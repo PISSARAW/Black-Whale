@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import FightDoorStatus from './FightDoorStatus.svelte'
   import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
@@ -65,8 +67,18 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
-      <FightPreparationStatus {state} {side} {language} onControl={side === 'player' ? onControl : onOpponentControl} />
-      <FightArenaStatus {state} {side} {language} onControl={side === 'player' ? onControl : onOpponentControl} />
+      <FightPreparationStatus
+        {state}
+        {side}
+        {language}
+        onControl={side === 'player' ? onControl : onOpponentControl}
+      />
+      <FightArenaStatus
+        {state}
+        {side}
+        {language}
+        onControl={side === 'player' ? onControl : onOpponentControl}
+      />
       <FightDoorStatus {state} {side} {language} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
@@ -91,7 +103,9 @@
             class:ready={canUseRangedAttack(fighter)}
             title={`${language === 'fr' ? ranged.labelFr : ranged.labelEn} · ${rangedAuraCost(fighter.id)} aura`}
           >
-            U · {language === 'fr' ? ranged.labelFr : ranged.labelEn} · {canUseRangedAttack(fighter)
+            {$bindings.playerRanged} · {language === 'fr' ? ranged.labelFr : ranged.labelEn} · {canUseRangedAttack(
+              fighter,
+            )
               ? language === 'fr'
                 ? 'prêt'
                 : 'ready'
@@ -100,8 +114,8 @@
                 : 'unavailable'}
           </span>
           {#if fighter.id !== 'camilla'}
-            <span class:ready={special.ready} title={special.hint}
-              >L · {special.label} · {special.ready
+            <span class:ready={special.ready} title={moveInputHint(special.hint, $bindings)}
+              >{$bindings.playerSpecial} · {special.label} · {special.ready
                 ? language === 'fr'
                   ? 'prêt'
                   : 'ready'
@@ -115,7 +129,7 @@
               class:ready={finisherReady(state, 'player')}
               title={language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}
             >
-              H · {language === 'fr' ? finisher.nameFr : finisher.nameEn} · {finisherReady(
+              {$bindings.playerFinisher} · {language === 'fr' ? finisher.nameFr : finisher.nameEn} · {finisherReady(
                 state,
                 'player',
               )

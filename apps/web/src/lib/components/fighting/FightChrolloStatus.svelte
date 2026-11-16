@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { chrolloNenActive } from '$lib/fighting/chrolloBook'
   import { chrolloPageName } from '$lib/fighting/chrolloPageNames'
   import type { FightSide, FightState } from '$lib/fighting/types'
@@ -12,8 +14,8 @@
   $: book = fighter.chrolloBook
   $: active = chrolloNenActive(fighter)
   $: effects = state[side === 'player' ? 'opponent' : 'player'].hatsuEffects
-  $: useKey = side === 'opponent' && state.mode === 'versus-local' ? ',' : 'L'
-  $: secondaryKey = side === 'opponent' && state.mode === 'versus-local' ? 'B' : 'H'
+  $: useKey = side === 'player' ? $bindings.playerSpecial : $bindings.opponentSpecial
+  $: secondaryKey = side === 'player' ? $bindings.playerFinisher : $bindings.opponentFinisher
 </script>
 
 {#if fighter.id === 'chrollo' && book}

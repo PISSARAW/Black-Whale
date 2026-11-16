@@ -1,5 +1,11 @@
 <script lang="ts">
+  import FightLessons from '$lib/components/fighting/FightLessons.svelte'
+  import { createFightLessons } from '$lib/fighting/fightLessonController'
+  import type { LessonId } from '$lib/fighting/fightLessons'
   import { performTrainingAction } from '$lib/fighting/trainingAction'
+  import { createFightControls, dispatchFightKey } from './fightingControls'
+  import type { PadAction } from '$lib/fighting/fightGamepad'
+  import FightInputSettings from '$lib/components/fighting/FightInputSettings.svelte'
   import {
     resetTraining,
     setTrainingResources,
@@ -12,11 +18,11 @@
   } from '$lib/fighting/trainingRecording'
   import type { TrainingPosition } from '$lib/fighting/trainingTypes'
   import { FIXED_STEP } from '$lib/fighting/fightClock'
-  import { ignoresFightKey, dispatchOpponentKey, dispatchHatsuKey } from './fightingKeyboard'
-  import { winnerLabel, finishLabel, handleEasterKey, canControlFight } from './fightingPageHelpers'
+  import { winnerLabel, finishLabel, canControlFight } from './fightingPageHelpers'
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
-  import { onMount } from 'svelte'
+  import { onMount, setContext } from 'svelte'
+  import { FIGHT_CONTROLS_CONTEXT } from '$lib/fighting/fightControlHints'
   import { performEasterEgg } from '$lib/fighting/easterEggs'
   import {
     defaultEasterEggPreferences,
@@ -52,11 +58,12 @@
     type FightInput,
     type FightMode,
     type FightState,
+    type FightSide,
     type FighterId,
     type MoveAction,
   } from '$lib/fighting/types'
   import { fightingCopy } from './fightingCopy'
-  import { attackKeys, movementKeys } from './fightingKeys'
+  import { attackKeys } from './fightingKeys'
   import './fighting.css'
   import './fightingMatch.css'
 
@@ -77,9 +84,32 @@
   let paused = false
   let language: 'fr' | 'en'
   let easterEggPreferences = defaultEasterEggPreferences()
+  const lessons = createFightLessons()
+  const controls = createFightControls(gamepadAction)
+  setContext(FIGHT_CONTROLS_CONTEXT, controls.bindings)
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
   $: copy = fightingCopy(language)
+  $: lessons.observe(state)
+
+  function resetFightInputs() {
+    input = { ...EMPTY_INPUT }
+    opponentInput = { ...EMPTY_INPUT }
+    pendingActions = []
+    controls.release()
+  }
+
+  function startLesson(id: LessonId) {
+    resetFightInputs()
+    paused = false
+    state = lessons.start(id)
+  }
+
+  function exitLesson() {
+    lessons.exit()
+    resetFightInputs()
+    if (state) state = setTrainingDummy(state, { behavior: 'idle' })
+  }
 
   function prepareFight() {
     state = createFight(selectedPlayer, selectedOpponent, {
@@ -87,9 +117,7 @@
       mode: selectedMode,
       environment,
     })
-    input = { ...EMPTY_INPUT }
-    opponentInput = { ...EMPTY_INPUT }
-    pendingActions = []
+    resetFightInputs()
     paused = false
   }
 
@@ -105,8 +133,7 @@
   function continueMatch() {
     if (!state) return
     state = beginFight(nextRound(state))
-    input = { ...EMPTY_INPUT }
-    opponentInput = { ...EMPTY_INPUT }
+    resetFightInputs()
   }
 
   function chooseAgain() {
@@ -121,12 +148,12 @@
   }
 
   function attack(action: AttackKind) {
-    const pressed = { ...input }
+    const pressed = controls.combine('player', input)
     queueAction((state) => performTrainingAction({ state, side: 'player', action, input: pressed }))
   }
 
   function finisher() {
-    const pressed = { ...input }
+    const pressed = controls.combine('player', input)
     queueAction((state) =>
       performTrainingAction({ state, side: 'player', action: 'finisher', input: pressed }),
     )
@@ -155,47 +182,46 @@
   }
 
   function opponentControl(key: keyof FightInput, active: boolean) {
+    if ($lessons) return
     if ((paused && state?.mode !== 'training') || state?.mode === 'versus-ai') return
     opponentInput = { ...opponentInput, [key]: active }
   }
 
   function opponentAttack(action: MoveAction | 'ranged') {
+    if ($lessons) return
     if (!state || (paused && state.mode !== 'training') || state.mode === 'versus-ai') return
-    const pressed = { ...opponentInput }
+    const pressed = controls.combine('opponent', opponentInput)
     queueAction((state) =>
       performTrainingAction({ state, side: 'opponent', action, input: pressed }),
     )
   }
 
-  function handleKey(event: KeyboardEvent, active: boolean) {
-    if (!state) return
-    if (ignoresFightKey(event, active)) return
-    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
-    if (
-      handleEasterKey(
-        event,
-        { active, state, keys: easterEggPreferences.keys, input, opponentInput },
-        (side, slot) => queueAction((current) => performEasterEgg(current, side, slot)),
-      )
-    )
-      return
-    if (
-      dispatchOpponentKey(event, active, {
-        mode: state.mode,
-        control: opponentControl,
-        attack: opponentAttack,
-      })
-    )
-      return
-    if (dispatchHatsuKey(event, active, { control, attack })) return
-    const movement = movementKeys[key]
-    if (movement) {
-      event.preventDefault()
-      control(movement, active)
+  function gamepadAction(side: FightSide, action: PadAction) {
+    if (action === 'pause') {
+      if (state?.phase === 'ready') startFight()
+      else if (state?.phase === 'fighting') togglePause()
       return
     }
-    if (!active || event.repeat) return
-    handleActionKey(key)
+    if (side === 'opponent') return opponentAttack(action)
+    if (action === 'finisher') return finisher()
+    if (action === 'throw') return throwAttack()
+    attack(action)
+  }
+
+  function handleKey(event: KeyboardEvent, active: boolean) {
+    if (!state) return
+    dispatchFightKey(event, active, {
+      state,
+      keys: easterEggPreferences.keys,
+      input: controls.combine('player', input),
+      opponentInput: controls.combine('opponent', opponentInput),
+      easter: (side, slot) => queueAction((current) => performEasterEgg(current, side, slot)),
+      control,
+      opponentControl,
+      opponentAttack,
+      attack,
+      action: handleActionKey,
+    })
   }
 
   function handleActionKey(key: string) {
@@ -216,17 +242,13 @@
 
   function togglePause() {
     paused = !paused
-    input = { ...EMPTY_INPUT }
-    opponentInput = { ...EMPTY_INPUT }
-    pendingActions = []
+    resetFightInputs()
   }
 
   function resetLab(position: TrainingPosition) {
     if (!state) return
     state = resetTraining(state, position)
-    input = { ...EMPTY_INPUT }
-    opponentInput = { ...EMPTY_INPUT }
-    pendingActions = []
+    resetFightInputs()
   }
 
   function stepLab() {
@@ -240,13 +262,13 @@
 
   onMount(() => {
     easterEggPreferences = readEasterEggPreferences()
+    controls.load()
     let frame = 0
     let last = performance.now()
-    const keydown = (event: KeyboardEvent) => handleKey(event, true)
-    const keyup = (event: KeyboardEvent) => handleKey(event, false)
+    const keydown = (event: KeyboardEvent) => controls.key(event, true, handleKey)
+    const keyup = (event: KeyboardEvent) => controls.key(event, false, handleKey)
     const release = () => {
-      input = { ...EMPTY_INPUT }
-      opponentInput = { ...EMPTY_INPUT }
+      resetFightInputs()
     }
     const visibility = () => {
       if (document.hidden && state?.phase === 'fighting') paused = true
@@ -255,17 +277,14 @@
     const loop = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.05)
       last = now
+      controls.poll(state?.mode, Boolean(state?.phase === 'fighting' && !paused))
       if (state?.phase === 'fighting' && !paused) {
         const versusAi = state.mode === 'versus-ai'
-        state = tickFight(
-          flushPendingActions(state),
-          { ...input },
-          {
-            dt,
-            opponentInput: versusAi ? undefined : { ...opponentInput },
-            ai: versusAi,
-          },
-        )
+        state = tickFight(flushPendingActions(state), controls.combine('player', input), {
+          dt,
+          opponentInput: versusAi ? undefined : controls.combine('opponent', opponentInput),
+          ai: versusAi,
+        })
       }
       frame = requestAnimationFrame(loop)
     }
@@ -306,6 +325,7 @@
   </header>
 
   {#if !state}
+    <FightLessons {lessons} {language} onStart={startLesson} />
     <FightSetup
       {language}
       player={selectedPlayer}
@@ -335,6 +355,21 @@
         {paused}
         canPause={state.phase === 'fighting'}
         onPause={togglePause}
+        ><FightInputSettings
+          {controls}
+          {language}
+          onEditing={() => {
+            if (state?.phase === 'fighting' && !paused) togglePause()
+            resetFightInputs()
+          }}
+        /></FightDisplaySettings
+      >
+      <FightLessons
+        {lessons}
+        {language}
+        presentation="panel"
+        onStart={startLesson}
+        onExit={exitLesson}
       />
       <div class="match-area">
         <FightLynchInterrogation
@@ -353,8 +388,7 @@
           onAction={queueAction}
           perform={performAuraAttack}
           onEditing={() => {
-            input = { ...EMPTY_INPUT }
-            opponentInput = { ...EMPTY_INPUT }
+            resetFightInputs()
           }}
         />
         <FightStage
@@ -384,7 +418,7 @@
           training={state.mode === 'training'}
         />
 
-        {#if state.mode === 'training'}
+        {#if state.mode === 'training' && !$lessons}
           <FightTrainingTools
             {state}
             {language}
@@ -459,10 +493,6 @@
         fighterId={state.player.id}
         mode={state.mode}
         title={copy.controls}
-        movement={copy.movement}
-        jump={copy.jump}
-        attacks={copy.attacks}
-        aura={copy.aura}
       />
     </details>
   {/if}

@@ -54,6 +54,7 @@
 
 <div class="fight-toolbar">
   <span class="format-name">{language === 'fr' ? format.titleFr : format.titleEn}</span>
+  <slot />
   <details class="display-settings">
     <summary>{language === 'fr' ? 'Affichage' : 'Display'}</summary>
     <div class="settings-panel">
@@ -109,7 +110,7 @@
 <style>
   .fight-toolbar {
     position: relative;
-    z-index: 45;
+    z-index: 50;
     display: flex;
     flex-wrap: wrap;
     align-items: center;

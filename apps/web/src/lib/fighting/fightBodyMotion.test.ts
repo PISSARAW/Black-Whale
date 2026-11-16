@@ -71,6 +71,17 @@ function pose(model: ReturnType<typeof figureOf>, who: ArcadeFighter, at = 1, ba
 const context = { seconds: 1, progress: 0 }
 
 describe('fighting rig', () => {
+  it('keeps the book strike on Chrollo’s actual right hand in both facings', () => {
+    const right = attacking('chrollo', 'standingHeavy', 0)
+    right.attack!.frame = attackData('heavy', right).startup
+    const left = { ...right, facing: -1 as const }
+    const first = bodyPlan(right, context)!.pose
+    const mirrored = bodyPlan(left, context)!.pose
+    expect(mirrored.rearElbow).toEqual(first.leadElbow)
+    expect(mirrored.rearShoulder).toEqual(first.leadShoulder)
+    expect(mirrored.leadElbow).toEqual(first.rearElbow)
+  })
+
   it('draws every fighter, with a plain guard for one that has no stance yet', () => {
     const unstanced = { ...fighter('kurapika'), id: 'no-stance' as FighterId }
     expect(bodyPlan(unstanced, context)?.pose.leadElbow).toBeDefined()

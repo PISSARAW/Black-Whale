@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { canCallHanzoBody } from '$lib/fighting/hanzoBodyCall'
   import type { FightState } from '$lib/fighting/types'
 
@@ -15,7 +17,8 @@
     title={language === 'fr'
       ? 'Interpeller le corps endormi à proximité'
       : 'Call to the nearby sleeping body'}
-    onclick={onCall}><kbd>T</kbd> {language === 'fr' ? 'Interpeller' : 'Call out'}</button
+    onclick={onCall}
+    ><kbd>{$bindings.playerCall}</kbd> {language === 'fr' ? 'Interpeller' : 'Call out'}</button
   >
 {/if}
 

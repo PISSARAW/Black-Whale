@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createFightPoseClock } from '$lib/fighting/fightPoseClock'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
@@ -22,12 +23,7 @@
   import { impactPresentation } from '$lib/fighting/fightImpactPresentation'
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
   import { motionOf } from '$lib/fighting/fighterMovement'
-  import {
-    createStrideClocks,
-    easeFactor,
-    poseProgress,
-    transitionSecondsFor,
-  } from '$lib/fighting/sceneMotion'
+  import { createStrideClocks, easeFactor, transitionSecondsFor } from '$lib/fighting/sceneMotion'
   import {
     impactReaction,
     isThrowTech,
@@ -257,11 +253,7 @@
         }
         fit()
 
-        const poseStarts: Record<'player' | 'opponent', { pose: FighterPose; at: number } | null> =
-          {
-            player: null,
-            opponent: null,
-          }
+        const poseClock = createFightPoseClock()
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
         const facings = {
@@ -292,11 +284,8 @@
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
           model.root.visible = fightFigureVisible(state, side)
-          const held = poseStarts[side]
-          if (!held || held.pose !== fighter.pose)
-            poseStarts[side] = { pose: fighter.pose, at: seconds }
-          const started = poseStarts[side]?.at ?? seconds
-          const progress = poseProgress(fighter, { seconds, started })
+          const receivedImpact = state.impact?.attacker !== side ? state.impact?.sequence : 0
+          const progress = poseClock(side, fighter, { seconds, impact: receivedImpact })
           const drawn = interpolatedPosition(state, side)
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)

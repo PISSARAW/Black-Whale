@@ -217,6 +217,43 @@ collision, portée, prédiction, blessure ou condition d’activation n’est aj
 `remainingVisitHatsu.test.ts` couvre les copies, les transitions, la perception,
 les animations, l’absence de mutation de la simulation et la libération 3D.
 
+## Objectif de démo locale
+
+La recette de référence porte sur Kurapika, Hisoka, Chrollo et Benjamin.
+
+- **Contrôles** : clavier P1/P2 configurable dans Commandes, sauvegarde locale,
+  deux manettes standard, fusion des périphériques et relâchement des commandes
+  lors d'une déconnexion, d'une perte de focus ou d'une édition des touches.
+  Les raccourcis affichés des quatre personnages suivent les touches configurées.
+  O projette ; F3 commande l'arène pour P1. P met en pause ; F10 commande l'arène
+  pour P2. Les touches avancées du Nen et des Easter Eggs restent réservées.
+- **Manettes** : stick/croix pour les directions ; boutons A/B/X/Y pour léger,
+  lourd, Hatsu et tir ; LB/RB pour garde et aura ; LT/RT pour projection et ultime ;
+  Start pour lancer/pause ; Back pour parler ; L3/R3 pour arène et Gyo. Le Hatsu
+  part au relâchement de X. Une nouvelle manette doit repasser au neutre avant
+  de piloter le combat. Les manettes sans mapping standard sont signalées.
+- **Mouvements et contacts** : six attaques normales animées à la main pour chacun
+  des quatre combattants ; la pose de contact tient pendant les frames actives.
+  Chrollo garde le livre dans sa main droite en changeant de côté. Les réactions
+  utilisent la durée réelle du stun, y compris les impacts courts et les coups
+  successifs ; elles restent figées pendant le hitstop. La marche conserve sa
+  cadence liée à la distance quand le rendu descend à 20 Hz.
+- **Apprentissage** : dix exercices FR/EN depuis « Apprendre le Nen » : Ren, Ken,
+  Zetsu, Gyo, Ryu, Ko, Emperor Time, rappel de Bungee Gum, Double Face et Secret
+  Window. Ils valident les états et effets réels du moteur, sans progresser pendant
+  la pause. Le Zetsu compte uniquement l’aura récupérée en Zetsu. Chaque exercice
+  peut être relancé ou quitté vers le laboratoire libre. Les outils du laboratoire
+  sont masqués pendant un exercice pour préserver son scénario.
+- **Limites de recette** : manettes standard simulées dans le navigateur, pas de
+  validation matérielle sur une manette physique. Les mesures de latence matérielle,
+  l’équilibrage par des joueurs externes et le réseau compétitif restent à réaliser.
+  Ce lot améliore une démo locale ; il ne constitue pas une validation de niveau AAA.
+
+`fightControls.test.ts` couvre les changements de touches, les conflits, les fronts
+bouton, la dérive des sticks et les pertes de focus. `tests/fighting-controls.spec.ts`
+vérifie le jeu compilé avec deux manettes simulées et le clavier configuré.
+Ces tests ne constituent pas une mesure de latence sur une manette physique.
+
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
@@ -1336,3 +1373,10 @@ Holy Chain peut coexister sur un autre doigt et Judgment Chain laisse une seule
 lame implantée. Les géométries partagées sont libérées une seule fois à la fermeture.
 `kurapikaChains.test.ts` couvre ces contrats ; `ui-tests/kurapika-chains` expose
 le rendu de production avec les cinq chaînes, les deux côtés et une lecture animée.
+
+`fightLessons.test.ts` prouve la réussite des dix scénarios par des actions du moteur
+et leur absence de progression par simple attente. `tests/fighting-lessons.spec.ts`
+vérifie les parcours des quatre personnages, la pause et le petit écran.
+`fightPoseClock.test.ts` couvre durée des réactions, hitstop, contacts et cadence.
+`node apps/web/scripts/check-fighting-motion.mjs` produit la planche de contrôle des
+24 attaques, en préparation/contact/récupération et dans les deux orientations.

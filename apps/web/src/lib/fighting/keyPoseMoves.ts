@@ -1,3 +1,6 @@
+import { holdNormalContacts } from './keyPoseContact'
+import { CHROLLO_NORMAL_POSES } from './keyPosesChrolloNormals'
+import { BENJAMIN_NORMAL_POSES } from './keyPosesBenjaminNormals'
 import { DOOR_LINK_POSE } from './keyPosesVoconte'
 import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
@@ -24,12 +27,13 @@ import type { FighterId, MoveSlot } from './types'
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   voconte: { neutralSpecial: DOOR_LINK_POSE },
-  kurapika: KURAPIKA_KEY_POSES,
+  kurapika: holdNormalContacts(KURAPIKA_KEY_POSES),
   theta: THETA_SHOT_POSES,
   shizuku: SHIZUKU_KEY_POSES,
-  hisoka: { ...HISOKA_KEY_POSES, ...HISOKA_SPECIAL_POSES },
+  hisoka: { ...holdNormalContacts(HISOKA_KEY_POSES), ...HISOKA_SPECIAL_POSES },
   franklin: FRANKLIN_KEY_POSES,
-  chrollo: CHROLLO_KEY_POSES,
+  chrollo: { ...CHROLLO_NORMAL_POSES, ...CHROLLO_KEY_POSES },
+  benjamin: BENJAMIN_NORMAL_POSES,
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   hanzo: HANZO_KEY_POSES,
   bonolenov: { forwardSpecial: PROLOGUE_SPEAR_POSE },

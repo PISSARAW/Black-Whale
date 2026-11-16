@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { advancedNenCopy } from '$lib/fighting/nenTacticalCopy'
   import FightNenTactics from './FightNenTactics.svelte'
   import type { FightInput } from '$lib/fighting/types'
@@ -18,7 +20,9 @@
   $: technique = nenStatus(fighter).join(' · ')
   $: tactical = nenTacticalState(fighter)
   $: explanation =
-    tactical.technique === 'on' ? onTacticalCopy(language) : (advancedNenCopy(tactical.technique, language) ?? tacticalCopy(tactical.technique))
+    tactical.technique === 'on'
+      ? onTacticalCopy(language)
+      : (advancedNenCopy(tactical.technique, language) ?? tacticalCopy(tactical.technique))
   $: flow = flowLabel(tactical.technique, tactical.auraPerSecond)
   $: danger =
     tactical.exhausted ||
@@ -139,7 +143,9 @@
 
   const warnings: Record<'fr' | 'en', Record<FightNenTactic, string>> = {
     fr: {
-      en: 'Détection de proximité · drain élevé', shu: 'Objet renforcé · corps exposé', in: 'Aura cachée · attention à Gyo et En',
+      en: 'Détection de proximité · drain élevé',
+      shu: 'Objet renforcé · corps exposé',
+      in: 'Aura cachée · attention à Gyo et En',
       ten: '',
       ren: 'Puissance +22 %',
       ken: 'Garde renforcée · drain élevé',
@@ -150,7 +156,9 @@
       on: 'Hatsu, Ken et Ko scellés · drain de vie',
     },
     en: {
-      en: 'Proximity sensing · heavy drain', shu: 'Reinforced object · exposed body', in: 'Aura hidden · Gyo and En can detect',
+      en: 'Proximity sensing · heavy drain',
+      shu: 'Reinforced object · exposed body',
+      in: 'Aura hidden · Gyo and En can detect',
       ten: '',
       ren: 'Power +22%',
       ken: 'Reinforced guard · heavy drain',
@@ -198,7 +206,14 @@
           onAura(true)
         }}
         onpointerup={() => onAura(false)}
-        onpointercancel={() => onAura(false)}><kbd>ESPACE</kbd> AURA</button
+        onpointercancel={() => onAura(false)}
+        ><kbd
+          >{$bindings.playerAura === ' '
+            ? language === 'fr'
+              ? 'Espace'
+              : 'Space'
+            : $bindings.playerAura}</kbd
+        > AURA</button
       >
       {#if fighter.id === 'kurapika'}
         <button
@@ -208,7 +223,9 @@
           disabled={Boolean(fighter.kurapika?.held?.loaded) ||
             (fighter.kurapika?.blackoutFrames ?? 0) > 0}
         >
-          <kbd>AURA + H</kbd> EMPEROR TIME
+          <kbd
+            >{$bindings.playerAura === ' ' ? 'Aura' : $bindings.playerAura} + {$bindings.playerFinisher}</kbd
+          > EMPEROR TIME
         </button>
       {/if}
     </div>

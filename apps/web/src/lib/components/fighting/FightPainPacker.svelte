@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import type { ArcadeFighter, FightSide } from '$lib/fighting/types'
   import { createPainPacker } from '$lib/fighting/feitanPain'
   import { chrolloHasActivePage } from '$lib/fighting/chrolloBook'
@@ -10,8 +12,13 @@
 
   $: pain = fighter.hatsuEffects.painPacker ?? createPainPacker()
   $: visible = fighter.id === 'feitan' || chrolloHasActivePage(fighter, 'feitan')
-  $: useKey = side === 'opponent' && local ? ',' : 'L'
-  $: preparation = fighter.id === 'chrollo' ? useKey : side === 'opponent' && local ? 'B' : 'H'
+  $: useKey = side === 'opponent' && local ? $bindings.opponentSpecial : $bindings.playerSpecial
+  $: preparation =
+    fighter.id === 'chrollo'
+      ? useKey
+      : side === 'opponent' && local
+        ? $bindings.opponentFinisher
+        : $bindings.playerFinisher
 </script>
 
 {#if visible && pain}

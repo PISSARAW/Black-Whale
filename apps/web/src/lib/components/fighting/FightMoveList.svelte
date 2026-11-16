@@ -1,5 +1,7 @@
 <script lang="ts">
   import FightMoveProperties from './FightMoveProperties.svelte'
+  import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { movesetFor, moveById } from '$lib/fighting/movesets'
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
@@ -16,7 +18,14 @@
         ['command', 'Command normals'],
         ['special', language === 'fr' ? 'Techniques' : 'Techniques'],
         ['throw', language === 'fr' ? 'Projection' : 'Throw'],
-        ['finisher', fighterId === 'chrollo' ? (language === 'fr' ? 'Page au signet' : 'Bookmarked page') : 'Finisher Hatsu'],
+        [
+          'finisher',
+          fighterId === 'chrollo'
+            ? language === 'fr'
+              ? 'Page au signet'
+              : 'Bookmarked page'
+            : 'Finisher Hatsu',
+        ],
       ] as const)
     : []
 
@@ -30,11 +39,19 @@
   <section class="move-list" aria-label={language === 'fr' ? 'Liste des coups' : 'Move list'}>
     <header>
       <span>{language === 'fr' ? 'MÉCANIQUE UNIQUE' : 'UNIQUE MECHANIC'}</span>
-      <p>{language === 'fr' ? moveset.mechanicFr : moveset.mechanicEn}</p>
+      <p>
+        {language === 'fr'
+          ? moveInputHint(moveset.mechanicFr, $bindings)
+          : moveInputHint(moveset.mechanicEn, $bindings)}
+      </p>
     </header>
     {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
     {#if arena}
-      <h3>{language === 'fr' ? 'Action d’arène · O (P2 : P)' : 'Arena action · O (P2: P)'}</h3>
+      <h3>
+        {language === 'fr'
+          ? `Action d’arène · ${$bindings.playerArena} (P2 : ${$bindings.opponentArena})`
+          : `Arena action · ${$bindings.playerArena} (P2: ${$bindings.opponentArena})`}
+      </h3>
       <p>{arena.name[language === 'fr' ? 0 : 1]} · {arena.effect[language === 'fr' ? 0 : 1]}</p>
       <p>{arena.condition[language === 'fr' ? 0 : 1]}</p>
     {/if}
@@ -45,7 +62,9 @@
             <h3>{title}</h3>
             {#each moveset.moves.filter((move) => move.category === category) as move (move.id)}
               <p>
-                <kbd>{move.input}</kbd><span>{language === 'fr' ? move.nameFr : move.nameEn}</span>
+                <kbd>{moveInputHint(move.input, $bindings)}</kbd><span
+                  >{language === 'fr' ? move.nameFr : move.nameEn}</span
+                >
                 <FightMoveProperties {move} {language} />
               </p>
             {/each}
@@ -61,7 +80,13 @@
     </div>
     {#if moveset.moves.some((move) => move.category === 'finisher')}
       <footer>
-        <strong>{fighterId === 'chrollo' ? 'Double Face · H' : language === 'fr' ? 'Condition du finisher' : 'Finisher condition'}</strong>
+        <strong
+          >{fighterId === 'chrollo'
+            ? `Double Face · ${$bindings.playerFinisher}`
+            : language === 'fr'
+              ? 'Condition du finisher'
+              : 'Finisher condition'}</strong
+        >
         <span>{language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}</span>
       </footer>
     {/if}

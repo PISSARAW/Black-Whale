@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
@@ -148,12 +150,13 @@
       </div>
       <div class="touch-group attack-controls">
         <FightHanzoCall {state} {language} {onCall} />
-        <button type="button" onclick={() => onAttack('light')}>J</button>
-        <button type="button" onclick={() => onAttack('heavy')}>K</button>
+        <button type="button" onclick={() => onAttack('light')}>{$bindings.playerLight}</button>
+        <button type="button" onclick={() => onAttack('heavy')}>{$bindings.playerHeavy}</button>
         <button
           type="button"
           onclick={onThrow}
-          aria-label={language === 'fr' ? 'Projection / déprojection' : 'Throw / tech'}>O</button
+          aria-label={language === 'fr' ? 'Projection / déprojection' : 'Throw / tech'}
+          >{$bindings.playerThrow}</button
         >
         <button
           type="button"
@@ -163,7 +166,7 @@
           title={rangedHint}
           onclick={() => onAttack('ranged')}
         >
-          <kbd>U</kbd>
+          <kbd>{$bindings.playerRanged}</kbd>
           <span>{language === 'fr' ? 'Tir' : 'Shot'}</span>
         </button>
         {#if moveset && finisher}
@@ -175,7 +178,7 @@
             title={language === 'fr' ? finisher.nameFr : finisher.nameEn}
             onclick={onFinisher}
           >
-            <kbd>H</kbd>
+            <kbd>{$bindings.playerFinisher}</kbd>
             <span>{language === 'fr' ? 'Ultime' : 'Super'}</span>
           </button>
         {/if}
@@ -196,7 +199,7 @@
             }}
             onpointercancel={() => hold('hatsu', false)}
           >
-            <kbd>L</kbd>
+            <kbd>{$bindings.playerSpecial}</kbd>
             <span
               >{state.player.id === 'beyond'
                 ? language === 'fr'
@@ -228,7 +231,13 @@
     {onEmperor}
     onAura={(active) => onControl('aura', active)}
   />
-  <FightEasterEggs {state} {language} {paused} bind:preferences={easterEggPreferences} onPlay={onEasterEgg} />
+  <FightEasterEggs
+    {state}
+    {language}
+    {paused}
+    bind:preferences={easterEggPreferences}
+    onPlay={onEasterEgg}
+  />
 </section>
 
 <style>

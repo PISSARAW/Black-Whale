@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { BEYOND_CURSE } from '$lib/fighting/beyondCurse'
   import { moveById } from '$lib/fighting/movesets'
   import { outsideDuelAbility } from '$lib/fighting/outsideDuelAbility'
@@ -8,7 +10,7 @@
   export let side: FightSide
   export let language: 'fr' | 'en'
   export let detailed = false
-  $: useKey = side === 'opponent' && state.mode === 'versus-local' ? ',' : 'L'
+  $: useKey = side === 'player' ? $bindings.playerSpecial : $bindings.opponentSpecial
   $: fighter = state[side]
   $: chain = fighter.kurapika
   $: held = chain?.held

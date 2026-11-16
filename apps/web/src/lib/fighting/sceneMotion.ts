@@ -48,7 +48,9 @@ export function createStrideClocks(): (side: FightSide, x: number, facing: -1 | 
   return (side, x, facing) => {
     const held = clocks[side]
     const step = held.x === null ? 0 : x - held.x
-    if (Math.abs(step) < 1) held.clock += step * facing * STRIDE_PER_UNIT
+    // A sparse render can cover several units even at ordinary walking speed.
+    // Only a large reposition (reset/teleport) should discard the travelled stride.
+    if (Math.abs(step) <= 12) held.clock += step * facing * STRIDE_PER_UNIT
     held.x = x
     return held.clock
   }

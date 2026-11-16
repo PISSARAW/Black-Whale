@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { benjaminNenActive } from '$lib/fighting/benjaminBaton'
   import { moveById } from '$lib/fighting/movesets'
   import type { FightSide, FightState } from '$lib/fighting/types'
@@ -11,7 +13,7 @@
   $: fighter = state[side]
   $: baton = fighter.hatsuEffects.baton
   $: active = benjaminNenActive(fighter)
-  $: cardKey = side === 'opponent' && state.mode === 'versus-local' ? 'B' : 'H'
+  $: cardKey = side === 'player' ? $bindings.playerFinisher : $bindings.opponentFinisher
   $: target = baton?.markedTarget ? state[baton.markedTarget] : null
   $: move = moveById(target?.attack?.moveId)
   $: action = target?.attack?.concealed

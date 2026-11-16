@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
   import { arenaObjects } from '$lib/fighting/arenaActions'
   import type { FightState, FightSide, FightInput } from '$lib/fighting/types'
@@ -9,6 +11,7 @@
   $: technique = arenaTechnique(state[side].id)
   $: locale = language === 'fr' ? 0 : 1
   $: objects = arenaObjects(state)
+  $: arenaKey = side === 'player' ? $bindings.playerArena : $bindings.opponentArena
   $: local = side === 'player' || state.mode === 'versus-local'
 </script>
 
@@ -20,8 +23,8 @@
     {#if state.arena.tether[side]}
       <span
         >{language === 'fr'
-          ? 'Lien actif · O/P : tirer puis lâcher l’ancrage, ou libérer le fil.'
-          : 'Active tether · O/P: pull then release the anchor, or release the thread.'}</span
+          ? `Lien actif · ${arenaKey} : tirer puis lâcher l’ancrage, ou libérer le fil.`
+          : `Active tether · ${arenaKey}: pull then release the anchor, or release the thread.`}</span
       >
     {/if}
     <span
@@ -57,7 +60,7 @@
           onControl('arena', false)
         }}
         onblur={() => onControl('arena', false)}
-        ><kbd>{side === 'player' ? 'O' : 'P'}</kbd>
+        ><kbd>{arenaKey}</kbd>
         {language === 'fr' ? 'Action d’arène' : 'Arena action'}</button
       >
     {/if}

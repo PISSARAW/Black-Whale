@@ -18,6 +18,7 @@ import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
 
 export interface EffectSceneOptions {
+  viewer?: () => FightSide
   THREE: typeof import('three')
   scene: import('three').Scene
   worldX: (value: number) => number

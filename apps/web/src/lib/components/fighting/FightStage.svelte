@@ -4,11 +4,11 @@
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   export let comfort = defaultFightComfort()
-  import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
+  import { parallelFutureCamera } from '$lib/fighting/parallelFutureCamera'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
   import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
-  import FightScene from './FightScene.svelte'
+  import FightLiveScene from './FightLiveScene.svelte'
   import FightEasterEggs from './FightEasterEggs.svelte'
   import FightEasterEggCaptions from './FightEasterEggCaptions.svelte'
   import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
@@ -47,7 +47,7 @@
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
-  $: visibleState = futureVisibleState(state, futureViewer, futurePreview)
+  $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
   $: throwTech = isThrowTech(visibleState)
 </script>
@@ -66,11 +66,13 @@
     <FightCatsName state={visibleState} {language} />
     <FightEasterEggCaptions state={visibleState} {language} />
     {#key sceneKey}
-      <FightScene
-        state={visibleState}
+      <FightLiveScene
+        {state}
         {stageId}
         {language}
         {comfort}
+        viewer={state.parallelFuture ? futureViewer : sensoryViewer}
+        previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
       />
     {/key}

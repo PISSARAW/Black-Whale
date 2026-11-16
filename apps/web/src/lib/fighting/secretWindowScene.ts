@@ -19,7 +19,7 @@ export function createSecretWindowScene(options: EffectSceneOptions): FighterEff
   const owls = { player: makeOwl('player'), opponent: makeOwl('opponent') }
   const syncSide = (state: FightState, side: FightSide, seconds: number) => {
     const model = owls[side]
-    model.owl.visible = secretWindowVisibleTo(state, side, 'player')
+    model.owl.visible = secretWindowVisibleTo(state, side, options.viewer?.() ?? 'player')
     const targetSide = state[side].secretWindow?.target
     if (!targetSide) return
     const original = state[targetSide]

@@ -1,3 +1,8 @@
+import {
+  PREDATOR_ANALYSIS_FRAMES,
+  PREDATOR_AURA_COST,
+  PREDATOR_MAX_HUNT_FRAMES,
+} from './predatorTuning'
 import { witnessedHatsu } from './nenWitness'
 import { voluntaryNenAvailable } from './nenAccess'
 import { needleAutonomy } from './illumiState'
@@ -9,9 +14,11 @@ import { createPredatorState, type PredatorAnalysis, type PredatorState } from '
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Duel abstraction: three seconds of direct study of this particular live manifestation. */
-export const PREDATOR_ANALYSIS_FRAMES = 180
-export const PREDATOR_AURA_COST = 40
-export const PREDATOR_MAX_HUNT_FRAMES = 180
+export {
+  PREDATOR_ANALYSIS_FRAMES,
+  PREDATOR_AURA_COST,
+  PREDATOR_MAX_HUNT_FRAMES,
+} from './predatorTuning'
 
 export function ownsPredator(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'rihan') return true

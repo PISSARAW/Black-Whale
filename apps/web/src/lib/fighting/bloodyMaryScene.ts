@@ -10,22 +10,24 @@ export function createBloodyMaryScene(options: EffectSceneOptions): FighterEffec
   const dropGeometry = new THREE.SphereGeometry(0.11, 8, 6)
   const bagGeometry = new THREE.BoxGeometry(0.19, 0.29, 0.06)
   const pupilGeometry = new THREE.SphereGeometry(0.025, 6, 4)
-  const lines = ['player', 'opponent'].map(() => {
+  const lines = ['player', 'opponent'].map((side) => {
     const line = new THREE.Line(
       new THREE.BufferGeometry(),
       new THREE.LineBasicMaterial({ color: 0x9c173e }),
     )
+    line.name = `bloody-mary:${side}`
     scene.add(line)
     return line
   })
-  const groups = ['player', 'opponent'].map(() => {
+  const groups = ['player', 'opponent'].map((side) => {
     const kit = new THREE.Group()
     const bag = new THREE.Mesh(bagGeometry, red)
     bag.position.y = 1.8
     kit.add(bag)
     scene.add(kit)
-    const drops = [0, 1, 2].map(() => {
+    const drops = [0, 1, 2].map((index) => {
       const group = new THREE.Group()
+      group.name = `bloody-mary-scout:${side}:${index}`
       const body = new THREE.Mesh(dropGeometry, red)
       const eye = new THREE.Mesh(dropGeometry, white)
       eye.scale.setScalar(0.55)

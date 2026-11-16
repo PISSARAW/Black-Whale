@@ -1,7 +1,23 @@
+import type { HumanPose } from '$lib/tour/humanAnimation'
 import { attackProgress } from './frameData'
 import { jumpProgress } from './fighterMovement'
 import { KO_DURATION } from './fightMoves'
 import type { ArcadeFighter, FightSide, FighterPose } from './types'
+
+export const FIGHT_MODEL_POSES: Record<FighterPose, HumanPose> = {
+  idle: 'idle',
+  walk: 'walk',
+  jump: 'idle',
+  guard: 'guard',
+  light: 'idle',
+  heavy: 'idle',
+  special: 'idle',
+  ranged: 'idle',
+  hit: 'idle',
+  down: 'fallen',
+  wakeup: 'idle',
+  ko: 'idle',
+}
 
 /**
  * Presentation timing of the 2D duel: how long each pose change blends, how far

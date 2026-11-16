@@ -1,17 +1,21 @@
 import { fightWorldX, fightWorldY } from './fightCoordinates'
-import type { FightState } from './types'
+import type { CinematicDirection } from './cinematicDirector'
+import type { FightSide, FightState } from './types'
+import type { CameraDetailRect } from './cinematicDetailLayout'
 
 export interface CombatCameraFrame {
   x: number
   y: number
   z: number
   lookY: number
+  detailReady?: boolean
 }
 interface Bounds {
   left: number
   right: number
   bottom: number
   top: number
+  region?: SafeRegion
 }
 export interface CombatCameraOptions {
   state: FightState
@@ -21,19 +25,87 @@ export interface CombatCameraOptions {
   intensity: number
   dt: number
   minimumDistance?: number
+  direction?: CinematicDirection
+  detail?: boolean
+  detailWeight?: number
+  detailRect?: CameraDetailRect
+  companion?: FightSide
 }
+interface SafeRegion {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+const DEFAULT_REGION = { left: -0.84, right: 0.84, top: 0.67, bottom: -0.88 }
 const TAN_FOV = Math.tan((17 * Math.PI) / 180)
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
+function outsideRegion(x: number, y: number, region: SafeRegion): boolean {
+  return x < region.left || x > region.right || y < region.bottom || y > region.top
+}
+function reservedRegion(portrait: boolean, weight: number, rect?: CameraDetailRect): SafeRegion {
+  const top = rect ? 1 - 2 * (rect.y + rect.height + 0.02) : 0.06
+  const right = rect ? 2 * (rect.x - 0.055) - 1 : 0.23
+  return {
+    ...DEFAULT_REGION,
+    top: portrait ? 0.67 + (top - 0.67) * weight : 0.67,
+    right: portrait ? 0.84 : 0.84 + (right - 0.84) * weight,
+  }
+}
+function cameraFocus(options: CombatCameraOptions): number {
+  const direction = options.direction
+  if (!direction?.side) return 0
+  return (fightWorldX(options.state[direction.side].x) - options.span.centre) * 0.12
+}
+function impactFocus(options: CombatCameraOptions): number {
+  const { state } = options
+  if (state.phase !== 'fighting' || !state.impact || state.impact.blocked || state.impact.avoided)
+    return 0
+  return clamp(state.hitstop / 12, 0, 1) * 0.22 * options.intensity
+}
 function bodyBounds(options: CombatCameraOptions): Bounds {
   const { state, span } = options
   const actors = [state.player, state.opponent]
-  const tops = actors.map((actor) => fightWorldY(actor.y) + (actor.id === 'biscuit' ? 2.8 : 1.9))
+  // Use velocity to begin opening the shot during takeoff, before a head reaches the HUD.
+  const tops = actors.map(
+    (actor) =>
+      fightWorldY(actor.y + Math.max(0, actor.velocityY) * 0.12) +
+      (actor.id === 'biscuit' ? 2.8 : 2.22),
+  )
+  const companion = options.companion && state[options.companion]
+  const beastX = companion ? fightWorldX(companion.x) - companion.facing : span.centre
   return {
-    left: Math.min(span.centre - span.gap / 2, ...actors.map((a) => fightWorldX(a.x))) - 0.8,
-    right: Math.max(span.centre + span.gap / 2, ...actors.map((a) => fightWorldX(a.x))) + 0.8,
+    left:
+      Math.min(
+        span.centre - span.gap / 2,
+        beastX - (companion ? 0.15 : 0),
+        ...actors.map((a) => fightWorldX(a.x)),
+      ) - 0.8,
+    right:
+      Math.max(
+        span.centre + span.gap / 2,
+        beastX + (companion ? 0.15 : 0),
+        ...actors.map((a) => fightWorldX(a.x)),
+      ) + 0.8,
     bottom: Math.min(0, ...actors.map((a) => fightWorldY(a.y))) - 0.08,
     top: Math.max(...tops) + 0.2,
   }
+}
+function fitsCameraBounds(frame: CombatCameraFrame, bounds: Bounds, aspect: number) {
+  const region = bounds.region ?? DEFAULT_REGION
+  const tilt = frame.y - frame.lookY
+  const length = Math.hypot(frame.z, tilt)
+  const cosine = frame.z / length
+  const sine = tilt / length
+  for (const x of [bounds.left, bounds.right])
+    for (const y of [bounds.bottom, bounds.top]) {
+      const dy = y - frame.lookY
+      const depth = length - sine * dy
+      const px = (x - frame.x) / (TAN_FOV * Math.max(0.25, aspect) * depth)
+      const py = (cosine * dy) / (TAN_FOV * depth)
+      if (depth <= 0 || outsideRegion(px, py, region)) return false
+    }
+  return true
 }
 /** Conservative projection bounds reserve room above heads for the HUD. */
 export function combatCameraDistance(
@@ -41,12 +113,35 @@ export function combatCameraDistance(
   bounds: Bounds,
   aspect: number,
 ): number {
-  const horizontal =
-    Math.max(frame.x - bounds.left, bounds.right - frame.x) /
-    (TAN_FOV * Math.max(0.25, aspect) * 0.84)
-  const vertical =
-    Math.max(frame.lookY - bounds.bottom, bounds.top - frame.lookY) / (TAN_FOV * 0.67)
-  return Math.max(4.8, horizontal, vertical)
+  let z = 4.8
+  for (let attempt = 0; attempt < 240; attempt++) {
+    if (fitsCameraBounds({ ...frame, z }, bounds, aspect)) return z
+    z *= 1.025
+  }
+  return z
+}
+/** Aim into a low portrait lane while dollying; zooming alone would move bodies behind its panel. */
+function fitPortraitLane(options: {
+  frame: CombatCameraFrame
+  bounds: Bounds
+  aspect: number
+  minimum: number
+}) {
+  const { frame, bounds, aspect } = options
+  const region = bounds.region!
+  const centre = (region.top + region.bottom) / 2
+  const tilt = frame.y - frame.lookY
+  const bodyY = (bounds.top + bounds.bottom) / 2
+  let z = Math.max(4.8, options.minimum)
+  for (let attempt = 0; attempt < 240; attempt++) {
+    const length = Math.hypot(z, tilt)
+    const dy = (centre * TAN_FOV * length) / (z / length + (centre * TAN_FOV * tilt) / length)
+    const lookY = bodyY - dy
+    const pose = { x: frame.x, z, lookY, y: lookY + tilt }
+    if (fitsCameraBounds(pose, bounds, aspect)) return pose
+    z *= 1.025
+  }
+  return { ...frame, z }
 }
 
 function preserveSpecialFraming(state: FightState): boolean {
@@ -62,17 +157,44 @@ export function combatCameraTarget(options: CombatCameraOptions) {
   const { state, base, span } = options
   const intensity = clamp(options.intensity, 0, 1)
   const bounds = bodyBounds(options)
-  const focus =
-    state.phase === 'fighting' && state.impact && !state.impact.blocked && !state.impact.avoided
-      ? clamp(state.hitstop / 12, 0, 1) * 0.22 * intensity
-      : 0
-  const x = base.x + (span.centre - base.x) * intensity
-  const lookY = Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2)
+  const focus = impactFocus(options)
+  const cue = intensity > 0 ? (options.direction?.strength ?? 0) : 0
+  const centre = span.centre
+  const focusOffset = cameraFocus(options)
+  const portrait = options.aspect < 1.15
+  const weight = options.detailWeight ?? (options.detail ? 1 : 0)
+  bounds.region = reservedRegion(portrait, weight, options.detailRect)
+  const insetOffset = portrait ? 0 : (bounds.right - bounds.left) * 0.36 * weight
+  const x = base.x + (centre - base.x + focusOffset + insetOffset) * intensity
+  const lift = portrait ? (bounds.top - bounds.bottom) * 0.72 * weight : 0
+  const lookY = Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2 + lift)
   const frame = {
     x,
     lookY,
     y: lookY + base.y - base.lookY,
-    z: preserveSpecialFraming(state) ? base.z : base.z * (1 - 0.14 * intensity) - focus,
+    z: preserveSpecialFraming(state)
+      ? base.z
+      : Math.max(5.9, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95),
+  }
+  return fittedTarget({ frame, bounds, options })
+}
+function fittedTarget({
+  frame,
+  bounds,
+  options,
+}: {
+  frame: CombatCameraFrame
+  bounds: Bounds
+  options: CombatCameraOptions
+}) {
+  if (bounds.region!.top < 0) {
+    const safe = fitPortraitLane({
+      frame,
+      bounds,
+      aspect: options.aspect,
+      minimum: Math.max(frame.z, options.minimumDistance ?? 0),
+    })
+    return { ...safe, bounds, minimum: safe.z }
   }
   const minimum = Math.max(
     options.minimumDistance ?? 0,
@@ -85,30 +207,44 @@ export function createCombatCamera() {
   let held: CombatCameraFrame | null = null
   let lastFrame = -1
   let pair = ''
+  let detailWeight = 0
   return {
     update(options: CombatCameraOptions): CombatCameraFrame {
-      const target = combatCameraTarget(options)
-      const key = `${options.state.player.id}:${options.state.opponent.id}`
-      if (!held || lastFrame > options.state.frame || key !== pair) held = { ...target }
-      const ease = 1 - Math.exp(-7 * clamp(options.dt, 0, 0.1))
+      const key = `${options.state.player.id}:${options.state.opponent.id}:${options.state.roundNumber}`
+      const reset = !held || lastFrame > options.state.frame || key !== pair
+      if (reset) detailWeight = 0
+      const step = clamp(options.dt, 0, 0.1) / 0.3
+      detailWeight = clamp(detailWeight + (options.detail ? step : -step), 0, 1)
+      const target = combatCameraTarget({ ...options, detailWeight })
+      if (reset || !held) held = { ...target }
+      const ease = 1 - Math.exp(-10 * clamp(options.dt, 0, 0.1))
+      const zoomEase = 1 - Math.exp(-(target.z < held.z ? 10 : 3.4) * clamp(options.dt, 0, 0.1))
       const x = held.x + (target.x - held.x) * ease
       const lookY = held.lookY + (target.lookY - held.lookY) * ease
-      const pose = {
+      let pose = {
         x,
         lookY,
         y: lookY + target.y - target.lookY,
-        z: held.z + (target.z - held.z) * ease,
+        z: held.z + (target.z - held.z) * zoomEase,
       }
       // Open the shot immediately when needed; easing must never crop a fighter.
-      pose.z = Math.max(
-        pose.z,
-        target.minimum,
-        combatCameraDistance(pose, target.bounds, options.aspect),
-      )
+      if (target.bounds.region!.top < 0)
+        pose = fitPortraitLane({
+          frame: pose,
+          bounds: target.bounds,
+          aspect: options.aspect,
+          minimum: Math.max(pose.z, target.minimum),
+        })
+      else
+        pose.z = Math.max(
+          pose.z,
+          target.minimum,
+          combatCameraDistance(pose, target.bounds, options.aspect),
+        )
       held = pose
       lastFrame = options.state.frame
       pair = key
-      return pose
+      return { ...pose, detailReady: detailWeight >= 1 }
     },
   }
 }

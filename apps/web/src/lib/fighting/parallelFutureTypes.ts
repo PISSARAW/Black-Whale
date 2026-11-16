@@ -25,6 +25,21 @@ export interface FutureCommand {
 }
 
 export interface FutureFrame {
+  /** Presentation snapshot only; the real branch never consumes these fields. */
+  scene?: Pick<
+    FightState,
+    | 'bungeeGum'
+    | 'catsName'
+    | 'catsNameConsumed'
+    | 'moonlight'
+    | 'lsdf'
+    | 'expulsion'
+    | 'score'
+    | 'knockdowns'
+    | 'winner'
+    | 'finishReason'
+    | 'hitstop'
+  >
   arena?: FightState['arena']
   voconteDoors?: FightState['voconteDoors']
   battlefield?: FightState['battlefield']

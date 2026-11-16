@@ -108,7 +108,16 @@ function canToggleEmperor(state: FightState, fighter: ArcadeFighter): boolean {
 
 /** A Nen condition kills by its rule, independent of score format or remaining HP. */
 export function chainRuleDeath(state: FightState, side: FightSide): FightState {
-  const fighter = { ...state[side], health: 0, attack: null, bufferedAttack: null, blocking: false }
+  const body = state[side]
+  const fighter = {
+    ...body,
+    health: 0,
+    attack: null,
+    bufferedAttack: null,
+    blocking: false,
+    kurapika:
+      body.kurapika && !body.judgmentChain ? { ...body.kurapika, vowBroken: true } : body.kurapika,
+  }
   return resolveFightOutcome(
     recordFightDeath(
       { ...state, [side]: fighter },

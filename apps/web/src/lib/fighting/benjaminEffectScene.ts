@@ -39,7 +39,7 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     group.add(made)
     return made
   }
-  const build = () => {
+  const build = (side: FightSide) => {
     const gun = new THREE.Group()
     mesh(gun, { geometry: box([0.62, 0.19, 0.17]), material: metal, position: [0, 0, 0] })
     mesh(gun, { geometry: box([0.6, 0.075, 0.075]), material: metal, position: [0.57, 0.03, 0] })
@@ -49,7 +49,7 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     const owlModel = createVisitHatsuModel(THREE, { model: 'secret-window' })
     owlModel.fit({ height: 0.48, width: 0.34 })
     const owl = owlModel.root
-    owl.name = 'benjamin-secret-window'
+    owl.name = side === 'player' ? 'benjamin-secret-window' : `benjamin-secret-window:${side}`
     owl.rotation.y = Math.PI
     const rectangle = new THREE.Group()
     for (const sign of [-1, 1]) {
@@ -67,14 +67,14 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     const card = new THREE.Group()
     mesh(card, { geometry: box([0.24, 0.36, 0.035]), material: dark, position: [0, 0, 0] })
     mesh(card, { geometry: box([0.16, 0.26, 0.04]), material: aura, position: [0, 0, 0] })
-    gun.name = 'benjamin-firearm'
-    owl.name = 'benjamin-secret-window'
-    rectangle.name = 'benjamin-culdcept-rectangle'
-    card.name = 'benjamin-culdcept-card'
+    gun.name = side === 'player' ? 'benjamin-firearm' : `benjamin-firearm:${side}`
+    owl.name = side === 'player' ? 'benjamin-secret-window' : `benjamin-secret-window:${side}`
+    rectangle.name = side === 'player' ? 'benjamin-culdcept-rectangle' : `benjamin-culdcept-rectangle:${side}`
+    card.name = side === 'player' ? 'benjamin-culdcept-card' : `benjamin-culdcept-card:${side}`
     scene.add(gun, owl, rectangle, card)
     return { gun, muzzle, owl, owlModel, rectangle, card }
   }
-  const sides = { player: build(), opponent: build() }
+  const sides = { player: build('player'), opponent: build('opponent') }
   const syncSide = (state: FightState, side: FightSide, seconds: number) => {
     const fighter = state[side]
     const held = sides[side]
@@ -90,7 +90,7 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     held.gun.scale.x = fighter.facing
     held.muzzle.visible = burstFlash(fighter)
     const target = markedFighter(state, fighter)
-    held.owl.visible = side === 'player' && Boolean(activeNen && target)
+    held.owl.visible = side === (options.viewer?.() ?? 'player') && Boolean(activeNen && target)
     if (target)
       held.owl.position.set(
         options.worldX(target.x) - 0.3,

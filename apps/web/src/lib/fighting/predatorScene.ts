@@ -24,6 +24,7 @@ export function createPredatorScene(options: PredatorSceneOptions) {
       for (const [index, side] of (['player', 'opponent'] as const).entries()) {
         const hunt = state[side].predator?.hunt
         const model = models[index]
+        model.root.name = `predator:${side}`
         model.root.visible = Boolean(hunt)
         if (!hunt) continue
         model.root.position.set(options.worldX(hunt.x), options.worldY(hunt.y), 0.3)

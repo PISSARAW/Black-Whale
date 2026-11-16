@@ -1,0 +1,179 @@
+{
+  "date": "2026-11-16T23:06:56.206Z",
+  "label": "reference",
+  "revision": "working-source",
+  "reusedBundle": null,
+  "production": true,
+  "browser": "157.0.8103.78",
+  "durationSeconds": 30,
+  "warmupSeconds": 8,
+  "profileSeconds": 5,
+  "suite": "stress",
+  "pass": true,
+  "machine": "hw.model: Mac17,3\nmachdep.cpu.brand_string: Apple M5\nhw.ncpu: 10\nhw.memsize: 17179869184",
+  "scope": "Production-compiled FightStage, actual engine replay, HUD and effects at 1280x900; arena height 560px. Profile window excluded from cadence samples. Headless Metal; Fresh browser process per case; other workstation load uncontrolled. Not a physical input latency measurement.",
+  "results": [
+    {
+      "fighter": "tserriednich",
+      "scenario": "future",
+      "stage": "banquet-hall",
+      "id": "future-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            5.26953125,
+            5.65283203125,
+            7.935546875
+          ],
+          "freeMemory": 2098249728
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            4.83349609375,
+            5.5478515625,
+            7.87158203125
+          ],
+          "freeMemory": 738017280
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            4.79150390625,
+            5.51318359375,
+            7.83154296875
+          ],
+          "freeMemory": 106283008
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1784,
+          "total": 834.0999999791384,
+          "max": 61.100000001490116
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1784,
+          "total": 4165.000000163913,
+          "max": 5.299999997019768
+        },
+        "4": {
+          "name": "Ee",
+          "count": 1784,
+          "total": 1660.499999962747,
+          "max": 4.299999997019768
+        }
+      },
+      "renderCallback": 3,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "81e4de36",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 1,
+      "stateFrame": 786,
+      "intervals": {
+        "count": 1783,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000291,
+        "max": 66.69999999999709,
+        "mean": 16.815535614133484
+      },
+      "renderCpu": {
+        "count": 1783,
+        "min": 1.4000000059604645,
+        "p50": 2.2000000029802322,
+        "p95": 3.2000000029802322,
+        "p99": 3.9000000059604645,
+        "max": 5.299999997019768,
+        "mean": 2.3348289400807136
+      },
+      "renderGpu": {
+        "count": 1782,
+        "min": 1.104625,
+        "p50": 4.041499,
+        "p95": 8.126291,
+        "p99": 9.616499,
+        "max": 11.307374,
+        "mean": 4.330912826038162
+      },
+      "drawCalls": {
+        "count": 1783,
+        "min": 529,
+        "p50": 731,
+        "p95": 785,
+        "p99": 791,
+        "max": 791,
+        "mean": 696.8945597307908
+      },
+      "triangles": {
+        "count": 1783,
+        "min": 391771,
+        "p50": 562992,
+        "p95": 761752,
+        "p99": 762604,
+        "max": 762604,
+        "mean": 566079.937745373
+      },
+      "geometries": {
+        "count": 1783,
+        "min": 147,
+        "p50": 147,
+        "p95": 147,
+        "p99": 147,
+        "max": 147,
+        "mean": 147
+      },
+      "textures": {
+        "count": 1783,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 59.468816393781616,
+      "over25ms": 14,
+      "over33ms": 1,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    }
+  ],
+  "errors": []
+}

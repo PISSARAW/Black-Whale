@@ -1,5 +1,8 @@
 # Fighting
 
+Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
+complètent les contrôles de réactivité et de performance.
+
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 ## Capacités d’arène

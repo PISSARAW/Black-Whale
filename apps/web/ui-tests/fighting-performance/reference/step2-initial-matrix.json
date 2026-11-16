@@ -1,0 +1,2376 @@
+{
+  "date": "2026-11-16T23:20:53.524Z",
+  "label": "reference",
+  "revision": "working-source",
+  "reusedBundle": null,
+  "production": true,
+  "browser": "157.0.8103.78",
+  "durationSeconds": 30,
+  "warmupSeconds": 8,
+  "profileSeconds": 0,
+  "suite": "stress",
+  "pass": false,
+  "machine": "hw.model: Mac17,3\nmachdep.cpu.brand_string: Apple M5\nhw.ncpu: 10\nhw.memsize: 17179869184",
+  "scope": "Production-compiled FightStage, actual engine replay, HUD and effects at 1280x900; arena height 560px. Profile window excluded from cadence samples. Headless Metal; Fresh browser process per case; other workstation load uncontrolled. Not a physical input latency measurement.",
+  "results": [
+    {
+      "fighter": "franklin",
+      "scenario": "projectiles",
+      "stage": "banquet-hall",
+      "id": "projectiles-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            2.74951171875,
+            3.912109375,
+            6.54833984375
+          ],
+          "freeMemory": 1914486784
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            2.78759765625,
+            3.88134765625,
+            6.50634765625
+          ],
+          "freeMemory": 1436729344
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            2.80029296875,
+            3.85107421875,
+            6.46435546875
+          ],
+          "freeMemory": 1337999360
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1800,
+          "total": 495.9000000283122,
+          "max": 1.1999999955296516
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1800,
+          "total": 7315.000000119209,
+          "max": 6.299999997019768
+        }
+      },
+      "renderCallback": 3,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "8f46074a",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1066,
+      "intervals": {
+        "count": 1799,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.666036687048358
+      },
+      "renderCpu": {
+        "count": 1799,
+        "min": 2.100000001490116,
+        "p50": 4.100000001490116,
+        "p95": 4.600000001490116,
+        "p99": 4.800000004470348,
+        "max": 6.299999997019768,
+        "mean": 4.063757643202996
+      },
+      "renderGpu": {
+        "count": 1798,
+        "min": 1.622166,
+        "p50": 4.985375,
+        "p95": 6.67775,
+        "p99": 7.275666,
+        "max": 7.678499,
+        "mean": 4.986928088987769
+      },
+      "drawCalls": {
+        "count": 1799,
+        "min": 719,
+        "p50": 1218,
+        "p95": 1314,
+        "p99": 1334,
+        "max": 1350,
+        "mean": 1210.8621456364647
+      },
+      "triangles": {
+        "count": 1799,
+        "min": 416884,
+        "p50": 816608,
+        "p95": 820274,
+        "p99": 820406,
+        "max": 820492,
+        "mean": 809550.8793774319
+      },
+      "geometries": {
+        "count": 1799,
+        "min": 224,
+        "p50": 380,
+        "p95": 505,
+        "p99": 524,
+        "max": 524,
+        "mean": 376.15175097276267
+      },
+      "textures": {
+        "count": 1799,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 243,
+        "textures": 0
+      },
+      "fps": 60.002268012354,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "franklin",
+      "scenario": "projectiles",
+      "stage": "banquet-hall",
+      "id": "projectiles-balanced",
+      "graphics": "balanced",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            2.92333984375,
+            3.81103515625,
+            6.388671875
+          ],
+          "freeMemory": 732184576
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.02099609375,
+            3.80078125,
+            6.3544921875
+          ],
+          "freeMemory": 1286553600
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            2.94384765625,
+            3.75732421875,
+            6.30908203125
+          ],
+          "freeMemory": 1177403392
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1800,
+          "total": 414.6000000908971,
+          "max": 1.1000000014901161
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1800,
+          "total": 6435.300000064075,
+          "max": 8.300000004470348
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1575,
+        697
+      ],
+      "pixelRatio": 1.25,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "8f46074a",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1064,
+      "intervals": {
+        "count": 1799,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000109,
+        "max": 16.80000000000291,
+        "mean": 16.66603668704836
+      },
+      "renderCpu": {
+        "count": 1799,
+        "min": 1.7999999970197678,
+        "p50": 3.600000001490116,
+        "p95": 4.199999995529652,
+        "p99": 4.5,
+        "max": 8.300000004470348,
+        "mean": 3.574819344118146
+      },
+      "renderGpu": {
+        "count": 1798,
+        "min": 2.280083,
+        "p50": 8.495541,
+        "p95": 11.329458,
+        "p99": 13.465708,
+        "max": 42.183083,
+        "mean": 8.432983722469416
+      },
+      "drawCalls": {
+        "count": 1799,
+        "min": 748,
+        "p50": 1234,
+        "p95": 1330,
+        "p99": 1350,
+        "max": 1366,
+        "mean": 1227.235686492496
+      },
+      "triangles": {
+        "count": 1799,
+        "min": 416916,
+        "p50": 816624,
+        "p95": 820290,
+        "p99": 820422,
+        "max": 820508,
+        "mean": 809980.046692607
+      },
+      "geometries": {
+        "count": 1799,
+        "min": 225,
+        "p50": 380,
+        "p95": 505,
+        "p99": 525,
+        "max": 525,
+        "mean": 376.81934408004446
+      },
+      "textures": {
+        "count": 1799,
+        "min": 15,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 244,
+        "textures": 0
+      },
+      "fps": 60.002268012353994,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "franklin",
+      "scenario": "projectiles",
+      "stage": "banquet-hall",
+      "id": "projectiles-quality",
+      "graphics": "quality",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            2.66357421875,
+            3.64208984375,
+            6.2080078125
+          ],
+          "freeMemory": 386940928
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            2.5546875,
+            3.58740234375,
+            6.158203125
+          ],
+          "freeMemory": 102875136
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.05859375,
+            3.66552734375,
+            6.15576171875
+          ],
+          "freeMemory": 159547392
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1801,
+          "total": 408.1000000536442,
+          "max": 0.7000000029802322
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1801,
+          "total": 5597.899999849498,
+          "max": 9.199999995529652
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        2205,
+        976
+      ],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "8f46074a",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1066,
+      "intervals": {
+        "count": 1800,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.666
+      },
+      "renderCpu": {
+        "count": 1800,
+        "min": 1.5,
+        "p50": 3.100000001490116,
+        "p95": 3.7000000029802322,
+        "p99": 4.299999997019768,
+        "max": 9.199999995529652,
+        "mean": 3.107999999916388
+      },
+      "renderGpu": {
+        "count": 1799,
+        "min": 8.52425,
+        "p50": 20.708833,
+        "p95": 23.981458,
+        "p99": 24.523749,
+        "max": 26.073,
+        "mean": 20.046645667593122
+      },
+      "drawCalls": {
+        "count": 1800,
+        "min": 750,
+        "p50": 1234,
+        "p95": 1330,
+        "p99": 1350,
+        "max": 1374,
+        "mean": 1230.4477777777777
+      },
+      "triangles": {
+        "count": 1800,
+        "min": 416868,
+        "p50": 816654,
+        "p95": 820290,
+        "p99": 820422,
+        "max": 820508,
+        "mean": 812878.7455555556
+      },
+      "geometries": {
+        "count": 1800,
+        "min": 225,
+        "p50": 381,
+        "p95": 506,
+        "p99": 525,
+        "max": 525,
+        "mean": 377.0677777777778
+      },
+      "textures": {
+        "count": 1800,
+        "min": 15,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 244,
+        "textures": 0
+      },
+      "fps": 60.00240009600384,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "tserriednich",
+      "scenario": "future",
+      "stage": "banquet-hall",
+      "id": "future-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            2.76220703125,
+            3.5673828125,
+            6.07666015625
+          ],
+          "freeMemory": 81674240
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.31396484375,
+            3.66259765625,
+            6.0810546875
+          ],
+          "freeMemory": 71254016
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.18505859375,
+            3.62353515625,
+            6.0390625
+          ],
+          "freeMemory": 72515584
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1786,
+          "total": 814.2000000178814,
+          "max": 37.899999998509884
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1786,
+          "total": 4300.600000277162,
+          "max": 4.899999998509884
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1786,
+          "total": 1709.799999833107,
+          "max": 2.899999998509884
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "81e4de36",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 1,
+      "stateFrame": 793,
+      "intervals": {
+        "count": 1785,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999995634,
+        "p99": 16.80000000000291,
+        "max": 33.400000000001455,
+        "mean": 16.806050420168066
+      },
+      "renderCpu": {
+        "count": 1785,
+        "min": 1.2999999970197678,
+        "p50": 2.3000000044703484,
+        "p95": 3.100000001490116,
+        "p99": 3.5,
+        "max": 4.899999998509884,
+        "mean": 2.4079551822289367
+      },
+      "renderGpu": {
+        "count": 1784,
+        "min": 1.285999,
+        "p50": 4.624125,
+        "p95": 8.269541,
+        "p99": 9.121791,
+        "max": 10.404375,
+        "mean": 4.730162223094166
+      },
+      "drawCalls": {
+        "count": 1785,
+        "min": 529,
+        "p50": 731,
+        "p95": 785,
+        "p99": 791,
+        "max": 791,
+        "mean": 696.5887955182072
+      },
+      "triangles": {
+        "count": 1785,
+        "min": 391771,
+        "p50": 562992,
+        "p95": 761752,
+        "p99": 762604,
+        "max": 762604,
+        "mean": 565769.3473389356
+      },
+      "geometries": {
+        "count": 1785,
+        "min": 147,
+        "p50": 147,
+        "p95": 147,
+        "p99": 147,
+        "max": 147,
+        "mean": 147
+      },
+      "textures": {
+        "count": 1785,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 59.50238009520381,
+      "over25ms": 15,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "tserriednich",
+      "scenario": "future",
+      "stage": "banquet-hall",
+      "id": "future-balanced",
+      "graphics": "balanced",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            3.720703125,
+            3.72509765625,
+            6.01953125
+          ],
+          "freeMemory": 122699776
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.38818359375,
+            3.65185546875,
+            5.96630859375
+          ],
+          "freeMemory": 640057344
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.6962890625,
+            3.71142578125,
+            5.96044921875
+          ],
+          "freeMemory": 499040256
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1787,
+          "total": 839.0999999567866,
+          "max": 36.20000000298023
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1787,
+          "total": 3164.9999999925494,
+          "max": 3.600000001490116
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1787,
+          "total": 1245.9000000208616,
+          "max": 2
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1575,
+        697
+      ],
+      "pixelRatio": 1.25,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "81e4de36",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 1,
+      "stateFrame": 795,
+      "intervals": {
+        "count": 1786,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999995634,
+        "p99": 16.80000000000291,
+        "max": 33.400000000001455,
+        "mean": 16.787346024636058
+      },
+      "renderCpu": {
+        "count": 1786,
+        "min": 1.1000000014901161,
+        "p50": 1.6000000014901161,
+        "p95": 2.600000001490116,
+        "p99": 2.8000000044703484,
+        "max": 3.600000001490116,
+        "mean": 1.771108622613706
+      },
+      "renderGpu": {
+        "count": 1785,
+        "min": 2.199416,
+        "p50": 11.281208,
+        "p95": 17.8305,
+        "p99": 23.180166,
+        "max": 30.536208,
+        "mean": 11.11101462745099
+      },
+      "drawCalls": {
+        "count": 1786,
+        "min": 545,
+        "p50": 747,
+        "p95": 801,
+        "p99": 807,
+        "max": 807,
+        "mean": 712.3549832026875
+      },
+      "triangles": {
+        "count": 1786,
+        "min": 391787,
+        "p50": 563008,
+        "p95": 761768,
+        "p99": 762620,
+        "max": 762620,
+        "mean": 565343.9300111982
+      },
+      "geometries": {
+        "count": 1786,
+        "min": 148,
+        "p50": 148,
+        "p95": 148,
+        "p99": 148,
+        "max": 148,
+        "mean": 148
+      },
+      "textures": {
+        "count": 1786,
+        "min": 15,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 59.5686774152664,
+      "over25ms": 13,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "tserriednich",
+      "scenario": "future",
+      "stage": "banquet-hall",
+      "id": "future-quality",
+      "graphics": "quality",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            3.97412109375,
+            3.763671875,
+            5.92578125
+          ],
+          "freeMemory": 99450880
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.4365234375,
+            3.65576171875,
+            5.86181640625
+          ],
+          "freeMemory": 112230400
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.369140625,
+            3.6337890625,
+            5.82763671875
+          ],
+          "freeMemory": 167575552
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1785,
+          "total": 846.400000102818,
+          "max": 32.600000001490116
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1785,
+          "total": 3307.099999964237,
+          "max": 3.2000000029802322
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1785,
+          "total": 1347.1000001430511,
+          "max": 2.2000000029802322
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        2205,
+        976
+      ],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "81e4de36",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 1,
+      "stateFrame": 793,
+      "intervals": {
+        "count": 1784,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000291,
+        "max": 33.400000000001455,
+        "mean": 16.80610986547085
+      },
+      "renderCpu": {
+        "count": 1784,
+        "min": 1.2000000029802322,
+        "p50": 1.7000000029802322,
+        "p95": 2.600000001490116,
+        "p99": 2.899999998509884,
+        "max": 3.2000000029802322,
+        "mean": 1.8528587443737372
+      },
+      "renderGpu": {
+        "count": 1783,
+        "min": 7.411583,
+        "p50": 18.560791,
+        "p95": 24.849583,
+        "p99": 32.148625,
+        "max": 40.858624,
+        "mean": 18.776285946719018
+      },
+      "drawCalls": {
+        "count": 1784,
+        "min": 545,
+        "p50": 747,
+        "p95": 801,
+        "p99": 807,
+        "max": 807,
+        "mean": 712.6591928251121
+      },
+      "triangles": {
+        "count": 1784,
+        "min": 391787,
+        "p50": 563008,
+        "p95": 761768,
+        "p99": 762620,
+        "max": 762620,
+        "mean": 565816.0028026906
+      },
+      "geometries": {
+        "count": 1784,
+        "min": 148,
+        "p50": 148,
+        "p95": 148,
+        "p99": 148,
+        "max": 148,
+        "mean": 148
+      },
+      "textures": {
+        "count": 1784,
+        "min": 15,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 59.50216962787797,
+      "over25ms": 15,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "camilla",
+      "scenario": "post-mortem",
+      "stage": "whale-hold",
+      "id": "post-mortem-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            4.4462890625,
+            3.85302734375,
+            5.8544921875
+          ],
+          "freeMemory": 77086720
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            4.14990234375,
+            3.80810546875,
+            5.81494140625
+          ],
+          "freeMemory": 1134641152
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.73876953125,
+            3.7314453125,
+            5.76416015625
+          ],
+          "freeMemory": 948305920
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1800,
+          "total": 432.0000001639128,
+          "max": 1.1000000014901161
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1800,
+          "total": 3072.6999999657273,
+          "max": 12.699999995529652
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "fa760a74",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1078,
+      "intervals": {
+        "count": 1799,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.665981100611454
+      },
+      "renderCpu": {
+        "count": 1799,
+        "min": 0.7999999970197678,
+        "p50": 1.6999999955296516,
+        "p95": 2.2999999970197678,
+        "p99": 2.7000000029802322,
+        "max": 12.699999995529652,
+        "mean": 1.7072262367799986
+      },
+      "renderGpu": {
+        "count": 1798,
+        "min": 0.141708,
+        "p50": 0.496,
+        "p95": 2.053708,
+        "p99": 4.410458,
+        "max": 8.505833,
+        "mean": 0.655467592324804
+      },
+      "drawCalls": {
+        "count": 1799,
+        "min": 278,
+        "p50": 440,
+        "p95": 552,
+        "p99": 585,
+        "max": 605,
+        "mean": 456.32629238465813
+      },
+      "triangles": {
+        "count": 1799,
+        "min": 102562,
+        "p50": 162670,
+        "p95": 204764,
+        "p99": 243288,
+        "max": 243312,
+        "mean": 170744.76375764314
+      },
+      "geometries": {
+        "count": 1799,
+        "min": 139,
+        "p50": 159,
+        "p95": 180,
+        "p99": 180,
+        "max": 180,
+        "mean": 161.1278488048916
+      },
+      "textures": {
+        "count": 1799,
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "p99": 2,
+        "max": 2,
+        "mean": 2
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 30,
+        "textures": 0
+      },
+      "fps": 60.00246813932313,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "camilla",
+      "scenario": "post-mortem",
+      "stage": "whale-hold",
+      "id": "post-mortem-balanced",
+      "graphics": "balanced",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            3.58740234375,
+            3.69921875,
+            5.705078125
+          ],
+          "freeMemory": 341082112
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.18896484375,
+            3.60986328125,
+            5.6494140625
+          ],
+          "freeMemory": 328237056
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.07958984375,
+            3.57275390625,
+            5.6123046875
+          ],
+          "freeMemory": 315392000
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1801,
+          "total": 411.69999995082617,
+          "max": 1.5
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1801,
+          "total": 2992.7000001743436,
+          "max": 10.400000005960464
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1575,
+        697
+      ],
+      "pixelRatio": 1.25,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "fa760a74",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1077,
+      "intervals": {
+        "count": 1800,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999995634,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.666
+      },
+      "renderCpu": {
+        "count": 1800,
+        "min": 0.7999999970197678,
+        "p50": 1.6000000014901161,
+        "p95": 2.2999999970197678,
+        "p99": 2.600000001490116,
+        "max": 10.400000005960464,
+        "mean": 1.6616666667618685
+      },
+      "renderGpu": {
+        "count": 1799,
+        "min": 0.246833,
+        "p50": 0.734333,
+        "p95": 1.053874,
+        "p99": 1.188708,
+        "max": 4.582291,
+        "mean": 0.780216194552529
+      },
+      "drawCalls": {
+        "count": 1800,
+        "min": 282,
+        "p50": 440,
+        "p95": 546,
+        "p99": 583,
+        "max": 604,
+        "mean": 454.6777777777778
+      },
+      "triangles": {
+        "count": 1800,
+        "min": 102610,
+        "p50": 162640,
+        "p95": 204692,
+        "p99": 243272,
+        "max": 243300,
+        "mean": 170071.4488888889
+      },
+      "geometries": {
+        "count": 1800,
+        "min": 140,
+        "p50": 159,
+        "p95": 180,
+        "p99": 180,
+        "max": 180,
+        "mean": 161.12
+      },
+      "textures": {
+        "count": 1800,
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "p99": 2,
+        "max": 2,
+        "mean": 2
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 30,
+        "textures": 0
+      },
+      "fps": 60.00240009600383,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "camilla",
+      "scenario": "post-mortem",
+      "stage": "whale-hold",
+      "id": "post-mortem-quality",
+      "graphics": "quality",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            2.962890625,
+            3.5263671875,
+            5.5595703125
+          ],
+          "freeMemory": 188284928
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.36865234375,
+            3.591796875,
+            5.55859375
+          ],
+          "freeMemory": 347701248
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            3.83984375,
+            3.6865234375,
+            5.5693359375
+          ],
+          "freeMemory": 100761600
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1800,
+          "total": 365.89999989420176,
+          "max": 1.8999999985098839
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1800,
+          "total": 2585.000000037253,
+          "max": 9.399999998509884
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        2205,
+        976
+      ],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "fa760a74",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1078,
+      "intervals": {
+        "count": 1799,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.665925514174543
+      },
+      "renderCpu": {
+        "count": 1799,
+        "min": 0.6999999955296516,
+        "p50": 1.3999999985098839,
+        "p95": 2,
+        "p99": 2.4000000059604645,
+        "max": 9.399999998509884,
+        "mean": 1.436131184012642
+      },
+      "renderGpu": {
+        "count": 1798,
+        "min": 0.376374,
+        "p50": 0.997625,
+        "p95": 3.704333,
+        "p99": 11.936374,
+        "max": 34.954,
+        "mean": 1.5198951685205764
+      },
+      "drawCalls": {
+        "count": 1799,
+        "min": 282,
+        "p50": 440,
+        "p95": 546,
+        "p99": 583,
+        "max": 605,
+        "mean": 454.6548082267927
+      },
+      "triangles": {
+        "count": 1799,
+        "min": 102610,
+        "p50": 162640,
+        "p95": 204692,
+        "p99": 243272,
+        "max": 243312,
+        "mean": 170053.63868816008
+      },
+      "geometries": {
+        "count": 1799,
+        "min": 139,
+        "p50": 159,
+        "p95": 180,
+        "p99": 180,
+        "max": 180,
+        "mean": 161.1284046692607
+      },
+      "textures": {
+        "count": 1799,
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "p99": 2,
+        "max": 2,
+        "mean": 2
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 30,
+        "textures": 0
+      },
+      "fps": 60.002668267627236,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "yokotani",
+      "scenario": "guards",
+      "stage": "heilly-hideout",
+      "id": "guards-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            3.66259765625,
+            3.6572265625,
+            5.5146484375
+          ],
+          "freeMemory": 291700736
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            3.86767578125,
+            3.70068359375,
+            5.5078125
+          ],
+          "freeMemory": 90406912
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            4.03466796875,
+            3.74267578125,
+            5.5009765625
+          ],
+          "freeMemory": 81084416
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1800,
+          "total": 311.4000000357628,
+          "max": 1
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1800,
+          "total": 8246.29999998957,
+          "max": 6.800000004470348
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "ab0801cb",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1057,
+      "intervals": {
+        "count": 1799,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.66598110061145
+      },
+      "renderCpu": {
+        "count": 1799,
+        "min": 2.5999999940395355,
+        "p50": 4.600000001490116,
+        "p95": 5.399999998509884,
+        "p99": 5.600000001490116,
+        "max": 6.800000004470348,
+        "mean": 4.5817120622526675
+      },
+      "renderGpu": {
+        "count": 1798,
+        "min": 1.049291,
+        "p50": 3.71825,
+        "p95": 8.708208,
+        "p99": 9.084874,
+        "max": 9.2875,
+        "mean": 4.224835955506117
+      },
+      "drawCalls": {
+        "count": 1799,
+        "min": 1349,
+        "p50": 2587,
+        "p95": 2758,
+        "p99": 2776,
+        "max": 2835,
+        "mean": 2422.4635908838245
+      },
+      "triangles": {
+        "count": 1799,
+        "min": 169475,
+        "p50": 296500,
+        "p95": 353827,
+        "p99": 355609,
+        "max": 367455,
+        "mean": 294172.08004446916
+      },
+      "geometries": {
+        "count": 1799,
+        "min": 404,
+        "p50": 404,
+        "p95": 404,
+        "p99": 404,
+        "max": 404,
+        "mean": 404
+      },
+      "textures": {
+        "count": 1799,
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "p99": 2,
+        "max": 2,
+        "mean": 2
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 60.002468139323135,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "yokotani",
+      "scenario": "guards",
+      "stage": "heilly-hideout",
+      "id": "guards-balanced",
+      "graphics": "balanced",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            3.98388671875,
+            3.755859375,
+            5.46484375
+          ],
+          "freeMemory": 142802944
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            4.3671875,
+            3.845703125,
+            5.4765625
+          ],
+          "freeMemory": 191168512
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            9.9345703125,
+            5.09228515625,
+            5.90185546875
+          ],
+          "freeMemory": 279658496
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1801,
+          "total": 391.1999998316169,
+          "max": 1.2000000029802322
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1801,
+          "total": 11432.20000000298,
+          "max": 18.399999998509884
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1575,
+        697
+      ],
+      "pixelRatio": 1.25,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "ab0801cb",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1072,
+      "intervals": {
+        "count": 1800,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.666
+      },
+      "renderCpu": {
+        "count": 1800,
+        "min": 3.2999999970197678,
+        "p50": 6.199999995529652,
+        "p95": 9.300000004470348,
+        "p99": 11.299999997019768,
+        "max": 18.399999998509884,
+        "mean": 6.349277777779434
+      },
+      "renderGpu": {
+        "count": 1799,
+        "min": 1.698416,
+        "p50": 10.088208,
+        "p95": 18.520708,
+        "p99": 20.58375,
+        "max": 21.833541,
+        "mean": 10.543419488604783
+      },
+      "drawCalls": {
+        "count": 1800,
+        "min": 1093,
+        "p50": 2601,
+        "p95": 2774,
+        "p99": 2787,
+        "max": 2812,
+        "mean": 2438.287222222222
+      },
+      "triangles": {
+        "count": 1800,
+        "min": 137683,
+        "p50": 296516,
+        "p95": 353607,
+        "p99": 355309,
+        "max": 363116,
+        "mean": 294370.99888888886
+      },
+      "geometries": {
+        "count": 1800,
+        "min": 405,
+        "p50": 405,
+        "p95": 405,
+        "p99": 405,
+        "max": 405,
+        "mean": 405
+      },
+      "textures": {
+        "count": 1800,
+        "min": 16,
+        "p50": 16,
+        "p95": 16,
+        "p99": 16,
+        "max": 16,
+        "mean": 16
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 60.00240009600384,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "yokotani",
+      "scenario": "guards",
+      "stage": "heilly-hideout",
+      "id": "guards-quality",
+      "graphics": "quality",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            9.02685546875,
+            5.26171875,
+            5.93896484375
+          ],
+          "freeMemory": 235208704
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            10.06005859375,
+            5.61328125,
+            6.0556640625
+          ],
+          "freeMemory": 235061248
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            12.89794921875,
+            6.36669921875,
+            6.3173828125
+          ],
+          "freeMemory": 94044160
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1669,
+          "total": 645.4000001773238,
+          "max": 7.100000001490116
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1669,
+          "total": 24758.399999901652,
+          "max": 39.30000000447035
+        }
+      },
+      "renderCallback": 3,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        2205,
+        976
+      ],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "ab0801cb",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1074,
+      "intervals": {
+        "count": 1668,
+        "min": 16.5,
+        "p50": 16.69999999999891,
+        "p95": 33.29999999999927,
+        "p99": 33.400000000001455,
+        "max": 66.59999999999854,
+        "mean": 18.004856115107913
+      },
+      "renderCpu": {
+        "count": 1668,
+        "min": 5.899999998509884,
+        "p50": 14.400000005960464,
+        "p95": 20.399999998509884,
+        "p99": 23.19999999552965,
+        "max": 39.30000000447035,
+        "mean": 14.838009592270751
+      },
+      "renderGpu": {
+        "count": 1666,
+        "min": 3.113999,
+        "p50": 10.071166,
+        "p95": 20.072666,
+        "p99": 23.542625,
+        "max": 48.396875,
+        "mean": 11.377169129051627
+      },
+      "drawCalls": {
+        "count": 1668,
+        "min": 1093,
+        "p50": 2577,
+        "p95": 2773,
+        "p99": 2790,
+        "max": 2843,
+        "mean": 2427.4910071942445
+      },
+      "triangles": {
+        "count": 1668,
+        "min": 137683,
+        "p50": 296288,
+        "p95": 353691,
+        "p99": 355321,
+        "max": 367161,
+        "mean": 293180.87889688247
+      },
+      "geometries": {
+        "count": 1668,
+        "min": 405,
+        "p50": 405,
+        "p95": 405,
+        "p99": 405,
+        "max": 405,
+        "mean": 405
+      },
+      "textures": {
+        "count": 1668,
+        "min": 16,
+        "p50": 16,
+        "p95": 16,
+        "p99": 16,
+        "max": 16,
+        "mean": 16
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 55.54057158840041,
+      "over25ms": 131,
+      "over33ms": 2,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": false,
+          "frameP95": false,
+          "frameP99": false,
+          "slowFrames": false,
+          "renderCpu": false,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": false
+      }
+    },
+    {
+      "fighter": "biscuit",
+      "scenario": "transformation",
+      "stage": "whale-hold",
+      "id": "transformation-performance",
+      "graphics": "performance",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            36.44921875,
+            12.84033203125,
+            8.673828125
+          ],
+          "freeMemory": 752844800
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            37.19970703125,
+            13.76953125,
+            9.05126953125
+          ],
+          "freeMemory": 371376128
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            36.95703125,
+            14.49853515625,
+            9.365234375
+          ],
+          "freeMemory": 106446848
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1801,
+          "total": 652.5999996736646,
+          "max": 1.8000000044703484
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1801,
+          "total": 2833.0000001341105,
+          "max": 3.5
+        }
+      },
+      "renderCallback": 3,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1260,
+        558
+      ],
+      "pixelRatio": 1,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "d8107281",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1077,
+      "intervals": {
+        "count": 1800,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.799999999995634,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.665944444444442
+      },
+      "renderCpu": {
+        "count": 1800,
+        "min": 1.0999999940395355,
+        "p50": 1.5999999940395355,
+        "p95": 1.8999999985098839,
+        "p99": 2,
+        "max": 3.5,
+        "mean": 1.573000000073678
+      },
+      "renderGpu": {
+        "count": 1799,
+        "min": 0.103499,
+        "p50": 0.948375,
+        "p95": 4.529083,
+        "p99": 7.148833,
+        "max": 11.26325,
+        "mean": 1.4126352317954431
+      },
+      "drawCalls": {
+        "count": 1800,
+        "min": 296,
+        "p50": 296,
+        "p95": 298,
+        "p99": 298,
+        "max": 298,
+        "mean": 296.6
+      },
+      "triangles": {
+        "count": 1800,
+        "min": 79490,
+        "p50": 79490,
+        "p95": 79670,
+        "p99": 79670,
+        "max": 79670,
+        "mean": 79544
+      },
+      "geometries": {
+        "count": 1800,
+        "min": 125,
+        "p50": 125,
+        "p95": 125,
+        "p99": 125,
+        "max": 125,
+        "mean": 125
+      },
+      "textures": {
+        "count": 1800,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 60.00260011267156,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "biscuit",
+      "scenario": "transformation",
+      "stage": "whale-hold",
+      "id": "transformation-balanced",
+      "graphics": "balanced",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            48.20458984375,
+            18.72265625,
+            11.02294921875
+          ],
+          "freeMemory": 116899840
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            59.037109375,
+            21.99560546875,
+            12.27294921875
+          ],
+          "freeMemory": 91963392
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            64.70947265625,
+            24.44482421875,
+            13.255859375
+          ],
+          "freeMemory": 90193920
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1803,
+          "total": 617.4999998956919,
+          "max": 1.6999999955296516
+        },
+        "2": {
+          "name": "Ee",
+          "count": 1803,
+          "total": 2803.5999999567866,
+          "max": 4.199999995529652
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        1575,
+        697
+      ],
+      "pixelRatio": 1.25,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "d8107281",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1072,
+      "intervals": {
+        "count": 1802,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291,
+        "mean": 16.665982241953383
+      },
+      "renderCpu": {
+        "count": 1802,
+        "min": 1.1000000014901161,
+        "p50": 1.5,
+        "p95": 1.8999999985098839,
+        "p99": 2.100000001490116,
+        "max": 4.199999995529652,
+        "mean": 1.5549944505864521
+      },
+      "renderGpu": {
+        "count": 1801,
+        "min": 0.193291,
+        "p50": 0.408791,
+        "p95": 0.977916,
+        "p99": 2.344624,
+        "max": 4.976,
+        "mean": 0.5479137623542484
+      },
+      "drawCalls": {
+        "count": 1802,
+        "min": 296,
+        "p50": 296,
+        "p95": 298,
+        "p99": 298,
+        "max": 298,
+        "mean": 296.6015538290788
+      },
+      "triangles": {
+        "count": 1802,
+        "min": 79490,
+        "p50": 79490,
+        "p95": 79670,
+        "p99": 79670,
+        "max": 79670,
+        "mean": 79544.1398446171
+      },
+      "geometries": {
+        "count": 1802,
+        "min": 125,
+        "p50": 125,
+        "p95": 125,
+        "p99": 125,
+        "max": 125,
+        "mean": 125
+      },
+      "textures": {
+        "count": 1802,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 60.00246403015441,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "fighter": "biscuit",
+      "scenario": "transformation",
+      "stage": "whale-hold",
+      "id": "transformation-quality",
+      "graphics": "quality",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [
+            88.826171875,
+            34.04736328125,
+            17.11767578125
+          ],
+          "freeMemory": 146292736
+        },
+        {
+          "elapsed": 10,
+          "load": [
+            80.19775390625,
+            34.0107421875,
+            17.30224609375
+          ],
+          "freeMemory": 435650560
+        },
+        {
+          "elapsed": 20,
+          "load": [
+            75.19580078125,
+            34.46875,
+            17.66015625
+          ],
+          "freeMemory": 160759808
+        }
+      ],
+      "droppedSamples": 0,
+      "callbacks": {
+        "1": {
+          "name": "R",
+          "count": 1801,
+          "total": 609.1999998912215,
+          "max": 2.2000000029802322
+        },
+        "3": {
+          "name": "Ee",
+          "count": 1801,
+          "total": 2738.500000067055,
+          "max": 2.7000000029802322
+        }
+      },
+      "renderCallback": 3,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [
+        2205,
+        976
+      ],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "d8107281",
+      "failedScene": false,
+      "requiredEffectSeen": true,
+      "predictionContexts": 0,
+      "stateFrame": 1078,
+      "intervals": {
+        "count": 1800,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000109,
+        "max": 16.80000000000291,
+        "mean": 16.66605555555556
+      },
+      "renderCpu": {
+        "count": 1800,
+        "min": 1,
+        "p50": 1.5,
+        "p95": 1.8999999985098839,
+        "p99": 2.100000001490116,
+        "max": 2.7000000029802322,
+        "mean": 1.5204444444800416
+      },
+      "renderGpu": {
+        "count": 1799,
+        "min": 0.318999,
+        "p50": 0.646874,
+        "p95": 1.204541,
+        "p99": 1.974999,
+        "max": 4.306833,
+        "mean": 0.7462506259032786
+      },
+      "drawCalls": {
+        "count": 1800,
+        "min": 296,
+        "p50": 296,
+        "p95": 298,
+        "p99": 298,
+        "max": 298,
+        "mean": 296.6011111111111
+      },
+      "triangles": {
+        "count": 1800,
+        "min": 79490,
+        "p50": 79490,
+        "p95": 79670,
+        "p99": 79670,
+        "max": 79670,
+        "mean": 79544.1
+      },
+      "geometries": {
+        "count": 1800,
+        "min": 125,
+        "p50": 125,
+        "p95": 125,
+        "p99": 125,
+        "max": 125,
+        "mean": 125
+      },
+      "textures": {
+        "count": 1800,
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "max": 1,
+        "mean": 1
+      },
+      "resourceDrift": {
+        "window": 300,
+        "geometries": 0,
+        "textures": 0
+      },
+      "fps": 60.00220008066962,
+      "over25ms": 0,
+      "over33ms": 0,
+      "budget": {
+        "checks": {
+          "samples": true,
+          "cadence": true,
+          "frameP95": true,
+          "frameP99": true,
+          "slowFrames": true,
+          "renderCpu": true,
+          "replay": true,
+          "effect": true,
+          "insetReuse": true,
+          "scene": true
+        },
+        "pass": true
+      }
+    }
+  ],
+  "errors": []
+}

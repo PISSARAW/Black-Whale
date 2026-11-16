@@ -21,10 +21,25 @@ export interface ProjectileScene {
 export function createProjectileScene(options: ProjectileSceneOptions): ProjectileScene {
   const { THREE, scene } = options
   const thetaMetals = new Map<number, import('three').MeshBasicMaterial>()
+  const stones = new Map<number, import('three').MeshStandardMaterial>()
+  const shapes = new Map<string, import('three').BufferGeometry>()
   const handgunMetal = (colour: number) => {
     const material = thetaMetals.get(colour) ?? new THREE.MeshBasicMaterial({ color: colour })
     thetaMetals.set(colour, material)
     return material
+  }
+  const stoneMaterial = (colour: number) => {
+    const material =
+      stones.get(colour) ??
+      new THREE.MeshStandardMaterial({ color: colour, roughness: 0.94, metalness: 0 })
+    stones.set(colour, material)
+    return material
+  }
+  const shapeFor = (projectile: FightProjectile) => {
+    const key = handgunBullet(projectile) ? 'handgun' : projectile.shape
+    const shape = shapes.get(key) ?? projectileGeometry(options, projectile)
+    shapes.set(key, shape)
+    return shape
   }
   const meshes = new Map<number, import('three').Mesh>()
   const remotePunches = createRemotePunchScene(options)
@@ -35,9 +50,9 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
     const material = isThetaBullet(projectile)
       ? handgunMetal(colour)
       : projectile.shape === 'stone'
-        ? new THREE.MeshStandardMaterial({ color: colour, roughness: 0.94, metalness: 0 })
+        ? stoneMaterial(colour)
         : options.glow(colour, 1)
-    const mesh = new THREE.Mesh(projectileGeometry(options, projectile), material)
+    const mesh = new THREE.Mesh(shapeFor(projectile), material)
     mesh.name = `fight-projectile:${projectile.id}`
     if (projectile.shuCharged) {
       const aura = new THREE.Mesh(mesh.geometry, options.glow(0xffe1a3, 0.4))
@@ -84,6 +99,9 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       jupiter.dispose()
       thetaMetals.forEach((material) => material.dispose())
       thetaMetals.clear()
+      stones.forEach((material) => material.dispose())
+      stones.clear()
+      shapes.clear()
       for (const mesh of meshes.values()) scene.remove(mesh)
       meshes.clear()
     },

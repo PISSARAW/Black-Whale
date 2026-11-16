@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "test:performance": "svelte-kit sync && node scripts/check-fighting-performance.mjs",
+    "test:performance:stress": "svelte-kit sync && node scripts/check-fighting-performance.mjs --stress",
+    "test:step2-ui": "svelte-kit sync && node scripts/check-fighting-step2.mjs",
     "test:training-ui": "svelte-kit sync && node scripts/check-fighting-training.mjs",
     "test:arena-ui": "node scripts/check-arena-techniques.mjs",
     "build": "vite build",

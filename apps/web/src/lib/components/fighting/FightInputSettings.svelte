@@ -7,6 +7,7 @@
     type ControlCommand,
   } from '$lib/fighting/fightInputBindings'
   import type { FightControls } from '../../../routes/fighting/fightingControls'
+  import FightGamepadDiagnostics from './FightGamepadDiagnostics.svelte'
   export let controls: FightControls
   export let language: 'fr' | 'en'
   export let onEditing: () => void = () => {}
@@ -14,6 +15,7 @@
   let panel: HTMLDetailsElement
   let capture: ControlCommand | null = null
   let error = ''
+  let measurementRunning = false
   let tab: 'player' | 'opponent' | 'pad' = 'player'
   $: commands = (Object.keys(CONTROL_KEYS) as ControlCommand[]).filter(
     (command) => command.startsWith(tab) || (tab === 'player' && command === 'pause'),
@@ -56,6 +58,7 @@
   class="input-settings"
   ontoggle={(event) => {
     if (!event.currentTarget.open) {
+      measurementRunning = false
       capture = null
       error = ''
       event.currentTarget.querySelector('summary')?.blur()
@@ -94,6 +97,7 @@
       >
     </nav>
     {#if tab === 'pad'}
+      <FightGamepadDiagnostics {language} bind:running={measurementRunning} />
       <p>
         {language === 'fr'
           ? 'Manettes au format standard : appuie sur un bouton, puis relâche les commandes pour activer la manette.'

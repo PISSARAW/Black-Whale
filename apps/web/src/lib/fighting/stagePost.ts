@@ -68,6 +68,7 @@ export interface StagePost {
 }
 
 interface PostOptions {
+  samples?: number
   THREE: typeof Three
   renderer: Three.WebGLRenderer
   scene: Three.Scene
@@ -83,10 +84,13 @@ export async function createStagePost(options: PostOptions): Promise<StagePost> 
       import('three/examples/jsm/postprocessing/ShaderPass.js'),
       import('three/examples/jsm/postprocessing/OutputPass.js'),
     ])
-  // Resolve 4x MSAA once for the scene. Full-screen post passes have no geometry
+  // Resolve the selected MSAA once for the scene. Full-screen passes have no geometry
   // edges to antialias: multisampling their ping-pong targets wastes bandwidth.
   // Keep half-float through the entire chain so the same HDR values feed bloom.
-  const input = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 })
+  const input = new THREE.WebGLRenderTarget(1, 1, {
+    type: THREE.HalfFloatType,
+    samples: options.samples ?? 4,
+  })
   const target = new THREE.WebGLRenderTarget(1, 1, {
     type: THREE.HalfFloatType,
     depthBuffer: false,

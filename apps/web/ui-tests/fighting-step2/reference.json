@@ -1,0 +1,177 @@
+{
+  "browser": "157.0.8103.78",
+  "scope": "Production render and synthetic Xbox mapping; not physical hardware validation",
+  "results": [
+    {
+      "check": "graphics",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 14,
+      "commands": 0,
+      "hash": "a2d6c727",
+      "graphics": "performance",
+      "frameBuffer": [
+        1244,
+        518
+      ],
+      "ratio": 1,
+      "contacts": [],
+      "impact": null,
+      "failed": false
+    },
+    {
+      "check": "graphics",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 27,
+      "commands": 0,
+      "hash": "a2d6c727",
+      "graphics": "balanced",
+      "frameBuffer": [
+        1555,
+        647
+      ],
+      "ratio": 1.25,
+      "contacts": [],
+      "impact": null,
+      "failed": false
+    },
+    {
+      "check": "graphics",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 39,
+      "commands": 0,
+      "hash": "a2d6c727",
+      "graphics": "quality",
+      "frameBuffer": [
+        2177,
+        906
+      ],
+      "ratio": 1.75,
+      "contacts": [],
+      "impact": null,
+      "failed": false
+    },
+    {
+      "check": "hit",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 48,
+      "commands": 0,
+      "hash": "bde64c91",
+      "graphics": "quality",
+      "frameBuffer": [
+        2177,
+        906
+      ],
+      "ratio": 1.75,
+      "contacts": [
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit"
+      ],
+      "impact": {
+        "blocked": false,
+        "parried": false
+      },
+      "failed": false
+    },
+    {
+      "check": "guard",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 49,
+      "commands": 0,
+      "hash": "e0367256",
+      "graphics": "quality",
+      "frameBuffer": [
+        2177,
+        906
+      ],
+      "ratio": 1.75,
+      "contacts": [
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard"
+      ],
+      "impact": {
+        "blocked": true,
+        "parried": false
+      },
+      "failed": false
+    },
+    {
+      "check": "parry",
+      "predictionContexts": 0,
+      "predictionDraws": 0,
+      "forecastFrames": 0,
+      "renders": 51,
+      "commands": 0,
+      "hash": "db233025",
+      "graphics": "quality",
+      "frameBuffer": [
+        2177,
+        906
+      ],
+      "ratio": 1.75,
+      "contacts": [
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-hit",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-guard",
+        "fight-contact-parry"
+      ],
+      "impact": {
+        "blocked": true,
+        "parried": true
+      },
+      "failed": false
+    },
+    {
+      "check": "synthetic-xbox-gating",
+      "commands": 0
+    },
+    {
+      "check": "future-reuse-and-private-view",
+      "frames": 600,
+      "contexts": 1
+    }
+  ],
+  "errors": []
+}

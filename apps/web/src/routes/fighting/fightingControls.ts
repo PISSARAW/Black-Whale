@@ -36,6 +36,7 @@ function browserPads(): readonly (Gamepad | null)[] {
   }
 }
 function editingControls(): boolean {
+  if (document.querySelector('.gamepad-inspector[data-inspecting="true"]')) return true
   if (document.querySelector('.input-settings[open], .display-settings[open]')) return true
   return isDisplayInput(document.activeElement) && document.activeElement?.tagName !== 'SUMMARY'
 }

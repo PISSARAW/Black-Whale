@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 657
+Fichiers : 686
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -277,6 +277,18 @@ Fichiers : 657
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
+## `apps/web/src/lib/fighting/cinematicCatalogue.test.ts`
+
+- forty-fighter cinematic coverage > covers the exact selectable roster with unique audit ids and physical lenses
+
+## `apps/web/src/lib/fighting/cinematicInteractions.test.ts`
+
+- confirmed cinematic interactions > observes Sun and Moon detonating when the second mark resolves inside the same engine tick
+
+## `apps/web/src/lib/fighting/cinematicLongFilm.test.ts`
+
+- long 1080p camera presentation > covers forty continuous duels with longer shots and a strictly advancing presentation cursor
+
 ## `apps/web/src/lib/fighting/clashLearning.test.ts`
 
 - foundation lessons complement the ten Nen lessons > keeps fifteen unique, bilingual practical exercises
@@ -293,7 +305,7 @@ Fichiers : 657
 
 ## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
 
-- confirmed cancels, pressure and reproducible punishment > allows the declared Kurapika light-to-heavy block cancel, without making it universal
+- confirmed cancels, pressure and reproducible punishment > allows the personal first light-to-heavy pressure link while excluding Hatsu on guard
 - downed bodies and juggle ceilings > rejects ordinary strikes and projectiles against a downed body
 
 ## `apps/web/src/lib/fighting/combatGrammar.test.ts`
@@ -352,9 +364,17 @@ Fichiers : 657
 - standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
 - configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
 
+## `apps/web/src/lib/fighting/fightGraphics.test.ts`
+
+- graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightPerformanceStress.test.ts`
+
+- performance evidence does not silently accept partial or invalid runs > retains twenty reference cases and fifteen explicit stress/profile combinations
 
 ## `apps/web/src/lib/fighting/fightPoseClock.test.ts`
 
@@ -399,6 +419,10 @@ Fichiers : 657
 - render interpolation > draws a fighter between its last two simulated positions
 - AI cadence > decides every 16 to 24 simulated frames
 
+## `apps/web/src/lib/fighting/fighterTrackingSilhouette.test.ts`
+
+- optional fighter tracking silhouettes > keeps an absorbed actor visible as a translucent marker without changing the engine snapshot
+
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
 - 2D fight formats > keeps Tour judging separate from health-based duels
@@ -410,6 +434,10 @@ Fichiers : 657
 ## `apps/web/src/lib/fighting/furykov.test.ts`
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
+
+## `apps/web/src/lib/fighting/gamepadDiagnostics.test.ts`
+
+- local Xbox hardware diagnostics > shows analog trigger travel without guessing a digital press
 
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
@@ -532,6 +560,10 @@ Fichiers : 657
 
 - Laplace Devil in the real 2D engine > enters Zetsu with closed eyes, without attacking, guarding or granting an evade
 
+## `apps/web/src/lib/fighting/parallelFutureCamera.test.ts`
+
+- Laplace Demon prediction inset > shows the real prince escaping Rising Sun while the predicted image is knocked out
+
 ## `apps/web/src/lib/fighting/phinks.test.ts`
 
 - Phinks — right-arm rotations, then one Ripper Cyclotron punch > starts a vulnerable wind-up without a hitbox, movement, charge or immediate aura payment
@@ -549,18 +581,46 @@ Fichiers : 657
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
 
+## `apps/web/src/lib/fighting/projectileResources.test.ts`
+
+- projectile rendering resources stay bounded over long matches > reuses one immutable geometry across thousands of successive bullets
+
 ## `apps/web/src/lib/fighting/projectiles.test.ts`
 
 - ranged attacks > gives a stone to fighters without a canonical projectile
+
+## `apps/web/src/lib/fighting/pvp/acknowledgement.test.ts`
+
+- received and applied input acknowledgements > acknowledges complete packets only after their commands leave the authoritative queue
+- received and applied input acknowledgements > player
+- received and applied input acknowledgements > player
 
 ## `apps/web/src/lib/fighting/pvp/client.test.ts`
 
 - private Clash client synchronization > stops on an invalid player invitation instead of trying to authenticate the spectator
 
+## `apps/web/src/lib/fighting/pvp/inputPipeline.test.ts`
+
+- bounded cumulative input uploads > sends a cancel and guard while the first command is still awaiting its HTTP receipt
+
+## `apps/web/src/lib/fighting/pvp/predictionRoster.test.ts`
+
+- prediction across the complete playable roster > uses exactly the forty playable identities
+- prediction across the complete playable roster > player
+- prediction across the complete playable roster > player
+
+## `apps/web/src/lib/fighting/pvp/response.test.ts`
+
+- stream reconciliation and bounded input traffic > clears old uploads on a round change even when the intermission views were missed
+
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
 - server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
 - seat-specific Nen information > preserves spoken text while remapping owners and public verdicts for P2
+
+## `apps/web/src/lib/fighting/pvp/snapshotStream.test.ts`
+
+- private view streaming lifecycle > parses split CRLF events and keeps the token in headers
 
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 
@@ -569,6 +629,11 @@ Fichiers : 657
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
+
+## `apps/web/src/lib/fighting/rosterQuality.test.ts`
+
+- roster quality parity > covers exactly the forty playable fighters, with four routes and a personal movement direction each
+- sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
 
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
 
@@ -1274,6 +1339,14 @@ Fichiers : 657
 ## `apps/web/src/lib/server/clashPvpHttp.test.ts`
 
 - Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
+
+## `apps/web/src/lib/server/clashPvpInputs.test.ts`
+
+- ordered cumulative input HTTP boundary > cannot apply an in-flight round-one action after both players start round two
+
+## `apps/web/src/lib/server/clashPvpStream.test.ts`
+
+- authenticated snapshot stream > pushes only the authenticated perspective and never renews presence on outgoing traffic
 
 ## `apps/web/src/lib/server/clashSeasonFile.test.ts`
 

@@ -48,7 +48,7 @@
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
-  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
+  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
   $: throwTech = isThrowTech(visibleState)
 </script>
 
@@ -83,7 +83,7 @@
 
     {#if visibleState.impact}
       {#key visibleState.impact.sequence}
-        {#if comfort.flashes}<div
+        {#if comfort.flashes && !visibleState.impact.avoided && !visibleState.impact.invulnerable}<div
             class:blocked={visibleState.impact.blocked}
             class="impact-flash"
           ></div>{/if}

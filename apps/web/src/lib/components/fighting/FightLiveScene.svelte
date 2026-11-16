@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import FightScene from './FightScene.svelte'
-  import FightFutureInset from './FightFutureInset.svelte'
+  import FightFuturePool from './FightFuturePool.svelte'
   import FightFutureClock from './FightFutureClock.svelte'
   import { parallelFutureCamera, futureCameraDirection } from '$lib/fighting/parallelFutureCamera'
   import { futureDetailRect } from '$lib/fighting/cinematicDetailLayout'
@@ -53,7 +53,10 @@
       {language}
       realState={state}
     />
-    <FightFutureInset {prediction} {rect} {comfort} {language} {stageId} />{/if}
+  {/if}
+  {#key viewer}
+    <FightFuturePool {prediction} active={detailVisible} {rect} {comfort} {language} {stageId} />
+  {/key}
 </div>
 
 <style>

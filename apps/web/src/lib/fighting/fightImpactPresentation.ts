@@ -1,4 +1,5 @@
 import { fighterMotionProfile } from './fighterMotionProfile'
+import { fightContactStyle } from './fightContactStyle'
 import type { AttackKind, FighterId, FightImpact } from './types'
 
 /** Visual weight of an impact. This never changes damage, stun or hitstop. */
@@ -47,10 +48,13 @@ const PROFILES: Record<AttackKind, ImpactPresentation> = {
 }
 
 export function impactPresentation(
-  impact: Pick<FightImpact, 'kind' | 'blocked' | 'critical' | 'knockdown' | 'wallSplat'>,
+  impact: Pick<FightImpact, 'kind' | 'blocked' | 'critical' | 'knockdown' | 'wallSplat'> &
+    Partial<Pick<FightImpact, 'parried' | 'avoided' | 'invulnerable'>>,
   attacker?: FighterId,
 ): ImpactPresentation {
   const base = PROFILES[impact.kind]
+  if (fightContactStyle(impact) === 'evaded')
+    return { ...base, sparks: 0, shakeMs: 0, shakeX: 0, shakeY: 0 }
   const character = attacker ? fighterMotionProfile(attacker).impact : 1
   const decisive = impact.critical || impact.knockdown || impact.wallSplat ? 1.25 : 1
   const force = character * decisive

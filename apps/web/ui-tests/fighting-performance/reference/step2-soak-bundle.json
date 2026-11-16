@@ -1,0 +1,19 @@
+{
+  "measuredReport": "step2-soak.json",
+  "compiledFiles": {
+    "assets/CopyShader-BzTUYzf6.js": "c65caa8d9568e1c1805f09ede9c12db982e6c30833704fd062d7a47f1cb5512d",
+    "assets/EffectComposer-DW1Mehy8.js": "008e0895d55ca47c91f71308313b16196bdf2d3c9ae1ed23644fe96250c6f533",
+    "assets/OutputPass-ksCbfTjn.js": "29826cc9fa51035814edcbbd581a7646f12cf37405b4ed486b6b02846fbbb9ab",
+    "assets/Pass-D99VFg9Z.js": "e06249655b83a1d2bab7594eb0e966c7e254d4928f417deb0b7b081d33b30994",
+    "assets/Reflector-Bhom4Ljg.js": "791f8e4903c25f070779f9f3c1a7d5fbc82c1679f141cc5138444e63243ac5c1",
+    "assets/ShaderPass-DhDZDJHj.js": "8761d3178e20089d947b3681223101d9401c21687c770c9b19f215bfff1339a6",
+    "assets/UnrealBloomPass-s5d-1xRS.js": "116d0066df9f915616dd092150e466a8574c369e10ebcb0bdbd106c1de545bf9",
+    "assets/fighterFigure-1gpmJECF.js": "ca7d0262eedf70ba1207ac1a0b0c556c920182c2bf551d0db47fc5611a7a6546",
+    "assets/index-BmEf7EaF.css": "1f655fd876faadbd1e84800c7df4d060bf5065609bced8d74d5c24d010262070",
+    "assets/index-CogwECNt.js": "030cc765996cfffb166995adc7cb74c04e9c407dfdf3217003fa67e9ea435b31",
+    "assets/stagePost-BaKETaza.js": "82d4a3ec01e07ee957d04fbd6f60285892210c0bd448e3fc58d8b21b2543fc75",
+    "assets/stageScenery-DlTlHp3V.js": "dca3441923f48d45af8acf6ac2bf1a1697edb925946fa790ebb2cc9a77eb2c19",
+    "assets/stageShipRoom-DIJF3aqg.js": "49eb6850cedb065b0e1a18a898b3769bfd42e65745c9c06576156bc33cdf3877",
+    "ui-tests/fighting-performance/index.html": "f097b3c4b042fa96ea927cabff4b97c9cd7b4e70e28c5b963be6a5cf5ce6bf83"
+  }
+}

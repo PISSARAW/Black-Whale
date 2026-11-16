@@ -36,6 +36,23 @@
 
 <fieldset>
   <legend>{language === 'fr' ? 'Confort visuel' : 'Visual comfort'}</legend>
+  <label>
+    {language === 'fr' ? 'Qualité graphique' : 'Graphics quality'}
+    <select
+      value={comfort.graphics ?? 'quality'}
+      onchange={(event) =>
+        update({ graphics: event.currentTarget.value as FightComfort['graphics'] })}
+    >
+      <option value="performance">{language === 'fr' ? 'Performance' : 'Performance'}</option>
+      <option value="balanced">{language === 'fr' ? 'Équilibrée' : 'Balanced'}</option>
+      <option value="quality">{language === 'fr' ? 'Qualité' : 'Quality'}</option>
+    </select>
+  </label>
+  <small
+    >{language === 'fr'
+      ? 'Performance réduit la résolution et les halos lumineux. Les pouvoirs, les contacts et les informations de combat restent identiques.'
+      : 'Performance reduces resolution and decorative bloom. Powers, contacts and combat information stay the same.'}</small
+  >
   <label
     >{language === 'fr' ? 'Caméra dynamique' : 'Dynamic camera'}
     <select

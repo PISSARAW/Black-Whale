@@ -87,7 +87,12 @@
               ? 'Condition du finisher'
               : 'Finisher condition'}</strong
         >
-        <span>{language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}</span>
+        <span
+          >{moveInputHint(
+            language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn,
+            $bindings,
+          )}</span
+        >
       </footer>
     {/if}
   </section>

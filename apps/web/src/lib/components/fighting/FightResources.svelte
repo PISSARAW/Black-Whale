@@ -127,7 +127,10 @@
           {#if moveset && finisher}
             <span
               class:ready={finisherReady(state, 'player')}
-              title={language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}
+              title={moveInputHint(
+                language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn,
+                $bindings,
+              )}
             >
               {$bindings.playerFinisher} · {language === 'fr' ? finisher.nameFr : finisher.nameEn} · {finisherReady(
                 state,

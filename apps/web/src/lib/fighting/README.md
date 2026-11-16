@@ -171,6 +171,31 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Le combat physique continue. Un nouveau match réinitialise ce prix, comme les
   autres états du duel. Le HUD montre la technique ciblée, la progression et le
   compte à rebours ; l’IA étudie avant de lancer Predator.
+- Zakuro utilise son propre sang avec la perfusion réelle portée dès le début du
+  duel (`blood-infusion` dans `preparationTypes.ts`). `bloodyMary.ts` sépare sang,
+  poches, matière déployée et prise physique ; le Hatsu ne copie aucun matériel
+  ni plaie du modèle. Le panneau de `FightBloodyMary.svelte` donne six commandes :
+  ouvrir une plaie (2 PV et 1 aura), déployer la prise (3 unités et 12 aura),
+  projeter au sol, explorer (3 gouttes et 8 aura), rappeler et perfuser.
+  Le sang voyage réellement : esquive, garde ou Ren/Ken avec 30 aura peuvent
+  empêcher la capture. Une prise immobilise le corps, sans étourdissement,
+  silence ni Zetsu ; maintenir Ren/Ken pendant 24 frames permet de se dégager.
+  La projection exige une prise maintenue au moins 30 frames et provoque une
+  blessure physique et un knockdown ordinaires, avec le verdict et les transferts
+  de dégâts communs. Une prise expire à 90 frames et cède si le lanceur est
+  frappé, perd son Nen ou s’éloigne, ou si la cible reçoit une autre blessure.
+  Ces délais, la résistance, les 6 unités disponibles, les 6 unités en poche,
+  la portée et les dégâts sont des adaptations de duel déclarées. Une perfusion
+  immobile transfère une unité en 120 frames, sans soin. Le rappel ne récupère
+  que le sang effectivement déployé ; ni sang adverse, bouclier ni exsanguination.
+  Les gouttes-yeux explorent indépendamment, se reforment après écrasement et ne
+  donnent qu’une dernière position réellement observée à proximité. Leur durée
+  est de 30 minutes simulées, dans les 30–40 minutes du manga, sans accélération
+  en secondes de duel. `bloodyMaryScene.ts` dessine la perfusion, la prise et les
+  gouttes ; `bloodyMaryFrame.ts` les fait avancer à l’horloge de combat. Les copies
+  conservent les conditions matérielles et le prêt de Dolphin ne déploie qu’un lot.
+  Une nouvelle manche réinitialise les réserves et les captures. L’ancien
+  `bloodBoundFrames` est retiré, et Predator observe la matière réellement active.
 - Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
   `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
   composition : les textes libres non reconnus ne coûtent rien et ne créent aucun

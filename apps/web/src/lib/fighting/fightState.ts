@@ -102,6 +102,7 @@ function createFighter(options: {
 }): ArcadeFighter {
   return {
     ...options,
+    equipment: options.id === 'zakuro' ? ['blood-infusion'] : [],
     maxHealth: options.health,
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
@@ -155,7 +156,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     needleFrames: 0,
     serpentMarks: 0,
     restrainedFrames: 0,
-    bloodBoundFrames: 0,
     entrancedFrames: 0,
     teleportDodges: 0,
     wormDodges: 0,

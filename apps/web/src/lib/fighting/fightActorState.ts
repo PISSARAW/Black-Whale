@@ -1,3 +1,4 @@
+import { maryHeld } from './bloodyMary'
 import { biohazardBodyFree } from './biohazard'
 import { battlePreparing } from './battleCantabileRules'
 import { crossGameBusy } from './crossGame'
@@ -15,8 +16,7 @@ export function canAct(fighter: ArcadeFighter): boolean {
 export function freeCombatBody(fighter: ArcadeFighter): boolean {
   return (
     biohazardBodyFree(fighter) &&
-    !fighter.pluggingWounds &&
-    !crossGameBusy(fighter) &&
+    !characterBusy(fighter) &&
     !musicPacifies(fighter) &&
     !chainsImmobilize(fighter) &&
     !projectionPreparing(fighter) &&
@@ -34,7 +34,7 @@ export function canMove(fighter: ArcadeFighter): boolean {
 export function canGuard(fighter: ArcadeFighter): boolean {
   return (
     guardHandsFree(fighter) &&
-    !crossGameBusy(fighter) &&
+    !characterBusy(fighter) &&
     !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&
@@ -46,5 +46,9 @@ export function canGuard(fighter: ArcadeFighter): boolean {
 }
 
 function guardHandsFree(fighter: ArcadeFighter): boolean {
-  return biohazardBodyFree(fighter) && !battlePreparing(fighter) && !fighter.pluggingWounds
+  return biohazardBodyFree(fighter) && !battlePreparing(fighter)
+}
+
+function characterBusy(fighter: ArcadeFighter): boolean {
+  return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }

@@ -1,3 +1,4 @@
+import { maryPredatorPrey } from './bloodyMaryPredator'
 import { chrolloHasActivePage } from './chrolloBook'
 import { wakeHanzoBody } from './hanzoProjection'
 import type { PredatorPreyId } from './predatorTypes'
@@ -119,13 +120,7 @@ export const PREDATOR_PREY: readonly PredatorPrey[] = [
     nameEn: 'Control needles',
     key: 'needleFrames',
   }),
-  targetCounter({
-    id: 'bloody-mary',
-    source: 'zakuro',
-    nameFr: 'Bloody Mary',
-    nameEn: 'Bloody Mary',
-    key: 'bloodBoundFrames',
-  }),
+  maryPredatorPrey,
   targetCounter({
     id: 'paper-serpent',
     source: 'kalluto',
@@ -140,7 +135,6 @@ type CounterKey =
   | 'manipulatedFrames'
   | 'stitchedFrames'
   | 'needleFrames'
-  | 'bloodBoundFrames'
   | 'serpentMarks'
 type CounterSpec = Pick<PredatorPrey, 'id' | 'source' | 'nameFr' | 'nameEn'> & { key: CounterKey }
 

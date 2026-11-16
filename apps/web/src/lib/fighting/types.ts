@@ -129,6 +129,10 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  equipment?: ('blood-infusion' | 'book' | 'flute')[]
+  bloodyMary?: import('./bloodyMary').BloodyMaryState
+  maryCapture?: import('./bloodyMary').MaryCapture
+  maryGraceFrames?: number
   battleCantabile?: import('./battleCantabileTypes').BattleCantabile
   battleUtteranceFrame?: number
   blinky?: BlinkyState
@@ -276,7 +280,6 @@ export interface FighterHatsuEffects {
   needleFrames: number
   serpentMarks: number
   restrainedFrames: number
-  bloodBoundFrames: number
   entrancedFrames: number
   teleportDodges: number
   wormDodges: number

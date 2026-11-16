@@ -405,7 +405,7 @@ describe('fighter Hatsu registry', () => {
 
   it('applies the second wave’s three distinct control effects', () => {
     const ready = closeFight('mizaistom', 'hisoka')
-    const impact = (source: 'mizaistom' | 'zakuro' | 'melody') =>
+    const impact = (source: 'mizaistom' | 'melody') =>
       hatsuFor(source).onImpact({
         state: ready,
         side: 'player',
@@ -415,7 +415,6 @@ describe('fighter Hatsu registry', () => {
         concealed: false,
       }).opponent.hatsuEffects
     expect(impact('mizaistom').restrainedFrames).toBe(0)
-    expect(impact('zakuro').bloodBoundFrames).toBe(100)
     expect(impact('melody').entrancedFrames).toBe(0)
   })
 

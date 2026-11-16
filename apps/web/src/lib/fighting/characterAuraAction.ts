@@ -1,4 +1,5 @@
 import { performBiohazardAction } from './biohazardAction'
+import { performMaryAction } from './bloodyMaryAction'
 import { performBattleCantabileAction } from './battleCantabileAction'
 import { performLynchAction } from './lynchAction'
 import { performCrossGameAction } from './crossGameAction'
@@ -25,6 +26,7 @@ export function characterAuraAction(
 ): FightState | null {
   const attempts = [
     () => performBiohazardAction(options),
+    () => performMaryAction(options),
     () => performBattleCantabileAction(options),
     () => performLynchAction(options),
     () => performCrossGameAction(options),

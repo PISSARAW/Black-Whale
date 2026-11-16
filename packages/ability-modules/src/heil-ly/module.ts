@@ -115,7 +115,7 @@ export const voconteHideoutDoors = defineAbility({
 /**
  * Bloody Mary — Zakuro Custard
  *
- * Blood she has already shed, put to work: it restrains, or it splits into
+ * Blood he has already shed, put to work: it restrains, or it splits into
  * eyed droplets that watch. The second mode is a knowledge source, so a wound
  * becomes surveillance.
  */
@@ -153,8 +153,8 @@ export const bloodyMary = defineAbility({
       label: 'Ouvrir une plaie',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — le sang versé pour servir',
+        chapter: 390,
+        label: 'ch. 390 — le sang versé pour servir',
       }),
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'bodyId') ?? ctx.actorId, state: 'INJURED' }),
@@ -178,8 +178,8 @@ export const bloodyMary = defineAbility({
       refusal: 'Il faut du sang versé : sans plaie, la capacité n’a rien à manipuler',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — la plaie précède toujours l’effet',
+        chapter: 390,
+        label: 'ch. 390 — la plaie précède toujours l’effet',
       }),
     },
 
@@ -187,8 +187,8 @@ export const bloodyMary = defineAbility({
       label: 'Entraver',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — le sang manipulé immobilise',
+        chapter: 390,
+        label: 'ch. 390 — le sang manipulé immobilise',
       }),
       conditions: [
         requiresTarget('Une cible est entravée'),
@@ -201,8 +201,8 @@ export const bloodyMary = defineAbility({
       label: 'Diviser en gouttes-yeux',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — les gouttes qui regardent',
+        chapter: 391,
+        label: 'ch. 391 — les gouttes qui regardent',
       }),
       conditions: [effectIsLive('effectId', 'Du sang est disponible')],
       effects: [

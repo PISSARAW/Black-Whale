@@ -1,4 +1,6 @@
 import { biohazardBodyFree } from './biohazard'
+import { holdMary, maryHeld } from './bloodyMary'
+import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
@@ -187,6 +189,7 @@ function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): Arc
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
   )
+  if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   const winding = steerCyclotron(advanced, input)
   if (winding) return winding
@@ -246,6 +249,7 @@ function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  if (maryAiBusy(advanced)) return maryAiBody(advanced)
   if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }
   const winding = steerCyclotron(advanced)
   if (winding) return winding
@@ -269,6 +273,7 @@ interface PerformMoveOptions {
 
 export function performMove(options: PerformMoveOptions): FightState {
   if (!biohazardBodyFree(options.state[options.side])) return options.state
+  if (maryHeld(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
   return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
 }
@@ -302,6 +307,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (maryHeld(options.state[options.side])) return options.state
   options = thetaFirearmOptions(options)
   return resolveMoonlightAction(
     options.state,
@@ -350,7 +356,9 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
   return true
 }
 
-export function opponentAttack(state: FightState): FightState {
+export const opponentAttack = (state: FightState): FightState => maryAiAction(state, performAuraAttack) ?? contextualOpponentAttack(state)
+
+function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state
   if (state.opponent.melodyPerformance)
     return soundDistance(state.opponent, state.player) > MELODY_MUSIC_RANGE

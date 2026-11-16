@@ -34,7 +34,6 @@ const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   saiyu: ['senseSeals'],
   kalluto: ['serpentMarks'],
   mizaistom: ['restrainedFrames'],
-  zakuro: ['bloodBoundFrames'],
   melody: ['entrancedFrames'],
   morena: ['contagionFrames', 'contagionStacks'],
   halkenburg: ['possessedFrames'],

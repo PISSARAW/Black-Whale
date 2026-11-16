@@ -6,7 +6,6 @@ import type { FightSide, FightState, FighterHatsuEffects } from './types'
 // consent, target condition, or fixed rule (e.g. Judgment Chain) is never scaled.
 const CONTROL_DURATIONS: readonly (keyof FighterHatsuEffects)[] = [
   'needleFrames',
-  'bloodBoundFrames',
   'restrainedFrames',
 ]
 

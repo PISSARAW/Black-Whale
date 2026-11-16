@@ -1,3 +1,4 @@
+import { holdMary, maryHeld } from './bloodyMary'
 import { crossGameRestrained, holdCrossGame } from './crossGame'
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
 import { advanceCyclotron } from './phinksCyclotron'
@@ -14,8 +15,8 @@ const MAX_X = 93
 
 export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
   fighter = advanceCyclotron(fighter)
-  fighter = holdCrossGame(fighter)
-  const vertical = crossGameRestrained(fighter) ? fighter : advanceAirborne(fighter)
+  fighter = holdMary(holdCrossGame(fighter))
+  const vertical = crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
@@ -28,7 +29,7 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
     ryuWindow: Math.max(0, fighter.ryuWindow - 1),
     throwTechFrames: Math.max(0, (fighter.throwTechFrames ?? 0) - 1),
   })
-  return holdCrossGame(advanceNen(advanced, FIXED_STEP))
+  return holdMary(holdCrossGame(advanceNen(advanced, FIXED_STEP)))
 }
 
 function advanceWakeup(
@@ -62,6 +63,8 @@ export function separateFighterPushboxes(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
 ): Pick<FightState, 'player' | 'opponent'> {
+  player = holdMary(player)
+  opponent = holdMary(opponent)
   player = holdCrossGame(anchorFighter(player))
   opponent = holdCrossGame(anchorFighter(opponent))
   if (player.hanzoProjection || opponent.hanzoProjection) {
@@ -101,6 +104,7 @@ function oppositeFacing(facing: -1 | 1): -1 | 1 {
 }
 
 function canPush(player: ArcadeFighter, opponent: ArcadeFighter, overlaps: boolean): boolean {
+  if (maryHeld(player) || maryHeld(opponent)) return false
   return overlaps && player.y <= 7 && opponent.y <= 7
 }
 

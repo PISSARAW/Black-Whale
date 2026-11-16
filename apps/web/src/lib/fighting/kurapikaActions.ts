@@ -1,3 +1,4 @@
+import { finishBorrowedMary } from './bloodyMaryAi'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
@@ -205,6 +206,8 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
+  const blood = finishBorrowedMary(options, perform)
+  if (blood) return blood
   const predator = finishBorrowedPredator(state, side)
   if (predator) return predator
   const fighter = state[side]

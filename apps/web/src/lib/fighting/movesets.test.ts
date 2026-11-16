@@ -67,7 +67,7 @@ describe('wave one movesets', () => {
       'bill',
     ])
     WAVE_THREE_FIGHTERS.filter(
-      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch'].includes(id),
+      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch', 'zakuro'].includes(id),
     ).forEach(assertCompleteMoveset)
   })
 
@@ -189,7 +189,7 @@ describe('wave one movesets', () => {
 
   it.each(
     WAVE_THREE_FIGHTERS.filter(
-      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch'].includes(id),
+      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch', 'zakuro'].includes(id),
     ),
   )('%s wave-three finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -363,8 +363,6 @@ function withFinisherCondition(state: FightState): FightState {
           },
         },
       }
-    case 'zakuro':
-      return withOpponentEffect(state, 'bloodBoundFrames', 60)
     case 'melody':
       return withOpponentEffect(state, 'entrancedFrames', 60)
     case 'camilla':

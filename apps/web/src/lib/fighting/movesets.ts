@@ -1,6 +1,7 @@
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
 import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
 import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
+import { tuneZakuroMoveset, zakuroMoveReady } from './bloodyMaryMoveset'
 import { blinkyBloodReady } from './blinky'
 import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { canAskLynchQuestion } from './lynchRules'
@@ -95,6 +96,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
     .map(tuneBashoMoveset)
+    .map(tuneZakuroMoveset)
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
     .map(tuneFurykovMoveset)
@@ -151,6 +153,8 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  const blood = zakuroMoveReady(state, side, move)
+  if (blood !== null) return blood
   const battle = bonolenovMoveAllowed(state, side, move)
   if (battle !== null) return battle
   if (!blinkyMoveAllowed(state, side, move.id)) return false
@@ -299,7 +303,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   shizuku: blinkyBloodReady,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: predatorReady,
-  zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,

@@ -1600,11 +1600,14 @@
     "description": "Zakuro manipulates blood released from an open wound. It can restrain targets or divide into eyed droplets that search independently for thirty to forty minutes before returning to normal blood.",
     "canonStatus": "canon",
     "moduleKey": "bloody-mary",
-    "firstVisibleChapterId": "ch-383",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-390",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-383"
+        "chapterId": "ch-390"
+      },
+      {
+        "chapterId": "ch-391"
       }
     ]
   },

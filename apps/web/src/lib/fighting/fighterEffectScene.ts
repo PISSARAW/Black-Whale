@@ -1,4 +1,5 @@
 import { createBiohazardScene } from './biohazardScene'
+import { createBloodyMaryScene } from './bloodyMaryScene'
 import { createCrossGameScene } from './crossGameScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createSecretWindowScene } from './secretWindowScene'
@@ -29,6 +30,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
   const crossGame = createCrossGameScene(options)
+  const mary = createBloodyMaryScene(options)
   const basho = createBashoFireScene(options)
   const nenFields = createNenFieldScene(options)
   const benjamin = createBenjaminEffectScene(options)
@@ -51,6 +53,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
     crossGame.sync(state, seconds)
+    mary.sync(state, seconds)
     basho.sync(state, seconds)
     nenFields.sync(state)
     benjamin.sync(state, seconds)
@@ -67,6 +70,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       secretWindow.dispose()
       camilla.dispose()
       crossGame.dispose()
+      mary.dispose()
       basho.dispose()
       nenFields.dispose()
       benjamin.dispose()

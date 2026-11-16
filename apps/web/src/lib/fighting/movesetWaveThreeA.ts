@@ -5,8 +5,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'zakuro',
     mechanic: [
-      'Bloody Mary : ses gouttes de sang traquent la cible avant de former une entrave mobile.',
-      'Bloody Mary: his blood droplets track the target before forming a mobile restraint.',
+      'Bloody Mary : son propre sang, depuis une plaie et avec sa perfusion ; prise physique, projection au sol ou gouttes-yeux de reconnaissance.',
+      'Bloody Mary: his own blood from an open wound with his infusion equipment; physical capture, ground slam or eyed scouting drops.',
     ],
     finisherCondition: [
       'La cible doit être immobilisée par le sang de Bloody Mary.',
@@ -23,11 +23,11 @@ const SPECS: readonly MovesetSpec[] = [
       'Fouet hématique|Hemal Whip',
       'Reflux défensif|Defensive Backflow',
       'Bloody Mary|Bloody Mary',
-      'Meute de gouttes|Droplet Pack',
-      'Flaque captive|Captive Pool',
-      'Écran de sang|Blood Screen',
-      'Garrot carmin|Crimson Garrote',
-      'Bloody Mary · Exsanguination|Bloody Mary · Exsanguination',
+      'Projection au sol|Ground slam',
+      'Gouttes-yeux|Eyed scouts',
+      'Rappel du sang|Recall blood',
+      'Projection|Throw',
+      'Sans finisher offensif|No offensive finisher',
     ],
     speed: 0.9,
     power: 0.98,

@@ -379,8 +379,8 @@ Entrées analysées : 11
 | `EntityRef` | `packages/canon-engine/src/world/state.ts:16` |
 | `EntityRegisteredEvent` | `packages/canon-engine/src/world/events.ts:21` |
 | `EnvironmentAlteredEvent` | `packages/canon-engine/src/world/events.ts:48` |
-| `EventSelectionRequest` | `packages/canon-engine/src/timeline/selection.ts:16` |
-| `EventSelection` | `packages/canon-engine/src/timeline/selection.ts:23` |
+| `EventSelectionRequest` | `packages/canon-engine/src/timeline/selection.ts:18` |
+| `EventSelection` | `packages/canon-engine/src/timeline/selection.ts:25` |
 | `IIdentityEngine` | `packages/canon-engine/src/identity/index.ts:22` |
 | `IKnowledgeEngine` | `packages/canon-engine/src/knowledge/index.ts:18` |
 | `IPerspectiveEngine` | `packages/canon-engine/src/perspective/index.ts:17` |
@@ -443,11 +443,11 @@ Entrées analysées : 11
 | `maskFutureEnds` | `packages/canon-engine/src/spoiler/index.ts:63` |
 | `projectMapScene` | `packages/canon-engine/src/world/projections.ts:83` |
 | `proposedSubjectIds` | `packages/canon-engine/src/world/events.ts:117` |
-| `readLegacySequence` | `packages/canon-engine/src/timeline/selection.ts:56` |
+| `readLegacySequence` | `packages/canon-engine/src/timeline/selection.ts:61` |
 | `reduceWorld` | `packages/canon-engine/src/world/reducer.ts:160` |
 | `replayWorld` | `packages/canon-engine/src/world/reducer.ts:256` |
 | `resolveVisibleBodyIds` | `packages/canon-engine/src/timeline/snapshot.ts:44` |
-| `selectEvent` | `packages/canon-engine/src/timeline/selection.ts:38` |
+| `selectEvent` | `packages/canon-engine/src/timeline/selection.ts:40` |
 | `snapshotKey` | `packages/canon-engine/src/timeline/snapshotStore.ts:17` |
 
 ## `packages/contracts/src/index.ts`

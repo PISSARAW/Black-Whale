@@ -1,5 +1,11 @@
 import { expect, test, type Page } from 'playwright/test'
 
+// These assertions cover replay state, not scrolling animation. Let pointer
+// actions finish their scroll before the sticky header is hit-tested.
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+})
+
 async function launch(page: Page, mode = 'Versus local') {
   await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: mode, exact: true }).click()
@@ -20,6 +26,13 @@ async function clip(page: Page) {
   await page.getByText('Bibliothèque de replays', { exact: false }).click()
   await expect(page.getByRole('button', { name: 'Lire ce replay', exact: true })).toBeVisible()
 }
+async function exitReplay(page: Page) {
+  const button = page.getByRole('button', { name: 'Quitter le replay', exact: true })
+  // The mobile page has a sticky header; nearest-edge scrolling can leave
+  // this wrapped control underneath it.
+  await button.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+  await button.click()
+}
 
 test('clip survives reload, replays with verified states and restores the paused match', async ({
   page,
@@ -35,14 +48,14 @@ test('clip survives reload, replays with verified states and restores the paused
   await expect(page.getByText('LECTURE DU REPLAY', { exact: true })).toBeVisible()
   await page.keyboard.press('l')
   await expect(page.getByText('Fin du replay · états vérifiés.', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Quitter le replay', exact: true }).click()
+  await exitReplay(page)
   await expect(page.locator('.pause-overlay')).toBeVisible()
   await page.reload({ waitUntil: 'networkidle' })
   await page.locator('.fight-replays summary').click()
   await expect(page.getByRole('button', { name: 'Lire ce replay', exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Lire ce replay', exact: true }).click()
   await expect(page.getByText('Fin du replay · états vérifiés.', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Quitter le replay', exact: true }).click()
+  await exitReplay(page)
   await expect(page.locator('.fighter-select')).toBeVisible()
   expect(errors).toEqual([])
 })

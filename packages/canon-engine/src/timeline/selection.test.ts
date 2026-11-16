@@ -13,6 +13,20 @@ describe('selectEvent', () => {
     expect(selectEvent(events, { eventId: 'c1-b' })).toEqual({ event: events[1], index: 1 })
   })
 
+  it('resolves a public catalogue link to its database event', () => {
+    const imported = events.map((event) => ({ ...event, sourceId: `catalogue-${event.id}` }))
+    expect(selectEvent(imported, { eventId: 'catalogue-c1-b', sequence: 1 })).toEqual({
+      event: imported[1],
+      index: 1,
+    })
+    expect(selectEvent(imported, { eventId: 'c1-b' }).event).toBe(imported[1])
+  })
+
+  it('prefers an exact database id when a source id has the same spelling', () => {
+    const imported = [{ ...events[0], sourceId: 'c1-b' }, events[1]]
+    expect(selectEvent(imported, { eventId: 'c1-b' }).event).toBe(imported[1])
+  })
+
   it('falls back to the last event when nothing is requested', () => {
     expect(selectEvent(events, {})).toEqual({ event: events[3], index: 3 })
   })

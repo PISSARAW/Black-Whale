@@ -2,9 +2,13 @@ import { expect, test, type Page } from 'playwright/test'
 
 const school = (page: Page) => page.getByRole('region', { name: 'École de combat', exact: true })
 async function catalog(page: Page) {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   const details = school(page).locator(':scope > details')
-  if ((await details.getAttribute('open')) === null)
-    await details.locator(':scope > summary').click()
+  if ((await details.getAttribute('open')) === null) {
+    const summary = details.locator(':scope > summary')
+    await summary.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+    await summary.click()
+  }
 }
 async function selectFighter(page: Page, fighter: string) {
   await catalog(page)
@@ -20,6 +24,9 @@ for (const fighter of ['kurapika', 'hisoka', 'chrollo', 'benjamin']) {
   test(`${fighter}: all four demonstrations complete through the real combat loop`, async ({
     page,
   }) => {
+    // Four real-time fights share this test. Software WebGL can advance the
+    // fixed-step simulation much slower than the display's nominal 60 Hz.
+    test.setTimeout(240_000)
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
     await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
@@ -29,7 +36,7 @@ for (const fighter of ['kurapika', 'hisoka', 'chrollo', 'benjamin']) {
         .getByRole('button', { name: `Démontrer · ${name}`, exact: true })
         .click()
       await expect(school(page).getByRole('status')).toHaveText('Exercice réussi !', {
-        timeout: 30000,
+        timeout: 60000,
       })
       await expect(page.locator('.fight-scene.failed')).toHaveCount(0)
     }

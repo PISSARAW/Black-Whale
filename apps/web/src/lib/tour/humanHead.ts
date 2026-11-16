@@ -1,6 +1,14 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial } from 'three'
 import { addSilentMajorityMask } from './humanCostume'
 import { addHumanHair } from './humanHair'
+import { buildKurapikaHead } from './kurapikaHead'
+import { buildMangaHead } from './mangaHead'
+import {
+  addEyeDetails,
+  addFaceDetails,
+  humanSkullGeometry,
+  humanEyeGeometry,
+} from './humanFaceDetails'
 import type { HumanLook } from './humanFigure'
 
 /** Ink, the one colour the head shares with the rest of the figure. */
@@ -32,21 +40,18 @@ export interface HumanHeadBuild {
   materials: { ink: Material; skin: Material; hairInk: Material }
 }
 
-export function buildHumanHead({
-  THREE,
-  geometry,
-  outlined,
-  glow,
-  profile,
-  seen,
-  materials,
-}: HumanHeadBuild): Group {
+export function buildHumanHead(build: HumanHeadBuild): Group {
+  if (build.profile.likeness === 'kurapika') return buildKurapikaHead(build)
+  if (build.profile.likeness && build.profile.likeness !== 'morena-prudo')
+    return buildMangaHead(build)
+  const { THREE, geometry, outlined, glow, profile, seen, materials } = build
   const { ink, skin, hairInk } = materials
+  const morena = profile.likeness === 'morena-prudo'
   const head = new THREE.Group()
   head.position.y = CANON.headY
   const skull = outlined({
     THREE,
-    geometry: geometry(THREE, 'skull', () => new THREE.SphereGeometry(0.19, 10, 8)),
+    geometry: geometry(THREE, `skull:${profile.face}`, () => humanSkullGeometry(build)),
     material: skin,
     ink,
   })
@@ -60,18 +65,17 @@ export function buildHumanHead({
 
   for (const side of [-1, 1]) {
     const eye = new THREE.Mesh(
-      geometry(THREE, 'eye', () => new THREE.PlaneGeometry(0.055, 0.014)),
+      geometry(THREE, 'eye:detailed', () => humanEyeGeometry(THREE)),
       ink,
     )
-    eye.name =
-      seen.human?.role === 'morena'
-        ? side < 0
-          ? 'face-eye-base-left'
-          : 'face-eye-base-right'
-        : side < 0
-          ? 'face-eye-left'
-          : 'face-eye-right'
-    eye.visible = seen.human?.role !== 'morena'
+    eye.name = morena
+      ? side < 0
+        ? 'face-eye-base-left'
+        : 'face-eye-base-right'
+      : side < 0
+        ? 'face-eye-left'
+        : 'face-eye-right'
+    eye.visible = !morena
     eye.position.set(side * 0.062, 0.018, 0.181)
     eye.scale.y = profile.expression === 'tired' ? 0.65 : profile.expression === 'anxious' ? 1.4 : 1
     eye.rotation.z =
@@ -80,20 +84,20 @@ export function buildHumanHead({
         : profile.expression === 'anxious'
           ? side * 0.1
           : side * -0.08
+    addEyeDetails(build, eye)
     head.add(eye)
     const brow = new THREE.Mesh(
       geometry(THREE, 'brow', () => new THREE.PlaneGeometry(0.064, 0.009)),
       ink,
     )
-    brow.name =
-      seen.human?.role === 'morena'
-        ? side < 0
-          ? 'face-brow-base-left'
-          : 'face-brow-base-right'
-        : side < 0
-          ? 'face-brow-left'
-          : 'face-brow-right'
-    brow.visible = seen.human?.role !== 'morena'
+    brow.name = morena
+      ? side < 0
+        ? 'face-brow-base-left'
+        : 'face-brow-base-right'
+      : side < 0
+        ? 'face-brow-left'
+        : 'face-brow-right'
+    brow.visible = !morena
     brow.position.set(side * 0.064, 0.06, 0.176)
     brow.scale.y = profile.expression === 'severe' ? 1.8 : 1
     brow.rotation.z =
@@ -128,8 +132,8 @@ export function buildHumanHead({
     ink,
   )
   mouth.position.set(0, -0.09, 0.178)
-  mouth.name = seen.human?.role === 'morena' ? 'face-mouth-base' : 'face-mouth'
-  mouth.visible = seen.human?.role !== 'morena' && !melody
+  mouth.name = morena ? 'face-mouth-base' : 'face-mouth'
+  mouth.visible = !morena && !melody
   head.add(mouth)
   if (melody) {
     for (const side of [-1, 1]) {
@@ -171,6 +175,8 @@ export function buildHumanHead({
   jawShade.position.set(0, -0.145, 0.135)
   jawShade.rotation.x = -0.5
   head.add(jawShade)
+
+  addFaceDetails(build, head)
 
   addHumanHair({
     THREE,

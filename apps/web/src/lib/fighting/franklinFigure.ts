@@ -19,7 +19,7 @@ function makeShapes(THREE: Three) {
 
 /** Preserve the archive's palette; make the sewn colossus readable in the duel camera. */
 export function franklinFightProfile(profile: HumanProfile): HumanProfile {
-  return { ...profile, shoulders: 1.5, hairStyle: 'slicked-back' }
+  return { ...profile, shoulders: 1.5 }
 }
 
 export function shapeFranklinFigure(options: {
@@ -43,6 +43,7 @@ export function shapeFranklinFigure(options: {
     thicken(model.root.getObjectByName(`hip-${side}`)!.children[0], 1.25)
     thicken(model.root.getObjectByName(`knee-${side}`)!.children[0], 1.2)
   }
+  if (model.root.getObjectByName('manga-head:franklin-bordeau')) return
   const head = model.root.getObjectByName('face-mouth')!.parent!
   head.scale.x = 1.12
   const skin = (model.root.getObjectByName('hand-left') as Mesh).material

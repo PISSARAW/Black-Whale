@@ -8,8 +8,9 @@ export function shapeFightEyes(options: {
   const { root, fighter, glow } = options
   root.traverse((node) => {
     if (!node.name.startsWith('face-eye')) return
-    if (fighter.kurapika?.emperorTime && 'material' in node)
-      (node as import('three').Mesh).material = glow(0xef3340, 1)
+    const iris = node.getObjectByName('eye-pupil') ?? node
+    if (fighter.kurapika?.emperorTime && 'material' in iris)
+      (iris as import('three').Mesh).material = glow(0xef3340, 1)
     if (fighter.parallelEyesClosed) {
       node.scale.y = 0.08
       node.rotation.z = 0

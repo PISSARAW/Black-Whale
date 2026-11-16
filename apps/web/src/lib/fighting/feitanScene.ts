@@ -1,3 +1,5 @@
+import { PAIN_PACKER_JOINTS } from '$lib/tour/painPackerModel'
+import { syncPainPackerRig, restorePainPackerWearer } from './painPackerRig'
 import { CANON } from '$lib/tour/humanProportions'
 import { createVisitHatsuModel } from './visitHatsuModel'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -39,7 +41,10 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     return new THREE.Mesh(geometry, material)
   }
   const build = (side: FightSide) => {
-    const outfit = createVisitHatsuModel(THREE, { model: 'pain-packer' })
+    const outfit = createVisitHatsuModel(THREE, {
+      model: 'pain-packer',
+      joints: PAIN_PACKER_JOINTS,
+    })
     outfit.fit({ height: 1.8 })
     // The visit garment is authored around the hood, with the coat extending below it.
     outfit.body.position.set(0, 0, 0)
@@ -70,7 +75,7 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
         const chest = figure.getObjectByName('fight-chest') ?? figure
         if (drawn.armour.parent !== chest) chest.add(drawn.armour)
         drawn.armour.visible = Boolean(pain?.armour)
-        drawn.armour.rotation.z = Math.sin(seconds * 3) * 0.015
+        syncPainPackerRig({ THREE, outfit: drawn.outfit, figure, active: Boolean(pain?.armour) })
         const sun = state.phase === 'fighting' ? pain?.sun : null
         drawn.sun.visible = Boolean(sun)
         drawn.boundary.visible = Boolean(sun)
@@ -89,6 +94,7 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     },
     dispose() {
       for (const drawn of Object.values(held)) {
+        restorePainPackerWearer(drawn.armour)
         drawn.outfit.dispose()
         drawn.solarModel.dispose()
         scene.remove(drawn.sun, drawn.boundary)

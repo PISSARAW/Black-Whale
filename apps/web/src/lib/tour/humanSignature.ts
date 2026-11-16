@@ -1,3 +1,4 @@
+import { MANGA_FACE_SIGNATURES } from './mangaFaceTraits'
 import type { Placed } from './humanSignatureGarments'
 import type { BufferGeometry, Group, Material, Object3D } from 'three'
 import { buildKakinCrown } from './humanKakinRoyal'
@@ -32,7 +33,7 @@ export interface HumanSignatureBuild {
   /** Where a piece can hang: the head, the trunk, and the right hand. */
   parts: { figure: Group; head: Group; arms: readonly Object3D[]; rightHand: Object3D }
   materials: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
-  worn: { signatures: readonly Signature[]; attire: Attire }
+  worn: { signatures: readonly Signature[]; attire: Attire; manga?: boolean }
 }
 
 /** A piece placed on one of the three mounts, in that mount's own space. */
@@ -41,7 +42,7 @@ const PIECES: Record<Signature, Piece> = {
     for (const side of [-1, 1]) {
       head({
         key: 'sig:lens-round',
-        make: () => new THREE.TorusGeometry(0.042, 0.008, 4, 10),
+        make: () => new THREE.TorusGeometry(0.042, 0.0045, 6, 24),
         material: paint.ink,
         at: [side * 0.062, 0.018, 0.188],
       })
@@ -422,6 +423,9 @@ export function addHumanSignatures({
     paint: materials,
   }
 
-  GARMENTS[worn.attire]?.(hang)
-  for (const piece of worn.signatures) PIECES[piece](hang)
+  if (!worn.manga || worn.attire === 'kakin-robe') GARMENTS[worn.attire]?.(hang)
+  for (const piece of worn.signatures) {
+    if (worn.manga && (MANGA_FACE_SIGNATURES.has(piece) || piece === 'fur-collar')) continue
+    PIECES[piece](hang)
+  }
 }

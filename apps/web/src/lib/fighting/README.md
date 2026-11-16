@@ -455,6 +455,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   sa victoire aux points, l’entraînement ne termine pas sur un K.-O. Zetsu et le vol
   du Hatsu dissipent l’armure et le soleil. `feitanScene.ts` dessine l’habit sur le
   rig et le périmètre de chaleur dans le monde ; le HUD affiche la douleur et l’état.
+  L’armure de `tour/painPackerModel.ts` est commune à la visite et au combat.
+  `painPackerRig.ts` suit les articulations des manches, de la capuche et du manteau,
+  puis restaure les parties masquées du porteur quand l’armure disparaît ou change de rig.
 - Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le corps naturel de Biscuit renforce attaque et défense, tandis que
   LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et

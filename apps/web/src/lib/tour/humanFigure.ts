@@ -3,12 +3,13 @@ import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
-import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
+import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
 import { CANON, stance } from './humanProportions'
 import { buildHumanTrunk } from './humanTrunk'
+import { addHumanClothes } from './humanClothes'
 import { contactShadow } from './contactShadow'
 import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
@@ -207,7 +208,13 @@ export function buildHumanFigure({
     figure,
     profile,
     frame,
-    materials: { cloth, ink, skin, shirt: glow(profile.shirt || SHIRT, 1) },
+    materials: {
+      cloth,
+      ink,
+      skin,
+      shirt: glow(profile.shirt || SHIRT, 1),
+      trousers: glow(profile.trousers, 1),
+    },
   })
 
   const head = buildHumanHead({
@@ -220,83 +227,38 @@ export function buildHumanFigure({
     materials: { ink, skin, hairInk },
   })
   head.scale.setScalar(frame.head * CANON.headScale)
+  if (profile.likeness === 'kurapika') head.scale.x *= 1.12
+  if (profile.likeness === 'melody') head.scale.multiplyScalar(1.2)
   head.position.y *= frame.neck
   figure.add(head)
 
-  const shirtFront = new THREE.Mesh(
-    geometry(THREE, 'clothes:shirt', () => new THREE.PlaneGeometry(0.16, 0.28)),
-    glow(profile.shirt, 1),
-  )
-  shirtFront.position.set(0, 1.19, 0.165)
-  figure.add(shirtFront)
-  for (const side of [-1, 1]) {
-    const lapel = new THREE.Mesh(
-      geometry(THREE, 'clothes:lapel', () => new THREE.PlaneGeometry(0.1, 0.3)),
-      cloth,
-    )
-    lapel.position.set(side * 0.075, 1.23, 0.175)
-    lapel.rotation.z = side * -0.28
-    figure.add(lapel)
-  }
-  const belt = new THREE.Mesh(
-    geometry(THREE, 'clothes:belt', () => new THREE.BoxGeometry(0.39, 0.045, 0.24)),
-    dark,
-  )
-  belt.position.y = 0.82 * frame.neck
-  belt.scale.x = 0.9 * width
-  figure.add(belt)
-  if (profile.clothing === 'suit') {
-    const tie = new THREE.Mesh(
-      geometry(THREE, 'clothes:tie', () => new THREE.ConeGeometry(0.035, 0.25, 3)),
-      accent,
-    )
-    tie.position.set(0, 1.19, 0.184)
-    tie.rotation.x = Math.PI
-    figure.add(tie)
-  }
-  if (profile.clothing === 'uniform') {
-    for (const side of [-1, 1]) {
-      const epaulette = new THREE.Mesh(
-        geometry(THREE, 'clothes:epaulette', () => new THREE.BoxGeometry(0.14, 0.035, 0.18)),
-        accent,
-      )
-      epaulette.position.set(side * (shoulder - 0.03) * profile.shoulders, 1.4, 0)
-      figure.add(epaulette)
-    }
-  }
-  if (profile.clothing === 'uniform' || profile.clothing === 'suit') {
-    const badge = new THREE.Mesh(
-      geometry(THREE, 'clothes:badge', () => new THREE.CircleGeometry(0.035, 6)),
-      accent,
-    )
-    badge.position.set(0.12, 1.29, 0.183)
-    figure.add(badge)
-  }
-  if (profile.clothing === 'uniform') {
-    const radio = new THREE.Mesh(
-      geometry(THREE, 'accessory:radio', () => new THREE.BoxGeometry(0.065, 0.12, 0.035)),
-      dark,
-    )
-    radio.position.set(-0.18, 1.31, 0.18)
-    figure.add(radio)
-  } else if (profile.clothing === 'combat') {
-    const armband = new THREE.Mesh(
-      geometry(THREE, 'accessory:armband', () => new THREE.CylinderGeometry(0.07, 0.07, 0.06, 7)),
-      accent,
-    )
-    armband.position.set(-(shoulder + 0.008) * profile.shoulders, 1.23, 0)
-    figure.add(armband)
-  }
-  if (profile.clothing === 'gown') {
+  addHumanClothes({
+    THREE,
+    geometry,
+    figure,
+    profile,
+    frame,
+    width,
+    shoulder,
+    materials: { cloth, shirt: glow(profile.shirt, 1), dark, accent, ink, skin },
+  })
+  if (profile.clothing === 'gown' && (isMorena(profile) || !profile.likeness)) {
     // Her marks belong to her. Anyone else the archive has actually drawn gets
     // the garment and not the person; anyone it has not drawn keeps exactly
     // what they had, which is ADR-005 §5's promise about diffs.
-    const dressed = { THREE, geometry, outlined, figure, cloth, ink, accent, dark, skin }
-    if (isMorena(profile) || !profile.likeness) {
-      addMorenaDetails({ ...dressed, head, seated: pose === 'seated' })
-    } else {
-      addCourtGown(dressed)
+    const dressed = {
+      THREE,
+      geometry,
+      outlined,
+      figure,
+      cloth,
+      ink,
+      accent,
+      dark,
+      skin,
+      hair: hairInk,
     }
+    addMorenaDetails({ ...dressed, head, seated: pose === 'seated' })
   }
 
   const { arms, legs, elbows, knees } = buildHumanLimbs({
@@ -334,7 +296,11 @@ export function buildHumanFigure({
       rightHand: elbows[1].getObjectByName('hand-right') ?? elbows[1],
     },
     materials: { ink, skin, accent, cloth, dark },
-    worn: { signatures: profile.signatures, attire: profile.clothing },
+    worn: {
+      signatures: profile.signatures,
+      attire: profile.clothing,
+      manga: Boolean(profile.likeness) && !isMorena(profile),
+    },
   })
 
   addPrisonBook({ THREE, seen, figure, paper: cloth, cover: cloth })

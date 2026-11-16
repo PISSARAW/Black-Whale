@@ -1,3 +1,4 @@
+import { buildCrossGameCage } from '$lib/tour/crossGameCageModel'
 import { placeVisitHand, freeVisitHand } from './visitSceneKit'
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { CROSS_GAME_DISPLAY } from './crossGame'
@@ -8,27 +9,23 @@ import type { FightSide, FightState } from './types'
 /** A yellow card turned over on disobedience, and the rectangular confinement shown in the manga. */
 export function createCrossGameScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
-  const box = new THREE.BoxGeometry(1.35, 2.4, 0.85)
-  const edges = new THREE.EdgesGeometry(box)
-  const material = new THREE.LineBasicMaterial({
-    color: 0xf4cc38,
-    transparent: true,
-    opacity: 0.85,
-  })
+  const lattice = buildCrossGameCage(THREE)
   const effects = (['player', 'opponent'] as const).map((side) => {
     const model = createVisitHatsuModel(THREE, { model: 'cross-game-card', stage: 1 })
     const card = model.fit({ height: 0.28, width: 0.19 })
-    const cage = new THREE.LineSegments(edges, material)
+    const cage = lattice.clone()
     scene.add(card, cage)
     return { side, card, cage, model }
   })
   return {
     sync: (state) => effects.forEach((effect) => syncCrossGame(options, state, effect)),
     dispose: () => {
-      effects.forEach(({ model, cage }) => { model.dispose(); scene.remove(cage) })
-      box.dispose()
-      edges.dispose()
-      material.dispose()
+      effects.forEach(({ model, cage }) => {
+        model.dispose()
+        scene.remove(cage)
+      })
+      lattice.geometry.dispose()
+      lattice.material.dispose()
     },
   }
 }

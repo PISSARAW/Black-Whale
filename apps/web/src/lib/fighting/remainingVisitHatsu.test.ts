@@ -21,21 +21,54 @@ function setup(id: FighterId = 'hisoka') {
   state.phase = 'fighting'
   state.player.x = 40
   state.opponent.x = 60
-  const options = { THREE, scene: new THREE.Scene(), worldX: (x: number) => x / 6, worldY: (y: number) => y / 6 }
+  const options = {
+    THREE,
+    scene: new THREE.Scene(),
+    worldX: (x: number) => x / 6,
+    worldY: (y: number) => y / 6,
+  }
   return { state, options }
 }
 function attack(source: FighterId, frame = 0): NonNullable<ArcadeFighter['attack']> {
-  return { kind: 'special', moveId: `${source}:neutralSpecial`, frame, impacted: false,
-    auraCharged: true, concealed: false, hatsuSource: source, projectileSpawned: false, reversal: false }
+  return {
+    kind: 'special',
+    moveId: `${source}:neutralSpecial`,
+    frame,
+    impacted: false,
+    auraCharged: true,
+    concealed: false,
+    hatsuSource: source,
+    projectileSpawned: false,
+    reversal: false,
+  }
 }
 function future(owner: 'player' | 'opponent'): NonNullable<FightState['parallelFuture']> {
-  return { owner, phase: 'vision', frames: [], preparation: 0, cursor: 0, previewCursor: 0, controls: null }
+  return {
+    owner,
+    phase: 'vision',
+    frames: [],
+    preparation: 0,
+    cursor: 0,
+    previewCursor: 0,
+    controls: null,
+  }
 }
 
 describe('remaining visit models in fighting', () => {
-  it.each(['black-voice', 'moonlight-contract', 'bungee-gum', 'cross-game-card', 'snake-arm',
-    'priest-staff', 'black-voice-antenna', 'controlled-bird', 'grimmel-arrow', 'rising-sun',
-    'biohazard-cuffs', 'tserriednich-second'] as VisitHatsuKind[])('builds and uniformly fits %s', (kind) => {
+  it.each([
+    'black-voice',
+    'moonlight-contract',
+    'bungee-gum',
+    'cross-game-card',
+    'snake-arm',
+    'priest-staff',
+    'black-voice-antenna',
+    'controlled-bird',
+    'grimmel-arrow',
+    'rising-sun',
+    'biohazard-cuffs',
+    'tserriednich-second',
+  ] as VisitHatsuKind[])('builds and uniformly fits %s', (kind) => {
     const model = createVisitHatsuModel(THREE, { model: kind, climb: 6 })
     model.fit({ width: 0.7, height: 1.2, depth: 0.9 })
     const size = new THREE.Box3().setFromObject(model.root).getSize(new THREE.Vector3())
@@ -85,8 +118,14 @@ describe('remaining visit models in fighting', () => {
   it('switches Longhi’s displayed stationery only after the second signature, including a loan', () => {
     const { state, options } = setup('kurapika')
     const effects = createMoonlightScene(options)
-    const pact = { issuer: 'opponent' as const, recipient: 'player' as const, terms: 'no-attacks' as const,
-      reward: 'one-use-of-moonlight-act' as const, penalty: 'one-week-zetsu' as const, remainingFrames: 90 }
+    const pact = {
+      issuer: 'opponent' as const,
+      recipient: 'player' as const,
+      terms: 'no-attacks' as const,
+      reward: 'one-use-of-moonlight-act' as const,
+      penalty: 'one-week-zetsu' as const,
+      remainingFrames: 90,
+    }
     state.moonlight = { offer: pact }
     effects.sync(state, 0)
     const offer = options.scene.getObjectByName('moonlight-contract:offer')!
@@ -95,7 +134,9 @@ describe('remaining visit models in fighting', () => {
     state.moonlight = { active: pact }
     effects.sync(state, 1)
     expect(offer.visible).toBe(false)
-    expect(options.scene.getObjectByName('moonlight-contract:signed')?.userData.variantStage).toBe(1)
+    expect(options.scene.getObjectByName('moonlight-contract:signed')?.userData.variantStage).toBe(
+      1,
+    )
     state.moonlight = undefined
     effects.sync(state, 2)
     expect(options.scene.children.every((root) => !root.visible)).toBe(true)
@@ -103,32 +144,57 @@ describe('remaining visit models in fighting', () => {
     expect(options.scene.children).toHaveLength(0)
   })
 
-  it.each(['chrollo', 'kurapika'] as const)('shows Saiyu’s staff for an active %s use, then hides it on Nen loss', (id) => {
-    const { state, options } = setup(id)
-    if (id === 'chrollo') state.player.chrolloBook = { pages: ['saiyu'], page: 0, open: true, bookmark: null }
-    else state.player.kurapika!.held = { source: 'saiyu', moveId: 'saiyu:neutralSpecial', victim: 'opponent', loaded: true, used: true, sustainedKeys: [] }
-    const effects = createVisitWeaponScene(options)
-    effects.sync(state, 0)
-    const staff = options.scene.getObjectByName('priest-staff:player')!
-    expect(staff.userData.visitModel).toBe('priest-staff')
-    state.player.nen.mode = 'zetsu'
-    effects.sync(state, 1)
-    expect(staff.visible).toBe(false)
-    effects.dispose()
-  })
+  it.each(['chrollo', 'kurapika'] as const)(
+    'shows Saiyu’s staff for an active %s use, then hides it on Nen loss',
+    (id) => {
+      const { state, options } = setup(id)
+      if (id === 'chrollo')
+        state.player.chrolloBook = { pages: ['saiyu'], page: 0, open: true, bookmark: null }
+      else
+        state.player.kurapika!.held = {
+          source: 'saiyu',
+          moveId: 'saiyu:neutralSpecial',
+          victim: 'opponent',
+          loaded: true,
+          used: true,
+          sustainedKeys: [],
+        }
+      const effects = createVisitWeaponScene(options)
+      effects.sync(state, 0)
+      const staff = options.scene.getObjectByName('priest-staff:player')!
+      expect(staff.userData.visitModel).toBe('priest-staff')
+      state.player.nen.mode = 'zetsu'
+      effects.sync(state, 1)
+      expect(staff.visible).toBe(false)
+      effects.dispose()
+    },
+  )
 
   it('extends Gel’s shared arm in active frames, including a Dolphin user, without mutating the attack', () => {
     const { state, options } = setup('kurapika')
-    state.player.kurapika!.held = { source: 'gel', moveId: 'gel:neutralSpecial', victim: 'opponent', loaded: true, used: true, sustainedKeys: [] }
+    state.player.kurapika!.held = {
+      source: 'gel',
+      moveId: 'gel:neutralSpecial',
+      victim: 'opponent',
+      loaded: true,
+      used: true,
+      sustainedKeys: [],
+    }
     state.player.attack = attack('gel')
     const effects = createVisitWeaponScene(options)
     effects.sync(state, 0)
     const snake = options.scene.getObjectByName('gel-snake-arm:player')!
     const folded = snake.children[0].scale.y
+    snake.updateMatrixWorld(true)
+    const head = snake.getObjectByName('gel-snake-head')!
+    const firstHeadSize = new THREE.Box3().setFromObject(head).getSize(new THREE.Vector3())
     state.player.attack.frame = attackData('special', state.player).startup
     const before = structuredClone(state)
     effects.sync(state, 0)
     expect(snake.children[0].scale.y).toBeGreaterThan(folded)
+    snake.updateMatrixWorld(true)
+    const activeHeadSize = new THREE.Box3().setFromObject(head).getSize(new THREE.Vector3())
+    expect(activeHeadSize.distanceTo(firstHeadSize)).toBeLessThan(0.000001)
     expect(state).toEqual(before)
     state.player.attack = null
     effects.sync(state, 1)
@@ -136,6 +202,40 @@ describe('remaining visit models in fighting', () => {
     effects.dispose()
   })
 
+  it('replaces the real hand during Gel’s transformation and restores it on interruption', () => {
+    const { state, options } = setup('gel')
+    state.player.attack = attack('gel')
+    const figure = new THREE.Group()
+    const hand = new THREE.Group()
+    hand.name = 'hand-right'
+    figure.add(hand)
+    const effects = createVisitWeaponScene({ ...options, figureOf: () => figure })
+    effects.sync(state, 0)
+    expect(hand.visible).toBe(false)
+    state.player.attack = null
+    effects.sync(state, 1)
+    expect(hand.visible).toBe(true)
+    state.player.attack = attack('gel')
+    effects.sync(state, 2)
+    effects.dispose()
+    expect(hand.visible).toBe(true)
+  })
+  it.each([1, -1] as const)('keeps Gel’s snake upright when striking in direction %s', (facing) => {
+    const { state, options } = setup('gel')
+    state.player.facing = facing
+    state.opponent.x = state.player.x + facing * 20
+    state.player.attack = attack('gel')
+    const effects = createVisitWeaponScene(options)
+    effects.sync(state, 0)
+    const snake = options.scene.getObjectByName('gel-snake-arm:player')!
+    snake.updateMatrixWorld(true)
+    const head = snake.getObjectByName('gel-snake-head')!
+    const up = new THREE.Vector3(0, 1, 0).transformDirection(head.matrixWorld)
+    const forward = new THREE.Vector3(0, 0, -1).transformDirection(head.matrixWorld)
+    expect(up.y).toBeGreaterThan(0.9)
+    expect(forward.x * facing).toBeGreaterThan(0.9)
+    effects.dispose()
+  })
   it('animates Halkenburg’s existing strike, without introducing a second projectile or impact', () => {
     const { state, options } = setup('halkenburg')
     state.player.attack = attack('halkenburg')
@@ -217,8 +317,13 @@ describe('remaining visit models in fighting', () => {
     state.opponent.crossGame = { owner: 'player', phase: 'warning', noticeFrames: 0, x: 60, y: 0 }
     const effects = createCrossGameScene(options)
     effects.sync(state, 0)
-    const card = options.scene.children.find((root) => root.userData.visitModel === 'cross-game-card')!
-    const face = card.getObjectByProperty('isMesh', true) as THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>
+    const card = options.scene.children.find(
+      (root) => root.userData.visitModel === 'cross-game-card',
+    )!
+    const face = card.getObjectByProperty('isMesh', true) as THREE.Mesh<
+      THREE.BufferGeometry,
+      THREE.MeshBasicMaterial
+    >
     expect(face.material.color.getHex()).toBe(0xf0c94d)
     state.player.crossGameCardFrames = 0
     effects.sync(state, 1)
@@ -228,10 +333,33 @@ describe('remaining visit models in fighting', () => {
 
   it('shares prepared birds and flutes, animates wings, and releases removed entities', () => {
     const { state, options } = setup('cluck')
-    state.battlefield = { entities: [
-      { id: 'bird', kind: 'bird', owner: 'player', x: 45, y: 0, present: true, material: 'real', health: 1, controller: { side: 'player', source: 'cluck' } },
-      { id: 'flute', kind: 'flute', owner: 'neutral', x: 50, y: 0, present: true, material: 'real', health: 1 },
-    ], interactionHeld: { player: false, opponent: false }, completed: { player: 0, opponent: 0 } }
+    state.battlefield = {
+      entities: [
+        {
+          id: 'bird',
+          kind: 'bird',
+          owner: 'player',
+          x: 45,
+          y: 0,
+          present: true,
+          material: 'real',
+          health: 1,
+          controller: { side: 'player', source: 'cluck' },
+        },
+        {
+          id: 'flute',
+          kind: 'flute',
+          owner: 'neutral',
+          x: 50,
+          y: 0,
+          present: true,
+          material: 'real',
+          health: 1,
+        },
+      ],
+      interactionHeld: { player: false, opponent: false },
+      completed: { player: 0, opponent: 0 },
+    }
     const effects = createPreparationScene(options)
     effects.sync(state, 0)
     const bird = options.scene.getObjectByName('visit-hatsu:controlled-bird')!
@@ -252,7 +380,12 @@ describe('remaining visit models in fighting', () => {
   it('requires a real flute for a borrowed Melody performance', () => {
     const { state, options } = setup('kurapika')
     state.player.equipment = []
-    state.player.melodyPerformance = { originX: 40, startupFrames: 0, playingFrames: 30, moveId: 'melody:neutralSpecial' }
+    state.player.melodyPerformance = {
+      originX: 40,
+      startupFrames: 0,
+      playingFrames: 30,
+      moveId: 'melody:neutralSpecial',
+    }
     const effects = createMelodyFluteScene(options)
     effects.sync(state, 0)
     expect(options.scene.children).toHaveLength(0)

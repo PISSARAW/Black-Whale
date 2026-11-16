@@ -1,18 +1,11 @@
+import { mangaBiscuitTrueForm } from '$lib/tour/mangaBiscuitProfile'
 import type { Object3D } from 'three'
 import type { HumanFigure } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 
-/** Ch. 154: adult proportions and a massive frame, retaining Biscuit's costume and hair. */
+/** The supplied adult appearance is shared with previews, resolved only on transformation. */
 export function biscuitTrueFormProfile(compact: HumanProfile): HumanProfile {
-  return {
-    ...compact,
-    frame: 'adult',
-    build: 'broad',
-    height: 1.2,
-    shoulders: 1.5,
-    face: 'square',
-    expression: 'severe',
-  }
+  return mangaBiscuitTrueForm(compact)
 }
 
 /** Thicken the masses, never the joint groups: elbows, wrists and feet keep their reach. */
@@ -25,7 +18,9 @@ export function shapeBiscuitTrueForm(model: HumanFigure): void {
     widen(shoulder.children[2], 1.8)
     widen(elbow.children[0], 1.65)
     model.root.getObjectByName(`hand-${side}`)!.scale.multiplyScalar(1.25)
-    widen(model.root.getObjectByName(`hip-${side}`)!.children[0], 1.55)
+    const hip = model.root.getObjectByName(`hip-${side}`)!
+    hip.position.x *= 1.5
+    widen(hip.children[0], 1.55)
     widen(model.root.getObjectByName(`knee-${side}`)!.children[0], 1.4)
   }
 }

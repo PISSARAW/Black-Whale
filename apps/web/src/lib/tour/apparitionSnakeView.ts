@@ -1,7 +1,7 @@
 import type { Object3D } from 'three'
-import { SNAKE_BOW, SNAKE_HEAD, type Apparition } from './apparitions'
+import { type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
-import { modelKit } from './nenModelPrimitives'
+import { buildGelSnakeHead } from './gelSnakeHead'
 
 const SNAKE_BEADS = 26
 
@@ -36,92 +36,11 @@ function snake(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   // walking up to the thing will meet it. It is a group of its own
   // because it is the part that moves: `driftApparitions` turns it to
   // whoever is looking and flicks the tongue.
-  const head = new THREE.Group()
+  const head = buildGelSnakeHead({ THREE, glow, root, skin: arm })
   head.position.set(Math.cos(last) * seen.size, climb + 0.24, Math.sin(last) * seen.size)
-
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(thickness, thickness * 1.1, 0.34, 6), arm)
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(thickness, thickness * 1.1, 0.34, 12), arm)
   neck.position.y = -0.24
   head.add(neck)
-
-  // The bow, at the join, which is the one thing that makes this Snake
-  // Arm rather than a snake: two pink wings and a knot between them,
-  // sat exactly where the black stops and the violet starts.
-  const ribbon = glow(SNAKE_BOW, 1)
-  const bow = new THREE.Group()
-  bow.position.y = -0.07
-  for (const side of [-1, 1]) {
-    const wing = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.17, 5), ribbon)
-    wing.rotation.z = (side * Math.PI) / 2
-    wing.position.set(side * 0.13, 0.02, 0)
-    bow.add(wing)
-  }
-  const knot = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), ribbon)
-  bow.add(knot)
-  head.add(bow)
-
-  const violet = glow(SNAKE_HEAD, 1)
-  const skull = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 10), violet)
-  // Long rather than round, and pointing the way the head faces, which
-  // is -z: a snout is what says which end of a snake this is.
-  skull.scale.set(0.95, 0.82, 1.45)
-  head.add(skull)
-  const kit = modelKit({ THREE, glow, root: head, skin: violet })
-  for (const [index, x, y] of [
-    [0, -0.1, 0.11],
-    [1, 0.1, 0.11],
-    [2, -0.12, -0.02],
-    [3, 0.12, -0.02],
-  ]) {
-    kit.heart({
-      name: `heart-mark-${index}`,
-      at: [x, y, -0.25],
-      width: 0.065,
-      colour: 0x171318,
-    }).rotation.y = Math.PI
-  }
-
-  // The mouth, held open. A snake that has hold of something is not a
-  // snake with its mouth shut.
-  const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 8), violet)
-  jaw.scale.set(0.85, 0.42, 1.2)
-  jaw.position.set(0, -0.11, -0.06)
-  jaw.rotation.x = -0.3
-  head.add(jaw)
-
-  const white = glow(0xf7f2ff, 1)
-  const ink = glow(0x1a1420, 1)
-  for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), white)
-    eye.position.set(side * 0.11, 0.06, -0.16)
-    head.add(eye)
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.036, 8, 6), ink)
-    pupil.position.set(side * 0.115, 0.06, -0.225)
-    head.add(pupil)
-    // Two fangs, because the mouth is open and an open mouth with
-    // nothing in it reads as a puppet rather than a snake.
-    const fang = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.09, 4), white)
-    fang.rotation.x = Math.PI
-    fang.position.set(side * 0.065, -0.09, -0.19)
-    head.add(fang)
-  }
-
-  // The tongue, forked, out of the front of the mouth. Named because
-  // the drift reaches for it by name to flick it.
-  const tongue = new THREE.Group()
-  tongue.name = 'tongue'
-  tongue.position.set(0, -0.08, -0.2)
-  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.22, 5), ribbon)
-  stem.rotation.x = Math.PI / 2
-  stem.position.z = -0.11
-  tongue.add(stem)
-  for (const side of [-1, 1]) {
-    const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.002, 0.12, 5), ribbon)
-    tip.rotation.x = Math.PI / 2
-    tip.rotation.z = side * 0.4
-    tip.position.set(side * 0.028, 0, -0.27)
-    tongue.add(tip)
-  }
-  head.add(tongue)
 
   // And the rest of the limb, back to the shoulder it came out of. It
   // is beads rather than a tube for the reason the chain is links: the

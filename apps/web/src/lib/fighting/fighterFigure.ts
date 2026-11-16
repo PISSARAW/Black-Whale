@@ -1,3 +1,4 @@
+import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
 import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
@@ -31,7 +32,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
     blinkyAvailable(fighter),
-    Boolean(fighter.hanzoProjection),
+    fighter.hanzoProjection ? fighter.hanzoProjection.startupFrames > 0 : null,
     Boolean(fighter.parallelEyesClosed),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
@@ -109,6 +110,7 @@ function addFighterEquipment(
 ): void {
   const { THREE, glow, fighter } = options
   addBonolenovPrologue({ THREE, glow, fighter, model })
+  addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
     addPadailleWeapon({ THREE, glow, model })
   if (fighter.id === 'franklin') {
@@ -119,4 +121,13 @@ function addFighterEquipment(
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
   if (blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })
+}
+
+function addHanzoActivation(
+  options: Parameters<typeof buildFightFigure>[0],
+  model: ReturnType<typeof buildHumanFigure>,
+) {
+  const { THREE, glow, fighter } = options
+  if (fighter.id === 'hanzo' && (fighter.hanzoProjection?.startupFrames ?? 0) > 0)
+    addHanzoProjectionMantle({ THREE, glow, model })
 }

@@ -1,3 +1,4 @@
+import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { rightHandedPose } from './fightHandedPose'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
@@ -88,6 +89,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateMussePistol(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
+    restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
     if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)
       return
@@ -105,6 +107,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
+    animateMelodyFlute(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   }
 }

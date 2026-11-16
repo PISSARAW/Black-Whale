@@ -105,6 +105,12 @@ export const LIKENESS_ROSTER: readonly string[] = [
   'brocco-li',
   'keni-wang',
   'luini',
+  // A.7 — combattants ajoutés au catalogue commun (2026-11-16)
+  'longhi',
+  'padaille',
+  'terebellum',
+  'voconte',
+  'yokotani',
 ]
 
 type Invariant = (catalogue: Catalogue) => Finding[]

@@ -13,6 +13,7 @@
   import type { FighterId } from '$lib/fighting/types'
   import type { FightFormatId } from '$lib/fighting/formats'
   import './pvp.css'
+  import { rankingToken } from '$lib/fighting/career/ranking'
   let player: FighterId = 'kurapika',
     opponent: FighterId = 'hisoka'
   let formatId: FightFormatId = 'knockout'
@@ -27,7 +28,7 @@
     try {
       const response = await fetch($link('/fighting/pvp/api/matches'), {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', 'x-clash-profile': rankingToken() },
         body: JSON.stringify({
           ruleset: PVP_RULESET,
           setup: { player, opponent, formatId, environment },
@@ -37,6 +38,8 @@
       if (!response.ok) throw Error(value.error ?? 'CREATE_FAILED')
       const session = value as PvpSession
       sessionStorage.setItem(pvpSessionKey(session.matchId), session.token)
+      if (session.watchHref)
+        sessionStorage.setItem(`clash:watch:${session.matchId}`, session.watchHref)
       await goto($link(session.inviteHref))
     } catch (failure) {
       error = failure instanceof Error ? failure.message : 'CREATE_FAILED'
@@ -55,6 +58,9 @@
 <main class="pvp-page">
   <a href={$link('/fighting')}>{language === 'fr' ? 'Retour à Clash' : 'Back to Clash'}</a>
   <h1>Clash · {language === 'fr' ? 'Duel privé' : 'Private duel'}</h1>
+  <a href={$link('/fighting/profile')}
+    >{language === 'fr' ? 'Profil et saison PvP' : 'Profile and PvP season'}</a
+  >
   <p>
     {language === 'fr'
       ? 'Choisis le duel et partage son invitation. Chaque joueur confirme la même configuration avant de commencer.'

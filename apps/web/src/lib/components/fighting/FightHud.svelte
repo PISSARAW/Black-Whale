@@ -35,27 +35,31 @@
         </span>
       </div>
       <FightHealth {fighter} {language} {mirrored} {detailed} />
-      <div
-        class="aura"
-        role="meter"
-        aria-label="Aura"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow={fighter.aura}
-      >
-        <span style={`width:${fighter.aura}%`}></span>
-      </div>
+      {#if !state.spectatorView}<div
+          class="aura"
+          role="meter"
+          aria-label="Aura"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={fighter.aura}
+        >
+          <span style={`width:${fighter.aura}%`}></span>
+        </div>{/if}
       <div class="nen-status">
         <span
-          >{!mirrored
-            ? nenStatus(fighter).join(' · ')
-            : state.player.nen.gyo
-              ? auraDistribution(fighter)
-              : language === 'fr'
-                ? 'Nen masqué'
-                : 'Nen hidden'}</span
+          >{state.spectatorView
+            ? language === 'fr'
+              ? 'Vue publique'
+              : 'Public view'
+            : !mirrored
+              ? nenStatus(fighter).join(' · ')
+              : state.player.nen.gyo
+                ? auraDistribution(fighter)
+                : language === 'fr'
+                  ? 'Nen masqué'
+                  : 'Nen hidden'}</span
         >
-        <b>{Math.floor(fighter.aura)}<small> / 100</small></b>
+        {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
       </div>
       <FightComboMaster {state} {side} {language} compact />
     </div>

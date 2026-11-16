@@ -77,6 +77,9 @@
   <a href={localizePath('/fighting/pvp', language)}
     >{language === 'fr' ? 'Jouer en duel privé' : 'Play a private duel'}</a
   >
+  <a href={localizePath('/fighting/profile', language)}
+    >{language === 'fr' ? 'Profil, saison et tournois' : 'Profile, season and tournaments'}</a
+  >
   <details open={expanded}>
     <summary
       >{language === 'fr' ? 'Défis et parcours Arcade' : 'Challenges and Arcade route'}</summary

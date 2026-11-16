@@ -20,7 +20,7 @@ function lobby() {
     environment: createFightEnvironment(),
   } as const
   const host = registry.create(setup),
-    guest = registry.join(host.matchId, PVP_RULESET)
+    guest = registry.join(host.matchId, PVP_RULESET, { invitation: host.inviteHref.split('#')[1] })
   const view = () => registry.view(host.matchId, host.token)
   const ready = (token: string) =>
     registry.ready(host.matchId, { token, ruleset: PVP_RULESET, configHash: view().configHash })
@@ -72,7 +72,9 @@ describe('authoritative private Clash lobby', () => {
       formatId: 'knockout',
       environment: createFightEnvironment(),
     })
-    const guest = registry.join(host.matchId, PVP_RULESET)
+    const guest = registry.join(host.matchId, PVP_RULESET, {
+      invitation: host.inviteHref.split('#')[1],
+    })
     const view = () => registry.view(host.matchId, host.token)
     function readyBoth() {
       for (const token of [host.token, guest.token])
@@ -121,13 +123,17 @@ describe('authoritative private Clash lobby', () => {
       environment: createFightEnvironment(),
     })
     registry.leave(host.matchId, host.token)
-    expect(() => registry.join(host.matchId, PVP_RULESET)).toThrow('NOT_READY')
+    expect(() =>
+      registry.join(host.matchId, PVP_RULESET, { invitation: host.inviteHref.split('#')[1] }),
+    ).toThrow('NOT_READY')
   })
   it('uses one invite and two opaque authenticated seats, and requires both configuration confirmations', () => {
     const l = lobby()
     expect(l.host.token).not.toBe(l.guest.token)
     expect(l.host.inviteHref).not.toContain(l.host.token)
-    expect(() => l.registry.join(l.host.matchId, PVP_RULESET)).toThrow('FULL')
+    expect(() =>
+      l.registry.join(l.host.matchId, PVP_RULESET, { invitation: l.host.inviteHref.split('#')[1] }),
+    ).toThrow('FULL')
     expect(() => l.registry.view(l.host.matchId, 'wrong')).toThrow('UNAUTHORIZED')
     expect(l.ready(l.host.token).status).toBe('ready')
     l.advance(100)
@@ -144,7 +150,7 @@ describe('authoritative private Clash lobby', () => {
   })
   it('refuses a mismatched ruleset or configuration without marking the seat ready', () => {
     const l = lobby()
-    expect(() => l.registry.join('absent', 'old')).toThrow('VERSION')
+    expect(() => l.registry.join('absent', 'old', { invitation: '' })).toThrow('VERSION')
     for (const change of [{ ruleset: 'old' }, { configHash: 'tampered' }])
       expect(() =>
         l.registry.ready(l.host.matchId, {

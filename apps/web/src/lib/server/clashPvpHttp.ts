@@ -4,6 +4,7 @@ import { rateLimit } from './rateLimit'
 import { log, describeError } from './log'
 import { parsePvpPacket, parsePvpSetup, record } from '$lib/fighting/pvp/protocol'
 import { PVP_RULESET } from '$lib/fighting/pvp/types'
+import { clashSeasons } from './clashSeasons'
 
 const headers = { 'cache-control': 'no-store' }
 export function clashPvpFailure(error: unknown): Response {
@@ -15,6 +16,7 @@ export function clashPvpFailure(error: unknown): Response {
   const statuses: Record<string, number> = {
     NOT_FOUND: 404,
     UNAUTHORIZED: 401,
+    INVITATION: 401,
     VERSION: 426,
     FULL: 409,
     SEQUENCE: 409,
@@ -79,13 +81,16 @@ export async function clashBody(request: Request): Promise<unknown> {
     return null
   }
 }
-export function createClashLobby(body: unknown): Response {
+export function createClashLobby(body: unknown, profileToken = ''): Response {
   if (!record(body) || body.ruleset !== PVP_RULESET)
     return json({ error: 'VERSION' }, { status: 426, headers })
   const setup = parsePvpSetup(body.setup)
   if (!setup) return json({ error: 'INVALID_SETUP' }, { status: 400, headers })
   try {
-    return json(clashPvpRegistry.create(setup), { status: 201, headers })
+    return json(clashPvpRegistry.create(setup, clashSeasons.identify(profileToken) ?? undefined), {
+      status: 201,
+      headers,
+    })
   } catch (error) {
     return clashPvpFailure(error)
   }
@@ -93,8 +98,18 @@ export function createClashLobby(body: unknown): Response {
 export function updateClashLobby(id: string, request: Request, body: unknown): Response {
   if (!record(body)) return invalid()
   try {
-    if (body.kind === 'join' && typeof body.ruleset === 'string')
-      return json(clashPvpRegistry.join(id, body.ruleset), { status: 201, headers })
+    if (
+      body.kind === 'join' &&
+      typeof body.ruleset === 'string' &&
+      typeof body.invitation === 'string'
+    )
+      return json(
+        clashPvpRegistry.join(id, body.ruleset, {
+          invitation: body.invitation,
+          profile: clashSeasons.identify(request.headers.get('x-clash-profile') ?? '') ?? undefined,
+        }),
+        { status: 201, headers },
+      )
     return authenticatedUpdate(id, request, body)
   } catch (error) {
     return clashPvpFailure(error)

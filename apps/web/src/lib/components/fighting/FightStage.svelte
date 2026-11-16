@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { clashCareer } from '$lib/fighting/career/profile'
   import FightTouchControls from './FightTouchControls.svelte'
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
@@ -54,6 +55,7 @@
 <FightAudio {state} {language} {paused} viewer={sensoryViewer} />
 <section
   class="fight-stage"
+  data-clash-theme={$clashCareer.appearance.theme}
   class:high-contrast={comfort.highContrast}
   data-shake={comfort.shake}
   data-flashes={comfort.flashes}
@@ -64,7 +66,13 @@
     <FightCatsName state={visibleState} {language} />
     <FightEasterEggCaptions state={visibleState} {language} />
     {#key sceneKey}
-      <FightScene state={visibleState} {stageId} {language} {comfort} />
+      <FightScene
+        state={visibleState}
+        {stageId}
+        {language}
+        {comfort}
+        appearance={$clashCareer.appearance}
+      />
     {/key}
 
     {#if training}
@@ -132,6 +140,12 @@
 </section>
 
 <style>
+  .fight-stage[data-clash-theme='heavens'] {
+    border-color: #a6e5ff;
+  }
+  .fight-stage[data-clash-theme='nocturne'] {
+    border-color: #d3a9ff;
+  }
   .fight-stage {
     --hud-font: calc(0.75rem * var(--hud-scale, 1));
     display: flex;

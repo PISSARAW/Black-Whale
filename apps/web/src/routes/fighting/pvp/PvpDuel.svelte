@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { clashCareer } from '$lib/fighting/career/profile'
+  import FightCeremony from '$lib/components/fighting/FightCeremony.svelte'
   import { onMount, setContext } from 'svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightPvpPanels from '$lib/components/fighting/FightPvpPanels.svelte'
@@ -17,6 +19,7 @@
   export let client: PvpClient
   export let language: 'fr' | 'en'
   export let invite = ''
+  export let watchInvite = ''
   export let autoConnect = false
   let input = { ...EMPTY_INPUT }
   let joined = autoConnect
@@ -67,6 +70,7 @@
     await client.join()
   }
   onMount(() => {
+    clashCareer.load()
     controls.load()
     const unlisten = listenFightEvents({ controls, handleKey: key, release, hidden: release })
     let disposed = false,
@@ -96,11 +100,15 @@
   })
 </script>
 
-<FightPvpStatus {client} {language} {invite} />
+<FightPvpStatus {client} {language} {invite} {watchInvite} />
 {#if !joined}<button type="button" class="join" onclick={join}
     >{language === 'fr' ? 'Rejoindre ce duel privé' : 'Join this private duel'}</button
   >{/if}
 {#if state}
+  {#if state.phase === 'ready' || state.phase === 'finished'}<FightCeremony
+      {state}
+      {language}
+    />{/if}
   <FightInputSettings {controls} {language} onEditing={release} />
   <FightPvpPanels {state} {language} paused={!enabled} onCommand={emit} onEditing={release} />
   <FightStage

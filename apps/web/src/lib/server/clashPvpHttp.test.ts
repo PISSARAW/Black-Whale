@@ -58,6 +58,7 @@ describe('Clash PvP HTTP boundary', () => {
     const guest = await updateClashLobby(host.matchId, request(), {
       kind: 'join',
       ruleset: PVP_RULESET,
+      invitation: host.inviteHref.split('#')[1],
     }).json()
     const configHash = clashPvpRegistry.view(host.matchId, host.token).configHash
     for (const token of [host.token, guest.token])

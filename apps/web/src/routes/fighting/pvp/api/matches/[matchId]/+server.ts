@@ -9,13 +9,18 @@ import {
 } from '$lib/server/clashPvpHttp'
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = ({ params, request, getClientAddress }) => {
+export const GET: RequestHandler = ({ params, request, getClientAddress, url }) => {
   const limited = clashThrottle(`poll:${getClientAddress()}`, 3000)
   if (limited) return limited
   try {
-    return json(clashPvpRegistry.view(params.matchId, clashBearer(request)), {
-      headers: { 'cache-control': 'no-store' },
-    })
+    return json(
+      url.searchParams.has('watch')
+        ? clashPvpRegistry.watch(params.matchId, clashBearer(request))
+        : clashPvpRegistry.view(params.matchId, clashBearer(request)),
+      {
+        headers: { 'cache-control': 'no-store' },
+      },
+    )
   } catch (error) {
     return clashPvpFailure(error)
   }

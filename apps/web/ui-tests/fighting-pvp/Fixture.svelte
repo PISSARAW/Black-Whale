@@ -25,7 +25,7 @@
     })
     const session = await response.json()
     sessionStorage.setItem(pvpSessionKey(session.matchId), session.token)
-    location.href = `${location.pathname}?match=${session.matchId}`
+    location.href = `${location.pathname}?match=${session.matchId}#${session.inviteHref.split('#')[1]}`
   }
   onMount(() => {
     if (!id) return
@@ -34,6 +34,7 @@
     client = createPvpClient({
       matchId: id,
       endpoint: `/__pvp/${id}`,
+      invitation: location.hash.slice(1),
       fetch,
       storage: sessionStorage,
     })

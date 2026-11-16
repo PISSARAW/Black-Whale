@@ -21,7 +21,9 @@ function connection() {
     formatId: 'knockout',
     environment: createFightEnvironment(),
   })
-  const guest = registry.join(host.matchId, PVP_RULESET)
+  const guest = registry.join(host.matchId, PVP_RULESET, {
+    invitation: host.inviteHref.split('#')[1],
+  })
   const saved = new Map([[pvpSessionKey(host.matchId), host.token]])
   const bodies: Array<Record<string, unknown>> = []
   const fetcher = async function (this: unknown, _url, init) {
@@ -90,6 +92,23 @@ function connection() {
   }
 }
 describe('private Clash client synchronization', () => {
+  it('stops on an invalid player invitation instead of trying to authenticate the spectator', async () => {
+    let requests = 0
+    const client = createPvpClient({
+      matchId: 'private',
+      endpoint: '/test',
+      invitation: 'watch-token',
+      fetch: (async () => {
+        requests++
+        return new Response('{"error":"INVITATION"}', { status: 401 })
+      }) as typeof fetch,
+    })
+    await client.join()
+    expect(get(client).connection).toBe('error')
+    expect(get(client).error).toBe('INVITATION')
+    await client.step(0)
+    expect(requests).toBe(1)
+  })
   it('serializes a ready click behind an in-flight connection request', async () => {
     const c = connection()
     await Promise.all([c.client.join(), c.client.ready()])

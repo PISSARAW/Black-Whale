@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { clashCareer } from '$lib/fighting/career/profile'
+  import { createCareerTracker } from '$lib/fighting/career/runtime'
+  import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
   import FightCombatSchool from '$lib/components/fighting/FightCombatSchool.svelte'
   import { createCombatSchool, advanceCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
@@ -20,7 +23,7 @@
   import { resetTraining, setTrainingDummy } from '$lib/fighting/trainingSession'
   import type { TrainingPosition } from '$lib/fighting/trainingTypes'
   import { FIXED_STEP } from '$lib/fighting/fightClock'
-  import { winnerLabel, finishLabel, canControlFight } from './fightingPageHelpers'
+  import { canControlFight } from './fightingPageHelpers'
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount, setContext } from 'svelte'
@@ -42,7 +45,6 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { createFight, performAuraAttack } from '$lib/fighting/engine'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
-  import { fighterDefinition } from '$lib/fighting/roster'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
     EMPTY_INPUT,
@@ -67,7 +69,9 @@
   let input: FightInput = { ...EMPTY_INPUT }
   let opponentInput: FightInput = { ...EMPTY_INPUT }
   /** Presses wait for the next simulated frame instead of landing between two. */
-  const match = createFightMatchRuntime()
+  const match = createFightMatchRuntime(undefined, {
+    career: createCareerTracker(clashCareer.record),
+  })
   const replays = match.replays
   const diagnostics = match.diagnostics
   const replayActions = { onOpen: openReplay, onClose: closeReplay, onRestart: restartReplay }
@@ -268,6 +272,7 @@
     resetFightInputs()
   }
   onMount(() => {
+    clashCareer.load()
     easterEggPreferences = readEasterEggPreferences()
     controls.load()
     void replays.load()
@@ -445,42 +450,17 @@
           />
         {/if}
 
-        {#if paused && state.phase === 'fighting' && state.mode !== 'training'}
-          <div class="match-overlay pause-overlay">
-            <p>{language === 'fr' ? 'COMBAT EN PAUSE' : 'FIGHT PAUSED'}</p>
-            <h2>{language === 'fr' ? 'PAUSE' : 'PAUSED'}</h2>
-            <button type="button" onclick={togglePause}>
-              {language === 'fr' ? 'Reprendre' : 'Resume'}
-            </button>
-          </div>
-        {/if}
-
-        {#if state.phase === 'ready' && !replays.active}
-          <div class="match-overlay ready-overlay">
-            <p>
-              {fighterDefinition(state.player.id).name} <span>VS</span>
-              {fighterDefinition(state.opponent.id).name}
-            </p>
-            <h2>{copy.ready}</h2>
-            <button type="button" onclick={startFight}>{copy.fight}</button>
-          </div>
-        {:else if state.phase === 'finished' && !replays.active}
-          <div class="match-overlay result-overlay">
-            <p>{finishLabel(state, language)}</p>
-            <h2>{winnerLabel(state, copy)}</h2>
-            <p>{state.roundsWon.player} — {state.roundsWon.opponent}</p>
-            <div>
-              {#if state.matchWinner}
-                <button type="button" onclick={rematch}>{copy.rematch}</button>
-              {:else}
-                <button type="button" onclick={continueMatch}>
-                  {language === 'fr' ? 'Manche suivante' : 'Next round'}
-                </button>
-              {/if}
-              <button type="button" class="secondary" onclick={chooseAgain}>{copy.roster}</button>
-            </div>
-          </div>
-        {/if}
+        <FightMatchOverlays
+          {state}
+          {language}
+          {paused}
+          replay={replays.active}
+          {togglePause}
+          {startFight}
+          {rematch}
+          {continueMatch}
+          {chooseAgain}
+        />
       </div>
     </div>
 

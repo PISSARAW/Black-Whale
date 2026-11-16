@@ -14,7 +14,6 @@ réglages du duel. `arenaTechnique.test.ts` vérifie collisions, destruction,
 interruption, stockage, marques, prévisions et réinitialisation ;
 `scripts/check-arena-techniques.mjs` vérifie clavier, tactile et rendu mobile.
 
-
 `fighting` est le mode de duel 2D du Black Whale. Il reprend les personnages et
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.
@@ -207,6 +206,17 @@ annulation des entrées et persistance. `node scripts/check-fighting-readability
 (depuis `apps/web`) vérifie les composants de production, les trois largeurs
 1440 / 390 / 320 px, le tactile, le stockage et l’animation réduite. Les manettes
 standard sont simulées ; aucune mesure de latence matérielle n’est revendiquée.
+
+## Phase 8 : carrière et extension de l’expérience
+
+`/fighting/profile` ajoute l’historique local, la maîtrise des quarante personnages,
+les habillages, introductions et poses de victoire. Les replays et le laboratoire
+ne donnent pas de progression. Le classement mensuel partagé suit seulement les
+matchs PvP terminés et validés par le serveur entre deux identités inscrites.
+Les spectateurs utilisent un secret séparé, sans accès aux commandes ou aux visions
+privées. `/fighting/tournament` propose un tableau local de deux à seize participants.
+La présentation ne modifie aucune condition du Nen. Détails, persistance et limites :
+[CAREER.md](./CAREER.md).
 
 ## Phase 7 : PvP privé
 
@@ -905,7 +915,7 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   hors champ. La baie des ressorts reçoit un cadrage plus haut (`stageCamera.ts`),
   vérifié avec les deux combattants aux extrémités et la grande forme de Biscuit.
   `stageRoomClearance.test.ts` contrôle chaque modèle ; `pnpm --filter
-  @black-whale/web test:stages-ui` capture les 33 terrains à 1100, 390 et 320 px,
+@black-whale/web test:stages-ui` capture les 33 terrains à 1100, 390 et 320 px,
   au centre, aux extrémités et avec la grande forme de Biscuit.
   Le terrain ne modifie pas le barème ; LSDF exige
   toutefois la juridiction de la planque occupée par Morena.

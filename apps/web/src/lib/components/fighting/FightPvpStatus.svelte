@@ -5,6 +5,7 @@
   export let client: PvpClient
   export let language: 'fr' | 'en'
   export let invite = ''
+  export let watchInvite = ''
   const labels: Record<PvpStatus, [string, string]> = {
     waiting: ['En attente du second joueur', 'Waiting for the second player'],
     ready: ['Confirmer le duel ou la manche suivante', 'Confirm the duel or next round'],
@@ -89,12 +90,23 @@
         onfocus={(event) => event.currentTarget.select()}
       /></label
     >{/if}
+  {#if watchInvite}<label
+      >{language === 'fr' ? 'Invitation spectateur' : 'Spectator invite'}<input
+        readonly
+        value={watchInvite}
+        onfocus={(event) => event.currentTarget.select()}
+      /></label
+    >{/if}
   {#if $client.error}<p role="alert">
       {$client.connection === 'diverged'
         ? language === 'fr'
           ? 'État reçu incohérent. Commandes suspendues ; resynchronisation…'
           : 'State mismatch. Inputs suspended; resynchronizing…'
-        : $client.error}
+        : $client.error === 'INVITATION'
+          ? language === 'fr'
+            ? 'Invitation de joueur invalide ou expirée.'
+            : 'Player invitation is invalid or expired.'
+          : $client.error}
     </p>{/if}
 </section>
 

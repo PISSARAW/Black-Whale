@@ -11,6 +11,8 @@ import {
   type PvpView,
 } from './types'
 import type { FightState } from '../types'
+import { rankingToken } from '../career/ranking'
+import { recordOnlineCareer } from '../career/online'
 
 interface ClientState {
   view: PvpView | null
@@ -22,6 +24,7 @@ interface ClientState {
 interface ClientOptions {
   matchId: string
   endpoint: string
+  invitation?: string
   fetch: typeof fetch
   storage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
   now?: () => number
@@ -58,7 +61,11 @@ export function createPvpClient(options: ClientOptions) {
     const response = await transport(options.endpoint, {
       method: body ? 'POST' : 'GET',
       cache: 'no-store',
-      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
+        'x-clash-profile': rankingToken(),
+      },
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(2500),
     })
@@ -70,6 +77,7 @@ export function createPvpClient(options: ClientOptions) {
   function accept(view: PvpView) {
     const state = decodePvpView(view)
     store.update((current) => ({ ...current, view, state, connection: 'connected', error: '' }))
+    recordOnlineCareer(view)
   }
   function failure(error: unknown) {
     const message = error instanceof Error ? error.message : 'NETWORK'
@@ -109,7 +117,11 @@ export function createPvpClient(options: ClientOptions) {
     join() {
       return exclusive(async () => {
         if (!token) {
-          const session = (await request({ kind: 'join', ruleset: PVP_RULESET })) as PvpSession
+          const session = (await request({
+            kind: 'join',
+            ruleset: PVP_RULESET,
+            invitation: options.invitation ?? '',
+          })) as PvpSession
           token = session.token
           options.storage?.setItem(pvpSessionKey(options.matchId), token)
         }
@@ -132,7 +144,7 @@ export function createPvpClient(options: ClientOptions) {
     step(input: number) {
       return exclusive(async () => {
         const current = get(store)
-        if (['version', 'error'].includes(current.connection)) return
+        if (terminalConnection(current)) return
         if ((!retry && current.connection !== 'connected') || current.view?.status !== 'playing') {
           retry = null
           pending = []
@@ -174,10 +186,16 @@ export function createPvpClient(options: ClientOptions) {
     },
   }
 }
+function terminalConnection(current: ClientState) {
+  return (
+    ['version', 'error'].includes(current.connection) ||
+    ['finished', 'abandoned'].includes(current.view?.status ?? '')
+  )
+}
 function errorConnection(message: string): ClientState['connection'] {
   if (message === 'VERSION') return 'version'
   if (message === 'DIVERGED') return 'diverged'
-  if (['FULL', 'UNAUTHORIZED', 'NOT_FOUND'].includes(message)) return 'error'
+  if (['FULL', 'UNAUTHORIZED', 'NOT_FOUND', 'INVITATION'].includes(message)) return 'error'
   return 'reconnecting'
 }
 export type PvpClient = ReturnType<typeof createPvpClient>

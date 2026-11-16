@@ -25,7 +25,9 @@
     trackFightOpponent,
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
-  import { fightMove } from '$lib/fighting/fightMoves'
+  import { fightSceneReaction } from '$lib/fighting/sceneReaction'
+  import { victoryMotion } from '$lib/fighting/career/presentation'
+  import { defaultAppearance, type CareerAppearance } from '$lib/fighting/career/types'
   import { fightBodyMotion } from '$lib/fighting/fightBodyMotion'
   import {
     comfortableImpact,
@@ -35,13 +37,6 @@
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
   import { motionOf } from '$lib/fighting/fighterMovement'
   import { createStrideClocks, transitionSecondsFor } from '$lib/fighting/sceneMotion'
-  import {
-    impactReaction,
-    isThrowTech,
-    knockdownMotion,
-    throwTechMotion,
-    wakeupMotion,
-  } from '$lib/fighting/reactionMotion'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
@@ -50,6 +45,7 @@
   import type { HumanPose } from '$lib/tour/humanAnimation'
 
   export let comfort = defaultFightComfort()
+  export let appearance: CareerAppearance = defaultAppearance()
   export let state: FightState
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
 
@@ -296,20 +292,6 @@
           model: ReturnType<typeof buildFighter>
           seconds: number
         }
-        function reactionMotion(
-          fighter: ArcadeFighter,
-          progress: number,
-          side: 'player' | 'opponent',
-        ) {
-          let motion = fightMove(fighter, progress)
-          if (fighter.pose === 'hit' && state.impact?.attacker !== side)
-            motion = impactReaction(state.impact?.zone ?? 'torso', progress)
-          if (fighter.pose === 'down') motion = knockdownMotion(progress)
-          if (fighter.pose === 'wakeup') motion = wakeupMotion(progress)
-          if (isThrowTech(state)) motion = throwTechMotion(side)
-          return motion
-        }
-
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
           model.root.visible = fightFigureVisible(state, side)
@@ -319,7 +301,7 @@
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
-          const fallback = reactionMotion(fighter, progress, side)
+          const fallback = fightSceneReaction({ fighter, state, progress, side })
           const impact = state.impact
           const hitZone = impact && impact.attacker !== side ? impact.zone : undefined
           const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
@@ -330,7 +312,13 @@
               opponent: sleepingBody(opponent),
               bodyAngle,
               seconds,
-              motion,
+              motion: victoryMotion({
+                state,
+                side,
+                victory: appearance.victory,
+                seconds,
+                fallback: motion,
+              }),
             }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
             transitionSeconds: transitionSecondsFor(fighter),

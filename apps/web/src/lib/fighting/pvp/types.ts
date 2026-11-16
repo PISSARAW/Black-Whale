@@ -7,7 +7,7 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-1:${REPLAY_RULESET}`
+export const PVP_RULESET = `clash-pvp-2:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -41,6 +41,7 @@ export interface PvpSession {
   token: string
   side: FightSide
   inviteHref: string
+  watchHref?: string
 }
 export type PvpStatus = 'waiting' | 'ready' | 'playing' | 'interrupted' | 'finished' | 'abandoned'
 export interface PvpView {
@@ -58,5 +59,14 @@ export interface PvpView {
   snapshot: string
   snapshotHash: string
   disconnectedSide: FightSide | null
+  practice?: import('../career/types').MatchPractice
+  names?: Partial<Record<FightSide, string>>
+}
+export interface PvpSpectatorView {
+  status: PvpStatus
+  setup: PvpSetup
+  tick: number
+  snapshot: string
+  snapshotHash: string
 }
 export const pvpSessionKey = (id: string) => `black-whale:clash:pvp:${id}`

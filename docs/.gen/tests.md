@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 640
+Fichiers : 649
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -259,6 +259,15 @@ Fichiers : 640
 ## `apps/web/src/lib/fighting/bonolenov.test.ts`
 
 - Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
+
+## `apps/web/src/lib/fighting/career/career.test.ts`
+
+- persistent local Clash career > starts empty, bounds text and sanitizes names without interpreting markup
+- career observes actual referee states > never grants career progress while playing a recorded match
+
+## `apps/web/src/lib/fighting/career/tournament.test.ts`
+
+- local tournament organizer > rejects invalid entrants and results, and never mutates the previous bracket
 
 ## `apps/web/src/lib/fighting/chrollo.test.ts`
 
@@ -533,12 +542,16 @@ Fichiers : 640
 
 ## `apps/web/src/lib/fighting/pvp/client.test.ts`
 
-- private Clash client synchronization > serializes a ready click behind an in-flight connection request
+- private Clash client synchronization > stops on an invalid player invitation instead of trying to authenticate the spectator
 
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
 - server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
 - seat-specific Nen information > preserves spoken text while remapping owners and public verdicts for P2
+
+## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
+
+- read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
 
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
@@ -559,6 +572,10 @@ Fichiers : 640
 ## `apps/web/src/lib/fighting/stageBackground.test.ts`
 
 - stage background Easter Eggs > keeps declared likenesses and original graphic sources available for all stages
+
+## `apps/web/src/lib/fighting/stagePost.test.ts`
+
+- scene-only multisample antialiasing > keeps scene MSAA and HDR, resolves before post, and preserves the output chain
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 
@@ -1240,6 +1257,10 @@ Fichiers : 640
 ## `apps/web/src/lib/server/clashPvpHttp.test.ts`
 
 - Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
+
+## `apps/web/src/lib/server/clashSeasons.test.ts`
+
+- instance PvP seasons > uses opaque credentials and exposes no token in identity or standings
 
 ## `apps/web/src/lib/server/co-presence.test.ts`
 

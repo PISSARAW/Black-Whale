@@ -12,6 +12,8 @@ import type {
   PvpView,
 } from '$lib/fighting/pvp/types'
 import type { FightSide } from '$lib/fighting/types'
+import { clashSeasons, type ClashSeasons, type RankedProfile } from './clashSeasons'
+import { spectatorSnapshot } from '$lib/fighting/pvp/spectator'
 
 interface Seat {
   token: string
@@ -29,6 +31,10 @@ interface Lobby {
   disconnectedSide: FightSide | null
   lastAdvancedAt: number
   match: AuthoritativeClashMatch
+  profiles: Partial<Record<FightSide, RankedProfile>>
+  watchToken: string
+  joinToken: string
+  ranked: boolean
 }
 export class ClashPvpError extends Error {
   constructor(readonly code: string) {
@@ -41,8 +47,9 @@ export class ClashPvpRegistry {
   constructor(
     private now = Date.now,
     private randomId: () => string = () => crypto.randomUUID(),
+    private seasons: ClashSeasons = clashSeasons,
   ) {}
-  create(setup: PvpSetup): PvpSession {
+  create(setup: PvpSetup, profile?: RankedProfile): PvpSession {
     this.sweep()
     if (this.lobbies.size >= 100) throw new ClashPvpError('CAPACITY')
     const id = this.randomId(),
@@ -62,16 +69,29 @@ export class ClashPvpRegistry {
       status: 'waiting',
       disconnectedSide: null,
       match: new AuthoritativeClashMatch(state),
+      profiles: { player: profile },
+      watchToken: this.randomId(),
+      joinToken: this.randomId(),
+      ranked: false,
     })
-    return session(id, 'player', token)
+    const result = session(id, 'player', token)
+    result.inviteHref += `#${this.lobbies.get(id)!.joinToken}`
+    result.watchHref = `/fighting/pvp/watch/${id}#${this.lobbies.get(id)!.watchToken}`
+    return result
   }
-  join(id: string, ruleset: string): PvpSession {
+  join(
+    id: string,
+    ruleset: string,
+    options: { invitation: string; profile?: RankedProfile },
+  ): PvpSession {
     if (ruleset !== PVP_RULESET) throw new ClashPvpError('VERSION')
     const lobby = this.lobby(id)
     if (lobby.seats.opponent) throw new ClashPvpError('FULL')
     if (lobby.status !== 'waiting') throw new ClashPvpError('NOT_READY')
+    if (options.invitation !== lobby.joinToken) throw new ClashPvpError('INVITATION')
     const token = this.randomId()
     lobby.seats.opponent = { token, seenAt: this.now() }
+    lobby.profiles.opponent = options.profile
     lobby.status = 'ready'
     return session(id, 'opponent', token)
   }
@@ -99,6 +119,19 @@ export class ClashPvpRegistry {
       authorityHash: fightReplayHash(state),
       ...pvpSnapshot(state, side),
       disconnectedSide: lobby.disconnectedSide,
+      practice: lobby.match.summary(),
+      names: { player: lobby.profiles.player?.name, opponent: lobby.profiles.opponent?.name },
+    }
+  }
+  watch(id: string, token: string) {
+    const lobby = this.lobby(id)
+    if (token !== lobby.watchToken) throw new ClashPvpError('UNAUTHORIZED')
+    this.advance(lobby)
+    return {
+      status: lobby.status,
+      setup: structuredClone(lobby.setup),
+      tick: lobby.match.tick,
+      ...spectatorSnapshot(lobby.match.snapshot()),
     }
   }
   ready(id: string, options: { token: string; ruleset: string; configHash: string }): PvpView {
@@ -146,6 +179,15 @@ export class ClashPvpRegistry {
       lobby.status = state.matchWinner ? 'finished' : 'ready'
       lobby.ready = { player: false, opponent: false }
       lobby.match.release()
+      if (state.matchWinner && !lobby.ranked) {
+        lobby.ranked = true
+        this.seasons.record({
+          id: lobby.id,
+          player: lobby.profiles.player,
+          opponent: lobby.profiles.opponent,
+          winner: state.matchWinner,
+        })
+      }
     }
   }
   private detectDisconnect(lobby: Lobby) {
@@ -214,5 +256,10 @@ export class ClashPvpRegistry {
 function session(matchId: string, side: FightSide, token: string): PvpSession {
   return { matchId, side, token, inviteHref: `/fighting/pvp/${matchId}` }
 }
-const shared = globalThis as typeof globalThis & { __clashPvp?: ClashPvpRegistry }
+const shared = globalThis as typeof globalThis & {
+  __clashPvp?: ClashPvpRegistry
+  __clashPvpRules?: string
+}
+if (shared.__clashPvpRules !== PVP_RULESET) shared.__clashPvp = new ClashPvpRegistry()
+shared.__clashPvpRules = PVP_RULESET
 export const clashPvpRegistry = shared.__clashPvp ?? (shared.__clashPvp = new ClashPvpRegistry())

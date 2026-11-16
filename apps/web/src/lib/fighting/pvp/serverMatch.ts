@@ -4,6 +4,7 @@ import { unpackReplayInput } from '../fightReplayInput'
 import { applyPvpCommand } from './commands'
 import type { FightSide, FightState } from '../types'
 import type { PvpCommand, PvpInputPacket } from './types'
+import { createMatchPractice } from '../career/practice'
 
 const SIDES = ['player', 'opponent'] as const
 /** Only this server instance advances time. No client state, tick, or verdict is accepted. */
@@ -14,6 +15,7 @@ export class AuthoritativeClashMatch {
   private receipts: Partial<Record<FightSide, string>> = {}
   private inputAt = { player: 0, opponent: 0 }
   tick = 0
+  private practice = createMatchPractice()
   constructor(private current: FightState) {}
   snapshot(): FightState {
     return structuredClone(this.current)
@@ -24,6 +26,9 @@ export class AuthoritativeClashMatch {
   }
   nextSequence(side: FightSide) {
     return this.sequences[side]
+  }
+  summary() {
+    return this.practice.snapshot()
   }
   submit(
     side: FightSide,
@@ -48,6 +53,7 @@ export class AuthoritativeClashMatch {
   }
   advance(now: number) {
     if (this.current.phase !== 'fighting') return
+    const before = this.current
     for (const side of SIDES) {
       const commands = this.pending[side].splice(0, 8)
       for (const command of commands) this.current = applyPvpCommand(this.current, side, command)
@@ -59,5 +65,6 @@ export class AuthoritativeClashMatch {
       ai: false,
     })
     this.tick += 1
+    this.practice.observe(before, this.current)
   }
 }

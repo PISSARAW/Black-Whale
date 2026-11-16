@@ -31,7 +31,7 @@ const SIDE_FIELDS = new Set([
   'sun',
   'moon',
 ])
-function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
+export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
   if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
   if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'

@@ -1,5 +1,9 @@
 # Clash : PvP privé (phase 7)
 
+La [phase 8](./CAREER.md) ajoute les saisons, le profil, la vue spectateur et des
+secrets séparés pour rejoindre ou regarder. Le protocole courant est `clash-pvp-2` ;
+les descriptions de l’autorité et des conditions de combat ci-dessous restent valables.
+
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
 joueurs. Les quarante personnages, les trois formats, les arènes, les ressources
 scénarisées, les aiguilles et la juridiction de LSDF utilisent les configurations
@@ -80,7 +84,8 @@ de combat n’est inventé. Un match déjà gagné conserve son verdict.
 Le registre est en mémoire du processus, limité à cent invitations et à trente
 minutes d’inactivité. Il faut un coordinateur partagé ou un routage vers le même
 processus pour plusieurs serveurs ; un redémarrage perd les invitations. Il n’y a
-ni matchmaking, ni classement, ni spectateurs dans cette phase.
+ni matchmaking dans cette phase. Le classement par instance et les spectateurs
+sont ajoutés par la phase 8.
 
 ## Latence et validation
 

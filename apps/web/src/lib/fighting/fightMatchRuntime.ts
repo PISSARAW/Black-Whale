@@ -9,6 +9,7 @@ import { createResponseDiagnostics } from './fightResponseDiagnostics'
 import { tickFight } from './engine'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 import type { ReplayCommand, ReplayPacket } from './fightReplayTypes'
+import type { CareerTracker } from './career/runtime'
 
 interface Queued {
   command?: ReplayCommand
@@ -17,10 +18,11 @@ interface Queued {
 }
 export function createFightMatchRuntime(
   clock: () => number = () => performance.now(),
-  options: { record?: boolean } = {},
+  options: { record?: boolean; career?: CareerTracker } = {},
 ) {
   const replays = createFightReplayController()
   const diagnostics = createResponseDiagnostics()
+  const career = options.career
   let pending: Queued[] = []
   let boundary: FightState | null = null
   let frameObserver: ((state: FightState) => void) | null = null
@@ -33,12 +35,14 @@ export function createFightMatchRuntime(
     clear()
     diagnostics.reset()
     replays.begin(options.record === false ? null : state)
+    career?.begin(state)
   }
   function apply(state: FightState, command: ReplayCommand) {
     if (replays.active) return state
     const after = applyReplayCommand(state, command)
     replays.append(state, [0, 0, 0, [command]], after)
     boundary = after
+    career?.observe(state, after)
     return after
   }
   function flush(state: FightState) {
@@ -118,6 +122,7 @@ export function createFightMatchRuntime(
         onFrame: (before, after) => {
           diagnostics.observeFrame(before, after)
           frameObserver?.(after)
+          career?.observe(before, after)
         },
       })
       const packet: ReplayPacket = [dt, player, opponent, applied.commands]

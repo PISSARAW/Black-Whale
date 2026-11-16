@@ -4,7 +4,8 @@
   import FightNenControls from './FightNenControls.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
-  import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from '$lib/fighting/hatsu'
+  import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
+  import FightLsdfStatus from './FightLsdfStatus.svelte'
   import { nenTacticalState } from '$lib/fighting/nen'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { impactCallout } from '$lib/fighting/impactCallout'
@@ -15,7 +16,7 @@
     RANGED_AURA_COST,
   } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
-  import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
+  import { finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
   import type { AttackKind, FightInput, FightNenZone, FightState } from '$lib/fighting/types'
 
   export let state: FightState
@@ -29,26 +30,10 @@
 
   $: playerDefinition = fighterDefinition(state.player.id)
   $: moveset = movesetFor(state.player.id)
-  $: neutralSpecial = moveForSlot(state.player.id, 'neutralSpecial')
-  $: specialLabel = moveset
-    ? language === 'fr'
-      ? (neutralSpecial?.nameFr ?? 'Technique')
-      : (neutralSpecial?.nameEn ?? 'Technique')
-    : language === 'fr'
-      ? playerDefinition.specialFr
-      : playerDefinition.specialEn
-  $: hatsuReady = moveset
-    ? Boolean(neutralSpecial && canUseMovesetMove(state, 'player', neutralSpecial))
-    : canUseFightHatsu(state.player)
-  $: hatsuHint = moveset
-    ? hatsuReady
-      ? `${specialLabel} · ${neutralSpecial?.auraCost ?? 40} aura`
-      : state.player.id === 'kurapika' && neutralSpecial?.id === 'kurapika:neutralSpecial'
-        ? language === 'fr'
-          ? 'Chain Jail · Brigade Fantôme uniquement'
-          : 'Chain Jail · Phantom Troupe only'
-        : `${specialLabel} · indisponible`
-    : `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
+  $: special = fightSpecialPresentation(state, language)
+  $: specialLabel = special.label
+  $: hatsuReady = special.ready
+  $: hatsuHint = special.hint
   $: ranged = projectileProfile(state.player.id)
   $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
   $: rangedReady = canUseRangedAttack(state.player)
@@ -76,6 +61,7 @@
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
   <FightAudio {state} />
   <FightHud {state} {language} />
+  <FightLsdfStatus {state} {language} />
   <FightNenControls
     fighter={state.player}
     {language}

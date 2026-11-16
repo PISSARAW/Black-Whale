@@ -51,11 +51,10 @@ export const tysonHatsu: FighterHatsu = {
 }
 
 export const voconteHatsu: FighterHatsu = dodgeHatsu('voconte', 'doorDodges')
-export const yokotaniHatsu: FighterHatsu = dodgeHatsu('yokotani', 'lsdfGuards')
 
 type TimedKey =
   'gidalCurseFrames' | 'contractFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
-type DodgeKey = 'doorDodges' | 'lsdfGuards'
+type DodgeKey = 'doorDodges'
 
 function setEffect(
   state: FightState,

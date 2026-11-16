@@ -1,0 +1,51 @@
+import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from './hatsu'
+import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
+import { fighterDefinition } from './roster'
+import { isLsdfMove } from './lsdf'
+import { lsdfHint } from './lsdfPresentation'
+import type { FightState } from './types'
+
+interface SpecialPresentation {
+  label: string
+  ready: boolean
+  hint: string
+}
+
+export function fightSpecialPresentation(
+  state: FightState,
+  language: 'fr' | 'en',
+): SpecialPresentation {
+  const move = moveForSlot(state.player.id, 'neutralSpecial')
+  const ready = movesetFor(state.player.id)
+    ? Boolean(move && canUseMovesetMove(state, 'player', move))
+    : canUseFightHatsu(state.player)
+  const label = specialLabel(state, language)
+  return { label, ready, hint: specialHint({ state, language, ready, label }) }
+}
+
+function specialLabel(state: FightState, language: 'fr' | 'en'): string {
+  if (isLsdfMove(state.player)) return 'LSDF'
+  const move = moveForSlot(state.player.id, 'neutralSpecial')
+  if (movesetFor(state.player.id))
+    return (language === 'fr' ? move?.nameFr : move?.nameEn) ?? 'Technique'
+  const definition = fighterDefinition(state.player.id)
+  return language === 'fr' ? definition.specialFr : definition.specialEn
+}
+
+function specialHint(options: {
+  state: FightState
+  language: 'fr' | 'en'
+  ready: boolean
+  label: string
+}): string {
+  const { state, language, ready, label } = options
+  if (isLsdfMove(state.player)) return lsdfHint(state, 'player', language)
+  const move = moveForSlot(state.player.id, 'neutralSpecial')
+  if (!movesetFor(state.player.id)) return `${label} · ${FIGHT_HATSU_AURA_COST} aura`
+  if (ready) return `${label} · ${move?.auraCost ?? 40} aura`
+  if (move?.id === 'kurapika:neutralSpecial')
+    return language === 'fr'
+      ? 'Chain Jail · Brigade Fantôme uniquement'
+      : 'Chain Jail · Phantom Troupe only'
+  return `${label} · indisponible`
+}

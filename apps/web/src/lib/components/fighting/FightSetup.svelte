@@ -4,7 +4,7 @@
   import type { FightFormatId } from '$lib/fighting/formats'
   import { FIGHTING_ROSTER, fighterDefinition } from '$lib/fighting/roster'
   import { groupedFightingRoster, randomDuel, randomFighter } from '$lib/fighting/rosterSelection'
-  import type { FightStageId } from '$lib/fighting/stages'
+  import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { FightMode, FighterId, FightSide } from '$lib/fighting/types'
   import FighterAvatar from './FighterAvatar.svelte'
   import FightFormatPicker from './FightFormatPicker.svelte'
@@ -14,7 +14,7 @@
   export let language: 'fr' | 'en'
   export let player: FighterId
   export let opponent: FighterId
-  export let stage: FightStageId
+  export let environment: FightEnvironment
   export let format: FightFormatId
   export let mode: FightMode
   export let launchLabel: string
@@ -22,7 +22,7 @@
   export let opponentLabel: string
   export let onPlayer: (id: FighterId) => void
   export let onOpponent: (id: FighterId) => void
-  export let onStage: (id: FightStageId) => void
+  export let onEnvironment: (environment: FightEnvironment) => void
   export let onFormat: (id: FightFormatId) => void
   export let onMode: (mode: FightMode) => void
   export let onLaunch: () => void
@@ -169,7 +169,7 @@
   </div>
 </section>
 
-<StagePicker selected={stage} {language} onSelect={onStage} />
+<StagePicker {environment} {language} onSelect={onEnvironment} />
 <FightFormatPicker selected={format} {language} onSelect={onFormat} />
 
 <div class="fight-mode-picker" aria-label={language === 'fr' ? 'Mode de jeu' : 'Game mode'}>

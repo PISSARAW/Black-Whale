@@ -1,14 +1,16 @@
 <script lang="ts">
   import { preloadFightStage } from '$lib/fighting/stageScenery'
   import { FIGHT_STAGES, type FightStageId } from '$lib/fighting/stages'
+  import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
+  import FightLsdfSetup from './FightLsdfSetup.svelte'
 
-  export let selected: FightStageId
+  export let environment: FightEnvironment
   export let language: 'fr' | 'en'
-  export let onSelect: (id: FightStageId) => void
+  export let onSelect: (environment: FightEnvironment) => void
 
   function choose(id: FightStageId) {
     preloadFightStage(id)
-    onSelect(id)
+    onSelect({ ...environment, stageId: id })
   }
 </script>
 
@@ -21,8 +23,8 @@
     {#each FIGHT_STAGES as stage (stage.id)}
       <button
         type="button"
-        class:selected={selected === stage.id}
-        aria-pressed={selected === stage.id}
+        class:selected={environment.stageId === stage.id}
+        aria-pressed={environment.stageId === stage.id}
         onclick={() => choose(stage.id)}
       >
         <span class="swatch" style={`--floor:${stage.swatch[0]};--light:${stage.swatch[1]}`}></span>
@@ -31,6 +33,9 @@
       </button>
     {/each}
   </div>
+  {#if environment.stageId === 'heilly-hideout'}
+    <FightLsdfSetup {environment} {language} onChange={onSelect} />
+  {/if}
 </section>
 
 <style>

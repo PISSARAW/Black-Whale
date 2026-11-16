@@ -114,7 +114,7 @@ une vérification dans le manga avant d'être corrigés.
 | Silent Majority | 3 marques → 22 dégâts              | Dix suspects, quatre serpents, retour si révoqué sans victime                                | Retiré   | Retiré du roster le 2026-11-16 : aucune aptitude martiale connue.      |
 | Terebellum      | Transfert réel des blessures       | Sweet Home : **transfère** les dégâts par contact simultané                                  | D (fait) | Corrigé le 2026-11-16 : contacts de mains vérifiés pendant les frames actives ; gauche seule pour ses blessures, droite et gauche pour celles d’autrui ; sans réceptacle, l’absorption à droite blesse sa main gauche. Coups et projectiles conservent les dégâts, sans esquive gratuite. Portée et coups porteurs restent des abstractions du duel. |
 | Voconte         | Une esquive par porte              | Portes reliant des salles préparées de la base Heil-Ly                                       | B        | Le README veut qu'un terrain ne change aucune règle : à arbitrer.      |
-| Yokotani        | Une garde LSDF                     | Gardiens invincibles **dans la planque de Morena**, Morena présente ; expulsent sans blesser | **A**    | Hors de la planque, LSDF ne fonctionne pas.                            |
+| Yokotani | Gardes LSDF autonomes, expulsion sans dégâts | Planque Heil-Ly, Morena présente, présentation à un intrus en infraction | D (fait) | Corrigé le 2026-11-16 : juridiction explicite, gardes invulnérables, aucun dégât/point/knockdown ; Yokotani reste vulnérable. |
 
 ### Enregistrés mais hors roster jouable
 
@@ -137,7 +137,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 1. ~~Corriger le bug Hinrigh~~ — fait.
 2. **Constat 4 : traité.** Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
-3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~ (faits), Hanzo, Gel, Longhi, Yokotani.
+3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~ (faits), Hanzo, Gel, Longhi, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois

@@ -1,3 +1,5 @@
+import type { FightEnvironment } from './fightEnvironment'
+import type { LsdfGuard } from './lsdf'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
 
@@ -92,7 +94,7 @@ export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightMode = 'versus-ai' | 'versus-local' | 'training'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
-export type FightFinishReason = 'hits' | 'knockout' | 'technical-knockout' | 'time' | null
+export type FightFinishReason = 'hits' | 'knockout' | 'technical-knockout' | 'time' | 'expulsion' | null
 
 export interface FighterDefinition {
   id: FighterId
@@ -229,7 +231,6 @@ export interface FighterHatsuEffects {
   synthesisFrames: number
   eyeWogFrames: number
   doorDodges: number
-  lsdfGuards: number
   /** Set once the Hatsu was activated in front of this fighter. */
   witnessedHatsu: FighterId | null
   /** Skill Hunter's held page: the only ability Chrollo can replay. */
@@ -311,6 +312,10 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  environment: FightEnvironment
+  /** Autonomous guards, never avoidance charges on the fighter. */
+  lsdf?: Partial<Record<FightSide, LsdfGuard>>
+  expulsion?: { owner: FightSide; target: FightSide; sequence: number }
   formatId: FightFormatId
   mode: FightMode
   player: ArcadeFighter

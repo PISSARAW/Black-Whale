@@ -18,7 +18,7 @@
   } from '$lib/fighting/engine'
   import { type FightFormatId } from '$lib/fighting/formats'
   import { fighterDefinition } from '$lib/fighting/roster'
-  import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
     EMPTY_INPUT,
     type AttackKind,
@@ -39,7 +39,7 @@
 
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
-  let selectedStage: FightStageId = DEFAULT_FIGHT_STAGE
+  let environment = createFightEnvironment()
   let selectedFormat: FightFormatId = 'heavens-arena'
   let selectedMode: FightMode = 'versus-ai'
   let state: FightState | null = null
@@ -67,6 +67,7 @@
     state = createFight(selectedPlayer, selectedOpponent, {
       formatId: selectedFormat,
       mode: selectedMode,
+      environment,
     })
     input = { ...EMPTY_INPUT }
     opponentInput = { ...EMPTY_INPUT }
@@ -188,6 +189,7 @@
   }
 
   function finishLabel(current: FightState): string {
+    if (current.finishReason === 'expulsion') return language === 'fr' ? 'EXPULSION' : 'EXPELLED'
     if (current.finishReason === 'time') return 'TIME'
     if (current.finishReason === 'hits') return '10 PTS'
     if (current.finishReason === 'technical-knockout') return 'T.K.O.'
@@ -340,7 +342,7 @@
       {language}
       player={selectedPlayer}
       opponent={selectedOpponent}
-      stage={selectedStage}
+      {environment}
       format={selectedFormat}
       mode={selectedMode}
       launchLabel={copy.launch}
@@ -348,7 +350,7 @@
       opponentLabel={copy.opponent}
       onPlayer={(id) => (selectedPlayer = id)}
       onOpponent={(id) => (selectedOpponent = id)}
-      onStage={(id) => (selectedStage = id)}
+      onEnvironment={(next) => (environment = next)}
       onFormat={(id) => (selectedFormat = id)}
       onMode={(mode) => (selectedMode = mode)}
       onLaunch={prepareFight}
@@ -358,7 +360,7 @@
       <FightStage
         {state}
         {language}
-        stageId={selectedStage}
+        stageId={state.environment.stageId}
         onAttack={attack}
         onThrow={throwAttack}
         onFinisher={finisher}

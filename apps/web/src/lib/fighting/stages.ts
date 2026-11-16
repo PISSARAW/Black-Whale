@@ -1,8 +1,8 @@
 /**
  * Where a Clash duel is fought.
  *
- * A stage is scenery only: the engine's lane, timer and rules are the same on
- * every one of them. `ship-room` stages are not authored here — they name a
+ * The engine's lane, timer and scoring format stay the same on every stage.
+ * LSDF additionally requires the hideout scenario. `ship-room` stages name a
  * space of `data/ship/blueprint.json` and the scene raises that room from the
  * same mesh the visit walks through.
  */
@@ -14,6 +14,7 @@ export type FightStageId =
   | 'observation-deck'
   | 'screening-room'
   | 'supreme-court'
+  | 'heilly-hideout'
 
 export type FightStageKind = 'hold' | 'heavens-arena' | 'ship-room'
 
@@ -102,6 +103,16 @@ export const FIGHT_STAGES: readonly FightStageDefinition[] = [
     noteFr: 'Pont 1 · pièce de la visite',
     noteEn: 'Tier 1 · room from the visit',
     swatch: ['#3a2a1e', '#c9a86a'],
+  },
+  {
+    id: 'heilly-hideout',
+    kind: 'ship-room',
+    spaceId: 'tier-2-heilly-secret-hideout-corridor',
+    nameFr: 'Planque Heil-Ly',
+    nameEn: 'Heil-Ly hideout',
+    noteFr: 'LSDF : Morena présente et intrus en infraction requis',
+    noteEn: 'LSDF requires Morena’s presence and unlawful intruders',
+    swatch: ['#353b38', '#c4bb9a'],
   },
 ]
 

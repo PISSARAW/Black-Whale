@@ -1,3 +1,4 @@
+import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
 import { franklinNenAvailable } from './franklinAttack'
@@ -64,7 +65,8 @@ export function moveForAction(
 ): FighterMove | null {
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
-  const slot = slotForAction(fighter, action, input)
+  const slot = fighter.id === 'yokotani' && action === 'special'
+    ? 'neutralSpecial' : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
 }
 
@@ -74,6 +76,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
   const fighter = state[side]
+  if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side)) return false
   if (!hasMoveResources(fighter, move)) return false
   if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
@@ -186,5 +189,4 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
   voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
-  yokotani: (state, side) => state[side].hatsuEffects.lsdfGuards > 0,
 }

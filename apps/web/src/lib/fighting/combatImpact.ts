@@ -1,3 +1,5 @@
+import { finishFight } from './combatVerdict'
+export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
 import { blocksAttack } from './duelMoves'
@@ -410,30 +412,6 @@ function preserveHitFormatHealth(state: FightState, side: FightSide): FightState
   return { ...state, [side]: { ...state[side], health: 1 } }
 }
 
-export function finishFight(
-  state: FightState,
-  winner: FightSide,
-  finishReason: Exclude<FightFinishReason, null> = 'knockout',
-): FightState {
-  const loser = otherSide(winner)
-  const roundsWon = { ...state.roundsWon, [winner]: state.roundsWon[winner] + 1 }
-  const matchWinner = roundsWon[winner] >= 2 ? winner : null
-  return {
-    ...state,
-    phase: 'finished',
-    winner,
-    matchWinner,
-    roundsWon,
-    finishReason,
-    [loser]: {
-      ...state[loser],
-      pose: 'ko',
-      blocking: false,
-      attack: null,
-      bufferedAttack: null,
-    },
-  }
-}
 
 function throwImmune(fighter: ArcadeFighter): boolean {
   return (

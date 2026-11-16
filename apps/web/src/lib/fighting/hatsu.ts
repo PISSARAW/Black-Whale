@@ -1,3 +1,4 @@
+import { canActivateLsdf } from './lsdf'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
@@ -39,6 +40,7 @@ export function resolveDeathHatsu(
 
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
+  if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
   const witnessSide = side === 'player' ? 'opponent' : 'player'
   const witness = state[witnessSide]
   const seen = {
@@ -175,7 +177,6 @@ type AvoidanceKey =
   | 'wormDodges'
   | 'kachoGuards'
   | 'doorDodges'
-  | 'lsdfGuards'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'futureSight',
@@ -185,7 +186,6 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'wormDodges',
   'kachoGuards',
   'doorDodges',
-  'lsdfGuards',
 ]
 
 /** Keys `consumeHatsuAvoidance` spends with their own rule; the rest lose one charge. */

@@ -44,9 +44,21 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Lynch, Luini et Bill.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
   Terebellum et Voconte.
-- Yokotani clôt le roster avec sa défense judiciaire LSDF. Les quarante
-  combattants disposent ainsi de six cents coups définis et cent vingt routes
-  courtes de combo.
+- Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**
+  si **Morena est présente** et si son adversaire est déclaré **intrus en infraction**
+  dans la préparation du duel. `fightEnvironment.ts` transmet ce scénario au moteur.
+  L le présente à l’intrus et invoque sept gardes numérotés ; ils restent
+  invulnérables, poursuivent la cible et l’escortent hors de la planque sans dégâts,
+  points ni knockdown. L’expulsion termine la manche avec le verdict `expulsion`,
+  sans animation de K.-O. ; en entraînement, le mannequin est replacé sans victoire.
+  Les gardes disparaissent si Morena part ou si le lien de Nen est coupé.
+  Yokotani lui-même reste vulnérable. La gravité supplémentaire des agressions
+  augmente le niveau d’alerte, plafonné à cinq dans cette adaptation.
+  `lsdf.ts`, `lsdfAction.ts` et `hatsu/yokotani.ts` portent ces règles ; `lsdfScene.ts`
+  réutilise les gardes de la visite et montre Morena en arrière-plan.
+  Le moveset conserve une seule technique LSDF, sans coup d’activation ni finisher
+  offensif inventé. Les coups physiques ordinaires restent des abstractions arcade.
+  Le coût d’aura et les vitesses de poursuite/escorte sont des réglages de duel.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
@@ -87,12 +99,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   le plan de la visite (`stageShipRoom.ts`) et la bande de combat y est dérivée de
   l'emprise et du mobilier (`stageLane.ts`). Le mobilier modélisé de la visite est repris
   tel quel (`stageRoomDetails.ts`) : une salle ajoutée que la visite habille doit y
-  inscrire son constructeur. Un terrain ne change aucune règle.
+  inscrire son constructeur. Le terrain ne modifie pas le barème ; LSDF exige
+  toutefois la juridiction de la planque occupée par Morena.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
 - Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à
   dix points ou au TKO après trois knockdowns, **Combat K.-O.** à la vie (100 PV, décision
   après 90 secondes), et **Arcade** conserve la règle historique à dix points ou
-  K.-O. en soixante secondes. Les conditions restent indépendantes du terrain.
+  K.-O. en soixante secondes. Ces barèmes restent indépendants du terrain.
 - Le jugement de la Tour attribue un point pour une touche nette, deux pour une
   touche critique et un point supplémentaire lorsqu'elle provoque un knockdown.
 

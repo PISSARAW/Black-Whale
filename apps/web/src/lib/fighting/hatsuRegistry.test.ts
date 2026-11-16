@@ -612,16 +612,11 @@ describe('fighter Hatsu registry', () => {
     expect(effect('salesale').smokeFrames).toBe(180)
   })
 
-  it('turns LSDF into a one-hit defence', () => {
-    for (const source of ['yokotani'] as const) {
-      const state = hatsuFor(source).onTrigger({
-        state: closeFight(source, 'hisoka'),
-        side: 'player',
-        source,
-      })
-      expect(hatsuAvoidsImpact(state.player)).toBe(true)
-      expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
-    }
+  it('cannot summon LSDF outside Morena’s occupied hideout', () => {
+    const ready = closeFight('yokotani', 'hisoka')
+    const state = hatsuFor('yokotani').onTrigger({ state: ready, side: 'player', source: 'yokotani' })
+    expect(state).toBe(ready)
+    expect(hatsuAvoidsImpact(state.player)).toBe(false)
   })
 
   it('applies the remaining curse, contract and support effects', () => {

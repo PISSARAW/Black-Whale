@@ -1,3 +1,4 @@
+import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import { FIGHT_FPS } from './frameData'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
@@ -6,6 +7,7 @@ import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 interface CreateFightOptions {
   formatId?: FightFormatId
   mode?: FightMode
+  environment?: Partial<FightEnvironment>
 }
 
 export function createFightState(
@@ -18,6 +20,7 @@ export function createFightState(
   const mode = typeof options === 'string' ? 'versus-ai' : (options.mode ?? 'versus-ai')
   const format = fightFormat(formatId)
   return {
+    environment: createFightEnvironment(typeof options === 'string' ? {} : options.environment),
     formatId,
     mode,
     player: createFighter({ id: playerId, x: 22, facing: 1, health: format.health }),
@@ -48,6 +51,8 @@ export function nextFightRound(state: FightState): FightState {
   const format = fightFormat(state.formatId)
   return {
     ...state,
+    lsdf: undefined,
+    expulsion: undefined,
     player: createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
     opponent: createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
     phase: 'ready',
@@ -145,7 +150,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     synthesisFrames: 0,
     eyeWogFrames: 0,
     doorDodges: 0,
-    lsdfGuards: 0,
     witnessedHatsu: null,
     stolenHatsu: null,
     hatsuStolen: 0,

@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { createLsdfScene } from '$lib/fighting/lsdfScene'
+  import { lsdfFighterVisible } from '$lib/fighting/lsdfPresentation'
   import { createHanzoProjectionScene } from '$lib/fighting/hanzoProjectionScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
@@ -148,6 +150,7 @@
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
         const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
+        const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
           const nen = nenKey(fighter)
@@ -256,6 +259,7 @@
 
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
+          model.root.visible = lsdfFighterVisible(state, side)
           const held = poseStarts[side]
           if (!held || held.pose !== fighter.pose)
             poseStarts[side] = { pose: fighter.pose, at: seconds }
@@ -298,6 +302,7 @@
           })
           projectileScene.sync(state.projectiles, seconds)
           fighterEffects.sync(state, seconds)
+          lsdfScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
@@ -357,6 +362,7 @@
           geometries.forEach((item) => item.dispose())
           projectileScene.dispose()
           fighterEffects.dispose()
+          lsdfScene.dispose()
           projectionScene.dispose()
           post?.dispose()
           scenery.dispose()

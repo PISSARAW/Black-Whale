@@ -1,3 +1,4 @@
+import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
 import { benjaminHatsu } from './benjamin'
@@ -12,7 +13,6 @@ import {
   tubeppaHatsu,
   tysonHatsu,
   voconteHatsu,
-  yokotaniHatsu,
 } from './combatCompletion'
 import { camillaHatsu } from './camilla'
 import { biscuitHatsu } from './biscuit'
@@ -49,64 +49,65 @@ import { zakuroHatsu } from './zakuro'
 import { zhangleiHatsu } from './zhanglei'
 import type { FightState, FighterId } from '../types'
 
-const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
-  kurapika: kurapikaHatsu,
-  hisoka: hisokaHatsu,
-  chrollo: chrolloHatsu,
-  morena: morenaHatsu,
-  benjamin: benjaminHatsu,
-  tserriednich: tserriednichHatsu,
-  feitan: feitanHatsu,
-  saiyu: saiyuHatsu,
-  theta: thetaHatsu,
-  biscuit: biscuitHatsu,
-  marayam: marayamHatsu,
-  phinks: phinksHatsu,
-  franklin: franklinHatsu,
-  machi: machiHatsu,
-  illumi: illumiHatsu,
-  kalluto: kallutoHatsu,
-  bonolenov: bonolenovHatsu,
-  shizuku: shizukuHatsu,
-  hinrigh: hinrighHatsu,
-  mizaistom: mizaistomHatsu,
-  leorio: leorioHatsu,
-  hanzo: hanzoHatsu,
-  rihan: rihanHatsu,
-  zakuro: zakuroHatsu,
-  melody: melodyHatsu,
-  basho: bashoHatsu,
-  camilla: camillaHatsu,
-  halkenburg: halkenburgHatsu,
-  gel: gelHatsu,
-  lynch: lynchHatsu,
-  luini: luiniHatsu,
-  bill: billHatsu,
-  furykov: martialOnlyHatsu('furykov'),
-  cluck: martialOnlyHatsu('cluck'),
-  beyond: martialOnlyHatsu('beyond'),
-  fugetsu: fugetsuHatsu,
-  kacho: kachoHatsu,
-  luzurus: luzurusHatsu,
-  momoze: momozeHatsu,
-  salesale: salesaleHatsu,
-  zhanglei: zhangleiHatsu,
-  gidal: gidalHatsu,
-  longhi: longhiHatsu,
-  musse: martialOnlyHatsu('musse'),
-  padaille: padailleHatsu,
-  tubeppa: tubeppaHatsu,
-  tyson: tysonHatsu,
-  sayird: martialOnlyHatsu('sayird'),
-  terebellum: terebellumHatsu,
-  voconte: voconteHatsu,
-  yokotani: yokotaniHatsu,
+// Resolve hooks lazily to preserve bindings across shared combat imports.
+const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
+  kurapika: () => kurapikaHatsu,
+  hisoka: () => hisokaHatsu,
+  chrollo: () => chrolloHatsu,
+  morena: () => morenaHatsu,
+  benjamin: () => benjaminHatsu,
+  tserriednich: () => tserriednichHatsu,
+  feitan: () => feitanHatsu,
+  saiyu: () => saiyuHatsu,
+  theta: () => thetaHatsu,
+  biscuit: () => biscuitHatsu,
+  marayam: () => marayamHatsu,
+  phinks: () => phinksHatsu,
+  franklin: () => franklinHatsu,
+  machi: () => machiHatsu,
+  illumi: () => illumiHatsu,
+  kalluto: () => kallutoHatsu,
+  bonolenov: () => bonolenovHatsu,
+  shizuku: () => shizukuHatsu,
+  hinrigh: () => hinrighHatsu,
+  mizaistom: () => mizaistomHatsu,
+  leorio: () => leorioHatsu,
+  hanzo: () => hanzoHatsu,
+  rihan: () => rihanHatsu,
+  zakuro: () => zakuroHatsu,
+  melody: () => melodyHatsu,
+  basho: () => bashoHatsu,
+  camilla: () => camillaHatsu,
+  halkenburg: () => halkenburgHatsu,
+  gel: () => gelHatsu,
+  lynch: () => lynchHatsu,
+  luini: () => luiniHatsu,
+  bill: () => billHatsu,
+  furykov: () => martialOnlyHatsu('furykov'),
+  cluck: () => martialOnlyHatsu('cluck'),
+  beyond: () => martialOnlyHatsu('beyond'),
+  fugetsu: () => fugetsuHatsu,
+  kacho: () => kachoHatsu,
+  luzurus: () => luzurusHatsu,
+  momoze: () => momozeHatsu,
+  salesale: () => salesaleHatsu,
+  zhanglei: () => zhangleiHatsu,
+  gidal: () => gidalHatsu,
+  longhi: () => longhiHatsu,
+  musse: () => martialOnlyHatsu('musse'),
+  padaille: () => padailleHatsu,
+  tubeppa: () => tubeppaHatsu,
+  tyson: () => tysonHatsu,
+  sayird: () => martialOnlyHatsu('sayird'),
+  terebellum: () => terebellumHatsu,
+  voconte: () => voconteHatsu,
+  yokotani: () => yokotaniHatsu,
 }
 
 export function hatsuFor(id: FighterId): FighterHatsu {
-  return HATSU_REGISTRY[id]
+  return HATSU_REGISTRY[id]()
 }
 
 export function advanceHatsuFrames(state: FightState): FightState {
-  return Object.values(HATSU_REGISTRY).reduce((next, hatsu) => hatsu.onFrame(next), state)
+  return Object.values(HATSU_REGISTRY).reduce((next, resolve) => resolve().onFrame(next), state)
 }

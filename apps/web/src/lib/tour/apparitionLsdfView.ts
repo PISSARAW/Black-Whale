@@ -30,7 +30,7 @@ function levelSegments(level: number): number[] {
   return segments[Math.max(1, Math.min(9, Math.floor(level)))] ?? segments[4]
 }
 
-function guard(
+export function buildLsdfGuard(
   context: BasicApparitionContext,
   options: { level: number; scale: number; at: Point },
 ) {
@@ -113,9 +113,9 @@ function guard(
 
 function addFormation(formation: Group, context: BasicApparitionContext, stage: number) {
   formation.add(
-    guard(context, { level: Math.max(5, stage), scale: 0.9, at: [0, -0.05, 0.2] }),
-    guard(context, { level: 4, scale: 0.68, at: [-1.15, 0.08, -0.48] }),
-    guard(context, { level: 4, scale: 0.68, at: [1.15, 0.08, -0.48] }),
+    buildLsdfGuard(context, { level: Math.max(5, stage), scale: 0.9, at: [0, -0.05, 0.2] }),
+    buildLsdfGuard(context, { level: 4, scale: 0.68, at: [-1.15, 0.08, -0.48] }),
+    buildLsdfGuard(context, { level: 4, scale: 0.68, at: [1.15, 0.08, -0.48] }),
   )
 }
 

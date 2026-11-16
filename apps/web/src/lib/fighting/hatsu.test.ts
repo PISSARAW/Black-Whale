@@ -33,6 +33,23 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
 
     const armed = performAttack(ready, side, 'special')
 
+    if (id === 'yokotani') {
+      expect(armed).toBe(ready)
+      const home: FightState = {
+        ...ready,
+        environment: {
+          stageId: 'heilly-hideout', morenaPresent: true,
+          unlawfulIntruders: { player: side !== 'player', opponent: side !== 'opponent' },
+        },
+      }
+      const summoned = performAttack(home, side, 'special')
+      expect(summoned.lsdf?.[side]).toBeDefined()
+      expect(summoned[side].attack).toBeNull()
+      expect(summoned[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
+      expect(advance(summoned, 0.4).impact).toBeNull()
+      return
+    }
+
     expect(armed[side].attack?.kind).toBe('special')
     expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
     expect(advance(armed, 0.4).impact?.attacker).toBe(side)

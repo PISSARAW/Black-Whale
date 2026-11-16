@@ -1,3 +1,4 @@
+import { performLsdfAction } from './lsdfAction'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './frameData'
 import { fightFormat } from './formats'
@@ -80,6 +81,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
+  if (withHatsu.phase === 'finished') return withHatsu
   const armed = spawnRangedProjectiles(withHatsu)
   const flight = advanceProjectiles(armed, FIXED_STEP)
   const resolved = resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits))
@@ -202,6 +204,8 @@ export function performAuraAttack(options: {
   const { side, kind, auraCharged } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
+  const judicial = performLsdfAction(options)
+  if (judicial) return judicial
   const variant = attackVariant({ fighter: original, kind, variant: options.variant })
   const { hatsuSource, concealed, resourceReady } = attackIntent(original, kind, options.moveId)
   const starts = canStartFighterAttack(original, kind, options.moveId)

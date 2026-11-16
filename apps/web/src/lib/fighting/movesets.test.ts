@@ -82,7 +82,10 @@ describe('wave one movesets', () => {
 
   it('completes the roster with Yokotani', () => {
     expect(ROSTER_FINAL_FIGHTERS).toEqual(['yokotani'])
-    ROSTER_FINAL_FIGHTERS.forEach(assertCompleteMoveset)
+    const moveset = movesetFor('yokotani')!
+    expect(moveset.moves.filter((move) => move.category === 'special')).toHaveLength(1)
+    expect(moveset.moves.some((move) => move.category === 'finisher')).toBe(false)
+    expect(moveForSlot('yokotani', 'neutralSpecial')?.tuning.damage).toBe(0)
   })
 
   it('maps stance and direction to six normals, three commands and four specials', () => {
@@ -195,19 +198,11 @@ describe('wave one movesets', () => {
     ).toBe(`${fighterId}:finisher`)
   })
 
-  it.each(ROSTER_FINAL_FIGHTERS)('%s final finisher is conditionally locked', (fighterId) => {
-    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-    const supplied = withFinisherCondition({
-      ...base,
-      player: { ...base.player, aura: 100 },
-    })
-    expect(finisherReady(base, 'player')).toBe(false)
-    expect(finisherReady(supplied, 'player')).toBe(true)
-    expect(
-      performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-    ).toBe(`${fighterId}:finisher`)
-  })
-})
+  it('does not invent a damaging finisher for Yokotani', () => {
+    const state = beginFight(createFight('yokotani', 'hisoka'))
+    expect(finisherReady(state, 'player')).toBe(false)
+    expect(performMove({ state, side: 'player', action: 'finisher' })).toBe(state)
+  })})
 
 function assertCompleteMoveset(fighterId: FighterId): void {
   const moveset = movesetFor(fighterId)!
@@ -312,8 +307,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, player: { ...player, x: 46 }, opponent: { ...opponent, x: 51 } }
     case 'voconte':
       return withPlayerEffect(state, 'doorDodges', 1)
-    case 'yokotani':
-      return withPlayerEffect(state, 'lsdfGuards', 1)
     default:
       return { ...state, player, opponent }
   }

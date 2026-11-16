@@ -1,3 +1,4 @@
+import { interceptArenaProjectile } from './arenaSimulation'
 import { travelKallutoPaper } from './kallutoFlight'
 import { paperAvailable, paperZonePoint } from './kallutoPaper'
 import { hasIllumiNeedles } from './illumiEquipment'
@@ -324,6 +325,9 @@ export function advanceProjectiles(
   for (const held of state.projectiles) {
     const projectile = advanceProjectileMotion(state, held, step)
     if (!projectile) continue
+    const terrain = interceptArenaProjectile(state, projectile, held.x)
+    state = terrain.state
+    if (terrain.intercepted) continue
     const intercepted = interceptBiohazardProjectile(state, {
       projectile,
       previousX: held.x,

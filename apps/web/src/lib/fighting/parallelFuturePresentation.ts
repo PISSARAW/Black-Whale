@@ -15,6 +15,7 @@ export function futureVisibleState(
   const predicted = future.frames[index]
   return {
     ...state,
+    arena: predicted.arena,
     voconteDoors: predicted.voconteDoors,
     player: predicted.player,
     opponent: predicted.opponent,

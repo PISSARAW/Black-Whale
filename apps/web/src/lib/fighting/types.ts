@@ -131,9 +131,7 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
-  /** Cosmetic scenes; their props never enter battlefield or projectile state. */
-  easterEgg?: import('./easterEggs').EasterEggPlayback
-  easterEggDiscoveries?: number
+  arenaRecovery?: number
   easterEggSequence?: number
   padailleTool?: PadailleTool
   kallutoPaper?: import('./kallutoPaper').KallutoPaperState
@@ -316,6 +314,7 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  arena?: boolean
   interact?: boolean
   plugWounds?: boolean
   /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
@@ -429,6 +428,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  arena?: import('./arenaTypes').ArenaState
   voconteDoors?: import('./voconteDoorTypes').VoconteDoors
   battlefield?: import('./preparationTypes').FightBattlefield
   /** Fatal causes collected before one common verdict, including simultaneous hits. */

@@ -21,6 +21,11 @@ export function personalEquipment(id: FighterId): FightEquipment[] {
 export function createBattlefield(environment: FightEnvironment): FightBattlefield {
   const preparation = environment.preparation ?? EMPTY_PREPARATION
   const entities: PreparedEntity[] = []
+  if (environment.arenaInteractions)
+    for (const x of [34, 66]) entities.push({
+      ...entity('crate', 'neutral', x), id: `arena:crate:${x}`, health: 40,
+      arena: { width: 3, height: 8 },
+    })
   if (environment.morenaPresent && environment.stageId === 'heilly-hideout')
     entities.push(entity('morena', 'neutral', 50))
   if (preparation.mode === 'scenario') installScenario(entities, preparation)

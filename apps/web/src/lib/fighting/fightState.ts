@@ -1,4 +1,5 @@
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
+import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
 import { createBiohazardInventory } from './biohazard'
@@ -30,6 +31,7 @@ export function createFightState(
   const format = fightFormat(formatId)
   const environment = createFightEnvironment(typeof options === 'string' ? {} : options.environment)
   return setupIllumiNeedles({
+    arena: environment.arenaInteractions ? createArenaState() : undefined,
     battlefield: createBattlefield(environment),
     environment,
     formatId,
@@ -64,6 +66,7 @@ export function nextFightRound(state: FightState): FightState {
     {
       ...state,
       battlefield: createBattlefield(state.environment),
+      arena: state.environment.arenaInteractions ? createArenaState() : undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
       forecastSimulation: undefined,

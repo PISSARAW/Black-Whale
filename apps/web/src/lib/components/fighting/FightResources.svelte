@@ -4,6 +4,7 @@
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightBiohazardStatus from './FightBiohazardStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
+  import FightArenaStatus from './FightArenaStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightMachiStatus from './FightMachiStatus.svelte'
   import FightPadailleStatus from './FightPadailleStatus.svelte'
@@ -35,6 +36,7 @@
   export let detailed = false
   export let showControls = false
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
+  export let onOpponentControl: (key: keyof FightInput, held: boolean) => void = () => {}
   export let onTalk: (side: FightSide) => void = () => {}
   export let onBattleAction: (side: FightSide, moveId: string) => void = () => {}
   export let onAura: (active: boolean) => void
@@ -63,7 +65,8 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
-      <FightPreparationStatus {state} {side} {language} {onControl} />
+      <FightPreparationStatus {state} {side} {language} onControl={side === 'player' ? onControl : onOpponentControl} />
+      <FightArenaStatus {state} {side} {language} onControl={side === 'player' ? onControl : onOpponentControl} />
       <FightDoorStatus {state} {side} {language} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />

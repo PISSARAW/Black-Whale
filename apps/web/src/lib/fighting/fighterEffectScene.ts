@@ -1,3 +1,4 @@
+import { createArenaScene } from './arenaScene'
 import { createKallutoPaperScene } from './kallutoScene'
 import { createEasterEggScene } from './easterEggScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
@@ -33,6 +34,7 @@ export interface FighterEffectScene {
 
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const arena = createArenaScene(options)
   const paper = createKallutoPaperScene(options)
   const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
@@ -61,6 +63,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
 
   const sync = (state: FightState, seconds: number) => {
     easterEggs.sync(state, seconds)
+    arena.sync(state, seconds)
     paper.sync(state, seconds)
     doors.sync(state, seconds)
     biohazard.sync(state, seconds)
@@ -82,6 +85,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     sync,
     dispose: () => {
       easterEggs.dispose()
+      arena.dispose()
       paper.dispose()
       doors.dispose()
       biohazard.dispose()

@@ -4,6 +4,7 @@ import type { FightPreparation } from './preparationTypes'
 
 /** Match scenario, independent of the scoring format and the two fighters. */
 export interface FightEnvironment {
+  arenaInteractions?: boolean
   needleStock?: Partial<Record<FightSide, boolean>>
   preparation?: FightPreparation
   stageId: FightStageId
@@ -13,6 +14,7 @@ export interface FightEnvironment {
 
 export function createFightEnvironment(options: Partial<FightEnvironment> = {}): FightEnvironment {
   return {
+    arenaInteractions: options.arenaInteractions ?? false,
     needleStock: options.needleStock ? { ...options.needleStock } : undefined,
     preparation: options.preparation
       ? {

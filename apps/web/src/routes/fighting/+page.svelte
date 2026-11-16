@@ -58,7 +58,7 @@
 
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
-  let environment = createFightEnvironment()
+  let environment = createFightEnvironment({ arenaInteractions: true })
   let selectedFormat: FightFormatId = DEFAULT_FIGHT_FORMAT
   let selectedMode: FightMode = 'versus-ai'
   let state: FightState | null = null

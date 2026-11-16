@@ -50,6 +50,14 @@ export function interactWithPreparation(state: FightState, side: FightSide): Fig
   if (!state.battlefield || !canInteractBody(fighter)) return state
   const target = preparationInteractionTarget(state, side)
   if (!target) return state
+  if (target.arena && target.kind === 'crate') {
+    const proposed = Math.max(10, Math.min(90, target.x + fighter.facing * 3))
+    const blocker = state.battlefield.entities.find((entry) => entry.id !== target.id && entry.arena &&
+      liveEntity(entry) && (entry.x - target.x) * fighter.facing > 0 && Math.abs(entry.x - proposed) < 6)
+    const x = blocker ? blocker.x - fighter.facing * 6 : proposed
+    if (Math.abs(state[side === 'player' ? 'opponent' : 'player'].x - x) < 6) return state
+    return updateEntity(state, target.id, { x })
+  }
   if (target.kind === 'needles') {
     const picked = updateEntity(state, target.id, { present: false })
     return {
@@ -72,6 +80,7 @@ export function interactWithPreparation(state: FightState, side: FightSide): Fig
 
 function canInteract(entry: PreparedEntity, side: FightSide): boolean {
   if (!liveEntity(entry)) return false
+  if (entry.arena && entry.kind === 'crate') return true
   if (entry.kind === 'flute' || entry.kind === 'needles') return true
   if (entry.kind === 'room') return Boolean(entry.sealed)
   return entry.kind === 'supporter' && entry.owner === side && Boolean(entry.consenting)
@@ -128,6 +137,7 @@ function approach(from: number, to: number, speed: number): number {
 }
 
 function canInteractBody(fighter: FightState['player']): boolean {
+  if (fighter.arenaRecovery) return false
   if (fighter.hanzoProjection || fighter.melodyPerformance || fighter.parallelEyesClosed)
     return false
   if (!illumiBodyFree(fighter)) return false

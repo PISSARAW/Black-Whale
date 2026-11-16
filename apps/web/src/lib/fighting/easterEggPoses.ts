@@ -1,5 +1,6 @@
 import { addPoses, lerpPose, type BodyPlan, type FightPose } from './fightPose'
 import type { ArcadeFighter } from './types'
+import { authoredEasterEggPose } from './easterEggMotion'
 
 const REST: FightPose = {
   leadShoulder: [0.12, 0, 0.12],
@@ -14,7 +15,7 @@ export function easterEggBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!egg) return null
   const t = egg.frame / egg.duration
   const beat = Math.sin(t * Math.PI * 6)
-  const pose = gesture(fighter, t, beat)
+  const pose = authoredEasterEggPose(fighter) ?? gesture(fighter, t, beat)
   const envelope = Math.min(1, t * 10, (1 - t) * 10)
   return {
     key: `egg:${fighter.id}:${egg.slot}:${egg.startedAt}`,

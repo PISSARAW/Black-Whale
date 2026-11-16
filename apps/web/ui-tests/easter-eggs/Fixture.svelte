@@ -3,6 +3,8 @@
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import { beginFight, createFight, tickFight } from '$lib/fighting/engine'
   import { performEasterEgg } from '$lib/fighting/easterEggs'
+  import { easterEggPreviewOpponent } from '$lib/fighting/easterEggSecrets'
+  import { FIGHTING_ROSTER } from '$lib/fighting/roster'
   import {
     easterEggDefinition,
     type EasterEggFighter,
@@ -29,7 +31,10 @@
   let paused = false
   function fresh(id: EasterEggFighter): FightState {
     const base = beginFight(
-      createFight(id, 'hisoka', { mode: 'versus-local', formatId: 'knockout' }),
+      createFight(id, easterEggPreviewOpponent({ fighterId: id, opponentId: 'hisoka', slot: 4 }), {
+        mode: 'versus-local',
+        formatId: 'knockout',
+      }),
     )
     return { ...base, player: { ...base.player, x: 36 }, opponent: { ...base.opponent, x: 64 } }
   }
@@ -57,6 +62,8 @@
   }
   function current() {
     return {
+      fighter: state.player.id,
+      opponent: state.opponent.id,
       egg: state.player.easterEgg,
       opponentEgg: state.opponent.easterEgg,
       discoveries: preferences.discoveries,
@@ -88,6 +95,7 @@
     preferences = readEasterEggPreferences()
     Object.assign(window, {
       easterEggFixture: {
+        roster: () => FIGHTING_ROSTER.map((fighter) => fighter.id),
         showCase,
         reset,
         advance,

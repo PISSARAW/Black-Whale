@@ -9,7 +9,15 @@ export function easterEggCaption(fighter: ArcadeFighter, language: 'fr' | 'en'):
   if (fighter.id === 'rihan' && egg.slot >= 3) return rihanCaption(egg, language)
   if (fighter.id === 'leorio' && egg.slot === 4 && t > 0.6)
     return language === 'fr' ? 'Tu attendais depuis longtemps ?' : 'Have you been waiting long?'
-  return easterEggDefinition(fighter.id, egg.slot)?.name[language] ?? ''
+  return authoredCaption(fighter, language)
+}
+
+function authoredCaption(fighter: ArcadeFighter, language: 'fr' | 'en'): string {
+  const egg = fighter.easterEgg!
+  const definition = easterEggDefinition(fighter.id, egg.slot)
+  if (!definition) return ''
+  if (definition.ending && egg.frame / egg.duration > 0.55) return definition.ending[language]
+  return definition.name[language]
 }
 
 function rihanCaption(egg: NonNullable<ArcadeFighter['easterEgg']>, language: 'fr' | 'en'): string {

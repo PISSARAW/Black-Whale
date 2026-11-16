@@ -86,11 +86,31 @@ try {
   await page.evaluate(() => window.easterEggFixture.pause(false))
   await page.keyboard.press('F4')
   assert.equal(await page.evaluate(() => window.easterEggFixture.current().opponentEgg.slot), 1)
+  const roster = await page.evaluate(() => window.easterEggFixture.roster())
+  assert.equal(roster.length, 40)
+  const mobileCaptures = new Set([
+    'hisoka',
+    'chrollo',
+    'theta',
+    'biscuit',
+    'kalluto',
+    'mizaistom',
+    'beyond',
+    'yokotani',
+  ])
+  let sceneCases = 0
+  let sceneScreenshots = 0
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 1100 })
-    for (const id of ['hisoka', 'kurapika', 'leorio', 'rihan']) {
+    for (const id of roster) {
       for (const slot of width === 1440 ? [1, 2, 3, 4] : [4]) {
-        await page.evaluate(([id, slot]) => window.easterEggFixture.showCase(id, slot), [id, slot])
+        const shown = await page.evaluate(
+          ([id, slot]) => window.easterEggFixture.showCase(id, slot),
+          [id, slot],
+        )
+        assert.equal(shown.fighter, id)
+        assert.equal(shown.egg?.slot, slot)
+        sceneCases++
         await page.locator('.easter-eggs').evaluate((node) => {
           node.open = true
         })
@@ -99,11 +119,20 @@ try {
           const canvas = document.querySelector('canvas')
           return canvas && canvas.width !== 300 && canvas.height !== 150
         })
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        )
+        assert.deepEqual(errors, [])
         assert.equal(await page.locator('.fight-scene.failed').count(), 0)
-        await page.screenshot({
-          path: path.join(output, `${id}-${slot}-${width}.png`),
-          fullPage: true,
-        })
+        assert.ok((await page.locator('.egg-caption p').textContent()).length > 0)
+        if ((width === 1440 && slot === 4) || (width !== 1440 && mobileCaptures.has(id))) {
+          await page.screenshot({
+            path: path.join(output, `${id}-${slot}-${width}.png`),
+            fullPage: true,
+          })
+          sceneScreenshots++
+        }
         assert.equal(
           await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1),
           false,
@@ -113,13 +142,17 @@ try {
   }
   await page.evaluate(() => window.easterEggFixture.showCase('rihan', 4, 'en'))
   await page.getByText('Insufficient information.', { exact: true }).waitFor()
+  await page.evaluate(() => window.easterEggFixture.showCase('yokotani', 4, 'en'))
+  await page
+    .getByText('The stamp returns to the same sheet, still on the wrong side.', { exact: true })
+    .waitFor()
   assert.deepEqual(errors, [])
   await writeFile(
     path.join(output, 'report.json'),
-    JSON.stringify({ sceneScreenshots: 24, errors }, null, 2),
+    JSON.stringify({ fighters: roster.length, sceneCases, sceneScreenshots, errors }, null, 2),
   )
   process.stdout.write(
-    `Easter Eggs UI: controls, previews, collection, reload and 24 scene screenshots passed; ${output}\n`,
+    `Easter Eggs UI: controls, previews, collection, reload and ${sceneCases} scene cases / ${sceneScreenshots} screenshots passed; ${output}\n`,
   )
 } finally {
   await browser.close()

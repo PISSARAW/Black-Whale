@@ -33,10 +33,13 @@ import {
 } from './easterEggPreferences'
 import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
 import { FUTURE_PREPARATION_FRAMES } from './parallelFutureTypes'
+import { easterEggSecretRequirement } from './easterEggSecrets'
 
 function ready(id: EasterEggFighter = 'hisoka', side: FightSide = 'player'): FightState {
+  const requirement = easterEggSecretRequirement(id)
+  const target = requirement.kind === 'opponent' ? requirement.fighters[0] : 'hisoka'
   const state = beginFight(
-    createFight(side === 'player' ? id : 'hisoka', side === 'opponent' ? id : 'hisoka', {
+    createFight(side === 'player' ? id : target, side === 'opponent' ? id : target, {
       mode: 'versus-local',
       formatId: 'knockout',
     }),
@@ -126,7 +129,7 @@ describe('Clash cosmetic scenes', () => {
       const invalid = { ...base, phase }
       expect(performEasterEgg(invalid, 'player', 1)).toBe(invalid)
     }
-    const other = beginFight(createFight('chrollo', 'hisoka'))
+    const other = beginFight(createFight('morena', 'hisoka'))
     expect(performEasterEgg(other, 'player', 1)).toBe(other)
   })
 
@@ -196,7 +199,7 @@ describe('Clash cosmetic scenes', () => {
         expect(easterEggCaption(fighter, 'fr')).not.toBe('')
         expect(easterEggCaption(fighter, 'en')).not.toBe('')
       }
-    expect(poses.size).toBe(16)
+    expect(poses.size).toBe(ids.length * 4)
     const rihan = frames(performEasterEgg(ready('rihan'), 'player', 4), 140)
     expect(easterEggCaption(rihan.player, 'fr')).toBe('Informations insuffisantes.')
     expect(easterEggCaption(rihan.player, 'en')).toBe('Insufficient information.')

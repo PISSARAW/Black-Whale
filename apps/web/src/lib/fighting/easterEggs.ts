@@ -1,3 +1,5 @@
+import { easterEggSecretReady } from './easterEggSecrets'
+export { easterEggSecretReady } from './easterEggSecrets'
 import { canAct } from './fightActorState'
 import { fightAcceptsCommands } from './fightOutcome'
 import { futureAcceptsMove } from './parallelFutureAbility'
@@ -12,25 +14,13 @@ export interface EasterEggPlayback {
   startedAt: number
 }
 
-const TROUPE = new Set([
-  'hisoka',
-  'chrollo',
-  'feitan',
-  'phinks',
-  'franklin',
-  'machi',
-  'illumi',
-  'kalluto',
-  'bonolenov',
-  'shizuku',
-])
-
-export function easterEggSecretReady(state: FightState, side: FightSide): boolean {
-  const fighter = state[side]
-  if (fighter.id === 'kurapika')
-    return TROUPE.has(state[side === 'player' ? 'opponent' : 'player'].id)
-  if (fighter.id === 'rihan') return Boolean((fighter.easterEggDiscoveries ?? 0) & eggBit(3))
-  return (fighter.easterEggSequence ?? 0) === 3
+/** Side-aware admission for UI commands which bypass the ordinary attack dispatcher. */
+export function runOutsideEasterEgg(
+  state: FightState,
+  side: FightSide,
+  action: (state: FightState) => FightState,
+): FightState {
+  return state[side].easterEgg ? state : action(state)
 }
 
 export function canPerformEasterEgg(
@@ -66,6 +56,7 @@ function bodyAtRest(fighter: ArcadeFighter): boolean {
     fighter.coveringEars,
     fighter.cyclotronWindup,
     fighter.preparationRecovery,
+    fighter.bloodyMary?.infusion,
     fighter.hatsuEffects.possessedFrames,
     fighter.hatsuEffects.manipulatedFrames,
   ].some(Boolean)

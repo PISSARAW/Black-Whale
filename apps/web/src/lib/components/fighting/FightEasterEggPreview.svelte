@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { beginFight, createFight, tickFight } from '$lib/fighting/engine'
   import { performEasterEgg } from '$lib/fighting/easterEggs'
+  import { easterEggPreviewOpponent } from '$lib/fighting/easterEggSecrets'
   import type { EasterEggSlot } from '$lib/fighting/easterEggCatalogue'
   import { EMPTY_INPUT, type FighterId } from '$lib/fighting/types'
   import FightScene from './FightScene.svelte'
@@ -13,7 +14,7 @@
   let preview = fresh()
   let playing = true
   function fresh() {
-    const target = fighterId === 'kurapika' && slot === 4 ? 'hisoka' : opponentId
+    const target = easterEggPreviewOpponent({ fighterId, opponentId, slot })
     const state = beginFight(createFight(fighterId, target, { mode: 'training' }))
     // A separate, silent sandbox. Unlock requirements are waived only for this preview.
     state.player = { ...state.player, easterEggSequence: 3, easterEggDiscoveries: 7 }

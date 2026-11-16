@@ -1173,38 +1173,96 @@ la confection de la poupée et la dernière parole réellement reçue.
 
 ## Easter Eggs de Clash
 
-Hisoka, Kurapika, Leorio et Rihan ont chacun quatre scènes cosmétiques décrites
-par `easterEggCatalogue.ts`. Il s’agit d’interludes écrits pour Clash : les
-répliques ne sont pas des citations du manga et les scènes n’ajoutent aucun Hatsu.
+Les quarante combattants sélectionnables ont chacun quatre scènes cosmétiques, soit 160
+Easter Eggs. `easterEggCatalogue.ts` rassemble les quatre séries initiales et les 36
+séries de `easterEggRosterOne.ts` à `easterEggRosterFour.ts`. Il s’agit d’interludes
+écrits pour Clash : les répliques ne sont pas des citations du manga et les scènes
+n’ajoutent aucun Hatsu.
 
-F2 (P1) et F4 (P2 en local ou entraînement), configurables dans le panneau
-« Easter Eggs · Gestes et secrets », jouent le geste 1 sans direction, le 2 avec
-avant, le 3 avec arrière et le secret avec bas. Avant et arrière suivent le côté
-regardé par chaque combattant. Les quatre boutons du panneau servent au tactile.
-Les touches de fonction peuvent nécessiter Fn selon le clavier.
+F2 (P1) et F4 (P2 en local ou entraînement), configurables dans le panneau « Easter Eggs
+· Gestes et secrets », jouent le geste 1 sans direction, le 2 avec avant, le 3 avec
+arrière et le secret avec bas. Avant et arrière suivent le côté regardé par chaque
+combattant. Les quatre boutons du panneau servent au tactile. Les touches de fonction
+peuvent nécessiter Fn selon le clavier.
 
-Les gestes 1, 2 puis 3 doivent se terminer dans cet ordre, dans la même manche,
-pour ouvrir les secrets de Hisoka et Leorio. Rihan doit terminer son analyse
-(geste 3). Kurapika doit affronter un membre du groupe Brigade du duel, y compris
-Hisoka. Un coup interrompt la scène et remet à zéro la séquence de trois gestes.
-Une scène exige un corps libre au sol, sans attaque, garde, dash ou relevée.
-Pendant la scène, le corps reste vulnérable ; les commandes de déplacement,
-garde et attaque ne peuvent ni l’annuler gratuitement ni préparer une attaque.
+Les gestes 1, 2 puis 3 doivent se terminer dans cet ordre, dans la même manche, pour
+ouvrir les secrets fondés sur une série. D’autres exigent un geste terminé ou un
+adversaire précis, affiché dans l’indice : Theta face à Tserriednich, Kalluto face à
+Illumi, Melody face à Kurapika ou Leorio, par exemple. `easterEggSecrets.ts` centralise
+ces conditions et choisit aussi la cible du bac à sable des aperçus. Les quatre séries
+initiales conservent leurs conditions. Un coup interrompt la scène et remet à zéro la
+séquence de trois gestes. Une scène exige un corps libre au sol, sans attaque, garde,
+dash ou relevée. Pendant la scène, le corps reste vulnérable ; les commandes de
+déplacement, garde et attaque ne peuvent ni l’annuler gratuitement ni préparer une
+attaque.
 
-`easterEggs.ts` avance dans le simulateur déterministe après les impacts, y
-compris pour les prévisions de Parallel Future. Hitstop et pause suspendent les
-animations ; une fin de manche les retire. Les poses de `easterEggPoses.ts`, les
-accessoires de `easterEggScene.ts`, les bulles FR/EN et les sons courts restent
-exclusivement visuels ou sonores. Cartes, chaînes et mallette n’entrent jamais
-dans les projectiles, l’inventaire ou les ressources ramassables.
+`easterEggs.ts` avance dans le simulateur déterministe après les impacts, y compris pour
+les prévisions de Parallel Future. Hitstop et pause suspendent les animations ; une fin
+de manche les retire. Les poses de `easterEggPoses.ts`, les accessoires de
+`easterEggScene.ts` et `easterEggRosterScene.ts`, les bulles FR/EN et les sons courts
+restent exclusivement visuels ou sonores. Cartes, chaînes et mallette n’entrent jamais
+dans les projectiles, l’inventaire ou les ressources ramassables. Les 114 motifs de
+`easterEggGestures1.ts` à `easterEggGestures5.ts` reçoivent une posture et une cadence
+propres à chaque série ; les 160 poses intermédiaires sont distinctes. Les accessoires
+utilisent les matériaux non éclairés de l’arène et suivent les mains du rig. Les
+esquisses, lettres, rubans, feuilles et flacons vides ne composent aucun poème de Nen,
+contrat, modèle ou ressource de préparation.
 
-Seules les scènes terminées sont découvertes. Le compteur 0/4 et les touches
-sont conservés localement, avec repli en mémoire si le stockage est indisponible.
-Les conditions des secrets sont renouvelées à chaque manche. Les aperçus des
-scènes découvertes tournent dans un duel séparé, silencieux et sans sauvegarde.
-`easterEggs.test.ts` couvre les deux camps, les interruptions, les ressources,
-les commandes et la persistance ; `pnpm --filter @black-whale/web test:easter-eggs`
-vérifie les boutons, les aperçus, le rechargement et le rendu à 1440, 390 et 320 px.
+Seules les scènes terminées sont découvertes. Le compteur 0/4 et les touches sont
+conservés localement, avec repli en mémoire si le stockage est indisponible. Les
+conditions des secrets sont renouvelées à chaque manche. Les aperçus des scènes
+découvertes tournent dans un duel séparé, silencieux et sans sauvegarde.
+`easterEggs.test.ts` et `easterEggRoster.test.ts` couvrent le roster exact, les
+conditions accessibles, les deux camps, les interruptions, les ressources, les commandes
+et la persistance compatible avec les sauvegardes du premier lot ; `pnpm --filter
+@black-whale/web test:easter-eggs` vérifie les boutons, les aperçus, le rechargement et
+240 états de scène à 1440, 390 et 320 px. La collection reste au format local v1.
+
+| Combattant | Geste 1 | Geste 2 | Geste 3 | Secret | | --- | --- | --- | --- | --- | |
+Kurapika | Sous la manche | Un avertissement | Le pendule | Face à l’Araignée | | Hisoka
+| Au bout des doigts | Approche donc | Équilibre précaire | La carte de trop | | Chrollo
+| Le col du chef | À ton tour | Un marque-page ordinaire | La mauvaise page | | Benjamin
+| Salut princier | Inspection de l’insigne | Appel des troupes | Un prince de trop | |
+Tserriednich | Regard de collectionneur | Mains dans le dos | Dix battements | L’avis du
+professeur | | Feitan | Plus haut que le nez | Moins de bruit | Pas une poussière | Le
+regard suffit | | Saiyu | Je n’entends rien | Je ne dis rien | Je ne vois rien | Trois
+mains seraient pratiques | | Theta | Une minute de cours | Reprenons depuis le début |
+Vérification discrète | Le cours n’est pas fini | | Biscuit | L’œil de l’experte |
+Profil avantageux | Juste un échauffement | Un éclat de trop | | Phinks | Survêtement
+impeccable | Les deux épaules | Un, deux, trois… | Tu m’as fait perdre le compte | |
+Franklin | Dix doigts, bien fermés | Faire de la place | Patienter | Travail de
+précision | | Machi | Manche ajustée | À la bonne longueur | Pli net | Même les nœuds
+sont sérieux | | Illumi | Pas un cheveu | Le regard fixe | Le compte est bon | Question
+de famille | | Kalluto | Un pli du kimono | Derrière l’éventail | Un simple pliage | Le
+pliage s’incline | | Bonolenov | Bandages en place | L’oreille du danseur | Trois petits
+temps | Le quatrième était en trop | | Shizuku | Bien voir | Il me manque quelque chose
+| Un peu de rangement | Qu’est-ce que je cherchais ? | | Hinrigh | La tenue du
+négociateur | On peut discuter | Pile ou face | Elle n’a pas bougé | | Mizaistom |
+Cravate réglementaire | Veuillez patienter | Note de service | À qui appartient ce
+ticket ? | | Leorio | Mise au point | Une seconde ! | Où est-ce passé ? | Ah, le voilà…
+| | Hanzo | Réflexion au sommet | Pose de ninja | Le pas silencieux | Qui a fait ce
+bruit ? | | Rihan | Première hypothèse | Changer d’angle | Analyse en cours |
+Informations insuffisantes | | Zakuro | Poignet propre | Une affaire à régler | Le
+flacon vide | Toujours vide | | Melody | À l’écoute | Tout doucement | Un air pour soi |
+Une révérence de trop | | Basho | Le temps d’un vers | Le geste du poète | Trois lignes
+à trouver | La rime attendra | | Camilla | Priorité aux ongles | L’invitation royale |
+Une patte, rien de plus | Finalement, non | | Halkenburg | Tenue de cérémonie | La main
+sur le cœur | Le bulletin | Un vote bien plié | | Gel | Une mèche en place | Le poignet
+souple | Le nœud de la ceinture | Un rythme sinueux | | Lynch | Prête à discuter | Alors
+? | Je t’écoute | Ça devient long | | Luini | Présentable | Par ici, peut-être | Un
+regard au coin | Il n’y a personne | | Bill | Veste de garde | Ça va aller | Une feuille
+ordinaire | Accrochée à la manche | | Furykov | Le menton du spécialiste | Inspection
+visuelle | Quatre détails | Et moi, alors ? | | Cluck | Le chapeau d’abord | De quel
+côté ? | Courrier en attente | L’adresse est à l’intérieur | | Beyond | La barbe de
+l’explorateur | Vers le large | Une carte sans destination | Le nord était en bas | |
+Longhi | La manche du témoin | Simple poignée de main | Une feuille vierge | Plus
+d’encre | | Musse | Poignet de service | Rapport silencieux | Un hibou sur papier |
+Veille prolongée | | Padaille | Main naturelle | Les articulations | Bien alignés | Pas
+cette main-là | | Sayird | Uniforme de garde | Un petit signe | Tendre l’oreille | Le
+mémo échappé | | Terebellum | Les deux paumes | À bonne distance | Un carré parfait |
+L’autre manche | | Voconte | Les revers du guide | C’est par là | Bonne hauteur | Après
+vous… | | Yokotani | La cravate du règlement | Le règlement prévoit… | Registre
+ordinaire | À remplir en trois exemplaires |
 
 ## Chaînes de Kurapika
 

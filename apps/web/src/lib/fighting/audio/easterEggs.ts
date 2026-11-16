@@ -2,9 +2,11 @@ import type { Graph } from '$lib/audio/ambient/mixer'
 import { rush, startsAt, swept } from '$lib/audio/hatsu/synth'
 import type { FightSoundEvent } from './events'
 import { materialStrike } from './voices'
+import { playRosterEasterEggSound } from './easterEggRoster'
 
 /** Short, quiet cues only; nothing keeps sounding after a scene is interrupted. */
 export function playEasterEggSound(g: Graph, event: FightSoundEvent): void {
+  if (playRosterEasterEggSound(g, event)) return
   if (event.fighter === 'hisoka') {
     materialStrike(g, { material: 'paper', force: event.value ? 0.35 : 0.2, light: true })
   } else if (event.fighter === 'kurapika') {

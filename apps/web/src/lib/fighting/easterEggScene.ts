@@ -1,9 +1,11 @@
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { ArcadeFighter, FightSide } from './types'
+import { createRosterEasterEggScene } from './easterEggRosterScene'
 
 /** All objects live exclusively in the renderer. Nothing can be picked up or hit. */
 export function createEasterEggScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
+  const rosterProps = createRosterEasterEggScene(options)
   const paper = new THREE.MeshBasicMaterial({ color: 0xfff4dc })
   const red = new THREE.MeshBasicMaterial({ color: 0xb32048 })
   const metal = new THREE.MeshBasicMaterial({ color: 0xdce7ef })
@@ -114,10 +116,12 @@ export function createEasterEggScene(options: EffectSceneOptions): FighterEffect
   }
   return {
     sync: (state) => {
+      rosterProps.sync(state, 0)
       syncSide(state.player, models.player, 'player')
       syncSide(state.opponent, models.opponent, 'opponent')
     },
     dispose: () => {
+      rosterProps.dispose()
       scene.remove(models.player.root, models.opponent.root)
       for (const shape of [
         cardShape,

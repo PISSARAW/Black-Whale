@@ -57,8 +57,8 @@
     >
     <p class="instructions">
       {language === 'fr'
-        ? 'Touche seule : geste 1 · + avant : 2 · + arrière : 3 · + bas : secret. Terminer une scène pour la découvrir. Un coup l’interrompt.'
-        : 'Key alone: gesture 1 · + forward: 2 · + back: 3 · + down: secret. Finish a scene to discover it. A hit interrupts it.'}
+        ? 'Scènes cosmétiques : le combat continue. Touche seule : geste 1 · + avant : 2 · + arrière : 3 · + bas : secret. Terminer une scène pour la découvrir. Un coup l’interrompt.'
+        : 'Cosmetic scenes: the fight continues. Key alone: gesture 1 · + forward: 2 · + back: 3 · + down: secret. Finish a scene to discover it. A hit interrupts it.'}
     </p>
     <div class="fighters">
       {#each sides as side (side)}

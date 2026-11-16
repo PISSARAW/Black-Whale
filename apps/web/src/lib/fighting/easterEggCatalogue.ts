@@ -1,16 +1,17 @@
 import type { FighterId } from './types'
 
-export type EasterEggSlot = 1 | 2 | 3 | 4
-export type EasterEggFighter = 'hisoka' | 'kurapika' | 'leorio' | 'rihan'
-export interface EasterEggDefinition {
-  slot: EasterEggSlot
-  name: { fr: string; en: string }
-  frames: number
-  hint: { fr: string; en: string }
-}
+import type { EasterEggDefinition, EasterEggSlot } from './easterEggTypes'
+import { EASTER_ROSTER_ONE } from './easterEggRosterOne'
+import { EASTER_ROSTER_TWO } from './easterEggRosterTwo'
+import { EASTER_ROSTER_THREE } from './easterEggRosterThree'
+import { EASTER_ROSTER_FOUR } from './easterEggRosterFour'
+export type { EasterEggDefinition, EasterEggSlot } from './easterEggTypes'
 
 /** Authored comic interludes, not additional canonical abilities or quoted dialogue. */
-export const EASTER_EGGS: Record<EasterEggFighter, readonly EasterEggDefinition[]> = {
+const ORIGINAL_EGGS: Record<
+  'hisoka' | 'kurapika' | 'leorio' | 'rihan',
+  readonly EasterEggDefinition[]
+> = {
   hisoka: [
     {
       slot: 1,
@@ -141,11 +142,23 @@ export const EASTER_EGGS: Record<EasterEggFighter, readonly EasterEggDefinition[
   ],
 }
 
+export const EASTER_EGGS = {
+  ...ORIGINAL_EGGS,
+  ...EASTER_ROSTER_ONE,
+  ...EASTER_ROSTER_TWO,
+  ...EASTER_ROSTER_THREE,
+  ...EASTER_ROSTER_FOUR,
+} satisfies Partial<Record<FighterId, readonly EasterEggDefinition[]>>
+export type EasterEggFighter = keyof typeof EASTER_EGGS
+
 export function easterEggsFor(id: FighterId): readonly EasterEggDefinition[] {
   return Object.hasOwn(EASTER_EGGS, id) ? EASTER_EGGS[id as EasterEggFighter] : []
 }
 
-export function easterEggDefinition(id: FighterId, slot: EasterEggSlot) {
+export function easterEggDefinition(
+  id: FighterId,
+  slot: EasterEggSlot,
+): EasterEggDefinition | undefined {
   return easterEggsFor(id).find((egg) => egg.slot === slot)
 }
 

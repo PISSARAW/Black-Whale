@@ -1,3 +1,4 @@
+import { buildPreparedVisitModel, syncPreparedVisitModel, disposePreparedVisitModels } from './preparedVisitModels'
 import { LUINI_ROOM_HALF_WIDTH, LUINI_ROOM_HEIGHT } from './luiniSpatial'
 import { buildHumanFigure, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
@@ -24,6 +25,8 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   function build(entry: PreparedEntity) {
     if (entry.kind === 'morena' || entry.kind === 'supporter') return human(entry)
+    const shared = buildPreparedVisitModel(options, entry)
+    if (shared) return shared
     const root = new THREE.Group()
     root.name = `prepared:${entry.id}`
     decorate(root, entry)
@@ -37,12 +40,6 @@ export function createPreparationScene(options: EffectSceneOptions) {
         object.position.y = 0.38
         root.add(object)
       },
-      flute: () => {
-        const flute = mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.65, 8), 0xdac790)
-        flute.rotation.z = Math.PI / 2
-        flute.position.y = 0.2
-        root.add(flute)
-      },
       needles: () => {
         const pin = box([0.02, 0.35, 0.02], 0xd8dce1)
         pin.rotation.z = 1
@@ -52,8 +49,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
         root.add(pin, cap)
       },
       seed: () => seed(root),
-      animal: () => animal(root, false),
-      bird: () => animal(root, true),
+      animal: () => animal(root),
       room: () => door(root),
       destination: () => marker(root, 0x6dced2),
       delivery: () => marker(root, 0xe3ce83),
@@ -105,25 +101,17 @@ export function createPreparationScene(options: EffectSceneOptions) {
     return figure.root
   }
 
-  function animal(root: import('three').Group, bird: boolean) {
-    const body = sphere(bird ? 0.14 : 0.1, bird ? 0x758796 : 0x9b8f80)
+  function animal(root: import('three').Group) {
+    const body = sphere(0.1, 0x9b8f80)
     body.scale.set(1.5, 0.8, 1)
     body.position.y = 0.16
-    const head = sphere(0.075, bird ? 0x8d9dac : 0xb1a494)
+    const head = sphere(0.075, 0xb1a494)
     head.position.set(0.15, 0.21, 0)
     root.add(body, head)
-    if (bird) {
-      for (const direction of [-1, 1]) {
-        const wing = box([0.22, 0.035, 0.12], 0x536b80)
-        wing.position.set(0, 0.2, direction * 0.15)
-        root.add(wing)
-      }
-    } else {
-      for (const direction of [-1, 1]) {
-        const ear = sphere(0.05, 0xe4b1a1)
-        ear.position.set(0.13, 0.28, direction * 0.05)
-        root.add(ear)
-      }
+    for (const direction of [-1, 1]) {
+      const ear = sphere(0.05, 0xe4b1a1)
+      ear.position.set(0.13, 0.28, direction * 0.05)
+      root.add(ear)
     }
   }
 
@@ -178,11 +166,17 @@ export function createPreparationScene(options: EffectSceneOptions) {
         root.position.set(options.worldX(entry.x), options.worldY(entry.y), backgroundDepth(entry))
         syncStaticAppearance(root, entry)
         syncAnimatedAppearance({ root, entry, seconds })
+        syncPreparedVisitModel(options, { root, entry, state, seconds })
       }
-      for (const [id, root] of models) if (!active.has(id)) root.visible = false
+      for (const [id, root] of models) {
+        if (active.has(id)) continue
+        disposePreparedVisitModels(root)
+        scene.remove(root)
+        models.delete(id)
+      }
     },
     dispose() {
-      for (const root of models.values()) scene.remove(root)
+      for (const root of models.values()) { disposePreparedVisitModels(root); scene.remove(root) }
       geometries.forEach((held) => held.dispose())
       materials.forEach((held) => held.dispose())
       models.clear()

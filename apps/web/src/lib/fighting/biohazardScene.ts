@@ -6,21 +6,12 @@ import type { FightSide, FightState } from './types'
 /** Physical rings morph into a pigeon, then become ordinary latched handcuffs on capture. */
 export function createBiohazardScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
-  const metal = new THREE.MeshStandardMaterial({
-    color: '#c5d1d6',
-    metalness: 0.55,
-    roughness: 0.3,
-    emissive: '#74828b',
-    emissiveIntensity: 0.35,
-  })
   const aura = new THREE.MeshBasicMaterial({
     color: '#80d6a0',
     transparent: true,
     opacity: 0.22,
     depthWrite: false,
   })
-  const ringShape = new THREE.TorusGeometry(0.095, 0.017, 8, 20)
-  const chainShape = new THREE.TorusGeometry(0.026, 0.009, 6, 10)
   const bodyShape = new THREE.SphereGeometry(1, 12, 8)
   type Model = {
     root: import('three').Group
@@ -28,6 +19,7 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
     cuffs: import('three').Group
     wings: import('three').Group[]
     visit: VisitHatsuModel
+    reverted: VisitHatsuModel
     glow: import('three').Mesh
   }
   const models = new Map<string, Model>()
@@ -44,24 +36,17 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
     visit.root.rotation.y = Math.PI / 3
     bird.add(visit.root)
     const wings = [...visit.joints.values()]
+    const reverted = createVisitHatsuModel(THREE, { model: 'biohazard-cuffs' })
+    reverted.fit({ width: 0.45 })
     const cuffs = new THREE.Group()
     cuffs.name = 'biohazard-handcuffs'
-    for (const sign of [-1, 1]) {
-      const ring = new THREE.Mesh(ringShape, metal)
-      ring.position.x = sign * 0.15
-      cuffs.add(ring)
-    }
-    for (let index = 0; index < 4; index++) {
-      const link = new THREE.Mesh(chainShape, metal)
-      link.position.x = -0.055 + index * 0.037
-      link.rotation.y = ((index % 2) * Math.PI) / 2
-      cuffs.add(link)
-    }
+    reverted.root.rotation.x = Math.PI / 2
+    cuffs.add(reverted.root)
     const glow = new THREE.Mesh(bodyShape, aura)
     glow.scale.set(0.35, 0.24, 0.2)
     root.add(bird, cuffs, glow)
     scene.add(root)
-    return { root, bird, cuffs, wings, glow, visit }
+    return { root, bird, cuffs, wings, glow, visit, reverted }
   }
 
   function syncObject(state: FightState, side: FightSide, object: BiohazardObject): void {
@@ -98,10 +83,10 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
         state[side].biohazard?.objects.forEach((object) => syncObject(state, side, object))
     },
     dispose: () => {
-      models.forEach((model) => { model.visit.dispose(); scene.remove(model.root) })
+      models.forEach((model) => { model.visit.dispose(); model.reverted.dispose(); scene.remove(model.root) })
       models.clear()
-      for (const shape of [ringShape, chainShape, bodyShape]) shape.dispose()
-      for (const material of [metal, aura]) material.dispose()
+      for (const shape of [bodyShape]) shape.dispose()
+      for (const material of [aura]) material.dispose()
     },
   }
 }

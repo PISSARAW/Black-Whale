@@ -1,3 +1,4 @@
+import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
 import { createArenaScene } from './arenaScene'
 import { createKallutoPaperScene } from './kallutoScene'
 import { createEasterEggScene } from './easterEggScene'
@@ -10,11 +11,10 @@ import { createSecretWindowScene } from './secretWindowScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createBashoFireScene } from './bashoFireScene'
 import { createNenFieldScene } from './nenFieldScene'
-import { gyoSight, insideEn } from './nenPerception'
 import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
-import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
+import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
 
 export interface EffectSceneOptions {
@@ -49,17 +49,11 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const benjamin = createBenjaminEffectScene(options)
   const kurapika = createKurapikaEffectScene(options)
   const machi = createMachiThreadScene(options)
-  const gumMaterial = new THREE.LineBasicMaterial({
-    color: 0xff55bb,
-    transparent: true,
-    opacity: 0,
-  })
-  const gumGeometry = new THREE.BufferGeometry()
-  const gum = new THREE.Line(gumGeometry, gumMaterial)
+  const visitHatsu = createRemainingVisitHatsuScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
-  scene.add(gum, ...cards)
+  scene.add(...cards)
 
   const sync = (state: FightState, seconds: number) => {
     easterEggs.sync(state, seconds)
@@ -77,7 +71,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     benjamin.sync(state, seconds)
     kurapika.sync(state, seconds)
     machi.sync(state, seconds)
-    syncGum(options, { state, line: gum, material: gumMaterial })
+    visitHatsu.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
 
@@ -99,49 +93,12 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       benjamin.dispose()
       machi.dispose()
       kurapika.dispose()
-      scene.remove(gum, ...cards)
-      gumGeometry.dispose()
-      gumMaterial.dispose()
+      visitHatsu.dispose()
+      scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()
     },
   }
-}
-
-interface GumSync {
-  state: FightState
-  line: import('three').Line
-  material: import('three').LineBasicMaterial
-}
-
-function syncGum(options: EffectSceneOptions, effect: GumSync): void {
-  const attachment = effect.state.bungeeGum
-  effect.line.visible = bungeeVisible(effect.state)
-  if (!attachment) return
-  const owner = effect.state[attachment.owner]
-  const target = effect.state[attachment.target]
-  const localOnly =
-    attachment.hidden && attachment.owner !== 'player' && !gyoSight(effect.state.player)
-  const points = Array.from({ length: 49 }, (_, index) => {
-    const ratio = index / 48
-    const sag = Math.sin(ratio * Math.PI) * -0.32
-    return {
-      x: owner.x + (target.x - owner.x) * ratio,
-      y: owner.y + (target.y - owner.y) * ratio,
-      sag,
-    }
-  })
-    .filter((point) => !localOnly || insideEn(effect.state.player, point))
-    .map(
-      (point) =>
-        new options.THREE.Vector3(
-          options.worldX(point.x),
-          options.worldY(point.y) + 1.15 + point.sag,
-          0.28,
-        ),
-    )
-  effect.line.geometry.setFromPoints(points)
-  effect.material.opacity = attachment.hidden ? 0.4 : 0.82
 }
 
 interface MeshSync {

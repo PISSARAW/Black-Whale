@@ -1,3 +1,4 @@
+import { buildGrimmelArrow, buildRisingSun } from './emittedHatsuModels'
 import { buildEmittedFist } from './emittedFistModel'
 import type * as Three from 'three'
 import type { Vec2 } from './types'
@@ -134,7 +135,7 @@ export class HatsuSceneEffects {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     })
-    this.#sun = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), this.#sunMaterial)
+    this.#sun = buildRisingSun(THREE, this.#sunMaterial)
     this.#sun.visible = false
     this.#sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
     this.#blastMaterial = new THREE.MeshBasicMaterial({
@@ -154,17 +155,7 @@ export class HatsuSceneEffects {
       opacity: 0.95,
       depthTest: false,
     })
-    this.#shaft = new THREE.Group()
-    const arrowShaft = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.05, 0.05, 1.6, 6),
-      this.#arrowMaterial,
-    )
-    arrowShaft.rotation.x = Math.PI / 2
-    this.#shaft.add(arrowShaft)
-    const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.4, 6), this.#arrowMaterial)
-    arrowHead.rotation.x = -Math.PI / 2
-    arrowHead.position.z = -1
-    this.#shaft.add(arrowHead)
+    this.#shaft = buildGrimmelArrow(THREE, this.#arrowMaterial)
     this.#shaft.visible = false
     this.#shaft.frustumCulled = false
     this.#shaft.renderOrder = 3

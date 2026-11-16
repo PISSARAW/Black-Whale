@@ -1,7 +1,5 @@
-import { buildEmittedFist } from '$lib/tour/emittedFistModel'
+import { EXTRA_VISIT_MODELS } from './visitHatsuSources'
 import { CANONICAL_MODELS } from '$lib/nen/archive-models'
-import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
-import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
 import { batchNenModel } from '$lib/tour/nenModelBatch'
 import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
 import type { BasicApparitionContext } from '$lib/tour/apparitionBasicView'
@@ -10,10 +8,11 @@ import type { Group, Object3D, Mesh, Material, BufferGeometry } from 'three'
 
 type Three = typeof import('three')
 type ArchiveModel = keyof typeof CANONICAL_MODELS
-export type VisitHatsuKind = ArchiveModel | 'paper-doll' | 'sun-mark' | 'moon-mark' | 'emitted-fist'
+export type VisitHatsuKind = ArchiveModel | keyof typeof EXTRA_VISIT_MODELS
 interface ModelOptions {
   model: VisitHatsuKind
   stage?: number
+  climb?: number
   anchor?: 'center' | 'floor'
   /** Named parts kept out of static batching so combat can animate them. */
   joints?: readonly string[]
@@ -41,7 +40,7 @@ export function createVisitHatsuModel(THREE: Three, options: ModelOptions) {
   }
   const seen: Apparition = { id: root.name, kind: spec.apparitionKind, at: [0, 0], y: 0,
     size: 1, colour: spec.colour, stage: options.stage ?? spec.stage,
-    hidden: false, spaceId: 'fighting', tierId: 'fighting' }
+    hidden: false, spaceId: 'fighting', tierId: 'fighting', climb: options.climb }
   spec.build(seen, { THREE, root: body, glow, skin: glow(spec.colour, 1) })
   const joints = retainJoints(THREE, body, options.joints ?? [])
   batchNenModel(body)
@@ -77,19 +76,8 @@ export function createVisitHatsuModel(THREE: Three, options: ModelOptions) {
 export type VisitHatsuModel = ReturnType<typeof createVisitHatsuModel>
 
 function modelSource(model: VisitHatsuKind) {
-  if (model === 'emitted-fist') return {
-    apparitionKind: 'mark' as const, colour: 0xbcecff, stage: 0,
-    build: (_seen: Apparition, context: BasicApparitionContext) => context.root.add(
-      buildEmittedFist(context.THREE, context.skin)),
-  }
-  if (model === 'paper-doll') return {
-    apparitionKind: 'paper' as const, colour: 0xefe7d9, stage: 0, build: buildObjectApparition,
-  }
-  if (model === 'sun-mark' || model === 'moon-mark') return {
-    apparitionKind: model, colour: model === 'sun-mark' ? 0xffcc55 : 0xc7d9e9,
-    stage: 0, build: buildBasicApparition,
-  }
-  return CANONICAL_MODELS[model]
+  if (model in EXTRA_VISIT_MODELS) return EXTRA_VISIT_MODELS[model as keyof typeof EXTRA_VISIT_MODELS]
+  return CANONICAL_MODELS[model as ArchiveModel]
 }
 
 function retainJoints(THREE: Three, body: Group, names: readonly string[]): Map<string, Group> {

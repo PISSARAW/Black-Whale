@@ -11,7 +11,6 @@ interface FeitanSceneOptions extends EffectSceneOptions {
 export function createFeitanScene(options: FeitanSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const geometries: import('three').BufferGeometry[] = []
-  const core = new THREE.MeshBasicMaterial({ color: '#fff3b4', fog: false })
   const flame = new THREE.MeshBasicMaterial({
     color: '#ff741c',
     transparent: true,
@@ -49,7 +48,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     armour.position.y = CANON.headY
     const sun = new THREE.Group()
     sun.name = `rising-sun:${side}`
-    const sphere = mesh(new THREE.SphereGeometry(1, 24, 16), core)
+    const solarModel = createVisitHatsuModel(THREE, { model: 'rising-sun' })
+    const sphere = solarModel.root
     const corona = mesh(new THREE.SphereGeometry(1.35, 24, 16), flame)
     sun.add(sphere, corona)
     const boundary = new THREE.Group()
@@ -57,7 +57,7 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     boundary.add(mesh(new THREE.CircleGeometry(1, 64), heat))
     boundary.add(mesh(new THREE.RingGeometry(0.985, 1, 96), edge))
     scene.add(sun, boundary)
-    return { armour, outfit, sun, boundary, corona }
+    return { armour, outfit, solarModel, sun, boundary, corona }
   }
   const held = { player: build('player'), opponent: build('opponent') }
   return {
@@ -90,10 +90,11 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     dispose() {
       for (const drawn of Object.values(held)) {
         drawn.outfit.dispose()
+        drawn.solarModel.dispose()
         scene.remove(drawn.sun, drawn.boundary)
       }
       geometries.forEach((geometry) => geometry.dispose())
-      ;[core, flame, edge, heat].forEach((material) => material.dispose())
+      ;[flame, edge, heat].forEach((material) => material.dispose())
     },
   }
 }

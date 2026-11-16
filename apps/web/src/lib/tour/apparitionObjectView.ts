@@ -15,12 +15,14 @@ const CHAIN_LINKS = 18
 
 function gum(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   const strand = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6),
+    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6, 24),
     skin,
   )
+  strand.name = 'gum-strand'
   strand.rotation.z = Math.PI / 2
   root.add(strand)
   const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), skin)
+  blob.name = 'gum-anchor'
   blob.scale.set(1, 0.7, 1)
   root.add(blob)
   return root
@@ -359,6 +361,7 @@ function contract(seen: Apparition, { THREE, glow, root }: BasicApparitionContex
   }
 
   const pen = new THREE.Group()
+  pen.name = 'moonlight-pen'
   pen.add(
     new THREE.Mesh(
       new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.022, seen.size * 0.5, 6),

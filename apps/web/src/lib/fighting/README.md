@@ -160,6 +160,26 @@ spécifique ; une bête gardienne passive ou le modèle d’un autre Hatsu ne le
 remplace pas. Cette couche ne modifie ni coûts, ni dégâts, ni conditions des Hatsu.
 `visitHatsuModel.test.ts` couvre échelle, animations, visibilité, copie et nettoyage.
 
+`remainingVisitHatsuScene.ts` raccorde également le téléphone et les antennes de
+Black Voice, le papier et le stylo de Moonlight Act, le bâton de Saiyu, le
+bras-serpent de Gel, la flèche de Halkenburg et la seconde bête personnelle de
+Tserriednich. Les accessoires suivent le squelette animé ; les pages et prêts
+utilisent l’identité du Hatsu exécuté, avec les conditions existantes. Le contrat
+ne passe à sa version signée qu’après acceptation effective des deux parties.
+La seconde bête accompagne uniquement la vue P1 de sa propre vision/divergence,
+sans révéler la vision adverse ni matérialiser une bête gardienne passive.
+
+Bungee Gum déforme le maillage de la visite sur la liaison réelle, avec la même
+courbure et le même découpage par In/Gyo/En. La carte jaune de Cross Game, les
+menottes redevenues ordinaires de Biohazard, les flûtes ramassables, les oiseaux
+de préparation et le noyau de Rising Sun utilisent leurs constructeurs communs.
+Les ailes suivent le vol ; le filament de contrôle de Cluck ne paraît que sous
+Gyo. La flûte d’un emprunteur exige toujours un instrument réellement équipé.
+Les effets de flèche et de bête personnelle restent purement visuels : aucune
+collision, portée, prédiction, blessure ou condition d’activation n’est ajoutée.
+`remainingVisitHatsu.test.ts` couvre les copies, les transitions, la perception,
+les animations, l’absence de mutation de la simulation et la libération 3D.
+
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.

@@ -168,6 +168,7 @@
   } from '$lib/tour/TourAtmosphereView'
   import { ApparitionView } from '$lib/tour/ApparitionView'
   import { buildBasicApparition, BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
+  import { buildAntennaApparition } from '$lib/tour/antennaModel'
   import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
   import { buildWormPortal } from '$lib/tour/apparitionPortalView'
   import { batchNenModel } from '$lib/tour/nenModelBatch'
@@ -2029,17 +2030,7 @@
           turns = root
         }
 
-        if (seen.kind === 'antenna') {
-          const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, seen.size * 2), skin)
-          pole.position.y = seen.size
-          root.add(pole)
-
-          const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.04), glow(seen.colour, 0.9))
-          bulb.position.y = seen.size * 2
-          root.add(bulb)
-
-          turns = root
-        }
+        turns = buildAntennaApparition(seen, { THREE, glow, root, skin }) ?? turns
 
         if (seen.kind === 'portal') {
           pane =

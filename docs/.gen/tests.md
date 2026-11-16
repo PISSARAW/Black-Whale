@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 650
+Fichiers : 657
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -372,6 +372,11 @@ Fichiers : 650
 
 - replay boundaries for panels and training > keeps the initial RNG, infinite training clock and resource setup
 
+## `apps/web/src/lib/fighting/fightReplayReview.test.ts`
+
+- deterministic replay review > bounds reconstruction work per render and cancels an older seek
+- Nen commitments during replay takeover > keeps a copied page, missing equipment, Zetsu and exact resource values
+
 ## `apps/web/src/lib/fighting/fightResponseDiagnostics.test.ts`
 
 - response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
@@ -519,6 +524,10 @@ Fichiers : 650
 
 - Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
 
+## `apps/web/src/lib/fighting/painPackerRig.test.ts`
+
+- reference Pain Packer outfit > shares its actual hood, grille, coat and gloves across the visit and Fighting
+
 ## `apps/web/src/lib/fighting/parallelFuture.test.ts`
 
 - Laplace Devil in the real 2D engine > enters Zetsu with closed eyes, without attacking, guarding or granting an evade
@@ -588,6 +597,10 @@ Fichiers : 650
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
+
+## `apps/web/src/lib/fighting/teamMatch.test.ts`
+
+- local three-fighter teams > requires three distinct known characters on each side
 
 ## `apps/web/src/lib/fighting/techniqueAuraColours.test.ts`
 
@@ -1262,6 +1275,10 @@ Fichiers : 650
 
 - Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
 
+## `apps/web/src/lib/server/clashSeasonFile.test.ts`
+
+- durable PvP seasons > restores identities, ratings and duplicate receipts after a server restart without persisting bearer tokens
+
 ## `apps/web/src/lib/server/clashSeasons.test.ts`
 
 - instance PvP seasons > uses opaque credentials and exposes no token in identity or standings
@@ -1914,6 +1931,10 @@ Fichiers : 650
 ## `apps/web/src/lib/tour/kachoView.test.ts`
 
 - Kacho’s apartment against the study, dining and kitchen panels > keeps a valid walked plan and distinguishes panel props from five reconstructed rooms
+
+## `apps/web/src/lib/tour/kurapikaLikeness.test.ts`
+
+- Kurapika likeness from the supplied manga reference > uses a dark suit and tie, with a white shirt and the declared blond bob
 
 ## `apps/web/src/lib/tour/lampAir.test.ts`
 

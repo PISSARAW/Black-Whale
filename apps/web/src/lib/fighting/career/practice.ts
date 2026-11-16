@@ -1,5 +1,6 @@
 import type { FightState } from '../types'
 import type { MatchPractice } from './types'
+import { isCareerDuel } from './eligibility'
 
 const fighter = () => ({ bestCombo: 0, bestComboDamage: 0, healthLost: 0 })
 export function createMatchPractice() {
@@ -7,7 +8,7 @@ export function createMatchPractice() {
   return {
     observe(before: FightState, after: FightState) {
       // Forecast frames are not played frames; ready/replay/lab states do not earn practice.
-      if (after.forecastSimulation || after.mode === 'training') return
+      if (after.forecastSimulation || !isCareerDuel(after)) return
       totals.frames += Math.max(0, Math.min(3, before.remainingFrames - after.remainingFrames))
       for (const side of ['player', 'opponent'] as const) {
         const actor = after[side]

@@ -48,7 +48,9 @@ sa limite de taille est atteinte.
 Le rendu continue d’utiliser les règles de perception du combat, sans afficher
 les deltas internes, les conditions cachées ou les commandes adverses en attente.
 La bibliothèque conserve la pause, les vitesses et le retour au combat suspendu.
-La reprise du contrôle à un instant arbitraire n’est pas ajoutée dans cette phase.
+La reprise du contrôle est ajoutée par la [phase 9](./PHASE9.md) : curseur par lots
+enregistrés, vérification des états reconstruits, essai local, répétition et retour
+à la relecture. Les essais ne modifient pas la source ni la progression de carrière.
 
 ## Diagnostic de réactivité
 

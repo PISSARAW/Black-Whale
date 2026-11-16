@@ -108,6 +108,11 @@
             : 'Player invitation is invalid or expired.'
           : $client.error}
     </p>{/if}
+  {#if view?.ranking === 'pending'}<p role="status">
+      {language === 'fr'
+        ? 'Verdict conservé dans ce salon. Écriture du classement en attente ; recharge le salon pour réessayer.'
+        : 'Verdict kept in this lobby. Ranking storage pending; reload the lobby to retry.'}
+    </p>{/if}
 </section>
 
 <style>

@@ -31,6 +31,7 @@
 | `fighting/pvp/api/matches` | `+server.ts` |
 | `fighting/pvp/api/matches/[matchId]` | `+server.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |
 | `health` | `+server.ts` |
 | `hunt` | `+page.svelte` |

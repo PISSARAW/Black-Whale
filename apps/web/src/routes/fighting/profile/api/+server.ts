@@ -5,7 +5,10 @@ import { record } from '$lib/fighting/pvp/protocol'
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = () =>
-  json(clashSeasons.leaderboard(), { headers: { 'cache-control': 'no-store' } })
+  json(
+    { ...clashSeasons.leaderboard(), ...clashSeasons.status() },
+    { headers: { 'cache-control': 'no-store' } },
+  )
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   const limited = clashThrottle(`profile:${getClientAddress()}`, 20)
   if (limited) return limited
@@ -18,6 +21,6 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
       headers: { 'cache-control': 'no-store' },
     })
   } catch {
-    return json({ error: 'PROFILE_CAPACITY' }, { status: 503 })
+    return json({ error: 'RANKING_UNAVAILABLE' }, { status: 503 })
   }
 }

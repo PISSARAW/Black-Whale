@@ -61,6 +61,7 @@ export interface PvpView {
   disconnectedSide: FightSide | null
   practice?: import('../career/types').MatchPractice
   names?: Partial<Record<FightSide, string>>
+  ranking?: 'counted' | 'pending' | 'unranked'
 }
 export interface PvpSpectatorView {
   status: PvpStatus

@@ -209,6 +209,12 @@ standard sont simulées ; aucune mesure de latence matérielle n’est revendiqu
 
 ## Phase 8 : carrière et extension de l’expérience
 
+La [phase 9](./PHASE9.md) ajoute la navigation vérifiée dans les replays, les essais
+locaux depuis leur état réel, les équipes de trois avec une assistance par relais,
+et la persistance des identités et classements PvP après redémarrage. Les essais
+et équipes sont exclus de la carrière et des classements. Les coûts, corps,
+conditions de copie et engagements du Nen restent ceux du moteur ordinaire.
+
 `/fighting/profile` ajoute l’historique local, la maîtrise des quarante personnages,
 les habillages, introductions et poses de victoire. Les replays et le laboratoire
 ne donnent pas de progression. Le classement mensuel partagé suit seulement les

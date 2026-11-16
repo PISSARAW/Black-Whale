@@ -9,6 +9,9 @@
 <main class="pvp-page">
   <a href={$link('/fighting')}>{$locale === 'fr' ? 'Retour à Clash' : 'Back to Clash'}</a>
   <h1>{$locale === 'fr' ? 'Profil et saison' : 'Profile and season'}</h1>
+  <a href={$link('/fighting/teams')}
+    >{$locale === 'fr' ? 'Équipes et relais' : 'Teams and relays'}</a
+  >
   <a href={$link('/fighting/tournament')}
     >{$locale === 'fr' ? 'Organiser un tournoi' : 'Organize a tournament'}</a
   >

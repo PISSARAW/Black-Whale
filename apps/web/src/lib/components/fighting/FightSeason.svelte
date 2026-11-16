@@ -9,6 +9,8 @@
   let name = '',
     error = '',
     busy = false
+  let durable = false,
+    available = true
   $: fr = language === 'fr'
   async function refresh() {
     try {
@@ -17,6 +19,13 @@
       const value = await response.json()
       season = value.season
       entries = value.entries
+      durable = value.persistence === 'disk'
+      available = value.available !== false
+      error = available
+        ? ''
+        : fr
+          ? 'Écriture du classement indisponible. Aucun résultat local ne remplace un verdict serveur.'
+          : 'Ranking storage unavailable. Local results cannot replace server verdicts.'
     } catch {
       error = fr ? 'Saison momentanément indisponible.' : 'Season temporarily unavailable.'
     }
@@ -58,8 +67,12 @@
   </p>
   <p>
     {fr
-      ? 'Le serveur conserve ce classement jusqu’à son redémarrage. Ton historique local reste dans ce navigateur.'
-      : 'The server keeps these standings until restart. Your local history stays in this browser.'}
+      ? durable
+        ? 'Les identités et saisons sont conservées sur le serveur après redémarrage. Ton historique local reste dans ce navigateur.'
+        : 'Ce serveur utilise un classement en mémoire. Ton historique local reste dans ce navigateur.'
+      : durable
+        ? 'Identities and seasons survive server restarts. Your local history stays in this browser.'
+        : 'This server uses in-memory standings. Your local history stays in this browser.'}
   </p>
   {#if credential}<p>{fr ? 'Profil inscrit' : 'Registered profile'} : {credential.name}</p>{/if}
   <form

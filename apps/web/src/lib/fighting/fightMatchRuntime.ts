@@ -41,7 +41,7 @@ export function createFightMatchRuntime(
     if (replays.active) return state
     const after = applyReplayCommand(state, command)
     replays.append(state, [0, 0, 0, [command]], after)
-    boundary = after
+    if (!replays.practicing) boundary = after
     career?.observe(state, after)
     return after
   }
@@ -80,6 +80,11 @@ export function createFightMatchRuntime(
     }
     return { state: next, commands }
   }
+  function recordBoundary(state: FightState) {
+    if (replays.practicing || !boundary || boundary === state) return
+    if (fightReplayHash(boundary) !== fightReplayHash(state))
+      replays.append(boundary, [0, 0, 0, [panelReplayCommand(boundary, state)]], state)
+  }
   return {
     replays,
     diagnostics,
@@ -89,6 +94,24 @@ export function createFightMatchRuntime(
     begin,
     clear,
     apply,
+    seekReplay(packet: number) {
+      clear()
+      return replays.seek(packet)
+    },
+    takeoverReplay() {
+      clear()
+      diagnostics.reset()
+      return replays.takeover()
+    },
+    repeatReplayPractice() {
+      clear()
+      diagnostics.reset()
+      return replays.repeatPractice()
+    },
+    returnToReplay() {
+      clear()
+      return replays.returnToReplay()
+    },
     enqueue(state: FightState, command: ReplayCommand) {
       if (replays.active || !fightAcceptsCommands(state)) return
       const receipt = diagnostics.receive(state, command, clock())
@@ -108,8 +131,7 @@ export function createFightMatchRuntime(
     ): FightState {
       if (replays.active) return replays.advance(options.dt) ?? state
       if (state.phase !== 'fighting') return state
-      if (boundary && boundary !== state && fightReplayHash(boundary) !== fightReplayHash(state))
-        replays.append(boundary, [0, 0, 0, [panelReplayCommand(boundary, state)]], state)
+      recordBoundary(state)
       const dt = Math.min(0.05, Math.max(0, options.dt))
       const player = packReplayInput(input)
       const opponent = packReplayInput(options.opponentInput ?? EMPTY_INPUT)
@@ -127,7 +149,7 @@ export function createFightMatchRuntime(
       })
       const packet: ReplayPacket = [dt, player, opponent, applied.commands]
       replays.append(state, packet, after)
-      boundary = after
+      if (!replays.practicing) boundary = after
       return after
     },
   }

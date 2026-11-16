@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createReplayReviewActions } from '$lib/fighting/fightReplayReviewActions'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { createCareerTracker } from '$lib/fighting/career/runtime'
   import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
@@ -74,7 +75,24 @@
   })
   const replays = match.replays
   const diagnostics = match.diagnostics
-  const replayActions = { onOpen: openReplay, onClose: closeReplay, onRestart: restartReplay }
+  const replayActions = {
+    onOpen: openReplay,
+    onClose: closeReplay,
+    onRestart: restartReplay,
+    review: createReplayReviewActions({
+      match,
+      release: resetFightInputs,
+      update: (next) => {
+        state = next
+        paused = false
+      },
+      onTakeover: () => {
+        lessons.exit()
+        school.exit()
+        practice.exit()
+      },
+    }),
+  }
   let replayReturnPaused = false
   let comfort = defaultFightComfort()
   let stageElement: HTMLDivElement | undefined

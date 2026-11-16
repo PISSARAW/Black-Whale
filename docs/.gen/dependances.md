@@ -2,7 +2,7 @@
 
 # Graphe des dépendances
 
-Nœuds : 25 · Arêtes uniques : 58
+Nœuds : 25 · Arêtes uniques : 59
 
 ## Arêtes
 
@@ -21,7 +21,7 @@ Nœuds : 25 · Arêtes uniques : 58
 | `lib:components` | `package:@black-whale/domain` | 11 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
 | `lib:fighting` | `lib:components` | 2 |
-| `lib:fighting` | `lib:tour` | 67 |
+| `lib:fighting` | `lib:tour` | 69 |
 | `lib:fighting` | `package:@black-whale/domain` | 1 |
 | `lib:fighting` | `package:@black-whale/nen-engine` | 23 |
 | `lib:hunt` | `lib:arena` | 3 |
@@ -48,6 +48,7 @@ Nœuds : 25 · Arêtes uniques : 58
 | `lib:strategy` | `package:@black-whale/canon-engine` | 12 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 2 |
+| `lib:tour` | `lib:fighting` | 15 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 13 |
 | `lib:tour` | `package:@black-whale/domain` | 4 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 36 |
@@ -69,4 +70,4 @@ Nœuds : 25 · Arêtes uniques : 58
 
 ## Cycles
 
-Aucun cycle détecté.
+- `lib:tour` → `lib:fighting` → `lib:tour`

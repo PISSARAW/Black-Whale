@@ -1,16 +1,24 @@
 <script lang="ts">
+  import FightReplayReview from './FightReplayReview.svelte'
+  import type { ReplayReviewActions } from '$lib/fighting/fightReplayReview'
   import type { FightReplayController } from '$lib/fighting/fightReplayController'
   import { MAX_REPLAY_BYTES } from '$lib/fighting/fightReplayTypes'
   import type { SavedFightReplay } from '$lib/fighting/fightReplayTypes'
   import { fighterDefinition } from '$lib/fighting/roster'
   export let replays: FightReplayController
   export let language: 'fr' | 'en'
+  export let expanded = false
+  export let review: ReplayReviewActions | undefined = undefined
   export let onOpen: (id: string) => void
   export let onClose: () => void
   export let onRestart: () => void
   let file: HTMLInputElement
   let localError = ''
   const messages: Record<string, [string, string]> = {
+    practice: [
+      'Cet essai local ne remplace pas une capture de match.',
+      'This local rehearsal does not replace a match recording.',
+    ],
     divergence: [
       'Ce replay ne correspond plus aux règles actuelles du jeu.',
       'This replay no longer matches the current game rules.',
@@ -71,6 +79,7 @@
   aria-label={language === 'fr' ? 'Replays de matchs' : 'Match replays'}
   data-fight-scroll
 >
+  {#if review}<FightReplayReview {replays} actions={review} {language} />{/if}
   {#if playback}
     <div class="playback-bar">
       <strong>{language === 'fr' ? 'LECTURE DU REPLAY' : 'REPLAY PLAYBACK'}</strong>
@@ -105,7 +114,7 @@
           ? 'Fin du replay · états vérifiés.'
           : 'Replay finished · states verified.'}
       </p>{/if}
-  {:else if $replays.recording}
+  {:else if $replays.recording && !$replays.practice}
     <div class="capture-bar">
       <span
         >{language === 'fr'
@@ -123,7 +132,7 @@
         : 'Capture stopped: an untracked action or recording limit was encountered. The fight continues normally.'}
     </p>{/if}
   {#if status}<p role="status">{status}</p>{/if}
-  <details>
+  <details open={expanded}>
     <summary
       >{language === 'fr' ? 'Bibliothèque de replays' : 'Replay library'} · {$replays.library
         .length}/5</summary

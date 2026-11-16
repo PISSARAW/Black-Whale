@@ -53,8 +53,9 @@ Chaque mois UTC ouvre une nouvelle saison. Le tableau montre les cent premières
 entrées ; les jetons n’y sont jamais exposés.
 
 Ce classement est celui d’une instance du serveur, avec des pseudonymes et sans
-comptes ou matchmaking. Les profils et saisons sont en mémoire, comme les salons
-de la phase 7 : un redémarrage les efface et nécessite une nouvelle inscription.
+comptes ou matchmaking. La [phase 9](./PHASE9.md) conserve désormais les identités,
+saisons et reçus de résultats sur disque, avec des jetons hachés. Les salons de
+combat restent en mémoire ; leur redémarrage invalide les invitations en cours.
 Douze saisons, 5 000 identités et 50 000 résultats par saison bornent le registre.
 L’historique de pratique local reste dans le navigateur.
 

@@ -120,6 +120,7 @@ export class ClashPvpRegistry {
       ...pvpSnapshot(state, side),
       disconnectedSide: lobby.disconnectedSide,
       practice: lobby.match.summary(),
+      ranking: this.rankingStatus(lobby),
       names: { player: lobby.profiles.player?.name, opponent: lobby.profiles.opponent?.name },
     }
   }
@@ -163,7 +164,11 @@ export class ClashPvpRegistry {
   }
   private advance(lobby: Lobby) {
     const now = this.now()
-    if (['finished', 'abandoned'].includes(lobby.status)) return
+    if (lobby.status === 'finished') {
+      this.rank(lobby)
+      return
+    }
+    if (lobby.status === 'abandoned') return
     this.detectDisconnect(lobby)
     if (lobby.status !== 'playing') {
       lobby.lastAdvancedAt = now
@@ -179,16 +184,24 @@ export class ClashPvpRegistry {
       lobby.status = state.matchWinner ? 'finished' : 'ready'
       lobby.ready = { player: false, opponent: false }
       lobby.match.release()
-      if (state.matchWinner && !lobby.ranked) {
-        lobby.ranked = true
-        this.seasons.record({
-          id: lobby.id,
-          player: lobby.profiles.player,
-          opponent: lobby.profiles.opponent,
-          winner: state.matchWinner,
-        })
-      }
+      this.rank(lobby)
     }
+  }
+  private rank(lobby: Lobby) {
+    const winner = lobby.match.snapshot().matchWinner
+    if (!winner || lobby.ranked) return
+    lobby.ranked = this.seasons.record({
+      id: lobby.id,
+      player: lobby.profiles.player,
+      opponent: lobby.profiles.opponent,
+      winner,
+    })
+  }
+  private rankingStatus(lobby: Lobby): PvpView['ranking'] {
+    const a = lobby.profiles.player,
+      b = lobby.profiles.opponent
+    if (!a || !b || a.id === b.id || lobby.status !== 'finished') return 'unranked'
+    return lobby.ranked ? 'counted' : 'pending'
   }
   private detectDisconnect(lobby: Lobby) {
     if (!lobby.seats.opponent) return
@@ -259,7 +272,10 @@ function session(matchId: string, side: FightSide, token: string): PvpSession {
 const shared = globalThis as typeof globalThis & {
   __clashPvp?: ClashPvpRegistry
   __clashPvpRules?: string
+  __clashPvpSeasons?: ClashSeasons
 }
-if (shared.__clashPvpRules !== PVP_RULESET) shared.__clashPvp = new ClashPvpRegistry()
+if (shared.__clashPvpRules !== PVP_RULESET || shared.__clashPvpSeasons !== clashSeasons)
+  shared.__clashPvp = new ClashPvpRegistry()
 shared.__clashPvpRules = PVP_RULESET
+shared.__clashPvpSeasons = clashSeasons
 export const clashPvpRegistry = shared.__clashPvp ?? (shared.__clashPvp = new ClashPvpRegistry())

@@ -108,8 +108,10 @@ describe('duel rules', () => {
     expect(state.player.aura).toBeLessThan(36)
   })
   it('does not cancel on whiff or without a declared block route', () => {
-    const state = close()
-    state.player = { ...state.player, id: 'hisoka' }
+    const state = beginFight(createFight('franklin', 'hisoka', { mode: 'versus-local' }))
+    state.player = { ...state.player, x: 46, aura: 100 }
+    state.opponent = { ...state.opponent, x: 51 }
+    expect(moveForSlot('franklin', 'standingLight')!.cancelOnBlockInto).toEqual([])
     const whiff = performAttack(state, 'player', 'light')
     expect(performAttack(whiff, 'player', 'heavy').player.attack?.kind).toBe('light')
     whiff.opponent.blocking = true

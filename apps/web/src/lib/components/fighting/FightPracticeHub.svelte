@@ -81,6 +81,9 @@
     >{language === 'fr' ? 'Profil, saison et tournois' : 'Profile, season and tournaments'}</a
   >
   <details open={expanded}>
+    <a href={localizePath('/fighting/teams', language)}
+      >{language === 'fr' ? 'Équipes et assistances par relais' : 'Teams and relay assists'}</a
+    >
     <summary
       >{language === 'fr' ? 'Défis et parcours Arcade' : 'Challenges and Arcade route'}</summary
     >

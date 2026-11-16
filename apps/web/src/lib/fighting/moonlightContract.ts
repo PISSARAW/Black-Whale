@@ -4,6 +4,7 @@ import { chrolloPageForMove } from './chrolloBook'
 import { hatsuSealedByOn } from './onTechnique'
 import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+import { moonlightBinds, rewardMoonlightParty, teamMoonlightSigners } from './moonlightParties'
 
 export const MOONLIGHT_TRUCE_FRAMES = 300
 export const MOONLIGHT_OFFER_FRAMES = 480
@@ -11,6 +12,7 @@ export const MOONLIGHT_SIGNING_RANGE = 12
 export const MOONLIGHT_MOVE = 'longhi:neutralSpecial'
 
 export interface MoonlightAgreement {
+  signers?: Record<FightSide, import('./types').FighterId>
   sourceMoveId?: string
   issuer: FightSide
   recipient: FightSide
@@ -117,6 +119,7 @@ export function offerMoonlightContract(options: {
     },
     moonlight: {
       offer: {
+        signers: teamMoonlightSigners(state),
         issuer: side,
         recipient,
         sourceMoveId: moveId,
@@ -168,6 +171,7 @@ export function moonlightZetsu(fighter: ArcadeFighter): ArcadeFighter {
 
 export function breachMoonlightContract(state: FightState, side: FightSide): FightState {
   if (!state.moonlight?.active) return state
+  if (!moonlightBinds(state, side, state.moonlight.active)) return state
   return {
     ...state,
     [side]: moonlightZetsu(state[side]),
@@ -183,10 +187,8 @@ export function advanceMoonlightContract(state: FightState): FightState {
   if (!pact) return tickCooldown(state)
   const remainingFrames = pact.remainingFrames - 1
   if (remainingFrames > 0) return { ...state, moonlight: { active: { ...pact, remainingFrames } } }
-  const recipient = state[pact.recipient]
   return {
-    ...state,
-    [pact.recipient]: { ...recipient, moonlightLoan: (recipient.moonlightLoan ?? 0) + 1 },
+    ...rewardMoonlightParty(state, pact),
     moonlight: { outcome: { kind: 'fulfilled', side: pact.recipient } },
   }
 }

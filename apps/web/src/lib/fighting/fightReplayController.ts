@@ -5,6 +5,7 @@ import { decodeFightReplay } from './fightReplayCodec'
 import { loadFightReplays, saveFightReplay, deleteFightReplay } from './fightReplayStorage'
 import type { FightReplay, ReplayPacket, SavedFightReplay } from './fightReplayTypes'
 import type { FightState } from './types'
+import { canPracticeReplay, practiceReplay } from './fightReplayPractice'
 
 export interface ReplayView {
   library: SavedFightReplay[]
@@ -12,6 +13,7 @@ export interface ReplayView {
   packets: number
   captureIssue: string
   status: string
+  practice: { id: string; packet: number } | null
   playback: {
     id: string
     elapsed: number
@@ -20,6 +22,10 @@ export interface ReplayView {
     speed: number
     finished: boolean
     error: string
+    packet: number
+    packets: number
+    seeking: boolean
+    canPractice: boolean
   } | null
 }
 const initial: ReplayView = {
@@ -28,6 +34,7 @@ const initial: ReplayView = {
   packets: 0,
   captureIssue: '',
   status: '',
+  practice: null,
   playback: null,
 }
 export function createFightReplayController() {
@@ -37,6 +44,7 @@ export function createFightReplayController() {
   let source: SavedFightReplay | null = null
   let suspended: FightState | null = null
   let sequence = 0
+  let rehearsal = false
   const status = (message: string) => view.update((value) => ({ ...value, status: message }))
   async function remember(replay: FightReplay): Promise<SavedFightReplay> {
     const entry = { id: `${Date.now().toString(36)}-${++sequence}`, createdAt: Date.now(), replay }
@@ -53,6 +61,10 @@ export function createFightReplayController() {
     return entry
   }
   async function save() {
+    if (rehearsal) {
+      status('practice')
+      return null
+    }
     const replay = recorder?.snapshot()
     if (!replay) {
       status('empty')
@@ -65,12 +77,14 @@ export function createFightReplayController() {
     player = null
     source = null
     suspended = null
+    rehearsal = false
     view.update((value) => ({
       ...value,
       recording: Boolean(recorder),
       packets: 0,
       captureIssue: '',
       playback: null,
+      practice: null,
       status: '',
     }))
   }
@@ -78,7 +92,10 @@ export function createFightReplayController() {
     subscribe: view.subscribe,
     begin,
     get active() {
-      return player !== null
+      return player !== null && !rehearsal
+    },
+    get practicing() {
+      return rehearsal
     },
     async load() {
       try {
@@ -128,11 +145,13 @@ export function createFightReplayController() {
         return current
       }
       if (!player) suspended = current
+      rehearsal = false
       player = next
       source = entry
       view.update((value) => ({
         ...value,
         status: '',
+        practice: null,
         playback: {
           id,
           elapsed: 0,
@@ -141,6 +160,10 @@ export function createFightReplayController() {
           speed: 1,
           finished: false,
           error: '',
+          packet: 0,
+          packets: entry.replay.packets.length,
+          seeking: false,
+          canPractice: canPracticeReplay(player!.state),
         },
       }))
       return player.state
@@ -148,7 +171,8 @@ export function createFightReplayController() {
     advance(dt: number): FightState | null {
       const playback = get(view).playback
       if (!player || !playback) return null
-      const state = playback.running ? player.advance(dt, playback.speed) : player.state
+      const state =
+        playback.running || player.seeking ? player.advance(dt, playback.speed) : player.state
       view.update((value) => ({
         ...value,
         playback: {
@@ -157,6 +181,9 @@ export function createFightReplayController() {
           finished: player!.done,
           running: playback.running && !player!.done,
           error: player!.error,
+          packet: player!.cursor,
+          seeking: player!.seeking,
+          canPractice: !player!.error && !player!.seeking && canPracticeReplay(state),
         },
       }))
       return state
@@ -165,7 +192,11 @@ export function createFightReplayController() {
       view.update((value) => ({
         ...value,
         playback: value.playback
-          ? { ...value.playback, running: !value.playback.running && !value.playback.finished }
+          ? {
+              ...value.playback,
+              running:
+                !value.playback.running && !value.playback.finished && !value.playback.seeking,
+            }
           : null,
       }))
     },
@@ -176,8 +207,55 @@ export function createFightReplayController() {
         playback: current.playback ? { ...current.playback, speed: value } : null,
       }))
     },
+    seek(packet: number): FightState | null {
+      if (!player || rehearsal || !player.seek(packet)) return null
+      view.update((value) => ({
+        ...value,
+        playback: value.playback ? { ...value.playback, running: false } : null,
+      }))
+      return this.advance(0)
+    },
+    takeover(): FightState | null {
+      if (!player || !source || player.error || player.seeking || rehearsal) return null
+      const state = practiceReplay(player.state, source.id, player.cursor)
+      if (!state) return null
+      rehearsal = true
+      view.update((value) => ({
+        ...value,
+        playback: null,
+        practice: { id: source!.id, packet: player!.cursor },
+      }))
+      return state
+    },
+    repeatPractice(): FightState | null {
+      return rehearsal && player && source
+        ? practiceReplay(player.state, source.id, player.cursor)
+        : null
+    },
+    returnToReplay(): FightState | null {
+      if (!rehearsal || !source || !player) return null
+      rehearsal = false
+      view.update((value) => ({
+        ...value,
+        practice: null,
+        playback: {
+          id: source!.id,
+          elapsed: player!.elapsed,
+          duration: source!.replay.duration,
+          running: false,
+          speed: 1,
+          finished: player!.done,
+          error: player!.error,
+          packet: player!.cursor,
+          packets: source!.replay.packets.length,
+          seeking: false,
+          canPractice: canPracticeReplay(player!.state),
+        },
+      }))
+      return player.state
+    },
     restart(): FightState | null {
-      if (!source || !player) return null
+      if (!source || !player || rehearsal) return null
       player = createReplayPlayer(source.replay)
       view.update((value) => ({
         ...value,
@@ -188,6 +266,9 @@ export function createFightReplayController() {
               finished: false,
               error: player!.error,
               running: !player!.error,
+              packet: 0,
+              seeking: false,
+              canPractice: canPracticeReplay(player!.state),
             }
           : null,
       }))
@@ -198,7 +279,8 @@ export function createFightReplayController() {
       player = null
       source = null
       suspended = null
-      view.update((value) => ({ ...value, playback: null }))
+      rehearsal = false
+      view.update((value) => ({ ...value, playback: null, practice: null }))
       return restored
     },
     async import(text: string) {

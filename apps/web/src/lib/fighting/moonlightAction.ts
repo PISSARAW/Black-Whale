@@ -6,6 +6,7 @@ import {
 } from './moonlightContract'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+import { moonlightBinds } from './moonlightParties'
 
 /** Moonlight Act has no damaging carrier, no forced signature and no attack finisher. */
 export function performMoonlightAction(options: AuraAttackOptions): FightState | null {
@@ -25,6 +26,7 @@ export function resolveMoonlightAction(
   side: FightSide,
 ): FightState {
   if (!before.moonlight?.active || !actionStarted(before[side], after[side])) return after
+  if (!moonlightBinds(before, side, before.moonlight.active)) return after
   const physical = after[side].attack?.kind === 'light' || after[side].attack?.kind === 'heavy'
   // Zetsu interrupts Nen before it takes effect; an ordinary physical blow still proceeds.
   return breachMoonlightContract(physical ? after : before, side)

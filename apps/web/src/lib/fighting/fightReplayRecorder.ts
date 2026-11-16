@@ -15,7 +15,7 @@ import { initialReplayState } from './fightReplayCommands'
 import type { FightState } from './types'
 
 export function replaySetup(state: FightState): ReplaySetup | null {
-  if (state.forecastSimulation) return null
+  if (state.forecastSimulation || state.teamMatch) return null
   if (
     !FIGHTING_ROSTER.some(({ id }) => id === state.player.id) ||
     !FIGHTING_ROSTER.some(({ id }) => id === state.opponent.id)

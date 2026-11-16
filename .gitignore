@@ -39,3 +39,6 @@ coverage/
 # checkout that git reports as dirty — so leaving it tracked makes the second
 # deploy on any host impossible.
 .deploy-history
+
+# Persistent Clash rankings and hashed credentials (server volume).
+.clash-data/

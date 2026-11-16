@@ -1,3 +1,4 @@
+import { hisokaUtilityMove } from './hisokaTechnique'
 import { usesRemotePunch } from './leorioAttack'
 import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
 import { variantData } from './duelMoves'
@@ -6,10 +7,7 @@ import { fightingStyle } from './fightStyles'
 import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
 
-export const FIGHT_FPS = 60
-export const FIXED_STEP = 1 / FIGHT_FPS
-export const ROUND_FRAMES = 60 * FIGHT_FPS
-export const INPUT_BUFFER_FRAMES = 6
+export { FIGHT_FPS, FIXED_STEP, ROUND_FRAMES, INPUT_BUFFER_FRAMES } from './fightClock'
 
 export interface FightBox {
   left: number
@@ -191,6 +189,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (hisokaUtilityMove(fighter)) return null
   if (usesRemotePunch(fighter)) return null
   if (usesFranklinBarrage(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')

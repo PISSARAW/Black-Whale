@@ -1,4 +1,4 @@
-import { FIXED_STEP } from './frameData'
+import { FIXED_STEP } from './fightClock'
 import type { FightSide, FightState } from './types'
 
 /** Beyond this jump in one frame (a round reset, a teleport) the renderer snaps. */

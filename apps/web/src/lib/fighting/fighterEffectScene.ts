@@ -1,3 +1,4 @@
+import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
 import { attackAuraColour } from './techniqueAuraColours'
 import type { FightSide, FightState } from './types'
 
@@ -60,7 +61,7 @@ interface GumSync {
 
 function syncGum(options: EffectSceneOptions, effect: GumSync): void {
   const attachment = effect.state.bungeeGum
-  effect.line.visible = Boolean(attachment)
+  effect.line.visible = bungeeVisible(effect.state)
   if (!attachment) return
   const owner = effect.state[attachment.owner]
   const target = effect.state[attachment.target]
@@ -74,7 +75,7 @@ function syncGum(options: EffectSceneOptions, effect: GumSync): void {
     )
   })
   effect.line.geometry.setFromPoints(points)
-  effect.material.opacity = attachment.hidden ? 0.14 : 0.82
+  effect.material.opacity = attachment.hidden ? 0.4 : 0.82
 }
 
 interface MeshSync {
@@ -104,7 +105,7 @@ function syncChain(options: EffectSceneOptions, effect: MeshSync): void {
 function syncCards(options: EffectSceneOptions, effect: MeshSync): void {
   const side = attackingSide(effect.state, 'hisoka')
   const active =
-    side && ['heavy', 'ranged', 'special'].includes(effect.state[side].attack?.kind ?? '')
+    side && !hisokaUtilityMove(effect.state[side]) && ['heavy', 'ranged', 'special'].includes(effect.state[side].attack?.kind ?? '')
   effect.meshes.forEach((mesh) => (mesh.visible = Boolean(active)))
   if (!active || !side) return
   const fighter = effect.state[side]

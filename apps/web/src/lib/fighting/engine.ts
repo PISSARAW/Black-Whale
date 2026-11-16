@@ -1,8 +1,9 @@
+import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
 import { performLeorioAction } from './leorioAttack'
 import { performLsdfAction } from './lsdfAction'
 import { attackVariant } from './duelMoves'
-import { FIGHT_FPS, FIXED_STEP } from './frameData'
+import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { fightFormat } from './formats'
 import {
   advanceHatsuFrames,
@@ -196,6 +197,7 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
+  if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId)) return options.state
   const remote = performLeorioAction(options, performAuraAttack)
   if (remote) return remote
   const judicial = performLsdfAction(options)
@@ -209,15 +211,16 @@ function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string)
   const usesHatsu = move ? ['special', 'finisher'].includes(move.category) : kind === 'special'
   return {
     hatsuSource: usesHatsu ? hatsuSourceFor(fighter, moveId) : null,
-    concealed: concealedHatsu(fighter, kind),
+    concealed: concealedHatsu(fighter, kind, moveId),
     resourceReady: move ? fighter.aura >= move.auraCost : attackResourceReady(fighter, kind),
   }
 }
 
-function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind): boolean {
+function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   return (
     kind === 'special' &&
     fighter.id === 'hisoka' &&
+    hisokaTechnique(fighter, moveId) === 'attach' &&
     fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES &&
     fighter.aura >= FIGHT_HATSU_AURA_COST + IN_AURA_SURCHARGE
   )

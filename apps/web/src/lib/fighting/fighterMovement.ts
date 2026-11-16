@@ -1,4 +1,4 @@
-import { FIXED_STEP } from './frameData'
+import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, FightInput, FighterDash, FighterMotion } from './types'
 

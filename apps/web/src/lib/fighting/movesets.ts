@@ -1,3 +1,4 @@
+import { tuneHisokaMoveset } from './hisokaMoveset'
 import { remotePunchAvailable } from './leorioAttack'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
@@ -39,7 +40,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneFranklinMoveset).map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map(tuneFranklinMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
   [...MOVESETS.values()].flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
 import { FIGHT_HATSU_AURA_COST, hatsuFor } from './hatsu'
+import { attackData, FIXED_STEP } from './frameData'
 import { BUNGEE_REST_DISTANCE } from './hatsu/hisoka'
 import { IN_CHARGE_FRAMES } from './nen'
 import { EMPTY_INPUT } from './types'
@@ -69,22 +70,28 @@ describe('In and Bungee Gum', () => {
       state,
       side: 'player',
       kind: 'special',
+      moveId: 'hisoka:forwardSpecial',
       auraCharged: false,
     })
     // No teleport: the trigger only puts the stretched gum under tension.
     expect(retracting.opponent.x).toBe(80)
-    expect(retracting.bungeeGum).toMatchObject({ owner: 'player', retracting: true })
+    expect(retracting.bungeeGum).toMatchObject({ owner: 'player', retracting: false })
 
-    const firstFrame = tickFight(retracting, EMPTY_INPUT, 1 / 60)
+    let firstFrame = retracting
+    const startup = attackData('special', retracting.player).startup
+    for (let frame = 0; frame < startup; frame++)
+      firstFrame = tickFight(firstFrame, EMPTY_INPUT, {
+        dt: FIXED_STEP,
+        opponentInput: EMPTY_INPUT,
+      })
     expect(gap(firstFrame)).toBeLessThan(gap(retracting))
     expect(gap(firstFrame)).toBeGreaterThan(20)
 
-    // Reeled into the still-active special, the target is struck on arrival and
-    // the gum sticks again, slack, as in the Kastro fight.
+    // Recall changes spacing without a second strike or detaching the gum.
     const reeled = advance(retracting, 1)
     expect(gap(reeled)).toBeLessThan(20)
     expect(reeled.impact?.attacker).toBe('player')
-    expect(reeled.impact?.sequence).toBeGreaterThan(retracting.impact?.sequence ?? 0)
+    expect(reeled.impact?.sequence).toBe(retracting.impact?.sequence)
     expect(reeled.bungeeGum).toMatchObject({ owner: 'player', retracting: false })
   })
 

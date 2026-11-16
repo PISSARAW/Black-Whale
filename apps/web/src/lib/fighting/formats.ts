@@ -1,4 +1,4 @@
-import { FIGHT_FPS } from './frameData'
+import { FIGHT_FPS } from './fightClock'
 
 export type FightFormatId = 'heavens-arena' | 'knockout' | 'arcade'
 export type FightVictoryRule = 'points' | 'health' | 'hybrid'

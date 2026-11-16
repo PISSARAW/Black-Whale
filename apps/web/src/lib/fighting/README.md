@@ -69,6 +69,19 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Le moveset conserve une seule technique LSDF, sans coup d’activation ni finisher
   offensif inventé. Les coups physiques ordinaires restent des abstractions arcade.
   Le coût d’aura et les vitesses de poursuite/escorte sont des réglages de duel.
+- Hisoka distingue **L** (frappe qui attache sur contact non gardé), **→ + L**
+  (rappel de la cible) et **← + L** (Hisoka se propulse vers la cible ancrée).
+  Rappel et rebond exigent sa propre liaison tendue, attendent la fin du startup,
+  ne frappent pas et s’interrompent sur un impact reçu. La liaison reste attachée
+  une fois détendue ; Zetsu ou la perte du Hatsu la dissipe. **↓ + L** prépare au
+  sol Texture Surprise sur le panneau plat de son vêtement : seul son aspect
+  devient celui de la peau, sans soin, défense, esquive ni modification des
+  collisions. Un contact reçu expose ce masque. Le support choisi, la préparation
+  au sol et cette interruption sont des adaptations au duel. **H** exige une
+  liaison et la consomme sur un coup réussi. `hisokaTechnique.ts` vérifie ces
+  conditions à la commande et à l’activation ; `hisokaMoveset.ts` supprime les
+  frappes des trois utilitaires. Les quatre gestes sont distincts dans
+  `keyPosesHisokaSpecials.ts`. In cache réellement la liaison adverse jusqu’à Gyo.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.

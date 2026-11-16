@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightFormat } from '$lib/fighting/formats'
+  import { bungeeVisible } from '$lib/fighting/hisokaTechnique'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
   import FightGrudge from './FightGrudge.svelte'
@@ -11,9 +12,7 @@
   $: player = fighterDefinition(state.player.id)
   $: opponent = fighterDefinition(state.opponent.id)
   $: format = fightFormat(state.formatId)
-  $: visibleBungee =
-    state.bungeeGum &&
-    (state.bungeeGum.owner === 'player' || !state.bungeeGum.hidden || state.player.nen.gyo)
+  $: visibleBungee = bungeeVisible(state)
 </script>
 
 <div class="hud" aria-live="polite">
@@ -27,13 +26,26 @@
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
     <FightGrudge fighter={state.player} {language} />
+    {#if state.player.textureSurprise}
+      <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>
+    {/if}
     {#if visibleBungee}
       <div class="secret-status">
-        {state.bungeeGum?.owner === 'player'
-          ? 'Bungee Gum · attaché'
-          : language === 'fr'
-            ? 'Bungee Gum détecté'
-            : 'Bungee Gum detected'}
+        {state.bungeeGum?.retracting
+          ? state.bungeeGum.rebounding
+            ? language === 'fr'
+              ? 'Bungee Gum · rebond'
+              : 'Bungee Gum · rebound'
+            : language === 'fr'
+              ? 'Bungee Gum · rappel'
+              : 'Bungee Gum · recall'
+          : state.bungeeGum?.owner === 'player'
+            ? language === 'fr'
+              ? 'Bungee Gum · attaché'
+              : 'Bungee Gum · attached'
+            : language === 'fr'
+              ? 'Bungee Gum détecté'
+              : 'Bungee Gum detected'}
       </div>
     {/if}
   </div>
@@ -83,6 +95,9 @@
           : 'opponent aura hidden'}
     </div>
     <FightGrudge fighter={state.opponent} {language} />
+    {#if state.opponent.textureSurprise}
+      <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>
+    {/if}
   </div>
 </div>
 

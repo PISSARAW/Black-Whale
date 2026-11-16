@@ -40,12 +40,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'hisoka',
     mechanic: [
-      'Bungee Gum : une cible attachée peut être rappelée ou exécutée.',
-      'Bungee Gum: an attached target can be recalled or executed.',
+      'L : frappe et attache Bungee Gum au contact non gardé. → + L : tire la cible attachée ; ← + L : propulse Hisoka vers elle. Rappel et rebond exigent une liaison tendue et ne frappent pas. ↓ + L : au sol, Texture Surprise masque le tissu en peau jusqu’au contact reçu, sans protection physique.',
+      'L: strike and attach Bungee Gum on unguarded contact. → + L: pull the attached target; ← + L: launch Hisoka toward it. Recall and rebound need a stretched link and do not strike. ↓ + L: grounded Texture Surprise disguises cloth as skin until incoming contact, without physical protection.',
     ],
     finisherCondition: [
-      'Bungee Gum doit être attaché à l’adversaire.',
-      'Bungee Gum must be attached to the opponent.',
+      'Bungee Gum doit être attaché à l’adversaire ; la liaison est consommée si le coup touche.',
+      'Bungee Gum must be attached to the opponent; a successful strike consumes the link.',
     ],
     labels: [
       'Entaille de carte|Card Slash',
@@ -68,9 +68,9 @@ const SPECS: readonly MovesetSpec[] = [
     power: 0.94,
     reach: 1.7,
     combos: [
-      ['standingLight', 'forwardLight', 'forwardSpecial'],
+      ['standingLight', 'neutralSpecial', 'forwardSpecial'],
       ['lowLight', 'standingHeavy', 'neutralSpecial'],
-      ['airLight', 'airHeavy', 'downSpecial'],
+      ['airLight', 'airHeavy'],
     ],
   },
   {

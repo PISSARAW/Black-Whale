@@ -57,8 +57,15 @@ describe('fight poses', () => {
 
 describe('keyed moves', () => {
   it.each(['kurapika', 'hisoka'] as const)('keys the six normals of %s', (id) => {
-    expect(keyedSlots(id).sort()).toEqual(
-      ['airHeavy', 'airLight', 'lowHeavy', 'lowLight', 'standingHeavy', 'standingLight'].sort(),
+    expect(keyedSlots(id)).toEqual(
+      expect.arrayContaining([
+        'airHeavy',
+        'airLight',
+        'lowHeavy',
+        'lowLight',
+        'standingHeavy',
+        'standingLight',
+      ]),
     )
     for (const slot of keyedSlots(id)) {
       expect(moveForSlot(id, slot)).not.toBeNull()

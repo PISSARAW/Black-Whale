@@ -1,5 +1,5 @@
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
-import { FIGHT_FPS } from './frameData'
+import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'

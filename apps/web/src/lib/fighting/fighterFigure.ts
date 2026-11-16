@@ -8,7 +8,7 @@ import type { ArcadeFighter } from './types'
 
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
-  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection))])
+  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), Boolean(fighter.textureSurprise)])
 }
 
 export function buildFightFigure(options: {
@@ -39,11 +39,13 @@ export function buildFightFigure(options: {
   }
   const declared = humanProfile(seen)
   const profile = fighter.id === 'franklin' ? franklinFightProfile(declared) : declared
+  // Texture Surprise changes only a flat cloth panel's appearance.
+  const dressed = fighter.textureSurprise ? { ...profile, shirt: profile.skin } : profile
   const model = buildHumanFigure({
     THREE,
     glow: 'hanzoProjection' in fighter && fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
     seen,
-    profile,
+    profile: dressed,
   })
 
   if (fighter.id === 'franklin') {

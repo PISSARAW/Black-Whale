@@ -1,3 +1,4 @@
+import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import type { FighterMove } from './movesetTypes'
 import type { FightSide, FightState, FighterId, MoveSlot } from './types'
 
@@ -128,7 +129,9 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
   'hisoka:forwardSpecial': {
     source: 'Heavens Arena — Bungee Gum retraction',
     evidence: 'manga-shown',
-    conditions: ['Bungee Gum must already be attached.'],
+    conditions: [
+      'Hisoka must own an attached, stretched gum line; no pull is already in progress.',
+    ],
     prohibitions: ['The pull follows the existing elastic attachment.'],
     narrativeCost: 'Tension exposes Hisoka if the opponent anticipates the pull.',
     narrativeEffect: 'Retracts the elastic line to alter spacing.',
@@ -136,25 +139,33 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
   'hisoka:downSpecial': {
     source: 'Heavens Arena — Texture Surprise',
     evidence: 'manga-shown',
-    conditions: ['A thin, flat surface must receive the texture.'],
-    prohibitions: ['It changes appearance and texture, not the underlying substance.'],
-    narrativeCost: 'The deception collapses once the covered surface is exposed.',
-    narrativeEffect: 'Creates a visual feint, abstracted as a defensive mix-up.',
+    conditions: [
+      'A thin, flat surface must receive the texture: the existing shirt panel in this duel.',
+    ],
+    prohibitions: [
+      'It changes appearance, never substance, health, collisions, or invulnerability.',
+    ],
+    narrativeCost:
+      'Grounded preparation and aura; incoming contact exposes the cloth disguise (duel adaptation).',
+    narrativeEffect: 'Disguises the cloth panel as skin without changing the physical costume.',
   },
   'hisoka:backSpecial': {
     source: 'Heavens Arena — Bungee Gum recoil',
     evidence: 'manga-shown',
-    conditions: ['Hisoka needs an anchor or a stretched gum line.'],
+    conditions: [
+      'Hisoka must own a stretched gum line; the attached opponent serves as the duel anchor.',
+    ],
     prohibitions: ['The rebound cannot occur without stored elastic tension.'],
     narrativeCost: 'A predictable anchor can be punished.',
-    narrativeEffect: 'Releases stored tension for sudden movement or a counterattack.',
+    narrativeEffect:
+      'Releases stored tension to launch Hisoka toward the anchor, without moving the target.',
   },
   'hisoka:finisher': {
     source: 'Heavens Arena / Yorknew — cards and Bungee Gum combination',
     evidence: 'gameplay-abstraction',
     conditions: ['Bungee Gum must be attached to the opponent.'],
     prohibitions: ['This named sequence is a competitive composition, not a manga attack name.'],
-    narrativeCost: 'Consumes the attachment and a large amount of aura.',
+    narrativeCost: 'Spends aura on startup and consumes the attachment on a successful strike.',
     narrativeEffect: 'A lethal card sequence accelerated by elastic retraction.',
   },
 }
@@ -179,6 +190,7 @@ export function canonicalTechniqueAllowed(
   side: FightSide,
   move: Pick<FighterMove, 'id'>,
 ): boolean {
+  if (!hisokaTechniqueAllowed(state, side, move.id)) return false
   if (move.id !== 'kurapika:neutralSpecial') return true
   const opponent = state[side === 'player' ? 'opponent' : 'player']
   return PHANTOM_TROUPE.has(opponent.id)

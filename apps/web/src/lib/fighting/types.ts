@@ -140,6 +140,8 @@ export interface ArcadeFighter {
   auraExhausted: boolean
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
+  /** Texture Surprise disguises an existing cloth panel, never the physical body. */
+  textureSurprise?: { surface: 'cloth' }
   /** On (怨): hatred banked from damage, and the seal its blood leaves. Absent until hit. */
   on?: { grudge: number; sealFrames: number }
   /** Dash, prejump, landing and air drift; absent until the fighter first moves. */
@@ -317,6 +319,8 @@ export interface BungeeGumAttachment {
   hidden: boolean
   /** The owner is reeling the target in; cleared once the line goes slack. */
   retracting: boolean
+  /** The owner launches themselves toward the stretched target attachment. */
+  rebounding?: boolean
 }
 
 export interface FightState {

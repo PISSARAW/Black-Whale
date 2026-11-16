@@ -102,6 +102,8 @@ function struckFighter(
     ...comboState(options),
     x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
     health: Math.max(0, options.fighter.health - options.damage),
+    // Contact exposes the cloth disguise; it supplies no armour or evasion.
+    textureSurprise: undefined,
     knockdownFrames: knockdownFrames(options),
     wakeupInvulnerableFrames: 0,
     attack: null,

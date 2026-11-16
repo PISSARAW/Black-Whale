@@ -1,3 +1,4 @@
+import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
 import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
 import { archetypeTimeline } from './fightArchetypes'
@@ -9,12 +10,13 @@ import type { FighterId, MoveSlot } from './types'
 /**
  * The moves drawn by the fighting rig, by fighter. Kurapika and Hisoka, the
  * reference vertical slice, have their normals keyed by hand against their own
- * stance; every other move of every fighter is drawn from its family's
+ * stance; Hisoka's four techniques also have distinct authored gestures.
+ * Other moves without authored keys are drawn from their family's
  * gestures (`fightArchetypes.ts`) against a ready guard.
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   kurapika: KURAPIKA_KEY_POSES,
-  hisoka: HISOKA_KEY_POSES,
+  hisoka: { ...HISOKA_KEY_POSES, ...HISOKA_SPECIAL_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   franklin: FRANKLIN_KEY_POSES,
 }

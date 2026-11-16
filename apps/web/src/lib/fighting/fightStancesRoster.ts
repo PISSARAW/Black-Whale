@@ -75,7 +75,7 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
   saiyu: stance(
     [
       LEGS_WIDE,
-      { leadKnee: [0.5, 0, 0], rearKnee: [0.4, 0, 0], body: [0.1, 0, 0] },
+      { leadHip: [-0.2, 0, 0], leadKnee: [0.3, 0, 0], rearKnee: [0.2, 0, 0], body: [0.12, 0, 0] },
       { leadShoulder: [-0.6, 0, 0.2], leadElbow: [-1.2, 0, 0], leadWrist: [-0.6, 0, 0] },
       { rearShoulder: [-1.2, 0, 0.35], rearElbow: [-2.1, 0, 0] },
     ],
@@ -97,7 +97,12 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
   biscuit: stance(
     [
       LEGS_SOFT,
-      { leadKnee: [0.6, 0, 0], chest: [0.05, -0.35, 0] },
+      {
+        leadHip: [-0.2, 0, 0],
+        leadKnee: [0.25, 0, 0],
+        body: [0.06, 0, 0],
+        chest: [0.05, -0.35, 0],
+      },
       { leadShoulder: [-0.7, 0, 0.1], leadElbow: [-0.9, 0, 0] },
       { rearShoulder: [0.3, 0, -0.15], rearElbow: [-1.7, 0, 0] },
     ],
@@ -163,7 +168,7 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
   bonolenov: stance(
     [
       LEGS_WIDE,
-      { leadKnee: [0.6, 0, 0], rearKnee: [0.55, 0, 0] },
+      { leadHip: [-0.25, 0, 0], leadKnee: [0.3, 0, 0], rearKnee: [0.2, 0, 0], body: [0.08, 0, 0] },
       { leadShoulder: [-0.3, 0, 1.05], leadElbow: [-0.6, 0, 0] },
       { rearShoulder: [-0.3, 0, -1.05], rearElbow: [-0.6, 0, 0] },
     ],
@@ -293,7 +298,7 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
   luini: stance(
     [
       LEGS_SOFT,
-      { leadKnee: [0.6, 0, 0], chest: [0.08, -0.2, 0] },
+      { leadHip: [-0.2, 0, 0], leadKnee: [0.25, 0, 0], body: [0.06, 0, 0], chest: [0.08, -0.2, 0] },
       { leadShoulder: [-1, 0, 0.3], leadElbow: [-1, 0, 0], leadWrist: [-0.8, 0, 0] },
       { rearShoulder: [-0.9, 0, -0.3], rearElbow: [-1.1, 0, 0], rearWrist: [-0.8, 0, 0] },
     ],
@@ -388,7 +393,16 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
   ),
   // Sweet Home: knees bent behind arms crossed like a shield.
   terebellum: stance(
-    [LEGS_SOFT, ARMS_CROSSED, { leadKnee: [0.55, 0, 0], chest: [0.12, -0.15, 0] }],
+    [
+      LEGS_SOFT,
+      ARMS_CROSSED,
+      {
+        leadHip: [-0.2, 0, 0],
+        leadKnee: [0.22, 0, 0],
+        body: [0.06, 0, 0],
+        chest: [0.12, -0.15, 0],
+      },
+    ],
     0.04,
     1,
   ),

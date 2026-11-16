@@ -5,6 +5,10 @@ import type { FightPose } from './fightPose'
  * ways to hold the arms, each a partial pose that `addPoses` sums. A fighter's
  * stance (`fightStancesRoster.ts`) picks one of each and adds what is its own.
  *
+ * A knee never bends much further than its hip flexes: the shin stays near
+ * upright and the body sinks over the feet. A knee bent alone throws the shin
+ * back and the figure reads as sitting (`fightStance.test.ts` holds this).
+ *
  * Signs follow `fightPose.ts`: shoulders and hips x < 0 swing forward, elbows
  * x < 0 bend, knees x > 0 bend; z > 0 opens the lead limb, z < 0 the rear one.
  */
@@ -19,27 +23,27 @@ export const LEGS_UPRIGHT: FightPose = {
 
 /** Weight balanced on soft knees, lead foot forward: the default fighter. */
 export const LEGS_SOFT: FightPose = {
-  leadHip: [-0.3, 0, 0.06],
-  leadKnee: [0.45, 0, 0],
-  rearHip: [0.22, 0, -0.06],
-  rearKnee: [0.12, 0, 0],
+  leadHip: [-0.25, 0, 0.04],
+  leadKnee: [0.3, 0, 0],
+  rearHip: [0.18, 0, -0.04],
+  rearKnee: [0.08, 0, 0],
 }
 
 /** Low and coiled, ready to spring: assassins, ninjas, beasts. */
 export const LEGS_DEEP: FightPose = {
-  body: [0.12, 0, 0],
-  leadHip: [-0.65, 0, 0.12],
-  leadKnee: [1, 0, 0],
-  rearHip: [0.05, 0, -0.12],
-  rearKnee: [0.7, 0, 0],
+  body: [0.15, 0, 0],
+  leadHip: [-0.5, 0, 0.08],
+  leadKnee: [0.6, 0, 0],
+  rearHip: [0.1, 0, -0.08],
+  rearKnee: [0.45, 0, 0],
 }
 
 /** Feet planted wide: big bodies that do not need to move. */
 export const LEGS_WIDE: FightPose = {
-  leadHip: [-0.12, 0, 0.3],
-  leadKnee: [0.35, 0, 0],
-  rearHip: [0.08, 0, -0.3],
-  rearKnee: [0.3, 0, 0],
+  leadHip: [-0.12, 0, 0.2],
+  leadKnee: [0.15, 0, 0],
+  rearHip: [0.06, 0, -0.2],
+  rearKnee: [0.1, 0, 0],
 }
 
 /** A boxer's high guard: lead fist forward, rear fist at the chin. */

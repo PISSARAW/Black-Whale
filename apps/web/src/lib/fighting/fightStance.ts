@@ -29,10 +29,10 @@ const STANCES: Partial<Record<FighterId, FightStance>> = {
       leadWrist: [0.2, 0, 0],
       rearShoulder: [-0.45, 0, -0.18],
       rearElbow: [-1.9, 0, 0],
-      leadHip: [-0.3, 0, 0.06],
-      leadKnee: [0.45, 0, 0],
-      rearHip: [0.22, 0, -0.06],
-      rearKnee: [0.12, 0, 0],
+      leadHip: [-0.25, 0, 0.04],
+      leadKnee: [0.3, 0, 0],
+      rearHip: [0.18, 0, -0.04],
+      rearKnee: [0.08, 0, 0],
     },
     bounce: 0.08,
     tempo: 1.6,
@@ -48,10 +48,10 @@ const STANCES: Partial<Record<FighterId, FightStance>> = {
       leadWrist: [0.5, 0, 0],
       rearShoulder: [-0.1, 0, -0.15],
       rearElbow: [-0.5, 0, 0],
-      leadHip: [-0.2, 0, 0.08],
-      leadKnee: [0.3, 0, 0],
-      rearHip: [0.15, 0, -0.06],
-      rearKnee: [0.08, 0, 0],
+      leadHip: [-0.15, 0, 0.04],
+      leadKnee: [0.18, 0, 0],
+      rearHip: [0.12, 0, -0.04],
+      rearKnee: [0.05, 0, 0],
     },
     bounce: 0.05,
     tempo: 1,
@@ -88,10 +88,11 @@ export function fightStance(id: FighterId): FightStance | null {
 export function stanceAt(stance: FightStance, seconds: number): FightPose {
   const dip = stance.bounce * (0.5 - 0.5 * Math.cos(seconds * Math.PI * 2 * stance.tempo))
   return addPoses(stance.pose, {
-    leadHip: [-dip * 0.5, 0, 0],
-    leadKnee: [dip, 0, 0],
-    rearHip: [-dip * 0.4, 0, 0],
-    rearKnee: [dip * 0.8, 0, 0],
+    // Hip and knee bend together, so the bounce sinks the body instead of the shins.
+    leadHip: [-dip * 0.6, 0, 0],
+    leadKnee: [dip * 0.6, 0, 0],
+    rearHip: [-dip * 0.3, 0, 0],
+    rearKnee: [dip * 0.4, 0, 0],
     rearShoulder: [dip * 0.3, 0, 0],
   })
 }

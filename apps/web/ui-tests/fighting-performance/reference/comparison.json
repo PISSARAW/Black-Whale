@@ -1,0 +1,311 @@
+{
+  "generated": "2026-11-16T19:53:50.302Z",
+  "before": {
+    "revision": "7209a4d4",
+    "date": "2026-11-16T19:38:36.049Z"
+  },
+  "after": {
+    "revision": "7209a4d4-rig-en-post-optimization",
+    "date": "2026-11-16T19:39:43.216Z"
+  },
+  "budget": "FPS >=59; frame p95 <=17.5ms, p99 <=20ms; >25ms <=1%; render CPU p95 <=12ms; GPU duration reported separately with a 12ms headroom target; complete replay validated. Headless cadence is not a physical presentation or input-latency measurement.",
+  "results": [
+    {
+      "id": "kurapika-desktop",
+      "before": {
+        "fps": 60.002266752299526,
+        "cpuP95": 2.100000001490116,
+        "gpuP95": 1.774249,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002533440300816,
+        "cpuP95": 2.2000000029802322,
+        "gpuP95": 1.291624,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": 4.761904829483732,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": true
+      },
+      "sameCombatHash": "3695fd08",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "kurapika-live",
+      "before": {
+        "fps": 60.00240009600383,
+        "cpuP95": 2.5,
+        "gpuP95": 19.167624,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002400096003846,
+        "cpuP95": 4,
+        "gpuP95": 19.63625,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": 60.00000000000001,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": false
+      },
+      "sameCombatHash": "484898e0",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "hisoka-desktop",
+      "before": {
+        "fps": 60.002400096003846,
+        "cpuP95": 2.100000001490116,
+        "gpuP95": 1.269666,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002266752299526,
+        "cpuP95": 2.1999999955296516,
+        "gpuP95": 1.289041,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": 4.7619044746941785,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": true
+      },
+      "sameCombatHash": "d6518d7a",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "hisoka-live",
+      "before": {
+        "fps": 60.002533440300816,
+        "cpuP95": 6.100000001490116,
+        "gpuP95": 20.506083,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.00240009600383,
+        "cpuP95": 5,
+        "gpuP95": 19.365791,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": -18.03278690526896,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": false
+      },
+      "sameCombatHash": "e6f75547",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "chrollo-desktop",
+      "before": {
+        "fps": 60.00226675229954,
+        "cpuP95": 2.100000001490116,
+        "gpuP95": 1.194916,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002266752299526,
+        "cpuP95": 2,
+        "gpuP95": 1.195458,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": -4.76190482948372,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": true
+      },
+      "sameCombatHash": "ed893f8e",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "chrollo-live",
+      "before": {
+        "fps": 60.002266752299526,
+        "cpuP95": 2.7000000029802322,
+        "gpuP95": 18.816291,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002400096003846,
+        "cpuP95": 2.3000000044703484,
+        "gpuP95": 20.250374,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": -14.814814743272887,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": false
+      },
+      "sameCombatHash": "57154f44",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "benjamin-desktop",
+      "before": {
+        "fps": 60.002354775863104,
+        "cpuP95": 2.3000000044703484,
+        "gpuP95": 1.350416,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2701
+      },
+      "after": {
+        "fps": 60.00235477586311,
+        "cpuP95": 1.8999999985098839,
+        "gpuP95": 1.298333,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2701
+      },
+      "renderCpuP95ChangePercent": -17.39130457317446,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": true
+      },
+      "sameCombatHash": "1060fb6d",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    },
+    {
+      "id": "benjamin-live",
+      "before": {
+        "fps": 60.002400096003846,
+        "cpuP95": 2.3000000044703484,
+        "gpuP95": 19.307708,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "after": {
+        "fps": 60.002400096003846,
+        "cpuP95": 2.8000000044703484,
+        "gpuP95": 18.035666,
+        "frameP99": 16.80000000000291,
+        "slowFrames": 0,
+        "frames": 2700
+      },
+      "renderCpuP95ChangePercent": 21.739130392529795,
+      "gpuHeadroom": {
+        "targetP95Ms": 12,
+        "supported": true,
+        "reached": false
+      },
+      "sameCombatHash": "35612a9d",
+      "replayLoops": 2,
+      "checks": {
+        "fps": true,
+        "p95": true,
+        "p99": true,
+        "slowRate": true,
+        "cpu": true,
+        "replay": true,
+        "scene": true
+      },
+      "pass": true
+    }
+  ],
+  "pass": true
+}

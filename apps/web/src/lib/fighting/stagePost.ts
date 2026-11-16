@@ -76,40 +76,77 @@ interface PostOptions {
 
 export async function createStagePost(options: PostOptions): Promise<StagePost> {
   const { THREE, renderer, scene, camera } = options
-  const [{ EffectComposer }, { RenderPass }, { UnrealBloomPass }, { ShaderPass }, { OutputPass }] =
+  const [{ EffectComposer }, { UnrealBloomPass }, { ShaderPass }, { OutputPass }] =
     await Promise.all([
       import('three/examples/jsm/postprocessing/EffectComposer.js'),
-      import('three/examples/jsm/postprocessing/RenderPass.js'),
       import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
       import('three/examples/jsm/postprocessing/ShaderPass.js'),
       import('three/examples/jsm/postprocessing/OutputPass.js'),
     ])
-  // Half-float so a fitting brighter than white is still brighter than white
-  // when the bloom reads it; multisampled so the composer does not cost the
-  // fighters the antialiasing the canvas was giving them.
-  const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 })
+  // Resolve 4x MSAA once for the scene. Full-screen post passes have no geometry
+  // edges to antialias: multisampling their ping-pong targets wastes bandwidth.
+  // Keep half-float through the entire chain so the same HDR values feed bloom.
+  const input = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 })
+  const target = new THREE.WebGLRenderTarget(1, 1, {
+    type: THREE.HalfFloatType,
+    depthBuffer: false,
+  })
   const composer = new EffectComposer(renderer, target)
-  const renderPass = new RenderPass(scene, camera)
-  const sanitisePass = new ShaderPass(SANITISE_SHADER)
+  // A separate texture name prevents ShaderPass replacing the scene texture
+  // with its ping-pong input. Sanitisation still precedes bloom, exactly once.
+  const sanitisePass = new ShaderPass(SANITISE_SHADER, 'composerInput')
+  sanitisePass.uniforms.tDiffuse.value = input.texture
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(1, 1),
     BLOOM_STRENGTH,
     BLOOM_RADIUS,
     BLOOM_THRESHOLD,
   )
+  // These targets contain full-screen quads only; no depth attachment is read.
+  const bloomTargets = [
+    bloomPass.renderTargetBright,
+    ...bloomPass.renderTargetsHorizontal,
+    ...bloomPass.renderTargetsVertical,
+  ]
+  bloomTargets.forEach((buffer) => {
+    buffer.depthBuffer = false
+  })
   const vignettePass = new ShaderPass(VIGNETTE_SHADER)
   const outputPass = new OutputPass()
-  const passes = [renderPass, sanitisePass, bloomPass, vignettePass, outputPass]
+  const passes = [sanitisePass, bloomPass, vignettePass, outputPass]
   passes.forEach((pass) => composer.addPass(pass))
   return {
-    render: () => composer.render(),
+    render: () => {
+      renderSceneInput({ renderer, scene, camera, target: input })
+      composer.render()
+    },
     resize: (width, height, ratio) => {
       composer.setPixelRatio(ratio)
       composer.setSize(width, height)
+      input.setSize(width * ratio, height * ratio)
     },
     dispose: () => {
       passes.forEach((pass) => pass.dispose())
       composer.dispose()
+      input.dispose()
     },
+  }
+}
+
+/** RenderPass’s clear/restore semantics, with an MSAA target owned by the scene. */
+function renderSceneInput(
+  options: Omit<PostOptions, 'THREE'> & { target: Three.WebGLRenderTarget },
+) {
+  const { renderer, scene, camera, target } = options
+  const previous = renderer.getRenderTarget()
+  const autoClear = renderer.autoClear
+  try {
+    renderer.autoClear = false
+    renderer.setRenderTarget(target)
+    renderer.clear(renderer.autoClearColor, renderer.autoClearDepth, renderer.autoClearStencil)
+    renderer.render(scene, camera)
+  } finally {
+    renderer.autoClear = autoClear
+    renderer.setRenderTarget(previous)
   }
 }

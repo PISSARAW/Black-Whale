@@ -23,7 +23,8 @@ import type { ArcadeFighter } from './types'
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
-    fighter.nen,
+    // En is drawn by the effect scene, never by this figure (see buildFightFigure).
+    { ...fighter.nen, en: null },
     fighter.plantedPaper,
     Boolean(fighter.kallutoPaper?.doll),
     Boolean(fighter.illumi?.disguised),

@@ -1,0 +1,431 @@
+{
+  "date": "2026-11-16T19:31:57.364Z",
+  "label": "current-work-in-progress",
+  "revision": "uncommitted-snapshot-2026-11-16T20-05",
+  "reusedBundle": "/tmp/fps-current-bundle/production",
+  "production": true,
+  "browser": "157.0.8103.78",
+  "durationSeconds": 20,
+  "warmupSeconds": 8,
+  "machine": "hw.model: Mac17,3\nmachdep.cpu.brand_string: Apple M5\nhw.ncpu: 10\nhw.memsize: 17179869184",
+  "scope": "Production-compiled FightStage, actual engine replay, HUD and effects at 1280x900; arena height 560px. Profile window excluded from cadence samples. Headless Metal; Fresh browser process per case; other workstation load uncontrolled. Not a physical input latency measurement.",
+  "results": [
+    {
+      "id": "kurapika-live",
+      "fighter": "kurapika",
+      "stage": "banquet-hall",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [3.578125, 4.37744140625, 7.39501953125],
+          "freeMemory": 132366336
+        },
+        {
+          "elapsed": 10,
+          "load": [4.34423828125, 4.51318359375, 7.40771484375],
+          "freeMemory": 164462592
+        }
+      ],
+      "callbacks": {
+        "1": {
+          "name": "x",
+          "count": 1200,
+          "total": 376.8999999091029,
+          "max": 1.0999999940395355
+        },
+        "2": {
+          "name": "Qe",
+          "count": 1200,
+          "total": 3425.8999998420477,
+          "max": 25.5
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [2205, 976],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "484898e0",
+      "failedScene": false,
+      "stateFrame": 389,
+      "intervals": {
+        "count": 1199,
+        "p50": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.799999999999272,
+        "max": 16.80000000000291,
+        "mean": 16.665971643035864
+      },
+      "renderCpu": {
+        "count": 1199,
+        "p50": 2.5,
+        "p95": 4.600000001490116,
+        "p99": 6.800000004470348,
+        "max": 25.5,
+        "mean": 2.8534612175484217
+      },
+      "renderGpu": {
+        "count": 1198,
+        "p50": 17.528208,
+        "p95": 22.079041,
+        "p99": 23.508999,
+        "max": 27.217375,
+        "mean": 17.07751766110181
+      },
+      "drawCalls": {
+        "count": 1199,
+        "p50": 532,
+        "p95": 833,
+        "p99": 890,
+        "max": 910,
+        "mean": 576.2335279399499
+      },
+      "triangles": {
+        "count": 1199,
+        "p50": 420811,
+        "p95": 1029335,
+        "p99": 1051427,
+        "max": 1051779,
+        "mean": 526886.8165137614
+      },
+      "geometries": {
+        "count": 1199,
+        "p50": 145,
+        "p95": 154,
+        "p99": 154,
+        "max": 154,
+        "mean": 144.57047539616346
+      },
+      "textures": {
+        "count": 1199,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "fps": 60.002502189415736,
+      "over25ms": 0,
+      "over33ms": 0
+    },
+    {
+      "id": "hisoka-live",
+      "fighter": "hisoka",
+      "stage": "banquet-hall",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [4.3408203125, 4.49658203125, 7.33349609375],
+          "freeMemory": 79511552
+        },
+        {
+          "elapsed": 10,
+          "load": [4.515625, 4.529296875, 7.3115234375],
+          "freeMemory": 334692352
+        }
+      ],
+      "callbacks": {
+        "1": {
+          "name": "x",
+          "count": 1200,
+          "total": 363.3999999910593,
+          "max": 1.8999999985098839
+        },
+        "2": {
+          "name": "Qe",
+          "count": 1200,
+          "total": 4078.800000026822,
+          "max": 20.5
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [2205, 976],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "e6f75547",
+      "failedScene": false,
+      "stateFrame": 444,
+      "intervals": {
+        "count": 1199,
+        "p50": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109,
+        "max": 33.29999999999927,
+        "mean": 16.679816513761466
+      },
+      "renderCpu": {
+        "count": 1199,
+        "p50": 2.5999999940395355,
+        "p95": 6.699999995529652,
+        "p99": 12.5,
+        "max": 20.5,
+        "mean": 3.3986655546474993
+      },
+      "renderGpu": {
+        "count": 1198,
+        "p50": 16.274791,
+        "p95": 21.215541,
+        "p99": 22.879,
+        "max": 27.291166,
+        "mean": 15.824682865609335
+      },
+      "drawCalls": {
+        "count": 1199,
+        "p50": 558,
+        "p95": 1054,
+        "p99": 1105,
+        "max": 1131,
+        "mean": 628.5271059216013
+      },
+      "triangles": {
+        "count": 1199,
+        "p50": 409440,
+        "p95": 839582,
+        "p99": 843042,
+        "max": 845606,
+        "mean": 490671.61134278565
+      },
+      "geometries": {
+        "count": 1199,
+        "p50": 135,
+        "p95": 135,
+        "p99": 135,
+        "max": 135,
+        "mean": 134.83569641367808
+      },
+      "textures": {
+        "count": 1199,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "fps": 59.95269787140422,
+      "over25ms": 1,
+      "over33ms": 0
+    },
+    {
+      "id": "chrollo-live",
+      "fighter": "chrollo",
+      "stage": "banquet-hall",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [3.82421875, 4.365234375, 7.1875],
+          "freeMemory": 2118467584
+        },
+        {
+          "elapsed": 10,
+          "load": [4.18359375, 4.41943359375, 7.17333984375],
+          "freeMemory": 1736916992
+        }
+      ],
+      "callbacks": {
+        "1": {
+          "name": "x",
+          "count": 1198,
+          "total": 360.5999998822808,
+          "max": 2
+        },
+        "2": {
+          "name": "Qe",
+          "count": 1198,
+          "total": 4053.0999999195337,
+          "max": 26.100000001490116
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [2205, 976],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "57154f44",
+      "failedScene": false,
+      "stateFrame": 445,
+      "intervals": {
+        "count": 1197,
+        "p50": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109,
+        "max": 33.30000000000109,
+        "mean": 16.6937343358396
+      },
+      "renderCpu": {
+        "count": 1197,
+        "p50": 2.5,
+        "p95": 8,
+        "p99": 13.100000001490116,
+        "max": 26.100000001490116,
+        "mean": 3.382873851223946
+      },
+      "renderGpu": {
+        "count": 1196,
+        "p50": 12.540833,
+        "p95": 18.68125,
+        "p99": 20.740541,
+        "max": 24.925083,
+        "mean": 13.130900172240795
+      },
+      "drawCalls": {
+        "count": 1197,
+        "p50": 537,
+        "p95": 835,
+        "p99": 897,
+        "max": 925,
+        "mean": 574.6491228070175
+      },
+      "triangles": {
+        "count": 1197,
+        "p50": 405194,
+        "p95": 752032,
+        "p99": 759410,
+        "max": 769600,
+        "mean": 468040.71512113616
+      },
+      "geometries": {
+        "count": 1197,
+        "p50": 128,
+        "p95": 137,
+        "p99": 137,
+        "max": 137,
+        "mean": 129.1203007518797
+      },
+      "textures": {
+        "count": 1197,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "fps": 59.90271438866202,
+      "over25ms": 2,
+      "over33ms": 0
+    },
+    {
+      "id": "benjamin-live",
+      "fighter": "benjamin",
+      "stage": "banquet-hall",
+      "effects": true,
+      "dpr": 2,
+      "live": true,
+      "hostLoad": [
+        {
+          "elapsed": 0,
+          "load": [3.685546875, 4.29296875, 7.0634765625],
+          "freeMemory": 1728724992
+        },
+        {
+          "elapsed": 10,
+          "load": [3.6533203125, 4.2666015625, 7.021484375],
+          "freeMemory": 1698955264
+        }
+      ],
+      "callbacks": {
+        "1": {
+          "name": "x",
+          "count": 1200,
+          "total": 302.2000000178814,
+          "max": 1.8999999985098839
+        },
+        "2": {
+          "name": "Qe",
+          "count": 1200,
+          "total": 3069.900000035763,
+          "max": 12.600000001490116
+        }
+      },
+      "renderCallback": 2,
+      "gpuSupported": true,
+      "gpuDisjoint": 0,
+      "resolution": [2205, 976],
+      "pixelRatio": 1.75,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "verified": 1,
+      "failure": "",
+      "tapeHash": "35612a9d",
+      "failedScene": false,
+      "stateFrame": 445,
+      "intervals": {
+        "count": 1199,
+        "p50": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.799999999999272,
+        "max": 16.80000000000291,
+        "mean": 16.665971643035867
+      },
+      "renderCpu": {
+        "count": 1199,
+        "p50": 2.100000001490116,
+        "p95": 4.300000004470348,
+        "p99": 7.199999995529652,
+        "max": 12.600000001490116,
+        "mean": 2.556630525467692
+      },
+      "renderGpu": {
+        "count": 1198,
+        "p50": 14.3355,
+        "p95": 20.799749,
+        "p99": 22.183541,
+        "max": 28.703791,
+        "mean": 14.987856570116852
+      },
+      "drawCalls": {
+        "count": 1199,
+        "p50": 576,
+        "p95": 1009,
+        "p99": 1083,
+        "max": 1140,
+        "mean": 646.3386155129274
+      },
+      "triangles": {
+        "count": 1199,
+        "p50": 421772,
+        "p95": 838742,
+        "p99": 854690,
+        "max": 857126,
+        "mean": 510382.1567973311
+      },
+      "geometries": {
+        "count": 1199,
+        "p50": 140,
+        "p95": 140,
+        "p99": 140,
+        "max": 140,
+        "mean": 138.80733944954127
+      },
+      "textures": {
+        "count": 1199,
+        "p50": 15,
+        "p95": 15,
+        "p99": 15,
+        "max": 15,
+        "mean": 15
+      },
+      "fps": 60.00250218941573,
+      "over25ms": 0,
+      "over33ms": 0
+    }
+  ],
+  "errors": []
+}

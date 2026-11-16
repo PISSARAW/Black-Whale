@@ -1,0 +1,58 @@
+{
+  "production": true,
+  "headed": false,
+  "stage": "banquet-hall",
+  "dpr": 2,
+  "scope": "Actual SvelteKit production page, live keyboard commands and default recording; no GPU timer query. Cadence monitor is not a physical input-latency or presentation measurement.",
+  "results": [
+    {
+      "fighter": "Kurapika",
+      "frames": 904,
+      "fps": 60.002256722044805,
+      "p95": 16.700000000000728,
+      "p99": 16.80000000000109,
+      "max": 16.80000000000291,
+      "over25": 0,
+      "noDraw": 0,
+      "canvas": [2054, 1067],
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "fighter": "Hisoka",
+      "frames": 903,
+      "fps": 60.00199342170828,
+      "p95": 16.799999999999272,
+      "p99": 16.80000000000109,
+      "max": 16.80000000000291,
+      "over25": 0,
+      "noDraw": 0,
+      "canvas": [2054, 1067],
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "fighter": "Chrollo",
+      "frames": 903,
+      "fps": 60.00239212194501,
+      "p95": 16.799999999999272,
+      "p99": 16.80000000000291,
+      "max": 16.80000000000291,
+      "over25": 0,
+      "noDraw": 0,
+      "canvas": [2054, 1067],
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "fighter": "Benjamin",
+      "frames": 903,
+      "fps": 60.00239212194507,
+      "p95": 16.700000000000728,
+      "p99": 16.799999999999272,
+      "max": 16.80000000000291,
+      "over25": 0,
+      "noDraw": 0,
+      "canvas": [2054, 1067],
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    }
+  ],
+  "errors": []
+}

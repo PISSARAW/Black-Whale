@@ -170,7 +170,9 @@ export function footHeight(rig: FightRig): number {
 export function captureFootPlant(rig: FightRig): FootPlantAnchor {
   const { figure } = rig.human
   const ground = figure.parent ?? figure
-  ground.updateWorldMatrix(true, true)
+  // getWorldPosition/worldToLocal update the ankle’s ancestor chain themselves.
+  // Updating every decorative descendant here repeated the renderer’s traversal
+  // twice per fighter and frame without changing either sole’s transform.
   const positions = rig.ankles.map((ankle) =>
     ground.worldToLocal(ankle.getWorldPosition(rig.probe)).clone(),
   ) as [Vector3, Vector3]

@@ -1,3 +1,5 @@
+import { tuneBeyondMoveset } from './beyondMoveset'
+import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
 import { illumiBodyFree } from './illumiState'
 import { illumiResources } from './illumiAccess'
@@ -88,7 +90,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneIllumiMoveset).map(tuneBiohazardMoveset)
+  ALL_MOVESETS.map(tuneBeyondMoveset).map(tuneIllumiMoveset).map(tuneBiohazardMoveset)
     .map(tuneMachiMoveset)
     .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
@@ -180,6 +182,7 @@ function contextualMoveAllowed(state: FightState, side: FightSide, move: Fighter
 }
 
 function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (beyondCurseUnavailable({ fighter: state[side], kind: move.kind, moveId: move.id })) return false
   if (move.id === 'lynch:neutralSpecial') return canAskLynchQuestion(state, side, move.id)
   const fighter = state[side]
   if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
@@ -326,7 +329,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
-  beyond: (state, side) => state[side].health <= 40,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
 }

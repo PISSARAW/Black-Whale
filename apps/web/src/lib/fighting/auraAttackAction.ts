@@ -1,3 +1,4 @@
+import { beyondCurseUnavailable } from './beyondCurseAction'
 import { blinkyActionAllowed } from './blinkyAction'
 import { observeComboMaster } from './comboMaster'
 import { isErigeronAction } from './billSupport'
@@ -66,6 +67,7 @@ function canAttemptTechnique(options: AuraAttackOptions): boolean {
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {
   const { state, side, kind, moveId } = options
+  if (beyondCurseUnavailable({ fighter: state[side], kind, moveId })) return false
   if (!blinkyActionAllowed(options)) return false
   if (moveId === 'gel:finisher') return false
   return kind !== 'special' || (padailleMoveAvailable(state[side], moveId) && feitanMoveAvailable(state[side], moveId))

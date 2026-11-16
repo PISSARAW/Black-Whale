@@ -191,7 +191,7 @@
             onpointercancel={() => hold('hatsu', false)}
           >
             <kbd>L</kbd>
-            <span>Hatsu</span>
+            <span>{state.player.id === 'beyond' ? (language === 'fr' ? 'Physique' : 'Physical') : 'Hatsu'}</span>
           </button>
         {/if}
       </div>

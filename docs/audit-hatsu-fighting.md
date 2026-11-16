@@ -31,7 +31,7 @@ une vérification dans le manga avant d'être corrigés.
    doigts coupés de Franklin) ne sont modélisés nulle part dans l’état initial.
    _Franklin corrigé le 2026-11-16 : les dix doigts sectionnés sont représentés
    comme une restriction permanente ; le Hatsu produit des rafales de projectiles._
-4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck, Beyond et Sayird jouent en martial pur (`martialOnlyHatsu`). Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
+4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck et Sayird jouent en martial pur (`martialOnlyHatsu`). Beyond conserve ses coups physiques et déclare sa malédiction réelle, indisponible sans préparation. Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
    Musse utilise son pistolet physique et Secret Window comme surveillance privée au contact, sans dégâts ni esquive.
    Le README exclut « les pouvoirs qui
    exigent une préparation incompatible avec un duel ». Le déchiffrage et la fabrication de
@@ -112,7 +112,7 @@ une vérification dans le manga avant d'être corrigés.
 | --------------- | ---------------------------------- | -------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
 | Furykov         | Console d’alerte informative       | Combo Master : alerte immédiate AFFECTED USERS ; déchiffrage/fabrication sur plusieurs jours | D (fait) | Corrigé le 2026-11-16 : L ouvre la console sans frappe ; alerte sur Nen réellement dissimulé dirigé contre lui, signature illisible « ? », destinataires confirmés uniquement. Aucun buff, esquive, prédiction ou déchiffrage accéléré. Coût, engagement et lisibilité par Gyo sont des adaptations au duel. |
 | Cluck | Coups martiaux ; contrôle d’oiseaux retenable par Steal Chain | Contrôle d’oiseaux attesté pour distribuer des bulletins de vote ; conditions complètes inconnues | D (fait) | Corrigé le 2026-11-16 : pouvoir réel distinct des coups, sans restriction au courrier. Aucun oiseau fourni dans ce duel, aucun effet de volée inventé ; rétention après contact et drainage, sans chargement de Dolphin ni verrouillage d’Emperor Time. |
-| Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
+| Beyond | Coups physiques et malédiction réelle sans préparation de duel | Malédiction préparée sur un porteur, visant une cible désignée, déclenchée à la mort du porteur (ch. 401/415) | D (adapté) | Quatorze coups physiques conservés et explicitement adaptés. Aucun finisher à faible santé. Hatsu déclaré séparément, retenable par Steal Chain, indisponible pour Dolphin et les pages de Chrollo sans préparation ; aucune frappe, mort ou blessure de Beyond ne remplace le sacrifice. |
 | Longhi | Contrat volontaire, prêt à usage unique et sanction de Zetsu | Moonlight Act : termes expliqués et deux signatures volontaires (ch. 401) | D (fait) | Corrigé le 2026-11-16 : proposition, acceptation ou refus explicites ; aucune entrave sur touche ni finisher offensif. Les deux signataires subissent Zetsu en cas de violation. La trêve de cinq secondes et la sanction limitée au match sont des adaptations déclarées. |
 | Musse | Pistolet et surveillance privée | Secret Window : hibou espion | D (fait) | Pistolet physique et surveillance au contact, sans dégâts ni esquive. |
 | Padaille | Marteau, foret et hache de la main droite, choisis directement | Trois transformations montrées au chapitre 391 ; aucun hasard attesté | Corrigé | Bonus général, armes non attestées et finisher retirés. Coûts et frappes adaptés au duel. |
@@ -141,7 +141,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 ## Ordre de traitement proposé
 
 1. ~~Corriger le bug Hinrigh~~ — fait.
-2. **Constat 4 : traité.** Cluck, Beyond et Sayird jouent en martial pur ; Furykov conserve l’alerte informative de Combo Master ;
+2. **Constat 4 : traité.** Cluck et Sayird jouent en martial pur ; Beyond distingue ses coups physiques de sa malédiction réelle indisponible sans préparation ; Furykov conserve l’alerte informative de Combo Master ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
 3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), ~~Gel~~, ~~Longhi~~, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc

@@ -1,3 +1,5 @@
+import { BEYOND_CURSE } from './beyondCurse'
+
 /** Canon Hatsu with no valid target in the duel; never substitute a martial strike. */
 export interface OutsideDuelAbility {
   id: string
@@ -35,5 +37,5 @@ export const ERIGERON: OutsideDuelAbility = {
 }
 
 export function outsideDuelAbility(moveId?: string): OutsideDuelAbility | null {
-  return [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION].find((ability) => ability.id === moveId) ?? null
+  return [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION, BEYOND_CURSE].find((ability) => ability.id === moveId) ?? null
 }

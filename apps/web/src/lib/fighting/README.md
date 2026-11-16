@@ -322,9 +322,27 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   sur plusieurs jours restent hors duel. Coût d’ouverture (40 aura), engagement
   et règle de lisibilité par Gyo sont des adaptations ; ses autres techniques
   restent martiales, sans bonus de dégâts ni esquive automatique.
-- Cluck, Beyond et Sayird combattent avec des coups martiaux chargés de Ren,
+- Cluck et Sayird combattent avec des coups martiaux chargés de Ren,
   sans transformer leurs Hatsu en effets offensifs inventés. L’absence de cible
   ou de préparation adaptée dans ce mode ne rend pas leurs pouvoirs inexistants.
+- Beyond conserve ses quatorze coups physiques, dont quatre frappes chargées au
+  Ren : leurs noms, gestes, puissance et coûts sont des adaptations de duel.
+  L est explicitement une charge physique, distincte de son véritable Hatsu.
+  Le finisher « Dernière frontière » et le seuil de santé sont supprimés ; H ne
+  déclenche aucun remplacement, même avec un identifiant de coup périmé.
+  `hatsu/beyond.ts` déclare une **malédiction sacrificielle réelle**, sous un nom
+  descriptif : son nom officiel reste inconnu. Les chapitres 401 et 415 décrivent
+  un porteur marqué à l’avance, une cible désignée et un déclenchement à la mort
+  du porteur. Le duel ne représente pas cette préparation ; ni une frappe, ni les
+  blessures ou la mort de Beyond ne la remplacent. Aucun contre posthume ou
+  malus immédiat n’est ajouté. L’interface affiche son indisponibilité pour les
+  deux côtés, tout en gardant la commande physique L jouable.
+  Steal Chain retient `beyond:sacrificialCurse`, pas un coup martial. Son chargement
+  dans Stealth Dolphin ne fournit ni porteur ni cible : l’usage reste bloqué,
+  sans attaque de remplacement, dépense d’aura ou consommation de l’usage.
+  Une page de Chrollo conserve le même prérequis, y compris au signet ; la gestion
+  du livre reste possible. `beyondMoveset.ts`, `beyondCurse.ts` et
+  `beyondCurseAction.ts` portent ces distinctions.
 - Cluck conserve son **contrôle d’oiseaux**, attesté pour la livraison de bulletins
   de vote (chapitre 320), sans restriction canonique au courrier : les conditions
   et limites complètes restent inconnues. Aucun oiseau n’est fourni par ce duel.

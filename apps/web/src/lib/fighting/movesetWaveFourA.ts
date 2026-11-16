@@ -77,10 +77,10 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'beyond',
     mechanic: [
-      'Force de l’explorateur : sa malédiction sacrificielle n’agit pas en duel ; Beyond se bat en colosse qui accepte d’encaisser.',
-      'Explorer’s strength: his Sacrificial Curse does not act in a duel; Beyond fights as a colossus who accepts taking hits.',
+      'Coups physiques renforcés au Ren. La malédiction sacrificielle est réelle, mais sa préparation n’est pas représentée dans le duel.',
+      'Ren-powered physical blows. His sacrificial curse is real, but its preparation is not represented in the duel.',
     ],
-    finisherCondition: ['Beyond doit être à 40 PV ou moins.', 'Beyond must have 40 HP or less.'],
+    finisherCondition: ['Aucun finisher à faible santé.', 'No low-health super.'],
     labels: [
       'Direct de l’explorateur|Explorer Straight',
       'Marteau Netero|Netero Hammer',
@@ -93,10 +93,10 @@ const SPECS: readonly MovesetSpec[] = [
       'Survie instinctive|Survival Instinct',
       'Charge de l’explorateur|Explorer Charge',
       'Coup de l’expédition|Expedition Blow',
-      'Frappe tellurique|Earthen Strike',
-      'Résistance vitale|Vital Endurance',
+      'Frappe basse renforcée|Reinforced Low Strike',
+      'Revers renforcé|Reinforced Backfist',
       'Étreinte du pionnier|Pioneer Clinch',
-      'Dernière frontière|Final Frontier',
+      'Finisher indisponible|No finisher',
     ],
     speed: 0.98,
     power: 1.16,

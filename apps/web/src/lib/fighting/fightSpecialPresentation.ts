@@ -1,3 +1,6 @@
+import { beyondPhysicalPresentation } from './beyondPresentation'
+import { BEYOND_CURSE } from './beyondCurse'
+import { chrolloPageForMove } from './chrolloBook'
 import { padaillePresentation } from './padaillePresentation'
 import { illumiSpecialPresentation } from './illumiPresentation'
 import { voconteSpecialPresentation } from './vocontePresentation'
@@ -53,6 +56,8 @@ function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): Sp
 }
 
 function specialLabel(state: FightState, language: 'fr' | 'en'): string {
+  if (chrolloPageForMove(state.player) === 'beyond')
+    return language === 'fr' ? BEYOND_CURSE.nameFr : BEYOND_CURSE.nameEn
   if (isLsdfMove(state.player)) return 'LSDF'
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   if (movesetFor(state.player.id))
@@ -68,6 +73,8 @@ function specialHint(options: {
   label: string
 }): string {
   const { state, language } = options
+  if (chrolloPageForMove(state.player) === 'beyond')
+    return language === 'fr' ? BEYOND_CURSE.reasonFr : BEYOND_CURSE.reasonEn
   if (state.player.id === 'musse' && state.player.secretWindow)
     return language === 'fr'
       ? 'Secret Window · surveillance active'
@@ -143,6 +150,7 @@ function camillaPresentation(language: 'fr' | 'en'): SpecialPresentation {
 }
 
 function personalSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation | null {
+  if (state.player.id === 'beyond') return beyondPhysicalPresentation(state, language)
   if (state.player.id === 'hinrigh') return biohazardPresentation(state, language)
   if (state.player.id === 'phinks') return cyclotronPresentation(state, language)
   if (state.player.id === 'basho') return bashoPresentation(state, language)

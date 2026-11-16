@@ -47,6 +47,7 @@ export function buildFightFigure(options: {
   const dressed = fighter.textureSurprise ? { ...profile, shirt: profile.skin } : profile
   const model = buildHumanFigure({
     THREE,
+    auraStyle: 'visitor',
     glow: 'hanzoProjection' in fighter && fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
     seen,
     profile: trueForm ? biscuitTrueFormProfile(dressed) : dressed,

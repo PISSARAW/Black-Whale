@@ -13,6 +13,7 @@ import { SKIN_TIME } from './humanAuraSkin'
 export function animateHumanAura(aura: HumanAura): (seconds: number) => void {
   const { onFlames, renFlames, eyeAuras, koPoints, ryuPoints, enFields, onCore, auraGlass } = aura
   return (seconds: number) => {
+    if (aura.visitorShell) aura.visitorShell.material.uniforms.u_time.value = seconds
     // The shell breathes by scale and never by material. Its material is shared
     // across every figure wearing the same bend — one upload for a deck of
     // guards — so writing an index of refraction here would be every body on

@@ -10,13 +10,11 @@ import {
   enVertexShader,
   fluxFragmentShader,
   fluxVertexShader,
-  onFragmentShader,
-  onVertexShader,
-  renFragmentShader,
-  renVertexShader,
   tenFragmentShader,
   tenVertexShader,
 } from './auraShaders'
+
+import { visitorAuraGeometry, visitorAuraMaterial } from './visitorAura'
 
 type ThreeModule = typeof import('three')
 
@@ -64,8 +62,7 @@ export class NenSceneAura {
     this.#root = new THREE.Group()
     this.#world = new THREE.Group()
 
-    this.#auraGeom = new THREE.CylinderGeometry(0.7, 0.9, 2.4, 32, 32, true)
-    this.#auraGeom.translate(0, 1.2, 0)
+    this.#auraGeom = visitorAuraGeometry(THREE)
 
     // TEN
     this.#ten = new THREE.Mesh(
@@ -87,54 +84,10 @@ export class NenSceneAura {
     )
     this.#ten.position.y = -1.2
 
-    // REN
-    this.#ren = new THREE.Mesh(
-      this.#auraGeom,
-      new THREE.ShaderMaterial({
-        vertexShader: renVertexShader,
-        fragmentShader: renFragmentShader,
-        uniforms: {
-          u_time: { value: 0 },
-          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
-          u_colorEdge: {
-            value: new THREE.Color(
-              NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0],
-            ),
-          },
-          u_opacity: { value: 0.8 },
-        },
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        side: THREE.DoubleSide,
-      }),
-    )
+    // REN / ON: the same shaders and blending as Fighting 2D.
+    this.#ren = new THREE.Mesh(this.#auraGeom, visitorAuraMaterial(THREE, 'ren'))
     this.#ren.position.y = -1.2
-
-    // ON
-    this.#on = new THREE.Mesh(
-      this.#auraGeom,
-      new THREE.ShaderMaterial({
-        vertexShader: onVertexShader,
-        fragmentShader: onFragmentShader,
-        uniforms: {
-          u_time: { value: 0 },
-          u_intensityMultiplier: { value: 1.0 },
-          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
-          u_colorEdge: {
-            value: new THREE.Color(
-              NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0],
-            ),
-          },
-          u_opacity: { value: 0.8 },
-        },
-        transparent: true,
-        premultipliedAlpha: true,
-        depthWrite: false,
-        blending: THREE.MultiplyBlending,
-        side: THREE.DoubleSide,
-      }),
-    )
+    this.#on = new THREE.Mesh(this.#auraGeom, visitorAuraMaterial(THREE, 'on'))
     this.#on.position.y = -1.2
 
     // ZETSU (Refraction via MeshPhysicalMaterial)

@@ -26,6 +26,8 @@ export interface HumanFigureBuild {
   profile?: HumanProfile
   /** What the visitor can see of aura. Absent is plain sight. See `auraSight.ts`. */
   observerSight?: AuraSight
+  /** Fighting uses the visitor's Ren/On envelope; ship figures keep their skin. */
+  auraStyle?: 'human' | 'visitor'
 }
 export interface HumanFigure {
   root: Group
@@ -175,6 +177,7 @@ export function buildHumanFigure({
   seen,
   profile = humanProfile(seen),
   observerSight = 'sight',
+  auraStyle = 'human',
 }: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
@@ -354,6 +357,7 @@ export function buildHumanFigure({
   const layers = auraLayersFor(nen, observerSight)
   const aura = buildHumanAura({
     THREE,
+    auraStyle,
     geometry,
     glow,
     ...(glass ? { glass } : {}),

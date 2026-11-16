@@ -1,6 +1,7 @@
+import { fightCategoryEfficiency } from './nenCategories'
 import { attackData, attackPhase } from './frameData'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
-import { nenAttackFactor, nenDamageFactor } from './nen'
+import { nenAttackFactor, nenDamageFactor, releaseFocusedAura } from './nen'
 import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
@@ -19,6 +20,10 @@ export interface ImpactDefence {
 }
 
 interface ResolvedDamageOptions {
+  /** Ordinary handgun rounds do not inherit the shooter’s Nen/Hatsu power. */
+  physicalProjectile?: boolean
+  projectileNenPower?: number
+  projectileHatsuPower?: number
   attacker: ArcadeFighter
   defence: ImpactDefence
   base: number
@@ -26,8 +31,6 @@ interface ResolvedDamageOptions {
   kind: AttackKind
   damageScale: number
   openingMultiplier: number
-  /** A conventional Musse bullet carries no invented aura reinforcement. */
-  unreinforced?: boolean
 }
 
 export function resolvedDamage(options: ResolvedDamageOptions): number {
@@ -46,21 +49,26 @@ function attackDamage(
     blocked: boolean
   },
 ): number {
-  const { defender, base, blocked, zone, damageScale, openingMultiplier } = options
-  if (blocked && defender.nen.ken) return 0
+  const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
   const guard = blocked ? 0.28 : 1
-  return Math.max(
-    1,
-    Math.round(
-      base *
-        attackerDamageFactor(options) *
-        nenDamageFactor(defender, zone) *
-        hatsuDefenceFactor(defender) *
-        guard *
-        damageScale *
-        openingMultiplier,
-    ),
+  const rawDamage = Math.round(
+    base *
+      (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
+      (options.projectileNenPower ??
+        (options.physicalProjectile ? 1 : nenAttackFactor(attacker, kind))) *
+      nenDamageFactor(defender, zone) *
+      (options.projectileHatsuPower ??
+        (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
+      hatsuDefenceFactor(defender) *
+      guard *
+      openingMultiplier,
   )
+  // Scale the rounded wound down so successive light hits cannot round back up.
+  const damage = Math.floor(rawDamage * damageScale)
+  // Ken absorbs ordinary guarded blows, but its protection has finite output.
+  const absorption =
+    blocked && defender.nen.ken ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
+  return absorption ? Math.max(0, damage - Math.round(absorption)) : Math.max(1, damage)
 }
 
 interface StrikeOptions {
@@ -103,6 +111,11 @@ function struckFighter(
     ...comboState(options),
     x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
     health: Math.max(0, options.fighter.health - options.damage),
+    aura:
+      options.blocked && options.fighter.nen.ken
+        ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1)
+        : options.fighter.aura,
+    nen: contactNen(options.fighter, options.blocked),
     // Contact exposes the cloth disguise; it supplies no armour or evasion.
     textureSurprise: undefined,
     knockdownFrames: knockdownFrames(options),
@@ -110,6 +123,11 @@ function struckFighter(
     attack: null,
     bufferedAttack: null,
   }
+}
+
+function contactNen(fighter: ArcadeFighter, blocked: boolean): ArcadeFighter['nen'] {
+  const nen = blocked ? fighter.nen : releaseFocusedAura(fighter).nen
+  return { ...nen, en: null, in: false }
 }
 
 function launchState(options: StrikeOptions): Pick<ArcadeFighter, 'y' | 'velocityY'> {
@@ -201,15 +219,4 @@ export function atWall(
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value))
-}
-
-function attackerDamageFactor(
-  options: Pick<ResolvedDamageOptions, 'attacker' | 'kind' | 'unreinforced'>,
-): number {
-  if (options.unreinforced) return 1
-  return (
-    fighterDefinition(options.attacker.id).power *
-    nenAttackFactor(options.attacker, options.kind) *
-    hatsuDamageFactor(options.attacker)
-  )
 }

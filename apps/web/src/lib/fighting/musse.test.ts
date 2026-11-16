@@ -230,11 +230,11 @@ describe('Musse — handgun and Secret Window', () => {
       ...state,
       opponent: {
         ...state.opponent,
-        hatsuEffects: { ...state.opponent.hatsuEffects, futureSight: 2 },
+        hatsuEffects: { ...state.opponent.hatsuEffects, teleportDodges: 2 },
       },
     })
     expect(result.player.secretWindow).toBeUndefined()
-    expect(result.opponent.hatsuEffects.futureSight).toBe(1)
+    expect(result.opponent.hatsuEffects.teleportDodges).toBe(1)
     expect(result.opponent.health).toBe(state.opponent.health)
   })
 

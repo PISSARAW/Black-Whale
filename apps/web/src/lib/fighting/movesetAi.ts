@@ -43,6 +43,10 @@ function finisherInRange(state: FightState, gap: number): boolean {
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
   if (state.opponent.id === 'musse') return musseSlots(state, gap)
+  if (state.opponent.id === 'tserriednich')
+    return gap > 10
+      ? ['forwardHeavy', 'standingHeavy']
+      : ['standingLight', 'standingHeavy', 'lowHeavy']
   if (state.opponent.id === 'benjamin') return benjaminAiSlots(state, roll, gap)
   if (state.opponent.id === 'chrollo') return chrolloAiSlots(state, roll, gap)
   return candidateSlots(roll, gap)

@@ -5,8 +5,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'furykov',
     mechanic: [
-      'Discipline militaire : Combo Master exige des jours de co-présence, Furykov se bat donc sans Hatsu, en soldat de l’Académie dont la précision allonge les séries.',
-      'Military discipline: Combo Master needs days of co-presence, so Furykov fights without a Hatsu, as an Academy soldier whose precision extends his sequences.',
+      'L ouvre Combo Master : sa console alerte immédiatement sur le Nen dissimulé dirigé contre lui, sans esquive ni renforcement. Une signature illisible reste « ? » ; Gyo peut la rendre lisible. Seules les personnes affectées confirmées dans ce duel sont listées. Déchiffrer et fabriquer demandent toujours des jours, hors duel. Ses autres techniques sont martiales.',
+      'L opens Combo Master: its console immediately warns of concealed Nen directed at him, without evasion or reinforcement. Unreadable signatures stay “?”; Gyo can make them readable. Only confirmed affected people in this duel are listed. Deciphering and fabrication still take days, outside the duel. His other techniques are martial.',
     ],
     finisherCondition: [
       'Une série d’au moins trois coups doit être en cours.',
@@ -22,7 +22,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Pas de lecture|Reading Step',
       'Briseur de cadence|Cadence Breaker',
       'Réponse automatique|Automatic Response',
-      'Enchaînement réglementaire|Regulation Chain',
+      'Combo Master · Console|Combo Master · Console',
       'Lecture instantanée|Instant Read',
       'Rupture basse|Low Break',
       'Garde adaptative|Adaptive Guard',
@@ -41,8 +41,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'cluck',
     mechanic: [
-      'Combat du Zodiaque : sa Manipulation d’oiseaux sert au courrier, pas au duel ; Cluck se bat en Hunter mobile qui change d’angle sans cesse.',
-      'Zodiac combat: her Bird Manipulation carries mail, not duels; Cluck fights as a mobile Hunter who keeps changing angles.',
+      'Cluck contrôle des oiseaux, notamment pour livrer les bulletins de vote ; les conditions et limites complètes restent inconnues. Aucun oiseau à contrôler dans ce duel : son Hatsu reste réel et volable par Steal Chain, mais inutilisable ici. Aucune attaque de volée inventée ; ses coups sont des adaptations martiales.',
+      'Cluck controls birds, notably to deliver voting ballots; the full conditions and limits remain unknown. This duel supplies no birds to control: her Hatsu is real and stealable through Steal Chain, but unavailable here. No invented flock attack; her strikes are martial adaptations.',
     ],
     finisherCondition: [
       'L’adversaire doit être à 40 PV ou moins.',
@@ -110,8 +110,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'longhi',
     mechanic: [
-      'Moonlight Act : le premier accord transforme ses clauses en entraves coercitives.',
-      'Moonlight Act: the initial agreement turns her clauses into coercive restraints.',
+      'Moonlight Act : contrat volontaire, clauses expliquées avant les deux signatures.',
+      'Moonlight Act: a voluntary contract, with terms explained before both signatures.',
     ],
     finisherCondition: [
       'La cible doit être liée par un contrat Moonlight Act.',
@@ -131,8 +131,8 @@ const SPECS: readonly MovesetSpec[] = [
       'Obligation d’exécution|Performance Obligation',
       'Clause de chute|Knockdown Clause',
       'Avenant protecteur|Protective Amendment',
-      'Consentement forcé|Forced Consent',
-      'Moonlight Act · Jugement final|Moonlight Act · Final Judgment',
+      'Projection|Throw',
+      'Sans finisher offensif|No offensive finisher',
     ],
     speed: 0.92,
     power: 0.98,

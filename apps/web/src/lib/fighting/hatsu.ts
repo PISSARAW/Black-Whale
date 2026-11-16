@@ -1,3 +1,5 @@
+import { scaleNenControl } from './nenHatsuEffects'
+import { isErigeronAction } from './billSupport'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
 import { canActivateLsdf } from './lsdf'
@@ -11,7 +13,8 @@ import { hatsuFor } from './hatsu/registry'
 /** Shared gameplay contract for every roster Hatsu. */
 export const FIGHT_HATSU_AURA_COST = 40
 
-export function canUseFightHatsu(fighter: Pick<ArcadeFighter, 'aura' | 'nen' | 'on'>): boolean {
+export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
+  if (isErigeronAction(fighter, 'special', `${fighter.id}:neutralSpecial`)) return false
   return (
     fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
   )
@@ -29,7 +32,7 @@ export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): Fighter
 }
 
 /**
- * A direct hit killed `victimSide`. Returns the state rewritten by the victim's
+ * An attributed attack or effect killed `victimSide`. Returns the state rewritten by the victim's
  * conditional Nen, or `null` when nothing wakes and the KO stands.
  */
 export function resolveDeathHatsu(
@@ -44,6 +47,7 @@ export function resolveDeathHatsu(
 
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
+  if (source === 'bill') return state
   if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
   // Secret Window's private owl cannot satisfy Skill Hunter's visual witnessing condition.
   if (source === 'musse') return hatsuFor(source).onTrigger({ state, side, source })
@@ -69,7 +73,7 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  return withDolphinIdentity(
+  return scaleNenControl(options.state, withDolphinIdentity(
     options.state,
     (state) =>
       hatsuFor(source).onImpact({
@@ -82,7 +86,7 @@ export function resolveHatsuImpact(options: {
         concealed,
       }),
     source,
-  )
+  ), side)
 }
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
@@ -90,11 +94,9 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
-  const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
-  const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * cyclotron * cantabile * biohazard * haiku * growth * coins * completion
+  return transformed * cyclotron * cantabile * biohazard * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {
@@ -108,14 +110,11 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
-  const growth = fighter.hatsuEffects.growthFrames > 0 ? 0.82 : 1
   const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
   const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
   const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
   const completion = completionDefenceFactor(fighter)
-  return (
-    transformed * cantabile * biohazard * predator * growth * exposed * smoked * coins * completion
-  )
+  return transformed * cantabile * biohazard * predator * exposed * smoked * coins * completion
 }
 
 function completionDefenceFactor(fighter: ArcadeFighter): number {
@@ -129,16 +128,7 @@ export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
   return AVOIDANCE_KEYS.some((key) => fighter.hatsuEffects[key] > 0)
 }
 
-export function consumeFutureSight(fighter: ArcadeFighter): ArcadeFighter {
-  if (!fighter.hatsuEffects.futureSight) return fighter
-  return {
-    ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, futureSight: fighter.hatsuEffects.futureSight - 1 },
-  }
-}
-
 export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
-  if (fighter.hatsuEffects.futureSight > 0) return consumeFutureSight(fighter)
   if (fighter.hatsuEffects.isolationFrames > 0) {
     return {
       ...fighter,
@@ -149,10 +139,9 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 type AvoidanceKey =
-  'futureSight' | 'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
+  'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
-  'futureSight',
   'isolationFrames',
   'teleportDodges',
   'wormDodges',
@@ -161,7 +150,7 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
 ]
 
 /** Keys `consumeHatsuAvoidance` spends with their own rule; the rest lose one charge. */
-const SPECIAL_AVOIDANCE_KEYS: readonly AvoidanceKey[] = ['futureSight', 'isolationFrames']
+const SPECIAL_AVOIDANCE_KEYS: readonly AvoidanceKey[] = ['isolationFrames']
 const STANDARD_AVOIDANCE_KEYS = AVOIDANCE_KEYS.filter(
   (key) => !SPECIAL_AVOIDANCE_KEYS.includes(key),
 )

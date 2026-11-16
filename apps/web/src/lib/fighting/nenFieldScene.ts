@@ -1,0 +1,43 @@
+import type { EffectSceneOptions } from './fighterEffectScene'
+import { gyoSight } from './nenPerception'
+import type { FightState } from './types'
+
+/** Radius uses duel coordinates, rather than the exploration rig's metre scale. */
+export function createNenFieldScene(options: EffectSceneOptions) {
+  const { THREE, scene } = options
+  const geometry = new THREE.RingGeometry(0.98, 1, 64)
+  const fields = (['player', 'opponent'] as const).map((side) => {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x8be8ff,
+      transparent: true,
+      opacity: 0.32,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.rotation.x = -Math.PI / 2
+    scene.add(mesh)
+    return { side, mesh, material }
+  })
+  return {
+    sync(state: FightState) {
+      for (const { side, mesh } of fields) {
+        const fighter = state[side]
+        mesh.visible =
+          Boolean(fighter.nen.en) &&
+          (side === 'player' || !fighter.nen.in || gyoSight(state.player))
+        const radius = fighter.nen.en?.radius ?? 1
+        const scale = Math.abs(options.worldX(fighter.x + radius) - options.worldX(fighter.x))
+        mesh.scale.setScalar(scale)
+        mesh.position.set(options.worldX(fighter.x), options.worldY(fighter.y) + 0.025, 0)
+      }
+    },
+    dispose() {
+      geometry.dispose()
+      for (const { mesh, material } of fields) {
+        scene.remove(mesh)
+        material.dispose()
+      }
+    },
+  }
+}

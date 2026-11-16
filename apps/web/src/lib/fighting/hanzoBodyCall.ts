@@ -1,4 +1,5 @@
 import { wakeHanzoBody } from './hanzoProjection'
+import { canSpeak, senseDeprived } from './saiyuSenses'
 import type { FightInput, FightSide, FightState } from './types'
 
 /** Audible range is a duel abstraction; the words are directed at the body. */
@@ -9,6 +10,8 @@ export function canCallHanzoBody(state: FightState, side: FightSide): boolean {
   const target = state[side === 'player' ? 'opponent' : 'player'].hanzoProjection
   if (state.phase !== 'fighting' || !target) return false
   if (caller.health <= 0 || caller.hitStun > 0) return false
+  if (!canSpeak(caller) || senseDeprived(state[side === 'player' ? 'opponent' : 'player'], 'hearing'))
+    return false
   return Math.hypot(caller.x - target.bodyX, caller.y) <= HANZO_CALL_RANGE
 }
 

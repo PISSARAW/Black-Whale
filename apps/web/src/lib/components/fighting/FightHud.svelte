@@ -1,120 +1,88 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightFormat } from '$lib/fighting/formats'
-  import { bungeeVisible } from '$lib/fighting/hisokaTechnique'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
-  import type { FightState } from '$lib/fighting/types'
-  import FightSecretWindowStatus from './FightSecretWindowStatus.svelte'
-  import FightChrolloStatus from './FightChrolloStatus.svelte'
-  import FightBenjaminStatus from './FightBenjaminStatus.svelte'
-  import FightGrudge from './FightGrudge.svelte'
-  import FightKurapikaStatus from './FightKurapikaStatus.svelte'
-  import FightPainPacker from './FightPainPacker.svelte'
+  import type { FightSide, FightState } from '$lib/fighting/types'
+  import FightHealth from './FightHealth.svelte'
+  import FightComboMaster from './FightComboMaster.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
+  export let detailed = false
 
-  $: player = fighterDefinition(state.player.id)
-  $: opponent = fighterDefinition(state.opponent.id)
+  const sides: FightSide[] = ['player', 'opponent']
   $: format = fightFormat(state.formatId)
-  $: visibleBungee = bungeeVisible(state)
 </script>
 
-<div class="hud" aria-live="polite">
-  <div class="fighter-meter player-meter">
-    <div class="meter-label">
-      <strong>{player.name}</strong><span
-        >P1 · {'●'.repeat(state.roundsWon.player)}{'○'.repeat(2 - state.roundsWon.player)}</span
+<div class="hud">
+  {#each sides as side (side)}
+    {@const fighter = state[side]}
+    {@const mirrored = side === 'opponent'}
+    <div class="fighter-meter" class:opponent-meter={mirrored}>
+      <div class="meter-label">
+        <strong>{fighterDefinition(fighter.id).name}</strong>
+        <span
+          class="rounds"
+          aria-label={`${state.roundsWon[side]} / 2 ${language === 'fr' ? 'manches gagnées' : 'rounds won'}`}
+        >
+          <small
+            >{!mirrored
+              ? 'P1'
+              : state.mode === 'versus-ai'
+                ? 'CPU'
+                : state.mode === 'training'
+                  ? 'DUMMY'
+                  : 'P2'}</small
+          >
+          <span aria-hidden="true"
+            >{'●'.repeat(state.roundsWon[side])}{'○'.repeat(
+              Math.max(0, 2 - state.roundsWon[side]),
+            )}</span
+          >
+        </span>
+      </div>
+      <FightHealth {fighter} {language} {mirrored} {detailed} />
+      <div
+        class="aura"
+        role="meter"
+        aria-label="Aura"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={fighter.aura}
       >
+        <span style={`width:${fighter.aura}%`}></span>
+      </div>
+      <div class="nen-status">
+        <span
+          >{!mirrored
+            ? nenStatus(fighter).join(' · ')
+            : state.player.nen.gyo
+              ? auraDistribution(fighter)
+              : language === 'fr'
+                ? 'Nen masqué'
+                : 'Nen hidden'}</span
+        >
+        <b>{Math.floor(fighter.aura)}<small> / 100</small></b>
+      </div>
+      <FightComboMaster {state} {side} {language} compact />
     </div>
-    <div class="health"><span style={`width:${state.player.health}%`}></span></div>
-    <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
-    <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
-    <FightGrudge fighter={state.player} {language} />
-    <FightBenjaminStatus {state} side="player" {language} />
-    <FightKurapikaStatus {state} side="player" {language} />
-    <FightPainPacker fighter={state.player} {language} />
-    <FightChrolloStatus {state} side="player" {language} />
-    <FightSecretWindowStatus {state} side="player" {language} />
-    {#if state.player.textureSurprise}
-      <div class="secret-status">
-        Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}
+  {/each}
+  <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>
+    <div class="timer" class:urgent={state.mode !== 'training' && state.time <= 10}>
+      {state.mode === 'training' ? '∞' : Math.ceil(state.time)}
+    </div>
+    {#if format.hitTarget !== null}
+      <div class="point-score" aria-label="Points">
+        <strong>{state.score.player}</strong><small>/{format.hitTarget}</small><strong
+          >{state.score.opponent}</strong
+        >
       </div>
     {/if}
-    {#if visibleBungee}
-      <div class="secret-status">
-        {state.bungeeGum?.retracting
-          ? state.bungeeGum.rebounding
-            ? language === 'fr'
-              ? 'Bungee Gum · rebond'
-              : 'Bungee Gum · rebound'
-            : language === 'fr'
-              ? 'Bungee Gum · rappel'
-              : 'Bungee Gum · recall'
-          : state.bungeeGum?.owner === 'player'
-            ? language === 'fr'
-              ? 'Bungee Gum · attaché'
-              : 'Bungee Gum · attached'
-            : language === 'fr'
-              ? 'Bungee Gum détecté'
-              : 'Bungee Gum detected'}
-      </div>
-    {/if}
-  </div>
-  <div class="tower-score">
-    <small>{language === 'fr' ? format.titleFr : format.titleEn}</small>
-    <strong>
-      {format.hitTarget === null ? Math.ceil(state.player.health) : state.score.player}<span
-        >{format.hitTarget === null
-          ? language === 'fr'
-            ? ' PV'
-            : ' HP'
-          : `/${format.hitTarget}`}</span
-      >
-    </strong>
     {#if format.knockdownTarget !== null}
-      <div class="knockdown-score">
-        <span>{state.knockdowns.player} KD</span>
-        <span>{state.knockdowns.opponent} KD</span>
-      </div>
-    {/if}
-    <div class="timer">{Math.ceil(state.time)}</div>
-    <strong>
-      {format.hitTarget === null ? Math.ceil(state.opponent.health) : state.score.opponent}<span
-        >{format.hitTarget === null
-          ? language === 'fr'
-            ? ' PV'
-            : ' HP'
-          : `/${format.hitTarget}`}</span
-      >
-    </strong>
-  </div>
-  <div class="fighter-meter opponent-meter">
-    <div class="meter-label">
-      <span
-        >{state.mode === 'versus-ai' ? 'CPU' : state.mode === 'training' ? 'DUMMY' : 'P2'} · {'●'.repeat(
-          state.roundsWon.opponent,
-        )}{'○'.repeat(2 - state.roundsWon.opponent)}</span
-      ><strong>{opponent.name}</strong>
-    </div>
-    <div class="health"><span style={`width:${state.opponent.health}%`}></span></div>
-    <div class="aura"><span style={`width:${state.opponent.aura}%`}></span></div>
-    <div class="nen-status">
-      {state.player.nen.gyo
-        ? auraDistribution(state.opponent)
-        : language === 'fr'
-          ? 'aura adverse masquée'
-          : 'opponent aura hidden'}
-    </div>
-    <FightGrudge fighter={state.opponent} {language} />
-    <FightBenjaminStatus {state} side="opponent" {language} />
-    <FightKurapikaStatus {state} side="opponent" {language} />
-    <FightPainPacker fighter={state.opponent} {language} />
-    <FightChrolloStatus {state} side="opponent" {language} />
-    <FightSecretWindowStatus {state} side="opponent" {language} />
-    {#if state.opponent.textureSurprise}
-      <div class="secret-status">
-        Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}
+      <div class="knockdown-score" aria-label="Knockdowns">
+        <span>{state.knockdowns.player}/{format.knockdownTarget}</span><small>KD</small><span
+          >{state.knockdowns.opponent}/{format.knockdownTarget}</span
+        >
       </div>
     {/if}
   </div>
@@ -122,158 +90,156 @@
 
 <style>
   .hud {
-    position: absolute;
+    position: relative;
     z-index: 20;
-    top: 1rem;
-    left: 50%;
+    margin: 0.8rem 1rem 0;
     display: grid;
-    width: min(94%, 1050px);
-    grid-template-columns: 1fr 72px 1fr;
-    gap: 0.75rem;
-    transform: translateX(-50%);
+    grid-template-columns: minmax(0, 1fr) calc(80px * var(--hud-scale, 1)) minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.65rem;
+    background: linear-gradient(#060c12ed, #060c12b3 75%, transparent);
+    pointer-events: none;
+  }
+  .fighter-meter {
+    min-width: 0;
+  }
+  .opponent-meter {
+    grid-column: 3;
+  }
+  .meter-label,
+  .nen-status,
+  .rounds {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
   }
   .meter-label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
+    min-height: 1.4rem;
+    margin-bottom: 0.35rem;
     color: #fff;
-    font: 700 clamp(0.7rem, 1.5vw, 1rem)/1 var(--font-display);
-    letter-spacing: 0.08em;
+    font: 700 calc(1rem * var(--hud-scale, 1))/1.5 var(--font-display);
     text-transform: uppercase;
-    text-shadow: 0 2px 3px #000;
   }
-  .meter-label span {
-    color: #a7b4c2;
-    font: 600 0.65rem/1 var(--font-mono);
+  .meter-label strong {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
-  .health,
+  .rounds {
+    flex-shrink: 0;
+    color: #edce7b;
+    font: 600 var(--hud-font)/1 var(--font-mono);
+  }
+  .rounds small {
+    color: #b1c0cd;
+    font-size: 0.7rem;
+  }
   .aura {
+    height: calc(7px * var(--hud-scale, 1));
     overflow: hidden;
-    border: 2px solid rgb(255 255 255 / 65%);
-    background: rgb(4 8 12 / 82%);
-    transform: skewX(-9deg);
+    margin-top: 5px;
+    border: 1px solid #50778c;
+    background: #101a24;
   }
-  .health {
-    height: 17px;
-  }
-  .aura {
-    height: 7px;
-    margin-top: 4px;
-    border-width: 1px;
-  }
-  .health span,
-  .aura span {
+  .aura > span {
     display: block;
     height: 100%;
-    transition: width 160ms ease-out;
-  }
-  .health span {
-    background: linear-gradient(90deg, #a61d2d, #f2c84b 35%, #dff46b);
-  }
-  .aura span {
-    background: linear-gradient(90deg, #2a87ff, #7de7ff);
-    box-shadow: 0 0 8px #67dff8;
+    background: #7ad4ee;
   }
   .nen-status {
     margin-top: 0.3rem;
-    color: #8fdfff;
-    font: 600 0.55rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-shadow: 0 1px 4px #000;
+    color: #a6deec;
+    font: 600 var(--hud-font)/1.35 var(--font-mono);
+    overflow-wrap: anywhere;
   }
-  .secret-status {
-    margin-top: 0.25rem;
-    color: #ff80dc;
-    font: 700 0.52rem/1 var(--font-mono);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    text-shadow: 0 0 7px #7e185f;
+  .nen-status b {
+    flex-shrink: 0;
+    color: #eef8ff;
+    font-variant-numeric: tabular-nums;
   }
-  .opponent-meter .meter-label {
-    text-align: right;
+  .nen-status small {
+    color: #a6b7c6;
+    font-size: inherit;
   }
-  .opponent-meter .health,
-  .opponent-meter .aura {
-    transform: scaleX(-1) skewX(-9deg);
-  }
+  .opponent-meter .meter-label,
   .opponent-meter .nen-status {
+    flex-direction: row-reverse;
     text-align: right;
+  }
+  .opponent-meter .aura {
+    transform: scaleX(-1);
   }
   .tower-score {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    color: #f1d36d;
-    font: 800 0.9rem/1 var(--font-display);
-  }
-  .tower-score > strong {
-    position: absolute;
-    top: 62px;
-  }
-  .tower-score > small {
-    position: absolute;
-    top: -0.1rem;
-    width: 8rem;
-    color: #f1d36d;
-    font: 700 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-align: center;
-    text-transform: uppercase;
-    text-shadow: 0 1px 3px #000;
-  }
-  .tower-score > strong:first-child {
-    transform: translateX(-24px);
-  }
-  .tower-score > strong:last-child {
-    transform: translateX(24px);
-  }
-  .tower-score span {
-    color: #8998a1;
-    font: 600 0.45rem/1 var(--font-mono);
-  }
-  .knockdown-score {
-    position: absolute;
-    top: 79px;
-    display: flex;
-    width: 86px;
-    justify-content: space-between;
-    color: #f1d36d;
-    font: 700 0.44rem/1 var(--font-mono);
-    letter-spacing: 0.04em;
+    container-type: inline-size;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    color: #edce7b;
+    font: 700 var(--hud-font)/1.3 var(--font-mono);
+    font-variant-numeric: tabular-nums;
   }
   .timer {
-    display: grid;
-    height: 58px;
-    place-items: center;
-    border: 2px solid #d9b650;
-    background: rgb(5 9 13 / 88%);
+    padding: 0.3rem 0;
+    border-bottom: 2px solid #d9b650;
     color: #fff;
-    font: 700 2rem/1 var(--font-display);
-    box-shadow: 0 0 0 3px rgb(0 0 0 / 60%);
+    font: 800 min(calc(2.5rem * var(--hud-scale, 1)), 44cqi)/1 var(--font-display);
+    text-align: center;
+  }
+  .timer.urgent {
+    color: #ff9b8d;
+    border-color: currentColor;
+  }
+  .point-score,
+  .knockdown-score {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem;
+    margin-top: 0.35rem;
+  }
+  .knockdown-score {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    text-align: center;
+  }
+  .knockdown-score small {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .point-score strong {
+    font-size: calc(1.1rem * var(--hud-scale, 1));
+  }
+  .tower-score small {
+    color: #c2c8cc;
+    font-size: 0.7rem;
   }
   @media (max-width: 600px) {
     .hud {
-      top: 0.65rem;
-      grid-template-columns: 1fr 48px 1fr;
-      gap: 0.35rem;
+      margin: 0.35rem 0.3rem 0;
+      gap: 0.45rem;
+      padding: 0.45rem;
+      grid-template-columns: minmax(0, 1fr) calc(54px * var(--hud-scale, 1)) minmax(0, 1fr);
     }
-    .timer {
-      height: 45px;
-      font-size: 1.4rem;
+    .meter-label {
+      align-items: start;
+      flex-direction: column;
+      font-size: calc(0.85rem * var(--hud-scale, 1));
     }
-    .tower-score > strong {
-      top: 49px;
-      font-size: 0.75rem;
+    .opponent-meter .meter-label {
+      flex-direction: column;
+      align-items: end;
     }
-    .knockdown-score {
-      top: 64px;
-      width: 70px;
+    .nen-status {
+      align-items: start;
+      flex-direction: column;
+      gap: 0.1rem;
     }
-    .health {
-      height: 13px;
+    .opponent-meter .nen-status {
+      flex-direction: column;
+      align-items: end;
     }
-    .meter-label span {
+    .nen-status small {
       display: none;
     }
   }

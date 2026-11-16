@@ -1,14 +1,17 @@
 <script lang="ts">
-  import type { ArcadeFighter } from '$lib/fighting/types'
+  import type { ArcadeFighter, FightSide } from '$lib/fighting/types'
   import { createPainPacker } from '$lib/fighting/feitanPain'
   import { chrolloHasActivePage } from '$lib/fighting/chrolloBook'
 
   export let fighter: ArcadeFighter
   export let language: 'fr' | 'en'
+  export let side: FightSide = 'player'
+  export let local = false
 
   $: pain = fighter.hatsuEffects.painPacker ?? createPainPacker()
   $: visible = fighter.id === 'feitan' || chrolloHasActivePage(fighter, 'feitan')
-  $: preparation = fighter.id === 'chrollo' ? 'L' : 'H'
+  $: useKey = side === 'opponent' && local ? ',' : 'L'
+  $: preparation = fighter.id === 'chrollo' ? useKey : side === 'opponent' && local ? 'B' : 'H'
 </script>
 
 {#if visible && pain}
@@ -21,7 +24,7 @@
       <span>{preparation} · Rising Sun</span>
     {:else if pain.injuries > 0}
       {language === 'fr' ? 'Douleur' : 'Pain'} · {Math.round(pain.injuries)}
-      <span>L · Pain Packer</span>
+      <span>{useKey} · Pain Packer</span>
     {:else}
       Pain Packer
       <span>{language === 'fr' ? 'Une blessure est nécessaire' : 'Requires an injury'}</span>

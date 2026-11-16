@@ -1,13 +1,17 @@
 <script lang="ts">
   import { moveById } from '$lib/fighting/movesets'
+  import { outsideDuelAbility } from '$lib/fighting/outsideDuelAbility'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
+  export let detailed = false
+  $: useKey = side === 'opponent' && state.mode === 'versus-local' ? ',' : 'L'
   $: fighter = state[side]
   $: chain = fighter.kurapika
   $: held = chain?.held
-  $: ability = moveById(held?.moveId)
+  $: outsideDuel = outsideDuelAbility(held?.moveId)
+  $: ability = outsideDuel ?? moveById(held?.moveId)
   $: hours = ((chain?.lifespanFrames ?? 0) / 60).toLocaleString(
     language === 'fr' ? 'fr-FR' : 'en-US',
     { maximumFractionDigits: 2 },
@@ -21,11 +25,11 @@
     class:danger={Boolean(fighter.judgmentChain || fighter.chainJail)}
   >
     {#if chain}
-      <div>
-        Emperor Time · {chain.emperorTime ? 'ON' : 'OFF'} · {language === 'fr'
-          ? 'vie perdue'
-          : 'lifespan lost'} : {hours} h
-      </div>
+      {#if detailed || chain.emperorTime || chain.lifespanFrames > 0}<div>
+          Emperor Time · {chain.emperorTime ? 'ON' : 'OFF'} · {language === 'fr'
+            ? 'vie perdue'
+            : 'lifespan lost'} : {hours} h
+        </div>{/if}
       {#if chain.blackoutFrames > 0}
         <div>
           {language === 'fr' ? 'INCONSCIENT' : 'UNCONSCIOUS'} · {Math.ceil(
@@ -39,19 +43,28 @@
             ? 'Stealth Dolphin'
             : 'Steal Chain'}
         </div>
-        <div>
-          {language === 'fr'
-            ? held.used
-              ? '← + L : terminer l’effet · Emperor Time verrouillé'
-              : held.loaded
-                ? '← + L : usage unique · Emperor Time verrouillé'
-                : 'Activer Emperor Time, puis ← + L pour charger'
-            : held.used
-              ? '← + L: end effect · Emperor Time locked'
-              : held.loaded
-                ? '← + L: single use · Emperor Time locked'
-                : 'Activate Emperor Time, then ← + L to load'}
-        </div>
+        {#if outsideDuel}
+          <div>
+            {language === 'fr' ? outsideDuel.reasonFr : outsideDuel.reasonEn}
+            {language === 'fr'
+              ? 'Capacité conservée dans Steal Chain.'
+              : 'Ability retained in Steal Chain.'}
+          </div>
+        {:else}
+          <div>
+            {language === 'fr'
+              ? held.used
+                ? `← + ${useKey} : terminer l’effet · Emperor Time verrouillé`
+                : held.loaded
+                  ? `← + ${useKey} : usage unique · Emperor Time verrouillé`
+                  : `Activer Emperor Time, puis ← + ${useKey} pour charger`
+              : held.used
+                ? `← + ${useKey}: end effect · Emperor Time locked`
+                : held.loaded
+                  ? `← + ${useKey}: single use · Emperor Time locked`
+                  : `Activate Emperor Time, then ← + ${useKey} to load`}
+          </div>
+        {/if}
       {/if}
     {/if}
     {#if fighter.chainJail}<div>

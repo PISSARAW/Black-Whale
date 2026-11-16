@@ -6,10 +6,12 @@
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
+  export let detailed = false
 
   $: fighter = state[side]
   $: baton = fighter.hatsuEffects.baton
   $: active = benjaminNenActive(fighter)
+  $: cardKey = side === 'opponent' && state.mode === 'versus-local' ? 'B' : 'H'
   $: target = baton?.markedTarget ? state[baton.markedTarget] : null
   $: move = moveById(target?.attack?.moveId)
   $: action = target?.attack?.concealed
@@ -44,15 +46,15 @@
         ? 'héritages connus'
         : 'known inheritances'}</span
     >
-    <span>Air Blow · Secret Window · Culdcept</span>
+    {#if detailed}<span>Air Blow · Secret Window · Culdcept</span>{/if}
     {#if !active}
       <span>{language === 'fr' ? 'Héritages suspendus' : 'Inherited abilities suspended'}</span>
     {:else}
       <span
         >Culdcept · {baton.card
           ? language === 'fr'
-            ? 'carte prête [H]'
-            : 'card ready [H]'
+            ? `carte prête [${cardKey}]`
+            : `card ready [${cardKey}]`
           : language === 'fr'
             ? 'sans carte'
             : 'no card'}</span

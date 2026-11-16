@@ -1,3 +1,4 @@
+import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
 import { kurapikaMoveAvailable } from './kurapika'
@@ -8,7 +9,7 @@ import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST, hatsuSourceFor } from './hatsu'
 import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
-import { canUseRangedAttack, RANGED_AURA_COST } from './projectiles'
+import { canUseRangedAttack, rangedAuraCost } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
@@ -42,11 +43,12 @@ export function startFighterAttack(options: {
     ...fighter,
     attack: { ...fighter.attack!, kind, variant: options.variant, moveId: options.moveId },
   })
-  const usesRyu = fighter.blocking || fighter.ryuWindow > 0
-  const focused = usesRyu ? focusAttackRyu(fighter, kind) : fighter
+  const usesRyu = wantsAttackRyu(fighter)
+  const focused = attackRyu(fighter, kind)
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    nen: { ...prepared.nen, en: null },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
     aura: fighter.aura - attackAuraCost(kind, options.moveId, fighter.id) - (concealed ? 12 : 0),
     pose: kind,
@@ -61,12 +63,9 @@ export function startFighterAttack(options: {
       confirmedHit: false,
       frame: 0,
       impacted: false,
-      auraCharged: auraCharged && !(fighter.id === 'musse' && kind === 'ranged'),
+      auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
-      hatsuSource:
-        kind === 'special'
-          ? (options.hatsuSource ?? hatsuSourceFor(fighter, options.moveId))
-          : null,
+      hatsuSource: attackHatsuSource(options),
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },
@@ -74,12 +73,18 @@ export function startFighterAttack(options: {
   }
 }
 
+function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
+  return options.kind === 'special'
+    ? (options.hatsuSource ?? hatsuSourceFor(options.fighter, options.moveId))
+    : null
+}
+
 export function canStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (!characterAttackAvailable(fighter, kind, moveId)) return false
+  if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&
@@ -93,6 +98,7 @@ function characterAttackAvailable(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (fighter.id === 'theta' && kind === 'special') return false
   if (!kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
@@ -129,7 +135,7 @@ function attackAuraCost(
   const move = moveById(moveId)
   if (move) return move.auraCost
   if (kind === 'special') return FIGHT_HATSU_AURA_COST
-  return kind === 'ranged' && !['benjamin', 'musse'].includes(fighterId) ? RANGED_AURA_COST : 0
+  return kind === 'ranged' ? rangedAuraCost(fighterId ?? 'hisoka') : 0
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
@@ -157,4 +163,21 @@ function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: s
     : kind === 'special'
       ? canUseFightHatsu(fighter)
       : kind !== 'ranged' || canUseRangedAttack(fighter)
+}
+
+function canChargeAura(fighter: ArcadeFighter, kind: AttackKind): boolean {
+  return (
+    fighter.nen.mode !== 'zetsu' &&
+    !thetaPhysicalShot(fighter, kind) &&
+    !(fighter.id === 'musse' && kind === 'ranged')
+  )
+}
+
+function wantsAttackRyu(fighter: ArcadeFighter): boolean {
+  return !fighter.nen.ko && (fighter.blocking || fighter.ryuWindow > 0)
+}
+
+function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
+  const focused = Object.values(fighter.nen.ryu).some((share) => Number(share) > 0)
+  return wantsAttackRyu(fighter) && !focused ? focusAttackRyu(fighter, kind) : fighter
 }

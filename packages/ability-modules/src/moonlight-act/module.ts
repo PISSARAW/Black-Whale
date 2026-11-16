@@ -33,7 +33,7 @@ export const moonlightAct = defineAbility({
   site: {
     kind: 'contract',
     instruction:
-      'Two parties sign voluntarily; touching either of them honours the terms and rewards both, touching anyone else is a breach worth a week of Zetsu.',
+      'Explain the terms, duration, reward and penalty, then obtain both voluntary signatures. The shown pact rewards compliance with one use of Moonlight Act and punishes breach with one week of Zetsu.',
     rule: 'Only a voluntary agreement with explicit terms can be rewarded or punished by the Manipulation contract.',
     cost: 'Mutual consent · declared duration and penalty',
     color: '#c6ddff',
@@ -51,8 +51,8 @@ export const moonlightAct = defineAbility({
       label: 'Signer le contrat',
       evidence: shown({
         kind: 'chapter',
-        chapter: 397,
-        label: 'ch. 397 — le contrat énoncé terme par terme, puis accepté',
+        chapter: 401,
+        label: 'ch. 401 — le contrat énoncé terme par terme, puis accepté',
       }),
       conditions: [
         requiresTarget('Un cocontractant est présent'),
@@ -83,8 +83,8 @@ export const moonlightAct = defineAbility({
       // displayed as written, and the panel shows nothing else.
       evidence: shown({
         kind: 'chapter',
-        chapter: 397,
-        label: 'ch. 397 — les termes sont énoncés avant la signature',
+        chapter: 401,
+        label: 'ch. 401 — les termes sont énoncés avant la signature',
       }),
       effects: [
         knowledgeGrant({
@@ -98,8 +98,8 @@ export const moonlightAct = defineAbility({
       label: 'Exécuter le contrat',
       evidence: shown({
         kind: 'chapter',
-        chapter: 397,
-        label: 'ch. 397 — la récompense suit l’exécution',
+        chapter: 401,
+        label: 'ch. 401 — la récompense suit l’exécution',
       }),
       effects: [setEffectState({ state: 'ENDED', attributes: { outcome: 'fulfilled' } })],
     },
@@ -109,8 +109,8 @@ export const moonlightAct = defineAbility({
       refusal: 'Le contrat est volontaire : sans accord libre, il n’y a pas de capacité',
       evidence: shown({
         kind: 'chapter',
-        chapter: 397,
-        label: 'ch. 397 — le consentement est la condition d’entrée',
+        chapter: 401,
+        label: 'ch. 401 — le consentement est la condition d’entrée',
       }),
     },
 
@@ -127,8 +127,8 @@ export const moonlightAct = defineAbility({
       label: 'Rompre le contrat',
       evidence: shown({
         kind: 'chapter',
-        chapter: 397,
-        label: 'ch. 397 — la pénalité inscrite s’applique',
+        chapter: 401,
+        label: 'ch. 401 — la pénalité inscrite s’applique',
       }),
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { outcome: 'breached' } })],
       hint: 'Applique la pénalité inscrite au contrat',

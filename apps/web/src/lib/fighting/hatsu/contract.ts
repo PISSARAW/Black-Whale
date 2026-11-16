@@ -1,4 +1,5 @@
 import type { ArcadeFighter, FightSide, FightState, FighterId } from '../types'
+import type { OutsideDuelAbility } from '../outsideDuelAbility'
 
 export interface HatsuTriggerContext {
   state: FightState
@@ -13,7 +14,7 @@ export interface HatsuImpactContext extends HatsuTriggerContext {
   concealed: boolean
 }
 
-/** A direct hit has just killed `victimSide`; the attacker on `killerSide` landed it. */
+/** An attributed death: the common verdict identifies a living killer before post-mortem Nen. */
 export interface HatsuDeathContext {
   state: FightState
   victimSide: FightSide
@@ -26,9 +27,11 @@ export interface FighterHatsu {
   onImpact: (context: HatsuImpactContext) => FightState
   onFrame: (state: FightState) => FightState
   sourceFor?: (fighter: ArcadeFighter, moveId?: string) => FighterId | null
-  /** The canon Hatsu cannot act in a duel: the fighter plays on martial skill and basic Nen. */
+  /** No confirmed personal Hatsu can act in this duel: the fighter plays on martial skill and basic Nen. */
   martialOnly?: true
-  /** Conditional Nen that wakes only when its owner is killed by a direct hit. */
+  /** Still a real Hatsu for Steal Chain, despite lacking a target in this duel. */
+  stealableOutsideDuel?: OutsideDuelAbility
+  /** Conditional Nen that wakes only when its owner is killed by an attributed attack or effect. */
   onDeath?: (context: HatsuDeathContext) => FightState
 }
 
@@ -37,9 +40,8 @@ export const unchangedImpact = ({ state }: HatsuImpactContext): FightState => st
 export const unchangedFrame = (state: FightState): FightState => state
 
 /**
- * A fighter whose only canon Hatsu needs a preparation no duel allows (days of
- * co-presence, a courier flock, a post-mortem sacrifice, a surveillance familiar).
- * Inventing a combat effect for it would contradict the manga, so none is applied.
+ * A fighter whose personal Hatsu is unknown or lacks a suitable target or setup here.
+ * Combat moves stay martial; stealableOutsideDuel may still declare the actual Hatsu.
  */
 export function martialOnlyHatsu(id: FighterId): FighterHatsu {
   return {

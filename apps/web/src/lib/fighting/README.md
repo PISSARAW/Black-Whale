@@ -54,8 +54,7 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   sa victoire aux points, l’entraînement ne termine pas sur un K.-O. Zetsu et le vol
   du Hatsu dissipent l’armure et le soleil. `feitanScene.ts` dessine l’habit sur le
   rig et le périmètre de chaleur dans le monde ; le HUD affiche la douleur et l’état.
-- Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le projectile de Theta neutralise
-  l'aura, le corps naturel de Biscuit renforce attaque et défense, tandis que
+- Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le corps naturel de Biscuit renforce attaque et défense, tandis que
   LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
   ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
@@ -93,8 +92,53 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
+- Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
+  `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
+  composition : les textes libres non reconnus ne coûtent rien et ne créent aucun
+  pouvoir. L recopie la composition attestée ; le panneau permet de
+  la saisir et de la relire avant de l’écrire. L’écriture prend une seconde et
+  25 aura, sans frappe ni bonus général ; bouger, garder ou être frappé l’interrompt.
+  Une fois écrite, la condition ne s’applique qu’à un contact du poing : un échec,
+  une parade, un coup de pied, une projection ou un projectile n’allume aucun feu.
+  Un contact sur garde peut enflammer. `bashoFire.ts` produit une brûlure visible
+  de 90 frames, avec trois pulsations de 2 dégâts avant défense Nen ; ni paralysie,
+  bonus à tous les coups, « Encre terrestre » ou finisher inventé. Ces chiffres et
+  le maintien du poème tant que le Nen reste disponible sont des adaptations de
+  duel, sans notation littéraire automatique : la qualité compte dans le manga,
+  mais une seule composition attestée est prise en charge ici. Les nouvelles
+  manches réinitialisent papier et feu. Les copies conservent l’écriture et ses
+  conditions ; les brûlures portent l’identité du lanceur pour le verdict.
+
+- Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
+  `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),
+  qui accélère la croissance d’un être vivant et peut favoriser le développement du
+  Nen d’autrui, avec un effet faible sur les personnes non entraînées. Ce n’est ni
+  un soin personnel, ni un bonus automatique d’attaque ou de défense.
+  Le duel actuel ne propose pas de cible de soutien : L, avec ou sans direction,
+  reste donc indisponible, sans dépense d’aura, frappe, annulation ou mise en buffer.
+  L’interface explique cette limite du mode ; elle n’en fait pas une restriction
+  canonique d’Erigeron. Les racines offensives/protectrices, floraisons et finisher
+  à faible santé sont retirés. Les copies de Chrollo et de Stealth Dolphin conservent
+  la même exigence de cible adaptée ; Erigeron demeure une capacité réelle et copiable.
+  `billSupport.ts` et `hatsu/bill.ts` ne lui attribuent aucun effet de combat inventé.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
   Terebellum et Voconte.
+- Longhi utilise un **contrat volontaire**, sans entrave sur touche ni finisher.
+  L propose les clauses affichées dans `FightMoonlightPanel.svelte` ; seul le
+  destinataire peut signer ou refuser. Silence, éloignement ou refus n’imposent
+  rien. La signature exige deux personnages conscients, au sol et à portée des
+  mains ; elle ne prend pas la forme d’un coup. Les commandes existent aussi
+  pour le second joueur et au tactile ; l’IA décide uniquement pour elle-même.
+  Le scénario de duel est une trêve de cinq secondes de combat, sans démarrer
+  de coup, projectile ou technique. Déplacements, garde et Nen de base restent
+  libres. Respecter le pacte accorde au destinataire **un usage de Moonlight Act**,
+  proposé depuis le panneau sans remplacer son Hatsu personnel. Les deux parties
+  encourent Zetsu si elles rompent la même clause. La semaine du chapitre 401
+  est représentée par le reste du match, y compris les manches suivantes ; aucun
+  hitstun contractuel n’est appliqué. `moonlightContract.ts` porte les signatures,
+  la durée, le prêt et la sanction ; `moonlightAction.ts` contrôle le démarrage
+  effectif des commandes. Les clauses de cette trêve sont une adaptation explicite,
+  pas un contrat montré au manga. Une nouvelle partie réinitialise prêts et sanctions.
 - Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**
   si **Morena est présente** et si son adversaire est déclaré **intrus en infraction**
   dans la préparation du duel. `fightEnvironment.ts` transmet ce scénario au moteur.
@@ -126,11 +170,42 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
-- Furykov, Cluck, Beyond et Sayird jouent en **martial pur**
-  (`martialOnlyHatsu`) : leur seul Hatsu canon exige une préparation qu'un duel
-  n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
-  posthume, observation prolongée). Leurs techniques restent des coups chargés de Ren,
-  sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
+- Furykov ouvre **Combo Master** avec L, sans frappe, déplacement ni protection.
+  `comboMaster.ts` alerte immédiatement sur une attaque de Nen dissimulée déjà
+  engagée contre lui ou sur une liaison cachée qui l’affecte ; aucun buffer ni
+  action future n’est lu. Les projectiles ordinaires, le Nen visible et les tirs
+  qui s’éloignent ou passent hors de sa hauteur ne déclenchent pas d’alerte.
+  `FightComboMaster.svelte` affiche « ? » si la signature est illisible : dans
+  cette adaptation, seul Gyo permet de la lire, sans dissiper In. La liste des
+  personnes affectées ne reprend que les destinataires confirmés d’un effet
+  représenté dans ce duel (actuellement Bungee Gum), jamais son auteur ni une
+  victime future ; elle ne sonde pas les personnes hors arène. Zetsu, épuisement,
+  sceau de On, vol du Hatsu ou mort dissipent la console. Une page copiée doit
+  rester active ; la manche suivante repart sans console. Déchiffrage et fabrication
+  sur plusieurs jours restent hors duel. Coût d’ouverture (40 aura), engagement
+  et règle de lisibilité par Gyo sont des adaptations ; ses autres techniques
+  restent martiales, sans bonus de dégâts ni esquive automatique.
+- Cluck, Beyond et Sayird combattent avec des coups martiaux chargés de Ren,
+  sans transformer leurs Hatsu en effets offensifs inventés. L’absence de cible
+  ou de préparation adaptée dans ce mode ne rend pas leurs pouvoirs inexistants.
+- Cluck conserve son **contrôle d’oiseaux**, attesté pour la livraison de bulletins
+  de vote (chapitre 320), sans restriction canonique au courrier : les conditions
+  et limites complètes restent inconnues. Aucun oiseau n’est fourni par ce duel.
+  `hatsu/cluck.ts` déclare une capacité réelle retenable par Steal Chain sous
+  l’identité `cluck:birdManipulation`, distincte de ses coups. Sans cible adaptée,
+  aucun chargement ni usage de Stealth Dolphin n’est proposé et Emperor Time
+  reste désactivable. Le HUD nomme le pouvoir et explique l’absence d’oiseaux ;
+  aucune volée, protection, information partagée ou attaque d’oiseaux n’est inventée.
+  Le vol ne scelle que ce Hatsu, pas ses techniques martiales après récupération
+  de l’aura drainée. Retour de capacité et nouvelle manche lèvent la rétention.
+- Little Eye reste un Hatsu réel de Sayird : il contrôle un petit animal réel
+  (jusqu’à la taille d’un hamster) et transmet sa vue et son ouïe, sans agir sur
+  une créature matérialisée par le Nen. Kurapika peut le retenir après drainage,
+  sous l’identité `sayird:littleEye`, distincte des frappes martiales. Aucun animal
+  cible n’est fourni en duel : le HUD nomme la capacité et précise cette limite ;
+  chargement et usage restent indisponibles, sans verrouiller Emperor Time.
+  Les coups de Sayird restent des adaptations martiales même quand Little Eye
+  est retenu. La manche suivante rend la capacité à son propriétaire.
 - Musse utilise **U** pour son pistolet ordinaire : une balle physique par pression,
   sans coût d’aura ni renforcement automatique par Ren, Ko ou un Hatsu. L’arme
   reste utilisable en Zetsu ou si son Hatsu est volé. Le modèle tient le pistolet
@@ -152,16 +227,32 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   portée, interruption par Zetsu et munitions non comptées sont des réglages de duel.
   L’écoute à travers une paroi et la restitution après observation prolongée ne
   sont pas transformées en bonus de combat dans cette arène ouverte.
-- Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
-  (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
-  qui se joue à la vie : le chat tue le meurtrier et Camilla revient.
-- Sweet Home (`sweetHomeContacts.ts`, `sweetHomeImpact.ts`) vérifie les contacts
-  pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures
-  à l'adversaire touché à gauche ; →+L absorbe à droite vers son propre corps
-  touché à gauche ; ↓+L absorbe à droite sans réceptacle et blesse sa main gauche.
-  Sans contact requis, la cible initiale garde les dégâts. Chaque blessure est
-  déplacée une fois, sans nouvelle réduction ni esquive. Portée, frames et coups
-  porteurs sont des abstractions du duel ; aucun objet-réceptacle n'est inventé.
+- Camilla conserve **Cat’s Name** comme Nen posthume automatique (chapitre 373),
+  sans finisher à faible santé ni coup de chat de son vivant. U tire une balle de
+  pistolet réelle, sans coût d’aura et utilisable en Zetsu ; ses autres coups sont
+  des gestes physiques de duel. Aucun Zetsu obligatoire n’est inventé.
+  `fightDeaths.ts` enregistre l’auteur et la cause d’une mort ; `fightOutcome.ts`
+  applique un verdict commun après les coups, projectiles, transferts, chaleurs
+  et morts de Judgment Chain. Les deux frappes d’un échange simultané sont
+  entièrement évaluées avant le Nen posthume ; points, TKO et temps restent non létaux.
+  Une Camilla tuée par un adversaire vivant déclenche `camillaCat.ts` : apparition
+  (24 frames), capture (24), absorption (36), résurrection (36). Le chat géant,
+  ses pattes et sa queue lumineuse suivent ces mêmes phases ; l’énergie rejoint
+  le corps et Camilla retrouve sa réserve complète. Le meurtrier consommé reste
+  absent de la scène jusqu’à la prochaine manche. Chronomètre, inputs, projectiles
+  et autres effets sont suspendus pendant ces deux secondes. La victoire est
+  attribuée une seule fois à la fin. En entraînement, la séquence joue puis les
+  deux réserves sont rétablies sans victoire. `camillaCamera.ts` inclut le corps
+  et la queue dans le cadrage mobile ; `FightCatsName.svelte` nomme chaque phase.
+  Pour les interactions non montrées dans le manga, la mort est attribuée au
+  propriétaire de l’effet fatal : chaleur, transfert ou Judgment Chain. Un retour
+  sur soi, une mort sans auteur ou un meurtrier déjà mort ne fournissent pas de
+  vie au chat dans cette adaptation ; un double décès simultané reste une égalité.
+  Cette convention de duel n’affirme pas résoudre les limites inconnues du manga.
+  Elle évite aussi une boucle de résurrections dans un miroir Camilla/Camilla.
+  Une mort en Zetsu ou sans aura peut déclencher le Nen posthume. Le vol du Hatsu empêche son activation.
+  `camilla.test.ts` couvre ces règles ; `scripts/check-camilla-cat.mjs` capture
+  les quatre phases et le verdict sur écran large et mobile.
 - Hanzo utilise **Hanzo Skill 4** avec L : son corps reste endormi au sol, sans
   déplacement ni garde, pendant que les commandes pilotent le double. Haut/bas
   le font flotter ; il traverse l'adversaire et peut le frapper. Le corps conserve
@@ -173,6 +264,25 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
   La portée audible de 18 unités est une abstraction du duel.
+- Tserriednich utilise **Laplace Devil** avec L (P2 : virgule) : il entre
+  volontairement en Zetsu et ferme les yeux. Les 30 frames de préparation sont
+  un réglage du duel ; il ne bouge ni ne garde, et une touche réelle l'interrompt.
+  Le moteur simule ensuite exactement 600 frames dans une branche isolée, avec
+  les mêmes projectiles, collisions, IA et graine aléatoire. Le joueur voit ces
+  dix secondes dans la scène et peut les inspecter avec le curseur ; le temps
+  réel, les ressources, dégâts, points et verdicts restent suspendus pendant
+  cette lecture de la vision initiale. L ou H rouvre les yeux et commence une
+  fenêtre de divergence de dix secondes. Tserriednich se déplace et agit dans
+  la réalité ; l'adversaire perçoit le déroulement prédit. Les collisions utilisent
+  toujours les corps réels : rester dans la trajectoire prévue fait subir le coup.
+  L'IA adverse vise l'image et rejoue ses commandes prédites ; Tserriednich IA peut
+  anticiper un danger mais doit physiquement s'en écarter. En versus local,
+  prévoir des décisions humaines est impossible : les commandes présentes sont
+  prolongées lors du calcul puis rejouées pendant la fenêtre, adaptation affichée
+  dans le panneau. Deux boutons de point de vue permettent de comparer les perceptions
+  sur l'écran partagé. Zetsu imposé, vol, sceau de On ou changement de page interrompent
+  la capacité ; les manches effacent la branche. Les gestes inventés de bête gardienne
+  et l'ancienne charge d'esquive sont supprimés. Référence : chapitres 385–387.
 - Benjamin commence le duel après les morts de Vincent, Musse et Shikaku :
   `benjaminBaton.ts` fixe les trois héritages et vérifie mort, loyauté, diplôme
   militaire et appartenance à son armée. Aucun coup ne crée de charge de dégâts.
@@ -211,6 +321,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   inscrire son constructeur. Le terrain ne modifie pas le barème ; LSDF exige
   toutefois la juridiction de la planque occupée par Morena.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
+- Le HUD sépare vie, aura, temps et manches des ressources et restrictions des
+  personnages, regroupées sous l'arène. `FightHealth` utilise la réserve maximale
+  fournie par le moteur, avec un repère tous les 100 PV. Affichage donne accès aux
+  PV exacts, aux détails tactiques, à la taille du HUD (100–130 %) et aux commandes
+  tactiles automatiques. Le plein écran dépend du navigateur ; le manuel se replie.
+  `pnpm --filter @black-whale/web test:hud` vérifie le roster et les états chargés
+  de Chrollo, Kurapika et Benjamin ; voir `apps/web/ui-tests/fighting-hud/README.md`.
 - Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à
   dix points ou au TKO après trois knockdowns, **Combat K.-O.** à la vie (100 PV, décision
   après 90 secondes), et **Arcade** conserve la règle historique à dix points ou
@@ -263,6 +380,20 @@ sans changer les règles, les boîtes ni les données de frame.
   scène.
 
 ## Mouvement et rendu
+
+- Saiyu distingue **L : Mizaru** (vue), **avant + L : Kikazaru** (ouïe) et
+  **bas + L : Iwazaru** (parole). Chaque contact non gardé retire uniquement la
+  faculté correspondante ; répéter le même singe n’en retire aucune autre.
+  Les coups de bâton et le finisher n’ajoutent aucun sceau. Aucun Zetsu ni stun
+  supplémentaire n’est imposé : perdre ses sens ne ferme pas automatiquement
+  les pores d’aura et ne bloque pas tous les Hatsu.
+  Le masque de Mizaru cache l’arène et ses informations visuelles ; Kikazaru coupe
+  le mix de combat ; Iwazaru empêche d’interpeller le corps de Hanzo. Un corps
+  privé d’ouïe n’entend pas non plus cet appel. Le versus local propose les
+  perceptions J1/J2 sur son écran partagé, avec commandes conservées.
+  Portées, blocage par la garde, finisher après deux facultés distinctes et maintien
+  des privations jusqu’à la fin de manche restent des adaptations du duel ;
+  le manga (ch. 349) n’en fixe pas les modalités complètes.
 
 - `fighterMovement.ts` porte la marche (recul à 80 %), le dash (18 frames) et le
   backdash (16 frames) au double appui sous 14 frames, le prejump de 3 frames, un saut
@@ -360,3 +491,103 @@ vitesses de drainage, portées et préparations sont des réglages du duel ; la 
 unique de Judgment Chain adapte le choix de conditions au combat sans dialogue.
 Les décès conditionnels terminent la manche dans tous les formats ; l’entraînement
 rétablit les PV. `kurapika.test.ts` couvre ces transitions par le moteur réel.
+
+### Theta : pistolet réel, Hatsu inconnu
+
+Theta conserve les fondamentaux du Nen et ses coups physiques. L et U tirent
+une balle matérielle ; avant/bas/arrière + L changent la visée et le rythme.
+Ces variantes de combat ne sont pas des Hatsu supplémentaires. Les balles
+n’exigent pas d’aura et restent utilisables en Zetsu, sous épuisement ou sous
+un sceau de Nen. Elles ne drainent aucune aura, n’imposent aucun Zetsu et ne
+profitent pas d’un multiplicateur offensif de Nen ; la défense Nen adverse
+continue à s’appliquer. Le calibre et la capacité du chargeur restent indéterminés.
+
+Son Hatsu personnel et sa catégorie naturelle restent inconnus : aucune capacité
+n’est exposée au vol par Skill Hunter ou Steal Chain. « Neutralisation absolue »
+et sa condition de finisher ont été retirées. Les poses de tir et le pistolet
+remplacent la présentation de lanceuse d’orbes. Les sources de référence sont
+les chapitres 385 et 387 : elle tente de tirer sur Tserriednich pendant son Zetsu
+volontaire, elle ne lui impose pas ce Zetsu. `theta.test.ts` vérifie les tirs
+pour les deux joueurs et leur interaction avec garde, interruption et vol de Hatsu.
+
+### Gel : bras-serpent sans propriétés inventées
+
+Gel conserve sa transformation du bras et l’allonge de ses frappes. Les variantes
+directionnelles représentent des gestes avec le même bras ; portées, dégâts,
+timings et coûts d’aura restent des réglages du duel. Le nom « Bras-serpent »
+est descriptif : le nom officiel, la catégorie et les règles complètes restent
+inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
+ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
+les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.
+
+### Nen tactique et catégories dans le duel 2D
+
+Les quatre bases gardent leurs commandes contextuelles : Ten au repos, Espace pour
+Ren, Espace + garde pour Ken, Espace + bas pour Zetsu, Espace + haut pour Gyo.
+Relâcher Aura pendant l’amorce d’un coup engage Ko (20 aura), puis l’impact ou la
+fin du coup libère la concentration. Zetsu coupe toute protection et application
+d’aura ; il ne rend pas un corps invisible. Ren augmente la puissance au prix de
+la réserve. Ken protège aussi hors garde ; sous garde, son absorption est finie
+et chaque contact consomme de l’aura. Une attaque très puissante peut le dépasser.
+
+Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
+
+| Technique | P1 | P2 local | Effet et contrepartie |
+| --- | --- | --- | --- |
+| En | R | [ | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact. |
+| Shu | F | ] | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
+| In | X | \ | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact. |
+| Gyo | G | ; | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie. |
+| Ryu | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s. |
+
+En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
+Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
+qui le traversent sont localisés, sans lui attribuer l’analyse visuelle de Gyo.
+L’IA lit les gestes visibles et effectue des lectures Gyo périodiques ; sa décision
+ne consulte pas un drapeau In secret ni la présence d’un projectile indétectable.
+Les commandes supplémentaires sont enregistrées par le mannequin comme les autres
+inputs. P continue à mettre le duel en pause.
+
+`nenCategories.ts` applique l’efficacité selon l’hexagone (100 / 80 / 60 / 40 %)
+aux **actions apprises**, sans attribuer de nouveaux Hatsu. Le Renforcement agit
+sur les coups du corps, sa défense et les objets en Shu. L’Émission agit sur les
+projectiles d’aura et le maintien de Shu après lancer ; la Matérialisation sur les
+outils matérialisés et le déplacement des constructions (double et gardes LSDF) ;
+la Transformation sur les propriétés de l’aura (traction de Bungee Gum, chaleur
+de Rising Sun) ; la Manipulation sur les durées de contrôle réglées pour le duel.
+La Spécialisation ne devient pas une aptitude accessible à tous par proximité.
+
+`nenAbility.ts` choisit la capacité effectivement utilisée : une page du livre de
+Chrollo, un héritage de Benjamin, une chaîne ou le Hatsu retenu dans Dolphin. Les
+composantes déclarées dans `data/abilities/abilities.json` sont calculées ensemble
+par moyenne géométrique de leurs facteurs de puissance ; les conditions, cibles,
+consentements, morts et durées canoniques ne sont jamais multipliés. Copier un
+Hatsu ne copie pas l’affinité de son propriétaire.
+
+Emperor Time applique **simultanément 100 % d’efficacité** à toutes les catégories
+utilisées par Kurapika : corps, défense, outils, émission et capacité empruntée.
+Il conserve son niveau d’apprentissage, ses capacités disponibles et son coût
+existant d’une heure de vie par seconde ; il ne crée aucune réserve d’aura.
+L’efficacité offensive d’un projectile est mémorisée au départ : un changement
+ultérieur de mode ou d’Emperor Time ne réécrit pas le tir en vol.
+
+Le HUD affiche affinité, efficacités, distribution, contacts En et objet en Shu.
+Les affinités inconnues restent nommées comme telles : une valeur neutre de 70 %
+sert à l’équilibrage, y compris pour les catégories ordinaires d’un Spécialiste,
+dont les efficacités ne sont pas universellement établies dans le manga. Les
+multiplicateurs, rayons et coûts ci-dessus sont des réglages de duel. Les types
+naturels et les catégories des capacités viennent du catalogue canonique, régénéré
+avec `node scripts/generate-fighting-nen.mjs` (`nenCatalogue.gen.ts`).
+
+Références de règles : chapitres 83 et 108 (efficacité et Emperor Time), 140–142
+(Shu, Ko, Ken et Ryu), 361 et 364 (coût en durée de vie).
+
+### Gel : bras-serpent sans propriétés inventées
+
+Gel conserve sa transformation du bras et l’allonge de ses frappes. Les variantes
+directionnelles représentent des gestes avec le même bras ; portées, dégâts,
+timings et coûts d’aura restent des réglages du duel. Le nom « Bras-serpent »
+est descriptif : le nom officiel, la catégorie et les règles complètes restent
+inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
+ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
+les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.

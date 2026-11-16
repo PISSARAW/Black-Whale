@@ -1,5 +1,6 @@
-import { finishFight } from './combatVerdict'
-import { fightFormat } from './formats'
+import { categoryPower } from './nenCategories'
+import { recordFightDeath } from './fightDeaths'
+import { resolveFightOutcome } from './fightOutcome'
 import { hurtboxes } from './frameData'
 import { wakeHanzoBody } from './hanzoProjection'
 import { nenDamageFactor } from './nen'
@@ -16,7 +17,7 @@ export function createRisingSun(fighter: ArcadeFighter, injuries: number): Risin
     x: fighter.x,
     y: fighter.y + 18,
     radius: 12 + pain * 0.25,
-    damage: 2 + pain * 0.12,
+    damage: (2 + pain * 0.12) * categoryPower(fighter, 'transmuter'),
     age: 0,
     duration: 120 + Math.round(pain * 2),
     scored: [],
@@ -40,7 +41,7 @@ export function resolveSolarHeat(state: FightState): FightState {
   })
   if (pulses.length === 0) return state
   const heated = pulses.reduce((next, pulse) => burnArea(next, pulse), state)
-  return judgeHeat(heated)
+  return resolveFightOutcome(heated)
 }
 
 function burnArea(state: FightState, pulse: { owner: FightSide; sun: RisingSun }): FightState {
@@ -54,6 +55,7 @@ function burnArea(state: FightState, pulse: { owner: FightSide; sun: RisingSun }
       ...next,
       [side]: { ...wakeHanzoBody(fighter), health: Math.max(0, fighter.health - damage) },
     }
+    next = recordFightDeath(next, { victimSide: side, killerSide: side === pulse.owner ? null : pulse.owner, cause: 'heat' })
     if (side !== pulse.owner && !scored.includes(side)) {
       scored.push(side)
       next = { ...next, score: { ...next.score, [pulse.owner]: next.score[pulse.owner] + 1 } }
@@ -71,42 +73,4 @@ function burnArea(state: FightState, pulse: { owner: FightSide; sun: RisingSun }
       },
     },
   }
-}
-
-function judgeHeat(state: FightState): FightState {
-  if (state.mode === 'training') {
-    return {
-      ...state,
-      player: restoreTrainingHealth(state.player),
-      opponent: restoreTrainingHealth(state.opponent),
-    }
-  }
-  const format = fightFormat(state.formatId)
-  const next = format.victory === 'points' ? preservePointHealth(state) : state
-  const playerLost = heatLoss(next, 'player')
-  const opponentLost = heatLoss(next, 'opponent')
-  if (playerLost && opponentLost) {
-    return { ...next, phase: 'finished', winner: 'draw', finishReason: playerLost }
-  }
-  if (playerLost) return finishFight(next, 'opponent', playerLost)
-  return opponentLost ? finishFight(next, 'player', opponentLost) : next
-}
-
-function restoreTrainingHealth(fighter: ArcadeFighter): ArcadeFighter {
-  return fighter.health > 0 ? fighter : { ...fighter, health: fighter.maxHealth }
-}
-
-function preservePointHealth(state: FightState): FightState {
-  return {
-    ...state,
-    player: { ...state.player, health: Math.max(1, state.player.health) },
-    opponent: { ...state.opponent, health: Math.max(1, state.opponent.health) },
-  }
-}
-
-function heatLoss(state: FightState, side: FightSide): 'knockout' | 'hits' | null {
-  const format = fightFormat(state.formatId)
-  if (format.victory !== 'points' && state[side].health <= 0) return 'knockout'
-  const opponent = side === 'player' ? 'opponent' : 'player'
-  return format.hitTarget !== null && state.score[opponent] >= format.hitTarget ? 'hits' : null
 }

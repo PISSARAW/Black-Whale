@@ -50,7 +50,7 @@ const FAMILIES: Partial<Record<FighterId, FightFamily>> = {
   franklin: 'caster',
   illumi: 'caster',
   kalluto: 'caster',
-  theta: 'caster',
+  theta: 'striker',
   melody: 'caster',
   basho: 'caster',
   halkenburg: 'caster',

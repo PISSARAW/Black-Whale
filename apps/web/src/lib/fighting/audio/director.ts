@@ -1,6 +1,7 @@
 import { NEN_PRESENTATION } from '@black-whale/nen-engine'
 import { sharedAudioContext } from '$lib/audio/context'
-import type { ArcadeFighter, FightState } from '../types'
+import type { ArcadeFighter, FightSide, FightState } from '../types'
+import { saiyuAudioEnabled } from '../saiyuSenses'
 import { activeSoundNen, fightSoundEvents, newSoundRound } from './events'
 import { continuousVoice, createFightMix, type ContinuousVoice, type FightMix } from './mixer'
 import { playFightSound } from './play'
@@ -22,7 +23,10 @@ export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
 }
 
 export interface FightAudioDirector {
-  update: (state: FightState, options: { paused: boolean; settings: FightAudioSettings }) => void
+  update: (
+    state: FightState,
+    options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide },
+  ) => void
   dispose: () => void
 }
 
@@ -87,6 +91,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     if (disposed) return
     if (previous && newSoundRound(previous, state)) rebuild(state)
     active = !options.paused && !options.settings.muted
+    active = active && saiyuAudioEnabled(state, options.viewer)
     mix.setActive(active)
     updateLevels(mix, { state, settings: options.settings })
     updateStagePressure(mix, stages, state)
@@ -121,8 +126,7 @@ function updateLevels(
   mix.effects.gain.setTargetAtTime(settings.effects, now, 0.025)
   mix.ambience.gain.setTargetAtTime(settings.ambience * duck * 0.7, now, 0.09)
   mix.pressure.gain.setTargetAtTime(settings.tension * pressure * duck, now, 0.12)
-  for (const cutoff of mix.hearing)
-    cutoff.setTargetAtTime(state.player.hatsuEffects.senseSeals >= 2 ? 420 : 18000, now, 0.12)
+  for (const cutoff of mix.hearing) cutoff.setTargetAtTime(18000, now, 0.12)
 }
 
 function updateStagePressure(mix: FightMix, voices: ContinuousVoice[], state: FightState): void {

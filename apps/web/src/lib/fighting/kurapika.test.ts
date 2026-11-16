@@ -229,7 +229,7 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const attached = advance(cast(state, 'backSpecial'), 19)
     const escaped = { ...attached, opponent: { ...attached.opponent, x: 90 } }
     expect(advance(escaped, 80).player.kurapika?.held).toBeNull()
-    const martial = advance(cast(duel('furykov'), 'backSpecial'), 90)
+    const martial = advance(cast(duel('beyond'), 'backSpecial'), 90)
     expect(martial.opponent.aura).toBeLessThan(18)
     expect(martial.player.kurapika?.held).toBeNull()
   })

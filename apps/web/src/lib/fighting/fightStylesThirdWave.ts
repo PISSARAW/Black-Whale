@@ -67,9 +67,9 @@ export const THIRD_WAVE_STYLES: Record<ThirdWaveId, FightingStyle> = {
       ranged: {},
     },
   }),
-  bill: make('bill', ['Croissance tenace', 'Tenacious growth'], {
+  bill: make('bill', ['Garde du corps', 'Bodyguard'], {
     range: [8, 13],
-    specialChance: 0.46,
+    specialChance: 0,
     attacks: {
       light: { recovery: 0.84 },
       heavy: { damage: 1.08, knockback: 1.1 },

@@ -1,4 +1,7 @@
 import { addMussePistol } from './mussePistol'
+import { gyoSight } from './nenPerception'
+import { addThetaHandgun } from './thetaFigure'
+import { shapeFightEyes } from './fightFigureEyes'
 import { addChrolloBook } from './chrolloFigure'
 import { addFranklinHands } from './franklinHands'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
@@ -14,6 +17,7 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.nen,
+    Boolean(fighter.parallelEyesClosed),
     'hanzoProjection' in fighter && Boolean(fighter.hanzoProjection),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
@@ -25,6 +29,7 @@ export function buildFightFigure(options: {
   THREE: HumanFigureBuild['THREE']
   glow: HumanFigureBuild['glow']
   fighter: ArcadeFighter
+  observer?: ArcadeFighter
 }) {
   const { THREE, glow, fighter } = options
   const definition = fighterDefinition(fighter.id)
@@ -44,7 +49,7 @@ export function buildFightFigure(options: {
       identity: definition.modelId,
       pose: 'idle',
       aura: fighter.nen.mode,
-      nen: fighter.nen,
+      nen: { ...fighter.nen, en: null },
     },
   }
   const declared = humanProfile(seen)
@@ -55,6 +60,7 @@ export function buildFightFigure(options: {
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
+    observerSight: observerSight(options.observer),
     glow:
       'hanzoProjection' in fighter && fighter.hanzoProjection
         ? (colour, opacity) => glow(colour, opacity * 0.28)
@@ -64,26 +70,25 @@ export function buildFightFigure(options: {
   })
   if (trueForm) shapeBiscuitTrueForm(model)
 
-  equipFightFigure({ THREE, glow, fighter, model })
-  if (fighter.kurapika?.emperorTime)
-    model.root.traverse((node) => {
-      if (node.name.startsWith('face-eye') && 'material' in node)
-        (node as import('three').Mesh).material = glow(0xef3340, 1)
-    })
+  addFighterEquipment(options, model)
+  shapeFightEyes({ root: model.root, fighter, glow })
   return model
 }
 
-function equipFightFigure(options: {
-  THREE: HumanFigureBuild['THREE']
-  glow: HumanFigureBuild['glow']
-  fighter: ArcadeFighter
-  model: ReturnType<typeof buildHumanFigure>
-}): void {
-  const { THREE, glow, fighter, model } = options
+function addFighterEquipment(
+  options: Parameters<typeof buildFightFigure>[0],
+  model: ReturnType<typeof buildHumanFigure>,
+): void {
+  const { THREE, glow, fighter } = options
   if (fighter.id === 'franklin') {
     shapeFranklinFigure({ THREE, glow, model })
     addFranklinHands({ THREE, glow, model })
   }
-  if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
+  if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
+}
+
+function observerSight(observer?: ArcadeFighter): 'gyo' | 'sight' {
+  return observer && gyoSight(observer) ? 'gyo' : 'sight'
 }

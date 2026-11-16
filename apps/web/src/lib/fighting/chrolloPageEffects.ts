@@ -14,15 +14,12 @@ type CopiedFighter = ArcadeFighter & {
 }
 
 const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
-  tserriednich: ['futureSight'],
   phinks: ['cyclotronTurns'],
   bonolenov: ['cantabileFrames'],
   shizuku: ['blinkyFrames'],
   hinrigh: ['biohazardFrames'],
   rihan: ['predatorFrames'],
-  basho: ['haikuFrames'],
   luini: ['teleportDodges'],
-  bill: ['growthFrames'],
   marayam: ['isolationFrames'],
   fugetsu: ['wormDodges'],
   kacho: ['kachoGuards'],
@@ -41,11 +38,8 @@ const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   mizaistom: ['restrainedFrames'],
   zakuro: ['bloodBoundFrames'],
   melody: ['entrancedFrames'],
-  gel: ['venomFrames'],
   lynch: ['soulExposedFrames'],
-  longhi: ['contractFrames'],
   morena: ['contagionFrames', 'contagionStacks'],
-  theta: ['forcedZetsuFrames'],
   halkenburg: ['possessedFrames'],
 }
 

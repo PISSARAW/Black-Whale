@@ -1564,11 +1564,11 @@
     "description": "Longhi offers a voluntary contract with explicit terms, duration, rewards and penalties. Once both parties consent, Moonlight Act enforces the agreement through Manipulation.",
     "canonStatus": "canon",
     "moduleKey": "moonlight-act",
-    "firstVisibleChapterId": "ch-397",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-401",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-397"
+        "chapterId": "ch-401"
       }
     ]
   },

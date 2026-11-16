@@ -33,7 +33,7 @@ const SPECS: readonly StyleSpec[] = [
   },
   {
     id: 'longhi',
-    names: ['Contrat coercitif', 'Coercive contract'],
+    names: ['Contrat volontaire', 'Voluntary contract'],
     range: [10, 17],
     chance: 0.54,
     threshold: 0.4,

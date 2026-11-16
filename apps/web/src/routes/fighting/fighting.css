@@ -365,26 +365,6 @@
   position: relative;
 }
 
-.pause-fight {
-  position: absolute;
-  z-index: 35;
-  top: 0.75rem;
-  right: 0.75rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid rgb(255 255 255 / 28%);
-  background: rgb(4 8 12 / 78%);
-  color: #dce5ea;
-  font: 600 0.6rem/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.pause-fight:hover,
-.pause-fight:focus-visible {
-  border-color: #d9b650;
-  color: #fff;
-}
-
 .pause-overlay {
   z-index: 34;
   background: rgb(3 7 10 / 64%);

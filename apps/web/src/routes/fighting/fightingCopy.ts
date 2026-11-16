@@ -21,7 +21,7 @@ export function fightingCopy(language: 'fr' | 'en') {
         jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
         attacks:
           'J/K : normales · direction + J/K : command normals · direction + L : techniques · U : projectile · H : finisher',
-        aura: 'Bas ou saut + J/K : variantes basses et aériennes · O : projection/déprojection. Les routes et la condition du finisher sont propres au combattant. Espace : Aura.',
+        aura: 'Bas ou saut + J/K : variantes basses et aériennes · O : projection/déprojection. Les routes et la condition du finisher sont propres au combattant. Espace : Aura. R : En · F : Shu · X : In · G : Gyo · 1–4 : Ryu (tête, torse, mains, jambes).',
       }
     : {
         eyebrow: 'NEW MODE · 2D DUEL',
@@ -42,6 +42,6 @@ export function fightingCopy(language: 'fr' | 'en') {
         jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
         attacks:
           'J/K: normals · direction + J/K: command normals · direction + L: techniques · U: projectile · H: finisher',
-        aura: 'Down or jump + J/K: low and aerial variants · O: throw/tech. Routes and finisher conditions are fighter-specific. Space: Aura.',
+        aura: 'Down or jump + J/K: low and aerial variants · O: throw/tech. Routes and finisher conditions are fighter-specific. Space: Aura. R: En · F: Shu · X: In · G: Gyo · 1–4: Ryu (head, torso, hands, legs).',
       }
 }

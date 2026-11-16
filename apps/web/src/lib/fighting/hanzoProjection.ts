@@ -1,3 +1,4 @@
+import { constructionFactor } from './nenCategories'
 import { createNenTechniqueState } from '@black-whale/nen-engine'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
@@ -108,12 +109,13 @@ export function hanzoMoveResources(
 /** The double floats freely and passes through matter; it does not jump or dash. */
 export function steerHanzoProjection(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (projectionPreparing(fighter) || fighter.attack) return fighter
+  const control = constructionFactor(fighter)
   const horizontal = Number(input.right) - Number(input.left)
   const vertical = Number(input.jump) - Number(input.down)
   return {
     ...fighter,
-    x: Math.max(7, Math.min(93, fighter.x + horizontal * 0.5)),
-    y: Math.max(0, Math.min(12, fighter.y + vertical * 0.4)),
+    x: Math.max(7, Math.min(93, fighter.x + horizontal * 0.5 * control)),
+    y: Math.max(0, Math.min(12, fighter.y + vertical * 0.4 * control)),
     velocityY: 0,
     motion: undefined,
     crouching: false,

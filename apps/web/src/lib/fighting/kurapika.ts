@@ -1,5 +1,7 @@
+import { fightCategoryEfficiency } from './nenCategories'
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
+import { outsideDuelAbility } from './outsideDuelAbility'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
@@ -73,8 +75,13 @@ function kurapikaHeldMoveAvailable(fighter: ArcadeFighter, moveId: string): bool
     return !/Special$|:finisher$/.test(moveId)
   if (moveId === 'kurapika:finisher') return Boolean(fighter.kurapika?.emperorTime)
   if (moveId === 'kurapika:backSpecial' && fighter.kurapika?.held)
-    return Boolean(fighter.kurapika.emperorTime)
+    return heldChainAvailable(fighter)
   return true
+}
+
+function heldChainAvailable(fighter: ArcadeFighter): boolean {
+  const chain = fighter.kurapika!
+  return chain.emperorTime && !outsideDuelAbility(chain.held!.moveId)
 }
 
 /** Emperor Time changes efficiency at the attained level, never mastery or aura reserves. */
@@ -82,8 +89,7 @@ export function kurapikaEfficiency(
   fighter: ArcadeFighter,
   category: 'enhancer' | 'emitter',
 ): number {
-  if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return 1
-  return category === 'enhancer' ? 0.6 : 0.4
+  return fightCategoryEfficiency(fighter, category)
 }
 
 /** Different commands can belong to the same Hatsu. */
@@ -104,6 +110,7 @@ export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boo
   const stolen = fighter.stolenChainAbility
   if (!stolen) return false
   const selected = moveId ?? `${fighter.id}:neutralSpecial`
+  if (outsideDuelAbility(stolen.moveId)) return selected === stolen.moveId
   if (!/:(neutralSpecial|forwardSpecial|downSpecial|backSpecial|finisher)$/.test(selected))
     return false
   return chainAbilityGroup(stolen.moveId) === chainAbilityGroup(selected)
@@ -128,7 +135,7 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = fighter.kurapika?.held
   return held?.used && fighter.attack?.moveId === held.moveId
-    ? { ...fighter, id: held.source }
+    ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
     : fighter
 }
 

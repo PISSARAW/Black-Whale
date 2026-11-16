@@ -217,16 +217,16 @@ describe('Sweet Home damage transfer', () => {
   it('applies the wound once even through the recipient’s Ken and avoidance Hatsu', () => {
     const ready = stance(close())
     ready.opponent.nen.ken = true
-    ready.opponent.hatsuEffects.futureSight = 1
+    ready.opponent.hatsuEffects.isolationFrames = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
     expect(next.player.health).toBe(100)
     expect(next.opponent.health).toBe(100 - next.impact!.damage)
-    expect(next.opponent.hatsuEffects.futureSight).toBe(1)
+    expect(next.opponent.hatsuEffects.isolationFrames).toBe(1)
   })
 
   it('does not transfer damage that was already avoided', () => {
     const ready = stance(close())
-    ready.player.hatsuEffects.futureSight = 1
+    ready.player.hatsuEffects.isolationFrames = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
     expect(next.player.health).toBe(100)
     expect(next.opponent.health).toBe(100)

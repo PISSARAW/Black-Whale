@@ -25,7 +25,7 @@
     margin-top: 0.2rem;
   }
   .bar {
-    height: 4px;
+    height: 6px;
     overflow: hidden;
     border: 1px solid rgb(120 40 70 / 55%);
     background: rgb(12 4 8 / 80%);
@@ -38,7 +38,7 @@
   }
   small {
     color: #b9879b;
-    font: 600 0.55rem/1 var(--font-mono);
+    font: 600 var(--hud-font, 0.75rem)/1.35 var(--font-mono);
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
@@ -66,6 +66,12 @@
     }
     to {
       opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar span {
+      transition: none;
+      animation: none;
     }
   }
 </style>

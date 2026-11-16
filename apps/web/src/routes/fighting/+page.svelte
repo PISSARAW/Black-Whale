@@ -1,9 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
+  import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
+  import FightBashoPoem from '$lib/components/fighting/FightBashoPoem.svelte'
+  import { composeBashoPoem } from '$lib/fighting/bashoAction'
+  import FightMoonlightPanel from '$lib/components/fighting/FightMoonlightPanel.svelte'
+  import { offerMoonlightContract, respondMoonlightContract } from '$lib/fighting/moonlightContract'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
+  import FightDisplaySettings from '$lib/components/fighting/FightDisplaySettings.svelte'
   import FightSetup from '$lib/components/fighting/FightSetup.svelte'
   import FightTrainingTools from '$lib/components/fighting/FightTrainingTools.svelte'
   import FightControlsManual from '$lib/components/fighting/FightControlsManual.svelte'
@@ -18,6 +23,7 @@
     performThrow,
     tickFight,
   } from '$lib/fighting/engine'
+  import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
   import { type FightFormatId } from '$lib/fighting/formats'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
@@ -38,6 +44,7 @@
     opponentMovementKeys,
   } from './fightingKeys'
   import './fighting.css'
+  import './fightingMatch.css'
 
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
@@ -49,6 +56,10 @@
   let opponentInput: FightInput = { ...EMPTY_INPUT }
   /** Presses wait for the next simulated frame instead of landing between two. */
   let pendingActions: Array<(current: FightState) => FightState> = []
+  let stageElement: HTMLDivElement | undefined
+  let showDetails = false
+  let hudScale = 1
+  let showControls = false
   let paused = false
   let recording = false
   let playingRecording = false
@@ -100,7 +111,7 @@
   }
 
   function queueAction(action: (current: FightState) => FightState) {
-    if (state?.phase === 'fighting' && !paused) pendingActions = [...pendingActions, action]
+    if (state && fightAcceptsCommands(state) && !paused) pendingActions = [...pendingActions, action]
   }
 
   function attack(kind: AttackKind) {
@@ -130,7 +141,7 @@
   function flushPendingActions(current: FightState): FightState {
     const actions = pendingActions
     pendingActions = []
-    return actions.reduce((next, action) => action(next), current)
+    return actions.reduce((next, action) => fightAcceptsCommands(next) ? action(next) : next, current)
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -202,8 +213,20 @@
     return 'K.O.'
   }
 
+  function isDisplayInput(target: EventTarget | null): boolean {
+    return (
+      target instanceof HTMLElement &&
+      Boolean(
+        target.closest(
+          'input, select, textarea, summary, [contenteditable="true"], [data-fight-scroll]',
+        ),
+      )
+    )
+  }
+
   function handleKey(event: KeyboardEvent, active: boolean) {
     if (!state) return
+    if (active && isDisplayInput(event.target)) return
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
     if (handleOpponentKey(event, active, key)) return
     if (handleHatsuKey(event, active, key)) return
@@ -247,6 +270,8 @@
   function togglePause() {
     paused = !paused
     input = { ...EMPTY_INPUT }
+    opponentInput = { ...EMPTY_INPUT }
+    pendingActions = []
   }
 
   function handleHatsuKey(event: KeyboardEvent, active: boolean, key: string): boolean {
@@ -332,7 +357,7 @@
   ])}
 />
 
-<main class="fighting-shell">
+<main class="fighting-shell" class:is-playing={Boolean(state)}>
   <header class="fight-header">
     <nav aria-label="Breadcrumb" class="fight-breadcrumb">
       <a href={$link('/tour/modes')}>{language === 'fr' ? 'Modes jouables' : 'Playable modes'}</a>
@@ -362,85 +387,105 @@
       onLaunch={prepareFight}
     />
   {:else}
-    <div class="stage-wrap">
-      <FightStage
-        {state}
+    <div class="stage-wrap" bind:this={stageElement} style={`--hud-scale:${hudScale}`}>
+      <FightDisplaySettings
         {language}
+        formatId={state.formatId}
+        target={stageElement}
+        bind:detailed={showDetails}
+        bind:hudScale
+        bind:showControls
         {paused}
-        stageId={state.environment.stageId}
-        onAttack={attack}
-        onThrow={throwAttack}
-        onCall={callBody}
-        onFinisher={finisher}
-        onEmperor={() => queueAction((current) => toggleEmperorTime(current, 'player'))}
-        onControl={control}
-        training={state.mode === 'training'}
+        canPause={state.phase === 'fighting'}
+        onPause={togglePause}
       />
-
-      {#if state.mode === 'training'}
-        <FightTrainingTools
-          {language}
-          {recording}
-          playing={playingRecording}
-          commandCount={dummyRecording.length}
-          onRecord={toggleRecording}
-          onPlay={playDummyRecording}
+      <div class="match-area">
+        <FightBashoPoem {state} {language} {paused}
+          onEditing={() => { input = { ...EMPTY_INPUT }; opponentInput = { ...EMPTY_INPUT } }}
+          onCompose={(side, text) => queueAction((current) => composeBashoPoem({ state: current, side, text }, performAuraAttack))}
         />
-      {/if}
+        <FightMoonlightPanel {state} {language} {paused}
+          onOffer={(side) => queueAction((current) => offerMoonlightContract({ state: current, side }))}
+          onRespond={(side, accept) => queueAction((current) => respondMoonlightContract({ state: current, side, accept }))}
+        />
+        <FightStage
+          {state}
+          {language}
+          {paused}
+          {showControls}
+          detailed={showDetails || state.mode === 'training'}
+          stageId={state.environment.stageId}
+          onAttack={attack}
+          onThrow={throwAttack}
+          onCall={callBody}
+          onFinisher={finisher}
+          onEmperor={() => queueAction((current) => toggleEmperorTime(current, 'player'))}
+          onControl={control}
+          training={state.mode === 'training'}
+        />
 
-      {#if state.phase === 'fighting'}
-        <button type="button" class="pause-fight" aria-pressed={paused} onclick={togglePause}>
-          {paused ? (language === 'fr' ? 'Reprendre' : 'Resume') : 'Pause'}
-        </button>
-      {/if}
+        {#if state.mode === 'training'}
+          <FightTrainingTools
+            {language}
+            {recording}
+            playing={playingRecording}
+            commandCount={dummyRecording.length}
+            onRecord={toggleRecording}
+            onPlay={playDummyRecording}
+          />
+        {/if}
 
-      {#if paused && state.phase === 'fighting'}
-        <div class="match-overlay pause-overlay">
-          <p>{language === 'fr' ? 'COMBAT EN PAUSE' : 'FIGHT PAUSED'}</p>
-          <h2>{language === 'fr' ? 'PAUSE' : 'PAUSED'}</h2>
-          <button type="button" onclick={togglePause}>
-            {language === 'fr' ? 'Reprendre' : 'Resume'}
-          </button>
-        </div>
-      {/if}
-
-      {#if state.phase === 'ready'}
-        <div class="match-overlay ready-overlay">
-          <p>
-            {fighterDefinition(state.player.id).name} <span>VS</span>
-            {fighterDefinition(state.opponent.id).name}
-          </p>
-          <h2>{copy.ready}</h2>
-          <button type="button" onclick={startFight}>{copy.fight}</button>
-        </div>
-      {:else if state.phase === 'finished'}
-        <div class="match-overlay result-overlay">
-          <p>{finishLabel(state)}</p>
-          <h2>{winnerLabel(state)}</h2>
-          <p>{state.roundsWon.player} — {state.roundsWon.opponent}</p>
-          <div>
-            {#if state.matchWinner}
-              <button type="button" onclick={rematch}>{copy.rematch}</button>
-            {:else}
-              <button type="button" onclick={continueMatch}>
-                {language === 'fr' ? 'Manche suivante' : 'Next round'}
-              </button>
-            {/if}
-            <button type="button" class="secondary" onclick={chooseAgain}>{copy.roster}</button>
+        {#if paused && state.phase === 'fighting'}
+          <div class="match-overlay pause-overlay">
+            <p>{language === 'fr' ? 'COMBAT EN PAUSE' : 'FIGHT PAUSED'}</p>
+            <h2>{language === 'fr' ? 'PAUSE' : 'PAUSED'}</h2>
+            <button type="button" onclick={togglePause}>
+              {language === 'fr' ? 'Reprendre' : 'Resume'}
+            </button>
           </div>
-        </div>
-      {/if}
+        {/if}
+
+        {#if state.phase === 'ready'}
+          <div class="match-overlay ready-overlay">
+            <p>
+              {fighterDefinition(state.player.id).name} <span>VS</span>
+              {fighterDefinition(state.opponent.id).name}
+            </p>
+            <h2>{copy.ready}</h2>
+            <button type="button" onclick={startFight}>{copy.fight}</button>
+          </div>
+        {:else if state.phase === 'finished'}
+          <div class="match-overlay result-overlay">
+            <p>{finishLabel(state)}</p>
+            <h2>{winnerLabel(state)}</h2>
+            <p>{state.roundsWon.player} — {state.roundsWon.opponent}</p>
+            <div>
+              {#if state.matchWinner}
+                <button type="button" onclick={rematch}>{copy.rematch}</button>
+              {:else}
+                <button type="button" onclick={continueMatch}>
+                  {language === 'fr' ? 'Manche suivante' : 'Next round'}
+                </button>
+              {/if}
+              <button type="button" class="secondary" onclick={chooseAgain}>{copy.roster}</button>
+            </div>
+          </div>
+        {/if}
+      </div>
     </div>
 
-    <FightControlsManual
-      {language}
-      fighterId={state.player.id}
-      mode={state.mode}
-      title={copy.controls}
-      movement={copy.movement}
-      jump={copy.jump}
-      attacks={copy.attacks}
-      aura={copy.aura}
-    />
+    <details class="fight-manual">
+      <summary>{language === 'fr' ? 'Commandes et techniques' : 'Controls and techniques'}</summary>
+      <FightControlsManual
+        {language}
+        fighterId={state.player.id}
+        mode={state.mode}
+        title={copy.controls}
+        movement={copy.movement}
+        jump={copy.jump}
+        attacks={copy.attacks}
+        aura={copy.aura}
+      />
+    </details>
   {/if}
 </main>

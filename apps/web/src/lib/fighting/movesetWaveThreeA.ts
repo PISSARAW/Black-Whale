@@ -112,12 +112,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'basho',
     mechanic: [
-      'Great Hiker : un haïku préparé enchante ses frappes et donne corps à son image poétique.',
-      'Great Hiker: a prepared haiku enchants his strikes and gives form to its poetic image.',
+      'Great Hiker : écrire le poème attesté ; seuls les contacts du poing enflamment leur cible.',
+      'Great Hiker: write the attested poem; only fist contacts ignite their target.',
     ],
     finisherCondition: [
-      'Un haïku de Great Hiker doit être actif.',
-      'A Great Hiker haiku must be active.',
+      'Aucun finisher offensif attesté.',
+      'No attested offensive finisher.',
     ],
     labels: [
       'Pinceau direct|Brush Straight',
@@ -130,11 +130,11 @@ const SPECS: readonly MovesetSpec[] = [
       'Strophe brûlante|Burning Stanza',
       'Césure défensive|Defensive Caesura',
       'Great Hiker|Great Hiker',
-      'Haïku de feu|Fire Haiku',
-      'Encre terrestre|Earthen Ink',
-      'Vers de protection|Protective Verse',
+      'Variante retirée|Removed variant',
+      'Variante retirée|Removed variant',
+      'Variante retirée|Removed variant',
       'Reliure du poète|Poet Binding',
-      'Great Hiker · Poème funéraire|Great Hiker · Funeral Poem',
+      'Sans finisher offensif|No offensive finisher',
     ],
     speed: 1,
     power: 1.04,

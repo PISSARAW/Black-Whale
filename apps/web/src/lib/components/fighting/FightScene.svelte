@@ -2,7 +2,8 @@
   import { onMount } from 'svelte'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
-  import { lsdfFighterVisible } from '$lib/fighting/lsdfPresentation'
+  import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
+  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import {
     createHanzoProjectionScene,
     projectionCameraSpan,
@@ -124,7 +125,7 @@
           scenery.fog.kind === 'exp2'
             ? new THREE.FogExp2(scenery.fog.colour, scenery.fog.density)
             : new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
-        camera.far = scenery.cameraFar
+        camera.far = Math.max(100, scenery.cameraFar)
         scene.add(scenery.root)
         let post: import('$lib/fighting/stagePost').StagePost | null = null
         if (scenery.bloom) {
@@ -137,10 +138,10 @@
           }
         }
 
-        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter })
+        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter, observer: fighter === state.player ? undefined : state.player })
 
         // Rebuild only the fighter whose aura or body form changes; keep the stage.
-        const nenKey = fightFigureKey
+        const nenKey = (fighter: ArcadeFighter) => fightFigureKey(fighter) + String(state.player.nen.gyo)
         const models = {
           player: { model: buildFighter(state.player), nen: nenKey(state.player) },
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
@@ -268,7 +269,7 @@
 
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
-          model.root.visible = lsdfFighterVisible(state, side)
+          model.root.visible = fightFigureVisible(state, side)
           const held = poseStarts[side]
           if (!held || held.pose !== fighter.pose)
             poseStarts[side] = { pose: fighter.pose, at: seconds }
@@ -297,6 +298,18 @@
           })
         }
 
+        // Pulling back on a narrow viewport must not bury fighters in the stage fog.
+        const updateCameraFog = () => {
+          if (scene.fog instanceof THREE.Fog && scenery.fog.kind === 'linear') {
+            const setback = Math.max(0, camera.position.z - 9.2)
+            scene.fog.near = scenery.fog.near + setback
+            scene.fog.far = scenery.fog.far + setback
+          }
+          if (scene.fog instanceof THREE.FogExp2 && scenery.fog.kind === 'exp2') {
+            scene.fog.density = scenery.fog.density * Math.min(1, 9.2 / camera.position.z)
+          }
+        }
+
         const render = (now: number) => {
           if (disposed) return
           const seconds = now / 1000
@@ -310,7 +323,7 @@
             model: modelOf('player', state.player),
             seconds,
           })
-          projectileScene.sync(state.projectiles, seconds)
+          projectileScene.sync(state.projectiles, seconds, state.player)
           fighterEffects.sync(state, seconds)
           feitanScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
@@ -326,12 +339,14 @@
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
           const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
-          const framing = biscuitCameraFrame({ state, centre, gap, aspect: camera.aspect })
+          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
+          const framing = biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect })
           const ease = easeFactor(CAMERA_RATE, dt)
           camera.position.x += (framing.x - camera.position.x) * ease
           camera.position.z += (framing.z - camera.position.z) * ease
           camera.position.y += (framing.y - camera.position.y) * ease
           cameraLookY += (framing.lookY - cameraLookY) * ease
+          updateCameraFog()
           if (now < shakeUntil) {
             const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
             camera.position.x += Math.sin(now * 0.15) * shakeX * fade

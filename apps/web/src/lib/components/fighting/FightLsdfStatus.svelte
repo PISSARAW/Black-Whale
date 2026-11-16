@@ -37,31 +37,21 @@
 
 <style>
   aside {
-    position: absolute;
-    z-index: 22;
-    top: 8rem;
-    left: 50%;
+    grid-column: 1 / -1;
     display: grid;
-    gap: 0.2rem;
-    width: min(90%, 27rem);
-    padding: 0.5rem 0.7rem;
-    border: 1px solid #655a39;
-    background: rgb(7 12 15 / 88%);
+    gap: 0.3rem;
+    padding: 0.55rem 0.7rem;
+    border-left: 2px solid #c7ab64;
+    background: #151c22;
     color: #eee4bf;
-    font: 600 0.6rem/1.4 var(--font-mono);
-    text-align: center;
-    transform: translateX(-50%);
-    pointer-events: none;
+    font: inherit;
+    overflow-wrap: anywhere;
   }
   small {
-    color: #a8bac5;
+    color: #c2cbd2;
+    font-size: inherit;
   }
   strong {
     color: #f1d36d;
-  }
-  @media (max-width: 600px) {
-    aside {
-      top: 6.5rem;
-    }
   }
 </style>

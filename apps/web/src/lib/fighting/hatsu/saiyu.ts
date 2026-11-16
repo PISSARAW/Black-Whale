@@ -1,24 +1,23 @@
 import { unchangedFrame, unchangedTrigger, type FighterHatsu } from './contract'
-
-const THREE_MONKEYS_ZETSU_FRAMES = 150
+import { saiyuMonkey, SENSE_BITS } from '../saiyuSenses'
 
 export const saiyuHatsu: FighterHatsu = {
   id: 'saiyu',
   onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) => {
+  onImpact: ({ state, defenderSide, blocked, moveId }) => {
     if (blocked) return state
+    const monkey = saiyuMonkey(moveId)
+    if (!monkey) return state
     const defender = state[defenderSide]
-    const senseSeals = Math.min(3, defender.hatsuEffects.senseSeals + 1)
+    const senseSeals = defender.hatsuEffects.senseSeals | SENSE_BITS[monkey.sense]
+    if (senseSeals === defender.hatsuEffects.senseSeals) return state
     return {
       ...state,
       [defenderSide]: {
         ...defender,
-        hitStun: Math.max(defender.hitStun, senseSeals * 12),
         hatsuEffects: {
           ...defender.hatsuEffects,
           senseSeals,
-          forcedZetsuFrames:
-            senseSeals === 3 ? THREE_MONKEYS_ZETSU_FRAMES : defender.hatsuEffects.forcedZetsuFrames,
         },
       },
     }

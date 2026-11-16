@@ -1,3 +1,16 @@
+import { tuneBashoMoveset } from './bashoMoveset'
+import { bashoCanWrite } from './bashoPoem'
+import { tuneGelMoveset } from './gelMoveset'
+import { tuneCamillaMoveset } from './camillaMoveset'
+import { sealedSenseCount } from './saiyuSenses'
+import { tuneThetaMoveset } from './thetaMoveset'
+import { thetaShotMove } from './thetaFirearm'
+import { tuneParallelFutureMoveset } from './parallelFutureMoveset'
+import { futureMoveResources } from './parallelFutureAbility'
+import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
+import { tuneLonghiMoveset } from './longhiMoveset'
+import { moonlightCanOffer } from './moonlightContract'
+import { isErigeronAction } from './billSupport'
 import { tuneBenjaminMoveset } from './benjaminMoveset'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { tuneKurapikaMoveset } from './kurapikaMoveset'
@@ -50,11 +63,18 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneBenjaminMoveset)
+  ALL_MOVESETS.map(tuneCamillaMoveset)
+    .map(tuneParallelFutureMoveset)
+    .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
+    .map(tuneThetaMoveset)
+    .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
+    .map(tuneLonghiMoveset)
+    .map(tuneBashoMoveset)
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
+    .map(tuneFurykovMoveset)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
@@ -85,7 +105,8 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'musse'].includes(fighter.id) && action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi', 'basho', 'musse'].includes(fighter.id) &&
+    action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -96,6 +117,12 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
+  if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
+  return ordinaryMoveAllowed(state, side, move)
+}
+
+function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
   const fighter = state[side]
   if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
     return false
@@ -106,8 +133,12 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (!musseMoveAvailable(fighter, move.id)) return false
+  const future = futureMoveResources(fighter, move.id)
+  if (future !== null) return future
+  if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
+  if (thetaShotMove(fighter, move.id)) return true
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources
@@ -124,6 +155,7 @@ function isHeldChainMove(fighter: ArcadeFighter, move: FighterMove): boolean {
 }
 
 function characterMoveAvailable(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (isErigeronAction(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
     return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
@@ -197,13 +229,10 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => Boolean(state[side].hatsuEffects.baton?.card),
-  tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
+  tserriednich: (state, side) =>
+    state.parallelFuture?.owner === side && state.parallelFuture.phase === 'vision',
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
-  saiyu: (state, side) => opponentOf(state, side).hatsuEffects.senseSeals >= 2,
-  theta: (state, side) => {
-    const opponent = opponentOf(state, side)
-    return opponent.hatsuEffects.forcedZetsuFrames > 0 || opponent.aura <= 30
-  },
+  saiyu: (state, side) => sealedSenseCount(opponentOf(state, side)) >= 2,
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
   franklin: () => true,
@@ -220,17 +249,12 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
     opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
-  basho: (state, side) => state[side].hatsuEffects.haikuFrames > 0,
-  camilla: (state, side) => state[side].health <= 30,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
-  gel: (state, side) => opponentOf(state, side).hatsuEffects.venomFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
-  bill: (state, side) => state[side].hatsuEffects.growthFrames > 0 && state[side].health <= 50,
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,
-  longhi: (state, side) => opponentOf(state, side).hatsuEffects.contractFrames > 0,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),

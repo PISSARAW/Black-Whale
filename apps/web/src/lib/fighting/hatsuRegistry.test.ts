@@ -168,16 +168,20 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDamageFactor(state.player)).toBe(1)
   })
 
-  it('uses Parallel Future to erase the next incoming hit', () => {
+  it('requires vulnerable preparation instead of erasing an incoming hit', () => {
     let state = closeFight('tserriednich', 'hisoka')
-    state = { ...state, opponent: { ...state.opponent, hitStun: 0 } }
+    state = {
+      ...state,
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52, hitStun: 0 },
+    }
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.futureSight).toBe(1)
-    state = performAttack(state, 'opponent', 'light')
-    const avoided = advance(state, 0.2)
-    expect(avoided.impact).toMatchObject({ attacker: 'opponent', avoided: true, damage: 0 })
-    expect(avoided.player.health).toBe(100)
-    expect(avoided.player.hatsuEffects.futureSight).toBe(0)
+    expect(state.player.nen.mode).toBe('zetsu')
+    expect(state.player.parallelEyesClosed).toBe(true)
+    const health = state.player.health
+    const struck = advance(performAttack(state, 'opponent', 'light'), 0.2)
+    expect(struck.player.health).toBeLessThan(health)
+    expect(struck.parallelFuture).toBeUndefined()
   })
 
   it('does not apply a missing-health multiplier to Feitan’s martial attacks', () => {
@@ -187,7 +191,7 @@ describe('fighter Hatsu registry', () => {
     expect(wounded).toBe(healthy)
   })
 
-  it('lets Three Monkeys seal all senses after three strikes', () => {
+  it('lets each of Three Monkeys seal its own sense without forcing Zetsu', () => {
     let state = closeFight('saiyu', 'hisoka')
     for (let strike = 0; strike < 3; strike += 1) {
       state = hatsuFor('saiyu').onImpact({
@@ -195,15 +199,16 @@ describe('fighter Hatsu registry', () => {
         side: 'player',
         defenderSide: 'opponent',
         source: 'saiyu',
+        moveId: ['saiyu:neutralSpecial', 'saiyu:forwardSpecial', 'saiyu:downSpecial'][strike],
         blocked: false,
         concealed: false,
       })
     }
-    expect(state.opponent.hatsuEffects.senseSeals).toBe(3)
-    expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
+    expect(state.opponent.hatsuEffects.senseSeals).toBe(7)
+    expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
   })
 
-  it('makes Theta suppress aura with her projectile', () => {
+  it('keeps Theta’s personal Hatsu unknown without draining or sealing Nen', () => {
     const ready = closeFight('theta', 'hisoka')
     const struck = hatsuFor('theta').onImpact({
       state: ready,
@@ -213,8 +218,8 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(struck.opponent.aura).toBe(ready.opponent.aura - 18)
-    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(90)
+    expect(struck).toBe(ready)
+    expect(hatsuFor('theta').martialOnly).toBe(true)
   })
 
   it('keeps Cookie outside the duel and does not expose a stealable Biscuit Hatsu', () => {
@@ -442,15 +447,11 @@ describe('fighter Hatsu registry', () => {
     expect(struck).toBe(ready)
   })
 
-  it('activates Basho’s and Bill’s reinforcement Hatsu', () => {
-    for (const source of ['basho', 'bill'] as const) {
-      const state = hatsuFor(source).onTrigger({
-        state: closeFight(source, 'hisoka'),
-        side: 'player',
-        source,
-      })
-      expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
-    }
+  it('does not turn Basho’s poem into an automatic reinforcement bonus', () => {
+    const state = closeFight('basho', 'hisoka')
+    const triggered = hatsuFor('basho').onTrigger({ state, side: 'player', source: 'basho' })
+    expect(triggered).toBe(state)
+    expect(hatsuDamageFactor(triggered.player)).toBe(1)
   })
 
   it('gives Luini one defensive counter', () => {
@@ -488,7 +489,7 @@ describe('fighter Hatsu registry', () => {
           'player',
           'heavy',
         ),
-        0.6,
+        2.7,
       )
     }
     const killed = killing('knockout')
@@ -536,9 +537,9 @@ describe('fighter Hatsu registry', () => {
     expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
   })
 
-  it('lets Gel poison aura and Lynch expose the target’s soul', () => {
+  it('keeps Gel’s arm free of added effects while Lynch exposes the target’s soul', () => {
     const ready = closeFight('gel', 'hisoka')
-    const poisoned = hatsuFor('gel').onImpact({
+    const struck = hatsuFor('gel').onImpact({
       state: ready,
       side: 'player',
       defenderSide: 'opponent',
@@ -554,7 +555,7 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(poisoned.opponent.hatsuEffects.venomFrames).toBe(180)
+    expect(struck).toBe(ready)
     expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
   })
 
@@ -568,7 +569,7 @@ describe('fighter Hatsu registry', () => {
   })
 
   it('keeps fighters whose canon Hatsu cannot act in a duel purely martial', () => {
-    for (const id of ['furykov', 'cluck', 'beyond', 'sayird'] as const) {
+    for (const id of ['cluck', 'beyond', 'sayird'] as const) {
       const ready = closeFight(id, 'hisoka')
       const hatsu = hatsuFor(id)
       const triggered = hatsu.onTrigger({ state: ready, side: 'player', source: id })
@@ -651,7 +652,7 @@ describe('fighter Hatsu registry', () => {
       source: 'tubeppa',
     })
     expect(curse.opponent.hatsuEffects.gidalCurseFrames).toBe(240)
-    expect(contract.opponent.hatsuEffects.contractFrames).toBe(120)
+    expect(contract).toBe(ready)
     expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
   })
 

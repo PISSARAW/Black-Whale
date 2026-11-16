@@ -1,3 +1,4 @@
+import { carryMoonlightRound } from './moonlightContract'
 import { createBenjaminBaton } from './benjaminBaton'
 import { createKurapika } from './kurapika'
 import { createPainPacker } from './feitanPain'
@@ -53,34 +54,42 @@ export function createFightState(
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
-  return {
-    ...state,
-    lsdf: undefined,
-    expulsion: undefined,
-    player: preserveLifespan(
-      createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
-      state.player,
-    ),
-    opponent: preserveLifespan(
-      createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
-      state.opponent,
-    ),
-    phase: 'ready',
-    frame: 0,
-    time: format.roundFrames / FIGHT_FPS,
-    remainingFrames: format.roundFrames,
-    frameAccumulator: 0,
-    hitstop: 0,
-    winner: null,
-    finishReason: null,
-    roundNumber: state.roundNumber + 1,
-    score: { player: 0, opponent: 0 },
-    knockdowns: { player: 0, opponent: 0 },
-    bungeeGum: null,
-    projectiles: [],
-    nextProjectileId: 1,
-    impact: null,
-  }
+  return carryMoonlightRound(
+    {
+      ...state,
+      parallelFuture: undefined,
+      forecastSimulation: undefined,
+      lsdf: undefined,
+      expulsion: undefined,
+    deaths: undefined,
+    catsName: undefined,
+    catsNameConsumed: undefined,
+      player: preserveLifespan(
+        createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
+        state.player,
+      ),
+      opponent: preserveLifespan(
+        createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+        state.opponent,
+      ),
+      phase: 'ready',
+      frame: 0,
+      time: format.roundFrames / FIGHT_FPS,
+      remainingFrames: format.roundFrames,
+      frameAccumulator: 0,
+      hitstop: 0,
+      winner: null,
+      finishReason: null,
+      roundNumber: state.roundNumber + 1,
+      score: { player: 0, opponent: 0 },
+      knockdowns: { player: 0, opponent: 0 },
+      bungeeGum: null,
+      projectiles: [],
+      nextProjectileId: 1,
+      impact: null,
+    },
+    state,
+  )
 }
 
 function createFighter(options: {
@@ -91,6 +100,7 @@ function createFighter(options: {
 }): ArcadeFighter {
   return {
     ...options,
+    maxHealth: options.health,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
@@ -127,7 +137,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     forcedZetsuFrames: 0,
     contagionFrames: 0,
     contagionStacks: 0,
-    futureSight: 0,
     baton: null,
     senseSeals: 0,
     blinkyFrames: 0,
@@ -148,11 +157,8 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     predatorFrames: 0,
     bloodBoundFrames: 0,
     entrancedFrames: 0,
-    haikuFrames: 0,
-    venomFrames: 0,
     soulExposedFrames: 0,
     teleportDodges: 0,
-    growthFrames: 0,
     wormDodges: 0,
     kachoGuards: 0,
     desireFrames: 0,
@@ -160,7 +166,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     smokeFrames: 0,
     coinCharges: 0,
     gidalCurseFrames: 0,
-    contractFrames: 0,
     weaponFrames: 0,
     synthesisFrames: 0,
     eyeWogFrames: 0,

@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { advancedNenCopy } from '$lib/fighting/nenTacticalCopy'
+  import FightNenTactics from './FightNenTactics.svelte'
+  import type { FightInput } from '$lib/fighting/types'
   import { KO_COST, nenStatus, nenTacticalState, type FightNenTactic } from '$lib/fighting/nen'
   import type { ArcadeFighter, FightNenZone } from '$lib/fighting/types'
   import { FIGHT_NEN_ZONES } from '$lib/fighting/nen'
@@ -6,13 +9,16 @@
 
   export let fighter: ArcadeFighter
   export let language: 'fr' | 'en'
+  export let detailed = false
+  export let showControls = false
   export let onAura: (active: boolean) => void
+  export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
   export let onEmperor: () => void = () => {}
 
   $: technique = nenStatus(fighter).join(' · ')
   $: tactical = nenTacticalState(fighter)
   $: explanation =
-    tactical.technique === 'on' ? onTacticalCopy(language) : tacticalCopy(tactical.technique)
+    tactical.technique === 'on' ? onTacticalCopy(language) : (advancedNenCopy(tactical.technique, language) ?? tacticalCopy(tactical.technique))
   $: flow = flowLabel(tactical.technique, tactical.auraPerSecond)
   $: danger =
     tactical.exhausted ||
@@ -54,7 +60,7 @@
       }
     if (active === 'ken')
       return {
-        benefit: 'Sous garde, les dégâts sont annulés',
+        benefit: 'Protection soutenue du corps et de la garde',
         risk: 'Drain massif et continu · épuisement rapide',
       }
     if (active === 'ko')
@@ -97,7 +103,7 @@
           : 'NO DEFENCE · Nen impacts become devastating',
       }
     if (active === 'ken')
-      return { benefit: 'While guarding, damage is negated', risk: 'Massive constant drain' }
+      return { benefit: 'Sustained body and guard protection', risk: 'Massive constant drain' }
     if (active === 'ko')
       return {
         benefit: 'Critical impact · maximum power',
@@ -120,310 +126,190 @@
       }
     return { benefit: 'Balanced defence · light recovery', risk: 'No specialised zone' }
   }
+
+  $: warning = tactical.exhausted
+    ? language === 'fr'
+      ? 'Épuisé · défense nulle jusqu’à 18 aura'
+      : 'Exhausted · no defence until 18 aura'
+    : tactical.technique === 'ren' && fighter.aura <= 25
+      ? language === 'fr'
+        ? 'Fatigue critique · Zetsu forcé imminent'
+        : 'Critical fatigue · forced Zetsu imminent'
+      : warnings[language][tactical.technique]
+
+  const warnings: Record<'fr' | 'en', Record<FightNenTactic, string>> = {
+    fr: {
+      en: 'Détection de proximité · drain élevé', shu: 'Objet renforcé · corps exposé', in: 'Aura cachée · attention à Gyo et En',
+      ten: '',
+      ren: 'Puissance +22 %',
+      ken: 'Garde renforcée · drain élevé',
+      zetsu: 'Défense Nen nulle',
+      gyo: 'Vision Nen · défense réduite',
+      ryu: 'Zones non renforcées exposées',
+      ko: 'Corps exposé hors zone renforcée',
+      on: 'Hatsu, Ken et Ko scellés · drain de vie',
+    },
+    en: {
+      en: 'Proximity sensing · heavy drain', shu: 'Reinforced object · exposed body', in: 'Aura hidden · Gyo and En can detect',
+      ten: '',
+      ren: 'Power +22%',
+      ken: 'Reinforced guard · heavy drain',
+      zetsu: 'No Nen defence',
+      gyo: 'Nen vision · reduced defence',
+      ryu: 'Other zones exposed',
+      ko: 'Body exposed outside focused zone',
+      on: 'Hatsu, Ken and Ko sealed · life drain',
+    },
+  }
 </script>
 
-<div
-  class="nen-controls"
-  class:danger
-  aria-label={language === 'fr' ? 'Contrôle tactique de l’aura' : 'Tactical aura control'}
->
-  <button
-    type="button"
-    class:active={fighter.nen.mode !== 'ten' || fighter.nen.gyo || fighter.nen.ko !== null}
-    aria-label={language === 'fr' ? 'Maintenir Aura' : 'Hold Aura'}
-    onpointerdown={(event) => {
-      event.currentTarget.setPointerCapture(event.pointerId)
-      onAura(true)
-    }}
-    onpointerup={() => onAura(false)}
-    onpointercancel={() => onAura(false)}
-  >
-    <kbd>ESPACE</kbd>
-    <strong>AURA</strong>
-    <span>{technique}</span>
-  </button>
-
-  {#if fighter.id === 'kurapika'}
-    <button type="button" class:active={fighter.kurapika?.emperorTime} onclick={onEmperor}
-      disabled={Boolean(fighter.kurapika?.held?.loaded) || (fighter.kurapika?.blackoutFrames ?? 0) > 0}>
-      <kbd>AURA + H</kbd><strong>EMPEROR TIME</strong>
-      <span>{language === 'fr' ? '1 seconde = 1 heure de vie · efficacité 100 %' : '1 second = 1 hour of life · 100% efficiency'}</span>
-    </button>
-  {/if}
-
-  <section class="tactical-readout" data-technique={tactical.technique} aria-live="polite">
-    <header>
-      <div>
-        <small>{language === 'fr' ? 'ÉTAT NEN' : 'NEN STATE'}</small>
-        <strong>{tactical.technique}</strong>
-      </div>
-      <b class:draining={tactical.auraPerSecond < 0 || tactical.technique === 'ko' || tactical.technique === 'on'}
-        >{flow}</b
-      >
-    </header>
-
-    <div class="tradeoff">
-      <p class="benefit"><i aria-hidden="true">+</i><span>{explanation.benefit}</span></p>
-      <p class="risk"><i aria-hidden="true">!</i><span>{explanation.risk}</span></p>
+<div class="nen-controls" class:danger>
+  <div class="nen-summary">
+    <strong>{technique}</strong>
+    <b
+      class:draining={tactical.auraPerSecond < 0 ||
+        tactical.technique === 'ko' ||
+        tactical.technique === 'on'}>{flow}</b
+    >
+    {#if warning}<span class="warning">{warning}</span>{/if}
+  </div>
+  {#if tactical.focusZone}
+    <div
+      class="zone-distribution"
+      aria-label={language === 'fr' ? 'Répartition de l’aura' : 'Aura distribution'}
+    >
+      {#each FIGHT_NEN_ZONES as zone (zone)}
+        <span
+          class:focused={zone === tactical.focusZone}
+          class:exposed={tactical.exposedZones.includes(zone)}
+        >
+          {zoneLabel(zone)} <b>{Math.round(tactical.distribution[zone] * 100)}%</b>
+        </span>
+      {/each}
     </div>
-
-    {#if tactical.focusZone}
-      <div class="focus-heading">
-        <span>{language === 'fr' ? 'ZONE RENFORCÉE' : 'REINFORCED ZONE'}</span>
-        <b>{zoneLabel(tactical.focusZone)} · {Math.round(tactical.focusShare * 100)}%</b>
-      </div>
-      <div
-        class="zone-distribution"
-        aria-label={language === 'fr' ? 'Répartition du Ryu' : 'Ryu distribution'}
+  {/if}
+  {#if showControls || detailed}
+    <div class="nen-buttons">
+      <button
+        type="button"
+        aria-label={language === 'fr' ? 'Maintenir Aura' : 'Hold Aura'}
+        onpointerdown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId)
+          onAura(true)
+        }}
+        onpointerup={() => onAura(false)}
+        onpointercancel={() => onAura(false)}><kbd>ESPACE</kbd> AURA</button
       >
-        {#each FIGHT_NEN_ZONES as zone (zone)}
-          <span
-            class:focused={zone === tactical.focusZone}
-            class:exposed={tactical.exposedZones.includes(zone)}
-            style={`--share:${Math.max(0.04, tactical.distribution[zone])}`}
-          >
-            <i></i><small>{zoneLabel(zone)}</small><b
-              >{Math.round(tactical.distribution[zone] * 100)}%</b
-            >
-          </span>
-        {/each}
-      </div>
-    {/if}
-  </section>
-
-  <p class="shortcut-hint">
-    {language === 'fr'
-      ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · + L (rancune 50) : On'
-      : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · + L (grudge 50): On'}
-  </p>
+      {#if fighter.id === 'kurapika'}
+        <button
+          type="button"
+          class:active={fighter.kurapika?.emperorTime}
+          onclick={onEmperor}
+          disabled={Boolean(fighter.kurapika?.held?.loaded) ||
+            (fighter.kurapika?.blackoutFrames ?? 0) > 0}
+        >
+          <kbd>AURA + H</kbd> EMPEROR TIME
+        </button>
+      {/if}
+    </div>
+  {/if}
+  {#if showControls || detailed}<FightNenTactics {language} {onControl} />{/if}
+  {#if detailed}
+    <div class="nen-explanation">
+      <p>{explanation.benefit}</p>
+      <p class="warning">{explanation.risk}</p>
+      <p>
+        {language === 'fr'
+          ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · R : En · F : Shu · X : In · G : Gyo · 1–4 : Ryu tête/torse/mains/jambes · + L (rancune 50) : On'
+          : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · R: En · F: Shu · X: In · G: Gyo · 1–4: Ryu head/torso/hands/legs · + L (grudge 50): On'}
+      </p>
+    </div>
+  {/if}
 </div>
 
 <style>
   .nen-controls {
-    position: absolute;
-    z-index: 28;
-    top: 5.8rem;
-    left: 50%;
     display: grid;
-    width: min(92vw, 620px);
-    justify-items: center;
-    transform: translateX(-50%);
-    pointer-events: none;
+    gap: 0.4rem;
+    color: #dbe6ec;
+    font: 600 var(--hud-font, 0.75rem)/1.4 var(--font-mono);
   }
-  .nen-controls > button {
-    display: grid;
-    min-width: 148px;
-    grid-template-columns: auto auto;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem 0.65rem;
-    padding: 0.55rem 0.8rem;
-    border: 1px solid rgb(116 171 195 / 45%);
-    border-radius: 3px;
-    background: rgb(4 10 15 / 82%);
-    color: #dce9ef;
-    backdrop-filter: blur(6px);
-    touch-action: none;
-    pointer-events: auto;
-  }
-  .nen-controls > button:hover,
-  .nen-controls > button.active,
-  .nen-controls > button:active {
-    border-color: #72d9ff;
-    background: rgb(21 73 94 / 90%);
-    box-shadow: 0 0 18px rgb(75 193 238 / 34%);
-  }
-  .nen-controls > button kbd {
-    color: #d5b85c;
-    font: 700 0.55rem/1 var(--font-mono);
-  }
-  .nen-controls > button strong {
-    font: 800 0.78rem/1 var(--font-display);
-    letter-spacing: 0.14em;
-  }
-  .nen-controls > button span {
-    grid-column: 1 / -1;
-    color: #87dcff;
-    font: 700 0.55rem/1 var(--font-mono);
-    text-transform: uppercase;
-  }
-  .tactical-readout {
-    width: 100%;
-    margin-top: 0.42rem;
-    padding: 0.55rem 0.65rem 0.62rem;
-    border: 1px solid rgb(109 217 255 / 32%);
-    border-radius: 3px;
-    background: linear-gradient(105deg, rgb(4 11 16 / 92%), rgb(9 25 34 / 88%));
-    box-shadow: 0 10px 28px rgb(0 0 0 / 30%);
-    backdrop-filter: blur(8px);
-  }
-  .danger .tactical-readout {
-    border-color: rgb(255 91 91 / 58%);
-    background: linear-gradient(105deg, rgb(25 6 9 / 94%), rgb(39 12 15 / 91%));
-  }
-  .tactical-readout header,
-  .focus-heading {
+  .nen-summary {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .tactical-readout header > div {
-    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.55rem;
+    gap: 0.25rem 0.75rem;
   }
-  .tactical-readout header small,
-  .focus-heading span {
-    color: #81949e;
-    font: 700 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.12em;
-  }
-  .tactical-readout header strong {
+  .nen-summary strong {
     color: #a9eaff;
-    font: 900 0.85rem/1 var(--font-display);
-    letter-spacing: 0.13em;
     text-transform: uppercase;
   }
-  .danger .tactical-readout header strong {
-    color: #ff9a96;
+  .nen-summary b {
+    color: #a0e2c5;
   }
-  .tactical-readout header > b {
-    padding: 0.18rem 0.35rem;
-    border: 1px solid rgb(126 228 191 / 35%);
-    color: #82e1bb;
-    font: 800 0.52rem/1 var(--font-mono);
-    letter-spacing: 0.05em;
+  .nen-summary b.draining {
+    color: #ffc29e;
   }
-  .tactical-readout header > b.draining {
-    border-color: rgb(255 132 105 / 43%);
-    color: #ff9c83;
+  .warning {
+    color: #ffbdab;
   }
-  .tradeoff {
-    display: grid;
-    margin-top: 0.42rem;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.42rem;
+  .danger .warning {
+    font-weight: 800;
   }
-  .tradeoff p {
-    display: grid;
-    min-width: 0;
-    margin: 0;
-    grid-template-columns: 1.15rem 1fr;
-    align-items: center;
-    gap: 0.35rem;
-    color: #c9d8de;
-    font: 650 0.55rem/1.22 var(--font-mono);
+  .nen-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
-  .tradeoff i {
-    display: grid;
-    width: 1.05rem;
-    height: 1.05rem;
-    place-items: center;
-    border-radius: 50%;
-    font-style: normal;
-    font-weight: 900;
+  button {
+    min-height: 44px;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid #6b8a9a;
+    border-radius: 3px;
+    background: #14232d;
+    color: #e8f5fc;
+    font: inherit;
+    touch-action: none;
   }
-  .benefit i {
-    background: rgb(61 194 146 / 20%);
-    color: #79dfb9;
+  button:active,
+  button.active {
+    background: #285469;
+    border-color: #a4e8ff;
   }
-  .risk i {
-    background: rgb(234 72 72 / 20%);
-    color: #ff8580;
+  button:disabled {
+    opacity: 0.5;
   }
-  .risk span {
-    color: #ffaaa2;
+  button:focus-visible {
+    outline: 2px solid #e7ca7c;
+    outline-offset: 2px;
   }
-  .focus-heading {
-    margin-top: 0.52rem;
-    padding-top: 0.46rem;
-    border-top: 1px solid rgb(255 255 255 / 10%);
-  }
-  .focus-heading b {
-    color: #fff3aa;
-    font: 800 0.58rem/1 var(--font-mono);
-    text-transform: uppercase;
+  kbd {
+    color: #e7ca7c;
+    font-size: inherit;
   }
   .zone-distribution {
-    display: grid;
-    margin-top: 0.38rem;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.28rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
-  .zone-distribution > span {
-    position: relative;
-    display: grid;
-    overflow: hidden;
-    min-width: 0;
-    padding: 0.28rem 0.34rem;
-    grid-template-columns: 1fr auto;
-    gap: 0.2rem;
-    border: 1px solid rgb(255 255 255 / 11%);
-    background: rgb(255 255 255 / 4%);
+  .zone-distribution span {
+    padding: 0.2rem 0.35rem;
+    border: 1px solid #394754;
+    background: #151e26;
   }
-  .zone-distribution > span > i {
-    position: absolute;
-    inset: 0;
-    width: calc(var(--share) * 100%);
-    background: rgb(80 198 238 / 18%);
+  .zone-distribution .focused {
+    border-color: #ecd17b;
+    color: #ffedae;
   }
-  .zone-distribution > span.focused {
-    border-color: rgb(255 222 103 / 70%);
-    box-shadow: inset 0 0 12px rgb(255 201 55 / 16%);
+  .zone-distribution .exposed {
+    border-style: dashed;
+    color: #ffbdab;
   }
-  .zone-distribution > span.focused > i {
-    background: rgb(255 207 66 / 31%);
+  .nen-explanation {
+    padding-top: 0.3rem;
+    border-top: 1px solid #35434c;
   }
-  .zone-distribution > span.exposed {
-    border-color: rgb(255 92 92 / 36%);
-  }
-  .zone-distribution > span.exposed > i {
-    background: rgb(231 55 55 / 22%);
-  }
-  .zone-distribution small,
-  .zone-distribution b {
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .zone-distribution small {
-    color: #a9bac2;
-    font: 650 0.48rem/1 var(--font-mono);
-  }
-  .zone-distribution b {
-    color: #edf7fa;
-    font: 800 0.5rem/1 var(--font-mono);
-  }
-  .shortcut-hint {
-    max-width: min(82vw, 620px);
-    margin: 0.35rem 0 0;
-    color: #a9bbc5;
-    font: 600 0.52rem/1.25 var(--font-mono);
-    text-align: center;
-    text-shadow: 0 1px 5px #000;
-  }
-  @media (max-width: 760px) {
-    .nen-controls {
-      top: 4.6rem;
-      width: min(96vw, 620px);
-    }
-    .shortcut-hint {
-      display: none;
-    }
-    .tactical-readout {
-      padding: 0.45rem 0.5rem 0.5rem;
-    }
-    .tradeoff {
-      grid-template-columns: 1fr;
-    }
-    .tradeoff p {
-      font-size: 0.5rem;
-    }
-    .zone-distribution small {
-      display: none;
-    }
+  p {
+    margin: 0.3rem 0 0;
   }
 </style>

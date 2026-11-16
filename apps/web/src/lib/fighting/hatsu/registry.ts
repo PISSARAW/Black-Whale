@@ -1,3 +1,5 @@
+import { fightResolutionPending } from '../fightOutcome'
+import { furykovHatsu } from './furykov'
 import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
@@ -17,6 +19,7 @@ import {
   voconteHatsu,
 } from './combatCompletion'
 import { camillaHatsu } from './camilla'
+import { cluckHatsu } from './cluck'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
 import { franklinHatsu } from './franklin'
@@ -43,6 +46,7 @@ import { lynchHatsu } from './lynch'
 import { momozeHatsu } from './momoze'
 import { rihanHatsu } from './rihan'
 import { saiyuHatsu } from './saiyu'
+import { sayirdHatsu } from './sayird'
 import { salesaleHatsu } from './salesale'
 import { shizukuHatsu } from './shizuku'
 import { thetaHatsu } from './theta'
@@ -85,8 +89,8 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   lynch: () => lynchHatsu,
   luini: () => luiniHatsu,
   bill: () => billHatsu,
-  furykov: () => martialOnlyHatsu('furykov'),
-  cluck: () => martialOnlyHatsu('cluck'),
+  furykov: () => furykovHatsu,
+  cluck: () => cluckHatsu,
   beyond: () => martialOnlyHatsu('beyond'),
   fugetsu: () => fugetsuHatsu,
   kacho: () => kachoHatsu,
@@ -100,7 +104,7 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   padaille: () => padailleHatsu,
   tubeppa: () => tubeppaHatsu,
   tyson: () => tysonHatsu,
-  sayird: () => martialOnlyHatsu('sayird'),
+  sayird: () => sayirdHatsu,
   terebellum: () => terebellumHatsu,
   voconte: () => voconteHatsu,
   yokotani: () => yokotaniHatsu,
@@ -112,6 +116,7 @@ export function hatsuFor(id: FighterId): FighterHatsu {
 
 export function advanceHatsuFrames(state: FightState): FightState {
   return Object.values(HATSU_REGISTRY).reduce((next, resolve) => {
+    if (fightResolutionPending(next)) return next
     const hatsu = resolve()
     return withDolphinIdentity(next, hatsu.onFrame, hatsu.id)
   }, state)

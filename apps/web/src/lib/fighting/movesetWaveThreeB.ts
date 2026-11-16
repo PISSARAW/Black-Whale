@@ -1,3 +1,4 @@
+import { billMoveset } from './billMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
@@ -40,12 +41,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'gel',
     mechanic: [
-      'Bras-serpent : son allonge imprévisible injecte un venin qui épuise progressivement l’aura.',
-      'Snake Arm: her unpredictable reach injects venom that progressively exhausts aura.',
+      'Bras-serpent : une même transformation du bras pour des frappes à longue allonge. Ses autres propriétés restent inconnues.',
+      'Snake arm: one arm transformation used for extended-reach strikes. Its other properties remain unknown.',
     ],
     finisherCondition: [
-      'Le venin doit circuler dans la cible.',
-      'Venom must be coursing through the target.',
+      'Aucun finisher confirmé dans le manga.',
+      'No finisher confirmed in the manga.',
     ],
     labels: [
       'Pique du Serpent|Snake Jab',
@@ -55,14 +56,14 @@ const SPECS: readonly MovesetSpec[] = [
       'Crochet aérien|Aerial Fang',
       'Morsure plongeante|Diving Bite',
       'Allonge serpentine|Serpentine Reach',
-      'Étreinte constrictrice|Constricting Crush',
-      'Mue défensive|Defensive Shedding',
+      'Frappe étendue|Extended Strike',
+      'Retrait en garde|Guarded Retreat',
       'Bras-serpent|Snake Arm',
-      'Morsure venimeuse|Venomous Bite',
+      'Frappe du bras-serpent|Snake Arm Strike',
       'Vipère rasante|Ground Viper',
-      'Anneaux protecteurs|Protective Coils',
-      'Constriction du Zodiac|Zodiac Constriction',
-      'Serpent · Dose létale|Snake · Lethal Dose',
+      'Revers serpentin|Serpentine Backhand',
+      'Projection|Throw',
+      'Aucun finisher confirmé|No confirmed finisher',
     ],
     speed: 0.84,
     power: 1.02,
@@ -145,42 +146,6 @@ const SPECS: readonly MovesetSpec[] = [
       ['airLight', 'airHeavy', 'neutralSpecial'],
     ],
   },
-  {
-    fighterId: 'bill',
-    mechanic: [
-      'Erigeron : sa croissance accélérée restaure le corps et renforce temporairement sa ténacité.',
-      'Erigeron: accelerated growth restores the body and temporarily reinforces his resilience.',
-    ],
-    finisherCondition: [
-      'Erigeron doit être actif et Bill à 50 PV ou moins.',
-      'Erigeron must be active while Bill has 50 HP or less.',
-    ],
-    labels: [
-      'Direct du garde|Guard Straight',
-      'Crochet tenace|Tenacious Hook',
-      'Coup aux racines|Root Strike',
-      'Fauchage du semeur|Sower Sweep',
-      'Bourgeon aérien|Aerial Bud',
-      'Talon de croissance|Growth Heel',
-      'Poussée d’Erigeron|Erigeron Rush',
-      'Percée vivace|Perennial Break',
-      'Reprise végétale|Vegetal Recovery',
-      'Erigeron|Erigeron',
-      'Croissance accélérée|Accelerated Growth',
-      'Racines de garde|Guard Roots',
-      'Floraison protectrice|Protective Bloom',
-      'Prise du jardinier|Gardener Hold',
-      'Erigeron · Seconde floraison|Erigeron · Second Bloom',
-    ],
-    speed: 0.98,
-    power: 1,
-    reach: 1.4,
-    combos: [
-      ['standingLight', 'standingHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardHeavy', 'downSpecial'],
-      ['airHeavy', 'forwardSpecial'],
-    ],
-  },
 ]
 
-export const WAVE_THREE_MOVESETS_B = SPECS.map(buildMoveset)
+export const WAVE_THREE_MOVESETS_B = [...SPECS.map(buildMoveset), billMoveset()]

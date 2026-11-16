@@ -6,6 +6,7 @@
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
+  export let detailed = false
 
   $: fighter = state[side]
   $: book = fighter.chrolloBook
@@ -18,16 +19,26 @@
 {#if fighter.id === 'chrollo' && book}
   <div class="book-status" class:opponent={side === 'opponent'}>
     <strong>Bandit’s Secret · {book.page + 1}/{book.pages.length}</strong>
-    <div class="pages" aria-label={language === 'fr' ? 'Pages du livre' : 'Book pages'}>
-      {#each book.pages as page, index (page)}
-        <span
-          class:open={active && book.open && index === book.page}
-          class:pinned={book.bookmark === page}
-        >
-          {book.bookmark === page ? '◆ ' : ''}{chrolloPageName(page, language)}
-        </span>
-      {/each}
-    </div>
+    <span>{chrolloPageName(book.pages[book.page], language)}</span>
+    {#if detailed}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (Scrollable book pages need a keyboard focus target.) -->
+      <div
+        class="pages"
+        role="region"
+        tabindex="0"
+        data-fight-scroll
+        aria-label={language === 'fr' ? 'Pages du livre' : 'Book pages'}
+      >
+        {#each book.pages as page, index (page)}
+          <span
+            class:open={active && book.open && index === book.page}
+            class:pinned={book.bookmark === page}
+          >
+            {book.bookmark === page ? '◆ ' : ''}{chrolloPageName(page, language)}
+          </span>
+        {/each}
+      </div>
+    {/if}
     {#if !active}
       <span
         >{language === 'fr' ? 'Livre dissipé · Nen requis' : 'Book dismissed · Nen required'}</span
@@ -80,8 +91,17 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.2rem;
+    max-height: 10rem;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding: 0.2rem;
+  }
+  .pages:focus-visible {
+    outline: 2px solid #e2c979;
+    outline-offset: 2px;
   }
   .pages span {
+    max-width: 100%;
     border: 1px solid #51515a;
     padding: 0.12rem 0.3rem;
     border-radius: 2px;
@@ -96,9 +116,6 @@
   }
   .opponent {
     text-align: right;
-  }
-  .opponent .pages {
-    justify-content: flex-end;
   }
   @media (max-width: 600px) {
     .book-status {

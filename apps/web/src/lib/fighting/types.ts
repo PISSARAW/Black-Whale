@@ -1,3 +1,7 @@
+import type { CatsNameSequence } from './camillaCat'
+import type { FightDeath } from './fightDeaths'
+import type { ComboMasterState } from './comboMasterTypes'
+import type { ParallelFutureState } from './parallelFutureTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
 import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
@@ -120,6 +124,16 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  bashoPoem?: import('./bashoPoem').BashoPoem
+  bashoBurn?: import('./bashoPoem').BashoBurn
+  /** Execution adapters may borrow a Hatsu identity; the aura still belongs to this user. */
+  nenOwner?: FighterId
+  /** Conjured information console. It never modifies damage, guard, movement or evasion. */
+  comboMaster?: ComboMasterState
+  /** One use earned by fulfilling a voluntarily signed Moonlight Act contract. */
+  moonlightLoan?: number
+  /** Week-long Zetsu, represented for the remainder of this match. */
+  moonlightZetsu?: boolean
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: { owner: FightSide }
@@ -130,6 +144,8 @@ export interface ArcadeFighter {
   y: number
   velocityY: number
   health: number
+  /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
+  parallelEyesClosed?: boolean
   aura: number
   nen: NenTechniqueState<FightNenZone>
   facing: -1 | 1
@@ -217,8 +233,8 @@ export interface FighterHatsuEffects {
   forcedZetsuFrames: number
   contagionFrames: number
   contagionStacks: number
-  futureSight: number
   baton: BenjaminBatonState | null
+  /** Independent monkey seals: sight = 1, hearing = 2, speech = 4. */
   senseSeals: number
   blinkyFrames: number
   cohortWillFrames: number
@@ -238,11 +254,8 @@ export interface FighterHatsuEffects {
   predatorFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
-  haikuFrames: number
-  venomFrames: number
   soulExposedFrames: number
   teleportDodges: number
-  growthFrames: number
   wormDodges: number
   kachoGuards: number
   desireFrames: number
@@ -250,7 +263,6 @@ export interface FighterHatsuEffects {
   smokeFrames: number
   coinCharges: number
   gidalCurseFrames: number
-  contractFrames: number
   weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
@@ -264,6 +276,14 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  en?: boolean
+  shu?: boolean
+  conceal?: boolean
+  gyo?: boolean
+  focusHead?: boolean
+  focusTorso?: boolean
+  focusHands?: boolean
+  focusFeet?: boolean
   /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
   call?: boolean
   left: boolean
@@ -312,6 +332,12 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  /** Offensive Nen is committed at release; later Zetsu/Emperor Time cannot rewrite a shot. */
+  nenPower?: number
+  hatsuPower?: number
+  shuCharged?: boolean
+  /** After detached Shu dissipates, the physical object keeps travelling. */
+  shuFrames?: number
   id: number
   owner: FightSide
   fighterId: FighterId
@@ -332,6 +358,8 @@ export interface FightProjectile {
   lifetime: number
   /** `object` for real thrown matter; `nen` for conjured or emitted aura. */
   matter: ProjectileMatter
+  /** In conceals the aura; Combo Master may warn its target without dispelling it. */
+  concealed?: boolean
   remotePunch?: RemotePunchPath
 }
 
@@ -348,6 +376,14 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  /** Fatal causes collected before one common verdict, including simultaneous hits. */
+  deaths?: readonly FightDeath[]
+  catsName?: CatsNameSequence
+  catsNameConsumed?: FightSide
+  moonlight?: import('./moonlightContract').MoonlightState
+  parallelFuture?: ParallelFutureState
+  /** Prevent speculative branches from recursively opening another forecast. */
+  forecastSimulation?: boolean
   environment: FightEnvironment
   /** Autonomous guards, never avoidance charges on the fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 532
+Fichiers : 554
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -134,6 +134,10 @@ Fichiers : 532
 
 - the recorded Melody concert > streams through the shared graph and releases its media source when stopped
 
+## `apps/web/src/lib/audio/ambient/mixerRouting.test.ts`
+
+- mode-owned Hatsu routing > restores nested routes, including when a borrowed sound throws
+
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
 - Hatsu audiovisual coverage > gives every published Hatsu a stable dedicated audio signature
@@ -212,9 +216,21 @@ Fichiers : 532
 
 - anchors > gives every reconstructed room a place of its own to stand
 
+## `apps/web/src/lib/fighting/audio/events.test.ts`
+
+- combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
+
 ## `apps/web/src/lib/fighting/auraColours.test.ts`
 
 - fighter aura colours > uses the colour the manga or the anime showed
+
+## `apps/web/src/lib/fighting/benjamin.test.ts`
+
+- Benjamin’s canonical loadout > inherits only from dead loyal academy graduates serving in his army
+
+## `apps/web/src/lib/fighting/chrollo.test.ts`
+
+- Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
 ## `apps/web/src/lib/fighting/combatGrammar.test.ts`
 
@@ -227,6 +243,14 @@ Fichiers : 532
 ## `apps/web/src/lib/fighting/engine.test.ts`
 
 - fighting engine > starts a duel with the selected Black Whale fighters
+
+## `apps/web/src/lib/fighting/feitanPain.test.ts`
+
+- Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
+
+## `apps/web/src/lib/fighting/feitanScene.test.ts`
+
+- Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
 
 ## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
 
@@ -263,9 +287,17 @@ Fichiers : 532
 
 - 2D fight formats > offers distinct hit, health and hybrid victory rules
 
+## `apps/web/src/lib/fighting/franklin.test.ts`
+
+- Franklin’s Double Machine Gun > fires ten travelling Nen bullets from alternating hands for U, without duplicate emissions
+
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
 - fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
+
+## `apps/web/src/lib/fighting/hisoka.test.ts`
+
+- Hisoka’s distinct elastic techniques > loads the complete Hatsu registry
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
@@ -276,9 +308,22 @@ Fichiers : 532
 - key pose timeline > pins keys to the phase they belong to
 - fight poses > blends and sums joints, treating a missing joint as rest
 
+## `apps/web/src/lib/fighting/kurapika.test.ts`
+
+- Kurapika manga chains in the 2D engine > starts without Emperor Time and toggles with Aura + H for either player
+
+## `apps/web/src/lib/fighting/leorio.test.ts`
+
+- Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
+- Leorio’s attested techniques > lists only one Hatsu, generic physical blows, and no finisher
+
 ## `apps/web/src/lib/fighting/movesets.test.ts`
 
 - wave one movesets > gives ten fighters the complete requested move structure
+
+## `apps/web/src/lib/fighting/musse.test.ts`
+
+- Musse — handgun and Secret Window > keeps one contact Hatsu and physical normals, without an invented execution finisher
 
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
@@ -311,6 +356,10 @@ Fichiers : 532
 ## `apps/web/src/lib/fighting/techniqueContracts.test.ts`
 
 - canonical technique contracts > keeps canon separate from competitive tuning
+
+## `apps/web/src/lib/fighting/terebellum.test.ts`
+
+- Sweet Home damage transfer > does not grant an avoidance charge on activation
 
 ## `apps/web/src/lib/hunt/arena.test.ts`
 

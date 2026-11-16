@@ -26,7 +26,12 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const move = moveById(held?.moveId)
   if (!held?.loaded || held.used || !move) return false
   // Preserve the actual technique's conditions and cost at the borrower's attained state.
-  const actor: ArcadeFighter = { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id, stolenChainAbility: undefined }
+  const actor: ArcadeFighter = {
+    ...fighter,
+    id: held.source,
+    nenOwner: fighter.nenOwner ?? fighter.id,
+    stolenChainAbility: undefined,
+  }
   return canUseMovesetMove({ ...state, [side]: actor }, side, move)
 }
 
@@ -134,6 +139,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   const fighter = state[side]
   return {
     predator: predatorBusy(fighter),
+    'secret-window': Boolean(fighter.secretWindow),
     poem: Boolean(fighter.bashoPoem),
     gum: state.bungeeGum?.owner === side,
     projection: Boolean(fighter.hanzoProjection),

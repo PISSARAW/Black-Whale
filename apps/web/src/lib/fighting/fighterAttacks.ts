@@ -131,7 +131,11 @@ export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
   return remaining <= INPUT_BUFFER_FRAMES
 }
 
-function attackAuraCost(kind: AttackKind, moveId?: string, fighterId?: FighterId): number {
+function attackAuraCost(
+  kind: AttackKind,
+  moveId: string | undefined,
+  fighterId: FighterId,
+): number {
   const move = moveById(moveId)
   if (move) return move.auraCost
   if (kind === 'special') return FIGHT_HATSU_AURA_COST
@@ -166,7 +170,12 @@ function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: s
 }
 
 function canChargeAura(fighter: ArcadeFighter, kind: AttackKind): boolean {
-  return fighter.nen.mode !== 'zetsu' && !thetaPhysicalShot(fighter, kind) && !predatorNenLocked(fighter)
+  return (
+    fighter.nen.mode !== 'zetsu' &&
+    !thetaPhysicalShot(fighter, kind) &&
+    !predatorNenLocked(fighter) &&
+    !(fighter.id === 'musse' && kind === 'ranged')
+  )
 }
 
 function wantsAttackRyu(fighter: ArcadeFighter): boolean {

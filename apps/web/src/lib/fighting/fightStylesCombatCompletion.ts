@@ -40,8 +40,8 @@ const SPECS: readonly StyleSpec[] = [
   },
   {
     id: 'musse',
-    names: ['Patrouille armée', 'Armed patrol'],
-    range: [13, 20],
+    names: ['Pistolet et surveillance', 'Handgun and surveillance'],
+    range: [5, 9],
     chance: 0.56,
     threshold: 0.34,
   },

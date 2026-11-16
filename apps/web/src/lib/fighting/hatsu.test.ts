@@ -141,6 +141,11 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       expect(advance(armed, 0.4).impact).toBeNull()
       return
     }
+    if (id === 'musse') {
+      expect(armed[side].aura).toBe(auraBefore - moveForSlot('musse', 'neutralSpecial')!.auraCost)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     if (id === 'hanzo') {
       expect(armed[side].hanzoProjection).toBeDefined()
       expect(armed[side].attack).toBeNull()

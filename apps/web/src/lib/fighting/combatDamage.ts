@@ -52,20 +52,22 @@ function attackDamage(
   const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
   const guard = blocked ? 0.28 : 1
   const rawDamage = Math.round(
-      base *
-        (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
-        (options.projectileNenPower ?? (options.physicalProjectile ? 1 : nenAttackFactor(attacker, kind))) *
-        nenDamageFactor(defender, zone) *
-        (options.projectileHatsuPower ?? (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
-        hatsuDefenceFactor(defender) *
-        guard *
-        openingMultiplier,
+    base *
+      (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
+      (options.projectileNenPower ??
+        (options.physicalProjectile ? 1 : nenAttackFactor(attacker, kind))) *
+      nenDamageFactor(defender, zone) *
+      (options.projectileHatsuPower ??
+        (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
+      hatsuDefenceFactor(defender) *
+      guard *
+      openingMultiplier,
   )
   // Scale the rounded wound down so successive light hits cannot round back up.
   const damage = Math.floor(rawDamage * damageScale)
   // Ken absorbs ordinary guarded blows, but its protection has finite output.
-  const absorption = blocked && defender.nen.ken
-    ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
+  const absorption =
+    blocked && defender.nen.ken ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
   return absorption ? Math.max(0, damage - Math.round(absorption)) : Math.max(1, damage)
 }
 
@@ -109,8 +111,10 @@ function struckFighter(
     ...comboState(options),
     x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
     health: Math.max(0, options.fighter.health - options.damage),
-    aura: options.blocked && options.fighter.nen.ken
-      ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1) : options.fighter.aura,
+    aura:
+      options.blocked && options.fighter.nen.ken
+        ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1)
+        : options.fighter.aura,
     nen: contactNen(options.fighter, options.blocked),
     // Contact exposes the cloth disguise; it supplies no armour or evasion.
     textureSurprise: undefined,

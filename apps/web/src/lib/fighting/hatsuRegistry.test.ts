@@ -570,7 +570,7 @@ describe('fighter Hatsu registry', () => {
   })
 
   it('keeps fighters whose canon Hatsu cannot act in a duel purely martial', () => {
-    for (const id of ['cluck', 'beyond', 'musse', 'sayird'] as const) {
+    for (const id of ['cluck', 'beyond', 'sayird'] as const) {
       const ready = closeFight(id, 'hisoka')
       const hatsu = hatsuFor(id)
       const triggered = hatsu.onTrigger({ state: ready, side: 'player', source: id })

@@ -31,14 +31,15 @@ une vérification dans le manga avant d'être corrigés.
    doigts coupés de Franklin) ne sont modélisés nulle part dans l’état initial.
    _Franklin corrigé le 2026-11-16 : les dix doigts sectionnés sont représentés
    comme une restriction permanente ; le Hatsu produit des rafales de projectiles._
-4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck, Beyond, Musse et Sayird jouent en martial pur (`martialOnlyHatsu`). Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
+4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck, Beyond et Sayird jouent en martial pur (`martialOnlyHatsu`). Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
+   Musse utilise son pistolet physique et Secret Window comme surveillance privée au contact, sans dégâts ni esquive.
    Le README exclut « les pouvoirs qui
    exigent une préparation incompatible avec un duel ». Le déchiffrage et la fabrication de
    Combo Master restent donc exclus ; son alerte immédiate convient au duel. Le contrôle
    d’oiseaux de Cluck reste réel et retenable par Steal Chain, mais sans oiseau cible fourni
    dans ce mode ; la livraison de courrier n’est pas une restriction canonique.
    Beyond (malédiction posthume préparée), Silent Majority (dix suspects),
-   Musse et Sayird (surveillance) n'ont aucun Hatsu de duel canon. Leurs effets en jeu sont
+   Sayird (surveillance) n'ont aucun Hatsu de duel canon. Leurs effets en jeu sont
    inventés. **Décision à prendre :** les garder en martial pur, étiqueter honnêtement
    `gameplay-abstraction`, ou les retirer du roster.
 5. **Une capacité volée reste à son propriétaire.** _Corrigé pour Skill Hunter le 2026-11-16 ; reste à faire pour Steal Chain._ Canon (Skill Hunter, Steal Chain) : la victime
@@ -112,7 +113,7 @@ une vérification dans le manga avant d'être corrigés.
 | Cluck | Coups martiaux ; contrôle d’oiseaux retenable par Steal Chain | Contrôle d’oiseaux attesté pour distribuer des bulletins de vote ; conditions complètes inconnues | D (fait) | Corrigé le 2026-11-16 : pouvoir réel distinct des coups, sans restriction au courrier. Aucun oiseau fourni dans ce duel, aucun effet de volée inventé ; rétention après contact et drainage, sans chargement de Dolphin ni verrouillage d’Emperor Time. |
 | Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Longhi | Contrat volontaire, prêt à usage unique et sanction de Zetsu | Moonlight Act : termes expliqués et deux signatures volontaires (ch. 401) | D (fait) | Corrigé le 2026-11-16 : proposition, acceptation ou refus explicites ; aucune entrave sur touche ni finisher offensif. Les deux signataires subissent Zetsu en cas de violation. La trêve de cinq secondes et la sanction limitée au match sont des adaptations déclarées. |
-| Musse           | Une esquive                        | Secret Window : hibou espion                                                                 | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
+| Musse | Pistolet et surveillance privée | Secret Window : hibou espion | D (fait) | Pistolet physique et surveillance au contact, sans dégâts ni esquive. |
 | Padaille        | ×1,25 dégâts pendant 3 s           | Bras-outil **au hasard** : marteau, foret ou hache                                           | B        | Piste simple : tirage déterministe de l'outil, trois effets distincts. |
 | Sayird          | Martial ; Little Eye retenable par Steal Chain | Contrôle un petit animal réel (jusqu’au hamster), partage vue et ouïe ; exclut les créatures matérialisées par le Nen | D (fait) | Corrigé le 2026-11-16 : Little Eye distinct des coups, volable par Kurapika, sans cible ni effet inventé en duel. |
 | Silent Majority | 3 marques → 22 dégâts              | Dix suspects, quatre serpents, retour si révoqué sans victime                                | Retiré   | Retiré du roster le 2026-11-16 : aucune aptitude martiale connue.      |
@@ -139,7 +140,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 ## Ordre de traitement proposé
 
 1. ~~Corriger le bug Hinrigh~~ — fait.
-2. **Constat 4 : traité.** Cluck, Beyond, Musse et Sayird jouent en martial pur ; Furykov conserve l’alerte informative de Combo Master ;
+2. **Constat 4 : traité.** Cluck, Beyond et Sayird jouent en martial pur ; Furykov conserve l’alerte informative de Combo Master ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
 3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), ~~Gel~~, ~~Longhi~~, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc

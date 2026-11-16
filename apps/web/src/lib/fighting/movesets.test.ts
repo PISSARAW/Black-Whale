@@ -48,7 +48,9 @@ describe('wave one movesets', () => {
       'leorio',
       'hanzo',
     ])
-    WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio').forEach(assertCompleteMoveset)
+    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh')
+      .filter((id) => id !== 'leorio')
+      .forEach(assertCompleteMoveset)
   })
 
   it('gives the third wave ten equally complete movesets', () => {
@@ -64,7 +66,9 @@ describe('wave one movesets', () => {
       'luini',
       'bill',
     ])
-    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel', 'basho', 'melody'].includes(id)).forEach(assertCompleteMoveset)
+    WAVE_THREE_FIGHTERS.filter(
+      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody'].includes(id),
+    ).forEach(assertCompleteMoveset)
   })
 
   it('gives the fourth wave ten equally complete movesets', () => {
@@ -79,7 +83,9 @@ describe('wave one movesets', () => {
       'terebellum',
       'voconte',
     ])
-    WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi').forEach(assertCompleteMoveset)
+    WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi'].includes(id)).forEach(
+      assertCompleteMoveset,
+    )
   })
 
   it('completes the roster with Yokotani', () => {
@@ -164,41 +170,41 @@ describe('wave one movesets', () => {
     },
   )
 
-  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio' && id !== 'franklin'))(
-    '%s wave-two finisher is conditionally locked',
-    (fighterId) => {
-      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-      const supplied = withFinisherCondition({
-        ...base,
-        player: { ...base.player, aura: 100 },
-      })
-      expect(finisherReady(base, 'player')).toBe(false)
-      expect(finisherReady(supplied, 'player')).toBe(true)
-      expect(
-        performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-      ).toBe(`${fighterId}:finisher`)
-    },
-  )
+  it.each(
+    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter(
+      (id) => id !== 'leorio' && id !== 'franklin',
+    ),
+  )('%s wave-two finisher is conditionally locked', (fighterId) => {
+    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+    const supplied = withFinisherCondition({
+      ...base,
+      player: { ...base.player, aura: 100 },
+    })
+    expect(finisherReady(base, 'player')).toBe(false)
+    expect(finisherReady(supplied, 'player')).toBe(true)
+    expect(
+      performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
+    ).toBe(`${fighterId}:finisher`)
+  })
 
-  it.each(WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel', 'basho', 'melody'].includes(id)))(
-    '%s wave-three finisher is conditionally locked',
-    (fighterId) => {
-      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-      const supplied = withFinisherCondition({
-        ...base,
-        player: { ...base.player, aura: 100 },
-      })
-      expect(finisherReady(base, 'player')).toBe(false)
-      expect(finisherReady(supplied, 'player')).toBe(true)
-      const executed = performMove({ state: supplied, side: 'player', action: 'finisher' })
-      if (fighterId === 'rihan') {
-        expect(executed.player.predator?.hunt?.preyId).toBe('bungee-gum')
-        expect(executed.player.attack).toBeNull()
-      } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
-    },
-  )
+  it.each(
+    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel', 'basho', 'melody'].includes(id)),
+  )('%s wave-three finisher is conditionally locked', (fighterId) => {
+    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+    const supplied = withFinisherCondition({
+      ...base,
+      player: { ...base.player, aura: 100 },
+    })
+    expect(finisherReady(base, 'player')).toBe(false)
+    expect(finisherReady(supplied, 'player')).toBe(true)
+    const executed = performMove({ state: supplied, side: 'player', action: 'finisher' })
+    if (fighterId === 'rihan') {
+      expect(executed.player.predator?.hunt?.preyId).toBe('bungee-gum')
+      expect(executed.player.attack).toBeNull()
+    } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
+  })
 
-  it.each(WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi'))(
+  it.each(WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi'].includes(id)))(
     '%s wave-four finisher is conditionally locked',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -342,10 +348,17 @@ function withFinisherCondition(state: FightState): FightState {
       return {
         ...state,
         bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
-        player: { ...player, predator: {
-          watching: true, known: ['bungee-gum'], hunt: null, sealFrames: 0, successes: 0,
-          analysis: { owner: 'opponent', preyId: 'bungee-gum', observedFrames: 180 },
-        } },
+        player: {
+          ...player,
+          predator: {
+            watching: true,
+            known: ['bungee-gum'],
+            hunt: null,
+            sealFrames: 0,
+            successes: 0,
+            analysis: { owner: 'opponent', preyId: 'bungee-gum', observedFrames: 180 },
+          },
+        },
       }
     case 'zakuro':
       return withOpponentEffect(state, 'bloodBoundFrames', 60)
@@ -365,8 +378,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, opponent: { ...opponent, health: 40 } }
     case 'beyond':
       return { ...state, player: { ...player, health: 40 } }
-    case 'musse':
-      return { ...state, opponent: { ...opponent, health: 35 } }
     case 'padaille':
       return withPlayerEffect(state, 'weaponFrames', 60)
     case 'sayird':

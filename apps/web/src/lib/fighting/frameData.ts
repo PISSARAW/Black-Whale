@@ -1,4 +1,5 @@
 import { isMelodyMusicAttack } from './melodyRules'
+import { secretWindowUtility } from './secretWindow'
 import { comboMasterUtilityMove } from './comboMasterAvailability'
 import { isErigeronAttack } from './billSupport'
 import { benjaminRangedData } from './benjaminWeapon'
@@ -204,6 +205,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (secretWindowUtility(fighter)) return null
   fighter = dolphinActor(fighter)
   if (utilityAttack(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')

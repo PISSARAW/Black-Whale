@@ -4,6 +4,7 @@ import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
+import { musseHatsu } from './musse'
 import { benjaminHatsu } from './benjamin'
 import { bashoHatsu } from './basho'
 import { billHatsu } from './bill'
@@ -99,7 +100,7 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   zhanglei: () => zhangleiHatsu,
   gidal: () => gidalHatsu,
   longhi: () => longhiHatsu,
-  musse: () => martialOnlyHatsu('musse'),
+  musse: () => musseHatsu,
   padaille: () => padailleHatsu,
   tubeppa: () => tubeppaHatsu,
   tyson: () => tysonHatsu,

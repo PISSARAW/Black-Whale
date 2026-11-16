@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
   import type { FightInput } from '$lib/fighting/types'
@@ -11,6 +12,7 @@
   import { canUseRangedAttack, projectileProfile, rangedAuraCost } from '$lib/fighting/projectiles'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightBenjaminStatus from './FightBenjaminStatus.svelte'
+  import FightSecretWindowStatus from './FightSecretWindowStatus.svelte'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
   import FightCamillaStatus from './FightCamillaStatus.svelte'
@@ -51,12 +53,21 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
+      <FightPreparationStatus {state} {side} {language} {onControl} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}
-        <FightNenControls {fighter} {language} {detailed} {showControls} {onAura} {onEmperor} {onControl} />
+        <FightNenControls
+          {fighter}
+          {language}
+          {detailed}
+          {showControls}
+          {onAura}
+          {onEmperor}
+          {onControl}
+        />
         <div class="ability-readiness">
           <span
             class:ready={canUseRangedAttack(fighter)}
@@ -71,15 +82,15 @@
                 : 'unavailable'}
           </span>
           {#if fighter.id !== 'camilla'}
-          <span class:ready={special.ready} title={special.hint}
-            >L · {special.label} · {special.ready
-              ? language === 'fr'
-                ? 'prêt'
-                : 'ready'
-              : language === 'fr'
-                ? 'indisponible'
-                : 'unavailable'}</span
-          >
+            <span class:ready={special.ready} title={special.hint}
+              >L · {special.label} · {special.ready
+                ? language === 'fr'
+                  ? 'prêt'
+                  : 'ready'
+                : language === 'fr'
+                  ? 'indisponible'
+                  : 'unavailable'}</span
+            >
           {/if}
           {#if moveset && finisher}
             <span
@@ -119,8 +130,9 @@
       <FightBenjaminStatus {state} {side} {language} {detailed} />
       <FightChrolloStatus {state} {side} {language} {detailed} />
       <FightPredatorStatus {state} {side} {language} />
+      <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
-      <FightOutsideDuelStatus {fighter} {language} />
+      {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

@@ -16,6 +16,7 @@ export function chooseMovesetAttack(
   if (finisherReady(state, side) && roll > 0.72 && finisherInRange(state, gap))
     return moveForSlot(fighter.id, 'finisher')
   if (fighter.id === 'benjamin' && gap > 18) return null
+  if (fighter.id === 'musse' && gap > 9) return null
   const slots = fighterSlots(state, roll, gap)
   return (
     slots
@@ -43,6 +44,7 @@ function finisherInRange(state: FightState, gap: number): boolean {
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
   if (state.opponent.id === 'rihan') return predatorAiSlots(state)
+  if (state.opponent.id === 'musse') return musseSlots(state, gap)
   if (state.opponent.id === 'tserriednich')
     return gap > 10
       ? ['forwardHeavy', 'standingHeavy']
@@ -50,4 +52,10 @@ function fighterSlots(state: FightState, roll: number, gap: number): readonly Mo
   if (state.opponent.id === 'benjamin') return benjaminAiSlots(state, roll, gap)
   if (state.opponent.id === 'chrollo') return chrolloAiSlots(state, roll, gap)
   return candidateSlots(roll, gap)
+}
+
+function musseSlots(state: FightState, gap: number): readonly MoveSlot[] {
+  return gap <= 6 && !state.opponent.secretWindow
+    ? ['neutralSpecial', 'standingLight']
+    : ['standingLight', 'forwardLight', 'standingHeavy']
 }

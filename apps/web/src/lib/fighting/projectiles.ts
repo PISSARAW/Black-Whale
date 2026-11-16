@@ -65,6 +65,18 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 8,
     size: [0.85, 0.45],
   }),
+  musse: {
+    ...projectile({
+      matter: 'object',
+      labels: ['Pistolet', 'Handgun'],
+      shape: 'bullet',
+      colour: '#e0d4b5',
+      speed: 84,
+      damage: 10,
+      size: [0.45, 0.2],
+    }),
+    y: 11.4,
+  },
   benjamin: projectile({
     matter: 'object',
     labels: ['Mitraillette · Rafale', 'Machine Gun · Burst'],
@@ -210,12 +222,13 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
+  if (fighter.id === 'musse') return true
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }
 
 export function rangedAuraCost(id: FighterId): number {
   if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (['benjamin', 'theta', 'camilla'].includes(id)) return 0
+  if (['benjamin', 'theta', 'camilla', 'musse'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 
@@ -238,7 +251,8 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     return state
   }
   const profile = projectileProfile(fighter.id)
-  const aim = fighter.id === 'theta' ? thetaShotAim(fighter) : { y: profile.y, targetZone: 'torso' as const }
+  const aim =
+    fighter.id === 'theta' ? thetaShotAim(fighter) : { y: profile.y, targetZone: 'torso' as const }
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     owner: side,
@@ -290,9 +304,11 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const projectile = advanceProjectileNen(held.remotePunch
-      ? advanceRemotePunch(held)
-      : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 })
+    const projectile = advanceProjectileNen(
+      held.remotePunch
+        ? advanceRemotePunch(held)
+        : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 },
+    )
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

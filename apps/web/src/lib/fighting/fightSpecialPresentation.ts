@@ -57,8 +57,22 @@ function specialHint(options: {
   ready: boolean
   label: string
 }): string {
-  const { state, language, ready, label } = options
+  const { state, language } = options
+  if (state.player.id === 'musse' && state.player.secretWindow)
+    return language === 'fr'
+      ? 'Secret Window · surveillance active'
+      : 'Secret Window · monitoring active'
   if (isLsdfMove(state.player)) return lsdfHint(state, 'player', language)
+  return ordinarySpecialHint(options)
+}
+
+function ordinarySpecialHint(options: {
+  state: FightState
+  language: 'fr' | 'en'
+  ready: boolean
+  label: string
+}): string {
+  const { state, language, ready, label } = options
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   if (!movesetFor(state.player.id)) return `${label} · ${FIGHT_HATSU_AURA_COST} aura`
   if (ready) return `${label} · ${move?.auraCost ?? 40} aura`

@@ -1,3 +1,4 @@
+import { addMussePistol } from './mussePistol'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { shapeFightEyes } from './fightFigureEyes'
@@ -84,6 +85,7 @@ function addFighterEquipment(
     addFranklinHands({ THREE, glow, model })
   }
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
 }
 

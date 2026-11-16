@@ -8,7 +8,7 @@ export function isFirearmProjectile(projectile: FightProjectile): boolean {
   return (
     projectile.matter === 'object' &&
     projectile.shape === 'bullet' &&
-    ['theta', 'benjamin', 'camilla', 'feitan'].includes(projectile.fighterId)
+    ['theta', 'benjamin', 'camilla', 'feitan', 'musse'].includes(projectile.fighterId)
   )
 }
 

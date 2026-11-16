@@ -23,11 +23,7 @@ import {
   isAntiAir,
   otherSide,
 } from './frameData'
-import {
-  consumeHatsuAvoidance,
-  hatsuAvoidsImpact,
-  resolveHatsuImpact,
-} from './hatsu'
+import { consumeHatsuAvoidance, hatsuAvoidsImpact, resolveHatsuImpact } from './hatsu'
 import { focusGuardRyu, isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
@@ -40,19 +36,9 @@ import {
   strikeProjectileDefender,
   type ImpactDefence,
 } from './combatDamage'
-import {
-  addJudgedKnockdown,
-  isJudgedKnockdown,
-  scoreJudgedImpact,
-} from './towerJudging'
+import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
 import type { ProjectileHit } from './projectiles'
-import type {
-  ArcadeFighter,
-  FightNenZone,
-  FightSide,
-  FightState,
-  FighterId,
-} from './types'
+import type { ArcadeFighter, FightNenZone, FightSide, FightState, FighterId } from './types'
 
 const GROUND = 0
 const PARRY_WINDOW_FRAMES = 6
@@ -249,7 +235,11 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
-  const defence = prepareDefence(defender, hit.projectile.targetZone, projectileRead(hit.projectile))
+  const defence = prepareDefence(
+    defender,
+    hit.projectile.targetZone,
+    projectileRead(hit.projectile),
+  )
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = comboScale(comboHits)
@@ -375,9 +365,17 @@ function attackCanResolve(
   return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
 }
 
-function parryActive(fighter: ArcadeFighter, blocked: boolean, read: { attacker?: ArcadeFighter; bonus: number }): boolean {
-  return blocked && fighter.guardFrames > 0 &&
-    fighter.guardFrames <= PARRY_WINDOW_FRAMES + read.bonus + melodyParryBonus(fighter, read.attacker)
+function parryActive(
+  fighter: ArcadeFighter,
+  blocked: boolean,
+  read: { attacker?: ArcadeFighter; bonus: number },
+): boolean {
+  return (
+    blocked &&
+    fighter.guardFrames > 0 &&
+    fighter.guardFrames <=
+      PARRY_WINDOW_FRAMES + read.bonus + melodyParryBonus(fighter, read.attacker)
+  )
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
@@ -403,7 +401,6 @@ function finishAfterImpact(
     cause,
   })
 }
-
 
 function throwImmune(fighter: ArcadeFighter): boolean {
   if (fighter.hanzoProjection) return false
@@ -445,9 +442,16 @@ function resolveTrade(original: FightState, first: FightState): FightState {
 }
 
 function strikeRead(attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> }) {
-  return { attacker, concealed: attacker.attack.concealed && Boolean(attacker.attack.hatsuSource), position: attacker }
+  return {
+    attacker,
+    concealed: attacker.attack.concealed && Boolean(attacker.attack.hatsuSource),
+    position: attacker,
+  }
 }
 
 function projectileRead(projectile: ProjectileHit['projectile']) {
-  return { concealed: Boolean(projectile.concealed) && projectile.matter === 'nen', position: projectile }
+  return {
+    concealed: Boolean(projectile.concealed) && projectile.matter === 'nen',
+    position: projectile,
+  }
 }

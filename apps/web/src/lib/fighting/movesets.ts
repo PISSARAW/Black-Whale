@@ -24,6 +24,7 @@ import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
 import { tuneChrolloMoveset } from './chrolloMoveset'
 import { tuneHisokaMoveset } from './hisokaMoveset'
 import { remotePunchAvailable } from './leorioAttack'
+import { musseMoveAvailable } from './secretWindow'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
@@ -109,7 +110,8 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho'].includes(fighter.id) && action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse'].includes(fighter.id) &&
+    action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -141,6 +143,7 @@ export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boo
     return predatorNenAvailable(fighter)
   const melody = melodyMoveResources(fighter, move.kind, move.id)
   if (melody !== null) return melody
+  if (!musseMoveAvailable(fighter, move.id)) return false
   const future = futureMoveResources(fighter, move.id)
   if (future !== null) return future
   return remainingMoveResources(fighter, move)
@@ -264,7 +267,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,
-  musse: (state, side) => opponentOf(state, side).health <= 35,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),

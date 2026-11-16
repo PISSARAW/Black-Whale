@@ -32,6 +32,23 @@ export type Graph = {
   muffle: BiquadFilterNode
   air: BiquadFilterNode
   reverbSend: GainNode
+  /** A mode-owned destination, already placed and reverberated. */
+  oneShotTarget?: AudioNode
+  /** Optional lifecycle owner for one-shots borrowed by an isolated mode. */
+  registerSource?: (source: AudioScheduledSourceNode) => void
+}
+
+let routedEffectsGraph: Graph | null = null
+
+/** Reuse the ship's sound recipes inside a mode's own mix, synchronously. */
+export function withHatsuAudioGraph<T>(target: Graph, play: () => T): T {
+  const previous = routedEffectsGraph
+  routedEffectsGraph = target
+  try {
+    return play()
+  } finally {
+    routedEffectsGraph = previous
+  }
 }
 
 let graph: Graph | null = null
@@ -177,6 +194,7 @@ export function applyMuffle(g: Graph, on: boolean, seconds: number) {
  * second graph.
  */
 export function hatsuAudioGraph(): Graph | null {
+  if (routedEffectsGraph) return routedEffectsGraph
   if (typeof window === 'undefined') return null
   if (!effectsGraph) {
     // A click must never fail because the browser has no Web Audio; the score

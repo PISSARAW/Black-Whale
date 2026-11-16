@@ -30,6 +30,7 @@
   export let onEmperor: () => void = () => {}
   export let onControl: (key: keyof FightInput, active: boolean) => void
   export let training = false
+  export let paused = false
 
   $: playerDefinition = fighterDefinition(state.player.id)
   $: moveset = movesetFor(state.player.id)
@@ -61,8 +62,8 @@
   }
 </script>
 
+<FightAudio {state} {language} {paused} />
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
-  <FightAudio {state} />
   <FightHud {state} {language} />
   <FightLsdfStatus {state} {language} />
   <FightNenControls

@@ -1,80 +1,187 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { isThrowTech } from '$lib/fighting/reactionMotion'
-  import type { FightImpact, FightState } from '$lib/fighting/types'
+  import { sharedAudioContext } from '$lib/audio/context'
+  import {
+    createFightAudioDirector,
+    DEFAULT_FIGHT_AUDIO,
+    type FightAudioDirector,
+  } from '$lib/fighting/audio/director'
+  import { readFightAudioSettings, saveFightAudioSettings } from '$lib/fighting/audio/settings'
+  import type { FightState } from '$lib/fighting/types'
 
   export let state: FightState
+  export let language: 'fr' | 'en' = 'fr'
+  export let paused = false
 
-  let context: AudioContext | null = null
-  let lastImpact = state.impact?.sequence ?? 0
-  let lastThrowTech = false
-  let lastAura = `${state.player.nen.mode}:${state.opponent.nen.mode}`
+  let director: FightAudioDirector | null = null
+  let settings = { ...DEFAULT_FIGHT_AUDIO }
+  let hidden = false
+  let mounted = false
+  let unavailable = false
 
-  onMount(() => {
-    const unlock = () => {
-      context ??= new AudioContext()
-      void context.resume()
-    }
-    window.addEventListener('pointerdown', unlock, { passive: true })
-    window.addEventListener('keydown', unlock)
-    return () => {
-      window.removeEventListener('pointerdown', unlock)
-      window.removeEventListener('keydown', unlock)
-      void context?.close()
-    }
-  })
+  $: if (mounted) director?.update(state, { paused: paused || hidden, settings })
 
-  $: syncImpact(state.impact)
-  $: syncThrowTech(isThrowTech(state))
-  $: syncAura(`${state.player.nen.mode}:${state.opponent.nen.mode}`)
-
-  function syncImpact(impact: FightImpact | null): void {
-    if (!impact || impact.sequence === lastImpact) return
-    lastImpact = impact.sequence
-    if (impact.blocked || impact.parried) {
-      tone(180, 0.075, 0.055)
-      tone(420, 0.045, 0.025)
+  function unlock(): void {
+    if (settings.muted || hidden) return
+    const context = sharedAudioContext()
+    if (!context) {
+      unavailable = true
       return
     }
-    playStrike(impact)
-  }
-
-  function playStrike(impact: FightImpact): void {
-    const heavy = impact.kind === 'heavy' || impact.kind === 'special' || impact.knockdown
-    tone(heavy ? 72 : 105, heavy ? 0.13 : 0.075, heavy ? 0.09 : 0.055)
-    if (heavy) tone(48, 0.18, 0.065)
-  }
-
-  function syncThrowTech(active: boolean): void {
-    if (active && !lastThrowTech) {
-      tone(320, 0.08, 0.05)
-      tone(540, 0.11, 0.04)
+    const start = () => {
+      if (!mounted || hidden || settings.muted) return
+      director ??= createFightAudioDirector(state)
+      director?.update(state, { paused, settings })
     }
-    lastThrowTech = active
+    if (context.state === 'suspended')
+      void context
+        .resume()
+        .then(start)
+        .catch(() => {})
+    else start()
   }
 
-  function syncAura(value: string): void {
-    if (value === lastAura) return
-    lastAura = value
-    tone(110, 0.28, 0.025)
-    tone(220, 0.22, 0.018)
+  function remember(): void {
+    saveFightAudioSettings(settings)
+    if (!settings.muted) unlock()
   }
 
-  function tone(frequency: number, duration: number, volume: number): void {
-    if (!context) return
-    const oscillator = context.createOscillator()
-    const gain = context.createGain()
-    const now = context.currentTime
-    oscillator.type = frequency < 100 ? 'sawtooth' : 'triangle'
-    oscillator.frequency.setValueAtTime(frequency, now)
-    oscillator.frequency.exponentialRampToValueAtTime(
-      Math.max(35, frequency * 0.62),
-      now + duration,
-    )
-    gain.gain.setValueAtTime(volume, now)
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration)
-    oscillator.connect(gain).connect(context.destination)
-    oscillator.start(now)
-    oscillator.stop(now + duration)
-  }
+  const controlKey = (event: KeyboardEvent) => event.stopPropagation()
+
+  onMount(() => {
+    settings = readFightAudioSettings()
+    hidden = document.hidden
+    mounted = true
+    const visibility = () => {
+      hidden = document.hidden
+      director?.update(state, { paused: paused || hidden, settings })
+    }
+    if (sharedAudioContext()?.state === 'running') unlock()
+    window.addEventListener('pointerdown', unlock, { passive: true })
+    window.addEventListener('keydown', unlock)
+    document.addEventListener('visibilitychange', visibility)
+    return () => {
+      mounted = false
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+      document.removeEventListener('visibilitychange', visibility)
+      director?.dispose()
+      director = null
+    }
+  })
 </script>
+
+<div class="fight-audio">
+  <button
+    type="button"
+    aria-pressed={!settings.muted}
+    onkeydown={controlKey}
+    onclick={() => {
+      settings = { ...settings, muted: !settings.muted }
+      remember()
+    }}
+  >
+    {language === 'fr' ? 'Son' : 'Sound'} · {settings.muted ? 'OFF' : 'ON'}
+  </button>
+  <details>
+    <summary onkeydown={controlKey}>{language === 'fr' ? 'Mixage' : 'Mix'}</summary>
+    <div class="mix-panel">
+      <label
+        >{language === 'fr' ? 'Coups et techniques' : 'Strikes and techniques'}
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          bind:value={settings.effects}
+          onchange={remember}
+          onkeydown={controlKey}
+        />
+      </label>
+      <label
+        >{language === 'fr' ? 'Ambiance du stage' : 'Stage ambience'}
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          bind:value={settings.ambience}
+          onchange={remember}
+          onkeydown={controlKey}
+        />
+      </label>
+      <label
+        >{language === 'fr' ? 'Tension et tic-tac' : 'Tension and ticking'}
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          bind:value={settings.tension}
+          onchange={remember}
+          onkeydown={controlKey}
+        />
+      </label>
+    </div>
+  </details>
+  {#if unavailable}<span>{language === 'fr' ? 'Audio indisponible' : 'Audio unavailable'}</span
+    >{/if}
+</div>
+
+<style>
+  .fight-audio {
+    position: relative;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: fit-content;
+    min-height: 2.5rem;
+    padding: 0.3rem 0.65rem;
+    color: #c6d4dc;
+    background: #0a1017;
+    font: 500 0.68rem/1.4 var(--font-mono);
+  }
+  button,
+  summary {
+    cursor: pointer;
+    color: inherit;
+  }
+  button {
+    border: 1px solid #3a4c59;
+    border-radius: 2px;
+    background: #111d26;
+    padding: 0.3rem 0.6rem;
+    font: inherit;
+  }
+  button[aria-pressed='true'] {
+    color: #ecd088;
+    border-color: #8b7541;
+  }
+  button:focus-visible,
+  summary:focus-visible,
+  input:focus-visible {
+    outline: 2px solid #ecd088;
+    outline-offset: 3px;
+  }
+  .mix-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: grid;
+    gap: 0.65rem;
+    width: min(18rem, 80vw);
+    padding: 0.9rem;
+    border: 1px solid #3a4c59;
+    background: #0a1017;
+    box-shadow: 0 12px 30px #0009;
+  }
+  label {
+    display: grid;
+    gap: 0.35rem;
+  }
+  input {
+    width: 100%;
+    accent-color: #d2b56e;
+  }
+</style>

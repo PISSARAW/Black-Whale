@@ -172,6 +172,7 @@ function roomSend(context: AudioContext): AudioNode | null {
 interface Sink {
   context: AudioContext
   muffle: AudioNode
+  oneShotTarget?: AudioNode
 }
 
 function buildTarget(g: Sink, place: Place | null): AudioNode {
@@ -227,6 +228,7 @@ function buildTarget(g: Sink, place: Place | null): AudioNode {
  * wall, panner, room — built once and shared by every oscillator of the cast.
  */
 export function emissionTarget(g: Sink): AudioNode {
+  if (g.oneShotTarget) return g.oneShotTarget
   const held = emission?.targets.get(g.muffle)
   if (held) return held
   const built = buildTarget(g, emission?.place ?? null)

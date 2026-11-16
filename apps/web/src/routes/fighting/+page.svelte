@@ -366,6 +366,7 @@
       <FightStage
         {state}
         {language}
+        {paused}
         stageId={state.environment.stageId}
         onAttack={attack}
         onThrow={throwAttack}

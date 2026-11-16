@@ -1,3 +1,4 @@
+import { createVisitHatsuModel } from './visitHatsuModel'
 import type { FightState } from './types'
 
 interface PredatorSceneOptions {
@@ -8,43 +9,28 @@ interface PredatorSceneOptions {
   worldY: (y: number) => number
 }
 
-/** Abstract countermeasure silhouette: the attested Salé-salé design is not universal. */
+/** The visit's attested Salé-salé appearance is the duel's visual reference, not a new universal anatomy. */
 export function createPredatorScene(options: PredatorSceneOptions) {
-  const { THREE, scene, worldX, worldY } = options
-  const geometry = new THREE.ConeGeometry(0.065, 0.23, 4)
-  const ring = new THREE.TorusGeometry(0.3, 0.025, 5, 16)
-  const material = options.glow(0xb8c79a, 0.85)
   const models = ['player', 'opponent'].map(() => {
-    const root = new THREE.Group()
-    root.name = 'predator-countermeasure-silhouette'
-    root.add(new THREE.Mesh(ring, material))
-    for (let index = 0; index < 8; index++) {
-      const tooth = new THREE.Mesh(geometry, material)
-      const angle = (index * Math.PI) / 4
-      tooth.position.set(Math.sin(angle) * 0.22, Math.cos(angle) * 0.22, 0)
-      tooth.rotation.z = -angle + Math.PI
-      root.add(tooth)
-    }
-    root.visible = false
-    scene.add(root)
-    return root
+    const model = createVisitHatsuModel(options.THREE, { model: 'predator' })
+    model.root.userData.referenceVariant = 'predator-salesale'
+    model.fit({ height: 0.9, width: 1.05 })
+    model.root.visible = false
+    options.scene.add(model.root)
+    return model
   })
   return {
     sync(state: FightState, seconds: number) {
       for (const [index, side] of (['player', 'opponent'] as const).entries()) {
         const hunt = state[side].predator?.hunt
         const model = models[index]
-        model.visible = Boolean(hunt)
+        model.root.visible = Boolean(hunt)
         if (!hunt) continue
-        model.position.set(worldX(hunt.x), worldY(hunt.y), 0.3)
-        model.rotation.z = seconds * 0.9
-        model.scale.setScalar(1 + Math.sin(seconds * 9) * 0.12)
+        model.root.position.set(options.worldX(hunt.x), options.worldY(hunt.y), 0.3)
+        model.root.rotation.z = Math.sin(seconds * 5) * 0.06
+        model.body.scale.setScalar(1 + Math.sin(seconds * 9) * 0.035)
       }
     },
-    dispose() {
-      models.forEach((model) => scene.remove(model))
-      geometry.dispose()
-      ring.dispose()
-    },
+    dispose() { models.forEach((model) => model.dispose()) },
   }
 }

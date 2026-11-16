@@ -1,3 +1,4 @@
+import { createVisitHatsuModel } from './visitHatsuModel'
 import { sleepingBody } from './hanzoProjection'
 import { secretWindowVisibleTo } from './secretWindow'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -6,30 +7,14 @@ import type { FightSide, FightState } from './types'
 /** The default scene is P1's view: an enemy observer's private bird stays invisible. */
 export function createSecretWindowScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
-  const aura = new THREE.MeshBasicMaterial({ color: 0xe5d9bc, transparent: true, opacity: 0.85 })
-  const dark = new THREE.MeshBasicMaterial({ color: 0x30251b })
-  const bodyShape = new THREE.SphereGeometry(0.13, 9, 6)
-  const headShape = new THREE.SphereGeometry(0.11, 9, 6)
-  const eyeShape = new THREE.SphereGeometry(0.027, 6, 4)
-  const wingShape = new THREE.BoxGeometry(0.06, 0.17, 0.025)
   const makeOwl = (side: FightSide) => {
-    const owl = new THREE.Group()
+    const model = createVisitHatsuModel(THREE, { model: 'secret-window' })
+    model.fit({ height: 0.48, width: 0.34 })
+    const owl = model.root
     owl.name = `secret-window-${side}`
-    const body = new THREE.Mesh(bodyShape, aura)
-    body.scale.set(0.8, 1.2, 0.7)
-    const head = new THREE.Mesh(headShape, aura)
-    head.position.y = 0.15
-    owl.add(body, head)
-    const wings = [-1, 1].map((sign) => {
-      const eye = new THREE.Mesh(eyeShape, dark)
-      eye.position.set(sign * 0.047, 0.17, 0.09)
-      const wing = new THREE.Mesh(wingShape, aura)
-      wing.position.set(sign * 0.13, 0, 0)
-      owl.add(eye, wing)
-      return wing
-    })
+    owl.rotation.y = Math.PI
     scene.add(owl)
-    return { owl, wings }
+    return { owl, dispose: model.dispose }
   }
   const owls = { player: makeOwl('player'), opponent: makeOwl('opponent') }
   const syncSide = (state: FightState, side: FightSide, seconds: number) => {
@@ -46,9 +31,7 @@ export function createSecretWindowScene(options: EffectSceneOptions): FighterEff
       worldY(target.y + height) + Math.sin(seconds * 4) * 0.035,
       0.25,
     )
-    model.wings.forEach((wing, index) => {
-      wing.rotation.z = (index === 0 ? -1 : 1) * (0.2 + Math.sin(seconds * 5) * 0.08)
-    })
+    model.owl.rotation.z = Math.sin(seconds * 5) * 0.04
   }
   return {
     sync: (state, seconds) => {
@@ -56,10 +39,8 @@ export function createSecretWindowScene(options: EffectSceneOptions): FighterEff
       syncSide(state, 'opponent', seconds)
     },
     dispose: () => {
-      scene.remove(owls.player.owl, owls.opponent.owl)
-      for (const shape of [bodyShape, headShape, eyeShape, wingShape]) shape.dispose()
-      aura.dispose()
-      dark.dispose()
+      owls.player.dispose()
+      owls.opponent.dispose()
     },
   }
 }

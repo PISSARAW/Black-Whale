@@ -1,3 +1,5 @@
+import { CANON } from '$lib/tour/humanProportions'
+import { createVisitHatsuModel } from './visitHatsuModel'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
 
@@ -9,9 +11,6 @@ interface FeitanSceneOptions extends EffectSceneOptions {
 export function createFeitanScene(options: FeitanSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const geometries: import('three').BufferGeometry[] = []
-  const cloth = new THREE.MeshBasicMaterial({ color: '#231e2a', side: THREE.DoubleSide })
-  const lining = new THREE.MeshBasicMaterial({ color: '#85374e', side: THREE.DoubleSide })
-  const bone = new THREE.MeshBasicMaterial({ color: '#e8d6b5' })
   const core = new THREE.MeshBasicMaterial({ color: '#fff3b4', fog: false })
   const flame = new THREE.MeshBasicMaterial({
     color: '#ff741c',
@@ -41,26 +40,13 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     return new THREE.Mesh(geometry, material)
   }
   const build = (side: FightSide) => {
-    const armour = new THREE.Group()
+    const outfit = createVisitHatsuModel(THREE, { model: 'pain-packer' })
+    outfit.fit({ height: 1.8 })
+    // The visit garment is authored around the hood, with the coat extending below it.
+    outfit.body.position.set(0, 0, 0)
+    const armour = outfit.root
     armour.name = `pain-packer:${side}`
-    const cape = mesh(new THREE.CylinderGeometry(0.3, 0.64, 1.05, 6, 1, true), cloth)
-    cape.position.y = 0.77
-    const collar = mesh(new THREE.CylinderGeometry(0.31, 0.35, 0.25, 6), lining)
-    collar.position.y = 1.33
-    const hood = mesh(new THREE.ConeGeometry(0.3, 0.62, 5), lining)
-    hood.position.y = 1.65
-    const mask = mesh(new THREE.SphereGeometry(0.13, 8, 6), bone)
-    mask.position.set(0, 1.48, 0.26)
-    mask.scale.set(0.8, 1.15, 0.45)
-    armour.add(cape, collar, hood, mask)
-    for (const sign of [-1, 1]) {
-      const cross = mesh(new THREE.BoxGeometry(0.055, 0.52, 0.025), bone)
-      cross.position.set(0, 1.04, 0.36)
-      cross.rotation.z = sign * 0.8
-      const eye = mesh(new THREE.SphereGeometry(0.027, 6, 4), cloth)
-      eye.position.set(sign * 0.045, 1.5, 0.315)
-      armour.add(cross, eye)
-    }
+    armour.position.y = CANON.headY
     const sun = new THREE.Group()
     sun.name = `rising-sun:${side}`
     const sphere = mesh(new THREE.SphereGeometry(1, 24, 16), core)
@@ -71,7 +57,7 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     boundary.add(mesh(new THREE.CircleGeometry(1, 64), heat))
     boundary.add(mesh(new THREE.RingGeometry(0.985, 1, 96), edge))
     scene.add(sun, boundary)
-    return { armour, sun, boundary, corona }
+    return { armour, outfit, sun, boundary, corona }
   }
   const held = { player: build('player'), opponent: build('opponent') }
   return {
@@ -81,7 +67,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
         const pain = fighter.hatsuEffects.painPacker
         const drawn = held[side]
         const figure = options.figureOf(side)
-        if (drawn.armour.parent !== figure) figure.add(drawn.armour)
+        const chest = figure.getObjectByName('fight-chest') ?? figure
+        if (drawn.armour.parent !== chest) chest.add(drawn.armour)
         drawn.armour.visible = Boolean(pain?.armour)
         drawn.armour.rotation.z = Math.sin(seconds * 3) * 0.015
         const sun = state.phase === 'fighting' ? pain?.sun : null
@@ -102,11 +89,11 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     },
     dispose() {
       for (const drawn of Object.values(held)) {
-        drawn.armour.removeFromParent()
+        drawn.outfit.dispose()
         scene.remove(drawn.sun, drawn.boundary)
       }
       geometries.forEach((geometry) => geometry.dispose())
-      ;[cloth, lining, bone, core, flame, edge, heat].forEach((material) => material.dispose())
+      ;[core, flame, edge, heat].forEach((material) => material.dispose())
     },
   }
 }

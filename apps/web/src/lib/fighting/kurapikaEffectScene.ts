@@ -1,3 +1,4 @@
+import { createStealthDolphinScene } from './stealthDolphinScene'
 import { createKurapikaChainModel } from './kurapikaChainModel'
 import { kurapikaChainMotions } from './kurapikaChainMotion'
 import { kurapikaChainPath } from './kurapikaChainPath'
@@ -8,6 +9,7 @@ import type { FightSide, FightState } from './types'
 
 /** The visit's five models, attached to the animated right hand instead of the arena origin. */
 export function createKurapikaEffectScene(options: EffectSceneOptions): FighterEffectScene {
+  const dolphin = createStealthDolphinScene(options)
   const groups = (['player', 'opponent'] as const).map((side) => {
     const model = createKurapikaChainModel(options.THREE)
     model.root.name = `kurapika-chains:${side}`
@@ -39,10 +41,12 @@ export function createKurapikaEffectScene(options: EffectSceneOptions): FighterE
   }
 
   return {
-    sync: (state) => {
+    sync: (state, seconds) => {
+      dolphin.sync(state, seconds)
       groups.forEach((group) => syncGroup(group, state))
     },
     dispose: () => {
+      dolphin.dispose()
       groups.forEach(({ model }) => model.dispose())
     },
   }

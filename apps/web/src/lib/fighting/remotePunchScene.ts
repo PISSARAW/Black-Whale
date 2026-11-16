@@ -1,3 +1,4 @@
+import { createVisitHatsuModel, type VisitHatsuModel } from './visitHatsuModel'
 import {
   REMOTE_PUNCH_HEIGHT,
   REMOTE_PUNCH_RISE_FRAMES,
@@ -7,6 +8,7 @@ import type { ProjectileSceneOptions } from './projectileScene'
 import type { FightProjectile } from './types'
 
 interface PunchVisual {
+  model: VisitHatsuModel
   root: import('three').Group
   fist: import('three').Group
   trace: import('three').Mesh
@@ -27,12 +29,16 @@ export function createRemotePunchScene(options: ProjectileSceneOptions) {
       }
       for (const [id, visual] of visuals) {
         if (active.has(id)) continue
+        visual.model.dispose()
         options.scene.remove(visual.root)
         visuals.delete(id)
       }
     },
     dispose() {
-      for (const visual of visuals.values()) options.scene.remove(visual.root)
+      for (const visual of visuals.values()) {
+        visual.model.dispose()
+        options.scene.remove(visual.root)
+      }
       visuals.clear()
     },
   }
@@ -41,20 +47,13 @@ export function createRemotePunchScene(options: ProjectileSceneOptions) {
 function buildPunch(options: ProjectileSceneOptions): PunchVisual {
   const { THREE, geometry } = options
   const root = new THREE.Group()
+  const model = createVisitHatsuModel(THREE, { model: 'emitted-fist' })
+  model.fit({ height: 1.25, width: 0.5 })
   const fist = new THREE.Group()
-  const material = options.glow(0xbcecff, 0.88)
+  // Keep the knuckles at the animated emergence point and the forearm below them.
+  model.root.position.y = -0.3
+  fist.add(model.root)
   const box = geometry(new THREE.BoxGeometry(1, 1, 1))
-  const part = (size: number[], at: number[]) => {
-    const mesh = new THREE.Mesh(box, material)
-    mesh.scale.set(size[0], size[1], size[2])
-    mesh.position.set(at[0], at[1], at[2])
-    fist.add(mesh)
-  }
-  part([0.22, 0.95, 0.23], [0, -0.475, 0])
-  part([0.38, 0.3, 0.3], [0, 0, 0])
-  for (let finger = 0; finger < 4; finger++)
-    part([0.085, 0.13, 0.32], [-0.14 + finger * 0.093, 0.2, 0])
-  part([0.12, 0.24, 0.24], [0.23, -0.02, 0.06])
   const trace = new THREE.Mesh(box, options.glow(0x76c9ec, 0.3))
   const exit = new THREE.Mesh(
     geometry(new THREE.RingGeometry(0.16, 0.21, 24)),
@@ -63,7 +62,7 @@ function buildPunch(options: ProjectileSceneOptions): PunchVisual {
   exit.rotation.x = -Math.PI / 2
   root.add(fist, trace, exit)
   options.scene.add(root)
-  return { root, fist, trace, exit }
+  return { root, fist, trace, exit, model }
 }
 
 function posePunch(

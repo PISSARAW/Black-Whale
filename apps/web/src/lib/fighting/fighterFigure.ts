@@ -29,7 +29,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.illumi?.disguised),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
-    fighter.id === 'shizuku' && blinkyAvailable(fighter),
+    blinkyAvailable(fighter),
     Boolean(fighter.hanzoProjection),
     Boolean(fighter.parallelEyesClosed),
     isBiscuitTrueForm(fighter),
@@ -117,5 +117,5 @@ function addFighterEquipment(
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
-  if (fighter.id === 'shizuku' && blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })
+  if (blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })
 }

@@ -1,3 +1,4 @@
+import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
 import { padailleKeyedMove } from './padaillePoses'
@@ -102,6 +103,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     applyFightPose(rig, drawn, fighter.facing)
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
+    animateBlinky(human.figure, fighter, seconds)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   }
 }
@@ -158,8 +160,12 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
       blend: 0.12,
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
-  if (fighter.attack) return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
+  if (fighter.attack) return attackingPlan(fighter, standing)
   return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+}
+
+function attackingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+  return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
 }
 
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {

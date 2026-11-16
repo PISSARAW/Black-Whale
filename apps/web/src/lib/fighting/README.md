@@ -86,6 +86,30 @@ vitesses, santé des objets et durées de possession sont des réglages du jeu.
 réinitialisation ; `pnpm --filter @black-whale/web test:preparation-ui` vérifie
 le parcours et le rendu à 1100, 390 et 320 px.
 
+## Modèles de Hatsu partagés avec la visite
+
+`visitHatsuModel.ts` appelle les constructeurs de la visite référencés par
+`nen/archive-models.ts` : Blinky, Jupiter, Cat’s Name, Pain Packer, Predator,
+Secret Window (Musse et Benjamin), Stealth Dolphin, Biohazard et Skill Hunter.
+La poupée de papier et les symboles Sun and Moon utilisent aussi les constructeurs
+de la visite ; `visitHatsuMarks.ts` prépare les marques pour les objets de combat.
+Les chaînes passent par `kurapikaChainModel.ts` et `tour/chainTipKit.ts` ;
+Remote Punch partage `tour/emittedFistModel.ts`.
+Les gardes LSDF utilisent déjà `tour/apparitionLsdfView.ts`.
+
+Le combat ne redessine pas leur anatomie : il adapte uniformément leur taille,
+leur ancrage et leur orientation. Les articulations nommées restent animables
+après regroupement des maillages statiques : mains du chat, ailes de Biohazard,
+feuillets et signet du livre. Jupiter reste dans le volume de son projectile.
+Les apparitions privées restent privées dans la vue P1, y compris après copie.
+Les géométries et matériaux propres à chaque apparition sont libérés au retrait,
+à la reconstruction d’un combattant et à la fermeture de la scène.
+
+Les pouvoirs sans modèle équivalent dans la visite conservent leur représentation
+spécifique ; une bête gardienne passive ou le modèle d’un autre Hatsu ne les
+remplace pas. Cette couche ne modifie ni coûts, ni dégâts, ni conditions des Hatsu.
+`visitHatsuModel.test.ts` couvre échelle, animations, visibilité, copie et nettoyage.
+
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
@@ -277,8 +301,9 @@ le parcours et le rendu à 1100, 390 et 320 px.
   défensif. Les autres Hatsu restent utilisables. Les coups renforcés et émissions
   simples ne constituent pas des proies ; les gardes LSDF invulnérables ne sont pas
   automatiquement contrés. Le chasseur peut être détruit avant capture, sans
-  contrecoup de réussite. Sa silhouette abstraite (`predatorScene.ts`) ne présente
-  pas la forme créée contre Salé-salé dans le Nendex comme un modèle universel.
+  contrecoup de réussite. `predatorScene.ts` réutilise la forme attestée contre
+  Salé-salé, commune à la visite et au Nendex, comme référence visuelle du duel ;
+  cela ne définit ni une anatomie universelle ni un contre universel.
   Une capture réussie prive **son utilisateur** de tout Nen pendant **48 heures
   simulées**, soit 10 368 000 frames, hitstop compris (`predatorSeal.ts`). Le prix
   persiste entre les manches et après fermeture du livre ou restitution de la

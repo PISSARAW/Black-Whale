@@ -1,3 +1,4 @@
+import { createVisitHatsuModel } from './visitHatsuModel'
 import { benjaminNenActive } from './benjaminBaton'
 import { attackData, attackPhase } from './frameData'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -12,8 +13,8 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     metalness: 0.7,
   })
   const aura = new THREE.MeshBasicMaterial({ color: '#eeeeec', transparent: true, opacity: 0.8 })
-  const dark = new THREE.MeshBasicMaterial({ color: '#24252a' })
   const flash = new THREE.MeshBasicMaterial({ color: '#ffe09c' })
+  const dark = new THREE.MeshBasicMaterial({ color: '#24252a' })
   const geometries: import('three').BufferGeometry[] = []
   const box = (size: [number, number, number]) => {
     const made = new THREE.BoxGeometry(...size)
@@ -45,19 +46,11 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     mesh(gun, { geometry: box([0.29, 0.15, 0.12]), material: metal, position: [-0.42, -0.03, 0] })
     mesh(gun, { geometry: box([0.14, 0.26, 0.1]), material: metal, position: [0.12, -0.2, 0] })
     const muzzle = mesh(gun, { geometry: sphere(0.11), material: flash, position: [0.93, 0.03, 0] })
-    const owl = new THREE.Group()
-    const body = mesh(owl, { geometry: sphere(0.16), material: aura, position: [0, 0, 0] })
-    body.scale.set(0.85, 1.2, 0.7)
-    mesh(owl, { geometry: sphere(0.13), material: aura, position: [0, 0.17, 0] })
-    for (const sign of [-1, 1]) {
-      mesh(owl, { geometry: sphere(0.04), material: dark, position: [sign * 0.06, 0.19, 0.11] })
-      const wing = mesh(owl, {
-        geometry: box([0.1, 0.22, 0.04]),
-        material: aura,
-        position: [sign * 0.16, 0, 0],
-      })
-      wing.rotation.z = sign * 0.25
-    }
+    const owlModel = createVisitHatsuModel(THREE, { model: 'secret-window' })
+    owlModel.fit({ height: 0.48, width: 0.34 })
+    const owl = owlModel.root
+    owl.name = 'benjamin-secret-window'
+    owl.rotation.y = Math.PI
     const rectangle = new THREE.Group()
     for (const sign of [-1, 1]) {
       mesh(rectangle, {
@@ -79,7 +72,7 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     rectangle.name = 'benjamin-culdcept-rectangle'
     card.name = 'benjamin-culdcept-card'
     scene.add(gun, owl, rectangle, card)
-    return { gun, muzzle, owl, rectangle, card }
+    return { gun, muzzle, owl, owlModel, rectangle, card }
   }
   const sides = { player: build(), opponent: build() }
   const syncSide = (state: FightState, side: FightSide, seconds: number) => {
@@ -97,7 +90,7 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     held.gun.scale.x = fighter.facing
     held.muzzle.visible = burstFlash(fighter)
     const target = markedFighter(state, fighter)
-    held.owl.visible = Boolean(activeNen && target)
+    held.owl.visible = side === 'player' && Boolean(activeNen && target)
     if (target)
       held.owl.position.set(
         options.worldX(target.x) - 0.3,
@@ -123,8 +116,10 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
       syncSide(state, 'opponent', seconds)
     },
     dispose: () => {
-      for (const held of Object.values(sides))
-        scene.remove(held.gun, held.owl, held.rectangle, held.card)
+      for (const held of Object.values(sides)) {
+        scene.remove(held.gun, held.rectangle, held.card)
+        held.owlModel.dispose()
+      }
       geometries.forEach((geometry) => geometry.dispose())
       for (const material of [metal, aura, dark, flash]) material.dispose()
     },

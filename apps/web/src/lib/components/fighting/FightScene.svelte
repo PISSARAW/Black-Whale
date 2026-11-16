@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
@@ -185,6 +186,7 @@
           const held = models[side]
           const nen = nenKey(fighter)
           if (held.nen === nen) return held.model
+          disposeMountedVisitHatsu(held.model.root)
           scene.remove(held.model.root)
           held.model = buildFighter(fighter)
           held.nen = nen
@@ -401,6 +403,7 @@
           resize?.disconnect()
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
+          Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
           projectileScene.dispose()
           fighterEffects.dispose()
           predatorScene.dispose()

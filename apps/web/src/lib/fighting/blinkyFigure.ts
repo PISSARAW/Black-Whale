@@ -1,43 +1,38 @@
+import { blinkyAvailable, blinkyCommand } from './blinky'
+import { attackPhase } from './frameData'
+import type { ArcadeFighter } from './types'
+import type { Object3D, Quaternion } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
+import { createVisitHatsuModel, type VisitHatsuModel } from './visitHatsuModel'
 
-type Three = HumanFigureBuild['THREE']
-const SHAPES = new WeakMap<Three, ReturnType<typeof shapes>>()
-function shapes(THREE: Three) {
-  const made = {
-    body: new THREE.SphereGeometry(0.13, 10, 8),
-    pipe: new THREE.CylinderGeometry(0.035, 0.035, 0.55, 8),
-    nozzle: new THREE.BoxGeometry(0.2, 0.08, 0.1),
-    eye: new THREE.SphereGeometry(0.027, 7, 5),
-  }
-  Object.values(made).forEach((shape) => (shape.userData.sharedHuman = true))
-  return made
-}
+const MODELS = new WeakMap<Object3D, { visual: VisitHatsuModel; orientation: Quaternion }>()
+
+/** Same eye stalks, toothed nozzle and tongue as the visit, held by the duel's wrist. */
 export function addBlinky(options: {
-  THREE: Three
+  THREE: HumanFigureBuild['THREE']
   glow: HumanFigureBuild['glow']
   model: HumanFigure
 }): void {
-  const { THREE, glow, model } = options
-  let geometry = SHAPES.get(THREE)
-  if (!geometry) {
-    geometry = shapes(THREE)
-    SHAPES.set(THREE, geometry)
-  }
-  const vacuum = new THREE.Group()
-  vacuum.name = 'shizuku-blinky'
-  const body = new THREE.Mesh(geometry.body, glow(0x9663ab, 1))
-  body.scale.set(1, 1.5, 1)
-  body.position.set(0, 0.12, 0)
-  const pipe = new THREE.Mesh(geometry.pipe, glow(0xaeb5bd, 1))
-  pipe.position.set(0, -0.25, 0)
-  const nozzle = new THREE.Mesh(geometry.nozzle, glow(0x714986, 1))
-  nozzle.position.set(0, -0.53, 0.03)
-  vacuum.add(body, pipe, nozzle)
-  for (const x of [-0.06, 0.06]) {
-    const eye = new THREE.Mesh(geometry.eye, glow(0xf6f0df, 1))
-    eye.position.set(x, 0.17, 0.115)
-    vacuum.add(eye)
-  }
-  vacuum.position.set(0, -0.02, 0.08)
-  model.root.getObjectByName('hand-right')?.add(vacuum)
+  const visual = createVisitHatsuModel(options.THREE, { model: 'blinky', figureOwned: true, joints: ['tongue'] })
+  visual.fit({ height: 0.82, width: 0.55 })
+  visual.root.name = 'shizuku-blinky'
+  visual.root.position.set(0, -0.25, 0.08)
+  options.model.root.getObjectByName('hand-right')?.add(visual.root)
+  MODELS.set(options.model.turns, { visual, orientation: new options.THREE.Quaternion() })
+}
+
+/** Wrist poses carry the tool; suction adds a small tongue movement in its active frames. */
+export function animateBlinky(figure: Object3D, fighter: ArcadeFighter, seconds: number): void {
+  const held = MODELS.get(figure)
+  if (!held) return
+  const model = held.visual
+  model.root.visible = blinkyAvailable(fighter)
+  const sucking = Boolean(blinkyCommand(fighter)) && attackPhase(fighter) === 'active'
+  // The rig supplies the grip position; cancel wrist roll so the nozzle stays upright.
+  model.root.parent!.getWorldQuaternion(model.root.quaternion).invert()
+  model.root.quaternion.multiply(figure.getWorldQuaternion(held.orientation))
+  model.root.rotateZ(sucking ? Math.sin(seconds * 22) * 0.025 : 0)
+  model.root.position.set(0, -0.25, 0.08).applyQuaternion(model.root.quaternion)
+  const tongue = model.joints.get('tongue')!
+  tongue.rotation.x = sucking ? Math.sin(seconds * 18) * 0.07 : 0
 }

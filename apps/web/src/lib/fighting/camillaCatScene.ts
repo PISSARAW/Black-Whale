@@ -1,3 +1,4 @@
+import { createVisitHatsuModel } from './visitHatsuModel'
 import { CAT_ABSORB_END, CAT_CAPTURE_END, CAT_SUMMON_END, CATS_NAME_FRAMES } from './camillaCat'
 import { attackPhase } from './frameData'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -11,8 +12,6 @@ export function catsNameFighterVisible(state: FightState, side: FightSide): bool
 export function createCamillaCatScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
   const shapes: import('three').BufferGeometry[] = []
-  const fur = new THREE.MeshBasicMaterial({ color: '#24202f' })
-  const inner = new THREE.MeshBasicMaterial({ color: '#6d5b7d' })
   const gold = new THREE.MeshBasicMaterial({ color: '#ffe694' })
   const metal = new THREE.MeshBasicMaterial({ color: '#54535c' })
   const lineMaterial = new THREE.LineBasicMaterial({
@@ -33,38 +32,21 @@ export function createCamillaCatScene(options: EffectSceneOptions): FighterEffec
       material?: import('three').Material
     },
   ) => {
-    const mesh = new THREE.Mesh(spec.shape, spec.material ?? fur)
+    const mesh = new THREE.Mesh(spec.shape, spec.material ?? gold)
     mesh.position.set(...spec.at)
     group.add(mesh)
     return mesh
   }
-  const cat = new THREE.Group()
+  const catModel = createVisitHatsuModel(THREE, {
+    model: 'cats-name', anchor: 'floor', joints: ['arm--1', 'arm-1', 'hand--1', 'hand-1', 'cat-tail'],
+  })
+  catModel.fit({ height: 2.8, width: 2.4 })
+  const catScale = catModel.root.scale.x
+  const cat = catModel.root
   cat.name = 'cats-name-feline'
-  make(cat, { shape: sphere([0.63, 0.9, 0.38]), at: [0, 0.95, 0] })
-  make(cat, { shape: sphere([0.6, 0.47, 0.4]), at: [0, 1.88, 0] })
-  make(cat, { shape: sphere([0.28, 0.17, 0.13]), at: [0, 1.7, 0.36], material: inner })
-  const paws: import('three').Mesh[] = []
-  for (const sign of [-1, 1]) {
-    const ear = new THREE.ConeGeometry(0.22, 0.45, 4)
-    shapes.push(ear)
-    make(cat, { shape: ear, at: [sign * 0.38, 2.35, 0] })
-    make(cat, { shape: sphere([0.13, 0.055, 0.03]), at: [sign * 0.25, 1.97, 0.38], material: gold })
-    const arm = make(cat, { shape: sphere([0.24, 0.75, 0.24]), at: [sign * 0.64, 1.16, 0.24] })
-    arm.rotation.z = sign * 0.22
-    const paw = make(cat, { shape: sphere([0.32, 0.38, 0.3]), at: [sign * 0.8, 0.93, 0.5] })
-    paw.name = 'cats-name-paw'
-    paws.push(paw)
-  }
-  const tailCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0.4, 0.4, 0),
-    new THREE.Vector3(1.05, 0.8, 0),
-    new THREE.Vector3(1.22, 2, 0),
-    new THREE.Vector3(0.9, 2.45, 0),
-  ])
-  const tailShape = new THREE.TubeGeometry(tailCurve, 24, 0.065, 7, false)
-  shapes.push(tailShape)
-  make(cat, { shape: tailShape, at: [0, 0, 0] })
-  make(cat, { shape: sphere([0.1, 0.1, 0.1]), at: [0.9, 2.45, 0], material: gold })
+  const captureParts = [...catModel.joints.entries()]
+    .filter(([name]) => name.startsWith('arm-') || name.startsWith('hand-'))
+    .map(([name, joint]) => ({ joint, x: joint.position.x, sign: name.endsWith('--1') ? -1 : 1 }))
   const energyShape = sphere([0.13, 0.13, 0.13])
   const energy = new THREE.Mesh(energyShape, gold)
   energy.name = 'cats-name-life-energy'
@@ -100,12 +82,13 @@ export function createCamillaCatScene(options: EffectSceneOptions): FighterEffec
     cat.position.set(worldX(killer.x), worldY(killer.y) + 0.03, -0.3)
     const appearance = Math.min(1, (frame + 1) / CAT_SUMMON_END)
     const disappearance = 1 - clamp((frame - 108) / 12)
-    cat.scale.setScalar(Math.max(0.001, appearance * disappearance))
+    cat.scale.setScalar(Math.max(0.001, catScale * appearance * disappearance))
     const closure = clamp((frame - CAT_SUMMON_END) / (CAT_CAPTURE_END - CAT_SUMMON_END))
-    paws.forEach((paw, index) => {
-      paw.position.x = (index === 0 ? -1 : 1) * (0.8 - closure * 0.59)
+    captureParts.forEach(({ joint, x, sign }) => {
+      joint.position.x = x - sign * closure * 0.5
     })
-    const tail = new THREE.Vector3(worldX(killer.x) + 0.9, worldY(killer.y) + 2.48, 0)
+    cat.updateWorldMatrix(true, true)
+    const tail = catModel.body.localToWorld(new THREE.Vector3(0.85, 1.65, -0.5))
     const start =
       frame < CAT_ABSORB_END ? new THREE.Vector3(worldX(killer.x), worldY(killer.y + 7), 0.5) : tail
     const end =
@@ -130,10 +113,11 @@ export function createCamillaCatScene(options: EffectSceneOptions): FighterEffec
   return {
     sync,
     dispose: () => {
-      scene.remove(cat, energy, lifeLine, ...Object.values(guns))
+      catModel.dispose()
+      scene.remove(energy, lifeLine, ...Object.values(guns))
       shapes.forEach((shape) => shape.dispose())
       lineGeometry.dispose()
-      for (const material of [fur, inner, gold, metal, lineMaterial]) material.dispose()
+      for (const material of [gold, metal, lineMaterial]) material.dispose()
     },
   }
 }

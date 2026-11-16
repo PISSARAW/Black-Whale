@@ -315,8 +315,11 @@ describe('Bonolenov — prepared Battle Cantabile pieces', () => {
     renderer.sync(sphere().projectiles, 0)
     const planet = scene.getObjectByName('bonolenov-jupiter:1')
     expect(planet).toBeDefined()
-    expect(planet!.scale.x).toBe(2)
-    expect((planet as THREE.Mesh).geometry.getAttribute('color')).toBeDefined()
+    expect(planet!.userData.visitModel).toBe('jupiter')
+    const bounds = new THREE.Box3().setFromObject(planet!).getSize(new THREE.Vector3())
+    const shot = sphere().projectiles[0]
+    expect(bounds.x).toBeLessThanOrEqual(shot.width / 6 + 0.001)
+    expect(bounds.y).toBeLessThanOrEqual(shot.height / 6 + 0.001)
     renderer.dispose()
     expect(scene.children).toHaveLength(0)
   })

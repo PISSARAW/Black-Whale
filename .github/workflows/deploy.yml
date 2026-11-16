@@ -1,5 +1,9 @@
 name: CD
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 on:
   workflow_run:
     workflows: ['CI']
@@ -23,5 +27,5 @@ jobs:
           script: |
             cd /opt/black-whale
             git fetch origin main
-            git reset --hard origin/main
+            git reset --hard '${{ github.event.workflow_run.head_sha }}'
             ./infrastructure/hetzner/deploy.sh

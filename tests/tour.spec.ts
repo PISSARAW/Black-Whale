@@ -202,6 +202,8 @@ test.describe('the walk', () => {
     page,
     browserName,
   }) => {
+    // Two complete scene boots plus a high-quality software-rendered capture.
+    test.setTimeout(120_000)
     test.skip(browserName !== 'chromium', 'Regression specific to the Chrome/ANGLE render path')
 
     const shaderFailures: string[] = []
@@ -260,6 +262,12 @@ test.describe('the walk', () => {
   })
 
   test('persists witnessed hostile Nen only in simulated royal life', async ({ page }) => {
+    // This exercises three scene boots. Keep the state/persistence check off
+    // the expensive high-quality path, covered by the shader test above.
+    test.setTimeout(120_000)
+    await page.addInitScript(() => {
+      localStorage.setItem('black-whale:tour-comfort', JSON.stringify({ quality: 'low' }))
+    })
     await page.goto('/')
     await page.evaluate(() => localStorage.clear())
     await page.goto(ROYAL_NEN_SCENE)

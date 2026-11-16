@@ -78,6 +78,21 @@ describe('roues d’action', () => {
     expect(counts[Math.floor(counts.length / 2)]).toBeGreaterThanOrEqual(MINIMUM_ENTRIES)
   })
 
+  it('shows Voconte’s LSDF refusal without allowing it on either branch', () => {
+    const module = modules.find(({ manifest }) => manifest.id === 'voconte-hideout-doors')!
+    expect(wheelOf(module).find(({ id }) => id === 'transport-lsdf-guard')).toMatchObject({
+      visibility: 'locked',
+    })
+    for (const branchId of ['canon', 'simulation']) {
+      const context = {
+        ...contextFor(module, 'transport-lsdf-guard'),
+        cursor: { ...CURSOR, branchId },
+      }
+      expect(module.plan(context)).toMatchObject({ status: 'LOCKED', projectedEffects: [] })
+      expect(module.execute(context).allowed).toBe(false)
+    }
+  })
+
   it('gives every use a provenance or a stated refusal', () => {
     const undocumented = modules.flatMap((module) =>
       wheelOf(module)

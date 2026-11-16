@@ -91,6 +91,17 @@ export const voconteHideoutDoors = defineAbility({
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
+
+    'transport-lsdf-guard': {
+      label: 'Transporter un garde LSDF',
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 399,
+        label: 'ch. 399 — les gardes LSDF restent sur place',
+      }),
+      refusal: 'Le passage représenté ne transporte pas les gardes de Nen LSDF.',
+      effects: [],
+    },
   },
 
   ui: { componentKey: 'PortalNetworkView' },

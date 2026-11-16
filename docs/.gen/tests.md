@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 621
+Fichiers : 630
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -264,6 +264,16 @@ Fichiers : 621
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
+## `apps/web/src/lib/fighting/clashLearning.test.ts`
+
+- foundation lessons complement the ten Nen lessons > keeps fifteen unique, bilingual practical exercises
+- short Nen challenges measure real counterplay > observes interruption on individual simulation frames inside a slower render batch
+- five-encounter Arcade progression > requires match victory before advancing and resets the next encounter’s body and conditions
+
+## `apps/web/src/lib/fighting/clashReplayAdvanced.test.ts`
+
+- bounded replay snapshots and panel deltas > keeps a valid prefix when the capture reaches its byte limit
+
 ## `apps/web/src/lib/fighting/cluck.test.ts`
 
 - Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
@@ -340,6 +350,18 @@ Fichiers : 621
 ## `apps/web/src/lib/fighting/fightPresentation.test.ts`
 
 - fight presentation > draws forward and backward dashes as distinct authored actions
+
+## `apps/web/src/lib/fighting/fightReplay.test.ts`
+
+- deterministic full-match replays > round-trips every held gameplay input, including advanced Nen and arena actions
+
+## `apps/web/src/lib/fighting/fightReplayPanels.test.ts`
+
+- replay boundaries for panels and training > keeps the initial RNG, infinite training clock and resource setup
+
+## `apps/web/src/lib/fighting/fightResponseDiagnostics.test.ts`
+
+- response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
 
 ## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
 
@@ -475,6 +497,10 @@ Fichiers : 621
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
 - On (The Last Mission) > banks grudge from damage taken, never from aura
+
+## `apps/web/src/lib/fighting/opponentHabits.test.ts`
+
+- bounded AI knowledge and adaptation > records a visible action once rather than once per render or hitstop
 
 ## `apps/web/src/lib/fighting/padaille.test.ts`
 

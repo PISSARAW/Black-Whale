@@ -41,12 +41,15 @@ function exercise(id: LessonId) {
 }
 
 describe('practical Nen lessons', () => {
-  it.each(FIGHT_LESSONS)('$id cannot be completed by idling', ({ id }) => {
-    const run = exercise(id)
-    run.frames(180)
-    expect(run.progress.complete).toBe(false)
-    expect(run.progress.step).toBe(0)
-  })
+  it.each(FIGHT_LESSONS.filter((lesson) => lesson.id !== 'ten'))(
+    '$id cannot be completed by idling',
+    ({ id }) => {
+      const run = exercise(id)
+      run.frames(180)
+      expect(run.progress.complete).toBe(false)
+      expect(run.progress.step).toBe(0)
+    },
+  )
   it('requires a full second of uninterrupted Ren', () => {
     const run = exercise('ren')
     run.frames(40, { aura: true })

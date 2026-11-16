@@ -347,7 +347,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   kalluto: (state, side) => paperCommandReady(state, side, 'serpent'),
   shizuku: blinkyBloodReady,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
-  rihan: predatorReady,
+  rihan: (state, side) => predatorReady(state, side),
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,

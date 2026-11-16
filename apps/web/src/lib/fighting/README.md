@@ -206,6 +206,49 @@ annulation des entrées et persistance. `node scripts/check-fighting-readability
 1440 / 390 / 320 px, le tactile, le stockage et l’animation réduite. Les manettes
 standard sont simulées ; aucune mesure de latence matérielle n’est revendiquée.
 
+## Phase 6 : apprentissage, défis et Arcade
+
+Les cinq exercices de `fightFoundationLessons.ts` ajoutent distance, garde,
+projection, punition et Ten aux dix exercices de Nen existants. Une touche ou
+une punition exige un impact réel ; une projection lointaine ne valide rien.
+Les consignes FR/EN reprennent les touches configurées. La pause ne fait pas
+progresser les objectifs.
+
+`fightChallenges.ts` propose quatre scénarios courts : interrompre le moulinet
+de Phinks, arrêter une traction sans dissiper Bungee Gum, réintégrer le corps de
+Hanzo puis garder bas une véritable rafale, et percevoir In avec Gyo sans retirer
+le lien. La projection et la rafale sont préparées par les commandes ordinaires,
+avec leurs coûts réels. Les contacts sont mémorisés avant la confirmation de
+l’interruption à la frame suivante. Le scénario échoue après vingt secondes de
+simulation, après changement de scénario ou, pour Hanzo, si le corps prend un
+coup non gardé. La garde peut conserver son chip normal. Les outils du laboratoire
+et les commandes P2 sont écartés pendant ces scénarios. Les objectifs observent
+chaque frame simulée, même quand plusieurs frames arrivent dans un même rendu.
+
+`clashArcade.ts` enchaîne cinq matchs en deux manches gagnantes : Hisoka,
+Franklin, Phinks, Hanzo et Chrollo. Chacun annonce la règle à travailler.
+Une victoire de manche ne suffit pas à avancer. La défaite peut être rejouée,
+sans bonus de statistiques ; chaque nouvelle rencontre reconstruit corps, aura,
+équipement et conditions ordinaires. Le choix « Parcours Arcade » est distinct
+du simple format de duel nommé Arcade. Les graines sont déterministes.
+
+`opponentHabits.ts` mémorise au plus douze manifestations sur quinze secondes :
+coups bas, actions aériennes et tirs effectivement perçus. Trois observations
+peuvent infléchir une garde, un anti-air ou une approche sautée, avec les délais
+et limitations physiques ordinaires. L’IA ne lit ni buffer, ni réponse privée,
+ni analyse de Rihan, ni branche future. Une cible aveuglée n’est pas suivie à sa
+position secrète : le dernier point connu expire après deux secondes ; En ne
+localise qu’à portée et avec un Nen disponible. Les scans de Gyo/En suivent une
+horloge propre plutôt que le mode de Nen caché adverse.
+
+`clashLearning.test.ts`, `opponentHabits.test.ts`, `clashReplayAdvanced.test.ts`
+et `clashImportOrder.test.ts` couvrent ces parcours et les interactions du Nen.
+`node scripts/check-fighting-progression.mjs` depuis `apps/web` vérifie les
+composants de production, les quinze exercices proposés, un défi réussi, la
+bibliothèque persistante, l’import/export, la lecture vérifiée, l’enchaînement
+Arcade et les largeurs 1440 / 390 / 320 px. Le détail des replays est dans
+[REPLAYS.md](./REPLAYS.md).
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le
@@ -325,7 +368,7 @@ La recette de référence porte sur Kurapika, Hisoka, Chrollo et Benjamin.
   utilisent la durée réelle du stun, y compris les impacts courts et les coups
   successifs ; elles restent figées pendant le hitstop. La marche conserve sa
   cadence liée à la distance quand le rendu descend à 20 Hz.
-- **Apprentissage** : dix exercices FR/EN depuis « Apprendre le Nen » : Ren, Ken,
+- **Apprentissage** : quinze exercices FR/EN depuis « Apprendre le Nen » : Ren, Ken,
   Zetsu, Gyo, Ryu, Ko, Emperor Time, rappel de Bungee Gum, Double Face et Secret
   Window. Ils valident les états et effets réels du moteur, sans progresser pendant
   la pause. Le Zetsu compte uniquement l’aura récupérée en Zetsu. Chaque exercice
@@ -1461,8 +1504,9 @@ lame implantée. Les géométries partagées sont libérées une seule fois à l
 `kurapikaChains.test.ts` couvre ces contrats ; `ui-tests/kurapika-chains` expose
 le rendu de production avec les cinq chaînes, les deux côtés et une lecture animée.
 
-`fightLessons.test.ts` prouve la réussite des dix scénarios par des actions du moteur
-et leur absence de progression par simple attente. `tests/fighting-lessons.spec.ts`
+`fightLessons.test.ts` et `clashLearning.test.ts` vérifient les quinze exercices
+par les états et contacts réels du moteur ; seul le retour au Ten demande de
+relâcher les commandes et de patienter. `tests/fighting-lessons.spec.ts`
 vérifie les parcours des quatre personnages, la pause et le petit écran.
 `fightPoseClock.test.ts` couvre durée des réactions, hitstop, contacts et cadence.
 `node apps/web/scripts/check-fighting-motion.mjs` produit la planche de contrôle des

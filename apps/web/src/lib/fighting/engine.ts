@@ -1,3 +1,4 @@
+import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
 import { simulateClashFrame } from './fightFrameSimulation'
 import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
@@ -49,17 +50,12 @@ import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
-import { callHanzoBody, canCallHanzoBody } from './hanzoBodyCall'
+import { callHanzoBody } from './hanzoBodyCall'
 import { advanceEmperorClock, kurapikaAiActivation, resolveJudgmentDeaths } from './kurapikaActions'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { recordFightInjuries } from './feitanPain'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
-import {
-  canRejoinHanzoBody,
-  sleepingBody,
-  steerHanzoProjection,
-  wakeHanzoBody,
-} from './hanzoProjection'
+import { canRejoinHanzoBody, steerHanzoProjection, wakeHanzoBody } from './hanzoProjection'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { finishExpiredFight } from './fightTimeout'
@@ -401,19 +397,18 @@ function contextualOpponentAttack(state: FightState): FightState {
   if (cyclotron) return cyclotron
   const emperor = kurapikaAiActivation(state)
   if (emperor) return emperor
-  if (canCallHanzoBody(state, 'opponent')) return callHanzoBody(state, 'opponent')
+  if (opponentCanAttemptCall(state)) return callHanzoBody(state, 'opponent')
   return ordinaryOpponentAttack(state)
 }
 
 function ordinaryOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
-  if (planned.arena && nearestArenaObject(planned, 'opponent', 14) && planned.frame % 90 === 0) {
-    const terrain = performArenaAction(planned, 'opponent', performAuraAttack)
-    if (terrain !== planned) return terrain
-  }
+  const terrain = opponentTerrainAction(planned)
+  if (terrain) return terrain
   const [rolled, chance] = randomValue(planned)
-  const gap = Math.abs(sleepingBody(rolled.player).x - rolled.opponent.x)
+  const gap = perceivedOpponentGap(rolled)
+  if (!Number.isFinite(gap)) return rolled
   const definition = fighterDefinition(rolled.opponent.id)
   const style = fightingStyle(rolled.opponent.id)
   const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
@@ -442,6 +437,13 @@ function ordinaryOpponentAttack(state: FightState): FightState {
         auraCharged: false,
       })
     : rolled
+}
+
+function opponentTerrainAction(state: FightState): FightState | null {
+  if (!state.arena || !nearestArenaObject(state, 'opponent', 14) || state.frame % 90 !== 0)
+    return null
+  const next = performArenaAction(state, 'opponent', performAuraAttack)
+  return next === state ? null : next
 }
 
 function randomValue(state: FightState): [FightState, number] {

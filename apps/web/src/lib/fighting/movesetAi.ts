@@ -1,3 +1,4 @@
+import { habitAttackSlots } from './opponentHabits'
 import { counterplayAttackSlots } from './styleCounterAttack'
 import { hasPlantedPaper, paperState } from './kallutoPaper'
 import { illumiAiSlots } from './illumiAi'
@@ -44,7 +45,9 @@ function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
 }
 
 function attackSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
-  return counterplayAttackSlots(state, gap) ?? fighterSlots(state, roll, gap)
+  return (
+    counterplayAttackSlots(state, gap) ?? habitAttackSlots(state) ?? fighterSlots(state, roll, gap)
+  )
 }
 
 function finisherInRange(state: FightState, gap: number): boolean {

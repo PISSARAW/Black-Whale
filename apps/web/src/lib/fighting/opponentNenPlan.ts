@@ -1,3 +1,5 @@
+import { perceivedOpponentGap } from './opponentAwareness'
+import { seesCombatBody } from './fightCounterplay'
 import { advancedOpponentNen } from './nenAi'
 import { applyAuraContext } from './nen'
 import { chainsImmobilize } from './kurapika'
@@ -5,7 +7,7 @@ import { opponentWantsOn } from './onTechnique'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
 export function planOpponentNen(state: FightState): FightState {
-  const gap = Math.abs(state.player.x - state.opponent.x)
+  const gap = perceivedOpponentGap(state)
   const opponent = state.opponent
   if (opponent.melodyPerformance) return state
   if (opponent.judgmentChain || chainsImmobilize(opponent))
@@ -29,6 +31,8 @@ function applyOpponentAura(
 const needsZetsu = (fighter: ArcadeFighter) => fighter.aura < 16 && fighter.nen.mode !== 'zetsu'
 const canLeaveZetsu = (fighter: ArcadeFighter) => fighter.nen.mode === 'zetsu' && fighter.aura > 48
 const needsKen = (state: FightState, gap: number) =>
+  seesCombatBody(state.opponent) &&
+  !state.player.attack?.concealed &&
   gap < 18 &&
   state.opponent.aura > 28 &&
   !state.opponent.nen.ken &&

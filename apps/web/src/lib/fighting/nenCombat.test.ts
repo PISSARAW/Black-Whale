@@ -428,15 +428,17 @@ describe('Category components and Emperor Time', () => {
     expect(bungeeVisible({ ...state, player: aura(state.player, {}) })).toBe(false)
   })
 
-  it('the CPU uses Gyo against hidden aura, and En against nearby Zetsu', () => {
+  it('the CPU scans on its own schedule without consulting an unseen Nen mode', () => {
     const state = duel('hisoka', 'phinks')
+    const neutral = planOpponentNen(state).opponent.nen
     expect(
-      planOpponentNen({ ...state, player: aura(state.player, { conceal: true }) }).opponent.nen.gyo,
-    ).toBe(true)
+      planOpponentNen({ ...state, player: aura(state.player, { conceal: true }) }).opponent.nen,
+    ).toEqual(neutral)
     expect(
       planOpponentNen({ ...state, player: aura(state.player, { aura: true, down: true }) }).opponent
-        .nen.en,
-    ).not.toBeNull()
+        .nen,
+    ).toEqual(neutral)
+    expect(neutral.gyo).toBe(true)
     const idle = { ...state, frame: 60 }
     expect(
       planOpponentNen({ ...idle, player: aura(idle.player, { conceal: true }) }).opponent.nen.gyo,

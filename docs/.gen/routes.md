@@ -23,7 +23,7 @@
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |
 | `events/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
-| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
+| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
 | `health` | `+server.ts` |
 | `hunt` | `+page.svelte` |
 | `hunt/editor` | `+page.svelte` |

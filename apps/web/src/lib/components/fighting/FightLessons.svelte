@@ -10,6 +10,8 @@
   export let onExit: () => void = () => {}
   const bindings = useFightBindings()
   const commands: Record<string, ControlCommand> = {
+    light: 'playerLight',
+    throw: 'playerThrow',
     aura: 'playerAura',
     guard: 'playerGuard',
     down: 'playerDown',
@@ -38,8 +40,8 @@
   <details class="lessons-launcher">
     <summary
       >{language === 'fr'
-        ? 'Apprendre le Nen · 10 exercices pratiques'
-        : 'Learn Nen · 10 practical exercises'}</summary
+        ? `Apprendre le Nen · ${FIGHT_LESSONS.length} exercices pratiques`
+        : `Learn Nen · ${FIGHT_LESSONS.length} practical exercises`}</summary
     >
     <p>
       {language === 'fr'

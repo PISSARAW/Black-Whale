@@ -1,3 +1,4 @@
+import { FOUNDATION_CHECKS } from './fightFoundationLessons'
 import { createFightState } from './fightState'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import { bungeeVisible } from './hisokaTechnique'
@@ -27,7 +28,7 @@ export function createLessonFight(id: LessonId): FightState {
     ...state,
     phase: 'fighting',
     player: { ...state.player, x: 44 },
-    opponent: { ...state.opponent, x: 50 },
+    opponent: { ...state.opponent, x: id === 'throw' ? 56 : id === 'punish' ? 54 : 50 },
   }
   for (const side of ['player', 'opponent'] as const)
     state = setTrainingResources(state, side, {
@@ -36,8 +37,8 @@ export function createLessonFight(id: LessonId): FightState {
       infiniteAura: false,
     })
   state = setTrainingDummy(state, {
-    behavior: id === 'ken' ? 'attack' : 'idle',
-    action: 'light',
+    behavior: ['ken', 'guard', 'punish'].includes(id) ? 'attack' : 'idle',
+    action: id === 'punish' ? 'heavy' : 'light',
     delay: 90,
   })
   if (id === 'gyo')
@@ -62,6 +63,7 @@ export function initialLessonProgress(id: LessonId): LessonProgress {
 }
 type Check = (state: FightState, progress: LessonProgress) => boolean
 const CHECKS: Record<LessonId, Check> = {
+  ...FOUNDATION_CHECKS,
   ren: (s) => nenTacticalState(s.player).technique === 'ren' && s.player.aura < 90,
   ken: (s, p) =>
     s.player.nen.ken &&
@@ -92,7 +94,13 @@ const CHECKS: Record<LessonId, Check> = {
   },
   window: (s) => s.player.hatsuEffects.baton?.markedTarget === 'opponent',
 }
-const HOLD_FRAMES: Partial<Record<LessonId, number>> = { ren: 60, gyo: 30, ryu: 30 }
+const HOLD_FRAMES: Partial<Record<LessonId, number>> = {
+  spacing: 30,
+  ten: 60,
+  ren: 60,
+  gyo: 30,
+  ryu: 30,
+}
 
 function recalledTarget(state: FightState): boolean {
   return Boolean(

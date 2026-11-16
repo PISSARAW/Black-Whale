@@ -6,6 +6,7 @@ import {
   REPLAY_VERSION,
   MAX_REPLAY_PACKETS,
   MAX_REPLAY_SECONDS,
+  MAX_REPLAY_BYTES,
   type FightReplay,
   type ReplayPacket,
   type ReplaySetup,
@@ -39,6 +40,7 @@ export function createReplayRecorder(state: FightState) {
   const checkpoints = [{ packet: 0, hash: fightReplayHash(state) }]
   let last = state
   let duration = 0
+  let bytes = JSON.stringify(setup).length
   let error = ''
   return {
     get count() {
@@ -56,10 +58,16 @@ export function createReplayRecorder(state: FightState) {
         error = 'untracked'
         return
       }
-      if (packets.length >= MAX_REPLAY_PACKETS || duration + packet[0] > MAX_REPLAY_SECONDS) {
+      const packetBytes = JSON.stringify(packet).length
+      if (
+        packets.length >= MAX_REPLAY_PACKETS ||
+        duration + packet[0] > MAX_REPLAY_SECONDS ||
+        bytes + packetBytes > MAX_REPLAY_BYTES - 1_000_000
+      ) {
         error = 'limit'
         return
       }
+      bytes += packetBytes
       packets.push(packet)
       duration += packet[0]
       last = after

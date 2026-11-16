@@ -1,7 +1,18 @@
+import { FOUNDATION_LESSONS, type FoundationLessonId } from './fightFoundationLessons'
 import type { FighterId } from './types'
 
 export type LessonId =
-  'ren' | 'ken' | 'zetsu' | 'gyo' | 'ryu' | 'ko' | 'emperor' | 'gum' | 'bookmark' | 'window'
+  | FoundationLessonId
+  | 'ren'
+  | 'ken'
+  | 'zetsu'
+  | 'gyo'
+  | 'ryu'
+  | 'ko'
+  | 'emperor'
+  | 'gum'
+  | 'bookmark'
+  | 'window'
 export interface FightLesson {
   id: LessonId
   fighter: FighterId
@@ -11,6 +22,7 @@ export interface FightLesson {
   takeaway: [string, string]
 }
 export const FIGHT_LESSONS: readonly FightLesson[] = [
+  ...FOUNDATION_LESSONS,
   {
     id: 'ren',
     fighter: 'kurapika',

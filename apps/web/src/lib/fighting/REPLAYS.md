@@ -31,6 +31,25 @@ leurs seize combinaisons, l’IA, un match complet avec changement de manche, le
 commandes refusées et les resets du laboratoire. Les autres personnages ne sont
 pas certifiés par cette suite de référence.
 
+## Extension de la phase 6
+
+`clashReplayAdvanced.test.ts` étend la vérification aux quarante personnages,
+avec graine explicite et état initial complet. Elle vérifie les éditeurs de Basho,
+les signatures volontaires de Longhi, les sélections de Blinky, les refus d’une
+copie sans équipement, une projection déjà préparée, Cat’s Name et la branche
+de Parallel Future. La simulation garde les entrées et les paquets temporels
+originaux. Les mutations des panneaux sont isolées dans un journal `panel` avec
+empreintes avant/après ; elles ne sont appliquées que par le lecteur local.
+Les tableaux, suppressions, valeurs `undefined` et valeurs non finies du laboratoire
+conservent leur représentation. Les clés de prototype, structures invalides et
+versions incompatibles sont refusées ; la capture conserve un préfixe valide si
+sa limite de taille est atteinte.
+
+Le rendu continue d’utiliser les règles de perception du combat, sans afficher
+les deltas internes, les conditions cachées ou les commandes adverses en attente.
+La bibliothèque conserve la pause, les vitesses et le retour au combat suspendu.
+La reprise du contrôle à un instant arbitraire n’est pas ajoutée dans cette phase.
+
 ## Diagnostic de réactivité
 
 En entraînement libre, ouvrir « Diagnostic de réactivité ». Chaque commande

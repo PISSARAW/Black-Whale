@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { createClashPractice } from '$lib/fighting/clashPractice'
+  import FightPracticeHub from '$lib/components/fighting/FightPracticeHub.svelte'
   import FightLabSession from '$lib/components/fighting/FightLabSession.svelte'
   import FightReplays from '$lib/components/fighting/FightReplays.svelte'
   import FightResponseDiagnostics from '$lib/components/fighting/FightResponseDiagnostics.svelte'
@@ -78,13 +80,18 @@
   let language: 'fr' | 'en'
   let easterEggPreferences = defaultEasterEggPreferences()
   const lessons = createFightLessons()
+  const practice = createClashPractice()
+  match.observeFrames(practice.observe)
   const controls = createFightControls(gamepadAction)
   setContext(FIGHT_CONTROLS_CONTEXT, controls.bindings)
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
   $: copy = fightingCopy(language)
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
-  $: if (!replays.active) lessons.observe(state)
+  $: if (!replays.active) {
+    lessons.observe(state)
+    practice.observe(state)
+  }
 
   function resetFightInputs() {
     input = { ...EMPTY_INPUT }
@@ -96,6 +103,7 @@
   function startLesson(id: LessonId) {
     resetFightInputs()
     paused = false
+    practice.exit()
     state = lessons.start(id)
     match.begin(state)
   }
@@ -107,6 +115,7 @@
   }
 
   function prepareFight() {
+    practice.exit()
     state = createFight(selectedPlayer, selectedOpponent, {
       formatId: selectedFormat,
       mode: selectedMode,
@@ -133,6 +142,7 @@
   }
 
   function chooseAgain() {
+    practice.exit()
     state = null
     match.begin(null)
     resetFightInputs()
@@ -149,7 +159,7 @@
   }
 
   function sendMove(side: FightSide, action: MoveAction | 'ranged') {
-    if (side === 'opponent' && ($lessons || state?.mode === 'versus-ai')) return
+    if (side === 'opponent' && ($lessons || practice.active || state?.mode === 'versus-ai')) return
     const pressed = controls.combine(side, side === 'player' ? input : opponentInput)
     queueCommand({ kind: 'move', side, action, input: packReplayInput(pressed) })
   }
@@ -164,7 +174,7 @@
   }
 
   function opponentControl(key: keyof FightInput, active: boolean) {
-    if ($lessons) return
+    if ($lessons || practice.active) return
     if ((paused && state?.mode !== 'training') || state?.mode === 'versus-ai') return
     opponentInput = { ...opponentInput, [key]: active }
   }
@@ -237,6 +247,14 @@
     })
   }
 
+  function launchPractice(next: FightState | null) {
+    lessons.exit()
+    resetFightInputs()
+    state = next
+    match.begin(next)
+    paused = false
+  }
+
   function openReplay(id: string) {
     if (!replays.active) replayReturnPaused = paused
     resetFightInputs()
@@ -277,7 +295,7 @@
       if (state && !paused)
         state = match.advance(state, controls.combine('player', input), {
           dt,
-          opponentInput: controls.combine('opponent', opponentInput),
+          opponentInput: practice.opponentInput(controls.combine('opponent', opponentInput)),
         })
       frame = requestAnimationFrame(loop)
     }
@@ -310,6 +328,13 @@
     <p class="intro">{copy.intro}</p>
   </header>
 
+  {#if !replays.active}<FightPracticeHub
+      {practice}
+      {state}
+      {language}
+      fighter={selectedPlayer}
+      onLaunch={launchPractice}
+    />{/if}
   {#if !state}
     <FightReplays {replays} {language} {...replayActions} />
     <FightLessons {lessons} {language} onStart={startLesson} />
@@ -407,7 +432,7 @@
           training={state.mode === 'training'}
         />
 
-        {#if state.mode === 'training' && !$lessons && !replays.active}
+        {#if state.mode === 'training' && !$lessons && !practice.active && !replays.active}
           <FightResponseDiagnostics {diagnostics} {language} />
           <FightLabSession
             bind:state

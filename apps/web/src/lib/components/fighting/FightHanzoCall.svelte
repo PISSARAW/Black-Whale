@@ -1,16 +1,24 @@
 <script lang="ts">
   import { useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
-  import { canCallHanzoBody } from '$lib/fighting/hanzoBodyCall'
+  import { seesCombatBody } from '$lib/fighting/fightCounterplay'
+  import { canSpeak } from '$lib/fighting/saiyuSenses'
+  import { HANZO_CALL_RANGE } from '$lib/fighting/hanzoBodyCall'
   import type { FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en'
   export let onCall: () => void
-  $: callReady = canCallHanzoBody(state, 'player')
+  $: knownBody = seesCombatBody(state.player) && state.opponent.hanzoProjection
+  $: callReady =
+    canSpeak(state.player) &&
+    state.player.hitStun === 0 &&
+    Boolean(
+      knownBody && Math.hypot(state.player.x - knownBody.bodyX, state.player.y) <= HANZO_CALL_RANGE,
+    )
 </script>
 
-{#if state.opponent.hanzoProjection}
+{#if knownBody}
   <button
     type="button"
     disabled={!callReady}

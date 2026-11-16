@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 618
+Fichiers : 621
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -277,6 +277,11 @@ Fichiers : 618
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
 
+## `apps/web/src/lib/fighting/commandReadability.test.ts`
+
+- own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
+- private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
 - counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
@@ -311,6 +316,12 @@ Fichiers : 618
 
 - fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
 - keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
+## `apps/web/src/lib/fighting/fightComfortControls.test.ts`
+
+- visual comfort is presentation only > persists validated settings and tolerates corrupt, stale or inaccessible storage
+- held touch controls release and cancel predictably > keeps Hatsu held until commit and passes the held input to the attempt
+- controller protection chords use the same Nen and hand rules > does not cover wounds and ears simultaneously with the same two hands
 
 ## `apps/web/src/lib/fighting/fightControls.test.ts`
 
@@ -512,7 +523,7 @@ Fichiers : 618
 
 ## `apps/web/src/lib/fighting/stageBackground.test.ts`
 
-- stage background Easter Eggs > authors two declared cameos, an original image and a keepsake for all 33 stages
+- stage background Easter Eggs > keeps declared likenesses and original graphic sources available for all stages
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 

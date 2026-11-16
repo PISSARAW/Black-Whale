@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  const bindings = useFightBindings()
+  import FightComfortSettings from './FightComfortSettings.svelte'
+  import { defaultFightComfort } from '$lib/fighting/fightComfort'
+  export let comfort = defaultFightComfort()
   import { onMount } from 'svelte'
   import { fightFormat } from '$lib/fighting/formats'
   import type { FightFormatId } from '$lib/fighting/formats'
@@ -58,6 +63,7 @@
   <details class="display-settings">
     <summary>{language === 'fr' ? 'Affichage' : 'Display'}</summary>
     <div class="settings-panel">
+      <FightComfortSettings bind:comfort {language} />
       <label
         ><input type="checkbox" bind:checked={detailed} />
         {language === 'fr'
@@ -100,8 +106,8 @@
           ? 'Reprendre'
           : 'Resume'
         : language === 'fr'
-          ? 'Pause · P'
-          : 'Pause · P'}
+          ? `Pause · ${$bindings.pause}`
+          : `Pause · ${$bindings.pause}`}
     </button>
   {/if}
   {#if fullscreenError}<span role="status">{fullscreenError}</span>{/if}

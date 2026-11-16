@@ -66,6 +66,12 @@ export function sampleGamepad(
   const buttons: FightInput = { ...EMPTY_INPUT }
   for (const [button, key] of Object.entries(BUTTON_INPUTS))
     buttons[key] = pressed(pad, Number(button))
+  const protection = pressed(pad, 8) && (pressed(pad, 4) || pressed(pad, 5))
+  if (protection) {
+    buttons.coverEars = pressed(pad, 4)
+    buttons.plugWounds = !buttons.coverEars && pressed(pad, 5)
+    buttons.call = buttons.guard = buttons.aura = false
+  }
   const input = mergeFightInput(buttons, stickInput(pad, lastInput))
   return {
     input,

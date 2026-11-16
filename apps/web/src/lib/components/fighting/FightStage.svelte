@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
-  const bindings = useFightBindings()
+  import FightTouchControls from './FightTouchControls.svelte'
+  import FightDecisionReadout from './FightDecisionReadout.svelte'
+  import { defaultFightComfort } from '$lib/fighting/fightComfort'
+  export let comfort = defaultFightComfort()
   import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
@@ -16,13 +18,9 @@
   import FightResources from './FightResources.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
-  import FightHanzoCall from './FightHanzoCall.svelte'
-  import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { impactCallout } from '$lib/fighting/impactCallout'
-  import { canUseRangedAttack, projectileProfile, rangedAuraCost } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
-  import { finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let state: FightState
@@ -49,31 +47,24 @@
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
   $: visibleState = futureVisibleState(state, futureViewer, futurePreview)
-  $: moveset = movesetFor(state.player.id)
-  $: special = fightSpecialPresentation(state, language)
-  $: hatsuReady = special.ready
-  $: hatsuHint = special.hint
-  $: ranged = projectileProfile(state.player.id)
-  $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
-  $: rangedReady = canUseRangedAttack(state.player)
-  $: rangedHint = `${rangedLabel} · ${rangedAuraCost(state.player.id)} aura`
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
-  $: finisher = moveForSlot(state.player.id, 'finisher')
-  $: finisherAvailable = finisherReady(state, 'player')
   $: throwTech = isThrowTech(visibleState)
-  function hold(key: keyof FightInput, active: boolean) {
-    onControl(key, active)
-  }
 </script>
 
 <FightAudio {state} {language} {paused} viewer={sensoryViewer} />
-<section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
+<section
+  class="fight-stage"
+  class:high-contrast={comfort.highContrast}
+  data-shake={comfort.shake}
+  data-flashes={comfort.flashes}
+  aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
+>
   <div class="fight-arena">
     <FightHud state={visibleState} {language} {detailed} />
     <FightCatsName state={visibleState} {language} />
     <FightEasterEggCaptions state={visibleState} {language} />
     {#key sceneKey}
-      <FightScene state={visibleState} {stageId} {language} />
+      <FightScene state={visibleState} {stageId} {language} {comfort} />
     {/key}
 
     {#if training}
@@ -82,7 +73,10 @@
 
     {#if visibleState.impact}
       {#key visibleState.impact.sequence}
-        <div class:blocked={visibleState.impact.blocked} class="impact-flash"></div>
+        {#if comfort.flashes}<div
+            class:blocked={visibleState.impact.blocked}
+            class="impact-flash"
+          ></div>{/if}
         <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
           {impactCallout(visibleState.impact, language)}
         </div>
@@ -98,119 +92,16 @@
     bind:scrub={futurePreview}
     onOpenEyes={() => onAttack('special')}
   />
-  {#if showControls}<div class="touch-controls">
-      <div class="touch-group movement-controls">
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Aller à gauche' : 'Move left'}
-          onpointerdown={() => hold('left', true)}
-          onpointerup={() => hold('left', false)}
-          onpointercancel={() => hold('left', false)}
-          onpointerleave={() => hold('left', false)}>←</button
-        >
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Sauter' : 'Jump'}
-          onpointerdown={() => hold('jump', true)}
-          onpointerup={() => hold('jump', false)}
-          onpointercancel={() => hold('jump', false)}>↑</button
-        >
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Aller à droite' : 'Move right'}
-          onpointerdown={() => hold('right', true)}
-          onpointerup={() => hold('right', false)}
-          onpointercancel={() => hold('right', false)}
-          onpointerleave={() => hold('right', false)}>→</button
-        >
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Se baisser' : 'Crouch'}
-          onpointerdown={() => hold('down', true)}
-          onpointerup={() => hold('down', false)}
-          onpointercancel={() => hold('down', false)}>↓</button
-        >
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Garde' : 'Block'}
-          onpointerdown={() => hold('guard', true)}
-          onpointerup={() => hold('guard', false)}
-          onpointercancel={() => hold('guard', false)}>G</button
-        >
-        <button
-          type="button"
-          aria-label={language === 'fr' ? 'Se couvrir les oreilles' : 'Cover ears'}
-          onpointerdown={(event) => {
-            event.currentTarget.setPointerCapture(event.pointerId)
-            hold('coverEars', true)
-          }}
-          onpointerup={() => hold('coverEars', false)}
-          onpointercancel={() => hold('coverEars', false)}>E</button
-        >
-      </div>
-      <div class="touch-group attack-controls">
-        <FightHanzoCall {state} {language} {onCall} />
-        <button type="button" onclick={() => onAttack('light')}>{$bindings.playerLight}</button>
-        <button type="button" onclick={() => onAttack('heavy')}>{$bindings.playerHeavy}</button>
-        <button
-          type="button"
-          onclick={onThrow}
-          aria-label={language === 'fr' ? 'Projection / déprojection' : 'Throw / tech'}
-          >{$bindings.playerThrow}</button
-        >
-        <button
-          type="button"
-          class="ranged-button"
-          disabled={!rangedReady}
-          aria-label={rangedHint}
-          title={rangedHint}
-          onclick={() => onAttack('ranged')}
-        >
-          <kbd>{$bindings.playerRanged}</kbd>
-          <span>{language === 'fr' ? 'Tir' : 'Shot'}</span>
-        </button>
-        {#if moveset && finisher}
-          <button
-            type="button"
-            class="finisher-button"
-            disabled={!finisherAvailable}
-            aria-label={`${language === 'fr' ? finisher.nameFr : finisher.nameEn} · ${language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}`}
-            title={language === 'fr' ? finisher.nameFr : finisher.nameEn}
-            onclick={onFinisher}
-          >
-            <kbd>{$bindings.playerFinisher}</kbd>
-            <span>{language === 'fr' ? 'Ultime' : 'Super'}</span>
-          </button>
-        {/if}
-        {#if state.player.id !== 'camilla'}
-          <button
-            type="button"
-            class="special-button"
-            disabled={!hatsuReady}
-            aria-label={hatsuHint}
-            title={hatsuHint}
-            onpointerdown={(event) => {
-              event.currentTarget.setPointerCapture(event.pointerId)
-              hold('hatsu', true)
-            }}
-            onpointerup={() => {
-              onAttack('special')
-              hold('hatsu', false)
-            }}
-            onpointercancel={() => hold('hatsu', false)}
-          >
-            <kbd>{$bindings.playerSpecial}</kbd>
-            <span
-              >{state.player.id === 'beyond'
-                ? language === 'fr'
-                  ? 'Physique'
-                  : 'Physical'
-                : 'Hatsu'}</span
-            >
-          </button>
-        {/if}
-      </div>
-    </div>{/if}
+  <FightDecisionReadout state={visibleState} {language} />
+  {#if showControls}<FightTouchControls
+      state={visibleState}
+      {language}
+      {onAttack}
+      {onThrow}
+      {onCall}
+      {onFinisher}
+      {onControl}
+    />{/if}
   <FightBlinkyPanel
     state={visibleState}
     {language}
@@ -290,100 +181,8 @@
   .damage-callout.from-player {
     left: 62%;
   }
-  .touch-controls {
-    position: relative;
-    z-index: 30;
-    padding: 0.65rem;
-    border-top: 1px solid #34434d;
-    background: #080f15;
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none;
-  }
-  .touch-group {
-    display: flex;
-    gap: 0.45rem;
-    pointer-events: auto;
-  }
-  .attack-controls {
-    max-width: 65%;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .touch-group button {
-    display: grid;
-    width: 46px;
-    height: 46px;
-    place-items: center;
-    border: 1px solid rgb(255 255 255 / 34%);
-    border-radius: 50%;
-    background: rgb(6 10 14 / 72%);
-    color: #fff;
-    font: 700 1rem/1 var(--font-mono);
-    backdrop-filter: blur(5px);
-  }
-  .touch-group button:active {
-    background: #c7952d;
-    color: #080a0c;
-  }
-  .touch-group button:disabled {
-    opacity: 0.35;
-  }
-  .special-button,
-  .ranged-button,
-  .finisher-button {
-    width: auto !important;
-    min-width: 104px;
-    grid-template-columns: 24px minmax(0, 1fr);
-    gap: 0.45rem;
-    padding: 0 0.7rem;
-    border-radius: 24px !important;
-    border-color: #6dd9ff !important;
-    box-shadow: inset 0 0 14px rgb(72 188 238 / 25%);
-  }
-  .special-button kbd,
-  .ranged-button kbd,
-  .finisher-button kbd {
-    display: grid;
-    width: 24px;
-    height: 24px;
-    place-items: center;
-    border: 1px solid rgb(109 217 255 / 55%);
-    border-radius: 50%;
-    color: #9be8ff;
-    font: 700 0.7rem/1 var(--font-mono);
-  }
-  .special-button span,
-  .ranged-button span,
-  .finisher-button span {
-    overflow: hidden;
-    min-width: 0;
-    max-width: 112px;
-    font: 700 0.75rem/1.15 var(--font-mono);
-    letter-spacing: 0.04em;
-    text-align: left;
-    text-overflow: ellipsis;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .ranged-button {
-    width: auto !important;
-    min-width: 92px;
-    grid-template-columns: 24px minmax(0, 1fr);
-    gap: 0.4rem;
-    padding: 0 0.6rem;
-    border-radius: 24px !important;
-    border-color: #e7bc68 !important;
-  }
-  .finisher-button {
-    width: auto !important;
-    min-width: 104px;
-    grid-template-columns: 24px minmax(0, 1fr);
-    gap: 0.4rem;
-    padding: 0 0.6rem;
-    border-radius: 24px !important;
-    border-color: #ef5a62 !important;
-    box-shadow: inset 0 0 14px rgb(239 90 98 / 25%);
+  .high-contrast .fight-arena {
+    filter: contrast(1.25);
   }
   @media (prefers-reduced-motion: reduce) {
     .impact-flash {
@@ -423,25 +222,6 @@
     .fight-arena {
       height: 56vh;
       min-height: 360px;
-    }
-    .touch-controls {
-      gap: 0.5rem;
-    }
-    .touch-group {
-      gap: 0.28rem;
-    }
-    .touch-group button {
-      width: 44px;
-      height: 44px;
-    }
-    .movement-controls {
-      max-width: 185px;
-      flex-wrap: wrap;
-    }
-    .attack-controls {
-      max-width: 220px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
     }
     .damage-callout {
       top: 49%;

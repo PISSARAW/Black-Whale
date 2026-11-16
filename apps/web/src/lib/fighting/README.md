@@ -161,6 +161,51 @@ réactions retardées, trajectoires réelles, chaleur, corps séparé, mains occ
 les quarante styles, les copies et les explications du manuel. Les profils,
 distances et délais sont des réglages du duel, pas des valeurs du manga.
 
+## Commandes et lisibilité
+
+Le remappage clavier P1/P2 et les deux manettes standard passent par
+`fightInputBindings.ts` et `fightGamepad.ts`. Les indications de pause suivent
+la touche configurée. Back + LB couvre les oreilles ; Back + RB couvre les
+plaies. Ces accords occupent les mains, sans maintenir simultanément la garde,
+l’aura ou la parole ; couvrir les oreilles prend priorité si les trois touches
+sont maintenues. Les règles ordinaires du Nen restent appliquées.
+
+`commandFeedback.ts` observe les tentatives de coups au clavier, à la manette
+et au tactile, ainsi que les panneaux de Hatsu. Il distingue exécution, buffer
+et refus. Les motifs décrivent le corps et les prérequis connus du joueur :
+aura, récupération, mains occupées, équipement, préparation ou cible matérielle
+absente / hors de portée. Les conditions non identifiables restent génériques ;
+aucune condition cachée adverse n’est expliquée automatiquement. Les gestes
+qui manquent leur cible restent des gestes exécutés, pas des refus de portée.
+`commandHands.ts` applique les postures maintenues avant les coups en attente :
+une attaque simultanée avec la protection des oreilles ou des plaies ne profite
+pas d’une frame où les mains semblaient encore libres. Le moteur conserve ses
+contrats de coût, d’interruption et de refus sans effet. Les prévisions privées
+ne produisent pas de retours de commande supplémentaires.
+
+« Mes commandes et engagements » sélectionne les données propres de P1 ou P2
+en local / laboratoire, et reste sur P1 contre l’IA. Les durées exactes concernent
+le joueur sélectionné : fin du geste, stun, relevée, danse, écriture et prochaine
+rotation. Les tours conservés sont un compte, pas une durée d’expiration. Une
+liaison ne paraît qu’après perception ; aucun minuteur privé adverse n’est exposé.
+Les durées utilisent les frames simulées à 60 Hz, suspendues en pause et hitstop.
+
+Les réglages de confort visuel sont locaux et persistants : secousses à 0, 50 ou
+100 %, flashs d’impact et contraste renforcé. Le choix système d’animation réduite
+prime sur les secousses et les flashs. Ils modifient seulement la présentation,
+sans changer les manifestations accessibles à Gyo / En ni les collisions.
+Les commandes tactiles utilisent des boutons nommés de 44 px minimum, avec
+capture du pointeur. Annulation, perte de capture, de focus ou démontage relâchent
+les actions sans déclencher le Hatsu. Les interactions et protections restent
+accessibles en petits écrans ; les panneaux propres aux capacités sont conservés.
+
+`commandReadability.test.ts` et `fightComfortControls.test.ts` vérifient refus,
+buffers, coût, prérequis, perception, engagements, protections simultanées,
+annulation des entrées et persistance. `node scripts/check-fighting-readability.mjs`
+(depuis `apps/web`) vérifie les composants de production, les trois largeurs
+1440 / 390 / 320 px, le tactile, le stockage et l’animation réduite. Les manettes
+standard sont simulées ; aucune mesure de latence matérielle n’est revendiquée.
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le

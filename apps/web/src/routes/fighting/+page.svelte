@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { defaultFightComfort } from '$lib/fighting/fightComfort'
+  import { createQueuedFightActions } from './fightingQueuedActions'
   import FightLessons from '$lib/components/fighting/FightLessons.svelte'
   import { createFightLessons } from '$lib/fighting/fightLessonController'
   import type { LessonId } from '$lib/fighting/fightLessons'
@@ -31,8 +33,7 @@
   import FightHatsuPanels from '$lib/components/fighting/FightHatsuPanels.svelte'
   import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
-  import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
-  import { battleStageCallbacks } from './battleCallbacks'
+  import { battleStageCallbacks, callFightBody } from './battleCallbacks'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightDisplaySettings from '$lib/components/fighting/FightDisplaySettings.svelte'
@@ -76,7 +77,8 @@
   let input: FightInput = { ...EMPTY_INPUT }
   let opponentInput: FightInput = { ...EMPTY_INPUT }
   /** Presses wait for the next simulated frame instead of landing between two. */
-  let pendingActions: Array<(current: FightState) => FightState> = []
+  const pendingActions = createQueuedFightActions()
+  let comfort = defaultFightComfort()
   let stageElement: HTMLDivElement | undefined
   let showDetails = false
   let hudScale = 1
@@ -95,7 +97,7 @@
   function resetFightInputs() {
     input = { ...EMPTY_INPUT }
     opponentInput = { ...EMPTY_INPUT }
-    pendingActions = []
+    pendingActions.clear()
     controls.release()
   }
 
@@ -144,7 +146,7 @@
 
   function queueAction(action: (current: FightState) => FightState) {
     if (state && fightAcceptsCommands(state) && (!paused || state.mode === 'training'))
-      pendingActions = [...pendingActions, action]
+      pendingActions.push(action)
   }
 
   function attack(action: AttackKind) {
@@ -160,20 +162,14 @@
   }
 
   function throwAttack() {
-    queueAction((state) => performTrainingAction({ state, side: 'player', action: 'throw' }))
+    const pressed = controls.combine('player', input)
+    queueAction((state) =>
+      performTrainingAction({ state, side: 'player', action: 'throw', input: pressed }),
+    )
   }
 
   function callBody() {
-    queueAction((current) => callHanzoBody(current, 'player'))
-  }
-
-  function flushPendingActions(current: FightState): FightState {
-    const actions = pendingActions
-    pendingActions = []
-    return actions.reduce(
-      (next, action) => (fightAcceptsCommands(next) ? action(next) : next),
-      current,
-    )
+    queueAction(callFightBody)
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -253,7 +249,7 @@
 
   function stepLab() {
     if (!state || state.mode !== 'training' || !paused) return
-    state = tickFight({ ...flushPendingActions(state), frameAccumulator: 0 }, input, {
+    state = tickFight({ ...pendingActions.flush(state), frameAccumulator: 0 }, input, {
       dt: FIXED_STEP,
       opponentInput,
       ai: false,
@@ -280,7 +276,7 @@
       controls.poll(state?.mode, Boolean(state?.phase === 'fighting' && !paused))
       if (state?.phase === 'fighting' && !paused) {
         const versusAi = state.mode === 'versus-ai'
-        state = tickFight(flushPendingActions(state), controls.combine('player', input), {
+        state = tickFight(pendingActions.flush(state), controls.combine('player', input), {
           dt,
           opponentInput: versusAi ? undefined : controls.combine('opponent', opponentInput),
           ai: versusAi,
@@ -346,6 +342,7 @@
   {:else}
     <div class="stage-wrap" bind:this={stageElement} style={`--hud-scale:${hudScale}`}>
       <FightDisplaySettings
+        bind:comfort
         {language}
         formatId={state.formatId}
         target={stageElement}
@@ -392,6 +389,7 @@
           }}
         />
         <FightStage
+          {comfort}
           {state}
           bind:easterEggPreferences
           onEasterEgg={(side, slot) =>

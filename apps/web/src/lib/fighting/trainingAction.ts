@@ -1,3 +1,5 @@
+import { prepareCommandHands } from './commandHands'
+import { observeFightCommand } from './commandFeedback'
 import { performAuraAttack, performMove, performThrow } from './engine'
 import { observeTrainingCommand } from './trainingHistory'
 import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
@@ -10,11 +12,13 @@ export function performTrainingAction(options: {
   action: TrainingAction
   input?: FightInput
 }): FightState {
-  return observeTrainingCommand(options.state, options, (state) => {
-    const { side, action, input = EMPTY_INPUT } = options
-    if (action === 'throw') return performThrow(state, side)
-    if (action === 'ranged')
-      return performAuraAttack({ state, side, kind: 'ranged', auraCharged: input.aura })
-    return performMove({ state, side, action, input })
-  })
+  return observeFightCommand(prepareCommandHands(options.state, options), options, (current) =>
+    observeTrainingCommand(current, options, (state) => {
+      const { side, action, input = EMPTY_INPUT } = options
+      if (action === 'throw') return performThrow(state, side)
+      if (action === 'ranged')
+        return performAuraAttack({ state, side, kind: 'ranged', auraCharged: input.aura })
+      return performMove({ state, side, action, input })
+    }),
+  )
 }

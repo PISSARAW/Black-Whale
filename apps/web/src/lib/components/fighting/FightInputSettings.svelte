@@ -125,6 +125,12 @@
         </dd>
         <dt>Start / Back</dt>
         <dd>{language === 'fr' ? 'Lancer ou pause / parler' : 'Start or pause / speak'}</dd>
+        <dt>Back + LB / RB</dt>
+        <dd>
+          {language === 'fr'
+            ? 'Couvrir les oreilles / les plaies (mains occupées)'
+            : 'Cover ears / wounds (hands occupied)'}
+        </dd>
         <dt>L3 / R3</dt>
         <dd>{language === 'fr' ? 'Arène / Gyo' : 'Arena / Gyo'}</dd>
       </dl>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { observeFightCommand } from '$lib/fighting/commandFeedback'
   import FightKallutoPaper from './FightKallutoPaper.svelte'
   import { selectPaperTarget, selectPaperCommand } from '$lib/fighting/kallutoPaper'
   import { speakBattleWords } from '$lib/fighting/battleConversation'
@@ -19,7 +20,11 @@
   export let onEditing: () => void
   export let perform: (options: AuraAttackOptions) => FightState
   function dispatch(side: FightSide, action: (state: FightState) => FightState) {
-    onAction((current) => runOutsideEasterEgg(current, side, action))
+    onAction((current) =>
+      observeFightCommand(current, { side, action: 'utility' }, (next) =>
+        runOutsideEasterEgg(next, side, action),
+      ),
+    )
   }
 </script>
 

@@ -26,7 +26,11 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove } from '$lib/fighting/fightMoves'
   import { fightBodyMotion } from '$lib/fighting/fightBodyMotion'
-  import { impactPresentation } from '$lib/fighting/fightImpactPresentation'
+  import {
+    comfortableImpact,
+    defaultFightComfort,
+    effectiveFightComfort,
+  } from '$lib/fighting/fightComfort'
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
   import { motionOf } from '$lib/fighting/fighterMovement'
   import { createStrideClocks, easeFactor, transitionSecondsFor } from '$lib/fighting/sceneMotion'
@@ -44,6 +48,7 @@
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
 
+  export let comfort = defaultFightComfort()
   export let state: FightState
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
 
@@ -76,6 +81,8 @@
   const CAMERA_RATE = 6
 
   onMount(() => {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const visualComfort = () => effectiveFightComfort(comfort, motionPreference.matches)
     let disposed = false
     let animationFrame = 0
     let resize: ResizeObserver | null = null
@@ -226,7 +233,11 @@
           const impact = state.impact
           if (!impact || impact.sequence === lastImpact) return
           lastImpact = impact.sequence
-          const profile = impactPresentation(impact, state[impact.attacker].id)
+          const profile = comfortableImpact({
+            impact,
+            attacker: state[impact.attacker].id,
+            comfort: visualComfort(),
+          })
           shakeStarted = now
           shakeUntil = now + profile.shakeMs
           shakeX = profile.shakeX
@@ -374,7 +385,7 @@
           camera.position.y += (framing.y - camera.position.y) * ease
           cameraLookY += (framing.lookY - cameraLookY) * ease
           updateCameraFog()
-          if (now < shakeUntil) {
+          if (visualComfort().shake > 0 && now < shakeUntil) {
             const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
             camera.position.x += Math.sin(now * 0.15) * shakeX * fade
             camera.position.y += Math.cos(now * 0.19) * shakeY * fade

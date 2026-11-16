@@ -1,5 +1,11 @@
 import { expect, test, type Page } from 'playwright/test'
 
+test.beforeEach(async ({ page }) => {
+  // These checks exercise combat commands; animated document scrolling can
+  // move the lesson controls under the sticky header during hit-testing.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+})
+
 async function lesson(page: Page, name: RegExp) {
   await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
   await page.getByText(/^Apprendre le Nen · \d+ exercices pratiques$/).click()
@@ -28,7 +34,9 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
   await page.keyboard.down('Space')
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
   await page.keyboard.up('Space')
-  await panel(page).getByRole('button', { name: 'Recommencer' }).click()
+  const restart = panel(page).getByRole('button', { name: 'Recommencer' })
+  await restart.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+  await restart.click()
   await expect(panel(page)).not.toContainText('Exercice réussi.')
   await panel(page).getByRole('button', { name: 'Entraînement libre' }).click()
   await expect(panel(page)).toHaveCount(0)

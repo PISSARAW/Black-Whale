@@ -1,3 +1,4 @@
+import { crossGameCanWarn } from './crossGame'
 import { tunePhinksMoveset } from './phinksMoveset'
 import { cyclotronMoveResources } from './phinksAction'
 import { cyclotronPunchReady } from './phinksCyclotron'
@@ -117,7 +118,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse', 'phinks'].includes(
+    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse', 'phinks', 'mizaistom'].includes(
       fighter.id,
     ) && action === 'special'
       ? 'neutralSpecial'
@@ -130,6 +131,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (move.id === 'mizaistom:neutralSpecial') return crossGameCanWarn(state, side)
   if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
   if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
   return ordinaryMoveAllowed(state, side, move)
@@ -267,7 +269,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   bonolenov: (state, side) => state[side].hatsuEffects.cantabileFrames > 0,
   shizuku: (state, side) => opponentOf(state, side).health <= 50,
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
-  mizaistom: (state, side) => opponentOf(state, side).hatsuEffects.restrainedFrames > 0,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: predatorReady,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,

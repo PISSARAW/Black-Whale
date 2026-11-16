@@ -1,5 +1,7 @@
 import { steerCyclotron } from './phinksCyclotron'
 import { cyclotronAiAction } from './phinksAction'
+import { resolveCrossGameCommand, resolveCrossGameMovement } from './crossGameAction'
+import { crossGameBusy, crossGameRestrained } from './crossGame'
 import { advancePredatorClock } from './predatorSeal'
 import { resolvePredatorThreats } from './predatorCombat'
 import { performMelodyAction } from './melodyAction'
@@ -138,7 +140,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
-  const judged = resolveJudgmentDeaths({ ...state, player, opponent })
+  const judged = resolveJudgmentDeaths(resolveCrossGameMovement(state, { ...state, player, opponent }))
   if (fightResolutionPending(judged)) return judged
   const buffered = flushBuffered(
     flushBuffered(resolveHanzoBodyCalls(judged, input, opponentInput), 'player'),
@@ -256,6 +258,11 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (crossGameBusy(options.state[options.side])) return options.state
+  return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+}
+
+function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   if (state.catsName) return state
   if (!futureAcceptsMove(state, side)) return state
@@ -285,13 +292,14 @@ export function performMove(options: PerformMoveOptions): FightState {
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
   options = thetaFirearmOptions(options)
-  return resolveMoonlightAction(options.state, executeAuraAttack(options), options.side)
+  return resolveMoonlightAction(options.state, resolveCrossGameCommand(options.state, executeAuraAttack(options), options.side), options.side)
 }
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (!fightAcceptsCommands(options.state)) return options.state
   const original = options.state[side]
+  if (crossGameBusy(original)) return options.state
   const music = performMelodyAction(options, performAuraAttack)
   if (music) return music
   const character = characterAuraAction(options, performAuraAttack)
@@ -409,6 +417,7 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.wakeupInvulnerableFrames > 0 && !fighter.attack)
     return { ...fighter, pose: 'wakeup', blocking: false }
   if (fighter.hitStun > 0) return { ...fighter, pose: 'hit', blocking: false }
+  if (crossGameRestrained(fighter)) return { ...fighter, pose: 'idle', blocking: false }
   if (musicPacifies(fighter)) return { ...fighter, pose: 'idle', blocking: false }
   if (fighter.melodyPerformance) return { ...fighter, pose: 'special', blocking: false }
   return activeFighterPose(fighter)
@@ -423,6 +432,7 @@ function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
+    !crossGameBusy(fighter) &&
     !musicPacifies(fighter) &&
     !chainsImmobilize(fighter) &&
     !projectionPreparing(fighter) &&
@@ -439,6 +449,7 @@ function canMove(fighter: ArcadeFighter): boolean {
 
 function canGuard(fighter: ArcadeFighter): boolean {
   return (
+    !crossGameBusy(fighter) &&
     !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&

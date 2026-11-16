@@ -1,3 +1,4 @@
+import { performCrossGameAction } from './crossGameAction'
 import { performMachiAction } from './machiAction'
 import { performCyclotronAction } from './phinksAction'
 import { performPredatorAction } from './predatorAction'
@@ -20,6 +21,7 @@ export function characterAuraAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const attempts = [
+    () => performCrossGameAction(options),
     () => performMachiAction(options, perform),
     () => performPredatorAction(options),
     () => performParallelFutureAction(options),

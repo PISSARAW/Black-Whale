@@ -1,3 +1,4 @@
+import { mizaistomMoveset } from './mizaistomMoveset'
 import { leorioMoveset } from './leorioMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
@@ -72,42 +73,6 @@ const SPECS: readonly MovesetSpec[] = [
     ],
   },
   {
-    fighterId: 'mizaistom',
-    mechanic: [
-      'Cross Game : les cartes colorées imposent arrêt, avertissement puis contrainte.',
-      'Cross Game: colored cards impose stop, warning, then restraint.',
-    ],
-    finisherCondition: [
-      'La cible doit être immobilisée par Cross Game.',
-      'The target must be restrained by Cross Game.',
-    ],
-    labels: [
-      'Direct du Bœuf|Ox Straight',
-      'Marteau du Zodiac|Zodiac Hammer',
-      'Carte basse|Low Card',
-      'Balayage judiciaire|Judicial Sweep',
-      'Mandat aérien|Aerial Warrant',
-      'Sentence descendante|Descending Sentence',
-      'Interposition|Interposition',
-      'Charge du Bœuf|Ox Charge',
-      'Carte de recul|Retreat Card',
-      'Carte bleue|Blue Card',
-      'Carte jaune|Yellow Card',
-      'Carte rouge|Red Card',
-      'Zone de Cross Game|Cross Game Zone',
-      'Arrestation|Arrest',
-      'Cross Game · Verdict|Cross Game · Verdict',
-    ],
-    speed: 1,
-    power: 1.04,
-    reach: 1.2,
-    combos: [
-      ['standingLight', 'backHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardHeavy', 'downSpecial'],
-      ['airHeavy', 'forwardSpecial'],
-    ],
-  },
-  {
     fighterId: 'hanzo',
     mechanic: [
       'L : projeter le double en laissant le corps endormi. Le double flotte (haut/bas), traverse l’adversaire et frappe ; toucher le corps ou l’interpeller à proximité (T/V) interrompt la projection. Revenir au corps puis L pour le réintégrer.',
@@ -146,9 +111,10 @@ const SPECS: readonly MovesetSpec[] = [
 ]
 
 export const WAVE_TWO_MOVESETS_B = [
-  ...SPECS.slice(0, 3).map(buildMoveset),
+  ...SPECS.slice(0, 2).map(buildMoveset),
+  mizaistomMoveset(),
   leorioMoveset(),
-  ...SPECS.slice(3).map(buildMoveset),
+  ...SPECS.slice(2).map(buildMoveset),
 ].map((moveset) => {
   if (moveset.fighterId !== 'hanzo') return moveset
   return {

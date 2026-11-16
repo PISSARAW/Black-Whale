@@ -3,6 +3,7 @@
   import FightCyclotronStatus from './FightCyclotronStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
+  import FightCrossGameStatus from './FightCrossGameStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
   import type { FightInput } from '$lib/fighting/types'
   import FightOutsideDuelStatus from './FightOutsideDuelStatus.svelte'
@@ -59,6 +60,7 @@
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
       <FightCyclotronStatus {fighter} {language} {side} />
+      <FightCrossGameStatus {fighter} {language} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}

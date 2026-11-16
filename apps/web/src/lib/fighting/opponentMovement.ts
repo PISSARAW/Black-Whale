@@ -1,3 +1,4 @@
+import { crossGameBusy } from './crossGame'
 import { musicPacifies } from './melodyRules'
 import { bashoWriting } from './bashoPoem'
 import { chainsImmobilize } from './kurapika'
@@ -12,7 +13,7 @@ const MAX_X = 93
 
 export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
   if (fighter.melodyPerformance || musicPacifies(fighter)) return { ...fighter, blocking: false }
-  if (projectionPreparing(fighter) || bashoWriting(fighter)) return fighter
+  if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter)) return fighter
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
   const next = opponentGuardState(fighter, player, gap)

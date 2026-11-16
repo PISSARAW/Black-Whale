@@ -49,7 +49,7 @@ describe('wave one movesets', () => {
       'hanzo',
     ])
     WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh')
-      .filter((id) => id !== 'leorio')
+      .filter((id) => !['leorio', 'mizaistom'].includes(id))
       .forEach(assertCompleteMoveset)
   })
 
@@ -172,7 +172,7 @@ describe('wave one movesets', () => {
 
   it.each(
     WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter(
-      (id) => id !== 'leorio' && id !== 'franklin',
+      (id) => !['leorio', 'mizaistom'].includes(id) && id !== 'franklin',
     ),
   )('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))

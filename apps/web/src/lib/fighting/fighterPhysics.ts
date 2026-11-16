@@ -1,3 +1,4 @@
+import { crossGameRestrained, holdCrossGame } from './crossGame'
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
 import { advanceCyclotron } from './phinksCyclotron'
 import { sleepingBody } from './hanzoProjection'
@@ -13,7 +14,8 @@ const MAX_X = 93
 
 export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
   fighter = advanceCyclotron(fighter)
-  const vertical = advanceAirborne(fighter)
+  fighter = holdCrossGame(fighter)
+  const vertical = crossGameRestrained(fighter) ? fighter : advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
@@ -26,7 +28,7 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
     ryuWindow: Math.max(0, fighter.ryuWindow - 1),
     throwTechFrames: Math.max(0, (fighter.throwTechFrames ?? 0) - 1),
   })
-  return advanceNen(advanced, FIXED_STEP)
+  return holdCrossGame(advanceNen(advanced, FIXED_STEP))
 }
 
 function advanceWakeup(
@@ -60,8 +62,8 @@ export function separateFighterPushboxes(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
 ): Pick<FightState, 'player' | 'opponent'> {
-  player = anchorFighter(player)
-  opponent = anchorFighter(opponent)
+  player = holdCrossGame(anchorFighter(player))
+  opponent = holdCrossGame(anchorFighter(opponent))
   if (player.hanzoProjection || opponent.hanzoProjection) {
     return {
       player: { ...player, facing: player.x <= sleepingBody(opponent).x ? 1 : -1 },
@@ -110,14 +112,18 @@ function pushboxOverlap(
   return facing === 1 ? player.right - opponent.left : opponent.right - player.left
 }
 
+function positionFixed(fighter: ArcadeFighter): boolean {
+  return fighterAnchored(fighter) || crossGameRestrained(fighter)
+}
+
 function pushShifts(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
   overlap: number,
 ): [number, number] {
-  if (fighterAnchored(player) && fighterAnchored(opponent)) return [0, 0]
-  if (fighterAnchored(player)) return [0, overlap]
-  if (fighterAnchored(opponent)) return [overlap, 0]
+  if (positionFixed(player) && positionFixed(opponent)) return [0, 0]
+  if (positionFixed(player)) return [0, overlap]
+  if (positionFixed(opponent)) return [overlap, 0]
   const playerAtWall = player.x <= MIN_X || player.x >= MAX_X
   const opponentAtWall = opponent.x <= MIN_X || opponent.x >= MAX_X
   if (playerAtWall) return [0, overlap]

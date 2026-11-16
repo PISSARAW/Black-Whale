@@ -1,4 +1,5 @@
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
+import { crossGameBodyPlan } from './crossGamePresentation'
 import { animateMussePistol } from './mussePistol'
 import { musseKeyedMove } from './mussePoses'
 import { benjaminKeyedMove } from './benjaminPoses'
@@ -134,6 +135,8 @@ export interface PlanContext extends ReactionContext {
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const cyclotron = cyclotronBodyPlan(fighter)
   if (cyclotron) return cyclotron
+  const crossGame = crossGameBodyPlan(fighter)
+  if (crossGame) return crossGame
   const melody = melodyBodyPlan(fighter, context)
   if (melody) return melody
   if (fighter.hanzoProjection && !fighter.attack)

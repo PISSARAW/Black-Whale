@@ -428,7 +428,7 @@ describe('fighter Hatsu registry', () => {
         blocked: false,
         concealed: false,
       }).opponent.hatsuEffects
-    expect(impact('mizaistom').restrainedFrames).toBe(90)
+    expect(impact('mizaistom').restrainedFrames).toBe(0)
     expect(impact('zakuro').bloodBoundFrames).toBe(100)
     expect(impact('melody').entrancedFrames).toBe(0)
   })

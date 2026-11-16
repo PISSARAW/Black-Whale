@@ -1,4 +1,5 @@
 import { cyclotronPresentation } from './phinksPresentation'
+import { crossGamePresentation } from './crossGamePresentation'
 import { predatorSpecialPresentation } from './predatorPresentation'
 import { melodyCanPerform } from './melodyRules'
 import { bashoPresentation } from './bashoPresentation'
@@ -36,6 +37,7 @@ export function fightSpecialPresentation(
 }
 
 function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
+  if (state.player.id === 'mizaistom') return crossGamePresentation(state, language)
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)
     ? Boolean(move && canUseMovesetMove(state, 'player', move))

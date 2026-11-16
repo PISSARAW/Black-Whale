@@ -1,3 +1,4 @@
+import { crossGameBusy } from './crossGame'
 import { machiImmobilized } from './machiThread'
 import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
@@ -88,6 +89,8 @@ export function canStartFighterAttack(
   moveId?: string,
 ): boolean {
   if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
+  if (crossGameBusy(fighter)) return false
+  if (melodyRestrictsCombat(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
@@ -120,6 +123,8 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
   if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
+  if (crossGameBusy(fighter)) return false
+  if (melodyRestrictsCombat(fighter)) return false
   if (
     fighter.hitStun > 0 ||
     fighter.blockStun > 0 ||

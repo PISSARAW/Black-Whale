@@ -1,3 +1,4 @@
+import type { CrossGameState } from './crossGame'
 import type { MachiThread } from './machiThread'
 import type { PredatorState } from './predatorTypes'
 import type { MelodyPerformance, MelodyHearing } from './melodyRules'
@@ -172,6 +173,8 @@ export interface ArcadeFighter {
   coveringEars?: boolean
   /** A borrower must supply a real flute; native Melody owns one. */
   melodyFlute?: boolean
+  crossGame?: CrossGameState
+  crossGameCardFrames?: number
   melodyPerformance?: MelodyPerformance
   melodyHearing?: MelodyHearing
   hatsuEffects: FighterHatsuEffects

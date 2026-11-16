@@ -141,6 +141,7 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
+    'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
     predator: predatorBusy(fighter),
     cyclotron: cyclotronBusy(fighter),
     'secret-window': Boolean(fighter.secretWindow),

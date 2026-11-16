@@ -676,3 +676,35 @@ l’écoute. Une copie du Hatsu demande une vraie flûte et ne copie pas cette o
   `stitchedFrames` n’est plus qu’un indicateur dérivé ; il n’impose aucun hitstun.
   Le soin personnel, les coûts, frames, portées, seuil de contention et finisher
   sont des adaptations du duel. La suture ne régénère pas de tissu manquant.
+
+### Mizaistom : avertissement avant la contrainte
+
+`mizaistomMoveset.ts` conserve dix coups physiques ordinaires et un seul Cross Game :
+**L, avec ou sans direction**, montre le carton jaune et annonce « Ne bougez plus :
+ni déplacement, ni nouvelle attaque ». L’avertissement ne frappe pas et n’inflige
+aucun dégât, stun ou point. La garde ordinaire ne l’annule pas. Le carton et l’ordre
+doivent pouvoir être perçus ; les sceaux des sens et les oreilles couvertes sont
+pris en compte. L’état et l’ordre sont affichés pour chaque joueur.
+
+`crossGameAction.ts` vérifie un déplacement volontaire, un nouveau saut ou une
+nouvelle attaque après l’avertissement : le carton se retourne alors et la cible
+est enfermée brièvement dans un parallélépipède. Obéir ne déclenche rien ; un
+second L et un coup reçu ne remplacent jamais la désobéissance. La parole et le
+Nen de base restent disponibles sous contrainte. Aucun hitstun artificiel, Zetsu,
+soin, bonus de dégâts ou finisher n’est ajouté. Un mouvement déjà engagé, une
+entrée invalide et un déplacement subi sous un impact ne constituent pas une
+nouvelle désobéissance.
+
+`crossGame.ts` porte la condition et sa durée ; `crossGameScene.ts` dessine le
+carton jaune et l’enceinte rectangulaire. Le coût de 40 aura, la portée de 28 unités,
+la présentation et le délai de réaction de 18 frames, ainsi que la contrainte de
+90 frames sont des réglages du duel. L’ordre choisi adapte la capacité au combat
+sans dialogue libre. Les cartes bleue et rouge ne deviennent pas des attaques :
+leurs usages d’admission et d’expulsion ne sont pas simulés ici. La zone offensive,
+les sentences, le mandat aérien et « Cross Game · Verdict » sont retirés.
+
+Les copies conservent avertissement et désobéissance ; fermer la page non marquée
+ou perdre le Hatsu dissipe ses effets. Une nouvelle manche efface l’état.
+`mizaistom.test.ts` vérifie le moteur, les deux joueurs, l’IA, les copies et le rendu
+3D du carton et de la contrainte. Référence : Cross Game montré dans le manga,
+lors des préparatifs de l’expédition ; la catégorie naturelle reste inconnue.

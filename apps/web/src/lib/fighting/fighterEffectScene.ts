@@ -1,3 +1,4 @@
+import { createCrossGameScene } from './crossGameScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createSecretWindowScene } from './secretWindowScene'
 import { createBashoFireScene } from './bashoFireScene'
@@ -25,6 +26,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const { THREE, scene } = options
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
+  const crossGame = createCrossGameScene(options)
   const basho = createBashoFireScene(options)
   const nenFields = createNenFieldScene(options)
   const benjamin = createBenjaminEffectScene(options)
@@ -45,6 +47,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const sync = (state: FightState, seconds: number) => {
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
+    crossGame.sync(state, seconds)
     basho.sync(state, seconds)
     nenFields.sync(state)
     benjamin.sync(state, seconds)
@@ -59,6 +62,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     dispose: () => {
       secretWindow.dispose()
       camilla.dispose()
+      crossGame.dispose()
       basho.dispose()
       nenFields.dispose()
       benjamin.dispose()

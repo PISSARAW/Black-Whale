@@ -103,3 +103,14 @@ export const STANCE_FRAME_JOINTS: readonly FightJoint[] = [
   'leadKnee',
   'rearKnee',
 ]
+
+/** What the fighting rig draws on one frame, and how it eases into it. */
+export interface BodyPlan {
+  pose: FightPose
+  /** Keep the lower foot on the floor (off in the air). */
+  plant: boolean
+  /** A change of key starts a cross-fade from the last drawn pose. */
+  key: string
+  /** Cross-fade length in seconds; 0 snaps. */
+  blend: number
+}

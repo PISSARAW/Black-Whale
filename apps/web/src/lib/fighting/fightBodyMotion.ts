@@ -1,11 +1,16 @@
 import type { HumanMotion } from '$lib/tour/humanAnimation'
+import { READY_ARMS } from './fightGestures'
 import {
   addPoses,
+  lerpPose,
+  NEUTRAL_POSE,
   pickJoints,
   STANCE_FRAME_JOINTS,
   UPPER_JOINTS,
+  type BodyPlan,
   type FightPose,
 } from './fightPose'
+import { reactionPlan, type ReactionContext } from './fightReactions'
 import {
   applyFightPose,
   fightRigOf,
@@ -13,90 +18,159 @@ import {
   hasFightRig,
   plantFeet,
   resetFightRig,
+  type FightRig,
 } from './fightRig'
-import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt } from './fightStance'
+import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
-import { keyPoseTimeline } from './keyPoseMoves'
+import { keyedMove } from './keyPoseMoves'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
-import type { ArcadeFighter, AttackVariant, FighterPose } from './types'
+import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 
 /**
- * Where the fighting rig takes over from the procedural gestures.
+ * Where the fighting rig draws a fighter, frame by frame.
  *
- * A fighter with a stance (`fightStance.ts`) is drawn in it whenever it is
- * standing, walking, guarding or crouching, and its keyed moves
- * (`keyPoseMoves.ts`) replace the old gestures. Everything else — hits,
- * knockdowns, throws, unkeyed moves, fighters without a stance — falls back to
- * the motion the scene already computed.
+ * Every fighter stands in its stance (`fightStance.ts`, or a plain guard when it
+ * has none yet), attacks through its keyed moves (`keyPoseMoves.ts`) and reacts
+ * through `fightReactions.ts`. Only a throw tech still falls back to the motion
+ * the scene computed.
+ *
+ * Changing from one plan to another — a stance into a move, a move back to the
+ * stance, a hit — cross-fades from the pose last drawn, so the extra joints the
+ * visit's animation does not blend (chest, wrists) never jump.
  */
-export interface BodyMotionOptions {
+export interface BodyMotionOptions extends ReactionContext {
   fighter: ArcadeFighter
   seconds: number
-  /** The motion to play when the rig has nothing keyed for this frame. */
+  /** The motion to play when the rig has nothing for this frame. */
   fallback?: HumanMotion
 }
 
-interface BodyPlan {
-  pose: FightPose
-  /** Keep the lower foot on the floor. */
-  plant: boolean
+const DEFAULT_STANCE: FightStance = {
+  pose: {
+    chest: [0.03, -0.3, 0],
+    ...READY_ARMS,
+    leadHip: [-0.3, 0, 0.06],
+    leadKnee: [0.45, 0, 0],
+    rearHip: [0.22, 0, -0.06],
+    rearKnee: [0.12, 0, 0],
+  },
+  bounce: 0.06,
+  tempo: 1.3,
 }
 
 const STANDING_POSES = new Set<FighterPose>(['idle', 'walk', 'guard'])
 const ATTACK_POSES = new Set<FighterPose>(['light', 'heavy', 'special', 'ranged'])
 
-export function fightBodyMotion({ fighter, seconds, fallback }: BodyMotionOptions): HumanMotion {
-  const plan = bodyPlan(fighter, seconds)
+export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
+  const { fighter, seconds, fallback } = options
+  const plan = bodyPlan(fighter, options)
   return (human) => {
-    if (plan || hasFightRig(human.figure)) resetFightRig(fightRigOf(human))
-    if (!plan) {
+    if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)
       return
     }
     const rig = fightRigOf(human)
+    resetFightRig(rig)
+    if (!plan) {
+      remember(rig, { key: 'fallback', pose: NEUTRAL_POSE, seconds })
+      fallback?.(human)
+      return
+    }
     const before = plan.plant ? footHeight(rig) : 0
-    applyFightPose(rig, plan.pose, fighter.facing)
+    applyFightPose(rig, blended(rig, plan, seconds), fighter.facing)
     if (plan.plant) plantFeet(rig, before)
   }
 }
 
-export function bodyPlan(fighter: ArcadeFighter, seconds: number): BodyPlan | null {
-  const stance = fightStance(fighter.id)
-  if (!stance) return null
-  const standing = stanceAt(stance, seconds)
-  if (fighter.attack) return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
-  return restingPlan(fighter, standing)
+interface PoseMemory {
+  key: string
+  from: FightPose
+  since: number
+  last: FightPose
 }
 
-function basePose(variant: AttackVariant, standing: FightPose): FightPose {
-  const upper = pickJoints(standing, UPPER_JOINTS)
+const MEMORY = new WeakMap<FightRig, PoseMemory>()
+
+function remember(rig: FightRig, drawn: { key: string; pose: FightPose; seconds: number }): void {
+  MEMORY.set(rig, { key: drawn.key, from: drawn.pose, since: drawn.seconds, last: drawn.pose })
+}
+
+function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
+  const memory = MEMORY.get(rig)
+  if (!memory) {
+    // The first pose of a figure is drawn as is: there is nothing to fade from.
+    remember(rig, { key: plan.key, pose: plan.pose, seconds: -Infinity })
+    return plan.pose
+  }
+  if (memory.key !== plan.key)
+    Object.assign(memory, { key: plan.key, from: memory.last, since: seconds })
+  const travel =
+    plan.blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / plan.blend)) : 1
+  const eased = travel * travel * (3 - 2 * travel)
+  memory.last = travel >= 1 ? plan.pose : lerpPose(memory.from, plan.pose, eased)
+  return memory.last
+}
+
+export interface PlanContext extends ReactionContext {
+  seconds: number
+}
+
+export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  if (fighter.attack) return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
+  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+}
+
+function basePose(variant: AttackVariant, standing: FightPose, authored: boolean): FightPose {
+  // Hand-keyed moves strike from the fighter's own guard; family gestures from a ready one.
+  const upper = authored ? pickJoints(standing, UPPER_JOINTS) : READY_ARMS
   if (variant === 'low') return addPoses(upper, CROUCH_POSE)
   if (variant === 'air') return addPoses(upper, AIR_POSE)
-  return standing
+  if (authored) return standing
+  return addPoses(pickJoints(standing, STANCE_FRAME_JOINTS), READY_ARMS)
+}
+
+const KIND_SLOTS: Record<AttackKind, Record<AttackVariant, MoveSlot>> = {
+  light: { standing: 'standingLight', low: 'lowLight', air: 'airLight', throw: 'throw' },
+  heavy: { standing: 'standingHeavy', low: 'lowHeavy', air: 'airHeavy', throw: 'throw' },
+  special: { standing: 'neutralSpecial', low: 'downSpecial', air: 'airHeavy', throw: 'throw' },
+  ranged: {
+    standing: 'neutralSpecial',
+    low: 'neutralSpecial',
+    air: 'airLight',
+    throw: 'throw',
+  },
 }
 
 function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
   const attack = fighter.attack
-  const move = moveById(attack?.moveId)
-  const timeline = attack && move ? keyPoseTimeline(fighter.id, move.slot) : null
-  if (!attack || !timeline) return null
+  // A teched throw is drawn by the scene, both fighters breaking the grab together.
+  if (!attack || (attack.variant === 'throw' && fighter.throwTechFrames)) return null
+  const variant = attack.variant ?? 'standing'
+  const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
+  const { timeline, authored } = keyedMove(fighter.id, slot)
   const frames = attackData(attack.kind, fighter)
   const keyed = sampleTimeline(timeline, { frame: attack.frame, frames })
-  const variant = attack.variant ?? 'standing'
-  return { pose: addPoses(basePose(variant, standing), keyed), plant: variant !== 'air' }
+  return {
+    pose: addPoses(basePose(variant, standing, authored), keyed),
+    plant: variant !== 'air' && fighter.y <= 0,
+    key: `attack:${attack.moveId ?? attack.kind}`,
+    blend: 0.04,
+  }
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
   if (!STANDING_POSES.has(fighter.pose) || fighter.y > 0) return null
   // The guard pose raises the arms itself; the stance only sets the frame.
   const guarding = fighter.pose === 'guard'
+  const plan = (pose: FightPose, key: string): BodyPlan => ({ pose, plant: true, key, blend: 0.1 })
   if (fighter.crouching) {
     const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
-    return { pose: addPoses(upper, CROUCH_POSE), plant: true }
+    return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
-  if (guarding) return { pose: pickJoints(standing, STANCE_FRAME_JOINTS), plant: true }
+  if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
   // The walk cycle moves the legs; the stance keeps the guard up over it.
-  if (fighter.pose === 'walk') return { pose: pickJoints(standing, UPPER_JOINTS), plant: true }
-  return { pose: standing, plant: true }
+  if (fighter.pose === 'walk') return plan(pickJoints(standing, UPPER_JOINTS), 'walk')
+  return plan(standing, 'stance')
 }

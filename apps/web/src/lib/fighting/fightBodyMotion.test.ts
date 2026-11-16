@@ -5,6 +5,8 @@ import type { HumanPose } from '$lib/tour/humanAnimation'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
 import { footHeight, fightRigOf } from './fightRig'
 import { createFightState } from './fightState'
+import { keyedMove } from './keyPoseMoves'
+import { FIGHTING_ROSTER } from './roster'
 import { attackData } from './frameData'
 import { moveForSlot } from './movesets'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
@@ -62,15 +64,17 @@ function attacking(id: FighterId, slot: MoveSlot, frame: number): ArcadeFighter 
 
 function pose(model: ReturnType<typeof figureOf>, who: ArcadeFighter, at = 1, base?: HumanPose) {
   model.animate(at, base ?? 'idle', {
-    motion: fightBodyMotion({ fighter: who, seconds: at }),
+    motion: fightBodyMotion({ fighter: who, seconds: at, progress: 0 }),
   })
 }
 
+const context = { seconds: 1, progress: 0 }
+
 describe('fighting rig', () => {
-  it('leaves fighters without a stance to the procedural gestures', () => {
+  it('draws every fighter, with a plain guard for one that has no stance yet', () => {
     const unstanced = { ...fighter('kurapika'), id: 'no-stance' as FighterId }
-    expect(bodyPlan(unstanced, 1)).toBeNull()
-    expect(bodyPlan(fighter('kurapika'), 1)).not.toBeNull()
+    expect(bodyPlan(unstanced, context)?.pose.leadElbow).toBeDefined()
+    expect(bodyPlan(fighter('kurapika'), context)).not.toBeNull()
   })
 
   it('turns the chest about the waist and carries the arms with it', () => {
@@ -84,9 +88,9 @@ describe('fighting rig', () => {
 
   it('keeps the planted foot on the floor through a deep crouch', () => {
     const model = figureOf('kurapika')
-    const standing = poseAndMeasure(model, fighter('kurapika'))
+    const standing = poseAndMeasure(model, fighter('kurapika'), 1)
     const sunk = model.turns.position.y
-    const crouched = poseAndMeasure(model, fighter('kurapika', { crouching: true }))
+    const crouched = poseAndMeasure(model, fighter('kurapika', { crouching: true }), 2)
     expect(crouched).toBeCloseTo(standing, 3)
     expect(model.turns.position.y).toBeLessThan(sunk - 0.2)
   })
@@ -102,22 +106,90 @@ describe('fighting rig', () => {
     expect(shoulder.rotation.x).toBeLessThan(atRest - 0.6)
   })
 
-  it('resets the extra joints when the scene falls back to another motion', () => {
+  it('cross-fades from the last drawn pose when the plan changes', () => {
+    const model = figureOf('hisoka')
+    pose(model, fighter('hisoka', { crouching: true }), 1)
+    const chest = model.root.getObjectByName('fight-chest')!
+    const crouched = chest.rotation.x
+    pose(model, fighter('hisoka'), 1)
+    expect(chest.rotation.x).toBeCloseTo(crouched, 5)
+    pose(model, fighter('hisoka'), 1.5)
+    expect(chest.rotation.x).not.toBeCloseTo(crouched, 2)
+  })
+
+  it('draws a struck fighter recoiling by where the blow landed', () => {
+    const struck = fighter('chrollo', { pose: 'hit' })
+    const head = bodyPlan(struck, { ...context, hitZone: 'head' })!.pose.head![0]
+    const torso = bodyPlan(struck, { ...context, hitZone: 'torso' })!.pose.head![0]
+    expect(head).toBeLessThan(torso)
+  })
+
+  it('leaves a knocked-down fighter on its back and stands it up on wake-up', () => {
+    const lying = bodyPlan(fighter('franklin', { pose: 'down' }), { ...context, progress: 1 })!
+    expect(lying.pose.body![0]).toBeLessThan(-1.2)
+    const risen = bodyPlan(fighter('franklin', { pose: 'wakeup' }), { ...context, progress: 1 })!
+    expect(Math.abs(risen.pose.body?.[0] ?? 0)).toBeLessThan(0.3)
+  })
+
+  it('hands a teched throw back to the scene and resets the extra joints', () => {
     const model = figureOf('hisoka')
     pose(model, fighter('hisoka'))
-    pose(model, fighter('hisoka', { pose: 'hit' }))
+    const teched = { ...attacking('hisoka', 'throw', 2), throwTechFrames: 4 }
+    pose(model, teched, 2)
     expect(model.root.getObjectByName('fight-chest')!.rotation.y).toBe(0)
   })
 })
 
-/** Pose a figure and read the height of its lower foot while still posed. */
-function poseAndMeasure(model: ReturnType<typeof figureOf>, who: ArcadeFighter): number {
-  let height = Number.NaN
-  model.animate(1, 'idle', {
-    motion: (rig) => {
-      fightBodyMotion({ fighter: who, seconds: 1 })(rig)
-      height = footHeight(fightRigOf(rig))
-    },
+describe('keyed moves for the whole roster', () => {
+  const slots: MoveSlot[] = [
+    'standingLight',
+    'standingHeavy',
+    'lowLight',
+    'lowHeavy',
+    'airLight',
+    'airHeavy',
+    'forwardLight',
+    'forwardHeavy',
+    'backHeavy',
+    'neutralSpecial',
+    'forwardSpecial',
+    'downSpecial',
+    'backSpecial',
+    'throw',
+    'finisher',
+  ]
+  it('gives every move of every fighter a contact pose on its first active frame', () => {
+    for (const definition of FIGHTING_ROSTER) {
+      for (const slot of slots) {
+        const { timeline } = keyedMove(definition.id, slot)
+        expect(timeline.some((key) => key.phase === 'active' && key.at === 0)).toBe(true)
+      }
+    }
   })
+
+  it("draws a family's gestures for moves without hand keys", () => {
+    expect(keyedMove('kurapika', 'standingLight').authored).toBe(true)
+    expect(keyedMove('kurapika', 'neutralSpecial').authored).toBe(false)
+    expect(keyedMove('franklin', 'neutralSpecial').timeline).not.toBe(
+      keyedMove('leorio', 'neutralSpecial').timeline,
+    )
+  })
+})
+
+/** Pose a figure, let any cross-fade finish, and read the height of its lower foot. */
+function poseAndMeasure(
+  model: ReturnType<typeof figureOf>,
+  who: ArcadeFighter,
+  at: number,
+): number {
+  let height = Number.NaN
+  for (const seconds of [at, at + 1]) {
+    model.animate(seconds, 'idle', {
+      motion: (rig) => {
+        fightBodyMotion({ fighter: who, seconds, progress: 0 })(rig)
+        height = footHeight(fightRigOf(rig))
+      },
+    })
+  }
   return height
 }

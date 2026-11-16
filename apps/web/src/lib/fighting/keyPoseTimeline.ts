@@ -66,12 +66,14 @@ export function heldFrame(frame: number, frames: PhaseFrames): number {
 export interface TimelineSample {
   frame: number
   frames: PhaseFrames
+  /** Ease back into the stance after the last key (the default); off for a body left lying. */
+  settle?: boolean
 }
 
 export function sampleTimeline(timeline: MoveTimeline, sample: TimelineSample): FightPose {
   const frame = heldFrame(sample.frame, sample.frames)
   let previous = { frame: 0, pose: NEUTRAL_POSE }
-  for (const key of [...timeline, SETTLE]) {
+  for (const key of sample.settle === false ? timeline : [...timeline, SETTLE]) {
     const at = keyFrameOf(key, sample.frames)
     if (frame < at) {
       const travel = (frame - previous.frame) / Math.max(1e-6, at - previous.frame)

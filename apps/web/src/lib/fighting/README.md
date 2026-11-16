@@ -98,11 +98,21 @@ sans changer les règles, les boîtes ni les données de frame.
   recovery lente. Hors frames actives, les poses sont tenues deux frames.
 - `fightStance.ts` donne la garde de chaque combattant (poitrine ouverte vers la
   caméra, rebond), ainsi que l'accroupi et le repli aérien communs.
-- `keyPosesKurapika.ts` et `keyPosesHisoka.ts` posent leurs six normales ;
-  `keyPoseMoves.ts` les indexe. Un coup absent garde son geste procédural, et un
-  combattant sans garde reste entièrement sur l'ancien rendu.
-- `fightBodyMotion.ts` choisit, frame par frame, entre le rig de combat et le
-  mouvement que la scène a déjà calculé (coups reçus, chutes, projections).
+- `keyPosesKurapika.ts` et `keyPosesHisoka.ts` posent leurs six normales à la
+  main. Tous les autres coups de tous les combattants viennent de
+  `fightGestures.ts` (jab, cross, uppercut, crochet, coups de pied, entaille,
+  estoc, paumes de Nen, projection, finisher en trois frappes), distribués par
+  famille dans `fightArchetypes.ts` : frappeur, kickeur, lame, lanceur, colosse.
+  La famille est une lecture du manga ; elle ne change ni frame, ni boîte, ni
+  dégâts. `keyPoseMoves.ts` sert la pose clé à la main avant l'archétype.
+- `fightReactions.ts` dessine le coup reçu selon la zone touchée (tête, buste,
+  mains, jambes), la chute sur le dos avec rebond, la relevée par l'accroupi, le
+  K.-O. et le saut, sur la progression que mesure déjà `sceneMotion.ts`.
+- `fightBodyMotion.ts` choisit le plan de chaque frame et fond la pose
+  précédente dans la nouvelle à chaque changement (garde, coup, coup reçu), si
+  bien que poitrine et poignets ne sautent jamais. Un combattant sans garde
+  reçoit une garde simple. Seule la projection contrée reste dessinée par la
+  scène.
 
 ## Mouvement et rendu
 

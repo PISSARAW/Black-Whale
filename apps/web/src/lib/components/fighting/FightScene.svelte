@@ -276,7 +276,8 @@
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = reactionMotion(fighter, progress, side)
-          const motion = fightBodyMotion({ fighter, seconds, fallback })
+          const hitZone = state.impact?.attacker !== side ? state.impact?.zone : undefined
+          const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
           model.animate(seconds, MODEL_POSES[fighter.pose], {
             motion: trackFightOpponent({
               fighter,

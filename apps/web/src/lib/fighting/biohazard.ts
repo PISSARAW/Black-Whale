@@ -1,8 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide } from './types'
 
 export const BIOHAZARD_COST = 20
@@ -77,16 +75,7 @@ export function biohazardAuthority(fighter: ArcadeFighter, moveId?: string): boo
 }
 
 export function biohazardNen(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    canUseHatsu(fighter.nen) &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !fighter.moonlightZetsu &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
 export function biohazardCanLaunch(fighter: ArcadeFighter): boolean {

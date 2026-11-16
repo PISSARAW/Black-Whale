@@ -1,5 +1,15 @@
 # Audit — fidélité des Hatsu du mode Fighting (2D)
 
+> Verrouillage transversal du Nen : les constats initiaux ci-dessous doivent être lus
+> avec les corrections successives des fiches. Le moteur utilise désormais
+> `nenAccess.ts` et `nenActionRules.ts` pour les restrictions communes, et
+> `fightAttackCost.ts` pour le coût réel des pages copiées et de In. Les conditions
+> propres à chaque capacité restent dans leurs modules. `nenRules.test.ts` et
+> `nenImport.test.ts` couvrent les refus, reprises de buffer, interruptions,
+> copies, perceptions et exceptions post-mortem. Voir aussi la section
+> « Verrouillage transversal du Nen » du README colocalisé. Les coûts numériques
+> restent des réglages du duel ; ce changement ne les présente pas comme des valeurs du manga.
+
 Audit du 2026-11-16, sans modification de code. Périmètre : `apps/web/src/lib/fighting/hatsu/*`,
 `hatsu.ts`, `techniqueContracts.ts`, comparés aux fiches canon de `packages/ability-modules`
 (champs `rule`, `condition`, `cost`) et au manga.

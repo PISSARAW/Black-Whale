@@ -1,9 +1,9 @@
+import { witnessedHatsu } from './nenWitness'
+import { voluntaryNenAvailable } from './nenAccess'
 import { needleAutonomy } from './illumiState'
 import { senseDeprived } from './saiyuSenses'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
-import { enforcePredatorSeal, predatorNenLocked, PREDATOR_SEAL_FRAMES } from './predatorSeal'
+import { enforcePredatorSeal, PREDATOR_SEAL_FRAMES } from './predatorSeal'
 import { PREDATOR_PREY, predatorPrey, preyIsLive, preyPosition } from './predatorPrey'
 import { createPredatorState, type PredatorAnalysis, type PredatorState } from './predatorTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -25,17 +25,7 @@ export function isPredatorMove(fighter: ArcadeFighter, moveId?: string): boolean
 }
 
 export function predatorNenAvailable(fighter: ArcadeFighter): boolean {
-  if (!needleAutonomy(fighter)) return false
-  return (
-    ownsPredator(fighter) &&
-    !predatorNenLocked(fighter) &&
-    canUseHatsu(fighter.nen) &&
-    !hatsuSealedByOn(fighter) &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.health > 0 &&
-    !fighter.auraExhausted
-  )
+  return needleAutonomy(fighter) && ownsPredator(fighter) && voluntaryNenAvailable(fighter)
 }
 
 export function canSeePrey(
@@ -105,7 +95,7 @@ export function launchPredator(state: FightState, side: FightSide): FightState {
       ...state[side === 'player' ? 'opponent' : 'player'],
       hatsuEffects: {
         ...state[side === 'player' ? 'opponent' : 'player'].hatsuEffects,
-        witnessedHatsu: 'rihan',
+        witnessedHatsu: witnessedHatsu(state, { side, source: 'rihan' }),
       },
     },
     [side]: {

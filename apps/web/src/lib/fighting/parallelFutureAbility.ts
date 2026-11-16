@@ -1,18 +1,11 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { transitionNen } from '@black-whale/nen-engine'
 import { hatsuSourceFor, triggerHatsu } from './hatsu'
-import { hatsuSealedByOn } from './onTechnique'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export function futureNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { allowVoluntaryZetsu: true, requireReserve: true })
 }
 
 export function futureCanPrepare(fighter: ArcadeFighter): boolean {

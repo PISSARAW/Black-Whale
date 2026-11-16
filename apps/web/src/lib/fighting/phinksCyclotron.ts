@@ -1,6 +1,6 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
 import { hatsuSourceFor } from './hatsu'
-import { hatsuSealedByOn } from './onTechnique'
 import { applyAuraContext } from './nen'
 import { canStartFighterAttack } from './fighterAttacks'
 import type { AttackFrameData } from './frameData'
@@ -12,16 +12,7 @@ export const CYCLOTRON_ROTATION_AURA = 2
 export const CYCLOTRON_PUNCH = 'phinks:finisher'
 
 export function cyclotronNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    fighter.nen.mode !== 'zetsu' &&
-    !hatsuSealedByOn(fighter) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    cyclotronOwned(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true }) && cyclotronOwned(fighter)
 }
 
 function cyclotronOwned(fighter: ArcadeFighter): boolean {

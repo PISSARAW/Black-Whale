@@ -1,8 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove, CHROLLO_SECONDARY } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightState } from './types'
 
 export const BASHO_POEM_MOVE = 'basho:neutralSpecial'
@@ -50,14 +48,7 @@ function normalizePoem(text: string): string {
 }
 
 export function bashoNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.aura > 0 &&
-    canUseHatsu(fighter.nen) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !fighter.moonlightZetsu &&
-    !predatorNenLocked(fighter) &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
 export function hasBashoPoem(fighter: ArcadeFighter, moveId?: string): boolean {

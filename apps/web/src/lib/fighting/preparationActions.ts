@@ -1,8 +1,8 @@
+import { witnessedHatsu } from './nenWitness'
+import { voluntaryNenAvailable } from './nenAccess'
 import { performLuiniAction } from './luiniSpatial'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { PREPARED_COSTS } from './preparationTuning'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
 import { preparationCheck, preparationSource, animalTarget } from './preparationRequirements'
 import { nearEntity, updateEntity } from './preparationWorld'
 import type { AuraAttackOptions } from './auraAttackAction'
@@ -54,7 +54,10 @@ export function performPreparedAction(options: AuraAttackOptions): FightState | 
     },
     [witness]: {
       ...activated[witness],
-      hatsuEffects: { ...activated[witness].hatsuEffects, witnessedHatsu: source },
+      hatsuEffects: {
+        ...activated[witness].hatsuEffects,
+        witnessedHatsu: witnessedHatsu(state, { side, source: source }),
+      },
     },
   }
 }
@@ -132,12 +135,5 @@ function preparedBodyFree(fighter: ArcadeFighter): boolean {
 }
 
 function preparationAuraAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    canUseHatsu(fighter.nen) &&
-    !hatsuSealedByOn(fighter) &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !fighter.predator?.sealFrames
-  )
+  return voluntaryNenAvailable(fighter)
 }

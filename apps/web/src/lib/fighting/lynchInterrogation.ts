@@ -1,3 +1,4 @@
+import { witnessedHatsu } from './nenWitness'
 import { hasBodyAndSoul, lynchTargetConscious } from './lynchRules'
 import { LYNCH_ANSWER_COST, type LynchReply } from './lynchTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -33,7 +34,10 @@ function recordReply(state: FightState, side: FightSide, reply: LynchReply): Fig
     },
     [target]: {
       ...state[target],
-      hatsuEffects: { ...state[target].hatsuEffects, witnessedHatsu: 'lynch' },
+      hatsuEffects: {
+        ...state[target].hatsuEffects,
+        witnessedHatsu: witnessedHatsu(state, { side, source: 'lynch' }),
+      },
       bodyAndSoulReplies: [...(state[target].bodyAndSoulReplies ?? []), reply].slice(-6),
     },
   }

@@ -1,10 +1,9 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { needleAutonomy } from './illumiState'
 import { hasEquipment } from './preparationWorld'
 import { senseDeprived } from './saiyuSenses'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, AttackKind } from './types'
 
 import { MELODY_MUSIC_MOVE } from './melodyTuning'
@@ -56,12 +55,7 @@ export function melodyMusicIntent(
 
 export function melodyNenActive(fighter: ArcadeFighter): boolean {
   return (
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.auraExhausted &&
-    !hatsuSealedByOn(fighter) &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
+    voluntaryNenAvailable(fighter) &&
     !chainAbilitySealed(fighter, fighter.melodyPerformance?.moveId ?? MELODY_MUSIC_MOVE)
   )
 }

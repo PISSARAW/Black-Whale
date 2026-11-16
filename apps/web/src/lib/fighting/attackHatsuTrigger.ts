@@ -1,4 +1,4 @@
-import { triggerHatsu } from './hatsu'
+import { triggerHatsuAction } from './hatsu'
 import { startPadailleTool } from './padailleWeapon'
 import type { FightSide, FightState, FighterId } from './types'
 
@@ -8,8 +8,9 @@ export function triggerAttackHatsu(options: {
   side: FightSide
   source: FighterId
   moveId?: string
+  concealed?: boolean
 }): FightState {
-  const { state, side, source, moveId } = options
-  const triggered = triggerHatsu(state, side, source)
+  const { side, source, moveId } = options
+  const triggered = triggerHatsuAction(options)
   return source === 'padaille' ? startPadailleTool(triggered, side, moveId) : triggered
 }

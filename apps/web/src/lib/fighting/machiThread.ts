@@ -1,7 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface MachiThread {
@@ -31,14 +30,7 @@ export function machiImmobilized(fighter: ArcadeFighter): boolean {
 }
 
 export function machiNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 export function machiSourceActive(fighter: ArcadeFighter): boolean {
@@ -80,7 +72,11 @@ export function releaseMachiThread(state: FightState, side: FightSide): FightSta
 }
 
 /** Closing Machi's non-bookmarked page drops the actual link as well as its indicator. */
-export function releaseMachiPageThread(state: FightState, side: FightSide, page: string): FightState {
+export function releaseMachiPageThread(
+  state: FightState,
+  side: FightSide,
+  page: string,
+): FightState {
   return page === 'machi' ? releaseMachiThread(state, side) : state
 }
 

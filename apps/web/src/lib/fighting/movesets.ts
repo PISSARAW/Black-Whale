@@ -1,3 +1,5 @@
+import { nenActionAllowed } from './nenActionRules'
+import { attackAuraCost } from './fightAttackCost'
 import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
 import { tuneKallutoMoveset } from './kallutoMoveset'
 import { tuneBeyondMoveset } from './beyondMoveset'
@@ -175,6 +177,11 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (!nenActionAllowed({ state, side, kind: move.kind, moveId: move.id })) return false
+  return contextualMoveAllowed(state, side, move)
+}
+
+function contextualMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
   if (!illumiBodyFree(state[side])) return false
   const needles = illumiMoveReadiness(state, side, move)
   if (needles !== null) return needles
@@ -241,7 +248,7 @@ function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): bool
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources
-  if (fighter.aura < move.auraCost) return false
+  if (fighter.aura < attackAuraCost({ fighter, kind: move.kind, moveId: move.id })) return false
   return hasTechniqueResources(fighter, move)
 }
 

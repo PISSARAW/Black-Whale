@@ -1,4 +1,6 @@
+import { witnessedHatsu } from './nenWitness'
 import { illumiBodyFree } from './illumiState'
+import { voluntaryNenAvailable } from './nenAccess'
 import { preparationCheck } from './preparationRequirements'
 import { scaleNenControl } from './nenHatsuEffects'
 import { predatorNenLocked } from './predatorSeal'
@@ -47,13 +49,26 @@ export function resolveDeathHatsu(
   victimSide: FightSide,
 ): FightState | null {
   const victim = state[victimSide]
-  if (victim.hatsuEffects.hatsuStolen > 0) return null
+  const deathMoveId = hatsuFor(victim.id).stealableOutsideDuel?.id
+  if (victim.hatsuEffects.hatsuStolen > 0 || chainAbilitySealed(victim, deathMoveId)) return null
   return hatsuFor(victim.id).onDeath?.({ state, victimSide, killerSide }) ?? null
 }
 
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
-  if (!preparationCheck(state, side, state[side].attack?.moveId).ready) return state
+  return triggerHatsuAction({ state, side, source, moveId: state[side].attack?.moveId })
+}
+
+export function triggerHatsuAction(options: {
+  state: FightState
+  side: FightSide
+  source: FighterId
+  moveId?: string
+  concealed?: boolean
+}): FightState {
+  const { state, side, source, moveId } = options
+  if (!voluntaryNenAvailable(state[side]) || chainAbilitySealed(state[side], moveId)) return state
+  if (!preparationCheck(state, side, moveId).ready) return state
   if (source === 'bill') return state
   if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
   // Secret Window's private owl cannot satisfy Skill Hunter's visual witnessing condition.
@@ -64,7 +79,10 @@ export function triggerHatsu(state: FightState, side: FightSide, source: Fighter
     ...state,
     [witnessSide]: {
       ...witness,
-      hatsuEffects: { ...witness.hatsuEffects, witnessedHatsu: source },
+      hatsuEffects: {
+        ...witness.hatsuEffects,
+        witnessedHatsu: witnessedHatsu(state, { side, source, concealed: options.concealed }),
+      },
     },
   }
   return hatsuFor(source).onTrigger({ state: seen, side, source })
@@ -80,6 +98,11 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
+  if (
+    !voluntaryNenAvailable(options.state[side]) ||
+    chainAbilitySealed(options.state[side], moveId)
+  )
+    return options.state
   if (!preparationCheck(options.state, side, moveId).ready) return options.state
   return scaleNenControl(
     options.state,

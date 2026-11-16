@@ -1,6 +1,5 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { enTouchesSegment, gyoSight } from './nenPerception'
-import { hatsuSealedByOn } from './onTechnique'
 import { chrolloPageForMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -30,13 +29,7 @@ export function hisokaTechnique(fighter: ArcadeFighter, moveId?: string): Hisoka
 }
 
 export function hisokaNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 /** Checked both on input (including buffered input) and at the end of startup. */
@@ -75,6 +68,10 @@ export function hisokaUtilityMove(fighter: ArcadeFighter): boolean {
 export function bungeeVisible(state: FightState, observer: FightSide = 'player'): boolean {
   const gum = state.bungeeGum
   if (!gum) return false
-  return gum.owner === observer || !gum.hidden || gyoSight(state[observer]) ||
+  return (
+    gum.owner === observer ||
+    !gum.hidden ||
+    gyoSight(state[observer]) ||
     enTouchesSegment(state[observer], state[gum.owner], state[gum.target])
+  )
 }

@@ -1,4 +1,5 @@
 import { releasePadailleWeapon } from './padailleWeapon'
+import { outsideDuelAbility } from './outsideDuelAbility'
 import { finishBorrowedLuini } from './luiniDolphin'
 import { borrowedDoorActive } from './voconteDoorState'
 import { illumiBodyFree } from './illumiState'
@@ -201,6 +202,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   return (
+    outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     kurapikaNenActive(fighter) &&

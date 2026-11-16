@@ -1,3 +1,5 @@
+import { attackAuraCost } from './fightAttackCost'
+import { canUseMovesetMove, moveById } from './movesets'
 import { paperMoveAllowed } from './kallutoPaper'
 import { blinkyActionAllowed } from './blinkyAction'
 import { beyondCurseUnavailable } from './beyondCurseAction'
@@ -30,14 +32,14 @@ interface AttackIntent {
 export function commitAuraAttack(options: AuraAttackOptions, intent: AttackIntent): FightState {
   const { side, kind, auraCharged, variant, moveId } = options
   const original = options.state[side]
-  if (!canAttemptTechnique(options)) return options.state
+  if (!attackAdmission(options, intent)) return options.state
   const { hatsuSource, concealed, resourceReady } = intent
   const starts = canStartFighterAttack(original, kind, moveId)
   const buffers = resourceReady && canBufferFighterAttack(original)
   if (!starts && !buffers) return options.state
   const state =
     starts && hatsuSource
-      ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId })
+      ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
       : options.state
   const fighter = state[side]
   if (starts)
@@ -51,6 +53,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
         auraCharged,
         concealed,
         hatsuSource,
+        auraCost: attackAuraCost({ fighter: original, kind, moveId, concealed }),
       }),
     })
   return {
@@ -62,11 +65,14 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   }
 }
 
-function canAttemptTechnique(options: AuraAttackOptions): boolean {
+function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): boolean {
   const { state, side, kind, moveId } = options
-  if (state[side].id === 'camilla' && kind === 'special') return false
-  if (isErigeronAction(state[side], kind, moveId)) return false
-  return techniqueAllowed(options)
+  const fighter = state[side]
+  if (fighter.id === 'camilla' && kind === 'special') return false
+  if (!techniqueAllowed(options)) return false
+  const move = moveById(moveId)
+  if (move && !canUseMovesetMove(state, side, move)) return false
+  return fighter.aura >= attackAuraCost({ fighter, kind, moveId, concealed: intent.concealed })
 }
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {

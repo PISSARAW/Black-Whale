@@ -5,10 +5,9 @@ import {
   melodyMusicIntent,
   MELODY_MUSIC_MOVE,
   MELODY_STARTUP,
-  MELODY_START_COST,
 } from './melodyRules'
 import { stopMelodyMusic } from './melodyChannel'
-import { moveById } from './movesets'
+import { attackAuraCost } from './fightAttackCost'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { FightState } from './types'
 
@@ -40,7 +39,7 @@ function beginMusic(options: AuraAttackOptions): FightState {
     !canStartFighterAttack(fighter, kind, selected)
   )
     return state
-  const cost = moveById(selected)?.auraCost ?? MELODY_START_COST
+  const cost = attackAuraCost({ fighter, kind, moveId: selected })
   if (fighter.aura < cost) return state
   const witnessed = triggerHatsu(state, side, 'melody')
   return {

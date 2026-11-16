@@ -1,5 +1,7 @@
 import { boxesOverlap, pushbox } from '../frameData'
 import { projectHanzo, wakeHanzoBody } from '../hanzoProjection'
+import { voluntaryNenAvailable } from '../nenAccess'
+import { chainAbilitySealed } from '../kurapika'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { unchangedImpact, type FighterHatsu } from './contract'
 
@@ -30,11 +32,5 @@ function tickProjection(state: FightState, side: FightSide): FightState {
 }
 
 function projectionBroken(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health <= 0 ||
-    fighter.aura <= 0 ||
-    fighter.nen.mode === 'zetsu' ||
-    fighter.hatsuEffects.forcedZetsuFrames > 0 ||
-    fighter.hatsuEffects.hatsuStolen > 0
-  )
+  return !voluntaryNenAvailable(fighter) || chainAbilitySealed(fighter, 'hanzo:neutralSpecial')
 }

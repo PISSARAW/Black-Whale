@@ -1,22 +1,12 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { illumiBodyFree, ILLUMI_IMPLANT } from './illumiState'
 import type { ArcadeFighter } from './types'
 
 export function illumiNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    canUseHatsu(fighter.nen) &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter) &&
-    fighter.health > 0
-  )
+  return voluntaryNenAvailable(fighter) && !chainAbilitySealed(fighter, ILLUMI_IMPLANT)
 }
 
 export function ownsIllumiNeedles(fighter: ArcadeFighter): boolean {

@@ -2,11 +2,22 @@ import { BEYOND_CURSE } from './beyondCurse'
 
 /** Canon Hatsu with no valid target in the duel; never substitute a martial strike. */
 export interface OutsideDuelAbility {
+  activation?: 'post-mortem'
   id: string
   nameFr: string
   nameEn: string
   reasonFr: string
   reasonEn: string
+}
+
+/** A real stealable ability; death is not a voluntary Dolphin command. */
+export const CATS_NAME: OutsideDuelAbility = {
+  id: 'camilla:catsName',
+  nameFr: 'Cat’s Name',
+  nameEn: 'Cat’s Name',
+  activation: 'post-mortem',
+  reasonFr: 'Nen post-mortem : aucun déclenchement volontaire par Dolphin.',
+  reasonEn: 'Post-mortem Nen: Dolphin cannot activate it voluntarily.',
 }
 
 /** Ch. 361: a real small animal is controlled, with sight and hearing relayed. */
@@ -37,5 +48,9 @@ export const ERIGERON: OutsideDuelAbility = {
 }
 
 export function outsideDuelAbility(moveId?: string): OutsideDuelAbility | null {
-  return [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION, BEYOND_CURSE].find((ability) => ability.id === moveId) ?? null
+  return (
+    [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION, BEYOND_CURSE, CATS_NAME].find(
+      (ability) => ability.id === moveId,
+    ) ?? null
+  )
 }

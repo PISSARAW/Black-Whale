@@ -1,6 +1,6 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { fightCategoryEfficiency } from './nenCategories'
-import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
-import { hatsuSealedByOn } from './onTechnique'
+import { transitionNen } from '@black-whale/nen-engine'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
@@ -40,15 +40,7 @@ export function createKurapika(): KurapikaState {
 }
 
 export function kurapikaNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !fighter.chainJail &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 export function chainsImmobilize(fighter: ArcadeFighter): boolean {

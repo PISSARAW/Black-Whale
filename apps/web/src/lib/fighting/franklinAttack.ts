@@ -1,5 +1,5 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
-import { hatsuSealedByOn } from './onTechnique'
+import { chainAbilitySealed } from './kurapika'
+import { voluntaryNenAvailable } from './nenAccess'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter } from './types'
 
@@ -7,9 +7,7 @@ export const FRANKLIN_SHOT_INTERVAL = 2
 
 /** Ten permanently severed fingertips; no temporary transformation or damage charge. */
 export function franklinNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter) && fighter.hatsuEffects.hatsuStolen === 0
-  )
+  return voluntaryNenAvailable(fighter) && !chainAbilitySealed(fighter, 'franklin:neutralSpecial')
 }
 
 export function usesFranklinBarrage(fighter: ArcadeFighter): boolean {

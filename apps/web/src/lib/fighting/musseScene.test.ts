@@ -84,10 +84,14 @@ describe('Musse’s physical weapon and private owl', () => {
     effects.sync(mirrored, 0)
     expect(owl.visible).toBe(false)
     expect(scene.getObjectByName('secret-window-opponent')?.visible).toBe(false)
-    const geometry = (owl.children[0] as THREE.Mesh).geometry
-    const dispose = vi.spyOn(geometry, 'dispose')
+    const geometries = new Set<THREE.BufferGeometry>()
+    owl.traverse((node) => {
+      if (node instanceof THREE.Mesh) geometries.add(node.geometry)
+    })
+    expect(geometries.size).toBeGreaterThan(0)
+    const disposals = [...geometries].map((geometry) => vi.spyOn(geometry, 'dispose'))
     effects.dispose()
-    expect(dispose).toHaveBeenCalledOnce()
+    for (const dispose of disposals) expect(dispose).toHaveBeenCalledOnce()
     expect(scene.children).toHaveLength(0)
   })
 })

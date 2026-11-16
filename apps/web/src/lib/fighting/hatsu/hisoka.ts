@@ -1,4 +1,5 @@
 import { categoryPower } from '../nenCategories'
+import { chainAbilitySealed } from '../kurapika'
 import { attackPhase } from '../frameData'
 import {
   BUNGEE_REST_DISTANCE,
@@ -69,13 +70,16 @@ function reelIn(state: FightState): FightState {
   if (!gum) return state
   const owner = state[gum.owner]
   const target = state[gum.target]
-  if (!hisokaNenActive(owner) || target.health <= 0) return { ...state, bungeeGum: null }
+  if (gumUnavailable(owner, target)) return { ...state, bungeeGum: null }
   if (!gum.retracting) return state
   if (retractionInterrupted(owner))
     return { ...state, bungeeGum: { ...gum, retracting: false, rebounding: false } }
   const stretch = Math.abs(target.x - owner.x) - BUNGEE_REST_DISTANCE
   if (stretch <= 0) return { ...state, bungeeGum: { ...gum, retracting: false, rebounding: false } }
-  const pull = Math.min(stretch, Math.max(MIN_PULL, stretch * ELASTIC_RECOVERY * categoryPower(owner, 'transmuter')))
+  const pull = Math.min(
+    stretch,
+    Math.max(MIN_PULL, stretch * ELASTIC_RECOVERY * categoryPower(owner, 'transmuter')),
+  )
   const direction = target.x >= owner.x ? 1 : -1
   const side = gum.rebounding ? gum.owner : gum.target
   const moving = state[side]
@@ -87,6 +91,14 @@ function reelIn(state: FightState): FightState {
 
 function retractionInterrupted(owner: ArcadeFighter): boolean {
   return owner.hitStun > 0 || owner.knockdownFrames > 0 || owner.blockStun > 0
+}
+
+function gumUnavailable(owner: ArcadeFighter, target: ArcadeFighter): boolean {
+  return (
+    !hisokaNenActive(owner) ||
+    chainAbilitySealed(owner, 'hisoka:neutralSpecial') ||
+    target.health <= 0
+  )
 }
 
 function clamp(value: number): number {

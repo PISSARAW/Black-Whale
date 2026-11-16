@@ -1,3 +1,4 @@
+import { witnessedHatsu } from './nenWitness'
 import { commitProjectileNen } from './nenProjectiles'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide } from './frameData'
 import { franklinNenAvailable, franklinSalvo, franklinShotAt } from './franklinAttack'
@@ -20,7 +21,10 @@ export function spawnFranklinBarrage(state: FightState, side: FightSide): FightS
     ...state,
     [witnessSide]: {
       ...witness,
-      hatsuEffects: { ...witness.hatsuEffects, witnessedHatsu: 'franklin' },
+      hatsuEffects: {
+        ...witness.hatsuEffects,
+        witnessedHatsu: witnessedHatsu(state, { side, source: 'franklin' }),
+      },
     },
     [side]: {
       ...fighter,

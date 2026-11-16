@@ -4,6 +4,34 @@
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.
 
+## Verrouillage transversal du Nen
+
+`nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,
+vol et sceaux. `nenActionRules.ts` applique ce contrat aux commandes directes,
+à l’IA, aux coups en attente et aux actions maintenues. Chaque pouvoir conserve
+ses conditions matérielles et son propre mode d’interruption. Les prédicats de
+maintien utilisent le même accès, sans confondre blessure, entrave et manipulation.
+
+`fightAttackCost.ts` calcule le coût réellement exécuté, y compris la page copiée
+et le surcoût de In. Le coût est fixé avant les effets de départ, payé une seule
+fois et revalidé à la sortie du buffer ; une interruption ne rembourse pas un
+geste commencé. Ces nombres restent des réglages de duel, pas des coûts du manga.
+Une action déjà payée peut engager la dernière unité d’aura ; l’épuisement et
+l’entretien sont contrôlés séparément. Étudier avec Rihan ne coûte pas 40 aura.
+
+Les exceptions sont explicites : le Zetsu volontaire de Parallel Future ne
+neutralise pas sa propre vision ; les armes physiques et le corps de Biscuit ne
+reçoivent pas un coût de Hatsu ; les séquelles de Needle People restent physiques.
+Cat’s Name conserve son déclenchement post-mortem sans aura et en Zetsu, mais
+Steal Chain peut le retenir. Dolphin ne le charge pas comme une attaque volontaire.
+
+`nenWitness.ts` mémorise seulement une manifestation visuellement accessible :
+ni cécité ni yeux fermés ne donnent de témoignage ; une manifestation explicitement
+dissimulée par In demande Gyo, sans rendre invisibles ses supports physiques. Une observation
+antérieure reste acquise. Le hibou privé de Secret Window ne devient pas public.
+`nenRules.test.ts` et `nenImport.test.ts` vérifient les chemins communs et les
+exceptions, en complément des suites propres aux personnages et aux copies.
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le

@@ -1,22 +1,12 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import { musicPacifies, melodyRestrictsCombat } from './melodyRules'
 import { BATTLE_MOVES } from './battleCantabileTypes'
 import type { ArcadeFighter, AttackKind, FighterId } from './types'
 
 export function battleNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    canUseHatsu(fighter.nen) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
 /** Copying the Hatsu supplies neither the Gyudondond's body holes nor a learned model. */

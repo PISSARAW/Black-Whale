@@ -1,3 +1,4 @@
+import { witnessedHatsu } from './nenWitness'
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { chrolloPageForMove } from './chrolloBook'
 import { hatsuSealedByOn } from './onTechnique'
@@ -111,7 +112,7 @@ export function offerMoonlightContract(options: {
       ...state[recipient],
       hatsuEffects: {
         ...state[recipient].hatsuEffects,
-        witnessedHatsu: 'longhi',
+        witnessedHatsu: witnessedHatsu(state, { side, source: 'longhi' }),
       },
     },
     moonlight: {

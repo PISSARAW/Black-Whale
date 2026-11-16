@@ -1,3 +1,5 @@
+import { attackAuraCost } from './fightAttackCost'
+import { interruptUnavailableNen } from './nenActionRules'
 import { illumiBodyFree } from './illumiState'
 import { machiImmobilized } from './machiThread'
 import { battlePreparing } from './battleCantabileRules'
@@ -14,9 +16,9 @@ import { feitanMoveAvailable } from './feitanPain'
 import { projectionPreparing } from './hanzoProjection'
 import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
-import { canUseFightHatsu, FIGHT_HATSU_AURA_COST, hatsuSourceFor } from './hatsu'
+import { canUseFightHatsu, hatsuSourceFor } from './hatsu'
 import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
-import { canUseRangedAttack, rangedAuraCost } from './projectiles'
+import { canUseRangedAttack } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
@@ -24,6 +26,7 @@ const MIN_X = 7
 const MAX_X = 93
 
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
+  fighter = interruptUnavailableNen(fighter)
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
@@ -51,6 +54,7 @@ export function startFighterAttack(options: {
   variant?: AttackVariant
   moveId?: string
   hatsuSource?: FighterId | null
+  auraCost?: number
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
   const data = attackData(kind, {
@@ -69,7 +73,9 @@ export function startFighterAttack(options: {
     ...prepared,
     nen: { ...prepared.nen, en: null },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
-    aura: fighter.aura - attackAuraCost(kind, options.moveId, fighter.id) - (concealed ? 12 : 0),
+    aura:
+      fighter.aura -
+      (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
     pose: kind,
     blocking: false,
     guardFrames: 0,
@@ -161,17 +167,6 @@ function ordinaryCanBufferFighterAttack(fighter: ArcadeFighter): boolean {
   if (!fighter.attack) return false
   const remaining = attackTotal(attackData(fighter.attack.kind, fighter)) - fighter.attack.frame
   return remaining <= INPUT_BUFFER_FRAMES
-}
-
-function attackAuraCost(
-  kind: AttackKind,
-  moveId: string | undefined,
-  fighterId: FighterId,
-): number {
-  const move = moveById(moveId)
-  if (move) return move.auraCost
-  if (kind === 'special') return FIGHT_HATSU_AURA_COST
-  return kind === 'ranged' ? rangedAuraCost(fighterId ?? 'hisoka') : 0
 }
 
 function canAct(fighter: ArcadeFighter): boolean {

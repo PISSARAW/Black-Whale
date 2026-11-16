@@ -1,8 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import { sleepingBody } from './hanzoProjection'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
@@ -41,17 +39,7 @@ function ownsPaper(fighter: ArcadeFighter): boolean {
   return Boolean(held?.used && held.source === 'kalluto')
 }
 function paperNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.nen.on &&
-    !fighter.auraExhausted &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter) &&
-    !fighter.hatsuEffects.hatsuStolen &&
-    !fighter.hatsuEffects.forcedZetsuFrames
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 const PAPER_COMMANDS: Readonly<Record<string, PaperCommand>> = {
   'kalluto:neutralSpecial': 'plant',

@@ -1,8 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import { maryHasInfusion } from './bloodyMaryEquipment'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -59,17 +57,7 @@ export const maryState = (fighter: ArcadeFighter): BloodyMaryState =>
   fighter.bloodyMary ?? { available: MARY_CAPACITY, bags: MARY_BAGS, drops: [] }
 
 export function maryNen(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.nen.on &&
-    !fighter.moonlightZetsu &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
 export function maryOwned(fighter: ArcadeFighter): boolean {
@@ -80,8 +68,7 @@ export function maryOwned(fighter: ArcadeFighter): boolean {
 }
 
 export function maryAuthority(fighter: ArcadeFighter, moveId?: string): boolean {
-  if (!maryOwned(fighter) || !maryNen(fighter) || !maryHasInfusion(fighter))
-    return false
+  if (!maryOwned(fighter) || !maryNen(fighter) || !maryHasInfusion(fighter)) return false
   if (fighter.id !== 'chrollo' || !moveId) return true
   return chrolloPageForMove(fighter, moveId) === 'zakuro'
 }

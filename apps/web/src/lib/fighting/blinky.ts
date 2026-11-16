@@ -1,14 +1,13 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightInput, FightProjectile, FightSide, FightState } from './types'
 
 export type BlinkyTarget = 'bullet' | 'card' | 'stone' | 'needle'
 export type BlinkyCommand = 'suction' | 'eject' | 'blood'
 export interface BlinkyState {
+  lastArenaObject?: string
   target: BlinkyTarget
   command?: BlinkyCommand
   lastObject?: FightProjectile
@@ -29,17 +28,7 @@ export function blinkyAvailable(fighter: ArcadeFighter): boolean {
 }
 
 function blinkyNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.nen.on &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter) &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
 /** One named material category, not indiscriminate suction of everything nearby. */

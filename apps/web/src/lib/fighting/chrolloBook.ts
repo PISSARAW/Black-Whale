@@ -1,4 +1,4 @@
-import { hatsuSealedByOn } from './onTechnique'
+import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FighterId } from './types'
 
 export type ChrolloPage = 'sun-and-moon' | 'black-voice' | Exclude<FighterId, 'chrollo'>
@@ -22,14 +22,7 @@ export function createChrolloBook(): ChrolloBookState {
 }
 
 export function chrolloNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    fighter.nen.mode !== 'zetsu' &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 export function chrolloPageForMove(

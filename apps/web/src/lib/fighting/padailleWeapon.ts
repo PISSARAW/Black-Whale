@@ -1,7 +1,5 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export type PadailleTool = 'hammer' | 'drill' | 'axe'
@@ -17,11 +15,9 @@ export function padailleIntent(fighter: ArcadeFighter, moveId?: string): boolean
 }
 
 export function padailleNenActive(fighter: ArcadeFighter): boolean {
-  if (!canUseHatsu(fighter.nen) || hatsuSealedByOn(fighter) || predatorNenLocked(fighter))
-    return false
-  if (fighter.health <= 0 || fighter.hatsuEffects.hatsuStolen > 0) return false
-  if (fighter.stolenChainAbility || fighter.hatsuEffects.forcedZetsuFrames > 0) return false
-  return ownsPadailleWeapon(fighter)
+  return (
+    voluntaryNenAvailable(fighter) && !fighter.stolenChainAbility && ownsPadailleWeapon(fighter)
+  )
 }
 
 function ownsPadailleWeapon(fighter: ArcadeFighter): boolean {

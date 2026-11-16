@@ -1,4 +1,5 @@
-import { hatsuSealedByOn } from './onTechnique'
+import { chainAbilitySealed } from './kurapika'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -26,11 +27,8 @@ export function createPainPacker(): PainPackerState {
 
 export function feitanNenActive(fighter: ArcadeFighter): boolean {
   return (
-    fighter.health > 0 &&
-    fighter.nen.mode !== 'zetsu' &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter) &&
+    voluntaryNenAvailable(fighter) &&
+    !chainAbilitySealed(fighter, 'feitan:neutralSpecial') &&
     (fighter.id !== 'chrollo' || chrolloHasActivePage(fighter, 'feitan'))
   )
 }

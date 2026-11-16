@@ -1,3 +1,4 @@
+import { witnessedHatsu } from './nenWitness'
 import { canStartFighterAttack } from './fighterAttacks'
 import {
   confineCrossGame,
@@ -40,7 +41,10 @@ export function performCrossGameAction(options: AuraAttackOptions): FightState |
         x: target.x,
         y: target.y,
       },
-      hatsuEffects: { ...target.hatsuEffects, witnessedHatsu: 'mizaistom' },
+      hatsuEffects: {
+        ...target.hatsuEffects,
+        witnessedHatsu: witnessedHatsu(state, { side, source: 'mizaistom' }),
+      },
     },
   }
 }

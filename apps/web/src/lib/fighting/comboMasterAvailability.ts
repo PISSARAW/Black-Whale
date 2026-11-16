@@ -1,18 +1,10 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
 import { COMBO_MASTER_MOVE } from './comboMasterTypes'
 import type { ArcadeFighter } from './types'
 
 export function comboMasterNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    fighter.nen.mode !== 'zetsu' &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.stolenChainAbility?.moveId !== COMBO_MASTER_MOVE &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter) && fighter.stolenChainAbility?.moveId !== COMBO_MASTER_MOVE
 }
 
 function ownsConsole(fighter: ArcadeFighter): boolean {

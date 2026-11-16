@@ -1,5 +1,6 @@
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
 import { beginCatsName } from '../camillaCat'
+import { CATS_NAME } from '../outsideDuelAbility'
 
 /**
  * Cat's Name — Camilla (Succession Contest).
@@ -11,5 +12,8 @@ import { beginCatsName } from '../camillaCat'
  */
 export const camillaHatsu: FighterHatsu = {
   ...martialOnlyHatsu('camilla'),
+  get stealableOutsideDuel() {
+    return CATS_NAME
+  },
   onDeath: ({ state, victimSide, killerSide }) => beginCatsName(state, victimSide, killerSide),
 }

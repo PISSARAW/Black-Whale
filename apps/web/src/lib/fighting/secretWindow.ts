@@ -1,5 +1,5 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
 import { sleepingBody } from './hanzoProjection'
 import { chainAbilitySealed } from './kurapika'
 import type { ArcadeFighter, FightSide, FightState, FighterPose } from './types'
@@ -28,14 +28,10 @@ export function observeSecretWindow(state: FightState, target: FightSide): Secre
 }
 
 export function secretWindowNenActive(fighter: ArcadeFighter): boolean {
-  if (!hasSecretWindow(fighter) || chainAbilitySealed(fighter, 'musse:neutralSpecial')) return false
   return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    fighter.nen.mode !== 'zetsu' &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
+    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
+    hasSecretWindow(fighter) &&
+    !chainAbilitySealed(fighter, 'musse:neutralSpecial')
   )
 }
 

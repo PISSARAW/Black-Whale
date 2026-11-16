@@ -1,3 +1,5 @@
+import { attackIntent } from './fightAttackIntent'
+import { nenActionAllowed } from './nenActionRules'
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
 import { advanceEasterEggs } from './easterEggs'
 import { illumiBodyFree } from './illumiState'
@@ -52,12 +54,7 @@ import {
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { fightFormat } from './formats'
-import {
-  advanceHatsuFrames,
-  canUseFightHatsu,
-  FIGHT_HATSU_AURA_COST,
-  hatsuSourceFor,
-} from './hatsu'
+import { advanceHatsuFrames } from './hatsu'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
 import { resolveOnImpacts } from './onTechnique'
@@ -66,7 +63,7 @@ import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
 import { finishFight, resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
-import { canUseMovesetMove, moveForAction, moveById } from './movesets'
+import { canUseMovesetMove, moveForAction } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
 import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
 import { steerFighter } from './fighterMovement'
@@ -85,7 +82,6 @@ import type {
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
-const IN_AURA_SURCHARGE = 12
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
@@ -334,6 +330,7 @@ function executeAuraAttack(options: AuraAttackOptions): FightState {
   options = thetaFirearmOptions(options)
   const { side, kind } = options
   if (!fightAcceptsCommands(options.state)) return options.state
+  if (!nenActionAllowed(options)) return options.state
   const original = options.state[side]
   if (crossGameBusy(original)) return options.state
   const prepared = performPreparedAction(options)
@@ -350,32 +347,6 @@ function executeAuraAttack(options: AuraAttackOptions): FightState {
     variant: options.variant,
   })
   return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
-}
-
-function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string) {
-  const move = moveById(moveId)
-  const usesHatsu = move ? ['special', 'finisher'].includes(move.category) : kind === 'special'
-  return {
-    hatsuSource: usesHatsu ? hatsuSourceFor(fighter, moveId) : null,
-    concealed: concealedHatsu(fighter, kind, moveId),
-    resourceReady: move ? fighter.aura >= move.auraCost : attackResourceReady(fighter, kind),
-  }
-}
-
-function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, _moveId?: string): boolean {
-  return (
-    (kind === 'special' || kind === 'ranged') &&
-    (fighter.nen.in || fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES) &&
-    fighter.nen.mode !== 'zetsu' &&
-    !fighter.nen.on &&
-    fighter.aura >= FIGHT_HATSU_AURA_COST + IN_AURA_SURCHARGE
-  )
-}
-
-function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean {
-  if (kind === 'special') return canUseFightHatsu(fighter)
-  if (kind === 'ranged') return canUseRangedAttack(fighter)
-  return true
 }
 
 export const opponentAttack = (state: FightState): FightState =>

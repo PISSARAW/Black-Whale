@@ -1,11 +1,11 @@
+import { chainAbilitySealed } from './kurapika'
+import { voluntaryNenAvailable } from './nenAccess'
 import { morenaPresent } from './preparationRequirements'
 import { constructionFactor } from './nenCategories'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { inMorenasHideout } from './fightEnvironment'
 import { finishFight } from './combatVerdict'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
-import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface LsdfGuard {
@@ -42,14 +42,10 @@ export function isLsdfMove(fighter: ArcadeFighter, moveId?: string): boolean {
 export function lsdfCanPersist(state: FightState, side: FightSide): boolean {
   const fighter = state[side]
   return (
+    voluntaryNenAvailable(fighter) &&
     lsdfJurisdiction(state, side) &&
     ownsLsdf(fighter) &&
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !fighter.auraExhausted &&
-    !hatsuSealedByOn(fighter) &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0
+    !chainAbilitySealed(fighter, 'yokotani:neutralSpecial')
   )
 }
 

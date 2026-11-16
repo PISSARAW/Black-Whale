@@ -1,8 +1,6 @@
+import { voluntaryNenAvailable } from './nenAccess'
 import { canSpeak, senseDeprived } from './saiyuSenses'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface CrossGameState {
@@ -24,11 +22,7 @@ export function crossGameIntent(fighter: ArcadeFighter, moveId?: string): boolea
 }
 
 export function crossGameNenActive(fighter: ArcadeFighter): boolean {
-  if (!canUseHatsu(fighter.nen) || hatsuSealedByOn(fighter) || predatorNenLocked(fighter))
-    return false
-  if (fighter.health <= 0 || fighter.hatsuEffects.hatsuStolen > 0) return false
-  if (fighter.stolenChainAbility || fighter.hatsuEffects.forcedZetsuFrames > 0) return false
-  return crossGameOwned(fighter)
+  return voluntaryNenAvailable(fighter) && !fighter.stolenChainAbility && crossGameOwned(fighter)
 }
 
 function crossGameOwned(fighter: ArcadeFighter): boolean {

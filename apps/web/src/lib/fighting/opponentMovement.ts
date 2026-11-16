@@ -1,3 +1,4 @@
+import { chainsImmobilize } from './kurapika'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
 import { FIXED_STEP } from './frameData'
 import { fightingStyle, shouldStyleGuard, styleMovement } from './fightStyles'
@@ -37,6 +38,7 @@ function shouldBlock(fighter: ArcadeFighter, player: ArcadeFighter, gap: number)
 
 function canMove(fighter: ArcadeFighter): boolean {
   return (
+    !chainsImmobilize(fighter) &&
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.health > 0 &&

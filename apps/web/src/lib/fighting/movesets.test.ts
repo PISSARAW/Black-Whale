@@ -223,7 +223,7 @@ function withFinisherCondition(state: FightState): FightState {
   const opponent = state.opponent
   switch (player.id) {
     case 'kurapika':
-      return { ...state, opponent: { ...opponent, health: 35 } }
+      return { ...state, player: { ...player, kurapika: { ...player.kurapika!, emperorTime: true } } }
     case 'theta':
       return withOpponentEffect(state, 'forcedZetsuFrames', 60)
     case 'hisoka':

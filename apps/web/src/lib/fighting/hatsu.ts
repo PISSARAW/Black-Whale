@@ -1,3 +1,5 @@
+import { withDolphinIdentity } from './kurapikaDolphin'
+import { chainAbilitySealed } from './kurapika'
 import { canActivateLsdf } from './lsdf'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
@@ -19,6 +21,7 @@ export function canUseFightHatsu(fighter: Pick<ArcadeFighter, 'aura' | 'nen' | '
  * in Chrollo's book. Their techniques remain Ren-charged strikes.
  */
 export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): FighterId | null {
+  if (chainAbilitySealed(fighter, moveId)) return null
   const hatsu = hatsuFor(fighter.id)
   if (hatsu.martialOnly || fighter.hatsuEffects.hatsuStolen > 0) return null
   return hatsu.sourceFor ? hatsu.sourceFor(fighter, moveId) : fighter.id
@@ -63,15 +66,9 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  return hatsuFor(source).onImpact({
-    state: options.state,
-    side,
-    defenderSide,
-    source,
-    moveId,
-    blocked,
-    concealed,
-  })
+  return withDolphinIdentity(options.state, (state) => hatsuFor(source).onImpact({
+    state, side, defenderSide, source, moveId, blocked, concealed,
+  }), source)
 }
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {

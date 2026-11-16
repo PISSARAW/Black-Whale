@@ -44,7 +44,7 @@ export interface ProjectileProfile {
 const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   kurapika: projectile({
     matter: 'nen',
-    labels: ['Chaîne', 'Chain'],
+    labels: ['Chaîne divinatoire', 'Dowsing Chain'],
     shape: 'chain',
     colour: '#e8d44d',
     speed: 48,
@@ -196,6 +196,8 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'kurapika') return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
+  if (fighter.id === 'benjamin') return true
   if (fighter.id === 'leorio') return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
@@ -203,6 +205,8 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 }
 
 export function rangedAuraCost(id: FighterId): number {
+  if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
+  if (id === 'benjamin') return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 

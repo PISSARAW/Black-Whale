@@ -7,6 +7,7 @@
   export let fighter: ArcadeFighter
   export let language: 'fr' | 'en'
   export let onAura: (active: boolean) => void
+  export let onEmperor: () => void = () => {}
 
   $: technique = nenStatus(fighter).join(' · ')
   $: tactical = nenTacticalState(fighter)
@@ -141,6 +142,14 @@
     <strong>AURA</strong>
     <span>{technique}</span>
   </button>
+
+  {#if fighter.id === 'kurapika'}
+    <button type="button" class:active={fighter.kurapika?.emperorTime} onclick={onEmperor}
+      disabled={Boolean(fighter.kurapika?.held?.loaded) || (fighter.kurapika?.blackoutFrames ?? 0) > 0}>
+      <kbd>AURA + H</kbd><strong>EMPEROR TIME</strong>
+      <span>{language === 'fr' ? '1 seconde = 1 heure de vie · efficacité 100 %' : '1 second = 1 hour of life · 100% efficiency'}</span>
+    </button>
+  {/if}
 
   <section class="tactical-readout" data-technique={tactical.technique} aria-live="polite">
     <header>

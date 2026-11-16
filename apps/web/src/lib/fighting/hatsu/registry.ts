@@ -1,3 +1,4 @@
+import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
@@ -109,5 +110,8 @@ export function hatsuFor(id: FighterId): FighterHatsu {
 }
 
 export function advanceHatsuFrames(state: FightState): FightState {
-  return Object.values(HATSU_REGISTRY).reduce((next, resolve) => resolve().onFrame(next), state)
+  return Object.values(HATSU_REGISTRY).reduce((next, resolve) => {
+    const hatsu = resolve()
+    return withDolphinIdentity(next, hatsu.onFrame, hatsu.id)
+  }, state)
 }

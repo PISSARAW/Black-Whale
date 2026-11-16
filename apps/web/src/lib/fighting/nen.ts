@@ -5,6 +5,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { attackData } from './frameData'
+import { restrictedChainAura, kurapikaEfficiency } from './kurapika'
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
@@ -31,6 +32,8 @@ export function createFightingNen() {
 
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  const restricted = restrictedChainAura(fighter, input)
+  if (restricted) return restricted
   const sworn = applyOnContext(fighter, input)
   if (sworn) return sworn
   if (fighter.auraExhausted) return withAction(fighter, { type: 'ZETSU' })
@@ -76,6 +79,7 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
+  if (fighter.drainingChain) return advanceOn(fighter)
   const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
   const depleted = fighter.auraExhausted || aura === 0
   const auraExhausted = depleted && aura < EXHAUSTION_RELEASE_AURA
@@ -135,7 +139,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  return factor
+  return kind === 'light' || kind === 'heavy' ? factor * kurapikaEfficiency(fighter, 'enhancer') : factor
 }
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {

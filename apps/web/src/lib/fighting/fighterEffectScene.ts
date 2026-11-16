@@ -1,5 +1,5 @@
+import { createKurapikaEffectScene } from './kurapikaEffectScene'
 import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
-import { attackAuraColour } from './techniqueAuraColours'
 import type { FightSide, FightState } from './types'
 
 export interface EffectSceneOptions {
@@ -16,6 +16,7 @@ export interface FighterEffectScene {
 
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const kurapika = createKurapikaEffectScene(options)
   const gumMaterial = new THREE.LineBasicMaterial({
     color: 0xff55bb,
     transparent: true,
@@ -23,30 +24,24 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   })
   const gumGeometry = new THREE.BufferGeometry()
   const gum = new THREE.Line(gumGeometry, gumMaterial)
-  const chainMaterial = new THREE.MeshBasicMaterial({ color: 0xd8ecff })
-  const chainGeometry = new THREE.TorusGeometry(0.055, 0.018, 4, 7)
-  const chain = Array.from({ length: 11 }, () => new THREE.Mesh(chainGeometry, chainMaterial))
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
-  scene.add(gum, ...chain, ...cards)
+  scene.add(gum, ...cards)
 
   const sync = (state: FightState, seconds: number) => {
+    kurapika.sync(state, seconds)
     syncGum(options, { state, line: gum, material: gumMaterial })
-    syncChain(options, { state, meshes: chain, seconds })
-    const chainSide = attackingSide(state, 'kurapika')
-    if (chainSide) chainMaterial.color.set(attackAuraColour(state[chainSide]))
     syncCards(options, { state, meshes: cards, seconds })
   }
 
   return {
     sync,
     dispose: () => {
-      scene.remove(gum, ...chain, ...cards)
+      scene.remove(gum, ...cards)
       gumGeometry.dispose()
       gumMaterial.dispose()
-      chainGeometry.dispose()
-      chainMaterial.dispose()
+      kurapika.dispose()
       cardGeometry.dispose()
       cardMaterial.dispose()
     },
@@ -82,24 +77,6 @@ interface MeshSync {
   state: FightState
   meshes: import('three').Mesh[]
   seconds: number
-}
-
-function syncChain(options: EffectSceneOptions, effect: MeshSync): void {
-  const side = attackingSide(effect.state, 'kurapika')
-  const active = side && effect.state[side].attack?.kind === 'special'
-  effect.meshes.forEach((mesh) => (mesh.visible = Boolean(active)))
-  if (!active || !side) return
-  const fighter = effect.state[side]
-  const reach = fighter.x + fighter.facing * 13
-  effect.meshes.forEach((mesh, index) => {
-    const ratio = index / Math.max(1, effect.meshes.length - 1)
-    mesh.position.set(
-      options.worldX(fighter.x + (reach - fighter.x) * ratio),
-      options.worldY(fighter.y) + 1.25 + Math.sin(ratio * Math.PI * 2) * 0.1,
-      0.3,
-    )
-    mesh.rotation.y = Math.PI / 2
-  })
 }
 
 function syncCards(options: EffectSceneOptions, effect: MeshSync): void {

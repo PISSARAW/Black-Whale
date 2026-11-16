@@ -1,0 +1,239 @@
+import { canStartFighterAttack } from './fighterAttacks'
+import { rangedAuraCost } from './projectiles'
+import { finishFight } from './combatVerdict'
+import { canonicalTechniqueAllowed } from './techniqueContracts'
+import { moveById } from './movesets'
+import {
+  createKurapika,
+  chainsImmobilize,
+  EMPEROR_BLACKOUT_FRAMES,
+  EMPEROR_BLACKOUT_THRESHOLD,
+  kurapikaNenActive,
+  zetsuFighter,
+} from './kurapika'
+import {
+  dismissDolphinGum,
+  dolphinCanUse,
+  dolphinIsBusy,
+  recordDolphinEffects,
+  returnChainAbility,
+  withDolphinIdentity,
+} from './kurapikaDolphin'
+import type { AuraAttackOptions } from './auraAttackAction'
+import type { ArcadeFighter, FightSide, FightState } from './types'
+
+export function toggleEmperorTime(state: FightState, side: FightSide): FightState {
+  const fighter = state[side]
+  if (!canToggleEmperor(state, fighter)) return state
+  if (fighter.judgmentChain) return chainRuleDeath(state, side)
+  const chain = fighter.kurapika ?? createKurapika()
+  if (chain.emperorTime && chain.held?.loaded) return state
+  if (!chain.emperorTime && !kurapikaNenActive(fighter)) return state
+  return {
+    ...state,
+    [side]: {
+      ...fighter,
+      kurapika: {
+        ...chain,
+        emperorTime: !chain.emperorTime,
+        continuousFrames: 0,
+      },
+    },
+  }
+}
+
+/** Every simulated frame, including hitstop and unconsciousness; never a render-frame clock. */
+export function advanceEmperorClock(state: FightState): FightState {
+  return {
+    ...state,
+    player: advanceEmperor(state.player),
+    opponent: advanceEmperor(state.opponent),
+  }
+}
+
+function advanceEmperor(fighter: ArcadeFighter): ArcadeFighter {
+  const chain = fighter.kurapika
+  if (!chain) return fighter
+  const blackoutFrames = Math.max(0, chain.blackoutFrames - 1)
+  const running = emperorRunning(fighter)
+  const continuousFrames = running && chain.blackoutFrames === 0 ? chain.continuousFrames + 1 : 0
+  const blackout = continuousFrames >= EMPEROR_BLACKOUT_THRESHOLD
+  const body = blackout || blackoutFrames > 0 ? unconsciousBody(fighter) : fighter
+  return {
+    ...body,
+    kurapika: {
+      ...chain,
+      emperorTime: running,
+      lifespanFrames: chain.lifespanFrames + Number(running),
+      continuousFrames: blackout ? 0 : continuousFrames,
+      blackoutFrames: blackout ? EMPEROR_BLACKOUT_FRAMES : blackoutFrames,
+    },
+  }
+}
+
+function emperorRunning(fighter: ArcadeFighter): boolean {
+  const chain = fighter.kurapika!
+  return (
+    chain.emperorTime &&
+    (kurapikaNenActive(fighter) || Boolean(chain.held?.loaded) || chain.blackoutFrames > 0)
+  )
+}
+
+function unconsciousBody(fighter: ArcadeFighter): ArcadeFighter {
+  return {
+    ...zetsuFighter(fighter),
+    attack: null,
+    bufferedAttack: null,
+    blocking: false,
+    motion: undefined,
+  }
+}
+
+function canToggleEmperor(state: FightState, fighter: ArcadeFighter): boolean {
+  return state.phase === 'fighting' && fighter.id === 'kurapika' && canAct(fighter)
+}
+
+/** A Nen condition kills by its rule, independent of score format or remaining HP. */
+export function chainRuleDeath(state: FightState, side: FightSide): FightState {
+  const fighter = { ...state[side], health: 0, attack: null, bufferedAttack: null, blocking: false }
+  if (state.mode === 'training')
+    return { ...state, [side]: { ...fighter, health: 100, judgmentChain: undefined } }
+  return finishFight({ ...state, [side]: fighter }, side === 'player' ? 'opponent' : 'player')
+}
+
+export function resolveJudgmentDeaths(state: FightState): FightState {
+  for (const side of ['player', 'opponent'] as const)
+    if (state[side].judgmentChain && state[side].health <= 0) return chainRuleDeath(state, side)
+  return state
+}
+
+type PerformAttack = (options: AuraAttackOptions) => FightState
+
+export function performKurapikaAction(
+  options: AuraAttackOptions,
+  perform: PerformAttack,
+): FightState | null {
+  const { state, side, kind, moveId } = options
+  if (state.phase !== 'fighting') return state
+  if (violatesJudgment(options)) return chainRuleDeath(state, side)
+  if (state[side].id !== 'kurapika') return null
+  // U directs an attached Dowsing Chain, never a detached projectile.
+  if (kind === 'ranged')
+    return perform({ ...options, kind: 'special', moveId: 'kurapika:forwardSpecial' })
+  if (kind !== 'special') return null
+  if (!moveId) return perform({ ...options, moveId: 'kurapika:neutralSpecial' })
+  return jailAction(options) ?? dolphinAction(options, perform)
+}
+
+function violatesJudgment(options: AuraAttackOptions): boolean {
+  const { state, side, kind } = options
+  return (
+    Boolean(state[side].judgmentChain) &&
+    (kind === 'special' ||
+      (kind === 'ranged' && rangedAuraCost(state[side].id) > 0) ||
+      options.auraCharged)
+  )
+}
+
+function jailAction({ state, side, kind, moveId }: AuraAttackOptions): FightState | null {
+  if (moveId !== 'kurapika:neutralSpecial') return null
+  const targetSide = side === 'player' ? 'opponent' : 'player'
+  if (state[targetSide].chainJail?.owner === side && canAct(state[side]))
+    return { ...state, [targetSide]: { ...state[targetSide], chainJail: undefined } }
+  if (
+    !canonicalTechniqueAllowed(state, side, { id: moveId }) &&
+    canStartFighterAttack(state[side], kind, moveId)
+  )
+    return chainRuleDeath(state, side)
+  return null
+}
+
+function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): FightState | null {
+  const { state, side, moveId } = options
+  const fighter = state[side]
+  const held = fighter.kurapika?.held
+  if (moveId !== 'kurapika:backSpecial' || !held) return null
+  if (!canAct(fighter) || !kurapikaNenActive(fighter) || !fighter.kurapika!.emperorTime)
+    return state
+  if (!held.loaded)
+    return {
+      ...state,
+      [side]: {
+        ...fighter,
+        kurapika: {
+          ...fighter.kurapika!,
+          held: { ...held, loaded: true },
+        },
+      },
+    }
+  if (held.used) {
+    const detached = endDolphinEffect(options, perform)
+    return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
+  }
+  return useDolphin(options, perform)
+}
+
+function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
+  const { state, side } = options
+  const fighter = state[side]
+  const held = fighter.kurapika!.held!
+  if (fighter.hanzoProjection)
+    return withDolphinIdentity(
+      state,
+      (projected) => perform({ ...options, state: projected, moveId: held.moveId }),
+      held.source,
+    )
+  if (fighter.textureSurprise)
+    return { ...state, [side]: { ...fighter, textureSurprise: undefined } }
+  return dismissDolphinGum(state, side)
+}
+
+function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightState {
+  const { state, side } = options
+  if (!dolphinCanUse(state, side)) return state
+  const fighter = state[side]
+  const held = fighter.kurapika!.held!
+  const move = moveById(held.moveId)!
+  const prepared: FightState = {
+    ...state,
+    [side]: {
+      ...fighter,
+      id: held.source,
+      kurapika: {
+        ...fighter.kurapika!,
+        held: { ...held, used: true },
+      },
+    },
+  }
+  const cast = perform({
+    ...options,
+    state: prepared,
+    kind: move.kind,
+    variant: move.variant,
+    moveId: move.id,
+  })
+  if (cast === prepared || (cast[side] === prepared[side] && cast.lsdf === prepared.lsdf))
+    return state
+  const restored = { ...cast, [side]: { ...cast[side], id: fighter.id } }
+  return recordDolphinEffects(state, restored, side)
+}
+
+function canAct(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.health > 0 &&
+    fighter.y === 0 &&
+    !chainsImmobilize(fighter) &&
+    fighter.hitStun === 0 &&
+    fighter.blockStun === 0 &&
+    fighter.knockdownFrames === 0 &&
+    fighter.attack === null
+  )
+}
+
+export function kurapikaAiActivation(state: FightState): FightState | null {
+  const fighter = state.opponent
+  if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return null
+  if (fighter.health >= 70 && !fighter.kurapika?.held) return null
+  const activated = toggleEmperorTime(state, 'opponent')
+  return activated === state ? null : activated
+}

@@ -271,3 +271,49 @@ sans changer les règles, les boîtes ni les données de frame.
 - Le netcode rollback n'est pas encore présent. Le moteur fixe et les entrées P1/P2
   séparées constituent la base de resimulation, mais le transport, la prédiction et
   la synchronisation d'état restent une couche réseau distincte.
+
+### Kurapika : chaînes et Emperor Time
+
+- **Aura + H** (P2 : Alt + B), ou le bouton Emperor Time, active/coupe les yeux
+  écarlates. L’efficacité atteint 100 % au niveau acquis : aucune réserve d’aura
+  gratuite ni maîtrise de toutes les techniques. Le renforcement des normales et
+  Holy Chain passent de 60 % à 100 %. Chaque seconde simulée, hitstop compris,
+  consomme une heure de vie ; le compteur survit aux manches. Après trois heures
+  d’usage continu, le moteur reproduit l’évanouissement observé et neuf heures
+  d’inconscience, sans compresser ces durées en quelques secondes de duel.
+- **L : Chain Jail**, chaîne du majeur. Une touche non gardée immobilise et force
+  le Zetsu aussi longtemps que Kurapika la maintient. L libère ; perdre le Nen la
+  dissipe. Le serment est mortel : tenter réellement ce coup sur un non-membre de
+  la Brigade, Hisoka compris, tue Kurapika. L’IA évite cet usage interdit.
+- **Avant + L / U : Dowsing Chain**, chaîne de l’annulaire. Arme physique de portée
+  moyenne, elle peut intercepter les balles matérielles pendant sa phase active.
+  U dirige cette chaîne attachée ; aucun projectile de chaîne détaché n’est créé.
+  La détection des mensonges et la recherche hors combat n’ont pas de cible dans
+  ce duel sans dialogue.
+- **Bas + L : Holy Chain**, chaîne du pouce. Un soin après préparation, sans
+  hitbox offensive : 18 PV normalement, 30 avec Emperor Time, plafonné à la vie maximale.
+  Un coup reçu avant le soin l’interrompt ; il ne ressuscite pas.
+- **Arrière + L : Steal Chain**, chaîne de l’index. La seringue doit toucher sans
+  être gardée, puis maintenir sa connexion : interruption du porteur ou distance
+  supérieure à 24 unités rompt le drainage. Elle retire 40 unités d’aura/seconde ;
+  à épuisement, une capacité est retenue et son propriétaire ne peut plus l’utiliser.
+  Aucun pouvoir n’est inventé pour un combattant martial sans Hatsu de duel.
+- Avec une capacité retenue, **arrière + L sous Emperor Time** la charge dans
+  Stealth Dolphin ; le prochain arrière + L l’utilise une seule fois, avec ses
+  propres conditions, coût et effets. Emperor Time reste verrouillé jusqu’à cet
+  usage et la fin de ses effets. Un nouveau arrière + L détache une gomme active ;
+  les effets temporisés doivent finir. Le moteur conserve l’identité et les règles
+  de la capacité empruntée. Un duel sans allié ne propose pas de prêt à un tiers.
+- **H : Judgment Chain**, chaîne de l’auriculaire. Emperor Time et un contact à
+  courte portée sont nécessaires ; aucun seuil arbitraire de PV. La règle annoncée
+  est « reste en Zetsu ». Elle persiste après l’arrêt d’Emperor Time. La cible peut
+  marcher et combattre physiquement : une demande d’aura, de Hatsu ou de tir Nen
+  enfreint la règle et la tue. Les inputs neutres maintiennent le Zetsu pour éviter
+  qu’un retour automatique au Ten enfreigne la règle à la place du joueur.
+
+Références : chapitres 83–84 (chaînes, serment, efficacité), 361 et 364
+(Steal Chain / Dolphin, coût en vie), 368–369 (inconscience). Les PV de soin,
+vitesses de drainage, portées et préparations sont des réglages du duel ; la règle
+unique de Judgment Chain adapte le choix de conditions au combat sans dialogue.
+Les décès conditionnels terminent la manche dans tous les formats ; l’entraînement
+rétablit les PV. `kurapika.test.ts` couvre ces transitions par le moteur réel.

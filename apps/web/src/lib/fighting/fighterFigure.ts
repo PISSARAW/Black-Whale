@@ -9,7 +9,7 @@ import type { ArcadeFighter } from './types'
 
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
-  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), Boolean(fighter.textureSurprise)])
+  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), Boolean(fighter.textureSurprise), Boolean(fighter.kurapika?.emperorTime)])
 }
 
 export function buildFightFigure(options: {
@@ -54,5 +54,9 @@ export function buildFightFigure(options: {
     addFranklinHands({ THREE, glow, model })
   }
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.kurapika?.emperorTime) model.root.traverse((node) => {
+    if (node.name.startsWith('face-eye') && 'material' in node)
+      (node as import('three').Mesh).material = glow(0xef3340, 1)
+  })
   return model
 }

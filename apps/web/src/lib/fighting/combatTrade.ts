@@ -18,6 +18,7 @@ export function tradeFighter(options: TradeFighterOptions): ArcadeFighter {
     knockdownFrames: Math.max(incoming.knockdownFrames, outgoing.knockdownFrames),
     comboDamage: incoming.comboDamage + outgoing.comboDamage - original.comboDamage,
     hatsuEffects: tradeHatsuEffects(options),
+    ...tradeChainState(options),
     nen: original.hanzoProjection && !incoming.hanzoProjection ? incoming.nen : outgoing.nen,
     attack: null,
     aura: Math.max(0, Math.min(100, incoming.aura + outgoing.aura - original.aura)),
@@ -51,4 +52,14 @@ export function tradeAttachment(original: FightState, first: FightState, second:
   const opponentChanged = second.bungeeGum !== original.bungeeGum
   if (playerChanged && opponentChanged) return null
   return playerChanged ? first.bungeeGum : second.bungeeGum
+}
+
+function tradeChainState({ original, incoming, outgoing }: TradeFighterOptions) {
+  return {
+    kurapika: outgoing.kurapika !== original.kurapika ? outgoing.kurapika : incoming.kurapika,
+    chainJail: incoming.chainJail ?? outgoing.chainJail,
+    judgmentChain: incoming.judgmentChain ?? outgoing.judgmentChain,
+    drainingChain: incoming.drainingChain ?? outgoing.drainingChain,
+    stolenChainAbility: incoming.stolenChainAbility ?? outgoing.stolenChainAbility,
+  }
 }

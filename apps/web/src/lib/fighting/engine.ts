@@ -1,3 +1,7 @@
+import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
+import { advanceEmperorClock, kurapikaAiActivation, performKurapikaAction, resolveJudgmentDeaths } from './kurapikaActions'
+import { chainsImmobilize } from './kurapika'
+import { withDolphinIdentity } from './kurapikaDolphin'
 import { recordFightInjuries } from './feitanPain'
 import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
@@ -85,21 +89,24 @@ export function tickFight(
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
+  state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
   const player = updatePlayer(state.player, input)
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, player)
+  const judged = resolveJudgmentDeaths({ ...state, player, opponent })
+  if (judged.phase === 'finished') return judged
   const buffered = flushBuffered(
     flushBuffered(
-      resolveHanzoBodyCalls({ ...state, player, opponent }, input, opponentInput),
+      resolveHanzoBodyCalls(judged, input, opponentInput),
       'player',
     ),
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
   if (withHatsu.phase === 'finished') return recordFightInjuries(state, withHatsu)
-  const armed = spawnRangedProjectiles(withHatsu)
+  const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
   const flight = advanceProjectiles(armed, FIXED_STEP)
   const resolved = recordFightInjuries(
     state,
@@ -197,11 +204,9 @@ interface PerformMoveOptions {
 export function performMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   const selected = moveForAction(state[side], action, input)
-  const currentMove = moveById(state[side].attack?.moveId)
-  const routedMove = currentMove?.cancelInto
-    .map((id) => moveById(id))
-    .find((candidate) => candidate?.kind === selected?.kind)
-  const move = state[side].id === 'chrollo' ? selected : (routedMove ?? selected)
+  const override = characterMoveOverride({ state, side, action, input }, selected, performAuraAttack)
+  if (override) return override
+  const move = routedFightMove(state[side], selected)
   if (!move) {
     if (action === 'throw') return performLegacyThrow(state, side)
     if (action === 'finisher') return state
@@ -222,6 +227,8 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
+  const chains = performKurapikaAction(options, performAuraAttack)
+  if (chains) return chains
   const book = performChrolloBookAction(options)
   if (book) return book
   if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId)) return options.state
@@ -261,6 +268,8 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 
 export function opponentAttack(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
+  const emperor = kurapikaAiActivation(state)
+  if (emperor) return emperor
   if (canCallHanzoBody(state, 'opponent')) return callHanzoBody(state, 'opponent')
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
@@ -299,6 +308,8 @@ export function opponentAttack(state: FightState): FightState {
 function planOpponentNen(state: FightState): FightState {
   const gap = Math.abs(state.player.x - state.opponent.x)
   const opponent = state.opponent
+  if (opponent.judgmentChain || chainsImmobilize(opponent))
+    return applyOpponentAura(state, { aura: true, down: true })
   if (opponent.hanzoProjection) return state
   if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
   if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
@@ -363,6 +374,7 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
+    !chainsImmobilize(fighter) &&
     !projectionPreparing(fighter) &&
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
@@ -377,6 +389,7 @@ function canMove(fighter: ArcadeFighter): boolean {
 
 function canGuard(fighter: ArcadeFighter): boolean {
   return (
+    !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&
     fighter.hitStun === 0 &&
     fighter.knockdownFrames === 0 &&

@@ -1,3 +1,4 @@
+import { isKurapikaUtility, dolphinActor } from './kurapika'
 import { feitanUtilityMove } from './feitanPain'
 import { chrolloUtilityMove } from './chrolloBook'
 import { hisokaUtilityMove } from './hisokaTechnique'
@@ -99,6 +100,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 }
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
+  fighter = dolphinActor(fighter)
   return franklinAttackData(baseAttackData(kind, fighter), fighter)
 }
 
@@ -194,6 +196,8 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  fighter = dolphinActor(fighter)
+  if (isKurapikaUtility(fighter)) return null
   if (feitanUtilityMove(fighter)) return null
   if (chrolloUtilityMove(fighter)) return null
   if (hisokaUtilityMove(fighter)) return null

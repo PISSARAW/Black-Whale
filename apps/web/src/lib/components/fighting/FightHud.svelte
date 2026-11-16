@@ -6,6 +6,7 @@
   import type { FightState } from '$lib/fighting/types'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
+  import FightKurapikaStatus from './FightKurapikaStatus.svelte'
   import FightPainPacker from './FightPainPacker.svelte'
 
   export let state: FightState
@@ -28,6 +29,7 @@
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
     <FightGrudge fighter={state.player} {language} />
+    <FightKurapikaStatus {state} side="player" {language} />
     <FightPainPacker fighter={state.player} {language} />
     <FightChrolloStatus {state} side="player" {language} />
     {#if state.player.textureSurprise}
@@ -99,6 +101,7 @@
           : 'opponent aura hidden'}
     </div>
     <FightGrudge fighter={state.opponent} {language} />
+    <FightKurapikaStatus {state} side="opponent" {language} />
     <FightPainPacker fighter={state.opponent} {language} />
     <FightChrolloStatus {state} side="opponent" {language} />
     {#if state.opponent.textureSurprise}

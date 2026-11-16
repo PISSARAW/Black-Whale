@@ -1,3 +1,4 @@
+import { recordDolphinEffects } from './kurapikaDolphin'
 import { finishFight } from './combatVerdict'
 export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
@@ -155,6 +156,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       otherSide(transferred.impact!.attacker),
     )
   if (shouldResolveHatsu(attacker, defence)) {
+    const beforeHatsu = next
     next = resolveHatsuImpact({
       state: next,
       side,
@@ -164,6 +166,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       blocked: defence.blocked,
       concealed: attacker.attack.concealed,
     })
+    next = recordDolphinEffects(beforeHatsu, next, side)
   }
   return finishAfterImpact(next, side, defenderSide)
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
@@ -370,6 +371,7 @@
         onThrow={throwAttack}
         onCall={callBody}
         onFinisher={finisher}
+        onEmperor={() => queueAction((current) => toggleEmperorTime(current, 'player'))}
         onControl={control}
         training={state.mode === 'training'}
       />

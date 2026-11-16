@@ -1,3 +1,4 @@
+import { kurapikaMoveAvailable } from './kurapika'
 import { feitanMoveAvailable } from './feitanPain'
 import { chrolloMoveAvailable } from './chrolloBook'
 import { remotePunchAvailable } from './leorioAttack'
@@ -46,7 +47,7 @@ export function startFighterAttack(options: {
   return {
     ...prepared,
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
-    aura: fighter.aura - attackAuraCost(kind, options.moveId) - (concealed ? 12 : 0),
+    aura: fighter.aura - attackAuraCost(kind, options.moveId, fighter.id) - (concealed ? 12 : 0),
     pose: kind,
     blocking: false,
     guardFrames: 0,
@@ -77,6 +78,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (!kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (!remotePunchAvailable(fighter, kind, moveId)) return false
   if (projectionPreparing(fighter)) return false
@@ -102,11 +104,11 @@ export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
   return remaining <= INPUT_BUFFER_FRAMES
 }
 
-function attackAuraCost(kind: AttackKind, moveId?: string): number {
+function attackAuraCost(kind: AttackKind, moveId?: string, fighterId?: FighterId): number {
   const move = moveById(moveId)
   if (move) return move.auraCost
   if (kind === 'special') return FIGHT_HATSU_AURA_COST
-  return kind === 'ranged' ? RANGED_AURA_COST : 0
+  return kind === 'ranged' && fighterId !== 'benjamin' ? RANGED_AURA_COST : 0
 }
 
 function canAct(fighter: ArcadeFighter): boolean {

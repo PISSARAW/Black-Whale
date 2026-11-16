@@ -1,3 +1,5 @@
+import { tuneKurapikaMoveset } from './kurapikaMoveset'
+import { kurapikaMoveAvailable } from './kurapika'
 import { feitanMoveAvailable } from './feitanPain'
 import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
 import { tuneChrolloMoveset } from './chrolloMoveset'
@@ -44,7 +46,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneFranklinMoveset).map(tuneChrolloMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map(tuneKurapikaMoveset).map(tuneFranklinMoveset).map(tuneChrolloMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
   [...MOVESETS.values()].flatMap((moveset) =>
@@ -90,6 +92,8 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (!kurapikaMoveAvailable(fighter, move.id)) return false
+  if (fighter.id === 'kurapika' && move.id === 'kurapika:backSpecial' && fighter.kurapika?.held) return true
   if (!feitanMoveAvailable(fighter, move.id)) return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
   if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
@@ -154,7 +158,7 @@ const opponentOf = (state: FightState, side: FightSide) =>
   state[side === 'player' ? 'opponent' : 'player']
 
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
-  kurapika: (state, side) => opponentOf(state, side).health <= 35,
+  kurapika: (state, side) => Boolean(state[side].kurapika?.emperorTime) && !opponentOf(state, side).judgmentChain,
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,

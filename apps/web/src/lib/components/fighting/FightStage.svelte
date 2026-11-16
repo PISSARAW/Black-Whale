@@ -27,6 +27,7 @@
   export let onThrow: () => void
   export let onCall: () => void
   export let onFinisher: () => void
+  export let onEmperor: () => void = () => {}
   export let onControl: (key: keyof FightInput, active: boolean) => void
   export let training = false
 
@@ -68,6 +69,7 @@
     fighter={state.player}
     {language}
     onAura={(active) => onControl('aura', active)}
+    {onEmperor}
   />
   {#key sceneKey}
     <FightScene {state} {stageId} />

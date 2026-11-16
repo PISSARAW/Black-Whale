@@ -1,3 +1,4 @@
+import { createKurapika } from './kurapika'
 import { createPainPacker } from './feitanPain'
 import { createChrolloBook } from './chrolloBook'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
@@ -55,8 +56,8 @@ export function nextFightRound(state: FightState): FightState {
     ...state,
     lsdf: undefined,
     expulsion: undefined,
-    player: createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
-    opponent: createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+    player: preserveLifespan(createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }), state.player),
+    opponent: preserveLifespan(createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }), state.opponent),
     phase: 'ready',
     frame: 0,
     time: format.roundFrames / FIGHT_FPS,
@@ -83,6 +84,7 @@ function createFighter(options: {
 }): ArcadeFighter {
   return {
     ...options,
+    kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
     aura: 55,
@@ -168,4 +170,10 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
     seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
   }
   return seed >>> 0
+}
+
+function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  return fighter.kurapika ? { ...fighter, kurapika: {
+    ...fighter.kurapika, lifespanFrames: previous.kurapika?.lifespanFrames ?? 0,
+  } } : fighter
 }

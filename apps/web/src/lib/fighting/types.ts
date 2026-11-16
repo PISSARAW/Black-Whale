@@ -117,6 +117,11 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  kurapika?: import('./kurapika').KurapikaState
+  chainJail?: { owner: FightSide; x: number; y: number }
+  drainingChain?: { owner: FightSide }
+  stolenChainAbility?: { owner: FightSide; moveId: string }
+  judgmentChain?: { owner: FightSide; rule: 'zetsu' }
   id: FighterId
   x: number
   y: number

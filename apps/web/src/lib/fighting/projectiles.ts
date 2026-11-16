@@ -1,3 +1,5 @@
+import { hasMoveResources, moveForSlot } from './movesets'
+import { advanceRemotePunch, remotePunchCanHit, spawnRemotePunch } from './remotePunch'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
@@ -141,12 +143,12 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   }),
   leorio: projectile({
     matter: 'nen',
-    labels: ['Poing émissif', 'Emissive fist'],
-    shape: 'orb',
-    colour: '#38bdf8',
-    speed: 68,
-    damage: 11,
-    size: [1, 0.75],
+    labels: ['Poing à distance', 'Remote Punch'],
+    shape: 'remote-fist',
+    colour: '#bcecff',
+    speed: 0,
+    damage: 19,
+    size: [1.6, 1.5],
   }),
 }
 
@@ -194,18 +196,25 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'leorio') return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }
 
+export function rangedAuraCost(id: FighterId): number {
+  return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
+}
+
 export function spawnRangedProjectiles(state: FightState): FightState {
   const barrage = spawnFranklinBarrage(spawnFranklinBarrage(state, 'player'), 'opponent')
-  return spawnForSide(spawnForSide(barrage, 'player'), 'opponent')
+  const remote = spawnRemotePunch(spawnRemotePunch(barrage, 'player'), 'opponent')
+  return spawnForSide(spawnForSide(remote, 'player'), 'opponent')
 }
 
 function spawnForSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (
+    fighter.id === 'leorio' ||
     fighter.id === 'franklin' ||
     fighter.attack?.kind !== 'ranged' ||
     fighter.attack.projectileSpawned ||
@@ -259,11 +268,22 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const projectile = { ...held, x: held.x + held.velocityX * step, age: held.age + 1 }
+    const projectile = held.remotePunch
+      ? advanceRemotePunch(held)
+      : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 }
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
-    if (collision) hits.push({ projectile, defenderSide, position: collision })
-    else if (projectile.age < projectile.lifetime && projectile.x > 2 && projectile.x < 98)
+    if (collision) {
+      hits.push({ projectile, defenderSide, position: collision })
+      if (projectile.remotePunch)
+        projectile.remotePunch = { ...projectile.remotePunch, struck: true }
+    }
+    if (
+      (!collision || projectile.remotePunch) &&
+      projectile.age < projectile.lifetime &&
+      projectile.x > 2 &&
+      projectile.x < 98
+    )
       kept.push(projectile)
   }
   return { state: { ...state, projectiles: kept }, hits }
@@ -273,6 +293,7 @@ function projectileCollision(
   projectile: FightProjectile,
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
+  if (!remotePunchCanHit(projectile)) return null
   const box: FightBox = {
     left: projectile.x - projectile.width,
     right: projectile.x + projectile.width,

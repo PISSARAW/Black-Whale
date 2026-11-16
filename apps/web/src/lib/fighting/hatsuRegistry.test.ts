@@ -424,7 +424,7 @@ describe('fighter Hatsu registry', () => {
     expect(impact('melody').entrancedFrames).toBe(75)
   })
 
-  it('makes Leorio’s remote fist add a second impact', () => {
+  it('does not add automatic damage or stun to Leorio’s contact hits', () => {
     const ready = closeFight('leorio', 'hisoka')
     const struck = hatsuFor('leorio').onImpact({
       state: ready,
@@ -434,8 +434,7 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(struck.opponent.health).toBe(92)
-    expect(struck.opponent.hitStun).toBe(30)
+    expect(struck).toBe(ready)
   })
 
   it('activates Basho’s and Bill’s reinforcement Hatsu', () => {

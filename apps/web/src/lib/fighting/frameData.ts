@@ -1,3 +1,4 @@
+import { usesRemotePunch } from './leorioAttack'
 import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
@@ -190,6 +191,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (usesRemotePunch(fighter)) return null
   if (usesFranklinBarrage(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')
     return null

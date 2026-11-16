@@ -82,7 +82,7 @@ une vérification dans le manga avant d'être corrigés.
 | Shizuku    | Draine PV et aura d'un **vivant**, la soigne   | Blinky n'aspire que le **non-vivant** désigné                           | D (fait) | Corrigé le 2026-11-16 : plus aucun drain du vivant ; Blinky avale pendant 0,5 s les objets réels lancés contre Shizuku (cartes, balles, aiguilles, pierres), jamais l'aura émise ou matérialisée. |
 | Hinrigh    | Buff ×1,2 / ×0,86 (et auto-paralysie)          | Biohazard : objets touchés deviennent des animaux                       | **A**    | Effet inventé (le bug d'auto-paralysie est corrigé). Piste : transformer un projectile ou un objet en bête.                                                                                       |
 | Mizaistom  | Entrave 1,5 s sur tout coup                    | Cross Game : **avertissement** avant l'entrave, parole libre            | B        | Il manque le carton jaune. Facile : premier coup = avertissement, second = entrave.                                                                                                               |
-| Leorio     | +8 dégâts, stun                                | Remote Punch : l'aura traverse une surface                              | B        | Le poing devrait sortir du sol ou du mur, pas frapper au contact.                                                                                                                                 |
+| Leorio     | Poing transmis dans le sol, sortie différée au point visé | Remote Punch : l’aura traverse une surface (ch. 325) | A | Corrigé : aucune collision sous le sol, aucun bonus de contact ni boule d’aura. Variantes médicales, double émission et finisher retirés ; portée et délai restent des réglages arcade. |
 | Hanzo      | Une esquive par « clone »                      | Hanzo Skill 4 : double invisible, **corps endormi et immobile**         | **A**    | Le double n'esquive pas : il laisse le corps vulnérable. L'effet est inversé.                                                                                                                     |
 
 ### Troisième vague
@@ -141,6 +141,6 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois
-   vers), Leorio (poing par le sol), Phinks (seuil de quatre tours), ~~Terebellum (transfert)~~ (fait).
+   vers), ~~Leorio (poing par le sol)~~ (fait), Phinks (seuil de quatre tours), ~~Terebellum (transfert)~~ (fait).
 6. **Les C** : remplacer chaque bonus générique par l'effet de la fiche, ou l'étiqueter
    `gameplay-abstraction` dans le contrat.

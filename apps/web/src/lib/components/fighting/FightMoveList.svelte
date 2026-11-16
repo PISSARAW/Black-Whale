@@ -30,6 +30,7 @@
     </header>
     <div class="move-groups">
       {#each groups as [category, title] (category)}
+        {#if moveset.moves.some((move) => move.category === category)}
         <div>
           <h3>{title}</h3>
           {#each moveset.moves.filter((move) => move.category === category) as move (move.id)}
@@ -38,6 +39,7 @@
             </p>
           {/each}
         </div>
+        {/if}
       {/each}
     </div>
     <div class="routes">
@@ -46,10 +48,12 @@
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>
+    {#if moveset.moves.some((move) => move.category === 'finisher')}
     <footer>
       <strong>{language === 'fr' ? 'Condition du finisher' : 'Finisher condition'}</strong>
       <span>{language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}</span>
     </footer>
+    {/if}
   </section>
 {/if}
 

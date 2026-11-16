@@ -40,6 +40,16 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   expose aussi sa mécanique propre et au moins trois routes courtes.
 - La deuxième vague applique le même contrat à Franklin, Machi, Illumi, Kalluto,
   Bonolenov, Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
+  Leorio fait exception au format de quinze coups : dix coups physiques ordinaires
+  et un seul Hatsu attesté, le poing transmis par une surface (chapitre 325).
+  `leorioMoveset.ts` retire les variantes médicales, la double émission et le finisher.
+  L (avec ou sans direction) et U déclenchent la même frappe au sol, pour 40 aura.
+  `remotePunch.ts` fixe le point de sortie au contact du sol, limite la portée et
+  fait voyager l’aura sous la surface sans collision avant la sortie du poing.
+  Le délai, la portée et les dégâts sont des réglages arcade ; aucune poursuite
+  automatique, onde diagnostique ou condition de faible santé n’est attribuée au manga.
+  `keyPosesLeorio.ts` anime la frappe du sol et `remotePunchScene.ts` dessine le
+  poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,

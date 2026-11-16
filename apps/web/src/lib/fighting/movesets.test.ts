@@ -46,7 +46,7 @@ describe('wave one movesets', () => {
       'leorio',
       'hanzo',
     ])
-    WAVE_TWO_FIGHTERS.forEach(assertCompleteMoveset)
+    WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio').forEach(assertCompleteMoveset)
   })
 
   it('gives the third wave ten equally complete movesets', () => {
@@ -159,7 +159,7 @@ describe('wave one movesets', () => {
     expect(armed.player.aura).toBe(45)
   })
 
-  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'franklin'))('%s wave-two finisher is conditionally locked', (fighterId) => {
+  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio' && id !== 'franklin'))('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
       ...base,
@@ -261,8 +261,6 @@ function withFinisherCondition(state: FightState): FightState {
       return withPlayerEffect(state, 'biohazardFrames', 60)
     case 'mizaistom':
       return withOpponentEffect(state, 'restrainedFrames', 60)
-    case 'leorio':
-      return { ...state, player: { ...player, health: 45 } }
     case 'hanzo':
       return withPlayerEffect(state, 'cloneDodges', 1)
     case 'rihan':

@@ -1,3 +1,4 @@
+import { remotePunchAvailable } from './leorioAttack'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
@@ -65,8 +66,7 @@ export function moveForAction(
 ): FighterMove | null {
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
-  const slot = fighter.id === 'yokotani' && action === 'special'
-    ? 'neutralSpecial' : slotForAction(fighter, action, input)
+  const slot = (fighter.id === 'leorio' || fighter.id === 'yokotani') && action === 'special' ? 'neutralSpecial' : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
 }
 
@@ -83,6 +83,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
   if (fighter.aura < move.auraCost) return false
   return move.category !== 'special' && move.category !== 'finisher'
@@ -166,7 +167,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   shizuku: (state, side) => opponentOf(state, side).health <= 50,
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   mizaistom: (state, side) => opponentOf(state, side).hatsuEffects.restrainedFrames > 0,
-  leorio: (state, side) => state[side].health <= 45,
   hanzo: (state, side) => state[side].hatsuEffects.cloneDodges > 0,
   rihan: (state, side) =>
     state[side].hatsuEffects.predatorFrames > 0 &&

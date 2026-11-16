@@ -1,3 +1,5 @@
+import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
+import { performLeorioAction } from './leorioAttack'
 import { performLsdfAction } from './lsdfAction'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './frameData'
@@ -7,9 +9,7 @@ import {
   canUseFightHatsu,
   FIGHT_HATSU_AURA_COST,
   hatsuSourceFor,
-  triggerHatsu,
 } from './hatsu'
-import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
 import { opponentWantsOn, resolveOnImpacts } from './onTechnique'
@@ -28,7 +28,6 @@ import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
   AttackKind,
-  AttackVariant,
   FightInput,
   FightSide,
   FightState,
@@ -193,57 +192,16 @@ export function performMove(options: PerformMoveOptions): FightState {
   })
 }
 
-export function performAuraAttack(options: {
-  state: FightState
-  side: FightSide
-  kind: AttackKind
-  auraCharged: boolean
-  variant?: AttackVariant
-  moveId?: string
-}): FightState {
-  const { side, kind, auraCharged } = options
+export function performAuraAttack(options: AuraAttackOptions): FightState {
+  const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
+  const remote = performLeorioAction(options, performAuraAttack)
+  if (remote) return remote
   const judicial = performLsdfAction(options)
   if (judicial) return judicial
   const variant = attackVariant({ fighter: original, kind, variant: options.variant })
-  const { hatsuSource, concealed, resourceReady } = attackIntent(original, kind, options.moveId)
-  const starts = canStartFighterAttack(original, kind, options.moveId)
-  const buffers = resourceReady && canBufferFighterAttack(original)
-  if (!starts && !buffers) return options.state
-  const state =
-    starts && hatsuSource ? triggerHatsu(options.state, side, hatsuSource) : options.state
-  const fighter = state[side]
-  if (starts) {
-    return {
-      ...state,
-      [side]: startFighterAttack({
-        fighter,
-        kind,
-        variant,
-        moveId: options.moveId,
-        auraCharged,
-        concealed,
-        hatsuSource,
-      }),
-    }
-  }
-  return buffers
-    ? {
-        ...state,
-        [side]: {
-          ...fighter,
-          bufferedAttack: {
-            kind,
-            variant,
-            moveId: options.moveId,
-            auraCharged,
-            concealed,
-            hatsuSource,
-          },
-        },
-      }
-    : state
+  return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
 }
 
 function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string) {

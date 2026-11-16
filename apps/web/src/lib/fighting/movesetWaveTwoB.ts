@@ -1,3 +1,4 @@
+import { leorioMoveset } from './leorioMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
@@ -107,39 +108,6 @@ const SPECS: readonly MovesetSpec[] = [
     ],
   },
   {
-    fighterId: 'leorio',
-    mechanic: [
-      'Émission médicale : ses poings distants traversent l’espace et punissent les ouvertures.',
-      'Medical Emission: his remote punches cross space and punish openings.',
-    ],
-    finisherCondition: ['Leorio doit être à 45 PV ou moins.', 'Leorio must have 45 HP or less.'],
-    labels: [
-      'Direct d’examen|Exam Straight',
-      'Crochet du médecin|Doctor Hook',
-      'Poing au foie|Liver Shot',
-      'Balayage d’urgence|Emergency Sweep',
-      'Direct bondissant|Leaping Straight',
-      'Marteau clinique|Clinical Hammer',
-      'Course aux urgences|Emergency Rush',
-      'Épaule du candidat|Applicant Shoulder',
-      'Revers diagnostique|Diagnostic Backfist',
-      'Remote Punch|Remote Punch',
-      'Double émission|Double Emission',
-      'Uppercut souterrain|Underground Uppercut',
-      'Onde de diagnostic|Diagnostic Pulse',
-      'Projection du Hunter|Hunter Throw',
-      'Opération à distance|Remote Operation',
-    ],
-    speed: 1.02,
-    power: 1.02,
-    reach: 1,
-    combos: [
-      ['standingLight', 'standingHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardLight', 'downSpecial'],
-      ['airLight', 'forwardSpecial'],
-    ],
-  },
-  {
     fighterId: 'hanzo',
     mechanic: [
       'Double astral : son clone absorbe une attaque et ouvre une riposte de ninja.',
@@ -177,4 +145,8 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_TWO_MOVESETS_B = SPECS.map(buildMoveset)
+export const WAVE_TWO_MOVESETS_B = [
+  ...SPECS.slice(0, 3).map(buildMoveset),
+  leorioMoveset(),
+  ...SPECS.slice(3).map(buildMoveset),
+]

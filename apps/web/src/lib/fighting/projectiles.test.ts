@@ -50,7 +50,7 @@ describe('ranged attacks', () => {
     expect(projectileProfile('illumi').shape).toBe('bullet')
     expect(projectileProfile('bonolenov').shape).toBe('orb')
     expect(projectileProfile('hinrigh').shape).toBe('bullet')
-    expect(projectileProfile('leorio').shape).toBe('orb')
+    expect(projectileProfile('leorio').shape).toBe('remote-fist')
   })
 
   it('spawns a travelling projectile before applying damage', () => {

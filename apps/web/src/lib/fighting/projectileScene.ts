@@ -1,6 +1,7 @@
 import type { FightProjectile } from './types'
+import { createRemotePunchScene } from './remotePunchScene'
 
-interface ProjectileSceneOptions {
+export interface ProjectileSceneOptions {
   THREE: typeof import('three')
   scene: import('three').Scene
   glow: (colour: number, opacity: number) => import('three').MeshBasicMaterial
@@ -17,6 +18,7 @@ export interface ProjectileScene {
 export function createProjectileScene(options: ProjectileSceneOptions): ProjectileScene {
   const { THREE, scene } = options
   const meshes = new Map<number, import('three').Mesh>()
+  const remotePunches = createRemotePunchScene(options)
 
   const build = (projectile: FightProjectile) => {
     const colour = Number.parseInt(projectile.colour.slice(1), 16)
@@ -31,8 +33,10 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   }
 
   const sync = (projectiles: FightProjectile[], seconds: number) => {
+    remotePunches.sync(projectiles)
     const active = new Set(projectiles.map((projectile) => projectile.id))
     for (const projectile of projectiles) {
+      if (projectile.remotePunch) continue
       const mesh = meshes.get(projectile.id) ?? build(projectile)
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
@@ -48,6 +52,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   return {
     sync,
     dispose: () => {
+      remotePunches.dispose()
       for (const mesh of meshes.values()) scene.remove(mesh)
       meshes.clear()
     },

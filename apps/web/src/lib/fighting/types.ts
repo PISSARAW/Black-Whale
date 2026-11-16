@@ -276,7 +276,14 @@ export interface FightImpact {
 }
 
 export type ProjectileShape =
-  'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone'
+  'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone' | 'remote-fist'
+
+export interface RemotePunchPath {
+  originX: number
+  targetX: number
+  travelFrames: number
+  struck: boolean
+}
 
 export interface FightProjectile {
   id: number
@@ -299,6 +306,7 @@ export interface FightProjectile {
   lifetime: number
   /** `object` for real thrown matter; `nen` for conjured or emitted aura. */
   matter: ProjectileMatter
+  remotePunch?: RemotePunchPath
 }
 
 export type ProjectileMatter = 'object' | 'nen'

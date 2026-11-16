@@ -25,6 +25,14 @@ const PHANTOM_TROUPE = new Set<FighterId>([
 ])
 
 const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContract>> = {
+  'leorio:neutralSpecial': {
+    source: 'Hunter × Hunter — chapter 325',
+    evidence: 'manga-shown',
+    conditions: ['Strike a connected solid surface to transmit the aura.'],
+    prohibitions: ['No airborne aura ball, medical pulse, or low-health transformation.'],
+    narrativeCost: 'Aura and commitment to striking the surface.',
+    narrativeEffect: 'Aura travels through the surface and emerges as a fist at a distant point.',
+  },
   'kurapika:neutralSpecial': {
     source: 'Yorknew City — Chain Jail and Kurapika’s limiting vow',
     evidence: 'manga-shown',

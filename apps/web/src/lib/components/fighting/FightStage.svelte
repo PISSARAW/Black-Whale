@@ -13,7 +13,7 @@
   import {
     canUseRangedAttack,
     projectileProfile,
-    RANGED_AURA_COST,
+    rangedAuraCost,
   } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
@@ -37,7 +37,7 @@
   $: ranged = projectileProfile(state.player.id)
   $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
   $: rangedReady = canUseRangedAttack(state.player)
-  $: rangedHint = `${rangedLabel} · ${RANGED_AURA_COST} aura`
+  $: rangedHint = `${rangedLabel} · ${rangedAuraCost(state.player.id)} aura`
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
   $: finisher = moveForSlot(state.player.id, 'finisher')
   $: finisherAvailable = finisherReady(state, 'player')

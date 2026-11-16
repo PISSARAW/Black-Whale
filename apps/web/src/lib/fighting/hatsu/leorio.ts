@@ -1,21 +1,9 @@
-import { unchangedFrame, unchangedTrigger, type FighterHatsu } from './contract'
+import { unchangedFrame, unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
-const REMOTE_PUNCH_DAMAGE = 8
-
+/** The surface strike is a real delayed hitbox, never bonus damage on a contact hit. */
 export const leorioHatsu: FighterHatsu = {
   id: 'leorio',
   onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) => {
-    if (blocked) return state
-    const defender = state[defenderSide]
-    return {
-      ...state,
-      [defenderSide]: {
-        ...defender,
-        health: Math.max(0, defender.health - REMOTE_PUNCH_DAMAGE),
-        hitStun: 30,
-      },
-    }
-  },
+  onImpact: unchangedImpact,
   onFrame: unchangedFrame,
 }

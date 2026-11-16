@@ -33,6 +33,16 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
 
     const armed = performAttack(ready, side, 'special')
 
+    if (id === 'leorio') {
+      expect(armed[side].attack?.moveId).toBe('leorio:neutralSpecial')
+      expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
+      const travelling = advance(armed, 0.4)
+      expect(travelling.projectiles.some((projectile) => projectile.remotePunch)).toBe(true)
+      expect(travelling.impact).toBeNull()
+      return
+    }
+
+
     if (id === 'yokotani') {
       expect(armed).toBe(ready)
       const home: FightState = {

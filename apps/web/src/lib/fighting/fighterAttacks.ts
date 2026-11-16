@@ -1,3 +1,4 @@
+import { remotePunchAvailable } from './leorioAttack'
 import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST, hatsuSourceFor } from './hatsu'
@@ -73,6 +74,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (!remotePunchAvailable(fighter, kind, moveId)) return false
   const move = moveById(moveId)
   const resourceReady = move
     ? hasMoveResources(fighter, move)

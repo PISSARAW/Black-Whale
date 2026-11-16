@@ -1,3 +1,4 @@
+import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
 import { archetypeTimeline } from './fightArchetypes'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
@@ -14,6 +15,7 @@ import type { FighterId, MoveSlot } from './types'
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   kurapika: KURAPIKA_KEY_POSES,
   hisoka: HISOKA_KEY_POSES,
+  leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   franklin: FRANKLIN_KEY_POSES,
 }
 

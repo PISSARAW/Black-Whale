@@ -1,9 +1,30 @@
 import { describe, expect, it } from 'vitest'
+import { attackMotionAccent } from './fightAttackMotion'
 import { bodyPlan } from './fightBodyMotion'
+import { attackData } from './frameData'
 import { impactPresentation } from './fightImpactPresentation'
 import { createFightState } from './fightState'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
 import type { ArcadeFighter, FighterDash } from './types'
+
+function striking(kind: 'light' | 'heavy' | 'special', frame: number): ArcadeFighter {
+  const fighter = createFightState('benjamin', 'hisoka').player
+  return {
+    ...fighter,
+    pose: kind,
+    attack: {
+      kind,
+      variant: 'standing',
+      frame,
+      impacted: false,
+      auraCharged: false,
+      concealed: false,
+      hatsuSource: null,
+      projectileSpawned: false,
+      reversal: false,
+    },
+  }
+}
 
 function dashing(direction: -1 | 1, frame = 5): ArcadeFighter {
   const fighter = createFightState('kurapika', 'hisoka').player
@@ -70,6 +91,31 @@ describe('fight presentation', () => {
     expect(advance.key).toBe('walk:forward')
     expect(retreat.key).toBe('walk:backward')
     expect(advance.pose.body?.[0]).toBeGreaterThan(retreat.pose.body?.[0] ?? 0)
+  })
+
+  it('loads the legs before driving the whole body into contact', () => {
+    const base = striking('heavy', 0)
+    const frames = attackData('heavy', base)
+    const loaded = { ...base, attack: { ...base.attack!, frame: frames.startup - 1 } }
+    const contact = { ...base, attack: { ...base.attack!, frame: frames.startup } }
+    const windup = attackMotionAccent({ fighter: loaded, frames, authored: false })
+    const drive = attackMotionAccent({ fighter: contact, frames, authored: false })
+    expect(windup.rearKnee?.[0]).toBeGreaterThan(drive.rearKnee?.[0] ?? 0)
+    expect(drive.body?.[0]).toBeGreaterThan(windup.body?.[0] ?? 0)
+    expect(drive.root?.[2]).toBeGreaterThan(windup.root?.[2] ?? 0)
+  })
+
+  it('settles kinetic overshoot through recovery', () => {
+    const base = striking('special', 0)
+    const frames = attackData('special', base)
+    const recoveryStart = frames.startup + frames.active
+    const early = { ...base, attack: { ...base.attack!, frame: recoveryStart } }
+    const late = { ...base, attack: { ...base.attack!, frame: recoveryStart + frames.recovery - 1 } }
+    const overshoot = attackMotionAccent({ fighter: early, frames, authored: false })
+    const settled = attackMotionAccent({ fighter: late, frames, authored: false })
+    expect(Math.abs(overshoot.body?.[0] ?? 0)).toBeGreaterThan(
+      Math.abs(settled.body?.[0] ?? 0),
+    )
   })
 
   it('gives heavier and decisive impacts more visual weight', () => {

@@ -1,4 +1,5 @@
 import type { HumanMotion } from '$lib/tour/humanAnimation'
+import { attackMotionAccent } from './fightAttackMotion'
 import { READY_ARMS } from './fightGestures'
 import {
   addPoses,
@@ -154,8 +155,9 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
   const { timeline, authored } = keyedMove(fighter.id, slot)
   const frames = attackData(attack.kind, fighter)
   const keyed = sampleTimeline(timeline, { frame: attack.frame, frames })
+  const accent = attackMotionAccent({ fighter, frames, authored })
   return {
-    pose: addPoses(basePose(variant, standing, authored), keyed),
+    pose: addPoses(basePose(variant, standing, authored), keyed, accent),
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: attackBlend(attack.kind),

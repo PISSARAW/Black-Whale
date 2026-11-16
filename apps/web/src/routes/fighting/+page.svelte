@@ -11,7 +11,6 @@
     beginFight,
     createFight,
     nextRound,
-    opponentAttack as runOpponentAi,
     performAuraAttack,
     performMove,
     performThrow,
@@ -29,6 +28,13 @@
     type FighterId,
     type MoveAction,
   } from '$lib/fighting/types'
+  import { fightingCopy } from './fightingCopy'
+  import {
+    attackKeys,
+    movementKeys,
+    opponentAttackKeys,
+    opponentMovementKeys,
+  } from './fightingKeys'
   import './fighting.css'
 
   let selectedPlayer: FighterId = 'kurapika'
@@ -39,7 +45,8 @@
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
   let opponentInput: FightInput = { ...EMPTY_INPUT }
-  let aiClock = 0
+  /** Presses wait for the next simulated frame instead of landing between two. */
+  let pendingActions: Array<(current: FightState) => FightState> = []
   let paused = false
   let recording = false
   let playingRecording = false
@@ -54,51 +61,7 @@
   let language: 'fr' | 'en'
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
-  $: copy =
-    language === 'fr'
-      ? {
-          eyebrow: 'NOUVEAU MODE · DUEL 2D',
-          title: 'Black Whale: Clash',
-          intro:
-            'Choisis ton combattant, maîtrise son aura et impose-toi avant la fin du chronomètre.',
-          player: 'Ton combattant',
-          opponent: 'Adversaire',
-          launch: 'Entrer dans l’arène',
-          ready: 'PRÊT ?',
-          fight: 'COMBATTRE',
-          victory: 'VICTOIRE',
-          defeat: 'DÉFAITE',
-          draw: 'ÉGALITÉ',
-          rematch: 'Revanche',
-          roster: 'Changer de combattants',
-          controls: 'Commandes',
-          movement: 'Q / D ou flèches : déplacement',
-          jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
-          attacks:
-            'J/K : normales · direction + J/K : command normals · direction + L : techniques · U : projectile · H : finisher',
-          aura: 'Bas ou saut + J/K : variantes basses et aériennes · O : projection/déprojection. Les routes et la condition du finisher sont propres au combattant. Espace : Aura.',
-        }
-      : {
-          eyebrow: 'NEW MODE · 2D DUEL',
-          title: 'Black Whale: Clash',
-          intro: 'Choose your fighter, master their aura and prevail before the timer runs out.',
-          player: 'Your fighter',
-          opponent: 'Opponent',
-          launch: 'Enter the arena',
-          ready: 'READY?',
-          fight: 'FIGHT',
-          victory: 'VICTORY',
-          defeat: 'DEFEAT',
-          draw: 'DRAW',
-          rematch: 'Rematch',
-          roster: 'Change fighters',
-          controls: 'Controls',
-          movement: 'A / D or arrows: move',
-          jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
-          attacks:
-            'J/K: normals · direction + J/K: command normals · direction + L: techniques · U: projectile · H: finisher',
-          aura: 'Down or jump + J/K: low and aerial variants · O: throw/tech. Routes and finisher conditions are fighter-specific. Space: Aura.',
-        }
+  $: copy = fightingCopy(language)
 
   function prepareFight() {
     state = createFight(selectedPlayer, selectedOpponent, {
@@ -107,7 +70,7 @@
     })
     input = { ...EMPTY_INPUT }
     opponentInput = { ...EMPTY_INPUT }
-    aiClock = 0
+    pendingActions = []
     paused = false
   }
 
@@ -133,21 +96,34 @@
     paused = false
   }
 
+  function queueAction(action: (current: FightState) => FightState) {
+    if (state?.phase === 'fighting' && !paused) pendingActions = [...pendingActions, action]
+  }
+
   function attack(kind: AttackKind) {
-    if (state && !paused) {
-      state =
-        kind === 'ranged'
-          ? performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
-          : performMove({ state, side: 'player', action: kind, input })
-    }
+    const pressed = { ...input }
+    queueAction((current) =>
+      kind === 'ranged'
+        ? performAuraAttack({ state: current, side: 'player', kind, auraCharged: pressed.aura })
+        : performMove({ state: current, side: 'player', action: kind, input: pressed }),
+    )
   }
 
   function finisher() {
-    if (state && !paused) state = performMove({ state, side: 'player', action: 'finisher', input })
+    const pressed = { ...input }
+    queueAction((current) =>
+      performMove({ state: current, side: 'player', action: 'finisher', input: pressed }),
+    )
   }
 
   function throwAttack() {
-    if (state && !paused) state = performThrow(state, 'player')
+    queueAction((current) => performThrow(current, 'player'))
+  }
+
+  function flushPendingActions(current: FightState): FightState {
+    const actions = pendingActions
+    pendingActions = []
+    return actions.reduce((next, action) => action(next), current)
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -163,17 +139,19 @@
 
   function opponentAttack(action: MoveAction | 'ranged') {
     if (!state || paused || state.mode === 'versus-ai') return
-    state =
+    const pressed = { ...opponentInput }
+    queueAction((current) =>
       action === 'throw'
-        ? performThrow(state, 'opponent')
+        ? performThrow(current, 'opponent')
         : action === 'ranged'
           ? performAuraAttack({
-              state,
+              state: current,
               side: 'opponent',
               kind: action,
-              auraCharged: opponentInput.aura,
+              auraCharged: pressed.aura,
             })
-          : performMove({ state, side: 'opponent', action, input: opponentInput })
+          : performMove({ state: current, side: 'opponent', action, input: pressed }),
+    )
     recordDummy({ type: 'attack', action })
   }
 
@@ -214,46 +192,6 @@
     if (current.finishReason === 'hits') return '10 PTS'
     if (current.finishReason === 'technical-knockout') return 'T.K.O.'
     return 'K.O.'
-  }
-
-  const movementKeys: Record<string, keyof FightInput> = {
-    ArrowLeft: 'left',
-    q: 'left',
-    a: 'left',
-    ArrowRight: 'right',
-    d: 'right',
-    ArrowUp: 'jump',
-    z: 'jump',
-    w: 'jump',
-    ArrowDown: 'down',
-    s: 'down',
-    Shift: 'guard',
-    i: 'guard',
-    ' ': 'aura',
-  }
-
-  const attackKeys: Record<string, AttackKind> = {
-    j: 'light',
-    k: 'heavy',
-    u: 'ranged',
-  }
-
-  const opponentMovementKeys: Record<string, keyof FightInput> = {
-    ArrowLeft: 'left',
-    ArrowRight: 'right',
-    ArrowUp: 'jump',
-    ArrowDown: 'down',
-    Enter: 'guard',
-    Alt: 'aura',
-  }
-
-  const opponentAttackKeys: Record<string, MoveAction | 'ranged'> = {
-    n: 'light',
-    m: 'heavy',
-    ',': 'special',
-    '.': 'ranged',
-    '/': 'throw',
-    b: 'finisher',
   }
 
   function handleKey(event: KeyboardEvent, active: boolean) {
@@ -352,15 +290,12 @@
       last = now
       if (state?.phase === 'fighting' && !paused) {
         advanceDummyPlayback()
-        state = tickFight(state, input, {
+        const versusAi = state.mode === 'versus-ai'
+        state = tickFight(flushPendingActions(state), input, {
           dt,
-          opponentInput: state.mode === 'versus-ai' ? undefined : opponentInput,
+          opponentInput: versusAi ? undefined : opponentInput,
+          ai: versusAi,
         })
-        aiClock += dt
-        if (state.mode === 'versus-ai' && aiClock >= 0.34) {
-          state = runOpponentAi(state)
-          aiClock = 0
-        }
       }
       frame = requestAnimationFrame(loop)
     }

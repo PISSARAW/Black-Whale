@@ -19,6 +19,9 @@ import { chooseMovesetAttack } from './movesetAi'
 import { canUseMovesetMove, moveForAction, moveById } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
 import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
+import { steerFighter } from './fighterMovement'
+import { capturePositions } from './fightInterpolation'
+import { advanceAiCadence } from './aiCadence'
 import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
@@ -32,9 +35,6 @@ import type {
 } from './types'
 
 const GROUND = 0
-const JUMP_SPEED = 48
-const MIN_X = 7
-const MAX_X = 93
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
@@ -47,10 +47,10 @@ export function beginFight(state: FightState): FightState {
 export function tickFight(
   state: FightState,
   input: FightInput,
-  options: number | { dt: number; opponentInput?: FightInput },
+  options: number | { dt: number; opponentInput?: FightInput; ai?: boolean },
 ): FightState {
-  const dt = typeof options === 'number' ? options : options.dt
-  const opponentInput = typeof options === 'number' ? undefined : options.opponentInput
+  const settings = typeof options === 'number' ? { dt: options } : options
+  const { dt, opponentInput } = settings
   if (state.phase !== 'fighting') return state
   const remainingFrames = Math.min(state.remainingFrames, Math.ceil(state.time * FIGHT_FPS))
   let next = {
@@ -60,7 +60,10 @@ export function tickFight(
   }
   while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
     const accumulator = next.frameAccumulator - FIXED_STEP
+    const previousPositions = capturePositions(next)
     next = { ...stepFight(next, input, opponentInput), frameAccumulator: accumulator }
+    next = { ...next, previousPositions }
+    if (settings.ai && !opponentInput) next = advanceAiCadence(next, opponentAttack)
   }
   return next
 }
@@ -100,14 +103,12 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   let next = updateHatsuCharge(applyAuraContext(advanceFighterPhysics(fighter), input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
-  if (playerCanJump(next, input)) {
-    return poseFighter({ ...next, velocityY: JUMP_SPEED, pose: 'jump', blocking: false })
-  }
-  if (!canMove(next) || next.blocking) return poseFighter(next)
-  const direction = Number(input.right) - Number(input.left)
-  const speed = fighterDefinition(next.id).speed * 28
-  const x = clamp(next.x + direction * speed * FIXED_STEP, MIN_X, MAX_X)
-  return poseFighter({ ...next, x, pose: direction === 0 ? 'idle' : 'walk' })
+  const steered = steerFighter(next, {
+    input,
+    mobile: canMove(next),
+    jumpable: playerCanJump(next, input),
+  })
+  return poseFighter(steered)
 }
 
 function updateHatsuCharge(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -385,10 +386,6 @@ function canGuard(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     fighter.attack === null
   )
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
 }
 
 export function displayPose(fighter: ArcadeFighter): FighterPose {

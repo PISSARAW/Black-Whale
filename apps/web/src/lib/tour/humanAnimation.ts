@@ -33,6 +33,10 @@ export type HumanMotion = (rig: AnimatedHuman) => void
 export interface HumanAnimationLayer {
   motion?: HumanMotion
   transitionKey?: string
+  /** Cross-fade length for this transition; 0 snaps (an attack's first frame). */
+  transitionSeconds?: number
+  /** Clock that drives the walk cycle instead of wall time, so feet match ground speed. */
+  strideClock?: number
 }
 
 interface TransformFrame {
@@ -41,6 +45,10 @@ interface TransformFrame {
 }
 
 const TRANSITION_SECONDS = 0.1
+
+function poseClock(pose: HumanPose, seconds: number, layer?: HumanAnimationLayer): number {
+  return pose === 'walk' ? (layer?.strideClock ?? seconds) : seconds
+}
 
 function animatedParts(rig: AnimatedHuman): Object3D[] {
   return [
@@ -170,15 +178,18 @@ export function humanAnimation(
   let displayedPose: string = rig.pose
   let transitionFrom: TransformFrame | null = null
   let transitionStarted = 0
+  let transitionSeconds = TRANSITION_SECONDS
 
-  const syncTransition = (seconds: number, pose: HumanPose, transitionKey?: string): void => {
+  const syncTransition = (seconds: number, pose: HumanPose, layer?: HumanAnimationLayer): void => {
+    const transitionKey = layer?.transitionKey
     if (!transitionKey) {
       transitionFrom = null
       displayedPose = pose
       return
     }
     if (transitionKey === displayedPose) return
-    transitionFrom = frameOf(parts)
+    transitionSeconds = layer?.transitionSeconds ?? TRANSITION_SECONDS
+    transitionFrom = transitionSeconds > 0 ? frameOf(parts) : null
     transitionStarted = seconds
     displayedPose = transitionKey
   }
@@ -271,7 +282,7 @@ export function humanAnimation(
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
-    syncTransition(seconds, pose, layer?.transitionKey)
+    syncTransition(seconds, pose, layer)
     rig.figure.position.copy(figureBasePosition)
     rig.figure.rotation.copy(figureBaseRotation)
     rig.arms.forEach((arm, index) => {
@@ -290,11 +301,11 @@ export function humanAnimation(
     rig.head.rotation.set(headBase.x, headBase.y + Math.sin(seconds * 0.37) * 0.08, headBase.z)
     rig.pelvis.position.x = pelvisBaseX + Math.sin(seconds * 0.8) * 0.012
 
-    animatePose[pose]?.(seconds)
+    animatePose[pose]?.(poseClock(pose, seconds, layer))
 
     layer?.motion?.(rig)
     if (transitionFrom) {
-      const amount = Math.min(1, Math.max(0, (seconds - transitionStarted) / TRANSITION_SECONDS))
+      const amount = Math.min(1, Math.max(0, (seconds - transitionStarted) / transitionSeconds))
       blendFrame(parts, transitionFrom, amount)
       if (amount === 1) transitionFrom = null
     }

@@ -1,15 +1,15 @@
 import { advanceFighterAttack } from './fighterAttacks'
+import { advanceAirborne } from './fighterMovement'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
 import { advanceNen } from './nen'
 import type { ArcadeFighter, FightState } from './types'
 
 const GROUND = 0
-const GRAVITY = 120
 const MIN_X = 7
 const MAX_X = 93
 
 export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
-  const vertical = advanceVertical(fighter)
+  const vertical = advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
@@ -23,13 +23,6 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
     throwTechFrames: Math.max(0, (fighter.throwTechFrames ?? 0) - 1),
   })
   return advanceNen(advanced, FIXED_STEP)
-}
-
-function advanceVertical(fighter: ArcadeFighter): Pick<ArcadeFighter, 'y' | 'velocityY'> {
-  if (fighter.y <= GROUND && fighter.velocityY <= 0) return { y: GROUND, velocityY: 0 }
-  const velocityY = fighter.velocityY - GRAVITY * FIXED_STEP
-  const y = Math.max(GROUND, fighter.y + velocityY * FIXED_STEP)
-  return { y, velocityY: y === GROUND ? 0 : velocityY }
 }
 
 function advanceWakeup(

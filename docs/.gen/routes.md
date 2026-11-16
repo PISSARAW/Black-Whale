@@ -23,7 +23,7 @@
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |
 | `events/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
-| `fighting` | `+page.server.ts`, `+page.svelte`, `fighting.css` |
+| `fighting` | `+page.server.ts`, `+page.svelte`, `fighting.css`, `fightingCopy.ts`, `fightingKeys.ts` |
 | `health` | `+server.ts` |
 | `hunt` | `+page.svelte` |
 | `hunt/editor` | `+page.svelte` |

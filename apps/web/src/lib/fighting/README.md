@@ -70,7 +70,7 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - Le jugement de la Tour attribue un point pour une touche nette, deux pour une
   touche critique et un point supplémentaire lorsqu'elle provoque un knockdown.
 
-Le joueur utilise Q/D ou les flèches pour se déplacer, Z ou flèche haute pour
+Le joueur utilise Q/D ou les flèches pour se déplacer (double appui : dash avant ou backdash), Z ou flèche haute pour
 sauter, S ou flèche basse pour se baisser, Maj/I pour garder, J/K pour les coups,
 direction + J/K pour les command normals, direction + L pour les techniques,
 H pour le finisher et U pour le projectile propre au combattant. Espace est l'unique bouton Aura : maintenu seul il produit
@@ -82,6 +82,19 @@ La tranche verticale de référence est Kurapika contre Hisoka. Elle conserve le
 procédural partagé : les coups sont posés par code et suivent les frames du moteur.
 Le passage à des modèles glTF skinnés pourra remplacer cette couche de présentation
 sans changer les règles, les boîtes ni les données de frame.
+
+## Mouvement et rendu
+
+- `fighterMovement.ts` porte la marche (recul à 80 %), le dash (18 frames) et le
+  backdash (16 frames) au double appui sous 14 frames, le prejump de 3 frames, un saut
+  à deux gravités (environ 38 frames en l'air) dont la dérive horizontale est fixée au
+  décollage, puis 3 frames de landing sans déplacement.
+- `fightInterpolation.ts` : le moteur reste à 60 Hz ; le rendu interpole entre les deux
+  dernières frames simulées, ce qui supprime la saccade sur un écran 120 Hz.
+- `sceneMotion.ts` : fondu instantané vers un coup ou une touche, foulée réglée sur la
+  distance parcourue, caméra amortie indépendamment du framerate.
+- `aiCadence.ts` : l'IA décide toutes les 16 à 24 frames simulées, dans le tick.
+  Les appuis du joueur sont mis en file et appliqués au début de la frame suivante.
 
 ## Duel et règles d’échange
 

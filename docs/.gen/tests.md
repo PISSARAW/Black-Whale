@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 521
+Fichiers : 523
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -236,6 +236,12 @@ Fichiers : 521
 
 - fighter facing presentation > faces right with a positive near-profile angle
 
+## `apps/web/src/lib/fighting/fighterMovement.test.ts`
+
+- fighter movement > walks backward slower than forward
+- render interpolation > draws a fighter between its last two simulated positions
+- AI cadence > decides every 16 to 24 simulated frames
+
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
 - 2D fight formats > offers distinct hit, health and hybrid victory rules
@@ -259,6 +265,10 @@ Fichiers : 521
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
+
+## `apps/web/src/lib/fighting/rosterSelection.test.ts`
+
+- fighting roster selection > places every playable fighter in exactly one labelled group
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 

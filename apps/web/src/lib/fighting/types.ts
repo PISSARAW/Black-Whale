@@ -139,6 +139,8 @@ export interface ArcadeFighter {
   auraExhausted: boolean
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
+  /** Dash, prejump, landing and air drift; absent until the fighter first moves. */
+  motion?: FighterMotion
   attack: {
     moveId?: string
     variant?: AttackVariant
@@ -161,6 +163,24 @@ export interface ArcadeFighter {
     concealed: boolean
     hatsuSource: FighterId | null
   } | null
+}
+
+export interface FighterDash {
+  direction: -1 | 1
+  frame: number
+  frames: number
+  peak: number
+}
+
+export interface FighterMotion {
+  velocityX: number
+  prejumpFrames: number
+  jumpDirection: -1 | 0 | 1
+  landingFrames: number
+  dash: FighterDash | null
+  heldDirection: -1 | 0 | 1
+  tapDirection: -1 | 0 | 1
+  tapWindow: number
 }
 
 export interface FighterHatsuEffects {
@@ -301,6 +321,10 @@ export interface FightState {
   projectiles: FightProjectile[]
   nextProjectileId: number
   impact: FightImpact | null
+  /** Positions before the last simulated frame, read by the renderer to interpolate. */
+  previousPositions?: Record<FightSide, { x: number; y: number }>
+  /** Frames until the AI opponent picks its next action. */
+  aiCooldown?: number
 }
 
 export const EMPTY_INPUT: FightInput = {

@@ -1,12 +1,18 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { attackProgress } from '$lib/fighting/frameData'
   import {
     createFighterFacing,
     trackFightOpponent,
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
-  import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
+  import { fightMove } from '$lib/fighting/fightMoves'
+  import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
+  import {
+    createStrideClocks,
+    easeFactor,
+    poseProgress,
+    transitionSecondsFor,
+  } from '$lib/fighting/sceneMotion'
   import {
     impactReaction,
     isThrowTech,
@@ -42,6 +48,8 @@
     ko: 'idle',
   }
 
+  /** Per-second ease of the camera; 6 is a touch snappier than the old 0.07/frame at 60 Hz. */
+  const CAMERA_RATE = 6
   const worldX = (value: number) => (value - 50) * 0.115
   const worldY = (value: number) => value * 0.12
 
@@ -228,6 +236,8 @@
             player: null,
             opponent: null,
           }
+        const strideClock = createStrideClocks()
+        let lastFrameAt: number | null = null
         const facings = {
           player: createFighterFacing(state.player.facing),
           opponent: createFighterFacing(state.opponent.facing),
@@ -239,23 +249,6 @@
           model: ReturnType<typeof buildFighter>
           seconds: number
         }
-        function poseProgress(
-          fighter: ArcadeFighter,
-          { seconds, started }: { seconds: number; started: number },
-        ): number {
-          let progress = attackProgress(fighter)
-          if (fighter.pose === 'jump')
-            progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
-          if (fighter.pose === 'hit') progress = Math.min(1, Math.max(0, 1 - fighter.hitStun / 26))
-          if (fighter.pose === 'down')
-            progress = Math.min(1, Math.max(0, 1 - fighter.knockdownFrames / 42))
-          if (fighter.pose === 'wakeup')
-            progress = Math.min(1, Math.max(0, 1 - fighter.wakeupInvulnerableFrames / 18))
-          if (fighter.pose === 'ko')
-            progress = Math.min(1, (seconds - started) / (KO_DURATION * 1.35))
-          return progress
-        }
-
         function reactionMotion(
           fighter: ArcadeFighter,
           progress: number,
@@ -277,7 +270,8 @@
             poseStarts[side] = { pose: fighter.pose, at: seconds }
           const started = poseStarts[side]?.at ?? seconds
           const progress = poseProgress(fighter, { seconds, started })
-          model.root.position.set(worldX(fighter.x), worldY(fighter.y), 0)
+          const drawn = interpolatedPosition(state, side)
+          model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const motion = reactionMotion(fighter, progress, side)
@@ -290,12 +284,16 @@
               motion,
             }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
+            transitionSeconds: transitionSecondsFor(fighter.pose),
+            strideClock: strideClock(side, worldX(drawn.x), fighter.facing),
           })
         }
 
         const render = (now: number) => {
           if (disposed) return
           const seconds = now / 1000
+          const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
+          lastFrameAt = now
           emitImpact(now)
           animateFighter({
             side: 'player',
@@ -314,14 +312,15 @@
             seconds,
           })
 
-          const playerX = worldX(state.player.x)
-          const opponentX = worldX(state.opponent.x)
+          const playerX = worldX(interpolatedPosition(state, 'player').x)
+          const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
           const centre = (playerX + opponentX) / 2
           const gap = Math.abs(playerX - opponentX)
           const targetZ = state.phase === 'finished' ? 7.2 : 8.1 + gap * 0.16
-          camera.position.x += (centre * 0.32 - camera.position.x) * 0.07
-          camera.position.z += (targetZ - camera.position.z) * 0.07
-          camera.position.y += (2.2 - camera.position.y) * 0.07
+          const ease = easeFactor(CAMERA_RATE, dt)
+          camera.position.x += (centre * 0.32 - camera.position.x) * ease
+          camera.position.z += (targetZ - camera.position.z) * ease
+          camera.position.y += (2.2 - camera.position.y) * ease
           if (now < shakeUntil) {
             camera.position.x += Math.sin(now * 0.12) * 0.035
             camera.position.y += Math.cos(now * 0.15) * 0.025

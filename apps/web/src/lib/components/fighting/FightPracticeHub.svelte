@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { localizePath } from '$lib/i18n/config'
   import { FIGHT_CHALLENGES } from '$lib/fighting/fightChallenges'
   import { ARCADE_ENCOUNTERS } from '$lib/fighting/clashArcade'
   import type { ClashPractice } from '$lib/fighting/clashPractice'
@@ -7,6 +8,7 @@
   export let state: FightState | null
   export let fighter: FighterId = 'kurapika'
   export let language: 'fr' | 'en'
+  export let expanded = false
   export let onLaunch: (state: FightState | null) => void
   $: index = language === 'fr' ? 0 : 1
   $: challenge = FIGHT_CHALLENGES.find((entry) => entry.id === $practice.challenge?.id)
@@ -72,7 +74,10 @@
       >
     </div>
   {/if}
-  <details>
+  <a href={localizePath('/fighting/pvp', language)}
+    >{language === 'fr' ? 'Jouer en duel privé' : 'Play a private duel'}</a
+  >
+  <details open={expanded}>
     <summary
       >{language === 'fr' ? 'Défis et parcours Arcade' : 'Challenges and Arcade route'}</summary
     >
@@ -116,6 +121,11 @@
     cursor: pointer;
     color: #f5d25c;
     min-height: 44px;
+  }
+  a {
+    display: block;
+    padding: 0.5rem 0;
+    color: #f5d25c;
   }
   p {
     margin: 0.5rem 0;

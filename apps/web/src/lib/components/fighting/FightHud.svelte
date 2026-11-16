@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fightSeatLabel } from '$lib/fighting/pvp/presentation'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
@@ -25,15 +26,7 @@
           class="rounds"
           aria-label={`${state.roundsWon[side]} / 2 ${language === 'fr' ? 'manches gagnées' : 'rounds won'}`}
         >
-          <small
-            >{!mirrored
-              ? 'P1'
-              : state.mode === 'versus-ai'
-                ? 'CPU'
-                : state.mode === 'training'
-                  ? 'DUMMY'
-                  : 'P2'}</small
-          >
+          <small>{fightSeatLabel(state, side, language)}</small>
           <span aria-hidden="true"
             >{'●'.repeat(state.roundsWon[side])}{'○'.repeat(
               Math.max(0, 2 - state.roundsWon[side]),

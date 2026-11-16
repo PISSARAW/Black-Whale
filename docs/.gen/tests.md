@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 630
+Fichiers : 640
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -531,6 +531,15 @@ Fichiers : 630
 
 - ranged attacks > gives a stone to fighters without a canonical projectile
 
+## `apps/web/src/lib/fighting/pvp/client.test.ts`
+
+- private Clash client synchronization > serializes a ready click behind an in-flight connection request
+
+## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
+
+- server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
+- seat-specific Nen information > preserves spoken text while remapping owners and public verdicts for P2
+
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
@@ -580,6 +589,10 @@ Fichiers : 630
 - frame-based input and command history > records P1 and P2 holds and their exact duration at 60 Hz
 - dummy recording playback > keeps input-only tracks and trailing holds until the recorded end, then releases
 - lab resource aids retain Hatsu conditions > editing Feitan HP does not manufacture the injuries needed for Pain Packer
+
+## `apps/web/src/lib/fighting/trainingGuard.test.ts`
+
+- training guard trials > takes the first hit, then guards even after a dropped combo has reset its counter
 
 ## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
 
@@ -1219,6 +1232,14 @@ Fichiers : 630
 - buildLocationPaths > joins a location to its parents
 - buildTimeline > orders entries by chapter then sequence
 - buildChapterTrajectory > falls back to an explicit unknown position
+
+## `apps/web/src/lib/server/clashPvp.test.ts`
+
+- authoritative private Clash lobby > allows time to review the initial lobby and starts only while both confirmed seats are connected
+
+## `apps/web/src/lib/server/clashPvpHttp.test.ts`
+
+- Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
 
 ## `apps/web/src/lib/server/co-presence.test.ts`
 

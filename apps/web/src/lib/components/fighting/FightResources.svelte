@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fightSeatLabel } from '$lib/fighting/pvp/presentation'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import FightDoorStatus from './FightDoorStatus.svelte'
@@ -59,13 +60,7 @@
       aria-label={`${fighterDefinition(fighter.id).name} · ${language === 'fr' ? 'ressources et états' : 'resources and status'}`}
     >
       <div class="resource-owner">
-        {side === 'player'
-          ? 'P1'
-          : state.mode === 'versus-ai'
-            ? 'CPU'
-            : state.mode === 'training'
-              ? 'DUMMY'
-              : 'P2'} · {fighterDefinition(fighter.id).name}
+        {fightSeatLabel(state, side, language)} · {fighterDefinition(fighter.id).name}
       </div>
       <FightPreparationStatus
         {state}

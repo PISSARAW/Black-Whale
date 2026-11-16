@@ -1,5 +1,7 @@
 # Fighting
 
+Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.
@@ -205,6 +207,15 @@ annulation des entrées et persistance. `node scripts/check-fighting-readability
 (depuis `apps/web`) vérifie les composants de production, les trois largeurs
 1440 / 390 / 320 px, le tactile, le stockage et l’animation réduite. Les manettes
 standard sont simulées ; aucune mesure de latence matérielle n’est revendiquée.
+
+## Phase 7 : PvP privé
+
+« Jouer en duel privé » ouvre `/fighting/pvp` : invitation, deux places authentifiées,
+configuration confirmée, commandes exécutées par le serveur et verdict du moteur.
+Le transport vérifie les états, affiche la connexion et permet la reconnexion après
+une courte coupure. Les observations privées du Nen sont filtrées par destinataire.
+Le registre reste en mémoire d’un processus, sans prédiction ni rollback.
+Contrats, limites et vérifications : [PVP.md](./PVP.md).
 
 ## Phase 6 : apprentissage, défis et Arcade
 
@@ -1023,9 +1034,9 @@ sans changer les règles, les boîtes ni les données de frame.
 - **Entraînement** désactive la limite de temps et la fin par K.-O., affiche startup,
   active, recovery, avantage sur garde, compteur de combo/juggle, hitboxes et
   hurtboxes. Le dummy peut enregistrer puis rejouer déplacements, garde et attaques.
-- Le netcode rollback n'est pas encore présent. Le moteur fixe et les entrées P1/P2
-  séparées constituent la base de resimulation, mais le transport, la prédiction et
-  la synchronisation d'état restent une couche réseau distincte.
+- Le [PvP privé](./PVP.md) ajoute une couche HTTP autoritaire distincte du moteur.
+  Le moteur fixe et les entrées P1/P2 séparées restent la base de resimulation ;
+  la prédiction et le rollback ne sont pas encore présents.
 
 ### Kurapika : chaînes et Emperor Time
 

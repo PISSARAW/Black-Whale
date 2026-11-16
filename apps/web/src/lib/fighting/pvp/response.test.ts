@@ -4,6 +4,8 @@ import { ClashPvpRegistry } from '$lib/server/clashPvp'
 import { createFightEnvironment } from '../fightEnvironment'
 import { createPvpClient, decodePvpView } from './client'
 import { PVP_RULESET, pvpSessionKey, type PvpView } from './types'
+import { encodeFightSnapshot } from '../fightReplaySnapshot'
+import { fightReplayHash } from '../fightReplayHash'
 
 async function connection() {
   let now = 1000,
@@ -11,6 +13,8 @@ async function connection() {
     fail = false,
     posts = 0
   let snapshot!: PvpView
+  let receiptGate: Promise<void> | null = null
+  let openReceipt = () => {}
   let controller: ReadableStreamDefaultController<Uint8Array> | undefined
   const registry = new ClashPvpRegistry(
     () => now,
@@ -42,13 +46,20 @@ async function connection() {
         ruleset: PVP_RULESET,
         configHash: body.configHash,
       })
-    else if (body?.kind === 'input') {
+    else if (body?.kind === 'inputs') {
       posts++
-      snapshot = registry.submit(host.matchId, { token: host.token, packet: body.packet })
+      const receipt = registry.receiveInputs(host.matchId, {
+        token: host.token,
+        packets: body.packets,
+      })
       if (fail) {
         fail = false
         throw Error('NETWORK')
       }
+      const gate = receiptGate
+      receiptGate = null
+      if (gate) await gate
+      return new Response(JSON.stringify(receipt))
     } else snapshot = registry.view(host.matchId, host.token)
     return new Response(JSON.stringify(snapshot))
   }
@@ -84,6 +95,12 @@ async function connection() {
     fail: () => {
       fail = true
     },
+    holdReceipt() {
+      receiptGate = new Promise<void>((resolve) => {
+        openReceipt = resolve
+      })
+      return () => openReceipt()
+    },
     async push(view: PvpView) {
       controller!.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(view)}\n\n`))
       for (let i = 0; i < 8; i++) await Promise.resolve()
@@ -95,6 +112,81 @@ async function connection() {
   }
 }
 describe('stream reconciliation and bounded input traffic', () => {
+  it('clears old uploads on a round change even when the intermission views were missed', async () => {
+    const c = await connection()
+    try {
+      await c.stream()
+      const release = c.holdReceipt()
+      c.client.queue({ kind: 'move', action: 'light', input: 0 })
+      c.time(50)
+      c.client.pump(0)
+      for (let i = 0; i < 12; i++) await Promise.resolve()
+      expect(c.client.predictionStats.transport.inFlight).toBeGreaterThan(0)
+      const fresh = c.registry.view(c.host.matchId, c.host.token)
+      const state = decodePvpView(fresh)
+      state.roundNumber++
+      state.player.attack = null
+      const next = {
+        ...fresh,
+        snapshot: encodeFightSnapshot(state),
+        snapshotHash: fightReplayHash(state),
+      }
+      await c.push(next)
+      expect(c.client.predictionStats.transport.inFlight).toBe(0)
+      expect(c.client.predictionStats.transport.unreceived).toBe(0)
+      expect(get(c.client).state?.roundNumber).toBe(2)
+      release()
+      for (let i = 0; i < 12; i++) await Promise.resolve()
+      expect(get(c.client).state?.roundNumber).toBe(2)
+      expect(get(c.client).connection).toBe('connected')
+    } finally {
+      c.client.stop()
+    }
+  })
+  it('sends new commands before an old HTTP response and uses private application acknowledgements', async () => {
+    const c = await connection()
+    try {
+      await c.stream()
+      const release = c.holdReceipt()
+      c.client.queue({ kind: 'move', action: 'light', input: 0 })
+      c.time(50)
+      c.client.pump(0)
+      for (let i = 0; i < 12; i++) await Promise.resolve()
+      const before = c.posts()
+      c.client.queue({ kind: 'move', action: 'heavy', input: 0 })
+      c.time(50)
+      c.client.pump(0)
+      for (let i = 0; i < 12; i++) await Promise.resolve()
+      expect(c.posts()).toBe(before + 1)
+      const fresh = c.registry.view(c.host.matchId, c.host.token)
+      await c.push(fresh)
+      expect(get(c.client).state).toEqual(decodePvpView(fresh))
+      expect(get(c.client).view?.appliedSequence).toBeGreaterThan(0)
+      expect(c.client.predictionStats.transport.unreceived).toBe(0)
+      expect(c.client.predictionStats.transport.inFlight).toBe(0)
+      const current = get(c.client).view!.revision
+      release()
+      for (let i = 0; i < 12; i++) await Promise.resolve()
+      expect(get(c.client).view!.revision).toBe(current)
+      expect(get(c.client).connection).toBe('connected')
+    } finally {
+      c.client.stop()
+    }
+  })
+  it('polls when a stream remains open but stops delivering fresh authority', async () => {
+    const c = await connection()
+    try {
+      await c.stream()
+      const revision = get(c.client).view!.revision
+      c.time(300)
+      c.client.pump(0)
+      for (let i = 0; i < 20; i++) await Promise.resolve()
+      expect(get(c.client).view!.revision).toBeGreaterThan(revision)
+      expect(get(c.client).state).toEqual(decodePvpView(get(c.client).view!))
+    } finally {
+      c.client.stop()
+    }
+  })
   it('ignores reordered snapshots and keeps authoritative HUD separate from predicted poses', async () => {
     const c = await connection()
     try {

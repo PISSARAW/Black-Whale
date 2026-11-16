@@ -61,6 +61,18 @@ export function parsePvpPacket(value: unknown): PvpInputPacket | null {
   if (!value.commands.every((entry) => record(entry) && validCommand(entry))) return null
   return value as unknown as PvpInputPacket
 }
+export function parsePvpPackets(value: unknown): PvpInputPacket[] | null {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 8) return null
+  const packets = value.map(parsePvpPacket)
+  if (packets.some((packet) => !packet)) return null
+  const valid = packets as PvpInputPacket[]
+  if (valid.reduce((count, packet) => count + packet.commands.length, 0) > 8) return null
+  return valid.every(
+    (packet, index) => index === 0 || packet.sequence === valid[index - 1].sequence + 1,
+  )
+    ? valid
+    : null
+}
 export function parsePvpSetup(value: unknown): PvpSetup | null {
   if (!record(value) || !only(value, ['player', 'opponent', 'formatId', 'environment'])) return null
   if (

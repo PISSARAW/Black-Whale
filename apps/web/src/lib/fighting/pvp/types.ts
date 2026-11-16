@@ -7,7 +7,7 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-3:${REPLAY_RULESET}`
+export const PVP_RULESET = `clash-pvp-4:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -35,6 +35,13 @@ export interface PvpInputPacket {
   sequence: number
   input: number
   commands: PvpCommand[]
+}
+/** Receipt only; application, Nen and combat results arrive in the private view. */
+export interface PvpInputReceipt {
+  matchId: string
+  side: FightSide
+  nextSequence: number
+  round: number
 }
 export interface PvpSession {
   matchId: string

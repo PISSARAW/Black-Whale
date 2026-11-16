@@ -2,7 +2,13 @@ import { json } from '@sveltejs/kit'
 import { clashPvpRegistry, ClashPvpError } from './clashPvp'
 import { rateLimit } from './rateLimit'
 import { log, describeError } from './log'
-import { parsePvpPacket, parsePvpSetup, record } from '$lib/fighting/pvp/protocol'
+import {
+  boundedInteger,
+  parsePvpPacket,
+  parsePvpPackets,
+  parsePvpSetup,
+  record,
+} from '$lib/fighting/pvp/protocol'
 import { PVP_RULESET } from '$lib/fighting/pvp/types'
 import { clashSeasons } from './clashSeasons'
 
@@ -121,6 +127,12 @@ function authenticatedUpdate(
   body: Record<string, unknown>,
 ): Response {
   const token = clashBearer(request)
+  if (body.kind === 'inputs') {
+    const packets = parsePvpPackets(body.packets)
+    return packets && boundedInteger(body.round, Number.MAX_SAFE_INTEGER)
+      ? json(clashPvpRegistry.receiveInputs(id, { token, packets, round: body.round }), { headers })
+      : invalid()
+  }
   if (body.kind === 'leave') {
     clashPvpRegistry.leave(id, token)
     return json({ left: true }, { headers })

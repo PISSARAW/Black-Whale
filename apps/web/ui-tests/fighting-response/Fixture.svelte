@@ -16,6 +16,16 @@
   import { PVP_RULESET, type PvpSession } from '$lib/fighting/pvp/types'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { installFrameProbe } from '../fighting-performance/frameProbe'
+  import { createImpactProbe } from './impactProbe'
+  const impactProbe = createImpactProbe()
+  const measuredFetch: typeof fetch = (url, init) => {
+    if (init?.body) {
+      const body = JSON.parse(String(init.body))
+      if (body.kind === 'input') impactProbe.sent([body.packet])
+      if (body.kind === 'inputs') impactProbe.sent(body.packets)
+    }
+    return fetch(url, init)
+  }
   export let probe: ReturnType<typeof installFrameProbe>
   let client = null as ReturnType<typeof createPvpClient> | null
   let rendered = true,
@@ -37,6 +47,7 @@
   }> = []
   const failed = ''
   $: state = $client?.state ?? null
+  $: if ($client?.view && $client.state) impactProbe.observe($client.view, $client.state)
   setContext(FIGHT_VISUAL_PREDICTION, () => (legacy ? null : (client?.visualPrediction ?? null)))
   THREE.Scene.prototype.onAfterRender = function (renderer, scene) {
     if (!scene.getObjectByName('fight-collision-boxes')) return
@@ -95,7 +106,7 @@
     client = createPvpClient({
       matchId: session.matchId,
       endpoint: endpoint + '/' + session.matchId,
-      fetch,
+      fetch: measuredFetch,
       storage: sessionStorage,
     })
     await client.join()
@@ -113,7 +124,7 @@
       matchId: options.matchId,
       endpoint: '/__response/' + options.network + '/' + options.matchId,
       invitation: options.invitation,
-      fetch,
+      fetch: measuredFetch,
       storage: sessionStorage,
     })
     await client.join()
@@ -156,6 +167,7 @@
     held = { ...held, [key]: value }
   }
   export function move(action: MoveAction | 'ranged') {
+    impactProbe.queue(action)
     marker = {
       at: performance.now(),
       command: action,
@@ -181,6 +193,7 @@
   export function reset() {
     latency = []
     attempts = []
+    impactProbe.reset()
     probe.reset()
   }
   export function result() {
@@ -188,6 +201,7 @@
       ...probe.result(),
       latency,
       attempts,
+      impacts: impactProbe.trials,
       failed,
       state: client ? get(client) : null,
       prediction: client?.predictionStats,

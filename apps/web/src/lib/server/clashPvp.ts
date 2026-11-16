@@ -160,12 +160,27 @@ export class ClashPvpRegistry {
     return this.view(id, options.token)
   }
   submit(id: string, options: { token: string; packet: PvpInputPacket }): PvpView {
+    this.receiveInputs(id, { token: options.token, packets: [options.packet] })
+    return this.view(id, options.token)
+  }
+  receiveInputs(id: string, options: { token: string; packets: PvpInputPacket[]; round?: number }) {
     const { lobby, side } = this.access(id, options.token)
     this.advance(lobby)
     if (lobby.status !== 'playing') throw new ClashPvpError('NOT_PLAYING')
-    const result = lobby.match.submit(side, options.packet, this.now())
-    if (result === 'sequence' || result === 'busy') throw new ClashPvpError(result.toUpperCase())
-    return this.view(id, options.token)
+    if (options.round !== undefined && options.round !== lobby.match.roundNumber)
+      throw new ClashPvpError('NOT_PLAYING')
+    for (const packet of options.packets) {
+      const result = lobby.match.submit(side, packet, this.now())
+      if (result === 'sequence' || result === 'busy') throw new ClashPvpError(result.toUpperCase())
+    }
+    lobby.seats[side]!.seenAt = this.now()
+    lobby.touchedAt = this.now()
+    return {
+      matchId: id,
+      side,
+      nextSequence: lobby.match.nextSequence(side),
+      round: lobby.match.roundNumber,
+    }
   }
   leave(id: string, token: string): void {
     const { lobby, side } = this.access(id, token)

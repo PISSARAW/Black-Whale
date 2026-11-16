@@ -9,7 +9,7 @@ const replaySource = await readFile(
 )
 const replayRuleset = replaySource.match(/REPLAY_RULESET = '([^']+)'/)?.[1]
 assert.ok(replayRuleset, 'Missing replay ruleset')
-const ruleset = process.env.RESPONSE_RULESET ?? `clash-pvp-3:${replayRuleset}`
+const ruleset = process.env.RESPONSE_RULESET ?? `clash-pvp-4:${replayRuleset}`
 const fighters = process.env.RESPONSE_FIGHTERS?.split(',') ?? [
   'kurapika',
   'hisoka',
@@ -51,7 +51,7 @@ async function appliedView(options) {
       while (boundary >= 0) {
         const view = JSON.parse(buffer.slice(6, boundary))
         buffer = buffer.slice(boundary + 2)
-        if (view.appliedSequence >= 1) return view
+        if (view.appliedSequence >= 2) return view
         boundary = buffer.indexOf('\n\n')
       }
     }
@@ -61,6 +61,9 @@ async function appliedView(options) {
   }
 }
 for (const [index, fighter] of fighters.entries()) {
+  // Three stream attempts per case; respect the production 30/minute IP budget.
+  const pause = Number(process.env.RESPONSE_ENDPOINT_PAUSE_MS ?? (fighters.length > 8 ? 6500 : 0))
+  if (pause) await new Promise((resolve) => setTimeout(resolve, pause))
   const opponent = fighters[(index + 1) % fighters.length]
   const host = await request({
     body: {
@@ -86,19 +89,25 @@ for (const [index, fighter] of fighters.entries()) {
   const initial = await request({ id, token: host.token })
   for (const token of [host.token, guest.token])
     await request({ id, token, body: { kind: 'ready', ruleset, configHash: initial.configHash } })
-  for (const token of [host.token, guest.token])
-    await request({
+  for (const token of [host.token, guest.token]) {
+    const body = {
+      kind: 'inputs',
+      round: 1,
+      packets: [
+        { sequence: 0, input: 0, commands: [{ kind: 'move', action: 'light', input: 0 }] },
+        { sequence: 1, input: 0, commands: [] },
+      ],
+    }
+    const receipt = await request({
       id,
       token,
-      body: {
-        kind: 'input',
-        packet: {
-          sequence: 0,
-          input: 0,
-          commands: [{ kind: 'move', action: 'light', input: 0 }],
-        },
-      },
+      body,
     })
+    assert.equal(receipt.nextSequence, 2)
+    assert.equal(receipt.round, 1)
+    assert.equal('snapshot' in receipt, false)
+    assert.deepEqual(await request({ id, token, body }), receipt)
+  }
   for (const [token, owner] of [
     [host.token, fighter],
     [guest.token, opponent],

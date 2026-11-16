@@ -1,7 +1,7 @@
 # Clash : PvP privé (phase 7)
 
 La [phase 8](./CAREER.md) ajoute les saisons, le profil, la vue spectateur et des
-secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-3` inclut le ruleset moteur courant ;
+secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-4` inclut le ruleset moteur courant ;
 les descriptions de l’autorité et des conditions de combat ci-dessous restent valables.
 
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
@@ -90,8 +90,11 @@ sont ajoutés par la phase 8.
 ## Latence et validation
 
 Le client lit les contrôles sur chaque frame et envoie les entrées sans attendre
-50 ms après la fin d’une requête. Une seule requête de commandes reste en vol ;
-un budget de 20 envois/s et une courte rafale de trois paquets bornent le trafic.
+50 ms après la fin d’une requête. Un pipeline cumulatif maintient au plus quatre requêtes actives et huit paquets
+non confirmés, avec 20 envois/s et une rafale de trois. Les reçus compacts et
+les vues privées confirment les numéros reçus ; le serveur déduplique les lots
+et refuse ceux d’une autre manche. Les garanties et mesures jusqu’au contact
+sont détaillées dans [IMPACT.md](./IMPACT.md).
 Un flux SSE authentifié pousse jusqu’à 30 vues privées/s, indépendamment de
 l’aller-retour des commandes. Le jeton reste dans les en-têtes. Le flux sortant
 ne renouvelle jamais la présence d’un joueur ; le polling HTTP reste le repli si

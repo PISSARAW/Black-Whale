@@ -5,11 +5,26 @@ import path from 'node:path'
 import { build, preview } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
+import { execFileSync } from 'node:child_process'
+import { realpathSync } from 'node:fs'
 import { responseApi } from './fighting-response-api.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = process.env.RESPONSE_OUTPUT ?? '/tmp/black-whale-response'
 const runId = new Date().toISOString()
+const serialCommit = process.env.RESPONSE_SERIAL_COMMIT ?? ''
+assert.ok(
+  !serialCommit || /^[a-f0-9]{8,40}$/.test(serialCommit),
+  'Use an immutable baseline commit',
+)
+const serialSource = serialCommit
+  ? execFileSync('git', ['show', `${serialCommit}:apps/web/src/lib/fighting/pvp/client.ts`], {
+      cwd: process.env.RESPONSE_SOURCE_REPO ?? root,
+      encoding: 'utf8',
+    })
+  : null
+const clientPath = realpathSync(path.join(root, 'src/lib/fighting/pvp/client.ts'))
+let serialLoaded = false
 const seconds = Number(process.env.RESPONSE_SECONDS ?? 30)
 const requestedFighters = process.env.RESPONSE_FIGHTERS?.split(',') ?? [
   'kurapika',
@@ -28,7 +43,22 @@ const config = {
   root,
   publicDir: 'static',
   mode: 'production',
-  plugins: [svelte({ configFile: false, compilerOptions: { dev: false } })],
+  plugins: [
+    {
+      name: 'serial-input-baseline',
+      enforce: 'pre',
+      load(id) {
+        if (
+          serialSource &&
+          (id === clientPath || id === path.join(root, 'src/lib/fighting/pvp/client.ts'))
+        ) {
+          serialLoaded = true
+          return serialSource
+        }
+      },
+    },
+    svelte({ configFile: false, compilerOptions: { dev: false } }),
+  ],
   resolve: { alias: { $lib: path.join(root, 'src/lib') } },
   css: { postcss: { plugins: [] } },
   logLevel: 'warn',
@@ -53,6 +83,8 @@ if (!process.env.RESPONSE_SKIP_BUILD) {
       rollupOptions: { output: { entryFileNames: 'server.mjs' } },
     },
   })
+  if (serialSource)
+    assert.ok(serialLoaded, 'Serial client baseline must actually replace the client module')
 }
 try {
   await symlink(path.join(root, 'node_modules'), path.join(output, 'server/node_modules'))
@@ -159,7 +191,28 @@ async function duel(fighter, legacy) {
     await host.page.waitForTimeout(Number(process.env.RESPONSE_WARMUP_MS ?? 6000))
     await host.page.evaluate(() => window.responseLab.reset())
     for (let second = 0; second < seconds; second++) {
-      if (second % 2 === 0) await host.page.evaluate(() => window.responseLab.move('light'))
+      if (second % 2 === 0) {
+        if (process.env.RESPONSE_IMPACT === '1') {
+          await host.page.evaluate(() => {
+            const state = window.responseLab.result().state.state
+            window.responseLab.control(state.player.x < state.opponent.x ? 'right' : 'left', true)
+          })
+          await host.page.waitForFunction(
+            () => {
+              const state = window.responseLab.result().state.state
+              return Math.abs(state.player.x - state.opponent.x) <= 5
+            },
+            undefined,
+            { timeout: 5000 },
+          )
+          await host.page.evaluate(() => {
+            window.responseLab.control('right', false)
+            window.responseLab.control('left', false)
+          })
+          await host.page.waitForTimeout(150)
+        }
+        await host.page.evaluate(() => window.responseLab.move('light'))
+      }
       if (second === 6) await host.page.evaluate(() => window.responseLab.control('aura', true))
       if (second === 12) await host.page.evaluate(() => window.responseLab.control('aura', false))
       await host.page.waitForTimeout(1000)
@@ -180,6 +233,16 @@ async function duel(fighter, legacy) {
       attempted,
       unobservedAnimations: attempted - raw.latency.length,
       latency: distribution(raw.latency.map((row) => row.ms)),
+      impactTrials: raw.impacts,
+      commandSend: distribution(
+        raw.impacts.flatMap((row) => (row.sentMs === undefined ? [] : [row.sentMs])),
+      ),
+      authoritativeApplication: distribution(
+        raw.impacts.flatMap((row) => (row.appliedMs === undefined ? [] : [row.appliedMs])),
+      ),
+      authoritativeContact: distribution(
+        raw.impacts.flatMap((row) => (row.contactMs === undefined ? [] : [row.contactMs])),
+      ),
       cadence: distribution(intervals),
       fps: (1000 * intervals.length) / intervals.reduce((a, b) => a + b, 0),
       over25ms: intervals.filter((ms) => ms > 25).length,
@@ -231,6 +294,22 @@ async function duel(fighter, legacy) {
     assert.ok(raw.latency.length >= 3, `${fighter}: no rendered attacks`)
     if (!legacy)
       assert.equal(raw.latency.length, attempted, 'Every trial must produce an animation')
+    if (process.env.RESPONSE_IMPACT === '1') {
+      assert.equal(
+        result.authoritativeApplication.count,
+        attempted,
+        'Every trial must be applied by authority',
+      )
+      assert.equal(
+        result.authoritativeContact.count,
+        attempted,
+        'Every trial must produce a confirmed contact',
+      )
+      assert.ok(
+        raw.impacts.every((row) => row.blocked),
+        'The defender must actually block every trial',
+      )
+    }
     process.stdout.write(JSON.stringify(result) + '\n')
     return result
   } finally {
@@ -265,12 +344,14 @@ try {
     date: new Date().toISOString(),
     runId,
     browser: browser.version(),
+    serialCommit: serialCommit || null,
+    impactTrials: process.env.RESPONSE_IMPACT === '1',
     production: true,
     seconds,
     warmupMs: Number(process.env.RESPONSE_WARMUP_MS ?? 6000),
     roster: fighters,
     scope:
-      'Production client and SSR API bundles, real authenticated POST + filtered SSE through a test-only latency shaper. Two browser contexts; only the primary renders WebGL. Baseline reproduces completion+50ms polling and no prediction in the same fixture. Timing is input queue to an actual scene render with a startup, not physical controller-to-photon latency. Dropped receipts and skipped view events simulate application faults, not Internet packet delivery.',
+      'Production client and SSR API bundles, real authenticated POST + filtered SSE through a test-only latency shaper. Two browser contexts; only the primary renders WebGL. Rows with legacy=true reproduce completion+50ms polling and no prediction. Rows with legacy=false retain prediction and SSE. When serialCommit is set, only the input client module is loaded from that immutable commit; otherwise the current cumulative sender is used. Timing is input queue to an actual scene render with a startup, not physical controller-to-photon latency. Dropped receipts and skipped view events simulate application faults, not Internet packet delivery.',
     results,
     transport: adapter.stats,
     errors,

@@ -117,7 +117,6 @@ const AFFILIATIONS: Partial<Record<FighterId, Affiliation>> = {
   kalluto: zoldyck(),
   hisoka: independent('Indépendant', 'Independent'),
   beyond: independent('Expédition du Continent Sombre', 'Dark Continent expedition'),
-  silentmajority: independent('Affiliation inconnue', 'Unknown affiliation'),
 }
 
 export function groupedFightingRoster(roster: readonly FighterDefinition[]): FighterRosterGroup[] {

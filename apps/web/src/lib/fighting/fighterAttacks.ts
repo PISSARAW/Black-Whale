@@ -57,7 +57,10 @@ export function startFighterAttack(options: {
       impacted: false,
       auraCharged,
       concealed,
-      hatsuSource: kind === 'special' ? (options.hatsuSource ?? hatsuSourceFor(fighter)) : null,
+      hatsuSource:
+        kind === 'special'
+          ? (options.hatsuSource ?? hatsuSourceFor(fighter, options.moveId))
+          : null,
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },

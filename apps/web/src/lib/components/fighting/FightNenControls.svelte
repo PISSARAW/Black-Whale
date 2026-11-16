@@ -2,6 +2,7 @@
   import { KO_COST, nenStatus, nenTacticalState, type FightNenTactic } from '$lib/fighting/nen'
   import type { ArcadeFighter, FightNenZone } from '$lib/fighting/types'
   import { FIGHT_NEN_ZONES } from '$lib/fighting/nen'
+  import { onFlowLabel, onTacticalCopy } from '$lib/fighting/onCopy'
 
   export let fighter: ArcadeFighter
   export let language: 'fr' | 'en'
@@ -9,12 +10,14 @@
 
   $: technique = nenStatus(fighter).join(' · ')
   $: tactical = nenTacticalState(fighter)
-  $: explanation = tacticalCopy(tactical.technique)
+  $: explanation =
+    tactical.technique === 'on' ? onTacticalCopy(language) : tacticalCopy(tactical.technique)
   $: flow = flowLabel(tactical.technique, tactical.auraPerSecond)
   $: danger =
     tactical.exhausted ||
     tactical.technique === 'zetsu' ||
     tactical.technique === 'ko' ||
+    tactical.technique === 'on' ||
     (tactical.technique === 'ren' && fighter.aura <= 25)
 
   const ZONE_LABELS: Record<'fr' | 'en', Record<FightNenZone, string>> = {
@@ -32,6 +35,7 @@
 
   function flowLabel(active: FightNenTactic, rate: number): string {
     if (active === 'ko') return `${language === 'fr' ? 'COÛT' : 'COST'} −${KO_COST}`
+    if (active === 'on') return onFlowLabel(language)
     const amount = Math.abs(rate).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', {
       maximumFractionDigits: 1,
     })
@@ -144,7 +148,9 @@
         <small>{language === 'fr' ? 'ÉTAT NEN' : 'NEN STATE'}</small>
         <strong>{tactical.technique}</strong>
       </div>
-      <b class:draining={tactical.auraPerSecond < 0 || tactical.technique === 'ko'}>{flow}</b>
+      <b class:draining={tactical.auraPerSecond < 0 || tactical.technique === 'ko' || tactical.technique === 'on'}
+        >{flow}</b
+      >
     </header>
 
     <div class="tradeoff">
@@ -178,8 +184,8 @@
 
   <p class="shortcut-hint">
     {language === 'fr'
-      ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko'
-      : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko'}
+      ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · + L (rancune 50) : On'
+      : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · + L (grudge 50): On'}
   </p>
 </div>
 

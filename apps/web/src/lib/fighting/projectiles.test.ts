@@ -105,4 +105,13 @@ describe('ranged attacks', () => {
     const armed = opponentAttack(state)
     expect(armed.opponent.attack?.kind).toBe('ranged')
   })
+
+  it('tells Blinky which projectiles are ordinary objects', () => {
+    expect(projectileProfile('kurapika').matter).toBe('nen')
+    expect(projectileProfile('theta').matter).toBe('nen')
+    expect(projectileProfile('franklin').matter).toBe('nen')
+    expect(projectileProfile('hisoka').matter).toBe('object')
+    expect(projectileProfile('benjamin').matter).toBe('object')
+    expect(projectileProfile('musse').matter).toBe('object')
+  })
 })

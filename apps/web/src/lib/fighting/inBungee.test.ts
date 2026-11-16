@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
-import { FIGHT_HATSU_AURA_COST } from './hatsu'
+import { FIGHT_HATSU_AURA_COST, hatsuFor } from './hatsu'
+import { BUNGEE_REST_DISTANCE } from './hatsu/hisoka'
 import { IN_CHARGE_FRAMES } from './nen'
 import { EMPTY_INPUT } from './types'
 
@@ -40,10 +41,15 @@ describe('In and Bungee Gum', () => {
     expect(beforeHiddenImpact.impact).toBeNull()
     const attached = advance(beforeHiddenImpact, 0.35)
     expect(attached.impact).toMatchObject({ attacker: 'player', concealed: true })
-    expect(attached.bungeeGum).toEqual({ owner: 'player', target: 'opponent', hidden: true })
+    expect(attached.bungeeGum).toEqual({
+      owner: 'player',
+      target: 'opponent',
+      hidden: true,
+      retracting: false,
+    })
   })
 
-  it('leaves a quick Bungee Gum visible and retracts an existing attachment', () => {
+  it('leaves a quick Bungee Gum visible and retracts it as an elastic pull', () => {
     let state = performAuraAttack({
       state: closeHisokaFight(),
       side: 'player',
@@ -58,13 +64,50 @@ describe('In and Bungee Gum', () => {
       player: { ...state.player, aura: 100, attack: null, hitStun: 0, blockStun: 0 },
       opponent: { ...state.opponent, x: 80, hitStun: 0, blockStun: 0 },
     }
-    const retracted = performAuraAttack({
+    const gap = (next: typeof state) => Math.abs(next.opponent.x - next.player.x)
+    const retracting = performAuraAttack({
       state,
       side: 'player',
       kind: 'special',
       auraCharged: false,
     })
-    expect(retracted.bungeeGum).toBeNull()
-    expect(Math.abs(retracted.opponent.x - retracted.player.x)).toBeLessThanOrEqual(9)
+    // No teleport: the trigger only puts the stretched gum under tension.
+    expect(retracting.opponent.x).toBe(80)
+    expect(retracting.bungeeGum).toMatchObject({ owner: 'player', retracting: true })
+
+    const firstFrame = tickFight(retracting, EMPTY_INPUT, 1 / 60)
+    expect(gap(firstFrame)).toBeLessThan(gap(retracting))
+    expect(gap(firstFrame)).toBeGreaterThan(20)
+
+    // Reeled into the still-active special, the target is struck on arrival and
+    // the gum sticks again, slack, as in the Kastro fight.
+    const reeled = advance(retracting, 1)
+    expect(gap(reeled)).toBeLessThan(20)
+    expect(reeled.impact?.attacker).toBe('player')
+    expect(reeled.impact?.sequence).toBeGreaterThan(retracting.impact?.sequence ?? 0)
+    expect(reeled.bungeeGum).toMatchObject({ owner: 'player', retracting: false })
+  })
+
+  it('pulls harder the more the gum is stretched, and stops at rest length', () => {
+    const base = beginFight(createFight('hisoka', 'kurapika'))
+    const tense = (opponentX: number) => ({
+      ...base,
+      player: { ...base.player, x: 20 },
+      opponent: { ...base.opponent, x: opponentX },
+      bungeeGum: {
+        owner: 'player' as const,
+        target: 'opponent' as const,
+        hidden: false,
+        retracting: true,
+      },
+    })
+    const pull = (opponentX: number) =>
+      opponentX - hatsuFor('hisoka').onFrame(tense(opponentX)).opponent.x
+    expect(pull(85)).toBeGreaterThan(pull(40))
+    expect(pull(40)).toBeGreaterThan(0)
+
+    const slack = hatsuFor('hisoka').onFrame(tense(20 + BUNGEE_REST_DISTANCE))
+    expect(slack.opponent.x).toBe(20 + BUNGEE_REST_DISTANCE)
+    expect(slack.bungeeGum).toMatchObject({ retracting: false })
   })
 })

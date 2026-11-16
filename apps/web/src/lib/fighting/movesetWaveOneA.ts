@@ -76,12 +76,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'chrollo',
     mechanic: [
-      'Skill Hunter : mémorise le dernier Hatsu reçu et alterne marquage et détonation.',
-      'Skill Hunter: records the last received Hatsu and alternates marking with detonation.',
+      'Skill Hunter : vole un Hatsu vu en action en plaquant sa cible sur le livre, puis le rejoue ; Black Voice et Sun and Moon restent ses propres pages.',
+      'Skill Hunter: steals a Hatsu he has seen in action by pressing its user onto the book, then replays it; Black Voice and Sun and Moon remain his own pages.',
     ],
     finisherCondition: [
-      'Une marque Sun and Moon doit être posée.',
-      'A Sun and Moon mark must be active.',
+      'Une marque du Soleil ou de la Lune doit être posée : le finisher pose l’autre.',
+      'A Sun or Moon mark must be placed: the finisher stamps the other.',
     ],
     labels: [
       'Pique du voleur|Thief Jab',
@@ -97,7 +97,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Black Voice|Black Voice',
       'Marque du Soleil|Sun Mark',
       'Marque de la Lune|Moon Mark',
-      'Enlèvement de compétence|Skill Abduction',
+      'Prise du voleur|Thief’s Grab',
       'Sun and Moon · Détonation|Sun and Moon · Detonation',
     ],
     speed: 1.02,

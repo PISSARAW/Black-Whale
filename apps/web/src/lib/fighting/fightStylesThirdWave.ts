@@ -77,7 +77,7 @@ export const THIRD_WAVE_STYLES: Record<ThirdWaveId, FightingStyle> = {
       ranged: {},
     },
   }),
-  furykov: make('furykov', ['Lecture de combo', 'Combo reading'], {
+  furykov: make('furykov', ['Discipline militaire', 'Military discipline'], {
     range: [6, 10],
     specialChance: 0.44,
     attacks: {

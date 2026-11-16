@@ -17,8 +17,6 @@ export const longhiHatsu: FighterHatsu = {
   onFrame: (state) => tickState(state, 'contractFrames', true),
 }
 
-export const musseHatsu: FighterHatsu = dodgeHatsu('musse', 'secretWindowDodges')
-
 export const padailleHatsu: FighterHatsu = {
   id: 'padaille',
   onTrigger: ({ state, side }) => setEffect(state, side, { key: 'weaponFrames', value: 180 }),
@@ -52,36 +50,13 @@ export const tysonHatsu: FighterHatsu = {
   },
 }
 
-export const sayirdHatsu: FighterHatsu = dodgeHatsu('sayird', 'littleEyeDodges')
-
-export const silentMajorityHatsu: FighterHatsu = {
-  id: 'silentmajority',
-  onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) => {
-    if (blocked) return state
-    const fighter = state[defenderSide]
-    const marks = fighter.hatsuEffects.silentMarks + 1
-    const strikes = marks >= 3
-    return {
-      ...state,
-      [defenderSide]: {
-        ...fighter,
-        health: Math.max(0, fighter.health - (strikes ? 22 : 0)),
-        hatsuEffects: { ...fighter.hatsuEffects, silentMarks: strikes ? 0 : marks },
-      },
-    }
-  },
-  onFrame: unchangedFrame,
-}
-
 export const terebellumHatsu: FighterHatsu = dodgeHatsu('terebellum', 'sweetHomeCharges')
 export const voconteHatsu: FighterHatsu = dodgeHatsu('voconte', 'doorDodges')
 export const yokotaniHatsu: FighterHatsu = dodgeHatsu('yokotani', 'lsdfGuards')
 
 type TimedKey =
   'gidalCurseFrames' | 'contractFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
-type DodgeKey =
-  'secretWindowDodges' | 'littleEyeDodges' | 'sweetHomeCharges' | 'doorDodges' | 'lsdfGuards'
+type DodgeKey = 'sweetHomeCharges' | 'doorDodges' | 'lsdfGuards'
 
 function setEffect(
   state: FightState,

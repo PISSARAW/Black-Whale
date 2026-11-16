@@ -59,7 +59,6 @@ describe('fighting roster models', () => {
       'musse',
       'padaille',
       'sayird',
-      'silent-majority-user',
       'terebellum',
       'voconte',
       'yokotani',
@@ -75,7 +74,7 @@ describe('fighting roster models', () => {
     const rosterIds = new Set(FIGHTING_ROSTER.map((fighter) => fighter.modelId))
     const exclusions = [...PASSIVE_GUARDIAN_USERS, ...NON_DUEL_HATSU_USERS]
 
-    expect(FIGHTING_ROSTER).toHaveLength(41)
+    expect(FIGHTING_ROSTER).toHaveLength(40)
     expect(exclusions.every((modelId) => !rosterIds.has(modelId))).toBe(true)
   })
 })

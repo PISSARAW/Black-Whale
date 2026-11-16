@@ -4,8 +4,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'shizuku',
     mechanic: [
-      'Blinky : aspire le sang et l’aura d’une cible blessée tout en soignant Shizuku.',
-      'Blinky: drains blood and aura from a wounded target while healing Shizuku.',
+      'Blinky : aspire les objets lancés contre Shizuku, jamais un être vivant ni une construction de Nen.',
+      'Blinky: swallows objects thrown at Shizuku, never a living being or a Nen construct.',
     ],
     finisherCondition: [
       'L’adversaire doit être à 50 PV ou moins.',
@@ -21,12 +21,12 @@ const SPECS: readonly MovesetSpec[] = [
       'Pas de nettoyage|Cleaning Step',
       'Coup de réservoir|Tank Strike',
       'Retour de manche|Handle Return',
-      'Aspiration sanguine|Blood Suction',
+      'Aspiration d’objets|Object Suction',
       'Blinky Cyclone|Blinky Cyclone',
       'Aspiration basse|Low Vacuum',
       'Rejet d’objets|Object Ejection',
-      'Capture aspirante|Vacuum Capture',
-      'Blinky · Drain total|Blinky · Total Drain',
+      'Prise au manche|Handle Hold',
+      'Blinky · Grand ménage|Blinky · Deep Clean',
     ],
     speed: 0.98,
     power: 1,

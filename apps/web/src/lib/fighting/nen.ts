@@ -5,6 +5,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { attackData } from './frameData'
+import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
 export const KO_COST = 20
@@ -12,7 +13,7 @@ export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
 export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
 
-export type FightNenTactic = 'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko'
+export type FightNenTactic = 'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko' | 'on'
 
 export interface FightNenTacticalState {
   technique: FightNenTactic
@@ -30,6 +31,8 @@ export function createFightingNen() {
 
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  const sworn = applyOnContext(fighter, input)
+  if (sworn) return sworn
   if (fighter.auraExhausted) return withAction(fighter, { type: 'ZETSU' })
 
   if (!input.aura) {
@@ -77,10 +80,11 @@ export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
   const depleted = fighter.auraExhausted || aura === 0
   const auraExhausted = depleted && aura < EXHAUSTION_RELEASE_AURA
   const next = { ...fighter, aura, auraExhausted }
-  return auraExhausted ? withAction(next, { type: 'ZETSU' }) : next
+  return advanceOn(auraExhausted ? withAction(next, { type: 'ZETSU' }) : next)
 }
 
 export function auraFlowRate(fighter: ArcadeFighter): number {
+  if (fighter.nen.on) return 0
   if (fighter.nen.mode === 'zetsu') return 10
   if (fighter.nen.ken) return -8
   if (fighter.nen.gyo) return -2.4
@@ -130,6 +134,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   const share = Number(fighter.nen.ryu[zone] ?? 0)
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
+  if (fighter.nen.on) factor += ON_ATTACK_BONUS
   return factor
 }
 
@@ -146,7 +151,11 @@ export function isCriticalAuraStrike(fighter: ArcadeFighter): boolean {
 }
 
 export function hasRyu(fighter: ArcadeFighter): boolean {
-  return Object.values(fighter.nen.ryu).some((share) => Number(share) > 0) && !fighter.nen.ko
+  return (
+    Object.values(fighter.nen.ryu).some((share) => Number(share) > 0) &&
+    !fighter.nen.ko &&
+    !fighter.nen.on
+  )
 }
 
 /** Presentation-ready combat information: what is reinforced and what was sacrificed. */
@@ -159,15 +168,17 @@ export function nenTacticalState(fighter: ArcadeFighter): FightNenTacticalState 
       distribution[zone] > strongest[1] ? [zone, distribution[zone]] : strongest,
     [null, 0],
   )
-  const technique: FightNenTactic = fighter.nen.ko
-    ? 'ko'
-    : hasRyu(fighter)
-      ? 'ryu'
-      : fighter.nen.ken
-        ? 'ken'
-        : fighter.nen.gyo
-          ? 'gyo'
-          : fighter.nen.mode
+  const technique: FightNenTactic = fighter.nen.on
+    ? 'on'
+    : fighter.nen.ko
+      ? 'ko'
+      : hasRyu(fighter)
+        ? 'ryu'
+        : fighter.nen.ken
+          ? 'ken'
+          : fighter.nen.gyo
+            ? 'gyo'
+            : fighter.nen.mode
   const exposesBody = technique === 'ko' || technique === 'ryu'
 
   return {
@@ -185,6 +196,7 @@ export function nenTacticalState(fighter: ArcadeFighter): FightNenTacticalState 
 
 export function nenStatus(fighter: ArcadeFighter): string[] {
   if (fighter.auraExhausted) return ['zetsu', 'épuisé']
+  if (fighter.nen.on) return ['on']
   const status: string[] = [fighter.nen.mode]
   if (fighter.nen.ken) status.push('ken')
   if (fighter.nen.gyo) status.push('gyo')

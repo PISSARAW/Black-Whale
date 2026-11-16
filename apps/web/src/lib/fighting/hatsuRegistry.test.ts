@@ -5,9 +5,12 @@ import {
   hatsuAvoidsImpact,
   hatsuDamageFactor,
   hatsuDefenceFactor,
+  hatsuSourceFor,
+  resolveHatsuImpact,
+  triggerHatsu,
 } from './hatsu'
 import { hatsuFor } from './hatsu/registry'
-import { EMPTY_INPUT, type FightState } from './types'
+import { EMPTY_INPUT, type FightProjectile, type FightState } from './types'
 
 function advance(state: FightState, seconds: number): FightState {
   let next = state
@@ -29,6 +32,40 @@ function closeFight(
   }
 }
 
+const SAMPLE_PROJECTILE = {
+  id: 0,
+  owner: 'opponent',
+  fighterId: 'theta',
+  x: 50,
+  y: 6.1,
+  velocityX: -50,
+  width: 0.7,
+  height: 0.5,
+  damage: 8,
+  hitstun: 13,
+  blockstun: 9,
+  hitstop: 5,
+  knockback: 2.2,
+  targetZone: 'torso',
+  shape: 'stone',
+  colour: '#81715f',
+  age: 0,
+  lifetime: 120,
+  matter: 'object',
+} satisfies FightProjectile
+
+function chrolloStrike(state: FightState, slot: string, blocked = false): FightState {
+  return hatsuFor('chrollo').onImpact({
+    state,
+    side: 'player',
+    defenderSide: 'opponent',
+    source: 'chrollo',
+    moveId: `chrollo:${slot}`,
+    blocked,
+    concealed: false,
+  })
+}
+
 describe('fighter Hatsu registry', () => {
   it('lets Chain Jail force only a Phantom Troupe target into Zetsu', () => {
     const struck = advance(
@@ -39,27 +76,62 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.nen.mode).toBe('zetsu')
   })
 
-  it('lets Skill Hunter replay the last Hatsu received', () => {
-    let state = advance(performAttack(closeFight('illumi', 'chrollo'), 'player', 'special'), 0.5)
-    expect(state.opponent.hatsuEffects.lastHatsuReceived).toBe('illumi')
-    state = {
-      ...state,
-      player: { ...state.player, x: 42, hitStun: 90 },
-      opponent: {
-        ...state.opponent,
-        x: 54,
-        aura: 100,
-        nen: createFight('chrollo', 'illumi').player.nen,
-        attack: null,
-        hitStun: 0,
-        blockStun: 0,
-        knockdownFrames: 0,
-        wakeupInvulnerableFrames: 0,
-        hatsuEffects: { ...state.opponent.hatsuEffects, needleFrames: 0 },
-      },
-    }
-    const copied = advance(performAttack(state, 'opponent', 'special'), 0.6)
-    expect(copied.player.hatsuEffects.needleFrames).toBeGreaterThan(0)
+  it('lets Skill Hunter steal only a Hatsu Chrollo has seen, with the target on the book', () => {
+    const ready = closeFight('chrollo', 'illumi')
+    const seen = triggerHatsu(ready, 'opponent', 'illumi')
+    expect(seen.player.hatsuEffects.witnessedHatsu).toBe('illumi')
+
+    const stolen = chrolloStrike(seen, 'neutralSpecial')
+    expect(stolen.player.hatsuEffects.stolenHatsu).toBe('illumi')
+    expect(stolen.opponent.hatsuEffects.hatsuStolen).toBe(1)
+    // The owner cannot use an ability while it is held in the book.
+    expect(hatsuSourceFor(stolen.opponent)).toBeNull()
+    // Only Skill Hunter opens the stolen page; his own techniques stay his.
+    expect(hatsuSourceFor(stolen.player, 'chrollo:neutralSpecial')).toBe('illumi')
+    expect(hatsuSourceFor(stolen.player, 'chrollo:forwardSpecial')).toBe('chrollo')
+
+    const replayed = resolveHatsuImpact({
+      state: stolen,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'illumi',
+      moveId: 'chrollo:neutralSpecial',
+      blocked: false,
+      concealed: false,
+    })
+    expect(replayed.opponent.hatsuEffects.needleFrames).toBeGreaterThan(0)
+  })
+
+  it('cannot steal an unseen, blocked or martial ability', () => {
+    const unseen = chrolloStrike(closeFight('chrollo', 'illumi'), 'neutralSpecial')
+    expect(unseen.player.hatsuEffects.stolenHatsu).toBeNull()
+
+    const seen = triggerHatsu(closeFight('chrollo', 'illumi'), 'opponent', 'illumi')
+    const blocked = chrolloStrike(seen, 'neutralSpecial', true)
+    expect(blocked.player.hatsuEffects.stolenHatsu).toBeNull()
+
+    const martial = advance(performAttack(closeFight('beyond', 'chrollo'), 'player', 'special'), 1)
+    expect(martial.opponent.health).toBeLessThan(100)
+    expect(martial.opponent.hatsuEffects.witnessedHatsu).toBeNull()
+  })
+
+  it('ties Black Voice to its antenna strike and detonates Sun and Moon only as a pair', () => {
+    const ready = closeFight('chrollo', 'hisoka')
+    const controlled = chrolloStrike(ready, 'forwardSpecial')
+    expect(controlled.opponent.hatsuEffects.manipulatedFrames).toBeGreaterThan(0)
+    expect(chrolloStrike(ready, 'downSpecial').opponent.hatsuEffects.manipulatedFrames).toBe(0)
+
+    const sun = chrolloStrike(ready, 'downSpecial')
+    expect(sun.opponent.hatsuEffects.sunMark).toBe(1)
+    expect(sun.opponent.health).toBe(ready.opponent.health)
+    expect(chrolloStrike(sun, 'downSpecial').opponent.health).toBe(ready.opponent.health)
+
+    const detonated = chrolloStrike(sun, 'backSpecial')
+    expect(detonated.opponent.health).toBe(ready.opponent.health - 24)
+    expect(detonated.opponent.hatsuEffects).toMatchObject({ sunMark: 0, moonMark: 0 })
+
+    const finished = chrolloStrike(chrolloStrike(ready, 'backSpecial'), 'finisher')
+    expect(finished.opponent.health).toBe(ready.opponent.health - 24)
   })
 
   it('stacks Contagion and drains aura', () => {
@@ -120,30 +192,6 @@ describe('fighter Hatsu registry', () => {
     }
     expect(state.opponent.hatsuEffects.senseSeals).toBe(3)
     expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
-  })
-
-  it('combines Black Voice control with Sun and Moon detonation', () => {
-    const impact = hatsuFor('chrollo').onImpact
-    let state = impact({
-      state: closeFight('chrollo', 'hisoka'),
-      side: 'player',
-      defenderSide: 'opponent',
-      source: 'chrollo',
-      blocked: false,
-      concealed: false,
-    })
-    expect(state.opponent.hatsuEffects.manipulatedFrames).toBeGreaterThan(0)
-    const markedHealth = state.opponent.health
-    state = impact({
-      state,
-      side: 'player',
-      defenderSide: 'opponent',
-      source: 'chrollo',
-      blocked: false,
-      concealed: false,
-    })
-    expect(state.opponent.health).toBe(markedHealth - 24)
-    expect(state.opponent.hatsuEffects.sunMoonMarks).toBe(0)
   })
 
   it('makes Theta suppress aura with her projectile', () => {
@@ -265,20 +313,47 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
   })
 
-  it('lets Shizuku drain a wounded target with Blinky', () => {
+  it('never lets Blinky drain a living target', () => {
     const ready = closeFight('shizuku', 'hisoka')
-    ready.player.health = 70
     const struck = hatsuFor('shizuku').onImpact({
-      state: ready,
+      state: { ...ready, player: { ...ready.player, health: 70 } },
       side: 'player',
       defenderSide: 'opponent',
       source: 'shizuku',
       blocked: false,
       concealed: false,
     })
-    expect(struck.player.health).toBe(78)
-    expect(struck.opponent.health).toBe(92)
-    expect(struck.opponent.aura).toBeLessThan(ready.opponent.aura)
+    expect(struck.player.health).toBe(70)
+    expect(struck.opponent.health).toBe(ready.opponent.health)
+    expect(struck.opponent.aura).toBe(ready.opponent.aura)
+  })
+
+  it('lets Blinky swallow incoming objects but never Nen constructs', () => {
+    const ready = closeFight('shizuku', 'theta')
+    const shot = (id: number, x: number, matter: FightProjectile['matter']) => ({
+      ...SAMPLE_PROJECTILE,
+      id,
+      x,
+      matter,
+    })
+    const armed = hatsuFor('shizuku').onTrigger({
+      state: {
+        ...ready,
+        projectiles: [
+          shot(1, ready.player.x + 6, 'object'),
+          shot(2, ready.player.x + 6, 'nen'),
+          shot(3, ready.player.x + 40, 'object'),
+        ],
+      },
+      side: 'player',
+      source: 'shizuku',
+    })
+    expect(armed.player.hatsuEffects.blinkyFrames).toBeGreaterThan(0)
+    const cleaned = hatsuFor('shizuku').onFrame(armed)
+    expect(cleaned.projectiles.map((projectile) => projectile.id)).toEqual([2, 3])
+    expect(cleaned.player.hatsuEffects.blinkyFrames).toBe(
+      armed.player.hatsuEffects.blinkyFrames - 1,
+    )
   })
 
   it('turns Hinrigh’s Biohazard into temporary attack and armour', () => {
@@ -289,6 +364,23 @@ describe('fighter Hatsu registry', () => {
     })
     expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
     expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
+  })
+
+  it('never stuns Hinrigh with his own Biohazard', () => {
+    const triggered = hatsuFor('hinrigh').onTrigger({
+      state: closeFight('hinrigh', 'hisoka'),
+      side: 'player',
+      source: 'hinrigh',
+    })
+    const ticked = hatsuFor('hinrigh').onFrame(triggered)
+    expect(ticked.player.hatsuEffects.biohazardFrames).toBe(89)
+    expect(ticked.player.hitStun).toBe(0)
+
+    let fight = performAttack(closeFight('hinrigh', 'hisoka'), 'player', 'special')
+    fight = advance(fight, 1.2)
+    expect(fight.player.hatsuEffects.biohazardFrames).toBeGreaterThan(0)
+    expect(fight.player.hitStun).toBe(0)
+    expect(fight.player.pose).not.toBe('hit')
   })
 
   it('gives Hanzo’s clone one complete dodge', () => {
@@ -345,8 +437,8 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.hitStun).toBe(30)
   })
 
-  it('activates the third wave’s three reinforcement Hatsu', () => {
-    for (const source of ['basho', 'bill', 'furykov'] as const) {
+  it('activates Basho’s and Bill’s reinforcement Hatsu', () => {
+    for (const source of ['basho', 'bill'] as const) {
       const state = hatsuFor(source).onTrigger({
         state: closeFight(source, 'hisoka'),
         side: 'player',
@@ -404,34 +496,34 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
   })
 
-  it('turns Cluck’s flock and Zhang Lei’s coins into scaling buffs', () => {
-    const birds = hatsuFor('cluck').onTrigger({
-      state: closeFight('cluck', 'hisoka'),
-      side: 'player',
-      source: 'cluck',
-    })
+  it('turns Zhang Lei’s coins into a scaling buff', () => {
     let coins = closeFight('zhanglei', 'hisoka')
     for (let charge = 0; charge < 3; charge += 1) {
       coins = hatsuFor('zhanglei').onTrigger({ state: coins, side: 'player', source: 'zhanglei' })
     }
-    expect(hatsuDamageFactor(birds.player)).toBeGreaterThan(1)
     expect(hatsuDamageFactor(coins.player)).toBeGreaterThan(1.2)
     expect(hatsuDefenceFactor(coins.player)).toBeLessThan(1)
   })
 
-  it('applies Beyond’s sacrificial curse as a lasting vulnerability', () => {
-    const ready = closeFight('beyond', 'hisoka')
-    const cursed = hatsuFor('beyond').onImpact({
-      state: ready,
-      side: 'player',
-      defenderSide: 'opponent',
-      source: 'beyond',
-      blocked: false,
-      concealed: false,
-    })
-    expect(cursed.opponent.hatsuEffects.curseFrames).toBe(240)
-    expect(cursed.opponent.aura).toBeLessThan(ready.opponent.aura)
-    expect(hatsuDefenceFactor(cursed.opponent)).toBeGreaterThan(1)
+  it('keeps fighters whose canon Hatsu cannot act in a duel purely martial', () => {
+    for (const id of ['furykov', 'cluck', 'beyond', 'musse', 'sayird'] as const) {
+      const ready = closeFight(id, 'hisoka')
+      const hatsu = hatsuFor(id)
+      const triggered = hatsu.onTrigger({ state: ready, side: 'player', source: id })
+      const impacted = hatsu.onImpact({
+        state: ready,
+        side: 'player',
+        defenderSide: 'opponent',
+        source: id,
+        blocked: false,
+        concealed: false,
+      })
+      expect(hatsu.martialOnly).toBe(true)
+      expect(hatsuSourceFor(ready.player)).toBeNull()
+      expect(triggered).toBe(ready)
+      expect(impacted).toBe(ready)
+      expect(hatsu.onFrame(ready)).toBe(ready)
+    }
   })
 
   it('gives Fugetsu and Kacho one protected passage', () => {
@@ -474,22 +566,6 @@ describe('fighter Hatsu registry', () => {
     }
   })
 
-  it('lets Silent Majority execute its target on the third mark', () => {
-    let state = closeFight('silentmajority', 'hisoka')
-    for (let strike = 0; strike < 3; strike += 1) {
-      state = hatsuFor('silentmajority').onImpact({
-        state,
-        side: 'player',
-        defenderSide: 'opponent',
-        source: 'silentmajority',
-        blocked: false,
-        concealed: false,
-      })
-    }
-    expect(state.opponent.health).toBe(78)
-    expect(state.opponent.hatsuEffects.silentMarks).toBe(0)
-  })
-
   it('applies the remaining curse, contract and support effects', () => {
     const ready = closeFight('gidal', 'hisoka')
     const curse = hatsuFor('gidal').onImpact({
@@ -518,14 +594,14 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
   })
 
-  it('arms Padaille and grants tactical dodges to Musse, Sayird and Voconte', () => {
+  it('arms Padaille and grants Voconte a tactical dodge', () => {
     const armed = hatsuFor('padaille').onTrigger({
       state: closeFight('padaille', 'hisoka'),
       side: 'player',
       source: 'padaille',
     })
     expect(hatsuDamageFactor(armed.player)).toBeGreaterThan(1)
-    for (const source of ['musse', 'sayird', 'voconte'] as const) {
+    for (const source of ['voconte'] as const) {
       const state = hatsuFor(source).onTrigger({
         state: closeFight(source, 'hisoka'),
         side: 'player',

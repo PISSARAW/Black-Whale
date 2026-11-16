@@ -108,10 +108,6 @@ function completionSpecialTail(rig: AnimatedHuman, beat: MoveBeat): void {
     case 'sayird':
       rig.figure.rotation.y += 1.25 * gather - 1.6 * extension
       break
-    case 'silentmajority':
-      rig.figure.rotation.x -= 0.55 * extension
-      rig.arms[0].rotation.z += 1.3 * gather
-      break
     case 'terebellum':
       rig.arms[0].rotation.x -= 1.25 * gather
       rig.arms[1].rotation.x -= 1.1 * extension
@@ -132,10 +128,6 @@ function completionLightTail(rig: AnimatedHuman, beat: MoveBeat): boolean {
   switch (fighter) {
     case 'sayird':
       rig.figure.rotation.y += 0.92 * gather - 1.18 * extension
-      break
-    case 'silentmajority':
-      rig.arms[0].rotation.x -= 0.46 * gather
-      rig.arms[1].rotation.x -= 0.86 * extension
       break
     case 'terebellum':
       rig.figure.rotation.x -= 0.44 * extension
@@ -161,10 +153,6 @@ function completionHeavyTail(rig: AnimatedHuman, beat: MoveBeat): boolean {
     case 'sayird':
       rig.figure.rotation.z += 0.26 * gather
       rig.legs[0].rotation.x -= 0.82 * extension
-      break
-    case 'silentmajority':
-      rig.figure.rotation.y += 0.98 * gather - 1.42 * extension
-      rig.arms[0].rotation.x -= 0.4 * gather
       break
     case 'terebellum':
       rig.arms[0].rotation.x -= 1.4 * gather

@@ -21,6 +21,7 @@
     throwTechMotion,
     wakeupMotion,
   } from '$lib/fighting/reactionMotion'
+  import { fighterAuraHex } from '$lib/fighting/auraColours'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
@@ -139,7 +140,7 @@
               at: [0, 0],
               y: 0,
               size: 1,
-              colour: Number.parseInt(definition.colour.slice(1), 16),
+              colour: fighterAuraHex(fighter.id),
               stage: 0,
               hidden: false,
               human: {

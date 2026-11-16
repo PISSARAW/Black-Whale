@@ -1,3 +1,4 @@
+import { attackAuraColour } from './techniqueAuraColours'
 import type { FightSide, FightState } from './types'
 
 interface EffectSceneOptions {
@@ -32,6 +33,8 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const sync = (state: FightState, seconds: number) => {
     syncGum(options, { state, line: gum, material: gumMaterial })
     syncChain(options, { state, meshes: chain, seconds })
+    const chainSide = attackingSide(state, 'kurapika')
+    if (chainSide) chainMaterial.color.set(attackAuraColour(state[chainSide]))
     syncCards(options, { state, meshes: cards, seconds })
   }
 

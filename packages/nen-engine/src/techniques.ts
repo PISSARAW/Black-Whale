@@ -221,7 +221,8 @@ export const isAuraAtRest = (state: NenTechniqueState) =>
   state.ko === null &&
   !Object.values(state.ryu).some((share) => Number(share) > 0)
 
-export const canUseHatsu = (state: NenTechniqueState) => state.mode !== 'zetsu'
+/** On seals the user's own Nen: a body under the contract has no Hatsu to call on. */
+export const canUseHatsu = (state: NenTechniqueState) => state.mode !== 'zetsu' && !state.on
 export const canSeeIn = (state: NenTechniqueState) => state.gyo
 export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqueState) =>
   !source.in || observer.gyo

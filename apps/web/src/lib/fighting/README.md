@@ -7,17 +7,19 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
-- Le roster jouable compte quarante et un personnages. Il exige au moins un atout
+- Le roster jouable compte quarante personnages. Il exige au moins un atout
   canonique utilisable en affrontement : aptitude martiale, arme, Hatsu offensif,
   défensif ou tactique, ou pouvoir conceptuel activable pendant le combat. Une bête
   gardienne passive, non maîtrisée par son prince, ne suffit pas à rendre ce prince
   jouable. Les pouvoirs qui exigent une préparation incompatible avec un duel sont
-  exclus selon la même règle.
+  exclus selon la même règle. Silent Majority en a été retiré pour cette raison :
+  sa malédiction exige dix suspects à portée et son utilisateur, anonyme, n'a
+  aucune aptitude martiale connue ; il reste présent dans la visite et l'enquête.
 - Kurapika, Hisoka, Chrollo, Benjamin, Tserriednich, Feitan, Saiyu, Theta, Biscuit,
   Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh, Mizaistom,
   Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel, Lynch,
   Luini, Bill, Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
-  Silent Majority, Terebellum, Voconte et Yokotani satisfont ce contrat. Chrollo
+  Terebellum, Voconte et Yokotani satisfont ce contrat. Chrollo
   dispose de Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
@@ -41,14 +43,18 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
-  Silent Majority, Terebellum et Voconte. Quarante combattants disposent donc
-  désormais d’un moveset complet.
-- Yokotani clôt le roster avec sa défense judiciaire LSDF. Les quarante et un
-  combattants disposent ainsi de six cent quinze coups définis et cent vingt-trois
-  routes courtes de combo.
+  Terebellum et Voconte.
+- Yokotani clôt le roster avec sa défense judiciaire LSDF. Les quarante
+  combattants disposent ainsi de six cents coups définis et cent vingt routes
+  courtes de combo.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
+- Furykov, Cluck, Beyond, Musse et Sayird jouent en **martial pur**
+  (`martialOnlyHatsu`) : leur seul Hatsu canon exige une préparation qu'un duel
+  n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
+  posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
+  sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
   projectiles attestés sont propres au combattant ; les autres lancent une pierre,
   sans leur inventer de technique de Nen. Les collisions sont transmises à

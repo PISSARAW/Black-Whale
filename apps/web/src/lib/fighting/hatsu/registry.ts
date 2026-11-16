@@ -1,17 +1,13 @@
-import type { FighterHatsu } from './contract'
+import { martialOnlyHatsu, type FighterHatsu } from './contract'
 import { benjaminHatsu } from './benjamin'
 import { bashoHatsu } from './basho'
-import { beyondHatsu } from './beyond'
 import { billHatsu } from './bill'
 import { bonolenovHatsu } from './bonolenov'
 import { chrolloHatsu } from './chrollo'
 import {
   gidalHatsu,
   longhiHatsu,
-  musseHatsu,
   padailleHatsu,
-  sayirdHatsu,
-  silentMajorityHatsu,
   terebellumHatsu,
   tubeppaHatsu,
   tysonHatsu,
@@ -19,11 +15,9 @@ import {
   yokotaniHatsu,
 } from './combatCompletion'
 import { camillaHatsu } from './camilla'
-import { cluckHatsu } from './cluck'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
 import { franklinHatsu } from './franklin'
-import { furykovHatsu } from './furykov'
 import { fugetsuHatsu } from './fugetsu'
 import { gelHatsu } from './gel'
 import { halkenburgHatsu } from './halkenburg'
@@ -88,9 +82,9 @@ const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
   lynch: lynchHatsu,
   luini: luiniHatsu,
   bill: billHatsu,
-  furykov: furykovHatsu,
-  cluck: cluckHatsu,
-  beyond: beyondHatsu,
+  furykov: martialOnlyHatsu('furykov'),
+  cluck: martialOnlyHatsu('cluck'),
+  beyond: martialOnlyHatsu('beyond'),
   fugetsu: fugetsuHatsu,
   kacho: kachoHatsu,
   luzurus: luzurusHatsu,
@@ -99,12 +93,11 @@ const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
   zhanglei: zhangleiHatsu,
   gidal: gidalHatsu,
   longhi: longhiHatsu,
-  musse: musseHatsu,
+  musse: martialOnlyHatsu('musse'),
   padaille: padailleHatsu,
   tubeppa: tubeppaHatsu,
   tyson: tysonHatsu,
-  sayird: sayirdHatsu,
-  silentmajority: silentMajorityHatsu,
+  sayird: martialOnlyHatsu('sayird'),
   terebellum: terebellumHatsu,
   voconte: voconteHatsu,
   yokotani: yokotaniHatsu,

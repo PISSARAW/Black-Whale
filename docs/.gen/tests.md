@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 523
+Fichiers : 530
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -212,6 +212,10 @@ Fichiers : 523
 
 - anchors > gives every reconstructed room a place of its own to stand
 
+## `apps/web/src/lib/fighting/auraColours.test.ts`
+
+- fighter aura colours > uses the colour the manga or the anime showed
+
 ## `apps/web/src/lib/fighting/combatGrammar.test.ts`
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
@@ -224,9 +228,18 @@ Fichiers : 523
 
 - fighting engine > starts a duel with the selected Black Whale fighters
 
+## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
+
+- fighting rig > draws every fighter, with a plain guard for one that has no stance yet
+- keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
+
+- idle stances > gives every playable fighter a stance
 
 ## `apps/web/src/lib/fighting/fightStyles.test.ts`
 
@@ -254,9 +267,18 @@ Fichiers : 523
 
 - In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
 
+## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
+
+- key pose timeline > pins keys to the phase they belong to
+- fight poses > blends and sums joints, treating a missing joint as rest
+
 ## `apps/web/src/lib/fighting/movesets.test.ts`
 
 - wave one movesets > gives ten fighters the complete requested move structure
+
+## `apps/web/src/lib/fighting/onTechnique.test.ts`
+
+- On (The Last Mission) > banks grudge from damage taken, never from aura
 
 ## `apps/web/src/lib/fighting/projectiles.test.ts`
 
@@ -277,6 +299,10 @@ Fichiers : 523
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
+
+## `apps/web/src/lib/fighting/techniqueAuraColours.test.ts`
+
+- technique aura colours > gives each of Kurapika’s chains the aura the anime showed
 
 ## `apps/web/src/lib/fighting/techniqueContracts.test.ts`
 
@@ -1530,7 +1556,7 @@ Fichiers : 523
 
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 
-- shared human figure > draws Morena as one seated silhouette at the negotiation table
+- shared human figure > forwards locomotion poses and combat motion to the articulated rig
 
 ## `apps/web/src/lib/tour/humanHair.test.ts`
 

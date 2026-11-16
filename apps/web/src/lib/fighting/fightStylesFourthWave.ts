@@ -7,7 +7,7 @@ type FourthWaveId = Extract<
 >
 
 export const FOURTH_WAVE_STYLES: Record<FourthWaveId, FightingStyle> = {
-  cluck: make('cluck', ['Essaim tactique', 'Tactical flock'], {
+  cluck: make('cluck', ['Harcèlement mobile', 'Mobile harassment'], {
     range: [14, 21],
     chance: 0.56,
     attacks: {
@@ -17,7 +17,7 @@ export const FOURTH_WAVE_STYLES: Record<FourthWaveId, FightingStyle> = {
       ranged: { startup: 0.7 },
     },
   }),
-  beyond: make('beyond', ['Pression sacrificielle', 'Sacrificial pressure'], {
+  beyond: make('beyond', ['Pression frontale', 'Frontal pressure'], {
     range: [6, 10],
     chance: 0.44,
     attacks: {

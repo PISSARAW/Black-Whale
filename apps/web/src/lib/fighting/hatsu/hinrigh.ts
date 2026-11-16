@@ -23,12 +23,12 @@ export const hinrighHatsu: FighterHatsu = {
   }),
 }
 
+/** Biohazard is carried by Hinrigh himself: it only counts down, it never locks its caster. */
 function tickBiohazard(fighter: ArcadeFighter): ArcadeFighter {
   const frames = fighter.hatsuEffects.biohazardFrames
   if (frames <= 0) return fighter
   return {
     ...fighter,
-    hitStun: Math.max(fighter.hitStun, 2),
     hatsuEffects: { ...fighter.hatsuEffects, biohazardFrames: frames - 1 },
   }
 }

@@ -10,7 +10,6 @@ type CompletionId = Extract<
   | 'tubeppa'
   | 'tyson'
   | 'sayird'
-  | 'silentmajority'
   | 'terebellum'
   | 'voconte'
   | 'yokotani'
@@ -41,7 +40,7 @@ const SPECS: readonly StyleSpec[] = [
   },
   {
     id: 'musse',
-    names: ['Renseignement aérien', 'Aerial intelligence'],
+    names: ['Patrouille armée', 'Armed patrol'],
     range: [13, 20],
     chance: 0.56,
     threshold: 0.34,
@@ -69,17 +68,10 @@ const SPECS: readonly StyleSpec[] = [
   },
   {
     id: 'sayird',
-    names: ['Reconnaissance ciblée', 'Targeted scouting'],
+    names: ['Garde rapprochée', 'Close protection'],
     range: [14, 22],
     chance: 0.55,
     threshold: 0.32,
-  },
-  {
-    id: 'silentmajority',
-    names: ['Assassinat invisible', 'Invisible assassination'],
-    range: [15, 23],
-    chance: 0.62,
-    threshold: 0.28,
   },
   {
     id: 'terebellum',

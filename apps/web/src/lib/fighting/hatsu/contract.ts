@@ -18,9 +18,26 @@ export interface FighterHatsu {
   onTrigger: (context: HatsuTriggerContext) => FightState
   onImpact: (context: HatsuImpactContext) => FightState
   onFrame: (state: FightState) => FightState
-  sourceFor?: (fighter: ArcadeFighter) => FighterId
+  sourceFor?: (fighter: ArcadeFighter, moveId?: string) => FighterId | null
+  /** The canon Hatsu cannot act in a duel: the fighter plays on martial skill and basic Nen. */
+  martialOnly?: true
 }
 
 export const unchangedTrigger = ({ state }: HatsuTriggerContext): FightState => state
 export const unchangedImpact = ({ state }: HatsuImpactContext): FightState => state
 export const unchangedFrame = (state: FightState): FightState => state
+
+/**
+ * A fighter whose only canon Hatsu needs a preparation no duel allows (days of
+ * co-presence, a courier flock, a post-mortem sacrifice, a surveillance familiar).
+ * Inventing a combat effect for it would contradict the manga, so none is applied.
+ */
+export function martialOnlyHatsu(id: FighterId): FighterHatsu {
+  return {
+    id,
+    onTrigger: unchangedTrigger,
+    onImpact: unchangedImpact,
+    onFrame: unchangedFrame,
+    martialOnly: true,
+  }
+}

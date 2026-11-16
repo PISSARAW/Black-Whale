@@ -74,7 +74,6 @@ describe('wave one movesets', () => {
       'musse',
       'padaille',
       'sayird',
-      'silentmajority',
       'terebellum',
       'voconte',
     ])
@@ -233,9 +232,12 @@ function withFinisherCondition(state: FightState): FightState {
     case 'theta':
       return withOpponentEffect(state, 'forcedZetsuFrames', 60)
     case 'hisoka':
-      return { ...state, bungeeGum: { owner: 'player', target: 'opponent', hidden: false } }
+      return {
+        ...state,
+        bungeeGum: { owner: 'player', target: 'opponent', hidden: false, retracting: false },
+      }
     case 'chrollo':
-      return withOpponentEffect(state, 'sunMoonMarks', 1)
+      return withOpponentEffect(state, 'sunMark', 1)
     case 'benjamin':
       return withPlayerEffect(state, 'batonCharges', 3)
     case 'tserriednich':
@@ -293,25 +295,19 @@ function withFinisherCondition(state: FightState): FightState {
     case 'bill':
       return withPlayerEffect({ ...state, player: { ...player, health: 50 } }, 'growthFrames', 60)
     case 'furykov':
-      return withPlayerEffect(
-        { ...state, player: { ...player, comboHits: 3 } },
-        'comboFocusFrames',
-        60,
-      )
+      return { ...state, player: { ...player, comboHits: 3 } }
     case 'cluck':
-      return withPlayerEffect(state, 'birdFrames', 60)
+      return { ...state, opponent: { ...opponent, health: 40 } }
     case 'beyond':
-      return withOpponentEffect({ ...state, player: { ...player, health: 40 } }, 'curseFrames', 60)
+      return { ...state, player: { ...player, health: 40 } }
     case 'longhi':
       return withOpponentEffect(state, 'contractFrames', 60)
     case 'musse':
-      return withPlayerEffect(state, 'secretWindowDodges', 1)
+      return { ...state, opponent: { ...opponent, health: 35 } }
     case 'padaille':
       return withPlayerEffect(state, 'weaponFrames', 60)
     case 'sayird':
-      return withPlayerEffect(state, 'littleEyeDodges', 1)
-    case 'silentmajority':
-      return withOpponentEffect(state, 'silentMarks', 2)
+      return { ...state, player: { ...player, comboHits: 2 } }
     case 'terebellum':
       return withPlayerEffect(state, 'sweetHomeCharges', 1)
     case 'voconte':

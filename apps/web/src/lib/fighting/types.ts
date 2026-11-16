@@ -50,7 +50,6 @@ export type FighterId =
   | 'tubeppa'
   | 'tyson'
   | 'sayird'
-  | 'silentmajority'
   | 'terebellum'
   | 'voconte'
   | 'yokotani'
@@ -139,6 +138,8 @@ export interface ArcadeFighter {
   auraExhausted: boolean
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
+  /** On (怨): hatred banked from damage, and the seal its blood leaves. Absent until hit. */
+  on?: { grudge: number; sealFrames: number }
   /** Dash, prejump, landing and air drift; absent until the fighter first moves. */
   motion?: FighterMotion
   attack: {
@@ -190,7 +191,9 @@ export interface FighterHatsuEffects {
   futureSight: number
   batonCharges: number
   senseSeals: number
-  sunMoonMarks: number
+  blinkyFrames: number
+  sunMark: number
+  moonMark: number
   manipulatedFrames: number
   transformationFrames: number
   isolationFrames: number
@@ -211,9 +214,6 @@ export interface FighterHatsuEffects {
   soulExposedFrames: number
   teleportDodges: number
   growthFrames: number
-  comboFocusFrames: number
-  birdFrames: number
-  curseFrames: number
   wormDodges: number
   kachoGuards: number
   desireFrames: number
@@ -222,16 +222,18 @@ export interface FighterHatsuEffects {
   coinCharges: number
   gidalCurseFrames: number
   contractFrames: number
-  secretWindowDodges: number
   weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
-  littleEyeDodges: number
-  silentMarks: number
   sweetHomeCharges: number
   doorDodges: number
   lsdfGuards: number
-  lastHatsuReceived: FighterId | null
+  /** Set once the Hatsu was activated in front of this fighter. */
+  witnessedHatsu: FighterId | null
+  /** Skill Hunter's held page: the only ability Chrollo can replay. */
+  stolenHatsu: FighterId | null
+  /** 1 while the fighter's own Hatsu sits in Chrollo's book. */
+  hatsuStolen: number
 }
 
 export interface FightInput {
@@ -290,12 +292,18 @@ export interface FightProjectile {
   colour: string
   age: number
   lifetime: number
+  /** `object` for real thrown matter; `nen` for conjured or emitted aura. */
+  matter: ProjectileMatter
 }
+
+export type ProjectileMatter = 'object' | 'nen'
 
 export interface BungeeGumAttachment {
   owner: FightSide
   target: FightSide
   hidden: boolean
+  /** The owner is reeling the target in; cleared once the line goes slack. */
+  retracting: boolean
 }
 
 export interface FightState {

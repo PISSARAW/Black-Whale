@@ -3,6 +3,7 @@
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
+  import FightGrudge from './FightGrudge.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -25,6 +26,7 @@
     <div class="health"><span style={`width:${state.player.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
+    <FightGrudge fighter={state.player} {language} />
     {#if visibleBungee}
       <div class="secret-status">
         {state.bungeeGum?.owner === 'player'
@@ -80,6 +82,7 @@
           ? 'aura adverse masquée'
           : 'opponent aura hidden'}
     </div>
+    <FightGrudge fighter={state.opponent} {language} />
   </div>
 </div>
 

@@ -1,4 +1,5 @@
 import { canUseHatsu } from '@black-whale/nen-engine'
+import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export { advanceHatsuFrames, hatsuFor } from './hatsu/registry'
 import { hatsuFor } from './hatsu/registry'
@@ -6,16 +7,34 @@ import { hatsuFor } from './hatsu/registry'
 /** Shared gameplay contract for every roster Hatsu. */
 export const FIGHT_HATSU_AURA_COST = 40
 
-export function canUseFightHatsu(fighter: Pick<ArcadeFighter, 'aura' | 'nen'>): boolean {
-  return fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen)
+export function canUseFightHatsu(fighter: Pick<ArcadeFighter, 'aura' | 'nen' | 'on'>): boolean {
+  return (
+    fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
+  )
 }
 
-export function hatsuSourceFor(fighter: ArcadeFighter): FighterId {
-  return hatsuFor(fighter.id).sourceFor?.(fighter) ?? fighter.id
+/**
+ * `null` when no Hatsu acts: a martial-only fighter, or one whose ability is held
+ * in Chrollo's book. Their techniques remain Ren-charged strikes.
+ */
+export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): FighterId | null {
+  const hatsu = hatsuFor(fighter.id)
+  if (hatsu.martialOnly || fighter.hatsuEffects.hatsuStolen > 0) return null
+  return hatsu.sourceFor ? hatsu.sourceFor(fighter, moveId) : fighter.id
 }
 
+/** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
-  return hatsuFor(source).onTrigger({ state, side, source })
+  const witnessSide = side === 'player' ? 'opponent' : 'player'
+  const witness = state[witnessSide]
+  const seen = {
+    ...state,
+    [witnessSide]: {
+      ...witness,
+      hatsuEffects: { ...witness.hatsuEffects, witnessedHatsu: source },
+    },
+  }
+  return hatsuFor(source).onTrigger({ state: seen, side, source })
 }
 
 export function resolveHatsuImpact(options: {
@@ -28,16 +47,8 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  const defender = options.state[defenderSide]
-  const recorded = {
-    ...options.state,
-    [defenderSide]: {
-      ...defender,
-      hatsuEffects: { ...defender.hatsuEffects, lastHatsuReceived: source },
-    },
-  }
   return hatsuFor(source).onImpact({
-    state: recorded,
+    state: options.state,
     side,
     defenderSide,
     source,
@@ -56,8 +67,6 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
   const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
   const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
-  const combo = fighter.hatsuEffects.comboFocusFrames > 0 ? 1.2 : 1
-  const birds = fighter.hatsuEffects.birdFrames > 0 ? 1.15 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
   return (
@@ -69,8 +78,6 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
     biohazard *
     haiku *
     growth *
-    combo *
-    birds *
     coins *
     completion
   )
@@ -94,21 +101,11 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
   const growth = fighter.hatsuEffects.growthFrames > 0 ? 0.82 : 1
   const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
-  const cursed = fighter.hatsuEffects.curseFrames > 0 ? 1.2 : 1
   const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
   const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
   const completion = completionDefenceFactor(fighter)
   return (
-    transformed *
-    cantabile *
-    biohazard *
-    predator *
-    growth *
-    exposed *
-    cursed *
-    smoked *
-    coins *
-    completion
+    transformed * cantabile * biohazard * predator * growth * exposed * smoked * coins * completion
   )
 }
 
@@ -171,8 +168,6 @@ type AvoidanceKey =
   | 'teleportDodges'
   | 'wormDodges'
   | 'kachoGuards'
-  | 'secretWindowDodges'
-  | 'littleEyeDodges'
   | 'sweetHomeCharges'
   | 'doorDodges'
   | 'lsdfGuards'
@@ -185,8 +180,6 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'teleportDodges',
   'wormDodges',
   'kachoGuards',
-  'secretWindowDodges',
-  'littleEyeDodges',
   'sweetHomeCharges',
   'doorDodges',
   'lsdfGuards',

@@ -5,12 +5,14 @@ import type {
   FightSide,
   FightState,
   FighterId,
+  ProjectileMatter,
   ProjectileShape,
 } from './types'
 
 export const RANGED_AURA_COST = 12
 
 export interface ProjectileProfile {
+  matter: ProjectileMatter
   labelFr: string
   labelEn: string
   shape: ProjectileShape
@@ -27,20 +29,26 @@ export interface ProjectileProfile {
 }
 
 /**
+ * `matter` says what Shizuku's Blinky may swallow: real objects (cards, bullets,
+ * needles, paper, stones) but never conjured or emitted aura, nor Hinrigh's
+ * living weapons.
+ *
  * Only attacks the character is actually shown carrying or producing belong
  * here. Everyone else still gets the shared ranged arcade action, but throws a
  * mundane stone instead of gaining an invented Nen technique.
  */
 const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   kurapika: projectile({
+    matter: 'nen',
     labels: ['Chaîne', 'Chain'],
     shape: 'chain',
-    colour: '#d7e6ff',
+    colour: '#e8d44d',
     speed: 48,
     damage: 10,
     size: [1.25, 0.55],
   }),
   hisoka: projectile({
+    matter: 'object',
     labels: ['Carte', 'Card'],
     shape: 'card',
     colour: '#ff5fb7',
@@ -49,6 +57,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.85, 0.45],
   }),
   benjamin: projectile({
+    matter: 'object',
     labels: ['Tir d’arme lourde', 'Heavy firearm shot'],
     shape: 'bullet',
     colour: '#d8c7a0',
@@ -57,6 +66,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.65, 0.28],
   }),
   feitan: projectile({
+    matter: 'object',
     labels: ['Pointe du parapluie', 'Umbrella spike'],
     shape: 'bullet',
     colour: '#cbd5e1',
@@ -65,6 +75,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.9, 0.3],
   }),
   theta: projectile({
+    matter: 'nen',
     labels: ['Projectile d’aura', 'Aura projectile'],
     shape: 'orb',
     colour: '#67e8f9',
@@ -73,6 +84,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.8, 0.6],
   }),
   franklin: projectile({
+    matter: 'nen',
     labels: ['Balles d’aura', 'Aura bullets'],
     shape: 'bullet',
     colour: '#ef4444',
@@ -81,6 +93,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.6, 0.24],
   }),
   machi: projectile({
+    matter: 'nen',
     labels: ['Fil de Nen', 'Nen thread'],
     shape: 'chain',
     colour: '#f472b6',
@@ -89,6 +102,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [1.2, 0.3],
   }),
   illumi: projectile({
+    matter: 'object',
     labels: ['Aiguille', 'Needle'],
     shape: 'bullet',
     colour: '#a78bfa',
@@ -97,6 +111,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.72, 0.22],
   }),
   kalluto: projectile({
+    matter: 'object',
     labels: ['Confetti', 'Confetti'],
     shape: 'card',
     colour: '#fb7185',
@@ -105,6 +120,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.7, 0.4],
   }),
   bonolenov: projectile({
+    matter: 'nen',
     labels: ['Jupiter', 'Jupiter'],
     shape: 'orb',
     colour: '#fbbf24',
@@ -113,6 +129,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [1.25, 1],
   }),
   hinrigh: projectile({
+    matter: 'nen',
     labels: ['Arme Biohazard', 'Biohazard weapon'],
     shape: 'bullet',
     colour: '#34d399',
@@ -121,6 +138,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.85, 0.32],
   }),
   leorio: projectile({
+    matter: 'nen',
     labels: ['Poing émissif', 'Emissive fist'],
     shape: 'orb',
     colour: '#38bdf8',
@@ -129,6 +147,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [1, 0.75],
   }),
   halkenburg: projectile({
+    matter: 'nen',
     labels: ['Flèche de Grimmel', 'Grimmel arrow'],
     shape: 'bullet',
     colour: '#f8fafc',
@@ -136,17 +155,10 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 12,
     size: [1.1, 0.3],
   }),
-  cluck: projectile({
-    labels: ['Oiseau manipulé', 'Manipulated bird'],
-    shape: 'card',
-    colour: '#fbbf24',
-    speed: 62,
-    damage: 9,
-    size: [0.9, 0.55],
-  }),
 }
 
 const THROWN_STONE = projectile({
+  matter: 'object',
   labels: ['Pierre', 'Stone'],
   shape: 'stone',
   colour: '#81715f',
@@ -156,6 +168,7 @@ const THROWN_STONE = projectile({
 })
 
 interface ProjectileOptions {
+  matter: ProjectileMatter
   labels: [string, string]
   shape: ProjectileShape
   colour: string
@@ -166,6 +179,7 @@ interface ProjectileOptions {
 
 function projectile(options: ProjectileOptions): ProjectileProfile {
   return {
+    matter: options.matter,
     labelFr: options.labels[0],
     labelEn: options.labels[1],
     shape: options.shape,
@@ -221,6 +235,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     targetZone: 'torso',
     shape: profile.shape,
     colour: profile.colour,
+    matter: profile.matter,
     age: 0,
     lifetime: 120,
   }

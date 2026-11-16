@@ -11,6 +11,7 @@ import {
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
+import { opponentWantsOn, resolveOnImpacts } from './onTechnique'
 import { fighterDefinition } from './roster'
 import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
@@ -81,7 +82,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const withHatsu = advanceHatsuFrames(buffered)
   const armed = spawnRangedProjectiles(withHatsu)
   const flight = advanceProjectiles(armed, FIXED_STEP)
-  const resolved = resolveFightImpacts(flight.state, flight.hits)
+  const resolved = resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits))
   if (resolved.phase === 'finished') return resolved
   const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
   const remainingFrames =
@@ -245,7 +246,7 @@ function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string)
   const move = moveById(moveId)
   const usesHatsu = move ? ['special', 'finisher'].includes(move.category) : kind === 'special'
   return {
-    hatsuSource: usesHatsu ? hatsuSourceFor(fighter) : null,
+    hatsuSource: usesHatsu ? hatsuSourceFor(fighter, moveId) : null,
     concealed: concealedHatsu(fighter, kind),
     resourceReady: move ? fighter.aura >= move.auraCost : attackResourceReady(fighter, kind),
   }
@@ -307,13 +308,14 @@ function planOpponentNen(state: FightState): FightState {
   const opponent = state.opponent
   if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
   if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
+  if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
   if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
   return wantsRen(opponent, gap) ? applyOpponentAura(state, { aura: true }) : state
 }
 
 function applyOpponentAura(
   state: FightState,
-  partial: Partial<Pick<FightInput, 'aura' | 'down' | 'guard' | 'jump'>>,
+  partial: Partial<Pick<FightInput, 'aura' | 'down' | 'guard' | 'jump' | 'hatsu'>>,
 ): FightState {
   const input = { ...EMPTY_INPUT, ...partial }
   return { ...state, opponent: applyAuraContext(state.opponent, input) }

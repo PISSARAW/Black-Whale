@@ -1,4 +1,5 @@
 import { canUseHatsu } from '@black-whale/nen-engine'
+import { hatsuSealedByOn } from './onTechnique'
 import { moveId } from './movesetFactory'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
@@ -79,7 +80,7 @@ export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boo
   if (fighter.aura < move.auraCost) return false
   return move.category !== 'special' && move.category !== 'finisher'
     ? true
-    : canUseHatsu(fighter.nen)
+    : canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
 }
 
 export function finisherReady(state: FightState, side: FightSide): boolean {
@@ -136,7 +137,10 @@ const opponentOf = (state: FightState, side: FightSide) =>
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   kurapika: (state, side) => opponentOf(state, side).health <= 35,
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
-  chrollo: (state, side) => opponentOf(state, side).hatsuEffects.sunMoonMarks > 0,
+  chrollo: (state, side) => {
+    const marks = opponentOf(state, side).hatsuEffects
+    return marks.sunMark + marks.moonMark > 0
+  },
   benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
   feitan: (state, side) => state[side].health <= 35,
@@ -169,16 +173,13 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   bill: (state, side) => state[side].hatsuEffects.growthFrames > 0 && state[side].health <= 50,
-  furykov: (state, side) =>
-    state[side].hatsuEffects.comboFocusFrames > 0 && state[side].comboHits >= 3,
-  cluck: (state, side) => state[side].hatsuEffects.birdFrames > 0,
-  beyond: (state, side) =>
-    opponentOf(state, side).hatsuEffects.curseFrames > 0 && state[side].health <= 40,
+  furykov: (state, side) => state[side].comboHits >= 3,
+  cluck: (state, side) => opponentOf(state, side).health <= 40,
+  beyond: (state, side) => state[side].health <= 40,
   longhi: (state, side) => opponentOf(state, side).hatsuEffects.contractFrames > 0,
-  musse: (state, side) => state[side].hatsuEffects.secretWindowDodges > 0,
+  musse: (state, side) => opponentOf(state, side).health <= 35,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
-  sayird: (state, side) => state[side].hatsuEffects.littleEyeDodges > 0,
-  silentmajority: (state, side) => opponentOf(state, side).hatsuEffects.silentMarks >= 2,
+  sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => state[side].hatsuEffects.sweetHomeCharges > 0,
   voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
   yokotani: (state, side) => state[side].hatsuEffects.lsdfGuards > 0,

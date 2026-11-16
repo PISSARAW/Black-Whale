@@ -6,6 +6,7 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
   import { attackProgress } from '$lib/fighting/frameData'
+  import { fighterAuraHex } from '$lib/fighting/auraColours'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { ArcadeFighter, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -88,7 +89,7 @@
             at: [0, 0],
             y: 0,
             size: preview ? 0.9 : 1,
-            colour: Number.parseInt(definition.colour.slice(1), 16),
+            colour: fighterAuraHex(fighter.id),
             stage: 0,
             hidden: false,
             human: {

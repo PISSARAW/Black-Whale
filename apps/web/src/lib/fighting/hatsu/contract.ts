@@ -40,9 +40,8 @@ export const unchangedImpact = ({ state }: HatsuImpactContext): FightState => st
 export const unchangedFrame = (state: FightState): FightState => state
 
 /**
- * A fighter whose personal Hatsu is unknown or needs preparation no duel allows (days of
- * co-presence, a courier flock, a post-mortem sacrifice, a surveillance familiar).
- * Inventing a combat effect for it would contradict the manga, so none is applied.
+ * A fighter whose personal Hatsu is unknown or lacks a suitable target or setup here.
+ * Combat moves stay martial; stealableOutsideDuel may still declare the actual Hatsu.
  */
 export function martialOnlyHatsu(id: FighterId): FighterHatsu {
   return {

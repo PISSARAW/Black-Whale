@@ -40,8 +40,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'cluck',
     mechanic: [
-      'Combat du Zodiaque : sa Manipulation d’oiseaux sert au courrier, pas au duel ; Cluck se bat en Hunter mobile qui change d’angle sans cesse.',
-      'Zodiac combat: her Bird Manipulation carries mail, not duels; Cluck fights as a mobile Hunter who keeps changing angles.',
+      'Cluck contrôle des oiseaux, notamment pour livrer les bulletins de vote ; les conditions et limites complètes restent inconnues. Aucun oiseau à contrôler dans ce duel : son Hatsu reste réel et volable par Steal Chain, mais inutilisable ici. Aucune attaque de volée inventée ; ses coups sont des adaptations martiales.',
+      'Cluck controls birds, notably to deliver voting ballots; the full conditions and limits remain unknown. This duel supplies no birds to control: her Hatsu is real and stealable through Steal Chain, but unavailable here. No invented flock attack; her strikes are martial adaptations.',
     ],
     finisherCondition: [
       'L’adversaire doit être à 40 PV ou moins.',

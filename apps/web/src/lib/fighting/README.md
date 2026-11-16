@@ -168,11 +168,19 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   sur plusieurs jours restent hors duel. Coût d’ouverture (40 aura), engagement
   et règle de lisibilité par Gyo sont des adaptations ; ses autres techniques
   restent martiales, sans bonus de dégâts ni esquive automatique.
-- Cluck, Beyond, Musse et Sayird jouent en **martial pur**
-  (`martialOnlyHatsu`) : leur seul Hatsu canon exige une préparation qu'un duel
-  n'offre pas (oiseaux messagers, sacrifice
-  posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
-  sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
+- Cluck, Beyond, Musse et Sayird combattent avec des coups martiaux chargés de Ren,
+  sans transformer leurs Hatsu en effets offensifs inventés. L’absence de cible
+  ou de préparation adaptée dans ce mode ne rend pas leurs pouvoirs inexistants.
+- Cluck conserve son **contrôle d’oiseaux**, attesté pour la livraison de bulletins
+  de vote (chapitre 320), sans restriction canonique au courrier : les conditions
+  et limites complètes restent inconnues. Aucun oiseau n’est fourni par ce duel.
+  `hatsu/cluck.ts` déclare une capacité réelle retenable par Steal Chain sous
+  l’identité `cluck:birdManipulation`, distincte de ses coups. Sans cible adaptée,
+  aucun chargement ni usage de Stealth Dolphin n’est proposé et Emperor Time
+  reste désactivable. Le HUD nomme le pouvoir et explique l’absence d’oiseaux ;
+  aucune volée, protection, information partagée ou attaque d’oiseaux n’est inventée.
+  Le vol ne scelle que ce Hatsu, pas ses techniques martiales après récupération
+  de l’aura drainée. Retour de capacité et nouvelle manche lèvent la rétention.
 - Little Eye reste un Hatsu réel de Sayird : il contrôle un petit animal réel
   (jusqu’à la taille d’un hamster) et transmet sa vue et son ouïe, sans agir sur
   une créature matérialisée par le Nen. Kurapika peut le retenir après drainage,

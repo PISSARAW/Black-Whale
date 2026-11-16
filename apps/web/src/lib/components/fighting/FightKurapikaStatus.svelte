@@ -45,9 +45,10 @@
         </div>
         {#if outsideDuel}
           <div>
+            {language === 'fr' ? outsideDuel.reasonFr : outsideDuel.reasonEn}
             {language === 'fr'
-              ? 'Hors duel : aucun petit animal réel à contrôler. Capacité conservée dans Steal Chain.'
-              : 'Outside the duel: no real small animal to control. Ability retained in Steal Chain.'}
+              ? 'Capacité conservée dans Steal Chain.'
+              : 'Ability retained in Steal Chain.'}
           </div>
         {:else}
           <div>

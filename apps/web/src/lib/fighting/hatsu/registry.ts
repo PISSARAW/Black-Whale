@@ -17,6 +17,7 @@ import {
   voconteHatsu,
 } from './combatCompletion'
 import { camillaHatsu } from './camilla'
+import { cluckHatsu } from './cluck'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
 import { franklinHatsu } from './franklin'
@@ -87,7 +88,7 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   luini: () => luiniHatsu,
   bill: () => billHatsu,
   furykov: () => furykovHatsu,
-  cluck: () => martialOnlyHatsu('cluck'),
+  cluck: () => cluckHatsu,
   beyond: () => martialOnlyHatsu('beyond'),
   fugetsu: () => fugetsuHatsu,
   kacho: () => kachoHatsu,

@@ -6,6 +6,7 @@
   import { createFightState } from '$lib/fighting/fightState'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
   import { focusGuardRyu } from '$lib/fighting/nen'
+  import { hatsuFor } from '$lib/fighting/hatsu/registry'
   import type { FightSide, FightState, FighterId } from '$lib/fighting/types'
 
   let state = createFightState('kurapika', 'hisoka')
@@ -44,15 +45,17 @@
       current[side === 'player' ? 'opponent' : 'player'].hatsuEffects.manipulatedFrames = 120
     }
     if (fighter.kurapika) {
+      const victim = side === 'player' ? 'opponent' : 'player'
+      const outside = hatsuFor(current[victim].id).stealableOutsideDuel
       fighter.kurapika = {
         ...fighter.kurapika,
         emperorTime: true,
         lifespanFrames: 1234567,
         held: {
-          victim: side === 'player' ? 'opponent' : 'player',
-          source: 'benjamin',
-          moveId: 'benjamin:neutralSpecial',
-          loaded: true,
+          victim,
+          source: outside ? current[victim].id : 'benjamin',
+          moveId: outside?.id ?? 'benjamin:neutralSpecial',
+          loaded: !outside,
           used: false,
           sustainedKeys: [],
         },

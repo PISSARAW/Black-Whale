@@ -34,8 +34,10 @@ une vérification dans le manga avant d'être corrigés.
 4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck, Beyond, Musse et Sayird jouent en martial pur (`martialOnlyHatsu`). Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
    Le README exclut « les pouvoirs qui
    exigent une préparation incompatible avec un duel ». Le déchiffrage et la fabrication de
-   Combo Master restent donc exclus ; son alerte immédiate convient au duel. Cluck
-   (oiseaux messagers), Beyond (malédiction posthume préparée), Silent Majority (dix suspects),
+   Combo Master restent donc exclus ; son alerte immédiate convient au duel. Le contrôle
+   d’oiseaux de Cluck reste réel et retenable par Steal Chain, mais sans oiseau cible fourni
+   dans ce mode ; la livraison de courrier n’est pas une restriction canonique.
+   Beyond (malédiction posthume préparée), Silent Majority (dix suspects),
    Musse et Sayird (surveillance) n'ont aucun Hatsu de duel canon. Leurs effets en jeu sont
    inventés. **Décision à prendre :** les garder en martial pur, étiqueter honnêtement
    `gameplay-abstraction`, ou les retirer du roster.
@@ -107,7 +109,7 @@ une vérification dans le manga avant d'être corrigés.
 | Combattant      | Hatsu en jeu                       | Canon (fiche)                                                                                | Verdict  | Écart                                                                  |
 | --------------- | ---------------------------------- | -------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
 | Furykov         | Console d’alerte informative       | Combo Master : alerte immédiate AFFECTED USERS ; déchiffrage/fabrication sur plusieurs jours | D (fait) | Corrigé le 2026-11-16 : L ouvre la console sans frappe ; alerte sur Nen réellement dissimulé dirigé contre lui, signature illisible « ? », destinataires confirmés uniquement. Aucun buff, esquive, prédiction ou déchiffrage accéléré. Coût, engagement et lisibilité par Gyo sont des adaptations au duel. |
-| Cluck           | ×1,15 dégâts pendant 3 s           | Oiseaux messagers                                                                            | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
+| Cluck | Coups martiaux ; contrôle d’oiseaux retenable par Steal Chain | Contrôle d’oiseaux attesté pour distribuer des bulletins de vote ; conditions complètes inconnues | D (fait) | Corrigé le 2026-11-16 : pouvoir réel distinct des coups, sans restriction au courrier. Aucun oiseau fourni dans ce duel, aucun effet de volée inventé ; rétention après contact et drainage, sans chargement de Dolphin ni verrouillage d’Emperor Time. |
 | Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Longhi | Contrat volontaire, prêt à usage unique et sanction de Zetsu | Moonlight Act : termes expliqués et deux signatures volontaires (ch. 401) | D (fait) | Corrigé le 2026-11-16 : proposition, acceptation ou refus explicites ; aucune entrave sur touche ni finisher offensif. Les deux signataires subissent Zetsu en cas de violation. La trêve de cinq secondes et la sanction limitée au match sont des adaptations déclarées. |
 | Musse           | Une esquive                        | Secret Window : hibou espion                                                                 | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |

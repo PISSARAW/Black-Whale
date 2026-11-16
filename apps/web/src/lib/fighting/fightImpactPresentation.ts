@@ -1,4 +1,5 @@
-import type { AttackKind, FightImpact } from './types'
+import { fighterMotionProfile } from './fighterMotionProfile'
+import type { AttackKind, FighterId, FightImpact } from './types'
 
 /** Visual weight of an impact. This never changes damage, stun or hitstop. */
 export interface ImpactPresentation {
@@ -47,9 +48,12 @@ const PROFILES: Record<AttackKind, ImpactPresentation> = {
 
 export function impactPresentation(
   impact: Pick<FightImpact, 'kind' | 'blocked' | 'critical' | 'knockdown' | 'wallSplat'>,
+  attacker?: FighterId,
 ): ImpactPresentation {
   const base = PROFILES[impact.kind]
-  const force = impact.critical || impact.knockdown || impact.wallSplat ? 1.25 : 1
+  const character = attacker ? fighterMotionProfile(attacker).impact : 1
+  const decisive = impact.critical || impact.knockdown || impact.wallSplat ? 1.25 : 1
+  const force = character * decisive
   const guard = impact.blocked ? 0.72 : 1
   return {
     sparks: Math.round(base.sparks * force),

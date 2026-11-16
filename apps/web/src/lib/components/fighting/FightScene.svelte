@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { createHanzoProjectionScene } from '$lib/fighting/hanzoProjectionScene'
+  import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
     trackFightOpponent,
@@ -133,7 +135,9 @@
           const definition = fighterDefinition(fighter.id)
           return buildHumanFigure({
             THREE,
-            glow,
+            glow: fighter.hanzoProjection
+              ? (colour, opacity) => glow(colour, opacity * 0.28)
+              : glow,
             seen: {
               id: `fighting-scene:${definition.modelId}`,
               kind: 'combatant',
@@ -159,7 +163,7 @@
         // A fighter's aura is built into its figure, so a change of Nen rebuilds
         // that one figure. The stage is left standing: raising a room of the
         // ship again on every Ren would blank the arena for the length of it.
-        const nenKey = (fighter: ArcadeFighter) => JSON.stringify(fighter.nen)
+        const nenKey = (fighter: ArcadeFighter) => JSON.stringify([fighter.nen, Boolean(fighter.hanzoProjection)])
         const models = {
           player: { model: buildFighter(state.player), nen: nenKey(state.player) },
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
@@ -173,6 +177,7 @@
           worldX,
           worldY,
         })
+        const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
         const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
@@ -206,7 +211,7 @@
           const impact = state.impact
           if (!impact || impact.sequence === lastImpact) return
           lastImpact = impact.sequence
-          const profile = impactPresentation(impact)
+          const profile = impactPresentation(impact, state[impact.attacker].id)
           shakeStarted = now
           shakeUntil = now + profile.shakeMs
           shakeX = profile.shakeX
@@ -298,7 +303,7 @@
           model.animate(seconds, modelPose, {
             motion: trackFightOpponent({
               fighter,
-              opponent,
+              opponent: sleepingBody(opponent),
               bodyAngle,
               seconds,
               motion,
@@ -324,6 +329,7 @@
           })
           projectileScene.sync(state.projectiles, seconds)
           fighterEffects.sync(state, seconds)
+          projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
             fighter: state.opponent,
@@ -334,8 +340,14 @@
 
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
-          const centre = (playerX + opponentX) / 2
-          const gap = Math.abs(playerX - opponentX)
+          const positions = [playerX, opponentX]
+          for (const fighter of [state.player, state.opponent]) {
+            if (fighter.hanzoProjection) positions.push(worldX(fighter.hanzoProjection.bodyX))
+          }
+          const left = Math.min(...positions)
+          const right = Math.max(...positions)
+          const centre = (left + right) / 2
+          const gap = right - left
           const targetZ = state.phase === 'finished' ? 7.2 : 8.1 + gap * 0.16
           const ease = easeFactor(CAMERA_RATE, dt)
           camera.position.x += (centre * 0.32 - camera.position.x) * ease
@@ -376,6 +388,7 @@
           geometries.forEach((item) => item.dispose())
           projectileScene.dispose()
           fighterEffects.dispose()
+          projectionScene.dispose()
           post?.dispose()
           scenery.dispose()
           renderer.dispose()

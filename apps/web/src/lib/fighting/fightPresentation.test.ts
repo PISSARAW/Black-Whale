@@ -4,11 +4,21 @@ import { bodyPlan } from './fightBodyMotion'
 import { attackData } from './frameData'
 import { impactPresentation } from './fightImpactPresentation'
 import { createFightState } from './fightState'
+import { fighterMotionProfile } from './fighterMotionProfile'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
+import { FIGHTING_ROSTER } from './roster'
 import type { ArcadeFighter, FighterDash } from './types'
 
 function striking(kind: 'light' | 'heavy' | 'special', frame: number): ArcadeFighter {
   const fighter = createFightState('benjamin', 'hisoka').player
+  return withStrike(fighter, kind, frame)
+}
+
+function withStrike(
+  fighter: ArcadeFighter,
+  kind: 'light' | 'heavy' | 'special',
+  frame: number,
+): ArcadeFighter {
   return {
     ...fighter,
     pose: kind,
@@ -136,5 +146,70 @@ describe('fight presentation', () => {
     expect(heavy.sparks).toBeGreaterThan(light.sparks)
     expect(heavy.shakeMs).toBeGreaterThan(light.shakeMs)
     expect(heavy.shakeX).toBeGreaterThan(light.shakeX)
+  })
+
+  it('gives every playable fighter a complete individual motion profile', () => {
+    const signatures = FIGHTING_ROSTER.map(({ id }) => {
+      const profile = fighterMotionProfile(id)
+      Object.values(profile).forEach((value) => {
+        expect(Number.isFinite(value)).toBe(true)
+        expect(value).toBeGreaterThan(0.75)
+        expect(value).toBeLessThan(1.3)
+      })
+      return Object.values(profile).map((value) => value.toFixed(3)).join(':')
+    })
+    expect(new Set(signatures).size).toBeGreaterThan(FIGHTING_ROSTER.length * 0.75)
+  })
+
+  it('routes every playable fighter through all four presentation passes', () => {
+    for (const definition of FIGHTING_ROSTER) {
+      const base = createFightState(definition.id, 'hisoka').player
+      const motion = motionOf(base)
+      const context = { seconds: 1, progress: 0 }
+      const walk = bodyPlan(
+        { ...base, pose: 'walk', motion: { ...motion, heldDirection: base.facing } },
+        context,
+      )
+      const dash = bodyPlan(
+        {
+          ...base,
+          pose: 'walk',
+          motion: {
+            ...motion,
+            heldDirection: base.facing,
+            dash: { direction: base.facing, frame: 8, frames: 18, peak: 96 },
+          },
+        },
+        context,
+      )
+      const prejump = bodyPlan(
+        { ...base, motion: { ...motion, prejumpFrames: PREJUMP_FRAMES - 1 } },
+        context,
+      )
+      const landing = bodyPlan(
+        { ...base, motion: { ...motion, landingFrames: LANDING_FRAMES } },
+        context,
+      )
+      expect([walk?.key, dash?.key, prejump?.key, landing?.key]).toEqual([
+        'walk:forward',
+        'dash:true',
+        'prejump',
+        'landing',
+      ])
+      const started = withStrike(base, 'heavy', 0)
+      const contact = withStrike(base, 'heavy', attackData('heavy', started).startup)
+      expect(bodyPlan(contact, context)?.key).toBe('attack:heavy')
+      const impact = impactPresentation(
+        {
+          kind: 'heavy',
+          blocked: false,
+          critical: false,
+          knockdown: false,
+          wallSplat: false,
+        },
+        definition.id,
+      )
+      expect(impact.shakeX).toBeGreaterThan(0)
+    }
   })
 })

@@ -1,4 +1,5 @@
 import { fightFamily, type FightFamily } from './fightArchetypes'
+import { fighterMotionProfile } from './fighterMotionProfile'
 import { lerpPose, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, AttackKind } from './types'
@@ -114,7 +115,8 @@ export function attackMotionAccent(options: AttackMotionOptions): FightPose {
   const attack = fighter.attack
   if (!attack || attack.variant === 'air' || attack.variant === 'throw') return NEUTRAL_POSE
   const family = fightFamily(fighter.id)
-  const strength = KIND_WEIGHT[attack.kind] * (authored ? 0.4 : 1)
+  const profile = fighterMotionProfile(fighter.id)
+  const strength = KIND_WEIGHT[attack.kind] * profile.attack * (authored ? 0.4 : 1)
   if (attack.frame < frames.startup)
     return scalePose(WINDUP[family], strength * easeIn(attack.frame / frames.startup))
   if (attack.frame < frames.startup + frames.active) return scalePose(DRIVE[family], strength)

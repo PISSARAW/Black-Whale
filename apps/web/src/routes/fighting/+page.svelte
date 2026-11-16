@@ -9,6 +9,8 @@
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount } from 'svelte'
+  import { performEasterEgg } from '$lib/fighting/easterEggs'
+  import { defaultEasterEggPreferences, readEasterEggPreferences, easterEggKeyCommand } from '$lib/fighting/easterEggPreferences'
   import FightHatsuPanels from '$lib/components/fighting/FightHatsuPanels.svelte'
   import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
@@ -76,6 +78,7 @@
   let playbackIndex = 0
   let dummyRecording: DummyCommand[] = []
   let language: 'fr' | 'en'
+  let easterEggPreferences = defaultEasterEggPreferences()
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
   $: copy = fightingCopy(language)
@@ -212,6 +215,12 @@
     if (!state) return
     if (active && isDisplayInput(event.target)) return
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
+    const egg = easterEggKeyCommand(key, { state, keys: easterEggPreferences.keys, input, opponentInput })
+    if (egg) {
+      event.preventDefault()
+      if (active && !event.repeat) queueAction((current) => performEasterEgg(current, egg.side, egg.slot))
+      return
+    }
     if (handleOpponentKey(event, active, key)) return
     if (handleHatsuKey(event, active, key)) return
     const movement = movementKeys[key]
@@ -290,6 +299,7 @@
   }
 
   onMount(() => {
+    easterEggPreferences = readEasterEggPreferences()
     let frame = 0
     let last = performance.now()
     const keydown = (event: KeyboardEvent) => handleKey(event, true)
@@ -406,6 +416,8 @@
         />
         <FightStage
           {state}
+          bind:easterEggPreferences
+          onEasterEgg={(side, slot) => queueAction((current) => performEasterEgg(current, side, slot))}
           {language}
           {paused}
           {showControls}

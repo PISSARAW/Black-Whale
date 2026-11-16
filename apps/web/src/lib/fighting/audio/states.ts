@@ -10,6 +10,7 @@ export function characterSoundEvents(
   side: FightSide,
 ): FightSoundEvent[] {
   return [
+    ...easterEggEvents(before, after, side),
     ...battleMusicEvents(before, after, side),
     ...emperorEvents(before, after, side),
     ...bodyEvents(before, after, side),
@@ -19,6 +20,18 @@ export function characterSoundEvents(
     ...gumEvents(before, after, side),
     ...chargeEvents(before, after, side),
   ]
+}
+
+function easterEggEvents(before: FightState, after: FightState, side: FightSide): FightSoundEvent[] {
+  const egg = after[side].easterEgg
+  if (!egg) return []
+  const previous = before[side].easterEgg
+  const fresh = !previous || egg.startedAt !== previous.startedAt || egg.slot !== previous.slot
+  const was = fresh ? -1 : previous.frame
+  return [0, Math.floor(egg.duration * 0.55)]
+    .filter((frame) => was < frame && egg.frame >= frame)
+    .map((frame) => ({ ...fighterEvent(after[side], side, 'easter-egg'),
+      value: frame === 0 ? 0 : 1, moveId: String(egg.slot) }))
 }
 
 function emperorEvents(before: FightState, after: FightState, side: FightSide): FightSoundEvent[] {

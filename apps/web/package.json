@@ -10,6 +10,7 @@
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
+    "test:easter-eggs": "svelte-kit sync && node scripts/check-easter-eggs.mjs",
     "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",
     "test:luini": "svelte-kit sync && node scripts/check-luini.mjs",
     "test:voconte": "svelte-kit sync && node scripts/check-voconte.mjs",

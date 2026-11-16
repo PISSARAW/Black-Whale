@@ -131,6 +131,10 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  /** Cosmetic scenes; their props never enter battlefield or projectile state. */
+  easterEgg?: import('./easterEggs').EasterEggPlayback
+  easterEggDiscoveries?: number
+  easterEggSequence?: number
   padailleTool?: PadailleTool
   kallutoPaper?: import('./kallutoPaper').KallutoPaperState
   plantedPaper?: readonly import('./kallutoPaper').PlantedPaper[]

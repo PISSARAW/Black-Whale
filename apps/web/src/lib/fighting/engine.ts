@@ -1,4 +1,5 @@
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
+import { advanceEasterEggs } from './easterEggs'
 import { illumiBodyFree } from './illumiState'
 import { illumiInput } from './illumiFrame'
 import { poseFighter } from './fightActorPose'
@@ -81,16 +82,13 @@ import type {
   FighterPose,
   MoveAction,
 } from './types'
-
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
 const IN_AURA_SURCHARGE = 12
-
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
-
 export function tickFight(
   state: FightState,
   input: FightInput,
@@ -132,11 +130,14 @@ export function tickFight(
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
   }
-  return next
+  return advanceEasterEggs(next, false)
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return simulateVoconteDoorFrame(state, controls, { step: stepFight, decide: opponentAttack })
+  return advanceEasterEggs(
+    simulateVoconteDoorFrame(state, controls, { step: stepFight, decide: opponentAttack }),
+    state.hitstop === 0,
+  )
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
@@ -188,6 +189,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter))
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
@@ -249,6 +251,7 @@ function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  if (advanced.easterEgg) return poseFighter(advanced)
   if (advanced.needlePuppet) return advanced
   if (maryAiBusy(advanced)) return maryAiBody(advanced)
   if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }
@@ -273,6 +276,7 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (options.state[options.side].easterEgg) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
@@ -314,6 +318,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   options = thetaFirearmOptions(options)
@@ -471,6 +476,7 @@ function flushBuffered(state: FightState, side: FightSide): FightState {
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {
+  if (state[side].easterEgg) return state
   if (state[side].cyclotronWindup) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (state.catsName) return state

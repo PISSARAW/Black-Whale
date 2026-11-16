@@ -175,6 +175,7 @@ function attackAuraCost(
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
+  if (fighter.easterEgg) return false
   return (
     !machiImmobilized(fighter) &&
     fighter.hitStun === 0 &&

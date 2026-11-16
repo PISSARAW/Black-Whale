@@ -1,4 +1,5 @@
 import { createKallutoPaperScene } from './kallutoScene'
+import { createEasterEggScene } from './easterEggScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
 import { createBiohazardScene } from './biohazardScene'
@@ -20,6 +21,7 @@ export interface EffectSceneOptions {
   scene: import('three').Scene
   worldX: (value: number) => number
   worldY: (value: number) => number
+  handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
   /** Live posed rig; callbacks also follow aura/body rebuilds. */
   figureOf?: (side: FightSide) => import('three').Object3D | undefined
 }
@@ -32,6 +34,7 @@ export interface FighterEffectScene {
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const paper = createKallutoPaperScene(options)
+  const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
   const biohazard = createBiohazardScene(options)
   const preparedScene = createPreparationScene(options)
@@ -57,6 +60,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   scene.add(gum, ...cards)
 
   const sync = (state: FightState, seconds: number) => {
+    easterEggs.sync(state, seconds)
     paper.sync(state, seconds)
     doors.sync(state, seconds)
     biohazard.sync(state, seconds)
@@ -77,6 +81,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   return {
     sync,
     dispose: () => {
+      easterEggs.dispose()
       paper.dispose()
       doors.dispose()
       biohazard.dispose()

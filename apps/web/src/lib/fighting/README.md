@@ -1051,6 +1051,41 @@ les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
 des restrictions attribuées au manga. Le panneau expose les zones plantées,
 la confection de la poupée et la dernière parole réellement reçue.
 
+## Easter Eggs de Clash
+
+Hisoka, Kurapika, Leorio et Rihan ont chacun quatre scènes cosmétiques décrites
+par `easterEggCatalogue.ts`. Il s’agit d’interludes écrits pour Clash : les
+répliques ne sont pas des citations du manga et les scènes n’ajoutent aucun Hatsu.
+
+F2 (P1) et F4 (P2 en local ou entraînement), configurables dans le panneau
+« Easter Eggs · Gestes et secrets », jouent le geste 1 sans direction, le 2 avec
+avant, le 3 avec arrière et le secret avec bas. Avant et arrière suivent le côté
+regardé par chaque combattant. Les quatre boutons du panneau servent au tactile.
+Les touches de fonction peuvent nécessiter Fn selon le clavier.
+
+Les gestes 1, 2 puis 3 doivent se terminer dans cet ordre, dans la même manche,
+pour ouvrir les secrets de Hisoka et Leorio. Rihan doit terminer son analyse
+(geste 3). Kurapika doit affronter un membre du groupe Brigade du duel, y compris
+Hisoka. Un coup interrompt la scène et remet à zéro la séquence de trois gestes.
+Une scène exige un corps libre au sol, sans attaque, garde, dash ou relevée.
+Pendant la scène, le corps reste vulnérable ; les commandes de déplacement,
+garde et attaque ne peuvent ni l’annuler gratuitement ni préparer une attaque.
+
+`easterEggs.ts` avance dans le simulateur déterministe après les impacts, y
+compris pour les prévisions de Parallel Future. Hitstop et pause suspendent les
+animations ; une fin de manche les retire. Les poses de `easterEggPoses.ts`, les
+accessoires de `easterEggScene.ts`, les bulles FR/EN et les sons courts restent
+exclusivement visuels ou sonores. Cartes, chaînes et mallette n’entrent jamais
+dans les projectiles, l’inventaire ou les ressources ramassables.
+
+Seules les scènes terminées sont découvertes. Le compteur 0/4 et les touches
+sont conservés localement, avec repli en mémoire si le stockage est indisponible.
+Les conditions des secrets sont renouvelées à chaque manche. Les aperçus des
+scènes découvertes tournent dans un duel séparé, silencieux et sans sauvegarde.
+`easterEggs.test.ts` couvre les deux camps, les interruptions, les ressources,
+les commandes et la persistance ; `pnpm --filter @black-whale/web test:easter-eggs`
+vérifie les boutons, les aperçus, le rechargement et le rendu à 1440, 390 et 320 px.
+
 ## Chaînes de Kurapika
 
 `kurapikaChainModel.ts` réutilise les maillons creux de `tour/chainTipKit.ts`

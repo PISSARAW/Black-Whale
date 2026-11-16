@@ -18,6 +18,9 @@
   <p>{jump}</p>
   <p>{attacks}</p>
   <p>{aura}</p>
+  <p>{language === 'fr'
+    ? 'Easter Eggs : F2 (P2 : F4), touches configurables dans « Gestes et secrets ». Seule : geste 1 ; avec avant : 2 ; arrière : 3 ; bas : secret. Les boutons fonctionnent aussi au tactile.'
+    : 'Easter Eggs: F2 (P2: F4), configurable in “Gestures and secrets”. Alone: gesture 1; with forward: 2; back: 3; down: secret. Buttons also work on touchscreens.'}</p>
   <p>
     {language === 'fr'
       ? 'E maintenu (P2 : C) : se couvrir les oreilles, sans garde ni attaque.'

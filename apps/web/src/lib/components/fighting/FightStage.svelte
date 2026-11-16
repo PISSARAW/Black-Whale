@@ -4,6 +4,10 @@
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
   import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
   import FightScene from './FightScene.svelte'
+  import FightEasterEggs from './FightEasterEggs.svelte'
+  import FightEasterEggCaptions from './FightEasterEggCaptions.svelte'
+  import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
+  import type { EasterEggSlot } from '$lib/fighting/easterEggCatalogue'
   import FightSaiyuSenses from './FightSaiyuSenses.svelte'
   import FightHud from './FightHud.svelte'
   import FightCatsName from './FightCatsName.svelte'
@@ -37,6 +41,8 @@
   export let showControls = false
   export let training = false
   export let paused = false
+  export let easterEggPreferences = defaultEasterEggPreferences()
+  export let onEasterEgg: (side: FightSide, slot: EasterEggSlot) => void = () => {}
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
@@ -63,6 +69,7 @@
   <div class="fight-arena">
     <FightHud state={visibleState} {language} {detailed} />
     <FightCatsName state={visibleState} {language} />
+    <FightEasterEggCaptions state={visibleState} {language} />
     {#key sceneKey}
       <FightScene state={visibleState} {stageId} />
     {/key}
@@ -220,6 +227,7 @@
     {onEmperor}
     onAura={(active) => onControl('aura', active)}
   />
+  <FightEasterEggs {state} {language} {paused} bind:preferences={easterEggPreferences} onPlay={onEasterEgg} />
 </section>
 
 <style>

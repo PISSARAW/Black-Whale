@@ -295,6 +295,7 @@ function performBorrowedMove(
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
+  if (fighter.easterEgg) return false
   if (!illumiBodyFree(fighter)) return false
   return (
     fighter.health > 0 &&

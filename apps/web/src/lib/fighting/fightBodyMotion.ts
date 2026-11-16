@@ -1,4 +1,5 @@
 import { animatePadailleWeapon } from './padailleFigure'
+import { easterEggBodyPlan } from './easterEggPoses'
 import { padailleKeyedMove } from './padaillePoses'
 import { bonolenovDancePlan } from './bonolenovPoses'
 import { biohazardBodyPlan } from './biohazardPresentation'
@@ -144,6 +145,8 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const easterEgg = easterEggBodyPlan(fighter)
+  if (easterEgg) return easterEgg
   const special =
     pluggingWoundsPlan(fighter) ?? biohazardBodyPlan(fighter) ?? techniqueBodyPlan(fighter, context)
   if (special) return special

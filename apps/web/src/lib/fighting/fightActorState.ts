@@ -11,6 +11,7 @@ import type { ArcadeFighter, FightInput } from './types'
 const GROUND = 0
 
 function characterBusy(fighter: ArcadeFighter): boolean {
+  if (fighter.easterEgg) return true
   if (!illumiBodyFree(fighter)) return true
   return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }

@@ -164,7 +164,13 @@
           worldY,
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
-        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns })
+        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns,
+          handAnchor: (side, hand) => {
+            const lead = state[side].facing === 1 ? 'right' : 'left'
+            const limb = hand === 'lead' ? lead : lead === 'right' ? 'left' : 'right'
+            return models[side].model.root.getObjectByName(`hand-${limb}`)
+          },
+         })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
         const feitanScene = createFeitanScene({

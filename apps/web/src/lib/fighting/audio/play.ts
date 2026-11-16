@@ -18,6 +18,7 @@ import type { FightMix } from './mixer'
 import { FIGHTER_SOUNDS } from './profiles'
 import { combatPressure } from './stages'
 import { breath, fighterMotif, floorContact, heartbeat, materialStrike, watchTick } from './voices'
+import { playEasterEggSound } from './easterEggs'
 
 interface Cue {
   g: Graph
@@ -100,6 +101,7 @@ const CUES: Record<FightSoundKind, (cue: Cue) => void> = {
     metallic(g, { root: 330 + (event.value ?? 1) * 80, force: 0.4 })
   },
   effect: effectCue,
+  'easter-egg': ({ g, event }) => playEasterEggSound(g, event),
 }
 
 export function playFightSound(mix: FightMix, event: FightSoundEvent, state: FightState): void {

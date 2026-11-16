@@ -52,6 +52,7 @@ export type FightSoundKind =
   | 'seal'
   | 'lsdf'
   | 'effect'
+  | 'easter-egg'
 
 export interface FightSoundEvent {
   kind: FightSoundKind

@@ -1,3 +1,4 @@
+import { feitanUtilityMove } from './feitanPain'
 import { chrolloUtilityMove } from './chrolloBook'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { usesRemotePunch } from './leorioAttack'
@@ -193,6 +194,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (feitanUtilityMove(fighter)) return null
   if (chrolloUtilityMove(fighter)) return null
   if (hisokaUtilityMove(fighter)) return null
   if (usesRemotePunch(fighter)) return null

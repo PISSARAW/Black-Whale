@@ -1,13 +1,17 @@
+import { tuneFeitanMoveset } from './feitanMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'feitan',
     mechanic: [
-      'Pain Packer : les dégâts subis amplifient directement Rising Sun.',
-      'Pain Packer: received damage directly amplifies Rising Sun.',
+      'Après une blessure, L revêt Pain Packer. H libère un soleil fixe : plus la douleur est forte, plus sa chaleur porte, dure et brûle. L’armure protège de la chaleur, pas des coups.',
+      'After an injury, L dons Pain Packer. H releases a stationary sun: greater pain increases its heat, reach and duration. The outfit protects against heat, not strikes.',
     ],
-    finisherCondition: ['Feitan doit être à 35 PV ou moins.', 'Feitan must have 35 HP or less.'],
+    finisherCondition: [
+      'Pain Packer doit être revêtu et chargé de blessures. Aucun soleil ne doit être actif.',
+      'Pain Packer must be worn and charged with injuries. No sun may already be active.',
+    ],
     labels: [
       'Pointe de parapluie|Umbrella Point',
       'Taille de sabre|Sword Cleave',
@@ -19,9 +23,9 @@ const SPECS: readonly MovesetSpec[] = [
       'Décapitation|Decapitation',
       'Revers du bourreau|Executioner Backfist',
       'Pain Packer|Pain Packer',
-      'Armure thermique|Thermal Armor',
-      'Soleil rampant|Creeping Sun',
-      'Contre de douleur|Pain Counter',
+      'Estoc du parapluie|Umbrella Thrust',
+      'Entaille rasante|Sweeping Slash',
+      'Revers de lame|Blade Backslash',
       'Étranglement du bourreau|Executioner Choke',
       'Rising Sun|Rising Sun',
     ],
@@ -177,4 +181,4 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset)
+export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset)

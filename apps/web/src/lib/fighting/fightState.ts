@@ -1,3 +1,4 @@
+import { createPainPacker } from './feitanPain'
 import { createChrolloBook } from './chrolloBook'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import { FIGHT_FPS } from './fightClock'
@@ -101,7 +102,10 @@ function createFighter(options: {
     auraExhausted: false,
     hatsuChargeFrames: 0,
     chrolloBook: options.id === 'chrollo' ? createChrolloBook() : undefined,
-    hatsuEffects: emptyHatsuEffects(),
+    hatsuEffects: {
+      ...emptyHatsuEffects(),
+      painPacker: options.id === 'feitan' ? createPainPacker() : null,
+    },
     attack: null,
     bufferedAttack: null,
   }
@@ -109,6 +113,7 @@ function createFighter(options: {
 
 function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
   return {
+    painPacker: null,
     forcedZetsuFrames: 0,
     contagionFrames: 0,
     contagionStacks: 0,

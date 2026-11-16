@@ -44,8 +44,17 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban
   rendent les états visibles. Livre et vols repartent à zéro à la manche suivante.
   Les commandes fonctionnent aussi en versus local et au tactile.
-- Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
-  les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
+- Feitan mémorise les PV effectivement perdus pendant la manche (`feitanPain.ts`).
+  Après une blessure, L revêt Pain Packer sans soin ni frappe ; H libère le soleil
+  fixe de `feitanSun.ts`. Les blessures engagées augmentent la chaleur, le rayon et
+  la durée, puis sont dépensées. L’armure protège de la chaleur, jamais des coups.
+  Les valeurs, la dépense des blessures et la séparation L/H adaptent le manga au
+  duel. La chaleur atteint les corps dans son cercle, traverse la garde et laisse
+  fuir sans hitstun. Un soleil marque au plus un point par cible ; la Tour conserve
+  sa victoire aux points, l’entraînement ne termine pas sur un K.-O. Zetsu et le vol
+  du Hatsu dissipent l’armure et le soleil. `feitanScene.ts` dessine l’habit sur le
+  rig et le périmètre de chaleur dans le monde ; le HUD affiche la douleur et l’état.
+- Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le projectile de Theta neutralise
   l'aura, la transformation de Biscuit renforce attaque et défense, tandis que
   LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et

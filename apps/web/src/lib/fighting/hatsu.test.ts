@@ -1,3 +1,4 @@
+import { recordFightInjuries } from './feitanPain'
 import { moveForSlot } from './movesets'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAttack, tickFight } from './engine'
@@ -33,6 +34,19 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     const auraBefore = ready[side].aura
 
     const armed = performAttack(ready, side, 'special')
+
+    if (id === 'feitan') {
+      expect(armed).toBe(ready)
+      const wounded = recordFightInjuries(ready, {
+        ...ready, [side]: { ...ready[side], health: 80 },
+      })
+      const wrapped = advance(performAttack(wounded, side, 'special'), 0.4)
+      expect(wrapped[side].hatsuEffects.painPacker).toMatchObject({ armour: true, packedDamage: 20 })
+      expect(wrapped[side].health).toBe(80)
+      expect(wrapped.impact).toBeNull()
+      return
+    }
+
 
     if (id === 'chrollo') {
       expect(armed[side].attack?.moveId).toBe('chrollo:neutralSpecial')

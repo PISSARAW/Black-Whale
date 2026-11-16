@@ -32,6 +32,7 @@
   } from '$lib/fighting/reactionMotion'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
+  import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -153,6 +154,9 @@
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
         const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
+        const feitanScene = createFeitanScene({
+          THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns,
+        })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
@@ -306,6 +310,7 @@
           })
           projectileScene.sync(state.projectiles, seconds)
           fighterEffects.sync(state, seconds)
+          feitanScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
@@ -359,6 +364,7 @@
           geometries.forEach((item) => item.dispose())
           projectileScene.dispose()
           fighterEffects.dispose()
+          feitanScene.dispose()
           lsdfScene.dispose()
           projectionScene.dispose()
           post?.dispose()

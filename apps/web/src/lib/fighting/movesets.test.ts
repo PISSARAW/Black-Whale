@@ -238,7 +238,10 @@ function withFinisherCondition(state: FightState): FightState {
     case 'tserriednich':
       return withPlayerEffect(state, 'futureSight', 1)
     case 'feitan':
-      return { ...state, player: { ...player, health: 35 } }
+      return { ...state, player: { ...player, health: 70, hatsuEffects: {
+        ...player.hatsuEffects,
+        painPacker: { injuries: 0, packedDamage: 30, armour: true, sun: null },
+      } } }
     case 'saiyu':
       return withOpponentEffect(state, 'senseSeals', 2)
     case 'biscuit':

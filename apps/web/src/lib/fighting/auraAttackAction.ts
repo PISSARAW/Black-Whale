@@ -1,3 +1,4 @@
+import { feitanMoveAvailable } from './feitanPain'
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { triggerHatsu } from './hatsu'
 import type { AttackKind, AttackVariant, FightSide, FightState, FighterId } from './types'
@@ -21,6 +22,7 @@ interface AttackIntent {
 export function commitAuraAttack(options: AuraAttackOptions, intent: AttackIntent): FightState {
   const { side, kind, auraCharged, variant, moveId } = options
   const original = options.state[side]
+  if (!techniqueAllowed(options)) return options.state
   const { hatsuSource, concealed, resourceReady } = intent
   const starts = canStartFighterAttack(original, kind, moveId)
   const buffers = resourceReady && canBufferFighterAttack(original)
@@ -48,4 +50,9 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
       bufferedAttack: { kind, variant, moveId, auraCharged, concealed, hatsuSource },
     },
   }
+}
+
+function techniqueAllowed(options: AuraAttackOptions): boolean {
+  const { state, side, kind, moveId } = options
+  return kind !== 'special' || feitanMoveAvailable(state[side], moveId)
 }

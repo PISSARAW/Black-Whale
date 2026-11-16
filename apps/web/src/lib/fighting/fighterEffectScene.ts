@@ -2,7 +2,7 @@ import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
 import { attackAuraColour } from './techniqueAuraColours'
 import type { FightSide, FightState } from './types'
 
-interface EffectSceneOptions {
+export interface EffectSceneOptions {
   THREE: typeof import('three')
   scene: import('three').Scene
   worldX: (value: number) => number

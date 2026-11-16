@@ -1,3 +1,4 @@
+import { recordFightInjuries } from './feitanPain'
 import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
 import { performLeorioAction } from './leorioAttack'
@@ -97,10 +98,13 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
-  if (withHatsu.phase === 'finished') return withHatsu
+  if (withHatsu.phase === 'finished') return recordFightInjuries(state, withHatsu)
   const armed = spawnRangedProjectiles(withHatsu)
   const flight = advanceProjectiles(armed, FIXED_STEP)
-  const resolved = resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits))
+  const resolved = recordFightInjuries(
+    state,
+    resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
+  )
   if (resolved.phase === 'finished') return resolved
   const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
   const remainingFrames =

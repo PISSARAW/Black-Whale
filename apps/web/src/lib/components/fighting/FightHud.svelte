@@ -6,6 +6,7 @@
   import type { FightState } from '$lib/fighting/types'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
+  import FightPainPacker from './FightPainPacker.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -27,6 +28,7 @@
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
     <FightGrudge fighter={state.player} {language} />
+    <FightPainPacker fighter={state.player} {language} />
     <FightChrolloStatus {state} side="player" {language} />
     {#if state.player.textureSurprise}
       <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>
@@ -97,6 +99,7 @@
           : 'opponent aura hidden'}
     </div>
     <FightGrudge fighter={state.opponent} {language} />
+    <FightPainPacker fighter={state.opponent} {language} />
     <FightChrolloStatus {state} side="opponent" {language} />
     {#if state.opponent.textureSurprise}
       <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>

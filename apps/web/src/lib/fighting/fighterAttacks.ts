@@ -1,3 +1,4 @@
+import { feitanMoveAvailable } from './feitanPain'
 import { chrolloMoveAvailable } from './chrolloBook'
 import { remotePunchAvailable } from './leorioAttack'
 import { projectionPreparing } from './hanzoProjection'
@@ -127,6 +128,7 @@ function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string):
 }
 
 function attackResourcesReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  if (kind === 'special' && !feitanMoveAvailable(fighter, moveId)) return false
   const move = moveById(moveId)
   return move
     ? hasMoveResources(fighter, move)

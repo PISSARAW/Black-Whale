@@ -1,3 +1,4 @@
+import { feitanMoveAvailable } from './feitanPain'
 import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
 import { tuneChrolloMoveset } from './chrolloMoveset'
 import { tuneHisokaMoveset } from './hisokaMoveset'
@@ -89,6 +90,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (!feitanMoveAvailable(fighter, move.id)) return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
   if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
@@ -157,7 +159,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
-  feitan: (state, side) => state[side].health <= 35,
+  feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => opponentOf(state, side).hatsuEffects.senseSeals >= 2,
   theta: (state, side) => {
     const opponent = opponentOf(state, side)

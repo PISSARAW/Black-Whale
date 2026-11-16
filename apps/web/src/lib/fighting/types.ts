@@ -1,3 +1,4 @@
+import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
 import type { LsdfGuard } from './lsdf'
@@ -200,6 +201,7 @@ export interface FighterMotion {
 }
 
 export interface FighterHatsuEffects {
+  painPacker: PainPackerState | null
   forcedZetsuFrames: number
   contagionFrames: number
   contagionStacks: number

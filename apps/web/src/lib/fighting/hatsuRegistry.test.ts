@@ -171,11 +171,11 @@ describe('fighter Hatsu registry', () => {
     expect(avoided.player.hatsuEffects.futureSight).toBe(0)
   })
 
-  it('powers Rising Sun with the damage Feitan has suffered', () => {
+  it('does not apply a missing-health multiplier to Feitan’s martial attacks', () => {
     const ready = performAttack(closeFight('feitan', 'hisoka'), 'player', 'special')
     const healthy = hatsuDamageFactor(ready.player)
     const wounded = hatsuDamageFactor({ ...ready.player, health: 20 })
-    expect(wounded).toBeGreaterThan(healthy * 2)
+    expect(wounded).toBe(healthy)
   })
 
   it('lets Three Monkeys seal all senses after three strikes', () => {

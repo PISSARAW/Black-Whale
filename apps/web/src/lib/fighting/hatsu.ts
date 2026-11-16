@@ -76,7 +76,6 @@ export function resolveHatsuImpact(options: {
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const baton = 1 + fighter.hatsuEffects.batonCharges * 0.12
-  const risingSun = risingSunFactor(fighter)
   const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 1.35 : 1
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
@@ -87,7 +86,6 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const completion = completionDamageFactor(fighter)
   return (
     baton *
-    risingSun *
     transformed *
     cyclotron *
     cantabile *
@@ -97,11 +95,6 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
     coins *
     completion
   )
-}
-
-function risingSunFactor(fighter: ArcadeFighter): number {
-  if (fighter.id !== 'feitan' || fighter.attack?.kind !== 'special') return 1
-  return 1 + ((100 - fighter.health) / 100) * 1.8
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {

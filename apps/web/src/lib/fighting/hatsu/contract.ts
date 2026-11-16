@@ -1,4 +1,5 @@
 import type { ArcadeFighter, FightSide, FightState, FighterId } from '../types'
+import type { OutsideDuelAbility } from '../outsideDuelAbility'
 
 export interface HatsuTriggerContext {
   state: FightState
@@ -28,6 +29,8 @@ export interface FighterHatsu {
   sourceFor?: (fighter: ArcadeFighter, moveId?: string) => FighterId | null
   /** The canon Hatsu cannot act in a duel: the fighter plays on martial skill and basic Nen. */
   martialOnly?: true
+  /** Still a real Hatsu for Steal Chain, despite lacking a target in this duel. */
+  stealableOutsideDuel?: OutsideDuelAbility
   /** Conditional Nen that wakes only when its owner is killed by a direct hit. */
   onDeath?: (context: HatsuDeathContext) => FightState
 }

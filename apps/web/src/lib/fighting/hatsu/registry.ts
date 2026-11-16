@@ -42,6 +42,7 @@ import { lynchHatsu } from './lynch'
 import { momozeHatsu } from './momoze'
 import { rihanHatsu } from './rihan'
 import { saiyuHatsu } from './saiyu'
+import { sayirdHatsu } from './sayird'
 import { salesaleHatsu } from './salesale'
 import { shizukuHatsu } from './shizuku'
 import { thetaHatsu } from './theta'
@@ -99,7 +100,7 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   padaille: () => padailleHatsu,
   tubeppa: () => tubeppaHatsu,
   tyson: () => tysonHatsu,
-  sayird: () => martialOnlyHatsu('sayird'),
+  sayird: () => sayirdHatsu,
   terebellum: () => terebellumHatsu,
   voconte: () => voconteHatsu,
   yokotani: () => yokotaniHatsu,

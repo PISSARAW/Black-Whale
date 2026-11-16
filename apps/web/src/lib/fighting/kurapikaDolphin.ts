@@ -5,13 +5,17 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** One actual technique, not the victim's entire moveset. No prior witnessing condition. */
 export function stealableChainMove(fighter: ArcadeFighter): string | null {
-  if (hatsuFor(fighter.id).martialOnly || fighter.hatsuEffects.hatsuStolen > 0) return null
+  if (fighter.stolenChainAbility || fighter.hatsuEffects.hatsuStolen > 0) return null
+  const hatsu = hatsuFor(fighter.id)
+  if (hatsu.stealableOutsideDuel) return hatsu.stealableOutsideDuel.id
+  if (hatsu.martialOnly) return null
+  return combatChainMove(fighter)
+}
+
+function combatChainMove(fighter: ArcadeFighter): string | null {
   const moves =
     movesetFor(fighter.id)?.moves.filter(
-      (move) =>
-        move.category === 'special' &&
-        move.id !== 'biscuit:neutralSpecial' &&
-        !fighter.stolenChainAbility,
+      (move) => move.category === 'special' && move.id !== 'biscuit:neutralSpecial',
     ) ?? []
   return moves.find((move) => move.id === fighter.attack?.moveId)?.id ?? moves[0]?.id ?? null
 }

@@ -1,5 +1,6 @@
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
+import { outsideDuelAbility } from './outsideDuelAbility'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
@@ -73,8 +74,13 @@ function kurapikaHeldMoveAvailable(fighter: ArcadeFighter, moveId: string): bool
     return !/Special$|:finisher$/.test(moveId)
   if (moveId === 'kurapika:finisher') return Boolean(fighter.kurapika?.emperorTime)
   if (moveId === 'kurapika:backSpecial' && fighter.kurapika?.held)
-    return Boolean(fighter.kurapika.emperorTime)
+    return heldChainAvailable(fighter)
   return true
+}
+
+function heldChainAvailable(fighter: ArcadeFighter): boolean {
+  const chain = fighter.kurapika!
+  return chain.emperorTime && !outsideDuelAbility(chain.held!.moveId)
 }
 
 /** Emperor Time changes efficiency at the attained level, never mastery or aura reserves. */
@@ -104,6 +110,7 @@ export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boo
   const stolen = fighter.stolenChainAbility
   if (!stolen) return false
   const selected = moveId ?? `${fighter.id}:neutralSpecial`
+  if (outsideDuelAbility(stolen.moveId)) return selected === stolen.moveId
   if (!/:(neutralSpecial|forwardSpecial|downSpecial|backSpecial|finisher)$/.test(selected))
     return false
   return chainAbilityGroup(stolen.moveId) === chainAbilityGroup(selected)

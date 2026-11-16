@@ -3,6 +3,7 @@ import { rangedAuraCost } from './projectiles'
 import { finishFight } from './combatVerdict'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
 import { moveById } from './movesets'
+import { outsideDuelAbility } from './outsideDuelAbility'
 import {
   createKurapika,
   chainsImmobilize,
@@ -153,8 +154,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
   const fighter = state[side]
   const held = fighter.kurapika?.held
   if (moveId !== 'kurapika:backSpecial' || !held) return null
-  if (!canAct(fighter) || !kurapikaNenActive(fighter) || !fighter.kurapika!.emperorTime)
-    return state
+  if (!canUseDolphinAction(fighter)) return state
   if (!held.loaded)
     return {
       ...state,
@@ -171,6 +171,15 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
     return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
   }
   return useDolphin(options, perform)
+}
+
+function canUseDolphinAction(fighter: ArcadeFighter): boolean {
+  return (
+    !outsideDuelAbility(fighter.kurapika!.held!.moveId) &&
+    canAct(fighter) &&
+    kurapikaNenActive(fighter) &&
+    fighter.kurapika!.emperorTime
+  )
 }
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {

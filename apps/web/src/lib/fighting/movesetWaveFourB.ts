@@ -40,8 +40,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'sayird',
     mechanic: [
-      'Garde rapprochée : Little Eye ne fait que filmer ; Sayird se bat en soldat entraîné dont les séries courtes ouvrent la garde.',
-      'Close protection: Little Eye only films; Sayird fights as a trained soldier whose short sequences open the guard.',
+      'Little Eye contrôle un petit animal réel, jusqu’à la taille d’un hamster, et transmet ce qu’il voit et entend ; les créatures matérialisées par le Nen sont exclues. Le pouvoir reste hors du duel mais peut être volé par Kurapika. Les coups sont des adaptations martiales.',
+      'Little Eye controls a real small animal, up to hamster size, and relays what it sees and hears; Nen-conjured creatures are excluded. The ability stays outside the duel but Kurapika can steal it. Strikes are martial adaptations.',
     ],
     finisherCondition: [
       'Une série d’au moins deux coups doit être en cours.',

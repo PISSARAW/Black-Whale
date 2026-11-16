@@ -1,5 +1,6 @@
 <script lang="ts">
   import { moveById } from '$lib/fighting/movesets'
+  import { outsideDuelAbility } from '$lib/fighting/outsideDuelAbility'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let side: FightSide
@@ -9,7 +10,8 @@
   $: fighter = state[side]
   $: chain = fighter.kurapika
   $: held = chain?.held
-  $: ability = moveById(held?.moveId)
+  $: outsideDuel = outsideDuelAbility(held?.moveId)
+  $: ability = outsideDuel ?? moveById(held?.moveId)
   $: hours = ((chain?.lifespanFrames ?? 0) / 60).toLocaleString(
     language === 'fr' ? 'fr-FR' : 'en-US',
     { maximumFractionDigits: 2 },
@@ -41,19 +43,27 @@
             ? 'Stealth Dolphin'
             : 'Steal Chain'}
         </div>
-        <div>
-          {language === 'fr'
-            ? held.used
-              ? `← + ${useKey} : terminer l’effet · Emperor Time verrouillé`
-              : held.loaded
-                ? `← + ${useKey} : usage unique · Emperor Time verrouillé`
-                : `Activer Emperor Time, puis ← + ${useKey} pour charger`
-            : held.used
-              ? `← + ${useKey}: end effect · Emperor Time locked`
-              : held.loaded
-                ? `← + ${useKey}: single use · Emperor Time locked`
-                : `Activate Emperor Time, then ← + ${useKey} to load`}
-        </div>
+        {#if outsideDuel}
+          <div>
+            {language === 'fr'
+              ? 'Hors duel : aucun petit animal réel à contrôler. Capacité conservée dans Steal Chain.'
+              : 'Outside the duel: no real small animal to control. Ability retained in Steal Chain.'}
+          </div>
+        {:else}
+          <div>
+            {language === 'fr'
+              ? held.used
+                ? `← + ${useKey} : terminer l’effet · Emperor Time verrouillé`
+                : held.loaded
+                  ? `← + ${useKey} : usage unique · Emperor Time verrouillé`
+                  : `Activer Emperor Time, puis ← + ${useKey} pour charger`
+              : held.used
+                ? `← + ${useKey}: end effect · Emperor Time locked`
+                : held.loaded
+                  ? `← + ${useKey}: single use · Emperor Time locked`
+                  : `Activate Emperor Time, then ← + ${useKey} to load`}
+          </div>
+        {/if}
       {/if}
     {/if}
     {#if fighter.chainJail}<div>

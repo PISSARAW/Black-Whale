@@ -131,6 +131,14 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
   posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
   sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
+- Little Eye reste un Hatsu réel de Sayird : il contrôle un petit animal réel
+  (jusqu’à la taille d’un hamster) et transmet sa vue et son ouïe, sans agir sur
+  une créature matérialisée par le Nen. Kurapika peut le retenir après drainage,
+  sous l’identité `sayird:littleEye`, distincte des frappes martiales. Aucun animal
+  cible n’est fourni en duel : le HUD nomme la capacité et précise cette limite ;
+  chargement et usage restent indisponibles, sans verrouiller Emperor Time.
+  Les coups de Sayird restent des adaptations martiales même quand Little Eye
+  est retenu. La manche suivante rend la capacité à son propriétaire.
 - Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
   (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
   qui se joue à la vie : le chat tue le meurtrier et Camilla revient.

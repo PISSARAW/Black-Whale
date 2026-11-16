@@ -190,6 +190,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   inscrire son constructeur. Le terrain ne modifie pas le barème ; LSDF exige
   toutefois la juridiction de la planque occupée par Morena.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
+- Le HUD sépare vie, aura, temps et manches des ressources et restrictions des
+  personnages, regroupées sous l'arène. `FightHealth` utilise la réserve maximale
+  fournie par le moteur, avec un repère tous les 100 PV. Affichage donne accès aux
+  PV exacts, aux détails tactiques, à la taille du HUD (100–130 %) et aux commandes
+  tactiles automatiques. Le plein écran dépend du navigateur ; le manuel se replie.
+  `pnpm --filter @black-whale/web test:hud` vérifie le roster et les états chargés
+  de Chrollo, Kurapika et Benjamin ; voir `apps/web/ui-tests/fighting-hud/README.md`.
 - Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à
   dix points ou au TKO après trois knockdowns, **Combat K.-O.** à la vie (100 PV, décision
   après 90 secondes), et **Arcade** conserve la règle historique à dix points ou

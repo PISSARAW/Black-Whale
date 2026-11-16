@@ -4,6 +4,8 @@
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
+  export let detailed = false
+  $: useKey = side === 'opponent' && state.mode === 'versus-local' ? ',' : 'L'
   $: fighter = state[side]
   $: chain = fighter.kurapika
   $: held = chain?.held
@@ -21,11 +23,11 @@
     class:danger={Boolean(fighter.judgmentChain || fighter.chainJail)}
   >
     {#if chain}
-      <div>
-        Emperor Time · {chain.emperorTime ? 'ON' : 'OFF'} · {language === 'fr'
-          ? 'vie perdue'
-          : 'lifespan lost'} : {hours} h
-      </div>
+      {#if detailed || chain.emperorTime || chain.lifespanFrames > 0}<div>
+          Emperor Time · {chain.emperorTime ? 'ON' : 'OFF'} · {language === 'fr'
+            ? 'vie perdue'
+            : 'lifespan lost'} : {hours} h
+        </div>{/if}
       {#if chain.blackoutFrames > 0}
         <div>
           {language === 'fr' ? 'INCONSCIENT' : 'UNCONSCIOUS'} · {Math.ceil(
@@ -42,15 +44,15 @@
         <div>
           {language === 'fr'
             ? held.used
-              ? '← + L : terminer l’effet · Emperor Time verrouillé'
+              ? `← + ${useKey} : terminer l’effet · Emperor Time verrouillé`
               : held.loaded
-                ? '← + L : usage unique · Emperor Time verrouillé'
-                : 'Activer Emperor Time, puis ← + L pour charger'
+                ? `← + ${useKey} : usage unique · Emperor Time verrouillé`
+                : `Activer Emperor Time, puis ← + ${useKey} pour charger`
             : held.used
-              ? '← + L: end effect · Emperor Time locked'
+              ? `← + ${useKey}: end effect · Emperor Time locked`
               : held.loaded
-                ? '← + L: single use · Emperor Time locked'
-                : 'Activate Emperor Time, then ← + L to load'}
+                ? `← + ${useKey}: single use · Emperor Time locked`
+                : `Activate Emperor Time, then ← + ${useKey} to load`}
         </div>
       {/if}
     {/if}

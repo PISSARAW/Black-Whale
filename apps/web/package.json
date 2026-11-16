@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
+    "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
     "clean": "rimraf .svelte-kit build",
     "test:coverage": "vitest run --coverage"
   },

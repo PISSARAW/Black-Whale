@@ -57,18 +57,20 @@
 
 <style>
   .training-frame-data {
-    position: absolute;
+    position: relative;
     z-index: 25;
-    top: 9.5rem;
-    left: 1rem;
     display: grid;
-    min-width: 190px;
+    box-sizing: border-box;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    margin: 0.75rem 1rem 0;
     gap: 0.16rem;
     border-left: 3px solid #f5d25c;
     padding: 0.55rem 0.7rem;
     background: rgb(2 7 10 / 82%);
     color: #d8e5eb;
-    font: 700 0.58rem/1.25 var(--font-mono);
+    font: 700 var(--hud-font, 0.75rem)/1.35 var(--font-mono);
+    overflow-wrap: anywhere;
     text-transform: uppercase;
     pointer-events: none;
   }

@@ -124,7 +124,7 @@
           scenery.fog.kind === 'exp2'
             ? new THREE.FogExp2(scenery.fog.colour, scenery.fog.density)
             : new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
-        camera.far = scenery.cameraFar
+        camera.far = Math.max(100, scenery.cameraFar)
         scene.add(scenery.root)
         let post: import('$lib/fighting/stagePost').StagePost | null = null
         if (scenery.bloom) {
@@ -297,6 +297,18 @@
           })
         }
 
+        // Pulling back on a narrow viewport must not bury fighters in the stage fog.
+        const updateCameraFog = () => {
+          if (scene.fog instanceof THREE.Fog && scenery.fog.kind === 'linear') {
+            const setback = Math.max(0, camera.position.z - 9.2)
+            scene.fog.near = scenery.fog.near + setback
+            scene.fog.far = scenery.fog.far + setback
+          }
+          if (scene.fog instanceof THREE.FogExp2 && scenery.fog.kind === 'exp2') {
+            scene.fog.density = scenery.fog.density * Math.min(1, 9.2 / camera.position.z)
+          }
+        }
+
         const render = (now: number) => {
           if (disposed) return
           const seconds = now / 1000
@@ -332,6 +344,7 @@
           camera.position.z += (framing.z - camera.position.z) * ease
           camera.position.y += (framing.y - camera.position.y) * ease
           cameraLookY += (framing.lookY - cameraLookY) * ease
+          updateCameraFog()
           if (now < shakeUntil) {
             const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
             camera.position.x += Math.sin(now * 0.15) * shakeX * fade

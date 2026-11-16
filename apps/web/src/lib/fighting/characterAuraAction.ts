@@ -1,4 +1,5 @@
 import { performMachiAction } from './machiAction'
+import { performCyclotronAction } from './phinksAction'
 import { performPredatorAction } from './predatorAction'
 import { performBashoAction } from './bashoAction'
 import { performMoonlightAction } from './moonlightAction'
@@ -22,6 +23,7 @@ export function characterAuraAction(
     () => performMachiAction(options, perform),
     () => performPredatorAction(options),
     () => performParallelFutureAction(options),
+    () => performCyclotronAction(options),
     () => performKurapikaAction(options, perform),
     () => performChrolloBookAction(options),
     () =>

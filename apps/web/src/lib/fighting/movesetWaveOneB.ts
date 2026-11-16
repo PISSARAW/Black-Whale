@@ -146,12 +146,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'phinks',
     mechanic: [
-      'Ripper Cyclotron : chaque activation arme un tour, consommé au prochain impact.',
-      'Ripper Cyclotron: each activation stores a turn, consumed by the next impact.',
+      'Ripper Cyclotron : rotations complètes du bras droit, puis un poing chargé sans bonus général.',
+      'Ripper Cyclotron: complete right-arm rotations, then one charged punch without a global bonus.',
     ],
     finisherCondition: [
-      'Au moins quatre tours de Cyclotron sont requis.',
-      'At least four Cyclotron turns are required.',
+      'Un tour complet permet de libérer le poing droit.',
+      'One full turn allows the right punch to be released.',
     ],
     labels: [
       'Direct de météore|Meteor Straight',
@@ -168,7 +168,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Foreuse basse|Low Drill',
       'Fausse rotation|False Wind-up',
       'Prise de la Brigade|Troupe Grapple',
-      'Cyclotron · Quatrième tour|Cyclotron · Fourth Turn',
+      'Ripper Cyclotron · Libération|Ripper Cyclotron · Release',
     ],
     speed: 1.04,
     power: 1.14,
@@ -181,26 +181,28 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset).map((moveset) => {
-  if (moveset.fighterId !== 'biscuit') return moveset
-  return {
-    ...moveset,
-    moves: moveset.moves.map((move) =>
-      move.slot === 'neutralSpecial'
-        ? {
-            ...move,
-            auraCost: 0,
-            tuning: {
-              ...move.tuning,
-              damage: 0,
-              hitstun: 0,
-              blockstun: 0,
-              hitstop: 0,
-              knockback: 0,
-              lunge: 0,
-            },
-          }
-        : move,
-    ),
-  }
-})
+export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset)
+  .map(tuneFeitanMoveset)
+  .map((moveset) => {
+    if (moveset.fighterId !== 'biscuit') return moveset
+    return {
+      ...moveset,
+      moves: moveset.moves.map((move) =>
+        move.slot === 'neutralSpecial'
+          ? {
+              ...move,
+              auraCost: 0,
+              tuning: {
+                ...move.tuning,
+                damage: 0,
+                hitstun: 0,
+                blockstun: 0,
+                hitstop: 0,
+                knockback: 0,
+                lunge: 0,
+              },
+            }
+          : move,
+      ),
+    }
+  })

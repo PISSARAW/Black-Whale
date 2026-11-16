@@ -1,3 +1,4 @@
+import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { animateMussePistol } from './mussePistol'
 import { musseKeyedMove } from './mussePoses'
 import { benjaminKeyedMove } from './benjaminPoses'
@@ -92,6 +93,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     const anchor = plan.plant ? captureFootPlant(rig) : null
     const drawn = blended(rig, plan, seconds)
     applyFightPose(rig, drawn, fighter.facing)
+    animateCyclotron(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   }
 }
@@ -130,6 +132,8 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const cyclotron = cyclotronBodyPlan(fighter)
+  if (cyclotron) return cyclotron
   const melody = melodyBodyPlan(fighter, context)
   if (melody) return melody
   if (fighter.hanzoProjection && !fighter.attack)

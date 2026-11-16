@@ -196,6 +196,8 @@ export interface ArcadeFighter {
   on?: { grudge: number; sealFrames: number }
   /** Dash, prejump, landing and air drift; absent until the fighter first moves. */
   motion?: FighterMotion
+  /** Frame of the current clockwise right-arm rotation; completed turns are stored separately. */
+  cyclotronWindup?: { frame: number }
   attack: {
     moveId?: string
     variant?: AttackVariant
@@ -208,6 +210,8 @@ export interface ArcadeFighter {
     hatsuSource: FighterId | null
     projectileSpawned: boolean
     projectilesSpawned?: number
+    /** Charge committed to this one right punch, including a miss. */
+    cyclotronTurns?: number
     reversal: boolean
   } | null
   bufferedAttack: {

@@ -73,7 +73,7 @@ une vérification dans le manga avant d'être corrigés.
 | Saiyu | Mizaru : vue ; Kikazaru : ouïe ; Iwazaru : parole | Chaque singe retire sa propre faculté sur contact (ch. 349) | B (fait) | Corrigé le 2026-11-16 : sceaux indépendants, masque visuel, silence du mix, appel de Hanzo impossible sans parole/ouïe ; aucun Zetsu ni stun supplémentaire. Modalités du duel explicitement adaptées. |
 | Theta | Pistolet physique, sans drainage ni Zetsu forcé | Garde et instructrice de Nen ; Hatsu personnel inconnu | A | Tirs matériels sans coût d’aura, visées adaptées au duel ; aucune capacité de neutralisation inventée, aucun finisher ni Hatsu volable. Références : ch. 385 et 387. |
 | Biscuit | Corps naturel : ×1,35 dégâts, ×0,68 dégâts reçus | Vraie forme corporelle ; Cookie soigne et repose | D (fait) | Corrigé le 2026-11-16 : deux silhouettes, retour au corps naturel par L sans direction, sans coup ni coût d’aura, persistant jusqu’à la manche suivante. Corps séparé des Hatsu copiables ; Cookie hors duel. « Massage éclair » remplacé par « Direct du maître ». Les multiplicateurs restent un équilibrage arcade. |
-| Phinks       | +1 tour par déclenchement (max 7), +22 %/tour      | Ripper Cyclotron : moulinet visible ; < 4 tours = rien             | B        | Pas de seuil minimal ; tours gagnés sans moulinet visible. Coût canon 6, pas 40.                                                                                                                                   |
+| Phinks | Rotations réelles du bras droit, puis un poing chargé | Ripper Cyclotron : chaque rotation complète renforce le coup de poing droit (ch. 226) | D (adapté) | Corrigé le 2026-11-16 : L lance/arrête le moulinet ; H engage tous les tours terminés dans un seul poing, sans bonus général aux dégâts. Aucun plafond de sept tours ni minimum canonique de quatre. Cadence, prix par tour, formule de dégâts et dépense sur coup manqué/gardé/interrompu sont des conventions de duel. Le « coût canon 6 » de l’ancienne ligne était un paramètre interne, pas un fait du manga. |
 
 ### Deuxième vague
 
@@ -146,6 +146,6 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), ~~Basho (trois
-   vers)~~ (fait), ~~Leorio (poing par le sol)~~ (fait), Phinks (seuil de quatre tours), ~~Terebellum (transfert)~~ (fait).
+   vers)~~ (fait), ~~Leorio (poing par le sol)~~ (fait), ~~Phinks (rotations et poing droit)~~ (fait), ~~Terebellum (transfert)~~ (fait).
 6. **Les C** : remplacer chaque bonus générique par l'effet de la fiche, ou l'étiqueter
    `gameplay-abstraction` dans le contrat.

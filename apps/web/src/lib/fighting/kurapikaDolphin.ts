@@ -1,4 +1,5 @@
 import { machiThreadForOwner } from './machiThread'
+import { cyclotronBusy } from './phinksCyclotron'
 import { hatsuFor } from './hatsu/registry'
 import { canUseMovesetMove, moveById, movesetFor } from './movesets'
 import type { StolenChainAbility } from './kurapika'
@@ -141,6 +142,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   const fighter = state[side]
   return {
     predator: predatorBusy(fighter),
+    cyclotron: cyclotronBusy(fighter),
     'secret-window': Boolean(fighter.secretWindow),
     poem: Boolean(fighter.bashoPoem),
     gum: state.bungeeGum?.owner === side,

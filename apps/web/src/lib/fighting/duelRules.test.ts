@@ -42,12 +42,12 @@ function active(state: FightState): FightState {
 }
 describe('duel rules', () => {
   it('rejects Hatsu effects with no aura or while stunned', () => {
-    const state = beginFight(createFight('phinks', 'hisoka'))
+    const state = beginFight(createFight('padaille', 'hisoka'))
     state.player.aura = 0
-    expect(performAttack(state, 'player', 'special').player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(performAttack(state, 'player', 'special').player.hatsuEffects.weaponFrames).toBe(0)
     state.player.aura = 100
     state.player.hitStun = 10
-    expect(performAttack(state, 'player', 'special').player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(performAttack(state, 'player', 'special').player.hatsuEffects.weaponFrames).toBe(0)
   })
   it('trades simultaneous strikes, including a double KO', () => {
     let state = close()
@@ -98,12 +98,12 @@ describe('duel rules', () => {
     expect(state.score.player).toBe(3)
   })
   it('triggers a buffered Hatsu exactly when the attack starts', () => {
-    let state = beginFight(createFight('phinks', 'kurapika'))
+    let state = beginFight(createFight('padaille', 'kurapika'))
     state.player.hitStun = 3
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
     state = step(state, 3)
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(1)
+    expect(state.player.hatsuEffects.weaponFrames).toBeGreaterThan(0)
     expect(state.player.attack?.kind).toBe('special')
     expect(state.player.aura).toBeLessThan(16)
   })
@@ -143,13 +143,13 @@ describe('duel rules', () => {
     expect(active(state).impact).toBeNull()
   })
   it('executes buffered Hatsu only after recovery and rechecks aura', () => {
-    let state = beginFight(createFight('phinks', 'kurapika'))
+    let state = beginFight(createFight('padaille', 'kurapika'))
     state.player.hitStun = 3
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
     state.player.aura = 0
     state = step(state, 4)
     expect(state.player.attack).toBeNull()
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
   })
 })

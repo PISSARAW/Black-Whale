@@ -87,7 +87,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (melodyRestrictsCombat(fighter)) return false
+  if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
@@ -119,7 +119,7 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 }
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
-  if (melodyRestrictsCombat(fighter)) return false
+  if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
   if (
     fighter.hitStun > 0 ||
     fighter.blockStun > 0 ||
@@ -145,7 +145,8 @@ function attackAuraCost(
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
-    !machiImmobilized(fighter) && fighter.hitStun === 0 &&
+    !machiImmobilized(fighter) &&
+    fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
     fighter.health > 0

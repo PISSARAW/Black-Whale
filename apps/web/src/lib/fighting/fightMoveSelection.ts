@@ -1,3 +1,4 @@
+import { performCyclotronAction } from './phinksAction'
 import { performParallelFutureAction } from './parallelFutureAbility'
 import { performKurapikaAction, toggleEmperorTime } from './kurapikaActions'
 import { moveById } from './movesets'
@@ -18,7 +19,7 @@ export function routedFightMove(
   fighter: ArcadeFighter,
   selected: FighterMove | null,
 ): FighterMove | null {
-  if (fighter.id === 'chrollo' || fighter.id === 'tserriednich') return selected
+  if (['chrollo', 'tserriednich', 'phinks'].includes(fighter.id)) return selected
   const current = moveById(fighter.attack?.moveId)
   return (
     current?.cancelInto
@@ -34,14 +35,8 @@ export function characterMoveOverride(
   perform: PerformAttack,
 ): FightState | null {
   const { state, side, action, input } = options
-  if (state[side].id === 'tserriednich' && (action === 'special' || action === 'finisher'))
-    return performParallelFutureAction({
-      state,
-      side,
-      kind: 'special',
-      moveId: selected?.id,
-      auraCharged: false,
-    })
+  const utility = nativeUtilityOverride(options, selected)
+  if (utility) return utility
   if (state[side].id === 'kurapika' && action === 'finisher' && input.aura)
     return toggleEmperorTime(state, side)
   const selectedChain = selectedChainOverride(options, selected, perform)
@@ -66,4 +61,22 @@ function judgmentOverride(options: MoveContext, perform: PerformAttack): FightSt
   if (!state[side].judgmentChain) return null
   if (action !== 'special' && action !== 'finisher' && !input.aura) return null
   return performKurapikaAction({ state, side, kind: 'special', auraCharged: input.aura }, perform)
+}
+
+function nativeUtilityOverride(
+  options: MoveContext,
+  selected: FighterMove | null,
+): FightState | null {
+  const { state, side, action } = options
+  if (action !== 'special' && action !== 'finisher') return null
+  const cast = { phinks: performCyclotronAction, tserriednich: performParallelFutureAction }
+  const id = state[side].id
+  if (!(id in cast)) return null
+  return cast[id as keyof typeof cast]({
+    state,
+    side,
+    kind: 'special',
+    moveId: selected?.id,
+    auraCharged: false,
+  })
 }

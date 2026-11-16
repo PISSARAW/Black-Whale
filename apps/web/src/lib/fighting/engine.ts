@@ -1,9 +1,16 @@
+import { steerCyclotron } from './phinksCyclotron'
+import { cyclotronAiAction } from './phinksAction'
 import { advancePredatorClock } from './predatorSeal'
 import { resolvePredatorThreats } from './predatorCombat'
 import { performMelodyAction } from './melodyAction'
 import { melodyInput, reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { advanceMelodyHearing } from './melodyHearing'
-import { musicPacifies, melodyRestrictsCombat, MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
+import {
+  musicPacifies,
+  melodyRestrictsCombat,
+  MELODY_MUSIC_RANGE,
+  soundDistance,
+} from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { advanceCatsName } from './camillaCat'
@@ -93,15 +100,17 @@ export function tickFight(
     const accumulator = next.frameAccumulator - FIXED_STEP
     const previousPositions = capturePositions(next)
     next = {
-      ...stepPostMortemOrFuture(next, () => stepParallelFuture(
-        next,
-        { player: input, opponent: opponentInput, ai: settings.ai ?? false },
-        {
-          simulate: simulateFightFrame,
-          replay: (current, command) =>
-            performAuraAttack({ state: current, side: 'opponent', ...command }),
-        },
-      )),
+      ...stepPostMortemOrFuture(next, () =>
+        stepParallelFuture(
+          next,
+          { player: input, opponent: opponentInput, ai: settings.ai ?? false },
+          {
+            simulate: simulateFightFrame,
+            replay: (current, command) =>
+              performAuraAttack({ state: current, side: 'opponent', ...command }),
+          },
+        ),
+      ),
       frameAccumulator: accumulator,
     }
     next = { ...next, previousPositions }
@@ -115,7 +124,9 @@ export function tickFight(
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
   const next = stepFight(state, controls.player, controls.opponent)
-  return controls.ai && !controls.opponent && !next.catsName ? advanceAiCadence(next, opponentAttack) : next
+  return controls.ai && !controls.opponent && !next.catsName
+    ? advanceAiCadence(next, opponentAttack)
+    : next
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
@@ -137,10 +148,12 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
   const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
   const flight = advanceProjectiles(resolvePredatorThreats(armed), FIXED_STEP)
-  const resolved = reconcileMelodySound(recordFightInjuries(
-    state,
-    resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
-  ))
+  const resolved = reconcileMelodySound(
+    recordFightInjuries(
+      state,
+      resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
+    ),
+  )
   if (fightResolutionPending(resolved)) return resolved
   const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
   const remainingFrames =
@@ -152,7 +165,9 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return reconcileMelodySound(remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next)
+  return reconcileMelodySound(
+    remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next,
+  )
 }
 
 function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -162,6 +177,8 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   const advanced = advanceFighterPhysics(melodyInput(fighter, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
+  const winding = steerCyclotron(advanced, input)
+  if (winding) return winding
   if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
   let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
@@ -218,6 +235,8 @@ function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = advanceFighterPhysics(fighter)
+  const winding = steerCyclotron(advanced)
+  if (winding) return winding
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   if (advanced.hanzoProjection && canRejoinHanzoBody(advanced) && advanced.aura < 16)
     return wakeHanzoBody(advanced)
@@ -292,10 +311,13 @@ function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string)
 }
 
 function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, _moveId?: string): boolean {
-  return (kind === 'special' || kind === 'ranged') &&
+  return (
+    (kind === 'special' || kind === 'ranged') &&
     (fighter.nen.in || fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES) &&
-    fighter.nen.mode !== 'zetsu' && !fighter.nen.on &&
+    fighter.nen.mode !== 'zetsu' &&
+    !fighter.nen.on &&
     fighter.aura >= FIGHT_HATSU_AURA_COST + IN_AURA_SURCHARGE
+  )
 }
 
 function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean {
@@ -314,6 +336,8 @@ export function opponentAttack(state: FightState): FightState {
   if (moonlightAiWaiting(state)) return state
   const future = parallelFutureAiAction(state)
   if (future) return future
+  const cyclotron = cyclotronAiAction(state)
+  if (cyclotron) return cyclotron
   const emperor = kurapikaAiActivation(state)
   if (emperor) return emperor
   if (canCallHanzoBody(state, 'opponent')) return callHanzoBody(state, 'opponent')
@@ -438,6 +462,7 @@ function flushBuffered(state: FightState, side: FightSide): FightState {
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {
+  if (state[side].cyclotronWindup) return state
   if (state.catsName) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   const move = moveForAction(state[side], 'throw', EMPTY_INPUT)

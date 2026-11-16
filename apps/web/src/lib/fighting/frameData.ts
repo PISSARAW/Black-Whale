@@ -1,4 +1,5 @@
 import { machiUtilityMove } from './machiThread'
+import { cyclotronAttackData } from './phinksCyclotron'
 import { isMelodyMusicAttack } from './melodyRules'
 import { secretWindowUtility } from './secretWindow'
 import { comboMasterUtilityMove } from './comboMasterAvailability'
@@ -108,7 +109,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   fighter = dolphinActor(fighter)
-  return franklinAttackData(baseAttackData(kind, fighter), fighter)
+  return cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter)
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
@@ -215,7 +216,19 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 }
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
-  return [isMelodyMusicAttack, isErigeronAttack, comboMasterUtilityMove, chrolloUtilityMove, isKurapikaUtility, hisokaUtilityMove, usesFranklinBarrage, benjaminUtilityMove, feitanUtilityMove, usesRemotePunch, machiUtilityMove].some((check) => check(fighter))
+  return [
+    isMelodyMusicAttack,
+    isErigeronAttack,
+    comboMasterUtilityMove,
+    chrolloUtilityMove,
+    isKurapikaUtility,
+    hisokaUtilityMove,
+    usesFranklinBarrage,
+    benjaminUtilityMove,
+    feitanUtilityMove,
+    usesRemotePunch,
+    machiUtilityMove,
+  ].some((check) => check(fighter))
 }
 
 export function isAntiAir(fighter: ArcadeFighter): boolean {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightMachiStatus from './FightMachiStatus.svelte'
+  import FightCyclotronStatus from './FightCyclotronStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
@@ -57,6 +58,7 @@
       <FightPreparationStatus {state} {side} {language} {onControl} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
+      <FightCyclotronStatus {fighter} {language} {side} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}

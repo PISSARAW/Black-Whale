@@ -1,4 +1,5 @@
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
+import { advanceCyclotron } from './phinksCyclotron'
 import { sleepingBody } from './hanzoProjection'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
@@ -11,6 +12,7 @@ const MIN_X = 7
 const MAX_X = 93
 
 export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
+  fighter = advanceCyclotron(fighter)
   const vertical = advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
   const combo = advanceCombo(fighter, vertical.y, wakeup)

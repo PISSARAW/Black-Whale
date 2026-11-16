@@ -1,3 +1,6 @@
+import { tunePhinksMoveset } from './phinksMoveset'
+import { cyclotronMoveResources } from './phinksAction'
+import { cyclotronPunchReady } from './phinksCyclotron'
 import { isPredatorMove, predatorNenAvailable, predatorReady } from './predator'
 import { predatorNenLocked } from './predatorSeal'
 import { tuneMelodyMoveset } from './melodyMoveset'
@@ -69,8 +72,10 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneMachiMoveset).map(tuneCamillaMoveset)
+  ALL_MOVESETS.map(tuneMachiMoveset)
+    .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
+    .map(tunePhinksMoveset)
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneMelodyMoveset)
@@ -112,8 +117,9 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse'].includes(fighter.id) &&
-    action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse', 'phinks'].includes(
+      fighter.id,
+    ) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -140,6 +146,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const cyclotron = cyclotronMoveResources(fighter, move.id)
+  if (cyclotron !== null && move.kind === 'special') return cyclotron
   if (move.kind === 'special' && predatorNenLocked(fighter)) return false
   if (move.kind === 'special' && isPredatorMove(fighter, move.id))
     return predatorNenAvailable(fighter)
@@ -251,7 +259,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => sealedSenseCount(opponentOf(state, side)) >= 2,
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
-  phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
+  phinks: (state, side) => cyclotronPunchReady(state[side]),
   franklin: () => true,
   machi: (state, side) => machiBindReady(state, side),
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,

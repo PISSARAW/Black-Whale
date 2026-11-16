@@ -39,10 +39,12 @@ function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
 }
 
 function finisherInRange(state: FightState, gap: number): boolean {
+  if (state.opponent.id === 'phinks') return gap <= 12
   return state.opponent.id !== 'chrollo' || gap <= 9
 }
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  if (state.opponent.id === 'phinks') return ['standingLight', 'standingHeavy', 'forwardHeavy']
   if (state.opponent.id === 'rihan') return predatorAiSlots(state)
   if (state.opponent.id === 'musse') return musseSlots(state, gap)
   if (state.opponent.id === 'tserriednich')

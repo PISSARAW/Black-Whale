@@ -79,7 +79,13 @@ function chargeEvents(before: FightState, after: FightState, side: FightSide): F
   const fighter = after[side]
   const turns = fighter.hatsuEffects.cyclotronTurns
   if (turns <= before[side].hatsuEffects.cyclotronTurns) return []
-  return [{ ...fighterEvent(fighter, side, 'hatsu'), source: 'phinks', value: turns }]
+  return [
+    {
+      ...fighterEvent(fighter, side, 'hatsu'),
+      source: 'phinks',
+      value: turns - before[side].hatsuEffects.cyclotronTurns,
+    },
+  ]
 }
 
 const lifespanBeat = (frames = 0) => Math.floor(frames / 60)

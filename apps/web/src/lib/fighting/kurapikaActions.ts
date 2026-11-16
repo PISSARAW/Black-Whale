@@ -1,3 +1,4 @@
+import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
 import { rangedAuraCost } from './projectiles'
@@ -100,11 +101,16 @@ function canToggleEmperor(state: FightState, fighter: ArcadeFighter): boolean {
 /** A Nen condition kills by its rule, independent of score format or remaining HP. */
 export function chainRuleDeath(state: FightState, side: FightSide): FightState {
   const fighter = { ...state[side], health: 0, attack: null, bufferedAttack: null, blocking: false }
-  return resolveFightOutcome(recordFightDeath({ ...state, [side]: fighter }, {
-    victimSide: side,
-    killerSide: state[side].judgmentChain?.owner ?? null,
-    cause: state[side].judgmentChain ? 'judgment' : 'vow',
-  }))
+  return resolveFightOutcome(
+    recordFightDeath(
+      { ...state, [side]: fighter },
+      {
+        victimSide: side,
+        killerSide: state[side].judgmentChain?.owner ?? null,
+        cause: state[side].judgmentChain ? 'judgment' : 'vow',
+      },
+    ),
+  )
 }
 
 export function resolveJudgmentDeaths(state: FightState): FightState {
@@ -112,7 +118,11 @@ export function resolveJudgmentDeaths(state: FightState): FightState {
   for (const side of ['player', 'opponent'] as const) {
     const judgment = state[side].judgmentChain
     if (!judgment || state[side].health > 0) continue
-    next = recordFightDeath(next, { victimSide: side, killerSide: judgment.owner, cause: 'judgment' })
+    next = recordFightDeath(next, {
+      victimSide: side,
+      killerSide: judgment.owner,
+      cause: 'judgment',
+    })
   }
   return next === state ? state : resolveFightOutcome(next)
 }
@@ -197,8 +207,13 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
-  if (fighter.bashoPoem)
-    return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
+  if (held.source === 'phinks')
+    return withDolphinIdentity(
+      state,
+      (borrowed) => perform({ ...options, state: borrowed, moveId: CYCLOTRON_PUNCH }),
+      'phinks',
+    )
+  if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
   if (fighter.hanzoProjection)
     return withDolphinIdentity(
       state,

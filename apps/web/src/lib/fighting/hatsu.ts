@@ -76,30 +76,33 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  return scaleNenControl(options.state, withDolphinIdentity(
+  return scaleNenControl(
     options.state,
-    (state) =>
-      hatsuFor(source).onImpact({
-        state,
-        side,
-        defenderSide,
-        source,
-        moveId,
-        blocked,
-        concealed,
-      }),
-    source,
-  ), side)
+    withDolphinIdentity(
+      options.state,
+      (state) =>
+        hatsuFor(source).onImpact({
+          state,
+          side,
+          defenderSide,
+          source,
+          moveId,
+          blocked,
+          concealed,
+        }),
+      source,
+    ),
+    side,
+  )
 }
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
-  const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * cyclotron * cantabile * biohazard * coins * completion
+  return transformed * cantabile * biohazard * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {

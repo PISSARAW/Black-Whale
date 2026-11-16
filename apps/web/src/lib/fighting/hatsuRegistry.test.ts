@@ -244,21 +244,17 @@ describe('fighter Hatsu registry', () => {
     expect(avoided.player.hatsuEffects.isolationFrames).toBe(0)
   })
 
-  it('stores missed Ripper Cyclotron rotations until Phinks connects', () => {
-    const trigger = hatsuFor('phinks').onTrigger
-    let state = trigger({ state: closeFight('phinks', 'hisoka'), side: 'player', source: 'phinks' })
-    state = trigger({ state, side: 'player', source: 'phinks' })
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(2)
-    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1.4)
-    state = hatsuFor('phinks').onImpact({
-      state,
+  it('never creates Cyclotron rotations or a global damage bonus through a carrier hook', () => {
+    const base = closeFight('phinks', 'hisoka')
+    const triggered = hatsuFor('phinks').onTrigger({
+      state: base,
       side: 'player',
-      defenderSide: 'opponent',
       source: 'phinks',
-      blocked: false,
-      concealed: false,
     })
-    expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(triggered).toBe(base)
+    expect(triggered.player.hatsuEffects.cyclotronTurns).toBe(0)
+    base.player.hatsuEffects.cyclotronTurns = 15
+    expect(hatsuDamageFactor(base.player)).toBe(1)
   })
 
   it('does not add invisible damage on top of Franklin’s travelling bullets', () => {

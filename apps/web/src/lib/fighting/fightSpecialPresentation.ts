@@ -1,3 +1,4 @@
+import { cyclotronPresentation } from './phinksPresentation'
 import { predatorSpecialPresentation } from './predatorPresentation'
 import { melodyCanPerform } from './melodyRules'
 import { bashoPresentation } from './bashoPresentation'
@@ -21,6 +22,7 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
+  if (state.player.id === 'phinks') return cyclotronPresentation(state, language)
   if (state.player.id === 'basho') return bashoPresentation(state, language)
   if (state.player.id === 'melody') return melodyPresentation(state, language)
   if (state.player.id === 'rihan') return predatorSpecialPresentation(state, language)

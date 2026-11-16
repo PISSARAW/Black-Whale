@@ -287,6 +287,23 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
   La portée audible de 18 unités est une abstraction du duel.
+- Phinks prépare **Ripper Cyclotron** par de véritables tours du bras droit.
+  L lance le moulinet ; L l’arrête sans frapper. Chaque tour complet est compté
+  après 36 frames de simulation et coûte 2 aura ; ces valeurs règlent le duel,
+  sans prétendre être des nombres du manga. H engage les tours terminés dans
+  un seul poing droit, dès le premier tour, sans plafond de sept tours ni seuil
+  spécial à quatre. Le coup n’accorde aucun bonus aux attaques ordinaires ou aux tirs.
+  La charge est dépensée dès l’exécution du poing, y compris sur un coup manqué,
+  gardé ou interrompu : c’est la convention du duel pour les cas non détaillés au manga.
+  Le moulinet laisse le corps exposé, immobile et sans garde ; une touche interrompt
+  le tour en cours mais conserve les tours déjà terminés. Une pause jette seulement
+  le tour incomplet. Zetsu, sceau, vol du Hatsu ou fermeture de sa page annulent la
+  réserve et son renforcement ; la manche suivante repart à zéro. Les copies suivent
+  les mêmes rotations : réutiliser la capacité chargée libère le poing.
+  `phinksCyclotron.ts` compte les tours et porte les données du poing ;
+  `phinksMotion.ts` anime l’épaule anatomiquement droite dans les deux orientations.
+  L’IA charge réellement à distance et revient au contact ; le panneau affiche les
+  tours complets et la progression du moulinet. Référence : chapitre 226.
 - Tserriednich utilise **Laplace Devil** avec L (P2 : virgule) : il entre
   volontairement en Zetsu et ferme les yeux. Les 30 frames de préparation sont
   un réglage du duel ; il ne bouge ni ne garde, et une touche réelle l'interrompt.

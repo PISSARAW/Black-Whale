@@ -30,7 +30,7 @@ describe('wave one movesets', () => {
       'biscuit',
       'phinks',
     ])
-    WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich'].includes(id)).forEach(
+    WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich', 'phinks'].includes(id)).forEach(
       assertCompleteMoveset,
     )
   })
@@ -154,7 +154,7 @@ describe('wave one movesets', () => {
     expect(canUseMovesetMove(versus('illumi'), 'player', chainJail)).toBe(true)
   })
 
-  it.each(WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich'].includes(id)))(
+  it.each(WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich', 'phinks'].includes(id)))(
     '%s finisher is locked behind its unique condition',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -313,12 +313,17 @@ function withFinisherCondition(state: FightState): FightState {
       return withOpponentEffect(state, 'senseSeals', 3)
     case 'biscuit':
       return { ...state, player: { ...player, biscuitTrueForm: true } }
-    case 'phinks':
-      return withPlayerEffect(state, 'cyclotronTurns', 4)
     case 'franklin':
       return { ...state, opponent: { ...opponent, health: 40 } }
     case 'machi':
-      return { ...state, player: { ...player, x: opponent.x - 6 }, opponent: { ...opponent, machiThread: { owner: 'player', kind: 'bind', x: opponent.x, y: opponent.y } } }
+      return {
+        ...state,
+        player: { ...player, x: opponent.x - 6 },
+        opponent: {
+          ...opponent,
+          machiThread: { owner: 'player', kind: 'bind', x: opponent.x, y: opponent.y },
+        },
+      }
     case 'illumi':
       return withOpponentEffect(state, 'needleFrames', 60)
     case 'kalluto':

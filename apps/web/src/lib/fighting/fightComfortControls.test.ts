@@ -30,7 +30,7 @@ function pad(buttons: number[]): FightPad {
 
 describe('visual comfort is presentation only', () => {
   it('persists validated settings and tolerates corrupt, stale or inaccessible storage', () => {
-    const settings = { shake: 0.5, flashes: false, highContrast: true } as const
+    const settings = { camera: 0.5, shake: 0.5, flashes: false, highContrast: true } as const
     const setItem = vi.fn()
     saveFightComfort(settings, { setItem })
     expect(readFightComfort({ getItem: () => setItem.mock.calls[0][1] })).toEqual(settings)
@@ -53,7 +53,12 @@ describe('visual comfort is presentation only', () => {
   })
   it('honors system reduced motion even when saved settings request full effects', () => {
     const full = defaultFightComfort()
-    expect(effectiveFightComfort(full, true)).toEqual({ ...full, shake: 0, flashes: false })
+    expect(effectiveFightComfort(full, true)).toEqual({
+      ...full,
+      camera: 0,
+      shake: 0,
+      flashes: false,
+    })
     expect(effectiveFightComfort(full, false)).toEqual(full)
     expect(full.shake).toBe(1)
   })

@@ -1,3 +1,4 @@
+import { prepareTrainingGuard, trainingGuardInput } from './trainingGuard'
 import type { FutureControls } from './parallelFutureTypes'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 import { enforceTrainingResources } from './trainingSession'
@@ -19,7 +20,7 @@ export function stepTrainingFrame(
 ): FightState {
   if (!state.training || state.mode !== 'training' || state.forecastSimulation)
     return hooks.simulate(state, controls)
-  let prepared = enforceTrainingResources(state)
+  let prepared = enforceTrainingResources(prepareTrainingGuard(state))
   const opponent = dummyInput(prepared, controls.opponent ?? EMPTY_INPUT)
   prepared = captureTrainingInput(prepared, opponent)
   prepared = sampleTrainingInputs(prepared, { player: controls.player, opponent })
@@ -36,7 +37,7 @@ function dummyInput(state: FightState, manual: FightInput): FightInput {
   const behavior = lab.settings.dummy.behavior
   return {
     ...EMPTY_INPUT,
-    guard: ['guard', 'crouch-guard', 'reversal'].includes(behavior),
+    guard: ['guard', 'crouch-guard', 'reversal'].includes(behavior) || trainingGuardInput(state),
     down: behavior === 'crouch-guard',
     jump: behavior === 'jump',
   }

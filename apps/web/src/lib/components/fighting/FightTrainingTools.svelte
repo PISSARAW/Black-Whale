@@ -27,6 +27,8 @@
     ['manual', 'Manuel · P2', 'Manual · P2'],
     ['idle', 'Immobile', 'Idle'],
     ['guard', 'Garde haute', 'Standing guard'],
+    ['guard-after-hit', 'Garde après la première touche', 'Guard after first hit'],
+    ['random-guard', 'Garde aléatoire · confirmation', 'Random guard · hit confirm'],
     ['crouch-guard', 'Garde basse', 'Crouching guard'],
     ['jump', 'Saut répété', 'Repeated jump'],
     ['attack', 'Attaque répétée', 'Repeated attack'],

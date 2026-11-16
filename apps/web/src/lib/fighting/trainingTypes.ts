@@ -3,7 +3,15 @@ import type { FightInput, FightSide, MoveAction } from './types'
 export type TrainingAction = MoveAction | 'ranged'
 export type TrainingPosition = 'center' | 'left' | 'right'
 export type DummyBehavior =
-  'manual' | 'idle' | 'guard' | 'crouch-guard' | 'jump' | 'attack' | 'reversal'
+  | 'manual'
+  | 'idle'
+  | 'guard'
+  | 'guard-after-hit'
+  | 'random-guard'
+  | 'crouch-guard'
+  | 'jump'
+  | 'attack'
+  | 'reversal'
 export interface TrainingResources {
   health: number
   aura: number

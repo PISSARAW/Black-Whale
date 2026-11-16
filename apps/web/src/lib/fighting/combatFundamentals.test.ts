@@ -275,9 +275,9 @@ describe('confirmed cancels, pressure and reproducible punishment', () => {
       performMove({ state: blocked, side: 'player', action: 'heavy' }).player.attack?.moveId,
     ).toBe('kurapika:standingHeavy')
     const other = resolve(
-      performMove({ state: guarded(duel('hisoka', 'kurapika')), side: 'player', action: 'light' }),
+      performMove({ state: guarded(duel('biscuit', 'kurapika')), side: 'player', action: 'light' }),
     )
-    expect(canCancel(other.player, 'heavy', 'hisoka:standingHeavy')).toBe(false)
+    expect(canCancel(other.player, 'heavy', 'biscuit:standingHeavy')).toBe(false)
     expect(canCancel(blocked.player, 'special', 'kurapika:neutralSpecial')).toBe(false)
   })
   it('does not cancel a whiff, a parried contact or an expired cancel window', () => {

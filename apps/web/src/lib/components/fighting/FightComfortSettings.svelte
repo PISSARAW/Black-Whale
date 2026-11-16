@@ -37,6 +37,20 @@
 <fieldset>
   <legend>{language === 'fr' ? 'Confort visuel' : 'Visual comfort'}</legend>
   <label
+    >{language === 'fr' ? 'Caméra dynamique' : 'Dynamic camera'}
+    <select
+      aria-label={language === 'fr' ? 'Caméra dynamique' : 'Dynamic camera'}
+      value={comfort.camera ?? 1}
+      disabled={reducedMotion}
+      onchange={(event) =>
+        update({ camera: Number(event.currentTarget.value) as FightComfort['camera'] })}
+    >
+      <option value={0}>{language === 'fr' ? 'Cadrage stable' : 'Stable framing'}</option>
+      <option value={0.5}>{language === 'fr' ? 'Modérée' : 'Moderate'}</option>
+      <option value={1}>{language === 'fr' ? 'Complète' : 'Full'}</option>
+    </select>
+  </label>
+  <label
     >{language === 'fr' ? 'Secousses' : 'Camera shake'}
     <select
       aria-label={language === 'fr' ? 'Secousses' : 'Camera shake'}
@@ -66,8 +80,8 @@
   >
   {#if reducedMotion}<small
       >{language === 'fr'
-        ? 'Animation réduite du système : secousses et flashs désactivés.'
-        : 'System reduced motion: shake and impact flashes disabled.'}</small
+        ? 'Animation réduite du système : caméra stable, secousses et flashs désactivés.'
+        : 'System reduced motion: stable camera, shake and impact flashes disabled.'}</small
     >{/if}
 </fieldset>
 

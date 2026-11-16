@@ -1575,3 +1575,8 @@ dans leurs trois phases et les deux orientations.
 
 Les replays de matchs, le journal des commandes, les scénarios de référence et
 le protocole de mesure sont décrits dans [REPLAYS.md](./REPLAYS.md).
+
+## Combats de référence et caméra dynamique
+
+Les seize routes, les exercices de défense, les règles de cancel et le cadrage
+dynamique sont documentés dans [COMBAT.md](./COMBAT.md).

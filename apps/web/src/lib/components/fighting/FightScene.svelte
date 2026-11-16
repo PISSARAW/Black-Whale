@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createCombatCamera } from '$lib/fighting/combatCamera'
   import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightPoseClock } from '$lib/fighting/fightPoseClock'
@@ -33,7 +34,7 @@
   } from '$lib/fighting/fightComfort'
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
   import { motionOf } from '$lib/fighting/fighterMovement'
-  import { createStrideClocks, easeFactor, transitionSecondsFor } from '$lib/fighting/sceneMotion'
+  import { createStrideClocks, transitionSecondsFor } from '$lib/fighting/sceneMotion'
   import {
     impactReaction,
     isThrowTech,
@@ -77,9 +78,6 @@
     ko: 'idle',
   }
 
-  /** Per-second ease of the camera; 6 is a touch snappier than the old 0.07/frame at 60 Hz. */
-  const CAMERA_RATE = 6
-
   onMount(() => {
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const visualComfort = () => effectiveFightComfort(comfort, motionPreference.matches)
@@ -108,7 +106,7 @@
         scene.fog = new THREE.Fog(0x05090d, 8, 18)
         const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30)
         camera.position.set(0, 2.25, 9.2)
-        let cameraLookY = 1.18
+        const combatCamera = createCombatCamera()
 
         const materials: Array<[string, import('three').MeshBasicMaterial]> = []
         const geometries: import('three').BufferGeometry[] = []
@@ -184,13 +182,18 @@
           worldY,
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
-        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns,
+        const fighterEffects = createFighterEffectScene({
+          THREE,
+          scene,
+          worldX,
+          worldY,
+          figureOf: (side) => models[side].model.turns,
           handAnchor: (side, hand) => {
             const lead = state[side].facing === 1 ? 'right' : 'left'
             const limb = hand === 'lead' ? lead : lead === 'right' ? 'left' : 'right'
             return models[side].model.root.getObjectByName(`hand-${limb}`)
           },
-         })
+        })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
         const feitanScene = createFeitanScene({
@@ -347,6 +350,34 @@
           }
         }
 
+        const updateCombatCamera = (dt: number, now: number) => {
+          const playerX = worldX(interpolatedPosition(state, 'player').x)
+          const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
+          const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
+          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
+          const framing = sceneryCameraFrame(
+            biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect }),
+            scenery,
+          )
+          const pose = combatCamera.update({
+            state,
+            base: framing,
+            span: catSpan,
+            aspect: camera.aspect,
+            dt,
+            intensity: visualComfort().camera ?? 1,
+            minimumDistance: scenery.framing?.minimumDistance,
+          })
+          camera.position.set(pose.x, pose.y, pose.z)
+          updateCameraFog()
+          if (visualComfort().shake > 0 && now < shakeUntil) {
+            const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
+            camera.position.x += Math.sin(now * 0.15) * shakeX * fade
+            camera.position.y += Math.cos(now * 0.19) * shakeY * fade
+          }
+          camera.lookAt(pose.x, pose.lookY, 0)
+        }
+
         const render = (now: number) => {
           if (disposed) return
           const seconds = now / 1000
@@ -374,23 +405,7 @@
           })
           fighterEffects.sync(state, seconds)
 
-          const playerX = worldX(interpolatedPosition(state, 'player').x)
-          const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
-          const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
-          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
-          const framing = sceneryCameraFrame(biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect }), scenery)
-          const ease = easeFactor(CAMERA_RATE, dt)
-          camera.position.x += (framing.x - camera.position.x) * ease
-          camera.position.z += (framing.z - camera.position.z) * ease
-          camera.position.y += (framing.y - camera.position.y) * ease
-          cameraLookY += (framing.lookY - cameraLookY) * ease
-          updateCameraFog()
-          if (visualComfort().shake > 0 && now < shakeUntil) {
-            const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
-            camera.position.x += Math.sin(now * 0.15) * shakeX * fade
-            camera.position.y += Math.cos(now * 0.19) * shakeY * fade
-          }
-          camera.lookAt(camera.position.x, cameraLookY, 0)
+          updateCombatCamera(dt, now)
 
           for (let index = sparks.length - 1; index >= 0; index -= 1) {
             const spark = sparks[index]

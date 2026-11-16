@@ -1,4 +1,6 @@
 <script lang="ts">
+  import FightCombatSchool from '$lib/components/fighting/FightCombatSchool.svelte'
+  import { createCombatSchool, advanceCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
   import FightPracticeHub from '$lib/components/fighting/FightPracticeHub.svelte'
   import FightLabSession from '$lib/components/fighting/FightLabSession.svelte'
@@ -56,7 +58,6 @@
   import { attackKeys } from './fightingKeys'
   import './fighting.css'
   import './fightingMatch.css'
-
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
   let environment = createFightEnvironment({ arenaInteractions: true })
@@ -81,10 +82,18 @@
   let easterEggPreferences = defaultEasterEggPreferences()
   const lessons = createFightLessons()
   const practice = createClashPractice()
-  match.observeFrames(practice.observe)
+  const school = createCombatSchool()
+  const schoolActions = {
+    onLaunch: launchPractice,
+    beforeLaunch: practice.exit,
+    onExit: resetFightInputs,
+  }
+  match.observeFrames((next) => {
+    practice.observe(next)
+    school.observe(next)
+  })
   const controls = createFightControls(gamepadAction)
   setContext(FIGHT_CONTROLS_CONTEXT, controls.bindings)
-
   $: language = $locale === 'fr' ? 'fr' : 'en'
   $: copy = fightingCopy(language)
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
@@ -92,29 +101,28 @@
     lessons.observe(state)
     practice.observe(state)
   }
-
   function resetFightInputs() {
     input = { ...EMPTY_INPUT }
     opponentInput = { ...EMPTY_INPUT }
     match.clear()
+    school.release()
     controls.release()
   }
-
   function startLesson(id: LessonId) {
+    school.exit()
     resetFightInputs()
     paused = false
     practice.exit()
     state = lessons.start(id)
     match.begin(state)
   }
-
   function exitLesson() {
     lessons.exit()
     resetFightInputs()
     if (state) state = setTrainingDummy(state, { behavior: 'idle' })
   }
-
   function prepareFight() {
+    school.exit()
     practice.exit()
     state = createFight(selectedPlayer, selectedOpponent, {
       formatId: selectedFormat,
@@ -125,41 +133,40 @@
     match.begin(state)
     paused = false
   }
-
   function startFight() {
     if (state) state = match.apply(state, { kind: 'start' })
   }
-
   function rematch() {
     prepareFight()
     startFight()
   }
-
   function continueMatch() {
     if (!state) return
     state = match.apply(state, { kind: 'round' })
     resetFightInputs()
   }
-
   function chooseAgain() {
+    school.exit()
     practice.exit()
     state = null
     match.begin(null)
     resetFightInputs()
     paused = false
   }
-
   function queueAction(action: (current: FightState) => FightState) {
     if (state && fightAcceptsCommands(state) && (!paused || state.mode === 'training'))
       match.queue(action)
   }
-
   function queueCommand(command: ReplayCommand) {
     if (state && (!paused || state.mode === 'training')) match.enqueue(state, command)
   }
-
   function sendMove(side: FightSide, action: MoveAction | 'ranged') {
-    if (side === 'opponent' && ($lessons || practice.active || state?.mode === 'versus-ai')) return
+    if (school.demonstrating) return
+    if (
+      side === 'opponent' &&
+      ($lessons || practice.active || school.active || state?.mode === 'versus-ai')
+    )
+      return
     const pressed = controls.combine(side, side === 'player' ? input : opponentInput)
     queueCommand({ kind: 'move', side, action, input: packReplayInput(pressed) })
   }
@@ -167,18 +174,15 @@
   const finisher = () => sendMove('player', 'finisher')
   const throwAttack = () => sendMove('player', 'throw')
   const opponentAttack = (action: MoveAction | 'ranged') => sendMove('opponent', action)
-
   function control(key: keyof FightInput, active: boolean) {
     if (!canControlFight(state, paused)) return
     input = { ...input, [key]: active }
   }
-
   function opponentControl(key: keyof FightInput, active: boolean) {
-    if ($lessons || practice.active) return
+    if ($lessons || practice.active || school.active) return
     if ((paused && state?.mode !== 'training') || state?.mode === 'versus-ai') return
     opponentInput = { ...opponentInput, [key]: active }
   }
-
   function gamepadAction(side: FightSide, action: PadAction) {
     if (action === 'pause') {
       if (replays.active) {
@@ -191,7 +195,6 @@
     }
     sendMove(side, action)
   }
-
   function handleKey(event: KeyboardEvent, active: boolean) {
     if (!state) return
     dispatchFightKey(event, active, {
@@ -207,7 +210,6 @@
       action: handleActionKey,
     })
   }
-
   function handleActionKey(key: string) {
     if (handlePauseKey(key)) return
     if (!canControlFight(state, paused)) return
@@ -217,13 +219,11 @@
     if (attackKind) return attack(attackKind)
     if (key === 'Enter' && state?.phase === 'ready') startFight()
   }
-
   function handlePauseKey(key: string): boolean {
     if (key !== 'p' || state?.phase !== 'fighting') return false
     togglePause()
     return true
   }
-
   function togglePause() {
     if (replays.active) {
       replays.toggle()
@@ -232,13 +232,11 @@
     paused = !paused
     resetFightInputs()
   }
-
   function resetLab(position: TrainingPosition) {
     if (!state) return
     state = resetTraining(state, position)
     resetFightInputs()
   }
-
   function stepLab() {
     if (!state || state.mode !== 'training' || !paused) return
     state = match.advance({ ...state, frameAccumulator: 0 }, input, {
@@ -246,7 +244,6 @@
       opponentInput,
     })
   }
-
   function launchPractice(next: FightState | null) {
     lessons.exit()
     resetFightInputs()
@@ -254,7 +251,6 @@
     match.begin(next)
     paused = false
   }
-
   function openReplay(id: string) {
     if (!replays.active) replayReturnPaused = paused
     resetFightInputs()
@@ -271,7 +267,6 @@
     state = replays.restart()
     resetFightInputs()
   }
-
   onMount(() => {
     easterEggPreferences = readEasterEggPreferences()
     controls.load()
@@ -293,7 +288,11 @@
       last = now
       controls.poll(state?.mode, Boolean(state?.phase === 'fighting' && !paused && !replays.active))
       if (state && !paused)
-        state = match.advance(state, controls.combine('player', input), {
+        state = advanceCombatSchool({
+          school,
+          match,
+          state,
+          input: controls.combine('player', input),
           dt,
           opponentInput: practice.opponentInput(controls.combine('opponent', opponentInput)),
         })
@@ -316,7 +315,6 @@
     { name: 'Black Whale: Clash', path: $link('/fighting') },
   ])}
 />
-
 <main class="fighting-shell" class:is-playing={Boolean(state)}>
   <header class="fight-header">
     <nav aria-label="Breadcrumb" class="fight-breadcrumb">
@@ -328,7 +326,7 @@
     <p class="intro">{copy.intro}</p>
   </header>
 
-  {#if !replays.active}<FightPracticeHub
+  {#if !replays.active && !$school}<FightPracticeHub
       {practice}
       {state}
       {language}
@@ -336,6 +334,7 @@
       onLaunch={launchPractice}
     />{/if}
   {#if !state}
+    <FightCombatSchool {school} {language} {...schoolActions} />
     <FightReplays {replays} {language} {...replayActions} />
     <FightLessons {lessons} {language} onStart={startLesson} />
     <FightSetup
@@ -357,7 +356,8 @@
     />
   {:else}
     <div class="stage-wrap" bind:this={stageElement} style={`--hud-scale:${hudScale}`}>
-      {#if !$lessons}<FightReplays {replays} {language} {...replayActions} />{/if}
+      {#if !replays.active}<FightCombatSchool {school} {language} {...schoolActions} />{/if}
+      {#if !$lessons && !$school}<FightReplays {replays} {language} {...replayActions} />{/if}
       <FightDisplaySettings
         bind:comfort
         {language}
@@ -432,7 +432,7 @@
           training={state.mode === 'training'}
         />
 
-        {#if state.mode === 'training' && !$lessons && !practice.active && !replays.active}
+        {#if state.mode === 'training' && !$lessons && !practice.active && !replays.active && !$school}
           <FightResponseDiagnostics {diagnostics} {language} />
           <FightLabSession
             bind:state

@@ -1,3 +1,4 @@
+import { battleUtilityAttack } from './bonolenovMoveset'
 import { blinkyAttackData } from './blinkyAction'
 import { blinkyUtilityAttack } from './blinky'
 import { LYNCH_MOVE } from './lynchTypes'
@@ -112,7 +113,10 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   fighter = dolphinActor(fighter)
-  return blinkyAttackData(cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter), fighter)
+  return blinkyAttackData(
+    cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter),
+    fighter,
+  )
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
@@ -222,6 +226,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 function utilityAttack(fighter: ArcadeFighter): boolean {
   if (fighter.attack?.moveId === LYNCH_MOVE) return true
   return [
+    battleUtilityAttack,
     isMelodyMusicAttack,
     isErigeronAttack,
     comboMasterUtilityMove,

@@ -1,3 +1,4 @@
+import { battleMusicEvents } from './battleCantabile'
 import type { FightSide, FightState, FighterHatsuEffects } from '../types'
 import { fighterEvent, type FightSoundEvent } from './events'
 
@@ -8,6 +9,7 @@ export function characterSoundEvents(
   side: FightSide,
 ): FightSoundEvent[] {
   return [
+    ...battleMusicEvents(before, after, side),
     ...emperorEvents(before, after, side),
     ...bodyEvents(before, after, side),
     ...bookEvents(before, after, side),
@@ -48,6 +50,8 @@ function bodyEvents(before: FightState, after: FightState, side: FightSide): Fig
     [previous.chainJail, fighter.chainJail, 'seal'],
     [previous.judgmentChain, fighter.judgmentChain, 'seal'],
     [previous.textureSurprise, fighter.textureSurprise, 'page'],
+    [previous.battleCantabile?.preparation, fighter.battleCantabile?.preparation, 'hatsu'],
+    [previous.battleCantabile?.form, fighter.battleCantabile?.form, 'transform'],
   ]
   return transitions
     .filter(
@@ -117,7 +121,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   stitchedFrames: 'thread',
   needleFrames: 'needle',
   restrainedFrames: 'verdict',
-  cantabileFrames: 'dance',
   bloodBoundFrames: 'blood',
   entrancedFrames: 'flute',
   possessedFrames: 'spirit',

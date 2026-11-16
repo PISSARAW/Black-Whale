@@ -1,3 +1,4 @@
+import { PROLOGUE_SPEAR_POSE } from './bonolenovPoses'
 import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
@@ -30,6 +31,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   franklin: FRANKLIN_KEY_POSES,
   chrollo: CHROLLO_KEY_POSES,
   hanzo: HANZO_KEY_POSES,
+  bonolenov: { forwardSpecial: PROLOGUE_SPEAR_POSE },
   furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
 }
 

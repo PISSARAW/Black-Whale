@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { winnerLabel, finishLabel, isDisplayInput, type DummyCommand, type DummyCommandData } from './fightingPageHelpers'
+  import { battleStageCallbacks } from './battleCallbacks'
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount } from 'svelte'
@@ -69,10 +71,6 @@
   let recordingStartFrame = 0
   let playbackStartFrame = 0
   let playbackIndex = 0
-  type DummyCommandData =
-    | { type: 'input'; key: keyof FightInput; active: boolean }
-    | { type: 'attack'; action: MoveAction | 'ranged' }
-  type DummyCommand = DummyCommandData & { frame: number }
   let dummyRecording: DummyCommand[] = []
   let language: 'fr' | 'en'
 
@@ -201,30 +199,6 @@
     playbackStartFrame = state.frame
     playbackIndex = 0
     opponentInput = { ...EMPTY_INPUT }
-  }
-
-  function winnerLabel(current: FightState): string {
-    if (current.winner === 'draw') return copy.draw
-    return current.winner === 'player' ? copy.victory : copy.defeat
-  }
-
-  function finishLabel(current: FightState): string {
-    if (current.finishReason === 'expulsion') return language === 'fr' ? 'EXPULSION' : 'EXPELLED'
-    if (current.finishReason === 'time') return 'TIME'
-    if (current.finishReason === 'hits') return '10 PTS'
-    if (current.finishReason === 'technical-knockout') return 'T.K.O.'
-    return 'K.O.'
-  }
-
-  function isDisplayInput(target: EventTarget | null): boolean {
-    return (
-      target instanceof HTMLElement &&
-      Boolean(
-        target.closest(
-          'input, select, textarea, summary, [contenteditable="true"], [data-fight-scroll]',
-        ),
-      )
-    )
   }
 
   function handleKey(event: KeyboardEvent, active: boolean) {
@@ -430,6 +404,7 @@
           onBlinkyCommand={(side, command) => { if (state) state = selectBlinkyCommand(state, side, command) }}
           onOpponentControl={opponentControl}
           onControl={control}
+          {...battleStageCallbacks(queueAction)}
           training={state.mode === 'training'}
         />
 
@@ -465,8 +440,8 @@
           </div>
         {:else if state.phase === 'finished'}
           <div class="match-overlay result-overlay">
-            <p>{finishLabel(state)}</p>
-            <h2>{winnerLabel(state)}</h2>
+            <p>{finishLabel(state, language)}</p>
+            <h2>{winnerLabel(state, copy)}</h2>
             <p>{state.roundsWon.player} — {state.roundsWon.opponent}</p>
             <div>
               {#if state.matchWinner}

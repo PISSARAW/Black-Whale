@@ -1,3 +1,4 @@
+import { dolphinMissingBattleBody } from './battleCantabileRules'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
@@ -195,6 +196,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   return (
     !outsideDuelAbility(fighter.kurapika!.held!.moveId) &&
+    !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     kurapikaNenActive(fighter) &&
     fighter.kurapika!.emperorTime
@@ -213,8 +215,7 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
       (borrowed) => perform({ ...options, state: borrowed, moveId: CYCLOTRON_PUNCH }),
       'phinks',
     )
-  if (fighter.lynchQuestion)
-    return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
+  if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
   if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
   if (fighter.hanzoProjection)
     return withDolphinIdentity(

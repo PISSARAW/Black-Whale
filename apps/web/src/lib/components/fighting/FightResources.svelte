@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightMachiStatus from './FightMachiStatus.svelte'
   import FightCyclotronStatus from './FightCyclotronStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
@@ -30,6 +31,8 @@
   export let detailed = false
   export let showControls = false
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
+  export let onTalk: (side: FightSide) => void = () => {}
+  export let onBattleAction: (side: FightSide, moveId: string) => void = () => {}
   export let onAura: (active: boolean) => void
   export let onEmperor: () => void
 
@@ -138,6 +141,7 @@
       <FightPredatorStatus {state} {side} {language} />
       <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
+      <FightBattleCantabile {state} {side} {language} {onTalk} {onBattleAction} />
       {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
       {#if fighter.textureSurprise}
         <div class="secret-status">

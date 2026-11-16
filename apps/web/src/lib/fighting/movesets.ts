@@ -1,3 +1,4 @@
+import { bonolenovMoveAllowed, bonolenovResources, tuneBonolenovMoveset } from './bonolenovMoveset'
 import { blinkyBloodReady } from './blinky'
 import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { canAskLynchQuestion } from './lynchRules'
@@ -94,6 +95,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
     .map(tuneFurykovMoveset)
+    .map(tuneBonolenovMoveset)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
@@ -124,9 +126,18 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'lynch', 'longhi', 'melody', 'basho', 'musse', 'phinks', 'mizaistom'].includes(
-      fighter.id,
-    ) && action === 'special'
+    [
+      'leorio',
+      'yokotani',
+      'bill',
+      'lynch',
+      'longhi',
+      'melody',
+      'basho',
+      'musse',
+      'phinks',
+      'mizaistom',
+    ].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -137,6 +148,8 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  const battle = bonolenovMoveAllowed(state, side, move)
+  if (battle !== null) return battle
   if (!blinkyMoveAllowed(state, side, move.id)) return false
   if (move.id === 'mizaistom:neutralSpecial') return crossGameCanWarn(state, side)
   if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
@@ -156,6 +169,10 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
+}
+
+function ordinaryMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   const cyclotron = cyclotronMoveResources(fighter, move.id)
   if (cyclotron !== null && move.kind === 'special') return cyclotron
   if (move.kind === 'special' && predatorNenLocked(fighter)) return false
@@ -274,7 +291,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   machi: (state, side) => machiBindReady(state, side),
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
-  bonolenov: (state, side) => state[side].hatsuEffects.cantabileFrames > 0,
   shizuku: blinkyBloodReady,
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),

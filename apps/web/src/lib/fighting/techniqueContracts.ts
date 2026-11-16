@@ -1,3 +1,4 @@
+import { BONOLENOV_CANON } from './bonolenovCanon'
 import { BENJAMIN_CANON } from './benjaminCanon'
 import { CHROLLO_CANON } from './chrolloCanon'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
@@ -196,6 +197,7 @@ export function techniqueContract(
   move: Pick<FighterMove, 'id' | 'category'>,
 ): TechniqueCanonContract {
   const defined = CONTRACTS[move.id as `${FighterId}:${MoveSlot}`]
+  if (BONOLENOV_CANON[move.id]) return BONOLENOV_CANON[move.id]
   if (defined) return defined
   if (BENJAMIN_CANON[move.id]) return BENJAMIN_CANON[move.id]
   return {

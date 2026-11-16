@@ -1,3 +1,4 @@
+import { createJupiterScene } from './jupiterScene'
 import { gyoSight, perceivesProjectile } from './nenPerception'
 import { isThetaBullet } from './thetaFirearm'
 import type { ArcadeFighter, FightProjectile } from './types'
@@ -27,6 +28,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   }
   const meshes = new Map<number, import('three').Mesh>()
   const remotePunches = createRemotePunchScene(options)
+  const jupiter = createJupiterScene(options)
 
   const build = (projectile: FightProjectile) => {
     const colour = Number.parseInt(projectile.colour.slice(1), 16)
@@ -53,9 +55,10 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       (shot) => !observer || shot.owner === 'player' || perceivesProjectile(observer, shot),
     )
     remotePunches.sync(visible)
+    jupiter.sync(visible, seconds)
     const active = new Set(projectiles.map((projectile) => projectile.id))
     for (const projectile of projectiles) {
-      if (projectile.remotePunch) continue
+      if (projectile.remotePunch || projectile.jupiter) continue
       const mesh = meshes.get(projectile.id) ?? build(projectile)
       mesh.visible = visible.includes(projectile)
       syncShuAura(mesh, projectile, observer)
@@ -78,6 +81,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
     sync,
     dispose: () => {
       remotePunches.dispose()
+      jupiter.dispose()
       thetaMetals.forEach((material) => material.dispose())
       thetaMetals.clear()
       for (const mesh of meshes.values()) scene.remove(mesh)

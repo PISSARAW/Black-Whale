@@ -1,7 +1,7 @@
+import { battleCombatBusy } from './battleCantabileRules'
 import { crossGameBusy } from './crossGame'
 import { machiImmobilized } from './machiThread'
 import { predatorNenLocked } from './predatorSeal'
-import { melodyRestrictsCombat } from './melodyRules'
 import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
@@ -89,7 +89,7 @@ export function canStartFighterAttack(
   moveId?: string,
 ): boolean {
   if (fighter.pluggingWounds) return false
-  if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
+  if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
   if (crossGameBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
@@ -123,7 +123,7 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
   if (fighter.pluggingWounds) return false
-  if (fighter.cyclotronWindup || melodyRestrictsCombat(fighter)) return false
+  if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
   if (crossGameBusy(fighter)) return false
   if (
     fighter.hitStun > 0 ||

@@ -51,6 +51,12 @@ function chainAbility(fighter: ArcadeFighter, moveId?: string): string | null {
 
 function selectedAbility(source: FighterId, moveId?: string): string | null {
   const slot = moveId?.split(':')[1] ?? 'neutralSpecial'
+  if (source === 'bonolenov')
+    return slot === 'finisher'
+      ? 'battle-cantabile-jupiter'
+      : slot === 'downSpecial'
+        ? 'battle-cantabile-metamorphosen'
+        : 'battle-cantabile-prologue'
   if (source === 'benjamin') return BENJAMIN_ABILITIES[slot] ?? null
   if (source === 'hisoka' && slot === 'downSpecial') return 'texture-surprise'
   return defaultAbility(source)

@@ -80,7 +80,38 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   expose aussi sa mécanique propre et au moins trois routes courtes.
 - La deuxième vague applique le même contrat à Franklin, Machi, Illumi, Kalluto,
   Bonolenov, Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
-  Leorio fait exception au format de quinze coups : dix coups physiques ordinaires
+- Bonolenov utilise trois pièces distinctes de **Battle Cantabile**. L prépare
+  Prologue pendant 60 frames sans frappe ni bonus global, puis matérialise une
+  tenue guerrière et une lance ; →+L frappe avec cette lance seulement après
+  la préparation. La danse et sa musique sont rendues par le corps aux orifices
+  découverts ; déplacement volontaire pendant la préparation, garde, saut,
+  blessure ou entrave l’interrompent. ←+L cesse volontairement les pièces.
+  H et U engagent chaque fois une nouvelle danse de 90 frames pour **Jupiter** :
+  la sphère géante apparaît autour du danseur, poursuit le corps réel de la cible,
+  puis utilise les collisions et dégâts ordinaires du moteur. Elle disparaît si
+  la source musicale est interrompue ou si la cible sort de son rayon de 58 unités.
+  Cette portée est spatiale : se couvrir les oreilles n’annule pas la sphère.
+  ↓+L prépare **Metamorphosen** pendant 45 frames : un échange parlé avec le
+  modèle est exigé avant de prendre son apparence. À proximité, T et V (ou les
+  boutons Parler des deux joueurs) fournissent les deux voix ; une IA disponible
+  peut répondre au joueur. Le temps passé à moins de 18 unités du modèle est
+  compté dans ce duel, y compris auprès de ce modèle devenu inconscient ; son
+  inconscience ne remplace jamais l’échange parlé préalable. La durée acquise
+  est figée au début de la préparation et la forme expire sans se prolonger
+  toute seule. Seul l’adversaire fournit un modèle ; aucune rencontre historique
+  n’est présumée. Apparence, statistiques et pouvoirs restent séparés : aucune
+  capacité du modèle, invulnérabilité ou nouvelle collision n’est copiée.
+  Zetsu, épuisement, sceau ou vol dissipent les pièces ; chaque manche efface les
+  modèles appris. Les copies n’obtiennent pas les orifices corporels nécessaires
+  à la musique ; Steal Chain peut retenir le pouvoir sans charger un Dolphin
+  inutilisable ni verrouiller Emperor Time. Coûts (40/55/30 aura), préparation,
+  rayon sonore, dialogue, durée maximale de poursuite (180 frames), sphère
+  indépendante du corps et collisions fixes sont des adaptations explicites au
+  duel. Aucune limite de taille ou acquisition de modèle supplémentaire n’est
+  inventée. `battleCantabileAction.ts`, `battleCantabileFrame.ts`,
+  `battleConversation.ts`, `jupiterFlight.ts` et `bonolenov.test.ts` portent ces
+  règles ; `ui-tests/bonolenov` et `scripts/check-bonolenov.mjs` vérifient le rendu.
+- Leorio fait exception au format de quinze coups : dix coups physiques ordinaires
   et un seul Hatsu attesté, le poing transmis par une surface (chapitre 325).
   `leorioMoveset.ts` retire les variantes médicales, la double émission et le finisher.
   L (avec ou sans direction) et U déclenchent la même frappe au sol, pour 40 aura.

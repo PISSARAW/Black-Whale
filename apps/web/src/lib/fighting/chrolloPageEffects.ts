@@ -16,7 +16,6 @@ type CopiedFighter = ArcadeFighter & {
 
 const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   phinks: ['cyclotronTurns'],
-  bonolenov: ['cantabileFrames'],
   shizuku: ['blinkyFrames'],
   hinrigh: ['biohazardFrames'],
   luini: ['teleportDodges'],

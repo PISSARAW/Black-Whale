@@ -129,6 +129,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  battleCantabile?: import('./battleCantabileTypes').BattleCantabile
+  battleUtteranceFrame?: number
   blinky?: BlinkyState
   openWounds?: number
   pluggingWounds?: boolean
@@ -272,7 +274,6 @@ export interface FighterHatsuEffects {
   stitchedFrames: number
   needleFrames: number
   serpentMarks: number
-  cantabileFrames: number
   biohazardFrames: number
   restrainedFrames: number
   bloodBoundFrames: number
@@ -357,6 +358,8 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  /** A conjured sphere pursues its designated target within earshot. */
+  jupiter?: boolean
   living?: boolean
   /** Offensive Nen is committed at release; later Zetsu/Emperor Time cannot rewrite a shot. */
   nenPower?: number

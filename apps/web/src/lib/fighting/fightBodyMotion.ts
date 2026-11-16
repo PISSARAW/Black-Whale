@@ -1,3 +1,4 @@
+import { bonolenovDancePlan } from './bonolenovPoses'
 import { pluggingWoundsPlan } from './blinkyPose'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { crossGameBodyPlan } from './crossGamePresentation'
@@ -134,6 +135,10 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  return bonolenovDancePlan(fighter, context.seconds) ?? ordinaryBodyPlan(fighter, context)
+}
+
+function ordinaryBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const cyclotron = cyclotronBodyPlan(fighter)
   if (cyclotron) return cyclotron
   const crossGame = crossGameBodyPlan(fighter)

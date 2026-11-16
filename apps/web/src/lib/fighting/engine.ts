@@ -1,20 +1,20 @@
+import { resolveFighterSpeech } from './battleConversation'
+import { reconcileBattleCantabile } from './battleCantabileFrame'
+import { battleInput, battlePreparing } from './battleCantabileRules'
+import { canAct, canMove, canGuard } from './fightActorState'
+import { poseFighter } from './fightActorPose'
 import { blinkyAiDefense } from './blinkyWounds'
 import { plugWoundsInput } from './blinky'
 import { steerCyclotron } from './phinksCyclotron'
 import { cyclotronAiAction } from './phinksAction'
 import { resolveCrossGameCommand, resolveCrossGameMovement } from './crossGameAction'
-import { crossGameBusy, crossGameRestrained } from './crossGame'
+import { crossGameBusy } from './crossGame'
 import { advancePredatorClock } from './predatorSeal'
 import { resolvePredatorThreats } from './predatorCombat'
 import { performMelodyAction } from './melodyAction'
 import { melodyInput, reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { advanceMelodyHearing } from './melodyHearing'
-import {
-  musicPacifies,
-  melodyRestrictsCombat,
-  MELODY_MUSIC_RANGE,
-  soundDistance,
-} from './melodyRules'
+import { MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { advanceCatsName } from './camillaCat'
@@ -30,14 +30,12 @@ import { characterAuraAction } from './characterAuraAction'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { advanceEmperorClock, kurapikaAiActivation, resolveJudgmentDeaths } from './kurapikaActions'
-import { chainsImmobilize } from './kurapika'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { recordFightInjuries } from './feitanPain'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
-import { callHanzoBody, canCallHanzoBody, resolveHanzoBodyCalls } from './hanzoBodyCall'
+import { callHanzoBody, canCallHanzoBody } from './hanzoBodyCall'
 import {
   canRejoinHanzoBody,
-  projectionPreparing,
   sleepingBody,
   steerHanzoProjection,
   wakeHanzoBody,
@@ -119,7 +117,7 @@ export function tickFight(
     }
     next = { ...next, previousPositions }
     if (next.phase === 'finished') {
-      next = reconcileMelodySound(next)
+      next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
   }
@@ -142,20 +140,24 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
-  const judged = resolveJudgmentDeaths(resolveCrossGameMovement(state, { ...state, player, opponent }))
+  const judged = resolveJudgmentDeaths(
+    resolveCrossGameMovement(state, { ...state, player, opponent }),
+  )
   if (fightResolutionPending(judged)) return judged
   const buffered = flushBuffered(
-    flushBuffered(resolveHanzoBodyCalls(judged, input, opponentInput), 'player'),
+    flushBuffered(resolveFighterSpeech(judged, input, opponentInput), 'player'),
     'opponent',
   )
   const withHatsu = advanceMelodyHearing(advanceHatsuFrames(buffered))
   if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
   const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
   const flight = advanceProjectiles(resolvePredatorThreats(armed), FIXED_STEP)
-  const resolved = reconcileMelodySound(
-    recordFightInjuries(
-      state,
-      resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
+  const resolved = reconcileBattleCantabile(
+    reconcileMelodySound(
+      recordFightInjuries(
+        state,
+        resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
+      ),
     ),
   )
   if (fightResolutionPending(resolved)) return resolved
@@ -169,8 +171,10 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return reconcileMelodySound(
-    remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next,
+  return reconcileBattleCantabile(
+    reconcileMelodySound(
+      remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next,
+    ),
   )
 }
 
@@ -179,7 +183,9 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const advanced = advanceFighterPhysics(plugWoundsInput(melodyInput(fighter, input), input))
+  const advanced = advanceFighterPhysics(
+    plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
+  )
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   const winding = steerCyclotron(advanced, input)
   if (winding) return winding
@@ -239,6 +245,7 @@ function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }
   const winding = steerCyclotron(advanced)
   if (winding) return winding
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
@@ -294,7 +301,11 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
   options = thetaFirearmOptions(options)
-  return resolveMoonlightAction(options.state, resolveCrossGameCommand(options.state, executeAuraAttack(options), options.side), options.side)
+  return resolveMoonlightAction(
+    options.state,
+    resolveCrossGameCommand(options.state, executeAuraAttack(options), options.side),
+    options.side,
+  )
 }
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
@@ -410,57 +421,6 @@ function finishByTime(state: FightState): FightState {
     state,
     state.player.health > state.opponent.health ? 'player' : 'opponent',
     'time',
-  )
-}
-
-function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
-  if (fighter.health <= 0) return { ...fighter, pose: 'ko', blocking: false }
-  if (fighter.knockdownFrames > 0) return { ...fighter, pose: 'down', blocking: false }
-  if (fighter.wakeupInvulnerableFrames > 0 && !fighter.attack)
-    return { ...fighter, pose: 'wakeup', blocking: false }
-  if (fighter.hitStun > 0) return { ...fighter, pose: 'hit', blocking: false }
-  if (crossGameRestrained(fighter)) return { ...fighter, pose: 'idle', blocking: false }
-  if (musicPacifies(fighter)) return { ...fighter, pose: 'idle', blocking: false }
-  if (fighter.melodyPerformance) return { ...fighter, pose: 'special', blocking: false }
-  return activeFighterPose(fighter)
-}
-
-function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
-  if (fighter.attack) return { ...fighter, pose: fighter.attack.kind, blocking: false }
-  if (fighter.y > GROUND) return { ...fighter, pose: 'jump', blocking: false }
-  if (fighter.blocking || fighter.blockStun > 0) return { ...fighter, pose: 'guard' }
-  return fighter
-}
-
-function canAct(fighter: ArcadeFighter): boolean {
-  return (
-    !fighter.pluggingWounds &&
-    !crossGameBusy(fighter) &&
-    !musicPacifies(fighter) &&
-    !chainsImmobilize(fighter) &&
-    !projectionPreparing(fighter) &&
-    fighter.hitStun === 0 &&
-    fighter.blockStun === 0 &&
-    fighter.knockdownFrames === 0 &&
-    fighter.health > 0
-  )
-}
-
-function canMove(fighter: ArcadeFighter): boolean {
-  return canAct(fighter) && fighter.attack === null && !fighter.melodyPerformance
-}
-
-function canGuard(fighter: ArcadeFighter): boolean {
-  return (
-    !fighter.pluggingWounds &&
-    !crossGameBusy(fighter) &&
-    !melodyRestrictsCombat(fighter) &&
-    !chainsImmobilize(fighter) &&
-    fighter.y === GROUND &&
-    fighter.hitStun === 0 &&
-    fighter.knockdownFrames === 0 &&
-    fighter.health > 0 &&
-    fighter.attack === null
   )
 }
 

@@ -1,3 +1,5 @@
+import { addBonolenovPrologue, battleFigureKey, battleNeedsSkin } from './bonolenovFigure'
+import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
@@ -19,6 +21,7 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.nen,
+    ...battleFigureKey(fighter),
     fighter.id === 'shizuku' && blinkyAvailable(fighter),
     Boolean(fighter.parallelEyesClosed),
     'hanzoProjection' in fighter && Boolean(fighter.hanzoProjection),
@@ -35,7 +38,7 @@ export function buildFightFigure(options: {
   observer?: ArcadeFighter
 }) {
   const { THREE, glow, fighter } = options
-  const definition = fighterDefinition(fighter.id)
+  const definition = fighterDefinition(battleAppearance(fighter))
   const seen: HumanLook = {
     id: `fighting-scene:${definition.modelId}`,
     kind: 'combatant',
@@ -59,7 +62,7 @@ export function buildFightFigure(options: {
   const profile = fighter.id === 'franklin' ? franklinFightProfile(declared) : declared
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
-  const dressed = fighter.textureSurprise ? { ...profile, shirt: profile.skin } : profile
+  const dressed = battleNeedsSkin(fighter) ? { ...profile, shirt: profile.skin } : profile
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
@@ -73,6 +76,7 @@ export function buildFightFigure(options: {
   })
   if (trueForm) shapeBiscuitTrueForm(model)
 
+  addBonolenovPrologue({ THREE, glow, fighter, model })
   addFighterEquipment(options, model)
   shapeFightEyes({ root: model.root, fighter, glow })
   return model

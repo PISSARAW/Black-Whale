@@ -34,6 +34,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     const auraBefore = ready[side].aura
 
     const armed = performAttack(ready, side, 'special')
+    if (id === 'bonolenov') {
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].battleCantabile?.preparation?.piece).toBe('prologue')
+      expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     if (id === 'lynch') {
       expect(armed[side].attack).toBeNull()
       expect(armed[side].lynchQuestion?.id).toBe('identity')
@@ -48,7 +55,6 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       expect(advance(armed, 0.4).impact).toBeNull()
       return
     }
-
 
     if (id === 'melody') {
       expect(armed[side].attack).toBeNull()

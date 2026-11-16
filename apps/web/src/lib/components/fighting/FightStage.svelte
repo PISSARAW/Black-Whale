@@ -18,7 +18,7 @@
   import { canUseRangedAttack, projectileProfile, rangedAuraCost } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
-  import type { AttackKind, FightInput, FightState } from '$lib/fighting/types'
+  import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -28,6 +28,8 @@
   export let onCall: () => void
   export let onFinisher: () => void
   export let onEmperor: () => void = () => {}
+  export let onTalk: (side: FightSide) => void = () => {}
+  export let onBattleAction: (side: FightSide, moveId: string) => void = () => {}
   export let onControl: (key: keyof FightInput, active: boolean) => void
   export let onBlinkyTarget: (side: FightSide, target: BlinkyTarget) => void = () => {}
   export let onBlinkyCommand: (side: FightSide, command: BlinkyCommand) => void = () => {}
@@ -172,31 +174,39 @@
           </button>
         {/if}
         {#if state.player.id !== 'camilla'}
-        <button
-          type="button"
-          class="special-button"
-          disabled={!hatsuReady}
-          aria-label={hatsuHint}
-          title={hatsuHint}
-          onpointerdown={(event) => {
-            event.currentTarget.setPointerCapture(event.pointerId)
-            hold('hatsu', true)
-          }}
-          onpointerup={() => {
-            onAttack('special')
-            hold('hatsu', false)
-          }}
-          onpointercancel={() => hold('hatsu', false)}
-        >
-          <kbd>L</kbd>
-          <span>Hatsu</span>
-        </button>
+          <button
+            type="button"
+            class="special-button"
+            disabled={!hatsuReady}
+            aria-label={hatsuHint}
+            title={hatsuHint}
+            onpointerdown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId)
+              hold('hatsu', true)
+            }}
+            onpointerup={() => {
+              onAttack('special')
+              hold('hatsu', false)
+            }}
+            onpointercancel={() => hold('hatsu', false)}
+          >
+            <kbd>L</kbd>
+            <span>Hatsu</span>
+          </button>
         {/if}
       </div>
     </div>{/if}
-  <FightBlinkyPanel state={visibleState} {language} onTarget={onBlinkyTarget} onCommand={onBlinkyCommand}
-    onHold={(side, key, active) => side === 'player' ? onControl(key, active) : onOpponentControl(key, active)} />
+  <FightBlinkyPanel
+    state={visibleState}
+    {language}
+    onTarget={onBlinkyTarget}
+    onCommand={onBlinkyCommand}
+    onHold={(side, key, active) =>
+      side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
+  />
   <FightResources
+    {onTalk}
+    {onBattleAction}
     {onControl}
     {state}
     {language}

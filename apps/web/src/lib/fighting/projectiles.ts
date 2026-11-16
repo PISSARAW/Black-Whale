@@ -1,10 +1,13 @@
+import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
+import { advanceJupiter } from './jupiterFlight'
+import { battleRangedAvailable } from './battleCantabileRules'
 import { predatorNenLocked } from './predatorSeal'
-import { advanceProjectileNen, commitProjectileNen } from './nenProjectiles'
+import { commitProjectileNen } from './nenProjectiles'
 import { CAMILLA_PISTOL } from './camillaWeapon'
 import { thetaShotAim } from './thetaFirearm'
 import { benjaminBurstReady } from './benjaminWeapon'
 import { hasMoveResources, moveForSlot } from './movesets'
-import { advanceRemotePunch, remotePunchCanHit, spawnRemotePunch } from './remotePunch'
+import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
@@ -142,12 +145,12 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   }),
   bonolenov: projectile({
     matter: 'nen',
-    labels: ['Jupiter', 'Jupiter'],
+    labels: ['Jupiter · Danse', 'Jupiter · Dance'],
     shape: 'orb',
-    colour: '#fbbf24',
-    speed: 42,
-    damage: 11,
-    size: [1.25, 1],
+    colour: '#d8aa72',
+    speed: 84,
+    damage: 38,
+    size: [12, 12],
   }),
   hinrigh: projectile({
     matter: 'nen',
@@ -214,6 +217,10 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)
+}
+
+function standardRangedAvailable(fighter: ArcadeFighter): boolean {
   if (predatorNenLocked(fighter) && rangedAuraCost(fighter.id) > 0) return false
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
@@ -223,10 +230,11 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
   if (fighter.id === 'musse') return true
-  return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
+  return ordinaryRangedReady(fighter)
 }
 
 export function rangedAuraCost(id: FighterId): number {
+  if (id === 'bonolenov') return 55
   if (id === 'kurapika' || id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
   if (['benjamin', 'theta', 'camilla', 'musse'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
@@ -241,8 +249,7 @@ export function spawnRangedProjectiles(state: FightState): FightState {
 function spawnForSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (
-    fighter.id === 'leorio' ||
-    fighter.id === 'franklin' ||
+    ['bonolenov', 'leorio', 'franklin'].includes(fighter.id) ||
     fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
     !benjaminBurstReady(fighter) ||
@@ -304,11 +311,9 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const projectile = advanceProjectileNen(
-      held.remotePunch
-        ? advanceRemotePunch(held)
-        : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 },
-    )
+    const jupiter = held.jupiter ? advanceJupiter(state, held, step) : undefined
+    if (held.jupiter && !jupiter) continue
+    const projectile = jupiter ?? travelFightProjectile(held, step)
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {
@@ -316,13 +321,7 @@ export function advanceProjectiles(
       if (projectile.remotePunch)
         projectile.remotePunch = { ...projectile.remotePunch, struck: true }
     }
-    if (
-      (!collision || projectile.remotePunch) &&
-      projectile.age < projectile.lifetime &&
-      projectile.x > 2 &&
-      projectile.x < 98
-    )
-      kept.push(projectile)
+    if (keepFightProjectile(projectile, Boolean(collision))) kept.push(projectile)
   }
   return { state: { ...state, projectiles: kept }, hits }
 }
@@ -344,4 +343,8 @@ function projectileCollision(
     x: (Math.max(box.left, hurtbox.left) + Math.min(box.right, hurtbox.right)) / 2,
     y: (Math.max(box.bottom, hurtbox.bottom) + Math.min(box.top, hurtbox.top)) / 2,
   }
+}
+
+function ordinaryRangedReady(fighter: ArcadeFighter): boolean {
+  return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }

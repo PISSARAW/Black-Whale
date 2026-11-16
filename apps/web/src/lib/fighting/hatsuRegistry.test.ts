@@ -313,14 +313,15 @@ describe('fighter Hatsu registry', () => {
     expect(state.opponent.hatsuEffects.serpentMarks).toBe(0)
   })
 
-  it('arms Bonolenov with Battle Cantabile’s attack and armour', () => {
+  it('never substitutes generic attack or defence bonuses for Bonolenov’s danced pieces', () => {
     const state = hatsuFor('bonolenov').onTrigger({
       state: closeFight('bonolenov', 'hisoka'),
       side: 'player',
       source: 'bonolenov',
     })
-    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
-    expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
+    expect(state.player.battleCantabile).toBeUndefined()
+    expect(hatsuDamageFactor(state.player)).toBe(1)
+    expect(hatsuDefenceFactor(state.player)).toBe(1)
   })
 
   it('never lets a Blinky contact hit drain aura or heal its user', () => {
@@ -341,13 +342,27 @@ describe('fighter Hatsu registry', () => {
   it('lets an aimed, prepared Blinky swallow named objects but never Nen constructs', () => {
     const ready = closeFight('shizuku', 'theta')
     const armed = performAttack(ready, 'player', 'special')
-    const fighter = { ...armed.player, attack: { ...armed.player.attack!, frame: attackData('special', armed.player).startup } }
+    const fighter = {
+      ...armed.player,
+      attack: { ...armed.player.attack!, frame: attackData('special', armed.player).startup },
+    }
     const shot = (id: number, x: number, matter: FightProjectile['matter']) => ({
-      ...SAMPLE_PROJECTILE, id, x, y: fighter.y + 6.1, shape: 'bullet' as const, matter,
+      ...SAMPLE_PROJECTILE,
+      id,
+      x,
+      y: fighter.y + 6.1,
+      shape: 'bullet' as const,
+      matter,
     })
-    const cleaned = hatsuFor('shizuku').onFrame({ ...armed, player: fighter, projectiles: [
-      shot(1, fighter.x + 6, 'object'), shot(2, fighter.x + 6, 'nen'), shot(3, fighter.x + 40, 'object'),
-    ] })
+    const cleaned = hatsuFor('shizuku').onFrame({
+      ...armed,
+      player: fighter,
+      projectiles: [
+        shot(1, fighter.x + 6, 'object'),
+        shot(2, fighter.x + 6, 'nen'),
+        shot(3, fighter.x + 40, 'object'),
+      ],
+    })
     expect(cleaned.projectiles.map((projectile) => projectile.id)).toEqual([2, 3])
     expect(cleaned.player.blinky?.lastObject?.id).toBe(1)
   })

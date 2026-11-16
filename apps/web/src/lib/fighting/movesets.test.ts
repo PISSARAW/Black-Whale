@@ -171,9 +171,9 @@ describe('wave one movesets', () => {
   )
 
   it.each(
-    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter(
-      (id) => !['leorio', 'mizaistom'].includes(id) && id !== 'franklin',
-    ),
+    WAVE_TWO_FIGHTERS.filter((id) => id !== 'bonolenov')
+      .filter((id) => id !== 'hinrigh')
+      .filter((id) => !['leorio', 'mizaistom'].includes(id) && id !== 'franklin'),
   )('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
@@ -188,7 +188,9 @@ describe('wave one movesets', () => {
   })
 
   it.each(
-    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch'].includes(id)),
+    WAVE_THREE_FIGHTERS.filter(
+      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch'].includes(id),
+    ),
   )('%s wave-three finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
@@ -328,8 +330,6 @@ function withFinisherCondition(state: FightState): FightState {
       return withOpponentEffect(state, 'needleFrames', 60)
     case 'kalluto':
       return withOpponentEffect(state, 'serpentMarks', 2)
-    case 'bonolenov':
-      return withPlayerEffect(state, 'cantabileFrames', 120)
     case 'shizuku':
       return { ...state, opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 } }
     case 'hinrigh':

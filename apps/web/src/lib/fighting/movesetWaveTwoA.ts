@@ -148,8 +148,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'bonolenov',
     mechanic: [
-      'Battle Cantabile : la danse guerrière renforce attaque et défense pendant son chant.',
-      'Battle Cantabile: the war dance strengthens offense and defense during its song.',
+      'Battle Cantabile exige la danse et la musique des orifices corporels. L prépare Prologue (tenue et lance), →+L porte un coup de lance. H ou U prépare Jupiter à chaque usage, puis sa sphère poursuit la cible dans la portée du son. ↓+L prépare Metamorphosen après un échange parlé avec le modèle ; durée plafonnée par le temps passé auprès de lui. T/V ou Parler permettent l’échange. ←+L cesse la musique et reprend son apparence. Aucun bonus global ni pouvoir copié par le déguisement.',
+      'Battle Cantabile requires dancing and music from the body’s holes. L prepares Prologue (attire and spear); →+L thrusts the spear. H or U prepares Jupiter anew, then its sphere pursues the target within earshot. ↓+L prepares Metamorphosen after a spoken exchange with the model; duration is capped by time spent near them. T/V or Talk supplies the exchange. ←+L stops the music and restores his appearance. No global buff or powers copied by the disguise.',
     ],
     finisherCondition: ['Battle Cantabile doit être actif.', 'Battle Cantabile must be active.'],
     labels: [
@@ -162,10 +162,10 @@ const SPECS: readonly MovesetSpec[] = [
       'Marche rituelle|Ritual March',
       'Vrille de guerre|War Spiral',
       'Contre syncopé|Syncopated Counter',
-      'Battle Cantabile|Battle Cantabile',
-      'Prologue|Prologue',
-      'Rythme funèbre|Funeral Rhythm',
-      'Jupiter défensif|Defensive Jupiter',
+      'Prologue · Danse|Prologue · Dance',
+      'Prologue · Lance|Prologue · Spear',
+      'Metamorphosen|Metamorphosen',
+      'Cesser la musique|Stop the Music',
       'Étreinte rituelle|Ritual Clinch',
       'Jupiter|Jupiter',
     ],

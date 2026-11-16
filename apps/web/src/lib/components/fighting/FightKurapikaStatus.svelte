@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dolphinMissingBattleBody } from '$lib/fighting/battleCantabileRules'
   import { moveById } from '$lib/fighting/movesets'
   import { outsideDuelAbility } from '$lib/fighting/outsideDuelAbility'
   import type { FightSide, FightState } from '$lib/fighting/types'
@@ -11,6 +12,7 @@
   $: chain = fighter.kurapika
   $: held = chain?.held
   $: outsideDuel = outsideDuelAbility(held?.moveId)
+  $: missingBody = dolphinMissingBattleBody(fighter)
   $: ability = outsideDuel ?? moveById(held?.moveId)
   $: hours = ((chain?.lifespanFrames ?? 0) / 60).toLocaleString(
     language === 'fr' ? 'fr-FR' : 'en-US',
@@ -43,9 +45,15 @@
             ? 'Stealth Dolphin'
             : 'Steal Chain'}
         </div>
-        {#if outsideDuel}
+        {#if outsideDuel || missingBody}
           <div>
-            {language === 'fr' ? outsideDuel.reasonFr : outsideDuel.reasonEn}
+            {missingBody
+              ? language === 'fr'
+                ? 'Battle Cantabile : orifices corporels requis absents.'
+                : 'Battle Cantabile: required body holes are absent.'
+              : language === 'fr'
+                ? outsideDuel?.reasonFr
+                : outsideDuel?.reasonEn}
             {language === 'fr'
               ? 'Capacité conservée dans Steal Chain.'
               : 'Ability retained in Steal Chain.'}

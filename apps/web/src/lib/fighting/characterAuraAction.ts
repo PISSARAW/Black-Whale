@@ -1,3 +1,4 @@
+import { performBattleCantabileAction } from './battleCantabileAction'
 import { performLynchAction } from './lynchAction'
 import { performCrossGameAction } from './crossGameAction'
 import { performMachiAction } from './machiAction'
@@ -22,6 +23,7 @@ export function characterAuraAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const attempts = [
+    () => performBattleCantabileAction(options),
     () => performLynchAction(options),
     () => performCrossGameAction(options),
     () => performMachiAction(options, perform),

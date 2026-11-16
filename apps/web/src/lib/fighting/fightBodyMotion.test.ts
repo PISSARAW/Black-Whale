@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { buildHumanFigure } from '$lib/tour/humanFigure'
 import type { HumanPose } from '$lib/tour/humanAnimation'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
-import { footHeight, fightRigOf } from './fightRig'
+import { captureFootPlant, footHeight, fightRigOf } from './fightRig'
 import { createFightState } from './fightState'
 import { keyedMove } from './keyPoseMoves'
 import { FIGHTING_ROSTER } from './roster'
@@ -93,6 +93,16 @@ describe('fighting rig', () => {
     const crouched = poseAndMeasure(model, fighter('kurapika', { crouching: true }), 2)
     expect(crouched).toBeCloseTo(standing, 3)
     expect(model.turns.position.y).toBeLessThan(sunk - 0.2)
+  })
+
+  it('locks one support foot horizontally through a grounded pose', () => {
+    const model = figureOf('kurapika')
+    const standing = poseAndReadFeet(model, fighter('kurapika'), 1)
+    const crouched = poseAndReadFeet(model, fighter('kurapika', { crouching: true }), 2)
+    const drift = crouched.map((foot, index) =>
+      Math.hypot(foot.x - standing[index].x, foot.z - standing[index].z),
+    )
+    expect(Math.min(...drift)).toBeLessThan(1e-5)
   })
 
   it('reaches the jab contact on its first active frame', () => {
@@ -192,4 +202,17 @@ function poseAndMeasure(
     })
   }
   return height
+}
+
+function poseAndReadFeet(model: ReturnType<typeof figureOf>, who: ArcadeFighter, at: number) {
+  let feet: Array<{ x: number; z: number }> = []
+  for (const seconds of [at, at + 1]) {
+    model.animate(seconds, 'idle', {
+      motion: (human) => {
+        fightBodyMotion({ fighter: who, seconds, progress: 0 })(human)
+        feet = captureFootPlant(fightRigOf(human)).positions.map(({ x, z }) => ({ x, z }))
+      },
+    })
+  }
+  return feet
 }

@@ -13,8 +13,8 @@ import {
 import { reactionPlan, type ReactionContext } from './fightReactions'
 import {
   applyFightPose,
+  captureFootPlant,
   fightRigOf,
-  footHeight,
   hasFightRig,
   plantFeet,
   resetFightRig,
@@ -78,9 +78,10 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
       fallback?.(human)
       return
     }
-    const before = plan.plant ? footHeight(rig) : 0
-    applyFightPose(rig, blended(rig, plan, seconds), fighter.facing)
-    if (plan.plant) plantFeet(rig, before)
+    const anchor = plan.plant ? captureFootPlant(rig) : null
+    const drawn = blended(rig, plan, seconds)
+    applyFightPose(rig, drawn, fighter.facing)
+    if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   }
 }
 

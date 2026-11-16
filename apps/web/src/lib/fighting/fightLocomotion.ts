@@ -1,4 +1,5 @@
-import { addPoses, lerpPose, type FightPose } from './fightPose'
+import { fightFamily, type FightFamily } from './fightArchetypes'
+import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
 import { motionOf } from './fighterMovement'
 import type { ArcadeFighter } from './types'
 
@@ -77,6 +78,39 @@ const BACK_CATCH: FightPose = {
   rearKnee: [0.58, 0, 0],
 }
 
+/** Family accents keep the fighter's authored guard but change how the body carries momentum. */
+const DASH_ACCENTS: Record<FightFamily, FightPose> = {
+  striker: { chest: [0.04, -0.08, 0], rearShoulder: [-0.12, 0, -0.08] },
+  kicker: {
+    body: [-0.04, 0, 0],
+    leadHip: [-0.22, 0, 0.08],
+    rearHip: [0.2, 0, -0.08],
+    leadShoulder: [0.15, 0, 0.25],
+  },
+  blade: {
+    body: [0.12, 0, 0],
+    chest: [0.16, -0.12, 0],
+    leadShoulder: [-0.25, 0, -0.18],
+    rearShoulder: [0.18, 0, 0.12],
+  },
+  caster: {
+    body: [-0.08, 0, 0],
+    chest: [-0.05, -0.15, 0],
+    leadShoulder: [-0.18, 0, 0.15],
+    leadElbow: [-0.28, 0, 0],
+    rearElbow: [-0.22, 0, 0],
+  },
+  brute: {
+    root: [0, -0.05, 0],
+    body: [0.16, 0, 0],
+    chest: [0.08, 0, 0],
+    leadKnee: [0.18, 0, 0],
+    rearKnee: [0.22, 0, 0],
+    leadShoulder: [0.1, 0, 0.28],
+    rearShoulder: [0.08, 0, -0.28],
+  },
+}
+
 export interface DashPose {
   pose: FightPose
   forward: boolean
@@ -90,7 +124,13 @@ export function dashPose(fighter: ArcadeFighter, standing: FightPose): DashPose 
   const poses = forward
     ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH]
     : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH]
-  return { pose: addPoses(standing, sampleThreeBeat(poses, progress)), forward }
+  const accent = dashAccent(fighter, progress, forward)
+  return { pose: addPoses(standing, sampleThreeBeat(poses, progress), accent), forward }
+}
+
+function dashAccent(fighter: ArcadeFighter, progress: number, forward: boolean): FightPose {
+  const strength = Math.sin(progress * Math.PI) * (forward ? 1 : 0.7)
+  return scalePose(DASH_ACCENTS[fightFamily(fighter.id)], strength)
 }
 
 function sampleThreeBeat(poses: FightPose[], progress: number): FightPose {

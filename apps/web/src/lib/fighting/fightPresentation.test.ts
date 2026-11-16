@@ -21,6 +21,18 @@ describe('fight presentation', () => {
     expect(backward.pose.body?.[0]).toBeLessThan(0)
   })
 
+  it('carries family-specific momentum over each fighter stance', () => {
+    const striker = bodyPlan(dashing(1, 9), { seconds: 1, progress: 0 })!
+    const bruteBase = createFightState('benjamin', 'hisoka').player
+    const bruteDash: FighterDash = { direction: 1, frame: 9, frames: 18, peak: 96 }
+    const brute = bodyPlan(
+      { ...bruteBase, pose: 'walk', motion: { ...motionOf(bruteBase), dash: bruteDash } },
+      { seconds: 1, progress: 0 },
+    )!
+    expect(brute.pose.rearKnee?.[0]).toBeGreaterThan(striker.pose.rearKnee?.[0] ?? 0)
+    expect(brute.pose.leadShoulder?.[2]).not.toBe(striker.pose.leadShoulder?.[2])
+  })
+
   it('gives heavier and decisive impacts more visual weight', () => {
     const light = impactPresentation({
       kind: 'light',

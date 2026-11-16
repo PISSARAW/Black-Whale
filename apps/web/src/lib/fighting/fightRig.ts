@@ -28,6 +28,17 @@ export interface FightRig {
   probe: Vector3
 }
 
+export interface FootPlantAnchor {
+  positions: readonly [Vector3, Vector3]
+}
+
+export interface PlantFeetOptions {
+  anchor: FootPlantAnchor
+  /** Authored root travel remains visible while joint-induced foot drift is removed. */
+  root?: Turn
+  facing: 1 | -1
+}
+
 /** The upper body starts a little above the hip joints. */
 const UPPER_BODY_ABOVE_HIP = 0.1
 /** The chest pivots at the belt, not at the feet. */
@@ -152,12 +163,18 @@ function applyLimbs(rig: FightRig, pose: FightPose, sides: PoseSides): void {
 
 /** Height of the lower foot, in the space the figure stands in. */
 export function footHeight(rig: FightRig): number {
+  return Math.min(...captureFootPlant(rig).positions.map((position) => position.y))
+}
+
+/** Positions of both soles in the fighter model's ground space. */
+export function captureFootPlant(rig: FightRig): FootPlantAnchor {
   const { figure } = rig.human
   const ground = figure.parent ?? figure
   ground.updateWorldMatrix(true, true)
-  return Math.min(
-    ...rig.ankles.map((ankle) => ground.worldToLocal(ankle.getWorldPosition(rig.probe)).y),
-  )
+  const positions = rig.ankles.map((ankle) =>
+    ground.worldToLocal(ankle.getWorldPosition(rig.probe)).clone(),
+  ) as [Vector3, Vector3]
+  return { positions }
 }
 
 /**
@@ -165,12 +182,19 @@ export function footHeight(rig: FightRig): number {
  * legs: a crouch then sinks the body instead of pushing the feet through the
  * floor, and a kick lifts one foot while the other stays planted.
  */
-export function plantFeet(rig: FightRig, before: number): void {
+export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const { human } = rig
   rig.ankles.forEach((ankle, index) => {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)
     ankle.rotation.x += Math.min(MAX_ANKLE, Math.max(-MAX_ANKLE, level))
   })
-  human.figure.position.y -= footHeight(rig) - before
+  const after = captureFootPlant(rig)
+  const support = after.positions[0].y <= after.positions[1].y ? 0 : 1
+  const target = options.anchor.positions[support].clone()
+  const root = options.root ?? [0, 0, 0]
+  target.x += root[0] * options.facing
+  target.y += root[1]
+  target.z += root[2]
+  human.figure.position.add(target.sub(after.positions[support]))
 }

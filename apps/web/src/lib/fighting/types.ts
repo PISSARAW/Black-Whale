@@ -248,7 +248,6 @@ export interface FighterHatsuEffects {
   bloodBoundFrames: number
   entrancedFrames: number
   haikuFrames: number
-  venomFrames: number
   soulExposedFrames: number
   teleportDodges: number
   wormDodges: number

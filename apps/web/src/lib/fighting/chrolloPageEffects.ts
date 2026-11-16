@@ -39,7 +39,6 @@ const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   mizaistom: ['restrainedFrames'],
   zakuro: ['bloodBoundFrames'],
   melody: ['entrancedFrames'],
-  gel: ['venomFrames'],
   lynch: ['soulExposedFrames'],
   morena: ['contagionFrames', 'contagionStacks'],
   halkenburg: ['possessedFrames'],

@@ -1,3 +1,4 @@
+import { tuneGelMoveset } from './gelMoveset'
 import { tuneCamillaMoveset } from './camillaMoveset'
 import { sealedSenseCount } from './saiyuSenses'
 import { tuneThetaMoveset } from './thetaMoveset'
@@ -64,6 +65,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneThetaMoveset)
+    .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
     .map(tuneChrolloMoveset)
@@ -242,7 +244,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
   basho: (state, side) => state[side].hatsuEffects.haikuFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
-  gel: (state, side) => opponentOf(state, side).hatsuEffects.venomFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,

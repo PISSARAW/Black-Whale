@@ -64,7 +64,7 @@ describe('wave one movesets', () => {
       'luini',
       'bill',
     ])
-    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla'].includes(id)).forEach(assertCompleteMoveset)
+    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel'].includes(id)).forEach(assertCompleteMoveset)
   })
 
   it('gives the fourth wave ten equally complete movesets', () => {
@@ -180,7 +180,7 @@ describe('wave one movesets', () => {
     },
   )
 
-  it.each(WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla'].includes(id)))(
+  it.each(WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla', 'gel'].includes(id)))(
     '%s wave-three finisher is conditionally locked',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -352,8 +352,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, player: { ...player, health: 30 } }
     case 'halkenburg':
       return withOpponentEffect(state, 'possessedFrames', 60)
-    case 'gel':
-      return withOpponentEffect(state, 'venomFrames', 60)
     case 'lynch':
       return withOpponentEffect(state, 'soulExposedFrames', 60)
     case 'luini':

@@ -115,7 +115,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   bloodBoundFrames: 'blood',
   entrancedFrames: 'flute',
   haikuFrames: 'poem',
-  venomFrames: 'snake',
   possessedFrames: 'spirit',
   contagionFrames: 'contagion',
   blinkyFrames: 'vacuum',

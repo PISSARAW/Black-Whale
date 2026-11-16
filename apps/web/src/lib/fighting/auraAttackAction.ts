@@ -58,5 +58,6 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {
   const { state, side, kind, moveId } = options
+  if (moveId === 'gel:finisher') return false
   return kind !== 'special' || feitanMoveAvailable(state[side], moveId)
 }

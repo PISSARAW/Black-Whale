@@ -541,9 +541,9 @@ describe('fighter Hatsu registry', () => {
     expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
   })
 
-  it('lets Gel poison aura and Lynch expose the target’s soul', () => {
+  it('keeps Gel’s arm free of added effects while Lynch exposes the target’s soul', () => {
     const ready = closeFight('gel', 'hisoka')
-    const poisoned = hatsuFor('gel').onImpact({
+    const struck = hatsuFor('gel').onImpact({
       state: ready,
       side: 'player',
       defenderSide: 'opponent',
@@ -559,7 +559,7 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(poisoned.opponent.hatsuEffects.venomFrames).toBe(180)
+    expect(struck).toBe(ready)
     expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
   })
 

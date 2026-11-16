@@ -471,3 +471,13 @@ remplacent la présentation de lanceuse d’orbes. Les sources de référence so
 les chapitres 385 et 387 : elle tente de tirer sur Tserriednich pendant son Zetsu
 volontaire, elle ne lui impose pas ce Zetsu. `theta.test.ts` vérifie les tirs
 pour les deux joueurs et leur interaction avec garde, interruption et vol de Hatsu.
+
+### Gel : bras-serpent sans propriétés inventées
+
+Gel conserve sa transformation du bras et l’allonge de ses frappes. Les variantes
+directionnelles représentent des gestes avec le même bras ; portées, dégâts,
+timings et coûts d’aura restent des réglages du duel. Le nom « Bras-serpent »
+est descriptif : le nom officiel, la catégorie et les règles complètes restent
+inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
+ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
+les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.

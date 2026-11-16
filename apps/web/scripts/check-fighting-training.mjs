@@ -56,7 +56,9 @@ try {
   process.stdout.write('Reset checked\n')
   await page.getByText('Lire une ouverture perceptible', { exact: true }).click()
   await page.getByLabel('Perception du contre-jeu', { exact: true }).selectOption('opponent')
-  await page.getByText('Aucune ouverture repérée avec les sens et le Nen actuels.', { exact: true }).waitFor()
+  await page
+    .getByText('Aucune ouverture repérée avec les sens et le Nen actuels.', { exact: true })
+    .waitFor()
   await page.getByLabel('Perception du contre-jeu', { exact: true }).selectOption('player')
   await page.getByRole('button', { name: 'Reset · Centre', exact: true }).click()
   await page.getByLabel('Mannequin', { exact: true }).selectOption('guard')

@@ -30,7 +30,9 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
     const bird = new THREE.Group()
     bird.name = 'biohazard-pigeon'
     const visit = createVisitHatsuModel(THREE, {
-      model: 'biohazard', stage: 1, joints: ['pigeon-wing--1', 'pigeon-wing-1'],
+      model: 'biohazard',
+      stage: 1,
+      joints: ['pigeon-wing--1', 'pigeon-wing-1'],
     })
     visit.fit({ width: 0.65, height: 0.48 })
     visit.root.rotation.y = Math.PI / 3
@@ -83,7 +85,11 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
         state[side].biohazard?.objects.forEach((object) => syncObject(state, side, object))
     },
     dispose: () => {
-      models.forEach((model) => { model.visit.dispose(); model.reverted.dispose(); scene.remove(model.root) })
+      models.forEach((model) => {
+        model.visit.dispose()
+        model.reverted.dispose()
+        scene.remove(model.root)
+      })
       models.clear()
       for (const shape of [bodyShape]) shape.dispose()
       for (const material of [aura]) material.dispose()

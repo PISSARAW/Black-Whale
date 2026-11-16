@@ -235,10 +235,25 @@ describe('Machi real thread uses', () => {
   })
 
   it('lets Skill Hunter copy the actual suture without an invisible offensive bind', () => {
-    const state = beginFight(createFight('chrollo', 'hisoka', { mode: 'versus-local', formatId: 'knockout' }))
-    const copied = { ...state, player: { ...state.player, health: 40, aura: 100,
-      chrolloBook: addChrolloPage(state.player.chrolloBook!, 'machi') } }
-    const cast = performAuraAttack({ state: copied, side: 'player', kind: 'special', moveId: 'chrollo:neutralSpecial', auraCharged: false })
+    const state = beginFight(
+      createFight('chrollo', 'hisoka', { mode: 'versus-local', formatId: 'knockout' }),
+    )
+    const copied = {
+      ...state,
+      player: {
+        ...state.player,
+        health: 40,
+        aura: 100,
+        chrolloBook: addChrolloPage(state.player.chrolloBook!, 'machi'),
+      },
+    }
+    const cast = performAuraAttack({
+      state: copied,
+      side: 'player',
+      kind: 'special',
+      moveId: 'chrollo:neutralSpecial',
+      auraCharged: false,
+    })
     const healed = advance(cast, 80)
     expect(healed.player.health).toBe(40 + MACHI_SUTURE_HEAL)
     expect(healed.opponent.machiThread).toBeUndefined()
@@ -246,16 +261,51 @@ describe('Machi real thread uses', () => {
   })
 
   it('keeps a borrowed ligature in Dolphin until Kurapika releases the actual thread', () => {
-    const state = beginFight(createFight('kurapika', 'machi', { mode: 'versus-local', formatId: 'knockout' }))
-    const loaded: FightState = { ...state,
-      player: { ...state.player, x: 42, aura: 100, kurapika: { ...createKurapika(), emperorTime: true,
-        held: { source: 'machi', victim: 'opponent', moveId: 'machi:downSpecial', loaded: true, used: false, sustainedKeys: [] } } },
-      opponent: { ...state.opponent, x: 48, stolenChainAbility: { owner: 'player', moveId: 'machi:downSpecial' } } }
-    const cast = performAuraAttack({ state: loaded, side: 'player', kind: 'special', moveId: 'kurapika:backSpecial', auraCharged: false })
+    const state = beginFight(
+      createFight('kurapika', 'machi', { mode: 'versus-local', formatId: 'knockout' }),
+    )
+    const loaded: FightState = {
+      ...state,
+      player: {
+        ...state.player,
+        x: 42,
+        aura: 100,
+        kurapika: {
+          ...createKurapika(),
+          emperorTime: true,
+          held: {
+            source: 'machi',
+            victim: 'opponent',
+            moveId: 'machi:downSpecial',
+            loaded: true,
+            used: false,
+            sustainedKeys: [],
+          },
+        },
+      },
+      opponent: {
+        ...state.opponent,
+        x: 48,
+        stolenChainAbility: { owner: 'player', moveId: 'machi:downSpecial' },
+      },
+    }
+    const cast = performAuraAttack({
+      state: loaded,
+      side: 'player',
+      kind: 'special',
+      moveId: 'kurapika:backSpecial',
+      auraCharged: false,
+    })
     const bound = advance(cast, 90)
     expect(bound.opponent.machiThread).toMatchObject({ owner: 'player', kind: 'bind' })
     expect(bound.player.kurapika?.held?.used).toBe(true)
-    const released = performAuraAttack({ state: rested(bound), side: 'player', kind: 'special', moveId: 'kurapika:backSpecial', auraCharged: false })
+    const released = performAuraAttack({
+      state: rested(bound),
+      side: 'player',
+      kind: 'special',
+      moveId: 'kurapika:backSpecial',
+      auraCharged: false,
+    })
     expect(released.opponent.machiThread).toBeUndefined()
     expect(released.player.kurapika?.held).toBeNull()
     expect(released.opponent.stolenChainAbility).toBeUndefined()

@@ -106,11 +106,11 @@ modes. L’horloge du navigateur est quantifiée : ces chiffres ne permettent pa
 d’attribuer un coût précis aux très petits écarts.
 
 | Personnage | Rendu p95 sans capture | Rendu p95 avec capture | Échantillons sans / avec |
-| --- | ---: | ---: | ---: |
-| Kurapika | 63,5 ms | 62,0 ms | 91 / 94 |
-| Hisoka | 144,2 ms | 107,3 ms | 74 / 84 |
-| Chrollo | 52,0 ms | 56,3 ms | 103 / 96 |
-| Benjamin | 176,9 ms | 68,2 ms | 52 / 80 |
+| ---------- | ---------------------: | ---------------------: | -----------------------: |
+| Kurapika   |                63,5 ms |                62,0 ms |                  91 / 94 |
+| Hisoka     |               144,2 ms |               107,3 ms |                  74 / 84 |
+| Chrollo    |                52,0 ms |                56,3 ms |                 103 / 96 |
+| Benjamin   |               176,9 ms |                68,2 ms |                  52 / 80 |
 
 Le rendu logiciel ne tient donc pas le budget de 60 FPS. Ces courtes passes
 successives ont des variations importantes et ne permettent pas d’isoler le coût

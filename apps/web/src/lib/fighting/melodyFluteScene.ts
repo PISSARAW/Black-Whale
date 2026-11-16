@@ -14,7 +14,10 @@ export function createMelodyFluteScene(options: EffectSceneOptions): FighterEffe
         const equipped = hasMelodyFlute(fighter)
         if (signature) signature.visible = equipped
         if (!equipped || !fighter.melodyPerformance || signature) continue
-        const flute = pool.get(`melody-borrowed-flute:${side}`, { model: 'melody-flute', fit: { width: 0.6 } })
+        const flute = pool.get(`melody-borrowed-flute:${side}`, {
+          model: 'melody-flute',
+          fit: { width: 0.6 },
+        })
         placeVisitHand(options, { state, side, root: flute.root, hand: 'left' })
         flute.root.position.y += 0.08
         flute.root.position.z += 0.1

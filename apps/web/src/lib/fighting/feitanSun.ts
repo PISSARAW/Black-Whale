@@ -55,7 +55,11 @@ function burnArea(state: FightState, pulse: { owner: FightSide; sun: RisingSun }
       ...next,
       [side]: { ...wakeHanzoBody(fighter), health: Math.max(0, fighter.health - damage) },
     }
-    next = recordFightDeath(next, { victimSide: side, killerSide: side === pulse.owner ? null : pulse.owner, cause: 'heat' })
+    next = recordFightDeath(next, {
+      victimSide: side,
+      killerSide: side === pulse.owner ? null : pulse.owner,
+      cause: 'heat',
+    })
     if (side !== pulse.owner && !scored.includes(side)) {
       scored.push(side)
       next = { ...next, score: { ...next.score, [pulse.owner]: next.score[pulse.owner] + 1 } }

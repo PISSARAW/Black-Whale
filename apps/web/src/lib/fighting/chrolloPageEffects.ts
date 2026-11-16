@@ -76,7 +76,8 @@ function clearPageEffects(options: {
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
-  if (page === 'kalluto' && fighter.kallutoPaper) return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
+  if (page === 'kalluto' && fighter.kallutoPaper)
+    return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
   if (page === 'padaille') return { ...fighter, padailleTool: undefined }
   return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
 }

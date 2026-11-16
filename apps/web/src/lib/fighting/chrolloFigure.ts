@@ -21,13 +21,14 @@ export function addChrolloBook(options: {
   const ribbons: Object3D[] = []
   const build = (open: boolean) => {
     const book = createVisitHatsuModel(THREE, {
-      model: 'skill-book', figureOwned: true,
+      model: 'skill-book',
+      figureOwned: true,
       joints: ['book-leaf:-1', 'book-leaf:1', 'book-ribbon', 'book-ribbon-tail'],
     })
     book.fit({ width: 0.5, depth: 0.35 })
     for (const side of [-1, 1]) {
       const leaf = book.joints.get(`book-leaf:${side}`)!
-      if (!open) leaf.rotation.z = side * Math.PI / 2
+      if (!open) leaf.rotation.z = (side * Math.PI) / 2
     }
     for (const name of ['book-ribbon', 'book-ribbon-tail']) {
       const ribbon = book.joints.get(name)

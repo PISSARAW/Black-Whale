@@ -44,10 +44,16 @@ function captured(base = duel()): FightState {
 
 describe('Zakuro’s physical Bloody Mary', () => {
   it('lets the AI finish a finite infusion without walking away or receiving health', () => {
-    const base = beginFight(createFight('hisoka', 'zakuro', { mode: 'versus-ai', formatId: 'knockout' }))
-    const depleted = { ...base, opponent: { ...base.opponent,
-      bloodyMary: { ...maryState(base.opponent), available: 0, bags: 1 },
-    } }
+    const base = beginFight(
+      createFight('hisoka', 'zakuro', { mode: 'versus-ai', formatId: 'knockout' }),
+    )
+    const depleted = {
+      ...base,
+      opponent: {
+        ...base.opponent,
+        bloodyMary: { ...maryState(base.opponent), available: 0, bags: 1 },
+      },
+    }
     let state = command(depleted, 'infuse', 'opponent')
     for (let i = 0; i < 120; i++) state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: true })
     expect(state.opponent.bloodyMary).toMatchObject({ available: 1, bags: 0 })

@@ -8,11 +8,21 @@ import { createBungeeGumScene } from './bungeeGumScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 
 export function createRemainingVisitHatsuScene(options: EffectSceneOptions): FighterEffectScene {
-  const scenes = [createBlackVoiceScene, createMoonlightScene, createFutureBeastScene,
-    createVisitWeaponScene, createHalkenburgArrowScene, createMelodyFluteScene,
-    createBungeeGumScene].map((create) => create(options))
+  const scenes = [
+    createBlackVoiceScene,
+    createMoonlightScene,
+    createFutureBeastScene,
+    createVisitWeaponScene,
+    createHalkenburgArrowScene,
+    createMelodyFluteScene,
+    createBungeeGumScene,
+  ].map((create) => create(options))
   return {
-    sync(state, seconds) { scenes.forEach((scene) => scene.sync(state, seconds)) },
-    dispose() { scenes.forEach((scene) => scene.dispose()) },
+    sync(state, seconds) {
+      scenes.forEach((scene) => scene.sync(state, seconds))
+    },
+    dispose() {
+      scenes.forEach((scene) => scene.dispose())
+    },
   }
 }

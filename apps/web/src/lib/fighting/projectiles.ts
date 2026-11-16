@@ -353,7 +353,8 @@ function projectileCollision(
   projectile: FightProjectile,
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
-  if (!remotePunchCanHit(projectile) || !canReceiveCombatHit(defender, projectile.canHitDowned)) return null
+  if (!remotePunchCanHit(projectile) || !canReceiveCombatHit(defender, projectile.canHitDowned))
+    return null
   if (projectile.kallutoPaper) {
     const point = paperZonePoint(defender, projectile.targetZone)
     if (

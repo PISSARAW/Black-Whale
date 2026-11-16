@@ -92,5 +92,7 @@ function lynchSlots(state: FightState, gap: number): readonly MoveSlot[] {
 function kallutoSlots(state: FightState): readonly MoveSlot[] {
   if (!hasPlantedPaper(state, 'opponent', paperState(state.opponent).zone))
     return ['neutralSpecial', 'standingLight']
-  return !paperState(state.opponent).doll ? ['backSpecial', 'forwardSpecial'] : ['forwardSpecial', 'standingLight']
+  return !paperState(state.opponent).doll
+    ? ['backSpecial', 'forwardSpecial']
+    : ['forwardSpecial', 'standingLight']
 }

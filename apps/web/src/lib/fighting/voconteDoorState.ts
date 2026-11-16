@@ -6,5 +6,8 @@ export function doorNetworkBusy(state: FightState, side: FightSide): boolean {
 }
 
 export function borrowedDoorActive(state: FightState, side: FightSide): boolean {
-  return state[side].kurapika?.held?.source === 'voconte' && Boolean(state.voconteDoors?.networks[side]?.active)
+  return (
+    state[side].kurapika?.held?.source === 'voconte' &&
+    Boolean(state.voconteDoors?.networks[side]?.active)
+  )
 }

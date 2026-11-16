@@ -65,7 +65,7 @@ try {
   }
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify(results, null, 2))
-  console.log(`Verified ${results.length} Biohazard frames; screenshots: ${output}`)
+  process.stdout.write(`Verified ${results.length} Biohazard frames; screenshots: ${output}\n`)
 } finally {
   await browser.close()
   await server.close()

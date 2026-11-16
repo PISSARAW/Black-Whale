@@ -50,7 +50,12 @@ function steal({ state, side, defenderSide }: HatsuImpactContext): FightState {
 
 function stealableVictim(victim: ArcadeFighter): boolean {
   // Bodily changes, basic Nen and abilities requiring no usable Hatsu are not pages.
-  return victim.health > 0 && victim.id !== 'chrollo' && victim.id !== 'theta' && victim.hatsuEffects.hatsuStolen === 0
+  return (
+    victim.health > 0 &&
+    victim.id !== 'chrollo' &&
+    victim.id !== 'theta' &&
+    victim.hatsuEffects.hatsuStolen === 0
+  )
 }
 
 function blackVoice({ state, defenderSide }: HatsuImpactContext): FightState {

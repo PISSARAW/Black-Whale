@@ -13,7 +13,11 @@ export function addBlinky(options: {
   glow: HumanFigureBuild['glow']
   model: HumanFigure
 }): void {
-  const visual = createVisitHatsuModel(options.THREE, { model: 'blinky', figureOwned: true, joints: ['tongue'] })
+  const visual = createVisitHatsuModel(options.THREE, {
+    model: 'blinky',
+    figureOwned: true,
+    joints: ['tongue'],
+  })
   visual.fit({ height: 0.82, width: 0.55 })
   visual.root.name = 'shizuku-blinky'
   visual.root.position.set(0, -0.25, 0.08)

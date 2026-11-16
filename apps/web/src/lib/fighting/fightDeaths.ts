@@ -1,7 +1,8 @@
 import { resolveDeathHatsu } from './hatsu'
 import type { FightSide, FightState } from './types'
 
-export type FightDeathCause = 'strike' | 'projectile' | 'heat' | 'transfer' | 'judgment' | 'vow' | 'blood'
+export type FightDeathCause =
+  'strike' | 'projectile' | 'heat' | 'transfer' | 'judgment' | 'vow' | 'blood'
 export interface FightDeath {
   victimSide: FightSide
   killerSide: FightSide | null

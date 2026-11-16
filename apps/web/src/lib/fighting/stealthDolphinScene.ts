@@ -12,9 +12,12 @@ export function createStealthDolphinScene(options: EffectSceneOptions): FighterE
     sync(state, seconds) {
       const fighter = state.player
       model.root.visible = Boolean(fighter.kurapika?.held?.loaded && kurapikaNenActive(fighter))
-      model.root.position.set(options.worldX(fighter.x) - fighter.facing * 0.6,
-        options.worldY(fighter.y) + 1.55 + Math.sin(seconds * 4) * 0.04, 0.3)
-      model.root.rotation.y = fighter.facing * Math.PI / 3
+      model.root.position.set(
+        options.worldX(fighter.x) - fighter.facing * 0.6,
+        options.worldY(fighter.y) + 1.55 + Math.sin(seconds * 4) * 0.04,
+        0.3,
+      )
+      model.root.rotation.y = (fighter.facing * Math.PI) / 3
       model.root.rotation.z = Math.sin(seconds * 3) * 0.04
     },
     dispose: model.dispose,

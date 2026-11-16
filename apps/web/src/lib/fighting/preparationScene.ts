@@ -1,4 +1,8 @@
-import { buildPreparedVisitModel, syncPreparedVisitModel, disposePreparedVisitModels } from './preparedVisitModels'
+import {
+  buildPreparedVisitModel,
+  syncPreparedVisitModel,
+  disposePreparedVisitModels,
+} from './preparedVisitModels'
 import { LUINI_ROOM_HALF_WIDTH, LUINI_ROOM_HEIGHT } from './luiniSpatial'
 import { buildHumanFigure, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
@@ -176,7 +180,10 @@ export function createPreparationScene(options: EffectSceneOptions) {
       }
     },
     dispose() {
-      for (const root of models.values()) { disposePreparedVisitModels(root); scene.remove(root) }
+      for (const root of models.values()) {
+        disposePreparedVisitModels(root)
+        scene.remove(root)
+      }
       geometries.forEach((held) => held.dispose())
       materials.forEach((held) => held.dispose())
       models.clear()

@@ -31,6 +31,8 @@ export function createPredatorScene(options: PredatorSceneOptions) {
         model.body.scale.setScalar(1 + Math.sin(seconds * 9) * 0.035)
       }
     },
-    dispose() { models.forEach((model) => model.dispose()) },
+    dispose() {
+      models.forEach((model) => model.dispose())
+    },
   }
 }

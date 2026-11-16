@@ -14,10 +14,14 @@ export function createHalkenburgArrowScene(options: EffectSceneOptions): Fighter
       for (const side of ['player', 'opponent'] as const) {
         const fighter = state[side]
         const attack = fighter.attack
-        if (!attack || attack.kind !== 'special' || visitAttackSource(fighter) !== 'halkenburg') continue
+        if (!attack || attack.kind !== 'special' || visitAttackSource(fighter) !== 'halkenburg')
+          continue
         const phase = attackPhase(fighter)
         if (phase === 'recovery') continue
-        const arrow = pool.get(`halkenburg-arrow:${side}`, { model: 'grimmel-arrow', fit: { depth: 0.85 } })
+        const arrow = pool.get(`halkenburg-arrow:${side}`, {
+          model: 'grimmel-arrow',
+          fit: { depth: 0.85 },
+        })
         arrow.root.userData.visualOnly = true
         placeVisitHand(options, { state, side, root: arrow.root })
         const target = state[side === 'player' ? 'opponent' : 'player']

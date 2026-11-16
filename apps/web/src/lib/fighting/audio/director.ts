@@ -24,7 +24,10 @@ export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
 }
 
 export interface FightAudioDirector {
-  update: (state: FightState, options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide }) => void
+  update: (
+    state: FightState,
+    options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide },
+  ) => void
   dispose: () => void
 }
 

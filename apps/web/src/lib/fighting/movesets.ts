@@ -5,6 +5,8 @@ import { melodyMoveResources } from './melodyRules'
 import { tuneBashoMoveset } from './bashoMoveset'
 import { bashoCanWrite } from './bashoPoem'
 import { tuneGelMoveset } from './gelMoveset'
+import { machiBindReady } from './machiThread'
+import { tuneMachiMoveset } from './machiMoveset'
 import { tuneCamillaMoveset } from './camillaMoveset'
 import { sealedSenseCount } from './saiyuSenses'
 import { tuneThetaMoveset } from './thetaMoveset'
@@ -67,7 +69,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneCamillaMoveset)
+  ALL_MOVESETS.map(tuneMachiMoveset).map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
@@ -251,7 +253,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
   franklin: () => true,
-  machi: (state, side) => opponentOf(state, side).hatsuEffects.stitchedFrames > 0,
+  machi: (state, side) => machiBindReady(state, side),
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
   bonolenov: (state, side) => state[side].hatsuEffects.cantabileFrames > 0,

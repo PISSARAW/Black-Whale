@@ -636,3 +636,26 @@ réserves d’aura. Après 12 frames d’écoute, une garde manuelle correcte b�
 de 3 frames supplémentaires de parade : c’est un équilibrage arcade, jamais une
 esquive automatique. Les oreilles couvertes ou un sceau auditif réinitialisent
 l’écoute. Une copie du Hatsu demande une vraie flûte et ne copie pas cette ouïe.
+
+### Machi : suture, pistage et ligature
+
+- L prépare une suture personnelle : 12 PV après 30 frames, plafonnés à la vie
+  maximale. Aucun impact offensif, résurrection ou membre recréé ; un coup reçu
+  avant la suture l’interrompt.
+- Avant + L et U posent au contact une aiguille et un fil de pistage, sans dégâts
+  ni immobilisation. Le HUD indique la direction et la distance de la cible.
+  U dirige ce même geste : aucun projectile de Nen détaché n’est créé.
+- Bas + L ligature la cible touchée sans garde. Un vrai lien mémorise propriétaire,
+  cible et point de contention. Tant que le fil court est maintenu, la cible reste
+  à cet endroit, peut employer son aura, mais ne peut pas frapper ni se déplacer.
+  Marcher contre son corps ne déplace pas son ancrage.
+- Un coup reçu par le porteur, la garde, un autre geste de ses mains ou une
+  distance supérieure à 16 unités font perdre la contention : seul le pistage
+  subsiste. Arrière + L lâche entièrement le fil. Perdre le Nen, le Hatsu ou la vie
+  dissipe le lien ; la manche suivante le réinitialise.
+- H exige un fil de ligature encore valide et le consomme sur touche. Les copies
+  respectent ces mêmes règles ; Stealth Dolphin attend la libération du fil.
+- Le fil visible et la boucle autour du corps correspondent au lien du moteur.
+  `stitchedFrames` n’est plus qu’un indicateur dérivé ; il n’impose aucun hitstun.
+  Le soin personnel, les coûts, frames, portées, seuil de contention et finisher
+  sont des adaptations du duel. La suture ne régénère pas de tissu manquant.

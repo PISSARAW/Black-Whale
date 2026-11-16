@@ -318,7 +318,7 @@ function withFinisherCondition(state: FightState): FightState {
     case 'franklin':
       return { ...state, opponent: { ...opponent, health: 40 } }
     case 'machi':
-      return withOpponentEffect(state, 'stitchedFrames', 60)
+      return { ...state, player: { ...player, x: opponent.x - 6 }, opponent: { ...opponent, machiThread: { owner: 'player', kind: 'bind', x: opponent.x, y: opponent.y } } }
     case 'illumi':
       return withOpponentEffect(state, 'needleFrames', 60)
     case 'kalluto':

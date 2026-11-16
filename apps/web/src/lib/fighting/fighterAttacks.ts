@@ -1,3 +1,4 @@
+import { machiImmobilized } from './machiThread'
 import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
 import { thetaPhysicalShot } from './thetaFirearm'
@@ -144,7 +145,7 @@ function attackAuraCost(
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
-    fighter.hitStun === 0 &&
+    !machiImmobilized(fighter) && fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
     fighter.health > 0

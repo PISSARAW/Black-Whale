@@ -281,6 +281,7 @@ describe('fighter Hatsu registry', () => {
       side: 'player',
       defenderSide: 'opponent',
       source: 'machi',
+      moveId: 'machi:downSpecial',
       blocked: false,
       concealed: false,
     })
@@ -292,7 +293,8 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(stitched.opponent.hatsuEffects.stitchedFrames).toBe(90)
+    expect(stitched.opponent.machiThread).toMatchObject({ owner: 'player', kind: 'bind' })
+    expect(stitched.opponent.hitStun).toBe(ready.opponent.hitStun)
     expect(needled.opponent.hatsuEffects.needleFrames).toBe(120)
     expect(needled.opponent.aura).toBeLessThan(ready.opponent.aura)
   })

@@ -1,3 +1,4 @@
+import { machiThreadForOwner } from './machiThread'
 import { hatsuFor } from './hatsu/registry'
 import { canUseMovesetMove, moveById, movesetFor } from './movesets'
 import type { StolenChainAbility } from './kurapika'
@@ -83,6 +84,7 @@ export function dolphinIsBusy(
   side: FightSide,
   held: StolenChainAbility,
 ): boolean {
+  if (machiThreadForOwner(state, side)) return true
   if (state[side].attack?.moveId === held.moveId) return true
   return held.sustainedKeys.some((entry) => dolphinEffectActive(state, side, entry))
 }

@@ -1,3 +1,4 @@
+import { createMachiThreadScene } from './machiThreadScene'
 import { createSecretWindowScene } from './secretWindowScene'
 import { createBashoFireScene } from './bashoFireScene'
 import { createNenFieldScene } from './nenFieldScene'
@@ -28,6 +29,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const nenFields = createNenFieldScene(options)
   const benjamin = createBenjaminEffectScene(options)
   const kurapika = createKurapikaEffectScene(options)
+  const machi = createMachiThreadScene(options)
   const gumMaterial = new THREE.LineBasicMaterial({
     color: 0xff55bb,
     transparent: true,
@@ -47,6 +49,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     nenFields.sync(state)
     benjamin.sync(state, seconds)
     kurapika.sync(state, seconds)
+    machi.sync(state, seconds)
     syncGum(options, { state, line: gum, material: gumMaterial })
     syncCards(options, { state, meshes: cards, seconds })
   }
@@ -59,6 +62,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       basho.dispose()
       nenFields.dispose()
       benjamin.dispose()
+      machi.dispose()
       scene.remove(gum, ...cards)
       gumGeometry.dispose()
       gumMaterial.dispose()

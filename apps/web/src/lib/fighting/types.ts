@@ -1,3 +1,4 @@
+import type { MachiThread } from './machiThread'
 import type { PredatorState } from './predatorTypes'
 import type { MelodyPerformance, MelodyHearing } from './melodyRules'
 import type { CatsNameSequence } from './camillaCat'
@@ -174,6 +175,8 @@ export interface ArcadeFighter {
   melodyPerformance?: MelodyPerformance
   melodyHearing?: MelodyHearing
   hatsuEffects: FighterHatsuEffects
+  /** Actual needle/thread attached to this body; a mark alone never immobilizes. */
+  machiThread?: MachiThread
   /** Musse’s contact owl: private observation, never a combat modifier. */
   secretWindow?: SecretWindowState
   /** Bandit's Secret: retained pages, one open page and one Double Face bookmark. */

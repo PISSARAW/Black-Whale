@@ -1,3 +1,4 @@
+import { machiUtilityMove } from './machiThread'
 import { isMelodyMusicAttack } from './melodyRules'
 import { secretWindowUtility } from './secretWindow'
 import { comboMasterUtilityMove } from './comboMasterAvailability'
@@ -214,18 +215,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 }
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
-  return (
-    isMelodyMusicAttack(fighter) ||
-    isErigeronAttack(fighter) ||
-    comboMasterUtilityMove(fighter) ||
-    chrolloUtilityMove(fighter) ||
-    isKurapikaUtility(fighter) ||
-    hisokaUtilityMove(fighter) ||
-    usesFranklinBarrage(fighter) ||
-    benjaminUtilityMove(fighter) ||
-    feitanUtilityMove(fighter) ||
-    usesRemotePunch(fighter)
-  )
+  return [isMelodyMusicAttack, isErigeronAttack, comboMasterUtilityMove, chrolloUtilityMove, isKurapikaUtility, hisokaUtilityMove, usesFranklinBarrage, benjaminUtilityMove, feitanUtilityMove, usesRemotePunch, machiUtilityMove].some((check) => check(fighter))
 }
 
 export function isAntiAir(fighter: ArcadeFighter): boolean {

@@ -115,7 +115,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   }),
   machi: projectile({
     matter: 'nen',
-    labels: ['Fil de Nen', 'Nen thread'],
+    labels: ['Aiguille de pistage', 'Tracking needle'],
     shape: 'chain',
     colour: '#f472b6',
     speed: 60,
@@ -227,7 +227,7 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 }
 
 export function rangedAuraCost(id: FighterId): number {
-  if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
+  if (id === 'kurapika' || id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
   if (['benjamin', 'theta', 'camilla', 'musse'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }

@@ -5,6 +5,7 @@ import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
 import { moveById } from './movesets'
+import { releaseMachiThread } from './machiThread'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import {
   createKurapika,
@@ -206,7 +207,7 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
     )
   if (fighter.textureSurprise)
     return { ...state, [side]: { ...fighter, textureSurprise: undefined } }
-  return dismissDolphinGum(state, side)
+  return releaseMachiThread(dismissDolphinGum(state, side), side)
 }
 
 function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightState {

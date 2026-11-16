@@ -1,3 +1,4 @@
+import { anchorFighter, fighterAnchored } from './fighterAnchors'
 import { sleepingBody } from './hanzoProjection'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
@@ -57,8 +58,8 @@ export function separateFighterPushboxes(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
 ): Pick<FightState, 'player' | 'opponent'> {
-  if (player.chainJail) player = { ...player, x: player.chainJail.x, y: player.chainJail.y, velocityY: 0 }
-  if (opponent.chainJail) opponent = { ...opponent, x: opponent.chainJail.x, y: opponent.chainJail.y, velocityY: 0 }
+  player = anchorFighter(player)
+  opponent = anchorFighter(opponent)
   if (player.hanzoProjection || opponent.hanzoProjection) {
     return {
       player: { ...player, facing: player.x <= sleepingBody(opponent).x ? 1 : -1 },
@@ -112,9 +113,9 @@ function pushShifts(
   opponent: ArcadeFighter,
   overlap: number,
 ): [number, number] {
-  if (player.chainJail && opponent.chainJail) return [0, 0]
-  if (player.chainJail) return [0, overlap]
-  if (opponent.chainJail) return [overlap, 0]
+  if (fighterAnchored(player) && fighterAnchored(opponent)) return [0, 0]
+  if (fighterAnchored(player)) return [0, overlap]
+  if (fighterAnchored(opponent)) return [overlap, 0]
   const playerAtWall = player.x <= MIN_X || player.x >= MAX_X
   const opponentAtWall = opponent.x <= MIN_X || opponent.x >= MAX_X
   if (playerAtWall) return [0, overlap]

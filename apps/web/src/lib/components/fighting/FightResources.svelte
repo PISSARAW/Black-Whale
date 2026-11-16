@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightMachiStatus from './FightMachiStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
@@ -125,6 +126,7 @@
           </div>
         {/if}
       {/if}
+      <FightMachiStatus {state} {side} {language} />
       <FightKurapikaStatus {state} {side} {language} {detailed} />
       <FightPainPacker {fighter} {language} {side} local={state.mode === 'versus-local'} />
       <FightBenjaminStatus {state} {side} {language} {detailed} />

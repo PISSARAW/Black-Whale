@@ -1,3 +1,4 @@
+import { releaseMachiPageThread } from './machiThread'
 import { chrolloHasActivePage, type ChrolloPage } from './chrolloBook'
 import type { ArcadeFighter, FighterHatsuEffects, FightSide, FightState } from './types'
 
@@ -82,12 +83,13 @@ function clearPageEffects(options: {
       },
     }
   }
-  return {
+  const cleared = {
     ...state,
     [side]: owner,
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
+  return releaseMachiPageThread(cleared, side, page)
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {

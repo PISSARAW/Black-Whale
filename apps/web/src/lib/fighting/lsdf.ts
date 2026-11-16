@@ -1,3 +1,4 @@
+import { constructionFactor } from './nenCategories'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { inMorenasHideout } from './fightEnvironment'
@@ -89,7 +90,7 @@ function advanceGuard(state: FightState, side: FightSide, guard: LsdfGuard): Fig
   const body = target
   // Further aggression after the charges are declared increases the alert level.
   const level = Math.min(5, guard.level + Number(target.attack?.frame === 1))
-  const x = approach(guard.x, body.x, 0.45 + level * 0.08)
+  const x = approach(guard.x, body.x, (0.45 + level * 0.08) * constructionFactor(state[side]))
   const arrived = Math.abs(x - body.x) <= 2.5 && body.y <= 3
   const nextGuard: LsdfGuard = { ...guard, x, level, phase: arrived ? 'escorting' : 'approaching' }
   const next = { ...state, lsdf: { ...state.lsdf, [side]: nextGuard } }

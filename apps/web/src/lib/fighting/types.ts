@@ -123,6 +123,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  /** Execution adapters may borrow a Hatsu identity; the aura still belongs to this user. */
+  nenOwner?: FighterId
   /** Conjured information console. It never modifies damage, guard, movement or evasion. */
   comboMaster?: ComboMasterState
   /** One use earned by fulfilling a voluntarily signed Moonlight Act contract. */
@@ -270,6 +272,14 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  en?: boolean
+  shu?: boolean
+  conceal?: boolean
+  gyo?: boolean
+  focusHead?: boolean
+  focusTorso?: boolean
+  focusHands?: boolean
+  focusFeet?: boolean
   /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
   call?: boolean
   left: boolean
@@ -318,6 +328,12 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  /** Offensive Nen is committed at release; later Zetsu/Emperor Time cannot rewrite a shot. */
+  nenPower?: number
+  hatsuPower?: number
+  shuCharged?: boolean
+  /** After detached Shu dissipates, the physical object keeps travelling. */
+  shuFrames?: number
   id: number
   owner: FightSide
   fighterId: FighterId

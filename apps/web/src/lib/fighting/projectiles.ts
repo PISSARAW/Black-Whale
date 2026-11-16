@@ -1,3 +1,4 @@
+import { advanceProjectileNen, commitProjectileNen } from './nenProjectiles'
 import { CAMILLA_PISTOL } from './camillaWeapon'
 import { thetaShotAim } from './thetaFirearm'
 import { benjaminBurstReady } from './benjaminWeapon'
@@ -269,7 +270,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
         impacted: true,
       },
     },
-    projectiles: [...state.projectiles, projectile],
+    projectiles: [...state.projectiles, commitProjectileNen(projectile, fighter)],
     nextProjectileId: state.nextProjectileId + 1,
   }
 }
@@ -287,9 +288,9 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const projectile = held.remotePunch
+    const projectile = advanceProjectileNen(held.remotePunch
       ? advanceRemotePunch(held)
-      : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 }
+      : { ...held, x: held.x + held.velocityX * step, age: held.age + 1 })
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

@@ -1,3 +1,4 @@
+import { categoryPower } from '../nenCategories'
 import { attackPhase } from '../frameData'
 import {
   BUNGEE_REST_DISTANCE,
@@ -74,7 +75,7 @@ function reelIn(state: FightState): FightState {
     return { ...state, bungeeGum: { ...gum, retracting: false, rebounding: false } }
   const stretch = Math.abs(target.x - owner.x) - BUNGEE_REST_DISTANCE
   if (stretch <= 0) return { ...state, bungeeGum: { ...gum, retracting: false, rebounding: false } }
-  const pull = Math.min(stretch, Math.max(MIN_PULL, stretch * ELASTIC_RECOVERY))
+  const pull = Math.min(stretch, Math.max(MIN_PULL, stretch * ELASTIC_RECOVERY * categoryPower(owner, 'transmuter')))
   const direction = target.x >= owner.x ? 1 : -1
   const side = gum.rebounding ? gum.owner : gum.target
   const moving = state[side]

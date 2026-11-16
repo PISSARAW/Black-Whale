@@ -1,3 +1,4 @@
+import { scaleNenControl } from './nenHatsuEffects'
 import { isErigeronAction } from './billSupport'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
@@ -70,7 +71,7 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  return withDolphinIdentity(
+  return scaleNenControl(options.state, withDolphinIdentity(
     options.state,
     (state) =>
       hatsuFor(source).onImpact({
@@ -83,7 +84,7 @@ export function resolveHatsuImpact(options: {
         concealed,
       }),
     source,
-  )
+  ), side)
 }
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {

@@ -1,3 +1,4 @@
+import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { shapeFightEyes } from './fightFigureEyes'
 import { addChrolloBook } from './chrolloFigure'
@@ -27,6 +28,7 @@ export function buildFightFigure(options: {
   THREE: HumanFigureBuild['THREE']
   glow: HumanFigureBuild['glow']
   fighter: ArcadeFighter
+  observer?: ArcadeFighter
 }) {
   const { THREE, glow, fighter } = options
   const definition = fighterDefinition(fighter.id)
@@ -46,7 +48,7 @@ export function buildFightFigure(options: {
       identity: definition.modelId,
       pose: 'idle',
       aura: fighter.nen.mode,
-      nen: fighter.nen,
+      nen: { ...fighter.nen, en: null },
     },
   }
   const declared = humanProfile(seen)
@@ -57,6 +59,7 @@ export function buildFightFigure(options: {
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
+    observerSight: observerSight(options.observer),
     glow:
       'hanzoProjection' in fighter && fighter.hanzoProjection
         ? (colour, opacity) => glow(colour, opacity * 0.28)
@@ -82,4 +85,8 @@ function addFighterEquipment(
   }
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
+}
+
+function observerSight(observer?: ArcadeFighter): 'gyo' | 'sight' {
+  return observer && gyoSight(observer) ? 'gyo' : 'sight'
 }

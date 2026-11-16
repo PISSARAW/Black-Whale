@@ -1,3 +1,4 @@
+import { categoryPower } from './nenCategories'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { hurtboxes } from './frameData'
@@ -16,7 +17,7 @@ export function createRisingSun(fighter: ArcadeFighter, injuries: number): Risin
     x: fighter.x,
     y: fighter.y + 18,
     radius: 12 + pain * 0.25,
-    damage: 2 + pain * 0.12,
+    damage: (2 + pain * 0.12) * categoryPower(fighter, 'transmuter'),
     age: 0,
     duration: 120 + Math.round(pain * 2),
     scored: [],

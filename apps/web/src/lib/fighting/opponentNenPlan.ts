@@ -1,3 +1,4 @@
+import { advancedOpponentNen } from './nenAi'
 import { applyAuraContext } from './nen'
 import { chainsImmobilize } from './kurapika'
 import { opponentWantsOn } from './onTechnique'
@@ -13,7 +14,7 @@ export function planOpponentNen(state: FightState): FightState {
   if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
   if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
-  return wantsRen(opponent, gap) ? applyOpponentAura(state, { aura: true }) : state
+  return advancedOpponentNen(state) ?? restingOpponentNen(state, gap)
 }
 
 function applyOpponentAura(
@@ -33,3 +34,10 @@ const needsKen = (state: FightState, gap: number) =>
   ['heavy', 'special'].includes(state.player.pose)
 const wantsRen = (fighter: ArcadeFighter, gap: number) =>
   gap < 12 && fighter.aura > 55 && fighter.nen.mode === 'ten'
+
+function restingOpponentNen(state: FightState, gap: number): FightState {
+  if (state.opponent.nen.mode === 'zetsu') return state
+  return wantsRen(state.opponent, gap)
+    ? applyOpponentAura(state, { aura: true })
+    : applyOpponentAura(state, {})
+}

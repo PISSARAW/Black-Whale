@@ -1,3 +1,4 @@
+import { commitProjectileNen } from './nenProjectiles'
 import { attackData, attackPhase, otherSide } from './frameData'
 import { remotePunchGrounded, remotePunchTargetX, usesRemotePunch } from './leorioAttack'
 import type { FightProjectile, FightSide, FightState } from './types'
@@ -47,7 +48,7 @@ export function spawnRemotePunch(state: FightState, side: FightSide): FightState
   return {
     ...state,
     [side]: { ...fighter, attack: { ...attack, impacted: true, projectileSpawned: true } },
-    projectiles: [...state.projectiles, projectile],
+    projectiles: [...state.projectiles, commitProjectileNen(projectile, fighter)],
     nextProjectileId: state.nextProjectileId + 1,
   }
 }

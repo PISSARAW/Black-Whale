@@ -1,3 +1,4 @@
+import { fightCategoryEfficiency } from './nenCategories'
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import { outsideDuelAbility } from './outsideDuelAbility'
@@ -88,8 +89,7 @@ export function kurapikaEfficiency(
   fighter: ArcadeFighter,
   category: 'enhancer' | 'emitter',
 ): number {
-  if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return 1
-  return category === 'enhancer' ? 0.6 : 0.4
+  return fightCategoryEfficiency(fighter, category)
 }
 
 /** Different commands can belong to the same Hatsu. */
@@ -135,7 +135,7 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = fighter.kurapika?.held
   return held?.used && fighter.attack?.moveId === held.moveId
-    ? { ...fighter, id: held.source }
+    ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
     : fighter
 }
 

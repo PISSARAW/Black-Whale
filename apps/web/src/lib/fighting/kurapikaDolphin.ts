@@ -26,7 +26,7 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const move = moveById(held?.moveId)
   if (!held?.loaded || held.used || !move) return false
   // Preserve the actual technique's conditions and cost at the borrower's attained state.
-  const actor: ArcadeFighter = { ...fighter, id: held.source, stolenChainAbility: undefined }
+  const actor: ArcadeFighter = { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id, stolenChainAbility: undefined }
   return canUseMovesetMove({ ...state, [side]: actor }, side, move)
 }
 
@@ -39,7 +39,7 @@ export function withDolphinIdentity(
   const borrowed = (fighter: ArcadeFighter) => {
     const held = fighter.kurapika?.held
     return held?.used && (!source || held.source === source)
-      ? { ...fighter, id: held.source }
+      ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
       : fighter
   }
   const player = borrowed(state.player)
@@ -48,8 +48,8 @@ export function withDolphinIdentity(
   const next = run({ ...state, player, opponent })
   return {
     ...next,
-    player: { ...next.player, id: state.player.id },
-    opponent: { ...next.opponent, id: state.opponent.id },
+    player: { ...next.player, id: state.player.id, nenOwner: state.player.nenOwner },
+    opponent: { ...next.opponent, id: state.opponent.id, nenOwner: state.opponent.nenOwner },
   }
 }
 

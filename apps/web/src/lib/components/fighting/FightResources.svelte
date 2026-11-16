@@ -1,4 +1,6 @@
 <script lang="ts">
+  import FightNenReadout from './FightNenReadout.svelte'
+  import type { FightInput } from '$lib/fighting/types'
   import FightOutsideDuelStatus from './FightOutsideDuelStatus.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
@@ -20,6 +22,7 @@
   export let language: 'fr' | 'en'
   export let detailed = false
   export let showControls = false
+  export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
   export let onAura: (active: boolean) => void
   export let onEmperor: () => void
 
@@ -46,10 +49,11 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
+      <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
       <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}
-        <FightNenControls {fighter} {language} {detailed} {showControls} {onAura} {onEmperor} />
+        <FightNenControls {fighter} {language} {detailed} {showControls} {onAura} {onEmperor} {onControl} />
         <div class="ability-readiness">
           <span
             class:ready={canUseRangedAttack(fighter)}

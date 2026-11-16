@@ -1,6 +1,7 @@
-import { chrolloPageForMove } from './chrolloBook'
 import { canUseHatsu } from '@black-whale/nen-engine'
+import { enTouchesSegment, gyoSight } from './nenPerception'
 import { hatsuSealedByOn } from './onTechnique'
+import { chrolloPageForMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BUNGEE_REST_DISTANCE = 8
@@ -70,8 +71,10 @@ export function hisokaUtilityMove(fighter: ArcadeFighter): boolean {
   return technique === 'recall' || technique === 'rebound' || technique === 'texture'
 }
 
-/** In hides the line from the opposing observer until they use Gyo. */
+/** Gyo reveals a hidden tether; En locates the part crossing its field. */
 export function bungeeVisible(state: FightState, observer: FightSide = 'player'): boolean {
   const gum = state.bungeeGum
-  return Boolean(gum && (gum.owner === observer || !gum.hidden || state[observer].nen.gyo))
+  if (!gum) return false
+  return gum.owner === observer || !gum.hidden || gyoSight(state[observer]) ||
+    enTouchesSegment(state[observer], state[gum.owner], state[gum.target])
 }

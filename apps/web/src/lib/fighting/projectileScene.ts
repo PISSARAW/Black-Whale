@@ -1,5 +1,6 @@
+import { gyoSight, perceivesProjectile } from './nenPerception'
 import { isThetaBullet } from './thetaFirearm'
-import type { FightProjectile } from './types'
+import type { ArcadeFighter, FightProjectile } from './types'
 import { createRemotePunchScene } from './remotePunchScene'
 
 export interface ProjectileSceneOptions {
@@ -12,7 +13,7 @@ export interface ProjectileSceneOptions {
 }
 
 export interface ProjectileScene {
-  sync: (projectiles: FightProjectile[], seconds: number) => void
+  sync: (projectiles: FightProjectile[], seconds: number, observer?: ArcadeFighter) => void
   dispose: () => void
 }
 
@@ -36,17 +37,27 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
           ? new THREE.MeshStandardMaterial({ color: colour, roughness: 0.94, metalness: 0 })
           : options.glow(colour, 1)
     const mesh = new THREE.Mesh(projectileGeometry(options, projectile), material)
+    mesh.name = `fight-projectile:${projectile.id}`
+    if (projectile.shuCharged) {
+      const aura = new THREE.Mesh(mesh.geometry, options.glow(0xffe1a3, 0.4))
+      aura.scale.setScalar(1.2)
+      mesh.add(aura)
+      mesh.userData.shuAura = aura
+    }
     scene.add(mesh)
     meshes.set(projectile.id, mesh)
     return mesh
   }
 
-  const sync = (projectiles: FightProjectile[], seconds: number) => {
-    remotePunches.sync(projectiles)
+  const sync = (projectiles: FightProjectile[], seconds: number, observer?: ArcadeFighter) => {
+    const visible = projectiles.filter((shot) => !observer || shot.owner === 'player' || perceivesProjectile(observer, shot))
+    remotePunches.sync(visible)
     const active = new Set(projectiles.map((projectile) => projectile.id))
     for (const projectile of projectiles) {
       if (projectile.remotePunch) continue
       const mesh = meshes.get(projectile.id) ?? build(projectile)
+      mesh.visible = visible.includes(projectile)
+      syncShuAura(mesh, projectile, observer)
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
       mesh.rotation.z = isThetaBullet(projectile) ? -Math.PI / 2 : projectile.shape === 'card' ? seconds * 8 : seconds * 2
@@ -68,6 +79,15 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       meshes.clear()
     },
   }
+}
+
+function shuVisible(projectile: FightProjectile, observer?: ArcadeFighter): boolean {
+  return !observer || projectile.owner === 'player' || !projectile.concealed || gyoSight(observer)
+}
+
+function syncShuAura(mesh: import('three').Mesh, projectile: FightProjectile, observer?: ArcadeFighter) {
+  const aura = mesh.userData.shuAura as import('three').Mesh | undefined
+  if (aura) aura.visible = Boolean(projectile.shuCharged) && shuVisible(projectile, observer)
 }
 
 function projectileGeometry(

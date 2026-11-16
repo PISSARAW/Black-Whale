@@ -43,11 +43,12 @@ export function startFighterAttack(options: {
     ...fighter,
     attack: { ...fighter.attack!, kind, variant: options.variant, moveId: options.moveId },
   })
-  const usesRyu = fighter.blocking || fighter.ryuWindow > 0
-  const focused = usesRyu ? focusAttackRyu(fighter, kind) : fighter
+  const usesRyu = wantsAttackRyu(fighter)
+  const focused = attackRyu(fighter, kind)
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    nen: { ...prepared.nen, en: null },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
     aura: fighter.aura - attackAuraCost(kind, options.moveId, fighter.id) - (concealed ? 12 : 0),
     pose: kind,
@@ -62,7 +63,7 @@ export function startFighterAttack(options: {
       confirmedHit: false,
       frame: 0,
       impacted: false,
-      auraCharged: auraCharged && !thetaPhysicalShot(fighter, kind),
+      auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
       hatsuSource: attackHatsuSource(options),
       projectileSpawned: false,
@@ -158,4 +159,17 @@ function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: s
     : kind === 'special'
       ? canUseFightHatsu(fighter)
       : kind !== 'ranged' || canUseRangedAttack(fighter)
+}
+
+function canChargeAura(fighter: ArcadeFighter, kind: AttackKind): boolean {
+  return fighter.nen.mode !== 'zetsu' && !thetaPhysicalShot(fighter, kind)
+}
+
+function wantsAttackRyu(fighter: ArcadeFighter): boolean {
+  return !fighter.nen.ko && (fighter.blocking || fighter.ryuWindow > 0)
+}
+
+function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
+  const focused = Object.values(fighter.nen.ryu).some((share) => Number(share) > 0)
+  return wantsAttackRyu(fighter) && !focused ? focusAttackRyu(fighter, kind) : fighter
 }

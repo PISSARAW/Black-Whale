@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { advancedNenCopy } from '$lib/fighting/nenTacticalCopy'
+  import FightNenTactics from './FightNenTactics.svelte'
+  import type { FightInput } from '$lib/fighting/types'
   import { KO_COST, nenStatus, nenTacticalState, type FightNenTactic } from '$lib/fighting/nen'
   import type { ArcadeFighter, FightNenZone } from '$lib/fighting/types'
   import { FIGHT_NEN_ZONES } from '$lib/fighting/nen'
@@ -9,12 +12,13 @@
   export let detailed = false
   export let showControls = false
   export let onAura: (active: boolean) => void
+  export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
   export let onEmperor: () => void = () => {}
 
   $: technique = nenStatus(fighter).join(' · ')
   $: tactical = nenTacticalState(fighter)
   $: explanation =
-    tactical.technique === 'on' ? onTacticalCopy(language) : tacticalCopy(tactical.technique)
+    tactical.technique === 'on' ? onTacticalCopy(language) : (advancedNenCopy(tactical.technique, language) ?? tacticalCopy(tactical.technique))
   $: flow = flowLabel(tactical.technique, tactical.auraPerSecond)
   $: danger =
     tactical.exhausted ||
@@ -56,7 +60,7 @@
       }
     if (active === 'ken')
       return {
-        benefit: 'Sous garde, les dégâts sont annulés',
+        benefit: 'Protection soutenue du corps et de la garde',
         risk: 'Drain massif et continu · épuisement rapide',
       }
     if (active === 'ko')
@@ -99,7 +103,7 @@
           : 'NO DEFENCE · Nen impacts become devastating',
       }
     if (active === 'ken')
-      return { benefit: 'While guarding, damage is negated', risk: 'Massive constant drain' }
+      return { benefit: 'Sustained body and guard protection', risk: 'Massive constant drain' }
     if (active === 'ko')
       return {
         benefit: 'Critical impact · maximum power',
@@ -135,6 +139,7 @@
 
   const warnings: Record<'fr' | 'en', Record<FightNenTactic, string>> = {
     fr: {
+      en: 'Détection de proximité · drain élevé', shu: 'Objet renforcé · corps exposé', in: 'Aura cachée · attention à Gyo et En',
       ten: '',
       ren: 'Puissance +22 %',
       ken: 'Garde renforcée · drain élevé',
@@ -145,6 +150,7 @@
       on: 'Hatsu, Ken et Ko scellés · drain de vie',
     },
     en: {
+      en: 'Proximity sensing · heavy drain', shu: 'Reinforced object · exposed body', in: 'Aura hidden · Gyo and En can detect',
       ten: '',
       ren: 'Power +22%',
       ken: 'Reinforced guard · heavy drain',
@@ -207,14 +213,15 @@
       {/if}
     </div>
   {/if}
+  {#if showControls || detailed}<FightNenTactics {language} {onControl} />{/if}
   {#if detailed}
     <div class="nen-explanation">
       <p>{explanation.benefit}</p>
       <p class="warning">{explanation.risk}</p>
       <p>
         {language === 'fr'
-          ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · + L (rancune 50) : On'
-          : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · + L (grudge 50): On'}
+          ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · R : En · F : Shu · X : In · G : Gyo · 1–4 : Ryu tête/torse/mains/jambes · + L (rancune 50) : On'
+          : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · R: En · F: Shu · X: In · G: Gyo · 1–4: Ryu head/torso/hands/legs · + L (grudge 50): On'}
       </p>
     </div>
   {/if}

@@ -179,6 +179,7 @@
       </div>
     </div>{/if}
   <FightResources
+    {onControl}
     {state}
     {language}
     {detailed}

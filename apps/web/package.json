@@ -12,7 +12,8 @@
     "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",
     "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
     "clean": "rimraf .svelte-kit build",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:nen-ui": "svelte-kit sync && node scripts/check-fighting-nen.mjs"
   },
   "dependencies": {
     "@black-whale/ability-modules": "workspace:*",

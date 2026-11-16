@@ -171,12 +171,12 @@ function updateHatsuCharge(fighter: ArcadeFighter, input: FightInput): ArcadeFig
   const chargingHatsu = input.hatsu && canAct(next) && next.attack === null
   const hatsuChargeFrames = chargingHatsu ? next.hatsuChargeFrames + 1 : next.hatsuChargeFrames
   if (activatesIn(next, chargingHatsu, hatsuChargeFrames)) next = setIn(next, true)
-  if (releasesIn(next, chargingHatsu)) next = setIn(next, false)
+  if (!input.conceal && releasesIn(next, chargingHatsu)) next = setIn(next, false)
   return { ...next, hatsuChargeFrames }
 }
 
 function activatesIn(fighter: ArcadeFighter, charging: boolean, frames: number): boolean {
-  return fighter.id === 'hisoka' && charging && frames >= IN_CHARGE_FRAMES
+  return charging && frames >= IN_CHARGE_FRAMES
 }
 
 function releasesIn(fighter: ArcadeFighter, charging: boolean): boolean {
@@ -282,14 +282,11 @@ function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string)
   }
 }
 
-function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
-  return (
-    kind === 'special' &&
-    fighter.id === 'hisoka' &&
-    hisokaTechnique(fighter, moveId) === 'attach' &&
-    fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES &&
+function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, _moveId?: string): boolean {
+  return (kind === 'special' || kind === 'ranged') &&
+    (fighter.nen.in || fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES) &&
+    fighter.nen.mode !== 'zetsu' && !fighter.nen.on &&
     fighter.aura >= FIGHT_HATSU_AURA_COST + IN_AURA_SURCHARGE
-  )
 }
 
 function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean {

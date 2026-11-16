@@ -1,3 +1,5 @@
+import { createNenFieldScene } from './nenFieldScene'
+import { gyoSight, insideEn } from './nenPerception'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
@@ -19,6 +21,7 @@ export interface FighterEffectScene {
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const camilla = createCamillaCatScene(options)
+  const nenFields = createNenFieldScene(options)
   const benjamin = createBenjaminEffectScene(options)
   const kurapika = createKurapikaEffectScene(options)
   const gumMaterial = new THREE.LineBasicMaterial({
@@ -35,6 +38,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
 
   const sync = (state: FightState, seconds: number) => {
     camilla.sync(state, seconds)
+    nenFields.sync(state)
     benjamin.sync(state, seconds)
     kurapika.sync(state, seconds)
     syncGum(options, { state, line: gum, material: gumMaterial })
@@ -45,6 +49,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     sync,
     dispose: () => {
       camilla.dispose()
+      nenFields.dispose()
       benjamin.dispose()
       scene.remove(gum, ...cards)
       gumGeometry.dispose()
@@ -68,15 +73,13 @@ function syncGum(options: EffectSceneOptions, effect: GumSync): void {
   if (!attachment) return
   const owner = effect.state[attachment.owner]
   const target = effect.state[attachment.target]
-  const points = Array.from({ length: 13 }, (_, index) => {
-    const ratio = index / 12
+  const localOnly = attachment.hidden && attachment.owner !== 'player' && !gyoSight(effect.state.player)
+  const points = Array.from({ length: 49 }, (_, index) => {
+    const ratio = index / 48
     const sag = Math.sin(ratio * Math.PI) * -0.32
-    return new options.THREE.Vector3(
-      options.worldX(owner.x + (target.x - owner.x) * ratio),
-      options.worldY(owner.y + (target.y - owner.y) * ratio) + 1.15 + sag,
-      0.28,
-    )
-  })
+    return { x: owner.x + (target.x - owner.x) * ratio, y: owner.y + (target.y - owner.y) * ratio, sag }
+  }).filter((point) => !localOnly || insideEn(effect.state.player, point))
+    .map((point) => new options.THREE.Vector3(options.worldX(point.x), options.worldY(point.y) + 1.15 + point.sag, 0.28))
   effect.line.geometry.setFromPoints(points)
   effect.material.opacity = attachment.hidden ? 0.4 : 0.82
 }

@@ -1,6 +1,7 @@
+import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
+import { isFirearmProjectile } from './nenProjectiles'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
-import { isThetaBullet } from './thetaFirearm'
 import { observeComboMaster } from './comboMaster'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { recordDolphinEffects } from './kurapikaDolphin'
@@ -81,7 +82,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const collision = attackCollision(attacker, defender)
   if (!collision) return state
   const data = attackData(attacker.attack.kind, attacker)
-  const defence = prepareDefence(defender, data.targetZone, attacker)
+  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker))
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const antiAir = isAntiAir(attacker) && sleepingBody(defender).y > GROUND
   const comboHits = nextComboHits(sleepingBody(defender), defence)
@@ -243,7 +244,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
-  const defence = prepareDefence(defender, hit.projectile.targetZone)
+  const defence = prepareDefence(defender, hit.projectile.targetZone, projectileRead(hit.projectile))
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = comboScale(comboHits)
@@ -251,7 +252,9 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     attacker,
     defence,
     base: hit.projectile.damage,
-    physicalProjectile: isThetaBullet(hit.projectile),
+    physicalProjectile: isFirearmProjectile(hit.projectile),
+    projectileNenPower: hit.projectile.nenPower,
+    projectileHatsuPower: hit.projectile.hatsuPower,
     zone: hit.projectile.targetZone,
     kind: 'ranged',
     damageScale,
@@ -308,7 +311,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
       damageScale,
       points,
       zone: hit.projectile.targetZone,
-      concealed: false,
+      concealed: Boolean(hit.projectile.concealed),
       avoided: defence.avoided,
       projectileId: hit.projectile.id,
       position: hit.position,
@@ -325,11 +328,14 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
 function prepareDefence(
   fighter: ArcadeFighter,
   zone: FightNenZone,
-  attacker?: ArcadeFighter,
+  read?: { attacker?: ArcadeFighter; concealed: boolean; position: { x: number; y: number } },
 ): ImpactDefence {
+  const attacker = read?.attacker
   fighter = wakeHanzoBody(fighter)
   const blocked = blocksImpact(fighter, attacker)
-  const parried = parryActive(fighter, blocked)
+  const visible = !read?.concealed || gyoSight(fighter) || insideEn(fighter, read.position)
+  const bonus = read ? nenReadBonus(fighter, { ...fighter, ...read.position }) : 0
+  const parried = visible && parryActive(fighter, blocked, { attacker, bonus })
   const invulnerable = impactInvulnerable(fighter, attacker)
   if (invulnerable) return { fighter, blocked, parried, avoided: true, invulnerable }
   if (hatsuAvoidsImpact(fighter)) return avoidedDefence(fighter, blocked, parried)
@@ -363,8 +369,9 @@ function attackCanResolve(
   return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
 }
 
-function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
-  return blocked && fighter.guardFrames > 0 && fighter.guardFrames <= PARRY_WINDOW_FRAMES
+function parryActive(fighter: ArcadeFighter, blocked: boolean, read: { attacker?: ArcadeFighter; bonus: number }): boolean {
+  return blocked && fighter.guardFrames > 0 &&
+    fighter.guardFrames <= PARRY_WINDOW_FRAMES + read.bonus
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
@@ -429,4 +436,12 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
   return { ...traded, deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])] }
+}
+
+function strikeRead(attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> }) {
+  return { attacker, concealed: attacker.attack.concealed && Boolean(attacker.attack.hatsuSource), position: attacker }
+}
+
+function projectileRead(projectile: ProjectileHit['projectile']) {
+  return { concealed: Boolean(projectile.concealed) && projectile.matter === 'nen', position: projectile }
 }

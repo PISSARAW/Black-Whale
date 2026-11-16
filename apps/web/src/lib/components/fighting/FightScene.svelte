@@ -138,10 +138,10 @@
           }
         }
 
-        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter })
+        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter, observer: fighter === state.player ? undefined : state.player })
 
         // Rebuild only the fighter whose aura or body form changes; keep the stage.
-        const nenKey = fightFigureKey
+        const nenKey = (fighter: ArcadeFighter) => fightFigureKey(fighter) + String(state.player.nen.gyo)
         const models = {
           player: { model: buildFighter(state.player), nen: nenKey(state.player) },
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
@@ -323,7 +323,7 @@
             model: modelOf('player', state.player),
             seconds,
           })
-          projectileScene.sync(state.projectiles, seconds)
+          projectileScene.sync(state.projectiles, seconds, state.player)
           fighterEffects.sync(state, seconds)
           feitanScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)

@@ -1,3 +1,4 @@
+import { commitProjectileNen } from './nenProjectiles'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide } from './frameData'
 import { franklinNenAvailable, franklinSalvo, franklinShotAt } from './franklinAttack'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
@@ -30,7 +31,7 @@ export function spawnFranklinBarrage(state: FightState, side: FightSide): FightS
         projectilesSpawned: shot + 1,
       },
     },
-    projectiles: [...state.projectiles, projectile],
+    projectiles: [...state.projectiles, commitProjectileNen(projectile, fighter)],
     nextProjectileId: state.nextProjectileId + 1,
   }
 }

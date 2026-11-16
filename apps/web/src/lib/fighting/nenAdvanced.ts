@@ -1,0 +1,115 @@
+import { transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
+import type { ArcadeFighter, FightInput, FightNenZone } from './types'
+
+/** Duel distances/maintenance costs are tuning, not claims about manga measurements. */
+export const EN_RADIUS = 22
+export const EN_DRAIN = 9
+export const SHU_DRAIN = 4
+export const IN_DRAIN = 3
+export const SHU_BODY_SHARE = 0.8
+
+const WEAPONS: Readonly<Partial<Record<ArcadeFighter['id'], string>>> = {
+  kurapika: 'chains',
+  hisoka: 'cards',
+  feitan: 'umbrella',
+  saiyu: 'staff',
+  shizuku: 'blinky',
+  illumi: 'needles',
+  kalluto: 'paper',
+}
+
+export function shuObject(fighter: ArcadeFighter): string {
+  return WEAPONS[fighter.id] ?? 'stone'
+}
+
+export function conjuredWeapon(fighter: ArcadeFighter): boolean {
+  return ['kurapika', 'shizuku', 'saiyu'].includes(fighter.id)
+}
+
+export function weaponUsesShu(fighter: ArcadeFighter): boolean {
+  return Boolean(WEAPONS[fighter.id] && fighter.nen.shu.includes(shuObject(fighter)))
+}
+
+export function selectedNenZone(input: FightInput): FightNenZone | null {
+  if (input.focusHead) return 'head'
+  if (input.focusTorso) return 'torso'
+  if (input.focusHands) return 'hands'
+  return input.focusFeet ? 'feet' : null
+}
+
+function action(fighter: ArcadeFighter, value: NenTechniqueAction<FightNenZone>): ArcadeFighter {
+  return { ...fighter, nen: transitionNen(fighter.nen, value).state }
+}
+
+/** Held overlays never survive releasing their input, Zetsu, exhaustion or an impact. */
+export function applyAdvancedNen(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  const available = advancedNenAvailable(fighter)
+  const en = available && Boolean(input.en) && !fighter.attack
+  const shu = available && Boolean(input.shu)
+  if (fighter.nen.ko) return applySightInputs(fighter, input, available)
+  let next = action(fighter, { type: 'EN', radius: en ? EN_RADIUS : null })
+  next = action(next, { type: 'SHU', objectId: shuObject(fighter), on: shu })
+  next = applySightInputs(next, input, available)
+  if (en) next = { ...next, nen: { ...next.nen, mode: 'ren', ken: false, ko: null, ryu: {} } }
+  return applyManualFocus(next, input, available && !en)
+}
+
+function applyManualFocus(
+  fighter: ArcadeFighter,
+  input: FightInput,
+  available: boolean,
+): ArcadeFighter {
+  const zone = selectedNenZone(input)
+  return available && zone ? focusNenZone(fighter, zone) : fighter
+}
+
+function applySightInputs(
+  fighter: ArcadeFighter,
+  input: FightInput,
+  available: boolean,
+): ArcadeFighter {
+  const gyo = Boolean(input.gyo || (input.aura && input.jump))
+  let next = action(fighter, { type: 'GYO', on: available && gyo })
+  if (input.conceal || fighter.nen.in)
+    next = action(next, {
+      type: 'IN',
+      on: available && Boolean(input.conceal || fighter.attack?.concealed),
+    })
+  return next
+}
+
+function advancedNenAvailable(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.nen.mode !== 'zetsu' &&
+    !fighter.nen.on &&
+    !fighter.auraExhausted &&
+    fighter.health > 0 &&
+    fighter.hitStun === 0 &&
+    fighter.knockdownFrames === 0 &&
+    fighter.hatsuEffects.forcedZetsuFrames === 0
+  )
+}
+
+export function focusNenZone(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
+  if (!canRedistributeAura(fighter)) return fighter
+  const distribution = { head: 8, torso: 8, hands: 8, feet: 8, [zone]: 76 }
+  return {
+    ...action(
+      { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
+      { type: 'RYU', distribution },
+    ),
+    ryuWindow: 9,
+  }
+}
+
+export function canRedistributeAura(fighter: ArcadeFighter): boolean {
+  return fighter.nen.mode !== 'zetsu' && !fighter.nen.on && !fighter.auraExhausted
+}
+
+export function advancedAuraDrain(fighter: ArcadeFighter): number {
+  return (
+    Number(Boolean(fighter.nen.en)) * EN_DRAIN +
+    Number(fighter.nen.shu.length > 0) * SHU_DRAIN +
+    Number(fighter.nen.in) * IN_DRAIN
+  )
+}

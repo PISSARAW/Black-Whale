@@ -481,3 +481,75 @@ est descriptif : le nom officiel, la catégorie et les règles complètes resten
 inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
 ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
 les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.
+
+### Nen tactique et catégories dans le duel 2D
+
+Les quatre bases gardent leurs commandes contextuelles : Ten au repos, Espace pour
+Ren, Espace + garde pour Ken, Espace + bas pour Zetsu, Espace + haut pour Gyo.
+Relâcher Aura pendant l’amorce d’un coup engage Ko (20 aura), puis l’impact ou la
+fin du coup libère la concentration. Zetsu coupe toute protection et application
+d’aura ; il ne rend pas un corps invisible. Ren augmente la puissance au prix de
+la réserve. Ken protège aussi hors garde ; sous garde, son absorption est finie
+et chaque contact consomme de l’aura. Une attaque très puissante peut le dépasser.
+
+Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
+
+| Technique | P1 | P2 local | Effet et contrepartie |
+| --- | --- | --- | --- |
+| En | R | [ | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact. |
+| Shu | F | ] | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
+| In | X | \ | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact. |
+| Gyo | G | ; | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie. |
+| Ryu | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s. |
+
+En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
+Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
+qui le traversent sont localisés, sans lui attribuer l’analyse visuelle de Gyo.
+L’IA lit les gestes visibles et effectue des lectures Gyo périodiques ; sa décision
+ne consulte pas un drapeau In secret ni la présence d’un projectile indétectable.
+Les commandes supplémentaires sont enregistrées par le mannequin comme les autres
+inputs. P continue à mettre le duel en pause.
+
+`nenCategories.ts` applique l’efficacité selon l’hexagone (100 / 80 / 60 / 40 %)
+aux **actions apprises**, sans attribuer de nouveaux Hatsu. Le Renforcement agit
+sur les coups du corps, sa défense et les objets en Shu. L’Émission agit sur les
+projectiles d’aura et le maintien de Shu après lancer ; la Matérialisation sur les
+outils matérialisés et le déplacement des constructions (double et gardes LSDF) ;
+la Transformation sur les propriétés de l’aura (traction de Bungee Gum, chaleur
+de Rising Sun) ; la Manipulation sur les durées de contrôle réglées pour le duel.
+La Spécialisation ne devient pas une aptitude accessible à tous par proximité.
+
+`nenAbility.ts` choisit la capacité effectivement utilisée : une page du livre de
+Chrollo, un héritage de Benjamin, une chaîne ou le Hatsu retenu dans Dolphin. Les
+composantes déclarées dans `data/abilities/abilities.json` sont calculées ensemble
+par moyenne géométrique de leurs facteurs de puissance ; les conditions, cibles,
+consentements, morts et durées canoniques ne sont jamais multipliés. Copier un
+Hatsu ne copie pas l’affinité de son propriétaire.
+
+Emperor Time applique **simultanément 100 % d’efficacité** à toutes les catégories
+utilisées par Kurapika : corps, défense, outils, émission et capacité empruntée.
+Il conserve son niveau d’apprentissage, ses capacités disponibles et son coût
+existant d’une heure de vie par seconde ; il ne crée aucune réserve d’aura.
+L’efficacité offensive d’un projectile est mémorisée au départ : un changement
+ultérieur de mode ou d’Emperor Time ne réécrit pas le tir en vol.
+
+Le HUD affiche affinité, efficacités, distribution, contacts En et objet en Shu.
+Les affinités inconnues restent nommées comme telles : une valeur neutre de 70 %
+sert à l’équilibrage, y compris pour les catégories ordinaires d’un Spécialiste,
+dont les efficacités ne sont pas universellement établies dans le manga. Les
+multiplicateurs, rayons et coûts ci-dessus sont des réglages de duel. Les types
+naturels et les catégories des capacités viennent du catalogue canonique, régénéré
+avec `node scripts/generate-fighting-nen.mjs` (`nenCatalogue.gen.ts`).
+
+Références de règles : chapitres 83 et 108 (efficacité et Emperor Time), 140–142
+(Shu, Ko, Ken et Ryu), 361 et 364 (coût en durée de vie).
+
+### Gel : bras-serpent sans propriétés inventées
+
+Gel conserve sa transformation du bras et l’allonge de ses frappes. Les variantes
+directionnelles représentent des gestes avec le même bras ; portées, dégâts,
+timings et coûts d’aura restent des réglages du duel. Le nom « Bras-serpent »
+est descriptif : le nom officiel, la catégorie et les règles complètes restent
+inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
+ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
+les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.

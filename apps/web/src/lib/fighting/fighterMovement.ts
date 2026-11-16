@@ -50,6 +50,8 @@ function withMotion(fighter: ArcadeFighter, motion: Partial<FighterMotion>): Arc
 export function advanceAirborne(
   fighter: ArcadeFighter,
 ): Pick<ArcadeFighter, 'x' | 'y' | 'velocityY' | 'motion'> {
+  if (fighter.hanzoProjection)
+    return { x: fighter.x, y: fighter.y, velocityY: 0, motion: undefined }
   const motion = motionOf(fighter)
   const landingFrames = Math.max(0, motion.landingFrames - 1)
   if (fighter.y <= GROUND && fighter.velocityY <= 0) {

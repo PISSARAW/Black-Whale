@@ -1,3 +1,4 @@
+import { wakeHanzoBody } from './hanzoProjection'
 import type { FightFinishReason, FightSide, FightState } from './types'
 
 export function finishFight(
@@ -10,6 +11,8 @@ export function finishFight(
   const matchWinner = roundsWon[winner] >= 2 ? winner : null
   return {
     ...state,
+    player: wakeHanzoBody(state.player),
+    opponent: wakeHanzoBody(state.opponent),
     phase: 'finished',
     winner,
     matchWinner,
@@ -17,7 +20,7 @@ export function finishFight(
     finishReason,
     lsdf: finishReason === 'expulsion' ? state.lsdf : undefined,
     [loser]: {
-      ...state[loser],
+      ...wakeHanzoBody(state[loser]),
       pose: finishReason === 'expulsion' ? 'idle' : 'ko',
       blocking: false,
       attack: null,

@@ -142,6 +142,13 @@ export interface ArcadeFighter {
   hatsuEffects: FighterHatsuEffects
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */
   textureSurprise?: { surface: 'cloth' }
+  /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
+  hanzoProjection?: {
+    bodyX: number
+    bodyFacing: -1 | 1
+    bodyNen: NenTechniqueState<FightNenZone>
+    startupFrames: number
+  }
   /** On (怨): hatred banked from damage, and the seal its blood leaves. Absent until hit. */
   on?: { grudge: number; sealFrames: number }
   /** Dash, prejump, landing and air drift; absent until the fighter first moves. */
@@ -212,7 +219,6 @@ export interface FighterHatsuEffects {
   cantabileFrames: number
   biohazardFrames: number
   restrainedFrames: number
-  cloneDodges: number
   predatorFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
@@ -242,6 +248,8 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
+  call?: boolean
   left: boolean
   right: boolean
   jump: boolean

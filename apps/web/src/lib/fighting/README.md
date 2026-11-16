@@ -100,6 +100,17 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Sans contact requis, la cible initiale garde les dégâts. Chaque blessure est
   déplacée une fois, sans nouvelle réduction ni esquive. Portée, frames et coups
   porteurs sont des abstractions du duel ; aucun objet-réceptacle n'est inventé.
+- Hanzo utilise **Hanzo Skill 4** avec L : son corps reste endormi au sol, sans
+  déplacement ni garde, pendant que les commandes pilotent le double. Haut/bas
+  le font flotter ; il traverse l'adversaire et peut le frapper. Le corps conserve
+  sa propre hurtbox : un coup ou un simple contact interrompt la projection, sans
+  annuler les dégâts ni offrir l'invulnérabilité de relevée. Revenir près du corps
+  puis L permet de le réintégrer sans repayer le coût. Le double ne lance pas
+  d'objets physiques. H devient un étranglement à courte portée pendant la projection.
+  Le coût d'aura, les 24 frames de préparation et les dégâts restent des réglages
+  de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
+  le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
+  La portée audible de 18 unités est une abstraction du duel.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
   projectiles attestés sont propres au combattant ; les autres lancent une pierre,
   sans leur inventer de technique de Nen. Les collisions sont transmises à

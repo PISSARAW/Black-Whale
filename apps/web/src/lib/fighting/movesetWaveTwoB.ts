@@ -110,29 +110,29 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'hanzo',
     mechanic: [
-      'Double astral : son clone absorbe une attaque et ouvre une riposte de ninja.',
-      'Astral Double: his clone absorbs one attack and opens a ninja retaliation.',
+      'L : projeter le double en laissant le corps endormi. Le double flotte (haut/bas), traverse l’adversaire et frappe ; toucher le corps ou l’interpeller à proximité (T/V) interrompt la projection. Revenir au corps puis L pour le réintégrer.',
+      'L: project a double, leaving the body asleep. The double floats (up/down), passes through the opponent and strikes; touching the body or calling to it nearby (T/V) ends projection. Return to the body and press L to rejoin it.',
     ],
     finisherCondition: [
-      'Le double astral doit être disponible.',
-      'The astral double must be available.',
+      'Le double astral doit être actif ; l’étranglement exige le corps-à-corps.',
+      'The astral double must be active; the choke requires close contact.',
     ],
     labels: [
       'Pique du ninja|Ninja Jab',
       'Paume secrète|Secret Palm',
       'Coup au tendon|Tendon Strike',
       'Fauchage furtif|Stealth Sweep',
-      'Kunai aérien|Aerial Kunai',
+      'Paume aérienne|Aerial Palm',
       'Talon d’ombre|Shadow Heel',
       'Pas sans trace|Traceless Step',
       'Paume assassine|Assassin Palm',
-      'Substitution|Substitution',
-      'Hanzo Skill|Hanzo Skill',
-      'Double astral|Astral Double',
-      'Attaque souterraine|Underground Assault',
-      'Écran de fumée|Smoke Screen',
+      'Revers du ninja|Ninja Backhand',
+      'Hanzo Skill 4|Hanzo Skill 4',
+      'Paume du ninja|Ninja Palm',
+      'Balayage du ninja|Ninja Sweep',
+      'Contre du ninja|Ninja Counter',
       'Clé du ninja|Ninja Lock',
-      'Art secret · Décapitation|Secret Art · Decapitation',
+      'Double astral · Étranglement|Astral Double · Choke',
     ],
     speed: 0.8,
     power: 1.02,
@@ -140,7 +140,7 @@ const SPECS: readonly MovesetSpec[] = [
     combos: [
       ['standingLight', 'forwardLight', 'forwardSpecial'],
       ['lowLight', 'backHeavy', 'downSpecial'],
-      ['airLight', 'airHeavy', 'neutralSpecial'],
+      ['airLight', 'airHeavy', 'backSpecial'],
     ],
   },
 ]
@@ -149,4 +149,18 @@ export const WAVE_TWO_MOVESETS_B = [
   ...SPECS.slice(0, 3).map(buildMoveset),
   leorioMoveset(),
   ...SPECS.slice(3).map(buildMoveset),
-]
+].map((moveset) => {
+  if (moveset.fighterId !== 'hanzo') return moveset
+  return {
+    ...moveset,
+    moves: moveset.moves.map((move) => {
+      if (move.slot === 'neutralSpecial')
+        return { ...move, tuning: { ...move.tuning, damage: 0, reach: 0, lunge: 0 } }
+      if (move.slot === 'finisher')
+        return { ...move, tuning: { ...move.tuning, reach: 4, lunge: 0, knockback: 1 } }
+      if (move.category === 'special')
+        return { ...move, tuning: { ...move.tuning, reach: Math.min(9, move.tuning.reach) } }
+      return move
+    }),
+  }
+})

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 530
+Fichiers : 532
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -236,6 +236,10 @@ Fichiers : 530
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightPresentation.test.ts`
+
+- fight presentation > draws forward and backward dashes as distinct authored actions
 
 ## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
 

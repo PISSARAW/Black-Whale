@@ -1,4 +1,5 @@
 import { animateFranklinHands } from './franklinHands'
+import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { attackMotionAccent } from './fightAttackMotion'
 import { READY_ARMS } from './fightGestures'
@@ -122,6 +123,8 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  if (fighter.hanzoProjection && !fighter.attack)
+    return { pose: HANZO_FLOAT_POSE, plant: false, key: 'astral-double', blend: 0.12 }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
   if (fighter.attack) return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
   return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)

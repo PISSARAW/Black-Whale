@@ -1,6 +1,7 @@
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { usesRemotePunch } from './leorioAttack'
 import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
+import { sleepingBody } from './hanzoProjection'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { fightingStyle } from './fightStyles'
@@ -204,6 +205,7 @@ export function isAntiAir(fighter: ArcadeFighter): boolean {
 }
 
 export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
+  if (fighter.hanzoProjection) return hurtboxes({ ...sleepingBody(fighter), knockdownFrames: 1 })
   if (fighter.knockdownFrames > 0) {
     return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]
   }
@@ -215,6 +217,7 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
 }
 
 export function pushbox(fighter: ArcadeFighter): FightBox {
+  if (fighter.hanzoProjection) return pushbox({ ...sleepingBody(fighter), knockdownFrames: 1 })
   const airborne = fighter.y > 0
   const halfWidth = fighter.knockdownFrames > 0 ? 3.5 : fighter.crouching ? 2.35 : 2.05
   return worldBox(fighter, {

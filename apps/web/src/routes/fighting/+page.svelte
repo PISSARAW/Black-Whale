@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightSetup from '$lib/components/fighting/FightSetup.svelte'
@@ -119,6 +120,10 @@
 
   function throwAttack() {
     queueAction((current) => performThrow(current, 'player'))
+  }
+
+  function callBody() {
+    queueAction((current) => callHanzoBody(current, 'player'))
   }
 
   function flushPendingActions(current: FightState): FightState {
@@ -363,6 +368,7 @@
         stageId={state.environment.stageId}
         onAttack={attack}
         onThrow={throwAttack}
+        onCall={callBody}
         onFinisher={finisher}
         onControl={control}
         training={state.mode === 'training'}

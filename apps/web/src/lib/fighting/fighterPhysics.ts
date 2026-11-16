@@ -1,3 +1,4 @@
+import { sleepingBody } from './hanzoProjection'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
@@ -56,6 +57,12 @@ export function separateFighterPushboxes(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
 ): Pick<FightState, 'player' | 'opponent'> {
+  if (player.hanzoProjection || opponent.hanzoProjection) {
+    return {
+      player: { ...player, facing: player.x <= sleepingBody(opponent).x ? 1 : -1 },
+      opponent: { ...opponent, facing: opponent.x <= sleepingBody(player).x ? 1 : -1 },
+    }
+  }
   const playerFacing: -1 | 1 = player.x <= opponent.x ? 1 : -1
   const playerBox = pushbox(player)
   const opponentBox = pushbox(opponent)

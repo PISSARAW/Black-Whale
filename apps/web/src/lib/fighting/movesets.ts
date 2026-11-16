@@ -4,6 +4,7 @@ import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
 import { franklinNenAvailable } from './franklinAttack'
+import { hanzoMoveResources } from './hanzoProjection'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import { moveId } from './movesetFactory'
@@ -43,7 +44,9 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
   ALL_MOVESETS.map(tuneFranklinMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
-  [...MOVESETS.values()].flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),
+  [...MOVESETS.values()].flatMap((moveset) =>
+    moveset.moves.map((move) => [move.id, move] as const),
+  ),
 )
 
 export const WAVE_ONE_FIGHTERS = WAVE_ONE_MOVESETS.map((moveset) => moveset.fighterId)
@@ -86,6 +89,8 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
+  const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
+  if (projectionResources !== null) return projectionResources
   if (fighter.aura < move.auraCost) return false
   return move.category !== 'special' && move.category !== 'finisher'
     ? true
@@ -168,7 +173,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   shizuku: (state, side) => opponentOf(state, side).health <= 50,
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   mizaistom: (state, side) => opponentOf(state, side).hatsuEffects.restrainedFrames > 0,
-  hanzo: (state, side) => state[side].hatsuEffects.cloneDodges > 0,
+  hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: (state, side) =>
     state[side].hatsuEffects.predatorFrames > 0 &&
     opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,

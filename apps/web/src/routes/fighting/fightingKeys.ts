@@ -2,6 +2,7 @@ import type { AttackKind, FightInput, MoveAction } from '$lib/fighting/types'
 
 /** Keyboard layout of the duel: P1 on letters, P2 on arrows in local versus. */
 export const movementKeys: Record<string, keyof FightInput> = {
+  t: 'call',
   ArrowLeft: 'left',
   q: 'left',
   a: 'left',
@@ -24,6 +25,7 @@ export const attackKeys: Record<string, AttackKind> = {
 }
 
 export const opponentMovementKeys: Record<string, keyof FightInput> = {
+  v: 'call',
   ArrowLeft: 'left',
   ArrowRight: 'right',
   ArrowUp: 'jump',

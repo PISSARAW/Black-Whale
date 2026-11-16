@@ -6,6 +6,7 @@
   import FightAudio from './FightAudio.svelte'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
   import FightLsdfStatus from './FightLsdfStatus.svelte'
+  import FightHanzoCall from './FightHanzoCall.svelte'
   import { nenTacticalState } from '$lib/fighting/nen'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { impactCallout } from '$lib/fighting/impactCallout'
@@ -24,6 +25,7 @@
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
   export let onAttack: (kind: AttackKind) => void
   export let onThrow: () => void
+  export let onCall: () => void
   export let onFinisher: () => void
   export let onControl: (key: keyof FightInput, active: boolean) => void
   export let training = false
@@ -159,6 +161,7 @@
       >
     </div>
     <div class="touch-group attack-controls">
+      <FightHanzoCall {state} {language} {onCall} />
       <button type="button" onclick={() => onAttack('light')}>J</button>
       <button type="button" onclick={() => onAttack('heavy')}>K</button>
       <button

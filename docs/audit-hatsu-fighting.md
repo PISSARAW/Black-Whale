@@ -83,7 +83,7 @@ une vérification dans le manga avant d'être corrigés.
 | Hinrigh    | Buff ×1,2 / ×0,86 (et auto-paralysie)          | Biohazard : objets touchés deviennent des animaux                       | **A**    | Effet inventé (le bug d'auto-paralysie est corrigé). Piste : transformer un projectile ou un objet en bête.                                                                                       |
 | Mizaistom  | Entrave 1,5 s sur tout coup                    | Cross Game : **avertissement** avant l'entrave, parole libre            | B        | Il manque le carton jaune. Facile : premier coup = avertissement, second = entrave.                                                                                                               |
 | Leorio     | Poing transmis dans le sol, sortie différée au point visé | Remote Punch : l’aura traverse une surface (ch. 325) | A | Corrigé : aucune collision sous le sol, aucun bonus de contact ni boule d’aura. Variantes médicales, double émission et finisher retirés ; portée et délai restent des réglages arcade. |
-| Hanzo      | Une esquive par « clone »                      | Hanzo Skill 4 : double invisible, **corps endormi et immobile**         | **A**    | Le double n'esquive pas : il laisse le corps vulnérable. L'effet est inversé.                                                                                                                     |
+| Hanzo      | Double piloté, corps endormi distinct          | Hanzo Skill 4 : corps vulnérable, double flottant et capable de frapper | D (fait) | Corrigé le 2026-11-16 : aucune esquive gratuite ; coups et contact au corps interrompent la projection, retour volontaire près du corps, étranglement au contact. T/V ou le bouton tactile permettent aussi d'interpeller le corps à proximité, sans dégâts. |
 
 ### Troisième vague
 
@@ -127,17 +127,17 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 
 | Verdict | Audit (41 jouables) | Au 2026-11-16 (40 jouables) |
 | ------- | ------------------- | --------------------------- |
-| A       | 13                  | 5                           |
+| A       | 13                  | 3                           |
 | B       | 14                  | 15                          |
 | C       | 11                  | 8                           |
-| D       | 3                   | 12                          |
+| D       | 3                   | 14                          |
 
 ## Ordre de traitement proposé
 
 1. ~~Corriger le bug Hinrigh~~ — fait.
 2. **Constat 4 : traité.** Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
-3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~ (faits), Hanzo, Gel, Longhi, ~~Yokotani~~ (fait).
+3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), Gel, Longhi, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois

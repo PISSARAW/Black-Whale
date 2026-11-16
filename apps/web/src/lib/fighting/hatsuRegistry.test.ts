@@ -384,14 +384,14 @@ describe('fighter Hatsu registry', () => {
     expect(fight.player.pose).not.toBe('hit')
   })
 
-  it('gives Hanzo’s clone one complete dodge', () => {
+  it('leaves Hanzo’s sleeping body vulnerable during projection', () => {
     const state = hatsuFor('hanzo').onTrigger({
       state: closeFight('hanzo', 'hisoka'),
       side: 'player',
       source: 'hanzo',
     })
-    expect(hatsuAvoidsImpact(state.player)).toBe(true)
-    expect(consumeHatsuAvoidance(state.player).hatsuEffects.cloneDodges).toBe(0)
+    expect(state.player.hanzoProjection?.bodyX).toBe(state.player.x)
+    expect(hatsuAvoidsImpact(state.player)).toBe(false)
   })
 
   it('lets Predator analyse and suppress an enemy Hatsu', () => {

@@ -1,6 +1,7 @@
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
 import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
+import { HANZO_KEY_POSES } from './keyPosesHanzo'
 import { archetypeTimeline } from './fightArchetypes'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
@@ -19,6 +20,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   hisoka: { ...HISOKA_KEY_POSES, ...HISOKA_SPECIAL_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   franklin: FRANKLIN_KEY_POSES,
+  hanzo: HANZO_KEY_POSES,
 }
 
 export interface KeyedMove {

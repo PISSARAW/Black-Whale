@@ -2,6 +2,7 @@ import { finishFight } from './combatVerdict'
 export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
+import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { blocksAttack } from './duelMoves'
 import {
   activeHitbox,
@@ -76,9 +77,9 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (!collision) return state
   const data = attackData(attacker.attack.kind, attacker)
   const defence = prepareDefence(defender, data.targetZone, attacker)
-  const opening = openingType(defender, defence.blocked)
-  const antiAir = isAntiAir(attacker) && defender.y > GROUND
-  const comboHits = nextComboHits(defender, defence)
+  const opening = openingType(sleepingBody(defender), defence.blocked)
+  const antiAir = isAntiAir(attacker) && sleepingBody(defender).y > GROUND
+  const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = comboScale(comboHits)
   const critical = isCriticalAuraStrike(attacker)
   const damage = resolvedDamage({
@@ -98,7 +99,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     avoided: defence.avoided,
     critical,
   })
-  const wallSplat = !defence.avoided && atWall(defender, attacker, data.knockback)
+  const wallSplat = !defence.avoided && atWall(sleepingBody(defender), attacker, data.knockback)
   const struck = strikeAfterDefence(defence, {
     attacker,
     damage,
@@ -234,8 +235,8 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   const attacker = state[side]
   const defender = state[hit.defenderSide]
   const defence = prepareDefence(defender, hit.projectile.targetZone)
-  const opening = openingType(defender, defence.blocked)
-  const comboHits = nextComboHits(defender, defence)
+  const opening = openingType(sleepingBody(defender), defence.blocked)
+  const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = comboScale(comboHits)
   const damage = resolvedDamage({
     attacker,
@@ -253,7 +254,8 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     avoided: defence.avoided,
     critical: false,
   })
-  const wallSplat = !defence.avoided && atWall(defender, attacker, hit.projectile.knockback)
+  const wallSplat =
+    !defence.avoided && atWall(sleepingBody(defender), attacker, hit.projectile.knockback)
   const struck = defence.avoided
     ? defence.fighter
     : strikeProjectileDefender({
@@ -322,6 +324,7 @@ function prepareDefence(
   zone: FightNenZone,
   attacker?: ArcadeFighter,
 ): ImpactDefence {
+  fighter = wakeHanzoBody(fighter)
   const blocked = blocksImpact(fighter, attacker)
   const parried = parryActive(fighter, blocked)
   const invulnerable = impactInvulnerable(fighter, attacker)
@@ -362,7 +365,8 @@ function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
-  if (defender.y > GROUND && defender.juggleCount >= MAX_JUGGLE_HITS) return null
+  const body = sleepingBody(defender)
+  if (body.y > GROUND && body.juggleCount >= MAX_JUGGLE_HITS) return null
   const hitbox = activeHitbox(attacker)
   if (!hitbox) return null
   const hurtbox = hurtboxes(defender).find((candidate) => boxesOverlap(hitbox, candidate))
@@ -414,6 +418,7 @@ function preserveHitFormatHealth(state: FightState, side: FightSide): FightState
 
 
 function throwImmune(fighter: ArcadeFighter): boolean {
+  if (fighter.hanzoProjection) return false
   return (
     fighter.y > 0 ||
     fighter.hitStun > 0 ||

@@ -34,6 +34,33 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     narrativeCost: 'Aura and commitment to striking the surface.',
     narrativeEffect: 'Aura travels through the surface and emerges as a fist at a distant point.',
   },
+  'hanzo:neutralSpecial': {
+    source: 'Succession Contest — chapter 372, Hanzo Skill 4',
+    evidence: 'manga-shown',
+    conditions: [
+      'Hanzo leaves his physical body asleep and motionless to control the double.',
+      'He must return to his body to end the projection voluntarily.',
+    ],
+    prohibitions: [
+      'The double is not a substitution that absorbs an incoming attack.',
+      'Touch or speech directed at the sleeping body interrupts the projection.',
+      'The projected vessel does not gain physical throwing ammunition.',
+    ],
+    narrativeCost: 'The sleeping body cannot move or guard; the double requires his full focus.',
+    narrativeEffect:
+      'A precisely controlled double floats, passes through matter and can strike physically.',
+  },
+  'hanzo:finisher': {
+    source: 'Succession Contest — chapter 372, Hanzo strangles Tuffdy with his double',
+    evidence: 'manga-shown',
+    conditions: ['The astral double must be active and reach the target physically.'],
+    prohibitions: [
+      'No remote decapitation, automatic execution or protection of the sleeping body.',
+    ],
+    narrativeCost: 'A close-range commitment while the physical body stays exposed.',
+    narrativeEffect:
+      'The double grabs and strangles the target; damage and timing are duel abstractions.',
+  },
   'kurapika:neutralSpecial': {
     source: 'Yorknew City — Chain Jail and Kurapika’s limiting vow',
     evidence: 'manga-shown',

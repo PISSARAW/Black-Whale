@@ -60,6 +60,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       return
     }
 
+    if (id === 'hanzo') {
+      expect(armed[side].hanzoProjection).toBeDefined()
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     expect(armed[side].attack?.kind).toBe('special')
     expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
     expect(advance(armed, 0.4).impact?.attacker).toBe(side)

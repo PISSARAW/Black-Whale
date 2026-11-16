@@ -198,6 +198,7 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'leorio') return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
+  if (fighter.hanzoProjection) return false
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }
 
@@ -216,6 +217,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
   if (
     fighter.id === 'leorio' ||
     fighter.id === 'franklin' ||
+    fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
     fighter.attack.projectileSpawned ||
     attackPhase(fighter) !== 'active'

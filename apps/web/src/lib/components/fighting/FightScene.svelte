@@ -2,7 +2,10 @@
   import { onMount } from 'svelte'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { lsdfFighterVisible } from '$lib/fighting/lsdfPresentation'
-  import { createHanzoProjectionScene } from '$lib/fighting/hanzoProjectionScene'
+  import {
+    createHanzoProjectionScene,
+    projectionCameraSpan,
+  } from '$lib/fighting/hanzoProjectionScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -270,7 +273,8 @@
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = reactionMotion(fighter, progress, side)
-          const hitZone = state.impact?.attacker !== side ? state.impact?.zone : undefined
+          const impact = state.impact
+          const hitZone = impact && impact.attacker !== side ? impact.zone : undefined
           const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
           const modelPose = motionOf(fighter).dash ? 'idle' : MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {
@@ -314,14 +318,7 @@
 
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
-          const positions = [playerX, opponentX]
-          for (const fighter of [state.player, state.opponent]) {
-            if (fighter.hanzoProjection) positions.push(worldX(fighter.hanzoProjection.bodyX))
-          }
-          const left = Math.min(...positions)
-          const right = Math.max(...positions)
-          const centre = (left + right) / 2
-          const gap = right - left
+          const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
           const targetZ = state.phase === 'finished' ? 7.2 : 8.1 + gap * 0.16
           const ease = easeFactor(CAMERA_RATE, dt)
           camera.position.x += (centre * 0.32 - camera.position.x) * ease

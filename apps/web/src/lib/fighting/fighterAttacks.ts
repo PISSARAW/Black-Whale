@@ -1,4 +1,5 @@
 import { remotePunchAvailable } from './leorioAttack'
+import { projectionPreparing } from './hanzoProjection'
 import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST, hatsuSourceFor } from './hatsu'
@@ -75,12 +76,9 @@ export function canStartFighterAttack(
   moveId?: string,
 ): boolean {
   if (!remotePunchAvailable(fighter, kind, moveId)) return false
-  const move = moveById(moveId)
-  const resourceReady = move
-    ? hasMoveResources(fighter, move)
-    : kind === 'special'
-      ? canUseFightHatsu(fighter)
-      : kind !== 'ranged' || canUseRangedAttack(fighter)
+  if (projectionPreparing(fighter)) return false
+  if (fighter.hanzoProjection && kind === 'ranged') return false
+  const resourceReady = attackResourcesReady(fighter, kind, moveId)
   return (
     canAct(fighter) &&
     (fighter.attack === null || cancelReady(fighter, kind, moveId)) &&
@@ -124,4 +122,13 @@ function clamp(value: number, minimum: number, maximum: number): number {
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   if (!canCancel(fighter, kind, moveId) || !fighter.attack) return false
   return fighter.attack.frame <= attackData(fighter.attack.kind, fighter).cancelEnd
+}
+
+function attackResourcesReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  const move = moveById(moveId)
+  return move
+    ? hasMoveResources(fighter, move)
+    : kind === 'special'
+      ? canUseFightHatsu(fighter)
+      : kind !== 'ranged' || canUseRangedAttack(fighter)
 }

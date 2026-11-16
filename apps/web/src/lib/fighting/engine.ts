@@ -2,6 +2,15 @@ import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
 import { performLeorioAction } from './leorioAttack'
 import { performLsdfAction } from './lsdfAction'
+import { callHanzoBody, canCallHanzoBody, resolveHanzoBodyCalls } from './hanzoBodyCall'
+import { performProjectionAction } from './hanzoProjectionAction'
+import {
+  canRejoinHanzoBody,
+  projectionPreparing,
+  sleepingBody,
+  steerHanzoProjection,
+  wakeHanzoBody,
+} from './hanzoProjection'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { fightFormat } from './formats'
@@ -65,6 +74,9 @@ export function tickFight(
     const previousPositions = capturePositions(next)
     next = { ...stepFight(next, input, opponentInput), frameAccumulator: accumulator }
     next = { ...next, previousPositions }
+    if (next.phase === 'finished') {
+      next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
+    }
     if (settings.ai && !opponentInput) next = advanceAiCadence(next, opponentAttack)
   }
   return next
@@ -77,7 +89,10 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, player)
   const buffered = flushBuffered(
-    flushBuffered({ ...state, player, opponent }, 'player'),
+    flushBuffered(
+      resolveHanzoBodyCalls({ ...state, player, opponent }, input, opponentInput),
+      'player',
+    ),
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
@@ -104,7 +119,9 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  let next = updateHatsuCharge(applyAuraContext(advanceFighterPhysics(fighter), input), input)
+  const advanced = advanceFighterPhysics(fighter)
+  if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
+  let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
   const steered = steerFighter(next, {
     input,
@@ -154,7 +171,10 @@ function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
 }
 
 function updateOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  return poseFighter(moveOpponent(advanceFighterPhysics(fighter), player))
+  const advanced = advanceFighterPhysics(fighter)
+  if (advanced.hanzoProjection && canRejoinHanzoBody(advanced) && advanced.aura < 16)
+    return wakeHanzoBody(advanced)
+  return poseFighter(moveOpponent(advanced, sleepingBody(player)))
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
@@ -200,8 +220,8 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId)) return options.state
   const remote = performLeorioAction(options, performAuraAttack)
   if (remote) return remote
-  const judicial = performLsdfAction(options)
-  if (judicial) return judicial
+  const utility = performUtilityHatsu(options)
+  if (utility) return utility
   const variant = attackVariant({ fighter: original, kind, variant: options.variant })
   return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
 }
@@ -234,10 +254,11 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 
 export function opponentAttack(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
+  if (canCallHanzoBody(state, 'opponent')) return callHanzoBody(state, 'opponent')
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
   const [rolled, chance] = randomValue(planned)
-  const gap = Math.abs(rolled.player.x - rolled.opponent.x)
+  const gap = Math.abs(sleepingBody(rolled.player).x - rolled.opponent.x)
   const definition = fighterDefinition(rolled.opponent.id)
   const style = fightingStyle(rolled.opponent.id)
   const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
@@ -271,6 +292,7 @@ export function opponentAttack(state: FightState): FightState {
 function planOpponentNen(state: FightState): FightState {
   const gap = Math.abs(state.player.x - state.opponent.x)
   const opponent = state.opponent
+  if (opponent.hanzoProjection) return state
   if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
   if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
@@ -334,6 +356,7 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
+    !projectionPreparing(fighter) &&
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
@@ -385,4 +408,8 @@ function performLegacyThrow(state: FightState, side: FightSide): FightState {
     variant: 'throw',
     auraCharged: false,
   })
+}
+
+function performUtilityHatsu(options: Parameters<typeof performAuraAttack>[0]): FightState | null {
+  return performLsdfAction(options) ?? performProjectionAction(options)
 }

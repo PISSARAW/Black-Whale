@@ -262,7 +262,18 @@ function withFinisherCondition(state: FightState): FightState {
     case 'mizaistom':
       return withOpponentEffect(state, 'restrainedFrames', 60)
     case 'hanzo':
-      return withPlayerEffect(state, 'cloneDodges', 1)
+      return {
+        ...state,
+        player: {
+          ...player,
+          hanzoProjection: {
+            bodyX: player.x,
+            bodyFacing: player.facing,
+            bodyNen: player.nen,
+            startupFrames: 0,
+          },
+        },
+      }
     case 'rihan':
       return withOpponentEffect(
         withPlayerEffect(state, 'predatorFrames', 60),

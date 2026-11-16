@@ -1,3 +1,5 @@
+import { tuneVoconteMoveset } from './voconteMoveset'
+import { voconteMoveResources } from './voconteDoorAction'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
 import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
 import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
@@ -85,6 +87,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneMachiMoveset)
     .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
+    .map(tuneVoconteMoveset)
     .map(tunePhinksMoveset)
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
@@ -142,6 +145,7 @@ export function moveForAction(
       'musse',
       'phinks',
       'mizaistom',
+      'voconte',
     ].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
@@ -176,6 +180,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
+  if (door !== null) return door
   const biohazard = biohazardMoveResources(fighter, move.id)
   if (biohazard !== null) return biohazard
   return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
@@ -311,7 +317,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
-  voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
 }
 
 function predatorMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {

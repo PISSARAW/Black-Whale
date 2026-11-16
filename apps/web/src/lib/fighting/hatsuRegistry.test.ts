@@ -641,7 +641,7 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
   })
 
-  it('arms Padaille and grants Voconte a tactical dodge', () => {
+  it('arms Padaille while Voconte gains no automatic dodge', () => {
     const armed = hatsuFor('padaille').onTrigger({
       state: closeFight('padaille', 'hisoka'),
       side: 'player',
@@ -654,7 +654,7 @@ describe('fighter Hatsu registry', () => {
         side: 'player',
         source,
       })
-      expect(hatsuAvoidsImpact(state.player)).toBe(true)
+      expect(hatsuAvoidsImpact(state.player)).toBe(false)
     }
   })
 })

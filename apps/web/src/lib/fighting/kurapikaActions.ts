@@ -1,3 +1,4 @@
+import { borrowedDoorActive } from './voconteDoorState'
 import { finishBorrowedMary } from './bloodyMaryAi'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
@@ -212,6 +213,8 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  if (borrowedDoorActive(state, side))
+    return withDolphinIdentity(state, (borrowed) => perform({ ...options, state: borrowed, moveId: held.moveId }), 'voconte')
   if (held.source === 'phinks')
     return withDolphinIdentity(
       state,

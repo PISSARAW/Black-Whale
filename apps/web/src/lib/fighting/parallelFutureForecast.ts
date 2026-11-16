@@ -16,6 +16,7 @@ export function forecastParallelFuture(
     const before = predicted.opponent.attack
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
     frames.push({
+      voconteDoors: predicted.voconteDoors,
       player: predicted.player,
       opponent: predicted.opponent,
       projectiles: predicted.projectiles,

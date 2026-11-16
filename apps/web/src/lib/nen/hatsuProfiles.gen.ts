@@ -991,13 +991,13 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   },
   {
     id: 'voconte-hideout-doors',
-    name: 'Hideout Doors',
+    name: 'Door',
     owner: 'Voconte',
     kind: 'door-network',
     instruction:
       'Arm one frame and one return frame; stepping into either comes out at the other, walking past does nothing, and Nen constructs are not moved.',
-    rule: 'The doors connect prepared rooms throughout the Heil-Ly base instead of opening unrestricted portals anywhere.',
-    cost: 'Prepared hideout walls and connected rooms',
+    rule: 'Enter the prepared threshold in its triggering direction. Full installation and selection limits are unknown; the shown weapons and Nen constructs did not travel.',
+    cost: 'Prepared frames; complete canonical cost unknown',
     color: '#7ec8b6',
     action: 'Install the first door',
   },

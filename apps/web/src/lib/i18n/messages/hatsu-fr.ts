@@ -643,12 +643,12 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
     cost: 'Contacts simultanés au moment des dégâts',
   },
   'voconte-hideout-doors': {
-    name: 'Portes de la planque',
-    action: 'Installer la première porte',
+    name: 'Door',
+    action: 'Relier les huisseries',
     instruction:
-      'Armez un cadre et un cadre de retour ; entrer dans l’un fait ressortir par l’autre, passer devant ne fait rien, et les constructions de Nen ne sont pas déplacées.',
-    rule: 'Les portes relient des pièces préparées dans toute la base des Heil-Ly, au lieu d’ouvrir des portails n’importe où.',
-    cost: 'Murs de planque préparés et pièces reliées',
+      'Franchissez le seuil dans son sens de déclenchement : la personne est transportée, y compris un entrant involontaire. Le seuil de retour change son orientation.',
+    rule: 'Les armes lancées et les constructions de Nen montrées ne sont pas transportées. Les conditions complètes d’installation et de sélection restent inconnues.',
+    cost: 'Huisseries préparées ; coût canonique complet inconnu',
   },
   'padaille-weapon-transformation': {
     name: 'Je viens te chercher',

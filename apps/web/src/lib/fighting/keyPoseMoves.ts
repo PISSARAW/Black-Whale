@@ -1,3 +1,4 @@
+import { DOOR_LINK_POSE } from './keyPosesVoconte'
 import { PROLOGUE_SPEAR_POSE } from './bonolenovPoses'
 import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
@@ -23,6 +24,7 @@ import type { FighterId, MoveSlot } from './types'
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   feitan: { neutralSpecial: FEITAN_PAIN_PACKER, finisher: FEITAN_RISING_SUN },
+  voconte: { neutralSpecial: DOOR_LINK_POSE },
   kurapika: KURAPIKA_KEY_POSES,
   theta: THETA_SHOT_POSES,
   shizuku: SHIZUKU_KEY_POSES,

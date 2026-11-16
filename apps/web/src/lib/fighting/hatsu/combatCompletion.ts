@@ -1,5 +1,5 @@
 import type { ArcadeFighter, FightState } from '../types'
-import { unchangedFrame, unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
+import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
 export const gidalHatsu: FighterHatsu = {
   id: 'gidal',
@@ -44,11 +44,10 @@ export const tysonHatsu: FighterHatsu = {
   },
 }
 
-export const voconteHatsu: FighterHatsu = dodgeHatsu('voconte', 'doorDodges')
+export { voconteHatsu } from './voconte'
 
 type TimedKey =
   'gidalCurseFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
-type DodgeKey = 'doorDodges'
 
 function setEffect(
   state: FightState,
@@ -79,21 +78,6 @@ function tickFighter(fighter: ArcadeFighter, key: TimedKey): ArcadeFighter {
   return {
     ...fighter,
     hatsuEffects: { ...fighter.hatsuEffects, [key]: frames - 1 },
-  }
-}
-
-function dodgeHatsu(id: FighterHatsu['id'], key: DodgeKey): FighterHatsu {
-  return {
-    id,
-    onTrigger: ({ state, side }) => {
-      const fighter = state[side]
-      return {
-        ...state,
-        [side]: { ...fighter, hatsuEffects: { ...fighter.hatsuEffects, [key]: 1 } },
-      }
-    },
-    onImpact: unchangedImpact,
-    onFrame: unchangedFrame,
   }
 }
 

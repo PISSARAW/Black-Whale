@@ -1,3 +1,4 @@
+import { voconteUtilityCast } from './voconteDoors'
 import { battleUtilityAttack } from './bonolenovMoveset'
 import { blinkyAttackData } from './blinkyAction'
 import { blinkyUtilityAttack } from './blinky'
@@ -224,6 +225,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 }
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
+  if (voconteUtilityCast(fighter)) return true
   if (fighter.attack?.moveId === LYNCH_MOVE) return true
   return [
     battleUtilityAttack,

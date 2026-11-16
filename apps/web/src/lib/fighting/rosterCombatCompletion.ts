@@ -54,7 +54,7 @@ const SPECS: readonly FighterSpec[] = [
     id: 'voconte',
     modelId: 'voconte',
     name: 'Voconte',
-    special: 'Hideout Doors',
+    special: 'Door',
     colours: ['#422006', '#f59e0b'],
     stats: [1, 1.08, 25],
   },

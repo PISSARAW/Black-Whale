@@ -83,7 +83,7 @@ describe('wave one movesets', () => {
       'terebellum',
       'voconte',
     ])
-    WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi'].includes(id)).forEach(
+    WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte'].includes(id)).forEach(
       assertCompleteMoveset,
     )
   })
@@ -206,7 +206,7 @@ describe('wave one movesets', () => {
     } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
   })
 
-  it.each(WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi'].includes(id)))(
+  it.each(WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte'].includes(id)))(
     '%s wave-four finisher is conditionally locked',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -383,8 +383,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, player: { ...player, comboHits: 2 } }
     case 'terebellum':
       return { ...state, player: { ...player, x: 46 }, opponent: { ...opponent, x: 51 } }
-    case 'voconte':
-      return withPlayerEffect(state, 'doorDodges', 1)
     default:
       return { ...state, player, opponent }
   }

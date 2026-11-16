@@ -1,3 +1,4 @@
+import { doorNetworkBusy } from './voconteDoorState'
 import { machiThreadForOwner } from './machiThread'
 import { cyclotronBusy } from './phinksCyclotron'
 import { hatsuFor } from './hatsu/registry'
@@ -144,6 +145,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
     predator: predatorBusy(fighter),
     cyclotron: cyclotronBusy(fighter),
+    door: doorNetworkBusy(state, side),
     'secret-window': Boolean(fighter.secretWindow),
     'body-and-soul': Boolean(fighter.lynchQuestion),
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),

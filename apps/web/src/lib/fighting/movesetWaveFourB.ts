@@ -112,8 +112,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'voconte',
     mechanic: [
-      'Hideout Doors : son réseau de portes change l’angle d’assaut et réserve une sortie sûre.',
-      'Hideout Doors: his door network changes the assault angle and reserves a safe exit.',
+      'Door : franchir un seuil préparé dans son sens de déclenchement transporte réellement la personne.',
+      'Door: actually crossing a prepared threshold in its triggering direction transports the person.',
     ],
     finisherCondition: [
       'Une porte de sortie Hideout Doors doit encore être ouverte.',
@@ -124,11 +124,11 @@ const SPECS: readonly MovesetSpec[] = [
       'Revers de porte|Door Backfist',
       'Trappe basse|Low Trapdoor',
       'Fauchage du seuil|Threshold Sweep',
-      'Portail aérien|Aerial Doorway',
-      'Chute de la trappe|Trapdoor Drop',
-      'Traversée du repaire|Hideout Passage',
+      'Poing aérien|Aerial Punch',
+      'Coup plongeant|Diving Strike',
+      'Avance physique|Physical Advance',
       'Charge hors cadre|Off-Frame Rush',
-      'Porte de repli|Retreat Door',
+      'Revers en recul|Retreat Backfist',
       'Hideout Doors|Hideout Doors',
       'Assaut de l’autre côté|Other-Side Assault',
       'Trappe d’embuscade|Ambush Trapdoor',

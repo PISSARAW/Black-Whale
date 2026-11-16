@@ -48214,12 +48214,26 @@
         "fromChapterId": "ch-407"
       }
     ],
-    "modifiedAt": "2026-11-13",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
         "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-399"
       }
-    ]
+    ],
+    "nen": {
+      "type": "emitter",
+      "typeLabel": "Emission",
+      "overview": "Voconte uses directional doorframes to transport people. The full installation and maintenance conditions remain unknown.",
+      "abilityIds": [
+        "voconte-hideout-doors"
+      ]
+    }
   },
   {
     "id": "wolfe",

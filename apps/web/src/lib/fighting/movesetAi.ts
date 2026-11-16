@@ -1,3 +1,4 @@
+import { voconteAiSlots } from './vocontePresentation'
 import { biohazardAiSlots } from './biohazardAi'
 import { predatorAiSlots } from './predatorAi'
 import { benjaminAiSlots } from './benjaminAi'
@@ -45,6 +46,11 @@ function finisherInRange(state: FightState, gap: number): boolean {
 }
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  if (state.opponent.id === 'voconte') return voconteAiSlots(state, gap)
+  return ordinaryFighterSlots(state, roll, gap)
+}
+
+function ordinaryFighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
   if (state.opponent.id === 'hinrigh') return biohazardAiSlots(state, roll, gap)
   if (state.opponent.id === 'phinks') return ['standingLight', 'standingHeavy', 'forwardHeavy']
   if (state.opponent.id === 'lynch') return lynchSlots(state, gap)

@@ -40,7 +40,7 @@ export const FIGHT_NEN_PROFILES: Readonly<Record<string, { affinity: NenCategory
   "terebellum": {"affinity":"unknown","abilities":["damage-sweet-home"]},
   "theta": {"affinity":"unknown","abilities":["theta-aura-projectile"]},
   "tserriednich": {"affinity":"specialist","abilities":["parallel-future","tserriednich-guardian-lie-marks"]},
-  "voconte": {"affinity":"unknown","abilities":["voconte-hideout-doors"]},
+  "voconte": {"affinity":"emitter","abilities":["voconte-hideout-doors"]},
   "yokotani": {"affinity":"unknown","abilities":["lsdf"]},
   "zakuro": {"affinity":"unknown","abilities":["bloody-mary"]},
 }
@@ -127,7 +127,7 @@ export const FIGHT_ABILITY_CATEGORIES: Readonly<Record<string, readonly ActiveNe
   "tserriednich-guardian-lie-marks": ["manipulator"],
   "tubeppa-guardian-synthesis": ["transmuter"],
   "tyson-guardian-eye-wogs": ["emitter","manipulator"],
-  "voconte-hideout-doors": ["conjurer"],
+  "voconte-hideout-doors": ["emitter"],
   "without-you": [],
   "yomotsu-hegui": [],
   "zhanglei-guardian-coins": ["conjurer"],

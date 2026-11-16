@@ -59,6 +59,7 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
+      voconteDoors: undefined,
       parallelFuture: undefined,
       forecastSimulation: undefined,
       lsdf: undefined,
@@ -168,7 +169,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     weaponFrames: 0,
     synthesisFrames: 0,
     eyeWogFrames: 0,
-    doorDodges: 0,
     witnessedHatsu: null,
     stolenHatsu: null,
     hatsuStolen: 0,

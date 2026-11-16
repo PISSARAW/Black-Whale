@@ -24,7 +24,6 @@ const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   zhanglei: ['coinCharges'],
   padaille: ['weaponFrames'],
   tubeppa: ['synthesisFrames'],
-  voconte: ['doorDodges'],
 }
 const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   'black-voice': ['manipulatedFrames'],

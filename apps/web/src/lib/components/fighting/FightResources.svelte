@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightDoorStatus from './FightDoorStatus.svelte'
   import FightBiohazardStatus from './FightBiohazardStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightMachiStatus from './FightMachiStatus.svelte'
@@ -61,6 +62,7 @@
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
       <FightPreparationStatus {state} {side} {language} {onControl} />
+      <FightDoorStatus {state} {side} {language} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
       <FightCyclotronStatus {fighter} {language} {side} />

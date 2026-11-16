@@ -80,7 +80,7 @@ export const FIGHTER_NEN_CATEGORIES: Readonly<Record<FighterId, NenCategory>> = 
   tyson: 'unknown',
   sayird: 'emitter',
   terebellum: 'unknown',
-  voconte: 'unknown',
+  voconte: 'emitter',
   yokotani: 'unknown',
 }
 

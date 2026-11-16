@@ -1650,18 +1650,29 @@
   {
     "id": "voconte-hideout-doors",
     "ownerId": "voconte",
-    "name": "Hideout Doors",
-    "alternateNames": ["Unofficial descriptive name"],
-    "category": "conjurer",
+    "name": "Door",
+    "alternateNames": [
+      "Hideout Doors (descriptive name)"
+    ],
+    "category": "emitter",
     "abilityType": "hideout-door-network",
-    "description": "Voconte creates doors throughout the Heil-Ly base, connecting rooms into a controlled network and letting members reroute movement through the hideout.",
+    "description": "Voconte connects directional doorframes. People actually entering a triggering threshold are transported, including unsuspecting entrants to Room 3101; the return threshold changes their facing. Thrown weapons and Yokotani’s Nen constructs were not transported. The complete installation, selection and maintenance conditions remain unknown.",
     "canonStatus": "canon",
     "moduleKey": "voconte-hideout-doors",
-    "firstVisibleChapterId": "ch-383",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-393",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-383"
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-399"
       }
     ]
   },

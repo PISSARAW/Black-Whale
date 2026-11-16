@@ -65,7 +65,7 @@ import { createFightState, nextFightRound } from './fightState'
 import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
 import { steerFighter } from './fighterMovement'
 import { capturePositions } from './fightInterpolation'
-import { advanceAiCadence } from './aiCadence'
+import { simulateVoconteDoorFrame } from './voconteDoorFrame'
 import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
@@ -128,10 +128,7 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  const next = stepFight(state, controls.player, controls.opponent)
-  return controls.ai && !controls.opponent && !next.catsName
-    ? advanceAiCadence(next, opponentAttack)
-    : next
+  return simulateVoconteDoorFrame(state, controls, { step: stepFight, decide: opponentAttack })
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {

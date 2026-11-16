@@ -139,14 +139,13 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 type AvoidanceKey =
-  'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
+  'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'isolationFrames',
   'teleportDodges',
   'wormDodges',
   'kachoGuards',
-  'doorDodges',
 ]
 
 /** Keys `consumeHatsuAvoidance` spends with their own rule; the rest lose one charge. */

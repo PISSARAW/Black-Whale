@@ -292,7 +292,6 @@ export interface FighterHatsuEffects {
   weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
-  doorDodges: number
   /** Set once the Hatsu was activated in front of this fighter. */
   witnessedHatsu: FighterId | null
   /** Last acquired page; the book itself decides which abilities can be used. */
@@ -408,6 +407,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  voconteDoors?: import('./voconteDoorTypes').VoconteDoors
   /** Fatal causes collected before one common verdict, including simultaneous hits. */
   deaths?: readonly FightDeath[]
   catsName?: CatsNameSequence

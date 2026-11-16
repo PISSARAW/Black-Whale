@@ -841,3 +841,29 @@ Les nombres de plaies par coup, leur couverture par deux mains, coûts, portées
 durées et pertes de PV sont des adaptations explicites de duel, pas des valeurs
 énoncées dans le manga. La règle du sang vient du combat contre Pike (ch. 228) ;
 la désignation et le dernier objet relèvent des règles de Blinky à Yorknew.
+
+### Voconte : Door et franchissement directionnel
+
+`voconteDoors.ts` transporte les corps réels qui franchissent une huisserie active,
+avec leur trajectoire simulée avant les collisions puis après une éventuelle poussée.
+L relie ou referme deux cadres physiques fournis par le duel : A à x=30, vers la
+droite, mène à B ; B à x=70, vers la gauche, ramène à A. Le seuil de retour fixe
+l’orientation d’arrivée. Les deux combattants peuvent subir le transport, sans
+nettoyage du hitstun, invulnérabilité, impact offensif ou charge d’esquive.
+Marcher à contresens ou sauter au-dessus du linteau ne déclenche rien. Les
+projectiles, armes lancées et constructions de Nen ne sont pas transportés ;
+le double contrôlé de Hanzo ne se substitue pas à son corps endormi.
+
+La préparation de 18 frames est interruptible. Les deux cadres fournis, leur
+position, leurs dimensions, la sortie à deux unités, le coût de 20 aura, la
+fermeture manuelle et l’entretien par Nen actif sont des conventions de duel.
+Le manga montre des passages directionnels pour les personnes et l’absence
+de transport pour les armes et les LSDF (ch. 393–394, 398–399) ; les conditions
+complètes d’installation, de sélection et d’entretien restent inconnues.
+Door n’hérite ni de la pièce scellée ni des lieux visités de Luini, ni d’une
+restriction démontrée à l’intérieur de la planque. Voconte est classé Émetteur.
+
+Skill Hunter conserve les seuils seulement avec une page active ; Stealth Dolphin
+reste occupé jusqu’à la fermeture de son réseau puis rend la capacité. Les
+prévisions de Parallel Future incluent l’état des portes. Chaque manche le
+réinitialise. `voconte.test.ts` couvre le moteur, les copies et les cadres 3D.

@@ -7,13 +7,10 @@ import { applySurfaceDetail } from '../tour/surfaceDetail'
 import type { Space } from '../tour/types'
 import { floorSheen, roomDust, type StageEffect } from './stageAtmosphere'
 import type { FightScenery, SceneryKit } from './stageKit'
-import { findFightLane, type FightLane } from './stageLane'
-import {
-  buildRoomDetails,
-  detailedSurfacePlan,
-  disposeRoomDetails,
-  roomBarriers,
-} from './stageRoomDetails'
+import type { FightLane } from './stageLane'
+import { cachedRoomFightLane } from './stageRoomLane'
+import { roomCutDepth } from './stageRoomCut'
+import { buildRoomDetails, detailedSurfacePlan, disposeRoomDetails } from './stageRoomDetails'
 
 /**
  * Anything standing nearer the camera than this is cut away above the floor.
@@ -22,7 +19,6 @@ import {
  * walked through, not filmed: without the cut the nearest table is what the
  * camera sees. It is the open fourth wall of a stage set.
  */
-const CUT_DEPTH = 1
 /**
  * Low enough that what is left of a cut solid is thinner than a pixel: at two
  * centimetres every chair in front of the lane left its outline on the floor.
@@ -172,17 +168,20 @@ export async function buildShipRoomScenery(
   if (!space) throw new Error(`Fight stage ${spaceId} is not in the blueprint`)
   const plan = roomPlan(ship, space)
   const planes = [
-    new THREE.Plane(new THREE.Vector3(0, 0, -1), CUT_DEPTH),
+    new THREE.Plane(new THREE.Vector3(0, 0, -1), roomCutDepth(spaceId)),
     new THREE.Plane(new THREE.Vector3(0, -1, 0), CUT_HEIGHT),
   ]
-  const room = roomSurfaces({ THREE, mesh: buildTierMesh(detailedSurfacePlan(plan)), planes })
   const deck = ship.plans.get(space.tierId) ?? plan
   const details = buildRoomDetails({ THREE, plan: deck, spaceId, planes })
+  let lane: FightLane
+  try {
+    lane = cachedRoomFightLane({ THREE, space, plan, details })
+  } catch (error) {
+    disposeRoomDetails(details)
+    throw error
+  }
+  const room = roomSurfaces({ THREE, mesh: buildTierMesh(detailedSurfacePlan(plan)), planes })
   room.root.add(details)
-  const lane = findFightLane(space, plan.structures, {
-    columns: plan.columns.get(space.id),
-    barriers: roomBarriers(spaceId),
-  })
   placeOnLane(room.root, lane, floorOf(space, plan.tier))
 
   // The lights stay outside the turned room, so the key always falls from the
@@ -205,6 +204,8 @@ export async function buildShipRoomScenery(
     cameraFar: 90,
     clipped: true,
     bloom: true,
+    framing:
+      spaceId === 'tier-5-hull-suspension-bay' ? { minimumDistance: 14, lookY: 3 } : undefined,
     update: (seconds) => effects.forEach((effect) => effect.update(seconds)),
     dispose: () => {
       effects.forEach((effect) => effect.dispose())

@@ -6,7 +6,8 @@ acoustique `impulseResponse` de la visite. Aucun sample tiers n'est chargé.
 
 - `profiles.ts` écrit la matière, le poids, le souffle et le motif de chacun des
   quarante combattants ; `catalogueProfiles.ts` couvre les autres identités.
-- `stages.ts` décrit les neuf ambiances, les sols, la réverbération et les motifs.
+- `stages.ts` et `stageAdditions.ts` couvrent les 33 terrains, leurs sols,
+  leur réverbération et leurs motifs ; les salons ont une acoustique plus courte.
   La pression suit le temps, le pourcentage de PV restant, les combos, les points
   et les knockdowns. Le calcul respecte les formats à plusieurs barres de vie.
 - `events.ts` et `states.ts` comparent les états immuables du moteur. Un coup dans

@@ -1,43 +1,17 @@
 import type * as Three from 'three'
-import { buildBanquetDetails, disposeBanquetDetails } from '../tour/banquetView'
+import { disposeBanquetDetails } from '../tour/banquetView'
 import type { TierPlan } from '../tour/blueprint'
-import { buildBurialChamberDetails, burialSurfacePlan } from '../tour/burialChamberView'
 import type { Polygon } from '../tour/types'
-import { buildCasinoDetails, casinoSurfacePlan } from '../tour/casinoView'
 import { buildDoorDetails } from '../tour/doorView'
-import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from '../tour/screeningRoomView'
 import { COURT_BAR_RUNS, COURT_BAR_X } from '../tour/supremeCourtFurniture'
-import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from '../tour/supremeCourtView'
+import { STAGE_ROOM_BUILDERS, STAGE_SURFACE_PLANS } from './stageRoomModels'
 
 /**
  * The hand-modelled dressing the visit hangs on a room, borrowed as it stands.
  *
- * Only the builders of the rooms Clash offers are listed: the visit's own list
- * in `tour/TierView.ts` imports every interior aboard, and a duel in the casino
- * has no use for fourteen princes' apartments. A room added to `stages.ts`
- * that the visit dresses needs its builder added here.
+ * The selected models and their visual replacements live in stageRoomModels.
+ * Collision keeps the original plan, just as it does in the visit.
  */
-interface DetailOptions {
-  THREE: typeof Three
-  plan: TierPlan
-  spaceId: string
-  reveal: boolean
-}
-
-const DETAIL_BUILDERS: ReadonlyArray<(options: DetailOptions) => Three.Group | null> = [
-  buildBanquetDetails,
-  buildBurialChamberDetails,
-  buildCasinoDetails,
-  buildScreeningRoomDetails,
-  buildSupremeCourtDetails,
-]
-
-const SURFACE_PLANS: ReadonlyArray<(plan: TierPlan, reveal: boolean) => TierPlan> = [
-  burialSurfacePlan,
-  casinoSurfacePlan,
-  screeningRoomSurfacePlan,
-  supremeCourtSurfacePlan,
-]
 
 /** Half the room a fighter needs to keep off a rail. */
 const BARRIER_REACH = 0.4
@@ -64,7 +38,7 @@ export function roomBarriers(spaceId: string): readonly Polygon[] {
 
 /** The plan with the coarse solids a detail builder redraws taken back out. */
 export function detailedSurfacePlan(plan: TierPlan): TierPlan {
-  return SURFACE_PLANS.reduce((held, apply) => apply(held, false), plan)
+  return STAGE_SURFACE_PLANS.reduce((held, apply) => apply(held, false), plan)
 }
 
 function clip(root: Three.Object3D, planes: Three.Plane[]): void {
@@ -92,9 +66,12 @@ export function buildRoomDetails(options: RoomDetails): Three.Group {
   const { THREE, plan, spaceId, planes } = options
   const detail = { THREE, plan, spaceId, reveal: false }
   const root = new THREE.Group()
-  for (const build of DETAIL_BUILDERS) {
+  for (const build of STAGE_ROOM_BUILDERS) {
     const dressed = build(detail)
-    if (dressed) root.add(dressed)
+    if (dressed) {
+      root.add(dressed)
+      break
+    }
   }
   const doors = buildDoorDetails(detail)
   if (doors) root.add(doors)

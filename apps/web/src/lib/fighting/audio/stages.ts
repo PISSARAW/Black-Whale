@@ -1,6 +1,7 @@
 import type { FightStageId } from '../stages'
 import type { FightState } from '../types'
 import { fightFormat } from '../formats'
+import { additionalStageSounds } from './stageAdditions'
 
 export interface StageSoundProfile {
   identity: string
@@ -15,7 +16,7 @@ export interface StageSoundProfile {
     'hull' | 'crowd' | 'crystal' | 'chips' | 'sea' | 'projector' | 'gavel' | 'ritual' | 'pipes'
 }
 
-export const STAGE_SOUNDS: Readonly<Record<FightStageId, StageSoundProfile>> = {
+const ORIGINAL_STAGE_SOUNDS = {
   'whale-hold': {
     identity: 'Coque, moteurs profonds et acier qui travaille',
     floor: 'steel',
@@ -115,6 +116,11 @@ export const STAGE_SOUNDS: Readonly<Record<FightStageId, StageSoundProfile>> = {
     motif: [0, 6, 1, -1, 0, 3, -5, -6],
     accent: 'pipes',
   },
+} satisfies Record<string, StageSoundProfile>
+
+export const STAGE_SOUNDS: Readonly<Record<FightStageId, StageSoundProfile>> = {
+  ...ORIGINAL_STAGE_SOUNDS,
+  ...additionalStageSounds(ORIGINAL_STAGE_SOUNDS),
 }
 
 /** A bounded pressure curve: elapsed time, danger, exchange and nearing the verdict. */

@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
+    "test:stages-ui": "svelte-kit sync && node scripts/check-fighting-stages.mjs",
     "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
     "test:easter-eggs": "svelte-kit sync && node scripts/check-easter-eggs.mjs",
     "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",

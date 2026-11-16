@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { fogDensityOf } from '../tour/atmosphere'
 import { theShip } from '../tour/blueprint'
 import { buildShipRoomScenery } from './stageShipRoom'
+import { FIGHT_BODY_HALF_WIDTH } from './stageRoomCut'
 
 const kit = () => {
   const materials: THREE.Material[] = []
@@ -30,6 +31,26 @@ const kit = () => {
 }
 
 describe('2D arena ship-room rendering', () => {
+  it('keeps the original burial model behind the widest bodies with an actual material cut', async () => {
+    const owned = kit()
+    const scenery = await buildShipRoomScenery(owned.value, 'tier-1-princes-burial-chamber-rotunda')
+    const model = scenery.root.getObjectByName('princes-burial-chamber-manga-details')!
+    expect(model).toBeDefined()
+    let materials = 0
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return
+      const held = Array.isArray(object.material) ? object.material : [object.material]
+      for (const material of held) {
+        materials++
+        const cut = material.clippingPlanes?.find((plane: THREE.Plane) => plane.normal.z === -1)
+        expect(cut?.constant).toBeLessThanOrEqual(-FIGHT_BODY_HALF_WIDTH)
+        expect(material.clipIntersection).toBe(true)
+      }
+    })
+    expect(materials).toBeGreaterThan(0)
+    scenery.dispose()
+  })
+
   it('reuses the visit atmosphere, surface texture and reflection', async () => {
     const owned = kit()
     const scenery = await buildShipRoomScenery(owned.value, 'tier-2-screening-room')

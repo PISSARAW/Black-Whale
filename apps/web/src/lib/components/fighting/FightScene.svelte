@@ -3,6 +3,7 @@
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
+  import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
   import {
@@ -360,7 +361,7 @@
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
           const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
           const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
-          const framing = biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect })
+          const framing = sceneryCameraFrame(biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect }), scenery)
           const ease = easeFactor(CAMERA_RATE, dt)
           camera.position.x += (framing.x - camera.position.x) * ease
           camera.position.z += (framing.z - camera.position.z) * ease

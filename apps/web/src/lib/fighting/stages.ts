@@ -6,7 +6,10 @@
  * space of `data/ship/blueprint.json` and the scene raises that room from the
  * same mesh the visit walks through.
  */
+import { SHIP_ROOM_STAGES, type ShipRoomStageId } from './stageCatalogue'
+
 export type FightStageId =
+  | ShipRoomStageId
   | 'whale-hold'
   | 'heavens-arena'
   | 'banquet-hall'
@@ -125,6 +128,7 @@ export const FIGHT_STAGES: readonly FightStageDefinition[] = [
     noteEn: 'LSDF requires Morena’s presence and unlawful intruders',
     swatch: ['#353b38', '#c4bb9a'],
   },
+  ...SHIP_ROOM_STAGES,
 ]
 
 export function fightStage(id: FightStageId): FightStageDefinition {

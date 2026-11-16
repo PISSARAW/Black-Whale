@@ -579,8 +579,25 @@ le parcours et le rendu à 1100, 390 et 320 px.
   (`stageScenery.ts`, `stageHeavensArena.ts`) ; les salles du navire sont levées depuis
   le plan de la visite (`stageShipRoom.ts`) et la bande de combat y est dérivée de
   l'emprise et du mobilier (`stageLane.ts`). Le mobilier modélisé de la visite est repris
-  tel quel (`stageRoomDetails.ts`) : une salle ajoutée que la visite habille doit y
-  inscrire son constructeur. Le terrain ne modifie pas le barème ; LSDF exige
+  tel quel (`stageRoomDetails.ts`, `stageRoomModels.ts`), avec un seul modèle par
+  pièce et le retrait de ses volumes visuels simplifiés. `stageCatalogue.ts` ajoute
+  24 stages : les douze salons princiers dégagés, Nasubi, Unma, l’entrepôt Cha-R,
+  le réfectoire, deux espaces du cinéplexe, le bureau Cha-R, l’atrium du commissariat,
+  l’entrée du hangar, les ressorts, le pont extérieur et les canots tribord.
+  `stageRoomLane.ts` vérifie aussi les triangles du mobilier réel jusqu’à 2,7 m
+  (`stageModelClearance.ts`), notamment les garde-corps et les bancs. La réserve
+  autour des corps est de 2,4 m de large. Dans la chambre funéraire, la quatrième
+  paroi est ouverte derrière les corps : les quatorze cercueils et les relais
+  restent dans le décor arrière, sans déplacement ni suppression du modèle. Une pièce
+  sans piste libre est refusée au lieu de forcer son axe central.
+  `stageRoomFocus.ts` privilégie les tables, fauteuils et affiches du plan ;
+  `stageLane.ts` recherche aussi un angle oblique lorsque le mobilier serait
+  hors champ. La baie des ressorts reçoit un cadrage plus haut (`stageCamera.ts`),
+  vérifié avec les deux combattants aux extrémités et la grande forme de Biscuit.
+  `stageRoomClearance.test.ts` contrôle chaque modèle ; `pnpm --filter
+  @black-whale/web test:stages-ui` capture les 33 terrains à 1100, 390 et 320 px,
+  au centre, aux extrémités et avec la grande forme de Biscuit.
+  Le terrain ne modifie pas le barème ; LSDF exige
   toutefois la juridiction de la planque occupée par Morena.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
 - Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à

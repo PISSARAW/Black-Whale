@@ -22,6 +22,8 @@ export interface FightScenery {
   clipped: boolean
   /** Whether the frame is finished by `stagePost`: lamp bloom and a vignette. */
   bloom?: boolean
+  /** A tall room may need a wider, higher view while retaining the shared fighter framing. */
+  framing?: { minimumDistance: number; lookY: number }
   /** Moves what the stage keeps moving, once a frame. */
   update?: (seconds: number) => void
   /** Releases what the kit did not register. */

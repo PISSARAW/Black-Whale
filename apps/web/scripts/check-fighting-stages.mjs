@@ -27,6 +27,7 @@ const checks = []
 const errors = []
 const only = process.env.FIGHT_STAGES_ONLY?.split(',')
 const views = process.env.FIGHT_STAGES_VIEWS?.split(',') ?? ['normal', 'edges', 'biscuit']
+const widths = process.env.FIGHT_STAGES_WIDTHS?.split(',').map(Number) ?? [1100, 390, 320]
 try {
   browser = await chromium.launch({
     headless: true,
@@ -62,7 +63,7 @@ try {
   await page.waitForFunction(() => window.stagesFixture, undefined, { timeout: 120000 })
   const stages = await page.evaluate(() => window.stagesFixture.stages())
   assert.equal(stages.length, 33)
-  for (const width of [1100, 390, 320]) {
+  for (const width of widths) {
     await page.setViewportSize({ width, height: 1000 })
     for (const stage of stages) {
       if (only && !only.includes(stage.id)) continue

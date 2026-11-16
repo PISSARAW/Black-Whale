@@ -1380,3 +1380,27 @@ vérifie les parcours des quatre personnages, la pause et le petit écran.
 `fightPoseClock.test.ts` couvre durée des réactions, hitstop, contacts et cadence.
 `node apps/web/scripts/check-fighting-motion.mjs` produit la planche de contrôle des
 24 attaques, en préparation/contact/récupération et dans les deux orientations.
+
+## Easter Eggs des fonds de stage
+
+Les 33 stages ont chacun deux spectateurs, une affiche originale et un petit objet
+animé, définis dans `stageBackgroundShip.ts` et `stageBackgroundRoyal.ts`.
+La soute accueille Phinks et Franklin ; la Tour Céleste place Biscuit et Leorio au
+premier rang ; les canots réunissent Kacho et Fugetsu ; Oito berce Woble dans son salon.
+Les caméos appartiennent à la mise en scène arcade, sans affirmer leurs positions
+canoniques dans la visite ou les archives.
+
+`stageBackground.ts` ajoute cette couche après le calcul du couloir de combat.
+Les personnages réutilisent les profils de la visite, les illustrations sont tracées
+sur Canvas et les accessoires sont des géométries simples. Les spectateurs réagissent
+aux nouveaux impacts et à la fin du duel ; les scènes solennelles restent calmes.
+Un combattant déjà présent est remplacé par un passager anonyme dans le public.
+Aucune entité, collision, aura, ressource ou règle du moteur n’est ajoutée.
+Les mouvements réduits figent cette couche. Une description française/anglaise
+est disponible aux lecteurs d’écran ; les textures et matériaux privés sont libérés
+à la fermeture sans détruire les géométries humaines partagées.
+
+`stageBackground.test.ts` vérifie le catalogue complet, les doublons, les réactions,
+les mouvements réduits, le placement derrière le duel, l’absence de mutation du jeu
+et la libération des ressources. `scripts/check-fighting-stages.mjs` contrôle aussi
+ces décors dans la scène de production, sur les trois tailles d’écran habituelles.

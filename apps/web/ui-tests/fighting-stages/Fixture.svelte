@@ -54,7 +54,7 @@
   <div class="fight-arena">
     <FightHud {state} {language} detailed={false} />
     {#key `${environment.stageId}:${state.player.id}:${state.opponent.id}`}
-      <FightScene {state} stageId={environment.stageId} />
+      <FightScene {state} stageId={environment.stageId} {language} />
     {/key}
   </div>
   <StagePicker {environment} {language} onSelect={choose} />

@@ -73,7 +73,7 @@
     <FightCatsName state={visibleState} {language} />
     <FightEasterEggCaptions state={visibleState} {language} />
     {#key sceneKey}
-      <FightScene state={visibleState} {stageId} />
+      <FightScene state={visibleState} {stageId} {language} />
     {/key}
 
     {#if training}

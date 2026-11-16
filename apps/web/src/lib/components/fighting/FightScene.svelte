@@ -1,5 +1,9 @@
 <script lang="ts">
   import { createFightPoseClock } from '$lib/fighting/fightPoseClock'
+  import {
+    backgroundParticipants,
+    stageBackgroundDescription,
+  } from '$lib/fighting/stageBackgroundCatalogue'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
@@ -40,6 +44,13 @@
 
   export let state: FightState
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
+
+  export let language: 'fr' | 'en' = 'fr'
+  $: backgroundDescription = stageBackgroundDescription(
+    stageId,
+    backgroundParticipants(state),
+    language,
+  )
 
   let canvas: HTMLCanvasElement
   let failed = false
@@ -113,7 +124,10 @@
           return made
         }
 
-        const scenery = await buildFightScenery({ THREE, glow, geometry }, stageId)
+        const scenery = await buildFightScenery({ THREE, glow, geometry }, stageId, {
+          fight: () => state,
+          reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        })
         if (disposed) {
           scenery.dispose()
           return
@@ -416,12 +430,23 @@
   })
 </script>
 
+<p class="background-description">{backgroundDescription}</p>
 <div class:failed class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
   {#if failed}<span>3D</span>{/if}
 </div>
 
 <style>
+  .background-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .fight-scene {
     position: absolute;
     inset: 0;

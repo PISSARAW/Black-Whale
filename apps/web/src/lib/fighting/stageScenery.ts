@@ -1,3 +1,5 @@
+import { buildStageBackground } from './stageBackground'
+import type { StageBackgroundContext } from './stageBackgroundTypes'
 import { buildHeavensArenaScenery } from './stageHeavensArena'
 import type { FightScenery, SceneryKit } from './stageKit'
 import { fightStage, type FightStageId } from './stages'
@@ -75,10 +77,7 @@ export function preloadFightStage(stageId: FightStageId): void {
  * The ship rooms are imported on demand: they bring the blueprint and the
  * visit's mesh builder with them, which the two authored stages never need.
  */
-export async function buildFightScenery(
-  kit: SceneryKit,
-  stageId: FightStageId,
-): Promise<FightScenery> {
+async function buildBaseScenery(kit: SceneryKit, stageId: FightStageId): Promise<FightScenery> {
   const stage = fightStage(stageId)
   if (stage.kind === 'heavens-arena') return buildHeavensArenaScenery(kit)
   if (stage.kind === 'ship-room' && stage.spaceId) {
@@ -86,4 +85,26 @@ export async function buildFightScenery(
     return buildShipRoomScenery(kit, stage.spaceId)
   }
   return buildHoldScenery(kit)
+}
+
+/** Compose Easter Eggs after the room computes its collision-free fighting lane. */
+export async function buildFightScenery(
+  kit: SceneryKit,
+  stageId: FightStageId,
+  context: StageBackgroundContext = {},
+): Promise<FightScenery> {
+  const scenery = await buildBaseScenery(kit, stageId)
+  const background = buildStageBackground(kit, stageId, context)
+  scenery.root.add(background.root)
+  return {
+    ...scenery,
+    update: (seconds) => {
+      scenery.update?.(seconds)
+      background.update(seconds)
+    },
+    dispose: () => {
+      background.dispose()
+      scenery.dispose()
+    },
+  }
 }

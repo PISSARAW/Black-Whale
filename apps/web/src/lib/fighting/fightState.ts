@@ -1,3 +1,4 @@
+import { carryMoonlightRound } from './moonlightContract'
 import { createBenjaminBaton } from './benjaminBaton'
 import { createKurapika } from './kurapika'
 import { createPainPacker } from './feitanPain'
@@ -53,7 +54,7 @@ export function createFightState(
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
-  return {
+  return carryMoonlightRound({
     ...state,
     lsdf: undefined,
     expulsion: undefined,
@@ -80,7 +81,7 @@ export function nextFightRound(state: FightState): FightState {
     projectiles: [],
     nextProjectileId: 1,
     impact: null,
-  }
+  }, state)
 }
 
 function createFighter(options: {
@@ -159,7 +160,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     smokeFrames: 0,
     coinCharges: 0,
     gidalCurseFrames: 0,
-    contractFrames: 0,
     weaponFrames: 0,
     synthesisFrames: 0,
     eyeWogFrames: 0,

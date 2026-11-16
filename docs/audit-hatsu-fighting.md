@@ -44,6 +44,7 @@ une vérification dans le manga avant d'être corrigés.
 6. **Le motif « `hitStun ≥ 2` par frame » sert de paralysie générique** pour neuf Hatsu (Machi,
    Illumi, Mizaistom, Melody, Zakuro, Luzurus, Momoze, Longhi, Black Voice). Il efface les
    différences canon entre contrôle total, entrave physique, transe et contrat.
+   _Longhi corrigé le 2026-11-16 : le contrat exige deux signatures volontaires et ne paralyse plus._
 
 ## Bug repéré en passant
 
@@ -108,7 +109,7 @@ une vérification dans le manga avant d'être corrigés.
 | Furykov         | Console d’alerte informative       | Combo Master : alerte immédiate AFFECTED USERS ; déchiffrage/fabrication sur plusieurs jours | D (fait) | Corrigé le 2026-11-16 : L ouvre la console sans frappe ; alerte sur Nen réellement dissimulé dirigé contre lui, signature illisible « ? », destinataires confirmés uniquement. Aucun buff, esquive, prédiction ou déchiffrage accéléré. Coût, engagement et lisibilité par Gyo sont des adaptations au duel. |
 | Cluck           | ×1,15 dégâts pendant 3 s           | Oiseaux messagers                                                                            | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
-| Longhi          | Entrave 2 s                        | Moonlight Act : accord **volontaire** aux termes explicites                                  | **A**    | Le consentement manque, et c'est toute la capacité.                    |
+| Longhi | Contrat volontaire, prêt à usage unique et sanction de Zetsu | Moonlight Act : termes expliqués et deux signatures volontaires (ch. 401) | D (fait) | Corrigé le 2026-11-16 : proposition, acceptation ou refus explicites ; aucune entrave sur touche ni finisher offensif. Les deux signataires subissent Zetsu en cas de violation. La trêve de cinq secondes et la sanction limitée au match sont des adaptations déclarées. |
 | Musse           | Une esquive                        | Secret Window : hibou espion                                                                 | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Padaille        | ×1,25 dégâts pendant 3 s           | Bras-outil **au hasard** : marteau, foret ou hache                                           | B        | Piste simple : tirage déterministe de l'outil, trois effets distincts. |
 | Sayird          | Martial ; Little Eye retenable par Steal Chain | Contrôle un petit animal réel (jusqu’au hamster), partage vue et ouïe ; exclut les créatures matérialisées par le Nen | D (fait) | Corrigé le 2026-11-16 : Little Eye distinct des coups, volable par Kurapika, sans cible ni effet inventé en duel. |
@@ -138,7 +139,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 1. ~~Corriger le bug Hinrigh~~ — fait.
 2. **Constat 4 : traité.** Cluck, Beyond, Musse et Sayird jouent en martial pur ; Furykov conserve l’alerte informative de Combo Master ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
-3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), Gel, Longhi, ~~Yokotani~~ (fait).
+3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), Gel, ~~Longhi~~, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois

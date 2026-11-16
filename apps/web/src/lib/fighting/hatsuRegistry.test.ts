@@ -651,7 +651,7 @@ describe('fighter Hatsu registry', () => {
       source: 'tubeppa',
     })
     expect(curse.opponent.hatsuEffects.gidalCurseFrames).toBe(240)
-    expect(contract.opponent.hatsuEffects.contractFrames).toBe(120)
+    expect(contract).toBe(ready)
     expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
   })
 

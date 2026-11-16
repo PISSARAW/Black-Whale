@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import FightMoonlightPanel from '$lib/components/fighting/FightMoonlightPanel.svelte'
+  import { offerMoonlightContract, respondMoonlightContract } from '$lib/fighting/moonlightContract'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
@@ -395,6 +397,10 @@
         onPause={togglePause}
       />
       <div class="match-area">
+        <FightMoonlightPanel {state} {language} {paused}
+          onOffer={(side) => queueAction((current) => offerMoonlightContract({ state: current, side }))}
+          onRespond={(side, accept) => queueAction((current) => respondMoonlightContract({ state: current, side, accept }))}
+        />
         <FightStage
           {state}
           {language}

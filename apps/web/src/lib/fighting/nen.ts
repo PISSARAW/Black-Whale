@@ -32,12 +32,16 @@ export function createFightingNen() {
 
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (fighter.moonlightZetsu) return forceZetsu(fighter)
   const restricted = restrictedChainAura(fighter, input)
   if (restricted) return restricted
   const sworn = applyOnContext(fighter, input)
   if (sworn) return sworn
   if (fighter.auraExhausted) return withAction(fighter, { type: 'ZETSU' })
+  return heldAuraContext(fighter, input)
+}
 
+function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (!input.aura) {
     const released = commitKoOnRelease(fighter)
     if (released !== fighter) return released

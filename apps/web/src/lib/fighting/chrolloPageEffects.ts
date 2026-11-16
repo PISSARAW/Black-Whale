@@ -42,7 +42,6 @@ const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   melody: ['entrancedFrames'],
   gel: ['venomFrames'],
   lynch: ['soulExposedFrames'],
-  longhi: ['contractFrames'],
   morena: ['contagionFrames', 'contagionStacks'],
   theta: ['forcedZetsuFrames'],
   halkenburg: ['possessedFrames'],

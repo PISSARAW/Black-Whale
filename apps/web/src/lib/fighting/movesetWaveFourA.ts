@@ -109,8 +109,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'longhi',
     mechanic: [
-      'Moonlight Act : le premier accord transforme ses clauses en entraves coercitives.',
-      'Moonlight Act: the initial agreement turns her clauses into coercive restraints.',
+      'Moonlight Act : contrat volontaire, clauses expliquées avant les deux signatures.',
+      'Moonlight Act: a voluntary contract, with terms explained before both signatures.',
     ],
     finisherCondition: [
       'La cible doit être liée par un contrat Moonlight Act.',
@@ -130,8 +130,8 @@ const SPECS: readonly MovesetSpec[] = [
       'Obligation d’exécution|Performance Obligation',
       'Clause de chute|Knockdown Clause',
       'Avenant protecteur|Protective Amendment',
-      'Consentement forcé|Forced Consent',
-      'Moonlight Act · Jugement final|Moonlight Act · Final Judgment',
+      'Projection|Throw',
+      'Sans finisher offensif|No offensive finisher',
     ],
     speed: 0.92,
     power: 0.98,

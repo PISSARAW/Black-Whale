@@ -1,3 +1,5 @@
+import { resolveMoonlightAction, performMoonlightAction } from './moonlightAction'
+import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { advanceEmperorClock, kurapikaAiActivation, performKurapikaAction, resolveJudgmentDeaths } from './kurapikaActions'
 import { chainsImmobilize } from './kurapika'
@@ -225,6 +227,10 @@ export function performMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  return resolveMoonlightAction(options.state, executeAuraAttack(options), options.side)
+}
+
+function executeAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
@@ -271,6 +277,12 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 }
 
 export function opponentAttack(state: FightState): FightState {
+  if (state.phase !== 'fighting') return state
+  state = moonlightAiResponse(state)
+  return moonlightAiWaiting(state) ? state : ordinaryOpponentAttack(state)
+}
+
+function ordinaryOpponentAttack(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
   const emperor = kurapikaAiActivation(state)
   if (emperor) return emperor
@@ -435,5 +447,5 @@ function performLegacyThrow(state: FightState, side: FightSide): FightState {
 }
 
 function performUtilityHatsu(options: Parameters<typeof performAuraAttack>[0]): FightState | null {
-  return performLsdfAction(options) ?? performProjectionAction(options)
+  return performMoonlightAction(options) ?? performLsdfAction(options) ?? performProjectionAction(options)
 }

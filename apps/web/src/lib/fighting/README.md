@@ -107,6 +107,22 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   `billSupport.ts` et `hatsu/bill.ts` ne lui attribuent aucun effet de combat inventé.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
   Terebellum et Voconte.
+- Longhi utilise un **contrat volontaire**, sans entrave sur touche ni finisher.
+  L propose les clauses affichées dans `FightMoonlightPanel.svelte` ; seul le
+  destinataire peut signer ou refuser. Silence, éloignement ou refus n’imposent
+  rien. La signature exige deux personnages conscients, au sol et à portée des
+  mains ; elle ne prend pas la forme d’un coup. Les commandes existent aussi
+  pour le second joueur et au tactile ; l’IA décide uniquement pour elle-même.
+  Le scénario de duel est une trêve de cinq secondes de combat, sans démarrer
+  de coup, projectile ou technique. Déplacements, garde et Nen de base restent
+  libres. Respecter le pacte accorde au destinataire **un usage de Moonlight Act**,
+  proposé depuis le panneau sans remplacer son Hatsu personnel. Les deux parties
+  encourent Zetsu si elles rompent la même clause. La semaine du chapitre 401
+  est représentée par le reste du match, y compris les manches suivantes ; aucun
+  hitstun contractuel n’est appliqué. `moonlightContract.ts` porte les signatures,
+  la durée, le prêt et la sanction ; `moonlightAction.ts` contrôle le démarrage
+  effectif des commandes. Les clauses de cette trêve sont une adaptation explicite,
+  pas un contrat montré au manga. Une nouvelle partie réinitialise prêts et sanctions.
 - Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**
   si **Morena est présente** et si son adversaire est déclaré **intrus en infraction**
   dans la préparation du duel. `fightEnvironment.ts` transmet ce scénario au moteur.

@@ -935,7 +935,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Longhi',
     kind: 'contract',
     instruction:
-      'Two parties sign voluntarily; touching either of them honours the terms and rewards both, touching anyone else is a breach worth a week of Zetsu.',
+      'Explain the terms, duration, reward and penalty, then obtain both voluntary signatures. The shown pact rewards compliance with one use of Moonlight Act and punishes breach with one week of Zetsu.',
     rule: 'Only a voluntary agreement with explicit terms can be rewarded or punished by the Manipulation contract.',
     cost: 'Mutual consent · declared duration and penalty',
     color: '#c6ddff',

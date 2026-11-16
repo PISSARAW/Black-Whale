@@ -122,6 +122,10 @@ export interface FighterDefinition {
 export interface ArcadeFighter {
   /** Conjured information console. It never modifies damage, guard, movement or evasion. */
   comboMaster?: ComboMasterState
+  /** One use earned by fulfilling a voluntarily signed Moonlight Act contract. */
+  moonlightLoan?: number
+  /** Week-long Zetsu, represented for the remainder of this match. */
+  moonlightZetsu?: boolean
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: { owner: FightSide }
@@ -249,7 +253,6 @@ export interface FighterHatsuEffects {
   smokeFrames: number
   coinCharges: number
   gidalCurseFrames: number
-  contractFrames: number
   weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
@@ -349,6 +352,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  moonlight?: import('./moonlightContract').MoonlightState
   environment: FightEnvironment
   /** Autonomous guards, never avoidance charges on the fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>

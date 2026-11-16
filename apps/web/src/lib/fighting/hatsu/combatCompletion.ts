@@ -9,13 +9,7 @@ export const gidalHatsu: FighterHatsu = {
   onFrame: (state) => tickState(state, 'gidalCurseFrames'),
 }
 
-export const longhiHatsu: FighterHatsu = {
-  id: 'longhi',
-  onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) =>
-    blocked ? state : setEffect(state, defenderSide, { key: 'contractFrames', value: 120 }),
-  onFrame: (state) => tickState(state, 'contractFrames', true),
-}
+export { longhiHatsu } from './longhi'
 
 export const padailleHatsu: FighterHatsu = {
   id: 'padaille',
@@ -53,7 +47,7 @@ export const tysonHatsu: FighterHatsu = {
 export const voconteHatsu: FighterHatsu = dodgeHatsu('voconte', 'doorDodges')
 
 type TimedKey =
-  'gidalCurseFrames' | 'contractFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
+  'gidalCurseFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
 type DodgeKey = 'doorDodges'
 
 function setEffect(
@@ -71,20 +65,19 @@ function setEffect(
   }
 }
 
-function tickState(state: FightState, key: TimedKey, lock = false): FightState {
+function tickState(state: FightState, key: TimedKey): FightState {
   return {
     ...state,
-    player: tickFighter(state.player, key, lock),
-    opponent: tickFighter(state.opponent, key, lock),
+    player: tickFighter(state.player, key),
+    opponent: tickFighter(state.opponent, key),
   }
 }
 
-function tickFighter(fighter: ArcadeFighter, key: TimedKey, lock: boolean): ArcadeFighter {
+function tickFighter(fighter: ArcadeFighter, key: TimedKey): ArcadeFighter {
   const frames = fighter.hatsuEffects[key]
   if (frames <= 0) return fighter
   return {
     ...fighter,
-    hitStun: lock ? Math.max(fighter.hitStun, 2) : fighter.hitStun,
     hatsuEffects: { ...fighter.hatsuEffects, [key]: frames - 1 },
   }
 }

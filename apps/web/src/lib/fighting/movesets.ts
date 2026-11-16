@@ -1,4 +1,6 @@
 import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
+import { tuneLonghiMoveset } from './longhiMoveset'
+import { moonlightCanOffer } from './moonlightContract'
 import { isErigeronAction } from './billSupport'
 import { tuneBenjaminMoveset } from './benjaminMoveset'
 import { benjaminMoveAvailable } from './benjaminBaton'
@@ -54,6 +56,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
   ALL_MOVESETS.map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneFranklinMoveset)
+    .map(tuneLonghiMoveset)
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
     .map(tuneFurykovMoveset)
@@ -87,7 +90,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill'].includes(fighter.id) && action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi'].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -98,6 +101,11 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
+  return ordinaryMoveAllowed(state, side, move)
+}
+
+function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
   const fighter = state[side]
   if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
     return false
@@ -232,7 +240,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,
-  longhi: (state, side) => opponentOf(state, side).hatsuEffects.contractFrames > 0,
   musse: (state, side) => opponentOf(state, side).health <= 35,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,

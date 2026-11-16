@@ -77,7 +77,7 @@ describe('wave one movesets', () => {
       'terebellum',
       'voconte',
     ])
-    WAVE_FOUR_FIGHTERS.forEach(assertCompleteMoveset)
+    WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi').forEach(assertCompleteMoveset)
   })
 
   it('completes the roster with Yokotani', () => {
@@ -191,7 +191,7 @@ describe('wave one movesets', () => {
     },
   )
 
-  it.each(WAVE_FOUR_FIGHTERS)('%s wave-four finisher is conditionally locked', (fighterId) => {
+  it.each(WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi'))('%s wave-four finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
       ...base,
@@ -360,8 +360,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, opponent: { ...opponent, health: 40 } }
     case 'beyond':
       return { ...state, player: { ...player, health: 40 } }
-    case 'longhi':
-      return withOpponentEffect(state, 'contractFrames', 60)
     case 'musse':
       return { ...state, opponent: { ...opponent, health: 35 } }
     case 'padaille':

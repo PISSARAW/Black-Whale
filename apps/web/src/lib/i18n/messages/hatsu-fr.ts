@@ -606,7 +606,7 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
     name: 'Moonlight Act',
     action: 'Choisir le premier signataire',
     instruction:
-      'Deux parties signent volontairement ; toucher l’une d’elles honore les termes et les récompense toutes deux, toucher quelqu’un d’autre est une rupture qui coûte une semaine de Zetsu.',
+      'Expliquez les termes, la durée, la récompense et la sanction, puis recueillez deux signatures volontaires. Le pacte montré récompense son respect par un usage de Moonlight Act et punit sa violation par une semaine de Zetsu.',
     rule: 'Seul un accord volontaire aux termes explicites peut être récompensé ou puni par le contrat de manipulation.',
     cost: 'Consentement mutuel · durée et sanction déclarées',
   },

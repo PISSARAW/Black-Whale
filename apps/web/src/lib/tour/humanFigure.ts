@@ -383,8 +383,8 @@ export function buildHumanFigure({
   far.rotation.copy(figure.rotation)
   const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
   const animateAura = animateHumanAura(aura)
-  const animate = (seconds: number) => {
-    animateHuman(seconds)
+  const animate: ReturnType<typeof humanAnimation> = (seconds, nextPose, layer) => {
+    animateHuman(seconds, nextPose, layer)
     animateAura(seconds)
   }
   return { root, turns: figure, lod: { near: figure, far }, animate }

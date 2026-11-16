@@ -6,6 +6,7 @@
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
   import { fightMove } from '$lib/fighting/fightMoves'
+  import { fightBodyMotion } from '$lib/fighting/fightBodyMotion'
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
   import {
     createStrideClocks,
@@ -274,7 +275,8 @@
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
-          const motion = reactionMotion(fighter, progress, side)
+          const fallback = reactionMotion(fighter, progress, side)
+          const motion = fightBodyMotion({ fighter, seconds, fallback })
           model.animate(seconds, MODEL_POSES[fighter.pose], {
             motion: trackFightOpponent({
               fighter,

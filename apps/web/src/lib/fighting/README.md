@@ -83,6 +83,27 @@ procédural partagé : les coups sont posés par code et suivent les frames du m
 Le passage à des modèles glTF skinnés pourra remplacer cette couche de présentation
 sans changer les règles, les boîtes ni les données de frame.
 
+### Rig de combat et poses clés
+
+- `fightRig.ts` donne au rig de la visite les articulations d'un duel, pour la
+  scène de combat seulement : une poitrine qui pivote à la taille (tête et bras
+  suivent), coudes, poignets, chevilles, et des pieds qui restent au sol quoi que
+  fassent les genoux. `tour/` n'est pas modifié.
+- `fightPose.ts` décrit une pose côté avant / côté arrière, pour un combattant
+  tourné vers la droite ; tourné vers la gauche, elle est mise en miroir comme un
+  sprite.
+- `keyPoseTimeline.ts` épingle chaque pose clé à une phase de la frame data
+  (startup, active, recovery) : anticipation pendant le startup, contact atteint
+  en un ou deux frames et tenu pendant les frames actives (et le hitstop),
+  recovery lente. Hors frames actives, les poses sont tenues deux frames.
+- `fightStance.ts` donne la garde de chaque combattant (poitrine ouverte vers la
+  caméra, rebond), ainsi que l'accroupi et le repli aérien communs.
+- `keyPosesKurapika.ts` et `keyPosesHisoka.ts` posent leurs six normales ;
+  `keyPoseMoves.ts` les indexe. Un coup absent garde son geste procédural, et un
+  combattant sans garde reste entièrement sur l'ancien rendu.
+- `fightBodyMotion.ts` choisit, frame par frame, entre le rig de combat et le
+  mouvement que la scène a déjà calculé (coups reçus, chutes, projections).
+
 ## Mouvement et rendu
 
 - `fighterMovement.ts` porte la marche (recul à 80 %), le dash (18 frames) et le

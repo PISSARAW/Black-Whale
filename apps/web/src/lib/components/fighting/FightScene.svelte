@@ -164,7 +164,7 @@
           worldY,
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
-        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
+        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
         const feitanScene = createFeitanScene({
@@ -337,7 +337,6 @@
             seconds,
           })
           projectileScene.sync(state.projectiles, seconds, state.player)
-          fighterEffects.sync(state, seconds)
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
           feitanScene.sync(state, seconds)
@@ -349,6 +348,7 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
+          fighterEffects.sync(state, seconds)
 
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)

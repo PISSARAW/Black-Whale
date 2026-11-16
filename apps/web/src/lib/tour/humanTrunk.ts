@@ -113,6 +113,7 @@ export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
     ink,
   })
   torso.scale.set(profile.shoulders * frame.width, 1, CHEST_DEPTH / widest)
+  torso.name = 'torso'
   torso.position.y = 1.12 * frame.neck
   figure.add(torso)
 

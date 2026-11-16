@@ -20,6 +20,8 @@ export interface EffectSceneOptions {
   scene: import('three').Scene
   worldX: (value: number) => number
   worldY: (value: number) => number
+  /** Live posed rig; callbacks also follow aura/body rebuilds. */
+  figureOf?: (side: FightSide) => import('three').Object3D | undefined
 }
 
 export interface FighterEffectScene {

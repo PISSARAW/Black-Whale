@@ -1050,3 +1050,19 @@ Les quatre zones, la phrase par défaut « Je suis ici. », les coûts, les temp
 les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
 des restrictions attribuées au manga. Le panneau expose les zones plantées,
 la confection de la poupée et la dernière parole réellement reçue.
+
+## Chaînes de Kurapika
+
+`kurapikaChainModel.ts` réutilise les maillons creux de `tour/chainTipKit.ts`
+et les cinq embouts de `tour/chainTips.ts`, avec leurs matériaux et proportions.
+Les maillons alternés suivent une courbe depuis le doigt de la main droite ;
+`kurapikaChainHand.ts` adapte le bras à la cible après la pose des deux combattants.
+Les poses sont relues à chaque frame, y compris après reconstruction du modèle.
+Le torse nommé de `tour/humanTrunk.ts` fournit le point de contact réel.
+
+`kurapikaChainMotion.ts` suit les frames du coup pour le déploiement et le retour.
+Chain Jail et Steal Chain restent attachées tant que leur état de jeu persiste ;
+Holy Chain peut coexister sur un autre doigt et Judgment Chain laisse une seule
+lame implantée. Les géométries partagées sont libérées une seule fois à la fermeture.
+`kurapikaChains.test.ts` couvre ces contrats ; `ui-tests/kurapika-chains` expose
+le rendu de production avec les cinq chaînes, les deux côtés et une lecture animée.

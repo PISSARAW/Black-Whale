@@ -54,22 +54,29 @@ export const ARMS_GUARD: FightPose = {
   rearElbow: [-2, 0, 0],
 }
 
-/** Arms folded across the chest. */
+/**
+ * Arms folded across the chest. The elbow only bends forward, so the shoulder
+ * turns about the vertical (y) to swing each forearm across the body: lead
+ * inward is y < 0, rear inward y > 0. The rear arm sits a little lower so the
+ * forearms stack instead of passing through each other.
+ */
 export const ARMS_CROSSED: FightPose = {
-  leadShoulder: [-0.75, 0, -0.45],
-  leadElbow: [-1.85, 0, 0],
-  rearShoulder: [-0.8, 0, 0.45],
-  rearElbow: [-1.8, 0, 0],
+  leadShoulder: [-0.35, -1, 0.08],
+  leadElbow: [-1.65, 0, 0],
+  rearShoulder: [-0.22, 1, -0.08],
+  rearElbow: [-1.55, 0, 0],
 }
 
-/** Fists on the hips, elbows out. */
+/**
+ * Fists on the hips, elbows out: the upper arm opens sideways (z) and the
+ * elbow folds the forearm back in by twice that (z again), which puts the hand
+ * straight under the shoulder, at the hip.
+ */
 export const ARMS_ON_HIPS: FightPose = {
-  leadShoulder: [0.1, 0, 0.55],
-  leadElbow: [-1.5, 0, 0],
-  leadWrist: [0.3, 0, 0],
-  rearShoulder: [0.1, 0, -0.55],
-  rearElbow: [-1.5, 0, 0],
-  rearWrist: [0.3, 0, 0],
+  leadShoulder: [0, 0, 0.75],
+  leadElbow: [-0.2, 0, -1.5],
+  rearShoulder: [0, 0, -0.75],
+  rearElbow: [-0.2, 0, 1.5],
 }
 
 /** Hands clasped behind the back. */

@@ -1,4 +1,5 @@
-import { performMove, tickFight } from './engine'
+import { commandMary } from './bloodyMaryAction'
+import { performAuraAttack, performMove, tickFight } from './engine'
 import { CYCLOTRON_ROTATION_FRAMES } from './phinksCyclotron'
 import { EMPTY_INPUT, type FightState } from './types'
 
@@ -12,10 +13,14 @@ export type CombatRouteSetup =
   | 'prologue'
   | 'pigeon'
   | 'warning'
+  | 'question'
+  | 'scouts'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
   if (!setup) return state
+  if (setup === 'scouts')
+    state = commandMary({ state, side: 'player', command: 'bleed' }, performAuraAttack)
   const input = setupInput(state, setup)
   state = performMove({ state, side: 'player', action: 'special', input })
   if (setup === 'cyclotron') {
@@ -42,6 +47,7 @@ function step(state: FightState) {
 }
 
 function setupInput(state: FightState, setup: CombatRouteSetup) {
+  if (setup === 'scouts') return { ...EMPTY_INPUT, down: true }
   if (setup === 'tracking')
     return { ...EMPTY_INPUT, right: state.player.facing === 1, left: state.player.facing === -1 }
   if (setup === 'disguise')

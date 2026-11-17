@@ -1,8 +1,8 @@
-# Dix-huit profils de combos
+# Vingt-deux profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
-Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh et Mizaistom
-ont huit exemples chacun dans l’Académie. Les quatre routes
+Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
+Gel, Lynch, Padaille et Zakuro ont huit exemples chacun dans l’Académie. Les quatre routes
 initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
@@ -13,7 +13,9 @@ ajoutent quatre autres profils. `duelComboThirdProfiles.ts` et
 `duelComboThirdLessons.ts` ajoutent Illumi, Kalluto, Shizuku et Leorio.
 `duelComboFourthProfiles.ts` et `duelComboFourthLessons.ts` ajoutent Saiyu,
 Bonolenov, Hinrigh et Mizaistom.
-Le catalogue compte 232 routes pour quarante personnages.
+`duelComboFifthProfiles.ts` et `duelComboFifthLessons.ts` ajoutent Gel, Lynch,
+Padaille et Zakuro.
+Le catalogue compte 248 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -160,6 +162,24 @@ Les trois derniers profils enseignent aussi lourd → arrière + lourd après
 récupération. Les préparations utilisent commandes, coûts, temps et inventaire
 réels ; aucun état de pouvoir n’est injecté pour réussir une démonstration.
 
+## Gel, Lynch, Padaille et Zakuro
+
+Gel peut prolonger physiquement ou finir avec le bras-serpent : 24 aura pour la
+frappe avant à longue allonge, 20 pour la variante basse qui termine plus près.
+Aucun venin, drain ou effet de contrôle n’est ajouté à la transformation.
+Padaille choisit réellement la main droite marteau, foret ou hache pour 20 aura.
+Le foret conserve une poussée inférieure au seuil de mise au sol et peut se
+convertir en balayage. La hache démarre plus lentement ; la main transformée ne
+renforce pas les normales et n’ignore ni la garde ni les interruptions.
+Lynch peut lier le revers après récupération ou préparer une question réelle.
+Son exercice bas comporte deux poings sur cible consciente : deux réponses
+privées à 10 aura chacune, sans bonus de dégâts, de hitstun ou de vulnérabilité.
+Zakuro prépare une plaie réelle (2 santé, 1 aura) puis trois gouttes-yeux (8 aura,
+3 unités de sang). Sa conversion physique conserve la réserve et les six poches ;
+les gouttes ne font aucun dégât et ne garantissent pas une prise ou une projection.
+Les questions et commandes de sang restent des préparations distinctes, avec
+leurs conditions de parole, d’équipement, de Nen et de disponibilité du corps.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -178,12 +198,14 @@ bonus, les fragments de la bonne zone, les vraies frappes de Blinky et le délai
 ainsi que les restrictions du poing transmis dans le sol.
 `duelComboFourth.test.ts` vérifie les sens choisis, Prologue et la liaison de
 la lance, les menottes ouvertes par les dégâts et le carton sans détention automatique.
+`duelComboFifth.test.ts` vérifie les fins du bras-serpent, le choix des trois
+outils, la prolongation du foret, les réponses payées et les réserves des gouttes.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-11` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-12` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

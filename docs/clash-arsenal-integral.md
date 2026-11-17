@@ -503,7 +503,7 @@ de couverture des profils ou un nombre de tests :
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
 | Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                                                                    |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les destinataires non éveillés et les éditeurs spécialisés du prêt de Stealth Dolphin. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                 |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
@@ -566,3 +566,45 @@ certifie pas l'arsenal intégral. Le On reste disponible.
 Références : chapitres 361, 364, 369 et 388. Le maintien de Dolphin pendant le
 sommeil de Kurapika et d'Oito doit rester distinct d'une nouvelle commande
 volontaire pendant leur inconscience.
+
+## Stealth Dolphin : prêt à un corps réel
+
+Le panneau propose une injection de Dolphin chargé et inutilisé vers les corps
+réels au contact, y compris les alliés qui attendent à leur portail. La main
+droite doit être disponible. Une référence à un membre inexistant ou une cible
+hors de portée ne crée ni destinataire ni dispositif. La portée chiffrée reste
+un réglage de duel. Le transfert conserve l'unique capacité, son stock volé et
+ses conditions ; il ne donne ni les autres Hatsu du donneur, ni son matériel.
+
+Le prêt libère le stockage de Steal Chain. Kurapika peut conserver une seconde
+capacité non chargée pendant que le premier Dolphin est prêté. Il ne peut pas
+lever Emperor Time ni rééquiper ce Dolphin avant la résolution du prêt.
+L'échéancier d'Emperor Time avance aussi lorsque son corps attend en réserve.
+Le destinataire commande sa propre application dans le panneau ; les commandes
+Dolphin n'émettent pas artificiellement de paroles audibles.
+
+Le destinataire garde son identité, sa réserve personnelle et son propre Nen.
+Son canal d'exécution emprunté est temporaire : aucun état d'Emperor Time ne lui
+est enregistré. L'aura et les rendements restent ceux du donneur. Cookie et les
+commandes utilitaires admises sont explicitement étiquetés « Dolphin prêté ».
+L'IA destinataire utilise les mêmes chemins d'admission et les mêmes ressources.
+
+L'inconscience de Kurapika est liée au destinataire. Une application déjà active
+reste entretenue ; l'inconscience interdit de donner un nouvel ordre. La fenêtre
+de trois heures suivie de neuf heures de sommeil reprend le cas observé avec
+Little Eye aux chapitres 364 et 369 ; sa généralisation n'est pas une durée
+universelle affirmée pour toutes les capacités dans le manga. Le Dolphin visible
+uniquement par son porteur reste affiché durant cette inconscience.
+
+Une fois l'application terminée, le destinataire peut demander la fin du prêt,
+y compris avec un stock volé épuisé. Le Hatsu revient au corps du donneur et le
+verrou de Kurapika est levé. Le passage de manche conserve un prêt encore chargé,
+son stock, le corps lié et les horloges : il ne fournit pas un retrait gratuit.
+Le changement d'équipier d'un porteur déjà en cours d'application reste bloqué
+pour éviter de suspendre ses effets hors scène.
+
+**Reste à terminer :** les destinataires initialement non éveillés et leur
+initiation, les éditeurs spécialisés qui vivent hors des commandes d'arsenal
+(notamment la composition de Basho), ainsi que le masquage réseau complet des
+informations privées de Dolphin. Cette passe ne clôt donc pas l'audit des quarante
+personnages. Le On est conservé. Ruleset courant : **clash-combat-31**.

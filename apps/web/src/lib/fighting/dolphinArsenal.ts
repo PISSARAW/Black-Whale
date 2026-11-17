@@ -1,3 +1,4 @@
+import { withLoanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor } from './dolphinSupply'
 import { withDolphinIdentity, recordDolphinEffects } from './kurapikaDolphin'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -32,6 +33,18 @@ export function performDolphinApplication(
   return cast === prepared ? state : cast
 }
 export function dolphinArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
+  if (state[side].dolphinLoan) return withLoanOptions(state, side)
+  return equippedArsenalOptions(state, side)
+}
+function withLoanOptions(state: FightState, side: FightSide): ArsenalOption[] {
+  let result: ArsenalOption[] = []
+  withLoanCarrier(state, { side, kurapikaCommand: true }, (borrowed) => {
+    result = equippedArsenalOptions(borrowed, side)
+    return borrowed
+  })
+  return result
+}
+function equippedArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const fighter = state[side],
     held = fighter.kurapika?.held
   if (fighter.id !== 'kurapika' || !held?.loaded) return []

@@ -1,4 +1,10 @@
-import { mapPhysicalBodies } from './physicalBodyMap'
+import {
+  equippedDolphin,
+  loanCarrier,
+  restoreLoanCarrier,
+  reconcileLoanLinks,
+} from './dolphinBorrowing'
+import { changeDolphinBody } from './dolphinBodies'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { cookieCanStart } from './cookie'
@@ -56,10 +62,10 @@ export function withDolphinIdentity(
   source?: ArcadeFighter['id'],
 ): FightState {
   const borrowed = (fighter: ArcadeFighter) => {
-    const held = fighter.kurapika?.held
+    const held = equippedDolphin(fighter)
     return held?.used && (!source || held.source === source)
       ? stolenAuraActor({
-          ...fighter,
+          ...loanCarrier(fighter),
           id: held.source,
           nenOwner: fighter.nenOwner ?? fighter.id,
         })
@@ -69,19 +75,21 @@ export function withDolphinIdentity(
   const opponent = borrowed(state.opponent)
   if (player === state.player && opponent === state.opponent) return run(state)
   const next = run({ ...state, player, opponent })
-  return {
+  return reconcileLoanLinks({
     ...next,
-    player: {
-      ...restoreStolenAura(state.player, next.player),
-      id: state.player.id,
-      nenOwner: state.player.nenOwner,
-    },
-    opponent: {
-      ...restoreStolenAura(state.opponent, next.opponent),
-      id: state.opponent.id,
-      nenOwner: state.opponent.nenOwner,
-    },
-  }
+    player: player === state.player ? next.player : restoreBorrowedBody(state.player, next.player),
+    opponent:
+      opponent === state.opponent
+        ? next.opponent
+        : restoreBorrowedBody(state.opponent, next.opponent),
+  })
+}
+function restoreBorrowedBody(original: ArcadeFighter, after: ArcadeFighter): ArcadeFighter {
+  return restoreLoanCarrier(original, {
+    ...restoreStolenAura(original, after),
+    id: original.id,
+    nenOwner: original.nenOwner,
+  })
 }
 
 /** Track effects created by this use, so Dolphin cannot stop an unrelated Hatsu. */
@@ -122,26 +130,15 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
   const fighter = state[side]
   const held = fighter.kurapika?.held
   if (!held) return state
-  const victim = stolenAbilityVictim(state, held)
   const restored = {
     ...state,
     [side]: { ...fighter, kurapika: { ...fighter.kurapika!, held: null } },
   }
-  return victim
-    ? mapPhysicalBodies(restored, (body) =>
-        body === victim ? { ...body, stolenChainAbility: undefined } : body,
-      )
-    : restored
-}
-
-function stolenAbilityVictim(
-  state: FightState,
-  held: StolenChainAbility,
-): ArcadeFighter | undefined {
-  const seat = state.teamMatch?.seats[held.victim]
-  const active = seat?.active ?? 0
-  const member = held.victimMember ?? active
-  return member === active ? state[held.victim] : seat?.members[member]
+  const member = held.victimMember ?? state.teamMatch?.seats[held.victim].active ?? 0
+  return changeDolphinBody(restored, { owner: held.victim, member }, (body) => ({
+    ...body,
+    stolenChainAbility: undefined,
+  }))
 }
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */

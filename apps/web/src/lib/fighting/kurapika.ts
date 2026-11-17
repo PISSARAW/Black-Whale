@@ -1,3 +1,4 @@
+import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor } from './dolphinSupply'
 import { judgmentForbidsNen } from './judgmentRules'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -95,6 +96,7 @@ export function kurapikaEfficiency(
 
 export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boolean {
   const selected = moveId ?? `${fighter.id}:neutralSpecial`
+  if (borrowedChainChannel(fighter, selected)) return false
   if (
     fighter.skillHunterStolen?.some(
       (entry) => chainAbilityGroup(entry.moveId) === chainAbilityGroup(selected),
@@ -107,6 +109,15 @@ export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boo
   if (!/:(neutralSpecial|forwardSpecial|downSpecial|backSpecial|finisher)$/.test(selected))
     return false
   return chainAbilityGroup(stolen.moveId) === chainAbilityGroup(selected)
+}
+
+function borrowedChainChannel(fighter: ArcadeFighter, selected: string): boolean {
+  const held = fighter.kurapika?.held
+  return Boolean(
+    fighter.dolphinExecution &&
+    held &&
+    chainAbilityGroup(held.moveId) === chainAbilityGroup(selected),
+  )
 }
 
 export function zetsuFighter(fighter: ArcadeFighter): ArcadeFighter {
@@ -126,9 +137,13 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 }
 
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
-  const held = fighter.kurapika?.held
+  const held = equippedDolphin(fighter)
   return held?.used && fighter.attack?.moveId === held.moveId
-    ? stolenAuraActor({ ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id })
+    ? stolenAuraActor({
+        ...loanCarrier(fighter),
+        id: held.source,
+        nenOwner: fighter.nenOwner ?? fighter.id,
+      })
     : fighter
 }
 

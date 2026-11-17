@@ -1,6 +1,7 @@
 import { hatsuFor } from './hatsu/registry'
 import { chrolloHasActivePage } from './chrolloBook'
-import { chainAbilitySealed } from './kurapika'
+import { chainAbilitySealed, dolphinActor } from './kurapika'
+import { stolenAuraActor } from './dolphinSupply'
 import { moveById } from './movesets'
 import { voluntaryNenAvailable } from './nenAccess'
 import { melodyMusicIntent } from './melodyRules'
@@ -24,7 +25,7 @@ const NEN_RANGED: readonly FighterId[] = [
 
 /** Shared admission check, including the direct/AI and buffered execution paths. */
 export function nenActionAllowed(options: NenAction): boolean {
-  const fighter = options.state[options.side]
+  const fighter = dolphinCommandActor(options)
   const move = moveById(options.moveId)
   if (move && (move.id.split(':')[0] !== fighter.id || move.kind !== options.kind)) return false
   if (fighter.melodyPerformance && melodyMusicIntent(fighter, options.kind, options.moveId))
@@ -36,6 +37,18 @@ export function nenActionAllowed(options: NenAction): boolean {
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options))
   )
+}
+
+function dolphinCommandActor(options: NenAction): ArcadeFighter {
+  const fighter = options.state[options.side]
+  if (
+    fighter.id !== 'kurapika' ||
+    options.moveId !== 'kurapika:backSpecial' ||
+    !fighter.kurapika?.held?.loaded
+  )
+    return fighter
+  const actor = stolenAuraActor(fighter)
+  return fighter.kurapika.held.used ? { ...actor, auraExhausted: false } : actor
 }
 
 export function usesVoluntaryNen(
@@ -72,10 +85,11 @@ function nenMoveId(
 export function interruptUnavailableNen(fighter: ArcadeFighter): ArcadeFighter {
   const attack = fighter.attack
   if (!attack?.hatsuSource) return fighter
+  const actor = dolphinActor(fighter)
   if (
-    voluntaryNenAvailable(fighter) &&
-    !chainAbilitySealed(fighter, attack.moveId) &&
-    copiedPageActive(fighter, attack.hatsuSource) &&
+    voluntaryNenAvailable(actor) &&
+    !chainAbilitySealed(actor, attack.moveId) &&
+    copiedPageActive(actor, attack.hatsuSource) &&
     (!attack.copiedPage || chrolloHasActivePage(fighter, attack.copiedPage))
   )
     return fighter

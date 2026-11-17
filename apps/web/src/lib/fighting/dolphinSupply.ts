@@ -64,7 +64,9 @@ export function restoreStolenAura(original: ArcadeFighter, after: ArcadeFighter)
 /** Once equipped, Dolphin spends stolen aura; new voluntary use still needs a conscious carrier. */
 export function dolphinSupplyAvailable(actor: ArcadeFighter): boolean {
   const supplied = stolenAuraActor(actor)
-  return voluntaryNenAvailable(supplied)
+  return voluntaryNenAvailable(
+    actor.kurapika?.held?.used ? { ...supplied, auraExhausted: false } : supplied,
+  )
 }
 
 export function withDolphinSupply(

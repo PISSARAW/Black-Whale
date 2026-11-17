@@ -1,5 +1,5 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
-import { kurapikaNenActive } from './kurapika'
+import { equippedDolphin } from './dolphinBorrowing'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 
 /** Each owner has a separate model; only the selected viewer's private dolphin is visible. */
@@ -17,8 +17,7 @@ export function createStealthDolphinScene(options: EffectSceneOptions): FighterE
       for (const { side, model } of models) {
         const fighter = state[side]
         model.root.visible =
-          side === (options.viewer?.() ?? 'player') &&
-          Boolean(fighter.kurapika?.held?.loaded && kurapikaNenActive(fighter))
+          side === (options.viewer?.() ?? 'player') && Boolean(equippedDolphin(fighter)?.loaded)
         model.root.position.set(
           options.worldX(fighter.x) - fighter.facing * 0.6,
           options.worldY(fighter.y) + 1.55 + Math.sin(seconds * 4) * 0.04,

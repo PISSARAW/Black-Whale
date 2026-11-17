@@ -8,6 +8,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
   'blackVoiceScreen',
+  'stolenChainAbility',
   'blackVoiceGear',
   'equipment',
   'equipmentProps',
@@ -53,8 +54,23 @@ function restingNen(actor: ArcadeFighter): boolean {
   const base = createFightState(actor.id, actor.id).player
   const special = (value: ArcadeFighter) =>
     restingValue(Object.fromEntries(Object.entries(value).filter(([key]) => !BODY_FIELDS.has(key))))
-  return replayChecksum(special(actor)) === replayChecksum(special(base))
+  return replayChecksum(special(relayDolphinState(actor))) === replayChecksum(special(base))
 }
+function relayDolphinState(actor: ArcadeFighter): ArcadeFighter {
+  const chain = actor.kurapika
+  let next = actor
+  if (actor.dolphinLoan && !actor.dolphinLoan.held.used) next = { ...next, dolphinLoan: undefined }
+  if (!chain) return next
+  const normalized = { ...chain, lifespanFrames: 0 }
+  if (chain.dolphinLoans?.length && !chain.held?.loaded) {
+    normalized.emperorTime = false
+    normalized.continuousFrames = 0
+    normalized.dolphinLoans = undefined
+    normalized.held = null
+  }
+  return { ...next, kurapika: normalized }
+}
+
 function restingValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(restingValue)
   if (!value || typeof value !== 'object') return value

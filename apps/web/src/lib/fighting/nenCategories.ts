@@ -21,9 +21,13 @@ export function fightCategoryEfficiency(
 ): number {
   if (fighter.nen.mode === 'zetsu') return 0
   const owner = fighter.nenOwner ?? fighter.id
-  if (owner === 'kurapika' && fighter.kurapika?.emperorTime) return 1
+  if (owner === 'kurapika' && ownEmperorTime(fighter)) return 1
   const affinity = FIGHT_NEN_PROFILES[owner]?.affinity ?? 'unknown'
   return affinityEfficiency(affinity, category)
+}
+
+function ownEmperorTime(fighter: ArcadeFighter): boolean {
+  return fighter.dolphinLoanChannel?.emperorTime ?? fighter.kurapika?.emperorTime ?? false
 }
 
 function affinityEfficiency(affinity: string, category: ActiveNenCategory): number {

@@ -82,6 +82,8 @@ export const ARSENAL_ACTION_IDS = [
   'judgment-preset',
   'judgment-release',
   'judgment-call',
+  'dolphin-lend',
+  'dolphin-use',
   'dolphin-move',
   'copied-move',
   'gum-seal',
@@ -113,8 +115,10 @@ export type ArsenalActionId = (typeof ARSENAL_ACTION_IDS)[number]
 export interface ArsenalCommand {
   action: ArsenalActionId
   target?: string
+  loan?: boolean
 }
 export interface CookieSession {
+  loan?: boolean
   target: FightSide
   mode: 'massage' | 'piano'
   frames: number

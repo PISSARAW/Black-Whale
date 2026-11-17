@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 751
+Fichiers : 754
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -406,6 +406,18 @@ Fichiers : 751
 
 - Steal Chain keeps the actual stolen aura and suppresses the linked victim > prevents voluntary Nen immediately after real syringe contact, before the reserve is empty
 - Dolphin spends a finite donor reserve independently from the carrier > pays the actual borrowed activation from stolen aura and restores the real body
+
+## `apps/web/src/lib/fighting/dolphinLoan.test.ts`
+
+- a real Stealth Dolphin recipient > injects an actual body, frees Steal Chain and keeps the lender under Emperor Time
+
+## `apps/web/src/lib/fighting/dolphinLoanReplay.test.ts`
+
+- Stealth Dolphin loan replay and the P2 network boundary > exports and replays real drainage, injection, borrowed use and dismissal
+
+## `apps/web/src/lib/fighting/dolphinLoanTeam.test.ts`
+
+- Stealth Dolphin stays attached to actual team members > lends to an actual ally at the gate, lets that ally enter, and clocks the waiting lender
 
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 

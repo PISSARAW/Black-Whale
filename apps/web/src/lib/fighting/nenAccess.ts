@@ -52,5 +52,8 @@ function forcedZetsu(fighter: ArcadeFighter): boolean {
 }
 
 function emperorBlackout(fighter: ArcadeFighter): boolean {
-  return (fighter.kurapika?.blackoutFrames ?? 0) > 0 && !fighter.dolphinExecution
+  return Boolean(
+    (fighter.kurapika?.blackoutFrames || fighter.dolphinLoan?.blackoutFrames) &&
+    !fighter.dolphinExecution,
+  )
 }

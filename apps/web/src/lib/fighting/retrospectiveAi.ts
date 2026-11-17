@@ -1,3 +1,4 @@
+import { dolphinLoanAi } from './dolphinAi'
 import { blackVoiceAi } from './blackVoiceAi'
 import { bashoArsenalAi } from './bashoArsenalAi'
 import { physicalProjectile } from './projectileMatter'
@@ -26,6 +27,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    dolphinLoanAi(state, perform) ??
     utilityArsenalAi(state, perform) ??
     gumAi(state) ??
     interviewAi(state) ??

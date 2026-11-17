@@ -1,3 +1,5 @@
+import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
+import { mapPhysicalBodies } from './physicalBodyMap'
 import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
 import { finishBorrowedBasho } from './bashoWard'
 import { judgmentActionBreach } from './judgmentAction'
@@ -44,7 +46,7 @@ export function toggleEmperorTime(state: FightState, side: FightSide): FightStat
   if (!canToggleEmperor(state, fighter)) return state
   const chain = fighter.kurapika ?? createKurapika()
   if (judgmentForbidsNen(fighter) && !chain.emperorTime) return chainRuleDeath(state, side)
-  if (chain.emperorTime && chain.held?.loaded) return state
+  if (chain.emperorTime && dolphinLocksEmperor(fighter)) return state
   if (!chain.emperorTime && !kurapikaNenActive(fighter)) return state
   return {
     ...state,
@@ -61,11 +63,7 @@ export function toggleEmperorTime(state: FightState, side: FightSide): FightStat
 
 /** Every simulated frame, including hitstop and unconsciousness; never a render-frame clock. */
 export function advanceEmperorClock(state: FightState): FightState {
-  return {
-    ...state,
-    player: advanceEmperor(state.player),
-    opponent: advanceEmperor(state.opponent),
-  }
+  return advanceDolphinLoanClocks(mapPhysicalBodies(state, advanceEmperor))
 }
 
 function advanceEmperor(fighter: ArcadeFighter): ArcadeFighter {
@@ -94,7 +92,9 @@ function emperorRunning(fighter: ArcadeFighter): boolean {
   const chain = fighter.kurapika!
   return (
     chain.emperorTime &&
-    (kurapikaNenActive(fighter) || Boolean(chain.held?.loaded) || chain.blackoutFrames > 0)
+    (kurapikaNenActive(fighter) ||
+      Boolean(chain.held?.loaded || chain.dolphinLoans?.length) ||
+      chain.blackoutFrames > 0)
   )
 }
 
@@ -188,6 +188,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
   const held = fighter.kurapika?.held
   if (moveId !== 'kurapika:backSpecial' || !held) return null
   if (!canUseDolphinAction(fighter)) return state
+  if (dolphinLoadingBlocked(fighter)) return state
   if (!held.loaded)
     return {
       ...state,
@@ -204,6 +205,13 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
     return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
   }
   return useDolphin(options, perform)
+}
+
+function dolphinLoadingBlocked(fighter: ArcadeFighter): boolean {
+  return Boolean(!fighter.kurapika?.held?.loaded && fighter.kurapika?.dolphinLoans?.length)
+}
+function dolphinLocksEmperor(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.kurapika?.held?.loaded || fighter.kurapika?.dolphinLoans?.length)
 }
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {

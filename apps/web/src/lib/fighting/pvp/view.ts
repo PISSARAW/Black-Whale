@@ -15,6 +15,7 @@ const SIDE_FIELDS = new Set([
   'issuer',
   'recipient',
   'victimSide',
+  'victim',
   'killerSide',
   'attacker',
   'side',

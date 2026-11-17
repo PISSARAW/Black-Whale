@@ -1,3 +1,4 @@
+import { carryDolphinState } from './dolphinRound'
 import { carryVoiceAutopilot } from './blackVoiceAutopilot'
 import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
 import { createWritingKit } from './bashoMaterials'
@@ -110,6 +111,7 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = carryDolphinState(fighter, previous)
   fighter = carryVoiceAutopilot(
     {
       ...fighter,

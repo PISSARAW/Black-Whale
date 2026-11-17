@@ -219,6 +219,29 @@ describe('visit Hatsu adapted to the duel', () => {
     effects.dispose()
   })
 
+  it('keeps a recipient’s private Dolphin visible during the linked blackout', () => {
+    const options = setup()
+    const effects = createStealthDolphinScene(options)
+    const state = createFightState('biscuit', 'kurapika')
+    state.player.dolphinLoan = {
+      lender: { owner: 'opponent', member: 0 },
+      blackoutFrames: 200,
+      held: {
+        source: 'hisoka',
+        moveId: 'hisoka:neutralSpecial',
+        victim: 'opponent',
+        loaded: true,
+        used: true,
+        sustainedKeys: [],
+      },
+    }
+    state.player.nen.mode = 'zetsu'
+    effects.sync(state, 0)
+    expect(options.scene.getObjectByName('kurapika-stealth-dolphin')!.visible).toBe(true)
+    expect(state.player.kurapika).toBeUndefined()
+    effects.dispose()
+  })
+
   it('releases a removed Jupiter immediately and sizes it to its real projectile volume', () => {
     const options = setup()
     const effects = createProjectileScene({ ...options, glow, geometry: (made) => made })

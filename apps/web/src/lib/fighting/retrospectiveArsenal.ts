@@ -1,3 +1,6 @@
+import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
+import { withDolphinSupply } from './dolphinSupply'
+import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
 import { performBlackVoiceCommand } from './blackVoiceAction'
 import { blackVoiceOptions } from './blackVoiceOptions'
 import { performBashoQuestion, bashoQuestionOptions } from './bashoQuestions'
@@ -25,8 +28,10 @@ import type { FightSide, FightState } from './types'
 export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false
   const command = value as Record<string, unknown>
-  if (!Object.keys(command).every((key) => key === 'action' || key === 'target')) return false
+  if (!Object.keys(command).every((key) => key === 'action' || key === 'target' || key === 'loan'))
+    return false
   if (!ARSENAL_ACTION_IDS.includes(command.action as ArsenalCommand['action'])) return false
+  if (command.loan !== undefined && typeof command.loan !== 'boolean') return false
   return (
     command.target === undefined ||
     (typeof command.target === 'string' && command.target.length <= 100)
@@ -41,15 +46,38 @@ export function performArsenalCommand(
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
   if (state[side].blackVoiceControl?.active) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
+  if (command.loan) return performLoanCommand({ state, side, command }, performArsenalCommand)
+  if (selfDolphinCommand(state, side, command))
+    return withDolphinSupply(state, side, (supplied) =>
+      performArsenalCommand(supplied, side, command),
+    )
+  return nativeArsenalCommand(state, side, command)
+}
+function nativeArsenalCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
   if (command.action === 'support-consent') return toggleConsent(state, side)
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
   return handler ? handler[1](state, side, command) : state
+}
+
+function selfDolphinCommand(state: FightState, side: FightSide, command: ArsenalCommand): boolean {
+  const body = state[side]
+  return (
+    body.id === 'kurapika' &&
+    Boolean(body.kurapika?.held?.auraSupply) &&
+    !body.dolphinExecution &&
+    dolphinCommandAllowed(body, command)
+  )
 }
 
 const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['dolphin-lend', performDolphinLoan],
   ['voice-', performBlackVoiceCommand],
   ['basho-ask', performBashoQuestion],
   ['basho-answer', performBashoQuestion],
@@ -73,6 +101,12 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
+    ...nativeArsenalOptions(state, side),
+    ...loanCommandOptions(state, side, nativeArsenalOptions),
+  ]
+}
+function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
+  return [
     consentOption(state, side),
     ...blackVoiceOptions(state, side),
     ...judgmentOptions(state, side),
@@ -85,6 +119,7 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),
+    ...dolphinLoanOptions(state, side),
     ...dolphinArsenalOptions(state, side),
     ...copiedArsenalOptions(state, side),
     ...historicalOptions(state, side),

@@ -1,3 +1,5 @@
+import { loanCarrier } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -7,6 +9,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 
 export function ownsBungeeGum(fighter: ArcadeFighter): boolean {
+  if (fighter.dolphinLoan?.held.source === 'hisoka' && fighter.dolphinLoan.held.used)
+    fighter = stolenAuraActor(loanCarrier(fighter))
   if (!voluntaryNenAvailable(fighter) || chainAbilitySealed(fighter, 'hisoka:neutralSpecial'))
     return false
   if (fighter.id === 'hisoka') return true

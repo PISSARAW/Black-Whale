@@ -38,6 +38,7 @@ export function illumiPreparing(fighter: ArcadeFighter): boolean {
 export function illumiBodyFree(fighter: ArcadeFighter): boolean {
   return (
     !fighter.arsenalSleep &&
+    !(fighter.dolphinLoan?.blackoutFrames ?? 0) &&
     !fighter.clothCapture &&
     needleAutonomy(fighter) &&
     !fighter.blackVoiceControl?.active &&

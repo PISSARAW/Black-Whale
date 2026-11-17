@@ -1,3 +1,4 @@
+import { loanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor, withDolphinSupply } from './dolphinSupply'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
@@ -75,6 +76,7 @@ function performCookieCommand(
         targetHealth: recipient.health,
         targetX: recipient.x,
         targetY: recipient.y,
+        loan: Boolean(caster.dolphinLoanChannel),
       },
     },
   }
@@ -138,7 +140,7 @@ function advanceSession(state: FightState, side: FightSide): FightState {
 }
 
 function sessionContinues(state: FightState, side: FightSide): boolean {
-  const caster = stolenAuraActor(state[side])
+  const caster = cookieSessionActor(state[side])
   const session = caster.cookie!
   const target = state[session.target]
   if (!ownsCookie(caster) || !voluntaryNenAvailable(caster)) return false
@@ -147,6 +149,10 @@ function sessionContinues(state: FightState, side: FightSide): boolean {
   if (target.health <= 0 || target.attack || target.hitStun > 0) return false
   if (Math.hypot(target.x - session.targetX, target.y - session.targetY) > 1) return false
   return session.target === side || Boolean(target.supportConsent)
+}
+
+function cookieSessionActor(actor: ArcadeFighter): ArcadeFighter {
+  return stolenAuraActor(actor.cookie?.loan ? loanCarrier(actor) : actor)
 }
 
 export function cookieOptions(state: FightState, side: FightSide): ArsenalOption[] {

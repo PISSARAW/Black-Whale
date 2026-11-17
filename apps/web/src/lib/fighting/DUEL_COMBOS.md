@@ -1,11 +1,11 @@
-# Trente-quatre profils de combos
+# Trente-huit profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
 Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
 Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov, Beyond, Tserriednich, Basho,
-Camilla, Longhi, Bill, Cluck, Sayird et Luini ont huit exemples chacun dans
-l’Académie. Les quatre routes
-initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
+Camilla, Longhi, Bill, Cluck, Sayird, Luini, Rihan, Melody, Terebellum et Voconte
+ont huit exemples chacun dans l’Académie. Les quatre routes initiales restent
+disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
@@ -23,7 +23,9 @@ Furykov et Beyond.
 Basho, Camilla et Longhi.
 `duelComboEighthProfiles.ts` et `duelComboEighthLessons.ts` ajoutent Bill, Cluck,
 Sayird et Luini.
-Le catalogue compte 296 routes pour quarante personnages.
+`duelComboNinthProfiles.ts` et `duelComboNinthLessons.ts` ajoutent Rihan, Melody,
+Terebellum et Voconte.
+Le catalogue compte 312 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -243,6 +245,25 @@ restent des objets réels du scénario ; ouvrir la porte condamne toujours la pi
 Les autres routes restent disponibles en duel strict sans ces ressources ; les
 pouvoirs ne deviennent ni des cancels offensifs ni des prérequis gratuits.
 
+## Rihan, Melody, Terebellum et Voconte
+
+Rihan peut ouvrir réellement l’observation de Predator puis convertir cinq frappes
+physiques avec deux liaisons après récupération. Aucune manifestation n’est créée :
+l’analyse reste vide et aucun prédateur ne vient garantir la route. Les vrais
+prérequis de prédation et la sanction de 48 heures de Nen restent applicables.
+Melody écoute pendant douze frames réelles, sans musique ni aura. Son ouïe améliore
+la tolérance de la parade manuelle, sans apaisement du mannequin ni bonus offensif.
+Jouer la flûte reste séparé ; son arrêt met fin à l’apaisement avant une frappe.
+Terebellum peut finir par la frappe physique existante à 40 aura, sans effacer les
+blessures déjà reçues. Sweet Home exige une nouvelle blessure et de vrais contacts
+de main pendant les frames actives ; aucune absorption vers soi n’est forcée pour
+faire réussir le combo. Balayage, poussée et liaison restent disponibles sans aura.
+Voconte connecte réellement ses huisseries pour 20 aura et attend la préparation
+et la récupération. Les cinq frappes ne créent aucun transit ; franchir un seuil
+dans son sens continue de transporter le corps réel selon les règles ordinaires.
+Les exercices `observation`, `listening` et `doors` exécutent les états réels,
+sans fournir de proie analysée, de musique active ou de téléportation automatique.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -269,12 +290,14 @@ le hibou privé, la console sans renforcement et les frappes payées sans maléd
 et ses vrais poings, Camilla à un PV et l’offre sans consentement automatique.
 `duelComboEighth.test.ts` vérifie les ressources et coûts réels, la germination
 sans soin, le courrier sans impacts, le petit animal et l’ancrage irréversible.
+`duelComboNinth.test.ts` vérifie l’observation sans analyse offerte, l’écoute
+sans musique, la frappe sans soin rétroactif et le franchissement des vrais seuils.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-15` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-16` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

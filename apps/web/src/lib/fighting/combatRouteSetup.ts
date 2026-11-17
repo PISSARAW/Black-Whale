@@ -1,3 +1,4 @@
+import { MELODY_LISTEN_FRAMES } from './melodyTuning'
 import { commandMary } from './bloodyMaryAction'
 import { performAuraAttack, performMove, tickFight } from './engine'
 import { CYCLOTRON_ROTATION_FRAMES } from './phinksCyclotron'
@@ -23,6 +24,9 @@ export type CombatRouteSetup =
   | 'courier'
   | 'little-eye'
   | 'anchor'
+  | 'observation'
+  | 'listening'
+  | 'doors'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
@@ -30,7 +34,8 @@ export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup):
   if (setup === 'scouts')
     state = commandMary({ state, side: 'player', command: 'bleed' }, performAuraAttack)
   const input = setupInput(state, setup)
-  state = performMove({ state, side: 'player', action: 'special', input })
+  if (setup !== 'listening')
+    state = performMove({ state, side: 'player', action: 'special', input })
   if (setup === 'cyclotron') {
     for (let i = 0; i < CYCLOTRON_ROTATION_FRAMES; i++) state = step(state)
     state = performMove({ state, side: 'player', action: 'special' })
@@ -79,6 +84,8 @@ function settled(state: FightState) {
 
 function setupReady(state: FightState, setup: CombatRouteSetup) {
   if (setup === 'pigeon' && !state.opponent.biohazardRestraint) return false
+  if (setup === 'listening' && (state.player.melodyHearing?.frames ?? 0) < MELODY_LISTEN_FRAMES)
+    return false
   return settled(state)
 }
 

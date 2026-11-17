@@ -9,6 +9,7 @@ import { FIFTH_DUEL_PROFILES } from './duelComboFifthProfiles'
 import { SIXTH_DUEL_PROFILES } from './duelComboSixthProfiles'
 import { SEVENTH_DUEL_PROFILES } from './duelComboSeventhProfiles'
 import { EIGHTH_DUEL_PROFILES } from './duelComboEighthProfiles'
+import { NINTH_DUEL_PROFILES } from './duelComboNinthProfiles'
 
 // Combat rules are authored independently of the Academy's example sequences.
 // Utility chains and inherited preparations deliberately have no combo destinations.
@@ -116,6 +117,7 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
   ...SIXTH_DUEL_PROFILES,
   ...SEVENTH_DUEL_PROFILES,
   ...EIGHTH_DUEL_PROFILES,
+  ...NINTH_DUEL_PROFILES,
 }
 export const DUEL_COMBO_FIGHTERS = Object.keys(PROFILES) as FighterId[]
 export const hasDuelComboProfile = (fighter: string): boolean => Object.hasOwn(PROFILES, fighter)

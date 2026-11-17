@@ -1039,3 +1039,17 @@ vidéos lorsque les images existent. `--audio-only` produit uniquement le son.
 `check-personal-guard-victories.mjs` vérifie huit victoires et revanches dans
 Clash. Sorties : `output/fighting-personal-guard/longhi/` et
 `output/fighting-personal-guard/furykov/`.
+
+## Theta — Une balle d’avance
+
+`theta-fatality.html` montre dix secondes de feinte au chargeur, esquive,
+crosse, visée et tir unique avec ralenti sur la douille. `target`, `stage`,
+`side=opponent` et `reduced` adaptent les acteurs et le décor.
+La démonstration prouve d’abord une vraie victoire au pistolet physique.
+
+`node apps/web/scripts/render-theta-fatality.mjs` exporte le film en 1080p30
+(`--inspect` : plans de contrôle). `compose-theta-fatality.mjs` produit le son
+du jeu et assemble `output/fighting-theta-fatality/Theta-Fatality-10s.mp4`.
+Le seul dialogue est l’annonce anglaise Fatality.
+`check-theta-fatality.mjs` contrôle les variantes, le mobile et l’intégration ;
+`check-theta-victories.mjs` contrôle les victoires automatiques et revanches.

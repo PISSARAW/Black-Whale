@@ -534,3 +534,6 @@ les arènes, les deux côtés, IA/local et les quatre motifs de victoire.
 la restauration et les conditions natives des Hatsu. Les scripts
 `check-personal-guard.mjs` et `check-personal-guard-victories.mjs` couvrent les
 démos, mobile, confort, sons et huit victoires automatiques avec revanches.
+
+Theta : [Une balle d’avance](./THETA.md) utilise le chargeur comme leurre,
+un coup de crosse puis l’unique balle restée dans la chambre.

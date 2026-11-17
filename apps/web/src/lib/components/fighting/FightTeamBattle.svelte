@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount, setContext } from 'svelte'
   import FightStage from './FightStage.svelte'
+  import FightTeamRoster from './FightTeamRoster.svelte'
+  import { createTeamRuntime } from '$lib/fighting/teams/runtime'
+  import { teamAssistBlock, TEAM_ASSIST_LABELS } from '$lib/fighting/teams/availability'
   import FightHatsuPanels from './FightHatsuPanels.svelte'
   import FightInputSettings from './FightInputSettings.svelte'
   import { createFightControls, dispatchFightKey } from '../../../routes/fighting/fightingControls'
@@ -13,15 +16,7 @@
   import { packReplayInput } from '$lib/fighting/fightReplayInput'
   import { performAuraAttack } from '$lib/fighting/engine'
   import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
-  import {
-    tickTeamFight,
-    requestTeamAssist,
-    nextTeamRound,
-    startTeamFight,
-  } from '$lib/fighting/teamMatch'
-  import { teamLiving } from '$lib/fighting/teamTypes'
-  import { fighterDefinition } from '$lib/fighting/roster'
-  import { FIXED_STEP } from '$lib/fighting/fightClock'
+  import { requestTeamAssist, nextTeamRound, startTeamFight } from '$lib/fighting/teamMatch'
   import {
     EMPTY_INPUT,
     type FightState,
@@ -32,11 +27,13 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let onExit: () => void
+  export let animate = true
+  export let victoryEnabled = true
   let victoryActive = false
   let paused = false,
     message = ''
   let inputs = { player: { ...EMPTY_INPUT }, opponent: { ...EMPTY_INPUT } }
-  let pending: ((current: FightState) => FightState)[] = []
+  const runtime = createTeamRuntime()
   const controls = createFightControls((side, action) =>
     action === 'pause' ? togglePause() : move(side, action),
   )
@@ -45,7 +42,7 @@
   $: fr = language === 'fr'
   function release() {
     inputs = { player: { ...EMPTY_INPUT }, opponent: { ...EMPTY_INPUT } }
-    pending = []
+    runtime.clear()
     controls.release()
   }
   function togglePause() {
@@ -53,7 +50,7 @@
     release()
   }
   function queue(action: (current: FightState) => FightState) {
-    if (!paused && state.phase === 'fighting' && pending.length < 64) pending.push(action)
+    if (!paused) runtime.queue(state, action)
   }
   function move(side: FightSide, action: MoveAction | 'ranged') {
     const input = packReplayInput(controls.combine(side, inputs[side]))
@@ -64,14 +61,9 @@
   }
   function assist(side: FightSide, index: number) {
     queue((current) => {
-      const next = requestTeamAssist(current, side, index)
-      message =
-        next === current
-          ? fr
-            ? 'Relais refusé : rejoins ton bord, corps libre et Nen au repos, sans manifestation en cours.'
-            : 'Relay refused: reach your gate with a free body, resting Nen and no active manifestation.'
-          : ''
-      return next
+      const block = teamAssistBlock(current, side, index)
+      message = block ? TEAM_ASSIST_LABELS[block][fr ? 0 : 1] : ''
+      return block ? current : requestTeamAssist(current, side, index)
     })
   }
   function handleKey(event: KeyboardEvent, active: boolean) {
@@ -98,6 +90,18 @@
       },
     })
   }
+  export function advance(dt: number, manual?: Record<FightSide, FightInput>) {
+    if (paused || state.phase !== 'fighting') return state
+    state = runtime.advance(
+      state,
+      manual ?? {
+        player: controls.combine('player', inputs.player),
+        opponent: controls.combine('opponent', inputs.opponent),
+      },
+      dt,
+    )
+    return state
+  }
   onMount(() => {
     controls.load()
     const stop = listenFightEvents({
@@ -115,21 +119,7 @@
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
       controls.poll('versus-local', !paused && state.phase === 'fighting')
-      if (!paused && state.phase === 'fighting') {
-        if (state.frameAccumulator + dt >= FIXED_STEP) {
-          const actions = pending
-          pending = []
-          for (const action of actions) state = action(state)
-        }
-        state = tickTeamFight(
-          state,
-          {
-            player: controls.combine('player', inputs.player),
-            opponent: controls.combine('opponent', inputs.opponent),
-          },
-          dt,
-        )
-      }
+      if (animate) advance(dt)
       frame = requestAnimationFrame(loop)
     }
     frame = requestAnimationFrame(loop)
@@ -149,27 +139,20 @@
     <button type="button" onclick={onExit}>{fr ? 'Quitter les équipes' : 'Exit teams'}</button>
   </header>
   <div class="team-rosters">
-    {#each ['player', 'opponent'] as side (side)}
-      {@const seat = state.teamMatch!.seats[side as FightSide]}
-      <section aria-label={side === 'player' ? 'P1' : 'P2'}>
-        <h2>{side === 'player' ? 'P1' : 'P2'} · {teamLiving(seat)}/3</h2>
-        {#each seat.members as member, index (member.id)}<div class:eliminated={member.health <= 0}>
-            <strong>{fighterDefinition(member.id).name}</strong>
-            {seat.active === index ? (fr ? ' · en scène' : ' · on stage') : ''}
-            {#if index !== seat.active && member.health > 0}<button
-                type="button"
-                disabled={paused || seat.assistUsed || state.phase !== 'fighting'}
-                onclick={() => assist(side as FightSide, index)}
-                >{fr ? 'Appeler en relais' : 'Call relay'}</button
-              >{/if}
-          </div>{/each}
-        {#if seat.relay}<p>
-            {fr
-              ? 'Allié en relais · sortie soumise aux engagements et entraves.'
-              : 'Ally relay · commitments and restraints can prevent departure.'}
-          </p>{/if}
-      </section>
-    {/each}
+    <FightTeamRoster
+      {state}
+      side="player"
+      {language}
+      {paused}
+      onAssist={(index) => assist('player', index)}
+    />
+    <FightTeamRoster
+      {state}
+      side="opponent"
+      {language}
+      {paused}
+      onAssist={(index) => assist('opponent', index)}
+    />
   </div>
   {#if message}<p role="status">{message}</p>{/if}
   {#if state.phase === 'ready'}<button
@@ -200,39 +183,62 @@
       >{/if}
   {/if}
   <FightInputSettings {controls} {language} onEditing={release} />
-  <FightHatsuPanels
-    {state}
-    {language}
-    {paused}
-    onAction={queue}
-    perform={performAuraAttack}
-    onEditing={release}
-  />
-  <FightStage
-    bind:victoryActive
-    victoryPaused={paused}
-    {state}
-    {language}
-    {paused}
-    showControls
-    stageId={state.environment.stageId}
-    onAttack={(kind) => move('player', kind)}
-    onThrow={() => move('player', 'throw')}
-    onFinisher={() => move('player', 'finisher')}
-    onCall={() => queue(callFightBody)}
-    onEmperor={() =>
-      queue((current) => applyReplayCommand(current, { kind: 'emperor', side: 'player' }))}
-    onControl={(key, held) => hold('player', key, held)}
-    onOpponentControl={(key, held) => hold('opponent', key, held)}
-    onBlinkyTarget={(side, target) =>
-      queue((current) => designateBlinkyTarget(current, side, target))}
-    onBlinkyCommand={(side, command) =>
-      queue((current) => selectBlinkyCommand(current, side, command))}
-    {...battleStageCallbacks(queue)}
-  />
+  {#if state.phase === 'fighting'}
+    <details class="team-techniques" ontoggle={release}>
+      <summary
+        >{fr
+          ? 'Techniques et préparations · P1/P2'
+          : 'Techniques and preparations · P1/P2'}</summary
+      >
+      <FightHatsuPanels
+        {state}
+        {language}
+        {paused}
+        onAction={queue}
+        perform={performAuraAttack}
+        onEditing={release}
+      />
+    </details>
+  {/if}
+  {#if state.phase !== 'ready'}
+    <FightStage
+      {victoryEnabled}
+      bind:victoryActive
+      victoryPaused={paused}
+      {state}
+      {language}
+      {paused}
+      showControls
+      stageId={state.environment.stageId}
+      onAttack={(kind) => move('player', kind)}
+      onThrow={() => move('player', 'throw')}
+      onFinisher={() => move('player', 'finisher')}
+      onCall={() => queue(callFightBody)}
+      onEmperor={() =>
+        queue((current) => applyReplayCommand(current, { kind: 'emperor', side: 'player' }))}
+      onControl={(key, held) => hold('player', key, held)}
+      onOpponentControl={(key, held) => hold('opponent', key, held)}
+      onBlinkyTarget={(side, target) =>
+        queue((current) => designateBlinkyTarget(current, side, target))}
+      onBlinkyCommand={(side, command) =>
+        queue((current) => selectBlinkyCommand(current, side, command))}
+      {...battleStageCallbacks(queue)}
+    />
+  {/if}
 </div>
 
 <style>
+  .team-techniques {
+    border: 1px solid #586b80;
+    padding: 0.6rem;
+    margin: 0.6rem 0;
+  }
+  summary {
+    min-height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
   .teams-battle {
     max-width: 100%;
     color: #e5eff9;
@@ -241,19 +247,6 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
-  }
-  section {
-    padding: 0.6rem;
-    border: 1px solid #586b80;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  section div {
-    margin: 0.4rem 0;
-  }
-  .eliminated {
-    opacity: 0.45;
-    text-decoration: line-through;
   }
   button {
     padding: 0.5rem;

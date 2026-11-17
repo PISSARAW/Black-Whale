@@ -9,6 +9,7 @@
     "test:step2-ui": "svelte-kit sync && node scripts/check-fighting-step2.mjs",
     "test:training-ui": "svelte-kit sync && node scripts/check-fighting-training.mjs",
     "test:coach-ui": "svelte-kit sync && node scripts/check-fighting-coach.mjs",
+    "test:teams-ui": "svelte-kit sync && node scripts/check-fighting-teams.mjs",
     "test:solo-ui": "svelte-kit sync && node scripts/check-fighting-solo.mjs",
     "test:online-ui": "svelte-kit sync && node scripts/check-fighting-online.mjs",
     "test:arena-ui": "node scripts/check-arena-techniques.mjs",

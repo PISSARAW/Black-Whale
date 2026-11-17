@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 726
+Fichiers : 734
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -353,6 +353,14 @@ Fichiers : 726
 - counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
+## `apps/web/src/lib/fighting/dowsing.test.ts`
+
+- Dowsing Chain screens an actual voluntary statement without becoming a truth oracle > questions face to face without Emperor Time, damage, or a forced answer
+
+## `apps/web/src/lib/fighting/dowsingScene.test.ts`
+
+- the real Dowsing pendulum follows simulation and perception > swings the ring-finger tip on a knowing lie, then hides it when the live Hatsu is stopped
 
 ## `apps/web/src/lib/fighting/duelComboDepth.test.ts`
 
@@ -770,6 +778,13 @@ Fichiers : 726
 
 - local three-fighter teams > requires three distinct known characters on each side
 
+## `apps/web/src/lib/fighting/teams/teams.test.ts`
+
+- team relay owns its world commitments > refuses Hisoka’s paid anchor until it is actually released, without refunding its cost
+- successive team bodies share physical terrain without inheriting Nen > preserves a real destroyed crate through a real round victory and retains the survivor’s resources
+- fixed-step team commands retain their actual body > drops a strike queued for a leader after the preceding relay changes bodies
+- ordered team drafts save no combat powers or resources > reorders the actual next starters and persists only the local selection
+
 ## `apps/web/src/lib/fighting/techniqueAuraColours.test.ts`
 
 - technique aura colours > gives each of Kurapika’s chains the aura the anime showed
@@ -804,6 +819,10 @@ Fichiers : 726
 
 - victory selection > uses all real opponents and every stage for either winning side, including mirrors
 - victory playback > keeps real ten-second timing when rendering drops below ten frames per second
+
+## `apps/web/src/lib/fighting/victory/renderer.test.ts`
+
+- live victory renderer > keeps Camilla’s wide camera still when camera movement is disabled
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 

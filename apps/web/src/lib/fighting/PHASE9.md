@@ -39,6 +39,11 @@ revanche normale explicitement lancée recommence un duel ordinaire.
 
 ## Équipes locales et assistances par relais
 
+L’[étape 8](./STEP8.md) ajoute l’ordre sauvegardé, le suivi des ressources, les
+refus partagés et la conservation des caisses physiques entre combattants. Les
+engagements de décor empêchent un relais de prêter leur propriétaire à un autre
+corps ; les manifestations suivent la remise en manche ordinaire.
+
 `/fighting/teams` prépare deux groupes de trois personnages distincts, choisis
 dans les quarante combattants, sur le terrain sélectionné. Les contrôles clavier,
 manettes, tactiles et panneaux de Hatsu utilisent les commandes ordinaires. Il

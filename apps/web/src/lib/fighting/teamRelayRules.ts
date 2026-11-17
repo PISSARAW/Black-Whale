@@ -1,3 +1,4 @@
+import { teamWorldEngaged } from './teams/commitments'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -38,11 +39,32 @@ const BODY_FIELDS = new Set([
   'crouching',
   'blocking',
 ])
+const RESTING_NEN = new Map<string, string>()
 function restingNen(actor: ArcadeFighter): boolean {
-  const base = createFightState(actor.id, actor.id).player
-  const special = (value: ArcadeFighter) =>
-    restingValue(Object.fromEntries(Object.entries(value).filter(([key]) => !BODY_FIELDS.has(key))))
-  return replayChecksum(special(actor)) === replayChecksum(special(base))
+  let baseline = RESTING_NEN.get(actor.id)
+  if (baseline === undefined) {
+    baseline = restingSignature(createFightState(actor.id, actor.id).player)
+    RESTING_NEN.set(actor.id, baseline)
+  }
+  return restingSignature(actor) === baseline
+}
+function restingSignature(actor: ArcadeFighter) {
+  const values = Object.fromEntries(
+    Object.entries(restingBody(actor)).filter(([key]) => !BODY_FIELDS.has(key)),
+  )
+  return replayChecksum(restingValue(values))
+}
+function restingBody(actor: ArcadeFighter): ArcadeFighter {
+  const body = {
+    ...actor,
+    hatsuEffects: {
+      ...actor.hatsuEffects,
+      witnessedHatsu: null,
+      witnessedAt: undefined,
+      witnessedMoveId: undefined,
+    },
+  }
+  return actor.kurapika ? { ...body, kurapika: { ...actor.kurapika, lifespanFrames: 0 } } : body
 }
 function restingValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(restingValue)
@@ -57,6 +79,7 @@ function quietWorld(state: FightState): boolean {
   return (
     ![
       state.parallelFuture,
+      state.forecastSimulation,
       state.catsName,
       state.moonlight,
       state.bungeeGum,
@@ -66,9 +89,9 @@ function quietWorld(state: FightState): boolean {
     ].some(Boolean) && state.projectiles.length === 0
   )
 }
-export function teamRelayReady(state: FightState, side: FightSide): boolean {
+export function teamRelayBlock(state: FightState, side: FightSide): 'body' | 'commitment' | null {
   const actor = state[side]
-  if (!relayBodyFree(actor)) return false
+  if (!relayBodyFree(actor)) return 'body'
   const target = state[side === 'player' ? 'opponent' : 'player']
   const links = [
     target.chainJail,
@@ -79,8 +102,15 @@ export function teamRelayReady(state: FightState, side: FightSide): boolean {
     target.maryCapture,
     target.biohazardRestraint,
   ]
-  return quietWorld(state) && restingNen(actor) && !links.some(Boolean)
+  return quietWorld(state) &&
+    restingNen(actor) &&
+    !links.some(Boolean) &&
+    !teamWorldEngaged(state, side)
+    ? null
+    : 'commitment'
 }
+export const teamRelayReady = (state: FightState, side: FightSide) =>
+  teamRelayBlock(state, side) === null
 function relayBodyFree(actor: ArcadeFighter) {
   const motion = motionOf(actor)
   return (

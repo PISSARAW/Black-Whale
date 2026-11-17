@@ -26,6 +26,9 @@ Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LO
 L’[étape 7](./STEP7.md) ajoute trois parcours scénarisés avec fins et sauvegardes,
 puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
 
+L’[étape 8](./STEP8.md) approfondit la sélection des équipes, les ressources,
+les refus de relais et la conservation du terrain physique entre combattants.
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.

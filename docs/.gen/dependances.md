@@ -21,7 +21,7 @@ Nœuds : 25 · Arêtes uniques : 59
 | `lib:components` | `package:@black-whale/domain` | 11 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
 | `lib:fighting` | `lib:components` | 2 |
-| `lib:fighting` | `lib:tour` | 69 |
+| `lib:fighting` | `lib:tour` | 72 |
 | `lib:fighting` | `package:@black-whale/domain` | 1 |
 | `lib:fighting` | `package:@black-whale/nen-engine` | 22 |
 | `lib:hunt` | `lib:arena` | 3 |

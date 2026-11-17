@@ -2,6 +2,8 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import type { ArcadeFighter } from './types'
 
 export const FIGHTER_FACING_ANGLE = 1.25
+/** Three-quarter faces expose both eyes while the body and attacks face the rival. */
+export const FIGHTER_FACE_ANGLE = 0.9
 export const FIGHTER_TURN_DURATION = 10 / 60
 
 const HEAD_SWAY_SPEED = 0.37
@@ -72,7 +74,7 @@ export function trackFightOpponent({
 }: OpponentTrackingOptions): HumanMotion {
   const deltaX = opponent ? opponent.x - fighter.x : fighter.facing
   const direction = deltaX === 0 ? fighter.facing : Math.sign(deltaX)
-  const targetWorldAngle = direction * (Math.PI / 2)
+  const targetWorldAngle = direction * FIGHTER_FACE_ANGLE
   const headPitch = opponent
     ? clamp(
         -Math.atan2(opponent.y - fighter.y, Math.max(1, Math.abs(deltaX))),

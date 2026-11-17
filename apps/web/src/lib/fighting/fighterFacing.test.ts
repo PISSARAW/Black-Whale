@@ -3,6 +3,7 @@ import { Group, Object3D } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import {
   FIGHTER_FACING_ANGLE,
+  FIGHTER_FACE_ANGLE,
   FIGHTER_TURN_DURATION,
   createFighterFacing,
   trackFightOpponent,
@@ -49,6 +50,6 @@ describe('fighter facing presentation', () => {
       seconds,
     })(human)
 
-    expect(human.head.rotation.y).toBeCloseTo(Math.PI / 2 - FIGHTER_FACING_ANGLE, 5)
+    expect(human.head.rotation.y).toBeCloseTo(FIGHTER_FACE_ANGLE - FIGHTER_FACING_ANGLE, 5)
   })
 })

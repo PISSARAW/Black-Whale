@@ -4,6 +4,7 @@
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
 
@@ -20,48 +21,51 @@
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
-      <div class="meter-label">
-        <strong>{fighterDefinition(fighter.id).name}</strong>
-        <span
-          class="rounds"
-          aria-label={`${state.roundsWon[side]} / 2 ${language === 'fr' ? 'manches gagnées' : 'rounds won'}`}
-        >
-          <small>{fightSeatLabel(state, side, language)}</small>
-          <span aria-hidden="true"
-            >{'●'.repeat(state.roundsWon[side])}{'○'.repeat(
-              Math.max(0, 2 - state.roundsWon[side]),
-            )}</span
+      {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
+      <div class="fighter-gauges">
+        <div class="meter-label">
+          <strong>{fighterDefinition(fighter.id).name}</strong>
+          <span
+            class="rounds"
+            aria-label={`${state.roundsWon[side]} / 2 ${language === 'fr' ? 'manches gagnées' : 'rounds won'}`}
           >
-        </span>
+            <small>{fightSeatLabel(state, side, language)}</small>
+            <span aria-hidden="true"
+              >{'●'.repeat(state.roundsWon[side])}{'○'.repeat(
+                Math.max(0, 2 - state.roundsWon[side]),
+              )}</span
+            >
+          </span>
+        </div>
+        <FightHealth {fighter} {language} {mirrored} {detailed} />
+        {#if !state.spectatorView}<div
+            class="aura"
+            role="meter"
+            aria-label="Aura"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={fighter.aura}
+          >
+            <span style={`width:${fighter.aura}%`}></span>
+          </div>{/if}
+        <div class="nen-status">
+          <span
+            >{state.spectatorView
+              ? language === 'fr'
+                ? 'Vue publique'
+                : 'Public view'
+              : !mirrored
+                ? nenStatus(fighter).join(' · ')
+                : state.player.nen.gyo
+                  ? auraDistribution(fighter)
+                  : language === 'fr'
+                    ? 'Nen masqué'
+                    : 'Nen hidden'}</span
+          >
+          {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
+        </div>
+        <FightComboMaster {state} {side} {language} compact />
       </div>
-      <FightHealth {fighter} {language} {mirrored} {detailed} />
-      {#if !state.spectatorView}<div
-          class="aura"
-          role="meter"
-          aria-label="Aura"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          aria-valuenow={fighter.aura}
-        >
-          <span style={`width:${fighter.aura}%`}></span>
-        </div>{/if}
-      <div class="nen-status">
-        <span
-          >{state.spectatorView
-            ? language === 'fr'
-              ? 'Vue publique'
-              : 'Public view'
-            : !mirrored
-              ? nenStatus(fighter).join(' · ')
-              : state.player.nen.gyo
-                ? auraDistribution(fighter)
-                : language === 'fr'
-                  ? 'Nen masqué'
-                  : 'Nen hidden'}</span
-        >
-        {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
-      </div>
-      <FightComboMaster {state} {side} {language} compact />
     </div>
   {/each}
   <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>
@@ -99,6 +103,20 @@
   }
   .fighter-meter {
     min-width: 0;
+    display: flex;
+    gap: 8px;
+  }
+  .fighter-gauges {
+    min-width: 0;
+    flex: 1;
+  }
+  .opponent-meter {
+    flex-direction: row-reverse;
+  }
+  @media (max-width: 600px), (max-height: 600px) {
+    .fighter-meter {
+      gap: 5px;
+    }
   }
   .opponent-meter {
     grid-column: 3;

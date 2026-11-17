@@ -174,7 +174,7 @@ export function combatCameraTarget(options: CombatCameraOptions) {
     y: lookY + base.y - base.lookY,
     z: preserveSpecialFraming(state)
       ? base.z
-      : Math.max(5.9, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95),
+      : Math.max(4.8, base.z * (1 - 0.32 * intensity) - focus - cue * 0.95),
   }
   return fittedTarget({ frame, bounds, options })
 }

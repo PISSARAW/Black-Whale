@@ -1,3 +1,5 @@
+import { returnLoanedHatsu } from './dolphinReturn'
+import { dolphinIsBusy } from './kurapikaDolphin'
 import { dolphinBody } from './dolphinBodies'
 import { reconcileLoanLinks } from './dolphinBorrowing'
 import { mapPhysicalBodies } from './physicalBodyMap'
@@ -26,5 +28,11 @@ export function advanceDolphinLoanClocks(state: FightState): FightState {
 }
 /** The recipient explicitly orders dismissal after the single application is finished. */
 export function settleDolphinLoans(state: FightState): FightState {
-  return reconcileLoanLinks(state)
+  let next = state
+  for (const side of ['player', 'opponent'] as const) {
+    const held = next[side].dolphinLoan?.held
+    if (held?.used && !held.returned && !dolphinIsBusy(next, side, held))
+      next = returnLoanedHatsu(next, side)
+  }
+  return reconcileLoanLinks(next)
 }

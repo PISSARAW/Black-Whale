@@ -5,7 +5,7 @@ import { performLuiniAction } from './luiniSpatial'
 import { PREPARED_COSTS } from './preparationTuning'
 import { chainAbilitySealed } from './kurapika'
 import { preparationCheck, preparationSource, animalTarget } from './preparationRequirements'
-import { nearEntity, updateEntity } from './preparationWorld'
+import { nearEntity, liveEntity, updateEntity } from './preparationWorld'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -94,7 +94,10 @@ export function completePreparation(state: FightState, side: FightSide): FightSt
 
 export function controlledEntities(state: FightState, side: FightSide, source?: FighterId) {
   return (state.battlefield?.entities ?? []).filter(
-    (entry) => entry.controller?.side === side && (!source || entry.controller.source === source),
+    (entry) =>
+      liveEntity(entry) &&
+      entry.controller?.side === side &&
+      (!source || entry.controller.source === source),
   )
 }
 

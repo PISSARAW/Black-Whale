@@ -1,3 +1,4 @@
+import { arsenalMindAvailable } from './arsenalMind'
 import { withDolphinSupply } from './dolphinSupply'
 import { withLoanCarrier } from './dolphinBorrowing'
 import { performDolphinApplication } from './dolphinArsenal'
@@ -19,7 +20,7 @@ export function performArsenalAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
   const { state, side, command } = options
-  if (!fightAcceptsCommands(state)) return state
+  if (!fightAcceptsCommands(state) || !arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.action.startsWith('dolphin-') && command.action !== 'dolphin-lend')
     return executeDolphin(options, perform)

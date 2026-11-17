@@ -23,7 +23,16 @@ export function captureDolphinAura(fighter: ArcadeFighter): DolphinAuraSupply {
 }
 
 export interface StealChainDrain {
+  theftId?: string
+  moveId?: string | null
   owner: FightSide
   ownerMember?: number
   supply?: DolphinAuraSupply
+}
+
+export interface StolenChainSeal {
+  owner: FightSide
+  ownerMember?: number
+  moveId: string
+  theftId?: string
 }

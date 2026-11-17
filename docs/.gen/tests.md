@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 763
+Fichiers : 764
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -422,6 +422,11 @@ Fichiers : 763
 ## `apps/web/src/lib/fighting/dolphinLoanTeam.test.ts`
 
 - Stealth Dolphin stays attached to actual team members > lends to an actual ally at the gate, lets that ally enter, and clocks the waiting lender
+
+## `apps/web/src/lib/fighting/dolphinReturn.test.ts`
+
+- returning the original Hatsu independently of Dolphin dismissal > returns the real donor’s Hatsu as its application ends, leaving the equipped device and ET running
+- Steal Chain remembers the actual technique before its hit interrupts the victim > steals an executing Texture Surprise and keeps the resulting loan until the surface effect ends
 
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 

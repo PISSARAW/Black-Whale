@@ -11,6 +11,9 @@ import { dolphinMissingBattleBody } from './battleCantabileRules'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
+  theftId?: string
+  /** The original Hatsu is already usable again; the equipped device can still await dismissal. */
+  returned?: boolean
   victim: FightSide
   victimMember?: number
   auraSupply?: import('./dolphinAura').DolphinAuraSupply
@@ -138,7 +141,7 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = equippedDolphin(fighter)
-  return held?.used && fighter.attack?.moveId === held.moveId
+  return held?.used && !held.returned && fighter.attack?.moveId === held.moveId
     ? stolenAuraActor({
         ...loanCarrier(fighter),
         id: held.source,

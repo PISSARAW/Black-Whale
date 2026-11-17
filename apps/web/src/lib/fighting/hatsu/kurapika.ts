@@ -1,3 +1,4 @@
+import { physicalBodyKey } from '../fightBodyIdentity'
 import { captureDolphinAura } from '../dolphinAura'
 import { advanceDowsing } from '../dowsingAction'
 import { implantJudgment } from '../judgmentAction'
@@ -41,6 +42,7 @@ function chainImpact({
   state,
   side,
   defenderSide,
+  defenderMoveId,
   moveId,
   blocked,
 }: HatsuImpactContext): FightState {
@@ -54,19 +56,27 @@ function chainImpact({
       [defenderSide]: bind({ ...target, chainJail: { owner: side, x: target.x, y: target.y } }),
     }
   }
-  if (canAttachSyringe(fighter, moveId)) return attachStealSyringe(state, side, defenderSide)
+  if (canAttachSyringe(fighter, moveId))
+    return attachStealSyringe(state, side, { targetSide: defenderSide, moveId: defenderMoveId })
   if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime)
     return implantJudgment(state, side, defenderSide)
   return state
 }
 
-function attachStealSyringe(state: FightState, side: FightSide, targetSide: FightSide): FightState {
+function attachStealSyringe(
+  state: FightState,
+  side: FightSide,
+  contact: { targetSide: FightSide; moveId?: string },
+): FightState {
+  const { targetSide, moveId } = contact
   const target = state[targetSide]
   return {
     ...state,
     [targetSide]: {
       ...forceZetsu(target),
       drainingChain: {
+        moveId: stealableChainMove(target, moveId),
+        theftId: `steal:${state.roundNumber}:${state.frame}:${physicalBodyKey(state, side)}:${physicalBodyKey(state, targetSide)}`,
         owner: side,
         ownerMember: state.teamMatch?.seats[side].active ?? 0,
         supply: captureDolphinAura(target),
@@ -115,7 +125,7 @@ function drainChain(state: FightState, side: FightSide): FightState {
       ...state,
       [side]: { ...forceZetsu(target), aura, drainingChain: { ...target.drainingChain!, supply } },
     }
-  const moveId = stealableChainMove(target)
+  const moveId = target.drainingChain!.moveId ?? stealableChainMove(target)
   const drained = { ...forceZetsu(target), aura: 0, auraExhausted: true, drainingChain: undefined }
   if (!moveId) return { ...state, [side]: drained }
   return storeDrainedAbility(state, side, { ownerSide, supply, moveId, drained })
@@ -138,6 +148,7 @@ function storeDrainedAbility(
     [side]: {
       ...drained,
       stolenChainAbility: {
+        theftId: target.drainingChain?.theftId,
         owner: ownerSide,
         ownerMember: target.drainingChain?.ownerMember ?? 0,
         moveId,
@@ -148,6 +159,7 @@ function storeDrainedAbility(
       kurapika: {
         ...(owner.kurapika ?? createKurapika()),
         held: {
+          theftId: target.drainingChain?.theftId,
           victim: side,
           victimMember: state.teamMatch?.seats[side].active ?? 0,
           auraSupply: supply,

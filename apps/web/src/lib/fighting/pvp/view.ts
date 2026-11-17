@@ -39,8 +39,8 @@ const SIDE_FIELDS = new Set([
 ])
 export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
-  if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
-  if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'
+  if (field === 'sustainedKeys' && typeof value === 'string') return localSustainedKey(value)
+  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
   if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
   if (!value || typeof value !== 'object') return value
   return Object.fromEntries(
@@ -50,6 +50,16 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
     ]),
   )
 }
+function localSide(value: string): string {
+  if (value === 'player') return 'opponent'
+  return value === 'opponent' ? 'player' : value
+}
+function localSustainedKey(value: string): string {
+  return value.replace(/^(player|opponent):/, (side) =>
+    side === 'player:' ? 'opponent:' : 'player:',
+  )
+}
+
 function redactEnemy(enemy: ArcadeFighter) {
   enemy.blackVoiceScreen = undefined
   if (enemy.blackVoiceGear)

@@ -11,7 +11,7 @@ const PREFIXES: Readonly<Record<string, readonly string[]>> = {
 }
 export function dolphinCommandAllowed(actor: ArcadeFighter, command: ArsenalCommand): boolean {
   const held = equippedDolphin(actor)
-  if (!held?.loaded) return false
+  if (!held?.loaded || held.returned) return false
   return (PREFIXES[held.source] ?? []).some((prefix) => command.action.startsWith(prefix))
 }
 export function performLoanCommand(

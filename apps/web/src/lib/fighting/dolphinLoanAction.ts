@@ -1,3 +1,4 @@
+import type { StolenChainAbility } from './kurapika'
 import { withLoanCarrier } from './dolphinBorrowing'
 import { dolphinCanUse } from './kurapikaDolphin'
 import { outsideDuelAbility } from './outsideDuelAbility'
@@ -91,15 +92,12 @@ function recipientOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const body = state[side]
   const lender = dolphinBody(state, body.dolphinLoan!.lender)
   const held = body.dolphinLoan!.held
+  const [labelFr, labelEn] = recipientUseLabels(held)
   return [
     {
       command: { action: 'dolphin-use' },
-      labelFr: held.used
-        ? 'Dolphin prêté · Terminer l’application'
-        : 'Dolphin prêté · Utiliser le Hatsu chargé',
-      labelEn: held.used
-        ? 'Loaned Dolphin · Finish the application'
-        : 'Loaned Dolphin · Use the equipped Hatsu',
+      labelFr,
+      labelEn,
       ready: Boolean(lender?.kurapika?.emperorTime && recipientCanCommand(state, side)),
       conditionFr:
         'Ordre du destinataire ; aura du donneur, conditions et matériel du Hatsu conservés. Le prêteur paie Emperor Time.',
@@ -107,6 +105,13 @@ function recipientOptions(state: FightState, side: FightSide): ArsenalOption[] {
         'The recipient commands; donor aura, Hatsu conditions and real equipment remain required. The lender pays Emperor Time.',
     },
   ]
+}
+
+function recipientUseLabels(held: StolenChainAbility): [string, string] {
+  if (held.returned) return ['Dolphin prêté · Fermer Dolphin', 'Loaned Dolphin · Dismiss Dolphin']
+  return held.used
+    ? ['Dolphin prêté · Terminer l’application', 'Loaned Dolphin · Finish the application']
+    : ['Dolphin prêté · Utiliser le Hatsu chargé', 'Loaned Dolphin · Use the equipped Hatsu']
 }
 
 function recipientCanCommand(state: FightState, side: FightSide): boolean {

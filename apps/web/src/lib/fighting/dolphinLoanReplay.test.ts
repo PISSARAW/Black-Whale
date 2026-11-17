@@ -1,3 +1,5 @@
+import { physicalBodyKey } from './fightBodyIdentity'
+import { localPerspective } from './pvp/view'
 import { BASHO_ATTESTED_POEMS } from './bashoPoem'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
@@ -124,6 +126,12 @@ describe('Stealth Dolphin loan replay and the P2 network boundary', () => {
   it('mirrors lender and original victim separately in the recipient’s local P1 view', () => {
     const state = preparedLoan().state
     const local = privatePvpState(state, 'opponent')
+    expect(physicalBodyKey(local, 'player')).toBe(physicalBodyKey(state, 'opponent'))
+    expect(physicalBodyKey(local, 'opponent')).toBe(physicalBodyKey(state, 'player'))
+    expect(localPerspective(['player:senseSeals', 'gum'], true, 'sustainedKeys')).toEqual([
+      'opponent:senseSeals',
+      'gum',
+    ])
     expect(local.player.dolphinLoan?.lender).toEqual({ owner: 'opponent', member: 0 })
     expect(local.player.dolphinLoan?.held.victim).toBe('player')
     expect(local.player.dolphinLoan?.held.victimMember).toBe(0)

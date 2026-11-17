@@ -638,3 +638,34 @@ ne doivent pas être transformés en trois espions interchangeables. L'écoute �
 travers une barrière et l'oiseau posé au contact sont décrits ; la fonction du
 troisième et la lecture exacte de la limite de simultanéité restent à traiter
 sans inventer de pouvoir (chapitres 366, 373 et 389).
+
+## Dolphin : restitution, fermeture et continuité des effets
+
+La fin de l'application rend désormais immédiatement le Hatsu au corps du donneur,
+sans confondre cette restitution avec la disparition du Dolphin équipé. Tant que
+le dispositif reste présent, Emperor Time continue de coûter de la vie. Le
+destinataire peut ensuite le fermer même sans aura personnelle ; le prêteur éveillé
+peut aussi fermer un prêt déjà restitué via leur connexion commune. Une capacité
+encore inutilisée ou une application maintenue ne bénéficie pas de ce raccourci.
+
+Chaque prélèvement effectif possède son identifiant. Une ancienne restitution ne
+peut donc pas effacer un vol plus récent du même Hatsu sur le même corps. Le Hatsu
+exécuté au contact de la seringue est conservé avant que la blessure et Zetsu
+n'interrompent l'action de la victime. La sélection de duel peut ainsi retenir une
+Texture Surprise réellement en cours, au lieu de revenir systématiquement au
+premier spécial une fois le drainage terminé ; cela n'ajoute aucune condition de
+connaissance ou d'observation préalable à Steal Chain.
+
+Les constructions qui apparaissent à la fin d'un démarrage sont suivies pendant
+leurs propres hooks : Texture Surprise garde son prêt tant que le support reste
+actif, et les autres Hatsu personnels du porteur ne rallongent pas cette utilisation.
+Little Eye emprunté reste contrôlé pendant l'inconscience liée, comme dans le cas
+montré d'Oito. La mort de l'animal met fin au contrôle et restitue le Hatsu avant
+la fermeture de Dolphin. Les entités mortes ne restent pas comptées comme des
+animaux contrôlés. L'observation sensorielle et l'activation complète de Little Eye
+sur une personne non éveillée restent à compléter dans le chantier suivant.
+
+Les commandes volontaires du panneau, y compris l'arrêt d'un soutien, ne passent
+plus pendant un sommeil, un blackout ou une manipulation qui retire l'autonomie.
+Les boutons concernés sont désactivés. Le On reste disponible. Cette passe porte
+le ruleset à **clash-combat-33** ; elle ne clôt pas les autres réserves de l'audit.

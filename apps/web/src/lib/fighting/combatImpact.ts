@@ -3,7 +3,7 @@ import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
 import { recoilGuardedAttack } from './guardRecoil'
-import { strikeRead, projectileRead } from './combatRead'
+import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
 import { resolveIllumiContact } from './illumiImpact'
 import { resolveLynchContact } from './lynchInterrogation'
@@ -185,6 +185,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       defenderSide,
       source: attacker.attack.hatsuSource,
       moveId: attacker.attack.moveId,
+      defenderMoveId: interruptedHatsuMove(defender),
       blocked: defence.blocked,
       concealed: attacker.attack.concealed,
     })

@@ -80,6 +80,7 @@ export function dolphinCanContinue(state: FightState, side: FightSide, moveId: s
   const held = state[side].kurapika?.held
   return (
     held?.source === 'hisoka' &&
+    !held.returned &&
     state.bungeeGum?.owner === side &&
     ['hisoka:forwardSpecial', 'hisoka:backSpecial'].includes(moveId)
   )

@@ -1,3 +1,5 @@
+import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { advanceLuiniAnchors } from './luiniSpatial'
 import { advanceCopiedInventory, recordEquipmentPickup } from './copiedInventory'
 import { historicalMatterExists } from './historicalCopyLifetime'
@@ -111,8 +113,9 @@ function canInteract(entry: PreparedEntity, side: FightSide): boolean {
 function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity {
   const awake = { ...entry, sleepingFrames: Math.max(0, (entry.sleepingFrames ?? 0) - 1) }
   const control = entry.controller
-  if (!control || !liveEntity(entry)) return awake
-  if (!controllerKeepsAbility(state, entry)) return { ...awake, controller: undefined }
+  if (!control) return awake
+  if (!liveEntity(entry) || !controllerKeepsAbility(state, entry))
+    return { ...awake, controller: undefined }
   if (control.source === 'sayird') return advanceAnimal(state, awake)
   return advanceCourier(state, awake)
 }
@@ -142,8 +145,8 @@ function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntit
 
 function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boolean {
   const { side, source } = entry.controller!
-  const fighter = state[side]
-  if (fighter.hatsuEffects.hatsuStolen > 0) return false
+  const fighter = preparedControllerBody(state, side, source)
+  if (fighter.health <= 0 || fighter.hatsuEffects.hatsuStolen > 0) return false
   if (fighter.id === 'chrollo')
     return chrolloHasActivePage(fighter, source as Exclude<typeof source, 'chrollo'>)
   if (fighter.kurapika?.held?.used) return fighter.kurapika.held.source === source
@@ -152,6 +155,18 @@ function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boole
     fighter,
     source === 'sayird' ? 'sayird:littleEye' : 'cluck:birdManipulation',
   )
+}
+
+function preparedControllerBody(
+  state: FightState,
+  side: FightSide,
+  source: FightState['player']['id'],
+) {
+  const actor = state[side]
+  const held = equippedDolphin(actor)
+  return held?.used && !held.returned && held.source === source
+    ? stolenAuraActor(loanCarrier(actor))
+    : actor
 }
 
 function approach(from: number, to: number, speed: number): number {

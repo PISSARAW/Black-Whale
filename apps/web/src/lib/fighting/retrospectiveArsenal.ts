@@ -1,3 +1,4 @@
+import { arsenalMindAvailable } from './arsenalMind'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
@@ -44,7 +45,7 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
-  if (state[side].blackVoiceControl?.active) return state
+  if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.loan) return performLoanCommand({ state, side, command }, performArsenalCommand)
   if (selfDolphinCommand(state, side, command))
@@ -100,10 +101,13 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 }
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  return [
+  const options = [
     ...nativeArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),
   ]
+  return arsenalMindAvailable(state[side])
+    ? options
+    : options.map((option) => ({ ...option, ready: false }))
 }
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [

@@ -90,6 +90,7 @@ export function triggerHatsuAction(options: {
 }
 
 export function resolveHatsuImpact(options: {
+  defenderMoveId?: string
   state: FightState
   side: FightSide
   defenderSide: FightSide

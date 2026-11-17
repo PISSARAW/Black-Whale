@@ -1,6 +1,7 @@
 import { createFightState } from './fightState'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import type { CombatRoute } from './combatRoutes'
+import { prepareCombatRoute } from './combatRouteSetup'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -31,7 +32,7 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
       infiniteAura: false,
       infiniteHealth: false,
     })
-  return setTrainingDummy(state, { behavior: 'guard-after-hit' })
+  return setTrainingDummy(prepareCombatRoute(state, route.setup), { behavior: 'guard-after-hit' })
 }
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {

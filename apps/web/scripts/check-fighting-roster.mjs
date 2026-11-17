@@ -53,7 +53,12 @@ try {
     await page.locator('.showcase-portrait img').waitFor({ timeout: 30000 })
     await dossier.locator('summary').click()
     assert.equal(await dossier.locator('dt').count(), 3)
-    assert.match(await dossier.innerText(), /4 routes/)
+    assert.match(
+      await dossier.innerText(),
+      new RegExp(
+        `${['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks'].includes(id) ? 8 : 4} routes`,
+      ),
+    )
     assert.equal(await page.locator('.showcase-portrait .failed').count(), 0)
     const file = `${id}.png`
     await page.locator('.character-showcase').screenshot({ path: path.join(output, file) })
@@ -62,11 +67,16 @@ try {
   await page.evaluate(() => window.rosterFixture.show('academy'))
   const select = page.getByRole('combobox', { name: 'Personnage des exercices' })
   assert.equal(await select.locator('option').count(), 40)
-  await page.getByText('École de combat · 160 routes et défense', { exact: true }).waitFor()
+  await page.getByText('École de combat · 184 routes et défense', { exact: true }).waitFor()
   for (const { id } of roster) {
     await select.selectOption(id)
-    assert.equal(await page.getByRole('button', { name: /^Pratiquer ·/ }).count(), 4)
-    assert.equal(await page.getByRole('button', { name: /^Démontrer ·/ }).count(), 4)
+    const routeCount = ['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks'].includes(
+      id,
+    )
+      ? 8
+      : 4
+    assert.equal(await page.getByRole('button', { name: /^Pratiquer ·/ }).count(), routeCount)
+    assert.equal(await page.getByRole('button', { name: /^Démontrer ·/ }).count(), routeCount)
     await page.getByRole('button', { name: 'Défense · bloquer puis punir' }).waitFor()
   }
   for (const width of [390, 320]) {
@@ -95,13 +105,13 @@ try {
   await writeFile(
     path.join(output, 'report.json'),
     JSON.stringify(
-      { passed: true, portraits: 40, routes: 160, defense: 40, widths: [1440, 390, 320], errors },
+      { passed: true, portraits: 40, routes: 184, defense: 40, widths: [1440, 390, 320], errors },
       null,
       2,
     ),
   )
   process.stdout.write(
-    `Roster UI verified: 40 portraits, 160 routes, 40 defense exercises. ${output}\n`,
+    `Roster UI verified: 40 portraits, 184 routes, 40 defense exercises. ${output}\n`,
   )
 } finally {
   await browser?.close()

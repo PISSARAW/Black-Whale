@@ -178,14 +178,15 @@ function movesetAttackData(
   move: NonNullable<ReturnType<typeof moveById>>,
 ): AttackFrameData {
   const data = move.tuning
+  const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return {
     ...data,
     guard: move.guard,
     canHitDowned: move.canHitDowned,
     reversalInvulnerableFrames: move.reversalInvulnerableFrames,
-    startup: data.startup + (fighter.attack?.concealed ? 10 : 0),
-    cancelEnd: data.startup + data.active + 6,
+    startup,
+    cancelEnd: move.cancelWindow ? startup + move.cancelWindow.end : data.startup + data.active + 6,
     box: {
       left: 1.4,
       right: data.reach,

@@ -2,6 +2,7 @@ import { performParallelFutureAction } from './parallelFutureAbility'
 import { performCyclotronAction } from './phinksAction'
 import { performKurapikaAction, toggleEmperorTime } from './kurapikaActions'
 import { moveById } from './movesets'
+import { hasDuelComboProfile } from './duelComboProfiles'
 import type { FighterMove } from './movesetTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightInput, FightSide, FightState, MoveAction } from './types'
@@ -19,8 +20,9 @@ export function routedFightMove(
   fighter: ArcadeFighter,
   selected: FighterMove | null,
 ): FighterMove | null {
-  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id))
-    return selected
+  // These fighters expose directional combo branches; preserve the player's exact choice.
+  if (hasDuelComboProfile(fighter.id)) return selected
+  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id)) return selected
   if (['shizuku', 'kalluto'].includes(fighter.id)) return selected
   const current = moveById(fighter.attack?.moveId)
   return (

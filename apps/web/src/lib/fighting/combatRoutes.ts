@@ -2,6 +2,8 @@ import type { FighterId, MoveSlot } from './types'
 import { FIGHTING_ROSTER } from './roster'
 import { ROSTER_COMBAT_ROUTES } from './rosterCombatRoutes'
 import type { RosterFighterId } from './rosterChoreography'
+import { DUEL_COMBO_LESSONS } from './duelComboLessons'
+import type { CombatRouteSetup } from './combatRouteSetup'
 
 const REFERENCE_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 type ReferenceFighter = (typeof REFERENCE_FIGHTERS)[number]
@@ -15,6 +17,7 @@ export interface CombatRoute {
   title: readonly [string, string]
   moves: readonly MoveSlot[]
   requirement: readonly [string, string]
+  setup?: CombatRouteSetup
 }
 const TITLES = {
   confirm: ['Confirmer une touche', 'Confirm a hit'],
@@ -102,6 +105,7 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
             ] as const),
     })),
   ),
+  ...DUEL_COMBO_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)

@@ -4,6 +4,8 @@ import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './c
 import { tickFight } from './engine'
 import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT, type FightState } from './types'
+import { canStartFighterAttack } from './fighterAttacks'
+import { moveForSlot } from './movesets'
 
 function step(state: FightState, guarding: boolean) {
   return tickFight(state, EMPTY_INPUT, {
@@ -39,7 +41,12 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
   let index = 0
   let lastImpact = 0
   for (let tick = 0; tick < 240 && contacts.length < route.moves.length; tick++) {
-    if (index === 0 || (index < route.moves.length && state.player.attack?.confirmedHit)) {
+    const move = moveForSlot(route.fighter, route.moves[index])
+    if (
+      move &&
+      (index === 0 || contacts.length === index) &&
+      canStartFighterAttack(state.player, move.kind, move.id)
+    ) {
       const slot = route.moves[index]
       const after = performTrainingAction({
         state,

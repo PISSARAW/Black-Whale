@@ -37,10 +37,8 @@ export function createCombatSchool() {
       sentStep = -1
       opponentAt = -1000
       view.set(initialCombatProgress(id, demo))
-      // The slower light of Franklin needs the larger, real recovery of Benjamin's heavy.
-      const defensePartner = ['chrollo:defense', 'franklin:defense'].includes(id)
-        ? ('benjamin' as const)
-        : undefined
+      // A common, genuinely punishable heavy keeps this lesson stable across personal links.
+      const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
       const state = createCombatRouteFight(route, defensePartner)
       return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
     },

@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { FIGHTING_ROSTER } from './roster'
 import { COMBAT_FIGHTERS, COMBAT_ROUTES } from './combatRoutes'
 import { movesetFor } from './movesets'
+import { hasDuelComboProfile } from './duelComboProfiles'
 import { ROSTER_CHOREOGRAPHY } from './rosterChoreography'
 import { keyedMove } from './keyPoseMoves'
 import { buildFightFigure } from './fighterFigure'
@@ -30,12 +31,16 @@ const NORMALS: MoveSlot[] = [
 ]
 
 describe('roster quality parity', () => {
-  it('covers exactly the forty playable fighters, with four routes and a personal movement direction each', () => {
+  it('covers forty fighters, their core routes and twenty-four advanced duel lessons', () => {
     const ids = FIGHTING_ROSTER.map((fighter) => fighter.id).sort()
     expect(Object.keys(ROSTER_CHOREOGRAPHY).sort()).toEqual(ids)
     expect([...COMBAT_FIGHTERS].sort()).toEqual(ids)
-    expect(COMBAT_ROUTES).toHaveLength(160)
-    expect(new Set(COMBAT_ROUTES.map((route) => route.id)).size).toBe(160)
+    expect(COMBAT_ROUTES).toHaveLength(184)
+    expect(new Set(COMBAT_ROUTES.map((route) => route.id)).size).toBe(184)
+    for (const id of ids)
+      expect(COMBAT_ROUTES.filter((route) => route.fighter === id)).toHaveLength(
+        hasDuelComboProfile(id) ? 8 : 4,
+      )
   })
 
   it.each(FIGHTING_ROSTER)(
@@ -63,7 +68,7 @@ describe('roster quality parity', () => {
             moveset.moves.some((move) => move.slot === slot),
             route.id,
           ).toBe(true)
-        if (!['kurapika', 'hisoka', 'chrollo', 'benjamin'].includes(id)) {
+        if (!hasDuelComboProfile(id)) {
           expect(
             route.moves.every((slot) => !slot.includes('Special') && slot !== 'finisher'),
           ).toBe(true)

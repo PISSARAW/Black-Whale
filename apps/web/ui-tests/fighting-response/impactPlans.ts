@@ -26,7 +26,7 @@ function routeCommand(options: {
   const slot = route.moves[index]
   const move = moveForSlot(route.fighter, slot)!
   if (!canStartFighterAttack(state.player, move.kind, move.id)) return null
-  if (index > 0 && !state.player.attack?.confirmedHit) return null
+  if (index > 0 && (state.opponent.comboHits !== index || state.opponent.hitStun === 0)) return null
   return {
     kind: 'move',
     action: combatRouteAction(slot),

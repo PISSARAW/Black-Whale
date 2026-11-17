@@ -8,6 +8,8 @@ export type CombatCue =
   | 'ready'
   | 'wait'
   | 'cancel'
+  | 'link-wait'
+  | 'link'
   | 'late'
   | 'blocked'
   | 'wrong'
@@ -81,6 +83,9 @@ function routeCue(progress: CombatProgress, state: FightState, route: CombatRout
   const move = moveForSlot(route.fighter, route.moves[progress.step])!
   if (state.player.attack?.moveId === move.id) return 'wait'
   if (state.opponent.hitStun <= move.tuning.startup) return 'late'
+  const previous = moveForSlot(route.fighter, route.moves[progress.step - 1])!
+  if (previous.linkInto?.includes(move.id))
+    return canStartFighterAttack(state.player, move.kind, move.id) ? 'link' : 'link-wait'
   return canStartFighterAttack(state.player, move.kind, move.id) ? 'cancel' : 'wait'
 }
 function defenseContact(progress: CombatProgress, state: FightState): CombatProgress {

@@ -48,8 +48,10 @@ en français et en anglais, avec les touches configurées.
 
 ## Combat et apprentissage
 
-`combatRoutes.ts` couvre les quarante combattants : quatre routes par personnage,
-soit 160 routes, avec démonstration et entraînement manuel. Les 144 nouvelles
+`combatRoutes.ts` couvre les quarante combattants : quatre routes de base par personnage,
+et vingt-quatre exemples avancés pour six personnages, soit 184 routes avec
+démonstration et entraînement manuel. Leurs profils indépendants sont décrits dans
+[`DUEL_COMBOS.md`](./DUEL_COMBOS.md). Les 144 autres
 routes de `rosterCombatRoutes.ts` utilisent les coups physiques ; elles ne
 transforment pas les soutiens ou préparations en Hatsu offensifs. Les seize
 routes des personnages de référence sont conservées.
@@ -60,8 +62,8 @@ Sur garde, seul le premier léger dispose du lien de pression déclaré vers son
 lourd ; la pression s’arrête ensuite. Les projections, les coûts, les conditions
 des capacités et les règles de juggle restent appliqués par le moteur ordinaire.
 
-Quarante exercices enseignent aussi le blocage puis la punition réelle. Pour
-Chrollo et Franklin, le mannequin utilise Benjamin : sa récupération laisse une
+Quarante exercices enseignent aussi le blocage puis la punition réelle. Le
+mannequin utilise Benjamin pour tous : sa récupération laisse une
 fenêtre adaptée à leur léger. Aucun ralentissement artificiel n’est ajouté au
 mannequin pendant l’exercice.
 
@@ -72,7 +74,7 @@ mannequin pendant l’exercice.
   géométries, absence de mutation du combattant, écriture et interruptions.
 - `fightPoseClock.test.ts` : maintien du contact pour les neuf coups de chacun des
   quarante personnages, puis retour à la garde.
-- `combatRoutes.test.ts` : 1 280 situations, deux sens, deux distances, centre et
+- `combatRoutes.test.ts` : 1 472 situations, deux sens, deux distances, centre et
   coin, avec garde adverse après la première touche.
 - `combatSchool.test.ts` : démonstrations à 120, 60, 30 et 20 lots de rendu par
   seconde, défense des quarante personnages et relecture déterministe des routes.

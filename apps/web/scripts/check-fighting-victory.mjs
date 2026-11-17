@@ -28,6 +28,19 @@ const browser = await chromium.launch({
 })
 const errors = [],
   results = []
+const matchups = [
+  ['hisoka', 'franklin', 'heavens-arena', 'player'],
+  ['chrollo', 'hisoka', 'whale-hold', 'opponent'],
+  ['kurapika', 'marayam', 'banquet-hall', 'player'],
+  ['feitan', 'chrollo', 'heavens-arena', 'opponent'],
+  ['phinks', 'biscuit', 'screening-room', 'player'],
+  ['franklin', 'kurapika', 'whale-hold', 'opponent'],
+  ['benjamin', 'tserriednich', 'benjamin-salon', 'player'],
+  ['tserriednich', 'hisoka', 'vip-casino', 'opponent'],
+  ['leorio', 'franklin', 'banquet-hall', 'player'],
+  ['halkenburg', 'biscuit', 'halkenburg-salon', 'opponent'],
+  ['camilla', 'chrollo', 'camilla-salon', 'player'],
+]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
   page.on('pageerror', (error) => {
@@ -42,13 +55,13 @@ try {
   })
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)
+  assert.deepEqual(
+    matchups.map(([winner]) => winner).sort(),
+    (await page.evaluate(() => window.victoryFixture.fighters())).sort(),
+    'Every registered cinematic must have a browser integration check',
+  )
   for (const [winner, target, stage, side] of [
-    ['hisoka', 'franklin', 'heavens-arena', 'player'],
-    ['chrollo', 'hisoka', 'whale-hold', 'opponent'],
-    ['kurapika', 'marayam', 'banquet-hall', 'player'],
-    ['feitan', 'chrollo', 'heavens-arena', 'opponent'],
-    ['phinks', 'biscuit', 'screening-room', 'player'],
-    ['franklin', 'kurapika', 'whale-hold', 'opponent'],
+    ...matchups,
     ['hisoka', 'hisoka', 'observation-deck', 'opponent'],
   ]) {
     await page.evaluate((options) => window.victoryFixture.configure(options), {
@@ -61,7 +74,7 @@ try {
     await page.waitForFunction(() => window.victoryFixture.snapshot().ready)
     await page.evaluate(() => window.victoryFixture.finish())
     const before = await page.evaluate(() => window.victoryFixture.snapshot().state)
-    for (const elapsed of [2.5, 4.7, 8]) {
+    for (const elapsed of [2.5, 4.7, 8, 9.4]) {
       await page.evaluate((t) => window.victoryFixture.pose(t), elapsed)
       await page.waitForTimeout(150)
       await page.screenshot({ path: path.join(output, `${winner}-${target}-${elapsed}.png`) })
@@ -86,6 +99,43 @@ try {
   await page.screenshot({ path: path.join(output, 'mobile-phinks-marayam.png') })
   // Real FightStage: automatic playback, delayed results, pause, skip and no retrigger.
   await page.setViewportSize({ width: 1280, height: 800 })
+  for (const [winner, target, stage, side] of matchups) {
+    await page.evaluate((options) => window.victoryFixture.configure(options), {
+      winner,
+      target,
+      stage,
+      side,
+    })
+    await page.locator('.fight-scene.ready').waitFor()
+    await page.evaluate(() => window.victoryFixture.finish())
+    const live = page.locator('[data-victory-cinematic]')
+    await live.waitFor()
+    assert.equal(await live.getAttribute('data-winner'), winner)
+    assert.equal(await live.getAttribute('data-target'), target)
+    assert.equal(await live.getAttribute('data-stage'), stage)
+    await page.waitForFunction(
+      () =>
+        Number(document.querySelector('[data-victory-cinematic]')?.getAttribute('data-elapsed')) >
+        0,
+    )
+    const audio = page.locator('audio').last()
+    await page.waitForFunction(
+      (winner) =>
+        [...document.querySelectorAll('audio')].some((audio) =>
+          audio.src.endsWith(`/clash-victories/${winner}.m4a`),
+        ),
+      winner,
+    )
+    const soundtrack = await page.request.get(
+      new URL(await audio.getAttribute('src'), page.url()).href,
+    )
+    assert.equal(soundtrack.status(), 200, `${winner}: soundtrack must be served`)
+    await page.keyboard.press('Escape')
+    await live.waitFor({ state: 'detached' })
+    assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().active), false)
+    await page.getByRole('button', { name: /Rejouer|Revanche/i }).waitFor()
+    console.log(`Verified automatic victory and audio: ${winner}`)
+  }
   await page.evaluate((options) => window.victoryFixture.configure(options), {
     winner: 'hisoka',
     target: 'chrollo',

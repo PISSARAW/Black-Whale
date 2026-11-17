@@ -11,6 +11,7 @@ export interface VictoryActor {
 }
 export interface VictoryContext {
   scene: Scene
+  scenery: Object3D
   camera: PerspectiveCamera
   state: FightState
   frame: VictoryFrame

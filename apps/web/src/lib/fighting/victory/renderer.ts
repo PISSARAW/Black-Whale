@@ -15,6 +15,11 @@ import { createKurapikaVictory } from './kurapika'
 import { createFeitanVictory } from './feitan'
 import { createPhinksVictory } from './phinks'
 import { createFranklinVictory } from './franklin'
+import { createBenjaminVictory } from './benjamin'
+import { createTserriednichVictory } from './tserriednich'
+import { createLeorioVictory } from './leorio'
+import { createHalkenburgVictory } from './halkenburg'
+import { createCamillaVictory } from './camilla'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -23,9 +28,26 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   feitan: createFeitanVictory,
   phinks: createPhinksVictory,
   franklin: createFranklinVictory,
+  benjamin: createBenjaminVictory,
+  tserriednich: createTserriednichVictory,
+  leorio: createLeorioVictory,
+  halkenburg: createHalkenburgVictory,
+  camilla: createCamillaVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
-  const base = { hisoka: 1.5, chrollo: 1.7, kurapika: 1.1, feitan: 2.3, phinks: 0.8, franklin: 2.7 }
+  const base = {
+    hisoka: 1.5,
+    chrollo: 1.7,
+    kurapika: 1.1,
+    feitan: 2.3,
+    phinks: 0.8,
+    franklin: 2.7,
+    benjamin: 1.6,
+    tserriednich: 1.8,
+    leorio: 2.4,
+    halkenburg: 2.6,
+    camilla: 1.9,
+  }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
 function hideAuxiliaryRoots(options: {
@@ -111,7 +133,7 @@ export function createVictoryRenderer(options: {
         const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
         drivers.set(frame.fighter, driver)
         driver.update(context)
-        if (comfort.camera === 0)
+        if (comfort.camera === 0 && !['leorio', 'camilla'].includes(frame.fighter))
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)
         victim.root.updateWorldMatrix(true, true)

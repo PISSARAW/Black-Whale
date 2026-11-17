@@ -673,3 +673,140 @@ cinématiques de victoire à convertir. Camilla reste comptée séparément comm
 référence. Les effets partagés de choc et de cratère portent désormais les noms
 `cinematicImpactEffects.ts` et `cinematicCrater.ts`, avec `cinematicEase.ts`
 pour l'interpolation ; Phinks et Franklin ne dépendent d'aucun autre personnage.
+
+## Benjamin — Le dernier ordre
+
+```sh
+node apps/web/scripts/render-benjamin-fatality.mjs --inspect
+node apps/web/scripts/render-benjamin-fatality.mjs
+node apps/web/scripts/compose-benjamin-fatality.mjs
+node apps/web/scripts/check-benjamin-fatality.mjs
+```
+
+Sortie : `output/fighting-benjamin-fatality/Benjamin-Fatality-10s.mp4`,
+600 images, dix secondes, 1920 × 1080, 60 images/s, H.264 et AAC stéréo.
+`--audio-only` sur le script de composition régénère uniquement le son.
+
+Un duel continu contre Tserriednich est résolu par le moteur : Air Blow de
+la paume gauche donne le K.-O. Les PV, l'aura et le verdict ne sont jamais
+réécrits par le film. Les dix secondes suivantes utilisent directement
+`victory/benjamin.ts`, comme les victoires normales du jeu, avec la cible et
+l'arène du match. La démo accepte `target`, `stage`, `side=opponent` et `reduced`
+dans son URL pour contrôler tailles, lieux, P2 et confort visuel.
+
+Le gros plan d'ouverture montre deux plaques militaires de souvenir ; un écho
+de soldat apparaît et rejoint la paume gauche. Benjamin avance à bout portant,
+déchaîne Air Blow à 4,5 s, projette puis disperse la cible en fragments stylisés.
+Il salue de la main droite ; le verdict Fatality et l'annonce commencent à 7 s.
+La chaîne reste sous le menton et le salut conserve les articulations natives.
+
+L'écho est un rappel visuel de Benjamin Baton, acquis avant le duel. Il ne vole
+pas le Hatsu du vaincu. La projection, la dispersion et les plaques sont une mise
+en scène arcade ; le mécanisme complet d'Air Blow n'est pas établi par le manga.
+Le mix associe cliquetis des plaques, souffle spectral, pas militaires,
+compression d'air, explosion unique, débris et voix locale Daniel.
+
+Le lot compte désormais cinq fatalities (Kurapika, Feitan, Phinks, Franklin,
+Benjamin) et deux cinématiques de victoire (Hisoka et Chrollo).
+
+## Tserriednich — Tu arrives trop tard
+
+`tserriednich-fatality.html` joue dix secondes contre Hisoka au casino VIP,
+avec le renderer de victoire utilisé dans Clash. La vision désaturée précède
+la réouverture des yeux, puis deux corps opaques montrent la divergence.
+La prise du poignet, le tir dévié et le contre final emploient des bras articulés
+sans étirement. Les paramètres `target`, `stage`, `side` et `reduced` permettent
+les contrôles des autres modèles et lieux.
+
+`node apps/web/scripts/render-tserriednich-fatality.mjs` exporte 600 images.
+`node apps/web/scripts/compose-tserriednich-fatality.mjs` ajoute le son et fournit
+la bande du jeu. `node apps/web/scripts/check-tserriednich-fatality.mjs` contrôle
+les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclenchement réel.
+
+## Chrollo — Indoor Fish × Sun and Moon
+
+```sh
+node apps/web/scripts/render-chrollo-fish-fatality.mjs --inspect
+node apps/web/scripts/render-chrollo-fish-fatality.mjs
+node apps/web/scripts/compose-chrollo-fish-fatality.mjs
+node apps/web/scripts/check-chrollo-fish-fatality.mjs
+```
+
+Sortie : `output/fighting-chrollo-fish-fatality/Chrollo-Indoor-Fish-Fatality-10s.mp4`,
+600 images en 1080p60 et dix secondes de son. Le duel natif se termine par Sun
+and Moon, puis le renderer de victoire de Clash joue les deux poissons marqués,
+les morsures et leur croisement. Le contact des marques, la fermeture du livre
+et la détonation partagent l'image 390 (6,5 s). Le verdict Fatality arrive à 8 s.
+
+La démo joue contre Hisoka au casino VIP. `target`, `stage`, `side=opponent` et
+`reduced` permettent de contrôler l'adaptation. Le mix et l'animation remplacent
+la scène de Chrollo dans les victoires normales, sans modifier le résultat.
+Cette combinaison est une chorégraphie arcade demandée pour le jeu. Les vidéos
+précédentes restent disponibles ; le lot courant comporte sept fatalities
+et une cinématique de victoire pour Hisoka.
+
+## Leorio — L’étage supérieur
+
+```sh
+node apps/web/scripts/render-leorio-fatality.mjs --inspect
+node apps/web/scripts/render-leorio-fatality.mjs
+node apps/web/scripts/compose-leorio-fatality.mjs
+node apps/web/scripts/check-leorio-fatality.mjs
+```
+
+Sortie : `output/fighting-leorio-fatality/Leorio-Fatality-10s.mp4`, 1080p60,
+600 images et dix secondes avec son. La démo utilise le modèle natif de Leorio
+contre Hisoka au casino VIP et le renderer de victoire de production. Les
+paramètres `target`, `stage`, `side=opponent` et `reduced` restent disponibles.
+
+Les six coups à distance précèdent un uppercut à 5,8 s ; la caméra suit la
+projection jusqu'au plafond à 7 s. Fissures et débris accompagnent le choc,
+puis Leorio remet ses lunettes. Le son synchronise les frappes au sol, les
+sorties des poings, les impacts et l'annonce à huit secondes. L'exagération
+de la projection est une chorégraphie après le verdict natif, sans changer
+la simulation. Le lot comporte désormais huit fatalities et la victoire
+d'Hisoka.
+
+## Halkenburg — Une seule volonté
+
+```sh
+node apps/web/scripts/render-halkenburg-fatality.mjs --inspect
+node apps/web/scripts/render-halkenburg-fatality.mjs
+node apps/web/scripts/compose-halkenburg-fatality.mjs
+node apps/web/scripts/check-halkenburg-fatality.mjs
+```
+
+Sortie : `output/fighting-halkenburg-fatality/Halkenburg-Fatality-10s.mp4`,
+600 images en 1080p60 avec dix secondes de son. La démo oppose Halkenburg à
+Hisoka dans le salon du neuvième prince. Trois compagnons alimentent l'arc,
+Grimmel part à 5 s, frappe à 5,4 s, puis le transfert de conscience prend
+le relais. Le gros plan des yeux de la cible montre le changement de volonté.
+
+Le moteur résout d'abord le scénario avec trois compagnons consentants, la
+charge complète et une possession réelle. Le renderer de victoire reconstruit
+ensuite ces étapes sans modifier l'état natif. Le mix associe trois voix
+synthétiques, la tension de corde, le départ de flèche et le transfert.
+`target`, `stage`, `side=opponent` et `reduced` permettent les contrôles des
+modèles et décors. Le lot compte dix cinématiques de victoire.
+
+## Camilla — Le Souffle, intégré à Clash
+
+```sh
+node apps/web/scripts/render-camilla-fatality.mjs --inspect
+node apps/web/scripts/render-camilla-fatality.mjs
+node apps/web/scripts/compose-camilla-fatality.mjs
+node apps/web/scripts/check-camilla-fatality.mjs
+```
+
+Sortie : `output/fighting-camilla-fatality/Camilla-Fatality-10s.mp4`,
+600 images en 1080p60 avec dix secondes de son. La démo conserve une véritable
+mort et résurrection Cat's Name contre Chrollo dans le salon de Camilla avant
+de montrer le renderer utilisé dans le jeu. `target`, `stage`, `side=opponent`
+et `reduced` permettent de vérifier les autres acteurs et décors.
+
+La prise à deux pattes, l'écrasement et l'absorption précèdent 90 images de
+portrait immobile. Les yeux s'ouvrent à l'image 554 ; l'unique inspiration
+commence à l'image 558. La composition reprend la bande originale de la
+référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
+Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
+règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.

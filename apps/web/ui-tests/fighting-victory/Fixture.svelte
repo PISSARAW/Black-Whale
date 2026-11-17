@@ -5,7 +5,7 @@
   import FightVictoryOverlay from '$lib/components/fighting/FightVictoryOverlay.svelte'
   import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
   import { beginFight, createFight } from '$lib/fighting/engine'
-  import { selectVictory } from '$lib/fighting/victory/catalogue'
+  import { selectVictory, VICTORY_FIGHTERS } from '$lib/fighting/victory/catalogue'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FighterId, FightSide, FightMode } from '$lib/fighting/types'
   import type { FightStageId } from '$lib/fighting/stages'
@@ -69,6 +69,7 @@
       },
       finish,
       pose,
+      fighters: () => [...VICTORY_FIGHTERS],
       async pause(value: boolean) {
         paused = value
         await tick()

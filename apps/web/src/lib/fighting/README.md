@@ -1641,7 +1641,8 @@ dynamique sont documentés dans [COMBAT.md](./COMBAT.md).
 
 ## Cinématiques de victoire
 
-Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks et Franklin
+Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin,
+Benjamin, Tserriednich, Leorio, Halkenburg et Camilla
 se déclenchent après le verdict avec le vaincu et le décor du match courant.
 Leur intégration, leur cycle de vie et leurs vérifications sont décrits dans
 [victory/README.md](./victory/README.md).

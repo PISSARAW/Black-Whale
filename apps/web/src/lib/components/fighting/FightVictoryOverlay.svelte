@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightFutureVictory from './FightFutureVictory.svelte'
   import { VICTORY_TITLES } from '$lib/fighting/victory/catalogue'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
@@ -8,7 +9,7 @@
   export let language: 'fr' | 'en'
   export let onSkip: () => void
   $: fr = language === 'fr'
-  $: fatality = frame && !['hisoka', 'chrollo'].includes(frame.fighter)
+  $: fatality = frame && frame.fighter !== 'hisoka'
 </script>
 
 {#if frame?.active}
@@ -24,11 +25,15 @@
   >
     <div class="cinema-top"></div>
     <div class="cinema-bottom"></div>
+    {#if frame.fighter === 'tserriednich'}<FightFutureVictory
+        elapsed={frame.elapsed}
+        {language}
+      />{/if}
     <p class="cinematic-match" aria-live="polite">
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if frame.elapsed >= 7}
+    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong>{fatality ? 'FATALITY' : fr ? 'VICTOIRE' : 'VICTORY'}</strong><b
           >{fighterDefinition(frame.fighter).name}</b

@@ -199,6 +199,9 @@ jobs:
       DATABASE_URL: postgresql://bw_user:bw_password@localhost:5432/black_whale_test
       ADMIN_PASSWORD: e2e-password-not-a-secret
       SESSION_SECRET: e2e-session-secret-at-least-32-characters-long
+      # Playwright builds the same web app as production, which needs more
+      # than Node 20's observed 2 GB default heap on these runners.
+      NODE_OPTIONS: --max-old-space-size=4096
 
     steps:
       - uses: actions/checkout@v4

@@ -15,6 +15,8 @@ export type CombatRouteSetup =
   | 'warning'
   | 'question'
   | 'scouts'
+  | 'owl'
+  | 'console'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {

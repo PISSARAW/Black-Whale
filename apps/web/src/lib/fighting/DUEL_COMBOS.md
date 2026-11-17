@@ -1,9 +1,9 @@
-# Vingt-deux profils de combos
+# Vingt-six profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
 Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
-Gel, Lynch, Padaille et Zakuro ont huit exemples chacun dans l’Académie. Les quatre routes
-initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
+Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov et Beyond ont huit exemples
+chacun dans l’Académie. Les quatre routes initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
@@ -15,7 +15,9 @@ ajoutent quatre autres profils. `duelComboThirdProfiles.ts` et
 Bonolenov, Hinrigh et Mizaistom.
 `duelComboFifthProfiles.ts` et `duelComboFifthLessons.ts` ajoutent Gel, Lynch,
 Padaille et Zakuro.
-Le catalogue compte 248 routes pour quarante personnages.
+`duelComboSixthProfiles.ts` et `duelComboSixthLessons.ts` ajoutent Theta, Musse,
+Furykov et Beyond.
+Le catalogue compte 264 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -180,6 +182,24 @@ les gouttes ne font aucun dégât et ne garantissent pas une prise ou une projec
 Les questions et commandes de sang restent des préparations distinctes, avec
 leurs conditions de parole, d’équipement, de Nen et de disponibilité du corps.
 
+## Theta, Musse, Furykov et Beyond
+
+Theta peut terminer par une vraie balle au torse ou aux jambes, sans aura et même
+sans Nen. Le choix avant + L vise aussi la tête. Seul le démarrage est réglé dans
+le profil : dégâts, matière et collision viennent du projectile physique existant.
+Viser les pieds ne change pas sa garde intermédiaire et n’impose aucun Zetsu.
+Musse prépare Secret Window au contact pour 16 aura avant la conversion physique.
+Le hibou reste une information privée sur les gestes, sans lecture d’aura, du futur,
+bonus de dégâts ou immobilisation. Son pistolet U conserve sa commande séparée.
+Furykov ouvre réellement sa console à 40 aura puis dispose d’une route de cinq
+frappes, dont lourd → revers après récupération. Les alertes ne procurent ni
+esquive ni renforcement ; le déchiffrage et la fabrication restent hors duel.
+Beyond choisit une frappe physique engagée à 24 aura ou une fin basse à 20 aura,
+ou conserve son aura avec balayage et poussée ordinaires. La malédiction reste
+indisponible sans porteur et préparation ; aucun finisher à faible santé n’est ajouté.
+Les exercices `owl` et `console` attendent la récupération de leurs commandes
+réelles. Aucun contact d’information n’est compté comme dégât de combo.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -200,12 +220,14 @@ ainsi que les restrictions du poing transmis dans le sol.
 la lance, les menottes ouvertes par les dégâts et le carton sans détention automatique.
 `duelComboFifth.test.ts` vérifie les fins du bras-serpent, le choix des trois
 outils, la prolongation du foret, les réponses payées et les réserves des gouttes.
+`duelComboSixth.test.ts` vérifie les balles et leurs zones, le tir sans Nen,
+le hibou privé, la console sans renforcement et les frappes payées sans malédiction.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-12` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-13` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

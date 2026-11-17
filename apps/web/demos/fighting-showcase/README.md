@@ -1019,3 +1019,23 @@ ajoute trois passages, chute, impact, fermeture et Fatality en anglais.
 Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
 contrôlent le rendu et son déclenchement automatique dans Clash.
 Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
+
+## Longhi et Furykov — Victoires personnelles
+
+`personal-guard.html?hero=longhi` montre Moonlight Act : signatures libres,
+rupture, Zetsu puis cinq coups physiques. `?hero=furykov` montre une contre-arme adaptée à l’adversaire, une parade
+puis trois frappes. Le déchiffrage et la fabrication sont supposés achevés
+avant le duel dans ce scénario. Chaque séquence
+dure dix secondes et utilise les acteurs et l’arène de Clash. `target`,
+`stage`, `side=opponent` et `reduced` permettent les adaptations.
+
+`node apps/web/scripts/render-personal-guard.mjs --longhi --inspect` exporte
+les plans de contrôle de Longhi ; sans `--longhi`, il contrôle Furykov.
+Retirer `--inspect` produit les 600 images 1080p60.
+`node apps/web/scripts/compose-personal-guard.mjs` crée les deux pistes du jeu,
+avec les impacts synchronisés et Fatality en anglais, puis assemble les
+vidéos lorsque les images existent. `--audio-only` produit uniquement le son.
+`check-personal-guard.mjs` vérifie les variantes de démonstration et
+`check-personal-guard-victories.mjs` vérifie huit victoires et revanches dans
+Clash. Sorties : `output/fighting-personal-guard/longhi/` et
+`output/fighting-personal-guard/furykov/`.

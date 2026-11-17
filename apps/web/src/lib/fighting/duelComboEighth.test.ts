@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { describe, expect, it } from 'vitest'
 import { combatRoute, combatRoutesFor } from './combatRoutes'
 import { combatRouteAction, combatRouteInput, createCombatRouteFight } from './combatRouteFight'
@@ -155,8 +156,12 @@ describe('eighth expansion scenario prerequisites', () => {
     expect(state.impact!.sequence).toBe(sequence)
   })
 
-  it('Sayird’s real animal remains a moving observation subject while physical hits do the damage', () => {
-    const initial = createCombatRouteFight(combatRoute('sayird:little-eye'))
+  it('Sayird’s real animal follows its ordered destination while physical hits do the damage', () => {
+    const initial = performArsenalCommand(
+      createCombatRouteFight(combatRoute('sayird:little-eye')),
+      'player',
+      { action: 'little-eye-right' },
+    )
     const animal = controlledEntities(initial, 'player', 'sayird')[0]
     expect(animal).toMatchObject({
       kind: 'animal',

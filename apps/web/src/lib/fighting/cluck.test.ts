@@ -121,6 +121,7 @@ describe('Cluck — bird control retained by Steal Chain', () => {
         owner: thief,
         ownerMember: 0,
         moveId: BIRD_MANIPULATION.id,
+        theftId: held[thief].kurapika!.held!.theftId,
       })
       expect(held[victim].aura).toBeLessThan(state[victim].aura)
       expect(held[victim].auraExhausted).toBe(true)

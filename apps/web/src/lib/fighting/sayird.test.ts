@@ -110,6 +110,7 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
         owner: thief,
         ownerMember: 0,
         moveId: LITTLE_EYE.id,
+        theftId: drained[thief].kurapika!.held!.theftId,
       })
       expect(drained[victim].aura).toBeLessThan(10)
       expect(drained[victim].auraExhausted).toBe(true)

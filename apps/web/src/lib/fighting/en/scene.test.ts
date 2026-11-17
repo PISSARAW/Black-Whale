@@ -41,7 +41,7 @@ describe('neutral En contact rendering', () => {
     expect(scene.children[1].visible).toBe(false)
     const point = scene.getObjectByName('en-contact') as THREE.Mesh
     expect(point.visible).toBe(true)
-    expect(point.geometry.type).toBe('SphereGeometry')
+    expect(point.geometry.type).toBe('BoxGeometry')
     expect(point.position.x).toBe(50)
     expect((point.material as THREE.MeshBasicMaterial).color.getHex()).toBe(0xc6f4fa)
     expect(point.children).toHaveLength(0)
@@ -91,7 +91,7 @@ describe('neutral En contact rendering', () => {
     expect(new Set(points.map((point) => point.geometry)).size).toBe(1)
     expect(new Set(points.map((point) => point.material)).size).toBe(1)
     fields.sync(state)
-    expect(scene.children).toHaveLength(MAX_EN_CONTACTS + 2)
+    expect(scene.children).toHaveLength(MAX_EN_CONTACTS * 2 + 2)
     state.enReadings = []
     fields.sync(state)
     expect(points.every((point) => !point.visible)).toBe(true)

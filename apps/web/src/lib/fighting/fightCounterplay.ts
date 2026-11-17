@@ -159,7 +159,7 @@ function visiblePreparation(target: ArcadeFighter): boolean {
 }
 
 function perceivesCombatProjectile(viewer: ArcadeFighter, shot: FightProjectile): boolean {
-  if (sensesPosition(viewer, shot)) return true
+  if (sensesPosition(viewer, shot) && (shot.matter === 'object' || !shot.concealed)) return true
   if (!seesCombatBody(viewer)) return false
   if (shot.matter === 'object' || !shot.concealed) return true
   return voluntaryNenAvailable(viewer) && perceivesProjectile(viewer, shot)

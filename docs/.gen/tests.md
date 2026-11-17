@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 747
+Fichiers : 772
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -335,7 +335,7 @@ Fichiers : 747
 
 ## `apps/web/src/lib/fighting/commandQualification.test.ts`
 
-- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v20 recording
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the current recording
 - held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
 - draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
 
@@ -350,7 +350,7 @@ Fichiers : 747
 
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
-- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
+- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without ocular Gyo
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
 
@@ -409,7 +409,7 @@ Fichiers : 747
 ## `apps/web/src/lib/fighting/en/en.test.ts`
 
 - En evidence for all forty bodies > keeps a measured minimum distinct from unknown canonical maxima and arcade ranges
-- contact is distinct from visual aura inspection > senses static Zetsu bodies, hidden projectiles and hidden tethers, with no identity or timing bonus
+- contact is distinct from visual aura inspection > senses static Zetsu bodies while In protects aura projectiles and tethers
 - Phinks’s limited concentration > allows stationary presence but ends on movement, including a contact leaving the field
 
 ## `apps/web/src/lib/fighting/en/scene.test.ts`
@@ -648,8 +648,25 @@ Fichiers : 747
 
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
-- Nen techniques in an actual 2D duel > En detects physical bodies in Zetsu, hidden aura and entering projectiles only inside its radius
+- Nen techniques in an actual 2D duel > En detects bodies in Zetsu and accessible projectiles, while In hides aura
 - Category components and Emperor Time > applies hexagon efficiencies to fists and defence, including normalized catalogue aliases
+
+## `apps/web/src/lib/fighting/nenCombat/advanced.test.ts`
+
+- advanced combinations from the supplied Nen excerpt > distinguishes low-output aura observation from Ren-based ocular detection of In
+
+## `apps/web/src/lib/fighting/nenCombat/combat.test.ts`
+
+- En, In and actual defense counterplay > reports body contours and present motion while In conceals aura reactions and pure aura traps
+- in-world Gyo aura reading > draws only current inspected zones and releases all geometry when disposed
+
+## `apps/web/src/lib/fighting/nenCombat/pad.test.ts`
+
+- Xbox Nen chords > keeps movement on the left stick and resets every modifier on release
+
+## `apps/web/src/lib/fighting/nenCombat/replay.test.ts`
+
+- advanced Nen input playback > reconstructs focused Gyo, weak sight, paid defensive Ko and En from recorded inputs
 
 ## `apps/web/src/lib/fighting/nenPresentation.test.ts`
 
@@ -855,10 +872,6 @@ Fichiers : 747
 
 - victory selection > uses all real opponents and every stage for either winning side, including mirrors
 - victory playback > keeps real ten-second timing when rendering drops below ten frames per second
-
-## `apps/web/src/lib/fighting/victory/renderer.test.ts`
-
-- live victory renderer > keeps Camilla’s wide camera still when camera movement is disabled
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 

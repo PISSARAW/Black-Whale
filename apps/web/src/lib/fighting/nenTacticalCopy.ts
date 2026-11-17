@@ -4,7 +4,7 @@ const COPY = {
   fr: {
     en: {
       benefit: 'Localise les contacts proches, sans analyser le Hatsu',
-      risk: 'Drain élevé · défense dispersée · cesse à l’attaque',
+      risk: 'Drain élevé · défense dispersée · concentration requise',
     },
     shu: {
       benefit: 'Renforce l’objet porté ou lancé',
@@ -18,7 +18,7 @@ const COPY = {
   en: {
     en: {
       benefit: 'Locates nearby contacts without identifying the Hatsu',
-      risk: 'Heavy drain · spread defence · ends on attack',
+      risk: 'Heavy drain · spread defence · requires concentration',
     },
     shu: {
       benefit: 'Reinforces a held or thrown object',

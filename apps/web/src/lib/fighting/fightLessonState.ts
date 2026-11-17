@@ -1,3 +1,4 @@
+import { prepareNenLesson, NEN_LESSON_CHECKS } from './nenCombat/lessonState'
 import { FOUNDATION_CHECKS } from './fightFoundationLessons'
 import {
   ADVANCED_LESSON_CHECKS,
@@ -52,7 +53,7 @@ export function createLessonFight(id: LessonId): FightState {
       ...state,
       bungeeGum: { owner: 'opponent', target: 'player', hidden: true, retracting: false },
     }
-  return prepareAdvancedLesson(state, id)
+  return prepareNenLesson(prepareAdvancedLesson(state, id), id)
 }
 export function initialLessonProgress(id: LessonId): LessonProgress {
   return {
@@ -71,6 +72,7 @@ type Check = (state: FightState, progress: LessonProgress) => boolean
 const CHECKS: Record<LessonId, Check> = {
   ...FOUNDATION_CHECKS,
   ...ADVANCED_LESSON_CHECKS,
+  ...NEN_LESSON_CHECKS,
   ren: (s) => nenTacticalState(s.player).technique === 'ren' && s.player.aura < 90,
   ken: (s, p) =>
     s.player.nen.ken &&

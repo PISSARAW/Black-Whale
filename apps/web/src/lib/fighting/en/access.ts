@@ -5,7 +5,6 @@ export function enBodyAvailable(fighter: ArcadeFighter): boolean {
   return (
     voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true }) &&
     ![
-      fighter.attack,
       fighter.hitStun,
       fighter.knockdownFrames,
       fighter.hanzoProjection,
@@ -34,4 +33,9 @@ export function activeEnRadius(fighter: ArcadeFighter): number {
 export function enContains(fighter: ArcadeFighter, point: { x: number; y: number }): boolean {
   const radius = activeEnRadius(fighter)
   return radius > 0 && Math.hypot(point.x - fighter.x, point.y - fighter.y) <= radius
+}
+
+/** Phinks loses concentration when he attacks; no blanket prohibition is assigned to Hinrigh. */
+export function enDuringAttack(fighter: ArcadeFighter) {
+  return enProfile(fighter).unstable ? null : fighter.nen.en
 }

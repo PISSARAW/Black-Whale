@@ -1,6 +1,7 @@
+import { readableImpact } from './nenCombat/impactRead'
 import { melodyRestrictsCombat } from './melodyRules'
 import { melodyParryBonus } from './melodyHearing'
-import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
+import { nenReadBonus } from './nenPerception'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { blocksGuardRequirement } from './duelMoves'
 import { attackData, attackPhase } from './frameData'
@@ -19,7 +20,7 @@ export function prepareDefence(
 ): ImpactDefence {
   fighter = wakeHanzoBody(fighter)
   const blocked = !melodyRestrictsCombat(fighter) && blocksGuardRequirement(fighter, read.guard)
-  const visible = !read.concealed || gyoSight(fighter) || insideEn(fighter, read.position)
+  const visible = readableImpact(fighter, read)
   const bonus = nenReadBonus(fighter, { ...fighter, ...read.position })
   const parried = visible && parryActive(fighter, blocked, { attacker: read.attacker, bonus })
   const invulnerable = impactInvulnerable(fighter, read)

@@ -1,5 +1,8 @@
 # En : preuves, portées et représentation dans Clash
 
+Le [contrat actuel des techniques avancées](./NEN_COMBAT.md) enrichit les contours
+et mouvements perçus, maintient En pendant les coups de Hinrigh et respecte In.
+
 La sélection de quarante combattants possède désormais quarante profils explicites
 (`en/profiles.ts`). En n’est plus accordé à tout utilisateur de Nen. **Deux profils
 sont activables ; trente-huit restent non qualifiés.** Une technique non documentée
@@ -90,7 +93,7 @@ personnages, notamment Nobunaga et Babimyna hors sélection, ne sont pas transf�
   dans la portée sonore déjà utilisée par le jeu. Aucun cooldown supplémentaire.
 - Entretien : **9 aura/s pour En + 4 pour Ren**, soit 13 aura/s sans autre overlay.
   Le facteur de protection corporelle dispersée **0,45**, le maintien de la touche,
-  l’arrêt en attaquant, sur impact, projection ou indisponibilité du Nen sont des
+  l’arrêt sur impact, projection ou indisponibilité du Nen sont des
   choix de duel, pas des quantités ou interdictions établies par le manga.
 - `EN_RADIUS = 22` reste une constante historique de compatibilité ; elle ne
   donne aucun rayon actif aux profils non qualifiés.
@@ -98,13 +101,15 @@ personnages, notamment Nobunaga et Babimyna hors sélection, ne sont pas transf�
 ## Ce que la perception fournit
 
 En repère le **contact et la position** dans son volume, même pour une présence
-immobile ou un corps en Zetsu. Le jeu inclut les corps, doubles présents, entités
+immobile ou un corps en Zetsu. In dissimule les manifestations d’aura ; En seul
+ne révèle pas un fil ou un projectile de Nen caché. Les corps et objets réels
+restent perceptibles. Le jeu inclut les corps, doubles perceptibles, entités
 physiques du scénario, projectiles et le point le plus proche d’un fil qui touche
 le champ. Les marqueurs abstraits de destination et d’objectif sont exclus.
 Les poings distants encore sous le sol ne deviennent pas des contacts aériens.
 
 In conserve la forme, la couleur et les détails de l’aura cachés. En affiche un
-repère neutre, jamais le modèle complet de la technique dissimulée. **Gyo** reste
+contour neutre et son mouvement présent, jamais le modèle complet de la technique dissimulée. **Gyo** reste
 la lecture visuelle de l’aura : il exige une vue et un Nen disponibles. En ne donne
 ni catégorie, identité de Hatsu, intention, conditions, parade automatique ou
 bonus de frames de parade. Le bonus de timing arcade de Gyo demeure inchangé.
@@ -113,8 +118,8 @@ projectile caché. La copie d’un Hatsu, un déguisement, Emperor Time et une i
 d’exécution empruntée n’accordent aucune formation supplémentaire à En.
 
 En PvP, le serveur calcule les contacts avant de masquer les techniques cachées,
-puis transmet uniquement une liste privée de points `{x, y}` au siège concerné.
-Aucune identité, forme, couleur ou statistique du projectile n’accompagne ces
+puis transmet uniquement une liste privée de contacts et de leurs dimensions perçues au siège concerné.
+Aucune identité, modèle personnel, couleur ou statistique d’attaque n’accompagne ces
 points. Les spectateurs ne reçoivent pas cette liste. Le rendu et le HUD utilisent
 le même filtre ; un cache hors portée ou invalide ne crée pas de contact. La
 liste est bornée à 128 repères pour le rendu, sans limiter les collisions physiques.
@@ -138,7 +143,7 @@ la perception, les interruptions, les ressources et les vues privées. Le scéna
 `test:nen-ui` contrôle les touches et boutons à 1200, 390 et 320 px, avec les
 statuts français et anglais. Les vérifications globales complètent ces cas.
 
-## Résultats de cette revue (17 novembre 2026)
+## Résultats initiaux de la revue En — version 21 (17 novembre 2026)
 
 - Les 51 nouveaux cas En (40 profils, accès, contacts, concentration, confidentialité
   et rendu P2) passent. Le dernier groupe de perception/rendu/son et intégration

@@ -1,3 +1,5 @@
+import { applyOcularInput } from './nenCombat/ocularInput'
+import { clearBodyGyo, focusBodyGyo } from './nenCombat/bodyGyo'
 import { enRadius, ARCADE_EN_RADIUS } from './en/profiles'
 import { activeEnRadius, canMaintainEn } from './en/access'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -47,10 +49,14 @@ function action(fighter: ArcadeFighter, value: NenTechniqueAction<FightNenZone>)
 
 /** Held overlays never survive releasing their input, Zetsu, exhaustion or an impact. */
 export function applyAdvancedNen(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  fighter = clearBodyGyo(fighter)
   const available = advancedNenAvailable(fighter)
   const en = available && Boolean(input.en) && canMaintainEn(fighter, input)
   const shu = available && Boolean(input.shu)
-  if (fighter.nen.ko) return applySightInputs(fighter, input, available)
+  if (fighter.nen.ko) {
+    const overlaid = action(fighter, { type: 'SHU', objectId: shuObject(fighter), on: shu })
+    return applySightInputs(overlaid, input, available)
+  }
   let next = action(fighter, { type: 'EN', radius: en ? enRadius(fighter) : null })
   next = action(next, { type: 'SHU', objectId: shuObject(fighter), on: shu })
   next = applySightInputs(next, input, available)
@@ -64,7 +70,8 @@ function applyManualFocus(
   available: boolean,
 ): ArcadeFighter {
   const zone = selectedNenZone(input)
-  return available && zone ? focusNenZone(fighter, zone) : fighter
+  if (!available || !zone) return fighter
+  return input.gyo && !input.aura ? focusBodyGyo(fighter, zone) : focusNenZone(fighter, zone)
 }
 
 function applySightInputs(
@@ -72,8 +79,7 @@ function applySightInputs(
   input: FightInput,
   available: boolean,
 ): ArcadeFighter {
-  const gyo = Boolean(input.gyo || (input.aura && input.jump))
-  let next = action(fighter, { type: 'GYO', on: available && gyo })
+  let next = applyOcularInput(fighter, input, available)
   if (input.conceal || fighter.nen.in)
     next = action(next, {
       type: 'IN',
@@ -103,7 +109,7 @@ export function focusNenZone(fighter: ArcadeFighter, zone: FightNenZone): Arcade
 }
 
 export function canRedistributeAura(fighter: ArcadeFighter): boolean {
-  return fighter.nen.mode !== 'zetsu' && !fighter.nen.on && !fighter.auraExhausted
+  return voluntaryNenAvailable(fighter, { requireHatsu: false })
 }
 
 export function advancedAuraDrain(fighter: ArcadeFighter): number {

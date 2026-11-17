@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightNenGuide from './FightNenGuide.svelte'
   import { enProfile } from '$lib/fighting/en/profiles'
   import { enDescription } from '$lib/fighting/en/presentation'
   import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
@@ -51,6 +52,7 @@
         : control.label}</button
     >
   {/each}
+  <FightNenGuide {language} />
 </div>
 
 <style>

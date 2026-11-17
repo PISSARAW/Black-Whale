@@ -1,11 +1,11 @@
 import { enContains } from './en/access'
 import { enContactPoints, nearestPoint } from './en/contacts'
-import { voluntaryNenAvailable } from './nenAccess'
-import { senseDeprived } from './saiyuSenses'
+import { gyoSight } from './nenCombat/sight'
+export { gyoSight } from './nenCombat/sight'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
 /** En senses contacts inside its volume, including stationary bodies in Zetsu.
- * It locates something hidden with In; Gyo is needed to inspect its aura.
+ * In-hidden aura requires ocular Gyo; physical bodies remain detectable.
  */
 export function insideEn(observer: ArcadeFighter, position: { x: number; y: number }): boolean {
   return enContains(observer, position)
@@ -13,15 +13,6 @@ export function insideEn(observer: ArcadeFighter, position: { x: number; y: numb
 
 export function perceivesAura(observer: ArcadeFighter, source: ArcadeFighter): boolean {
   return !source.nen.in || gyoSight(observer)
-}
-
-export function gyoSight(observer: ArcadeFighter): boolean {
-  return (
-    observer.nen.gyo &&
-    !observer.parallelEyesClosed &&
-    !senseDeprived(observer, 'sight') &&
-    voluntaryNenAvailable(observer, { requireReserve: true, requireHatsu: false })
-  )
 }
 
 export function perceivesProjectile(observer: ArcadeFighter, projectile: FightProjectile): boolean {

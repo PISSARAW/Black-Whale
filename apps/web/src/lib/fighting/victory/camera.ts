@@ -2,7 +2,7 @@ import { Quaternion, Vector3 } from 'three'
 import type { VictoryActor, VictoryContext } from './types'
 
 export function victoryShot(
-  context: VictoryContext,
+  context: Pick<VictoryContext, 'camera'>,
   options: { target: Vector3; offset: Vector3; width: number; height: number },
 ) {
   const { camera } = context,

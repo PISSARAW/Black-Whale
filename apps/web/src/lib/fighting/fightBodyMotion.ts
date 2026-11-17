@@ -1,4 +1,5 @@
 import { animateBenjaminRifle } from './benjaminRiflePose'
+import { onAwakeningBodyPlan } from './onAwakening'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
@@ -66,6 +67,7 @@ import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } 
 export interface BodyMotionOptions extends ReactionContext {
   fighter: ArcadeFighter
   seconds: number
+  onAwakeningFrame?: number | null
   /** The motion to play when the rig has nothing for this frame. */
   fallback?: HumanMotion
 }
@@ -153,10 +155,12 @@ function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
 
 export interface PlanContext extends ReactionContext {
   seconds: number
+  onAwakeningFrame?: number | null
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const plan = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
+  const ordinary = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
+  const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1
     ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan

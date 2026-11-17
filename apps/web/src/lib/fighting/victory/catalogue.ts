@@ -1,5 +1,6 @@
 import type { FightSide, FightState, FighterId } from '../types'
 import { troupeMember } from '../troupeMembership'
+import { beyondCurseVariant, type BeyondCurseVariant } from './beyondCurseSelection'
 
 export const VICTORY_DURATION = 10
 export const VICTORY_FIGHTERS = [
@@ -26,10 +27,13 @@ export const VICTORY_FIGHTERS = [
   'melody',
   'hinrigh',
   'terebellum',
+  'voconte',
+  'longhi',
+  'furykov',
 ] as const
 export type VictoryFighter = (typeof VICTORY_FIGHTERS)[number]
 export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> = {
-  hisoka: ['Le dernier fil', 'The last thread'],
+  hisoka: ['Regarde-moi', 'Look at me'],
   chrollo: ['Le festin du Soleil et de la Lune', 'The feast of Sun and Moon'],
   kurapika: ['Le jugement est rendu', 'The verdict is delivered'],
   feitan: ['Le soleil du supplice', 'The sun of torment'],
@@ -52,13 +56,16 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   melody: ['Un champ au printemps', 'A field in spring'],
   hinrigh: ['Pièce à conviction', 'Evidence'],
   terebellum: ['Retour à l’envoyeur', 'Return to sender'],
+  voconte: ['Aller simple', 'One-way trip'],
+  longhi: ['Tu avais signé', 'You signed it'],
+  furykov: ['La réponse était prête', 'The answer was ready'],
 }
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
   return (VICTORY_FIGHTERS as readonly string[]).includes(id)
 }
 export interface VictorySelection {
   token: string
-  variant?: 'kurapika-judgment' | 'kurapika-troupe'
+  variant?: 'kurapika-judgment' | 'kurapika-troupe' | BeyondCurseVariant
   fighter: VictoryFighter
   winner: FightSide
   loser: FightSide
@@ -70,6 +77,7 @@ export function selectVictory(state: FightState): VictorySelection | null {
     fighter = state[winner].id
   if (!hasVictoryCinematic(fighter)) return null
   const loser = winner === 'player' ? 'opponent' : 'player'
+  const curse = beyondCurseVariant(state)
   const token = [
     state.environment.stageId,
     state.roundNumber,
@@ -83,7 +91,7 @@ export function selectVictory(state: FightState): VictorySelection | null {
     fighter,
     winner,
     loser,
-    ...victoryVariant(fighter, state[loser].id),
+    ...(curse ? { variant: curse } : victoryVariant(fighter, state[loser].id)),
   }
 }
 

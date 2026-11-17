@@ -1,69 +1,97 @@
-import { CatmullRomCurve3, Group, Mesh, MeshBasicMaterial, TubeGeometry, Vector3 } from 'three'
-import type { VictoryDriver } from './types'
-import { createVictoryCard } from './card'
-import { createVictorySmile } from './smile'
-import { disposeVictoryObject, ease } from './resources'
-import {
-  fallVictoryVictim,
-  localToHead,
-  reachVictoryHand,
-  turnVictoryHero,
-  victimTorso,
-} from './pose'
-import { victoryPortrait, victoryShot, victoryWide } from './camera'
+import { Quaternion, Vector3 } from 'three'
+import type { VictoryContext, VictoryDriver } from './types'
+import { createHisokaFearFace } from './hisokaFearFace'
+import { createHisokaFearAura } from './hisokaFearAura'
+import { createHisokaFearVictim } from './hisokaFearVictim'
+import { hisokaFearPose, HISOKA_FEAR_DEATH } from './hisokaFearPose'
+import { victoryShot } from './camera'
+import { visibleVictoryBounds } from './bodyBounds'
 
-export function createHisokaVictory(): VictoryDriver {
-  const root = new Group(),
-    card = createVictoryCard()
-  const smile = createVictorySmile()
-  const gum = new Mesh(
-    new TubeGeometry(new CatmullRomCurve3([new Vector3(), new Vector3(1, 0, 0)]), 1, 0.009, 6),
-    new MeshBasicMaterial({ color: 0xef83c6 }),
+function fearPortrait(context: VictoryContext, victim = false) {
+  const actor = victim ? context.victim : context.hero
+  const centre = actor.head.getWorldPosition(new Vector3()),
+    q = actor.root.getWorldQuaternion(new Quaternion())
+  const push = victim ? 0 : Math.max(0, Math.min(1, (context.age - 240) / 84))
+  victoryShot(context, {
+    target: centre.clone().add(new Vector3(0, victim ? -0.1 : -0.065, 0.07).applyQuaternion(q)),
+    offset: new Vector3(0, victim ? 0.02 : -0.08, 0.8).applyQuaternion(q),
+    width: victim ? 0.75 : 0.64 - push * 0.14,
+    height: victim ? 0.88 : 0.72 - push * 0.2,
+  })
+}
+function fearWide(context: VictoryContext) {
+  const bounds = visibleVictoryBounds(context.hero.root).union(
+    visibleVictoryBounds(context.victim.root),
   )
-  root.add(gum, card)
+  victoryShot(context, {
+    target: bounds.getCenter(new Vector3()),
+    offset: new Vector3(0.3, 0.25, 6),
+    width: bounds.getSize(new Vector3()).x + 1,
+    height: Math.max(context.hero.height, context.victim.height) + 0.6,
+  })
+}
+const fearVictimShot = (age: number) =>
+  (age >= 120 && age < 180) || (age >= 348 && age < HISOKA_FEAR_DEATH)
+const fearFaceShot = (age: number) =>
+  (age >= 180 && age < 282) || (age >= 324 && age < 348) || age >= 504
+function fearStillCamera(context: VictoryContext) {
+  const height = Math.max(context.hero.height, context.victim.height)
+  victoryShot(context, {
+    target: new Vector3(context.centre + 0.2, height * 0.5, 0),
+    offset: new Vector3(0.3, 0.25, 6),
+    width: context.gap + context.hero.width + context.victim.width + context.victim.height + 1.2,
+    height: height + 0.6,
+  })
+}
+function fearCamera(context: VictoryContext) {
+  const { age } = context
+  if (context.comfort.camera === 0) {
+    fearStillCamera(context)
+    return
+  }
+  if (fearVictimShot(age)) {
+    fearPortrait(context, true)
+    return
+  }
+  if (fearFaceShot(age)) {
+    fearPortrait(context)
+    return
+  }
+  fearWide(context)
+}
+export function createHisokaVictory(): VictoryDriver {
+  const face = createHisokaFearFace(),
+    aura = createHisokaFearAura(),
+    victim = createHisokaFearVictim()
   return {
     update(context) {
-      const { age, hero, victim } = context
-      turnVictoryHero(context, 270)
-      const recall = ease((age - 120) / 90)
-      victim.root.position.x -= context.gap * 0.38 * recall
-      fallVictoryVictim(context, { start: 210, duration: 55 })
-      const hand = localToHead(hero, new Vector3(0.2, -0.43, 0.25 - recall * 0.12))
-      if (age >= 270)
-        hand.copy(
-          localToHead(hero, new Vector3(0.12, -0.36 + ease((age - 270) / 100) * 0.18, 0.29)),
-        )
-      reachVictoryHand(context, { side: 'right', target: hand })
-      hero.root.updateWorldMatrix(true, true)
-      const grip = hero.root.getObjectByName('hand-right')!.getWorldPosition(new Vector3())
-      const target = victimTorso(context)
-      gum.visible = age < 270
-      if (gum.visible) {
-        gum.geometry.dispose()
-        const mid = grip.clone().lerp(target, 0.5)
-        mid.y -= (1 - recall) * 0.13
-        gum.geometry = new TubeGeometry(new CatmullRomCurve3([grip, mid, target]), 32, 0.009, 6)
+      const pose = hisokaFearPose(context),
+        expression = face.apply(context),
+        pressure = aura.sync(context)
+      context.add(aura.root)
+      victim.apply(context)
+      fearCamera(context)
+      context.scene.userData.hisokaFearVictory = {
+        ...expression,
+        ...pressure,
+        floor: pose.fall?.floor,
+        upY: pose.fall?.upY,
+        roll: pose.fall?.roll,
+        death: context.age >= HISOKA_FEAR_DEATH,
+        panic: pose.panic,
+        retreat: pose.retreat,
+        tremor: pose.tremor,
+        gesture: pose.gesture,
+        handErrors: pose.handErrors,
       }
-      card.visible = age >= 270
-      card.position.copy(grip).add(new Vector3(0, 0.04, 0.035))
-      card.quaternion.copy(hero.head.getWorldQuaternion(card.quaternion))
-      card.rotateZ(-0.14)
-      if (age >= 270) smile.apply(context)
-      if (age >= 420) victim.root.visible = false
-      context.add(root)
-      if (age >= 270) victoryPortrait(context)
-      else if (age >= 60 && age < 120)
-        victoryShot(context, {
-          target: grip,
-          offset: new Vector3(0.15, 0.1, 1.4),
-          width: 0.9,
-          height: 0.8,
-        })
-      else victoryWide(context)
+      context.defer(() => {
+        delete context.scene.userData.hisokaFearVictory
+      })
     },
     dispose() {
-      disposeVictoryObject(root)
-      smile.dispose()
+      face.dispose()
+      aura.dispose()
+      victim.dispose()
     },
   }
 }

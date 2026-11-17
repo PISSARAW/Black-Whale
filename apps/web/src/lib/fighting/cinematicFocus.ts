@@ -30,10 +30,10 @@ function boxAt(position: Vector3, size: [number, number]): Box3 {
 }
 function headOf(actor: Object3D): Object3D | undefined {
   const named = actor.getObjectByName('kurapika-head')
-  if (named) return named
+  if (named && cameraNodeVisible(named)) return named
   let head: Object3D | undefined
   actor.traverse((n) => {
-    if (n.name.startsWith('manga-head:')) head = n
+    if (!head && n.name.startsWith('manga-head:') && cameraNodeVisible(n)) head = n
   })
   return head
 }
@@ -99,7 +99,7 @@ function nodeFocus(
     return {
       box: boxAt(object.getWorldPosition(new Vector3()), [anchor.size ?? 0.6, anchor.size ?? 0.6]),
     }
-  return { box: box.expandByScalar(0.06) }
+  return { box: box.expandByScalar(0.06), head: object.userData.cameraFrontal ? object : undefined }
 }
 function entityFocus(
   anchor: Extract<CameraAnchor, { type: 'entity' }>,
@@ -164,8 +164,7 @@ export function aimCinematicFocus(
     Math.max(0.8, size.y / (2 * tangent * 0.78), size.x / (2 * tangent * camera.aspect * 0.85)) +
     size.z / 2
   const head = resolved.find((r) => r.head)?.head
-  const rotation =
-    head && detail.frontal ? head.getWorldQuaternion(new Quaternion()) : new Quaternion()
+  const rotation = frontalRotation(head, detail)
   const rise = Math.tan(((detail.elevation ?? 0) * Math.PI) / 180) * distance
   const offset = new Vector3(0, 0.035 + rise, distance).applyQuaternion(rotation)
   camera.position.copy(centre).add(offset)
@@ -174,4 +173,17 @@ export function aimCinematicFocus(
   camera.updateProjectionMatrix()
   camera.updateMatrixWorld(true)
   return true
+}
+
+/** Full-body frontal shots keep the horizon level even when the wearer bows its head. */
+function frontalRotation(head: Object3D | undefined, detail: CameraDetail) {
+  const rotation = new Quaternion()
+  if (!head || !detail.frontal) return rotation
+  head.getWorldQuaternion(rotation)
+  const body = detail.anchors?.some((anchor) => anchor.type === 'rig' && anchor.part === 'body')
+  if (!body) return rotation
+  const forward = new Vector3(0, 0, 1).applyQuaternion(rotation)
+  forward.y = 0
+  if (forward.lengthSq() < 0.00001) return new Quaternion()
+  return rotation.setFromUnitVectors(new Vector3(0, 0, 1), forward.normalize())
 }

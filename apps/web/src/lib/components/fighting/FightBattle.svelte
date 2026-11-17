@@ -7,6 +7,7 @@
   import FightPauseOverview from './FightPauseOverview.svelte'
   import FightPauseDisplay from './FightPauseDisplay.svelte'
   import FightPauseTechniques from './FightPauseTechniques.svelte'
+  import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
   import FightPauseTraining from './FightPauseTraining.svelte'
   import FightActiveObjective from './FightActiveObjective.svelte'
   import FightMatchOverlays from './FightMatchOverlays.svelte'
@@ -146,6 +147,9 @@
     >
       <FightActiveObjective {language} {lessons} {school} {practice} />
     </FightStage>
+    {#if state.player.id === 'chrollo' && state.phase === 'fighting' && !pausedView && !replays.active && !victoryActive}
+      <FightChrolloLiveBook {state} {language} {actions} />
+    {/if}
     {#if !paused && !victoryActive}<FightMatchOverlays
         {state}
         {language}

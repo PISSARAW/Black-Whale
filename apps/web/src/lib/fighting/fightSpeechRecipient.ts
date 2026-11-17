@@ -1,5 +1,5 @@
 import { battleAppearance } from './battleCantabileRules'
-import { canHear, soundDistance } from './melodyRules'
+import { canHear } from './melodyRules'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface SpeechRecipient {
@@ -35,7 +35,7 @@ export function recipientHears(
     canHear(body) &&
     !body.arsenalSleep &&
     !recipientUnconscious(body) &&
-    soundDistance(state[speaker], body) <= 18
+    Math.hypot(state[speaker].x - body.x, state[speaker].y - body.y) <= 18
   )
 }
 export function recordHeardWords(

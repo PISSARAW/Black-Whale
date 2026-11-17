@@ -315,6 +315,26 @@ heures et les neuf heures d'inconscience restent inchangés. Les tests couvrent
 les deux côtés, la limite d'évanouissement et la re-simulation d'un replay.
 Le ruleset passe à **clash-combat-23**. Le On est conservé.
 
+## Hanzo : parole du double et corps séparé
+
+Le double de Hanzo peut parler et écouter près de sa propre position, comme dans
+l'échange avec Tuffdy au chapitre 372. L'interdiction générale de parole pendant
+Skill 4 est retirée une fois sa préparation terminée. Une conversation près du
+double ne déplace pas le corps endormi ; interpeller ce corps reste une action
+distincte qui interrompt la projection. Les privations de parole, le sommeil et
+la perte d'autonomie restent exécutés. Recoupement :
+[Hanzo](https://hunterxhunter.fandom.com/wiki/Hanzo).
+
+Le papier d'écoute de Kalluto reste planté sur le corps physique et ne reçoit pas
+une voix émise à distance par le double. Les caméras enregistrent chaque corps
+visible à sa position et captent la voix là où elle est émise. Une prise du
+double n'est pas attribuée automatiquement au corps physique pour l'analyse de
+Dowsing Chain : aucun lien d'identité authentifié n'est fabriqué. Les tests
+couvrent les deux côtés, le rappel du corps, la parole empêchée, l'écoute par
+papier, la caméra et les snapshots. Le ruleset devient **clash-combat-24**.
+Cette correction n'invente aucun des autres skills numérotés non révélés.
+Le On est conservé.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante

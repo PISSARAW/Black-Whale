@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 740
+Fichiers : 741
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -549,6 +549,10 @@ Fichiers : 740
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
+
+- Hanzo’s speaking double has its own position without moving the sleeping body > replays the actual Talk input and camera recording without a state patch
 
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 

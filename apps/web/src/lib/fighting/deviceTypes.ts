@@ -3,6 +3,7 @@ import type { FighterId, FightSide } from './types'
 export type PhysicalDeviceKind = 'camera' | 'firearm' | 'transmitter' | 'receiver'
 export type BiohazardDeviceForm = 'cat' | 'snake' | 'oyster'
 export interface RecordedBody {
+  projection?: boolean
   frame: number
   subject: FightSide
   appearance: FighterId
@@ -10,6 +11,7 @@ export interface RecordedBody {
   y: number
 }
 export interface RecordedSpeech {
+  projection?: boolean
   sampleId?: number
   frame: number
   subject: FightSide

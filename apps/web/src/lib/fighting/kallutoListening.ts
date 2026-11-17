@@ -7,7 +7,7 @@ import {
   recordHeardWords,
 } from './fightSpeechRecipient'
 import { canSpeak, senseDeprived } from './saiyuSenses'
-import { sleepingBody } from './hanzoProjection'
+import { sleepingBody, projectionPreparing } from './hanzoProjection'
 import { paperAvailable, paperState, hasPlantedPaper } from './kallutoPaper'
 import type { PaperWords } from './kallutoPaper'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -39,7 +39,7 @@ export function speakPaperWords(
   for (const owner of ['player', 'opponent'] as const) {
     if (!paperListening(next, owner)) continue
     const doll = paperState(next[owner]).doll!
-    const source = sleepingBody(next[speaker])
+    const source = next[speaker] // Hanzo's controlled double speaks at its own location.
     const target = sleepingBody(next[doll.target])
     if (Math.hypot(source.x - target.x, source.y - target.y) > PAPER_VOICE_RANGE) continue
     next = {
@@ -59,7 +59,7 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
     state.phase === 'fighting' &&
     !state.catsName &&
     canSpeak(fighter) &&
-    !fighter.hanzoProjection &&
+    !projectionPreparing(fighter) &&
     !fighter.arsenalSleep &&
     !fighter.needlePuppet &&
     voluntarySpeechMind(fighter)

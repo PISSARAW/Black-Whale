@@ -8,10 +8,16 @@ import type { FightSide, FightState } from './types'
 
 /** Flat-arena view cone; its numeric reach and sampling rate are scenario tuning. */
 export function cameraSees(state: FightState, camera: PreparedEntity, side: FightSide): boolean {
-  const point = devicePosition(state, camera),
-    body = sleepingBody(state[side]),
-    direction = camera.device?.facing ?? 1
   if (state[side].clothCapture) return false
+  return cameraSeesPoint(state, camera, sleepingBody(state[side]))
+}
+function cameraSeesPoint(
+  state: FightState,
+  camera: PreparedEntity,
+  body: { x: number; y: number },
+): boolean {
+  const point = devicePosition(state, camera),
+    direction = camera.device?.facing ?? 1
   return (
     Math.hypot(point.x - body.x, point.y - body.y) <= DEVICE_CAMERA_RANGE &&
     (body.x - point.x) * direction >= 0
@@ -25,7 +31,7 @@ export function captureDeviceSpeech(
   for (const camera of state.battlefield?.entities ?? []) {
     if (!cameraIsRecording(camera)) continue
     const point = devicePosition(state, camera),
-      body = sleepingBody(state[utterance.side])
+      body = state[utterance.side]
     if (Math.hypot(point.x - body.x, point.y - body.y) > 18) continue
     const sampleId = (camera.device!.speechSerial ?? 0) + 1
     const words = [
@@ -34,16 +40,24 @@ export function captureDeviceSpeech(
         sampleId,
         frame: state.frame,
         subject: utterance.side,
-        bodyKey: physicalBodyKey(state, utterance.side),
-        appearance: visibleBodyAppearance(state[utterance.side]),
+        ...recordedSpeaker(state, utterance.side),
         text: utterance.text,
         deliberateLie: utterance.deliberateLie,
-        visibleBody: cameraSees(state, camera, utterance.side),
+        visibleBody: !body.clothCapture && cameraSeesPoint(state, camera, body),
       },
     ].slice(-DEVICE_MEMORY_LIMIT)
     next = changeDevice(next, camera, { words, speechSerial: sampleId })
   }
   return next
+}
+function recordedSpeaker(state: FightState, side: FightSide) {
+  const body = state[side]
+  // A speaking double is not footage of its sleeping physical body.
+  return {
+    bodyKey: body.hanzoProjection ? undefined : physicalBodyKey(state, side),
+    projection: body.hanzoProjection ? true : undefined,
+    appearance: visibleBodyAppearance(body),
+  }
 }
 export function advanceDeviceRecordings(state: FightState): FightState {
   return (state.battlefield?.entities ?? [])
@@ -73,16 +87,29 @@ function cameraIsRecording(entry: PreparedEntity): boolean {
   )
 }
 function pictureBodies(state: FightState, camera: PreparedEntity): RecordedBody[] {
-  return (['player', 'opponent'] as const)
-    .filter((side) => cameraSees(state, camera, side))
-    .map((side) => {
-      const body = sleepingBody(state[side])
-      return {
+  return (['player', 'opponent'] as const).flatMap((side) => {
+    const body = sleepingBody(state[side]),
+      appearance = visibleBodyAppearance(state[side])
+    const pictures: RecordedBody[] = cameraSees(state, camera, side)
+      ? [
+          {
+            frame: state.frame,
+            subject: side,
+            appearance,
+            x: body.x,
+            y: body.y,
+          },
+        ]
+      : []
+    if (state[side].hanzoProjection && cameraSeesPoint(state, camera, state[side]))
+      pictures.push({
         frame: state.frame,
         subject: side,
-        appearance: visibleBodyAppearance(state[side]),
-        x: body.x,
-        y: body.y,
-      }
-    })
+        appearance,
+        projection: true,
+        x: state[side].x,
+        y: state[side].y,
+      })
+    return pictures
+  })
 }

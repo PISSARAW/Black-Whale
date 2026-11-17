@@ -85,7 +85,7 @@
             state[side].devicePlayback!.viewedAt / 60,
           )} s</strong
         >
-        {#each state[side].devicePlayback!.pictures.slice(-2) as frame, i (`${frame.frame}:${frame.subject}:${i}`)}
+        {#each state[side].devicePlayback!.pictures.slice(-4) as frame, i (`${frame.frame}:${frame.subject}:${i}`)}
           <span
             >{Math.floor(frame.frame / 60)} s · {fighterDefinition(frame.appearance).name} · x {frame.x.toFixed(
               1,

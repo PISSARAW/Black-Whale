@@ -859,6 +859,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   Le coût d'aura, les 24 frames de préparation et les dégâts restent des réglages
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
+  Le double peut parler et écouter à sa propre position ; parler près du double
+  ne réveille pas le corps distant. Le papier planté sur le corps y reste, tandis
+  que la caméra capte la voix à son lieu d'émission et filme les deux corps visibles.
   La portée audible de 18 unités est une abstraction du duel.
 - Sweet Home (`hatsu/terebellum.ts`, `sweetHomeImpact.ts`) vérifie les contacts
   pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures

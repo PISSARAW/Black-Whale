@@ -262,7 +262,6 @@ export default tseslint.config(
       'apps/web/src/lib/tour/hatsu.ts', // 3263 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/lib/tour/mesh.ts', // 1820 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/lib/tour/morena.ts', // 1034
-      'apps/web/src/routes/+layout.svelte', // 859
       'apps/web/src/routes/arena/+page.svelte', // 1048
       'apps/web/src/routes/characters/+page.svelte', // 768
       'apps/web/src/routes/characters/\\[slug\\]/+page.svelte', // 1194

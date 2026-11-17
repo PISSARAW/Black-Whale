@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { fightTouchBindings } from '$lib/fighting/fightTouchHints'
   import { GUARD_LABELS } from '$lib/fighting/combatProperties'
   import { moveById } from '$lib/fighting/movesets'
   import type { FighterMove } from '$lib/fighting/movesetTypes'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
+  export let touch = false
   export let move: FighterMove
   export let language: 'fr' | 'en'
+  $: hints = touch ? fightTouchBindings(language) : $bindings
   $: guard = GUARD_LABELS[move.guard][language === 'fr' ? 0 : 1]
   $: blockRoutes = move.cancelOnBlockInto
     .map((id) => {
@@ -26,13 +29,13 @@
       · {language === 'fr' ? 'Cancel sur garde' : 'Block cancel'} : {blockRoutes}{/if}
     {#if hitRoutes.length}
       · {language === 'fr' ? 'Cancel sur touche' : 'Hit cancel'} :
-      {hitRoutes.map((target) => moveInputHint(target!.input, $bindings)).join(' / ')}
+      {hitRoutes.map((target) => moveInputHint(target!.input, hints)).join(' / ')}
       (F{move.tuning.startup + move.cancelWindow!.start}–{move.tuning.startup +
         move.cancelWindow!.end})
     {/if}
     {#if links.length}
       · {language === 'fr' ? 'Après récupération' : 'After recovery'} :
-      {links.map((target) => moveInputHint(target!.input, $bindings)).join(' / ')}
+      {links.map((target) => moveInputHint(target!.input, hints)).join(' / ')}
     {/if}
     {#if move.cancelWindow}
       · {move.auraCost} aura{/if}

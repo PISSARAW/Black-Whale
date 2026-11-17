@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fightTouchBindings } from '$lib/fighting/fightTouchHints'
   import FightStyleGuide from './FightStyleGuide.svelte'
   import FightMoveProperties from './FightMoveProperties.svelte'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
@@ -8,9 +9,11 @@
   import FightChrolloManual from './FightChrolloManual.svelte'
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
 
+  export let touch = false
   export let fighterId: FighterId
   export let language: 'fr' | 'en'
 
+  $: hints = touch ? fightTouchBindings(language) : $bindings
   $: moveset = movesetFor(fighterId)
   $: arena = arenaTechnique(fighterId)
   $: groups = moveset
@@ -42,8 +45,8 @@
       <span>{language === 'fr' ? 'MÉCANIQUE UNIQUE' : 'UNIQUE MECHANIC'}</span>
       <p>
         {language === 'fr'
-          ? moveInputHint(moveset.mechanicFr, $bindings)
-          : moveInputHint(moveset.mechanicEn, $bindings)}
+          ? moveInputHint(moveset.mechanicFr, hints)
+          : moveInputHint(moveset.mechanicEn, hints)}
       </p>
     </header>
     <FightStyleGuide {fighterId} {language} />
@@ -51,8 +54,8 @@
     {#if arena}
       <h3>
         {language === 'fr'
-          ? `Action d’arène · ${$bindings.playerArena} (P2 : ${$bindings.opponentArena})`
-          : `Arena action · ${$bindings.playerArena} (P2: ${$bindings.opponentArena})`}
+          ? `Action d’arène · ${hints.playerArena}${touch ? '' : ` (P2 : ${hints.opponentArena})`}`
+          : `Arena action · ${hints.playerArena}${touch ? '' : ` (P2: ${hints.opponentArena})`}`}
       </h3>
       <p>{arena.name[language === 'fr' ? 0 : 1]} · {arena.effect[language === 'fr' ? 0 : 1]}</p>
       <p>{arena.condition[language === 'fr' ? 0 : 1]}</p>
@@ -64,10 +67,10 @@
             <h3>{title}</h3>
             {#each moveset.moves.filter((move) => move.category === category) as move (move.id)}
               <p>
-                <kbd>{moveInputHint(move.input, $bindings)}</kbd><span
+                <kbd>{moveInputHint(move.input, hints)}</kbd><span
                   >{language === 'fr' ? move.nameFr : move.nameEn}</span
                 >
-                <FightMoveProperties {move} {language} />
+                <FightMoveProperties {move} {language} {touch} />
               </p>
             {/each}
           </div>
@@ -84,7 +87,7 @@
       <footer>
         <strong
           >{fighterId === 'chrollo'
-            ? `Double Face · ${$bindings.playerFinisher}`
+            ? `Double Face · ${hints.playerFinisher}`
             : language === 'fr'
               ? 'Condition du finisher'
               : 'Finisher condition'}</strong
@@ -92,7 +95,7 @@
         <span
           >{moveInputHint(
             language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn,
-            $bindings,
+            hints,
           )}</span
         >
       </footer>
@@ -129,7 +132,7 @@
   }
   .move-groups p {
     display: grid;
-    grid-template-columns: 58px 1fr;
+    grid-template-columns: minmax(58px, auto) 1fr;
     gap: 0.4rem;
     margin: 0.18rem 0;
   }

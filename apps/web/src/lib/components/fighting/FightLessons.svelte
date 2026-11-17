@@ -9,6 +9,7 @@
   import type { ControlCommand } from '$lib/fighting/fightInputBindings'
   export let lessons: FightLessonsController
   export let language: 'fr' | 'en'
+  export let expanded = false
   export let presentation: 'launcher' | 'panel' = 'launcher'
   export let onStart: (id: LessonId) => void
   export let onExit: () => void = () => {}
@@ -41,7 +42,7 @@
 </script>
 
 {#if presentation === 'launcher'}
-  <details class="lessons-launcher">
+  <details class="lessons-launcher" open={expanded}>
     <summary
       >{language === 'fr'
         ? `Apprendre le Nen · ${FIGHT_LESSONS.length} exercices pratiques`

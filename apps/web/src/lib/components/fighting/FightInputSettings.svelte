@@ -10,6 +10,7 @@
   import FightGamepadDiagnostics from './FightGamepadDiagnostics.svelte'
   export let controls: FightControls
   export let language: 'fr' | 'en'
+  export let inline = false
   export let onEditing: () => void = () => {}
   const { bindings, devices } = controls
   let panel: HTMLDetailsElement
@@ -46,7 +47,7 @@
 
 <svelte:window
   onkeydown={(event) => {
-    if (panel?.open && !capture && event.key === 'Escape') {
+    if (panel?.open && !capture && !inline && event.key === 'Escape') {
       event.preventDefault()
       panel.open = false
     }
@@ -56,6 +57,8 @@
 <details
   bind:this={panel}
   class="input-settings"
+  class:inline
+  open={inline}
   ontoggle={(event) => {
     if (!event.currentTarget.open) {
       measurementRunning = false
@@ -89,12 +92,14 @@
                 : 'Gamepads'}</button
         >
       {/each}
-      <button
-        type="button"
-        onclick={() => {
-          panel.open = false
-        }}>{language === 'fr' ? 'Fermer' : 'Close'}</button
-      >
+      {#if !inline}
+        <button
+          type="button"
+          onclick={() => {
+            panel.open = false
+          }}>{language === 'fr' ? 'Fermer' : 'Close'}</button
+        >
+      {/if}
     </nav>
     {#if tab === 'pad'}
       <FightGamepadDiagnostics {language} bind:running={measurementRunning} />
@@ -250,5 +255,23 @@
   }
   dd {
     margin: 0;
+  }
+  .inline > summary {
+    display: none;
+  }
+  .inline section {
+    position: static;
+    width: auto;
+    max-height: none;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .inline nav {
+    flex-wrap: wrap;
+  }
+  .inline .binding-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(6rem, 1fr);
   }
 </style>

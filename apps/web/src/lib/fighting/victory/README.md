@@ -391,3 +391,29 @@ adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.
 
 `check-hanzo-bill-victories.mjs` vérifie le déclenchement dans Clash, les
 rematches des deux côtés et les bandes sonores sans modifier le résultat.
+
+Hinrigh : « Pièce à conviction » transforme au contact les trois objets de sa
+mallette : caméra à 30, menottes à 54 et pistolet à 78. Le chat-caméra enregistre
+la scène. Deux paires de pigeons rejoignent les poignets à 174 et les chevilles
+à 222, puis redeviennent des attaches métalliques aux positions physiques des
+membres. Le pistolet-serpent conserve son canon et tire une seule balle à 360.
+La cible suit la chute native à partir de 372 ; les menottes continuent de
+suivre ses mains rapprochées. Le pistolet redevient ordinaire au sol. Hinrigh
+soulève le chat et le caresse au contact de son véritable modèle, sans masquer
+son visage. Le verdict et l’annonce anglaise Fatality arrivent après huit
+secondes, sans voix française. La caméra réduite conserve un plan fixe.
+
+Le film valide la transformation d’une paire portée, une capture réelle sans
+dégâts et un K.-O. physique. Le chat-caméra et le pistolet-serpent rappellent les
+transformations du manga (chapitres 390–391), mais restent ici une mise en scène
+après verdict : ils n’ajoutent ni équipement, ni tir, ni immobilisation durable
+à la simulation. Les modèles natifs de Biohazard sont réutilisés ; seules les
+ressources propres aux accessoires sont libérées. Le résultat reste inchangé.
+`hinrigh.test.ts`, `hinrighFilm.test.ts`, `check-hinrigh-fatality.mjs` et
+`check-hinrigh-victories.mjs` couvrent contacts, restauration, victoire native,
+deux côtés, gabarits, miroir, lieux, mobile, confort, rematches et chargement du son.
+
+`hinrighPlayback.test.ts` couvre tous les adversaires et lieux du catalogue,
+les quatre motifs de victoire, les deux côtés, les modes IA/local et les
+rematches. Le contrôle navigateur vérifie aussi la fin naturelle à dix secondes
+et le retour aux résultats.

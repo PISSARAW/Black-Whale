@@ -29,6 +29,7 @@ import { createBiscuitVictory } from './biscuit'
 import { createSaiyuVictory } from './saiyu'
 import { createHanzoVictory } from './hanzo'
 import { createBillVictory } from './bill'
+import { createHinrighVictory } from './hinrigh'
 import { createMelodyVictory } from './melody'
 import { suspendFightExpression } from '../fightExpressionRig'
 
@@ -54,6 +55,7 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hanzo: createHanzoVictory,
   bill: createBillVictory,
   melody: createMelodyVictory,
+  hinrigh: createHinrighVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -78,6 +80,7 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     melody: 2.1,
     hanzo: 2.8,
     bill: 2.3,
+    hinrigh: 2.1,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -182,6 +185,7 @@ export function createVictoryRenderer(options: {
             'hanzo',
             'bill',
             'melody',
+            'hinrigh',
           ].includes(frame.fighter)
         )
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)

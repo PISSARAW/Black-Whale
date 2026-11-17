@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightHinrighVictory from './FightHinrighVictory.svelte'
   import FightSaiyuVictory from './FightSaiyuVictory.svelte'
   import FightFutureVictory from './FightFutureVictory.svelte'
   import { VICTORY_TITLES } from '$lib/fighting/victory/catalogue'
@@ -31,12 +32,13 @@
         elapsed={frame.elapsed}
         {language}
       />{/if}
+    {#if frame.fighter === 'hinrigh'}<FightHinrighVictory elapsed={frame.elapsed} />{/if}
     {#if frame.fighter === 'saiyu'}<FightSaiyuVictory elapsed={frame.elapsed} {language} />{/if}
     <p class="cinematic-match" aria-live="polite">
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody'].includes(frame.fighter) ? 8 : 7)}
+    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong
           >{frame.fighter === 'melody'

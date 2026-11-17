@@ -51,6 +51,7 @@ const matchups = [
   ['melody', 'chrollo', 'banquet-hall', 'player'],
   ['hanzo', 'benjamin', 'whale-hold', 'opponent'],
   ['bill', 'benjamin', 'banquet-hall', 'player'],
+  ['hinrigh', 'padaille', 'vip-casino', 'player'],
 ]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })

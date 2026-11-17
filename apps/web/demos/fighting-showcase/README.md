@@ -977,3 +977,16 @@ Sortie : `output/fighting-bill-fatality/Bill-Fatality-10s.mp4`.
 Les deux cinématiques sont enregistrées dans Clash et utilisent les acteurs
 et l’arène du combat courant. `check-hanzo-bill-victories.mjs` vérifie huit
 victoires automatiques, dont les rematches des deux côtés, et leurs sons.
+
+## Hinrigh — Pièce à conviction
+
+`hinrigh-fatality.html` présente dix secondes de Biohazard : transformation
+d’objets au contact, pigeons-menottes, arme-serpent retournée contre la cible
+et chat-caméra qui filme l’exécution. La démo oppose Hinrigh à Padaille au
+casino VIP ; `target`, `stage`, `side=opponent` et `reduced` l’adaptent.
+`render-hinrigh-fatality.mjs --inspect` exporte les plans de contrôle ; sans
+`--inspect`, il produit les 600 images 1080p60. `compose-hinrigh-fatality.mjs`
+ajoute le mix original, Fatality en anglais et le son chargé dans Clash.
+`check-hinrigh-fatality.mjs` et `check-hinrigh-victories.mjs` contrôlent la démo
+et son déclenchement automatique.
+Sortie : `output/fighting-hinrigh-fatality/Hinrigh-Fatality-10s.mp4`.

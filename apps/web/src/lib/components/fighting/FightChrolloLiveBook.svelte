@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { hunterOptions } from '$lib/fighting/skillHunterAcquisition'
   import { historicalOptions } from '$lib/fighting/chrolloHistoricalOptions'
   import { HISTORICAL_CHROLLO_PAGES } from '$lib/fighting/chrolloHistoricalPages'
   import { chrolloPageName } from '$lib/fighting/chrolloPageNames'
@@ -14,25 +15,28 @@
   import { performAuraAttack } from '$lib/fighting/engine'
   import { observeFightCommand } from '$lib/fighting/commandFeedback'
   import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
-  import type { FightState } from '$lib/fighting/types'
+  import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let language: 'fr' | 'en'
+  export let side: FightSide = 'player'
+  export let readOnly = false
+  $: other = (side === 'player' ? 'opponent' : 'player') as FightSide
   export let actions: LiveBookActions
   let open = false
   $: fr = language === 'fr'
-  $: book = state.player.chrolloBook
-  $: ready = liveBookReady(state)
+  $: book = state[side].chrolloBook
+  $: ready = !readOnly && liveBookReady(state, side)
   $: options = open
-    ? historicalOptions(state, 'player').filter(
+    ? [...historicalOptions(state, side), ...hunterOptions(state, side)].filter(
         (option) => option.command.action !== 'history-page',
       )
     : []
-  $: effects = liveBookEffects(state, language)
-  $: roomCue = liveFishRoomCue(state, language)
+  $: effects = liveBookEffects(state, language, side)
+  $: roomCue = liveFishRoomCue(state, language, side)
   function use(command: ArsenalCommand) {
     actions.queueAction((current) =>
-      observeFightCommand(current, { side: 'player', action: 'utility' }, (next) =>
-        performArsenalAction({ state: next, side: 'player', command }, performAuraAttack),
+      observeFightCommand(current, { side, action: 'utility' }, (next) =>
+        performArsenalAction({ state: next, side, command }, performAuraAttack),
       ),
     )
   }
@@ -47,7 +51,13 @@
     bind:open
     aria-label={fr ? 'Livre de Chrollo en combat' : 'Chrollo combat book'}
   >
-    <summary>{fr ? 'Livre' : 'Book'} · {chrolloPageName(book.pages[book.page], language)}</summary>
+    <summary
+      >{side === 'player' ? 'P1' : 'P2'} · {fr ? 'Livre' : 'Book'} · {chrolloPageName(
+        book.pages[book.page],
+        language,
+      )} · {state[side].facing === 1 ? '→' : '←'}
+      {Math.abs(state[side].x - state[other].x).toFixed(1)} u</summary
+    >
     {#if open}
       <div
         class="book-panel"
@@ -64,8 +74,8 @@
           <br />{fr ? 'Signet' : 'Bookmark'} : {chrolloPageName(book.bookmark, language)}
         </p>
         <p class="distance">
-          {state.player.facing === 1 ? '→' : '←'} · {fr ? 'Distance du duel' : 'Duel distance'} : {Math.abs(
-            state.player.x - state.opponent.x,
+          {state[side].facing === 1 ? '→' : '←'} · {fr ? 'Distance du duel' : 'Duel distance'} : {Math.abs(
+            state[side].x - state[other].x,
           ).toFixed(1)} u
         </p>
         {#if book.pages[book.page] === 'indoor-fish'}<p class="room-cue">{roomCue}</p>{/if}
@@ -85,19 +95,19 @@
         <div class="book-moves">
           <button
             type="button"
-            disabled={!liveBookMoveReady(state, 'use')}
-            onclick={() => actions.queueCommand(liveBookMove('use'))}
+            disabled={readOnly || !liveBookMoveReady(state, 'use', side)}
+            onclick={() => actions.queueCommand(liveBookMove('use', side))}
             >{fr ? 'Utiliser la page' : 'Use page'}</button
           >
           <button
             type="button"
-            disabled={!liveBookMoveReady(state, 'bookmark')}
-            onclick={() => actions.queueCommand(liveBookMove('bookmark'))}>Double Face</button
+            disabled={readOnly || !liveBookMoveReady(state, 'bookmark', side)}
+            onclick={() => actions.queueCommand(liveBookMove('bookmark', side))}>Double Face</button
           >
           <button
             type="button"
-            disabled={!liveBookMoveReady(state, 'secondary')}
-            onclick={() => actions.queueCommand(liveBookMove('secondary'))}
+            disabled={readOnly || !liveBookMoveReady(state, 'secondary', side)}
+            onclick={() => actions.queueCommand(liveBookMove('secondary', side))}
             >{fr ? 'Page au signet / Lune' : 'Bookmarked page / Moon'}</button
           >
         </div>
@@ -105,16 +115,20 @@
           <button
             class="application"
             type="button"
-            disabled={!option.ready}
+            disabled={readOnly || !option.ready}
             title={fr ? option.conditionFr : option.conditionEn}
             onclick={() => use(option.command)}>{fr ? option.labelFr : option.labelEn}</button
           >
         {/each}
         {#each effects as effect (effect)}<p class="effect" role="status">{effect}</p>{/each}
         <small
-          >{fr
-            ? 'Le combat continue. Les contacts, les mains libres et les coûts restent nécessaires.'
-            : 'Combat continues. Contact, free hands and costs still apply.'}</small
+          >{readOnly
+            ? fr
+              ? 'Replay · commandes verrouillées.'
+              : 'Replay · controls locked.'
+            : fr
+              ? 'Le combat continue. Les contacts, les mains libres et les coûts restent nécessaires.'
+              : 'Combat continues. Contact, free hands and costs still apply.'}</small
         >
       </div>
     {/if}

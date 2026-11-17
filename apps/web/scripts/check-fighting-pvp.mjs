@@ -156,11 +156,37 @@ try {
     await guest.screenshot({ path: path.join(output, `pvp-${width}.png`), fullPage: true })
   }
   // Both browsers stop heartbeats for long enough to exercise suspension.
+  const beforeCut = await readView(host)
   await guest.route('**/__pvp/*', (route) => route.abort())
   await guest.waitForTimeout(3400)
   await host.getByText('Duel suspendu', { exact: false }).waitFor()
   await guest.unroute('**/__pvp/*')
   await host.getByText('Combat en cours', { exact: false }).waitFor()
+  const resumed = await readView(host)
+  assert.ok(resumed.inputEpoch > beforeCut.inputEpoch)
+  const stale = await host.evaluate(async (old) => {
+    const id = new URLSearchParams(location.search).get('match')
+    const token = sessionStorage.getItem(`black-whale:clash:pvp:${id}`)
+    const response = await fetch(`/__pvp/${id}`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        kind: 'inputs',
+        round: JSON.parse(old.snapshot).roundNumber,
+        inputEpoch: old.inputEpoch,
+        packets: [
+          {
+            sequence: old.nextSequence,
+            input: 2,
+            commands: [{ kind: 'move', action: 'special', input: 0 }],
+          },
+        ],
+      }),
+    })
+    return { status: response.status, ...(await response.json()) }
+  }, beforeCut)
+  assert.equal(stale.status, 409)
+  assert.equal(stale.error, 'STALE_INPUT')
   await guest.getByRole('button', { name: 'Quitter le duel', exact: true }).click()
   await host.getByText('Duel interrompu définitivement', { exact: false }).waitFor()
   assert.deepEqual(errors, [])

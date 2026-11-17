@@ -2,13 +2,8 @@ import { json } from '@sveltejs/kit'
 import { clashPvpRegistry, ClashPvpError } from './clashPvp'
 import { rateLimit } from './rateLimit'
 import { log, describeError } from './log'
-import {
-  boundedInteger,
-  parsePvpPacket,
-  parsePvpPackets,
-  parsePvpSetup,
-  record,
-} from '$lib/fighting/pvp/protocol'
+import { parsePvpSetup, record } from '$lib/fighting/pvp/protocol'
+import { parsePvpControlUpload } from '$lib/fighting/pvp/controlUpload'
 import { PVP_RULESET } from '$lib/fighting/pvp/types'
 import { clashSeasons } from './clashSeasons'
 
@@ -28,6 +23,7 @@ export function clashPvpFailure(error: unknown): Response {
     SEQUENCE: 409,
     BUSY: 409,
     NOT_PLAYING: 409,
+    STALE_INPUT: 409,
     NOT_READY: 409,
     CAPACITY: 503,
   }
@@ -127,12 +123,7 @@ function authenticatedUpdate(
   body: Record<string, unknown>,
 ): Response {
   const token = clashBearer(request)
-  if (body.kind === 'inputs') {
-    const packets = parsePvpPackets(body.packets)
-    return packets && boundedInteger(body.round, Number.MAX_SAFE_INTEGER)
-      ? json(clashPvpRegistry.receiveInputs(id, { token, packets, round: body.round }), { headers })
-      : invalid()
-  }
+  if (body.kind === 'inputs' || body.kind === 'input') return inputUpdate(id, token, body)
   if (body.kind === 'leave') {
     clashPvpRegistry.leave(id, token)
     return json({ left: true }, { headers })
@@ -146,8 +137,16 @@ function authenticatedUpdate(
       clashPvpRegistry.ready(id, { token, ruleset: body.ruleset, configHash: body.configHash }),
       { headers },
     )
-  const packet = body.kind === 'input' ? parsePvpPacket(body.packet) : null
-  return packet ? json(clashPvpRegistry.submit(id, { token, packet }), { headers }) : invalid()
+  return invalid()
+}
+function inputUpdate(id: string, token: string, body: Record<string, unknown>) {
+  const upload = parsePvpControlUpload(body)
+  if (!upload) return invalid()
+  const result =
+    body.kind === 'input'
+      ? clashPvpRegistry.submit(id, { token, ...upload, packet: upload.packets[0] })
+      : clashPvpRegistry.receiveInputs(id, { token, ...upload })
+  return json(result, { headers })
 }
 function invalid() {
   return json({ error: 'INVALID_COMMAND' }, { status: 400, headers })

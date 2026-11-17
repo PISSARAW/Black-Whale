@@ -4,6 +4,10 @@ L’[étape 2](./STEP2.md) complète les profils graphiques, la lecture des cont
 et la qualification Xbox locale. Le diagnostic de manette mesure la lecture par
 le navigateur ; il ne remplace pas une mesure physique manette-écran.
 
+L’[étape 4](./STEP4.md) ajoute le protocole `clash-pvp-5`, les générations de
+commandes et la qualification des reprises ; les rapports historiques ci-dessous
+gardent leurs versions et périmètres d’origine.
+
 Objectif : afficher plus tôt les contrôles des 40 personnages jouables
 sans déléguer au navigateur le Nen, les contacts ou le résultat du duel.
 

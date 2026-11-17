@@ -20,9 +20,14 @@ export function decodePvpView(view: PvpView) {
 
 function validateEnvelope(view: PvpView) {
   if (
-    ![view.tick, view.revision, view.nextSequence, view.appliedSequence, view.appliedAtTick].every(
-      (value) => Number.isSafeInteger(value) && value >= 0,
-    )
+    ![
+      view.inputEpoch,
+      view.tick,
+      view.revision,
+      view.nextSequence,
+      view.appliedSequence,
+      view.appliedAtTick,
+    ].every((value) => Number.isSafeInteger(value) && value >= 0)
   )
     throw Error('DIVERGED')
   if (view.appliedSequence > view.nextSequence || view.appliedAtTick > view.tick)

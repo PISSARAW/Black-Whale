@@ -4,21 +4,16 @@ export { decodePvpView } from './clientView'
 import { createPvpPrediction } from './prediction'
 import { createSnapshotStream } from './snapshotStream'
 import { createInputPipeline } from './inputPipeline'
-import { record, boundedInteger } from './protocol'
+import { createPvpControlGate } from './controlGate'
+import { readPvpInputReceipt } from './inputReceipt'
 import type { FightVisualPrediction } from '../fightVisualPrediction'
-import {
-  PVP_RULESET,
-  pvpSessionKey,
-  type PvpCommand,
-  type PvpInputReceipt,
-  type PvpSession,
-  type PvpView,
-} from './types'
+import { PVP_RULESET, pvpSessionKey, type PvpCommand, type PvpSession, type PvpView } from './types'
 import type { FightState } from '../types'
 import { rankingToken } from '../career/ranking'
 import { recordOnlineCareer } from '../career/online'
 
 interface ClientState {
+  neutralRequired: boolean
   view: PvpView | null
   state: FightState | null
   connection: 'connecting' | 'connected' | 'reconnecting' | 'diverged' | 'error' | 'version'
@@ -35,6 +30,7 @@ interface ClientOptions {
 }
 export function createPvpClient(options: ClientOptions) {
   const store = writable<ClientState>({
+    neutralRequired: false,
     view: null,
     state: null,
     connection: 'connecting',
@@ -46,6 +42,7 @@ export function createPvpClient(options: ClientOptions) {
   const transport = options.fetch
   let token = options.storage?.getItem(pvpSessionKey(options.matchId)) ?? ''
   const prediction = createPvpPrediction(clock)
+  const controls = createPvpControlGate()
   let stopped = false
   let acceptedAt = 0
   let polledAt = -Infinity
@@ -53,7 +50,12 @@ export function createPvpClient(options: ClientOptions) {
     now: clock,
     send: async (packets, signal) => {
       const receipt = await request(
-        { kind: 'inputs', round: get(store).state?.roundNumber, packets },
+        {
+          kind: 'inputs',
+          round: get(store).state?.roundNumber,
+          inputEpoch: get(store).view?.inputEpoch,
+          packets,
+        },
         signal,
       )
       acceptReceipt(receipt)
@@ -97,18 +99,37 @@ export function createPvpClient(options: ClientOptions) {
     if (view.matchId !== options.matchId) throw Error('DIVERGED')
     if (!current.view) return true
     if (view.revision <= current.view.revision) return false
-    if (view.side !== current.view.side || view.tick < current.view.tick) throw Error('DIVERGED')
+    if (
+      view.side !== current.view.side ||
+      view.tick < current.view.tick ||
+      view.inputEpoch < current.view.inputEpoch
+    )
+      throw Error('DIVERGED')
     return true
   }
   function acceptReceipt(value: unknown) {
-    const view = get(store).view
-    if (!record(value) || !view || value.matchId !== options.matchId || value.side !== view.side)
-      throw Error('DIVERGED')
-    if (!boundedInteger(value.nextSequence, pipeline.stats.nextSequence)) throw Error('DIVERGED')
-    if (value.round !== get(store).state?.roundNumber) throw Error('DIVERGED')
-    pipeline.acknowledge((value as unknown as PvpInputReceipt).nextSequence)
+    const current = get(store)
+    if (!current.view || !current.state) throw Error('DIVERGED')
+    const sequence = readPvpInputReceipt(value, {
+      matchId: options.matchId,
+      side: current.view.side,
+      inputEpoch: current.view.inputEpoch,
+      round: current.state.roundNumber,
+      nextSequence: pipeline.stats.nextSequence,
+    })
+    if (sequence !== null) pipeline.acknowledge(sequence)
   }
   function reconcile(state: FightState, view: PvpView) {
+    const previous = get(store).view
+    if (
+      controls.accept(
+        view.inputEpoch,
+        previous?.status === 'playing' || previous?.status === 'interrupted',
+      )
+    ) {
+      pipeline.reset(view.nextSequence)
+      prediction.clear()
+    }
     if (view.status === 'playing') {
       if (get(store).state?.roundNumber !== state.roundNumber) pipeline.reset(view.nextSequence)
       pipeline.acknowledge(view.nextSequence)
@@ -131,6 +152,7 @@ export function createPvpClient(options: ClientOptions) {
       view,
       state,
       connection: 'connected',
+      neutralRequired: controls.blocked,
       error: '',
     }))
     recordOnlineCareer(view)
@@ -155,7 +177,7 @@ export function createPvpClient(options: ClientOptions) {
   }
   function inputFailure(error: unknown) {
     const code = error instanceof Error ? error.message : ''
-    if (['SEQUENCE', 'NOT_PLAYING', 'BUSY'].includes(code)) {
+    if (['SEQUENCE', 'NOT_PLAYING', 'BUSY', 'STALE_INPUT'].includes(code)) {
       // Keep immutable unreceived commands: a view reconciles any accepted prefix.
       void refresh()
       return
@@ -171,6 +193,13 @@ export function createPvpClient(options: ClientOptions) {
     return !stream.connected || current.connection !== 'connected' || clock() - acceptedAt > 250
   }
   let inFlight: Promise<void> | null = null
+  function controlledInput(value: number) {
+    const blocked = controls.blocked
+    const input = controls.input(value)
+    if (blocked !== controls.blocked)
+      store.update((current) => ({ ...current, neutralRequired: controls.blocked }))
+    return input
+  }
   function exclusive(action: () => Promise<void>): Promise<void> {
     if (stopped) return Promise.resolve()
     if (inFlight) return inFlight.then(() => exclusive(action))
@@ -188,6 +217,7 @@ export function createPvpClient(options: ClientOptions) {
       return get(visuals)
     },
     queue(command: PvpCommand) {
+      if (controls.blocked) return
       const intent = { ...command }
       if (get(store).connection === 'connected' && get(store).view?.status === 'playing')
         pipeline.queue(intent, () => prediction.command(intent))
@@ -201,19 +231,24 @@ export function createPvpClient(options: ClientOptions) {
       const current = get(store)
       if (stopped || current.connection !== 'connected' || current.view?.status !== 'playing')
         return
-      visuals.set(prediction.advance(dt, input))
+      visuals.set(prediction.advance(dt, controlledInput(input)))
     },
     pump(input: number) {
       const current = get(store)
       if (stopped || terminalConnection(current) || !current.view) return
       if (current.connection !== 'diverged') stream.start()
       if (current.connection === 'connected' && current.view.status === 'playing')
-        void pipeline.send(input)
+        void pipeline.send(controlledInput(input))
       const interval = current.view.status === 'playing' ? 100 : 250
       if (needsPolling(current) && clock() - polledAt >= interval) void refresh()
     },
     get predictionStats() {
-      return { ...prediction.stats, streaming: stream.connected, transport: pipeline.stats }
+      return {
+        ...prediction.stats,
+        neutralRequired: controls.blocked,
+        streaming: stream.connected,
+        transport: pipeline.stats,
+      }
     },
     join() {
       return exclusive(async () => {
@@ -247,7 +282,7 @@ export function createPvpClient(options: ClientOptions) {
         const current = get(store)
         if (terminalConnection(current)) return
         if (current.view?.status === 'playing' && current.connection !== 'diverged')
-          await pipeline.send(input, true)
+          await pipeline.send(controlledInput(input), true)
         if (!stream.connected || current.connection !== 'connected')
           accept((await request()) as PvpView)
       })

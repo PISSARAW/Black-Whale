@@ -103,7 +103,7 @@ describe('ordered cumulative input HTTP boundary', () => {
   })
   it('authenticates compact receipts without returning another world snapshot', async () => {
     const { host, guest } = await lobby()
-    const body = { kind: 'inputs', round: 1, packets: [packet(0), packet(1)] }
+    const body = { kind: 'inputs', inputEpoch: 1, round: 1, packets: [packet(0), packet(1)] }
     expect(updateClashLobby(host.matchId, request('foreign'), body).status).toBe(401)
     expect(clashPvpRegistry.view(host.matchId, host.token).nextSequence).toBe(0)
     const response = updateClashLobby(host.matchId, request(host.token), body)
@@ -113,6 +113,7 @@ describe('ordered cumulative input HTTP boundary', () => {
       side: 'player',
       nextSequence: 2,
       round: 1,
+      inputEpoch: 1,
     })
     expect(clashPvpRegistry.view(host.matchId, guest.token).nextSequence).toBe(0)
     expect(await updateClashLobby(host.matchId, request(host.token), body).json()).toEqual({
@@ -120,6 +121,7 @@ describe('ordered cumulative input HTTP boundary', () => {
       side: 'player',
       nextSequence: 2,
       round: 1,
+      inputEpoch: 1,
     })
   })
   it('rejects delayed uploads from another round without consuming their sequences', async () => {
@@ -127,6 +129,7 @@ describe('ordered cumulative input HTTP boundary', () => {
     for (const round of [undefined, -1, 0.5, '1', 2]) {
       const response = updateClashLobby(host.matchId, request(host.token), {
         kind: 'inputs',
+        inputEpoch: 1,
         round,
         packets: [packet(0)],
       })
@@ -136,6 +139,7 @@ describe('ordered cumulative input HTTP boundary', () => {
     expect(
       updateClashLobby(host.matchId, request(host.token), {
         kind: 'inputs',
+        inputEpoch: 1,
         round: 1,
         packets: [packet(0)],
       }).status,

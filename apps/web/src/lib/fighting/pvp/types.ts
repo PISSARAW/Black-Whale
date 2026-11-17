@@ -7,7 +7,7 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-4:${REPLAY_RULESET}`
+export const PVP_RULESET = `clash-pvp-5:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -38,6 +38,7 @@ export interface PvpInputPacket {
 }
 /** Receipt only; application, Nen and combat results arrive in the private view. */
 export interface PvpInputReceipt {
+  inputEpoch: number
   matchId: string
   side: FightSide
   nextSequence: number
@@ -52,6 +53,8 @@ export interface PvpSession {
 }
 export type PvpStatus = 'waiting' | 'ready' | 'playing' | 'interrupted' | 'finished' | 'abandoned'
 export interface PvpView {
+  /** Server-owned control generation; changes when held/queued controls are released. */
+  inputEpoch: number
   matchId: string
   side: FightSide
   ruleset: string

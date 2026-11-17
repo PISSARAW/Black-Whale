@@ -42,6 +42,13 @@
     · {connections[$client.connection][index]}
     {#if $client.ping !== null}· {$client.ping} ms{/if}
   </p>
+  {#if $client.neutralRequired && view?.status === 'playing'}
+    <p role="status">
+      {language === 'fr'
+        ? 'Duel repris : relâche les commandes avant de reprendre le contrôle.'
+        : 'Duel resumed: release your controls before continuing.'}
+    </p>
+  {/if}
   {#if view}
     <p>
       {fighterDefinition(view.setup.player).name} — {fighterDefinition(view.setup.opponent).name} · {view

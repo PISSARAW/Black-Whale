@@ -6,6 +6,9 @@ complètent les contrôles de réactivité et de performance.
 L’[étape 3](./STEP3.md) corrige les répétitions infinies de coups physiques au sol
 et ajoute les situations et relevés du laboratoire pour les essais d’équilibrage.
 
+L’[étape 4](./STEP4.md) fiabilise les reprises PvP, les commandes retardées et
+la reconstruction privée, avec des essais jusqu’à 300 ms de RTT simulé.
+
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 ## Capacités d’arène

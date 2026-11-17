@@ -159,16 +159,27 @@ export class ClashPvpRegistry {
     this.beginConfirmedRound(lobby)
     return this.view(id, options.token)
   }
-  submit(id: string, options: { token: string; packet: PvpInputPacket }): PvpView {
-    this.receiveInputs(id, { token: options.token, packets: [options.packet] })
+  submit(
+    id: string,
+    options: { token: string; packet: PvpInputPacket; round?: number; inputEpoch?: number },
+  ): PvpView {
+    this.receiveInputs(id, { ...options, packets: [options.packet] })
     return this.view(id, options.token)
   }
-  receiveInputs(id: string, options: { token: string; packets: PvpInputPacket[]; round?: number }) {
+  receiveInputs(
+    id: string,
+    options: { token: string; packets: PvpInputPacket[]; round?: number; inputEpoch?: number },
+  ) {
     const { lobby, side } = this.access(id, options.token)
     this.advance(lobby)
     if (lobby.status !== 'playing') throw new ClashPvpError('NOT_PLAYING')
     if (options.round !== undefined && options.round !== lobby.match.roundNumber)
       throw new ClashPvpError('NOT_PLAYING')
+    if (
+      options.inputEpoch !== undefined &&
+      options.inputEpoch !== lobby.match.acknowledgement(side).inputEpoch
+    )
+      throw new ClashPvpError('STALE_INPUT')
     for (const packet of options.packets) {
       const result = lobby.match.submit(side, packet, this.now())
       if (result === 'sequence' || result === 'busy') throw new ClashPvpError(result.toUpperCase())
@@ -180,6 +191,7 @@ export class ClashPvpRegistry {
       side,
       nextSequence: lobby.match.nextSequence(side),
       round: lobby.match.roundNumber,
+      inputEpoch: lobby.match.acknowledgement(side).inputEpoch,
     }
   }
   leave(id: string, token: string): void {
@@ -237,9 +249,10 @@ export class ClashPvpRegistry {
     const missing = (['player', 'opponent'] as const).find((side) => !this.connected(lobby, side))
     if (!missing) return
     const elapsed = this.now() - lobby.seats[missing]!.seenAt
-    lobby.status = elapsed > PVP_GRACE_MS ? 'abandoned' : 'interrupted'
+    const status = elapsed > PVP_GRACE_MS ? 'abandoned' : 'interrupted'
+    if (lobby.status !== status) lobby.match.release()
+    lobby.status = status
     lobby.disconnectedSide = missing
-    lobby.match.release()
   }
   private resume(lobby: Lobby) {
     if (lobby.status === 'ready') {

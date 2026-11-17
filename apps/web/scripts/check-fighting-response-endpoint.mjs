@@ -9,7 +9,13 @@ const replaySource = await readFile(
 )
 const replayRuleset = replaySource.match(/REPLAY_RULESET = '([^']+)'/)?.[1]
 assert.ok(replayRuleset, 'Missing replay ruleset')
-const ruleset = process.env.RESPONSE_RULESET ?? `clash-pvp-4:${replayRuleset}`
+const protocolSource = await readFile(
+  new URL('../src/lib/fighting/pvp/types.ts', import.meta.url),
+  'utf8',
+)
+const protocol = protocolSource.match(/clash-pvp-\d+/)?.[0]
+assert.ok(protocol, 'Missing PvP protocol')
+const ruleset = process.env.RESPONSE_RULESET ?? `${protocol}:${replayRuleset}`
 const fighters = process.env.RESPONSE_FIGHTERS?.split(',') ?? [
   'kurapika',
   'hisoka',
@@ -90,9 +96,11 @@ for (const [index, fighter] of fighters.entries()) {
   for (const token of [host.token, guest.token])
     await request({ id, token, body: { kind: 'ready', ruleset, configHash: initial.configHash } })
   for (const token of [host.token, guest.token]) {
+    const current = await request({ id, token })
     const body = {
       kind: 'inputs',
       round: 1,
+      inputEpoch: current.inputEpoch,
       packets: [
         { sequence: 0, input: 0, commands: [{ kind: 'move', action: 'light', input: 0 }] },
         { sequence: 1, input: 0, commands: [] },

@@ -33,6 +33,7 @@
   setContext(FIGHT_VISUAL_PREDICTION, () => client.visualPrediction)
   $: state = $client.state
   $: enabled = $client.connection === 'connected' && $client.view?.status === 'playing'
+  $: if (!enabled) release()
   function release() {
     input = { ...EMPTY_INPUT }
     controls.release()

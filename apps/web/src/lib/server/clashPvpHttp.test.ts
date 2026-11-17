@@ -35,12 +35,16 @@ describe('Clash PvP HTTP boundary', () => {
     expect(
       updateClashLobby(session.matchId, request(), {
         kind: 'input',
+        round: 1,
+        inputEpoch: 0,
         packet: { sequence: 0, input: 0, commands: [] },
       }).status,
     ).toBe(401)
     expect(
       updateClashLobby(session.matchId, request(session.token), {
         kind: 'input',
+        round: 1,
+        inputEpoch: 0,
         packet: { sequence: 0, input: 0, commands: [{ kind: 'panel', payload: 'forged' }] },
       }).status,
     ).toBe(400)
@@ -71,6 +75,8 @@ describe('Clash PvP HTTP boundary', () => {
       ).toBe(200)
     const response = updateClashLobby(host.matchId, request(guest.token), {
       kind: 'input',
+      round: 1,
+      inputEpoch: 0,
       packet: {
         sequence: 0,
         input: 0,

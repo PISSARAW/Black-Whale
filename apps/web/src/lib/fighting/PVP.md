@@ -1,8 +1,11 @@
 # Clash : PvP privé (phase 7)
 
 La [phase 8](./CAREER.md) ajoute les saisons, le profil, la vue spectateur et des
-secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-4` inclut le ruleset moteur courant ;
+secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-5` inclut le ruleset moteur courant ;
 les descriptions de l’autorité et des conditions de combat ci-dessous restent valables.
+
+L’[étape 4](./STEP4.md) ajoute les générations de commandes après suspension,
+le retour au neutre, le watchdog SSE et les essais jusqu’à 300 ms de RTT simulé.
 
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
 joueurs. Les quarante personnages, les trois formats, les arènes, les ressources
@@ -24,6 +27,11 @@ en attente par place. Les entrées maintenues expirent après 250 ms sans nouvea
 paquet. Chaque place possède une séquence croissante ; un reçu perdu peut être
 redemandé avec le même paquet sans exécuter ni payer une seconde fois l’action.
 Une réutilisation du numéro avec un autre contenu est refusée.
+
+Les enveloppes HTTP doivent aussi fournir la manche et l’`inputEpoch` courant
+délivré par le serveur. Une ancienne génération est refusée après reprise, même
+dans la même manche. Le client vide alors les intentions anciennes et exige le
+relâchement des commandes ; un ancien reçu ne peut pas acquitter un nouvel envoi.
 
 `pvp/commands.ts` couvre les coups, Emperor Time, appels au corps, Easter Eggs,
 actions nommées de Battle Cantabile, parole, Blinky, papier de Kalluto, Bloody Mary, poème,

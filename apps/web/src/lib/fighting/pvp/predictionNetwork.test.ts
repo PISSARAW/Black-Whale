@@ -165,7 +165,7 @@ function exercise(player: FighterId, opponent: FighterId, rtt: number) {
 describe('sixteen matchups under delayed private views', () => {
   for (const player of ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const)
     for (const opponent of ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const)
-      it.each([0, 50, 100, 150])(
+      it.each([0, 50, 100, 150, 300])(
         `${player} / ${opponent}, RTT %sms + jitter + duplicate receipts`,
         (rtt) => exercise(player, opponent, rtt),
         30000,
@@ -177,7 +177,7 @@ describe('sixteen matchups under delayed private views', () => {
 describe('forty roster bodies under delayed private views', () => {
   const roster = FIGHTING_ROSTER.map(({ id }) => id)
   for (const [index, player] of roster.entries())
-    it.each([0, 50, 100, 150])(
+    it.each([0, 50, 100, 150, 300])(
       `${player} / ${roster[(index + 17) % roster.length]}, RTT %sms`,
       (rtt) => exercise(player, roster[(index + 17) % roster.length], rtt),
       30000,

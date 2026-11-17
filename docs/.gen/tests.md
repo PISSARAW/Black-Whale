@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 688
+Fichiers : 690
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -613,6 +613,10 @@ Fichiers : 688
 - prediction across the complete playable roster > player
 - prediction across the complete playable roster > player
 
+## `apps/web/src/lib/fighting/pvp/reconciliationSafety.test.ts`
+
+- private reconciliation preserves temporal, post-mortem and conditional Nen states > resimulation cannot publish resource, result, sound or camera events
+
 ## `apps/web/src/lib/fighting/pvp/response.test.ts`
 
 - stream reconciliation and bounded input traffic > clears old uploads on a round change even when the intermission views were missed
@@ -624,7 +628,7 @@ Fichiers : 688
 
 ## `apps/web/src/lib/fighting/pvp/snapshotStream.test.ts`
 
-- private view streaming lifecycle > parses split CRLF events and keeps the token in headers
+- private view streaming lifecycle > replaces a silent stream without retaining its reader or repeating an accepted event
 
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 

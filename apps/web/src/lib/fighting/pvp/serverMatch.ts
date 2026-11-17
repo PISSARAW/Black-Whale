@@ -23,6 +23,7 @@ export class AuthoritativeClashMatch {
   }
   private inputAt = { player: 0, opponent: 0 }
   tick = 0
+  private inputEpoch = 0
   private practice = createMatchPractice()
   constructor(private current: FightState) {}
   snapshot(): FightState {
@@ -39,7 +40,11 @@ export class AuthoritativeClashMatch {
     return this.sequences[side]
   }
   acknowledgement(side: FightSide) {
-    return { appliedSequence: this.applied[side], appliedAtTick: this.appliedTick[side] }
+    return {
+      inputEpoch: this.inputEpoch,
+      appliedSequence: this.applied[side],
+      appliedAtTick: this.appliedTick[side],
+    }
   }
   summary() {
     return this.practice.snapshot()
@@ -65,6 +70,7 @@ export class AuthoritativeClashMatch {
     return 'accepted'
   }
   release() {
+    this.inputEpoch++
     this.pending = { player: [], opponent: [] }
     this.inputs = { player: 0, opponent: 0 }
     for (const side of SIDES) this.acknowledge(side)

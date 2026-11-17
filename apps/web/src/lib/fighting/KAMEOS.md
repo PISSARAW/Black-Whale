@@ -1,7 +1,7 @@
 # Kaméos complets — plan de conception
 
-Statut : lots 0 à 2 faits (caractérisation, scission du pas dans `duelStep/`, état
-dans `kameos/`) ; le reste est une **proposition**. Nom de travail « Kaméo » (terme de MK) ;
+Statut : lots 0 à 3 faits (caractérisation, scission du pas dans `duelStep/`, état et
+projection de mêlée dans `kameos/`) ; le reste est une **proposition**. Nom de travail « Kaméo » (terme de MK) ;
 un nom propre à Clash est à choisir pour l'interface.
 
 ## Objectif
@@ -14,12 +14,12 @@ et conditions que le moteur ordinaire. Il se distingue du relais de
 
 ## Diagnostic : le moteur est un duel
 
-| Mesure (hors tests)                                        | Valeur        |
-| ---------------------------------------------------------- | ------------- |
-| Fichiers qui lisent `.player` / `.opponent`                | 142           |
-| Occurrences de `state.player` / `state.opponent`           | ~2 840        |
-| Bascules `side === 'player' ? 'opponent' : 'player'`       | 138           |
-| `types.ts` / `engine.ts`                                   | 498 / 484 l.  |
+| Mesure (hors tests)                                  | Valeur       |
+| ---------------------------------------------------- | ------------ |
+| Fichiers qui lisent `.player` / `.opponent`          | 142          |
+| Occurrences de `state.player` / `state.opponent`     | ~2 840       |
+| Bascules `side === 'player' ? 'opponent' : 'player'` | 138          |
+| `types.ts` / `engine.ts`                             | 498 / 484 l. |
 
 Il n'existe pas de « cible » distincte de « l'autre camp » : chaque Hatsu, chaque
 collision, chaque règle considère que l'adversaire est `state[otherSide]`. Généraliser
@@ -32,11 +32,11 @@ Le duel principal reste `player` contre `opponent`. Les kaméos vivent à côté
 ```ts
 // kameos/types.ts
 interface KameoSlot {
-  fighter: ArcadeFighter      // corps complet
+  fighter: ArcadeFighter // corps complet
   phase: 'reserve' | 'entering' | 'acting' | 'leaving' | 'eliminated'
-  call: KameoCallId | null    // neutre / avant / arrière
-  cooldownFrames: number      // recharge avant le prochain appel, 0 = prêt
-  phaseFrames: number         // durée passée dans la phase
+  call: KameoCallId | null // neutre / avant / arrière
+  cooldownFrames: number // recharge avant le prochain appel, 0 = prêt
+  phaseFrames: number // durée passée dans la phase
 }
 // FightState.kameos?: Partial<Record<FightSide, KameoSlot>>
 ```
@@ -61,6 +61,25 @@ fois. Il faut donc scinder `stepFight` en deux :
   par **paire** (leader↔adversaire, kaméo↔adversaire).
 
 Cette scission est le premier vrai chantier et conditionne tout le reste.
+
+**Constat du lot 3.** La mêlée se sépare proprement : `resolveMeleePair`
+(`combatImpact.ts`) résout les coups entre deux corps sans horloge, observateur ni
+verdict, et la projection l'utilise telle quelle. Le reste de `settleBodies` ne se
+sépare pas sans toucher aux personnages :
+
+| Étape de la frame                         | Nature                                   |
+| ----------------------------------------- | ---------------------------------------- |
+| `stepActors` (physique, frames d'attaque) | par corps, réutilisable                  |
+| `resolveMeleePair`                        | par paire, réutilisable                  |
+| `advanceHatsuFrames`                      | les 40 `onFrame` lisent la paire entière |
+| paroles, ouïe de Melody, jugements        | lisent la paire entière                  |
+| commandes tamponnées                      | par corps, mais via l'état               |
+| projectiles, `resolveFightOutcome`        | monde, une fois par frame                |
+
+Faire tourner `advanceHatsuFrames` dans une projection ferait avancer deux fois les
+horloges de l'adversaire. Un kaméo n'a donc **aucune horloge de Hatsu** tant que les
+`onFrame` concernés n'ont pas de forme par corps. C'est la raison technique du défaut
+« interdit » du registre (lot 7) : seuls les coups physiques sont sûrs aujourd'hui.
 
 ### Collisions et projectiles
 
@@ -92,8 +111,8 @@ sans bonus kaméo.
 - **Mort** : un kaméo qui tombe à 0 PV est mort et passe `eliminated` pour le match.
   Le leader continue. Une vraie mort se produit au lieu d'une invulnérabilité à la MK.
 - **Hatsu ciblés** (chaînes, contrats, pages de Chrollo, Cat's Name…) : un registre
-  `kameos/hatsuEligibility.ts` classe chaque Hatsu en *autorisé en kaméo*,
-  *autorisé, cible = corps principal adverse* ou *interdit en kaméo*. Le défaut est
+  `kameos/hatsuEligibility.ts` classe chaque Hatsu en _autorisé en kaméo_,
+  _autorisé, cible = corps principal adverse_ ou _interdit en kaméo_. Le défaut est
   **interdit**, on ouvre au cas par cas. Les Hatsu adverses ne visent jamais le kaméo,
   sauf par contact physique réel.
 

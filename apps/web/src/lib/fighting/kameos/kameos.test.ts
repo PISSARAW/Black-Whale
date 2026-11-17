@@ -49,9 +49,7 @@ describe('kameo state (lot 2)', () => {
   it('refuses a kameo identical to its own leader, or added after the start', () => {
     const state = createFight('kurapika', 'hisoka')
     expect(() => withKameos(state, { player: 'kurapika' })).toThrow('kameo-is-leader')
-    expect(() => withKameos(beginFight(state), { player: 'illumi' })).toThrow(
-      'kameo-after-start',
-    )
+    expect(() => withKameos(beginFight(state), { player: 'illumi' })).toThrow('kameo-after-start')
   })
 
   it('keeps reserve kameos inert: the duel plays exactly as without them', () => {

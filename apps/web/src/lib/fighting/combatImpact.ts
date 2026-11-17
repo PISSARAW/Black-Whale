@@ -58,12 +58,16 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
     projectiles.map((hit) => hit.projectile),
   )
   if (state.catsName || state.phase !== 'fighting') return state
+  return resolveFightOutcome(projectiles.reduce(resolveProjectileHit, resolveMeleePair(state)))
+}
+
+/** Melee between the two bodies of a duel only: no clock, observer or verdict runs here. */
+export function resolveMeleePair(state: FightState): FightState {
   const trade = canTrade(state)
-  let next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
-  if (trade) next = resolveTrade(state, next)
-  else if (next.phase === 'fighting')
-    next = recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
-  return resolveFightOutcome(projectiles.reduce(resolveProjectileHit, next))
+  const next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
+  if (trade) return resolveTrade(state, next)
+  if (next.phase !== 'fighting') return next
+  return recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
 }
 
 function canTrade(state: FightState): boolean {

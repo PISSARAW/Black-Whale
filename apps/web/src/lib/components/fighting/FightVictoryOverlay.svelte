@@ -38,7 +38,7 @@
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh'].includes(frame.fighter) ? 8 : 7)}
+    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong
           >{frame.fighter === 'melody'

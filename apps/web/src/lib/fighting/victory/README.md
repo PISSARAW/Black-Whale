@@ -417,3 +417,30 @@ deux côtés, gabarits, miroir, lieux, mobile, confort, rematches et chargement 
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie aussi la fin naturelle à dix secondes
 et le retour aux résultats.
+
+Terebellum : « Retour à l’envoyeur » reçoit deux coups de couteau et un coup
+au torse. À 120, la blessure et le même couteau apparaissent dans la canette
+maintenue dans sa main gauche. L’attaquant récupère physiquement la lame à 204 ;
+la canette conserve sa déformation et sa trace. Terebellum pose la canette et
+touche le torse adverse de sa main gauche avant les coups de 240 et 360.
+Le dernier couteau se retrouve dans le front de celui qui l’a donné, avec un
+gros plan avant la chute native à 384. Terebellum reprend sa canette abîmée et
+boit sans blessure. L’annonce Fatality est en anglais, après huit secondes.
+
+Les transferts ont lieu à l’instant du nouveau dommage, avec contact gauche
+continu. Aucun dégât n’est stocké, aucune vieille blessure n’est soignée ou
+réutilisée. Le pouvoir n’absorbe rien à distance : pour ses propres blessures,
+le contact gauche suffit (chapitre 399). Le film obtient un vrai K.-O. par
+Sweet Home et vérifie que Terebellum reste à ses PV maximaux. Une simulation
+témoin identique, privée du seul transfert, confirme le dommage effectivement
+dévié ; elle ne modifie pas la continuité du film. Le rendu après verdict ne
+modifie aucun PV ni état de combat. Les bras gardent leurs longueurs et le
+plus grand personnage fléchit les jambes pour rejoindre les petits gabarits.
+Les poses, accessoires et matériaux sont restaurés et les sons suivent les dix
+secondes. Les contrôles couvrent les deux côtés, tailles, miroir, lieux, confort,
+mobile et rematches.
+
+`terebellumPlayback.test.ts` couvre tous les adversaires et lieux du catalogue,
+les quatre motifs de victoire, les deux côtés, les modes IA/local et les
+rematches. Le contrôle navigateur vérifie la fin naturelle après dix secondes,
+le chargement du son et le retour aux résultats sans mutation du combat.

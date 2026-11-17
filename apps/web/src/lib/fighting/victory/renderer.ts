@@ -39,6 +39,7 @@ import { isBeyondCurse } from './beyondCurseSelection'
 import { createLonghiVictory } from './longhi'
 import { createFurykovVictory } from './furykov'
 import { createThetaVictory } from './theta'
+import { createMizaistomVictory } from './mizaistom'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -68,6 +69,7 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   longhi: createLonghiVictory,
   furykov: createFurykovVictory,
   theta: createThetaVictory,
+  mizaistom: createMizaistomVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -98,6 +100,7 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     longhi: 0.4,
     furykov: 1,
     theta: 1.8,
+    mizaistom: 1.8,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -143,6 +146,7 @@ function ownsComfortCamera(frame: VictoryFrame) {
       'longhi',
       'furykov',
       'theta',
+      'mizaistom',
     ].includes(frame.fighter)
   )
 }

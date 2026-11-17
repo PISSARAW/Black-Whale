@@ -1053,3 +1053,16 @@ du jeu et assemble `output/fighting-theta-fatality/Theta-Fatality-10s.mp4`.
 Le seul dialogue est l’annonce anglaise Fatality.
 `check-theta-fatality.mjs` contrôle les variantes, le mobile et l’intégration ;
 `check-theta-victories.mjs` contrôle les victoires automatiques et revanches.
+
+## Mizaistom — Dernier avertissement
+
+`mizaistom-fatality.html` montre deux désobéissances, le retournement du carton
+jaune et deux confinements brefs. Les frappes physiques attendent la libération ;
+la dernière projette la cible à travers un panneau, puis Fatality est annoncé
+en anglais. Le décor et la cible suivent `stage`, `target`, `side` et `reduced`.
+
+`render-mizaistom-fatality.mjs` exporte dix secondes en 1080p30 ; `--inspect`
+produit les plans de contrôle. `compose-mizaistom-fatality.mjs` crée le son
+du jeu et `output/fighting-mizaistom-fatality/Mizaistom-Fatality-10s.mp4`.
+Les scripts `check-mizaistom-fatality.mjs` et `check-mizaistom-victories.mjs`
+contrôlent les variantes et les victoires/rematches dans Clash.

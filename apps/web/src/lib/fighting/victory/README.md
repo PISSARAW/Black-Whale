@@ -537,3 +537,6 @@ démos, mobile, confort, sons et huit victoires automatiques avec revanches.
 
 Theta : [Une balle d’avance](./THETA.md) utilise le chargeur comme leurre,
 un coup de crosse puis l’unique balle restée dans la chambre.
+
+Mizaistom : [Dernier avertissement](./MIZAISTOM.md) alterne deux cartons jaunes
+retournés, des contraintes brèves et des frappes physiques après libération.

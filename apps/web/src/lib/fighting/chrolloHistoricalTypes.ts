@@ -24,6 +24,8 @@ export interface ChrolloHistoricalState {
   appearance?: { owner: FightSide; model: FighterId }
 }
 export interface HistoricalCopy {
+  /** Physical likeness only; a copied non-fighter never inherits her aura nodes or Dolphin. */
+  appearanceModel?: 'queen-oito'
   originalMember?: number
   originalKind?: import('./preparationTypes').PreparedEntityKind
   inertDeviceForm?: import('./deviceTypes').BiohazardDeviceForm

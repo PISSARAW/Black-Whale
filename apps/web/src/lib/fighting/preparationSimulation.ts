@@ -1,3 +1,4 @@
+import { personKeepsLittleEye } from './dolphinPeopleState'
 import { advanceLittleEyeShots } from './littleEyeCapture'
 import { advanceLittleEyeSenses } from './littleEyeSenses'
 import { dolphinBody } from './dolphinBodies'
@@ -147,6 +148,7 @@ function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntit
 }
 
 function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boolean {
+  if (entry.controller?.person) return personKeepsLittleEye(state, entry.controller.person)
   const { side, source, member } = entry.controller!
   const body = dolphinBody(state, { owner: side, member: member ?? 0 })
   if (!body) return false

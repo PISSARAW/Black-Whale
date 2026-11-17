@@ -103,6 +103,7 @@ export function controlledEntities(state: FightState, side: FightSide, source?: 
     (entry) =>
       liveEntity(entry) &&
       entry.controller?.side === side &&
+      !entry.controller.person &&
       (entry.controller.member ?? 0) === (state.teamMatch?.seats[side].active ?? 0) &&
       (!source || entry.controller.source === source),
   )

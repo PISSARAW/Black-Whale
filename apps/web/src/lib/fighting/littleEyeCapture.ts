@@ -1,36 +1,20 @@
-import { physicalBodyKey } from './fightBodyIdentity'
+import { emitLittleEyeBall } from './littleEyeBall'
 import { animalTarget } from './preparationRequirements'
 import { littleEyeTarget, type LittleEyeShot } from './littleEyeTypes'
 import { updateEntity } from './preparationWorld'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightSide, FightState } from './types'
 
-/** Speeds, collision radius and lifetime are arena units, not canonical Nen limits. */
-const SHOT_SPEED = 54
 export function launchLittleEye(state: FightState, side: FightSide): FightState {
-  const animal = animalTarget(state, side, 'animal')
-  if (!animal || !state.battlefield) return state
-  const body = state[side]
-  const dx = animal.x - body.x,
-    dy = animal.y + 0.2 - (body.y + 1),
-    length = Math.hypot(dx, dy) || 1
-  const shot: LittleEyeShot = {
-    id: `little-eye:${state.roundNumber}:${state.frame}:${physicalBodyKey(state, side)}`,
-    owner: side,
-    member: state.teamMatch?.seats[side].active ?? 0,
-    x: body.x,
-    y: body.y + 1,
-    velocityX: (dx / length) * SHOT_SPEED,
-    velocityY: (dy / length) * SHOT_SPEED,
-    age: 0,
-  }
-  return {
-    ...state,
-    battlefield: {
-      ...state.battlefield,
-      littleEyeShots: [...(state.battlefield.littleEyeShots ?? []), shot],
-    },
-  }
+  const target = animalTarget(state, side, 'animal')
+  return target
+    ? emitLittleEyeBall(state, {
+        owner: side,
+        member: state.teamMatch?.seats[side].active ?? 0,
+        from: state[side],
+        target,
+      })
+    : state
 }
 export function advanceLittleEyeShots(state: FightState): FightState {
   if (!state.battlefield?.littleEyeShots?.length) return state
@@ -46,7 +30,12 @@ export function advanceLittleEyeShots(state: FightState): FightState {
     const target = firstContact(next, shot, moved)
     if (target)
       next = updateEntity(next, target.id, {
-        controller: { side: shot.owner, source: 'sayird', member: shot.member },
+        controller: {
+          side: shot.owner,
+          source: 'sayird',
+          member: shot.member,
+          person: shot.person,
+        },
         littleEye: { facing: shot.velocityX < 0 ? -1 : 1 },
       })
     else if (shotInScene(moved)) kept.push(moved)
@@ -74,7 +63,7 @@ export function littleEyeShotBusy(state: FightState, side: FightSide): boolean {
   const member = state.teamMatch?.seats[side].active ?? 0
   return Boolean(
     state.battlefield?.littleEyeShots?.some(
-      (shot) => shot.owner === side && shot.member === member,
+      (shot) => !shot.person && shot.owner === side && shot.member === member,
     ),
   )
 }

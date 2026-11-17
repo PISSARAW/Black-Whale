@@ -35,6 +35,14 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'person-dolphin-use',
+  'person-dolphin-close',
+  'person-eye-left',
+  'person-eye-right',
+  'person-eye-look-left',
+  'person-eye-look-right',
+  'person-eye-stay',
+  'person-eye-release',
   'little-eye-left',
   'little-eye-right',
   'little-eye-stay',

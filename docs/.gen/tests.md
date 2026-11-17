@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 835
+Fichiers : 838
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -427,6 +427,18 @@ Fichiers : 835
 ## `apps/web/src/lib/fighting/dolphinLoanTeam.test.ts`
 
 - Stealth Dolphin stays attached to actual team members > lends to an actual ally at the gate, lets that ally enter, and clocks the waiting lender
+
+## `apps/web/src/lib/fighting/dolphinPeople.test.ts`
+
+- Stealth Dolphin lends to the real unawakened scenario recipient > uses a separate Oito body, actual syringe reach and an unused equipped Hatsu without granting fighter statistics
+
+## `apps/web/src/lib/fighting/dolphinPeopleMatter.test.ts`
+
+- the unawakened recipient remains a real person rather than an inert prop > copies her physical likeness without life, aura nodes, an equipped loan or a new controllable person
+
+## `apps/web/src/lib/fighting/dolphinPeopleReplay.test.ts`
+
+- the actual non-user loan across P2, replay and private presentation > mirrors the lender, original donor and recipient control separately without turning Oito into a fighter
 
 ## `apps/web/src/lib/fighting/dolphinReturn.test.ts`
 

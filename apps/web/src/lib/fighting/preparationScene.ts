@@ -1,3 +1,4 @@
+import { createDolphinPeopleScene } from './dolphinPeopleScene'
 import { createLittleEyeScene } from './littleEyeScene'
 import {
   buildPreparedVisitModel,
@@ -15,6 +16,7 @@ import type { FightState } from './types'
 export function createPreparationScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
   const littleEye = createLittleEyeScene(options)
+  const people = createDolphinPeopleScene(options)
   const models = new Map<string, import('three').Group>()
   const geometries: import('three').BufferGeometry[] = []
   const materials = new Map<number, import('three').MeshBasicMaterial>()
@@ -31,7 +33,12 @@ export function createPreparationScene(options: EffectSceneOptions) {
     mesh(new THREE.BoxGeometry(...size), color)
 
   function build(entry: PreparedEntity) {
-    if (entry.kind === 'morena' || entry.kind === 'supporter' || entry.kind === 'puppet')
+    if (
+      entry.person ||
+      entry.kind === 'morena' ||
+      entry.kind === 'supporter' ||
+      entry.kind === 'puppet'
+    )
       return human(entry)
     const shared = buildPreparedVisitModel(options, entry)
     if (shared) return shared
@@ -87,13 +94,9 @@ export function createPreparationScene(options: EffectSceneOptions) {
       hidden: false,
       human: {
         role: morena ? 'morena' : 'fighter',
-        identity: entry.copy?.appearance
-          ? fighterDefinition(entry.copy.appearance).modelId
-          : morena
-            ? 'morena-prudo'
-            : 'halkenburg-supporter',
+        identity: preparedHumanIdentity(entry),
         pose: 'idle',
-        aura: 'ten',
+        aura: entry.person || entry.copy ? 'none' : 'ten',
       },
     }
     const figure = buildHumanFigure({
@@ -166,6 +169,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
   return {
     sync(state: FightState, seconds: number) {
       littleEye.sync(state)
+      people.sync(state, seconds)
       const entries = (state.battlefield?.entities ?? []).filter(
         (entry) => entry.kind !== 'device' && !entry.writingKit && !entry.weakSpirit,
       )
@@ -192,6 +196,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
     },
     dispose() {
       littleEye.dispose()
+      people.dispose()
       for (const root of models.values()) {
         disposePreparedVisitModels(root)
         scene.remove(root)
@@ -204,7 +209,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 }
 
 function backgroundDepth(entry: PreparedEntity): number {
-  return ['morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
+  return ['person', 'morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
 }
 
 function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity) {
@@ -225,7 +230,22 @@ function syncAnimatedAppearance(context: {
   seconds: number
 }) {
   const { root, entry, seconds } = context
+  syncPreparedSleep(root, entry)
   if (entry.littleEye) root.rotation.y = entry.littleEye.facing === 1 ? 0 : Math.PI
+  if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -1.4 : 0
   if (entry.kind === 'supporter') root.rotation.z = entry.sleepingFrames ? -0.5 : 0
   if (entry.kind === 'bird' && entry.controller) root.rotation.z = Math.sin(seconds * 12) * 0.12
+}
+
+function preparedHumanIdentity(entry: PreparedEntity): string {
+  if (entry.person) return entry.person.identity
+  if (entry.copy?.appearanceModel) return entry.copy.appearanceModel
+  if (entry.copy?.appearance) return fighterDefinition(entry.copy.appearance).modelId
+  return entry.kind === 'morena' || entry.copy?.originalKind === 'morena'
+    ? 'morena-prudo'
+    : 'halkenburg-supporter'
+}
+
+function syncPreparedSleep(root: import('three').Group, entry: PreparedEntity) {
+  if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -Math.PI / 2 : 0
 }

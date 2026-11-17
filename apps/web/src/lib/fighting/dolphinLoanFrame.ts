@@ -1,3 +1,4 @@
+import { advanceDolphinPeople } from './dolphinPeopleState'
 import { returnLoanedHatsu } from './dolphinReturn'
 import { dolphinIsBusy } from './kurapikaDolphin'
 import { dolphinBody } from './dolphinBodies'
@@ -7,24 +8,26 @@ import { forceZetsu } from './nen'
 import type { FightState } from './types'
 
 export function advanceDolphinLoanClocks(state: FightState): FightState {
-  return mapPhysicalBodies(state, (body) => {
-    const loan = body.dolphinLoan
-    if (!loan) return body
-    const lender = dolphinBody(state, loan.lender)
-    const blackoutFrames = lender?.kurapika?.blackoutFrames ?? 0
-    const unconscious =
-      blackoutFrames > 0
-        ? {
-            ...forceZetsu(body),
-            attack: null,
-            bufferedAttack: null,
-            blocking: false,
-            motion: undefined,
-          }
-        : body
-    if (unconscious === body && (loan.blackoutFrames ?? 0) === blackoutFrames) return body
-    return { ...unconscious, dolphinLoan: { ...loan, blackoutFrames } }
-  })
+  return advanceDolphinPeople(
+    mapPhysicalBodies(state, (body) => {
+      const loan = body.dolphinLoan
+      if (!loan) return body
+      const lender = dolphinBody(state, loan.lender)
+      const blackoutFrames = lender?.kurapika?.blackoutFrames ?? 0
+      const unconscious =
+        blackoutFrames > 0
+          ? {
+              ...forceZetsu(body),
+              attack: null,
+              bufferedAttack: null,
+              blocking: false,
+              motion: undefined,
+            }
+          : body
+      if (unconscious === body && (loan.blackoutFrames ?? 0) === blackoutFrames) return body
+      return { ...unconscious, dolphinLoan: { ...loan, blackoutFrames } }
+    }),
+  )
 }
 /** The recipient explicitly orders dismissal after the single application is finished. */
 export function settleDolphinLoans(state: FightState): FightState {
@@ -34,5 +37,5 @@ export function settleDolphinLoans(state: FightState): FightState {
     if (held?.used && !held.returned && !dolphinIsBusy(next, side, held))
       next = returnLoanedHatsu(next, side)
   }
-  return reconcileLoanLinks(next)
+  return reconcileLoanLinks(advanceDolphinPeople(next))
 }

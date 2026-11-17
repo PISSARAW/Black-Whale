@@ -39,7 +39,7 @@ export function voiceTargets(state: FightState): VoiceTarget[] {
   const result: VoiceTarget[] = []
   for (const side of ['player', 'opponent'] as const) result.push(...seatTargets(state, side))
   for (const entry of state.battlefield?.entities ?? []) {
-    if (!['morena', 'supporter'].includes(entry.kind) || entry.copy) continue
+    if (!['morena', 'supporter', 'person'].includes(entry.kind) || entry.copy) continue
     const target = voiceTarget(state, entry.id)
     if (target) result.push(target)
   }

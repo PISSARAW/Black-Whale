@@ -1,3 +1,5 @@
+import { personDolphinOptions } from './dolphinPeopleOptions'
+import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
@@ -46,6 +48,7 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
+  if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.loan) return performLoanCommand({ state, side, command }, performArsenalCommand)
@@ -107,9 +110,10 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
     ...nativeArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),
   ]
-  return arsenalMindAvailable(state[side])
+  const personal = arsenalMindAvailable(state[side])
     ? options
     : options.map((option) => ({ ...option, ready: false }))
+  return [...personal, ...personDolphinOptions(state, side)]
 }
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [

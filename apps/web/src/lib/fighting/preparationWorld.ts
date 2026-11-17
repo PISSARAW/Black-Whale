@@ -1,3 +1,4 @@
+import { scenarioOito } from './dolphinPeopleWorld'
 import { scenarioWeakSpirit } from './bashoWard'
 import { scenarioWritingKit } from './bashoMaterials'
 import { scenarioDevices } from './physicalDevices'
@@ -44,6 +45,7 @@ export function createBattlefield(environment: FightEnvironment): FightBattlefie
 
 function installScenario(entities: PreparedEntity[], preparation: FightPreparation) {
   const resources = new Set(preparation.resources)
+  if (resources.has('people')) entities.push(scenarioOito())
   for (const side of ['player', 'opponent'] as const) {
     const x = side === 'player' ? 25 : 75
     installProps(entities, { resources, side, x })

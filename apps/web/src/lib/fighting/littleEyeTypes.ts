@@ -8,7 +8,8 @@ export interface LittleEyeControl {
 export interface LittleEyeShot {
   id: string
   owner: FightSide
-  member: number
+  member?: number
+  person?: string
   x: number
   y: number
   velocityX: number

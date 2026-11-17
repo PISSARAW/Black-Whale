@@ -1,3 +1,4 @@
+import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { carryDolphinState } from './dolphinRound'
 import { carryVoiceAutopilot } from './blackVoiceAutopilot'
 import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
@@ -75,7 +76,7 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
-      battlefield: createBattlefield(state.environment),
+      battlefield: carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
       throwTech: undefined,
       voconteDoors: undefined,

@@ -503,7 +503,7 @@ de couverture des profils ou un nombre de tests :
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
 | Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les destinataires non éveillés et les éditeurs spécialisés du prêt de Stealth Dolphin. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                 |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                             |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
@@ -703,4 +703,58 @@ ou la mort de l'animal termine l'application ; le dispositif équipé et Emperor
 Time conservent leur propre fermeture. Ruleset : **clash-combat-34**. Le On reste
 présent. Les destinataires non éveillés, leurs nœuds d'aura et les autres réserves
 listées plus haut restent à terminer ; cette passe ne certifie pas les 40
+arsenaux à 100 %.
+
+## Dolphin : destinataire non éveillée et ouverture des nœuds d'aura
+
+La ressource de scénario « Reine Oito » installe une seule personne physique,
+distincte des 40 combattants sélectionnables. Elle ne reçoit ni identité de
+combattant d'emprunt, ni affinité, statistiques Nen, matériel ou Hatsu personnel.
+Le prêt exige toujours un Dolphin chargé et inutilisé, la main droite disponible
+et un contact de seringue à la position réelle du destinataire. Il libère le
+stock de Steal Chain et garde le prêteur sous Emperor Time.
+
+L'activation de Little Eye utilise exactement le stock d'aura prélevé au donneur.
+Dolphin déclenche l'émission à proximité d'Oito ; la boule doit atteindre un
+petit animal réel admissible.
+Les ordres et les perceptions appartiennent à Oito, avec ses propres contrôles ;
+ils ne sont pas attribués au corps de Kurapika ou d'un autre combattant. La
+transmission de la vue et de l'ouïe s'arrête pendant le blackout partagé, tandis
+que l'animal conserve son dernier ordre et que l'application continue. Le Hatsu
+revient au donneur à la fin de cette application, mais Dolphin et le coût de vie
+continuent jusqu'à leur fermeture.
+
+Le prêt permet à Oito de voir l'aura avant sa première activation. L'activation
+entrouvre ses nœuds, sans lui attribuer Ten ou une technique personnelle ; cette
+ouverture reste après la fermeture du dispositif. Erigeron peut également être
+prêté à ce corps non éveillé et faire pousser une vraie graine au contact avec
+l'aura de Bill : c'est le mécanisme d'éveil montré pendant les leçons du chapitre
+388, sans prétendre que cette combinaison précise a été montrée sur Oito.
+L'ouverture des nœuds ne simule pas un apprentissage instantané du contrôle de
+l'aura.
+
+Ce corps vivant est une cible humaine de Black Voice, sous ses conditions
+d'antenne et de téléphone. Gallery Fake en produit une copie physique inerte,
+avec l'apparence d'Oito mais sans son prêt, ses perceptions ni ses nœuds ouverts.
+Cette copie peut être commandée par Order Stamp ; elle ne devient pas une
+utilisatrice de Nen.
+
+La personne, son Dolphin équipé, l'animal contrôlé et une éventuelle boule déjà
+émise sont conservés au changement de manche. Changer le score ne supprime donc
+pas la contrainte d'Emperor Time. Le protocole PvP distingue le prêteur, le
+donneur original et le propriétaire des contrôles du destinataire ; le replay
+conserve l'injection, l'éveil, les commandes, la restitution et la fermeture.
+
+Dolphin est visible au destinataire **et** à Kurapika, jamais aux autres
+observateurs grâce à Gyo. Cette correction concerne aussi les prêts aux
+combattants ; elle suit les chapitres [364](https://hunterxhunter.fandom.com/wiki/Chapter_364)
+et [367](https://hunterxhunter.fandom.com/wiki/Chapter_367). Les images et les
+paroles reçues par l'animal restent dans le flux privé du destinataire : la
+connexion des deux esprits n'ajoute pas un transfert automatique de toutes ses
+perceptions au prêteur.
+
+Ruleset : **clash-combat-35**. Le On reste présent. Ces applications connues sont
+exécutables ; les autres réserves de l'audit, notamment les éditeurs spécialisés,
+Lovely Ghostwriter, les prothèses et liens multiples d'Hisoka, Judgment et les
+consciences d'Halkenburg, restent ouvertes. Ce jalon ne certifie pas les 40
 arsenaux à 100 %.

@@ -1,4 +1,5 @@
-import { changeDolphinBody, dolphinBody } from './dolphinBodies'
+import { dolphinRecipientLoan, clearDolphinRecipient } from './dolphinRecipients'
+import { changeDolphinBody } from './dolphinBodies'
 import type { StolenChainAbility } from './kurapika'
 import type { FightSide, FightState } from './types'
 
@@ -27,13 +28,12 @@ export function dismissReturnedLoans(state: FightState, side: FightSide): FightS
   if (!refs?.length) return state
   const member = state.teamMatch?.seats[side].active ?? 0
   const done = refs.every((ref) => {
-    const loan = dolphinBody(state, ref)?.dolphinLoan
+    const loan = dolphinRecipientLoan(state, ref)
     return loan?.held.returned && loan.lender.owner === side && loan.lender.member === member
   })
   if (!done) return state
   let next = state
-  for (const ref of refs)
-    next = changeDolphinBody(next, ref, (body) => ({ ...body, dolphinLoan: undefined }))
+  for (const ref of refs) next = clearDolphinRecipient(next, ref)
   return {
     ...next,
     [side]: { ...next[side], kurapika: { ...next[side].kurapika!, dolphinLoans: undefined } },

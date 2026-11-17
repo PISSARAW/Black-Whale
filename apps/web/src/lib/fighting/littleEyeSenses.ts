@@ -1,3 +1,4 @@
+import { advancePersonLittleEyeSenses, capturePersonLittleEyeSpeech } from './dolphinPeopleSenses'
 import { changeDolphinBody, dolphinBody } from './dolphinBodies'
 import { arsenalMindAvailable } from './arsenalMind'
 import { sleepingBody } from './hanzoProjection'
@@ -26,7 +27,7 @@ export function animalSeesPoint(
 }
 export function advanceLittleEyeSenses(state: FightState): FightState {
   if (state.pvpSeat) return state // The referee supplies private perception; clients cannot reconstruct it from redacted bodies.
-  let next = state
+  let next = advancePersonLittleEyeSenses(state)
   for (const animal of state.battlefield?.entities ?? []) {
     const body = sensoryUser(state, animal)
     if (!body) continue
@@ -41,7 +42,7 @@ export function advanceLittleEyeSenses(state: FightState): FightState {
           frame: state.frame,
           x: animal.x,
           y: animal.y,
-          pictures: animalPictures(state, animal, body),
+          pictures: animalPictures(state, animal, gyoSight(body)),
           words: actor.littleEyeScreen?.animal === animal.id ? actor.littleEyeScreen.words : [],
         },
       }),
@@ -51,7 +52,13 @@ export function advanceLittleEyeSenses(state: FightState): FightState {
 }
 function sensoryUser(state: FightState, animal: PreparedEntity): ArcadeFighter | undefined {
   const control = animal.controller
-  if (!control || control.source !== 'sayird' || !liveEntity(animal) || animal.sleepingFrames)
+  if (
+    !control ||
+    control.person ||
+    control.source !== 'sayird' ||
+    !liveEntity(animal) ||
+    animal.sleepingFrames
+  )
     return undefined
   const body = dolphinBody(state, { owner: control.side, member: control.member ?? 0 })
   return body && arsenalMindAvailable(body) ? body : undefined
@@ -59,7 +66,7 @@ function sensoryUser(state: FightState, animal: PreparedEntity): ArcadeFighter |
 export function animalPictures(
   state: FightState,
   animal: PreparedEntity,
-  observer: ArcadeFighter,
+  observerGyo: boolean,
 ): LittleEyeScreen['pictures'] {
   return (['player', 'opponent'] as const).flatMap((side) => {
     const actor = state[side]
@@ -71,7 +78,7 @@ export function animalPictures(
             appearance: visibleBodyAppearance(actor),
             x: body.x,
             y: body.y,
-            auraVisible: visibleAura(actor, observer),
+            auraVisible: visibleAura(actor, observerGyo),
           },
         ]
       : []
@@ -86,15 +93,15 @@ export function animalPictures(
     return pictures
   })
 }
-function visibleAura(actor: ArcadeFighter, observer: ArcadeFighter): boolean {
-  return actor.nen.mode !== 'zetsu' && actor.aura > 0 && (!actor.nen.in || gyoSight(observer))
+function visibleAura(actor: ArcadeFighter, observerGyo: boolean): boolean {
+  return actor.nen.mode !== 'zetsu' && actor.aura > 0 && (!actor.nen.in || observerGyo)
 }
 export function captureLittleEyeSpeech(
   state: FightState,
   speech: { side: FightSide; text: string },
 ): FightState {
   if (state.pvpSeat) return state // The referee supplies private perception; clients cannot reconstruct it from redacted bodies.
-  let next = state
+  let next = capturePersonLittleEyeSpeech(state, speech)
   for (const animal of state.battlefield?.entities ?? []) {
     if (!sensoryUser(state, animal)) continue
     const speaker = state[speech.side]

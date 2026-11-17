@@ -1,9 +1,18 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
+  import { performArsenalAction } from '$lib/fighting/arsenalExecution'
+  import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
   import FightPreparationSetup from '$lib/components/fighting/FightPreparationSetup.svelte'
   import FightPreparationStatus from '$lib/components/fighting/FightPreparationStatus.svelte'
-  import { beginFight, createFight, performAttack, tickFight } from '$lib/fighting/engine'
+  import {
+    beginFight,
+    createFight,
+    performAttack,
+    performAuraAttack,
+    tickFight,
+  } from '$lib/fighting/engine'
   import { createFightEnvironment, type FightEnvironment } from '$lib/fighting/fightEnvironment'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
   import { EMPTY_INPUT, type FightInput, type FighterId } from '$lib/fighting/types'
@@ -56,6 +65,47 @@
     for (let frame = 0; frame < frames; frame++) advanceFrame()
     await tick()
   }
+  export async function prepareOitoLoan() {
+    player = 'kurapika'
+    environment = createFightEnvironment({
+      preparation: { mode: 'scenario', resources: ['people', 'animals'], cohorts: [] },
+    })
+    const fresh = beginFight(
+      createFight('kurapika', 'sayird', {
+        mode: 'versus-local',
+        formatId: 'knockout',
+        environment,
+      }),
+    )
+    state = {
+      ...fresh,
+      player: { ...fresh.player, x: 22, aura: 100 },
+      opponent: { ...fresh.opponent, x: 27, aura: 30 },
+    }
+    input = { ...EMPTY_INPUT }
+    state = performAuraAttack({
+      state,
+      side: 'player',
+      kind: 'special',
+      moveId: 'kurapika:backSpecial',
+      auraCharged: false,
+    })
+    for (let index = 0; index < 160; index++) advanceFrame()
+    for (let index = 0; index < 80; index++)
+      state = tickFight(state, EMPTY_INPUT, {
+        dt: 1 / 60,
+        opponentInput: { ...EMPTY_INPUT, right: true },
+      })
+    state = toggleEmperorTime(state, 'player')
+    state = performAuraAttack({
+      state,
+      side: 'player',
+      kind: 'special',
+      moveId: 'kurapika:backSpecial',
+      auraCharged: false,
+    })
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -79,7 +129,13 @@
   }}
 />
 <main>
-  <FightPreparationSetup {environment} {player} opponent="hisoka" language="fr" onChange={reset} />
+  <FightPreparationSetup
+    {environment}
+    {player}
+    opponent={state.opponent.id}
+    language="fr"
+    onChange={reset}
+  />
   <div class="arena">
     {#key player}<FightScene {state} stageId="heavens-arena" />{/key}
   </div>
@@ -94,6 +150,15 @@
       }}>{presentation.label} · L</button
     >
     <p>{presentation.hint}</p>
+    {#if state.battlefield?.entities.some((entry) => entry.person)}
+      <FightRetrospectiveArsenal
+        {state}
+        language="fr"
+        onUse={(side, command) => {
+          state = performArsenalAction({ state, side, command }, performAuraAttack)
+        }}
+      />
+    {/if}
   </section>
 </main>
 

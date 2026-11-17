@@ -26,6 +26,11 @@
       fr: 'Faibles esprits pour les talismans',
       en: 'Weak spirits for protective charms',
     },
+    {
+      id: 'people',
+      fr: 'Reine Oito · destinataire non éveillée',
+      en: 'Queen Oito · unawakened recipient',
+    },
     { id: 'writing', fr: 'Papier, pinceaux et encre réels', en: 'Real paper, brushes and ink' },
     { id: 'animals', fr: 'Petits animaux réels', en: 'Real small animals' },
     { id: 'birds', fr: 'Pigeons et points de livraison', en: 'Pigeons and delivery points' },

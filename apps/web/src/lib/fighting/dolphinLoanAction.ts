@@ -1,3 +1,4 @@
+import { lendDolphinToPerson } from './dolphinPeopleAction'
 import type { StolenChainAbility } from './kurapika'
 import { withLoanCarrier } from './dolphinBorrowing'
 import { dolphinCanUse } from './kurapikaDolphin'
@@ -11,13 +12,13 @@ import type { FightSide, FightState } from './types'
 
 const INJECTION_REACH = 6 // Duel contact distance, not a manga quantity.
 export function dolphinCanLend(state: FightState, side: FightSide, target: VoiceTarget): boolean {
-  if (!lenderReady(state, side) || !recipientReady(target)) return false
+  if (!dolphinLenderReady(state, side) || !recipientReady(target)) return false
   if (sameBody(state, side, target)) return false
   if (!historicalHandsReady(state, side, ['right'])) return false
   const caster = state[side]
   return Math.hypot(target.x - caster.x, target.y - caster.y) <= INJECTION_REACH
 }
-function lenderReady(state: FightState, side: FightSide): boolean {
+export function dolphinLenderReady(state: FightState, side: FightSide): boolean {
   const caster = state[side]
   const chain = caster.kurapika
   if (!chain) return false
@@ -46,6 +47,10 @@ export function performDolphinLoan(
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
+  const person = state.battlefield?.entities.find(
+    (entry) => entry.id === command.target && entry.person,
+  )
+  if (person) return lendDolphinToPerson(state, side, person)
   const target = command.target && voiceTarget(state, command.target)
   if (!target || !dolphinCanLend(state, side, target)) return state
   const caster = state[side]

@@ -2,6 +2,7 @@ import type { PreparedEntityKind } from './preparationTypes'
 
 export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
   fr: {
+    person: 'Reine Oito',
     'black-voice': 'Matériel de Black Voice',
     'weak-spirit': 'Faible esprit',
     device: 'Appareil matériel',
@@ -19,6 +20,7 @@ export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, strin
     delivery: 'Point de livraison',
   },
   en: {
+    person: 'Queen Oito',
     'black-voice': 'Black Voice equipment',
     'weak-spirit': 'Weak spirit',
     device: 'Physical device',

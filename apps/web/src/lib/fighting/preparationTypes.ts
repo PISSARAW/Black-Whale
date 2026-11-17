@@ -11,6 +11,7 @@ export type PreparationResource =
   | 'devices'
   | 'writing'
   | 'spirits'
+  | 'people'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion'
 export interface FightPreparation {
   mode: 'duel' | 'scenario'
@@ -20,6 +21,7 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'person'
   | 'black-voice'
   | 'weak-spirit'
   | 'device'
@@ -57,7 +59,7 @@ export interface PreparedEntity {
   linkedTo?: string
   growth?: number
   delivered?: boolean
-  controller?: { side: FightSide; source: FighterId; member?: number }
+  controller?: { side: FightSide; source: FighterId; member?: number; person?: string }
 }
 
 export interface FightBattlefield {

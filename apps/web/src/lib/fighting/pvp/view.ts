@@ -1,3 +1,4 @@
+import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
 import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
@@ -117,6 +118,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
+  concealDolphinPeople(view, side)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
@@ -124,6 +126,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
   for (const frame of view.parallelFuture?.frames ?? []) {
     concealDeviceMedia(frame.battlefield)
+    concealDolphinPeople(frame, side)
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

@@ -1,7 +1,7 @@
 import { commandMary } from './bloodyMaryAction'
 import { performAuraAttack, performMove, tickFight } from './engine'
 import { CYCLOTRON_ROTATION_FRAMES } from './phinksCyclotron'
-import { EMPTY_INPUT, type FightState } from './types'
+import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
 
 export type CombatRouteSetup =
   | 'bungee'
@@ -17,6 +17,8 @@ export type CombatRouteSetup =
   | 'scouts'
   | 'owl'
   | 'console'
+  | 'poem'
+  | 'offer'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
@@ -65,9 +67,7 @@ function settled(state: FightState) {
         !fighter.attack &&
         !fighter.hitStun &&
         !fighter.knockdownFrames &&
-        !fighter.illumi?.preparation &&
-        !fighter.battleCantabile?.preparation &&
-        !fighter.crossGameCardFrames &&
+        !preparing(fighter) &&
         !fighter.wakeupInvulnerableFrames,
     )
   )
@@ -76,4 +76,13 @@ function settled(state: FightState) {
 function setupReady(state: FightState, setup: CombatRouteSetup) {
   if (setup === 'pigeon' && !state.opponent.biohazardRestraint) return false
   return settled(state)
+}
+
+function preparing(fighter: ArcadeFighter) {
+  return Boolean(
+    fighter.illumi?.preparation ||
+    fighter.battleCantabile?.preparation ||
+    fighter.crossGameCardFrames ||
+    fighter.bashoPoem?.writingFrames,
+  )
 }

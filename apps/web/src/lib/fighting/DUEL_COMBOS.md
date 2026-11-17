@@ -1,9 +1,10 @@
-# Vingt-six profils de combos
+# Trente profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
 Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
-Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov et Beyond ont huit exemples
-chacun dans l’Académie. Les quatre routes initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
+Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov, Beyond, Tserriednich, Basho,
+Camilla et Longhi ont huit exemples chacun dans l’Académie. Les quatre routes
+initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
@@ -17,7 +18,9 @@ Bonolenov, Hinrigh et Mizaistom.
 Padaille et Zakuro.
 `duelComboSixthProfiles.ts` et `duelComboSixthLessons.ts` ajoutent Theta, Musse,
 Furykov et Beyond.
-Le catalogue compte 264 routes pour quarante personnages.
+`duelComboSeventhProfiles.ts` et `duelComboSeventhLessons.ts` ajoutent Tserriednich,
+Basho, Camilla et Longhi.
+Le catalogue compte 280 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -200,6 +203,25 @@ indisponible sans porteur et préparation ; aucun finisher à faible santé n’
 Les exercices `owl` et `console` attendent la récupération de leurs commandes
 réelles. Aucun contact d’information n’est compté comme dégât de combo.
 
+## Tserriednich, Basho, Camilla et Longhi
+
+Tserriednich lie le lourd après récupération d’avant + léger, puis peut choisir
+le balayage, la poussée ou une seconde liaison vers le revers. Ses cinq frappes
+sont physiques : aucune vision n’est imposée au mannequin pour garantir la route.
+Fermer les yeux reste une préparation distincte en Zetsu, vulnérable aux coups.
+Basho écrit réellement le poème reconnu pour 25 aura et 60 frames. Dans son
+exercice bas, seuls les deux poings intermédiaires enflamment la cible ; le coup
+de pied initial et l’épaule finale ne le font pas. Les pulsations de brûlure ne
+créent aucun impact ou hitstun de combo supplémentaire ni multiplicateur général.
+Camilla convertit cinq frappes physiques avec une liaison après le lourd, même
+à un seul PV. Aucun bouton, seuil de santé ou combo n’active Cat’s Name ; seule
+la mort attribuée prévue par le moteur le fait. Le pistolet U reste distinct.
+Longhi propose réellement Moonlight Act avant une route physique. Sans seconde
+signature explicite, ni touche ni garde ne crée une trêve, une sanction ou un prêt.
+Une acceptation volontaire lie toujours les deux parties selon la clause publiée.
+Les préparations `poem` et `offer` utilisent les actions ordinaires ; l’écriture
+est terminée avant l’ouverture, sans injecter de poème prêt ou de consentement.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -222,12 +244,14 @@ la lance, les menottes ouvertes par les dégâts et le carton sans détention au
 outils, la prolongation du foret, les réponses payées et les réserves des gouttes.
 `duelComboSixth.test.ts` vérifie les balles et leurs zones, le tir sans Nen,
 le hibou privé, la console sans renforcement et les frappes payées sans malédiction.
+`duelComboSeventh.test.ts` vérifie les liaisons sans vision forcée, le poème
+et ses vrais poings, Camilla à un PV et l’offre sans consentement automatique.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-13` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-14` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

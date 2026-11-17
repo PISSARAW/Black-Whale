@@ -19,15 +19,19 @@ beforeAll(async () => {
 })
 
 describe('command qualification from the frozen six-fighter states', () => {
-  it('keeps all historical input packets and the original archive intact across the v20 recording', async () => {
+  it('keeps all historical input packets and the original archive intact across the current recording', async () => {
     const historical = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
     )
     expect(historical.archiveSha256).toBe(
       'd4e27df52932d61bfd526cc94d145111947103190208e4c2aae3c4a00e416900',
     )
-    // Archive v20 is immutable; promotion below checks every checkpoint under the current engine.
-    expect(frozen.ruleset).toBe('clash-combat-20')
+    const previous = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference/v20', import.meta.url)),
+    )
+    // Preserve v20 as its own archive while validating the current recording separately.
+    expect(previous.ruleset).toBe('clash-combat-20')
+    expect(frozen.ruleset).toBe(REPLAY_RULESET)
     expect(Object.keys(frozen.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
     for (const [id, replay] of Object.entries(historical.tapes))
       expect(frozen.tapes[id].packets).toEqual(replay.packets)

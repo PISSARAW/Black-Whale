@@ -931,8 +931,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   interrompre le tireur coupe la rafale. Le HUD et la scène montrent les
   héritages, l'oiseau, le rectangle, la carte et l'arme physique.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
-  projectiles attestés sont propres au combattant ; les autres lancent une pierre,
-  sans leur inventer de technique de Nen. Les collisions sont transmises à
+  projectiles attestés sont propres au combattant ; les gardes du corps utilisent
+  leur arme de service ([armes et conventions du duel](./BODYGUARD_FIREARMS.md)).
+  Les autres lancent une pierre, sans leur inventer de technique de Nen. Les collisions sont transmises à
   `combatImpact.ts`, qui leur applique la même garde, parade, aura et décision de
   score qu'aux coups physiques.
 - Franklin tire **Double Machine Gun** avec U et L : les balles de Nen partent
@@ -1113,9 +1114,10 @@ sans changer les règles, les boîtes ni les données de frame.
   le Zetsu aussi longtemps que Kurapika la maintient. L libère ; perdre le Nen la
   dissipe. Le serment est mortel : tenter réellement ce coup sur un non-membre de
   la Brigade, Hisoka compris, tue Kurapika. L’IA évite cet usage interdit.
-- **Avant + L / U : Dowsing Chain**, chaîne de l’annulaire. Arme physique de portée
+- **Avant + L : Dowsing Chain**, chaîne de l’annulaire. Arme physique de portée
   moyenne, elle peut intercepter les balles matérielles pendant sa phase active.
-  U dirige cette chaîne attachée ; aucun projectile de chaîne détaché n’est créé.
+  La chaîne reste attachée ; aucun projectile de chaîne détaché n’est créé.
+  **U tire le pistolet physique tenu à gauche**, sans coût d’aura ni bonus d’Emperor Time.
   La détection des mensonges et la recherche hors combat n’ont pas de cible dans
   ce duel sans dialogue.
 - **Bas + L : Holy Chain**, chaîne du pouce. Un soin après préparation, sans

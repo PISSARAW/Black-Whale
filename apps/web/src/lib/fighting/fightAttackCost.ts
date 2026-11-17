@@ -1,6 +1,7 @@
 import { chrolloPageForMove, chrolloPageSource, chrolloCopiedMove } from './chrolloBook'
 import { moveById, moveForSlot } from './movesets'
 import { rangedAuraCost } from './projectiles'
+import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import type { ArcadeFighter, AttackKind } from './types'
 
 export const CONCEALED_AURA_SURCHARGE = 12
@@ -15,6 +16,7 @@ interface AttackCostOptions {
 /** A copied page pays for its actual technique, before any activation changes its state. */
 export function attackAuraCost(options: AttackCostOptions): number {
   const { fighter, kind, moveId, concealed } = options
+  if (bodyguardPhysicalShot(fighter, kind)) return 0
   const copied = copiedMove(options)
   const move = moveById(moveId)
   const base = copied?.auraCost ?? move?.auraCost ?? legacyCost(fighter, kind)

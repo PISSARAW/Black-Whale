@@ -23,7 +23,8 @@ libérés même si un chargement asynchrone se termine après la fermeture.
 
 Les réglages de caméra, secousses, flashs et contraste restent indépendants.
 Les géométries de projectiles sont partagées par forme ; les projectiles des
-pistolets de Theta et Musse conservent leurs dimensions propres. Les matériaux des pierres
+pistolets des gardes du corps utilisent une petite balle métallique ; Theta et
+Musse conservent leurs profils de tir propres. Les matériaux des pierres
 sont réutilisés et libérés avec la scène. Les projectiles restent des objets
 distincts pour les positions, collisions, perceptions et enveloppes de Shu.
 La réduction des animations imposée par le système reste prioritaire.

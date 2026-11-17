@@ -11,7 +11,8 @@ import { bonolenovDancePlan } from './bonolenovPoses'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
 import { pluggingWoundsPlan } from './blinkyPose'
-import { animateMussePistol } from './mussePistol'
+import { animateServiceHandgun } from './serviceHandgun'
+import { bodyguardFiring } from './bodyguardFirearms'
 import { musseKeyedMove } from './mussePoses'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { benjaminKeyedMove } from './benjaminPoses'
@@ -89,7 +90,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
   const plan = bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
-    animateMussePistol(human.figure, fighter)
+    animateServiceHandgun(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
     restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
@@ -164,6 +165,7 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
 function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
   return (
     ['chrollo', 'kurapika'].includes(fighter.id) ||
+    bodyguardFiring(fighter) ||
     plan.key === 'roster-writing' ||
     plan.key === 'roster-console'
   )

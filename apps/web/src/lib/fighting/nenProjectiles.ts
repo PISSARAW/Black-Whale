@@ -1,4 +1,5 @@
 import { abilityPower } from './nenAbility'
+import { isBodyguardBullet } from './bodyguardFirearms'
 import { abilityCategories, categoryPower, fightCategoryEfficiency } from './nenCategories'
 import { fightAbility } from './nenAbility'
 import { shuObject } from './nenAdvanced'
@@ -8,7 +9,7 @@ export function isFirearmProjectile(projectile: FightProjectile): boolean {
   return (
     projectile.matter === 'object' &&
     projectile.shape === 'bullet' &&
-    ['theta', 'benjamin', 'camilla', 'feitan', 'musse'].includes(projectile.fighterId)
+    (isBodyguardBullet(projectile) || ['benjamin', 'camilla', 'feitan'].includes(projectile.fighterId))
   )
 }
 

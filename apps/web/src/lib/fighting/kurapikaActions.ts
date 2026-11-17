@@ -157,9 +157,7 @@ export function performKurapikaAction(
   const breach = judgmentActionBreach(options)
   if (breach) return breach
   if (state[side].id !== 'kurapika') return null
-  // U directs an attached Dowsing Chain, never a detached projectile.
-  if (kind === 'ranged')
-    return perform({ ...options, kind: 'special', moveId: 'kurapika:forwardSpecial' })
+  // U is the physical service pistol; forward + L still directs Dowsing Chain.
   if (kind !== 'special') return null
   if (!moveId) return perform({ ...options, moveId: 'kurapika:neutralSpecial' })
   return jailAction(options) ?? dolphinAction(options, perform)

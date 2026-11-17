@@ -14,7 +14,6 @@ interface NenAction {
 }
 
 const NEN_RANGED: readonly FighterId[] = [
-  'kurapika',
   'leorio',
   'machi',
   'franklin',
@@ -63,7 +62,7 @@ function nenMoveId(
   action: Pick<NenAction, 'kind' | 'moveId'>,
 ): string | undefined {
   if (action.kind !== 'ranged') return action.moveId
-  return ['kurapika', 'machi'].includes(fighter.id)
+  return fighter.id === 'machi'
     ? `${fighter.id}:forwardSpecial`
     : `${fighter.id}:neutralSpecial`
 }

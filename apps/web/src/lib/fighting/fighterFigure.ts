@@ -10,6 +10,7 @@ import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
+import { addBodyguardPistol } from './bodyguardFigure'
 import { shapeFightEyes } from './fightFigureEyes'
 import { finishFightModel } from './fighterModelFinish'
 import { registerFightExpression } from './fightExpressionRig'
@@ -121,6 +122,7 @@ function addFighterEquipment(
   model: ReturnType<typeof buildHumanFigure>,
 ): void {
   const { THREE, glow, fighter } = options
+  addBodyguardPistol({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))

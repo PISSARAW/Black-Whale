@@ -1,9 +1,11 @@
 import type { FightSide, FighterId } from './types'
 
 export interface RetrospectiveFighterState {
+  personalEncounters?: readonly import('./personalEncounters').PersonalEncounter[]
   deviceTouchId?: string
   devicePlayback?: import('./deviceTypes').DevicePlayback
   receiverReading?: import('./deviceTypes').ReceiverReading
+  dowsingScreened?: readonly { deviceId: string; sampleId: number }[]
   dowsingSession?: import('./dowsingTypes').DowsingSession
   dowsingPrompt?: import('./dowsingTypes').DowsingPrompt
   dowsingReading?: import('./dowsingTypes').DowsingReading
@@ -50,6 +52,9 @@ export const ARSENAL_ACTION_IDS = [
   'device-signal',
   'device-face-left',
   'device-face-right',
+  'statement-sincere',
+  'statement-lie',
+  'dowsing-video',
   'dowsing-ask',
   'dowsing-answer',
   'dowsing-stop',

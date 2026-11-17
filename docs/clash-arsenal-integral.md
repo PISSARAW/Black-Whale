@@ -172,10 +172,8 @@ la question. Les snapshots conservent le même résultat après restauration.
 Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
 et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
 
-L'analyse d'un enregistrement doit encore disposer d'un support réellement
-présent, d'une rencontre antérieure et d'Emperor Time. La localisation par
-radiesthésie et les questions fondées sur d'autres souvenirs restent également
-à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La localisation par radiesthésie et les questions fondées sur d'autres souvenirs
+restent à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
 La distinction entre mensonge conscient et connaissance objective est recoupée
 avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
 notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
@@ -219,6 +217,44 @@ condition du manga. Les usages sont recoupés avec la synthèse de
 [Hinrigh](https://hunterxhunter.fandom.com/wiki/Hinrigh_Biganduffno).
 Les couteaux et le budget complet de matériel de Hinrigh restent à auditer.
 
+## Dowsing Chain : analyse d'une véritable vidéo
+
+Kurapika peut analyser un extrait effectivement enregistré et lu sur la caméra,
+sous **Emperor Time**, après avoir rencontré la personne. La rencontre est
+constatée dans la simulation par un face-à-face visible ; elle n'est jamais
+accordée par le choix d'un personnage dans le menu. Cette mémoire reste acquise
+entre les manches et appartient au corps réel d'un membre d'équipe. La portée
+de reconnaissance de dix-huit unités est un réglage du duel.
+
+Chaque joueur peut déclarer sincèrement ou mentir consciemment sur les trois
+faits déjà représentés (identité, état du Nen, In). Il garde seul le contrôle
+de sa déclaration. Le canal de voix existant vérifie parole, esprit libre et
+interdictions de communication. Une caméra doit réellement capter son visage
+et sa voix ; le support conserve chaque prise séparément, même pour des mots
+identiques prononcés dans une seule frame.
+
+Une lecture ordinaire révèle les images et les paroles, sans intention cachée.
+Dowsing analyse la prise sélectionnée, conserve son résultat daté et ne consulte
+pas le Nen actuel ou les pensées de la personne filmée. Un texte libre dont
+l'intention n'est pas représentée donne un résultat **indéterminé**, jamais une
+certification de sincérité. La perte de la caméra, de la vue, de l'audition ou
+d'Emperor Time termine la concentration. Les frais de vie d'Emperor Time restent
+comptés par l'horloge réelle ; les trois points d'aura sont un réglage du duel.
+
+Les commandes, la sélection d'extrait et les résultats sont reproductibles après
+snapshot et en PvP, y compris pour P2. La disponibilité des boutons ne révèle
+pas l'intention cachée. Les rencontres, les analyses et les réponses restent
+privées pour l'adversaire. L'IA analyse ses enregistrements admissibles sans
+fabriquer de réponse humaine et passe aux prises qu'elle n'a pas encore étudiées.
+Le ruleset devient **clash-combat-21**. Le On reste disponible, y compris pour
+une déclaration volontaire ; l'analyse vidéo n'accorde pas Emperor Time à un
+simple voleur de la chaîne.
+
+Cette extension reprend l'usage vidéo du chapitre 348, recoupé avec
+[Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika). Elle ne fournit pas
+une base de connaissances universelle pour déterminer le vrai dans une phrase
+libre ; les autres sujets conscients et la radiesthésie restent à représenter.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -226,12 +262,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                         |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.               |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                 |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la vidéo, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                     |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.     |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                       |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                           |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |

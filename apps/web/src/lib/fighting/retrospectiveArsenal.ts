@@ -1,3 +1,4 @@
+import { performRecordedStatement, recordedStatementOptions } from './recordedStatements'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { deviceOptions } from './deviceOptions'
 import { performDeviceCommand } from './deviceActions'
@@ -43,6 +44,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['statement-', performRecordedStatement],
   ['device-', performDeviceCommand],
   ['biohazard-', performDeviceCommand],
   ['dowsing-', performDowsingCommand],
@@ -63,6 +65,7 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
     consentOption(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
+    ...recordedStatementOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),

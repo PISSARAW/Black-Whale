@@ -7,6 +7,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'personalEncounters',
+  'dowsingScreened',
   'heardWords',
   'dowsingReading',
   'devicePlayback',

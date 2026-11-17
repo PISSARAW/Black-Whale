@@ -10,10 +10,12 @@ export interface RecordedBody {
   y: number
 }
 export interface RecordedSpeech {
+  sampleId?: number
   frame: number
   subject: FightSide
   appearance: FighterId
   text: string
+  bodyKey?: string
   /** Simulation of a recorded behavioural cue; raw playback must never disclose it. */
   deliberateLie?: boolean
   visibleBody?: boolean
@@ -29,6 +31,7 @@ export interface PhysicalDevice {
   batteryFrames: number
   facing?: -1 | 1
   recording?: boolean
+  speechSerial?: number
   pictures?: readonly RecordedBody[]
   words?: readonly RecordedSpeech[]
   channel?: string

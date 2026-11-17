@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dowsingIndication } from '$lib/fighting/dowsingPresentation'
   import {
     judgmentClauseLabel,
     implantedJudgmentLabel,
@@ -62,13 +63,10 @@
         <span
           >Dowsing · {language === 'fr' ? 'Dernière lecture' : 'Latest reading'} ({Math.floor(
             state[side].dowsingReading!.frame / 60,
-          )} s) · {state[side].dowsingReading!.text} · {state[side].dowsingReading!.swings
-            ? language === 'fr'
-              ? 'Le pendule oscille : mensonge conscient.'
-              : 'The pendulum swings: a knowing lie.'
-            : language === 'fr'
-              ? 'Pas d’oscillation : aucun mensonge conscient détecté.'
-              : 'No swing: no knowing lie detected.'}</span
+          )} s) · {state[side].dowsingReading!.text} · {dowsingIndication(
+            state[side].dowsingReading!,
+            language,
+          )}</span
         >
       {/if}
       {#if state[side].devicePlayback}

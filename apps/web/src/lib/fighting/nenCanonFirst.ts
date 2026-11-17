@@ -12,7 +12,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'emperor-time',
     ],
     condition:
-      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation and Dolphin require Emperor Time.',
+      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation, Dolphin and video Dowsing require Emperor Time. Video screening also requires a previously met subject and real recorded media.',
     effect:
       'Restraint, directed chain, healing, aura drain and a single stolen use remain distinct.',
     prohibition:
@@ -169,11 +169,12 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     abilities: ['biohazard-hinrigh'],
     condition:
       'Touch a real object; transformed animals retain the object’s function and finite aura.',
-    effect: 'Carried handcuffs become pigeons that can physically latch and be recovered.',
+    effect:
+      'Handcuff pigeons restrain; a camera cat records for physical retrieval, a snake barrel fires the actual ammunition, and an oyster preserves its swallowed transmitter and radio signal.',
     prohibition:
       'No animal from nothing, copied inventory, self-transformation, generic boost or forced Zetsu.',
     adaptation:
-      'Two pairs, transformation time, durability, capture grace and lifetime tune the duel; the knife remains physical.',
+      'Two cuff pairs, device stocks, transformation time, durability and most lifetimes tune the duel. The oyster estimate remains two simulated hours; the knife remains physical.',
   },
   mizaistom: {
     abilities: ['cross-game'],

@@ -49,6 +49,8 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.dowsingScreened = undefined
+  enemy.personalEncounters = undefined
   enemy.devicePlayback = undefined
   enemy.receiverReading = undefined
   enemy.dowsingReading = undefined

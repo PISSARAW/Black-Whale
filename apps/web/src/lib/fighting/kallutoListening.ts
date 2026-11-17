@@ -29,13 +29,13 @@ export function paperListening(state: FightState, owner: FightSide): boolean {
 export function speakPaperWords(
   state: FightState,
   speaker: FightSide,
-  message: string | { text: string; recipient?: string } = 'I am here.',
+  message: string | { text: string; recipient?: string; statementIntent?: boolean } = 'I am here.',
 ): FightState {
-  const { text, target } = normalizeSpokenWords(message)
+  const { text, target, intent } = normalizeSpokenWords(message)
   if (!text) return state
   if (!voiceAvailable(state, speaker)) return state
   const words: PaperWords = { frame: state.frame, speaker, text }
-  let next = captureDeviceSpeech(state, { side: speaker, text })
+  let next = captureDeviceSpeech(state, { side: speaker, text, deliberateLie: intent })
   for (const owner of ['player', 'opponent'] as const) {
     if (!paperListening(next, owner)) continue
     const doll = paperState(next[owner]).doll!
@@ -66,10 +66,12 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
   )
 }
 
-function normalizeSpokenWords(message: string | { text: string; recipient?: string }) {
+function normalizeSpokenWords(
+  message: string | { text: string; recipient?: string; statementIntent?: boolean },
+) {
   return typeof message === 'string'
-    ? { text: message.trim(), target: undefined }
-    : { text: message.text.trim(), target: message.recipient }
+    ? { text: message.trim(), target: undefined, intent: undefined }
+    : { text: message.text.trim(), target: message.recipient, intent: message.statementIntent }
 }
 
 function voluntarySpeechMind(fighter: ArcadeFighter): boolean {

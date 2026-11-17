@@ -2,7 +2,8 @@ import type { FightSide } from './types'
 
 export type DowsingQuestion = 'identity' | 'nen' | 'in'
 export interface DowsingSession {
-  question: DowsingQuestion
+  question: DowsingQuestion | 'recording'
+  video?: { deviceId: string }
   target: FightSide
   startedAt: number
   readingAt?: number
@@ -18,6 +19,8 @@ export interface DowsingReading {
   frame: number
   text: string
   swings: boolean
+  inconclusive?: boolean
+  source?: { deviceId: string; recordedAt: number; sampleId: number }
 }
 export const DOWSING_MOVE = 'kurapika:forwardSpecial'
 export const DOWSING_COST = 3

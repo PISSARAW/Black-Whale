@@ -1,18 +1,21 @@
+import { observePersonalEncounters } from './personalEncounters'
+import { performDowsingVideo, videoDowsingFocus } from './dowsingVideo'
 import { triggerHatsuAction } from './hatsu'
 import { judgmentActionBreach } from './judgmentAction'
 import { speakPaperWords, voiceAvailable } from './kallutoListening'
-import { fighterDefinition } from './roster'
+import { dowsingAnswerText } from './dowsingAnswers'
 import { canAskDowsing, dowsingBodyReady, dowsingFaceToFace, ownsDowsing } from './dowsingRules'
 import { DOWSING_MOVE, DOWSING_COST, DOWSING_QUESTIONS } from './dowsingTypes'
 import type { DowsingQuestion, DowsingPrompt } from './dowsingTypes'
 import type { ArsenalCommand } from './retrospectiveTypes'
-import type { ArcadeFighter, FightSide, FightState } from './types'
+import type { FightSide, FightState } from './types'
 
 export function performDowsingCommand(
   state: FightState,
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
+  if (command.action === 'dowsing-video') return performDowsingVideo(state, side, command.target)
   if (command.action === 'dowsing-stop') return stopDowsing(state, side)
   if (command.action === 'dowsing-answer') return answerDowsing(state, side, command.target)
   if (
@@ -61,7 +64,7 @@ function answerDowsing(state: FightState, side: FightSide, answer?: string): Fig
   const prompt = state[side].dowsingPrompt
   if (!prompt || !currentQuestion(state, side, prompt)) return state
   const text = dowsingAnswerText(state[side], prompt.question, answer === 'lie')
-  const spoken = speakPaperWords(state, side, text)
+  const spoken = speakPaperWords(state, side, { text, statementIntent: answer === 'lie' })
   if (spoken.phase !== 'fighting') return spoken
   // Only this explicit voluntary response declares its intent. Free text is never guessed truthful.
   const swings = answer === 'lie'
@@ -87,24 +90,6 @@ function currentQuestion(state: FightState, side: FightSide, prompt: DowsingProm
     dowsingFaceToFace(state, prompt.asker),
   )
 }
-export function dowsingAnswerText(
-  fighter: ArcadeFighter,
-  question: DowsingQuestion,
-  lie: boolean,
-): string {
-  if (question === 'identity') return identityAnswer(fighter, lie)
-  if (question === 'in')
-    return (lie ? !fighter.nen.in : fighter.nen.in)
-      ? 'Je dissimule mon aura avec In.'
-      : 'Je ne dissimule pas mon aura avec In.'
-  const mode = fighter.nen.on ? 'on' : fighter.nen.mode
-  return `Mon état de Nen est ${lie ? (mode === 'zetsu' ? 'ten' : 'zetsu') : mode}.`
-}
-function identityAnswer(fighter: ArcadeFighter, lie: boolean): string {
-  const identity = fighter.nenOwner ?? fighter.id
-  const stated = lie ? (identity === 'hisoka' ? 'kurapika' : 'hisoka') : identity
-  return `Je suis ${fighterDefinition(stated).name}.`
-}
 export function stopDowsing(state: FightState, side: FightSide): FightState {
   if (!state[side].dowsingSession) return state
   const target = other(side)
@@ -119,13 +104,13 @@ export function stopDowsing(state: FightState, side: FightSide): FightState {
   }
 }
 export function advanceDowsing(state: FightState): FightState {
-  let next = state
+  let next = observePersonalEncounters(state)
   for (const side of ['player', 'opponent'] as const) {
     const session = next[side].dowsingSession
     if (
       session &&
       (!dowsingBodyReady(next[side]) ||
-        !dowsingFaceToFace(next, side) ||
+        !dowsingSessionFocus(next, side) ||
         readingAnimationOver(next, side))
     )
       next = stopDowsing(next, side)
@@ -138,4 +123,9 @@ function readingAnimationOver(state: FightState, side: FightSide): boolean {
 }
 function other(side: FightSide): FightSide {
   return side === 'player' ? 'opponent' : 'player'
+}
+
+function dowsingSessionFocus(state: FightState, side: FightSide): boolean {
+  const video = state[side].dowsingSession?.video
+  return video ? videoDowsingFocus(state, side, video.deviceId) : dowsingFaceToFace(state, side)
 }

@@ -107,6 +107,7 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = { ...fighter, personalEncounters: previous.personalEncounters }
   fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
   return fighter.kurapika
     ? {

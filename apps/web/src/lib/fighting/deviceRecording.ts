@@ -1,5 +1,5 @@
+import { physicalBodyKey, visibleBodyAppearance } from './fightBodyIdentity'
 import { sleepingBody } from './hanzoProjection'
-import { battleAppearance } from './battleCantabileRules'
 import { devicePosition, changeDevice } from './physicalDevices'
 import { DEVICE_CAMERA_RANGE, DEVICE_MEMORY_LIMIT } from './deviceTypes'
 import type { PreparedEntity } from './preparationTypes'
@@ -27,18 +27,21 @@ export function captureDeviceSpeech(
     const point = devicePosition(state, camera),
       body = sleepingBody(state[utterance.side])
     if (Math.hypot(point.x - body.x, point.y - body.y) > 18) continue
+    const sampleId = (camera.device!.speechSerial ?? 0) + 1
     const words = [
       ...(camera.device!.words ?? []),
       {
+        sampleId,
         frame: state.frame,
         subject: utterance.side,
-        appearance: recordedAppearance(state, utterance.side),
+        bodyKey: physicalBodyKey(state, utterance.side),
+        appearance: visibleBodyAppearance(state[utterance.side]),
         text: utterance.text,
         deliberateLie: utterance.deliberateLie,
         visibleBody: cameraSees(state, camera, utterance.side),
       },
     ].slice(-DEVICE_MEMORY_LIMIT)
-    next = changeDevice(next, camera, { words })
+    next = changeDevice(next, camera, { words, speechSerial: sampleId })
   }
   return next
 }
@@ -77,14 +80,9 @@ function pictureBodies(state: FightState, camera: PreparedEntity): RecordedBody[
       return {
         frame: state.frame,
         subject: side,
-        appearance: recordedAppearance(state, side),
+        appearance: visibleBodyAppearance(state[side]),
         x: body.x,
         y: body.y,
       }
     })
-}
-
-function recordedAppearance(state: FightState, side: FightSide) {
-  const body = state[side]
-  return battleAppearance({ ...body, id: body.nenOwner ?? body.id })
 }

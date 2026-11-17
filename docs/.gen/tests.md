@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 690
+Fichiers : 699
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -323,6 +323,18 @@ Fichiers : 690
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
 
+## `apps/web/src/lib/fighting/duelComboDepth.test.ts`
+
+- personal execution and conditions > gives Kurapika a real recovery link that works without a declared cancel
+
+## `apps/web/src/lib/fighting/duelComboRoster.test.ts`
+
+- personal powers and recovery links > attaches Gum through real contact, then consumes a pre-existing tether with the finisher
+
+## `apps/web/src/lib/fighting/duelComboSecond.test.ts`
+
+- second expansion power conditions > preserves Machi’s real tracking marker without turning it into restraint or a free finisher
+
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
 - duel rules > rejects Hatsu effects with no aura or while stunned
@@ -350,6 +362,10 @@ Fichiers : 690
 ## `apps/web/src/lib/fighting/feitanScene.test.ts`
 
 - Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
+
+## `apps/web/src/lib/fighting/fightAdvancedLessons.test.ts`
+
+- five advanced practical exercises use real engine outcomes > extends the curriculum while preserving the fifteen existing lesson identities
 
 ## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
 
@@ -634,13 +650,18 @@ Fichiers : 690
 
 - read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
 
+## `apps/web/src/lib/fighting/replayCoach.test.ts`
+
+- verified replay diagnostics and concrete rehearsal > measures the same visible response from the second player’s perspective
+- diagnostics preserve the viewer’s Nen perception > does not reveal an attack with In, an unseen body or a hidden book page
+
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
 
 ## `apps/web/src/lib/fighting/rosterQuality.test.ts`
 
-- roster quality parity > covers exactly the forty playable fighters, with four routes and a personal movement direction each
+- roster quality parity > covers forty fighters, their core routes and forty advanced duel lessons
 - sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
 
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
@@ -704,6 +725,11 @@ Fichiers : 690
 ## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
 
 - actual contact recovery measurement > measures a real travelling projectile after its owner has recovered
+
+## `apps/web/src/lib/fighting/victory/playback.test.ts`
+
+- victory selection > uses all real opponents and every stage for either winning side, including mirrors
+- victory playback > keeps real ten-second timing when rendering drops below ten frames per second
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 

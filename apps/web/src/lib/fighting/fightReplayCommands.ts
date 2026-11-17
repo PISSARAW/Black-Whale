@@ -1,6 +1,6 @@
 import { decodeFightSnapshot } from './fightReplaySnapshot'
 import { applyPanelReplay } from './fightReplayPanels'
-import { beginFight, createFight, nextRound, tickFight } from './engine'
+import { beginFight, createFight, nextRound, tickFight, type FightTickOptions } from './engine'
 import { performTrainingAction } from './trainingAction'
 import { toggleEmperorTime } from './kurapikaActions'
 import { performEasterEgg } from './easterEggs'
@@ -35,11 +35,19 @@ export function applyReplayCommand(state: FightState, command: ReplayCommand): F
   }
 }
 export function executeReplayPacket(state: FightState, packet: ReplayPacket): FightState {
+  return executeObservedReplayPacket(state, packet)
+}
+export function executeObservedReplayPacket(
+  state: FightState,
+  packet: ReplayPacket,
+  observe: Pick<FightTickOptions, 'onFrame'> = {},
+): FightState {
   const [dt, player, opponent, commands] = packet
   const next = commands.reduce(applyReplayCommand, state)
   return tickFight(next, unpackReplayInput(player), {
     dt,
     opponentInput: next.mode === 'versus-ai' ? undefined : unpackReplayInput(opponent),
     ai: next.mode === 'versus-ai',
+    onFrame: observe.onFrame,
   })
 }

@@ -1,4 +1,9 @@
 import { FOUNDATION_CHECKS } from './fightFoundationLessons'
+import {
+  ADVANCED_LESSON_CHECKS,
+  prepareAdvancedLesson,
+  normalizeAdvancedProgress,
+} from './fightAdvancedLessonState'
 import { createFightState } from './fightState'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import { bungeeVisible } from './hisokaTechnique'
@@ -7,6 +12,7 @@ import { fightLesson, type LessonId } from './fightLessons'
 import type { FightState } from './types'
 
 export interface LessonProgress {
+  setupHitFrame?: number
   id: LessonId
   step: number
   heldFrames: number
@@ -46,7 +52,7 @@ export function createLessonFight(id: LessonId): FightState {
       ...state,
       bungeeGum: { owner: 'opponent', target: 'player', hidden: true, retracting: false },
     }
-  return state
+  return prepareAdvancedLesson(state, id)
 }
 export function initialLessonProgress(id: LessonId): LessonProgress {
   return {
@@ -64,6 +70,7 @@ export function initialLessonProgress(id: LessonId): LessonProgress {
 type Check = (state: FightState, progress: LessonProgress) => boolean
 const CHECKS: Record<LessonId, Check> = {
   ...FOUNDATION_CHECKS,
+  ...ADVANCED_LESSON_CHECKS,
   ren: (s) => nenTacticalState(s.player).technique === 'ren' && s.player.aura < 90,
   ken: (s, p) =>
     s.player.nen.ken &&
@@ -115,6 +122,7 @@ export function observeLesson(progress: LessonProgress, state: FightState): Less
   if (progress.complete || progress.invalid) return progress
   if (changedScenario(progress, state)) return { ...progress, invalid: true }
   if (state.frame === progress.lastFrame) return progress
+  progress = normalizeAdvancedProgress(progress, state)
   progress = observeAuraRecovery(progress, state)
   const delta = state.frame - progress.lastFrame
   const passed = CHECKS[progress.id](state, progress) === true

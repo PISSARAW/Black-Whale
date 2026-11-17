@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { FightReplayController } from '$lib/fighting/fightReplayController'
   import type { ReplayReviewActions } from '$lib/fighting/fightReplayReview'
+  import FightReplayCoach from './FightReplayCoach.svelte'
   export let replays: FightReplayController
   export let actions: ReplayReviewActions
   export let language: 'fr' | 'en'
@@ -64,6 +65,8 @@
     >
   </div>
 {/if}
+
+{#if playback || $replays.practice}<FightReplayCoach {replays} {actions} {language} />{/if}
 
 <style>
   .review {

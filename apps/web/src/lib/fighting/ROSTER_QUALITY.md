@@ -49,6 +49,12 @@ aux personnages. `FightFighterDossier.svelte` donne pour chacun le plan de jeu,
 le pouvoir et ses conditions, le contre-jeu et les exercices de l’Académie,
 en français et en anglais, avec les touches configurées.
 
+## Lisibilité pendant le combat
+
+La [lisibilité des visages](./FACE_READABILITY.md) combine vue de trois quarts,
+reliefs précalculés, cadrage plus proche et portraits fixes dans les jauges.
+Le banc de comparaison et ses limites de mesure y sont documentés.
+
 ## Combat et apprentissage
 
 `combatRoutes.ts` couvre les quarante combattants : quatre routes de base par personnage,

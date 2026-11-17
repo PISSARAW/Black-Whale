@@ -18,6 +18,10 @@ import type { SecretWindowState } from './secretWindow'
 import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
+import type { FightKameos } from './kameos/types'
+
+export type { FightInput } from './fightInput'
+export { EMPTY_INPUT } from './fightInput'
 
 export type FighterId =
   | 'kurapika'
@@ -325,33 +329,6 @@ export interface FighterHatsuEffects {
   hatsuStolen: number
 }
 
-export interface FightInput {
-  arena?: boolean
-  interact?: boolean
-  plugWounds?: boolean
-  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
-  coverEars?: boolean
-  /** Holding this occupies both hands to cover up to two separate wounds. */
-  en?: boolean
-  shu?: boolean
-  conceal?: boolean
-  gyo?: boolean
-  focusHead?: boolean
-  focusTorso?: boolean
-  focusHands?: boolean
-  focusFeet?: boolean
-  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
-  /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
-  call?: boolean
-  left: boolean
-  right: boolean
-  jump: boolean
-  down: boolean
-  guard: boolean
-  aura: boolean
-  hatsu: boolean
-}
-
 export interface FightImpact {
   sequence: number
   attacker: FightSide
@@ -456,6 +433,8 @@ export interface FightState {
   mode: FightMode
   player: ArcadeFighter
   opponent: ArcadeFighter
+  /** Kameo partners beside each leader (KAMEOS.md); absent in an ordinary duel. */
+  kameos?: FightKameos
   phase: FightPhase
   frame: number
   time: number
@@ -478,14 +457,4 @@ export interface FightState {
   previousPositions?: Record<FightSide, { x: number; y: number }>
   /** Frames until the AI opponent picks its next action. */
   aiCooldown?: number
-}
-
-export const EMPTY_INPUT: FightInput = {
-  left: false,
-  right: false,
-  jump: false,
-  down: false,
-  guard: false,
-  aura: false,
-  hatsu: false,
 }

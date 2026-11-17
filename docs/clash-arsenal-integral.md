@@ -533,3 +533,12 @@ conditions ; elles ne remplacent pas une relecture intégrale des planches.
 Le périmètre publié a également été vérifié jusqu'au [chapitre 420 sur VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-420/chapter/51204), publié le 6 septembre 2026. Les manuscrits annoncés au-delà ne sont pas traités comme des chapitres publiés. Cette vérification de publication ne certifie pas à elle seule la couverture de chaque nouvelle technique.
 Les poèmes apocryphes de `data/prophecies` ne servent jamais de prophéties
 canoniques ou de prédictions d'une décision humaine future.
+
+## Références corporelles : aucun membre fictif
+
+Une référence à un membre inexistant d'une équipe ne désigne jamais par défaut
+le combattant actif. Le contrôle vérifie l'existence du corps réel avant le
+contact et avant tout rattachement. En duel sans équipe, seuls les indices zéro
+correspondent à un corps présent. Ce contrôle empêche notamment de contourner
+l'auto-manipulation en implantant une antenne sur un faux réserviste de son propre
+camp. Le correctif porte le ruleset courant à **clash-combat-29**.

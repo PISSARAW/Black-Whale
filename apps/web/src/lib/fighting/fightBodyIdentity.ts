@@ -16,7 +16,8 @@ export function physicalBodyAt(
   member?: number,
 ): ArcadeFighter | undefined {
   const seat = state.teamMatch?.seats[side]
-  if (!seat || member === undefined || seat.active === member) return state[side]
+  if (!seat) return member === undefined || member === 0 ? state[side] : undefined
+  if (member === undefined || seat.active === member) return state[side]
   const body = seat.members[member]
   return body ? { ...body, x: side === 'player' ? 7 : 93, y: 0 } : undefined
 }

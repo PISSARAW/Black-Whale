@@ -66,6 +66,13 @@ describe('Black Voice original phone and two physical antennas', () => {
       }),
     ).toBe(without)
   })
+  it('never resolves a nonexistent member reference to the active body', () => {
+    const state = command(ready(), 'voice-arm')
+    expect(command(state, 'voice-implant', 'body:player:2')).toBe(state)
+    expect(command(state, 'voice-implant', 'body:opponent:2')).toBe(state)
+    expect(state.player.blackVoiceControl).toBeUndefined()
+    expect(state.opponent.blackVoiceControl).toBeUndefined()
+  })
   it('reserves the actual hands for the book, phone and pin', () => {
     const phone = command(ready(), 'voice-phone')
     expect(phone.player.blackVoiceGear?.phone?.hand).toBe('left')

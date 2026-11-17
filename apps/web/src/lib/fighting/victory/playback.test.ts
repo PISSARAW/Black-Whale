@@ -20,6 +20,19 @@ function result(
   }
 }
 describe('victory selection', () => {
+  it.each(['hisoka', 'biscuit', 'benjamin', 'kurapika'] as const)(
+    'selects Judgment rather than Chain Jail for non-Spider %s',
+    (target) => {
+      expect(selectVictory(result('kurapika', target))?.variant).toBe('kurapika-judgment')
+    },
+  )
+  it.each(['franklin', 'chrollo', 'kalluto'] as const)(
+    'keeps the existing Troupe cinematic for %s',
+    (target) => {
+      expect(selectVictory(result('kurapika', target))?.variant).toBe('kurapika-troupe')
+    },
+  )
+
   it('uses all real opponents and every stage for either winning side, including mirrors', () => {
     for (const fighter of VICTORY_FIGHTERS)
       for (const target of FIGHTING_ROSTER)

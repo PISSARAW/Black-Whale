@@ -70,6 +70,83 @@ function setup(winner: FighterId, side: FightSide, targetOverride?: FighterId) {
   return { renderer, state, models, camera, scene, armour }
 }
 describe('live victory renderer', () => {
+  it.each(['benjamin', 'biscuit', 'hisoka'] as const)(
+    'reveals Hisoka’s terrifying face after Gyo and drops %s through native gravity',
+    (target) => {
+      const fixture = setup('hisoka', 'opponent', target)
+      const skin = fixture.models.opponent.getObjectByName('manga-face')!.children[1] as THREE.Mesh
+      const originalGeometry = skin.geometry,
+        originalPositions = Array.from(skin.geometry.attributes.position.array)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      try {
+        for (const age of [
+          0, 90, 150, 180, 210, 228, 240, 252, 270, 282, 294, 312, 324, 348, 378, 390, 414, 450,
+          504, 570,
+        ]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.hisokaFearVictory
+          if (age >= 294) expect(audit.jawDrop).toBeGreaterThan(0.03)
+          if (age >= 300 && age < 390) {
+            expect(audit.retreat).toBeGreaterThan(0.32)
+            expect(audit.panic).toBeGreaterThan(0.6)
+            audit.handErrors.forEach((error: number) => expect(error).toBeLessThan(0.065))
+          }
+          expect(audit.death).toBe(age >= 390)
+          if (age < 180) expect(audit.reveal).toBe(0)
+          if (age >= 240) expect(audit.reveal).toBe(1)
+          if (age >= 294) expect(audit.expression).toBe(1)
+          if (age === 150) expect(audit.gyo).toBeGreaterThan(0.7)
+          if (age >= 450) {
+            expect(audit.floor).toBeCloseTo(0.012, 5)
+            expect(Math.abs(audit.upY)).toBeLessThan(0.15)
+            expect(Math.abs(audit.roll)).toBeLessThan(0.05)
+          }
+          expect(fixture.models.player.visible).toBe(true)
+          if (age >= 294) expect(skin.geometry).not.toBe(originalGeometry)
+          restore()
+          expect(skin.geometry).toBe(originalGeometry)
+          expect(Array.from(originalGeometry.attributes.position.array)).toEqual(originalPositions)
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
+  it('keeps Hisoka’s comfort camera fixed through retreat and collapse', () => {
+    const fixture = setup('hisoka', 'player', 'benjamin')
+    let first: unknown
+    try {
+      for (const age of [90, 294, 378, 450, 570]) {
+        const restore = fixture.renderer.apply({
+          state: fixture.state,
+          models: fixture.models,
+          comfort: { ...defaultFightComfort(), camera: 0, flashes: false },
+          frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+        })!
+        const camera = {
+          p: fixture.camera.position.toArray(),
+          q: fixture.camera.quaternion.toArray(),
+        }
+        first ??= camera
+        expect(camera).toEqual(first)
+        restore()
+      }
+    } finally {
+      fixture.renderer.dispose()
+      fixture.armour.dispose()
+    }
+  })
+
   it.each(['benjamin', 'biscuit', 'bill'] as const)(
     'uses Bill’s production combos, body plans and unchanged finale against %s',
     (target) => {

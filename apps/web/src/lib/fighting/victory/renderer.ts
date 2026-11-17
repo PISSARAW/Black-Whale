@@ -34,6 +34,10 @@ import { createTerebellumVictory } from './terebellum'
 import { createHinrighVictory } from './hinrigh'
 import { createMelodyVictory } from './melody'
 import { suspendFightExpression } from '../fightExpressionRig'
+import { createBeyondCurseVictory } from './beyondCurse'
+import { isBeyondCurse } from './beyondCurseSelection'
+import { createLonghiVictory } from './longhi'
+import { createFurykovVictory } from './furykov'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -60,6 +64,8 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hinrigh: createHinrighVictory,
   terebellum: createTerebellumVictory,
   voconte: createVoconteVictory,
+  longhi: createLonghiVictory,
+  furykov: createFurykovVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -87,6 +93,8 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     hinrigh: 2.1,
     terebellum: 0.5,
     voconte: 2,
+    longhi: 0.4,
+    furykov: 1,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -101,12 +109,45 @@ function hideAuxiliaryRoots(options: {
     root.visible = false
   }
 }
+function resolveDriver(frame: VictoryFrame, drivers: Map<string, VictoryDriver>) {
+  const curse = isBeyondCurse(frame.variant)
+  const key = curse ? frame.variant! : frame.fighter
+  const driver = drivers.get(key) ?? (curse ? createBeyondCurseVictory() : DRIVERS[frame.fighter]())
+  drivers.set(key, driver)
+  return driver
+}
+function ownsComfortCamera(frame: VictoryFrame) {
+  return (
+    isBeyondCurse(frame.variant) ||
+    [
+      'kurapika',
+      'leorio',
+      'camilla',
+      'kalluto',
+      'machi',
+      'shizuku',
+      'bonolenov',
+      'illumi',
+      'biscuit',
+      'saiyu',
+      'hanzo',
+      'bill',
+      'hisoka',
+      'melody',
+      'hinrigh',
+      'terebellum',
+      'voconte',
+      'longhi',
+      'furykov',
+    ].includes(frame.fighter)
+  )
+}
 export function createVictoryRenderer(options: {
   scene: Scene
   camera: PerspectiveCamera
   scenery: Object3D
 }) {
-  const drivers = new Map<VictoryFighter, VictoryDriver>(),
+  const drivers = new Map<string, VictoryDriver>(),
     lighting = victoryLighting()
   let disposed = false
   return {
@@ -172,30 +213,9 @@ export function createVictoryRenderer(options: {
             transaction.defer(() => root.removeFromParent())
           },
         }
-        const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
-        drivers.set(frame.fighter, driver)
+        const driver = resolveDriver(frame, drivers)
         driver.update(context)
-        if (
-          comfort.camera === 0 &&
-          frame.fighter !== 'kurapika' &&
-          ![
-            'leorio',
-            'camilla',
-            'kalluto',
-            'machi',
-            'shizuku',
-            'bonolenov',
-            'illumi',
-            'biscuit',
-            'saiyu',
-            'hanzo',
-            'bill',
-            'melody',
-            'hinrigh',
-            'terebellum',
-            'voconte',
-          ].includes(frame.fighter)
-        )
+        if (comfort.camera === 0 && !ownsComfortCamera(frame))
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)
         victim.root.updateWorldMatrix(true, true)

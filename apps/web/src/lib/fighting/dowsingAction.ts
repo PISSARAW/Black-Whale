@@ -1,3 +1,4 @@
+import { speakDeclaredFact } from './recordedStatements'
 import { observePersonalEncounters } from './personalEncounters'
 import { performDowsingVideo, videoDowsingFocus } from './dowsingVideo'
 import { triggerHatsuAction } from './hatsu'
@@ -64,8 +65,11 @@ function answerDowsing(state: FightState, side: FightSide, answer?: string): Fig
   const prompt = state[side].dowsingPrompt
   if (!prompt || !currentQuestion(state, side, prompt)) return state
   const text = dowsingAnswerText(state[side], prompt.question, answer === 'lie')
-  const spoken = speakPaperWords(state, side, { text, statementIntent: answer === 'lie' })
-  if (spoken.phase !== 'fighting') return spoken
+  const spoken = speakDeclaredFact(state, side, {
+    question: prompt.question,
+    lie: answer === 'lie',
+  })
+  if (spoken.phase !== 'fighting' || spoken.catsName || spoken[side].health <= 0) return spoken
   // Only this explicit voluntary response declares its intent. Free text is never guessed truthful.
   const swings = answer === 'lie'
   return {

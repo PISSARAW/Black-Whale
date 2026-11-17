@@ -1,3 +1,4 @@
+import { bashoArsenalAi } from './bashoArsenalAi'
 import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
@@ -22,14 +23,21 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    deviceAi(state) ??
-    dowsingAi(state) ??
-    judgmentAiPreset(state) ??
+    utilityArsenalAi(state, perform) ??
     gumAi(state) ??
     interviewAi(state) ??
     supportAi(state) ??
     copiedArsenalAi(state, perform) ??
     historicalAi(state, perform)
+  )
+}
+
+function utilityArsenalAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return (
+    bashoArsenalAi(state, perform) ?? deviceAi(state) ?? dowsingAi(state) ?? judgmentAiPreset(state)
   )
 }
 

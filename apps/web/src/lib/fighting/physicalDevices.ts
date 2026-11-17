@@ -80,6 +80,7 @@ export function deviceBodyFree(state: FightState, side: FightSide): boolean {
     !fighter.arsenalSleep &&
     !fighter.coveringEars &&
     !fighter.melodyPerformance &&
+    (fighter.bashoPoem?.writingFrames ?? 0) === 0 &&
     ![
       fighter.hatsuEffects.manipulatedFrames,
       fighter.hatsuEffects.possessedFrames,

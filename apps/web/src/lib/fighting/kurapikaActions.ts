@@ -1,3 +1,4 @@
+import { finishBorrowedBasho } from './bashoWard'
 import { judgmentActionBreach } from './judgmentAction'
 import { judgmentForbidsNen } from './judgmentRules'
 import { stopCookie } from './cookie'
@@ -246,7 +247,8 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
   const fighter = state[side]
   const held = fighter.kurapika!.held!
   if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
-  if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
+  const poem = finishBorrowedBasho(state, side)
+  if (poem) return poem
   if (fighter.hanzoProjection)
     return withDolphinIdentity(
       state,

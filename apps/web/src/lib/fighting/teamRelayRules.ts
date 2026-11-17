@@ -7,6 +7,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'writingKit',
+  'bashoWard',
   'personalEncounters',
   'dowsingScreened',
   'heardWords',
@@ -67,6 +69,8 @@ function quietWorld(state: FightState): boolean {
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
+      (state.player.bashoWard?.remainingFrames ?? 0) > 0,
+      (state.opponent.bashoWard?.remainingFrames ?? 0) > 0,
     ].some(Boolean) &&
     state.projectiles.length === 0 &&
     !state.battlefield?.entities.some((entry) => entry.device?.form || entry.device?.transforming)
@@ -91,6 +95,7 @@ function relayBodyFree(actor: ArcadeFighter) {
   const motion = motionOf(actor)
   return (
     canMove(actor) &&
+    (actor.bashoWard?.remainingFrames ?? 0) === 0 &&
     actor.y === 0 &&
     ![
       actor.bufferedAttack,

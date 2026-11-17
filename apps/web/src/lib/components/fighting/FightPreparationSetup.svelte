@@ -21,6 +21,12 @@
       fr: 'Caméras, armes, émetteurs et récepteurs réels',
       en: 'Real cameras, firearms, transmitters and receivers',
     },
+    {
+      id: 'spirits',
+      fr: 'Faibles esprits pour les talismans',
+      en: 'Weak spirits for protective charms',
+    },
+    { id: 'writing', fr: 'Papier, pinceaux et encre réels', en: 'Real paper, brushes and ink' },
     { id: 'animals', fr: 'Petits animaux réels', en: 'Real small animals' },
     { id: 'birds', fr: 'Pigeons et points de livraison', en: 'Pigeons and delivery points' },
     { id: 'plants', fr: 'Graines vivantes à faire germer', en: 'Living seeds to germinate' },

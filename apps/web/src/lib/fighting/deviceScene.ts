@@ -100,8 +100,9 @@ export function createDeviceScene(options: EffectSceneOptions): FighterEffectSce
     if (hand && !entry.device!.swallowed) hand.getWorldPosition(model.root.position)
     const scale = deviceMorphScale(entry)
     model.creature.scale.setScalar(scale)
-    model.original.visible = !entry.device!.form || entry.device!.kind === 'firearm'
-    model.creature.visible = Boolean(entry.device!.form || entry.device!.transforming)
+    const displayedForm = entry.device!.form?.kind ?? entry.copy?.inertDeviceForm
+    model.original.visible = !displayedForm || entry.device!.kind === 'firearm'
+    model.creature.visible = Boolean(displayedForm || entry.device!.transforming)
     orientDevice(state, entry, model)
   }
   function orientDevice(

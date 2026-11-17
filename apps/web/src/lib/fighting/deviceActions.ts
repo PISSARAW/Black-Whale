@@ -108,7 +108,7 @@ function fireDevice(state: FightState, side: FightSide, entry: PreparedEntity): 
     targetZone: 'torso',
     shape: 'bullet',
     colour: '#d8c7a0',
-    matter: 'object',
+    matter: entry.material === 'nen' ? 'nen' : 'object',
     age: 0,
     lifetime: 120,
     guard: 'mid',

@@ -69,6 +69,16 @@
           )}</span
         >
       {/if}
+      {#if state[side].bashoWard}
+        <span
+          >Great Hiker · {language === 'fr'
+            ? 'Talisman contre les faibles esprits'
+            : 'Weak-spirit charm'} · {Math.max(
+            0,
+            state[side].bashoWard!.remainingFrames / 60,
+          ).toFixed(1)} s</span
+        >
+      {/if}
       {#if state[side].devicePlayback}
         <strong
           >{language === 'fr' ? 'Dernière lecture de la caméra' : 'Latest camera playback'} · {Math.floor(

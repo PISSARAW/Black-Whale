@@ -1,3 +1,4 @@
+import { sleepingBody } from './hanzoProjection'
 import { placeVisitHand } from './visitSceneKit'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
@@ -26,6 +27,7 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     root.name = kind === 'poem' ? `basho-poem:${side}` : `combo-master:${side}`
     root.add(new THREE.Mesh(geometry, material))
     const pen = new THREE.Mesh(penGeometry, penMaterial)
+    pen.name = kind === 'poem' ? `basho-brush:${side}` : `combo-stylus:${side}`
     pen.position.set(0.28, 0.05, 0.04)
     pen.rotation.z = -0.4
     pen.visible = kind === 'poem'
@@ -62,18 +64,41 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     build(side, 'poem'),
     build(side, 'console'),
   ])
+  function propVisible(prop: ReturnType<typeof build>, state: FightState): boolean {
+    const actor = state[prop.side]
+    if (prop.kind === 'poem') return Boolean(actor.bashoPoem || actor.bashoArchive?.length)
+    return Boolean(actor.comboMaster && prop.side === (options.viewer?.() ?? 'player'))
+  }
+  const rightPoint = new THREE.Vector3()
+  function placePoem(prop: ReturnType<typeof build>, state: FightState) {
+    const actor = state[prop.side],
+      writing = (actor.bashoPoem?.writingFrames ?? 0) > 0
+    prop.pen.visible = writing && Boolean(actor.writingKit?.brush)
+    prop.root.scale.setScalar(writing ? 1 : 0.45)
+    if (!writing) {
+      const body = sleepingBody(actor)
+      prop.root.position.set(options.worldX(body.x), options.worldY(body.y) + 0.9, 0.3)
+      return
+    }
+    const right = options.figureOf?.(prop.side)?.getObjectByName('hand-right')
+    if (!right) return
+    right.getWorldPosition(rightPoint)
+    prop.root.updateMatrixWorld(true)
+    prop.pen.position.copy(prop.root.worldToLocal(rightPoint))
+  }
   return {
     sync(state) {
       for (const prop of props) {
         const f = state[prop.side]
-        prop.root.visible =
-          prop.kind === 'poem'
-            ? Boolean(f.bashoPoem)
-            : Boolean(f.comboMaster && prop.side === (options.viewer?.() ?? 'player'))
-        if (!prop.root.visible) continue
+        prop.root.visible = propVisible(prop, state)
+        if (!prop.root.visible) {
+          prop.pen.visible = false
+          continue
+        }
         placeVisitHand(options, { state, side: prop.side, root: prop.root, hand: 'left' })
         prop.root.position.z += 0.25
         prop.root.rotation.set(-0.12, 0, -0.08 * f.facing)
+        if (prop.kind === 'poem') placePoem(prop, state)
         prop.pen.rotation.z = penAngle(f.bashoPoem?.writingFrames)
         prop.write(
           prop.kind === 'poem' ? poemLines(state, prop.side) : consoleLines(state, prop.side),
@@ -92,7 +117,7 @@ function penAngle(writingFrames = 0): number {
   return -0.4 + (writingFrames > 0 ? Math.sin((writingFrames * Math.PI) / 6) * 0.12 : 0)
 }
 function poemLines(state: FightState, side: FightSide): string[] {
-  const poem = state[side].bashoPoem!
+  const poem = state[side].bashoPoem ?? state[side].bashoArchive!.at(-1)!
   return ['GREAT HIKER', ...(poem.ready ? poem.text.split('\n') : ['...'])]
 }
 function consoleLines(state: FightState, side: FightSide): string[] {

@@ -44,6 +44,7 @@ export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, st
 }
 export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
   fr: {
+    'weak-spirit': 'Faible esprit',
     device: 'Appareil matériel',
     puppet: 'Copie inerte · marionnette',
     needles: 'Aiguilles',
@@ -59,6 +60,7 @@ export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, strin
     delivery: 'Point de livraison',
   },
   en: {
+    'weak-spirit': 'Weak spirit',
     device: 'Physical device',
     puppet: 'Inert copy · puppet',
     needles: 'Needles',

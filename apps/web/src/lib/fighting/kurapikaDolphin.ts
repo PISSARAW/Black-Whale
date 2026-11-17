@@ -192,7 +192,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     door: doorNetworkBusy(state, side),
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
     'body-and-soul': Boolean(fighter.lynchQuestion),
-    poem: Boolean(fighter.bashoPoem),
+    poem: poemUseBusy(state, side),
     gum: state.bungeeGum?.owner === side,
     projection: Boolean(fighter.hanzoProjection),
     texture: Boolean(fighter.textureSurprise),
@@ -205,5 +205,17 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
   if (fighter.gumWoundSeals) return true
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
+  )
+}
+
+function poemUseBusy(state: FightState, side: FightSide): boolean {
+  const actor = state[side]
+  return Boolean(
+    actor.bashoPoem ||
+    actor.bashoArchive?.length ||
+    (['player', 'opponent'] as const).some((target) => {
+      const ward = state[target].bashoWard
+      return ward?.owner === side && ward.remainingFrames > 0
+    }),
   )
 }

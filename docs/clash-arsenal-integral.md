@@ -255,6 +255,56 @@ Cette extension reprend l'usage vidéo du chapitre 348, recoupé avec
 une base de connaissances universelle pour déterminer le vrai dans une phrase
 libre ; les autres sujets conscients et la radiesthésie restent à représenter.
 
+## Basho : trois compositions attestées et supports matériels
+
+Great Hiker propose désormais les trois effets montrés aux chapitres 68, 402 et
+404 : embraser ce que frappe le poing, brûler mortellement une personne qui ment
+sciemment en réponse à ses questions, et écarter les faibles esprits avec un
+papier protecteur. Les textes FR/EN sont des adaptations de leur sens ; aucune
+phrase libre ne devient un souhait et aucune formule de qualité littéraire
+n'est inventée. Référence de recoupement :
+[Basho](https://hunterxhunter.fandom.com/wiki/Basho).
+
+Le pinceau, l'encre et les feuilles sont un équipement physique. Basho commence
+avec son matériel ; copier ou emprunter Great Hiker ne le fournit pas. Une
+réserve présente dans la préparation scénarisée peut être ramassée et déposée
+sans dupliquer son stock. Écrire occupe les deux mains, consomme une feuille dès
+le début et reste interruptible. Un livre ouvert et un appareil tenu occupent
+réellement leurs mains. Les compositions terminées restent distinctes : écrire
+le poème contre les mensonges ne transforme pas ce papier en poème du poing.
+Une copie matérielle par Gallery Fake suit la disparition de son support et ne
+reproduit ni pouvoir actif ni marque Sun and Moon de l'original.
+
+Le poème contre les mensonges demande une question audible et une réponse
+volontaire à cette question. Les sujets actuellement représentés sont
+l'identité, la disponibilité du Nen et l'usage de In. Une réponse sciemment
+mensongère déclenche un décès par le feu, y compris dans un format aux points,
+avec la bonne attribution pour les pouvoirs post-mortem. Le silence, une réponse
+sincère ou du texte libre non interprété ne déclenchent rien. Une déclaration
+structurée ne permet pas de contourner une question en cours.
+
+Le talisman exige une bande réellement écrite et un contact physique. Sa pose
+sur autrui est coopérative dans ce scénario ; ce choix ne crée pas un serment de
+consentement du Nen. Il repousse les faibles esprits effectivement présents,
+sans soin ni suppression d'une malédiction puissante. Un esprit suit le corps
+visé, même lorsqu'un relais d'équipe change le combattant actif. Le papier reste
+visible après la fin de son effet ; la disparition d'un support matérialisé le
+retire réellement.
+
+Les trois feuilles initiales, la seconde d'écriture, les 25 points d'aura, les
+brûlures de contact et la minute du talisman sont des **réglages de duel**, pas
+des quotas ou durées canoniques. L'IA utilise le matériel présent, les papiers
+utiles et les questions sans fabriquer de réponse adverse. Les modèles visuels
+réemploient le papier et le pinceau existants. Le PvP, les snapshots et l'import
+complet des replays acceptent les dix ressources de préparation ; le test
+d'export/import couvre également les appareils ajoutés précédemment. Le ruleset
+est **clash-combat-22**. Le On demeure disponible et n'empêche pas de manipuler
+un équipement ordinaire ; il ne donne pas accès à Great Hiker.
+
+Cette extension rend les trois effets accessibles. Elle ne fournit pas une
+compréhension universelle des mensonges en langage libre, ni une notation
+littéraire des poèmes, ni un exorcisme universel.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -270,7 +320,7 @@ de couverture des profils ou un nombre de tests :
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                           |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
-| Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |
+| Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |
 | Beyond | Ajouter une préparation sacrificielle réelle et une cible déclarée avant de simuler sa malédiction. |
 | Furykov | Représenter les travaux de déchiffrage et de fabrication dans un contexte où leur durée est réellement possible. |
 
@@ -293,5 +343,6 @@ ne fournit pas toutes les planches en accès libre. Les synthèses de
 [Hisoka](https://hunterxhunter.fandom.com/wiki/Hisoka_Morow) et
 [Longhi](https://hunterxhunter.fandom.com/wiki/Longhi) ont servi à recouper les
 conditions ; elles ne remplacent pas une relecture intégrale des planches.
+Le périmètre publié a également été vérifié jusqu'au [chapitre 420 sur VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-420/chapter/51204), publié le 6 septembre 2026. Les manuscrits annoncés au-delà ne sont pas traités comme des chapitres publiés. Cette vérification de publication ne certifie pas à elle seule la couverture de chaque nouvelle technique.
 Les poèmes apocryphes de `data/prophecies` ne servent jamais de prophéties
 canoniques ou de prédictions d'une décision humaine future.

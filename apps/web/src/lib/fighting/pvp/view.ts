@@ -49,6 +49,9 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.bashoArchive = undefined
+  enemy.bashoInquiry = undefined
+  if (enemy.bashoPoem?.writingFrames) enemy.bashoPoem = { ...enemy.bashoPoem, text: '...' }
   enemy.dowsingScreened = undefined
   enemy.personalEncounters = undefined
   enemy.devicePlayback = undefined

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 736
+Fichiers : 739
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -248,9 +248,17 @@ Fichiers : 736
 
 - Basho’s written Great Hiker poem > preserves a bookmarked copy’s composition and requires its page to remain available
 
+## `apps/web/src/lib/fighting/bashoMaterialInteractions.test.ts`
+
+- written poems preserve the actual matter and the selected effect > retains Gallery Fake provenance without cloning Nen marks or a stock identifier
+
 ## `apps/web/src/lib/fighting/bashoPanel.test.ts`
 
 - Basho poem panel > shows editable three-line composition, the exact trigger and disclosed duel tuning
+
+## `apps/web/src/lib/fighting/bashoRetrospective.test.ts`
+
+- Great Hiker has the three attested effects and actual writing supplies > consumes each real sheet once, archives distinct written poems and refuses a fourth sheet
 
 ## `apps/web/src/lib/fighting/benjamin.test.ts`
 
@@ -746,6 +754,10 @@ Fichiers : 736
 ## `apps/web/src/lib/fighting/retrospectiveIntegration.test.ts`
 
 - retrospective utility admission, clocks and network boundaries > requires entering criteria before dialing, consumes a limited allowance, and reports actual coordinates privately
+
+## `apps/web/src/lib/fighting/retrospectiveScenarioReplay.test.ts`
+
+- complete retrospective scenarios export and import their real resources > replays writing, a physical charm, weak spirits, transformation and the camera under all ten preparation resources
 
 ## `apps/web/src/lib/fighting/roster.test.ts`
 

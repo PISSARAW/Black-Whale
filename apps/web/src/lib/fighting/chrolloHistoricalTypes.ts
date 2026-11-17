@@ -22,6 +22,7 @@ export interface ChrolloHistoricalState {
   appearance?: { owner: FightSide; model: FighterId }
 }
 export interface HistoricalCopy {
+  inertDeviceForm?: import('./deviceTypes').BiohazardDeviceForm
   owner: FightSide
   originalId: string
   createdAt: number

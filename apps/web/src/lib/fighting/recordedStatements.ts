@@ -1,3 +1,4 @@
+import { performBashoQuestion } from './bashoQuestions'
 import { dowsingAnswerText } from './dowsingAnswers'
 import { speakPaperWords, voiceAvailable } from './kallutoListening'
 import { DOWSING_QUESTIONS } from './dowsingTypes'
@@ -19,11 +20,27 @@ export function performRecordedStatement(
   )
     return state
   const lie = command.action === 'statement-lie'
+  return speakDeclaredFact(state, side, { question: command.target as DowsingQuestion, lie })
+}
+export function speakDeclaredFact(
+  state: FightState,
+  side: FightSide,
+  statement: { question: DowsingQuestion; lie: boolean },
+): FightState {
+  const { question, lie } = statement
+  if (state[side].bashoPrompt?.question === question) {
+    const answered = performBashoQuestion(state, side, {
+      action: 'basho-answer',
+      target: lie ? 'lie' : 'sincere',
+    })
+    if (answered !== state) return answered
+  }
   return speakPaperWords(state, side, {
-    text: dowsingAnswerText(state[side], command.target as DowsingQuestion, lie),
+    text: dowsingAnswerText(state[side], question, lie),
     statementIntent: lie,
   })
 }
+
 export function recordedStatementOptions(state: FightState, side: FightSide): ArsenalOption[] {
   if (!state.battlefield?.entities.some((e) => e.device?.recording)) return []
   return Object.entries(DOWSING_QUESTIONS).flatMap(([question, label]) =>

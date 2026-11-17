@@ -1,3 +1,4 @@
+import { createWritingKit } from './bashoMaterials'
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
 import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
@@ -129,6 +130,10 @@ function createFighter(options: {
   return {
     ...options,
     equipment: personalEquipment(options.id),
+    writingKit:
+      options.id === 'basho'
+        ? createWritingKit(`${options.facing === 1 ? 'player' : 'opponent'}:basho:kit`)
+        : undefined,
     maxHealth: options.health,
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,

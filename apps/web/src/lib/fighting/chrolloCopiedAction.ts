@@ -61,7 +61,7 @@ export function copiedHandsAvailable(
   source: string,
 ): boolean {
   return (
-    !['kurapika', 'padaille', 'melody', 'phinks'].includes(source) ||
+    !['kurapika', 'padaille', 'melody', 'phinks', 'basho'].includes(source) ||
     fighter.chrolloBook?.open === false
   )
 }

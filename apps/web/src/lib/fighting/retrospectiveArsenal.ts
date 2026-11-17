@@ -1,3 +1,6 @@
+import { performBashoQuestion, bashoQuestionOptions } from './bashoQuestions'
+import { performBashoWard, bashoWardOptions } from './bashoWard'
+import { performWritingKitCommand, writingKitOptions } from './bashoMaterials'
 import { performRecordedStatement, recordedStatementOptions } from './recordedStatements'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { deviceOptions } from './deviceOptions'
@@ -44,6 +47,10 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['basho-ask', performBashoQuestion],
+  ['basho-answer', performBashoQuestion],
+  ['basho-', performBashoWard],
+  ['writing-', performWritingKitCommand],
   ['statement-', performRecordedStatement],
   ['device-', performDeviceCommand],
   ['biohazard-', performDeviceCommand],
@@ -66,6 +73,9 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
     ...recordedStatementOptions(state, side),
+    ...writingKitOptions(state, side),
+    ...bashoQuestionOptions(state, side),
+    ...bashoWardOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),

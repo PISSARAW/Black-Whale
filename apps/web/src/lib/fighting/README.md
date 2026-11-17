@@ -667,22 +667,24 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   conservent les conditions matérielles et le prêt de Dolphin ne déploie qu’un lot.
   Une nouvelle manche réinitialise les réserves et les captures. L’ancien
   `bloodBoundFrames` est retiré, et Predator observe la matière réellement active.
-- Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
-  `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
-  composition : les textes libres non reconnus ne coûtent rien et ne créent aucun
-  pouvoir. L recopie la composition attestée ; le panneau permet de
-  la saisir et de la relire avant de l’écrire. L’écriture prend une seconde et
-  25 aura, sans frappe ni bonus général ; bouger, garder ou être frappé l’interrompt.
-  Une fois écrite, la condition ne s’applique qu’à un contact du poing : un échec,
-  une parade, un coup de pied, une projection ou un projectile n’allume aucun feu.
-  Un contact sur garde peut enflammer. `bashoFire.ts` produit une brûlure visible
-  de 90 frames, avec trois pulsations de 2 dégâts avant défense Nen ; ni paralysie,
-  bonus à tous les coups, « Encre terrestre » ou finisher inventé. Ces chiffres et
-  le maintien du poème tant que le Nen reste disponible sont des adaptations de
-  duel, sans notation littéraire automatique : la qualité compte dans le manga,
-  mais une seule composition attestée est prise en charge ici. Les nouvelles
-  manches réinitialisent papier et feu. Les copies conservent l’écriture et ses
-  conditions ; les brûlures portent l’identité du lanceur pour le verdict.
+- Basho dispose des trois compositions attestées des chapitres 68, 402 et 404 dans
+  `FightBashoPoem.svelte` : poing incendiaire, réponse mensongère punie par le feu
+  mortel, talisman contre les faibles esprits. `bashoPoem.ts` reconnaît les
+  adaptations FR/EN proposées, sans interpréter les souhaits libres ou noter leur
+  qualité littéraire. Les feuilles, le pinceau et l'encre sont physiques ; les
+  copies du Hatsu n'en reçoivent pas gratuitement. Une feuille est consommée dès
+  le début, les deux mains sont occupées et le mouvement, la garde ou une frappe
+  interrompent l'écriture. Les papiers prêts restent distincts dans l'archive.
+  Le poing exige un vrai contact, pas un coup de pied ou un projectile. Les
+  questions exigent une parole audible et une réponse volontaire sur un fait
+  représenté ; le silence et le texte libre ne sont pas jugés automatiquement.
+  Le talisman exige une bande écrite et un contact, sans soin ou exorcisme de
+  malédiction puissante. Les faibles esprits suivent le corps réellement visé.
+  Trois feuilles, une seconde d'écriture, 25 aura, le feu de contact de 90 frames
+  et la minute du talisman sont des réglages de duel. Les copies conservent
+  les conditions du pouvoir et la durée de vie de leur support matériel ; les
+  effets portent l'identité du lanceur pour le verdict. Les nouvelles manches
+  réinitialisent ces préparations. Voir [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
 
 - Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
   `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),

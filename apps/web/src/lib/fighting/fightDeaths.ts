@@ -7,6 +7,7 @@ export interface FightDeath {
   victimSide: FightSide
   killerSide: FightSide | null
   cause: FightDeathCause
+  fatalCondition?: boolean
 }
 
 /** Record the actual fatal source before judging; never infer a murderer from score or position. */
@@ -17,7 +18,7 @@ export function recordFightDeath(state: FightState, death: FightDeath): FightSta
 }
 
 export function explicitDeath(death: FightDeath): boolean {
-  return death.cause === 'judgment' || death.cause === 'vow'
+  return death.cause === 'judgment' || death.cause === 'vow' || death.fatalCondition === true
 }
 
 /** All casualties of a batch are known before post-mortem Nen is asked to act. */

@@ -148,7 +148,7 @@ function validPreparation(value: unknown): boolean {
   )
     return false
   return (
-    value.resources.length <= 8 &&
+    value.resources.length <= 10 &&
     value.cohorts.length <= 2 &&
     value.resources.every((id) =>
       member(id, [
@@ -160,6 +160,8 @@ function validPreparation(value: unknown): boolean {
         'needles',
         'rooms',
         'devices',
+        'writing',
+        'spirits',
       ]),
     ) &&
     value.cohorts.every((side) => member(side, ['player', 'opponent']))

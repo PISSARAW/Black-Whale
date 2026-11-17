@@ -95,6 +95,14 @@ Les références fournies par le mainteneur et les palettes choisies sont docume
 `data/characters/appearance.json` ; l’attribution de la tenue à capuche à Tserriednich suit
 sa confirmation explicite. `bonolenovBattleArmor.ts` fournit la forme Prologue partagée.
 
+`humanModelFinish.ts` ajoute la finition des yeux et du visage directement dans
+`buildHumanFigure`. Elle est ainsi utilisée par la visite, Chasse, Infiltration,
+Arène et Clash, avec les mêmes buffers partagés et les mêmes articulations.
+Les détails restent dans le modèle proche ; le LOD lointain conserve ses trois
+formes simples. Les visages spécifiques de Kurapika et Morena sont préservés.
+`humanModelFinish.test.ts` compare le constructeur d’apparitions des modes Tour
+aux quarante combattants, vérifie les exceptions et la durée de vie des buffers.
+
 `mangaCast.test.ts` contrôle les articulations, les transformations et les géométries
 communes. `node apps/web/scripts/check-manga-cast.mjs` rend tout le catalogue en WebGL :
 `MANGA_CAST_IDS` sélectionne les identités séparées par des virgules, `MANGA_CAST_VIEWS`

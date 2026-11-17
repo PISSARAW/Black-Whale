@@ -8,7 +8,6 @@ import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
 import { shapeFightEyes } from './fightFigureEyes'
-import { finishFightModel } from './fighterModelFinish'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -92,7 +91,6 @@ export function buildFightFigure(options: {
     seen,
     profile: finalProfile,
   })
-  finishFightModel({ THREE, glow: figureGlow, model, profile: finalProfile })
   if (trueForm) shapeBiscuitTrueForm(model)
   if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 

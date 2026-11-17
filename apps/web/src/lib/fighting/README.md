@@ -23,6 +23,9 @@ vérifiées, la récupération d’identité et les tournois reliés aux résult
 
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
+L’[étape 7](./STEP7.md) ajoute trois parcours scénarisés avec fins et sauvegardes,
+puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.

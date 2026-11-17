@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 711
+Fichiers : 726
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -224,6 +224,14 @@ Fichiers : 711
 
 - forty arena applications and real cover > covers exactly the forty playable fighters and leaves preparation optional
 
+## `apps/web/src/lib/fighting/arsenalAi.test.ts`
+
+- the forty opponents use their own Nen arsenal > covers the exact selectable roster and makes only legal choices
+
+## `apps/web/src/lib/fighting/arsenalAiNen.test.ts`
+
+- AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -277,6 +285,15 @@ Fichiers : 711
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
+## `apps/web/src/lib/fighting/chrolloCopiedArsenal.test.ts`
+
+- one loaded Dolphin Hatsu > can retract its existing rubber without starting a second attachment
+- applications of an acquired Hatsu remain separate from other Hatsu of its owner > executes Texture Surprise as a surface disguise, without a Bungee Gum attachment
+
+## `apps/web/src/lib/fighting/chrolloHistorical.test.ts`
+
+- retrospective stolen pages execute their own material rules > creates inert copies with both hands, without copying living properties or powers
+
 ## `apps/web/src/lib/fighting/cinematicCatalogue.test.ts`
 
 - forty-fighter cinematic coverage > covers the exact selectable roster with unique audit ids and physical lenses
@@ -316,10 +333,20 @@ Fichiers : 711
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
 
+## `apps/web/src/lib/fighting/commandQualification.test.ts`
+
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v17 recording
+- held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
+- draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
+
 ## `apps/web/src/lib/fighting/commandReadability.test.ts`
 
 - own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
 - private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
+## `apps/web/src/lib/fighting/cookie.test.ts`
+
+- Cookie is an executable treatment, separate from Biscuit’s body > summons the masseuse without attacking or changing the body
 
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
@@ -335,6 +362,10 @@ Fichiers : 711
 
 - fifth expansion personal mechanics > Gel chooses two physical arm endings with different real costs and no added status
 
+## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
+
+- ninth expansion personal mechanics > Rihan opens real observation without inventing a manifestation or completed analysis
+
 ## `apps/web/src/lib/fighting/duelComboRoster.test.ts`
 
 - personal powers and recovery links > attaches Gum through real contact, then consumes a pre-existing tether with the finisher
@@ -346,6 +377,10 @@ Fichiers : 711
 ## `apps/web/src/lib/fighting/duelComboSeventh.test.ts`
 
 - seventh expansion personal mechanics > Tserriednich waits for the advancing light to recover before linking the heavy
+
+## `apps/web/src/lib/fighting/duelComboTenth.test.ts`
+
+- roster completion and returning conversion branches > Halkenburg gathers his real marked consenting cohort over eight simulated seconds without firing
 
 ## `apps/web/src/lib/fighting/duelComboThird.test.ts`
 
@@ -491,6 +526,10 @@ Fichiers : 711
 
 - Hisoka’s distinct elastic techniques > loads the complete Hatsu registry
 
+## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
+
+- Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
 ## `apps/web/src/lib/fighting/illumi.test.ts`
 
 - Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
@@ -499,6 +538,11 @@ Fichiers : 711
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
 - In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
+
+## `apps/web/src/lib/fighting/judgmentClauses.test.ts`
+
+- Judgment Chain declares immutable independent clauses before heart contact > allows a communication-only clause without imposing Zetsu or blocking voluntary Nen
+- a no-contact clause follows actual initiated communications, not proximity or disguises > allows speech to Kurapika, then kills on an actual greeting received by a Troupe teammate at the gate
 
 ## `apps/web/src/lib/fighting/kalluto.test.ts`
 
@@ -671,13 +715,17 @@ Fichiers : 711
 - verified replay diagnostics and concrete rehearsal > measures the same visible response from the second player’s perspective
 - diagnostics preserve the viewer’s Nen perception > does not reveal an attack with In, an unseen body or a hidden book page
 
+## `apps/web/src/lib/fighting/retrospectiveIntegration.test.ts`
+
+- retrospective utility admission, clocks and network boundaries > requires entering criteria before dialing, consumes a limited allowance, and reports actual coordinates privately
+
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
 
 ## `apps/web/src/lib/fighting/rosterQuality.test.ts`
 
-- roster quality parity > covers forty fighters, their core routes and one hundred and twenty advanced duel lessons
+- roster quality parity > covers forty fighters, their core routes and one hundred and sixty-eight advanced duel lessons
 - sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
 
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
@@ -691,6 +739,16 @@ Fichiers : 711
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 
 - Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
+
+## `apps/web/src/lib/fighting/skillHunterAcquisition.test.ts`
+
+- Skill Hunter executes all four canonical acquisition conditions > cannot steal from observation and an ordinary contact alone
+
+## `apps/web/src/lib/fighting/solo/solo.test.ts`
+
+- solo story routes use actual Nen and physical outcomes > plays the complete reading route and saves its original ending and local title
+- solo modes preserve ordinary fighters and round rules > carries real remaining health and aura through the ordinary survival boundary
+- local solo persistence, command isolation and scheduling > checkpoints entry, preserves cleared encounters and restarts only the in-progress encounter
 
 ## `apps/web/src/lib/fighting/stageBackground.test.ts`
 
@@ -2845,6 +2903,10 @@ Fichiers : 711
 ## `scripts/combat-reference-compare.test.ts`
 
 - combat reference comparison > accepts identical behavior and reports a separate source change
+
+## `scripts/command-qualification-metrics.test.ts`
+
+- qualification acceptance uses all requested observations > keeps a same-frame RAF timestamp before setup in the first segment
 
 ## `scripts/doc-lint.test.ts`
 

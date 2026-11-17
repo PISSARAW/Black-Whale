@@ -80,6 +80,9 @@
   <a href={localizePath('/fighting/profile', language)}
     >{language === 'fr' ? 'Profil, saison et tournois' : 'Profile, season and tournaments'}</a
   >
+  <a href={localizePath('/fighting/profile/solo', language)}
+    >{language === 'fr' ? 'Parcours et défis solo' : 'Solo routes and challenges'}</a
+  >
   <details open={expanded}>
     <a href={localizePath('/fighting/teams', language)}
       >{language === 'fr' ? 'Équipes et assistances par relais' : 'Teams and relay assists'}</a

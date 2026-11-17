@@ -26,6 +26,7 @@
 | `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
 | `fighting/profile` | `+page.svelte` |
 | `fighting/profile/api` | `+server.ts` |
+| `fighting/profile/solo` | `+page.svelte` |
 | `fighting/pvp` | `+page.svelte`, `PvpDuel.svelte`, `pvp.css` |
 | `fighting/pvp/[matchId]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/api/matches` | `+server.ts` |

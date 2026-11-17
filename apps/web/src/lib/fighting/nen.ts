@@ -7,7 +7,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { attackData } from './frameData'
-import { restrictedChainAura } from './kurapika'
+import { restrictedChainAura, dolphinActor } from './kurapika'
 import {
   applyAdvancedNen,
   advancedAuraDrain,
@@ -172,6 +172,7 @@ export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {
+  fighter = dolphinActor(fighter)
   if (predatorNenLocked(fighter)) return 0.7
   if (fighter.nen.mode === 'zetsu') return 0.7
   let factor = fighter.nen.mode === 'ren' ? 1.22 : 1

@@ -173,8 +173,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   moonlightZetsu?: boolean
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
-  drainingChain?: { owner: FightSide }
-  stolenChainAbility?: { owner: FightSide; moveId: string }
+  drainingChain?: import('./dolphinAura').StealChainDrain
+  stolenChainAbility?: { owner: FightSide; ownerMember?: number; moveId: string }
   judgmentChain?: import('./judgmentRules').JudgmentSeal
   id: FighterId
   x: number

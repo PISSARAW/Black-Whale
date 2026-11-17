@@ -1,3 +1,4 @@
+import { stolenAuraActor, withDolphinSupply } from './dolphinSupply'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -28,7 +29,7 @@ export function cookieTarget(state: FightState, side: FightSide, target?: string
 }
 
 export function cookieCanStart(state: FightState, side: FightSide, target: FightSide): boolean {
-  const caster = state[side]
+  const caster = stolenAuraActor(state[side])
   if (!ownsCookie(caster) || !voluntaryNenAvailable(caster)) return false
   if (chainAbilitySealed(caster, 'biscuit:cookie') || caster.cookie) return false
   if (!treatmentBodyFree(caster)) return false
@@ -44,6 +45,13 @@ function treatmentBodyFree(fighter: ArcadeFighter): boolean {
 }
 
 export function performCookie(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  return withDolphinSupply(state, side, (prepared) => performCookieCommand(prepared, side, command))
+}
+function performCookieCommand(
   state: FightState,
   side: FightSide,
   command: ArsenalCommand,
@@ -130,7 +138,7 @@ function advanceSession(state: FightState, side: FightSide): FightState {
 }
 
 function sessionContinues(state: FightState, side: FightSide): boolean {
-  const caster = state[side]
+  const caster = stolenAuraActor(state[side])
   const session = caster.cookie!
   const target = state[session.target]
   if (!ownsCookie(caster) || !voluntaryNenAvailable(caster)) return false

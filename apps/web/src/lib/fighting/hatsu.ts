@@ -98,30 +98,16 @@ export function resolveHatsuImpact(options: {
   blocked: boolean
   concealed: boolean
 }): FightState {
-  const { side, defenderSide, source, moveId, blocked, concealed } = options
-  if (
-    !voluntaryNenAvailable(options.state[side]) ||
-    chainAbilitySealed(options.state[side], moveId)
-  )
-    return options.state
-  if (!preparationCheck(options.state, side, moveId).ready) return options.state
-  return scaleNenControl(
+  const { side, source, moveId } = options
+  return withDolphinIdentity(
     options.state,
-    withDolphinIdentity(
-      options.state,
-      (state) =>
-        hatsuFor(source).onImpact({
-          state,
-          side,
-          defenderSide,
-          source,
-          moveId,
-          blocked,
-          concealed,
-        }),
-      source,
-    ),
-    side,
+    (state) => {
+      if (!voluntaryNenAvailable(state[side]) || chainAbilitySealed(state[side], moveId))
+        return state
+      if (!preparationCheck(state, side, moveId).ready) return state
+      return scaleNenControl(state, hatsuFor(source).onImpact({ ...options, state }), side)
+    },
+    source,
   )
 }
 

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 750
+Fichiers : 751
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -401,6 +401,11 @@ Fichiers : 750
 ## `apps/web/src/lib/fighting/deviceIntegration.test.ts`
 
 - physical device boundaries stay consistent with the actual bodies > keeps both hands finite and counts the open book without copying equipment
+
+## `apps/web/src/lib/fighting/dolphinAura.test.ts`
+
+- Steal Chain keeps the actual stolen aura and suppresses the linked victim > prevents voluntary Nen immediately after real syringe contact, before the reserve is empty
+- Dolphin spends a finite donor reserve independently from the carrier > pays the actual borrowed activation from stolen aura and restores the real body
 
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 

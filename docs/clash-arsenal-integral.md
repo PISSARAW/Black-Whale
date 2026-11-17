@@ -542,3 +542,27 @@ contact et avant tout rattachement. En duel sans équipe, seuls les indices zér
 correspondent à un corps présent. Ce contrôle empêche notamment de contourner
 l'auto-manipulation en implantant une antenne sur un faux réserviste de son propre
 camp. Le correctif porte le ruleset courant à **clash-combat-29**.
+
+## Steal Chain : réserve réelle du donneur
+
+Le contact effectif de la seringue impose désormais Zetsu pendant le drainage,
+avant même que la réserve soit vide. La victime conserve ses actions physiques ;
+un simple coup reçu par Kurapika ne détache pas automatiquement une seringue
+encore reliée. La perte de portée ou du Nen nécessaire interrompt le prélèvement.
+
+Chaque capacité réellement prélevée conserve la quantité d'aura effectivement
+retirée, le corps du donneur et ses rendements de catégories au prélèvement.
+Dolphin utilise ce stock pour l'activation et l'entretien des effets empruntés ;
+le repos du porteur ne le remplit pas. Le bonus d'Emperor Time de Kurapika ne
+remplace pas les rendements du donneur. La réserve personnelle du porteur reste
+séparée, et aucun canal temporaire d'exécution ne subsiste dans l'état enregistré.
+Un stock insuffisant refuse l'activation, même si le porteur dispose d'aura.
+Le retour de la capacité vise le membre réellement volé, pas son remplaçant actif.
+
+Cette correction porte le ruleset à **clash-combat-30**. Les coûts chiffrés restent
+ceux du duel. Le prêt à un tiers réel reste un chantier ouvert ; cette passe ne
+certifie pas l'arsenal intégral. Le On reste disponible.
+
+Références : chapitres 361, 364, 369 et 388. Le maintien de Dolphin pendant le
+sommeil de Kurapika et d'Oito doit rester distinct d'une nouvelle commande
+volontaire pendant leur inconscience.

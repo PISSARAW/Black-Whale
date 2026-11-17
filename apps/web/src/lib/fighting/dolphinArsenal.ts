@@ -1,3 +1,4 @@
+import { stolenAuraActor } from './dolphinSupply'
 import { withDolphinIdentity, recordDolphinEffects } from './kurapikaDolphin'
 import { chainAbilityGroup } from './chainAbilityGroup'
 import { canUseMovesetMove, movesetFor, moveById } from './movesets'
@@ -36,7 +37,12 @@ export function dolphinArsenalOptions(state: FightState, side: FightSide): Arsen
   if (fighter.id !== 'kurapika' || !held?.loaded) return []
   const prepared = {
     ...state,
-    [side]: { ...fighter, id: held.source, nenOwner: fighter.id, stolenChainAbility: undefined },
+    [side]: stolenAuraActor({
+      ...fighter,
+      id: held.source,
+      nenOwner: fighter.nenOwner ?? fighter.id,
+      stolenChainAbility: undefined,
+    }),
   }
   return (movesetFor(held.source)?.moves ?? [])
     .filter(
@@ -51,9 +57,9 @@ export function dolphinArsenalOptions(state: FightState, side: FightSide): Arsen
       labelEn: `Dolphin · ${move.nameEn}`,
       ready: fighter.kurapika!.emperorTime && canUseMovesetMove(prepared, side, move),
       conditionFr:
-        'Choisir une application du même Hatsu ; un seul usage, Emperor Time et ressources propres requis.',
+        'Choisir une application du même Hatsu ; un seul usage, Emperor Time, aura prélevée et matériel réel requis.',
       conditionEn:
-        'Choose an application of the same Hatsu; one use only, Emperor Time and own resources required.',
+        'Choose an application of the same Hatsu; one use only, Emperor Time, stolen aura and real equipment required.',
     }))
 }
 

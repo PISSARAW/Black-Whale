@@ -1,3 +1,4 @@
+import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
 import { finishBorrowedBasho } from './bashoWard'
 import { judgmentActionBreach } from './judgmentAction'
 import { judgmentForbidsNen } from './judgmentRules'
@@ -210,9 +211,15 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
     outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
-    kurapikaNenActive(fighter) &&
+    dolphinActionAuraAvailable(fighter) &&
     fighter.kurapika!.emperorTime
   )
+}
+
+function dolphinActionAuraAvailable(fighter: ArcadeFighter): boolean {
+  return fighter.kurapika?.held?.loaded
+    ? dolphinSupplyAvailable(fighter)
+    : kurapikaNenActive(fighter)
 }
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
@@ -269,7 +276,7 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
   const held = fighter.kurapika!.held!
   const prepared: FightState = {
     ...state,
-    [side]: {
+    [side]: stolenAuraActor({
       ...fighter,
       id: held.source,
       nenOwner: fighter.nenOwner ?? fighter.id,
@@ -277,14 +284,18 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
         ...fighter.kurapika!,
         held: { ...held, used: true },
       },
-    },
+    }),
   }
   const cast = performBorrowedMove({ ...options, state: prepared }, held.moveId, perform)
   if (cast === prepared || (cast[side] === prepared[side] && cast.lsdf === prepared.lsdf))
     return state
   const restored = {
     ...cast,
-    [side]: { ...cast[side], id: fighter.id, nenOwner: fighter.nenOwner },
+    [side]: {
+      ...restoreStolenAura(fighter, cast[side]),
+      id: fighter.id,
+      nenOwner: fighter.nenOwner,
+    },
   }
   return recordDolphinEffects(state, restored, side)
 }

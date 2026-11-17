@@ -40,7 +40,7 @@ describe('one loaded Dolphin Hatsu', () => {
     let state = {
       ...base,
       player: { ...base.player, x: 44, aura: 100 },
-      opponent: { ...base.opponent, x: 49, aura: 1 },
+      opponent: { ...base.opponent, x: 49, aura: 100 },
     }
     const steal = (s: FightState) =>
       performAuraAttack({
@@ -50,7 +50,7 @@ describe('one loaded Dolphin Hatsu', () => {
         moveId: 'kurapika:backSpecial',
         auraCharged: false,
       })
-    state = frames(steal(state), 90)
+    state = frames(steal(state), 220)
     expect(state.player.kurapika?.held?.source).toBe('hisoka')
     state = toggleEmperorTime(state, 'player')
     state = steal(state)

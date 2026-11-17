@@ -43,9 +43,14 @@ function zetsuBlocks(fighter: ArcadeFighter, options: NenAccessOptions): boolean
 function forcedZetsu(fighter: ArcadeFighter): boolean {
   return Boolean(
     fighter.chainJail ||
+    fighter.drainingChain ||
     fighter.moonlightZetsu ||
     fighter.hatsuEffects.forcedZetsuFrames > 0 ||
     (fighter.predator?.sealFrames ?? 0) > 0 ||
-    (fighter.kurapika?.blackoutFrames ?? 0) > 0,
+    emperorBlackout(fighter),
   )
+}
+
+function emperorBlackout(fighter: ArcadeFighter): boolean {
+  return (fighter.kurapika?.blackoutFrames ?? 0) > 0 && !fighter.dolphinExecution
 }

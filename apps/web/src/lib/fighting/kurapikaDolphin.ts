@@ -1,3 +1,5 @@
+import { mapPhysicalBodies } from './physicalBodyMap'
+import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
@@ -34,13 +36,13 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const held = fighter.kurapika?.held
   const move = moveById(held?.moveId)
   if (!held?.loaded || held.used) return false
-  // Preserve the actual technique's conditions and cost at the borrower's attained state.
-  const actor: ArcadeFighter = {
+  // Preserve the actual technique's conditions; its reserve and quality belong to the donor.
+  const actor: ArcadeFighter = stolenAuraActor({
     ...fighter,
     id: held.source,
     nenOwner: fighter.nenOwner ?? fighter.id,
     stolenChainAbility: undefined,
-  }
+  })
   const prepared = { ...state, [side]: actor }
   if (held.moveId === 'biscuit:cookie') return cookieCanStart(prepared, side, side)
   if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
@@ -56,11 +58,11 @@ export function withDolphinIdentity(
   const borrowed = (fighter: ArcadeFighter) => {
     const held = fighter.kurapika?.held
     return held?.used && (!source || held.source === source)
-      ? {
+      ? stolenAuraActor({
           ...fighter,
           id: held.source,
           nenOwner: fighter.nenOwner ?? fighter.id,
-        }
+        })
       : fighter
   }
   const player = borrowed(state.player)
@@ -70,12 +72,12 @@ export function withDolphinIdentity(
   return {
     ...next,
     player: {
-      ...next.player,
+      ...restoreStolenAura(state.player, next.player),
       id: state.player.id,
       nenOwner: state.player.nenOwner,
     },
     opponent: {
-      ...next.opponent,
+      ...restoreStolenAura(state.opponent, next.opponent),
       id: state.opponent.id,
       nenOwner: state.opponent.nenOwner,
     },
@@ -120,11 +122,26 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
   const fighter = state[side]
   const held = fighter.kurapika?.held
   if (!held) return state
-  return {
+  const victim = stolenAbilityVictim(state, held)
+  const restored = {
     ...state,
     [side]: { ...fighter, kurapika: { ...fighter.kurapika!, held: null } },
-    [held.victim]: { ...state[held.victim], stolenChainAbility: undefined },
   }
+  return victim
+    ? mapPhysicalBodies(restored, (body) =>
+        body === victim ? { ...body, stolenChainAbility: undefined } : body,
+      )
+    : restored
+}
+
+function stolenAbilityVictim(
+  state: FightState,
+  held: StolenChainAbility,
+): ArcadeFighter | undefined {
+  const seat = state.teamMatch?.seats[held.victim]
+  const active = seat?.active ?? 0
+  const member = held.victimMember ?? active
+  return member === active ? state[held.victim] : seat?.members[member]
 }
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */

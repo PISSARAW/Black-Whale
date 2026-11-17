@@ -39,7 +39,7 @@ export function abilityCategories(ability: string | null): readonly ActiveNenCat
 
 /** Each component is calculated separately: there is no stacking six global buffs. */
 export function categoryPower(fighter: ArcadeFighter, category: ActiveNenCategory): number {
-  return 0.7 + 0.5 * fightCategoryEfficiency(fighter, category)
+  return 0.7 + 0.5 * abilityCategoryEfficiency(fighter, category)
 }
 
 export function constructionFactor(fighter: ArcadeFighter): number {
@@ -48,4 +48,15 @@ export function constructionFactor(fighter: ArcadeFighter): number {
 
 export function manipulationFactor(fighter: ArcadeFighter): number {
   return categoryPower(fighter, 'manipulator')
+}
+
+/** An ability loan uses the donor's stolen aura, without lending the carrier Emperor Time. */
+export function abilityCategoryEfficiency(
+  fighter: ArcadeFighter,
+  category: ActiveNenCategory,
+): number {
+  return (
+    fighter.dolphinExecution?.supply.efficiencies[category] ??
+    fightCategoryEfficiency(fighter, category)
+  )
 }

@@ -1,8 +1,9 @@
+import { stolenAuraActor } from './dolphinSupply'
 import { judgmentForbidsNen } from './judgmentRules'
 import { chainAbilityGroup } from './chainAbilityGroup'
 export { chainAbilityGroup } from './chainAbilityGroup'
 import { voluntaryNenAvailable } from './nenAccess'
-import { fightCategoryEfficiency } from './nenCategories'
+import { abilityCategoryEfficiency } from './nenCategories'
 import { transitionNen } from '@black-whale/nen-engine'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
@@ -10,6 +11,8 @@ import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
   victim: FightSide
+  victimMember?: number
+  auraSupply?: import('./dolphinAura').DolphinAuraSupply
   source: FighterId
   moveId: string
   loaded: boolean
@@ -87,7 +90,7 @@ export function kurapikaEfficiency(
   fighter: ArcadeFighter,
   category: 'enhancer' | 'emitter',
 ): number {
-  return fightCategoryEfficiency(fighter, category)
+  return abilityCategoryEfficiency(fighter, category)
 }
 
 export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boolean {
@@ -125,7 +128,7 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = fighter.kurapika?.held
   return held?.used && fighter.attack?.moveId === held.moveId
-    ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
+    ? stolenAuraActor({ ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id })
     : fighter
 }
 
@@ -133,7 +136,11 @@ export function restrictedChainAura(
   fighter: ArcadeFighter,
   input: FightInput,
 ): ArcadeFighter | null {
-  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0)
+  if (
+    chainsImmobilize(fighter) ||
+    fighter.drainingChain ||
+    fighter.hatsuEffects.forcedZetsuFrames > 0
+  )
     return zetsuFighter(fighter)
   if (judgmentForbidsNen(fighter)) return judgmentInput(fighter, input)
   return null

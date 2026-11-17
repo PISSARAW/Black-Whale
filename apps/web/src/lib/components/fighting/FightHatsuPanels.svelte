@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightRetrospectiveArsenal from './FightRetrospectiveArsenal.svelte'
+  import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
   import { observeFightCommand } from '$lib/fighting/commandFeedback'
   import FightKallutoPaper from './FightKallutoPaper.svelte'
@@ -15,12 +16,15 @@
   import { offerMoonlightContract, respondMoonlightContract } from '$lib/fighting/moonlightContract'
   import type { AuraAttackOptions } from '$lib/fighting/auraAttackAction'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import type { ReplayCommand } from '$lib/fighting/fightReplayTypes'
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused: boolean
   export let onAction: (action: (state: FightState) => FightState) => void
   export let onEditing: () => void
   export let perform: (options: AuraAttackOptions) => FightState
+  export let onCommand: ((command: ReplayCommand) => void) | undefined = undefined
+  export let replay = false
   function dispatch(side: FightSide, action: (state: FightState) => FightState) {
     onAction((current) =>
       observeFightCommand(current, { side, action: 'utility' }, (next) =>
@@ -29,6 +33,14 @@
     )
   }
 </script>
+
+{#if onCommand && state.player.id === 'chrollo' && state.phase === 'fighting' && !paused && !replay}
+  <FightChrolloLiveBook
+    {state}
+    {language}
+    actions={{ queueAction: onAction, queueCommand: onCommand }}
+  />
+{/if}
 
 <FightRetrospectiveArsenal
   {state}

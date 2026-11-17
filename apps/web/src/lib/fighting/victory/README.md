@@ -19,7 +19,7 @@ Hisoka affiche « VICTOIRE », Melody affiche « FRIENDSHIP » et les autres
 affichent « FATALITY ». Uvogin ne fait pas partie de ce catalogue.
 L'animation se joue localement, y compris en PvP : aucun événement réseau ni
 dommage supplémentaire n'est envoyé. Chain Jail reste une pose après verdict réservée aux membres réels de la Brigade.
-Les autres adversaires déclenchent la variante Judgment Chain.
+Les autres adversaires déclenchent la variante Judgment Chain. Les morts de Furykov et Longhi face aux princes sont décrites dans [BEYOND_CURSE.md](./BEYOND_CURSE.md) et leurs victoires personnelles dans [PERSONAL_GUARDS.md](./PERSONAL_GUARDS.md).
 
 Le temps attend le premier rendu, s'arrête pendant une pause ou quand l'onglet
 est masqué et reprend ensuite. Le son suit la même horloge. Échap, Entrée,
@@ -383,6 +383,7 @@ adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.
 `check-hanzo-bill-victories.mjs` vérifie le déclenchement dans Clash, les
 rematches des deux côtés et les bandes sonores sans modifier le résultat.
 
+
 Hinrigh : « Pièce à conviction » transforme au contact les trois objets de sa
 mallette : caméra à 30, menottes à 54 et pistolet à 78. Le chat-caméra enregistre
 la scène. Deux paires de pigeons rejoignent les poignets à 174 et les chevilles
@@ -408,6 +409,7 @@ deux côtés, gabarits, miroir, lieux, mobile, confort, rematches et chargement 
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie aussi la fin naturelle à dix secondes
 et le retour aux résultats.
+
 
 Terebellum : « Retour à l’envoyeur » reçoit deux coups de couteau et un coup
 au torse. À 120, la blessure et le même couteau apparaissent dans la canette
@@ -435,3 +437,91 @@ mobile et rematches.
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie la fin naturelle après dix secondes,
 le chargement du son et le retour aux résultats sans mutation du combat.
+
+Hisoka : « Regarde-moi » remplace le fil final comme cinématique par défaut.
+Le Ren monte durant 96 images ; l’adversaire concentre le Gyo à 120. Le plan
+subjectif à 180 révèle progressivement le visage sous le masque, puis les yeux
+s’assombrissent et le sourire s’élargit de 240 à 294. Le dernier souffle s’arrête
+à 390 ; la caméra montre ensuite la chute native sur le dos. Le vaincu reste
+présent au sol pendant le portrait final. `hisokaThread.ts` conserve le précédent
+rendu sans modifier sa démo autonome.
+
+`hisokaFearFace.ts` possède ses seules géométries : bouche et dents interpolées,
+plaques cicatricielles ajustées à la peau par rayons, ombres orbitales et creux
+nasal. La tête et les matériaux originaux sont restaurés après chaque image.
+`hisokaFearAura.ts` dessine le Ren et le Gyo même avec les flashes désactivés.
+Le confort caméra conserve un plan large fixe. Le film ne change pas les règles :
+`hisokaFearFilm.ts` vérifie une vraie préparation de Texture Surprise, le Ren
+et le Gyo natifs sans dégâts ni annulation du masque de tissu, puis obtient
+un vrai verdict avec les coups existants. La révélation du visage est subjective
+et la mort de peur appartient à la mise en scène après verdict, sans nouveau
+seuil de dégâts ou effet létal attribué au Ren.
+
+`render-hisoka-fear.mjs`, `compose-hisoka-fear.mjs` et `check-hisoka-fear.mjs`
+produisent les dix secondes en 1080p60 et `hisoka.m4a`. Les battements accélèrent
+puis s’arrêtent à 6,5 s ; un silence précède la réception à 7,08 s. Seule l’annonce
+anglaise Fatality est parlée. Les contrôles couvrent P2, les gabarits, le miroir,
+le mobile, le confort, l’intégration dans Clash et l’immuabilité du résultat.
+
+La révision de terreur déforme la géométrie privée des joues et de la mâchoire,
+avec seize poses de bouche ajustées à la peau, un sourire ouvert et des dents
+irrégulières. Un œil est plissé, l’autre dilaté, avec des pupilles minuscules.
+Le cadrage suit l’orientation du corps afin de conserver l’inclinaison menaçante
+de la tête. Deux pas de recul, des tremblements, des gouttes de sueur et les
+gestes de protection, de gorge puis de poitrine prolongent la panique avant
+la mort à 390. La géométrie partagée du visage reste intacte et se restaure
+après chaque image. Les souffles et les derniers battements s’accélèrent
+jusqu’à 6,5 s, avant le silence et la réception à 7,08 s.
+
+
+Voconte : « Aller simple » fait du choix de la destination un piège. Voconte
+franchit A à 90, s’écarte sur la passerelle de B et laisse sa cible le poursuivre
+à 156. B est un cadre physique ancré sur un plancher en hauteur, dont le bord
+s’arrête devant la sortie. La cible dépasse ce bord et tombe à partir de 186 ;
+Voconte revient de B à A à 246, puis referme A sans toucher le vaincu.
+La révélation de la hauteur précède le suivi de la chute et l’impact à 342.
+La silhouette bascule sur le dos, les fissures et débris restent au sol,
+puis le portrait final précède Fatality en anglais après huit secondes.
+
+La trajectoire utilise `advanceAirborne` avec une élévation initiale ; son
+échantillonnage au ralenti adapte la durée au gabarit pour garder l’impact à
+5,7 secondes. Les deux portes gardent leurs positions. Seuls deux corps réels
+circulent, sans fantôme, découpe de portail ou projectile téléporté. La hauteur
+et le piège sont une chorégraphie après verdict, sans nouvelle règle de dégâts
+ou de transport dans le combat natif. La simulation préalable démontre les
+passages directionnels des deux combattants puis un K.-O. physique natif.
+
+`voconte.test.ts` couvre gabarits, miroir, deux côtés, contacts au sol et
+restauration des poses, matériaux, visibilité et brouillard. Le cadrage haut
+écarte transactionnellement les panneaux qui masquent les combattants.
+`voconteFall.test.ts` compare la chute à l’intégrateur réel et préserve les
+anciens lancements au sol. `voconteFilm.test.ts` contrôle le verdict et la
+continuité. `vocontePlayback.test.ts` parcourt tous les adversaires et lieux,
+quatre motifs de victoire, IA/local et rematches. Les contrôles navigateur
+`check-voconte-fatality.mjs` et `check-voconte-victories.mjs` vérifient le rendu,
+le mobile, le confort, le son et le retour aux résultats à dix secondes.
+
+
+Longhi et Furykov possèdent chacun une cinématique personnelle de dix secondes,
+enregistrée après leurs victoires éligibles avec la cible et le lieu du combat.
+Longhi fait signer Moonlight Act aux deux parties, montre la rupture et le
+Zetsu, puis termine avec cinq coups physiques. Le contrat ne blesse pas et sa
+signature reste volontaire. Furykov équipe une contre-arme adaptée à la cible,
+avec déchiffrage et fabrication achevés avant le duel selon le scénario demandé.
+Les quatre modèles et leurs effets sont des créations pour le jeu. Les deux
+scènes finissent par une chute native et Fatality en anglais, sans voix française.
+
+Le document commun se place dans la portée réelle des trois mains, sans
+étirer les bras, et porte le nom de l’adversaire. Le cadrage et les accessoires
+suivent les gabarits ; les poses, matériaux et ressources sont restaurés après
+chaque image. `nativeComboBody.ts` partage avec Bill son rendu de poses natif,
+sans changer sa chorégraphie. Les sons `longhi.m4a` et `furykov.m4a` suivent
+l’horloge de la victoire, y compris après une revanche.
+
+`personalGuardPlayback.test.ts` croise les deux personnages avec tout le roster,
+les arènes, les deux côtés, IA/local et les quatre motifs de victoire.
+`personalGuardTrack.test.ts` vérifie cinq vrais impacts contre chaque cible.
+`personalGuard.test.ts` et `personalGuardFilm.test.ts` contrôlent les contacts,
+la restauration et les conditions natives des Hatsu. Les scripts
+`check-personal-guard.mjs` et `check-personal-guard-victories.mjs` couvrent les
+démos, mobile, confort, sons et huit victoires automatiques avec revanches.

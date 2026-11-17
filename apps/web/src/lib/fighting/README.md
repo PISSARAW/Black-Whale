@@ -64,6 +64,13 @@ et sans nouvelle capacité de Nen.
 
 ## Verrouillage transversal du Nen
 
+L’[entrée en On](./ON_PRESENTATION.md) accompagne le serment réel d’un geste,
+de volutes noires et indigo et d’un cadrage sur le regard. Les iris dorés et les
+sclères sombres persistent jusqu’à la fin effective du On.
+
+Les [apparitions de Pain Packer et Rising Sun](./FEITAN_PRESENTATION.md) distinguent
+la matérialisation de la tenue et l’embrasement du soleil, avec leurs cadrages propres.
+
 `nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,
 vol et sceaux. `nenActionRules.ts` applique ce contrat aux commandes directes,
 à l’IA, aux coups en attente et aux actions maintenues. Chaque pouvoir conserve

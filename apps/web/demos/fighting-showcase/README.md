@@ -999,3 +999,18 @@ sans `--inspect`, le script produit 600 images en 1080p60.
 Les scripts `check-terebellum-fatality.mjs` et `check-terebellum-victories.mjs`
 contrôlent le combat natif, le rendu et le déclenchement dans Clash.
 Sortie : `output/fighting-terebellum-fatality/Terebellum-Fatality-10s.mp4`.
+
+## Voconte — Aller simple
+
+`voconte-fatality.html` présente dix secondes de poursuite piégée : Voconte
+passe par A, s’écarte à la sortie de B sur une passerelle en hauteur, puis
+revient dans l’arène pendant que sa cible tombe. La révélation du piège, la
+chute au ralenti et l’impact à 5,7 secondes remplacent les coups de battant.
+La démo oppose Voconte à Terebellum dans la cale. `target`, `stage`,
+`side=opponent` et `reduced` adaptent cible, lieu, côté et confort.
+`render-voconte-fatality.mjs --inspect` exporte les plans de contrôle ; sans
+cette option il produit 600 images 1080p60. `compose-voconte-fatality.mjs`
+ajoute trois passages, chute, impact, fermeture et Fatality en anglais.
+Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
+contrôlent le rendu et son déclenchement automatique dans Clash.
+Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.

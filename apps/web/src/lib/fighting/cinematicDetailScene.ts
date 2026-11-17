@@ -59,9 +59,11 @@ export function createCinematicDetailScene({ scene, figureOf }: DetailOptions) {
     camera.lookAt(target)
     return detail.kind === 'seal' || ['syringe', 'blade'].includes(detail.tip ?? '') ? [actor] : []
   }
-  function aimSun({ detail, rival }: AimContext): Object3D[] | null {
+  function aimSun({ detail, state, rival }: AimContext): Object3D[] | null {
     const sun = scene.getObjectByName(`rising-sun:${detail.side}`)
     if (!sun || !visible(sun)) return null
+    if (detail.anchors && aimCinematicFocus({ scene, figureOf, camera, state, detail }))
+      return [rival]
     sun.getWorldPosition(position)
     target.y += 1.2
     const distance = Math.max(5.3, target.distanceTo(position) * 2.2)
@@ -82,6 +84,8 @@ export function createCinematicDetailScene({ scene, figureOf }: DetailOptions) {
     return []
   }
   function aimBody({ detail, state, rival }: AimContext): Object3D[] {
+    if (detail.anchors && aimCinematicFocus({ scene, figureOf, camera, state, detail }))
+      return [rival]
     const tall = Boolean(state[detail.side].biscuitTrueForm)
     target.y += detail.kind === 'armour' ? 1.45 : tall ? 1.3 : 1
     const distance = detail.kind === 'body' ? (tall ? 6.8 : 5.3) : 2.9

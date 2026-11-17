@@ -1,4 +1,8 @@
 <script lang="ts">
+  import FightHisokaFear from './FightHisokaFear.svelte'
+  import FightBeyondCurse from './FightBeyondCurse.svelte'
+  import FightGuardVictory from './FightGuardVictory.svelte'
+  import { isBeyondCurse } from '$lib/fighting/victory/beyondCurseSelection'
   import FightHinrighVictory from './FightHinrighVictory.svelte'
   import FightSaiyuVictory from './FightSaiyuVictory.svelte'
   import FightFutureVictory from './FightFutureVictory.svelte'
@@ -11,7 +15,8 @@
   export let language: 'fr' | 'en'
   export let onSkip: () => void
   $: fr = language === 'fr'
-  $: fatality = frame && frame.fighter !== 'hisoka'
+  $: fatality = Boolean(frame)
+  $: curse = isBeyondCurse(frame?.variant)
 </script>
 
 {#if frame?.active}
@@ -28,7 +33,15 @@
   >
     <div class="cinema-top"></div>
     <div class="cinema-bottom"></div>
-    {#if frame.fighter === 'tserriednich'}<FightFutureVictory
+    {#if curse}<FightBeyondCurse elapsed={frame.elapsed} {language} />{/if}
+    {#if frame.fighter === 'longhi' || frame.fighter === 'furykov'}<FightGuardVictory
+        target={state[frame.loser].id}
+        fighter={frame.fighter}
+        elapsed={frame.elapsed}
+        {language}
+      />{/if}
+    {#if frame.fighter === 'hisoka'}<FightHisokaFear elapsed={frame.elapsed} />{/if}
+    {#if !curse && frame.fighter === 'tserriednich'}<FightFutureVictory
         elapsed={frame.elapsed}
         {language}
       />{/if}
@@ -38,7 +51,16 @@
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum'].includes(frame.fighter) ? 8 : 7)}
+    {#if curse && frame.elapsed >= 8.5}
+      <div class="cinematic-verdict">
+        <strong>FATALITY</strong><b>{fr ? 'L’héritage de Beyond' : 'Beyond’s legacy'}</b>
+        <span
+          >{fighterDefinition(state[frame.loser].id).name} · {fr
+            ? 'Nen post mortem'
+            : 'Post-mortem Nen'}</span
+        >
+      </div>
+    {:else if !curse && !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['hisoka', 'tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum', 'voconte', 'longhi', 'furykov'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong
           >{frame.fighter === 'melody'

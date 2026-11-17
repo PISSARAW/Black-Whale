@@ -17,6 +17,13 @@ privées, les spectateurs, les simulations de prévision et le format équipes n
 peuvent pas devenir un essai de duel. Un extrait encore en combat peut être repris
 à sa dernière position, même si le fichier s’arrête à cet endroit.
 
+L’[étape 5](./STEP5.md) complète cette relecture par un diagnostic local vérifié :
+récupérations visibles laissées sans réponse et attaques effectivement punies.
+Le joueur peut rejoindre le paquet concerné, puis reprendre le contrôle avec les
+actions ci-dessous. L’analyse indépendante ne déplace pas le curseur affiché,
+n’utilise pas de préparations cachées pour suggérer une réponse et n’ajoute aucun
+pouvoir de Nen.
+
 `fightReplayPractice.ts` clone le véritable état du simulateur. P1 et P2 sont alors
 manuels en versus local ; l’IA et les rétablissements de ressources du laboratoire
 cessent. Aucune préparation, page copiée, arme, aura ou résurrection n’est fournie.

@@ -7,6 +7,8 @@ import os from 'node:os'
 import { build, preview } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
+import { fightingPerformanceCases } from './fighting-performance-cases.mjs'
+import { fightingPerformanceBudget, resourceDrift } from './fighting-performance-budget.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = process.env.FIGHT_PERF_OUTPUT ?? '/tmp/black-whale-fighting-performance'
@@ -14,6 +16,21 @@ const duration = Number(process.env.FIGHT_PERF_SECONDS ?? 45)
 const warmup = Number(process.env.FIGHT_PERF_WARMUP ?? 8)
 const profileSeconds = Number(process.env.FIGHT_PERF_PROFILE ?? 0)
 const selected = process.env.FIGHT_PERF_CASES?.split(',')
+const suite =
+  process.env.FIGHT_PERF_SUITE ?? (process.argv.includes('--stress') ? 'stress' : 'reference')
+assert.ok(
+  Number.isFinite(duration) && duration > 0 && duration <= 600,
+  'Measurement duration must be between 0 and 600 seconds',
+)
+assert.ok(Number.isFinite(warmup) && warmup >= 0, 'Invalid warmup duration')
+const available = fightingPerformanceCases(suite)
+const cases = available.filter((entry) => !selected || selected.includes(entry.id))
+assert.ok(cases.length > 0, 'No performance case selected')
+if (selected)
+  assert.ok(
+    selected.every((id) => available.some((entry) => entry.id === id)),
+    'Unknown performance case selected',
+  )
 await mkdir(output, { recursive: true })
 const config = {
   configFile: false,
@@ -47,20 +64,12 @@ const launchBrowser = () =>
 let browser = await launchBrowser()
 const errors = [],
   results = []
-const cases = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
-  .flatMap((fighter) => [
-    { id: `${fighter}-desktop`, fighter, stage: 'heavens-arena', effects: false, dpr: 1 },
-    { id: `${fighter}-retina`, fighter, stage: 'heavens-arena', effects: false, dpr: 2 },
-    { id: `${fighter}-effects`, fighter, stage: 'whale-hold', effects: true, dpr: 2 },
-    { id: `${fighter}-bloom`, fighter, stage: 'banquet-hall', effects: true, dpr: 2 },
-    { id: `${fighter}-live`, fighter, stage: 'banquet-hall', effects: true, dpr: 2, live: true },
-  ])
-  .filter((entry) => !selected || selected.includes(entry.id))
 function distribution(values) {
   const sorted = values.slice().sort((a, b) => a - b)
   const at = (p) => sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * p) - 1)] ?? 0
   return {
     count: sorted.length,
+    min: sorted[0] ?? 0,
     p50: at(0.5),
     p95: at(0.95),
     p99: at(0.99),
@@ -80,6 +89,7 @@ function summarize(result) {
     triangles: distribution(samples.map((s) => s.triangles)),
     geometries: distribution(samples.map((s) => s.geometries)),
     textures: distribution(samples.map((s) => s.textures)),
+    resourceDrift: resourceDrift(samples),
     fps: (intervals.length * 1000) / intervals.reduce((a, b) => a + b, 0),
     over25ms: intervals.filter((ms) => ms > 25).length,
     over33ms: intervals.filter((ms) => ms > 33.5).length,
@@ -118,6 +128,7 @@ try {
     assert.match(raw.renderer, /Metal Renderer/)
     assert.ok(raw.samples.length >= duration * 20, `Insufficient rendered frames: ${entry.id}`)
     const result = { ...entry, hostLoad, ...summarize(raw) }
+    result.budget = fightingPerformanceBudget(result)
     results.push(result)
     await writeFile(path.join(output, `${entry.id}.frames.json`), JSON.stringify(raw))
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))
@@ -150,6 +161,8 @@ try {
     durationSeconds: duration,
     warmupSeconds: warmup,
     profileSeconds,
+    suite,
+    pass: results.every((entry) => entry.budget.pass),
     machine: execFileSync(
       'sysctl',
       ['hw.model', 'machdep.cpu.brand_string', 'hw.ncpu', 'hw.memsize'],
@@ -161,6 +174,11 @@ try {
     errors,
   }
   await writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2))
+  assert.equal(
+    report.pass,
+    true,
+    'Performance budget failed; see report.json (no slow frames were filtered)',
+  )
 } finally {
   await browser.close()
   await new Promise((resolve, reject) =>

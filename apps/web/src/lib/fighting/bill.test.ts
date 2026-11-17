@@ -229,7 +229,10 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
     for (const action of ['special', 'finisher'] as const) {
       expect(performMove({ state, side: 'player', action })).toBe(state)
     }
-    expect(canUseMovesetMove(state, 'player', moveForSlot('chrollo', 'forwardSpecial')!)).toBe(true)
+    // Acquisition still needs a witnessed Hatsu, answered questions and palm contact.
+    expect(canUseMovesetMove(state, 'player', moveForSlot('chrollo', 'forwardSpecial')!)).toBe(
+      false,
+    )
     const borrowed = fight('kurapika', 'bill')
     borrowed.player.kurapika = {
       ...createKurapika(),

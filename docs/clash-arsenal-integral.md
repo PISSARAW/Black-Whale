@@ -1,0 +1,222 @@
+# Clash — arsenal intégral et usage du Nen
+
+## Exigence retenue le 17 novembre 2026
+
+Les quarante personnages doivent avoir accès à toutes leurs techniques attestées,
+à leurs applications et aux techniques de Nen qu'ils maîtrisent. L'IA doit savoir
+préparer et utiliser ces actions ; la simple présence d'un coup dans un catalogue
+ne suffit pas. Les fonctions de soutien, surveillance, transformation, déplacement,
+soin, contrat et Nen post-mortem font partie du périmètre.
+
+Deux décisions explicites de l'utilisateur s'appliquent :
+
+- **Le On reste présent et utilisable**, avec ses commandes et son IA existantes.
+  Cette exception demandée n'autorise pas l'invention d'autres pouvoirs.
+- **L'arsenal est rétrospectif** : les techniques montrées à différentes époques
+  doivent être disponibles, même acquises ou perdues entre-temps. La disponibilité
+  historique élargie ne supprime pas leurs conditions d'exécution.
+
+Un coût numérique de duel peut être réglé. Une obligation de contact, une ressource
+matérielle, un serment, un consentement, une cause de décès, une durée explicitement
+canonique ou une différence entre apparence et corps ne devient pas facultative.
+Une condition inconnue reste inconnue. Les aptitudes non révélées ne sont pas
+complétées par un pouvoir inventé.
+
+## Passe livrée : utilisation des capacités existantes
+
+`arsenalAiFirst.ts` et `arsenalAiSecond.ts` donnent un plan explicite à chacun des
+quarante combattants. `arsenalAi.ts` ajoute des alternatives martiales ;
+`movesetAi.ts` vérifie portée et admission avant de retenir une commande. Les
+plans ne fournissent aucune ressource, blessure, page, signature ou cible manquante.
+Les réponses aux menaces et aux habitudes observées restent prioritaires.
+
+- Kurapika distingue soin utile, Chain Jail admissible, drainage, chargement de
+  Dolphin, Judgment et gestion d'Emperor Time. L'IA ne réserve plus l'activation
+  d'Emperor Time aux seuls PV bas et peut l'arrêter entre deux applications.
+- Hisoka utilise traction et rebond sur sa liaison réelle. Chrollo referme le
+  livre et utilise la Lune après le Soleil, plutôt que de recommencer le Soleil.
+- Saiyu choisit les singes correspondant aux sens encore disponibles. Machi
+  distingue suture, pistage, ligature et engagement final. Biscuit révèle son corps
+  naturel sans coût d'aura avant ses attaques propres à cette forme.
+- Bonolenov utilise Prologue, lance, Jupiter et un modèle réellement appris pour
+  Metamorphosen. Zakuro peut déployer ses gouttes de surveillance puis rappeler son
+  sang avant une nouvelle prise. Padaille utilise les trois outils montrés.
+- Les plans de soutien et de surveillance tentent leurs commandes préparées ;
+  Camilla conserve son déclenchement à la mort, Beyond ses coups physiques en
+  l'absence de sacrifice et Theta son Hatsu personnel inconnu.
+- `arsenalAiAction.ts` ajoute l'usage des armes à distance déjà représentées.
+  `arsenalAiNen.ts` utilise In et Ko dans les cas retenus : même surcoût, même
+  engagement et mêmes zones corporelles exposées que pour un joueur. Aucun futur
+  privé ni commande cachée n'est utilisé pour reconnaître une ouverture.
+
+`arsenalAi.test.ts` vérifie les quarante plans, les coûts et conditions par le
+chemin réel du moteur, les ressources absentes, les trois singes, les outils,
+les liens et Soleil/Lune. `arsenalAiNen.test.ts` vérifie In, Ko, la perception,
+le refus sous Zetsu et la conservation explicite du On. Les imports d'un plan
+avant le moteur restent testés : le hook de Predator est résolu à l'appel.
+
+La première passe portait le ruleset à `clash-combat-8` : les décisions de l'IA font partie de la
+simulation des replays. Les enregistrements d'un ruleset précédent sont refusés
+plutôt que rejoués avec des décisions différentes. Le protocole PvP reprend
+automatiquement cette version depuis `REPLAY_RULESET`.
+
+## Extension jouable du 17 novembre 2026
+
+Les commandes supplémentaires sont accessibles dans le panneau Techniques et
+préparations, pour chacun des deux joueurs locaux et par le protocole PvP
+validé côté arbitre. Les choix sont enregistrés par le mécanisme de replay du
+panneau. La préparation ne fournit ni consentement ni équipement manquant.
+
+- **Biscuit : Cookie** est une invocation de soutien distincte du corps naturel.
+  Massage progressif de la fatigue, consentement pour autrui, traitement
+  interruptible, et Piano Massage après **30 minutes de sommeil simulé**. Aucun
+  dégât, soin de plaie ou transformation corporelle n'est associé au traitement.
+  Cookie est volable séparément ; Dolphin consomme un seul traitement et reste
+  chargé jusqu'à la fin de son effet.
+- **Skill Hunter : acquisition** vérifie l'observation visuelle du Hatsu,
+  l'entretien avec réponse audible et le contact de la paume sur la couverture,
+  dans une heure simulée. Le contact offensif vise les mains et ne blesse pas.
+  La victime perd le Hatsu concerné, sans perdre tout son Nen ou ses autres Hatsu.
+- **Pages historiques :** Gallery Fake produit une copie inerte, sans pouvoir,
+  avec deux mains libres et une durée de 24 heures. Order Stamp exige une copie
+  humanoïde avec tête attachée et un ordre vocal ; la destruction de la tête
+  arrête le contrôle. Les marques Sun/Moon maintiennent les copies après la
+  fermeture de leur page. Convert Hands change l'apparence et préserve le corps,
+  l'identité et les pouvoirs. Fun Fun Cloth enveloppe et restitue intact ; son
+  contact et celui de Convert Hands ont une préparation interruptible. Indoor
+  Fish requiert une pièce close et diffère les blessures jusqu'à disparition.
+  La téléportation reprend l'application montrée sur autrui ; ses conditions
+  complètes restent inconnues.
+- **Love Dial 6700 :** saisie d'un profil de Nen, numéro conjuré, appel et
+  indication privée de présence ou de coordonnées. Le quota quotidien existe
+  dans le manga, mais **sa valeur n'est pas révélée**. Deux appels par jour et
+  les seuils de localisation sont des réglages du scénario, jamais des nombres
+  présentés comme canoniques.
+- **Applications copiées :** une page acquise conserve l'identité de son Hatsu.
+  Le panneau propose ses différentes commandes, avec leurs conditions natives.
+  Bungee Gum donne accès à traction et rebond ; Texture Surprise reste séparé.
+  Le changement de page interrompt les effets qui ne sont plus maintenus.
+  Les corps, flûtes, aiguilles, munitions et réserves biologiques ne sont pas copiés.
+  Dolphin propose également les applications admissibles du Hatsu chargé.
+- **Hisoka :** colmatage des plaies sans restauration des PV ; interception
+  préparée d'un projectile matériel puis renvoi du même objet. La force reçue
+  peut blesser les mains. Aucune balle de Nen n'est absorbée automatiquement.
+- **Longhi :** la sanction compte une semaine entière de simulation, y compris
+  le hitstop, et conserve le temps restant entre les manches. La trêve de cinq
+  secondes reste un contrat de scénario explicitement expliqué.
+
+L'IA emploie Cookie dans une ouverture de récupération, prépare les copies,
+les poissons ou le tissu quand le contexte le permet, et réutilise le plan du
+Hatsu d'origine pour les commandes d'une page acquise. Elle prépare également
+les interceptions physiques et les pansements d'Hisoka. Elle ne produit jamais
+la réponse d'un joueur humain à l'entretien de Skill Hunter.
+
+Les tests `cookie`, `skillHunterAcquisition`, `chrolloHistorical`,
+`chrolloCopiedArsenal`, `hisokaArsenal` et `retrospectiveIntegration` couvrent
+l'exécution, les pertes d'accès, les durées et les limites de confidentialité.
+Les timestamps d'observation sont exclus des effets maintenus de Dolphin.
+
+## Judgment Chain : clauses indépendantes et communication réelle
+
+Les deux interdictions montrées sur Chrollo sont sélectionnables séparément ou
+ensemble avant implantation : ne pas utiliser le Nen, ne pas communiquer avec
+les membres réels de la Brigade. Les clauses sont annoncées au démarrage du
+coup, puis copiées dans le sceau au contact du cœur sous Emperor Time. Changer
+la préparation suivante ne réécrit jamais une chaîne déjà implantée.
+L'interdiction de communication seule laisse le Nen disponible.
+
+Le jugement vérifie les activations volontaires de Nen par les commandes de
+combat, Gyo, En, Shu, In et la répartition manuelle. Une transformation physique
+de Biscuit ou une arme à feu ne devient pas du Nen. Un autre sceau qui rend le
+Nen impossible ne crée pas une violation fictive. Kurapika peut retirer sa
+propre chaîne sans réactiver Emperor Time ; il ne retire pas celle d'autrui.
+
+Les paroles adressées à un combattant présent ou à un réserviste réel passent
+par un canal commun : portée de voix, audition, sommeil, parole disponible et
+esprit libre. Hisoka n'est pas compté comme membre véritable ; un déguisement
+ne change pas l'appartenance. Recevoir passivement une parole ou être simplement
+à proximité ne constitue pas une communication initiée. Les questions de Lynch,
+les avertissements de Mizaistom, l'entretien de Skill Hunter et les signatures
+ou refus de contrat participent à ce contrôle. L'IA s'abstient des réponses
+interdites et prépare deux clauses quand une réserve de la Brigade est présente.
+
+Les commandes sont enregistrables et validées par le protocole PvP, y compris
+le destinataire en réserve pour P2. Les choix non annoncés et les paroles reçues
+restent privés. Une mort provoquée entre deux frames élimine bien le corps réel
+avant la manche d'équipe suivante. Le ruleset de cette extension est **clash-combat-18**.
+Les clauses de secret et de libération d'otages restent à réaliser ; cette passe
+ne constitue pas une certification de toutes les applications de Judgment.
+
+## Dowsing Chain : dépistage en face-à-face
+
+Le panneau donne accès à trois questions : identité, état actuel du Nen et In.
+Chaque joueur choisit sa propre réponse sincère ou son mensonge conscient.
+Le silence ne produit aucun verdict. Le pendule indique le mensonge de la
+réponse délibérément prononcée, sans restituer à sa place la vérité cachée.
+Les paroles libres ne sont pas classées par une expression régulière ou une
+comparaison omnisciente avec les données du combat. Le vocabulaire de questions
+est encore limité à ces trois faits conscients représentés dans le duel.
+
+Le dépistage ordinaire exige un sujet présent en face du regard de Kurapika,
+une voix et une audition réelles. Il fonctionne sans Emperor Time. Perdre le
+Nen, subir une interruption, fermer la page copiée ou rompre le face-à-face
+interrompt le dépistage et retire la demande de réponse. Une lecture acquise
+reste une information passée ; elle ne devient pas une sonde de l'état futur.
+L'IA peut interroger et répondre pour son propre combattant ; elle ne fournit
+jamais la réponse d'un joueur humain. Le On de l'interlocuteur reste utilisable.
+
+Le modèle du pendule à l'annulaire est animé par les frames du dépistage.
+In le cache à l'autre observateur ; Gyo rétablit sa visibilité. Les lectures
+antérieures restent privées en PvP, et la perspective P2 traduit l'auteur de
+la question. Les snapshots conservent le même résultat après restauration.
+Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
+et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
+
+L'analyse d'un enregistrement doit encore disposer d'un support réellement
+présent, d'une rencontre antérieure et d'Emperor Time. La localisation par
+radiesthésie et les questions fondées sur d'autres souvenirs restent également
+à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La distinction entre mensonge conscient et connaissance objective est recoupée
+avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
+notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
+
+## Écarts qui empêchent encore d'annoncer « 100 % »
+
+Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
+combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
+Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
+de couverture des profils ou un nombre de tests :
+
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                         |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.               |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                 |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la vidéo, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                     |
+
+| Hinrigh | Étendre Biohazard aux autres objets et applications effectivement montrés, en conservant les fonctions matérielles originales. Les deux menottes ne constituent pas l'arsenal complet. |
+| Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |
+| Beyond | Ajouter une préparation sacrificielle réelle et une cible déclarée avant de simuler sa malédiction. |
+| Furykov | Représenter les travaux de déchiffrage et de fabrication dans un contexte où leur durée est réellement possible. |
+
+Le contrôle des autres personnages doit également comparer leurs applications
+attestées, leurs contreparties et les commandes effectivement accessibles.
+Un pouvoir partiellement connu ne peut pas recevoir une certification exhaustive.
+
+Une technique est terminée lorsque son entrée joueur est accessible, ses conditions
+sont exécutées, son effet et ses interruptions sont visibles, l'IA peut préparer
+et employer son usage utile, et les copies, resets, prévisions et replays gardent
+le même comportement. Une simple déclaration dans `NEN_CANON` ne valide pas ce point.
+
+## Références vérifiées et limites de la vérification
+
+Les chapitres 68, 95–106, 117–119, 123, 149, 351–357, 388, 401–406 sont les points de
+référence pour ces extensions. L'[index officiel VIZ](https://www.viz.com/shonenjump/chapters/hunter-x-hunter?locale=en)
+ne fournit pas toutes les planches en accès libre. Les synthèses de
+[Chrollo](https://hunterxhunter.fandom.com/wiki/Chrollo_Lucilfer),
+[Neon](https://hunterxhunter.fandom.com/wiki/Neon_Nostrade),
+[Hisoka](https://hunterxhunter.fandom.com/wiki/Hisoka_Morow) et
+[Longhi](https://hunterxhunter.fandom.com/wiki/Longhi) ont servi à recouper les
+conditions ; elles ne remplacent pas une relecture intégrale des planches.
+Les poèmes apocryphes de `data/prophecies` ne servent jamais de prophéties
+canoniques ou de prédictions d'une décision humaine future.

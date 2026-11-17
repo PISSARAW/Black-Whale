@@ -94,6 +94,7 @@
       },
     }),
   }
+  let victoryActive = false
   let replayReturnPaused = false
   let comfort = defaultFightComfort()
   let stageElement: HTMLDivElement | undefined
@@ -427,6 +428,9 @@
           }}
         />
         <FightStage
+          bind:victoryActive
+          victoryEnabled={!$replays.playback}
+          victoryPaused={pausedView}
           {comfort}
           {state}
           bind:easterEggPreferences
@@ -465,18 +469,17 @@
             onPlayback={() => (opponentInput = { ...EMPTY_INPUT })}
           />
         {/if}
-
-        <FightMatchOverlays
-          {state}
-          {language}
-          {paused}
-          replay={replays.active}
-          {togglePause}
-          {startFight}
-          {rematch}
-          {continueMatch}
-          {chooseAgain}
-        />
+        {#if !victoryActive}<FightMatchOverlays
+            {state}
+            {language}
+            {paused}
+            replay={replays.active}
+            {togglePause}
+            {startFight}
+            {rematch}
+            {continueMatch}
+            {chooseAgain}
+          />{/if}
       </div>
     </div>
 

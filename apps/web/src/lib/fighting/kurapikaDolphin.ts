@@ -1,3 +1,5 @@
+import { ownsBungeeGum } from './hisokaArsenal'
+import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
 import { ownsNeedlePuppet } from './illumiFrame'
@@ -40,6 +42,7 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
     stolenChainAbility: undefined,
   }
   const prepared = { ...state, [side]: actor }
+  if (held.moveId === 'biscuit:cookie') return cookieCanStart(prepared, side, side)
   if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
   return Boolean(move && canUseMovesetMove(prepared, side, move))
 }
@@ -135,7 +138,11 @@ function changedDolphinCounters(before: FightState, after: FightState): string[]
     const old = before[target].hatsuEffects
     const next = after[target].hatsuEffects
     for (const key of Object.keys(next) as (keyof typeof next)[])
-      if (typeof next[key] === 'number' && Number(next[key]) > Number(old[key]))
+      if (
+        key !== 'witnessedAt' &&
+        typeof next[key] === 'number' &&
+        Number(next[key]) > Number(old[key])
+      )
         keys.add(`${target}:${key}`)
   }
   return [...keys]
@@ -163,6 +170,8 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
+    'gum-support': gumUseBusy(fighter),
+    cookie: Boolean(fighter.cookie),
     prepared: controlledEntities(state, side).length > 0,
     'luini-anchor': Boolean(luiniAnchor(state, side)),
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
@@ -184,4 +193,12 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     texture: Boolean(fighter.textureSurprise),
     lsdf: Boolean(state.lsdf?.[side]),
   }
+}
+
+function gumUseBusy(fighter: ArcadeFighter): boolean {
+  if (!ownsBungeeGum(fighter)) return false
+  if (fighter.gumWoundSeals) return true
+  return (
+    !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
+  )
 }

@@ -121,9 +121,11 @@ describe('foundation lessons complement the ten Nen lessons', () => {
   })
   it('completes a punishment only on a real recovery hit', () => {
     const run = lesson('punish')
-    for (let i = 0; !run.state.opponent.attack && i < 120; i++) run.frames(1)
     run.frames(10, { left: true })
+    for (let i = 0; !run.state.opponent.attack && i < 120; i++) run.frames(1)
     for (let i = 0; attackPhase(run.state.opponent) !== 'recovery' && i < 90; i++) run.frames(1)
+    expect(run.state.opponent.attack?.confirmedHit).toBe(false)
+    expect(run.state.player.hitStun).toBe(0)
     run.frames(10, { right: true })
     run.attack('light', { right: true })
     run.frames(12)

@@ -1,4 +1,5 @@
 import { attackData } from './frameData'
+import { performHunterInterview } from './skillHunterAcquisition'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAttack, tickFight } from './engine'
 import {
@@ -81,12 +82,17 @@ describe('fighter Hatsu registry', () => {
 
   it('lets Skill Hunter steal only a Hatsu Chrollo has seen, with the target on the book', () => {
     const ready = closeFight('chrollo', 'illumi')
+    ready.opponent = { ...ready.opponent, x: 47, hitStun: 0 }
     const seen = triggerHatsu(ready, 'opponent', 'illumi')
     expect(seen.player.hatsuEffects.witnessedHatsu).toBe('illumi')
 
-    const stolen = chrolloStrike(seen, 'forwardSpecial')
+    const asked = performHunterInterview(seen, 'player', { action: 'hunter-ask' })
+    const answered = performHunterInterview(asked, 'opponent', { action: 'hunter-answer' })
+    const stolen = chrolloStrike(answered, 'forwardSpecial')
     expect(stolen.player.hatsuEffects.stolenHatsu).toBe('illumi')
-    expect(stolen.opponent.hatsuEffects.hatsuStolen).toBe(1)
+    expect(stolen.opponent.skillHunterStolen).toEqual([
+      { owner: 'player', moveId: 'illumi:neutralSpecial' },
+    ])
     // The owner cannot use an ability while it is held in the book.
     expect(hatsuSourceFor(stolen.opponent)).toBeNull()
     // Only Skill Hunter opens the stolen page; his own techniques stay his.

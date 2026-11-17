@@ -8,6 +8,9 @@ import { transpileModule, ModuleKind } from 'typescript'
 import { dataChunks } from './dataChunks'
 import { manualChunks } from './manualChunks'
 import { bundleBudget } from './bundleBudget'
+import { DUEL_COMBO_FIGHTERS, tuneDuelComboProfile } from '../src/lib/fighting/duelComboProfiles'
+import { DUEL_COMBO_LESSONS } from '../src/lib/fighting/duelComboLessons'
+import type { FighterMoveset } from '../src/lib/fighting/movesetTypes'
 
 const directories: string[] = []
 afterEach(async () => {
@@ -78,6 +81,32 @@ describe('production bundle partitioning', () => {
     expect(chunks.length).toBeGreaterThan(10)
     expect(Math.max(...chunks.map((item) => Buffer.byteLength(item.code)))).toBeLessThan(500_000)
   }, 30_000)
+
+  it('splits existing combo catalogues without changing lessons or forty-fighter tuning', async () => {
+    const profiles = resolve('src/lib/fighting/duelComboProfiles.ts')
+    const lessons = resolve('src/lib/fighting/duelComboLessons.ts')
+    const built = await compile(
+      `export * from ${JSON.stringify(profiles)}\nexport { DUEL_COMBO_LESSONS } from ${JSON.stringify(lessons)}`,
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    expect(actual.DUEL_COMBO_FIGHTERS).toEqual(DUEL_COMBO_FIGHTERS)
+    expect(actual.DUEL_COMBO_LESSONS).toEqual(DUEL_COMBO_LESSONS)
+    for (const fighterId of DUEL_COMBO_FIGHTERS) {
+      const moveset = {
+        fighterId,
+        moves: [{ id: `${fighterId}:standingLight`, slot: 'standingLight', tuning: { active: 3 } }],
+      } as FighterMoveset
+      expect(actual.tuneDuelComboProfile(moveset)).toEqual(tuneDuelComboProfile(moveset))
+    }
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-combo-catalogues',
+      ),
+    ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
 
   it('retains escaped strings, Unicode, nulls, property order and __proto__ as data', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'black-whale-json-'))

@@ -1,7 +1,8 @@
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
-import { createArenaScene } from './arenaScene'
+import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
 import { createEasterEggScene } from './easterEggScene'
+import { createArenaScene } from './arenaScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
 import { createBiohazardScene } from './biohazardScene'
@@ -24,9 +25,9 @@ export interface EffectSceneOptions {
   scene: import('three').Scene
   worldX: (value: number) => number
   worldY: (value: number) => number
-  handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
   /** Live posed rig; callbacks also follow aura/body rebuilds. */
   figureOf?: (side: FightSide) => import('three').Object3D | undefined
+  handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
 }
 
 export interface FighterEffectScene {
@@ -52,6 +53,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const kurapika = createKurapikaEffectScene(options)
   const machi = createMachiThreadScene(options)
   const visitHatsu = createRemainingVisitHatsuScene(options)
+  const retrospective = createRetrospectiveScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -74,6 +76,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     kurapika.sync(state, seconds)
     machi.sync(state, seconds)
     visitHatsu.sync(state, seconds)
+    retrospective.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
 
@@ -96,6 +99,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       machi.dispose()
       kurapika.dispose()
       visitHatsu.dispose()
+      retrospective.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

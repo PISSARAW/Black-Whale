@@ -1,3 +1,4 @@
+import { declareJudgment } from './judgmentAction'
 import { triggerHatsuAction } from './hatsu'
 import { startPadailleTool } from './padailleWeapon'
 import type { FightSide, FightState, FighterId } from './types'
@@ -11,6 +12,9 @@ export function triggerAttackHatsu(options: {
   concealed?: boolean
 }): FightState {
   const { side, source, moveId } = options
-  const triggered = triggerHatsuAction(options)
+  const triggered =
+    source === 'kurapika'
+      ? declareJudgment(triggerHatsuAction(options), side, moveId)
+      : triggerHatsuAction(options)
   return source === 'padaille' ? startPadailleTool(triggered, side, moveId) : triggered
 }

@@ -22,9 +22,9 @@ export function tuneLonghiMoveset(base: FighterMoveset): FighterMoveset {
   return {
     ...base,
     mechanicFr:
-      'Moonlight Act : propose un contrat expliqué et signé librement par les deux parties. Aucune touche ne vaut signature. Le pacte de duel interdit les attaques pendant cinq secondes ; le destinataire gagne ensuite un usage du pouvoir. Rompre la clause impose Zetsu pour le reste du match.',
+      'Moonlight Act : propose un contrat expliqué et signé librement par les deux parties. Aucune touche ne vaut signature. Le pacte de duel interdit les attaques pendant cinq secondes ; le destinataire gagne ensuite un usage du pouvoir. Rompre la clause impose Zetsu pendant une semaine de simulation.',
     mechanicEn:
-      'Moonlight Act: offer disclosed terms for both parties to sign freely. A hit is never consent. The duel pact forbids attacks for five seconds, then grants the recipient one use of the ability. Breaching it imposes Zetsu for the rest of the match.',
+      'Moonlight Act: offer disclosed terms for both parties to sign freely. A hit is never consent. The duel pact forbids attacks for five seconds, then grants the recipient one use of the ability. Breaching it imposes Zetsu for one simulated week.',
     finisherConditionFr: '',
     finisherConditionEn: '',
     combos: [
@@ -60,7 +60,7 @@ function renameMove(move: FighterMove, name = ''): FighterMove {
       narrativeCost:
         'Both signatories are bound. The five-second truce is an explicit duel scenario.',
       narrativeEffect:
-        'Fulfilment loans one use of Moonlight Act. Breach imposes Zetsu: one week in the manga, the remainder of the match here.',
+        'Fulfilment loans one use of Moonlight Act. Breach imposes Zetsu for one simulated week, retained across rounds.',
     },
   }
 }

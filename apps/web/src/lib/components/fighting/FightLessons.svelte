@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { FIGHT_LESSONS, fightLesson, type LessonId } from '$lib/fighting/fightLessons'
+  import {
+    FIGHT_CURRICULUM as FIGHT_LESSONS,
+    fightLesson,
+    type LessonId,
+  } from '$lib/fighting/fightLessons'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
   import { useFightBindings } from '$lib/fighting/fightControlHints'
   import type { ControlCommand } from '$lib/fighting/fightInputBindings'

@@ -6,20 +6,43 @@ import { setTrainingResources } from '../../src/lib/fighting/trainingSession'
 import type { ReplayCommand, ReplayPacket } from '../../src/lib/fighting/fightReplayTypes'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 import { EMPTY_INPUT, type FighterId, type FightState } from '../../src/lib/fighting/types'
+import {
+  prepareStressState,
+  stressCommands,
+  stressInputs,
+  type StressScenario,
+} from './stressScenario'
+import type { FightGraphics } from '../../src/lib/fighting/fightGraphics'
 
 export interface PerformanceScenario {
   fighter: FighterId
   stage: FightStageId
   effects: boolean
   live?: boolean
+  scenario?: StressScenario
+  graphics?: FightGraphics
 }
 /** One recorded tick per packet: browser cadence can change, the combat sequence cannot. */
 export function performanceTape(options: PerformanceScenario) {
-  let state = createFight(options.fighter, options.fighter === 'chrollo' ? 'hisoka' : 'chrollo', {
-    mode: options.effects ? 'training' : 'versus-local',
-    formatId: 'knockout',
-    environment: { stageId: options.stage, arenaInteractions: false },
-  })
+  let state = createFight(
+    options.fighter,
+    options.scenario === 'post-mortem'
+      ? 'benjamin'
+      : options.fighter === 'chrollo'
+        ? 'hisoka'
+        : 'chrollo',
+    {
+      mode: options.effects ? 'training' : 'versus-local',
+      formatId: 'knockout',
+      environment: {
+        stageId: options.stage,
+        arenaInteractions: false,
+        ...(options.scenario === 'guards'
+          ? { morenaPresent: true, unlawfulIntruders: { player: false, opponent: true } }
+          : {}),
+      },
+    },
+  )
   state = { ...state, player: { ...state.player, x: 44 }, opponent: { ...state.opponent, x: 50 } }
   if (options.effects)
     for (const side of ['player', 'opponent'] as const)
@@ -28,13 +51,23 @@ export function performanceTape(options: PerformanceScenario) {
         infiniteAura: true,
         infiniteHealth: true,
       })
+  state = prepareStressState(state, options.scenario)
   const recorder = createReplayRecorder(state)!
   const first: ReplayPacket = [0, 0, 0, [{ kind: 'start' }]]
   let after = beginFight(state)
   recorder.append(state, first, after)
   state = after
   for (let tick = 0; tick < 1200 && !state.matchWinner; tick++) {
-    const commands = scenarioCommands(state, tick)
+    let commands = options.scenario
+      ? stressCommands(state, tick, options.scenario)
+      : scenarioCommands(state, tick)
+    if (commands.some((command) => command.kind === 'round' || command.kind === 'start')) {
+      const control: ReplayPacket = [0, 0, 0, commands]
+      after = executeReplayPacket(state, control)
+      recorder.append(state, control, after)
+      state = after
+      commands = []
+    }
     const phase = Math.floor(tick / 120) % 8
     const close = Math.abs(state.player.x - state.opponent.x) > 6
     const input = {
@@ -58,8 +91,8 @@ export function performanceTape(options: PerformanceScenario) {
     }
     const packet: ReplayPacket = [
       1 / 60,
-      packReplayInput(input),
-      packReplayInput(opponent),
+      packReplayInput(options.scenario ? stressInputs(options.scenario).player : input),
+      packReplayInput(options.scenario ? stressInputs(options.scenario).opponent : opponent),
       commands,
     ]
     after = executeReplayPacket(state, packet)
@@ -71,6 +104,7 @@ export function performanceTape(options: PerformanceScenario) {
   return replay
 }
 function scenarioCommands(state: FightState, tick: number): ReplayCommand[] {
+  if (state.phase === 'ready') return [{ kind: 'start' }]
   if (state.phase === 'finished') return [{ kind: 'round' }]
   const result: ReplayCommand[] = []
   if (tick % 30 === 0)

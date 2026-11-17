@@ -3,6 +3,7 @@
   import { attackData, attackPhase } from '$lib/fighting/frameData'
   import { moveById } from '$lib/fighting/movesets'
   import type { FightState } from '$lib/fighting/types'
+  import FightComboChoices from './FightComboChoices.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -46,6 +47,7 @@
   </span>
   <span>COMBO {state.opponent.comboHits} · {state.opponent.comboDamage} DMG</span>
   <span>JUGGLE {state.opponent.juggleCount}/3</span>
+  <FightComboChoices {state} {language} />
   <span class="collision-legend"
     >{language === 'fr'
       ? 'Corps : cyan / violet · frappe : rouge · projectile : orange'

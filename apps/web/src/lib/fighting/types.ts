@@ -1,4 +1,5 @@
 import type { PadailleTool } from './padailleWeapon'
+import type { RetrospectiveFighterState } from './retrospectiveTypes'
 import type { IllumiState, NeedlePuppet } from './illumiState'
 import type { MachiThread } from './machiThread'
 import type { BlinkyState } from './blinky'
@@ -10,7 +11,7 @@ import type { FightDeath } from './fightDeaths'
 import type { ComboMasterState } from './comboMasterTypes'
 import type { ParallelFutureState } from './parallelFutureTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
-import type { ChrolloBookState } from './chrolloBook'
+import type { ChrolloBookState, ChrolloPage } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
 import type { LsdfGuard } from './lsdf'
 import type { SecretWindowState } from './secretWindow'
@@ -130,13 +131,13 @@ export interface FighterDefinition {
   specialRange: number
 }
 
-export interface ArcadeFighter {
+export interface ArcadeFighter extends RetrospectiveFighterState {
   throwTechRecoveryFrames?: number
-  arenaRecovery?: number
-  /** Cosmetic playback is included in deterministic replay state. */
+  /** Cosmetic scenes; their props never enter battlefield or projectile state. */
   easterEgg?: import('./easterEggs').EasterEggPlayback
   easterEggDiscoveries?: number
   easterEggSequence?: number
+  arenaRecovery?: number
   padailleTool?: PadailleTool
   kallutoPaper?: import('./kallutoPaper').KallutoPaperState
   plantedPaper?: readonly import('./kallutoPaper').PlantedPaper[]
@@ -174,7 +175,7 @@ export interface ArcadeFighter {
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: { owner: FightSide }
   stolenChainAbility?: { owner: FightSide; moveId: string }
-  judgmentChain?: { owner: FightSide; rule: 'zetsu' }
+  judgmentChain?: import('./judgmentRules').JudgmentSeal
   id: FighterId
   x: number
   y: number
@@ -235,6 +236,7 @@ export interface ArcadeFighter {
   /** Frame of the current clockwise right-arm rotation; completed turns are stored separately. */
   cyclotronWindup?: { frame: number }
   attack: {
+    copiedPage?: ChrolloPage
     moveId?: string
     variant?: AttackVariant
     confirmedBlock?: boolean
@@ -252,6 +254,8 @@ export interface ArcadeFighter {
     reversal: boolean
   } | null
   bufferedAttack: {
+    cancelFrom?: string
+    copiedPage?: ChrolloPage
     bufferFrames?: number
     moveId?: string
     variant?: AttackVariant
@@ -313,6 +317,8 @@ export interface FighterHatsuEffects {
   eyeWogFrames: number
   /** Set once the Hatsu was activated in front of this fighter. */
   witnessedHatsu: FighterId | null
+  witnessedAt?: number
+  witnessedMoveId?: string
   /** Last acquired page; the book itself decides which abilities can be used. */
   stolenHatsu: FighterId | null
   /** 1 while the fighter's own Hatsu sits in Chrollo's book. */
@@ -387,7 +393,6 @@ export interface FightProjectile {
   guard?: Exclude<import('./combatProperties').GuardRequirement, 'throw'>
   canHitDowned?: boolean
   kallutoPaper?: 'plant' | 'serpent'
-  /** A conjured sphere pursues its designated target within earshot. */
   jupiter?: boolean
   living?: boolean
   /** A transformed living object cannot be swallowed by Blinky. */

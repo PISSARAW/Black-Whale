@@ -1,4 +1,4 @@
-import { witnessedHatsu } from './nenWitness'
+import { witnessedHatsuState } from './nenWitness'
 import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { preparationCheck } from './preparationRequirements'
@@ -81,7 +81,7 @@ export function triggerHatsuAction(options: {
       ...witness,
       hatsuEffects: {
         ...witness.hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source, concealed: options.concealed }),
+        ...witnessedHatsuState(state, { side, source, moveId, concealed: options.concealed }),
       },
     },
   }

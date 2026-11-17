@@ -1,3 +1,4 @@
+import { witnessedHatsuState } from './nenWitness'
 import { arenaNenAvailable, arenaObjects } from './arenaActions'
 import { storeArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
 import { liveEntity, updateEntity } from './preparationWorld'
@@ -82,7 +83,7 @@ function completeUtility(context: {
       ...next[witness],
       hatsuEffects: {
         ...next[witness].hatsuEffects,
-        witnessedHatsu: state[side].id,
+        ...witnessedHatsuState(state, { side, source: state[side].id }),
       },
     },
   }

@@ -172,7 +172,9 @@ describe('frame-based input and command history', () => {
     let state = performMove({ state: lab(), side: 'player', action: 'light' })
     expect(state.training!.history).toHaveLength(1)
     expect(state.training!.history[0].outcome).toBe('started')
-    state = performMove({ state, side: 'player', action: 'heavy' })
+    // No attached rubber: Hisoka's finisher is genuinely inadmissible, whereas an authored early heavy cancel may now buffer.
+    expect(state.bungeeGum).toBeNull()
+    state = performMove({ state, side: 'player', action: 'finisher' })
     expect(state.training!.history.at(-1)?.outcome).toBe('refused')
     const total = attackTotal(attackData(state.player.attack!.kind, state.player))
     state = {

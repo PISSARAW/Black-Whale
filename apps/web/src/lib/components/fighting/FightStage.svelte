@@ -1,5 +1,11 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
+  import { createVictoryPlayback } from '$lib/fighting/victory/playback'
+  import { mountVictoryClock } from '$lib/fighting/victory/clock'
+  import FightVictoryOverlay from './FightVictoryOverlay.svelte'
+  import FightVictoryAudio from './FightVictoryAudio.svelte'
   import { clashCareer } from '$lib/fighting/career/profile'
+  import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
   import FightTouchControls from './FightTouchControls.svelte'
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
@@ -24,6 +30,14 @@
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
+  export let victoryEnabled = true
+  export let victoryPaused = false
+  export let victoryActive = false
+  const victory = createVictoryPlayback()
+  $: victory.observe(state, victoryEnabled)
+  $: victoryActive = Boolean($victory?.active)
+  onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
+  export let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
   export let state: FightState
   export let language: 'fr' | 'en'
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
@@ -48,11 +62,18 @@
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
-  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
+  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
+  $: if (sceneKey) victory.sceneLoading()
   $: throwTech = isThrowTech(visibleState)
 </script>
 
-<FightAudio {state} {language} {paused} viewer={sensoryViewer} />
+<FightAudio
+  {state}
+  {language}
+  paused={paused || victoryActive}
+  viewer={sensoryViewer}
+  bind:settings={audioSettings}
+/>
 <section
   class="fight-stage"
   data-clash-theme={$clashCareer.appearance.theme}
@@ -62,9 +83,9 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    <FightHud state={visibleState} {language} {detailed} />
-    <FightCatsName state={visibleState} {language} />
-    <FightEasterEggCaptions state={visibleState} {language} />
+    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} />
+      <FightCatsName state={visibleState} {language} />
+      <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
       <FightLiveScene
         {state}
@@ -74,71 +95,81 @@
         viewer={state.parallelFuture ? futureViewer : sensoryViewer}
         previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
+        victoryFrame={$victory}
+        onSceneReady={victory.sceneReady}
+        onSceneFailed={victory.sceneFailed}
       />
     {/key}
 
-    {#if training}
-      <FightTrainingOverlay state={visibleState} {language} />
-    {/if}
+    {#if !victoryActive}
+      {#if training}
+        <FightTrainingOverlay state={visibleState} {language} />
+      {/if}
 
-    {#if visibleState.impact}
-      {#key visibleState.impact.sequence}
-        {#if comfort.flashes}<div
-            class:blocked={visibleState.impact.blocked}
-            class="impact-flash"
-          ></div>{/if}
-        <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
-          {impactCallout(visibleState.impact, language)}
-        </div>
-      {/key}
+      {#if visibleState.impact}
+        {#key visibleState.impact.sequence}
+          {#if comfort.flashes && !visibleState.impact.avoided && !visibleState.impact.invulnerable}<div
+              class:blocked={visibleState.impact.blocked}
+              class="impact-flash"
+            ></div>{/if}
+          <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
+            {impactCallout(visibleState.impact, language)}
+          </div>
+        {/key}
+      {/if}
+      {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
+      <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
+      <slot />
     {/if}
-    {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
-    <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
+    <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
+    <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
   </div>
-  <FightParallelFuture
-    {state}
-    {language}
-    bind:viewer={futureViewer}
-    bind:scrub={futurePreview}
-    onOpenEyes={() => onAttack('special')}
-  />
-  <FightDecisionReadout state={visibleState} {language} />
-  {#if showControls}<FightTouchControls
+  {#if !victoryActive}
+    <FightParallelFuture
+      {state}
+      {language}
+      bind:viewer={futureViewer}
+      bind:scrub={futurePreview}
+      onOpenEyes={() => onAttack('special')}
+    />
+    <FightDecisionReadout state={visibleState} {language} />
+    {#if showControls}<FightTouchControls
+        state={visibleState}
+        {language}
+        {onAttack}
+        {onThrow}
+        {onCall}
+        {onFinisher}
+        {onControl}
+      />{/if}
+    <FightBlinkyPanel
       state={visibleState}
       {language}
-      {onAttack}
-      {onThrow}
-      {onCall}
-      {onFinisher}
+      onTarget={onBlinkyTarget}
+      onCommand={onBlinkyCommand}
+      onHold={(side, key, active) =>
+        side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
+    />
+    <FightResources
+      {onOpponentControl}
+      {onTalk}
+      {onBattleAction}
       {onControl}
-    />{/if}
-  <FightBlinkyPanel
-    state={visibleState}
-    {language}
-    onTarget={onBlinkyTarget}
-    onCommand={onBlinkyCommand}
-    onHold={(side, key, active) =>
-      side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
-  />
-  <FightResources
-    {onOpponentControl}
-    {onTalk}
-    {onBattleAction}
-    {onControl}
-    state={visibleState}
-    {language}
-    {detailed}
-    {showControls}
-    {onEmperor}
-    onAura={(active) => onControl('aura', active)}
-  />
-  <FightEasterEggs
-    {state}
-    {language}
-    {paused}
-    bind:preferences={easterEggPreferences}
-    onPlay={onEasterEgg}
-  />
+      state={visibleState}
+      {language}
+      {detailed}
+      {showControls}
+      {onEmperor}
+      onAura={(active) => onControl('aura', active)}
+    />
+    <FightEasterEggs
+      {state}
+      {language}
+      {paused}
+      bind:preferences={easterEggPreferences}
+      onPlay={onEasterEgg}
+    />
+  {/if}
 </section>
 
 <style>

@@ -32,13 +32,17 @@ function connection() {
     const body = init?.body ? JSON.parse(String(init.body)) : null
     if (body) bodies.push(body)
     let view: PvpView
-    if (body?.kind === 'input') {
-      view = registry.submit(host.matchId, { token: host.token, packet: body.packet })
+    if (body?.kind === 'inputs') {
+      const receipt = registry.receiveInputs(host.matchId, {
+        token: host.token,
+        packets: body.packets,
+      })
       if (fail) {
         const reason = fail
         fail = ''
         throw Error(reason)
       }
+      return new Response(JSON.stringify(receipt))
     } else if (body?.kind === 'ready')
       view = registry.ready(host.matchId, {
         token: host.token,
@@ -122,18 +126,21 @@ describe('private Clash client synchronization', () => {
     expect(get(c.client).ping).toBe(10)
     expect(get(c.client).state?.player.id).toBe('hisoka')
   })
-  it('retries a lost receipt with exactly the same sequence and action, without paying twice', async () => {
+  it('recovers a lost receipt from the private view without paying twice', async () => {
     const c = connection()
     await c.start()
     c.client.queue({ kind: 'move', action: 'special', input: 0 })
     c.fail()
     await c.client.step(0)
-    expect(get(c.client).connection).toBe('reconnecting')
+    expect(get(c.client).connection).toBe('connected')
     await c.client.step(0)
     expect(get(c.client).connection).toBe('connected')
-    const packets = c.bodies.filter((body) => body.kind === 'input')
-    expect(packets.at(-1)).toEqual(packets.at(-2))
-    expect(get(c.client).view?.nextSequence).toBe(1)
+    const packets = c.bodies.filter((body) => body.kind === 'inputs')
+    expect(packets[0].packets).toEqual([
+      { sequence: 0, input: 0, commands: [{ kind: 'move', action: 'special', input: 0 }] },
+    ])
+    expect(get(c.client).view?.nextSequence).toBe(2)
+    expect(c.client.predictionStats.transport.unreceived).toBe(0)
   })
   it('detects a changed snapshot, suspends commands, and resynchronizes before accepting new input', async () => {
     const c = connection()
@@ -146,7 +153,7 @@ describe('private Clash client synchronization', () => {
     c.client.queue({ kind: 'call' })
     await c.client.step(0)
     expect(get(c.client).connection).toBe('connected')
-    expect(c.bodies.filter((body) => body.kind === 'input')).toHaveLength(1)
+    expect(c.bodies.filter((body) => body.kind === 'inputs')).toHaveLength(1)
   })
   it('blocks old clients and stops network work after disposal', async () => {
     const c = connection()

@@ -16,6 +16,16 @@
   import { PVP_RULESET, type PvpSession } from '$lib/fighting/pvp/types'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { installFrameProbe } from '../fighting-performance/frameProbe'
+  import { createImpactProbe } from './impactProbe'
+  const impactProbe = createImpactProbe()
+  const measuredFetch: typeof fetch = (url, init) => {
+    if (init?.body) {
+      const body = JSON.parse(String(init.body))
+      if (body.kind === 'input') impactProbe.sent([body.packet])
+      if (body.kind === 'inputs') impactProbe.sent(body.packets)
+    }
+    return fetch(url, init)
+  }
   export let probe: ReturnType<typeof installFrameProbe>
   let client = null as ReturnType<typeof createPvpClient> | null
   let rendered = true,
@@ -25,16 +35,19 @@
   let started = false
   let lastCompleted = -Infinity
   let requestBusy = false
-  let marker: { at: number; command: string; queued: unknown } | null = null
+  let marker: { at: number; command: string; queued: unknown; attempt: number } | null = null
+  let attempts: unknown[] = []
   let latency: Array<{
     command: string
     ms: number
     confirmed: boolean
+    attempt: number
     queued: unknown
     drawn: unknown
   }> = []
   const failed = ''
   $: state = $client?.state ?? null
+  $: if ($client?.view && $client.state) impactProbe.observe($client.view, $client.state)
   setContext(FIGHT_VISUAL_PREDICTION, () => (legacy ? null : (client?.visualPrediction ?? null)))
   THREE.Scene.prototype.onAfterRender = function (renderer, scene) {
     if (!scene.getObjectByName('fight-collision-boxes')) return
@@ -46,6 +59,7 @@
     if (attack) {
       latency.push({
         command: marker.command,
+        attempt: marker.attempt,
         ms: performance.now() - marker.at,
         confirmed: Boolean(authority?.player.attack),
         queued: marker.queued,
@@ -92,7 +106,7 @@
     client = createPvpClient({
       matchId: session.matchId,
       endpoint: endpoint + '/' + session.matchId,
-      fetch,
+      fetch: measuredFetch,
       storage: sessionStorage,
     })
     await client.join()
@@ -110,7 +124,7 @@
       matchId: options.matchId,
       endpoint: '/__response/' + options.network + '/' + options.matchId,
       invitation: options.invitation,
-      fetch,
+      fetch: measuredFetch,
       storage: sessionStorage,
     })
     await client.join()
@@ -153,17 +167,41 @@
     held = { ...held, [key]: value }
   }
   export function move(action: MoveAction | 'ranged') {
-    marker = { at: performance.now(), command: action, queued: client?.predictionStats }
+    impactProbe.queue(action)
+    marker = {
+      at: performance.now(),
+      command: action,
+      queued: client?.predictionStats,
+      attempt: attempts.length,
+    }
+    const current = client ? get(client) : null
+    attempts.push({
+      ...marker,
+      connection: current?.connection,
+      status: current?.view?.status,
+      tick: current?.view?.tick,
+      pose: current?.state?.player.pose,
+      attack: current?.state?.player.attack?.moveId,
+      hitstop: current?.state?.hitstop,
+      hitStun: current?.state?.player.hitStun,
+      blockStun: current?.state?.player.blockStun,
+      health: current?.state?.player.health,
+      projection: Boolean(current?.state?.player.hanzoProjection),
+    })
     client!.queue({ kind: 'move', action, input: packReplayInput(held) })
   }
   export function reset() {
     latency = []
+    attempts = []
+    impactProbe.reset()
     probe.reset()
   }
   export function result() {
     return {
       ...probe.result(),
       latency,
+      attempts,
+      impacts: impactProbe.trials,
       failed,
       state: client ? get(client) : null,
       prediction: client?.predictionStats,

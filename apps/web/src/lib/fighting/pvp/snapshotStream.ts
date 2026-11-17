@@ -1,6 +1,7 @@
 import type { PvpView } from './types'
 
 const MAX_EVENT_BYTES = 16_000_000
+export const SNAPSHOT_STREAM_STALE_MS = 1500
 interface SnapshotStreamOptions {
   endpoint: string
   fetch: typeof fetch
@@ -16,6 +17,7 @@ export function createSnapshotStream(options: SnapshotStreamOptions) {
   let retryAt = 0
   let unsupported = false
   let connected = false
+  let messageAt = 0
   async function read(response: Response, signal: AbortSignal) {
     if (signal.aborted) {
       await response.body?.cancel()
@@ -35,7 +37,11 @@ export function createSnapshotStream(options: SnapshotStreamOptions) {
     signal.addEventListener('abort', abort, { once: true })
     connected = true
     try {
-      await consumeEvents(reader, options.accept)
+      await consumeEvents(reader, (view) => {
+        if (signal.aborted) return
+        options.accept(view)
+        messageAt = options.now()
+      })
     } finally {
       signal.removeEventListener('abort', abort)
       await reader.cancel().catch(() => {})
@@ -44,9 +50,15 @@ export function createSnapshotStream(options: SnapshotStreamOptions) {
   }
   return {
     start() {
+      if (controller && options.now() - messageAt > SNAPSHOT_STREAM_STALE_MS) {
+        controller.abort()
+        controller = null
+        connected = false
+      }
       if (controller || unsupported || options.now() < retryAt) return
       const active = new AbortController()
       controller = active
+      messageAt = options.now()
       const separator = options.endpoint.includes('?') ? '&' : '?'
       void transport(options.endpoint + separator + 'stream=1', {
         headers: options.headers(),

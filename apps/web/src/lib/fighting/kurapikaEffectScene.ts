@@ -1,3 +1,4 @@
+import { gyoSight } from './nenPerception'
 import { createStealthDolphinScene } from './stealthDolphinScene'
 import { createKurapikaChainModel } from './kurapikaChainModel'
 import { kurapikaChainMotions } from './kurapikaChainMotion'
@@ -32,6 +33,7 @@ export function createKurapikaEffectScene(options: EffectSceneOptions): FighterE
       model.seal.rotation.x = Math.PI / 2
     }
     for (const motion of motions) {
+      if (motion.mode === 'dowsing' && !dowsingVisible(state, side, options.viewer)) continue
       // Once planted, Judgment Chain's one blade remains at the heart, not in the hand too.
       if (motion.stage === 4 && model.seal.visible) continue
       model.draw(
@@ -50,4 +52,9 @@ export function createKurapikaEffectScene(options: EffectSceneOptions): FighterE
       groups.forEach(({ model }) => model.dispose())
     },
   }
+}
+
+function dowsingVisible(state: FightState, side: FightSide, viewer?: () => FightSide): boolean {
+  const shown = viewer?.() ?? 'player'
+  return side === shown || !state[side].nen.in || gyoSight(state[shown])
 }

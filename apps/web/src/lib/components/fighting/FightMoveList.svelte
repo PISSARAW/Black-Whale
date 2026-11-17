@@ -75,7 +75,7 @@
       {/each}
     </div>
     <div class="routes">
-      <h3>{language === 'fr' ? 'Routes courtes' : 'Short routes'}</h3>
+      <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
       {#each moveset.combos as route (route.join(':'))}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}

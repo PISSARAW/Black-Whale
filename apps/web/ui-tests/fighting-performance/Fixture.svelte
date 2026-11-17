@@ -7,6 +7,7 @@
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   import { performanceTape, type PerformanceScenario } from './scenario'
   import type { installFrameProbe } from './frameProbe'
+  import { stressManifested, type StressScenario } from './stressScenario'
   export let probe: ReturnType<typeof installFrameProbe>
   let tape = performanceTape({ fighter: 'kurapika', stage: 'heavens-arena', effects: false })
   let live = false
@@ -16,12 +17,26 @@
   let running = false
   let verified = 0
   let failure = ''
-  const comfort = defaultFightComfort()
+  let scenario: StressScenario | undefined
+  let requiredEffectSeen = true
+  let predictionRenderers = new WeakSet<THREE.WebGLRenderer>()
+  let predictionContexts = 0
+  let comfort = defaultFightComfort()
   THREE.Scene.prototype.onAfterRender = function (renderer, scene) {
-    if (scene.getObjectByName('fight-collision-boxes')) probe.draw(renderer)
+    if (scene.userData.fightView === 'prediction' && !predictionRenderers.has(renderer)) {
+      predictionRenderers.add(renderer)
+      predictionContexts++
+    }
+    if (scene.userData.fightView === 'primary' && scene.getObjectByName('fight-collision-boxes'))
+      probe.draw(renderer)
   }
   export function start(options: PerformanceScenario) {
     running = false
+    comfort = { ...defaultFightComfort(), graphics: options.graphics ?? 'quality' }
+    scenario = options.scenario
+    requiredEffectSeen = !scenario
+    predictionRenderers = new WeakSet()
+    predictionContexts = 0
     tape = performanceTape(options)
     live = options.live ?? false
     replay = driver()
@@ -39,6 +54,8 @@
     probe.stop()
   }
   export function reset() {
+    verified = 0
+    requiredEffectSeen = stressManifested(state, scenario)
     probe.reset()
   }
   export function pause() {
@@ -52,6 +69,8 @@
       failure: failure || replay.error,
       tapeHash: tape.checkpoints.at(-1)!.hash,
       failedScene: Boolean(document.querySelector('.fight-scene.failed')),
+      requiredEffectSeen,
+      predictionContexts,
       stateFrame: state.frame,
     }
   }
@@ -70,6 +89,7 @@
           }
         }
         state = replay.advance(Math.min(0.05, (now - last) / 1000))
+        requiredEffectSeen ||= stressManifested(state, scenario)
       }
       last = now
       frame = requestAnimationFrame(advance)

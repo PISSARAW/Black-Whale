@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightTrainingTools from './FightTrainingTools.svelte'
+  import FightCombatReference from './FightCombatReference.svelte'
   import { setTrainingResources, setTrainingDummy } from '$lib/fighting/trainingSession'
   import {
     toggleTrainingRecording,
@@ -15,8 +16,17 @@
   export let onStep: () => void
   export let onReset: (position: TrainingPosition) => void
   export let onPlayback: () => void
+  export let onReferenceStart: ((next: FightState) => void) | undefined = undefined
+  function launchReference(next: FightState) {
+    if (onReferenceStart) return onReferenceStart(next)
+    onReset('center')
+    state = next
+    onPlayback()
+    if (paused) onPause()
+  }
 </script>
 
+<FightCombatReference {language} onLaunch={launchReference} />
 <FightTrainingTools
   {state}
   {language}

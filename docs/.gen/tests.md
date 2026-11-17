@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 679
+Fichiers : 731
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -224,6 +224,14 @@ Fichiers : 679
 
 - forty arena applications and real cover > covers exactly the forty playable fighters and leaves preparation optional
 
+## `apps/web/src/lib/fighting/arsenalAi.test.ts`
+
+- the forty opponents use their own Nen arsenal > covers the exact selectable roster and makes only legal choices
+
+## `apps/web/src/lib/fighting/arsenalAiNen.test.ts`
+
+- AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -277,6 +285,15 @@ Fichiers : 679
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
+## `apps/web/src/lib/fighting/chrolloCopiedArsenal.test.ts`
+
+- one loaded Dolphin Hatsu > can retract its existing rubber without starting a second attachment
+- applications of an acquired Hatsu remain separate from other Hatsu of its owner > executes Texture Surprise as a surface disguise, without a Bungee Gum attachment
+
+## `apps/web/src/lib/fighting/chrolloHistorical.test.ts`
+
+- retrospective stolen pages execute their own material rules > creates inert copies with both hands, without copying living properties or powers
+
 ## `apps/web/src/lib/fighting/cinematicCatalogue.test.ts`
 
 - forty-fighter cinematic coverage > covers the exact selectable roster with unique audit ids and physical lenses
@@ -303,6 +320,10 @@ Fichiers : 679
 
 - Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
 
+## `apps/web/src/lib/fighting/combatBaseline.test.ts`
+
+- six-fighter fixed starting situations > starts the approach trial clear of both interactive crates
+
 ## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
 
 - confirmed cancels, pressure and reproducible punishment > allows the personal first light-to-heavy pressure link while excluding Hatsu on guard
@@ -312,16 +333,66 @@ Fichiers : 679
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
 
+## `apps/web/src/lib/fighting/commandQualification.test.ts`
+
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v17 recording
+- held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
+- draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
+
 ## `apps/web/src/lib/fighting/commandReadability.test.ts`
 
 - own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
 - private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
+## `apps/web/src/lib/fighting/cookie.test.ts`
+
+- Cookie is an executable treatment, separate from Biscuit’s body > summons the masseuse without attacking or changing the body
 
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
 - counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
+## `apps/web/src/lib/fighting/dowsing.test.ts`
+
+- Dowsing Chain screens an actual voluntary statement without becoming a truth oracle > questions face to face without Emperor Time, damage, or a forced answer
+
+## `apps/web/src/lib/fighting/dowsingScene.test.ts`
+
+- the real Dowsing pendulum follows simulation and perception > swings the ring-finger tip on a knowing lie, then hides it when the live Hatsu is stopped
+
+## `apps/web/src/lib/fighting/duelComboDepth.test.ts`
+
+- personal execution and conditions > gives Kurapika a real recovery link that works without a declared cancel
+
+## `apps/web/src/lib/fighting/duelComboFifth.test.ts`
+
+- fifth expansion personal mechanics > Gel chooses two physical arm endings with different real costs and no added status
+
+## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
+
+- ninth expansion personal mechanics > Rihan opens real observation without inventing a manifestation or completed analysis
+
+## `apps/web/src/lib/fighting/duelComboRoster.test.ts`
+
+- personal powers and recovery links > attaches Gum through real contact, then consumes a pre-existing tether with the finisher
+
+## `apps/web/src/lib/fighting/duelComboSecond.test.ts`
+
+- second expansion power conditions > preserves Machi’s real tracking marker without turning it into restraint or a free finisher
+
+## `apps/web/src/lib/fighting/duelComboSeventh.test.ts`
+
+- seventh expansion personal mechanics > Tserriednich waits for the advancing light to recover before linking the heavy
+
+## `apps/web/src/lib/fighting/duelComboTenth.test.ts`
+
+- roster completion and returning conversion branches > Halkenburg gathers his real marked consenting cohort over eight simulated seconds without firing
+
+## `apps/web/src/lib/fighting/duelComboThird.test.ts`
+
+- third expansion personal mechanics > prepares Illumi’s altered face through real vulnerable time without implanting a puppet
 
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
@@ -339,6 +410,10 @@ Fichiers : 679
 
 - fighting engine > starts a duel with the selected Black Whale fighters
 
+## `apps/web/src/lib/fighting/exchangeBalance.test.ts`
+
+- hitstun tuning is limited to long grounded physical combos > replays the actual escape from a long corner string with identical checkpoints
+
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
@@ -346,6 +421,10 @@ Fichiers : 679
 ## `apps/web/src/lib/fighting/feitanScene.test.ts`
 
 - Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
+
+## `apps/web/src/lib/fighting/fightAdvancedLessons.test.ts`
+
+- five advanced practical exercises use real engine outcomes > extends the curriculum while preserving the fifteen existing lesson identities
 
 ## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
 
@@ -364,9 +443,17 @@ Fichiers : 679
 - standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
 - configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
 
+## `apps/web/src/lib/fighting/fightGraphics.test.ts`
+
+- graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightPerformanceStress.test.ts`
+
+- performance evidence does not silently accept partial or invalid runs > retains twenty reference cases and fifteen explicit stress/profile combinations
 
 ## `apps/web/src/lib/fighting/fightPoseClock.test.ts`
 
@@ -427,6 +514,10 @@ Fichiers : 679
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
 
+## `apps/web/src/lib/fighting/gamepadDiagnostics.test.ts`
+
+- local Xbox hardware diagnostics > shows analog trigger travel without guessing a digital press
+
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
@@ -443,6 +534,10 @@ Fichiers : 679
 
 - Hisoka’s distinct elastic techniques > loads the complete Hatsu registry
 
+## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
+
+- Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
 ## `apps/web/src/lib/fighting/illumi.test.ts`
 
 - Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
@@ -451,6 +546,11 @@ Fichiers : 679
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
 - In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
+
+## `apps/web/src/lib/fighting/judgmentClauses.test.ts`
+
+- Judgment Chain declares immutable independent clauses before heart contact > allows a communication-only clause without imposing Zetsu or blocking voluntary Nen
+- a no-contact clause follows actual initiated communications, not proximity or disguises > allows speech to Kurapika, then kills on an actual greeting received by a Troupe teammate at the gate
 
 ## `apps/web/src/lib/fighting/kalluto.test.ts`
 
@@ -528,6 +628,10 @@ Fichiers : 679
 
 - Nen perception in the rendered duel > actually hides a hostile Nen projectile until Gyo or an En contact reveals it
 
+## `apps/web/src/lib/fighting/nenWitnessMove.test.ts`
+
+- Skill Hunter observes the actual newly started technique > steals Texture Surprise after seeing it without taking Bungee Gum
+
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
 - On (The Last Mission) > banks grudge from damage taken, never from aura
@@ -569,6 +673,10 @@ Fichiers : 679
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
 
+## `apps/web/src/lib/fighting/projectileResources.test.ts`
+
+- projectile rendering resources stay bounded over long matches > reuses one immutable geometry across thousands of successive bullets
+
 ## `apps/web/src/lib/fighting/projectiles.test.ts`
 
 - ranged attacks > gives a stone to fighters without a canonical projectile
@@ -583,9 +691,23 @@ Fichiers : 679
 
 - private Clash client synchronization > stops on an invalid player invitation instead of trying to authenticate the spectator
 
+## `apps/web/src/lib/fighting/pvp/inputPipeline.test.ts`
+
+- bounded cumulative input uploads > sends a cancel and guard while the first command is still awaiting its HTTP receipt
+
+## `apps/web/src/lib/fighting/pvp/predictionRoster.test.ts`
+
+- prediction across the complete playable roster > uses exactly the forty playable identities
+- prediction across the complete playable roster > player
+- prediction across the complete playable roster > player
+
+## `apps/web/src/lib/fighting/pvp/reconciliationSafety.test.ts`
+
+- private reconciliation preserves temporal, post-mortem and conditional Nen states > resimulation cannot publish resource, result, sound or camera events
+
 ## `apps/web/src/lib/fighting/pvp/response.test.ts`
 
-- stream reconciliation and bounded input traffic > ignores reordered snapshots and keeps authoritative HUD separate from predicted poses
+- stream reconciliation and bounded input traffic > clears old uploads on a round change even when the intermission views were missed
 
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
@@ -594,11 +716,20 @@ Fichiers : 679
 
 ## `apps/web/src/lib/fighting/pvp/snapshotStream.test.ts`
 
-- private view streaming lifecycle > parses split CRLF events and keeps the token in headers
+- private view streaming lifecycle > replaces a silent stream without retaining its reader or repeating an accepted event
 
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 
 - read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
+
+## `apps/web/src/lib/fighting/replayCoach.test.ts`
+
+- verified replay diagnostics and concrete rehearsal > measures the same visible response from the second player’s perspective
+- diagnostics preserve the viewer’s Nen perception > does not reveal an attack with In, an unseen body or a hidden book page
+
+## `apps/web/src/lib/fighting/retrospectiveIntegration.test.ts`
+
+- retrospective utility admission, clocks and network boundaries > requires entering criteria before dialing, consumes a limited allowance, and reports actual coordinates privately
 
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
@@ -606,7 +737,7 @@ Fichiers : 679
 
 ## `apps/web/src/lib/fighting/rosterQuality.test.ts`
 
-- roster quality parity > covers exactly the forty playable fighters, with four routes and a personal movement direction each
+- roster quality parity > covers forty fighters, their core routes and one hundred and sixty-eight advanced duel lessons
 - sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
 
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
@@ -620,6 +751,16 @@ Fichiers : 679
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 
 - Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
+
+## `apps/web/src/lib/fighting/skillHunterAcquisition.test.ts`
+
+- Skill Hunter executes all four canonical acquisition conditions > cannot steal from observation and an ordinary contact alone
+
+## `apps/web/src/lib/fighting/solo/solo.test.ts`
+
+- solo story routes use actual Nen and physical outcomes > plays the complete reading route and saves its original ending and local title
+- solo modes preserve ordinary fighters and round rules > carries real remaining health and aura through the ordinary survival boundary
+- local solo persistence, command isolation and scheduling > checkpoints entry, preserves cleared encounters and restarts only the in-progress encounter
 
 ## `apps/web/src/lib/fighting/stageBackground.test.ts`
 
@@ -670,6 +811,11 @@ Fichiers : 679
 ## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
 
 - actual contact recovery measurement > measures a real travelling projectile after its owner has recovered
+
+## `apps/web/src/lib/fighting/victory/playback.test.ts`
+
+- victory selection > uses all real opponents and every stage for either winning side, including mirrors
+- victory playback > keeps real ten-second timing when rendering drops below ten frames per second
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 
@@ -1314,6 +1460,10 @@ Fichiers : 679
 
 - Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
 
+## `apps/web/src/lib/server/clashPvpInputs.test.ts`
+
+- ordered cumulative input HTTP boundary > cannot apply an in-flight round-one action after both players start round two
+
 ## `apps/web/src/lib/server/clashPvpStream.test.ts`
 
 - authenticated snapshot stream > pushes only the authenticated perspective and never renews presence on outgoing traffic
@@ -1333,6 +1483,22 @@ Fichiers : 679
 ## `apps/web/src/lib/server/compare-selection.test.ts`
 
 - resolveComparisonSelection > defaults a bare URL to the latest event and the first two characters
+
+## `apps/web/src/lib/server/competition/http.test.ts`
+
+- competitive HTTP authentication, filtering and bounded commands > recovers the authoritative identity from its existing code without accepting a name or result
+
+## `apps/web/src/lib/server/competition/persistence.test.ts`
+
+- durable competitive receipts and recoverable identities > does not acknowledge a terminal result until its journal write succeeds
+
+## `apps/web/src/lib/server/competition/queue.test.ts`
+
+- connection and identity filters > uses single-use identity-bound server probes instead of a client ping number
+
+## `apps/web/src/lib/server/competition/service.test.ts`
+
+- competitive queues use actual authoritative duels > matches two different identities, restores only the owner’s seat and protects the shared preset
 
 ## `apps/web/src/lib/server/event-log.test.ts`
 
@@ -2750,6 +2916,14 @@ Fichiers : 679
 - parseSimulationActionInput > rejects an unsupported action type
 - SimulationStore.applyAction > rejects a move targeting an entity absent from the branch
 - SimulationStore bounds > deletes simulation branches past the TTL when a new one is created
+
+## `scripts/combat-reference-compare.test.ts`
+
+- combat reference comparison > accepts identical behavior and reports a separate source change
+
+## `scripts/command-qualification-metrics.test.ts`
+
+- qualification acceptance uses all requested observations > keeps a same-frame RAF timestamp before setup in the first segment
 
 ## `scripts/doc-lint.test.ts`
 

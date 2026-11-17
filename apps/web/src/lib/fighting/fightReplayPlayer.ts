@@ -1,9 +1,13 @@
-import { executeReplayPacket, initialReplayState } from './fightReplayCommands'
+import { executeObservedReplayPacket, initialReplayState } from './fightReplayCommands'
 import { fightReplayHash } from './fightReplayHash'
 import type { FightReplay } from './fightReplayTypes'
+import type { FightState } from './types'
 
 /** Re-simulation, not a sequence of restored screenshots or recorded result states. */
-export function createReplayPlayer(replay: FightReplay) {
+export function createReplayPlayer(
+  replay: FightReplay,
+  onFrame?: (before: FightState, after: FightState, packet: number) => void,
+) {
   let state = initialReplayState(replay.setup)
   let cursor = 0
   let elapsed = 0
@@ -18,7 +22,9 @@ export function createReplayPlayer(replay: FightReplay) {
   function consume() {
     const packet = replay.packets[cursor]
     try {
-      state = executeReplayPacket(state, packet)
+      state = executeObservedReplayPacket(state, packet, {
+        onFrame: onFrame ? (before, after) => onFrame(before, after, cursor) : undefined,
+      })
       elapsed += packet[0]
       cursor++
       verify()

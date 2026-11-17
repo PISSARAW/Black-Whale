@@ -27,9 +27,9 @@ export interface FighterHatsu {
   onImpact: (context: HatsuImpactContext) => FightState
   onFrame: (state: FightState) => FightState
   sourceFor?: (fighter: ArcadeFighter, moveId?: string) => FighterId | null
-  /** No confirmed personal Hatsu can act in this duel: the fighter plays on martial skill and basic Nen. */
+  /** Generic attacks are martial; prepared utilities and post-mortem Nen have separate paths. */
   martialOnly?: true
-  /** Still a real Hatsu for Steal Chain, despite lacking a target in this duel. */
+  /** A real Hatsu for Steal Chain; an ordinary duel may lack its target or preparation. */
   stealableOutsideDuel?: OutsideDuelAbility
   /** Conditional Nen that wakes only after an attributed death, never a nonlethal verdict. */
   onDeath?: (context: HatsuDeathContext) => FightState
@@ -40,8 +40,8 @@ export const unchangedImpact = ({ state }: HatsuImpactContext): FightState => st
 export const unchangedFrame = (state: FightState): FightState => state
 
 /**
- * A fighter whose personal Hatsu is unknown or lacks a suitable target or setup here.
- * Combat moves stay martial; stealableOutsideDuel may still declare the actual Hatsu.
+ * Generic attack hooks remain martial when the personal Hatsu is unknown, passive,
+ * or performed through a prepared utility. stealableOutsideDuel may declare that Hatsu.
  */
 export function martialOnlyHatsu(id: FighterId): FighterHatsu {
   return {

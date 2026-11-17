@@ -1,4 +1,10 @@
-import { martialOnlyHatsu } from './contract'
+import { martialOnlyHatsu, type FighterHatsu } from './contract'
+import { advanceCookie } from '../cookie'
+import { COOKIE_TREATMENT } from '../outsideDuelAbility'
 
-/** Cookie needs a treatment session; the duel uses martial skill and basic Nen. */
-export const biscuitHatsu = martialOnlyHatsu('biscuit')
+/** The native body is martial; Cookie is a separate stealable support Hatsu. */
+export const biscuitHatsu: FighterHatsu = {
+  ...martialOnlyHatsu('biscuit'),
+  stealableOutsideDuel: COOKIE_TREATMENT,
+  onFrame: (state) => advanceCookie(state),
+}

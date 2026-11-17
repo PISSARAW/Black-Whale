@@ -26,10 +26,14 @@
 | `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
 | `fighting/profile` | `+page.svelte` |
 | `fighting/profile/api` | `+server.ts` |
+| `fighting/profile/solo` | `+page.svelte` |
 | `fighting/pvp` | `+page.svelte`, `PvpDuel.svelte`, `pvp.css` |
 | `fighting/pvp/[matchId]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/api/matches` | `+server.ts` |
 | `fighting/pvp/api/matches/[matchId]` | `+server.ts` |
+| `fighting/pvp/online` | `+page.svelte` |
+| `fighting/pvp/online/api` | `+server.ts` |
+| `fighting/pvp/online/tournament/[id]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
 | `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |

@@ -1,14 +1,15 @@
 import {
-  addChrolloPage,
   chrolloHasActivePage,
   chrolloNenActive,
   chrolloPageForMove,
   chrolloSourceFor,
   CHROLLO_SECONDARY,
   CHROLLO_STEAL,
-  type ChrolloPage,
 } from '../chrolloBook'
 import { reconcileChrolloPages } from '../chrolloPageEffects'
+import { completeSkillHunter } from '../skillHunterAcquisition'
+import { advanceHistoricalEffects } from '../chrolloHistoricalEffects'
+import { advanceHistoricalCopies } from '../chrolloHistoricalObjects'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { unchangedTrigger, type FighterHatsu, type HatsuImpactContext } from './contract'
 
@@ -27,35 +28,15 @@ export const chrolloHatsu: FighterHatsu = {
     if (page === 'black-voice') return blackVoice(context)
     return page === 'sun-and-moon' ? stamp(context) : context.state
   },
-  onFrame: (state) => advanceBook(advanceBook(state, 'player'), 'opponent'),
+  onFrame: (state) =>
+    advanceHistoricalCopies(
+      advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+    ),
 }
 
 function steal({ state, side, defenderSide }: HatsuImpactContext): FightState {
-  const thief = state[side]
-  const victim = state[defenderSide]
-  const seen = thief.hatsuEffects.witnessedHatsu === victim.id
-  const book = thief.chrolloBook
-  if (!book || !seen || !stealableVictim(victim)) return state
-  const next = {
-    ...state,
-    [side]: {
-      ...thief,
-      chrolloBook: addChrolloPage(book, victim.id as ChrolloPage),
-      hatsuEffects: { ...thief.hatsuEffects, stolenHatsu: victim.id },
-    },
-    [defenderSide]: { ...victim, hatsuEffects: { ...victim.hatsuEffects, hatsuStolen: 1 } },
-  }
-  return reconcileChrolloPages(state, next, side)
-}
-
-function stealableVictim(victim: ArcadeFighter): boolean {
-  // Bodily changes, basic Nen and abilities requiring no usable Hatsu are not pages.
-  return (
-    victim.health > 0 &&
-    victim.id !== 'chrollo' &&
-    victim.id !== 'theta' &&
-    victim.hatsuEffects.hatsuStolen === 0
-  )
+  if (defenderSide === side) return state
+  return completeSkillHunter(state, side)
 }
 
 function blackVoice({ state, defenderSide }: HatsuImpactContext): FightState {

@@ -1,3 +1,4 @@
+import { speakPaperWords } from './kallutoListening'
 import { chrolloPageForMove, CHROLLO_USE, CHROLLO_SECONDARY } from './chrolloBook'
 import { canAskLynchQuestion } from './lynchRules'
 import { LYNCH_MOVE, LYNCH_QUESTIONS, type LynchQuestionId } from './lynchTypes'
@@ -16,13 +17,14 @@ export function performLynchAction(options: AuraAttackOptions): FightState | nul
 
 function startQuestion(options: AuraAttackOptions): FightState {
   const { state, side, moveId, lynchQuestion = 'identity' } = options
-  const fighter = state[side]
   if (!Object.hasOwn(LYNCH_QUESTIONS, lynchQuestion) || !canAskLynchQuestion(state, side, moveId))
     return state
+  const spoken = speakPaperWords(state, side, LYNCH_QUESTIONS[lynchQuestion].fr)
+  if (spoken.phase !== 'fighting') return spoken
   return {
-    ...state,
+    ...spoken,
     [side]: {
-      ...fighter,
+      ...spoken[side],
       bufferedAttack: null,
       lynchQuestion: {
         id: lynchQuestion,

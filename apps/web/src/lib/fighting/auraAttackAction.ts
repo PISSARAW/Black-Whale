@@ -1,4 +1,5 @@
 import { INPUT_BUFFER_FRAMES } from './fightClock'
+import { cancelBufferSource } from './bufferedCancel'
 import { attackAuraCost } from './fightAttackCost'
 import { canUseMovesetMove, moveById } from './movesets'
 import { paperMoveAllowed } from './kallutoPaper'
@@ -36,7 +37,8 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   if (!attackAdmission(options, intent)) return options.state
   const { hatsuSource, concealed, resourceReady } = intent
   const starts = canStartFighterAttack(original, kind, moveId)
-  const buffers = resourceReady && canBufferFighterAttack(original)
+  const cancelFrom = cancelBufferSource(original, moveId)
+  const buffers = resourceReady && (canBufferFighterAttack(original) || Boolean(cancelFrom))
   if (!starts && !buffers) return options.state
   const state =
     starts && hatsuSource
@@ -68,7 +70,9 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
         auraCharged,
         concealed,
         hatsuSource,
-        bufferFrames: INPUT_BUFFER_FRAMES,
+        cancelFrom,
+        // Contact is resolved after buffer advancement; retain the intent for that flush.
+        bufferFrames: INPUT_BUFFER_FRAMES + Number(Boolean(cancelFrom)),
       },
     },
   }

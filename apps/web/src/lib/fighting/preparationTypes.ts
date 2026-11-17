@@ -11,6 +11,7 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'puppet'
   | 'morena'
   | 'supporter'
   | 'animal'
@@ -23,6 +24,7 @@ export type PreparedEntityKind =
   | 'destination'
   | 'delivery'
 export interface PreparedEntity {
+  copy?: import('./chrolloHistoricalTypes').HistoricalCopy
   arena?: import('./arenaTypes').ArenaObject
   id: string
   kind: PreparedEntityKind

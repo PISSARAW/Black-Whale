@@ -48,7 +48,7 @@ try {
   process.stdout.write('Fixture ready\n')
   const snapshot = () => page.evaluate(() => window.progressionFixture.snapshot())
   await page.locator('.lessons-launcher summary').click()
-  assert.equal(await page.locator('.lesson-list button').count(), 15)
+  assert.equal(await page.locator('.lesson-list button').count(), 20)
   await page.getByRole('button', { name: /5\. Ten/ }).click()
   await page.evaluate(() => window.progressionFixture.advance(61))
   await page.locator('.lesson-panel').getByText('Exercice réussi.', { exact: true }).waitFor()
@@ -65,9 +65,12 @@ try {
   await page.getByText('Fin du replay · états vérifiés.', { exact: true }).waitFor()
   assert.equal((await snapshot()).hash, recordedHash)
   await page.getByRole('button', { name: 'Quitter le replay', exact: true }).click()
-  const downloadEvent = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Exporter', exact: true }).click()
-  const download = await downloadEvent
+  if (!(await page.locator('.fight-replays details').evaluate((node) => node.open)))
+    await page.locator('.fight-replays summary').click()
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.getByRole('button', { name: 'Exporter', exact: true }).click(),
+  ])
   assert.match(download.suggestedFilename(), /\.bw-replay\.json$/)
   const replayFile = path.join(output, 'roundtrip.bw-replay.json')
   await download.saveAs(replayFile)
@@ -76,6 +79,8 @@ try {
   await page.evaluate(() => window.progressionFixture.advance(100))
   await page.getByText('Fin du replay · états vérifiés.', { exact: true }).waitFor()
   await page.getByRole('button', { name: 'Quitter le replay', exact: true }).click()
+  if (!(await page.locator('.practice-hub details').evaluate((node) => node.open)))
+    await page.locator('.practice-hub summary').click()
   await page.getByRole('button', { name: 'Lancer le parcours avec kurapika', exact: true }).click()
   assert.equal((await snapshot()).state.opponent.id, 'hisoka')
   await page.evaluate(() => window.progressionFixture.winMatch())

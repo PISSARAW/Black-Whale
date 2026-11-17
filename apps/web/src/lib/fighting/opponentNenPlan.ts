@@ -1,3 +1,4 @@
+import { judgmentForbidsNen } from './judgmentRules'
 import { perceivedOpponentGap } from './opponentAwareness'
 import { seesCombatBody } from './fightCounterplay'
 import { advancedOpponentNen } from './nenAi'
@@ -10,7 +11,7 @@ export function planOpponentNen(state: FightState): FightState {
   const gap = perceivedOpponentGap(state)
   const opponent = state.opponent
   if (opponent.melodyPerformance) return state
-  if (opponent.judgmentChain || chainsImmobilize(opponent))
+  if (judgmentForbidsNen(opponent) || chainsImmobilize(opponent))
     return applyOpponentAura(state, { aura: true, down: true })
   if (opponent.hanzoProjection) return state
   if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })

@@ -1,4 +1,7 @@
+import { performCookie } from './cookie'
 import { performVoconteDoorAction } from './voconteDoorAction'
+import { performChrolloCopiedAction } from './chrolloCopiedAction'
+import { performChrolloHistoricalAction } from './chrolloHistoricalAction'
 import { performIllumiAction } from './illumiAction'
 import { performMaryAction } from './bloodyMaryAction'
 import { performBattleCantabileAction } from './battleCantabileAction'
@@ -25,7 +28,11 @@ export function characterAuraAction(
   options: AuraAttackOptions,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
+  if (options.moveId === 'biscuit:cookie')
+    return performCookie(options.state, options.side, { action: 'cookie-massage' })
   const attempts = [
+    () => performChrolloCopiedAction(options, perform),
+    () => performChrolloHistoricalAction(options),
     () => performVoconteDoorAction(options),
     () => performIllumiAction(options),
     () => performMaryAction(options),

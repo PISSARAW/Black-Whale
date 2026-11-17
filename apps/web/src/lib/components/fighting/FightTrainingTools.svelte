@@ -2,6 +2,7 @@
   import FightCounterplayHint from './FightCounterplayHint.svelte'
   import FightTrainingResources from './FightTrainingResources.svelte'
   import FightTrainingHistory from './FightTrainingHistory.svelte'
+  import FightExchangeStudy from './FightExchangeStudy.svelte'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import type {
     DummyBehavior,
@@ -145,6 +146,7 @@
       : 'Fixed HP and aura are lab aids. Nen prerequisites, seals, costs and interruptions are still checked.'}
   </p>
   <FightCounterplayHint {state} {language} />
+  <FightExchangeStudy {state} {language} {onReset} {onDummy} {onResources} />
   <FightTrainingHistory history={lab.history} {language} />
 </section>
 

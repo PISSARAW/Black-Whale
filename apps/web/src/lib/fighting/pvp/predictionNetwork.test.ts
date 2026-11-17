@@ -1,3 +1,4 @@
+import { FIGHTING_ROSTER } from '../roster'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, tickFight } from '../engine'
 import { EMPTY_INPUT, type FighterId, type FightState } from '../types'
@@ -79,7 +80,12 @@ function exercise(player: FighterId, opponent: FighterId, rtt: number) {
         ? [
             {
               kind: 'move',
-              action: frame % 120 === 0 ? 'special' : frame % 80 === 0 ? 'heavy' : 'light',
+              action:
+                frame % 120 === 0 && player !== 'tserriednich'
+                  ? 'special'
+                  : frame % 80 === 0
+                    ? 'heavy'
+                    : 'light',
               input: 0,
             },
           ]
@@ -159,9 +165,21 @@ function exercise(player: FighterId, opponent: FighterId, rtt: number) {
 describe('sixteen matchups under delayed private views', () => {
   for (const player of ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const)
     for (const opponent of ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const)
-      it.each([0, 50, 100, 150])(
+      it.each([0, 50, 100, 150, 300])(
         `${player} / ${opponent}, RTT %sms + jitter + duplicate receipts`,
         (rtt) => exercise(player, opponent, rtt),
         30000,
       )
+})
+
+// Cover each remaining roster body with every transport profile; the full pair matrix
+// lives in predictionRoster.test.ts without repeating 300 network frames per pair.
+describe('forty roster bodies under delayed private views', () => {
+  const roster = FIGHTING_ROSTER.map(({ id }) => id)
+  for (const [index, player] of roster.entries())
+    it.each([0, 50, 100, 150, 300])(
+      `${player} / ${roster[(index + 17) % roster.length]}, RTT %sms`,
+      (rtt) => exercise(player, roster[(index + 17) % roster.length], rtt),
+      30000,
+    )
 })

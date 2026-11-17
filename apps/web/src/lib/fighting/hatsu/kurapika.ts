@@ -1,3 +1,5 @@
+import { advanceDowsing } from '../dowsingAction'
+import { implantJudgment } from '../judgmentAction'
 import { forceZetsu } from '../nen'
 import { activeHitbox, attackPhase, boxesOverlap } from '../frameData'
 import { canonicalTechniqueAllowed } from '../techniqueContracts'
@@ -30,7 +32,7 @@ export const kurapikaHatsu: FighterHatsu = {
       const held = next[side].kurapika?.held
       if (held?.used && !dolphinIsBusy(next, side, held)) next = returnChainAbility(next, side)
     }
-    return next
+    return advanceDowsing(next)
   },
 }
 
@@ -54,15 +56,7 @@ function chainImpact({
   if (canAttachSyringe(fighter, moveId))
     return { ...state, [defenderSide]: { ...target, drainingChain: { owner: side } } }
   if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime)
-    return {
-      ...state,
-      [defenderSide]: {
-        ...forceZetsu(target),
-        judgmentChain: { owner: side, rule: 'zetsu' },
-        attack: null,
-        bufferedAttack: null,
-      },
-    }
+    return implantJudgment(state, side, defenderSide)
   return state
 }
 

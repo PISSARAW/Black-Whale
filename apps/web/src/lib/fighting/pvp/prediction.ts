@@ -5,17 +5,11 @@ import { EMPTY_INPUT, type FightState } from '../types'
 import { fighterVisual, type FightVisualPrediction } from '../fightVisualPrediction'
 import { applyPvpCommand } from './commands'
 import { createPredictionHistory } from './predictionHistory'
+import { predictionEligible as eligible, sameControlledBody } from './predictionPolicy'
 import type { PvpCommand, PvpInputPacket, PvpView } from './types'
 
-const FIGHTERS = new Set(['kurapika', 'hisoka', 'chrollo', 'benjamin'])
-const SAFE_PAGES = new Set([...FIGHTERS, 'sun-and-moon', 'black-voice'])
 export const MAX_PREDICTION_FRAMES = 12
 export const PREDICTION_STALE_MS = 250
-function eligible(state: FightState) {
-  if (state.phase !== 'fighting' || state.parallelFuture || state.catsName) return false
-  if (!FIGHTERS.has(state.player.id) || !FIGHTERS.has(state.opponent.id)) return false
-  return (state.player.chrolloBook?.pages ?? []).every((page) => SAFE_PAGES.has(page))
-}
 function authoritativeReaction(state: FightState) {
   const player = state.player
   return (
@@ -37,12 +31,15 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
   let input = 0
   let acceptedAt = 0
   let round = 0
+  let inputEpoch = -1
   let unknownAck = -1
   let offset = { x: 0, y: 0 }
   let remoteVelocity = { x: 0, y: 0 }
   let serverTick = 0
   let steps = 0
   let corrections = 0
+  let reconciliations = 0
+  let replayedFrames = 0
   function reset(state: FightState | null = null) {
     history.clear()
     authority = state
@@ -50,25 +47,31 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
     localFrame = 0
     baseFrame = 0
     accumulator = 0
+    input = 0
+    remoteVelocity = { x: 0, y: 0 }
     offset = { x: 0, y: 0 }
   }
   function step(frame: number) {
     if (!simulation) return
     for (const command of history.commands(frame, baseFrame)) {
-      if (command.kind === 'move' || command.kind === 'emperor')
-        simulation = applyPvpCommand(simulation, 'player', command)
+      simulation = applyPvpCommand(simulation, 'player', command)
+      if (!eligible(simulation)) {
+        simulation = null
+        return
+      }
     }
     simulation = tickFight(simulation, unpackReplayInput(history.input(frame, input)), {
       dt: FIXED_STEP,
       opponentInput: EMPTY_INPUT,
       ai: false,
     })
+    if (!eligible(simulation)) simulation = null
     steps++
   }
   function projection(): FightVisualPrediction | null {
     if (!authority || !simulation || !eligible(authority)) return null
     if (clock() - acceptedAt > PREDICTION_STALE_MS || authoritativeReaction(authority)) return null
-    if (!safeVisual(simulation)) return null
+    if (!safeVisual(simulation) || !sameControlledBody(authority, simulation)) return null
     const player = fighterVisual(authority.player, simulation.player)
     player.x += offset.x
     player.y = Math.max(0, player.y + offset.y)
@@ -88,7 +91,10 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
         ? structuredClone({ ...authority, mode: 'versus-local' })
         : null
     const target = Math.min(localFrame, baseFrame + MAX_PREDICTION_FRAMES)
-    for (let frame = baseFrame + 1; frame <= target; frame++) step(frame)
+    for (let frame = baseFrame + 1; frame <= target; frame++) {
+      step(frame)
+      replayedFrames++
+    }
   }
   function reserveControls() {
     if (!authority || localFrame - baseFrame < MAX_PREDICTION_FRAMES) return
@@ -111,13 +117,15 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
       const previous = authority
       const tickDelta = view.tick - serverTick
       const acknowledgedFrame = history.acknowledge(view.appliedSequence)
-      const changedRound = roundChanged(state, round)
+      const changedRound = roundChanged(state, round) || view.inputEpoch !== inputEpoch
       const missingAck = acknowledgedFrame === undefined && view.appliedSequence !== unknownAck
       if (needsHistoryReset(changedRound, view.appliedSequence, missingAck)) {
         reset(state)
         unknownAck = view.appliedSequence
       }
       round = state.roundNumber
+      inputEpoch = view.inputEpoch
+      reconciliations++
       serverTick = view.tick
       baseFrame =
         acknowledgedFrame === undefined
@@ -129,7 +137,7 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
       localFrame = Math.max(localFrame, baseFrame)
       authority = state
       acceptedAt = clock()
-      remoteVelocity = remoteMotion(previous, state, tickDelta)
+      remoteVelocity = changedRound ? { x: 0, y: 0 } : remoteMotion(previous, state, tickDelta)
       rebuild()
       offset = { x: 0, y: 0 }
       offset = correctionOffset(before, projection(), changedRound || authoritativeReaction(state))
@@ -162,6 +170,8 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
       return {
         steps,
         corrections,
+        reconciliations,
+        replayedFrames,
         pending: history.pending,
         authorityAgeMs: clock() - acceptedAt,
         backlogFrames: Math.max(0, localFrame - baseFrame),

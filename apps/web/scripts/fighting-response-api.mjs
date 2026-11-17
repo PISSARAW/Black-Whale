@@ -40,8 +40,8 @@ export function responseApi(api) {
         const key = id + ':' + api.clashBearer(request)
         if (
           profile.includes('loss') &&
-          body?.kind === 'input' &&
-          body.packet.sequence === 3 &&
+          ['input', 'inputs'].includes(body?.kind) &&
+          (body.packet?.sequence === 3 || body.packets?.some((packet) => packet.sequence === 3)) &&
           !lost.has(key)
         ) {
           lost.add(key)

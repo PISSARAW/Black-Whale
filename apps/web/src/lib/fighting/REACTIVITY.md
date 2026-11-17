@@ -1,6 +1,14 @@
 # Réactivité locale et PvP
 
-Objectif : afficher plus tôt les contrôles de Kurapika, Hisoka, Chrollo et Benjamin
+L’[étape 2](./STEP2.md) complète les profils graphiques, la lecture des contacts
+et la qualification Xbox locale. Le diagnostic de manette mesure la lecture par
+le navigateur ; il ne remplace pas une mesure physique manette-écran.
+
+L’[étape 4](./STEP4.md) ajoute le protocole `clash-pvp-5`, les générations de
+commandes et la qualification des reprises ; les rapports historiques ci-dessous
+gardent leurs versions et périmètres d’origine.
+
+Objectif : afficher plus tôt les contrôles des 40 personnages jouables
 sans déléguer au navigateur le Nen, les contacts ou le résultat du duel.
 
 ## Comportement livré
@@ -28,8 +36,9 @@ quatre ticks restent disponibles pour les prochaines entrées : les délais de
 reçus ne doivent pas saturer durablement la fenêtre de présentation. Cette
 compression concerne l’animation ; seul l’accusé appliqué retire une intention.
 Après 250 ms sans autorité fraîche, l’affichage revient au confirmé. Les états
-complexes non couverts (Parallel Future, Cat’s Name, pages de Chrollo hors du
-périmètre) utilisent aussi ce repli.
+de Parallel Future et Cat’s Name utilisent aussi ce repli pendant leur séquence
+active. Les pages copiées de Chrollo sont couvertes. Le changement de corps de Hanzo
+attend la confirmation ; les déplacements de sa projection confirmée sont anticipés.
 
 C’est une prédiction de présentation avec réconciliation serveur. Le délai de
 confirmation d’un impact reste celui du serveur. Ce n’est pas un rollback complet
@@ -76,7 +85,109 @@ admis est relu jusqu’à la même empreinte. Les autres tests couvrent les limi
 de travail, les séquences reçues/appliquées, la confidentialité du Nen, les vues
 désordonnées, les corps de flux annulés, les resets et la reprise de séquence.
 
-## Mesures de référence
+## Extension au roster complet
+
+`predictionPolicy.ts` utilise directement `FIGHTING_ROSTER` : aucun combattant
+ni adversaire n’est sélectionné par une liste de quatre noms. Le transport,
+les accusés reçus/appliqués et le journal local restent communs aux 40 identités.
+Les commandes nommées (papier, Battle Cantabile, poème, appels, contrats,
+conversation et gestes) passent par les mêmes conditions du moteur privé avant
+leur réconciliation. Leurs états de Nen ne sont jamais publiés de façon provisoire.
+
+La matrice de démarrage/réconciliation/replay couvre les **1 600 affrontements**.
+Les 40 places P2, les 40 contrôles locaux et les conditions de Zetsu sont aussi
+vérifiés. En complément des seize duels initiaux, quarante confrontations réparties
+sur le roster utilisent chacune 0/50/100/150 ms de RTT simulé avec jitter et reçus
+dupliqués. Les séquences temporelles sont testées séparément pour vérifier qu’un
+tick de présentation ne déclenche jamais une prévision de 600 ticks.
+
+```sh
+RESPONSE_ROSTER=1 RESPONSE_AFTER_ONLY=1 RESPONSE_SECONDS=10 \
+  RESPONSE_WARMUP_MS=3000 RESPONSE_OUTPUT=/tmp/clash-response-roster \
+  node scripts/check-fighting-response.mjs
+```
+
+Le banc récupère la liste depuis le bundle serveur. Cette campagne mesure chacun
+des 40 personnages, avec deux places privées, cinq entrées et dix secondes de
+mesure nominale après échauffement. Le rapport indique les frames réellement
+observées, les pics, la latence de démarrage et les éventuelles animations manquées.
+La campagne historique ci-dessous conserve son périmètre de quatre références.
+
+## Mesures des 40 personnages sur secteur
+
+La campagne du 16 novembre 2026 sur Apple M5 / 16 Go, Chrome 157 / ANGLE Metal,
+valide les 40 corps à **60 FPS**, avec **24 003 frames**, aucune au-delà de 25 ms,
+et un intervalle p99 de **16,8 ms**. Les **200 essais sur 200** ont une animation
+observée ; le démarrage visuel p95 varie de **12,5 à 18,9 ms** selon le personnage.
+Le RTT imposé est de 100 ms, avec jitter, 80 reçus HTTP supprimés et 320 vues SSE
+sautées sur l’ensemble de la campagne. Les ressources, contacts et verdicts restent
+confirmés par le serveur.
+
+Une première série a été interrompue quand le Mac, à 19 % de batterie en économie
+d’énergie, a plafonné le navigateur à 30 Hz. Les 40 passages ont été refaits sur
+secteur, avec les mêmes réglages de qualité (DPR 2 plafonné à 1,75, bloom, salle de
+banquet). Les traces de la série interrompue sont identifiées séparément.
+
+Chaque personnage affronte Chrollo ; Chrollo affronte Hisoka. Les 1 600 paires sont
+couvertes par les tests déterministes, tandis que ces 40 passages mesurent le rendu.
+Cinq essais par personnage constituent un contrôle court du roster, pas une mesure
+de latence physique ni une validation exhaustive de tous les effets de Hatsu.
+Les séquences temporelles et post-mortem conservent leur repli confirmé.
+
+| Personnage   |   FPS | Démarrage visuel p95 |
+| ------------ | ----: | -------------------: |
+| Kurapika     | 60,00 |              16,9 ms |
+| Hisoka       | 60,00 |              14,5 ms |
+| Chrollo      | 60,00 |              15,6 ms |
+| Benjamin     | 60,00 |              12,5 ms |
+| Tserriednich | 60,00 |              12,5 ms |
+| Feitan       | 60,00 |              16,2 ms |
+| Saiyu        | 60,00 |              14,7 ms |
+| Theta        | 60,00 |              16,5 ms |
+| Biscuit      | 60,00 |              17,1 ms |
+| Phinks       | 60,00 |              15,3 ms |
+| Franklin     | 60,00 |              14,1 ms |
+| Machi        | 60,00 |              17,2 ms |
+| Illumi       | 60,00 |              16,2 ms |
+| Kalluto      | 60,00 |              14,4 ms |
+| Bonolenov    | 60,00 |              16,6 ms |
+| Shizuku      | 60,00 |              15,6 ms |
+| Hinrigh      | 60,00 |              16,6 ms |
+| Mizaistom    | 60,00 |              15,8 ms |
+| Leorio       | 60,00 |              17,0 ms |
+| Hanzo        | 60,00 |              16,7 ms |
+| Rihan        | 60,00 |              16,1 ms |
+| Zakuro       | 60,00 |              16,5 ms |
+| Melody       | 60,00 |              15,0 ms |
+| Basho        | 60,00 |              13,3 ms |
+| Camilla      | 60,00 |              16,0 ms |
+| Halkenburg   | 60,00 |              15,7 ms |
+| Gel          | 60,00 |              16,3 ms |
+| Lynch        | 60,00 |              14,5 ms |
+| Luini        | 60,00 |              14,5 ms |
+| Bill         | 60,00 |              15,9 ms |
+| Furykov      | 60,00 |              16,5 ms |
+| Cluck        | 60,00 |              15,5 ms |
+| Beyond       | 60,00 |              15,9 ms |
+| Longhi       | 60,00 |              16,3 ms |
+| Musse        | 60,00 |              18,9 ms |
+| Padaille     | 60,00 |              15,5 ms |
+| Sayird       | 60,00 |              15,9 ms |
+| Terebellum   | 60,00 |              15,8 ms |
+| Voconte      | 60,00 |              15,4 ms |
+| Yokotani     | 60,00 |              16,4 ms |
+
+Les **5 489 tests ciblés** passent dans 29 fichiers : roster, P2, Zetsu, commandes
+nommées, protocoles, combos, défense, Nen, séquences particulières et replays.
+Le typage du périmètre et le build de production passent aussi après intégration
+des dernières caméras. Les vrais endpoints sont vérifiés sur six confrontations
+supplémentaires et leurs deux places privées.
+
+Les données sont conservées dans
+`ui-tests/fighting-response/reference/roster-2026-11-16.json`. Les limites de la
+méthode et les empreintes des traces y figurent avec les conditions d’alimentation.
+
+## Mesures de référence initiales
 
 Sur Apple M5 / 16 Go, Chrome 157 avec ANGLE Metal, le passage intégré produit :
 

@@ -4,7 +4,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 export type ChainStage = 0 | 1 | 2 | 3 | 4
 export interface ChainMotion {
   stage: ChainStage
-  mode: 'attack' | 'jail' | 'drain' | 'healing'
+  mode: 'attack' | 'jail' | 'drain' | 'healing' | 'dowsing'
   extension: number
   reach: number
 }
@@ -20,6 +20,8 @@ const STAGES: Record<string, ChainStage> = {
 export function kurapikaChainMotions(state: FightState, side: FightSide): ChainMotion[] {
   const target = state[side === 'player' ? 'opponent' : 'player']
   const motions = maintainedChains(target, side)
+  if (state[side].dowsingSession)
+    motions.push({ stage: 0, mode: 'dowsing', extension: 1, reach: 0 })
   const attack = attackChain(state[side])
   if (attack && !motions.some((held) => held.stage === attack.stage)) motions.push(attack)
   return motions

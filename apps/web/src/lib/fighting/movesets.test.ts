@@ -120,10 +120,15 @@ describe('wave one movesets', () => {
     const hisoka = movesetFor('hisoka')!
     expect(kurapika.combos).not.toEqual(hisoka.combos)
     expect(moveForSlot('kurapika', 'standingHeavy')?.cancelInto).toEqual([
+      'kurapika:lowHeavy',
+      'kurapika:forwardHeavy',
       'kurapika:forwardSpecial',
     ])
-    expect(moveForSlot('kurapika', 'backHeavy')?.cancelInto).toEqual(['kurapika:forwardSpecial'])
-    expect(kurapika.combos.every((route) => route.length <= 3)).toBe(true)
+    expect(moveForSlot('kurapika', 'backHeavy')?.cancelInto).toEqual([
+      'kurapika:standingHeavy',
+      'kurapika:forwardSpecial',
+    ])
+    expect(kurapika.combos.every((route) => route.length <= 5)).toBe(true)
   })
 
   it('makes Dowsing Chain Kurapika’s standard weapon', () => {

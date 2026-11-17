@@ -1,4 +1,5 @@
-import { witnessedHatsu } from './nenWitness'
+import { speakPaperWords } from './kallutoListening'
+import { witnessedHatsuState } from './nenWitness'
 import { canStartFighterAttack } from './fighterAttacks'
 import {
   confineCrossGame,
@@ -20,11 +21,13 @@ export function performCrossGameAction(options: AuraAttackOptions): FightState |
   if (!crossGameCanWarn(state, side)) return state
   if (!canStartFighterAttack(state[side], kind, moveId)) return state
   const targetSide = side === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
+  const spoken = speakPaperWords(state, side, 'Ne bouge plus.')
+  if (spoken.phase !== 'fighting') return spoken
+  const target = spoken[targetSide]
   return {
-    ...state,
+    ...spoken,
     [side]: {
-      ...state[side],
+      ...spoken[side],
       aura: state[side].aura - CROSS_GAME_COST,
       crossGameCardFrames: CROSS_GAME_DISPLAY,
       blocking: false,
@@ -43,7 +46,7 @@ export function performCrossGameAction(options: AuraAttackOptions): FightState |
       },
       hatsuEffects: {
         ...target.hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'mizaistom' }),
+        ...witnessedHatsuState(state, { side, source: 'mizaistom' }),
       },
     },
   }

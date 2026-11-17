@@ -1,3 +1,6 @@
+import { ownsBungeeGum } from '../hisokaArsenal'
+import { chrolloAbilityActive } from '../chrolloAbilityActive'
+import { advanceGumArsenal } from '../hisokaArsenal'
 import { categoryPower } from '../nenCategories'
 import { chainAbilitySealed } from '../kurapika'
 import { attackPhase } from '../frameData'
@@ -31,12 +34,15 @@ export const hisokaHatsu: FighterHatsu = {
       bungeeGum: { owner: side, target: defenderSide, hidden: concealed, retracting: false },
     }
   },
-  onFrame: (state) => reelIn(SIDES.reduce(advanceTechnique, state)),
+  onFrame: (state) => advanceGumArsenal(reelIn(SIDES.reduce(advanceTechnique, state))),
 }
 
 function advanceTechnique(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
-  if (fighter.textureSurprise && !hisokaNenActive(fighter))
+  if (
+    fighter.textureSurprise &&
+    (!hisokaNenActive(fighter) || !chrolloAbilityActive(fighter, 'hisoka:downSpecial'))
+  )
     return { ...state, [side]: { ...fighter, textureSurprise: undefined } }
   const pending = activeTechnique(fighter)
   if (!pending || !hisokaTechniqueAllowed(state, side, pending.attack.moveId)) return state
@@ -95,7 +101,7 @@ function retractionInterrupted(owner: ArcadeFighter): boolean {
 
 function gumUnavailable(owner: ArcadeFighter, target: ArcadeFighter): boolean {
   return (
-    !hisokaNenActive(owner) ||
+    !ownsBungeeGum(owner) ||
     chainAbilitySealed(owner, 'hisoka:neutralSpecial') ||
     target.health <= 0
   )

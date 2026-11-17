@@ -1,3 +1,4 @@
+import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { releaseLuiniAnchor } from './luiniSpatial'
 import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
@@ -5,7 +6,7 @@ import { chrolloHasActivePage, type ChrolloPage } from './chrolloBook'
 import type { ArcadeFighter, FighterHatsuEffects, FightSide, FightState } from './types'
 
 type EffectKey = {
-  [K in keyof FighterHatsuEffects]: FighterHatsuEffects[K] extends number ? K : never
+  [K in keyof FighterHatsuEffects]-?: FighterHatsuEffects[K] extends number ? K : never
 }[keyof FighterHatsuEffects]
 
 /** Optional copied states keep the book independent of native fighters' module lifecycles. */
@@ -58,9 +59,10 @@ function clearPageEffects(options: {
   side: FightSide
   page: ChrolloPage
 }): FightState {
-  const { state, side, page } = options
+  const { state, side } = options
+  const page = options.page.split(':')[0] as ChrolloPage
   const targetSide = side === 'player' ? 'opponent' : 'player'
-  let owner = clearEffects(state[side], OWN_EFFECTS[page] ?? [])
+  let owner = clearHisokaPage(clearEffects(state[side], OWN_EFFECTS[page] ?? []), page)
   owner = endCopiedObservation(owner, page)
   if (page === 'padaille') owner = { ...owner, padailleTool: undefined }
   if (page === 'hanzo') owner = endCopiedProjection(owner)
@@ -76,9 +78,12 @@ function clearPageEffects(options: {
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
-  if (page === 'kalluto' && fighter.kallutoPaper)
+  if (
+    page === 'kalluto' &&
+    fighter.kallutoPaper &&
+    !chrolloAbilityActive(fighter, 'kalluto:backSpecial')
+  )
     return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
-  if (page === 'padaille') return { ...fighter, padailleTool: undefined }
   return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
 }
 
@@ -128,4 +133,17 @@ function endCopiedPainPacker(fighter: CopiedFighter, page: ChrolloPage): CopiedF
     }
   }
   return fighter
+}
+
+function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFighter {
+  if (page !== 'hisoka') return fighter
+  return {
+    ...fighter,
+    textureSurprise: chrolloAbilityActive(fighter, 'hisoka:downSpecial')
+      ? fighter.textureSurprise
+      : undefined,
+    gumWoundSeals: chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
+      ? fighter.gumWoundSeals
+      : undefined,
+  }
 }

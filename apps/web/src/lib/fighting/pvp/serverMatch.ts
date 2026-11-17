@@ -17,13 +17,20 @@ export class AuthoritativeClashMatch {
   private sequences = { player: 0, opponent: 0 }
   private applied = { player: 0, opponent: 0 }
   private appliedTick = { player: 0, opponent: 0 }
-  private receipts: Partial<Record<FightSide, string>> = {}
+  private receipts: Record<FightSide, Map<number, string>> = {
+    player: new Map(),
+    opponent: new Map(),
+  }
   private inputAt = { player: 0, opponent: 0 }
   tick = 0
+  private inputEpoch = 0
   private practice = createMatchPractice()
   constructor(private current: FightState) {}
   snapshot(): FightState {
     return structuredClone(this.current)
+  }
+  get roundNumber() {
+    return this.current.roundNumber
   }
   replaceRound(state: FightState) {
     this.current = state
@@ -33,7 +40,11 @@ export class AuthoritativeClashMatch {
     return this.sequences[side]
   }
   acknowledgement(side: FightSide) {
-    return { appliedSequence: this.applied[side], appliedAtTick: this.appliedTick[side] }
+    return {
+      inputEpoch: this.inputEpoch,
+      appliedSequence: this.applied[side],
+      appliedAtTick: this.appliedTick[side],
+    }
   }
   summary() {
     return this.practice.snapshot()
@@ -44,8 +55,7 @@ export class AuthoritativeClashMatch {
     now: number,
   ): 'accepted' | 'duplicate' | 'sequence' | 'busy' {
     const signature = JSON.stringify(packet)
-    if (packet.sequence === this.sequences[side] - 1 && this.receipts[side] === signature)
-      return 'duplicate'
+    if (this.receipts[side].get(packet.sequence) === signature) return 'duplicate'
     if (packet.sequence !== this.sequences[side]) return 'sequence'
     if (this.pending[side].length + packet.commands.length > 16) return 'busy'
     this.inputs[side] = packet.input
@@ -53,11 +63,14 @@ export class AuthoritativeClashMatch {
     this.pending[side].push(
       ...packet.commands.map((command) => ({ command, sequence: packet.sequence })),
     )
-    this.receipts[side] = signature
+    this.receipts[side].set(packet.sequence, signature)
+    if (this.receipts[side].size > 64)
+      this.receipts[side].delete(this.receipts[side].keys().next().value!)
     this.sequences[side] += 1
     return 'accepted'
   }
   release() {
+    this.inputEpoch++
     this.pending = { player: [], opponent: [] }
     this.inputs = { player: 0, opponent: 0 }
     for (const side of SIDES) this.acknowledge(side)

@@ -5,6 +5,7 @@ import { setTrainingDummy } from './trainingSession'
 import { performTrainingAction } from './trainingAction'
 import { tickFight } from './engine'
 import { EMPTY_INPUT, type FightState } from './types'
+import { hasDuelComboProfile } from './duelComboProfiles'
 
 function step(state: FightState) {
   return tickFight(state, EMPTY_INPUT, {
@@ -69,6 +70,14 @@ describe.each(COMBAT_FIGHTERS)('%s pressure gives the defender a turn', (fighter
     state = step(step(state))
     const attempted = performTrainingAction({ state, side: 'player', action: 'heavy' })
     expect(attempted.player.attack?.moveId).toBe(`${fighter}:standingLight`)
-    expect(attempted.commandFeedback?.player?.outcome).toBe('refused')
+    expect(attempted.commandFeedback?.player?.outcome).toBe(
+      hasDuelComboProfile(fighter) ? 'buffered' : 'refused',
+    )
+    state = attempted
+    for (let frame = 0; frame < 60; frame++) {
+      state = step(state)
+      expect(state.player.attack?.kind).not.toBe('heavy')
+    }
+    expect(state.player.bufferedAttack).toBeNull()
   })
 })

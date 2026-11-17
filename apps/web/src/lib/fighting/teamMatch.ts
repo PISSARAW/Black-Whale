@@ -1,3 +1,4 @@
+import { settleTeamBodyOutcome } from './teamOutcome'
 import { beginFight, createFight, nextRound, performMove, tickFight } from './engine'
 import { FIGHTING_ROSTER } from './roster'
 import { FIXED_STEP } from './fightClock'
@@ -8,7 +9,7 @@ import {
   type FightSide,
   type FightState,
 } from './types'
-import { teamLiving, type TeamMatch, type TeamSeat } from './teamTypes'
+import { type TeamMatch, type TeamSeat } from './teamTypes'
 import { atTeamGate, teamEntry, teamRelayReady } from './teamRelayRules'
 import type { FightEnvironment } from './fightEnvironment'
 
@@ -148,20 +149,13 @@ export function tickTeamFight(
   return { ...settleTeamRound(next), frameAccumulator: budget }
 }
 function settleTeamRound(state: FightState): FightState {
-  if (state.phase !== 'finished') return state
-  const team = structuredClone(state.teamMatch!)
-  for (const side of SIDES) {
-    // Timeout/technical defeat eliminates the actual body too; no extra reserve from a relay.
-    if (state.winner === other(side) || state.winner === 'draw')
-      team.seats[side].members[team.seats[side].active].health = 0
-  }
-  const alive = SIDES.filter((side) => teamLiving(team.seats[side]) > 0)
-  team.winner = alive.length === 2 ? null : (alive[0] ?? 'draw')
-  return { ...state, teamMatch: team }
+  return settleTeamBodyOutcome(state)
 }
 export function nextTeamRound(state: FightState): FightState {
   if (!state.teamMatch || state.phase !== 'finished' || state.teamMatch.winner) return state
-  const team: TeamMatch = structuredClone(state.teamMatch)
+  state = settleTeamBodyOutcome(state)
+  if (state.teamMatch!.winner) return state
+  const team: TeamMatch = structuredClone(state.teamMatch!)
   const bodies = {} as Pick<FightState, 'player' | 'opponent'>
   for (const side of SIDES) {
     const seat = team.seats[side]

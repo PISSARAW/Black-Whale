@@ -1,7 +1,14 @@
+import { performLegacyThrow } from './legacyThrow'
+import { judgmentActionBreach } from './judgmentAction'
+import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
+import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
+import { nativeArsenalAiAction } from './arsenalAiAction'
+import { performOpponentArsenalMove } from './arsenalAiNen'
 import { simulateClashFrame } from './fightFrameSimulation'
 import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
+import { flushBufferedCancel } from './bufferedCancel'
 import { nenActionAllowed } from './nenActionRules'
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
 import { advanceEasterEggs } from './easterEggs'
@@ -163,7 +170,12 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   state = advancePredatorClock(state)
   if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
-  if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
+  if (state.hitstop > 0)
+    return advanceRetrospectiveHitstop({
+      ...state,
+      frame: state.frame + 1,
+      hitstop: state.hitstop - 1,
+    })
   state = advancePreparation(state, { player: input, opponent: opponentInput })
   state = readArenaInputs(state, { player: input, opponent: opponentInput }, (current, side) =>
     performArenaAction(current, side, performAuraAttack),
@@ -324,7 +336,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
   if (override) return override
   const move = routedFightMove(state[side], selected)
   if (!move) {
-    if (action === 'throw') return performLegacyThrow(state, side)
+    if (action === 'throw') return performLegacyThrow(state, side, performAuraAttack)
     if (action === 'finisher') return state
     return performAuraAttack({
       state,
@@ -348,6 +360,8 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
+  const breach = judgmentActionBreach(options)
+  if (breach) return breach
   options = thetaFirearmOptions(options)
   return resolveMoonlightAction(
     options.state,
@@ -404,6 +418,10 @@ function contextualOpponentAttack(state: FightState): FightState {
 function ordinaryOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
+  const retrospective = retrospectiveAiAction(planned, performAuraAttack)
+  if (retrospective) return retrospective
+  const native = nativeArsenalAiAction(planned, performAuraAttack)
+  if (native) return native
   const terrain = opponentTerrainAction(planned)
   if (terrain) return terrain
   const [rolled, chance] = randomValue(planned)
@@ -413,14 +431,10 @@ function ordinaryOpponentAttack(state: FightState): FightState {
   const style = fightingStyle(rolled.opponent.id)
   const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
   if (movesetAttack) {
-    return performAuraAttack({
-      state: rolled,
-      side: 'opponent',
-      kind: movesetAttack.kind,
-      variant: movesetAttack.variant,
-      moveId: movesetAttack.id,
-      auraCharged: false,
-    })
+    return performOpponentArsenalMove(
+      { state: rolled, move: movesetAttack, roll: chance },
+      performAuraAttack,
+    )
   }
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),
@@ -456,6 +470,8 @@ export function displayPose(fighter: ArcadeFighter): FighterPose {
 }
 
 function flushBuffered(state: FightState, side: FightSide): FightState {
+  const canceled = flushBufferedCancel(state, side, performAuraAttack)
+  if (canceled) return canceled
   const fighter = state[side]
   const intent = fighter.bufferedAttack
   if (!intent || fighter.attack || !canAct(fighter)) return state
@@ -470,18 +486,5 @@ export function performThrow(state: FightState, side: FightSide): FightState {
   if (state.catsName) return state
   const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
   if (move) return performMove({ state, side, action: 'throw' })
-  return performLegacyThrow(state, side)
-}
-
-function performLegacyThrow(state: FightState, side: FightSide): FightState {
-  const fighter = state[side]
-  if (fighter.y > 0) return state
-  if (!canMove(fighter)) return state
-  return performAuraAttack({
-    state,
-    side,
-    kind: 'heavy',
-    variant: 'throw',
-    auraCharged: false,
-  })
+  return performLegacyThrow(state, side, performAuraAttack)
 }

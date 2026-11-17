@@ -21,6 +21,7 @@ export function installFrameProbe() {
   let enabled = false
   let renderer: WebGLRenderer | null = null
   let samples: Sample[] = []
+  let droppedSamples = 0
   let gpuSupported = false
   let gpuDisjoint = 0
   const pending: Array<{ query: WebGLQuery; sample: Sample }> = []
@@ -63,6 +64,10 @@ export function installFrameProbe() {
         row.count++
         row.total += work
         row.max = Math.max(row.max, work)
+        if (id === render && renderer && samples.length >= LIMIT) {
+          droppedSamples++
+          if (query && gl) gl.deleteQuery(query)
+        }
         if (id === render && renderer && samples.length < LIMIT) {
           if (previous) {
             const sample = {
@@ -94,6 +99,7 @@ export function installFrameProbe() {
     reset() {
       renderTime = null
       samples = []
+      droppedSamples = 0
       callbacks = {}
       gpuDisjoint = 0
       previous = 0
@@ -105,6 +111,7 @@ export function installFrameProbe() {
     result() {
       return {
         samples: samples.slice(),
+        droppedSamples,
         callbacks,
         renderCallback: render,
         gpuSupported,

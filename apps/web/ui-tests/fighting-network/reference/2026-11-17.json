@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-17",
+  "ruleset": "clash-pvp-5:clash-combat-5",
+  "evidence": "deterministic-application-network-tests",
+  "success": true,
+  "tests": 379,
+  "passed": 379,
+  "failed": 0,
+  "suites": [
+    {
+      "file": "apps/web/src/lib/fighting/pvp/controlEpoch.test.ts",
+      "status": "passed",
+      "tests": 85,
+      "durationMs": 818.525146484375
+    },
+    {
+      "file": "apps/web/src/lib/fighting/pvp/predictionNetwork.test.ts",
+      "status": "passed",
+      "tests": 280,
+      "durationMs": 255107.41137695312
+    },
+    {
+      "file": "apps/web/src/lib/fighting/pvp/reconciliationSafety.test.ts",
+      "status": "passed",
+      "tests": 7,
+      "durationMs": 3149.791748046875
+    },
+    {
+      "file": "apps/web/src/lib/fighting/pvp/snapshotStream.test.ts",
+      "status": "passed",
+      "tests": 7,
+      "durationMs": 50.779541015625
+    }
+  ],
+  "profiles": {
+    "rttMs": [0, 50, 100, 150, 300],
+    "referenceOrderedPairs": 16,
+    "rosterRotatingPairs": 40,
+    "seatEpochCases": 80,
+    "suspensionMs": 3101,
+    "abandonmentMs": 30001,
+    "faults": [
+      "jitter",
+      "duplicate receipts",
+      "skipped private views",
+      "late upload after resume",
+      "missed interruption views",
+      "silent SSE stream"
+    ]
+  },
+  "browser": {
+    "passed": true,
+    "contexts": 2,
+    "widths": [1440, 390, 320],
+    "webgl": false,
+    "oldEpochHttpStatus": 409,
+    "oldEpochError": "STALE_INPUT",
+    "output": "/tmp/black-whale-step4-browser"
+  },
+  "sourceSha256": {
+    "apps/web/scripts/check-fighting-pvp.mjs": "4a48634e3570907ae9e31e71425d24457a3470badea1f12a5001715e9946bf4b",
+    "apps/web/scripts/check-fighting-response-endpoint.mjs": "2194bb7e39eae0d579daa8556807e69bcc8fef5d1cbaf6c6055c0d48bfd08fea",
+    "apps/web/src/lib/components/fighting/FightPvpStatus.svelte": "57a8d5857f2d4e380c61fba597acf3dafc311580468450ab87204a12f3c4aaff",
+    "apps/web/src/lib/fighting/pvp/acknowledgement.test.ts": "c5524383aa3d07ba06906f0cddd515def1b6ff6c469a341ab95e738f7427aa61",
+    "apps/web/src/lib/fighting/pvp/client.ts": "645bf7545f0eed8c725364c6801cb16d986d23524c6e2cb062579725d2e44025",
+    "apps/web/src/lib/fighting/pvp/clientView.ts": "1fc68593329f945ea6eff6d484c1c2fc2456a897028a37ecfbfbdb097e853745",
+    "apps/web/src/lib/fighting/pvp/controlEpoch.test.ts": "9d5fc929873f12db76f4e67e140016430762da048508ec53aba115d774cbd9a8",
+    "apps/web/src/lib/fighting/pvp/controlGate.ts": "abfbb018a97dbe67e676af71554749d621cc6b5cfedbba4fdb4d0b8bf97b4aab",
+    "apps/web/src/lib/fighting/pvp/controlUpload.ts": "9a9f0cbc1373fb4e86fedd10df97664bcad93e23630b12f54ae7081e98ac7de9",
+    "apps/web/src/lib/fighting/pvp/inputReceipt.ts": "f79440983bf211dc398faaa693205c28f2e953ace75c46a017a8ad1d999bef72",
+    "apps/web/src/lib/fighting/pvp/prediction.ts": "2df5f2c2ecda83350ba3f07d957bc87601c4f5c29dc2ebe60951aeb00597b01c",
+    "apps/web/src/lib/fighting/pvp/predictionNetwork.test.ts": "ab31b2f69752fd0c4d3d4f9d14d77aa25e04563eee5b1314e5158798aff1c930",
+    "apps/web/src/lib/fighting/pvp/reconciliationSafety.test.ts": "79586fa0944753600ff9a640a7dd2a4e6556836820235f8a9508d2af5ed6fc4f",
+    "apps/web/src/lib/fighting/pvp/serverMatch.ts": "fc7073d187ee22bd565989a1ca66617d985f82017398c087c178d89f02b103d3",
+    "apps/web/src/lib/fighting/pvp/snapshotStream.test.ts": "e3888da977ac1852a2b972099b6ddab715047d1c1bb8035d1cc073f423d67500",
+    "apps/web/src/lib/fighting/pvp/snapshotStream.ts": "7b2e2ee8cf8f3e4c50046dfe31046cc382617a029d640d0be2862b4a15d78eaa",
+    "apps/web/src/lib/fighting/pvp/types.ts": "0d1cf80ed675c65dc5cadab4015008e976c38e05425d79ac4ce29ac40aae1aac",
+    "apps/web/src/lib/server/clashPvp.ts": "44797e98d99bd6b96d651deba2966bc5c123b5740bc82539bd10389ad0cb2600",
+    "apps/web/src/lib/server/clashPvpHttp.test.ts": "8fe59277b360789928c29c593e6654b9cdb6bd028d04956768771f2a7363f845",
+    "apps/web/src/lib/server/clashPvpHttp.ts": "6a870f091b6296c6f44bc87bfe6145255dc9e277d841e3a317bbf308395ef71d",
+    "apps/web/src/lib/server/clashPvpInputs.test.ts": "ea1d4d89ce55102539a36d48b70e28a58d43b17d3013861c39bf9a6ba4d5235a",
+    "apps/web/src/routes/fighting/pvp/PvpDuel.svelte": "cf1e99c29394408efa405944098469db6f7ee747fbc03166a20a23777302d3a9"
+  },
+  "limits": {
+    "fullTwoPlayerRollback": false,
+    "realInternet": false,
+    "physicalLatency": false,
+    "gpuPerformanceMeasured": false
+  },
+  "isolatedValidation": {
+    "baseCommit": "33c7df36",
+    "scope": "base commit plus step 4 source overlay; excludes concurrent combo work",
+    "success": true,
+    "files": 18,
+    "tests": 3820,
+    "passed": 3820,
+    "failed": 0,
+    "typecheck": {
+      "errors": 0,
+      "warningsOutsideNetwork": 4,
+      "warningFile": "apps/web/src/routes/infiltration/+page.svelte"
+    },
+    "lintOfStep4Files": "passed"
+  },
+  "productionApi": {
+    "passed": true,
+    "duels": ["kurapika/hisoka", "hisoka/chrollo", "chrollo/benjamin", "benjamin/kurapika"],
+    "bothPrivateSeats": true,
+    "privateSse": true,
+    "appliedAcknowledgements": true,
+    "temporaryServerStopped": true
+  },
+  "globalValidation": {
+    "build": "passed",
+    "typecheck": "passed after concurrent fixes",
+    "ratchet": {
+      "passed": 17
+    },
+    "docLint": "passed",
+    "tests": "failed in concurrent combo work",
+    "lint": "6 complexity errors outside step 4 at last run",
+    "testFailures": [
+      "movesets.test.ts: 1 failure in first pass; passed on recheck",
+      "clashLearning.test.ts: 1 failure",
+      "duelRules.test.ts: 2 failures"
+    ],
+    "logs": "/tmp/black-whale-step4-*"
+  }
+}

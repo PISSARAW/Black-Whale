@@ -5,5 +5,5 @@ export const longhiHatsu: FighterHatsu = {
   id: 'longhi',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: advanceMoonlightContract,
+  onFrame: (state) => advanceMoonlightContract(state),
 }

@@ -1,6 +1,6 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { enTouchesSegment, gyoSight } from './nenPerception'
-import { chrolloPageForMove } from './chrolloBook'
+import { chrolloCopiedMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BUNGEE_REST_DISTANCE = 8
@@ -9,8 +9,10 @@ export type HisokaTechnique = 'attach' | 'recall' | 'rebound' | 'texture' | 'fin
 /** Skill Hunter replays the attachment, never an unrelated Hisoka move. */
 export function hisokaTechnique(fighter: ArcadeFighter, moveId?: string): HisokaTechnique | null {
   if (fighter.id === 'chrollo')
-    return chrolloPageForMove(fighter, moveId) === 'hisoka' ? 'attach' : null
-  if (fighter.id !== 'hisoka') return null
+    return nativeHisokaTechnique(chrolloCopiedMove(fighter, moveId) ?? '')
+  return fighter.id === 'hisoka' ? nativeHisokaTechnique(moveId) : null
+}
+function nativeHisokaTechnique(moveId?: string): HisokaTechnique | null {
   switch (moveId) {
     case undefined:
     case 'hisoka:neutralSpecial':

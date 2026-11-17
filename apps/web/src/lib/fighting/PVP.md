@@ -1,8 +1,15 @@
 # Clash : PvP privé (phase 7)
 
 La [phase 8](./CAREER.md) ajoute les saisons, le profil, la vue spectateur et des
-secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-3` inclut le ruleset moteur courant ;
+secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-5` inclut le ruleset moteur courant ;
 les descriptions de l’autorité et des conditions de combat ci-dessous restent valables.
+
+L’[étape 4](./STEP4.md) ajoute les générations de commandes après suspension,
+le retour au neutre, le watchdog SSE et les essais jusqu’à 300 ms de RTT simulé.
+
+L’[étape 6](./STEP6.md) utilise ces mêmes salons pour la recherche non classée ou
+classée, les séries au premier à deux matchs et les tournois à résultats serveur.
+Les invitations privées décrites ci-dessous restent accessibles séparément.
 
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
 joueurs. Les quarante personnages, les trois formats, les arènes, les ressources
@@ -24,6 +31,11 @@ en attente par place. Les entrées maintenues expirent après 250 ms sans nouvea
 paquet. Chaque place possède une séquence croissante ; un reçu perdu peut être
 redemandé avec le même paquet sans exécuter ni payer une seconde fois l’action.
 Une réutilisation du numéro avec un autre contenu est refusée.
+
+Les enveloppes HTTP doivent aussi fournir la manche et l’`inputEpoch` courant
+délivré par le serveur. Une ancienne génération est refusée après reprise, même
+dans la même manche. Le client vide alors les intentions anciennes et exige le
+relâchement des commandes ; un ancien reçu ne peut pas acquitter un nouvel envoi.
 
 `pvp/commands.ts` couvre les coups, Emperor Time, appels au corps, Easter Eggs,
 actions nommées de Battle Cantabile, parole, Blinky, papier de Kalluto, Bloody Mary, poème,
@@ -90,25 +102,32 @@ sont ajoutés par la phase 8.
 ## Latence et validation
 
 Le client lit les contrôles sur chaque frame et envoie les entrées sans attendre
-50 ms après la fin d’une requête. Une seule requête de commandes reste en vol ;
-un budget de 20 envois/s et une courte rafale de trois paquets bornent le trafic.
+50 ms après la fin d’une requête. Un pipeline cumulatif maintient au plus quatre requêtes actives et huit paquets
+non confirmés, avec 20 envois/s et une rafale de trois. Les reçus compacts et
+les vues privées confirment les numéros reçus ; le serveur déduplique les lots
+et refuse ceux d’une autre manche. Les garanties et mesures jusqu’au contact
+sont détaillées dans [IMPACT.md](./IMPACT.md).
 Un flux SSE authentifié pousse jusqu’à 30 vues privées/s, indépendamment de
 l’aller-retour des commandes. Le jeton reste dans les en-têtes. Le flux sortant
 ne renouvelle jamais la présence d’un joueur ; le polling HTTP reste le repli si
 le serveur intermédiaire ne prend pas en charge le streaming.
 
 `nextSequence` confirme la réception, `appliedSequence` confirme la consommation
-par le moteur et `appliedAtTick` indique son tick. Le client ignore les révisions
+par le moteur et `appliedAtTick` indique son tick. Toutes les commandes
+sémantiques du roster sont rejouées dans le bac à sable privé ; leurs coûts et
+résultats publiés restent exclusivement ceux du serveur. Le client ignore les révisions
 anciennes et rejoue les intentions non appliquées depuis le dernier état privé
 confirmé. Aucun numéro de frame ni résultat simulé par le client n’est envoyé.
 
-Pour les duels entre Kurapika, Hisoka, Chrollo et Benjamin, une simulation locale
+Pour les duels entre les 40 personnages du roster, une simulation locale
 bornée à douze frames anticipe uniquement le corps contrôlé : déplacement,
 garde et animation de coup. Les petits écarts sont amortis ; interruption,
 nouvelle manche, dégâts ou K.-O. font immédiatement autorité. Après 250 ms sans
-état frais, l’anticipation cesse. Les états complexes de Parallel Future,
-Cat’s Name et les pages de Chrollo hors du périmètre pris en charge reviennent
-à l’affichage confirmé. Les positions publiques adverses sont extrapolées au
+état frais, l’anticipation cesse. Les séquences actives de Parallel Future et Cat’s Name reviennent à l’affichage
+confirmé. Les pages copiées de Chrollo sont prises en charge ; une activation de
+Parallel Future suspend aussi leur simulation provisoire avant de créer une prévision.
+Hanzo anticipe les déplacements d’une projection confirmée ; le changement de corps
+attend le serveur. Les positions publiques adverses sont extrapolées au
 maximum sur deux frames ; aucune action adverse cachée n’est inventée.
 
 Le HUD, le Nen, les coûts, les impacts, les projectiles et les verdicts utilisent

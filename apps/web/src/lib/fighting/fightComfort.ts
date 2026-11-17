@@ -1,7 +1,9 @@
 import { impactPresentation } from './fightImpactPresentation'
+import { FIGHT_GRAPHICS, type FightGraphics } from './fightGraphics'
 import type { FightState, FighterId } from './types'
 
 export interface FightComfort {
+  graphics?: FightGraphics
   shake: 0 | 0.5 | 1
   camera?: 0 | 0.5 | 1
   flashes: boolean
@@ -30,6 +32,7 @@ export function readFightComfort(storage?: Pick<Storage, 'getItem'>): FightComfo
       camera: [0, 0.5, 1].includes(value.camera) ? value.camera : 1,
       flashes: value.flashes,
       highContrast: value.highContrast,
+      ...(FIGHT_GRAPHICS.includes(value.graphics) ? { graphics: value.graphics } : {}),
     }
   } catch {
     return defaultFightComfort()

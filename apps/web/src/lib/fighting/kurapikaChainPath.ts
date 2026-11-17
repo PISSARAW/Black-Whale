@@ -20,7 +20,11 @@ export function kurapikaChainPath(
   const centre = chainChest(options, { state, side: targetSide })
   const direction = new THREE.Vector3(fighter.facing, 0, 0)
   const contact = centre.clone().add(new THREE.Vector3(-fighter.facing * 0.18, 0, 0.15))
-  if (motion.mode === 'healing') {
+  if (motion.mode === 'dowsing') {
+    const swing = dowsingSwing(state, side)
+    contact.copy(start).add(new THREE.Vector3(fighter.facing * 0.12 + swing, -0.65, 0.2))
+    direction.set(0, -1, 0)
+  } else if (motion.mode === 'healing') {
     contact.copy(start).add(new THREE.Vector3(fighter.facing * 0.12, -0.48, 0.2))
     direction.set(0, -1, 0)
   } else if (motion.mode === 'attack') {
@@ -47,4 +51,9 @@ export function kurapikaChainPath(
   }
   points.push(end)
   return { points, stage: motion.stage, direction }
+}
+
+function dowsingSwing(state: FightState, side: FightSide): number {
+  const session = state[side].dowsingSession
+  return session?.swings ? Math.sin((state.frame - (session.readingAt ?? 0)) * 0.28) * 0.22 : 0
 }

@@ -5,6 +5,8 @@ export type NenAccessFailure = 'dead' | 'exhausted' | 'zetsu' | 'sealed' | 'stol
 interface NenAccessOptions {
   allowVoluntaryZetsu?: boolean
   requireReserve?: boolean
+  /** A stolen personal Hatsu does not remove basic Ten, Gyo, En or an independent loan. */
+  requireHatsu?: boolean
 }
 
 /** Access to living, voluntary Nen. Post-mortem effects have their own contract. */
@@ -16,7 +18,7 @@ export function nenAccessFailure(
   if (reserveUnavailable(fighter, options)) return 'exhausted'
   if (zetsuBlocks(fighter, options)) return 'zetsu'
   if (onSealed(fighter)) return 'sealed'
-  return fighter.hatsuEffects.hatsuStolen > 0 ? 'stolen' : null
+  return options.requireHatsu !== false && fighter.hatsuEffects.hatsuStolen > 0 ? 'stolen' : null
 }
 
 export function voluntaryNenAvailable(

@@ -3,20 +3,17 @@ import { decodePvpView } from './clientView'
 export { decodePvpView } from './clientView'
 import { createPvpPrediction } from './prediction'
 import { createSnapshotStream } from './snapshotStream'
+import { createInputPipeline } from './inputPipeline'
+import { createPvpControlGate } from './controlGate'
+import { readPvpInputReceipt } from './inputReceipt'
 import type { FightVisualPrediction } from '../fightVisualPrediction'
-import {
-  PVP_RULESET,
-  pvpSessionKey,
-  type PvpCommand,
-  type PvpInputPacket,
-  type PvpSession,
-  type PvpView,
-} from './types'
+import { PVP_RULESET, pvpSessionKey, type PvpCommand, type PvpSession, type PvpView } from './types'
 import type { FightState } from '../types'
 import { rankingToken } from '../career/ranking'
 import { recordOnlineCareer } from '../career/online'
 
 interface ClientState {
+  neutralRequired: boolean
   view: PvpView | null
   state: FightState | null
   connection: 'connecting' | 'connected' | 'reconnecting' | 'diverged' | 'error' | 'version'
@@ -33,6 +30,7 @@ interface ClientOptions {
 }
 export function createPvpClient(options: ClientOptions) {
   const store = writable<ClientState>({
+    neutralRequired: false,
     view: null,
     state: null,
     connection: 'connecting',
@@ -44,15 +42,27 @@ export function createPvpClient(options: ClientOptions) {
   const transport = options.fetch
   let token = options.storage?.getItem(pvpSessionKey(options.matchId)) ?? ''
   const prediction = createPvpPrediction(clock)
-  let pending: Array<{ command: PvpCommand; id: number }> = [],
-    retry: PvpInputPacket | null = null,
-    stopped = false
-  let retryIds: number[] = []
+  const controls = createPvpControlGate()
+  let stopped = false
   let acceptedAt = 0
-  let lastSend = -Infinity
-  let lastInput = 0
-  let tokens = 3
-  let tokenAt = clock()
+  let polledAt = -Infinity
+  const pipeline = createInputPipeline({
+    now: clock,
+    send: async (packets, signal) => {
+      const receipt = await request(
+        {
+          kind: 'inputs',
+          round: get(store).state?.roundNumber,
+          inputEpoch: get(store).view?.inputEpoch,
+          packets,
+        },
+        signal,
+      )
+      acceptReceipt(receipt)
+    },
+    sent: (packet, ids) => prediction.sent(packet, ids),
+    failed: inputFailure,
+  })
   const authHeaders = () => ({
     authorization: `Bearer ${token}`,
     'x-clash-profile': rankingToken(),
@@ -65,7 +75,7 @@ export function createPvpClient(options: ClientOptions) {
     failed: streamFailure,
     now: clock,
   })
-  async function request(body?: unknown): Promise<unknown> {
+  async function request(body?: unknown, signal?: AbortSignal): Promise<unknown> {
     const start = clock()
     const response = await transport(options.endpoint, {
       method: body ? 'POST' : 'GET',
@@ -75,9 +85,12 @@ export function createPvpClient(options: ClientOptions) {
         ...authHeaders(),
       },
       body: body ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(2500),
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(2500)])
+        : AbortSignal.timeout(2500),
     })
     const value = await response.json()
+    signal?.throwIfAborted()
     if (!response.ok) throw Error(value.error ?? `HTTP_${response.status}`)
     if (!stopped) store.update((current) => ({ ...current, ping: Math.round(clock() - start) }))
     return value
@@ -86,23 +99,45 @@ export function createPvpClient(options: ClientOptions) {
     if (view.matchId !== options.matchId) throw Error('DIVERGED')
     if (!current.view) return true
     if (view.revision <= current.view.revision) return false
-    if (view.side !== current.view.side || view.tick < current.view.tick) throw Error('DIVERGED')
+    if (
+      view.side !== current.view.side ||
+      view.tick < current.view.tick ||
+      view.inputEpoch < current.view.inputEpoch
+    )
+      throw Error('DIVERGED')
     return true
   }
-  function retireReceivedPacket(view: PvpView) {
-    if (!retry || view.nextSequence <= retry.sequence) return
-    retry = null
-    retryIds = []
+  function acceptReceipt(value: unknown) {
+    const current = get(store)
+    if (!current.view || !current.state) throw Error('DIVERGED')
+    const sequence = readPvpInputReceipt(value, {
+      matchId: options.matchId,
+      side: current.view.side,
+      inputEpoch: current.view.inputEpoch,
+      round: current.state.roundNumber,
+      nextSequence: pipeline.stats.nextSequence,
+    })
+    if (sequence !== null) pipeline.acknowledge(sequence)
   }
   function reconcile(state: FightState, view: PvpView) {
+    const previous = get(store).view
+    if (
+      controls.accept(
+        view.inputEpoch,
+        previous?.status === 'playing' || previous?.status === 'interrupted',
+      )
+    ) {
+      pipeline.reset(view.nextSequence)
+      prediction.clear()
+    }
     if (view.status === 'playing') {
+      if (get(store).state?.roundNumber !== state.roundNumber) pipeline.reset(view.nextSequence)
+      pipeline.acknowledge(view.nextSequence)
       prediction.accept(state, view)
       return
     }
     prediction.clear()
-    pending = []
-    retry = null
-    retryIds = []
+    pipeline.reset(view.nextSequence)
   }
   function accept(view: PvpView) {
     if (stopped) return
@@ -110,7 +145,6 @@ export function createPvpClient(options: ClientOptions) {
     const state = validatedState(view)
     if (!validEnvelope(view, current)) return
     acceptedAt = clock()
-    retireReceivedPacket(view)
     reconcile(state, view)
     visuals.set(prediction.current)
     store.update((value) => ({
@@ -118,6 +152,7 @@ export function createPvpClient(options: ClientOptions) {
       view,
       state,
       connection: 'connected',
+      neutralRequired: controls.blocked,
       error: '',
     }))
     recordOnlineCareer(view)
@@ -134,26 +169,37 @@ export function createPvpClient(options: ClientOptions) {
     if (connection === 'reconnecting' && stream.connected && clock() - acceptedAt < 250) return
     prediction.clear()
     if (['diverged', 'version', 'error'].includes(connection)) {
-      pending = []
-      retry = null
-      retryIds = []
+      pipeline.reset(get(store).view?.nextSequence ?? 0)
       stream.stop()
     }
     visuals.set(null)
     store.update((current) => ({ ...current, connection, error: message }))
   }
-  function packetFor(view: PvpView, input: number) {
-    const intents = pending.splice(0, 8)
-    const packet = {
-      sequence: view.nextSequence,
-      input,
-      commands: intents.map((intent) => intent.command),
+  function inputFailure(error: unknown) {
+    const code = error instanceof Error ? error.message : ''
+    if (['SEQUENCE', 'NOT_PLAYING', 'BUSY', 'STALE_INPUT'].includes(code)) {
+      // Keep immutable unreceived commands: a view reconciles any accepted prefix.
+      void refresh()
+      return
     }
-    retryIds = intents.map((intent) => intent.id)
-    prediction.sent(packet, retryIds)
-    return packet
+    failure(error)
+  }
+  function refresh() {
+    if (inFlight) return inFlight
+    polledAt = clock()
+    return exclusive(async () => accept((await request()) as PvpView))
+  }
+  function needsPolling(current: ClientState) {
+    return !stream.connected || current.connection !== 'connected' || clock() - acceptedAt > 250
   }
   let inFlight: Promise<void> | null = null
+  function controlledInput(value: number) {
+    const blocked = controls.blocked
+    const input = controls.input(value)
+    if (blocked !== controls.blocked)
+      store.update((current) => ({ ...current, neutralRequired: controls.blocked }))
+    return input
+  }
   function exclusive(action: () => Promise<void>): Promise<void> {
     if (stopped) return Promise.resolve()
     if (inFlight) return inFlight.then(() => exclusive(action))
@@ -165,29 +211,19 @@ export function createPvpClient(options: ClientOptions) {
     return inFlight
   }
 
-  function urgentInput(input: number) {
-    return pending.length > 0 || input !== lastInput
-  }
-  function transportBusy(current: ClientState) {
-    return stopped || Boolean(inFlight) || !current.view || terminalConnection(current)
-  }
   const api = {
     subscribe: store.subscribe,
     get visualPrediction() {
       return get(visuals)
     },
     queue(command: PvpCommand) {
-      if (
-        get(store).connection === 'connected' &&
-        get(store).view?.status === 'playing' &&
-        pending.length < 8
-      )
-        pending.push({ command, id: prediction.command(command) })
+      if (controls.blocked) return
+      const intent = { ...command }
+      if (get(store).connection === 'connected' && get(store).view?.status === 'playing')
+        pipeline.queue(intent, () => prediction.command(intent))
     },
     release() {
-      pending = []
-      retry = null
-      retryIds = []
+      pipeline.release()
       prediction.clear()
       visuals.set(null)
     },
@@ -195,25 +231,24 @@ export function createPvpClient(options: ClientOptions) {
       const current = get(store)
       if (stopped || current.connection !== 'connected' || current.view?.status !== 'playing')
         return
-      visuals.set(prediction.advance(dt, input))
+      visuals.set(prediction.advance(dt, controlledInput(input)))
     },
     pump(input: number) {
       const current = get(store)
-      if (transportBusy(current) || !current.view) return
+      if (stopped || terminalConnection(current) || !current.view) return
       if (current.connection !== 'diverged') stream.start()
-      const now = clock()
-      tokens = Math.min(3, tokens + Math.max(0, now - tokenAt) * 0.02)
-      tokenAt = now
-      const urgent = urgentInput(input)
-      const interval = current.view.status === 'playing' ? 50 : 250
-      if (tokens < 1 || (!urgent && now - lastSend < interval)) return
-      tokens--
-      lastSend = now
-      lastInput = input
-      void api.step(input)
+      if (current.connection === 'connected' && current.view.status === 'playing')
+        void pipeline.send(controlledInput(input))
+      const interval = current.view.status === 'playing' ? 100 : 250
+      if (needsPolling(current) && clock() - polledAt >= interval) void refresh()
     },
     get predictionStats() {
-      return { ...prediction.stats, streaming: stream.connected }
+      return {
+        ...prediction.stats,
+        neutralRequired: controls.blocked,
+        streaming: stream.connected,
+        transport: pipeline.stats,
+      }
     },
     join() {
       return exclusive(async () => {
@@ -246,26 +281,10 @@ export function createPvpClient(options: ClientOptions) {
       return exclusive(async () => {
         const current = get(store)
         if (terminalConnection(current)) return
-        if ((!retry && current.connection !== 'connected') || current.view?.status !== 'playing') {
-          retry = null
-          pending = []
+        if (current.view?.status === 'playing' && current.connection !== 'diverged')
+          await pipeline.send(controlledInput(input), true)
+        if (!stream.connected || current.connection !== 'connected')
           accept((await request()) as PvpView)
-          return
-        }
-        retry ??= packetFor(current.view, input)
-        try {
-          accept((await request({ kind: 'input', packet: retry })) as PvpView)
-          retry = null
-        } catch (error) {
-          if (
-            error instanceof Error &&
-            ['SEQUENCE', 'NOT_PLAYING', 'BUSY'].includes(error.message)
-          ) {
-            retry = null
-            pending = []
-            accept((await request()) as PvpView)
-          } else throw error
-        }
       })
     },
     leave() {
@@ -275,8 +294,7 @@ export function createPvpClient(options: ClientOptions) {
         stream.stop()
         prediction.clear()
         visuals.set(null)
-        pending = []
-        retry = null
+        pipeline.stop()
         store.update((current) => ({
           ...current,
           view: current.view ? { ...current.view, status: 'abandoned' } : null,
@@ -285,9 +303,7 @@ export function createPvpClient(options: ClientOptions) {
     },
     stop() {
       stopped = true
-      pending = []
-      retry = null
-      retryIds = []
+      pipeline.stop()
       prediction.clear()
       visuals.set(null)
       stream.stop()

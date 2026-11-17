@@ -1,11 +1,13 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from '../nenAccess'
+import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
 import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
+import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
-export const COHORT_WILL_FRAMES = 480
+export { COHORT_WILL_FRAMES } from '../preparationTuning'
 /** How long the supporter occupies the target's body. */
 const POSSESSION_FRAMES = 120
 /** Halkenburg risks his own life at every shot (ch. 400–411). */
@@ -83,8 +85,8 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
   const effects = fighter.hatsuEffects
   const gathers =
     ownsBow(fighter) &&
-    canUseHatsu(fighter.nen) &&
-    effects.hatsuStolen === 0 &&
+    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
+    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
     readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
   const possessed = effects.possessedFrames

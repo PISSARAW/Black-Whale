@@ -1,3 +1,4 @@
+import { settleTeamBodyOutcome } from './teamOutcome'
 import { finishFight } from './combatVerdict'
 import { BIOHAZARD_GRACE } from './biohazard'
 import { releaseBiohazardWounds } from './biohazardWounds'
@@ -26,7 +27,12 @@ export function resolveFightOutcome(state: FightState): FightState {
   const playerLost = lossReason(triggered, 'player')
   const opponentLost = lossReason(triggered, 'opponent')
   if (playerLost && opponentLost)
-    return { ...cleared, phase: 'finished', winner: 'draw', finishReason: playerLost }
+    return settleTeamBodyOutcome({
+      ...cleared,
+      phase: 'finished',
+      winner: 'draw',
+      finishReason: playerLost,
+    })
   if (playerLost) return finishFight(cleared, 'opponent', playerLost)
   return opponentLost ? finishFight(cleared, 'player', opponentLost) : cleared
 }

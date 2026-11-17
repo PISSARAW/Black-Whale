@@ -30,11 +30,23 @@
       'Start the route. Forward / back directions are relative to your fighter.',
     ],
     wait: ['Attends la confirmation de la touche.', 'Wait for the hit confirmation.'],
+    volley: [
+      'Rafale en cours : une seule commande, laisse les balles toucher.',
+      'Barrage in progress: one command, let the bullets land.',
+    ],
     late: [
       'Trop tard pour garantir la suite : réessaie et enchaîne plus tôt.',
       'Too late to guarantee the next hit: retry and continue earlier.',
     ],
     cancel: ['Touche confirmée : enchaîne maintenant.', 'Hit confirmed: continue now.'],
+    'link-wait': [
+      'Liaison : attends la fin du geste avant le coup suivant.',
+      'Link: wait for recovery before the next attack.',
+    ],
+    link: [
+      'Liaison disponible : lance le coup suivant maintenant.',
+      'Link available: start the next attack now.',
+    ],
     blocked: [
       'La garde ou une touche reçue a interrompu l’essai. Réessaie.',
       'A block or received hit interrupted the attempt. Retry.',
@@ -102,7 +114,7 @@
       {#if activeRoute}<p class="route">{routeText(activeRoute.id)}</p>
         <details>
           <summary>{language === 'fr' ? 'Conditions de la route' : 'Route conditions'}</summary>
-          <p>{activeRoute.requirement[index]}</p>
+          <p>{moveInputHint(activeRoute.requirement[index], $bindings)}</p>
         </details>
         {#if activeRoute.kind === 'punish'}<p>
             {language === 'fr'
@@ -122,7 +134,13 @@
       <p class:complete={current.complete} class:failed={current.failed} role="status">
         {cues[current.cue][index]}
       </p>
-      <span>{current.step} / {activeRoute?.moves.length ?? 2}</span>
+      <span
+        >{current.step} / {activeRoute?.moves.length ?? 2}
+        {#if (activeRoute?.hits?.[current.step] ?? 1) > 1}
+          · {language === 'fr' ? 'Impacts de la rafale' : 'Barrage impacts'} : {current.stepHits} / {activeRoute!
+            .hits![current.step]}
+        {/if}
+      </span>
       <div class="actions">
         <button type="button" onclick={() => launch(current!.id)}
           >{language === 'fr' ? 'Réessayer l’exercice' : 'Retry exercise'}</button
@@ -166,6 +184,7 @@
       {#each routes as route (route.id)}<li>
           <strong>{route.title[index]}</strong>
           <p class="route">{routeText(route.id)}</p>
+          <p>{moveInputHint(route.requirement[index], $bindings)}</p>
           <div class="actions">
             <button type="button" onclick={() => launch(route.id)}
               >{language === 'fr' ? 'Pratiquer' : 'Practice'} · {route.title[index]}</button

@@ -20,6 +20,7 @@ const SIDE_FIELDS = new Set([
   'matchWinner',
   'speaker',
   'questioner',
+  'asker',
   'affected',
   'cohorts',
   'recipientSide',
@@ -45,6 +46,17 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.dowsingReading = undefined
+  enemy.judgmentPreset = undefined
+  enemy.heardWords = undefined
+  enemy.hunterInterview = undefined
+  if (enemy.chrolloHistorical)
+    enemy.chrolloHistorical = {
+      ...enemy.chrolloHistorical,
+      phone: undefined,
+      aiPlan: undefined,
+      aiLastUse: undefined,
+    }
   enemy.bodyAndSoulReplies = undefined
   enemy.secretWindow = undefined
   enemy.melodyHearing = undefined
@@ -52,7 +64,12 @@ function redactEnemy(enemy: ArcadeFighter) {
   enemy.bufferedAttack = null
   enemy.predator = enemy.predator ? { ...enemy.predator, known: [], analysis: null } : undefined
   enemy.kallutoPaper = enemy.kallutoPaper ? { ...enemy.kallutoPaper, heard: undefined } : undefined
-  enemy.hatsuEffects = { ...enemy.hatsuEffects, witnessedHatsu: null }
+  enemy.hatsuEffects = {
+    ...enemy.hatsuEffects,
+    witnessedHatsu: null,
+    witnessedAt: undefined,
+    witnessedMoveId: undefined,
+  }
   if (enemy.chrolloBook)
     enemy.chrolloBook = { ...enemy.chrolloBook, pages: [], bookmark: null, page: 0 }
 }
@@ -60,6 +77,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
   redactEnemy(view[other])
+  redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
@@ -82,10 +100,18 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
-  if (enemy.nen.in) enemy.nen = createFightingNen()
+  if (enemy.nen.in) {
+    enemy.nen = createFightingNen()
+    enemy.dowsingSession = undefined
+  }
+  if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null
 }
 export function pvpSnapshot(state: FightState, side: FightSide) {
   const visible = privatePvpState(state, side)
   return { snapshot: encodeFightSnapshot(visible), snapshotHash: fightReplayHash(visible) }
+}
+
+function redactReserves(view: FightState, side: FightSide): void {
+  for (const member of view.teamMatch?.seats[side].members ?? []) redactEnemy(member)
 }

@@ -58,6 +58,9 @@
 <main class="pvp-page">
   <a href={$link('/fighting')}>{language === 'fr' ? 'Retour à Clash' : 'Back to Clash'}</a>
   <h1>Clash · {language === 'fr' ? 'Duel privé' : 'Private duel'}</h1>
+  <a href={$link('/fighting/pvp/online')}
+    >{language === 'fr' ? 'Chercher un adversaire en ligne' : 'Find an online opponent'}</a
+  >
   <a href={$link('/fighting/profile')}
     >{language === 'fr' ? 'Profil et saison PvP' : 'Profile and PvP season'}</a
   >

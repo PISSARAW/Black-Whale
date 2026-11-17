@@ -38,6 +38,10 @@ export interface FighterMove {
   canHitDowned: boolean
   reversalInvulnerableFrames: number
   cancelInto: readonly string[]
+  /** Cancel bounds in frames relative to the attack's first active frame. */
+  cancelWindow?: { start: number; end: number }
+  /** Training hints for recovery links; these never grant a cancel or bypass hitstun. */
+  linkInto?: readonly string[]
 }
 
 export interface FighterMoveset {

@@ -1,6 +1,8 @@
 import { createFightState } from './fightState'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import type { CombatRoute } from './combatRoutes'
+import { prepareCombatRoute } from './combatRouteSetup'
+import { combatRouteScenario } from './combatRouteScenario'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -10,19 +12,20 @@ import {
 } from './types'
 
 export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId): FightState {
+  const preparation = combatRouteScenario(route.setup)
   let state = createFightState(
     route.fighter,
     opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
     {
       mode: 'training',
       formatId: 'knockout',
-      environment: { stageId: 'heavens-arena', arenaInteractions: false },
+      environment: { stageId: 'heavens-arena', arenaInteractions: false, preparation },
     },
   )
   state = {
     ...state,
     phase: 'fighting',
-    player: { ...state.player, x: 44 },
+    player: { ...state.player, x: preparation ? 22 : 44 },
     opponent: { ...state.opponent, x: 50 },
   }
   for (const side of ['player', 'opponent'] as const)
@@ -31,7 +34,7 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
       infiniteAura: false,
       infiniteHealth: false,
     })
-  return setTrainingDummy(state, { behavior: 'guard-after-hit' })
+  return setTrainingDummy(prepareCombatRoute(state, route.setup), { behavior: 'guard-after-hit' })
 }
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {

@@ -4,6 +4,7 @@ import {
   createFight,
   performAttack,
   performAuraAttack,
+  performMove,
   performThrow,
   tickFight,
 } from './engine'
@@ -76,7 +77,12 @@ describe('duel rules', () => {
     expect(state.player.attack?.kind).toBe('heavy')
     expect(performAttack(state, 'player', 'light').player.attack?.kind).toBe('heavy')
     state = active(state)
-    state = performAttack(state, 'player', 'special')
+    state = performMove({
+      state,
+      side: 'player',
+      action: 'special',
+      input: { ...EMPTY_INPUT, right: true },
+    })
     expect(state.player.attack?.kind).toBe('special')
     expect(state.player.attack?.moveId).toBe('kurapika:forwardSpecial')
     expect(state.player.aura).toBe(100 - moveForSlot('kurapika', 'forwardSpecial')!.auraCost)
@@ -85,7 +91,12 @@ describe('duel rules', () => {
     let state = close()
     for (const kind of ['light', 'heavy', 'special'] as const) {
       const sequence = state.impact?.sequence ?? 0
-      state = performAttack(state, 'player', kind)
+      state = performMove({
+        state,
+        side: 'player',
+        action: kind,
+        input: { ...EMPTY_INPUT, right: kind === 'special' },
+      })
       expect(state.player.attack?.kind).toBe(kind)
       let elapsed = 0
       while ((state.impact?.sequence ?? 0) === sequence && elapsed++ < 60) {

@@ -13,7 +13,7 @@ import { machiUtilityMove } from './machiThread'
 import { cyclotronAttackData } from './phinksCyclotron'
 import { isErigeronAttack } from './billSupport'
 import { usesRemotePunch } from './leorioAttack'
-import { chrolloUtilityMove } from './chrolloBook'
+import { chrolloUtilityMove, chrolloCopiedMove } from './chrolloBook'
 import { isKurapikaUtility } from './kurapika'
 import { dolphinActor } from './kurapika'
 import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
@@ -132,9 +132,7 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
-  const source = fighter.attack?.hatsuSource
-  const copied = fighter.id === 'chrollo' && source && source !== 'chrollo'
-  const move = moveById(copied ? `${source}:neutralSpecial` : fighter.attack?.moveId)
+  const move = moveById(frameMoveId(fighter))
   if (move) return blinkyAttackData(movesetAttackData(fighter, move), fighter)
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
@@ -178,14 +176,15 @@ function movesetAttackData(
   move: NonNullable<ReturnType<typeof moveById>>,
 ): AttackFrameData {
   const data = move.tuning
+  const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return {
     ...data,
     guard: move.guard,
     canHitDowned: move.canHitDowned,
     reversalInvulnerableFrames: move.reversalInvulnerableFrames,
-    startup: data.startup + (fighter.attack?.concealed ? 10 : 0),
-    cancelEnd: data.startup + data.active + 6,
+    startup,
+    cancelEnd: move.cancelWindow ? startup + move.cancelWindow.end : data.startup + data.active + 6,
     box: {
       left: 1.4,
       right: data.reach,
@@ -273,8 +272,9 @@ export function isAntiAir(fighter: ArcadeFighter): boolean {
 }
 
 export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
+  if (fighter.clothCapture) return []
   if (fighter.hanzoProjection) return hurtboxes({ ...sleepingBody(fighter), knockdownFrames: 1 })
-  if (fighter.knockdownFrames > 0) {
+  if (fighter.knockdownFrames > 0 || fighter.arsenalSleep) {
     return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]
   }
   const crouch = fighter.crouching ? 4 : 0
@@ -290,6 +290,8 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
 }
 
 export function pushbox(fighter: ArcadeFighter): FightBox {
+  if (fighter.clothCapture)
+    return worldBox(fighter, { left: -0.1, right: 0.1, bottom: 0, top: 0.2 })
   if (fighter.hanzoProjection) return pushbox({ ...sleepingBody(fighter), knockdownFrames: 1 })
   const airborne = fighter.y > 0
   const halfWidth = fighter.knockdownFrames > 0 ? 3.5 : fighter.crouching ? 2.35 : 2.05
@@ -331,4 +333,12 @@ export function worldBox(fighter: ArcadeFighter, box: FightBox): FightBox {
     bottom: fighter.y + box.bottom,
     top: fighter.y + box.top,
   }
+}
+
+function frameMoveId(fighter: ArcadeFighter): string | undefined {
+  const source = fighter.attack?.hatsuSource
+  const copied = fighter.id === 'chrollo' && source && source !== 'chrollo'
+  return copied
+    ? (chrolloCopiedMove(fighter, fighter.attack?.moveId) ?? `${source}:neutralSpecial`)
+    : fighter.attack?.moveId
 }

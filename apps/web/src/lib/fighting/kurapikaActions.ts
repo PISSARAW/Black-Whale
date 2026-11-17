@@ -1,3 +1,6 @@
+import { judgmentActionBreach } from './judgmentAction'
+import { judgmentForbidsNen } from './judgmentRules'
+import { stopCookie } from './cookie'
 import { releasePadailleWeapon } from './padailleWeapon'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { finishBorrowedLuini } from './luiniDolphin'
@@ -9,7 +12,6 @@ import { healthPercent } from './health'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
-import { rangedAuraCost } from './projectiles'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
@@ -38,8 +40,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 export function toggleEmperorTime(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (!canToggleEmperor(state, fighter)) return state
-  if (fighter.judgmentChain) return chainRuleDeath(state, side)
   const chain = fighter.kurapika ?? createKurapika()
+  if (judgmentForbidsNen(fighter) && !chain.emperorTime) return chainRuleDeath(state, side)
   if (chain.emperorTime && chain.held?.loaded) return state
   if (!chain.emperorTime && !kurapikaNenActive(fighter)) return state
   return {
@@ -152,7 +154,8 @@ export function performKurapikaAction(
 ): FightState | null {
   const { state, side, kind, moveId } = options
   if (state.phase !== 'fighting') return state
-  if (violatesJudgment(options)) return chainRuleDeath(state, side)
+  const breach = judgmentActionBreach(options)
+  if (breach) return breach
   if (state[side].id !== 'kurapika') return null
   // U directs an attached Dowsing Chain, never a detached projectile.
   if (kind === 'ranged')
@@ -160,16 +163,6 @@ export function performKurapikaAction(
   if (kind !== 'special') return null
   if (!moveId) return perform({ ...options, moveId: 'kurapika:neutralSpecial' })
   return jailAction(options) ?? dolphinAction(options, perform)
-}
-
-function violatesJudgment(options: AuraAttackOptions): boolean {
-  const { state, side, kind } = options
-  return (
-    Boolean(state[side].judgmentChain) &&
-    (kind === 'special' ||
-      (kind === 'ranged' && rangedAuraCost(state[side].id) > 0) ||
-      options.auraCharged)
-  )
 }
 
 function jailAction({ state, side, kind, moveId }: AuraAttackOptions): FightState | null {
@@ -203,7 +196,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
       },
     }
   if (held.used) {
-    const detached = releasePadailleWeapon(state, side) ?? endDolphinEffect(options, perform)
+    const detached = endDolphinEffect(options, perform)
     return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
   }
   return useDolphin(options, perform)
@@ -221,6 +214,7 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
+  if (state[side].cookie) return stopCookie(state, side)
   const passage = finishBorrowedLuini(options, perform)
   if (passage) return passage
   const blood = finishBorrowedMary(options, perform)
@@ -321,8 +315,19 @@ function canAct(fighter: ArcadeFighter): boolean {
 
 export function kurapikaAiActivation(state: FightState): FightState | null {
   const fighter = state.opponent
-  if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return null
-  if (healthPercent(fighter) >= 70 && !fighter.kurapika?.held) return null
+  if (fighter.id !== 'kurapika') return null
+  const chain = fighter.kurapika
+  const needsEmperor = aiNeedsEmperor(state)
+  // Do not burn lifespan between useful applications; a loaded Dolphin keeps its own lock.
+  if (chain?.emperorTime) {
+    if (needsEmperor || chain.held?.loaded || Math.abs(state.player.x - fighter.x) <= 9) return null
+  } else if (!needsEmperor) return null
   const activated = toggleEmperorTime(state, 'opponent')
   return activated === state ? null : activated
+}
+
+function aiNeedsEmperor(state: FightState): boolean {
+  const held = state.opponent.kurapika?.held
+  if (held && !held.used) return true
+  return healthPercent(state.opponent) < 70 || state.player.chainJail?.owner === 'opponent'
 }

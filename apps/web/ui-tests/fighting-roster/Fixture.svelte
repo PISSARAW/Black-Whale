@@ -3,6 +3,7 @@
   import FightCombatSchool from '$lib/components/fighting/FightCombatSchool.svelte'
   import { createCombatSchool } from '$lib/fighting/combatSchool'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
+  import { combatRoutesFor } from '$lib/fighting/combatRoutes'
   import type { FighterId } from '$lib/fighting/types'
   let player: FighterId = 'kurapika'
   let opponent: FighterId = 'hisoka'
@@ -19,7 +20,7 @@
     language = next
   }
   export function roster() {
-    return FIGHTING_ROSTER.map(({ id, name }) => ({ id, name }))
+    return FIGHTING_ROSTER.map(({ id, name }) => ({ id, name, routes: combatRoutesFor(id).length }))
   }
 </script>
 

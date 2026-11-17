@@ -1,4 +1,5 @@
-import { witnessedHatsu } from './nenWitness'
+import { illumiBodyFree } from './illumiState'
+import { witnessedHatsuState } from './nenWitness'
 import { voluntaryNenAvailable } from './nenAccess'
 import { performLuiniAction } from './luiniSpatial'
 import { PREPARED_COSTS } from './preparationTuning'
@@ -56,7 +57,7 @@ export function performPreparedAction(options: AuraAttackOptions): FightState | 
       ...activated[witness],
       hatsuEffects: {
         ...activated[witness].hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: source }),
+        ...witnessedHatsuState(state, { side, source: source }),
       },
     },
   }
@@ -125,6 +126,7 @@ export function preparedUserAvailable(
 
 function preparedBodyFree(fighter: ArcadeFighter): boolean {
   return (
+    illumiBodyFree(fighter) &&
     fighter.health > 0 &&
     !fighter.attack &&
     fighter.hitStun === 0 &&

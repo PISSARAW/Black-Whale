@@ -6,6 +6,7 @@ import {
 import { LUINI_ROOM_HALF_WIDTH, LUINI_ROOM_HEIGHT } from './luiniSpatial'
 import { buildHumanFigure, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
+import { fighterDefinition } from './roster'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
@@ -28,7 +29,8 @@ export function createPreparationScene(options: EffectSceneOptions) {
     mesh(new THREE.BoxGeometry(...size), color)
 
   function build(entry: PreparedEntity) {
-    if (entry.kind === 'morena' || entry.kind === 'supporter') return human(entry)
+    if (entry.kind === 'morena' || entry.kind === 'supporter' || entry.kind === 'puppet')
+      return human(entry)
     const shared = buildPreparedVisitModel(options, entry)
     if (shared) return shared
     const root = new THREE.Group()
@@ -83,7 +85,11 @@ export function createPreparationScene(options: EffectSceneOptions) {
       hidden: false,
       human: {
         role: morena ? 'morena' : 'fighter',
-        identity: morena ? 'morena-prudo' : 'halkenburg-supporter',
+        identity: entry.copy?.appearance
+          ? fighterDefinition(entry.copy.appearance).modelId
+          : morena
+            ? 'morena-prudo'
+            : 'halkenburg-supporter',
         pose: 'idle',
         aura: 'ten',
       },
@@ -96,7 +102,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
     })
     figure.root.scale.setScalar(0.8)
     figure.root.name = `prepared:${entry.id}`
-    if (!morena) {
+    if (entry.kind === 'supporter') {
       const feather = sphere(0.06, 0xf0e5ac)
       feather.scale.set(1, 2, 0.4)
       feather.position.set(0.12, 0.9, 0.2)
@@ -196,6 +202,10 @@ function backgroundDepth(entry: PreparedEntity): number {
 }
 
 function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity) {
+  if (entry.copy)
+    root.traverse((part) => {
+      if (part.name.startsWith('manga-head:')) part.visible = entry.copy!.headAttached
+    })
   const growth = root.getObjectByName('growth')
   if (growth) growth.scale.setScalar(entry.growth ? 1 : 0.05)
   const panel = root.getObjectByName('door-panel')

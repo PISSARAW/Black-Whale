@@ -32,6 +32,7 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let onExit: () => void
+  let victoryActive = false
   let paused = false,
     message = ''
   let inputs = { player: { ...EMPTY_INPUT }, opponent: { ...EMPTY_INPUT } }
@@ -178,7 +179,7 @@
         state = startTeamFight(state)
       }}>{fr ? 'Commencer la manche' : 'Start round'}</button
     >{/if}
-  {#if state.phase === 'finished'}
+  {#if state.phase === 'finished' && !victoryActive}
     <p role="status">
       {state.teamMatch?.winner
         ? state.teamMatch.winner === 'draw'
@@ -208,6 +209,8 @@
     onEditing={release}
   />
   <FightStage
+    bind:victoryActive
+    victoryPaused={paused}
     {state}
     {language}
     {paused}

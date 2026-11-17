@@ -4,6 +4,7 @@ import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
 import { nenAttackFactor, nenDamageFactor, releaseFocusedAura } from './nen'
 import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
+import { groundedComboStun } from './groundedComboStun'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 
 const GROUND = 0
@@ -72,6 +73,7 @@ function attackDamage(
 }
 
 interface StrikeOptions {
+  melee?: boolean
   fighter: ArcadeFighter
   attacker: ArcadeFighter
   damage: number
@@ -86,7 +88,7 @@ interface StrikeOptions {
 export function strikeDefender(options: StrikeOptions): ArcadeFighter {
   const data = attackData(options.attacker.attack?.kind ?? 'light', options.attacker)
   // Frame data supplies timing/force; the resolved wound already includes defence and scaling.
-  return struckFighter({ ...data, ...options })
+  return struckFighter({ ...data, ...options, melee: true })
 }
 
 export function strikeProjectileDefender(
@@ -150,11 +152,21 @@ function stunState(
 ): Pick<ArcadeFighter, 'hitStun' | 'blockStun' | 'pose' | 'blocking'> {
   const hitStun = options.hitstun + Number(options.counterHit) * 3 + Number(options.wallSplat) * 5
   return {
-    hitStun: options.blocked ? 0 : hitStun,
+    hitStun: options.blocked ? 0 : contactHitstun(options, hitStun),
     blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 : 0,
     pose: options.blocked ? 'guard' : 'hit',
     blocking: options.blocked,
   }
+}
+
+function contactHitstun(options: StrikeOptions, hitstun: number): number {
+  if (!options.melee) return hitstun
+  return groundedComboStun({
+    attacker: options.attacker,
+    defender: options.fighter,
+    hitstun,
+    comboHits: options.comboHits,
+  })
 }
 
 function comboState(

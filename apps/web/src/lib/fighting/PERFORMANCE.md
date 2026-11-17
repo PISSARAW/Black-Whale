@@ -1,5 +1,9 @@
 # Rendu du combat : référence de production
 
+L’[étape 2](./STEP2.md) ajoute trois profils graphiques, le diagnostic Xbox et
+une matrice de charges de Nen avec sessions prolongées. Les mesures historiques
+ci-dessous restent la référence des quatre combattants initiaux.
+
 Le banc mesure Kurapika, Hisoka, Chrollo et Benjamin avec le vrai moteur,
 `FightStage`, le HUD, la caméra et les effets. Les composants Svelte sont compilés
 et minifiés en mode production, puis servis par un serveur de prévisualisation.

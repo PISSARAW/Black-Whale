@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import { FIGHT_LESSONS, type LessonId } from './fightLessons'
+import { FIGHT_CURRICULUM, type LessonId } from './fightLessons'
 import {
   createLessonFight,
   initialLessonProgress,
@@ -27,7 +27,8 @@ export function createFightLessons() {
       const current = get(session)
       if (!current?.complete) return null
       return (
-        FIGHT_LESSONS[FIGHT_LESSONS.findIndex((lesson) => lesson.id === current.id) + 1]?.id ?? null
+        FIGHT_CURRICULUM[FIGHT_CURRICULUM.findIndex((lesson) => lesson.id === current.id) + 1]
+          ?.id ?? null
       )
     },
     exit() {

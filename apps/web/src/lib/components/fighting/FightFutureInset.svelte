@@ -6,6 +6,7 @@
   import type { FightComfort } from '$lib/fighting/fightComfort'
   import type { FightStageId } from '$lib/fighting/stages'
   export let prediction: FutureCameraView
+  export let active = true
   export let rect: CameraDetailRect
   export let comfort: FightComfort
   export let language: 'fr' | 'en'
@@ -25,6 +26,8 @@
 
 <div
   class="prediction-panel"
+  class:dormant={!active}
+  aria-hidden={!active}
   data-camera-detail="prediction"
   data-camera-source="tserriednich"
   data-camera-event="tserriednich.prediction"
@@ -40,6 +43,7 @@
 >
   <div class="view">
     <FightScene
+      {active}
       state={renderState}
       {stageId}
       {language}
@@ -80,6 +84,9 @@
 </div>
 
 <style>
+  .prediction-panel.dormant {
+    visibility: hidden;
+  }
   .prediction-panel {
     position: absolute;
     box-sizing: border-box;

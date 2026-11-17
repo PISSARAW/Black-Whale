@@ -4,6 +4,7 @@ import type { FightState } from '../types'
 export function isCareerDuel(state: FightState): boolean {
   return (
     state.mode !== 'training' &&
+    !state.soloSession &&
     !('replayPractice' in state && state.replayPractice) &&
     !('teamMatch' in state && state.teamMatch)
   )

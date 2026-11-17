@@ -7,7 +7,7 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-3:${REPLAY_RULESET}`
+export const PVP_RULESET = `clash-pvp-5:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -18,6 +18,7 @@ export interface PvpSetup {
 }
 /** A seat is supplied by its authenticated session, never by a client command. */
 export type PvpCommand =
+  | { kind: 'arsenal'; command: import('../retrospectiveTypes').ArsenalCommand }
   | { kind: 'move'; action: MoveAction | 'ranged'; input: number }
   | { kind: 'emperor' | 'call' | 'offer' }
   | { kind: 'easter'; slot: 1 | 2 | 3 | 4 }
@@ -36,6 +37,14 @@ export interface PvpInputPacket {
   input: number
   commands: PvpCommand[]
 }
+/** Receipt only; application, Nen and combat results arrive in the private view. */
+export interface PvpInputReceipt {
+  inputEpoch: number
+  matchId: string
+  side: FightSide
+  nextSequence: number
+  round: number
+}
 export interface PvpSession {
   matchId: string
   token: string
@@ -45,6 +54,8 @@ export interface PvpSession {
 }
 export type PvpStatus = 'waiting' | 'ready' | 'playing' | 'interrupted' | 'finished' | 'abandoned'
 export interface PvpView {
+  /** Server-owned control generation; changes when held/queued controls are released. */
+  inputEpoch: number
   matchId: string
   side: FightSide
   ruleset: string

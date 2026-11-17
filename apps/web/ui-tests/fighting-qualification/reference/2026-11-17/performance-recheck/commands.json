@@ -1,0 +1,820 @@
+{
+  "version": 1,
+  "pass": true,
+  "measuredRuleset": "clash-combat-13",
+  "reference": {
+    "ruleset": "clash-combat-9",
+    "sourceFingerprint": "eb3c0d5a47e229ccbd8b4780f3aef0c2564a4755e4e2862ab08753722c56ac3f",
+    "archiveSha256": "d4e27df52932d61bfd526cc94d145111947103190208e4c2aae3c4a00e416900"
+  },
+  "queueTrials": 882,
+  "queueFailures": [],
+  "frozenRoutes": 96,
+  "checkpoints": true,
+  "linkWindows": [
+    {
+      "fighter": "kurapika",
+      "from": "forwardLight",
+      "to": "standingHeavy",
+      "freeFrame": 25,
+      "lastGuaranteedOffset": 6,
+      "firstFailure": 7,
+      "pass": true,
+      "rows": [
+        {
+          "offset": -1,
+          "startedImmediately": false,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 0,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 1,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 2,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 3,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 4,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 5,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 6,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 7,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": true,
+          "combo": 0,
+          "guaranteed": false
+        }
+      ]
+    },
+    {
+      "fighter": "chrollo",
+      "from": "standingHeavy",
+      "to": "backHeavy",
+      "freeFrame": 37,
+      "lastGuaranteedOffset": 4,
+      "firstFailure": 5,
+      "pass": true,
+      "rows": [
+        {
+          "offset": -1,
+          "startedImmediately": false,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 0,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 1,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 2,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 3,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 4,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 5,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": true,
+          "combo": 0,
+          "guaranteed": false
+        }
+      ]
+    },
+    {
+      "fighter": "phinks",
+      "from": "standingHeavy",
+      "to": "finisher",
+      "freeFrame": 80,
+      "lastGuaranteedOffset": 5,
+      "firstFailure": 6,
+      "pass": true,
+      "rows": [
+        {
+          "offset": -1,
+          "startedImmediately": false,
+          "connected": false,
+          "blocked": false,
+          "combo": null,
+          "guaranteed": false
+        },
+        {
+          "offset": 0,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 1,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 2,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 3,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 4,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 5,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": false,
+          "combo": 3,
+          "guaranteed": true
+        },
+        {
+          "offset": 6,
+          "startedImmediately": true,
+          "connected": true,
+          "blocked": true,
+          "combo": 0,
+          "guaranteed": false
+        }
+      ]
+    }
+  ],
+  "observations": 45402,
+  "windows": [
+    {
+      "id": "route-kurapika-confirm-neutral-right-center-6",
+      "finalHash": "bf141adf",
+      "count": 462,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-low-neutral-right-center-6",
+      "finalHash": "91d95ee0",
+      "count": 420,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-punish-neutral-right-center-6",
+      "finalHash": "8c0b723c",
+      "count": 427,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-air-neutral-right-center-6",
+      "finalHash": "814f8d49",
+      "count": 315,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-economy-neutral-right-center-6",
+      "finalHash": "c2a7adb1",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-carry-neutral-right-center-6",
+      "finalHash": "298e5b67",
+      "count": 518,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-precision-neutral-right-center-6",
+      "finalHash": "f7cba748",
+      "count": 581,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-precision-economy-neutral-right-center-6",
+      "finalHash": "cc643606",
+      "count": 581,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-confirm-interactive-right-center-6",
+      "finalHash": "0e9013c9",
+      "count": 462,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-low-interactive-right-center-6",
+      "finalHash": "71141936",
+      "count": 420,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-punish-interactive-right-center-6",
+      "finalHash": "30c7ec4e",
+      "count": 427,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-air-interactive-right-center-6",
+      "finalHash": "13c22c9f",
+      "count": 315,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-economy-interactive-right-center-6",
+      "finalHash": "32d3feef",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-carry-interactive-right-center-6",
+      "finalHash": "4e8b1da9",
+      "count": 518,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-precision-interactive-right-center-6",
+      "finalHash": "db8b6992",
+      "count": 581,
+      "mismatches": 0
+    },
+    {
+      "id": "route-kurapika-precision-economy-interactive-right-center-6",
+      "finalHash": "a5631fac",
+      "count": 581,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-confirm-neutral-right-center-6",
+      "finalHash": "6571c38c",
+      "count": 546,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-low-neutral-right-center-6",
+      "finalHash": "ffff278a",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-punish-neutral-right-center-6",
+      "finalHash": "804febf7",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-air-neutral-right-center-6",
+      "finalHash": "608cc0e1",
+      "count": 343,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-economy-neutral-right-center-6",
+      "finalHash": "22358f62",
+      "count": 497,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-carry-neutral-right-center-6",
+      "finalHash": "990df3ec",
+      "count": 574,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-power-neutral-right-center-6",
+      "finalHash": "c8861c04",
+      "count": 630,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-power-economy-neutral-right-center-6",
+      "finalHash": "b16b035b",
+      "count": 665,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-confirm-interactive-right-center-6",
+      "finalHash": "52030bae",
+      "count": 546,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-low-interactive-right-center-6",
+      "finalHash": "9c808b08",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-punish-interactive-right-center-6",
+      "finalHash": "03d92b0d",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-air-interactive-right-center-6",
+      "finalHash": "9db38e4b",
+      "count": 343,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-economy-interactive-right-center-6",
+      "finalHash": "993c93c4",
+      "count": 497,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-carry-interactive-right-center-6",
+      "finalHash": "7896ca72",
+      "count": 574,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-power-interactive-right-center-6",
+      "finalHash": "07a12f9a",
+      "count": 630,
+      "mismatches": 0
+    },
+    {
+      "id": "route-benjamin-power-economy-interactive-right-center-6",
+      "finalHash": "5f7f9fc1",
+      "count": 665,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-confirm-neutral-right-center-6",
+      "finalHash": "20730c1a",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-low-neutral-right-center-6",
+      "finalHash": "86daffb5",
+      "count": 413,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-punish-neutral-right-center-6",
+      "finalHash": "1a13dbc9",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-air-neutral-right-center-6",
+      "finalHash": "0323abb5",
+      "count": 287,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-economy-neutral-right-center-6",
+      "finalHash": "97ebe857",
+      "count": 427,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-carry-neutral-right-center-6",
+      "finalHash": "ffe5d697",
+      "count": 483,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-extension-neutral-right-center-6",
+      "finalHash": "e14416e2",
+      "count": 560,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-tether-neutral-right-center-6",
+      "finalHash": "e2d3c9f9",
+      "count": 630,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-confirm-interactive-right-center-6",
+      "finalHash": "e8816554",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-low-interactive-right-center-6",
+      "finalHash": "1fef486b",
+      "count": 413,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-punish-interactive-right-center-6",
+      "finalHash": "8173c9e7",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-air-interactive-right-center-6",
+      "finalHash": "a1c4f5b7",
+      "count": 287,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-economy-interactive-right-center-6",
+      "finalHash": "1a5df251",
+      "count": 427,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-carry-interactive-right-center-6",
+      "finalHash": "aadf7fc1",
+      "count": 483,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-extension-interactive-right-center-6",
+      "finalHash": "dce2b620",
+      "count": 560,
+      "mismatches": 0
+    },
+    {
+      "id": "route-hisoka-tether-interactive-right-center-6",
+      "finalHash": "be268d7b",
+      "count": 630,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-confirm-neutral-right-center-6",
+      "finalHash": "4b9dd1fc",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-low-neutral-right-center-6",
+      "finalHash": "0a9129fb",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-punish-neutral-right-center-6",
+      "finalHash": "0fcd2385",
+      "count": 497,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-air-neutral-right-center-6",
+      "finalHash": "1a920076",
+      "count": 322,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-economy-neutral-right-center-6",
+      "finalHash": "d59ab399",
+      "count": 462,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-carry-neutral-right-center-6",
+      "finalHash": "a99f2f46",
+      "count": 434,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-precision-neutral-right-center-6",
+      "finalHash": "b16b9140",
+      "count": 707,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-low-control-neutral-right-center-6",
+      "finalHash": "98dceaa4",
+      "count": 434,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-confirm-interactive-right-center-6",
+      "finalHash": "a70d120a",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-low-interactive-right-center-6",
+      "finalHash": "d800d14d",
+      "count": 504,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-punish-interactive-right-center-6",
+      "finalHash": "510242ff",
+      "count": 497,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-air-interactive-right-center-6",
+      "finalHash": "e1a05c84",
+      "count": 322,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-economy-interactive-right-center-6",
+      "finalHash": "2a37debb",
+      "count": 462,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-carry-interactive-right-center-6",
+      "finalHash": "d75e698c",
+      "count": 434,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-precision-interactive-right-center-6",
+      "finalHash": "58839fc6",
+      "count": 707,
+      "mismatches": 0
+    },
+    {
+      "id": "route-chrollo-low-control-interactive-right-center-6",
+      "finalHash": "316394be",
+      "count": 434,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-confirm-neutral-right-center-6",
+      "finalHash": "e22fd9a3",
+      "count": 294,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-low-neutral-right-center-6",
+      "finalHash": "1c8e0804",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-punish-neutral-right-center-6",
+      "finalHash": "c476852d",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-air-neutral-right-center-6",
+      "finalHash": "2d3c4ddd",
+      "count": 273,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-economy-neutral-right-center-6",
+      "finalHash": "9697ca21",
+      "count": 413,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-carry-neutral-right-center-6",
+      "finalHash": "d16237c1",
+      "count": 490,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-speed-neutral-right-center-6",
+      "finalHash": "ca6aa968",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-speed-economy-neutral-right-center-6",
+      "finalHash": "8745d254",
+      "count": 595,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-confirm-interactive-right-center-6",
+      "finalHash": "cee23ac5",
+      "count": 294,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-low-interactive-right-center-6",
+      "finalHash": "895f3f92",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-punish-interactive-right-center-6",
+      "finalHash": "c8bbfb03",
+      "count": 448,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-air-interactive-right-center-6",
+      "finalHash": "00f827c3",
+      "count": 273,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-economy-interactive-right-center-6",
+      "finalHash": "5168160f",
+      "count": 413,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-carry-interactive-right-center-6",
+      "finalHash": "5f48c113",
+      "count": 490,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-speed-interactive-right-center-6",
+      "finalHash": "23a54ad2",
+      "count": 455,
+      "mismatches": 0
+    },
+    {
+      "id": "route-feitan-speed-economy-interactive-right-center-6",
+      "finalHash": "5b1816c2",
+      "count": 595,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-confirm-neutral-right-center-6",
+      "finalHash": "9802658d",
+      "count": 516,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-low-neutral-right-center-6",
+      "finalHash": "2a2333c8",
+      "count": 336,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-punish-neutral-right-center-6",
+      "finalHash": "4728d83b",
+      "count": 474,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-air-neutral-right-center-6",
+      "finalHash": "15c34ea5",
+      "count": 282,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-economy-neutral-right-center-6",
+      "finalHash": "1aea3ada",
+      "count": 432,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-carry-neutral-right-center-6",
+      "finalHash": "499eae71",
+      "count": 588,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-precision-neutral-right-center-6",
+      "finalHash": "484c709c",
+      "count": 510,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-charged-neutral-right-center-6",
+      "finalHash": "47b55e8c",
+      "count": 558,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-confirm-interactive-right-center-6",
+      "finalHash": "02181a27",
+      "count": 516,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-low-interactive-right-center-6",
+      "finalHash": "10d3a81e",
+      "count": 336,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-punish-interactive-right-center-6",
+      "finalHash": "45aded2d",
+      "count": 474,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-air-interactive-right-center-6",
+      "finalHash": "9614f29b",
+      "count": 282,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-economy-interactive-right-center-6",
+      "finalHash": "0414b360",
+      "count": 432,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-carry-interactive-right-center-6",
+      "finalHash": "b9c55015",
+      "count": 588,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-precision-interactive-right-center-6",
+      "finalHash": "db1f38c6",
+      "count": 510,
+      "mismatches": 0
+    },
+    {
+      "id": "route-phinks-charged-interactive-right-center-6",
+      "finalHash": "c4831e12",
+      "count": 558,
+      "mismatches": 0
+    }
+  ]
+}

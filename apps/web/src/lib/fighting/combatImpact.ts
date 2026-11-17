@@ -1,3 +1,4 @@
+import { catchBungeeObject } from './hisokaCatch'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
@@ -274,7 +275,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
   )
     return state
-  const captured = captureCuldceptProjectile(state, hit)
+  const captured = captureIncomingProjectile(state, hit)
   if (captured) return captured
   const side = hit.projectile.owner
   const attacker = state[side]
@@ -440,4 +441,8 @@ function impactWallSplat(options: {
     !options.defence.avoided &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
+}
+
+function captureIncomingProjectile(state: FightState, hit: ProjectileHit): FightState | null {
+  return catchBungeeObject(state, hit) ?? captureCuldceptProjectile(state, hit)
 }

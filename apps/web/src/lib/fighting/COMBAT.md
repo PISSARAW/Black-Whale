@@ -6,11 +6,15 @@ et routes sont des réglages de jeu ; ils ne changent pas les conditions canoniq
 des Hatsu. Les mesures historiques ci-dessous concernent les quatre personnages
 de référence.
 
-## Cent soixante routes jouables
+## Trois cent vingt-huit routes jouables
 
 Chaque personnage possède quatre routes et un exercice de défense dans l’Académie.
-Les 144 routes ajoutées passent par les coups physiques ; les seize routes de
-référence ci-dessous conservent leurs préparations de Nen.
+Les quarante personnages ont quatre exemples supplémentaires ; Kurapika et Benjamin
+en ont encore quatre de plus, avec des règles
+de combo indépendantes des exercices : [choix et liaisons](./DUEL_COMBOS.md).
+Les exemples supplémentaires proposent des fins physiques et des techniques
+soumises à leurs coûts et conditions. Les préparations de Nen restent distinctes
+du compteur de combo.
 
 Les directions avant / arrière sont relatives au combattant. Les touches ci-dessous
 sont celles du clavier par défaut ; l’école affiche les commandes remappées.
@@ -38,7 +42,8 @@ des dégâts et la limite aérienne restent applicables.
 
 ## Cancels et défense
 
-Les cancels sur touche suivent les liens déclarés de ces routes. Sur garde, seule
+Les quarante combattants disposent de profils de coups indépendants des exemples.
+Les cancels sur touche suivent les destinations déclarées dans ces profils. Sur garde, seule
 la première attaque légère peut continuer vers le lourd de sa route de confirmation.
 Le lourd bloqué ne peut pas se convertir gratuitement en Hatsu : le défenseur
 retrouve un tour de jeu. Une parade au bon timing interrompt cette pression ; un
@@ -47,19 +52,19 @@ léger raté ne permet pas un cancel anticipé.
 L’école propose quarante exercices de blocage puis punition, un par personnage.
 Le mannequin commence réellement son attaque après une courte préparation.
 La réussite exige un blocage puis une touche marquée `punish` par le moteur,
-pendant la récupération adverse. L’adversaire des exercices de Chrollo et Franklin est Benjamin :
-le lourd d’Hisoka ne laisse pas cette même punition légère garantie.
+pendant la récupération adverse. Tous ces exercices utilisent le lourd de Benjamin,
+dont la récupération offre une vraie fenêtre adaptée à tous les légers du roster.
 
 ## École et laboratoire
 
-Ouvrir « École de combat · 160 routes et défense », choisir un personnage, puis
+Ouvrir « École de combat · 328 routes et défense », choisir un personnage, puis
 « Pratiquer » ou « Démontrer ». Le compteur progresse uniquement sur les contacts
 réels de la bonne attaque, avec un compteur de combo continu. Une mauvaise suite,
 une garde ou la fin du hitstun interrompt l’essai. Les indications distinguent
 confirmation, fenêtre de cancel et saisie tardive.
 
 Les démonstrations passent par les mêmes commandes, coûts et ticks que le joueur ;
-elles ne forcent pas les touches ou la réussite. Les 160 sont validées à des lots
+elles ne forcent pas les touches ou la réussite. Les 328 sont validées à des lots
 de rendu de 120, 60, 30 et 20 Hz. Elles supportent la pause et l’annulation d’une
 commande encore en file. « Terminer l’exercice » rend le laboratoire libre.
 
@@ -68,8 +73,14 @@ aléatoire · confirmation ». La première reste armée même après un combo i
 La seconde choisit sa réponse à chaque nouvelle attaque, de façon déterministe,
 sans consommer le RNG du combat. Ces états se rejouent avec les replays.
 
-Les règles de replay passent à `clash-combat-3` : les anciennes versions ne sont
+Les règles de replay passent à `clash-combat-5` : les anciennes versions ne sont
 pas compatibles avec ces nouveaux timings et sont refusées à l’import.
+
+Le [réglage des échanges de l’étape 3](./STEP3.md) réduit progressivement le
+hitstun après la troisième touche physique au sol. Il évite la répétition infinie
+de légers au coin et conserve les trois premiers contacts des routes déclarées.
+Le laboratoire fournit sept situations et un export local des observations pour
+les parties d’équilibrage ; les essais automatisés ne remplacent pas ces parties.
 
 ## Caméra
 
@@ -88,7 +99,7 @@ La caméra n’écrit jamais dans la simulation, les positions ou les hitboxes.
 
 ## Vérifications
 
-Les 128 cas de routes couvrent les deux orientations, deux distances de départ
+Les 2 624 cas de routes couvrent les deux orientations, deux distances de départ
 et des situations au centre et au coin, contre une garde après le premier coup.
 Les tests supplémentaires couvrent les parades, la fin de pression, les whiffs,
 les exercices de défense, les démonstrations et leur relecture déterministe.

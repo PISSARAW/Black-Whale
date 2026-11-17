@@ -47,9 +47,19 @@ export const ERIGERON: OutsideDuelAbility = {
   reasonEn: 'No support target in this duel.',
 }
 
+export const COOKIE_TREATMENT: OutsideDuelAbility = {
+  id: 'biscuit:cookie',
+  nameFr: 'Cookie · Traitement',
+  nameEn: 'Cookie · Treatment',
+  reasonFr:
+    'Traitement de soutien : corps disponible, proximité et consentement ; Piano Massage exige trente minutes de sommeil.',
+  reasonEn:
+    'Support treatment: available body, proximity and consent; Piano Massage requires thirty minutes of sleep.',
+}
+
 export function outsideDuelAbility(moveId?: string): OutsideDuelAbility | null {
   return (
-    [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION, BEYOND_CURSE, CATS_NAME].find(
+    [LITTLE_EYE, ERIGERON, BIRD_MANIPULATION, BEYOND_CURSE, CATS_NAME, COOKIE_TREATMENT].find(
       (ability) => ability.id === moveId,
     ) ?? null
   )

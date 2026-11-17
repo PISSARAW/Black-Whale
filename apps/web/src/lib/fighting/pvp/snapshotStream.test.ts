@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { PvpView } from './types'
-import { createSnapshotStream } from './snapshotStream'
+import { createSnapshotStream, SNAPSHOT_STREAM_STALE_MS } from './snapshotStream'
 
 async function settle() {
   for (let i = 0; i < 30; i++) await Promise.resolve()
 }
 function connection(options: { accept?: () => void; eventStream?: boolean } = {}) {
+  let now = 1000
   let source!: ReadableStreamDefaultController<Uint8Array>
   const cancel = vi.fn(),
     failed = vi.fn()
@@ -37,7 +38,7 @@ function connection(options: { accept?: () => void; eventStream?: boolean } = {}
     headers: () => ({ authorization: 'Bearer private-seat' }),
     accept,
     failed,
-    now: () => 1000,
+    now: () => now,
   })
   return {
     stream,
@@ -45,10 +46,48 @@ function connection(options: { accept?: () => void; eventStream?: boolean } = {}
     accept,
     failed,
     cancel,
+    time: (ms: number) => {
+      now += ms
+    },
     send: (text: string) => source.enqueue(new TextEncoder().encode(text)),
   }
 }
 describe('private view streaming lifecycle', () => {
+  it('replaces a silent stream without retaining its reader or repeating an accepted event', async () => {
+    const c = connection()
+    c.stream.start()
+    await settle()
+    c.send('data: {"revision":1}\n\n')
+    await settle()
+    c.time(SNAPSHOT_STREAM_STALE_MS + 1)
+    c.stream.start()
+    await settle()
+    expect(c.fetcher).toHaveBeenCalledTimes(2)
+    expect(c.cancel).toHaveBeenCalledTimes(1)
+    c.send('data: {"revision":2}\n\n')
+    await settle()
+    expect(c.accept.mock.calls.map(([view]) => view.revision)).toEqual([1, 2])
+    expect(c.stream.connected).toBe(true)
+    expect(c.failed).not.toHaveBeenCalled()
+    c.stream.stop()
+    await settle()
+    expect(c.cancel).toHaveBeenCalledTimes(2)
+  })
+  it('keeps a healthy stream across many watchdog intervals', async () => {
+    const c = connection()
+    c.stream.start()
+    await settle()
+    for (let revision = 0; revision < 8; revision++) {
+      c.time(1000)
+      c.send(`data: ${JSON.stringify({ revision })}\n\n`)
+      await settle()
+      c.stream.start()
+    }
+    expect(c.fetcher).toHaveBeenCalledOnce()
+    expect(c.accept).toHaveBeenCalledTimes(8)
+    c.stream.stop()
+    await settle()
+  })
   it('parses split CRLF events and keeps the token in headers', async () => {
     const c = connection()
     c.stream.start()

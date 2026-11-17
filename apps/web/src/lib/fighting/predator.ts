@@ -3,7 +3,7 @@ import {
   PREDATOR_AURA_COST,
   PREDATOR_MAX_HUNT_FRAMES,
 } from './predatorTuning'
-import { witnessedHatsu } from './nenWitness'
+import { witnessedHatsuState } from './nenWitness'
 import { voluntaryNenAvailable } from './nenAccess'
 import { needleAutonomy } from './illumiState'
 import { senseDeprived } from './saiyuSenses'
@@ -102,7 +102,7 @@ export function launchPredator(state: FightState, side: FightSide): FightState {
       ...state[side === 'player' ? 'opponent' : 'player'],
       hatsuEffects: {
         ...state[side === 'player' ? 'opponent' : 'player'].hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'rihan' }),
+        ...witnessedHatsuState(state, { side, source: 'rihan' }),
       },
     },
     [side]: {

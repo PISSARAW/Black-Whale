@@ -1,4 +1,4 @@
-import { witnessedHatsu } from './nenWitness'
+import { witnessedHatsuState } from './nenWitness'
 import { chrolloPageForMove, CHROLLO_SECONDARY, CHROLLO_USE } from './chrolloBook'
 import { resolveCrossGameCommand } from './crossGameAction'
 import { resolveMoonlightAction } from './moonlightAction'
@@ -89,7 +89,7 @@ function executeMary(options: {
       ...target,
       hatsuEffects: {
         ...target.hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'zakuro' }),
+        ...witnessedHatsuState(state, { side, source: 'zakuro' }),
       },
     },
   }

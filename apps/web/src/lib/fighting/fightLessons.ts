@@ -1,8 +1,10 @@
 import { FOUNDATION_LESSONS, type FoundationLessonId } from './fightFoundationLessons'
+import { ADVANCED_FIGHT_LESSONS, type AdvancedLessonId } from './fightAdvancedLessons'
 import type { FighterId } from './types'
 
 export type LessonId =
   | FoundationLessonId
+  | AdvancedLessonId
   | 'ren'
   | 'ken'
   | 'zetsu'
@@ -196,6 +198,10 @@ export const FIGHT_LESSONS: readonly FightLesson[] = [
     ],
   },
 ]
+export const FIGHT_CURRICULUM: readonly FightLesson[] = [
+  ...FIGHT_LESSONS,
+  ...ADVANCED_FIGHT_LESSONS,
+]
 export function fightLesson(id: LessonId): FightLesson {
-  return FIGHT_LESSONS.find((lesson) => lesson.id === id)!
+  return FIGHT_CURRICULUM.find((lesson) => lesson.id === id)!
 }

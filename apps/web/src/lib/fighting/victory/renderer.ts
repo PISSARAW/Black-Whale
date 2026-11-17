@@ -1,0 +1,143 @@
+import type { Object3D, PerspectiveCamera, Scene } from 'three'
+import type { FightState } from '../types'
+import type { FightComfort } from '../fightComfort'
+import type { VictoryFrame } from './playback'
+import type { VictoryFighter } from './catalogue'
+import type { VictoryContext, VictoryDriver, VictoryModels } from './types'
+import { victoryActor, resetVictoryActor, groundVictoryActor } from './actors'
+import { victoryTransaction } from './transaction'
+import { victoryLighting } from './lighting'
+import { victoryWide } from './camera'
+import { suppressVictoryFlashes } from './resources'
+import { createHisokaVictory } from './hisoka'
+import { createChrolloVictory } from './chrollo'
+import { createKurapikaVictory } from './kurapika'
+import { createFeitanVictory } from './feitan'
+import { createPhinksVictory } from './phinks'
+import { createFranklinVictory } from './franklin'
+
+const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
+  hisoka: createHisokaVictory,
+  chrollo: createChrolloVictory,
+  kurapika: createKurapikaVictory,
+  feitan: createFeitanVictory,
+  phinks: createPhinksVictory,
+  franklin: createFranklinVictory,
+}
+function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
+  const base = { hisoka: 1.5, chrollo: 1.7, kurapika: 1.1, feitan: 2.3, phinks: 0.8, franklin: 2.7 }
+  return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
+}
+function hideAuxiliaryRoots(options: {
+  scene: Scene
+  visible: Object3D[]
+  save: (root: Object3D) => void
+}) {
+  for (const root of options.scene.children) {
+    if (options.visible.includes(root) || 'isLight' in root) continue
+    options.save(root)
+    root.visible = false
+  }
+}
+export function createVictoryRenderer(options: {
+  scene: Scene
+  camera: PerspectiveCamera
+  scenery: Object3D
+}) {
+  const drivers = new Map<VictoryFighter, VictoryDriver>(),
+    lighting = victoryLighting()
+  let disposed = false
+  return {
+    apply(input: {
+      state: FightState
+      frame: VictoryFrame | null
+      models: VictoryModels
+      comfort: FightComfort
+    }) {
+      const { frame, state, models, comfort } = input
+      if (!frame?.active || disposed) {
+        delete options.scene.userData.victory
+        return null
+      }
+      const transaction = victoryTransaction(options.camera)
+      try {
+        const initialHero = models[frame.winner],
+          initialVictim = models[frame.loser]
+        const centre = Math.max(
+          -1.6,
+          Math.min(1.6, (initialHero.position.x + initialVictim.position.x) / 2),
+        )
+        resetVictoryActor(victoryActor(initialHero, state[frame.winner].id), transaction.save)
+        resetVictoryActor(victoryActor(initialVictim, state[frame.loser].id), transaction.save)
+        initialHero.rotation.set(0, 0, 0)
+        initialVictim.rotation.set(0, 0, 0)
+        initialHero.updateWorldMatrix(true, true)
+        initialVictim.updateWorldMatrix(true, true)
+        const hero = victoryActor(initialHero, state[frame.winner].id),
+          victim = victoryActor(initialVictim, state[frame.loser].id)
+        const gap = victoryGap({ frame, victim })
+        hero.root.position.set(centre - gap / 2, 0, 0)
+        hero.root.rotation.set(0, 1.15, 0)
+        victim.root.position.set(centre + gap / 2, 0, 0)
+        victim.root.rotation.set(0, -1.15, 0)
+        groundVictoryActor(hero)
+        groundVictoryActor(victim)
+        hideAuxiliaryRoots({
+          scene: options.scene,
+          visible: [hero.root, victim.root, options.scenery],
+          save: transaction.save,
+        })
+        lighting.apply(options.scenery, transaction)
+        const context: VictoryContext = {
+          ...options,
+          state,
+          frame,
+          age: Math.min(599, frame.elapsed * 60),
+          hero,
+          victim,
+          centre,
+          gap,
+          comfort,
+          save: transaction.save,
+          material: transaction.material,
+          defer: transaction.defer,
+          add(root) {
+            if (!comfort.flashes) suppressVictoryFlashes(root, transaction.save)
+            options.scene.add(root)
+            root.updateMatrixWorld(true)
+            transaction.defer(() => root.removeFromParent())
+          },
+        }
+        const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
+        drivers.set(frame.fighter, driver)
+        driver.update(context)
+        if (comfort.camera === 0)
+          victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
+        hero.root.updateWorldMatrix(true, true)
+        victim.root.updateWorldMatrix(true, true)
+        options.scene.userData.victory = {
+          winner: frame.winner,
+          fighter: frame.fighter,
+          target: state[frame.loser].id,
+          stage: state.environment.stageId,
+          elapsed: frame.elapsed,
+          heroHeight: hero.height,
+          victimHeight: victim.height,
+          gap,
+          centre,
+        }
+        return transaction.restore
+      } catch (error) {
+        transaction.restore()
+        throw error
+      }
+    },
+    dispose() {
+      disposed = true
+      drivers.forEach((driver) => driver.dispose())
+      drivers.clear()
+      lighting.dispose()
+      delete options.scene.userData.victory
+    },
+  }
+}

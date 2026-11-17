@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import { comfortableImpact, type FightComfort } from './fightComfort'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
+import { fightContactStyle } from './fightContactStyle'
 import type { FightState } from './types'
 
 export function createFightImpactScene(options: {
@@ -12,10 +13,23 @@ export function createFightImpactScene(options: {
   glow: (colour: number, opacity: number) => Three.MeshBasicMaterial
 }) {
   const { THREE, scene, comfort } = options
-  const shape = options.geometry(new THREE.SphereGeometry(0.045, 5, 4))
-  const materials = { hit: options.glow(0xffd36a, 1), block: options.glow(0x67d9ff, 1) }
-  const sparks: Array<{ mesh: Three.Mesh; velocity: Three.Vector3; born: number; size: number }> =
-    []
+  const shapes = {
+    hit: options.geometry(new THREE.SphereGeometry(0.045, 5, 4)),
+    guard: options.geometry(new THREE.BoxGeometry(0.025, 0.09, 0.025)),
+    parry: options.geometry(new THREE.TorusGeometry(0.16, 0.014, 4, 24)),
+  }
+  const materials = {
+    hit: options.glow(0xffd36a, 1),
+    guard: options.glow(0x67d9ff, 1),
+    parry: options.glow(0xffffff, 1),
+  }
+  const sparks: Array<{
+    mesh: Three.Mesh
+    velocity: Three.Vector3
+    born: number
+    size: number
+    ring: boolean
+  }> = []
   let last = options.initial.impact?.sequence ?? 0
   let shake = { started: 0, until: 0, x: 0, y: 0 }
   return {
@@ -23,6 +37,8 @@ export function createFightImpactScene(options: {
       const impact = state.impact
       if (!impact || impact.sequence === last) return
       last = impact.sequence
+      const style = fightContactStyle(impact)
+      if (style === 'evaded') return
       const profile = comfortableImpact({
         impact,
         attacker: state[impact.attacker].id,
@@ -34,20 +50,24 @@ export function createFightImpactScene(options: {
         fightWorldY(impact.position.y),
         0.25,
       )
-      for (let i = 0; i < profile.sparks; i++) {
-        const angle = (i / profile.sparks) * Math.PI * 2
-        const mesh = new THREE.Mesh(shape, impact.blocked ? materials.block : materials.hit)
+      const count = style === 'parry' && profile.sparks > 0 ? 1 : profile.sparks
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2
+        const mesh = new THREE.Mesh(shapes[style], materials[style])
+        mesh.name = `fight-contact-${style}`
+        mesh.rotation.z = angle
         mesh.position.copy(origin)
         scene.add(mesh)
         sparks.push({
           mesh,
           velocity: new THREE.Vector3(
-            Math.cos(angle) * profile.sparkSpeed,
-            Math.sin(angle) * profile.sparkSpeed,
+            style === 'parry' ? 0 : Math.cos(angle) * profile.sparkSpeed,
+            style === 'parry' ? 0 : Math.sin(angle) * profile.sparkSpeed,
             0,
           ),
           born: now,
           size: profile.sparkSize,
+          ring: style === 'parry',
         })
       }
     },
@@ -56,8 +76,10 @@ export function createFightImpactScene(options: {
         const spark = sparks[i],
           age = now - spark.born
         spark.mesh.position.add(spark.velocity)
-        spark.velocity.y -= 0.0008
-        spark.mesh.scale.setScalar(spark.size * Math.max(0.01, 1 - age / 360))
+        if (!spark.ring) spark.velocity.y -= 0.0008
+        spark.mesh.scale.setScalar(
+          spark.size * (spark.ring ? 0.5 + age / 180 : Math.max(0.01, 1 - age / 360)),
+        )
         if (age > 360) {
           scene.remove(spark.mesh)
           sparks.splice(i, 1)

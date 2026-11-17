@@ -191,7 +191,12 @@ function clamp(value: number, minimum: number, maximum: number): number {
 
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   if (!canCancel(fighter, kind, moveId) || !fighter.attack) return false
-  return fighter.attack.frame <= attackData(fighter.attack.kind, fighter).cancelEnd
+  const data = attackData(fighter.attack.kind, fighter)
+  const window = moveById(fighter.attack.moveId)?.cancelWindow
+  return (
+    (!window || fighter.attack.frame >= data.startup + window.start) &&
+    fighter.attack.frame <= data.cancelEnd
+  )
 }
 
 function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {

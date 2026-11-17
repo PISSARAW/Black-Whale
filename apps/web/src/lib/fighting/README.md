@@ -1,6 +1,30 @@
 # Fighting
 
+La [référence reproductible des six combattants](./BASELINE.md) fige leurs routes,
+les sept situations d’essai, les mesures et la bibliothèque de replays de départ.
+
+La [qualification des commandes et de la cadence](./COMMAND_QUALIFICATION.md)
+mesure les six personnages à partir de cette référence et conserve les limites matérielles.
+
+Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
+complètent les contrôles de réactivité et de performance.
+
+L’[étape 3](./STEP3.md) corrige les répétitions infinies de coups physiques au sol
+et ajoute les situations et relevés du laboratoire pour les essais d’équilibrage.
+
+L’[étape 4](./STEP4.md) fiabilise les reprises PvP, les commandes retardées et
+la reconstruction privée, avec des essais jusqu’à 300 ms de RTT simulé.
+
+L’[étape 5](./STEP5.md) ajoute cinq exercices pratiques et un diagnostic vérifié
+des replays pour revoir puis essayer une réponse à une erreur observable.
+
+L’[étape 6](./STEP6.md) ajoute les files non classée et classée, les séries
+vérifiées, la récupération d’identité et les tournois reliés aux résultats serveur.
+
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
+
+L’[étape 7](./STEP7.md) ajoute trois parcours scénarisés avec fins et sauvegardes,
+puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
 
 ## Capacités d’arène
 
@@ -230,7 +254,7 @@ La présentation ne modifie aucune condition du Nen. Détails, persistance et li
 configuration confirmée, commandes exécutées par le serveur et verdict du moteur.
 Le transport vérifie les états, affiche la connexion et permet la reconnexion après
 une courte coupure. Les observations privées du Nen sont filtrées par destinataire.
-Le registre reste en mémoire d’un processus, sans prédiction ni rollback.
+Le registre reste en mémoire d’un processus ; la prédiction visuelle couvre les 40 personnages.
 Contrats, limites et vérifications : [PVP.md](./PVP.md).
 
 ## Phase 6 : apprentissage, défis et Arcade
@@ -271,7 +295,7 @@ horloge propre plutôt que le mode de Nen caché adverse.
 `clashLearning.test.ts`, `opponentHabits.test.ts`, `clashReplayAdvanced.test.ts`
 et `clashImportOrder.test.ts` couvrent ces parcours et les interactions du Nen.
 `node scripts/check-fighting-progression.mjs` depuis `apps/web` vérifie les
-composants de production, les quinze exercices proposés, un défi réussi, la
+composants de production, les vingt exercices proposés, un défi réussi, la
 bibliothèque persistante, l’import/export, la lecture vérifiée, l’enchaînement
 Arcade et les largeurs 1440 / 390 / 320 px. Le détail des replays est dans
 [REPLAYS.md](./REPLAYS.md).
@@ -396,9 +420,11 @@ La recette de référence a été étendue aux quarante personnages jouables :
   utilisent la durée réelle du stun, y compris les impacts courts et les coups
   successifs ; elles restent figées pendant le hitstop. La marche conserve sa
   cadence liée à la distance quand le rendu descend à 20 Hz.
-- **Apprentissage** : quinze exercices FR/EN depuis « Apprendre le Nen » : Ren, Ken,
+- **Apprentissage** : vingt exercices FR/EN depuis « Apprendre le Nen » : Ren, Ken,
   Zetsu, Gyo, Ryu, Ko, Emperor Time, rappel de Bungee Gum, Double Face et Secret
-  Window. Ils valident les états et effets réels du moteur, sans progresser pendant
+  Window. Cinq situations complètent ces bases : anti-air, déprojection, confirmation,
+  défense au coin et interruption d’une préparation de Phinks. Ils valident les
+  états et effets réels du moteur, sans progresser pendant
   la pause. Le Zetsu compte uniquement l’aura récupérée en Zetsu. Chaque exercice
   peut être relancé ou quitté vers le laboratoire libre. Les outils du laboratoire
   sont masqués pendant un exercice pour préserver son scénario.
@@ -1056,7 +1082,7 @@ sans changer les règles, les boîtes ni les données de frame.
   hurtboxes. Le dummy peut enregistrer puis rejouer déplacements, garde et attaques.
 - Le [PvP privé](./PVP.md) ajoute une couche HTTP autoritaire distincte du moteur.
   Le moteur fixe et les entrées P1/P2 séparées restent la base de resimulation ;
-  la prédiction et le rollback ne sont pas encore présents.
+  la prédiction visuelle bornée couvre les 40 personnages ; le rollback complet reste absent.
 
 ### Kurapika : chaînes et Emperor Time
 
@@ -1536,7 +1562,8 @@ lame implantée. Les géométries partagées sont libérées une seule fois à l
 le rendu de production avec les cinq chaînes, les deux côtés et une lecture animée.
 
 `fightLessons.test.ts` et `clashLearning.test.ts` vérifient les quinze exercices
-par les états et contacts réels du moteur ; seul le retour au Ten demande de
+historiques ; `fightAdvancedLessons.test.ts` couvre les cinq situations ajoutées.
+La validation utilise les états et contacts réels du moteur ; seul le retour au Ten demande de
 relâcher les commandes et de patienter. `tests/fighting-lessons.spec.ts`
 vérifie les parcours des quatre personnages, la pause et le petit écran.
 `fightPoseClock.test.ts` couvre durée des réactions, hitstop, contacts et cadence.
@@ -1611,3 +1638,10 @@ le protocole de mesure sont décrits dans [REPLAYS.md](./REPLAYS.md).
 
 Les seize routes, les exercices de défense, les règles de cancel et le cadrage
 dynamique sont documentés dans [COMBAT.md](./COMBAT.md).
+
+## Cinématiques de victoire
+
+Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks et Franklin
+se déclenchent après le verdict avec le vaincu et le décor du match courant.
+Leur intégration, leur cycle de vie et leurs vérifications sont décrits dans
+[victory/README.md](./victory/README.md).

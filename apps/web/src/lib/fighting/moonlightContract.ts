@@ -1,8 +1,14 @@
-import { witnessedHatsu } from './nenWitness'
-import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
+import { judgmentForbidsContact, resolveJudgmentCommunication } from './judgmentCommunication'
+import {
+  advanceMoonlightPenalty,
+  carryMoonlightPenalty,
+  MOONLIGHT_PENALTY_FRAMES,
+} from './moonlightPenalty'
+import { illumiBodyFree } from './illumiState'
+import { witnessedHatsuState } from './nenWitness'
+import { transitionNen } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove } from './chrolloBook'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import { moonlightBinds, rewardMoonlightParty, teamMoonlightSigners } from './moonlightParties'
 
@@ -33,14 +39,7 @@ export interface MoonlightState {
 const other = (side: FightSide): FightSide => (side === 'player' ? 'opponent' : 'player')
 
 export function moonlightNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.aura > 0 &&
-    !predatorNenLocked(fighter) &&
-    !fighter.moonlightZetsu &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    canUseHatsu(fighter.nen) &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter, { requireReserve: true, requireHatsu: false })
 }
 
 export function hasMoonlightAuthority(fighter: ArcadeFighter, moveId?: string): boolean {
@@ -70,6 +69,7 @@ function canSign(fighter: ArcadeFighter): boolean {
 function freelyActing(fighter: ArcadeFighter): boolean {
   const effects = fighter.hatsuEffects
   return (
+    illumiBodyFree(fighter) &&
     effects.manipulatedFrames === 0 &&
     !fighter.needlePuppet &&
     effects.entrancedFrames === 0 &&
@@ -108,13 +108,13 @@ export function offerMoonlightContract(options: {
   if ((state.moonlight?.cooldownFrames ?? 0) > 0) return state
   if (!moonlightSigningAvailable(state) || !hasMoonlightAuthority(state[side], moveId)) return state
   const recipient = other(side)
-  return {
+  const offered: FightState = {
     ...state,
     [recipient]: {
       ...state[recipient],
       hatsuEffects: {
         ...state[recipient].hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'longhi' }),
+        ...witnessedHatsuState(state, { side, source: 'longhi' }),
       },
     },
     moonlight: {
@@ -130,6 +130,7 @@ export function offerMoonlightContract(options: {
       },
     },
   }
+  return resolveJudgmentCommunication(offered, side, state[recipient].id)
 }
 
 /** Only the recipient's explicit response can supply the second signature. */
@@ -142,7 +143,11 @@ export function respondMoonlightContract(options: {
   const offer = state.moonlight?.offer
   if (state.phase !== 'fighting' || !offer || offer.recipient !== side) return state
   if (!accept)
-    return { ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } }
+    return resolveJudgmentCommunication(
+      { ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } },
+      side,
+      state[offer.issuer].id,
+    )
   if (
     !moonlightSigningAvailable(state) ||
     !hasMoonlightAuthority(state[offer.issuer], offer.sourceMoveId)
@@ -150,18 +155,20 @@ export function respondMoonlightContract(options: {
     return state
   const issuer = state[offer.issuer]
   const loan = issuer.moonlightLoan ?? 0
-  return {
+  const signed: FightState = {
     ...state,
     [offer.issuer]: { ...issuer, moonlightLoan: loan > 0 ? loan - 1 : loan },
     moonlight: { active: { ...offer, remainingFrames: MOONLIGHT_TRUCE_FRAMES } },
   }
+  return resolveJudgmentCommunication(signed, side, state[offer.issuer].id)
 }
 
-/** The week-long penalty lasts through the match; basic movement and physical blows remain. */
+/** Basic movement and physical blows remain during the actual week-long Nen sanction. */
 export function moonlightZetsu(fighter: ArcadeFighter): ArcadeFighter {
   return {
     ...fighter,
     moonlightZetsu: true,
+    moonlightPenaltyFrames: fighter.moonlightPenaltyFrames ?? MOONLIGHT_PENALTY_FRAMES,
     nen: transitionNen(fighter.nen, { type: 'ZETSU' }).state,
     bufferedAttack: null,
     hatsuChargeFrames: 0,
@@ -181,6 +188,7 @@ export function breachMoonlightContract(state: FightState, side: FightSide): Fig
 
 export function advanceMoonlightContract(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
+  state = advanceMoonlightPenalty(state)
   const offer = state.moonlight?.offer
   if (offer) return tickOffer(state, offer)
   const pact = state.moonlight?.active
@@ -214,7 +222,8 @@ function tickCooldown(state: FightState): FightState {
 export function moonlightAiResponse(state: FightState): FightState {
   const offer = state.moonlight?.offer
   if (!offer) return moonlightAiLoanOffer(state)
-  if (state.mode !== 'versus-ai' || offer?.recipient !== 'opponent') return state
+  if (judgmentForbidsContact(state.opponent, state[offer.issuer].id)) return state
+  if (state.mode !== 'versus-ai' || offer.recipient !== 'opponent') return state
   if (offer.remainingFrames > MOONLIGHT_OFFER_FRAMES - 30) return state
   if (!moonlightSigningAvailable(state)) return state
   const accepts = state.opponent.aura < 45 && state.projectiles.length === 0
@@ -223,6 +232,7 @@ export function moonlightAiResponse(state: FightState): FightState {
 
 function moonlightAiLoanOffer(state: FightState): FightState {
   if (state.mode !== 'versus-ai' || (state.opponent.moonlightLoan ?? 0) < 1) return state
+  if (judgmentForbidsContact(state.opponent, state.player.id)) return state
   return state.opponent.aura < 45 ? offerMoonlightContract({ state, side: 'opponent' }) : state
 }
 
@@ -233,7 +243,9 @@ export function moonlightAiWaiting(state: FightState): boolean {
 export function carryMoonlightRound(next: FightState, previous: FightState): FightState {
   const carry = (side: FightSide): ArcadeFighter => {
     const fighter = { ...next[side], moonlightLoan: previous[side].moonlightLoan }
-    return previous[side].moonlightZetsu ? moonlightZetsu(fighter) : fighter
+    return previous[side].moonlightZetsu
+      ? carryMoonlightPenalty(moonlightZetsu(fighter), previous[side])
+      : fighter
   }
   return {
     ...next,

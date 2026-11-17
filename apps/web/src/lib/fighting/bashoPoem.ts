@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove, CHROLLO_SECONDARY } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -96,11 +97,14 @@ export function writingBodyAvailable(fighter: ArcadeFighter): boolean {
 
 function freeWritingMind(fighter: ArcadeFighter): boolean {
   const effects = fighter.hatsuEffects
-  return ![
-    effects.manipulatedFrames,
-    Number(Boolean(fighter.needlePuppet)),
-    effects.entrancedFrames,
-    effects.possessedFrames,
-    effects.momozeFrames,
-  ].some((frames) => frames > 0)
+  return (
+    illumiBodyFree(fighter) &&
+    ![
+      effects.manipulatedFrames,
+      Number(Boolean(fighter.needlePuppet)),
+      effects.entrancedFrames,
+      effects.possessedFrames,
+      effects.momozeFrames,
+    ].some((frames) => frames > 0)
+  )
 }

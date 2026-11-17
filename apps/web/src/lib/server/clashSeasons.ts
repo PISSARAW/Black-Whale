@@ -93,22 +93,26 @@ export class ClashSeasons {
     const profile = this.profiles.get(tokenHash(token))
     return profile ? { id: profile.id, name: profile.name } : null
   }
+  rating(id: string): number {
+    return this.season().entries.get(id)?.rating ?? 1200
+  }
   record(result: {
     id: string
     player?: RankedProfile
     opponent?: RankedProfile
     winner: FightSide
+    season?: string
   }) {
     const { player, opponent } = result
-    if (!player || !opponent || player.id === opponent.id || this.damaged) return false
+    if (!player || !opponent || !this.canRecord(result)) return false
+    if ([...this.seasons.values()].some((season) => season.results.has(result.id))) return true
     const previous = new Map(this.seasons)
-    const current = this.season()
+    const current = this.season(result.season)
     const season = {
       ...current,
       entries: new Map(current.entries),
       results: new Set(current.results),
     }
-    if (season.results.has(result.id)) return true
     if (season.results.size >= 50_000) return false
     this.seasons.set(season.id, season)
     season.results.add(result.id)
@@ -148,8 +152,20 @@ export class ClashSeasons {
       losses: entry.losses + Number(!win),
     }
   }
-  private season() {
-    const id = new Date(this.now()).toISOString().slice(0, 7)
+  private canRecord(result: { player?: RankedProfile; opponent?: RankedProfile; season?: string }) {
+    if (this.damaged || result.player?.id === result.opponent?.id) return false
+    if (!result.season) return true
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(result.season)) return false
+    const current = new Date(this.now()),
+      target = new Date(`${result.season}-01T00:00:00Z`)
+    const months =
+      (current.getUTCFullYear() - target.getUTCFullYear()) * 12 +
+      current.getUTCMonth() -
+      target.getUTCMonth()
+    return months >= 0 && months < 12
+  }
+  private season(requested?: string) {
+    const id = requested ?? new Date(this.now()).toISOString().slice(0, 7)
     let season = this.seasons.get(id)
     if (!season) {
       season = { id, entries: new Map(), results: new Set() }

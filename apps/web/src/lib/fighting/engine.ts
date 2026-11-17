@@ -1,4 +1,5 @@
 import { performLegacyThrow } from './legacyThrow'
+import { expireHistoricalMatter } from './historicalMatterClock'
 import { judgmentActionBreach } from './judgmentAction'
 import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
 import { retrospectiveAiAction } from './retrospectiveAi'
@@ -158,12 +159,14 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return simulateClashFrame(state, controls, {
-    step: stepFight,
-    decide: opponentAttack,
-    attack: (state, action, input) =>
-      performTrainingAction({ state, side: 'opponent', action, input }),
-  })
+  return expireHistoricalMatter(
+    simulateClashFrame(state, controls, {
+      step: stepFight,
+      decide: opponentAttack,
+      attack: (state, action, input) =>
+        performTrainingAction({ state, side: 'opponent', action, input }),
+    }),
+  )
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
@@ -357,6 +360,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  options = { ...options, state: expireHistoricalMatter(options.state) }
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state

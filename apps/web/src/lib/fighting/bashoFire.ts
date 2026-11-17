@@ -1,5 +1,5 @@
 import { physicalHandOccupancy } from './deviceHands'
-import { writingHandsFree, writingCopyExists } from './bashoMaterials'
+import { writingHandsFree, writingPaperExists } from './bashoMaterials'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { hatsuDefenceFactor } from './hatsu'
@@ -61,7 +61,7 @@ function advancePoem(state: FightState, side: FightSide): ArcadeFighter {
   fighter = maintainPoemArchive(state, fighter)
   const poem = fighter.bashoPoem
   if (!poem) return fighter
-  if (!hasBashoPoem(fighter, poem.sourceMoveId) || !writingCopyExists(state, poem.paperCopyId))
+  if (!hasBashoPoem(fighter, poem.sourceMoveId) || !writingPaperExists(state, poem.paperCopyId))
     return { ...fighter, bashoPoem: undefined }
   if (!bashoWriting(fighter)) return fighter
   if (
@@ -97,7 +97,7 @@ function advanceBurn(state: FightState, side: FightSide): FightState {
 function maintainPoemArchive(state: FightState, fighter: ArcadeFighter): ArcadeFighter {
   const live = fighter.bashoArchive?.filter(
     (poem) =>
-      hasBashoPoem(fighter, poem.sourceMoveId) && writingCopyExists(state, poem.paperCopyId),
+      hasBashoPoem(fighter, poem.sourceMoveId) && writingPaperExists(state, poem.paperCopyId),
   )
   const archive = live?.length ? live : undefined
   return archive?.length !== fighter.bashoArchive?.length

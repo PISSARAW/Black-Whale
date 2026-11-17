@@ -1,4 +1,5 @@
 import { ownsBungeeGum } from './hisokaArsenal'
+import { physicalProjectile } from './projectileMatter'
 import { prepareDefence } from './combatDefence'
 import { projectileRead } from './combatRead'
 import { resolvedDamage, strikeProjectileDefender } from './combatDamage'
@@ -59,7 +60,7 @@ export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightS
 function canCatch(fighter: ArcadeFighter, shot: FightProjectile): boolean {
   if (!fighter.gumCatch?.frames || fighter.gumCatch.projectile || !ownsBungeeGum(fighter))
     return false
-  if (shot.matter !== 'object' || shot.living || shot.remotePunch) return false
+  if (!physicalProjectile(shot) || shot.living || shot.remotePunch) return false
   return shot.velocityX * fighter.facing < 0 && (shot.x - fighter.x) * fighter.facing >= -shot.width
 }
 

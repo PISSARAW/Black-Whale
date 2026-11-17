@@ -93,6 +93,7 @@ function fireDevice(state: FightState, side: FightSide, entry: PreparedEntity): 
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     deviceOrigin: { id: entry.id, owner: side },
+    materialCopyId: entry.copy ? entry.id : undefined,
     owner: side,
     fighterId: state[side].id,
     x: point.x + direction * 0.5,

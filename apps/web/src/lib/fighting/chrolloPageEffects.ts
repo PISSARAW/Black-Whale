@@ -1,4 +1,5 @@
 import { chrolloAbilityActive } from './chrolloAbilityActive'
+import { expireHistoricalMatter } from './historicalMatterClock'
 import { releaseLuiniAnchor } from './luiniSpatial'
 import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
@@ -51,7 +52,9 @@ export function reconcileChrolloPages(
       (book?.bookmark === page || (book?.open && book.pages[book.page] === page)) &&
       !chrolloHasActivePage(after[side], page),
   )
-  return lost.reduce((state, page) => clearPageEffects({ state, side, page }), after)
+  return expireHistoricalMatter(
+    lost.reduce((state, page) => clearPageEffects({ state, side, page }), after),
+  )
 }
 
 function clearPageEffects(options: {

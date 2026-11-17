@@ -1,4 +1,5 @@
 import { bashoArsenalAi } from './bashoArsenalAi'
+import { physicalProjectile } from './projectileMatter'
 import { gallerySenseAi } from './galleryAi'
 import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
@@ -185,7 +186,7 @@ function incomingObject(state: FightState): boolean {
   return state.projectiles.some(
     (shot) =>
       shot.owner === 'player' &&
-      shot.matter === 'object' &&
+      physicalProjectile(shot) &&
       !shot.living &&
       perceivesProjectile(state.opponent, shot) &&
       Math.abs(shot.x - state.opponent.x) < 18 &&

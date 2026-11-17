@@ -375,6 +375,43 @@ Gallery Fake exigent leurs deux mains, et Order Stamp demande une main disponibl
 Toucher le corps endormi de Hanzo le réveille réellement. Le ruleset devient
 **clash-combat-25**. Le On est conservé ; il n'accorde pas le repérage de Gallery Fake.
 
+## Copies transportées et parties détachées
+
+Ramasser une flûte ou des aiguilles copiées conserve maintenant leur provenance
+matérielle. Le ramassage ne redémarre pas leur durée de vie et ne transforme pas
+une copie en équipement permanent. Le contrôle s'applique aussi aux membres en
+réserve et empêche de convertir des aiguilles matérialisées en stock réel lors
+d'une nouvelle manche. Un équipement réel déjà possédé n'est pas remplacé par
+une copie ramassée.
+
+La modélisation distingue l'objet entier d'une pièce qui en est déjà séparée :
+endommager l'arme ne transmet pas rétroactivement des dégâts à une balle déjà
+tirée, ni détruire le matériel d'écriture à une feuille déjà écrite. Ces parties
+conservent la durée et les conditions d'existence de leur copie d'origine. Les
+balles et aiguilles lancées, papiers archivés, talismans et aiguilles implantées
+ne deviennent pas permanents après séparation. Les marques réellement posées
+restent distinctes des marques de l'objet dont on a seulement copié l'apparence.
+
+La perte d'une flûte copiée arrête immédiatement la musique et sa pacification.
+La disparition d'une aiguille de contrôle n'efface pas la lésion cérébrale déjà
+représentée. Le matériel disparaît aussi pendant le hitstop ou si son créateur
+meurt au cours de Cat's Name, sans faire avancer des attaques de marionnettes
+pendant cette séquence. La vérification intervient à la fin de la frame réelle
+et dans ses prévisions, avant de permettre l'usage suivant.
+
+Bungee Gum reconnaît les objets physiques matérialisés sans les confondre avec
+un faisceau d'aura. Les forces transmises à ses mains restent prises en compte.
+Un objet copié retenu par la gomme, ou stocké dans la représentation de Culdcept
+du duel, conserve sa provenance ; le stockage ne rend pas sa matière éternelle.
+Cette correction n'apporte aucune preuve supplémentaire sur les conditions
+encore inconnues de Culdcept. Blinky conserve son interdiction des objets de Nen.
+
+En PvP, les pages masquées ne sont pas traitées comme des pages inexistantes :
+le client conserve le matériel effectivement fourni par l'arbitre sans révéler
+le contenu du livre adverse. Les projections privées et les outils de replay
+conservent la même distinction. Le ruleset devient **clash-combat-26** et le On
+reste conservé.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -382,12 +419,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage et l’En de Gallery Fake sont exécutables ; les interactions matérielles restantes, notamment Black Voice et les outils copiés ramassés, doivent encore être contrôlées. |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                               |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                         |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                   |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage et l’En de Gallery Fake sont exécutables ; les interactions matérielles restantes, notamment le téléphone et les deux antennes physiques de Black Voice, doivent encore être contrôlées. |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                          |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                    |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |

@@ -19,7 +19,7 @@ export function preserveIllumiNeedles(
   fighter: ArcadeFighter,
   previous: ArcadeFighter,
 ): ArcadeFighter {
-  return supply(fighter, hasIllumiNeedles(previous))
+  return supply(fighter, hasIllumiNeedles(previous) && !previous.equipmentProps?.needles?.copyId)
 }
 
 function supply(fighter: ArcadeFighter, equipped: boolean): ArcadeFighter {

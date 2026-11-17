@@ -1,4 +1,5 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { expireHistoricalMatter } from './historicalMatterClock'
 import { freeDeviceHand } from './deviceHands'
 import { historicalHandsReady, originalLeftHandReady } from './historicalHands'
 import { touchesDevice } from './physicalDevices'
@@ -254,6 +255,7 @@ export function orderHistoricalPuppets(
 
 /** Marks keep a copy in existence after Gallery Fake is closed, until its destruction. */
 export function advanceHistoricalCopies(state: FightState): FightState {
+  state = expireHistoricalMatter(state)
   if (!state.battlefield) return state
   let next = state
   for (const entry of state.battlefield.entities) {

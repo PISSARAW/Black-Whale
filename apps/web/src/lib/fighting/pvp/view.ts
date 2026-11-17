@@ -84,7 +84,13 @@ function redactEnemy(enemy: ArcadeFighter) {
     witnessedMoveId: undefined,
   }
   if (enemy.chrolloBook)
-    enemy.chrolloBook = { ...enemy.chrolloBook, pages: [], bookmark: null, page: 0 }
+    enemy.chrolloBook = {
+      ...enemy.chrolloBook,
+      pagesPrivate: true,
+      pages: [],
+      bookmark: null,
+      page: 0,
+    }
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))

@@ -1,4 +1,4 @@
-import { historicalCopyExpired } from './historicalCopyLifetime'
+import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { freeDeviceHand, physicalHandOccupancy } from './deviceHands'
 import { deviceBodyFree } from './physicalDevices'
 import { updateEntity } from './preparationWorld'
@@ -151,9 +151,10 @@ export function writingKitOptions(state: FightState, side: FightSide): ArsenalOp
 }
 
 export function writingCopyExists(state: FightState, copyId?: string): boolean {
-  if (!copyId) return true
-  const copy = state.battlefield?.entities.find((entry) => entry.id === copyId)
-  return Boolean(copy?.copy && copy.health > 0 && !historicalCopyExpired(state, copy))
+  return historicalMatterExists(state, copyId)
+}
+export function writingPaperExists(state: FightState, copyId?: string): boolean {
+  return historicalPartExists(state, copyId)
 }
 export function advanceWritingMaterials(state: FightState): FightState {
   let next = state

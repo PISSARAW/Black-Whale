@@ -290,7 +290,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     canHitDowned: false,
     shape: profile.shape,
     colour: profile.colour,
-    matter: profile.matter,
+    ...rangedMaterial(fighter, profile),
     concealed: fighter.attack.concealed,
     age: 0,
     lifetime: 120,
@@ -312,6 +312,14 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     ],
     nextProjectileId: state.nextProjectileId + 1,
   }
+}
+
+function rangedMaterial(
+  fighter: ArcadeFighter,
+  profile: ProjectileProfile,
+): Pick<FightProjectile, 'matter' | 'materialCopyId'> {
+  const copyId = fighter.id === 'illumi' ? fighter.equipmentProps?.needles?.copyId : undefined
+  return { matter: copyId ? 'nen' : profile.matter, materialCopyId: copyId }
 }
 
 export interface ProjectileHit {

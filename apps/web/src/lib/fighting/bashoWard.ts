@@ -1,5 +1,5 @@
 import { physicalBodyAt } from './fightBodyIdentity'
-import { writingCopyExists } from './bashoMaterials'
+import { writingPaperExists } from './bashoMaterials'
 import { freeDeviceHand } from './deviceHands'
 import { bashoEffectPoem, hasBashoPoem, availableBashoPoem } from './bashoPoem'
 import { deviceBodyFree } from './physicalDevices'
@@ -97,7 +97,7 @@ export function advanceBashoWardClocks(state: FightState): FightState {
   let next = state
   for (const side of ['player', 'opponent'] as const) {
     const ward = next[side].bashoWard
-    if (ward && !writingCopyExists(next, ward.paperCopyId)) {
+    if (ward && !writingPaperExists(next, ward.paperCopyId)) {
       next = { ...next, [side]: { ...next[side], bashoWard: undefined } }
       continue
     }

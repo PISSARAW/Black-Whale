@@ -1,4 +1,5 @@
 import { freeDeviceHand } from './deviceHands'
+import { historicalCopyExpired } from './historicalCopyLifetime'
 import { liveEntity, updateEntity } from './preparationWorld'
 import { sleepingBody } from './hanzoProjection'
 import { canAct } from './fightActorState'
@@ -30,7 +31,12 @@ export function scenarioDevices(side: FightSide): PreparedEntity[] {
 }
 export function deviceEntity(state: FightState, id?: string): PreparedEntity | undefined {
   return state.battlefield?.entities.find(
-    (entry) => entry.id === id && entry.kind === 'device' && entry.device && liveEntity(entry),
+    (entry) =>
+      entry.id === id &&
+      entry.kind === 'device' &&
+      entry.device &&
+      liveEntity(entry) &&
+      (!entry.copy || !historicalCopyExpired(state, entry)),
   )
 }
 export function devicePosition(state: FightState, entry: PreparedEntity): { x: number; y: number } {

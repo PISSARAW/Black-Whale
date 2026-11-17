@@ -486,6 +486,10 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   corps effectifs, y compris lors d'un relais d'équipe. L'ouverture du livre et
   les gestes historiques utilisent les mains réellement disponibles. Voir
   [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
+  Les outils ramassés et leurs pièces détachées conservent la provenance de leur
+  matière Nen : flûte, aiguilles, balles, feuilles et objets retenus ne deviennent
+  pas permanents par ramassage ou stockage. Les réserves, prévisions, replays et
+  séquences de Cat's Name suivent la même disparition matérielle.
 - Feitan mémorise les PV effectivement perdus pendant la manche (`feitanPain.ts`).
   Après une blessure, L revêt Pain Packer sans soin ni frappe ; H libère le soleil
   fixe de `feitanSun.ts`. Les blessures engagées augmentent la chaleur, le rayon et

@@ -59,6 +59,7 @@ function disguise(state: FightState, side: FightSide): FightState {
       illumi: {
         ...current,
         preparation: ILLUMI_DISGUISE_FRAMES,
+        mediumCopyId: fighter.equipmentProps?.needles?.copyId,
         anchor: { x: fighter.x, y: fighter.y },
       },
     },

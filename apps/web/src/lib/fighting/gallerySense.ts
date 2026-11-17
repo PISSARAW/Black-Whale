@@ -169,6 +169,8 @@ function storedKitPosition(state: FightState, id: string): { x: number; y: numbe
     for (let index = 0; index < bodies.length; index++) {
       const body = physicalBodyAt(state, side, index)!
       if (body.writingKit?.sourceId === id) return sleepingBody(body)
+      if (Object.values(body.equipmentProps ?? {}).some((prop) => prop?.entityId === id))
+        return sleepingBody(body)
     }
   }
   return undefined

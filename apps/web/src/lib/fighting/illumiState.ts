@@ -2,12 +2,14 @@ import type { ArcadeFighter, FightSide } from './types'
 
 export type NeedleOrder = 'stay' | 'approach' | 'retreat'
 export interface IllumiState {
+  mediumCopyId?: string
   order: NeedleOrder
   disguised: boolean
   preparation: number
   anchor?: { x: number; y: number }
 }
 export interface NeedlePuppet {
+  mediumCopyId?: string
   owner: FightSide
   order: NeedleOrder
   needleEmbedded: boolean

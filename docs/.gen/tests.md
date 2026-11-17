@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 744
+Fichiers : 746
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -359,6 +359,14 @@ Fichiers : 744
 ## `apps/web/src/lib/fighting/cookie.test.ts`
 
 - Cookie is an executable treatment, separate from Biscuit’s body > summons the masseuse without attacking or changing the body
+
+## `apps/web/src/lib/fighting/copiedInventory.test.ts`
+
+- conjured tools retain their actual material provenance after pickup > keeps a thrown copied needle’s origin after it leaves the collected stock
+
+## `apps/web/src/lib/fighting/copiedMatterClocks.test.ts`
+
+- material lifetime survives paused combat and maintained effects > does not make a copied projectile permanent by storing it in Culdcept
 
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 

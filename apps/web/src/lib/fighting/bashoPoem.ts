@@ -1,4 +1,4 @@
-import { writingMaterialsReady, writingCopyExists } from './bashoMaterials'
+import { writingMaterialsReady, writingPaperExists } from './bashoMaterials'
 import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
@@ -77,7 +77,7 @@ export function availableBashoPoem(
       poem?.ready &&
       poem.effect === effect &&
       hasBashoPoem(actor, poem.sourceMoveId) &&
-      writingCopyExists(state, poem.paperCopyId),
+      writingPaperExists(state, poem.paperCopyId),
   )
 }
 declare module './types' {

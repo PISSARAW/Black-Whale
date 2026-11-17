@@ -30,6 +30,7 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
             owner: side,
             order: illumiState(attacker).order,
             needleEmbedded: true,
+            mediumCopyId: attacker.equipmentProps?.needles?.copyId,
           },
           attack: null,
           bufferedAttack: null,

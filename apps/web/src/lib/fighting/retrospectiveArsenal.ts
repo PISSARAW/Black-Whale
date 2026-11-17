@@ -1,3 +1,4 @@
+import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
@@ -80,6 +81,7 @@ const COMMAND_HANDLERS: readonly [
 ][] = [
   ['dolphin-lend', performDolphinLoan],
   ['voice-', performBlackVoiceCommand],
+  ['little-eye-', performLittleEyeCommand],
   ['basho-ask', performBashoQuestion],
   ['basho-answer', performBashoQuestion],
   ['basho-', performBashoWard],
@@ -113,6 +115,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
   return [
     consentOption(state, side),
     ...blackVoiceOptions(state, side),
+    ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
     ...recordedStatementOptions(state, side),

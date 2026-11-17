@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightLittleEyeScreen from './FightLittleEyeScreen.svelte'
   import { dowsingIndication } from '$lib/fighting/dowsingPresentation'
   import {
     judgmentClauseLabel,
@@ -115,6 +116,7 @@
           </p>
         {/each}
       {/if}
+      <FightLittleEyeScreen screen={state[side].littleEyeScreen} {language} />
       {#if state[side].devicePlayback}
         <strong
           >{language === 'fr' ? 'Dernière lecture de la caméra' : 'Latest camera playback'} · {Math.floor(

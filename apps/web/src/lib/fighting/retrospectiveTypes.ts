@@ -35,6 +35,12 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'little-eye-left',
+  'little-eye-right',
+  'little-eye-stay',
+  'little-eye-look-left',
+  'little-eye-look-right',
+  'little-eye-release',
   'voice-self-implant',
   'voice-autopilot',
   'voice-watch',

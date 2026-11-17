@@ -1,3 +1,4 @@
+import { littleEyeShotBusy } from './littleEyeCapture'
 import { dismissReturnedLoans } from './dolphinReturn'
 import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
 import { mapPhysicalBodies } from './physicalBodyMap'
@@ -246,7 +247,8 @@ function endActiveDolphinEffect(options: AuraAttackOptions, perform: PerformAtta
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
-  if (controlledEntities(state, side).length) return releasePreparedControl(state, side)
+  if (controlledEntities(state, side).length || littleEyeShotBusy(state, side))
+    return releasePreparedControl(state, side)
   if (borrowedDoorActive(state, side))
     return withDolphinIdentity(
       state,

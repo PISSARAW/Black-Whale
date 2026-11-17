@@ -1,3 +1,4 @@
+import { littleEyeShotBusy } from './littleEyeCapture'
 import { chainAbilityGroup } from './chainAbilityGroup'
 import {
   equippedDolphin,
@@ -108,7 +109,7 @@ export function recordDolphinEffects(
   const held = equippedDolphin(after[side])
   if (!held?.used || held.returned || !dolphinEffectScope(after[side], held)) return after
   const keys = new Set(held.sustainedKeys)
-  if (controlledEntities(after, side).length) keys.add('prepared')
+  if (controlledEntities(after, side).length || littleEyeShotBusy(after, side)) keys.add('prepared')
   for (const key of changedDolphinCounters(before, after)) keys.add(key)
   for (const key of dolphinEffectFlags(before, after, side)) keys.add(key)
   return writeDolphinKeys(after, side, [...keys])
@@ -207,7 +208,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
         (entry) => entry.device?.form?.owner === side || entry.device?.transforming?.owner === side,
       ),
     ),
-    prepared: controlledEntities(state, side).length > 0,
+    prepared: preparedEffectBusy(state, side),
     'luini-anchor': Boolean(luiniAnchor(state, side)),
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
     'padaille-weapon': Boolean(fighter.padailleTool),
@@ -251,4 +252,8 @@ function poemUseBusy(state: FightState, side: FightSide): boolean {
       )
     })
   )
+}
+
+function preparedEffectBusy(state: FightState, side: FightSide): boolean {
+  return controlledEntities(state, side).length > 0 || littleEyeShotBusy(state, side)
 }

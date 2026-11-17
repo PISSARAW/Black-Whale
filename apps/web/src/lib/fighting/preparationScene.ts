@@ -1,3 +1,4 @@
+import { createLittleEyeScene } from './littleEyeScene'
 import {
   buildPreparedVisitModel,
   syncPreparedVisitModel,
@@ -13,6 +14,7 @@ import type { FightState } from './types'
 
 export function createPreparationScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
+  const littleEye = createLittleEyeScene(options)
   const models = new Map<string, import('three').Group>()
   const geometries: import('three').BufferGeometry[] = []
   const materials = new Map<number, import('three').MeshBasicMaterial>()
@@ -163,6 +165,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   return {
     sync(state: FightState, seconds: number) {
+      littleEye.sync(state)
       const entries = (state.battlefield?.entities ?? []).filter(
         (entry) => entry.kind !== 'device' && !entry.writingKit && !entry.weakSpirit,
       )
@@ -188,6 +191,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
       }
     },
     dispose() {
+      littleEye.dispose()
       for (const root of models.values()) {
         disposePreparedVisitModels(root)
         scene.remove(root)
@@ -221,6 +225,7 @@ function syncAnimatedAppearance(context: {
   seconds: number
 }) {
   const { root, entry, seconds } = context
+  if (entry.littleEye) root.rotation.y = entry.littleEye.facing === 1 ? 0 : Math.PI
   if (entry.kind === 'supporter') root.rotation.z = entry.sleepingFrames ? -0.5 : 0
   if (entry.kind === 'bird' && entry.controller) root.rotation.z = Math.sin(seconds * 12) * 0.12
 }

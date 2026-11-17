@@ -669,3 +669,38 @@ Les commandes volontaires du panneau, y compris l'arrêt d'un soutien, ne passen
 plus pendant un sommeil, un blackout ou une manipulation qui retire l'autonomie.
 Les boutons concernés sont désactivés. Le On reste disponible. Cette passe porte
 le ruleset à **clash-combat-33** ; elle ne clôt pas les autres réserves de l'audit.
+
+## Little Eye : capture et perceptions réellement utilisables
+
+Little Eye lance une boule d'aura qui doit atteindre un petit être vivant réel,
+au plus de la taille d'un hamster. La capture n'est plus instantanée : un animal
+qui quitte sa trajectoire peut être manqué. Une copie de Gallery Fake, une
+créature de Nen, un animal mort ou un animal trop grand ne convient pas. Cette
+boule ne blesse ni n'étourdit les combattants. Les vitesses, distances et tailles
+de collision sont des réglages de la scène, pas des restrictions Nen annoncées
+par le manga.
+
+L'utilisateur reçoit maintenant une lecture de la vue et de l'ouïe de l'animal :
+apparences, positions et aura effectivement visible, paroles à portée de son
+corps. Cette lecture respecte l'orientation, les obstacles physiques de l'arène,
+In et Gyo. Elle ne révèle ni pensée, ni mensonge intentionnel, ni technique
+privée. Les doubles visibles de Hanzo sont distincts de son corps endormi. Le
+flux est privé dans le PvP et conservé dans le replay. Le client reçoit ces
+perceptions de l’arbitre, sans les reconstruire depuis des corps dont les données
+Nen ont été masquées.
+
+Les ordres de déplacement, d'orientation, d'arrêt et de libération passent par le
+véritable utilisateur, y compris avec un prêt de Dolphin ou une page de Skill
+Hunter. L'animal n'avance plus automatiquement vers un adversaire dont la
+position serait connue sans observation. Il conserve son dernier ordre pendant
+l'inconscience du porteur ; aucune nouvelle perception ou commande n'est alors
+reçue. L'IA s'appuie elle aussi sur l'image reçue. Un projectile qui touche
+réellement l'animal peut le tuer sans fabriquer un impact sur un combattant.
+
+Le temps de vol fait partie de l'unique application prêtée : il ne permet pas de
+rendre le Hatsu avant la capture puis de continuer à l'utiliser. Une libération
+ou la mort de l'animal termine l'application ; le dispositif équipé et Emperor
+Time conservent leur propre fermeture. Ruleset : **clash-combat-34**. Le On reste
+présent. Les destinataires non éveillés, leurs nœuds d'aura et les autres réserves
+listées plus haut restent à terminer ; cette passe ne certifie pas les 40
+arsenaux à 100 %.

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 819
+Fichiers : 820
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -723,6 +723,10 @@ Fichiers : 819
 
 - Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
 - Leorio’s attested techniques > lists only one Hatsu, generic physical blows, and no finisher
+
+## `apps/web/src/lib/fighting/littleEye.test.ts`
+
+- Little Eye uses actual emitted capture and the animal’s senses > travels before capture, can miss an escaping animal, and never damages or stuns a human
 
 ## `apps/web/src/lib/fighting/longhi.test.ts`
 

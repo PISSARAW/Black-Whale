@@ -1,3 +1,5 @@
+import { equippedDolphin } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { luiniPhasePresentation } from './luiniPresentation'
 import { preparationCheck } from './preparationRequirements'
 import { preparedSource, preparedActionReady, controlledEntities } from './preparationActions'
@@ -46,9 +48,13 @@ export { ENTITY_LABELS } from './preparationEntityLabels'
 
 export function visiblePreparationCheck(state: FightState, side: FightSide) {
   const fighter = state[side]
-  const held = fighter.kurapika?.held
+  const held = equippedDolphin(fighter)
   if (!held) return preparationCheck(state, side)
-  const actor = { ...fighter, id: held.source, nenOwner: fighter.id }
+  const actor = stolenAuraActor({
+    ...fighter,
+    id: held.source,
+    nenOwner: fighter.nenOwner ?? fighter.id,
+  })
   return preparationCheck({ ...state, [side]: actor }, side, held.moveId)
 }
 

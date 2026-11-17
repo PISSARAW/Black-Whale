@@ -63,6 +63,7 @@ function localSustainedKey(value: string): string {
 
 function redactEnemy(enemy: ArcadeFighter) {
   enemy.blackVoiceScreen = undefined
+  enemy.littleEyeScreen = undefined
   if (enemy.blackVoiceGear)
     enemy.blackVoiceGear = {
       phone: enemy.blackVoiceGear.phone?.hand ? enemy.blackVoiceGear.phone : undefined,

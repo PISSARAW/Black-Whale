@@ -82,7 +82,7 @@ describe('returning the original Hatsu independently of Dolphin dismissal', () =
     expect(released.opponent.dolphinLoan).toBeUndefined()
   })
   it('keeps Little Eye and its loan during the actual linked blackout, and returns the Hatsu when its animal dies', () => {
-    const active = use(lend(equipped('sayird')))
+    const active = frames(use(lend(equipped('sayird'))), 4)
     const animal = active.battlefield!.entities.find(
       (entry) => entry.controller?.side === 'opponent',
     )!

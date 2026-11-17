@@ -5,8 +5,8 @@ const DETAILS = {
   sayird: [
     'Little Eye',
     'Little Eye',
-    'Little Eye contrôle un petit animal réel, au plus de la taille d’un hamster : Sayird voit et entend par lui. Les créatures matérialisées par le Nen sont exclues.',
-    'Little Eye controls a real small animal, up to hamster size: Sayird sees and hears through it. Nen-conjured creatures are excluded.',
+    'Little Eye lance une boule d’aura qui doit atteindre un petit animal réel, au plus de la taille d’un hamster : Sayird voit et entend par lui. Les créatures matérialisées par le Nen sont exclues.',
+    'Little Eye launches an aura ball that must hit a real small animal, up to hamster size: Sayird sees and hears through it. Nen-conjured creatures are excluded.',
   ],
   cluck: [
     'Courrier par pigeon',

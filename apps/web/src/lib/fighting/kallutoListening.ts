@@ -1,4 +1,5 @@
 import { interruptEnForSpeech } from './en/interruptions'
+import { captureLittleEyeSpeech } from './littleEyeSenses'
 import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import {
@@ -36,7 +37,10 @@ export function speakPaperWords(
   if (!text) return state
   if (!voiceAvailable(state, speaker)) return state
   const words: PaperWords = { frame: state.frame, speaker, text }
-  let next = captureDeviceSpeech(state, { side: speaker, text, deliberateLie: intent })
+  let next = captureLittleEyeSpeech(
+    captureDeviceSpeech(state, { side: speaker, text, deliberateLie: intent }),
+    { side: speaker, text },
+  )
   for (const owner of ['player', 'opponent'] as const) {
     if (!paperListening(next, owner)) continue
     const doll = paperState(next[owner]).doll!

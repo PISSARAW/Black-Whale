@@ -57,7 +57,7 @@ export interface PreparedEntity {
   linkedTo?: string
   growth?: number
   delivered?: boolean
-  controller?: { side: FightSide; source: FighterId }
+  controller?: { side: FightSide; source: FighterId; member?: number }
 }
 
 export interface FightBattlefield {

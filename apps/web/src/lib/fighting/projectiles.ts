@@ -1,3 +1,4 @@
+import { interceptSmallAnimalProjectile } from './littleEyeImpact'
 import { interceptDeviceProjectile } from './deviceImpact'
 import { canReceiveCombatHit } from './combatTargets'
 import { BODYGUARD_PISTOL, hasBodyguardFirearm, bodyguardShotHeight } from './bodyguardFirearms'
@@ -261,7 +262,9 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
   }
   const profile = projectileProfile(fighter.id)
   const aim =
-    fighter.id === 'theta' ? thetaShotAim(fighter) : { y: bodyguardShotHeight(fighter, profile.y), targetZone: 'torso' as const }
+    fighter.id === 'theta'
+      ? thetaShotAim(fighter)
+      : { y: bodyguardShotHeight(fighter, profile.y), targetZone: 'torso' as const }
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     owner: side,
@@ -340,6 +343,9 @@ export function advanceProjectiles(
     const deviceCollision = interceptDeviceProjectile(state, { projectile, previousX: held.x })
     state = deviceCollision.state
     if (deviceCollision.intercepted) continue
+    const animalCollision = interceptSmallAnimalProjectile(state, { projectile, previousX: held.x })
+    state = animalCollision.state
+    if (animalCollision.intercepted) continue
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

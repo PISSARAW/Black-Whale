@@ -1,3 +1,6 @@
+import { advanceLittleEyeShots } from './littleEyeCapture'
+import { advanceLittleEyeSenses } from './littleEyeSenses'
+import { dolphinBody } from './dolphinBodies'
 import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor } from './dolphinSupply'
 import { advanceLuiniAnchors } from './luiniSpatial'
@@ -17,12 +20,12 @@ export function advancePreparation(
   inputs: { player: FightInput; opponent?: FightInput },
 ): FightState {
   if (!state.battlefield) return state
-  let next = state
+  let next = advanceLittleEyeShots(state)
   for (const side of ['player', 'opponent'] as const)
     next = readInteraction(next, side, Boolean(inputs[side]?.interact))
   const entities = next.battlefield!.entities.map((entry) => advanceEntity(next, entry))
   next = { ...next, battlefield: { ...next.battlefield!, entities } }
-  return advanceLuiniAnchors(completeDeliveries(state, next))
+  return advanceLittleEyeSenses(advanceLuiniAnchors(completeDeliveries(state, next)))
 }
 
 function readInteraction(state: FightState, side: FightSide, pressed: boolean): FightState {
@@ -116,14 +119,14 @@ function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity
   if (!control) return awake
   if (!liveEntity(entry) || !controllerKeepsAbility(state, entry))
     return { ...awake, controller: undefined }
-  if (control.source === 'sayird') return advanceAnimal(state, awake)
+  if (control.source === 'sayird') return advanceAnimal(awake)
   return advanceCourier(state, awake)
 }
 
-function advanceAnimal(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const side = entry.controller!.side === 'player' ? 'opponent' : 'player'
-  const target = state[side]
-  return { ...entry, x: approach(entry.x, target.x, 0.12), y: entry.kind === 'bird' ? 5 : 0 }
+function advanceAnimal(entry: PreparedEntity): PreparedEntity {
+  if (!entry.littleEye || entry.sleepingFrames) return entry
+  const target = entry.littleEye.destinationX ?? entry.x
+  return { ...entry, x: approach(entry.x, target, 0.12) }
 }
 
 function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntity {
@@ -144,8 +147,16 @@ function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntit
 }
 
 function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boolean {
-  const { side, source } = entry.controller!
-  const fighter = preparedControllerBody(state, side, source)
+  const { side, source, member } = entry.controller!
+  const body = dolphinBody(state, { owner: side, member: member ?? 0 })
+  if (!body) return false
+  return bodyKeepsPreparedAbility(preparedControllerBody(body, source), source)
+}
+
+function bodyKeepsPreparedAbility(
+  fighter: FightState['player'],
+  source: FightState['player']['id'],
+): boolean {
   if (fighter.health <= 0 || fighter.hatsuEffects.hatsuStolen > 0) return false
   if (fighter.id === 'chrollo')
     return chrolloHasActivePage(fighter, source as Exclude<typeof source, 'chrollo'>)
@@ -157,12 +168,7 @@ function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boole
   )
 }
 
-function preparedControllerBody(
-  state: FightState,
-  side: FightSide,
-  source: FightState['player']['id'],
-) {
-  const actor = state[side]
+function preparedControllerBody(actor: FightState['player'], source: FightState['player']['id']) {
   const held = equippedDolphin(actor)
   return held?.used && !held.returned && held.source === source
     ? stolenAuraActor(loanCarrier(actor))

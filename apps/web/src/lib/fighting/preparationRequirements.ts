@@ -1,3 +1,4 @@
+import { littleEyeTarget } from './littleEyeTypes'
 import {
   luiniAnchor,
   luiniDestination,
@@ -85,7 +86,9 @@ function requirementSatisfied(context: {
 
 export function animalTarget(state: FightState, side: FightSide, kind: 'animal' | 'bird') {
   return (state.battlefield?.entities ?? [])
-    .filter((entry) => entry.kind === kind && liveEntity(entry))
+    .filter((entry) =>
+      kind === 'animal' ? littleEyeTarget(entry) : entry.kind === kind && liveEntity(entry),
+    )
     .find(
       (entry) =>
         entry.material === 'real' &&

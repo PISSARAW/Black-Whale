@@ -48,6 +48,12 @@ try {
   await page.screenshot({ path: path.join(output, 'prepared-scene.png'), fullPage: true })
   await page.evaluate(() => window.preparationFixture.renderCase('sayird', ['animals']))
   await page.getByRole('button', { name: 'Activer L' }).click()
+  assert.equal((await snapshot()).battlefield.littleEyeShots.length, 1)
+  assert.equal(
+    (await snapshot()).battlefield.entities.filter((entry) => entry.controller).length,
+    0,
+  )
+  await page.evaluate(() => window.preparationFixture.advance(8))
   assert.equal(
     (await snapshot()).battlefield.entities.filter((entry) => entry.controller).length,
     1,

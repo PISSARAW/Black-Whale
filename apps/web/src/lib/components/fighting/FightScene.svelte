@@ -58,7 +58,6 @@
   } from '$lib/fighting/sceneMotion'
   import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
-  import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { drawVictoryFrame } from '$lib/fighting/victory/draw'
@@ -116,6 +115,7 @@
         const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
         const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         const { createVictoryRenderer } = await import('$lib/fighting/victory/renderer')
+        const { createFighterEffectScene } = await import('$lib/fighting/fighterEffectScene')
         if (disposed || !canvas) return
 
         const {

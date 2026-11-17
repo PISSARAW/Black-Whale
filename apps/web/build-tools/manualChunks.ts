@@ -7,6 +7,7 @@ export function manualChunks(id: string): string | undefined {
   if (/\/i18n\/messages\/(en|fr)\.ts$/.test(id))
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
   if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
+  if (/\/fighting\/nenCanon(?:First|Second)\.ts$/.test(id)) return 'clash-nen-canon'
   if (!id.includes('/three/src/')) return undefined
   if (/\/Three(?:\.Core)?\.js$/.test(id)) return undefined
   return threeChunkName(id)

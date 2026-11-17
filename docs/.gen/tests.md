@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 820
+Fichiers : 835
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -515,6 +515,10 @@ Fichiers : 820
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
 
+## `apps/web/src/lib/fighting/feitanPresentation.test.ts`
+
+- Feitan manifestation animations > keeps the full-body frontal camera above the floor while Feitan bows his head
+
 ## `apps/web/src/lib/fighting/feitanScene.test.ts`
 
 - Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
@@ -803,6 +807,14 @@ Fichiers : 820
 
 - Skill Hunter observes the actual newly started technique > steals Texture Surprise after seeing it without taking Bungee Gum
 
+## `apps/web/src/lib/fighting/onAwakening.test.ts`
+
+- On awakening presentation > starts on an accepted oath, advances on simulation frames and never restarts on a repeated render
+
+## `apps/web/src/lib/fighting/onAwakeningScene.test.ts`
+
+- On awakening scene lifecycle > frames the visible animated head instead of an unposed hidden LOD
+
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
 - On (The Last Mission) > banks grudge from damage taken, never from aura
@@ -1002,6 +1014,10 @@ Fichiers : 820
 ## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
 
 - actual contact recovery measurement > measures a real travelling projectile after its owner has recovered
+
+## `apps/web/src/lib/fighting/victory/beyondCurse.test.ts`
+
+- Beyond post-mortem cinematic selection > prioritizes the carrier death branch only for princes, for either match side
 
 ## `apps/web/src/lib/fighting/victory/playback.test.ts`
 

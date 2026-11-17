@@ -1,3 +1,4 @@
+import { NEN_CANON } from '../src/lib/fighting/nenCanon'
 import { afterEach, describe, expect, it } from 'vitest'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -104,6 +105,19 @@ describe('production bundle partitioning', () => {
       built.result.output.some(
         (item) => item.type === 'chunk' && item.name === 'clash-combo-catalogues',
       ),
+    ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
+
+  it('preserves all Nen conditions when their inert catalogue is loaded in a separate chunk', async () => {
+    const canon = resolve('src/lib/fighting/nenCanon.ts')
+    const built = await compile(`export { NEN_CANON } from ${JSON.stringify(canon)}`)
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    expect(actual.NEN_CANON).toEqual(NEN_CANON)
+    expect(
+      built.result.output.some((item) => item.type === 'chunk' && item.name === 'clash-nen-canon'),
     ).toBe(true)
     expect(built.warnings).toEqual([])
   })

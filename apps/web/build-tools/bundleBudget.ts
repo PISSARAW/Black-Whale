@@ -25,7 +25,7 @@ export function bundleBudget(): Plugin {
       for (const chunk of chunks) {
         if (chunk.bytes > MAX_JAVASCRIPT_BYTES)
           this.error(
-            `${chunk.file} exceeds the unchanged 500 kB JavaScript budget (${chunk.bytes} bytes)`,
+            `${chunk.name} (${chunk.file}) exceeds the unchanged 500 kB JavaScript budget (${chunk.bytes} bytes)`,
           )
       }
       this.emitFile({

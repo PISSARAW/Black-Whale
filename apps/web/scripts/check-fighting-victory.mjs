@@ -47,6 +47,8 @@ const matchups = [
   ['bonolenov', 'hisoka', 'whale-hold', 'player'],
   ['illumi', 'franklin', 'vip-casino', 'opponent'],
   ['biscuit', 'hisoka', 'heavens-arena', 'player'],
+  ['saiyu', 'hisoka', 'heavens-arena', 'opponent'],
+  ['melody', 'chrollo', 'banquet-hall', 'player'],
 ]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })

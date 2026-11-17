@@ -1,10 +1,9 @@
 # Cinématiques de victoire de Clash
 
-Les dix-sept scènes (Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin, Benjamin,
-Tserriednich, Leorio, Halkenburg, Camilla, Kalluto, Machi, Shizuku, Bonolenov, Illumi et Biscuit) se jouent
-pendant dix secondes après le verdict. Le gagnant, le vaincu et le lieu viennent
-du combat courant, pour les deux côtés du duel. Les scènes ne modifient jamais
-les PV, l'aura, les conditions des Hatsu ou le résultat synchronisé.
+Les cinématiques enregistrées dans `catalogue.ts` se jouent pendant dix secondes
+après le verdict. Le gagnant, le vaincu et le lieu viennent du combat courant,
+pour les deux côtés du duel. Les scènes ne modifient jamais les PV, l’aura,
+les conditions des Hatsu ou le résultat synchronisé.
 
 `playback.ts` gère le déclenchement, la pause, la fin et le passage de la scène.
 `renderer.ts` travaille sur les modèles de la scène actuelle et restaure toutes
@@ -16,8 +15,8 @@ Le HUD et le panneau de résultats attendent la fin ou le passage de la scène.
 Les replays, égalités et prévisions ne déclenchent pas une nouvelle victoire.
 Les réglages de confort et de son s'appliquent également à ces séquences.
 
-Le film d'Hisoka garde son verdict « VICTOIRE » ; les seize autres affichent
-« FATALITY ». Uvogin ne fait pas partie de ce catalogue.
+Hisoka affiche « VICTOIRE », Melody affiche « FRIENDSHIP » et les autres
+affichent « FATALITY ». Uvogin ne fait pas partie de ce catalogue.
 L'animation se joue localement, y compris en PvP : aucun événement réseau ni
 dommage supplémentaire n'est envoyé. Chain Jail reste une pose après verdict réservée aux membres réels de la Brigade.
 Les autres adversaires déclenchent la variante Judgment Chain.
@@ -31,11 +30,11 @@ Si le canvas ou une ressource échoue, les résultats restent accessibles.
 le chronométrage, les pauses, le passage et les rematches. `renderer.test.ts`
 vérifie les modèles natifs des deux côtés, l'absence de mutation du combat,
 la restauration des poses et matériaux et le repli après une erreur.
-`node apps/web/scripts/check-fighting-victory.mjs` contrôle les dix-sept séquences,
+`node apps/web/scripts/check-fighting-victory.mjs` contrôle tout le catalogue,
 plusieurs lieux, les tailles extrêmes, un miroir et le mobile dans un vrai canvas.
 Il vérifie aussi le déclenchement automatique et le chargement du son de chaque
 personnage enregistré ; une entrée absente du contrôle fait échouer le script.
-Les bandes sonores proviennent des dix-sept démos et se trouvent dans
+Les bandes sonores proviennent des démos et se trouvent dans
 `apps/web/static/clash-victories/`.
 
 Benjamin : « Le dernier ordre » utilise la paume gauche d'Air Blow, un écho de
@@ -279,3 +278,57 @@ la chute et la restauration des modèles. `check-kurapika-troupe.mjs` contrôle
 P2, les gabarits, les lieux, le mobile, le confort et le branchement dans Clash.
 `render-kurapika-troupe.mjs` et `compose-kurapika-troupe.mjs` produisent dix
 secondes en 1080p60 et `kurapika-troupe.m4a`, sans aucune voix.
+
+Saiyu : « Les trois silences » utilise trois manifestations graphiques distinctes
+de Mizaru, Kikazaru et Iwazaru. L’archive du projet ne possède pas leur anatomie
+révélée : ces signes expriment leurs fonctions, sans inventer un modèle de bête.
+Les contacts aux yeux, à l’oreille et à la bouche arrivent aux images 90, 162 et
+234. Le cadre se ferme brièvement, le son s’étouffe puis la tentative de cri
+reste muette. La cible porte successivement les mains à ses yeux, ses oreilles
+et sa bouche. Le bâton natif s’allonge à 282, touche la surface réelle du torse
+à 360 et projette le vaincu avec la gravité, la pose de KO et le sol du combat.
+
+Les deux mains suivent deux prises réelles sur le bâton, sans étirer les bras.
+Le film préalable obtient trois touches natives distinctes (bits 1, 3, 7), puis
+un K.-O. natif avec le finisher. Aucun Zetsu automatique ni dégât supplémentaire
+n’est ajouté. La cinématique de dix secondes est branchée aux victoires de Saiyu,
+avec adaptation au lieu, à la cible et au côté gagnant. L’annonce « Fatality »
+en anglais arrive à 8,1 secondes, après le retour du son, sans réplique française.
+`saiyu.test.ts` vérifie contacts, prises, chute et restauration sur les gabarits
+extrêmes et le miroir ; `saiyuFilm.test.ts` vérifie la simulation des deux côtés.
+`check-saiyu-fatality.mjs` vérifie le mobile, le confort et le déclenchement réel.
+
+
+La version sensorielle de Saiyu garde le cadre totalement noir de 98 à 130,
+puis révèle des iris pâles sans reflets. À 162, la cible se prend les oreilles
+et l’onde sonore s’aplatit ; le mix coupe tout son entre 174 et 282 (2,9–4,7 s).
+Le plan frontal de 234 à 282 révèle une bouche ouverte et une main à la gorge :
+la tentative de cri demeure muette. Les signes s’effacent rapidement après
+contact pour dégager le visage. `saiyuPerception.ts` possède seulement ses
+matériaux et la bouche temporaire ; la face native et les matériaux des yeux
+sont restaurés après chaque rendu. Le compositeur vérifie aussi le silence
+sur l’audio AAC exporté. La scène conserve une durée de dix secondes.
+
+Melody : « Un champ au printemps » lève sa flûte native pendant 48 images, puis
+joue continuellement. Les ondes de musique atteignent la cible ; sa garde
+s’abaisse et ses yeux se ferment entre 144 et 234. À 210, le décor réel laisse
+place à la prairie subjective : 1 280 fleurs, des herbes, des collines et des
+pétales. La cible contemple une fleur tenue dans sa main à 324 ; Melody continue
+de jouer jusqu’au dernier plan. Le livre de Chrollo est rangé pendant l’illusion.
+
+Cette fin est une capitulation hypnotique, sans exécution. Le film préalable
+valide une vraie performance native, une écoute qui pacifie la cible, l’absence
+de dégâts musicaux, puis une vraie victoire à la décision avec le perdant vivant.
+Le renderer n’ajoute ni sommeil permanent, ni mort, ni effet de trois minutes.
+L’arène et les matériaux, les poses et la position de la flûte sont restaurés
+après chaque image. `melody.test.ts` vérifie les deux prises, l’embouchure, le
+miroir et les gabarits ; `melodyFilm.test.ts` couvre les deux côtés du duel.
+Le mix utilise une phrase de flûte originale et l’annonce anglaise « Friendship »
+à 8,1 secondes, sans dialogue français. La scène est branchée aux victoires de
+Melody et s’adapte à l’arène et aux acteurs du combat courant.
+
+
+`check-saiyu-melody-victories.mjs` contrôle huit victoires réelles dans le
+composant Clash, avec rematches, modes IA/local, deux côtés, deux arènes,
+verdicts et chargement des sons. `saiyuMelodyPlayback.test.ts` couvre tous les
+adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.

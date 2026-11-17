@@ -923,3 +923,35 @@ Les cibles hors Brigade conservent leur variante Judgment Chain.
 instrumentale, sans voix. `check-kurapika-troupe.mjs` vérifie le déclenchement,
 le son, les deux côtés, les gabarits, les lieux, le mobile et le confort.
 Sortie : `output/fighting-kurapika-troupe/Kurapika-Brigade-Fatality-10s.mp4`.
+
+## Saiyu — Les trois silences
+
+`node apps/web/scripts/render-saiyu-fatality.mjs --inspect` produit les plans de
+contrôle ; la même commande sans `--inspect` exporte 600 images en 1080p60.
+`node apps/web/scripts/compose-saiyu-fatality.mjs` ajoute le mix et l’annonce anglaise « Fatality » à 8,1 s,
+également chargé dans Clash. `check-saiyu-fatality.mjs` contrôle le déclenchement,
+le son, P2, le miroir, les petites et grandes cibles, le mobile et le confort.
+
+La démo affronte Hisoka à la Tour Céleste ; `target`, `stage`, `side=opponent`
+et `reduced` permettent les adaptations. Trois touches natives retirent les
+sens avant le vrai K.-O. par le bâton. La mise en scène utilise les signes de
+chaque sens, conserve les modèles natifs et n’invente pas l’anatomie des singes.
+Sortie : `output/fighting-saiyu-fatality/Saiyu-Fatality-Sens-Annonce-10s.mp4`.
+La version sensorielle montre un noir complet, des yeux sans regard, les mains
+aux oreilles, une onde sonore devenue plate et une bouche ouverte en cri muet.
+Le mix est entièrement silencieux entre 2,9 et 4,7 secondes.
+
+## Melody — Un champ au printemps
+
+`node apps/web/scripts/render-melody-fatality.mjs --inspect` exporte les plans
+de contrôle ; sans `--inspect`, le script exporte 600 images en 1080p60.
+`compose-melody-fatality.mjs` ajoute la phrase de flûte originale et l’annonce
+« Friendship » en anglais. `check-melody-fatality.mjs` contrôle le déclenchement,
+les deux côtés, les tailles, le miroir, les lieux, le mobile et le confort.
+
+La démo oppose Melody à Chrollo dans la salle de banquet. `target`, `stage`,
+`side=opponent` et `reduced` permettent les adaptations. La prairie est une
+perception du personnage enchanté ; Melody ne tue pas avec sa musique.
+La simulation préalable obtient une victoire native à la décision, après une
+vraie performance qui pacifie la cible sans lui infliger de dégâts.
+Sortie : `output/fighting-melody-fatality/Melody-Friendship-10s.mp4`.

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightSaiyuVictory from './FightSaiyuVictory.svelte'
   import FightFutureVictory from './FightFutureVictory.svelte'
   import { VICTORY_TITLES } from '$lib/fighting/victory/catalogue'
   import { fighterDefinition } from '$lib/fighting/roster'
@@ -30,15 +31,22 @@
         elapsed={frame.elapsed}
         {language}
       />{/if}
+    {#if frame.fighter === 'saiyu'}<FightSaiyuVictory elapsed={frame.elapsed} {language} />{/if}
     <p class="cinematic-match" aria-live="polite">
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit'].includes(frame.fighter) ? 8 : 7)}
+    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'melody'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
-        <strong>{fatality ? 'FATALITY' : fr ? 'VICTOIRE' : 'VICTORY'}</strong><b
-          >{fighterDefinition(frame.fighter).name}</b
-        ><span
+        <strong
+          >{frame.fighter === 'melody'
+            ? 'FRIENDSHIP'
+            : fatality
+              ? 'FATALITY'
+              : fr
+                ? 'VICTOIRE'
+                : 'VICTORY'}</strong
+        ><b>{fighterDefinition(frame.fighter).name}</b><span
           >{frame.variant === 'kurapika-judgment'
             ? fr
               ? 'La dernière condition'

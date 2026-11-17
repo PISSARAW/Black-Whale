@@ -25,7 +25,7 @@
     }
     if (current.token !== token) {
       token = current.token
-      element.src = `/clash-victories/${current.fighter}.m4a`
+      element.src = `/clash-victories/${current.variant ?? current.fighter}.m4a`
       element.load()
     }
     element.muted = audio.muted

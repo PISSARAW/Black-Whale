@@ -41,7 +41,7 @@ export function createFinishedFallPresentation() {
     const to = fall.samples[Math.min(last, index + 1)]
     const y = from.y + (to.y - from.y) * Math.min(1, frame - index)
     const progress = ['ko', 'down'].includes(fighter.pose)
-      ? fallProgress({ elapsed, last, y })
+      ? finishedFallProgress({ elapsed, last, y })
       : undefined
     return {
       fighter: landedPose({ ...fighter, y, velocityY: y > 0 ? from.velocityY : 0 }),
@@ -65,7 +65,15 @@ function landedPose(fighter: ArcadeFighter): ArcadeFighter {
   return { ...fighter, pose: 'idle', attack: null }
 }
 
-function fallProgress({ elapsed, last, y }: { elapsed: number; last: number; y: number }): number {
+export function finishedFallProgress({
+  elapsed,
+  last,
+  y,
+}: {
+  elapsed: number
+  last: number
+  y: number
+}): number {
   const duration = KO_DURATION * 1.35
   if (y > 0) return Math.min(0.18, elapsed / duration)
   return Math.min(1, (last > 0 ? 0.18 : 0) + (elapsed - last * FIXED_STEP) / duration)

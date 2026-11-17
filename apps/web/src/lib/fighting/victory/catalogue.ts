@@ -1,4 +1,5 @@
 import type { FightSide, FightState, FighterId } from '../types'
+import { troupeMember } from '../troupeMembership'
 
 export const VICTORY_DURATION = 10
 export const VICTORY_FIGHTERS = [
@@ -33,6 +34,7 @@ export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
 }
 export interface VictorySelection {
   token: string
+  variant?: 'kurapika-judgment' | 'kurapika-troupe'
   fighter: VictoryFighter
   winner: FightSide
   loser: FightSide
@@ -52,5 +54,19 @@ export function selectVictory(state: FightState): VictorySelection | null {
     fighter,
     state[loser].id,
   ].join(':')
-  return { token, fighter, winner, loser }
+  return {
+    token,
+    fighter,
+    winner,
+    loser,
+    ...victoryVariant(fighter, state[loser].id),
+  }
+}
+
+function victoryVariant(
+  fighter: VictoryFighter,
+  target: FighterId,
+): Pick<VictorySelection, 'variant'> {
+  if (fighter !== 'kurapika') return {}
+  return { variant: troupeMember(target) ? 'kurapika-troupe' : 'kurapika-judgment' }
 }

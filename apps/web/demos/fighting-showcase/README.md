@@ -810,3 +810,21 @@ commence à l'image 558. La composition reprend la bande originale de la
 référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
 Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
 règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
+
+
+Kurapika contre la Brigade — « La colère écarlate » : `kurapika-troupe.html`
+présente dix secondes de capture éclair, sept coups au corps et au visage,
+puis une projection finale inspirée de son affrontement avec Uvogin. Les yeux
+restent écarlates et le visage en colère. La démo affronte Chrollo dans la cale ;
+`target`, `stage`, `side=opponent` et `reduced` permettent les adaptations.
+Seuls les neuf membres jouables réels de la Brigade sont acceptés.
+
+`kurapikaTroupeFilm.ts` obtient une capture Chain Jail native, sans dégâts,
+le Zetsu forcé puis un K.-O. physique. Le renderer est celui de Clash et choisit
+automatiquement cette variante après une victoire de Kurapika sur la Brigade.
+Les cibles hors Brigade conservent leur variante Judgment Chain.
+`render-kurapika-troupe.mjs` exporte 600 images en 1080p60 ;
+`compose-kurapika-troupe.mjs` ajoute les chaînes, les coups et la tension
+instrumentale, sans voix. `check-kurapika-troupe.mjs` vérifie le déclenchement,
+le son, les deux côtés, les gabarits, les lieux, le mobile et le confort.
+Sortie : `output/fighting-kurapika-troupe/Kurapika-Brigade-Fatality-10s.mp4`.

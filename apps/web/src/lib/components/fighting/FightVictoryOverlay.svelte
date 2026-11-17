@@ -20,6 +20,7 @@
     data-victory-cinematic
     data-winner={frame.fighter}
     data-target={state[frame.loser].id}
+    data-variant={frame.variant}
     data-stage={state.environment.stageId}
     data-elapsed={frame.elapsed.toFixed(2)}
   >
@@ -33,12 +34,27 @@
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla'].includes(frame.fighter) ? 8 : 7)}
+    {#if !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong>{fatality ? 'FATALITY' : fr ? 'VICTOIRE' : 'VICTORY'}</strong><b
           >{fighterDefinition(frame.fighter).name}</b
-        ><span>{VICTORY_TITLES[frame.fighter][fr ? 0 : 1]}</span>
+        ><span
+          >{frame.variant === 'kurapika-judgment'
+            ? fr
+              ? 'La dernière condition'
+              : 'The final condition'
+            : frame.variant === 'kurapika-troupe'
+              ? fr
+                ? 'La colère écarlate'
+                : 'Scarlet fury'
+              : VICTORY_TITLES[frame.fighter][fr ? 0 : 1]}</span
+        >
       </div>
+    {/if}
+    {#if frame.variant === 'kurapika-judgment' && frame.elapsed >= 3 && frame.elapsed < 5.8}
+      <p class="judgment-condition">
+        {fr ? '« N’utilise plus le Nen. »' : '“Do not use Nen again.”'}
+      </p>
     {/if}
     <button type="button" class="skip-victory" onclick={onSkip}
       >{fr ? 'Passer' : 'Skip'} <kbd>{fr ? 'Échap' : 'Esc'}</kbd></button
@@ -47,6 +63,21 @@
 {/if}
 
 <style>
+  .judgment-condition {
+    position: absolute;
+    left: 50%;
+    bottom: 13%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0.7rem 1.2rem;
+    border: 1px solid #b98e60;
+    background: #090b10dd;
+    color: #f5d3a2;
+    white-space: nowrap;
+    font-size: clamp(12px, 1.7vw, 24px);
+    letter-spacing: 0.07em;
+  }
+
   .victory-cinematic {
     position: absolute;
     inset: 0;

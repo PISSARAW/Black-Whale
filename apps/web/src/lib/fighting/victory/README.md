@@ -128,3 +128,46 @@ séquence native de mort, consommation et résurrection avant le verdict.
 la prise, le portrait fixe et la restauration des modèles. Le contrôle navigateur
 `check-camilla-fatality.mjs` couvre grandes et petites cibles, miroir, P2,
 plusieurs lieux, confort réduit, mobile et déclenchement réel dans FightStage.
+
+
+Kurapika hors Brigade : « La dernière condition » active visuellement Emperor
+Time, déploie Judgment Chain depuis le petit doigt droit, implante le pieu au
+cœur à l’image 150 et annonce « N’utilise plus le Nen ». La tentative d’aura
+commence à 294 ; la violation déclenche le pieu à 348. Une coupe interne montre
+le cœur, ses vaisseaux et la chaîne qui se referme, puis le vaincu s’effondre sur
+le dos avec la pose et les contacts au sol natifs. Kurapika revient en portrait. Aucune chaîne ne ligote le torse.
+
+`troupeMember` choisit automatiquement cette variante pour les cibles hors
+Brigade, y compris Hisoka, et choisit « La colère écarlate » pour les membres réels.
+Le frame de lecture transporte la variante afin de sélectionner son titre et
+son fichier sonore `kurapika-judgment.m4a`. Le mix comporte des battements,
+maillons, rupture et annonce Fatality, sans réplique française. Le film de
+validation résout une véritable implantation sans dégâts sous Emperor Time,
+puis un véritable décès provoqué par une entrée de Nen interdite. Il ne change
+ni les règles de Judgment Chain ni les conditions de Chain Jail.
+
+`kurapikaJudgmentFilm.test.ts`, `renderer.test.ts` et `playback.test.ts` vérifient
+le verdict, le petit doigt, l’absence de Chain Jail, le corps au sol, le choix de
+variante et la restauration complète de la scène. `check-kurapika-judgment.mjs`
+contrôle P2, petite/grande cible, miroir, mobile, confort réduit, déclenchement,
+et le chargement du son propre à cette variante. L’export de dix secondes
+provient de `render-kurapika-judgment.mjs` et `compose-kurapika-judgment.mjs`.
+
+Kurapika face à la Brigade : « La colère écarlate » reprend le rythme brutal de
+son combat contre Uvogin. Les yeux écarlates et les sourcils froncés précèdent
+Chain Jail : la chaîne part du majeur droit à l’image 33 et ligote le torse à 63.
+Kurapika frappe sept fois, en alternant corps et visage, aux images 84, 114,
+144, 174, 204, 234 et 300. Le dernier coup projette la cible ; sa chute utilise
+la gravité, le rig de KO et les contacts au sol du combat. La chaîne suit le
+torse pendant la chute puis se retire entre 368 et 410. Le portrait final
+conserve sa colère. Cette variante ne déploie pas Judgment Chain.
+
+Le sélecteur réserve `kurapika-troupe` aux neuf membres jouables actuels de la
+Brigade, en excluant Hisoka. La démo résout d’abord une vraie capture sans
+dégâts, le Zetsu forcé et un K.-O. physique ; ses sept frappes condensent les
+coups réels du combat. La présentation ne modifie jamais le résultat courant.
+`kurapikaTroupe.test.ts` vérifie les sept contacts des poings sur chaque membre,
+la chute et la restauration des modèles. `check-kurapika-troupe.mjs` contrôle
+P2, les gabarits, les lieux, le mobile, le confort et le branchement dans Clash.
+`render-kurapika-troupe.mjs` et `compose-kurapika-troupe.mjs` produisent dix
+secondes en 1080p60 et `kurapika-troupe.m4a`, sans aucune voix.

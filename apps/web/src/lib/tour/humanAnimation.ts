@@ -30,6 +30,13 @@ export interface AnimatedHuman {
 /** A game-specific motion layered on top of the shared body poses. */
 export type HumanMotion = (rig: AnimatedHuman) => void
 
+const ANIMATION_RIGS = new WeakMap<Object3D, AnimatedHuman>()
+
+/** Read the authored anatomy without advancing its animation or transition memory. */
+export function humanAnimationRig(figure: Object3D): AnimatedHuman | undefined {
+  return ANIMATION_RIGS.get(figure)
+}
+
 export interface HumanAnimationLayer {
   motion?: HumanMotion
   /** Final contact constraints run after all pose cross-fades and motion layers. */
@@ -161,6 +168,7 @@ export function poseHuman(rig: PosedHuman): void {
 export function humanAnimation(
   rig: AnimatedHuman,
 ): (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void {
+  ANIMATION_RIGS.set(rig.figure, rig)
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
   const flute = rig.figure.getObjectByName('signature-flute')
   const fluteBasePosition = flute?.position.clone()

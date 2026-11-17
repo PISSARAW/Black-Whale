@@ -136,7 +136,7 @@ export function createVictoryRenderer(options: {
         const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
         drivers.set(frame.fighter, driver)
         driver.update(context)
-        if (comfort.camera === 0 && !['leorio', 'camilla'].includes(frame.fighter))
+        if (comfort.camera === 0 && !['leorio', 'camilla', 'kurapika'].includes(frame.fighter))
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)
         victim.root.updateWorldMatrix(true, true)

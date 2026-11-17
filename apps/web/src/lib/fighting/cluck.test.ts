@@ -119,6 +119,7 @@ describe('Cluck — bird control retained by Steal Chain', () => {
       })
       expect(held[victim].stolenChainAbility).toEqual({
         owner: thief,
+        ownerMember: 0,
         moveId: BIRD_MANIPULATION.id,
       })
       expect(held[victim].aura).toBeLessThan(state[victim].aura)
@@ -138,7 +139,11 @@ describe('Cluck — bird control retained by Steal Chain', () => {
     const attached = advance(steal(state), 19)
     expect(attached.opponent.drainingChain).toBeDefined()
     expect(attached.player.kurapika?.held).toBeNull()
-    const stopped = advance({ ...attached, player: { ...attached.player, hitStun: 40 } }, 90)
+    // Since the Stealth Dolphin donor-aura rule (733ff3225), a hit on Kurapika no longer
+    // detaches a connected syringe; losing range or the needed Nen still stops the drain.
+    const hit = advance({ ...attached, player: { ...attached.player, hitStun: 40 } }, 90)
+    expect(hit.player.kurapika?.held).toMatchObject({ source: 'cluck' })
+    const stopped = advance({ ...attached, player: { ...attached.player, x: 5 } }, 90)
     expect(stopped.player.kurapika?.held).toBeNull()
     expect(stopped.opponent.drainingChain).toBeUndefined()
   })
@@ -187,9 +192,13 @@ describe('Cluck — bird control retained by Steal Chain', () => {
     expect(returned.player.kurapika?.held).toBeNull()
     expect(returned.opponent.stolenChainAbility).toBeUndefined()
     expect(stealableChainMove(returned.opponent)).toBe(BIRD_MANIPULATION.id)
+    // A round boundary keeps an unused stolen Hatsu (dolphinRound.ts); releasing still returns it.
     const reset = nextRound({ ...state, phase: 'finished', winner: 'player' })
-    expect(reset.player.kurapika?.held).toBeNull()
-    expect(reset.opponent.stolenChainAbility).toBeUndefined()
-    expect(stealableChainMove(reset.opponent)).toBe(BIRD_MANIPULATION.id)
+    expect(reset.player.kurapika?.held).toMatchObject({ source: 'cluck', used: false })
+    expect(reset.opponent.stolenChainAbility).toMatchObject({ owner: 'player' })
+    expect(stealableChainMove(reset.opponent)).toBeNull()
+    const released = returnChainAbility(reset, 'player')
+    expect(released.opponent.stolenChainAbility).toBeUndefined()
+    expect(stealableChainMove(released.opponent)).toBe(BIRD_MANIPULATION.id)
   })
 })

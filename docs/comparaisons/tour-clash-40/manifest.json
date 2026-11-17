@@ -1,0 +1,234 @@
+{
+  "revision": "8e82775d3ee527ed4fe1cab77f69893e9b162831",
+  "date": "2026-11-17",
+  "personnages": 40,
+  "pose": "idle",
+  "aura": "none / zetsu",
+  "angle": 0,
+  "disposition": {
+    "colonnes": 4,
+    "groupes": 10,
+    "largeur_colonne": 360,
+    "hauteur_groupe": 1100,
+    "tour_y": 55,
+    "clash_y": 585,
+    "hauteur_modele": 500
+  },
+  "erreurs_de_rendu": [],
+  "planches": [
+    {
+      "fichier": "visages.png",
+      "largeur": 1440,
+      "hauteur": 11000,
+      "sha256": "93d606e9f845b8de57cc2600b39e74b23459b32a51add4569369d7f35cd1fee3"
+    },
+    {
+      "fichier": "silhouettes.png",
+      "largeur": 1440,
+      "hauteur": 11000,
+      "sha256": "5e6781de22704ba45699002d7bc78191ebcd8054383f09c6d4cade3b827b0171"
+    }
+  ],
+  "roster": [
+    {
+      "id": "kurapika",
+      "modele": "kurapika",
+      "nom": "Kurapika"
+    },
+    {
+      "id": "hisoka",
+      "modele": "hisoka",
+      "nom": "Hisoka"
+    },
+    {
+      "id": "chrollo",
+      "modele": "chrollo-lucilfer",
+      "nom": "Chrollo"
+    },
+    {
+      "id": "benjamin",
+      "modele": "prince-benjamin",
+      "nom": "Benjamin"
+    },
+    {
+      "id": "tserriednich",
+      "modele": "prince-tserriednich",
+      "nom": "Tserriednich"
+    },
+    {
+      "id": "feitan",
+      "modele": "feitan-portor",
+      "nom": "Feitan"
+    },
+    {
+      "id": "saiyu",
+      "modele": "saiyu",
+      "nom": "Saiyu"
+    },
+    {
+      "id": "theta",
+      "modele": "theta",
+      "nom": "Theta"
+    },
+    {
+      "id": "biscuit",
+      "modele": "biscuit-krueger",
+      "nom": "Biscuit"
+    },
+    {
+      "id": "phinks",
+      "modele": "phinks-magcub",
+      "nom": "Phinks"
+    },
+    {
+      "id": "franklin",
+      "modele": "franklin-bordeau",
+      "nom": "Franklin"
+    },
+    {
+      "id": "machi",
+      "modele": "machi-komacine",
+      "nom": "Machi"
+    },
+    {
+      "id": "illumi",
+      "modele": "illumi",
+      "nom": "Illumi"
+    },
+    {
+      "id": "kalluto",
+      "modele": "kalluto-zoldyck",
+      "nom": "Kalluto"
+    },
+    {
+      "id": "bonolenov",
+      "modele": "bonolenov-ndongo",
+      "nom": "Bonolenov"
+    },
+    {
+      "id": "shizuku",
+      "modele": "shizuku-murasaki",
+      "nom": "Shizuku"
+    },
+    {
+      "id": "hinrigh",
+      "modele": "hinrigh-biganduffno",
+      "nom": "Hinrigh"
+    },
+    {
+      "id": "mizaistom",
+      "modele": "mizaistom-nana",
+      "nom": "Mizaistom"
+    },
+    {
+      "id": "leorio",
+      "modele": "leorio-paradinight",
+      "nom": "Leorio"
+    },
+    {
+      "id": "hanzo",
+      "modele": "hanzo",
+      "nom": "Hanzo"
+    },
+    {
+      "id": "rihan",
+      "modele": "rihan",
+      "nom": "Rihan"
+    },
+    {
+      "id": "zakuro",
+      "modele": "zakuro-custard",
+      "nom": "Zakuro"
+    },
+    {
+      "id": "melody",
+      "modele": "melody",
+      "nom": "Melody"
+    },
+    {
+      "id": "basho",
+      "modele": "basho",
+      "nom": "Basho"
+    },
+    {
+      "id": "camilla",
+      "modele": "prince-camilla",
+      "nom": "Camilla"
+    },
+    {
+      "id": "halkenburg",
+      "modele": "prince-halkenburg",
+      "nom": "Halkenburg"
+    },
+    {
+      "id": "gel",
+      "modele": "gel",
+      "nom": "Gel"
+    },
+    {
+      "id": "lynch",
+      "modele": "lynch-fullbokko",
+      "nom": "Lynch"
+    },
+    {
+      "id": "luini",
+      "modele": "luini",
+      "nom": "Luini"
+    },
+    {
+      "id": "bill",
+      "modele": "bill",
+      "nom": "Bill"
+    },
+    {
+      "id": "furykov",
+      "modele": "furykov",
+      "nom": "Furykov"
+    },
+    {
+      "id": "cluck",
+      "modele": "cluck",
+      "nom": "Cluck"
+    },
+    {
+      "id": "beyond",
+      "modele": "beyond-netero",
+      "nom": "Beyond"
+    },
+    {
+      "id": "longhi",
+      "modele": "longhi",
+      "nom": "Longhi"
+    },
+    {
+      "id": "musse",
+      "modele": "musse",
+      "nom": "Musse"
+    },
+    {
+      "id": "padaille",
+      "modele": "padaille",
+      "nom": "Padaille"
+    },
+    {
+      "id": "sayird",
+      "modele": "sayird",
+      "nom": "Sayird"
+    },
+    {
+      "id": "terebellum",
+      "modele": "terebellum",
+      "nom": "Terebellum"
+    },
+    {
+      "id": "voconte",
+      "modele": "voconte",
+      "nom": "Voconte"
+    },
+    {
+      "id": "yokotani",
+      "modele": "yokotani",
+      "nom": "Yokotani"
+    }
+  ]
+}

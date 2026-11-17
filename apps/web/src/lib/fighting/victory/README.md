@@ -546,3 +546,6 @@ ou de Bungee Gum, son propre sceau de 48 heures, puis une fin physique.
 
 Zakuro : [La dernière goutte](./ZAKURO.md) utilise ses gouttes éclaireuses,
 quatre liens de son propre sang et deux projections, puis rappelle sa réserve.
+
+Lynch : [Le dernier aveu](./LYNCH.md) fait répondre le corps malgré la bouche
+couverte, accélère six contacts puis termine par un coup physique sans réponse.

@@ -1088,3 +1088,13 @@ est Fatality en anglais. Les scripts `check-rihan-fatality.mjs` et
 `zakuroFatalityFilm.ts`. Rendu : `node scripts/render-zakuro-fatality.mjs`
 depuis `apps/web` ; son et assemblage :
 `node apps/web/scripts/compose-zakuro-fatality.mjs` depuis la racine.
+
+## Lynch — Le dernier aveu
+
+`lynch-fatality.html` : dix secondes de Body and Soul, bouche couverte,
+six réponses du corps puis un dernier coup physique dans le silence.
+Paramètres `target`, `stage`, `side=opponent`, `reduced`. Preuve continue
+dans `lynchFatalityFilm.ts`, avec réponses privées et K.-O. natif.
+Depuis `apps/web` : `node scripts/render-lynch-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-lynch-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-lynch-fatality/Lynch-Fatality-10s.mp4`.

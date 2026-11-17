@@ -60,6 +60,7 @@ const matchups = [
   ['mizaistom', 'zakuro', 'supreme-court', 'player'],
   ['rihan', 'shizuku', 'whale-hold', 'opponent'],
   ['zakuro', 'luini', 'whale-hold', 'player'],
+  ['lynch', 'hisoka', 'vip-casino', 'opponent'],
 ]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })

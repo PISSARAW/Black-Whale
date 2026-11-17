@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightHeldButton from './FightHeldButton.svelte'
   import type { FightInput } from '$lib/fighting/types'
   export let language: 'fr' | 'en'
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
@@ -19,32 +20,17 @@
   aria-label={language === 'fr' ? 'Techniques Nen à maintenir' : 'Hold Nen techniques'}
 >
   {#each controls as control (control.key)}
-    <button
-      type="button"
-      onpointerdown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId)
-        onControl(control.key, true)
-      }}
-      onpointerup={() => onControl(control.key, false)}
-      onpointercancel={() => onControl(control.key, false)}
-      onlostpointercapture={() => onControl(control.key, false)}
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.stopPropagation()
-          onControl(control.key, true)
-        }
-      }}
-      onkeyup={(event) => {
-        event.stopPropagation()
-        onControl(control.key, false)
-      }}
-      onblur={() => onControl(control.key, false)}
-      ><kbd>{control.shortcut}</kbd>
+    <FightHeldButton
+      label={control.label.includes('/')
+        ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
+        : control.label}
+      onHold={(active) => onControl(control.key, active)}
+    >
+      <kbd>{control.shortcut}</kbd>
       {control.label.includes('/')
         ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
-        : control.label}</button
-    >
+        : control.label}
+    </FightHeldButton>
   {/each}
 </div>
 
@@ -54,7 +40,7 @@
     flex-wrap: wrap;
     gap: 0.35rem;
   }
-  button {
+  .tactics :global(button) {
     min-height: 44px;
     padding: 0.35rem 0.55rem;
     border: 1px solid #6b8a9a;
@@ -64,10 +50,10 @@
     font: inherit;
     touch-action: none;
   }
-  button:active {
+  .tactics :global(button:active) {
     background: #285469;
   }
-  button:focus-visible {
+  .tactics :global(button:focus-visible) {
     outline: 2px solid #e7ca7c;
     outline-offset: 2px;
   }

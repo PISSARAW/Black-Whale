@@ -1,6 +1,8 @@
 <script lang="ts">
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import '../app.css'
+  import AppFooter from '$lib/components/AppFooter.svelte'
+  import { routeTransitionKey } from '$lib/fighting/fightNavigation'
   import { page } from '$app/stores'
   import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
   import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
@@ -49,7 +51,6 @@
     { href: '/ship', label: $t.nav.explore },
     { href: '/timeline', label: $t.nav.timeline },
     { href: '/characters', label: $t.nav.characters },
-    { href: '/fighting', label: $t.nav.clash },
     ...(PUBLIC_FEATURES.perspectives ? [{ href: '/perspectives', label: $t.nav.knowledge }] : []),
   ]
 
@@ -75,12 +76,6 @@
   // so nothing links to them in the server-rendered markup — crawlers see the
   // Ability Archive, Faction Network and Simulations as orphans. The footer is
   // the one place every route can expose them without any JavaScript.
-  // UTC keeps the year identical between the server render and hydration.
-  const copyrightYear = new Date().getUTCFullYear()
-
-  const REPOSITORY_URL = 'https://github.com/PISSARAW/Black-Whale'
-  const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/'
-
   function closeMenu() {
     menuOpen = false
   }
@@ -234,46 +229,14 @@
   {/if}
 
   <main id="main-content">
-    {#key $page.url.pathname}
+    {#key routeTransitionKey($page.url.pathname)}
       <div class="route-shell">
         <slot />
       </div>
     {/key}
   </main>
 
-  <footer class="app-footer" data-hatsu-pass>
-    <div class="footer-brand">
-      <strong>Black Whale</strong>
-    </div>
-
-    <nav class="footer-nav" aria-label={$t.layout.archiveSections}>
-      <p>{$t.layout.footerSections}</p>
-      <ul>
-        {#each primaryNavigation as item (item.href)}
-          <li><a href={$link(item.href)}>{item.label}</a></li>
-        {/each}
-        {#each secondaryNavigation as item (item.href)}
-          <li><a href={$link(item.href)}>{item.label}</a></li>
-        {/each}
-      </ul>
-    </nav>
-
-    <div class="footer-legal">
-      <span>{$t.layout.copyright(copyrightYear)}</span>
-      <span>{$t.layout.disclaimer}</span>
-      <!-- The catalogue and the hand-drawn maps are CC BY 4.0 (LICENSE-DATA),
-           which asks for the credit wherever the material is displayed — every
-           route shows one or the other, so it belongs in the shared footer. -->
-      <span class="footer-credit">
-        {$t.layout.dataCreditPrefix}
-        <a href={REPOSITORY_URL} rel="noreferrer" target="_blank"
-          >{$t.layout.dataCreditRepository}</a
-        >
-        {$t.layout.dataCreditLicensedUnder}
-        <a href={LICENSE_URL} rel="license noreferrer" target="_blank">CC BY 4.0</a>
-      </span>
-    </div>
-  </footer>
+  <AppFooter navigation={[...primaryNavigation, ...secondaryNavigation]} />
 
   <!-- The Hatsu layer lives at the root so its state and mechanics survive navigation. -->
   <GlobalHatsuEffects />
@@ -441,53 +404,6 @@
     color: var(--text-secondary);
     font-size: 0.75rem;
   }
-  .app-footer {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 1.5rem 3rem;
-    margin: 0 auto;
-    padding: 2rem var(--page-gutter) max(2rem, env(safe-area-inset-bottom));
-    border-top: 1px solid var(--line-subtle);
-  }
-  .footer-brand strong {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  .footer-nav p {
-    margin: 0 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-  }
-  .footer-nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .footer-nav a {
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    text-decoration: none;
-  }
-  .footer-nav a:hover {
-    color: var(--text-primary);
-    text-decoration: underline;
-  }
-  .footer-legal {
-    display: grid;
-    grid-column: 1 / -1;
-    gap: 0.4rem;
-    padding-top: 1rem;
-    color: var(--text-muted);
-    font-size: 0.65rem;
-    line-height: 1.6;
-  }
-  .footer-credit a {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
   .route-shell {
     min-height: calc(100vh - var(--header-height));
   }
@@ -536,9 +452,6 @@
       color: var(--text-secondary);
       cursor: pointer;
       font-size: 0.85rem;
-    }
-    .app-footer {
-      grid-template-columns: 1fr;
     }
   }
 </style>

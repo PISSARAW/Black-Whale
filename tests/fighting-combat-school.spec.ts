@@ -1,8 +1,34 @@
 import { expect, test, type Page } from 'playwright/test'
+import { openPauseTab, prepareFight, resumeFight } from './helpers/fighting'
 
 const school = (page: Page) => page.getByRole('region', { name: 'École de combat', exact: true })
-async function catalog(page: Page) {
+const objective = (page: Page) => page.locator('.battle-objective').getByRole('status')
+async function academy(page: Page) {
   await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/fr/fighting/academy', { waitUntil: 'networkidle' })
+  await page.getByRole('button', { name: /Combos & défense/ }).click()
+  const time = new Date('2026-11-17T12:00:00Z')
+  await page.clock.install({ time })
+  await page.clock.pauseAt(new Date(time.getTime() + 1000))
+}
+async function advanceCombat(page: Page, batches: number) {
+  await expect(page.locator('.fight-scene canvas')).toHaveAttribute('data-engine', /three\.js/)
+  // Each 50 ms batch reaches the real fixed-step loop through a rendered frame.
+  for (let i = 0; i < batches; i++) await page.clock.fastForward(50)
+}
+async function demonstration(page: Page) {
+  await expect
+    .poll(
+      async () => {
+        await advanceCombat(page, 20)
+        return objective(page).innerText()
+      },
+      { timeout: 60000 },
+    )
+    .toBe('Exercice réussi')
+}
+async function catalog(page: Page) {
+  if (await page.locator('.fight-arena').count()) await openPauseTab(page, 'Entraînement')
   const details = school(page).locator(':scope > details')
   if ((await details.getAttribute('open')) === null) {
     const summary = details.locator(':scope > summary')
@@ -24,21 +50,20 @@ for (const fighter of ['kurapika', 'hisoka', 'chrollo', 'benjamin']) {
   test(`${fighter}: all four demonstrations complete through the real combat loop`, async ({
     page,
   }) => {
-    // Four real-time fights share this test. Software WebGL can advance the
-    // fixed-step simulation much slower than the display's nominal 60 Hz.
+    // Four full demonstrations share the real fixed-step loop and WebGL renderer.
     test.setTimeout(240_000)
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
-    await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
+    await academy(page)
     for (const name of names) {
       await selectFighter(page, fighter)
       await school(page)
         .getByRole('button', { name: `Démontrer · ${name}`, exact: true })
         .click()
-      await expect(school(page).getByRole('status')).toHaveText('Exercice réussi !', {
-        timeout: 60000,
-      })
+      await demonstration(page)
       await expect(page.locator('.fight-scene.failed')).toHaveCount(0)
+      await openPauseTab(page, 'Entraînement')
+      await expect(school(page).getByRole('status')).toHaveText('Exercice réussi !')
     }
     await school(page).getByRole('button', { name: 'Terminer l’exercice', exact: true }).click()
     await expect(page.locator('.response-diagnostics')).toBeVisible()
@@ -49,36 +74,37 @@ for (const fighter of ['kurapika', 'hisoka', 'chrollo', 'benjamin']) {
 test('manual practice rejects a different starter, resets cleanly and pauses the demonstration', async ({
   page,
 }) => {
-  await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
+  await academy(page)
   await selectFighter(page, 'kurapika')
   await school(page)
     .getByRole('button', { name: `Pratiquer · ${names[0]}`, exact: true })
     .click()
+  await advanceCombat(page, 1)
   await page.keyboard.press('k')
+  await advanceCombat(page, 20)
+  await openPauseTab(page, 'Entraînement')
   await expect(school(page).getByRole('status')).toContainText('ne correspond pas')
   await school(page).getByRole('button', { name: 'Réessayer l’exercice', exact: true }).click()
+  await openPauseTab(page, 'Entraînement')
   await expect(school(page).getByRole('status')).toContainText('Commence la route')
-  await page.locator('.pause-fight').click()
   await school(page).getByRole('button', { name: 'Voir la démonstration', exact: true }).click()
-  await page.locator('.pause-fight').click()
-  await expect(page.locator('.pause-fight')).toHaveText('Reprendre')
+  await openPauseTab(page, 'Entraînement')
+  await expect(page.getByRole('button', { name: 'Reprendre le combat' })).toBeVisible()
   const frozen = await school(page).locator('.active-exercise > span').innerText()
-  await page.waitForTimeout(500)
+  await page.clock.fastForward(500)
   await expect(school(page).locator('.active-exercise > span')).toHaveText(frozen)
-  await page.locator('.pause-fight').click()
-  await expect(school(page).getByRole('status')).toHaveText('Exercice réussi !')
+  await resumeFight(page)
+  await demonstration(page)
+  await openPauseTab(page, 'Entraînement')
   await school(page).getByRole('button', { name: 'Terminer l’exercice', exact: true }).click()
   await page.getByLabel('Mannequin', { exact: true }).selectOption('random-guard')
   await expect(page.getByLabel('Mannequin', { exact: true })).toHaveValue('random-guard')
 })
 
 async function localFight(page: Page) {
-  await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
-  await page.getByRole('button', { name: 'Versus local', exact: true }).click()
-  await page.locator('.selection-summary button').click()
-  await expect(page.locator('.ready-overlay')).toBeVisible()
+  await prepareFight(page)
   await page.locator('.ready-overlay button').click()
-  await page.locator('.display-settings > summary').click()
+  await openPauseTab(page, 'Affichage & son')
 }
 test('camera preference persists, respects reduced motion and fits a narrow screen', async ({
   page,
@@ -95,7 +121,7 @@ test('camera preference persists, respects reduced motion and fits a narrow scre
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await expect(camera).toHaveValue('0.5')
   await expect(camera).toBeEnabled()
-  const box = await page.locator('.settings-panel').boundingBox()
+  const box = await page.locator('.pause-display').boundingBox()
   expect(box!.x).toBeGreaterThanOrEqual(0)
   expect(box!.x + box!.width).toBeLessThanOrEqual(390)
   await page.screenshot({
@@ -107,21 +133,23 @@ test('camera preference persists, respects reduced motion and fits a narrow scre
 test('defense exercise confirms the guard and explains a missed punish opening', async ({
   page,
 }) => {
-  await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
+  await academy(page)
   await selectFighter(page, 'kurapika')
   await school(page)
     .getByRole('button', { name: 'Défense · bloquer puis punir', exact: true })
     .click()
+  await openPauseTab(page, 'Entraînement')
   const instruction = await school(page).locator('.active-exercise').innerText()
   const guard = instruction.match(/Garde\s*:\s*(\S+)/u)![1]
   const key = guard === 'Maj' ? 'Shift' : guard
+  await resumeFight(page)
   await page.keyboard.down(key)
+  // Advance past the dummy's attack and the punish window while holding guard.
+  await advanceCombat(page, 40)
+  await page.keyboard.up(key)
+  await openPauseTab(page, 'Entraînement')
   await expect(school(page).getByRole('status')).toContainText(
     'L’ouverture de punition est passée.',
-    {
-      timeout: 30000,
-    },
   )
-  await page.keyboard.up(key)
   await expect(school(page).locator('.active-exercise > span')).toHaveText('1 / 2')
 })

@@ -8,6 +8,7 @@
   export let replays: FightReplayController
   export let language: 'fr' | 'en'
   export let expanded = false
+  export let compact = false
   export let review: ReplayReviewActions | undefined = undefined
   export let onOpen: (id: string) => void
   export let onClose: () => void
@@ -132,48 +133,49 @@
         : 'Capture stopped: an untracked action or recording limit was encountered. The fight continues normally.'}
     </p>{/if}
   {#if status}<p role="status">{status}</p>{/if}
-  <details open={expanded}>
-    <summary
-      >{language === 'fr' ? 'Bibliothèque de replays' : 'Replay library'} · {$replays.library
-        .length}/5</summary
-    >
-    <p class="explanation">
-      {language === 'fr'
-        ? 'Duels et entraînements des quarante personnages, avec scénario et commandes des panneaux. Le match complet est enregistré à sa fin ; cinq replays sont conservés localement. Les extraits sont identifiés séparément.'
-        : 'Duels and training with all forty fighters, including scenarios and panel commands. Completed matches are saved automatically; five replays are kept locally. Partial clips are labelled separately.'}
-    </p>
-    <input
-      bind:this={file}
-      type="file"
-      accept=".json,.bw-replay.json,application/json"
-      onchange={importFile}
-      aria-label={language === 'fr' ? 'Importer un replay' : 'Import replay'}
-    />
-    <ul>
-      {#each $replays.library as entry (entry.id)}<li>
-          <div>
-            <strong>{title(entry)}</strong> · {time(entry.replay.duration)} · {entry.replay.complete
-              ? language === 'fr'
-                ? 'Match complet'
-                : 'Full match'
-              : language === 'fr'
-                ? 'Extrait'
-                : 'Clip'}
-          </div>
-          <div class="entry-actions">
-            <button type="button" onclick={() => onOpen(entry.id)}
-              >{language === 'fr' ? 'Lire ce replay' : 'Play this replay'}</button
-            ><button type="button" onclick={() => download(entry)}
-              >{language === 'fr' ? 'Exporter' : 'Export'}</button
-            ><button type="button" onclick={() => replays.remove(entry.id)}
-              >{language === 'fr' ? 'Supprimer' : 'Delete'}</button
-            >
-          </div>
-        </li>{:else}<li>
-          {language === 'fr' ? 'Aucun replay enregistré.' : 'No saved replays.'}
-        </li>{/each}
-    </ul>
-  </details>
+  {#if !compact}<details open={expanded}>
+      <summary
+        >{language === 'fr' ? 'Bibliothèque de replays' : 'Replay library'} · {$replays.library
+          .length}/5</summary
+      >
+      <p class="explanation">
+        {language === 'fr'
+          ? 'Duels et entraînements des quarante personnages, avec scénario et commandes des panneaux. Le match complet est enregistré à sa fin ; cinq replays sont conservés localement. Les extraits sont identifiés séparément.'
+          : 'Duels and training with all forty fighters, including scenarios and panel commands. Completed matches are saved automatically; five replays are kept locally. Partial clips are labelled separately.'}
+      </p>
+      <input
+        bind:this={file}
+        type="file"
+        accept=".json,.bw-replay.json,application/json"
+        onchange={importFile}
+        aria-label={language === 'fr' ? 'Importer un replay' : 'Import replay'}
+      />
+      <ul>
+        {#each $replays.library as entry (entry.id)}<li>
+            <div>
+              <strong>{title(entry)}</strong> · {time(entry.replay.duration)} · {entry.replay
+                .complete
+                ? language === 'fr'
+                  ? 'Match complet'
+                  : 'Full match'
+                : language === 'fr'
+                  ? 'Extrait'
+                  : 'Clip'}
+            </div>
+            <div class="entry-actions">
+              <button type="button" onclick={() => onOpen(entry.id)}
+                >{language === 'fr' ? 'Lire ce replay' : 'Play this replay'}</button
+              ><button type="button" onclick={() => download(entry)}
+                >{language === 'fr' ? 'Exporter' : 'Export'}</button
+              ><button type="button" onclick={() => replays.remove(entry.id)}
+                >{language === 'fr' ? 'Supprimer' : 'Delete'}</button
+              >
+            </div>
+          </li>{:else}<li>
+            {language === 'fr' ? 'Aucun replay enregistré.' : 'No saved replays.'}
+          </li>{/each}
+      </ul>
+    </details>{/if}
 </section>
 
 <style>

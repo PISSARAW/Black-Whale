@@ -7,8 +7,8 @@ import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
+import { improveFightFace } from './fightFaceReadability'
 import { shapeFightEyes } from './fightFigureEyes'
-import { finishFightModel } from './fighterModelFinish'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -50,6 +50,8 @@ export function buildFightFigure(options: {
   glow: HumanFigureBuild['glow']
   fighter: ArcadeFighter
   observer?: ArcadeFighter
+  /** Reference captures can compare the unchanged shared model. */
+  readability?: boolean
 }) {
   const { THREE, glow, fighter } = options
   const definition = fighterDefinition(battleAppearance(fighter))
@@ -92,7 +94,7 @@ export function buildFightFigure(options: {
     seen,
     profile: finalProfile,
   })
-  finishFightModel({ THREE, glow: figureGlow, model, profile: finalProfile })
+  if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
   if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 

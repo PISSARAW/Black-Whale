@@ -7,6 +7,7 @@ import { FIGHTING_ROSTER } from '../fighting/roster'
 import { projectHanzo } from '../fighting/hanzoProjection'
 import { fightFigureKey } from '../fighting/fighterFigure'
 import { buildFightFigure } from '../fighting/fighterFigure'
+import { combatFaceGeometry } from '../fighting/fightFaceReadability'
 import { createFightState } from '../fighting/fightState'
 import { addBonolenovBattleArmor } from './bonolenovBattleArmor'
 import { emptyBattleCantabile } from '../fighting/battleCantabileTypes'
@@ -342,14 +343,18 @@ describe('manga cast shared by the visit and Fighting', () => {
     const fighting = buildFightFigure({ THREE, glow, fighter })
     for (const name of [
       'saiyu-gold-circlet',
-      'saiyu-large-ears',
-      'saiyu-shaved-heart',
       'saiyu-curled-tail',
       'saiyu-knee-scroll',
       'saiyu-abdominal-lines',
       'saiyu-gold-emblem-top',
     ])
       expect(mesh(fighting.root, name).geometry).toBe(mesh(common.root, name).geometry)
+    for (const name of ['saiyu-large-ears', 'saiyu-shaved-heart']) {
+      expect(mesh(fighting.root, name).geometry).toBe(
+        combatFaceGeometry(mesh(common.root, name).geometry),
+      )
+      expect(mesh(common.root, name).geometry.getAttribute('color')).toBeUndefined()
+    }
     const tail = mesh(fighting.root, 'saiyu-curled-tail')
     const rest = tail.position.clone()
     for (const facing of [-1, 1] as const) {

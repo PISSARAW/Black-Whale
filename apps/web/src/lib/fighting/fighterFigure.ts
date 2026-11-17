@@ -1,3 +1,5 @@
+import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
+import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
 import { addPadailleWeapon } from './padailleFigure'
@@ -51,6 +53,7 @@ export function buildFightFigure(options: {
   glow: HumanFigureBuild['glow']
   fighter: ArcadeFighter
   observer?: ArcadeFighter
+  palette?: Palette
 }) {
   const { THREE, glow, fighter } = options
   const definition = fighterDefinition(battleAppearance(fighter))
@@ -81,7 +84,10 @@ export function buildFightFigure(options: {
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
   const dressed = figureClothing(profile, fighter)
-  const finalProfile = trueForm ? biscuitTrueFormProfile(dressed) : dressed
+  const finalProfile = wardrobeProfile(
+    trueForm ? biscuitTrueFormProfile(dressed) : dressed,
+    wardrobePalette(fighter, options.palette ?? 'native'),
+  )
   const figureGlow: HumanFigureBuild['glow'] = fighter.hanzoProjection
     ? (colour, opacity) => glow(colour, opacity * 0.28)
     : glow

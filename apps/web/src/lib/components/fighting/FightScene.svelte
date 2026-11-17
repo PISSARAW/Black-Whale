@@ -18,6 +18,8 @@
     backgroundParticipants,
     stageBackgroundDescription,
   } from '$lib/fighting/stageBackgroundCatalogue'
+  import { presentedFigures } from '$lib/fighting/presentation/figures'
+  import { clashPresentation } from '$lib/fighting/presentation/profile'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
@@ -93,6 +95,7 @@
   let detailRect = cinematicDetailRect(1.7)
 
   onMount(() => {
+    clashPresentation.ensureLoaded()
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const visualComfort = () => effectiveFightComfort(comfort, motionPreference.matches)
     const cinematicDirector = createCinematicDirector({ viewer: () => viewer })
@@ -155,21 +158,12 @@
           return
         }
 
-        const buildFighter = (fighter: ArcadeFighter) =>
-          buildFightFigure({
-            THREE,
-            glow,
-            fighter,
-            observer: fighter === state[viewer] ? undefined : state[viewer],
-          })
-
-        // Rebuild only the fighter whose aura or body form changes; keep the stage.
-        const nenKey = (fighter: ArcadeFighter) =>
-          fightFigureKey(fighter) + String(state[viewer].nen.gyo)
-        const models = {
-          player: { model: buildFighter(state.player), nen: nenKey(state.player) },
-          opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
-        }
+        const { buildFighter, nenKey, buildReference, models } = presentedFigures({
+          build: buildFightFigure,
+          key: fightFigureKey,
+          resources: { THREE, glow },
+          read: () => ({ state, viewer, preferences: $clashPresentation.preferences }),
+        })
         scene.add(models.player.model.root, models.opponent.model.root)
         const victoryRenderer = createVictoryRenderer({ scene, camera, scenery: scenery.root })
         const detailScene = createCinematicDetailScene({
@@ -185,7 +179,11 @@
           worldX,
           worldY,
         })
-        const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
+        const projectionScene = createHanzoProjectionScene({
+          scene,
+          buildFighter: buildReference,
+          worldX,
+        })
         const fighterEffects = createFighterEffectScene({
           viewer: () => viewer,
           THREE,

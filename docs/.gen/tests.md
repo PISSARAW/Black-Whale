@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 734
+Fichiers : 737
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -443,6 +443,10 @@ Fichiers : 734
 - standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
 - configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
 
+## `apps/web/src/lib/fighting/fightExpressions.test.ts`
+
+- the six fighters express combat through their existing face > gives the six fighters distinct expressions and keeps Chrollo restrained
+
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
@@ -668,6 +672,11 @@ Fichiers : 734
 
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
+
+## `apps/web/src/lib/fighting/presentation/presentation.test.ts`
+
+- original presentation without private knowledge or Nen changes > covers precisely the forty selected fighters with distinct bilingual lines
+- local earned collection > rejects locked titles and palettes; loads earned rewards without altering solo data
 
 ## `apps/web/src/lib/fighting/projectileResources.test.ts`
 

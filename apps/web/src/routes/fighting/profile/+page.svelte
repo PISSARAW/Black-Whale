@@ -1,5 +1,6 @@
 <script lang="ts">
   import { link, locale } from '$lib/i18n'
+  import FightPersonalization from '$lib/components/fighting/FightPersonalization.svelte'
   import FightCareer from '$lib/components/fighting/FightCareer.svelte'
   import FightSeason from '$lib/components/fighting/FightSeason.svelte'
   import '../pvp/pvp.css'
@@ -23,6 +24,7 @@
   <a href={$link('/fighting/tournament')}
     >{$locale === 'fr' ? 'Organiser un tournoi' : 'Organize a tournament'}</a
   >
+  <FightPersonalization language={$locale === 'fr' ? 'fr' : 'en'} />
   <FightCareer language={$locale === 'fr' ? 'fr' : 'en'} /><FightSeason
     language={$locale === 'fr' ? 'fr' : 'en'}
     endpoint={$link('/fighting/profile/api')}

@@ -32,6 +32,9 @@ puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
 L’[étape 8](./STEP8.md) approfondit la sélection des équipes, les ressources,
 les refus de relais et la conservation du terrain physique entre combattants.
 
+L’[étape 9](./STEP9.md) enrichit les dialogues, fins et tenues locales,
+avec les titres des parcours solo équipables dans le profil.
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.

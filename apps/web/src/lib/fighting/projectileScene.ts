@@ -143,7 +143,5 @@ function projectileGeometry(
 }
 
 function handgunBullet(projectile: FightProjectile): boolean {
-  return (
-    isBodyguardBullet(projectile)
-  )
+  return isBodyguardBullet(projectile)
 }

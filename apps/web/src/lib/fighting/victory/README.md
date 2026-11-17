@@ -194,8 +194,7 @@ géométries partagées sans les détruire. Les contrôles couvrent le contact a
 la surface de Jupiter, la restauration, les tailles, P2, le miroir et le mobile.
 
 Illumi : « Même après la mort » commence par son regard vide et une aiguille à
-tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image
-132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles
+tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image 132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles
 supplémentaires arrivent au front à 282 et 300. La chute commence à 348. Le corps
 sans vie se relève à partir de 420 et s’incline à 468, avant le portrait final.
 Les trois pointes suivent les coordonnées locales de la tête pendant la chute,
@@ -209,7 +208,6 @@ aucun dégât, soin, contrôle supplémentaire ou résurrection n’est envoyé 
 La caméra normale contient le corps entier pendant sa chute ; le réglage de
 confort conserve un seul plan fixe. Les contrôles couvrent les contacts, les
 articulations, la restauration, P2, les gabarits, le miroir et le mobile.
-
 
 Biscuit : « Le soin de grâce » commence par Cookie massant sa main avec sa lotion,
 puis révèle son corps naturel à l’image 210. Un unique direct touche le torse
@@ -226,7 +224,6 @@ les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclencheme
 `render-biscuit-fatality.mjs` exporte 600 images et `compose-biscuit-fatality.mjs`
 compose la bande sonore du jeu et la vidéo de dix secondes.
 
-
 La chute de Biscuit utilise `advanceAirborne`, la progression de KO de
 `finishedFallPresentation`, `reactionPlan` et `fightGroundContact` comme le combat.
 Le vaincu quitte sa garde, reçoit le coup, puis se couche sur le dos sans rotation
@@ -235,7 +232,6 @@ natif est emprunté sans avancer sa mémoire d’animation et tous ses changemen
 sont restaurés après le rendu. Le cadrage réserve la longueur du corps couché,
 y compris avec la caméra réduite sur mobile. Le mix ne contient aucune réplique
 française ; seuls les bruitages et l’annonce « Fatality » sont conservés.
-
 
 Kurapika hors Brigade : « La dernière condition » active visuellement Emperor
 Time, déploie Judgment Chain depuis le petit doigt droit, implante le pieu au
@@ -279,7 +275,6 @@ P2, les gabarits, les lieux, le mobile, le confort et le branchement dans Clash.
 `render-kurapika-troupe.mjs` et `compose-kurapika-troupe.mjs` produisent dix
 secondes en 1080p60 et `kurapika-troupe.m4a`, sans aucune voix.
 
-
 Hanzo : « Derrière toi » laisse le corps natif en méditation, yeux fermés.
 Un deuxième modèle complet apparaît à l’image 72, traverse une cloison solide
 à 138 et rejoint le cou de la cible à 216. Les deux articulations de chaque
@@ -308,12 +303,10 @@ partagées restent conservées lors de la libération du double.
 `check-hanzo-fatality.mjs` produisent la vidéo de dix secondes, le son du jeu
 `hanzo.m4a` et les vérifications navigateur (P2, mobile, miroir et confort).
 
-
 Saiyu : « Les trois silences » utilise trois manifestations graphiques distinctes
 de Mizaru, Kikazaru et Iwazaru. L’archive du projet ne possède pas leur anatomie
 révélée : ces signes expriment leurs fonctions, sans inventer un modèle de bête.
-Les contacts aux yeux, à l’oreille et à la bouche arrivent aux images 90, 162 et
-234. Le cadre se ferme brièvement, le son s’étouffe puis la tentative de cri
+Les contacts aux yeux, à l’oreille et à la bouche arrivent aux images 90, 162 et 234. Le cadre se ferme brièvement, le son s’étouffe puis la tentative de cri
 reste muette. La cible porte successivement les mains à ses yeux, ses oreilles
 et sa bouche. Le bâton natif s’allonge à 282, touche la surface réelle du torse
 à 360 et projette le vaincu avec la gravité, la pose de KO et le sol du combat.
@@ -327,7 +320,6 @@ en anglais arrive à 8,1 secondes, après le retour du son, sans réplique fran�
 `saiyu.test.ts` vérifie contacts, prises, chute et restauration sur les gabarits
 extrêmes et le miroir ; `saiyuFilm.test.ts` vérifie la simulation des deux côtés.
 `check-saiyu-fatality.mjs` vérifie le mobile, le confort et le déclenchement réel.
-
 
 La version sensorielle de Saiyu garde le cadre totalement noir de 98 à 130,
 puis révèle des iris pâles sans reflets. À 162, la cible se prend les oreilles
@@ -382,7 +374,6 @@ miroir et les gabarits ; `melodyFilm.test.ts` couvre les deux côtés du duel.
 Le mix utilise une phrase de flûte originale et l’annonce anglaise « Friendship »
 à 8,1 secondes, sans dialogue français. La scène est branchée aux victoires de
 Melody et s’adapte à l’arène et aux acteurs du combat courant.
-
 
 `check-saiyu-melody-victories.mjs` contrôle huit victoires réelles dans le
 composant Clash, avec rematches, modes IA/local, deux côtés, deux arènes,

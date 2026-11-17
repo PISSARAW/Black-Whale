@@ -811,7 +811,6 @@ référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
 Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
 règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
 
-
 ## Kalluto — La dernière danse du papier
 
 ```sh
@@ -879,14 +878,12 @@ sang. Le nettoyage et le bouton sont des éléments cosmétiques après verdict.
 `target`, `stage`, `side=opponent` et `reduced` contrôlent l'adaptation dans
 la même scène de production. Le catalogue compte quatorze cinématiques.
 
-
 Bonolenov — « Le dernier mouvement » : `bonolenov-fatality.html` présente dix
 secondes de Prologue et Jupiter sur le renderer du jeu. Le film valide d’abord
 une danse complète et le K.-O. natif par Jupiter. `render-bonolenov-fatality.mjs`
 exporte 600 images, `compose-bonolenov-fatality.mjs` produit la musique corporelle,
 les impacts et le son réutilisé par Clash ; `check-bonolenov-fatality.mjs` contrôle
 les gabarits, les lieux, P2, le miroir, le confort, le mobile et le déclenchement.
-
 
 Illumi — « Même après la mort » : `illumi-fatality.html` utilise le renderer de
 victoire de Clash pour les dix secondes d’implantation, perte de volonté, mort
@@ -896,7 +893,6 @@ exporte 600 images ; `compose-illumi-fatality.mjs` produit le son synchronisé e
 `check-illumi-fatality.mjs` contrôle l’intégration, P2, les tailles et le mobile.
 Le catalogue compte désormais seize cinématiques.
 
-
 Biscuit — « Le soin de grâce » : `biscuit-fatality.html` présente dix secondes
 de soin par Cookie, transformation native, direct au torse et retour au soin.
 Le film obtient un K.-O. physique après la transformation gratuite ; la lotion
@@ -905,7 +901,6 @@ reste un soin. `render-biscuit-fatality.mjs` exporte 600 images en 1080p60,
 et `check-biscuit-fatality.mjs` contrôle les modèles, les lieux, P2 et le mobile.
 Sortie : `output/fighting-biscuit-fatality/Biscuit-Fatality-10s.mp4`.
 Le catalogue compte désormais dix-sept personnages avec cinématique de victoire.
-
 
 Kurapika contre la Brigade — « La colère écarlate » : `kurapika-troupe.html`
 présente dix secondes de capture éclair, sept coups au corps et au visage,

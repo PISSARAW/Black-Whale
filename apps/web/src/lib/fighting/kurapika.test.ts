@@ -340,7 +340,11 @@ describe('Kurapika manga chains in the 2D engine', () => {
 
   it('fires the service pistol with U while leaving the attached chain on forward + L', () => {
     const base = duel('hisoka')
-    const started = performAttack({ ...base, opponent: { ...base.opponent, x: 80 } }, 'player', 'ranged')
+    const started = performAttack(
+      { ...base, opponent: { ...base.opponent, x: 80 } },
+      'player',
+      'ranged',
+    )
     expect(started.player.attack).toMatchObject({ kind: 'ranged', hatsuSource: null })
     expect(advance(started, 11).projectiles[0]).toMatchObject({ shape: 'bullet', matter: 'object' })
     const chain = cast(duel('hisoka'), 'forwardSpecial')

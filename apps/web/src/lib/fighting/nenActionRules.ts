@@ -14,13 +14,7 @@ interface NenAction {
   moveId?: string
 }
 
-const NEN_RANGED: readonly FighterId[] = [
-  'leorio',
-  'machi',
-  'franklin',
-  'bonolenov',
-  'kalluto',
-]
+const NEN_RANGED: readonly FighterId[] = ['leorio', 'machi', 'franklin', 'bonolenov', 'kalluto']
 
 /** Shared admission check, including the direct/AI and buffered execution paths. */
 export function nenActionAllowed(options: NenAction): boolean {
@@ -92,9 +86,7 @@ function nenMoveId(
   action: Pick<NenAction, 'kind' | 'moveId'>,
 ): string | undefined {
   if (action.kind !== 'ranged') return action.moveId
-  return fighter.id === 'machi'
-    ? `${fighter.id}:forwardSpecial`
-    : `${fighter.id}:neutralSpecial`
+  return fighter.id === 'machi' ? `${fighter.id}:forwardSpecial` : `${fighter.id}:neutralSpecial`
 }
 
 /** Cancel a maintained action when its access is lost; released projectiles stay independent. */

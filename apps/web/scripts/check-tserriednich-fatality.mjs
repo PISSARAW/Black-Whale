@@ -71,7 +71,9 @@ try {
       await page.setViewportSize({ width: 1280, height: 800 })
     }
     results.push(options)
-    process.stdout.write(`Verified Tserriednich: ${options.target}, ${options.stage}, ${options.side}\n`)
+    process.stdout.write(
+      `Verified Tserriednich: ${options.target}, ${options.stage}, ${options.side}\n`,
+    )
   }
   await page.goto(`${base}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)

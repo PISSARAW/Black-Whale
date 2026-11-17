@@ -1,4 +1,8 @@
+import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
+import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
+import { nativeArsenalAiAction } from './arsenalAiAction'
+import { performOpponentArsenalMove } from './arsenalAiNen'
 import { simulateClashFrame } from './fightFrameSimulation'
 import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
@@ -164,7 +168,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   state = advancePredatorClock(state)
   if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
-  if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
+  if (state.hitstop > 0) return advanceRetrospectiveHitstop({ ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 })
   state = advancePreparation(state, { player: input, opponent: opponentInput })
   state = readArenaInputs(state, { player: input, opponent: opponentInput }, (current, side) =>
     performArenaAction(current, side, performAuraAttack),
@@ -405,6 +409,10 @@ function contextualOpponentAttack(state: FightState): FightState {
 function ordinaryOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
+  const retrospective = retrospectiveAiAction(planned, performAuraAttack)
+  if (retrospective) return retrospective
+  const native = nativeArsenalAiAction(planned, performAuraAttack)
+  if (native) return native
   const terrain = opponentTerrainAction(planned)
   if (terrain) return terrain
   const [rolled, chance] = randomValue(planned)
@@ -414,14 +422,7 @@ function ordinaryOpponentAttack(state: FightState): FightState {
   const style = fightingStyle(rolled.opponent.id)
   const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
   if (movesetAttack) {
-    return performAuraAttack({
-      state: rolled,
-      side: 'opponent',
-      kind: movesetAttack.kind,
-      variant: movesetAttack.variant,
-      moveId: movesetAttack.id,
-      auraCharged: false,
-    })
+    return performOpponentArsenalMove({ state: rolled, move: movesetAttack, roll: chance }, performAuraAttack)
   }
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),

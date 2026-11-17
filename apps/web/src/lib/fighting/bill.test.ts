@@ -229,7 +229,8 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
     for (const action of ['special', 'finisher'] as const) {
       expect(performMove({ state, side: 'player', action })).toBe(state)
     }
-    expect(canUseMovesetMove(state, 'player', moveForSlot('chrollo', 'forwardSpecial')!)).toBe(true)
+    // Acquisition still needs a witnessed Hatsu, answered questions and palm contact.
+    expect(canUseMovesetMove(state, 'player', moveForSlot('chrollo', 'forwardSpecial')!)).toBe(false)
     const borrowed = fight('kurapika', 'bill')
     borrowed.player.kurapika = {
       ...createKurapika(),
@@ -244,11 +245,11 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
       },
     }
     const loaded = performMove({
-      state: borrowed,
-      side: 'player',
-      action: 'special',
-      input: { ...EMPTY_INPUT, left: true },
-    })
+        state: borrowed,
+        side: 'player',
+        action: 'special',
+        input: { ...EMPTY_INPUT, left: true },
+      })
     expect(loaded.player.kurapika!.held!.loaded).toBe(true)
     expect(dolphinCanUse(loaded, 'player')).toBe(false)
   })
@@ -268,6 +269,8 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
     const presentation = fightSpecialPresentation(fight(), language)
     expect(presentation.ready).toBe(false)
     expect(presentation.label).toContain('Erigeron')
-    expect(presentation.hint).toContain(language === 'fr' ? 'Graine vivante' : 'Living seed')
+    expect(presentation.hint).toContain(
+      language === 'fr' ? 'Graine vivante' : 'Living seed',
+    )
   })
 })

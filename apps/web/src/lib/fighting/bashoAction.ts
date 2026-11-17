@@ -1,4 +1,4 @@
-import { witnessedHatsu } from './nenWitness'
+import { witnessedHatsuState } from './nenWitness'
 import { chrolloPageForMove, CHROLLO_SECONDARY, CHROLLO_USE } from './chrolloBook'
 import {
   BASHO_POEMS,
@@ -56,7 +56,7 @@ function startBashoWriting(options: {
       ...state[other],
       hatsuEffects: {
         ...state[other].hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'basho' }),
+        ...witnessedHatsuState(state, { side, source: 'basho' }),
       },
     },
   }

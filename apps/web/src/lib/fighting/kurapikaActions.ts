@@ -1,3 +1,4 @@
+import { stopCookie } from './cookie'
 import { releasePadailleWeapon } from './padailleWeapon'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { finishBorrowedLuini } from './luiniDolphin'
@@ -203,7 +204,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
       },
     }
   if (held.used) {
-    const detached = releasePadailleWeapon(state, side) ?? endDolphinEffect(options, perform)
+    const detached = endDolphinEffect(options, perform)
     return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
   }
   return useDolphin(options, perform)
@@ -221,6 +222,7 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
+  if (state[side].cookie) return stopCookie(state, side)
   const passage = finishBorrowedLuini(options, perform)
   if (passage) return passage
   const blood = finishBorrowedMary(options, perform)
@@ -321,8 +323,19 @@ function canAct(fighter: ArcadeFighter): boolean {
 
 export function kurapikaAiActivation(state: FightState): FightState | null {
   const fighter = state.opponent
-  if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return null
-  if (healthPercent(fighter) >= 70 && !fighter.kurapika?.held) return null
+  if (fighter.id !== 'kurapika') return null
+  const chain = fighter.kurapika
+  const needsEmperor = aiNeedsEmperor(state)
+  // Do not burn lifespan between useful applications; a loaded Dolphin keeps its own lock.
+  if (chain?.emperorTime) {
+    if (needsEmperor || chain.held?.loaded || Math.abs(state.player.x - fighter.x) <= 9) return null
+  } else if (!needsEmperor) return null
   const activated = toggleEmperorTime(state, 'opponent')
   return activated === state ? null : activated
+}
+
+function aiNeedsEmperor(state: FightState): boolean {
+  const held = state.opponent.kurapika?.held
+  if (held && !held.used) return true
+  return healthPercent(state.opponent) < 70 || state.player.chainJail?.owner === 'opponent'
 }

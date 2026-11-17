@@ -10,7 +10,7 @@ import { hasBashoPoem } from './bashoPoem'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { nenDamageFactor } from './nen'
 import type { PreparedEntity } from './preparationTypes'
-import type { FightInput, FightProjectile, FightSide, FightState } from './types'
+import type { FightInput, FightProjectile, FightSide, FightState, FightNenZone } from './types'
 
 export const arenaBox = (entry: PreparedEntity) => ({
   left: entry.x - entry.arena!.width,
@@ -118,7 +118,10 @@ function strikeArenaObject(state: FightState, side: FightSide): FightState {
   const attack = fighter.attack!
   const data = attackData(attack.kind, fighter)
   if (data.damage <= 0) return state
-  state = damageArenaObject(state, target.id, data.damage * hatsuDamageFactor(fighter))
+  state = damageArenaObject(state, target.id, {
+    damage: data.damage * hatsuDamageFactor(fighter),
+    zone: data.targetZone,
+  })
   state = ignitePunchedObject(state, side, target.id)
   return { ...state, [side]: { ...state[side], attack: { ...attack, impacted: true } } }
 }
@@ -131,9 +134,26 @@ function ignitePunchedObject(state: FightState, side: FightSide, objectId: strin
   return updateEntity(state, object.id, { arena: { ...object.arena!, burning: 90 } })
 }
 
-export function damageArenaObject(state: FightState, id: string, damage: number): FightState {
+export function damageArenaObject(
+  state: FightState,
+  id: string,
+  hit: number | { damage: number; zone?: FightNenZone },
+): FightState {
   const entry = state.battlefield?.entities.find((object) => object.id === id)
-  return entry ? updateEntity(state, id, { health: Math.max(0, entry.health - damage) }) : state
+  if (!entry) return state
+  const { damage, zone } = typeof hit === 'number' ? { damage: hit, zone: undefined } : hit
+  const copy =
+    entry.copy && zone === 'head'
+      ? {
+          ...entry.copy,
+          headHealth: Math.max(0, (entry.copy.headHealth ?? 15) - damage),
+          headAttached: (entry.copy.headHealth ?? 15) > damage,
+        }
+      : entry.copy
+  return updateEntity(state, id, {
+    health: Math.max(0, entry.health - damage),
+    ...(copy ? { copy } : {}),
+  })
 }
 
 /** Swept projectile collision runs before body collision; the same shot cannot hit both. */
@@ -166,7 +186,10 @@ export function interceptArenaProjectile(
   if (Math.abs(defender.x - previousX) + 3 < Math.abs(target.x - previousX))
     return { state, intercepted: false }
   return {
-    state: damageArenaObject(state, target.id, projectile.damage * (projectile.nenPower ?? 1)),
+    state: damageArenaObject(state, target.id, {
+      damage: projectile.damage * (projectile.nenPower ?? 1),
+      zone: projectile.targetZone,
+    }),
     intercepted: !projectile.jupiter,
   }
 }

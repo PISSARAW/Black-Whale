@@ -1,4 +1,9 @@
-import { chrolloPageForMove, CHROLLO_SECONDARY } from './chrolloBook'
+import {
+  chrolloPageForMove,
+  chrolloPageSource,
+  chrolloCopiedMove,
+  CHROLLO_SECONDARY,
+} from './chrolloBook'
 import { keyedMove, type KeyedMove } from './keyPoseMoves'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import type { ArcadeFighter } from './types'
@@ -8,7 +13,10 @@ export function chrolloKeyedMove(fighter: ArcadeFighter): KeyedMove | null {
   if (fighter.id !== 'chrollo' || fighter.attack?.kind !== 'special') return null
   const page = chrolloPageForMove(fighter, fighter.attack.moveId)
   if (!page) return null
-  if (page !== 'sun-and-moon' && page !== 'black-voice') return keyedMove(page, 'neutralSpecial')
+  if (chrolloPageSource(page) !== 'chrollo') {
+    const [source, slot] = (chrolloCopiedMove(fighter, fighter.attack.moveId) ?? '').split(':')
+    return keyedMove(source as import('./types').FighterId, slot as import('./types').MoveSlot)
+  }
   const moon = fighter.attack.moveId === CHROLLO_SECONDARY && !fighter.chrolloBook?.open
   return { timeline: CHROLLO_KEY_POSES[moon ? 'finisher' : 'neutralSpecial']!, authored: true }
 }

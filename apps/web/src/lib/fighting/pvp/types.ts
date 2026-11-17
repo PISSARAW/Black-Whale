@@ -18,6 +18,7 @@ export interface PvpSetup {
 }
 /** A seat is supplied by its authenticated session, never by a client command. */
 export type PvpCommand =
+  | { kind: 'arsenal'; command: import('../retrospectiveTypes').ArsenalCommand }
   | { kind: 'move'; action: MoveAction | 'ranged'; input: number }
   | { kind: 'emperor' | 'call' | 'offer' }
   | { kind: 'easter'; slot: 1 | 2 | 3 | 4 }

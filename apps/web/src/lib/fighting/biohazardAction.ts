@@ -1,4 +1,4 @@
-import { witnessedHatsu } from './nenWitness'
+import { witnessedHatsuState } from './nenWitness'
 import { chrolloPageForMove } from './chrolloBook'
 import { writingBodyAvailable } from './bashoPoem'
 import { canAct } from './fightActorState'
@@ -56,7 +56,7 @@ export function performBiohazardAction(options: AuraAttackOptions): FightState |
       ...state[target],
       hatsuEffects: {
         ...state[target].hatsuEffects,
-        witnessedHatsu: witnessedHatsu(state, { side, source: 'hinrigh' }),
+        ...witnessedHatsuState(state, { side, source: 'hinrigh' }),
       },
     },
   }

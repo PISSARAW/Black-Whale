@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightRetrospectiveArsenal from './FightRetrospectiveArsenal.svelte'
   import FightBloodyMary from './FightBloodyMary.svelte'
   import FightBashoPoem from './FightBashoPoem.svelte'
   import FightMoonlightPanel from './FightMoonlightPanel.svelte'
@@ -15,6 +16,13 @@
     if (side === 'player') onCommand(command)
   }
 </script>
+
+<FightRetrospectiveArsenal
+  {state}
+  {language}
+  {paused}
+  onUse={(side, command) => send(side, { kind: 'arsenal', command })}
+/>
 
 <FightBloodyMary
   {state}

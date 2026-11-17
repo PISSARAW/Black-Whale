@@ -1,4 +1,5 @@
 import { chrolloPageForMove } from './chrolloBook'
+import { hunterInterviewReady } from './skillHunterAcquisition'
 import type { FightState, MoveSlot } from './types'
 
 /** Stage a Sun/Moon pair, preserve a useful page, and steal only after observation. */
@@ -6,10 +7,19 @@ export function chrolloAiSlots(state: FightState, roll: number, gap: number): re
   const fighter = state.opponent
   const book = fighter.chrolloBook
   if (!book) return ['standingLight']
+  const secondary = closedBookSlots(state)
+  if (secondary) return secondary
   if (gap > 10) return roll > 0.7 ? ['backSpecial', 'downSpecial'] : ['forwardHeavy']
   if (canSteal(state, gap) && roll > 0.7) return ['forwardSpecial', 'standingLight']
   if (needsMoon(state)) return ['downSpecial', 'standingLight']
   return bookPlan(state, roll)
+}
+
+function closedBookSlots(state: FightState): readonly MoveSlot[] | null {
+  const book = state.opponent.chrolloBook!
+  if (book.open || !book.bookmark) return null
+  if (book.bookmark !== 'sun-and-moon') return ['finisher', 'neutralSpecial', 'standingLight']
+  return state.player.hatsuEffects.sunMark > 0 ? ['finisher', 'standingLight'] : null
 }
 
 function bookPlan(state: FightState, roll: number): readonly MoveSlot[] {
@@ -22,7 +32,7 @@ function bookPlan(state: FightState, roll: number): readonly MoveSlot[] {
 
 function canSteal(state: FightState, gap: number): boolean {
   return (
-    state.opponent.hatsuEffects.witnessedHatsu === state.player.id &&
+    hunterInterviewReady(state, 'opponent') &&
     state.player.hatsuEffects.hatsuStolen === 0 &&
     gap <= 6
   )

@@ -2,7 +2,9 @@ import { CHROLLO_CANON } from './chrolloCanon'
 import { BONOLENOV_CANON } from './bonolenovCanon'
 import { BIOHAZARD_CANON } from './biohazardCanon'
 import { BENJAMIN_CANON } from './benjaminCanon'
+import { rosterTechniqueContract } from './nenCanon'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
+import { hunterInterviewReady } from './skillHunterAcquisition'
 import type { FighterMove } from './movesetTypes'
 import type { FightSide, FightState, FighterId, MoveSlot } from './types'
 
@@ -54,7 +56,7 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     ],
     narrativeCost: 'Targeted support; Nen development remains weak on untrained individuals.',
     narrativeEffect:
-      'Accelerates living growth and can support another person’s Nen development. The current duel has no support target.',
+      'Accelerates living growth and can support another person’s Nen development. A prepared scenario can supply a real seed; the ordinary duel supplies no support target.',
   },
   'leorio:neutralSpecial': {
     source: 'Hunter × Hunter — chapter 325',
@@ -202,12 +204,14 @@ export function techniqueContract(
   if (BONOLENOV_CANON[move.id]) return BONOLENOV_CANON[move.id]
   if (defined) return defined
   if (BENJAMIN_CANON[move.id]) return BENJAMIN_CANON[move.id]
+  const rosterContract = rosterTechniqueContract(move)
+  if (rosterContract) return rosterContract
   return {
     source: 'Black Whale: Clash combat interpretation',
     evidence: 'gameplay-abstraction',
     conditions: ['Standard combat and aura rules apply.'],
     prohibitions: ['This move must not invent a new Nen ability.'],
-    narrativeCost: move.category === 'normal' ? 'Physical commitment.' : 'Aura and recovery.',
+    narrativeCost: 'Physical commitment and recovery; any basic Nen use follows its own costs.',
     narrativeEffect: 'Competitive expression of established martial ability.',
   }
 }
@@ -218,6 +222,7 @@ export function canonicalTechniqueAllowed(
   move: Pick<FighterMove, 'id'>,
 ): boolean {
   if (!hisokaTechniqueAllowed(state, side, move.id)) return false
+  if (move.id === 'chrollo:forwardSpecial') return hunterInterviewReady(state, side)
   if (move.id !== 'kurapika:neutralSpecial') return true
   const opponent = state[side === 'player' ? 'opponent' : 'player']
   return PHANTOM_TROUPE.has(opponent.id)

@@ -4,6 +4,7 @@ import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
+import { validArsenalCommand } from '../retrospectiveArsenal'
 
 export function record(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
@@ -28,10 +29,11 @@ const ENUM_FIELDS: Record<string, [string, string[]]> = {
 }
 function validCommand(value: Record<string, unknown>): boolean {
   const kind = String(value.kind)
+  if (kind === 'arsenal')
+    return only(value, ['kind', 'command']) && validArsenalCommand(value.command)
   if (['emperor', 'call', 'offer'].includes(kind)) return only(value, ['kind'])
   if (kind === 'move') return validMove(value)
-  if (kind === 'easter')
-    return only(value, ['kind', 'slot']) && boundedInteger(value.slot, 4) && value.slot > 0
+  if (kind === 'easter') return validEasterCommand(value)
   if (kind === 'respond')
     return only(value, ['kind', 'accept']) && typeof value.accept === 'boolean'
   const enumField = ENUM_FIELDS[kind]
@@ -161,4 +163,8 @@ function validMove(value: Record<string, unknown>): boolean {
     member(value.action, ['light', 'heavy', 'special', 'throw', 'finisher', 'ranged']) &&
     boundedInteger(value.input, REPLAY_INPUT_MASK)
   )
+}
+
+function validEasterCommand(value: Record<string, unknown>): boolean {
+  return only(value, ['kind', 'slot']) && boundedInteger(value.slot, 4) && value.slot > 0
 }

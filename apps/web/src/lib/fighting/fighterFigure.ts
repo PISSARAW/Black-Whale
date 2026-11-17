@@ -30,6 +30,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     fighter.plantedPaper,
     Boolean(fighter.kallutoPaper?.doll),
     Boolean(fighter.illumi?.disguised),
+    ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
     blinkyAvailable(fighter),
@@ -78,12 +79,7 @@ export function buildFightFigure(options: {
   )
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
-  const dressed =
-    fighter.textureSurprise ||
-    fighter.battleCantabile?.preparation ||
-    fighter.battleCantabile?.prologue
-      ? { ...profile, shirt: profile.skin }
-      : profile
+  const dressed = figureClothing(profile, fighter)
   const finalProfile = trueForm ? biscuitTrueFormProfile(dressed) : dressed
   const figureGlow: HumanFigureBuild['glow'] = fighter.hanzoProjection
     ? (colour, opacity) => glow(colour, opacity * 0.28)
@@ -98,6 +94,7 @@ export function buildFightFigure(options: {
   })
   finishFightModel({ THREE, glow: figureGlow, model, profile: finalProfile })
   if (trueForm) shapeBiscuitTrueForm(model)
+  if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 
   addIllumiNeedles({ THREE, glow, fighter, model })
   addFighterEquipment(options, model)
@@ -136,4 +133,15 @@ function addHanzoActivation(
   const { THREE, glow, fighter } = options
   if (fighter.id === 'hanzo' && (fighter.hanzoProjection?.startupFrames ?? 0) > 0)
     addHanzoProjectionMantle({ THREE, glow, model })
+}
+
+function historicalFigureKey(fighter: ArcadeFighter) {
+  return [fighter.chrolloHistorical?.appearance?.model, Boolean(fighter.clothCapture)]
+}
+function figureClothing(profile: ReturnType<typeof humanProfile>, fighter: ArcadeFighter) {
+  return fighter.textureSurprise ||
+    fighter.battleCantabile?.preparation ||
+    fighter.battleCantabile?.prologue
+    ? { ...profile, shirt: profile.skin }
+    : profile
 }

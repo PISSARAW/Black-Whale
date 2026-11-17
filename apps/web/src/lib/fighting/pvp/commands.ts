@@ -1,4 +1,5 @@
 import { performAuraAttack } from '../engine'
+import { performArsenalAction } from '../arsenalExecution'
 import { performTrainingAction } from '../trainingAction'
 import { unpackReplayInput } from '../fightReplayInput'
 import { fightAcceptsCommands } from '../fightOutcome'
@@ -30,6 +31,26 @@ export function applyPvpCommand(
     : observeFightCommand(state, { side, action: 'utility' }, run)
 }
 function execute(state: FightState, side: FightSide, command: PvpCommand): FightState {
+  if (command.kind === 'arsenal') {
+    return performArsenalAction(
+      {
+        state,
+        side,
+        command: {
+          ...command.command,
+          target: arsenalTarget(command.command.target, side),
+        },
+      },
+      performAuraAttack,
+    )
+  }
+  return executeTraditional(state, side, command)
+}
+function executeTraditional(
+  state: FightState,
+  side: FightSide,
+  command: Exclude<PvpCommand, { kind: 'arsenal' }>,
+): FightState {
   switch (command.kind) {
     case 'move':
       return performTrainingAction({
@@ -93,4 +114,9 @@ function paperUse(state: FightState, side: FightSide, command: 'plant' | 'serpen
     kind: 'special',
     auraCharged: false,
   })
+}
+
+function arsenalTarget(target: string | undefined, side: FightSide): string | undefined {
+  if (target === 'player') return side
+  return target === 'opponent' ? (side === 'player' ? 'opponent' : 'player') : target
 }

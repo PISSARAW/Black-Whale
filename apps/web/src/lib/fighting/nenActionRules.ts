@@ -75,7 +75,8 @@ export function interruptUnavailableNen(fighter: ArcadeFighter): ArcadeFighter {
   if (
     voluntaryNenAvailable(fighter) &&
     !chainAbilitySealed(fighter, attack.moveId) &&
-    copiedPageActive(fighter, attack.hatsuSource)
+    copiedPageActive(fighter, attack.hatsuSource) &&
+    (!attack.copiedPage || chrolloHasActivePage(fighter, attack.copiedPage))
   )
     return fighter
   return { ...fighter, attack: null, bufferedAttack: null, hatsuChargeFrames: 0 }

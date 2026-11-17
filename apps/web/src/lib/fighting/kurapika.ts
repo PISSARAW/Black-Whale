@@ -1,3 +1,5 @@
+import { chainAbilityGroup } from './chainAbilityGroup'
+export { chainAbilityGroup } from './chainAbilityGroup'
 import { voluntaryNenAvailable } from './nenAccess'
 import { fightCategoryEfficiency } from './nenCategories'
 import { transitionNen } from '@black-whale/nen-engine'
@@ -87,24 +89,16 @@ export function kurapikaEfficiency(
   return fightCategoryEfficiency(fighter, category)
 }
 
-/** Different commands can belong to the same Hatsu. */
-export function chainAbilityGroup(moveId: string): string {
-  const [source, slot] = moveId.split(':')
-  if (source === 'kurapika' || source === 'benjamin') return moveId
-  if (source === 'hisoka') return slot === 'downSpecial' ? 'texture-surprise' : 'bungee-gum'
-  if (source === 'chrollo')
-    return slot === 'neutralSpecial'
-      ? 'skill-hunter'
-      : slot === 'forwardSpecial'
-        ? 'black-voice'
-        : 'sun-and-moon'
-  return source
-}
-
 export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boolean {
+  const selected = moveId ?? `${fighter.id}:neutralSpecial`
+  if (
+    fighter.skillHunterStolen?.some(
+      (entry) => chainAbilityGroup(entry.moveId) === chainAbilityGroup(selected),
+    )
+  )
+    return true
   const stolen = fighter.stolenChainAbility
   if (!stolen) return false
-  const selected = moveId ?? `${fighter.id}:neutralSpecial`
   if (outsideDuelAbility(stolen.moveId)) return selected === stolen.moveId
   if (!/:(neutralSpecial|forwardSpecial|downSpecial|backSpecial|finisher)$/.test(selected))
     return false

@@ -1,4 +1,4 @@
-import { chrolloPageForMove, chrolloPageSource } from './chrolloBook'
+import { chrolloPageForMove, chrolloPageSource, chrolloCopiedMove } from './chrolloBook'
 import { moveById, moveForSlot } from './movesets'
 import { rangedAuraCost } from './projectiles'
 import type { ArcadeFighter, AttackKind } from './types'
@@ -26,6 +26,8 @@ function copiedMove(options: AttackCostOptions) {
   if (kind !== 'special') return null
   const source = chrolloPageSource(chrolloPageForMove(fighter, moveId))
   if (!source || source === 'chrollo') return null
+  const chosen = chrolloCopiedMove(fighter, moveId)
+  if (chosen && chosen !== `${source}:neutralSpecial`) return moveById(chosen)
   const slot =
     source === 'feitan' && fighter.hatsuEffects.painPacker?.armour ? 'finisher' : 'neutralSpecial'
   return moveForSlot(source, slot)

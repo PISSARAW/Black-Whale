@@ -53,11 +53,25 @@ function chooseMaryAiCommand(state: FightState): import('./bloodyMary').MaryComm
   if (state.player.maryCapture?.owner === 'opponent')
     return maryCommandReady(state, 'opponent', 'slam') ? 'slam' : null
   if (state.opponent.bloodyMary?.tendril?.phase === 'resting') return 'recall'
+  const scouts = maryScoutingPlan(state)
+  if (scouts !== undefined) return scouts
   for (const command of ['bleed', 'bind', 'infuse'] as const) {
-    const range = maryAiInRange(state, command)
-    if (range && maryCommandReady(state, 'opponent', command)) return command
+    if (maryAiCanCommand(state, command)) return command
   }
   return null
+}
+
+function maryAiCanCommand(state: FightState, command: import('./bloodyMary').MaryCommand): boolean {
+  return maryAiInRange(state, command) && maryCommandReady(state, 'opponent', command)
+}
+
+function maryScoutingPlan(
+  state: FightState,
+): import('./bloodyMary').MaryCommand | null | undefined {
+  const gap = Math.abs(state.player.x - state.opponent.x)
+  if (maryState(state.opponent).drops.length)
+    return gap < 22 && maryCommandReady(state, 'opponent', 'recall') ? 'recall' : null
+  return gap >= 22 && maryCommandReady(state, 'opponent', 'scout') ? 'scout' : undefined
 }
 
 export function maryAiBusy(fighter: ArcadeFighter): boolean {

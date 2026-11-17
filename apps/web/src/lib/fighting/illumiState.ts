@@ -34,5 +34,5 @@ export function illumiPreparing(fighter: ArcadeFighter): boolean {
 }
 
 export function illumiBodyFree(fighter: ArcadeFighter): boolean {
-  return needleAutonomy(fighter) && !illumiPreparing(fighter)
+  return !fighter.arsenalSleep && !fighter.clothCapture && needleAutonomy(fighter) && !illumiPreparing(fighter)
 }

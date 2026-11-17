@@ -20,6 +20,7 @@ import {
 import { activeHitbox } from './frameData'
 import { hatsuFor, hatsuSourceFor, triggerHatsu } from './hatsu'
 import { chooseMovesetAttack } from './movesetAi'
+import { performHunterInterview } from './skillHunterAcquisition'
 import { forceZetsu } from './nen'
 import { EMPTY_INPUT, type FightState } from './types'
 
@@ -52,7 +53,10 @@ function impact(state: FightState, moveId: string): FightState {
   })
 }
 function stolen(): FightState {
-  return impact(triggerHatsu(ready(), 'opponent', 'illumi'), CHROLLO_STEAL)
+  let state = triggerHatsu(ready(), 'opponent', 'illumi')
+  state = performHunterInterview(state, 'player', { action: 'hunter-ask' })
+  state = performHunterInterview(state, 'opponent', { action: 'hunter-answer' })
+  return impact(state, CHROLLO_STEAL)
 }
 
 describe('Bandit’s Secret and Double Face', () => {
@@ -112,17 +116,17 @@ describe('Bandit’s Secret and Double Face', () => {
   it('retains acquired pages and revokes their owner even when turning away', () => {
     const acquired = stolen()
     expect(acquired.player.chrolloBook).toMatchObject({
-      pages: ['sun-and-moon', 'black-voice', 'illumi'],
+      pages: ['sun-and-moon', 'black-voice', 'illumi:neutralSpecial'],
       page: 2,
       open: true,
     })
-    expect(acquired.opponent.hatsuEffects.hatsuStolen).toBe(1)
+    expect(acquired.opponent.skillHunterStolen).toEqual([{ owner: 'player', moveId: 'illumi:neutralSpecial' }])
     expect(hatsuSourceFor(acquired.opponent)).toBeNull()
     expect(hatsuSourceFor(acquired.player, CHROLLO_USE)).toBe('illumi')
     const turned = action(acquired, CHROLLO_TURN)
-    expect(turned.player.chrolloBook?.pages).toContain('illumi')
+    expect(turned.player.chrolloBook?.pages).toContain('illumi:neutralSpecial')
     expect(hatsuSourceFor(turned.player, CHROLLO_USE)).toBe('chrollo')
-    expect(turned.opponent.hatsuEffects.hatsuStolen).toBe(1)
+    expect(turned.opponent.skillHunterStolen).toEqual(acquired.opponent.skillHunterStolen)
     expect(impact(acquired, CHROLLO_STEAL)).toBe(acquired)
   })
   it('cannot steal an unseen ability or through guard', () => {
@@ -159,9 +163,7 @@ describe('Bandit’s Secret and Double Face', () => {
         needlePuppet: { owner: 'player' as const, order: 'stay' as const, needleEmbedded: true },
       },
     }
-    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({
-      needleEmbedded: false,
-    })
+    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({ needleEmbedded: false })
     const closed = action(controlled, CHROLLO_BOOKMARK)
     const kept = action(advance(closed), CHROLLO_TURN)
     expect(kept.opponent.needlePuppet?.needleEmbedded).toBe(true)

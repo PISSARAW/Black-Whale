@@ -7,7 +7,7 @@ const GROUND = 0
 
 export function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.health <= 0) return { ...fighter, pose: 'ko', blocking: false }
-  if (fighter.knockdownFrames > 0) return { ...fighter, pose: 'down', blocking: false }
+  if (bodyDown(fighter)) return { ...fighter, pose: 'down', blocking: false }
   if (fighter.wakeupInvulnerableFrames > 0 && !fighter.attack)
     return { ...fighter, pose: 'wakeup', blocking: false }
   if (fighter.hitStun > 0) return { ...fighter, pose: 'hit', blocking: false }
@@ -23,4 +23,8 @@ function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.y > GROUND) return { ...fighter, pose: 'jump', blocking: false }
   if (fighter.blocking || fighter.blockStun > 0) return { ...fighter, pose: 'guard' }
   return fighter
+}
+
+function bodyDown(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.arsenalSleep) || fighter.knockdownFrames > 0
 }

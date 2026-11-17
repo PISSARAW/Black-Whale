@@ -1,4 +1,6 @@
 <script lang="ts">
+  import FightRetrospectiveArsenal from './FightRetrospectiveArsenal.svelte'
+  import { performArsenalAction } from '$lib/fighting/arsenalExecution'
   import { observeFightCommand } from '$lib/fighting/commandFeedback'
   import FightKallutoPaper from './FightKallutoPaper.svelte'
   import { selectPaperTarget, selectPaperCommand } from '$lib/fighting/kallutoPaper'
@@ -27,6 +29,14 @@
     )
   }
 </script>
+
+<FightRetrospectiveArsenal
+  {state}
+  {language}
+  {paused}
+  onUse={(side, command) =>
+    dispatch(side, (current) => performArsenalAction({ state: current, side, command }, perform))}
+/>
 
 <FightBloodyMary
   {state}

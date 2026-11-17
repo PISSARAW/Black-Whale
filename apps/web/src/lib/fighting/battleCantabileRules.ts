@@ -67,7 +67,11 @@ export function battleRangedAvailable(fighter: ArcadeFighter): boolean | null {
 }
 
 export function battleAppearance(fighter: ArcadeFighter): FighterId {
-  return fighter.battleCantabile?.form?.model ?? fighter.id
+  return (
+    fighter.chrolloHistorical?.appearance?.model ??
+    fighter.battleCantabile?.form?.model ??
+    fighter.id
+  )
 }
 
 export function battleCommand(

@@ -146,8 +146,7 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
     expect(chainAbilitySealed(held.opponent, LITTLE_EYE.id)).toBe(true)
     for (const move of movesetFor('sayird')!.moves) {
       expect(chainAbilitySealed(held.opponent, move.id)).toBe(false)
-      if (move.category !== 'finisher')
-        expect(canUseMovesetMove(held, 'opponent', move)).toBe(move.slot !== 'neutralSpecial')
+      if (move.category !== 'finisher') expect(canUseMovesetMove(held, 'opponent', move)).toBe(move.slot !== 'neutralSpecial')
     }
     expect(stealableChainMove(held.opponent)).toBeNull()
   })
@@ -181,7 +180,7 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
         hatsuEffects: { ...state.opponent.hatsuEffects, hatsuStolen: 1 },
       }),
     ).toBeNull()
-    for (const id of ['biscuit'] as const)
+    for (const id of ['theta'] as const)
       expect(stealableChainMove({ ...state.opponent, id })).toBeNull()
   })
 

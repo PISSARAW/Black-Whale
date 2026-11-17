@@ -4,6 +4,7 @@
   import { createCinematicDetailScene } from '$lib/fighting/cinematicDetailScene'
   import type { CinematicDirection } from '$lib/fighting/cinematicTypes'
   import { createFighterTrackingSilhouettes } from '$lib/fighting/fighterTrackingSilhouette'
+  import { markFightRender } from '$lib/fighting/fightRenderObservation'
   import { cinematicDetailRect, type CameraDetailRect } from '$lib/fighting/cinematicDetailLayout'
   import FightCameraDetail from './FightCameraDetail.svelte'
   import FightTrackingMarkers from './FightTrackingMarkers.svelte'
@@ -48,6 +49,7 @@
     createStrideClocks,
     transitionSecondsFor,
   } from '$lib/fighting/sceneMotion'
+  import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
@@ -363,7 +365,7 @@
             model: modelOf('player', state.player),
             seconds,
           })
-          projectileScene.sync(state.projectiles, seconds, state.player)
+          projectileScene.sync(arsenalProjectilePresentation(state), seconds, state.player)
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
           feitanScene.sync(state, seconds)
@@ -383,6 +385,7 @@
 
           collisions.sync(state)
           scenery.update?.(seconds)
+          markFightRender(scene, state)
           drawVictoryFrame({
             victory: victoryRenderer,
             input: {

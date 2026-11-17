@@ -38,7 +38,7 @@
         : `${who} fulfilled the pact and receives one use of Moonlight Act.`,
       breached: fr
         ? `${who} a rompu la clause : Zetsu jusqu’à la fin du match.`
-        : `${who} breached the clause: Zetsu for the rest of the match.`,
+        : `${who} breached the clause: Zetsu for one simulated week.`,
     }
     return messages[result.kind]
   }
@@ -58,8 +58,8 @@
     </p>
     <p class="terms">
       {fr
-        ? 'Récompense : le destinataire reçoit un usage de Moonlight Act si le pacte est respecté. Sanction pour chacun : Zetsu en cas de violation — une semaine dans le manga, le reste du match ici.'
-        : 'Reward: the recipient receives one use of Moonlight Act on fulfilment. Either signatory incurs Zetsu on breach — one week in the manga, the rest of the match here.'}
+        ? 'Récompense : le destinataire reçoit un usage de Moonlight Act si le pacte est respecté. Sanction pour chacun : Zetsu en cas de violation — une semaine de simulation, conservée entre les manches.'
+        : 'Reward: the recipient receives one use of Moonlight Act on fulfilment. Either signatory incurs Zetsu on breach — one simulated week, retained across rounds.'}
     </p>
     {#if offer}
       <p class="status">

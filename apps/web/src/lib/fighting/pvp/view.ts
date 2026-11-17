@@ -45,6 +45,14 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.hunterInterview = undefined
+  if (enemy.chrolloHistorical)
+    enemy.chrolloHistorical = {
+      ...enemy.chrolloHistorical,
+      phone: undefined,
+      aiPlan: undefined,
+      aiLastUse: undefined,
+    }
   enemy.bodyAndSoulReplies = undefined
   enemy.secretWindow = undefined
   enemy.melodyHearing = undefined
@@ -52,7 +60,12 @@ function redactEnemy(enemy: ArcadeFighter) {
   enemy.bufferedAttack = null
   enemy.predator = enemy.predator ? { ...enemy.predator, known: [], analysis: null } : undefined
   enemy.kallutoPaper = enemy.kallutoPaper ? { ...enemy.kallutoPaper, heard: undefined } : undefined
-  enemy.hatsuEffects = { ...enemy.hatsuEffects, witnessedHatsu: null }
+  enemy.hatsuEffects = {
+    ...enemy.hatsuEffects,
+    witnessedHatsu: null,
+    witnessedAt: undefined,
+    witnessedMoveId: undefined,
+  }
   if (enemy.chrolloBook)
     enemy.chrolloBook = { ...enemy.chrolloBook, pages: [], bookmark: null, page: 0 }
 }
@@ -83,6 +96,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
   if (enemy.nen.in) enemy.nen = createFightingNen()
+  if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null
 }
 export function pvpSnapshot(state: FightState, side: FightSide) {

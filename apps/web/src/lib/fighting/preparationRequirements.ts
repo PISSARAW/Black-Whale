@@ -5,7 +5,7 @@ import {
   luiniRoomAtBody,
   validLuiniRooms,
 } from './luiniSpatial'
-import { chrolloPageForMove } from './chrolloBook'
+import { chrolloPageForMove, chrolloPageSource } from './chrolloBook'
 import { hasEquipment, liveEntity, nearEntity, readyCohort } from './preparationWorld'
 import type { HatsuRequirement, PreparationCheck } from './preparationTypes'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
@@ -115,5 +115,6 @@ function hasAnimal(state: FightState, side: FightSide, kind: 'animal' | 'bird'):
 
 function copiedPreparationSource(fighter: ArcadeFighter, moveId?: string): FighterId | null {
   const page = chrolloPageForMove(fighter, moveId)
-  return page && page !== 'sun-and-moon' && page !== 'black-voice' ? page : null
+  const source = chrolloPageSource(page)
+  return source === 'chrollo' ? null : source
 }

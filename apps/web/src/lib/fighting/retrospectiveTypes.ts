@@ -1,0 +1,69 @@
+import type { FightSide, FighterId } from './types'
+
+export interface RetrospectiveFighterState {
+  chrolloHistorical?: import('./chrolloHistoricalTypes').ChrolloHistoricalState
+  clothCapture?: { owner: FightSide }
+  skillHunterStolen?: readonly { owner: FightSide; moveId: string }[]
+  hunterInterview?: { target: FighterId; askedAt: number; answeredAt?: number }
+  hunterQuestion?: { owner: FightSide; askedAt: number }
+  moonlightPenaltyFrames?: number
+  gumWoundSeals?: number
+  gumCatch?: {
+    frames: number
+    hidden?: boolean
+    released?: boolean
+    projectile?: import('./types').FightProjectile
+    incomingSpeed?: number
+  }
+  supportConsent?: boolean
+  cookie?: CookieSession
+  arsenalSleep?: { owner: FightSide; cause: 'cookie' }
+}
+
+export const ARSENAL_ACTION_IDS = [
+  'dolphin-move',
+  'copied-move',
+  'gum-seal',
+  'gum-unseal',
+  'gum-release',
+  'gum-catch',
+  'gum-return',
+  'support-consent',
+  'cookie-massage',
+  'cookie-piano',
+  'cookie-stop',
+  'hunter-ask',
+  'hunter-answer',
+  'hunter-palm',
+  'history-phone-criteria',
+  'history-phone-call',
+  'history-page',
+  'history-use',
+  'history-release',
+  'history-order-wait',
+  'history-order-attack',
+  'history-shape-left',
+  'history-shape-right',
+  'history-shape-swap',
+] as const
+export type ArsenalActionId = (typeof ARSENAL_ACTION_IDS)[number]
+export interface ArsenalCommand {
+  action: ArsenalActionId
+  target?: string
+}
+export interface CookieSession {
+  target: FightSide
+  mode: 'massage' | 'piano'
+  frames: number
+  targetHealth: number
+  targetX: number
+  targetY: number
+}
+export interface ArsenalOption {
+  command: ArsenalCommand
+  labelFr: string
+  labelEn: string
+  ready: boolean
+  conditionFr: string
+  conditionEn: string
+}

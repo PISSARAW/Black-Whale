@@ -1,3 +1,4 @@
+import { ownsBungeeGum } from './hisokaArsenal'
 import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
@@ -86,7 +87,7 @@ export function blinkyNozzleY(fighter: ArcadeFighter): number {
 
 /** Two occupied hands can cover at most two separate wounds in this duel abstraction. */
 export function exposedBlinkyWounds(fighter: ArcadeFighter): number {
-  return Math.max(0, (fighter.openWounds ?? 0) - (fighter.pluggingWounds ? 2 : 0))
+  return Math.max(0, (fighter.openWounds ?? 0) - (ownsBungeeGum(fighter) ? fighter.gumWoundSeals ?? 0 : 0) - (fighter.pluggingWounds ? 2 : 0))
 }
 function handsFreeForPlugging(fighter: ArcadeFighter): boolean {
   return (

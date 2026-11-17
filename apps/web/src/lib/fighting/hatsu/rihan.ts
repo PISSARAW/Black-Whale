@@ -6,5 +6,5 @@ export const rihanHatsu: FighterHatsu = {
   id: 'rihan',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: advancePredator,
+  onFrame: (state) => advancePredator(state),
 }

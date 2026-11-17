@@ -8,7 +8,7 @@ const BOOK_MOVES: Partial<Record<MoveSlot, { cost: number; tuning: Partial<MoveT
   },
   forwardSpecial: {
     cost: 30,
-    tuning: { startup: 18, damage: 2, knockback: 0, lunge: 0, reach: 6 },
+    tuning: { startup: 18, damage: 0, hitstun: 0, blockstun: 0, knockback: 0, lunge: 0, reach: 6, targetZone: 'hands' },
   },
   backSpecial: {
     cost: 0,

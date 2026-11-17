@@ -19,8 +19,8 @@ export const CHROLLO_CANON: Record<string, TechniqueCanonContract> = {
     source: 'Ch. 106 — Skill Hunter acquisition conditions',
     evidence: 'gameplay-abstraction',
     conditions: [
-      'Witness the Hatsu in action, then land a clean book contact.',
-      'The interview is omitted; a round lasts less than the canon one-hour limit.',
+      'Witness the Hatsu, ask its owner about it and receive an audible answer.',
+      'The owner’s palm must touch the handprint on the cover, all within one hour.',
     ],
     prohibitions: ['Cannot steal basic Nen, bodily forms or an unseen Hatsu.'],
     narrativeCost: 'Close-range commitment; the victim loses access until the round resets.',

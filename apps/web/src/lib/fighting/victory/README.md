@@ -1,7 +1,7 @@
 # Cinématiques de victoire de Clash
 
-Les onze scènes (Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin, Benjamin,
-Tserriednich, Leorio, Halkenburg et Camilla) se jouent
+Les dix-sept scènes (Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin, Benjamin,
+Tserriednich, Leorio, Halkenburg, Camilla, Kalluto, Machi, Shizuku, Bonolenov, Illumi et Biscuit) se jouent
 pendant dix secondes après le verdict. Le gagnant, le vaincu et le lieu viennent
 du combat courant, pour les deux côtés du duel. Les scènes ne modifient jamais
 les PV, l'aura, les conditions des Hatsu ou le résultat synchronisé.
@@ -16,11 +16,11 @@ Le HUD et le panneau de résultats attendent la fin ou le passage de la scène.
 Les replays, égalités et prévisions ne déclenchent pas une nouvelle victoire.
 Les réglages de confort et de son s'appliquent également à ces séquences.
 
-Le film d'Hisoka garde son verdict « VICTOIRE » ; les dix autres affichent
+Le film d'Hisoka garde son verdict « VICTOIRE » ; les seize autres affichent
 « FATALITY ». Uvogin ne fait pas partie de ce catalogue.
 L'animation se joue localement, y compris en PvP : aucun événement réseau ni
-dommage supplémentaire n'est envoyé. Chain Jail reste ici une pose après verdict,
-sans contourner ses conditions dans la simulation du combat.
+dommage supplémentaire n'est envoyé. Chain Jail reste une pose après verdict réservée aux membres réels de la Brigade.
+Les autres adversaires déclenchent la variante Judgment Chain.
 
 Le temps attend le premier rendu, s'arrête pendant une pause ou quand l'onglet
 est masqué et reprend ensuite. Le son suit la même horloge. Échap, Entrée,
@@ -31,11 +31,11 @@ Si le canvas ou une ressource échoue, les résultats restent accessibles.
 le chronométrage, les pauses, le passage et les rematches. `renderer.test.ts`
 vérifie les modèles natifs des deux côtés, l'absence de mutation du combat,
 la restauration des poses et matériaux et le repli après une erreur.
-`node apps/web/scripts/check-fighting-victory.mjs` contrôle les onze séquences,
+`node apps/web/scripts/check-fighting-victory.mjs` contrôle les dix-sept séquences,
 plusieurs lieux, les tailles extrêmes, un miroir et le mobile dans un vrai canvas.
 Il vérifie aussi le déclenchement automatique et le chargement du son de chaque
 personnage enregistré ; une entrée absente du contrôle fait échouer le script.
-Les bandes sonores proviennent des onze démos et se trouvent dans
+Les bandes sonores proviennent des dix-sept démos et se trouvent dans
 `apps/web/static/clash-victories/`.
 
 Benjamin : « Le dernier ordre » utilise la paume gauche d'Air Blow, un écho de
@@ -128,6 +128,114 @@ séquence native de mort, consommation et résurrection avant le verdict.
 la prise, le portrait fixe et la restauration des modèles. Le contrôle navigateur
 `check-camilla-fatality.mjs` couvre grandes et petites cibles, miroir, P2,
 plusieurs lieux, confort réduit, mobile et déclenchement réel dans FightStage.
+
+Kalluto : « La dernière danse du papier » commence par un fragment discret fixé
+sur le haut du torse. La cible rit, puis 8 192 feuilles se déploient derrière
+Kalluto et 4 096 autres forment les courants de coupe autour de la marque.
+Les bandes du corps disparaissent progressivement, accompagnées de lambeaux
+aux couleurs natives. Kalluto referme son éventail tandis que les papiers tombent.
+La quantité de papier et la finition sont une amplification visuelle après
+verdict, sans explosion ni nouvelle règle d'exécution dans le moteur.
+
+Le film vérifie d'abord une véritable pose de papier sous In, un fragment
+physiquement planté et un K.-O. obtenu par le flux guidé. Le marqueur de la
+cinématique suit le corps réel, les bras gardent leurs articulations natives
+et tous les matériaux sont restaurés après chaque rendu. Le rire, les feuilles
+et les coupes utilisent la même horloge que les dix secondes de présentation.
+`kallutoFilm.test.ts`, `renderer.test.ts` et `check-kalluto-fatality.mjs` couvrent
+ces étapes, P2, miroir, tailles extrêmes, lieux et mobile.
+
+Machi : « Le dernier point » exploite le pistage, la toile, le contrôle du
+pantin, la ligature du cou, la découpe et la suture. Le fil initial et les
+cinq commandes partent des positions des vrais doigts. Machi se rapproche
+avant la découpe : les longues lignes de capture laissent place au travail
+à courte distance. Quatre sections du modèle se séparent à l'image 282 ;
+les sutures progressent à partir de 306 et les raccords se referment à 378.
+Un dernier point tiré à 420 libère les sections, qui retombent au sol.
+
+Les copies conservent les géométries natives et possèdent uniquement leurs
+matériaux de sectionnement ; leur destruction ne libère jamais les ressources
+des combattants. La couture de la cible est un tableau après verdict, sans
+soin, résurrection ou contrôle supplémentaire dans la simulation. Le film
+valide au préalable une vraie marque de pistage, une ligature maintenue et
+un K.-O. par Fil tendu. Les tests contrôlent la continuité, les raccords,
+les doigts, la restauration et la propriété des ressources.
+
+Shizuku : « Rien à signaler » montre Deme-chan comme une massue, puis une
+aspiration de sang stylisée par une ouverture. Le corps garde toute son échelle
+jusqu'à la chute ; seule la phase de nettoyage postérieure à la mort permet
+son absorption. Les traces ordinaires disparaissent ensuite, puis un bouton
+entre en dernier à l'image 444. Deme-chan restitue ce même bouton à partir de
+474 ; Shizuku le range avant de remettre ses lunettes et de demander « À qui ? ».
+Les commandes de matière sont dites à voix haute avant leur aspiration.
+
+Le modèle de la visite conserve sa bouche, ses yeux, ses dents et son tuyau
+continu. La tête pivote au bout du tuyau pour rester droite ; les deux mains
+rejoignent les prises physiques. Les objets de Nen portés par le vaincu se
+dissipent au décès au lieu d'être aspirés. Aucun objet de la scène réelle,
+aucune mémoire de Deme-chan et aucun PV n'est modifié par la présentation.
+Le film préalable exige de vraies ouvertures et une mort par aspiration native.
+Les contrôles couvrent les prises, l'ordre mort/nettoyage/dernier objet,
+la restitution, les deux côtés, le miroir, les tailles et le mobile.
+
+Bonolenov : « Le dernier mouvement » fait entendre les trous du corps, puis
+matérialise la tenue et la lance natives de Prologue à l’image 72. Deux contacts
+physiques de la pointe avec le sol marquent 132 et 168. Jupiter naît autour du
+corps à 210 et poursuit la cible de 288 à 396 : sa surface atteint le torse réel
+sur l’accord final. Le vaincu est écrasé de façon stylisée, puis la sphère se
+dissipe et Bonolenov s’incline. Le cratère est temporaire, sans modification du
+lieu. Le plan de confort contient toute la poursuite sans déplacement de caméra.
+
+Le film préalable accomplit réellement Prologue, un coup de lance et les 90
+frames de préparation de Jupiter avant un K.-O. par son projectile natif.
+La présentation ne débloque aucune connaissance de Metamorphosen et ne change
+aucune condition de portée auditive. Le geste de se couvrir les oreilles est
+une réaction de la cible ; il n’interrompt pas le guidage. La tenue réutilise les
+géométries partagées sans les détruire. Les contrôles couvrent le contact au sol,
+la surface de Jupiter, la restauration, les tailles, P2, le miroir et le mobile.
+
+Illumi : « Même après la mort » commence par son regard vide et une aiguille à
+tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image
+132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles
+supplémentaires arrivent au front à 282 et 300. La chute commence à 348. Le corps
+sans vie se relève à partir de 420 et s’incline à 468, avant le portrait final.
+Les trois pointes suivent les coordonnées locales de la tête pendant la chute,
+le redressement et le salut. Les bras utilisent leurs deux segments physiques.
+
+Le film natif valide une implantation sans dégâts, les ordres Éloigne-toi,
+Approche et Reste, puis un véritable K.-O. physique. Illumi ne possède pas de
+finisher offensif dans la simulation. Les aiguilles supplémentaires, la mort
+mise en scène et le contrôle du cadavre restent une présentation après verdict :
+aucun dégât, soin, contrôle supplémentaire ou résurrection n’est envoyé au jeu.
+La caméra normale contient le corps entier pendant sa chute ; le réglage de
+confort conserve un seul plan fixe. Les contrôles couvrent les contacts, les
+articulations, la restauration, P2, les gabarits, le miroir et le mobile.
+
+
+Biscuit : « Le soin de grâce » commence par Cookie massant sa main avec sa lotion,
+puis révèle son corps naturel à l’image 210. Un unique direct touche le torse
+réel à l’image 330 ; la cible suit la gravité native et touche le sol à l’image 357. Biscuit
+reprend sa petite apparence à l’image 420 et fait terminer sa manucure par Cookie.
+Les deux corps sont les modèles natifs du jeu, sans étirement des articulations.
+La lotion reste un soin et ne devient jamais une arme. La démonstration obtient
+d’abord un véritable K.-O. physique après une transformation native gratuite.
+Aucune transformation, récupération de PV ou d’aura n’est appliquée au résultat
+courant par la cinématique. Les poses, le cadrage réduit et les matériaux sont
+restaurés après chaque rendu ; les géométries humaines partagées sont conservées.
+`biscuitFilm.test.ts`, `renderer.test.ts` et `check-biscuit-fatality.mjs` couvrent
+les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclenchement.
+`render-biscuit-fatality.mjs` exporte 600 images et `compose-biscuit-fatality.mjs`
+compose la bande sonore du jeu et la vidéo de dix secondes.
+
+
+La chute de Biscuit utilise `advanceAirborne`, la progression de KO de
+`finishedFallPresentation`, `reactionPlan` et `fightGroundContact` comme le combat.
+Le vaincu quitte sa garde, reçoit le coup, puis se couche sur le dos sans rotation
+latérale. Les accessoires, cheveux et ombres ne déterminent pas le sol. Le rig
+natif est emprunté sans avancer sa mémoire d’animation et tous ses changements
+sont restaurés après le rendu. Le cadrage réserve la longueur du corps couché,
+y compris avec la caméra réduite sur mobile. Le mix ne contient aucune réplique
+française ; seuls les bruitages et l’annonce « Fatality » sont conservés.
 
 
 Kurapika hors Brigade : « La dernière condition » active visuellement Emperor

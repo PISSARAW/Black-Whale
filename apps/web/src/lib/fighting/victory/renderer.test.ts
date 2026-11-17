@@ -69,6 +69,282 @@ function setup(winner: FighterId, side: FightSide, targetOverride?: FighterId) {
   return { renderer, state, models, camera, scene, armour }
 }
 describe('live victory renderer', () => {
+  it.each(['hisoka', 'biscuit', 'benjamin'] as const)(
+    'uses only the little-finger Judgment blade and native supine KO against non-Spider %s',
+    (target) => {
+      const fixture = setup('kurapika', 'opponent', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      try {
+        expect(selectVictory(fixture.state)?.variant).toBe('kurapika-judgment')
+        for (const age of [42, 120, 150, 240, 330, 348, 378, 402, 480, 570]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.kurapikaJudgmentVictory
+          expect(audit.chainJail).toBe(false)
+          expect(audit.chainFinger).toBe('right-little')
+          if (age === 150) expect(audit.tipError).toBeLessThan(1e-6)
+          if (age >= 348) expect(audit.floor).toBeCloseTo(0.012, 5)
+          if (age >= 402) {
+            expect(Math.abs(audit.upY)).toBeLessThan(0.15)
+            expect(Math.abs(audit.roll)).toBeLessThan(0.05)
+          }
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
+  it.each(['franklin', 'kalluto', 'biscuit'] as const)(
+    'stages Biscuit’s two authored bodies and Cookie’s restorative hand treatment against %s',
+    (target) => {
+      const fixture = setup('biscuit', 'opponent', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      try {
+        for (const age of [42, 150, 210, 252, 300, 330, 348, 390, 420, 480, 570]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.biscuitVictory
+          expect(audit.large).toBe(age >= 210 && age < 420)
+          expect(audit.cookie).toBe(age < 96 || (age >= 420 && age < 522))
+          audit.treatmentErrors.forEach((error: number) => expect(error).toBeLessThan(1e-6))
+          if (age === 330) expect(audit.contactError).toBeLessThan(0.05)
+          if (age >= 330) {
+            expect(Math.abs(audit.roll)).toBeLessThan(0.05)
+            expect(audit.fallProgress).toBeGreaterThanOrEqual(0)
+            expect(audit.fallProgress).toBeLessThanOrEqual(1)
+            expect(audit.floor).toBeGreaterThanOrEqual(0.012 - 1e-6)
+          }
+          if (age >= 390) {
+            expect(audit.landing).toBe(true)
+            expect(audit.floor).toBeCloseTo(0.012, 5)
+            expect(Math.abs(audit.upY)).toBeLessThan(0.15)
+          }
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
+  it.each(['franklin', 'biscuit'] as const)(
+    'keeps Illumi’s skull needles attached through the death and corpse salute of %s',
+    (target) => {
+      const fixture = setup('illumi', 'opponent', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      try {
+        for (const age of [0, 120, 132, 180, 282, 300, 348, 378, 420, 468, 510, 570]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.illumiVictory
+          const contacts = [132, 282, 300]
+          expect(audit.embedded).toBe(contacts.filter((frame) => age >= frame).length)
+          contacts.forEach((frame, i) => {
+            if (age >= frame) expect(audit.errors[i]).toBeLessThan(0.00001)
+          })
+          expect(audit.dead).toBe(age >= 348)
+          if (age === 378) expect(audit.fall).toBeGreaterThan(0.9)
+          if (age === 510) {
+            expect(audit.fall).toBe(0)
+            expect(audit.bow).toBe(1)
+            expect(audit.dead).toBe(true)
+          }
+          audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.2))
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
+  it.each(['franklin', 'biscuit'] as const)(
+    'grounds Bonolenov’s spear and lands the physical Jupiter surface on %s',
+    (target) => {
+      const fixture = setup('bonolenov', 'player', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      const shared = new Set<THREE.BufferGeometry>()
+      fixture.models.player.traverse((node) => {
+        if (node instanceof THREE.Mesh) shared.add(node.geometry)
+      })
+      const dispose = [...shared].map((geometry) => vi.spyOn(geometry, 'dispose'))
+      try {
+        for (const age of [72, 132, 168, 288, 324, 396, 420, 540]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.bonolenovVictory
+          if (age === 132 || age === 168) expect(audit.spearTip[1]).toBeCloseTo(0.028, 3)
+          if (age === 288) expect(fixture.models.player.visible).toBe(false)
+          if (age === 396) {
+            expect(audit.contactError).toBeLessThan(0.0001)
+            expect(audit.pursuit).toBe(1)
+            expect(audit.formation).toBe(1)
+          }
+          if (age >= 420) expect(fixture.models.opponent.visible).toBe(false)
+          if (age === 540) expect(fixture.models.player.visible).toBe(true)
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+      dispose.forEach((spy) => {
+        expect(spy).not.toHaveBeenCalled()
+        spy.mockRestore()
+      })
+    },
+  )
+
+  it('extracts only blood while alive, then cleans the corpse and returns the last ordinary object', () => {
+    const fixture = setup('shizuku', 'opponent', 'franklin')
+    const before = snapshot(fixture.scene),
+      state = JSON.stringify(fixture.state)
+    try {
+      for (const age of [84, 210, 282, 342, 366, 402, 444, 474, 498, 570]) {
+        const restore = fixture.renderer.apply({
+          state: fixture.state,
+          models: fixture.models,
+          comfort: defaultFightComfort(),
+          frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+        })!
+        const audit = fixture.scene.userData.shizukuVictory
+        if (age < 342) {
+          expect(audit.absorption).toBe(0)
+          expect(fixture.models.player.scale.toArray()).toEqual([1, 1, 1])
+        }
+        expect(audit.bloodVisible).toBe(age >= 138 && age < 282)
+        if (age >= 402) expect(fixture.models.player.visible).toBe(false)
+        if (age === 444) expect(audit.buttonVisible).toBe(false)
+        if (age === 498) {
+          expect(audit.returned).toBe(true)
+          expect(audit.buttonVisible).toBe(true)
+        }
+        if (age >= 282)
+          fixture.models.player.traverse((node) => {
+            if (node.name === 'contact-shadow') expect(node.visible).toBe(false)
+          })
+        audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.05))
+        restore()
+        expect(snapshot(fixture.scene)).toEqual(before)
+        expect(JSON.stringify(fixture.state)).toBe(state)
+      }
+    } finally {
+      fixture.renderer.dispose()
+      fixture.armour.dispose()
+    }
+  })
+  it('keeps Machi’s fingers connected while sectioning, suturing and releasing the real target', () => {
+    const fixture = setup('machi', 'opponent', 'biscuit')
+    const before = snapshot(fixture.scene),
+      state = JSON.stringify(fixture.state)
+    const geometry = (fixture.models.player.getObjectByName('hand-left') as THREE.Mesh).geometry
+    const disposed = vi.spyOn(geometry, 'dispose')
+    try {
+      for (const age of [42, 144, 270, 306, 378, 402, 420, 486, 570]) {
+        const restore = fixture.renderer.apply({
+          state: fixture.state,
+          models: fixture.models,
+          comfort: defaultFightComfort(),
+          frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+        })!
+        const audit = fixture.scene.userData.machiVictory
+        if (age >= 42 && age < 420)
+          expect(
+            new THREE.Vector3()
+              .fromArray(audit.trackingEnd)
+              .distanceTo(new THREE.Vector3().fromArray(audit.marker)),
+          ).toBeLessThan(1e-6)
+        if (age >= 282) {
+          expect(audit.sectionCentres).toHaveLength(4)
+          expect(fixture.models.player.visible).toBe(false)
+        }
+        if (age === 270) expect(audit.controllingLength).toBeLessThan(1)
+        if (age === 378) {
+          expect(audit.sutured).toBe(true)
+          expect(
+            Math.max(...audit.sectionCentres.map((p: number[]) => p[0])) -
+              Math.min(...audit.sectionCentres.map((p: number[]) => p[0])),
+          ).toBeLessThan(1e-6)
+        }
+        if (age >= 420) expect(audit.released).toBe(true)
+        restore()
+        expect(snapshot(fixture.scene)).toEqual(before)
+        expect(JSON.stringify(fixture.state)).toBe(state)
+      }
+    } finally {
+      fixture.renderer.dispose()
+      fixture.armour.dispose()
+      expect(disposed).not.toHaveBeenCalled()
+      disposed.mockRestore()
+    }
+  })
+  it('attaches Kalluto’s marker before the laugh, tempest and progressive shredding', () => {
+    const fixture = setup('kalluto', 'opponent', 'biscuit')
+    const before = snapshot(fixture.scene),
+      state = JSON.stringify(fixture.state)
+    try {
+      for (const age of [42, 84, 108, 246, 330, 366, 450, 570]) {
+        const restore = fixture.renderer.apply({
+          state: fixture.state,
+          models: fixture.models,
+          comfort: defaultFightComfort(),
+          frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+        })!
+        const audit = fixture.scene.userData.kallutoVictory
+        if (age >= 84)
+          expect(
+            new THREE.Vector3()
+              .fromArray(audit.marker)
+              .distanceTo(new THREE.Vector3().fromArray(audit.attachment)),
+          ).toBeLessThan(1e-6)
+        if (age === 108) expect(audit.laugh).toBeGreaterThan(0.9)
+        if (age === 246) expect(audit.paperCount).toBe(8192)
+        if (age === 330) expect(audit.paperCount).toBe(12288)
+        if (age < 318) expect(audit.shredding).toBe(0)
+        if (age === 366) expect(audit.shredding).toBeGreaterThan(0)
+        if (age >= 450) expect(fixture.models.player.visible).toBe(false)
+        restore()
+        expect(snapshot(fixture.scene)).toEqual(before)
+        expect(JSON.stringify(fixture.state)).toBe(state)
+      }
+    } finally {
+      fixture.renderer.dispose()
+      fixture.armour.dispose()
+    }
+  })
   it('keeps Camilla’s wide camera still when camera movement is disabled', () => {
     const fixture = setup('camilla', 'player')
     let first: number[] | undefined
@@ -279,7 +555,8 @@ describe('live victory renderer', () => {
             )
             expect(scene.userData.victory.stage).toBe(state.environment.stageId)
             expect(Number.isFinite(camera.position.length())).toBe(true)
-            expect(models[side].visible).toBe(true)
+            const insideJupiter = fighter === 'bonolenov' && elapsed >= 4.5 && elapsed < 8
+            expect(models[side].visible).toBe(!insideJupiter && fighter !== 'biscuit')
             if (fighter === 'tserriednich') {
               const future = scene.userData.futureVictory
               expect(future.forecastSeconds).toBe(10)

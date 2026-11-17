@@ -14,6 +14,12 @@ export const VICTORY_FIGHTERS = [
   'leorio',
   'halkenburg',
   'camilla',
+  'kalluto',
+  'machi',
+  'shizuku',
+  'bonolenov',
+  'illumi',
+  'biscuit',
 ] as const
 export type VictoryFighter = (typeof VICTORY_FIGHTERS)[number]
 export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> = {
@@ -28,6 +34,12 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   leorio: ['L’étage supérieur', 'The next floor'],
   halkenburg: ['Une seule volonté', 'One shared will'],
   camilla: ['Le souffle', 'The breath'],
+  kalluto: ['La dernière danse du papier', 'The final paper dance'],
+  machi: ['Le dernier point', 'The final stitch'],
+  shizuku: ['Rien à signaler', 'Nothing to report'],
+  bonolenov: ['Le dernier mouvement', 'The final movement'],
+  illumi: ['Même après la mort', 'Even after death'],
+  biscuit: ['Le soin de grâce', 'The finishing touch'],
 }
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
   return (VICTORY_FIGHTERS as readonly string[]).includes(id)

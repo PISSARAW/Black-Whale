@@ -32,6 +32,7 @@ const matchups = [
   ['hisoka', 'franklin', 'heavens-arena', 'player'],
   ['chrollo', 'hisoka', 'whale-hold', 'opponent'],
   ['kurapika', 'marayam', 'banquet-hall', 'player'],
+  ['kurapika', 'chrollo', 'vip-casino', 'opponent'],
   ['feitan', 'chrollo', 'heavens-arena', 'opponent'],
   ['phinks', 'biscuit', 'screening-room', 'player'],
   ['franklin', 'kurapika', 'whale-hold', 'opponent'],
@@ -40,6 +41,12 @@ const matchups = [
   ['leorio', 'franklin', 'banquet-hall', 'player'],
   ['halkenburg', 'biscuit', 'halkenburg-salon', 'opponent'],
   ['camilla', 'chrollo', 'camilla-salon', 'player'],
+  ['kalluto', 'franklin', 'vip-casino', 'opponent'],
+  ['machi', 'hisoka', 'banquet-hall', 'player'],
+  ['shizuku', 'franklin', 'heavens-arena', 'opponent'],
+  ['bonolenov', 'hisoka', 'whale-hold', 'player'],
+  ['illumi', 'franklin', 'vip-casino', 'opponent'],
+  ['biscuit', 'hisoka', 'heavens-arena', 'player'],
 ]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
@@ -56,7 +63,7 @@ try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)
   assert.deepEqual(
-    matchups.map(([winner]) => winner).sort(),
+    [...new Set(matchups.map(([winner]) => winner))].sort(),
     (await page.evaluate(() => window.victoryFixture.fighters())).sort(),
     'Every registered cinematic must have a browser integration check',
   )
@@ -113,6 +120,10 @@ try {
     assert.equal(await live.getAttribute('data-winner'), winner)
     assert.equal(await live.getAttribute('data-target'), target)
     assert.equal(await live.getAttribute('data-stage'), stage)
+    const variant = await live.getAttribute('data-variant')
+    if (winner === 'kurapika')
+      assert.equal(variant, target === 'chrollo' ? 'kurapika-troupe' : 'kurapika-judgment')
+    const soundtrackId = variant || winner
     await page.waitForFunction(
       () =>
         Number(document.querySelector('[data-victory-cinematic]')?.getAttribute('data-elapsed')) >
@@ -120,11 +131,11 @@ try {
     )
     const audio = page.locator('audio').last()
     await page.waitForFunction(
-      (winner) =>
+      (soundtrackId) =>
         [...document.querySelectorAll('audio')].some((audio) =>
-          audio.src.endsWith(`/clash-victories/${winner}.m4a`),
+          audio.src.endsWith(`/clash-victories/${soundtrackId}.m4a`),
         ),
-      winner,
+      soundtrackId,
     )
     const soundtrack = await page.request.get(
       new URL(await audio.getAttribute('src'), page.url()).href,

@@ -812,6 +812,101 @@ Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
 règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
 
 
+## Kalluto — La dernière danse du papier
+
+```sh
+node apps/web/scripts/render-kalluto-fatality.mjs --inspect
+node apps/web/scripts/render-kalluto-fatality.mjs
+node apps/web/scripts/compose-kalluto-fatality.mjs
+node apps/web/scripts/check-kalluto-fatality.mjs
+```
+
+Sortie : `output/fighting-kalluto-fatality/Kalluto-Fatality-10s.mp4`,
+600 images en 1080p60 avec son. Le film montre la même séquence que les victoires
+de Kalluto dans Clash : papier discret fixé à 1,4 s, rire de la cible à 1,7 s,
+nuée de 12 288 feuilles, convergence à 4,7 s puis déchirure à partir de 5,3 s.
+La cible par défaut est Franklin au casino VIP. `target`, `stage`, `side=opponent`
+et `reduced` permettent les contrôles d'adaptation.
+
+Le verdict préalable vient d'un vrai fragment planté et d'un flux guidé dans
+le moteur. Le volume spectaculaire, la destruction stylisée et le rire sont
+une chorégraphie après verdict ; les PV et le résultat restent intacts.
+Le catalogue compte désormais douze cinématiques de victoire.
+
+## Machi — Le dernier point
+
+```sh
+node apps/web/scripts/render-machi-fatality.mjs --inspect
+node apps/web/scripts/render-machi-fatality.mjs
+node apps/web/scripts/compose-machi-fatality.mjs
+node apps/web/scripts/check-machi-fatality.mjs
+```
+
+Sortie : `output/fighting-machi-fatality/Machi-Fatality-10s.mp4`,
+600 images en 1080p60 avec son. La cible par défaut est Hisoka à la Tour
+Céleste. Machi piste le corps, referme sa toile et commande le pantin,
+puis se rapproche pour la découpe à 4,7 s. Elle recoud les quatre sections
+à partir de 5,1 s, les réunit à 6,3 s et tire le dernier point à 7 s.
+Le pantin se défait et les sections tombent ; Machi conserve son calme.
+
+Cette chorégraphie amplifie les usages des fils fournis comme référence.
+Le moteur résout au préalable un vrai pistage, une vraie ligature maintenue
+et un K.-O. par Fil tendu, sans modifier les PV pour le film. Le renderer de
+victoire est celui de Clash, adapté aux deux modèles et au lieu courant.
+`target`, `stage`, `side=opponent` et `reduced` permettent les contrôles.
+Le catalogue compte désormais treize cinématiques de victoire.
+
+## Shizuku — Rien à signaler
+
+```sh
+node apps/web/scripts/render-shizuku-fatality.mjs --inspect
+node apps/web/scripts/render-shizuku-fatality.mjs
+node apps/web/scripts/compose-shizuku-fatality.mjs
+node apps/web/scripts/check-shizuku-fatality.mjs
+```
+
+Sortie : `output/fighting-shizuku-fatality/Shizuku-Fatality-10s.mp4`,
+600 images en 1080p60 avec son. Deme-chan frappe à 1,4 s, aspire le sang
+par l'ouverture à 2,3 s ; la cible tombe à 4,7 s. Le corps inerte est nettoyé
+à partir de 5,7 s. Les traces suivent, puis le bouton entre en dernier à 7,4 s.
+Deme-chan le recrache à 7,9 s ; Shizuku le range puis remet ses lunettes.
+La voix française désigne le sang et le corps avant l'aspiration. La dernière
+réplique « À qui ? » accompagne sa recherche du propriétaire du bouton.
+
+Le film oppose Shizuku à Franklin à la Tour Céleste. Le moteur crée de vraies
+ouvertures par les coups de Deme-chan, puis résout le K.-O. par aspiration du
+sang. Le nettoyage et le bouton sont des éléments cosmétiques après verdict.
+`target`, `stage`, `side=opponent` et `reduced` contrôlent l'adaptation dans
+la même scène de production. Le catalogue compte quatorze cinématiques.
+
+
+Bonolenov — « Le dernier mouvement » : `bonolenov-fatality.html` présente dix
+secondes de Prologue et Jupiter sur le renderer du jeu. Le film valide d’abord
+une danse complète et le K.-O. natif par Jupiter. `render-bonolenov-fatality.mjs`
+exporte 600 images, `compose-bonolenov-fatality.mjs` produit la musique corporelle,
+les impacts et le son réutilisé par Clash ; `check-bonolenov-fatality.mjs` contrôle
+les gabarits, les lieux, P2, le miroir, le confort, le mobile et le déclenchement.
+
+
+Illumi — « Même après la mort » : `illumi-fatality.html` utilise le renderer de
+victoire de Clash pour les dix secondes d’implantation, perte de volonté, mort
+et salut du cadavre. Le film préalable valide les trois ordres natifs et un
+K.-O. physique, sans ajouter de finisher à Illumi. `render-illumi-fatality.mjs`
+exporte 600 images ; `compose-illumi-fatality.mjs` produit le son synchronisé et
+`check-illumi-fatality.mjs` contrôle l’intégration, P2, les tailles et le mobile.
+Le catalogue compte désormais seize cinématiques.
+
+
+Biscuit — « Le soin de grâce » : `biscuit-fatality.html` présente dix secondes
+de soin par Cookie, transformation native, direct au torse et retour au soin.
+Le film obtient un K.-O. physique après la transformation gratuite ; la lotion
+reste un soin. `render-biscuit-fatality.mjs` exporte 600 images en 1080p60,
+`compose-biscuit-fatality.mjs` produit le son de la vidéo et de Clash,
+et `check-biscuit-fatality.mjs` contrôle les modèles, les lieux, P2 et le mobile.
+Sortie : `output/fighting-biscuit-fatality/Biscuit-Fatality-10s.mp4`.
+Le catalogue compte désormais dix-sept personnages avec cinématique de victoire.
+
+
 Kurapika contre la Brigade — « La colère écarlate » : `kurapika-troupe.html`
 présente dix secondes de capture éclair, sept coups au corps et au visage,
 puis une projection finale inspirée de son affrontement avec Uvogin. Les yeux

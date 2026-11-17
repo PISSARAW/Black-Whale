@@ -20,6 +20,12 @@ import { createTserriednichVictory } from './tserriednich'
 import { createLeorioVictory } from './leorio'
 import { createHalkenburgVictory } from './halkenburg'
 import { createCamillaVictory } from './camilla'
+import { createKallutoVictory } from './kalluto'
+import { createMachiVictory } from './machi'
+import { createShizukuVictory } from './shizuku'
+import { createBonolenovVictory } from './bonolenov'
+import { createIllumiVictory } from './illumi'
+import { createBiscuitVictory } from './biscuit'
 import { suspendFightExpression } from '../fightExpressionRig'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
@@ -34,6 +40,12 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   leorio: createLeorioVictory,
   halkenburg: createHalkenburgVictory,
   camilla: createCamillaVictory,
+  kalluto: createKallutoVictory,
+  machi: createMachiVictory,
+  shizuku: createShizukuVictory,
+  bonolenov: createBonolenovVictory,
+  illumi: createIllumiVictory,
+  biscuit: createBiscuitVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -48,6 +60,12 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     leorio: 2.4,
     halkenburg: 2.6,
     camilla: 1.9,
+    kalluto: 2.2,
+    machi: 2.1,
+    shizuku: 2,
+    bonolenov: 3.2,
+    illumi: 2,
+    biscuit: 2,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -136,7 +154,20 @@ export function createVictoryRenderer(options: {
         const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
         drivers.set(frame.fighter, driver)
         driver.update(context)
-        if (comfort.camera === 0 && !['leorio', 'camilla', 'kurapika'].includes(frame.fighter))
+        if (
+          comfort.camera === 0 &&
+          frame.fighter !== 'kurapika' &&
+          ![
+            'leorio',
+            'camilla',
+            'kalluto',
+            'machi',
+            'shizuku',
+            'bonolenov',
+            'illumi',
+            'biscuit',
+          ].includes(frame.fighter)
+        )
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)
         victim.root.updateWorldMatrix(true, true)

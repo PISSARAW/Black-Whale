@@ -6,6 +6,7 @@ import { FOURTH_DUEL_LESSONS } from './duelComboFourthLessons'
 import { FIFTH_DUEL_LESSONS } from './duelComboFifthLessons'
 import { SIXTH_DUEL_LESSONS } from './duelComboSixthLessons'
 import { SEVENTH_DUEL_LESSONS } from './duelComboSeventhLessons'
+import { EIGHTH_DUEL_LESSONS } from './duelComboEighthLessons'
 
 /** Examples exercise the move rules; changing a lesson never changes a fighter's cancels. */
 export const DUEL_COMBO_LESSONS: readonly CombatRoute[] = [
@@ -16,6 +17,7 @@ export const DUEL_COMBO_LESSONS: readonly CombatRoute[] = [
   ...FIFTH_DUEL_LESSONS,
   ...SIXTH_DUEL_LESSONS,
   ...SEVENTH_DUEL_LESSONS,
+  ...EIGHTH_DUEL_LESSONS,
   {
     id: 'kurapika:economy',
     fighter: 'kurapika',

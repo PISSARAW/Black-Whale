@@ -31,12 +31,12 @@ const NORMALS: MoveSlot[] = [
 ]
 
 describe('roster quality parity', () => {
-  it('covers forty fighters, their core routes and one hundred and twenty advanced duel lessons', () => {
+  it('covers forty fighters, their core routes and one hundred and thirty-six advanced duel lessons', () => {
     const ids = FIGHTING_ROSTER.map((fighter) => fighter.id).sort()
     expect(Object.keys(ROSTER_CHOREOGRAPHY).sort()).toEqual(ids)
     expect([...COMBAT_FIGHTERS].sort()).toEqual(ids)
-    expect(COMBAT_ROUTES).toHaveLength(280)
-    expect(new Set(COMBAT_ROUTES.map((route) => route.id)).size).toBe(280)
+    expect(COMBAT_ROUTES).toHaveLength(296)
+    expect(new Set(COMBAT_ROUTES.map((route) => route.id)).size).toBe(296)
     for (const id of ids)
       expect(COMBAT_ROUTES.filter((route) => route.fighter === id)).toHaveLength(
         hasDuelComboProfile(id) ? 8 : 4,

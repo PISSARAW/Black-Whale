@@ -6,10 +6,10 @@ et routes sont des réglages de jeu ; ils ne changent pas les conditions canoniq
 des Hatsu. Les mesures historiques ci-dessous concernent les quatre personnages
 de référence.
 
-## Deux cent quatre-vingts routes jouables
+## Deux cent quatre-vingt-seize routes jouables
 
 Chaque personnage possède quatre routes et un exercice de défense dans l’Académie.
-Trente personnages ont chacun quatre exemples supplémentaires, avec des règles
+Trente-quatre personnages ont chacun quatre exemples supplémentaires, avec des règles
 de combo indépendantes des exercices : [choix et liaisons](./DUEL_COMBOS.md).
 Les 144 routes ajoutées passent par les coups physiques ; les seize routes de
 référence ci-dessous conservent leurs préparations de Nen.
@@ -40,7 +40,7 @@ des dégâts et la limite aérienne restent applicables.
 
 ## Cancels et défense
 
-Les trente combattants approfondis disposent de profils de coups indépendants des exemples ;
+Les trente-quatre combattants approfondis disposent de profils de coups indépendants des exemples ;
 les autres cancels sur touche suivent les liens déclarés de leurs routes. Sur garde, seule
 la première attaque légère peut continuer vers le lourd de sa route de confirmation.
 Le lourd bloqué ne peut pas se convertir gratuitement en Hatsu : le défenseur
@@ -55,14 +55,14 @@ dont la récupération offre une vraie fenêtre adaptée à tous les légers du 
 
 ## École et laboratoire
 
-Ouvrir « École de combat · 280 routes et défense », choisir un personnage, puis
+Ouvrir « École de combat · 296 routes et défense », choisir un personnage, puis
 « Pratiquer » ou « Démontrer ». Le compteur progresse uniquement sur les contacts
 réels de la bonne attaque, avec un compteur de combo continu. Une mauvaise suite,
 une garde ou la fin du hitstun interrompt l’essai. Les indications distinguent
 confirmation, fenêtre de cancel et saisie tardive.
 
 Les démonstrations passent par les mêmes commandes, coûts et ticks que le joueur ;
-elles ne forcent pas les touches ou la réussite. Les 280 sont validées à des lots
+elles ne forcent pas les touches ou la réussite. Les 296 sont validées à des lots
 de rendu de 120, 60, 30 et 20 Hz. Elles supportent la pause et l’annulation d’une
 commande encore en file. « Terminer l’exercice » rend le laboratoire libre.
 
@@ -97,7 +97,7 @@ La caméra n’écrit jamais dans la simulation, les positions ou les hitboxes.
 
 ## Vérifications
 
-Les 2 240 cas de routes couvrent les deux orientations, deux distances de départ
+Les 2 368 cas de routes couvrent les deux orientations, deux distances de départ
 et des situations au centre et au coin, contre une garde après le premier coup.
 Les tests supplémentaires couvrent les parades, la fin de pression, les whiffs,
 les exercices de défense, les démonstrations et leur relecture déterministe.

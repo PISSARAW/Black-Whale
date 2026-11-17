@@ -19,6 +19,10 @@ export type CombatRouteSetup =
   | 'console'
   | 'poem'
   | 'offer'
+  | 'growth'
+  | 'courier'
+  | 'little-eye'
+  | 'anchor'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
@@ -83,6 +87,7 @@ function preparing(fighter: ArcadeFighter) {
     fighter.illumi?.preparation ||
     fighter.battleCantabile?.preparation ||
     fighter.crossGameCardFrames ||
-    fighter.bashoPoem?.writingFrames,
+    fighter.bashoPoem?.writingFrames ||
+    fighter.preparationRecovery,
   )
 }

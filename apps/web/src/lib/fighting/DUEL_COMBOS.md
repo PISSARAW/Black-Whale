@@ -1,9 +1,10 @@
-# Trente profils de combos
+# Trente-quatre profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
 Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
 Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov, Beyond, Tserriednich, Basho,
-Camilla et Longhi ont huit exemples chacun dans l’Académie. Les quatre routes
+Camilla, Longhi, Bill, Cluck, Sayird et Luini ont huit exemples chacun dans
+l’Académie. Les quatre routes
 initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
@@ -20,7 +21,9 @@ Padaille et Zakuro.
 Furykov et Beyond.
 `duelComboSeventhProfiles.ts` et `duelComboSeventhLessons.ts` ajoutent Tserriednich,
 Basho, Camilla et Longhi.
-Le catalogue compte 280 routes pour quarante personnages.
+`duelComboEighthProfiles.ts` et `duelComboEighthLessons.ts` ajoutent Bill, Cluck,
+Sayird et Luini.
+Le catalogue compte 296 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -222,6 +225,24 @@ Une acceptation volontaire lie toujours les deux parties selon la clause publié
 Les préparations `poem` et `offer` utilisent les actions ordinaires ; l’écriture
 est terminée avant l’ouverture, sans injecter de poème prêt ou de consentement.
 
+## Bill, Cluck, Sayird et Luini
+
+Leurs quatre exercices conditionnels utilisent les ressources ordinaires du mode
+scénario, créées par `createBattlefield`, puis de vraies commandes et 18 frames de
+récupération. Le laboratoire replace ensuite les combattants pour l’ouverture
+rapprochée. Aucun contrôle, ancrage ou germe déjà activé n’est injecté.
+Bill fait germer une graine vivante à portée pour 20 aura. Ses cinq frappes sont
+physiques, avec deux liaisons après récupération, sans soin ni racine offensive.
+Cluck envoie un pigeon réel vers le point de livraison pour 5 aura ; le courrier
+se déplace et termine sa livraison, sans attaque d’oiseaux ou bonus de combo.
+Sayird contrôle un petit animal réel pour 2 aura et voit et entend par lui.
+Sa conversion reste physique, sans projectile, manipulation adverse ou Zetsu.
+Luini ancre depuis l’intérieur d’une pièce fermée à porte unique pour 20 aura.
+Cette première commande ne transporte personne. L’ancrage et le lieu déjà visité
+restent des objets réels du scénario ; ouvrir la porte condamne toujours la pièce.
+Les autres routes restent disponibles en duel strict sans ces ressources ; les
+pouvoirs ne deviennent ni des cancels offensifs ni des prérequis gratuits.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -246,12 +267,14 @@ outils, la prolongation du foret, les réponses payées et les réserves des gou
 le hibou privé, la console sans renforcement et les frappes payées sans malédiction.
 `duelComboSeventh.test.ts` vérifie les liaisons sans vision forcée, le poème
 et ses vrais poings, Camilla à un PV et l’offre sans consentement automatique.
+`duelComboEighth.test.ts` vérifie les ressources et coûts réels, la germination
+sans soin, le courrier sans impacts, le petit animal et l’ancrage irréversible.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-14` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-15` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

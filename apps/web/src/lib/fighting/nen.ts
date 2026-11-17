@@ -1,3 +1,4 @@
+import { physicalNenBody } from './physicalNenBody'
 import { illumiBodyFree } from './illumiState'
 import { enforcePredatorSeal, predatorNenLocked } from './predatorSeal'
 import {
@@ -197,7 +198,7 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 }
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
-  fighter = enforcePredatorSeal(fighter)
+  fighter = enforcePredatorSeal(physicalNenBody(fighter))
   const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
   const spread = fighter.nen.en ? 0.45 : 1
   const eyeFocus =

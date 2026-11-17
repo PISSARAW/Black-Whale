@@ -50,7 +50,8 @@ export function speakPaperWords(
   const recipient = speechRecipient(state, speaker, target)
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
-  return resolveJudgmentCommunication(next, speaker, recipientBody(state, recipient).id)
+  const actualRecipient = recipientBody(state, recipient)
+  return resolveJudgmentCommunication(next, speaker, actualRecipient.nenOwner ?? actualRecipient.id)
 }
 
 export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
@@ -62,6 +63,7 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
     !projectionPreparing(fighter) &&
     !fighter.arsenalSleep &&
     !fighter.needlePuppet &&
+    !fighter.blackVoiceControl?.active &&
     voluntarySpeechMind(fighter)
   )
 }
@@ -76,11 +78,15 @@ function normalizeSpokenWords(
 
 function voluntarySpeechMind(fighter: ArcadeFighter): boolean {
   return (
-    (fighter.kurapika?.blackoutFrames ?? 0) === 0 &&
+    !speechBlackout(fighter) &&
     ![
       fighter.hatsuEffects.manipulatedFrames,
       fighter.hatsuEffects.possessedFrames,
       fighter.hatsuEffects.momozeFrames,
     ].some((frames) => frames > 0)
   )
+}
+
+function speechBlackout(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.kurapika?.blackoutFrames || fighter.dolphinLoan?.blackoutFrames)
 }

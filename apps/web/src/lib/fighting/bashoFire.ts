@@ -24,7 +24,7 @@ export function resolveBashoPoemImpact(
 ): FightState {
   const fighter = before[side]
   const poem = bashoEffectPoem(fighter, 'ignite-punched-target')
-  if (!poem?.ready || !hasBashoPoem(fighter, poem.sourceMoveId)) return after
+  if (!poem?.ready || !hasBashoPoem(fighter, poem.sourceMoveId, poem.loan)) return after
   if (!punchContact(fighter, after) || physicalHandOccupancy(before, side).size >= 2) return after
   const target = side === 'player' ? 'opponent' : 'player'
   return {
@@ -61,7 +61,10 @@ function advancePoem(state: FightState, side: FightSide): ArcadeFighter {
   fighter = maintainPoemArchive(state, fighter)
   const poem = fighter.bashoPoem
   if (!poem) return fighter
-  if (!hasBashoPoem(fighter, poem.sourceMoveId) || !writingPaperExists(state, poem.paperCopyId))
+  if (
+    !hasBashoPoem(fighter, poem.sourceMoveId, poem.loan) ||
+    !writingPaperExists(state, poem.paperCopyId)
+  )
     return { ...fighter, bashoPoem: undefined }
   if (!bashoWriting(fighter)) return fighter
   if (
@@ -97,7 +100,8 @@ function advanceBurn(state: FightState, side: FightSide): FightState {
 function maintainPoemArchive(state: FightState, fighter: ArcadeFighter): ArcadeFighter {
   const live = fighter.bashoArchive?.filter(
     (poem) =>
-      hasBashoPoem(fighter, poem.sourceMoveId) && writingPaperExists(state, poem.paperCopyId),
+      hasBashoPoem(fighter, poem.sourceMoveId, poem.loan) &&
+      writingPaperExists(state, poem.paperCopyId),
   )
   const archive = live?.length ? live : undefined
   return archive?.length !== fighter.bashoArchive?.length

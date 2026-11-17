@@ -605,6 +605,36 @@ pour éviter de suspendre ses effets hors scène.
 
 **Reste à terminer :** les destinataires initialement non éveillés et leur
 initiation, les éditeurs spécialisés qui vivent hors des commandes d'arsenal
-(notamment la composition de Basho), ainsi que le masquage réseau complet des
+(hors composition de Basho, désormais achevée), ainsi que le masquage réseau complet des
 informations privées de Dolphin. Cette passe ne clôt donc pas l'audit des quarante
 personnages. Le On est conservé. Ruleset courant : **clash-combat-31**.
+
+## Basho prêté : composition et provenance du papier
+
+L'éditeur des trois poèmes attestés est désormais utilisable par le destinataire
+d'un prêt de Dolphin. Le choix « Dolphin prêté » passe aussi par la commande PvP
+typée du poème ; un sélecteur mal formé est refusé. L'écriture consomme une feuille
+du kit réellement porté et l'aura du donneur. Le pinceau, l'encre, les deux mains
+libres et l'écriture complète restent nécessaires. Le prêt ne les fournit pas.
+
+Les feuilles, questions et talismans issus du prêt gardent leur provenance.
+Le poème du poing attend un véritable coup de poing, le poème des réponses attend
+une question et un mensonge volontaire, et le talisman n'écarte que les faibles
+esprits. La fin de Dolphin retire ces effets empruntés sans rembourser la feuille
+consommée ni arrêter un autre poème personnel. Une seconde composition ne réarme
+pas l'unique usage. La parole est attribuée au corps visible réel, pas à l'identité
+temporaire utilisée pour exécuter le Hatsu ; l'inconscience du prêt et le contrôle
+actif de Black Voice bloquent la parole volontaire.
+
+Le stock d'aura encore disponible est distinct de l'aura déjà engagée dans
+l'application. Atteindre exactement le coût ne fait donc pas disparaître un effet
+qui vient d'être payé ; l'aura engagée ne finance aucune seconde dépense. Ce canal
+extérieur ne procure ni Ten ni rendement défensif à un corps resté en Zetsu.
+Les coûts chiffrés demeurent des réglages de duel. Ruleset : **clash-combat-32**.
+Le On reste présent. Les autres réserves de l'audit restent ouvertes.
+
+Point de vigilance pour la suite : les trois oiseaux annoncés de Secret Window
+ne doivent pas être transformés en trois espions interchangeables. L'écoute à
+travers une barrière et l'oiseau posé au contact sont décrits ; la fonction du
+troisième et la lecture exacte de la limite de simultanéité restent à traiter
+sans inventer de pouvoir (chapitres 366, 373 et 389).

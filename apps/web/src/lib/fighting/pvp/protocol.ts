@@ -42,6 +42,7 @@ function validCommand(value: Record<string, unknown>): boolean {
   return textCommand(value)
 }
 function textCommand(value: Record<string, unknown>): boolean {
+  if (value.kind === 'poem') return validPoem(value)
   const fields: Record<string, [string, number]> = {
     battle: ['moveId', 100],
     talk: ['words', 160],
@@ -52,6 +53,15 @@ function textCommand(value: Record<string, unknown>): boolean {
   const text = value[field[0]]
   return only(value, ['kind', field[0]]) && typeof text === 'string' && text.length <= field[1]
 }
+function validPoem(value: Record<string, unknown>): boolean {
+  return (
+    only(value, ['kind', 'text', 'loan']) &&
+    typeof value.text === 'string' &&
+    value.text.length <= 240 &&
+    (value.loan === undefined || typeof value.loan === 'boolean')
+  )
+}
+
 export function parsePvpPacket(value: unknown): PvpInputPacket | null {
   if (!record(value) || !only(value, ['sequence', 'input', 'commands'])) return null
   if (

@@ -1,4 +1,4 @@
-import { battleAppearance } from './battleCantabileRules'
+import { visibleBodyAppearance } from './fightBodyIdentity'
 import { canHear } from './melodyRules'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -46,7 +46,7 @@ export function recordHeardWords(
   if (recipientBody(state, recipient).blackVoiceAutopilot) return state
   const heardWords = {
     frame: state.frame,
-    speaker: battleAppearance(state[words.speaker]),
+    speaker: visibleBodyAppearance(state[words.speaker]),
     text: words.text,
   }
   if (recipient.reserve === undefined)

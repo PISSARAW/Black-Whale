@@ -29,7 +29,7 @@ export type PvpCommand =
   | { kind: 'paper-target'; zone: FightNenZone }
   | { kind: 'paper-command' | 'paper-use'; command: PaperCommand }
   | { kind: 'mary'; command: MaryCommand }
-  | { kind: 'poem'; text: string }
+  | { kind: 'poem'; text: string; loan?: boolean }
   | { kind: 'respond'; accept: boolean }
   | { kind: 'question'; question: LynchQuestionId }
 export interface PvpInputPacket {

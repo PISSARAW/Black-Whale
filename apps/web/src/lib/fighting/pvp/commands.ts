@@ -72,7 +72,10 @@ function executeTraditional(
     case 'talk':
       return speakBattleWords(state, side, command.words)
     case 'poem':
-      return composeBashoPoem({ state, side, text: command.text }, performAuraAttack)
+      return composeBashoPoem(
+        { state, side, text: command.text, loan: command.loan },
+        performAuraAttack,
+      )
     case 'mary':
       return commandMary({ state, side, command: command.command }, performAuraAttack)
     default:

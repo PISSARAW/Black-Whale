@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 762
+Fichiers : 763
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -247,6 +247,10 @@ Fichiers : 762
 ## `apps/web/src/lib/fighting/basho.test.ts`
 
 - Basho’s written Great Hiker poem > preserves a bookmarked copy’s composition and requires its page to remain available
+
+## `apps/web/src/lib/fighting/bashoDolphin.test.ts`
+
+- Great Haiku through an actual Stealth Dolphin loan > writes on the recipient’s real supplies with donor aura and no personal Emperor Time
 
 ## `apps/web/src/lib/fighting/bashoMaterialInteractions.test.ts`
 

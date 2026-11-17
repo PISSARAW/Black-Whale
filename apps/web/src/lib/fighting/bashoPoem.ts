@@ -1,3 +1,5 @@
+import { loanCarrier } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { writingMaterialsReady, writingPaperExists } from './bashoMaterials'
 import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -29,6 +31,7 @@ export const BASHO_ATTESTED_POEMS = {
 export type BashoEffect = keyof typeof BASHO_ATTESTED_POEMS
 
 export interface BashoPoem {
+  loan?: boolean
   text: string
   effect: BashoEffect
   paperId?: string
@@ -63,7 +66,8 @@ export function bashoEffectPoem(
   effect: BashoEffect,
 ): BashoPoem | undefined {
   return [fighter.bashoPoem, ...(fighter.bashoArchive ?? [])].find(
-    (poem) => poem?.ready && poem.effect === effect && hasBashoPoem(fighter, poem.sourceMoveId),
+    (poem) =>
+      poem?.ready && poem.effect === effect && hasBashoPoem(fighter, poem.sourceMoveId, poem.loan),
   )
 }
 export function availableBashoPoem(
@@ -76,7 +80,7 @@ export function availableBashoPoem(
     (poem) =>
       poem?.ready &&
       poem.effect === effect &&
-      hasBashoPoem(actor, poem.sourceMoveId) &&
+      hasBashoPoem(actor, poem.sourceMoveId, poem.loan) &&
       writingPaperExists(state, poem.paperCopyId),
   )
 }
@@ -103,11 +107,22 @@ export function bashoNenAvailable(fighter: ArcadeFighter): boolean {
   return voluntaryNenAvailable(fighter, { requireReserve: true })
 }
 
-export function hasBashoPoem(fighter: ArcadeFighter, _moveId?: string): boolean {
+export function hasBashoPoem(fighter: ArcadeFighter, _moveId?: string, loan = false): boolean {
+  const supplied = bashoSuppliedActor(fighter, loan)
+  if (!supplied) return false
+  fighter = supplied
   if (!bashoNenAvailable(fighter) || chainAbilitySealed(fighter, BASHO_POEM_MOVE)) return false
   if (fighter.id === 'basho') return fighter.hatsuEffects.hatsuStolen === 0
   if (borrowedBashoAvailable(fighter)) return true
   return fighter.id === 'chrollo' && chrolloHasActivePage(fighter, 'basho')
+}
+
+function bashoSuppliedActor(fighter: ArcadeFighter, loan: boolean): ArcadeFighter | undefined {
+  if (loan) {
+    if (fighter.dolphinLoan?.held.source !== 'basho') return undefined
+    return stolenAuraActor(loanCarrier(fighter))
+  }
+  return fighter.kurapika?.held?.source === 'basho' ? stolenAuraActor(fighter) : fighter
 }
 
 export function bashoWriting(fighter: ArcadeFighter): boolean {

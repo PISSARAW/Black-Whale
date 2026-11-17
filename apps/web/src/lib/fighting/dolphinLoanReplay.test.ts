@@ -1,3 +1,4 @@
+import { BASHO_ATTESTED_POEMS } from './bashoPoem'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -12,12 +13,12 @@ import { fightReplayHash } from './fightReplayHash'
 import { applyPvpCommand } from './pvp/commands'
 import { privatePvpState } from './pvp/view'
 import { parsePvpPacket } from './pvp/protocol'
-import { EMPTY_INPUT, type FightState } from './types'
+import { EMPTY_INPUT, type FightState, type FighterId } from './types'
 import type { ReplayPacket } from './fightReplayTypes'
 
-function scenario() {
+function scenario(source: FighterId = 'hisoka') {
   const base = beginFight(
-    createFight('kurapika', 'hisoka', { mode: 'versus-local', formatId: 'knockout' }),
+    createFight('kurapika', source, { mode: 'versus-local', formatId: 'knockout' }),
   )
   let state: FightState = {
     ...base,
@@ -54,8 +55,8 @@ function syringe(state: FightState): FightState {
     auraCharged: false,
   })
 }
-function preparedLoan() {
-  const run = scenario()
+function preparedLoan(source: FighterId = 'hisoka') {
+  const run = scenario(source)
   run.command(syringe)
   run.frames(220)
   run.command((state) => toggleEmperorTime(state, 'player'))
@@ -84,6 +85,40 @@ describe('Stealth Dolphin loan replay and the P2 network boundary', () => {
     for (let i = 0; !player.done && i < 1000; i++) player.advance(0.05, 2)
     expect(player.done).toBe(true)
     expect(player.error).toBe('')
+    expect(fightReplayHash(player.state)).toBe(fightReplayHash(run.state))
+  })
+  it('replays the borrowed poem editor, its actual paper charm and finite donor stock', () => {
+    const run = preparedLoan('basho')
+    run.command((state) =>
+      applyPvpCommand(state, 'opponent', {
+        kind: 'poem',
+        loan: true,
+        text: BASHO_ATTESTED_POEMS['ward-weak-spirits'].fr,
+      }),
+    )
+    run.frames(60)
+    run.command((state) =>
+      performArsenalCommand(state, 'opponent', {
+        action: 'basho-ward',
+        target: 'opponent',
+        loan: true,
+      }),
+    )
+    run.frames(10)
+    expect(run.state.opponent.bashoWard!.remainingFrames).toBeGreaterThan(0)
+    run.command((state) =>
+      performArsenalAction(
+        { state, side: 'opponent', command: { action: 'dolphin-use' } },
+        performAuraAttack,
+      ),
+    )
+    expect(run.state.opponent.writingKit!.sheets).toBe(2)
+    expect(run.state.opponent.dolphinLoan).toBeUndefined()
+    run.command((state) => toggleEmperorTime(state, 'player'))
+    const player = createReplayPlayer(decodeFightReplay(JSON.stringify(run.recorder.snapshot())))
+    for (let i = 0; !player.done && i < 1000; i++) player.advance(0.05, 2)
+    expect(player.error).toBe('')
+    expect(player.done).toBe(true)
     expect(fightReplayHash(player.state)).toBe(fightReplayHash(run.state))
   })
   it('mirrors lender and original victim separately in the recipient’s local P1 view', () => {

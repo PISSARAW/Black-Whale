@@ -224,12 +224,15 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
 
 function poemUseBusy(state: FightState, side: FightSide): boolean {
   const actor = state[side]
-  return Boolean(
-    actor.bashoPoem ||
-    actor.bashoArchive?.length ||
+  const loan = actor.dolphinLoan?.held.source === 'basho'
+  const papers = [actor.bashoPoem, ...(actor.bashoArchive ?? [])]
+  return (
+    papers.some((poem) => poem && (!loan || poem.loan)) ||
     (['player', 'opponent'] as const).some((target) => {
       const ward = state[target].bashoWard
-      return ward?.owner === side && ward.remainingFrames > 0
-    }),
+      return Boolean(
+        ward && ward.owner === side && ward.remainingFrames > 0 && (!loan || ward.loan),
+      )
+    })
   )
 }

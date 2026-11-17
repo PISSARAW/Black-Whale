@@ -1,3 +1,6 @@
+import { withLoanCarrier } from './dolphinBorrowing'
+import { withDolphinSupply } from './dolphinSupply'
+import { hasLoanedBasho } from './bashoDolphin'
 import { writingMaterialsReady, spendWritingSheet } from './bashoMaterials'
 import { witnessedHatsuState } from './nenWitness'
 import { chrolloPageForMove, CHROLLO_SECONDARY, CHROLLO_USE } from './chrolloBook'
@@ -54,6 +57,7 @@ function startBashoWriting(options: {
       motion: undefined,
       bashoPoem: {
         text,
+        loan: Boolean(fighter.dolphinLoanChannel),
         effect: recognizedBashoEffect(text)!,
         paperId: paid.paperId,
         paperCopyId: fighter.writingKit?.copyId,
@@ -75,10 +79,11 @@ function startBashoWriting(options: {
 
 /** Use the normal command path, including copied/borrowed ability costs and signed clauses. */
 export function composeBashoPoem(
-  options: { state: FightState; side: FightSide; text: string },
+  options: { state: FightState; side: FightSide; text: string; loan?: boolean },
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
   const { state, side, text } = options
+  if (options.loan) return composeLoanedBasho(options, perform)
   const fighter = state[side]
   if (!recognizedBashoPoem(text) || bashoWriting(fighter)) return state
   const draft = {
@@ -88,6 +93,7 @@ export function composeBashoPoem(
       bashoArchive: archivePrevious(fighter),
       bashoPoem: {
         text,
+        loan: Boolean(fighter.dolphinLoanChannel),
         effect: recognizedBashoEffect(text)!,
         writingFrames: 0,
         originX: fighter.x,
@@ -100,6 +106,19 @@ export function composeBashoPoem(
   if (next[side].health <= 0 || next.phase !== 'fighting') return next
   if (next[side].moonlightZetsu && !fighter.moonlightZetsu) return next
   return bashoWriting(next[side]) ? next : state
+}
+
+function composeLoanedBasho(
+  options: { state: FightState; side: FightSide; text: string },
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState {
+  const { state, side, text } = options
+  if (!hasLoanedBasho(state[side])) return state
+  return withLoanCarrier(state, { side, kurapikaCommand: true }, (prepared) =>
+    withDolphinSupply(prepared, side, (supplied) =>
+      composeBashoPoem({ state: supplied, side, text }, perform),
+    ),
+  )
 }
 
 function compositionMove(state: FightState, side: FightSide): string {

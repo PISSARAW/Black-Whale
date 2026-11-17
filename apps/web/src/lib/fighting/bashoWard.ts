@@ -1,15 +1,16 @@
 import { physicalBodyAt } from './fightBodyIdentity'
 import { writingPaperExists } from './bashoMaterials'
 import { freeDeviceHand } from './deviceHands'
-import { bashoEffectPoem, hasBashoPoem, availableBashoPoem } from './bashoPoem'
+import { bashoEffectPoem, hasBashoPoem, availableBashoPoem, type BashoPoem } from './bashoPoem'
 import { deviceBodyFree } from './physicalDevices'
 import { sleepingBody } from './hanzoProjection'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { PreparedEntity } from './preparationTypes'
-import type { FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BASHO_WARD_FRAMES = 60 * 60 // Duel tuning; no canonical duration is claimed.
 interface BashoWard {
+  loan?: boolean
   owner: FightSide
   paperId: string
   paperCopyId?: string
@@ -62,6 +63,7 @@ export function performBashoWard(
         paperCopyId: poem.paperCopyId,
         remainingFrames: BASHO_WARD_FRAMES,
         sourceMoveId: poem.sourceMoveId,
+        loan: poem.loan,
       },
     },
   }
@@ -108,7 +110,7 @@ export function advanceBashoWardClocks(state: FightState): FightState {
           ...next[side],
           bashoWard: {
             ...ward,
-            remainingFrames: hasBashoPoem(next[ward.owner], ward.sourceMoveId)
+            remainingFrames: hasBashoPoem(next[ward.owner], ward.sourceMoveId, ward.loan)
               ? ward.remainingFrames - 1
               : 0,
           },
@@ -175,16 +177,27 @@ export function finishBorrowedBasho(state: FightState, side: FightSide): FightSt
     ...state,
     [side]: {
       ...state[side],
-      bashoPoem: undefined,
-      bashoArchive: undefined,
-      bashoInquiry: undefined,
+      ...remainingBashoPapers(state[side]),
     },
   }
   for (const target of ['player', 'opponent'] as const) {
     const actor = next[target],
       ward = actor.bashoWard
-    if (ward?.owner === side)
+    if (ward?.owner === side && (!state[side].dolphinLoan || ward.loan))
       next = { ...next, [target]: { ...actor, bashoWard: { ...ward, remainingFrames: 0 } } }
   }
   return next
+}
+
+function remainingBashoPapers(actor: ArcadeFighter): Partial<ArcadeFighter> {
+  const keep = (poem: BashoPoem | undefined): poem is BashoPoem =>
+    Boolean(actor.dolphinLoan && poem && !poem.loan)
+  const kept = [actor.bashoPoem, ...(actor.bashoArchive ?? [])].filter(keep)
+  const archive = kept.filter((poem) => poem !== actor.bashoPoem)
+  const inquiryLive = kept.some((poem) => poem.paperId === actor.bashoInquiry?.paperId)
+  return {
+    bashoPoem: kept.find((poem) => poem === actor.bashoPoem),
+    bashoArchive: archive.length ? archive : undefined,
+    bashoInquiry: inquiryLive ? actor.bashoInquiry : undefined,
+  }
 }

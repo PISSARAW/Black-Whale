@@ -23,7 +23,7 @@ export function stolenAuraActor(actor: ArcadeFighter): ArcadeFighter {
   return {
     ...actor,
     aura: supply.amount,
-    auraExhausted: supply.amount <= 0,
+    auraExhausted: supply.amount <= 0 && !supply.committed,
     nen: borrowedTen ? { ...actor.nen, mode: 'ten' } : actor.nen,
     dolphinExecution: {
       supply,
@@ -54,6 +54,8 @@ export function restoreStolenAura(original: ArcadeFighter, after: ArcadeFighter)
             auraSupply: {
               ...context.supply,
               amount: Math.max(0, Math.min(context.supply.amount, after.aura)),
+              committed:
+                (context.supply.committed ?? 0) + Math.max(0, context.supply.amount - after.aura),
             },
           },
         }

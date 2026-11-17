@@ -33,7 +33,11 @@ function onSealed(fighter: ArcadeFighter): boolean {
 }
 
 function reserveUnavailable(fighter: ArcadeFighter, options: NenAccessOptions): boolean {
-  return fighter.auraExhausted || (options.requireReserve === true && fighter.aura <= 0)
+  return fighter.auraExhausted || (options.requireReserve === true && !availableAura(fighter))
+}
+
+function availableAura(fighter: ArcadeFighter): boolean {
+  return fighter.aura > 0 || (fighter.dolphinExecution?.supply.committed ?? 0) > 0
 }
 
 function zetsuBlocks(fighter: ArcadeFighter, options: NenAccessOptions): boolean {

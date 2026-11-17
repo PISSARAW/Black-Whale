@@ -6,6 +6,8 @@ import type { ArcadeFighter, FighterId, FightSide } from './types'
 export interface DolphinAuraSupply {
   originalOwner: FighterId
   amount: number
+  /** Aura already committed to the single running effect; unavailable for another cost. */
+  committed?: number
   efficiencies: Record<ActiveNenCategory, number>
 }
 export function captureDolphinAura(fighter: ArcadeFighter): DolphinAuraSupply {

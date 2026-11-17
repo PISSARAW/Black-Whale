@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { hasLoanedBasho, loanedBashoCanWrite } from '$lib/fighting/bashoDolphin'
   import {
     BASHO_POEMS,
     BASHO_ATTESTED_POEMS,
@@ -13,7 +14,7 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
-  export let onCompose: (side: FightSide, text: string) => void
+  export let onCompose: (side: FightSide, text: string, loan?: boolean) => void
   export let onEditing: () => void = () => {}
   let drafts: Partial<Record<FightSide, string>> = {}
   const sides: FightSide[] = ['player', 'opponent']
@@ -29,6 +30,7 @@
   function poet(current: FightState, side: FightSide) {
     const fighter = current[side]
     return (
+      hasLoanedBasho(fighter) ||
       fighter.id === 'basho' ||
       hasBashoPoem(fighter) ||
       chrolloHasActivePage(fighter, 'basho') ||
@@ -62,7 +64,7 @@
           : 'Duel tuning: 1 s writing · 25 aura · fist poem: 1.5 s burn, 2 damage every 0.5 s before Nen defence. Moving, guarding or being hit interrupts writing. No general boost. Quality matters in the manga; no automatic literary score is invented here.'}</small
       >
       {#each sides.filter((side) => poet(state, side)) as side (side)}
-        {#if human(side) && (state[side].id === 'basho' || hasBashoPoem(state[side]))}
+        {#if human(side) && (state[side].id === 'basho' || hasBashoPoem(state[side]) || hasLoanedBasho(state[side]))}
           <label for={`haiku-${side}`}
             >{name(side)} · {fr ? 'Écrire les trois vers' : 'Write the three lines'}</label
           >
@@ -114,6 +116,17 @@
             >
               {fr ? 'Écrire sur le papier · 25 aura' : 'Write on paper · 25 aura'}
             </button>
+            {#if hasLoanedBasho(state[side])}
+              <button
+                type="button"
+                disabled={paused ||
+                  !recognizedBashoPoem(draft(side, drafts, language)) ||
+                  !loanedBashoCanWrite(state, side)}
+                onclick={() => onCompose(side, draft(side, drafts, language), true)}
+              >
+                {fr ? 'Dolphin prêté · Écrire sur le papier' : 'Loaned Dolphin · Write on paper'}
+              </button>
+            {/if}
           </div>
         {/if}
       {/each}

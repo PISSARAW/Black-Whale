@@ -6,7 +6,7 @@ import { dolphinArsenalOptions } from './dolphinArsenal'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { abilityCategoryEfficiency, fightCategoryEfficiency } from './nenCategories'
 import { moveForSlot } from './movesets'
-import { applyAuraContext } from './nen'
+import { applyAuraContext, nenDamageFactor } from './nen'
 import { voluntaryNenAvailable } from './nenAccess'
 import { EMPTY_INPUT, type FightState, type FighterId } from './types'
 
@@ -133,6 +133,20 @@ describe('Dolphin spends a finite donor reserve independently from the carrier',
     )
     expect(treated.player.dolphinExecution).toBeUndefined()
   })
+  it('keeps aura committed to a running effect without making it available for another cost', () => {
+    const loaded = loadedDolphin()
+    loaded.player.kurapika!.held!.auraSupply!.amount = moveForSlot(
+      'hisoka',
+      'neutralSpecial',
+    )!.auraCost
+    const used = useDolphin(loaded)
+    expect(used.player.kurapika!.held!.auraSupply!.amount).toBe(0)
+    expect(used.player.kurapika!.held!.auraSupply!.committed).toBeGreaterThan(0)
+    const running = frames(used, 70)
+    expect(running.bungeeGum?.owner).toBe('player')
+    expect(dolphinArsenalOptions(running, 'player').every((option) => !option.ready)).toBe(true)
+    expect(running.player.aura).toBeGreaterThanOrEqual(loaded.player.aura)
+  })
   it('rejects a cast when stolen aura is insufficient despite a full personal reserve', () => {
     const loaded = loadedDolphin()
     loaded.player.aura = 100
@@ -148,6 +162,19 @@ describe('Dolphin spends a finite donor reserve independently from the carrier',
       loaded.player.kurapika!.held!.auraSupply!.amount,
     )
     expect(waiting.player.aura).toBeGreaterThan(loaded.player.aura)
+  })
+  it('executes an external Hatsu without lending Ten protection to an exhausted body', () => {
+    const loaded = loadedDolphin()
+    const body = {
+      ...loaded.player,
+      aura: 0,
+      auraExhausted: true,
+      nen: { ...loaded.player.nen, mode: 'zetsu' as const },
+    }
+    const supplied = stolenAuraActor(body)
+    expect(abilityCategoryEfficiency(supplied, 'transmuter')).toBe(1)
+    expect(fightCategoryEfficiency(supplied, 'enhancer')).toBe(0)
+    expect(nenDamageFactor(supplied, 'torso')).toBe(nenDamageFactor(body, 'torso'))
   })
   it('preserves donor efficiency without giving the carrier that affinity or extra Emperor Time', () => {
     const loaded = loadedDolphin()

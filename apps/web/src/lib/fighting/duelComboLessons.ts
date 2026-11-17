@@ -1,11 +1,13 @@
 import type { CombatRoute } from './combatRoutes'
 import { ROSTER_DUEL_LESSONS } from './duelComboRosterLessons'
 import { SECOND_DUEL_LESSONS } from './duelComboSecondLessons'
+import { THIRD_DUEL_LESSONS } from './duelComboThirdLessons'
 
 /** Examples exercise the move rules; changing a lesson never changes a fighter's cancels. */
 export const DUEL_COMBO_LESSONS: readonly CombatRoute[] = [
   ...ROSTER_DUEL_LESSONS,
   ...SECOND_DUEL_LESSONS,
+  ...THIRD_DUEL_LESSONS,
   {
     id: 'kurapika:economy',
     fighter: 'kurapika',

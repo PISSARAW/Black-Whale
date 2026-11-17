@@ -1,14 +1,16 @@
-# Dix profils de combos
+# Quatorze profils de combos
 
 Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin et
-Hanzo ont huit exemples chacun dans l’Académie. Les quatre routes
+Hanzo, Illumi, Kalluto, Shizuku et Leorio ont huit exemples chacun dans l’Académie. Les quatre routes
 initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
 `duelComboRosterProfiles.ts` et `duelComboRosterLessons.ts` ajoutent les quatre
 profils suivants. `duelComboSecondProfiles.ts` et `duelComboSecondLessons.ts`
-ajoutent les quatre derniers. Le catalogue compte 200 routes pour quarante personnages.
+ajoutent quatre autres profils. `duelComboThirdProfiles.ts` et
+`duelComboThirdLessons.ts` ajoutent Illumi, Kalluto, Shizuku et Leorio.
+Le catalogue compte 216 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -108,6 +110,36 @@ le corps endormi selon les règles existantes.
 Les préparations `tracking` et `true-form` passent aussi par de vraies commandes.
 Leur snapshot initial ne confond pas l’action préalable avec les impacts du combo.
 
+## Illumi, Kalluto, Shizuku et Leorio
+
+Illumi choisit le balayage, la poussée ou une liaison lourd → revers. Son nouvel
+exercice de déguisement dépense réellement 20 aura et attend les 30 frames de
+préparation avant les cinq frappes physiques. Le visage remodelé ne protège pas
+des coups et les normales ne créent ni implantation ni marionnette. Les ordres
+et l’implantation gardent leurs propres règles, sans nouvelle route de contrôle.
+
+Kalluto peut finir physiquement ou, si un fragment existe dans la zone choisie,
+convertir le lourd en serpent de papier. L’exercice plante un vrai papier dans le
+torse pour 16 aura, puis le serpent coûte 24 aura et doit toucher par sa trajectoire
+réelle. Un fragment aux pieds n’autorise pas le serpent visant le torse. La route
+physique n’accorde aucun papier, aucune explosion ni poupée d’écoute.
+
+Shizuku peut conserver l’aura avec le balayage ou la poussée, ou dépenser 24 aura
+dans la frappe de Blinky, avec une route de départ bas plus longue. Les coups
+laissent les plaies déjà gérées par le moteur, mais n’enchaînent pas automatiquement
+l’aspiration du sang. Les conditions du tuyau, des plaies et de leur couverture
+par les mains restent applicables ; aucun soin ni vol d’aura n’est ajouté.
+
+Leorio doit convertir un revers engagé pour garantir le poing à distance à
+40 aura. Son hitstun de duel laisse le temps au démarrage de 18 frames, au trajet
+minimal de 12 frames et à la remontée de 4 frames. Le poing garde sa visée fixe,
+sa portée et sa transmission au sol ; aucun coup de mêlée invisible ne remplace
+le projectile. Une technique volée, le manque d’aura ou un corps aérien interdit
+toujours le lancement. Les fins physiques restent disponibles sans dépense au sol.
+
+Les préparations `disguise` et `paper` utilisent les commandes et le temps ordinaires.
+Le laboratoire les termine avant de commencer le compteur de l’exercice.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -121,12 +153,15 @@ des liaisons, la garde après une coupure et les ressources/héritages requis.
 les marques, les attachements et la conservation/consommation des rotations.
 `duelComboSecond.test.ts` compare les quatre derniers profils et vérifie les
 préparations, la validation d’une rafale entière, ses coûts et son interruption.
+`duelComboThird.test.ts` vérifie les quatre profils suivants, le déguisement sans
+bonus, les fragments de la bonne zone, les vraies frappes de Blinky et le délai
+ainsi que les restrictions du poing transmis dans le sol.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-9` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-10` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

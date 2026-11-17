@@ -45,20 +45,16 @@ try {
   await page.waitForFunction(() => Boolean(window.rosterFixture))
   const roster = await page.evaluate(() => window.rosterFixture.roster())
   assert.equal(roster.length, 40)
+  const routesTotal = roster.reduce((sum, fighter) => sum + fighter.routes, 0)
   const portraits = []
-  for (const { id, name } of roster) {
+  for (const { id, name, routes } of roster) {
     await page.evaluate((id) => window.rosterFixture.select(id), id)
     const dossier = page.locator(`[data-fighter-dossier="${id}"]`)
     await dossier.waitFor()
     await page.locator('.showcase-portrait img').waitFor({ timeout: 30000 })
     await dossier.locator('summary').click()
     assert.equal(await dossier.locator('dt').count(), 3)
-    assert.match(
-      await dossier.innerText(),
-      new RegExp(
-        `${['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks', 'machi', 'biscuit', 'franklin', 'hanzo'].includes(id) ? 8 : 4} routes`,
-      ),
-    )
+    assert.match(await dossier.innerText(), new RegExp(`${routes} routes`))
     assert.equal(await page.locator('.showcase-portrait .failed').count(), 0)
     const file = `${id}.png`
     await page.locator('.character-showcase').screenshot({ path: path.join(output, file) })
@@ -67,23 +63,11 @@ try {
   await page.evaluate(() => window.rosterFixture.show('academy'))
   const select = page.getByRole('combobox', { name: 'Personnage des exercices' })
   assert.equal(await select.locator('option').count(), 40)
-  await page.getByText('École de combat · 200 routes et défense', { exact: true }).waitFor()
-  for (const { id } of roster) {
+  await page
+    .getByText(`École de combat · ${routesTotal} routes et défense`, { exact: true })
+    .waitFor()
+  for (const { id, routes: routeCount } of roster) {
     await select.selectOption(id)
-    const routeCount = [
-      'kurapika',
-      'benjamin',
-      'hisoka',
-      'chrollo',
-      'feitan',
-      'phinks',
-      'machi',
-      'biscuit',
-      'franklin',
-      'hanzo',
-    ].includes(id)
-      ? 8
-      : 4
     assert.equal(await page.getByRole('button', { name: /^Pratiquer ·/ }).count(), routeCount)
     assert.equal(await page.getByRole('button', { name: /^Démontrer ·/ }).count(), routeCount)
     await page.getByRole('button', { name: 'Défense · bloquer puis punir' }).waitFor()
@@ -114,13 +98,20 @@ try {
   await writeFile(
     path.join(output, 'report.json'),
     JSON.stringify(
-      { passed: true, portraits: 40, routes: 200, defense: 40, widths: [1440, 390, 320], errors },
+      {
+        passed: true,
+        portraits: 40,
+        routes: routesTotal,
+        defense: 40,
+        widths: [1440, 390, 320],
+        errors,
+      },
       null,
       2,
     ),
   )
   process.stdout.write(
-    `Roster UI verified: 40 portraits, 200 routes, 40 defense exercises. ${output}\n`,
+    `Roster UI verified: 40 portraits, ${routesTotal} routes, 40 defense exercises. ${output}\n`,
   )
 } finally {
   await browser?.close()

@@ -30,6 +30,10 @@
       'Start the route. Forward / back directions are relative to your fighter.',
     ],
     wait: ['Attends la confirmation de la touche.', 'Wait for the hit confirmation.'],
+    volley: [
+      'Rafale en cours : une seule commande, laisse les balles toucher.',
+      'Barrage in progress: one command, let the bullets land.',
+    ],
     late: [
       'Trop tard pour garantir la suite : réessaie et enchaîne plus tôt.',
       'Too late to guarantee the next hit: retry and continue earlier.',
@@ -130,7 +134,13 @@
       <p class:complete={current.complete} class:failed={current.failed} role="status">
         {cues[current.cue][index]}
       </p>
-      <span>{current.step} / {activeRoute?.moves.length ?? 2}</span>
+      <span
+        >{current.step} / {activeRoute?.moves.length ?? 2}
+        {#if (activeRoute?.hits?.[current.step] ?? 1) > 1}
+          · {language === 'fr' ? 'Impacts de la rafale' : 'Barrage impacts'} : {current.stepHits} / {activeRoute!
+            .hits![current.step]}
+        {/if}
+      </span>
       <div class="actions">
         <button type="button" onclick={() => launch(current!.id)}
           >{language === 'fr' ? 'Réessayer l’exercice' : 'Retry exercise'}</button

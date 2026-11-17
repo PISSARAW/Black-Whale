@@ -1,12 +1,14 @@
-# Combos de Kurapika, Benjamin, Hisoka, Chrollo, Feitan et Phinks
+# Dix profils de combos
 
-Les six combattants ont huit exemples chacun dans l’Académie. Les quatre routes
+Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin et
+Hanzo ont huit exemples chacun dans l’Académie. Les quatre routes
 initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
 `duelComboRosterProfiles.ts` et `duelComboRosterLessons.ts` ajoutent les quatre
-profils suivants. Le catalogue total compte 184 routes pour quarante personnages.
+profils suivants. `duelComboSecondProfiles.ts` et `duelComboSecondLessons.ts`
+ajoutent les quatre derniers. Le catalogue compte 200 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -68,8 +70,43 @@ pendant une attaque. La liaison attend la récupération du lourd, puis le poing
 touche avant la fin du hitstun. Le guidage du laboratoire distingue cette attente
 des tours manquants. Les corps restent vulnérables pendant les préparations.
 
+Les profils déclarés peuvent mettre en mémoire une destination de cancel pendant
+les six dernières frames avant le contact. Cette intention attend la confirmation
+réelle, et le blocage n’autorise que la pression déclarée. Elle expire sur un coup
+raté ou paré, sans lancer une attaque neutre retardée. L’aura et les conditions
+sont revérifiées à l’exécution ; les liaisons après récupération conservent leur
+timing propre. Ce buffer absorbe notamment une arrivée réseau légèrement anticipée.
+
 Les quarante exercices de défense utilisent le lourd de Benjamin comme attaque
 commune réellement punissable, indépendamment des nouvelles liaisons de Chrollo.
+
+## Machi, Biscuit, Franklin et Hanzo
+
+Machi choisit un balayage proche, une poussée ou une liaison lourd → arrière +
+lourd. Son exercice de pistage pose d’abord une vraie aiguille pour 18 aura ; les
+frappes suivantes conservent le repère sans le transformer en immobilisation.
+Le finisher exige toujours une vraie ligature maintenue, absente des cancels physiques.
+
+Biscuit garde ses fins physiques sans dépense et peut investir 24 aura dans le
+direct du maître. Son exercice de vraie forme utilise la commande réelle avant
+l’ouverture, sans coût ni soin, puis propose un finisher à 55 aura. Cette fin
+reste indisponible sans la forme naturelle ; Cookie n’est jamais appelé.
+
+Franklin choisit une fin physique ou un tir unique qui lance une rafale. Avant +
+spécial coûte 24 aura et émet dix balles ; spécial neutre coûte 40 aura et en émet
+vingt. `CombatRoute.hits` décrit les impacts attendus pour chaque commande :
+l’exercice ne valide pas une rafale sur sa première balle. Le compteur réel
+permet de compter deux balles arrivant dans la même frame sans inventer un
+projectile ou un contact. Toute coupure du combo ou interruption de tir fait
+échouer la route. Les projectiles conservent leurs déplacements et défenses.
+
+Hanzo utilise une liaison avant + léger → arrière + lourd, puis choisit balayage
+ou poussée. Ses quatre nouveaux exemples sont martiaux, sans créer un double ni
+une invulnérabilité. Préparer la projection reste une action séparée qui expose
+le corps endormi selon les règles existantes.
+
+Les préparations `tracking` et `true-form` passent aussi par de vraies commandes.
+Leur snapshot initial ne confond pas l’action préalable avec les impacts du combo.
 
 ## Apprentissage et validation
 
@@ -82,12 +119,14 @@ de cancel et les liaisons possibles. Les indications ne forcent aucun impact.
 des liaisons, la garde après une coupure et les ressources/héritages requis.
 `duelComboRoster.test.ts` vérifie les quatre nouveaux profils, leurs coûts,
 les marques, les attachements et la conservation/consommation des rotations.
+`duelComboSecond.test.ts` compare les quatre derniers profils et vérifie les
+préparations, la validation d’une rafale entière, ses coûts et son interruption.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-7` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-9` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

@@ -56,7 +56,7 @@ try {
     assert.match(
       await dossier.innerText(),
       new RegExp(
-        `${['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks'].includes(id) ? 8 : 4} routes`,
+        `${['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks', 'machi', 'biscuit', 'franklin', 'hanzo'].includes(id) ? 8 : 4} routes`,
       ),
     )
     assert.equal(await page.locator('.showcase-portrait .failed').count(), 0)
@@ -67,12 +67,21 @@ try {
   await page.evaluate(() => window.rosterFixture.show('academy'))
   const select = page.getByRole('combobox', { name: 'Personnage des exercices' })
   assert.equal(await select.locator('option').count(), 40)
-  await page.getByText('École de combat · 184 routes et défense', { exact: true }).waitFor()
+  await page.getByText('École de combat · 200 routes et défense', { exact: true }).waitFor()
   for (const { id } of roster) {
     await select.selectOption(id)
-    const routeCount = ['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks'].includes(
-      id,
-    )
+    const routeCount = [
+      'kurapika',
+      'benjamin',
+      'hisoka',
+      'chrollo',
+      'feitan',
+      'phinks',
+      'machi',
+      'biscuit',
+      'franklin',
+      'hanzo',
+    ].includes(id)
       ? 8
       : 4
     assert.equal(await page.getByRole('button', { name: /^Pratiquer ·/ }).count(), routeCount)
@@ -105,13 +114,13 @@ try {
   await writeFile(
     path.join(output, 'report.json'),
     JSON.stringify(
-      { passed: true, portraits: 40, routes: 184, defense: 40, widths: [1440, 390, 320], errors },
+      { passed: true, portraits: 40, routes: 200, defense: 40, widths: [1440, 390, 320], errors },
       null,
       2,
     ),
   )
   process.stdout.write(
-    `Roster UI verified: 40 portraits, 184 routes, 40 defense exercises. ${output}\n`,
+    `Roster UI verified: 40 portraits, 200 routes, 40 defense exercises. ${output}\n`,
   )
 } finally {
   await browser?.close()

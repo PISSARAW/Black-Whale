@@ -14,6 +14,7 @@ import { guardInput, mirrorNetworkFight, type ImpactIntent } from './impactNetwo
 import { createCombatSchool } from '$lib/fighting/combatSchool'
 import type { CombatFighter } from '$lib/fighting/combatRoutes'
 import type { PvpCommand } from '$lib/fighting/pvp/types'
+import { routeHitsBefore } from '$lib/fighting/combatRouteContacts'
 
 function routeCommand(options: {
   route: CombatRoute
@@ -26,7 +27,11 @@ function routeCommand(options: {
   const slot = route.moves[index]
   const move = moveForSlot(route.fighter, slot)!
   if (!canStartFighterAttack(state.player, move.kind, move.id)) return null
-  if (index > 0 && (state.opponent.comboHits !== index || state.opponent.hitStun === 0)) return null
+  if (
+    index > 0 &&
+    (state.opponent.comboHits !== routeHitsBefore(route, index) || state.opponent.hitStun === 0)
+  )
+    return null
   return {
     kind: 'move',
     action: combatRouteAction(slot),

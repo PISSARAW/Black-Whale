@@ -252,6 +252,7 @@ export interface ArcadeFighter {
     reversal: boolean
   } | null
   bufferedAttack: {
+    cancelFrom?: string
     bufferFrames?: number
     moveId?: string
     variant?: AttackVariant

@@ -2,6 +2,7 @@ import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwarenes
 import { simulateClashFrame } from './fightFrameSimulation'
 import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
+import { flushBufferedCancel } from './bufferedCancel'
 import { nenActionAllowed } from './nenActionRules'
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
 import { advanceEasterEggs } from './easterEggs'
@@ -456,6 +457,8 @@ export function displayPose(fighter: ArcadeFighter): FighterPose {
 }
 
 function flushBuffered(state: FightState, side: FightSide): FightState {
+  const canceled = flushBufferedCancel(state, side, performAuraAttack)
+  if (canceled) return canceled
   const fighter = state[side]
   const intent = fighter.bufferedAttack
   if (!intent || fighter.attack || !canAct(fighter)) return state

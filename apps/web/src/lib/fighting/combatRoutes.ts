@@ -18,6 +18,8 @@ export interface CombatRoute {
   moves: readonly MoveSlot[]
   requirement: readonly [string, string]
   setup?: CombatRouteSetup
+  /** Expected contacts per command; a barrage is entered once and must land every bullet. */
+  hits?: readonly number[]
 }
 const TITLES = {
   confirm: ['Confirmer une touche', 'Confirm a hit'],

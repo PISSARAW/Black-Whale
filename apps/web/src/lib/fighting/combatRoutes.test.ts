@@ -6,6 +6,7 @@ import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT, type FightState } from './types'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
+import { combatRouteContacts, routeHitsBefore } from './combatRouteContacts'
 
 function step(state: FightState, guarding: boolean) {
   return tickFight(state, EMPTY_INPUT, {
@@ -40,11 +41,11 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
   const contacts: Array<{ move: string | undefined; combo: number }> = []
   let index = 0
   let lastImpact = 0
-  for (let tick = 0; tick < 240 && contacts.length < route.moves.length; tick++) {
+  for (let tick = 0; tick < 240 && contacts.length < combatRouteContacts(route).length; tick++) {
     const move = moveForSlot(route.fighter, route.moves[index])
     if (
       move &&
-      (index === 0 || contacts.length === index) &&
+      (index === 0 || contacts.length === routeHitsBefore(route, index)) &&
       canStartFighterAttack(state.player, move.kind, move.id)
     ) {
       const slot = route.moves[index]
@@ -63,13 +64,17 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
     }
     state = step(state, contacts.length > 0)
     if (state.impact && state.impact.sequence !== lastImpact) {
+      const gained = state.impact.sequence - lastImpact
       lastImpact = state.impact.sequence
       if (state.impact.attacker === 'player') {
         if (state.impact.blocked)
           throw Error(
             `Guard escaped at ${state.frame}: ${JSON.stringify(contacts)}; ${state.player.attack?.moveId}`,
           )
-        contacts.push({ move: state.player.attack?.moveId, combo: state.impact.comboHits ?? 0 })
+        const total = state.impact.comboHits ?? 0
+        expect(total - contacts.length).toBe(gained)
+        for (let combo = total - gained + 1; combo <= total; combo++)
+          contacts.push({ move: state.player.attack?.moveId, combo })
       }
     }
   }
@@ -82,9 +87,9 @@ describe('all forty fighters’ combat routes against guard after the first hit'
       for (const corner of [false, true])
         it.each([4, 6])(`${route.id}, mirrored=${mirrored}, corner=${corner}, gap=%s`, (gap) => {
           const { contacts } = runRoute(route.id, { mirrored, corner, gap })
-          expect(contacts.map((hit) => hit.move)).toEqual(
-            route.moves.map((slot) => `${route.fighter}:${slot}`),
+          expect(contacts.map((hit) => hit.move)).toEqual(combatRouteContacts(route))
+          expect(contacts.map((hit) => hit.combo)).toEqual(
+            combatRouteContacts(route).map((_, index) => index + 1),
           )
-          expect(contacts.map((hit) => hit.combo)).toEqual(route.moves.map((_, index) => index + 1))
         })
 })

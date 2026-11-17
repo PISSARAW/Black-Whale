@@ -54,6 +54,21 @@ try {
         assert.match(await page.locator('.combo-choices').innerText(), /liaison/i)
         await page.locator('main').screenshot({ path: path.join(output, `${fighter}-link.png`) })
       }
+      if (title.includes('Rafale longue')) {
+        await page.evaluate(() => window.comboFixture.advance(240, 3))
+        for (let batch = 0; batch < 10; batch++) {
+          await page.evaluate(() => window.comboFixture.advance(10))
+          const sample = await page.evaluate(() => window.comboFixture.snapshot())
+          if (sample.progress.stepHits > 0) break
+        }
+        const firing = await page.evaluate(() => window.comboFixture.snapshot())
+        assert.equal(firing.progress.complete, false)
+        assert.ok(firing.progress.stepHits > 0 && firing.progress.stepHits < 20)
+        assert.match(await page.locator('.active-exercise').innerText(), /Impacts de la rafale/)
+        await page
+          .locator('.combat-school')
+          .screenshot({ path: path.join(output, 'franklin-barrage.png') })
+      }
       await page.evaluate(() => window.comboFixture.advance(240))
       const result = await page.evaluate(() => window.comboFixture.snapshot())
       assert.equal(result.progress.complete, true, title)

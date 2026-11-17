@@ -3,10 +3,12 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import type { CombatRoute } from './combatRoutes'
 import type { FightState } from './types'
+import { routeStepHits, routeHitsBefore } from './combatRouteContacts'
 
 export type CombatCue =
   | 'ready'
   | 'wait'
+  | 'volley'
   | 'cancel'
   | 'link-wait'
   | 'link'
@@ -29,6 +31,7 @@ export interface CombatProgress {
   failed: boolean
   complete: boolean
   demo: boolean
+  stepHits: number
 }
 export function initialCombatProgress(id: string, demo: boolean): CombatProgress {
   return {
@@ -41,6 +44,7 @@ export function initialCombatProgress(id: string, demo: boolean): CombatProgress
     failed: false,
     complete: false,
     demo,
+    stepHits: 0,
   }
 }
 function inactive(progress: CombatProgress, state: FightState): boolean {
@@ -58,11 +62,27 @@ function routeContact(
   const next = { ...progress, lastImpact: state.impact!.sequence }
   if (rejectedContact(state)) return { ...next, cue: 'blocked', failed: true }
   const expected = `${route.fighter}:${route.moves[progress.step]}`
-  if (state.player.attack?.moveId !== expected || state.impact!.comboHits !== progress.step + 1)
+  const hits = (state.impact!.comboHits ?? 0) - routeHitsBefore(route, progress.step)
+  const gained = hits - progress.stepHits
+  const continuous = state.impact!.sequence - progress.lastImpact === gained
+  if (
+    state.player.attack?.moveId !== expected ||
+    gained < 1 ||
+    hits > routeStepHits(route, progress.step) ||
+    !continuous
+  )
     return { ...next, cue: 'wrong', failed: true }
-  const step = progress.step + 1
+  const finishedStep = hits === routeStepHits(route, progress.step)
+  const step = progress.step + Number(finishedStep)
   const complete = step === route.moves.length
-  return { ...next, step, lastContact: state.frame, complete, cue: complete ? 'complete' : 'wait' }
+  return {
+    ...next,
+    step,
+    stepHits: finishedStep ? 0 : hits,
+    lastContact: state.frame,
+    complete,
+    cue: complete ? 'complete' : 'wait',
+  }
 }
 export function observeCombatRoute(
   progress: CombatProgress,
@@ -81,7 +101,8 @@ export function observeCombatRoute(
 function routeCue(progress: CombatProgress, state: FightState, route: CombatRoute): CombatCue {
   if (progress.step === 0) return 'ready'
   const move = moveForSlot(route.fighter, route.moves[progress.step])!
-  if (state.player.attack?.moveId === move.id) return 'wait'
+  if (state.player.attack?.moveId === move.id)
+    return routeStepHits(route, progress.step) > 1 ? 'volley' : 'wait'
   if (state.opponent.hitStun <= move.tuning.startup) return 'late'
   const previous = moveForSlot(route.fighter, route.moves[progress.step - 1])!
   if (previous.linkInto?.includes(move.id))

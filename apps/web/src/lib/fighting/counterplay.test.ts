@@ -79,7 +79,7 @@ function prime(state: FightState): FightState {
 }
 
 describe('counterplay uses only accessible manifestations', () => {
-  it('does not reveal an aura projectile concealed by In without Gyo or En', () => {
+  it('does not reveal an aura projectile concealed by In without ocular Gyo', () => {
     expect(readCounterplay(withShot({ concealed: true }), 'opponent')).toBeNull()
   })
   it('reveals it through an available Gyo, but not through sealed sight or Zetsu', () => {
@@ -108,14 +108,25 @@ describe('counterplay uses only accessible manifestations', () => {
       ),
     ).toBeNull()
   })
-  it('allows En to locate hidden motion inside its radius, without requiring sight', () => {
-    const state = withShot({ concealed: true, x: 50 })
-    state.opponent.nen = { ...state.opponent.nen, en: { radius: 18 } }
+  it('allows En to locate physical motion, but not aura hidden by In, without sight', () => {
+    const state = withShot({ concealed: true, matter: 'object', x: 50 })
+    state.opponent = {
+      ...createFight('hisoka', 'hinrigh').opponent,
+      x: state.opponent.x,
+      aura: 100,
+    }
+    state.opponent.nen = { ...state.opponent.nen, mode: 'ren', en: { radius: 18 } }
     state.opponent.hatsuEffects = { ...state.opponent.hatsuEffects, senseSeals: 1 }
     expect(readCounterplay(state, 'opponent')?.kind).toBe('projectile')
     expect(
       readCounterplay(
-        { ...state, projectiles: [projectile({ concealed: true, x: 40 })] },
+        { ...state, projectiles: [projectile({ concealed: true, x: 50 })] },
+        'opponent',
+      ),
+    ).toBeNull()
+    expect(
+      readCounterplay(
+        { ...state, projectiles: [projectile({ concealed: true, matter: 'object', x: 40 })] },
         'opponent',
       ),
     ).toBeNull()

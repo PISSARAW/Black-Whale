@@ -8,6 +8,7 @@
   import { performanceTape, type PerformanceScenario } from './scenario'
   import type { installFrameProbe } from './frameProbe'
   import { stressManifested, type StressScenario } from './stressScenario'
+  import { expressionProof } from './expressionProof'
   export let probe: ReturnType<typeof installFrameProbe>
   let tape = performanceTape({ fighter: 'kurapika', stage: 'heavens-arena', effects: false })
   let live = false
@@ -22,13 +23,16 @@
   let predictionRenderers = new WeakSet<THREE.WebGLRenderer>()
   let predictionContexts = 0
   let comfort = defaultFightComfort()
+  let primaryScene: THREE.Scene | undefined
   THREE.Scene.prototype.onAfterRender = function (renderer, scene) {
     if (scene.userData.fightView === 'prediction' && !predictionRenderers.has(renderer)) {
       predictionRenderers.add(renderer)
       predictionContexts++
     }
-    if (scene.userData.fightView === 'primary' && scene.getObjectByName('fight-collision-boxes'))
+    if (scene.userData.fightView === 'primary') {
+      primaryScene = scene
       probe.draw(renderer)
+    }
   }
   export function start(options: PerformanceScenario) {
     running = false
@@ -62,6 +66,9 @@
     running = false
     probe.stop()
   }
+  export function gpuTiming(value: boolean) {
+    probe.gpuTiming(value)
+  }
   export function result() {
     return {
       ...probe.result(),
@@ -72,6 +79,7 @@
       requiredEffectSeen,
       predictionContexts,
       stateFrame: state.frame,
+      expressions: expressionProof(primaryScene),
     }
   }
   onMount(() => {

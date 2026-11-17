@@ -1,5 +1,8 @@
 import { performLegacyThrow } from './legacyThrow'
+import { updatePlayerGuard } from './nenCombat/guardInput'
 import { judgmentActionBreach } from './judgmentAction'
+import { recordMotion } from './motionRecord'
+import { moveAdmitted } from './moveAdmission'
 import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
 import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
@@ -27,7 +30,7 @@ import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
-import { canAct, canMove, canGuard, playerCanJump, auraAttackBodyFree } from './fightActorState'
+import { canAct, canMove, playerCanJump, auraAttackBodyFree } from './fightActorState'
 import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
 import { advancePreparation } from './preparationSimulation'
@@ -91,7 +94,6 @@ import type {
   MoveAction,
 } from './types'
 
-const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
 
@@ -239,7 +241,7 @@ function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): Arc
     mobile: canMove(next),
     jumpable: playerCanJump(next, input),
   })
-  return poseFighter(steered)
+  return recordMotion(poseFighter(steered), input)
 }
 
 function updateHatsuCharge(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -257,24 +259,6 @@ function activatesIn(fighter: ArcadeFighter, charging: boolean, frames: number):
 
 function releasesIn(fighter: ArcadeFighter, charging: boolean): boolean {
   return !charging && !fighter.attack?.concealed && fighter.nen.in
-}
-
-function updatePlayerGuard(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const next = fighter
-  const blocking = playerIsBlocking(next, input)
-  const releasedGuard = next.blocking && !blocking
-  return {
-    ...next,
-    blocking,
-    guardFrames: blocking ? (next.blocking ? next.guardFrames + 1 : 1) : 0,
-    ryuWindow: releasedGuard ? RYU_FOLLOW_UP_FRAMES : next.ryuWindow,
-  }
-}
-
-function playerIsBlocking(fighter: ArcadeFighter, input: FightInput): boolean {
-  if (!input.guard) return false
-  if (!canGuard(fighter)) return false
-  return !input.aura || fighter.nen.ken
 }
 
 function updateOpponent(
@@ -326,8 +310,8 @@ export function performMove(options: PerformMoveOptions): FightState {
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   if (state.catsName) return state
-  if (!futureAcceptsMove(state, side)) return state
   const selected = moveForAction(state[side], action, input)
+  if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
   const override = characterMoveOverride(
     { state, side, action, input },
     selected,

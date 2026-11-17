@@ -1,5 +1,5 @@
 import { voluntaryNenAvailable } from './nenAccess'
-import { enTouchesSegment, gyoSight } from './nenPerception'
+import { gyoSight } from './nenPerception'
 import { chrolloCopiedMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -70,10 +70,5 @@ export function hisokaUtilityMove(fighter: ArcadeFighter): boolean {
 export function bungeeVisible(state: FightState, observer: FightSide = 'player'): boolean {
   const gum = state.bungeeGum
   if (!gum) return false
-  return (
-    gum.owner === observer ||
-    !gum.hidden ||
-    gyoSight(state[observer]) ||
-    enTouchesSegment(state[observer], state[gum.owner], state[gum.target])
-  )
+  return gum.owner === observer || !gum.hidden || gyoSight(state[observer])
 }

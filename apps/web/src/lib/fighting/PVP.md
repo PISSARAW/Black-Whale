@@ -64,8 +64,10 @@ L’autre joueur ne reçoit pas cette vision. Les réponses de Body and Soul,
 Secret Window, Melody Hearing, Combo Master, l’analyse de Predator, les paroles
 rapportées par le papier, le buffer adverse et les pages conservées dans le livre
 restent privés. Les mêmes retraits sont appliqués aux frames de vision.
-Les projectiles et liens cachés suivent la perception de Gyo/En ; une attaque
-dissimulée ne livre pas son identité sans Gyo. Cela ne constitue pas un système
+Gyo permet de voir les projectiles et liens dissimulés. En transmet seulement
+des points de contact privés `{x, y}`, calculés avant le masquage, sans identité
+ni détail du Hatsu ; les spectateurs n’en reçoivent aucun. Les profils et portées
+sont décrits dans [EN.md](./EN.md). Une attaque dissimulée ne livre pas son identité sans Gyo. Cela ne constitue pas un système
 général de dissimulation de tout l’état du monde : le client reçoit encore la
 géométrie nécessaire au rendu, notamment les positions corporelles.
 

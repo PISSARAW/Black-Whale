@@ -143,17 +143,19 @@ describe('personal powers and recovery links', () => {
     expect(command(state, 'lowHeavy').player.attack?.moveId).toBe('chrollo:lowHeavy')
   })
 
-  it('gives Chrollo a timed recovery link without granting a book cancel', () => {
+  it('chains Chrollo’s heavy into the back heavy without granting a book cancel', () => {
+    // Lot 3 of COMBO_GRAMMAR.md: the former recovery link is a chain under the tiered grammar.
     let state = createCombatRouteFight(combatRoute('chrollo:precision'))
     state = contact(command(state, 'standingLight'))
     state = contact(command(state, 'standingHeavy'))
     expect(comboChoices(state).find((choice) => choice.move.slot === 'backHeavy')).toMatchObject({
-      link: true,
-      status: 'wait',
+      link: false,
+      status: 'ready',
     })
-    expect(command(state, 'backHeavy').player.attack?.moveId).toBe('chrollo:standingHeavy')
-    while (state.player.attack) state = tick(state)
-    expect(contact(command(state, 'backHeavy')).opponent.comboHits).toBe(3)
+    const chained = contact(command(state, 'backHeavy'))
+    expect(chained.player.attack?.moveId).toBe('chrollo:backHeavy')
+    expect(chained.opponent.comboHits).toBe(3)
+    expect(moveForSlot('chrollo', 'standingHeavy')!.cancelInto).not.toContain('chrollo:finisher')
   })
 
   it('executes Feitan’s longer blade routes without granting injuries, armor or a sun', () => {

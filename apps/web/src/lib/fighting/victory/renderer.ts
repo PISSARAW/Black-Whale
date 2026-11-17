@@ -15,6 +15,24 @@ import { createKurapikaVictory } from './kurapika'
 import { createFeitanVictory } from './feitan'
 import { createPhinksVictory } from './phinks'
 import { createFranklinVictory } from './franklin'
+import { createBenjaminVictory } from './benjamin'
+import { createTserriednichVictory } from './tserriednich'
+import { createLeorioVictory } from './leorio'
+import { createHalkenburgVictory } from './halkenburg'
+import { createCamillaVictory } from './camilla'
+import { createKallutoVictory } from './kalluto'
+import { createMachiVictory } from './machi'
+import { createShizukuVictory } from './shizuku'
+import { createBonolenovVictory } from './bonolenov'
+import { createIllumiVictory } from './illumi'
+import { createBiscuitVictory } from './biscuit'
+import { createSaiyuVictory } from './saiyu'
+import { createHanzoVictory } from './hanzo'
+import { createBillVictory } from './bill'
+import { createTerebellumVictory } from './terebellum'
+import { createHinrighVictory } from './hinrigh'
+import { createMelodyVictory } from './melody'
+import { suspendFightExpression } from '../fightExpressionRig'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -23,9 +41,50 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   feitan: createFeitanVictory,
   phinks: createPhinksVictory,
   franklin: createFranklinVictory,
+  benjamin: createBenjaminVictory,
+  tserriednich: createTserriednichVictory,
+  leorio: createLeorioVictory,
+  halkenburg: createHalkenburgVictory,
+  camilla: createCamillaVictory,
+  kalluto: createKallutoVictory,
+  machi: createMachiVictory,
+  shizuku: createShizukuVictory,
+  bonolenov: createBonolenovVictory,
+  illumi: createIllumiVictory,
+  biscuit: createBiscuitVictory,
+  saiyu: createSaiyuVictory,
+  hanzo: createHanzoVictory,
+  bill: createBillVictory,
+  melody: createMelodyVictory,
+  hinrigh: createHinrighVictory,
+  terebellum: createTerebellumVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
-  const base = { hisoka: 1.5, chrollo: 1.7, kurapika: 1.1, feitan: 2.3, phinks: 0.8, franklin: 2.7 }
+  const base = {
+    hisoka: 1.5,
+    chrollo: 1.7,
+    kurapika: 1.1,
+    feitan: 2.3,
+    phinks: 0.8,
+    franklin: 2.7,
+    benjamin: 1.6,
+    tserriednich: 1.8,
+    leorio: 2.4,
+    halkenburg: 2.6,
+    camilla: 1.9,
+    kalluto: 2.2,
+    machi: 2.1,
+    shizuku: 2,
+    bonolenov: 3.2,
+    illumi: 2,
+    biscuit: 2,
+    saiyu: 2,
+    melody: 2.1,
+    hanzo: 2.8,
+    bill: 2.3,
+    hinrigh: 2.1,
+    terebellum: 0.5,
+  }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
 function hideAuxiliaryRoots(options: {
@@ -63,6 +122,8 @@ export function createVictoryRenderer(options: {
       try {
         const initialHero = models[frame.winner],
           initialVictim = models[frame.loser]
+        transaction.defer(suspendFightExpression(initialHero))
+        transaction.defer(suspendFightExpression(initialVictim))
         const centre = Math.max(
           -1.6,
           Math.min(1.6, (initialHero.position.x + initialVictim.position.x) / 2),
@@ -111,7 +172,26 @@ export function createVictoryRenderer(options: {
         const driver = drivers.get(frame.fighter) ?? DRIVERS[frame.fighter]()
         drivers.set(frame.fighter, driver)
         driver.update(context)
-        if (comfort.camera === 0)
+        if (
+          comfort.camera === 0 &&
+          frame.fighter !== 'kurapika' &&
+          ![
+            'leorio',
+            'camilla',
+            'kalluto',
+            'machi',
+            'shizuku',
+            'bonolenov',
+            'illumi',
+            'biscuit',
+            'saiyu',
+            'hanzo',
+            'bill',
+            'melody',
+            'hinrigh',
+            'terebellum',
+          ].includes(frame.fighter)
+        )
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)
         victim.root.updateWorldMatrix(true, true)

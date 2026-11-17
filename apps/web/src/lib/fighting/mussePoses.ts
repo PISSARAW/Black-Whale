@@ -2,6 +2,7 @@ import type { ArcadeFighter } from './types'
 import type { KeyedMove } from './keyPoseMoves'
 import type { MoveTimeline } from './keyPoseTimeline'
 import { secretWindowUtility } from './secretWindow'
+import { bodyguardFiring } from './bodyguardFirearms'
 
 const AIM = {
   body: [0.06, 0, 0],
@@ -30,7 +31,7 @@ const CONTACT: MoveTimeline = [
 
 export function musseKeyedMove(fighter: ArcadeFighter): KeyedMove | null {
   if (secretWindowUtility(fighter)) return { timeline: CONTACT, authored: false }
-  return fighter.id === 'musse' && fighter.attack?.kind === 'ranged'
+  return fighter.id !== 'theta' && bodyguardFiring(fighter)
     ? { timeline: HANDGUN, authored: false }
     : null
 }

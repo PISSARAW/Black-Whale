@@ -10,6 +10,7 @@
   import { createFightLessons } from '$lib/fighting/fightLessonController'
   import type { LessonId } from '$lib/fighting/fightLessons'
   import { createFightControls, dispatchFightKey } from './fightingControls'
+  import { coarsePointer } from '$lib/fighting/controlSchemePreference'
   import type { PadAction } from '$lib/fighting/fightGamepad'
   import { resetTraining, setTrainingDummy } from '$lib/fighting/trainingSession'
   import type { TrainingPosition } from '$lib/fighting/trainingTypes'
@@ -144,6 +145,7 @@
       formatId: selectedFormat,
       mode: selectedMode,
       environment,
+      controls: controls.schemesFor(selectedMode, coarsePointer()),
     })
     resetFightInputs()
     match.begin(state)

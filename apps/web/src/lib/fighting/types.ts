@@ -1,4 +1,6 @@
 import type { PadailleTool } from './padailleWeapon'
+import type { Numpad } from './motionInput'
+import type { ControlScheme } from './controlScheme'
 import type { RetrospectiveFighterState } from './retrospectiveTypes'
 import type { IllumiState, NeedlePuppet } from './illumiState'
 import type { MachiThread } from './machiThread'
@@ -18,6 +20,8 @@ import type { SecretWindowState } from './secretWindow'
 import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
+export type { FightInput } from './fightInputTypes'
+export { EMPTY_INPUT } from './fightInputTypes'
 
 export type FighterId =
   | 'kurapika'
@@ -191,6 +195,9 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   hitStun: number
   blockStun: number
   crouching?: boolean
+  /** Relative numpad directions of the last ticks, for classic motions (motionInput.ts). */
+  motionLog?: readonly Numpad[]
+  controlScheme?: ControlScheme
   throwTechFrames?: number
   knockdownFrames: number
   wakeupInvulnerableFrames: number
@@ -240,6 +247,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
     moveId?: string
     variant?: AttackVariant
     confirmedBlock?: boolean
+    /** The AI already rolled its follow-up for this contact (aiComboFollowUp.ts). */
+    aiFollowUpRolled?: boolean
     confirmedHit?: boolean
     kind: AttackKind
     frame: number
@@ -323,33 +332,6 @@ export interface FighterHatsuEffects {
   stolenHatsu: FighterId | null
   /** 1 while the fighter's own Hatsu sits in Chrollo's book. */
   hatsuStolen: number
-}
-
-export interface FightInput {
-  arena?: boolean
-  interact?: boolean
-  plugWounds?: boolean
-  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
-  coverEars?: boolean
-  /** Holding this occupies both hands to cover up to two separate wounds. */
-  en?: boolean
-  shu?: boolean
-  conceal?: boolean
-  gyo?: boolean
-  focusHead?: boolean
-  focusTorso?: boolean
-  focusHands?: boolean
-  focusFeet?: boolean
-  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
-  /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
-  call?: boolean
-  left: boolean
-  right: boolean
-  jump: boolean
-  down: boolean
-  guard: boolean
-  aura: boolean
-  hatsu: boolean
 }
 
 export interface FightImpact {
@@ -485,14 +467,4 @@ export interface FightState {
   previousPositions?: Record<FightSide, { x: number; y: number }>
   /** Frames until the AI opponent picks its next action. */
   aiCooldown?: number
-}
-
-export const EMPTY_INPUT: FightInput = {
-  left: false,
-  right: false,
-  jump: false,
-  down: false,
-  guard: false,
-  aura: false,
-  hatsu: false,
 }

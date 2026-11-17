@@ -92,6 +92,7 @@
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
       <FightLiveScene
+        active={!paused}
         {state}
         {stageId}
         {language}

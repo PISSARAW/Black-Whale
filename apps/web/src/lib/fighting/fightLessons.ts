@@ -1,3 +1,4 @@
+import { NEN_COMBAT_LESSONS, type NenCombatLessonId } from './nenCombat/lessons'
 import { FOUNDATION_LESSONS, type FoundationLessonId } from './fightFoundationLessons'
 import { ADVANCED_FIGHT_LESSONS, type AdvancedLessonId } from './fightAdvancedLessons'
 import type { FighterId } from './types'
@@ -5,6 +6,7 @@ import type { FighterId } from './types'
 export type LessonId =
   | FoundationLessonId
   | AdvancedLessonId
+  | NenCombatLessonId
   | 'ren'
   | 'ken'
   | 'zetsu'
@@ -201,6 +203,7 @@ export const FIGHT_LESSONS: readonly FightLesson[] = [
 export const FIGHT_CURRICULUM: readonly FightLesson[] = [
   ...FIGHT_LESSONS,
   ...ADVANCED_FIGHT_LESSONS,
+  ...NEN_COMBAT_LESSONS,
 ]
 export function fightLesson(id: LessonId): FightLesson {
   return FIGHT_CURRICULUM.find((lesson) => lesson.id === id)!

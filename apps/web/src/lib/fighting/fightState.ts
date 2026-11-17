@@ -1,4 +1,5 @@
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
+import { applyControlSchemes, keepControlScheme, type ControlSchemes } from './controlScheme'
 import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
@@ -19,6 +20,8 @@ interface CreateFightOptions {
   formatId?: FightFormatId
   mode?: FightMode
   environment?: Partial<FightEnvironment>
+  /** Per-side command scheme (controlScheme.ts); omitted sides stay simplified. */
+  controls?: ControlSchemes
 }
 
 export function createFightState(
@@ -31,7 +34,7 @@ export function createFightState(
   const mode = typeof options === 'string' ? 'versus-ai' : (options.mode ?? 'versus-ai')
   const format = fightFormat(formatId)
   const environment = createFightEnvironment(typeof options === 'string' ? {} : options.environment)
-  return setupIllumiNeedles({
+  const created = setupIllumiNeedles({
     training: mode === 'training' ? createTrainingState(format.health) : undefined,
     arena: environment.arenaInteractions ? createArenaState() : undefined,
     battlefield: createBattlefield(environment),
@@ -59,6 +62,7 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
   })
+  return applyControlSchemes(created, typeof options === 'string' ? undefined : options.controls)
 }
 
 export function nextFightRound(state: FightState): FightState {
@@ -107,7 +111,10 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
+  fighter = keepControlScheme(
+    preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous),
+    previous,
+  )
   return fighter.kurapika
     ? {
         ...fighter,

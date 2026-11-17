@@ -1,3 +1,4 @@
+import { enDuringAttack } from './en/access'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -9,10 +10,10 @@ import { biohazardBodyFree } from './biohazard'
 import { crossGameBusy } from './crossGame'
 import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
-import { thetaPhysicalShot } from './thetaFirearm'
+import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
-import { kurapikaMoveAvailable } from './kurapika'
+import { chainsImmobilize, kurapikaMoveAvailable } from './kurapika'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { feitanMoveAvailable } from './feitanPain'
 import { projectionPreparing } from './hanzoProjection'
@@ -73,7 +74,7 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
-    nen: { ...prepared.nen, en: null },
+    nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
     aura:
       fighter.aura -
@@ -139,7 +140,8 @@ function characterAttackAvailable(
   moveId?: string,
 ): boolean {
   if (fighter.id === 'theta' && kind === 'special') return false
-  if (!kurapikaMoveAvailable(fighter, moveId)) return false
+  if (chainsImmobilize(fighter)) return false
+  if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
   return true
@@ -211,9 +213,8 @@ function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: s
 function canChargeAura(fighter: ArcadeFighter, kind: AttackKind): boolean {
   return (
     fighter.nen.mode !== 'zetsu' &&
-    !thetaPhysicalShot(fighter, kind) &&
-    !predatorNenLocked(fighter) &&
-    !(fighter.id === 'musse' && kind === 'ranged')
+    !bodyguardPhysicalShot(fighter, kind) &&
+    !predatorNenLocked(fighter)
   )
 }
 

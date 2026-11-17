@@ -1,5 +1,5 @@
 import type { FighterId, FightSide, FightState } from './types'
-import { voluntaryNenAvailable } from './nenAccess'
+import { gyoSight } from './nenCombat/sight'
 
 /** Skill Hunter needs an actual visual observation, not the engine's private source ID. */
 export function witnessedHatsu(
@@ -46,9 +46,7 @@ function canWitness(state: FightState, cast: Parameters<typeof witnessedHatsu>[1
   if (!hasSight(observer)) return false
   const attack = state[cast.side].attack
   const hidden = cast.concealed ?? (attack?.hatsuSource === cast.source && attack.concealed)
-  const inspects =
-    observer.nen.gyo &&
-    voluntaryNenAvailable(observer, { requireReserve: true, requireHatsu: false })
+  const inspects = gyoSight(observer)
   return !hidden || inspects
 }
 

@@ -1,34 +1,22 @@
-import { liveEntity } from './preparationWorld'
-import { sleepingBody } from './hanzoProjection'
-import { senseDeprived } from './saiyuSenses'
+import { enContains } from './en/access'
+import { enContactPoints, nearestPoint } from './en/contacts'
+import { gyoSight } from './nenCombat/sight'
+export { gyoSight } from './nenCombat/sight'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
-/** En senses displacement inside its volume, including a body in Zetsu.
- * It locates something hidden with In; Gyo is needed to inspect its aura.
+/** En senses contacts inside its volume, including stationary bodies in Zetsu.
+ * In-hidden aura requires ocular Gyo; physical bodies remain detectable.
  */
 export function insideEn(observer: ArcadeFighter, position: { x: number; y: number }): boolean {
-  return (
-    observer.nen.mode !== 'zetsu' &&
-    Boolean(observer.nen.en) &&
-    Math.hypot(position.x - observer.x, position.y - observer.y) <= observer.nen.en!.radius
-  )
+  return enContains(observer, position)
 }
 
 export function perceivesAura(observer: ArcadeFighter, source: ArcadeFighter): boolean {
-  return !source.nen.in || gyoSight(observer) || insideEn(observer, source)
-}
-
-export function gyoSight(observer: ArcadeFighter): boolean {
-  return observer.nen.gyo && !senseDeprived(observer, 'sight')
+  return !source.nen.in || gyoSight(observer)
 }
 
 export function perceivesProjectile(observer: ArcadeFighter, projectile: FightProjectile): boolean {
-  return (
-    projectile.matter === 'object' ||
-    !projectile.concealed ||
-    gyoSight(observer) ||
-    insideEn(observer, projectile)
-  )
+  return projectile.matter === 'object' || !projectile.concealed || gyoSight(observer)
 }
 
 /** Closest point on a tether, so a string touching the observer is detectable
@@ -38,43 +26,14 @@ export function enTouchesSegment(
   start: { x: number; y: number },
   end: { x: number; y: number },
 ): boolean {
-  const dx = end.x - start.x
-  const dy = end.y - start.y
-  const length = dx * dx + dy * dy
-  const ratio = length
-    ? Math.max(0, Math.min(1, ((observer.x - start.x) * dx + (observer.y - start.y) * dy) / length))
-    : 0
-  return insideEn(observer, { x: start.x + ratio * dx, y: start.y + ratio * dy })
+  return insideEn(observer, nearestPoint(observer, start, end))
 }
 
 export function enContacts(state: FightState, side: FightSide): number {
-  const observer = state[side]
-  const target = state[side === 'player' ? 'opponent' : 'player']
-  const bodies =
-    Number(insideEn(observer, sleepingBody(target))) +
-    Number(Boolean(target.hanzoProjection) && insideEn(observer, target))
-  const gum = state.bungeeGum
-  const tether = gum ? Number(enTouchesSegment(observer, state[gum.owner], state[gum.target])) : 0
-  return (
-    bodies +
-    (state.battlefield?.entities ?? []).filter(
-      (entry) =>
-        liveEntity(entry) &&
-        !['destination', 'delivery'].includes(entry.kind) &&
-        insideEn(observer, entry),
-    ).length +
-    tether +
-    state.projectiles.filter(
-      (projectile) =>
-        projectile.owner !== side &&
-        (!projectile.remotePunch || projectile.y >= 0) &&
-        insideEn(observer, projectile),
-    ).length
-  )
+  return enContactPoints(state, side).length
 }
 
-/** Reading a trajectory helps a timed defence; it never supplies automatic guard. */
-export function nenReadBonus(observer: ArcadeFighter, source: ArcadeFighter): number {
-  if (insideEn(observer, source)) return 3
+/** Gyo keeps its existing arcade timing aid. En provides contacts, not extra reaction frames. */
+export function nenReadBonus(observer: ArcadeFighter, _source: ArcadeFighter): number {
   return gyoSight(observer) ? 2 : 0
 }

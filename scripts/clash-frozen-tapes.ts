@@ -3,14 +3,14 @@ import { gunzipSync } from 'node:zlib'
 import { createHash } from 'node:crypto'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { FightReplay } from '../apps/web/src/lib/fighting/fightReplayTypes'
+import { REPLAY_RULESET, type FightReplay } from '../apps/web/src/lib/fighting/fightReplayTypes'
 
 export async function loadFrozenCombatTapes(directoryOverride?: string) {
   const directory = resolve(
     directoryOverride ??
       process.env.CLASH_REFERENCE_DIRECTORY ??
       fileURLToPath(
-        new URL('../apps/web/ui-tests/fighting-reference/reference/v17', import.meta.url),
+        new URL(`../apps/web/ui-tests/fighting-reference/reference/${REPLAY_RULESET.replace('clash-combat-', 'v')}`, import.meta.url),
       ),
   )
   const baseline = JSON.parse(await readFile(resolve(directory, 'baseline.json'), 'utf8')) as {

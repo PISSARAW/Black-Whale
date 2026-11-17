@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
+  import { ending } from '$lib/fighting/presentation/ceremony'
+  import { clashPresentation } from '$lib/fighting/presentation/profile'
+  import { titleLabel } from '$lib/fighting/presentation/collection'
   import { ceremonyText, winnerForCeremony } from '$lib/fighting/career/presentation'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { fighterDefinition } from '$lib/fighting/roster'
@@ -8,6 +12,8 @@
   $: winner = winnerForCeremony(state)
   $: appearance = $clashCareer.appearance
   $: ready = state.phase === 'ready'
+  $: title = titleLabel($clashPresentation.preferences.title, language)
+  onMount(() => clashPresentation.ensureLoaded())
 </script>
 
 {#if (ready && appearance.intro !== 'off') || winner}
@@ -19,7 +25,8 @@
           </div>{/each}
       </div>
     {:else if winner}<strong>{fighterDefinition(state[winner].id).name}</strong>
-      <p>{ceremonyText(state, language, winner)}</p>{/if}
+      <p>{ending(state, language)}</p>{/if}
+    {#if title}<small>{language === 'fr' ? 'Profil local' : 'Local profile'} · {title}</small>{/if}
     <small
       >{language === 'fr' ? 'Dialogues originaux pour Clash' : 'Original dialogue for Clash'}</small
     >

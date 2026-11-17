@@ -11,6 +11,9 @@ const threeSource = require.resolve('three/src/Three.js')
 
 export default defineConfig(({ isSsrBuild }) => ({
   test: {
+    // Keep complete combat matrices within the memory budget of development machines.
+    maxWorkers: 3,
+    minWorkers: 1,
     coverage: {
       provider: 'v8',
       // Only this app's own source. Without it the report is mostly SvelteKit's

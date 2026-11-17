@@ -1,3 +1,4 @@
+import { enProfile } from './en/profiles'
 import { seesCombatBody } from './fightCounterplay'
 import { insideEn } from './nenPerception'
 import { shuObject } from './nenAdvanced'
@@ -9,7 +10,10 @@ export function advancedOpponentNen(state: FightState): FightState | null {
   const fighter = state.opponent
   const target = state.player
   if (fighter.aura < 30) return null
-  if (!seesCombatBody(fighter)) return state.frame % 180 < 24 ? hold(state, { en: true }) : null
+  if (!seesCombatBody(fighter))
+    return enProfile(fighter).radiusUnits !== null && state.frame % 180 < 24
+      ? hold(state, { en: true })
+      : null
   if (hiddenThreat(state)) return hold(state, { gyo: true })
   if (fighter.aura > 48 && shuObject(fighter) !== 'stone')
     return hold(state, { aura: true, shu: true })

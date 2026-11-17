@@ -5,7 +5,7 @@
   import FightVictoryOverlay from '$lib/components/fighting/FightVictoryOverlay.svelte'
   import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
   import { beginFight, createFight } from '$lib/fighting/engine'
-  import { selectVictory } from '$lib/fighting/victory/catalogue'
+  import { selectVictory, VICTORY_FIGHTERS } from '$lib/fighting/victory/catalogue'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FighterId, FightSide, FightMode } from '$lib/fighting/types'
   import type { FightStageId } from '$lib/fighting/stages'
@@ -15,6 +15,7 @@
     paused = false,
     preview = false,
     ready = false
+  let victorySide: FightSide = 'player'
   let frame: VictoryFrame | null = null
   const noop = () => {}
   async function configure(options: {
@@ -40,7 +41,7 @@
     await tick()
   }
   async function finish() {
-    const side = (window as any).victorySide ?? 'player'
+    const side = victorySide
     state = {
       ...state,
       phase: 'finished',
@@ -62,13 +63,14 @@
     await tick()
   }
   onMount(() => {
-    ;(window as any).victoryFixture = {
+    ;(window as Window & { victoryFixture?: unknown }).victoryFixture = {
       async configure(options: Parameters<typeof configure>[0]) {
-        ;(window as any).victorySide = options.side ?? 'player'
+        victorySide = options.side ?? 'player'
         await configure(options)
       },
       finish,
       pose,
+      fighters: () => [...VICTORY_FIGHTERS],
       async pause(value: boolean) {
         paused = value
         await tick()

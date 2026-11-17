@@ -1,4 +1,4 @@
-import { buildLsdfGuard } from '$lib/tour/apparitionLsdfView'
+import { buildFightLsdfFormation } from './lsdfFormation'
 import { buildHumanFigure, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
 import { inMorenasHideout } from './fightEnvironment'
@@ -26,7 +26,10 @@ export function createLsdfScene(options: LsdfSceneOptions) {
     }
     if (!model || model.level !== guard.level) {
       if (model) disposeRoot(model.root)
-      model = { level: guard.level, root: guardFormation(options, guard.level) }
+      model = {
+        level: guard.level,
+        root: buildFightLsdfFormation(options, guard.level),
+      }
       model.root.name = `lsdf:${side}`
       guards.set(side, model)
       scene.add(model.root)
@@ -79,27 +82,11 @@ function buildMorena({ THREE, glow }: LsdfSceneOptions) {
   return morena
 }
 
-function guardFormation(options: LsdfSceneOptions, level: number) {
-  const root = new options.THREE.Group()
-  root.name = 'fighting-lsdf-guards'
-  const context = { ...options, root, skin: options.glow(0xe8e5da, 1) }
-  for (let index = 0; index < 7; index++) {
-    const row = Math.floor((index + 1) / 2)
-    root.add(
-      buildLsdfGuard(context, {
-        level,
-        scale: 0.55,
-        at: [index === 0 ? 0 : (index % 2 ? -1 : 1) * 0.55, 0, -row * 0.55],
-      }),
-    )
-  }
-  return root
-}
-
 function disposeRoot(root: import('three').Object3D): void {
   root.removeFromParent()
   root.traverse((object) => {
     const mesh = object as import('three').Mesh
     mesh.geometry?.dispose()
+    if ('isInstancedMesh' in mesh) (mesh as import('three').InstancedMesh).dispose()
   })
 }

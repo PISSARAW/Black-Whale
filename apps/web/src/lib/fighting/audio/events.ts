@@ -1,3 +1,4 @@
+import { activeEnRadius } from '../en/access'
 import type { NenTechnique } from '@black-whale/nen-engine'
 import { attackData } from '../frameData'
 import { nenTacticalState } from '../nen'
@@ -80,7 +81,7 @@ export function fighterEvent(
 export function activeSoundNen(fighter: ArcadeFighter): NenTechnique {
   if (fighter.nen.mode === 'zetsu') return 'zetsu'
   if (fighter.nen.in) return 'in'
-  if (fighter.nen.en) return 'en'
+  if (activeEnRadius(fighter)) return 'en'
   if (fighter.nen.shu.length > 0) return 'shu'
   return nenTacticalState(fighter).technique
 }

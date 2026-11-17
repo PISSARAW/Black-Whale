@@ -1,3 +1,6 @@
+import { addBenjaminRifle } from './benjaminRifle'
+import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
+import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
 import { addPadailleWeapon } from './padailleFigure'
@@ -9,6 +12,8 @@ import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
 import { improveFightFace } from './fightFaceReadability'
 import { shapeFightEyes } from './fightFigureEyes'
+import { addBodyguardPistol } from './bodyguardFigure'
+import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -52,6 +57,7 @@ export function buildFightFigure(options: {
   observer?: ArcadeFighter
   /** Reference captures can compare the unchanged shared model. */
   readability?: boolean
+  palette?: Palette
 }) {
   const { THREE, glow, fighter } = options
   const definition = fighterDefinition(battleAppearance(fighter))
@@ -82,7 +88,10 @@ export function buildFightFigure(options: {
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
   const dressed = figureClothing(profile, fighter)
-  const finalProfile = trueForm ? biscuitTrueFormProfile(dressed) : dressed
+  const finalProfile = wardrobeProfile(
+    trueForm ? biscuitTrueFormProfile(dressed) : dressed,
+    wardrobePalette(fighter, options.palette ?? 'native'),
+  )
   const figureGlow: HumanFigureBuild['glow'] = fighter.hanzoProjection
     ? (colour, opacity) => glow(colour, opacity * 0.28)
     : glow
@@ -102,6 +111,7 @@ export function buildFightFigure(options: {
   addFighterEquipment(options, model)
   addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
+  registerFightExpression({ THREE, model, fighter })
   return model
 }
 
@@ -114,6 +124,7 @@ function addFighterEquipment(
   model: ReturnType<typeof buildHumanFigure>,
 ): void {
   const { THREE, glow, fighter } = options
+  addBodyguardPistol({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
@@ -123,6 +134,7 @@ function addFighterEquipment(
     addFranklinHands({ THREE, glow, model })
   }
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.id === 'benjamin') addBenjaminRifle({ THREE, glow, model })
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
   if (blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })

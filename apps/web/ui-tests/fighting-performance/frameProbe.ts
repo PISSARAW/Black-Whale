@@ -24,6 +24,7 @@ export function installFrameProbe() {
   let droppedSamples = 0
   let gpuSupported = false
   let gpuDisjoint = 0
+  let gpuTiming = false
   const pending: Array<{ query: WebGLQuery; sample: Sample }> = []
   let callbacks: Record<number, { name: string; count: number; total: number; max: number }> = {}
   window.requestAnimationFrame = (callback) => {
@@ -33,7 +34,7 @@ export function installFrameProbe() {
       active = id
       const start = performance.now()
       if (id === render) renderer?.info.reset()
-      const context = id === render ? renderer?.getContext() : null
+      const context = gpuTiming && id === render ? renderer?.getContext() : null
       const gl = context instanceof WebGL2RenderingContext ? context : null
       const timer = gl?.getExtension('EXT_disjoint_timer_query_webgl2')
       if (gl && timer) {
@@ -51,7 +52,7 @@ export function installFrameProbe() {
       }
       const query = enabled && gl && timer && pending.length < 8 ? gl.createQuery() : null
       if (query && gl && timer) gl.beginQuery(timer.TIME_ELAPSED_EXT, query)
-      callback(id === render && renderTime !== null ? renderTime : now)
+      callback(renderTime ?? now)
       if (query && gl && timer) gl.endQuery(timer.TIME_ELAPSED_EXT)
       const work = performance.now() - start
       if (enabled) {
@@ -88,6 +89,9 @@ export function installFrameProbe() {
     })
   }
   return {
+    gpuTiming(value: boolean) {
+      gpuTiming = value
+    },
     draw(current: WebGLRenderer) {
       renderer = current
       renderer.info.autoReset = false
@@ -115,6 +119,7 @@ export function installFrameProbe() {
         callbacks,
         renderCallback: render,
         gpuSupported,
+        gpuTiming,
         gpuDisjoint,
         resolution: renderer ? [renderer.domElement.width, renderer.domElement.height] : [],
         pixelRatio: renderer?.getPixelRatio() ?? 0,

@@ -1,3 +1,4 @@
+import { interruptEnForSpeech } from './en/interruptions'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import {
   speechRecipient,
@@ -47,6 +48,7 @@ export function speakPaperWords(
     }
   }
   const recipient = speechRecipient(state, speaker, target)
+  next = interruptEnForSpeech(next, speaker)
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
   return resolveJudgmentCommunication(next, speaker, recipientBody(state, recipient).id)

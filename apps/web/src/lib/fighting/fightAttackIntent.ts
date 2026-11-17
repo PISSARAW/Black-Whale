@@ -3,6 +3,7 @@ import { moveById } from './movesets'
 import { canUseRangedAttack } from './projectiles'
 import { IN_CHARGE_FRAMES } from './nen'
 import { attackAuraCost } from './fightAttackCost'
+import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import type { ArcadeFighter, AttackKind } from './types'
 
 export function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string) {
@@ -19,6 +20,7 @@ export function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: 
 }
 
 function concealedHatsu(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  if (bodyguardPhysicalShot(fighter, kind)) return false
   return (
     (kind === 'special' || kind === 'ranged') &&
     (fighter.nen.in || fighter.hatsuChargeFrames >= IN_CHARGE_FRAMES) &&

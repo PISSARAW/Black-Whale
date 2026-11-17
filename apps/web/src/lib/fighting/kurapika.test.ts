@@ -334,10 +334,14 @@ describe('Kurapika manga chains in the 2D engine', () => {
     ).toBeGreaterThan(judged.opponent.x)
   })
 
-  it('keeps the ranged chain attached instead of spawning detached projectiles', () => {
-    const started = performAttack(duel('hisoka'), 'player', 'ranged')
-    expect(started.player.attack?.moveId).toBe('kurapika:forwardSpecial')
-    expect(advance(started, 40).projectiles).toHaveLength(0)
+  it('fires the service pistol with U while leaving the attached chain on forward + L', () => {
+    const base = duel('hisoka')
+    const started = performAttack({ ...base, opponent: { ...base.opponent, x: 80 } }, 'player', 'ranged')
+    expect(started.player.attack).toMatchObject({ kind: 'ranged', hatsuSource: null })
+    expect(advance(started, 11).projectiles[0]).toMatchObject({ shape: 'bullet', matter: 'object' })
+    const chain = cast(duel('hisoka'), 'forwardSpecial')
+    expect(chain.player.attack?.moveId).toBe('kurapika:forwardSpecial')
+    expect(advance(chain, 40).projectiles).toHaveLength(0)
   })
 
   it('catches physical bullets with Dowsing Chain, not aura projectiles', () => {

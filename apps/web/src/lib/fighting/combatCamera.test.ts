@@ -100,4 +100,35 @@ describe('dynamic combat framing', () => {
     expect(rig.update(options)).toEqual(createCombatCamera().update(options))
     expect(JSON.stringify(state)).toBe(saved)
   })
+
+  it.each([0.35, 0.65, 1.4, 2.4])(
+    'keeps a fallen body’s full length visible at aspect %s',
+    (aspect) => {
+      const fresh = createFight('benjamin', 'chrollo')
+      for (const side of ['player', 'opponent'] as const) {
+        const state = {
+          ...fresh,
+          player: { ...fresh.player, x: 44 },
+          opponent: { ...fresh.opponent, x: 50 },
+        }
+        state[side] = { ...state[side], pose: 'ko' }
+        const pose = createCombatCamera().update({
+          state,
+          base,
+          span: { centre: -0.345, gap: 0.69 },
+          aspect,
+          intensity: 0,
+          dt: 1 / 60,
+        })
+        const camera = new PerspectiveCamera(34, aspect, 0.1, 100)
+        camera.position.set(pose.x, pose.y, pose.z)
+        camera.lookAt(pose.x, pose.lookY, 0)
+        camera.updateMatrixWorld(true)
+        for (const offset of [-3.1, 3.1]) {
+          const point = new Vector3(fightWorldX(state[side].x) + offset, 0.1, 0).project(camera)
+          expect(Math.abs(point.x)).toBeLessThan(0.9)
+        }
+      }
+    },
+  )
 })

@@ -1,6 +1,6 @@
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
-import type { FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { CameraDetailRect } from './cinematicDetailLayout'
 
 export interface CombatCameraFrame {
@@ -63,6 +63,10 @@ function impactFocus(options: CombatCameraOptions): number {
     return 0
   return clamp(state.hitstop / 12, 0, 1) * 0.22 * options.intensity
 }
+function actorHalfWidth(actor: ArcadeFighter): number {
+  // A body on its back extends far beyond the upright hurtbox, including large forms.
+  return ['down', 'ko', 'wakeup'].includes(actor.pose) ? 3.2 : 0.8
+}
 function bodyBounds(options: CombatCameraOptions): Bounds {
   const { state, span } = options
   const actors = [state.player, state.opponent]
@@ -75,18 +79,16 @@ function bodyBounds(options: CombatCameraOptions): Bounds {
   const companion = options.companion && state[options.companion]
   const beastX = companion ? fightWorldX(companion.x) - companion.facing : span.centre
   return {
-    left:
-      Math.min(
-        span.centre - span.gap / 2,
-        beastX - (companion ? 0.15 : 0),
-        ...actors.map((a) => fightWorldX(a.x)),
-      ) - 0.8,
-    right:
-      Math.max(
-        span.centre + span.gap / 2,
-        beastX + (companion ? 0.15 : 0),
-        ...actors.map((a) => fightWorldX(a.x)),
-      ) + 0.8,
+    left: Math.min(
+      span.centre - span.gap / 2 - 0.8,
+      beastX - (companion ? 0.15 : 0) - 0.8,
+      ...actors.map((a) => fightWorldX(a.x) - actorHalfWidth(a)),
+    ),
+    right: Math.max(
+      span.centre + span.gap / 2 + 0.8,
+      beastX + (companion ? 0.15 : 0) + 0.8,
+      ...actors.map((a) => fightWorldX(a.x) + actorHalfWidth(a)),
+    ),
     bottom: Math.min(0, ...actors.map((a) => fightWorldY(a.y))) - 0.08,
     top: Math.max(...tops) + 0.2,
   }

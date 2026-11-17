@@ -1,6 +1,10 @@
 <script lang="ts">
   import FightHeldButton from './FightHeldButton.svelte'
-  import type { FightInput } from '$lib/fighting/types'
+  import FightNenGuide from './FightNenGuide.svelte'
+  import { enProfile } from '$lib/fighting/en/profiles'
+  import { enDescription } from '$lib/fighting/en/presentation'
+  import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
+  export let fighter: ArcadeFighter | undefined = undefined
   export let language: 'fr' | 'en'
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
   const controls: { key: keyof FightInput; shortcut: string; label: string }[] = [
@@ -21,9 +25,12 @@
 >
   {#each controls as control (control.key)}
     <FightHeldButton
-      label={control.label.includes('/')
-        ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
-        : control.label}
+      label={control.key === 'en' && fighter
+        ? enDescription(fighter, language)
+        : control.label.includes('/')
+          ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
+          : control.label}
+      disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
       onHold={(active) => onControl(control.key, active)}
     >
       <kbd>{control.shortcut}</kbd>
@@ -32,6 +39,7 @@
         : control.label}
     </FightHeldButton>
   {/each}
+  <FightNenGuide {language} />
 </div>
 
 <style>

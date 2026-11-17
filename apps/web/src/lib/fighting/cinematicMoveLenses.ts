@@ -1,4 +1,5 @@
 import { moveById } from './movesets'
+import { bodyguardShotDetail } from './bodyguardCamera'
 import { fighterDefinition } from './roster'
 import { rig, prop, node } from './cinematicRules'
 import type { CameraDetail, CameraPart } from './cinematicTypes'
@@ -83,6 +84,10 @@ function chainTip(source: FighterId, slot?: string) {
   return source === 'kurapika' ? TIPS[slot ?? 'neutralSpecial'] : undefined
 }
 export function castCameraDetail(state: FightState, side: FightSide): CameraDetail {
+  return bodyguardShotDetail(state, side) ?? ordinaryCastCameraDetail(state, side)
+}
+
+function ordinaryCastCameraDetail(state: FightState, side: FightSide): CameraDetail {
   const attack = state[side].attack!
   const source = attack.hatsuSource ?? state[side].id
   const move = executedMove(state, side, source)

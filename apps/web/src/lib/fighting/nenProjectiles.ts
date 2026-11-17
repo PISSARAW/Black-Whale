@@ -1,4 +1,5 @@
 import { abilityPower } from './nenAbility'
+import { isBodyguardBullet } from './bodyguardFirearms'
 import { abilityCategories, categoryPower, fightCategoryEfficiency } from './nenCategories'
 import { fightAbility } from './nenAbility'
 import { shuObject } from './nenAdvanced'
@@ -8,7 +9,8 @@ export function isFirearmProjectile(projectile: FightProjectile): boolean {
   return (
     projectile.matter === 'object' &&
     projectile.shape === 'bullet' &&
-    ['theta', 'benjamin', 'camilla', 'feitan', 'musse'].includes(projectile.fighterId)
+    (isBodyguardBullet(projectile) ||
+      ['benjamin', 'camilla', 'feitan'].includes(projectile.fighterId))
   )
 }
 
@@ -29,12 +31,16 @@ export function commitProjectileNen(
 function commitThrownShu(projectile: FightProjectile, fighter: ArcadeFighter): FightProjectile {
   const shu =
     fighter.nen.mode !== 'zetsu' && !fighter.nen.on && fighter.nen.shu.includes(shuObject(fighter))
-  const power = 1 + 0.5 * fightCategoryEfficiency(fighter, 'enhancer')
+  const power =
+    1 +
+    0.5 * fightCategoryEfficiency(fighter, 'enhancer') +
+    Number(shu && fighter.nen.ko === 'hands') * 0.8
   const duration = Math.round(24 + 36 * fightCategoryEfficiency(fighter, 'emitter'))
   return {
     ...projectile,
     hatsuPower: 1,
     shuCharged: shu,
+    concealed: Boolean(projectile.concealed || (shu && fighter.nen.in)),
     nenPower: shu ? power : 1,
     shuFrames: shu ? duration : undefined,
   }

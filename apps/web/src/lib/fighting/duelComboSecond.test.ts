@@ -165,7 +165,7 @@ describe('second expansion power conditions', () => {
     expect(get(school)).toMatchObject({ complete: false, failed: true })
   })
 
-  it('lets Hanzo link a martial backhand after recovery without creating a projection', () => {
+  it('lets Hanzo chain a martial backhand without creating a projection', () => {
     let state = createCombatRouteFight(combatRoute('hanzo:precision'))
     for (const slot of ['standingLight', 'forwardLight'] as const) {
       const previous = state.impact?.sequence ?? 0
@@ -173,11 +173,9 @@ describe('second expansion power conditions', () => {
       for (let i = 0; i < 80 && (state.impact?.sequence ?? 0) === previous; i++) state = tick(state)
     }
     expect(comboChoices(state).find((choice) => choice.move.slot === 'backHeavy')).toMatchObject({
-      link: true,
-      status: 'wait',
+      link: false,
+      status: 'ready',
     })
-    expect(command(state, 'backHeavy').player.attack?.moveId).toBe('hanzo:forwardLight')
-    while (state.player.attack) state = tick(state)
     const linked = command(state, 'backHeavy')
     expect(linked.player.attack?.moveId).toBe('hanzo:backHeavy')
     expect(linked.player.hanzoProjection).toBeUndefined()

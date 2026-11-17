@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fightGroundContact } from '$lib/fighting/fightGroundContact'
+  import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
   import { createCinematicDetailScene } from '$lib/fighting/cinematicDetailScene'
@@ -18,6 +20,8 @@
     backgroundParticipants,
     stageBackgroundDescription,
   } from '$lib/fighting/stageBackgroundCatalogue'
+  import { presentedFigures } from '$lib/fighting/presentation/figures'
+  import { clashPresentation } from '$lib/fighting/presentation/profile'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
@@ -93,6 +97,7 @@
   let detailRect = cinematicDetailRect(1.7)
 
   onMount(() => {
+    clashPresentation.ensureLoaded()
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const visualComfort = () => effectiveFightComfort(comfort, motionPreference.matches)
     const cinematicDirector = createCinematicDirector({ viewer: () => viewer })
@@ -155,21 +160,12 @@
           return
         }
 
-        const buildFighter = (fighter: ArcadeFighter) =>
-          buildFightFigure({
-            THREE,
-            glow,
-            fighter,
-            observer: fighter === state[viewer] ? undefined : state[viewer],
-          })
-
-        // Rebuild only the fighter whose aura or body form changes; keep the stage.
-        const nenKey = (fighter: ArcadeFighter) =>
-          fightFigureKey(fighter) + String(state[viewer].nen.gyo)
-        const models = {
-          player: { model: buildFighter(state.player), nen: nenKey(state.player) },
-          opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
-        }
+        const { buildFighter, nenKey, buildReference, models } = presentedFigures({
+          build: buildFightFigure,
+          key: fightFigureKey,
+          resources: { THREE, glow },
+          read: () => ({ state, viewer, preferences: $clashPresentation.preferences }),
+        })
         scene.add(models.player.model.root, models.opponent.model.root)
         const victoryRenderer = createVictoryRenderer({ scene, camera, scenery: scenery.root })
         const detailScene = createCinematicDetailScene({
@@ -185,7 +181,11 @@
           worldX,
           worldY,
         })
-        const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
+        const projectionScene = createHanzoProjectionScene({
+          scene,
+          buildFighter: buildReference,
+          worldX,
+        })
         const fighterEffects = createFighterEffectScene({
           viewer: () => viewer,
           THREE,
@@ -234,8 +234,10 @@
         fit()
 
         const poseClock = createFightPoseClock()
+        const finishedFall = createFinishedFallPresentation()
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
+        let motionSeconds = 0
         const facings = {
           player: createFighterFacing(state.player.facing),
           opponent: createFighterFacing(state.opponent.facing),
@@ -249,18 +251,24 @@
         }
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, model, seconds } = options
-          const fighter = presentation.fighter(state, side)
+          const falling = finishedFall(state, side, {
+            fighter: presentation.fighter(state, side),
+            position: interpolatedPosition(state, side),
+            seconds,
+          })
+          const fighter = falling.fighter
           const opponent = presentation.fighter(state, side === 'player' ? 'opponent' : 'player')
           trackingSilhouettes.sync(model.root, { state, side, keep: keepCombatantMarkers })
-          const receivedImpact = state.impact?.attacker !== side ? state.impact?.sequence : 0
-          const progress = poseClock(side, fighter, { seconds, impact: receivedImpact })
-          const drawn = interpolatedPosition(state, side)
+          const impact = state.impact?.attacker === side ? null : state.impact
+          const receivedImpact = impact?.sequence
+          const progress =
+            falling.progress ?? poseClock(side, fighter, { seconds, impact: receivedImpact })
+          const drawn = falling.position
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
-          const impact = state.impact
-          const hitZone = impact && impact.attacker !== side ? impact.zone : undefined
+          const hitZone = impact?.zone
           const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
           const modelPose = motionOf(fighter).dash ? 'idle' : FIGHT_MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {
@@ -280,6 +288,7 @@
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
             transitionSeconds: transitionSecondsFor(fighter),
             strideClock: strideClock(side, worldX(drawn.x), fighter.facing),
+            afterMotion: fightGroundContact(fighter),
           })
         }
 
@@ -354,8 +363,9 @@
             animationFrame = requestAnimationFrame(render)
             return
           }
-          const seconds = presentationSeconds ?? now / 1000
           const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
+          motionSeconds += dt
+          const seconds = presentationSeconds ?? motionSeconds
           lastFrameAt = now
           impacts.emit(state, now)
           animateFighter({

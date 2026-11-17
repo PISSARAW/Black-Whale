@@ -46,11 +46,21 @@ describe('combat sound coverage', () => {
     { type: 'RYU', distribution: { hands: 70, torso: 10, head: 10, feet: 10 } },
     { type: 'ZETSU' },
   ])('hears $type even when the basic Nen mode stays the same', (action) => {
-    const before = fighting()
+    const before = action.type === 'EN' ? beginFight(createFight('hinrigh', 'hisoka')) : fighting()
+    if (action.type === 'EN') before.player.nen.mode = 'ren'
     const result = transitionNen(before.player.nen, action)
     const after = { ...before, player: { ...before.player, nen: result.state } }
     expect(fightSoundEvents(before, after).filter((event) => event.kind === 'nen')).toHaveLength(1)
     expect(fightSoundEvents(after, after)).toEqual([])
+  })
+
+  it('does not announce En from a stale flag on an unqualified body', () => {
+    const before = fighting()
+    const after = {
+      ...before,
+      player: { ...before.player, nen: { ...before.player.nen, en: { radius: 22 } } },
+    }
+    expect(fightSoundEvents(before, after).filter((event) => event.kind === 'nen')).toHaveLength(0)
   })
 
   it('plays an attack swish on its active frame, including a miss, once through hitstop', () => {

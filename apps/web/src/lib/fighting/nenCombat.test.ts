@@ -4,7 +4,7 @@ import { FIXED_STEP, attackData } from './frameData'
 import { resolveFightImpacts } from './combatImpact'
 import { resolvedDamage } from './combatDamage'
 import { applyAuraContext, advanceNen, auraFlowRate, nenAttackFactor, nenDamageFactor } from './nen'
-import { EN_RADIUS, SHU_BODY_SHARE, shuObject } from './nenAdvanced'
+import { SHU_BODY_SHARE, shuObject } from './nenAdvanced'
 import {
   FIGHT_CATEGORIES,
   abilityCategories,
@@ -85,17 +85,26 @@ function impact(state: FightState): FightState {
 }
 
 describe('Nen techniques in an actual 2D duel', () => {
-  it('En detects physical bodies in Zetsu, hidden aura and entering projectiles only inside its radius', () => {
-    const state = duel()
+  it('En detects bodies in Zetsu and accessible projectiles, while In hides aura', () => {
+    const state = duel('hinrigh')
     state.player = aura(state.player, { en: true })
     state.opponent = aura(state.opponent, { aura: true, down: true })
     expect(enContacts(state, 'player')).toBe(1)
-    expect(insideEn(state.player, { x: state.player.x + EN_RADIUS + 0.01, y: 0 })).toBe(false)
-    expect(insideEn(state.player, { x: state.player.x, y: EN_RADIUS + 1 })).toBe(false)
+    expect(
+      insideEn(state.player, { x: state.player.x + state.player.nen.en!.radius + 0.01, y: 0 }),
+    ).toBe(false)
+    expect(insideEn(state.player, { x: state.player.x, y: state.player.nen.en!.radius + 1 })).toBe(
+      false,
+    )
     const hidden = { ...shot(), owner: 'opponent' as const, concealed: true }
     state.projectiles = [hidden, { ...hidden, id: 2, x: 95 }]
+    expect(enContacts(state, 'player')).toBe(1)
+    state.projectiles = [
+      { ...hidden, concealed: false },
+      { ...hidden, id: 2, x: 95 },
+    ]
     expect(enContacts(state, 'player')).toBe(2)
-    expect(perceivesProjectile(state.player, hidden)).toBe(true)
+    expect(perceivesProjectile(state.player, hidden)).toBe(false)
     expect(
       perceivesProjectile({ ...state.player, nen: { ...state.player.nen, en: null } }, hidden),
     ).toBe(false)
@@ -103,14 +112,14 @@ describe('Nen techniques in an actual 2D duel', () => {
     expect(enContacts(state, 'player')).toBe(2) // Sleeping body and the incoming shot.
   })
 
-  it('maintains En with real upkeep and thinner defence, collapses on attack and forced Zetsu', () => {
-    const state = duel()
+  it('maintains Hinrigh’s En with real upkeep during attacks and stops in forced Zetsu', () => {
+    const state = duel('hinrigh')
     const en = aura(state.player, { en: true })
     expect(auraFlowRate(en)).toBeLessThan(-9)
     expect(nenDamageFactor(en, 'torso')).toBeGreaterThan(nenDamageFactor(state.player, 'torso'))
     expect(advanceNen(en, 1).aura).toBeLessThan(en.aura - 9)
     const attack = performAttack({ ...state, player: en }, 'player', 'light')
-    expect(attack.player.nen.en).toBeNull()
+    expect(attack.player.nen.en).toMatchObject({ radius: 20 })
     const zetsu = aura(en, {
       en: true,
       shu: true,
@@ -123,7 +132,7 @@ describe('Nen techniques in an actual 2D duel', () => {
     expect(aura(en, {}).nen.en).toBeNull()
   })
 
-  it('En and Gyo help a deliberately timed parry; concealed aura defeats an unread late parry', () => {
+  it('En supplies contact without extra parry frames; Gyo helps timing; concealed aura defeats an unread late parry', () => {
     const original = performAuraAttack({
       state: duel('kurapika', 'phinks'),
       side: 'player',
@@ -138,7 +147,7 @@ describe('Nen techniques in an actual 2D duel', () => {
     expect(impact(guarded).impact?.parried).toBe(false)
     expect(
       impact({ ...guarded, opponent: aura(guarded.opponent, { en: true }) }).impact?.parried,
-    ).toBe(true)
+    ).toBe(false)
     expect(
       impact({ ...guarded, opponent: aura(guarded.opponent, { gyo: true }) }).impact?.parried,
     ).toBe(true)
@@ -226,7 +235,7 @@ describe('Nen techniques in an actual 2D duel', () => {
     expect(perceivesProjectile(aura(state.opponent, { gyo: true }), hidden)).toBe(true)
     expect(perceivesProjectile(state.opponent, { ...hidden, matter: 'object' })).toBe(true)
     expect(nenDamageFactor(aura(state.opponent, { gyo: true }), 'torso')).toBeGreaterThan(
-      nenDamageFactor(state.opponent, 'torso'),
+      nenDamageFactor(aura(state.opponent, { aura: true }), 'torso'),
     )
     expect(aura(aura(state.player, { gyo: true }), {}).nen.gyo).toBe(false)
   })
@@ -299,7 +308,7 @@ describe('Nen techniques in an actual 2D duel', () => {
   })
 
   it('runs the new controls through both local fighters and clears them at exhaustion', () => {
-    const state = duel()
+    const state = duel('hinrigh')
     const next = tickFight(
       state,
       { ...EMPTY_INPUT, en: true },
@@ -418,13 +427,16 @@ describe('Category components and Emperor Time', () => {
     expect(executed.player.nenOwner).toBeUndefined()
   })
 
-  it('En locates an In-concealed tether crossing the field even with a distant anchor', () => {
+  it('In conceals a tether from En, while Gyo reveals its aura', () => {
     const state = duel('phinks', 'hisoka')
     state.player = aura(state.player, { en: true })
     state.opponent.x = 95
     state.bungeeGum = { owner: 'opponent', target: 'player', hidden: true, retracting: false }
-    expect(bungeeVisible(state)).toBe(true)
-    expect(enContacts(state, 'player')).toBe(1)
+    expect(bungeeVisible(state)).toBe(false)
+    expect(enContacts(state, 'player')).toBe(0)
+    const seen = { ...state, player: aura(state.player, { en: true, gyo: true }) }
+    expect(enContacts(seen, 'player')).toBe(1)
+    expect(bungeeVisible(seen)).toBe(true)
     expect(bungeeVisible({ ...state, player: aura(state.player, {}) })).toBe(false)
   })
 

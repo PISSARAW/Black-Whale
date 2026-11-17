@@ -1,0 +1,432 @@
+{
+  "version": 1,
+  "scope": "six-fighter-expression-rendering-on-one-machine",
+  "date": "2026-11-17",
+  "machine": {
+    "cpu": "Apple M5",
+    "cores": 10
+  },
+  "captureCases": 24,
+  "renderErrors": [],
+  "cadence": [
+    {
+      "fighter": "kurapika",
+      "expressions": false,
+      "duration": 12,
+      "load": [4.00439453125, 8.607421875, 10.29736328125],
+      "fps": 60.002169758572634,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109,
+        "max": 16.80000000000109
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5999999940395355,
+        "p50": 2.0999999940395355,
+        "p95": 2.9000000059604645,
+        "p99": 3.5,
+        "max": 4
+      },
+      "pass": true,
+      "frame": 899,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 165,
+      "textures": 3
+    },
+    {
+      "fighter": "kurapika",
+      "expressions": true,
+      "duration": 12,
+      "load": [3.41259765625, 8.25048828125, 10.14013671875],
+      "fps": 60.00200006666888,
+      "intervals": {
+        "count": 720,
+        "min": 16.5,
+        "p50": 16.700000000000728,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 720,
+        "min": 0.7000000029802322,
+        "p50": 2.5,
+        "p95": 3.5,
+        "p99": 3.7999999970197678,
+        "max": 4.200000002980232
+      },
+      "pass": true,
+      "frame": 901,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 165,
+      "textures": 3
+    },
+    {
+      "fighter": "benjamin",
+      "expressions": false,
+      "duration": 12,
+      "load": [2.865234375, 7.89453125, 9.9794921875],
+      "fps": 60.00216975857263,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5999999940395355,
+        "p50": 3.2000000029802322,
+        "p95": 3.9000000059604645,
+        "p99": 4.200000002980232,
+        "max": 4.5
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 152,
+      "textures": 3
+    },
+    {
+      "fighter": "benjamin",
+      "expressions": true,
+      "duration": 12,
+      "load": [3.02392578125, 7.685546875, 9.86865234375],
+      "fps": 60.0020000666689,
+      "intervals": {
+        "count": 720,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 720,
+        "min": 0.7999999970197678,
+        "p50": 1.1000000089406967,
+        "p95": 2.9000000059604645,
+        "p99": 3.2999999970197678,
+        "max": 3.9000000059604645
+      },
+      "pass": true,
+      "frame": 901,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 152,
+      "textures": 3
+    },
+    {
+      "fighter": "hisoka",
+      "expressions": false,
+      "duration": 12,
+      "load": [4.99853515625, 7.80859375, 9.85986328125],
+      "fps": 60.002500104171006,
+      "intervals": {
+        "count": 720,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 720,
+        "min": 0.7000000029802322,
+        "p50": 1,
+        "p95": 1.1000000089406967,
+        "p99": 1.2000000029802322,
+        "max": 1.7000000029802322
+      },
+      "pass": true,
+      "frame": 902,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 147,
+      "textures": 3
+    },
+    {
+      "fighter": "hisoka",
+      "expressions": true,
+      "duration": 12,
+      "load": [5.0654296875, 7.6865234375, 9.7802734375],
+      "fps": 60.00267049437526,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5999999940395355,
+        "p50": 0.9000000059604645,
+        "p95": 1.1000000089406967,
+        "p99": 1.4000000059604645,
+        "max": 2.0999999940395355
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 147,
+      "textures": 3
+    },
+    {
+      "fighter": "chrollo",
+      "expressions": false,
+      "duration": 12,
+      "load": [4.9404296875, 7.5234375, 9.6845703125],
+      "fps": 60.00267049437526,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.699999988079071,
+        "p50": 2.2999999970197678,
+        "p95": 3,
+        "p99": 3.5999999940395355,
+        "max": 4.100000008940697
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 175,
+      "textures": 3
+    },
+    {
+      "fighter": "chrollo",
+      "expressions": true,
+      "duration": 12,
+      "load": [4.27001953125, 7.25146484375, 9.54931640625],
+      "fps": 60.00317123853557,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291,
+        "max": 16.80000000000291
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5999999940395355,
+        "p50": 1.7999999970197678,
+        "p95": 2.7999999970197678,
+        "p99": 3.0999999940395355,
+        "max": 3.5
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 175,
+      "textures": 3
+    },
+    {
+      "fighter": "feitan",
+      "expressions": false,
+      "duration": 12,
+      "load": [3.76123046875, 6.9423828125, 9.38427734375],
+      "fps": 60.00267049437518,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "p99": 16.800000000017462,
+        "max": 16.800000000017462
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.699999988079071,
+        "p50": 2.5,
+        "p95": 3.5999999940395355,
+        "p99": 4.5,
+        "max": 6.200000002980232
+      },
+      "pass": true,
+      "frame": 899,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 155,
+      "textures": 2
+    },
+    {
+      "fighter": "feitan",
+      "expressions": true,
+      "duration": 12,
+      "load": [3.931640625, 6.81591796875, 9.29541015625],
+      "fps": 59.83576459592088,
+      "intervals": {
+        "count": 717,
+        "min": 16.5,
+        "p50": 16.699999999982538,
+        "p95": 16.79999999998836,
+        "p99": 16.800000000017462,
+        "max": 50
+      },
+      "cpu": {
+        "count": 717,
+        "min": 0.8999999910593033,
+        "p50": 2.4000000059604645,
+        "p95": 3.2000000029802322,
+        "p99": 3.4000000059604645,
+        "max": 30.200000002980232
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 155,
+      "textures": 2
+    },
+    {
+      "fighter": "phinks",
+      "expressions": false,
+      "duration": 12,
+      "load": [6.080078125, 7.1376953125, 9.36572265625],
+      "fps": 60.00267049437518,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.699999999982538,
+        "p95": 16.79999999998836,
+        "p99": 16.800000000017462,
+        "max": 16.800000000017462
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5,
+        "p50": 0.800000011920929,
+        "p95": 1.0999999940395355,
+        "p99": 1.1000000089406967,
+        "max": 1.4000000059604645
+      },
+      "pass": true,
+      "frame": 900,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 132,
+      "textures": 2
+    },
+    {
+      "fighter": "phinks",
+      "expressions": true,
+      "duration": 12,
+      "load": [5.84619140625, 7.03271484375, 9.28857421875],
+      "fps": 60.00267049437518,
+      "intervals": {
+        "count": 719,
+        "min": 16.5,
+        "p50": 16.699999999982538,
+        "p95": 16.79999999998836,
+        "p99": 16.800000000017462,
+        "max": 16.800000000017462
+      },
+      "cpu": {
+        "count": 719,
+        "min": 0.5999999940395355,
+        "p50": 0.7999999970197678,
+        "p95": 1,
+        "p99": 1.0999999940395355,
+        "max": 1.2999999970197678
+      },
+      "pass": true,
+      "frame": 901,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+      "geometries": 134,
+      "textures": 2
+    }
+  ],
+  "pass": true,
+  "durationPerPass": 12,
+  "warmupSeconds": 3,
+  "graphics": "balanced",
+  "viewport": [1280, 900],
+  "deviceScaleFactor": 2,
+  "comparison": "Same bundle; expression layer suspended then active; scripted commands by simulation frame",
+  "limits": [
+    "Short checks on one shared machine, not the full step-2 campaign",
+    "Baseline shares the prepared mouth geometry; suspension removes facial updates and body accents",
+    "Preliminary completion-clock measurements retained in output/fighting-expressions/report-initial.json; the 30 FPS passage was not reproduced in the RAF comparison"
+  ],
+  "bundleFiles": [
+    {
+      "path": "assets/CopyShader-BzTUYzf6.js",
+      "sha256": "d5c880fbab6c1915c1797eb18ec6ace6c1d2d3c5e368e8e02f8ecb4cbdfa6d92"
+    },
+    {
+      "path": "assets/EffectComposer-CwRD_mHF.js",
+      "sha256": "d64b52a855e0be1e43f5e4d35e4d77cb641b1c9a46f8177531e9eb7c9b594b07"
+    },
+    {
+      "path": "assets/OutputPass-CWO1b4zS.js",
+      "sha256": "200e22f1c8895ab083815b9480ad7cf17944dbeefc7bfb4d1c5095dccea4028e"
+    },
+    {
+      "path": "assets/Pass-DEPkSmSm.js",
+      "sha256": "a4c7a89cb214f9cf604c7528b7098c43eb62040b4a81f2e97885b4ef4a9abe33"
+    },
+    {
+      "path": "assets/Reflector-KE6FSnMO.js",
+      "sha256": "0dae93ff48a0b8908ed65dacabd1aa0d542f40f2854ed4b45c5119dd378ec125"
+    },
+    {
+      "path": "assets/ShaderPass--1kz5dzX.js",
+      "sha256": "64ff7f654724c5afbd807037fedfd2d9e49c76bfdbcd17d80b1223591463dc1f"
+    },
+    {
+      "path": "assets/UnrealBloomPass-ByxYJjEu.js",
+      "sha256": "49e92d8867cf6d9eff3893a1fc073ae03f338149b05961cc9276db9ad93097d2"
+    },
+    {
+      "path": "assets/fighterFigure-mfDJ58HR.js",
+      "sha256": "4b20c7c71b1733c34400e99876bf054b35fe86c136ae5cd5fa8b21fdf539926d"
+    },
+    {
+      "path": "assets/index-Bhuo13Il.js",
+      "sha256": "eec8978d09e1e3471f334c8ce4308249e94f252a0fb3ff0f3f7c04faf6af09ee"
+    },
+    {
+      "path": "assets/index-COB-ANjD.css",
+      "sha256": "e3f8bfc930e1b735ab831d6f9e973222d15bb29283e960783ac9ead887526f28"
+    },
+    {
+      "path": "assets/renderer-DkWnNvJB.js",
+      "sha256": "fd8cc650d474515f6d5af21e6084f6335ea1afd38dab6c62fb6d7fe47129188f"
+    },
+    {
+      "path": "assets/stagePost-DbqzOw5M.js",
+      "sha256": "61f6d1f6b38cfde0eed71d5ad7f57d895caa4f990a6883ac9ce5ffb1dca412d2"
+    },
+    {
+      "path": "assets/stageScenery-HIqeMnr-.js",
+      "sha256": "559e8599cb70c36acbca29c867e7b67d5c7421feacb337b9b9cef1809f368897"
+    },
+    {
+      "path": "assets/stageShipRoom-F-lR_NFU.js",
+      "sha256": "dc5b0de8f19f5d130261fd1a96aa4854a9794d9c29c107138a27ccd6bb330a6c"
+    },
+    {
+      "path": "ui-tests/fighting-expressions/index.html",
+      "sha256": "2be4e7cd83738d1ece8ecc7ec307fc2d052328f8494f6471118259c2999430f1"
+    }
+  ],
+  "validation": {
+    "targetedTests": 79,
+    "targetedLint": "passed",
+    "svelteCheck": {
+      "files": 4271,
+      "errors": 0,
+      "warnings": 0
+    }
+  }
+}

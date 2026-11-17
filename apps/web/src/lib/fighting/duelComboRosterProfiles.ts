@@ -4,26 +4,27 @@ export const ROSTER_DUEL_PROFILES = {
   hisoka: {
     window: 7,
     block: 'standingHeavy',
+    grammar: { specials: ['lowHeavy', 'backHeavy'], supers: ['neutralSpecial', 'finisher'] },
     moves: {
       standingLight: {
-        tuning: { startup: 3, hitstun: 18, knockback: 1 },
+        tuning: { startup: 3, hitstun: 12, knockback: 1 },
         into: ['standingHeavy', 'forwardLight'],
       },
       lowLight: {
-        tuning: { startup: 4, hitstun: 18, knockback: 0.8 },
+        tuning: { startup: 4, hitstun: 14, knockback: 0.8 },
         into: ['forwardLight', 'standingHeavy'],
       },
       standingHeavy: {
-        tuning: { startup: 8, hitstun: 26, knockback: 1.5, reach: 11.5 },
-        into: ['lowHeavy', 'backHeavy', 'neutralSpecial', 'finisher'],
+        tuning: { startup: 8, hitstun: 19, knockback: 1.5, reach: 11.5 },
+        into: [],
       },
       forwardLight: {
-        tuning: { startup: 6, hitstun: 23, knockback: 1, reach: 11.5, lunge: 1.3 },
-        into: ['forwardHeavy', 'neutralSpecial', 'standingHeavy'],
+        tuning: { startup: 6, hitstun: 16, knockback: 1, reach: 11.5, lunge: 1.3 },
+        into: ['forwardHeavy', 'standingHeavy'],
       },
       forwardHeavy: {
         tuning: { startup: 11, hitstun: 24, knockback: 1.8, reach: 14 },
-        into: ['neutralSpecial'],
+        into: [],
       },
       backHeavy: {
         tuning: { startup: 12, recovery: 22, damage: 14, knockback: 7, reach: 14 },
@@ -42,27 +43,28 @@ export const ROSTER_DUEL_PROFILES = {
   chrollo: {
     window: 6,
     block: 'backHeavy',
+    grammar: { specials: ['lowHeavy', 'forwardLight'], supers: ['neutralSpecial'] },
     moves: {
       standingLight: {
-        tuning: { startup: 4, hitstun: 18, knockback: 0.7 },
+        tuning: { startup: 4, hitstun: 14, knockback: 0.7 },
         into: ['backHeavy', 'standingHeavy'],
       },
       lowLight: {
-        tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
+        tuning: { startup: 5, hitstun: 16, knockback: 0.7 },
         into: ['standingHeavy', 'backHeavy'],
       },
       standingHeavy: {
-        tuning: { startup: 8, active: 4, recovery: 9, hitstun: 27, knockback: 1.2, reach: 10.5 },
-        into: ['neutralSpecial', 'lowHeavy', 'forwardLight'],
-        links: ['backHeavy'],
+        // Lot 3: the former recovery link into the back heavy is a chain (see COMBO_GRAMMAR.md).
+        tuning: { startup: 8, active: 4, recovery: 9, hitstun: 16, knockback: 1.2, reach: 10.5 },
+        into: ['backHeavy'],
       },
       backHeavy: {
         tuning: { startup: 9, hitstun: 23, knockback: 1, reach: 11.5, lunge: 1.1 },
-        into: ['neutralSpecial', 'lowHeavy', 'forwardLight'],
+        into: [],
       },
       forwardHeavy: {
         tuning: { startup: 13, hitstun: 23, knockback: 1.5, reach: 13, lunge: 1.5 },
-        into: ['neutralSpecial'],
+        into: [],
       },
       lowHeavy: {
         tuning: { startup: 10, recovery: 19, damage: 10, knockback: 3.1, reach: 11.5 },
@@ -80,26 +82,28 @@ export const ROSTER_DUEL_PROFILES = {
   feitan: {
     window: 5,
     block: 'standingHeavy',
+    grammar: { specials: ['lowHeavy', 'forwardHeavy'], supers: ['forwardSpecial'] },
     moves: {
       standingLight: {
-        tuning: { startup: 3, hitstun: 17, knockback: 0.8 },
+        tuning: { startup: 3, hitstun: 11, knockback: 0.8 },
         into: ['standingHeavy', 'forwardLight'],
       },
       lowLight: {
-        tuning: { startup: 4, hitstun: 18, knockback: 0.7 },
+        tuning: { startup: 4, hitstun: 14, knockback: 0.7 },
         into: ['forwardLight', 'standingHeavy'],
       },
       standingHeavy: {
-        tuning: { startup: 7, hitstun: 24, knockback: 1.2, reach: 11.5 },
-        into: ['forwardLight', 'lowHeavy', 'forwardHeavy', 'forwardSpecial'],
+        tuning: { startup: 7, hitstun: 19, knockback: 1.2, reach: 11.5 },
+        into: ['forwardLight'],
       },
       forwardLight: {
-        tuning: { startup: 5, hitstun: 22, knockback: 0.8, reach: 11.5, lunge: 1.3 },
-        into: ['backHeavy', 'forwardHeavy', 'lowHeavy', 'forwardSpecial'],
+        // +3 at most: Feitan's jab starts in 3 frames, so +4 would link back into it.
+        tuning: { startup: 5, hitstun: 15, knockback: 0.8, reach: 11.5, lunge: 1.3 },
+        into: ['backHeavy'],
       },
       backHeavy: {
-        tuning: { startup: 7, hitstun: 24, knockback: 1, reach: 12, lunge: 1.2 },
-        into: ['forwardHeavy', 'forwardSpecial', 'lowHeavy'],
+        tuning: { startup: 7, hitstun: 19, knockback: 1, reach: 12, lunge: 1.2 },
+        into: [],
       },
       lowHeavy: {
         tuning: { startup: 8, recovery: 17, damage: 9, knockback: 3.1, reach: 12 },

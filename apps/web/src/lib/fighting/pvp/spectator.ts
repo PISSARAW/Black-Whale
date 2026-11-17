@@ -15,6 +15,7 @@ export function spectatorSnapshot(state: FightState) {
   const publicState = privatePvpState(privatePvpState(actual, 'player'), 'opponent')
   // The second projection swaps seats. Restore the canonical order without restoring private data.
   const view = localPerspective(publicState, true) as FightState
+  view.enReadings = undefined
   view.parallelFuture = undefined
   view.commandFeedback = undefined
   view.bungeeGum = state.bungeeGum?.hidden ? null : state.bungeeGum

@@ -1,0 +1,178 @@
+{
+  "version": 2,
+  "scope": "all-selectable-fighters-on-one-machine",
+  "startedAt": "2026-11-17T11:50:54.892Z",
+  "machine": {
+    "cpu": "Apple M5",
+    "cores": 10
+  },
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+  "graphics": "balanced",
+  "viewport": [1280, 900],
+  "deviceScaleFactor": 2,
+  "roster": 40,
+  "captureCases": 160,
+  "cadencePassages": 80,
+  "durationPerPass": 8,
+  "warmupSeconds": 3,
+  "complete": true,
+  "pass": true,
+  "renderErrors": [],
+  "columns": [
+    "fighter",
+    "baselineFPS",
+    "expressionsFPS",
+    "intervalP95ms",
+    "intervalP99ms",
+    "cpuP95ms",
+    "bothPass"
+  ],
+  "results": [
+    ["kurapika", 60.0, 60.0, 16.8, 16.8, 3, true],
+    ["hisoka", 60.0, 60.0, 16.7, 16.8, 4.5, true],
+    ["chrollo", 60.0, 60.0, 16.8, 16.8, 3.4, true],
+    ["benjamin", 60.0, 60.0, 16.7, 16.8, 3.3, true],
+    ["tserriednich", 60.0, 60.0, 16.8, 16.8, 3.6, true],
+    ["feitan", 60.0, 60.0, 16.8, 16.8, 8.5, true],
+    ["saiyu", 59.88, 60.0, 16.7, 16.8, 4.4, true],
+    ["theta", 60.0, 60.0, 16.8, 16.8, 3.7, true],
+    ["biscuit", 60.0, 60.0, 16.8, 16.8, 3.9, true],
+    ["phinks", 60.0, 60.0, 16.7, 16.8, 3.9, true],
+    ["franklin", 60.0, 60.0, 16.8, 16.8, 4.5, true],
+    ["machi", 60.0, 60.0, 16.8, 16.8, 4.5, true],
+    ["illumi", 59.88, 60.0, 16.7, 16.8, 4.3, true],
+    ["kalluto", 60.0, 59.75, 16.7, 16.8, 4.3, true],
+    ["bonolenov", 59.88, 60.0, 16.7, 16.8, 4.2, true],
+    ["shizuku", 60.0, 60.0, 16.7, 16.8, 4.4, true],
+    ["hinrigh", 60.0, 59.75, 16.7, 16.8, 4.1, true],
+    ["mizaistom", 60.0, 60.0, 16.7, 16.8, 4.2, true],
+    ["leorio", 60.0, 60.0, 16.7, 16.8, 5.4, true],
+    ["hanzo", 60.0, 60.0, 16.7, 16.8, 5.4, true],
+    ["rihan", 60.0, 60.0, 16.8, 16.8, 4.4, true],
+    ["zakuro", 60.0, 60.0, 16.7, 16.8, 4.6, true],
+    ["melody", 60.0, 60.0, 16.8, 16.8, 4.6, true],
+    ["basho", 60.0, 60.0, 16.7, 16.8, 4.2, true],
+    ["camilla", 60.0, 60.0, 16.8, 16.8, 4.1, true],
+    ["halkenburg", 60.0, 59.88, 16.8, 16.8, 3.9, true],
+    ["gel", 60.0, 60.0, 16.7, 16.8, 3.9, true],
+    ["lynch", 60.0, 60.0, 16.7, 16.8, 3.7, true],
+    ["luini", 60.0, 60.0, 16.7, 16.8, 4.2, true],
+    ["bill", 60.0, 59.88, 16.8, 16.8, 3.8, true],
+    ["furykov", 60.0, 60.0, 16.8, 16.8, 3.3, true],
+    ["cluck", 60.0, 60.0, 16.8, 16.8, 2.8, true],
+    ["beyond", 60.0, 60.0, 16.8, 16.8, 2.4, true],
+    ["longhi", 60.0, 60.0, 16.8, 16.8, 3, true],
+    ["musse", 60.0, 60.0, 16.8, 16.8, 2.5, true],
+    ["padaille", 60.0, 60.0, 16.8, 16.8, 2.1, true],
+    ["sayird", 60.0, 60.0, 16.7, 16.8, 2.1, true],
+    ["terebellum", 60.0, 60.0, 16.8, 16.8, 2.1, true],
+    ["voconte", 60.0, 59.75, 16.8, 16.8, 2.1, true],
+    ["yokotani", 60.0, 59.88, 16.7, 16.8, 5, true]
+  ],
+  "bundle": {
+    "sha256": "7b4b215a0b0459d092b2f3f33a19a8c400cde6ba1bdf89f9636813d0bd586504",
+    "files": [
+      {
+        "path": "assets/CopyShader-BzTUYzf6.js",
+        "sha256": "d5c880fbab6c1915c1797eb18ec6ace6c1d2d3c5e368e8e02f8ecb4cbdfa6d92"
+      },
+      {
+        "path": "assets/EffectComposer-fJoR6yZr.js",
+        "sha256": "ec09c761e32d8d1427479014f7cbf81e318d684e86c2f47ae0eda25e33b2091c"
+      },
+      {
+        "path": "assets/fighterFigure-kdSoSgZQ.js",
+        "sha256": "14d3e37bfa837e1d22f975a5ba4f76444ece154a6b0e8dd779febc8e576b9084"
+      },
+      {
+        "path": "assets/index-COB-ANjD.css",
+        "sha256": "e3f8bfc930e1b735ab831d6f9e973222d15bb29283e960783ac9ead887526f28"
+      },
+      {
+        "path": "assets/index-DslJCRuL.js",
+        "sha256": "f1587a6387a05e8b50f4911bd035f10265960f92367e40e9c50a994d64607c32"
+      },
+      {
+        "path": "assets/OutputPass-ZyDHCSzm.js",
+        "sha256": "3beb1ef44a40c3f136bec40ca4b6c30bc3428118e4dc32affccee28e26f281f2"
+      },
+      {
+        "path": "assets/Pass-C0Ev8ymv.js",
+        "sha256": "9b8750979b705df993c64e8d32376a2b9cc5361197598f3011bd5cf37f706d9c"
+      },
+      {
+        "path": "assets/Reflector-DG9GhJJR.js",
+        "sha256": "c66c33b61ef635038d09909daf158d758a08a1768ad13558073d06e06f1bd572"
+      },
+      {
+        "path": "assets/renderer-B82rgUSs.js",
+        "sha256": "5b9b1420467b2701725699b2c2a1037ee357d57e84c1b47d1ff56e95d2497508"
+      },
+      {
+        "path": "assets/ShaderPass-C6TfSDIr.js",
+        "sha256": "c86e7b2467f0196c8e98402e2b4d64241ca25cbf2567a7452c931c2398ef4987"
+      },
+      {
+        "path": "assets/stagePost-Cu2eSVsK.js",
+        "sha256": "0f007c06afd944032753898f013e85c5b12acd60642c049404100da7fb2daf3a"
+      },
+      {
+        "path": "assets/stageScenery-VIjxIIGs.js",
+        "sha256": "ddbedc151dd913665c9b264733ad76aa208d7c4ad2682de420b16e4d0fc6b2ac"
+      },
+      {
+        "path": "assets/stageShipRoom-DDcleNKB.js",
+        "sha256": "f5fa8be395767055121d6f68dc6cef478e97efdb4bde5119248f8611c5339bd4"
+      },
+      {
+        "path": "assets/UnrealBloomPass-CI2wq5n6.js",
+        "sha256": "cf546ca43d3453b7950eedb1c972010ea97c2b58f5e72b27ece0da433473e5ec"
+      },
+      {
+        "path": "ui-tests/fighting-expressions/index.html",
+        "sha256": "581ec8e3b1753b166ac949aa31b2021f89c1eee715b8108e4c6aeeba36c661c8"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressions.ts",
+      "sha256": "aed9083638cfea7f53e31050949ea1ab4e22dc2645d556f8c6c070d2e07750c5"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressionProfiles.ts",
+      "sha256": "979afcb4fff77dcf06e30d15a5b6689ec61d7f09efb0b32bad88f91455005379"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressionFeatures.ts",
+      "sha256": "752eafbf427b7c0ed0c414b1229fa1a41431d366a01505f1f9be138ee127e606"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressionRig.ts",
+      "sha256": "b865b16ced404fda165018aebe7f0b8a3865cd61d2ee72208232e194c749e6d6"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressionMouth.ts",
+      "sha256": "c56d7fb3a749c9be7da79b295d1298a5a22ab4829a4880d961f22fcba7b0ad17"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightExpressionMotion.ts",
+      "sha256": "3ec15fcaad30e7f2e304c86a718e5fbbac2de82a039c457c161e772e54022cee"
+    }
+  ],
+  "limits": [
+    "Short checks of physical attacks on a shared machine; no universal hardware guarantee",
+    "The suspended comparison retains prepared morph geometries",
+    "This does not requalify all Hatsu stress scenarios from step 2"
+  ],
+  "validation": {
+    "targetedApplicationTests": 139,
+    "ratchetTests": 5,
+    "targetedLint": "passed",
+    "svelteCheck": {
+      "files": 4286,
+      "errors": 0,
+      "warnings": 0
+    }
+  }
+}

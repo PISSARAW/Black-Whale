@@ -75,11 +75,11 @@ describe.each(FIGHTERS)('%s conversion choices', (fighter) => {
 })
 
 describe('seventh expansion personal mechanics', () => {
-  it('Tserriednich waits for the advancing light to recover before linking the heavy', () => {
+  it('Tserriednich chains the heavy from the advancing light under the derived grammar', () => {
     const state = play('tserriednich:precision', { steps: 2 }).state
     const choice = comboChoices(state).find((entry) => entry.move.slot === 'standingHeavy')
-    expect(choice).toMatchObject({ link: true, status: 'wait' })
-    expect(command(state, 'standingHeavy').player.attack).toBe(state.player.attack)
+    expect(choice).toMatchObject({ link: false, status: 'ready' })
+    expect(command(state, 'standingHeavy').player.attack?.moveId).toBe('tserriednich:standingHeavy')
     const result = play('tserriednich:five-strikes')
     expect(result.state.opponent.comboHits).toBe(5)
     expect(result.spent).toBe(0)

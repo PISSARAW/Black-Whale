@@ -4,6 +4,7 @@
   import { moveById } from '$lib/fighting/movesets'
   import type { FighterMove } from '$lib/fighting/movesetTypes'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
+  import { formatFrameAdvantage, moveFrameAdvantage } from '$lib/fighting/moveFrameAdvantage'
   const bindings = useFightBindings()
   export let touch = false
   export let move: FighterMove
@@ -18,11 +19,16 @@
     .join(' → ')
   $: hitRoutes = move.cancelWindow ? move.cancelInto.map((id) => moveById(id)).filter(Boolean) : []
   $: links = (move.linkInto ?? []).map((id) => moveById(id)).filter(Boolean)
+  $: frames = moveFrameAdvantage(move)
 </script>
 
 {#if move.tuning.damage > 0 || move.category === 'throw'}
   <small class="move-properties">
     {guard}
+    {#if frames}
+      · {frames.startup}f · {language === 'fr' ? 'touche' : 'hit'}
+      {formatFrameAdvantage(frames.onHit, language)} · {language === 'fr' ? 'garde' : 'block'}
+      {formatFrameAdvantage(frames.onBlock, language)}{/if}
     {#if move.canHitDowned}
       · {language === 'fr' ? 'Touche au sol' : 'Hits downed targets'}{/if}
     {#if blockRoutes}

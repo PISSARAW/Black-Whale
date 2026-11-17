@@ -1,3 +1,4 @@
+import { interruptUnstableEn } from './en/interruptions'
 import { advanceEasterEggs } from './easterEggs'
 import { simulateVoconteDoorFrame } from './voconteDoorFrame'
 import { stepTrainingFrame } from './trainingFrame'
@@ -16,9 +17,12 @@ export function simulateClashFrame(
   controls: FutureControls,
   engine: FrameEngine,
 ): FightState {
-  return stepTrainingFrame(state, controls, {
-    simulate: (current, inputs) =>
-      advanceEasterEggs(simulateVoconteDoorFrame(current, inputs, engine), current.hitstop === 0),
-    attack: engine.attack,
-  })
+  return interruptUnstableEn(
+    state,
+    stepTrainingFrame(state, controls, {
+      simulate: (current, inputs) =>
+        advanceEasterEggs(simulateVoconteDoorFrame(current, inputs, engine), current.hitstop === 0),
+      attack: engine.attack,
+    }),
+  )
 }

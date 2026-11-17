@@ -1,5 +1,11 @@
+import { interruptEnForSpeech } from './en/interruptions'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
-import { speechRecipient, recipientBody, recipientHears, recordHeardWords } from './fightSpeechRecipient'
+import {
+  speechRecipient,
+  recipientBody,
+  recipientHears,
+  recordHeardWords,
+} from './fightSpeechRecipient'
 import { canSpeak, senseDeprived } from './saiyuSenses'
 import { sleepingBody } from './hanzoProjection'
 import { paperAvailable, paperState, hasPlantedPaper } from './kallutoPaper'
@@ -42,6 +48,7 @@ export function speakPaperWords(
     }
   }
   const recipient = speechRecipient(state, speaker, target)
+  next = interruptEnForSpeech(next, speaker)
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
   return resolveJudgmentCommunication(next, speaker, recipientBody(state, recipient).id)
@@ -60,12 +67,19 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
   )
 }
 
-function normalizeSpokenWords(message: string | {text: string; recipient?: string}) {
-  return typeof message === 'string' ? { text: message.trim(), target: undefined }
+function normalizeSpokenWords(message: string | { text: string; recipient?: string }) {
+  return typeof message === 'string'
+    ? { text: message.trim(), target: undefined }
     : { text: message.text.trim(), target: message.recipient }
 }
 
 function voluntarySpeechMind(fighter: ArcadeFighter): boolean {
-  return (fighter.kurapika?.blackoutFrames ?? 0) === 0 &&
-    ![fighter.hatsuEffects.manipulatedFrames, fighter.hatsuEffects.possessedFrames, fighter.hatsuEffects.momozeFrames].some((frames) => frames > 0)
+  return (
+    (fighter.kurapika?.blackoutFrames ?? 0) === 0 &&
+    ![
+      fighter.hatsuEffects.manipulatedFrames,
+      fighter.hatsuEffects.possessedFrames,
+      fighter.hatsuEffects.momozeFrames,
+    ].some((frames) => frames > 0)
+  )
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import { defaultFightComfort } from '$lib/fighting/fightComfort'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
   import FightResources from '$lib/components/fighting/FightResources.svelte'
   import { beginFight, createFight, tickFight } from '$lib/fighting/engine'
@@ -7,13 +8,13 @@
   import { movementKeys, opponentMovementKeys } from '../../src/routes/fighting/fightingKeys'
   import { EMPTY_INPUT, type FightInput, type FighterId } from '$lib/fighting/types'
 
-  let state = fresh('hisoka')
+  let state = fresh('hinrigh')
   let input = { ...EMPTY_INPUT }
   let opponentInput = { ...EMPTY_INPUT }
   let language: 'fr' | 'en' = 'fr'
 
   function fresh(player: FighterId) {
-    const next = beginFight(createFight(player, 'hisoka', { mode: 'versus-local' }))
+    const next = beginFight(createFight(player, 'hinrigh', { mode: 'versus-local' }))
     return {
       ...next,
       player: { ...next.player, x: 40, aura: 100 },
@@ -61,7 +62,13 @@
   onkeyup={(event) => keyboard(event, false)}
 />
 <main>
-  <div class="arena"><FightScene {state} stageId="heavens-arena" /></div>
+  <div class="arena">
+    <FightScene
+      {state}
+      stageId="heavens-arena"
+      comfort={{ ...defaultFightComfort(), graphics: 'performance' }}
+    />
+  </div>
   <FightResources
     {state}
     {language}

@@ -1,3 +1,4 @@
+import { activeEnRadius } from './en/access'
 import { illumiBodyFree } from './illumiState'
 import { enforcePredatorSeal, predatorNenLocked } from './predatorSeal'
 import {
@@ -198,7 +199,7 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
   fighter = enforcePredatorSeal(fighter)
   const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
-  const spread = fighter.nen.en ? 0.45 : 1
+  const spread = activeEnRadius(fighter) ? 0.45 : 1
   const eyeFocus =
     fighter.nen.gyo && (fighter.nen.ken || hasRyu(fighter) || fighter.nen.ko) ? 0.62 : 1
   const defence =
@@ -260,7 +261,7 @@ export function nenTacticalState(fighter: ArcadeFighter): FightNenTacticalState 
 }
 
 function overlayTechnique(fighter: ArcadeFighter): FightNenTactic {
-  if (fighter.nen.en) return 'en'
+  if (activeEnRadius(fighter)) return 'en'
   if (fighter.nen.gyo) return 'gyo'
   if (fighter.nen.shu.length) return 'shu'
   if (fighter.nen.in) return 'in'
@@ -273,7 +274,7 @@ export function nenStatus(fighter: ArcadeFighter): string[] {
   const status: string[] = [fighter.nen.mode]
   if (fighter.nen.ken) status.push('ken')
   if (fighter.nen.gyo) status.push('gyo')
-  if (fighter.nen.en) status.push(`en:${fighter.nen.en.radius}`)
+  if (activeEnRadius(fighter)) status.push(`en:${activeEnRadius(fighter)}`)
   if (fighter.nen.shu.length) status.push('shu')
   if (fighter.nen.in) status.push('in')
   if (fighter.nen.ko) status.push(`ko:${fighter.nen.ko}`)

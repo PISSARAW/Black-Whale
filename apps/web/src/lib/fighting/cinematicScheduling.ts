@@ -1,4 +1,4 @@
-import { gyoSight, insideEn } from './nenPerception'
+import { gyoSight } from './nenPerception'
 import {
   cameraContinuation,
   cameraDuration,
@@ -28,12 +28,7 @@ export function cameraDetailAllowed(
   if (detail.privateTo && detail.privateTo !== viewer) return false
   if (!state || !detail.aura) return true
   const side = detail.sourceSide ?? detail.side
-  return (
-    side === viewer ||
-    !state[side].nen.in ||
-    gyoSight(state[viewer]) ||
-    insideEn(state[viewer], state[side])
-  )
+  return side === viewer || !state[side].nen.in || gyoSight(state[viewer])
 }
 export function cameraShotActive(shot: CameraShot | null, c: Context): boolean {
   return Boolean(

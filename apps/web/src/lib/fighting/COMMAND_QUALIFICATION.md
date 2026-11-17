@@ -42,8 +42,10 @@ checkpoints v17 sont donc refusés ; ils ne sont pas réétiquetés.
 
 Le chargeur utilise [reference/v20](../../../ui-tests/fighting-reference/reference/v20/README.md).
 Les 96 flux d’entrée restent identiques aux originaux et chaque prémisse initiale
-est vérifiée. Le recorder et le décodeur de production créent les nouveaux
-checkpoints sous `clash-combat-20`. La revalidation de ceux-ci reste stricte.
+est vérifiée. Le recorder et le décodeur ont créé ces
+checkpoints sous `clash-combat-20`. Le moteur courant utilise `clash-combat-21`
+pour les [profils En qualifiés](./EN.md) ; la revalidation compare toujours tous
+les checkpoints v20 avant de promouvoir une référence pour la mesure.
 Les archives v9 et v17 et les anciens relevés de cadence restent historiques.
 
 ## Commandes et fenêtres

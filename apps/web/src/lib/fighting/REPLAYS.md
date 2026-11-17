@@ -11,6 +11,9 @@ restaure le combat suspendu avec son état de pause. Les commandes de combat ne
 modifient pas le replay. La même bibliothèque est accessible depuis la sélection.
 La capture est bornée à vingt minutes et 300 000 paquets ; l’import à 16 Mo.
 
+Les règles En qualifiées utilisent désormais `clash-combat-21` : voir [EN.md](./EN.md).
+Les replays d’une autre version ne sont pas réinterprétés silencieusement.
+
 ## Reproductibilité
 
 `fightMatchRuntime` applique les commandes au prochain tick réel. Il journalise

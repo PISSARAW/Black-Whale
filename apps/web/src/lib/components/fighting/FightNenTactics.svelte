@@ -1,5 +1,8 @@
 <script lang="ts">
-  import type { FightInput } from '$lib/fighting/types'
+  import { enProfile } from '$lib/fighting/en/profiles'
+  import { enDescription } from '$lib/fighting/en/presentation'
+  import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
+  export let fighter: ArcadeFighter | undefined = undefined
   export let language: 'fr' | 'en'
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
   const controls: { key: keyof FightInput; shortcut: string; label: string }[] = [
@@ -21,6 +24,8 @@
   {#each controls as control (control.key)}
     <button
       type="button"
+      disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
+      title={control.key === 'en' && fighter ? enDescription(fighter, language) : control.label}
       onpointerdown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
         onControl(control.key, true)

@@ -3,7 +3,7 @@ import type { FightNenTactic } from './nen'
 const COPY = {
   fr: {
     en: {
-      benefit: 'Détecte les contacts proches, même sous In ou Zetsu',
+      benefit: 'Localise les contacts proches, sans analyser le Hatsu',
       risk: 'Drain élevé · défense dispersée · cesse à l’attaque',
     },
     shu: {
@@ -17,7 +17,7 @@ const COPY = {
   },
   en: {
     en: {
-      benefit: 'Senses nearby contacts, including In and Zetsu',
+      benefit: 'Locates nearby contacts without identifying the Hatsu',
       risk: 'Heavy drain · spread defence · ends on attack',
     },
     shu: {

@@ -38,7 +38,7 @@ export function seesCombatBody(viewer: ArcadeFighter): boolean {
 }
 
 function sensesPosition(viewer: ArcadeFighter, position: { x: number; y: number }): boolean {
-  return voluntaryNenAvailable(viewer) && insideEn(viewer, position)
+  return insideEn(viewer, position)
 }
 
 function heatCue(
@@ -73,7 +73,10 @@ function projectileCue(state: FightState, side: FightSide): CounterplayCue | nul
         key: `projectile:${shot.id}`,
         owner: shot.owner,
         position: { x: shot.x, y: shot.y },
-        guard: shot.guard ?? 'mid',
+        guard:
+          seesCombatBody(viewer) && perceivesProjectile(viewer, shot)
+            ? (shot.guard ?? 'mid')
+            : undefined,
       }
     : null
 }

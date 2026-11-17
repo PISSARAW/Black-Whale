@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { enDescription } from '$lib/fighting/en/presentation'
+  import { activeEnRadius } from '$lib/fighting/en/access'
+  import { MAX_EN_CONTACTS } from '$lib/fighting/en/contacts'
   import { FIGHT_CATEGORIES, fightCategoryEfficiency } from '$lib/fighting/nenCategories'
   import { FIGHT_NEN_PROFILES } from '$lib/fighting/nenCatalogue.gen'
   import { enContacts, gyoSight } from '$lib/fighting/nenPerception'
@@ -11,6 +14,9 @@
   export let detailed = false
   $: fighter = state[side]
   $: opponent = state[side === 'player' ? 'opponent' : 'player']
+  $: enText = enDescription(fighter, language)
+  $: radius = activeEnRadius(fighter)
+  $: contacts = enContacts(state, side)
   $: profile = FIGHT_NEN_PROFILES[fighter.id]
   const labels = {
     fr: {
@@ -40,8 +46,9 @@
       ? ' · EMPEROR TIME · 100 %'
       : ''}</span
   >
-  {#if fighter.nen.en}<span
-      >En · {fighter.nen.en.radius} · {enContacts(state, side)}
+  <small>{enText}</small>
+  {#if radius}<span
+      >En · {radius} · {contacts}{contacts === MAX_EN_CONTACTS ? '+' : ''}
       {language === 'fr' ? 'contacts détectés' : 'contacts detected'}</span
     >{/if}
   {#if fighter.nen.shu.length}<span

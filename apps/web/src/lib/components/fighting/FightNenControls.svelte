@@ -230,7 +230,7 @@
       {/if}
     </div>
   {/if}
-  {#if showControls || detailed}<FightNenTactics {language} {onControl} />{/if}
+  {#if showControls || detailed}<FightNenTactics {fighter} {language} {onControl} />{/if}
   {#if detailed}
     <div class="nen-explanation">
       <p>{explanation.benefit}</p>

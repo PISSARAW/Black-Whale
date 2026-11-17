@@ -1,3 +1,4 @@
+import { enContactPoints } from '../en/contacts'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
@@ -76,6 +77,7 @@ function redactEnemy(enemy: ArcadeFighter) {
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
+  view.enReadings = enContactPoints(view, side)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])

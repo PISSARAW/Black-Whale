@@ -13,6 +13,9 @@ import { createPreparationScene } from './preparationScene'
 import { createMelodyFluteScene } from './melodyFluteScene'
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
 import { attackData } from './frameData'
+import { applyAuraContext } from './nen'
+import { enContacts } from './nenPerception'
+import { EMPTY_INPUT } from './types'
 import { BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
 import type { ArcadeFighter, FighterId, FightState } from './types'
 
@@ -295,13 +298,16 @@ describe('remaining visit models in fighting', () => {
     state.bungeeGum = { owner: 'opponent', target: 'player', hidden: true, retracting: false }
     effects.sync(state, 1)
     expect(gum.visible).toBe(false)
-    state.player.nen.en = { radius: 2 }
+    state.player = {
+      ...applyAuraContext(createFightState('hinrigh', 'hisoka').player, {
+        ...EMPTY_INPUT,
+        en: true,
+      }),
+      x: 42,
+    }
     effects.sync(state, 1)
-    expect(gum.visible).toBe(true)
-    gum.updateWorldMatrix(true, true)
-    const local = new THREE.Box3().setFromObject(strand)
-    expect(local.max.x).toBeLessThan(options.worldX(state.opponent.x) - 1)
-    expect(gum.getObjectByName('gum-anchor:combat-joint')?.visible).toBe(false)
+    expect(gum.visible).toBe(false)
+    expect(enContacts(state, 'player')).toBe(2) // Opponent and neutral tether contact; no strand disclosure.
     state.player.nen.en = null
     state.player.nen.gyo = true
     effects.sync(state, 1)

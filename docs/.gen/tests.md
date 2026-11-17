@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 741
+Fichiers : 747
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -406,6 +406,16 @@ Fichiers : 741
 
 - Easter Egg controls and collection > simulates scenes in Parallel Future without discovering a predicted ending
 
+## `apps/web/src/lib/fighting/en/en.test.ts`
+
+- En evidence for all forty bodies > keeps a measured minimum distinct from unknown canonical maxima and arcade ranges
+- contact is distinct from visual aura inspection > senses static Zetsu bodies, hidden projectiles and hidden tethers, with no identity or timing bonus
+- Phinks’s limited concentration > allows stationary presence but ends on movement, including a contact leaving the field
+
+## `apps/web/src/lib/fighting/en/scene.test.ts`
+
+- neutral En contact rendering > uses the selected observer without revealing an In-concealed field or a technique model
+
 ## `apps/web/src/lib/fighting/engine.test.ts`
 
 - fighting engine > starts a duel with the selected Black Whale fighters
@@ -472,9 +482,17 @@ Fichiers : 741
 
 - fight presentation > draws forward and backward dashes as distinct authored actions
 
+## `apps/web/src/lib/fighting/fightRenderMatrices.test.ts`
+
+- reflection pose reuse > reflects the current complete pose and still updates the next animation frame
+
 ## `apps/web/src/lib/fighting/fightReplay.test.ts`
 
 - deterministic full-match replays > round-trips every held gameplay input, including advanced Nen and arena actions
+
+## `apps/web/src/lib/fighting/fightReplayHash.test.ts`
+
+- replay hash shared subtree reuse > reuses only certified immutable forecasts and preserves the legacy hash for every prefix
 
 ## `apps/web/src/lib/fighting/fightReplayPanels.test.ts`
 
@@ -635,7 +653,7 @@ Fichiers : 741
 
 ## `apps/web/src/lib/fighting/nenPresentation.test.ts`
 
-- Nen perception in the rendered duel > actually hides a hostile Nen projectile until Gyo or an En contact reveals it
+- Nen perception in the rendered duel > keeps a concealed projectile hidden under En while Gyo reveals its visual form
 
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
@@ -783,6 +801,10 @@ Fichiers : 741
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 
 - 2D arena ship-room rendering > keeps the original burial model behind the widest bodies with an actual material cut
+
+## `apps/web/src/lib/fighting/stageStaticCut.test.ts`
+
+- static room clipping prepass > removes only whole triangles already discarded by the intersection shader
 
 ## `apps/web/src/lib/fighting/stages.test.ts`
 

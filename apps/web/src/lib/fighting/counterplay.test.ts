@@ -110,7 +110,12 @@ describe('counterplay uses only accessible manifestations', () => {
   })
   it('allows En to locate hidden motion inside its radius, without requiring sight', () => {
     const state = withShot({ concealed: true, x: 50 })
-    state.opponent.nen = { ...state.opponent.nen, en: { radius: 18 } }
+    state.opponent = {
+      ...createFight('hisoka', 'hinrigh').opponent,
+      x: state.opponent.x,
+      aura: 100,
+    }
+    state.opponent.nen = { ...state.opponent.nen, mode: 'ren', en: { radius: 18 } }
     state.opponent.hatsuEffects = { ...state.opponent.hatsuEffects, senseSeals: 1 }
     expect(readCounterplay(state, 'opponent')?.kind).toBe('projectile')
     expect(

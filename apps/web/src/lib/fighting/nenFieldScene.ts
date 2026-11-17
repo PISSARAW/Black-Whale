@@ -1,3 +1,5 @@
+import { activeEnRadius } from './en/access'
+import { createEnContactScene } from './en/contactScene'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import { gyoSight } from './nenPerception'
 import type { FightState } from './types'
@@ -5,6 +7,7 @@ import type { FightState } from './types'
 /** Radius uses duel coordinates, rather than the exploration rig's metre scale. */
 export function createNenFieldScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
+  const contacts = createEnContactScene(options)
   const geometry = new THREE.RingGeometry(0.98, 1, 64)
   const fields = (['player', 'opponent'] as const).map((side) => {
     const material = new THREE.MeshBasicMaterial({
@@ -21,18 +24,21 @@ export function createNenFieldScene(options: EffectSceneOptions) {
   })
   return {
     sync(state: FightState) {
+      contacts.sync(state)
+      const viewer = options.viewer?.() ?? 'player'
       for (const { side, mesh } of fields) {
         const fighter = state[side]
         mesh.visible =
-          Boolean(fighter.nen.en) &&
-          (side === 'player' || !fighter.nen.in || gyoSight(state.player))
-        const radius = fighter.nen.en?.radius ?? 1
+          Boolean(activeEnRadius(fighter)) &&
+          (side === viewer || !fighter.nen.in || gyoSight(state[viewer]))
+        const radius = activeEnRadius(fighter) || 1
         const scale = Math.abs(options.worldX(fighter.x + radius) - options.worldX(fighter.x))
         mesh.scale.setScalar(scale)
         mesh.position.set(options.worldX(fighter.x), options.worldY(fighter.y) + 0.025, 0)
       }
     },
     dispose() {
+      contacts.dispose()
       geometry.dispose()
       for (const { mesh, material } of fields) {
         scene.remove(mesh)

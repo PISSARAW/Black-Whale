@@ -26,7 +26,8 @@ describe('command qualification from the frozen six-fighter states', () => {
     expect(historical.archiveSha256).toBe(
       'd4e27df52932d61bfd526cc94d145111947103190208e4c2aae3c4a00e416900',
     )
-    expect(frozen.ruleset).toBe(REPLAY_RULESET)
+    // Archive v20 is immutable; promotion below checks every checkpoint under the current engine.
+    expect(frozen.ruleset).toBe('clash-combat-20')
     expect(Object.keys(frozen.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
     for (const [id, replay] of Object.entries(historical.tapes))
       expect(frozen.tapes[id].packets).toEqual(replay.packets)

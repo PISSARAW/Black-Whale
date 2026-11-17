@@ -1,6 +1,5 @@
 import { seesCombatBody } from './fightCounterplay'
 import { insideEn } from './nenPerception'
-import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
 import { canSpeak } from './saiyuSenses'
 import { HANZO_CALL_RANGE } from './hanzoBodyCall'
@@ -11,7 +10,7 @@ export function currentlyLocatedTarget(
 ): { x: number; y: number; at: number } | null {
   const body = sleepingBody(state.player)
   const observer = state.opponent
-  if (seesCombatBody(observer) || (voluntaryNenAvailable(observer) && insideEn(observer, body)))
+  if (seesCombatBody(observer) || insideEn(observer, body))
     return { x: body.x, y: body.y, at: state.frame }
   return null
 }

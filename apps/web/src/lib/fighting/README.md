@@ -1,5 +1,8 @@
 # Fighting
 
+Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
+observées et réglages arcade ; seules les pratiques qualifiées sont activables.
+
 La [référence reproductible des six combattants](./BASELINE.md) fige leurs routes,
 les sept situations d’essai, les mesures et la bibliothèque de replays de départ.
 
@@ -177,7 +180,7 @@ armure, invulnérabilité de backdash ou combo breaker n’est ajouté.
 `fightCounterplay.ts` repère seulement une manifestation accessible : projectile
 en approche, chaleur solaire, performance, corps endormi, préparation visible,
 récupération ou gomme repérée. In cache l’aura, pas un projectile matériel.
-Gyo exige la vue ; En localise le mouvement dans son rayon et exige un Nen
+Gyo exige la vue ; En localise les contacts, même immobiles, dans son rayon et exige un Nen
 disponible. Le lecteur ne consulte ni commande en attente, ni analyse privée,
 ni condition inconnue, ni branche future. Le laboratoire permet de choisir
 explicitement P1 ou P2 pour consulter ces indices de perception.
@@ -401,7 +404,7 @@ La seconde bête accompagne uniquement la vue P1 de sa propre vision/divergence,
 sans révéler la vision adverse ni matérialiser une bête gardienne passive.
 
 Bungee Gum déforme le maillage de la visite sur la liaison réelle, avec la même
-courbure et le même découpage par In/Gyo/En. La carte jaune de Cross Game, les
+courbure et la même visibilité par In/Gyo. En montre seulement un contact neutre. La carte jaune de Cross Game, les
 menottes redevenues ordinaires de Biohazard, les flûtes ramassables, les oiseaux
 de préparation et le noyau de Rising Sun utilisent leurs constructeurs communs.
 Les ailes suivent le vol ; le filament de contrôle de Cluck ne paraît que sous
@@ -1195,7 +1198,7 @@ Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
 
 | Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                      |
 | --------- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| En        | R             | [             | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact.                    |
+| En        | R             | [             | Profils qualifiés : Hinrigh ≥ 5 m observés (20 u de jeu), Phinks portée inconnue (12 u arcade, concentration fragile). Contacts neutres, sans bonus de parade ; 9 aura/s en plus de Ren et protection dispersée (réglages de duel). Voir [EN.md](./EN.md).                    |
 | Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
 | In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact.                                                 |
 | Gyo       | G             | ;             | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie.                                                                                                                                      |
@@ -1626,7 +1629,7 @@ plan 3D du combat. Ils partagent la caméra, le zoom, le cadrage et les conversi
 logiques du moteur et leur applique la même interpolation que le corps. Les volumes
 ne dépendent plus de pourcentages CSS ; leurs tailles, les portées et les règles de
 touche restent celles du moteur. Cyan/violet désignent les corps, rouge une frappe
-active, orange un projectile. Les projectiles de Nen cachés respectent Gyo/En.
+active, orange un projectile. Gyo révèle les projectiles de Nen cachés ; En affiche seulement leurs contacts neutres.
 Les volumes sont réservés à l’entraînement, ignorent le brouillard et réutilisent
 leurs géométries jusqu’à la destruction de la scène.
 

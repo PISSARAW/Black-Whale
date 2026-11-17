@@ -1,6 +1,14 @@
 import { futureCanPrepare } from './parallelFutureAbility'
 import type { FightSide, FightState } from './types'
 
+export function visibleFutureBeastOwner(state: FightState, viewer: FightSide = 'player') {
+  const future = state.parallelFuture
+  if (!future || future.phase === 'preparing') return undefined
+  return future.owner === viewer || state.mode === 'versus-local' || state.mode === 'training'
+    ? future.owner
+    : undefined
+}
+
 export function futureVisibleState(
   state: FightState,
   viewer: FightSide,

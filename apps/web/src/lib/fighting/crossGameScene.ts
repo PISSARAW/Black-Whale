@@ -14,6 +14,8 @@ export function createCrossGameScene(options: EffectSceneOptions): FighterEffect
     const model = createVisitHatsuModel(THREE, { model: 'cross-game-card', stage: 1 })
     const card = model.fit({ height: 0.28, width: 0.19 })
     const cage = lattice.clone()
+    card.name = `cross-game-card:${side}`
+    cage.name = `cross-game-cage:${side}`
     scene.add(card, cage)
     return { side, card, cage, model }
   })

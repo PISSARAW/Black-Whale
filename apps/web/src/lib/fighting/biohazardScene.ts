@@ -56,6 +56,7 @@ export function createBiohazardScene(options: EffectSceneOptions): FighterEffect
     let model = models.get(key)
     if (!model) {
       model = makeModel()
+      model.root.name = `biohazard:${side}:${object.id}`
       models.set(key, model)
     }
     model.root.visible = !['carried', 'broken'].includes(object.phase)

@@ -7,7 +7,7 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-2:${REPLAY_RULESET}`
+export const PVP_RULESET = `clash-pvp-3:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -54,6 +54,12 @@ export interface PvpView {
   ready: Record<FightSide, boolean>
   connected: Record<FightSide, boolean>
   nextSequence: number
+  /** Number of packets fully consumed by simulation, including refused commands. */
+  appliedSequence: number
+  /** Authoritative tick at which that cumulative acknowledgement advanced. */
+  appliedAtTick: number
+  /** Monotonic snapshot envelope revision, also across round/status transitions. */
+  revision: number
   tick: number
   authorityHash: string
   snapshot: string

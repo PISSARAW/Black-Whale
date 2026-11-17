@@ -1,6 +1,8 @@
 <script lang="ts">
   import { clashCareer } from '$lib/fighting/career/profile'
   import FightCeremony from '$lib/components/fighting/FightCeremony.svelte'
+  import { mountPvpDuelLoop } from '$lib/fighting/pvp/duelLoop'
+  import { FIGHT_VISUAL_PREDICTION } from '$lib/fighting/fightVisualPrediction'
   import { onMount, setContext } from 'svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightPvpPanels from '$lib/components/fighting/FightPvpPanels.svelte'
@@ -28,6 +30,7 @@
     if (side === 'player' && action !== 'pause') move(action)
   })
   setContext(FIGHT_CONTROLS_CONTEXT, controls.bindings)
+  setContext(FIGHT_VISUAL_PREDICTION, () => client.visualPrediction)
   $: state = $client.state
   $: enabled = $client.connection === 'connected' && $client.view?.status === 'playing'
   function release() {
@@ -73,26 +76,16 @@
     clashCareer.load()
     controls.load()
     const unlisten = listenFightEvents({ controls, handleKey: key, release, hidden: release })
-    let disposed = false,
-      frame = 0,
-      timer: ReturnType<typeof setTimeout>
-    function poll() {
-      controls.poll('versus-ai', enabled && !editing)
-      frame = requestAnimationFrame(poll)
-    }
-    async function network() {
-      if (disposed) return
-      if (joined)
-        await client.step(document.hidden ? 0 : packReplayInput(controls.combine('player', input)))
-      if (!disposed) timer = setTimeout(network, enabled ? 50 : 250)
-    }
+    const stopLoop = mountPvpDuelLoop({
+      client,
+      joined: () => joined,
+      input: () =>
+        document.hidden || editing ? 0 : packReplayInput(controls.combine('player', input)),
+      poll: () => controls.poll('versus-ai', enabled && !editing),
+    })
     if (autoConnect) void client.join()
-    frame = requestAnimationFrame(poll)
-    timer = setTimeout(network, 250)
     return () => {
-      disposed = true
-      clearTimeout(timer)
-      cancelAnimationFrame(frame)
+      stopLoop()
       unlisten()
       release()
       client.stop()

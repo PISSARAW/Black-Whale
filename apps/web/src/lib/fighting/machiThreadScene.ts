@@ -11,6 +11,8 @@ export function createMachiThreadScene(options: EffectSceneOptions): FighterEffe
     const geometry = new THREE.BufferGeometry()
     const line = new THREE.Line(geometry, material)
     const needle = new THREE.Mesh(needleGeometry, needleMaterial)
+    line.name = `machi-thread:${side}`
+    needle.name = `machi-needle:${side}`
     scene.add(line, needle)
     return { side, geometry, line, needle }
   })

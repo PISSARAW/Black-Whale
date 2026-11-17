@@ -1,3 +1,4 @@
+import { createCinematicPropsScene } from './cinematicPropsScene'
 import { createBlackVoiceScene } from './blackVoiceScene'
 import { createMoonlightScene } from './moonlightScene'
 import { createFutureBeastScene } from './futureBeastScene'
@@ -16,6 +17,7 @@ export function createRemainingVisitHatsuScene(options: EffectSceneOptions): Fig
     createHalkenburgArrowScene,
     createMelodyFluteScene,
     createBungeeGumScene,
+    createCinematicPropsScene,
   ].map((create) => create(options))
   return {
     sync(state, seconds) {

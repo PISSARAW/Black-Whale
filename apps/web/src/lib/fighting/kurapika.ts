@@ -17,6 +17,8 @@ export interface StolenChainAbility {
 
 export interface KurapikaState {
   emperorTime: boolean
+  /** Confirmed Chain Jail vow breach; retained after the verdict, reset with the round. */
+  vowBroken?: boolean
   /** Integer simulation frames: 60 spent frames = one hour of lifespan lost. */
   lifespanFrames: number
   continuousFrames: number

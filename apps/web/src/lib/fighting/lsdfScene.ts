@@ -27,6 +27,7 @@ export function createLsdfScene(options: LsdfSceneOptions) {
     if (!model || model.level !== guard.level) {
       if (model) disposeRoot(model.root)
       model = { level: guard.level, root: guardFormation(options, guard.level) }
+      model.root.name = `lsdf:${side}`
       guards.set(side, model)
       scene.add(model.root)
     }

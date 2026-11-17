@@ -155,11 +155,15 @@
           60
         ).toFixed(1)} s · {ownView
           ? language === 'fr'
-            ? 'Vous voyez la réalité.'
-            : 'You see reality.'
+            ? 'Réalité dans la vue principale ; image prédite dans l’encadré.'
+            : 'Reality in the main view; predicted image in the inset.'
           : language === 'fr'
-            ? 'Vous percevez le déroulement prédit.'
-            : 'You perceive the predicted sequence.'}
+            ? state.mode === 'versus-local'
+              ? 'La vue principale compare la réalité à l’image prédite dans l’encadré.'
+              : 'Vous percevez le déroulement prédit.'
+            : state.mode === 'versus-local'
+              ? 'The main view compares reality with the predicted image in the inset.'
+              : 'You perceive the predicted sequence.'}
       </p>
       {#if ownView}
         <div class="perceptions">

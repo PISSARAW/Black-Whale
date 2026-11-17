@@ -24,6 +24,7 @@ export function createRemotePunchScene(options: ProjectileSceneOptions) {
       const active = new Set(punches.map((projectile) => projectile.id))
       for (const projectile of punches) {
         const visual = visuals.get(projectile.id) ?? buildPunch(options)
+        visual.fist.name = `remote-punch:${projectile.id}`
         visuals.set(projectile.id, visual)
         posePunch(visual, projectile, options)
       }

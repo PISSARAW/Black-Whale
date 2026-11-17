@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 660
+Fichiers : 679
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -277,6 +277,18 @@ Fichiers : 660
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
 
+## `apps/web/src/lib/fighting/cinematicCatalogue.test.ts`
+
+- forty-fighter cinematic coverage > covers the exact selectable roster with unique audit ids and physical lenses
+
+## `apps/web/src/lib/fighting/cinematicInteractions.test.ts`
+
+- confirmed cinematic interactions > observes Sun and Moon detonating when the second mark resolves inside the same engine tick
+
+## `apps/web/src/lib/fighting/cinematicLongFilm.test.ts`
+
+- long 1080p camera presentation > covers forty continuous duels with longer shots and a strictly advancing presentation cursor
+
 ## `apps/web/src/lib/fighting/clashLearning.test.ts`
 
 - foundation lessons complement the ten Nen lessons > keeps fifteen unique, bilingual practical exercises
@@ -398,6 +410,10 @@ Fichiers : 660
 - fighter movement > walks backward slower than forward
 - render interpolation > draws a fighter between its last two simulated positions
 - AI cadence > decides every 16 to 24 simulated frames
+
+## `apps/web/src/lib/fighting/fighterTrackingSilhouette.test.ts`
+
+- optional fighter tracking silhouettes > keeps an absorbed actor visible as a translucent marker without changing the engine snapshot
 
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
@@ -532,6 +548,10 @@ Fichiers : 660
 
 - Laplace Devil in the real 2D engine > enters Zetsu with closed eyes, without attacking, guarding or granting an evade
 
+## `apps/web/src/lib/fighting/parallelFutureCamera.test.ts`
+
+- Laplace Demon prediction inset > shows the real prince escaping Rising Sun while the predicted image is knocked out
+
 ## `apps/web/src/lib/fighting/phinks.test.ts`
 
 - Phinks — right-arm rotations, then one Ripper Cyclotron punch > starts a vulnerable wind-up without a hitbox, movement, charge or immediate aura payment
@@ -553,14 +573,28 @@ Fichiers : 660
 
 - ranged attacks > gives a stone to fighters without a canonical projectile
 
+## `apps/web/src/lib/fighting/pvp/acknowledgement.test.ts`
+
+- received and applied input acknowledgements > acknowledges complete packets only after their commands leave the authoritative queue
+- received and applied input acknowledgements > player
+- received and applied input acknowledgements > player
+
 ## `apps/web/src/lib/fighting/pvp/client.test.ts`
 
 - private Clash client synchronization > stops on an invalid player invitation instead of trying to authenticate the spectator
+
+## `apps/web/src/lib/fighting/pvp/response.test.ts`
+
+- stream reconciliation and bounded input traffic > ignores reordered snapshots and keeps authoritative HUD separate from predicted poses
 
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
 - server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
 - seat-specific Nen information > preserves spoken text while remapping owners and public verdicts for P2
+
+## `apps/web/src/lib/fighting/pvp/snapshotStream.test.ts`
+
+- private view streaming lifecycle > parses split CRLF events and keeps the token in headers
 
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 
@@ -1279,6 +1313,10 @@ Fichiers : 660
 ## `apps/web/src/lib/server/clashPvpHttp.test.ts`
 
 - Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
+
+## `apps/web/src/lib/server/clashPvpStream.test.ts`
+
+- authenticated snapshot stream > pushes only the authenticated perspective and never renews presence on outgoing traffic
 
 ## `apps/web/src/lib/server/clashSeasonFile.test.ts`
 

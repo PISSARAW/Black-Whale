@@ -7,7 +7,10 @@
   import { fightReplayHash } from '../../src/lib/fighting/fightReplayHash'
   import { performTrainingAction } from '../../src/lib/fighting/trainingAction'
   import { EMPTY_INPUT } from '../../src/lib/fighting/types'
-  import { BASELINE_FIGHTERS, type BaselineFighter } from '../../src/lib/fighting/combatBaseline'
+  import { FIGHTING_ROSTER } from '../../src/lib/fighting/roster'
+  import type { FighterId } from '../../src/lib/fighting/types'
+  import { FIGHT_EXPRESSION_PROFILES } from '../../src/lib/fighting/fightExpressionProfiles'
+  const EXPRESSION_FIGHTERS = FIGHTING_ROSTER.map(({ id }) => id)
   import {
     emotionalCombatState,
     advanceExpressionCombat,
@@ -16,7 +19,7 @@
   import type { installQualificationProbe } from '../fighting-qualification/renderProbe'
   export let probe: ReturnType<typeof installQualificationProbe>
   let expressions = true
-  let fighter: BaselineFighter = 'kurapika',
+  let fighter: FighterId = 'kurapika',
     situation: ExpressionSituation = 'concentration',
     facing: 1 | -1 = 1
   let state = emotionalCombatState({ fighter, situation, facing })
@@ -48,8 +51,15 @@
     previous = now
     renders++
   }
+  export function fighters() {
+    return FIGHTING_ROSTER.map(({ id, name }) => ({
+      id,
+      name,
+      direction: FIGHT_EXPRESSION_PROFILES[id]!.direction,
+    }))
+  }
   export function select(options: {
-    fighter: BaselineFighter
+    fighter: FighterId
     situation: ExpressionSituation
     facing?: 1 | -1
     expressions?: boolean
@@ -72,21 +82,32 @@
   export function inspect() {
     return { scene, camera, renderer, THREE }
   }
-  export function snapshot() {
+  function actorRig() {
     const roots = scene?.children.filter((root) => fightFaceRig(root)) ?? []
     roots.sort((a, b) => (a.position.x - b.position.x) * facing)
-    const root = roots[0],
-      rig = root && fightFaceRig(root)
+    return roots[0] && fightFaceRig(roots[0])
+  }
+  export function ready(options: { fighter: FighterId; mode?: string }) {
+    const rig = actorRig(),
+      drawn = scene?.userData.drawnFight
+    return (
+      rig?.fighterId === options.fighter &&
+      drawn?.player === options.fighter &&
+      drawn?.frame === state.frame &&
+      (!options.mode || rig.mode === options.mode)
+    )
+  }
+  export function snapshot() {
+    const rig = actorRig()
     const head = rig?.eyes[0].node.parent
     let clip = null
     if (head && camera) {
       const box = new THREE.Box3().setFromObject(head)
-      const points = [
-        box.min,
-        box.max,
-        new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-        new THREE.Vector3(box.max.x, box.min.y, box.min.z),
-      ]
+      const points = [box.min.x, box.max.x].flatMap((x) =>
+        [box.min.y, box.max.y].flatMap((y) =>
+          [box.min.z, box.max.z].map((z) => new THREE.Vector3(x, y, z)),
+        ),
+      )
       const rect = renderer.domElement.getBoundingClientRect()
       const projected = points.map((point) => point.project(camera))
       const x = Math.max(
@@ -117,7 +138,13 @@
       frame: state.frame,
       actualPose: state.player.pose,
       mode: rig?.mode,
+      drawnFighter: rig?.fighterId,
       face: rig?.pose,
+      parts: {
+        eyes: rig?.eyes.map((part) => part.node.name),
+        mouth: rig?.mouth?.name,
+        nativeMouth: Boolean(rig?.nativeMouth),
+      },
       clip,
       intervals,
       geometries: renderer?.info.memory.geometries,
@@ -158,8 +185,8 @@
 
 <main>
   <nav aria-label="Expression proof">
-    {#each BASELINE_FIGHTERS as id (id)}<button on:click={() => select({ fighter: id, situation })}
-        >{id}</button
+    {#each EXPRESSION_FIGHTERS as id (id)}<button
+        on:click={() => select({ fighter: id, situation })}>{id}</button
       >{/each}
     {#each ['concentration', 'effort', 'pain', 'combat'] as mode (mode)}<button
         on:click={() => select({ fighter, situation: mode as ExpressionSituation })}>{mode}</button

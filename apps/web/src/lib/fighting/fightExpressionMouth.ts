@@ -7,7 +7,9 @@ const CACHE = new Map<string, BufferGeometry>()
 /** Three shared GPU morphs on the existing mouth: no additional meshes or draw calls. */
 export function prepareExpressionMouth(options: { THREE: Three; mouth: Mesh; head: Object3D }) {
   const { THREE, mouth, head } = options
-  const key = `${head.name}:${mouth.geometry.uuid}`
+  const skin = expressionFaceSurface(head)
+  const mesh = skin?.children.find((node) => 'geometry' in node) as Mesh | undefined
+  const key = `${head.name}:${mouth.geometry.uuid}:${mesh?.geometry.uuid ?? ''}`
   let geometry = CACHE.get(key)
   if (!geometry) {
     geometry = mouthRibbon(THREE, mouth.geometry)
@@ -34,7 +36,7 @@ function mouthTarget(
   const box = geometry.boundingBox!
   const centre = box.getCenter(new THREE.Vector3())
   const halfWidth = Math.max(0.001, (box.max.x - box.min.x) / 2)
-  const face = head.getObjectByName('manga-face') ?? head.getObjectByName('kurapika-face')
+  const face = expressionFaceSurface(head)
   const ray = new THREE.Raycaster()
   head.updateWorldMatrix(true, true)
   for (let i = 0; i < source.count; i++) {
@@ -112,4 +114,12 @@ function projectMouthPoint(
   ray.set(origin, direction)
   const contact = ray.intersectObject(face, true)[0]
   if (contact) point.z = mouth.worldToLocal(contact.point).z + 0.0018
+}
+
+function expressionFaceSurface(head: Object3D) {
+  return (
+    head.getObjectByName('manga-face') ??
+    head.getObjectByName('kurapika-face') ??
+    head.getObjectByName('franklin-square-jaw')
+  )
 }

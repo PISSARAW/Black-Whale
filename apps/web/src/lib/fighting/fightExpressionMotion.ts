@@ -32,6 +32,7 @@ export function expressiveFightMotion(
     const pose = blendFace(rig, { target: target.pose, seconds: context.seconds })
     rig.mode = target.mode
     drawFightFace(rig, pose)
+    if (context.fighter.melodyPerformance) return
     human.head.rotation.x += pose.headPitch
     human.head.rotation.y += pose.headYaw
     human.head.rotation.z += pose.headRoll * context.fighter.facing

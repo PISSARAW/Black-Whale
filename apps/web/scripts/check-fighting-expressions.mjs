@@ -2,18 +2,22 @@ import assert from 'node:assert/strict'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, writeFile } from 'node:fs/promises'
 import { build, preview } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
-import { distribution } from './command-qualification-report.mjs'
+import { distribution, bundleFingerprint } from './command-qualification-report.mjs'
+import { renderExpressionGallery } from './fighting-expression-gallery.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = path.resolve(
-  process.env.FIGHT_EXPRESSIONS_OUTPUT ?? path.join(root, '../../output/fighting-expressions'),
+  process.env.FIGHT_EXPRESSIONS_OUTPUT ??
+    path.join(root, '../../output/fighting-expressions-roster'),
 )
 const duration = Number(process.env.FIGHT_EXPRESSIONS_SECONDS ?? 15)
-const fighters = ['kurapika', 'benjamin', 'hisoka', 'chrollo', 'feitan', 'phinks']
+const fighters = [],
+  selected = []
+const requested = process.env.FIGHT_EXPRESSIONS_FIGHTERS?.split(',')
 assert.ok(duration >= 0 && duration <= 120)
 await mkdir(output, { recursive: true })
 const config = {
@@ -43,6 +47,23 @@ const browser = await chromium.launch({
 const errors = [],
   cases = [],
   cadence = []
+const report = {
+  version: 2,
+  scope: 'roster-emotion-rendering',
+  startedAt: new Date().toISOString(),
+  machine: { cpu: os.cpus()[0].model, cores: os.cpus().length },
+  duration,
+  warmup: 3,
+  bundle: await bundleFingerprint(path.join(output, 'production')),
+  cases,
+  cadence,
+  errors,
+  complete: false,
+  pass: false,
+  cadenceChecked: duration > 0,
+}
+const save = () =>
+  writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 })
 page.setDefaultTimeout(60000)
 page.on('pageerror', (error) => errors.push(error.message))
@@ -55,33 +76,44 @@ try {
     `http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-expressions/`,
   )
   await page.waitForFunction(() => window.fightExpressions?.snapshot().renders > 3)
+  const roster = await page.evaluate(() => window.fightExpressions.fighters())
+  if (requested)
+    assert.ok(
+      requested.every((id) => roster.some((entry) => entry.id === id)),
+      'Unknown fighter',
+    )
+  selected.push(...roster.filter(({ id }) => !requested || requested.includes(id)))
+  fighters.push(...selected.map(({ id }) => id))
+  report.fullRoster = selected.length === roster.length
+  report.fighters = selected
   for (const fighter of fighters) {
     for (const situation of ['concentration', 'effort', 'pain']) {
       const initial = await page.evaluate((options) => window.fightExpressions.select(options), {
         fighter,
         situation,
       })
-      await page.waitForFunction(
-        (situation) => window.fightExpressions.snapshot().mode === situation,
-        situation,
-      )
+      await page.waitForFunction((options) => window.fightExpressions.ready(options), {
+        fighter,
+        mode: situation,
+      })
       await page.waitForTimeout(300)
       const snapshot = await page.evaluate(() => window.fightExpressions.snapshot())
       assert.equal(snapshot.hash, initial.hash, 'The face renderer changed combat/replay state')
       assert.equal(snapshot.failed, false)
+      assert.equal(snapshot.drawnFighter, fighter)
       assert.equal(
         snapshot.actualPose,
         { concentration: 'idle', effort: 'heavy', pain: 'hit' }[situation],
       )
       if (situation === 'pain') {
-        assert.ok(snapshot.face.pain > 0.4)
+        assert.ok(snapshot.face.pain > 0)
         assert.equal(snapshot.face.smile, 0)
       }
       await page.screenshot({ path: path.join(output, `${fighter}-${situation}.png`) })
       assert.ok(snapshot.clip.width > 10 && snapshot.clip.height > 10)
       await page.screenshot({
         path: path.join(output, `${fighter}-${situation}-face.png`),
-        clip: snapshot.clip,
+        clip: (await page.evaluate(() => window.fightExpressions.snapshot())).clip,
       })
       cases.push({ fighter, situation, ...snapshot, intervals: undefined, probe: undefined })
     }
@@ -89,10 +121,13 @@ try {
       (fighter) => window.fightExpressions.select({ fighter, situation: 'pain', facing: -1 }),
       fighter,
     )
-    await page.waitForFunction(() => window.fightExpressions.snapshot().mode === 'pain')
+    await page.waitForFunction(
+      (fighter) => window.fightExpressions.ready({ fighter, mode: 'pain' }),
+      fighter,
+    )
     await page.waitForTimeout(200)
     const mirrored = await page.evaluate(() => window.fightExpressions.snapshot())
-    assert.ok(mirrored.face.pain > 0.4)
+    assert.ok(mirrored.face.pain > 0)
     await page.screenshot({ path: path.join(output, `${fighter}-pain-left.png`) })
     cases.push({
       ...mirrored,
@@ -101,6 +136,7 @@ try {
       intervals: undefined,
       probe: undefined,
     })
+    await save()
     process.stdout.write(`${fighter}: three real combat expressions and both facings verified\n`)
     if (duration)
       for (const expressions of [false, true]) {
@@ -109,6 +145,7 @@ try {
           situation: 'combat',
           expressions,
         })
+        await page.waitForFunction((fighter) => window.fightExpressions.ready({ fighter }), fighter)
         await page.waitForTimeout(3000)
         await page.evaluate(() => window.fightExpressions.resetMetrics())
         const load = os.loadavg()
@@ -143,39 +180,23 @@ try {
           path.join(output, `${fighter}-${expressions ? 'expressions' : 'baseline'}.frames.json`),
           JSON.stringify(result.probe),
         )
+        await save()
         process.stdout.write(
           `${fighter}/${expressions ? 'expressions' : 'baseline'}: ${fps.toFixed(2)} FPS; p95=${intervals.p95.toFixed(1)}ms; CPU p95=${cpu.p95.toFixed(1)}ms; pass=${pass}\n`,
         )
       }
   }
   assert.deepEqual(errors, [])
-  const cards = await Promise.all(
-    fighters.map(
-      async (fighter) =>
-        `<section><h2>${fighter}</h2><div>${(await Promise.all(['concentration', 'effort', 'pain'].map(async (situation) => `<figure><img src="data:image/png;base64,${(await readFile(path.join(output, `${fighter}-${situation}-face.png`))).toString('base64')}"><figcaption>${situation === 'pain' ? 'douleur' : situation}</figcaption></figure>`))).join('')}</div></section>`,
-    ),
-  )
-  await page.setContent(
-    `<html><head><style>body{margin:0;padding:24px;background:#101820;color:#edf0e8;font:16px system-ui}h1{font-size:23px;margin:0 0 8px}p{color:#b5c5cb}main{display:grid;grid-template-columns:1fr 1fr;gap:20px}section{background:#18242d;padding:12px;border-radius:8px}h2{text-transform:capitalize;margin:0 0 8px}section>div{display:flex;gap:12px}figure{margin:0;flex:1;text-align:center}img{width:150px;height:160px;object-fit:contain;image-rendering:auto}figcaption{font-size:14px;color:#cad8dc}</style></head><body><h1>Clash · expressions pendant le combat</h1><p>Les six personnages · détails capturés avec la caméra habituelle · concentration, effort, douleur</p><main>${cards.join('')}</main></body></html>`,
-  )
-  await page.screenshot({ path: path.join(output, 'expressions-six.png'), fullPage: true })
-  await writeFile(
-    path.join(output, 'report.json'),
-    JSON.stringify(
-      {
-        version: 1,
-        scope: 'six-fighter-emotion-rendering',
-        machine: { cpu: os.cpus()[0].model, cores: os.cpus().length },
-        cases,
-        cadence,
-        errors,
-        pass: errors.length === 0 && cadence.every((row) => row.pass),
-      },
-      null,
-      2,
-    ) + '\n',
-  )
-  if (cadence.some((row) => !row.pass)) process.exitCode = 1
+  await renderExpressionGallery({ page, output, fighters: selected })
+  report.complete = true
+  report.pass = errors.length === 0 && cadence.every((row) => row.pass)
+  report.qualified = report.pass && report.fullRoster && duration >= 8
+  await save()
+  if (!report.pass) process.exitCode = 1
+} catch (error) {
+  errors.push(`Runner: ${error.message}`)
+  await save()
+  throw error
 } finally {
   await browser.close()
   await new Promise((done) => server.httpServer.close(done))

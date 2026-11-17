@@ -7,7 +7,7 @@ La [qualification des commandes et de la cadence](./COMMAND_QUALIFICATION.md)
 mesure les six personnages à partir de cette référence et conserve les limites matérielles.
 
 Les [expressions pendant le combat](./EMOTIONS.md) ajoutent concentration, effort
-et douleur aux visages et aux postures des six personnages de référence.
+et douleur aux visages et aux postures des 40 combattants sélectionnables.
 
 Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
 complètent les contrôles de réactivité et de performance.

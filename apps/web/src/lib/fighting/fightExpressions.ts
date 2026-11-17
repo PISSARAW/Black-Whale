@@ -1,4 +1,5 @@
 import { attackData } from './frameData'
+import { FIGHT_EXPRESSION_PROFILES, fightExpressionProfile } from './fightExpressionProfiles'
 import type { ArcadeFighter, FighterId } from './types'
 
 export type FightEmotion = 'concentration' | 'effort' | 'pain' | 'rest'
@@ -15,23 +16,6 @@ export interface FightFacePose {
   headRoll: number
   shoulder: number
 }
-interface ExpressionProfile {
-  eye: number
-  brow: number
-  smile: number
-  intensity: number
-  shoulder: number
-}
-
-/** Art direction for the first six fighters, rather than a claim about their psychology. */
-const PROFILES: Partial<Record<FighterId, ExpressionProfile>> = {
-  kurapika: { eye: 0.9, brow: 0.16, smile: 0, intensity: 1, shoulder: 0.008 },
-  benjamin: { eye: 0.88, brow: 0.12, smile: 0, intensity: 0.9, shoulder: 0.014 },
-  hisoka: { eye: 0.9, brow: -0.04, smile: 0.45, intensity: 0.9, shoulder: 0.006 },
-  chrollo: { eye: 0.96, brow: 0.045, smile: 0, intensity: 0.58, shoulder: 0.004 },
-  feitan: { eye: 0.8, brow: 0.18, smile: 0, intensity: 1.1, shoulder: 0.012 },
-  phinks: { eye: 0.89, brow: 0.1, smile: 0.22, intensity: 1.08, shoulder: 0.015 },
-}
 export const REST_FACE: Readonly<FightFacePose> = {
   eye: 1,
   brow: 0,
@@ -46,31 +30,51 @@ export const REST_FACE: Readonly<FightFacePose> = {
   shoulder: 0,
 }
 export const FACE_CONTROLS = Object.keys(REST_FACE) as (keyof FightFacePose)[]
-export const hasFightExpression = (id: FighterId) => Boolean(PROFILES[id])
+export const hasFightExpression = (id: FighterId) => Boolean(FIGHT_EXPRESSION_PROFILES[id])
 const clamp = (value: number) => Math.max(0, Math.min(1, value))
 
 export function fightExpressionTarget(fighter: ArcadeFighter, progress: number) {
-  const profile = PROFILES[fighter.id]
+  const profile = fightExpressionProfile(fighter)
   if (!profile || fighter.easterEgg) return { mode: 'rest' as const, pose: { ...REST_FACE } }
   const stimulus = expressionStimulus(fighter, clamp(progress))
   const pain = stimulus.pain * profile.intensity
   const effort = stimulus.effort * profile.intensity
+  const eyes = profile.eyeResponse ?? 1,
+    brows = profile.browResponse ?? 1,
+    body = profile.bodyResponse ?? 1
   const pose: FightFacePose = {
-    eye: Math.max(0.18, profile.eye - pain * 0.53 - effort * 0.16),
-    brow: profile.brow + effort * 0.18 - pain * 0.38,
-    lift: -0.002 - effort * 0.004 + pain * 0.009,
+    eye: Math.max(0.18, profile.eye - (pain * 0.53 + effort * 0.16) * eyes),
+    brow: profile.brow + (effort * 0.18 - pain * 0.38) * brows,
+    lift: (-0.002 - effort * 0.004 + pain * 0.009) * brows,
     effort: clamp(effort),
     pain: clamp(pain),
     smile: profile.smile * (1 - clamp(pain)) * (1 - effort * 0.6),
-    headPitch: 0.025 + effort * 0.035 - pain * 0.05,
+    headPitch: (0.025 + effort * 0.035 - pain * 0.05) * body,
     // Open the face to the camera while the pupils continue aiming at the opponent.
-    headYaw: -fighter.facing * 0.42,
-    gaze: fighter.facing * 0.005,
-    headRoll: pain * 0.045,
+    headYaw: -fighter.facing * (profile.opening ?? 0.42),
+    gaze: fighter.facing * (profile.gaze ?? 0.005),
+    headRoll: pain * 0.045 * body,
     shoulder: profile.shoulder * (0.3 + effort + pain * 0.65),
   }
+  return { mode: stimulus.mode, pose: constrainExpression(fighter, pose) }
+}
+
+function constrainExpression(fighter: ArcadeFighter, pose: FightFacePose) {
   if (fighter.health <= 0) pose.eye = 0.1
-  return { mode: stimulus.mode, pose }
+  if (fighter.parallelEyesClosed) {
+    pose.eye = 1
+    pose.gaze = 0
+  }
+  if (fighter.melodyPerformance) {
+    pose.effort = 0
+    pose.smile = 0
+    pose.headPitch = 0
+    pose.headYaw = 0
+    pose.headRoll = 0
+    pose.gaze = 0
+    pose.shoulder = 0
+  }
+  return pose
 }
 
 function expressionStimulus(fighter: ArcadeFighter, progress: number) {

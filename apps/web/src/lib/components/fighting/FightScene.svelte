@@ -219,6 +219,7 @@
           worldX,
           worldY,
           figureOf: (side) => models[side].model.turns,
+          comfort: visualComfort,
         })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]

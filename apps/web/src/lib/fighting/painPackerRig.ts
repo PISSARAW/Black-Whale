@@ -36,11 +36,12 @@ export function syncPainPackerRig(options: {
   outfit: VisitHatsuModel
   figure: Object3D
   active: boolean
+  reveal?: { hood: number; coat: number }
 }) {
   const { THREE, outfit, figure, active } = options
   restorePainPackerWearer(outfit.root)
   if (!active) return
-  const head = hideBaseWearer(outfit.root, figure)
+  const head = hideBaseWearer(outfit.root, figure, options.reveal)
   const common = { THREE }
   follow({ ...common, joint: outfit.joints.get('pain-packer-hood'), target: head })
   follow({
@@ -70,19 +71,19 @@ export function syncPainPackerRig(options: {
   }
 }
 
-function hideBaseWearer(root: Object3D, figure: Object3D) {
+function hideBaseWearer(root: Object3D, figure: Object3D, reveal = { hood: 1, coat: 1 }) {
   const head =
     figure.getObjectByName('manga-head:feitan-portor') ??
     figure.getObjectByName('face-mouth')?.parent
   const hidden = new Map<Object3D, boolean>()
   for (const name of ['manga-long-coat', 'feitan-coat-folds']) {
     const part = figure.getObjectByName(name)
-    if (part) {
+    if (part && reveal.coat >= 1) {
       hidden.set(part, part.visible)
       part.visible = false
     }
   }
-  if (head) {
+  if (head && reveal.hood >= 1) {
     hidden.set(head, head.visible)
     head.visible = false
   }

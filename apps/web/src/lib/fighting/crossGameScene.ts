@@ -2,7 +2,7 @@ import { buildCrossGameCage } from '$lib/tour/crossGameCageModel'
 import { placeVisitHand, freeVisitHand } from './visitSceneKit'
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { CROSS_GAME_DISPLAY } from './crossGame'
-import { gyoSight, insideEn } from './nenPerception'
+import { gyoSight } from './nenPerception'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
 
@@ -48,8 +48,9 @@ function syncCrossGame(
   cage.visible = false
   if (!condition) return
   const owner = state[condition.owner]
-  const concealed = condition.owner !== 'player' && owner.nen.in && !gyoSight(state.player)
-  cage.visible = condition.phase === 'restrained' && (!concealed || insideEn(state.player, target))
+  const viewer = options.viewer?.() ?? 'player'
+  const concealed = condition.owner !== viewer && owner.nen.in && !gyoSight(state[viewer])
+  cage.visible = condition.phase === 'restrained' && !concealed
   cage.position.set(options.worldX(condition.x), options.worldY(condition.y) + 1.15, 0)
   card.visible = (owner.crossGameCardFrames ?? 0) > 0
   placeVisitHand(options, { state, side: condition.owner, root: card, hand: freeVisitHand(owner) })

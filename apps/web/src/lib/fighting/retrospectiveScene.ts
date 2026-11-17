@@ -1,4 +1,4 @@
-import { gyoSight, insideEn } from './nenPerception'
+import { gyoSight } from './nenPerception'
 import { createVisitHatsuModel, type VisitHatsuKind } from './visitHatsuModel'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
@@ -53,9 +53,13 @@ export function createRetrospectiveScene(options: EffectSceneOptions): FighterEf
   }
   function syncGum(state: FightState, side: FightSide) {
     const fighter = state[side]
-    if (fighter.gumWoundSeals && visibleGum(state, side))
+    if (fighter.gumWoundSeals && visibleGum(state, side, options.viewer?.() ?? 'player'))
       show(`${side}:gum-seal`, 'bungee-gum', { x: fighter.x, y: fighter.y + 8, height: 0.3 })
-    if (fighter.gumCatch && !fighter.gumCatch.released && visibleGum(state, side))
+    if (
+      fighter.gumCatch &&
+      !fighter.gumCatch.released &&
+      visibleGum(state, side, options.viewer?.() ?? 'player')
+    )
       show(`${side}:gum-catch`, 'bungee-gum', {
         x: fighter.x + fighter.facing * 2.5,
         y: fighter.y + 7,
@@ -74,7 +78,7 @@ export function createRetrospectiveScene(options: EffectSceneOptions): FighterEf
   }
 }
 
-function visibleGum(state: FightState, side: FightSide): boolean {
-  if (side === 'player' || !state[side].nen.in) return true
-  return gyoSight(state.player) || insideEn(state.player, state[side])
+function visibleGum(state: FightState, side: FightSide, viewer: FightSide): boolean {
+  if (side === viewer || !state[side].nen.in) return true
+  return gyoSight(state[viewer])
 }

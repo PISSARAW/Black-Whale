@@ -1,6 +1,9 @@
-import { settleTeamBodyOutcome } from './teamOutcome'
 import { beginFight, createFight, nextRound, performMove, tickFight } from './engine'
-import { FIGHTING_ROSTER } from './roster'
+import { teamAssistBlock } from './teams/availability'
+import { nextTeamIndex } from './teams/next'
+import { carryTeamTerrain } from './teams/terrain'
+import { validTeamRoster } from './teams/draft'
+import { settleTeamBodyOutcome } from './teamOutcome'
 import { FIXED_STEP } from './fightClock'
 import {
   EMPTY_INPUT,
@@ -15,18 +18,11 @@ import type { FightEnvironment } from './fightEnvironment'
 
 const SIDES = ['player', 'opponent'] as const
 const other = (side: FightSide): FightSide => (side === 'player' ? 'opponent' : 'player')
-function validTeam(ids: FighterId[]) {
-  return (
-    ids.length === 3 &&
-    new Set(ids).size === 3 &&
-    ids.every((id) => FIGHTING_ROSTER.some((fighter) => fighter.id === id))
-  )
-}
 export function createTeamFight(
   rosters: Record<FightSide, FighterId[]>,
   environment?: Partial<FightEnvironment>,
 ): FightState {
-  if (!SIDES.every((side) => validTeam(rosters[side]))) throw Error('INVALID_TEAM')
+  if (!SIDES.every((side) => validTeamRoster(rosters[side]))) throw Error('INVALID_TEAM')
   const state = createFight(rosters.player[0], rosters.opponent[0], {
     mode: 'versus-local',
     formatId: 'knockout',
@@ -63,10 +59,7 @@ function sync(state: FightState): FightState {
   }
 }
 export function requestTeamAssist(state: FightState, side: FightSide, index: number): FightState {
-  const seat = state.teamMatch?.seats[side]
-  if (!seat || state.phase !== 'fighting' || seat.assistUsed || seat.relay) return state
-  if (!reserveAvailable(seat, index)) return state
-  if (!atTeamGate(state, side) || !teamRelayReady(state, side)) return state
+  if (teamAssistBlock(state, side, index)) return state
   const next = sync(state),
     team = next.teamMatch!,
     selected = team.seats[side]
@@ -74,15 +67,6 @@ export function requestTeamAssist(state: FightState, side: FightSide, index: num
   selected.active = index
   selected.assistUsed = true
   return { ...next, [side]: teamEntry(selected.members[index], side), previousPositions: undefined }
-}
-function reserveAvailable(seat: TeamSeat, index: number) {
-  return (
-    Number.isInteger(index) &&
-    index >= 0 &&
-    index < 3 &&
-    index !== seat.active &&
-    seat.members[index].health > 0
-  )
 }
 function approachRelay(state: FightState, side: FightSide) {
   const relay = state.teamMatch!.seats[side].relay!
@@ -159,9 +143,7 @@ export function nextTeamRound(state: FightState): FightState {
   const bodies = {} as Pick<FightState, 'player' | 'opponent'>
   for (const side of SIDES) {
     const seat = team.seats[side]
-    const leader = seat.relay?.leader ?? seat.active
-    seat.active =
-      seat.members[leader].health > 0 ? leader : seat.members.findIndex((actor) => actor.health > 0)
+    seat.active = nextTeamIndex(seat)
     seat.relay = null
     bodies[side] = seat.members[seat.active]
   }
@@ -173,6 +155,12 @@ export function nextTeamRound(state: FightState): FightState {
       aura: bodies[side].aura,
       auraExhausted: bodies[side].auraExhausted,
     }
-  return sync({ ...round, roundsWon: { player: 1, opponent: 1 } })
+  return sync(
+    carryTeamTerrain(state, {
+      ...round,
+      previousPositions: undefined,
+      roundsWon: { player: 1, opponent: 1 },
+    }),
+  )
 }
 export const startTeamFight = (state: FightState) => beginFight(state)

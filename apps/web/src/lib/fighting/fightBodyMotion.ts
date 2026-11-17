@@ -1,4 +1,6 @@
+import { animateBenjaminRifle } from './benjaminRiflePose'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
+import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
@@ -9,7 +11,8 @@ import { bonolenovDancePlan } from './bonolenovPoses'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
 import { pluggingWoundsPlan } from './blinkyPose'
-import { animateMussePistol } from './mussePistol'
+import { animateServiceHandgun } from './serviceHandgun'
+import { bodyguardFiring } from './bodyguardFirearms'
 import { musseKeyedMove } from './mussePoses'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { benjaminKeyedMove } from './benjaminPoses'
@@ -86,8 +89,8 @@ const ATTACK_POSES = new Set<FighterPose>(['light', 'heavy', 'special', 'ranged'
 export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
   const plan = bodyPlan(fighter, options)
-  return (human) => {
-    animateMussePistol(human.figure, fighter)
+  return expressiveFightMotion(options, (human) => {
+    animateServiceHandgun(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
     restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
@@ -109,8 +112,9 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
+    animateBenjaminRifle(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
-  }
+  })
 }
 
 interface PoseMemory {
@@ -152,14 +156,25 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const plan = unmirroredBodyPlan(fighter, context)
-  const handed =
-    ['chrollo', 'kurapika'].includes(fighter.id) ||
-    plan?.key === 'roster-writing' ||
-    plan?.key === 'roster-console'
-  return plan && handed && fighter.facing === -1
+  const plan = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
+  return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1
     ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan
+}
+
+function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
+  return (
+    ['chrollo', 'kurapika'].includes(fighter.id) ||
+    bodyguardFiring(fighter) ||
+    plan.key === 'roster-writing' ||
+    plan.key === 'roster-console'
+  )
+}
+
+function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  if (!['down', 'ko', 'wakeup'].includes(fighter.pose)) return null
+  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  return reactionPlan(fighter, context, standing)
 }
 
 function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {

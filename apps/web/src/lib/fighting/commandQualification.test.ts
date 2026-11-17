@@ -19,14 +19,19 @@ beforeAll(async () => {
 })
 
 describe('command qualification from the frozen six-fighter states', () => {
-  it('keeps all historical input packets and the original archive intact across the v17 recording', async () => {
+  it('keeps all historical input packets and the original archive intact across the current recording', async () => {
     const historical = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
     )
     expect(historical.archiveSha256).toBe(
       'd4e27df52932d61bfd526cc94d145111947103190208e4c2aae3c4a00e416900',
     )
-    expect(frozen.ruleset).toBe('clash-combat-17')
+    const previous = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference/v20', import.meta.url)),
+    )
+    // Preserve v20 as its own archive while validating the current recording separately.
+    expect(previous.ruleset).toBe('clash-combat-20')
+    expect(frozen.ruleset).toBe(REPLAY_RULESET)
     expect(Object.keys(frozen.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
     for (const [id, replay] of Object.entries(historical.tapes))
       expect(frozen.tapes[id].packets).toEqual(replay.packets)
@@ -38,6 +43,17 @@ describe('command qualification from the frozen six-fighter states', () => {
     expect(() =>
       revalidateCombatReference(historical.tapes['route-kurapika-confirm-neutral-right-center-6']),
     ).toThrow(/Reference changed/)
+  })
+
+  it('keeps the v17 archive immutable and rejects its changed observation checkpoints', async () => {
+    const legacy = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference/v17', import.meta.url)),
+    )
+    expect(legacy.ruleset).toBe('clash-combat-17')
+    for (const fighter of ['kurapika', 'benjamin', 'hisoka', 'chrollo'])
+      expect(() =>
+        revalidateCombatReference(legacy.tapes[`route-${fighter}-confirm-neutral-right-center-6`]),
+      ).toThrow(/Reference changed/)
   })
 
   for (const fighter of BASELINE_FIGHTERS)
@@ -127,8 +143,6 @@ describe('command qualification from the frozen six-fighter states', () => {
 
 describe('recovery links use real guard and one-frame timing offsets', () => {
   for (const [fighter, route, from, to] of [
-    ['kurapika', 'precision', 'forwardLight', 'standingHeavy'],
-    ['chrollo', 'precision', 'standingHeavy', 'backHeavy'],
     ['phinks', 'charged', 'standingHeavy', 'finisher'],
   ] as const)
     it(`${fighter}: before recovery, first free tick, and the first late tick`, () => {

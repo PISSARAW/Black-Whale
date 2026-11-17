@@ -1,6 +1,7 @@
 import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
 import type { FutureControls, FutureFrame, SimulateFutureFrame } from './parallelFutureTypes'
 import { FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
+import { immutableFightSnapshot } from './immutableFightSnapshot'
 
 /** Uses the same fixed step, projectiles, impacts, AI cadence and RNG as the real duel. */
 export function forecastParallelFuture(
@@ -43,7 +44,7 @@ export function forecastParallelFuture(
       command: newAttack(before, predicted.opponent),
     })
   }
-  return frames
+  return immutableFightSnapshot(frames)
 }
 
 function predictionControls(

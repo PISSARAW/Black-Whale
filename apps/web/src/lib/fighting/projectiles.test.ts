@@ -27,15 +27,11 @@ describe('ranged attacks', () => {
       'morena',
       'tserriednich',
       'saiyu',
-      'biscuit',
       'marayam',
       'phinks',
       'shizuku',
       'mizaistom',
-      'hanzo',
-      'rihan',
       'zakuro',
-      'melody',
     ]
     for (const fighter of stoneThrowers) {
       expect(projectileProfile(fighter), fighter).toMatchObject({
@@ -107,7 +103,7 @@ describe('ranged attacks', () => {
   })
 
   it('tells Blinky which projectiles are ordinary objects', () => {
-    expect(projectileProfile('kurapika').matter).toBe('nen')
+    expect(projectileProfile('kurapika').matter).toBe('object')
     expect(projectileProfile('theta').matter).toBe('object')
     expect(projectileProfile('franklin').matter).toBe('nen')
     expect(projectileProfile('hisoka').matter).toBe('object')

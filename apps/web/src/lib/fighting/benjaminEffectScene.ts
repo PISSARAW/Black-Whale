@@ -1,28 +1,17 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { benjaminNenActive } from './benjaminBaton'
-import { attackData, attackPhase } from './frameData'
+import { attackPhase } from './frameData'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-/** Distinct silhouettes: a physical firearm, Musse's owl and Shikaku's rectangle/card. */
+/** Inherited Nen effects; the physical firearm belongs to Benjamin's animated hands. */
 export function createBenjaminEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
-  const metal = new THREE.MeshStandardMaterial({
-    color: '#343938',
-    roughness: 0.55,
-    metalness: 0.7,
-  })
   const aura = new THREE.MeshBasicMaterial({ color: '#eeeeec', transparent: true, opacity: 0.8 })
-  const flash = new THREE.MeshBasicMaterial({ color: '#ffe09c' })
   const dark = new THREE.MeshBasicMaterial({ color: '#24252a' })
   const geometries: import('three').BufferGeometry[] = []
   const box = (size: [number, number, number]) => {
     const made = new THREE.BoxGeometry(...size)
-    geometries.push(made)
-    return made
-  }
-  const sphere = (radius: number) => {
-    const made = new THREE.SphereGeometry(radius, 10, 7)
     geometries.push(made)
     return made
   }
@@ -40,12 +29,6 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     return made
   }
   const build = (side: FightSide) => {
-    const gun = new THREE.Group()
-    mesh(gun, { geometry: box([0.62, 0.19, 0.17]), material: metal, position: [0, 0, 0] })
-    mesh(gun, { geometry: box([0.6, 0.075, 0.075]), material: metal, position: [0.57, 0.03, 0] })
-    mesh(gun, { geometry: box([0.29, 0.15, 0.12]), material: metal, position: [-0.42, -0.03, 0] })
-    mesh(gun, { geometry: box([0.14, 0.26, 0.1]), material: metal, position: [0.12, -0.2, 0] })
-    const muzzle = mesh(gun, { geometry: sphere(0.11), material: flash, position: [0.93, 0.03, 0] })
     const owlModel = createVisitHatsuModel(THREE, { model: 'secret-window' })
     owlModel.fit({ height: 0.48, width: 0.34 })
     const owl = owlModel.root
@@ -67,13 +50,12 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     const card = new THREE.Group()
     mesh(card, { geometry: box([0.24, 0.36, 0.035]), material: dark, position: [0, 0, 0] })
     mesh(card, { geometry: box([0.16, 0.26, 0.04]), material: aura, position: [0, 0, 0] })
-    gun.name = side === 'player' ? 'benjamin-firearm' : `benjamin-firearm:${side}`
     owl.name = side === 'player' ? 'benjamin-secret-window' : `benjamin-secret-window:${side}`
     rectangle.name =
       side === 'player' ? 'benjamin-culdcept-rectangle' : `benjamin-culdcept-rectangle:${side}`
     card.name = side === 'player' ? 'benjamin-culdcept-card' : `benjamin-culdcept-card:${side}`
-    scene.add(gun, owl, rectangle, card)
-    return { gun, muzzle, owl, owlModel, rectangle, card }
+    scene.add(owl, rectangle, card)
+    return { owl, owlModel, rectangle, card }
   }
   const sides = { player: build('player'), opponent: build('opponent') }
   const syncSide = (state: FightState, side: FightSide, seconds: number) => {
@@ -82,14 +64,6 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     const benjamin = fighter.id === 'benjamin'
     const activeNen = benjamin && benjaminNenActive(fighter)
     const baton = fighter.hatsuEffects.baton
-    held.gun.visible = gunHeld(fighter)
-    held.gun.position.set(
-      options.worldX(fighter.x) + fighter.facing * 0.5,
-      options.worldY(fighter.y + 6.1),
-      0.35,
-    )
-    held.gun.scale.x = fighter.facing
-    held.muzzle.visible = burstFlash(fighter)
     const target = markedFighter(state, fighter)
     held.owl.visible = side === (options.viewer?.() ?? 'player') && Boolean(activeNen && target)
     if (target)
@@ -118,25 +92,13 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
     },
     dispose: () => {
       for (const held of Object.values(sides)) {
-        scene.remove(held.gun, held.rectangle, held.card)
+        scene.remove(held.rectangle, held.card)
         held.owlModel.dispose()
       }
       geometries.forEach((geometry) => geometry.dispose())
-      for (const material of [metal, aura, dark, flash]) material.dispose()
+      for (const material of [aura, dark]) material.dispose()
     },
   }
-}
-
-function burstFlash(fighter: ArcadeFighter): boolean {
-  if (fighter.attack?.kind !== 'ranged' || attackPhase(fighter) !== 'active') return false
-  return (fighter.attack.frame - attackData('ranged', fighter).startup) % 6 < 2
-}
-
-function gunHeld(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.id === 'benjamin' &&
-    (fighter.attack?.kind === 'ranged' || fighter.attack?.moveId === 'benjamin:backSpecial')
-  )
 }
 
 function markedFighter(state: FightState, fighter: ArcadeFighter): ArcadeFighter | null {

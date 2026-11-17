@@ -145,8 +145,15 @@ try {
   await page.waitForTimeout(1700)
   await page.keyboard.up('q')
   const one = teams.getByRole('region', { name: 'P1', exact: true })
-  await one.getByRole('button', { name: 'Appeler en relais', exact: true }).first().click()
-  await one.getByText('Hisoka · en scène', { exact: false }).waitFor()
+  await one
+    .getByRole('button', { name: /^P1 · Appeler / })
+    .first()
+    .click()
+  await one
+    .locator('.member')
+    .filter({ hasText: 'Hisoka' })
+    .getByText('En scène', { exact: true })
+    .waitFor()
   await teams.getByRole('button', { name: 'Pause', exact: true }).click()
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 1050 })

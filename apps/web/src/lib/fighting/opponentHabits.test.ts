@@ -169,8 +169,9 @@ describe('bounded AI knowledge and adaptation', () => {
   })
   it('uses En only inside its actual radius and does not keep that information under forced Zetsu', () => {
     const state = fight()
+    state.opponent = { ...createFight('benjamin', 'hinrigh').opponent, x: 53, aura: 100 }
     state.opponent.hatsuEffects.senseSeals = 1
-    state.opponent.nen.en = { radius: 18 }
+    state.opponent.nen = { ...state.opponent.nen, mode: 'ren', en: { radius: 18 } }
     expect(knownOpponentTarget(state)?.x).toBe(44)
     expect(knownOpponentTarget({ ...state, player: { ...state.player, x: 10 } })).toBeNull()
     state.opponent.moonlightZetsu = true

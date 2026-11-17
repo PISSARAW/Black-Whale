@@ -35,10 +35,13 @@ describe('ability detail publication boundary', () => {
     expect(JSON.stringify(data)).not.toContain("Shalnark's death")
   })
   it('serves a source-backed record with related entities', async () => {
-    const data = (await run('bungee-gum')) as any
+    const data = (await run('bungee-gum')) as {
+      ability: { id: string; sources: unknown[] }
+      owner: { id: string } | null
+    }
     expect(data.ability.id).toBe('bungee-gum')
     expect(data.ability.sources.length).toBeGreaterThan(0)
-    expect(data.owner.id).toBe('hisoka')
+    expect(data.owner?.id).toBe('hisoka')
   })
 
   it('returns the same 404 for unknown and spoiler-hidden abilities', async () => {
@@ -51,7 +54,10 @@ describe('ability detail publication boundary', () => {
       params: { slug: 'bungee-gum' },
       cookies: cookiesWith(),
       url: new URL('https://exploreblackwhale.com/fr/abilities/bungee-gum'),
-    } as never)) as any
+    } as never)) as {
+      ability: { description: string }
+      localizedContent: Record<string, string>
+    }
     expect(data.localizedContent[data.ability.description]).toMatch(/aura|caoutchouc/i)
   })
 })

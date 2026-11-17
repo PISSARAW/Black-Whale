@@ -57,8 +57,15 @@ function dolphin(state: FightState, source: FighterId, moveId: string) {
 
 describe('Combat preparation and real scenario entities', () => {
   it('En detects the actual prepared matter, excluding destination and objective markers', () => {
-    const state = duel('luini', ['rooms', 'objects', 'birds'])
-    state.player.nen = { ...state.player.nen, en: { radius: 100 } }
+    const state = duel('hinrigh', ['rooms', 'objects', 'birds'])
+    state.player = { ...state.player, x: 50 }
+    state.opponent = { ...state.opponent, x: 55 }
+    state.battlefield!.entities = state.battlefield!.entities.map((entity) => ({
+      ...entity,
+      x: 50,
+      y: 0,
+    }))
+    state.player.nen = { ...state.player.nen, mode: 'ren', en: { radius: 20 } }
     expect(enContacts(state, 'player')).toBe(7) // Opponent, two rooms, two crates, two pigeons.
     const gone = updateEntity(state, 'player:crate', { health: 0 })
     expect(enContacts(gone, 'player')).toBe(6)

@@ -1,0 +1,384 @@
+{
+  "date": "2026-11-17T13:33:07.670Z",
+  "status": "windowed-near-60-strict-budget-not-qualified",
+  "machine": "hw.model: Mac17,3\nmachdep.cpu.brand_string: Apple M5\nhw.ncpu: 10\nhw.memsize: 17179869184",
+  "browser": "157.0.8103.78",
+  "viewport": [1280, 900],
+  "deviceScaleFactor": 2,
+  "graphics": "quality",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
+  "power": "AC Power, lowPowerMode=0 before and after every windowed case",
+  "noSlowFramesFiltered": true,
+  "replayHashesUnchanged": true,
+  "emotions": {
+    "unchangedSince": "5ec9b75a0",
+    "authoredFighters": 40,
+    "sha256": {
+      "fightExpressionFeatures.ts": "752eafbf427b7c0ed0c414b1229fa1a41431d366a01505f1f9be138ee127e606",
+      "fightExpressionMotion.ts": "3ec15fcaad30e7f2e304c86a718e5fbbac2de82a039c457c161e772e54022cee",
+      "fightExpressionMouth.ts": "c56d7fb3a749c9be7da79b295d1298a5a22ab4829a4880d961f22fcba7b0ad17",
+      "fightExpressionProfiles.ts": "979afcb4fff77dcf06e30d15a5b6689ec61d7f09efb0b32bad88f91455005379",
+      "fightExpressionRig.ts": "b865b16ced404fda165018aebe7f0b8a3865cd61d2ee72208232e194c749e6d6",
+      "fightExpressions.ts": "aed9083638cfea7f53e31050949ea1ab4e22dc2645d556f8c6c070d2e07750c5"
+    }
+  },
+  "windowed": {
+    "artifact": "output/clash-hatsu-ac-after/report.json",
+    "durationSeconds": 45,
+    "warmupSeconds": 12,
+    "headless": false,
+    "pass": false,
+    "results": [
+      {
+        "id": "projectiles-quality",
+        "fps": 60,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 17.8,
+        "renderCpuP95": 3.9,
+        "drawCallsMedian": 1230,
+        "trianglesMedian": 527244,
+        "slowFramesOver25ms": 0,
+        "samples": 2700,
+        "replayLoops": 2,
+        "tapeHash": "ba286e4c",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      },
+      {
+        "id": "future-quality",
+        "fps": 59.8,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 34.3,
+        "renderCpuP95": 2.8,
+        "drawCallsMedian": 720,
+        "trianglesMedian": 404492,
+        "slowFramesOver25ms": 9,
+        "samples": 2691,
+        "replayLoops": 2,
+        "tapeHash": "241b3470",
+        "effectSeen": true,
+        "predictionContexts": 1,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      },
+      {
+        "id": "post-mortem-quality",
+        "fps": 60,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 17.8,
+        "renderCpuP95": 2.5,
+        "drawCallsMedian": 444,
+        "trianglesMedian": 162884,
+        "slowFramesOver25ms": 0,
+        "samples": 2700,
+        "replayLoops": 2,
+        "tapeHash": "fa760a74",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      },
+      {
+        "id": "guards-quality",
+        "fps": 59.954,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 33.4,
+        "renderCpuP95": 8.7,
+        "drawCallsMedian": 1812,
+        "trianglesMedian": 318304,
+        "slowFramesOver25ms": 2,
+        "samples": 2698,
+        "replayLoops": 2,
+        "tapeHash": "a8153543",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      },
+      {
+        "id": "transformation-quality",
+        "fps": 60,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 17.8,
+        "renderCpuP95": 2.1,
+        "drawCallsMedian": 296,
+        "trianglesMedian": 79582,
+        "slowFramesOver25ms": 0,
+        "samples": 2700,
+        "replayLoops": 2,
+        "tapeHash": "d8107281",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      }
+    ]
+  },
+  "headless": {
+    "artifact": "output/clash-hatsu-ac-strict/report.json",
+    "durationSeconds": 30,
+    "warmupSeconds": 12,
+    "headless": true,
+    "pass": false,
+    "results": [
+      {
+        "id": "projectiles-quality",
+        "fps": 55.936,
+        "frameP95": 33.3,
+        "frameP99": 33.4,
+        "frameMax": 50,
+        "renderCpuP95": 17.8,
+        "drawCallsMedian": 1232,
+        "trianglesMedian": 527214,
+        "slowFramesOver25ms": 121,
+        "samples": 1692,
+        "replayLoops": 2,
+        "tapeHash": "ba286e4c",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["cadence", "frameP95", "frameP99", "slowFrames", "renderCpu"]
+        }
+      },
+      {
+        "id": "future-quality",
+        "fps": 55.512,
+        "frameP95": 16.8,
+        "frameP99": 33.4,
+        "frameMax": 166.6,
+        "renderCpuP95": 11.2,
+        "drawCallsMedian": 719,
+        "trianglesMedian": 404492,
+        "slowFramesOver25ms": 83,
+        "samples": 1669,
+        "replayLoops": 1,
+        "tapeHash": "241b3470",
+        "effectSeen": true,
+        "predictionContexts": 1,
+        "budget": {
+          "pass": false,
+          "failed": ["cadence", "frameP99", "slowFrames"]
+        }
+      },
+      {
+        "id": "post-mortem-quality",
+        "fps": 59.903,
+        "frameP95": 16.7,
+        "frameP99": 16.8,
+        "frameMax": 33.3,
+        "renderCpuP95": 6.9,
+        "drawCallsMedian": 442,
+        "trianglesMedian": 162568,
+        "slowFramesOver25ms": 3,
+        "samples": 1799,
+        "replayLoops": 2,
+        "tapeHash": "fa760a74",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": true,
+          "failed": []
+        }
+      },
+      {
+        "id": "guards-quality",
+        "fps": 50.373,
+        "frameP95": 33.4,
+        "frameP99": 33.4,
+        "frameMax": 33.4,
+        "renderCpuP95": 20.3,
+        "drawCallsMedian": 1812,
+        "trianglesMedian": 318304,
+        "slowFramesOver25ms": 290,
+        "samples": 1517,
+        "replayLoops": 2,
+        "tapeHash": "a8153543",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["cadence", "frameP95", "frameP99", "slowFrames", "renderCpu"]
+        }
+      },
+      {
+        "id": "transformation-quality",
+        "fps": 59.936,
+        "frameP95": 16.8,
+        "frameP99": 16.8,
+        "frameMax": 50.1,
+        "renderCpuP95": 5.2,
+        "drawCallsMedian": 296,
+        "trianglesMedian": 79582,
+        "slowFramesOver25ms": 1,
+        "samples": 1805,
+        "replayLoops": 2,
+        "tapeHash": "d8107281",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": true,
+          "failed": []
+        }
+      }
+    ]
+  },
+  "baseline": {
+    "reference": {
+      "revision": "5ec9b75a072431378d8727988cbb917679e99aed",
+      "files": [
+        "src/lib/fighting/fightRenderer.ts",
+        "src/lib/fighting/lsdfScene.ts",
+        "src/lib/fighting/stageShipRoom.ts",
+        "src/lib/fighting/fightReplayHash.ts",
+        "src/lib/fighting/parallelFutureForecast.ts"
+      ]
+    },
+    "artifact": "output/clash-hatsu-ac-before/report.json",
+    "durationSeconds": 45,
+    "warmupSeconds": 12,
+    "headless": false,
+    "pass": false,
+    "results": [
+      {
+        "id": "future-quality",
+        "fps": 59.601,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 49.1,
+        "renderCpuP95": 2.7,
+        "drawCallsMedian": 720,
+        "trianglesMedian": 549238,
+        "slowFramesOver25ms": 17,
+        "samples": 2682,
+        "replayLoops": 2,
+        "tapeHash": "241b3470",
+        "effectSeen": true,
+        "predictionContexts": 1,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      },
+      {
+        "id": "guards-quality",
+        "fps": 60,
+        "frameP95": 17.6,
+        "frameP99": 17.7,
+        "frameMax": 17.8,
+        "renderCpuP95": 5.7,
+        "drawCallsMedian": 2604,
+        "trianglesMedian": 296380,
+        "slowFramesOver25ms": 0,
+        "samples": 2699,
+        "replayLoops": 2,
+        "tapeHash": "a8153543",
+        "effectSeen": true,
+        "predictionContexts": 0,
+        "budget": {
+          "pass": false,
+          "failed": ["frameP95"]
+        }
+      }
+    ]
+  },
+  "visual": {
+    "artifact": "output/clash-hatsu-visuals/report.json",
+    "pass": true,
+    "scope": "Six frozen primary views before camera intro; prediction context reuse is tested in the live campaign",
+    "comparisons": [
+      {
+        "id": "projectiles",
+        "tick": 180,
+        "stateFrame": 181,
+        "tapeHash": "ba286e4c",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 0,
+        "changedRatio": 0,
+        "pass": true
+      },
+      {
+        "id": "future-vision",
+        "tick": 100,
+        "stateFrame": 30,
+        "tapeHash": "241b3470",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 0,
+        "changedRatio": 0,
+        "pass": true
+      },
+      {
+        "id": "future-divergence",
+        "tick": 360,
+        "stateFrame": 271,
+        "tapeHash": "241b3470",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 0,
+        "changedRatio": 0,
+        "pass": true
+      },
+      {
+        "id": "post-mortem",
+        "tick": 150,
+        "stateFrame": 150,
+        "tapeHash": "fa760a74",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 0,
+        "changedRatio": 0,
+        "pass": true
+      },
+      {
+        "id": "guards",
+        "tick": 60,
+        "stateFrame": 61,
+        "tapeHash": "a8153543",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 17,
+        "changedRatio": 0.000006044831313648518,
+        "pass": true
+      },
+      {
+        "id": "transformation",
+        "tick": 100,
+        "stateFrame": 101,
+        "tapeHash": "d8107281",
+        "expressionsExactlyEqual": true,
+        "changedPixelsOver3": 0,
+        "changedRatio": 0,
+        "pass": true
+      }
+    ]
+  },
+  "checks": {
+    "appTests": 170,
+    "ratchetTests": 23,
+    "eslint": "pass",
+    "typecheck": {
+      "changedFilesErrors": 0,
+      "externalErrors": [
+        {
+          "file": "apps/web/demos/fighting-showcase/nobunagaFatalityActors.ts",
+          "line": 24,
+          "message": "Type 'string' is not assignable to type 'number'."
+        }
+      ]
+    }
+  }
+}

@@ -148,6 +148,7 @@ export function damageArenaObject(
   const entry = state.battlefield?.entities.find((object) => object.id === id)
   if (!entry) return state
   const { damage, zone } = typeof hit === 'number' ? { damage: hit, zone: undefined } : hit
+  if (!canDamageObject(entry, damage)) return state
   const copy =
     entry.copy && zone === 'head'
       ? {
@@ -160,6 +161,10 @@ export function damageArenaObject(
     health: Math.max(0, entry.health - damage),
     ...(copy ? { copy } : {}),
   })
+}
+
+function canDamageObject(entry: PreparedEntity, damage: number) {
+  return Number.isFinite(damage) && damage > 0 && entry.present && entry.health > 0
 }
 
 /** Swept projectile collision runs before body collision; the same shot cannot hit both. */

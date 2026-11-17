@@ -29,10 +29,21 @@ export function victoryPortrait(context: VictoryContext, actor = context.hero) {
 }
 export function victoryWide(context: VictoryContext, extraHeight = 0) {
   const height = Math.max(context.hero.height, context.victim.height, extraHeight)
+  const drift =
+    context.frame.fighter === 'benjamin'
+      ? 1
+      : context.frame.fighter === 'tserriednich' && context.comfort.camera === 0
+        ? -1
+        : 0
+  const travel = drift
+    ? context.victim.height + 1.5
+    : context.frame.fighter === 'halkenburg'
+      ? 2.2
+      : 0
   victoryShot(context, {
-    target: new Vector3(context.centre, height * 0.5, 0),
+    target: new Vector3(context.centre + travel * 0.2 * drift, height * 0.5, 0),
     offset: new Vector3(0.25, 0.25, 6),
-    width: context.gap + context.hero.width + context.victim.width + 0.6,
+    width: context.gap + context.hero.width + context.victim.width + 0.6 + travel,
     height: height + 0.45,
   })
 }

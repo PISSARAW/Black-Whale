@@ -124,11 +124,12 @@ describe('eighth expansion scenario prerequisites', () => {
       1,
     )
     expect(result.state.projectiles).toHaveLength(0)
+    // Lot 4 of COMBO_GRAMMAR.md: the former recovery link is a chain under the derived grammar.
     const waiting = play('bill:precision', { steps: 2 }).state
     expect(
       comboChoices(waiting).find((choice) => choice.move.slot === 'standingHeavy'),
-    ).toMatchObject({ link: true, status: 'wait' })
-    expect(command(waiting, 'standingHeavy').player.attack).toBe(waiting.player.attack)
+    ).toMatchObject({ link: false, status: 'ready' })
+    expect(command(waiting, 'standingHeavy').player.attack?.moveId).toBe('bill:standingHeavy')
   })
 
   it('Cluck’s pigeon travels and completes its actual delivery without creating extra hits', () => {

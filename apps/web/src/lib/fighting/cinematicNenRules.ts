@@ -1,3 +1,4 @@
+import { activeEnRadius } from './en/access'
 import { enContacts, gyoSight } from './nenPerception'
 import { rig, selfPart, targetPart } from './cinematicRules'
 import type { CameraRule } from './cinematicRules'
@@ -39,7 +40,7 @@ export const NEN_CAMERA_RULES: CameraRule[] = [
     label: ['En · Présence détectée', 'En · Presence detected'],
     select: (c) => enContacts(c.state, c.side),
     edge: 'increase',
-    guard: (c) => Boolean(c.self.nen.en),
+    guard: (c) => Boolean(activeEnRadius(c.self)),
     anchors: selfPart('body'),
     private: true,
   },

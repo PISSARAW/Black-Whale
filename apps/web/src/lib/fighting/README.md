@@ -1,12 +1,20 @@
 # Fighting
 
 Le menu, le combat tactile et la pause sont décrits dans [LOBBY.md](./LOBBY.md).
+Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
+complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
+
+Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
+observées et réglages arcade ; seules les pratiques qualifiées sont activables.
 
 La [référence reproductible des six combattants](./BASELINE.md) fige leurs routes,
 les sept situations d’essai, les mesures et la bibliothèque de replays de départ.
 
 La [qualification des commandes et de la cadence](./COMMAND_QUALIFICATION.md)
 mesure les six personnages à partir de cette référence et conserve les limites matérielles.
+
+Les [expressions pendant le combat](./EMOTIONS.md) ajoutent concentration, effort
+et douleur aux visages et aux postures des 40 combattants sélectionnables.
 
 Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
 complètent les contrôles de réactivité et de performance.
@@ -28,6 +36,12 @@ Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LO
 L’[étape 7](./STEP7.md) ajoute trois parcours scénarisés avec fins et sauvegardes,
 puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
 
+L’[étape 8](./STEP8.md) approfondit la sélection des équipes, les ressources,
+les refus de relais et la conservation du terrain physique entre combattants.
+
+L’[étape 9](./STEP9.md) enrichit les dialogues, fins et tenues locales,
+avec les titres des parcours solo équipables dans le profil.
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.
@@ -43,6 +57,10 @@ interruption, stockage, marques, prévisions et réinitialisation ;
 `fighting` est le mode de duel 2D du Black Whale. Il reprend les personnages et
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.
+
+La [reprise des vérifications globales](./GLOBAL_CHECKS.md) corrige les traitements
+et observations existants sous `clash-combat-20`, avec des références versionnées
+et sans nouvelle capacité de Nen.
 
 ## Verrouillage transversal du Nen
 
@@ -166,7 +184,7 @@ armure, invulnérabilité de backdash ou combo breaker n’est ajouté.
 `fightCounterplay.ts` repère seulement une manifestation accessible : projectile
 en approche, chaleur solaire, performance, corps endormi, préparation visible,
 récupération ou gomme repérée. In cache l’aura, pas un projectile matériel.
-Gyo exige la vue ; En localise le mouvement dans son rayon et exige un Nen
+Gyo exige la vue ; En localise les contacts, même immobiles, dans son rayon et exige un Nen
 disponible. Le lecteur ne consulte ni commande en attente, ni analyse privée,
 ni condition inconnue, ni branche future. Le laboratoire permet de choisir
 explicitement P1 ou P2 pour consulter ces indices de perception.
@@ -390,7 +408,7 @@ La seconde bête accompagne uniquement la vue P1 de sa propre vision/divergence,
 sans révéler la vision adverse ni matérialiser une bête gardienne passive.
 
 Bungee Gum déforme le maillage de la visite sur la liaison réelle, avec la même
-courbure et le même découpage par In/Gyo/En. La carte jaune de Cross Game, les
+courbure et la même visibilité par In/Gyo. En montre seulement un contact neutre. La carte jaune de Cross Game, les
 menottes redevenues ordinaires de Biohazard, les flûtes ramassables, les oiseaux
 de préparation et le noyau de Rising Sun utilisent leurs constructeurs communs.
 Les ailes suivent le vol ; le filament de contrôle de Cluck ne paraît que sous
@@ -948,8 +966,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   interrompre le tireur coupe la rafale. Le HUD et la scène montrent les
   héritages, l'oiseau, le rectangle, la carte et l'arme physique.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
-  projectiles attestés sont propres au combattant ; les autres lancent une pierre,
-  sans leur inventer de technique de Nen. Les collisions sont transmises à
+  projectiles attestés sont propres au combattant ; les gardes du corps utilisent
+  leur arme de service ([armes et conventions du duel](./BODYGUARD_FIREARMS.md)).
+  Les autres lancent une pierre, sans leur inventer de technique de Nen. Les collisions sont transmises à
   `combatImpact.ts`, qui leur applique la même garde, parade, aura et décision de
   score qu'aux coups physiques.
 - Franklin tire **Double Machine Gun** avec U et L : les balles de Nen partent
@@ -1130,9 +1149,10 @@ sans changer les règles, les boîtes ni les données de frame.
   le Zetsu aussi longtemps que Kurapika la maintient. L libère ; perdre le Nen la
   dissipe. Le serment est mortel : tenter réellement ce coup sur un non-membre de
   la Brigade, Hisoka compris, tue Kurapika. L’IA évite cet usage interdit.
-- **Avant + L / U : Dowsing Chain**, chaîne de l’annulaire. Arme physique de portée
+- **Avant + L : Dowsing Chain**, chaîne de l’annulaire. Arme physique de portée
   moyenne, elle peut intercepter les balles matérielles pendant sa phase active.
-  U dirige cette chaîne attachée ; aucun projectile de chaîne détaché n’est créé.
+  La chaîne reste attachée ; aucun projectile de chaîne détaché n’est créé.
+  **U tire le pistolet physique tenu à gauche**, sans coût d’aura ni bonus d’Emperor Time.
   La détection des mensonges et la recherche hors combat n’ont pas de cible dans
   ce duel sans dialogue.
 - **Bas + L : Holy Chain**, chaîne du pouce. Un soin après préparation, sans
@@ -1213,17 +1233,17 @@ et chaque contact consomme de l’aura. Une attaque très puissante peut le dép
 
 Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
 
-| Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                      |
-| --------- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| En        | R             | [             | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact.                    |
-| Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
-| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact.                                                 |
-| Gyo       | G             | ;             | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie.                                                                                                                                      |
-| Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                         |
+| Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                                                |
+| --------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| En        | R             | [             | Profils qualifiés : Hinrigh ≥ 5 m observés (20 u de jeu), Phinks portée inconnue (12 u arcade, concentration fragile). Contacts neutres, sans bonus de parade ; 9 aura/s en plus de Ren et protection dispersée (réglages de duel). Voir [EN.md](./EN.md).                           |
+| Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu.                           |
+| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle l’aura ; En seul ne révèle pas cette aura cachée.                                                 |
+| Gyo       | G             | ;             | Gyo oculaire : Ren, lecture de In et des zones adverses (6,4 aura/s). Version faible : 2,4 aura/s sans contre universel à In. G + zone : concentration corporelle ; Aura + G + zone : Ryu et lecture ; Aura + Garde + G + zone : Ko défensif. Voir [NEN_COMBAT.md](./NEN_COMBAT.md). |
+| Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                                                   |
 
 En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
-Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
-qui le traversent sont localisés, sans lui attribuer l’analyse visuelle de Gyo.
+Hatsu. Son cercle utilise les mêmes distances que les collisions. Les contacts matériels
+restent perceptibles ; En seul ne révèle pas l’aura dissimulée par In.
 L’IA lit les gestes visibles et effectue des lectures Gyo périodiques ; sa décision
 ne consulte pas un drapeau In secret ni la présence d’un projectile indétectable.
 Les commandes supplémentaires sont enregistrées par le mannequin comme les autres
@@ -1646,7 +1666,7 @@ plan 3D du combat. Ils partagent la caméra, le zoom, le cadrage et les conversi
 logiques du moteur et leur applique la même interpolation que le corps. Les volumes
 ne dépendent plus de pourcentages CSS ; leurs tailles, les portées et les règles de
 touche restent celles du moteur. Cyan/violet désignent les corps, rouge une frappe
-active, orange un projectile. Les projectiles de Nen cachés respectent Gyo/En.
+active, orange un projectile. Gyo révèle les projectiles de Nen cachés ; En n’affiche que les contacts accessibles à son champ.
 Les volumes sont réservés à l’entraînement, ignorent le brouillard et réutilisent
 leurs géométries jusqu’à la destruction de la scène.
 
@@ -1674,7 +1694,8 @@ dynamique sont documentés dans [COMBAT.md](./COMBAT.md).
 
 ## Cinématiques de victoire
 
-Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks et Franklin
+Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin,
+Benjamin, Tserriednich, Leorio, Halkenburg et Camilla
 se déclenchent après le verdict avec le vaincu et le décor du match courant.
 Leur intégration, leur cycle de vie et leurs vérifications sont décrits dans
 [victory/README.md](./victory/README.md).

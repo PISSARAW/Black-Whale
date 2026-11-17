@@ -174,8 +174,12 @@ function approach(from: number, to: number, speed: number): number {
 }
 
 function canInteractBody(fighter: FightState['player']): boolean {
-  if (fighter.arenaRecovery) return false
-  if (fighter.hanzoProjection || fighter.melodyPerformance || fighter.parallelEyesClosed)
+  if (
+    fighter.arenaRecovery ||
+    fighter.hanzoProjection ||
+    fighter.melodyPerformance ||
+    fighter.parallelEyesClosed
+  )
     return false
   if (!illumiBodyFree(fighter)) return false
   return (

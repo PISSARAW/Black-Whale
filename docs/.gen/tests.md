@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 764
+Fichiers : 819
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -367,7 +367,7 @@ Fichiers : 764
 
 ## `apps/web/src/lib/fighting/commandQualification.test.ts`
 
-- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v17 recording
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the current recording
 - held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
 - draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
 
@@ -375,6 +375,11 @@ Fichiers : 764
 
 - own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
 - private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
+## `apps/web/src/lib/fighting/controlScheme.test.ts`
+
+- numpad notation and quarter-circle forward > reads directions relative to facing
+- classic and simplified schemes > defaults to simplified and keeps the authored commands
 
 ## `apps/web/src/lib/fighting/cookie.test.ts`
 
@@ -390,7 +395,7 @@ Fichiers : 764
 
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
-- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
+- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without ocular Gyo
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
 
@@ -444,6 +449,10 @@ Fichiers : 764
 
 - fifth expansion personal mechanics > Gel chooses two physical arm endings with different real costs and no added status
 
+## `apps/web/src/lib/fighting/duelComboGrammar.test.ts`
+
+- tiered cancel grammar > covers every profile except the four recovery links into slow techniques
+
 ## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
 
 - ninth expansion personal mechanics > Rihan opens real observation without inventing a manifestation or completed analysis
@@ -458,7 +467,7 @@ Fichiers : 764
 
 ## `apps/web/src/lib/fighting/duelComboSeventh.test.ts`
 
-- seventh expansion personal mechanics > Tserriednich waits for the advancing light to recover before linking the heavy
+- seventh expansion personal mechanics > Tserriednich chains the heavy from the advancing light under the derived grammar
 
 ## `apps/web/src/lib/fighting/duelComboTenth.test.ts`
 
@@ -483,6 +492,16 @@ Fichiers : 764
 ## `apps/web/src/lib/fighting/emperorPostMortemClock.test.ts`
 
 - Emperor Time pays for living time during a post-mortem sequence > does not activate Emperor Time just because the cat is running
+
+## `apps/web/src/lib/fighting/en/en.test.ts`
+
+- En evidence for all forty bodies > keeps a measured minimum distinct from unknown canonical maxima and arcade ranges
+- contact is distinct from visual aura inspection > senses static Zetsu bodies while In protects aura projectiles and tethers
+- Phinks’s limited concentration > allows stationary presence but ends on movement, including a contact leaving the field
+
+## `apps/web/src/lib/fighting/en/scene.test.ts`
+
+- neutral En contact rendering > uses the selected observer without revealing an In-concealed field or a technique model
 
 ## `apps/web/src/lib/fighting/engine.test.ts`
 
@@ -521,6 +540,15 @@ Fichiers : 764
 - standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
 - configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
 
+## `apps/web/src/lib/fighting/fightExpressionRoster.test.ts`
+
+- all selectable fighters have authored emotions > covers the actual roster explicitly, with forty distinct focus directions
+- native expression geometry ownership > preserves world positions when grouping lips and teeth under a transformed head
+
+## `apps/web/src/lib/fighting/fightExpressions.test.ts`
+
+- the six fighters express combat through their existing face > gives the six fighters distinct expressions and keeps Chrollo restrained
+
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
@@ -553,9 +581,17 @@ Fichiers : 764
 
 - fight presentation > draws forward and backward dashes as distinct authored actions
 
+## `apps/web/src/lib/fighting/fightRenderMatrices.test.ts`
+
+- reflection pose reuse > reflects the current complete pose and still updates the next animation frame
+
 ## `apps/web/src/lib/fighting/fightReplay.test.ts`
 
 - deterministic full-match replays > round-trips every held gameplay input, including advanced Nen and arena actions
+
+## `apps/web/src/lib/fighting/fightReplayHash.test.ts`
+
+- replay hash shared subtree reuse > reuses only certified immutable forecasts and preserves the legacy hash for every prefix
 
 ## `apps/web/src/lib/fighting/fightReplayPanels.test.ts`
 
@@ -599,6 +635,10 @@ Fichiers : 764
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
 - 2D fight formats > keeps Tour judging separate from health-based duels
+
+## `apps/web/src/lib/fighting/frameDataTable.test.ts`
+
+- generated frame data table > is up to date with the movesets (run `pnpm fighting:frames`)
 
 ## `apps/web/src/lib/fighting/franklin.test.ts`
 
@@ -731,12 +771,29 @@ Fichiers : 764
 
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
-- Nen techniques in an actual 2D duel > En detects physical bodies in Zetsu, hidden aura and entering projectiles only inside its radius
+- Nen techniques in an actual 2D duel > En detects bodies in Zetsu and accessible projectiles, while In hides aura
 - Category components and Emperor Time > applies hexagon efficiencies to fists and defence, including normalized catalogue aliases
+
+## `apps/web/src/lib/fighting/nenCombat/advanced.test.ts`
+
+- advanced combinations from the supplied Nen excerpt > distinguishes low-output aura observation from Ren-based ocular detection of In
+
+## `apps/web/src/lib/fighting/nenCombat/combat.test.ts`
+
+- En, In and actual defense counterplay > reports body contours and present motion while In conceals aura reactions and pure aura traps
+- in-world Gyo aura reading > draws only current inspected zones and releases all geometry when disposed
+
+## `apps/web/src/lib/fighting/nenCombat/pad.test.ts`
+
+- Xbox Nen chords > keeps movement on the left stick and resets every modifier on release
+
+## `apps/web/src/lib/fighting/nenCombat/replay.test.ts`
+
+- advanced Nen input playback > reconstructs focused Gyo, weak sight, paid defensive Ko and En from recorded inputs
 
 ## `apps/web/src/lib/fighting/nenPresentation.test.ts`
 
-- Nen perception in the rendered duel > actually hides a hostile Nen projectile until Gyo or an En contact reveals it
+- Nen perception in the rendered duel > keeps a concealed projectile hidden under En while Gyo reveals its visual form
 
 ## `apps/web/src/lib/fighting/nenWitnessMove.test.ts`
 
@@ -782,6 +839,11 @@ Fichiers : 764
 
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
+
+## `apps/web/src/lib/fighting/presentation/presentation.test.ts`
+
+- original presentation without private knowledge or Nen changes > covers precisely the forty selected fighters with distinct bilingual lines
+- local earned collection > rejects locked titles and palettes; loads earned rewards without altering solo data
 
 ## `apps/web/src/lib/fighting/projectileResources.test.ts`
 
@@ -888,6 +950,10 @@ Fichiers : 764
 
 - 2D arena ship-room rendering > keeps the original burial model behind the widest bodies with an actual material cut
 
+## `apps/web/src/lib/fighting/stageStaticCut.test.ts`
+
+- static room clipping prepass > removes only whole triangles already discarded by the intersection shader
+
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
@@ -895,6 +961,13 @@ Fichiers : 764
 ## `apps/web/src/lib/fighting/teamMatch.test.ts`
 
 - local three-fighter teams > requires three distinct known characters on each side
+
+## `apps/web/src/lib/fighting/teams/teams.test.ts`
+
+- team relay owns its world commitments > refuses Hisoka’s paid anchor until it is actually released, without refunding its cost
+- successive team bodies share physical terrain without inheriting Nen > preserves a real destroyed crate through a real round victory and retains the survivor’s resources
+- fixed-step team commands retain their actual body > drops a strike queued for a leader after the preceding relay changes bodies
+- ordered team drafts save no combat powers or resources > reorders the actual next starters and persists only the local selection
 
 ## `apps/web/src/lib/fighting/techniqueAuraColours.test.ts`
 
@@ -2772,10 +2845,6 @@ Fichiers : 764
 ## `apps/web/src/routes/spoiler-limit/spoiler-limit.test.ts`
 
 - POST /spoiler-limit > stores the cap the reader submitted
-
-## `packages/ability-modules/test/action-wheels.spec.ts`
-
-- roues d’action > keeps the median at four or more across the catalogue
 
 ## `packages/ability-modules/test/bungee-gum.spec.ts`
 

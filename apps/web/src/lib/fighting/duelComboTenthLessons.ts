@@ -97,8 +97,8 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis balayage', 'Recovery · link then sweep'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'lowHeavy'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis celle d’avant + J pour K. Le balayage termine près sans aura.',
-      'Wait for the backfist to recover before forward + J, then for forward + J to recover before K. Sweep nearby without aura.',
+      'Attends la récupération du revers pour lier avant + J (trois frames), puis enchaîne K par chaîne. Le balayage termine près sans aura.',
+      'Wait for the back heavy to recover, link forward + J (three frames), then chain into K. Sweep nearby without aura.',
     ],
   },
   {
@@ -108,8 +108,8 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis poussée', 'Recovery · link then carry'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'forwardHeavy'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis celle d’avant + J pour K. La fin avant repousse davantage sans aura.',
-      'Wait for the backfist to recover before forward + J, then for forward + J to recover before K. The forward finish carries farther without aura.',
+      'Attends la récupération du revers pour lier avant + J (trois frames), puis enchaîne K par chaîne. La fin avant repousse davantage sans aura.',
+      'Wait for the back heavy to recover, link forward + J (three frames), then chain into K. The forward finish carries farther without aura.',
     ],
   },
   {
@@ -119,19 +119,19 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis fouet', 'Recovery · link into whip'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'forwardSpecial'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis celle d’avant + J pour K. Termine par fouet pour 24 aura, avec ses conditions de Nen.',
-      'Wait for the backfist to recover before forward + J, then for forward + J to recover before K. Finish with whip for 24 aura, subject to Nen availability.',
+      'Attends la récupération du revers pour lier avant + J (trois frames), puis enchaîne K par chaîne. Termine par fouet pour 24 aura, avec ses conditions de Nen.',
+      'Wait for the back heavy to recover, link forward + J (three frames), then chain into K. Finish with whip for 24 aura, subject to Nen availability.',
     ],
   },
   {
     id: 'kurapika:extended-recovery',
     fighter: 'kurapika',
-    kind: 'confirm',
+    kind: 'punish',
     title: ['Reprise prolongée · cinq frappes', 'Extended recovery · five strikes'],
-    moves: ['standingLight', 'backHeavy', 'forwardLight', 'standingHeavy', 'lowHeavy'],
+    moves: ['backHeavy', 'standingLight', 'forwardLight', 'standingHeavy', 'lowHeavy'],
     requirement: [
-      'Confirme J vers le revers. Attends la récupération du revers pour avant + J, puis celle d’avant + J pour K. Termine au sol sans aura ; aucune chaîne de contrôle n’est implantée.',
-      'Confirm J into the backfist. Wait for the backfist to recover before forward + J, then for forward + J to recover before K. Knock down without aura; no control chain is implanted.',
+      'Ouvre au revers (+9), puis lie J après sa récupération : la fenêtre est de cinq frames. Enchaîne avant + J et K par chaîne, puis annule dans le balayage. Sans aura ; aucune chaîne de contrôle n’est implantée.',
+      'Open with the back heavy (+9), then link J after it recovers: the window is five frames. Chain forward + J and K, then cancel into the sweep. No aura; no control chain is implanted.',
     ],
   },
   {
@@ -141,8 +141,8 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis balayage', 'Recovery · link then sweep'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'lowHeavy'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis confirme K par cancel. Le balayage termine près sans aura.',
-      'Wait for the backfist to recover before forward + J, then confirm K by cancelling. Sweep nearby without aura.',
+      'Attends la récupération de la crosse pour lier avant + J (trois frames), puis enchaîne K par chaîne. Le balayage termine près sans aura.',
+      'Wait for the rifle-butt to recover, link forward + J (three frames), then chain into K. Sweep nearby without aura.',
     ],
   },
   {
@@ -152,8 +152,8 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis poussée', 'Recovery · link then carry'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'forwardHeavy'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis confirme K par cancel. La fin avant repousse davantage sans aura.',
-      'Wait for the backfist to recover before forward + J, then confirm K by cancelling. The forward finish carries farther without aura.',
+      'Attends la récupération de la crosse pour lier avant + J (trois frames), puis enchaîne K par chaîne. La fin avant repousse davantage sans aura.',
+      'Wait for the rifle-butt to recover, link forward + J (three frames), then chain into K. The forward finish carries farther without aura.',
     ],
   },
   {
@@ -163,19 +163,19 @@ export const TENTH_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Reprise · liaison puis Air Blow', 'Recovery · link into Air Blow'],
     moves: ['backHeavy', 'forwardLight', 'standingHeavy', 'neutralSpecial'],
     requirement: [
-      'Attends la récupération du revers pour avant + J, puis confirme K par cancel. Termine par Air Blow pour 40 aura, avec ses conditions de Nen et d’héritage.',
-      'Wait for the backfist to recover before forward + J, then confirm K by cancelling. Finish with Air Blow for 40 aura, subject to Nen and inheritance conditions.',
+      'Attends la récupération de la crosse pour lier avant + J (trois frames), puis enchaîne K par chaîne. Termine par Air Blow pour 40 aura, avec ses conditions de Nen et d’héritage.',
+      'Wait for the rifle-butt to recover, link forward + J (three frames), then chain into K. Finish with Air Blow for 40 aura, subject to Nen and inheritance conditions.',
     ],
   },
   {
     id: 'benjamin:extended-recovery',
     fighter: 'benjamin',
-    kind: 'confirm',
+    kind: 'punish',
     title: ['Reprise prolongée · cinq frappes', 'Extended recovery · five strikes'],
-    moves: ['standingLight', 'backHeavy', 'forwardLight', 'standingHeavy', 'neutralSpecial'],
+    moves: ['backHeavy', 'standingLight', 'forwardLight', 'standingHeavy', 'neutralSpecial'],
     requirement: [
-      'Confirme J vers le revers. Attends la récupération du revers pour avant + J, puis confirme K par cancel. Air Blow coûte 40 aura et exige toujours son héritage ; aucune capacité n’est obtenue par ces frappes.',
-      'Confirm J into the backfist. Wait for the backfist to recover before forward + J, then confirm K by cancelling. Air Blow costs 40 aura and still requires inheritance; these strikes grant no ability.',
+      'Ouvre à la crosse (+11), puis lie J après sa récupération : la fenêtre est de six frames. Enchaîne avant + J et K, puis annule dans Air Blow : 40 aura, héritage toujours exigé ; aucune capacité n’est obtenue par ces frappes.',
+      'Open with the rifle-butt (+11), then link J after it recovers: the window is six frames. Chain forward + J and K, then cancel into Air Blow: 40 aura, inheritance still required; these strikes grant no ability.',
     ],
   },
 ]

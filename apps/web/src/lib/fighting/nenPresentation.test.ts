@@ -5,7 +5,7 @@ import { createProjectileScene } from './projectileScene'
 import { createNenFieldScene } from './nenFieldScene'
 import { applyAuraContext, focusAttackRyu, focusGuardRyu } from './nen'
 import { focusNenZone } from './nenAdvanced'
-import { gyoSight, perceivesProjectile } from './nenPerception'
+import { gyoSight, perceivesProjectile, enContacts } from './nenPerception'
 import { strikeDefender } from './combatDamage'
 import { EMPTY_INPUT, type FightProjectile } from './types'
 
@@ -49,16 +49,16 @@ function setup() {
 }
 
 describe('Nen perception in the rendered duel', () => {
-  it('actually hides a hostile Nen projectile until Gyo or an En contact reveals it', () => {
+  it('keeps a concealed projectile hidden under En while Gyo reveals its visual form', () => {
     const { scene, renderer } = setup()
-    const fighter = { ...createFight('hisoka', 'franklin').player, x: 40 }
+    const fighter = { ...createFight('hinrigh', 'franklin').player, x: 40 }
     renderer.sync([projectile], 0, fighter)
     const mesh = scene.getObjectByName('fight-projectile:1')!
     expect(mesh.visible).toBe(false)
     renderer.sync([projectile], 0, aura(fighter, { gyo: true }))
     expect(mesh.visible).toBe(true)
     renderer.sync([projectile], 0, aura(fighter, { en: true }))
-    expect(mesh.visible).toBe(true)
+    expect(mesh.visible).toBe(false)
     renderer.sync([{ ...projectile, x: 95 }], 0, aura(fighter, { en: true }))
     expect(mesh.visible).toBe(false)
     renderer.dispose()
@@ -87,7 +87,7 @@ describe('Nen perception in the rendered duel', () => {
   it('does not leak a hostile En radius hidden by In', () => {
     const scene = new THREE.Scene()
     const fields = createNenFieldScene({ THREE, scene, worldX: (x) => x, worldY: (y) => y })
-    const state = createFight('phinks', 'hisoka')
+    const state = createFight('phinks', 'hinrigh')
     state.opponent = aura(state.opponent, { en: true, conceal: true })
     fields.sync(state)
     expect(scene.children[1].visible).toBe(false)
@@ -102,7 +102,12 @@ describe('Nen perception in the rendered duel', () => {
     fighter.hatsuEffects = { ...fighter.hatsuEffects, senseSeals: 1 }
     expect(gyoSight(aura(fighter, { gyo: true }))).toBe(false)
     expect(perceivesProjectile(aura(fighter, { gyo: true }), projectile)).toBe(false)
-    expect(perceivesProjectile(aura(fighter, { en: true }), projectile)).toBe(true)
+    expect(perceivesProjectile(aura(fighter, { en: true }), projectile)).toBe(false)
+    const state = createFight('phinks', 'hisoka')
+    state.player = aura(fighter, { en: true })
+    state.opponent.x = 95
+    state.projectiles = [{ ...projectile, concealed: false }]
+    expect(enContacts(state, 'player')).toBe(1)
   })
 
   it('does not reopen aura through a Ryu parry or focus while in Zetsu', () => {

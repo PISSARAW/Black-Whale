@@ -59,6 +59,21 @@ export function fightRigOf(human: AnimatedHuman): FightRig {
   return made
 }
 
+/** A presentation may borrow the production rig without changing the model hierarchy permanently. */
+export function borrowFightRig(human: AnimatedHuman): { rig: FightRig; restore: () => void } {
+  const held = RIGS.get(human.figure)
+  if (held) return { rig: held, restore: () => {} }
+  const children = [...human.figure.children]
+  const rig = buildFightRig(human)
+  return {
+    rig,
+    restore() {
+      children.forEach((child) => human.figure.add(child))
+      rig.chest.removeFromParent()
+    },
+  }
+}
+
 function buildFightRig(human: AnimatedHuman): FightRig {
   const hip = human.legs[0].position.y
   const elbows = human.arms.map((arm) => arm.children[1])

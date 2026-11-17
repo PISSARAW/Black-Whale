@@ -265,7 +265,7 @@ describe('Benjamin’s canonical loadout', () => {
     expect(contact.pose[facing === 1 ? 'leadWrist' : 'rearWrist']).toBeUndefined()
   })
 
-  it('shows distinct weapon, bird, rectangle and card effects, and disposes them', () => {
+  it('keeps the firearm on the figure and shows distinct bird, rectangle and card effects', () => {
     const scene = new THREE.Scene()
     const effects = createBenjaminEffectScene({
       THREE,
@@ -274,10 +274,10 @@ describe('Benjamin’s canonical loadout', () => {
       worldY: (value) => value / 5,
     })
     effects.sync(performAttack(duel(), 'player', 'ranged'), 0)
-    expect(scene.getObjectByName('benjamin-firearm')?.visible).toBe(true)
+    expect(scene.getObjectByName('benjamin-firearm')).toBeUndefined()
     const marked = advance(technique(duel(), 'forwardSpecial'), 30)
     effects.sync(marked, 0)
-    expect(scene.getObjectByName('benjamin-firearm')?.visible).toBe(false)
+    expect(scene.getObjectByName('benjamin-firearm')).toBeUndefined()
     expect(scene.getObjectByName('benjamin-secret-window')?.visible).toBe(true)
     const charged = atActive(technique(duel(), 'downSpecial'))
     effects.sync(charged, 0)

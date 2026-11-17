@@ -1,5 +1,6 @@
 import {
   addPoses,
+  lerpPose,
   pickJoints,
   scalePose,
   UPPER_JOINTS,
@@ -81,8 +82,8 @@ const LYING: FightPose = {
   head: [0.25, 0, 0.2],
   leadShoulder: [-0.3, 0, 1],
   rearShoulder: [-0.2, 0, -1.1],
-  leadElbow: [1.2, 0, 0],
-  rearElbow: [1.5, 0, 0],
+  leadElbow: [-0.45, 0, 0],
+  rearElbow: [-0.35, 0, 0],
   leadHip: [-0.25, 0, 0.1],
   leadKnee: [0.7, 0, 0],
   rearHip: [-0.05, 0, -0.1],
@@ -155,26 +156,34 @@ export function reactionPlan(
 ): BodyPlan | null {
   const { progress } = context
   const grounded = fighter.y <= 0
-  const pose = (offsets: FightPose) => addPoses(standing, offsets)
   switch (fighter.pose) {
     case 'hit':
       return hitPlan(fighter, context, standing)
     case 'down':
       return {
-        pose: pose(sample(KNOCKDOWN, progress, false)),
-        plant: grounded,
+        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        plant: false,
         key: 'down',
         blend: 0.03,
       }
     case 'ko':
       return {
-        pose: pose(sample(KNOCKDOWN, progress, false)),
-        plant: grounded,
+        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        plant: false,
         key: 'ko',
         blend: 0.03,
       }
     case 'wakeup':
-      return { pose: pose(sample(WAKEUP, progress)), plant: true, key: 'wakeup', blend: 0.05 }
+      return {
+        pose: lerpPose(
+          sample(WAKEUP, progress, false),
+          standing,
+          Math.max(0, (progress - 0.7) / 0.3),
+        ),
+        plant: false,
+        key: 'wakeup',
+        blend: 0.05,
+      }
     case 'jump':
       return jumpPlan(progress, standing)
     default:

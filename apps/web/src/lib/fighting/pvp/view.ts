@@ -1,3 +1,4 @@
+import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
@@ -113,6 +114,7 @@ function redactEnemy(enemy: ArcadeFighter) {
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
+  view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
   redactEnemy(view[other])
   redactReserves(view, other)
@@ -141,6 +143,9 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
   if (enemy.nen.in) {
     enemy.nen = createFightingNen()
+    enemy.gyoFocus = undefined
+    enemy.gyoLow = undefined
+    enemy.defensiveKo = undefined
     enemy.dowsingSession = undefined
   }
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined

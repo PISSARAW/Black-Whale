@@ -14,6 +14,7 @@
   export let onSceneReady: () => void = () => {}
   export let onSceneFailed: () => void = () => {}
   export let state: FightState
+  export let active = true
   export let stageId: FightStageId
   export let language: 'fr' | 'en' = 'fr'
   export let viewer: FightSide = 'player'
@@ -40,6 +41,7 @@
 
 <div class="live-scene" bind:this={host}>
   <FightScene
+    {active}
     state={comparison.main}
     {stageId}
     {language}
@@ -62,7 +64,14 @@
     />
   {/if}
   {#key viewer}
-    <FightFuturePool {prediction} active={detailVisible} {rect} {comfort} {language} {stageId} />
+    <FightFuturePool
+      {prediction}
+      active={detailVisible && active}
+      {rect}
+      {comfort}
+      {language}
+      {stageId}
+    />
   {/key}
 </div>
 

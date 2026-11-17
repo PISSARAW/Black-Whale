@@ -1,6 +1,6 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { bungeeVisible } from './hisokaTechnique'
-import { gyoSight, insideEn } from './nenPerception'
+import { gyoSight } from './nenPerception'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightState } from './types'
 import type { Mesh } from 'three'
@@ -31,7 +31,7 @@ export function createBungeeGumScene(options: EffectSceneOptions): FighterEffect
   return {
     sync(state, seconds) {
       const points = gumPoints(options, state)
-      model.root.visible = bungeeVisible(state) && points.length > 1
+      model.root.visible = bungeeVisible(state, options.viewer?.() ?? 'player') && points.length > 1
       if (!model.root.visible) return
       const center = points[0].clone().lerp(points[points.length - 1], 0.5)
       model.root.position.copy(center)
@@ -69,7 +69,6 @@ function gumPoints(options: EffectSceneOptions, state: FightState) {
   if (!attachment) return []
   const owner = state[attachment.owner]
   const target = state[attachment.target]
-  const localOnly = attachment.hidden && attachment.owner !== 'player' && !gyoSight(state.player)
   return Array.from({ length: 49 }, (_, index) => {
     const ratio = index / 48
     return {
@@ -77,16 +76,14 @@ function gumPoints(options: EffectSceneOptions, state: FightState) {
       y: owner.y + (target.y - owner.y) * ratio,
       sag: Math.sin(ratio * Math.PI) * -0.32,
     }
-  })
-    .filter((point) => !localOnly || insideEn(state.player, point))
-    .map(
-      (point) =>
-        new options.THREE.Vector3(
-          options.worldX(point.x),
-          options.worldY(point.y) + 1.15 + point.sag,
-          0.28,
-        ),
-    )
+  }).map(
+    (point) =>
+      new options.THREE.Vector3(
+        options.worldX(point.x),
+        options.worldY(point.y) + 1.15 + point.sag,
+        0.28,
+      ),
+  )
 }
 
 /** Each tube ring shares one curve evaluation across all of its radial vertices. */
@@ -123,8 +120,9 @@ function poseGumAnchor(
   const owner = state[gum.owner]
   const target = state[gum.target]
   const middle = { x: (owner.x + target.x) / 2, y: (owner.y + target.y) / 2 }
-  const hidden = gum.hidden && gum.owner !== 'player' && !gyoSight(state.player)
-  anchor.visible = !hidden || insideEn(state.player, middle)
+  const viewer = options.viewer?.() ?? 'player'
+  const hidden = gum.hidden && gum.owner !== viewer && !gyoSight(state[viewer])
+  anchor.visible = !hidden
   anchor.position
     .set(options.worldX(middle.x), options.worldY(middle.y) + 1.15 - 0.32, 0.28)
     .sub(center)

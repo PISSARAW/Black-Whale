@@ -31,8 +31,22 @@ y compris lorsqu’ils sont adversaires. La référence historique v9 demeure in
 avec le moteur v17 et de nouveaux checkpoints de production. Les prémisses
 initiales sont vérifiées ; 34 états finaux changent. La provenance et les sommes
 de contrôle figurent dans le [dossier v17](../../../ui-tests/fighting-reference/reference/v17/README.md).
-Le chargeur du banc utilise désormais cette référence. La vérification stricte
-des checkpoints ne change pas ; les rapports retenus sous v16 restent historiques.
+Cette archive reste conservée ; les rapports retenus sous v16 restent historiques.
+
+## Référence v20 après correction de la mémoire d’observation
+
+Le traitement des manifestations enregistre désormais ensemble la source,
+la frame et la technique réellement vue. Ces informations participent aux
+checkpoints et aux conditions d’acquisition de Skill Hunter. Les anciens
+checkpoints v17 sont donc refusés ; ils ne sont pas réétiquetés.
+
+Le chargeur utilise [reference/v20](../../../ui-tests/fighting-reference/reference/v20/README.md).
+Les 96 flux d’entrée restent identiques aux originaux et chaque prémisse initiale
+est vérifiée. Le recorder et le décodeur ont créé ces
+checkpoints sous `clash-combat-20`. Le moteur courant utilise `clash-combat-21`
+pour les [profils En qualifiés](./EN.md) ; la revalidation compare toujours tous
+les checkpoints v20 avant de promouvoir une référence pour la mesure.
+Les archives v9 et v17 et les anciens relevés de cadence restent historiques.
 
 ## Commandes et fenêtres
 
@@ -53,10 +67,16 @@ les diagnostics et les gestes ordinaires du moteur. Les essais couvrent :
   le maintien, le relâchement, le retour au neutre et la reconnexion simulée.
 - Les coups essayés sur les états réels des 96 routes, avant et après confirmation.
   Le rapport distingue admission, exécution immédiate et conservation du replay.
-- Les liaisons Kurapika avant + léger → lourd, Chrollo lourd → arrière + lourd,
-  Phinks lourd → poing chargé. Le banc tente une commande avant la récupération,
-  puis chaque frame à partir du premier instant libre jusqu’au premier échec
-  contre une garde réelle. Il conserve les points de part et d’autre de la limite.
+- La liaison Phinks lourd → poing chargé. Le banc tente une commande avant la
+  récupération, puis chaque frame à partir du premier instant libre jusqu’au premier
+  échec contre une garde réelle. Il conserve les points de part et d’autre de la
+  limite. Depuis `clash-combat-23`, avant + léger → lourd de Kurapika est une chaîne,
+  et depuis `clash-combat-26` lourd → arrière + lourd de Chrollo aussi. Le nouveau
+  lien de Kurapika (arrière + lourd → avant + léger) n’apparaît dans aucun flux figé
+  et se vérifie dans `duelComboDepth.test.ts`.
+- Le quart de cercle avant du schéma classique (`controlScheme.test.ts`) : P1 et P2,
+  deux orientations, directions tenues 1, 2 ou 3 frames (120, 60, 30 et 20 Hz),
+  refus sans manipulation et expiration après la fenêtre de 15 frames.
 
 Les états de stun et la position aérienne des sondes de file sont des prémisses
 explicites du laboratoire ; ils ne représentent pas un combat humain. Les essais

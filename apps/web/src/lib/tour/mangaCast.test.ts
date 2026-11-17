@@ -246,7 +246,8 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(flute.parent).toBe(rest.parent)
     expect(flute.position.toArray()).toEqual(rest.position.toArray())
     expect(flute.scale.toArray()).toEqual(rest.scale.toArray())
-    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBe(1)
+    // Combat expressions resume after the flute: the concentration face is close to rest.
+    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBeCloseTo(1, 1)
   })
   it('shares Yokotani’s smiling face, bob and carried law book with Fighting', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('yokotani') })

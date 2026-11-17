@@ -11,6 +11,7 @@ import type { FightLane } from './stageLane'
 import { cachedRoomFightLane } from './stageRoomLane'
 import { roomCutDepth } from './stageRoomCut'
 import { buildRoomDetails, detailedSurfacePlan, disposeRoomDetails } from './stageRoomDetails'
+import { pruneStaticRoomCut } from './stageStaticCut'
 
 /**
  * Anything standing nearer the camera than this is cut away above the floor.
@@ -183,6 +184,10 @@ export async function buildShipRoomScenery(
   const room = roomSurfaces({ THREE, mesh: buildTierMesh(detailedSurfacePlan(plan)), planes })
   room.root.add(details)
   placeOnLane(room.root, lane, floorOf(space, plan.tier))
+  pruneStaticRoomCut(THREE, room.root)
+  room.root.traverse((node) => {
+    node.matrixAutoUpdate = false
+  })
 
   // The lights stay outside the turned room, so the key always falls from the
   // audience's side whichever way the lane happens to run.

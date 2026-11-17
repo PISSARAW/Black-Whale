@@ -1,3 +1,4 @@
+import { interruptEnForSpeech } from './en/interruptions'
 import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import {
@@ -48,6 +49,7 @@ export function speakPaperWords(
     }
   }
   const recipient = speechRecipient(state, speaker, target)
+  next = interruptEnForSpeech(next, speaker)
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
   const actualRecipient = recipientBody(state, recipient)

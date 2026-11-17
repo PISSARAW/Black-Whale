@@ -33,7 +33,6 @@ import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
-  comboScale,
   nextComboHits,
   openingDamageMultiplier,
   openingType,
@@ -43,6 +42,8 @@ import {
   type ImpactDefence,
 } from './combatDamage'
 import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
+import { attackerComboScale } from './comboDamageScale'
+import { grammarAllowsWallSplat } from './grammarWallSplat'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -88,7 +89,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const antiAir = launchesTarget(attacker, defender)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
-  const damageScale = comboScale(comboHits)
+  const damageScale = attackerComboScale(attacker, comboHits)
   const critical = isCriticalAuraStrike(attacker)
   const damage = resolvedDamage({
     attacker,
@@ -288,7 +289,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   )
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
-  const damageScale = comboScale(comboHits)
+  const damageScale = attackerComboScale(attacker, comboHits)
   const damage = resolvedDamage({
     attacker,
     defence,
@@ -440,6 +441,7 @@ function impactWallSplat(options: {
 }): boolean {
   return (
     !options.defence.avoided &&
+    grammarAllowsWallSplat(options.attacker, options.knockback) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }

@@ -1,9 +1,10 @@
 import { interceptDeviceProjectile } from './deviceImpact'
 import { canReceiveCombatHit } from './combatTargets'
-import { interceptArenaProjectile } from './arenaSimulation'
-import { travelKallutoPaper } from './kallutoFlight'
-import { paperAvailable, paperZonePoint } from './kallutoPaper'
+import { BODYGUARD_PISTOL, hasBodyguardFirearm, bodyguardShotHeight } from './bodyguardFirearms'
 import { hasIllumiNeedles } from './illumiEquipment'
+import { travelKallutoPaper } from './kallutoFlight'
+import { interceptArenaProjectile } from './arenaSimulation'
+import { paperAvailable, paperZonePoint } from './kallutoPaper'
 import { illumiBodyFree } from './illumiState'
 import { battleRangedAvailable } from './battleCantabileRules'
 import { advanceJupiter } from './jupiterFlight'
@@ -58,15 +59,6 @@ export interface ProjectileProfile {
  * mundane stone instead of gaining an invented Nen technique.
  */
 const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
-  kurapika: projectile({
-    matter: 'nen',
-    labels: ['Chaîne divinatoire', 'Dowsing Chain'],
-    shape: 'chain',
-    colour: '#e8d44d',
-    speed: 48,
-    damage: 10,
-    size: [1.25, 0.55],
-  }),
   hisoka: projectile({
     matter: 'object',
     labels: ['Carte', 'Card'],
@@ -221,7 +213,7 @@ function projectile(options: ProjectileOptions): ProjectileProfile {
 
 export function projectileProfile(id: FighterId): ProjectileProfile {
   if (id === 'camilla') return CAMILLA_PISTOL
-  return CANONICAL_PROJECTILES[id] ?? THROWN_STONE
+  return CANONICAL_PROJECTILES[id] ?? (hasBodyguardFirearm(id) ? BODYGUARD_PISTOL : THROWN_STONE)
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
@@ -233,19 +225,18 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 
 function standardRangedAvailable(fighter: ArcadeFighter): boolean {
   if (predatorNenLocked(fighter) && rangedAuraCost(fighter.id) > 0) return false
-  if (fighter.id === 'kurapika')
-    return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
-  if (fighter.id === 'musse') return true
+  if (hasBodyguardFirearm(fighter.id)) return true
   if (fighter.id === 'leorio')
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   return ordinaryRangedReady(fighter)
 }
 
 export function rangedAuraCost(id: FighterId): number {
+  if (hasBodyguardFirearm(id)) return 0
   if (id === 'bonolenov') return 55
-  if (id === 'kurapika' || id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
+  if (id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
   if (['benjamin', 'theta', 'camilla', 'hinrigh', 'musse'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
@@ -270,7 +261,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
   }
   const profile = projectileProfile(fighter.id)
   const aim =
-    fighter.id === 'theta' ? thetaShotAim(fighter) : { y: profile.y, targetZone: 'torso' as const }
+    fighter.id === 'theta' ? thetaShotAim(fighter) : { y: bodyguardShotHeight(fighter, profile.y), targetZone: 'torso' as const }
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     owner: side,

@@ -45,8 +45,8 @@ function run(id: AdvancedLessonId) {
 describe('five advanced practical exercises use real engine outcomes', () => {
   it('extends the curriculum while preserving the fifteen existing lesson identities', () => {
     expect(FIGHT_LESSONS).toHaveLength(15)
-    expect(FIGHT_CURRICULUM).toHaveLength(20)
-    expect(new Set(FIGHT_CURRICULUM.map((x) => x.id)).size).toBe(20)
+    expect(FIGHT_CURRICULUM).toHaveLength(26)
+    expect(new Set(FIGHT_CURRICULUM.map((x) => x.id)).size).toBe(26)
     expect(FIGHT_CURRICULUM.slice(0, 15)).toEqual(FIGHT_LESSONS)
     expect(
       ADVANCED_FIGHT_LESSONS.every((x) =>

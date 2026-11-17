@@ -1,5 +1,5 @@
 import { gyoSight, perceivesProjectile } from './nenPerception'
-import { isThetaBullet } from './thetaFirearm'
+import { isBodyguardBullet } from './bodyguardFirearms'
 import type { ArcadeFighter, FightProjectile } from './types'
 import { createRemotePunchScene } from './remotePunchScene'
 import { createJupiterScene } from './jupiterScene'
@@ -47,7 +47,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
 
   const build = (projectile: FightProjectile) => {
     const colour = Number.parseInt(projectile.colour.slice(1), 16)
-    const material = isThetaBullet(projectile)
+    const material = handgunBullet(projectile)
       ? handgunMetal(colour)
       : projectile.shape === 'stone'
         ? stoneMaterial(colour)
@@ -144,6 +144,6 @@ function projectileGeometry(
 
 function handgunBullet(projectile: FightProjectile): boolean {
   return (
-    isThetaBullet(projectile) || (projectile.fighterId === 'musse' && projectile.shape === 'bullet')
+    isBodyguardBullet(projectile)
   )
 }

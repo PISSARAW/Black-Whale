@@ -1,5 +1,6 @@
 import type * as Three from 'three'
 import { fightGraphics, type FightGraphics } from './fightGraphics'
+import { reuseFightRenderMatrices } from './fightRenderMatrices'
 
 export function createFightRenderer(
   THREE: typeof Three,
@@ -14,6 +15,7 @@ export function createFightRenderer(
   })
   renderer.setClearColor(0x05090d, 1)
   renderer.outputColorSpace = THREE.SRGBColorSpace
+  reuseFightRenderMatrices(renderer)
   return renderer
 }
 

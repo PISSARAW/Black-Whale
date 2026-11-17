@@ -127,3 +127,7 @@ Le banc attend maintenant l’identité et la frame du modèle réellement dessi
 avant de capturer une expression : une ancienne scène encore en chargement ne
 peut pas valider le personnage suivant. Les détails sont recadrés avec la caméra
 principale, en excluant les vues secondaires des techniques.
+
+La [vérification des Hatsu lourds](./HATSU_PERFORMANCE.md) complète ces essais avec
+Parallel Future, LSDF, les rafales de Franklin, le chat de Camilla et la forme
+naturelle de Biscuit. Elle conserve aussi les échecs du budget strict.

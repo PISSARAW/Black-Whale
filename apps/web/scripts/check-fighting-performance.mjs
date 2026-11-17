@@ -9,12 +9,15 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
 import { fightingPerformanceCases } from './fighting-performance-cases.mjs'
 import { fightingPerformanceBudget, resourceDrift } from './fighting-performance-budget.mjs'
+import { renderReference } from './fighting-performance-reference.mjs'
+import { fightPerformancePower } from './fighting-performance-host.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = process.env.FIGHT_PERF_OUTPUT ?? '/tmp/black-whale-fighting-performance'
 const duration = Number(process.env.FIGHT_PERF_SECONDS ?? 45)
 const warmup = Number(process.env.FIGHT_PERF_WARMUP ?? 8)
 const profileSeconds = Number(process.env.FIGHT_PERF_PROFILE ?? 0)
+const headless = process.env.FIGHT_PERF_HEADLESS !== '0'
 const selected = process.env.FIGHT_PERF_CASES?.split(',')
 const suite =
   process.env.FIGHT_PERF_SUITE ?? (process.argv.includes('--stress') ? 'stress' : 'reference')
@@ -32,19 +35,27 @@ if (selected)
     'Unknown performance case selected',
   )
 await mkdir(output, { recursive: true })
+const reference = renderReference(
+  root,
+  process.env.FIGHT_PERF_RENDER_REF,
+  process.env.FIGHT_PERF_RENDER_FILES?.split(','),
+)
 const config = {
   configFile: false,
   root,
   publicDir: 'static',
   mode: 'production',
-  plugins: [svelte({ configFile: false, compilerOptions: { dev: false } })],
+  plugins: [
+    reference?.plugin,
+    svelte({ configFile: false, compilerOptions: { dev: false } }),
+  ].filter(Boolean),
   resolve: { alias: { $lib: path.join(root, 'src/lib') } },
   css: { postcss: { plugins: [] } },
   logLevel: 'warn',
   build: {
     outDir: path.join(output, 'production'),
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: process.env.FIGHT_PERF_SOURCEMAP !== '0',
     rollupOptions: { input: path.join(root, 'ui-tests/fighting-performance/index.html') },
   },
 }
@@ -58,7 +69,7 @@ const launchBrowser = () =>
     executablePath:
       process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ??
       '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    headless: true,
+    headless,
     args: ['--use-angle=metal', '--enable-gpu', '--no-proxy-server'],
   })
 let browser = await launchBrowser()
@@ -114,8 +125,12 @@ try {
       { waitUntil: 'domcontentloaded', timeout: 120000 },
     )
     await page.waitForFunction(() => !!window.fightingPerformance)
+    await page.bringToFront()
+    if (process.env.FIGHT_PERF_GPU === '1')
+      await page.evaluate(() => window.fightingPerformance.gpuTiming(true))
     await page.evaluate((entry) => window.fightingPerformance.start(entry), entry)
     await page.waitForTimeout(warmup * 1000)
+    const powerBefore = fightPerformancePower()
     await page.evaluate(() => window.fightingPerformance.reset())
     for (let seconds = 0; seconds < duration; seconds += 10) {
       hostLoad.push({ elapsed: seconds, load: os.loadavg(), freeMemory: os.freemem() })
@@ -123,14 +138,21 @@ try {
       process.stdout.write(`${entry.id}: ${Math.min(duration, seconds + 10)}/${duration}s\n`)
     }
     const raw = await page.evaluate(() => window.fightingPerformance.result())
-    assert.equal(raw.failedScene, false)
-    assert.equal(raw.failure, '')
-    assert.match(raw.renderer, /Metal Renderer/)
-    assert.ok(raw.samples.length >= duration * 20, `Insufficient rendered frames: ${entry.id}`)
-    const result = { ...entry, hostLoad, ...summarize(raw) }
-    result.budget = fightingPerformanceBudget(result)
-    results.push(result)
     await writeFile(path.join(output, `${entry.id}.frames.json`), JSON.stringify(raw))
+    const result = {
+      ...entry,
+      hostLoad,
+      power: { before: powerBefore, after: fightPerformancePower() },
+      ...summarize(raw),
+    }
+    result.budget = fightingPerformanceBudget(result)
+    result.budget.checks.measurement =
+      raw.samples.length >= duration * 20 && /Metal Renderer/.test(raw.renderer)
+    result.budget.checks.powerStable =
+      result.power.before.source === result.power.after.source &&
+      result.power.before.lowPowerMode === result.power.after.lowPowerMode
+    result.budget.pass &&= result.budget.checks.measurement && result.budget.checks.powerStable
+    results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))
     process.stdout.write(
       `${entry.id}: ${result.fps.toFixed(2)} FPS; frame p95=${result.intervals.p95.toFixed(2)}ms; render CPU p95=${result.renderCpu.p95.toFixed(2)}ms; calls=${result.drawCalls.p50}\n`,
@@ -150,26 +172,27 @@ try {
     await context.close()
     await browser.close()
   }
-  assert.deepEqual(errors, [])
   const report = {
     date: new Date().toISOString(),
     label: process.env.FIGHT_PERF_LABEL ?? 'reference',
     revision: process.env.FIGHT_PERF_REVISION ?? 'working-source',
     reusedBundle: process.env.FIGHT_PERF_BUNDLE ?? null,
     production: true,
+    headless,
+    renderReference: reference ? { revision: reference.revision, files: reference.files } : null,
     browser: browser.version(),
     durationSeconds: duration,
     warmupSeconds: warmup,
     profileSeconds,
     suite,
-    pass: results.every((entry) => entry.budget.pass),
+    pass: errors.length === 0 && results.every((entry) => entry.budget.pass),
     machine: execFileSync(
       'sysctl',
       ['hw.model', 'machdep.cpu.brand_string', 'hw.ncpu', 'hw.memsize'],
       { encoding: 'utf8' },
     ).trim(),
     scope:
-      'Production-compiled FightStage, actual engine replay, HUD and effects at 1280x900; arena height 560px. Profile window excluded from cadence samples. Headless Metal; Fresh browser process per case; other workstation load uncontrolled. Not a physical input latency measurement.',
+      'Production-compiled FightStage, actual engine replay, HUD and effects at 1280x900; arena height 560px. Profile window excluded from cadence samples. Metal; fresh browser process per case; headless flag recorded separately; other workstation load uncontrolled. Not a physical input latency measurement.',
     results,
     errors,
   }

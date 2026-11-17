@@ -1,4 +1,10 @@
 <script lang="ts">
+  import {
+    judgmentClauseLabel,
+    implantedJudgmentLabel,
+    preparedJudgmentLabel,
+  } from '$lib/fighting/judgmentPresentation'
+  import { fighterDefinition } from '$lib/fighting/roster'
   import { phoneGuidance } from '$lib/fighting/retrospectivePresentation'
   import { arsenalOptions } from '$lib/fighting/retrospectiveArsenal'
   import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
@@ -13,6 +19,18 @@
       : (['player'] as const)
 </script>
 
+{#each ['player', 'opponent'] as publicSide (publicSide)}
+  {@const caster = state[publicSide as FightSide]}
+  {#if caster.attack?.moveId === 'kurapika:finisher' && caster.judgmentDeclaration}
+    <p role="status">
+      {fighterDefinition(caster.id).name} · Judgment : {judgmentClauseLabel(
+        caster.judgmentDeclaration.clauses,
+        language,
+      )}
+    </p>
+  {/if}
+{/each}
+
 {#each sides as side (side)}
   {@const options = arsenalOptions(state, side)}
   {#if options.length}
@@ -25,6 +43,21 @@
           ? 'Techniques et préparations'
           : 'Techniques and preparation'}</strong
       >
+      {#if state[side].id === 'kurapika'}<span
+          >{language === 'fr' ? 'Prochaine implantation' : 'Next implantation'} · {preparedJudgmentLabel(
+            state[side],
+            language,
+          )}</span
+        >{/if}
+      {#if state[side].judgmentChain}<strong
+          >Judgment · {implantedJudgmentLabel(state[side], language)} · {language === 'fr'
+            ? 'Rompre une clause est fatal.'
+            : 'Breaking a clause is fatal.'}</strong
+        >{/if}
+      {#if state[side].heardWords && state.frame - state[side].heardWords!.frame < 180}<span
+          >{fighterDefinition(state[side].heardWords!.speaker).name} : {state[side].heardWords!
+            .text}</span
+        >{/if}
       {#each options as option (`${option.command.action}:${option.command.target ?? ''}`)}
         <button
           type="button"

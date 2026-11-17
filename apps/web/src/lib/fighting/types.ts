@@ -175,7 +175,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: { owner: FightSide }
   stolenChainAbility?: { owner: FightSide; moveId: string }
-  judgmentChain?: { owner: FightSide; rule: 'zetsu' }
+  judgmentChain?: import('./judgmentRules').JudgmentSeal
   id: FighterId
   x: number
   y: number

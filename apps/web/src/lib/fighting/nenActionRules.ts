@@ -38,7 +38,7 @@ export function nenActionAllowed(options: NenAction): boolean {
   )
 }
 
-function usesVoluntaryNen(
+export function usesVoluntaryNen(
   fighter: ArcadeFighter,
   action: Pick<NenAction, 'kind' | 'moveId'>,
 ): boolean {

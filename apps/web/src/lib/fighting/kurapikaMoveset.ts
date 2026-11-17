@@ -24,9 +24,10 @@ const CHAIN_MOVES: Partial<Record<MoveSlot, ChainTuning>> = {
     variant: 'standing',
     guard: 'mid',
     auraCost: 35,
-    nameFr: 'Judgment Chain · Reste en Zetsu',
-    nameEn: 'Judgment Chain · Remain in Zetsu',
-    tuning: { ...CHAIN_CAST, hitstun: 0, blockstun: 0, reach: 7 },
+    nameFr: 'Judgment Chain · Clauses annoncées',
+    nameEn: 'Judgment Chain · Declared Clauses',
+    canHitDowned: true,
+    tuning: { ...CHAIN_CAST, bottom: 0, hitstun: 0, blockstun: 0, reach: 7 },
   },
 }
 
@@ -36,13 +37,13 @@ export function tuneKurapikaMoveset(moveset: FighterMoveset): FighterMoveset {
   return {
     ...moveset,
     mechanicFr:
-      'Aura + H : Emperor Time (1 seconde = 1 heure de vie). L : Chain Jail, Brigade seulement, sinon mort ; L libère. ↓ + L : soin. ← + L : drainage, puis chargement et usage unique via Stealth Dolphin. H : Judgment Chain, règle « reste en Zetsu ».',
+      'Aura + H : Emperor Time (1 seconde = 1 heure de vie). L : Chain Jail, Brigade seulement, sinon mort ; L libère. ↓ + L : soin. ← + L : drainage, puis chargement et usage unique via Stealth Dolphin. H : Judgment Chain, clauses choisies dans le panneau avant l’implantation : Nen interdit, aucune communication avec la Brigade, ou les deux.',
     mechanicEn:
-      'Aura + H: Emperor Time (1 second = 1 hour of life). L: Chain Jail, Troupe only or death; L releases. ↓ + L: heal. ← + L: drain, then load and use once through Stealth Dolphin. H: Judgment Chain, rule “remain in Zetsu”.',
+      'Aura + H: Emperor Time (1 second = 1 hour of life). L: Chain Jail, Troupe only or death; L releases. ↓ + L: heal. ← + L: drain, then load and use once through Stealth Dolphin. H: Judgment Chain, clauses selected in the panel before implantation: no Nen, no communication with the Troupe, or both.',
     finisherConditionFr:
-      'Emperor Time actif et contact au cœur ; aucun seuil de PV. La cible peut combattre sans Nen ; utiliser l’aura brise la règle et la tue.',
+      'Emperor Time actif et contact au cœur ; aucun seuil de PV. La cible conserve ses actions compatibles avec les clauses annoncées ; rompre une clause la tue.',
     finisherConditionEn:
-      'Active Emperor Time and contact with the heart; no HP threshold. The target may fight without Nen; using aura breaks the rule and kills them.',
+      'Active Emperor Time and contact with the heart; no HP threshold. The target keeps actions compatible with the declared clauses; breaking a clause kills them.',
     moves: moveset.moves.map(tuneChain),
   }
 }

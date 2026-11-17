@@ -45,6 +45,8 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.judgmentPreset = undefined
+  enemy.heardWords = undefined
   enemy.hunterInterview = undefined
   if (enemy.chrolloHistorical)
     enemy.chrolloHistorical = {
@@ -73,6 +75,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
   redactEnemy(view[other])
+  redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
@@ -102,4 +105,8 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
 export function pvpSnapshot(state: FightState, side: FightSide) {
   const visible = privatePvpState(state, side)
   return { snapshot: encodeFightSnapshot(visible), snapshotHash: fightReplayHash(visible) }
+}
+
+function redactReserves(view: FightState, side: FightSide): void {
+  for (const member of view.teamMatch?.seats[side].members ?? []) redactEnemy(member)
 }

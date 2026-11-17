@@ -116,6 +116,37 @@ Les tests `cookie`, `skillHunterAcquisition`, `chrolloHistorical`,
 l'exécution, les pertes d'accès, les durées et les limites de confidentialité.
 Les timestamps d'observation sont exclus des effets maintenus de Dolphin.
 
+## Judgment Chain : clauses indépendantes et communication réelle
+
+Les deux interdictions montrées sur Chrollo sont sélectionnables séparément ou
+ensemble avant implantation : ne pas utiliser le Nen, ne pas communiquer avec
+les membres réels de la Brigade. Les clauses sont annoncées au démarrage du
+coup, puis copiées dans le sceau au contact du cœur sous Emperor Time. Changer
+la préparation suivante ne réécrit jamais une chaîne déjà implantée.
+L'interdiction de communication seule laisse le Nen disponible.
+
+Le jugement vérifie les activations volontaires de Nen par les commandes de
+combat, Gyo, En, Shu, In et la répartition manuelle. Une transformation physique
+de Biscuit ou une arme à feu ne devient pas du Nen. Un autre sceau qui rend le
+Nen impossible ne crée pas une violation fictive. Kurapika peut retirer sa
+propre chaîne sans réactiver Emperor Time ; il ne retire pas celle d'autrui.
+
+Les paroles adressées à un combattant présent ou à un réserviste réel passent
+par un canal commun : portée de voix, audition, sommeil, parole disponible et
+esprit libre. Hisoka n'est pas compté comme membre véritable ; un déguisement
+ne change pas l'appartenance. Recevoir passivement une parole ou être simplement
+à proximité ne constitue pas une communication initiée. Les questions de Lynch,
+les avertissements de Mizaistom, l'entretien de Skill Hunter et les signatures
+ou refus de contrat participent à ce contrôle. L'IA s'abstient des réponses
+interdites et prépare deux clauses quand une réserve de la Brigade est présente.
+
+Les commandes sont enregistrables et validées par le protocole PvP, y compris
+le destinataire en réserve pour P2. Les choix non annoncés et les paroles reçues
+restent privés. Une mort provoquée entre deux frames élimine bien le corps réel
+avant la manche d'équipe suivante. Le ruleset de cette extension est **clash-combat-18**.
+Les clauses de secret et de libération d'otages restent à réaliser ; cette passe
+ne constitue pas une certification de toutes les applications de Judgment.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -127,7 +158,7 @@ de couverture des profils ou un nombre de tests :
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées. |
 | Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                   |
-| Kurapika   | Étendre les clauses de Judgment, les usages d'information de Dowsing Chain et le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                     |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, les usages d'information de Dowsing Chain et le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.               |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                       |
 
 | Hinrigh | Étendre Biohazard aux autres objets et applications effectivement montrés, en conservant les fonctions matérielles originales. Les deux menottes ne constituent pas l'arsenal complet. |
@@ -146,7 +177,7 @@ le même comportement. Une simple déclaration dans `NEN_CANON` ne valide pas ce
 
 ## Références vérifiées et limites de la vérification
 
-Les chapitres 68, 95–106, 123, 149, 351–357, 388, 401–406 sont les points de
+Les chapitres 68, 95–106, 117–119, 123, 149, 351–357, 388, 401–406 sont les points de
 référence pour ces extensions. L'[index officiel VIZ](https://www.viz.com/shonenjump/chapters/hunter-x-hunter?locale=en)
 ne fournit pas toutes les planches en accès libre. Les synthèses de
 [Chrollo](https://hunterxhunter.fandom.com/wiki/Chrollo_Lucilfer),

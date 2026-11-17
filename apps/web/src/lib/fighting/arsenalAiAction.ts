@@ -1,3 +1,4 @@
+import { judgmentForbidsContact } from './judgmentCommunication'
 import { perceivedOpponentGap } from './opponentAwareness'
 import { canAct } from './fightActorState'
 import { canUseRangedAttack } from './projectiles'
@@ -39,7 +40,7 @@ export function nativeArsenalAiAction(
 function shouldSpeakToModel(state: FightState, gap: number): boolean {
   const fighter = state.opponent
   if (fighter.id !== 'bonolenov' || gap > BATTLE_CONVERSATION_RANGE) return false
-  if (!canDiscussModel(state)) return false
+  if (judgmentForbidsContact(fighter, state.player.id) || !canDiscussModel(state)) return false
   // The player must actually have spoken. AI speech does not invent their reply.
   return (
     state.player.battleUtteranceFrame !== undefined && fighter.battleUtteranceFrame === undefined

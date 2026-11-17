@@ -1,3 +1,5 @@
+import { judgmentAiPreset } from './judgmentAction'
+import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
 import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
 import { perceivesProjectile } from './nenPerception'
@@ -18,7 +20,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    gumAi(state) ??
+    judgmentAiPreset(state) ?? gumAi(state) ??
     interviewAi(state) ??
     supportAi(state) ??
     copiedArsenalAi(state, perform) ??
@@ -178,6 +180,7 @@ function interviewAi(state: FightState): FightState | null {
   const previous = fighter.hunterInterview
   if (fighter.id !== 'chrollo' || fighter.hatsuEffects.witnessedHatsu !== state.player.id)
     return null
+  if (judgmentForbidsContact(fighter, state.player.id)) return null
   if (previous && state.frame - previous.askedAt <= SKILL_HUNTER_WINDOW) return null
   const next = performHunterInterview(state, 'opponent', { action: 'hunter-ask' })
   return next === state ? null : next

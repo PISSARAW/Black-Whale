@@ -1,3 +1,4 @@
+import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
 import { dolphinArsenalOptions } from './dolphinArsenal'
 import { copiedArsenalOptions } from './chrolloCopiedOptions'
 import { performGumCommand, gumArsenalOptions } from './hisokaArsenal'
@@ -31,6 +32,7 @@ export function performArsenalCommand(
     if (!canAct(state[side])) return state
     return { ...state, [side]: { ...state[side], supportConsent: !state[side].supportConsent } }
   }
+  if (command.action.startsWith('judgment-')) return performJudgmentCommand(state, side, command)
   if (command.action.startsWith('gum-')) return performGumCommand(state, side, command)
   if (command.action.startsWith('cookie-')) return performCookie(state, side, command)
   if (command.action.startsWith('hunter-')) return performHunterInterview(state, side, command)
@@ -41,6 +43,7 @@ export function performArsenalCommand(
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...judgmentOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),

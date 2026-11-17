@@ -1,3 +1,4 @@
+import { aiJudgmentSpeechAllowed } from './judgmentCommunication'
 import { habitAttackSlots } from './opponentHabits'
 import { counterplayAttackSlots } from './styleCounterAttack'
 import { arsenalAttackSlots } from './arsenalAi'
@@ -21,7 +22,7 @@ export function chooseMovesetAttack(
     slots
       .map((slot) => moveForSlot(fighter.id, slot))
       .find(
-        (move) => move && aiMoveInRange(move, gap) && canUseMovesetMove(state, 'opponent', move),
+        (move) => move && aiMoveInRange(move, gap) && aiJudgmentSpeechAllowed(state, 'opponent', move.id) && canUseMovesetMove(state, 'opponent', move),
       ) ?? null
   )
 }

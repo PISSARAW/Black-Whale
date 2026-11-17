@@ -1,3 +1,5 @@
+import { judgmentActionBreach } from './judgmentAction'
+import { judgmentForbidsNen } from './judgmentRules'
 import { stopCookie } from './cookie'
 import { releasePadailleWeapon } from './padailleWeapon'
 import { outsideDuelAbility } from './outsideDuelAbility'
@@ -10,7 +12,6 @@ import { healthPercent } from './health'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
-import { rangedAuraCost } from './projectiles'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
@@ -39,8 +40,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 export function toggleEmperorTime(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (!canToggleEmperor(state, fighter)) return state
-  if (fighter.judgmentChain) return chainRuleDeath(state, side)
   const chain = fighter.kurapika ?? createKurapika()
+  if (judgmentForbidsNen(fighter) && !chain.emperorTime) return chainRuleDeath(state, side)
   if (chain.emperorTime && chain.held?.loaded) return state
   if (!chain.emperorTime && !kurapikaNenActive(fighter)) return state
   return {
@@ -153,7 +154,8 @@ export function performKurapikaAction(
 ): FightState | null {
   const { state, side, kind, moveId } = options
   if (state.phase !== 'fighting') return state
-  if (violatesJudgment(options)) return chainRuleDeath(state, side)
+  const breach = judgmentActionBreach(options)
+  if (breach) return breach
   if (state[side].id !== 'kurapika') return null
   // U directs an attached Dowsing Chain, never a detached projectile.
   if (kind === 'ranged')
@@ -161,16 +163,6 @@ export function performKurapikaAction(
   if (kind !== 'special') return null
   if (!moveId) return perform({ ...options, moveId: 'kurapika:neutralSpecial' })
   return jailAction(options) ?? dolphinAction(options, perform)
-}
-
-function violatesJudgment(options: AuraAttackOptions): boolean {
-  const { state, side, kind } = options
-  return (
-    Boolean(state[side].judgmentChain) &&
-    (kind === 'special' ||
-      (kind === 'ranged' && rangedAuraCost(state[side].id) > 0) ||
-      options.auraCharged)
-  )
 }
 
 function jailAction({ state, side, kind, moveId }: AuraAttackOptions): FightState | null {

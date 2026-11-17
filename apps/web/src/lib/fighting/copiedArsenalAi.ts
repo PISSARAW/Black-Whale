@@ -1,3 +1,4 @@
+import { aiJudgmentSpeechAllowed } from './judgmentCommunication'
 import { arsenalAttackSlots } from './arsenalAi'
 import { chrolloHasActivePage, chrolloPageSource } from './chrolloBook'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -42,7 +43,7 @@ function copiedPageAi(state: FightState, page: import('./chrolloBook').ChrolloPa
     const move = moveForSlot(source, slot)
     if (!move || !['special', 'finisher'].includes(move.category)) continue
     if (chainAbilityGroup(move.id) !== chainAbilityGroup(page)) continue
-    if (canUseMovesetMove(prepared, 'opponent', move)) return move.id
+    if (aiJudgmentSpeechAllowed(prepared, 'opponent', move.id) && canUseMovesetMove(prepared, 'opponent', move)) return move.id
   }
   return null
 }

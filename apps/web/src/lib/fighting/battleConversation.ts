@@ -1,4 +1,5 @@
-import { speakPaperWords } from './kallutoListening'
+import { judgmentForbidsContact } from './judgmentCommunication'
+import { speakPaperWords, voiceAvailable } from './kallutoListening'
 import { canSpeak, senseDeprived } from './saiyuSenses'
 import { resolveHanzoBodyCalls } from './hanzoBodyCall'
 import { battleAppearance, battleMindAvailable } from './battleCantabileRules'
@@ -25,17 +26,29 @@ function nearModel(state: FightState): boolean {
 
 /** Each local player supplies their own words. An available AI may reply to the player. */
 export function speakBattleWords(state: FightState, side: FightSide, text?: string): FightState {
+  if (!voiceAvailable(state, side)) return state
   state = speakPaperWords(state, side, text)
   if (state.phase !== 'fighting' || state.catsName || !nearModel(state)) return state
   if (![state.player.id, state.opponent.id].includes('bonolenov') || !canExchange(state[side]))
     return state
   const other = side === 'player' ? 'opponent' : 'player'
-  const reply = state.mode === 'versus-ai' && side === 'player' && canExchange(state.opponent)
+  const reply = autoReplyAvailable(state, side)
+  if (reply) state = speakPaperWords(state, 'opponent', 'Je t’écoute.')
   return {
     ...state,
     [side]: { ...state[side], battleUtteranceFrame: state.frame },
     [other]: reply ? { ...state[other], battleUtteranceFrame: state.frame } : state[other],
   }
+}
+
+function autoReplyAvailable(state: FightState, side: FightSide): boolean {
+  return (
+    state.mode === 'versus-ai' &&
+    side === 'player' &&
+    canExchange(state.opponent) &&
+    voiceAvailable(state, 'opponent') &&
+    !judgmentForbidsContact(state.opponent, state.player.id)
+  )
 }
 
 /** Co-presence is measured in this duel only; no historical relationship is fabricated. */

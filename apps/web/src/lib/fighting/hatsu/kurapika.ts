@@ -1,3 +1,4 @@
+import { implantJudgment } from '../judgmentAction'
 import { forceZetsu } from '../nen'
 import { activeHitbox, attackPhase, boxesOverlap } from '../frameData'
 import { canonicalTechniqueAllowed } from '../techniqueContracts'
@@ -53,16 +54,7 @@ function chainImpact({
   }
   if (canAttachSyringe(fighter, moveId))
     return { ...state, [defenderSide]: { ...target, drainingChain: { owner: side } } }
-  if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime)
-    return {
-      ...state,
-      [defenderSide]: {
-        ...forceZetsu(target),
-        judgmentChain: { owner: side, rule: 'zetsu' },
-        attack: null,
-        bufferedAttack: null,
-      },
-    }
+  if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime) return implantJudgment(state, side, defenderSide)
   return state
 }
 

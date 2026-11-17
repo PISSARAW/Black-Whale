@@ -239,12 +239,16 @@ describe('Bonolenov — prepared Battle Cantabile pieces', () => {
       const state = duel()
       state.opponent.x = 38
       state.opponent.hatsuEffects.senseSeals = sealed
-      expect(speakBattleWords(state, 'opponent')).toBe(state)
+      const spoken = speakBattleWords(state, 'opponent')
+      expect(spoken.opponent.battleUtteranceFrame).toBeUndefined()
+      expect(step(spoken, 1).player.battleCantabile?.models.hisoka?.spoken).not.toBe(true)
     }
     const state = duel()
     state.opponent.x = 38
     state.opponent.knockdownFrames = 20
-    expect(speakBattleWords(state, 'opponent')).toBe(state)
+    const spoken = speakBattleWords(state, 'opponent')
+    expect(spoken.opponent.battleUtteranceFrame).toBeUndefined()
+    expect(step(spoken, 1).player.battleCantabile?.models.hisoka?.spoken).not.toBe(true)
   })
 
   it('an available AI can reply, without supplying words for the local human opponent', () => {

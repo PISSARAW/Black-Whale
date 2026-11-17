@@ -1,3 +1,4 @@
+import { judgmentForbidsContact, resolveJudgmentCommunication } from './judgmentCommunication'
 import {
   advanceMoonlightPenalty,
   carryMoonlightPenalty,
@@ -107,7 +108,7 @@ export function offerMoonlightContract(options: {
   if ((state.moonlight?.cooldownFrames ?? 0) > 0) return state
   if (!moonlightSigningAvailable(state) || !hasMoonlightAuthority(state[side], moveId)) return state
   const recipient = other(side)
-  return {
+  const offered: FightState = {
     ...state,
     [recipient]: {
       ...state[recipient],
@@ -129,6 +130,7 @@ export function offerMoonlightContract(options: {
       },
     },
   }
+  return resolveJudgmentCommunication(offered, side, state[recipient].id)
 }
 
 /** Only the recipient's explicit response can supply the second signature. */
@@ -141,7 +143,7 @@ export function respondMoonlightContract(options: {
   const offer = state.moonlight?.offer
   if (state.phase !== 'fighting' || !offer || offer.recipient !== side) return state
   if (!accept)
-    return { ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } }
+    return resolveJudgmentCommunication({ ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } }, side, state[offer.issuer].id)
   if (
     !moonlightSigningAvailable(state) ||
     !hasMoonlightAuthority(state[offer.issuer], offer.sourceMoveId)
@@ -149,11 +151,12 @@ export function respondMoonlightContract(options: {
     return state
   const issuer = state[offer.issuer]
   const loan = issuer.moonlightLoan ?? 0
-  return {
+  const signed: FightState = {
     ...state,
     [offer.issuer]: { ...issuer, moonlightLoan: loan > 0 ? loan - 1 : loan },
     moonlight: { active: { ...offer, remainingFrames: MOONLIGHT_TRUCE_FRAMES } },
   }
+  return resolveJudgmentCommunication(signed, side, state[offer.issuer].id)
 }
 
 /** Basic movement and physical blows remain during the actual week-long Nen sanction. */
@@ -215,7 +218,8 @@ function tickCooldown(state: FightState): FightState {
 export function moonlightAiResponse(state: FightState): FightState {
   const offer = state.moonlight?.offer
   if (!offer) return moonlightAiLoanOffer(state)
-  if (state.mode !== 'versus-ai' || offer?.recipient !== 'opponent') return state
+  if (judgmentForbidsContact(state.opponent, state[offer.issuer].id)) return state
+  if (state.mode !== 'versus-ai' || offer.recipient !== 'opponent') return state
   if (offer.remainingFrames > MOONLIGHT_OFFER_FRAMES - 30) return state
   if (!moonlightSigningAvailable(state)) return state
   const accepts = state.opponent.aura < 45 && state.projectiles.length === 0
@@ -224,6 +228,7 @@ export function moonlightAiResponse(state: FightState): FightState {
 
 function moonlightAiLoanOffer(state: FightState): FightState {
   if (state.mode !== 'versus-ai' || (state.opponent.moonlightLoan ?? 0) < 1) return state
+  if (judgmentForbidsContact(state.opponent, state.player.id)) return state
   return state.opponent.aura < 45 ? offerMoonlightContract({ state, side: 'opponent' }) : state
 }
 

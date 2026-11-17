@@ -1,3 +1,4 @@
+import { judgmentForbidsNen } from './judgmentRules'
 import { chainAbilityGroup } from './chainAbilityGroup'
 export { chainAbilityGroup } from './chainAbilityGroup'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -111,8 +112,8 @@ export function zetsuFighter(fighter: ArcadeFighter): ArcadeFighter {
 
 /** Neutral input obeys the announced Judgment rule; deliberate aura use breaks it. */
 export function judgmentInput(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  if (!fighter.judgmentChain) return fighter
-  if (input.aura && !input.down)
+  if (!judgmentForbidsNen(fighter)) return fighter
+  if (judgmentNenInput(fighter, input))
     return { ...fighter, health: 0, attack: null, bufferedAttack: null }
   return zetsuFighter(fighter)
 }
@@ -132,8 +133,14 @@ export function restrictedChainAura(
   fighter: ArcadeFighter,
   input: FightInput,
 ): ArcadeFighter | null {
-  if (fighter.judgmentChain) return judgmentInput(fighter, input)
-  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0)
-    return zetsuFighter(fighter)
+  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0) return zetsuFighter(fighter)
+  if (judgmentForbidsNen(fighter)) return judgmentInput(fighter, input)
   return null
+}
+
+function judgmentNenInput(fighter: ArcadeFighter, input: FightInput): boolean {
+  if (!voluntaryNenAvailable(fighter, { allowVoluntaryZetsu: true, requireHatsu: false, requireReserve: true })) return false
+  if (input.aura) return !input.down
+  if (fighter.hitStun > 0 || fighter.knockdownFrames > 0) return false
+  return [input.gyo, input.en, input.shu, input.conceal, input.focusHead, input.focusTorso, input.focusHands, input.focusFeet].some(Boolean)
 }

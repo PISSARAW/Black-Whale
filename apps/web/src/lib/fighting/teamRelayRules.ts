@@ -4,9 +4,12 @@ import { motionOf } from './fighterMovement'
 import { replayChecksum } from './clashReplayCodec'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-// Only ordinary body bookkeeping may differ while a fighter waits off stage.
+// Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'heardWords',
+  'judgmentPreset',
+  'judgmentDeclaration',
   'x',
   'y',
   'velocityY',

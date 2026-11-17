@@ -1,6 +1,9 @@
 import type { FightSide, FighterId } from './types'
 
 export interface RetrospectiveFighterState {
+  judgmentPreset?: import('./judgmentRules').JudgmentPreset
+  judgmentDeclaration?: { frame: number; clauses: readonly import('./judgmentRules').JudgmentClause[] }
+  heardWords?: { frame: number; speaker: FighterId; text: string }
   chrolloHistorical?: import('./chrolloHistoricalTypes').ChrolloHistoricalState
   clothCapture?: { owner: FightSide }
   skillHunterStolen?: readonly { owner: FightSide; moveId: string }[]
@@ -21,6 +24,9 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'judgment-preset',
+  'judgment-release',
+  'judgment-call',
   'dolphin-move',
   'copied-move',
   'gum-seal',

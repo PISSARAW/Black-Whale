@@ -1,3 +1,4 @@
+import { judgmentForbidsNen } from './judgmentRules'
 import { performParallelFutureAction } from './parallelFutureAbility'
 import { performCyclotronAction } from './phinksAction'
 import { performKurapikaAction, toggleEmperorTime } from './kurapikaActions'
@@ -44,7 +45,7 @@ export function characterMoveOverride(
   if (state[side].id === 'kurapika' && action === 'finisher' && input.aura)
     return toggleEmperorTime(state, side)
   const selectedChain = selectedChainOverride(options, selected, perform)
-  return selectedChain ?? judgmentOverride(options, perform)
+  return selectedChain ?? judgmentOverride({ ...options, selected }, perform)
 }
 
 function nativeUtilityOverride(
@@ -78,9 +79,9 @@ function selectedChainOverride(
   )
 }
 
-function judgmentOverride(options: MoveContext, perform: PerformAttack): FightState | null {
+function judgmentOverride(options: MoveContext & { selected: FighterMove | null }, perform: PerformAttack): FightState | null {
   const { state, side, action, input } = options
-  if (!state[side].judgmentChain) return null
+  if (!judgmentForbidsNen(state[side])) return null
   if (action !== 'special' && action !== 'finisher' && !input.aura) return null
-  return performKurapikaAction({ state, side, kind: 'special', auraCharged: input.aura }, perform)
+  return performKurapikaAction({ state, side, kind: options.selected?.kind ?? 'special', moveId: options.selected?.id, auraCharged: input.aura }, perform)
 }

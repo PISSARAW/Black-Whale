@@ -1,3 +1,4 @@
+import { judgmentActionBreach } from './judgmentAction'
 import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
 import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
@@ -353,6 +354,8 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
+  const breach = judgmentActionBreach(options)
+  if (breach) return breach
   options = thetaFirearmOptions(options)
   return resolveMoonlightAction(
     options.state,

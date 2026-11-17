@@ -1,3 +1,4 @@
+import { troupeMember } from './troupeMembership'
 import { CHROLLO_CANON } from './chrolloCanon'
 import { BONOLENOV_CANON } from './bonolenovCanon'
 import { BIOHAZARD_CANON } from './biohazardCanon'
@@ -18,18 +19,6 @@ export interface TechniqueCanonContract {
   narrativeCost: string
   narrativeEffect: string
 }
-
-const PHANTOM_TROUPE = new Set<FighterId>([
-  'chrollo',
-  'feitan',
-  'phinks',
-  'franklin',
-  'illumi',
-  'machi',
-  'kalluto',
-  'bonolenov',
-  'shizuku',
-])
 
 const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContract>> = {
   'furykov:neutralSpecial': {
@@ -225,5 +214,5 @@ export function canonicalTechniqueAllowed(
   if (move.id === 'chrollo:forwardSpecial') return hunterInterviewReady(state, side)
   if (move.id !== 'kurapika:neutralSpecial') return true
   const opponent = state[side === 'player' ? 'opponent' : 'player']
-  return PHANTOM_TROUPE.has(opponent.id)
+  return troupeMember(opponent.id)
 }

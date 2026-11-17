@@ -1,15 +1,14 @@
 import { addChrolloPage, chrolloNenActive, type ChrolloPage } from './chrolloBook'
 import { reconcileChrolloPages } from './chrolloPageEffects'
-import { canSpeak, senseDeprived } from './saiyuSenses'
+import { recipientHears } from './fightSpeechRecipient'
 import { canAct } from './fightActorState'
 import { NEN_CANON } from './nenCanon'
 import { chainAbilitySealed } from './kurapika'
-import { speakPaperWords } from './kallutoListening'
+import { speakPaperWords, voiceAvailable } from './kallutoListening'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const SKILL_HUNTER_WINDOW = 60 * 60 * 60
-const SPEECH_RANGE = 18
 const PALM_RANGE = 6
 
 export function hunterInterviewReady(state: FightState, side: FightSide): boolean {
@@ -28,9 +27,7 @@ export function hunterInterviewReady(state: FightState, side: FightSide): boolea
 
 function speechAvailable(state: FightState, side: FightSide): boolean {
   const other = side === 'player' ? 'opponent' : 'player'
-  if (!canSpeak(state[side]) || senseDeprived(state[other], 'hearing')) return false
-  if (state[other].coveringEars) return false
-  return Math.hypot(state[side].x - state[other].x, state[side].y - state[other].y) <= SPEECH_RANGE
+  return voiceAvailable(state, side) && recipientHears(state, side, { seat: other })
 }
 
 export function performHunterInterview(
@@ -45,6 +42,7 @@ export function performHunterInterview(
   if (thief.id !== 'chrollo' || !chrolloNenActive(thief) || !canAct(thief)) return state
   if (!speechAvailable(state, side) || thief.attack) return state
   const spoken = speakPaperWords(state, side, 'Comment fonctionne ta capacité de Nen ?')
+  if (spoken.phase !== 'fighting') return spoken
   return {
     ...spoken,
     [side]: { ...spoken[side], hunterInterview: { target: state[other].id, askedAt: state.frame } },
@@ -58,16 +56,31 @@ function answerHunter(state: FightState, side: FightSide): FightState {
   if (!question || !speechAvailable(state, side) || !canAct(target)) return state
   const owner = question.owner
   const interview = state[owner].hunterInterview
-  if (!interview || interview.target !== target.id || interview.askedAt !== question.askedAt)
+  if (
+    !interview ||
+    !interviewMatches(interview, target, { askedAt: question.askedAt, frame: state.frame })
+  )
     return state
-  if (state.frame - question.askedAt > SKILL_HUNTER_WINDOW) return state
   const ability = NEN_CANON[target.id]
   if (!ability?.abilities.length) return state
   const spoken = speakPaperWords(state, side, ability.condition)
+  if (spoken.phase !== 'fighting') return spoken
   return {
     ...spoken,
     [owner]: { ...spoken[owner], hunterInterview: { ...interview, answeredAt: state.frame } },
   }
+}
+
+function interviewMatches(
+  interview: NonNullable<ArcadeFighter['hunterInterview']>,
+  target: ArcadeFighter,
+  time: { askedAt: number; frame: number },
+): boolean {
+  return (
+    interview.target === target.id &&
+    interview.askedAt === time.askedAt &&
+    time.frame - time.askedAt <= SKILL_HUNTER_WINDOW
+  )
 }
 
 function offerPalm(state: FightState, side: FightSide): FightState {

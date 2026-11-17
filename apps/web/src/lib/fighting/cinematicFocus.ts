@@ -30,10 +30,10 @@ function boxAt(position: Vector3, size: [number, number]): Box3 {
 }
 function headOf(actor: Object3D): Object3D | undefined {
   const named = actor.getObjectByName('kurapika-head')
-  if (named) return named
+  if (named && cameraNodeVisible(named)) return named
   let head: Object3D | undefined
   actor.traverse((n) => {
-    if (n.name.startsWith('manga-head:')) head = n
+    if (!head && n.name.startsWith('manga-head:') && cameraNodeVisible(n)) head = n
   })
   return head
 }

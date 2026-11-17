@@ -1,4 +1,5 @@
 import { cameraSnapshot, cinematicEvents } from './cinematicEvents'
+import { onAwakeningDetail } from './onAwakening'
 import type { FightSide, FightState } from './types'
 
 import type { CinematicCue, CinematicDirection, CameraPacing } from './cinematicTypes'
@@ -68,7 +69,8 @@ export function createCinematicDirector(
         scheduler.clear()
       }
       const { strength, side } = strongestCue(cues, frame)
-      return { strength: strength * intensity, side, detail: shot?.detail ?? null }
+      const detail = onAwakeningDetail(shot, frame)
+      return { strength: strength * intensity, side, detail }
     },
   }
 }

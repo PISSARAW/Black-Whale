@@ -10,6 +10,7 @@ export function cameraDuration(
   duration: number | undefined,
   pacing: CameraPacing,
 ) {
+  if (detail.eventId === 'nen.on') return duration ?? 108
   if (pacing === 'compact') return duration ?? 42
   return Math.max(duration ?? 0, AWAKENINGS.has(detail.kind) ? 228 : 180)
 }

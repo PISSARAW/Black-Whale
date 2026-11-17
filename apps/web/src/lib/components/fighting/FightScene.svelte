@@ -3,6 +3,9 @@
   import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
+  import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
+  import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
+  import { updateFightCameraFog } from '$lib/fighting/fightSceneFog'
   import { createCinematicDetailScene } from '$lib/fighting/cinematicDetailScene'
   import type { CinematicDirection } from '$lib/fighting/cinematicTypes'
   import { createFighterTrackingSilhouettes } from '$lib/fighting/fighterTrackingSilhouette'
@@ -167,6 +170,15 @@
           read: () => ({ state, viewer, preferences: $clashPresentation.preferences }),
         })
         scene.add(models.player.model.root, models.opponent.model.root)
+        const onClock = createOnAwakeningClock(state)
+        let onFrames = onClock(state)
+        const onAwakening = createOnAwakeningScene({
+          THREE,
+          scene,
+          figureOf: (side) => models[side].model.turns,
+          comfort: visualComfort,
+          reducedMotion: () => motionPreference.matches,
+        })
         const victoryRenderer = createVictoryRenderer({ scene, camera, scenery: scenery.root })
         const detailScene = createCinematicDetailScene({
           scene,
@@ -244,8 +256,6 @@
         }
         interface AnimateFighterOptions {
           side: 'player' | 'opponent'
-          fighter: ArcadeFighter
-          opponent: ArcadeFighter
           model: ReturnType<typeof buildFighter>
           seconds: number
         }
@@ -269,7 +279,14 @@
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
           const hitZone = impact?.zone
-          const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
+          const motion = fightBodyMotion({
+            fighter,
+            seconds,
+            fallback,
+            progress,
+            hitZone,
+            onAwakeningFrame: onFrames[side],
+          })
           const modelPose = motionOf(fighter).dash ? 'idle' : FIGHT_MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {
             motion: trackFightOpponent({
@@ -292,30 +309,13 @@
           })
         }
 
-        // Pulling back on a narrow viewport must not bury fighters in the stage fog.
-        const updateCameraFog = () => {
-          const far = Math.max(100, scenery.cameraFar, camera.position.z + 30)
-          if (camera.far !== far) {
-            camera.far = far
-            camera.updateProjectionMatrix()
-          }
-          if (scene.fog instanceof THREE.Fog && scenery.fog.kind === 'linear') {
-            const setback = Math.max(0, camera.position.z - 9.2)
-            scene.fog.near = scenery.fog.near + setback
-            scene.fog.far = scenery.fog.far + setback
-          }
-          if (scene.fog instanceof THREE.FogExp2 && scenery.fog.kind === 'exp2') {
-            scene.fog.density = scenery.fog.density * Math.min(1, 9.2 / camera.position.z)
-          }
-        }
-
         const cameraIntensity = () => visualComfort().camera ?? 1
         const updateCombatCamera = (dt: number, now: number) => {
           if (cameraFrame && !motionPreference.matches) {
             const pose = fitCinematicView(cameraFrame, state, camera.aspect)
             camera.position.set(pose.x, pose.y, pose.z)
             camera.lookAt(pose.x, pose.lookY, 0)
-            updateCameraFog()
+            updateFightCameraFog(scene, camera, scenery)
             detail = null
             detailVisible = false
             return
@@ -351,7 +351,7 @@
           if (!pose.detailReady) detail = null
           detailVisible = Boolean(detail)
           camera.position.set(pose.x, pose.y, pose.z)
-          updateCameraFog()
+          updateFightCameraFog(scene, camera, scenery)
           impacts.shake(camera, now)
           camera.lookAt(pose.x, pose.lookY, 0)
         }
@@ -368,10 +368,9 @@
           const seconds = presentationSeconds ?? motionSeconds
           lastFrameAt = now
           impacts.emit(state, now)
+          onFrames = onClock(state, motionPreference.matches)
           animateFighter({
             side: 'player',
-            fighter: state.player,
-            opponent: state.opponent,
             model: modelOf('player', state.player),
             seconds,
           })
@@ -382,12 +381,11 @@
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
-            fighter: state.opponent,
-            opponent: state.player,
             model: modelOf('opponent', state.opponent),
             seconds,
           })
           fighterEffects.sync(state, seconds)
+          onAwakening.sync(state, onFrames)
 
           updateCombatCamera(dt, now)
 
@@ -431,6 +429,7 @@
           collisions.dispose()
           projectileScene.dispose()
           fighterEffects.dispose()
+          onAwakening.dispose()
           predatorScene.dispose()
           lsdfScene.dispose()
           feitanScene.dispose()

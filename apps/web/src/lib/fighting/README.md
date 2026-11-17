@@ -82,6 +82,24 @@ Surprise pendant 0,3 seconde dans la vue de combat.
 Les [accents de Benjamin](./BENJAMIN_PRESENTATION.md) réservent le type 1 à Air Blow,
 à la capture de Culdcept et à sa restitution effectivement émise.
 
+Les [rafales de Franklin](./FRANKLIN_PRESENTATION.md) restent en type 1 : départ de
+0,3 seconde et accents sur les émissions réelles des dix doigts.
+
+Les [matières manipulées de Machi, Kalluto et Zakuro](./FINE_CONTROL_PRESENTATION.md)
+reçoivent des accents de type 1 sur les fils, les fragments de papier et le sang.
+
+Les [transformations de Gel et Padaille, et la transmission de Leorio](./BODY_HATSU_PRESENTATION.md)
+restent en type 1 : bras droit, outil choisi et poing émis depuis la surface.
+
+L’[aspiration de Shizuku](./BLINKY_PRESENTATION.md) reste en type 1 : objets
+réellement stockés et sang effectivement extrait convergent vers la bouche de Blinky.
+
+Les [passages de Luini et Voconte](./PASSAGE_PRESENTATION.md) restent en type 1 :
+ancrage, liaison des seuils, franchissement réel et fermeture confirmée.
+
+Les [retours d’information de Musse, Sayird, Furykov et Lynch](./PERCEPTION_PRESENTATION.md)
+reçoivent des accents de type 1 dans le point de vue du participant autorisé.
+
 `nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,
 vol et sceaux. `nenActionRules.ts` applique ce contrat aux commandes directes,
 à l’IA, aux coups en attente et aux actions maintenues. Chaque pouvoir conserve

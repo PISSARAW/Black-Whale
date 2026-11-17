@@ -1,10 +1,13 @@
 import { gyoSight, perceivesProjectile } from './nenPerception'
 import { isBodyguardBullet } from './bodyguardFirearms'
-import type { ArcadeFighter, FightProjectile } from './types'
+import type { ArcadeFighter, FightProjectile, FightSide } from './types'
+import type { FightComfort } from './fightComfort'
 import { createRemotePunchScene } from './remotePunchScene'
 import { createJupiterScene } from './jupiterScene'
 
 export interface ProjectileSceneOptions {
+  viewer?: () => FightSide
+  comfort?: () => FightComfort
   THREE: typeof import('three')
   scene: import('three').Scene
   glow: (colour: number, opacity: number) => import('three').MeshBasicMaterial
@@ -36,7 +39,11 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
     return material
   }
   const shapeFor = (projectile: FightProjectile) => {
-    const key = handgunBullet(projectile) ? 'handgun' : projectile.shape
+    const key = franklinBullet(projectile)
+      ? 'franklin-bullet'
+      : handgunBullet(projectile)
+        ? 'handgun'
+        : projectile.shape
     const shape = shapes.get(key) ?? projectileGeometry(options, projectile)
     shapes.set(key, shape)
     return shape
@@ -67,7 +74,10 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
 
   const sync = (projectiles: FightProjectile[], seconds: number, observer?: ArcadeFighter) => {
     const visible = projectiles.filter(
-      (shot) => !observer || shot.owner === 'player' || perceivesProjectile(observer, shot),
+      (shot) =>
+        !observer ||
+        shot.owner === (options.viewer?.() ?? 'player') ||
+        perceivesProjectile(observer, shot),
     )
     remotePunches.sync(visible)
     jupiter.sync(visible, seconds)
@@ -76,14 +86,10 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       if (projectile.remotePunch || projectile.jupiter) continue
       const mesh = meshes.get(projectile.id) ?? build(projectile)
       mesh.visible = visible.includes(projectile)
-      syncShuAura(mesh, projectile, observer)
+      syncShuAura(mesh, projectile, { observer, viewer: options.viewer?.() ?? 'player' })
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
-      mesh.rotation.z = handgunBullet(projectile)
-        ? -Math.PI / 2
-        : projectile.shape === 'card'
-          ? seconds * 8
-          : seconds * 2
+      mesh.rotation.z = projectileZRotation(projectile, seconds)
     }
     for (const [id, mesh] of meshes) {
       if (active.has(id)) continue
@@ -108,17 +114,22 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   }
 }
 
-function shuVisible(projectile: FightProjectile, observer?: ArcadeFighter): boolean {
-  return !observer || projectile.owner === 'player' || !projectile.concealed || gyoSight(observer)
+function shuVisible(
+  projectile: FightProjectile,
+  c: { observer?: ArcadeFighter; viewer: FightSide },
+): boolean {
+  return (
+    !c.observer || projectile.owner === c.viewer || !projectile.concealed || gyoSight(c.observer)
+  )
 }
 
 function syncShuAura(
   mesh: import('three').Mesh,
   projectile: FightProjectile,
-  observer?: ArcadeFighter,
+  c: { observer?: ArcadeFighter; viewer: FightSide },
 ) {
   const aura = mesh.userData.shuAura as import('three').Mesh | undefined
-  if (aura) aura.visible = Boolean(projectile.shuCharged) && shuVisible(projectile, observer)
+  if (aura) aura.visible = Boolean(projectile.shuCharged) && shuVisible(projectile, c)
 }
 
 function projectileGeometry(
@@ -132,6 +143,7 @@ function projectileGeometry(
   if (projectile.shape === 'seed') return geometry(new THREE.OctahedronGeometry(0.22, 0))
   if (projectile.shape === 'eye') return geometry(new THREE.TorusGeometry(0.2, 0.065, 5, 12))
   if (handgunBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.016, 0.08, 3, 7))
+  if (franklinBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.019, 0.18, 3, 7))
   if (projectile.shape === 'bullet') return geometry(new THREE.CapsuleGeometry(0.055, 0.3, 3, 7))
   if (projectile.shape === 'stone') {
     const stone = new THREE.DodecahedronGeometry(0.24, 0)
@@ -143,7 +155,18 @@ function projectileGeometry(
 }
 
 function handgunBullet(projectile: FightProjectile): boolean {
+  return isBodyguardBullet(projectile)
+}
+
+function projectileZRotation(projectile: FightProjectile, seconds: number): number {
+  if (handgunBullet(projectile) || franklinBullet(projectile)) return -Math.PI / 2
+  return projectile.shape === 'card' ? seconds * 8 : seconds * 2
+}
+
+function franklinBullet(projectile: FightProjectile): boolean {
   return (
-    isBodyguardBullet(projectile)
+    projectile.fighterId === 'franklin' &&
+    projectile.shape === 'bullet' &&
+    projectile.matter === 'nen'
   )
 }

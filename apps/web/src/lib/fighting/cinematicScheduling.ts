@@ -3,6 +3,9 @@ import { kurapikaCameraEvent } from './kurapikaCameraPresentation'
 import { chrolloCameraEvent } from './chrolloCameraPresentation'
 import { hisokaCameraEvent } from './hisokaCameraPresentation'
 import { benjaminCameraEvent } from './benjaminCameraPresentation'
+import { franklinCameraEvent } from './franklinCameraPresentation'
+import { fineControlCameraEvent } from './fineControlCamera'
+import { perceptionCameraAllowed, perceptionCameraEvent } from './perceptionCamera'
 import {
   cameraContinuation,
   cameraDuration,
@@ -174,9 +177,19 @@ export function visibleCameraEvents(
 ) {
   return events
     .filter((e) => !e.detail || cameraDetailAllowed(e.detail, c.viewer, c.state))
+    .filter((e) => perceptionCameraAllowed(e, c))
     .map((event) =>
-      benjaminCameraEvent(
-        hisokaCameraEvent(chrolloCameraEvent(kurapikaCameraEvent(event, c)), c),
+      perceptionCameraEvent(
+        fineControlCameraEvent(
+          franklinCameraEvent(
+            benjaminCameraEvent(
+              hisokaCameraEvent(chrolloCameraEvent(kurapikaCameraEvent(event, c)), c),
+              c.state,
+            ),
+            c,
+          ),
+          c.state,
+        ),
         c.state,
       ),
     )

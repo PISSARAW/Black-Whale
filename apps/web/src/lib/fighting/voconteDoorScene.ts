@@ -2,6 +2,7 @@ import { doorLetter } from './voconteDoorLabels'
 import { DOOR_FRAMES, doorFramesVisible } from './voconteDoors'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightState } from './types'
+import { threadVisible } from './fineControlAnchors'
 
 /** The lintel and jambs are existing duel props; only the threshold glow is Nen. */
 export function createVoconteDoorScene(options: EffectSceneOptions): FighterEffectScene {
@@ -56,8 +57,8 @@ export function createVoconteDoorScene(options: EffectSceneOptions): FighterEffe
   return {
     sync: (state: FightState) => {
       root.visible = doorFramesVisible(state)
-      const active = Object.values(state.voconteDoors?.networks ?? {}).some(
-        (network) => network?.active,
+      const active = (['player', 'opponent'] as const).some(
+        (side) => state.voconteDoors?.networks[side]?.active && threadVisible(options, state, side),
       )
       lights.forEach((light) => {
         light.visible = active

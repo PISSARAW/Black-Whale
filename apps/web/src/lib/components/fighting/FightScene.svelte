@@ -187,6 +187,8 @@
         })
         const collisions = createFightCollisionScene({ THREE, scene })
         const projectileScene = createProjectileScene({
+          viewer: () => viewer,
+          comfort: visualComfort,
           THREE,
           scene,
           glow,
@@ -372,7 +374,7 @@
             model: modelOf('player', state.player),
             seconds,
           })
-          projectileScene.sync(arsenalProjectilePresentation(state), seconds, state.player)
+          projectileScene.sync(arsenalProjectilePresentation(state), seconds, state[viewer])
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
           feitanScene.sync(state, seconds)

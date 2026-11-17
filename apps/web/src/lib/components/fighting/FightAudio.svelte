@@ -15,7 +15,7 @@
   export let viewer: FightSide = 'player'
 
   let director: FightAudioDirector | null = null
-  let settings = { ...DEFAULT_FIGHT_AUDIO }
+  export let settings = { ...DEFAULT_FIGHT_AUDIO }
   let hidden = false
   let mounted = false
   let unavailable = false

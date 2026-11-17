@@ -1620,3 +1620,10 @@ le protocole de mesure sont décrits dans [REPLAYS.md](./REPLAYS.md).
 
 Les seize routes, les exercices de défense, les règles de cancel et le cadrage
 dynamique sont documentés dans [COMBAT.md](./COMBAT.md).
+
+## Cinématiques de victoire
+
+Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks et Franklin
+se déclenchent après le verdict avec le vaincu et le décor du match courant.
+Leur intégration, leur cycle de vie et leurs vérifications sont décrits dans
+[victory/README.md](./victory/README.md).

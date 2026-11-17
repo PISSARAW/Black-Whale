@@ -23,6 +23,7 @@
   export let invite = ''
   export let watchInvite = ''
   export let autoConnect = false
+  let victoryActive = false
   let input = { ...EMPTY_INPUT }
   let joined = autoConnect
   let editing = false
@@ -99,13 +100,14 @@
     >{language === 'fr' ? 'Rejoindre ce duel privé' : 'Join this private duel'}</button
   >{/if}
 {#if state}
-  {#if state.phase === 'ready' || state.phase === 'finished'}<FightCeremony
+  {#if !victoryActive && (state.phase === 'ready' || state.phase === 'finished')}<FightCeremony
       {state}
       {language}
     />{/if}
   <FightInputSettings {controls} {language} onEditing={release} />
   <FightPvpPanels {state} {language} paused={!enabled} onCommand={emit} onEditing={release} />
   <FightStage
+    bind:victoryActive
     {state}
     {language}
     stageId={state.environment.stageId}

@@ -333,6 +333,36 @@ du visage ; les paupières restent fermées douze images après le retour des PV
 puis s’ouvrent sur quatre images. Une baisse sonore précède le regard et un
 impact grave souligne son ouverture. Le gros plan reste frontal et suit la tête.
 
+## Hisoka — Le dernier fil, cinématique de victoire de dix secondes
+
+```sh
+node apps/web/scripts/render-hisoka-victory.mjs --inspect
+node apps/web/scripts/render-hisoka-victory.mjs --film-only
+node apps/web/scripts/render-hisoka-victory.mjs --audio-only
+node apps/web/scripts/compose-hisoka-victory.mjs
+```
+
+Sorties distinctes : `output/fighting-hisoka-victory/Hisoka-Le-Dernier-Fil.mp4`
+(démo complète) et `Hisoka-Victoire-10s.mp4` (les dix secondes seules).
+Le moteur courant rejoue le duel continu, puis Hisoka abaisse les PV adverses
+par des frappes physiques, récupère son aura en Zetsu, attache Bungee Gum et
+s'éloigne. Le finisher natif rappelle réellement Chrollo et provoque le K.-O.
+Aucun PV, résultat ou déplacement de combat n'est fabriqué par la présentation.
+
+`hisokaVictoryFilm.ts` étire cette fin sur 600 images : tension (2 s), rappel
+(1,5 s), impact et chute (1 s), puis portrait avec carte et sourire (5,5 s).
+`hisokaVictoryScene.ts` suit la vraie main pour l'insert et la face avant réelle
+pour le portrait. `hisokaVictoryTether.ts` affine le fil entre la vraie main et
+la cible native pendant les gros plans. La carte est un accessoire de présentation ; les deux segments
+du bras sont orientés vers sa prise. Les poses, visibilités et caméras sont
+restaurées après chaque rendu. Le modèle et la tenue restent ceux du jeu.
+
+La sortie est en 1080p60 ; le combat initial est échantillonné à 30 Hz et les
+600 images de la cinématique à 60 Hz. L'audio utilise le directeur sonore du jeu,
+complété par trois accents synthétiques pour la traction, le choc et la carte.
+`combat-report.json` conserve le résultat natif, la continuité et la piste de
+présentation ; `presentation-audit.json` conserve les contrôles du portrait.
+
 ### Plan fixe, yeux ouverts, une inspiration, fin
 
 ```sh
@@ -352,3 +382,294 @@ Les yeux restent fermés jusqu’à 38,48 secondes, s’ouvrent rapidement, puis
 unique inspiration synthétisée et filtrée accompagne le regard. Le montage coupe
 à 39,25 secondes, immédiatement après ce souffle. Aucun impact grave ni musique
 ne vient après l’ouverture. Le verdict central est masqué dans ce seul plan fixe.
+
+### Hisoka — portrait et sourire corrigés
+
+```sh
+node apps/web/scripts/render-hisoka-victory.mjs --portrait-only
+node apps/web/scripts/compose-hisoka-portrait.mjs
+```
+
+Sorties : `Hisoka-Le-Dernier-Fil-Corrige.mp4` et
+`Hisoka-Victoire-10s-Corrigee.mp4`, dans `output/fighting-hisoka-victory/`.
+Le montage conserve les 2 629 premières images et l'audio de la démo d'origine ;
+seules les 330 images du portrait sont remplacées. La cinématique garde ses
+600 images, dix secondes, et la démo sa durée de 49,3167 secondes.
+
+`hisokaNaturalSmile.ts` remplace la grande bouche plate asymétrique par des
+lèvres fermées de 0,056 unité de large. La courbe neutre et la courbe souriante
+sont projetées sur la vraie peau par rayons, avec un décalage de 0,0012 unité,
+puis interpolées sans dents rapportées. La tête et le torse sont au repos dans
+ce portrait ; la caméra reste frontale. Les ressources de géométrie du modèle
+ne sont pas modifiées et les poses sont restaurées après chaque passe.
+
+## Chrollo — La dernière page, victoire de dix secondes
+
+```sh
+node apps/web/scripts/render-chrollo-victory.mjs --inspect
+node apps/web/scripts/render-chrollo-victory.mjs --film-only
+node apps/web/scripts/render-chrollo-victory.mjs --audio-only
+node apps/web/scripts/compose-chrollo-victory.mjs
+```
+
+Sorties : `output/fighting-chrollo-victory/Chrollo-La-Derniere-Page.mp4`
+et `Chrollo-Victoire-10s.mp4`. Le duel reprend la chorégraphie stratégique,
+puis termine par une vraie rencontre des marques Sun and Moon. Le moteur
+conserve le Soleil sur Hisoka, le signet de Sun and Moon et le livre fermé
+nécessaires à la Lune. Chrollo récupère son aura par le Zetsu natif avant la fin.
+Aucun dégât, marque, déplacement ou résultat de combat n'est ajouté au rendu.
+
+`chrolloVictoryFilm.ts` produit 600 images finales : préparation et livre (3 s),
+explosion et chute (2 s), puis livre fermé et portrait (5 s). Les deux couvertures
+atteignent leur fermeture complète à l'image 180 de la cinématique, exactement
+sur l'image du début de la détonation. Le livre tenu est une chorégraphie de
+présentation des charnières du modèle natif ; elle ne change pas l'état de la
+page ou du signet dans la simulation. Les gros plans masquent le corps qui
+occulterait le livre et le portrait.
+
+`chrolloVictoryScene.ts` conserve les deux mains en contact avec le livre grâce
+à `cinematicArmReach.ts`, remet tête et torse au repos, puis restaure chaque
+transformation après rendu. `chrolloVictoryBlast.ts` amplifie visuellement
+la vraie détonation derrière Chrollo, avec cœur lumineux, onde et braises ;
+la profondeur reste derrière lui pour garder son visage et le livre lisibles.
+
+La démo dure 45,3667 secondes en 1080p60 ; le combat est échantillonné à 30 Hz,
+la cinématique à 60 Hz. Le son utilise le directeur sonore du jeu et des accents
+synthétiques : froissement des pages, claquement du livre et choc grave.
+Le claquement et le choc commencent tous deux à la même milliseconde que
+l'explosion. `combat-report.json` conserve les règles et les temps natifs ;
+`presentation-audit.json` conserve les angles des couvertures et les contacts.
+
+### Chrollo — mise en scène renforcée
+
+```sh
+node apps/web/scripts/render-chrollo-victory.mjs --spectacle --inspect
+node apps/web/scripts/render-chrollo-victory.mjs --spectacle
+node apps/web/scripts/compose-chrollo-spectacle.mjs
+```
+
+Sorties : `output/fighting-chrollo-spectacle/Chrollo-La-Derniere-Page-Spectaculaire.mp4`
+et `Chrollo-Victoire-Spectaculaire-10s.mp4`. L'ouverture de 2 122 images provient
+de la démo précédente ; seules les 600 images finales sont recalculées.
+Le script d'assemblage exige les mêmes événements, PV finaux et vainqueur natifs.
+
+La cinématique enchaîne la marque du Soleil (0–1,25 s), les pages et le signet
+(1,25–2,5 s), la fermeture rapprochée (2,5–3 s), la détonation (3–4 s),
+l'orbite et la sortie à pied (4–7 s), puis le regard final (7–10 s).
+La couverture est complètement fermée à l'image 180, au début de l'explosion.
+
+`chrolloSpectacleBook.ts` ajoute des pages illustrées et des couvertures à emblème,
+trois feuillets mobiles et un mouvement du signet. `chrolloSpectacleCamera.ts`
+compose les inserts, le travelling circulaire et le dernier rapprochement.
+`chrolloSpectacleBlast.ts` remplace les sphères uniformes par des flammes et
+fumées turbulentes calculées par shader, 48 débris balistiques, 80 braises et
+une onde au sol. Un flash bref marque le choc. `chrolloSpectacleMotion.ts`
+fait réagir le bas du manteau et ajoute les pas de sortie : ces déplacements
+appartiennent à la présentation après le résultat, pas à la simulation.
+La pose du visage reste neutre, les pieds sont posés au sol et les géométries
+partagées ne sont jamais déformées. Toutes les transformations sont restaurées.
+
+La nouvelle piste sonore conserve le combat, réduit l'ambiance avant le choc,
+puis ajoute froissement, tension grave, claquement, souffle, débris et quatre pas.
+La durée totale reste 45,3667 secondes et la fin seule dure dix secondes.
+
+## Kurapika × Chrollo — Le jugement écarlate
+
+```sh
+node apps/web/scripts/render-kurapika-victory.mjs --inspect
+node apps/web/scripts/render-kurapika-victory.mjs --film-only
+node apps/web/scripts/render-kurapika-victory.mjs --audio-only
+node apps/web/scripts/compose-kurapika-victory.mjs
+```
+
+Sorties : `output/fighting-kurapika-victory/Kurapika-Le-Jugement-Ecarlate.mp4`
+et `Kurapika-Victoire-10s.mp4`. Le duel local de la Tour céleste commence avec
+400 PV par combattant, puis n'effectue aucun soin, changement de PV ou reset.
+Chrollo utilise son livre, Sun and Moon et Black Voice ; Kurapika alterne combos,
+Dowsing Chain et récupération native. `kurapikaVictoryDirector.ts` attend les
+vraies fenêtres d'annulation pour les routes physiques.
+
+`kurapikaVictoryFilm.ts` active réellement Emperor Time avant la capture.
+Chain Jail cible Chrollo, membre autorisé de la Brigade : la touche ne fait
+aucun dégât, immobilise la cible et force son Zetsu. Un dernier coup lourd
+physique donne le K.-O. pendant cette immobilisation. Le moteur conserve
+Emperor Time et Chain Jail au résultat ; la victoire ne provient pas de dégâts
+inventés de la chaîne. La démo dure 48,3833 secondes, dont 600 images finales
+(10 secondes) en 1080p60.
+
+La fin montre les yeux, le lancement depuis le majeur, l'enroulement, le coup
+final, puis le relâchement du brin libre. Les quatre dernières secondes
+rapprochent la caméra du visage frontal et des deux iris écarlates natifs.
+Le visage et les yeux gardent leur géométrie ; seuls tête et torse reviennent
+au repos dans le portrait, et les couches d'aura qui occultent les traits sont
+masquées. Les transformations sont restaurées après chaque rendu.
+
+`kurapikaVictoryChains.ts` réutilise les vrais maillons et la griffe du jeu.
+La spirale de présentation suit le torse réel, y compris pendant la chute,
+et le brin libre suit la vraie main. `kurapikaSteel.ts` ajoute un éclairage
+argenté aux maillons de présentation ; les chaînes du combat restent celles
+du jeu. `kurapikaVictoryCamera.ts` compose les six types de plans.
+L'audio utilise le directeur sonore du jeu, complété par un sifflement,
+un verrouillage métallique, le choc physique et les maillons qui retombent.
+
+### Kurapika — variante Fatality
+
+```sh
+node apps/web/scripts/render-kurapika-fatality.mjs --inspect
+say -v Daniel -r 100 -o output/fighting-kurapika-fatality/fatality-raw.aiff 'Fatality.'
+ffmpeg -v error -y -i output/fighting-kurapika-fatality/fatality-raw.aiff -af 'aresample=48000,asetrate=36000,aresample=48000,atempo=1.12,highpass=f=90,lowpass=f=6000,aecho=0.8:0.7:90|180:0.28|0.15,loudnorm=I=-16:TP=-2:LRA=7' -ar 48000 -ac 2 output/fighting-kurapika-fatality/fatality-announcer.wav
+node apps/web/scripts/render-kurapika-fatality.mjs
+node apps/web/scripts/compose-kurapika-fatality.mjs
+```
+
+Sorties distinctes : `output/fighting-kurapika-fatality/Kurapika-Le-Jugement-Fatal.mp4`
+et `Kurapika-Fatality-10s.mp4`. La variante reprend les 2 303 images de combat
+précédant la cinématique d'origine et recalcule seulement 600 images finales.
+Les événements, les PV finaux et le vainqueur natifs doivent être identiques.
+
+`kurapikaFatalityFilm.ts` retime la même capture puis le même résultat : capture
+à 1,5 s, traction et résultat à 4,25 s, chute au sol à 5,5 s, puis quatre secondes
+de regard écarlate. La Fatality est une chorégraphie de présentation du résultat,
+avec suspension, resserrement et chute ; elle n'ajoute pas de dégâts à Chain Jail
+ni de nouvelle règle dans le moteur. Le K.-O. natif reste issu du coup physique.
+
+`kurapikaFatalityPose.ts` suspend le prisonnier à 0,95 m, pose ses membres entravés,
+retire le poing de Kurapika, puis fait tomber le corps avec les chaînes.
+Les quatre tours de maillons passent d'un rayon de 0,29 à 0,205 m sur la traction.
+`kurapikaFatalityCamera.ts` suit le poing, la suspension, le resserrement et la chute.
+`kurapikaFatalityLighting.ts` assombrit le décor sans modifier les matériaux
+partagés ; un éclairage de sol isole les personnages. `kurapikaFatalityDust.ts`
+ajoute poussière, éclats et fissures de présentation sur l'impact. Les matrices,
+visibilités et matériaux sont restaurés après chaque passe. Le visage de
+Kurapika garde sa géométrie et les iris rouges natifs.
+
+Le titre « FATALITY » accompagne une annonce anglaise synthétisée localement
+avec la voix système Daniel, grave et réverbérée. Aucun son de Mortal Kombat
+n'est utilisé. La tension, les chaînes, la traction et le choc sont synthétisés
+pour cette variante ; le combat conserve sa bande-son avant la cinématique.
+
+### Feitan — Fatality Pain Packer / Rising Sun
+
+```sh
+node apps/web/scripts/render-feitan-fatality.mjs --inspect
+node apps/web/scripts/render-feitan-fatality.mjs --film-only
+node apps/web/scripts/render-feitan-fatality.mjs --audio-only
+node apps/web/scripts/compose-feitan-fatality.mjs
+```
+
+Sorties : `output/fighting-feitan-fatality/Feitan-Rising-Sun-Fatality.mp4`
+(combat de 33,367 s, puis Fatality de 10 s), et `Feitan-Fatality-10s.mp4`.
+1080p, 60 images/s, H.264 / AAC stéréo. La composition reprend l'annonce
+Daniel synthétisée pour Kurapika dans `output/fighting-kurapika-fatality`.
+
+Une seule simulation Feitan × Hisoka accumule les blessures, équipe Pain Packer,
+puis libère Rising Sun. Les PV initiaux de démonstration sont fixés à 400 avant
+la première image ; aucun soin ni réinitialisation n'intervient ensuite.
+Le K.-O. est causé par les pulsations de chaleur natives. L'export vérifie les
+blessures, l'ordre armure / soleil / victoire et la continuité du combat.
+
+Les 600 images finales retiment ces événements : déploiement de l'armure à 1,5 s,
+fermeture de la cagoule à 2,7 s, ignition à 3,5 s, vague de chaleur à 4,5 s,
+combustion à 5 s, résultat natif à 6 s et portrait final à 7 s.
+`feitanFatalityPose.ts` repose le rig et resynchronise les sept articulations de
+l'armure sur le corps. `feitanFatalitySun.ts` ajoute une photosphère turbulente,
+des filaments, une onde au sol, une dissolution incandescente et des cendres.
+Les flammes et la fumée réutilisent `chrolloSpectacleBlast.ts`.
+Les poses, matériaux, visibilités et caméra sont restaurés après chaque rendu.
+La bande-son associe verrous métalliques, tension grave, grondement solaire,
+vague thermique, crépitement et annonce Fatality.
+
+### Phinks — Ripper Cyclotron
+
+```sh
+node apps/web/scripts/render-phinks-fatality.mjs --inspect
+node apps/web/scripts/render-phinks-fatality.mjs
+node apps/web/scripts/compose-phinks-fatality.mjs
+```
+
+Sortie : `output/fighting-phinks-fatality/Phinks-Fatality-10s.mp4`, 600 images,
+10 secondes, 1920 × 1080, 60 images/s, H.264 / AAC stéréo. Le mix réutilise
+l'annonce Daniel de `output/fighting-kurapika-fatality`.
+
+`phinksFatalityFilm.ts` simule un seul duel Phinks / Kurapika : les coups de
+préparation diminuent réellement les PV, puis Zetsu récupère l'aura avant la
+charge. Six tours complets sont payés par le moteur et consommés dans un seul
+Ripper Cyclotron qui donne le K.-O. L'export vérifie le vainqueur, les six tours,
+l'identité du coup et l'absence de soin ou de réinitialisation. La vidéo conserve
+seulement les dix secondes de finition ; le rapport garde aussi le combat natif.
+
+Le montage ouvre sur Phinks, montre les six moulinets entre 0,6 et 3,8 s,
+retient le poing chargé, puis frappe à 4,5 s. Les modèles, les vêtements et les
+visages sont ceux du jeu. `phinksFatalityPose.ts` fait tourner le bras droit à
+l'épaule, avec coude légèrement plié, puis place le coup avec deux segments
+articulés. `phinksFatalityEffects.ts` dessine trois rubans d'aura, la compression
+du poing et la fragmentation stylisée de Kurapika après le résultat natif.
+Les 210 fragments, les fissures de sol, les débris et la poussière sont des effets
+de présentation ; aucune règle de désintégration n'est ajoutée au combat.
+
+Le dernier plan et l'annonce Fatality commencent à 7 s. Le son accompagne chacun
+des six tours par une impulsion montante, coupe brièvement avant le choc, puis
+superpose un impact unique, le souffle et le cliquetis des fragments. Les poses,
+matériaux, visibilités et caméra sont restaurés après chaque passe de rendu.
+
+### Franklin — Double Machine Gun
+
+```sh
+node apps/web/scripts/render-franklin-fatality.mjs --inspect
+node apps/web/scripts/render-franklin-fatality.mjs
+node apps/web/scripts/compose-franklin-fatality.mjs
+```
+
+Sortie : `output/fighting-franklin-fatality/Franklin-Fatality-10s-Corrigee.mp4`, 600 images,
+10 secondes, 1920 × 1080, 60 images/s, H.264 / AAC stéréo. Le mix réutilise
+l'annonce Daniel de `output/fighting-kurapika-fatality`.
+
+`franklinFatalityFilm.ts` simule un duel Franklin / Kurapika. Des coups physiques
+préparent réellement les PV ; Zetsu récupère l'aura, puis Franklin prend sa distance
+et exécute une rafale prolongée native. Les quarante projectiles émis provoquent
+trente-huit impacts et le K.-O. Aucun dégât, soin ni rechargement n'est ajouté.
+Le rapport conserve les identifiants des balles, leurs émissions, leurs impacts,
+le résultat et la continuité. La vidéo conserve seulement dix secondes de finition.
+
+Le montage montre les cinq canons de la main droite, les extrémités basculées et
+les chaînes, puis les deux mains en tir. `franklinFatalityPose.ts` repose les bras
+avec deux segments articulés et oriente les poignets dans l'espace du parent pour
+respecter les proportions du rig. `franklinFingertipRig.ts` place quatre doigts
+et un pouce opposé sur chaque paume, avec des longueurs différentes. Chaque
+orifice affleure l'extrémité de son doigt et son axe vise la cible ; les traceurs
+suivent exactement cet axe. Les extrémités sectionnées pendent sous les doigts
+et les quatre maillons suivent la liaison, hors de la trajectoire du tir.
+La géométrie des pièces, les vêtements et le visage proviennent du jeu ; les
+corrections de position sont propres à cette démo.
+
+La première balle part à 2,6 s, le résultat natif intervient à 5,833 s, la chute
+se termine à 6,417 s et l'annonce Fatality commence à 7 s. Les traceurs, flammes
+de bouche, étincelles, marques d'impact et réactions du corps suivent les émissions
+et contacts enregistrés. Les trajectoires sont adaptées au placement de la scène.
+La fumée et la poussière accompagnent la chute, puis le portrait final de Franklin.
+Ces détails de présentation n'ajoutent aucune nouvelle règle au combat.
+
+Le mix associe chaque tir à un son bref, alterné en stéréo entre les deux mains,
+et chaque contact à un impact distinct. Les poses, matériaux, visibilités et caméra
+sont restaurés après chaque passe de rendu.
+
+### Inventaire vérifié des cinématiques — 17 novembre 2026
+
+Une fatality doit rendre la mise à mort lisible dans la scène. Un K.-O. natif,
+une explosion ou un carton de victoire ne suffisent pas à la valider.
+
+| Personnage | État du lot |
+| --- | --- |
+| Kurapika | Fatality : Chain Jail, traction, chute et verdict écarlate |
+| Feitan | Fatality : Pain Packer, Rising Sun et incinération |
+| Phinks | Fatality : six rotations, Ripper Cyclotron et pulvérisation |
+| Franklin | Fatality : Double Machine Gun, impacts multiples et chute ; canons corrigés |
+| Hisoka | Cinématique de victoire : rappel au Bungee Gum, K.-O., carte et sourire ; mise à mort non explicite |
+| Chrollo | Cinématique de victoire explosive : fermeture du livre et Sun and Moon ; sort de la victime insuffisamment lisible |
+| Camilla | Référence initiale dans un autre chat ; non réauditée ici |
+
+Le bilan vérifié dans cette série est donc de quatre fatalities et de deux
+cinématiques de victoire à convertir. Camilla reste comptée séparément comme
+référence. Les effets partagés de choc et de cratère portent désormais les noms
+`cinematicImpactEffects.ts` et `cinematicCrater.ts`, avec `cinematicEase.ts`
+pour l'interpolation ; Phinks et Franklin ne dépendent d'aucun autre personnage.

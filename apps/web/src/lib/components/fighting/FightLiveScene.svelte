@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import FightScene from './FightScene.svelte'
   import FightFuturePool from './FightFuturePool.svelte'
   import FightFutureClock from './FightFutureClock.svelte'
@@ -9,6 +10,9 @@
   import { defaultAppearance, type CareerAppearance } from '$lib/fighting/career/types'
   import type { FightState, FightSide } from '$lib/fighting/types'
   import type { FightStageId } from '$lib/fighting/stages'
+  export let victoryFrame: VictoryFrame | null = null
+  export let onSceneReady: () => void = () => {}
+  export let onSceneFailed: () => void = () => {}
   export let state: FightState
   export let stageId: FightStageId
   export let language: 'fr' | 'en' = 'fr'
@@ -42,12 +46,15 @@
     {viewer}
     {comfort}
     {appearance}
+    {victoryFrame}
+    {onSceneReady}
+    {onSceneFailed}
     cameraDirection={direction}
     detailLayout={prediction ? rect : undefined}
-    hideSecondaryView={Boolean(prediction)}
+    hideSecondaryView={Boolean(prediction) || Boolean(victoryFrame?.active)}
     bind:detailVisible
   />
-  {#if prediction && detailVisible}<FightFutureClock
+  {#if prediction && detailVisible && !victoryFrame?.active}<FightFutureClock
       {prediction}
       {rect}
       {language}

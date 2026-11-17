@@ -52,6 +52,8 @@
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import { drawVictoryFrame } from '$lib/fighting/victory/draw'
+  import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { ArcadeFighter, FightState } from '$lib/fighting/types'
 
   const presentation = createFightPresentation()
@@ -71,6 +73,9 @@
   export let hideSecondaryView = false
   export let detailVisible = false
   export let viewRole: 'primary' | 'prediction' = 'primary'
+  export let victoryFrame: VictoryFrame | null = null
+  export let onSceneReady: () => void = () => {}
+  export let onSceneFailed: () => void = () => {}
 
   export let language: 'fr' | 'en' = 'fr'
   $: backgroundDescription = stageBackgroundDescription(
@@ -100,6 +105,7 @@
         const THREE = await import('three')
         const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
         const { buildFightScenery } = await import('$lib/fighting/stageScenery')
+        const { createVictoryRenderer } = await import('$lib/fighting/victory/renderer')
         if (disposed || !canvas) return
 
         const {
@@ -163,6 +169,7 @@
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
         }
         scene.add(models.player.model.root, models.opponent.model.root)
+        const victoryRenderer = createVictoryRenderer({ scene, camera, scenery: scenery.root })
         const detailScene = createCinematicDetailScene({
           scene,
           figureOf: (side) => models[side].model.root,
@@ -376,8 +383,18 @@
 
           collisions.sync(state)
           scenery.update?.(seconds)
-          if (post) post.render()
-          else renderer.render(scene, camera)
+          drawVictoryFrame({
+            victory: victoryRenderer,
+            input: {
+              state,
+              frame: victoryFrame,
+              comfort: visualComfort(),
+              models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            },
+            draw: () => (post ? post.render() : renderer.render(scene, camera)),
+            failed: onSceneFailed,
+          })
+          if (!ready) onSceneReady()
           ready = true
           if (
             detail &&
@@ -394,6 +411,7 @@
         teardown = () => {
           cancelAnimationFrame(animationFrame)
           resize?.disconnect()
+          victoryRenderer.dispose()
           trackingSilhouettes.dispose()
           impacts.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
@@ -410,6 +428,7 @@
         }
       } catch {
         failed = true
+        onSceneFailed()
       }
     }
 
@@ -424,7 +443,11 @@
 <p class="background-description">{backgroundDescription}</p>
 <div class:failed class:ready class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
-  <FightTrackingMarkers {state} {language} enabled={keepCombatantMarkers} />
+  <FightTrackingMarkers
+    {state}
+    {language}
+    enabled={keepCombatantMarkers && !victoryFrame?.active}
+  />
   {#if detail && !hideSecondaryView && !failed}<FightCameraDetail
       {detail}
       rect={detailRect}

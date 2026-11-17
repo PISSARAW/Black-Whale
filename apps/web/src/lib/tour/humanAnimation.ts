@@ -32,6 +32,8 @@ export type HumanMotion = (rig: AnimatedHuman) => void
 
 export interface HumanAnimationLayer {
   motion?: HumanMotion
+  /** Final contact constraints run after all pose cross-fades and motion layers. */
+  afterMotion?: HumanMotion
   transitionKey?: string
   /** Cross-fade length for this transition; 0 snaps (an attack's first frame). */
   transitionSeconds?: number
@@ -309,5 +311,6 @@ export function humanAnimation(
       blendFrame(parts, transitionFrom, amount)
       if (amount === 1) transitionFrom = null
     }
+    layer?.afterMotion?.(rig)
   }
 }

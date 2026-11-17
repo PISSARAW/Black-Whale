@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fightGroundContact } from '$lib/fighting/fightGroundContact'
+  import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
   import { createCinematicDetailScene } from '$lib/fighting/cinematicDetailScene'
@@ -232,8 +234,10 @@
         fit()
 
         const poseClock = createFightPoseClock()
+        const finishedFall = createFinishedFallPresentation()
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
+        let motionSeconds = 0
         const facings = {
           player: createFighterFacing(state.player.facing),
           opponent: createFighterFacing(state.opponent.facing),
@@ -247,18 +251,24 @@
         }
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, model, seconds } = options
-          const fighter = presentation.fighter(state, side)
+          const falling = finishedFall(state, side, {
+            fighter: presentation.fighter(state, side),
+            position: interpolatedPosition(state, side),
+            seconds,
+          })
+          const fighter = falling.fighter
           const opponent = presentation.fighter(state, side === 'player' ? 'opponent' : 'player')
           trackingSilhouettes.sync(model.root, { state, side, keep: keepCombatantMarkers })
-          const receivedImpact = state.impact?.attacker !== side ? state.impact?.sequence : 0
-          const progress = poseClock(side, fighter, { seconds, impact: receivedImpact })
-          const drawn = interpolatedPosition(state, side)
+          const impact = state.impact?.attacker === side ? null : state.impact
+          const receivedImpact = impact?.sequence
+          const progress =
+            falling.progress ?? poseClock(side, fighter, { seconds, impact: receivedImpact })
+          const drawn = falling.position
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
-          const impact = state.impact
-          const hitZone = impact && impact.attacker !== side ? impact.zone : undefined
+          const hitZone = impact?.zone
           const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
           const modelPose = motionOf(fighter).dash ? 'idle' : FIGHT_MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {
@@ -278,6 +288,7 @@
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
             transitionSeconds: transitionSecondsFor(fighter),
             strideClock: strideClock(side, worldX(drawn.x), fighter.facing),
+            afterMotion: fightGroundContact(fighter),
           })
         }
 
@@ -352,8 +363,9 @@
             animationFrame = requestAnimationFrame(render)
             return
           }
-          const seconds = presentationSeconds ?? now / 1000
           const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
+          motionSeconds += dt
+          const seconds = presentationSeconds ?? motionSeconds
           lastFrameAt = now
           impacts.emit(state, now)
           animateFighter({

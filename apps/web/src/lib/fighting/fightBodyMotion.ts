@@ -153,7 +153,7 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const plan = unmirroredBodyPlan(fighter, context)
+  const plan = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
   const handed =
     ['chrollo', 'kurapika'].includes(fighter.id) ||
     plan?.key === 'roster-writing' ||
@@ -161,6 +161,12 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   return plan && handed && fighter.facing === -1
     ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan
+}
+
+function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  if (!['down', 'ko', 'wakeup'].includes(fighter.pose)) return null
+  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  return reactionPlan(fighter, context, standing)
 }
 
 function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {

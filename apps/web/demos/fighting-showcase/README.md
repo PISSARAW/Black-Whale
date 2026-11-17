@@ -990,3 +990,17 @@ ajoute le mix original, Fatality en anglais et le son chargé dans Clash.
 `check-hinrigh-fatality.mjs` et `check-hinrigh-victories.mjs` contrôlent la démo
 et son déclenchement automatique.
 Sortie : `output/fighting-hinrigh-fatality/Hinrigh-Fatality-10s.mp4`.
+
+## Terebellum — Retour à l’envoyeur
+
+`terebellum-fatality.html` présente dix secondes de Damage: Sweet Home :
+blessure et couteau déviés dans une canette, puis coups renvoyés à leur auteur
+par contact gauche. Terebellum termine sans une égratignure et reprend sa
+canette restée abîmée. La démo l’oppose à Hinrigh dans la cale ; `target`,
+`stage`, `side=opponent` et `reduced` permettent les variantes.
+`render-terebellum-fatality.mjs --inspect` exporte les plans de contrôle ;
+sans `--inspect`, le script produit 600 images en 1080p60.
+`compose-terebellum-fatality.mjs` ajoute le mix et Fatality en anglais.
+Les scripts `check-terebellum-fatality.mjs` et `check-terebellum-victories.mjs`
+contrôlent le combat natif, le rendu et le déclenchement dans Clash.
+Sortie : `output/fighting-terebellum-fatality/Terebellum-Fatality-10s.mp4`.

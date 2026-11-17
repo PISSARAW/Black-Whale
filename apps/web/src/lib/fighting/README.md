@@ -15,6 +15,9 @@ la reconstruction privée, avec des essais jusqu’à 300 ms de RTT simulé.
 L’[étape 5](./STEP5.md) ajoute cinq exercices pratiques et un diagnostic vérifié
 des replays pour revoir puis essayer une réponse à une erreur observable.
 
+L’[étape 6](./STEP6.md) ajoute les files non classée et classée, les séries
+vérifiées, la récupération d’identité et les tournois reliés aux résultats serveur.
+
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 ## Capacités d’arène

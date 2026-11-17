@@ -4,6 +4,7 @@
   import { createPvpClient, type PvpClient } from '$lib/fighting/pvp/client'
   import { pvpSessionKey } from '$lib/fighting/pvp/types'
   import PvpDuel from '../PvpDuel.svelte'
+  import FightOnlineReturn from '$lib/components/fighting/FightOnlineReturn.svelte'
   import type { PageData } from './$types'
   import '../pvp.css'
   export let data: PageData
@@ -31,10 +32,16 @@
   })
 </script>
 
-<svelte:head><title>Clash · PvP privé</title><meta name="robots" content="noindex" /></svelte:head>
+<svelte:head><title>Clash · PvP</title><meta name="robots" content="noindex" /></svelte:head>
 <main class="pvp-page">
   <a href={$link('/fighting')}>{$locale === 'fr' ? 'Retour à Clash' : 'Back to Clash'}</a>
-  <h1>Clash · {$locale === 'fr' ? 'Duel privé' : 'Private duel'}</h1>
+  <h1>Clash · {$locale === 'fr' ? 'Duel en ligne' : 'Online duel'}</h1>
+  <FightOnlineReturn
+    endpoint={$link('/fighting/pvp/online/api')}
+    href={$link('/fighting/pvp/online')}
+    matchId={data.matchId}
+    language={$locale === 'fr' ? 'fr' : 'en'}
+  />
   {#if client}<PvpDuel
       {client}
       language={$locale === 'fr' ? 'fr' : 'en'}

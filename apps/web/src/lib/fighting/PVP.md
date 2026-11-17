@@ -7,6 +7,10 @@ les descriptions de l’autorité et des conditions de combat ci-dessous restent
 L’[étape 4](./STEP4.md) ajoute les générations de commandes après suspension,
 le retour au neutre, le watchdog SSE et les essais jusqu’à 300 ms de RTT simulé.
 
+L’[étape 6](./STEP6.md) utilise ces mêmes salons pour la recherche non classée ou
+classée, les séries au premier à deux matchs et les tournois à résultats serveur.
+Les invitations privées décrites ci-dessous restent accessibles séparément.
+
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
 joueurs. Les quarante personnages, les trois formats, les arènes, les ressources
 scénarisées, les aiguilles et la juridiction de LSDF utilisent les configurations

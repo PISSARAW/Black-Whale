@@ -30,6 +30,9 @@
 | `fighting/pvp/[matchId]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/api/matches` | `+server.ts` |
 | `fighting/pvp/api/matches/[matchId]` | `+server.ts` |
+| `fighting/pvp/online` | `+page.svelte` |
+| `fighting/pvp/online/api` | `+server.ts` |
+| `fighting/pvp/online/tournament/[id]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
 | `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |

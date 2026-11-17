@@ -4,6 +4,11 @@
 `/fighting/tournament` porte le tableau de tournoi. Le menu de Clash et le
 laboratoire d’apprentissage donnent accès à ces pages.
 
+L’[étape 6](./STEP6.md) ajoute `/fighting/pvp/online` : identité récupérable,
+historique serveur et statistiques par personnage, files non classée et classée,
+séries vérifiées et tournois en ligne. Le tournoi local ci-dessous garde sa saisie
+manuelle et reste distinct du tableau en ligne alimenté par le serveur.
+
 ## Historique et maîtrise
 
 `career/profile.ts` conserve le pseudo, trois habillages, les préférences de

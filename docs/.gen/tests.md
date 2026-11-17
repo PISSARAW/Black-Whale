@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 699
+Fichiers : 711
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -303,6 +303,10 @@ Fichiers : 699
 
 - Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
 
+## `apps/web/src/lib/fighting/combatBaseline.test.ts`
+
+- six-fighter fixed starting situations > starts the approach trial clear of both interactive crates
+
 ## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
 
 - confirmed cancels, pressure and reproducible punishment > allows the personal first light-to-heavy pressure link while excluding Hatsu on guard
@@ -327,6 +331,10 @@ Fichiers : 699
 
 - personal execution and conditions > gives Kurapika a real recovery link that works without a declared cancel
 
+## `apps/web/src/lib/fighting/duelComboFifth.test.ts`
+
+- fifth expansion personal mechanics > Gel chooses two physical arm endings with different real costs and no added status
+
 ## `apps/web/src/lib/fighting/duelComboRoster.test.ts`
 
 - personal powers and recovery links > attaches Gum through real contact, then consumes a pre-existing tether with the finisher
@@ -334,6 +342,14 @@ Fichiers : 699
 ## `apps/web/src/lib/fighting/duelComboSecond.test.ts`
 
 - second expansion power conditions > preserves Machi’s real tracking marker without turning it into restraint or a free finisher
+
+## `apps/web/src/lib/fighting/duelComboSeventh.test.ts`
+
+- seventh expansion personal mechanics > Tserriednich waits for the advancing light to recover before linking the heavy
+
+## `apps/web/src/lib/fighting/duelComboThird.test.ts`
+
+- third expansion personal mechanics > prepares Illumi’s altered face through real vulnerable time without implanting a puppet
 
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
@@ -661,7 +677,7 @@ Fichiers : 699
 
 ## `apps/web/src/lib/fighting/rosterQuality.test.ts`
 
-- roster quality parity > covers forty fighters, their core routes and forty advanced duel lessons
+- roster quality parity > covers forty fighters, their core routes and one hundred and twenty advanced duel lessons
 - sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
 
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
@@ -1397,6 +1413,22 @@ Fichiers : 699
 ## `apps/web/src/lib/server/compare-selection.test.ts`
 
 - resolveComparisonSelection > defaults a bare URL to the latest event and the first two characters
+
+## `apps/web/src/lib/server/competition/http.test.ts`
+
+- competitive HTTP authentication, filtering and bounded commands > recovers the authoritative identity from its existing code without accepting a name or result
+
+## `apps/web/src/lib/server/competition/persistence.test.ts`
+
+- durable competitive receipts and recoverable identities > does not acknowledge a terminal result until its journal write succeeds
+
+## `apps/web/src/lib/server/competition/queue.test.ts`
+
+- connection and identity filters > uses single-use identity-bound server probes instead of a client ping number
+
+## `apps/web/src/lib/server/competition/service.test.ts`
+
+- competitive queues use actual authoritative duels > matches two different identities, restores only the owner’s seat and protects the shared preset
 
 ## `apps/web/src/lib/server/event-log.test.ts`
 
@@ -2809,6 +2841,10 @@ Fichiers : 699
 - parseSimulationActionInput > rejects an unsupported action type
 - SimulationStore.applyAction > rejects a move targeting an entity absent from the branch
 - SimulationStore bounds > deletes simulation branches past the TTL when a new one is created
+
+## `scripts/combat-reference-compare.test.ts`
+
+- combat reference comparison > accepts identical behavior and reports a separate source change
 
 ## `scripts/doc-lint.test.ts`
 

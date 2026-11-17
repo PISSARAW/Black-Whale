@@ -14,12 +14,14 @@ import type {
 import type { FightSide } from '$lib/fighting/types'
 import { clashSeasons, type ClashSeasons, type RankedProfile } from './clashSeasons'
 import { spectatorSnapshot } from '$lib/fighting/pvp/spectator'
+import type { ClashPvpTerminal } from './clashPvpTerminal'
 
 interface Seat {
   token: string
   seenAt: number
 }
 interface Lobby {
+  voluntary?: boolean
   id: string
   setup: PvpSetup
   configHash: string
@@ -45,6 +47,10 @@ export class ClashPvpError extends Error {
 }
 export class ClashPvpRegistry {
   private lobbies = new Map<string, Lobby>()
+  private terminalObserver?: (event: ClashPvpTerminal) => void
+  observeTerminals(observer: (event: ClashPvpTerminal) => void) {
+    this.terminalObserver = observer
+  }
   constructor(
     private now = Date.now,
     private randomId: () => string = () => crypto.randomUUID(),
@@ -197,21 +203,47 @@ export class ClashPvpRegistry {
   leave(id: string, token: string): void {
     const { lobby, side } = this.access(id, token)
     this.advance(lobby)
-    if (lobby.status === 'finished') return
+    if (lobby.status === 'finished' || lobby.status === 'abandoned') return
     lobby.status = 'abandoned'
+    lobby.voluntary = true
     lobby.disconnectedSide = side
     lobby.match.release()
+    this.notifyTerminal(lobby)
+  }
+  /** Competition leases may expire an unstarted match; no combat winner is manufactured. */
+  expireWaiting(id: string, token: string) {
+    const { lobby } = this.access(id, token)
+    const state = lobby.match.snapshot()
+    if (
+      this.now() - lobby.createdAt <= 120_000 ||
+      state.phase !== 'ready' ||
+      state.roundNumber !== 1
+    )
+      return
+    if (lobby.status === 'abandoned') return
+    const player = this.connected(lobby, 'player'),
+      opponent = this.connected(lobby, 'opponent')
+    lobby.status = 'abandoned'
+    lobby.voluntary = false
+    lobby.disconnectedSide = player !== opponent ? (player ? 'opponent' : 'player') : null
+    lobby.match.release()
+    this.notifyTerminal(lobby)
   }
   private advance(lobby: Lobby) {
     const now = this.now()
     if (lobby.status === 'finished') {
       this.rank(lobby)
+      this.notifyTerminal(lobby)
       return
     }
-    if (lobby.status === 'abandoned') return
+    if (lobby.status === 'abandoned') {
+      this.notifyTerminal(lobby)
+      return
+    }
     this.detectDisconnect(lobby)
     if (lobby.status !== 'playing') {
       lobby.lastAdvancedAt = now
+      this.notifyTerminal(lobby)
       return
     }
     const steps = Math.min(15, Math.floor(((now - lobby.lastAdvancedAt) * 60) / 1000 + 1e-6))
@@ -225,6 +257,28 @@ export class ClashPvpRegistry {
       lobby.ready = { player: false, opponent: false }
       lobby.match.release()
       this.rank(lobby)
+      this.notifyTerminal(lobby)
+    }
+  }
+  private notifyTerminal(lobby: Lobby) {
+    if (lobby.status !== 'finished' && lobby.status !== 'abandoned') return
+    const state = lobby.match.snapshot()
+    const event: ClashPvpTerminal = {
+      id: lobby.id,
+      status: lobby.status,
+      winner: state.matchWinner,
+      disconnected: lobby.disconnectedSide,
+      voluntary: Boolean(lobby.voluntary),
+      connected: {
+        player: this.connected(lobby, 'player'),
+        opponent: this.connected(lobby, 'opponent'),
+      },
+      started: state.phase !== 'ready' || state.roundNumber > 1,
+    }
+    try {
+      this.terminalObserver?.(event)
+    } catch {
+      throw new ClashPvpError('RESULT_STORAGE')
     }
   }
   private rank(lobby: Lobby) {

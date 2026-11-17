@@ -128,7 +128,7 @@ describe('wave one movesets', () => {
       'kurapika:standingHeavy',
       'kurapika:forwardSpecial',
     ])
-    expect(kurapika.combos.every((route) => route.length <= 4)).toBe(true)
+    expect(kurapika.combos.every((route) => route.length <= 5)).toBe(true)
   })
 
   it('makes Dowsing Chain Kurapika’s standard weapon', () => {

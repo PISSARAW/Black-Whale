@@ -10,13 +10,14 @@ import { SIXTH_DUEL_PROFILES } from './duelComboSixthProfiles'
 import { SEVENTH_DUEL_PROFILES } from './duelComboSeventhProfiles'
 import { EIGHTH_DUEL_PROFILES } from './duelComboEighthProfiles'
 import { NINTH_DUEL_PROFILES } from './duelComboNinthProfiles'
+import { TENTH_DUEL_PROFILES } from './duelComboTenthProfiles'
 
 // Combat rules are authored independently of the Academy's example sequences.
 // Utility chains and inherited preparations deliberately have no combo destinations.
 const KURAPIKA: Partial<Record<MoveSlot, ComboMove>> = {
   standingLight: {
     tuning: { startup: 4, hitstun: 17, knockback: 1.1 },
-    into: ['standingHeavy', 'forwardLight', 'forwardSpecial'],
+    into: ['standingHeavy', 'forwardLight', 'forwardSpecial', 'backHeavy'],
   },
   lowLight: {
     tuning: { startup: 5, hitstun: 18, knockback: 0.9 },
@@ -42,8 +43,9 @@ const KURAPIKA: Partial<Record<MoveSlot, ComboMove>> = {
     window: 5,
   },
   backHeavy: {
-    tuning: { startup: 10, hitstun: 22, knockback: 1.8, reach: 10 },
+    tuning: { startup: 10, active: 4, recovery: 16, hitstun: 34, knockback: 1.8, reach: 12 },
     into: ['standingHeavy', 'forwardSpecial'],
+    links: ['forwardLight'],
   },
   lowHeavy: {
     tuning: { startup: 10, recovery: 19, damage: 9, knockback: 3.1, reach: 12.5 },
@@ -64,7 +66,7 @@ const KURAPIKA: Partial<Record<MoveSlot, ComboMove>> = {
 const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
   standingLight: {
     tuning: { startup: 5, hitstun: 18, knockback: 1.1 },
-    into: ['standingHeavy', 'forwardLight'],
+    into: ['standingHeavy', 'forwardLight', 'backHeavy'],
   },
   lowLight: {
     tuning: { startup: 6, hitstun: 19, knockback: 0.8 },
@@ -87,8 +89,9 @@ const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
     into: ['lowHeavy', 'forwardHeavy', 'neutralSpecial'],
   },
   backHeavy: {
-    tuning: { startup: 12, hitstun: 23, knockback: 1.5, reach: 9.6 },
+    tuning: { startup: 12, active: 4, recovery: 16, hitstun: 34, knockback: 1.5, reach: 12 },
     into: ['standingHeavy', 'neutralSpecial'],
+    links: ['forwardLight'],
   },
   lowHeavy: {
     tuning: { startup: 11, recovery: 21, damage: 10, knockback: 3.1, reach: 11 },
@@ -118,6 +121,7 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
   ...SEVENTH_DUEL_PROFILES,
   ...EIGHTH_DUEL_PROFILES,
   ...NINTH_DUEL_PROFILES,
+  ...TENTH_DUEL_PROFILES,
 }
 export const DUEL_COMBO_FIGHTERS = Object.keys(PROFILES) as FighterId[]
 export const hasDuelComboProfile = (fighter: string): boolean => Object.hasOwn(PROFILES, fighter)

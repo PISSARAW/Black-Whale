@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { loadFrozenCombatTapes } from '../../../../../scripts/clash-frozen-tapes'
 import { BASELINE_FIGHTERS } from './combatBaseline'
@@ -18,6 +19,27 @@ beforeAll(async () => {
 })
 
 describe('command qualification from the frozen six-fighter states', () => {
+  it('keeps all historical input packets and the original archive intact across the v17 recording', async () => {
+    const historical = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
+    )
+    expect(historical.archiveSha256).toBe(
+      'd4e27df52932d61bfd526cc94d145111947103190208e4c2aae3c4a00e416900',
+    )
+    expect(frozen.ruleset).toBe(REPLAY_RULESET)
+    expect(Object.keys(frozen.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
+    for (const [id, replay] of Object.entries(historical.tapes))
+      expect(frozen.tapes[id].packets).toEqual(replay.packets)
+  })
+  it('still rejects promotion of the original Kurapika trace when its checkpoints differ', async () => {
+    const historical = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
+    )
+    expect(() =>
+      revalidateCombatReference(historical.tapes['route-kurapika-confirm-neutral-right-center-6']),
+    ).toThrow(/Reference changed/)
+  })
+
   for (const fighter of BASELINE_FIGHTERS)
     it(`${fighter}: re-records only after verifying the immutable original checkpoints`, () => {
       const original = frozen.tapes[`route-${fighter}-confirm-neutral-right-center-6`]

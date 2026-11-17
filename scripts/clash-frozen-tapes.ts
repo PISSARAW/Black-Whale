@@ -5,10 +5,13 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { FightReplay } from '../apps/web/src/lib/fighting/fightReplayTypes'
 
-export async function loadFrozenCombatTapes() {
+export async function loadFrozenCombatTapes(directoryOverride?: string) {
   const directory = resolve(
-    process.env.CLASH_REFERENCE_DIRECTORY ??
-      fileURLToPath(new URL('../apps/web/ui-tests/fighting-reference/reference', import.meta.url)),
+    directoryOverride ??
+      process.env.CLASH_REFERENCE_DIRECTORY ??
+      fileURLToPath(
+        new URL('../apps/web/ui-tests/fighting-reference/reference/v17', import.meta.url),
+      ),
   )
   const baseline = JSON.parse(await readFile(resolve(directory, 'baseline.json'), 'utf8')) as {
     ruleset: string

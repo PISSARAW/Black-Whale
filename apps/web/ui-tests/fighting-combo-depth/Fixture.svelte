@@ -7,11 +7,11 @@
   import { createCombatSchool, advanceCombatSchool } from '$lib/fighting/combatSchool'
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
   import { createCombatRouteFight } from '$lib/fighting/combatRouteFight'
-  import { combatRoute } from '$lib/fighting/combatRoutes'
+  import { combatRoute, combatRoutesFor } from '$lib/fighting/combatRoutes'
   import { DUEL_COMBO_FIGHTERS } from '$lib/fighting/duelComboProfiles'
   import { FIGHT_CONTROLS_CONTEXT } from '$lib/fighting/fightControlHints'
   import { defaultBindings } from '$lib/fighting/fightInputBindings'
-  import { EMPTY_INPUT, type FightState } from '$lib/fighting/types'
+  import { EMPTY_INPUT, type FightState, type FighterId } from '$lib/fighting/types'
 
   const school = createCombatSchool()
   const match = createFightMatchRuntime(undefined, { record: false })
@@ -45,6 +45,9 @@
   }
   export function snapshot() {
     return { progress: get(school), combo: state.opponent.comboHits, aura: state.player.aura }
+  }
+  export function routeCount(fighter: FighterId) {
+    return combatRoutesFor(fighter).length
   }
   export function fighters() {
     return DUEL_COMBO_FIGHTERS

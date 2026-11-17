@@ -43,7 +43,8 @@ try {
   for (const fighter of fighters) {
     if (!(await catalog.evaluate((node) => node.open))) await catalog.locator('summary').click()
     await page.getByRole('combobox', { name: 'Personnage des exercices' }).selectOption(fighter)
-    assert.equal(await page.getByRole('button', { name: /^Démontrer ·/ }).count(), 8)
+    const expected = await page.evaluate((id) => window.comboFixture.routeCount(id), fighter)
+    assert.equal(await page.getByRole('button', { name: /^Démontrer ·/ }).count(), expected)
     const titles = await page.getByRole('button', { name: /^Démontrer ·/ }).allTextContents()
     for (const title of titles) {
       if (!(await catalog.evaluate((node) => node.open))) await catalog.locator('summary').click()
@@ -53,6 +54,14 @@ try {
         assert.match(await page.locator('.active-exercise').innerText(), /Liaison : attends/)
         assert.match(await page.locator('.combo-choices').innerText(), /liaison/i)
         await page.locator('main').screenshot({ path: path.join(output, `${fighter}-link.png`) })
+      }
+      if (title.includes('Reprise · liaison')) {
+        await page.evaluate(() => window.comboFixture.advance(240, 1))
+        assert.match(await page.locator('.active-exercise').innerText(), /Liaison : attends/)
+        assert.match(await page.locator('.combo-choices').innerText(), /liaison/i)
+        await page
+          .locator('main')
+          .screenshot({ path: path.join(output, `${fighter}-recovery-link.png`) })
       }
       if (title.includes('Rafale longue')) {
         await page.evaluate(() => window.comboFixture.advance(240, 3))

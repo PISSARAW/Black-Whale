@@ -1,3 +1,4 @@
+import { COHORT_WILL_FRAMES } from './preparationTuning'
 import { MELODY_LISTEN_FRAMES } from './melodyTuning'
 import { commandMary } from './bloodyMaryAction'
 import { performAuraAttack, performMove, tickFight } from './engine'
@@ -27,6 +28,7 @@ export type CombatRouteSetup =
   | 'observation'
   | 'listening'
   | 'doors'
+  | 'cohort-ready'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
@@ -34,13 +36,13 @@ export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup):
   if (setup === 'scouts')
     state = commandMary({ state, side: 'player', command: 'bleed' }, performAuraAttack)
   const input = setupInput(state, setup)
-  if (setup !== 'listening')
+  if (!['listening', 'cohort-ready'].includes(setup))
     state = performMove({ state, side: 'player', action: 'special', input })
   if (setup === 'cyclotron') {
     for (let i = 0; i < CYCLOTRON_ROTATION_FRAMES; i++) state = step(state)
     state = performMove({ state, side: 'player', action: 'special' })
   }
-  for (let i = 0; i < 180 && !setupReady(state, setup); i++) state = step(state)
+  for (let i = 0; i < setupFrames(setup) && !setupReady(state, setup); i++) state = step(state)
   return {
     ...state,
     impact: null,
@@ -86,6 +88,8 @@ function setupReady(state: FightState, setup: CombatRouteSetup) {
   if (setup === 'pigeon' && !state.opponent.biohazardRestraint) return false
   if (setup === 'listening' && (state.player.melodyHearing?.frames ?? 0) < MELODY_LISTEN_FRAMES)
     return false
+  if (setup === 'cohort-ready' && state.player.hatsuEffects.cohortWillFrames < COHORT_WILL_FRAMES)
+    return false
   return settled(state)
 }
 
@@ -97,4 +101,8 @@ function preparing(fighter: ArcadeFighter) {
     fighter.bashoPoem?.writingFrames ||
     fighter.preparationRecovery,
   )
+}
+
+function setupFrames(setup: CombatRouteSetup) {
+  return setup === 'cohort-ready' ? COHORT_WILL_FRAMES + 1 : 180
 }

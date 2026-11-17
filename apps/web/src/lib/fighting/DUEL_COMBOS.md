@@ -1,11 +1,9 @@
-# Trente-huit profils de combos
+# Quarante profils de combos
 
-Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
-Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh, Mizaistom,
-Gel, Lynch, Padaille, Zakuro, Theta, Musse, Furykov, Beyond, Tserriednich, Basho,
-Camilla, Longhi, Bill, Cluck, Sayird, Luini, Rihan, Melody, Terebellum et Voconte
-ont huit exemples chacun dans l’Académie. Les quatre routes initiales restent
-disponibles. `duelComboProfiles.ts` définit leurs timings et
+Les quarante personnages ont désormais un profil de combo indépendant des exemples.
+Halkenburg et Yokotani complètent la couverture. Kurapika et Benjamin passent à
+douze exemples chacun ; les trente-huit autres en ont huit. Les quatre routes
+initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
 réellement choisies par le joueur, sans substitution automatique de coup.
@@ -25,7 +23,9 @@ Basho, Camilla et Longhi.
 Sayird et Luini.
 `duelComboNinthProfiles.ts` et `duelComboNinthLessons.ts` ajoutent Rihan, Melody,
 Terebellum et Voconte.
-Le catalogue compte 312 routes pour quarante personnages.
+`duelComboTenthProfiles.ts` complète Halkenburg et Yokotani ;
+`duelComboTenthLessons.ts` ajoute aussi une seconde passe à Kurapika et Benjamin.
+Le catalogue compte 328 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -264,6 +264,24 @@ dans son sens continue de transporter le corps réel selon les règles ordinaire
 Les exercices `observation`, `listening` et `doors` exécutent les états réels,
 sans fournir de proie analysée, de musique active ou de téléportation automatique.
 
+## Couverture complète et seconde passe des deux premiers profils
+
+Halkenburg réunit trois partisans réels, déjà marqués et consentants dans le
+scénario explicite, pendant 480 frames réellement simulées. Ses cinq frappes ne
+tirent aucune flèche, ne coûtent aucune vie et ne possèdent pas le mannequin.
+Les conditions de la flèche et son risque vital restent des actions distinctes.
+Yokotani lie le lourd après récupération d’avant + léger, puis peut lier le revers.
+Ses routes restent physiques hors juridiction ; LSDF n’est ni un coup de combo
+ni un moyen de rendre le mannequin incapable de garder. La vraie introduction
+reste possible dans la planque avec Morena et un intrus qualifié, sans dégâts.
+Kurapika et Benjamin gagnent une branche J → revers, puis une liaison du revers
+vers avant + léger. Le premier doit encore attendre avant de lier le lourd ; le
+second peut le confirmer par cancel. Balayage, poussée et fin payante prolongent
+cette ouverture ; aura, Nen et héritage d’Air Blow restent contrôlés à l’exécution.
+Leurs quatre nouveaux exemples portent leur total individuel à douze. Le hitstun
+du revers couvre sa récupération et le pas, avec décroissance ordinaire sur les
+longues suites ; les coups dans le vide et la garde n’autorisent aucun cancel ajouté.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -292,12 +310,14 @@ et ses vrais poings, Camilla à un PV et l’offre sans consentement automatique
 sans soin, le courrier sans impacts, le petit animal et l’ancrage irréversible.
 `duelComboNinth.test.ts` vérifie l’observation sans analyse offerte, l’écoute
 sans musique, la frappe sans soin rétroactif et le franchissement des vrais seuils.
+`duelComboTenth.test.ts` vérifie la cohorte et son temps réel, la juridiction
+de LSDF et les nouvelles liaisons de Kurapika et Benjamin avec leurs coûts.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-16` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-17` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

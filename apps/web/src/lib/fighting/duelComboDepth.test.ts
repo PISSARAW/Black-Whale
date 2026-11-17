@@ -134,7 +134,7 @@ describe.each(['kurapika', 'benjamin'] as const)('%s combo decisions', (fighter)
   })
 
   it('keeps every taught route finite and excludes utility techniques from combo cancels', () => {
-    expect(combatRoutesFor(fighter)).toHaveLength(8)
+    expect(combatRoutesFor(fighter)).toHaveLength(12)
     for (const slot of fighter === 'kurapika'
       ? (['neutralSpecial', 'backSpecial', 'downSpecial', 'finisher'] as const)
       : (['forwardSpecial', 'downSpecial', 'finisher'] as const)) {

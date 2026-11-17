@@ -23,6 +23,17 @@ versions d’origine et mesurée, les empreintes de la référence et du bundle
 effectivement exécuté. Le bundle de production et ses sourcemaps sont conservés
 pour permettre une reprise même si le checkout continue d’évoluer.
 
+## Référence v17 après évolution des combos
+
+Les nouvelles branches de Kurapika et Benjamin changent certains échanges,
+y compris lorsqu’ils sont adversaires. La référence historique v9 demeure intacte.
+`reference/v17` contient 96 réenregistrements des mêmes flux d’entrée, calculés
+avec le moteur v17 et de nouveaux checkpoints de production. Les prémisses
+initiales sont vérifiées ; 34 états finaux changent. La provenance et les sommes
+de contrôle figurent dans le [dossier v17](../../../ui-tests/fighting-reference/reference/v17/README.md).
+Le chargeur du banc utilise désormais cette référence. La vérification stricte
+des checkpoints ne change pas ; les rapports retenus sous v16 restent historiques.
+
 ## Commandes et fenêtres
 
 ```sh

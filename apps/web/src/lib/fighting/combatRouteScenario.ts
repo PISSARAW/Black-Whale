@@ -10,6 +10,7 @@ const RESOURCES: Partial<Record<CombatRouteSetup, PreparationResource>> = {
 
 /** Install ordinary scenario premises, never already grown, controlled or anchored entities. */
 export function combatRouteScenario(setup?: CombatRouteSetup): FightPreparation | undefined {
+  if (setup === 'cohort-ready') return { mode: 'scenario', resources: [], cohorts: ['player'] }
   const resource = setup && RESOURCES[setup]
   return resource ? { mode: 'scenario', resources: [resource], cohorts: [] } : undefined
 }

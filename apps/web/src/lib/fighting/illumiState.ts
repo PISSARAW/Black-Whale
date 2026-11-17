@@ -40,6 +40,7 @@ export function illumiBodyFree(fighter: ArcadeFighter): boolean {
     !fighter.arsenalSleep &&
     !fighter.clothCapture &&
     needleAutonomy(fighter) &&
+    !fighter.blackVoiceControl?.active &&
     !illumiPreparing(fighter)
   )
 }

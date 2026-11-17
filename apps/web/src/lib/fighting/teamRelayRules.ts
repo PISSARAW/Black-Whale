@@ -7,6 +7,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'blackVoiceScreen',
+  'blackVoiceGear',
   'equipment',
   'equipmentProps',
   'melodyFlute',
@@ -76,7 +78,10 @@ function quietWorld(state: FightState): boolean {
       (state.opponent.bashoWard?.remainingFrames ?? 0) > 0,
     ].some(Boolean) &&
     state.projectiles.length === 0 &&
-    !state.battlefield?.entities.some((entry) => entry.device?.form || entry.device?.transforming)
+    !state.battlefield?.entities.some(
+      (entry) =>
+        entry.device?.form || entry.device?.transforming || entry.blackVoiceControl?.active,
+    )
   )
 }
 export function teamRelayReady(state: FightState, side: FightSide): boolean {
@@ -84,6 +89,8 @@ export function teamRelayReady(state: FightState, side: FightSide): boolean {
   if (!relayBodyFree(actor)) return false
   const target = state[side === 'player' ? 'opponent' : 'player']
   const links = [
+    target.blackVoiceControl?.active,
+    target.blackVoiceControl?.active,
     target.chainJail,
     target.drainingChain,
     target.judgmentChain,

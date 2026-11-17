@@ -1,3 +1,4 @@
+import { blackVoiceAi } from './blackVoiceAi'
 import { bashoArsenalAi } from './bashoArsenalAi'
 import { physicalProjectile } from './projectileMatter'
 import { gallerySenseAi } from './galleryAi'
@@ -39,6 +40,7 @@ function utilityArsenalAi(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   return (
+    blackVoiceAi(state) ??
     bashoArsenalAi(state, perform) ??
     deviceAi(state) ??
     dowsingAi(state) ??

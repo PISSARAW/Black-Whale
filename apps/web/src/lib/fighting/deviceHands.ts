@@ -26,6 +26,7 @@ function characterHandOccupancy(
   const occupied = new Set<DeviceHand>()
   if (!ignored.gallery && actor.chrolloHistorical?.galleryFocus) occupied.add('left')
   if (!ignored.book && actor.chrolloBook?.open) occupied.add('right')
+  for (const hand of voiceHands(actor)) occupied.add(hand)
   return occupied
 }
 export function physicalHandsBusy(actor: FightState['player']): boolean {
@@ -52,4 +53,10 @@ function occupiesHand(
   )
     return false
   return device.carrierMember === undefined || device.carrierMember === active
+}
+
+function voiceHands(actor: FightState['player']): DeviceHand[] {
+  return [actor.blackVoiceGear?.phone, actor.blackVoiceGear?.armed].flatMap((piece) =>
+    piece?.hand ? [piece.hand] : [],
+  )
 }

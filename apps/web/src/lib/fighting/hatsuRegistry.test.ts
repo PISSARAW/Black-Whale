@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { attackData } from './frameData'
 import { performHunterInterview } from './skillHunterAcquisition'
 import { describe, expect, it } from 'vitest'
@@ -136,9 +137,14 @@ describe('fighter Hatsu registry', () => {
         },
       },
     }
-    expect(
-      chrolloStrike(voice, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames,
-    ).toBeGreaterThan(0)
+    const armed = performArsenalCommand(voice, 'player', { action: 'voice-arm' })
+    const planted = chrolloStrike(armed, 'neutralSpecial')
+    const phone = performArsenalCommand(planted, 'player', { action: 'voice-phone' })
+    const ordered = performArsenalCommand(phone, 'player', {
+      action: 'voice-stay',
+      target: 'opponent',
+    })
+    expect(ordered.opponent.blackVoiceControl?.active).toBe(true)
     expect(chrolloStrike(ready, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames).toBe(0)
     const sun = chrolloStrike(ready, 'neutralSpecial')
     expect(sun.opponent.hatsuEffects.sunMark).toBe(1)

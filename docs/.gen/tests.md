@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 746
+Fichiers : 748
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -279,6 +279,14 @@ Fichiers : 746
 ## `apps/web/src/lib/fighting/biohazardScene.test.ts`
 
 - physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
+
+## `apps/web/src/lib/fighting/blackVoice.test.ts`
+
+- Black Voice original phone and two physical antennas > does not conjure replacement gear from a page or ordinary needles
+
+## `apps/web/src/lib/fighting/blackVoiceIntegration.test.ts`
+
+- Black Voice at command, replay and death boundaries > uses P2 local body references without transferring private phone information
 
 ## `apps/web/src/lib/fighting/bonolenov.test.ts`
 

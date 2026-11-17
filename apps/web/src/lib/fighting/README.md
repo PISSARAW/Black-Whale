@@ -472,8 +472,17 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   H pose aussi le Soleil si le livre est ouvert, et la Lune à droite uniquement
   si le livre est fermé. Deux contacts sur une cible représentent la rencontre
   des marques ; charge et puissance restent réglées pour le duel.
-  Black Voice exige une antenne au contact puis ordonne un recul limité à 90 frames,
-  tant que sa page reste active. Le vol désactive le Hatsu adverse même quand sa page
+  Black Voice transporte le téléphone original de Shalnark et ses deux antennes
+  matérielles : aucune page acquise ne les conjure. L'implantation libère la main
+  qui tenait l'antenne ; le téléphone associé permet ensuite les ordres d'arrêt,
+  approche, recul et attaque, ainsi que la vue transmise par les yeux du sujet.
+  Le contrôle dure jusqu'au retrait de l'antenne, à la mort du sujet ou à la perte
+  de la page. L'objet implanté demeure réel lorsque le Nen cesse. Livre, téléphone
+  et antenne respectent les mains disponibles ; dépôt, ramassage et nombre de
+  pièces sont conservés, sans reconstitution gratuite à la manche suivante.
+  Les ordres déjà donnés sont autonomes ; ranger le téléphone ne libère pas la cible.
+  Le mode d'auto-manipulation de Shalnark reste à intégrer séparément.
+  Le vol désactive le Hatsu adverse même quand sa page
   est refermée. L’entretien et la paume sont des commandes réelles ; observer le
   Hatsu puis frapper ne suffit pas. Les conditions supplémentaires inconnues de Double Face ne sont pas
   inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban

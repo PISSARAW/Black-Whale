@@ -1,3 +1,5 @@
+import { performBlackVoiceCommand } from './blackVoiceAction'
+import { blackVoiceOptions } from './blackVoiceOptions'
 import { performBashoQuestion, bashoQuestionOptions } from './bashoQuestions'
 import { performBashoWard, bashoWardOptions } from './bashoWard'
 import { performWritingKitCommand, writingKitOptions } from './bashoMaterials'
@@ -47,6 +49,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['voice-', performBlackVoiceCommand],
   ['basho-ask', performBashoQuestion],
   ['basho-answer', performBashoQuestion],
   ['basho-', performBashoWard],
@@ -70,6 +73,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...blackVoiceOptions(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
     ...recordedStatementOptions(state, side),

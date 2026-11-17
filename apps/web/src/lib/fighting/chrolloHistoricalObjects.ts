@@ -125,6 +125,7 @@ function nextCopyId(state: FightState, side: FightSide): string {
 }
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
+    blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
     writingKit: source.writingKit
       ? { ...source.writingKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
       : undefined,

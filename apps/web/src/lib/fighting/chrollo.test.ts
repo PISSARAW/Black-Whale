@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { describe, expect, it } from 'vitest'
 import {
   beginFight,
@@ -206,8 +207,14 @@ describe('Bandit’s Secret and Double Face', () => {
       ...base,
       player: { ...base.player, chrolloBook: { ...base.player.chrolloBook!, page: 1 } },
     }
-    const planted = impact(voice, CHROLLO_USE)
-    const ordered = hatsuFor('chrollo').onFrame(planted)
+    const armed = performArsenalCommand(voice, 'player', { action: 'voice-arm' })
+    const planted = impact(armed, CHROLLO_USE)
+    const phone = performArsenalCommand(planted, 'player', { action: 'voice-phone' })
+    const command = performArsenalCommand(phone, 'player', {
+      action: 'voice-retreat',
+      target: 'opponent',
+    })
+    const ordered = hatsuFor('chrollo').onFrame(command)
     expect(ordered.opponent.x).toBeGreaterThan(planted.opponent.x)
     expect(ordered.opponent.blocking).toBe(false)
     expect(action(ordered, CHROLLO_TURN).opponent.hatsuEffects.manipulatedFrames).toBe(0)

@@ -35,6 +35,19 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'voice-watch',
+  'voice-arm',
+  'voice-phone',
+  'voice-pocket',
+  'voice-drop',
+  'voice-pickup',
+  'voice-implant',
+  'voice-remove',
+  'voice-stay',
+  'voice-retreat',
+  'voice-approach',
+  'voice-attack',
+  'voice-spoken-attack',
   'biohazard-device',
   'biohazard-device-cancel',
   'biohazard-device-end',

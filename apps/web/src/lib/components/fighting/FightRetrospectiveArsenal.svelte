@@ -79,6 +79,27 @@
           ).toFixed(1)} s</span
         >
       {/if}
+      {#if state[side].blackVoiceScreen}
+        {@const screen = state[side].blackVoiceScreen!}
+        <p>
+          Black Voice · {language === 'fr' ? 'Image reçue' : 'Received image'}
+          {Math.floor(screen.frame / 60)} s
+        </p>
+        {#if screen.blank}
+          <p>
+            {language === 'fr'
+              ? 'Aucune image visible par la cible.'
+              : 'No image visible to the subject.'}
+          </p>
+        {/if}
+        {#each screen.pictures as picture, i (i)}
+          <p>
+            {picture.appearance} · {picture.x.toFixed(1)} / {picture.y.toFixed(
+              1,
+            )}{picture.projection ? ' · projection' : ''}
+          </p>
+        {/each}
+      {/if}
       {#if state[side].devicePlayback}
         <strong
           >{language === 'fr' ? 'Dernière lecture de la caméra' : 'Latest camera playback'} · {Math.floor(

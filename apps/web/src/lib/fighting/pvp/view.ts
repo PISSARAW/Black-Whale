@@ -50,6 +50,13 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.blackVoiceScreen = undefined
+  if (enemy.blackVoiceGear)
+    enemy.blackVoiceGear = {
+      phone: enemy.blackVoiceGear.phone?.hand ? enemy.blackVoiceGear.phone : undefined,
+      armed: enemy.blackVoiceGear.armed,
+      antennas: [],
+    }
   enemy.bashoArchive = undefined
   enemy.bashoInquiry = undefined
   if (enemy.bashoPoem?.writingFrames) enemy.bashoPoem = { ...enemy.bashoPoem, text: '...' }

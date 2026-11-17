@@ -1,3 +1,4 @@
+import { advanceDowsing } from '../dowsingAction'
 import { implantJudgment } from '../judgmentAction'
 import { forceZetsu } from '../nen'
 import { activeHitbox, attackPhase, boxesOverlap } from '../frameData'
@@ -31,7 +32,7 @@ export const kurapikaHatsu: FighterHatsu = {
       const held = next[side].kurapika?.held
       if (held?.used && !dolphinIsBusy(next, side, held)) next = returnChainAbility(next, side)
     }
-    return next
+    return advanceDowsing(next)
   },
 }
 

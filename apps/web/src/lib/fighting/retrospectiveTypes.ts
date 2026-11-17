@@ -1,8 +1,14 @@
 import type { FightSide, FighterId } from './types'
 
 export interface RetrospectiveFighterState {
+  dowsingSession?: import('./dowsingTypes').DowsingSession
+  dowsingPrompt?: import('./dowsingTypes').DowsingPrompt
+  dowsingReading?: import('./dowsingTypes').DowsingReading
   judgmentPreset?: import('./judgmentRules').JudgmentPreset
-  judgmentDeclaration?: { frame: number; clauses: readonly import('./judgmentRules').JudgmentClause[] }
+  judgmentDeclaration?: {
+    frame: number
+    clauses: readonly import('./judgmentRules').JudgmentClause[]
+  }
   heardWords?: { frame: number; speaker: FighterId; text: string }
   chrolloHistorical?: import('./chrolloHistoricalTypes').ChrolloHistoricalState
   clothCapture?: { owner: FightSide }
@@ -24,6 +30,9 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'dowsing-ask',
+  'dowsing-answer',
+  'dowsing-stop',
   'judgment-preset',
   'judgment-release',
   'judgment-call',

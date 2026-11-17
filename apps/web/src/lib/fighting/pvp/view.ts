@@ -20,6 +20,7 @@ const SIDE_FIELDS = new Set([
   'matchWinner',
   'speaker',
   'questioner',
+  'asker',
   'affected',
   'cohorts',
   'recipientSide',
@@ -45,6 +46,7 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.dowsingReading = undefined
   enemy.judgmentPreset = undefined
   enemy.heardWords = undefined
   enemy.hunterInterview = undefined
@@ -98,7 +100,10 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
-  if (enemy.nen.in) enemy.nen = createFightingNen()
+  if (enemy.nen.in) {
+    enemy.nen = createFightingNen()
+    enemy.dowsingSession = undefined
+  }
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null
 }

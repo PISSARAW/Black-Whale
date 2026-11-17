@@ -20,9 +20,9 @@ export function poseKurapikaChainHand(
   const target = pose.side === 'player' ? 'opponent' : 'player'
   const goal = chainChest(options, {
     state: pose.state,
-    side: motion.mode === 'healing' ? pose.side : target,
+    side: motion.mode === 'healing' || motion.mode === 'dowsing' ? pose.side : target,
   })
-  if (motion.mode === 'healing') goal.y -= 0.12
+  if (motion.mode === 'healing' || motion.mode === 'dowsing') goal.y -= 0.12
   else goal.x -= pose.state[pose.side].facing * (pose.reaches[motion.stage] + 0.28)
   aimRightArm({ THREE: options.THREE, figure, goal, blend: motion.extension })
 }

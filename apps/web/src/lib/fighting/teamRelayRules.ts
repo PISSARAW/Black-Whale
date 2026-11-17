@@ -8,6 +8,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
   'heardWords',
+  'dowsingReading',
   'judgmentPreset',
   'judgmentDeclaration',
   'x',

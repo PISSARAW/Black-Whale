@@ -1,3 +1,4 @@
+import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
@@ -20,7 +21,9 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    judgmentAiPreset(state) ?? gumAi(state) ??
+    dowsingAi(state) ??
+    judgmentAiPreset(state) ??
+    gumAi(state) ??
     interviewAi(state) ??
     supportAi(state) ??
     copiedArsenalAi(state, perform) ??

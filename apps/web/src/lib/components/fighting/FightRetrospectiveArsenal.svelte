@@ -58,6 +58,19 @@
           >{fighterDefinition(state[side].heardWords!.speaker).name} : {state[side].heardWords!
             .text}</span
         >{/if}
+      {#if state[side].dowsingReading}
+        <span
+          >Dowsing · {language === 'fr' ? 'Dernière lecture' : 'Latest reading'} ({Math.floor(
+            state[side].dowsingReading!.frame / 60,
+          )} s) · {state[side].dowsingReading!.text} · {state[side].dowsingReading!.swings
+            ? language === 'fr'
+              ? 'Le pendule oscille : mensonge conscient.'
+              : 'The pendulum swings: a knowing lie.'
+            : language === 'fr'
+              ? 'Pas d’oscillation : aucun mensonge conscient détecté.'
+              : 'No swing: no knowing lie detected.'}</span
+        >
+      {/if}
       {#each options as option (`${option.command.action}:${option.command.target ?? ''}`)}
         <button
           type="button"

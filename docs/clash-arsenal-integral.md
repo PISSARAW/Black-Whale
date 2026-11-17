@@ -147,6 +147,39 @@ avant la manche d'équipe suivante. Le ruleset de cette extension est **clash-co
 Les clauses de secret et de libération d'otages restent à réaliser ; cette passe
 ne constitue pas une certification de toutes les applications de Judgment.
 
+## Dowsing Chain : dépistage en face-à-face
+
+Le panneau donne accès à trois questions : identité, état actuel du Nen et In.
+Chaque joueur choisit sa propre réponse sincère ou son mensonge conscient.
+Le silence ne produit aucun verdict. Le pendule indique le mensonge de la
+réponse délibérément prononcée, sans restituer à sa place la vérité cachée.
+Les paroles libres ne sont pas classées par une expression régulière ou une
+comparaison omnisciente avec les données du combat. Le vocabulaire de questions
+est encore limité à ces trois faits conscients représentés dans le duel.
+
+Le dépistage ordinaire exige un sujet présent en face du regard de Kurapika,
+une voix et une audition réelles. Il fonctionne sans Emperor Time. Perdre le
+Nen, subir une interruption, fermer la page copiée ou rompre le face-à-face
+interrompt le dépistage et retire la demande de réponse. Une lecture acquise
+reste une information passée ; elle ne devient pas une sonde de l'état futur.
+L'IA peut interroger et répondre pour son propre combattant ; elle ne fournit
+jamais la réponse d'un joueur humain. Le On de l'interlocuteur reste utilisable.
+
+Le modèle du pendule à l'annulaire est animé par les frames du dépistage.
+In le cache à l'autre observateur ; Gyo rétablit sa visibilité. Les lectures
+antérieures restent privées en PvP, et la perspective P2 traduit l'auteur de
+la question. Les snapshots conservent le même résultat après restauration.
+Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
+et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
+
+L'analyse d'un enregistrement doit encore disposer d'un support réellement
+présent, d'une rencontre antérieure et d'Emperor Time. La localisation par
+radiesthésie et les questions fondées sur d'autres souvenirs restent également
+à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La distinction entre mensonge conscient et connaissance objective est recoupée
+avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
+notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -154,12 +187,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                           |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées. |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                   |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, les usages d'information de Dowsing Chain et le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.               |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                       |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                         |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.               |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                 |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la vidéo, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                     |
 
 | Hinrigh | Étendre Biohazard aux autres objets et applications effectivement montrés, en conservant les fonctions matérielles originales. Les deux menottes ne constituent pas l'arsenal complet. |
 | Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |

@@ -1,3 +1,5 @@
+import { performDowsingCommand } from './dowsingAction'
+import { dowsingOptions } from './dowsingOptions'
 import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
 import { dolphinArsenalOptions } from './dolphinArsenal'
 import { copiedArsenalOptions } from './chrolloCopiedOptions'
@@ -28,10 +30,8 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
-  if (command.action === 'support-consent') {
-    if (!canAct(state[side])) return state
-    return { ...state, [side]: { ...state[side], supportConsent: !state[side].supportConsent } }
-  }
+  if (command.action === 'support-consent') return toggleConsent(state, side)
+  if (command.action.startsWith('dowsing-')) return performDowsingCommand(state, side, command)
   if (command.action.startsWith('judgment-')) return performJudgmentCommand(state, side, command)
   if (command.action.startsWith('gum-')) return performGumCommand(state, side, command)
   if (command.action.startsWith('cookie-')) return performCookie(state, side, command)
@@ -40,10 +40,16 @@ export function performArsenalCommand(
   return state
 }
 
+function toggleConsent(state: FightState, side: FightSide): FightState {
+  if (!canAct(state[side])) return state
+  return { ...state, [side]: { ...state[side], supportConsent: !state[side].supportConsent } }
+}
+
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
     ...judgmentOptions(state, side),
+    ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),

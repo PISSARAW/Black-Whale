@@ -66,6 +66,8 @@ export const fr: Messages = {
     simulations: 'Simulations',
     virtualTour: 'Visite virtuelle',
     tourModes: 'Modes de la visite',
+    clash: 'Clash',
+    backToTour: 'Retour à la visite',
     shipSources: 'Sources du vaisseau',
     arena: 'Arène du Black Whale',
     reconstruction: 'Reconstruction vivante',
@@ -298,7 +300,7 @@ export const fr: Messages = {
     modes: {
       seoTitle: 'Modes de la visite — Choisir son expérience du Black Whale',
       seoDescription:
-        'Choisissez entre la visite libre, la table de Morena, la reconstruction vivante, l’infiltration, la traque, l’arène, l’investigation et la stratégie à bord du Black Whale.',
+        'Choisissez entre la visite libre, la table de Morena, la reconstruction vivante, l’infiltration, la traque, l’arène, Clash, l’investigation et la stratégie à bord du Black Whale.',
       eyebrow: 'Expériences du Black Whale',
       title: 'Choisissez votre mode',
       intro:
@@ -309,6 +311,13 @@ export const fr: Messages = {
         tag: 'Exploration',
         description:
           'Parcourez le vaisseau reconstruit à votre rythme, de salle en salle et de pont en pont.',
+      },
+      clash: {
+        title: 'Black Whale Clash',
+        tag: 'Combats en temps réel · 40 personnages',
+        description:
+          'Choisissez parmi 40 combattants et utilisez leurs Hatsu dans des duels en temps réel, contre l’IA, en local ou en ligne.',
+        play: 'Jouer à Clash',
       },
       morena: {
         title: 'Morena',

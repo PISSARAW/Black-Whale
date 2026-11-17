@@ -12,39 +12,46 @@
       copy: $t.tour.modes.free,
     },
     {
+      key: 'clash',
+      href: '/fighting',
+      number: '02',
+      accent: '#d6ae48',
+      copy: $t.tour.modes.clash,
+    },
+    {
       key: 'morena',
       href: '/tour/morena',
-      number: '02',
+      number: '03',
       accent: '#d94f68',
       copy: $t.tour.modes.morena,
     },
     {
       key: 'reconstruction',
       href: '/reconstruction',
-      number: '03',
+      number: '04',
       accent: '#79b8ff',
       copy: $t.tour.modes.reconstruction,
     },
     {
       key: 'infiltration',
       href: '/infiltration',
-      number: '04',
+      number: '05',
       accent: '#6ee7b7',
       copy: $t.tour.modes.infiltration,
     },
-    { key: 'hunt', href: '/hunt', number: '05', accent: '#fb923c', copy: $t.tour.modes.hunt },
-    { key: 'arena', href: '/arena', number: '06', accent: '#ef4444', copy: $t.tour.modes.arena },
+    { key: 'hunt', href: '/hunt', number: '06', accent: '#fb923c', copy: $t.tour.modes.hunt },
+    { key: 'arena', href: '/arena', number: '07', accent: '#ef4444', copy: $t.tour.modes.arena },
     {
       key: 'investigation',
       href: '/investigation',
-      number: '07',
+      number: '08',
       accent: '#c4b5fd',
       copy: $t.tour.modes.investigation,
     },
     {
       key: 'strategy',
       href: '/strategy',
-      number: '08',
+      number: '09',
       accent: '#facc15',
       copy: $t.tour.modes.strategy,
     },
@@ -76,7 +83,13 @@
         <span class="tag">{mode.copy.tag}</span>
         <h2>{mode.copy.title}</h2>
         <p>{mode.copy.description}</p>
-        <span class="action">{$t.tour.modes.open}<span aria-hidden="true"> →</span></span>
+        <span class="action"
+          >{mode.key === 'clash' ? $t.tour.modes.clash.play : $t.tour.modes.open}<span
+            aria-hidden="true"
+          >
+            →</span
+          ></span
+        >
       </a>
     {/each}
   </section>

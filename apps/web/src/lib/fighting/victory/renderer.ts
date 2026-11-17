@@ -27,6 +27,8 @@ import { createBonolenovVictory } from './bonolenov'
 import { createIllumiVictory } from './illumi'
 import { createBiscuitVictory } from './biscuit'
 import { createSaiyuVictory } from './saiyu'
+import { createHanzoVictory } from './hanzo'
+import { createBillVictory } from './bill'
 import { createMelodyVictory } from './melody'
 import { suspendFightExpression } from '../fightExpressionRig'
 
@@ -49,6 +51,8 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   illumi: createIllumiVictory,
   biscuit: createBiscuitVictory,
   saiyu: createSaiyuVictory,
+  hanzo: createHanzoVictory,
+  bill: createBillVictory,
   melody: createMelodyVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
@@ -72,6 +76,8 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     biscuit: 2,
     saiyu: 2,
     melody: 2.1,
+    hanzo: 2.8,
+    bill: 2.3,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -173,6 +179,8 @@ export function createVictoryRenderer(options: {
             'illumi',
             'biscuit',
             'saiyu',
+            'hanzo',
+            'bill',
             'melody',
           ].includes(frame.fighter)
         )

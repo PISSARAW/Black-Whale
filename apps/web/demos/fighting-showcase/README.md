@@ -955,3 +955,25 @@ perception du personnage enchanté ; Melody ne tue pas avec sa musique.
 La simulation préalable obtient une victoire native à la décision, après une
 vraie performance qui pacifie la cible sans lui infliger de dégâts.
 Sortie : `output/fighting-melody-fatality/Melody-Friendship-10s.mp4`.
+
+## Hanzo — Derrière toi
+
+`hanzo-fatality.html` présente dix secondes avec Hanzo Skill 4 : corps en
+méditation, double qui traverse une cloison, étranglement et retour au corps.
+`render-hanzo-fatality.mjs` exporte les images ; `compose-hanzo-fatality.mjs`
+ajoute le son et l’annonce anglaise Fatality. `check-hanzo-fatality.mjs`
+vérifie la simulation native, les tailles, le miroir, le mobile et le confort.
+Sortie : `output/fighting-hanzo-fatality/Hanzo-Fatality-10s.mp4`.
+
+## Bill — Dernier rempart
+
+`bill-fatality.html` présente dix secondes : trois combos physiques natifs
+de 3, 4 et 5 coups, projection, puis germination sans dégâts d’Erigeron.
+`render-bill-fatality.mjs` exporte les images ; `compose-bill-fatality.mjs`
+ajoute les douze impacts et Fatality en anglais. `check-bill-fatality.mjs`
+vérifie le combat natif et l’adaptation aux côtés, cibles, lieux et au mobile.
+Sortie : `output/fighting-bill-fatality/Bill-Fatality-10s.mp4`.
+
+Les deux cinématiques sont enregistrées dans Clash et utilisent les acteurs
+et l’arène du combat courant. `check-hanzo-bill-victories.mjs` vérifie huit
+victoires automatiques, dont les rematches des deux côtés, et leurs sons.

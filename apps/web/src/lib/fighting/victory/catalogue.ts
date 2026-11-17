@@ -21,6 +21,8 @@ export const VICTORY_FIGHTERS = [
   'illumi',
   'biscuit',
   'saiyu',
+  'hanzo',
+  'bill',
   'melody',
 ] as const
 export type VictoryFighter = (typeof VICTORY_FIGHTERS)[number]
@@ -43,6 +45,8 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   illumi: ['Même après la mort', 'Even after death'],
   biscuit: ['Le soin de grâce', 'The finishing touch'],
   saiyu: ['Les trois silences', 'The three silences'],
+  hanzo: ['Derrière toi', 'Behind you'],
+  bill: ['Dernier rempart', 'The last line'],
   melody: ['Un champ au printemps', 'A field in spring'],
 }
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {

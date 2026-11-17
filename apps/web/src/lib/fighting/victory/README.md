@@ -279,6 +279,36 @@ P2, les gabarits, les lieux, le mobile, le confort et le branchement dans Clash.
 `render-kurapika-troupe.mjs` et `compose-kurapika-troupe.mjs` produisent dix
 secondes en 1080p60 et `kurapika-troupe.m4a`, sans aucune voix.
 
+
+Hanzo : « Derrière toi » laisse le corps natif en méditation, yeux fermés.
+Un deuxième modèle complet apparaît à l’image 72, traverse une cloison solide
+à 138 et rejoint le cou de la cible à 216. Les deux articulations de chaque
+bras gardent leur longueur ; le double adapte sa hauteur et sa flexion au
+gabarit de la victime. Il devient net pendant la prise, puis translucide lors
+des traversées. Le corps physique reste opaque et immobile jusqu’au retour.
+
+L’étranglement s’achève à 360. Le double relâche la prise avant 384 ; le vaincu
+suit ensuite la pose de KO et les contacts physiques de `nativeFall.ts`, sur
+le dos. Le double retourne continûment dans le corps à 468, avant le réveil
+et le portrait final. La cloison est une scénographie locale après verdict :
+elle n’ajoute ni collision, protection du corps, ni règle de Nen au combat.
+Le mix contient le souffle, les traversées, la prise, la chute et Fatality,
+sans réplique française. La caméra réduite conserve un plan fixe complet.
+
+`hanzoFatalityFilm.ts` prépare un véritable combat, active Skill 4, fait flotter
+le double et traverser l’adversaire, vérifie que le corps reste en place et
+qu’un rappel à distance est refusé, puis obtient un K.-O. avec l’étranglement
+natif du double. Le moteur termine la projection au verdict ; la cinématique
+reconstitue le retour au corps sans nouvelle commande de rappel. Les tests
+vérifient petites et grandes cibles, miroir, prise au cou, chute au sol,
+restauration du rendu et absence de mutation du résultat. Les géométries humaines
+partagées restent conservées lors de la libération du double.
+
+`render-hanzo-fatality.mjs`, `compose-hanzo-fatality.mjs` et
+`check-hanzo-fatality.mjs` produisent la vidéo de dix secondes, le son du jeu
+`hanzo.m4a` et les vérifications navigateur (P2, mobile, miroir et confort).
+
+
 Saiyu : « Les trois silences » utilise trois manifestations graphiques distinctes
 de Mizaru, Kikazaru et Iwazaru. L’archive du projet ne possède pas leur anatomie
 révélée : ces signes expriment leurs fonctions, sans inventer un modèle de bête.
@@ -309,6 +339,32 @@ matériaux et la bouche temporaire ; la face native et les matériaux des yeux
 sont restaurés après chaque rendu. Le compositeur vérifie aussi le silence
 sur l’audio AAC exporté. La scène conserve une durée de dix secondes.
 
+Bill : « Dernier rempart » joue désormais trois routes du jeu : Économie
+(direct, crochet, balayage), Précision (direct, direct en avançant, crochet,
+balayage), puis Croissance (coup bas, direct en avançant, crochet, revers,
+coup d’épaule). `billComboTrack.ts` les exécute avec `performMove` et
+`tickFight`, sans réinitialisation entre les routes. Une garde se réactive
+à la première ouverture de chaque combo : les séries restent de 3, 4 et 5
+contacts non bloqués. Les liaisons attendent la récupération réelle.
+
+`billNativePose.ts` dessine les mêmes `bodyPlan`, animations personnelles,
+déplacements, hitstops et réactions que le combat. La distance et la profondeur
+s’ajustent aux surfaces physiques par lancer de rayon, sans modifier les angles
+des articulations. Les 336 frames natives
+occupent les images 0–342 du film. La dernière frappe raccorde à la chute
+approuvée de `nativeFall.ts` à 343. `billFinalePose.ts` conserve le cadrage,
+la réception, la germination finale et le portrait. Erigeron ne frappe,
+ne porte et ne vieillit personne ; le résultat courant reste immuable.
+Les tests vérifient les routes contre garde, leurs plans natifs, les gabarits,
+le miroir, les deux côtés gagnants et la restauration du rendu.
+
+`billFatalityFilm.ts` obtient aussi son K.-O. avec ces vrais enchaînements.
+`render-bill-fatality.mjs`, `compose-bill-fatality.mjs` et
+`check-bill-fatality.mjs` exportent dix secondes en 1080p60, le son du jeu
+`bill.m4a` et les vérifications navigateur. Les douze impacts sonores suivent
+les contacts enregistrés du moteur ; la fin conserve Fatality en anglais,
+sans voix française.
+
 Melody : « Un champ au printemps » lève sa flûte native pendant 48 images, puis
 joue continuellement. Les ondes de musique atteignent la cible ; sa garde
 s’abaisse et ses yeux se ferment entre 144 et 234. À 210, le décor réel laisse
@@ -332,3 +388,6 @@ Melody et s’adapte à l’arène et aux acteurs du combat courant.
 composant Clash, avec rematches, modes IA/local, deux côtés, deux arènes,
 verdicts et chargement des sons. `saiyuMelodyPlayback.test.ts` couvre tous les
 adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.
+
+`check-hanzo-bill-victories.mjs` vérifie le déclenchement dans Clash, les
+rematches des deux côtés et les bandes sonores sans modifier le résultat.

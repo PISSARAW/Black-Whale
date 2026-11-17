@@ -105,12 +105,8 @@ test('replay controls stay usable at mobile width, with pause, speed and restart
   await openPauseTab(page, 'Replays')
   await expect(page.getByText('Fin du replay · états vérifiés.', { exact: true })).toBeVisible()
   await page.getByLabel('Vitesse', { exact: true }).selectOption('0.5')
-  await page
-    .getByRole('button', { name: 'Recommencer le replay', exact: true })
-    .evaluate((button) => {
-      ;(button as HTMLButtonElement).click()
-      document.querySelector<HTMLButtonElement>('.playback-bar button')!.click()
-    })
+  await page.getByRole('button', { name: 'Recommencer le replay', exact: true }).click()
+  await page.locator('.playback-bar').getByRole('button', { name: 'Pause', exact: true }).click()
   await expect(page.locator('.playback-bar button').first()).toHaveText('Lire')
   const bounds = await page.locator('.playback-bar').boundingBox()
   expect(bounds!.x).toBeGreaterThanOrEqual(0)

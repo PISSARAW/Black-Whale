@@ -51,8 +51,8 @@ export const DUEL_COMBO_LESSONS: readonly CombatRoute[] = [
     title: ['Précision · liaison puis fouet', 'Precision · link into whip'],
     moves: ['standingLight', 'forwardLight', 'standingHeavy', 'forwardSpecial'],
     requirement: [
-      'Après avant + J, attends la fin du geste avant K : c’est une liaison, pas un cancel. Le fouet final coûte 24 aura et exige le Nen disponible.',
-      'After forward + J, wait for recovery before K: this is a link, not a cancel. The final whip costs 24 aura and requires available Nen.',
+      'Avant + J s’enchaîne en K par chaîne, puis K s’annule dans le fouet : 24 aura et Nen disponible exigés.',
+      'Forward + J chains into K, then K cancels into the whip: 24 aura and available Nen required.',
     ],
   },
   {
@@ -62,8 +62,8 @@ export const DUEL_COMBO_LESSONS: readonly CombatRoute[] = [
     title: ['Précision · départ bas sans dépense', 'Precision · meterless low route'],
     moves: ['lowLight', 'forwardLight', 'standingHeavy', 'lowHeavy'],
     requirement: [
-      'Aucune dépense d’aura. Temporise K après avant + J, puis termine par le balayage pendant la confirmation.',
-      'No aura cost. Time K after forward + J, then cancel the confirmed backfist into the sweep.',
+      'Aucune dépense d’aura. Enchaîne K après avant + J, puis annule le revers confirmé dans le balayage.',
+      'No aura cost. Chain K after forward + J, then cancel the confirmed backfist into the sweep.',
     ],
   },
   {

@@ -67,10 +67,16 @@ les diagnostics et les gestes ordinaires du moteur. Les essais couvrent :
   le maintien, le relâchement, le retour au neutre et la reconnexion simulée.
 - Les coups essayés sur les états réels des 96 routes, avant et après confirmation.
   Le rapport distingue admission, exécution immédiate et conservation du replay.
-- Les liaisons Kurapika avant + léger → lourd, Chrollo lourd → arrière + lourd,
-  Phinks lourd → poing chargé. Le banc tente une commande avant la récupération,
-  puis chaque frame à partir du premier instant libre jusqu’au premier échec
-  contre une garde réelle. Il conserve les points de part et d’autre de la limite.
+- La liaison Phinks lourd → poing chargé. Le banc tente une commande avant la
+  récupération, puis chaque frame à partir du premier instant libre jusqu’au premier
+  échec contre une garde réelle. Il conserve les points de part et d’autre de la
+  limite. Depuis `clash-combat-23`, avant + léger → lourd de Kurapika est une chaîne,
+  et depuis `clash-combat-26` lourd → arrière + lourd de Chrollo aussi. Le nouveau
+  lien de Kurapika (arrière + lourd → avant + léger) n’apparaît dans aucun flux figé
+  et se vérifie dans `duelComboDepth.test.ts`.
+- Le quart de cercle avant du schéma classique (`controlScheme.test.ts`) : P1 et P2,
+  deux orientations, directions tenues 1, 2 ou 3 frames (120, 60, 30 et 20 Hz),
+  refus sans manipulation et expiration après la fenêtre de 15 frames.
 
 Les états de stun et la position aérienne des sondes de file sont des prémisses
 explicites du laboratoire ; ils ne représentent pas un combat humain. Les essais

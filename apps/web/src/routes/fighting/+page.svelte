@@ -151,6 +151,7 @@
       formatId: selectedFormat,
       mode: selectedMode,
       environment,
+      controls: controls.schemesFor(selectedMode, showControls),
     })
     resetFightInputs()
     match.begin(state)

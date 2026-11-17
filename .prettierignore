@@ -11,6 +11,7 @@ pnpm-lock.yaml
 packages/database/package-lock.json
 packages/database/prisma/migrations/
 docs/.gen/
+apps/web/src/lib/fighting/FRAME_DATA.md
 
 # Vite writes these next to the config it is loading; they are not source.
 apps/*/vite.config.ts.timestamp-*.mjs

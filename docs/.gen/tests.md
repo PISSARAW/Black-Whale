@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 747
+Fichiers : 764
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -335,7 +335,7 @@ Fichiers : 747
 
 ## `apps/web/src/lib/fighting/commandQualification.test.ts`
 
-- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v20 recording
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the current recording
 - held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
 - draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
 
@@ -343,6 +343,11 @@ Fichiers : 747
 
 - own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
 - private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
+## `apps/web/src/lib/fighting/controlScheme.test.ts`
+
+- numpad notation and quarter-circle forward > reads directions relative to facing
+- classic and simplified schemes > defaults to simplified and keeps the authored commands
 
 ## `apps/web/src/lib/fighting/cookie.test.ts`
 
@@ -370,6 +375,10 @@ Fichiers : 747
 
 - fifth expansion personal mechanics > Gel chooses two physical arm endings with different real costs and no added status
 
+## `apps/web/src/lib/fighting/duelComboGrammar.test.ts`
+
+- tiered cancel grammar > covers every profile except the four recovery links into slow techniques
+
 ## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
 
 - ninth expansion personal mechanics > Rihan opens real observation without inventing a manifestation or completed analysis
@@ -384,7 +393,7 @@ Fichiers : 747
 
 ## `apps/web/src/lib/fighting/duelComboSeventh.test.ts`
 
-- seventh expansion personal mechanics > Tserriednich waits for the advancing light to recover before linking the heavy
+- seventh expansion personal mechanics > Tserriednich chains the heavy from the advancing light under the derived grammar
 
 ## `apps/web/src/lib/fighting/duelComboTenth.test.ts`
 
@@ -532,6 +541,10 @@ Fichiers : 747
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
 - 2D fight formats > keeps Tour judging separate from health-based duels
+
+## `apps/web/src/lib/fighting/frameDataTable.test.ts`
+
+- generated frame data table > is up to date with the movesets (run `pnpm fighting:frames`)
 
 ## `apps/web/src/lib/fighting/franklin.test.ts`
 
@@ -855,10 +868,6 @@ Fichiers : 747
 
 - victory selection > uses all real opponents and every stage for either winning side, including mirrors
 - victory playback > keeps real ten-second timing when rendering drops below ten frames per second
-
-## `apps/web/src/lib/fighting/victory/renderer.test.ts`
-
-- live victory renderer > keeps Camilla’s wide camera still when camera movement is disabled
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 

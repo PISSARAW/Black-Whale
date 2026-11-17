@@ -8,6 +8,7 @@
   } from '$lib/fighting/fightInputBindings'
   import type { FightControls } from '../../../routes/fighting/fightingControls'
   import FightGamepadDiagnostics from './FightGamepadDiagnostics.svelte'
+  import FightControlSchemeSetting from './FightControlSchemeSetting.svelte'
   export let controls: FightControls
   export let language: 'fr' | 'en'
   export let onEditing: () => void = () => {}
@@ -96,6 +97,7 @@
         }}>{language === 'fr' ? 'Fermer' : 'Close'}</button
       >
     </nav>
+    <FightControlSchemeSetting {controls} {language} />
     {#if tab === 'pad'}
       <FightGamepadDiagnostics {language} bind:running={measurementRunning} />
       <p>

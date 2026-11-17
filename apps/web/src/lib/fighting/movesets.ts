@@ -1,4 +1,5 @@
 import { declareMoveCombatRules } from './moveCombatRules'
+import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
 import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
@@ -171,7 +172,8 @@ export function moveForAction(
     ].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
-  return moveset.moves.find((move) => move.slot === slot) ?? null
+  const chosen = schemeSlot({ fighter, action, input, slot })
+  return moveset.moves.find((move) => move.slot === chosen) ?? null
 }
 
 export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove | null {

@@ -1,4 +1,6 @@
 import { judgmentActionBreach } from './judgmentAction'
+import { recordMotion } from './motionRecord'
+import { moveAdmitted } from './moveAdmission'
 import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
 import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
@@ -233,7 +235,7 @@ function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): Arc
     mobile: canMove(next),
     jumpable: playerCanJump(next, input),
   })
-  return poseFighter(steered)
+  return recordMotion(poseFighter(steered), input)
 }
 
 function updateHatsuCharge(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -320,8 +322,8 @@ export function performMove(options: PerformMoveOptions): FightState {
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   if (state.catsName) return state
-  if (!futureAcceptsMove(state, side)) return state
   const selected = moveForAction(state[side], action, input)
+  if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
   const override = characterMoveOverride(
     { state, side, action, input },
     selected,

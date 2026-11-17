@@ -29,7 +29,14 @@ describe('defensive explanations use the actual guard property', () => {
     const body = properties('standingLight')
     expect(body).toContain('Cancel sur garde')
     expect(body).toContain(moveForSlot('kurapika', 'standingHeavy')!.nameFr)
-    expect(properties('standingHeavy')).not.toContain('Cancel sur garde')
+    // Tiered grammar: a blocked heavy may cancel into a physical ender, never into a Hatsu.
+    const heavy = properties('standingHeavy')
+    const onBlock = heavy.slice(
+      heavy.indexOf('Cancel sur garde'),
+      heavy.indexOf('Cancel sur touche'),
+    )
+    expect(onBlock).toContain(moveForSlot('kurapika', 'lowHeavy')!.nameFr)
+    expect(onBlock).not.toContain(moveForSlot('kurapika', 'forwardSpecial')!.nameFr)
   })
   it('also explains guards and block cancels in English', () => {
     expect(properties('standingLight', 'en')).toContain('Standing or crouching guard')

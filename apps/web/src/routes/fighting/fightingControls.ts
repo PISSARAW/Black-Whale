@@ -8,6 +8,12 @@ import {
   type KeyboardBindings,
 } from '$lib/fighting/fightInputBindings'
 import { ignoresFightKey, dispatchOpponentKey, dispatchHatsuKey } from './fightingKeyboard'
+import {
+  fightControlSchemes,
+  readControlScheme,
+  saveControlScheme,
+} from '$lib/fighting/controlSchemePreference'
+import type { ControlScheme } from '$lib/fighting/controlScheme'
 import { handleEasterKey, isDisplayInput } from './fightingPageHelpers'
 import { movementKeys } from './fightingKeys'
 import type {
@@ -42,6 +48,7 @@ function editingControls(): boolean {
 }
 export function createFightControls(onAction: (side: FightSide, action: PadAction) => void) {
   const bindings = writable<KeyboardBindings>(defaultBindings())
+  const scheme = writable<ControlScheme>('simplified')
   const devices = writable<{ names: string[]; unsupported: boolean }>({
     names: ['', ''],
     unsupported: false,
@@ -52,8 +59,17 @@ export function createFightControls(onAction: (side: FightSide, action: PadActio
   return {
     bindings,
     devices,
+    scheme,
     load() {
       bindings.set(readBindings(storage()))
+      scheme.set(readControlScheme(storage()))
+    },
+    saveScheme(value: ControlScheme) {
+      scheme.set(value)
+      saveControlScheme(value, storage())
+    },
+    schemesFor(mode: FightMode, touch: boolean) {
+      return fightControlSchemes({ mode, preference: get(scheme), touch })
     },
     save(value: KeyboardBindings) {
       bindings.set(value)

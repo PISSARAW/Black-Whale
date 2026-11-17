@@ -36,7 +36,8 @@ describe('grounded exchanges retain a defensive opportunity', () => {
 })
 
 function attack(side: FightSide = 'player') {
-  const state = beginFight(createFight('hisoka', 'bill', { mode: 'versus-local' }))
+  // Phinks stays outside the tiered grammar, so the grounded hitstun decay still applies.
+  const state = beginFight(createFight('phinks', 'bill', { mode: 'versus-local' }))
   return performMove({ state, side, action: 'light', input: EMPTY_INPUT })
 }
 

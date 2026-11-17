@@ -123,8 +123,6 @@ describe('command qualification from the frozen six-fighter states', () => {
 
 describe('recovery links use real guard and one-frame timing offsets', () => {
   for (const [fighter, route, from, to] of [
-    ['kurapika', 'precision', 'forwardLight', 'standingHeavy'],
-    ['chrollo', 'precision', 'standingHeavy', 'backHeavy'],
     ['phinks', 'charged', 'standingHeavy', 'finisher'],
   ] as const)
     it(`${fighter}: before recovery, first free tick, and the first late tick`, () => {

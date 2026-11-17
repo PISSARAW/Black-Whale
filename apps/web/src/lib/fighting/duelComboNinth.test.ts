@@ -100,12 +100,12 @@ describe('ninth expansion personal mechanics', () => {
     expect(hatsuDefenceFactor(result.state.player)).toBe(1)
   })
 
-  it('Rihan links the heavy after the advancing light’s recovery instead of cancelling it', () => {
+  it('Rihan chains the heavy from the advancing light under the derived grammar', () => {
     const state = play('rihan:precision', { steps: 2 }).state
     expect(
       comboChoices(state).find((choice) => choice.move.slot === 'standingHeavy'),
-    ).toMatchObject({ link: true, status: 'wait' })
-    expect(command(state, 'standingHeavy').player.attack).toBe(state.player.attack)
+    ).toMatchObject({ link: false, status: 'ready' })
+    expect(command(state, 'standingHeavy').player.attack?.moveId).toBe('rihan:standingHeavy')
     expect(play('rihan:precision').state.opponent.comboHits).toBe(4)
   })
 

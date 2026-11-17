@@ -168,8 +168,8 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
   state = advancePredatorClock(state)
-  if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
+  if (state.catsName) return advanceCatsName(state)
   if (state.hitstop > 0)
     return advanceRetrospectiveHitstop({
       ...state,

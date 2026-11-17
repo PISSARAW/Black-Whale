@@ -305,6 +305,16 @@ Cette extension rend les trois effets accessibles. Elle ne fournit pas une
 compréhension universelle des mensonges en langage libre, ni une notation
 littéraire des poèmes, ni un exorcisme universel.
 
+## Emperor Time pendant une séquence post-mortem
+
+La séquence de Cat's Name suspend le combat, mais le temps réellement vécu par
+Kurapika continue de coûter sa vie si Emperor Time est actif. Le coût avance
+sur les frames simulées jusqu'à sa mort effective ; ni un Dolphin encore chargé
+ni un évanouissement ne créent un Emperor Time post-mortem. Le seuil de trois
+heures et les neuf heures d'inconscience restent inchangés. Les tests couvrent
+les deux côtés, la limite d'évanouissement et la re-simulation d'un replay.
+Le ruleset passe à **clash-combat-23**. Le On est conservé.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante

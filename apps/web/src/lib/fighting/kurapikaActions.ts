@@ -70,6 +70,8 @@ export function advanceEmperorClock(state: FightState): FightState {
 function advanceEmperor(fighter: ArcadeFighter): ArcadeFighter {
   const chain = fighter.kurapika
   if (!chain) return fighter
+  if (fighter.health <= 0)
+    return { ...fighter, kurapika: { ...chain, emperorTime: false, continuousFrames: 0 } }
   const blackoutFrames = Math.max(0, chain.blackoutFrames - 1)
   const running = emperorRunning(fighter)
   const continuousFrames = running && chain.blackoutFrames === 0 ? chain.continuousFrames + 1 : 0

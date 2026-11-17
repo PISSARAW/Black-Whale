@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 739
+Fichiers : 740
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -429,6 +429,10 @@ Fichiers : 739
 ## `apps/web/src/lib/fighting/easterEggs.test.ts`
 
 - Easter Egg controls and collection > simulates scenes in Parallel Future without discovering a predicted ending
+
+## `apps/web/src/lib/fighting/emperorPostMortemClock.test.ts`
+
+- Emperor Time pays for living time during a post-mortem sequence > does not activate Emperor Time just because the cat is running
 
 ## `apps/web/src/lib/fighting/engine.test.ts`
 

@@ -106,7 +106,11 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
         loaded: false,
         used: false,
       })
-      expect(drained[victim].stolenChainAbility).toEqual({ owner: thief, moveId: LITTLE_EYE.id })
+      expect(drained[victim].stolenChainAbility).toEqual({
+        owner: thief,
+        ownerMember: 0,
+        moveId: LITTLE_EYE.id,
+      })
       expect(drained[victim].aura).toBeLessThan(10)
       expect(drained[victim].auraExhausted).toBe(true)
       expect(drained[victim].health).toBe(state[victim].health)
@@ -135,8 +139,11 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
     expect(advance(steal(far), 90).player.kurapika?.held).toBeNull()
     const attached = advance(steal(state), 19)
     expect(attached.opponent.drainingChain).toBeDefined()
-    const interrupted = { ...attached, player: { ...attached.player, hitStun: 40 } }
-    const stopped = advance(interrupted, 90)
+    // Since the Stealth Dolphin donor-aura rule (733ff3225), a hit on Kurapika no longer
+    // detaches a connected syringe; losing range or the needed Nen still stops the drain.
+    const hit = advance({ ...attached, player: { ...attached.player, hitStun: 40 } }, 90)
+    expect(hit.player.kurapika?.held).toMatchObject({ source: 'sayird' })
+    const stopped = advance({ ...attached, player: { ...attached.player, x: 5 } }, 90)
     expect(stopped.player.kurapika?.held).toBeNull()
     expect(stopped.opponent.drainingChain).toBeUndefined()
   })
@@ -185,15 +192,19 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
       expect(stealableChainMove({ ...state.opponent, id })).toBeNull()
   })
 
-  it('clears both sides of the reservation on return and at the next round', () => {
+  it('clears both sides of the reservation on return, and keeps it across the next round', () => {
     const held = advance(steal(duel()), 90)
     const returned = returnChainAbility(held, 'player')
     expect(returned.player.kurapika?.held).toBeNull()
     expect(returned.opponent.stolenChainAbility).toBeUndefined()
     expect(stealableChainMove(returned.opponent)).toBe(LITTLE_EYE.id)
+    // A round boundary keeps an unused stolen Hatsu (dolphinRound.ts); releasing still returns it.
     const next = nextRound({ ...held, phase: 'finished', winner: 'player' })
-    expect(next.player.kurapika?.held).toBeNull()
-    expect(next.opponent.stolenChainAbility).toBeUndefined()
-    expect(stealableChainMove(next.opponent)).toBe(LITTLE_EYE.id)
+    expect(next.player.kurapika?.held).toMatchObject({ source: 'sayird', used: false })
+    expect(next.opponent.stolenChainAbility).toMatchObject({ owner: 'player' })
+    expect(stealableChainMove(next.opponent)).toBeNull()
+    const released = returnChainAbility(next, 'player')
+    expect(released.opponent.stolenChainAbility).toBeUndefined()
+    expect(stealableChainMove(released.opponent)).toBe(LITTLE_EYE.id)
   })
 })

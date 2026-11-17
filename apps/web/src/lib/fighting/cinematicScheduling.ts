@@ -1,4 +1,8 @@
 import { gyoSight } from './nenPerception'
+import { kurapikaCameraEvent } from './kurapikaCameraPresentation'
+import { chrolloCameraEvent } from './chrolloCameraPresentation'
+import { hisokaCameraEvent } from './hisokaCameraPresentation'
+import { benjaminCameraEvent } from './benjaminCameraPresentation'
 import {
   cameraContinuation,
   cameraDuration,
@@ -168,7 +172,14 @@ export function visibleCameraEvents(
   events: CameraEvent[],
   c: { state: FightState; viewer: FightSide },
 ) {
-  return events.filter((e) => !e.detail || cameraDetailAllowed(e.detail, c.viewer, c.state))
+  return events
+    .filter((e) => !e.detail || cameraDetailAllowed(e.detail, c.viewer, c.state))
+    .map((event) =>
+      benjaminCameraEvent(
+        hisokaCameraEvent(chrolloCameraEvent(kurapikaCameraEvent(event, c)), c),
+        c.state,
+      ),
+    )
 }
 function pendingValid(event: CameraEvent, c: Context, pacing: CameraPacing) {
   if (!event.detail || c.frame - event.cue.frame >= (event.duration ?? 42)) return false

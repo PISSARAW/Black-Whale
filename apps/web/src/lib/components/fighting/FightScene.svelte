@@ -55,6 +55,7 @@
     FIGHT_MODEL_POSES,
     createStrideClocks,
     transitionSecondsFor,
+    type FighterSceneAnimation,
   } from '$lib/fighting/sceneMotion'
   import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
@@ -199,6 +200,7 @@
           worldX,
         })
         const fighterEffects = createFighterEffectScene({
+          comfort: visualComfort,
           viewer: () => viewer,
           THREE,
           scene,
@@ -255,12 +257,7 @@
           player: createFighterFacing(state.player.facing),
           opponent: createFighterFacing(state.opponent.facing),
         }
-        interface AnimateFighterOptions {
-          side: 'player' | 'opponent'
-          model: ReturnType<typeof buildFighter>
-          seconds: number
-        }
-        const animateFighter = (options: AnimateFighterOptions) => {
+        const animateFighter = (options: FighterSceneAnimation) => {
           const { side, model, seconds } = options
           const falling = finishedFall(state, side, {
             fighter: presentation.fighter(state, side),

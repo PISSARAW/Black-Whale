@@ -6,6 +6,7 @@ import { createVisitWeaponScene } from './visitWeaponScene'
 import { createHalkenburgArrowScene } from './halkenburgArrowScene'
 import { createMelodyFluteScene } from './melodyFluteScene'
 import { createBungeeGumScene } from './bungeeGumScene'
+import { createHisokaTextureScene } from './hisokaTextureScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 
 export function createRemainingVisitHatsuScene(options: EffectSceneOptions): FighterEffectScene {
@@ -17,6 +18,7 @@ export function createRemainingVisitHatsuScene(options: EffectSceneOptions): Fig
     createHalkenburgArrowScene,
     createMelodyFluteScene,
     createBungeeGumScene,
+    createHisokaTextureScene,
     createCinematicPropsScene,
   ].map((create) => create(options))
   return {

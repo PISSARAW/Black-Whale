@@ -2,6 +2,7 @@ import { chainChest, chainFinger } from './kurapikaChainAnchors'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { ChainMotion } from './kurapikaChainMotion'
 import type { FightSide, FightState } from './types'
+import { chainEase } from './kurapikaPresentation'
 
 export function kurapikaChainPath(
   options: EffectSceneOptions,
@@ -10,6 +11,7 @@ export function kurapikaChainPath(
     side: FightSide
     motion: ChainMotion
     tipReach: number
+    captureFrame?: number | null
   },
 ) {
   const { THREE, worldX } = options
@@ -37,14 +39,15 @@ export function kurapikaChainPath(
   bend.z = Math.max(start.z, end.z) + 0.12
   const points = [start, bend]
   if (motion.mode === 'jail') {
+    const gather = pose.captureFrame == null ? 0 : (1 - chainEase(pose.captureFrame / 18)) * 0.16
     for (let index = 0; index <= 36; index++) {
       const ratio = index / 36
       const angle = ratio * Math.PI * 6
       points.push(
         new THREE.Vector3(
-          centre.x + Math.cos(angle) * 0.3,
+          centre.x + Math.cos(angle) * (0.3 + gather),
           centre.y - 0.38 + ratio * 0.75,
-          centre.z + Math.sin(angle) * 0.24,
+          centre.z + Math.sin(angle) * (0.24 + gather),
         ),
       )
     }

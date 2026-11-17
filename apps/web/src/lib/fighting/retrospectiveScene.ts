@@ -16,6 +16,7 @@ export function createRetrospectiveScene(options: EffectSceneOptions): FighterEf
     if (!held) {
       held = createVisitHatsuModel(options.THREE, { model, anchor: 'floor' })
       held.fit({ height })
+      if (model === 'fun-fun-cloth') held.root.name = `chrollo-cloth:${key.split(':')[0]}`
       options.scene.add(held.root)
       models.set(key, held)
     }
@@ -40,12 +41,13 @@ export function createRetrospectiveScene(options: EffectSceneOptions): FighterEf
     if (fish)
       for (let i = 0; i < 2; i++) {
         const target = state[fish.target]
-        const angle = seconds * 1.2 + i * Math.PI
+        const angle = (fish.frames / 60) * 1.2 + i * Math.PI
         const model = show(`${side}:fish:${i}`, 'indoor-fish', {
           x: target.x + Math.cos(angle) * 4,
           y: target.y + 4 + Math.sin(angle) * 2,
           height: 0.8,
         })
+        model.root.name = `chrollo-fish:${side}:${i}`
         model.root.rotation.y = angle
       }
     if (fighter.chrolloHistorical?.cloth)

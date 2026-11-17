@@ -73,7 +73,7 @@ function impactDetail(state: FightState, before: CameraSnapshot): CameraDetail {
     labelEn: `${move?.nameEn ?? label} · Impact`,
     offset: { x: hit.position.x - state[side].x, y: hit.position.y - state[side].y },
     eventId: `impact:${hit.sequence}`,
-    source: old?.source,
+    source: move?.id.startsWith('kurapika:') ? 'kurapika' : old?.source,
     sourceSide: hit.attacker,
     aura: hit.concealed,
     anchors: impactAnchors(state, side),

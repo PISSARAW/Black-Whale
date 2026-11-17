@@ -2,6 +2,8 @@ import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, ruleValue, rig } from './cinematicRules'
 import type { CameraAnchor, CameraDetail, CameraPacing } from './cinematicTypes'
 import type { FightState } from './types'
+import { kurapikaCameraDuration } from './kurapikaCameraPresentation'
+import { chrolloCameraDuration } from './chrolloCameraPresentation'
 
 const OBSERVATIONS = new Map(ALL_CINEMATIC_RULES.map((rule) => [rule.id, rule]))
 const AWAKENINGS = new Set(['eyes', 'body', 'armour', 'sun'])
@@ -10,6 +12,10 @@ export function cameraDuration(
   duration: number | undefined,
   pacing: CameraPacing,
 ) {
+  const kurapika = kurapikaCameraDuration(detail)
+  if (kurapika !== null) return kurapika
+  const chrollo = chrolloCameraDuration(detail)
+  if (chrollo !== null) return chrollo
   if (detail.eventId === 'nen.on') return duration ?? 108
   if (pacing === 'compact') return duration ?? 42
   return Math.max(duration ?? 0, AWAKENINGS.has(detail.kind) ? 228 : 180)
@@ -69,6 +75,8 @@ export function cameraContinuation(detail: CameraDetail): CameraDetail {
   }
 }
 export function cameraDwell(detail: CameraDetail) {
+  if (kurapikaCameraDuration(detail) !== null) return 24
+  if (chrolloCameraDuration(detail) !== null) return 24
   if (AWAKENINGS.has(detail.kind)) return 90
   return detail.eventId?.startsWith('cast:') ? 18 : 54
 }

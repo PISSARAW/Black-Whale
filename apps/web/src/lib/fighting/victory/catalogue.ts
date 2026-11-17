@@ -69,7 +69,8 @@ export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
 }
 export interface VictorySelection {
   token: string
-  variant?: 'kurapika-judgment' | 'kurapika-troupe' | BeyondCurseVariant
+  variant?: 'kurapika-judgment' | 'kurapika-troupe' | 'chrollo-sun-moon' | BeyondCurseVariant
+  duration?: number
   fighter: VictoryFighter
   winner: FightSide
   loser: FightSide

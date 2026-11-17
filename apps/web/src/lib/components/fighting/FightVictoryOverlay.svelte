@@ -56,7 +56,12 @@
       {fighterDefinition(frame.fighter).name}
       <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
     </p>
-    {#if curse && frame.elapsed >= 8.5}
+    {#if frame.variant === 'chrollo-sun-moon' && frame.elapsed >= 2.35}
+      <div class="cinematic-verdict">
+        <strong>{fr ? 'VICTOIRE' : 'VICTORY'}</strong><b>Sun and Moon</b>
+        <span>{fr ? 'Détonation décisive' : 'Decisive detonation'}</span>
+      </div>
+    {:else if curse && frame.elapsed >= 8.5}
       <div class="cinematic-verdict">
         <strong>FATALITY</strong><b>{fr ? 'L’héritage de Beyond' : 'Beyond’s legacy'}</b>
         <span

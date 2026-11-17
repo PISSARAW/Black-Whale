@@ -15,10 +15,13 @@ import { createNenFieldScene } from './nenFieldScene'
 import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
+import { createChrolloEffectScene } from './chrolloEffectScene'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
+import type { FightComfort } from './fightComfort'
 
 export interface EffectSceneOptions {
+  comfort?: () => FightComfort
   viewer?: () => FightSide
   THREE: typeof import('three')
   scene: import('three').Scene
@@ -53,6 +56,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const machi = createMachiThreadScene(options)
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
+  const chrollo = createChrolloEffectScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -76,6 +80,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     machi.sync(state, seconds)
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
+    chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
 
@@ -99,6 +104,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       kurapika.dispose()
       visitHatsu.dispose()
       retrospective.dispose()
+      chrollo.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

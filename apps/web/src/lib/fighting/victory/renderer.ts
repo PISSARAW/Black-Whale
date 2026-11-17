@@ -11,6 +11,7 @@ import { victoryWide } from './camera'
 import { suppressVictoryFlashes } from './resources'
 import { createHisokaVictory } from './hisoka'
 import { createChrolloVictory } from './chrollo'
+import { createChrolloSunMoonVictory } from './chrolloSunMoon'
 import { createKurapikaVictory } from './kurapika'
 import { createFeitanVictory } from './feitan'
 import { createPhinksVictory } from './phinks'
@@ -116,6 +117,11 @@ function hideAuxiliaryRoots(options: {
   }
 }
 function resolveDriver(frame: VictoryFrame, drivers: Map<string, VictoryDriver>) {
+  if (frame.variant === 'chrollo-sun-moon') {
+    const driver = drivers.get(frame.variant) ?? createChrolloSunMoonVictory()
+    drivers.set(frame.variant, driver)
+    return driver
+  }
   const curse = isBeyondCurse(frame.variant)
   const key = curse ? frame.variant! : frame.fighter
   const driver = drivers.get(key) ?? (curse ? createBeyondCurseVictory() : DRIVERS[frame.fighter]())

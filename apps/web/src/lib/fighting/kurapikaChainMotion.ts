@@ -7,6 +7,7 @@ export interface ChainMotion {
   mode: 'attack' | 'jail' | 'drain' | 'healing' | 'dowsing'
   extension: number
   reach: number
+  returning?: boolean
 }
 const STAGES: Record<string, ChainStage> = {
   'kurapika:neutralSpecial': 2,
@@ -50,6 +51,7 @@ function attackChain(fighter: ArcadeFighter): ChainMotion | null {
     mode: stage === 3 ? 'healing' : 'attack',
     extension: 0.06 + progress * 0.94,
     reach: data.box.right,
+    returning: recovery > 0,
   }
 }
 

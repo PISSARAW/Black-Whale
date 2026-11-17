@@ -70,6 +70,18 @@ sclères sombres persistent jusqu’à la fin effective du On.
 Les [apparitions de Pain Packer et Rising Sun](./FEITAN_PRESENTATION.md) distinguent
 la matérialisation de la tenue et l’embrasement du soleil, avec leurs cadrages propres.
 
+La [présentation de Kurapika](./KURAPIKA_PRESENTATION.md) réserve les accents brefs
+aux chaînes courantes et les plans de 1,4 seconde aux manifestations majeures confirmées.
+
+La [présentation de Chrollo](./CHROLLO_PRESENTATION.md) distingue les accents du livre,
+les acquisitions et manifestations confirmées, et la détonation Sun and Moon décisive.
+
+Les [accents d’Hisoka](./HISOKA_PRESENTATION.md) accompagnent Bungee Gum et Texture
+Surprise pendant 0,3 seconde dans la vue de combat.
+
+Les [accents de Benjamin](./BENJAMIN_PRESENTATION.md) réservent le type 1 à Air Blow,
+à la capture de Culdcept et à sa restitution effectivement émise.
+
 `nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,
 vol et sceaux. `nenActionRules.ts` applique ce contrat aux commandes directes,
 à l’IA, aux coups en attente et aux actions maintenues. Chaque pouvoir conserve

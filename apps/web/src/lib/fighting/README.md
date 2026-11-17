@@ -1,5 +1,7 @@
 # Fighting
 
+Le menu, le combat tactile et la pause sont décrits dans [LOBBY.md](./LOBBY.md).
+
 La [référence reproductible des six combattants](./BASELINE.md) fige leurs routes,
 les sept situations d’essai, les mesures et la bibliothèque de replays de départ.
 

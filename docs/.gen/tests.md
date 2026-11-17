@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 732
+Fichiers : 736
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -447,9 +447,21 @@ Fichiers : 732
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
 
+## `apps/web/src/lib/fighting/fightMobile.test.ts`
+
+- touch combat inputs > supports eight directions and releases to neutral while sliding
+
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightNavigation.test.ts`
+
+- Clash preparation navigation > uses one persistent runtime across every preparation and battle page
+
+## `apps/web/src/lib/fighting/fightPausePlan.test.ts`
+
+- pause menu action planning > keeps actions frozen until resuming, and journals them on the ordinary match tick
 
 ## `apps/web/src/lib/fighting/fightPerformanceStress.test.ts`
 
@@ -479,6 +491,10 @@ Fichiers : 732
 ## `apps/web/src/lib/fighting/fightResponseDiagnostics.test.ts`
 
 - response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
+
+## `apps/web/src/lib/fighting/fightSetupDraft.test.ts`
+
+- Clash setup restoration > restores the selected matchup, mode, format and stage after a refresh
 
 ## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
 

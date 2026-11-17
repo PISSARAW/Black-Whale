@@ -37,6 +37,8 @@ function browserPads(): readonly (Gamepad | null)[] {
 }
 function editingControls(): boolean {
   if (document.querySelector('.gamepad-inspector[data-inspecting="true"]')) return true
+  if (document.querySelector('.clash-pause-menu[open]'))
+    return Boolean(document.activeElement?.closest('.capturing'))
   if (document.querySelector('.input-settings[open], .display-settings[open]')) return true
   return isDisplayInput(document.activeElement) && document.activeElement?.tagName !== 'SUMMARY'
 }

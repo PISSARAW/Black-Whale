@@ -31,7 +31,7 @@ Nœuds : 25 · Arêtes uniques : 59
 | `lib:hunt` | `package:@black-whale/ability-modules` | 3 |
 | `lib:hunt` | `package:@black-whale/nen-engine` | 3 |
 | `lib:infiltration` | `lib:arena` | 5 |
-| `lib:infiltration` | `lib:hunt` | 20 |
+| `lib:infiltration` | `lib:hunt` | 22 |
 | `lib:infiltration` | `lib:nen` | 2 |
 | `lib:infiltration` | `lib:tour` | 12 |
 | `lib:nen` | `package:@black-whale/ability-modules` | 1 |

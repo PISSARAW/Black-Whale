@@ -6,9 +6,10 @@ export function createHeldFightControl(options: {
   let owner: string | null = null
   return {
     press(token: string) {
-      if (owner !== null) return
+      if (owner !== null) return false
       owner = token
       options.hold(true)
+      return true
     },
     release(token: string) {
       if (owner !== token) return

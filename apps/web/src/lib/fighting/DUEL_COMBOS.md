@@ -1,7 +1,8 @@
-# Quatorze profils de combos
+# Dix-huit profils de combos
 
-Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin et
-Hanzo, Illumi, Kalluto, Shizuku et Leorio ont huit exemples chacun dans l’Académie. Les quatre routes
+Kurapika, Benjamin, Hisoka, Chrollo, Feitan, Phinks, Machi, Biscuit, Franklin,
+Hanzo, Illumi, Kalluto, Shizuku, Leorio, Saiyu, Bonolenov, Hinrigh et Mizaistom
+ont huit exemples chacun dans l’Académie. Les quatre routes
 initiales restent disponibles. `duelComboProfiles.ts` définit leurs timings et
 leurs cancels indépendamment de ces exemples ; `duelComboLessons.ts` enseigne les
 branches. Les directions avant/arrière suivent le personnage, avec les commandes
@@ -10,7 +11,9 @@ réellement choisies par le joueur, sans substitution automatique de coup.
 profils suivants. `duelComboSecondProfiles.ts` et `duelComboSecondLessons.ts`
 ajoutent quatre autres profils. `duelComboThirdProfiles.ts` et
 `duelComboThirdLessons.ts` ajoutent Illumi, Kalluto, Shizuku et Leorio.
-Le catalogue compte 216 routes pour quarante personnages.
+`duelComboFourthProfiles.ts` et `duelComboFourthLessons.ts` ajoutent Saiyu,
+Bonolenov, Hinrigh et Mizaistom.
+Le catalogue compte 232 routes pour quarante personnages.
 
 ## Choisir sa fin après léger puis lourd
 
@@ -140,6 +143,23 @@ toujours le lancement. Les fins physiques restent disponibles sans dépense au s
 Les préparations `disguise` et `paper` utilisent les commandes et le temps ordinaires.
 Le laboratoire les termine avant de commencer le compteur de l’exercice.
 
+## Saiyu, Bonolenov, Hinrigh et Mizaistom
+
+Ces quatre profils offrent chacun un balayage proche sans aura, une fin qui
+repousse davantage et des branches indépendantes des seize nouveaux exemples.
+Saiyu choisit après confirmation un seul singe : Mizaru retire la vue (40 aura),
+Kikazaru l’ouïe (24) ou Iwazaru la parole (20). Aucun Zetsu automatique.
+Bonolenov lie sa lance à 12 aura après récupération du lourd, uniquement après
+un vrai Prologue à 40 aura et 60 frames. Les danses ne sont pas des cancels.
+Hinrigh prépare un vrai pigeon-menottes à 20 aura ; la capture ne fait aucun
+dégât et le premier coup casse les menottes. La suite dépend du hitstun ordinaire.
+Mizaistom montre réellement son carton à 40 aura et attend le préavis de 18 frames.
+La cible peut garder ; les frappes et leur poussée ne déclenchent pas la détention.
+Seule une nouvelle action interdite après le préavis enfreint la règle.
+Les trois derniers profils enseignent aussi lourd → arrière + lourd après
+récupération. Les préparations utilisent commandes, coûts, temps et inventaire
+réels ; aucun état de pouvoir n’est injecté pour réussir une démonstration.
+
 ## Apprentissage et validation
 
 Les exercices expliquent le coût, le placement et la différence liaison/cancel.
@@ -156,12 +176,14 @@ préparations, la validation d’une rafale entière, ses coûts et son interrup
 `duelComboThird.test.ts` vérifie les quatre profils suivants, le déguisement sans
 bonus, les fragments de la bonne zone, les vraies frappes de Blinky et le délai
 ainsi que les restrictions du poing transmis dans le sol.
+`duelComboFourth.test.ts` vérifie les sens choisis, Prologue et la liaison de
+la lance, les menottes ouvertes par les dégâts et le carton sans détention automatique.
 `combatRoutes.test.ts` vérifie les exemples dans les deux sens, à deux distances,
 au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-10` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-11` : les anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

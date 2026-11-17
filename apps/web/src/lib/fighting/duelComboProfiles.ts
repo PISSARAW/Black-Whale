@@ -4,6 +4,7 @@ import type { ComboMove, DuelComboProfile } from './duelComboTypes'
 import { ROSTER_DUEL_PROFILES } from './duelComboRosterProfiles'
 import { SECOND_DUEL_PROFILES } from './duelComboSecondProfiles'
 import { THIRD_DUEL_PROFILES } from './duelComboThirdProfiles'
+import { FOURTH_DUEL_PROFILES } from './duelComboFourthProfiles'
 
 // Combat rules are authored independently of the Academy's example sequences.
 // Utility chains and inherited preparations deliberately have no combo destinations.
@@ -106,6 +107,7 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
   ...ROSTER_DUEL_PROFILES,
   ...SECOND_DUEL_PROFILES,
   ...THIRD_DUEL_PROFILES,
+  ...FOURTH_DUEL_PROFILES,
 }
 export const DUEL_COMBO_FIGHTERS = Object.keys(PROFILES) as FighterId[]
 export const hasDuelComboProfile = (fighter: string): boolean => Object.hasOwn(PROFILES, fighter)

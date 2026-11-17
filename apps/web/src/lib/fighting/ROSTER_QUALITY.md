@@ -49,7 +49,7 @@ en français et en anglais, avec les touches configurées.
 ## Combat et apprentissage
 
 `combatRoutes.ts` couvre les quarante combattants : quatre routes de base par personnage,
-et cinquante-six exemples avancés pour quatorze personnages, soit 216 routes avec
+et soixante-douze exemples avancés pour dix-huit personnages, soit 232 routes avec
 démonstration et entraînement manuel. Leurs profils indépendants sont décrits dans
 [`DUEL_COMBOS.md`](./DUEL_COMBOS.md). Les 144 autres
 routes de `rosterCombatRoutes.ts` utilisent les coups physiques ; elles ne
@@ -74,7 +74,7 @@ mannequin pendant l’exercice.
   géométries, absence de mutation du combattant, écriture et interruptions.
 - `fightPoseClock.test.ts` : maintien du contact pour les neuf coups de chacun des
   quarante personnages, puis retour à la garde.
-- `combatRoutes.test.ts` : 1 728 situations, deux sens, deux distances, centre et
+- `combatRoutes.test.ts` : 1 856 situations, deux sens, deux distances, centre et
   coin, avec garde adverse après la première touche.
 - `combatSchool.test.ts` : démonstrations à 120, 60, 30 et 20 lots de rendu par
   seconde, défense des quarante personnages et relecture déterministe des routes.

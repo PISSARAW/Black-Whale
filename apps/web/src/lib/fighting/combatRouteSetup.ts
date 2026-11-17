@@ -3,7 +3,15 @@ import { CYCLOTRON_ROTATION_FRAMES } from './phinksCyclotron'
 import { EMPTY_INPUT, type FightState } from './types'
 
 export type CombatRouteSetup =
-  'bungee' | 'cyclotron' | 'tracking' | 'true-form' | 'disguise' | 'paper'
+  | 'bungee'
+  | 'cyclotron'
+  | 'tracking'
+  | 'true-form'
+  | 'disguise'
+  | 'paper'
+  | 'prologue'
+  | 'pigeon'
+  | 'warning'
 
 /** Exercise prerequisites use real commands, time and costs, then let both bodies recover. */
 export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup): FightState {
@@ -14,12 +22,18 @@ export function prepareCombatRoute(state: FightState, setup?: CombatRouteSetup):
     for (let i = 0; i < CYCLOTRON_ROTATION_FRAMES; i++) state = step(state)
     state = performMove({ state, side: 'player', action: 'special' })
   }
-  for (let i = 0; i < 180 && !settled(state); i++) state = step(state)
+  for (let i = 0; i < 180 && !setupReady(state, setup); i++) state = step(state)
   return {
     ...state,
     impact: null,
     player: { ...state.player, x: 44 },
-    opponent: { ...state.opponent, x: 50 },
+    opponent: {
+      ...state.opponent,
+      x: 50,
+      ...(state.opponent.biohazardRestraint
+        ? { biohazardRestraint: { ...state.opponent.biohazardRestraint, x: 50 } }
+        : {}),
+    },
   }
 }
 
@@ -44,7 +58,14 @@ function settled(state: FightState) {
         !fighter.hitStun &&
         !fighter.knockdownFrames &&
         !fighter.illumi?.preparation &&
+        !fighter.battleCantabile?.preparation &&
+        !fighter.crossGameCardFrames &&
         !fighter.wakeupInvulnerableFrames,
     )
   )
+}
+
+function setupReady(state: FightState, setup: CombatRouteSetup) {
+  if (setup === 'pigeon' && !state.opponent.biohazardRestraint) return false
+  return settled(state)
 }

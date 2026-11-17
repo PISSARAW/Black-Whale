@@ -23,7 +23,14 @@ function prepare(id: string, options: { mirrored: boolean; corner: boolean; gap:
   state = {
     ...state,
     player: { ...state.player, x: target - facing * options.gap, facing },
-    opponent: { ...state.opponent, x: target, facing: facing === 1 ? -1 : 1 },
+    opponent: {
+      ...state.opponent,
+      x: target,
+      facing: facing === 1 ? -1 : 1,
+      ...(state.opponent.biohazardRestraint
+        ? { biohazardRestraint: { ...state.opponent.biohazardRestraint, x: target } }
+        : {}),
+    },
   }
   if (route.kind === 'air') {
     state = tickFight(

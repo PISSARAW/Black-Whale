@@ -17,6 +17,8 @@ export async function referenceSources(options: { copyTo?: string } = {}) {
       'packages/*/package.json',
       'data/**/*.json',
       'scripts/*combat-reference*.ts',
+      'scripts/*qualification*.ts',
+      'scripts/clash-frozen-tapes.ts',
       'package.json',
       'pnpm-lock.yaml',
       'pnpm-workspace.yaml',

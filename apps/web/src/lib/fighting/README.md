@@ -1,5 +1,8 @@
 # Fighting
 
+La [référence reproductible des six combattants](./BASELINE.md) fige leurs routes,
+les sept situations d’essai, les mesures et la bibliothèque de replays de départ.
+
 Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
 complètent les contrôles de réactivité et de performance.
 

@@ -1,0 +1,30 @@
+{
+  "evidence": "regenerated-from-archived-sources",
+  "cases": 852,
+  "routesCompleted": 768,
+  "situations": 84,
+  "sourceFingerprint": "eb3c0d5a47e229ccbd8b4780f3aef0c2564a4755e4e2862ab08753722c56ac3f",
+  "replayPlaybackCallsPerSecond": [
+    60,
+    20
+  ],
+  "comparison": {
+    "pass": true,
+    "versionChanged": false,
+    "definitionsChanged": false,
+    "duplicateIds": false,
+    "changed": [],
+    "sourceChanged": false
+  },
+  "currentCheckout": {
+    "sourceFingerprint": "a643d96e7da34196255d8837fcbcdf8b572b1130f7f871a2b730f78290e469b3",
+    "comparison": {
+      "pass": true,
+      "versionChanged": false,
+      "definitionsChanged": false,
+      "duplicateIds": false,
+      "changed": [],
+      "sourceChanged": true
+    }
+  }
+}

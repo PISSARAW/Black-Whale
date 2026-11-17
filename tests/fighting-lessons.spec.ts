@@ -34,6 +34,7 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
   page,
 }) => {
   await lesson(page, '6. Ren : maintenir son aura')
+  await expect(panel(page).locator('strong')).toContainText('1/1')
   await openPauseTab(page, 'Entraînement')
   await expect(page.getByRole('button', { name: 'Exercice suivant' })).toBeDisabled()
   await page.locator('.clash-pause-menu').focus()
@@ -45,10 +46,12 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
   await page.keyboard.down('Space')
   await advanceFight(page, 1200)
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
+  await expect(panel(page).locator('strong')).toContainText('1/1')
   await page.keyboard.up('Space')
   await openPauseTab(page, 'Entraînement')
   await page.getByRole('button', { name: 'Recommencer', exact: true }).click()
   await expect(panel(page)).not.toContainText('Exercice réussi.')
+  await expect(panel(page).locator('strong')).toContainText('1/1')
   await openPauseTab(page, 'Entraînement')
   await page.getByRole('button', { name: 'Entraînement libre', exact: true }).click()
   await expect(panel(page)).toHaveCount(0)
@@ -59,6 +62,7 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
 
 test('Kurapika pays the Emperor Time cost then turns it off', async ({ page }) => {
   await lesson(page, '12. Kurapika : le prix des yeux écarlates')
+  await expect(panel(page).locator('strong')).toContainText('1/2')
   await page.keyboard.down('Space')
   await advanceFight(page, 50)
   await page.keyboard.press('h')
@@ -71,6 +75,7 @@ test('Kurapika pays the Emperor Time cost then turns it off', async ({ page }) =
   await advanceFight(page, 1000)
   await page.keyboard.up('Space')
   await expect(panel(page)).toContainText('Exercice réussi.')
+  await expect(panel(page).locator('strong')).toContainText('2/2')
 })
 
 test('Hisoka attaches and recalls the tether', async ({ page }) => {

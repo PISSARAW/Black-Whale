@@ -30,8 +30,10 @@
 
 {#if lesson && $lessons}
   <aside class="battle-objective" aria-label={fr ? 'Objectif de l’exercice' : 'Exercise objective'}>
-    <strong>{lesson.title[index]} · {$lessons.step + 1}/{lesson.steps.length}</strong><span
-      role="status"
+    <strong
+      >{lesson.title[index]} · {Math.min($lessons.step + 1, lesson.steps.length)}/{lesson.steps
+        .length}</strong
+    ><span role="status"
       >{$lessons.complete
         ? fr
           ? 'Exercice réussi. Suite dans le menu pause.'

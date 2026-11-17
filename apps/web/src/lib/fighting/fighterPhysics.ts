@@ -121,6 +121,7 @@ function oppositeFacing(facing: -1 | 1): -1 | 1 {
 
 function canPush(player: ArcadeFighter, opponent: ArcadeFighter, overlaps: boolean): boolean {
   if (maryHeld(player) || maryHeld(opponent)) return false
+  if (player.clothCapture || opponent.clothCapture) return false
   return overlaps && player.y <= 7 && opponent.y <= 7
 }
 

@@ -134,3 +134,15 @@ Le ruleset devient **`clash-combat-24`**. Les archives historiques sont conserv�
 `reference/v24` enregistre les mêmes 96 flux de commandes avec le moteur actuel.
 Les nouveaux états et contre-jeux sont vérifiés par `nenCombat/*.test.ts`, les
 suites En, les tests des techniques et les scénarios d’interface français/anglais.
+
+## Accès au livre de Chrollo pendant un duel
+
+Le volet « Livre » permet de sélectionner les pages historiques et leurs applications
+sans mettre le combat en pause. Double Face et la page au signet emploient les mêmes
+commandes que le clavier. Les applications passent par l’arsenal ordinaire et sont
+enregistrées dans le replay ; l’IA continue de jouer pendant leur sélection.
+Les récupérations, l’aura, les contacts, les mains occupées et les conditions de chaque
+Hatsu restent nécessaires. Le volet affiche les effets effectivement actifs, notamment
+les marques, la manipulation, l’apparence, les captures et les marionnettes.
+Un corps miniaturisé et porté par Fun Fun Cloth ne repousse plus son porteur par
+collision. Sa restitution conserve sa position relative et n’ajoute aucun dégât.

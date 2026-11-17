@@ -424,6 +424,8 @@
           {language}
           paused={pausedView}
           onAction={queueAction}
+          onCommand={queueCommand}
+          replay={replays.active}
           perform={performAuraAttack}
           onEditing={() => {
             resetFightInputs()

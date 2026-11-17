@@ -540,3 +540,6 @@ un coup de crosse puis l’unique balle restée dans la chambre.
 
 Mizaistom : [Dernier avertissement](./MIZAISTOM.md) alterne deux cartons jaunes
 retournés, des contraintes brèves et des frappes physiques après libération.
+
+Rihan : [L’angle mort](./RIHAN.md) montre une prédation ciblée de Deme-chan
+ou de Bungee Gum, son propre sceau de 48 heures, puis une fin physique.

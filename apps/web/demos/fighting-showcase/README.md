@@ -1066,3 +1066,16 @@ produit les plans de contrôle. `compose-mizaistom-fatality.mjs` crée le son
 du jeu et `output/fighting-mizaistom-fatality/Mizaistom-Fatality-10s.mp4`.
 Les scripts `check-mizaistom-fatality.mjs` et `check-mizaistom-victories.mjs`
 contrôlent les variantes et les victoires/rematches dans Clash.
+
+## Rihan — L’angle mort
+
+`rihan-fatality.html` montre Predator dévorant Deme-chan, puis le propre
+sceau de 48 heures de Rihan et un dernier tir physique. `target=hisoka`
+utilise Bungee Gum ; les autres cibles gardent une fin physique avec une
+analyse incomplète. `stage`, `side=opponent` et `reduced` adaptent la scène.
+
+`render-rihan-fatality.mjs` exporte dix secondes en 1080p30 (`--inspect` :
+plans de contrôle). `compose-rihan-fatality.mjs` crée les deux pistes du jeu
+et `output/fighting-rihan-fatality/Rihan-Fatality-10s.mp4`. Le seul dialogue
+est Fatality en anglais. Les scripts `check-rihan-fatality.mjs` et
+`check-rihan-victories.mjs` vérifient le rendu et les victoires dans Clash.

@@ -53,7 +53,7 @@ describe('victory selection', () => {
     expect(selectVictory({ ...state, phase: 'ready' })).toBeNull()
     expect(selectVictory({ ...state, winner: 'draw' })).toBeNull()
     expect(selectVictory({ ...state, winner: null })).toBeNull()
-    expect(selectVictory(result('rihan'))).toBeNull()
+    expect(selectVictory(result('gel'))).toBeNull()
     expect(selectVictory({ ...state, mode: 'training' })).toBeNull()
     expect(selectVictory({ ...state, forecastSimulation: true })).toBeNull()
   })

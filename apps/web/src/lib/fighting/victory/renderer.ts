@@ -20,6 +20,7 @@ import { createTserriednichVictory } from './tserriednich'
 import { createLeorioVictory } from './leorio'
 import { createHalkenburgVictory } from './halkenburg'
 import { createCamillaVictory } from './camilla'
+import { suspendFightExpression } from '../fightExpressionRig'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -85,6 +86,8 @@ export function createVictoryRenderer(options: {
       try {
         const initialHero = models[frame.winner],
           initialVictim = models[frame.loser]
+        transaction.defer(suspendFightExpression(initialHero))
+        transaction.defer(suspendFightExpression(initialVictim))
         const centre = Math.max(
           -1.6,
           Math.min(1.6, (initialHero.position.x + initialVictim.position.x) / 2),

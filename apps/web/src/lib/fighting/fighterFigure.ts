@@ -9,6 +9,7 @@ import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
 import { shapeFightEyes } from './fightFigureEyes'
 import { finishFightModel } from './fighterModelFinish'
+import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -100,6 +101,7 @@ export function buildFightFigure(options: {
   addFighterEquipment(options, model)
   addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
+  registerFightExpression({ THREE, model, fighter })
   return model
 }
 

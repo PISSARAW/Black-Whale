@@ -1,4 +1,5 @@
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
+import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
@@ -86,7 +87,7 @@ const ATTACK_POSES = new Set<FighterPose>(['light', 'heavy', 'special', 'ranged'
 export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
   const plan = bodyPlan(fighter, options)
-  return (human) => {
+  return expressiveFightMotion(options, (human) => {
     animateMussePistol(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
@@ -110,7 +111,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
-  }
+  })
 }
 
 interface PoseMemory {

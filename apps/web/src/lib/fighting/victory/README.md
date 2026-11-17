@@ -543,3 +543,6 @@ retournés, des contraintes brèves et des frappes physiques après libération.
 
 Rihan : [L’angle mort](./RIHAN.md) montre une prédation ciblée de Deme-chan
 ou de Bungee Gum, son propre sceau de 48 heures, puis une fin physique.
+
+Zakuro : [La dernière goutte](./ZAKURO.md) utilise ses gouttes éclaireuses,
+quatre liens de son propre sang et deux projections, puis rappelle sa réserve.

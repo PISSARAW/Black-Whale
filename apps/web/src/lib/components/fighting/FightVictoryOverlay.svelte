@@ -76,7 +76,7 @@
             : 'Post-mortem Nen'}</span
         >
       </div>
-    {:else if !curse && !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['hisoka', 'tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum', 'voconte', 'longhi', 'furykov', 'theta', 'mizaistom', 'rihan'].includes(frame.fighter) ? 8 : 7)}
+    {:else if !curse && !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['hisoka', 'tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum', 'voconte', 'longhi', 'furykov', 'theta', 'mizaistom', 'rihan', 'zakuro'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong
           >{frame.fighter === 'melody'

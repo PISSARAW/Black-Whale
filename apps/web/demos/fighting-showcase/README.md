@@ -1079,3 +1079,12 @@ plans de contrôle). `compose-rihan-fatality.mjs` crée les deux pistes du jeu
 et `output/fighting-rihan-fatality/Rihan-Fatality-10s.mp4`. Le seul dialogue
 est Fatality en anglais. Les scripts `check-rihan-fatality.mjs` et
 `check-rihan-victories.mjs` vérifient le rendu et les victoires dans Clash.
+
+## Zakuro — La dernière goutte
+
+`zakuro-fatality.html` : dix secondes de Bloody Mary avec trois gouttes
+éclaireuses, liens de sang, double projection et rappel. Paramètres `target`,
+`stage`, `side=opponent`, `reduced`. Preuve native continue dans
+`zakuroFatalityFilm.ts`. Rendu : `node scripts/render-zakuro-fatality.mjs`
+depuis `apps/web` ; son et assemblage :
+`node apps/web/scripts/compose-zakuro-fatality.mjs` depuis la racine.

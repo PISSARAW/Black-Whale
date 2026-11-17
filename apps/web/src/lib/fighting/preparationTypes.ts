@@ -1,7 +1,16 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
-  'animals' | 'birds' | 'plants' | 'objects' | 'flutes' | 'needles' | 'rooms'
+  | 'animals'
+  | 'birds'
+  | 'plants'
+  | 'objects'
+  | 'flutes'
+  | 'needles'
+  | 'rooms'
+  | 'devices'
+  | 'writing'
+  | 'spirits'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion'
 export interface FightPreparation {
   mode: 'duel' | 'scenario'
@@ -11,6 +20,9 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'black-voice'
+  | 'weak-spirit'
+  | 'device'
   | 'puppet'
   | 'morena'
   | 'supporter'
@@ -24,6 +36,7 @@ export type PreparedEntityKind =
   | 'destination'
   | 'delivery'
 export interface PreparedEntity {
+  device?: import('./deviceTypes').PhysicalDevice
   copy?: import('./chrolloHistoricalTypes').HistoricalCopy
   arena?: import('./arenaTypes').ArenaObject
   id: string

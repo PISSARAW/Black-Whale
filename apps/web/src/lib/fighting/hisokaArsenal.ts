@@ -1,3 +1,5 @@
+import { loanCarrier } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -7,6 +9,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 
 export function ownsBungeeGum(fighter: ArcadeFighter): boolean {
+  if (fighter.dolphinLoan?.held.source === 'hisoka' && fighter.dolphinLoan.held.used)
+    fighter = stolenAuraActor(loanCarrier(fighter))
   if (!voluntaryNenAvailable(fighter) || chainAbilitySealed(fighter, 'hisoka:neutralSpecial'))
     return false
   if (fighter.id === 'hisoka') return true
@@ -149,8 +153,8 @@ export function gumArsenalOptions(state: FightState, side: FightSide): ArsenalOp
       fr: 'Bungee Gum · Préparer une interception',
       en: 'Bungee Gum · Prepare a catch',
       condition: [
-        'Fenêtre vulnérable et contact frontal avec un objet réel ; la force reçue peut blesser les mains.',
-        'Vulnerable window and frontal contact with a real object; the received force can injure the hands.',
+        'Fenêtre vulnérable et contact frontal avec un objet physique, y compris une copie matérialisée ; aucun faisceau d’aura. La force reçue peut blesser les mains.',
+        'Vulnerable window and frontal contact with a physical object, including a conjured copy; no aura beam. The received force can injure the hands.',
       ],
     },
     {

@@ -1,3 +1,5 @@
+import { bashoWritingNavigation } from './bashoNavigation'
+import { deviceNavigation } from './deviceNavigation'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput, repeatedHabit } from './opponentHabits'
 import { readCounterplay, type CounterplayCue } from './fightCounterplay'
@@ -52,7 +54,9 @@ function respondToHabits(state: FightState): ArcadeFighter {
   const input = habitGuardInput(state, fighter)
   return input && canMove(fighter)
     ? applyResponse(fighter, input)
-    : moveRememberedOpponent(state, fighter)
+    : (deviceNavigation(state, fighter) ??
+        bashoWritingNavigation(state, fighter) ??
+        moveRememberedOpponent(state, fighter))
 }
 
 function moveRememberedOpponent(state: FightState, fighter: ArcadeFighter): ArcadeFighter {

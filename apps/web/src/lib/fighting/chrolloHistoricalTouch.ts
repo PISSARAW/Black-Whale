@@ -1,4 +1,5 @@
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
+import { historicalHandsReady } from './historicalHands'
 import { chrolloPageForMove, chrolloHasActivePage } from './chrolloBook'
 import { battleAppearance } from './battleCantabileRules'
 import { updateEntity } from './preparationWorld'
@@ -76,14 +77,19 @@ function convertHistoricalHands(
 ): FightState {
   const caster = state[side]
   const other = side === 'player' ? 'opponent' : 'player'
-  if (Math.hypot(caster.x - state[other].x, caster.y - state[other].y) > 6 || caster.aura < 12)
-    return state
+  const body = sleepingBody(state[other])
+  if (Math.hypot(caster.x - body.x, caster.y - body.y) > 6 || caster.aura < 12) return state
   const right = action === 'history-shape-right' || action === 'history-shape-swap'
   const left = action !== 'history-shape-right'
-  if (right && caster.chrolloBook?.open) return state
+  const hands = (['left', 'right'] as const).filter((hand) => (hand === 'left' ? left : right))
+  if (!historicalHandsReady(state, side, hands)) return state
   const ownAppearance = battleAppearance(caster)
   const targetAppearance = battleAppearance(state[other])
-  let next = { ...state, [side]: { ...caster, aura: caster.aura - 12, arenaRecovery: 18 } }
+  let next = {
+    ...state,
+    [other]: wakeHanzoBody(state[other]),
+    [side]: { ...caster, aura: caster.aura - 12, arenaRecovery: 18 },
+  }
   if (left)
     next = {
       ...next,
@@ -161,7 +167,11 @@ function wrapClothObject(state: FightState, side: FightSide, id: string): FightS
 
 function clothHandsReady(state: FightState, side: FightSide): boolean {
   const caster = state[side]
-  return !caster.chrolloBook?.open && caster.aura >= 25 && !caster.chrolloHistorical?.cloth
+  return (
+    historicalHandsReady(state, side, ['left', 'right']) &&
+    caster.aura >= 25 &&
+    !caster.chrolloHistorical?.cloth
+  )
 }
 function clothTarget(side: FightSide, id?: string): string {
   return id ?? (side === 'player' ? 'opponent' : 'player')

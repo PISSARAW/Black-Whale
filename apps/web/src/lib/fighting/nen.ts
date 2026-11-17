@@ -2,6 +2,7 @@ import { defensiveKo } from './nenCombat/guardKo'
 import { regionalDefence } from './nenCombat/protection'
 import { bodyGyoZone, BODY_GYO_DRAIN, gyoStatus } from './nenCombat/bodyGyo'
 import { activeEnRadius } from './en/access'
+import { physicalNenBody } from './physicalNenBody'
 import { illumiBodyFree } from './illumiState'
 import { enforcePredatorSeal, predatorNenLocked } from './predatorSeal'
 import {
@@ -10,7 +11,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { attackData } from './frameData'
-import { restrictedChainAura } from './kurapika'
+import { restrictedChainAura, dolphinActor } from './kurapika'
 import {
   applyAdvancedNen,
   advancedAuraDrain,
@@ -182,6 +183,7 @@ export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {
+  fighter = dolphinActor(fighter)
   if (predatorNenLocked(fighter)) return 0.7
   if (fighter.nen.mode === 'zetsu') return 0.7
   const zone = attackData(kind, fighter).auraZone
@@ -208,7 +210,7 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 }
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
-  fighter = enforcePredatorSeal(fighter)
+  fighter = enforcePredatorSeal(physicalNenBody(fighter))
   const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
   const spread = activeEnRadius(fighter) ? 0.45 : 1
   const eyeFocus =

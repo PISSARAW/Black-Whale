@@ -1,4 +1,5 @@
 import { enContactReadings } from '../en/contacts'
+import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
@@ -10,10 +11,12 @@ import type { ArcadeFighter, FightSide, FightState } from '../types'
 /** Presentation only: local controls always operate P1; the referee keeps canonical seats. */
 const SIDE_FIELDS = new Set([
   'owner',
+  'originalId',
   'target',
   'issuer',
   'recipient',
   'victimSide',
+  'victim',
   'killerSide',
   'attacker',
   'side',
@@ -22,6 +25,8 @@ const SIDE_FIELDS = new Set([
   'speaker',
   'questioner',
   'asker',
+  'carrier',
+  'subject',
   'affected',
   'cohorts',
   'recipientSide',
@@ -47,6 +52,20 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.blackVoiceScreen = undefined
+  if (enemy.blackVoiceGear)
+    enemy.blackVoiceGear = {
+      phone: enemy.blackVoiceGear.phone?.hand ? enemy.blackVoiceGear.phone : undefined,
+      armed: enemy.blackVoiceGear.armed,
+      antennas: [],
+    }
+  enemy.bashoArchive = undefined
+  enemy.bashoInquiry = undefined
+  if (enemy.bashoPoem?.writingFrames) enemy.bashoPoem = { ...enemy.bashoPoem, text: '...' }
+  enemy.dowsingScreened = undefined
+  enemy.personalEncounters = undefined
+  enemy.devicePlayback = undefined
+  enemy.receiverReading = undefined
   enemy.dowsingReading = undefined
   enemy.judgmentPreset = undefined
   enemy.heardWords = undefined
@@ -55,6 +74,8 @@ function redactEnemy(enemy: ArcadeFighter) {
     enemy.chrolloHistorical = {
       ...enemy.chrolloHistorical,
       phone: undefined,
+      galleryFocus: undefined,
+      galleryReading: undefined,
       aiPlan: undefined,
       aiLastUse: undefined,
     }
@@ -72,18 +93,26 @@ function redactEnemy(enemy: ArcadeFighter) {
     witnessedMoveId: undefined,
   }
   if (enemy.chrolloBook)
-    enemy.chrolloBook = { ...enemy.chrolloBook, pages: [], bookmark: null, page: 0 }
+    enemy.chrolloBook = {
+      ...enemy.chrolloBook,
+      pagesPrivate: true,
+      pages: [],
+      bookmark: null,
+      page: 0,
+    }
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
+  concealDeviceMedia(view.battlefield)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
   for (const frame of view.parallelFuture?.frames ?? []) {
+    concealDeviceMedia(frame.battlefield)
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

@@ -1,3 +1,4 @@
+import { physicalNenBody } from './physicalNenBody'
 import { categoryProximity, type ActiveNenCategory } from '@black-whale/nen-engine'
 import { FIGHT_NEN_PROFILES, FIGHT_ABILITY_CATEGORIES } from './nenCatalogue.gen'
 import type { ArcadeFighter } from './types'
@@ -19,11 +20,15 @@ export function fightCategoryEfficiency(
   fighter: ArcadeFighter,
   category: ActiveNenCategory,
 ): number {
-  if (fighter.nen.mode === 'zetsu') return 0
+  if (physicalNenBody(fighter).nen.mode === 'zetsu') return 0
   const owner = fighter.nenOwner ?? fighter.id
-  if (owner === 'kurapika' && fighter.kurapika?.emperorTime) return 1
+  if (owner === 'kurapika' && ownEmperorTime(fighter)) return 1
   const affinity = FIGHT_NEN_PROFILES[owner]?.affinity ?? 'unknown'
   return affinityEfficiency(affinity, category)
+}
+
+function ownEmperorTime(fighter: ArcadeFighter): boolean {
+  return fighter.dolphinLoanChannel?.emperorTime ?? fighter.kurapika?.emperorTime ?? false
 }
 
 function affinityEfficiency(affinity: string, category: ActiveNenCategory): number {
@@ -39,7 +44,7 @@ export function abilityCategories(ability: string | null): readonly ActiveNenCat
 
 /** Each component is calculated separately: there is no stacking six global buffs. */
 export function categoryPower(fighter: ArcadeFighter, category: ActiveNenCategory): number {
-  return 0.7 + 0.5 * fightCategoryEfficiency(fighter, category)
+  return 0.7 + 0.5 * abilityCategoryEfficiency(fighter, category)
 }
 
 export function constructionFactor(fighter: ArcadeFighter): number {
@@ -48,4 +53,15 @@ export function constructionFactor(fighter: ArcadeFighter): number {
 
 export function manipulationFactor(fighter: ArcadeFighter): number {
   return categoryPower(fighter, 'manipulator')
+}
+
+/** An ability loan uses the donor's stolen aura, without lending the carrier Emperor Time. */
+export function abilityCategoryEfficiency(
+  fighter: ArcadeFighter,
+  category: ActiveNenCategory,
+): number {
+  return (
+    fighter.dolphinExecution?.supply.efficiencies[category] ??
+    fightCategoryEfficiency(fighter, category)
+  )
 }

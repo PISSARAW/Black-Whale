@@ -1,3 +1,4 @@
+import { voiceOutputFactor } from './blackVoiceAutopilot'
 import { witnessedHatsuState } from './nenWitness'
 import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -97,30 +98,16 @@ export function resolveHatsuImpact(options: {
   blocked: boolean
   concealed: boolean
 }): FightState {
-  const { side, defenderSide, source, moveId, blocked, concealed } = options
-  if (
-    !voluntaryNenAvailable(options.state[side]) ||
-    chainAbilitySealed(options.state[side], moveId)
-  )
-    return options.state
-  if (!preparationCheck(options.state, side, moveId).ready) return options.state
-  return scaleNenControl(
+  const { side, source, moveId } = options
+  return withDolphinIdentity(
     options.state,
-    withDolphinIdentity(
-      options.state,
-      (state) =>
-        hatsuFor(source).onImpact({
-          state,
-          side,
-          defenderSide,
-          source,
-          moveId,
-          blocked,
-          concealed,
-        }),
-      source,
-    ),
-    side,
+    (state) => {
+      if (!voluntaryNenAvailable(state[side]) || chainAbilitySealed(state[side], moveId))
+        return state
+      if (!preparationCheck(state, side, moveId).ready) return state
+      return scaleNenControl(state, hatsuFor(source).onImpact({ ...options, state }), side)
+    },
+    source,
   )
 }
 
@@ -128,7 +115,7 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * coins * completion
+  return transformed * coins * completion * voiceOutputFactor(fighter)
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {

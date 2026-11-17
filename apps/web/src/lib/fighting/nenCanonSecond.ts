@@ -34,13 +34,14 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
   },
   basho: {
     abilities: ['great-haiku'],
-    condition: 'Write a complete three-line poem before invoking its represented effect.',
+    condition:
+      'Write an attested three-line poem using actual paper, brush and ink, with both hands free. Each completed composition retains its own trigger.',
     effect:
-      'The completed poem can produce its supported fire effect; writing remains interruptible.',
+      'Completed compositions ignite fist contacts, punish conscious lies in reply to actual questions, or charge paper charms that repel weak spirits. Writing remains interruptible.',
     prohibition:
       'No automatic aura burn, immediate writing completion or unrestricted free-form wish engine.',
     adaptation:
-      'The supported poem vocabulary, quality assessment, writing duration and fire tune the duel.',
+      'Three represented effects; no automatic literary quality score. Paper stocks, writing duration, ordinary burning and charm lifetime are duel tuning.',
   },
   camilla: {
     abilities: ['cats-name'],

@@ -1,3 +1,4 @@
+import { interceptDeviceProjectile } from './deviceImpact'
 import { canReceiveCombatHit } from './combatTargets'
 import { BODYGUARD_PISTOL, hasBodyguardFirearm, bodyguardShotHeight } from './bodyguardFirearms'
 import { hasIllumiNeedles } from './illumiEquipment'
@@ -280,7 +281,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     canHitDowned: false,
     shape: profile.shape,
     colour: profile.colour,
-    matter: profile.matter,
+    ...rangedMaterial(fighter, profile),
     concealed: fighter.attack.concealed,
     age: 0,
     lifetime: 120,
@@ -302,6 +303,14 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     ],
     nextProjectileId: state.nextProjectileId + 1,
   }
+}
+
+function rangedMaterial(
+  fighter: ArcadeFighter,
+  profile: ProjectileProfile,
+): Pick<FightProjectile, 'matter' | 'materialCopyId'> {
+  const copyId = fighter.id === 'illumi' ? fighter.equipmentProps?.needles?.copyId : undefined
+  return { matter: copyId ? 'nen' : profile.matter, materialCopyId: copyId }
 }
 
 export interface ProjectileHit {
@@ -328,6 +337,9 @@ export function advanceProjectiles(
     })
     state = intercepted.state
     if (intercepted.intercepted) continue
+    const deviceCollision = interceptDeviceProjectile(state, { projectile, previousX: held.x })
+    state = deviceCollision.state
+    if (deviceCollision.intercepted) continue
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

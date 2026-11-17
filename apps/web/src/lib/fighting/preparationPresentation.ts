@@ -1,7 +1,7 @@
 import { luiniPhasePresentation } from './luiniPresentation'
 import { preparationCheck } from './preparationRequirements'
 import { preparedSource, preparedActionReady, controlledEntities } from './preparationActions'
-import type { HatsuRequirement, PreparedEntityKind } from './preparationTypes'
+import type { HatsuRequirement } from './preparationTypes'
 import type { FightSide, FightState } from './types'
 
 export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, string>> = {
@@ -42,36 +42,7 @@ export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, st
     'visited-destination': 'Destination visited by this user',
   },
 }
-export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
-  fr: {
-    puppet: 'Copie inerte · marionnette',
-    needles: 'Aiguilles',
-    morena: 'Morena',
-    supporter: 'Partisan marqué',
-    animal: 'Souris réelle',
-    bird: 'Pigeon réel',
-    seed: 'Graine vivante',
-    crate: 'Caisse',
-    flute: 'Flûte',
-    room: 'Pièce d’ancrage',
-    destination: 'Lieu visité',
-    delivery: 'Point de livraison',
-  },
-  en: {
-    puppet: 'Inert copy · puppet',
-    needles: 'Needles',
-    morena: 'Morena',
-    supporter: 'Marked supporter',
-    animal: 'Real mouse',
-    bird: 'Real pigeon',
-    seed: 'Living seed',
-    crate: 'Crate',
-    flute: 'Flute',
-    room: 'Anchor room',
-    destination: 'Visited place',
-    delivery: 'Delivery point',
-  },
-}
+export { ENTITY_LABELS } from './preparationEntityLabels'
 
 export function visiblePreparationCheck(state: FightState, side: FightSide) {
   const fighter = state[side]

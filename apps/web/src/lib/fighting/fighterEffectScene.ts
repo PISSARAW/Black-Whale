@@ -1,3 +1,5 @@
+import { createBashoSupportScene } from './bashoSupportScene'
+import { createDeviceScene } from './deviceScene'
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
 import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
@@ -54,6 +56,8 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const machi = createMachiThreadScene(options)
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
+  const devices = createDeviceScene(options)
+  const bashoSupport = createBashoSupportScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -77,6 +81,8 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     machi.sync(state, seconds)
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
+    devices.sync(state, seconds)
+    bashoSupport.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
 
@@ -100,6 +106,8 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       kurapika.dispose()
       visitHatsu.dispose()
       retrospective.dispose()
+      devices.dispose()
+      bashoSupport.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

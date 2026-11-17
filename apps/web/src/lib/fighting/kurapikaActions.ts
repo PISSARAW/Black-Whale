@@ -1,3 +1,7 @@
+import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
+import { mapPhysicalBodies } from './physicalBodyMap'
+import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
+import { finishBorrowedBasho } from './bashoWard'
 import { judgmentActionBreach } from './judgmentAction'
 import { judgmentForbidsNen } from './judgmentRules'
 import { stopCookie } from './cookie'
@@ -42,7 +46,7 @@ export function toggleEmperorTime(state: FightState, side: FightSide): FightStat
   if (!canToggleEmperor(state, fighter)) return state
   const chain = fighter.kurapika ?? createKurapika()
   if (judgmentForbidsNen(fighter) && !chain.emperorTime) return chainRuleDeath(state, side)
-  if (chain.emperorTime && chain.held?.loaded) return state
+  if (chain.emperorTime && dolphinLocksEmperor(fighter)) return state
   if (!chain.emperorTime && !kurapikaNenActive(fighter)) return state
   return {
     ...state,
@@ -59,16 +63,14 @@ export function toggleEmperorTime(state: FightState, side: FightSide): FightStat
 
 /** Every simulated frame, including hitstop and unconsciousness; never a render-frame clock. */
 export function advanceEmperorClock(state: FightState): FightState {
-  return {
-    ...state,
-    player: advanceEmperor(state.player),
-    opponent: advanceEmperor(state.opponent),
-  }
+  return advanceDolphinLoanClocks(mapPhysicalBodies(state, advanceEmperor))
 }
 
 function advanceEmperor(fighter: ArcadeFighter): ArcadeFighter {
   const chain = fighter.kurapika
   if (!chain) return fighter
+  if (fighter.health <= 0)
+    return { ...fighter, kurapika: { ...chain, emperorTime: false, continuousFrames: 0 } }
   const blackoutFrames = Math.max(0, chain.blackoutFrames - 1)
   const running = emperorRunning(fighter)
   const continuousFrames = running && chain.blackoutFrames === 0 ? chain.continuousFrames + 1 : 0
@@ -90,7 +92,9 @@ function emperorRunning(fighter: ArcadeFighter): boolean {
   const chain = fighter.kurapika!
   return (
     chain.emperorTime &&
-    (kurapikaNenActive(fighter) || Boolean(chain.held?.loaded) || chain.blackoutFrames > 0)
+    (kurapikaNenActive(fighter) ||
+      Boolean(chain.held?.loaded || chain.dolphinLoans?.length) ||
+      chain.blackoutFrames > 0)
   )
 }
 
@@ -182,6 +186,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
   const held = fighter.kurapika?.held
   if (moveId !== 'kurapika:backSpecial' || !held) return null
   if (!canUseDolphinAction(fighter)) return state
+  if (dolphinLoadingBlocked(fighter)) return state
   if (!held.loaded)
     return {
       ...state,
@@ -200,14 +205,27 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
   return useDolphin(options, perform)
 }
 
+function dolphinLoadingBlocked(fighter: ArcadeFighter): boolean {
+  return Boolean(!fighter.kurapika?.held?.loaded && fighter.kurapika?.dolphinLoans?.length)
+}
+function dolphinLocksEmperor(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.kurapika?.held?.loaded || fighter.kurapika?.dolphinLoans?.length)
+}
+
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   return (
     outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
-    kurapikaNenActive(fighter) &&
+    dolphinActionAuraAvailable(fighter) &&
     fighter.kurapika!.emperorTime
   )
+}
+
+function dolphinActionAuraAvailable(fighter: ArcadeFighter): boolean {
+  return fighter.kurapika?.held?.loaded
+    ? dolphinSupplyAvailable(fighter)
+    : kurapikaNenActive(fighter)
 }
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
@@ -244,7 +262,8 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
   const fighter = state[side]
   const held = fighter.kurapika!.held!
   if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
-  if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
+  const poem = finishBorrowedBasho(state, side)
+  if (poem) return poem
   if (fighter.hanzoProjection)
     return withDolphinIdentity(
       state,
@@ -263,7 +282,7 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
   const held = fighter.kurapika!.held!
   const prepared: FightState = {
     ...state,
-    [side]: {
+    [side]: stolenAuraActor({
       ...fighter,
       id: held.source,
       nenOwner: fighter.nenOwner ?? fighter.id,
@@ -271,14 +290,18 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
         ...fighter.kurapika!,
         held: { ...held, used: true },
       },
-    },
+    }),
   }
   const cast = performBorrowedMove({ ...options, state: prepared }, held.moveId, perform)
   if (cast === prepared || (cast[side] === prepared[side] && cast.lsdf === prepared.lsdf))
     return state
   const restored = {
     ...cast,
-    [side]: { ...cast[side], id: fighter.id, nenOwner: fighter.nenOwner },
+    [side]: {
+      ...restoreStolenAura(fighter, cast[side]),
+      id: fighter.id,
+      nenOwner: fighter.nenOwner,
+    },
   }
   return recordDolphinEffects(state, restored, side)
 }

@@ -8,8 +8,20 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'blackVoiceScreen',
+  'stolenChainAbility',
+  'blackVoiceGear',
+  'equipment',
+  'equipmentProps',
+  'melodyFlute',
+  'writingKit',
+  'bashoWard',
+  'personalEncounters',
+  'dowsingScreened',
   'heardWords',
   'dowsingReading',
+  'devicePlayback',
+  'receiverReading',
   'judgmentPreset',
   'judgmentDeclaration',
   'x',
@@ -50,7 +62,7 @@ function restingNen(actor: ArcadeFighter): boolean {
 }
 function restingSignature(actor: ArcadeFighter) {
   const values = Object.fromEntries(
-    Object.entries(restingBody(actor)).filter(([key]) => !BODY_FIELDS.has(key)),
+    Object.entries(restingBody(relayDolphinState(actor))).filter(([key]) => !BODY_FIELDS.has(key)),
   )
   return replayChecksum(restingValue(values))
 }
@@ -66,6 +78,21 @@ function restingBody(actor: ArcadeFighter): ArcadeFighter {
   }
   return actor.kurapika ? { ...body, kurapika: { ...actor.kurapika, lifespanFrames: 0 } } : body
 }
+function relayDolphinState(actor: ArcadeFighter): ArcadeFighter {
+  const chain = actor.kurapika
+  let next = actor
+  if (actor.dolphinLoan && !actor.dolphinLoan.held.used) next = { ...next, dolphinLoan: undefined }
+  if (!chain) return next
+  const normalized = { ...chain, lifespanFrames: 0 }
+  if (chain.dolphinLoans?.length && !chain.held?.loaded) {
+    normalized.emperorTime = false
+    normalized.continuousFrames = 0
+    normalized.dolphinLoans = undefined
+    normalized.held = null
+  }
+  return { ...next, kurapika: normalized }
+}
+
 function restingValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(restingValue)
   if (!value || typeof value !== 'object') return value
@@ -86,7 +113,14 @@ function quietWorld(state: FightState): boolean {
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
-    ].some(Boolean) && state.projectiles.length === 0
+      (state.player.bashoWard?.remainingFrames ?? 0) > 0,
+      (state.opponent.bashoWard?.remainingFrames ?? 0) > 0,
+    ].some(Boolean) &&
+    state.projectiles.length === 0 &&
+    !state.battlefield?.entities.some(
+      (entry) =>
+        entry.device?.form || entry.device?.transforming || entry.blackVoiceControl?.active,
+    )
   )
 }
 export function teamRelayBlock(state: FightState, side: FightSide): 'body' | 'commitment' | null {
@@ -94,6 +128,8 @@ export function teamRelayBlock(state: FightState, side: FightSide): 'body' | 'co
   if (!relayBodyFree(actor)) return 'body'
   const target = state[side === 'player' ? 'opponent' : 'player']
   const links = [
+    target.blackVoiceControl?.active,
+    target.blackVoiceControl?.active,
     target.chainJail,
     target.drainingChain,
     target.judgmentChain,
@@ -115,6 +151,7 @@ function relayBodyFree(actor: ArcadeFighter) {
   const motion = motionOf(actor)
   return (
     canMove(actor) &&
+    (actor.bashoWard?.remainingFrames ?? 0) === 0 &&
     actor.y === 0 &&
     ![
       actor.bufferedAttack,

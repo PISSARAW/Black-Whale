@@ -26,7 +26,8 @@ declare module './types' {
 
 /** Remember manifested actions only: no input buffers, analysis, private replies or future branch. */
 export function rememberOpponentHabits(state: FightState, fighter: ArcadeFighter): ArcadeFighter {
-  if (state.forecastSimulation || state.parallelFuture) return fighter
+  if (state.forecastSimulation || state.parallelFuture || fighter.blackVoiceAutopilot)
+    return fighter
   const memory = fighter.observedHabits ?? {
     lastFrame: -1,
     seenAttackFrame: null,

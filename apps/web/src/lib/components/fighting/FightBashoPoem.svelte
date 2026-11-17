@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { hasLoanedBasho, loanedBashoCanWrite } from '$lib/fighting/bashoDolphin'
   import {
     BASHO_POEMS,
+    BASHO_ATTESTED_POEMS,
     bashoCanWrite,
     recognizedBashoPoem,
     hasBashoPoem,
@@ -12,7 +14,7 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
-  export let onCompose: (side: FightSide, text: string) => void
+  export let onCompose: (side: FightSide, text: string, loan?: boolean) => void
   export let onEditing: () => void = () => {}
   let drafts: Partial<Record<FightSide, string>> = {}
   const sides: FightSide[] = ['player', 'opponent']
@@ -28,6 +30,7 @@
   function poet(current: FightState, side: FightSide) {
     const fighter = current[side]
     return (
+      hasLoanedBasho(fighter) ||
       fighter.id === 'basho' ||
       hasBashoPoem(fighter) ||
       chrolloHasActivePage(fighter, 'basho') ||
@@ -47,21 +50,21 @@
       >
       <p>
         {fr
-          ? 'Composition prise en charge : le haïku du chapitre 68 qui enflamme ce que frappe le poing. Les trois lignes ci-dessous en sont une traduction de sens. Les autres poèmes ne sont pas interprétés par ce duel.'
-          : 'Supported composition: the chapter 68 haiku that ignites what the fist strikes. The three lines below translate its meaning. Other poems are not interpreted by this duel.'}
+          ? 'Trois effets attestés : le poing enflamme, mentir en réponse à une question appelle un feu mortel, et un talisman de lumière hivernale écarte les faibles esprits. Les textes proposés sont des adaptations de sens ; aucun souhait libre n’est interprété. Les questions simulées portent sur l’identité, le Nen et In ; les paroles libres ne sont pas jugées automatiquement.'
+          : 'Three attested effects: fists ignite, knowing lies in reply to a question invoke lethal fire, and a winter-light charm repels weak spirits. The presets adapt their meaning; arbitrary wishes are not interpreted. Represented questions cover identity, Nen and In; free speech is not judged automatically.'}
       </p>
       <p>
         {fr
-          ? 'Condition : finir d’écrire, puis toucher avec un coup de poing. Échec, parade, coup de pied, projection et projectile ne déclenchent rien. Un contact sur garde peut enflammer.'
-          : 'Condition: finish writing, then connect with a fist strike. Misses, parries, kicks, throws and projectiles do nothing. A guarded fist contact can ignite.'}
+          ? 'Condition : papier, pinceau et encre réels, deux mains libres et écriture complète. Pour le poème du poing, toucher avec un coup de poing. Échec, parade, coup de pied, projection et projectile ne déclenchent rien. Un contact sur garde peut enflammer.'
+          : 'Condition: real paper, brush and ink, both hands free and completed writing. The fist poem requires an actual fist strike. Misses, parries, kicks, throws and projectiles do nothing. A guarded fist contact can ignite.'}
       </p>
       <small
         >{fr
-          ? 'Réglages de duel : écriture 1 s · 25 aura · brûlure 1,5 s, 2 dégâts toutes les 0,5 s avant défense Nen. Bouger, garder ou être frappé interrompt l’écriture. Aucun bonus général. La qualité compte dans le manga ; aucune note littéraire automatique n’est inventée ici.'
-          : 'Duel tuning: 1 s writing · 25 aura · 1.5 s burn, 2 damage every 0.5 s before Nen defence. Moving, guarding or being hit interrupts writing. No general boost. Quality matters in the manga; no automatic literary score is invented here.'}</small
+          ? 'Réglages de duel : écriture 1 s · 25 aura · pour le poème du poing, brûlure 1,5 s, 2 dégâts toutes les 0,5 s avant défense Nen. Bouger, garder ou être frappé interrompt l’écriture. Aucun bonus général. La qualité compte dans le manga ; aucune note littéraire automatique n’est inventée ici.'
+          : 'Duel tuning: 1 s writing · 25 aura · fist poem: 1.5 s burn, 2 damage every 0.5 s before Nen defence. Moving, guarding or being hit interrupts writing. No general boost. Quality matters in the manga; no automatic literary score is invented here.'}</small
       >
       {#each sides.filter((side) => poet(state, side)) as side (side)}
-        {#if human(side) && (state[side].id === 'basho' || hasBashoPoem(state[side]))}
+        {#if human(side) && (state[side].id === 'basho' || hasBashoPoem(state[side]) || hasLoanedBasho(state[side]))}
           <label for={`haiku-${side}`}
             >{name(side)} · {fr ? 'Écrire les trois vers' : 'Write the three lines'}</label
           >
@@ -82,12 +85,28 @@
             </p>
           {/if}
           <div class="actions">
-            <button
-              type="button"
-              onclick={() => (drafts = { ...drafts, [side]: BASHO_POEMS[language] })}
+            {#each Object.entries(BASHO_ATTESTED_POEMS) as [effect, texts] (effect)}
+              <button
+                type="button"
+                onclick={() => (drafts = { ...drafts, [side]: texts[language] })}
+              >
+                {effect === 'ignite-punched-target'
+                  ? fr
+                    ? 'Poème du poing'
+                    : 'Fist poem'
+                  : effect === 'ignite-liar'
+                    ? fr
+                      ? 'Réponses mensongères'
+                      : 'Lying answers'
+                    : fr
+                      ? 'Talisman hivernal'
+                      : 'Winter charm'}
+              </button>
+            {/each}
+            <small
+              >{fr ? 'Feuilles restantes' : 'Sheets remaining'} : {state[side].writingKit?.sheets ??
+                0}</small
             >
-              {fr ? 'Recopier le poème attesté' : 'Copy the attested poem'}
-            </button>
             <button
               type="button"
               disabled={paused ||
@@ -97,6 +116,17 @@
             >
               {fr ? 'Écrire sur le papier · 25 aura' : 'Write on paper · 25 aura'}
             </button>
+            {#if hasLoanedBasho(state[side])}
+              <button
+                type="button"
+                disabled={paused ||
+                  !recognizedBashoPoem(draft(side, drafts, language)) ||
+                  !loanedBashoCanWrite(state, side)}
+                onclick={() => onCompose(side, draft(side, drafts, language), true)}
+              >
+                {fr ? 'Dolphin prêté · Écrire sur le papier' : 'Loaned Dolphin · Write on paper'}
+              </button>
+            {/if}
           </div>
         {/if}
       {/each}
@@ -106,8 +136,8 @@
         <p class="status" role="status">
           {name(side)} · {state[side].bashoPoem?.ready
             ? fr
-              ? 'Poème écrit : le prochain contact du poing peut enflammer.'
-              : 'Poem written: a connecting fist can ignite.'
+              ? 'Poème écrit : son effet est disponible dans les commandes de techniques.'
+              : 'Poem written: its effect is available in the technique commands.'
             : fr
               ? 'Écriture en cours… Restez immobile et exposé.'
               : 'Writing… Remain still and exposed.'}

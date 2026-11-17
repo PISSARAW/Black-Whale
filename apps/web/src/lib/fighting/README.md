@@ -479,7 +479,8 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   L’arsenal initial est celui du duel contre Hisoka : Sun and Moon et Black Voice ;
   ce choix ne suppose pas que Black Voice soit encore disponible sur le navire.
   **L** utilise la page ouverte, ou celle au signet si le livre est fermé ;
-  **avant + L** vole au contact un Hatsu observé et ajoute sa page ;
+  **avant + L** termine un vol préparé : Hatsu observé, questions effectivement
+  répondues et paume de la victime sur la couverture dans la limite d’une heure ;
   **arrière + L** ouvre la page suivante ; **bas + L** place le signet et ferme
   le livre, rouvre un livre fermé, ou retire le signet d’une page ouverte déjà marquée.
   **H** utilise la page au signet. Une page ouverte et une page au signet peuvent
@@ -491,13 +492,38 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   H pose aussi le Soleil si le livre est ouvert, et la Lune à droite uniquement
   si le livre est fermé. Deux contacts sur une cible représentent la rencontre
   des marques ; charge et puissance restent réglées pour le duel.
-  Black Voice exige une antenne au contact puis ordonne un recul limité à 90 frames,
-  tant que sa page reste active. Le vol désactive le Hatsu adverse même quand sa page
-  est refermée. L’entretien est abrégé ; les manches restent sous la limite canon
-  d’une heure. Les conditions supplémentaires inconnues de Double Face ne sont pas
+  Black Voice transporte le téléphone original de Shalnark et ses deux antennes
+  matérielles : aucune page acquise ne les conjure. L'implantation libère la main
+  qui tenait l'antenne ; le téléphone associé permet ensuite les ordres d'arrêt,
+  approche, recul et attaque, ainsi que la vue transmise par les yeux du sujet.
+  Le contrôle dure jusqu'au retrait de l'antenne, à la mort du sujet ou à la perte
+  de la page. L'objet implanté demeure réel lorsque le Nen cesse. Livre, téléphone
+  et antenne respectent les mains disponibles ; dépôt, ramassage et nombre de
+  pièces sont conservés, sans reconstitution gratuite à la manche suivante.
+  Les ordres déjà donnés sont autonomes ; ranger le téléphone ne libère pas la cible.
+  L'auto-manipulation est exécutable en duel K.-O. contre un seul ennemi visible :
+  antenne sur soi, téléphone original, mission autonome sans annulation volontaire.
+  La fin de mission conserve au moins deux jours simulés de douleurs et de faiblesse,
+  même entre les manches, pendant le hitstop et Cat’s Name. Le corps n'ajoute pas
+  les événements de la mission à ses souvenirs conscients. Coûts et multiplicateurs
+  restent des réglages de duel ; les missions contre plusieurs ennemis restent ouvertes.
+  Le vol désactive le Hatsu adverse même quand sa page
+  est refermée. L’entretien et la paume sont des commandes réelles ; observer le
+  Hatsu puis frapper ne suffit pas. Les conditions supplémentaires inconnues de Double Face ne sont pas
   inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban
   rendent les états visibles. Livre et vols repartent à zéro à la manche suivante.
   Les commandes fonctionnent aussi en versus local et au tactile.
+  Gallery Fake permet aussi le repérage des copies depuis le contact de la main
+  gauche avec l'original (`gallerySense.ts`). Le relevé privé reste daté après
+  interruption ; il ne dévoile que les positions et contacts dans les volumes
+  réellement copiés. Les originaux humains et les appareils portés suivent leurs
+  corps effectifs, y compris lors d'un relais d'équipe. L'ouverture du livre et
+  les gestes historiques utilisent les mains réellement disponibles. Voir
+  [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
+  Les outils ramassés et leurs pièces détachées conservent la provenance de leur
+  matière Nen : flûte, aiguilles, balles, feuilles et objets retenus ne deviennent
+  pas permanents par ramassage ou stockage. Les réserves, prévisions, replays et
+  séquences de Cat's Name suivent la même disparition matérielle.
 - Feitan mémorise les PV effectivement perdus pendant la manche (`feitanPain.ts`).
   Après une blessure, L revêt Pain Packer sans soin ni frappe ; H libère le soleil
   fixe de `feitanSun.ts`. Les blessures engagées augmentent la chaleur, le rayon et
@@ -687,22 +713,24 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   conservent les conditions matérielles et le prêt de Dolphin ne déploie qu’un lot.
   Une nouvelle manche réinitialise les réserves et les captures. L’ancien
   `bloodBoundFrames` est retiré, et Predator observe la matière réellement active.
-- Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
-  `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
-  composition : les textes libres non reconnus ne coûtent rien et ne créent aucun
-  pouvoir. L recopie la composition attestée ; le panneau permet de
-  la saisir et de la relire avant de l’écrire. L’écriture prend une seconde et
-  25 aura, sans frappe ni bonus général ; bouger, garder ou être frappé l’interrompt.
-  Une fois écrite, la condition ne s’applique qu’à un contact du poing : un échec,
-  une parade, un coup de pied, une projection ou un projectile n’allume aucun feu.
-  Un contact sur garde peut enflammer. `bashoFire.ts` produit une brûlure visible
-  de 90 frames, avec trois pulsations de 2 dégâts avant défense Nen ; ni paralysie,
-  bonus à tous les coups, « Encre terrestre » ou finisher inventé. Ces chiffres et
-  le maintien du poème tant que le Nen reste disponible sont des adaptations de
-  duel, sans notation littéraire automatique : la qualité compte dans le manga,
-  mais une seule composition attestée est prise en charge ici. Les nouvelles
-  manches réinitialisent papier et feu. Les copies conservent l’écriture et ses
-  conditions ; les brûlures portent l’identité du lanceur pour le verdict.
+- Basho dispose des trois compositions attestées des chapitres 68, 402 et 404 dans
+  `FightBashoPoem.svelte` : poing incendiaire, réponse mensongère punie par le feu
+  mortel, talisman contre les faibles esprits. `bashoPoem.ts` reconnaît les
+  adaptations FR/EN proposées, sans interpréter les souhaits libres ou noter leur
+  qualité littéraire. Les feuilles, le pinceau et l'encre sont physiques ; les
+  copies du Hatsu n'en reçoivent pas gratuitement. Une feuille est consommée dès
+  le début, les deux mains sont occupées et le mouvement, la garde ou une frappe
+  interrompent l'écriture. Les papiers prêts restent distincts dans l'archive.
+  Le poing exige un vrai contact, pas un coup de pied ou un projectile. Les
+  questions exigent une parole audible et une réponse volontaire sur un fait
+  représenté ; le silence et le texte libre ne sont pas jugés automatiquement.
+  Le talisman exige une bande écrite et un contact, sans soin ou exorcisme de
+  malédiction puissante. Les faibles esprits suivent le corps réellement visé.
+  Trois feuilles, une seconde d'écriture, 25 aura, le feu de contact de 90 frames
+  et la minute du talisman sont des réglages de duel. Les copies conservent
+  les conditions du pouvoir et la durée de vie de leur support matériel ; les
+  effets portent l'identité du lanceur pour le verdict. Les nouvelles manches
+  réinitialisent ces préparations. Voir [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
 
 - Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
   `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),
@@ -877,6 +905,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   Le coût d'aura, les 24 frames de préparation et les dégâts restent des réglages
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
+  Le double peut parler et écouter à sa propre position ; parler près du double
+  ne réveille pas le corps distant. Le papier planté sur le corps y reste, tandis
+  que la caméra capte la voix à son lieu d'émission et filme les deux corps visibles.
   La portée audible de 18 unités est une abstraction du duel.
 - Sweet Home (`hatsu/terebellum.ts`, `sweetHomeImpact.ts`) vérifie les contacts
   pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures

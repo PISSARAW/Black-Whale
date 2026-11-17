@@ -1,5 +1,6 @@
+import { plantBlackVoice } from '../blackVoice'
+import { advanceBlackVoice } from '../blackVoiceFrame'
 import {
-  chrolloHasActivePage,
   chrolloNenActive,
   chrolloPageForMove,
   chrolloSourceFor,
@@ -10,10 +11,10 @@ import { reconcileChrolloPages } from '../chrolloPageEffects'
 import { completeSkillHunter } from '../skillHunterAcquisition'
 import { advanceHistoricalEffects } from '../chrolloHistoricalEffects'
 import { advanceHistoricalCopies } from '../chrolloHistoricalObjects'
+import { advanceGallerySenses } from '../gallerySense'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { unchangedTrigger, type FighterHatsu, type HatsuImpactContext } from './contract'
 
-const BLACK_VOICE_FRAMES = 90
 const SUN_MOON_DAMAGE = 24
 
 /** Pages and bookmark follow ch. 351. Acquisition dialogue and stamp contact are duel abstractions. */
@@ -25,30 +26,22 @@ export const chrolloHatsu: FighterHatsu = {
     if (context.blocked) return context.state
     if (context.moveId === CHROLLO_STEAL) return steal(context)
     const page = chrolloPageForMove(context.state[context.side], context.moveId)
-    if (page === 'black-voice') return blackVoice(context)
+    if (page === 'black-voice') return plantBlackVoice(context)
     return page === 'sun-and-moon' ? stamp(context) : context.state
   },
   onFrame: (state) =>
-    advanceHistoricalCopies(
-      advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+    advanceGallerySenses(
+      advanceHistoricalCopies(
+        advanceBlackVoice(
+          advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+        ),
+      ),
     ),
 }
 
 function steal({ state, side, defenderSide }: HatsuImpactContext): FightState {
   if (defenderSide === side) return state
   return completeSkillHunter(state, side)
-}
-
-function blackVoice({ state, defenderSide }: HatsuImpactContext): FightState {
-  const target = state[defenderSide]
-  return {
-    ...state,
-    [defenderSide]: {
-      ...target,
-      hitStun: Math.max(target.hitStun, 12),
-      hatsuEffects: { ...target.hatsuEffects, manipulatedFrames: BLACK_VOICE_FRAMES },
-    },
-  }
 }
 
 function stamp(context: HatsuImpactContext): FightState {
@@ -82,26 +75,5 @@ function advanceBook(state: FightState, side: FightSide): FightState {
     }
     return reconcileChrolloPages(state, dismissed, side)
   }
-  return chrolloHasActivePage(owner, 'black-voice') ? orderRetreat(state, side) : state
-}
-
-/** A planted antenna gives a concrete order. Range/duration are competitive tuning. */
-function orderRetreat(state: FightState, side: FightSide): FightState {
-  const targetSide = side === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  const frames = target.hatsuEffects.manipulatedFrames
-  if (frames <= 0) return state
-  const direction = target.x >= state[side].x ? 1 : -1
-  return {
-    ...state,
-    [targetSide]: {
-      ...target,
-      x: Math.max(7, Math.min(93, target.x + direction * 0.3)),
-      hitStun: Math.max(target.hitStun, 2),
-      blocking: false,
-      attack: null,
-      bufferedAttack: null,
-      hatsuEffects: { ...target.hatsuEffects, manipulatedFrames: frames - 1 },
-    },
-  }
+  return state
 }

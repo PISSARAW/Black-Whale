@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 794
+Fichiers : 818
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -248,9 +248,21 @@ Fichiers : 794
 
 - Basho’s written Great Hiker poem > preserves a bookmarked copy’s composition and requires its page to remain available
 
+## `apps/web/src/lib/fighting/bashoDolphin.test.ts`
+
+- Great Haiku through an actual Stealth Dolphin loan > writes on the recipient’s real supplies with donor aura and no personal Emperor Time
+
+## `apps/web/src/lib/fighting/bashoMaterialInteractions.test.ts`
+
+- written poems preserve the actual matter and the selected effect > retains Gallery Fake provenance without cloning Nen marks or a stock identifier
+
 ## `apps/web/src/lib/fighting/bashoPanel.test.ts`
 
 - Basho poem panel > shows editable three-line composition, the exact trigger and disclosed duel tuning
+
+## `apps/web/src/lib/fighting/bashoRetrospective.test.ts`
+
+- Great Hiker has the three attested effects and actual writing supplies > consumes each real sheet once, archives distinct written poems and refuses a fourth sheet
 
 ## `apps/web/src/lib/fighting/benjamin.test.ts`
 
@@ -264,9 +276,29 @@ Fichiers : 794
 
 - Bill’s physical combat and support-only Erigeron > keeps his ten ordinary physical moves and a single non-offensive support ability
 
+## `apps/web/src/lib/fighting/biohazardDevices.test.ts`
+
+- Biohazard preserves the actual touched device and its original function > requires supplied physical devices and spends aura without conjuring an inventory
+
 ## `apps/web/src/lib/fighting/biohazardScene.test.ts`
 
 - physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
+
+## `apps/web/src/lib/fighting/blackVoice.test.ts`
+
+- Black Voice original phone and two physical antennas > does not conjure replacement gear from a page or ordinary needles
+
+## `apps/web/src/lib/fighting/blackVoiceAutopilot.test.ts`
+
+- Black Voice self-manipulation and its physical consequences > implants one original antenna in the actual self and activates through its paired phone
+
+## `apps/web/src/lib/fighting/blackVoiceIntegration.test.ts`
+
+- Black Voice at command, replay and death boundaries > uses P2 local body references without transferring private phone information
+
+## `apps/web/src/lib/fighting/blackVoiceSelfReplay.test.ts`
+
+- self-manipulation is a simulated mission in full replays > replays the actual pin, phone, aura budget, autonomous kicks and aftermath without rewriting HP
 
 ## `apps/web/src/lib/fighting/bonolenov.test.ts`
 
@@ -353,11 +385,48 @@ Fichiers : 794
 
 - Cookie is an executable treatment, separate from Biscuit’s body > summons the masseuse without attacking or changing the body
 
+## `apps/web/src/lib/fighting/copiedInventory.test.ts`
+
+- conjured tools retain their actual material provenance after pickup > keeps a thrown copied needle’s origin after it leaves the collected stock
+
+## `apps/web/src/lib/fighting/copiedMatterClocks.test.ts`
+
+- material lifetime survives paused combat and maintained effects > does not make a copied projectile permanent by storing it in Culdcept
+
 ## `apps/web/src/lib/fighting/counterplay.test.ts`
 
 - counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without ocular Gyo
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
+## `apps/web/src/lib/fighting/deviceAi.test.ts`
+
+- Biohazard AI prepares real scenario equipment > walks normally toward an untouched camera and cannot teleport, invent gear, or transform under On
+
+## `apps/web/src/lib/fighting/deviceCombat.test.ts`
+
+- physical devices participate in combat and authenticated replay > breaks a real recording camera and clears its touching body on the following frame
+
+## `apps/web/src/lib/fighting/deviceIntegration.test.ts`
+
+- physical device boundaries stay consistent with the actual bodies > keeps both hands finite and counts the open book without copying equipment
+
+## `apps/web/src/lib/fighting/dolphinAura.test.ts`
+
+- Steal Chain keeps the actual stolen aura and suppresses the linked victim > prevents voluntary Nen immediately after real syringe contact, before the reserve is empty
+- Dolphin spends a finite donor reserve independently from the carrier > pays the actual borrowed activation from stolen aura and restores the real body
+
+## `apps/web/src/lib/fighting/dolphinLoan.test.ts`
+
+- a real Stealth Dolphin recipient > injects an actual body, frees Steal Chain and keeps the lender under Emperor Time
+
+## `apps/web/src/lib/fighting/dolphinLoanReplay.test.ts`
+
+- Stealth Dolphin loan replay and the P2 network boundary > exports and replays real drainage, injection, borrowed use and dismissal
+
+## `apps/web/src/lib/fighting/dolphinLoanTeam.test.ts`
+
+- Stealth Dolphin stays attached to actual team members > lends to an actual ally at the gate, lets that ally enter, and clocks the waiting lender
 
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 
@@ -414,6 +483,10 @@ Fichiers : 794
 ## `apps/web/src/lib/fighting/easterEggs.test.ts`
 
 - Easter Egg controls and collection > simulates scenes in Parallel Future without discovering a predicted ending
+
+## `apps/web/src/lib/fighting/emperorPostMortemClock.test.ts`
+
+- Emperor Time pays for living time during a post-mortem sequence > does not activate Emperor Time just because the cat is running
 
 ## `apps/web/src/lib/fighting/en/en.test.ts`
 
@@ -570,6 +643,14 @@ Fichiers : 794
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
 
+## `apps/web/src/lib/fighting/galleryIntegration.test.ts`
+
+- Gallery Fake command and simulation boundaries > maps P2’s local body reference back to the canonical original and keeps the resulting reading private
+
+## `apps/web/src/lib/fighting/gallerySense.test.ts`
+
+- Gallery Fake locates real copies from contact with the actual original > does not restore a severed head by making a second copy of the headless puppet
+
 ## `apps/web/src/lib/fighting/gamepadDiagnostics.test.ts`
 
 - local Xbox hardware diagnostics > shows analog trigger travel without guessing a digital press
@@ -577,6 +658,10 @@ Fichiers : 794
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
+
+- Hanzo’s speaking double has its own position without moving the sleeping body > replays the actual Talk input and camera recording without a state patch
 
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
@@ -593,6 +678,10 @@ Fichiers : 794
 ## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
 
 - Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
+## `apps/web/src/lib/fighting/historicalMaterialGestures.test.ts`
+
+- historical material gestures use actual hands and physical bodies > can copy a moved original already held in the left hand when the right hand is free
 
 ## `apps/web/src/lib/fighting/illumi.test.ts`
 
@@ -808,6 +897,10 @@ Fichiers : 794
 ## `apps/web/src/lib/fighting/retrospectiveIntegration.test.ts`
 
 - retrospective utility admission, clocks and network boundaries > requires entering criteria before dialing, consumes a limited allowance, and reports actual coordinates privately
+
+## `apps/web/src/lib/fighting/retrospectiveScenarioReplay.test.ts`
+
+- complete retrospective scenarios export and import their real resources > replays writing, a physical charm, weak spirits, transformation and the camera under all ten preparation resources
 
 ## `apps/web/src/lib/fighting/roster.test.ts`
 

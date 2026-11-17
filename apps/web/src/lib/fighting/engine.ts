@@ -1,5 +1,7 @@
+import { finishPhysicalFrame } from './physicalFrameClocks'
 import { performLegacyThrow } from './legacyThrow'
 import { updatePlayerGuard } from './nenCombat/guardInput'
+import { expireHistoricalMatter } from './historicalMatterClock'
 import { judgmentActionBreach } from './judgmentAction'
 import { recordMotion } from './motionRecord'
 import { moveAdmitted } from './moveAdmission'
@@ -160,18 +162,20 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return simulateClashFrame(state, controls, {
-    step: stepFight,
-    decide: opponentAttack,
-    attack: (state, action, input) =>
-      performTrainingAction({ state, side: 'opponent', action, input }),
-  })
+  return finishPhysicalFrame(
+    simulateClashFrame(state, controls, {
+      step: stepFight,
+      decide: opponentAttack,
+      attack: (state, action, input) =>
+        performTrainingAction({ state, side: 'opponent', action, input }),
+    }),
+  )
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
   state = advancePredatorClock(state)
-  if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
+  if (state.catsName) return advanceCatsName(state)
   if (state.hitstop > 0)
     return advanceRetrospectiveHitstop({
       ...state,
@@ -341,6 +345,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  options = { ...options, state: expireHistoricalMatter(options.state) }
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state

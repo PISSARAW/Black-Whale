@@ -12,7 +12,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'emperor-time',
     ],
     condition:
-      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation and Dolphin require Emperor Time.',
+      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation, Dolphin and video Dowsing require Emperor Time. Video screening also requires a previously met subject and real recorded media.',
     effect:
       'Restraint, directed chain, healing, aura drain and a single stolen use remain distinct.',
     prohibition:
@@ -30,13 +30,27 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'One fighter-to-fighter tether, cloth preparation, reach and composed card finish tune the duel.',
   },
   chrollo: {
-    abilities: ['skill-hunter', 'double-face', 'sun-and-moon', 'black-voice'],
+    abilities: [
+      'skill-hunter',
+      'double-face',
+      'sun-and-moon',
+      'black-voice',
+      'indoor-fish',
+      'fun-fun-cloth',
+      'chrollo-teleportation',
+      'order-stamp',
+      'convert-hands',
+      'gallery-fake',
+      'love-dial-6700',
+      'lovely-ghostwriter',
+    ],
     condition:
-      'A stolen ability needs its page and the book or single bookmark; copies keep body, material and target requirements.',
-    effect: 'Pages and bookmark control active powers; Sun and Moon marks survive page closure.',
+      'Acquisition needs witnessing, answered questions, a palm on the cover and completion within one hour. Active pages require the right-hand book or the unique bookmark; copied powers retain their own conditions.',
+    effect:
+      'Historical pages execute their separate effects. Gallery Fake copies remain inert, can be located from the original and sense contacts within their volume; Sun and Moon marks persist.',
     prohibition: 'No body, weapon, animal, ally, consent or learned model is acquired with a page.',
     adaptation:
-      'Historical Hisoka-duel loadout; witnessing plus contact abbreviates acquisition. The complete canonical theft sequence is not simulated.',
+      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning; Lovely Ghostwriter still lacks its handwritten subject and scenario-future context, and further material interactions remain under audit.',
   },
   benjamin: {
     abilities: ['benjamin-baton', 'air-blow', 'secret-window', 'culdcept'],
@@ -169,11 +183,12 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     abilities: ['biohazard-hinrigh'],
     condition:
       'Touch a real object; transformed animals retain the object’s function and finite aura.',
-    effect: 'Carried handcuffs become pigeons that can physically latch and be recovered.',
+    effect:
+      'Handcuff pigeons restrain; a camera cat records for physical retrieval, a snake barrel fires the actual ammunition, and an oyster preserves its swallowed transmitter and radio signal.',
     prohibition:
       'No animal from nothing, copied inventory, self-transformation, generic boost or forced Zetsu.',
     adaptation:
-      'Two pairs, transformation time, durability, capture grace and lifetime tune the duel; the knife remains physical.',
+      'Two cuff pairs, device stocks, transformation time, durability and most lifetimes tune the duel. The oyster estimate remains two simulated hours; the knife remains physical.',
   },
   mizaistom: {
     abilities: ['cross-game'],

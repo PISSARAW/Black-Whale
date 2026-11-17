@@ -1,4 +1,5 @@
 import { interruptEnForSpeech } from './en/interruptions'
+import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import {
   speechRecipient,
@@ -7,7 +8,7 @@ import {
   recordHeardWords,
 } from './fightSpeechRecipient'
 import { canSpeak, senseDeprived } from './saiyuSenses'
-import { sleepingBody } from './hanzoProjection'
+import { sleepingBody, projectionPreparing } from './hanzoProjection'
 import { paperAvailable, paperState, hasPlantedPaper } from './kallutoPaper'
 import type { PaperWords } from './kallutoPaper'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -29,17 +30,17 @@ export function paperListening(state: FightState, owner: FightSide): boolean {
 export function speakPaperWords(
   state: FightState,
   speaker: FightSide,
-  message: string | { text: string; recipient?: string } = 'I am here.',
+  message: string | { text: string; recipient?: string; statementIntent?: boolean } = 'I am here.',
 ): FightState {
-  const { text, target } = normalizeSpokenWords(message)
+  const { text, target, intent } = normalizeSpokenWords(message)
   if (!text) return state
   if (!voiceAvailable(state, speaker)) return state
   const words: PaperWords = { frame: state.frame, speaker, text }
-  let next = state
+  let next = captureDeviceSpeech(state, { side: speaker, text, deliberateLie: intent })
   for (const owner of ['player', 'opponent'] as const) {
     if (!paperListening(next, owner)) continue
     const doll = paperState(next[owner]).doll!
-    const source = sleepingBody(next[speaker])
+    const source = next[speaker] // Hanzo's controlled double speaks at its own location.
     const target = sleepingBody(next[doll.target])
     if (Math.hypot(source.x - target.x, source.y - target.y) > PAPER_VOICE_RANGE) continue
     next = {
@@ -51,7 +52,8 @@ export function speakPaperWords(
   next = interruptEnForSpeech(next, speaker)
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
-  return resolveJudgmentCommunication(next, speaker, recipientBody(state, recipient).id)
+  const actualRecipient = recipientBody(state, recipient)
+  return resolveJudgmentCommunication(next, speaker, actualRecipient.nenOwner ?? actualRecipient.id)
 }
 
 export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
@@ -60,26 +62,33 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
     state.phase === 'fighting' &&
     !state.catsName &&
     canSpeak(fighter) &&
-    !fighter.hanzoProjection &&
+    !projectionPreparing(fighter) &&
     !fighter.arsenalSleep &&
     !fighter.needlePuppet &&
+    !fighter.blackVoiceControl?.active &&
     voluntarySpeechMind(fighter)
   )
 }
 
-function normalizeSpokenWords(message: string | { text: string; recipient?: string }) {
+function normalizeSpokenWords(
+  message: string | { text: string; recipient?: string; statementIntent?: boolean },
+) {
   return typeof message === 'string'
-    ? { text: message.trim(), target: undefined }
-    : { text: message.text.trim(), target: message.recipient }
+    ? { text: message.trim(), target: undefined, intent: undefined }
+    : { text: message.text.trim(), target: message.recipient, intent: message.statementIntent }
 }
 
 function voluntarySpeechMind(fighter: ArcadeFighter): boolean {
   return (
-    (fighter.kurapika?.blackoutFrames ?? 0) === 0 &&
+    !speechBlackout(fighter) &&
     ![
       fighter.hatsuEffects.manipulatedFrames,
       fighter.hatsuEffects.possessedFrames,
       fighter.hatsuEffects.momozeFrames,
     ].some((frames) => frames > 0)
   )
+}
+
+function speechBlackout(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.kurapika?.blackoutFrames || fighter.dolphinLoan?.blackoutFrames)
 }

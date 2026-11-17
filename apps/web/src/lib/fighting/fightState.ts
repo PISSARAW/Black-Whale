@@ -1,3 +1,7 @@
+import { carryDolphinState } from './dolphinRound'
+import { carryVoiceAutopilot } from './blackVoiceAutopilot'
+import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
+import { createWritingKit } from './bashoMaterials'
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
 import { applyControlSchemes, keepControlScheme, type ControlSchemes } from './controlScheme'
 import { createTrainingState } from './trainingTypes'
@@ -111,6 +115,15 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = carryDolphinState(fighter, previous)
+  fighter = carryVoiceAutopilot(
+    {
+      ...fighter,
+      personalEncounters: previous.personalEncounters,
+      blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
+    },
+    previous,
+  )
   fighter = keepControlScheme(
     preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous),
     previous,
@@ -135,6 +148,14 @@ function createFighter(options: {
   return {
     ...options,
     equipment: personalEquipment(options.id),
+    writingKit:
+      options.id === 'basho'
+        ? createWritingKit(`${options.facing === 1 ? 'player' : 'opponent'}:basho:kit`)
+        : undefined,
+    blackVoiceGear:
+      options.id === 'chrollo'
+        ? createBlackVoiceGear(options.facing === 1 ? 'player' : 'opponent')
+        : undefined,
     maxHealth: options.health,
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,

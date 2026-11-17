@@ -1,3 +1,4 @@
+import { blackVoiceMoveAllowed } from './blackVoice'
 import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { cancelBufferSource } from './bufferedCancel'
 import { attackAuraCost } from './fightAttackCost'
@@ -94,6 +95,7 @@ function techniqueAllowed(options: AuraAttackOptions): boolean {
   if (!blinkyActionAllowed(options)) return false
   if (moveId === 'gel:finisher') return false
   if (kind !== 'special') return true
+  if (!blackVoiceMoveAllowed(state, side, moveId)) return false
   if (!padailleMoveAvailable(state[side], moveId)) return false
   if (!paperMoveAllowed(state, side, moveId)) return false
   if (isErigeronAction(state[side], kind, moveId)) return false

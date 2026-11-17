@@ -1,4 +1,6 @@
 import { advanceLuiniAnchors } from './luiniSpatial'
+import { advanceCopiedInventory, recordEquipmentPickup } from './copiedInventory'
+import { historicalMatterExists } from './historicalCopyLifetime'
 import { illumiBodyFree } from './illumiState'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -46,6 +48,7 @@ function completeDeliveries(before: FightState, after: FightState): FightState {
 }
 
 export function interactWithPreparation(state: FightState, side: FightSide): FightState {
+  state = advanceCopiedInventory(state)
   const fighter = state[side]
   if (!state.battlefield || !canInteractBody(fighter)) return state
   const target = preparationInteractionTarget(state, side)
@@ -65,15 +68,15 @@ function pickPreparationEquipment(
 ): FightState {
   const fighter = state[side]
   const equipment = target.kind === 'needles' ? 'needles' : 'flute'
-  if (equipment === 'flute' && hasEquipment(fighter, 'flute')) return state
+  if (
+    hasEquipment(fighter, equipment) ||
+    !historicalMatterExists(state, target.copy ? target.id : undefined)
+  )
+    return state
   const picked = updateEntity(state, target.id, { present: false })
   return {
     ...picked,
-    [side]: {
-      ...fighter,
-      equipment: [...(fighter.equipment ?? []), equipment],
-      ...(equipment === 'flute' ? { melodyFlute: true } : {}),
-    },
+    [side]: recordEquipmentPickup(fighter, target, equipment),
   }
 }
 
@@ -183,10 +186,17 @@ export function preparationInteractionTarget(
     .filter(
       (entry) =>
         canInteract(entry, side) &&
-        (entry.kind !== 'flute' || !hasEquipment(fighter, 'flute')) &&
+        historicalMatterExists(state, entry.copy ? entry.id : undefined) &&
+        needsPreparedEquipment(fighter, entry) &&
         Math.hypot(entry.x - fighter.x, entry.y - fighter.y) <= PREPARATION_REACH,
     )
     .sort(
       (a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id.localeCompare(b.id),
     )[0]
+}
+
+function needsPreparedEquipment(fighter: FightState['player'], entry: PreparedEntity): boolean {
+  return entry.kind === 'flute' || entry.kind === 'needles'
+    ? !hasEquipment(fighter, entry.kind)
+    : true
 }

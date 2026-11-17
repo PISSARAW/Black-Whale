@@ -1,3 +1,9 @@
+import { dolphinLoanAi } from './dolphinAi'
+import { blackVoiceAi } from './blackVoiceAi'
+import { bashoArsenalAi } from './bashoArsenalAi'
+import { physicalProjectile } from './projectileMatter'
+import { gallerySenseAi } from './galleryAi'
+import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
@@ -21,13 +27,27 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    dowsingAi(state) ??
-    judgmentAiPreset(state) ??
+    dolphinLoanAi(state, perform) ??
+    utilityArsenalAi(state, perform) ??
     gumAi(state) ??
     interviewAi(state) ??
     supportAi(state) ??
     copiedArsenalAi(state, perform) ??
     historicalAi(state, perform)
+  )
+}
+
+function utilityArsenalAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return (
+    blackVoiceAi(state) ??
+    bashoArsenalAi(state, perform) ??
+    deviceAi(state) ??
+    dowsingAi(state) ??
+    gallerySenseAi(state) ??
+    judgmentAiPreset(state)
   )
 }
 
@@ -170,7 +190,7 @@ function incomingObject(state: FightState): boolean {
   return state.projectiles.some(
     (shot) =>
       shot.owner === 'player' &&
-      shot.matter === 'object' &&
+      physicalProjectile(shot) &&
       !shot.living &&
       perceivesProjectile(state.opponent, shot) &&
       Math.abs(shot.x - state.opponent.x) < 18 &&

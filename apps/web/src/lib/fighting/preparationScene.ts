@@ -71,7 +71,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
   }
 
   function human(entry: PreparedEntity) {
-    const morena = entry.kind === 'morena'
+    const morena = entry.kind === 'morena' || entry.copy?.originalKind === 'morena'
     const seen: HumanLook = {
       id: `prepared:${entry.id}`,
       kind: 'combatant',
@@ -163,7 +163,9 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   return {
     sync(state: FightState, seconds: number) {
-      const entries = state.battlefield?.entities ?? []
+      const entries = (state.battlefield?.entities ?? []).filter(
+        (entry) => entry.kind !== 'device' && !entry.writingKit && !entry.weakSpirit,
+      )
       const active = new Set(entries.map((entry) => entry.id))
       for (const entry of entries) {
         let root = models.get(entry.id)

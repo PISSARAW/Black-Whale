@@ -1,4 +1,5 @@
 import { performHistoricalCommand } from './chrolloHistoricalAction'
+import { gallerySenseOptions } from './gallerySense'
 import { chrolloPageForMove } from './chrolloBook'
 import { HISTORICAL_CHROLLO_PAGES } from './chrolloHistoricalPages'
 import { canAct } from './fightActorState'
@@ -38,7 +39,7 @@ export function historicalOptions(state: FightState, side: FightSide): ArsenalOp
       en: 'Release target / fish',
       condition: ['Fin de l’effet maintenu.', 'End the maintained effect.'],
     })
-  return options.map((option) => ({
+  return [...options, ...gallerySenseOptions(state, side)].map((option) => ({
     ...option,
     ready: ready && performHistoricalCommand(state, side, option.command) !== state,
   }))

@@ -1,4 +1,6 @@
+import { releaseBlackVoicePage } from './blackVoice'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
+import { expireHistoricalMatter } from './historicalMatterClock'
 import { releaseLuiniAnchor } from './luiniSpatial'
 import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
@@ -51,7 +53,9 @@ export function reconcileChrolloPages(
       (book?.bookmark === page || (book?.open && book.pages[book.page] === page)) &&
       !chrolloHasActivePage(after[side], page),
   )
-  return lost.reduce((state, page) => clearPageEffects({ state, side, page }), after)
+  return expireHistoricalMatter(
+    lost.reduce((state, page) => clearPageEffects({ state, side, page }), after),
+  )
 }
 
 function clearPageEffects(options: {
@@ -74,7 +78,7 @@ function clearPageEffects(options: {
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
   const spatial = page === 'luini' ? releaseLuiniAnchor(cleared, side) : cleared
-  return releaseMachiPageThread(releaseIllumiPage(spatial, side, page), side, page)
+  return releaseCopiedBindings(spatial, side, page)
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
@@ -146,4 +150,9 @@ function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFight
       ? fighter.gumWoundSeals
       : undefined,
   }
+}
+
+function releaseCopiedBindings(state: FightState, side: FightSide, page: ChrolloPage): FightState {
+  const voiced = page === 'black-voice' ? releaseBlackVoicePage(state, side) : state
+  return releaseMachiPageThread(releaseIllumiPage(voiced, side, page), side, page)
 }

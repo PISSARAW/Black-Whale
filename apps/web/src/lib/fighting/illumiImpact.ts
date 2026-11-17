@@ -30,6 +30,7 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
             owner: side,
             order: illumiState(attacker).order,
             needleEmbedded: true,
+            mediumCopyId: attacker.equipmentProps?.needles?.copyId,
           },
           attack: null,
           bufferedAttack: null,
@@ -79,6 +80,7 @@ function canImplant({ state, side, defence }: NeedleContact): boolean {
 function alreadyControlled(target: ArcadeFighter): boolean {
   return Boolean(
     target.needlePuppet ||
+    target.blackVoiceControl?.active ||
     target.hatsuEffects.manipulatedFrames > 0 ||
     target.hatsuEffects.possessedFrames > 0,
   )

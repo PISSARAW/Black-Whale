@@ -1,3 +1,11 @@
+import {
+  equippedDolphin,
+  loanCarrier,
+  restoreLoanCarrier,
+  reconcileLoanLinks,
+} from './dolphinBorrowing'
+import { changeDolphinBody } from './dolphinBodies'
+import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
@@ -34,13 +42,13 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const held = fighter.kurapika?.held
   const move = moveById(held?.moveId)
   if (!held?.loaded || held.used) return false
-  // Preserve the actual technique's conditions and cost at the borrower's attained state.
-  const actor: ArcadeFighter = {
+  // Preserve the actual technique's conditions; its reserve and quality belong to the donor.
+  const actor: ArcadeFighter = stolenAuraActor({
     ...fighter,
     id: held.source,
     nenOwner: fighter.nenOwner ?? fighter.id,
     stolenChainAbility: undefined,
-  }
+  })
   const prepared = { ...state, [side]: actor }
   if (held.moveId === 'biscuit:cookie') return cookieCanStart(prepared, side, side)
   if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
@@ -54,32 +62,34 @@ export function withDolphinIdentity(
   source?: ArcadeFighter['id'],
 ): FightState {
   const borrowed = (fighter: ArcadeFighter) => {
-    const held = fighter.kurapika?.held
+    const held = equippedDolphin(fighter)
     return held?.used && (!source || held.source === source)
-      ? {
-          ...fighter,
+      ? stolenAuraActor({
+          ...loanCarrier(fighter),
           id: held.source,
           nenOwner: fighter.nenOwner ?? fighter.id,
-        }
+        })
       : fighter
   }
   const player = borrowed(state.player)
   const opponent = borrowed(state.opponent)
   if (player === state.player && opponent === state.opponent) return run(state)
   const next = run({ ...state, player, opponent })
-  return {
+  return reconcileLoanLinks({
     ...next,
-    player: {
-      ...next.player,
-      id: state.player.id,
-      nenOwner: state.player.nenOwner,
-    },
-    opponent: {
-      ...next.opponent,
-      id: state.opponent.id,
-      nenOwner: state.opponent.nenOwner,
-    },
-  }
+    player: player === state.player ? next.player : restoreBorrowedBody(state.player, next.player),
+    opponent:
+      opponent === state.opponent
+        ? next.opponent
+        : restoreBorrowedBody(state.opponent, next.opponent),
+  })
+}
+function restoreBorrowedBody(original: ArcadeFighter, after: ArcadeFighter): ArcadeFighter {
+  return restoreLoanCarrier(original, {
+    ...restoreStolenAura(original, after),
+    id: original.id,
+    nenOwner: original.nenOwner,
+  })
 }
 
 /** Track effects created by this use, so Dolphin cannot stop an unrelated Hatsu. */
@@ -120,11 +130,15 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
   const fighter = state[side]
   const held = fighter.kurapika?.held
   if (!held) return state
-  return {
+  const restored = {
     ...state,
     [side]: { ...fighter, kurapika: { ...fighter.kurapika!, held: null } },
-    [held.victim]: { ...state[held.victim], stolenChainAbility: undefined },
   }
+  const member = held.victimMember ?? state.teamMatch?.seats[held.victim].active ?? 0
+  return changeDolphinBody(restored, { owner: held.victim, member }, (body) => ({
+    ...body,
+    stolenChainAbility: undefined,
+  }))
 }
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */
@@ -172,6 +186,11 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   return {
     'gum-support': gumUseBusy(fighter),
     cookie: Boolean(fighter.cookie),
+    'biohazard-device': Boolean(
+      state.battlefield?.entities.some(
+        (entry) => entry.device?.form?.owner === side || entry.device?.transforming?.owner === side,
+      ),
+    ),
     prepared: controlledEntities(state, side).length > 0,
     'luini-anchor': Boolean(luiniAnchor(state, side)),
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
@@ -187,7 +206,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     door: doorNetworkBusy(state, side),
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
     'body-and-soul': Boolean(fighter.lynchQuestion),
-    poem: Boolean(fighter.bashoPoem),
+    poem: poemUseBusy(state, side),
     gum: state.bungeeGum?.owner === side,
     projection: Boolean(fighter.hanzoProjection),
     texture: Boolean(fighter.textureSurprise),
@@ -200,5 +219,20 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
   if (fighter.gumWoundSeals) return true
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
+  )
+}
+
+function poemUseBusy(state: FightState, side: FightSide): boolean {
+  const actor = state[side]
+  const loan = actor.dolphinLoan?.held.source === 'basho'
+  const papers = [actor.bashoPoem, ...(actor.bashoArchive ?? [])]
+  return (
+    papers.some((poem) => poem && (!loan || poem.loan)) ||
+    (['player', 'opponent'] as const).some((target) => {
+      const ward = state[target].bashoWard
+      return Boolean(
+        ward && ward.owner === side && ward.remainingFrames > 0 && (!loan || ward.loan),
+      )
+    })
   )
 }

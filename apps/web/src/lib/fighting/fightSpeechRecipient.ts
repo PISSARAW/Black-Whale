@@ -1,5 +1,5 @@
-import { battleAppearance } from './battleCantabileRules'
-import { canHear, soundDistance } from './melodyRules'
+import { visibleBodyAppearance } from './fightBodyIdentity'
+import { canHear } from './melodyRules'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface SpeechRecipient {
@@ -35,7 +35,7 @@ export function recipientHears(
     canHear(body) &&
     !body.arsenalSleep &&
     !recipientUnconscious(body) &&
-    soundDistance(state[speaker], body) <= 18
+    Math.hypot(state[speaker].x - body.x, state[speaker].y - body.y) <= 18
   )
 }
 export function recordHeardWords(
@@ -43,9 +43,10 @@ export function recordHeardWords(
   recipient: SpeechRecipient,
   words: { speaker: FightSide; text: string },
 ): FightState {
+  if (recipientBody(state, recipient).blackVoiceAutopilot) return state
   const heardWords = {
     frame: state.frame,
-    speaker: battleAppearance(state[words.speaker]),
+    speaker: visibleBodyAppearance(state[words.speaker]),
     text: words.text,
   }
   if (recipient.reserve === undefined)

@@ -1,3 +1,4 @@
+import { physicalHandOccupancy } from './deviceHands'
 import { activeHitbox, attackData, boxesOverlap, otherSide } from './frameData'
 import { arenaObjects } from './arenaActions'
 import { updateEntity } from './preparationWorld'
@@ -6,7 +7,8 @@ import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { hatsuDamageFactor } from './hatsu'
 import { remotePunchCanHit } from './remotePunch'
-import { hasBashoPoem } from './bashoPoem'
+import { bashoEffectPoem } from './bashoPoem'
+import { bashoFistAttack } from './bashoFire'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { nenDamageFactor } from './nen'
 import type { PreparedEntity } from './preparationTypes'
@@ -128,7 +130,11 @@ function strikeArenaObject(state: FightState, side: FightSide): FightState {
 
 function ignitePunchedObject(state: FightState, side: FightSide, objectId: string): FightState {
   const fighter = state[side]
-  if (!fighter.bashoPoem?.ready || fighter.attack?.kind !== 'light' || !hasBashoPoem(fighter))
+  if (
+    !bashoEffectPoem(fighter, 'ignite-punched-target') ||
+    !bashoFistAttack(fighter) ||
+    physicalHandOccupancy(state, side).size >= 2
+  )
     return state
   const object = state.battlefield!.entities.find((entry) => entry.id === objectId)!
   return updateEntity(state, object.id, { arena: { ...object.arena!, burning: 90 } })

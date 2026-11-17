@@ -1,3 +1,4 @@
+import { reconcileBlackVoice } from './blackVoice'
 import { settleTeamBodyOutcome } from './teamOutcome'
 import { finishFight } from './combatVerdict'
 import { BIOHAZARD_GRACE } from './biohazard'
@@ -18,6 +19,7 @@ export function fightAcceptsCommands(state: FightState): boolean {
 
 /** The sole verdict path for damage and attributed deaths; time and expulsion are nonlethal. */
 export function resolveFightOutcome(state: FightState): FightState {
+  state = reconcileBlackVoice(state)
   if (fightResolutionPending(state)) return state
   const durable = preservePointHealth(releaseBiohazardWounds(state, BIOHAZARD_GRACE))
   const triggered = resolvePostMortemDeaths(durable)

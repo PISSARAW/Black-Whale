@@ -1,3 +1,6 @@
+import { scenarioWeakSpirit } from './bashoWard'
+import { scenarioWritingKit } from './bashoMaterials'
+import { scenarioDevices } from './physicalDevices'
 import type { FightEnvironment } from './fightEnvironment'
 import type {
   FightBattlefield,
@@ -55,6 +58,9 @@ function installProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
+  if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
+  if (resources.has('writing')) entities.push(scenarioWritingKit(side))
+  if (resources.has('devices')) entities.push(...scenarioDevices(side))
   if (resources.has('animals')) entities.push(entity('animal', side, x + 2))
   if (resources.has('birds')) entities.push(entity('bird', side, x + 3))
   if (resources.has('plants')) entities.push(entity('seed', side, x))

@@ -172,13 +172,325 @@ la question. Les snapshots conservent le même résultat après restauration.
 Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
 et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
 
-L'analyse d'un enregistrement doit encore disposer d'un support réellement
-présent, d'une rencontre antérieure et d'Emperor Time. La localisation par
-radiesthésie et les questions fondées sur d'autres souvenirs restent également
-à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La localisation par radiesthésie et les questions fondées sur d'autres souvenirs
+restent à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
 La distinction entre mensonge conscient et connaissance objective est recoupée
 avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
 notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
+
+## Biohazard : caméra, arme et émetteur physiques
+
+Le scénario peut fournir une caméra, une arme à six balles, un émetteur et son
+récepteur à chaque camp. Ces stocks sont des réglages de préparation, jamais
+une création d'objets par Biohazard. Le contact initial immobilise réellement
+le corps et s'interrompt sur une perte de contact ou une incapacité.
+
+- La caméra devient un chat mobile en conservant l'enregistrement. Elle capte
+  seulement les corps visibles et les paroles audibles à sa position. Le chat
+  revient sur ordre ; la lecture exige de retrouver physiquement la caméra.
+  Aucune transmission vidéo à distance ni connaissance de l'intention d'autrui
+  n'est donnée par une simple lecture.
+- L'arme conserve son stock réel et sa trajectoire de balle. Son canon-serpent
+  peut retourner le tir contre le porteur réel de l'arme. Ni la transformation
+  ni une commande de tir ne recréent de munitions.
+- L'émetteur devient une huître que son porteur avale et ressort à sa propre
+  position. La forme dispose d'environ **deux heures simulées** ; le signal
+  conserve sa batterie et son canal. Le récepteur produit une consultation
+  datée, jamais une position automatiquement mise à jour. L'expiration de l'aura
+  laisse l'objet physique là où il se trouve, y compris dans le corps.
+
+Les mains, la main droite du livre ouvert, les membres réels d'une équipe, les
+impacts sur le matériel et les interruptions sont pris en compte. Les copies
+et Dolphin exigent les mêmes objets ; Dolphin consomme son usage et demeure
+chargé tant que la transformation subsiste. Le matériel peut être endommagé.
+L'IA rejoint les appareils par la marche ordinaire et utilise les trois formes.
+Les enregistrements bruts restent privés côté arbitre en PvP ; seule une lecture
+autorisée transmet son contenu au lecteur. Les replays conservent les appareils,
+les stocks, les déplacements et les consultations. Le ruleset devient
+**clash-combat-20** ; le On et les armes ordinaires restent disponibles.
+
+La portée des capteurs, les batteries, les PV du matériel, le temps de contact,
+le coût d'aura et la durée des formes autres que l'huître sont des réglages du
+scénario. La valeur du quota journalier de Biohazard et une formule canonique
+reliant masse et aura ne sont pas connues : aucun nombre n'est inventé comme
+condition du manga. Les usages sont recoupés avec la synthèse de
+[Hinrigh](https://hunterxhunter.fandom.com/wiki/Hinrigh_Biganduffno).
+Les couteaux et le budget complet de matériel de Hinrigh restent à auditer.
+
+## Dowsing Chain : analyse d'une véritable vidéo
+
+Kurapika peut analyser un extrait effectivement enregistré et lu sur la caméra,
+sous **Emperor Time**, après avoir rencontré la personne. La rencontre est
+constatée dans la simulation par un face-à-face visible ; elle n'est jamais
+accordée par le choix d'un personnage dans le menu. Cette mémoire reste acquise
+entre les manches et appartient au corps réel d'un membre d'équipe. La portée
+de reconnaissance de dix-huit unités est un réglage du duel.
+
+Chaque joueur peut déclarer sincèrement ou mentir consciemment sur les trois
+faits déjà représentés (identité, état du Nen, In). Il garde seul le contrôle
+de sa déclaration. Le canal de voix existant vérifie parole, esprit libre et
+interdictions de communication. Une caméra doit réellement capter son visage
+et sa voix ; le support conserve chaque prise séparément, même pour des mots
+identiques prononcés dans une seule frame.
+
+Une lecture ordinaire révèle les images et les paroles, sans intention cachée.
+Dowsing analyse la prise sélectionnée, conserve son résultat daté et ne consulte
+pas le Nen actuel ou les pensées de la personne filmée. Un texte libre dont
+l'intention n'est pas représentée donne un résultat **indéterminé**, jamais une
+certification de sincérité. La perte de la caméra, de la vue, de l'audition ou
+d'Emperor Time termine la concentration. Les frais de vie d'Emperor Time restent
+comptés par l'horloge réelle ; les trois points d'aura sont un réglage du duel.
+
+Les commandes, la sélection d'extrait et les résultats sont reproductibles après
+snapshot et en PvP, y compris pour P2. La disponibilité des boutons ne révèle
+pas l'intention cachée. Les rencontres, les analyses et les réponses restent
+privées pour l'adversaire. L'IA analyse ses enregistrements admissibles sans
+fabriquer de réponse humaine et passe aux prises qu'elle n'a pas encore étudiées.
+Le ruleset devient **clash-combat-21**. Le On reste disponible, y compris pour
+une déclaration volontaire ; l'analyse vidéo n'accorde pas Emperor Time à un
+simple voleur de la chaîne.
+
+Cette extension reprend l'usage vidéo du chapitre 348, recoupé avec
+[Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika). Elle ne fournit pas
+une base de connaissances universelle pour déterminer le vrai dans une phrase
+libre ; les autres sujets conscients et la radiesthésie restent à représenter.
+
+## Basho : trois compositions attestées et supports matériels
+
+Great Hiker propose désormais les trois effets montrés aux chapitres 68, 402 et
+404 : embraser ce que frappe le poing, brûler mortellement une personne qui ment
+sciemment en réponse à ses questions, et écarter les faibles esprits avec un
+papier protecteur. Les textes FR/EN sont des adaptations de leur sens ; aucune
+phrase libre ne devient un souhait et aucune formule de qualité littéraire
+n'est inventée. Référence de recoupement :
+[Basho](https://hunterxhunter.fandom.com/wiki/Basho).
+
+Le pinceau, l'encre et les feuilles sont un équipement physique. Basho commence
+avec son matériel ; copier ou emprunter Great Hiker ne le fournit pas. Une
+réserve présente dans la préparation scénarisée peut être ramassée et déposée
+sans dupliquer son stock. Écrire occupe les deux mains, consomme une feuille dès
+le début et reste interruptible. Un livre ouvert et un appareil tenu occupent
+réellement leurs mains. Les compositions terminées restent distinctes : écrire
+le poème contre les mensonges ne transforme pas ce papier en poème du poing.
+Une copie matérielle par Gallery Fake suit la disparition de son support et ne
+reproduit ni pouvoir actif ni marque Sun and Moon de l'original.
+
+Le poème contre les mensonges demande une question audible et une réponse
+volontaire à cette question. Les sujets actuellement représentés sont
+l'identité, la disponibilité du Nen et l'usage de In. Une réponse sciemment
+mensongère déclenche un décès par le feu, y compris dans un format aux points,
+avec la bonne attribution pour les pouvoirs post-mortem. Le silence, une réponse
+sincère ou du texte libre non interprété ne déclenchent rien. Une déclaration
+structurée ne permet pas de contourner une question en cours.
+
+Le talisman exige une bande réellement écrite et un contact physique. Sa pose
+sur autrui est coopérative dans ce scénario ; ce choix ne crée pas un serment de
+consentement du Nen. Il repousse les faibles esprits effectivement présents,
+sans soin ni suppression d'une malédiction puissante. Un esprit suit le corps
+visé, même lorsqu'un relais d'équipe change le combattant actif. Le papier reste
+visible après la fin de son effet ; la disparition d'un support matérialisé le
+retire réellement.
+
+Les trois feuilles initiales, la seconde d'écriture, les 25 points d'aura, les
+brûlures de contact et la minute du talisman sont des **réglages de duel**, pas
+des quotas ou durées canoniques. L'IA utilise le matériel présent, les papiers
+utiles et les questions sans fabriquer de réponse adverse. Les modèles visuels
+réemploient le papier et le pinceau existants. Le PvP, les snapshots et l'import
+complet des replays acceptent les dix ressources de préparation ; le test
+d'export/import couvre également les appareils ajoutés précédemment. Le ruleset
+est **clash-combat-22**. Le On demeure disponible et n'empêche pas de manipuler
+un équipement ordinaire ; il ne donne pas accès à Great Hiker.
+
+Cette extension rend les trois effets accessibles. Elle ne fournit pas une
+compréhension universelle des mensonges en langage libre, ni une notation
+littéraire des poèmes, ni un exorcisme universel.
+
+## Emperor Time pendant une séquence post-mortem
+
+La séquence de Cat's Name suspend le combat, mais le temps réellement vécu par
+Kurapika continue de coûter sa vie si Emperor Time est actif. Le coût avance
+sur les frames simulées jusqu'à sa mort effective ; ni un Dolphin encore chargé
+ni un évanouissement ne créent un Emperor Time post-mortem. Le seuil de trois
+heures et les neuf heures d'inconscience restent inchangés. Les tests couvrent
+les deux côtés, la limite d'évanouissement et la re-simulation d'un replay.
+Le ruleset passe à **clash-combat-23**. Le On est conservé.
+
+## Hanzo : parole du double et corps séparé
+
+Le double de Hanzo peut parler et écouter près de sa propre position, comme dans
+l'échange avec Tuffdy au chapitre 372. L'interdiction générale de parole pendant
+Skill 4 est retirée une fois sa préparation terminée. Une conversation près du
+double ne déplace pas le corps endormi ; interpeller ce corps reste une action
+distincte qui interrompt la projection. Les privations de parole, le sommeil et
+la perte d'autonomie restent exécutés. Recoupement :
+[Hanzo](https://hunterxhunter.fandom.com/wiki/Hanzo).
+
+Le papier d'écoute de Kalluto reste planté sur le corps physique et ne reçoit pas
+une voix émise à distance par le double. Les caméras enregistrent chaque corps
+visible à sa position et captent la voix là où elle est émise. Une prise du
+double n'est pas attribuée automatiquement au corps physique pour l'analyse de
+Dowsing Chain : aucun lien d'identité authentifié n'est fabriqué. Les tests
+couvrent les deux côtés, le rappel du corps, la parole empêchée, l'écoute par
+papier, la caméra et les snapshots. Le ruleset devient **clash-combat-24**.
+Cette correction n'invente aucun des autres skills numérotés non révélés.
+Le On est conservé.
+
+## Gallery Fake : repérage et En des copies
+
+Le contact avec l'original permet désormais de relever les positions de ses
+copies. L'utilisateur doit garder la main gauche au contact et Gallery Fake
+actif ; le livre peut occuper sa main droite. Tenir l'original dans la main gauche
+est un contact valable, sans exiger une troisième main. Le comportement reprend
+le repérage des yeux au chapitre 109, recoupé avec
+[Kortopi](https://hunterxhunter.fandom.com/wiki/Kortopi) et
+[le résumé du chapitre 109](https://hunterxhunter.fandom.com/wiki/Chapter_109).
+
+Le relevé distingue chaque copie réellement présente et les contacts à
+l'intérieur de son volume. Une pièce copiée utilise son intérieur, sans devenir
+une caisse pleine. Aucun rayon distant universel, identité mentale ou réserve
+d'aura de la cible n'est révélé. Les dimensions sont les conventions du décor
+de duel. Un appareil transporté suit les mains du porteur réel ; le matériel
+d'écriture ramassé suit son corps. Un original humain reste lié au membre
+réellement copié après un relais, plutôt qu'à la place active de son équipe.
+Le repérage s'interrompt si le contact ou le pouvoir manque. La dernière
+observation reste datée, sans mise à jour cachée après interruption.
+
+Les résultats sont privés, l'interface P2 remappe correctement le corps
+original et l'IA peut établir le contact avec un original disponible. Un contact
+réel détecté dans une copie peut informer son déplacement même sans vision.
+Un replay complet reproduit le suivi d'un appareil copié, ramassé puis transporté
+par les commandes ordinaires.
+
+La fabrication des copies conserve les propriétés matérielles représentées,
+sans recopier les volontés, panaches de soutien, contrôleurs, ancrages ou visites
+personnelles. Une fausse Morena ne remplace pas Morena et une fausse graine
+n'est pas une cible vivante pour Erigeron. Les appareils suivent leurs collisions
+propres ; ils ne deviennent pas des obstacles fixes à l'emplacement de leur
+création lorsqu'ils sont portés. Les marques Sun and Moon ne sont pas dupliquées.
+Les autres interactions matérielles non représentées restent à auditer.
+
+Le contrôle des gestes est commun : Skill Hunter ne s'ouvre pas autour d'un
+objet tenu à droite, Convert Hands vérifie la main qui touche, Fun Fun Cloth et
+Gallery Fake exigent leurs deux mains, et Order Stamp demande une main disponible.
+Toucher le corps endormi de Hanzo le réveille réellement. Le ruleset devient
+**clash-combat-25**. Le On est conservé ; il n'accorde pas le repérage de Gallery Fake.
+
+## Copies transportées et parties détachées
+
+Ramasser une flûte ou des aiguilles copiées conserve maintenant leur provenance
+matérielle. Le ramassage ne redémarre pas leur durée de vie et ne transforme pas
+une copie en équipement permanent. Le contrôle s'applique aussi aux membres en
+réserve et empêche de convertir des aiguilles matérialisées en stock réel lors
+d'une nouvelle manche. Un équipement réel déjà possédé n'est pas remplacé par
+une copie ramassée.
+
+La modélisation distingue l'objet entier d'une pièce qui en est déjà séparée :
+endommager l'arme ne transmet pas rétroactivement des dégâts à une balle déjà
+tirée, ni détruire le matériel d'écriture à une feuille déjà écrite. Ces parties
+conservent la durée et les conditions d'existence de leur copie d'origine. Les
+balles et aiguilles lancées, papiers archivés, talismans et aiguilles implantées
+ne deviennent pas permanents après séparation. Les marques réellement posées
+restent distinctes des marques de l'objet dont on a seulement copié l'apparence.
+
+La perte d'une flûte copiée arrête immédiatement la musique et sa pacification.
+La disparition d'une aiguille de contrôle n'efface pas la lésion cérébrale déjà
+représentée. Le matériel disparaît aussi pendant le hitstop ou si son créateur
+meurt au cours de Cat's Name, sans faire avancer des attaques de marionnettes
+pendant cette séquence. La vérification intervient à la fin de la frame réelle
+et dans ses prévisions, avant de permettre l'usage suivant.
+
+Bungee Gum reconnaît les objets physiques matérialisés sans les confondre avec
+un faisceau d'aura. Les forces transmises à ses mains restent prises en compte.
+Un objet copié retenu par la gomme, ou stocké dans la représentation de Culdcept
+du duel, conserve sa provenance ; le stockage ne rend pas sa matière éternelle.
+Cette correction n'apporte aucune preuve supplémentaire sur les conditions
+encore inconnues de Culdcept. Blinky conserve son interdiction des objets de Nen.
+
+En PvP, les pages masquées ne sont pas traitées comme des pages inexistantes :
+le client conserve le matériel effectivement fourni par l'arbitre sans révéler
+le contenu du livre adverse. Les projections privées et les outils de replay
+conservent la même distinction. Le ruleset devient **clash-combat-26** et le On
+reste conservé.
+
+## Black Voice : téléphone original, deux antennes et contrôle persistant
+
+Le matériel du chargement rétrospectif est explicitement celui prêté par Shalnark :
+un téléphone original associé à deux antennes réelles. Ces objets ne sont pas
+conjurés par Skill Hunter. Ils peuvent être rangés, déposés, ramassés et perdus ;
+le passage à la manche suivante ne recrée ni téléphone perdu ni antenne implantée.
+Une copie Gallery Fake conserve l'apparence matérielle, sans copier le lien Nen
+qui fait fonctionner Black Voice.
+
+La main qui implante l'antenne et celle qui utilise le téléphone sont réellement
+disponibles : le livre ouvert occupe toujours la droite. Le contact offensif est
+résolu par le moteur ; le panneau permet aussi l'implantation au contact d'une
+personne réelle dans la préparation. Aucun cadavre, copie inerte, double de Hanzo
+ou sujet déjà contrôlé n'est transformé en cible vivante admissible.
+Le téléphone associé donne ensuite les ordres d'arrêt, d'approche, de recul et
+d'attaque. Les personnes préparées frappent avec leur propre corps ; le contrôle
+ne leur donne aucun Hatsu personnel de Chrollo. Les vitesses et dégâts de ces
+coups ordinaires restent des réglages de duel.
+
+Le contrôle n'expire plus après 90 images : l'antenne reste implantée jusqu'à son
+retrait physique et l'ordre continue après rangement du téléphone. Un autre
+combattant libre peut la retirer au contact. Mort du sujet, mort du manipulateur
+ou perte de la page interrompent le Nen, sans effacer l'objet implanté. Le téléphone
+original est nécessaire pour changer un ordre ou consulter la vue du sujet.
+Cette image ne montre que son champ visuel représenté, avec une portée de scénario ;
+privation de la vue et yeux fermés donnent une image vide. Elle ne révèle pas
+les pensées, les pages cachées ou les décisions futures. Le relevé reste daté et privé.
+
+L'IA prend son téléphone après une implantation réussie puis donne un ordre.
+Les références corporelles de P2, les ordres persistants, les observations privées,
+les objets copiés et l'export/import complet d'un replay sont testés.
+Le ruleset est **clash-combat-27**. Le **On est conservé**.
+L'auto-manipulation est distincte de ces ordres ; son contexte exécutable est précisé ci-dessous.
+Les références sont les chapitres 95–96, 227 et 351–357, recoupés avec
+[Shalnark](https://hunterxhunter.fandom.com/wiki/Shalnark) et le
+[récapitulatif du chapitre 351](https://hunterxhunter.fandom.com/wiki/Chapter_351).
+
+## Auto-manipulation de Black Voice : mission, budget et conséquences
+
+L'application montrée par Shalnark au chapitre 227 est accessible depuis la page
+historique de Black Voice : sortir une des deux antennes originales, l'implanter
+sur son propre corps, prendre le téléphone associé puis activer le mode. Aucun
+matériel ou Nen supplémentaire n'est créé par cette séquence. Le contrôle de soi
+ne commence qu'à l'activation effective du téléphone ; la simple présence de
+l'antenne ne donne aucune protection préventive fictive.
+
+Le corps agit ensuite de façon autonome contre le combattant réel qui était
+visible à l'activation. Son identité corporelle et son indice d'équipe sont
+conservés. Les frappes passent par les coups physiques ordinaires, leurs boîtes
+de contact, les gardes et les dégâts du moteur ; aucune frappe n'applique par
+commodité une autre page de Chrollo. Les obstacles restent solides. Le budget
+d'aura est réellement dépensé, sans remplir la réserve pour représenter la hausse
+de débit. Les projectiles matériels ordinaires ne reçoivent pas ce bonus.
+
+Le joueur ne peut ni donner d'ordres, ni ranger les objets, ni tourner une page
+pour annuler volontairement la mission. Une interruption forcée du Nen, un retrait
+physique de l'antenne par autrui ou la défaite du corps visé interrompent le mode.
+Le passage à une manche suivante après un arrêt du combat ne permet pas de le
+réinitialiser : mission, page, antenne et réserve d'aura restent engagées.
+
+Après la mission, les douleurs musculaires et la faiblesse durent **au moins deux
+jours simulés** ; elles persistent entre les manches et le temps avance aussi
+pendant le hitstop et Cat’s Name. Deux jours constituent le minimum retenu dans
+ce scénario pour les plusieurs jours indiqués au chapitre 227, jamais une durée
+canonique exacte. Les multiplicateurs de force et de mobilité, l'affaiblissement
+et les coûts sont des réglages du duel. Cette application d'une capacité copiée
+n'attribue pas à Chrollo une performance physique chiffrée montrée chez Shalnark.
+Les habitudes observées, rencontres et paroles reçues pendant la mission ne sont
+pas ajoutées à ses souvenirs conscients ; les enregistrements d'appareils externes
+restent des objets indépendants.
+
+Le contexte actuellement exécutable est **un duel K.-O. contre un seul ennemi
+visible**, sans autre personne ennemie visible dans la préparation. Le format
+aux points et une mission contre plusieurs ennemis ne sont pas représentés par
+une condition Nen inventée : l'action y reste indisponible. Le cas à plusieurs
+ennemis montré chez Shalnark reste donc à généraliser avant certification complète.
+L'IA peut préparer les quatre étapes à partir de son propre matériel dans une
+situation de danger. Les missions, leurs effets et leur budget se rejouent par
+export/import complet. Le ruleset devient **clash-combat-28** ; le **On reste présent**.
 
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
@@ -187,15 +499,15 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                         |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.               |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                 |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la vidéo, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                     |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les destinataires non éveillés et les éditeurs spécialisés du prêt de Stealth Dolphin. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                 |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
-| Hinrigh | Étendre Biohazard aux autres objets et applications effectivement montrés, en conservant les fonctions matérielles originales. Les deux menottes ne constituent pas l'arsenal complet. |
-| Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |
+| Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
+| Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |
 | Beyond | Ajouter une préparation sacrificielle réelle et une cible déclarée avant de simuler sa malédiction. |
 | Furykov | Représenter les travaux de déchiffrage et de fabrication dans un contexte où leur durée est réellement possible. |
 
@@ -218,5 +530,111 @@ ne fournit pas toutes les planches en accès libre. Les synthèses de
 [Hisoka](https://hunterxhunter.fandom.com/wiki/Hisoka_Morow) et
 [Longhi](https://hunterxhunter.fandom.com/wiki/Longhi) ont servi à recouper les
 conditions ; elles ne remplacent pas une relecture intégrale des planches.
+Le périmètre publié a également été vérifié jusqu'au [chapitre 420 sur VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-420/chapter/51204), publié le 6 septembre 2026. Les manuscrits annoncés au-delà ne sont pas traités comme des chapitres publiés. Cette vérification de publication ne certifie pas à elle seule la couverture de chaque nouvelle technique.
 Les poèmes apocryphes de `data/prophecies` ne servent jamais de prophéties
 canoniques ou de prédictions d'une décision humaine future.
+
+## Références corporelles : aucun membre fictif
+
+Une référence à un membre inexistant d'une équipe ne désigne jamais par défaut
+le combattant actif. Le contrôle vérifie l'existence du corps réel avant le
+contact et avant tout rattachement. En duel sans équipe, seuls les indices zéro
+correspondent à un corps présent. Ce contrôle empêche notamment de contourner
+l'auto-manipulation en implantant une antenne sur un faux réserviste de son propre
+camp. Le correctif porte le ruleset courant à **clash-combat-29**.
+
+## Steal Chain : réserve réelle du donneur
+
+Le contact effectif de la seringue impose désormais Zetsu pendant le drainage,
+avant même que la réserve soit vide. La victime conserve ses actions physiques ;
+un simple coup reçu par Kurapika ne détache pas automatiquement une seringue
+encore reliée. La perte de portée ou du Nen nécessaire interrompt le prélèvement.
+
+Chaque capacité réellement prélevée conserve la quantité d'aura effectivement
+retirée, le corps du donneur et ses rendements de catégories au prélèvement.
+Dolphin utilise ce stock pour l'activation et l'entretien des effets empruntés ;
+le repos du porteur ne le remplit pas. Le bonus d'Emperor Time de Kurapika ne
+remplace pas les rendements du donneur. La réserve personnelle du porteur reste
+séparée, et aucun canal temporaire d'exécution ne subsiste dans l'état enregistré.
+Un stock insuffisant refuse l'activation, même si le porteur dispose d'aura.
+Le retour de la capacité vise le membre réellement volé, pas son remplaçant actif.
+
+Cette correction porte le ruleset à **clash-combat-30**. Les coûts chiffrés restent
+ceux du duel. Le prêt à un tiers réel reste un chantier ouvert ; cette passe ne
+certifie pas l'arsenal intégral. Le On reste disponible.
+
+Références : chapitres 361, 364, 369 et 388. Le maintien de Dolphin pendant le
+sommeil de Kurapika et d'Oito doit rester distinct d'une nouvelle commande
+volontaire pendant leur inconscience.
+
+## Stealth Dolphin : prêt à un corps réel
+
+Le panneau propose une injection de Dolphin chargé et inutilisé vers les corps
+réels au contact, y compris les alliés qui attendent à leur portail. La main
+droite doit être disponible. Une référence à un membre inexistant ou une cible
+hors de portée ne crée ni destinataire ni dispositif. La portée chiffrée reste
+un réglage de duel. Le transfert conserve l'unique capacité, son stock volé et
+ses conditions ; il ne donne ni les autres Hatsu du donneur, ni son matériel.
+
+Le prêt libère le stockage de Steal Chain. Kurapika peut conserver une seconde
+capacité non chargée pendant que le premier Dolphin est prêté. Il ne peut pas
+lever Emperor Time ni rééquiper ce Dolphin avant la résolution du prêt.
+L'échéancier d'Emperor Time avance aussi lorsque son corps attend en réserve.
+Le destinataire commande sa propre application dans le panneau ; les commandes
+Dolphin n'émettent pas artificiellement de paroles audibles.
+
+Le destinataire garde son identité, sa réserve personnelle et son propre Nen.
+Son canal d'exécution emprunté est temporaire : aucun état d'Emperor Time ne lui
+est enregistré. L'aura et les rendements restent ceux du donneur. Cookie et les
+commandes utilitaires admises sont explicitement étiquetés « Dolphin prêté ».
+L'IA destinataire utilise les mêmes chemins d'admission et les mêmes ressources.
+
+L'inconscience de Kurapika est liée au destinataire. Une application déjà active
+reste entretenue ; l'inconscience interdit de donner un nouvel ordre. La fenêtre
+de trois heures suivie de neuf heures de sommeil reprend le cas observé avec
+Little Eye aux chapitres 364 et 369 ; sa généralisation n'est pas une durée
+universelle affirmée pour toutes les capacités dans le manga. Le Dolphin visible
+uniquement par son porteur reste affiché durant cette inconscience.
+
+Une fois l'application terminée, le destinataire peut demander la fin du prêt,
+y compris avec un stock volé épuisé. Le Hatsu revient au corps du donneur et le
+verrou de Kurapika est levé. Le passage de manche conserve un prêt encore chargé,
+son stock, le corps lié et les horloges : il ne fournit pas un retrait gratuit.
+Le changement d'équipier d'un porteur déjà en cours d'application reste bloqué
+pour éviter de suspendre ses effets hors scène.
+
+**Reste à terminer :** les destinataires initialement non éveillés et leur
+initiation, les éditeurs spécialisés qui vivent hors des commandes d'arsenal
+(hors composition de Basho, désormais achevée), ainsi que le masquage réseau complet des
+informations privées de Dolphin. Cette passe ne clôt donc pas l'audit des quarante
+personnages. Le On est conservé. Ruleset courant : **clash-combat-31**.
+
+## Basho prêté : composition et provenance du papier
+
+L'éditeur des trois poèmes attestés est désormais utilisable par le destinataire
+d'un prêt de Dolphin. Le choix « Dolphin prêté » passe aussi par la commande PvP
+typée du poème ; un sélecteur mal formé est refusé. L'écriture consomme une feuille
+du kit réellement porté et l'aura du donneur. Le pinceau, l'encre, les deux mains
+libres et l'écriture complète restent nécessaires. Le prêt ne les fournit pas.
+
+Les feuilles, questions et talismans issus du prêt gardent leur provenance.
+Le poème du poing attend un véritable coup de poing, le poème des réponses attend
+une question et un mensonge volontaire, et le talisman n'écarte que les faibles
+esprits. La fin de Dolphin retire ces effets empruntés sans rembourser la feuille
+consommée ni arrêter un autre poème personnel. Une seconde composition ne réarme
+pas l'unique usage. La parole est attribuée au corps visible réel, pas à l'identité
+temporaire utilisée pour exécuter le Hatsu ; l'inconscience du prêt et le contrôle
+actif de Black Voice bloquent la parole volontaire.
+
+Le stock d'aura encore disponible est distinct de l'aura déjà engagée dans
+l'application. Atteindre exactement le coût ne fait donc pas disparaître un effet
+qui vient d'être payé ; l'aura engagée ne finance aucune seconde dépense. Ce canal
+extérieur ne procure ni Ten ni rendement défensif à un corps resté en Zetsu.
+Les coûts chiffrés demeurent des réglages de duel. Ruleset : **clash-combat-32**.
+Le On reste présent. Les autres réserves de l'audit restent ouvertes.
+
+Point de vigilance pour la suite : les trois oiseaux annoncés de Secret Window
+ne doivent pas être transformés en trois espions interchangeables. L'écoute à
+travers une barrière et l'oiseau posé au contact sont décrits ; la fonction du
+troisième et la lecture exacte de la limite de simultanéité restent à traiter
+sans inventer de pouvoir (chapitres 366, 373 et 389).

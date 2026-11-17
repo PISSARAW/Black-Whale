@@ -125,4 +125,4 @@ await writeFile(
     2,
   ),
 )
-console.log(`Saved Halkenburg soundtrack: ${audio}`)
+process.stdout.write(`Saved Halkenburg soundtrack: ${audio}\n`)

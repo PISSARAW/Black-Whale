@@ -83,4 +83,4 @@ await writeFile(
     2,
   ),
 )
-console.log(`Saved Camilla soundtrack: ${audio}`)
+process.stdout.write(`Saved Camilla soundtrack: ${audio}\n`)

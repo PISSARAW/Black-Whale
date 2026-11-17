@@ -81,7 +81,7 @@ try {
     }
     assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().state), before)
     results.push({ winner, target, stage, side })
-    console.log(`Rendered ${winner} against ${target} in ${stage} (${side})`)
+    process.stdout.write(`Rendered ${winner} against ${target} in ${stage} (${side})\n`)
   }
   await page.setViewportSize({ width: 390, height: 844 })
   await page.evaluate((options) => window.victoryFixture.configure(options), {
@@ -134,7 +134,7 @@ try {
     await live.waitFor({ state: 'detached' })
     assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().active), false)
     await page.getByRole('button', { name: /Rejouer|Revanche/i }).waitFor()
-    console.log(`Verified automatic victory and audio: ${winner}`)
+    process.stdout.write(`Verified automatic victory and audio: ${winner}\n`)
   }
   await page.evaluate((options) => window.victoryFixture.configure(options), {
     winner: 'hisoka',
@@ -213,7 +213,7 @@ try {
   await fallback.close()
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ results, errors }, null, 2))
-  console.log(`Victory integration passed. Artifacts: ${output}`)
+  process.stdout.write(`Victory integration passed. Artifacts: ${output}\n`)
 } finally {
   await browser.close()
   await server.close()

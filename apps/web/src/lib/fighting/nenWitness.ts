@@ -8,6 +8,7 @@ export function witnessedHatsu(
     side: FightSide
     source: FighterId
     concealed?: boolean
+    moveId?: string
   },
 ): FighterId | null {
   const observer = state[cast.side === 'player' ? 'opponent' : 'player']
@@ -30,7 +31,7 @@ export function witnessedHatsuState(state: FightState, cast: Parameters<typeof w
 }
 
 function manifestedMove(state: FightState, cast: Parameters<typeof witnessedHatsu>[1]): string {
-  const own = state[cast.side].attack?.moveId
+  const own = cast.moveId ?? state[cast.side].attack?.moveId
   if (own?.startsWith(`${cast.source}:`)) return own
   const prepared: Partial<Record<FighterId, string>> = {
     biscuit: 'biscuit:cookie',

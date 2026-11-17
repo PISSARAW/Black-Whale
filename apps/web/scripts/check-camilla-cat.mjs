@@ -30,7 +30,10 @@ const errors = []
 const results = []
 try {
   const page = await browser.newPage()
-  page.on('pageerror', (error) => { errors.push(error.message); console.error('Browser error:', error.message) })
+  page.on('pageerror', (error) => {
+    errors.push(error.message)
+    console.error('Browser error:', error.message)
+  })
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/camilla/`)
   await page.waitForFunction(() => window.camillaFixture)
   for (const width of [1280, 390]) {
@@ -64,7 +67,7 @@ try {
   }
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify(results, null, 2))
-  console.log(`Verified ${results.length} Cat’s Name frames; screenshots: ${output}`)
+  process.stdout.write(`Verified ${results.length} Cat’s Name frames; screenshots: ${output}\n`)
 } finally {
   await browser.close()
   await server.close()

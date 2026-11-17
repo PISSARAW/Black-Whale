@@ -120,6 +120,4 @@ await writeFile(
     2,
   ),
 )
-console.log(
-  `Saved Tserriednich soundtrack${existsSync(picture) ? ' and ten-second film' : ''}: ${folder}`,
-)
+process.stdout.write(`Saved Tserriednich soundtrack${existsSync(picture) ? ' and ten-second film' : ''}: ${folder}\n`)

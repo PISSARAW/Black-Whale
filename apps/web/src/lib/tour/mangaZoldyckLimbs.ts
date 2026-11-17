@@ -6,6 +6,7 @@ function sandals(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, glow, profile } = build
   for (const knee of limbs.knees) {
     const foot = knee.children[1]
+    if (!foot.getObjectByName('shoe-sole-and-toecap')) continue
     const bare = geometry(THREE, 'manga:travel-bare-foot', () =>
       new THREE.SphereGeometry(1, 16, 10).scale(0.046, 0.027, 0.113).translate(0, 0.002, 0.01),
     )

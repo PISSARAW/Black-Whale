@@ -138,4 +138,4 @@ await writeFile(
     2,
   ),
 )
-console.log(`Saved Chrollo soundtrack: ${audio}`)
+process.stdout.write(`Saved Chrollo soundtrack: ${audio}\n`)

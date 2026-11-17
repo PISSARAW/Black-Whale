@@ -81,3 +81,14 @@ trou que TypeScript signale — il n'y a pas de repli silencieux.
 
 Chacun de ces cas est un échec de build, pas une divergence découverte en
 production : c'est l'objet du chantier 3 de `docs/decision/adr-001-le-canon-compile.md`.
+
+## Roues d’action et fidélité
+
+La richesse des roues est un objectif de présentation, pas une règle du Nen.
+`packages/ability-modules/test/action-wheels.spec.ts` conserve le minimum de quatre entrées des autres
+modules et la médiane du catalogue. Pour Door de Voconte, il vérifie exactement
+les trois actions représentées : relier, franchir et refermer les huisseries.
+L’installation et la fermeture restent des adaptations déclarées ; leurs
+conditions canoniques complètes sont inconnues. Aucun quatrième pouvoir n’est
+ajouté pour satisfaire un compteur. Les contrôles de provenance, refus et Gyo
+s’appliquent également à Door.

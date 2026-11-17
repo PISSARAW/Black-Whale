@@ -117,6 +117,4 @@ await writeFile(
     2,
   ),
 )
-console.log(
-  `Saved Benjamin soundtrack${existsSync(picture) ? ' and ten-second film' : ''}: ${folder}`,
-)
+process.stdout.write(`Saved Benjamin soundtrack${existsSync(picture) ? ' and ten-second film' : ''}: ${folder}\n`)

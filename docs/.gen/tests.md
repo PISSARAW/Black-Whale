@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 737
+Fichiers : 741
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -335,7 +335,7 @@ Fichiers : 737
 
 ## `apps/web/src/lib/fighting/commandQualification.test.ts`
 
-- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v17 recording
+- command qualification from the frozen six-fighter states > keeps all historical input packets and the original archive intact across the v20 recording
 - held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
 - draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
 
@@ -442,6 +442,11 @@ Fichiers : 737
 - fight keyboard configuration > keeps projections, arena commands and pause distinct for both players
 - standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
 - configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
+
+## `apps/web/src/lib/fighting/fightExpressionRoster.test.ts`
+
+- all selectable fighters have authored emotions > covers the actual roster explicitly, with forty distinct focus directions
+- native expression geometry ownership > preserves world positions when grouping lips and teeth under a transformed head
 
 ## `apps/web/src/lib/fighting/fightExpressions.test.ts`
 
@@ -2670,10 +2675,6 @@ Fichiers : 737
 ## `apps/web/src/routes/spoiler-limit/spoiler-limit.test.ts`
 
 - POST /spoiler-limit > stores the cap the reader submitted
-
-## `packages/ability-modules/test/action-wheels.spec.ts`
-
-- roues d’action > keeps the median at four or more across the catalogue
 
 ## `packages/ability-modules/test/bungee-gum.spec.ts`
 

@@ -60,6 +60,8 @@ describe('the chapter 359 prison cast', () => {
       glow: (colour, opacity) => new THREE.MeshBasicMaterial({ color: colour, opacity }),
     })
     const initial = rig.turns.rotation.x
+    expect(rig.root.getObjectByName('shoe-sole-and-toecap')).toBeUndefined()
+    expect(rig.root.getObjectByName('zoldyck-sandals')).toBeUndefined()
     expect(initial).toBeLessThan(-1.4)
     expect(rig.turns.position.z).toBeGreaterThan(0)
     const origin = rig.turns.localToWorld(new THREE.Vector3())

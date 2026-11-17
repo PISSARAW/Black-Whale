@@ -19,7 +19,7 @@ beforeAll(async () => {
 })
 
 describe('command qualification from the frozen six-fighter states', () => {
-  it('keeps all historical input packets and the original archive intact across the v17 recording', async () => {
+  it('keeps all historical input packets and the original archive intact across the v20 recording', async () => {
     const historical = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
     )
@@ -38,6 +38,17 @@ describe('command qualification from the frozen six-fighter states', () => {
     expect(() =>
       revalidateCombatReference(historical.tapes['route-kurapika-confirm-neutral-right-center-6']),
     ).toThrow(/Reference changed/)
+  })
+
+  it('keeps the v17 archive immutable and rejects its changed observation checkpoints', async () => {
+    const legacy = await loadFrozenCombatTapes(
+      fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference/v17', import.meta.url)),
+    )
+    expect(legacy.ruleset).toBe('clash-combat-17')
+    for (const fighter of ['kurapika', 'benjamin', 'hisoka', 'chrollo'])
+      expect(() =>
+        revalidateCombatReference(legacy.tapes[`route-${fighter}-confirm-neutral-right-center-6`]),
+      ).toThrow(/Reference changed/)
   })
 
   for (const fighter of BASELINE_FIGHTERS)

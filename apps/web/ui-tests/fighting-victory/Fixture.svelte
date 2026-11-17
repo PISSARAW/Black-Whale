@@ -15,6 +15,7 @@
     paused = false,
     preview = false,
     ready = false
+  let victorySide: FightSide = 'player'
   let frame: VictoryFrame | null = null
   const noop = () => {}
   async function configure(options: {
@@ -40,7 +41,7 @@
     await tick()
   }
   async function finish() {
-    const side = (window as any).victorySide ?? 'player'
+    const side = victorySide
     state = {
       ...state,
       phase: 'finished',
@@ -62,9 +63,9 @@
     await tick()
   }
   onMount(() => {
-    ;(window as any).victoryFixture = {
+    ;(window as Window & { victoryFixture?: unknown }).victoryFixture = {
       async configure(options: Parameters<typeof configure>[0]) {
-        ;(window as any).victorySide = options.side ?? 'player'
+        victorySide = options.side ?? 'player'
         await configure(options)
       },
       finish,

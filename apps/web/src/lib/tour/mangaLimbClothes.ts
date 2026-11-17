@@ -82,10 +82,13 @@ function finishShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const shape = geometry(THREE, 'manga:shoes', () => kurapikaShoeGeometry(THREE))
   for (const knee of limbs.knees) {
     const shoe = knee.children[1]
+    const sole = shoe.getObjectByName('shoe-sole-and-toecap')
+    // Bare feet deliberately omit shoe details and must retain their own shape.
+    if (!sole) continue
     shoe.children.slice(0, 2).forEach((node) => {
       ;(node as Mesh).geometry = shape
     })
-    shoe.getObjectByName('shoe-sole-and-toecap')!.visible = false
+    sole.visible = false
   }
 }
 

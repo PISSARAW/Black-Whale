@@ -127,4 +127,4 @@ await writeFile(
     2,
   ),
 )
-console.log(`Saved Leorio soundtrack: ${audio}`)
+process.stdout.write(`Saved Leorio soundtrack: ${audio}\n`)

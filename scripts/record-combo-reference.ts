@@ -17,7 +17,7 @@ import { PVP_RULESET } from '../apps/web/src/lib/fighting/pvp/types'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const original = join(root, 'apps/web/ui-tests/fighting-reference/reference')
-const output = resolve(process.env.CLASH_COMBO_REFERENCE_OUTPUT ?? join(original, 'v17'))
+const output = resolve(process.env.CLASH_COMBO_REFERENCE_OUTPUT ?? join(original, 'v20'))
 if (
   await access(join(output, 'baseline.json')).then(
     () => true,

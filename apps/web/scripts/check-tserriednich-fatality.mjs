@@ -71,7 +71,7 @@ try {
       await page.setViewportSize({ width: 1280, height: 800 })
     }
     results.push(options)
-    console.log(`Verified Tserriednich: ${options.target}, ${options.stage}, ${options.side}`)
+    process.stdout.write(`Verified Tserriednich: ${options.target}, ${options.stage}, ${options.side}\n`)
   }
   await page.goto(`${base}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)
@@ -95,7 +95,7 @@ try {
   assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().active), false)
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ results, errors }, null, 2))
-  console.log(`Tserriednich checks passed: ${output}`)
+  process.stdout.write(`Tserriednich checks passed: ${output}\n`)
 } finally {
   await browser.close()
   await server.close()

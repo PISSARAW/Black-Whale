@@ -51,6 +51,10 @@ interruption, stockage, marques, prévisions et réinitialisation ;
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.
 
+La [reprise des vérifications globales](./GLOBAL_CHECKS.md) corrige les traitements
+et observations existants sous `clash-combat-20`, avec des références versionnées
+et sans nouvelle capacité de Nen.
+
 ## Verrouillage transversal du Nen
 
 `nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,

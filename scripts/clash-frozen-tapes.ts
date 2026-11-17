@@ -10,7 +10,7 @@ export async function loadFrozenCombatTapes(directoryOverride?: string) {
     directoryOverride ??
       process.env.CLASH_REFERENCE_DIRECTORY ??
       fileURLToPath(
-        new URL('../apps/web/ui-tests/fighting-reference/reference/v17', import.meta.url),
+        new URL('../apps/web/ui-tests/fighting-reference/reference/v20', import.meta.url),
       ),
   )
   const baseline = JSON.parse(await readFile(resolve(directory, 'baseline.json'), 'utf8')) as {

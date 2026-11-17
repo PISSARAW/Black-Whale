@@ -121,9 +121,9 @@ describe('hitstun tuning is limited to long grounded physical combos', () => {
     recorder.append(before, [1 / 60, 0, 0, []], after)
     const replay = recorder.snapshot()!
     expect(decodeFightReplay(JSON.stringify(replay)).ruleset).toBe(REPLAY_RULESET)
-    expect(REPLAY_RULESET).toBe('clash-combat-19')
-    expect(() =>
-      decodeFightReplay(JSON.stringify({ ...replay, ruleset: 'clash-combat-18' })),
-    ).toThrow('replay-version')
+    for (const ruleset of ['clash-combat-18', 'clash-combat-19'])
+      expect(() => decodeFightReplay(JSON.stringify({ ...replay, ruleset }))).toThrow(
+        'replay-version',
+      )
   })
 })

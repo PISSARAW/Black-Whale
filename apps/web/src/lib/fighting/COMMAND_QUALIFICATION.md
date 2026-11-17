@@ -31,8 +31,20 @@ y compris lorsqu’ils sont adversaires. La référence historique v9 demeure in
 avec le moteur v17 et de nouveaux checkpoints de production. Les prémisses
 initiales sont vérifiées ; 34 états finaux changent. La provenance et les sommes
 de contrôle figurent dans le [dossier v17](../../../ui-tests/fighting-reference/reference/v17/README.md).
-Le chargeur du banc utilise désormais cette référence. La vérification stricte
-des checkpoints ne change pas ; les rapports retenus sous v16 restent historiques.
+Cette archive reste conservée ; les rapports retenus sous v16 restent historiques.
+
+## Référence v20 après correction de la mémoire d’observation
+
+Le traitement des manifestations enregistre désormais ensemble la source,
+la frame et la technique réellement vue. Ces informations participent aux
+checkpoints et aux conditions d’acquisition de Skill Hunter. Les anciens
+checkpoints v17 sont donc refusés ; ils ne sont pas réétiquetés.
+
+Le chargeur utilise [reference/v20](../../../ui-tests/fighting-reference/reference/v20/README.md).
+Les 96 flux d’entrée restent identiques aux originaux et chaque prémisse initiale
+est vérifiée. Le recorder et le décodeur de production créent les nouveaux
+checkpoints sous `clash-combat-20`. La revalidation de ceux-ci reste stricte.
+Les archives v9 et v17 et les anciens relevés de cadence restent historiques.
 
 ## Commandes et fenêtres
 

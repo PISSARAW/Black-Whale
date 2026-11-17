@@ -50,32 +50,47 @@ export function interactWithPreparation(state: FightState, side: FightSide): Fig
   if (!state.battlefield || !canInteractBody(fighter)) return state
   const target = preparationInteractionTarget(state, side)
   if (!target) return state
-  if (target.arena && target.kind === 'crate') {
-    const proposed = Math.max(10, Math.min(90, target.x + fighter.facing * 3))
-    const blocker = state.battlefield.entities.find((entry) => entry.id !== target.id && entry.arena &&
-      liveEntity(entry) && (entry.x - target.x) * fighter.facing > 0 && Math.abs(entry.x - proposed) < 6)
-    const x = blocker ? blocker.x - fighter.facing * 6 : proposed
-    if (Math.abs(state[side === 'player' ? 'opponent' : 'player'].x - x) < 6) return state
-    return updateEntity(state, target.id, { x })
-  }
-  if (target.kind === 'needles') {
-    const picked = updateEntity(state, target.id, { present: false })
-    return {
-      ...picked,
-      [side]: { ...fighter, equipment: [...(fighter.equipment ?? []), 'needles'] },
-    }
-  }
-  if (target.kind === 'flute') {
-    if (hasEquipment(fighter, 'flute')) return state
-    const picked = updateEntity(state, target.id, { present: false })
-    return {
-      ...picked,
-      [side]: { ...fighter, equipment: [...(fighter.equipment ?? []), 'flute'], melodyFlute: true },
-    }
-  }
+  if (target.arena && target.kind === 'crate') return pushPreparedCrate(state, side, target)
+  if (target.kind === 'needles' || target.kind === 'flute')
+    return pickPreparedEquipment(state, side, target)
   if (target.kind === 'room')
     return updateEntity(state, target.id, { sealed: false, invalidated: true })
   return updateEntity(state, target.id, { consenting: false })
+}
+
+function pushPreparedCrate(state: FightState, side: FightSide, target: PreparedEntity): FightState {
+  const fighter = state[side]
+  const proposed = Math.max(10, Math.min(90, target.x + fighter.facing * 3))
+  const blocker = state.battlefield!.entities.find(
+    (entry) =>
+      entry.id !== target.id &&
+      entry.arena &&
+      liveEntity(entry) &&
+      (entry.x - target.x) * fighter.facing > 0 &&
+      Math.abs(entry.x - proposed) < 6,
+  )
+  const x = blocker ? blocker.x - fighter.facing * 6 : proposed
+  if (Math.abs(state[side === 'player' ? 'opponent' : 'player'].x - x) < 6) return state
+  return updateEntity(state, target.id, { x })
+}
+
+function pickPreparedEquipment(
+  state: FightState,
+  side: FightSide,
+  target: PreparedEntity,
+): FightState {
+  const fighter = state[side]
+  const flute = target.kind === 'flute'
+  if (flute && hasEquipment(fighter, 'flute')) return state
+  const equipment = [
+    ...(fighter.equipment ?? []),
+    flute ? ('flute' as const) : ('needles' as const),
+  ]
+  const picked = updateEntity(state, target.id, { present: false })
+  return {
+    ...picked,
+    [side]: { ...fighter, equipment, ...(flute ? { melodyFlute: true } : {}) },
+  }
 }
 
 function canInteract(entry: PreparedEntity, side: FightSide): boolean {
@@ -137,8 +152,12 @@ function approach(from: number, to: number, speed: number): number {
 }
 
 function canInteractBody(fighter: FightState['player']): boolean {
-  if (fighter.arenaRecovery) return false
-  if (fighter.hanzoProjection || fighter.melodyPerformance || fighter.parallelEyesClosed)
+  if (
+    fighter.arenaRecovery ||
+    fighter.hanzoProjection ||
+    fighter.melodyPerformance ||
+    fighter.parallelEyesClosed
+  )
     return false
   if (!illumiBodyFree(fighter)) return false
   return (

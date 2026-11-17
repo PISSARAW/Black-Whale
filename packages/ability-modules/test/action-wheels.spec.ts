@@ -30,7 +30,7 @@ const CURSOR = {
   localSequence: 2,
 }
 
-/** The minimum a use must reach: four entries, per §8.4. */
+/** Editorial coverage target (§8.4), never a reason to invent an unknown Nen use. */
 const MINIMUM_ENTRIES = 4
 
 function contextFor(module: NenAbilityModule, actionId?: string): AbilityContext {
@@ -66,12 +66,26 @@ const labelsOf = (module: NenAbilityModule, actionId: string) =>
   module.plan(contextFor(module, actionId)).conditions.map((condition) => condition.label)
 
 describe('roues d’action', () => {
-  it.each(modules.map((module) => [module.manifest.id, module] as const))(
-    '%s offers at least four uses',
-    (_id, module) => {
-      expect(wheelOf(module).length).toBeGreaterThanOrEqual(MINIMUM_ENTRIES)
-    },
-  )
+  it.each(
+    modules
+      .filter((module) => module.manifest.id !== 'voconte-hideout-doors')
+      .map((module) => [module.manifest.id, module] as const),
+  )('%s offers at least four uses', (_id, module) => {
+    expect(wheelOf(module).length).toBeGreaterThanOrEqual(MINIMUM_ENTRIES)
+  })
+
+  it('keeps Door limited to its three supported lifecycle actions', () => {
+    const door = modules.find((module) => module.manifest.id === 'voconte-hideout-doors')
+    if (!door) throw new Error('Door must remain registered')
+    expect(
+      wheelOf(door)
+        .map(({ id }) => id)
+        .sort(),
+    ).toEqual(['close-door', 'open-door', 'walk-through'])
+    // Installation/maintenance are declared adaptations, not newly revealed powers.
+    for (const action of ['open-door', 'close-door'])
+      expect(labelsOf(door, action).join(' ')).toContain('inconnu')
+  })
 
   it('keeps the median at four or more across the catalogue', () => {
     const counts = modules.map((module) => wheelOf(module).length).sort((a, b) => a - b)

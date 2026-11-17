@@ -90,8 +90,16 @@ describe('compiling client-safe ability presentations', () => {
     expect(compiled.problems).toContainEqual(expect.stringContaining('CanonSourceRef'))
   })
 
-  it('publishes at least four module-authored uses for every ability', () => {
+  it('publishes the three supported Door actions and preserves other wheels’ coverage', () => {
     for (const presentation of result.presentations) {
+      if (presentation.abilityId === 'voconte-hideout-doors') {
+        expect(presentation.actions.map(({ entry }) => entry.id).sort()).toEqual([
+          'close-door',
+          'open-door',
+          'walk-through',
+        ])
+        continue
+      }
       expect(presentation.actions.length, presentation.abilityId).toBeGreaterThanOrEqual(4)
     }
   })

@@ -27,7 +27,7 @@ Fichiers : 835
 
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
-- production bundle partitioning > rejects an oversized JavaScript chunk instead of suppressing its warning
+- production bundle partitioning > separates scene catalogues without changing authored gestures, stances or expressions
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 

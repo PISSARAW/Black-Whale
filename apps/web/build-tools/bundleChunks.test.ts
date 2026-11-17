@@ -12,6 +12,14 @@ import { bundleBudget } from './bundleBudget'
 import { DUEL_COMBO_FIGHTERS, tuneDuelComboProfile } from '../src/lib/fighting/duelComboProfiles'
 import { DUEL_COMBO_LESSONS } from '../src/lib/fighting/duelComboLessons'
 import type { FighterMoveset } from '../src/lib/fighting/movesetTypes'
+import { EASTER_ROSTER_ONE } from '../src/lib/fighting/easterEggRosterOne'
+import { EASTER_ROSTER_TWO } from '../src/lib/fighting/easterEggRosterTwo'
+import { EASTER_ROSTER_THREE } from '../src/lib/fighting/easterEggRosterThree'
+import { EASTER_ROSTER_FOUR } from '../src/lib/fighting/easterEggRosterFour'
+import { FIRST_ROSTER_CHOREOGRAPHY } from '../src/lib/fighting/rosterChoreographyFirst'
+import { SECOND_ROSTER_CHOREOGRAPHY } from '../src/lib/fighting/rosterChoreographySecond'
+import { ROSTER_STANCES } from '../src/lib/fighting/fightStancesRoster'
+import { FIGHT_EXPRESSION_PROFILES } from '../src/lib/fighting/fightExpressionProfiles'
 
 const directories: string[] = []
 afterEach(async () => {
@@ -52,6 +60,43 @@ async function compile(entry: string) {
 }
 
 describe('production bundle partitioning', () => {
+  it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
+    const modules = [
+      'easterEggRosterOne',
+      'easterEggRosterTwo',
+      'easterEggRosterThree',
+      'easterEggRosterFour',
+      'rosterChoreographyFirst',
+      'rosterChoreographySecond',
+      'fightStancesRoster',
+      'fightExpressionProfiles',
+    ]
+    const built = await compile(
+      modules
+        .map((name) => `export * from ${JSON.stringify(resolve(`src/lib/fighting/${name}.ts`))}`)
+        .join('\n'),
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    const expected = {
+      EASTER_ROSTER_ONE,
+      EASTER_ROSTER_TWO,
+      EASTER_ROSTER_THREE,
+      EASTER_ROSTER_FOUR,
+      FIRST_ROSTER_CHOREOGRAPHY,
+      SECOND_ROSTER_CHOREOGRAPHY,
+      ROSTER_STANCES,
+      FIGHT_EXPRESSION_PROFILES,
+    }
+    for (const [name, value] of Object.entries(expected)) expect(actual[name]).toEqual(value)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-presentation-catalogues',
+      ),
+    ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
   it('rejects an oversized JavaScript chunk instead of suppressing its warning', async () => {
     await expect(
       compile(`export const payload = ${JSON.stringify('x'.repeat(510_000))}`),

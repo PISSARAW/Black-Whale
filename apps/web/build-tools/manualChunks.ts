@@ -8,6 +8,12 @@ export function manualChunks(id: string): string | undefined {
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
   if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
   if (/\/fighting\/nenCanon(?:First|Second)\.ts$/.test(id)) return 'clash-nen-canon'
+  if (
+    /\/fighting\/(?:easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-presentation-catalogues'
   if (!id.includes('/three/src/')) return undefined
   if (/\/Three(?:\.Core)?\.js$/.test(id)) return undefined
   return threeChunkName(id)

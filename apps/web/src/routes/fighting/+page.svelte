@@ -38,6 +38,7 @@
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import { battleStageCallbacks, callFightBody } from './battleCallbacks'
   import Seo from '$lib/components/Seo.svelte'
+  import FightPageNavigation from '$lib/components/fighting/FightPageNavigation.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightDisplaySettings from '$lib/components/fighting/FightDisplaySettings.svelte'
   import FightSetup from '$lib/components/fighting/FightSetup.svelte'
@@ -339,11 +340,8 @@
   ])}
 />
 <main class="fighting-shell" class:is-playing={Boolean(state)}>
+  <FightPageNavigation />
   <header class="fight-header">
-    <nav aria-label="Breadcrumb" class="fight-breadcrumb">
-      <a href={$link('/tour/modes')}>{language === 'fr' ? 'Modes jouables' : 'Playable modes'}</a>
-      <span>/</span><span>Clash</span>
-    </nav>
     <p class="eyebrow">{copy.eyebrow}</p>
     <h1>{copy.title}</h1>
     <p class="intro">{copy.intro}</p>

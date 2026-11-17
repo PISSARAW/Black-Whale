@@ -215,7 +215,7 @@ describe('Benjamin’s canonical loadout', () => {
     }
     const chrollo = createFight('chrollo', 'benjamin').player
     expect(chrollo.hatsuEffects.baton).toBeNull()
-    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBeNull()
+    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBe('benjamin')
   })
 
   it('fires three physical bullets on separate frames without requiring Nen or aura', () => {

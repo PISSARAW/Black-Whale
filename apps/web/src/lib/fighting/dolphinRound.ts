@@ -9,11 +9,15 @@ export function carryDolphinState(fresh: ArcadeFighter, previous: ArcadeFighter)
     dolphinLoan: previous.dolphinLoan,
     stolenChainAbility: previous.stolenChainAbility,
     kurapika: retained ? chain : fresh.kurapika,
-    secretWindow: continuingDolphinWindow(previous),
+    ...continuingDolphinWindow(previous),
   }
 }
 
-function continuingDolphinWindow(previous: ArcadeFighter): ArcadeFighter['secretWindow'] {
+function continuingDolphinWindow(
+  previous: ArcadeFighter,
+): Pick<ArcadeFighter, 'secretWindow' | 'secretWindowListening'> {
   const held = previous.dolphinLoan?.held ?? previous.kurapika?.held
-  return held?.used && !held.returned && held.source === 'musse' ? previous.secretWindow : undefined
+  return held?.used && !held.returned && held.source === 'musse'
+    ? { secretWindow: previous.secretWindow, secretWindowListening: previous.secretWindowListening }
+    : {}
 }

@@ -2,6 +2,7 @@ import { attackPhase } from '../frameData'
 import { secretWindowNenActive, secretWindowUtility } from '../secretWindow'
 import { advanceSecretWindowFeeds } from '../secretWindowFeeds'
 import { attachSecretWindow } from '../secretWindowContact'
+import { secretWindowListeningAttack, startSecretWindowListening } from '../secretWindowListening'
 import type { FightSide, FightState } from '../types'
 import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
@@ -14,7 +15,9 @@ export const musseHatsu: FighterHatsu = {
 
 function tickSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
-  if (!secretWindowNenActive(fighter) || fighter.secretWindow) return state
+  if (!secretWindowNenActive(fighter)) return state
+  if (secretWindowListeningAttack(fighter)) return startSecretWindowListening(state, side)
+  if (fighter.secretWindow) return state
   if (
     !secretWindowUtility(fighter) ||
     attackPhase(fighter) !== 'active' ||

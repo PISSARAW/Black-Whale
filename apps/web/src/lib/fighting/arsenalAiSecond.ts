@@ -33,7 +33,9 @@ export const SECOND_ARSENAL_AI = {
   musse: ({ state, gap }) =>
     gap <= 6 && !state.opponent.secretWindow
       ? ['neutralSpecial']
-      : ['standingLight', 'forwardLight', 'standingHeavy'],
+      : !state.opponent.secretWindowListening
+        ? ['downSpecial', 'standingLight']
+        : ['standingLight', 'forwardLight', 'standingHeavy'],
   padaille: ({ roll }) => [
     roll < 0.33 ? 'neutralSpecial' : roll < 0.66 ? 'forwardSpecial' : 'downSpecial',
   ],

@@ -157,21 +157,23 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    [
-      'leorio',
-      'yokotani',
-      'bill',
-      'lynch',
-      'longhi',
-      'melody',
-      'basho',
-      'musse',
-      'mizaistom',
-      'phinks',
-      'voconte',
-    ].includes(fighter.id) && action === 'special'
-      ? 'neutralSpecial'
-      : slotForAction(fighter, action, input)
+    fighter.id === 'musse' && action === 'special' && input.down
+      ? 'downSpecial'
+      : [
+            'leorio',
+            'yokotani',
+            'bill',
+            'lynch',
+            'longhi',
+            'melody',
+            'basho',
+            'musse',
+            'mizaistom',
+            'phinks',
+            'voconte',
+          ].includes(fighter.id) && action === 'special'
+        ? 'neutralSpecial'
+        : slotForAction(fighter, action, input)
   const chosen = schemeSlot({ fighter, action, input, slot })
   return moveset.moves.find((move) => move.slot === chosen) ?? null
 }

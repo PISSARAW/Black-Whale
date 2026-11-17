@@ -88,7 +88,9 @@ function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): Copied
     !chrolloAbilityActive(fighter, 'kalluto:backSpecial')
   )
     return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
-  return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
+  return page === 'musse'
+    ? { ...fighter, secretWindow: undefined, secretWindowListening: undefined }
+    : fighter
 }
 
 function clearEffects(fighter: CopiedFighter, keys: readonly EffectKey[]): CopiedFighter {

@@ -7,6 +7,8 @@ import { performArsenalCommand } from './retrospectiveArsenal'
 import { performChrolloSelectedMove } from './chrolloCopiedAction'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { fightAcceptsCommands } from './fightOutcome'
+import { windowListeningMoveId } from './secretWindowListening'
+import { moveById } from './movesets'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { FightSide, FightState } from './types'
@@ -23,8 +25,8 @@ export function performArsenalAction(
   const { state, side, command } = options
   if (!fightAcceptsCommands(state)) return state
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
-  if (!arsenalMindAvailable(state[side])) return state
-  if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
+  if (!voluntaryArsenalReady(state, side)) return state
+  if (command.action === 'window-listen') return executeListening(options, perform)
   if (command.action.startsWith('dolphin-') && command.action !== 'dolphin-lend')
     return executeDolphin(options, perform)
   if (command.action === 'copied-move')
@@ -32,6 +34,32 @@ export function performArsenalAction(
       ? performChrolloSelectedMove({ state, side, moveId: command.target }, perform)
       : state
   return performArsenalCommand(state, side, command)
+}
+
+function voluntaryArsenalReady(state: FightState, side: FightSide): boolean {
+  return (
+    arsenalMindAvailable(state[side]) &&
+    futureAcceptsMove(state, side) &&
+    !state[side].parallelEyesClosed
+  )
+}
+
+function executeListening(
+  options: { state: FightState; side: FightSide; command: ArsenalCommand },
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState {
+  const { state, side } = options
+  const move = moveById(windowListeningMoveId(state[side]) ?? '')
+  return move
+    ? perform({
+        state,
+        side,
+        kind: move.kind,
+        variant: move.variant,
+        moveId: move.id,
+        auraCharged: false,
+      })
+    : state
 }
 
 function executeDolphin(

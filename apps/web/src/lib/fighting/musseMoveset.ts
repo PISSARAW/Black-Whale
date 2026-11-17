@@ -1,13 +1,14 @@
 import { buildMoveset } from './movesetFactory'
 import type { FighterMoveset } from './movesetTypes'
+import { windowListeningMove } from './secretWindowListeningMove'
 
-/** Chapter 373: an ordinary handgun and a contact surveillance bird, no execution Hatsu. */
+/** Chapters 366/373: handgun, shoulder eavesdropping and contact surveillance. */
 export function musseMoveset(): FighterMoveset {
   const base = buildMoveset({
     fighterId: 'musse',
     mechanic: [
-      'U : tir au pistolet, sans aura. L : poser Secret Window au contact ; le hibou transmet les gestes de la cible sans dégâts, entrave ni lecture d’aura. La garde ne supprime pas un contact réel. Le hibou n’est visible que de son utilisateur.',
-      'U: fire the handgun without aura. L: attach Secret Window by touch; its owl reports the target’s gestures without damage, restraint or aura reading. Guard does not negate physical touch. Only the user sees the owl.',
+      'U : tir au pistolet, sans aura. L : poser Secret Window au contact ; bas + L : écouter avec le hibou d’épaule. Le hibou transmet les gestes de la cible sans dégâts, entrave ni lecture d’aura. La garde ne supprime pas un contact réel. Le hibou n’est visible que de son utilisateur.',
+      'U: fire the handgun without aura. L: attach Secret Window by touch; down + L: summon the shoulder listening owl. Its owl reports the target’s gestures without damage, restraint or aura reading. Guard does not negate physical touch. Only the user sees the owl.',
     ],
     finisherCondition: ['', ''],
     labels: [
@@ -40,7 +41,11 @@ export function musseMoveset(): FighterMoveset {
     ...base,
     moves: base.moves
       .filter((move) => move.category !== 'finisher')
-      .filter((move) => move.category !== 'special' || move.slot === 'neutralSpecial')
+      .filter(
+        (move) =>
+          move.category !== 'special' || ['neutralSpecial', 'downSpecial'].includes(move.slot),
+      )
+      .map((move) => (move.slot === 'downSpecial' ? windowListeningMove(move) : move))
       .map((move) =>
         move.slot !== 'neutralSpecial'
           ? move

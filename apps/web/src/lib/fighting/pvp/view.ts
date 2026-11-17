@@ -93,6 +93,7 @@ function redactEnemy(enemy: ArcadeFighter) {
     }
   enemy.bodyAndSoulReplies = undefined
   enemy.secretWindow = undefined
+  enemy.secretWindowListening = undefined
   enemy.melodyHearing = undefined
   enemy.comboMaster = undefined
   enemy.bufferedAttack = null
@@ -100,6 +101,7 @@ function redactEnemy(enemy: ArcadeFighter) {
   enemy.kallutoPaper = enemy.kallutoPaper ? { ...enemy.kallutoPaper, heard: undefined } : undefined
   enemy.hatsuEffects = {
     ...enemy.hatsuEffects,
+    baton: privateBaton(enemy.hatsuEffects.baton),
     witnessedHatsu: null,
     witnessedAt: undefined,
     witnessedMoveId: undefined,
@@ -112,6 +114,10 @@ function redactEnemy(enemy: ArcadeFighter) {
       bookmark: null,
       page: 0,
     }
+}
+
+function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
+  return baton ? { ...baton, markedTarget: null } : baton
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))

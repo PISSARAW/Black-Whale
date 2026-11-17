@@ -1,6 +1,8 @@
 <script lang="ts">
   import { tick } from 'svelte'
   import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
+  import FightSecretWindowStatus from '$lib/components/fighting/FightSecretWindowStatus.svelte'
+  import { speakPaperWords } from '$lib/fighting/kallutoListening'
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
   import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
@@ -106,6 +108,16 @@
     })
     await tick()
   }
+  export async function prepareMusseListening(id: 'musse' | 'benjamin') {
+    player = id
+    reset(createFightEnvironment())
+    state = { ...state, player: { ...state.player, x: 22 }, opponent: { ...state.opponent, x: 48 } }
+    await tick()
+  }
+  export async function speakToOwl() {
+    state = speakPaperWords(state, 'opponent', 'Nous attendons derrière la porte.')
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -113,6 +125,7 @@
       health: state.opponent.health,
       music: Boolean(state.player.melodyPerformance),
       nocked: state.player.hatsuEffects.arrowNocked,
+      listening: state.player.secretWindowListening,
     }
   }
 </script>
@@ -150,7 +163,8 @@
       }}>{presentation.label} · L</button
     >
     <p>{presentation.hint}</p>
-    {#if state.battlefield?.entities.some((entry) => entry.person)}
+    <FightSecretWindowStatus {state} side="player" language="fr" />
+    {#if ['musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

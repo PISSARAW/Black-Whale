@@ -42,6 +42,8 @@ export function secretWindowTarget(
 
 /** One contact bird is sufficient for a duel with one opponent. */
 export function musseMoveAvailable(fighter: ArcadeFighter, moveId?: string): boolean {
+  if (fighter.id === 'musse' && moveId === 'musse:downSpecial')
+    return secretWindowNenActive(fighter) && !fighter.secretWindowListening
   if (fighter.id !== 'musse' || (moveId && moveId !== 'musse:neutralSpecial')) return true
   return secretWindowNenActive(fighter) && !fighter.secretWindow
 }

@@ -214,7 +214,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'padaille-weapon': Boolean(fighter.padailleTool),
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
-    'secret-window': Boolean(fighter.secretWindow),
+    'secret-window': secretWindowBusy(fighter),
     'paper-doll': Boolean(fighter.kallutoPaper?.doll),
     'paper-stream': state.projectiles.some(
       (shot) => shot.owner === side && Boolean(shot.kallutoPaper),
@@ -237,6 +237,10 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
   )
+}
+
+function secretWindowBusy(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.secretWindow || fighter.secretWindowListening)
 }
 
 function poemUseBusy(state: FightState, side: FightSide): boolean {

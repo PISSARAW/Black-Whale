@@ -763,7 +763,7 @@ arsenaux à 100 %.
 
 Le contact de Musse et celui de Benjamin utilisent maintenant la même application
 de Secret Window. Le hibou transmet les gestes du corps réellement touché et les
-paroles réellement prononcées à proximité, sans révéler l'intention, la technique
+paroles réellement prononcées par ce corps, sans révéler l'intention, la technique
 cachée ou les pensées. Une garde ne remplace pas une esquive et n'empêche pas ce
 contact non dommageable. Le contact reste soumis à la portée physique, à la grâce
 de relevée et aux véritables évitements.
@@ -788,3 +788,43 @@ L'écoute par le hibou d'épaule du chapitre 366 et la relecture développée pa
 Benjamin au chapitre 413 restent à intégrer après cette correction du flux. La
 fonction propre du troisième oiseau n'est pas inventée. Ruleset :
 **clash-combat-36** ; le On reste présent et l'audit global reste ouvert.
+
+## Secret Window : application d’écoute du hibou d’épaule
+
+L’application du chapitre 366 est maintenant distincte de la pose au contact du
+chapitre 373. Musse peut invoquer le hibou d’épaule avec bas + L ou le panneau
+d’arsenal ; Benjamin l’utilise comme application de son héritage avec arrière + L
+ou le même panneau. L’IA sait employer cette écoute. Ce geste n’inflige aucun
+dégât et n’exige pas de toucher une personne.
+
+Les paroles réellement prononcées à portée du scénario traversent les parois.
+L’écoute ne fournit ni image, pensée, intention de mensonge, quantité d’aura ou
+connaissance du futur. La portée de voix de 36 unités, le coût de 16 aura et les
+temps d’animation sont des réglages du scénario, pas des conditions chiffrées du
+manga. Le hibou de contact rapporte exclusivement la voix du corps marqué : les
+paroles d’une personne voisine et celles d’un double de Hanzo ne deviennent pas
+les paroles du corps surveillé.
+
+Chrollo peut choisir cette application sur une page de Secret Window réellement
+active ; fermer le livre sans signet l’interrompt. Le sélecteur de Dolphin
+propose également cette application du même Hatsu. Son activation consomme
+l’aura réellement prélevée, reste un seul usage et lie l’effet à Emperor Time
+jusqu’à son terme. L’écoute d’un prêt actif est conservée entre les manches.
+Un ordre d’arrêt ne rappelle pas le hibou déjà posé sur une autre cible.
+
+Les deux commandes appartiennent au même Hatsu : voler Secret Window à Benjamin
+scelle son écoute et son application au contact, sans sceller ses autres héritages.
+Les paroles restent privées en PvP, y compris pour les membres en réserve ; elles
+ne sont pas reconstruites depuis un état adverse masqué. Le panneau ancien de
+Benjamin ne lit plus directement le nom technique de l’attaque adverse et son
+marquage privé n’est plus envoyé au client adverse.
+
+La représentation du hibou d’épaule sert de marqueur du flux privé ; elle ne
+certifie pas une règle d’invisibilité non démontrée pour ce premier oiseau. Le
+nombre exact et la simultanéité des trois types ne sont pas présentés comme une
+restriction révélée. La fonction propre du troisième oiseau reste inconnue. La
+relecture développée par Benjamin au chapitre 413 reste le chantier suivant.
+Références : [fonctions montrées de Secret Window](https://hunterworld.tokyo/en/musse/),
+[chapitre 366](https://hunterxhunter.fandom.com/wiki/Chapter_366).
+Ruleset : **clash-combat-37**. Le On est conservé ; l’audit des autres arsenaux
+reste ouvert et ce jalon ne certifie pas un achèvement à 100 %.

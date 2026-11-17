@@ -36,6 +36,8 @@ export interface RetrospectiveFighterState {
 
 export const ARSENAL_ACTION_IDS = [
   'window-recall',
+  'window-stop-listening',
+  'window-listen',
   'person-dolphin-use',
   'person-dolphin-close',
   'person-eye-left',

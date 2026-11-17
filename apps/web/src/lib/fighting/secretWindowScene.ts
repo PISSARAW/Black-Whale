@@ -3,11 +3,13 @@ import { sleepingBody } from './hanzoProjection'
 import { secretWindowTarget } from './secretWindow'
 import { privateWindowBirdVisible, secretWindowBirdHeight } from './secretWindowPlacement'
 import { physicalBodyAt } from './fightBodyIdentity'
+import { createSecretWindowListeningScene } from './secretWindowListeningScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
 
 /** The default scene is P1's view: an enemy observer's private bird stays invisible. */
 export function createSecretWindowScene(options: EffectSceneOptions): FighterEffectScene {
+  const listening = createSecretWindowListeningScene(options)
   const { THREE, scene, worldX, worldY } = options
   const makeOwl = (side: FightSide, member: number) => {
     const model = createVisitHatsuModel(THREE, { model: 'secret-window' })
@@ -49,10 +51,12 @@ export function createSecretWindowScene(options: EffectSceneOptions): FighterEff
   }
   return {
     sync: (state, seconds) => {
+      listening.sync(state, seconds)
       for (const side of ['player', 'opponent'] as const)
         owls[side].forEach((_model, member) => syncBody(state, { side, member }, seconds))
     },
     dispose: () => {
+      listening.dispose()
       Object.values(owls)
         .flat()
         .forEach((model) => model.dispose())

@@ -84,7 +84,7 @@ export function performChrolloSelectedMove(
   if (fighter.id !== 'chrollo') return state
   const page = fighter.chrolloBook?.pages.find(
     (entry) =>
-      entry.includes(':') &&
+      (entry.includes(':') || entry === 'musse') &&
       chainAbilityGroup(entry) === chainAbilityGroup(moveId) &&
       chrolloHasActivePage(fighter, entry),
   )

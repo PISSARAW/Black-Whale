@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 840
+Fichiers : 841
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -787,7 +787,7 @@ Fichiers : 840
 
 ## `apps/web/src/lib/fighting/musse.test.ts`
 
-- Musse — handgun and Secret Window > keeps one contact Hatsu and physical normals, without an invented execution finisher
+- Musse — handgun and Secret Window > keeps the two demonstrated owl applications and physical normals without an execution finisher
 
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
@@ -956,9 +956,13 @@ Fichiers : 840
 
 - Secret Window follows actual bodies and private recipients > keeps the original marked body when an opponent relays, including the owl model
 
+## `apps/web/src/lib/fighting/secretWindowListening.test.ts`
+
+- Secret Window shoulder-owl eavesdropping > keeps the marked-body voice distinct from ambient eavesdropping
+
 ## `apps/web/src/lib/fighting/secretWindowReplay.test.ts`
 
-- Secret Window P2 and replay boundaries > records physical touch, real speech, private P2 observation and explicit recall deterministically
+- Secret Window P2 and replay boundaries > replays the P2 shoulder application, actual remote words and a voluntary stop
 
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 

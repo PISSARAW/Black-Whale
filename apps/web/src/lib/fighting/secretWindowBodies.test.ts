@@ -138,6 +138,13 @@ describe('Secret Window follows actual bodies and private recipients', () => {
     expect(next.player.secretWindow?.observation.action).toBe('walk')
     expect(secretWindowVisibleTo(next, 'player', 'player')).toBe(true)
     expect(secretWindowVisibleTo(next, 'player', 'opponent')).toBe(false)
+    expect(privatePvpState(next, 'opponent').opponent.hatsuEffects.baton?.markedTarget).toBeNull()
+    const stopped = musseHatsu.onFrame({
+      ...next,
+      player: { ...next.player, on: { grudge: 0, sealFrames: 60 } },
+    })
+    expect(stopped.player.hatsuEffects.baton?.markedTarget).toBeNull()
+    expect(stopped.player.secretWindow).toBeUndefined()
     expect(next.opponent.health).toBe(base.opponent.health)
   })
   it('relays actual speech near the bird through distance without relaying private intent', () => {

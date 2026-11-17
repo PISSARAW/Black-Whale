@@ -24,6 +24,7 @@
     'sleeping-body': ['Corps endormi', 'Sleeping body'],
   }
   $: feed = state[side].secretWindow
+  $: listening = state[side].secretWindowListening
   $: visible = side === 'player' || state.mode === 'versus-local'
   $: action = feed ? ACTIONS[feed.observation.action][language === 'fr' ? 0 : 1] : ''
 </script>
@@ -32,6 +33,12 @@
   <div class="secret-window-status">
     Secret Window · {action}
     {#if feed.heard}<span>« {feed.heard.text} »</span>{/if}
+  </div>
+{/if}
+{#if visible && listening && secretWindowNenActive(state[side])}
+  <div class="secret-window-status">
+    Secret Window · {language === 'fr' ? 'Hibou d’épaule : écoute' : 'Shoulder owl: listening'}
+    {#if listening.heard}<span>{listening.heard.text}</span>{/if}
   </div>
 {/if}
 

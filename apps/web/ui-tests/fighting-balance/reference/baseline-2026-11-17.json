@@ -1,0 +1,297 @@
+{
+  "version": 1,
+  "ruleset": "clash-combat-4",
+  "evidence": "scripted-engine-trials",
+  "premises": {
+    "frames": 600,
+    "defender": "bill",
+    "position": "right",
+    "initialX": [87, 93],
+    "slot": "standingLight",
+    "defense": "none",
+    "infiniteHealth": true,
+    "infiniteAura": false
+  },
+  "rows": [
+    {
+      "id": "kurapika",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "hisoka",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "chrollo",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "benjamin",
+      "max": 32,
+      "contacts": 32,
+      "ready": 0,
+      "timing": [4, 3, 9, 16, 9]
+    },
+    {
+      "id": "tserriednich",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "feitan",
+      "max": 40,
+      "contacts": 40,
+      "ready": 0,
+      "timing": [3, 3, 6, 16, 9]
+    },
+    {
+      "id": "saiyu",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "theta",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "biscuit",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "phinks",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "franklin",
+      "max": 30,
+      "contacts": 30,
+      "ready": 0,
+      "timing": [5, 3, 9, 16, 9]
+    },
+    {
+      "id": "machi",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "illumi",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "kalluto",
+      "max": 40,
+      "contacts": 40,
+      "ready": 0,
+      "timing": [3, 3, 6, 16, 9]
+    },
+    {
+      "id": "bonolenov",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "shizuku",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "hinrigh",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "mizaistom",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "leorio",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "hanzo",
+      "max": 40,
+      "contacts": 40,
+      "ready": 0,
+      "timing": [3, 3, 6, 16, 9]
+    },
+    {
+      "id": "rihan",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "zakuro",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "melody",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "basho",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "camilla",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "halkenburg",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "gel",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "lynch",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "luini",
+      "max": 40,
+      "contacts": 40,
+      "ready": 0,
+      "timing": [3, 3, 6, 16, 9]
+    },
+    {
+      "id": "bill",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "furykov",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "cluck",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "beyond",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "longhi",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "musse",
+      "max": 36,
+      "contacts": 36,
+      "ready": 0,
+      "timing": [4, 3, 7, 16, 9]
+    },
+    {
+      "id": "padaille",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "sayird",
+      "max": 38,
+      "contacts": 38,
+      "ready": 0,
+      "timing": [3, 3, 7, 16, 9]
+    },
+    {
+      "id": "terebellum",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    },
+    {
+      "id": "voconte",
+      "max": 40,
+      "contacts": 40,
+      "ready": 0,
+      "timing": [3, 3, 6, 16, 9]
+    },
+    {
+      "id": "yokotani",
+      "max": 34,
+      "contacts": 34,
+      "ready": 0,
+      "timing": [4, 3, 8, 16, 9]
+    }
+  ]
+}

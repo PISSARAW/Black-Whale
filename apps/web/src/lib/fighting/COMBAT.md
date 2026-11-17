@@ -68,8 +68,14 @@ aléatoire · confirmation ». La première reste armée même après un combo i
 La seconde choisit sa réponse à chaque nouvelle attaque, de façon déterministe,
 sans consommer le RNG du combat. Ces états se rejouent avec les replays.
 
-Les règles de replay passent à `clash-combat-3` : les anciennes versions ne sont
+Les règles de replay passent à `clash-combat-5` : les anciennes versions ne sont
 pas compatibles avec ces nouveaux timings et sont refusées à l’import.
+
+Le [réglage des échanges de l’étape 3](./STEP3.md) réduit progressivement le
+hitstun après la troisième touche physique au sol. Il évite la répétition infinie
+de légers au coin et conserve les trois premiers contacts des routes déclarées.
+Le laboratoire fournit sept situations et un export local des observations pour
+les parties d’équilibrage ; les essais automatisés ne remplacent pas ces parties.
 
 ## Caméra
 

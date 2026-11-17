@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 686
+Fichiers : 688
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -338,6 +338,10 @@ Fichiers : 686
 ## `apps/web/src/lib/fighting/engine.test.ts`
 
 - fighting engine > starts a duel with the selected Black Whale fighters
+
+## `apps/web/src/lib/fighting/exchangeBalance.test.ts`
+
+- hitstun tuning is limited to long grounded physical combos > replays the actual escape from a long corner string with identical checkpoints
 
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 

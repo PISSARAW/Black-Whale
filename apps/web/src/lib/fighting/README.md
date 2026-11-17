@@ -3,6 +3,9 @@
 Les profils graphiques, les contacts et le diagnostic Xbox de l’[étape 2](./STEP2.md)
 complètent les contrôles de réactivité et de performance.
 
+L’[étape 3](./STEP3.md) corrige les répétitions infinies de coups physiques au sol
+et ajoute les situations et relevés du laboratoire pour les essais d’équilibrage.
+
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 ## Capacités d’arène

@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --fix",
     "test": "turbo test",
     "test:ratchet": "vitest run",
+    "test:balance": "tsx scripts/report-fighting-balance.ts",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rimraf node_modules",
     "format": "prettier --write .",

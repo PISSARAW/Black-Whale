@@ -1,5 +1,9 @@
 # Audit — fidélité des Hatsu du mode Fighting (2D)
 
+Le réglage arcade du hitstun de l’[étape 3](../apps/web/src/lib/fighting/STEP3.md),
+livré le 17 novembre, porte le ruleset courant à `clash-combat-5`. Il ne modifie
+pas les conditions ou capacités de Nen auditées ici.
+
 > Verrouillage transversal du Nen : les constats initiaux ci-dessous doivent être lus
 > avec les corrections successives des fiches. Le moteur utilise désormais
 > `nenAccess.ts` et `nenActionRules.ts` pour les restrictions communes, et

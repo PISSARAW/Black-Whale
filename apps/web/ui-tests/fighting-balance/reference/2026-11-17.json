@@ -1,0 +1,3418 @@
+{
+  "version": 1,
+  "ruleset": "clash-combat-5",
+  "evidence": "scripted-engine-trials",
+  "premises": {
+    "frames": 360,
+    "slot": "standingLight",
+    "guardAfterHits": 3,
+    "infiniteHealth": true,
+    "infiniteAura": false,
+    "arenaInteractions": false
+  },
+  "pass": true,
+  "profiles": [
+    {
+      "id": "kurapika",
+      "name": "Kurapika",
+      "role": "control",
+      "plan": [
+        "Tenir la moyenne distance et confirmer avant les chaînes.",
+        "Hold mid-range and confirm before committing chains."
+      ],
+      "counter": [
+        "Punir une chaîne manquée ; Chain Jail exige une cible autorisée.",
+        "Punish a missed chain; Chain Jail requires an eligible target."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.4,
+        "recovery": 8
+      },
+      "walk": 28.6
+    },
+    {
+      "id": "hisoka",
+      "name": "Hisoka",
+      "role": "mobile",
+      "plan": [
+        "Attirer, attacher la gomme puis choisir la traction.",
+        "Bait, attach gum, then choose when to pull."
+      ],
+      "counter": [
+        "Frapper interrompt la traction ; Gyo repère In sans dissiper la gomme.",
+        "A hit interrupts pulling; Gyo reveals In without dispelling gum."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.7,
+        "recovery": 7
+      },
+      "walk": 33.9
+    },
+    {
+      "id": "chrollo",
+      "name": "Chrollo",
+      "role": "preparation",
+      "plan": [
+        "Préparer pages et signet ; vérifier les mains et le matériel.",
+        "Prepare pages and bookmark; check hands and equipment."
+      ],
+      "counter": [
+        "Punir les transitions du livre ; une copie ne fournit aucun équipement.",
+        "Punish book transitions; copying supplies no equipment."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.2,
+        "recovery": 8
+      },
+      "walk": 24.7
+    },
+    {
+      "id": "benjamin",
+      "name": "Benjamin",
+      "role": "pressure",
+      "plan": [
+        "Avancer avec les coups physiques et choisir un héritage disponible.",
+        "Advance with physical strikes and choose an available inheritance."
+      ],
+      "counter": [
+        "Prendre de la distance sur les lourds ; les héritages gardent leurs conditions.",
+        "Create space against heavies; inherited abilities keep their conditions."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 7.6,
+        "recovery": 9
+      },
+      "walk": 23.2
+    },
+    {
+      "id": "tserriednich",
+      "name": "Tserriednich",
+      "role": "preparation",
+      "plan": [
+        "Créer une ouverture pour fermer les yeux et préparer la vision.",
+        "Create space to close the eyes and prepare the vision."
+      ],
+      "counter": [
+        "Toucher pendant la préparation du Zetsu ; aucune anticipation avant une vision acquise.",
+        "Hit during Zetsu preparation; no anticipation before an earned vision."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8,
+        "recovery": 7
+      },
+      "walk": 29.7
+    },
+    {
+      "id": "feitan",
+      "name": "Feitan",
+      "role": "preparation",
+      "plan": [
+        "Transformer les blessures réellement reçues en Pain Packer.",
+        "Turn actual injuries into Pain Packer."
+      ],
+      "counter": [
+        "Punir la préparation puis quitter le cercle solaire ; la garde ne bloque pas la chaleur.",
+        "Punish preparation, then leave the solar circle; guard does not block heat."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.1,
+        "recovery": 6
+      },
+      "walk": 36.4
+    },
+    {
+      "id": "saiyu",
+      "name": "Saiyu",
+      "role": "control",
+      "plan": [
+        "Placer les singes pour retirer séparément les sens.",
+        "Land the monkeys to remove individual senses."
+      ],
+      "counter": [
+        "Garder ou esquiver les contacts ; Gyo ne répare pas une vue scellée.",
+        "Guard or evade contact; Gyo does not restore sealed sight."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 10,
+        "recovery": 8
+      },
+      "walk": 30.3
+    },
+    {
+      "id": "theta",
+      "name": "Theta",
+      "role": "ranged",
+      "plan": [
+        "Alterner pistolet physique et coups à courte portée.",
+        "Alternate a physical handgun with close-range strikes."
+      ],
+      "counter": [
+        "Garder les balles ou sauter puis approcher ; Zetsu ne supprime pas le pistolet.",
+        "Guard bullets or jump and approach; Zetsu does not remove the handgun."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.3,
+        "recovery": 7
+      },
+      "walk": 29.1
+    },
+    {
+      "id": "biscuit",
+      "name": "Biscuit",
+      "role": "pressure",
+      "plan": [
+        "Choisir le moment de révéler le corps naturel puis gagner le contact.",
+        "Choose when to reveal the natural body, then close in."
+      ],
+      "counter": [
+        "Faire manquer les coups lourds et punir leur récupération ; la forme est corporelle.",
+        "Bait heavy whiffs and punish recovery; the form belongs to the body."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 7.4,
+        "recovery": 7
+      },
+      "walk": 32.7
+    },
+    {
+      "id": "phinks",
+      "name": "Phinks",
+      "role": "preparation",
+      "plan": [
+        "Préparer les rotations avant de risquer le poing chargé.",
+        "Prepare rotations before risking the charged punch."
+      ],
+      "counter": [
+        "Presser pendant une rotation ; un tour déjà terminé ne disparaît pas par magie.",
+        "Pressure during a rotation; completed turns do not magically disappear."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 7.8,
+        "recovery": 8
+      },
+      "walk": 26.8
+    },
+    {
+      "id": "franklin",
+      "name": "Franklin",
+      "role": "ranged",
+      "plan": [
+        "Créer de la distance et engager une rafale avec les deux mains.",
+        "Create distance and commit to a two-handed barrage."
+      ],
+      "counter": [
+        "Varier garde et saut pour approcher ; un coup interrompt les tirs encore à émettre.",
+        "Mix guard and jumping to approach; a hit interrupts shots not yet released."
+      ],
+      "jab": {
+        "startup": 5,
+        "reach": 8.2,
+        "recovery": 9
+      },
+      "walk": 20.2
+    },
+    {
+      "id": "machi",
+      "name": "Machi",
+      "role": "control",
+      "plan": [
+        "Poser le fil, maintenir la bonne distance, suturer avec une ouverture.",
+        "Attach thread, maintain spacing, and suture during an opening."
+      ],
+      "counter": [
+        "Frapper le porteur ou dépasser la longueur de contention ; le pistage peut rester.",
+        "Hit the owner or exceed binding range; tracking may remain."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 9.4,
+        "recovery": 7
+      },
+      "walk": 33.9
+    },
+    {
+      "id": "illumi",
+      "name": "Illumi",
+      "role": "control",
+      "plan": [
+        "Chercher un contact réel de l’aiguille ; préparer le visage à couvert.",
+        "Seek actual needle contact; prepare the disguise safely."
+      ],
+      "counter": [
+        "Éviter ou garder l’aiguille ; couper le Nen ne répare pas Needle People.",
+        "Evade or guard the needle; losing Nen does not repair Needle People."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.5,
+        "recovery": 7
+      },
+      "walk": 32.1
+    },
+    {
+      "id": "kalluto",
+      "name": "Kalluto",
+      "role": "mobile",
+      "plan": [
+        "Planter du papier avant de faire converger le flux.",
+        "Plant paper before directing the stream."
+      ],
+      "counter": [
+        "Garder la pose des fragments ; le papier planté reste physique après le Nen.",
+        "Guard the planting hit; planted paper remains physical after Nen stops."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 9,
+        "recovery": 6
+      },
+      "walk": 37
+    },
+    {
+      "id": "bonolenov",
+      "name": "Bonolenov",
+      "role": "preparation",
+      "plan": [
+        "Trouver le temps de danser avant les techniques musicales.",
+        "Find time to dance before committing musical techniques."
+      ],
+      "counter": [
+        "Interrompre la danse ou sortir de la trajectoire ; copier ne fournit pas ses trous corporels.",
+        "Interrupt the dance or evade the trajectory; copying does not supply body holes."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.1,
+        "recovery": 8
+      },
+      "walk": 26.3
+    },
+    {
+      "id": "shizuku",
+      "name": "Shizuku",
+      "role": "control",
+      "plan": [
+        "Créer des plaies avec Blinky avant d’aspirer le sang exposé.",
+        "Create wounds with Blinky before vacuuming exposed blood."
+      ],
+      "counter": [
+        "Garder les frappes ; couvrir les plaies occupe les mains sans les soigner.",
+        "Guard strikes; plugging wounds occupies the hands without healing them."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.1,
+        "recovery": 8
+      },
+      "walk": 29.1
+    },
+    {
+      "id": "hinrigh",
+      "name": "Hinrigh",
+      "role": "control",
+      "plan": [
+        "Transformer des menottes réelles et récupérer les objets perdus.",
+        "Transform real handcuffs and recover dropped objects."
+      ],
+      "counter": [
+        "Garder ou éviter le pigeon ; blesser le porteur rompt la capture.",
+        "Guard or evade the pigeon; injuring the owner breaks capture."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.5,
+        "recovery": 7
+      },
+      "walk": 29.7
+    },
+    {
+      "id": "mizaistom",
+      "name": "Mizaistom",
+      "role": "control",
+      "plan": [
+        "Faire entendre le carton jaune avant de sanctionner une désobéissance.",
+        "Make the yellow warning audible before punishing disobedience."
+      ],
+      "counter": [
+        "Respecter l’avertissement perceptible ; le carton n’est pas une attaque invisible.",
+        "Obey the perceptible warning; the card is not an invisible strike."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.2,
+        "recovery": 8
+      },
+      "walk": 26.9
+    },
+    {
+      "id": "leorio",
+      "name": "Leorio",
+      "role": "control",
+      "plan": [
+        "Choisir le point de sortie du poing à travers le sol.",
+        "Choose where the fist emerges through the floor."
+      ],
+      "counter": [
+        "Bouger pendant la préparation et éviter le poing émergent ; pas de frappe instantanée.",
+        "Move during preparation and evade the emerging fist; it is not an instant hit."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8,
+        "recovery": 8
+      },
+      "walk": 28
+    },
+    {
+      "id": "hanzo",
+      "name": "Hanzo",
+      "role": "mobile",
+      "plan": [
+        "Placer le corps endormi avant de diriger le double.",
+        "Position the sleeping body before controlling the double."
+      ],
+      "counter": [
+        "Approcher le corps et le toucher ou l’appeler si la parole peut être entendue.",
+        "Approach the body and touch it, or call if speech can be heard."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.3,
+        "recovery": 6
+      },
+      "walk": 38.3
+    },
+    {
+      "id": "rihan",
+      "name": "Rihan",
+      "role": "preparation",
+      "plan": [
+        "Observer une manifestation puis construire une analyse personnelle.",
+        "Observe a manifestation and build personal analysis."
+      ],
+      "counter": [
+        "Presser physiquement l’observateur ; aucune analyse automatique d’un pouvoir caché.",
+        "Apply physical pressure; a hidden ability is not automatically understood."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.4,
+        "recovery": 8
+      },
+      "walk": 25.3
+    },
+    {
+      "id": "zakuro",
+      "name": "Zakuro",
+      "role": "control",
+      "plan": [
+        "Gérer le sang disponible et les gouttes de surveillance.",
+        "Manage available blood and surveillance droplets."
+      ],
+      "counter": [
+        "Punir les engagements et respecter la trajectoire du sang ; la réserve est finie.",
+        "Punish commitments and respect blood trajectories; the reserve is finite."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.2,
+        "recovery": 7
+      },
+      "walk": 30.9
+    },
+    {
+      "id": "melody",
+      "name": "Melody",
+      "role": "support",
+      "plan": [
+        "Obtenir une ouverture pour la flûte et conserver l’écoute.",
+        "Find a flute opening and preserve hearing."
+      ],
+      "counter": [
+        "Sortir de portée ou couvrir les oreilles, au prix des deux mains.",
+        "Leave range or cover the ears, at the cost of both hands."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.8,
+        "recovery": 7
+      },
+      "walk": 25.3
+    },
+    {
+      "id": "basho",
+      "name": "Basho",
+      "role": "preparation",
+      "plan": [
+        "Écrire le poème avant de chercher le contact du poing.",
+        "Write the poem before seeking fist contact."
+      ],
+      "counter": [
+        "Interrompre l’écriture et éviter le poing ; aucun feu gratuit à distance.",
+        "Interrupt writing and evade the fist; there is no free ranged fire."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.8,
+        "recovery": 8
+      },
+      "walk": 28
+    },
+    {
+      "id": "camilla",
+      "name": "Camilla",
+      "role": "ranged",
+      "plan": [
+        "Utiliser le pistolet sans confondre Cat’s Name avec une attaque volontaire.",
+        "Use the handgun; Cat’s Name is not a voluntary attack."
+      ],
+      "counter": [
+        "Un coup fatal n’annule pas le Nen post-mortem ; un vol exige ses vraies conditions.",
+        "A fatal blow does not cancel post-mortem Nen; theft requires its real conditions."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.3,
+        "recovery": 8
+      },
+      "walk": 27.4
+    },
+    {
+      "id": "halkenburg",
+      "name": "Halkenburg",
+      "role": "preparation",
+      "plan": [
+        "Réunir les partisans consentants et préparer la flèche.",
+        "Gather consenting supporters and prepare the arrow."
+      ],
+      "counter": [
+        "Interrompre le rassemblement ou éviter l’axe du tir ; les soutiens ne sont jamais copiés.",
+        "Interrupt the gathering or evade the firing line; supporters are never copied."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.6,
+        "recovery": 8
+      },
+      "walk": 26.9
+    },
+    {
+      "id": "gel",
+      "name": "Gel",
+      "role": "pressure",
+      "plan": [
+        "Gagner la distance où le bras-serpent peut toucher.",
+        "Enter the range where the snake arm can connect."
+      ],
+      "counter": [
+        "Faire manquer l’allonge puis punir le retour du bras.",
+        "Bait the extended arm and punish its recovery."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 10.2,
+        "recovery": 7
+      },
+      "walk": 30.2
+    },
+    {
+      "id": "lynch",
+      "name": "Lynch",
+      "role": "pressure",
+      "plan": [
+        "Poser une question audible puis toucher avec le poing.",
+        "Ask an audible question, then connect with the fist."
+      ],
+      "counter": [
+        "Éviter le contact : une garde qui reçoit le poing peut encore fournir une réponse privée.",
+        "Avoid contact: a guarded fist can still produce a private answer."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.1,
+        "recovery": 7
+      },
+      "walk": 29.1
+    },
+    {
+      "id": "luini",
+      "name": "Luini",
+      "role": "preparation",
+      "plan": [
+        "Préparer une pièce fermée et un lieu personnellement visité.",
+        "Prepare a sealed room and a personally visited destination."
+      ],
+      "counter": [
+        "Ouvrir la porte invalide cet ancrage pour la manche ; le passage ne donne pas d’invulnérabilité.",
+        "Opening the door invalidates that anchor for the round; passage grants no invulnerability."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.7,
+        "recovery": 6
+      },
+      "walk": 31.9
+    },
+    {
+      "id": "bill",
+      "name": "Bill",
+      "role": "support",
+      "plan": [
+        "Utiliser une graine réelle puis défendre sa préparation.",
+        "Use a real seed and defend its preparation."
+      ],
+      "counter": [
+        "Presser avec les coups physiques ; Erigeron ne donne ni soin personnel ni bonus offensif.",
+        "Pressure with physical strikes; Erigeron grants no self-heal or offensive bonus."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.4,
+        "recovery": 8
+      },
+      "walk": 27.4
+    },
+    {
+      "id": "furykov",
+      "name": "Furykov",
+      "role": "control",
+      "plan": [
+        "Lire les alertes de Combo Master sans abandonner la garde manuelle.",
+        "Read Combo Master alerts while maintaining manual defense."
+      ],
+      "counter": [
+        "Varier les ouvertures ; une commande en attente n’est jamais une attaque prédite.",
+        "Vary openings; a buffered command is never a predicted attack."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.4,
+        "recovery": 7
+      },
+      "walk": 29.7
+    },
+    {
+      "id": "cluck",
+      "name": "Cluck",
+      "role": "support",
+      "plan": [
+        "Utiliser le pigeon réel pour sa livraison puis défendre le contact.",
+        "Use the real pigeon for delivery, then defend close range."
+      ],
+      "counter": [
+        "Presser physiquement ; aucun essaim offensif ou bonus de combat inventé.",
+        "Apply physical pressure; no invented offensive swarm or combat bonus."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 9.7,
+        "recovery": 7
+      },
+      "walk": 30.2
+    },
+    {
+      "id": "beyond",
+      "name": "Beyond",
+      "role": "pressure",
+      "plan": [
+        "Jouer ses capacités physiques ; les malédictions préparées restent hors du duel.",
+        "Use physical abilities; prepared curses remain outside the duel."
+      ],
+      "counter": [
+        "Punir les engagements physiques ; aucun sacrifice ou transfert de malédiction automatique.",
+        "Punish physical commitments; no automatic sacrifice or curse transfer."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.8,
+        "recovery": 8
+      },
+      "walk": 27.4
+    },
+    {
+      "id": "longhi",
+      "name": "Longhi",
+      "role": "control",
+      "plan": [
+        "Proposer le pacte puis exploiter seulement une récompense réellement acquise.",
+        "Offer the pact and use only an actually earned reward."
+      ],
+      "counter": [
+        "Refuser reste possible ; aucune signature forcée ni sanction avant contrat.",
+        "Refusal remains possible; no forced signature or penalty before a contract."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.1,
+        "recovery": 7
+      },
+      "walk": 28.6
+    },
+    {
+      "id": "musse",
+      "name": "Musse",
+      "role": "ranged",
+      "plan": [
+        "Poser Secret Window au contact puis exploiter son observation privée.",
+        "Attach Secret Window at contact and use private observation."
+      ],
+      "counter": [
+        "Éviter la pose et punir le pistolet ; le hibou privé ne révèle pas de données au public.",
+        "Evade attachment and punish the handgun; the private owl does not reveal public data."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8,
+        "recovery": 7
+      },
+      "walk": 28.6
+    },
+    {
+      "id": "padaille",
+      "name": "Padaille",
+      "role": "pressure",
+      "plan": [
+        "Choisir marteau, foret ou hache en tenant compte de leur récupération.",
+        "Choose hammer, drill, or axe with their recovery in mind."
+      ],
+      "counter": [
+        "Faire manquer l’outil puis punir ; changer de forme n’annule pas un engagement.",
+        "Bait the tool and punish; changing form does not cancel commitment."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.8,
+        "recovery": 8
+      },
+      "walk": 27.4
+    },
+    {
+      "id": "sayird",
+      "name": "Sayird",
+      "role": "support",
+      "plan": [
+        "Contrôler un animal réel disponible, sans copie du matériel.",
+        "Control an available real animal; copying supplies no equipment."
+      ],
+      "counter": [
+        "Presser le corps du manipulateur ; l’observation n’est pas une frappe ou une guérison.",
+        "Pressure the controller’s body; observation is not a strike or heal."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 9.6,
+        "recovery": 7
+      },
+      "walk": 29.1
+    },
+    {
+      "id": "terebellum",
+      "name": "Terebellum",
+      "role": "control",
+      "plan": [
+        "Aligner les contacts des mains pour absorber ou transférer une blessure.",
+        "Align hand contact to absorb or transfer a wound."
+      ],
+      "counter": [
+        "Rompre la portée ou l’orientation des mains ; aucun renvoi automatique sans contact.",
+        "Break hand range or facing; there is no automatic contact-free reflection."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 8.5,
+        "recovery": 8
+      },
+      "walk": 28
+    },
+    {
+      "id": "voconte",
+      "name": "Voconte",
+      "role": "control",
+      "plan": [
+        "Relier les huisseries puis provoquer un franchissement dans le bon sens.",
+        "Link the frames, then cause a crossing in the correct direction."
+      ],
+      "counter": [
+        "Garder ses distances aux seuils ; les projectiles ne sont pas transportés.",
+        "Keep clear of thresholds; projectiles are not transported."
+      ],
+      "jab": {
+        "startup": 3,
+        "reach": 8.8,
+        "recovery": 6
+      },
+      "walk": 30.2
+    },
+    {
+      "id": "yokotani",
+      "name": "Yokotani",
+      "role": "control",
+      "plan": [
+        "Réunir la juridiction et la présence de Morena avant LSDF.",
+        "Establish jurisdiction and Morena’s presence before LSDF."
+      ],
+      "counter": [
+        "Les gardes sont invulnérables ; priver le porteur de son Hatsu exige les conditions habituelles.",
+        "The guards are invulnerable; disabling the owner’s Hatsu requires the usual conditions."
+      ],
+      "jab": {
+        "startup": 4,
+        "reach": 9.2,
+        "recovery": 8
+      },
+      "walk": 25.8
+    }
+  ],
+  "rows": [
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "kurapika",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 122,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 122,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "hisoka",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "chrollo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 3,
+      "maxCombo": 1,
+      "guardAt": 61,
+      "actionableFrames": 156,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 99,
+      "actionableFrames": 70,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 99,
+      "actionableFrames": 70,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 3,
+      "maxCombo": 1,
+      "guardAt": 61,
+      "actionableFrames": 156,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 99,
+      "actionableFrames": 70,
+      "frame": 360
+    },
+    {
+      "fighter": "benjamin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 99,
+      "actionableFrames": 70,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "tserriednich",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 118,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 39,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 118,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 39,
+      "frame": 360
+    },
+    {
+      "fighter": "feitan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 126,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 126,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "saiyu",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "theta",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 139,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 139,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "biscuit",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 71,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 71,
+      "frame": 360
+    },
+    {
+      "fighter": "phinks",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 3,
+      "maxCombo": 1,
+      "guardAt": 65,
+      "actionableFrames": 155,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 85,
+      "actionableFrames": 81,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 85,
+      "actionableFrames": 81,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 3,
+      "maxCombo": 1,
+      "guardAt": 65,
+      "actionableFrames": 155,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 85,
+      "actionableFrames": 81,
+      "frame": 360
+    },
+    {
+      "fighter": "franklin",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 85,
+      "actionableFrames": 81,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "machi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 127,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 127,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "illumi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "kalluto",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bonolenov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 132,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 132,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "shizuku",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 48,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 48,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 48,
+      "frame": 360
+    },
+    {
+      "fighter": "hinrigh",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 48,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "mizaistom",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "leorio",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 118,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 118,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "hanzo",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 31,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "rihan",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "zakuro",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 33,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 33,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 33,
+      "frame": 360
+    },
+    {
+      "fighter": "melody",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 33,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "basho",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 144,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "camilla",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 126,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 126,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "halkenburg",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 113,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 23,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 23,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 113,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 23,
+      "frame": 360
+    },
+    {
+      "fighter": "gel",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 23,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 131,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 131,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 53,
+      "frame": 360
+    },
+    {
+      "fighter": "lynch",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "luini",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "bill",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 127,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 127,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "furykov",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 41,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "cluck",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "beyond",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 123,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "longhi",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 45,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 72,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "musse",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 89,
+      "actionableFrames": 57,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "padaille",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 67,
+      "actionableFrames": 115,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "sayird",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 83,
+      "actionableFrames": 29,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 135,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "terebellum",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 59,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 63,
+      "actionableFrames": 117,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "voconte",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 6,
+      "maxCombo": 6,
+      "guardAt": 93,
+      "actionableFrames": 27,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "player",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 132,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "player",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "player",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "center",
+      "hits": 4,
+      "maxCombo": 4,
+      "guardAt": 76,
+      "actionableFrames": 132,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "left",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    },
+    {
+      "fighter": "yokotani",
+      "defender": "bill",
+      "side": "opponent",
+      "position": "right",
+      "hits": 5,
+      "maxCombo": 5,
+      "guardAt": 94,
+      "actionableFrames": 44,
+      "frame": 360
+    }
+  ]
+}

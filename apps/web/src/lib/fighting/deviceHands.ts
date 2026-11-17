@@ -4,20 +4,31 @@ export type DeviceHand = 'left' | 'right'
 /** Pockets and swallowed transmitters do not occupy the hands. The open book occupies the right. */
 export function freeDeviceHand(state: FightState, side: FightSide): DeviceHand | undefined {
   const actor = state[side]
-  if (handsBusy(actor)) return undefined
+  if (physicalHandsBusy(actor)) return undefined
   const occupied = physicalHandOccupancy(state, side)
   return (['right', 'left'] as const).find((hand) => !occupied.has(hand))
 }
-export function physicalHandOccupancy(state: FightState, side: FightSide): Set<DeviceHand> {
-  const actor = state[side]
-  const occupied = new Set<DeviceHand>()
-  if (actor.chrolloBook?.open) occupied.add('right')
+export function physicalHandOccupancy(
+  state: FightState,
+  side: FightSide,
+  ignored: { gallery?: boolean; book?: boolean } = {},
+): Set<DeviceHand> {
+  const occupied = characterHandOccupancy(state[side], ignored)
   const active = state.teamMatch?.seats[side].active
   for (const entry of state.battlefield?.entities ?? [])
     if (occupiesHand(entry, side, active)) occupied.add(entry.device!.hand!)
   return occupied
 }
-function handsBusy(actor: FightState['player']): boolean {
+function characterHandOccupancy(
+  actor: FightState['player'],
+  ignored: { gallery?: boolean; book?: boolean },
+): Set<DeviceHand> {
+  const occupied = new Set<DeviceHand>()
+  if (!ignored.gallery && actor.chrolloHistorical?.galleryFocus) occupied.add('left')
+  if (!ignored.book && actor.chrolloBook?.open) occupied.add('right')
+  return occupied
+}
+export function physicalHandsBusy(actor: FightState['player']): boolean {
   return Boolean(
     (actor.bashoPoem?.writingFrames ?? 0) > 0 ||
     actor.coveringEars ||

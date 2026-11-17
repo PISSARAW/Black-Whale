@@ -459,7 +459,8 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   L’arsenal initial est celui du duel contre Hisoka : Sun and Moon et Black Voice ;
   ce choix ne suppose pas que Black Voice soit encore disponible sur le navire.
   **L** utilise la page ouverte, ou celle au signet si le livre est fermé ;
-  **avant + L** vole au contact un Hatsu observé et ajoute sa page ;
+  **avant + L** termine un vol préparé : Hatsu observé, questions effectivement
+  répondues et paume de la victime sur la couverture dans la limite d’une heure ;
   **arrière + L** ouvre la page suivante ; **bas + L** place le signet et ferme
   le livre, rouvre un livre fermé, ou retire le signet d’une page ouverte déjà marquée.
   **H** utilise la page au signet. Une page ouverte et une page au signet peuvent
@@ -473,11 +474,18 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   des marques ; charge et puissance restent réglées pour le duel.
   Black Voice exige une antenne au contact puis ordonne un recul limité à 90 frames,
   tant que sa page reste active. Le vol désactive le Hatsu adverse même quand sa page
-  est refermée. L’entretien est abrégé ; les manches restent sous la limite canon
-  d’une heure. Les conditions supplémentaires inconnues de Double Face ne sont pas
+  est refermée. L’entretien et la paume sont des commandes réelles ; observer le
+  Hatsu puis frapper ne suffit pas. Les conditions supplémentaires inconnues de Double Face ne sont pas
   inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban
   rendent les états visibles. Livre et vols repartent à zéro à la manche suivante.
   Les commandes fonctionnent aussi en versus local et au tactile.
+  Gallery Fake permet aussi le repérage des copies depuis le contact de la main
+  gauche avec l'original (`gallerySense.ts`). Le relevé privé reste daté après
+  interruption ; il ne dévoile que les positions et contacts dans les volumes
+  réellement copiés. Les originaux humains et les appareils portés suivent leurs
+  corps effectifs, y compris lors d'un relais d'équipe. L'ouverture du livre et
+  les gestes historiques utilisent les mains réellement disponibles. Voir
+  [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
 - Feitan mémorise les PV effectivement perdus pendant la manche (`feitanPain.ts`).
   Après une blessure, L revêt Pain Packer sans soin ni frappe ; H libère le soleil
   fixe de `feitanSun.ts`. Les blessures engagées augmentent la chaleur, le rayon et

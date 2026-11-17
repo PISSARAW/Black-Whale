@@ -1,5 +1,8 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
-import { sleepingBody } from './hanzoProjection'
+import { freeDeviceHand } from './deviceHands'
+import { historicalHandsReady, originalLeftHandReady } from './historicalHands'
+import { touchesDevice } from './physicalDevices'
+import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { createArenaState } from './arenaTypes'
 import { chrolloHasActivePage } from './chrolloBook'
 import { battleAppearance } from './battleCantabileRules'
@@ -17,39 +20,101 @@ export function copyHistoricalObject(
   side: FightSide,
   targetId?: string,
 ): FightState {
-  if (!chrolloHasActivePage(state[side], 'gallery-fake') || state[side].chrolloBook?.open)
-    return state // Left touches; right creates the copy.
-  const source = copySource(state, side, targetId)
+  const target = targetId ?? (side === 'player' ? 'opponent' : 'player')
+  if (!galleryCopyHandsReady(state, side, target)) return state // Left touches; right creates the copy.
+  const source = copySource(state, side, target)
   if (!source || state[side].aura < 20) return state
+  const copy = createHistoricalReplica(state, side, source)
+  const field = copyField(state)
+  const touched = touchCopiedBody(state, source.id)
+  return {
+    ...touched,
+    arena: state.arena ?? createArenaState(),
+    [side]: copiedCaster(touched, side, source.id),
+    battlefield: { ...field, entities: [...field.entities, copy] },
+  }
+}
+
+function createHistoricalReplica(
+  state: FightState,
+  side: FightSide,
+  source: PreparedEntity,
+): PreparedEntity {
   const id = nextCopyId(state, side)
-  const copy: PreparedEntity = {
-    ...source,
+  return {
     id,
+    kind: ['morena', 'supporter'].includes(source.kind) ? 'puppet' : source.kind,
     owner: side,
     x: copySpawnX(state, side),
+    y: source.y,
     present: true,
     material: 'nen',
     health: 40,
     ...replicaMaterials(source, id),
     consenting: false,
     controller: undefined,
+    sealed: source.sealed,
+    singleDoor: source.singleDoor,
+    growth: source.growth,
     copy: {
       owner: side,
-      inertDeviceForm: source.device?.form?.kind,
+      inertDeviceForm: source.device?.form?.kind ?? source.copy?.inertDeviceForm,
       originalId: source.id,
+      originalKind: source.copy?.originalKind ?? source.kind,
+      originalMember: originalMember(state, source.id),
       createdAt: state.frame,
-      headAttached: true,
-      headHealth: 15,
+      ...replicaHead(source),
       ...copyAppearance(source),
     },
   }
-  const field = copyField(state)
+}
+function replicaHead(source: PreparedEntity): Pick<HistoricalCopy, 'headAttached' | 'headHealth'> {
   return {
-    ...state,
-    arena: state.arena ?? createArenaState(),
-    [side]: { ...state[side], aura: state[side].aura - 20, arenaRecovery: 18 },
-    battlefield: { ...field, entities: [...field.entities, copy] },
+    headAttached: source.copy?.headAttached ?? true,
+    headHealth: source.copy?.headHealth ?? 15,
   }
+}
+
+function galleryCopyHandsReady(state: FightState, side: FightSide, originalId: string): boolean {
+  return (
+    chrolloHasActivePage(state[side], 'gallery-fake') &&
+    !state[side].hanzoProjection &&
+    historicalHandsReady(state, side, ['right']) &&
+    originalLeftHandReady(state, side, originalId)
+  )
+}
+function copiedCaster(
+  state: FightState,
+  side: FightSide,
+  originalId: string,
+): FightState['player'] {
+  const actor = state[side],
+    history = actor.chrolloHistorical
+  const focus = history?.galleryFocus
+  const same =
+    focus?.originalId === originalId && focus.originalMember === originalMember(state, originalId)
+  return {
+    ...actor,
+    aura: actor.aura - 20,
+    arenaRecovery: 18,
+    chrolloHistorical: history ? { ...history, galleryFocus: same ? focus : undefined } : undefined,
+  }
+}
+function copyOriginalWithinReach(
+  state: FightState,
+  side: FightSide,
+  entry: PreparedEntity,
+): boolean {
+  if (entry.device?.carrier) return touchesDevice(state, side, entry)
+  return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 6
+}
+function touchCopiedBody(state: FightState, target: string): FightState {
+  return (target === 'player' || target === 'opponent') && state[target].hanzoProjection
+    ? { ...state, [target]: wakeHanzoBody(state[target]) }
+    : state
+}
+function originalMember(state: FightState, id: string): number | undefined {
+  return id === 'player' || id === 'opponent' ? (state.teamMatch?.seats[id].active ?? 0) : undefined
 }
 
 function nextCopyId(state: FightState, side: FightSide): string {
@@ -76,8 +141,18 @@ function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedE
       : undefined,
     arena: source.arena
       ? { width: source.arena.width, height: source.arena.height }
-      : { width: 2.2, height: 13 },
+      : replicaBounds(source),
   }
+}
+
+function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
+  if (source.kind === 'room') return undefined // An interior, not a solid crate.
+  if (source.device) return undefined // Physical device collisions use the actual carried position.
+  if (source.writingKit) return { width: 2, height: 1 }
+  if (source.kind === 'crate') return { width: 3, height: 8 }
+  return ['puppet', 'morena', 'supporter'].includes(source.kind)
+    ? { width: 2.2, height: 13 }
+    : undefined
 }
 
 function copySpawnX(state: FightState, side: FightSide): number {
@@ -115,13 +190,15 @@ function copySource(state: FightState, side: FightSide, targetId?: string): Prep
         entry.id === target &&
         entry.present &&
         !entry.weakSpirit &&
-        Math.hypot(entry.x - caster.x, entry.y - caster.y) <= 6,
+        !['destination', 'delivery'].includes(entry.kind) &&
+        copyOriginalWithinReach(state, side, entry),
     ) ?? null
   )
 }
 
 export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: string): FightState {
   if (
+    !freeDeviceHand(state, side) ||
     !canSpeak(state[side]) ||
     state[side].aura < 10 ||
     !chrolloHasActivePage(state[side], 'order-stamp')

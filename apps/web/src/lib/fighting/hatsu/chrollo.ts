@@ -10,6 +10,7 @@ import { reconcileChrolloPages } from '../chrolloPageEffects'
 import { completeSkillHunter } from '../skillHunterAcquisition'
 import { advanceHistoricalEffects } from '../chrolloHistoricalEffects'
 import { advanceHistoricalCopies } from '../chrolloHistoricalObjects'
+import { advanceGallerySenses } from '../gallerySense'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { unchangedTrigger, type FighterHatsu, type HatsuImpactContext } from './contract'
 
@@ -29,8 +30,10 @@ export const chrolloHatsu: FighterHatsu = {
     return page === 'sun-and-moon' ? stamp(context) : context.state
   },
   onFrame: (state) =>
-    advanceHistoricalCopies(
-      advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+    advanceGallerySenses(
+      advanceHistoricalCopies(
+        advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+      ),
     ),
 }
 

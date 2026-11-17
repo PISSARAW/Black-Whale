@@ -1,0 +1,36 @@
+import type { PreparedEntityKind } from './preparationTypes'
+
+export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
+  fr: {
+    'weak-spirit': 'Faible esprit',
+    device: 'Appareil matériel',
+    puppet: 'Copie inerte · marionnette',
+    needles: 'Aiguilles',
+    morena: 'Morena',
+    supporter: 'Partisan marqué',
+    animal: 'Souris réelle',
+    bird: 'Pigeon réel',
+    seed: 'Graine vivante',
+    crate: 'Caisse',
+    flute: 'Flûte',
+    room: 'Pièce d’ancrage',
+    destination: 'Lieu visité',
+    delivery: 'Point de livraison',
+  },
+  en: {
+    'weak-spirit': 'Weak spirit',
+    device: 'Physical device',
+    puppet: 'Inert copy · puppet',
+    needles: 'Needles',
+    morena: 'Morena',
+    supporter: 'Marked supporter',
+    animal: 'Real mouse',
+    bird: 'Real pigeon',
+    seed: 'Living seed',
+    crate: 'Crate',
+    flute: 'Flute',
+    room: 'Anchor room',
+    destination: 'Visited place',
+    delivery: 'Delivery point',
+  },
+}

@@ -1,4 +1,5 @@
 import { seesCombatBody } from './fightCounterplay'
+import { liveGalleryContacts } from './gallerySense'
 import { insideEn } from './nenPerception'
 import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
@@ -13,6 +14,13 @@ export function currentlyLocatedTarget(
   const observer = state.opponent
   if (seesCombatBody(observer) || (voluntaryNenAvailable(observer) && insideEn(observer, body)))
     return { x: body.x, y: body.y, at: state.frame }
+  const copyContact = liveGalleryContacts(state, 'opponent').find(
+    (item) =>
+      item.side === 'player' &&
+      item.member === (state.teamMatch?.seats.player.active ?? 0) &&
+      !item.projection,
+  )
+  if (copyContact) return { x: copyContact.x, y: copyContact.y, at: state.frame }
   return null
 }
 export function knownOpponentTarget(state: FightState) {

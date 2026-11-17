@@ -10,6 +10,7 @@ import type { ArcadeFighter, FightSide, FightState } from '../types'
 /** Presentation only: local controls always operate P1; the referee keeps canonical seats. */
 const SIDE_FIELDS = new Set([
   'owner',
+  'originalId',
   'target',
   'issuer',
   'recipient',
@@ -64,6 +65,8 @@ function redactEnemy(enemy: ArcadeFighter) {
     enemy.chrolloHistorical = {
       ...enemy.chrolloHistorical,
       phone: undefined,
+      galleryFocus: undefined,
+      galleryReading: undefined,
       aiPlan: undefined,
       aiLastUse: undefined,
     }

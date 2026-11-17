@@ -84,6 +84,8 @@ export const ARSENAL_ACTION_IDS = [
   'history-phone-criteria',
   'history-phone-call',
   'history-page',
+  'history-gallery-locate',
+  'history-gallery-stop',
   'history-use',
   'history-release',
   'history-order-wait',

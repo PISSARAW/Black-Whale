@@ -98,6 +98,37 @@
           >
         {/each}
       {/if}
+      {#if state[side].chrolloHistorical?.galleryReading}
+        {@const reading = state[side].chrolloHistorical!.galleryReading!}
+        <strong
+          >Gallery Fake · {language === 'fr' ? 'Repérage' : 'Location'} · {Math.floor(
+            reading.frame / 60,
+          )} s</strong
+        >
+        <span
+          >{state[side].chrolloHistorical?.galleryFocus
+            ? language === 'fr'
+              ? 'Contact avec l’original maintenu'
+              : 'Contact with the original maintained'
+            : language === 'fr'
+              ? 'Dernière observation, contact interrompu'
+              : 'Last observation, contact interrupted'}</span
+        >
+        {#each reading.copies as copy, i (copy.id)}
+          <span
+            >{language === 'fr' ? 'Copie' : 'Copy'}
+            {i + 1} · x {copy.x.toFixed(1)}, y {copy.y.toFixed(1)} · {copy.contacts.length}
+            {language === 'fr' ? 'contacts dans la copie' : 'contacts within the copy'}</span
+          >
+          {#if copy.contacts.length}
+            <span
+              >{copy.contacts
+                .map((contact) => `x ${contact.x.toFixed(1)}, y ${contact.y.toFixed(1)}`)
+                .join(' · ')}</span
+            >
+          {/if}
+        {/each}
+      {/if}
       {#if state[side].receiverReading}
         <span
           >{language === 'fr' ? 'Dernière réception radio' : 'Latest radio reading'} · {Math.floor(

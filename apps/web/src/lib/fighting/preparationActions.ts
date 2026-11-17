@@ -74,7 +74,7 @@ function activate(state: FightState, side: FightSide, source: FighterId): FightS
 
 function growSeed(state: FightState, side: FightSide): FightState {
   const seed = nearEntity(state, side, 'seed')
-  if (!seed || seed.growth) return state
+  if (!seed || seed.copy || seed.growth) return state
   const grown = updateEntity(state, seed.id, { growth: 1 })
   return completePreparation(grown, side)
 }

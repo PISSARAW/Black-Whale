@@ -71,7 +71,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
   }
 
   function human(entry: PreparedEntity) {
-    const morena = entry.kind === 'morena'
+    const morena = entry.kind === 'morena' || entry.copy?.originalKind === 'morena'
     const seen: HumanLook = {
       id: `prepared:${entry.id}`,
       kind: 'combatant',

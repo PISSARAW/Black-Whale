@@ -1,4 +1,5 @@
 import { bashoArsenalAi } from './bashoArsenalAi'
+import { gallerySenseAi } from './galleryAi'
 import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
@@ -37,7 +38,11 @@ function utilityArsenalAi(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   return (
-    bashoArsenalAi(state, perform) ?? deviceAi(state) ?? dowsingAi(state) ?? judgmentAiPreset(state)
+    bashoArsenalAi(state, perform) ??
+    deviceAi(state) ??
+    dowsingAi(state) ??
+    gallerySenseAi(state) ??
+    judgmentAiPreset(state)
   )
 }
 

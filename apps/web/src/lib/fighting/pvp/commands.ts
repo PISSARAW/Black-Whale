@@ -117,14 +117,15 @@ function paperUse(state: FightState, side: FightSide, command: 'plant' | 'serpen
 }
 
 function arsenalTarget(target: string | undefined, side: FightSide): string | undefined {
-  if (target?.startsWith('reserve:')) return reserveTarget(target, side)
+  if (target?.startsWith('reserve:') || target?.startsWith('body:'))
+    return memberTarget(target, side)
   if (target === 'player') return side
   return target === 'opponent' ? (side === 'player' ? 'opponent' : 'player') : target
 }
 
-function reserveTarget(target: string, side: FightSide): string {
-  const match = /^reserve:(player|opponent):([0-2])$/.exec(target)
+function memberTarget(target: string, side: FightSide): string {
+  const match = /^(reserve|body):(player|opponent):([0-2])$/.exec(target)
   if (!match) return target
-  const seat = match[1] === 'player' ? side : side === 'player' ? 'opponent' : 'player'
-  return `reserve:${seat}:${match[2]}`
+  const seat = match[2] === 'player' ? side : side === 'player' ? 'opponent' : 'player'
+  return `${match[1]}:${seat}:${match[3]}`
 }

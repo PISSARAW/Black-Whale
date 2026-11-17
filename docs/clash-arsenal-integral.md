@@ -335,6 +335,46 @@ papier, la caméra et les snapshots. Le ruleset devient **clash-combat-24**.
 Cette correction n'invente aucun des autres skills numérotés non révélés.
 Le On est conservé.
 
+## Gallery Fake : repérage et En des copies
+
+Le contact avec l'original permet désormais de relever les positions de ses
+copies. L'utilisateur doit garder la main gauche au contact et Gallery Fake
+actif ; le livre peut occuper sa main droite. Tenir l'original dans la main gauche
+est un contact valable, sans exiger une troisième main. Le comportement reprend
+le repérage des yeux au chapitre 109, recoupé avec
+[Kortopi](https://hunterxhunter.fandom.com/wiki/Kortopi) et
+[le résumé du chapitre 109](https://hunterxhunter.fandom.com/wiki/Chapter_109).
+
+Le relevé distingue chaque copie réellement présente et les contacts à
+l'intérieur de son volume. Une pièce copiée utilise son intérieur, sans devenir
+une caisse pleine. Aucun rayon distant universel, identité mentale ou réserve
+d'aura de la cible n'est révélé. Les dimensions sont les conventions du décor
+de duel. Un appareil transporté suit les mains du porteur réel ; le matériel
+d'écriture ramassé suit son corps. Un original humain reste lié au membre
+réellement copié après un relais, plutôt qu'à la place active de son équipe.
+Le repérage s'interrompt si le contact ou le pouvoir manque. La dernière
+observation reste datée, sans mise à jour cachée après interruption.
+
+Les résultats sont privés, l'interface P2 remappe correctement le corps
+original et l'IA peut établir le contact avec un original disponible. Un contact
+réel détecté dans une copie peut informer son déplacement même sans vision.
+Un replay complet reproduit le suivi d'un appareil copié, ramassé puis transporté
+par les commandes ordinaires.
+
+La fabrication des copies conserve les propriétés matérielles représentées,
+sans recopier les volontés, panaches de soutien, contrôleurs, ancrages ou visites
+personnelles. Une fausse Morena ne remplace pas Morena et une fausse graine
+n'est pas une cible vivante pour Erigeron. Les appareils suivent leurs collisions
+propres ; ils ne deviennent pas des obstacles fixes à l'emplacement de leur
+création lorsqu'ils sont portés. Les marques Sun and Moon ne sont pas dupliquées.
+Les autres interactions matérielles non représentées restent à auditer.
+
+Le contrôle des gestes est commun : Skill Hunter ne s'ouvre pas autour d'un
+objet tenu à droite, Convert Hands vérifie la main qui touche, Fun Fun Cloth et
+Gallery Fake exigent leurs deux mains, et Order Stamp demande une main disponible.
+Toucher le corps endormi de Hanzo le réveille réellement. Le ruleset devient
+**clash-combat-25**. Le On est conservé ; il n'accorde pas le repérage de Gallery Fake.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -342,12 +382,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                               |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Les interactions matérielles de Black Voice et les limites non révélées doivent encore être contrôlées.     |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                       |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                           |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage et l’En de Gallery Fake sont exécutables ; les interactions matérielles restantes, notamment Black Voice et les outils copiés ramassés, doivent encore être contrôlées. |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                               |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                         |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                   |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |

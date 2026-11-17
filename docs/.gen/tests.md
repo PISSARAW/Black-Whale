@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 741
+Fichiers : 744
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -542,6 +542,14 @@ Fichiers : 741
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
 
+## `apps/web/src/lib/fighting/galleryIntegration.test.ts`
+
+- Gallery Fake command and simulation boundaries > maps P2’s local body reference back to the canonical original and keeps the resulting reading private
+
+## `apps/web/src/lib/fighting/gallerySense.test.ts`
+
+- Gallery Fake locates real copies from contact with the actual original > does not restore a severed head by making a second copy of the headless puppet
+
 ## `apps/web/src/lib/fighting/gamepadDiagnostics.test.ts`
 
 - local Xbox hardware diagnostics > shows analog trigger travel without guessing a digital press
@@ -569,6 +577,10 @@ Fichiers : 741
 ## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
 
 - Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
+## `apps/web/src/lib/fighting/historicalMaterialGestures.test.ts`
+
+- historical material gestures use actual hands and physical bodies > can copy a moved original already held in the left hand when the right hand is free
 
 ## `apps/web/src/lib/fighting/illumi.test.ts`
 

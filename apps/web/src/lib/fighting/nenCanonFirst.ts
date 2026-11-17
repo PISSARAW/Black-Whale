@@ -30,13 +30,27 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'One fighter-to-fighter tether, cloth preparation, reach and composed card finish tune the duel.',
   },
   chrollo: {
-    abilities: ['skill-hunter', 'double-face', 'sun-and-moon', 'black-voice'],
+    abilities: [
+      'skill-hunter',
+      'double-face',
+      'sun-and-moon',
+      'black-voice',
+      'indoor-fish',
+      'fun-fun-cloth',
+      'chrollo-teleportation',
+      'order-stamp',
+      'convert-hands',
+      'gallery-fake',
+      'love-dial-6700',
+      'lovely-ghostwriter',
+    ],
     condition:
-      'A stolen ability needs its page and the book or single bookmark; copies keep body, material and target requirements.',
-    effect: 'Pages and bookmark control active powers; Sun and Moon marks survive page closure.',
+      'Acquisition needs witnessing, answered questions, a palm on the cover and completion within one hour. Active pages require the right-hand book or the unique bookmark; copied powers retain their own conditions.',
+    effect:
+      'Historical pages execute their separate effects. Gallery Fake copies remain inert, can be located from the original and sense contacts within their volume; Sun and Moon marks persist.',
     prohibition: 'No body, weapon, animal, ally, consent or learned model is acquired with a page.',
     adaptation:
-      'Historical Hisoka-duel loadout; witnessing plus contact abbreviates acquisition. The complete canonical theft sequence is not simulated.',
+      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning; Lovely Ghostwriter still lacks its handwritten subject and scenario-future context, and further material interactions remain under audit.',
   },
   benjamin: {
     abilities: ['benjamin-baton', 'air-blow', 'secret-window', 'culdcept'],

@@ -1,3 +1,4 @@
+import { addBenjaminRifle } from './benjaminRifle'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
@@ -129,6 +130,7 @@ function addFighterEquipment(
     addFranklinHands({ THREE, glow, model })
   }
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.id === 'benjamin') addBenjaminRifle({ THREE, glow, model })
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
   if (blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })

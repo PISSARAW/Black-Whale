@@ -1,3 +1,4 @@
+import { animateBenjaminRifle } from './benjaminRiflePose'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
@@ -110,6 +111,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
+    animateBenjaminRifle(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   })
 }
@@ -154,13 +156,17 @@ export interface PlanContext extends ReactionContext {
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const plan = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
-  const handed =
-    ['chrollo', 'kurapika'].includes(fighter.id) ||
-    plan?.key === 'roster-writing' ||
-    plan?.key === 'roster-console'
-  return plan && handed && fighter.facing === -1
+  return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1
     ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan
+}
+
+function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
+  return (
+    ['chrollo', 'kurapika'].includes(fighter.id) ||
+    plan.key === 'roster-writing' ||
+    plan.key === 'roster-console'
+  )
 }
 
 function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {

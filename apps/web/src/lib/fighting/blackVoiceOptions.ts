@@ -32,9 +32,14 @@ export function blackVoiceOptions(state: FightState, side: FightSide): ArsenalOp
       entry.id,
     )
   }
-  return options
+  return options.map(selfCondition)
 }
 function gearOptions(add: AddOption) {
+  add('voice-self-implant', ['Implanter une antenne sur moi', 'Implant an antenna in myself'])
+  add('voice-autopilot', [
+    'Auto-manipulation · mission sans annulation volontaire',
+    'Autopilot · mission without voluntary cancellation',
+  ])
   add('voice-arm', ['Sortir une antenne', 'Draw an antenna'])
   add('voice-phone', ['Prendre le téléphone', 'Hold the phone'])
   add('voice-pocket', ['Ranger les objets tenus', 'Pocket held objects'])
@@ -70,4 +75,15 @@ function subjectOptions(
     [`Dicter l’ordre d’attaque · ${name}`, `Speak the attack order · ${name}`],
     target.id,
   )
+}
+
+function selfCondition(option: ArsenalOption): ArsenalOption {
+  if (option.command.action !== 'voice-autopilot') return option
+  return {
+    ...option,
+    conditionFr:
+      'Antenne implantée sur soi, téléphone associé et ennemi visible. Aucun arrêt volontaire avant la fin de mission ; douleurs pendant au moins deux jours simulés. Contexte disponible : duel K.-O. sans autre ennemi visible.',
+    conditionEn:
+      'Antenna implanted in own body, paired phone and visible enemy. No voluntary stop before mission completion; muscle soreness for at least two simulated days. Available context: KO duel with no additional visible enemy.',
+  }
 }

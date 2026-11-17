@@ -444,11 +444,53 @@ L'IA prend son téléphone après une implantation réussie puis donne un ordre.
 Les références corporelles de P2, les ordres persistants, les observations privées,
 les objets copiés et l'export/import complet d'un replay sont testés.
 Le ruleset est **clash-combat-27**. Le **On est conservé**.
-L'auto-manipulation de Shalnark, avec sa mission irrévocable et ses douleurs durant
-plusieurs jours, n'est pas confondue avec ces ordres et reste ouverte pour la passe suivante.
+L'auto-manipulation est distincte de ces ordres ; son contexte exécutable est précisé ci-dessous.
 Les références sont les chapitres 95–96, 227 et 351–357, recoupés avec
 [Shalnark](https://hunterxhunter.fandom.com/wiki/Shalnark) et le
 [récapitulatif du chapitre 351](https://hunterxhunter.fandom.com/wiki/Chapter_351).
+
+## Auto-manipulation de Black Voice : mission, budget et conséquences
+
+L'application montrée par Shalnark au chapitre 227 est accessible depuis la page
+historique de Black Voice : sortir une des deux antennes originales, l'implanter
+sur son propre corps, prendre le téléphone associé puis activer le mode. Aucun
+matériel ou Nen supplémentaire n'est créé par cette séquence. Le contrôle de soi
+ne commence qu'à l'activation effective du téléphone ; la simple présence de
+l'antenne ne donne aucune protection préventive fictive.
+
+Le corps agit ensuite de façon autonome contre le combattant réel qui était
+visible à l'activation. Son identité corporelle et son indice d'équipe sont
+conservés. Les frappes passent par les coups physiques ordinaires, leurs boîtes
+de contact, les gardes et les dégâts du moteur ; aucune frappe n'applique par
+commodité une autre page de Chrollo. Les obstacles restent solides. Le budget
+d'aura est réellement dépensé, sans remplir la réserve pour représenter la hausse
+de débit. Les projectiles matériels ordinaires ne reçoivent pas ce bonus.
+
+Le joueur ne peut ni donner d'ordres, ni ranger les objets, ni tourner une page
+pour annuler volontairement la mission. Une interruption forcée du Nen, un retrait
+physique de l'antenne par autrui ou la défaite du corps visé interrompent le mode.
+Le passage à une manche suivante après un arrêt du combat ne permet pas de le
+réinitialiser : mission, page, antenne et réserve d'aura restent engagées.
+
+Après la mission, les douleurs musculaires et la faiblesse durent **au moins deux
+jours simulés** ; elles persistent entre les manches et le temps avance aussi
+pendant le hitstop et Cat’s Name. Deux jours constituent le minimum retenu dans
+ce scénario pour les plusieurs jours indiqués au chapitre 227, jamais une durée
+canonique exacte. Les multiplicateurs de force et de mobilité, l'affaiblissement
+et les coûts sont des réglages du duel. Cette application d'une capacité copiée
+n'attribue pas à Chrollo une performance physique chiffrée montrée chez Shalnark.
+Les habitudes observées, rencontres et paroles reçues pendant la mission ne sont
+pas ajoutées à ses souvenirs conscients ; les enregistrements d'appareils externes
+restent des objets indépendants.
+
+Le contexte actuellement exécutable est **un duel K.-O. contre un seul ennemi
+visible**, sans autre personne ennemie visible dans la préparation. Le format
+aux points et une mission contre plusieurs ennemis ne sont pas représentés par
+une condition Nen inventée : l'action y reste indisponible. Le cas à plusieurs
+ennemis montré chez Shalnark reste donc à généraliser avant certification complète.
+L'IA peut préparer les quatre étapes à partir de son propre matériel dans une
+situation de danger. Les missions, leurs effets et leur budget se rejouent par
+export/import complet. Le ruleset devient **clash-combat-28** ; le **On reste présent**.
 
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
@@ -457,12 +499,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                      |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. Restent notamment l’auto-manipulation et l’audit des applications et contacts de Sun and Moon. |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                              |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                        |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                  |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
+| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                                                                    |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |

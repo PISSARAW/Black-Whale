@@ -1,3 +1,4 @@
+import { carryVoiceAutopilot } from './blackVoiceAutopilot'
 import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
 import { createWritingKit } from './bashoMaterials'
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
@@ -109,11 +110,14 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  fighter = {
-    ...fighter,
-    personalEncounters: previous.personalEncounters,
-    blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
-  }
+  fighter = carryVoiceAutopilot(
+    {
+      ...fighter,
+      personalEncounters: previous.personalEncounters,
+      blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
+    },
+    previous,
+  )
   fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
   return fighter.kurapika
     ? {

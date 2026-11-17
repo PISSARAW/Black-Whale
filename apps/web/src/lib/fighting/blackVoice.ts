@@ -1,3 +1,4 @@
+import { settleVoiceAutopilot } from './blackVoiceAutopilot'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { physicalBodyAt } from './fightBodyIdentity'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -36,7 +37,7 @@ export function prepareBlackVoice(state: FightState, side: FightSide, moveId?: s
     : state
 }
 export function plantBlackVoice({ state, side, defenderSide }: HatsuImpactContext): FightState {
-  return completeVoiceImplant(state, side, defenderSide)
+  return side === defenderSide ? state : completeVoiceImplant(state, side, defenderSide)
 }
 
 /** A pin must actually pierce a living human. A projection, corpse or duplicate is not one. */
@@ -52,7 +53,14 @@ export function implantVoiceTarget(
     Math.hypot(target.x - state[side].x, target.y - state[side].y) > 8
   )
     return state
+  if (ownVoiceBody(state, side, target)) return state
   return completeVoiceImplant(state, side, targetId)
+}
+export function implantVoiceSelf(state: FightState, side: FightSide): FightState {
+  return completeVoiceImplant(state, side, side)
+}
+function ownVoiceBody(state: FightState, side: FightSide, target: VoiceTarget): boolean {
+  return target.side === side && target.member === (state.teamMatch?.seats[side].active ?? 0)
 }
 function completeVoiceImplant(state: FightState, side: FightSide, targetId: string): FightState {
   if (
@@ -62,7 +70,7 @@ function completeVoiceImplant(state: FightState, side: FightSide, targetId: stri
   )
     return state
   const target = voiceTarget(state, targetId)
-  if (!target || !plantableTarget(state, side, target)) return state
+  if (!target || !plantableTarget(target)) return state
   const gear = voiceGear(state, side),
     antenna = gear.armed!
   const control: BlackVoiceControl = {
@@ -76,10 +84,8 @@ function completeVoiceImplant(state: FightState, side: FightSide, targetId: stri
     blackVoiceControl: control,
   })
 }
-function plantableTarget(state: FightState, side: FightSide, target: VoiceTarget): boolean {
-  if (!livingHuman(target) || target.control || targetAlreadyControlled(target)) return false
-  const member = state.teamMatch?.seats[side].active ?? 0
-  return !(target.side === side && target.member === member)
+function plantableTarget(target: VoiceTarget): boolean {
+  return livingHuman(target) && !target.control && !targetAlreadyControlled(target)
 }
 
 function livingHuman(target: ReturnType<typeof voiceTarget> & {}): boolean {
@@ -100,7 +106,8 @@ export function issueVoiceOrder(
     control = target?.control
   if (!target || !control || !voiceOrderReady(state, side, control) || target.health <= 0)
     return state
-  if (control.active && control.order === order) return state
+  if (ownVoiceBody(state, side, target)) return state
+  if (sameVoiceOrder(control, order)) return state
   if (!control.active && targetAlreadyControlled(target)) return state
   return activateVoiceSubject(state, target, order)
 }
@@ -160,6 +167,11 @@ export function voiceAutonomy(fighter: ArcadeFighter): boolean {
 }
 
 export function reconcileBlackVoice(state: FightState): FightState {
+  state = settleVoiceAutopilot(state)
   if (!hasVoiceControl(state)) return state
   return releaseBlackVoicePage(releaseBlackVoicePage(state, 'player'), 'opponent')
+}
+
+function sameVoiceOrder(control: BlackVoiceControl, order: BlackVoiceOrder): boolean {
+  return control.active && control.order === order
 }

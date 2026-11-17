@@ -35,6 +35,8 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'voice-self-implant',
+  'voice-autopilot',
   'voice-watch',
   'voice-arm',
   'voice-phone',

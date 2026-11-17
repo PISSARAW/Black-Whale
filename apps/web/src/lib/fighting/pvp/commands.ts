@@ -23,7 +23,7 @@ export function applyPvpCommand(
   side: FightSide,
   command: PvpCommand,
 ): FightState {
-  if (!fightAcceptsCommands(state)) return state
+  if (!fightAcceptsCommands(state) || state[side].blackVoiceControl?.active) return state
   const run = (current: FightState) =>
     runOutsideEasterEgg(current, side, (next) => execute(next, side, command))
   return command.kind === 'move'

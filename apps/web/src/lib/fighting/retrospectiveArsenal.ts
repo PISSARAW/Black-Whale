@@ -39,6 +39,7 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
+  if (state[side].blackVoiceControl?.active) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.action === 'support-consent') return toggleConsent(state, side)
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))

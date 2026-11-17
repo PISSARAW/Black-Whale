@@ -43,6 +43,7 @@ export function recordHeardWords(
   recipient: SpeechRecipient,
   words: { speaker: FightSide; text: string },
 ): FightState {
+  if (recipientBody(state, recipient).blackVoiceAutopilot) return state
   const heardWords = {
     frame: state.frame,
     speaker: battleAppearance(state[words.speaker]),

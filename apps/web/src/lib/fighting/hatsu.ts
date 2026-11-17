@@ -1,3 +1,4 @@
+import { voiceOutputFactor } from './blackVoiceAutopilot'
 import { witnessedHatsuState } from './nenWitness'
 import { illumiBodyFree } from './illumiState'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -128,7 +129,7 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * coins * completion
+  return transformed * coins * completion * voiceOutputFactor(fighter)
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {

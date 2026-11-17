@@ -1,3 +1,4 @@
+import { blackVoiceSelfAi } from './blackVoiceSelfAi'
 import { chrolloHasActivePage } from './chrolloBook'
 import { performBlackVoiceCommand } from './blackVoiceAction'
 import { voiceGear } from './blackVoiceGear'
@@ -14,7 +15,8 @@ export function blackVoiceAi(state: FightState): FightState | null {
       !target.control.active &&
       target.health > 0,
   )
-  if (!subject) return null
+  if (!subject) return blackVoiceSelfAi(state)
+  if (subject.side === 'opponent') return blackVoiceSelfAi(state)
   const gear = voiceGear(state, 'opponent')
   const command = gear.phone?.hand
     ? { action: 'voice-stay' as const, target: subject.id }

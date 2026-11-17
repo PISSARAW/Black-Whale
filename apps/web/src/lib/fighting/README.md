@@ -481,7 +481,12 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   et antenne respectent les mains disponibles ; dépôt, ramassage et nombre de
   pièces sont conservés, sans reconstitution gratuite à la manche suivante.
   Les ordres déjà donnés sont autonomes ; ranger le téléphone ne libère pas la cible.
-  Le mode d'auto-manipulation de Shalnark reste à intégrer séparément.
+  L'auto-manipulation est exécutable en duel K.-O. contre un seul ennemi visible :
+  antenne sur soi, téléphone original, mission autonome sans annulation volontaire.
+  La fin de mission conserve au moins deux jours simulés de douleurs et de faiblesse,
+  même entre les manches, pendant le hitstop et Cat’s Name. Le corps n'ajoute pas
+  les événements de la mission à ses souvenirs conscients. Coûts et multiplicateurs
+  restent des réglages de duel ; les missions contre plusieurs ennemis restent ouvertes.
   Le vol désactive le Hatsu adverse même quand sa page
   est refermée. L’entretien et la paume sont des commandes réelles ; observer le
   Hatsu puis frapper ne suffit pas. Les conditions supplémentaires inconnues de Double Face ne sont pas

@@ -34,7 +34,7 @@ function observe(state: FightState, side: FightSide): FightState {
   }
 }
 function canMeet(actor: ArcadeFighter): boolean {
-  return seesCombatBody(actor) && canBeMet(actor)
+  return !actor.blackVoiceAutopilot && seesCombatBody(actor) && canBeMet(actor)
 }
 function canBeMet(actor: ArcadeFighter): boolean {
   return actor.health > 0 && !actor.arsenalSleep && !actor.clothCapture && !actor.hanzoProjection

@@ -1,3 +1,4 @@
+import { finishPhysicalFrame } from './physicalFrameClocks'
 import { performLegacyThrow } from './legacyThrow'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { judgmentActionBreach } from './judgmentAction'
@@ -159,7 +160,7 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return expireHistoricalMatter(
+  return finishPhysicalFrame(
     simulateClashFrame(state, controls, {
       step: stepFight,
       decide: opponentAttack,

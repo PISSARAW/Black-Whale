@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 748
+Fichiers : 750
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -284,9 +284,17 @@ Fichiers : 748
 
 - Black Voice original phone and two physical antennas > does not conjure replacement gear from a page or ordinary needles
 
+## `apps/web/src/lib/fighting/blackVoiceAutopilot.test.ts`
+
+- Black Voice self-manipulation and its physical consequences > implants one original antenna in the actual self and activates through its paired phone
+
 ## `apps/web/src/lib/fighting/blackVoiceIntegration.test.ts`
 
 - Black Voice at command, replay and death boundaries > uses P2 local body references without transferring private phone information
+
+## `apps/web/src/lib/fighting/blackVoiceSelfReplay.test.ts`
+
+- self-manipulation is a simulated mission in full replays > replays the actual pin, phone, aura budget, autonomous kicks and aftermath without rewriting HP
 
 ## `apps/web/src/lib/fighting/bonolenov.test.ts`
 

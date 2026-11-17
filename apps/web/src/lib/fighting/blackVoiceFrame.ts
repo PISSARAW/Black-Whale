@@ -1,3 +1,5 @@
+import { advanceVoiceSelf } from './blackVoiceSelfFrame'
+import { settleVoiceAutopilot } from './blackVoiceAutopilot'
 import { physicalBodyAt } from './fightBodyIdentity'
 import {
   changeVoiceTarget,
@@ -19,7 +21,7 @@ export function advanceBlackVoice(state: FightState): FightState {
     if (!target.control?.active) continue
     next = advanceSubject(next, target)
   }
-  return next
+  return settleVoiceAutopilot(next)
 }
 function advanceSubject(state: FightState, target: VoiceTarget): FightState {
   const control = target.control!,
@@ -31,6 +33,8 @@ function advanceSubject(state: FightState, target: VoiceTarget): FightState {
         ? { hatsuEffects: { ...target.body.hatsuEffects, manipulatedFrames: 0 } }
         : {}),
     })
+  if (target.body?.blackVoiceAutopilot)
+    return activeSubject(state, target) ? advanceVoiceSelf(state, target.side!) : state
   if (target.body) return obeyBody(state, target, owner)
   return obeyPerson(state, target, owner)
 }

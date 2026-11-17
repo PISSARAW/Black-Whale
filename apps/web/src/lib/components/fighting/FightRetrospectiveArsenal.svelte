@@ -79,6 +79,21 @@
           ).toFixed(1)} s</span
         >
       {/if}
+      {#if state[side].blackVoiceAutopilot}
+        <p role="status">
+          Black Voice · {language === 'fr'
+            ? 'Auto-manipulation : mission en cours, aucune annulation volontaire.'
+            : 'Autopilot: mission running, no voluntary cancellation.'}
+        </p>
+      {/if}
+      {#if state[side].blackVoiceAftermath}
+        <p role="status">
+          Black Voice · {language === 'fr'
+            ? 'Douleurs musculaires ; aucun souvenir de la mission.'
+            : 'Muscle soreness; no memory of the mission.'}
+          {Math.ceil(state[side].blackVoiceAftermath!.remainingFrames / (60 * 60 * 60))} h
+        </p>
+      {/if}
       {#if state[side].blackVoiceScreen}
         {@const screen = state[side].blackVoiceScreen!}
         <p>

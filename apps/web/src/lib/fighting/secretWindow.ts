@@ -1,7 +1,7 @@
-import { voluntaryNenAvailable } from './nenAccess'
-import { chrolloHasActivePage } from './chrolloBook'
 import { sleepingBody } from './hanzoProjection'
-import { chainAbilitySealed } from './kurapika'
+import { physicalBodyAt } from './fightBodyIdentity'
+import { secretWindowNenActive } from './secretWindowAccess'
+export { secretWindowNenActive } from './secretWindowAccess'
 import type { ArcadeFighter, FightSide, FightState, FighterPose } from './types'
 
 export interface SecretWindowObservation {
@@ -11,13 +11,19 @@ export interface SecretWindowObservation {
 
 export interface SecretWindowState {
   target: FightSide
+  targetMember?: number
   attachedAt: number
   observation: SecretWindowObservation
+  heard?: { frame: number; text: string }
 }
 
 /** The bird reports bodily actions, not aura, thoughts, attack names or the future. */
-export function observeSecretWindow(state: FightState, target: FightSide): SecretWindowObservation {
-  const fighter = state[target]
+export function observeSecretWindow(
+  state: FightState,
+  target: FightSide,
+  member?: number,
+): SecretWindowObservation {
+  const fighter = physicalBodyAt(state, target, member) ?? state[target]
   const body = sleepingBody(fighter)
   const action = fighter.hanzoProjection
     ? 'sleeping-body'
@@ -27,19 +33,11 @@ export function observeSecretWindow(state: FightState, target: FightSide): Secre
   return { frame: state.frame, action }
 }
 
-export function secretWindowNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
-    hasSecretWindow(fighter) &&
-    !chainAbilitySealed(fighter, 'musse:neutralSpecial')
-  )
-}
-
-function hasSecretWindow(fighter: ArcadeFighter): boolean {
-  if (fighter.id === 'musse') return true
-  if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'musse')
-  const held = fighter.kurapika?.held
-  return Boolean(held?.used && held.source === 'musse')
+export function secretWindowTarget(
+  state: FightState,
+  feed: SecretWindowState,
+): ArcadeFighter | undefined {
+  return physicalBodyAt(state, feed.target, feed.targetMember)
 }
 
 /** One contact bird is sufficient for a duel with one opponent. */

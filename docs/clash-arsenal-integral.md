@@ -758,3 +758,33 @@ exécutables ; les autres réserves de l'audit, notamment les éditeurs spécial
 Lovely Ghostwriter, les prothèses et liens multiples d'Hisoka, Judgment et les
 consciences d'Halkenburg, restent ouvertes. Ce jalon ne certifie pas les 40
 arsenaux à 100 %.
+
+## Secret Window : corps marqué et flux privé partagé avec Benjamin
+
+Le contact de Musse et celui de Benjamin utilisent maintenant la même application
+de Secret Window. Le hibou transmet les gestes du corps réellement touché et les
+paroles réellement prononcées à proximité, sans révéler l'intention, la technique
+cachée ou les pensées. Une garde ne remplace pas une esquive et n'empêche pas ce
+contact non dommageable. Le contact reste soumis à la portée physique, à la grâce
+de relevée et aux véritables évitements.
+
+La cible est conservée par membre physique d'équipe. Quand elle passe au portail,
+le hibou la suit ; le remplaçant n'hérite pas de son observation. Un Musse en
+réserve continue à recevoir ses propres observations. Le flux reste privé en PvP,
+y compris en réserve, et n'est pas recalculé depuis les informations masquées du
+client. Un esprit inconscient ne reçoit pas de nouvelles observations ni de
+paroles. Un ordre explicite permet de rappeler le hibou ; changer ensuite de cible
+demande un nouveau contact.
+
+Le bénéficiaire d'un Dolphin équipé utilise son stock emprunté pour conserver le
+flux, même si sa propre réserve ou son Hatsu personnel ne sont pas disponibles.
+Les entraves physiques au Nen et le sceau de On restent appliqués. Un changement
+de manche ne supprime pas un hibou encore lié à ce prêt et ne libère donc pas
+gratuitement le donneur ou le prêteur.
+
+Références : contact et transmission au chapitre 373, héritage aux chapitres 373
+et 389, fonctions connues résumées [ici](https://hunterworld.tokyo/en/musse/).
+L'écoute par le hibou d'épaule du chapitre 366 et la relecture développée par
+Benjamin au chapitre 413 restent à intégrer après cette correction du flux. La
+fonction propre du troisième oiseau n'est pas inventée. Ruleset :
+**clash-combat-36** ; le On reste présent et l'audit global reste ouvert.

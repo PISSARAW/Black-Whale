@@ -1,4 +1,5 @@
 import { personDolphinOptions } from './dolphinPeopleOptions'
+import { secretWindowOptions, performSecretWindowCommand } from './secretWindowCommands'
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
@@ -82,6 +83,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['window-', performSecretWindowCommand],
   ['dolphin-lend', performDolphinLoan],
   ['voice-', performBlackVoiceCommand],
   ['little-eye-', performLittleEyeCommand],
@@ -107,6 +109,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...secretWindowOptions(state, side),
     ...nativeArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),
   ]

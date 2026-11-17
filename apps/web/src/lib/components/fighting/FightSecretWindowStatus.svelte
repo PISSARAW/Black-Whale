@@ -29,7 +29,10 @@
 </script>
 
 {#if visible && feed && secretWindowNenActive(state[side])}
-  <div class="secret-window-status">Secret Window · {action}</div>
+  <div class="secret-window-status">
+    Secret Window · {action}
+    {#if feed.heard}<span>« {feed.heard.text} »</span>{/if}
+  </div>
 {/if}
 
 <style>
@@ -37,5 +40,9 @@
     color: #e5d9bc;
     margin-top: 0.3rem;
     font: 600 0.6rem/1.4 var(--font-mono);
+  }
+  span {
+    display: block;
+    overflow-wrap: anywhere;
   }
 </style>

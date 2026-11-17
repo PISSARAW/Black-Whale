@@ -1,5 +1,6 @@
 import { interruptEnForSpeech } from './en/interruptions'
 import { captureLittleEyeSpeech } from './littleEyeSenses'
+import { captureSecretWindowSpeech } from './secretWindowSpeech'
 import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import {
@@ -41,6 +42,7 @@ export function speakPaperWords(
     captureDeviceSpeech(state, { side: speaker, text, deliberateLie: intent }),
     { side: speaker, text },
   )
+  next = captureSecretWindowSpeech(next, { side: speaker, text })
   for (const owner of ['player', 'opponent'] as const) {
     if (!paperListening(next, owner)) continue
     const doll = paperState(next[owner]).doll!

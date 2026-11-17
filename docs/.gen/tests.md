@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 838
+Fichiers : 840
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -951,6 +951,14 @@ Fichiers : 838
 ## `apps/web/src/lib/fighting/sayird.test.ts`
 
 - Sayird and Little Eye outside the 2D duel > describes control, sight, hearing and real small targets in both languages
+
+## `apps/web/src/lib/fighting/secretWindowBodies.test.ts`
+
+- Secret Window follows actual bodies and private recipients > keeps the original marked body when an opponent relays, including the owl model
+
+## `apps/web/src/lib/fighting/secretWindowReplay.test.ts`
+
+- Secret Window P2 and replay boundaries > records physical touch, real speech, private P2 observation and explicit recall deterministically
 
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 

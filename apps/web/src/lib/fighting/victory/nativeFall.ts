@@ -14,12 +14,12 @@ const WORLD_UNIT = 0.12
 /** Sample the actual two-gravity integrator, with no render-cadence or easing dependency. */
 export function victoryFallTrajectory(
   source: ArcadeFighter,
-  launch: { velocityY: number; velocityX: number },
+  launch: { velocityY: number; velocityX: number; height?: number },
 ) {
   let fighter: ArcadeFighter = {
     ...source,
     x: 50,
-    y: 0,
+    y: (launch.height ?? 0) / WORLD_UNIT,
     velocityY: launch.velocityY,
     hitStun: 0,
     hanzoProjection: undefined,
@@ -38,7 +38,7 @@ export function victoryFallTrajectory(
 /** Exactly the combat KO choreography and physical surface contacts, applied transactionally. */
 export function nativeVictoryFall(
   context: VictoryContext,
-  options: { start: number; velocityY?: number; velocityX?: number },
+  options: { start: number; velocityY?: number; velocityX?: number; height?: number },
 ) {
   const { victim, age } = context
   const human = humanAnimationRig(victim.root.children[0])
@@ -46,6 +46,7 @@ export function nativeVictoryFall(
   const samples = victoryFallTrajectory(context.state[context.frame.loser], {
     velocityY: options.velocityY ?? 0,
     velocityX: options.velocityX ?? 0,
+    height: options.height,
   })
   const last = samples.length - 1
   const elapsed = Math.max(0, (age - options.start) * FIXED_STEP)

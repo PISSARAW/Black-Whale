@@ -444,3 +444,30 @@ mobile et rematches.
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie la fin naturelle après dix secondes,
 le chargement du son et le retour aux résultats sans mutation du combat.
+
+Voconte : « Aller simple » fait du choix de la destination un piège. Voconte
+franchit A à 90, s’écarte sur la passerelle de B et laisse sa cible le poursuivre
+à 156. B est un cadre physique ancré sur un plancher en hauteur, dont le bord
+s’arrête devant la sortie. La cible dépasse ce bord et tombe à partir de 186 ;
+Voconte revient de B à A à 246, puis referme A sans toucher le vaincu.
+La révélation de la hauteur précède le suivi de la chute et l’impact à 342.
+La silhouette bascule sur le dos, les fissures et débris restent au sol,
+puis le portrait final précède Fatality en anglais après huit secondes.
+
+La trajectoire utilise `advanceAirborne` avec une élévation initiale ; son
+échantillonnage au ralenti adapte la durée au gabarit pour garder l’impact à
+5,7 secondes. Les deux portes gardent leurs positions. Seuls deux corps réels
+circulent, sans fantôme, découpe de portail ou projectile téléporté. La hauteur
+et le piège sont une chorégraphie après verdict, sans nouvelle règle de dégâts
+ou de transport dans le combat natif. La simulation préalable démontre les
+passages directionnels des deux combattants puis un K.-O. physique natif.
+
+`voconte.test.ts` couvre gabarits, miroir, deux côtés, contacts au sol et
+restauration des poses, matériaux, visibilité et brouillard. Le cadrage haut
+écarte transactionnellement les panneaux qui masquent les combattants.
+`voconteFall.test.ts` compare la chute à l’intégrateur réel et préserve les
+anciens lancements au sol. `voconteFilm.test.ts` contrôle le verdict et la
+continuité. `vocontePlayback.test.ts` parcourt tous les adversaires et lieux,
+quatre motifs de victoire, IA/local et rematches. Les contrôles navigateur
+`check-voconte-fatality.mjs` et `check-voconte-victories.mjs` vérifient le rendu,
+le mobile, le confort, le son et le retour aux résultats à dix secondes.

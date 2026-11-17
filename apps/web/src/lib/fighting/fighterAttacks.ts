@@ -1,3 +1,4 @@
+import { enDuringAttack } from './en/access'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -73,7 +74,7 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
-    nen: { ...prepared.nen, en: null },
+    nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
     aura:
       fighter.aura -

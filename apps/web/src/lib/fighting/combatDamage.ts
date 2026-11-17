@@ -1,3 +1,4 @@
+import { shuGuardFactor } from './nenCombat/protection'
 import { fightCategoryEfficiency } from './nenCategories'
 import { attackData, attackPhase } from './frameData'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
@@ -62,6 +63,7 @@ function attackDamage(
         (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
       hatsuDefenceFactor(defender) *
       guard *
+      shuGuardFactor(defender, blocked, options.physicalProjectile) *
       openingMultiplier,
   )
   // Scale the rounded wound down so successive light hits cannot round back up.

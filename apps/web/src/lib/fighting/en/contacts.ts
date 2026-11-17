@@ -1,69 +1,101 @@
 import { sleepingBody } from '../hanzoProjection'
 import { liveEntity } from '../preparationWorld'
+import { gyoSight } from '../nenCombat/sight'
 import type { FightState, FightSide } from '../types'
-import { activeEnRadius, enContains } from './access'
-export interface EnPoint {
-  x: number
-  y: number
-}
+import { activeEnRadius } from './access'
+import {
+  bodyPresence,
+  clipReading,
+  pointPresence,
+  nearestPoint,
+  type EnPoint,
+  type EnReading,
+  type EnPresence,
+} from './geometry'
+export { nearestPoint } from './geometry'
+export type { EnPoint, EnReading } from './geometry'
 export const MAX_EN_CONTACTS = 128
-// A private presentation projection only; authoritative physics never consumes it.
+// Private presentation projection; authoritative physics never consumes cached readings.
 declare module '../types' {
   interface FightState {
     enReadings?: EnPoint[]
   }
 }
-/** Internal identities are used only to compare real motion, never sent as En knowledge. */
-export function enPresences(state: FightState, side: FightSide) {
-  const other = side === 'player' ? 'opponent' : 'player'
-  const target = state[other]
-  const points = [{ key: 'body', ...position(sleepingBody(target)) }]
-  if (target.hanzoProjection) points.push({ key: 'double', ...position(target) })
-  points.push(...entityPresences(state), ...projectilePresences(state, side))
-  const gum = state.bungeeGum
-  if (gum)
+/** Internal keys compare motion; transmitted contours carry no identity, Hatsu or future state. */
+export function enPresences(state: FightState, side: FightSide): EnPresence[] {
+  const other = side === 'player' ? 'opponent' : 'player',
+    target = state[other]
+  const points = [physicalPresence(state, other)]
+  if (target.hanzoProjection && (!target.nen.in || gyoSight(state[side])))
     points.push({
-      key: 'tether',
-      ...nearestPoint(state[side], state[gum.owner], state[gum.target]),
+      ...bodyPresence(state, other, { ...target, hanzoProjection: undefined }),
+      key: 'double',
     })
+  points.push(...entityPresences(state, side), ...projectilePresences(state, side))
+  const gum = state.bungeeGum
+  if (gum && (!gum.hidden || gum.owner === side || gyoSight(state[side])))
+    points.push(
+      pointPresence('tether', {
+        ...nearestPoint(state[side], state[gum.owner], state[gum.target]),
+        auraReaction: true,
+      }),
+    )
   return points
 }
-function entityPresences(state: FightState) {
+function physicalPresence(state: FightState, side: FightSide): EnPresence {
+  const target = state[side]
+  const body = target.hanzoProjection ? { ...sleepingBody(target), knockdownFrames: 1 } : target
+  const physical = bodyPresence(state, side, body)
+  // Previous positions follow the double; the resting body does not move with it.
+  if (target.hanzoProjection) {
+    physical.dx = 0
+    physical.dy = 0
+  }
+  return physical
+}
+function entityPresences(state: FightState, side: FightSide) {
   return (state.battlefield?.entities ?? [])
     .filter((entity) => liveEntity(entity) && !['destination', 'delivery'].includes(entity.kind))
-    .map((entity) => ({ key: `entity:${entity.id}`, ...position(entity) }))
+    .filter(
+      (entity) =>
+        entity.material === 'real' ||
+        entity.owner === 'neutral' ||
+        !state[entity.owner].nen.in ||
+        gyoSight(state[side]),
+    )
+    .map((entity) =>
+      pointPresence(`entity:${entity.id}`, { ...entity, auraReaction: entity.material === 'nen' }),
+    )
 }
 function projectilePresences(state: FightState, side: FightSide) {
   return state.projectiles
     .filter((shot) => shot.owner !== side && (!shot.remotePunch || shot.y >= 0))
-    .map((shot) => ({ key: `projectile:${shot.id}`, ...position(shot) }))
+    .filter((shot) => shot.matter === 'object' || !shot.concealed || gyoSight(state[side]))
+    .map((shot) =>
+      pointPresence(`projectile:${shot.id}`, {
+        x: shot.x,
+        y: shot.y - shot.height / 2,
+        width: shot.width,
+        height: shot.height,
+        dx: Math.sign(shot.velocityX),
+        dy: 0,
+        auraReaction:
+          shot.matter === 'nen' ||
+          Boolean(shot.shuCharged && (!shot.concealed || gyoSight(state[side]))),
+      }),
+    )
 }
-function position(value: EnPoint): EnPoint {
-  return { x: value.x, y: value.y }
-}
-export function nearestPoint(observer: EnPoint, start: EnPoint, end: EnPoint): EnPoint {
-  const dx = end.x - start.x,
-    dy = end.y - start.y,
-    length = dx * dx + dy * dy
-  const ratio = length
-    ? Math.max(0, Math.min(1, ((observer.x - start.x) * dx + (observer.y - start.y) * dy) / length))
-    : 0
-  return { x: start.x + ratio * dx, y: start.y + ratio * dy }
-}
-/** Presence/position only: no identity, aura category, intent, damage or Hatsu conditions. */
-export function enContactPoints(state: FightState, side: FightSide): EnPoint[] {
+export function enContactReadings(state: FightState, side: FightSide): EnReading[] {
   if (!activeEnRadius(state[side])) return []
   const held =
     side === 'player' && state.pvpSeat && !state.spectatorView ? state.enReadings : undefined
   const points = Array.isArray(held) ? held.slice(0, MAX_EN_CONTACTS) : enPresences(state, side)
   return points
-    .filter(
-      (point) =>
-        point &&
-        Number.isFinite(point.x) &&
-        Number.isFinite(point.y) &&
-        enContains(state[side], point),
-    )
+    .map((p) => clipReading(state[side], p))
+    .filter((p): p is EnReading => p !== null)
     .slice(0, MAX_EN_CONTACTS)
-    .map(position)
+}
+/** Legacy position/count API. Rich readings are explicitly limited to contacted contours. */
+export function enContactPoints(state: FightState, side: FightSide): EnPoint[] {
+  return enContactReadings(state, side).map(({ x, y }) => ({ x, y }))
 }

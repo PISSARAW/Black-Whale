@@ -7,7 +7,8 @@ import { defaultFightComfort } from '../fightComfort'
 import { VICTORY_FIGHTERS, selectVictory } from './catalogue'
 import { createVictoryRenderer } from './renderer'
 import { drawVictoryFrame } from './draw'
-import { fightBodyMotion } from '../fightBodyMotion'
+import { billComboTrack } from './billComboTrack'
+import { fightBodyMotion, bodyPlan } from '../fightBodyMotion'
 import type { FighterId, FightSide, FightState } from '../types'
 
 // The card's canvas printing is covered by the real browser fixture.
@@ -69,6 +70,95 @@ function setup(winner: FighterId, side: FightSide, targetOverride?: FighterId) {
   return { renderer, state, models, camera, scene, armour }
 }
 describe('live victory renderer', () => {
+  it.each(['benjamin', 'biscuit', 'bill'] as const)(
+    'uses Bill’s production combos, body plans and unchanged finale against %s',
+    (target) => {
+      const fixture = setup('bill', 'opponent', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      try {
+        for (const age of [
+          0, 5, 18, 37, 65, 95, 116, 150, 168, 195, 225, 247, 281, 319, 342, 366, 402, 456, 480,
+          510, 570,
+        ]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.billVictory
+          if (age < 343) {
+            const native = billComboTrack(target).states[audit.nativeIndex]
+            if (audit.contactFit === 1) expect(audit.horizontalContactError).toBeLessThan(0.025)
+            expect(audit.nativeMove).toBe(native.player.attack?.moveId ?? null)
+            expect(audit.nativeCombo).toBe(native.opponent.comboHits)
+            if (native.opponent.pose === 'down' && native.opponent.y === 0)
+              expect(audit.nativeFloor).toBeCloseTo(0.012, 5)
+            expect(audit.nativePose).toEqual(
+              bodyPlan(native.player, { seconds: native.frame / 60, progress: 0 })!.pose,
+            )
+          }
+          if (age >= 402) {
+            expect(audit.floor).toBeCloseTo(0.012, 5)
+            expect(Math.abs(audit.upY)).toBeLessThan(0.15)
+            expect(Math.abs(audit.roll)).toBeLessThan(0.05)
+          }
+          if (age >= 456)
+            audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.06))
+          if (age < 456) expect(audit.growth).toBe(0)
+          expect(audit.picked).toBe(false)
+          if (age >= 510) expect(audit.bloom).toBe(1)
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
+  it.each(['benjamin', 'biscuit', 'hanzo'] as const)(
+    'keeps Hanzo’s sleeping body fixed, his double at the neck and %s on the native floor',
+    (target) => {
+      const fixture = setup('hanzo', 'opponent', target)
+      const before = snapshot(fixture.scene),
+        state = JSON.stringify(fixture.state)
+      let bodyX: number | undefined
+      try {
+        for (const age of [42, 96, 138, 216, 270, 330, 360, 384, 420, 444, 467, 468, 516, 570]) {
+          const restore = fixture.renderer.apply({
+            state: fixture.state,
+            models: fixture.models,
+            comfort: defaultFightComfort(),
+            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
+          })!
+          const audit = fixture.scene.userData.hanzoVictory
+          bodyX ??= audit.body[0]
+          expect(audit.body[0]).toBe(bodyX)
+          expect(audit.doubleVisible).toBe(age >= 72 && age < 468)
+          if (age >= 216 && age <= 360)
+            audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.06))
+          if (age === 138) expect(audit.crossing).toBe(true)
+          if (age >= 420) {
+            expect(audit.floor).toBeCloseTo(0.012, 5)
+            expect(Math.abs(audit.upY)).toBeLessThan(0.15)
+            expect(Math.abs(audit.roll)).toBeLessThan(0.05)
+          }
+          if (age === 467) expect(Math.abs(audit.double[0] - audit.body[0])).toBeLessThan(0.01)
+          restore()
+          expect(snapshot(fixture.scene)).toEqual(before)
+          expect(JSON.stringify(fixture.state)).toBe(state)
+        }
+      } finally {
+        fixture.renderer.dispose()
+        fixture.armour.dispose()
+      }
+    },
+  )
+
   it.each(['hisoka', 'biscuit', 'benjamin'] as const)(
     'uses only the little-finger Judgment blade and native supine KO against non-Spider %s',
     (target) => {

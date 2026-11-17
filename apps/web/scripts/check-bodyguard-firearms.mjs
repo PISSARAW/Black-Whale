@@ -22,17 +22,17 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
-console.log('Bodyguard UI server ready')
+process.stdout.write('Bodyguard UI server ready\n')
 const browser = await chromium.launch({
   executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
   headless: true,
 })
-console.log('Bodyguard UI browser ready')
+process.stdout.write('Bodyguard UI browser ready\n')
 const errors = []
 const results = []
 try {
   const page = await browser.newPage()
-  console.log('Bodyguard UI page ready')
+  process.stdout.write('Bodyguard UI page ready\n')
   page.on('pageerror', (error) => {
     errors.push(error.message)
     console.error('Browser error:', error.message)
@@ -40,7 +40,7 @@ try {
   await page.goto(
     `http://127.0.0.1:${server.httpServer.address().port}/ui-tests/bodyguard-firearms/`,
   )
-  console.log('Bodyguard UI fixture loaded')
+  process.stdout.write('Bodyguard UI fixture loaded\n')
   await page.waitForFunction(() => window.bodyguardFixture)
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 844 })

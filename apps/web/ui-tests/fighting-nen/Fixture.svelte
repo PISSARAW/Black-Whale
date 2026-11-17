@@ -52,8 +52,21 @@
     for (let frame = 0; frame < frames; frame++) step()
     await tick()
   }
+  export async function prepareReading(locale: 'fr' | 'en' = 'fr') {
+    await renderCase('kurapika', locale)
+    opponentInput = { ...EMPTY_INPUT, focusHead: true, conceal: true }
+    step()
+    await tick()
+  }
   export function snapshot() {
-    return { nen: state.player.nen, opponentNen: state.opponent.nen, aura: state.player.aura }
+    return {
+      nen: state.player.nen,
+      opponentNen: state.opponent.nen,
+      aura: state.player.aura,
+      focus: state.player.gyoFocus,
+      low: state.player.gyoLow,
+      defensiveKo: state.player.defensiveKo,
+    }
   }
 </script>
 

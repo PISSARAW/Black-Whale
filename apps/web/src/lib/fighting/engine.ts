@@ -1,3 +1,4 @@
+import { updatePlayerGuard } from './nenCombat/guardInput'
 import { judgmentActionBreach } from './judgmentAction'
 import { recordMotion } from './motionRecord'
 import { moveAdmitted } from './moveAdmission'
@@ -28,7 +29,7 @@ import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
-import { canAct, canMove, canGuard, playerCanJump, auraAttackBodyFree } from './fightActorState'
+import { canAct, canMove, playerCanJump, auraAttackBodyFree } from './fightActorState'
 import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
 import { advancePreparation } from './preparationSimulation'
@@ -92,7 +93,6 @@ import type {
   MoveAction,
 } from './types'
 
-const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
 
@@ -171,7 +171,12 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   state = advancePredatorClock(state)
   if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
-  if (state.hitstop > 0) return advanceRetrospectiveHitstop({ ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 })
+  if (state.hitstop > 0)
+    return advanceRetrospectiveHitstop({
+      ...state,
+      frame: state.frame + 1,
+      hitstop: state.hitstop - 1,
+    })
   state = advancePreparation(state, { player: input, opponent: opponentInput })
   state = readArenaInputs(state, { player: input, opponent: opponentInput }, (current, side) =>
     performArenaAction(current, side, performAuraAttack),
@@ -253,24 +258,6 @@ function activatesIn(fighter: ArcadeFighter, charging: boolean, frames: number):
 
 function releasesIn(fighter: ArcadeFighter, charging: boolean): boolean {
   return !charging && !fighter.attack?.concealed && fighter.nen.in
-}
-
-function updatePlayerGuard(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const next = fighter
-  const blocking = playerIsBlocking(next, input)
-  const releasedGuard = next.blocking && !blocking
-  return {
-    ...next,
-    blocking,
-    guardFrames: blocking ? (next.blocking ? next.guardFrames + 1 : 1) : 0,
-    ryuWindow: releasedGuard ? RYU_FOLLOW_UP_FRAMES : next.ryuWindow,
-  }
-}
-
-function playerIsBlocking(fighter: ArcadeFighter, input: FightInput): boolean {
-  if (!input.guard) return false
-  if (!canGuard(fighter)) return false
-  return !input.aura || fighter.nen.ken
 }
 
 function updateOpponent(
@@ -427,7 +414,10 @@ function ordinaryOpponentAttack(state: FightState): FightState {
   const style = fightingStyle(rolled.opponent.id)
   const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
   if (movesetAttack) {
-    return performOpponentArsenalMove({ state: rolled, move: movesetAttack, roll: chance }, performAuraAttack)
+    return performOpponentArsenalMove(
+      { state: rolled, move: movesetAttack, roll: chance },
+      performAuraAttack,
+    )
   }
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),

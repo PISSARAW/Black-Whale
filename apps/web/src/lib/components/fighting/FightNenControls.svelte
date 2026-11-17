@@ -1,6 +1,7 @@
 <script lang="ts">
   import { useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
+  import { bodyGyoCopy } from '$lib/fighting/nenCombat/copy'
   import { advancedNenCopy } from '$lib/fighting/nenTacticalCopy'
   import FightNenTactics from './FightNenTactics.svelte'
   import type { FightInput } from '$lib/fighting/types'
@@ -22,7 +23,9 @@
   $: explanation =
     tactical.technique === 'on'
       ? onTacticalCopy(language)
-      : (advancedNenCopy(tactical.technique, language) ?? tacticalCopy(tactical.technique))
+      : (bodyGyoCopy(fighter, language) ??
+        advancedNenCopy(tactical.technique, language) ??
+        tacticalCopy(tactical.technique))
   $: flow = flowLabel(tactical.technique, tactical.auraPerSecond)
   $: danger =
     tactical.exhausted ||
@@ -139,13 +142,15 @@
       ? language === 'fr'
         ? 'Fatigue critique · Zetsu forcé imminent'
         : 'Critical fatigue · forced Zetsu imminent'
-      : warnings[language][tactical.technique]
+      : tactical.technique === 'gyo'
+        ? explanation.risk
+        : warnings[language][tactical.technique]
 
   const warnings: Record<'fr' | 'en', Record<FightNenTactic, string>> = {
     fr: {
       en: 'Détection de proximité · drain élevé',
       shu: 'Objet renforcé · corps exposé',
-      in: 'Aura cachée · attention à Gyo et En',
+      in: 'Gyo révèle · corps et objets réels visibles',
       ten: '',
       ren: 'Puissance +22 %',
       ken: 'Garde renforcée · drain élevé',

@@ -923,3 +923,70 @@ Les cibles hors Brigade conservent leur variante Judgment Chain.
 instrumentale, sans voix. `check-kurapika-troupe.mjs` vérifie le déclenchement,
 le son, les deux côtés, les gabarits, les lieux, le mobile et le confort.
 Sortie : `output/fighting-kurapika-troupe/Kurapika-Brigade-Fatality-10s.mp4`.
+
+## Saiyu — Les trois silences
+
+`node apps/web/scripts/render-saiyu-fatality.mjs --inspect` produit les plans de
+contrôle ; la même commande sans `--inspect` exporte 600 images en 1080p60.
+`node apps/web/scripts/compose-saiyu-fatality.mjs` ajoute le mix et l’annonce anglaise « Fatality » à 8,1 s,
+également chargé dans Clash. `check-saiyu-fatality.mjs` contrôle le déclenchement,
+le son, P2, le miroir, les petites et grandes cibles, le mobile et le confort.
+
+La démo affronte Hisoka à la Tour Céleste ; `target`, `stage`, `side=opponent`
+et `reduced` permettent les adaptations. Trois touches natives retirent les
+sens avant le vrai K.-O. par le bâton. La mise en scène utilise les signes de
+chaque sens, conserve les modèles natifs et n’invente pas l’anatomie des singes.
+Sortie : `output/fighting-saiyu-fatality/Saiyu-Fatality-Sens-Annonce-10s.mp4`.
+La version sensorielle montre un noir complet, des yeux sans regard, les mains
+aux oreilles, une onde sonore devenue plate et une bouche ouverte en cri muet.
+Le mix est entièrement silencieux entre 2,9 et 4,7 secondes.
+
+## Melody — Un champ au printemps
+
+`node apps/web/scripts/render-melody-fatality.mjs --inspect` exporte les plans
+de contrôle ; sans `--inspect`, le script exporte 600 images en 1080p60.
+`compose-melody-fatality.mjs` ajoute la phrase de flûte originale et l’annonce
+« Friendship » en anglais. `check-melody-fatality.mjs` contrôle le déclenchement,
+les deux côtés, les tailles, le miroir, les lieux, le mobile et le confort.
+
+La démo oppose Melody à Chrollo dans la salle de banquet. `target`, `stage`,
+`side=opponent` et `reduced` permettent les adaptations. La prairie est une
+perception du personnage enchanté ; Melody ne tue pas avec sa musique.
+La simulation préalable obtient une victoire native à la décision, après une
+vraie performance qui pacifie la cible sans lui infliger de dégâts.
+Sortie : `output/fighting-melody-fatality/Melody-Friendship-10s.mp4`.
+
+## Hanzo — Derrière toi
+
+`hanzo-fatality.html` présente dix secondes avec Hanzo Skill 4 : corps en
+méditation, double qui traverse une cloison, étranglement et retour au corps.
+`render-hanzo-fatality.mjs` exporte les images ; `compose-hanzo-fatality.mjs`
+ajoute le son et l’annonce anglaise Fatality. `check-hanzo-fatality.mjs`
+vérifie la simulation native, les tailles, le miroir, le mobile et le confort.
+Sortie : `output/fighting-hanzo-fatality/Hanzo-Fatality-10s.mp4`.
+
+## Bill — Dernier rempart
+
+`bill-fatality.html` présente dix secondes : trois combos physiques natifs
+de 3, 4 et 5 coups, projection, puis germination sans dégâts d’Erigeron.
+`render-bill-fatality.mjs` exporte les images ; `compose-bill-fatality.mjs`
+ajoute les douze impacts et Fatality en anglais. `check-bill-fatality.mjs`
+vérifie le combat natif et l’adaptation aux côtés, cibles, lieux et au mobile.
+Sortie : `output/fighting-bill-fatality/Bill-Fatality-10s.mp4`.
+
+Les deux cinématiques sont enregistrées dans Clash et utilisent les acteurs
+et l’arène du combat courant. `check-hanzo-bill-victories.mjs` vérifie huit
+victoires automatiques, dont les rematches des deux côtés, et leurs sons.
+
+## Hinrigh — Pièce à conviction
+
+`hinrigh-fatality.html` présente dix secondes de Biohazard : transformation
+d’objets au contact, pigeons-menottes, arme-serpent retournée contre la cible
+et chat-caméra qui filme l’exécution. La démo oppose Hinrigh à Padaille au
+casino VIP ; `target`, `stage`, `side=opponent` et `reduced` l’adaptent.
+`render-hinrigh-fatality.mjs --inspect` exporte les plans de contrôle ; sans
+`--inspect`, il produit les 600 images 1080p60. `compose-hinrigh-fatality.mjs`
+ajoute le mix original, Fatality en anglais et le son chargé dans Clash.
+`check-hinrigh-fatality.mjs` et `check-hinrigh-victories.mjs` contrôlent la démo
+et son déclenchement automatique.
+Sortie : `output/fighting-hinrigh-fatality/Hinrigh-Fatality-10s.mp4`.

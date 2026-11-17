@@ -307,7 +307,7 @@ describe('remaining visit models in fighting', () => {
     }
     effects.sync(state, 1)
     expect(gum.visible).toBe(false)
-    expect(enContacts(state, 'player')).toBe(2) // Opponent and neutral tether contact; no strand disclosure.
+    expect(enContacts(state, 'player')).toBe(1) // Physical opponent only; In also conceals the pure aura tether from En.
     state.player.nen.en = null
     state.player.nen.gyo = true
     effects.sync(state, 1)

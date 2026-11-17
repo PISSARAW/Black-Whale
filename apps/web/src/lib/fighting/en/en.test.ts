@@ -130,11 +130,11 @@ describe('contact is distinct from visual aura inspection', () => {
       },
     }
   }
-  it('senses static Zetsu bodies, hidden projectiles and hidden tethers, with no identity or timing bonus', () => {
+  it('senses static Zetsu bodies while In protects aura projectiles and tethers', () => {
     const state = concealed(),
       hash = fightReplayHash(state),
       points = enContactPoints(state, 'player')
-    expect(points).toHaveLength(3)
+    expect(points).toHaveLength(1)
     expect(points.every((p) => Object.keys(p).sort().join(',') === 'x,y')).toBe(true)
     expect(perceivesProjectile(state.player, shot)).toBe(false)
     expect(perceivesAura(state.player, state.opponent)).toBe(false)
@@ -149,9 +149,9 @@ describe('contact is distinct from visual aura inspection', () => {
       view = privatePvpState(state, 'player')
     expect(view.projectiles).toHaveLength(0)
     expect(view.bungeeGum).toBeNull()
-    expect(view.enReadings).toHaveLength(3)
-    expect(enContactPoints(view, 'player')).toEqual(view.enReadings)
-    expect(JSON.stringify(view.enReadings)).not.toMatch(/franklin|orb|damage|colour|tether|id/)
+    expect(view.enReadings).toHaveLength(1)
+    expect(enContactPoints(view, 'player')).toEqual(view.enReadings?.map(({ x, y }) => ({ x, y })))
+    expect(JSON.stringify(view.enReadings)).not.toMatch(/franklin|orb|damage|colour|tether|"id"/)
     expect(
       (decodeReplay(spectatorSnapshot(state).snapshot) as FightState).enReadings,
     ).toBeUndefined()

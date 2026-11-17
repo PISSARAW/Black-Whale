@@ -1,3 +1,4 @@
+import { nenPadChords } from './nenCombat/padChords'
 import { EMPTY_INPUT, type FightInput, type FightSide, type MoveAction } from './types'
 
 export interface FightPad {
@@ -66,13 +67,16 @@ export function sampleGamepad(
   const buttons: FightInput = { ...EMPTY_INPUT }
   for (const [button, key] of Object.entries(BUTTON_INPUTS))
     buttons[key] = pressed(pad, Number(button))
-  const protection = pressed(pad, 8) && (pressed(pad, 4) || pressed(pad, 5))
+  const protection =
+    pressed(pad, 8) &&
+    (pressed(pad, 4) || pressed(pad, 5)) &&
+    ![12, 13, 14, 15].some((button) => pressed(pad, button))
   if (protection) {
     buttons.coverEars = pressed(pad, 4)
     buttons.plugWounds = !buttons.coverEars && pressed(pad, 5)
     buttons.call = buttons.guard = buttons.aura = false
   }
-  const input = mergeFightInput(buttons, stickInput(pad, lastInput))
+  const input = mergeFightInput(nenPadChords(pad, buttons), stickInput(pad, lastInput))
   return {
     input,
     actions: padActions(pad, previous),

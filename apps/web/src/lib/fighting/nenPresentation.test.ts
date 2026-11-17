@@ -106,7 +106,7 @@ describe('Nen perception in the rendered duel', () => {
     const state = createFight('phinks', 'hisoka')
     state.player = aura(fighter, { en: true })
     state.opponent.x = 95
-    state.projectiles = [projectile]
+    state.projectiles = [{ ...projectile, concealed: false }]
     expect(enContacts(state, 'player')).toBe(1)
   })
 

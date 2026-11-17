@@ -11,7 +11,7 @@ import { finishFight } from './combatVerdict'
 import { FIXED_STEP } from './fightClock'
 import { hatsuDefenceFactor, hatsuFor, canUseFightHatsu } from './hatsu'
 import { applyAuraContext, focusGuardRyu, focusAttackRyu } from './nen'
-import { canUseRangedAttack } from './projectiles'
+import { canUseRangedAttack, rangedAuraCost, projectileProfile } from './projectiles'
 import { canSwearOn } from './onTechnique'
 import { finisherReady, moveForSlot } from './movesets'
 import {
@@ -260,26 +260,36 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
     expect(performMove({ state: ready, side: 'player', action: 'finisher' })).toBe(ready)
   })
 
-  it.each([{ aura: true }, { aura: true, guard: true }, { aura: true, jump: true }, {}])(
-    'blocks all aura controls during the seal: %j',
-    (input) => {
-      const state = succeed(studied())
-      const locked = applyAuraContext(state.player, { ...EMPTY_INPUT, ...input })
-      expect(locked.nen).toMatchObject({
-        mode: 'zetsu',
-        gyo: false,
-        ken: false,
-        ko: null,
-        on: false,
-        ryu: {},
-      })
-      expect(focusGuardRyu(locked, 'head').nen.ryu).toEqual({})
-      expect(focusAttackRyu(locked, 'heavy').nen.ryu).toEqual({})
-      expect(canUseFightHatsu(locked)).toBe(false)
-      expect(canUseRangedAttack(locked)).toBe(false)
-      expect(canSwearOn({ ...locked, on: { grudge: 100, sealFrames: 0 } })).toBe(false)
-    },
-  )
+  it.each([
+    { aura: true },
+    { aura: true, guard: true },
+    { aura: true, jump: true },
+    { gyo: true, focusHands: true },
+    { aura: true, guard: true, gyo: true, focusHead: true },
+    { en: true },
+    { conceal: true },
+    { shu: true },
+    {},
+  ])('blocks all aura controls during the seal: %j', (input) => {
+    const state = succeed(studied())
+    const locked = applyAuraContext(state.player, { ...EMPTY_INPUT, ...input })
+    expect(locked.nen).toMatchObject({
+      mode: 'zetsu',
+      gyo: false,
+      ken: false,
+      ko: null,
+      on: false,
+      ryu: {},
+    })
+    expect(focusGuardRyu(locked, 'head').nen.ryu).toEqual({})
+    expect(focusAttackRyu(locked, 'heavy').nen.ryu).toEqual({})
+    expect(canUseFightHatsu(locked)).toBe(false)
+    // The existing service handgun remains physical; sealing Nen must not turn it into a Hatsu.
+    expect(canUseRangedAttack(locked)).toBe(true)
+    expect(rangedAuraCost(locked.id)).toBe(0)
+    expect(projectileProfile(locked.id).matter).toBe('object')
+    expect(canSwearOn({ ...locked, on: { grudge: 100, sealFrames: 0 } })).toBe(false)
+  })
 
   it('allows physical combat without Ko or defensive enhancements during the seal', () => {
     const state = succeed(studied())

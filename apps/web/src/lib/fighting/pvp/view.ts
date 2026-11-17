@@ -1,4 +1,4 @@
-import { enContactPoints } from '../en/contacts'
+import { enContactReadings } from '../en/contacts'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
@@ -77,7 +77,7 @@ function redactEnemy(enemy: ArcadeFighter) {
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
-  view.enReadings = enContactPoints(view, side)
+  view.enReadings = enContactReadings(view, side)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
@@ -104,6 +104,9 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
   if (enemy.nen.in) {
     enemy.nen = createFightingNen()
+    enemy.gyoFocus = undefined
+    enemy.gyoLow = undefined
+    enemy.defensiveKo = undefined
     enemy.dowsingSession = undefined
   }
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined

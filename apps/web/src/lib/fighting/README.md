@@ -1,5 +1,8 @@
 # Fighting
 
+Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
+complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
+
 Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
 observées et réglages arcade ; seules les pratiques qualifiées sont activables.
 
@@ -1198,17 +1201,17 @@ et chaque contact consomme de l’aura. Une attaque très puissante peut le dép
 
 Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
 
-| Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                      |
-| --------- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| En        | R             | [             | Profils qualifiés : Hinrigh ≥ 5 m observés (20 u de jeu), Phinks portée inconnue (12 u arcade, concentration fragile). Contacts neutres, sans bonus de parade ; 9 aura/s en plus de Ren et protection dispersée (réglages de duel). Voir [EN.md](./EN.md).                    |
-| Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
-| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact.                                                 |
-| Gyo       | G             | ;             | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie.                                                                                                                                      |
-| Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                         |
+| Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                                                |
+| --------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| En        | R             | [             | Profils qualifiés : Hinrigh ≥ 5 m observés (20 u de jeu), Phinks portée inconnue (12 u arcade, concentration fragile). Contacts neutres, sans bonus de parade ; 9 aura/s en plus de Ren et protection dispersée (réglages de duel). Voir [EN.md](./EN.md).                           |
+| Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu.                           |
+| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle l’aura ; En seul ne révèle pas cette aura cachée.                                                 |
+| Gyo       | G             | ;             | Gyo oculaire : Ren, lecture de In et des zones adverses (6,4 aura/s). Version faible : 2,4 aura/s sans contre universel à In. G + zone : concentration corporelle ; Aura + G + zone : Ryu et lecture ; Aura + Garde + G + zone : Ko défensif. Voir [NEN_COMBAT.md](./NEN_COMBAT.md). |
+| Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                                                   |
 
 En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
-Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
-qui le traversent sont localisés, sans lui attribuer l’analyse visuelle de Gyo.
+Hatsu. Son cercle utilise les mêmes distances que les collisions. Les contacts matériels
+restent perceptibles ; En seul ne révèle pas l’aura dissimulée par In.
 L’IA lit les gestes visibles et effectue des lectures Gyo périodiques ; sa décision
 ne consulte pas un drapeau In secret ni la présence d’un projectile indétectable.
 Les commandes supplémentaires sont enregistrées par le mannequin comme les autres
@@ -1631,7 +1634,7 @@ plan 3D du combat. Ils partagent la caméra, le zoom, le cadrage et les conversi
 logiques du moteur et leur applique la même interpolation que le corps. Les volumes
 ne dépendent plus de pourcentages CSS ; leurs tailles, les portées et les règles de
 touche restent celles du moteur. Cyan/violet désignent les corps, rouge une frappe
-active, orange un projectile. Gyo révèle les projectiles de Nen cachés ; En affiche seulement leurs contacts neutres.
+active, orange un projectile. Gyo révèle les projectiles de Nen cachés ; En n’affiche que les contacts accessibles à son champ.
 Les volumes sont réservés à l’entraînement, ignorent le brouillard et réutilisent
 leurs géométries jusqu’à la destruction de la scène.
 

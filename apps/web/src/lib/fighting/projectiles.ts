@@ -1,3 +1,4 @@
+import { interceptDeviceProjectile } from './deviceImpact'
 import { canReceiveCombatHit } from './combatTargets'
 import { interceptArenaProjectile } from './arenaSimulation'
 import { travelKallutoPaper } from './kallutoFlight'
@@ -337,6 +338,9 @@ export function advanceProjectiles(
     })
     state = intercepted.state
     if (intercepted.intercepted) continue
+    const deviceCollision = interceptDeviceProjectile(state, { projectile, previousX: held.x })
+    state = deviceCollision.state
+    if (deviceCollision.intercepted) continue
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

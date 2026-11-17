@@ -163,7 +163,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   return {
     sync(state: FightState, seconds: number) {
-      const entries = state.battlefield?.entities ?? []
+      const entries = (state.battlefield?.entities ?? []).filter((entry) => entry.kind !== 'device')
       const active = new Set(entries.map((entry) => entry.id))
       for (const entry of entries) {
         let root = models.get(entry.id)

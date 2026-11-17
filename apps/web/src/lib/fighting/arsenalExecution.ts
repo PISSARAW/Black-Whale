@@ -1,6 +1,7 @@
 import { performDolphinApplication } from './dolphinArsenal'
 import { performArsenalCommand } from './retrospectiveArsenal'
 import { performChrolloSelectedMove } from './chrolloCopiedAction'
+import { futureAcceptsMove } from './parallelFutureAbility'
 import { fightAcceptsCommands } from './fightOutcome'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
@@ -17,6 +18,7 @@ export function performArsenalAction(
 ): FightState {
   const { state, side, command } = options
   if (!fightAcceptsCommands(state)) return state
+  if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.action === 'dolphin-move')
     return command.target
       ? performDolphinApplication({ state, side, moveId: command.target }, perform)

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 731
+Fichiers : 735
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -264,6 +264,10 @@ Fichiers : 731
 
 - Bill’s physical combat and support-only Erigeron > keeps his ten ordinary physical moves and a single non-offensive support ability
 
+## `apps/web/src/lib/fighting/biohazardDevices.test.ts`
+
+- Biohazard preserves the actual touched device and its original function > requires supplied physical devices and spends aura without conjuring an inventory
+
 ## `apps/web/src/lib/fighting/biohazardScene.test.ts`
 
 - physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
@@ -353,6 +357,18 @@ Fichiers : 731
 - counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
 - ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
 - responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
+## `apps/web/src/lib/fighting/deviceAi.test.ts`
+
+- Biohazard AI prepares real scenario equipment > walks normally toward an untouched camera and cannot teleport, invent gear, or transform under On
+
+## `apps/web/src/lib/fighting/deviceCombat.test.ts`
+
+- physical devices participate in combat and authenticated replay > breaks a real recording camera and clears its touching body on the following frame
+
+## `apps/web/src/lib/fighting/deviceIntegration.test.ts`
+
+- physical device boundaries stay consistent with the actual bodies > keeps both hands finite and counts the open book without copying equipment
 
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 

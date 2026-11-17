@@ -9,6 +9,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 const BODY_FIELDS = new Set([
   'heardWords',
   'dowsingReading',
+  'devicePlayback',
+  'receiverReading',
   'judgmentPreset',
   'judgmentDeclaration',
   'x',
@@ -63,7 +65,9 @@ function quietWorld(state: FightState): boolean {
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
-    ].some(Boolean) && state.projectiles.length === 0
+    ].some(Boolean) &&
+    state.projectiles.length === 0 &&
+    !state.battlefield?.entities.some((entry) => entry.device?.form || entry.device?.transforming)
   )
 }
 export function teamRelayReady(state: FightState, side: FightSide): boolean {

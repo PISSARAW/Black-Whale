@@ -71,6 +71,34 @@
               : 'No swing: no knowing lie detected.'}</span
         >
       {/if}
+      {#if state[side].devicePlayback}
+        <strong
+          >{language === 'fr' ? 'Dernière lecture de la caméra' : 'Latest camera playback'} · {Math.floor(
+            state[side].devicePlayback!.viewedAt / 60,
+          )} s</strong
+        >
+        {#each state[side].devicePlayback!.pictures.slice(-2) as frame, i (`${frame.frame}:${frame.subject}:${i}`)}
+          <span
+            >{Math.floor(frame.frame / 60)} s · {fighterDefinition(frame.appearance).name} · x {frame.x.toFixed(
+              1,
+            )}</span
+          >
+        {/each}
+        {#each state[side].devicePlayback!.words.slice(-3) as word, i (`${word.frame}:${word.subject}:${i}`)}
+          <span
+            >{Math.floor(word.frame / 60)} s · {fighterDefinition(word.appearance).name} : {word.text}</span
+          >
+        {/each}
+      {/if}
+      {#if state[side].receiverReading}
+        <span
+          >{language === 'fr' ? 'Dernière réception radio' : 'Latest radio reading'} · {Math.floor(
+            state[side].receiverReading!.frame / 60,
+          )} s · x {state[side].receiverReading!.x.toFixed(1)}, y {state[
+            side
+          ].receiverReading!.y.toFixed(1)}</span
+        >
+      {/if}
       {#each options as option (`${option.command.action}:${option.command.target ?? ''}`)}
         <button
           type="button"

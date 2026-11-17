@@ -16,6 +16,11 @@
   $: preparation = environment.preparation ?? EMPTY_PREPARATION
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
+    {
+      id: 'devices',
+      fr: 'Caméras, armes, émetteurs et récepteurs réels',
+      en: 'Real cameras, firearms, transmitters and receivers',
+    },
     { id: 'animals', fr: 'Petits animaux réels', en: 'Real small animals' },
     { id: 'birds', fr: 'Pigeons et points de livraison', en: 'Pigeons and delivery points' },
     { id: 'plants', fr: 'Graines vivantes à faire germer', en: 'Living seeds to germinate' },

@@ -1,6 +1,9 @@
 import type { FightSide, FighterId } from './types'
 
 export interface RetrospectiveFighterState {
+  deviceTouchId?: string
+  devicePlayback?: import('./deviceTypes').DevicePlayback
+  receiverReading?: import('./deviceTypes').ReceiverReading
   dowsingSession?: import('./dowsingTypes').DowsingSession
   dowsingPrompt?: import('./dowsingTypes').DowsingPrompt
   dowsingReading?: import('./dowsingTypes').DowsingReading
@@ -30,6 +33,23 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'biohazard-device',
+  'biohazard-device-cancel',
+  'biohazard-device-end',
+  'biohazard-swallow',
+  'biohazard-place',
+  'biohazard-cat-left',
+  'biohazard-cat-right',
+  'biohazard-cat-stay',
+  'biohazard-cat-recall',
+  'device-pickup',
+  'device-drop',
+  'device-record',
+  'device-watch',
+  'device-fire',
+  'device-signal',
+  'device-face-left',
+  'device-face-right',
   'dowsing-ask',
   'dowsing-answer',
   'dowsing-stop',

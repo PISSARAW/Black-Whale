@@ -1,3 +1,6 @@
+import { futureAcceptsMove } from './parallelFutureAbility'
+import { deviceOptions } from './deviceOptions'
+import { performDeviceCommand } from './deviceActions'
 import { performDowsingCommand } from './dowsingAction'
 import { dowsingOptions } from './dowsingOptions'
 import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
@@ -30,15 +33,25 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
+  if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.action === 'support-consent') return toggleConsent(state, side)
-  if (command.action.startsWith('dowsing-')) return performDowsingCommand(state, side, command)
-  if (command.action.startsWith('judgment-')) return performJudgmentCommand(state, side, command)
-  if (command.action.startsWith('gum-')) return performGumCommand(state, side, command)
-  if (command.action.startsWith('cookie-')) return performCookie(state, side, command)
-  if (command.action.startsWith('hunter-')) return performHunterInterview(state, side, command)
-  if (command.action.startsWith('history-')) return performHistoricalCommand(state, side, command)
-  return state
+  const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
+  return handler ? handler[1](state, side, command) : state
 }
+
+const COMMAND_HANDLERS: readonly [
+  string,
+  (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
+][] = [
+  ['device-', performDeviceCommand],
+  ['biohazard-', performDeviceCommand],
+  ['dowsing-', performDowsingCommand],
+  ['judgment-', performJudgmentCommand],
+  ['gum-', performGumCommand],
+  ['cookie-', performCookie],
+  ['hunter-', performHunterInterview],
+  ['history-', performHistoricalCommand],
+]
 
 function toggleConsent(state: FightState, side: FightSide): FightState {
   if (!canAct(state[side])) return state
@@ -49,6 +62,7 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
   return [
     consentOption(state, side),
     ...judgmentOptions(state, side),
+    ...deviceOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),

@@ -1,3 +1,6 @@
+import { strikePhysicalDevices } from '../deviceImpact'
+import { advanceBiohazardDevices } from '../biohazardDevices'
+import { advanceDeviceRecordings } from '../deviceRecording'
 import { advanceBiohazard } from '../biohazardFrame'
 import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
@@ -6,5 +9,8 @@ export const hinrighHatsu: FighterHatsu = {
   id: 'hinrigh',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: advanceBiohazard,
+  onFrame: (state) =>
+    advanceDeviceRecordings(
+      advanceBiohazardDevices(strikePhysicalDevices(advanceBiohazard(state))),
+    ),
 }

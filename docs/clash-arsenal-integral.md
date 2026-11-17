@@ -180,6 +180,45 @@ La distinction entre mensonge conscient et connaissance objective est recoupée
 avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
 notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
 
+## Biohazard : caméra, arme et émetteur physiques
+
+Le scénario peut fournir une caméra, une arme à six balles, un émetteur et son
+récepteur à chaque camp. Ces stocks sont des réglages de préparation, jamais
+une création d'objets par Biohazard. Le contact initial immobilise réellement
+le corps et s'interrompt sur une perte de contact ou une incapacité.
+
+- La caméra devient un chat mobile en conservant l'enregistrement. Elle capte
+  seulement les corps visibles et les paroles audibles à sa position. Le chat
+  revient sur ordre ; la lecture exige de retrouver physiquement la caméra.
+  Aucune transmission vidéo à distance ni connaissance de l'intention d'autrui
+  n'est donnée par une simple lecture.
+- L'arme conserve son stock réel et sa trajectoire de balle. Son canon-serpent
+  peut retourner le tir contre le porteur réel de l'arme. Ni la transformation
+  ni une commande de tir ne recréent de munitions.
+- L'émetteur devient une huître que son porteur avale et ressort à sa propre
+  position. La forme dispose d'environ **deux heures simulées** ; le signal
+  conserve sa batterie et son canal. Le récepteur produit une consultation
+  datée, jamais une position automatiquement mise à jour. L'expiration de l'aura
+  laisse l'objet physique là où il se trouve, y compris dans le corps.
+
+Les mains, la main droite du livre ouvert, les membres réels d'une équipe, les
+impacts sur le matériel et les interruptions sont pris en compte. Les copies
+et Dolphin exigent les mêmes objets ; Dolphin consomme son usage et demeure
+chargé tant que la transformation subsiste. Le matériel peut être endommagé.
+L'IA rejoint les appareils par la marche ordinaire et utilise les trois formes.
+Les enregistrements bruts restent privés côté arbitre en PvP ; seule une lecture
+autorisée transmet son contenu au lecteur. Les replays conservent les appareils,
+les stocks, les déplacements et les consultations. Le ruleset devient
+**clash-combat-20** ; le On et les armes ordinaires restent disponibles.
+
+La portée des capteurs, les batteries, les PV du matériel, le temps de contact,
+le coût d'aura et la durée des formes autres que l'huître sont des réglages du
+scénario. La valeur du quota journalier de Biohazard et une formule canonique
+reliant masse et aura ne sont pas connues : aucun nombre n'est inventé comme
+condition du manga. Les usages sont recoupés avec la synthèse de
+[Hinrigh](https://hunterxhunter.fandom.com/wiki/Hinrigh_Biganduffno).
+Les couteaux et le budget complet de matériel de Hinrigh restent à auditer.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -194,7 +233,7 @@ de couverture des profils ou un nombre de tests :
 | Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la vidéo, la localisation et les autres questions de Dowsing Chain, puis le prêt de Stealth Dolphin à un tiers réel. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                     |
 
-| Hinrigh | Étendre Biohazard aux autres objets et applications effectivement montrés, en conservant les fonctions matérielles originales. Les deux menottes ne constituent pas l'arsenal complet. |
+| Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Étendre les compositions et effets attestés au-delà du seul poème d'inflammation reconnu ; ne pas interpréter librement une phrase comme un souhait illimité. |
 | Beyond | Ajouter une préparation sacrificielle réelle et une cible déclarée avant de simuler sa malédiction. |
 | Furykov | Représenter les travaux de déchiffrage et de fabrication dans un contexte où leur durée est réellement possible. |

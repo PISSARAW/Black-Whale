@@ -172,6 +172,11 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   return {
     'gum-support': gumUseBusy(fighter),
     cookie: Boolean(fighter.cookie),
+    'biohazard-device': Boolean(
+      state.battlefield?.entities.some(
+        (entry) => entry.device?.form?.owner === side || entry.device?.transforming?.owner === side,
+      ),
+    ),
     prepared: controlledEntities(state, side).length > 0,
     'luini-anchor': Boolean(luiniAnchor(state, side)),
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,

@@ -44,6 +44,7 @@ export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, st
 }
 export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
   fr: {
+    device: 'Appareil matériel',
     puppet: 'Copie inerte · marionnette',
     needles: 'Aiguilles',
     morena: 'Morena',
@@ -58,6 +59,7 @@ export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, strin
     delivery: 'Point de livraison',
   },
   en: {
+    device: 'Physical device',
     puppet: 'Inert copy · puppet',
     needles: 'Needles',
     morena: 'Morena',

@@ -1,3 +1,4 @@
+import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
@@ -21,6 +22,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    deviceAi(state) ??
     dowsingAi(state) ??
     judgmentAiPreset(state) ??
     gumAi(state) ??

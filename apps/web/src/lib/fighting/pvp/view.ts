@@ -1,3 +1,4 @@
+import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
@@ -21,6 +22,8 @@ const SIDE_FIELDS = new Set([
   'speaker',
   'questioner',
   'asker',
+  'carrier',
+  'subject',
   'affected',
   'cohorts',
   'recipientSide',
@@ -46,6 +49,8 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.devicePlayback = undefined
+  enemy.receiverReading = undefined
   enemy.dowsingReading = undefined
   enemy.judgmentPreset = undefined
   enemy.heardWords = undefined
@@ -76,12 +81,14 @@ function redactEnemy(enemy: ArcadeFighter) {
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   const other = side === 'player' ? 'opponent' : 'player'
+  concealDeviceMedia(view.battlefield)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
   for (const frame of view.parallelFuture?.frames ?? []) {
+    concealDeviceMedia(frame.battlefield)
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

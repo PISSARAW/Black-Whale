@@ -20,7 +20,7 @@ const server = await createServer({
 })
 await server.listen()
 const browser = await chromium.launch({ headless: true, args: [
-  '--no-proxy-server', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
+  '--no-proxy-server', '--use-gl=angle', `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`, '--enable-unsafe-swiftshader',
 ] })
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 const errors = [], samples = []
@@ -65,16 +65,22 @@ const pairs = {
   melody: ['melody-offbeat', 'melody-last-bar'],
   basho: ['basho-fifth-verse', 'basho-full-stop'],
   camilla: ['camilla-kiss-hand', 'camilla-dismissal'],
+  halkenburg: ['halkenburg-broken-line', 'halkenburg-rampart'],
+  gel: ['gel-bracelet', 'gel-royal-coil'],
+  lynch: ['lynch-answer-me', 'lynch-cross-examination'],
+  luini: ['luini-wrong-door', 'luini-emergency-exit'],
+  bill: ['bill-stake', 'bill-living-shield'],
 }
 try {
-  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
+  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
   const selected = Object.entries(pairs)
     .filter((_, index) => {
       if (process.env.THROW_ROSTER_BATCH === 'second') return index >= 5 && index < 10
       if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10 && index < 15
       if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15 && index < 20
-      if (process.env.THROW_ROSTER_BATCH === 'fifth') return index >= 20
+      if (process.env.THROW_ROSTER_BATCH === 'fifth') return index >= 20 && index < 25
+      if (process.env.THROW_ROSTER_BATCH === 'sixth') return index >= 25
       return true
     })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))
@@ -112,6 +118,7 @@ try {
         if (phase === 'turn' && id === 'zakuro') assert.ok(value.audit.effects.includes('throw-signature:blood'))
         if (phase === 'turn' && id === 'camilla' && powered) assert.ok(value.audit.effects.includes('throw-signature:royal'))
         if (phase === 'grip' && id === 'melody' && powered) assert.ok(value.audit.effects.includes('throw-signature:flute'))
+        if (phase === 'turn' && id === 'gel') assert.ok(value.audit.effects.includes('throw-signature:serpent'))
         if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
         await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
         samples.push({ id, side, powered, phase, audit: value.audit })

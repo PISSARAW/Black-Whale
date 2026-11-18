@@ -21,7 +21,7 @@ const server = await createServer({
 })
 await server.listen()
 const browser = await chromium.launch({ headless: true, args: [
-  '--no-proxy-server', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
+  '--no-proxy-server', '--use-gl=angle', `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`, '--enable-unsafe-swiftshader',
 ] })
 const page = await browser.newPage({ viewport: { width: 960, height: 540 } })
 page.setDefaultTimeout(90000)
@@ -34,7 +34,9 @@ function ffmpeg(args) {
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'fifth'
+  const ids = process.env.THROW_ROSTER_BATCH === 'sixth'
+    ? ['halkenburg', 'gel', 'lynch', 'luini', 'bill']
+    : process.env.THROW_ROSTER_BATCH === 'fifth'
     ? ['rihan', 'zakuro', 'melody', 'basho', 'camilla']
     : process.env.THROW_ROSTER_BATCH === 'fourth'
     ? ['shizuku', 'hinrigh', 'mizaistom', 'leorio', 'hanzo']
@@ -50,13 +52,14 @@ try {
       const frames = path.join(output, name)
       await mkdir(frames, { recursive: true })
       await page.evaluate((options) => window.throwFixture.reset(options), {
-        id, powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
+        id, powered, plant: id === 'bill' && powered, cohort: id === 'halkenburg' && powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
       })
       await page.waitForTimeout(120)
       const count = powered ? 36 : 24
       for (let index = 0; index < count; index++) {
         await page.evaluate((age) => window.throwFixture.seek(age), index / (count - 1) * 23.99)
         await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+        await page.waitForFunction(() => { const value = window.throwFixture.snapshot(); return value.audit?.frame === value.state.frame })
         await page.screenshot({ path: path.join(frames, `${String(index).padStart(4, '0')}.png`) })
       }
       const clip = path.join(output, `${name}.mp4`)

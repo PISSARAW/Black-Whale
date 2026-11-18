@@ -51,6 +51,16 @@ export type ThrowPerformanceId =
   | 'basho-full-stop'
   | 'camilla-kiss-hand'
   | 'camilla-dismissal'
+  | 'halkenburg-broken-line'
+  | 'halkenburg-rampart'
+  | 'gel-bracelet'
+  | 'gel-royal-coil'
+  | 'lynch-answer-me'
+  | 'lynch-cross-examination'
+  | 'luini-wrong-door'
+  | 'luini-emergency-exit'
+  | 'bill-stake'
+  | 'bill-living-shield'
 
 export interface ThrowBeat {
   at: number
@@ -92,6 +102,11 @@ export interface ThrowPerformance {
     | 'flute'
     | 'poet'
     | 'royal'
+    | 'archer'
+    | 'serpent'
+    | 'interrogator'
+    | 'passage'
+    | 'growth'
   grip?: 'both' | 'prop' | 'scissors' | 'waist'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean

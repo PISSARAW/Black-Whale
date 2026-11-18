@@ -4,7 +4,7 @@ Couverture : `fighting/throws/**`, `superThrow.ts`, `throwCinematic*.ts`,
 `throwPresentationLayer.ts`, `components/fighting/FightThrowCinematic.svelte`
 et `FightThrowGuide.svelte`.
 
-Les vingt-cinq premières paires appartiennent aux combattants du tableau. Chaque paire
+Les trente premières paires appartiennent aux combattants du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
@@ -35,6 +35,11 @@ une trajectoire de prise et de chute, et une direction de caméra distincte.
 | Melody | Le contretemps | La dernière mesure |
 | Basho | Le cinquième vers | Le point final |
 | Camilla | Le baisemain forcé | L’audience est levée |
+| Halkenburg | La ligne brisée | Le rempart du prince |
+| Gel | Le bracelet vivant | L’anneau du serpent |
+| Lynch | Répondez donc | L’interrogatoire musclé |
+| Luini | Vous vous êtes trompé de porte | La sortie de secours |
+| Bill | Le tuteur | Le bouclier vivant |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,
@@ -96,6 +101,19 @@ pas automatiquement la cible. Camilla tord le poignet pour imposer un baisemain 
 sa super emploie le pistolet physique comme accessoire de prise, sans tirer ni
 consommer de balle. Cat’s Name conserve ses seules conditions post-mortem.
 
+Halkenburg ramène le poignet comme une corde d’arc avant de renverser la cible ;
+sa super soulève puis rabat le corps derrière son épaule. Les lignes de cohésion
+n’apparaissent qu’avec de vrais partisans prêts et une volonté déjà chargée : aucun
+tir ou transfert d’âme n’est déclenché. Gel enroule son bras-serpent autour du poignet,
+puis autour du torse dans sa super, avec la tête violette du modèle existant.
+Le Nen indisponible rend la prise générique ; le film n’applique aucun poison.
+Lynch impose une prise au col, puis un retournement musclé dans la super : la
+projection ne répond pas aux questions de Body and Soul. Luini contourne la prise
+et retourne la cible sans la téléporter. Il doit achever un passage partiel
+avant de saisir ; sa salle préparée conserve ses conditions et sa destination. Bill interpose son corps avant un
+renversement protecteur. Une plante réellement cultivée peut rester dans le champ ;
+Erigeron ne crée ni racines offensives ni bonus personnel pendant ces projections.
+
 ## Commandes et règles
 
 Les 40 combattants peuvent lancer une projection normale ou une super avec
@@ -143,7 +161,7 @@ correspondants. Le rendu ne modifie ni les coordonnées ni les blessures du mote
 
 `superThrow.test.ts` couvre le coût, la puissance et les refus des 40 combattants,
 le buffer, les deux sièges, les déprojections, la dépense unique et les chemins
-PvP/replay. Les tests de ce dossier couvrent les cinquante chorégraphies et les témoins
+PvP/replay. Les tests de ce dossier couvrent les soixante chorégraphies et les témoins
 conditionnels produits par les vraies commandes. `secondBatch.test.ts` vérifie
 les trajectoires des attaquants, les formes réelles et les ressources préservées.
 `thirdBatch.test.ts` couvre les accessoires conditionnels, la préparation réelle
@@ -152,9 +170,11 @@ de Prologue, la visibilité de In et l’absence de mutation de l’état par le
 de Nen, le déplacement de Hanzo et l’absence de conséquence ajoutée par le rendu.
 `fifthBatch.test.ts` couvre la réserve et la plaie de Zakuro, la restauration de la
 flûte, les vrais poèmes, la proie de Predator et le pistolet sans Cat’s Name.
+`sixthBatch.test.ts` vérifie le bras-serpent et sa restauration, la cohorte
+réellement chargée, la plante cultivée et l’absence d’effet de jeu ajouté.
 
-Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les cinquante
-projections en P1/P2 et leurs quatre plans, puis les vingt-cinq vues en 320 px. Il
+Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les soixante
+projections en P1/P2 et leurs quatre plans, puis les trente vues en 320 px. Il
 contrôle aussi la pause, le K.-O., le nettoyage et les mouvements réduits.
 Résultats : `/tmp/black-whale-five-throws`.
 
@@ -163,5 +183,9 @@ dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`.
 `THROW_ROSTER_BATCH=third` sélectionne Franklin, Machi, Illumi, Kalluto et Bonolenov.
 `THROW_ROSTER_BATCH=fourth` sélectionne Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
 `THROW_ROSTER_BATCH=fifth` sélectionne Rihan, Zakuro, Melody, Basho et Camilla.
+`THROW_ROSTER_BATCH=sixth` sélectionne Halkenburg, Gel, Lynch, Luini et Bill.
 Pour chaque lot, le rendu exporte les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
 de sortie se règle avec `THROW_RENDER_OUTPUT`.
+
+Sur un Mac compatible, `THROW_CAPTURE_ANGLE=metal` utilise le GPU pour ces captures.
+Le moteur logiciel SwiftShader reste le choix par défaut des scripts.

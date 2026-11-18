@@ -9,6 +9,7 @@
     performThrow,
     tickFight,
   } from '$lib/fighting/engine'
+  import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import { commandMary } from '$lib/fighting/bloodyMaryAction'
   import { performAuraAttack } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
@@ -57,7 +58,7 @@
       finite = finite && node.position.toArray().every(Number.isFinite)
       if (node.name.startsWith('throw-signature:') && visible(node)) effects.push(node.name)
       const rig = humanAnimationRig(node)
-      if (rig) {
+      if (rig && !preparedBody(node)) {
         rigs.push(rig)
         origins.push(rig.figure.getWorldPosition(rig.figure.position.clone()).toArray())
         bodies.push([
@@ -90,6 +91,10 @@
   onDestroy(() => {
     Scene.prototype.onAfterRender = previous
   })
+  function preparedBody(node: import('three').Object3D): boolean {
+    if (node.name.startsWith('prepared:') || node.name.startsWith('luini-origin:')) return true
+    return node.parent ? preparedBody(node.parent) : false
+  }
   function visible(node: import('three').Object3D): boolean {
     return node.visible && (!node.parent || visible(node.parent))
   }
@@ -137,6 +142,8 @@
       prologue?: boolean
       noNeedles?: boolean
       sealed?: boolean
+      plant?: boolean
+      cohort?: boolean
     } = {},
   ) {
     const side = options.side ?? 'player'
@@ -146,6 +153,13 @@
       createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, {
         mode: 'versus-local',
         formatId: 'knockout',
+        environment: createFightEnvironment({
+          preparation: {
+            mode: 'scenario',
+            resources: options.plant ? ['plants'] : [],
+            cohorts: options.cohort ? [side] : [],
+          },
+        }),
       }),
     )
     const victim = side === 'player' ? 'opponent' : 'player'
@@ -161,6 +175,44 @@
         health: options.ko ? 1 : current[victim].health,
         throwTechFrames: options.tech ? 8 : 0,
       },
+    }
+    if (options.plant) {
+      const seed = current.battlefield?.entities.find(
+        (entry) => entry.kind === 'seed' && entry.owner === side,
+      )
+      if (seed) {
+        current = {
+          ...current,
+          [side]: { ...current[side], x: seed.x },
+          [victim]: { ...current[victim], x: seed.x + current[side].facing * 5 },
+        }
+        current = performMove({ state: current, side, action: 'special' })
+        for (let i = 0; i < 20; i++)
+          current = tickFight(current, EMPTY_INPUT, {
+            dt: 1 / 60,
+            opponentInput: EMPTY_INPUT,
+            ai: false,
+          })
+      }
+    }
+    if (options.cohort) {
+      const supporter = current.battlefield?.entities.find(
+        (entry) => entry.kind === 'supporter' && entry.owner === side,
+      )
+      if (supporter) {
+        const x = supporter.x + current[side].facing * 17
+        current = {
+          ...current,
+          [side]: { ...current[side], x },
+          [victim]: { ...current[victim], x: x + current[side].facing * 5 },
+        }
+      }
+      for (let i = 0; i < 480; i++)
+        current = tickFight(current, EMPTY_INPUT, {
+          dt: 1 / 60,
+          opponentInput: EMPTY_INPUT,
+          ai: false,
+        })
     }
     if (options.bleed)
       current = commandMary({ state: current, side, command: 'bleed' }, performAuraAttack)

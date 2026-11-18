@@ -6,17 +6,22 @@ import { sleepingBody } from './hanzoProjection'
 import { advanceCyclotron } from './phinksCyclotron'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
+import { applyAirRecovery } from './airRecovery'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
 import { advanceNen } from './nen'
-import type { ArcadeFighter, FightState } from './types'
+import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
 const GROUND = 0
 const MIN_X = 7
 const MAX_X = 93
 
-export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
+export function advanceFighterPhysics(
+  fighter: ArcadeFighter,
+  input: FightInput = EMPTY_INPUT,
+): ArcadeFighter {
   fighter = advanceCyclotron(fighter)
   fighter = holdMary(holdCrossGame(fighter))
+  fighter = applyAirRecovery(fighter, input)
   const vertical =
     crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
@@ -26,6 +31,7 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
     arenaRecovery: Math.max(0, (fighter.arenaRecovery ?? 0) - 1),
     preparationRecovery: Math.max(0, (fighter.preparationRecovery ?? 0) - 1),
     ...vertical,
+    airRecovery: vertical.y > GROUND ? fighter.airRecovery : undefined,
     ...wakeup,
     ...combo,
     throwTechRecoveryFrames: Math.max(0, (fighter.throwTechRecoveryFrames ?? 0) - 1),

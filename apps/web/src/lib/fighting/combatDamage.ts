@@ -112,6 +112,7 @@ function struckFighter(
   return {
     ...options.fighter,
     ...launchState(options),
+    airRecovery: airRecoveryOnHit(options),
     ...stunState(options),
     ...comboState(options),
     x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
@@ -133,6 +134,13 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
+}
+
+function airRecoveryOnHit(options: StrikeOptions): true | undefined {
+  if (options.knockdown) return
+  if (options.fighter.airRecovery && options.fighter.y > 0) return true
+  const directionallyLaunched = options.melee && options.attacker.attack?.directionalChain === 'air'
+  return directionallyLaunched && options.antiAir && !options.blocked ? true : undefined
 }
 
 function contactNen(fighter: ArcadeFighter, blocked: boolean): ArcadeFighter['nen'] {

@@ -12,6 +12,7 @@ import {
   type MoveAction,
 } from './types'
 import { FIGHTING_ROSTER } from './roster'
+import { airRecoveryAvailable } from './airRecovery'
 
 function duel(
   id: FighterId,
@@ -37,6 +38,14 @@ function tick(state: FightState, guard: boolean) {
     dt: 1 / 60,
     ai: false,
     opponentInput: { ...EMPTY_INPUT, guard },
+  })
+}
+
+function defend(state: FightState, input: Partial<FightInput>) {
+  return tickFight(state, EMPTY_INPUT, {
+    dt: 1 / 60,
+    ai: false,
+    opponentInput: { ...EMPTY_INPUT, ...input },
   })
 }
 
@@ -214,3 +223,49 @@ it.each([false, true])('le coin change la fenêtre du Bungee Gum retardé, coin 
     comboHits: corner ? 4 : 1,
   })
 })
+
+it.each([false, true])(
+  'la défense tenue ne coupe pas une poursuite garantie, coin %s',
+  (corner) => {
+    const launch = launcher(duel('hisoka', { corner }))
+    let state = tap(launch, { right: true })
+    for (let i = 0; i < 60 && state.impact?.sequence === launch.impact?.sequence; i++) {
+      expect(airRecoveryAvailable(state.opponent)).toBe(false)
+      state = defend(state, { down: true, guard: true, right: true })
+    }
+    expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4, blocked: false })
+  },
+)
+
+it('le recul commence quand le défenseur récupère et respecte le bord de l’arène', () => {
+  for (const corner of [false, true]) {
+    const launch = launcher(duel('kurapika', { corner }))
+    const before = until(launch, (state) => state.opponent.hitStun === 1)
+    const free = defend(before, { right: true })
+    expect(airRecoveryAvailable(free.opponent)).toBe(true)
+    expect(free.opponent.x).toBe(before.opponent.x)
+    const retreat = defend(free, { right: true })
+    expect(retreat.opponent.x - free.opponent.x).toBeCloseTo(corner ? 0 : 0.4)
+    expect(retreat.opponent.comboHits).toBe(0)
+  }
+})
+
+it.each([false, true])(
+  'bas et garde accélèrent la descente puis gardent au sol, coin %s',
+  (corner) => {
+    let state = until(launcher(duel('kurapika', { corner })), (value) =>
+      airRecoveryAvailable(value.opponent),
+    )
+    const neutral = defend(state, {})
+    const fast = defend(state, { down: true, guard: true })
+    expect(fast.opponent.y).toBeLessThan(neutral.opponent.y)
+    expect(fast.opponent.y).toBeGreaterThan(0)
+    expect(fast.opponent.blocking).toBe(false)
+    state = fast
+    for (let f = 0; f < 20 && state.opponent.y > 0; f++)
+      state = defend(state, { down: true, guard: true })
+    expect(state.opponent).toMatchObject({ y: 0, blocking: true, crouching: true })
+    expect(state.opponent.airRecovery).toBeUndefined()
+    expect(state.opponent.wakeupInvulnerableFrames).toBe(0)
+  },
+)

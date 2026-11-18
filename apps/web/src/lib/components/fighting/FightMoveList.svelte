@@ -106,6 +106,9 @@
             ? 'La technique exige ses ressources et sa préparation habituelles.'
             : 'The technique requires its normal resources and preparation.'}</p>
         {/if}
+        <p>{language === 'fr'
+          ? `En défense après la relance, reculez, ripostez avec ${moveInputHint('J', $bindings)} ou maintenez ↓ + ${$bindings.playerGuard} pour redescendre et garder à l’atterrissage.`
+          : `After recovering from a launch, drift back, strike with ${moveInputHint('J', $bindings)} or hold ↓ + ${$bindings.playerGuard} to descend and guard on landing.`}</p>
       {/if}
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
       {#each examples as [key, route] (key)}

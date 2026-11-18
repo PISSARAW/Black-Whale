@@ -4,6 +4,7 @@ import { feitanCinematicDetail } from './feitanPresentation'
 import { kurapikaCinematicDetail } from './kurapikaCameraPresentation'
 import { chrolloCinematicDetail } from './chrolloCameraPresentation'
 import type { FightSide, FightState } from './types'
+import { directionalComboShot } from './directionalComboCamera'
 
 import type { CinematicCue, CinematicDirection, CameraPacing } from './cinematicTypes'
 export type { CameraDetail, CinematicCue, CinematicDirection } from './cinematicTypes'
@@ -49,6 +50,14 @@ export function createCinematicDirector(
         shot = null
         finishAge = 0
         scheduler.clear()
+      }
+      if (directionalComboShot(state)) {
+        // A directional finish uses the main lens. Do not replay its detail shot on recovery.
+        previous = next
+        cues = []
+        shot = null
+        scheduler.clear()
+        return { strength: 0, side: null, detail: null }
       }
       finishAge = state.phase === 'finished' ? finishAge + Math.max(0, dt) * 60 : 0
       const frame = state.frame + finishAge

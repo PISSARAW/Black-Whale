@@ -1,9 +1,21 @@
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, FightInput, MoveAction, MoveSlot } from './types'
+import { FIGHTING_ROSTER } from './roster'
 
 export type DirectionalEnding = 'ground' | 'air' | 'close' | 'carry'
 export type DirectionalChain = 'bridge' | DirectionalEnding
 export const DIRECTIONAL_LAUNCH_SPEED = 56
+
+export interface DirectionalIntent {
+  moveId?: string
+  directionalChain?: DirectionalChain
+}
+
+const CHAIN_FIGHTERS = new Set(FIGHTING_ROSTER.map(({ id }) => id))
+
+export function hasDirectionalChain(id: ArcadeFighter['id']): boolean {
+  return CHAIN_FIGHTERS.has(id)
+}
 
 const FINISHES: Record<DirectionalEnding, MoveSlot> = {
   ground: 'lowHeavy',
@@ -25,7 +37,7 @@ export function directionalInput(
 
 function directionalChainAvailable(fighter: ArcadeFighter, action: MoveAction, input: FightInput) {
   if (action !== 'light' || input.aura || fighter.y > 0) return false
-  if (fighter.id !== 'kurapika' && fighter.id !== 'hisoka') return false
+  if (!hasDirectionalChain(fighter.id)) return false
   const attack = fighter.attack
   return Boolean(attack && (!attack.impacted || attack.confirmedHit))
 }
@@ -49,10 +61,12 @@ export function directionalSlot(chain: DirectionalChain): MoveSlot {
   return chain === 'bridge' ? 'forwardLight' : FINISHES[chain]
 }
 
-export function directionalAllows(fighter: ArcadeFighter, moveId: string): boolean {
-  if (fighter.attack?.directionalChain !== 'bridge') return false
-  const signature = fighter.id === 'kurapika' ? 'forwardSpecial' : 'finisher'
-  return [signature, ...Object.values(FINISHES)].some((slot) => moveId === `${fighter.id}:${slot}`)
+export function directionalSourceMatches(fighter: ArcadeFighter, chain: DirectionalChain): boolean {
+  const attack = fighter.attack
+  if (!attack || !hasDirectionalChain(fighter.id)) return false
+  return chain === 'bridge'
+    ? attack.moveId === `${fighter.id}:standingLight`
+    : attack.directionalChain === 'bridge'
 }
 
 export function directionalFrameData(
@@ -60,7 +74,12 @@ export function directionalFrameData(
   chain?: DirectionalChain,
 ): AttackFrameData {
   if (!chain) return data
-  if (chain === 'bridge') return { ...data, hitstun: Math.max(data.hitstun, 33) }
+  if (chain === 'bridge')
+    return {
+      ...data,
+      knockback: Math.min(data.knockback, 2.5),
+      hitstun: Math.max(data.hitstun, 33),
+    }
   const startup = Math.min(data.startup, chain === 'carry' ? 16 : 9)
   const base = { ...data, startup, cancelEnd: data.cancelEnd - (data.startup - startup) }
   if (chain === 'air') return { ...base, knockback: 2.5, recovery: 14, hitstun: 28 }

@@ -1,6 +1,7 @@
 import type { AuraAttackOptions } from './auraAttackAction'
-import { directionalInput, directionalSlot } from './directionalChain'
+import { directionalInput, directionalSlot, type DirectionalEnding } from './directionalChain'
 import { canUseMovesetMove, moveForSlot } from './movesets'
+import { directionalTechnique } from './directionalTechniques'
 import type { FightInput, FightSide, FightState, MoveAction } from './types'
 
 export function performDirectionalChain(
@@ -11,7 +12,7 @@ export function performDirectionalChain(
   const fighter = state[side]
   const chain = directionalInput(fighter, action, input)
   if (!chain) return
-  const signature = chain === 'carry' ? signatureMove(state, side) : null
+  const signature = chain === 'bridge' ? null : signatureMove(state, side, chain)
   const move = signature ?? moveForSlot(fighter.id, directionalSlot(chain))
   if (move && canUseMovesetMove(state, side, move)) {
     return perform({
@@ -27,8 +28,10 @@ export function performDirectionalChain(
   return state
 }
 
-function signatureMove(state: FightState, side: FightSide) {
+function signatureMove(state: FightState, side: FightSide, ending: DirectionalEnding) {
   const fighter = state[side]
-  const move = moveForSlot(fighter.id, fighter.id === 'kurapika' ? 'forwardSpecial' : 'finisher')
+  const slot = directionalTechnique(fighter.id, ending)
+  if (!slot) return null
+  const move = moveForSlot(fighter.id, slot)
   return move && canUseMovesetMove(state, side, move) ? move : null
 }

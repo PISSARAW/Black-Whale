@@ -196,5 +196,6 @@ export function directionalFinishPose(fighter: ArcadeFighter): MoveTimeline | un
   if (!ending || ending === 'bridge') return
   // The native chain and tether retain their own prop-aware keys, synchronized to this move.
   if (ending === 'carry' && fighter.attack?.kind === 'special') return
-  return (fighter.id === 'kurapika' ? KURAPIKA : HISOKA)[ending]
+  if (fighter.id === 'kurapika') return KURAPIKA[ending]
+  if (fighter.id === 'hisoka') return HISOKA[ending]
 }

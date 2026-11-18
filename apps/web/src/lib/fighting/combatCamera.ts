@@ -2,7 +2,11 @@ import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { CameraDetailRect } from './cinematicDetailLayout'
-import { directionalCameraOffsets, previewLaunchSpeed } from './directionalComboCamera'
+import {
+  directionalCameraOffsets,
+  directionalComboShot,
+  previewLaunchSpeed,
+} from './directionalComboCamera'
 
 export interface CombatCameraFrame {
   x: number
@@ -192,9 +196,10 @@ function mainCameraFrame(
     x,
     lookY,
     y: lookY + base.y - base.lookY + shot.tilt,
-    z: preserveSpecialFraming(state)
-      ? base.z
-      : Math.max(shot.minimum, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95 + shot.zoom),
+    z:
+      shot.zoom === 0 && preserveSpecialFraming(state)
+        ? base.z
+        : Math.max(shot.minimum, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95 + shot.zoom),
   }
 }
 function fittedTarget({
@@ -237,14 +242,13 @@ export function createCombatCamera() {
       const target = combatCameraTarget({ ...options, detailWeight })
       if (reset || !held) held = { ...target }
       const ease = 1 - Math.exp(-10 * clamp(options.dt, 0, 0.1))
-      const zoomEase = 1 - Math.exp(-(target.z < held.z ? 10 : 3.4) * clamp(options.dt, 0, 0.1))
       const x = held.x + (target.x - held.x) * ease
       const lookY = held.lookY + (target.lookY - held.lookY) * ease
       let pose = {
         x,
         lookY,
         y: lookY + target.y - target.lookY,
-        z: held.z + (target.z - held.z) * zoomEase,
+        z: nextCameraDepth(held.z, target.z, options),
       }
       // Open the shot immediately when needed; easing must never crop a fighter.
       if (target.bounds.region!.top < 0)
@@ -266,4 +270,15 @@ export function createCombatCamera() {
       return { ...pose, detailReady: detailWeight >= 1 }
     },
   }
+}
+
+function nextCameraDepth(previous: number, target: number, options: CombatCameraOptions): number {
+  const dt = clamp(options.dt, 0, 0.1)
+  const inward = target < previous
+  const fraction = 1 - Math.exp(-(inward ? 10 : 3.4) * dt)
+  const change = (target - previous) * fraction
+  // A narrow frame can afford to close quickly on paper; limit the visible push-in.
+  const controlled =
+    inward && directionalComboShot(options.state) ? Math.max(change, -8 * dt) : change
+  return previous + controlled
 }

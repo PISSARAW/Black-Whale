@@ -75,8 +75,7 @@ function makeBullet(options: {
     damage: salvo.damage,
     hitstun: 12,
     blockstun: 8,
-    hitstop: 1,
-    knockback: 0.35,
+    ...bulletImpact(fighter, shot, salvo.shots),
     targetZone: low || sweep < 4 ? 'feet' : 'torso',
     shape: 'bullet',
     colour: '#ef4444',
@@ -84,6 +83,11 @@ function makeBullet(options: {
     age: 0,
     lifetime: 90,
   }
+}
+
+function bulletImpact(fighter: ArcadeFighter, shot: number, count: number) {
+  const finalDrive = fighter.attack?.directionalChain === 'carry' && shot === count - 1
+  return finalDrive ? { hitstop: 5, knockback: 3.5 } : { hitstop: 1, knockback: 0.35 }
 }
 
 /** An opponent inside the outstretched arms is hit along the muzzle path, never skipped. */

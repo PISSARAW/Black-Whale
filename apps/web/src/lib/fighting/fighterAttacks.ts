@@ -25,7 +25,11 @@ import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
 import { canUseRangedAttack } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
-import type { DirectionalChain } from './directionalChain'
+import {
+  directionalSourceMatches,
+  type DirectionalChain,
+  type DirectionalIntent,
+} from './directionalChain'
 
 const MIN_X = 7
 const MAX_X = 93
@@ -120,16 +124,18 @@ function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): F
 export function canStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
-  moveId?: string,
+  destination?: string | DirectionalIntent,
 ): boolean {
-  return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, moveId)
+  const intent = typeof destination === 'string' ? { moveId: destination } : (destination ?? {})
+  return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, intent)
 }
 
 function ordinaryCanStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
-  moveId?: string,
+  intent: DirectionalIntent,
 ): boolean {
+  const { moveId } = intent
   if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
   if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
@@ -137,7 +143,7 @@ function ordinaryCanStartFighterAttack(
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&
-    (fighter.attack === null || cancelReady(fighter, kind, moveId)) &&
+    (fighter.attack === null ? !intent.directionalChain : cancelReady(fighter, kind, intent)) &&
     resourceReady
   )
 }
@@ -199,13 +205,21 @@ function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value))
 }
 
-function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
-  if (!canCancel(fighter, kind, moveId) || !fighter.attack) return false
+function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
+  if (!fighter.attack || !legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
   const window = moveById(fighter.attack.moveId)?.cancelWindow
   return (
     (!window || fighter.attack.frame >= data.startup + window.start) &&
     fighter.attack.frame <= data.cancelEnd
+  )
+}
+
+function legalCancel(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
+  const { directionalChain, moveId } = intent
+  if (!directionalChain) return canCancel(fighter, kind, moveId)
+  return Boolean(
+    fighter.attack?.confirmedHit && directionalSourceMatches(fighter, directionalChain),
   )
 }
 

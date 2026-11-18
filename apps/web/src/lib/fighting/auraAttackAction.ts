@@ -38,7 +38,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   const original = options.state[side]
   if (!attackAdmission(options, intent)) return options.state
   const { hatsuSource, concealed } = intent
-  const starts = canStartFighterAttack(original, kind, moveId)
+  const starts = canStartFighterAttack(original, kind, options)
   if (!starts) return bufferAuraAttack(options, intent)
   const state = hatsuSource
     ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
@@ -64,7 +64,7 @@ function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): Fig
   const { state, side, kind, auraCharged, variant, moveId } = options
   const { hatsuSource, concealed, resourceReady } = intent
   const fighter = state[side]
-  const cancelFrom = cancelBufferSource(fighter, moveId)
+  const cancelFrom = cancelBufferSource(fighter, options)
   if (options.directionalChain && !cancelFrom) return state
   if (!resourceReady || (!cancelFrom && !canBufferFighterAttack(fighter))) return state
   return {

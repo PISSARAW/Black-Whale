@@ -18,17 +18,21 @@ const CONTROL: TechniqueCanonContract = {
     'A disposable puppet executes its instruction. The selected simple orders, movement speed and resetting bodies each round are duel adaptations.',
 }
 const DISGUISE: TechniqueCanonContract = {
-  source: 'Hunter × Hunter — Illumi’s physical disguises in the Hunter Exam and Yorknew arcs',
+  source: 'Hunter × Hunter — physical disguises, chapters 26 and 118',
   evidence: 'manga-shown',
-  conditions: ['Physical needles reshape the user’s own face and skin.'],
+  conditions: [
+    'Physical needles hold the Gittarackur alteration; removing them restores the original appearance.',
+    'The Hisoka face imitation can be held without needles for around four to five hours; the original eyes remain.',
+  ],
   prohibitions: [
     'No mind control of the opponent.',
     'No healing, invulnerability or defensive bonus.',
+    'The model’s clothes, body, identity and Hatsu are not acquired.',
   ],
   narrativeCost:
     'Illumi describes the physical alteration as painful. Twenty aura and thirty preparation frames are duel tuning.',
   narrativeEffect:
-    'A visibly altered face held by physical needles; removal restores the appearance.',
+    'Physical face alteration with needles or the demonstrated unpinned imitation. Four hours is the duel’s chosen lower bound within the stated range.',
 }
 
 export function illumiCanon(slot: MoveSlot): TechniqueCanonContract {

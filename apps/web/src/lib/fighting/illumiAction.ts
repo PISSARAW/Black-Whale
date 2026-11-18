@@ -1,5 +1,8 @@
 import { canStartFighterAttack } from './fighterAttacks'
 import { illumiAvailable, illumiMove } from './illumiAccess'
+import { illumiDisguiseAvailable, clearIllumiFace } from './illumiDisguise'
+import { newGumSource } from './bungeeSource'
+import { freeDeviceHand } from './deviceHands'
 import {
   illumiBodyFree,
   illumiState,
@@ -15,8 +18,9 @@ export function performIllumiAction(options: AuraAttackOptions): FightState | nu
   const { state, side, kind, moveId } = options
   const fighter = state[side]
   if (kind !== 'special' || !illumiMove(fighter, moveId)) return null
-  if (!illumiBodyFree(fighter) || !illumiAvailable(fighter) || !canIssueCommand(fighter))
-    return state
+  const available =
+    moveId === 'illumi:backSpecial' ? illumiDisguiseAvailable(fighter) : illumiAvailable(fighter)
+  if (!illumiBodyFree(fighter) || !available || !canIssueCommand(fighter)) return state
   return performCommand(options)
 }
 
@@ -47,9 +51,8 @@ export function giveNeedleOrder(
 function disguise(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const current = illumiState(fighter)
-  if (fighter.y !== 0) return state
-  if (current.disguised)
-    return { ...state, [side]: { ...fighter, illumi: { ...current, disguised: false } } }
+  if (fighter.y !== 0 || fighter.hanzoProjection || !freeDeviceHand(state, side)) return state
+  if (current.disguised) return { ...state, [side]: clearIllumiFace(fighter) }
   if (fighter.aura < ILLUMI_DISGUISE_COST) return state
   return {
     ...state,
@@ -59,7 +62,13 @@ function disguise(state: FightState, side: FightSide): FightState {
       illumi: {
         ...current,
         preparation: ILLUMI_DISGUISE_FRAMES,
-        mediumCopyId: fighter.equipmentProps?.needles?.copyId,
+        mediumCopyId:
+          fighter.illumiDisguisePlan === 'unpinned-hisoka'
+            ? undefined
+            : fighter.equipmentProps?.needles?.copyId,
+        disguiseMode: fighter.illumiDisguisePlan ?? 'pinned-gittarackur',
+        disguiseOrigin: newGumSource(fighter),
+        disguiseExpiresAt: undefined,
         anchor: { x: fighter.x, y: fighter.y },
       },
     },

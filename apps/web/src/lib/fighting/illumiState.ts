@@ -1,4 +1,7 @@
 import type { ArcadeFighter, FightSide } from './types'
+import type { GumSource } from './bungeeSource'
+
+export type IllumiDisguiseMode = 'pinned-gittarackur' | 'unpinned-hisoka'
 
 export type NeedleOrder = 'stay' | 'approach' | 'retreat'
 export interface IllumiState {
@@ -7,6 +10,14 @@ export interface IllumiState {
   disguised: boolean
   preparation: number
   anchor?: { x: number; y: number }
+  disguiseMode?: IllumiDisguiseMode
+  disguiseOrigin?: GumSource
+  disguiseExpiresAt?: number
+}
+declare module './types' {
+  interface ArcadeFighter {
+    illumiDisguisePlan?: IllumiDisguiseMode
+  }
 }
 export interface NeedlePuppet {
   mediumCopyId?: string

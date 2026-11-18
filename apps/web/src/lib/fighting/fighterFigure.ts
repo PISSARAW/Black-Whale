@@ -6,7 +6,7 @@ import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
 import { paperDolls } from './kallutoSurveillance'
 import { addPadailleWeapon } from './padailleFigure'
-import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
+import { illumiFaceProfile, addIllumiNeedles, illumiFigureKey } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
@@ -39,7 +39,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     fighter.plantedPaper,
     paperDolls(fighter).length,
     Boolean(fighter.paperKit?.fan),
-    Boolean(fighter.illumi?.disguised),
+    ...illumiFigureKey(fighter),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),

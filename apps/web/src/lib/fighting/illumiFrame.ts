@@ -2,6 +2,9 @@ import { releasePreparedEntity } from './preparedCorpseBody'
 import { advanceCorpseControls } from './illumiCorpses'
 import { illumiNenActive } from './illumiAccess'
 import { illumiState, type NeedlePuppet } from './illumiState'
+import { ILLUMI_UNPINNED_FRAMES } from './illumiDisguiseTuning'
+import { withGumChannel } from './bungeeChannel'
+import { observeIllumiFace } from './illumiDisguiseWitness'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
 
 export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -17,14 +20,29 @@ export function advanceIllumi(state: FightState): FightState {
 }
 
 function advanceForSide(state: FightState, side: FightSide): FightState {
-  const fighter = prepareDisguise(state[side])
-  const puppet = fighter.needlePuppet
-  if (!puppet) return fighter === state[side] ? state : { ...state, [side]: fighter }
-  const owner = state[puppet.owner]
-  return { ...state, [side]: obeyOrder(fighter, owner, puppet) }
+  const origin = state[side].illumi?.disguiseOrigin
+  return origin
+    ? withGumChannel(state, { ...origin, side }, (scoped) => advanceScopedIllumi(scoped, side))
+    : advanceScopedIllumi(state, side)
 }
 
-function prepareDisguise(fighter: ArcadeFighter): ArcadeFighter {
+function advanceScopedIllumi(state: FightState, side: FightSide): FightState {
+  const fighter = prepareDisguise(state[side], state.frame)
+  const observed =
+    fighter === state[side]
+      ? state
+      : observeIllumiFace(
+          { ...state, [side]: fighter },
+          side,
+          Boolean(state[side].illumi?.disguised),
+        )
+  const puppet = fighter.needlePuppet
+  if (!puppet) return observed
+  const owner = observed[puppet.owner]
+  return { ...observed, [side]: obeyOrder(fighter, owner, puppet) }
+}
+
+function prepareDisguise(fighter: ArcadeFighter, frame: number): ArcadeFighter {
   const current = fighter.illumi
   if (!current?.preparation) return fighter
   const interrupted = disguiseInterrupted(fighter)
@@ -37,6 +55,10 @@ function prepareDisguise(fighter: ArcadeFighter): ArcadeFighter {
       ...current,
       preparation,
       disguised: preparation === 0,
+      disguiseExpiresAt:
+        preparation === 0 && current.disguiseMode === 'unpinned-hisoka'
+          ? frame + 1 + ILLUMI_UNPINNED_FRAMES
+          : undefined,
       anchor: preparation ? current.anchor : undefined,
     },
   }

@@ -1,6 +1,7 @@
 import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
 import { carryDocumentState } from './paperDocumentRound'
+import { carryIllumiFace } from './illumiDisguiseClock'
 import { carryKallutoPaper } from './kallutoSurveillance'
 import { personalPaperKit } from './kallutoMaterials'
 import { carryPaperWorld } from './kallutoMaterialWorld'
@@ -110,6 +111,7 @@ export function nextFightRound(state: FightState): FightState {
           health: format.health,
         }),
         state.player,
+        state.frame,
       ),
       opponent: preserveLifespan(
         createFighter({
@@ -119,6 +121,7 @@ export function nextFightRound(state: FightState): FightState {
           health: format.health,
         }),
         state.opponent,
+        state.frame,
       ),
       phase: 'ready',
       frame: 0,
@@ -141,7 +144,12 @@ export function nextFightRound(state: FightState): FightState {
   )
 }
 
-function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+function preserveLifespan(
+  fighter: ArcadeFighter,
+  previous: ArcadeFighter,
+  elapsedFrames: number,
+): ArcadeFighter {
+  fighter = carryIllumiFace(fighter, previous, elapsedFrames)
   fighter = carryBodyDamage(fighter, previous)
   fighter = carryDocumentState(fighter, previous)
   fighter = carryDolphinState(fighter, previous)

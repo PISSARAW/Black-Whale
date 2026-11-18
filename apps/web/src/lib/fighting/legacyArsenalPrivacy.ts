@@ -2,6 +2,14 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  enemy.illumiDisguisePlan = undefined
+  if (enemy.illumi)
+    enemy.illumi = {
+      ...enemy.illumi,
+      disguiseOrigin: undefined,
+      disguiseExpiresAt: undefined,
+      anchor: undefined,
+    }
   enemy.texturePaperDraft = undefined
   enemy.texturePaperId = undefined
   enemy.paperTextureGeneration = undefined

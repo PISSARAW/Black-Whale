@@ -973,3 +973,11 @@ Le [suivi des documents](./clash-hisoka-documents.md) distingue le papier réel,
 l’encre sous-jacente et l’apparence de Nen. Les mains, le stock fini, les copies,
 les canaux du livre et de Dolphin, la lecture et les souvenirs restent séparés.
 Cette extension ne prédit pas l’avenir et ne change pas les contrats de Nen.
+
+## Visages d’Illumi — ruleset 56
+
+Les [deux préparations du visage](./clash-illumi-visages.md) ont leurs conditions
+matérielles distinctes : aiguilles réelles pour Gittarackur, délai de quatre heures
+simulées pour l’imitation sans aiguilles du chapitre 118. Le corps, les yeux,
+les vêtements et l’arsenal du personnage restent les siens. Cette extension
+ne certifie pas encore tout le contrôle mental et les usages sur autrui.

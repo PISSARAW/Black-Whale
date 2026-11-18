@@ -54,6 +54,8 @@ import { hunterOptions, performHunterInterview } from './skillHunterAcquisition'
 import { performHistoricalCommand } from './chrolloHistoricalAction'
 import { historicalOptions } from './chrolloHistoricalOptions'
 import { ARSENAL_ACTION_IDS, type ArsenalCommand, type ArsenalOption } from './retrospectiveTypes'
+import { performIllumiFaceCommand, illumiFaceOptions } from './illumiDisguise'
+import { nativeIllumiFaceOption } from './illumiDisguiseApplication'
 import type { FightSide, FightState } from './types'
 
 export function validArsenalCommand(value: unknown): value is ArsenalCommand {
@@ -125,6 +127,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['illumi-face-', performIllumiFaceCommand],
   ['gum-anchor-', performGumObjectAnchorCommand],
   ['paper-release-confetti', performPaperScatterCommand],
   ['paper-kit-', performPaperKitCommand],
@@ -196,6 +199,8 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...textureSurfaceOptions(state, side),
+    ...illumiFaceOptions(state, side),
+    ...nativeIllumiFaceOption(state, side),
     ...paperDocumentOptions(state, side),
     ...gumObjectAnchorOptions(state, side),
     ...cookieOptions(state, side),

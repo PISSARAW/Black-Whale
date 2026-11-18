@@ -18,8 +18,8 @@
     {#if !hasIllumiNeedles(fighter)}
       <span class="warning"
         >{fr
-          ? 'Aiguilles physiques requises ; la copie ne les fournit pas.'
-          : 'Physical needles required; copying does not supply them.'}</span
+          ? 'Needle People : aiguilles physiques requises ; la copie ne les fournit pas.'
+          : 'Needle People requires physical needles; copying does not supply them.'}</span
       >
     {/if}
     <span
@@ -40,11 +40,25 @@
           : 'Altering face · interrupted by movement or injury'}</span
       >
     {:else if fighter.illumi?.disguised}
-      <span
-        >{fr
-          ? 'Visage remodelé · aucune protection supplémentaire'
-          : 'Altered face · no extra protection'}</span
-      >
+      {#if fighter.illumi.disguiseMode === 'unpinned-hisoka'}
+        <span
+          >{fr
+            ? 'Visage d’Hisoka · sans aiguilles · yeux d’origine'
+            : 'Hisoka’s face · no needles · original eyes'}</span
+        >
+        {#if fighter.illumi.disguiseExpiresAt !== undefined}
+          <span
+            >{fr ? 'Retour dans' : 'Reverts in'}
+            {Math.max(0, Math.ceil((fighter.illumi.disguiseExpiresAt - state.frame) / 3600))} min</span
+          >
+        {/if}
+      {:else}
+        <span
+          >{fr
+            ? 'Visage remodelé · aucune protection supplémentaire'
+            : 'Altered face · no extra protection'}</span
+        >
+      {/if}
     {/if}
     <small
       >{fr

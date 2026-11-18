@@ -2,9 +2,14 @@ import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 import type { ArcadeFighter } from './types'
 
+export function illumiFigureKey(fighter: ArcadeFighter) {
+  return [Boolean(fighter.illumi?.disguised), fighter.illumi?.disguiseMode]
+}
+
 /** Physical face and skin alteration; the collision body and combat values stay identical. */
 export function illumiFaceProfile(profile: HumanProfile, fighter: ArcadeFighter): HumanProfile {
   if (!fighter.illumi?.disguised) return profile
+  if (fighter.illumi.disguiseMode === 'unpinned-hisoka') return { ...profile, faceLike: 'hisoka' }
   return { ...profile, face: 'round', expression: 'neutral', skin: 0xb5aa97, hairStyle: 'short' }
 }
 
@@ -41,6 +46,7 @@ export function addIllumiNeedles(options: {
 }
 
 function needleCount(fighter: ArcadeFighter): number {
+  if (fighter.illumi?.disguised && fighter.illumi.disguiseMode === 'unpinned-hisoka') return 0
   if (fighter.illumi?.disguised) return 7
   return fighter.needlePuppet?.needleEmbedded ? 1 : 0
 }

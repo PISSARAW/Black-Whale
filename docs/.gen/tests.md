@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 927
+Fichiers : 932
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -772,6 +772,22 @@ Fichiers : 927
 
 - Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
 - Illumi conditions and borrowed needles > can commit exactly forty aura and still implant the charged needle
+
+## `apps/web/src/lib/fighting/illumiDisguiseBorrowing.test.ts`
+
+- the selected disguise uses its actual acquisition and actual body > executes an unpinned copy without conjuring needles and ends it on closing its page
+
+## `apps/web/src/lib/fighting/illumiDisguiseFigure.test.ts`
+
+- the body keeps its own eyes, hair, clothes, joints and abilities under Illumi’s face alteration > uses Hisoka’s facial shell and marks while preserving the owner’s actual eyes and combat body
+
+## `apps/web/src/lib/fighting/illumiDisguiseReplay.test.ts`
+
+- the real Illumi disguise controls in replays, AI and On > records and reproduces P2’s physical pins, removal, unpinned choice, alteration and reversion
+
+## `apps/web/src/lib/fighting/illumiDisguiseTeam.test.ts`
+
+- Illumi’s physical face belongs to its body through a relay > does not block a relay merely for an uncast face choice
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 

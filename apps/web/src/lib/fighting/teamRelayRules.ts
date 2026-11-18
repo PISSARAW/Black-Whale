@@ -1,5 +1,6 @@
 import { teamWorldEngaged } from './teams/commitments'
 import { anyPaperTextureBusy } from './paperTexture'
+import { illumiRelaySignature } from './illumiDisguiseClock'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -40,6 +41,7 @@ const BODY_FIELDS = new Set([
   'bodyDamage',
   'gumProsthesisGeneration',
   'textureTarget',
+  'illumiDisguisePlan',
   'texturePaperDraft',
   'texturePaperId',
   'paperTextureGeneration',
@@ -84,6 +86,7 @@ function restingSignature(actor: ArcadeFighter) {
 function restingBody(actor: ArcadeFighter): ArcadeFighter {
   const body = {
     ...actor,
+    illumi: illumiRelaySignature(actor),
     on: actor.on?.sealFrames ? { grudge: 0, sealFrames: actor.on.sealFrames } : undefined,
     hatsuEffects: {
       ...actor.hatsuEffects,

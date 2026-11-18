@@ -3,6 +3,7 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { illumiAvailable, ownsIllumiNeedles, illumiMove } from './illumiAccess'
 import { illumiBodyFree, type NeedleOrder } from './illumiState'
 import { hasIllumiNeedles } from './illumiEquipment'
+import { freeDeviceHand } from './deviceHands'
 import type { FightSide, FightState } from './types'
 
 export function needleOrderLabel(order: NeedleOrder, language: 'fr' | 'en'): string {
@@ -49,6 +50,9 @@ export function illumiMoveReadiness(
   side: FightSide,
   move: FighterMove,
 ): boolean | null {
-  if (move.kind !== 'special' || move.slot !== 'neutralSpecial') return null
+  if (move.kind !== 'special') return null
+  if (move.slot === 'backSpecial' && illumiMove(state[side], move.id))
+    return !state[side].hanzoProjection && Boolean(freeDeviceHand(state, side))
+  if (move.slot !== 'neutralSpecial') return null
   return illumiMove(state[side], move.id) ? illumiStayReady(state, side) : null
 }

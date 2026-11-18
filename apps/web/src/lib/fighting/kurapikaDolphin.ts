@@ -18,6 +18,7 @@ import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
 import { ownsNeedlePuppet } from './illumiFrame'
+import { borrowedIllumiFaceBusy } from './illumiDisguiseClock'
 import { machiThreadForOwner } from './machiThread'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { preparedActionReady, controlledEntities } from './preparationActions'
@@ -237,6 +238,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'padaille-weapon': Boolean(fighter.padailleTool),
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
+    'illumi-face': borrowedIllumiFaceBusy(fighter),
     'secret-window': secretWindowBusy(fighter),
     'paper-doll': paperDolls(fighter).some((doll) => doll.active !== false),
     'paper-control': paperControlBusy(state, side),

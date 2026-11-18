@@ -140,7 +140,8 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     abilities: ['illumi-needle-people'],
     condition:
       'Physical needles, skull implantation and an explicit order are required for Needle People.',
-    effect: 'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen.',
+    effect:
+      'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen. Face alteration includes pinned Gittarackur and the temporary unpinned Hisoka face, with the original eyes and no copied Hatsu.',
     prohibition:
       'No aura drain, automatic two-second recovery, defensive disguise bonus or invented finisher.',
     adaptation:

@@ -3,6 +3,7 @@ import { advanceCopiedInventory } from './copiedInventory'
 import { advancePaperScatters } from './kallutoScatterFrame'
 import { cleanStoredPaperEntity } from './kallutoStoredPaper'
 import { cleanDocumentMatter } from './paperDocuments'
+import { reconcileIllumiFaces } from './illumiDisguiseClock'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
 declare module './types' {
@@ -13,6 +14,7 @@ declare module './types' {
 
 /** Expire matter without advancing puppet attacks, including during a frozen combat sequence. */
 export function expireHistoricalMatter(state: FightState): FightState {
+  state = reconcileIllumiFaces(state)
   state = advancePaperScatters(state)
   const field = state.battlefield
   if (!field) return expireCopiedProjectiles(advanceCopiedInventory(state))

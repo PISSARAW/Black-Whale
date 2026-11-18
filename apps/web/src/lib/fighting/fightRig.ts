@@ -1,3 +1,4 @@
+import { anatomicalTurn, constrainCombatJoint, constrainFightRig } from './fightAnatomy'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FightPose, Turn } from './fightPose'
@@ -148,8 +149,9 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
   }
   turnBy(human.figure, pose.body, mirror)
   turnBy(human.head, pose.head, mirror)
-  applyChest(rig, pose.chest, mirror)
+  applyChest(rig, pose.chest && anatomicalTurn(pose.chest, 'chest'), mirror)
   applyLimbs(rig, pose, sides)
+  constrainFightRig(rig)
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {
@@ -206,6 +208,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)
     ankle.rotation.x += Math.min(MAX_ANKLE, Math.max(-MAX_ANKLE, level))
+    constrainCombatJoint(ankle, 'ankle')
   })
   const after = captureFootPlant(rig)
   const support = after.positions[0].y <= after.positions[1].y ? 0 : 1

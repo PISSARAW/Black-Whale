@@ -1,4 +1,6 @@
 import { Quaternion, Vector3, type Object3D } from 'three'
+import { constrainCombatJoint } from './fightAnatomy'
+import { combatBendDirection, reachBasis } from './fightReachBasis'
 
 export interface LimbChain {
   root: Object3D
@@ -6,51 +8,55 @@ export interface LimbChain {
   end: Object3D
 }
 
-/** Solve a two-bone chain in its current bend plane; never extend or resize a bone. */
+/** A fixed-length two-bone chain with a stable bend plane and a one-axis hinge. */
 export function reachLimb(chain: LimbChain, target: Vector3, weight = 1): number {
-  const root = chain.root.getWorldPosition(new Vector3())
-  const hinge = chain.hinge.getWorldPosition(new Vector3())
-  const end = chain.end.getWorldPosition(new Vector3())
-  const upper = root.distanceTo(hinge),
-    lower = hinge.distanceTo(end)
-  if (upper < 1e-5 || lower < 1e-5) return end.distanceTo(target)
-  const direction = target.clone().sub(root)
-  const distance = Math.max(
-    Math.abs(upper - lower) + 0.001,
-    Math.min(upper + lower - 0.001, direction.length()),
-  )
-  direction.normalize()
-  if (direction.lengthSq() < 0.5) return end.distanceTo(target)
-  const along = (upper * upper - lower * lower + distance * distance) / (2 * distance)
-  const bend = hinge
-    .clone()
-    .sub(root)
-    .addScaledVector(direction, -hinge.clone().sub(root).dot(direction))
-  if (bend.lengthSq() < 1e-6) bend.crossVectors(direction, new Vector3(0, 0, 1))
-  if (bend.lengthSq() < 1e-6) bend.set(1, 0, 0)
-  const elbow = root
-    .clone()
-    .addScaledVector(direction, along)
-    .addScaledVector(bend.normalize(), Math.sqrt(Math.max(0, upper * upper - along * along)))
-  rotateToward(chain.root, { from: hinge.sub(root), to: elbow.sub(root) }, weight)
+  if (weight <= 0) return error(chain, target)
+  const oldRoot = chain.root.quaternion.clone(),
+    oldHinge = chain.hinge.quaternion.clone()
+  const origin = chain.root.getWorldPosition(new Vector3())
   const pivot = chain.hinge.getWorldPosition(new Vector3())
-  const solved = root.clone().addScaledVector(direction, distance)
-  rotateToward(
-    chain.hinge,
-    {
-      from: chain.end.getWorldPosition(new Vector3()).sub(pivot),
-      to: solved.sub(pivot),
-    },
-    weight,
-  )
-  return chain.end.getWorldPosition(new Vector3()).distanceTo(target)
+  const tip = chain.end.getWorldPosition(new Vector3())
+  const lengths = { upper: origin.distanceTo(pivot), lower: pivot.distanceTo(tip) }
+  if (Math.min(lengths.upper, lengths.lower) < 1e-5) return error(chain, target)
+  solveHinge(chain, lengths, origin.distanceTo(target))
+  orientChain(chain, { origin, target })
+  const amount = Math.min(1, Math.max(0, weight))
+  chain.root.quaternion.copy(oldRoot.slerp(chain.root.quaternion, amount))
+  chain.hinge.quaternion.copy(oldHinge.slerp(chain.hinge.quaternion, amount))
+  const knee = chain.hinge.name.startsWith('knee')
+  constrainCombatJoint(chain.root, knee ? 'hip' : 'shoulder')
+  constrainCombatJoint(chain.hinge, knee ? 'knee' : 'elbow')
+  chain.root.updateWorldMatrix(false, true)
+  return error(chain, target)
 }
-
-function rotateToward(joint: Object3D, vectors: { from: Vector3; to: Vector3 }, weight: number) {
-  const turn = new Quaternion().setFromUnitVectors(vectors.from.normalize(), vectors.to.normalize())
-  const parent = joint.parent!.getWorldQuaternion(new Quaternion())
+function solveHinge(
+  chain: LimbChain,
+  length: { upper: number; lower: number },
+  distance: number,
+): void {
+  const { upper: a, lower: b } = length
+  const reach = Math.min(a + b - 0.001, Math.max(Math.abs(a - b) + 0.001, distance))
+  const angle = Math.acos(Math.max(-1, Math.min(1, (reach * reach - a * a - b * b) / (2 * a * b))))
+  const sign = chain.hinge.name.startsWith('knee') ? 1 : -1
+  const shoe =
+    chain.end.parent === chain.hinge ? Math.atan2(-chain.end.position.z, -chain.end.position.y) : 0
+  chain.hinge.rotation.set(sign * angle - shoe, 0, 0)
+  constrainCombatJoint(chain.hinge, sign === 1 ? 'knee' : 'elbow')
+  chain.root.updateWorldMatrix(false, true)
+}
+function orientChain(chain: LimbChain, input: { origin: Vector3; target: Vector3 }): void {
+  const { origin, target } = input
+  const axis = chain.end.getWorldPosition(new Vector3()).sub(origin)
+  const pole = chain.hinge.getWorldPosition(new Vector3()).sub(origin)
+  const direction = target.clone().sub(origin).normalize()
+  if (direction.lengthSq() < 0.5) return
+  const bend = combatBendDirection(chain.root, chain.hinge.name.startsWith('knee'), direction)
+  const turn = reachBasis(direction, bend).multiply(reachBasis(axis, pole).invert())
+  const parent = chain.root.parent!.getWorldQuaternion(new Quaternion())
   turn.premultiply(parent.clone().invert()).multiply(parent)
-  turn.slerp(new Quaternion(), 1 - Math.min(1, Math.max(0, weight)))
-  joint.quaternion.premultiply(turn)
-  joint.updateWorldMatrix(false, true)
+  chain.root.quaternion.premultiply(turn)
+  chain.root.updateWorldMatrix(false, true)
+}
+function error(chain: LimbChain, target: Vector3): number {
+  return chain.end.getWorldPosition(new Vector3()).distanceTo(target)
 }

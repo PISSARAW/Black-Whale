@@ -1,3 +1,4 @@
+import { constrainCombatJoint } from './fightAnatomy'
 import { Quaternion, Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fightRigOf, type FightRig } from './fightRig'
@@ -128,4 +129,5 @@ function pinFoot(rig: FightRig, index: number, input: { target: Vector3; pivot: 
   const turn = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), input.pivot)
   flat.premultiply(turn)
   ankle.quaternion.copy(ankle.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(flat))
+  constrainCombatJoint(ankle, 'ankle')
 }

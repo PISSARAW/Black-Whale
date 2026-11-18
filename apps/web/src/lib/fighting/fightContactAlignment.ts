@@ -1,3 +1,4 @@
+import { constrainFightRig } from './fightAnatomy'
 import { Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fightRigOf, type FightRig } from './fightRig'
@@ -27,6 +28,7 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       if (!own || !rival) continue
       if (!projectionBody(fighter) && !projectionBody(state[other]))
         clearPassiveArms(fightRigOf(own), figureOf(other), fighter)
+      constrainFightRig(fightRigOf(own))
       const weight = contactWeight(fighter, state[other])
       if (weight <= 0) continue
       const zone = anatomicalContactZone(

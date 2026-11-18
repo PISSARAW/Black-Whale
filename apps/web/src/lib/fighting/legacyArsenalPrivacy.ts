@@ -2,6 +2,7 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  if (enemy.paperKit) enemy.paperKit = { ...enemy.paperKit, confetti: undefined }
   redactBattleModels(enemy)
   if (enemy.bloodyMary) enemy.bloodyMary = { ...enemy.bloodyMary, lastSeen: undefined }
   enemy.luiniExit = undefined

@@ -69,6 +69,7 @@ describe('production bundle partitioning', () => {
       [
         `export { beginFight, createFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
         `export { launchKallutoPaper } from ${JSON.stringify(resolve('src/lib/fighting/kallutoFlight.ts'))}`,
+        `export { performArsenalCommand } from ${JSON.stringify(resolve('src/lib/fighting/retrospectiveArsenal.ts'))}`,
       ].join('\n'),
     )
     const actual = await import(
@@ -81,6 +82,15 @@ describe('production bundle partitioning', () => {
     expect(dispersed.projectiles).toHaveLength(3)
     expect(dispersed.player.paperKit.markers).toBe(state.player.paperKit.markers - 1)
     expect(dispersed.player.id).toBe('kalluto')
+    const paper = dispersed.battlefield.entities.find(
+      (entry: { paperScatter?: unknown }) => entry.paperScatter,
+    )
+    const gathered = actual.performArsenalCommand(dispersed, 'player', {
+      action: 'paper-kit-gather',
+      target: paper.id,
+    })
+    expect(gathered.player.paperKit.confetti).toHaveLength(1)
+    expect(gathered.player.paperKit.confetti[0].id).toBe(paper.id)
   }, 30_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [

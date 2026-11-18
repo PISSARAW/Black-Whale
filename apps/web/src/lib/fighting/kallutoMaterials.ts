@@ -16,6 +16,7 @@ export interface PaperKit {
   sheets: number
   serial: number
   integrity: number
+  confetti?: PreparedEntity[]
 }
 export interface PaperPart {
   id: string

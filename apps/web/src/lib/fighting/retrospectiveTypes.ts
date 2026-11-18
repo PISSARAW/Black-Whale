@@ -101,6 +101,7 @@ export const ARSENAL_ACTION_IDS = [
   'paper-release-confetti',
   'paper-kit-take',
   'paper-kit-drop',
+  'paper-kit-gather',
   'paper-stop-listening',
   'window-recall',
   'window-stop-listening',

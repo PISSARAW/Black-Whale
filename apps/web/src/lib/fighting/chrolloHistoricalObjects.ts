@@ -1,4 +1,5 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { copyPaperKit } from './kallutoCopyKit'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { freeDeviceHand } from './deviceHands'
 import { historicalHandsReady, originalLeftHandReady } from './historicalHands'
@@ -126,9 +127,7 @@ function nextCopyId(state: FightState, side: FightSide): string {
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
     blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
-    paperKit: source.paperKit
-      ? { ...source.paperKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
-      : undefined,
+    paperKit: source.paperKit ? copyPaperKit(source.paperKit, id) : undefined,
     writingKit: source.writingKit
       ? { ...source.writingKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
       : undefined,

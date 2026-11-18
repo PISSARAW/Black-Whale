@@ -1,4 +1,5 @@
 import { historicalPartExists } from './historicalCopyLifetime'
+import { storedPaperScatters } from './kallutoStoredPaper'
 import { activePaperOwner } from './kallutoSurveillance'
 import type { DolphinBodyRef } from './dolphinLoanTypes'
 import type { PaperPart } from './kallutoMaterials'
@@ -32,11 +33,13 @@ export function availablePaperScatter(
   state: FightState,
   side: FightSide,
 ): PreparedEntity | undefined {
-  return ownedPaperScatters(state, activePaperOwner(state, side)).find(
-    (entry) =>
-      entry.present &&
-      entry.health > 0 &&
-      historicalPartExists(state, entry.paperScatter!.materialCopyId),
+  return (
+    ownedPaperScatters(state, activePaperOwner(state, side)).find(
+      (entry) =>
+        entry.present &&
+        entry.health > 0 &&
+        historicalPartExists(state, entry.paperScatter!.materialCopyId),
+    ) ?? storedPaperScatters(state, side)[0]
   )
 }
 export function paperControlBusy(state: FightState, side: FightSide): boolean {

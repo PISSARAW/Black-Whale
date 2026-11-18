@@ -4,10 +4,12 @@ import { historicalPartExists } from './historicalCopyLifetime'
 import { createPaperShot } from './kallutoPaperShot'
 import { commitPaperScatter } from './kallutoScatterFlight'
 import { commitProjectileNen } from './nenProjectiles'
+import { unpackStoredPaper } from './kallutoStoredPaper'
 import type { FightSide, FightState } from './types'
 
 /** Concentrate the available physical clouds together, sharing one attack's damage budget. */
 export function concentratePaperScatters(state: FightState, side: FightSide): FightState | null {
+  state = unpackStoredPaper(state, side)
   const scatters = ownedPaperScatters(state, activePaperOwner(state, side)).filter(
     (entry) =>
       entry.present &&

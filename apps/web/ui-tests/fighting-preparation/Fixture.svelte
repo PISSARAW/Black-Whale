@@ -133,6 +133,30 @@
     for (let index = 0; index < 480; index++) advanceFrame()
     await tick()
   }
+  export async function prepareKallutoGather() {
+    player = 'kalluto'
+    opponent = 'hisoka'
+    reset(createFightEnvironment())
+    state = {
+      ...state,
+      player: { ...state.player, x: 44 },
+      opponent: { ...state.opponent, x: 49 },
+    }
+    castPaper('neutralSpecial')
+    const paper = state.battlefield!.entities.find(
+      (entry) => entry.paperScatter && entry.id.endsWith(':path:1'),
+    )!
+    state = {
+      ...state,
+      player: {
+        ...state.player,
+        x: paper.x - 2,
+        paperKit: { ...state.player.paperKit!, salvos: 0 },
+      },
+      opponent: { ...state.opponent, x: 90 },
+    }
+    await tick()
+  }
   export async function prepareMusseListening(id: 'musse' | 'benjamin') {
     player = id
     opponent = 'hisoka'

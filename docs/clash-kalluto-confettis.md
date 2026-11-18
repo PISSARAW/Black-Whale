@@ -1,7 +1,7 @@
 # Kalluto : réemploi des confettis
 
 Cette extension de l’[arsenal rétrospectif](./clash-arsenal-integral.md) correspond
-aux rulesets **clash-combat-42** puis **48**. Le On est conservé, avec ses blocages du Nen.
+aux rulesets **clash-combat-42**, **48** et **49**. Le On est conservé, avec ses blocages du Nen.
 L’audit des quarante arsenaux reste ouvert.
 
 ## Application représentée
@@ -35,6 +35,23 @@ ces commandes n’en déduisent ni conjuration gratuite ni interdiction canoniqu
 
 ## Emprunt et interactions matérielles
 
+Depuis le ruleset 49, la commande « Ranger les confettis à portée » transfère
+les mêmes objets du terrain dans la réserve portée. Elle exige une main et un
+corps libres, le matériel porté et une portée réelle. Ce ramassage physique
+reste possible en Zetsu ; leur manipulation conserve ensuite ses prérequis de
+Nen, de marque et d'éventail.
+
+La réserve conserve les objets et leurs identifiants sans augmenter les
+compteurs de marques, salves ou feuilles neuves. Déposer puis reprendre
+l'équipement déplace aussi son contenu. Une concentration peut ressortir ces
+mêmes nuages, même avec zéro salve neuve. Un éventail déposé ne produit plus
+de coupure sur les attaques à mains nues.
+
+Gallery Fake donne de nouvelles identités aux copies du contenu physique.
+Leur provenance conjurée et leur durée restent attachées à la copie, y compris
+dans une réserve portée ou posée. L'expiration retire les copies sans toucher
+aux originaux. Les vues adverses ne révèlent pas le contenu rangé.
+
 Dolphin peut maintenir cette manipulation continue après sa première émission.
 Les commandes suivantes reprennent exclusivement ses confettis réellement
 disponibles ; elles ne permettent pas un second marquage frais. Le prêt reste
@@ -67,15 +84,16 @@ positions réelles, trop loin pour garantir la chaîne avant le retour de garde.
 Les tests n'ont pas été affaiblis pour présenter ces situations comme réussies.
 
 La compilation de production reste sous le plafond inchangé de 500 000 octets
-par fichier client : maximum de 498 989 octets. Les métadonnées du moveset de
+par fichier client : maximum de 498 989 octets en version 48, puis 455 255 en
+version 49 après séparation de l'inventaire papier. Les métadonnées du moveset de
 Kalluto rejoignent le catalogue existant ; les constantes de coût sont séparées
 du moteur et leur ancien export est conservé. Un test charge le moteur compilé
 et exerce l'émission réelle. Le test de compilation partielle des combos garde
 son avertissement de bloc vide, reproduit sur la base `bb76fe426` ; les sept
 autres tests de ce fichier réussissent.
 
-Le ramassage manuel des confettis dans une réserve, les autres cibles physiques
-et les interactions restantes demeurent à compléter. Cette extension ne certifie
+Les autres cibles physiques et les interactions restantes demeurent à compléter.
+Cette extension ne certifie
 pas l’arsenal complet de Kalluto ou des autres personnages.
 
 Références : [chapitre 226](https://hunterxhunter.fandom.com/wiki/Chapter_226),

@@ -2,6 +2,7 @@ import { freeDeviceHand } from './deviceHands'
 import { deviceBodyFree } from './physicalDevices'
 import { updateEntity } from './preparationWorld'
 import { historicalMatterExists } from './historicalCopyLifetime'
+import { gatherPaper, gatherPaperOptions } from './kallutoGather'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightSide, FightState } from './types'
@@ -14,6 +15,7 @@ export function performPaperKitCommand(
   if (!freeDeviceHand(state, side) || !deviceBodyFree(state, side) || state[side].attack)
     return state
   if (command.action === 'paper-kit-drop') return dropPaperKit(state, side)
+  if (command.action === 'paper-kit-gather') return gatherPaper(state, side, command)
   return command.action === 'paper-kit-take' ? takePaperKit(state, side, command.target) : state
 }
 function takePaperKit(state: FightState, side: FightSide, id?: string): FightState {
@@ -71,20 +73,23 @@ export function paperKitOptions(state: FightState, side: FightSide): ArsenalOpti
     : (state.battlefield?.entities ?? [])
         .filter((item) => item.present && item.paperKit)
         .map((item) => ({ action: 'paper-kit-take', target: item.id }))
-  return commands.map((command) => ({
-    command,
-    ready: performPaperKitCommand(state, side, command) !== state,
-    labelFr:
-      command.action === 'paper-kit-drop'
-        ? 'Papier · Déposer éventail et réserve'
-        : 'Papier · Prendre le matériel présent',
-    labelEn:
-      command.action === 'paper-kit-drop'
-        ? 'Paper · Put down fan and supplies'
-        : 'Paper · Take actual supplies',
-    conditionFr:
-      'Éventail et papier physiques à portée de main. Un Hatsu copié ou prêté ne fournit pas ces objets. Les quantités sont des réglages de scénario.',
-    conditionEn:
-      'Actual fan and paper within reach. Copying or borrowing the Hatsu does not provide these objects. Quantities are scenario tuning.',
-  }))
+  return [
+    ...gatherPaperOptions(state, side),
+    ...commands.map((command) => ({
+      command,
+      ready: performPaperKitCommand(state, side, command) !== state,
+      labelFr:
+        command.action === 'paper-kit-drop'
+          ? 'Papier · Déposer éventail et réserve'
+          : 'Papier · Prendre le matériel présent',
+      labelEn:
+        command.action === 'paper-kit-drop'
+          ? 'Paper · Put down fan and supplies'
+          : 'Paper · Take actual supplies',
+      conditionFr:
+        'Éventail et papier physiques à portée de main. Un Hatsu copié ou prêté ne fournit pas ces objets. Les quantités sont des réglages de scénario.',
+      conditionEn:
+        'Actual fan and paper within reach. Copying or borrowing the Hatsu does not provide these objects. Quantities are scenario tuning.',
+    })),
+  ]
 }

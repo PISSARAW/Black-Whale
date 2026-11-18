@@ -61,6 +61,8 @@ function clashChunkName(id: string): string | undefined {
     )
   )
     return 'clash-camera-catalogues'
+  if (/\/fighting\/kalluto(?:Gather|StoredPaper|CopyKit)\.ts$/.test(id))
+    return 'clash-paper-inventory'
   if (/\/fighting\/[^/]+Options\.ts$/.test(id)) return 'clash-arsenal-options'
   return undefined
 }

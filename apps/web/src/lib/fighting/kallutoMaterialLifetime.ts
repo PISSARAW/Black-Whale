@@ -1,10 +1,11 @@
 import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { paperDolls } from './kallutoSurveillance'
+import { cleanStoredPaper } from './kallutoStoredPaper'
 import type { ArcadeFighter, FightState } from './types'
 
 /** Real paper survives loss of Nen; a conjured copy and its detached parts keep their actual source lifetime. */
 export function cleanPaperMaterial(state: FightState, body: ArcadeFighter): ArcadeFighter {
-  let actor = body
+  let actor = cleanStoredPaper(state, body)
   if (actor.paperKit && !historicalMatterExists(state, actor.paperKit.copyId))
     actor = { ...actor, paperKit: undefined }
   const marks = actor.plantedPaper?.filter((mark) =>

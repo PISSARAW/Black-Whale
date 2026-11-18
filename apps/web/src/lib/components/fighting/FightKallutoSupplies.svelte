@@ -22,6 +22,12 @@
     {kit.sheets}
     {language === 'fr' ? 'feuilles' : 'sheets'}
   </p>
+  {#if kit.confetti?.length}
+    <p class="paper-stored">
+      {language === 'fr' ? 'Confettis rangés réutilisables' : 'Stored reusable confetti'} · {kit
+        .confetti.length}
+    </p>
+  {/if}
 {/if}
 {#if visible && loose}
   <p class="paper-loose">

@@ -38,8 +38,34 @@
 	header /og-default.png Cache-Control "public, max-age=604800"
 
 	encode zstd gzip
-	reverse_proxy web:3000 {
-		import client_ip
+	# Only the collector and tracker are public. The Umami UI and read APIs
+	# stay on the Docker network; statistics are served by the authenticated admin.
+	handle /_analytics/script.js {
+		rewrite * /script.js
+		reverse_proxy umami:3000 {
+			import client_ip
+		}
+	}
+	@analytics_collect {
+		method POST
+		path /_analytics/api/send
+	}
+	handle @analytics_collect {
+		rewrite * /api/send
+		request_body {
+			max_size 16KB
+		}
+		reverse_proxy umami:3000 {
+			import client_ip
+		}
+	}
+	handle /_analytics/* {
+		respond 404
+	}
+	handle {
+		reverse_proxy web:3000 {
+			import client_ip
+		}
 	}
 }
 

@@ -1,4 +1,5 @@
 import { get, writable } from 'svelte/store'
+import { trackEvent } from '$lib/analytics/client'
 import type { HatsuInteractionKind, HatsuProfile } from './hatsuRegistry.js'
 
 /**
@@ -95,8 +96,13 @@ export function refreshForcedZetsu() {
   return 0
 }
 
-export function activateHatsu(profile: HatsuProfile) {
+export function activateHatsu(
+  profile: HatsuProfile,
+  source: 'selection' | 'restore' = 'selection',
+) {
   if (refreshForcedZetsu() > Date.now()) {
+    if (source !== 'restore')
+      trackEvent('hatsu_blocked', { hatsu: profile.id, reason: 'forced-zetsu' })
     hatsuPanelOpen.set(false)
     return false
   }
@@ -104,7 +110,12 @@ export function activateHatsu(profile: HatsuProfile) {
   // than only in the picker: the same activation arrives from a link, from the
   // `black-whale:activate-hatsu` event and from a remembered session, and a
   // rule enforced on one path out of three is not a rule.
-  if (hatsuIsBlocked(profile)) return false
+  if (hatsuIsBlocked(profile)) {
+    if (source !== 'restore')
+      trackEvent('hatsu_blocked', { hatsu: profile.id, reason: 'mode-gate' })
+    return false
+  }
+  if (source !== 'restore') trackEvent('hatsu_select', { hatsu: profile.id, kind: profile.kind })
   parallelFutureVisible.set(profile.id === 'parallel-future')
   activeHatsu.set(profile)
   hatsuPanelOpen.set(false)

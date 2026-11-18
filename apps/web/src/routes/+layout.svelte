@@ -1,5 +1,6 @@
 <script lang="ts">
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
+  import Analytics from '$lib/analytics/Analytics.svelte'
   import '../app.css'
   import AppFooter from '$lib/components/AppFooter.svelte'
   import { routeTransitionKey } from '$lib/fighting/fightNavigation'
@@ -117,6 +118,7 @@
 </svelte:head>
 
 <svelte:window onkeydown={handleKeydown} />
+<Analytics websiteId={data.analyticsWebsiteId} />
 
 <div class="app-shell">
   <a class="skip-link" href="#main-content">{$t.layout.skipToContent}</a>

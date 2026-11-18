@@ -1,4 +1,7 @@
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+import { get } from 'svelte/store'
+import { activeHatsu } from '$lib/nen/hatsuState'
+import { trackHatsuUse } from '$lib/analytics/client'
 import { turnTheBook, type TourReport, type TourWorld } from '$lib/tour/hatsu'
 import {
   advanceCastHand,
@@ -27,6 +30,11 @@ interface CastOptions {
   vowRules: (subjectId: string) => string[]
 }
 
+function recordCast(context: CastContext, hand: CastHand, result: string) {
+  const kind = context.pages?.[hand === 'second' ? 1 : 0] ?? context.activeKind
+  if (kind) trackHatsuUse(get(activeHatsu)?.id ?? kind, kind, result)
+}
+
 export class TourCastController {
   constructor(private readonly options: CastOptions) {}
 
@@ -48,6 +56,7 @@ export class TourCastController {
     })
     if (!cast) return null
     const { result, mark } = cast
+    recordCast(context, hand, result.report.kind)
     this.finish(result.world, result.report)
     this.options.updateHands(
       advanceCastHand({
@@ -78,6 +87,7 @@ export class TourCastController {
       heading: context.heading,
       rules: vowRulesFor(kind, targetId, this.options.vowRules),
     })
+    trackHatsuUse(get(activeHatsu)?.id ?? kind, kind, result.report.kind)
     this.finish(result.world, result.report)
     if (result.travelTo) this.options.goToSpace(context.ship.spaces.get(result.travelTo)!)
   }

@@ -106,6 +106,9 @@ if ! compose run --rm migrate; then
 fi
 
 compose up -d --remove-orphans
+# Caddy reads its mounted file at startup; an unchanged proxy container is
+# otherwise left serving the old routes after an application deployment.
+compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile
 compose ps
 
 # Discovery submission is deliberately after the healthy stack is live. The

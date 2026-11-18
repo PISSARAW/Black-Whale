@@ -67,6 +67,7 @@ services:
       OLLAMA_TOKEN: ${OLLAMA_TOKEN:-}
       OLLAMA_TIMEOUT_MS: ${OLLAMA_TIMEOUT_MS:-8000}
       INDEXNOW_KEY: ${INDEXNOW_KEY:-}
+      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
     # Ollama runs on the host, not in this stack: this name is how the
     # container reaches it. See infrastructure/hetzner/README.md.
     extra_hosts: ['host.docker.internal:host-gateway']
@@ -99,6 +100,10 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
       SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env.production}
+      UMAMI_URL: http://umami:3000
+      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+      UMAMI_USERNAME: ${UMAMI_USERNAME:-black-whale}
+      UMAMI_PASSWORD: ${UMAMI_PASSWORD:-}
     expose: ['3002']
     healthcheck:
       test: [CMD, wget, -qO-, http://127.0.0.1:3002/health]
@@ -138,6 +143,70 @@ services:
       postgres: { condition: service_healthy }
     security_opt: [no-new-privileges:true]
 
+  umami-db:
+    image: postgres:16-alpine
+    profiles: [analytics]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:-}
+    volumes: [umami_data:/var/lib/postgresql/data]
+    networks: [analytics]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U umami -d umami']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    security_opt: [no-new-privileges:true]
+
+  umami:
+    image: ghcr.io/umami-software/umami:3.5.0
+    profiles: [analytics]
+    restart: unless-stopped
+    init: true
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:-}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:-}
+      TWO_FACTOR_ENCRYPTION_KEY: ${UMAMI_TWO_FACTOR_KEY:-}
+      DISABLE_TELEMETRY: '1'
+      CLIENT_IP_HEADER: x-real-ip
+    expose: ['3000']
+    networks: [backend, analytics]
+    depends_on:
+      umami-db: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3000/api/heartbeat').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+    security_opt: [no-new-privileges:true]
+
+  umami-backup:
+    image: postgres:16-alpine
+    profiles: [analytics]
+    restart: unless-stopped
+    environment:
+      PGHOST: umami-db
+      PGUSER: umami
+      PGDATABASE: umami
+      PGPASSWORD: ${UMAMI_DB_PASSWORD:-}
+    entrypoint: [/bin/sh, /backup-umami.sh]
+    volumes:
+      - ./backup-umami.sh:/backup-umami.sh:ro
+      - umami_backups:/backups
+    networks: [analytics]
+    depends_on:
+      umami-db: { condition: service_healthy }
+    security_opt: [no-new-privileges:true]
+
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
@@ -161,9 +230,13 @@ services:
 networks:
   backend:
     driver: bridge
+  analytics:
+    driver: bridge
 
 volumes:
   postgres_data:
   postgres_backups:
   caddy_data:
   caddy_config:
+  umami_data:
+  umami_backups:

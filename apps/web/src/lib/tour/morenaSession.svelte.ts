@@ -1,3 +1,4 @@
+import { trackEvent, trackHatsuUse } from '$lib/analytics/client'
 import {
   EMPTY_INFECTION_PROGRESS,
   completeRecruitment,
@@ -205,6 +206,7 @@ export class MorenaSession {
     this.epilogue = null
     this.resumeAvailable = false
     this.view = 'table'
+    trackEvent('mode_start', { variant: this.currentMode })
     this.changed()
   }
 
@@ -215,6 +217,12 @@ export class MorenaSession {
       drawRandom: this.drawRandom,
       detectionRandom: this.detectionRandom,
     })
+    if (command.kind === 'play-technique') {
+      const kind = command.page === 'second' ? before.bookmark?.kind : before.technique
+      trackHatsuUse(kind ?? 'none', kind ?? 'none', this.game === before ? 'unchanged' : 'applied')
+    }
+    if (this.game !== before)
+      trackEvent('mode_action', { action: command.kind, variant: this.currentMode })
     if (command.kind === 'ask' && this.game !== before) this.discover(command.question)
     this.choice = null
     this.recordCompletion()
@@ -342,6 +350,10 @@ export class MorenaSession {
     if (this.currentMode === 'canonical') this.labUnlocked = true
     const id = `${this.currentMode}:${this.currentChallengeSeed}`
     if (!this.history.some((result) => result.id === id)) {
+      trackEvent('mode_complete', {
+        variant: this.currentMode,
+        result: this.game.verdict ?? 'unknown',
+      })
       this.history = [
         {
           id,

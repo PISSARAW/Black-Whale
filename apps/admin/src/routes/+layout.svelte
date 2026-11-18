@@ -26,6 +26,7 @@
     <aside class="w-56 bg-gray-900 border-r border-gray-800 p-4 flex flex-col gap-2 text-sm">
       <h2 class="font-bold text-bw-gold text-base mb-2">BW Admin</h2>
       <a href="/" class="hover:text-bw-gold">Dashboard</a>
+      <a href="/analytics" class="hover:text-bw-gold">Fréquentation et usages</a>
       <a href="/chapters" class="hover:text-bw-gold">Chapters</a>
       <a href="/characters" class="hover:text-bw-gold">Characters</a>
       <a href="/events" class="hover:text-bw-gold">Events</a>

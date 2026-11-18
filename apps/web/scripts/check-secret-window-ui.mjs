@@ -27,7 +27,10 @@ let browser
 let page
 const errors = []
 const cases = []
-const fighters = process.env.SECRET_WINDOW_CHECK_FIGHTERS?.split(',') ?? ['musse', 'benjamin']
+const fighters = process.env.SECRET_WINDOW_CHECK_FIGHTERS?.split(',').filter(Boolean) ?? [
+  'musse',
+  'benjamin',
+]
 try {
   browser = await chromium.launch({
     headless: true,
@@ -78,6 +81,89 @@ try {
         undefined,
       )
       cases.push({ id, width })
+    }
+  }
+  if (process.env.SECRET_WINDOW_CHECK_ARCHIVE !== '0') {
+    await page.evaluate(() => window.preparationFixture.prepareMusseListening('benjamin'))
+    assert.ok(
+      await page
+        .getByRole('button', { name: 'Secret Window · Relecture de Musse', exact: true })
+        .isDisabled(),
+    )
+    for (const width of [1100, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 })
+      await page.evaluate(() => window.preparationFixture.prepareMusseArchive())
+      const first = 'Camilla est immobile après les tirs de Musse.'
+      const last = 'La dernière vision de Musse s’interrompt avant sa mort.'
+      await page
+        .getByRole('button', { name: `Secret Window · Revoir : ${last}`, exact: true })
+        .click()
+      assert.equal(
+        (await page.evaluate(() => window.preparationFixture.snapshot())).archive.cursor,
+        2,
+      )
+      await page
+        .getByRole('button', { name: `Secret Window · Revoir : ${first}`, exact: true })
+        .click()
+      assert.equal(
+        (await page.evaluate(() => window.preparationFixture.snapshot())).archive.cursor,
+        0,
+      )
+      assert.ok(await page.getByText(first, { exact: true }).isVisible())
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1),
+        false,
+      )
+      await page.screenshot({
+        path: path.join(output, `archive-${width}.png`),
+        fullPage: true,
+        timeout: 60000,
+      })
+      await page
+        .getByRole('button', { name: 'Secret Window · Fermer la relecture', exact: true })
+        .click()
+      assert.equal(
+        (await page.evaluate(() => window.preparationFixture.snapshot())).archive.cursor,
+        undefined,
+      )
+      await page.evaluate(() => window.preparationFixture.advance(1))
+      await page.evaluate(() => window.preparationFixture.speakToOwl())
+      const recorded = (await page.evaluate(() => window.preparationFixture.snapshot())).archive
+        .observed
+      assert.ok(recorded.length >= 2)
+      await page
+        .getByRole('button', { name: 'Secret Window · Revoir la dernière vue reçue', exact: true })
+        .click()
+      assert.equal(
+        (await page.evaluate(() => window.preparationFixture.snapshot())).archive.observedCursor,
+        recorded.at(-1).id,
+      )
+      assert.ok(
+        await page
+          .locator('.musse-archive')
+          .getByText('« Nous attendons derrière la porte. »', { exact: true })
+          .isVisible(),
+      )
+      await page
+        .getByRole('button', { name: 'Secret Window · Vue reçue précédente', exact: true })
+        .click()
+      assert.equal(
+        (await page.evaluate(() => window.preparationFixture.snapshot())).archive.observedCursor,
+        recorded.at(-2).id,
+      )
+      assert.equal(
+        await page
+          .locator('.musse-archive')
+          .getByText('« Nous attendons derrière la porte. »', { exact: true })
+          .count(),
+        0,
+      )
+      await page.screenshot({
+        path: path.join(output, `recorded-${width}.png`),
+        fullPage: true,
+        timeout: 60000,
+      })
+      cases.push({ id: 'benjamin-archive', width })
     }
   }
   assert.deepEqual(errors, [])

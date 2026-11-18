@@ -15,6 +15,30 @@ describe('Clash private network protocol', () => {
   it.each(FIGHTING_ROSTER)('accepts the ordinary scenario for $id', ({ id }) => {
     expect(parsePvpSetup({ ...setup(), player: id })?.player).toBe(id)
   })
+  it('accepts all twelve explicit preparation resources including Musse history', () => {
+    const config = setup()
+    config.environment = createFightEnvironment({
+      preparation: {
+        mode: 'scenario',
+        resources: [
+          'animals',
+          'birds',
+          'plants',
+          'objects',
+          'flutes',
+          'needles',
+          'rooms',
+          'devices',
+          'writing',
+          'spirits',
+          'people',
+          'musse-history',
+        ],
+        cohorts: [],
+      },
+    })
+    expect(parsePvpSetup(config)).toEqual(config)
+  })
   it('preserves equipment, resources, consent, and chosen arena without accepting initial states', () => {
     const config = setup()
     config.environment = createFightEnvironment({

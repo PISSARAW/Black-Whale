@@ -12,6 +12,7 @@ export type PreparationResource =
   | 'writing'
   | 'spirits'
   | 'people'
+  | 'musse-history'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion'
 export interface FightPreparation {
   mode: 'duel' | 'scenario'

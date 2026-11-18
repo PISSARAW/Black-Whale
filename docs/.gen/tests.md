@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 841
+Fichiers : 843
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -267,6 +267,14 @@ Fichiers : 841
 ## `apps/web/src/lib/fighting/benjamin.test.ts`
 
 - Benjamin’s canonical loadout > inherits only from dead loyal academy graduates serving in his army
+
+## `apps/web/src/lib/fighting/benjaminMusseArchive.test.ts`
+
+- Benjamin’s demonstrated retrospective Secret Window rewind > requires the declared historical preparation, an inherited power and actual Camilla rather than a phantom target
+
+## `apps/web/src/lib/fighting/benjaminMusseRecording.test.ts`
+
+- rewinding observations actually received by Benjamin > records movement and real remote words and keeps a selected past view independent of the current body
 
 ## `apps/web/src/lib/fighting/beyond.test.ts`
 

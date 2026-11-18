@@ -10,6 +10,7 @@ export interface SecretWindowObservation {
 }
 
 export interface SecretWindowState {
+  musseInheritance?: 'canon373'
   target: FightSide
   targetMember?: number
   attachedAt: number

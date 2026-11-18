@@ -17,6 +17,11 @@
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
     {
+      id: 'musse-history',
+      fr: 'Benjamin et Camilla · hibou hérité de Musse et longue surveillance déjà accomplis',
+      en: 'Benjamin and Camilla · Musse’s owl inherited and prolonged monitoring completed',
+    },
+    {
       id: 'devices',
       fr: 'Caméras, armes, émetteurs et récepteurs réels',
       en: 'Real cameras, firearms, transmitters and receivers',

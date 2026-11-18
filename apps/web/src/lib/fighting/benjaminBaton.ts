@@ -4,6 +4,7 @@ import type { ArcadeFighter, FightProjectile, FightSide } from './types'
 export type BenjaminInheritance = 'air-blow' | 'secret-window' | 'culdcept'
 
 export interface BenjaminBatonState {
+  musseArchive?: import('./benjaminMusseArchive').MusseRetrospectiveArchive
   inherited: readonly BenjaminInheritance[]
   markedTarget: FightSide | null
   card: FightProjectile | null

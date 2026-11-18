@@ -828,3 +828,39 @@ Références : [fonctions montrées de Secret Window](https://hunterworld.tokyo/
 [chapitre 366](https://hunterxhunter.fandom.com/wiki/Chapter_366).
 Ruleset : **clash-combat-37**. Le On est conservé ; l’audit des autres arsenaux
 reste ouvert et ce jalon ne certifie pas un achèvement à 100 %.
+
+## Secret Window : relecture développée par Benjamin
+
+Le scénario de préparation « historique de Musse » rend utilisable l’évolution
+montrée au chapitre 413. Il exige Benjamin, l’héritage admissible de Secret Window
+et le corps réel de Camilla, actif ou en réserve. Il déclare explicitement la
+longue surveillance continue déjà accomplie ; aucune durée numérique n’est
+inventée. Un duel ordinaire ne reçoit ni archive arbitraire ni Camilla fictive.
+
+Le panneau permet de revenir entre les dernières observations historiques de
+Musse, puis entre les gestes et paroles effectivement reçus par Benjamin pendant
+le scénario. Les deux sources restent distinctes : le premier enregistrement ne
+prétend pas montrer la résurrection de Camilla après la mort de Musse. Les vues
+reçues ensuite viennent exclusivement du flux privé du hibou hérité, sans pensée,
+nom technique caché, quantité d’aura ou futur de la cible. La limite de 256 vues
+récentes concerne le cache de présentation du scénario, pas une limite de Nen
+attribuée au manga.
+
+La relecture exige le même hibou hérité et la surveillance préparée. Rappeler ce
+hibou ou marquer une nouvelle cible ne reconstitue pas gratuitement cette
+préparation. Une manche conserve l’héritage et le flux survivants ; un relais
+conserve leurs propriétaires et les corps surveillés. Le blocage du Nen, le vol
+de Secret Window et le On empêchent son utilisation. Fermer une relecture reste
+une action d’interface d’un utilisateur conscient.
+
+Cette évolution n’est pas accordée automatiquement à Musse, à une page générique
+de Musse chez Chrollo ou à son prêt par Dolphin. Elle n’est pas présentée comme la
+fonction inconnue du troisième hibou. Le PvP masque l’archive adverse, y compris
+en réserve, et les commandes de relecture sont enregistrées dans les replays.
+
+Références : chapitre 413, recoupé dans les analyses de
+[VoraciousDrake](https://voraciousdrake.wordpress.com/2026/07/10/hxh-413-fealty/comment-page-1/)
+et de [Shimesaba](https://note.com/shimesaba2525/n/n929d34dc3981?hl=en), avec le
+contexte de la pose et de l’héritage au chapitre 373.
+Ruleset : **clash-combat-38**. Le On est conservé. L’audit des quarante arsenaux
+reste ouvert ; cette étape ne certifie pas un achèvement à 100 %.

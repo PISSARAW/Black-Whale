@@ -1,7 +1,13 @@
 import { arsenalMindAvailable } from './arsenalMind'
 import { captureShoulderWindowSpeech } from './secretWindowListening'
+import { recordWindowObservation } from './benjaminMusseRecording'
 import { mapPhysicalBodies } from './physicalBodyMap'
-import { secretWindowTarget, secretWindowNenActive, type SecretWindowState } from './secretWindow'
+import {
+  secretWindowTarget,
+  secretWindowNenActive,
+  observeSecretWindow,
+  type SecretWindowState,
+} from './secretWindow'
 import type { FightSide, FightState } from './types'
 
 /** Contact reports the marked body's words; ambient eavesdropping uses the shoulder bird. */
@@ -16,13 +22,18 @@ export function captureSecretWindowSpeech(
     const target = secretWindowTarget(state, feed)
     if (!target) return owner
     if (!markedBodySpeaks(state, feed, speech.side)) return owner
-    return {
-      ...owner,
-      secretWindow: {
-        ...feed,
-        heard: { frame: state.frame, text: speech.text },
+    return recordWindowObservation(
+      state,
+      {
+        ...owner,
+        secretWindow: {
+          ...feed,
+          observation: observeSecretWindow(state, feed.target, feed.targetMember),
+          heard: { frame: state.frame, text: speech.text },
+        },
       },
-    }
+      { frame: state.frame, text: speech.text },
+    )
   })
 }
 

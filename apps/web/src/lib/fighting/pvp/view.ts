@@ -117,7 +117,7 @@ function redactEnemy(enemy: ArcadeFighter) {
 }
 
 function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
-  return baton ? { ...baton, markedTarget: null } : baton
+  return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))

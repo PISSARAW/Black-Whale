@@ -1,4 +1,6 @@
 import { carryDolphinPeople } from './dolphinPeopleWorld'
+import { prepareMusseHistory } from './benjaminMusseScenario'
+import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
 import { carryVoiceAutopilot } from './blackVoiceAutopilot'
 import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
@@ -67,7 +69,10 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
   })
-  return applyControlSchemes(created, typeof options === 'string' ? undefined : options.controls)
+  return applyControlSchemes(
+    prepareMusseHistory(created),
+    typeof options === 'string' ? undefined : options.controls,
+  )
 }
 
 export function nextFightRound(state: FightState): FightState {
@@ -117,6 +122,7 @@ export function nextFightRound(state: FightState): FightState {
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
   fighter = carryDolphinState(fighter, previous)
+  fighter = carryMusseHistory(fighter, previous)
   fighter = carryVoiceAutopilot(
     {
       ...fighter,

@@ -21,8 +21,9 @@
   import type { PreparationResource } from '$lib/fighting/preparationTypes'
 
   let player: FighterId = 'bill'
+  let opponent: FighterId = 'hisoka'
   let environment = createFightEnvironment()
-  let state = beginFight(createFight(player, 'hisoka', { mode: 'versus-local', environment }))
+  let state = beginFight(createFight(player, opponent, { mode: 'versus-local', environment }))
   let input = { ...EMPTY_INPUT }
   $: presentation = fightSpecialPresentation(state, 'fr')
   function control(key: keyof FightInput, active: boolean) {
@@ -34,7 +35,7 @@
   }
   function reset(next: FightEnvironment) {
     environment = next
-    const fresh = beginFight(createFight(player, 'hisoka', { mode: 'versus-local', environment }))
+    const fresh = beginFight(createFight(player, opponent, { mode: 'versus-local', environment }))
     state = { ...fresh, player: { ...fresh.player, aura: 100 } }
     input = { ...EMPTY_INPUT }
   }
@@ -44,6 +45,7 @@
     copied = false,
   ) {
     player = id
+    opponent = 'hisoka'
     reset(
       createFightEnvironment({
         preparation: {
@@ -69,6 +71,7 @@
   }
   export async function prepareOitoLoan() {
     player = 'kurapika'
+    opponent = 'sayird'
     environment = createFightEnvironment({
       preparation: { mode: 'scenario', resources: ['people', 'animals'], cohorts: [] },
     })
@@ -110,12 +113,25 @@
   }
   export async function prepareMusseListening(id: 'musse' | 'benjamin') {
     player = id
+    opponent = 'hisoka'
     reset(createFightEnvironment())
     state = { ...state, player: { ...state.player, x: 22 }, opponent: { ...state.opponent, x: 48 } }
     await tick()
   }
   export async function speakToOwl() {
     state = speakPaperWords(state, 'opponent', 'Nous attendons derrière la porte.')
+    await tick()
+  }
+  export async function prepareMusseArchive() {
+    player = 'benjamin'
+    opponent = 'camilla'
+    environment = createFightEnvironment({
+      preparation: { mode: 'scenario', resources: ['musse-history'], cohorts: [] },
+    })
+    state = beginFight(
+      createFight(player, opponent, { mode: 'versus-local', formatId: 'knockout', environment }),
+    )
+    input = { ...EMPTY_INPUT }
     await tick()
   }
   export function snapshot() {
@@ -126,6 +142,7 @@
       music: Boolean(state.player.melodyPerformance),
       nocked: state.player.hatsuEffects.arrowNocked,
       listening: state.player.secretWindowListening,
+      archive: state.player.hatsuEffects.baton?.musseArchive,
     }
   }
 </script>
@@ -150,7 +167,7 @@
     onChange={reset}
   />
   <div class="arena">
-    {#key player}<FightScene {state} stageId="heavens-arena" />{/key}
+    {#key `${player}:${opponent}`}<FightScene {state} stageId="heavens-arena" />{/key}
   </div>
   <section class="status">
     <FightPreparationStatus {state} side="player" language="fr" onControl={control} />

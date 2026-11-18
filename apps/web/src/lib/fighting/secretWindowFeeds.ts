@@ -2,6 +2,7 @@ import { arsenalMindAvailable } from './arsenalMind'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { observeSecretWindow, secretWindowTarget } from './secretWindow'
 import { secretWindowNenActive } from './secretWindowAccess'
+import { recordWindowObservation } from './benjaminMusseRecording'
 import type { ArcadeFighter, FightState } from './types'
 
 /** A relay moves bodies, not the bird's attachment or the owner's private feed. */
@@ -15,13 +16,13 @@ export function advanceSecretWindowFeeds(state: FightState): FightState {
     if (!arsenalMindAvailable(owner)) return owner
     const target = secretWindowTarget(state, feed)
     if (!target) return owner
-    return {
+    return recordWindowObservation(state, {
       ...owner,
       secretWindow: {
         ...feed,
         observation: observeSecretWindow(state, feed.target, feed.targetMember),
       },
-    }
+    })
   })
 }
 

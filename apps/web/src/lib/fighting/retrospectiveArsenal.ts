@@ -1,4 +1,6 @@
 import { personDolphinOptions } from './dolphinPeopleOptions'
+import { musseArchiveOptions, performMusseArchiveCommand } from './benjaminMusseReplay'
+import { recordedWindowOptions, performRecordedWindowCommand } from './benjaminMusseRecorded'
 import { secretWindowOptions, performSecretWindowCommand } from './secretWindowCommands'
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
@@ -83,6 +85,8 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['window-archive', performMusseArchiveCommand],
+  ['window-recorded', performRecordedWindowCommand],
   ['window-', performSecretWindowCommand],
   ['dolphin-lend', performDolphinLoan],
   ['voice-', performBlackVoiceCommand],
@@ -109,6 +113,8 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...musseArchiveOptions(state, side),
+    ...recordedWindowOptions(state, side),
     ...secretWindowOptions(state, side),
     ...nativeArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),

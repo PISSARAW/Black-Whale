@@ -72,12 +72,17 @@ function restingBody(actor: ArcadeFighter): ArcadeFighter {
     ...actor,
     hatsuEffects: {
       ...actor.hatsuEffects,
+      baton: restingWindowBaton(actor.hatsuEffects.baton),
       witnessedHatsu: null,
       witnessedAt: undefined,
       witnessedMoveId: undefined,
     },
   }
   return actor.kurapika ? { ...body, kurapika: { ...actor.kurapika, lifespanFrames: 0 } } : body
+}
+
+function restingWindowBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
+  return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 function relayDolphinState(actor: ArcadeFighter): ArcadeFighter {
   const chain = actor.kurapika

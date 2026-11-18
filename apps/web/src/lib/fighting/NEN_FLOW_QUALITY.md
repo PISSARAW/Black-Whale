@@ -13,3 +13,9 @@ La marche utilise la garde complète et un pas chassé, sans cycle civil superpo
 La chute se pose avant les phases de rassemblement et de poussée du relevé ; ces dernières disposent d'une plus grande part de la récupération. Les durées d'indisponibilité et les conditions de réveil restent celles du moteur.
 
 Validation : avances graduelles et figées pendant le hitstop pour les 40 personnages, 270 conversions natives et 124 vérifications de chutes/relevés.
+
+## 3. Priorité des intentions
+
+Le contrôleur local et le CPU natif cessent les nouvelles dépenses offensives pendant leur récupération. Les mouvements défensifs restent possibles ; aucun Zetsu n'est commandé au contact. Le contrôleur ne remplace plus un ordre de retraite par une série de coups ordinaires. Les seuils d'entrée et de sortie gardent une marge distincte, même pour une technique coûteuse.
+
+Validation : pour les quarante combattants, les deux contrôleurs honorent la récupération, s'éloignent et ne créent ni aura ni matériel. Les 58 scénarios de l'arsenal et ses conditions restent valides.

@@ -1,3 +1,4 @@
+import { reservingAura } from './combatIntentPolicy'
 import { recoveryPunishOptions } from './recoveryPunish'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput } from './opponentHabits'
@@ -39,6 +40,7 @@ export function moveCounterplayOpponent(options: {
       ? applyResponse(projectiles.fighter, projectiles.input)
       : moveRememberedOpponent(view, projectiles.fighter)
   fighter = { ...fighter, projectileDefence: undefined }
+  if (reservingAura(fighter)) return moveRememberedOpponent(view, fighter)
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }

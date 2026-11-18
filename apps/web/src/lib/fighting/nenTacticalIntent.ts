@@ -72,7 +72,9 @@ function needsReserve(
 ): boolean {
   if (!budget.cost || (prepared && fighter.aura >= budget.cost)) return false
   if (fighter.nenTactics?.goal === 'recover') return fighter.aura < budget.reserve
-  const threshold = fighter.nenTactics ? budget.cost + 8 : (RESERVE[fighter.id] ?? budget.cost + 8)
+  const threshold = fighter.nenTactics
+    ? Math.min(budget.reserve - 8, budget.cost + 8)
+    : budget.reserve
   return fighter.aura < threshold
 }
 function personalPreparation(view: FightState): boolean {

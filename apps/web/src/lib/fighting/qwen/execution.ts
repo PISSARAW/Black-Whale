@@ -39,7 +39,7 @@ export function createFastController(side: FightSide, seed = 17) {
       lastMove = ''
     }
     const input = reflexInput(state, side, plan)
-    if (state.phase !== 'fighting' || state.frame < due) return { input }
+    if (!commandWindow(state, due, plan)) return { input }
     const context = { state, side, input }
     const utility = readyUtility(context, plan, specialDue)
     if (utility) {
@@ -61,7 +61,8 @@ export function createFastController(side: FightSide, seed = 17) {
 }
 /** A recovery intention completes when reserve is restored; it is not endless retreat. */
 function executablePlan(state: FightState, side: FightSide, plan: TacticalPlan): TacticalPlan {
-  if (plan.goal === 'recover' && state[side].aura >= 50) return { ...plan, goal: 'pressure' }
+  if (plan.goal === 'recover' && state[side].aura >= (state[side].nenTactics?.reserve || 65))
+    return { ...plan, goal: 'pressure' }
   return plan
 }
 function holdsDefense(input: FightInput) {
@@ -163,4 +164,8 @@ function inPersonalReach(context: Context, move: FighterMove): boolean {
   const { state, side } = context
   const target = state[side === 'player' ? 'opponent' : 'player']
   return seesCombatBody(state[side]) && aiMoveInRange(move, Math.abs(state[side].x - target.x))
+}
+
+function commandWindow(state: FightState, due: number, plan: TacticalPlan): boolean {
+  return state.phase === 'fighting' && state.frame >= due && plan.goal !== 'recover'
 }

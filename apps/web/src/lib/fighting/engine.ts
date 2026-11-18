@@ -1,3 +1,4 @@
+import { reservingAura } from './combatIntentPolicy'
 import { performArsenalAction } from './arsenalExecution'
 import { priorityBusyAi } from './priorityArsenalAi'
 import { judgmentActionBreach } from './judgmentAction'
@@ -273,7 +274,11 @@ export const opponentAttack = (state: FightState): FightState =>
     ? state
     : (priorityBusyAi(state, performAuraAttack) ??
       maryAiAction(state, performAuraAttack) ??
-      contextualOpponentAttack(state))
+      intentionalOpponentAttack(state))
+
+function intentionalOpponentAttack(state: FightState): FightState {
+  return reservingAura(state.opponent) ? planOpponentNen(state) : contextualOpponentAttack(state)
+}
 
 function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state

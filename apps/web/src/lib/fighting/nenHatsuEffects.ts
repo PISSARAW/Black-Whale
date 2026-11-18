@@ -1,4 +1,4 @@
-import { abilityCategories, manipulationFactor } from './nenCategories'
+import { nenOperationCategory, nenOperationPower } from './nenOperations'
 import { fightAbility } from './nenAbility'
 import type { FightSide, FightState, FighterHatsuEffects } from './types'
 
@@ -14,8 +14,9 @@ export function scaleNenControl(
   owner: FightSide,
 ): FightState {
   const fighter = before[owner]
-  if (!abilityCategories(fightAbility(fighter)).includes('manipulator')) return after
-  const factor = manipulationFactor(fighter)
+  const ability = fightAbility(fighter)
+  if (!nenOperationCategory(ability, 'control')) return after
+  const factor = nenOperationPower(fighter, { ability, operation: 'control' })
   return (['player', 'opponent'] as const).reduce((state, side) => {
     const effects = { ...state[side].hatsuEffects }
     for (const key of CONTROL_DURATIONS) {

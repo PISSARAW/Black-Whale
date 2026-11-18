@@ -25,3 +25,12 @@ existante. Une application n’ajoute ni projectile, ni matériel, ni propriét�
 Les commandes passent par les entrées et admissions du moteur, donc les replays et
 les conditions propres continuent de s’appliquer. Shu ne couvre plus une pierre
 fictive dans une main vide ; le lancer physique ordinaire reste une adaptation.
+
+## Opérations hybrides
+
+`nenOperations.ts` sépare impact, transmission, construction, propriété, contrôle et
+soin. Le contact ne moyenne plus toutes les catégories d’un Hatsu. La transmission
+module la durée des seuls projectiles dont l’Émission est déclarée ; elle n’ajoute
+pas cette catégorie à toute construction. Les durées de contrôle arcade gardent
+leur facteur propre, sans modifier serment, consentement ou Zetsu imposé. Les
+balles physiques, objets en Shu et sphères matérialisées conservent leur matière.

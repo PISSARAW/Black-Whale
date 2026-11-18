@@ -1,7 +1,7 @@
 import { chrolloPageForMove, chrolloPageSource, chrolloCopiedMove } from './chrolloBook'
 import { historicalChrolloPage } from './chrolloHistoricalPages'
 import { FIGHT_NEN_PROFILES } from './nenCatalogue.gen'
-import { abilityCategories, categoryPower } from './nenCategories'
+import { nenOperationPower } from './nenOperations'
 import type { ArcadeFighter, FighterId } from './types'
 
 const DEFAULT_ABILITY: Partial<Record<FighterId, string | null>> = {
@@ -93,12 +93,5 @@ function defaultAbility(source: FighterId): string | null {
 }
 
 export function abilityPower(fighter: ArcadeFighter, ability = fightAbility(fighter)): number {
-  const categories = abilityCategories(ability)
-  if (!categories.length) return 1
-  // A compound technique needs every declared component. Geometric mean keeps
-  // an inefficient component relevant without multiplying unrelated flat bonuses.
-  return Math.pow(
-    categories.reduce((power, category) => power * categoryPower(fighter, category), 1),
-    1 / categories.length,
-  )
+  return nenOperationPower(fighter, { ability, operation: 'impact' })
 }

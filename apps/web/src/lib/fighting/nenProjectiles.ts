@@ -1,6 +1,7 @@
 import { abilityPower } from './nenAbility'
 import { isBodyguardBullet } from './bodyguardFirearms'
-import { abilityCategories, categoryPower, fightCategoryEfficiency } from './nenCategories'
+import { fightCategoryEfficiency } from './nenCategories'
+import { nenTransmissionLifetime } from './nenOperations'
 import { fightAbility } from './nenAbility'
 import { shuObject } from './nenAdvanced'
 import type { ArcadeFighter, FightProjectile } from './types'
@@ -57,13 +58,13 @@ export function advanceProjectileNen(projectile: FightProjectile): FightProjecti
 
 function commitEmittedAura(projectile: FightProjectile, fighter: ArcadeFighter): FightProjectile {
   const aura = fighter.nen.mode !== 'zetsu' && !fighter.nen.on
-  const categories = abilityCategories(fightAbility(fighter))
-  const emitted = categories.includes('emitter') ? 1 : categoryPower(fighter, 'emitter')
+  const ability = fightAbility(fighter)
   const ren = fighter.nen.mode === 'ren' ? 1.22 : 1
   return {
     ...projectile,
     hatsuPower: 1,
-    nenPower: aura ? abilityPower(fighter) * emitted * ren : 0,
+    nenPower: aura ? abilityPower(fighter, ability) * ren : 0,
+    lifetime: nenTransmissionLifetime(fighter, { ability, lifetime: projectile.lifetime }),
     concealed: aura && Boolean(projectile.concealed || fighter.nen.in),
   }
 }

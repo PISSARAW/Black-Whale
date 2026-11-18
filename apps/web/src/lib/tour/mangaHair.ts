@@ -1,4 +1,5 @@
 import { mangaFeitanHair } from './mangaFeitanHead'
+import { mangaTubeppaBowl } from './mangaTubeppaHead'
 import { mangaBillFlames, mangaBashoPompadour } from './mangaBodyguardHair'
 import { mangaSaiyuCrop } from './mangaSaiyuHead'
 import { mangaCluckUpdo } from './mangaCluckHead'
@@ -166,6 +167,7 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
   }
   const style = look.hair === 'curtain' ? 'curtain' : profile.hairStyle
   const variants: Record<string, () => void> = {
+    'tubeppa-bowl': () => mangaTubeppaBowl(kit),
     'feitan-crop': () => mangaFeitanHair(kit),
     'bill-flames': () => mangaBillFlames(kit),
     'basho-pompadour': () => mangaBashoPompadour(kit),

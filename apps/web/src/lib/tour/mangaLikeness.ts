@@ -39,6 +39,7 @@ export interface MangaLikeness {
     | 'feitan-crop'
     | 'bill-flames'
     | 'basho-pompadour'
+    | 'tubeppa-bowl'
 }
 
 // Geometry directions refine the catalogue's faces; no random face is assigned to an id.
@@ -155,6 +156,17 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
   'prince-momoze': { eyes: 'round', cheek: 0.144, jaw: 0.061, brow: 0.6 },
   'prince-halkenburg': { eyes: 'narrow', cheek: 0.148, jaw: 0.087, brow: 0.85, hair: 'side-part' },
   'prince-zhanglei': { eyes: 'heavy', cheek: 0.185, jaw: 0.13, chin: 0.17, mouth: 0.065 },
+  'prince-tubeppa': {
+    eyes: 'narrow',
+    cheek: 0.163,
+    jaw: 0.115,
+    chin: 0.235,
+    nose: 1.65,
+    mouth: 0.086,
+    brow: 0.75,
+    neck: 0.054,
+    hair: 'tubeppa-bowl',
+  },
   'prince-salesale': { eyes: 'heavy', cheek: 0.189, jaw: 0.125, chin: 0.18 },
   'prince-luzurus': { eyes: 'narrow', cheek: 0.155, jaw: 0.092, hair: 'curtain' },
   'nasubi-hui-guo-rou': {

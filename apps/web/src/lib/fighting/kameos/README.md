@@ -86,6 +86,27 @@ existants gardent le sens de chacun de leurs bits.
 
 Le piège de Luzurus n'a pas encore de visuel au sol.
 
+### Tubeppa · animation et expressions
+
+`tubeppaMotion.ts` pose Tubeppa sur le même squelette articulé que le roster :
+ajustement des lunettes à l’entrée, préparation à deux mains, geste de soutien
+sur la frame effective du soin, relâchement et retrait. Les clés suivent les
+compteurs simulés de chaque phase ; les deux orientations conservent la main
+droite pour les lunettes. Les appuis utilisent le verrouillage des pieds du roster.
+Les impacts et la chute utilisent ses réactions communes et prennent priorité sur
+le soutien ; le corps reste au sol jusqu’à la fin de la manche.
+
+Le profil analytique dans `expressionProfiles.ts` anime yeux, sourcils et bouche
+avec les morphs, le cache, la respiration et les transitions du roster. Les lunettes
+et les boucles restent solidaires de la tête. Aucun changement aux dégâts, au soin,
+aux collisions, aux ressources ou aux données des replays.
+
+`tubeppaMotion.test.ts` vérifie le cycle réel, la frame du soin, un impact du moteur,
+les orientations, les appuis, les caches, les expressions indépendantes, les empreintes
+et la mort. `node apps/web/scripts/check-tubeppa-animation.mjs` capture une planche
+du modèle de production ; `TUBEPPA_ANIMATION_FILM=1` ajoute les frames du cycle complet.
+`TUBEPPA_ANIMATION_OUTPUT` choisit le dossier des captures.
+
 ## Lot 8 · replays et PvP
 
 - **Replays.** Rien à changer : l'instantané initial (`encodeFightSnapshot`) garde les

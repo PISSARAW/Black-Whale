@@ -1,4 +1,5 @@
 import { addBodyguardFaces } from './mangaBodyguardFaces'
+import { addTubeppaFace } from './mangaTubeppaHead'
 import type { Group, Mesh } from 'three'
 import type { HumanHeadBuild } from './humanHead'
 import { mergeHumanDetails } from './humanDetailGeometry'
@@ -98,6 +99,7 @@ export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {
   addHeillyReferenceFace(build, head)
   addGelFace(build, head)
   addBodyguardFaces(build, head)
+  if (id === 'prince-tubeppa') addTubeppaFace(build, head)
   if (id === 'cheadle-yorkshire') {
     const nose = head.getObjectByName('face-relief') as Mesh
     nose.material = build.materials.ink

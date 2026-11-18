@@ -425,6 +425,7 @@ export function addHumanSignatures({
 
   if (!worn.manga || worn.attire === 'kakin-robe') GARMENTS[worn.attire]?.(hang)
   for (const piece of worn.signatures) {
+    if (parts.head.getObjectByName(`signature:${piece}`)) continue
     if (worn.manga && (MANGA_FACE_SIGNATURES.has(piece) || piece === 'fur-collar')) continue
     PIECES[piece](hang)
   }

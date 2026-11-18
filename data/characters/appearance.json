@@ -246,27 +246,27 @@
     },
     {
       "id": "prince-tubeppa",
-      "body": { "build": "slim", "height": 1.0, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bowl", "expression": "severe" },
+      "body": { "build": "average", "height": 1.04, "frame": "adult", "shoulders": 1.02 },
+      "head": { "face": "square", "hairStyle": "bowl", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "Chap. 366, page de lecture 9, et chap. 388, page de lecture 16 : cheveux courts sombres, lunettes rectangulaires et blouse claire. Teintes choisies à partir des valeurs monochromes.",
+        "source": "Référence manga de la réception du départ et description fournies par le mainteneur le 2026-11-18 : coupe blonde en bol, lunettes, boucles d'oreilles et costume sombre à liserés clairs. Blond demandé explicitement ; teintes du costume choisies à partir de la planche monochrome.",
         "skin": "0xe3c6a8",
-        "hair": "0x35332e",
+        "hair": "0xe0c477",
         "attire": {
-          "jacket": "0xdad8cb",
-          "shirt": "0xeceae2",
-          "trousers": "0x212a30",
-          "accent": "0x8fa6ad"
+          "jacket": "0x202129",
+          "shirt": "0xf1ecdf",
+          "trousers": "0x24252d",
+          "accent": "0xbbaa76"
         }
       },
       "attire": "suit",
-      "signatures": ["glasses-thin"],
+      "signatures": ["glasses-thin", "earrings"],
       "verified": {
         "chapterIds": ["ch-349", "ch-358", "ch-362", "ch-366", "ch-388"],
         "status": "partial"
       },
-      "note": "Les cases du bureau montrent des lunettes rectangulaires, une coupe courte sombre et une blouse claire. Le gabarit de veste existant évoque la blouse sans en reproduire exactement la longueur ; les teintes restent choisies. Aucun gant ajouté."
+      "note": "Apparence de référence demandée : silhouette masculine, nez long, bouche longue et fine, menton carré, yeux noirs derrière des montures fines ouvertes. Coupe en bol blonde à mèches pointues, oreilles dégagées et boucles discrètes. Costume croisé sombre, chemise claire, cravate et liserés clairs sur les revers et le bas de veste, suivant la planche fournie ; cette tenue remplace la blouse du bureau pour le modèle partagé."
     },
     {
       "id": "prince-tyson",

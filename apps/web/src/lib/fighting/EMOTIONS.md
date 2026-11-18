@@ -6,6 +6,12 @@ profils sont conservés. Les autres profils adaptent le regard, les sourcils,
 la retenue, le sourire et la tension des épaules à chaque personnage.
 Ces profils sont une direction artistique du jeu.
 
+Tubeppa possède aussi une direction analytique dans `kameos/expressionProfiles.ts` :
+concentration derrière les lunettes, effort mesuré pendant le soin, douleur prioritaire
+et retour progressif au calme. Le profil du kaméo est séparé du catalogue des quarante
+combattants sélectionnables et partage leurs articulations, morphs et transitions.
+L’effort de soutien est fourni à la présentation sans créer de fausse attaque.
+
 `fightExpressions.ts` lit la pose, l’attaque et les états de réaction existants.
 La douleur prend priorité sur une attaque interrompue ; elle supprime immédiatement
 l’effort et le sourire. La récupération du coup, le hitstun et le réveil pilotent

@@ -1,4 +1,5 @@
 import { addFeitanCoat } from './mangaFeitanClothes'
+import { addTubeppaSuit } from './mangaTubeppaSuit'
 import { addBodyguardReferenceSuit } from './mangaBodyguardSuits'
 import { addSaiyuCostume } from './mangaSaiyuClothes'
 import { addCluckFeatherCostume } from './mangaCluckClothes'
@@ -173,6 +174,7 @@ function tracksuit(build: HumanClothesBuild) {
 }
 
 const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
+  'prince-tubeppa': addTubeppaSuit,
   'biscuit-krueger': addBiscuitReferenceClothes,
   melody: addMelodySuit,
   padaille: addPadailleShirt,

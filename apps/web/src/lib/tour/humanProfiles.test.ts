@@ -101,9 +101,10 @@ describe('shared human profiles', () => {
     })
     expect(humanProfile(person('prince-tubeppa', 'witness'))).toMatchObject({
       hairStyle: 'bowl',
-      hair: 0x35332e,
-      jacket: 0xdad8cb,
-      signatures: ['glasses-thin'],
+      hair: 0xe0c477,
+      face: 'square',
+      jacket: 0x202129,
+      signatures: ['glasses-thin', 'earrings'],
     })
   })
 

@@ -125,15 +125,15 @@ describe('bounded AI knowledge and adaptation', () => {
       at: 1,
     })
   })
-  it('adapts to repeated perceived shots with a delayed ordinary approach jump', () => {
+  it('does not force an unsafe approach jump merely because shots were repeated', () => {
     let state = fight()
     for (let i = 1; i <= 3; i++)
       state = remember({ ...state, frame: i * 30, projectiles: [shot(i)] })
     expect(repeatedHabit(state.opponent, 'projectile')).toBe(true)
     state.opponent.counterplayRead = { key: 'projectile:3', frames: 14, coveringEars: false }
     const result = moveCounterplayOpponent({ state, fighter: state.opponent, target: state.player })
-    expect(result.motion?.prejumpFrames).toBeGreaterThan(0)
-    expect(result.motion?.jumpDirection).toBe(-1)
+    expect(result.motion?.prejumpFrames ?? 0).toBe(0)
+    expect(result.blocking).toBe(true)
     expect(result.wakeupInvulnerableFrames).toBe(0)
   })
   it('prefers an anti-air only after repeated airborne manifestations and current visual contact', () => {

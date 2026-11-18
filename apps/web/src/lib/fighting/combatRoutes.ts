@@ -4,6 +4,10 @@ import { ROSTER_COMBAT_ROUTES } from './rosterCombatRoutes'
 import type { RosterFighterId } from './rosterChoreography'
 import { DUEL_COMBO_LESSONS } from './duelComboLessons'
 import type { CombatRouteSetup } from './combatRouteSetup'
+import { WHIFF_PUNISH_LESSONS } from './whiffPunishLessons'
+import { ROSTER_WHIFF_PUNISH_LESSONS } from './rosterWhiffPunishLessons'
+import type { CombatWhiffPractice } from './combatWhiffPractice'
+import { WAKEUP_LESSONS } from './wakeupLessons'
 
 const REFERENCE_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 type ReferenceFighter = (typeof REFERENCE_FIGHTERS)[number]
@@ -18,6 +22,8 @@ export interface CombatRoute {
   moves: readonly MoveSlot[]
   requirement: readonly [string, string]
   setup?: CombatRouteSetup
+  whiff?: CombatWhiffPractice
+  wakeup?: FighterId
   /** Expected contacts per command; a barrage is entered once and must land every bullet. */
   hits?: readonly number[]
 }
@@ -108,6 +114,9 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
     })),
   ),
   ...DUEL_COMBO_LESSONS,
+  ...WHIFF_PUNISH_LESSONS,
+  ...ROSTER_WHIFF_PUNISH_LESSONS,
+  ...WAKEUP_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)

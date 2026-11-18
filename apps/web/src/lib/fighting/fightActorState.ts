@@ -11,11 +11,12 @@ import type { ArcadeFighter, FightInput } from './types'
 const GROUND = 0
 
 export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
-  return !fighter.arenaRecovery && biohazardBodyFree(fighter)
+  return !fighter.halkSoulSleep && !fighter.arenaRecovery && biohazardBodyFree(fighter)
 }
 
 function characterBusy(fighter: ArcadeFighter): boolean {
   if (
+    fighter.halkSoulSleep ||
     fighter.easterEgg ||
     fighter.throwTechRecoveryFrames ||
     fighter.luiniPassage ||

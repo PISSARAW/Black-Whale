@@ -1,3 +1,4 @@
+import { futurePerceivedTarget } from './parallelFuture'
 import { collideArenaBodies, resolveArenaStrikes } from './arenaSimulation'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { advanceLoanGuest, cancelLoanGuest } from './dolphinLoan'
@@ -39,6 +40,7 @@ function removeDeadGuest(state: FightState, guest: RosterGuest, attack: DuelAtta
   return storeRosterGuest(ended, { ...current, phase: 'eliminated' })
 }
 function guestMustLeave(state: FightState, guest: RosterGuest): boolean {
+  if (guest.role === 'soul') return false
   const controlled = guest.role === 'loan' || blackVoiceAvailable(state, guest.owner)
   return !controlled || state[guest.owner].health <= 0 || guest.phase === 'leaving'
 }
@@ -62,6 +64,7 @@ function actGuest(state: FightState, guest: RosterGuest, attack: DuelAttack): Fi
     state: guestProjection(next, guest),
     side: guest.owner,
     kind,
+    variant: guestPerceivedEnemy(state, guest).halkSoulSleep ? 'low' : undefined,
     auraCharged: false,
   })
   next = mergeGuestProjection(next, used, guest)
@@ -98,6 +101,11 @@ function guestInput(state: FightState, guest: RosterGuest): FightInput {
       enemy.attack && !enemy.attack.concealed && Math.abs(gap) < 10 && guest.frames % 90 < 20,
     ),
   }
+}
+
+function guestPerceivedEnemy(state: FightState, guest: RosterGuest) {
+  const actual = state[guest.owner === 'player' ? 'opponent' : 'player']
+  return futurePerceivedTarget(guestProjection(state, guest), guest.owner, actual)
 }
 
 function guestDirection(order: string, gap: number): number {

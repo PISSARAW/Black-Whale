@@ -55,6 +55,7 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'franklin-aim',
   'gum-anchor-attach',
   'gum-anchor-self',
   'gum-anchor-object',
@@ -75,6 +76,9 @@ export const ARSENAL_ACTION_IDS = [
   'machi-pull',
   'dolphin-loan',
   'halkenburg-transfer',
+  'halkenburg-mode',
+  'halkenburg-sleep',
+  'halkenburg-sedative',
   'black-roster',
   'black-order',
   'black-remove',

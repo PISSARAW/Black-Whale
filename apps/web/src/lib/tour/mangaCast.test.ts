@@ -35,6 +35,141 @@ function mesh(root: THREE.Object3D, name: string) {
   return node as THREE.Mesh
 }
 describe('manga cast shared by the visit and Fighting', () => {
+  it('shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash', () => {
+    const common = buildHumanFigure({ THREE, glow, seen: seen('prince-salesale') })
+    const fighter = createFightState('salesale', 'hisoka').player
+    const fighting = buildFightFigure({ THREE, glow, fighter })
+    for (const name of [
+      'salesale-cheek-and-chin-folds',
+      'salesale-dark-ear-ring',
+      'salesale-long-light-robe',
+      'salesale-belt-knot',
+      'salesale-boot-shaft',
+    ])
+      expect(mesh(fighting.root, name).geometry).toBe(mesh(common.root, name).geometry)
+    expect(common.root.getObjectByName('signature-lips')).toBeUndefined()
+    const mouth = mesh(common.root, 'face-mouth')
+    expect(mouth.getObjectByName('salesale-smile-teeth')).toBeTruthy()
+    const teeth = mesh(common.root, 'salesale-smile-teeth').geometry
+    const animatedTeeth = mesh(fighting.root, 'salesale-smile-teeth').geometry
+    expect([...animatedTeeth.getAttribute('position').array]).toEqual([
+      ...teeth.getAttribute('position').array,
+    ])
+    expect([...animatedTeeth.index!.array]).toEqual([...teeth.index!.array])
+    const head = common.root.getObjectByName('manga-head:prince-salesale')!
+    const rings = head.getObjectByName('salesale-right-ear-piercings')!
+    expect(rings.children).toHaveLength(3)
+    expect(rings.children.every((node) => node.position.x < 0)).toBe(true)
+    common.root.updateMatrixWorld(true)
+    const origin = head.localToWorld(new THREE.Vector3(-0.067, 0.012, 1))
+    const ray = new THREE.Raycaster(
+      origin,
+      new THREE.Vector3(0, 0, -1).transformDirection(head.matrixWorld),
+    )
+    const eye = ray.intersectObject(head.getObjectByName('face-eye-left')!, true)
+    const skin = ray.intersectObject(head.getObjectByName('manga-face')!.children[1])[0]
+    expect(eye.length).toBeGreaterThan(0)
+    expect(eye[0].distance).toBeLessThan(skin.distance)
+    fighting.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
+    expect(
+      fighting.root.getObjectByName('fight-chest')!.getObjectByName('salesale-wrapped-lapel'),
+    ).toBeTruthy()
+    expect(
+      fighting.root.getObjectByName('fight-chest')!.getObjectByName('salesale-cloth-belt'),
+    ).toBeTruthy()
+    for (const side of ['left', 'right']) {
+      expect(
+        fighting.root.getObjectByName(`elbow-${side}`)!.getObjectByName('salesale-robe-cuff'),
+      ).toBeTruthy()
+      expect(
+        fighting.root.getObjectByName(`knee-${side}`)!.getObjectByName('salesale-boot-shaft'),
+      ).toBeTruthy()
+    }
+  })
+  it('shares Luzurus’s swept puffs, face and articulated reference outfit with Clash', () => {
+    const common = buildHumanFigure({ THREE, glow, seen: seen('prince-luzurus') })
+    const fighter = createFightState('luzurus', 'hisoka').player
+    const fighting = buildFightFigure({ THREE, glow, fighter })
+    for (const name of [
+      'face-relief',
+      'luzurus-light-stubble',
+      'luzurus-puff-tie',
+      'luzurus-vest-fringe',
+      'luzurus-wrapped-sash',
+      'luzurus-slipper-pattern',
+    ])
+      expect(mesh(fighting.root, name).geometry).toBe(mesh(common.root, name).geometry)
+    const head = common.root.getObjectByName('manga-head:prince-luzurus')!
+    expect(head.children.filter((node) => node.name === 'luzurus-puff-tie')).toHaveLength(2)
+    const hair = head.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
+    hair.geometry.computeBoundingBox()
+    expect(hair.geometry.boundingBox!.max.x).toBeGreaterThan(0.44)
+    expect(hair.geometry.boundingBox!.min.x).toBeLessThan(-0.44)
+    common.root.updateMatrixWorld(true)
+    const face = head.getObjectByName('manga-face')!.children[1]
+    for (const [x, y] of [
+      [0, 0.19],
+      [-0.06, 0.17],
+      [0.06, 0.17],
+    ]) {
+      const ray = new THREE.Raycaster(
+        head.localToWorld(new THREE.Vector3(x, y, 1)),
+        new THREE.Vector3(0, 0, -1).transformDirection(head.matrixWorld),
+      )
+      const scalpHit = ray.intersectObject(hair)[0],
+        skinHit = ray.intersectObject(face)[0]
+      expect(scalpHit).toBeTruthy()
+      expect(skinHit).toBeTruthy()
+      expect(scalpHit.distance).toBeLessThan(skinHit.distance)
+    }
+    fighting.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
+    expect(
+      fighting.root.getObjectByName('fight-chest')!.getObjectByName('luzurus-vest-fringe'),
+    ).toBeTruthy()
+    for (const side of ['left', 'right']) {
+      expect(
+        fighting.root.getObjectByName(`knee-${side}`)!.getObjectByName('luzurus-trouser-folds'),
+      ).toBeTruthy()
+      expect(
+        fighting.root
+          .getObjectByName(`elbow-${side}`)!
+          .getObjectByName('luzurus-loose-sleeve-cuff'),
+      ).toBeTruthy()
+    }
+  })
+  it('shares Morena’s reference details with Clash and keeps her dress on its joints', () => {
+    const common = buildHumanFigure({ THREE, glow, seen: seen('morena-prudo') })
+    const fighter = createFightState('morena', 'hisoka').player
+    const fighting = buildFightFigure({ THREE, glow, fighter })
+    for (const name of [
+      'morena-thorn-crown',
+      'morena-scar',
+      'morena-fitted-bodice',
+      'morena-black-boot',
+    ])
+      expect(mesh(fighting.root, name).geometry).toBe(mesh(common.root, name).geometry)
+    const head = common.root.getObjectByName('manga-head:morena-prudo')!
+    expect(head.children.filter((node) => node.name === 'morena-scar')).toHaveLength(2)
+    const piercings = head.getObjectByName('morena-left-ear-piercings')!
+    expect(piercings.children).toHaveLength(16)
+    expect(piercings.children.every((node) => node.position.x > 0)).toBe(true)
+    expect(common.root.getObjectByName('morena-stitch-crown')).toBeUndefined()
+    expect(common.root.getObjectByName('face-eye-base-left')).toBeUndefined()
+    const pupil = mesh(common.root, 'eye-pupil')
+    expect((pupil.material as THREE.MeshBasicMaterial).color.getHex()).toBe(0x795137)
+    fighting.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
+    const chest = fighting.root.getObjectByName('fight-chest')!
+    expect(chest.getObjectByName('morena-fitted-bodice')).toBeTruthy()
+    expect(chest.getObjectByName('morena-thorn-crown')).toBeTruthy()
+    expect(
+      fighting.root.getObjectByName('knee-left')!.getObjectByName('morena-black-boot'),
+    ).toBeTruthy()
+    expect(
+      fighting.root
+        .getObjectByName('shoulder-left')!
+        .getObjectByName('morena-off-shoulder-sleeve-edge'),
+    ).toBeTruthy()
+  })
   it.each(catalogue.declared.map((entry) => entry.id))(
     'builds and articulates %s without losing facial identity',
     (id) => {

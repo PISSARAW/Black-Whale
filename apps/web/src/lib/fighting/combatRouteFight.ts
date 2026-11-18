@@ -15,7 +15,10 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
   const preparation = combatRouteScenario(route.setup)
   let state = createFightState(
     route.fighter,
-    opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
+    opponent ??
+      route.wakeup ??
+      route.whiff?.opponent ??
+      (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
     {
       mode: 'training',
       formatId: 'knockout',
@@ -34,7 +37,9 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
       infiniteAura: false,
       infiniteHealth: false,
     })
-  return setTrainingDummy(prepareCombatRoute(state, route.setup), { behavior: 'guard-after-hit' })
+  state = prepareCombatRoute(state, route.setup)
+  if (route.whiff) state = { ...state, player: { ...state.player, x: 50 - route.whiff.gap } }
+  return setTrainingDummy(state, { behavior: 'guard-after-hit' })
 }
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {

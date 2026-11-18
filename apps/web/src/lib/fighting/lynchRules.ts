@@ -26,6 +26,7 @@ export function lynchTargetConscious(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     fighter.knockdownFrames === 0 &&
     !fighter.hanzoProjection &&
+    !fighter.halkSoulSleep &&
     (fighter.kurapika?.blackoutFrames ?? 0) === 0
   )
 }
@@ -52,6 +53,7 @@ function questioningBodyFree(fighter: ArcadeFighter): boolean {
     canSpeak(fighter) &&
     !fighter.attack &&
     !fighter.hanzoProjection &&
+    !fighter.halkSoulSleep &&
     !fighter.parallelEyesClosed &&
     !fighter.melodyPerformance
   )

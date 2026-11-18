@@ -2,13 +2,19 @@ import type * as Three from 'three'
 import { comfortableImpact, type FightComfort } from './fightComfort'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import { fightContactStyle } from './fightContactStyle'
-import type { FightState } from './types'
+import { closeFightPosition } from './fightCloseSpacing'
+import { humanAnimationRig } from '$lib/tour/humanAnimation'
+import { physicalRosterPair } from './fightPhysicalRoster'
+import { fightContactTarget } from './fightContactAlignment'
+import { fightRigOf } from './fightRig'
+import type { FightImpact, FightSide, FightState } from './types'
 
 export function createFightImpactScene(options: {
   THREE: typeof Three
   scene: Three.Scene
   initial: FightState
   comfort: () => FightComfort
+  figureOf?: (side: FightSide) => Three.Object3D
   geometry: <T extends Three.BufferGeometry>(made: T) => T
   glow: (colour: number, opacity: number) => Three.MeshBasicMaterial
 }) {
@@ -47,9 +53,10 @@ export function createFightImpactScene(options: {
       shake = { started: now, until: now + profile.shakeMs, x: profile.shakeX, y: profile.shakeY }
       const origin = new THREE.Vector3(
         fightWorldX(impact.position.x),
-        fightWorldY(impact.position.y),
+        fightWorldY(displayContactHeight(state, impact)),
         0.25,
       )
+      alignCloseImpact(origin, { state, impact, figureOf: options.figureOf })
       const count = style === 'parry' && profile.sparks > 0 ? 1 : profile.sparks
       for (let i = 0; i < count; i++) {
         const angle = (i / count) * Math.PI * 2
@@ -97,4 +104,79 @@ export function createFightImpactScene(options: {
       sparks.length = 0
     },
   }
+}
+
+function alignCloseImpact(
+  origin: Three.Vector3,
+  options: {
+    state: FightState
+    impact: FightImpact
+    figureOf?: (side: FightSide) => Three.Object3D
+  },
+) {
+  const { state, impact } = options
+  const side = impact.attacker === 'player' ? 'opponent' : 'player'
+  const attacker = state[impact.attacker]
+  const target = state[side]
+  if (alignPhysicalHit(origin, options)) return
+  const close = closeFightPosition(state, side, { body: target, rival: attacker })
+  origin.x += fightWorldX(close.x) - fightWorldX(target.x)
+  if (close.z) origin.z = 0.38
+  alignNeedleHead(origin, options)
+}
+
+function alignNeedleHead(
+  origin: Three.Vector3,
+  options: Parameters<typeof alignCloseImpact>[1],
+): void {
+  const { state, impact } = options
+  const side = impact.attacker === 'player' ? 'opponent' : 'player'
+  const attacker = state[impact.attacker]
+  if (attacker.attack?.moveId !== 'illumi:neutralSpecial' || impact.zone !== 'head') return
+  const figure = options.figureOf?.(side)
+  const head = figure && humanAnimationRig(figure)?.head
+  if (head) {
+    head.getWorldPosition(origin)
+    origin.x -= attacker.facing * 0.12
+    origin.z += 0.25
+  }
+}
+
+function alignPhysicalHit(
+  origin: Three.Vector3,
+  options: Parameters<typeof alignCloseImpact>[1],
+): boolean {
+  const { state, impact } = options
+  const side = impact.attacker === 'player' ? 'opponent' : 'player'
+  const human = options.figureOf && humanAnimationRig(options.figureOf(side))
+  if (!human || !anatomicalPhysicalHit(state, impact)) return false
+  origin.copy(fightContactTarget(fightRigOf(human), impact.zone, state[impact.attacker].facing))
+  origin.z += 0.12
+  return true
+}
+
+function anatomicalPhysicalHit(state: FightState, impact: FightImpact): boolean {
+  const other = impact.attacker === 'player' ? 'opponent' : 'player'
+  return (
+    physicalRosterPair(state[impact.attacker].id, state[other].id) &&
+    !impact.blocked &&
+    !impact.parried &&
+    impact.projectileId === null &&
+    !impact.transfer &&
+    !impact.objectTransfer
+  )
+}
+
+/** Elevated melee silhouettes can cross the lower collision box before reaching the body. */
+function displayContactHeight(state: FightState, impact: FightImpact): number {
+  if (!elevatedStrike(state[impact.attacker].attack?.moveId, impact)) return impact.position.y
+  const target = state[impact.attacker === 'player' ? 'opponent' : 'player']
+  if (target.hanzoProjection || target.knockdownFrames > 0) return impact.position.y
+  const height = impact.blocked || target.crouching ? 9 : 14
+  return Math.max(impact.position.y, target.y + height)
+}
+
+function elevatedStrike(moveId: string | undefined, impact: FightImpact): boolean {
+  if (impact.projectileId !== null || impact.transfer || impact.objectTransfer) return false
+  return moveId === 'hisoka:standingHeavy' || moveId === 'kurapika:standingHeavy'
 }

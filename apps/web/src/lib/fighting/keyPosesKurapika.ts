@@ -1,5 +1,6 @@
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { MoveSlot } from './types'
+import { strikeTimeline } from './keyPoseContact'
 
 /**
  * Kurapika's normals as key poses, added to his stance (or his crouch, or his
@@ -7,6 +8,37 @@ import type { MoveSlot } from './types'
  * turns just enough to put the shoulder behind it.
  */
 export const KURAPIKA_KEY_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
+  forwardSpecial: strikeTimeline(
+    {
+      root: [0, -0.02, -0.025],
+      body: [-0.04, 0.12, 0],
+      chest: [0.04, 0.32, 0],
+      leadShoulder: [-0.15, 0, -0.35],
+      leadElbow: [-0.55, 0, 0],
+      leadWrist: [-0.35, 0, 0],
+      rearKnee: [0.22, 0, 0],
+    },
+    {
+      root: [0, 0, 0.09],
+      body: [0.12, -0.12, 0],
+      chest: [0.04, -0.48, 0],
+      leadShoulder: [-1.08, 0, 0.2],
+      leadElbow: [1.2, 0, 0],
+      leadWrist: [0.22, 0, 0],
+      rearShoulder: [-0.05, 0, -0.12],
+      rearElbow: [-0.2, 0, 0],
+      rearHip: [0.18, 0, 0],
+      leadKnee: [0.1, 0, 0],
+    },
+    {
+      root: [0, -0.01, 0.035],
+      chest: [0.03, -0.28, 0],
+      leadShoulder: [-0.65, 0, 0.12],
+      leadElbow: [0.55, 0, 0],
+      leadWrist: [0.08, 0, 0],
+      rearKnee: [0.14, 0, 0],
+    },
+  ),
   // Dowsing Jab: a straight lead hand, chest turned into it.
   standingLight: [
     {

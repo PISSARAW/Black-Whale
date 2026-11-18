@@ -60,28 +60,33 @@ function makeBullet(options: {
   const salvo = franklinSalvo(fighter)
   const hand = shot % 2
   const finger = Math.floor(shot / 2) % 5
-  const low = salvo.height < 4
+  const direction = fighter.franklinAim === 'split' && hand === 0 ? -fighter.facing : fighter.facing
+  const sweep = fighter.franklinAim === 'sweep' ? [2.5, 6, 10.1, 6][shot % 4] : salvo.height
   return {
     id,
     owner: side,
     fighterId: 'franklin',
-    x: fighter.x + fighter.facing * (hand === 0 ? 5.3 : 9.5),
-    y: fighter.y + salvo.height + (hand === 0 ? -0.05 : 0.05) + (finger - 2) * 0.025,
-    velocityX: fighter.facing * 82,
+    x: fighter.x + direction * (hand === 0 ? 5.3 : 9.5),
+    y: fighter.y + sweep + (hand === 0 ? -0.05 : 0.05) + (finger - 2) * 0.025,
+    velocityX: direction * 82,
     width: 0.45,
     height: 0.18,
     damage: salvo.damage,
     hitstun: 12,
     blockstun: 8,
-    hitstop: 1,
-    knockback: 0.35,
-    targetZone: low ? 'feet' : 'torso',
+    ...bulletImpact(fighter, shot, salvo.shots),
+    targetZone: sweep < 4 ? 'feet' : 'torso',
     shape: 'bullet',
     colour: '#ef4444',
     matter: 'nen',
     age: 0,
     lifetime: 90,
   }
+}
+
+function bulletImpact(fighter: ArcadeFighter, shot: number, count: number) {
+  const finalDrive = fighter.attack?.directionalChain === 'carry' && shot === count - 1
+  return finalDrive ? { hitstop: 5, knockback: 3.5 } : { hitstop: 1, knockback: 0.35 }
 }
 
 /** An opponent inside the outstretched arms is hit along the muzzle path, never skipped. */

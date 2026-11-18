@@ -6,6 +6,7 @@ import { nenAttackFactor, nenDamageFactor, releaseFocusedAura } from './nen'
 import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
+import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 
 const GROUND = 0
@@ -111,6 +112,7 @@ function struckFighter(
   return {
     ...options.fighter,
     ...launchState(options),
+    airRecovery: airRecoveryOnHit(options),
     ...stunState(options),
     ...comboState(options),
     x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
@@ -134,6 +136,13 @@ function struckFighter(
   }
 }
 
+function airRecoveryOnHit(options: StrikeOptions): true | undefined {
+  if (options.knockdown) return
+  if (options.fighter.airRecovery && options.fighter.y > 0) return true
+  const directionallyLaunched = options.melee && options.attacker.attack?.directionalChain === 'air'
+  return directionallyLaunched && options.antiAir && !options.blocked ? true : undefined
+}
+
 function contactNen(fighter: ArcadeFighter, blocked: boolean): ArcadeFighter['nen'] {
   const nen = blocked ? fighter.nen : releaseFocusedAura(fighter).nen
   return { ...nen, en: null, in: false }
@@ -145,7 +154,10 @@ function launchState(options: StrikeOptions): Pick<ArcadeFighter, 'y' | 'velocit
   }
   return {
     y: Math.max(0.2, options.fighter.y),
-    velocityY: Math.max(18, options.fighter.velocityY),
+    velocityY: Math.max(
+      options.attacker.attack?.directionalChain === 'air' ? DIRECTIONAL_LAUNCH_SPEED : 18,
+      options.fighter.velocityY,
+    ),
   }
 }
 

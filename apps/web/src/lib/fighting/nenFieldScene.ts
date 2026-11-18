@@ -1,4 +1,5 @@
 import { createGyoReadingScene } from './nenCombat/gyoScene'
+import { createNenConcentrationScene } from './nenConcentrationScene'
 import { activeEnRadius } from './en/access'
 import { createEnContactScene } from './en/contactScene'
 import type { EffectSceneOptions } from './fighterEffectScene'
@@ -10,6 +11,7 @@ export function createNenFieldScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
   const contacts = createEnContactScene(options)
   const auraReading = createGyoReadingScene(options)
+  const concentration = createNenConcentrationScene(options)
   const geometry = new THREE.RingGeometry(0.98, 1, 64)
   const fields = (['player', 'opponent'] as const).map((side) => {
     const material = new THREE.MeshBasicMaterial({
@@ -28,6 +30,7 @@ export function createNenFieldScene(options: EffectSceneOptions) {
     sync(state: FightState) {
       contacts.sync(state)
       auraReading.sync(state)
+      concentration.sync(state)
       const viewer = options.viewer?.() ?? 'player'
       for (const { side, mesh } of fields) {
         const fighter = state[side]
@@ -43,6 +46,7 @@ export function createNenFieldScene(options: EffectSceneOptions) {
     dispose() {
       contacts.dispose()
       auraReading.dispose()
+      concentration.dispose()
       geometry.dispose()
       for (const { mesh, material } of fields) {
         scene.remove(mesh)

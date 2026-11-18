@@ -18,6 +18,12 @@
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
     {
+      id: 'sedatives',
+      fr: 'Sédatif de scénario pour le retour de conscience',
+      en: 'Scenario sedative for the returning mind',
+    },
+    { id: 'corpses', fr: 'Cadavres matériels', en: 'Physical corpses' },
+    {
       id: 'paper',
       fr: 'Éventails, confettis et feuilles réels',
       en: 'Actual fans, confetti and paper sheets',

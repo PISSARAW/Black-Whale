@@ -17,8 +17,11 @@ Hisoka/Illumi, Theta/Tserriednich, Benjamin/Halkenburg, Kurapika/Leorio,
 Kalluto/Illumi et Franklin/Phinks. Aucun texte n’est une citation du manga ;
 aucun dialogue ne révèle une préparation ou une capacité cachée.
 
-Les introductions respectent les réglages complet, bref et désactivé existants,
-sans retarder le lancement. La fin distingue manche, duel et expiration du temps.
+Les introductions des duels IA et locaux respectent les réglages complet, bref et
+désactivé existants. Le mode complet prépare successivement les deux personnages
+dans la scène 3D avant le signal de combat ; le mode bref conserve ce signal.
+Le simulateur reste en attente pendant cette séquence passable, décrite dans
+[presentation/README.md](./presentation/README.md). La fin distingue manche, duel et expiration du temps.
 Elle attend le verdict réel, y compris la résolution post-mortem de Cat’s Name,
 et n’est pas produite pour une prévision ou un résultat nul. Le titre affiché
 est explicitement celui du profil local, sans l’attribuer à l’adversaire.

@@ -11,6 +11,11 @@ import { AIR_POSE, CROUCH_POSE } from './fightStance'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import { sampleTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FightNenZone } from './types'
+import { shizukuHitReaction } from './shizukuHitReaction'
+import { rosterHitReaction, type StrikeContactMotion } from './rosterHitReaction'
+import { physicalHitPose, type PhysicalHit } from './fightHitResponse'
+import type { createFightPoseContinuity } from './fightPoseContinuity'
+import { physicalFallPose } from './fightFallResponse'
 
 /**
  * What happens to a body when it is not the one attacking: struck, knocked
@@ -28,6 +33,10 @@ export interface ReactionContext {
   progress: number
   /** Where the last blow landed, for a struck fighter. */
   hitZone?: FightNenZone
+  strikeReaction?: 'blinky-hammer' | 'blinky-drive'
+  strikeMotion?: StrikeContactMotion
+  physicalHit?: PhysicalHit
+  poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
 
 const HIT: Record<FightNenZone, FightPose> = {
@@ -161,17 +170,19 @@ export function reactionPlan(
       return hitPlan(fighter, context, standing)
     case 'down':
       return {
-        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        pose: fallingPose(context, grounded),
         plant: false,
-        key: 'down',
+        key: context.physicalHit ? `physical-down:${context.physicalHit.sequence}` : 'down',
         blend: 0.03,
+        reactionFrame: context.physicalHit ? progress * 40 : undefined,
       }
     case 'ko':
       return {
-        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        pose: fallingPose(context, grounded),
         plant: false,
-        key: 'ko',
+        key: context.physicalHit ? `physical-ko:${context.physicalHit.sequence}` : 'ko',
         blend: 0.03,
+        reactionFrame: context.physicalHit ? progress * 40 : undefined,
       }
     case 'wakeup':
       return {
@@ -192,10 +203,54 @@ export function reactionPlan(
 }
 
 function hitPlan(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose): BodyPlan {
-  const recoil = sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)
+  if (context.physicalHit) return physicalHitPlan(fighter, context, standing)
+  const recoil =
+    directedRecoil(context) ?? sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)
   const airborne = fighter.y > 0
   const juggled = airborne ? addPoses(recoil, LAUNCHED) : recoil
-  return { pose: addPoses(standing, juggled), plant: !airborne, key: 'hit', blend: 0.02 }
+  return {
+    pose: addPoses(standing, juggled),
+    plant: !airborne,
+    key: context.strikeReaction ?? context.strikeMotion?.shape ?? 'hit',
+    blend: 0.02,
+  }
+}
+
+function physicalHitPlan(
+  fighter: ArcadeFighter,
+  context: ReactionContext,
+  standing: FightPose,
+): BodyPlan {
+  const hit = context.physicalHit!
+  const airborne = fighter.y > 0
+  const legs = airborne
+    ? pickJoints(physicalFallPose(hit, { progress: 0.18, grounded: false }), [
+        'leadHip',
+        'rearHip',
+        'leadKnee',
+        'rearKnee',
+      ])
+    : {}
+  return {
+    pose: addPoses(standing, physicalHitPose(hit, context.progress), legs),
+    plant: !airborne,
+    key: `physical-hit:${hit.sequence}`,
+    blend: 0,
+    reactionFrame: context.progress * hit.duration,
+  }
+}
+
+function fallingPose(context: ReactionContext, grounded: boolean): FightPose {
+  if (context.physicalHit)
+    return physicalFallPose(context.physicalHit, { progress: context.progress, grounded })
+  const progress = grounded ? context.progress : Math.min(context.progress, 0.18)
+  const falling = sample(KNOCKDOWN, progress, false)
+  const recoil = directedRecoil({ ...context, progress: 0 })
+  return recoil && progress < 0.18 ? lerpPose(recoil, falling, progress / 0.18) : falling
+}
+
+function directedRecoil(context: ReactionContext): FightPose | null {
+  return shizukuHitReaction(context) ?? rosterHitReaction(context)
 }
 
 function jumpPlan(progress: number, standing: FightPose): BodyPlan {

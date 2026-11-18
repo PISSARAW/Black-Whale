@@ -78,6 +78,7 @@ export function mountFightingPage(options: FightLifecycleOptions): () => void {
   }
   frame = requestAnimationFrame(loop)
   return () => {
+    options.match.qwen.dispose()
     cancelAnimationFrame(frame)
     stopEvents()
   }

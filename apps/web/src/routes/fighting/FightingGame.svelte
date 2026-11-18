@@ -425,6 +425,7 @@
       {replays}
       {pausePlan}
       {diagnostics}
+      qwen={match.qwen}
       {lessons}
       {school}
       {practice}

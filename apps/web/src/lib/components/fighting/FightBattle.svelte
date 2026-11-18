@@ -10,6 +10,9 @@
   import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
   import FightPauseTraining from './FightPauseTraining.svelte'
   import FightActiveObjective from './FightActiveObjective.svelte'
+  import FightQwenControl from './FightQwenControl.svelte'
+  import { supportsQwenDuel } from '$lib/fighting/qwen/observation'
+  import type { QwenDuel } from '$lib/fighting/qwen/duel'
   import FightMatchOverlays from './FightMatchOverlays.svelte'
   import FightMoveList from './FightMoveList.svelte'
   import FightControlsManual from './FightControlsManual.svelte'
@@ -41,6 +44,7 @@
   export let actions: FightBattleActions
   export let replays: FightReplayController
   export let pausePlan: FightPausePlan
+  export let qwen: QwenDuel | undefined = undefined
   export let diagnostics: FightMatchRuntime['diagnostics']
   export let lessons: FightLessonsController
   export let school: CombatSchool
@@ -53,6 +57,7 @@
     review?: ReplayReviewActions
   }
   let victoryActive = false
+  let launching = false
   let target: HTMLDivElement
   let comfort = defaultFightComfort()
   let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
@@ -68,6 +73,15 @@
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
+  function startWithPresentation() {
+    if (touchDevice) void enterFightFullscreen(target)
+    if (state.mode === 'training' || replays.active) actions.startFight()
+    else launching = true
+  }
+  function beginAfterIntroduction() {
+    launching = false
+    actions.startFight()
+  }
   function menuKey(event: KeyboardEvent) {
     if (event.key !== 'Escape' || event.repeat || event.defaultPrevented || paused) return
     event.preventDefault()
@@ -113,8 +127,13 @@
       >
     </div>
   </header>
+  {#if qwen && supportsQwenDuel(state) && !replays.active}
+    <FightQwenControl {qwen} disabled={paused || state.phase === 'finished'} />
+  {/if}
   <div class="battle-surface match-area" tabindex="-1">
     <FightStage
+      introEnabled={launching && !replays.active}
+      onIntroComplete={beginAfterIntroduction}
       {state}
       {language}
       {comfort}
@@ -154,10 +173,8 @@
         {state}
         {language}
         replay={replays.active}
-        startFight={() => {
-          if (touchDevice) void enterFightFullscreen(target)
-          actions.startFight()
-        }}
+        introEnabled={launching}
+        startFight={startWithPresentation}
         rematch={actions.rematch}
         continueMatch={actions.continueMatch}
         chooseAgain={actions.chooseAgain}

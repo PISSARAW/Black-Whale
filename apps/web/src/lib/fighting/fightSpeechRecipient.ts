@@ -34,6 +34,7 @@ export function recipientHears(
   return (
     canHear(body) &&
     !body.arsenalSleep &&
+    !body.halkSoulSleep &&
     !recipientUnconscious(body) &&
     Math.hypot(state[speaker].x - body.x, state[speaker].y - body.y) <= 18
   )

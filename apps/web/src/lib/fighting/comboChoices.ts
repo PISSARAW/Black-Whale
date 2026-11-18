@@ -1,4 +1,10 @@
 import { hasDuelComboProfile } from './duelComboProfiles'
+import {
+  openingDestinations,
+  openingFollowup,
+  openingReward,
+  openingStartup,
+} from './comboOpenings'
 import { attackAuraCost } from './fightAttackCost'
 import { attackData } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
@@ -13,10 +19,8 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
   const fighter = state[side]
   const current = moveById(fighter.attack?.moveId)
   if (!hasDuelComboProfile(fighter.id) || !fighter.attack || !current) return []
-  return [
-    ...current.cancelInto.map((id) => ({ id, link: false })),
-    ...(current.linkInto ?? []).map((id) => ({ id, link: true })),
-  ].flatMap(({ id, link }) => {
+  const openings = openingDestinations(fighter)
+  return cancelChoices(current, openings).flatMap(({ id, link }) => {
     const move = moveById(id)
     if (!move) return []
     const cost = attackAuraCost({
@@ -26,8 +30,17 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
       concealed: fighter.nen.in && move.kind === 'special',
     })
     const status = choiceStatus({ state, side, current, move, link })
-    return [{ move, link, cost, status }]
+    const opening = openings.includes(id) ? fighter.attack?.comboOpening : undefined
+    return [{ move, link, cost, status, opening, reward: openingReward(fighter, id) }]
   })
+}
+
+function cancelChoices(move: FighterMove, openings: string[]) {
+  const cancels = new Set([...move.cancelInto, ...openings])
+  return [
+    ...Array.from(cancels, (id) => ({ id, link: false })),
+    ...(move.linkInto ?? []).filter((id) => !cancels.has(id)).map((id) => ({ id, link: true })),
+  ]
 }
 
 function choiceStatus(options: {
@@ -58,6 +71,7 @@ function choiceExpired(options: {
 }) {
   const { fighter, target, move, link } = options
   const attack = fighter.attack!
-  if (attack.confirmedHit && target.hitStun <= move.tuning.startup) return true
+  const startup = openingStartup(move.tuning.startup, openingFollowup(fighter, move.id))
+  if (attack.confirmedHit && target.hitStun <= startup) return true
   return !link && attack.frame > attackData(attack.kind, fighter).cancelEnd
 }

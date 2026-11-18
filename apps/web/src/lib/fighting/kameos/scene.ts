@@ -2,11 +2,55 @@ import { fightWorldY } from '../fightCoordinates'
 import { FIGHT_MODEL_POSES } from '../sceneMotion'
 import { disposeMountedVisitHatsu } from '../visitHatsuModel'
 import type { ProjectionSceneOptions } from '../hanzoProjectionScene'
-import type { FighterPose, FightSide, FightState } from '../types'
+import type { FighterId, FighterPose, FightSide, FightState } from '../types'
 import { KAMEO_CATALOGUE } from './catalogue'
 import type { KameoId, KameoSlot } from './types'
+import { tubeppaAnimation } from './tubeppaMotion'
+import { marayamAnimation } from './marayamMotion'
+import { zhangLeiAnimation } from './zhangLeiMotion'
+import { morenaAnimation } from './morenaMotion'
+import { luzurusAnimation } from './luzurusMotion'
+import { salesaleAnimation } from './salesaleMotion'
+import type { HumanPose } from '$lib/tour/humanAnimation'
 
 type Model = ReturnType<ProjectionSceneOptions['buildFighter']>
+const ANIMATIONS: Partial<Record<FighterId, typeof tubeppaAnimation>> = {
+  tubeppa: tubeppaAnimation,
+  marayam: marayamAnimation,
+  zhanglei: zhangLeiAnimation,
+  morena: morenaAnimation,
+  luzurus: luzurusAnimation,
+  salesale: salesaleAnimation,
+}
+interface HeldModel {
+  model: Model
+  id: string
+  fallFrame?: number
+  lastFrame?: number
+}
+
+function animateKameo(
+  held: HeldModel,
+  slot: KameoSlot,
+  context: {
+    frame: number
+    seconds: number
+    pose: HumanPose
+  },
+) {
+  const animation = ANIMATIONS[slot.fighter.id]
+  if (!animation) {
+    held.model.animate(context.seconds, context.pose)
+    return
+  }
+  const dead = slot.phase === 'eliminated' || slot.fighter.health <= 0
+  if (context.frame < (held.lastFrame ?? 0)) held.fallFrame = undefined
+  held.lastFrame = context.frame
+  if (!dead) held.fallFrame = undefined
+  if (dead) held.fallFrame ??= context.frame
+  const fallen = Math.min(1, (context.frame - (held.fallFrame ?? context.frame)) / 42)
+  held.model.animate(context.seconds, 'idle', animation(slot, context.seconds, fallen))
+}
 
 /** Scale of the body while it appears and goes, so a call reads as an arrival. */
 export function kameoPresence(slot: KameoSlot): number {
@@ -32,7 +76,7 @@ function kameoPose(slot: KameoSlot): FighterPose | 'fallen' {
 
 /** Draws each camp's kameo body beside the duel, with the visit likeness of its character. */
 export function createKameoScene(options: ProjectionSceneOptions) {
-  const held = new Map<FightSide, { model: Model; id: string }>()
+  const held = new Map<FightSide, HeldModel>()
   function modelFor(side: FightSide, slot: KameoSlot): Model {
     const current = held.get(side)
     if (current?.id === slot.fighter.id) return current.model
@@ -60,7 +104,7 @@ export function createKameoScene(options: ProjectionSceneOptions) {
         model.root.position.set(options.worldX(slot.fighter.x), fightWorldY(slot.fighter.y), 0.2)
         model.root.rotation.y = slot.fighter.facing * 1.25
         const pose = figure.pose === 'fallen' ? 'fallen' : FIGHT_MODEL_POSES[figure.pose]
-        model.animate(seconds, pose)
+        animateKameo(held.get(side)!, slot, { frame: state.frame, seconds, pose })
       }
     },
     dispose() {

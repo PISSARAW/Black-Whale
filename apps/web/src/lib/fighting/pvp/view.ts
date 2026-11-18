@@ -19,6 +19,7 @@ import type { ArcadeFighter, FightSide, FightState } from '../types'
 const SIDE_FIELDS = new Set([
   'owner',
   'originalId',
+  'origin',
   'target',
   'issuer',
   'recipient',
@@ -49,7 +50,8 @@ const SIDE_FIELDS = new Set([
 export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
   if (field === 'sustainedKeys' && typeof value === 'string') return localSustainedKey(value)
-  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
+  const scalar = swappedScalar(value, field)
+  if (scalar !== value) return scalar
   if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
   if (!value || typeof value !== 'object') return value
   return Object.fromEntries(
@@ -58,6 +60,12 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
       localPerspective(entry, true, key),
     ]),
   )
+}
+function swappedScalar(value: unknown, field: string): unknown {
+  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
+  if (field !== 'key') return value
+  if (value === 'mind:player') return 'mind:opponent'
+  return value === 'mind:opponent' ? 'mind:player' : value
 }
 function localSide(value: string): string {
   if (value === 'player') return 'opponent'
@@ -70,11 +78,7 @@ function localSustainedKey(value: string): string {
 }
 
 function redactEnemy(enemy: ArcadeFighter) {
-  enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
-    ...anchor,
-    source: undefined,
-    theftId: undefined,
-  }))
+  redactPrivateMaterials(enemy)
   redactLegacyArsenal(enemy)
   enemy.blackVoiceScreen = undefined
   enemy.littleEyeScreen = undefined
@@ -133,12 +137,33 @@ function redactEnemy(enemy: ArcadeFighter) {
     }
 }
 
+function redactPrivateMaterials(enemy: ArcadeFighter) {
+  enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
+    ...anchor,
+    source: undefined,
+    theftId: undefined,
+  }))
+  if (enemy.halkSoul) enemy.halkSoul = { ...enemy.halkSoul, mind: undefined }
+  enemy.halkSedativeSpent = undefined
+  enemy.luiniExit = undefined
+  enemy.luiniSelectedDestination = undefined
+  enemy.luiniComplete = undefined
+  if (enemy.bloodyMary) enemy.bloodyMary = { ...enemy.bloodyMary, lastSeen: undefined }
+  enemy.biohazardFootage = undefined
+  enemy.biohazardSignal = undefined
+  enemy.biohazardDevices = enemy.biohazardDevices?.map((item) => ({
+    ...item,
+    recordings: undefined,
+  }))
+}
+
 function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
   return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
   view.arsenalTrace = undefined
+  redactSoulView(view, side)
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
@@ -210,4 +235,16 @@ function redactReserves(view: FightState, side: FightSide): void {
     redactEnemy(member)
     if (!gyoSight(observer)) hideGumObjectAnchors(member)
   }
+}
+
+function redactSoulView(view: FightState, side: FightSide): void {
+  view.halkSoulLinks = view.halkSoulLinks?.map((link) => ({
+    ...link,
+    sourceMind:
+      link.sourceMind.side === side ? link.sourceMind : { ...link.sourceMind, identity: undefined },
+    targetMind:
+      link.targetMind.side === side ? link.targetMind : { ...link.targetMind, identity: undefined },
+    preparedSedative: link.owner === side ? link.preparedSedative : 0,
+  }))
+  if (view.halkenburgModes) view.halkenburgModes = { [side]: view.halkenburgModes[side] }
 }

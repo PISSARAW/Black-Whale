@@ -1,4 +1,6 @@
+import { halkenburgArrowUtility } from './halkenburgArrow'
 import type { GuardRequirement } from './combatProperties'
+import { openingFrameData } from './comboOpenings'
 import { paperUtilityAttack } from './kallutoPaper'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
@@ -25,6 +27,7 @@ import { sleepingBody } from './hanzoProjection'
 import { luiniHurtboxes } from './luiniPassage'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
+import { directionalFrameData } from './directionalChain'
 import { fightingStyle } from './fightStyles'
 import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
@@ -134,7 +137,11 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   const move = moveById(frameMoveId(fighter))
-  if (move) return blinkyAttackData(movesetAttackData(fighter, move), fighter)
+  if (move)
+    return blinkyAttackData(
+      directionalFrameData(movesetAttackData(fighter, move), fighter.attack?.directionalChain),
+      fighter,
+    )
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]
@@ -179,20 +186,25 @@ function movesetAttackData(
   const data = move.tuning
   const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
-  return {
-    ...data,
-    guard: move.guard,
-    canHitDowned: move.canHitDowned,
-    reversalInvulnerableFrames: move.reversalInvulnerableFrames,
-    startup,
-    cancelEnd: move.cancelWindow ? startup + move.cancelWindow.end : data.startup + data.active + 6,
-    box: {
-      left: 1.4,
-      right: data.reach,
-      bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
-      top: antiAir ? Math.max(15, data.top) : data.top,
+  return openingFrameData(
+    {
+      ...data,
+      guard: move.guard,
+      canHitDowned: move.canHitDowned,
+      reversalInvulnerableFrames: move.reversalInvulnerableFrames,
+      startup,
+      cancelEnd: move.cancelWindow
+        ? startup + move.cancelWindow.end
+        : data.startup + data.active + 6,
+      box: {
+        left: 1.4,
+        right: data.reach,
+        bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
+        top: antiAir ? Math.max(15, data.top) : data.top,
+      },
     },
-  }
+    fighter.attack?.comboFollowup,
+  )
 }
 
 function attackReach(kind: AttackKind, reach: number, specialRange: number): number {
@@ -246,6 +258,7 @@ function utilityAttack(fighter: ArcadeFighter): boolean {
   if (voconteUtilityCast(fighter)) return true
   return (
     battleUtilityAttack(fighter) ||
+    halkenburgArrowUtility(fighter) ||
     fighter.attack?.moveId === LYNCH_MOVE ||
     [
       padailleUtilityAttack,
@@ -276,7 +289,7 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
   if (fighter.clothCapture) return []
   if (fighter.luiniPassage) return luiniHurtboxes(fighter)
   if (fighter.hanzoProjection) return hurtboxes({ ...sleepingBody(fighter), knockdownFrames: 1 })
-  if (fighter.knockdownFrames > 0 || fighter.arsenalSleep) {
+  if (fighter.knockdownFrames > 0 || fighter.arsenalSleep || fighter.halkSoulSleep) {
     return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]
   }
   const crouch = fighter.crouching ? 4 : 0
@@ -296,12 +309,13 @@ export function pushbox(fighter: ArcadeFighter): FightBox {
     return worldBox(fighter, { left: -0.1, right: 0.1, bottom: 0, top: 0.2 })
   if (fighter.hanzoProjection) return pushbox({ ...sleepingBody(fighter), knockdownFrames: 1 })
   const airborne = fighter.y > 0
-  const halfWidth = fighter.knockdownFrames > 0 ? 3.5 : fighter.crouching ? 2.35 : 2.05
+  const down = fighter.knockdownFrames > 0 || Boolean(fighter.halkSoulSleep)
+  const halfWidth = down ? 3.5 : fighter.crouching ? 2.35 : 2.05
   return worldBox(fighter, {
     left: -halfWidth,
     right: halfWidth,
     bottom: 0,
-    top: fighter.knockdownFrames > 0 ? 2.8 : airborne ? 8.5 : fighter.crouching ? 7.5 : 11,
+    top: down ? 2.8 : airborne ? 8.5 : fighter.crouching ? 7.5 : 11,
   })
 }
 

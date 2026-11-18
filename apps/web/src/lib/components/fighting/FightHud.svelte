@@ -3,6 +3,7 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
+  import { airRecoveryAvailable } from '$lib/fighting/airRecovery'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
@@ -67,6 +68,11 @@
         </div>
         <FightComboMaster {state} {side} {language} compact />
         <FightKameoBadge {state} {side} {language} />
+        {#if state.mode === 'training' && !state.hitstop && airRecoveryAvailable(fighter)}
+          <span class="air-recovery">
+            {language === 'fr' ? 'Peut agir en l’air' : 'Can act in the air'}
+          </span>
+        {/if}
       </div>
     </div>
   {/each}
@@ -119,6 +125,15 @@
     .fighter-meter {
       gap: 5px;
     }
+  }
+  .air-recovery {
+    display: inline-block;
+    margin-top: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    color: #ccf8e5;
+    background: #143b32;
+    border-radius: 0.25rem;
+    font: 700 var(--hud-font)/1.25 var(--font-mono);
   }
   .opponent-meter {
     grid-column: 3;

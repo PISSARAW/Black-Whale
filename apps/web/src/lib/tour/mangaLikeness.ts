@@ -39,10 +39,26 @@ export interface MangaLikeness {
     | 'feitan-crop'
     | 'bill-flames'
     | 'basho-pompadour'
+    | 'tubeppa-bowl'
+    | 'marayam-crop'
+    | 'morena-long'
+    | 'luzurus-puffs'
+    | 'salesale-wave'
 }
 
 // Geometry directions refine the catalogue's faces; no random face is assigned to an id.
 const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
+  'morena-prudo': {
+    eyes: 'almond',
+    cheek: 0.159,
+    jaw: 0.091,
+    chin: 0.2,
+    brow: 0.7,
+    nose: 0.85,
+    mouth: 0.098,
+    hair: 'morena-long',
+    neck: 0.043,
+  },
   saiyu: {
     eyes: 'heavy',
     cheek: 0.151,
@@ -154,9 +170,62 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
   'prince-fugetsu': { eyes: 'round', cheek: 0.15, jaw: 0.065, brow: 0.6 },
   'prince-momoze': { eyes: 'round', cheek: 0.144, jaw: 0.061, brow: 0.6 },
   'prince-halkenburg': { eyes: 'narrow', cheek: 0.148, jaw: 0.087, brow: 0.85, hair: 'side-part' },
-  'prince-zhanglei': { eyes: 'heavy', cheek: 0.185, jaw: 0.13, chin: 0.17, mouth: 0.065 },
-  'prince-salesale': { eyes: 'heavy', cheek: 0.189, jaw: 0.125, chin: 0.18 },
-  'prince-luzurus': { eyes: 'narrow', cheek: 0.155, jaw: 0.092, hair: 'curtain' },
+  'prince-zhanglei': {
+    eyes: 'heavy',
+    cheek: 0.185,
+    jaw: 0.16,
+    chin: 0.23,
+    mouth: 0.078,
+    nose: 1.1,
+    brow: 0,
+    neck: 0.075,
+    headY: 1.69,
+  },
+  'prince-marayam': {
+    eyes: 'round',
+    cheek: 0.198,
+    jaw: 0.135,
+    chin: 0.175,
+    nose: 0.6,
+    mouth: 0.052,
+    brow: 0.55,
+    neck: 0.047,
+    headY: 1.73,
+    hair: 'marayam-crop',
+  },
+  'prince-tubeppa': {
+    eyes: 'narrow',
+    cheek: 0.163,
+    jaw: 0.115,
+    chin: 0.235,
+    nose: 1.65,
+    mouth: 0.086,
+    brow: 0.75,
+    neck: 0.054,
+    hair: 'tubeppa-bowl',
+  },
+  'prince-salesale': {
+    eyes: 'narrow',
+    cheek: 0.19,
+    jaw: 0.16,
+    chin: 0.22,
+    nose: 1.3,
+    mouth: 0.172,
+    brow: 1.35,
+    neck: 0.075,
+    hair: 'salesale-wave',
+  },
+  'prince-luzurus': {
+    eyes: 'almond',
+    cheek: 0.157,
+    jaw: 0.115,
+    chin: 0.225,
+    hair: 'luzurus-puffs',
+    brow: 1,
+    nose: 1.65,
+    mouth: 0.077,
+    neck: 0.049,
+  },
   'nasubi-hui-guo-rou': {
     eyes: 'heavy',
     cheek: 0.19,

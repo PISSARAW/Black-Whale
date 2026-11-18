@@ -1,10 +1,13 @@
 <script lang="ts">
+  import FightHalkenburgStatus from './FightHalkenburgStatus.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
 </script>
+
+<FightHalkenburgStatus {state} {side} {language} />
 
 {#if state[side].battleCantabile?.selectedModel}
   <p role="status">

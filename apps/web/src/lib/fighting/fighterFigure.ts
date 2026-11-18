@@ -35,6 +35,7 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.id,
+    fighter.halkCohortBody,
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
@@ -82,7 +83,7 @@ export function buildFightFigure(options: {
     hidden: false,
     human: {
       role: definition.modelRole,
-      identity: definition.modelId,
+      identity: fighter.halkCohortBody ? 'halkenburg-supporter' : definition.modelId,
       pose: 'idle',
       aura: fighter.nen.mode,
       nen: { ...fighter.nen, en: null },

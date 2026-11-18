@@ -31,6 +31,7 @@ import { padailleBoundAction, padailleEscapeAi } from './padailleEscape'
 import { luiniArsenalAi } from './luiniArsenal'
 import { crossGameBusy } from './crossGame'
 import { planOpponentNen } from './opponentNenPlan'
+import { projectileDefenceHolds } from './projectileDefence'
 import { cyclotronAiAction } from './phinksAction'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { performMelodyAction } from './melodyAction'
@@ -43,6 +44,8 @@ import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
+import { performDirectionalChain } from './directionalChainCommand'
+import { pursuitAttackAllowed } from './airPursuitCommand'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
@@ -196,8 +199,19 @@ export function performMove(options: PerformMoveOptions): FightState {
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   if (state.catsName) return state
+  if (!futureAcceptsMove(state, side)) return state
+  const command = { state, side, action, input }
   const selected = moveForAction(state[side], action, input)
   if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
+  return (
+    performDirectionalChain(command, performAuraAttack) ?? executeSelectedMove(command, selected)
+  )
+}
+
+function executeSelectedMove(
+  { state, side, action, input }: Required<PerformMoveOptions>,
+  selected: ReturnType<typeof moveForAction>,
+): FightState {
   const override = characterMoveOverride(
     { state, side, action, input },
     selected,
@@ -228,6 +242,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
   options = { ...options, state: expireHistoricalMatter(options.state) }
+  if (!pursuitAttackAllowed(options)) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
@@ -270,9 +285,11 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 export const opponentAttack = (state: FightState): FightState =>
-  priorityBusyAi(state, performAuraAttack) ??
-  maryAiAction(state, performAuraAttack) ??
-  contextualOpponentAttack(state)
+  projectileDefenceHolds(state)
+    ? state
+    : (priorityBusyAi(state, performAuraAttack) ??
+      maryAiAction(state, performAuraAttack) ??
+      contextualOpponentAttack(state))
 
 function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state

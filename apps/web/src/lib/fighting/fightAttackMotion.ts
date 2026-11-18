@@ -1,5 +1,6 @@
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
+import { franklinBarrageMotion } from './franklinBarrageMotion'
 import { lerpPose, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, AttackKind } from './types'
@@ -108,20 +109,33 @@ export interface AttackMotionOptions {
   frames: AttackFrameData
   /** Hand-authored moves already contain much of this motion. */
   authored: boolean
+  frame?: number
 }
 
 export function attackMotionAccent(options: AttackMotionOptions): FightPose {
   const { fighter, frames, authored } = options
   const attack = fighter.attack
   if (!attack || attack.variant === 'air' || attack.variant === 'throw') return NEUTRAL_POSE
+  const barrage = franklinBarrageMotion(options)
+  if (barrage) return barrage
   const family = fightFamily(fighter.id)
   const profile = fighterMotionProfile(fighter.id)
   const strength = KIND_WEIGHT[attack.kind] * profile.attack * (authored ? 0.4 : 1)
-  if (attack.frame < frames.startup)
-    return scalePose(WINDUP[family], strength * easeIn(attack.frame / frames.startup))
-  if (attack.frame < frames.startup + frames.active) return scalePose(DRIVE[family], strength)
-  const recovery = (attack.frame - frames.startup - frames.active) / frames.recovery
-  return scalePose(lerpPose(FOLLOW[family], NEUTRAL_POSE, easeOut(recovery)), strength)
+  const frame = options.frame ?? attack.frame
+  if (frame < frames.startup) {
+    const preparation = frame / frames.startup
+    const load = scalePose(WINDUP[family], easeIn(Math.min(1, preparation / 0.6)))
+    return scalePose(lerpPose(load, DRIVE[family], smooth((preparation - 0.6) / 0.4)), strength)
+  }
+  if (frame < frames.startup + frames.active) return scalePose(DRIVE[family], strength)
+  const recovery = (frame - frames.startup - frames.active) / frames.recovery
+  const release = lerpPose(DRIVE[family], FOLLOW[family], smooth(recovery / 0.3))
+  return scalePose(release, strength * (1 - easeOut(recovery)))
+}
+
+function smooth(value: number): number {
+  const x = Math.min(1, Math.max(0, value))
+  return x * x * (3 - 2 * x)
 }
 
 function easeIn(value: number): number {

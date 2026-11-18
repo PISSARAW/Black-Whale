@@ -248,6 +248,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   cyclotronWindup?: { frame: number }
   attack: FightAttack | null
   bufferedAttack: {
+    directionalChain?: import('./directionalChain').DirectionalChain
     cancelFrom?: string
     copiedPage?: ChrolloPage
     bufferFrames?: number

@@ -26,5 +26,5 @@ function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 function bodyDown(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.arsenalSleep) || fighter.knockdownFrames > 0
+  return Boolean(fighter.arsenalSleep || fighter.halkSoulSleep) || fighter.knockdownFrames > 0
 }

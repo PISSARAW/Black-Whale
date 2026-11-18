@@ -1,3 +1,6 @@
+import type { ProjectileHit } from '../projectiles'
+import { launchHalkenburgArrow, resolveHalkenburgArrow } from '../halkenburgArrow'
+import { halkenburgMode } from '../halkenburgSoulTypes'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
@@ -5,7 +8,7 @@ import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
 import { halkenburgRosterVariant } from '../halkenburgVariant'
-import type { ArcadeFighter, FightState } from '../types'
+import type { ArcadeFighter, FightSide, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
@@ -21,12 +24,12 @@ const SHOT_LIFE_COST = 8
 export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
   onTrigger: nock,
-  onImpact: possess,
-  onFrame: (state) => ({
-    ...state,
-    player: tick(state, 'player'),
-    opponent: tick(state, 'opponent'),
-  }),
+  onImpact: (context) =>
+    halkenburgMode(context.state, context.side) === 'souls' ? context.state : possess(context),
+  onFrame: (state) => {
+    const launched = launchHalkenburgArrow(launchHalkenburgArrow(state, 'player'), 'opponent')
+    return { ...launched, player: tick(launched, 'player'), opponent: tick(launched, 'opponent') }
+  },
 }
 
 function nock({ state, side }: HatsuTriggerContext): FightState {
@@ -34,14 +37,24 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const supporters = readyCohort(state, side)
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
-  const supporter = ready ? supporters[rng % supporters.length] : undefined
+  const participant = ready
+    ? chooseParticipant({
+        state,
+        side,
+        participants: supporters.map((supporter) => supporter.id),
+        rng,
+      })
+    : undefined
   return {
     ...state,
     rng: ready ? rng : state.rng,
     [side]: {
       ...archer,
-      halkenburgSupporter: supporter?.id,
-      health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
+      halkenburgSupporter: participant,
+      health:
+        ready && halkenburgMode(state, side) === 'roster'
+          ? Math.max(1, archer.health - SHOT_LIFE_COST)
+          : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
         arrowNocked: ready ? 1 : 0,
@@ -49,6 +62,19 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
       },
     },
   }
+}
+
+function chooseParticipant(options: {
+  state: FightState
+  side: FightSide
+  participants: string[]
+  rng: number
+}) {
+  const { state, side, participants, rng } = options
+  const archer = state[side]
+  if (halkenburgMode(state, side) === 'souls' && archer.id === 'halkenburg' && !archer.nenOwner)
+    participants.push(`self:${side}`)
+  return participants[rng % participants.length]
 }
 
 /** The arrow pierces every defence, so a guarded hit still lands it. */
@@ -107,4 +133,17 @@ function ownsBow(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'halkenburg') return true
   if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'halkenburg')
   return fighter.kurapika?.held?.loaded === true && fighter.kurapika.held.source === 'halkenburg'
+}
+
+export function settleHalkenburgArrow(state: FightState, hit: ProjectileHit): FightState {
+  return resolveHalkenburgArrow(state, hit, (current, side, defenderSide) =>
+    possess({
+      state: current,
+      side,
+      defenderSide,
+      source: 'halkenburg',
+      blocked: false,
+      concealed: false,
+    }),
+  )
 }

@@ -41,6 +41,20 @@ export function motionOf(fighter: ArcadeFighter): FighterMotion {
   return fighter.motion ?? STILL_MOTION
 }
 
+export function pursuitTakeoff(fighter: ArcadeFighter) {
+  return {
+    y: 0.15,
+    velocityY: 47,
+    motion: {
+      ...motionOf(fighter),
+      velocityX: fighter.facing * 35,
+      prejumpFrames: 0,
+      landingFrames: 0,
+      dash: null,
+    },
+  }
+}
+
 function withMotion(fighter: ArcadeFighter, motion: Partial<FighterMotion>): ArcadeFighter {
   return { ...fighter, motion: { ...motionOf(fighter), ...motion } }
 }

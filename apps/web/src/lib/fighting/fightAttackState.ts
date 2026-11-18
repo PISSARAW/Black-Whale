@@ -12,6 +12,9 @@ export interface FightAttack {
   /** The AI already rolled its follow-up for this contact (aiComboFollowUp.ts). */
   aiFollowUpRolled?: boolean
   confirmedHit?: boolean
+  comboOpening?: import('./comboOpenings').ComboOpening
+  comboFollowup?: import('./comboOpenings').ComboOpening
+  directionalChain?: import('./directionalChain').DirectionalChain
   kind: AttackKind
   frame: number
   impacted: boolean

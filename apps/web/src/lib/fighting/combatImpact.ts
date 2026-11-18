@@ -1,3 +1,4 @@
+import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
 import { catchBungeeObject } from './hisokaCatch'
 import { prepareDefence } from './combatDefence'
@@ -21,6 +22,8 @@ import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
+import { comboOpening, type ComboOpening } from './comboOpenings'
+import { launchesWithDirectionalEnding } from './directionalChain'
 import {
   activeHitbox,
   attackData,
@@ -107,9 +110,6 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
-  const spent = spendAttacker(attacker, defence)
-  const needle = resolveIllumiContact({ state, side, defence, spent })
-  if (needle) return needle
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -118,11 +118,31 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     critical,
   })
   const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
+  const spent = spendAttacker(
+    attacker,
+    defence,
+    comboOpening({
+      attacker,
+      defender: sleepingBody(defender),
+      position: collision.position,
+      reach: data.box.right,
+      damage,
+      defence,
+      launch: antiAir,
+      counter: opening.counterHit,
+      punish: opening.punish,
+      wall: wallSplat,
+      knockdown,
+      hits: comboHits,
+    }),
+  )
+  const needle = resolveIllumiContact({ state, side, defence, spent })
+  if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
     damage,
     knockdown,
-    antiAir,
+    antiAir: launchesWithDirectionalEnding(attacker, antiAir),
     wallSplat,
     counterHit: opening.counterHit,
     comboHits,
@@ -233,6 +253,7 @@ function impactPoints(options: {
 function spendAttacker(
   attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
+  opening?: ComboOpening,
 ): ArcadeFighter {
   const spent = setIn(
     releaseFocusedAura({
@@ -241,6 +262,7 @@ function spendAttacker(
         ...attacker.attack,
         impacted: true,
         confirmedHit: !defence.blocked && !defence.avoided,
+        ...(opening ? { comboOpening: opening } : {}),
         confirmedBlock: defence.blocked && !defence.parried && !defence.avoided,
         auraCharged: false,
       },
@@ -284,8 +306,8 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
   )
     return state
-  const captured = captureIncomingProjectile(state, hit)
-  if (captured) return captured
+  const handled = alternateProjectileResolution(state, hit)
+  if (handled) return handled
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
@@ -452,11 +474,13 @@ function impactWallSplat(options: {
 }): boolean {
   return (
     !options.defence.avoided &&
-    grammarAllowsWallSplat(options.attacker, options.knockback) &&
+    (options.attacker.attack?.directionalChain === 'air' ||
+      grammarAllowsWallSplat(options.attacker, options.knockback)) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }
 
-function captureIncomingProjectile(state: FightState, hit: ProjectileHit): FightState | null {
+function alternateProjectileResolution(state: FightState, hit: ProjectileHit): FightState | null {
+  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
   return catchBungeeObject(state, hit) ?? captureCuldceptProjectile(state, hit)
 }

@@ -35,7 +35,10 @@ export function updateControlledFighter(fighter: ArcadeFighter, input: FightInpu
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
+    input,
   )
+  if (advanced.halkSoulSleep)
+    return poseFighter({ ...advanced, attack: null, bufferedAttack: null, blocking: false })
   if (advanced.needlePuppet) return advanced
   if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
@@ -76,6 +79,8 @@ export function updateOpponent(
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
   if (advanced.easterEgg) return poseFighter(advanced)
+  if (advanced.halkSoulSleep)
+    return poseFighter({ ...advanced, attack: null, bufferedAttack: null, blocking: false })
   if (advanced.needlePuppet) return advanced
   if (maryAiBusy(advanced)) return maryAiBody(advanced)
   if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }

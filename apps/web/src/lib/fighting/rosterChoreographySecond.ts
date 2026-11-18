@@ -163,7 +163,17 @@ export const SECOND_ROSTER_CHOREOGRAPHY = {
     recovery: 0.41,
   },
   luini: {
-    strikes: ['jab', 'hook', 'lowKick', 'sweep', 'airSlash', 'dive', 'thrust', 'cross', 'backhand'],
+    strikes: [
+      'thrust',
+      'slash',
+      'lowKick',
+      'sweep',
+      'airSlash',
+      'dive',
+      'thrust',
+      'slash',
+      'backhand',
+    ],
     load: { body: [-0.06, 0, 0.08], head: [0.06, 0, 0] },
     drive: { chest: [0.04, -0.15, 0.07], rearShoulder: [0.1, 0, -0.1], leadWrist: [0.13, 0, 0] },
     release: { body: [-0.035, 0, 0.035] },

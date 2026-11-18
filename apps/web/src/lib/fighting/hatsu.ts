@@ -29,6 +29,7 @@ export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
  * in Chrollo's book. Their techniques remain Ren-charged strikes.
  */
 export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): FighterId | null {
+  if (fighter.halkForeignMind || fighter.halkSoulSleep) return null
   if (predatorNenLocked(fighter)) return null
   if (chainAbilitySealed(fighter, moveId)) return null
   const hatsu = hatsuFor(fighter.id)
@@ -46,6 +47,7 @@ export function resolveDeathHatsu(
   victimSide: FightSide,
 ): FightState | null {
   const victim = state[victimSide]
+  if (victim.halkForeignMind) return null
   const deathMoveId = hatsuFor(victim.id).stealableOutsideDuel?.id
   if (victim.hatsuEffects.hatsuStolen > 0 || chainAbilitySealed(victim, deathMoveId)) return null
   return hatsuFor(victim.id).onDeath?.({ state, victimSide, killerSide }) ?? null

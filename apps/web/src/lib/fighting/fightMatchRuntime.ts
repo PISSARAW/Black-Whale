@@ -6,7 +6,9 @@ import { applyReplayCommand } from './fightReplayCommands'
 import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { createFightReplayController } from './fightReplayController'
 import { createResponseDiagnostics } from './fightResponseDiagnostics'
-import { tickFight } from './engine'
+import { tickFight, performAuraAttack } from './engine'
+import { performArsenalAction } from './arsenalExecution'
+import { createQwenDuel, type QwenDuel } from './qwen/duel'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 import type { ReplayCommand, ReplayPacket } from './fightReplayTypes'
 import type { CareerTracker } from './career/runtime'
@@ -18,11 +20,12 @@ interface Queued {
 }
 export function createFightMatchRuntime(
   clock: () => number = () => performance.now(),
-  options: { record?: boolean; career?: CareerTracker } = {},
+  options: { record?: boolean; career?: CareerTracker; qwen?: QwenDuel } = {},
 ) {
   const replays = createFightReplayController()
   const diagnostics = createResponseDiagnostics()
   const career = options.career
+  const qwen = options.qwen ?? createQwenDuel({ clock })
   let pending: Queued[] = []
   let boundary: FightState | null = null
   let frameObserver: ((state: FightState) => void) | null = null
@@ -31,6 +34,7 @@ export function createFightMatchRuntime(
     diagnostics.clearQueued()
   }
   function begin(state: FightState | null) {
+    qwen.reset()
     boundary = state
     clear()
     diagnostics.reset()
@@ -85,7 +89,32 @@ export function createFightMatchRuntime(
     if (fightReplayHash(boundary) !== fightReplayHash(state))
       replays.append(boundary, [0, 0, 0, [panelReplayCommand(boundary, state)]], state)
   }
+  function driveInputs(
+    state: FightState,
+    input: FightInput,
+    settings: { dt: number; opponentInput?: FightInput },
+  ) {
+    const driven = state.frameAccumulator + settings.dt >= FIXED_STEP ? qwen.step(state) : null
+    enqueueDriven(driven)
+    return {
+      player: packReplayInput(driven?.player ?? input),
+      opponent: packReplayInput(driven?.opponent ?? settings.opponentInput ?? EMPTY_INPUT),
+    }
+  }
+
+  function enqueueDriven(driven: ReturnType<QwenDuel['step']>) {
+    if (!driven) return
+    for (const command of driven.commands) pending.push({ command, receipt: null })
+    for (const utility of driven.utilities)
+      pending.push({
+        action: (current) =>
+          performArsenalAction({ state: current, ...utility }, performAuraAttack),
+        receipt: null,
+      })
+  }
+
   return {
+    qwen,
     replays,
     diagnostics,
     observeFrames(observer: (state: FightState) => void) {
@@ -133,8 +162,7 @@ export function createFightMatchRuntime(
       if (state.phase !== 'fighting') return state
       recordBoundary(state)
       const dt = Math.min(0.05, Math.max(0, options.dt))
-      const player = packReplayInput(input)
-      const opponent = packReplayInput(options.opponentInput ?? EMPTY_INPUT)
+      const { player, opponent } = driveInputs(state, input, { ...options, dt })
       const applied =
         state.frameAccumulator + dt >= FIXED_STEP ? flush(state) : { state, commands: [] }
       const after = tickFight(applied.state, unpackReplayInput(player), {

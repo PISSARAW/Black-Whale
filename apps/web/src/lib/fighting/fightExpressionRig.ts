@@ -4,6 +4,7 @@ import { hasFightExpression, type FightEmotion, type FightFacePose } from './fig
 import { prepareExpressionMouth } from './fightExpressionMouth'
 import type { ArcadeFighter } from './types'
 import { fightExpressionProfile } from './fightExpressionProfiles'
+import { drawExpressionTeeth, suspendExpressionTeeth } from './fightExpressionToothedMouth'
 import {
   captureFacePart,
   captureFaceParts,
@@ -79,6 +80,7 @@ export function drawFightFace(rig: FightFaceRig, pose: FightFacePose) {
     morphs[1] = pose.pain
     morphs[2] = pose.smile
   }
+  drawExpressionTeeth(rig.mouth, pose)
 }
 
 /** Cinematics borrow the untouched face, then restore combat without losing its transition. */
@@ -108,6 +110,7 @@ export function suspendFightExpression(root: Object3D) {
   const morphs = rig.mouth?.morphTargetInfluences
   const weights = morphs?.slice()
   morphs?.fill(0)
+  const restoreTeeth = suspendExpressionTeeth(rig.mouth)
   return () => {
     parts.forEach(({ node }, index) => {
       node.scale.y = held[index].scale
@@ -119,5 +122,6 @@ export function suspendFightExpression(root: Object3D) {
     weights?.forEach((weight, index) => {
       morphs![index] = weight
     })
+    restoreTeeth()
   }
 }

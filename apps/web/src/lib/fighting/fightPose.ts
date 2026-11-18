@@ -113,4 +113,7 @@ export interface BodyPlan {
   key: string
   /** Cross-fade length in seconds; 0 snaps. */
   blend: number
+  attackFlow?: import('./fightAttackFlow').AttackFlowFrame
+  /** Simulation age of a contact reaction; repeated renders during hitstop keep the same pose. */
+  reactionFrame?: number
 }

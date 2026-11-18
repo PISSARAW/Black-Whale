@@ -64,6 +64,11 @@ function preparation(value: unknown): FightPreparation | undefined {
     'people',
     'musse-history',
     'paper',
+    'cameras',
+    'hostages',
+    'corpses',
+    'armed-corpses',
+    'sedatives',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),

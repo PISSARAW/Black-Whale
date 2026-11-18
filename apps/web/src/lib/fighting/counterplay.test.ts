@@ -236,7 +236,7 @@ describe('ordinary responses have a readable delay and physical consequences', (
     const state = prime(withShot())
     const cleared = react({ ...state, projectiles: [] })
     expect(cleared.counterplayRead).toBeUndefined()
-    const fresh = react({ ...state, opponent: cleared })
+    const fresh = react({ ...state, frame: state.frame + 13, opponent: cleared })
     expect(fresh.counterplayRead?.frames).toBe(1)
   })
 })

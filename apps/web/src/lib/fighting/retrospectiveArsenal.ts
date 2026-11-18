@@ -1,3 +1,4 @@
+import { performFranklinAim, franklinAimOptions } from './franklinAim'
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
@@ -123,6 +124,7 @@ const COMMAND_HANDLERS: readonly [
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
   ['gum-anchor-', performGumObjectAnchorCommand],
+  ['franklin-aim', (state, side, command) => performFranklinAim({ state, side, command })],
   ['paper-release-confetti', performPaperScatterCommand],
   ['paper-kit-', performPaperKitCommand],
   ['paper-stop-listening', performPaperReceiverCommand],
@@ -180,6 +182,7 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...franklinAimOptions(state, side),
     ...blackVoiceOptions(state, side),
     ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),

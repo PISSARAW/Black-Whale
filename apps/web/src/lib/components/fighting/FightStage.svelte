@@ -4,6 +4,8 @@
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
+  import FightIntroduction from './FightIntroduction.svelte'
+  import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
   import FightEssentialStatus from './FightEssentialStatus.svelte'
@@ -32,6 +34,12 @@
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let victoryEnabled = true
+  export let introEnabled = false
+  export let onIntroComplete: () => void = () => {}
+  const intro = createIntroPlayback(
+    () => onIntroComplete(),
+    () => paused,
+  )
   export let victoryPaused = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
@@ -66,7 +74,19 @@
   let futurePreview: number | null = null
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
-  $: if (sceneKey) victory.sceneLoading()
+  $: if (sceneKey) {
+    victory.sceneLoading()
+    intro.sceneLoading()
+  }
+  $: intro.observe(state, { enabled: introEnabled, mode: $clashCareer.appearance.intro })
+  function sceneReady() {
+    victory.sceneReady()
+    intro.sceneReady()
+  }
+  function sceneFailed() {
+    victory.sceneFailed()
+    intro.sceneFailed()
+  }
   $: throwTech = isThrowTech(visibleState)
 </script>
 
@@ -87,7 +107,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive && !$intro}<FightHud state={visibleState} {language} {detailed} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -101,8 +121,9 @@
         previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
         victoryFrame={$victory}
-        onSceneReady={victory.sceneReady}
-        onSceneFailed={victory.sceneFailed}
+        introFrame={$intro}
+        onSceneReady={sceneReady}
+        onSceneFailed={sceneFailed}
       />
     {/key}
 
@@ -129,6 +150,7 @@
     {/if}
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
+    <FightIntroduction playback={intro} {state} {language} {paused} />
   </div>
   {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
@@ -139,7 +161,7 @@
         onOpenEyes={() => onAttack('special')}
       />{/if}
     {#if !minimal}<FightDecisionReadout state={visibleState} {language} />{/if}
-    {#if showControls && !paused}<FightTouchControls
+    {#if showControls && !paused && !$intro}<FightTouchControls
         state={visibleState}
         {language}
         {onAttack}

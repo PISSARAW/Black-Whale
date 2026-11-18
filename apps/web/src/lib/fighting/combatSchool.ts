@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import { combatRoute, combatRoutesFor, type CombatFighter } from './combatRoutes'
+import { combatRoute, combatRoutesFor, type CombatFighter, type CombatRoute } from './combatRoutes'
 import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './combatRouteFight'
 import {
   initialCombatProgress,
@@ -13,11 +13,36 @@ import { setTrainingDummy } from './trainingSession'
 import { packReplayInput } from './fightReplayInput'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 import type { ReplayCommand } from './fightReplayTypes'
+import { FIXED_STEP } from './fightClock'
+import {
+  beginWakeup,
+  DEFAULT_WAKEUP,
+  observeWakeup,
+  prepareWakeupFight,
+  wakeupDefenderCommand,
+  wakeupDemoCommand,
+  wakeupDemoInput,
+  wakeupGuard,
+  type WakeupProgress,
+  type WakeupSettings,
+} from './combatWakeupPractice'
+import {
+  WHIFF_PUNISH_START,
+  whiffDemonstrationInput,
+  whiffPunishReady,
+} from './combatWhiffPractice'
+
+interface SchoolProgress extends CombatProgress {
+  wakeup?: WakeupProgress
+  wakeupSettings?: WakeupSettings
+}
 
 export function createCombatSchool() {
-  const view = writable<ReturnType<typeof initialCombatProgress> | null>(null)
+  const view = writable<SchoolProgress | null>(null)
   let sentStep = -1
   let opponentAt = -1000
+  let whiffAt = 0
+  let wakeupSent = { player: false, opponent: false }
   function definition(id: string) {
     return id.endsWith(':defense')
       ? combatRoutesFor(id.split(':')[0] as CombatFighter)[0]
@@ -31,19 +56,28 @@ export function createCombatSchool() {
     get demonstrating() {
       return get(view)?.demo === true
     },
-    start(id: string, demo = false): FightState {
+    get useFixedTiming() {
+      const current = get(view)
+      return Boolean(current?.wakeupSettings || (current?.demo && definition(current.id).whiff))
+    },
+    start(id: string, demo = false, wakeup: WakeupSettings = DEFAULT_WAKEUP): FightState {
       const route = definition(id)
       if (!route) throw Error('Unknown combat exercise')
       sentStep = -1
       opponentAt = -1000
-      view.set(initialCombatProgress(id, demo))
+      wakeupSent = { player: false, opponent: false }
+      const progress = initialCombatProgress(id, demo, Boolean(route.whiff))
+      view.set(route.wakeup ? { ...progress, wakeupSettings: { ...wakeup } } : progress)
       // A common, genuinely punishable heavy keeps this lesson stable across personal links.
       const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
       const state = createCombatRouteFight(route, defensePartner)
+      whiffAt = state.frame + WHIFF_PUNISH_START
+      if (route.wakeup) return prepareWakeupFight(state, wakeup)
       return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
     },
     release() {
       sentStep = -1
+      if (opponentAt >= 0 && get(view)?.lastFrame === opponentAt) opponentAt = -1000
     },
     exit() {
       view.set(null)
@@ -60,15 +94,42 @@ export function createCombatSchool() {
         view.set(null)
         return
       }
-      const next = current.id.endsWith(':defense')
-        ? observeCombatDefense(current, state)
-        : observeCombatRoute(current, state, route)
+      const next = observeSchoolProgress(current, state, route)
       if (next !== current) view.set(next)
     },
     input(state: FightState, input: FightInput): FightInput {
       const current = get(view)
       if (!current?.demo) return input
-      return { ...EMPTY_INPUT, jump: definition(current.id).kind === 'air' && state.frame < 4 }
+      if (current.wakeup && current.wakeupSettings)
+        return current.wakeup.result
+          ? EMPTY_INPUT
+          : wakeupDemoInput(state, current.wakeupSettings.followup)
+      const route = definition(current.id)
+      return route.whiff
+        ? whiffDemonstrationInput(state, route.whiff, { at: whiffAt, step: current.step })
+        : { ...EMPTY_INPUT, jump: route.kind === 'air' && state.frame < 4 }
+    },
+    opponentInput(input: FightInput): FightInput {
+      const current = get(view)
+      if (!current) return input
+      if (!current.wakeupSettings) return EMPTY_INPUT
+      if (!current.wakeup) return { ...EMPTY_INPUT, guard: current.lastImpact > 0 }
+      return wakeupGuard(current.wakeup, current.wakeupSettings.reaction)
+    },
+    wakeupCommands(state: FightState): ReplayCommand[] {
+      const current = get(view)
+      if (!current?.wakeup || current.wakeup.result || !current.wakeupSettings) return []
+      const { wakeup, wakeupSettings } = current
+      const player =
+        current.demo && !wakeupSent.player
+          ? wakeupDemoCommand(state, wakeup, wakeupSettings.followup)
+          : undefined
+      const opponent = !wakeupSent.opponent
+        ? wakeupDefenderCommand(state, wakeup, wakeupSettings.reaction)
+        : undefined
+      if (player) wakeupSent.player = true
+      if (opponent) wakeupSent.opponent = true
+      return [player, opponent].filter((entry): entry is ReplayCommand => Boolean(entry))
     },
     command(state: FightState): ReplayCommand | null {
       const current = get(view)
@@ -78,6 +139,11 @@ export function createCombatSchool() {
         if (command) opponentAt = state.frame
         return command
       }
+      const practice = definition(current.id).whiff
+      if (practice && state.frame >= whiffAt && opponentAt < 0) {
+        opponentAt = state.frame
+        return { kind: 'move', side: 'opponent', action: 'heavy', input: 0 }
+      }
       const command = demonstrationCommand(current, state, sentStep)
       if (command) sentStep = current.step
       return command
@@ -86,25 +152,61 @@ export function createCombatSchool() {
 }
 export type CombatSchool = ReturnType<typeof createCombatSchool>
 
-export function advanceCombatSchool(options: {
+function observeSchoolProgress(
+  current: SchoolProgress,
+  state: FightState,
+  route: CombatRoute,
+): SchoolProgress {
+  if (current.wakeup) {
+    const wakeup = observeWakeup(state, current.wakeup)
+    return wakeup === current.wakeup ? current : { ...current, wakeup }
+  }
+  if (current.id.endsWith(':defense')) return observeCombatDefense(current, state)
+  const next = observeCombatRoute(current, state, route)
+  if (route.wakeup && next.complete) return { ...next, wakeup: beginWakeup(state) }
+  return next
+}
+
+interface CombatSchoolFrame {
   school: CombatSchool
   match: import('./fightMatchRuntime').FightMatchRuntime
   state: FightState
   input: FightInput
   opponentInput: FightInput
   dt: number
-}): FightState {
+}
+
+export function advanceCombatSchool(options: CombatSchoolFrame): FightState {
   const { school, match, state } = options
   if (match.replays.active)
     return match.advance(state, options.input, {
       dt: options.dt,
       opponentInput: options.opponentInput,
     })
+  if (school.useFixedTiming) return advanceTimedSchool(options)
+  return advanceSchoolFrame(options)
+}
+
+function advanceTimedSchool(options: CombatSchoolFrame): FightState {
+  let state = options.state
+  let remaining = Math.min(options.dt, 0.05)
+  // The short recovery window is measured in simulation frames, even at a lower render rate.
+  while (remaining > FIXED_STEP) {
+    state = advanceSchoolFrame({ ...options, state, dt: FIXED_STEP })
+    remaining -= FIXED_STEP
+  }
+  return advanceSchoolFrame({ ...options, state, dt: remaining })
+}
+
+function advanceSchoolFrame(options: CombatSchoolFrame): FightState {
+  const { school, match, state } = options
   const command = school.command(state)
   if (command) match.enqueue(state, command)
+  if (state.frameAccumulator + options.dt >= FIXED_STEP)
+    for (const queued of school.wakeupCommands(state)) match.enqueue(state, queued)
   return match.advance(state, school.input(state, options.input), {
     dt: options.dt,
-    opponentInput: school.active ? EMPTY_INPUT : options.opponentInput,
+    opponentInput: school.opponentInput(options.opponentInput),
   })
 }
 
@@ -116,6 +218,12 @@ function defenseCommand(
   if (progress.step > 0 || state.frame < 30 || state.frame - opponentAt < 120) return null
   return { kind: 'move', side: 'opponent', action: 'heavy', input: 0 }
 }
+
+function demonstrationOpeningReady(state: FightState, route: CombatRoute): boolean {
+  if (route.kind === 'air' && state.frame < 27) return false
+  return !route.whiff || whiffPunishReady(state, route.whiff)
+}
+
 function demonstrationCommand(
   progress: CombatProgress,
   state: FightState,
@@ -123,7 +231,7 @@ function demonstrationCommand(
 ): ReplayCommand | null {
   if (!progress.demo || sentStep === progress.step) return null
   const route = combatRoute(progress.id)
-  if (progress.step === 0 && route.kind === 'air' && state.frame < 27) return null
+  if (progress.step === 0 && !demonstrationOpeningReady(state, route)) return null
   const slot = route.moves[progress.step]
   const move = moveForSlot(route.fighter, slot)!
   if (

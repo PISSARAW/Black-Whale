@@ -87,6 +87,109 @@ existants gardent le sens de chacun de leurs bits.
 
 Le piège de Luzurus n'a pas encore de visuel au sol.
 
+### Tubeppa · animation et expressions
+
+`tubeppaMotion.ts` pose Tubeppa sur le même squelette articulé que le roster :
+ajustement des lunettes à l’entrée, préparation à deux mains, geste de soutien
+sur la frame effective du soin, relâchement et retrait. Les clés suivent les
+compteurs simulés de chaque phase ; les deux orientations conservent la main
+droite pour les lunettes. Les appuis utilisent le verrouillage des pieds du roster.
+Les impacts et la chute utilisent ses réactions communes et prennent priorité sur
+le soutien ; le corps reste au sol jusqu’à la fin de la manche.
+
+Le profil analytique dans `expressionProfiles.ts` anime yeux, sourcils et bouche
+avec les morphs, le cache, la respiration et les transitions du roster. Les lunettes
+et les boucles restent solidaires de la tête. Aucun changement aux dégâts, au soin,
+aux collisions, aux ressources ou aux données des replays.
+
+`tubeppaMotion.test.ts` vérifie le cycle réel, la frame du soin, un impact du moteur,
+les orientations, les appuis, les caches, les expressions indépendantes, les empreintes
+et la mort. `node apps/web/scripts/check-tubeppa-animation.mjs` capture une planche
+du modèle de production ; `TUBEPPA_ANIMATION_FILM=1` ajoute les frames du cycle complet.
+`TUBEPPA_ANIMATION_OUTPUT` choisit le dossier des captures.
+
+### Marayam · animation et expressions
+
+`marayamMotion.ts` donne au jeune enfant un salut timide de la main droite à l’entrée,
+un sursaut et une posture protectrice sur la frame d’activation de l’isolement,
+puis un relâchement et un retrait. C’est une direction artistique du soutien arcade :
+la pose montre sa réaction à la protection, sans lui attribuer le contrôle conscient
+de sa Bête gardienne. `supportAnimation.ts` partage les articulations, les appuis,
+les réactions aux impacts et la chute avec Tubeppa et le roster.
+
+Les yeux, les sourcils et la bouche expriment concentration, effort et douleur.
+La bouche conserve son trait ondulé avec des morphs dédiés ; le short suit les
+hanches, le nœud papillon le torse. `marayamMotion.test.ts` contrôle le vrai cycle,
+la frame d’isolement, un impact réellement reçu, les deux orientations, les appuis,
+les morphs indépendants, les retours en arrière de présentation et les empreintes.
+
+`KAMEO_ANIMATION_CHARACTER=marayam node apps/web/scripts/check-tubeppa-animation.mjs`
+capture Marayam dans le banc partagé. `KAMEO_ANIMATION_OUTPUT` choisit le dossier ;
+`KAMEO_ANIMATION_FILM=1` ajoute les frames du cycle complet. Les anciennes variables
+`TUBEPPA_ANIMATION_*` restent compatibles.
+
+### Zhang Lei · animation et expressions
+
+`zhangLeiMotion.ts` lui donne une attitude posée, un salut mesuré à l’entrée,
+une préparation puis un geste de la main droite ouverte à la frame du bonus de
+pièce. Il relâche ensuite les bras et se retire. Cette direction artistique du
+soutien arcade montre son accompagnement du bonus de la Bête gardienne.
+`supportAnimation.ts` partage les articulations, les appuis, la respiration,
+les réactions aux impacts et la chute avec les autres personnages.
+
+Son regard mi-clos, ses plis nasaux et sa bouche utilisent les expressions du
+roster, avec une amplitude retenue ; les points du front et la moustache restent
+solidaires de la tête. Le plastron suit le torse, les plis du pantalon suivent les
+hanches et les genoux. `zhangLeiMotion.test.ts` vérifie le cycle réel et la frame
+du bonus, un coup réellement reçu, les deux orientations, les appuis, la stabilité
+des traits, les morphs indépendants et les empreintes de replay.
+
+`KAMEO_ANIMATION_CHARACTER=zhanglei node apps/web/scripts/check-tubeppa-animation.mjs`
+capture le modèle de production. `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
+
+### Morena · animation et expressions
+
+`morenaMotion.ts` pose la main aux lèvres, puis l’invitation sur la frame de Contagion,
+le relâchement et le retrait, avec les règles de portée et d’infection existantes.
+`supportHandContact.ts` suit la tête avec la main droite, comme pour les lunettes de Tubeppa.
+Le profil calme anime le regard et la bouche courbe ; la douleur prime sur le sourire.
+`morenaHairMotion.ts` anime les longueurs par morphs GPU, avec cuir chevelu fixe,
+géométries partagées, poids indépendants et rééchantillonnage lors des retours de replay.
+Les cicatrices et bijoux suivent la tête, la robe et les bottes leurs articulations.
+`morenaMotion.test.ts` vérifie le cycle, l’infection à portée, les contacts, les appuis,
+les impacts, les deux orientations, les caches, les traits et la mort.
+`KAMEO_ANIMATION_CHARACTER=morena node apps/web/scripts/check-tubeppa-animation.mjs`
+capture les états de production ; `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
+
+### Luzurus · animation et expressions
+
+`luzurusMotion.ts` échantillonne une entrée nonchalante, un examen de l’emplacement,
+un geste vers le sol sur la vraie frame de création du piège, puis le retrait.
+Cette direction artistique conserve les règles et la durée du piège existant.
+Le profil de `expressionProfiles.ts` anime le regard fatigué, la bouche et les
+sourcils ; douleur, appuis et chute utilisent les transitions communes du roster.
+`luzurusPuffMotion.ts` anime les deux houppes sans déplacer le crâne ni les attaches,
+avec un cache de géométries et des poids indépendants, rééchantillonnés en replay.
+`luzurusMotion.test.ts` vérifie le vrai cycle, la création puis l’activation du
+piège après le départ, un coup reçu, les deux orientations, les morphs et la mort.
+`KAMEO_ANIMATION_CHARACTER=luzurus node apps/web/scripts/check-tubeppa-animation.mjs`
+capture ses expressions ; `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
+
+### Salé-salé · animation et expressions
+
+`salesaleMotion.ts` pose un salut expansif, une préparation du souffle, l’ouverture
+des bras sur la vraie frame de brume, puis le relâchement et le retrait.
+Cette gestuelle accompagne l’adaptation arcade de la Bête gardienne ; les règles
+de portée, d’effet et de coût restent celles du moteur. Le profil de kaméo partage
+les transitions du roster et donne priorité à la douleur sur le sourire et l’effort.
+`fightExpressionToothedMouth.ts` déforme ensemble le contour natif et les dents,
+sans remplacer leur topologie ni ajouter de mesh. Le cache partage les géométries,
+avec des poids indépendants et une restauration commune après prêt cinématique.
+`salesaleMotion.test.ts` vérifie le cycle, l’effet à portée, un coup reçu, les
+orientations, les appuis, les dents contenues dans la bouche, les caches et la mort.
+`KAMEO_ANIMATION_CHARACTER=salesale node apps/web/scripts/check-tubeppa-animation.mjs`
+capture ses expressions ; `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
+
 ## Lot 8 · replays et PvP
 
 - **Replays.** Rien à changer : l'instantané initial (`encodeFightSnapshot`) garde les

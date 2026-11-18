@@ -1,11 +1,12 @@
 import { senseDeprived } from './saiyuSenses'
-import { insideEn, perceivesProjectile } from './nenPerception'
-import { voluntaryNenAvailable } from './nenAccess'
+import { insideEn } from './nenPerception'
+import { perceivedProjectiles, seesProjectile } from './projectilePerception'
+import { rankProjectileThreats } from './projectileForecast'
 import { bungeeVisible } from './hisokaTechnique'
 import { attackPhase } from './frameData'
 import { canHear, MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import type { GuardRequirement } from './combatProperties'
-import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export type CounterplayKind =
   'heat' | 'projectile' | 'music' | 'tether' | 'sleeping-body' | 'preparation' | 'recovery'
@@ -16,6 +17,7 @@ export interface CounterplayCue {
   position: { x: number; y: number }
   radius?: number
   guard?: GuardRequirement
+  impactFrames?: number
 }
 
 /** Public manifestations only; never inputs, buffered commands, analysis or private replies. */
@@ -59,26 +61,17 @@ function heatCue(
 
 function projectileCue(state: FightState, side: FightSide): CounterplayCue | null {
   const viewer = state[side]
-  const threats = state.projectiles
-    .filter((shot) => {
-      if (shot.owner === side || shot.y < 0 || Math.abs(shot.x - viewer.x) > 42) return false
-      if ((viewer.x - shot.x) * shot.velocityX < 0) return false
-      return perceivesCombatProjectile(viewer, shot)
-    })
-    .sort((a, b) => Math.abs(a.x - viewer.x) - Math.abs(b.x - viewer.x))
-  const shot = threats[0]
-  return shot
-    ? {
-        kind: 'projectile',
-        key: `projectile:${shot.id}`,
-        owner: shot.owner,
-        position: { x: shot.x, y: shot.y },
-        guard:
-          seesCombatBody(viewer) && perceivesProjectile(viewer, shot)
-            ? (shot.guard ?? 'mid')
-            : undefined,
-      }
-    : null
+  const threat = rankProjectileThreats(viewer, perceivedProjectiles(state, side))[0]
+  if (!threat) return null
+  const shot = threat.shot
+  return {
+    kind: 'projectile',
+    key: `projectile:${shot.id}`,
+    owner: shot.owner,
+    position: { x: shot.x, y: shot.y },
+    impactFrames: threat.impactFrames,
+    guard: seesProjectile(viewer, shot) ? (shot.guard ?? 'mid') : undefined,
+  }
 }
 
 function musicCue(
@@ -156,11 +149,4 @@ function visiblePreparation(target: ArcadeFighter): boolean {
     target.bashoPoem?.writingFrames ||
     target.hatsuEffects.cohortWillFrames > 0,
   )
-}
-
-function perceivesCombatProjectile(viewer: ArcadeFighter, shot: FightProjectile): boolean {
-  if (sensesPosition(viewer, shot) && (shot.matter === 'object' || !shot.concealed)) return true
-  if (!seesCombatBody(viewer)) return false
-  if (shot.matter === 'object' || !shot.concealed) return true
-  return voluntaryNenAvailable(viewer) && perceivesProjectile(viewer, shot)
 }

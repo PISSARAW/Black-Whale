@@ -6,7 +6,7 @@ import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export interface RosterGuest {
   id: string
   owner: FightSide
-  role: 'puppet' | 'loan'
+  role: 'puppet' | 'loan' | 'soul'
   phase: 'preparing' | 'acting' | 'leaving' | 'eliminated'
   fighter: ArcadeFighter
   frames: number
@@ -18,6 +18,7 @@ export interface RosterGuest {
 declare module './types' {
   interface FightState {
     rosterGuests?: readonly RosterGuest[]
+    rosterProjection?: { owner: FightSide; guestId: string }
   }
   interface FightProjectile {
     sourceBody?: string
@@ -71,6 +72,7 @@ export function guestProjection(state: FightState, guest: RosterGuest): FightSta
     [guest.owner]: guest.fighter,
     arena: guestArena(state, guest.owner),
     rosterGuests: undefined,
+    rosterProjection: { owner: guest.owner, guestId: guest.id },
   }
 }
 
@@ -92,6 +94,7 @@ export function mergeGuestProjection(
     roundsWon: state.roundsWon,
     matchWinner: state.matchWinner,
     teamMatch: state.teamMatch,
+    rosterProjection: state.rosterProjection,
     // Judge once with the real leader restored, so a guest never takes its team seat.
     phase: state.phase,
     winner: state.winner,

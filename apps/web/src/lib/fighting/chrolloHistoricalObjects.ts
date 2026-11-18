@@ -52,7 +52,9 @@ function createHistoricalReplica(
   const id = nextCopyId(state, side)
   return {
     id,
-    kind: ['morena', 'supporter', 'person'].includes(source.kind) ? 'puppet' : source.kind,
+    kind: ['morena', 'supporter', 'person', 'hostage'].includes(source.kind)
+      ? 'puppet'
+      : source.kind,
     owner: side,
     x: copySpawnX(state, side),
     y: source.y,
@@ -167,7 +169,7 @@ function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
   if (source.writingKit) return { width: 2, height: 1 }
   if (source.paperKit) return { width: 2, height: 1 }
   if (source.kind === 'crate') return { width: 3, height: 8 }
-  return ['puppet', 'morena', 'supporter', 'person'].includes(source.kind)
+  return ['puppet', 'morena', 'supporter', 'person', 'hostage'].includes(source.kind)
     ? { width: 2.2, height: 13 }
     : undefined
 }

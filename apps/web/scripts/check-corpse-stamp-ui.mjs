@@ -44,17 +44,25 @@ try {
   await page.waitForSelector('canvas')
   for (const width of [1100, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 })
-    for (const side of ['player', 'opponent']) {
-      await page.evaluate((side) => window.corpseFixture.prepareStamp(side), side)
+    for (const { side, kind } of ['corpse', 'hostage'].flatMap((kind) =>
+      ['player', 'opponent'].map((side) => ({ side, kind })),
+    )) {
+      await page.evaluate(({ side, kind }) => window.corpseFixture.prepareStamp(side, kind), {
+        side,
+        kind,
+      })
       const before = await page.evaluate(() => window.corpseFixture.snapshot())
       assert.equal(before.copy.copy.order, undefined)
-      assert.equal(before.copy.arena.height, 3)
+      assert.equal(before.copy.arena.height, kind === 'corpse' ? 3 : 13)
+      assert.equal(before.copy.kind, kind === 'corpse' ? 'corpse' : 'puppet')
+      assert.equal(before.copy.captiveOf, undefined)
       await page
         .getByRole('button', { name: 'Order Stamp · Marquer une marionnette', exact: true })
         .click()
       const active = await page.evaluate(() => window.corpseFixture.snapshot())
       assert.equal(active.copy.copy.order, 'attack')
-      assert.equal(active.copy.arena.height, 12)
+      assert.equal(active.copy.arena.height, kind === 'corpse' ? 12 : 13)
+      assert.deepEqual(active.original, before.original)
       assert.equal(active.actor.aura, before.actor.aura - 10)
       assert.equal(active.actor.health, before.actor.health)
       assert.equal(active.corpse.controller, undefined)
@@ -70,7 +78,7 @@ try {
       )
       await page
         .locator('.arena')
-        .screenshot({ path: path.join(output, `stamp-${side}-${width}.png`) })
+        .screenshot({ path: path.join(output, `stamp-${kind}-${side}-${width}.png`) })
       await page.evaluate(() => window.corpseFixture.advance(19))
       await page.getByRole('button', { name: 'Marionnettes · Attendre', exact: true }).click()
       const waiting = await page.evaluate(() => window.corpseFixture.snapshot())
@@ -83,13 +91,13 @@ try {
       await page.evaluate(() => window.corpseFixture.severCopy())
       const severed = await page.evaluate(() => window.corpseFixture.snapshot())
       assert.equal(severed.copy.copy.headAttached, false)
-      assert.equal(severed.copy.arena.height, 3)
-      cases.push({ width, side })
+      assert.equal(severed.copy.arena.height, kind === 'corpse' ? 3 : 13)
+      cases.push({ width, side, kind })
     }
   }
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ cases, errors }, null, 2))
-  process.stdout.write(`Copied corpse Order Stamp UI passed: ${cases.length} cases.\n`)
+  process.stdout.write(`Human copy Order Stamp UI passed: ${cases.length} cases.\n`)
 } catch (error) {
   await writeFile(
     path.join(output, 'failure.json'),

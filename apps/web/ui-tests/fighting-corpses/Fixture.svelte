@@ -17,6 +17,7 @@
   import type { LiveBookActions } from '$lib/fighting/chrolloLiveBook'
   import { EMPTY_INPUT, type FightSide } from '$lib/fighting/types'
   let side: FightSide = 'player'
+  let copyKind: 'corpse' | 'hostage' = 'corpse'
   let state = bookCorpseSetup()
   const actions: LiveBookActions = {
     queueAction: (run) => {
@@ -36,7 +37,8 @@
       state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
     await tick()
   }
-  export async function prepareStamp(nextSide: FightSide) {
+  export async function prepareStamp(nextSide: FightSide, kind: 'corpse' | 'hostage' = 'corpse') {
+    copyKind = kind
     side = nextSide
     state = bookCorpseSetup(side)
     state = {
@@ -51,13 +53,16 @@
         },
       },
     }
-    state = performArsenalCommand(state, side, { action: 'history-use', target: `${side}:corpse` })
+    state = performArsenalCommand(state, side, {
+      action: 'history-use',
+      target: `${side}:${copyKind}`,
+    })
     await advance(19)
     state = performArsenalCommand(state, side, { action: 'history-page', target: 'order-stamp' })
     await advance(13)
   }
   export async function severCopy() {
-    const copy = state.battlefield!.entities.find((entry) => entry.copy?.originalKind === 'corpse')!
+    const copy = state.battlefield!.entities.find((entry) => entry.copy?.originalKind === copyKind)!
     state = damageArenaObject(state, copy.id, { damage: 16, zone: 'head' })
     await advance(1)
   }
@@ -71,7 +76,8 @@
         loan: equippedDolphin(state[side]),
       },
       corpse: corpseEntry(state, `${side}:corpse`),
-      copy: state.battlefield!.entities.find((entry) => entry.copy?.originalKind === 'corpse'),
+      original: corpseEntry(state, `${side}:${copyKind}`),
+      copy: state.battlefield!.entities.find((entry) => entry.copy?.originalKind === copyKind),
       piles: state.battlefield!.entities.filter((entry) => entry.corpsePinBundle),
     }
   }

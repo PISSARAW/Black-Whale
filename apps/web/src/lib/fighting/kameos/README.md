@@ -201,3 +201,35 @@ capture ses expressions ; `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
   le leader adverse, et l'échange de perspective (`localPerspective`) montre à
   chaque joueur son propre kaméo côté `player`. Le ruleset passe à `clash-pvp-6`.
 - L'écran de création du duel privé propose le même sélecteur de kaméos.
+
+## Kaméos dans les combos
+
+L’appel fonctionne pendant une attaque. `buffer.ts` conserve aussi une pression
+manuelle pendant le hitstop : le corps et ses horloges restent figés, puis l’appel
+part à la première frame libre. La direction est mémorisée relativement au leader.
+La réserve, la recharge, l’aura et la capacité d’agir sont vérifiées à la saisie et
+à la reprise. Un appel devenu invalide est abandonné, sans rappel automatique.
+Le HUD indique « Appel mémorisé ». Ce comportement passe les replays en v66 ; le
+ruleset PvP en hérite.
+
+`comboLessons.ts` fournit six exercices dans Académie du Nen → Combos & défense :
+
+- Hisoka appelle Luzurus après le premier léger, frappe lourd, récupère puis place
+  un léger avant pendant l’immobilisation réelle. Le piège n’attrape qu’au sol.
+- Franklin appelle Zhang Lei, Marayam, Tubeppa, Morena ou Salé-salé après son premier
+  léger, puis enchaîne lourd et rafale rasante. La pièce renforce la fin de la rafale,
+  l’isolement protège le leader, le soin rend des PV, Contagion et la brume
+  affaiblissent une cible à portée.
+
+Les exercices imposent à la fois les contacts continus et l’effet réellement reçu.
+Un simple appel payé, un effet hors de portée ou l’absence de soutien ne suffit pas.
+Les soutiens ne créent aucune touche ni prise aérienne, et conservent les coûts,
+timings, interruptions et gardes du moteur. Les appels sont disponibles aux quarante
+leaders, au clavier, à la manette et au bouton tactile Kaméo.
+
+`comboCalls.test.ts` couvre les quarante leaders dans les deux camps, les six
+exercices au centre et au coin dans les deux orientations, et les ripostes après
+un appel tardif. Les démonstrations et leurs replays passent par `combatSchool.test.ts`.
+`node apps/web/scripts/check-fighting-kameo-combos.mjs` lance les exercices depuis
+l’interface avec les corps WebGL de production et écrit captures et rapport dans
+`KAMEO_COMBO_OUTPUT` (par défaut `/tmp/black-whale-kameo-combos`).

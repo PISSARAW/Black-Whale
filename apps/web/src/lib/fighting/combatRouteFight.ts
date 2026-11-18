@@ -3,6 +3,7 @@ import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import type { CombatRoute } from './combatRoutes'
 import { prepareCombatRoute } from './combatRouteSetup'
 import { combatRouteScenario } from './combatRouteScenario'
+import { withKameos } from './kameos/state'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -22,6 +23,7 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
       environment: { stageId: 'heavens-arena', arenaInteractions: false, preparation },
     },
   )
+  if (route.kameo) state = withKameos(state, { player: route.kameo.id })
   state = {
     ...state,
     phase: 'fighting',
@@ -34,7 +36,10 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
       infiniteAura: false,
       infiniteHealth: false,
     })
-  return setTrainingDummy(prepareCombatRoute(state, route.setup), { behavior: 'guard-after-hit' })
+  state = prepareCombatRoute(state, route.setup)
+  if (route.kameo?.id === 'tubeppa')
+    state = { ...state, player: { ...state.player, health: state.player.maxHealth - 40 } }
+  return setTrainingDummy(state, { behavior: 'guard-after-hit' })
 }
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {

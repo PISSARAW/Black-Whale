@@ -120,3 +120,13 @@ reconstruction du modèle, séparation des corps, couleurs des enveloppes et
 flux, articulations finies et absence de mutation de l’état. Le rapport et
 une capture par personnage sont écrits dans `PHYSICAL_ROSTER_OUTPUT`.
 Ce banc contrôle la présentation ; il ne mesure pas la cadence GPU d’un match.
+
+## Relevés et continuité après mise au sol
+
+`fightGroundRecovery.ts` place le regroupement, l’appui puis la remontée
+dans les dernières 48 % du compteur de mise au sol. Le corps retrouve sa
+garde avant la reprise des commandes, y compris lors d’un reversal bufferisé
+qui saute la pose `wakeup`. La protection de relevé conserve cette garde.
+Les KO et corps endormis restent au sol. Aucun compteur ni règle ne change.
+`fightGroundRecovery.test.ts` suit les quarante combattants jusqu’au reversal
+natif et vérifie la continuité des articulations et l’intégrité du replay.

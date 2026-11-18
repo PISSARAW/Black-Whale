@@ -356,6 +356,8 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     attackFlow: {
       frame,
       startup: frames.startup,
+      active: frames.active,
+      recovery: frames.recovery,
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,

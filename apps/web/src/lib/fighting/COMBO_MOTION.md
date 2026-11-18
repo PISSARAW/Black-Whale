@@ -1,5 +1,8 @@
 # Gestes de combo et concentration de l’aura
 
+La [continuité contextuelle des contacts et appuis](./CONTEXTUAL_MOTION.md)
+précise les variantes basses, les réactions et la stabilité à courte distance.
+
 La présentation conserve les commandes, amorces, contacts, récupérations, dégâts
 et règles de Nen du moteur. Elle ne modifie aucun état de combat.
 

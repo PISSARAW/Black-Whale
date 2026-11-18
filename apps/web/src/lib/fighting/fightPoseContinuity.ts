@@ -2,6 +2,7 @@ import { addPoses, lerpPose, scalePose, type BodyPlan, type FightPose } from './
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
 import { COMBO_LINK_SECONDS, type AttackFlowFrame } from './fightAttackFlow'
 import { linkedStrikePose } from './fightComboTransfer'
+import { contactPostureFrom, withContactPosture } from './fightContactPosture'
 
 interface Momentum {
   pose: PoseMemory
@@ -9,6 +10,7 @@ interface Momentum {
   outgoing: FightPose
   seconds: number
   token: string
+  posture?: FightPose
 }
 
 /** Scene-owned, rather than rig-owned: changing Nen geometry cannot erase the outgoing gesture. */
@@ -34,9 +36,10 @@ export function createFightPoseContinuity() {
     if (plan.key !== memory.key || restarted) {
       state.outgoing = state.velocity
       beginPoseTransition(memory, plan, seconds)
+      state.posture = contactPostureFrom(memory.from, plan)
     }
     memory.attack = plan.attackFlow
-    const drawn = drawFlow(state, plan, seconds)
+    const drawn = drawFlow(state, withContactPosture(plan, state.posture), seconds)
     const dt = Math.min(2, Math.max(0.25, (seconds - state.seconds) * 60))
     state.velocity = difference(drawn, memory.last, dt)
     memory.last = drawn

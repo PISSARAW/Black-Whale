@@ -109,25 +109,17 @@ costume croisé sombre à liserés clairs. L’apparence est commune à la visit
 de Clash. La planche `manga-cast` construit aussi les vrais modèles de combat des kaméos.
 
 `mangaMarayamHead.ts`, `mangaMarayamClothes.ts` et `mangaMarayamProfile.ts` reprennent
-la tenue publique de Marayam : tête ronde, yeux noirs écartés, cheveux turquoise courts,
-smoking croisé, nœud papillon et short. Son gabarit propre raccourcit le cou et les
-membres tout en agrandissant la tête ; les pièces de short suivent chaque hanche
-et les jambes nues conservent leurs articulations. L’apparence est partagée avec Clash.
+la tête ronde, les yeux noirs écartés, les cheveux turquoise, le smoking et le short.
+Son gabarit enfant garde les articulations des jambes et les attaches aux hanches.
 
-`mangaZhangLeiHead.ts` construit le crâne chauve, le menton carré, les yeux cernés,
-les six points du front, la moustache crayon et les lobes allongés de Zhang Lei.
-`mangaZhangLeiProfile.ts` conserve des proportions d’adulte petit et trapu.
-`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` reprennent sa tunique claire
-à plastron sombre, ses broderies et son pantalon ample resserré aux chevilles.
-Ces modèles et leurs géométries restent communs à la visite et au kaméo de Clash.
+`mangaZhangLeiHead.ts` et `mangaZhangLeiProfile.ts` portent le crâne chauve, le menton
+carré, les yeux cernés, six points, la moustache et les lobes allongés de Zhang Lei.
+`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` portent tunique brodée et pantalon.
 
-`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` reprennent
-les yeux bruns en amande de Morena, ses longs cheveux bleu sombre aux mèches
-recourbées, ses deux cicatrices sur l’œil gauche, les seize anneaux à l’oreille
-gauche et sa couronne d’épines. Les cicatrices sont projetées sur la surface du
-visage à la construction. `mangaMorenaClothes.ts` porte la robe noire ajustée,
-les épaules découvertes, les manches longues et les bottes ; la pose assise garde
-sa propre jupe sur les cuisses. L’apparence est commune à la visite et à Clash.
+`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` portent les yeux
+bruns, cheveux bleu sombre recourbés, cicatrices projetées, seize anneaux et couronne.
+`mangaMorenaClothes.ts` porte la robe noire aux épaules découvertes et les bottes ;
+sa jupe assise suit les cuisses. Ces modèles restent partagés avec la visite et Clash.
 
 `mangaLuzurusGeometry.ts`, `mangaLuzurusFace.ts` et `mangaLuzurusHair.ts` portent son visage rectangulaire,
 son nez pointu, sa barbe légère et ses deux houppes foncées. `mangaLuzurusClothes.ts` et `mangaLuzurusLimbs.ts`

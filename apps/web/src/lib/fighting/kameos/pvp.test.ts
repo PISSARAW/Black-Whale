@@ -70,22 +70,22 @@ describe('kameos in private PvP (lot 8)', () => {
       kameos: {
         player: {
           ...state.kameos!.player!,
-          fighter: { ...state.kameos!.player!.fighter, guardianWords: ['a'] },
+          fighter: { ...state.kameos!.player!.fighter, heardWords: ['a'] },
         },
         opponent: {
           ...state.kameos!.opponent!,
-          fighter: { ...state.kameos!.opponent!.fighter, guardianWords: ['b'] },
+          fighter: { ...state.kameos!.opponent!.fighter, heardWords: ['b'] },
         },
       },
     } as unknown as typeof state
     const host = privatePvpState(secret, 'player')
-    expect(host.kameos?.player?.fighter.guardianWords).toEqual(['a'])
-    expect(host.kameos?.opponent?.fighter.guardianWords).toBeUndefined()
+    expect(host.kameos?.player?.fighter.heardWords).toEqual(['a'])
+    expect(host.kameos?.opponent?.fighter.heardWords).toBeUndefined()
     const guest = privatePvpState(secret, 'opponent')
     expect(guest.kameos?.player?.fighter.id).toBe('morena')
-    expect(guest.kameos?.player?.fighter.guardianWords).toEqual(['b'])
+    expect(guest.kameos?.player?.fighter.heardWords).toEqual(['b'])
     expect(guest.kameos?.opponent?.fighter.id).toBe('tubeppa')
-    expect(guest.kameos?.opponent?.fighter.guardianWords).toBeUndefined()
+    expect(guest.kameos?.opponent?.fighter.heardWords).toBeUndefined()
   })
 
   it('names the new ruleset', () => {

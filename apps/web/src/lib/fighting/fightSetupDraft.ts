@@ -3,6 +3,8 @@ import { FIGHT_FORMATS, DEFAULT_FIGHT_FORMAT, type FightFormatId } from './forma
 import { FIGHT_STAGES } from './stages'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import type { FighterId, FightMode } from './types'
+import type { KameoPicks } from './kameos/state'
+import { parseKameoPicks, kameoSetupField } from './kameos/pvp'
 
 export interface FightSetupDraft {
   player: FighterId
@@ -10,6 +12,7 @@ export interface FightSetupDraft {
   environment: FightEnvironment
   format: FightFormatId
   mode: FightMode
+  kameos?: KameoPicks
 }
 const KEY = 'black-whale:clash:setup:v1'
 
@@ -32,7 +35,14 @@ function restoreDraft(value: Record<string, unknown>): FightSetupDraft {
   const mode =
     (['versus-ai', 'versus-local', 'training'] as const).find((entry) => entry === value.mode) ??
     fallback.mode
-  return { player, opponent, format, mode, environment: restoreEnvironment(value) }
+  return {
+    player,
+    opponent,
+    format,
+    mode,
+    environment: restoreEnvironment(value),
+    ...kameoSetupField(parseKameoPicks(value.kameos) ?? {}),
+  }
 }
 
 export function readFightSetup(): FightSetupDraft {
@@ -55,6 +65,7 @@ export function saveFightSetup(draft: FightSetupDraft): void {
         mode: draft.mode,
         stageId: draft.environment.stageId,
         arenaInteractions: draft.environment.arenaInteractions,
+        ...kameoSetupField(draft.kameos ?? {}),
       }),
     )
   } catch {

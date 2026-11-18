@@ -106,6 +106,10 @@ if ! compose run --rm migrate; then
 fi
 
 compose up -d --remove-orphans
+# Caddy reads its mounted file at startup; an unchanged proxy container is
+# otherwise left serving the old routes after an application deployment. Feed
+# the host file through stdin because Git can replace a file bind mount’s inode.
+compose exec -T caddy caddy reload --config - --adapter caddyfile < "$project_dir/infrastructure/docker/Caddyfile"
 compose ps
 
 # Discovery submission is deliberately after the healthy stack is live. The

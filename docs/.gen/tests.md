@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 844
+Fichiers : 846
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -733,6 +733,14 @@ Fichiers : 844
 ## `apps/web/src/lib/fighting/kalluto.test.ts`
 
 - Kalluto paper and surveillance dolls > retains callable frame hooks
+
+## `apps/web/src/lib/fighting/kallutoBodies.test.ts`
+
+- Kalluto’s multiple paper receivers bind actual bodies (chapter 225) > keeps the first marked body through a real relay and adds a second distinct receiver without replacing it
+
+## `apps/web/src/lib/fighting/kallutoReplay.test.ts`
+
+- physical paper receivers at P2, replay and Dolphin boundaries > replays P2 paper contact, doll activation, actual private speech and voluntary stop
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 

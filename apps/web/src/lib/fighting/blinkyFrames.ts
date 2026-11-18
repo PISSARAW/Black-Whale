@@ -70,6 +70,8 @@ function swallow(state: FightState, side: FightSide): FightState {
   const lastObject = {
     ...swallowed[swallowed.length - 1],
     kallutoPaper: undefined,
+    paperOwner: undefined,
+    paperTarget: undefined,
     nenPower: 1,
     hatsuPower: 1,
     shuCharged: false,

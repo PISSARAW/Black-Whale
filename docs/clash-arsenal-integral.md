@@ -896,3 +896,39 @@ Références : [chapitre 84](https://hunterxhunter.fandom.com/wiki/Chapter_84) e
 [description officielle de Judgment Chain](https://www.ntv.co.jp/hunterhunter/dictionary/index.html).
 Ruleset : **clash-combat-39**. Le On est conservé ; les clauses de secret et de
 libération d’otages restent à achever, ainsi que les autres écarts du relevé.
+
+## Kalluto : plusieurs poupées et corps réellement marqués
+
+La surveillance du chapitre 225 conserve désormais un récepteur distinct pour
+chaque personne effectivement marquée puis associée à une poupée. Créer une
+seconde poupée ne remplace plus la première. Le papier collé, son propriétaire
+et le corps surveillé gardent leur indice physique après un relais ; le
+remplaçant ne reçoit ni cette marque ni l’écoute d’un autre membre.
+
+Chaque récepteur rapporte seulement les paroles réellement prononcées autour
+de son propre papier. Le corps endormi de Hanzo reste le point d’écoute quand
+son double s’éloigne. La portée de voix de 18 unités reste un réglage du
+scénario, pas une portée canonique du lien de Nen. Les paroles ne révèlent
+aucune pensée, action silencieuse ou intention de mensonge. Un observateur
+inconscient ou privé d’ouïe ne reçoit pas de nouvelles paroles ; aucune écoute
+n’est reconstruite depuis un snapshot PvP masqué.
+
+Le panneau affiche les récepteurs séparément, et chaque poupée physique possède
+son modèle. Arrêter l’écoute conserve les poupées, les papiers et les souvenirs
+déjà reçus. Réactiver une poupée exige une activation admissible. Une page de
+Chrollo qui cesse d’être active interrompt tous ses récepteurs ; le signet conserve
+son rôle. Manipulation offensive et surveillance gardent leurs accès distincts
+lors d’un vol ou d’un prêt, avec le budget réel du donneur pour un effet emprunté.
+Une manche conserve les papiers et les récepteurs déjà préparés.
+
+Le contrôle de relais ne confond plus une rancœur passive avec un On déjà
+activé. La rancœur reste sur son propriétaire et n’est pas donnée au remplaçant ;
+le On actif et son sceau continuent à empêcher un relais qui suspendrait leurs
+effets. Les flux et leurs paroles restent privés, y compris en réserve, et les
+commandes de P2 se rejouent sans changer les corps marqués.
+
+Références : [chapitre 225](https://hunterxhunter.fandom.com/wiki/Chapter_225) et
+[applications du papier de Kalluto](https://hunterworld.tokyo/kaltzaoldyeck/).
+Ruleset : **clash-combat-40**. Le On est conservé. Le stock matériel, son ramassage
+et les autres interactions du papier restent à compléter avant de certifier
+l’arsenal entier de Kalluto ; l’audit global reste ouvert.

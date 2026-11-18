@@ -1,4 +1,5 @@
 import { carryDolphinPeople } from './dolphinPeopleWorld'
+import { carryKallutoPaper } from './kallutoSurveillance'
 import { prepareMusseHistory } from './benjaminMusseScenario'
 import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
@@ -122,6 +123,7 @@ export function nextFightRound(state: FightState): FightState {
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
   fighter = carryDolphinState(fighter, previous)
+  fighter = carryKallutoPaper(fighter, previous)
   fighter = carryMusseHistory(fighter, previous)
   fighter = carryVoiceAutopilot(
     {

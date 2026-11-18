@@ -1,49 +1,41 @@
 import { attackPhase } from './frameData'
-import {
-  paperAvailable,
-  paperCommand,
-  paperCommandReady,
-  paperState,
-  hasPlantedPaper,
-} from './kallutoPaper'
+import { paperCommand, paperCommandReady } from './kallutoPaper'
+import { paperAbilityAvailable } from './kallutoAccess'
+import { makePaperDoll } from './kallutoSurveillance'
 import { launchKallutoPaper } from './kallutoFlight'
 import { recordDolphinEffects } from './kurapikaDolphin'
-import type { FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
+import type { PaperCommand } from './kallutoPaperTypes'
 
 export function advanceKallutoPaper(state: FightState): FightState {
   return stepPaper(stepPaper(state, 'player'), 'opponent')
 }
-function reconcileDoll(state: FightState, side: FightSide): FightState {
-  const fighter = state[side]
-  const memory = paperState(fighter)
-  if (!memory.doll || hasPlantedPaper(state, side)) return state
-  return { ...state, [side]: { ...fighter, kallutoPaper: { ...memory, doll: undefined } } }
-}
 function stepPaper(state: FightState, side: FightSide): FightState {
-  state = reconcileDoll(state, side)
   const fighter = state[side]
   const attack = fighter.attack
   if (!attack) return state
-  const ranged = fighter.id === 'kalluto' && attack.kind === 'ranged'
-  if (!ranged && (attack.kind !== 'special' || !paperCommand(fighter))) return state
-  if (!paperAvailable(fighter))
+  const command = attackPaperCommand(fighter)
+  if (!command) return state
+  if (!paperAbilityAvailable(fighter, command))
     return { ...state, [side]: { ...fighter, attack: null, bufferedAttack: null } }
   if (attack.projectileSpawned || attack.impacted || attackPhase(fighter) !== 'active') return state
-  return emitPaper(state, side, ranged)
+  return emitPaper(state, side, command)
 }
-function emitPaper(state: FightState, side: FightSide, ranged: boolean): FightState {
+function attackPaperCommand(actor: ArcadeFighter): PaperCommand | null {
+  if (actor.id === 'kalluto' && actor.attack?.kind === 'ranged') return 'plant'
+  return actor.attack?.kind === 'special' ? paperCommand(actor) : null
+}
+function emitPaper(state: FightState, side: FightSide, command: PaperCommand): FightState {
   const fighter = state[side]
-  const command = ranged ? 'plant' : paperCommand(fighter)!
   if (!paperCommandReady(state, side, command)) return state
   if (command !== 'doll')
     return recordDolphinEffects(state, launchKallutoPaper(state, side, command), side)
-  const target = side === 'player' ? 'opponent' : 'player'
+  const receiver = makePaperDoll(state, side)
   const next = {
     ...state,
     [side]: {
-      ...fighter,
+      ...receiver,
       attack: { ...fighter.attack!, impacted: true },
-      kallutoPaper: { ...paperState(fighter), doll: { target, createdAt: state.frame } },
     },
   }
   return recordDolphinEffects(state, next, side)

@@ -2,6 +2,7 @@ import { createVisitHatsuModel } from './visitHatsuModel'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import { CANON } from '$lib/tour/humanProportions'
 import { paperAvailable } from './kallutoPaper'
+import { paperDolls } from './kallutoSurveillance'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Three = HumanFigureBuild['THREE']
@@ -39,13 +40,14 @@ export function addKallutoPaper(options: {
     at.parent.add(scrap)
   }
   if (fighter.id === 'kalluto' || paperAvailable(fighter)) addFan(options, shapes)
-  if (!fighter.kallutoPaper?.doll) return
-  const visual = createVisitHatsuModel(THREE, { model: 'paper-doll', figureOwned: true })
-  visual.fit({ height: 0.25, width: 0.2 })
-  const doll = visual.root
-  doll.name = 'kalluto-listening-doll'
-  doll.position.z = 0.025
-  model.root.getObjectByName('hand-left')?.add(doll)
+  paperDolls(fighter).forEach((_, index) => {
+    const visual = createVisitHatsuModel(THREE, { model: 'paper-doll', figureOwned: true })
+    visual.fit({ height: 0.25, width: 0.2 })
+    const doll = visual.root
+    doll.name = index === 0 ? 'kalluto-listening-doll' : `kalluto-listening-doll:${index}`
+    doll.position.set((index % 3) * 0.055, Math.floor(index / 3) * 0.055, 0.025 + index * 0.012)
+    model.root.getObjectByName('hand-left')?.add(doll)
+  })
 }
 function addFan(
   options: Parameters<typeof addKallutoPaper>[0],

@@ -1,4 +1,5 @@
 import { releaseBlackVoicePage } from './blackVoice'
+import { mutePaperDolls } from './kallutoSurveillance'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { releaseLuiniAnchor } from './luiniSpatial'
@@ -87,7 +88,7 @@ function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): Copied
     fighter.kallutoPaper &&
     !chrolloAbilityActive(fighter, 'kalluto:backSpecial')
   )
-    return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
+    return mutePaperDolls(fighter)
   return page === 'musse'
     ? { ...fighter, secretWindow: undefined, secretWindowListening: undefined }
     : fighter

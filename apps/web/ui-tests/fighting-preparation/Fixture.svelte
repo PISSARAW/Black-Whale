@@ -1,5 +1,8 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
+  import { paperDolls } from '$lib/fighting/kallutoSurveillance'
+  import { createTeamFight, requestTeamAssist } from '$lib/fighting/teamMatch'
   import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
   import FightSecretWindowStatus from '$lib/components/fighting/FightSecretWindowStatus.svelte'
   import { speakPaperWords } from '$lib/fighting/kallutoListening'
@@ -156,6 +159,46 @@
     for (let index = 0; index < 120; index++) advanceFrame()
     await tick()
   }
+  function castPaper(slot: string) {
+    state = performAuraAttack({
+      state,
+      side: 'player',
+      kind: 'special',
+      moveId: `kalluto:${slot}`,
+      auraCharged: false,
+    })
+    for (let index = 0; index < 80; index++) advanceFrame()
+  }
+  export async function prepareKallutoReceivers() {
+    player = 'kalluto'
+    opponent = 'chrollo'
+    state = beginFight(
+      createTeamFight({
+        player: ['kalluto', 'theta', 'biscuit'],
+        opponent: ['hisoka', 'chrollo', 'benjamin'],
+      }),
+    )
+    input = { ...EMPTY_INPUT }
+    state = {
+      ...state,
+      player: { ...state.player, x: 30, aura: 100 },
+      opponent: { ...state.opponent, x: 48 },
+    }
+    castPaper('neutralSpecial')
+    castPaper('backSpecial')
+    state = requestTeamAssist({ ...state, opponent: { ...state.opponent, x: 93 } }, 'opponent', 1)
+    state = {
+      ...state,
+      player: { ...state.player, x: 30, aura: 100 },
+      opponent: { ...state.opponent, x: 48 },
+    }
+    castPaper('neutralSpecial')
+    castPaper('backSpecial')
+    state = speakPaperWords(state, 'opponent', 'Paroles près du deuxième papier.')
+    state = { ...state, player: { ...state.player, x: 93 } }
+    state = speakPaperWords(state, 'player', 'Paroles près du premier papier.')
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -167,6 +210,7 @@
       archive: state.player.hatsuEffects.baton?.musseArchive,
       judgment: state.opponent.judgmentChain,
       playerHeard: state.player.heardWords,
+      dolls: paperDolls(state.player),
     }
   }
 </script>
@@ -205,7 +249,8 @@
     >
     <p>{presentation.hint}</p>
     <FightSecretWindowStatus {state} side="player" language="fr" />
-    {#if ['kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    <FightKallutoReceivers {state} side="player" language="fr" />
+    {#if ['kalluto', 'kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

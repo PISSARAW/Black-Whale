@@ -1,4 +1,5 @@
 import { littleEyeShotBusy } from './littleEyeCapture'
+import { paperDolls } from './kallutoSurveillance'
 import { chainAbilityGroup } from './chainAbilityGroup'
 import {
   equippedDolphin,
@@ -215,7 +216,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
     'secret-window': secretWindowBusy(fighter),
-    'paper-doll': Boolean(fighter.kallutoPaper?.doll),
+    'paper-doll': paperDolls(fighter).some((doll) => doll.active !== false),
     'paper-stream': state.projectiles.some(
       (shot) => shot.owner === side && Boolean(shot.kallutoPaper),
     ),

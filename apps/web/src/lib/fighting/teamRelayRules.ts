@@ -9,6 +9,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
   'secretWindow',
+  'kallutoPaper',
+  'plantedPaper',
   'blackVoiceScreen',
   'stolenChainAbility',
   'blackVoiceGear',
@@ -70,6 +72,7 @@ function restingSignature(actor: ArcadeFighter) {
 function restingBody(actor: ArcadeFighter): ArcadeFighter {
   const body = {
     ...actor,
+    on: actor.on?.sealFrames ? { grudge: 0, sealFrames: actor.on.sealFrames } : undefined,
     hatsuEffects: {
       ...actor.hatsuEffects,
       baton: restingWindowBaton(actor.hatsuEffects.baton),

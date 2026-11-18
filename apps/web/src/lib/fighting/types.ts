@@ -1,3 +1,4 @@
+import type { PaperProjectileMetadata } from './kallutoPaperTypes'
 import type { PadailleTool } from './padailleWeapon'
 import type { Numpad } from './motionInput'
 import type { ControlScheme } from './controlScheme'
@@ -371,10 +372,9 @@ export interface RemotePunchPath {
   struck: boolean
 }
 
-export interface FightProjectile {
+export interface FightProjectile extends PaperProjectileMetadata {
   guard?: Exclude<import('./combatProperties').GuardRequirement, 'throw'>
   canHitDowned?: boolean
-  kallutoPaper?: 'plant' | 'serpent'
   jupiter?: boolean
   living?: boolean
   /** A transformed living object cannot be swallowed by Blinky. */

@@ -3,6 +3,7 @@ import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
 import { hasPlantedPaper, paperState } from './kallutoPaper'
+import { currentPaperDoll } from './kallutoSurveillance'
 import { BUNGEE_REST_DISTANCE } from './hisokaTechnique'
 import { SENSE_BITS } from './saiyuSenses'
 import { battleAppearance } from './battleCantabileRules'
@@ -122,7 +123,7 @@ function kallutoSlots({ state, roll }: ArsenalAiContext): readonly import('./typ
   const paper = paperState(state.opponent)
   if (!hasPlantedPaper(state, 'opponent', paper.zone))
     return [roll < 0.5 ? 'neutralSpecial' : 'downSpecial']
-  return !paper.doll ? ['backSpecial'] : ['forwardSpecial', 'finisher']
+  return !currentPaperDoll(state, 'opponent') ? ['backSpecial'] : ['forwardSpecial', 'finisher']
 }
 
 function bonolenovSlots({

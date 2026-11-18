@@ -3,6 +3,7 @@ import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
+import { paperDolls } from './kallutoSurveillance'
 import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
@@ -33,7 +34,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
-    Boolean(fighter.kallutoPaper?.doll),
+    paperDolls(fighter).length,
     Boolean(fighter.illumi?.disguised),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),

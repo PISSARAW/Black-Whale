@@ -1,4 +1,5 @@
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
+import { concealPaperWords } from '../kallutoPrivacy'
 import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
@@ -98,7 +99,7 @@ function redactEnemy(enemy: ArcadeFighter) {
   enemy.comboMaster = undefined
   enemy.bufferedAttack = null
   enemy.predator = enemy.predator ? { ...enemy.predator, known: [], analysis: null } : undefined
-  enemy.kallutoPaper = enemy.kallutoPaper ? { ...enemy.kallutoPaper, heard: undefined } : undefined
+  enemy.kallutoPaper = concealPaperWords(enemy.kallutoPaper)
   enemy.hatsuEffects = {
     ...enemy.hatsuEffects,
     baton: privateBaton(enemy.hatsuEffects.baton),

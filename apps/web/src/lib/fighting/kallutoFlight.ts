@@ -1,8 +1,11 @@
 import { commitProjectileNen } from './nenProjectiles'
 import { travelFightProjectile } from './projectileFlight'
-import { paperAvailable, paperZonePoint, hasPlantedPaper, selectedPaperZone } from './kallutoPaper'
+import { paperZonePoint, selectedPaperZone } from './kallutoPaper'
+import { paperAbilityAvailable } from './kallutoAccess'
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { PaperCommand } from './kallutoPaper'
+import { activePaperOwner, paperMarksAt } from './kallutoSurveillance'
+import { physicalBodyAt } from './fightBodyIdentity'
 
 /** Paper is physical matter. Damage/speed/lifetime are duel tuning, never an explosive charge. */
 export function launchKallutoPaper(
@@ -35,6 +38,8 @@ export function launchKallutoPaper(
     lifetime: 120,
     concealed: fighter.attack?.concealed,
     kallutoPaper: command === 'serpent' ? 'serpent' : 'plant',
+    paperOwner: activePaperOwner(state, side),
+    paperTarget: activePaperOwner(state, side === 'player' ? 'opponent' : 'player'),
   }
   return {
     ...state,
@@ -60,14 +65,9 @@ export function travelKallutoPaper(
   step: number,
 ): FightProjectile {
   const shot = travelFightProjectile(held, step)
-  if (
-    held.kallutoPaper !== 'serpent' ||
-    !paperAvailable(state[held.owner]) ||
-    !hasPlantedPaper(state, held.owner, held.targetZone)
-  )
-    return shot
-  const target = held.owner === 'player' ? 'opponent' : 'player'
-  const point = paperZonePoint(state[target], held.targetZone)
+  const target = serpentTarget(state, held)
+  if (!target) return shot
+  const point = paperZonePoint(target, held.targetZone)
   const dx = point.x - held.x
   const dy = point.y - held.y
   const distance = Math.hypot(dx, dy)
@@ -80,8 +80,43 @@ export function travelKallutoPaper(
   }
 }
 
+function serpentTarget(state: FightState, shot: FightProjectile) {
+  if (shot.kallutoPaper !== 'serpent') return undefined
+  const owner = shot.paperOwner ?? activePaperOwner(state, shot.owner)
+  const target =
+    shot.paperTarget ?? activePaperOwner(state, shot.owner === 'player' ? 'opponent' : 'player')
+  const emitter = physicalBodyAt(state, owner.owner, owner.member)
+  if (
+    !emitter ||
+    !paperAbilityAvailable(emitter, 'serpent') ||
+    !paperMarksAt(state, { owner, target, zone: shot.targetZone })
+  )
+    return undefined
+  return physicalBodyAt(state, target.owner, target.member)
+}
+
 /** Only a landed physical fragment embeds paper. Guard, avoidance and ordinary punches never do. */
 export function plantPaperAfterHit(state: FightState, shot: FightProjectile): FightState {
+  if (!physicalPaperLanded(state, shot)) return state
+  const target = shot.owner === 'player' ? 'opponent' : 'player'
+  const owner = shot.paperOwner ?? activePaperOwner(state, shot.owner)
+  if (
+    paperMarksAt(state, { owner, target: activePaperOwner(state, target), zone: shot.targetZone })
+  )
+    return state
+  return {
+    ...state,
+    [target]: {
+      ...state[target],
+      plantedPaper: [
+        ...(state[target].plantedPaper ?? []),
+        { owner: owner.owner, ownerMember: owner.member, zone: shot.targetZone },
+      ],
+    },
+  }
+}
+
+function physicalPaperLanded(state: FightState, shot: FightProjectile): boolean {
   const impact = state.impact
   if (
     shot.kallutoPaper !== 'plant' ||
@@ -91,17 +126,6 @@ export function plantPaperAfterHit(state: FightState, shot: FightProjectile): Fi
     impact.projectileId !== shot.id ||
     impact.transfer
   )
-    return state
-  const target = shot.owner === 'player' ? 'opponent' : 'player'
-  if (hasPlantedPaper(state, shot.owner, shot.targetZone)) return state
-  return {
-    ...state,
-    [target]: {
-      ...state[target],
-      plantedPaper: [
-        ...(state[target].plantedPaper ?? []),
-        { owner: shot.owner, zone: shot.targetZone },
-      ],
-    },
-  }
+    return false
+  return true
 }

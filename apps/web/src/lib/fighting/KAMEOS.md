@@ -1,9 +1,9 @@
 # Kaméos de soutien — plan de conception
 
-Statut : lots 0 à 6 faits. Les kaméos de soutien se choisissent à la préparation
-(un par camp), s'appellent au clavier ou à la manette, apparaissent avec le modèle de
-leur personnage et s'affichent dans le HUD. Restent les replays et le PvP (lot 8) et
-le nom définitif pour l'interface.
+Statut : lots 0 à 8 faits. Les kaméos de soutien se choisissent à la préparation et
+dans le duel privé, s'appellent au clavier ou à la manette, s'affichent en scène et
+dans le HUD, et passent par les replays et le PvP autoritaire. Restent un visuel au
+sol pour le piège de Luzurus, la recherche en ligne, et le nom définitif.
 
 ## Objectif (révisé : kaméos de soutien)
 

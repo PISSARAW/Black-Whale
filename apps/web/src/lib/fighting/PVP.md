@@ -157,3 +157,10 @@ typage et les endpoints par les tests HTTP.
 `PVP_CHECK_NO_WEBGL=1` permet de refaire le scénario réseau avec le rendu de
 secours lorsque le poste ne dispose pas de WebGL ; ce passage ne valide pas les
 modèles 3D. Le contrôle par défaut conserve WebGL.
+
+## Kaméos de soutien (ruleset 6)
+
+Le setup peut porter `kameos`, un kaméo du catalogue par siège (voir
+[KAMEOS.md](./KAMEOS.md)). Le serveur l'attache à la création du match. Le kaméo
+adverse est masqué dans la vue privée comme le leader adverse. Le bouton d'appel est
+le bit `kameo` des entrées.

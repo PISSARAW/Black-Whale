@@ -6,6 +6,7 @@
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
+  import FightKameoBadge from './FightKameoBadge.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -62,6 +63,7 @@
         {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
       </div>
       <FightComboMaster {state} {side} {language} compact />
+      <FightKameoBadge {state} {side} {language} />
     </div>
   {/each}
   <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>

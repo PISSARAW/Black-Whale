@@ -19,6 +19,7 @@ const LABELS: Record<string, [string, string]> = {
   coverEars: ['Oreilles couvertes', 'Cover ears'],
   plugWounds: ['Plaies couvertes', 'Cover wounds'],
   call: ['Appel', 'Call'],
+  kameo: ['Kaméo', 'Kameo'],
   interact: ['Interaction', 'Interact'],
   arena: ['Terrain', 'Arena'],
   focusHead: ['Tête', 'Head'],

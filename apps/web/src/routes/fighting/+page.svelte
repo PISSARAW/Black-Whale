@@ -47,6 +47,7 @@
   import { link, locale } from '$lib/i18n'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { createFight, performAuraAttack } from '$lib/fighting/engine'
+  import { withChosenKameos } from '$lib/fighting/kameos/selection'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
@@ -149,11 +150,8 @@
   function prepareFight() {
     school.exit()
     practice.exit()
-    state = createFight(selectedPlayer, selectedOpponent, {
-      formatId: selectedFormat,
-      mode: selectedMode,
-      environment,
-    })
+    const options = { formatId: selectedFormat, mode: selectedMode, environment }
+    state = withChosenKameos(createFight(selectedPlayer, selectedOpponent, options))
     resetFightInputs()
     match.begin(state)
     paused = false

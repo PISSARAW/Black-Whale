@@ -14,6 +14,7 @@ import { createPainPacker } from './feitanPain'
 import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
+import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 
 interface CreateFightOptions {
@@ -103,6 +104,7 @@ export function nextFightRound(state: FightState): FightState {
         }),
         state.opponent,
       ),
+      ...roundKameoState(state, format.health),
       phase: 'ready',
       frame: 0,
       time: format.roundFrames / FIGHT_FPS,
@@ -124,7 +126,16 @@ export function nextFightRound(state: FightState): FightState {
   )
 }
 
-function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+function roundKameoState(state: FightState, health: number): Pick<FightState, 'kameos'> {
+  if (!state.kameos) return {}
+  return {
+    kameos: nextRoundKameos(state.kameos, (fighter, side) =>
+      preserveLifespan(createFighter({ id: fighter.id, ...KAMEO_SPAWN[side], health }), fighter),
+    ),
+  }
+}
+
+export function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
   fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
   return fighter.kurapika
     ? {
@@ -137,7 +148,7 @@ function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): Arca
     : fighter
 }
 
-function createFighter(options: {
+export function createFighter(options: {
   id: FighterId
   x: number
   facing: -1 | 1

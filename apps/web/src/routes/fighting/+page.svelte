@@ -157,11 +157,12 @@
     paused = false
   }
   function startFight() {
+    resetFightInputs()
     if (state) state = match.apply(state, { kind: 'start' })
   }
   function rematch() {
     prepareFight()
-    startFight()
+    if (state?.mode === 'training') startFight()
   }
   function continueMatch() {
     if (!state) return
@@ -414,6 +415,8 @@
           }}
         />
         <FightStage
+          introEnabled={!replays.active && state.mode !== 'training'}
+          onIntroComplete={startFight}
           bind:victoryActive
           victoryEnabled={!$replays.playback}
           victoryPaused={pausedView}
@@ -460,6 +463,7 @@
             {language}
             {paused}
             replay={replays.active}
+            introEnabled={!replays.active && state.mode !== 'training'}
             {togglePause}
             {startFight}
             {rematch}

@@ -8,6 +8,7 @@
   export let language: 'fr' | 'en'
   export let paused: boolean
   export let replay = false
+  export let introEnabled = false
   export let togglePause: () => void
   export let startFight: () => void
   export let rematch: () => void
@@ -26,7 +27,7 @@
   </div>
 {/if}
 
-{#if state.phase === 'ready' && !replay}
+{#if state.phase === 'ready' && !replay && !introEnabled}
   <div class="match-overlay ready-overlay">
     <FightCeremony {state} {language} />
     <p>

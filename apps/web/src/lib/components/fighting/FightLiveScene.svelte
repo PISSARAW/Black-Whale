@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
+  import type { IntroFrame } from '$lib/fighting/presentation/introPlayback'
   import FightScene from './FightScene.svelte'
   import FightFuturePool from './FightFuturePool.svelte'
   import FightFutureClock from './FightFutureClock.svelte'
@@ -11,6 +12,7 @@
   import type { FightState, FightSide } from '$lib/fighting/types'
   import type { FightStageId } from '$lib/fighting/stages'
   export let victoryFrame: VictoryFrame | null = null
+  export let introFrame: IntroFrame | null = null
   export let onSceneReady: () => void = () => {}
   export let onSceneFailed: () => void = () => {}
   export let state: FightState
@@ -49,6 +51,7 @@
     {comfort}
     {appearance}
     {victoryFrame}
+    {introFrame}
     {onSceneReady}
     {onSceneFailed}
     cameraDirection={direction}

@@ -27,5 +27,17 @@ jobs:
           script: |
             cd /opt/black-whale
             git fetch origin main
-            git reset --hard '${{ github.event.workflow_run.head_sha }}'
+            candidate='${{ github.event.workflow_run.head_sha }}'
+            running_image=$(docker inspect black-whale-web-1 --format '{{.Config.Image}}' 2>/dev/null || true)
+            running_health=$(docker inspect black-whale-web-1 --format '{{.State.Health.Status}}' 2>/dev/null || true)
+            running_commit=${running_image##*:}
+            # CI runs can finish out of order. A healthy newer release must
+            # not be replaced by an older run that has only just completed.
+            if [ "$running_health" = healthy ] &&
+              git rev-parse --verify "${running_commit}^{commit}" >/dev/null 2>&1 &&
+              git merge-base --is-ancestor "$candidate" "$running_commit"; then
+              echo 'This commit or a newer release is already healthy; skipping stale deployment.'
+              exit 0
+            fi
+            git reset --hard "$candidate
             ./infrastructure/hetzner/deploy.sh

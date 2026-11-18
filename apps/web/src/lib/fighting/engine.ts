@@ -220,7 +220,7 @@ function executeSelectedMove(
   if (override) return override
   const move = routedFightMove(state[side], selected)
   if (!move) {
-    if (action === 'throw') return performLegacyThrow(state, side, performAuraAttack)
+    if (action === 'throw') return performLegacyThrow({ state, side, input }, performAuraAttack)
     if (action === 'finisher') return state
     return performAuraAttack({
       state,
@@ -371,12 +371,17 @@ export function displayPose(fighter: ArcadeFighter): FighterPose {
   return poseFighter(fighter).pose
 }
 
-export function performThrow(state: FightState, side: FightSide): FightState {
+export function performThrow(
+  state: FightState,
+  side: FightSide,
+  input: FightInput = EMPTY_INPUT,
+): FightState {
+  if (state[side].id !== 'bonolenov') input = EMPTY_INPUT
   if (state[side].easterEgg) return state
   if (state[side].cyclotronWindup) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (state.catsName) return state
-  const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
-  if (move) return performMove({ state, side, action: 'throw' })
-  return performLegacyThrow(state, side, performAuraAttack)
+  const move = moveForAction(state[side], 'throw', input)
+  if (move) return performMove({ state, side, action: 'throw', input })
+  return performLegacyThrow({ state, side, input }, performAuraAttack)
 }

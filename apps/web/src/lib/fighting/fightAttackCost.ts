@@ -2,6 +2,7 @@ import { chrolloPageForMove, chrolloPageSource, chrolloCopiedMove } from './chro
 import { moveById, moveForSlot } from './movesets'
 import { rangedAuraCost } from './projectiles'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
+import { SUPER_THROW_COST } from './superThrow'
 import type { ArcadeFighter, AttackKind } from './types'
 
 export const CONCEALED_AURA_SURCHARGE = 12
@@ -11,10 +12,12 @@ interface AttackCostOptions {
   kind: AttackKind
   moveId?: string
   concealed?: boolean
+  superThrow?: boolean
 }
 
 /** A copied page pays for its actual technique, before any activation changes its state. */
 export function attackAuraCost(options: AttackCostOptions): number {
+  if (options.superThrow) return SUPER_THROW_COST
   const { fighter, kind, moveId, concealed } = options
   if (bodyguardPhysicalShot(fighter, kind)) return 0
   const copied = copiedMove(options)

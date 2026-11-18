@@ -9,6 +9,7 @@ interface IntroBounds {
   x: number
   height: number
   landmarks?: IntroLandmarkBounds
+  safeTop?: number
 }
 
 interface Orbit {
@@ -60,7 +61,13 @@ export function introInFrame(camera: PerspectiveCamera, bounds: IntroBounds): bo
     for (const y of [box.bottom, box.top])
       for (const z of [box.near, box.far]) {
         point.set(x, y, z).project(camera)
-        if (Math.abs(point.x) > 0.86 || Math.abs(point.y) > 0.82 || point.z > 1) return false
+        if (
+          Math.abs(point.x) > 0.86 ||
+          point.y > (bounds.safeTop ?? 0.82) ||
+          point.y < -0.82 ||
+          point.z > 1
+        )
+          return false
       }
   return true
 }

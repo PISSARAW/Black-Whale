@@ -14,6 +14,7 @@ import { padailleMoveAvailable } from './padailleWeapon'
 import { feitanMoveAvailable } from './feitanPain'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import { observeComboMaster } from './comboMaster'
+import { superThrowAvailable, throwAttackOptions } from './superThrow'
 import type { AttackKind, AttackVariant, FightSide, FightState, FighterId } from './types'
 import type { DirectionalChain } from './directionalChain'
 
@@ -22,6 +23,7 @@ export interface AuraAttackOptions {
   side: FightSide
   kind: AttackKind
   auraCharged: boolean
+  superThrow?: true
   lynchQuestion?: import('./lynchTypes').LynchQuestionId
   variant?: AttackVariant
   moveId?: string
@@ -36,6 +38,7 @@ interface AttackIntent {
 
 /** Start now or buffer once; effects and aura are committed only on the actual start. */
 export function commitAuraAttack(options: AuraAttackOptions, intent: AttackIntent): FightState {
+  options = throwAttackOptions(options)
   const { side, kind, auraCharged, variant, moveId } = options
   const original = options.state[side]
   if (!attackAdmission(options, intent)) return options.state
@@ -55,9 +58,16 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
       moveId,
       directionalChain: options.directionalChain,
       auraCharged,
+      superThrow: options.superThrow,
       concealed,
       hatsuSource,
-      auraCost: attackAuraCost({ fighter: original, kind, moveId, concealed }),
+      auraCost: attackAuraCost({
+        fighter: original,
+        kind,
+        moveId,
+        concealed,
+        superThrow: options.superThrow,
+      }),
     }),
   })
 }
@@ -79,6 +89,7 @@ function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): Fig
         moveId,
         ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
         auraCharged,
+        superThrow: options.superThrow,
         concealed,
         hatsuSource,
         cancelFrom,
@@ -92,13 +103,21 @@ function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): Fig
 function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): boolean {
   const { state, side, kind, moveId } = options
   const fighter = state[side]
-  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
-    return false
+  if (!attackMaterialsAvailable(options)) return false
   if (fighter.id === 'camilla' && kind === 'special') return false
   if (!techniqueAllowed(options)) return false
   const move = moveById(moveId)
   if (move && !canUseMovesetMove(state, side, move)) return false
-  return fighter.aura >= attackAuraCost({ fighter, kind, moveId, concealed: intent.concealed })
+  return (
+    fighter.aura >=
+    attackAuraCost({
+      fighter,
+      kind,
+      moveId,
+      concealed: intent.concealed,
+      superThrow: options.superThrow,
+    })
+  )
 }
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {
@@ -112,4 +131,12 @@ function techniqueAllowed(options: AuraAttackOptions): boolean {
   if (!paperMoveAllowed(state, side, moveId)) return false
   if (isErigeronAction(state[side], kind, moveId)) return false
   return hisokaTechniqueAllowed(state, side, moveId) && feitanMoveAvailable(state[side], moveId)
+}
+
+function attackMaterialsAvailable(options: AuraAttackOptions): boolean {
+  const { state, side, kind } = options
+  const fighter = state[side]
+  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
+    return false
+  return !options.superThrow || superThrowAvailable(fighter)
 }

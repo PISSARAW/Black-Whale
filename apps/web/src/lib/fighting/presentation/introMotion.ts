@@ -5,10 +5,13 @@ import { introShot, type IntroFrame } from './introPlayback'
 import type { FightSide } from '../types'
 import { introPerformance } from './introPerformances'
 import { sampleIntroPose } from './introPerformanceSample'
+import { throwBodyPlan } from '../throwCinematicMotion'
+import type { ThrowCinematicFrame } from '../throwCinematic'
 
 interface IntroMotionOptions extends BodyMotionOptions {
   introFrame: IntroFrame | null
   side: FightSide
+  throwFrame?: ThrowCinematicFrame | null
 }
 
 /** Dedicated entrance choreography; no action or simulation state is manufactured. */
@@ -37,5 +40,5 @@ export function introBodyPlan(options: IntroMotionOptions): BodyPlan | undefined
 }
 
 export function introBodyMotion(options: IntroMotionOptions) {
-  return fightBodyMotion({ ...options, plan: introBodyPlan(options) })
+  return fightBodyMotion({ ...options, plan: introBodyPlan(options) ?? throwBodyPlan(options) })
 }

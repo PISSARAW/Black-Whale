@@ -15,7 +15,7 @@ export function performTrainingAction(options: {
   return observeFightCommand(prepareCommandHands(options.state, options), options, (current) =>
     observeTrainingCommand(current, options, (state) => {
       const { side, action, input = EMPTY_INPUT } = options
-      if (action === 'throw') return performThrow(state, side)
+      if (action === 'throw') return performThrow(state, side, input)
       if (action === 'ranged')
         return performAuraAttack({ state, side, kind: 'ranged', auraCharged: input.aura })
       return performMove({ state, side, action, input })

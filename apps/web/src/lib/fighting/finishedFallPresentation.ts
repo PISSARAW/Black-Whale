@@ -2,6 +2,7 @@ import { FIXED_STEP } from './fightClock'
 import { advanceAirborne } from './fighterMovement'
 import { KO_DURATION } from './fightMoves'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+import type { ThrowCinematicFrame } from './throwCinematic'
 
 interface Position {
   x: number
@@ -20,11 +21,13 @@ interface FallInput {
 }
 
 /** The verdict stays immutable; only the displayed body completes its flight. */
-export function createFinishedFallPresentation() {
+export function createFinishedFallPresentation(
+  throwFrame: () => ThrowCinematicFrame | null = () => null,
+) {
   const falls: Partial<Record<FightSide, Fall>> = {}
   return (state: FightState, side: FightSide, input: FallInput) => {
     const { fighter, position, seconds } = input
-    if (!needsFinishedFall(state, fighter)) {
+    if (!needsFinishedFall(state, fighter, throwFrame())) {
       delete falls[side]
       return { fighter, position, progress: undefined as number | undefined }
     }
@@ -52,7 +55,12 @@ export function createFinishedFallPresentation() {
   }
 }
 
-function needsFinishedFall(state: FightState, fighter: ArcadeFighter): boolean {
+function needsFinishedFall(
+  state: FightState,
+  fighter: ArcadeFighter,
+  throwFrame: ThrowCinematicFrame | null,
+): boolean {
+  if (throwFrame?.active) return false
   return (
     state.phase === 'finished' &&
     !fighter.hanzoProjection &&

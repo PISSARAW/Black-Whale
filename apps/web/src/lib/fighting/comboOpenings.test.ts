@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { resolveFightImpacts } from './combatImpact'
 import { comboChoices } from './comboChoices'
-import { prepareCombatRoute } from './combatRouteSetup'
+import { prepareCombatRoute, type CombatRouteSetup } from './combatRouteSetup'
 import { selectedGumLink } from './bungeeNetwork'
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { attackData } from './frameData'
 import { FIGHTING_ROSTER } from './roster'
+import { rosterPhysicalBranch, ROSTER_TECHNIQUE_BRANCHES } from './rosterComboBranches'
+import type { ComboOpening } from './comboOpenings'
 import {
   EMPTY_INPUT,
   type FightSide,
@@ -18,6 +20,10 @@ import {
 
 function duel(fighter: FighterId, facing: 1 | -1): FightState {
   const state = beginFight(createFight(fighter, 'hisoka', { mode: 'versus-local' }))
+  return centre(state, facing)
+}
+
+function centre(state: FightState, facing: 1 | -1): FightState {
   return {
     ...state,
     player: { ...state.player, x: 50 - 6 * facing, facing },
@@ -70,6 +76,7 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('%s situational conversions',
     const hit = contact({ ...started, opponent: { ...started.opponent, x } })
     expect(hit.player.attack?.comboOpening).toBe('tip')
     expect(followup(hit, 1).impact).toMatchObject({ comboHits: 2, blocked: false })
+    expectPhysicalBranch(hit, 'tip')
   })
 
   it.each([1, -1] as const)('converts an anti-air facing %s', (facing) => {
@@ -81,6 +88,7 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('%s situational conversions',
     expect(hit.impact?.antiAir).toBe(true)
     expect(hit.player.attack?.comboOpening).toBe('anti-air')
     expect(followup(hit, 1).impact).toMatchObject({ comboHits: 2, blocked: false })
+    expectPhysicalBranch(hit, 'anti-air')
   })
 
   it.each([1, -1] as const)('converts a corner counter facing %s', (facing) => {
@@ -98,6 +106,7 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('%s situational conversions',
     expect(hit.impact).toMatchObject({ counterHit: true, wallSplat: true })
     expect(hit.player.attack?.comboOpening).toBe('corner-counter')
     expect(followup(hit, -1).impact).toMatchObject({ comboHits: 2, blocked: false })
+    expectPhysicalBranch(hit, 'corner-counter')
   })
 })
 
@@ -139,16 +148,16 @@ function routeMove(state: FightState, slot: MoveSlot) {
 }
 
 function tip(fighter: FighterId, facing: 1 | -1) {
-  const started = command(duel(fighter, facing), 'light', 1)
+  const started = command(duel(fighter, facing), 'light', fighter === 'chrollo' ? 0 : 1)
   const reach = attackData('light', started.player).box.right
   const x = started.player.x + facing * (reach + 1.65)
   return contact({ ...started, opponent: { ...started.opponent, x } })
 }
 
-function corner(fighter: FighterId, facing: 1 | -1, tether = false) {
+function corner(fighter: FighterId, facing: 1 | -1, setup?: CombatRouteSetup) {
   let state = duel(fighter, facing)
   state = { ...state, player: { ...state.player, aura: 100 } }
-  if (tether) state = prepareCombatRoute(state, 'bungee')
+  if (setup) state = prepareCombatRoute(state, setup)
   const x = facing === 1 ? 93 : 7
   state = {
     ...state,
@@ -158,6 +167,14 @@ function corner(fighter: FighterId, facing: 1 | -1, tether = false) {
   const attacking = performMove({ state, side: 'opponent', action: 'heavy', input: EMPTY_INPUT })
   const atWall = { ...attacking, opponent: { ...attacking.opponent, x } }
   return contact(command(atWall, 'light'))
+}
+
+function antiAir(fighter: FighterId, facing: 1 | -1, setup?: CombatRouteSetup) {
+  let state = duel(fighter, facing)
+  state = { ...state, player: { ...state.player, aura: 100 } }
+  if (setup) state = centre(prepareCombatRoute(state, setup), facing)
+  const started = command(state, 'heavy')
+  return contact({ ...started, opponent: { ...started.opponent, y: 6, velocityY: -12 } })
 }
 
 function keepGuard(state: FightState, until: number, down = false) {
@@ -171,6 +188,20 @@ function keepGuard(state: FightState, until: number, down = false) {
   }
   expect(state.impact?.comboHits).toBe(until)
   return state
+}
+
+function expectPhysicalBranch(hit: FightState, event: ComboOpening) {
+  const branch = rosterPhysicalBranch(hit.player.id, event)!
+  expect(branch.slot).not.toBe(event === 'corner-counter' ? 'backHeavy' : 'forwardHeavy')
+  const list = comboChoices(hit).filter(({ move }) => move.slot === branch.slot)
+  expect(list).toHaveLength(1)
+  expect(list[0]).toMatchObject({ status: 'ready', opening: event, cost: 0 })
+  for (const down of [false, true]) {
+    const started = routeMove(hit, branch.slot)
+    expect(started.player.attack?.moveId).toBe(`${hit.player.id}:${branch.slot}`)
+    const converted = keepGuard(started, 2, down)
+    if (branch.slot === 'lowHeavy') expect(converted.opponent.knockdownFrames).toBeGreaterThan(0)
+  }
 }
 
 describe.each([1, -1] as const)('personal conversions facing %s', (facing) => {
@@ -192,7 +223,7 @@ describe.each([1, -1] as const)('personal conversions facing %s', (facing) => {
       selectedGumLink(keepGuard(routeMove(opening, 'neutralSpecial'), 2), 'player'),
     ).toBeTruthy()
     expect(routeMove(opening, 'finisher').player.attack).toBe(opening.player.attack)
-    const tethered = corner('hisoka', facing, true)
+    const tethered = corner('hisoka', facing, 'bungee')
     expect(selectedGumLink(tethered, 'player')).toBeTruthy()
     const finisher = routeMove(tethered, 'finisher')
     expect(tethered.player.aura - finisher.player.aura).toBe(55)
@@ -215,4 +246,50 @@ describe.each([1, -1] as const)('personal conversions facing %s', (facing) => {
     keepGuard(shortWall, 11)
     keepGuard(longWall, 21)
   })
+
+  it('gives Franklin a raking barrage against a crouched target', () => {
+    for (const opening of [tip('franklin', facing), corner('franklin', facing)]) {
+      const lowBurst = routeMove(opening, 'downSpecial')
+      expect(opening.player.aura - lowBurst.player.aura).toBe(20)
+      keepGuard(lowBurst, 11, true)
+    }
+  })
 })
+
+const TECHNIQUE_SETUP = { biscuit: 'true-form', kalluto: 'paper' } as Partial<
+  Record<FighterId, CombatRouteSetup>
+>
+const OPENERS = { tip, 'anti-air': antiAir, 'corner-counter': corner }
+
+describe.each(Object.keys(ROSTER_TECHNIQUE_BRANCHES) as FighterId[])(
+  '%s signature conversion',
+  (id) => {
+    it.each([1, -1] as const)('lands with legal resources facing %s', (facing) => {
+      for (const [opening, branches] of Object.entries(ROSTER_TECHNIQUE_BRANCHES[id]!)) {
+        const event = opening as ComboOpening
+        const setup = TECHNIQUE_SETUP[id]
+        const hit = OPENERS[event](id, facing, setup)
+        const missingResource = id === 'theta' ? { weaponsConfiscated: true } : { aura: 0 }
+        const withoutResource = { ...hit, player: { ...hit.player, ...missingResource } }
+        for (const branch of branches) {
+          expect(comboChoices(hit).find(({ move }) => move.slot === branch.slot)).toMatchObject({
+            opening: event,
+            reward: 'technique',
+            status: 'ready',
+          })
+          expect(routeMove(withoutResource, branch.slot).player.attack).toBe(hit.player.attack)
+          expect(
+            comboChoices(withoutResource).find(({ move }) => move.slot === branch.slot)?.status,
+          ).toBe('unavailable')
+          if (setup) {
+            const unprepared = OPENERS[event](id, facing)
+            expect(routeMove(unprepared, branch.slot).player.attack).toBe(unprepared.player.attack)
+          }
+          const started = routeMove(hit, branch.slot)
+          expect(started.player.attack?.comboFollowup).toBeUndefined()
+          keepGuard(started, 2)
+        }
+      }
+    })
+  },
+)

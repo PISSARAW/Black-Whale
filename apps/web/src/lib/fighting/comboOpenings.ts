@@ -1,10 +1,23 @@
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
+import { rosterPhysicalBranch, ROSTER_TECHNIQUE_BRANCHES } from './rosterComboBranches'
 
 export type ComboOpening = 'tip' | 'anti-air' | 'corner-counter'
 
 type OpeningReward =
-  'knockdown' | 'backfist' | 'chain' | 'attach' | 'tether' | 'short-burst' | 'long-burst'
+  | 'knockdown'
+  | 'backfist'
+  | 'chain'
+  | 'attach'
+  | 'tether'
+  | 'short-burst'
+  | 'long-burst'
+  | 'low-burst'
+  | 'advance'
+  | 'sweep'
+  | 'quick'
+  | 'heavy'
+  | 'technique'
 type OpeningBranch = { slot: MoveSlot; reward: OpeningReward; advance?: true }
 
 const PERSONAL_BRANCHES: Partial<
@@ -24,10 +37,14 @@ const PERSONAL_BRANCHES: Partial<
     ],
   },
   franklin: {
-    tip: [{ slot: 'forwardSpecial', reward: 'short-burst' }],
+    tip: [
+      { slot: 'forwardSpecial', reward: 'short-burst' },
+      { slot: 'downSpecial', reward: 'low-burst' },
+    ],
     'corner-counter': [
       { slot: 'forwardSpecial', reward: 'short-burst' },
       { slot: 'neutralSpecial', reward: 'long-burst' },
+      { slot: 'downSpecial', reward: 'low-burst' },
     ],
   },
 }
@@ -77,8 +94,15 @@ function confirmedOpening(fighter: ArcadeFighter): ComboOpening | undefined {
   return fighter.attack?.confirmedHit ? fighter.attack.comboOpening : undefined
 }
 
-function openingBranches(fighter: ArcadeFighter, opening: ComboOpening) {
-  return PERSONAL_BRANCHES[fighter.id]?.[opening] ?? []
+function signatureBranches(id: FighterId, opening: ComboOpening): readonly OpeningBranch[] {
+  return PERSONAL_BRANCHES[id]?.[opening] ?? ROSTER_TECHNIQUE_BRANCHES[id]?.[opening] ?? []
+}
+
+function openingBranches(fighter: ArcadeFighter, opening: ComboOpening): readonly OpeningBranch[] {
+  const signatures = signatureBranches(fighter.id, opening)
+  const physical = rosterPhysicalBranch(fighter.id, opening)
+  if (!physical || signatures.some(({ slot }) => slot === physical.slot)) return signatures
+  return [physical, ...signatures]
 }
 
 function physicalDestination(fighter: ArcadeFighter, opening: ComboOpening) {

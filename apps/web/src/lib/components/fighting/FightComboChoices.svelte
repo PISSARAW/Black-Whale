@@ -26,6 +26,12 @@
     tether: ['Consomme l’attache', 'Consumes the tether'],
     'short-burst': ['10 tirs · récupère plus vite', '10 shots · shorter recovery'],
     'long-burst': ['20 tirs · reste exposé plus longtemps', '20 shots · longer commitment'],
+    'low-burst': ['10 tirs rasants', '10 low shots'],
+    advance: ['Rapprochement', 'Close the gap'],
+    sweep: ['Balayage', 'Sweep'],
+    quick: ['Reprise légère', 'Light follow-up'],
+    heavy: ['Reprise lourde', 'Heavy follow-up'],
+    technique: ['Technique du personnage', 'Character technique'],
   }
   $: choices = comboChoices(state)
   $: index = language === 'fr' ? 0 : 1

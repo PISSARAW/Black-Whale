@@ -22,6 +22,10 @@ black-whale-manual-*.sql.gz
 # Vite dev artefacts
 apps/*/vite.config.ts.timestamp-*.mjs
 
+# Generated render exports and their Vite dependency caches.
+/output/
+/apps/*/output/
+
 # Playwright
 test-results/
 playwright-report/
@@ -42,3 +46,8 @@ coverage/
 
 # Persistent Clash rankings and hashed credentials (server volume).
 .clash-data/
+
+# Local-only files: Finder metadata, generated image drafts, deletion holding pen.
+.DS_Store
+/generated_images/
+/_to_delete/

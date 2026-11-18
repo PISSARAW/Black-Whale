@@ -30,6 +30,9 @@ export default tseslint.config(
       '**/*.tsbuildinfo',
       'apps/*/vite.config.ts.timestamp-*.mjs',
       'packages/database/prisma/migrations/**',
+      // Render exports and their Vite dependency caches are generated artifacts.
+      'output/**',
+      'apps/*/output/**',
       // Scratch checkouts and a holding pen for deletions: copies of the tree,
       // not the tree. Linting them reports every finding twice and holds the
       // whole repo red on code nobody is editing.

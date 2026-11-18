@@ -23,6 +23,8 @@
   import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightReactionPresentation } from '$lib/fighting/fightReactionPresentation'
+  import { createPresentedModelRefresh } from '$lib/fighting/refreshPresentedModel'
+  import { createFightContactAlignment } from '$lib/fighting/fightContactAlignment'
   import FightStageDescription from './FightStageDescription.svelte'
   import { presentedFigures } from '$lib/fighting/presentation/figures'
   import { clashPresentation } from '$lib/fighting/presentation/profile'
@@ -62,7 +64,7 @@
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { drawVictoryFrame } from '$lib/fighting/victory/draw'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
-  import type { ArcadeFighter, FightState } from '$lib/fighting/types'
+  import type { FightState } from '$lib/fighting/types'
   const presentation = createFightPresentation()
   const interpolatedPosition = presentation.position
   export let viewer: 'player' | 'opponent' = 'player'
@@ -216,17 +218,10 @@
           figureOf: (side) => models[side].model.turns,
           comfort: visualComfort,
         })
-        const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
-          const held = models[side]
-          const nen = nenKey(fighter)
-          if (held.nen === nen) return held.model
-          disposeMountedVisitHatsu(held.model.root)
-          scene.remove(held.model.root)
-          held.model = buildFighter(fighter)
-          held.nen = nen
-          scene.add(held.model.root)
-          return held.model
-        }
+        const modelOf = createPresentedModelRefresh({ scene, models, nenKey, buildFighter })
+        const alignPhysicalContact = createFightContactAlignment(
+          (side) => models[side].model.turns,
+        )
 
         const impacts = createFightImpactScene({
           THREE,
@@ -391,6 +386,7 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
+          alignPhysicalContact(state)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
           onAwakening.sync(state, onFrames)

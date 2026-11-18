@@ -4,6 +4,9 @@ import { fightWorldX, fightWorldY } from './fightCoordinates'
 import { fightContactStyle } from './fightContactStyle'
 import { closeFightPosition } from './fightCloseSpacing'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
+import { physicalRosterPair } from './fightPhysicalRoster'
+import { fightContactTarget } from './fightContactAlignment'
+import { fightRigOf } from './fightRig'
 import type { FightImpact, FightSide, FightState } from './types'
 
 export function createFightImpactScene(options: {
@@ -115,9 +118,20 @@ function alignCloseImpact(
   const side = impact.attacker === 'player' ? 'opponent' : 'player'
   const attacker = state[impact.attacker]
   const target = state[side]
+  if (alignPhysicalHit(origin, options)) return
   const close = closeFightPosition(state, side, { body: target, rival: attacker })
   origin.x += fightWorldX(close.x) - fightWorldX(target.x)
   if (close.z) origin.z = 0.38
+  alignNeedleHead(origin, options)
+}
+
+function alignNeedleHead(
+  origin: Three.Vector3,
+  options: Parameters<typeof alignCloseImpact>[1],
+): void {
+  const { state, impact } = options
+  const side = impact.attacker === 'player' ? 'opponent' : 'player'
+  const attacker = state[impact.attacker]
   if (attacker.attack?.moveId !== 'illumi:neutralSpecial' || impact.zone !== 'head') return
   const figure = options.figureOf?.(side)
   const head = figure && humanAnimationRig(figure)?.head
@@ -126,6 +140,31 @@ function alignCloseImpact(
     origin.x -= attacker.facing * 0.12
     origin.z += 0.25
   }
+}
+
+function alignPhysicalHit(
+  origin: Three.Vector3,
+  options: Parameters<typeof alignCloseImpact>[1],
+): boolean {
+  const { state, impact } = options
+  const side = impact.attacker === 'player' ? 'opponent' : 'player'
+  const human = options.figureOf && humanAnimationRig(options.figureOf(side))
+  if (!human || !anatomicalPhysicalHit(state, impact)) return false
+  origin.copy(fightContactTarget(fightRigOf(human), impact.zone, state[impact.attacker].facing))
+  origin.z += 0.12
+  return true
+}
+
+function anatomicalPhysicalHit(state: FightState, impact: FightImpact): boolean {
+  const other = impact.attacker === 'player' ? 'opponent' : 'player'
+  return (
+    physicalRosterPair(state[impact.attacker].id, state[other].id) &&
+    !impact.blocked &&
+    !impact.parried &&
+    impact.projectileId === null &&
+    !impact.transfer &&
+    !impact.objectTransfer
+  )
 }
 
 /** Elevated melee silhouettes can cross the lower collision box before reaching the body. */

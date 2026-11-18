@@ -5,6 +5,7 @@ import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { usesRightHandPose } from './fightHandConvention'
 import { fighterKeyedMove } from './fighterKeyedMove'
+import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
@@ -114,7 +115,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
       return
     }
     const anchor = plan.plant ? captureFootPlant(rig) : null
-    const drawn = blended(rig, plan, seconds)
+    const drawn = drawBodyPose(options, rig, plan)
     applyFightPose(rig, drawn, fighter.facing)
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
@@ -132,6 +133,10 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
+
+function drawBodyPose(options: BodyMotionOptions, rig: FightRig, plan: BodyPlan): FightPose {
+  return options.poseContinuity?.(plan, options.seconds) ?? blended(rig, plan, options.seconds)
+}
 
 function remember(rig: FightRig, drawn: { key: string; pose: FightPose; seconds: number }): void {
   MEMORY.set(rig, {
@@ -344,6 +349,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     attackFlow: {
       frame,
       startup: frames.startup,
+      loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,
       contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),

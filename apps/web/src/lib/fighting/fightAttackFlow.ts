@@ -4,6 +4,7 @@ import type { AttackWeightTransfer } from './fightWeightTransfer'
 export interface AttackFlowFrame {
   frame: number
   startup: number
+  loadAt?: number
   facing: 1 | -1
   contact?: FightPose
   transfer?: AttackWeightTransfer

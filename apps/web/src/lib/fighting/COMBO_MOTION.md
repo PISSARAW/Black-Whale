@@ -67,3 +67,56 @@ visibles pendant la redistribution, les couleurs des enveloppes et des flux,
 les articulations finies et l’absence d’erreur graphique. Il produit un rapport
 JSON et une capture par personnage. `ROSTER_MOTION_OUTPUT` choisit le dossier
 de sortie. Ce banc ne mesure pas la cadence réelle d’un match à deux joueurs.
+
+## Continuité physique des quarante combattants
+
+Les transitions, réactions et chutes validées sur Hisoka–Machi,
+Phinks–Kurapika et Shizuku–Franklin s’appliquent à tous les matchups du
+roster, y compris les combats miroir, dans les deux orientations.
+`fightPoseContinuity.ts` conserve pose et vitesse dans la scène : une
+reconstruction du modèle lors d’une redistribution de Nen ne réinitialise
+plus la transition. Le rassemblement et la libération suivent la préparation
+personnelle du personnage ; le contact reste calé sur la première frame
+active. La pose se fige pendant le hitstop.
+
+`fightPhysicalProfile.ts` reprend le gabarit déclaré et la chorégraphie de
+chaque combattant pour régler sa résistance visuelle, sa torsion, ses appuis
+et le regroupement des jambes. La forme naturelle de Biscuit possède son
+propre profil. Ces réglages ne changent ni dégâts, ni hitstun, ni hitboxes.
+
+`fightHitResponse.ts` sépare la déformation locale, le mouvement du thorax,
+puis celui du bassin et des appuis. La réponse dépend de la zone, du geste,
+du Ko/contre réellement observé et du profil de la victime. Chaque impact
+possède son identité ; une nouvelle frappe reprend le corps déséquilibré.
+`fightFallResponse.ts` articule bras et jambes pendant la chute. Les gardes,
+projectiles et techniques utilitaires conservent leur présentation dédiée.
+
+`fightContactAlignment.ts` ajuste les frappes physiques ordinaires vers la
+surface anatomique de la cible, après l’animation des deux corps. Les
+corrections restent bornées, conservent la main de l’équipement et ne changent
+pas les coordonnées du simulateur. Les marques d’impact, enveloppes et flux
+suivent les membres et surfaces corrigés. Ryu, Ko et flux conservent exactement
+la couleur `fighterAuraHex` du personnage.
+
+La séparation des corps est commune au roster : `fightBodySeparation.ts`
+mesure les volumes animés de la tête, du thorax et du bassin, en complément
+des pushboxes du moteur. Elle corrige leurs chevauchements et relâche
+progressivement l’écartement. Le corps immatériel d’une projection active de
+Hanzo est une exception explicite ; In, Ken et l’invulnérabilité ordinaire
+ne suppriment pas la solidité. Un saut peut franchir le rival lorsque leurs
+volumes ne se recouvrent plus en hauteur. Les coordonnées logiques, les
+ressources et les résultats des replays restent inchangés.
+
+`referenceExchange.test.ts` conserve les trois premiers échanges comme
+régressions. `fightPhysicalRoster.test.ts` couvre les quarante réactions,
+transitions, reconstructions Nen, orientations et les 1600 matchups.
+`fightBodySeparation.test.ts` contrôle les quarante gabarits, le mur, les
+sauts et l’exception de projection.
+
+Depuis `apps/web`, `node scripts/check-fighting-physical-roster.mjs` vérifie
+160 présentations Chrome/WebGL : quarante combattants, deux orientations,
+Ryu et Ko. Chaque cas exécute deux contacts natifs et vérifie réactions,
+reconstruction du modèle, séparation des corps, couleurs des enveloppes et
+flux, articulations finies et absence de mutation de l’état. Le rapport et
+une capture par personnage sont écrits dans `PHYSICAL_ROSTER_OUTPUT`.
+Ce banc contrôle la présentation ; il ne mesure pas la cadence GPU d’un match.

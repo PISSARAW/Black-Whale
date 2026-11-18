@@ -1,4 +1,5 @@
 import { beginFight, createFight, nextRound } from '$lib/fighting/engine'
+import { withKameos } from '$lib/fighting/kameos/state'
 import { pvpConfigHash } from '$lib/fighting/pvp/config'
 import { fightReplayHash } from '$lib/fighting/fightReplayHash'
 import { AuthoritativeClashMatch } from '$lib/fighting/pvp/serverMatch'
@@ -62,7 +63,8 @@ export class ClashPvpRegistry {
     const id = this.randomId(),
       token = this.randomId(),
       now = this.now()
-    const state = createFight(setup.player, setup.opponent, { ...setup, mode: 'versus-local' })
+    const created = createFight(setup.player, setup.opponent, { ...setup, mode: 'versus-local' })
+    const state = withKameos(created, setup.kameos ?? {})
     state.rng = crypto.getRandomValues(new Uint32Array(1))[0]
     this.lobbies.set(id, {
       id,

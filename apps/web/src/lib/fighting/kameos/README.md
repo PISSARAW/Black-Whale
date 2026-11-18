@@ -85,3 +85,16 @@ existants gardent le sens de chacun de leurs bits.
   À la manette, c'est le bouton 16 (Guide), le seul bouton standard encore libre.
 
 Le piège de Luzurus n'a pas encore de visuel au sol.
+
+## Lot 8 · replays et PvP
+
+- **Replays.** Rien à changer : l'instantané initial (`encodeFightSnapshot`) garde les
+  kaméos, et le bit `kameo` est enregistré. `replay.test.ts` vérifie qu'un match avec
+  kaméos s'enregistre, et qu'un appel se relit à l'identique à deux cadences.
+- **PvP.** `PvpSetup.kameos` est optionnel. Il est omis quand aucun camp n'a de kaméo,
+  donc un tel setup garde son empreinte. `parseKameoPicks` n'accepte que des clés
+  `player` / `opponent` et des identifiants du catalogue. Le serveur attache les
+  kaméos à la création du match. Dans la vue privée, le kaméo adverse est masqué comme
+  le leader adverse, et l'échange de perspective (`localPerspective`) montre à
+  chaque joueur son propre kaméo côté `player`. Le ruleset passe à `clash-pvp-6`.
+- L'écran de création du duel privé propose le même sélecteur de kaméos.

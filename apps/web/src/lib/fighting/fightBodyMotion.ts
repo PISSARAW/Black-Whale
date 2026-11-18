@@ -19,6 +19,7 @@ import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
+import { pursuitRecoveryPose } from './pursuitRecoveryPose'
 import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { attackMotionAccent } from './fightAttackMotion'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
@@ -245,7 +246,7 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
   if (fighter.attack) return attackingPlan(fighter, standing, context.poseFraction)
-  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+  return readyPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!fighter.luiniPassage || fighter.hitStun > 0) return null
@@ -354,7 +355,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: fighter.y <= 0 && (variant !== 'air' || Boolean(pursuit && frame < frames.startup)),
+    plant: attackOnGround(fighter, { variant, pursuit, frame, startup: frames.startup }),
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
     attackFlow: {
@@ -367,6 +368,14 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
     },
   }
+}
+
+function attackOnGround(
+  fighter: ArcadeFighter,
+  timing: { variant: AttackVariant; pursuit?: string; frame: number; startup: number },
+): boolean {
+  const { variant, pursuit, frame, startup } = timing
+  return fighter.y <= 0 && (variant !== 'air' || Boolean(pursuit && frame < startup))
 }
 
 function bridgeContact(
@@ -384,6 +393,10 @@ function bridgeContact(
 
 function hasTechedThrow(fighter: ArcadeFighter): boolean {
   return fighter.attack?.variant === 'throw' && Boolean(fighter.throwTechFrames)
+}
+
+function readyPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+  return pursuitRecoveryPose(fighter) ?? restingPlan(fighter, standing)
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {

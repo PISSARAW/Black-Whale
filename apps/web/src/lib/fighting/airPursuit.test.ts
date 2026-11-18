@@ -13,6 +13,8 @@ import {
 } from './types'
 import { FIGHTING_ROSTER } from './roster'
 import { airRecoveryAvailable } from './airRecovery'
+import { createPursuitRecoveryCues } from './pursuitRecoveryPresentation'
+import { pursuitRecoveryPose } from './pursuitRecoveryPose'
 
 function duel(
   id: FighterId,
@@ -283,3 +285,32 @@ it.each([false, true])(
     expect(state.opponent.wakeupInvulnerableFrames).toBe(0)
   },
 )
+
+it.each([false, true])('montre la reprise avant la riposte du défenseur, coin %s', (corner) => {
+  const launch = launcher(duel('hisoka', { corner, tether: true }))
+  const observe = createPursuitRecoveryCues()
+  let state = tap(afterActive(launch, 10), { right: true }, 'special')
+  let ready: number | undefined
+  for (let frame = 0; frame < 64 && state.impact?.sequence === launch.impact?.sequence; frame++) {
+    const cue = observe(state).opponent
+    if (cue && ready === undefined) {
+      expect(cue).toEqual({ kind: 'ready', frame: state.frame })
+      expect(pursuitRecoveryPose(state.opponent)?.key).toBe('air-recovery-ready')
+      ready = state.frame
+      state = performMove({ state, side: 'opponent', action: 'light', input: EMPTY_INPUT })
+      expect(observe(state).opponent?.kind).toBe('ready')
+    }
+    if (ready === undefined) expect(pursuitRecoveryPose(state.opponent)).toBeUndefined()
+    state = tick(state, true)
+  }
+  const contact = observe(state).opponent
+  if (corner) {
+    expect(ready).toBeUndefined()
+    expect(contact).toBeUndefined()
+    expect(state.impact?.attacker).toBe('player')
+  } else {
+    expect(state.frame - ready!).toBe(4)
+    expect(contact).toEqual({ kind: 'reply', frame: state.frame })
+    expect(observe(launch).opponent).toBeUndefined()
+  }
+})

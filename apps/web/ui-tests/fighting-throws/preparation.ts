@@ -1,4 +1,11 @@
-import { beginFight, createFight, performMove, performThrow, tickFight, performAuraAttack } from '$lib/fighting/engine'
+import {
+  beginFight,
+  createFight,
+  performMove,
+  performThrow,
+  tickFight,
+  performAuraAttack,
+} from '$lib/fighting/engine'
 import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
 import { commandMary } from '$lib/fighting/bloodyMaryAction'
 import { COHORT_WILL_FRAMES } from '$lib/fighting/preparationTuning'
@@ -9,29 +16,28 @@ import { prepareSeventh } from './seventhPreparation'
 
 const TAPE_FRAMES = 180
 export type ThrowDemoOptions = Partial<EighthPreparation> & {
-      side?: FightSide
-      id?: FighterId
-      opponentId?: FighterId
-      tech?: boolean
-      miss?: boolean
-      ko?: boolean
-      powered?: boolean
-      freezeKO?: boolean
-      trueForm?: boolean
-      confiscated?: boolean
-      bleed?: boolean
-      poem?: boolean
-      prologue?: boolean
-      noNeedles?: boolean
-      sealed?: boolean
-      plant?: boolean
-      cohort?: boolean
-      bird?: boolean
-      console?: boolean
-      offer?: boolean
-      owl?: boolean
-    }
-
+  side?: FightSide
+  id?: FighterId
+  opponentId?: FighterId
+  tech?: boolean
+  miss?: boolean
+  ko?: boolean
+  powered?: boolean
+  freezeKO?: boolean
+  trueForm?: boolean
+  confiscated?: boolean
+  bleed?: boolean
+  poem?: boolean
+  prologue?: boolean
+  noNeedles?: boolean
+  sealed?: boolean
+  plant?: boolean
+  cohort?: boolean
+  bird?: boolean
+  console?: boolean
+  offer?: boolean
+  owl?: boolean
+}
 
 /** Build the fixture from native commands, including every preparation and recorded throw frame. */
 export function prepareThrowDemo(options: ThrowDemoOptions = {}): FightState[] {
@@ -52,10 +58,18 @@ export function prepareThrowDemo(options: ThrowDemoOptions = {}): FightState[] {
 type Setup = ThrowDemoOptions & { side: FightSide }
 function initialState(options: ThrowDemoOptions): FightState {
   const { id = 'hisoka', side = 'player', opponentId = 'kurapika' } = options
-  const base = beginFight(createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, {
-    mode: 'versus-local', formatId: 'knockout', environment: demoEnvironment(options),
-  }))
-  return { ...base, player: { ...base.player, x: 46, aura: 100 }, opponent: { ...base.opponent, x: 51, aura: 100 } }
+  const base = beginFight(
+    createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, {
+      mode: 'versus-local',
+      formatId: 'knockout',
+      environment: demoEnvironment(options),
+    }),
+  )
+  return {
+    ...base,
+    player: { ...base.player, x: 46, aura: 100 },
+    opponent: { ...base.opponent, x: 51, aura: 100 },
+  }
 }
 function demoEnvironment(options: ThrowDemoOptions) {
   const side = options.side ?? 'player'
@@ -65,7 +79,13 @@ function demoEnvironment(options: ThrowDemoOptions) {
   if (options.animal) resources.push('animals')
   if (options.relay) resources.push('objects')
   return createFightEnvironment({
-    ...(options.guards ? { stageId: 'heilly-hideout' as const, morenaPresent: true, unlawfulIntruders: { player: side !== 'player', opponent: side !== 'opponent' } } : {}),
+    ...(options.guards
+      ? {
+          stageId: 'heilly-hideout' as const,
+          morenaPresent: true,
+          unlawfulIntruders: { player: side !== 'player', opponent: side !== 'opponent' },
+        }
+      : {}),
     preparation: { mode: 'scenario', resources, cohorts: options.cohort ? [side] : [] },
   })
 }
@@ -89,37 +109,56 @@ function prepareAbilities(state: FightState, options: Setup): FightState {
   return state
 }
 function prepareSeed(state: FightState, side: FightSide): FightState {
-  const seed = state.battlefield?.entities.find(entry => entry.kind === 'seed' && entry.owner === side)
+  const seed = state.battlefield?.entities.find(
+    (entry) => entry.kind === 'seed' && entry.owner === side,
+  )
   if (!seed) throw new Error('Throw demo requires its real scenario seed')
   const victim = side === 'player' ? 'opponent' : 'player'
-  state = { ...state, [side]: { ...state[side], x: seed.x },
-    [victim]: { ...state[victim], x: seed.x + state[side].facing * 5 } }
+  state = {
+    ...state,
+    [side]: { ...state[side], x: seed.x },
+    [victim]: { ...state[victim], x: seed.x + state[side].facing * 5 },
+  }
   return advance(performMove({ state, side, action: 'special' }), 20)
 }
 function prepareCohort(state: FightState, side: FightSide): FightState {
-  const supporter = state.battlefield?.entities.find(entry => entry.kind === 'supporter' && entry.owner === side)
+  const supporter = state.battlefield?.entities.find(
+    (entry) => entry.kind === 'supporter' && entry.owner === side,
+  )
   if (!supporter) throw new Error('Throw demo requires real consenting supporters')
   const victim = side === 'player' ? 'opponent' : 'player'
   const x = supporter.x + state[side].facing * 17
-  state = { ...state, [side]: { ...state[side], x }, [victim]: { ...state[victim], x: x + state[side].facing * 5 } }
+  state = {
+    ...state,
+    [side]: { ...state[side], x },
+    [victim]: { ...state[victim], x: x + state[side].facing * 5 },
+  }
   return advance(state, COHORT_WILL_FRAMES)
 }
 
 /** These are initial scenario conditions at the throw, after all preparation clocks. */
 function configureThrow(state: FightState, options: Setup): FightState {
-  const { side } = options, victim = side === 'player' ? 'opponent' : 'player'
-  if (options.miss) state = { ...state,
-    [side]: { ...state[side], x: side === 'player' ? 20 : 80 },
-    [victim]: { ...state[victim], x: side === 'player' ? 80 : 20 },
-  }
-  return { ...state,
-    [side]: { ...state[side],
+  const { side } = options,
+    victim = side === 'player' ? 'opponent' : 'player'
+  if (options.miss)
+    state = {
+      ...state,
+      [side]: { ...state[side], x: side === 'player' ? 20 : 80 },
+      [victim]: { ...state[victim], x: side === 'player' ? 80 : 20 },
+    }
+  return {
+    ...state,
+    [side]: {
+      ...state[side],
       ...(options.noNeedles ? { equipment: [] } : {}),
       weaponsConfiscated: Boolean(options.confiscated),
-      hatsuEffects: { ...state[side].hatsuEffects, hatsuStolen: options.sealed ? 600 : 0 },
+      hatsuEffects: { ...state[side].hatsuEffects, hatsuStolen: options.sealed ? 1 : 0 },
     },
-    [victim]: { ...state[victim], health: options.ko ? 1 : state[victim].health,
-      throwTechFrames: options.tech ? THROW_TECH_FRAMES : 0 },
+    [victim]: {
+      ...state[victim],
+      health: options.ko ? 1 : state[victim].health,
+      throwTechFrames: options.tech ? THROW_TECH_FRAMES : 0,
+    },
   }
 }
 function advance(state: FightState, frames: number): FightState {

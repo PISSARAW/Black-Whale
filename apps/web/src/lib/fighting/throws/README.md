@@ -4,7 +4,7 @@ Couverture : `fighting/throws/**`, `superThrow.ts`, `throwCinematic*.ts`,
 `throwPresentationLayer.ts`, `components/fighting/FightThrowCinematic.svelte`
 et `FightThrowGuide.svelte`.
 
-Les trente-cinq premières paires appartiennent aux combattants du tableau. Chaque paire
+Les quarante paires couvrent tout le roster du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
@@ -45,6 +45,11 @@ une trajectoire de prise et de chute, et une direction de caméra distincte.
 | Beyond | Le col du géant | Le sommet infranchissable |
 | Longhi | La clause de sortie | Le point non négociable |
 | Musse | Le passage sous garde | La fenêtre se referme |
+| Padaille | Le bras de levier | Le levier de chantier |
+| Sayird | Hors du champ | Le changement de perspective |
+| Terebellum | Le relais des paumes | Livraison à domicile |
+| Voconte | Après vous | La mauvaise entrée |
+| Yokotani | Fin de non-recevoir | Veuillez quitter les lieux |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,
@@ -135,6 +140,19 @@ pistolet reste réellement rengainé ; aucun tir n’est ajouté. Un hibou Secre
 déjà maintenu suit son vrai corps cible, reste privé et conserve son véritable
 flux de gestes ou de paroles, sans nouvelle surveillance créée par la projection.
 
+Padaille saisit avec la main gauche et garde son bras droit transformé à l’écart.
+Le marteau, la perceuse ou la hache ne sont visibles qu’après leur vraie préparation ;
+la projection n’offre aucune transformation ni blessure supplémentaire.
+Sayird passe hors du champ adverse puis renverse la prise. Un animal déjà contrôlé
+et proche conserve son autonomie, sans animal ni partage de vision créés par le film.
+Terebellum relaie la prise entre ses paumes et contourne en profondeur son véritable
+objet récepteur lorsqu’il est préparé, des deux côtés de l’arène. Aucun transfert de
+blessure ou soin n’est ajouté. Voconte accompagne le mouvement comme un passeur :
+les vrais encadrements et le réseau activé restent en place, sans transit inventé.
+Yokotani exécute lui-même l’expulsion au col et aux hanches. Les gardes LSDF ne sont
+visibles que s’ils ont été réellement invoqués dans leur juridiction ; ils conservent
+leur comportement non violent et ne frappent pas la cible pendant la projection.
+
 ## Commandes et règles
 
 Les 40 combattants peuvent lancer une projection normale ou une super avec
@@ -199,7 +217,7 @@ correspondants. Le rendu ne modifie ni les coordonnées ni les blessures du mote
 
 `superThrow.test.ts` couvre le coût, la puissance et les refus des 40 combattants,
 le buffer, les deux sièges, les déprojections, la dépense unique et les chemins
-PvP/replay. Les tests de ce dossier couvrent les soixante-dix chorégraphies et les témoins
+PvP/replay. Les tests de ce dossier couvrent les quatre-vingts chorégraphies et les témoins
 conditionnels produits par les vraies commandes. `secondBatch.test.ts` vérifie
 les trajectoires des attaquants, les formes réelles et les ressources préservées.
 `thirdBatch.test.ts` couvre les accessoires conditionnels, la préparation réelle
@@ -215,9 +233,30 @@ avec et sans Aura : appui libre, os rigides, décollage, sol et état de jeu pr�
 Il prépare les vrais accessoires et vérifie la confidentialité des deux observateurs,
 le pigeon contrôlé et l’offre de contrat sans consentement fabriqué.
 
-Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les soixante-dix
-projections en P1/P2 et leurs quatre plans, puis les trente-cinq vues en 320 px. Il
-contrôle aussi la pause, le K.-O., le nettoyage et les mouvements réduits.
+`eighthBatch.test.ts` contrôle les cinq dernières paires en P1/P2 et normale/Aura :
+appuis, rigidité des jambes, réception complète, prise gauche de Padaille avec ses
+trois outils préparés, animal contrôlé, vrai récepteur, réseau de portes et gardes
+LSDF. Les prises sont confirmées par les ticks réels du moteur ; les accessoires
+respectent leur disponibilité et le rendu ne change aucun état de combat.
+
+`demoPreparation.test.ts` exécute les préparations exactes des exports pour tous
+les combattants, en normale/Aura et dans les deux sièges. Il contrôle le contact réel,
+les ressources disponibles au contact et un partenaire indemne avant la projection.
+Les cas de raté, de déprojection, de Nen scellé et de K.-O. après charge sont également
+vérifiés. Les conditions de raté, de déprojection et de K.-O. sont appliquées après
+les horloges de préparation, juste avant la commande native de prise.
+
+Le catalogue et les options partagés dans `ui-tests/fighting-throws/preparedOptions.ts`
+alimentent ces tests, les captures navigateur et les exports vidéo. Les préparations
+passent par les commandes réelles : plante cultivée, cohorte consentante chargée,
+poème terminé, Prologue, vraie forme, sang disponible, oiseaux contrôlés, offre de
+contrat et accessoires conditionnels. Aucun contrat accepté ni ressource de pouvoir
+n’est fabriqué pour la cinématique.
+
+Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les quatre-vingts
+projections en P1/P2 et leurs quatre plans, puis les quarante vues en 320 px. Il
+contrôle aussi les accessoires préparés et leur confidentialité, les refus après
+préparation, la pause, le K.-O., le nettoyage et les mouvements réduits.
 Résultats : `/tmp/black-whale-five-throws`.
 
 `THROW_ROSTER_BATCH=second` sélectionne Feitan, Saiyu, Theta, Biscuit et Phinks
@@ -227,6 +266,9 @@ dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`.
 `THROW_ROSTER_BATCH=fifth` sélectionne Rihan, Zakuro, Melody, Basho et Camilla.
 `THROW_ROSTER_BATCH=sixth` sélectionne Halkenburg, Gel, Lynch, Luini et Bill.
 `THROW_ROSTER_BATCH=seventh` sélectionne Furykov, Cluck, Beyond, Longhi et Musse.
+`THROW_ROSTER_BATCH=eighth` sélectionne Padaille, Sayird, Terebellum, Voconte et Yokotani.
+`THROW_ROSTER_BATCH=all` exporte le catalogue complet ; `THROW_RENDER_IDS` permet
+de sélectionner directement des combattants dans ce catalogue.
 Pour chaque lot, le rendu exporte les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
 de sortie se règle avec `THROW_RENDER_OUTPUT`.
 

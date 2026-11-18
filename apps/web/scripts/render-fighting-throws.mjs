@@ -20,7 +20,9 @@ const server = await createServer({
   server: { host: '127.0.0.1', port: 0, hmr: false, watch: null }, logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true, args: [
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined, headless: true, args: [
   '--no-proxy-server', '--use-gl=angle', `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`, '--enable-unsafe-swiftshader',
 ] })
 const page = await browser.newPage({ viewport: { width: 960, height: 540 } })
@@ -34,30 +36,23 @@ function ffmpeg(args) {
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'eighth'
-    ? ['padaille', 'sayird', 'terebellum', 'voconte', 'yokotani']
-    : process.env.THROW_ROSTER_BATCH === 'seventh'
-    ? ['furykov', 'cluck', 'beyond', 'longhi', 'musse']
-    : process.env.THROW_ROSTER_BATCH === 'sixth'
-    ? ['halkenburg', 'gel', 'lynch', 'luini', 'bill']
-    : process.env.THROW_ROSTER_BATCH === 'fifth'
-    ? ['rihan', 'zakuro', 'melody', 'basho', 'camilla']
-    : process.env.THROW_ROSTER_BATCH === 'fourth'
-    ? ['shizuku', 'hinrigh', 'mizaistom', 'leorio', 'hanzo']
-    : process.env.THROW_ROSTER_BATCH === 'third'
-    ? ['franklin', 'machi', 'illumi', 'kalluto', 'bonolenov']
-    : process.env.THROW_ROSTER_BATCH === 'second'
-    ? ['feitan', 'saiyu', 'theta', 'biscuit', 'phinks']
-    : ['kurapika', 'hisoka', 'chrollo', 'benjamin', 'tserriednich']
-  const selected = process.env.THROW_RENDER_IDS?.split(',') ?? ids
-  for (const id of ids.filter((id) => selected.includes(id))) {
+  const catalogue = await page.evaluate(() => window.throwFixture.catalogue())
+  const batches = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth']
+  const batch = process.env.THROW_ROSTER_BATCH ?? 'first'
+  const batchIndex = batches.indexOf(batch)
+  if (batch !== 'all' && batchIndex < 0) throw new Error(`Unknown throw batch: ${batch}`)
+  const requested = process.env.THROW_RENDER_IDS?.split(',')
+  const ids = catalogue.map(([id]) => id).filter((id, index) =>
+    requested ? requested.includes(id) : batch === 'all' || Math.floor(index / 5) === batchIndex)
+  if (!ids.length) throw new Error('No throw demos selected')
+  for (const id of ids) {
     for (const powered of [false, true]) {
       const name = `${id}-${powered ? 'super' : 'normal'}`
       const frames = path.join(output, name)
       await mkdir(frames, { recursive: true })
-      await page.evaluate((options) => window.throwFixture.reset(options), {
-        id, powered, tool: id === 'padaille' ? 'hammer' : undefined, animal: id === 'sayird' && powered, relay: id === 'terebellum' && powered, threshold: id === 'voconte', door: id === 'voconte' && powered, guards: id === 'yokotani' && powered, console: id === 'furykov' && powered, bird: id === 'cluck' && powered, offer: id === 'longhi' && powered, owl: id === 'musse' && powered, plant: id === 'bill' && powered, cohort: id === 'halkenburg' && powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
-      })
+      await page.evaluate(({ id, powered }) => {
+        window.throwFixture.reset(window.throwFixture.preparedOptions(id, powered))
+      }, { id, powered })
       await page.waitForTimeout(120)
       const count = powered ? 36 : 24
       for (let index = 0; index < count; index++) {
@@ -71,7 +66,7 @@ try {
         'tpad=start_mode=clone:start_duration=0.15:stop_mode=clone:stop_duration=0.3',
         '-c:v', 'libx264', '-preset', 'fast', '-crf', '19', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', clip])
       clips.push(clip)
-      console.log(`Rendered ${name}`)
+      process.stdout.write(`Rendered ${name}\n`)
     }
     const normal = path.join(output, `${id}-normal.mp4`), superClip = path.join(output, `${id}-super.mp4`)
     const paired = path.join(output, `${id}-pair.mp4`)
@@ -88,5 +83,5 @@ try {
   await writeFile(list, exported.map((clip) => `file '${clip.replaceAll("'", "'\\''")}'`).join('\n'))
   ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', path.join(output, 'les-dix-projections.mp4')])
   await writeFile(path.join(output, 'render.json'), JSON.stringify({ clips: exported, errors }, null, 2))
-  console.log(`Complete: ${output}`)
+  process.stdout.write(`Complete: ${output}\n`)
 } finally { await browser.close(); await server.close() }

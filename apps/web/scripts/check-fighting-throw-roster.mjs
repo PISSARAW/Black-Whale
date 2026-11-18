@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import assert from 'node:assert/strict'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -19,7 +20,9 @@ const server = await createServer({
   server: { host: '127.0.0.1', port: 0, hmr: false, watch: null }, logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true, args: [
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined, headless: true, args: [
   '--no-proxy-server', '--use-gl=angle', `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`, '--enable-unsafe-swiftshader',
 ] })
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
@@ -39,47 +42,12 @@ async function seek(age) {
   await rendered()
   return snapshot()
 }
-const pairs = {
-  kurapika: ['kurapika-pendulum', 'kurapika-last-link'],
-  hisoka: ['hisoka-return', 'hisoka-trapeze'],
-  chrollo: ['chrollo-page', 'chrollo-public'],
-  benjamin: ['benjamin-restraint', 'benjamin-arrest'],
-  tserriednich: ['tserriednich-collection', 'tserriednich-future'],
-  feitan: ['feitan-umbrella', 'feitan-wheel'],
-  saiyu: ['saiyu-lever', 'saiyu-vault'],
-  theta: ['theta-disarm', 'theta-blind-spot'],
-  biscuit: ['biscuit-lesson', 'biscuit-correction'],
-  phinks: ['phinks-wringer', 'phinks-reverse'],
-  franklin: ['franklin-cargo', 'franklin-unload'],
-  machi: ['machi-cross-stitch', 'machi-spool'],
-  illumi: ['illumi-joint', 'illumi-puppet'],
-  kalluto: ['kalluto-screen', 'kalluto-bow'],
-  bonolenov: ['bonolenov-waltz', 'bonolenov-prologue'],
-  shizuku: ['shizuku-brush', 'shizuku-spring-clean'],
-  hinrigh: ['hinrigh-handshake', 'hinrigh-underboss'],
-  mizaistom: ['mizaistom-warning', 'mizaistom-custody'],
-  leorio: ['leorio-consultation', 'leorio-house-call'],
-  hanzo: ['hanzo-blind-side', 'hanzo-moonfall'],
-  rihan: ['rihan-snare', 'rihan-dead-end'],
-  zakuro: ['zakuro-red-step', 'zakuro-red-spiral'],
-  melody: ['melody-offbeat', 'melody-last-bar'],
-  basho: ['basho-fifth-verse', 'basho-full-stop'],
-  camilla: ['camilla-kiss-hand', 'camilla-dismissal'],
-  halkenburg: ['halkenburg-broken-line', 'halkenburg-rampart'],
-  gel: ['gel-bracelet', 'gel-royal-coil'],
-  lynch: ['lynch-answer-me', 'lynch-cross-examination'],
-  luini: ['luini-wrong-door', 'luini-emergency-exit'],
-  bill: ['bill-stake', 'bill-living-shield'],
-  furykov: ["furykov-blind-angle", "furykov-perfect-sequence"],
-  cluck: ["cluck-underwing", "cluck-denied-flight"],
-  beyond: ["beyond-mountain-pass", "beyond-unconquered-summit"],
-  longhi: ["longhi-exit-clause", "longhi-non-negotiable"],
-  musse: ["musse-guarded-passage", "musse-window-closes"],
-}
+
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
-  const selected = Object.entries(pairs)
+  const pairs = await page.evaluate(() => window.throwFixture.catalogue())
+  const selected = pairs
     .filter((_, index) => {
       if (process.env.THROW_ROSTER_BATCH === 'second') return index >= 5 && index < 10
       if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10 && index < 15
@@ -94,7 +62,9 @@ try {
   const entries = process.argv.includes('--ko-only') ? [] : selected
   for (const [id, variants] of entries) {
     for (const side of ['player', 'opponent']) for (const powered of [false, true]) {
-      await reset({ id, side, powered, bleed: id === 'zakuro' })
+      await page.evaluate(({ id, side, powered }) => {
+        window.throwFixture.reset(window.throwFixture.preparedOptions(id, powered, side))
+      }, { id, side, powered })
       for (const [age, phase] of [[2, 'grip'], [9, 'turn'], [16, 'slam'], [22, 'release']]) {
         const value = await seek(age)
         assert.equal(value.audit.performance, variants[Number(powered)])
@@ -126,17 +96,39 @@ try {
         if (phase === 'turn' && id === 'camilla' && powered) assert.ok(value.audit.effects.includes('throw-signature:royal'))
         if (phase === 'grip' && id === 'melody' && powered) assert.ok(value.audit.effects.includes('throw-signature:flute'))
         if (phase === 'turn' && id === 'gel') assert.ok(value.audit.effects.includes('throw-signature:serpent'))
+        if (id === 'cluck' && powered) {
+          const bird = value.state.battlefield.entities.find(entity => entity.kind === 'bird' && entity.controller?.side === side && entity.controller.source === 'cluck')
+          const nearby = Boolean(bird && Math.abs(bird.x - value.state[side].x) < 15)
+          assert.equal(value.audit.effects.includes('throw-signature:aviary'), nearby, 'The native bird may leave the shot on its delivery route')
+        }
+        if (phase === 'turn') {
+          const preparedEffects = {
+            bill: 'growth', halkenburg: 'archer', longhi: 'agreement',
+            sayird: 'scout', terebellum: 'relay', yokotani: 'bailiff', basho: 'poet',
+          }
+          if (powered && preparedEffects[id])
+            assert.ok(value.audit.effects.includes(`throw-signature:${preparedEffects[id]}`), `${id}: missing prepared accessory`)
+          if (['furykov', 'musse'].includes(id) && powered) {
+            const effect = id === 'furykov' ? 'analyst' : 'spy'
+            assert.equal(value.audit.effects.includes(`throw-signature:${effect}`), side === 'player', `${id}: private accessory visibility`)
+          }
+          if (id === 'padaille') assert.ok(value.audit.effects.includes('throw-signature:artisan'))
+          if (id === 'voconte') assert.ok(value.audit.effects.includes('throw-signature:gatekeeper'))
+          if (id === 'bonolenov') assert.equal(value.audit.equipment.spear, powered)
+          if (id === 'biscuit') assert.equal(value.audit.equipment.trueForm, powered)
+        }
         if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
         await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
         samples.push({ id, side, powered, phase, audit: value.audit })
       }
     }
     await page.setViewportSize({ width: 320, height: 720 })
-    await reset({ id, side: 'opponent', powered: true })
+    await page.evaluate((id) => window.throwFixture.reset(window.throwFixture.preparedOptions(id, true, 'opponent')), id)
     const portrait = await seek(9)
     assert.equal(portrait.audit.finite, true)
     await page.screenshot({ path: path.join(output, `${id}-mobile-320.png`) })
     await page.setViewportSize({ width: 1280, height: 720 })
+    process.stdout.write(`Verified prepared throws: ${id}\n`)
   }
   for (const side of ['player', 'opponent']) {
     await reset({ id: 'biscuit', side, powered: true, trueForm: true })
@@ -151,6 +143,21 @@ try {
     assert.equal(armed.audit.performance, 'bonolenov-prologue')
     assert.equal(armed.audit.equipment.spear, true)
     await page.screenshot({ path: path.join(output, `bonolenov-prologue-${side}.png`) })
+  }
+  for (const side of ['player', 'opponent']) {
+    for (const options of [
+      { id: 'bill', plant: true, miss: true },
+      { id: 'halkenburg', cohort: true, tech: true },
+    ]) {
+      await reset({ ...options, side })
+      await page.evaluate(() => window.throwFixture.end())
+      await rendered()
+      const rejected = await snapshot()
+      assert.equal(rejected.audit.phase, null)
+      assert.equal(rejected.audit.effects.length, 0)
+      assert.equal(rejected.state.player.health, rejected.state.player.maxHealth)
+      assert.equal(rejected.state.opponent.health, rejected.state.opponent.maxHealth)
+    }
   }
   await reset({ id: 'bonolenov', powered: true })
   assert.equal((await seek(9)).audit.equipment.spear, false)
@@ -223,7 +230,7 @@ try {
   assert.equal((await snapshot()).audit.effects.length, 0)
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ samples, errors }, null, 2))
-  console.log(`Verified ${samples.length} production frames, ${entries.length} mobile views, pause, KO and reduced motion.`)
+  process.stdout.write(`Verified ${samples.length} production frames, ${entries.length} mobile views, pause, KO and reduced motion.\n`)
 } catch (error) {
   await writeFile(path.join(output, 'failure.json'), JSON.stringify({ error: String(error), errors, value: await snapshot() }, null, 2))
   await page.screenshot({ path: path.join(output, 'failure.png') })

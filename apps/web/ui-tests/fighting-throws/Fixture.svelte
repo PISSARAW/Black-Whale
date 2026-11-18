@@ -1,11 +1,12 @@
 <script lang="ts">
   import { prepareThrowDemo, type ThrowDemoOptions } from './preparation'
+  import { preparedThrowOptions, THROW_DEMO_CATALOGUE } from './preparedOptions'
   import { onDestroy } from 'svelte'
   import { Box3, Scene, Vector3, type PerspectiveCamera } from 'three'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import { beginFight, createFight } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
-  import type { FightState } from '$lib/fighting/types'
+  import type { FightSide, FightState } from '$lib/fighting/types'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   import { humanAnimationRig, type AnimatedHuman } from '$lib/tour/humanAnimation'
   let state = beginFight(createFight('hisoka', 'kurapika', { mode: 'versus-local' }))
@@ -50,15 +51,17 @@
       finite = finite && node.position.toArray().every(Number.isFinite)
       if (node.name.startsWith('throw-signature:') && visible(node)) effects.push(node.name)
       const rig = humanAnimationRig(node)
-      if (rig && !preparedBody(node)) {
-        rigs.push(rig)
-        origins.push(rig.figure.getWorldPosition(rig.figure.position.clone()).toArray())
-        bodies.push([
+      const side = rig && fightSeat(node)
+      if (rig && side) {
+        const index = side === 'player' ? 0 : 1
+        rigs[index] = rig
+        origins[index] = rig.figure.getWorldPosition(rig.figure.position.clone()).toArray()
+        bodies[index] = [
           rig.figure.rotation.x,
           rig.figure.rotation.y,
           rig.figure.rotation.z,
           rig.figure.position.y,
-        ])
+        ]
       }
     })
     audit = {
@@ -83,9 +86,10 @@
   onDestroy(() => {
     Scene.prototype.onAfterRender = previous
   })
-  function preparedBody(node: import('three').Object3D): boolean {
-    if (node.name.startsWith('prepared:') || node.name.startsWith('luini-origin:')) return true
-    return node.parent ? preparedBody(node.parent) : false
+  function fightSeat(node: import('three').Object3D): FightSide | undefined {
+    const side = node.userData.fightSide
+    if (side === 'player' || side === 'opponent') return side
+    return node.parent ? fightSeat(node.parent) : undefined
   }
   function visible(node: import('three').Object3D): boolean {
     return node.visible && (!node.parent || visible(node.parent))
@@ -128,6 +132,8 @@
   Object.assign(window, {
     throwFixture: {
       reset,
+      preparedOptions: preparedThrowOptions,
+      catalogue: () => THROW_DEMO_CATALOGUE,
       seek: (age: number) => {
         const found = tape.find((sample) => {
           const frame = confirmedThrow(sample)

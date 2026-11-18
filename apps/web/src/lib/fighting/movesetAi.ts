@@ -5,6 +5,7 @@ import { habitAttackSlots } from './opponentHabits'
 import { counterplayAttackSlots } from './styleCounterAttack'
 import { arsenalAttackSlots } from './arsenalAi'
 import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
+import { preferOpenZones, readDefensiveKo } from './nenCombat/aiReads'
 import type { FighterMove } from './movesetTypes'
 import type { FightState } from './types'
 
@@ -22,17 +23,18 @@ export function chooseMovesetAttack(
     ...(counterplayAttackSlots(state, gap) ?? habitAttackSlots(state) ?? []),
     ...arsenalAttackSlots({ state, roll, gap }),
   ]
+  const moves = slots
+    .map((slot) => moveForSlot(fighter.id, slot))
+    .filter((move): move is FighterMove => move !== null)
   return (
-    slots
-      .map((slot) => moveForSlot(fighter.id, slot))
-      .find(
-        (move) =>
-          move &&
-          personalApplicationReady(state,'opponent',move) &&
-          aiMoveInRange(move, gap) &&
-          aiJudgmentSpeechAllowed(state, 'opponent', move.id) &&
-          canUseMovesetMove(state, 'opponent', move),
-      ) ?? null
+    preferOpenZones(moves, readDefensiveKo(fighter, state.player)).find(
+      (move) =>
+        move &&
+        personalApplicationReady(state, 'opponent', move) &&
+        aiMoveInRange(move, gap) &&
+        aiJudgmentSpeechAllowed(state, 'opponent', move.id) &&
+        canUseMovesetMove(state, 'opponent', move),
+    ) ?? null
   )
 }
 

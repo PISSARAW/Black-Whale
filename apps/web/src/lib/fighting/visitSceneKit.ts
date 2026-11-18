@@ -1,4 +1,5 @@
 import { hatsuSourceFor } from './hatsu'
+import { retainedSoulBowReady } from './halkenburgSoulBow'
 import { createVisitHatsuModel, type VisitHatsuModel } from './visitHatsuModel'
 import { chrolloHasActivePage } from './chrolloBook'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -26,8 +27,15 @@ export function createVisitScenePool(options: EffectSceneOptions) {
       model.root.visible = true
       return model
     },
-    hide() { models.forEach((model) => { model.root.visible = false }) },
-    dispose() { models.forEach((model) => model.dispose()); models.clear() },
+    hide() {
+      models.forEach((model) => {
+        model.root.visible = false
+      })
+    },
+    dispose() {
+      models.forEach((model) => model.dispose())
+      models.clear()
+    },
   }
 }
 
@@ -44,6 +52,8 @@ export function freeVisitHand(fighter: ArcadeFighter): 'left' | 'right' {
 }
 
 export function visitAttackSource(fighter: ArcadeFighter): FighterId | null {
+  if (fighter.attack?.hatsuSource === 'halkenburg' && retainedSoulBowReady(fighter))
+    return 'halkenburg'
   if (!fighter.attack || !voluntaryNenAvailable(fighter)) return null
   const borrowed = fighter.kurapika?.held
   if (borrowed?.used) return borrowed.source
@@ -51,15 +61,25 @@ export function visitAttackSource(fighter: ArcadeFighter): FighterId | null {
 }
 
 /** Read the posed skeleton, with a deterministic fallback for previews without a rig. */
-export function placeVisitHand(options: EffectSceneOptions, placement: {
-  state: FightState; side: FightSide; root: Object3D; hand?: 'left' | 'right'; wrist?: boolean
-}) {
+export function placeVisitHand(
+  options: EffectSceneOptions,
+  placement: {
+    state: FightState
+    side: FightSide
+    root: Object3D
+    hand?: 'left' | 'right'
+    wrist?: boolean
+  },
+) {
   const { state, side, root } = placement
   const fighter = state[side]
   const figure = options.figureOf?.(side)
   const hand = figure?.getObjectByName(`hand-${placement.hand ?? 'right'}`)
-  root.position.set(options.worldX(fighter.x) + fighter.facing * 0.35,
-    options.worldY(fighter.y) + 1.05, 0.3)
+  root.position.set(
+    options.worldX(fighter.x) + fighter.facing * 0.35,
+    options.worldY(fighter.y) + 1.05,
+    0.3,
+  )
   root.rotation.set(0, fighter.facing * 0.5, 0)
   if (hand) hand.getWorldPosition(root.position)
   const orientation = placement.wrist ? hand : figure

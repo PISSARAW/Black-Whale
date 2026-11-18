@@ -1,4 +1,5 @@
 import { judgmentForbidsContact } from './judgmentCommunication'
+import { soulBowAiAction } from './halkenburgSoulBow'
 import { perceivedOpponentGap } from './opponentAwareness'
 import { canAct } from './fightActorState'
 import { canUseRangedAttack } from './projectiles'
@@ -32,7 +33,17 @@ export function nativeArsenalAiAction(
   if (!canAct(fighter) || fighter.attack || fighter.coveringEars) return null
   const gap = perceivedOpponentGap(state)
   if (!Number.isFinite(gap)) return null
+  const soulBow = soulBowAiAction(state)
+  if (soulBow) return soulBow
   if (shouldSpeakToModel(state, gap)) return speakBattleWords(state, 'opponent')
+  return nativeRangedAiAction(state, gap, perform)
+}
+function nativeRangedAiAction(
+  state: FightState,
+  gap: number,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  const fighter = state.opponent
   if (!RANGED_ARSENALS.includes(fighter.id) || gap < 15 || !canUseRangedAttack(fighter)) return null
   // Alternate a ranged action with the character's setup/utility decisions.
   if ((state.frame + state.rng) % 3 !== 0) return null

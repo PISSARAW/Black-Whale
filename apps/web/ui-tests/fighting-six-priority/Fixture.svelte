@@ -33,7 +33,7 @@
       if (/^prepared:.*corpse$/.test(node.name))
         corpses.push({ id: node.name, rotation: node.rotation.z })
       if (
-        /^(roster-guest:|biohazard-(camera|transmitter|gun)$|machi-material-thread:|luini-aperture:|prepared:.*corpse|manga-head:)/.test(
+        /^(roster-guest:|biohazard-(camera|transmitter|gun)$|machi-material-thread:|luini-aperture:|prepared:.*corpse|manga-head:|feitan-umbrella:|historical-weapon:)/.test(
           node.name,
         )
       )
@@ -78,10 +78,28 @@
       | 'machi'
       | 'luini'
       | 'bonolenov'
-      | 'illumi',
+      | 'illumi'
+      | 'illumi-mask'
+      | 'leorio'
+      | 'feitan',
   ) {
     mode = name
-    state = fresh(name, name === 'hinrigh' ? 'theta' : name === 'kurapika' ? 'franklin' : 'hisoka')
+    state = fresh(
+      name === 'illumi-mask' ? 'illumi' : name,
+      name === 'hinrigh' ? 'theta' : name === 'kurapika' ? 'franklin' : 'hisoka',
+    )
+    if (name === 'feitan') {
+      use('player', { action: 'umbrella-feint' })
+      frames(8)
+    }
+    if (name === 'leorio') {
+      use('player', { action: 'weapon-ready' })
+      frames(12)
+    }
+    if (name === 'illumi-mask') {
+      use('player', { action: 'illumi-mask', target: 'hisoka' })
+      frames(60)
+    }
     if (name === 'bonolenov') {
       state = {
         ...state,

@@ -45,6 +45,7 @@ import {
   type FightPose,
 } from './fightPose'
 import { reactionPlan, type ReactionContext } from './fightReactions'
+import { keepHumanJoints } from './fightJointLimits'
 import {
   applyFightPose,
   captureFootPlant,
@@ -60,6 +61,7 @@ import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
+import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 
 /**
@@ -131,6 +133,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
+    keepHumanJoints(rig)
     if (anchor)
       plantFeet(rig, {
         anchor,
@@ -345,7 +348,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
-  const base = basePose(variant, standing, authored)
+  const base = basePose(variant, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
   const poseAt = (at: number) =>
@@ -417,11 +420,8 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
   if (guarding) return plan(defensiveStance(standing), 'guard')
-  // The complete combat stance carries both legs across walk/stop/attack transitions.
-  if (fighter.pose === 'walk') {
-    const walking = walkPose(fighter, standing)
-    return { ...walking, plant: true }
-  }
+  // A fighter never strolls: it shuffles in its whole stance, guard and legs.
+  if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')
 }
 

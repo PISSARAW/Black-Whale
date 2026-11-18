@@ -21,7 +21,9 @@ export function fightAcceptsCommands(state: FightState): boolean {
 export function resolveFightOutcome(state: FightState): FightState {
   if (fightResolutionPending(state)) return state
   const durable = preservePointHealth(releaseBiohazardWounds(state, BIOHAZARD_GRACE))
-  const triggered = resolvePostMortemDeaths(reconcileHalkenburgSouls(durable))
+  const triggered = reconcileHalkenburgSouls(
+    resolvePostMortemDeaths(reconcileHalkenburgSouls(durable)),
+  )
   if (triggered.catsName) return triggered
   const cleared = { ...triggered, deaths: undefined }
   if (state.mode === 'training') return restoreTrainingCasualties(cleared)

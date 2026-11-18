@@ -43,6 +43,7 @@
   {state}
   {language}
   {paused}
+  minimal
   introEnabled
   onIntroComplete={start}
   onAttack={() => {}}
@@ -59,8 +60,7 @@
   rematch={() => reset()}
   continueMatch={() => {}}
   chooseAgain={() => {}}
-  {paused}
-  togglePause={() => { paused = !paused }}
+  quitFight={() => {}}
 />
 <output data-phase={state.phase}>{state.phase}</output>
 

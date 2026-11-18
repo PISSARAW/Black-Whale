@@ -3,6 +3,7 @@ import { Quaternion, Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fightRigOf, type FightRig } from './fightRig'
 import { reachLimb } from './fightLimbReach'
+import { keepHumanJoint } from './fightJointLimits'
 import { preserveSupportDepth } from './fightSupportDepth'
 import { supportCycle } from './fightSupportCycle'
 import { clearFootTarget } from './fightLimbClearance'
@@ -132,5 +133,6 @@ function pinFoot(rig: FightRig, index: number, input: { target: Vector3; pivot: 
   const turn = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), input.pivot)
   flat.premultiply(turn)
   ankle.quaternion.copy(ankle.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(flat))
+  keepHumanJoint(ankle, 'ankle')
   constrainCombatJoint(ankle, 'ankle')
 }

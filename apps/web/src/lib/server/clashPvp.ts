@@ -293,12 +293,6 @@ export class ClashPvpRegistry {
       winner,
     })
   }
-  private rankingStatus(lobby: Lobby): PvpView['ranking'] {
-    const a = lobby.profiles.player,
-      b = lobby.profiles.opponent
-    if (!a || !b || a.id === b.id || lobby.status !== 'finished') return 'unranked'
-    return lobby.ranked ? 'counted' : 'pending'
-  }
   private detectDisconnect(lobby: Lobby) {
     if (!lobby.seats.opponent) return
     if (lobby.match.snapshot().phase === 'ready') return
@@ -309,6 +303,12 @@ export class ClashPvpRegistry {
     if (lobby.status !== status) lobby.match.release()
     lobby.status = status
     lobby.disconnectedSide = missing
+  }
+  private rankingStatus(lobby: Lobby): PvpView['ranking'] {
+    const a = lobby.profiles.player,
+      b = lobby.profiles.opponent
+    if (!a || !b || a.id === b.id || lobby.status !== 'finished') return 'unranked'
+    return lobby.ranked ? 'counted' : 'pending'
   }
   private resume(lobby: Lobby) {
     if (lobby.status === 'ready') {

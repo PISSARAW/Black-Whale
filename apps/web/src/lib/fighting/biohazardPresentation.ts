@@ -17,6 +17,7 @@ export function biohazardPresentation(state: FightState, language: 'fr' | 'en') 
 
 export function biohazardBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (fighter.health <= 0) return null
+  if (fighter.padailleEscape) return padailleCuffPlan(fighter)
   if (fighter.biohazardRestraint)
     return {
       key: 'biohazard-cuffed',
@@ -47,4 +48,21 @@ export function biohazardBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
       rearElbow: [-1.1, 0, 0],
     },
   }
+}
+
+function padailleCuffPlan(fighter: ArcadeFighter): BodyPlan {
+  const escape = fighter.padailleEscape!
+  const effort = Math.sin((1 - escape.frames / 12) * Math.PI)
+  const right = fighter.facing === 1 ? 'lead' : 'rear'
+  const pose: import('./fightPose').FightPose = {
+    chest: [0.13, -0.2, 0],
+    head: [0.08, 0, 0],
+    leadShoulder: [-0.3, -0.15, -0.1],
+    rearShoulder: [-0.3, 0.15, 0.1],
+    leadElbow: [-1.5, 0, 0],
+    rearElbow: [-1.5, 0, 0],
+  }
+  pose[`${right}Shoulder`] = [escape.tool === 'axe' ? -0.3 - effort : -0.3, 0, 0]
+  pose[`${right}Elbow`] = [-1.5 + effort * 0.8, 0, 0]
+  return { key: 'padaille-cuff-escape', blend: 0.04, plant: true, pose }
 }

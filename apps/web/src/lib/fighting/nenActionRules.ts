@@ -1,4 +1,5 @@
 import { hatsuFor } from './hatsu/registry'
+import { retainedSoulBowReady } from './halkenburgSoulBow'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { moveById } from './movesets'
@@ -75,6 +76,7 @@ function nenMoveId(
 export function interruptUnavailableNen(fighter: ArcadeFighter): ArcadeFighter {
   const attack = fighter.attack
   if (!attack?.hatsuSource) return fighter
+  if (attack.hatsuSource === 'halkenburg' && retainedSoulBowReady(fighter)) return fighter
   if (
     voluntaryNenAvailable(fighter) &&
     !chainAbilitySealed(fighter, attack.moveId) &&

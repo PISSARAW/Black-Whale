@@ -29,6 +29,21 @@ const COPY = {
 export function luiniPhasePresentation(state: FightState, side: FightSide, language: 'fr' | 'en') {
   const copy = COPY[language]
   const [label, hint] = copy[luiniAction(state, side)]
+  if (state[side].luiniPassage)
+    return {
+      label:
+        language === 'fr'
+          ? 'Sortie partielle · buste exposé'
+          : 'Partial passage · exposed upper body',
+      hint:
+        language === 'fr'
+          ? 'Arsenal : sortir entièrement ou rentrer ; les deux parties du corps restent vulnérables.'
+          : 'Arsenal: emerge fully or withdraw; both body parts remain vulnerable.',
+      status:
+        language === 'fr'
+          ? 'Passage occupé · aucune invulnérabilité'
+          : 'Occupied passage · no invulnerability',
+    }
   const status = luiniAnchor(state, side)
     ? copy.active
     : luiniRoomBurned(state, side)

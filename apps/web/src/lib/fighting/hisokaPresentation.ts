@@ -1,4 +1,5 @@
 import { hisokaTechnique } from './hisokaTechnique'
+import { selectedGumLink, ownedGumLinks } from './bungeeNetwork'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const HISOKA_ACCENT_FRAMES = 18
@@ -39,12 +40,14 @@ function resets(before: Snapshot, after: Snapshot) {
 }
 function actor(state: FightState, side: FightSide) {
   const gum = state.bungeeGum?.owner === side ? state.bungeeGum : null
+  const link = selectedGumLink(state, side)
   return {
-    linked: Boolean(gum),
+    linked: Boolean(link),
+    newest: Math.max(-1, ...ownedGumLinks(state, side).map((entry) => entry.id)),
     target: gum?.target ?? '',
-    hidden: Boolean(gum?.hidden),
-    pulling: Boolean(gum?.retracting),
-    rebound: Boolean(gum?.rebounding),
+    hidden: Boolean(link?.hidden),
+    pulling: Boolean(link && link.motion !== 'idle'),
+    rebound: link?.motion === 'rebound',
     texture: Boolean(state[side].textureSurprise),
   }
 }
@@ -71,7 +74,7 @@ function changes(old: Actor, next: Actor, reattached: boolean): Accent[] {
   return events
 }
 function attachmentChanged(old: Actor, next: Actor, reattached: boolean) {
-  return next.linked && (!old.linked || old.target !== next.target || reattached)
+  return next.linked && (!old.linked || next.newest > old.newest || reattached)
 }
 function age(start: number | null, frame: number) {
   return start !== null && frame - start < HISOKA_ACCENT_FRAMES ? frame - start : null

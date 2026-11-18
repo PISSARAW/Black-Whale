@@ -1,12 +1,12 @@
-import { beyondPhysicalPresentation } from './beyondPresentation'
-import { BEYOND_CURSE } from './beyondCurse'
-import { chrolloPageForMove } from './chrolloBook'
 import { padaillePresentation } from './padaillePresentation'
 import { voconteSpecialPresentation } from './vocontePresentation'
+import { beyondPhysicalPresentation } from './beyondPresentation'
+import { BEYOND_CURSE } from './beyondCurse'
 import { illumiSpecialPresentation } from './illumiPresentation'
 import { lynchSpecialPresentation } from './lynchPresentation'
 import { crossGamePresentation } from './crossGamePresentation'
 import { preparedSpecialPresentation } from './preparationPresentation'
+import { chrolloPageForMove } from './chrolloBook'
 import { chrolloPageName } from './chrolloPageNames'
 import { predatorSpecialPresentation } from './predatorPresentation'
 import { melodyCanPerform } from './melodyRules'
@@ -77,8 +77,7 @@ function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): Sp
 }
 
 function specialLabel(state: FightState, language: 'fr' | 'en'): string {
-  if (state.player.id === 'chrollo')
-    return chrolloPageName(chrolloPageForMove(state.player), language)
+  if (state.player.id === 'chrollo') return chrolloPageName(chrolloPageForMove(state.player), language)
   if (isLsdfMove(state.player)) return 'LSDF'
   if (state.player.hanzoProjection) return language === 'fr' ? 'Réintégrer le corps' : 'Rejoin body'
   return ordinarySpecialLabel(state, language)

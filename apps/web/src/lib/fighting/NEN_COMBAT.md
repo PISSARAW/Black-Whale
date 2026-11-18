@@ -87,7 +87,7 @@ combinaisons View + LB/RB pour oreilles/plaies restent disponibles sans croix.
 - Ryu conserve **6 aura/s** ; Ryu + lecture oculaire coûte **8,4 aura/s**.
 - Ko défensif coûte **20 aura à l’engagement**, puis le maintien de Ren et des
   overlays éventuels. Le coût n’est pas répété par frame. Le facteur de défense
-  de la zone est **1,6**, les autres reçoivent **0** d’aura. La puissance physique
+  de la zone est **1,2**, les autres reçoivent **0** d’aura. La puissance physique
   de l’adversaire continue de compter : aucune invulnérabilité.
 - Shu conserve ses coûts et la dispersion corporelle existants. La garde d’arme
   réussie reçoit un facteur de chip **0,85**, exclu pour les projectiles balistiques.
@@ -162,7 +162,5 @@ et l’immobilisation de Chain Jail restent affichées quand elles sont effectiv
 
 Pendant la lecture d’un replay, ces volets montrent les états reconstruits en
 lecture seule : les commandes de page et d’Emperor Time sont verrouillées.
-
-Profils, opérations hybrides, débits et doctrines : [profondeur du Nen](./NEN_DEPTH.md).
 
 Tactiques personnelles, conversions et comparaison : [continuité des échanges](./NEN_TACTICS.md).

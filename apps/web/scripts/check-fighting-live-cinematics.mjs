@@ -57,7 +57,7 @@ try {
   const state = await fixture('snapshot')
   assert.equal(state.frame, 300)
   assert.equal(state.time, 115)
-  assert.ok(visible >= 95, `Extended shot too short: ${visible / 30}s`)
+  assert.ok(visible >= 27 && visible <= 43, `Emperor Time shot must stay brief: ${visible / 30}s`)
   assert.equal(await page.locator('[data-camera-detail]').count(), 0)
   process.stdout.write(
     `Emperor Time: ${visible / 30}s visible, 300 fixed ticks in 5s presentation\n`,

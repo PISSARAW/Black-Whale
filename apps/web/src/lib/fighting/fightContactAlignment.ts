@@ -8,6 +8,7 @@ import { rosterMoveShape } from './rosterStrikeMotion'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import { attackData } from './frameData'
 import { reachLimb } from './fightLimbReach'
+import { keepHumanJoints } from './fightJointLimits'
 import { createFightContactLatch } from './fightContactLatch'
 import { clearPassiveArms } from './fightLimbClearance'
 import { anatomicalContactZone, rememberSurfaceContact } from './fightSurfaceContact'
@@ -53,7 +54,17 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       alignStrike(ownRig, fighter, { target, weight })
       rememberImpactSurface(figureOf(side), { state, side, zone, position: target })
     }
+    // This is the final pose boundary: support IK, contact IK, passive arms,
+    // expressions and head tracking have all run by now.
+    keepFinalJoints(figureOf)
     settleBothBodies(figureOf)
+  }
+}
+
+function keepFinalJoints(figureOf: (side: FightSide) => Object3D): void {
+  for (const side of ['player', 'opponent'] as const) {
+    const human = humanAnimationRig(figureOf(side))
+    if (human) keepHumanJoints(fightRigOf(human))
   }
 }
 

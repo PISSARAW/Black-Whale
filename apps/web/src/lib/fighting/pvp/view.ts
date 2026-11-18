@@ -55,9 +55,14 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
 function swappedScalar(value: unknown, field: string): unknown {
   if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
   if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'
-  if (field !== 'key') return value
-  if (value === 'mind:player') return 'mind:opponent'
-  return value === 'mind:opponent' ? 'mind:player' : value
+  if (
+    !['key', 'participantMind', 'halkTeamMind', 'halkRosterMind'].includes(field) ||
+    typeof value !== 'string'
+  )
+    return value
+  return value.replace(/^mind:(player|opponent)(?=:|$)/, (_, side) =>
+    side === 'player' ? 'mind:opponent' : 'mind:player',
+  )
 }
 function redactEnemy(enemy: ArcadeFighter) {
   if (enemy.halkSoul) enemy.halkSoul = { ...enemy.halkSoul, mind: undefined }
@@ -180,6 +185,10 @@ function redactReserves(view: FightState, side: FightSide): void {
 }
 
 function redactSoulView(view: FightState, side: FightSide): void {
+  view.halkSoulMinds = view.halkSoulMinds?.map((item) => ({
+    ...item,
+    mind: item.mind.side === side ? item.mind : { ...item.mind, identity: undefined },
+  }))
   view.halkSoulLinks = view.halkSoulLinks?.map((link) => ({
     ...link,
     sourceMind:

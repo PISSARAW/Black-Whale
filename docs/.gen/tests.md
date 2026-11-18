@@ -2,11 +2,15 @@
 
 # Index des tests
 
-Fichiers : 941
+Fichiers : 938
 
 ## `apps/admin/src/hooks.server.test.ts`
 
 - admin handle > redirects an anonymous visitor to /login, remembering where they were going
+
+## `apps/admin/src/lib/server/analytics.test.ts`
+
+- private dashboard > shares one server-side login and aggregates activity without sending credentials to reads
 
 ## `apps/admin/src/lib/server/rate-limit.test.ts`
 
@@ -28,6 +32,10 @@ Fichiers : 941
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
 - production bundle partitioning > rejects an oversized JavaScript chunk instead of suppressing its warning
+
+## `apps/web/src/lib/analytics/hatsuTracking.test.ts`
+
+- Hatsu selection metrics > does not count session restoration as a selection
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 
@@ -509,9 +517,21 @@ Fichiers : 941
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
 
+## `apps/web/src/lib/fighting/fightMobile.test.ts`
+
+- touch combat inputs > supports eight directions and releases to neutral while sliding
+
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightNavigation.test.ts`
+
+- Clash preparation navigation > uses one persistent runtime across every preparation and battle page
+
+## `apps/web/src/lib/fighting/fightPausePlan.test.ts`
+
+- pause menu action planning > keeps actions frozen until resuming, and journals them on the ordinary match tick
 
 ## `apps/web/src/lib/fighting/fightPerformanceStress.test.ts`
 
@@ -549,6 +569,10 @@ Fichiers : 941
 ## `apps/web/src/lib/fighting/fightResponseDiagnostics.test.ts`
 
 - response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
+
+## `apps/web/src/lib/fighting/fightSetupDraft.test.ts`
+
+- Clash setup restoration > restores the selected matchup, mode, format and stage after a refresh
 
 ## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
 
@@ -624,9 +648,17 @@ Fichiers : 941
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
 
+## `apps/web/src/lib/fighting/halkenburgSoulChains.test.ts`
+
+- Halkenburg transfers through a connected chain of actual bodies > moves into a third body already involved in a transfer without copying any mind or healing
+
 ## `apps/web/src/lib/fighting/halkenburgSoulIntegration.test.ts`
 
 - Halkenburg’s selectable mind mode in the complete duel > keeps both prepared bodies physically vulnerable and resolves a real low strike on the sleeping one
+
+## `apps/web/src/lib/fighting/halkenburgSoulTeams.test.ts`
+
+- Halkenburg’s material minds in three-member team sets > keeps an untouched Camilla’s actual Cat’s Name revival in the stock count despite an earlier transfer chain
 
 ## `apps/web/src/lib/fighting/halkenburgSouls.test.ts`
 
@@ -771,6 +803,10 @@ Fichiers : 941
 
 - Melody’s bodily hearing > listens passively in Zetsu, with stolen Nen and without Gyo
 
+## `apps/web/src/lib/fighting/melodyInterrogation.test.ts`
+
+- Melody’s chapter 68 physiological questioning > asks audibly without Nen, with no forced response or hidden truth verdict
+
 ## `apps/web/src/lib/fighting/mizaistom.test.ts`
 
 - Mizaistom — conditional yellow card > gives a moving player time to read the warning and stop without being punished
@@ -787,6 +823,10 @@ Fichiers : 941
 
 - Musse — handgun and Secret Window > keeps one contact Hatsu and physical normals, without an invented execution finisher
 
+## `apps/web/src/lib/fighting/nenAudit.test.ts`
+
+- current Nen reference for all forty playable fighters > covers the exact roster, explicit conditions and only existing catalogue abilities
+
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
 - Nen techniques in an actual 2D duel > En detects bodies in Zetsu and accessible projectiles, while In hides aura
@@ -795,6 +835,11 @@ Fichiers : 941
 ## `apps/web/src/lib/fighting/nenCombat/advanced.test.ts`
 
 - advanced combinations from the supplied Nen excerpt > distinguishes low-output aura observation from Ren-based ocular detection of In
+
+## `apps/web/src/lib/fighting/nenCombat/aiReads.test.ts`
+
+- defensive Ko balance > guards its zone better than Ken without nearing invulnerability
+- AI Nen reads > answers a visible strike only after the reaction delay, on the aimed zone
 
 ## `apps/web/src/lib/fighting/nenCombat/combat.test.ts`
 
@@ -812,6 +857,10 @@ Fichiers : 941
 ## `apps/web/src/lib/fighting/nenPresentation.test.ts`
 
 - Nen perception in the rendered duel > keeps a concealed projectile hidden under En while Gyo reveals its visual form
+
+## `apps/web/src/lib/fighting/nenWitnessMove.test.ts`
+
+- Skill Hunter observes the actual newly started technique > steals Texture Surprise after seeing it without taking Bungee Gum
 
 ## `apps/web/src/lib/fighting/onAwakening.test.ts`
 
@@ -832,6 +881,10 @@ Fichiers : 941
 ## `apps/web/src/lib/fighting/padaille.test.ts`
 
 - Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
+
+## `apps/web/src/lib/fighting/padailleEscape.test.ts`
+
+- Padaille’s shown handcuff applications > pays for the drill transformation and slips a real cuff after an interruptible preparation
 
 ## `apps/web/src/lib/fighting/painPackerRig.test.ts`
 
@@ -1078,21 +1131,9 @@ Fichiers : 941
 
 - the lens fits real cinematic equipment > includes the whole staff even when the actor’s root is unnamed
 
-## `apps/web/src/lib/fighting/throws/fifthBatch.test.ts`
-
-- fifth batch: conditioned abilities and personality stay faithful to real resources > keeps Melody’s opening close-up on her actual instrument beside a taller opponent
-
 ## `apps/web/src/lib/fighting/throws/performances.test.ts`
 
-- thirty-five individual pairs of authored throw performances > owns seventy distinct pairs of actor poses, victim poses, trajectories and lenses
-
-## `apps/web/src/lib/fighting/throws/physics.test.ts`
-
-- throw weight, pivot and support > continues moving through an intermediate lift key instead of stopping at each pose
-
-## `apps/web/src/lib/fighting/throws/seventhBatch.test.ts`
-
-- seventh batch on the corrected cinematic physics > Furykov witnesses a console opened by a real action, privately, without creating a new alert
+- fifteen individual pairs of authored throw performances > owns thirty distinct pairs of actor poses, victim poses, trajectories and lenses
 
 ## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
 

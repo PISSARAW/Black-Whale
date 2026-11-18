@@ -1,7 +1,5 @@
 import { wantsObservedGuard, incomingLow } from '../combatPressure'
 import { focusFlags } from '../nenFocusCommand'
-import { hasRecoveryCancel } from '../recoveryPunish'
-import { attackPhase, attackData } from '../frameData'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -14,6 +12,9 @@ import { gyoSight } from '../nenPerception'
 import { opponentWantsOn } from '../onTechnique'
 import type { TacticalPlan } from './protocol'
 import { moveForSlot } from '../movesets'
+import { attackData, attackPhase } from '../frameData'
+import { hasRecoveryCancel } from '../recoveryPunish'
+import { focusInput } from '../nenCombat/aiReads'
 
 export function reflexInput(state: FightState, side: FightSide, plan: TacticalPlan): FightInput {
   const self = state[side]
@@ -55,8 +56,15 @@ function defend(
   input.aura = state[side].aura > 35 && plan.nen === 'ken'
   input.left = false
   input.right = false
-  input.focusTorso = plan.nen === 'ryu'
+  if (plan.nen === 'ryu' && target.attack)
+    Object.assign(
+      input,
+      CLEARED_FOCUS,
+      focusInput(attackData(target.attack.kind, target).targetZone),
+    )
 }
+
+const CLEARED_FOCUS = { focusHead: false, focusTorso: false, focusHands: false, focusFeet: false }
 
 function visibleThreat(state: FightState, side: FightSide): boolean {
   const self = state[side]
@@ -88,10 +96,7 @@ function applyNen(
   const flag = direct[plan.nen as keyof typeof direct]
   if (flag && self.aura > 25) input[flag] = true
   if (plan.nen === 'ryu' && self.aura > 8)
-    Object.assign(
-      input,
-      focusFlags(self.attack ? attackData(self.attack.kind, self).auraZone : 'hands'),
-    )
+    Object.assign(input, focusFlags(self.attack ? attackData(self.attack.kind,self).auraZone : 'hands'))
   applyHeldNen(input, context)
 }
 function applyHeldNen(
@@ -105,11 +110,20 @@ function applyHeldNen(
     input.aura = true
     input.down = true
   }
-  if (plan.nen === 'ko' && gap < 12 && self.aura > 65) input.aura = true
+  applyKoRelease(input, { self, plan, gap })
   if (plan.nen === 'on' && opponentWantsOn(self)) {
     input.aura = true
     input.hatsu = true
   }
+}
+
+/** Ko is committed by releasing Aura during the charged startup, not by holding it. */
+function applyKoRelease(
+  input: FightInput,
+  context: { self: FightState['player']; plan: TacticalPlan; gap: number },
+) {
+  const { self, plan, gap } = context
+  if (plan.nen === 'ko' && gap < 12 && self.aura > 65) input.aura = !self.attack?.auraCharged
 }
 
 function tacticalRange(state: FightState, side: FightSide, plan: TacticalPlan): number {

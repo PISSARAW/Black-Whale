@@ -27,14 +27,10 @@ function defaultOpponentNen(state: FightState): FightState | null {
 }
 
 function hiddenThreat(state: FightState): boolean {
-  // Read visible concentration/gestures and scan periodically; do not inspect
-  // an opponent's hidden In flag or undiscovered projectiles to choose a defence.
-  return (
-    (seesCombatBody(state.opponent) &&
-      state.player.pose === 'special' &&
-      !state.player.attack?.concealed) ||
-    state.frame % 180 < 24
-  )
+  // A visible gesture or a held guard is a reason to look with Gyo; the hidden
+  // In flag and undiscovered projectiles are never inspected to choose it.
+  const cue = state.player.pose === 'special' || state.player.blocking
+  return (seesCombatBody(state.opponent) && cue) || state.frame % 180 < 24
 }
 
 function hold(state: FightState, input: Partial<FightInput>): FightState {

@@ -1,7 +1,8 @@
-import { anatomicalTurn, constrainCombatJoint, constrainFightRig } from './fightAnatomy'
+import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FightPose, Turn } from './fightPose'
+import { humanChestTurn, keepHumanJoint, keepHumanJoints } from './fightJointLimits'
 
 /**
  * The shared human figure, seen with the joints a duel needs.
@@ -149,8 +150,9 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
   }
   turnBy(human.figure, pose.body, mirror)
   turnBy(human.head, pose.head, mirror)
-  applyChest(rig, pose.chest && anatomicalTurn(pose.chest, 'chest'), mirror)
+  applyChest(rig, pose.chest && humanChestTurn(pose.chest), mirror)
   applyLimbs(rig, pose, sides)
+  keepHumanJoints(rig)
   constrainFightRig(rig)
 }
 
@@ -208,6 +210,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)
     ankle.rotation.x += Math.min(MAX_ANKLE, Math.max(-MAX_ANKLE, level))
+    keepHumanJoint(ankle, 'ankle')
     constrainCombatJoint(ankle, 'ankle')
   })
   const after = captureFootPlant(rig)

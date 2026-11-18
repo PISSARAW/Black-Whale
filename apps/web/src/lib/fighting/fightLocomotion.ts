@@ -1,4 +1,3 @@
-import { shufflePose } from './fightShuffleStep'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
@@ -228,10 +227,33 @@ export function walkPose(fighter: ArcadeFighter, standing: FightPose): Locomotio
   const phase = Math.sin(fighter.x * fighter.facing * 0.251)
   const rhythm = scalePose(style.rhythm, phase * profile.walk * (advancing ? 1 : 0.65))
   const posture = scalePose(advancing ? style.advance : style.retreat, profile.walk)
+  const steps = shuffleStep(fighter.x * fighter.facing * SHUFFLE_PER_UNIT, advancing)
   return {
-    pose: addPoses(standing, posture, rhythm, scalePose(shufflePose(fighter), profile.walk)),
+    pose: addPoses(standing, posture, rhythm, scalePose(steps, profile.walk)),
     key: advancing ? 'walk:forward' : 'walk:backward',
     blend: 0.055,
+  }
+}
+
+/** One shuffle (lead foot, then rear foot) every ~2.5 world units. */
+const SHUFFLE_PER_UNIT = 0.4 * Math.PI
+
+/**
+ * A fighter's step: the stance's legs stay under it and one foot at a time
+ * lifts a hand's breadth and slides, the leading one first in the direction of
+ * travel. The planted foot stays on the floor (`plantFeet`), so the body glides
+ * over a step-drag instead of swinging a civilian stride.
+ */
+function shuffleStep(phase: number, advancing: boolean): FightPose {
+  const wave = Math.sin(phase)
+  const first = Math.max(0, advancing ? wave : -wave)
+  const second = Math.max(0, advancing ? -wave : wave)
+  return {
+    root: [0, -0.012 * Math.abs(wave), 0],
+    leadHip: [-0.1 * first, 0, 0],
+    leadKnee: [0.2 * first, 0, 0],
+    rearHip: [-0.08 * second, 0, 0],
+    rearKnee: [0.18 * second, 0, 0],
   }
 }
 

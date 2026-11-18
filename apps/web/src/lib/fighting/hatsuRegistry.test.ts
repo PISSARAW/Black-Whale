@@ -471,10 +471,16 @@ describe('fighter Hatsu registry', () => {
     expect(scored.winner).not.toBe('opponent')
   })
 
-  it('fires Grimmel only once the cohort’s will is gathered', () => {
+  it('keeps the requested roster variant behind the actual cohort’s gathered will', () => {
     const halkenburg = hatsuFor('halkenburg')
     const base = closeFight('halkenburg', 'hisoka')
-    const ready = { ...base, battlefield: createBattlefield({ ...base.environment, preparation: { mode: 'scenario', resources: [], cohorts: ['player'] } }) }
+    const ready = {
+      ...base,
+      battlefield: createBattlefield({
+        ...base.environment,
+        preparation: { mode: 'scenario', resources: [], cohorts: ['player'] },
+      }),
+    }
     const shoot = (state: FightState, blocked: boolean) =>
       halkenburg.onImpact({
         state: halkenburg.onTrigger({ state, side: 'player', source: 'halkenburg' }),
@@ -496,19 +502,23 @@ describe('fighter Hatsu registry', () => {
     expect(gathered.player.hatsuEffects.cohortWillFrames).toBe(COHORT_WILL_FRAMES)
     expect(gathered.opponent.hatsuEffects.cohortWillFrames).toBe(0)
 
-    // The arrow pierces the guard, takes the body over, and costs Halkenburg.
-    const struck = shoot(gathered, true)
-    expect(struck.player.id).toBe('halkenburg')
+    // Native Halkenburg's default is the requested roster replacement, not a 120-frame stun.
+    const struck = shoot({ ...gathered, rng: 1 }, true)
+    expect(struck.player.id).not.toBe('halkenburg')
+    expect(struck.player.halkenburgOrigin).toBe('halkenburg')
     expect(struck.opponent.id).toBe('hisoka')
-    expect(struck.opponent.hatsuEffects.possessedFrames).toBeGreaterThan(0)
+    expect(struck.opponent.hatsuEffects.possessedFrames).toBe(0)
     expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
-    expect(struck.player.health).toBeLessThan(ready.player.health)
+    expect(struck.player.health / struck.player.maxHealth).toBeLessThan(
+      ready.player.health / ready.player.maxHealth,
+    )
     expect(struck.player.hatsuEffects.cohortWillFrames).toBe(0)
-    expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
-    const supporter = struck.battlefield!.entities.find(
-      (entity) => entity.id === struck.player.halkenburgSupporter,
-    )!
-    expect(supporter.sleepingFrames).toBe(struck.opponent.hatsuEffects.possessedFrames)
+    expect(struck.opponent.health).toBe(ready.opponent.health)
+    const sleeping = struck.battlefield!.entities.filter(
+      (entity) => entity.kind === 'supporter' && (entity.sleepingFrames ?? 0) > 0,
+    )
+    expect(sleeping).toHaveLength(1)
+    expect(sleeping[0].sleepingFrames).toBeGreaterThan(120)
   })
 
   it('keeps Gel’s arm and Lynch’s carrier hook free of magical vulnerability', () => {

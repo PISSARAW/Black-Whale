@@ -23,7 +23,8 @@
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |
 | `events/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
-| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingLifecycle.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
+| `fighting` | `+layout.svelte`, `+page.server.ts`, `+page.svelte`, `FightingGame.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingLifecycle.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
+| `fighting/[screen]` | `+page.svelte`, `+page.ts` |
 | `fighting/profile` | `+page.svelte` |
 | `fighting/profile/api` | `+server.ts` |
 | `fighting/profile/solo` | `+page.svelte` |
@@ -77,6 +78,7 @@
 | ----- | -------- |
 | `(root)` | `+error.svelte`, `+layout.server.ts`, `+layout.svelte`, `+page.server.ts`, `+page.svelte` |
 | `abilities` | `+page.server.ts`, `+page.svelte` |
+| `analytics` | `+page.server.ts`, `+page.svelte` |
 | `api/characters` | `+server.ts` |
 | `api/characters/[slug]` | `+server.ts` |
 | `chapters` | `+page.server.ts`, `+page.svelte` |

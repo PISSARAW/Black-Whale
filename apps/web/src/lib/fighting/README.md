@@ -10,7 +10,8 @@ distante à un contrôleur rapide local pour les 40 personnages, avec replays v�
 [Halkenburg propose deux modes](../../../../../docs/clash-halkenburg-deux-modes.md) :
 la variante aléatoire du roster et le transfert de conscience entre les corps
 présents. Sommeil, priorité au réveil, décès matériels et coexistence restent
-séparés des adaptations numériques du duel. Règles : `clash-combat-36`.
+séparés des adaptations numériques du duel. Le transfert fonctionne aussi en équipes
+et dans les chaînes de plusieurs corps. Règles : `clash-combat-37`.
 
 Le [lot à quatre combats et plus](../../../../../docs/clash-quatre-combats-et-plus.md)
 audite le corpus de 17 personnages et ses cas limites, films compris. Il complète les armes physiques,
@@ -167,7 +168,7 @@ L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
 combattant ; les contrats particuliers des techniques restent prioritaires.
-Le ruleset courant `clash-combat-36` inclut le réglage du hitstun de l’étape 3,
+Le ruleset courant `clash-combat-37` inclut le réglage du hitstun de l’étape 3,
 les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
 des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
 [usages des sept techniques avancées](./NEN_COMBAT.md).

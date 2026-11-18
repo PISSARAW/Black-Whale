@@ -74,6 +74,7 @@ export function nextFightRound(state: FightState): FightState {
       rosterGuests: undefined,
       halkSoulLinks: undefined,
       halkSoulOrigins: undefined,
+      halkSoulMinds: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,

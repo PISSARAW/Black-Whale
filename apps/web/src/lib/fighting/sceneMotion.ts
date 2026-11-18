@@ -14,6 +14,7 @@ export interface FighterSceneAnimation {
 
 export const FIGHT_MODEL_POSES: Record<FighterPose, HumanPose> = {
   idle: 'idle',
+  // The visit's civilian stride never plays in a duel: the rig shuffles in stance.
   walk: 'idle',
   jump: 'idle',
   guard: 'idle',

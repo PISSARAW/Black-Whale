@@ -8,12 +8,13 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 
 type Input = { fighter: ArcadeFighter; seconds: number; progress?: number }
 type Contact = Pick<ReactionContext, 'hitZone' | 'strikeReaction' | 'strikeMotion' | 'physicalHit'>
+type Received = { sequence: number; contact: Contact; progress: number; reacting: boolean }
 
 /** Keep the contact's direction even when the attacker has already cancelled into another move. */
 export function createFightReactionPresentation() {
   let key = ''
   let lastFrame = -1
-  const contacts: Partial<Record<FightSide, { sequence: number; contact: Contact }>> = {}
+  const contacts: Partial<Record<FightSide, Received>> = {}
   let clock = createFightPoseClock()
   let motion = { player: createFightPoseContinuity(), opponent: createFightPoseContinuity() }
   return (state: FightState, side: FightSide, input: Input): ReactionContext => {
@@ -30,25 +31,37 @@ export function createFightReactionPresentation() {
     if (impact && contacts[side]?.sequence !== impact.sequence)
       contacts[side] = {
         sequence: impact.sequence,
-        contact: contactContext(state),
+        contact: contactContext(state, contacts[side]),
+        progress: 0,
+        reacting: true,
       }
+    const progress =
+      input.progress ??
+      clock(side, input.fighter, { seconds: input.seconds, impact: impact?.sequence })
+    rememberProgress(contacts[side], progress, input.fighter)
     return {
       ...contacts[side]?.contact,
       poseContinuity: physicalRosterPair(state.player.id, state.opponent.id)
         ? motion[side]
         : undefined,
-      progress:
-        input.progress ??
-        clock(side, input.fighter, { seconds: input.seconds, impact: impact?.sequence }),
+      progress,
     }
   }
+}
+
+function rememberProgress(
+  received: Received | undefined,
+  progress: number,
+  fighter: ArcadeFighter,
+) {
+  if (received) Object.assign(received, { progress, reacting: fighter.pose === 'hit' })
 }
 
 function receivedImpact(state: FightState, side: FightSide) {
   return state.impact?.attacker === side ? null : state.impact
 }
 
-function contactContext(state: FightState): Contact {
+function contactContext(state: FightState, previous?: Received): Contact {
   const impact = state.impact!
   const attacker = state[impact.attacker]
   const ordinary = { hitZone: impact.zone }
@@ -56,13 +69,20 @@ function contactContext(state: FightState): Contact {
   const directed = {
     ...ordinary,
     strikeMotion: rosterContactMotion(state),
-    physicalHit: physicalHitAtContact(state),
+    physicalHit: physicalHitAtContact(state, priorBalance(state, previous)),
   }
   if (attacker.id !== 'shizuku') return directed
   const move = attacker.attack?.moveId
   if (move === 'shizuku:standingHeavy') return { ...directed, strikeReaction: 'blinky-hammer' }
   if (move === 'shizuku:forwardSpecial') return { ...directed, strikeReaction: 'blinky-drive' }
   return directed
+}
+
+function priorBalance(state: FightState, previous?: Received) {
+  const hit = previous?.contact.physicalHit
+  const side = state.impact!.attacker === 'player' ? 'opponent' : 'player'
+  if (!hit || !previous?.reacting || state[side].comboHits < 2) return undefined
+  return { hit, progress: previous.progress }
 }
 
 function directionalContact(state: FightState): boolean {

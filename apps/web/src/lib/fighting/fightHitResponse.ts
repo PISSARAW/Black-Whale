@@ -14,10 +14,14 @@ export interface PhysicalHit {
   crush: boolean
   rising: boolean
   profile: FightPhysicalProfile
+  carry?: FightPose
 }
 
 /** Capture only observed hits. Counter/Ko change the visible impulse, never the combat state. */
-export function physicalHitAtContact(state: FightState): PhysicalHit | undefined {
+export function physicalHitAtContact(
+  state: FightState,
+  prior?: { hit: PhysicalHit; progress: number },
+): PhysicalHit | undefined {
   const hit = state.impact!
   const attacker = state[hit.attacker]
   const victim = state[hit.attacker === 'player' ? 'opponent' : 'player']
@@ -37,6 +41,7 @@ export function physicalHitAtContact(state: FightState): PhysicalHit | undefined
     twist: ['hook', 'backhand', 'slash', 'spin', 'kick'].includes(motion.shape) ? 1 : -0.4,
     crush: motion.shape === 'hammer' || motion.shape === 'dive',
     rising: motion.shape === 'uppercut',
+    carry: prior ? residualBalance(physicalHitPose(prior.hit, prior.progress)) : undefined,
   }
 }
 
@@ -49,6 +54,7 @@ export function physicalHitPose(hit: PhysicalHit, progress: number): FightPose {
   const chest = 0.55 + 0.45 * smooth(age / 3)
   const pelvis = 0.15 + 0.85 * smooth(age / 6)
   return addPoses(
+    scalePose(hit.carry ?? {}, 1 - smooth(age / 8)),
     scalePose(localReaction(hit), impulse * local),
     scalePose(chestReaction(hit), impulse * chest),
     scalePose(catchingStep(hit, age), impulse * pelvis),
@@ -57,12 +63,14 @@ export function physicalHitPose(hit: PhysicalHit, progress: number): FightPose {
 
 function localReaction(hit: PhysicalHit): FightPose {
   const face = hit.zone === 'head' || hit.rising
+  const low = hit.zone === 'feet'
+  const belly = hit.zone === 'torso'
   return {
-    head: [face ? -0.48 : 0.2, hit.twist * -0.2, face ? 0.16 : 0.05],
-    leadShoulder: [0.3, -0.1, 0.4],
-    rearShoulder: [0.2, 0.1, -0.32],
-    leadElbow: [-0.65, 0, 0],
-    rearElbow: [-0.8, 0, 0],
+    head: [face ? -0.55 : 0.16, hit.twist * -0.2, face ? 0.2 : 0.03],
+    leadShoulder: [belly ? 0.55 : 0.2, -0.1, low ? 0.65 : 0.3],
+    rearShoulder: [belly ? 0.45 : 0.15, 0.1, low ? -0.6 : -0.25],
+    leadElbow: [belly ? -1.1 : -0.65, 0, 0],
+    rearElbow: [belly ? -1.2 : -0.8, 0, 0],
     leadWrist: [0.12, 0, 0],
     rearWrist: [-0.1, 0, 0],
   }
@@ -70,9 +78,10 @@ function localReaction(hit: PhysicalHit): FightPose {
 
 function chestReaction(hit: PhysicalHit): FightPose {
   const fold = hit.crush || hit.zone === 'torso'
+  const low = hit.zone === 'feet'
   return {
-    body: [fold ? 0.26 : -0.22, -0.16 * hit.twist, 0.08 * hit.twist],
-    chest: [fold ? 0.48 : -0.24, -0.48 * hit.twist * hit.profile.rotation, 0.12 * hit.twist],
+    body: [fold ? 0.1 : -0.08, -0.1 * hit.twist, low ? 0.16 : 0.04 * hit.twist],
+    chest: [fold ? 0.55 : -0.3, -0.48 * hit.twist * hit.profile.rotation, 0.12 * hit.twist],
   }
 }
 
@@ -80,12 +89,26 @@ function catchingStep(hit: PhysicalHit, age: number): FightPose {
   const catchUp = smooth((age - 2) / 7) * hit.profile.step
   const low = hit.zone === 'feet'
   return {
-    root: [0, 0, -0.045 * catchUp],
+    root: [0, -0.035 * catchUp, -0.055 * catchUp],
     leadHip: [low ? 0.38 : -0.12, 0, 0.05],
     leadKnee: [low ? 0.72 : 0.28, 0, 0],
     rearHip: [-0.24 * catchUp, 0, -0.08],
     rearKnee: [0.48 * catchUp, 0, 0],
   }
+}
+
+/** Bounded residual balance: consecutive blows cannot straighten the victim or accumulate indefinitely. */
+function residualBalance(pose: FightPose): FightPose {
+  const result = scalePose(pose, 0.32)
+  for (const joint of Object.keys(result) as Array<keyof FightPose>) {
+    const cap = joint === 'root' ? 0.025 : 0.28
+    result[joint] = result[joint]!.map((value) => Math.max(-cap, Math.min(cap, value))) as [
+      number,
+      number,
+      number,
+    ]
+  }
+  return result
 }
 
 function smooth(value: number): number {

@@ -139,3 +139,13 @@ passages dessinés restent utilisés ; le contact entrant garde son image exacte
 La courte fenêtre de liaison prolonge la sortie du geste au lieu de ramener
 immédiatement à la garde. `fightComboTransfer.test.ts` vérifie les quarante
 contacts et la compression des appuis pendant une liaison.
+
+## Réactions locales et déséquilibre conservé
+
+Les réactions distinguent davantage tête, abdomen et perte d’appui : les bras
+protègent le ventre, la jambe touchée cède et le thorax absorbe avant le bassin.
+L’inclinaison du corps entier est réduite. Lors d’un combo confirmé, la réaction
+suivante conserve un résidu borné du déséquilibre précédent, dissipé sur huit
+images de simulation. Aucun résidu ne passe à un nouveau combat ou à une frappe
+isolée après récupération. `fightHitBalance.test.ts` vérifie ces différences et
+le transfert au cours de six combos natifs, sans mutation des états.

@@ -22,12 +22,7 @@ export function retrospectiveAiAction(
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
     dowsingAi(state) ??
-    judgmentAiPreset(state) ??
-    gumAi(state) ??
-    interviewAi(state) ??
-    supportAi(state) ??
-    copiedArsenalAi(state, perform) ??
-    historicalAi(state, perform)
+    hatsuArsenalAi(state, perform)
   )
 }
 
@@ -194,4 +189,18 @@ function fishOpportunity(state: FightState): boolean {
 }
 function clothOpportunity(state: FightState): boolean {
   return state.player.hitStun >= 35 && !state.opponent.chrolloHistorical?.cloth
+}
+
+function hatsuArsenalAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return (
+    judgmentAiPreset(state) ??
+    gumAi(state) ??
+    interviewAi(state) ??
+    supportAi(state) ??
+    copiedArsenalAi(state, perform) ??
+    historicalAi(state, perform)
+  )
 }

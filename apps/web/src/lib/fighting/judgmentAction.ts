@@ -50,14 +50,9 @@ export function performJudgmentCommand(
 ): FightState {
   const fighter = state[side]
   if (command.action === 'judgment-call') return speakToReserve(state, side, command.target)
-  if (fighter.id !== 'kurapika' || !canAct(fighter) || fighter.attack) return state
+  if (!judgmentActorReady(fighter)) return state
   if (command.action === 'judgment-release') return releaseJudgment(state, side)
-  if (
-    command.action !== 'judgment-preset' ||
-    !command.target ||
-    !Object.hasOwn(JUDGMENT_PRESETS, command.target)
-  )
-    return state
+  if (!validJudgmentPreset(command)) return state
   if (chainAbilitySealed(fighter, 'kurapika:finisher')) return state
   return { ...state, [side]: { ...fighter, judgmentPreset: command.target as JudgmentPreset } }
 }
@@ -174,4 +169,16 @@ function opposingTroupeReserve(state: FightState): boolean {
       (body, index) => index !== seat.active && body.health > 0 && troupeMember(body.id),
     ),
   )
+}
+
+function validJudgmentPreset(command: ArsenalCommand): boolean {
+  return Boolean(
+    command.action === 'judgment-preset' &&
+    command.target &&
+    Object.hasOwn(JUDGMENT_PRESETS, command.target),
+  )
+}
+
+function judgmentActorReady(fighter: FightState['player']): boolean {
+  return fighter.id === 'kurapika' && canAct(fighter) && !fighter.attack
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
@@ -22,7 +22,6 @@
   import type { Space, Vec2 } from '$lib/tour/types'
   import {
     infiltrationReducer,
-    initialInfiltrationState,
     type InfiltrationAction,
     type WitnessId,
   } from '$lib/infiltration/state'
@@ -31,10 +30,10 @@
 
   import type { CoverRole } from '$lib/infiltration/social/cover'
   import { evaluateRun } from '$lib/infiltration/balance'
-  import { MISSIONS, selectMission } from '$lib/infiltration/missions/definitions'
+  import { MISSIONS } from '$lib/infiltration/missions/definitions'
   import { seedFromText } from '$lib/infiltration/missions/random'
   import type { MissionId } from '$lib/infiltration/missions/types'
-  import { missionSetup } from '$lib/infiltration/missions/setup'
+  import { createMissionGame } from '$lib/infiltration/missionGame'
   import {
     nextObjectiveAction,
     objectivesPermitExtraction,
@@ -49,7 +48,6 @@
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
   import {
     applyConsequences,
-    applyCampaignContext,
     initialCampaign,
     type CampaignState,
   } from '$lib/infiltration/campaign'
@@ -101,22 +99,17 @@
       .map((tier) => ({ id: tier.id, label: nameOf(tier), active: true })),
   )
 
-  function freshGame() {
-    const selection = selectMission(selectedMission, defaultSeed)
-    return applyCampaignContext(
-      initialInfiltrationState(missionSetup({ selection, arena, graph })),
-      campaign,
-    )
-  }
+  const freshGame = () =>
+    createMissionGame({ missionId: selectedMission, seed: defaultSeed, arena, graph, campaign })
 
   let game = $state(freshGame())
-  let position = $state<Vec2>(game.player.position)
+  let position = $state<Vec2>(untrack(() => game.player.position))
   // The scene lands the visitor at the deck's entrance unless told otherwise:
   // these put them where the mission (or the save) says they stand.
-  let jumpTo = $state<string | null>(game.player.spaceId)
-  let jumpAt = $state<Vec2 | null>(game.player.position)
+  let jumpTo = $state<string | null>(untrack(() => game.player.spaceId))
+  let jumpAt = $state<Vec2 | null>(untrack(() => game.player.position))
   let heading = $state(0)
-  let currentSpace = $state<Space | null>(extraction)
+  let currentSpace = $state<Space | null>(untrack(() => extraction))
   let engaged = $state(false)
   let briefing = $state(true)
   let manualOpen = $state(false)

@@ -498,11 +498,17 @@ describe('fighter Hatsu registry', () => {
 
     // The arrow pierces the guard, takes the body over, and costs Halkenburg.
     const struck = shoot(gathered, true)
+    expect(struck.player.id).toBe('halkenburg')
+    expect(struck.opponent.id).toBe('hisoka')
     expect(struck.opponent.hatsuEffects.possessedFrames).toBeGreaterThan(0)
     expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
     expect(struck.player.health).toBeLessThan(ready.player.health)
     expect(struck.player.hatsuEffects.cohortWillFrames).toBe(0)
     expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
+    const supporter = struck.battlefield!.entities.find(
+      (entity) => entity.id === struck.player.halkenburgSupporter,
+    )!
+    expect(supporter.sleepingFrames).toBe(struck.opponent.hatsuEffects.possessedFrames)
   })
 
   it('keeps Gel’s arm and Lynch’s carrier hook free of magical vulnerability', () => {

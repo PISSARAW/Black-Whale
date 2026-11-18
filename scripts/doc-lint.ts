@@ -3,6 +3,10 @@ import { join, relative, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import fastGlob from 'fast-glob'
+import {
+  DOCUMENTATION_IGNORED_DIRS as IGNORED_DIRS,
+  findDocumentationFiles,
+} from './doc-stage-pages'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const DOCS = join(ROOT, 'docs')
@@ -76,22 +80,11 @@ function listDocs(dir: string): string[] {
   return out
 }
 
-const IGNORED_DIRS = new Set(['node_modules', '.svelte-kit', '.gen', 'coverage', 'archive', 'dist'])
-
 function findStagePages(dir: string): string[] {
-  const out: string[] = []
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const path = join(dir, entry.name)
-    if (entry.isDirectory()) {
-      if (IGNORED_DIRS.has(entry.name)) continue
-      out.push(...findStagePages(path))
-    } else if (entry.isFile() && entry.name.endsWith('.md')) {
-      const source = readFileSync(path, 'utf8')
-      const fm = parseFrontMatter(source)
-      if (fm && (fm.etage === 1 || fm.etage === 2)) out.push(path)
-    }
-  }
-  return out
+  return findDocumentationFiles(dir).filter((path) => {
+    const fm = parseFrontMatter(readFileSync(path, 'utf8'))
+    return fm && (fm.etage === 1 || fm.etage === 2)
+  })
 }
 
 function isPlaceholder(pattern: string): boolean {

@@ -213,6 +213,8 @@ describe('manga cast shared by the visit and Fighting', () => {
     const fighter = createFightState('melody', 'hanzo').player
     const model = buildFightFigure({ THREE, glow, fighter })
     const common = buildHumanFigure({ THREE, glow, seen: seen('melody') })
+    model.animate(0, 'idle', { motion: fightBodyMotion({ fighter, seconds: 0, progress: 0 }) })
+    const openEyeScale = model.root.getObjectByName('face-eye-left')!.scale.y
     const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
     expect(hair.geometry).toBe(
       (common.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry,
@@ -245,7 +247,7 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(flute.parent).toBe(rest.parent)
     expect(flute.position.toArray()).toEqual(rest.position.toArray())
     expect(flute.scale.toArray()).toEqual(rest.scale.toArray())
-    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBe(1)
+    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBe(openEyeScale)
   })
   it('shares Yokotani’s smiling face, bob and carried law book with Fighting', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('yokotani') })

@@ -63,3 +63,47 @@ La première passe à neuf workers avait dépassé les 30 secondes d’un test d
 compilation sous la charge du poste. Avec trois workers, ce même test passe en
 3,7 secondes ; son délai et ses assertions restent inchangés. La passe complète
 réussie conserve tous les cas, y compris les matrices de combat et de réseau.
+
+## Corrections du 18 novembre 2026
+
+- Le contrôle documentaire reste dans son checkout : les dépôts imbriqués,
+  y compris les worktrees signalés par un fichier `.git`, sont vérifiés depuis
+  leur propre racine. Un test conserve la lecture des documents cachés du dépôt
+  courant et vérifie les deux formes de dépôt imbriqué.
+- Les quatre avertissements `state_referenced_locally` d’Infiltration sont
+  supprimés par une initialisation explicite avec `untrack`. Les états restent
+  modifiables par la scène ; missions et sauvegardes gardent leurs réaffectations.
+  La construction d’une mission est extraite sans changement de comportement.
+- Les expressions de Melody gardent les yeux fermés pendant sa performance,
+  puis retrouvent leur expression ordinaire. Le placement de la flûte ne pilote
+  plus une seconde fois les yeux. Le test contrôle aussi le retour à la pose.
+- La régression de Grimmel vérifie que l’archer et la cible gardent leur identité
+  et que le partisan dort pendant la possession existante de la cible.
+  Aucun Hatsu, pouvoir, coût ou dégât supplémentaire n’est ajouté.
+
+- Les validations de commandes Dolphin et Judgment, l’identité d’exécution
+  empruntée, la graine du replay et l’ordre des décisions d’IA sont extraits en
+  petites fonctions équivalentes. Les conditions, priorités et empreintes des
+  replays restent vérifiées ; aucune exemption de lint n’est ajoutée.
+- Le faux renderer du test de libération des ressources fournit maintenant sa
+  méthode `render`, requise par le wrapper de matrices existant.
+- La démo longue vérifie les vrais états Bungee Gum et Texture Surprise et
+  l’absence de gros plan pour les quatorze chapitres utilisant les accents de
+  type 1. Chaque chapitre doit produire ses événements réels ; les vingt-six
+  autres conservent leurs plans détaillés. Continuité, vitesse et conservation
+  des états restent vérifiées pour les quarante chapitres.
+
+Vérification du lot intégré sur `eeb8cad4f` :
+
+- 20 767 tests monorepo réussis, dont les 2 944 cas réseau. Les quatre
+  partitions de 736 cas couvrent intégralement les latences 0, 50, 100 et 150 ms.
+  Le reste du monorepo est exécuté par Turbo, avec cette seule matrice séparée.
+- 77 nouveaux tests d’animations réussis ; les 1 433 tests dépendant du nouveau
+  rendu sont également rejoués et réussissent.
+- `pnpm typecheck` : 17 tâches réussies, zéro erreur et zéro avertissement.
+- `pnpm lint` : zéro erreur et zéro avertissement.
+- `pnpm test:ratchet` : 24 tests réussis, documentation comprise.
+
+Les archives de replays, le ruleset et les limites de lint restent inchangés.
+Les autres fonctionnalités non commitées du dossier de travail ne font pas
+partie de ce lot isolé.

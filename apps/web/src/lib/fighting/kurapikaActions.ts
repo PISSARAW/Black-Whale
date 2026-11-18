@@ -202,7 +202,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   return (
-    outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
+    dolphinBorrowingAvailable(fighter) &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     kurapikaNenActive(fighter) &&
@@ -328,4 +328,9 @@ function aiNeedsEmperor(state: FightState): boolean {
   const held = state.opponent.kurapika?.held
   if (held && !held.used) return true
   return healthPercent(state.opponent) < 70 || state.player.chainJail?.owner === 'opponent'
+}
+
+function dolphinBorrowingAvailable(fighter: ArcadeFighter): boolean {
+  const held = fighter.kurapika?.held
+  return outsideDuelAbility(held?.moveId)?.activation !== 'post-mortem'
 }

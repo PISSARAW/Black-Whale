@@ -25,7 +25,9 @@ function validateIdentity(value: Record<string, unknown>, setup: ReplaySetup) {
     value.formatId !== setup.formatId
   )
     throw Error('invalid-replay')
-  const seed = value.rng
+  validateSeed(value.rng)
+}
+function validateSeed(seed: unknown) {
   if (typeof seed !== 'number' || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff)
     throw Error('invalid-replay')
 }

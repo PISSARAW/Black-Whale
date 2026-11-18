@@ -35,12 +35,7 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const move = moveById(held?.moveId)
   if (!held?.loaded || held.used) return false
   // Preserve the actual technique's conditions and cost at the borrower's attained state.
-  const actor: ArcadeFighter = {
-    ...fighter,
-    id: held.source,
-    nenOwner: fighter.nenOwner ?? fighter.id,
-    stolenChainAbility: undefined,
-  }
+  const actor = dolphinActor(fighter, held.source)
   const prepared = { ...state, [side]: actor }
   if (held.moveId === 'biscuit:cookie') return cookieCanStart(prepared, side, side)
   if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
@@ -201,4 +196,13 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
   )
+}
+
+function dolphinActor(fighter: ArcadeFighter, source: ArcadeFighter['id']): ArcadeFighter {
+  return {
+    ...fighter,
+    id: source,
+    nenOwner: fighter.nenOwner ?? fighter.id,
+    stolenChainAbility: undefined,
+  }
 }

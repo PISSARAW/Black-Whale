@@ -100,6 +100,35 @@ coupe blonde en bol, nez long, menton carré, lunettes ouvertes et boucles d’o
 costume croisé sombre à liserés clairs. L’apparence est commune à la visite et au kaméo
 de Clash. La planche `manga-cast` construit aussi les vrais modèles de combat des kaméos.
 
+`mangaMarayamHead.ts`, `mangaMarayamClothes.ts` et `mangaMarayamProfile.ts` reprennent
+la tenue publique de Marayam : tête ronde, yeux noirs écartés, cheveux turquoise courts,
+smoking croisé, nœud papillon et short. Son gabarit propre raccourcit le cou et les
+membres tout en agrandissant la tête ; les pièces de short suivent chaque hanche
+et les jambes nues conservent leurs articulations. L’apparence est partagée avec Clash.
+
+`mangaZhangLeiHead.ts` construit le crâne chauve, le menton carré, les yeux cernés,
+les six points du front, la moustache crayon et les lobes allongés de Zhang Lei.
+`mangaZhangLeiProfile.ts` conserve des proportions d’adulte petit et trapu.
+`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` reprennent sa tunique claire
+à plastron sombre, ses broderies et son pantalon ample resserré aux chevilles.
+Ces modèles et leurs géométries restent communs à la visite et au kaméo de Clash.
+
+`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` reprennent
+les yeux bruns en amande de Morena, ses longs cheveux bleu sombre aux mèches
+recourbées, ses deux cicatrices sur l’œil gauche, les seize anneaux à l’oreille
+gauche et sa couronne d’épines. Les cicatrices sont projetées sur la surface du
+visage à la construction. `mangaMorenaClothes.ts` porte la robe noire ajustée,
+les épaules découvertes, les manches longues et les bottes ; la pose assise garde
+sa propre jupe sur les cuisses. L’apparence est commune à la visite et à Clash.
+
+`mangaLuzurusGeometry.ts`, `mangaLuzurusFace.ts` et `mangaLuzurusHair.ts` portent son visage rectangulaire,
+son nez pointu, sa barbe légère et ses deux houppes foncées. `mangaLuzurusClothes.ts` et `mangaLuzurusLimbs.ts`
+portent la veste à franges, la ceinture, le pantalon ample et les chaussures pointues, partagés avec Clash.
+
+`mangaSalesaleHead.ts`, `mangaSalesaleHair.ts` et `mangaSalesaleGeometry.ts` portent le visage plein,
+le sourire denté, les anneaux à droite et la mèche blonde du portrait fourni. `mangaSalesaleBody.ts`,
+`mangaSalesaleClothes.ts` et `mangaSalesaleLimbs.ts` portent son ventre arrondi, sa robe claire et ses bottes.
+
 `mangaCast.test.ts` contrôle les articulations, les transformations et les géométries
 communes. `node apps/web/scripts/check-manga-cast.mjs` rend tout le catalogue en WebGL :
 `MANGA_CAST_IDS` sélectionne les identités séparées par des virgules, `MANGA_CAST_VIEWS`

@@ -4,6 +4,7 @@ import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
+import { addMorenaSkirt } from './mangaMorenaClothes'
 import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
@@ -184,7 +185,7 @@ export function buildHumanFigure({
   const figure = new THREE.Group()
   const far = new THREE.Group()
   // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
-  const frame = frameShape(profile.frame)
+  const frame = frameShape(profile.frame, profile.likeness)
   const { lift, stature } = stance(frame)
   const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height * stature
   figure.scale.setScalar(unit)
@@ -242,7 +243,7 @@ export function buildHumanFigure({
     shoulder,
     materials: { cloth, shirt: glow(profile.shirt, 1), dark, accent, ink, skin },
   })
-  if (profile.clothing === 'gown' && (isMorena(profile) || !profile.likeness)) {
+  if (profile.clothing === 'gown' && !profile.likeness) {
     // Her marks belong to her. Anyone else the archive has actually drawn gets
     // the garment and not the person; anyone it has not drawn keeps exactly
     // what they had, which is ADR-005 §5's promise about diffs.
@@ -260,6 +261,8 @@ export function buildHumanFigure({
     }
     addMorenaDetails({ ...dressed, head, seated: pose === 'seated' })
   }
+  if (isMorena(profile))
+    addMorenaSkirt({ THREE, geometry, outlined, figure, cloth, ink, seated: pose === 'seated' })
 
   const { arms, legs, elbows, knees } = buildHumanLimbs({
     THREE,

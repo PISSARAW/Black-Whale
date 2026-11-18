@@ -1,5 +1,9 @@
 import { mangaFeitanHair } from './mangaFeitanHead'
 import { mangaTubeppaBowl } from './mangaTubeppaHead'
+import { mangaMarayamCrop } from './mangaMarayamHead'
+import { mangaMorenaHair } from './mangaMorenaHair'
+import { mangaLuzurusHair } from './mangaLuzurusHair'
+import { mangaSalesaleHair } from './mangaSalesaleHair'
 import { mangaBillFlames, mangaBashoPompadour } from './mangaBodyguardHair'
 import { mangaSaiyuCrop } from './mangaSaiyuHead'
 import { mangaCluckUpdo } from './mangaCluckHead'
@@ -167,6 +171,10 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
   }
   const style = look.hair === 'curtain' ? 'curtain' : profile.hairStyle
   const variants: Record<string, () => void> = {
+    'salesale-wave': () => mangaSalesaleHair(kit),
+    'luzurus-puffs': () => mangaLuzurusHair(kit),
+    'morena-long': () => mangaMorenaHair(kit),
+    'marayam-crop': () => mangaMarayamCrop(kit),
     'tubeppa-bowl': () => mangaTubeppaBowl(kit),
     'feitan-crop': () => mangaFeitanHair(kit),
     'bill-flames': () => mangaBillFlames(kit),

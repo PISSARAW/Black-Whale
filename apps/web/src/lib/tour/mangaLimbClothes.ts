@@ -1,4 +1,9 @@
 import { addFeitanBoots } from './mangaFeitanClothes'
+import { addMarayamShorts } from './mangaMarayamClothes'
+import { addZhangLeiLimbs } from './mangaZhangLeiLimbs'
+import { addMorenaSleevesAndBoots } from './mangaMorenaClothes'
+import { addLuzurusLimbs } from './mangaLuzurusLimbs'
+import { addSalesaleSleevesAndBoots } from './mangaSalesaleLimbs'
 import { addSaiyuLimbs } from './mangaSaiyuLimbs'
 import { addCluckLimbCostume } from './mangaCluckLimbs'
 import type { Group, Mesh } from 'three'
@@ -92,6 +97,14 @@ function finishShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {
   }
 }
 
+const REFERENCE_LIMBS: Record<string, (build: HumanLimbsBuild, limbs: HumanLimbs) => void> = {
+  'prince-salesale': addSalesaleSleevesAndBoots,
+  'prince-luzurus': addLuzurusLimbs,
+  'prince-marayam': addMarayamShorts,
+  'prince-zhanglei': addZhangLeiLimbs,
+  'morena-prudo': addMorenaSleevesAndBoots,
+}
+
 export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void {
   const { profile, THREE } = build
   if (!profile.likeness || profile.likeness === 'kurapika') return
@@ -124,6 +137,7 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   addCluckLimbCostume(build, limbs)
   addSaiyuLimbs(build, limbs)
   addFeitanBoots(build, limbs)
+  REFERENCE_LIMBS[profile.likeness]?.(build, limbs)
 }
 
 function colourShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {

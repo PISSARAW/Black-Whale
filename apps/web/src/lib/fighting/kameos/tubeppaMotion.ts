@@ -1,14 +1,9 @@
 import type { HumanAnimationLayer } from '$lib/tour/humanAnimation'
-import { fightBodyMotion } from '../fightBodyMotion'
-import { rightHandedPose } from '../fightHandedPose'
-import type { BodyPlan, FightPose } from '../fightPose'
-import { sampleTimeline, type MoveTimeline } from '../keyPoseTimeline'
-import { poseProgress } from '../sceneMotion'
-import { reactionPlan } from '../fightReactions'
-import type { ArcadeFighter } from '../types'
-import { KAMEO_CATALOGUE } from './catalogue'
+import type { FightPose } from '../fightPose'
+import type { MoveTimeline } from '../keyPoseTimeline'
 import type { KameoSlot } from './types'
 import { tubeppaGlassesMotion } from './tubeppaContacts'
+import { supportAnimation, type SupportChoreography } from './supportAnimation'
 
 // Art direction for the support adaptation: no new canon ability or combat action.
 const COMPOSED: FightPose = {
@@ -80,55 +75,14 @@ const LEAVE: MoveTimeline = [
   { phase: 'recovery', at: 0, pose: COMPOSED },
   { phase: 'recovery', at: 1, pose: EXIT },
 ]
-const TIMING = KAMEO_CATALOGUE.tubeppa.timing
-
-function supportPlan(slot: KameoSlot): BodyPlan {
-  const phases = {
-    entering: { timeline: ENTER, frames: { startup: 0, active: 0, recovery: TIMING.enter } },
-    acting: {
-      timeline: ACT,
-      frames: { startup: TIMING.startup, active: 0, recovery: TIMING.recovery },
-    },
-    leaving: { timeline: LEAVE, frames: { startup: 0, active: 0, recovery: TIMING.leave } },
-  }
-  const phase = phases[slot.phase as keyof typeof phases]
-  const pose = phase
-    ? sampleTimeline(phase.timeline, {
-        frame: slot.phaseFrames,
-        frames: phase.frames,
-        settle: false,
-        continuous: true,
-      })
-    : COMPOSED
-  return {
-    key: `tubeppa:${slot.phase}`,
-    pose: slot.fighter.facing === -1 ? rightHandedPose(pose) : pose,
-    plant: slot.fighter.y <= 0,
-    // The timeline already eases between phases; it also samples correctly after a seek.
-    blend: 0,
-  }
-}
-
-function reacting(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health <= 0 ||
-    fighter.hitStun > 0 ||
-    fighter.knockdownFrames > 0 ||
-    ['hit', 'down', 'ko', 'wakeup'].includes(fighter.pose)
-  )
-}
-
-function presentedFighter(slot: KameoSlot): ArcadeFighter {
-  const { fighter } = slot
-  if (slot.phase === 'eliminated' || fighter.health <= 0) return { ...fighter, pose: 'ko' }
-  if (fighter.knockdownFrames > 0) return { ...fighter, pose: 'down' }
-  if (fighter.hitStun > 0) return { ...fighter, pose: 'hit' }
-  return fighter
-}
-
-function supportActivity(slot: KameoSlot): number {
-  const settle = Math.max(0, slot.phaseFrames - TIMING.startup) / TIMING.recovery
-  return slot.phase === 'acting' ? 0.8 * (1 - Math.min(1, settle)) : 0
+const STYLE: SupportChoreography = {
+  stance: COMPOSED,
+  enter: ENTER,
+  act: ACT,
+  leave: LEAVE,
+  effort: 0.8,
+  rightHanded: true,
+  contact: tubeppaGlassesMotion,
 }
 
 export function tubeppaAnimation(
@@ -136,19 +90,5 @@ export function tubeppaAnimation(
   seconds: number,
   fallenProgress = 1,
 ): HumanAnimationLayer {
-  const dead = slot.phase === 'eliminated' || slot.fighter.health <= 0
-  const fighter = presentedFighter(slot)
-  const reaction = dead || reacting(fighter)
-  const progress = dead ? fallenProgress : poseProgress(fighter, { seconds, started: seconds })
-  const recoil = reaction ? reactionPlan(fighter, { progress }, COMPOSED) : null
-  return {
-    afterMotion: reaction ? undefined : tubeppaGlassesMotion(slot),
-    motion: fightBodyMotion({
-      fighter,
-      seconds,
-      progress,
-      plan: recoil ? { ...recoil, blend: 0 } : supportPlan(slot),
-      activity: reaction ? 0 : supportActivity(slot),
-    }),
-  }
+  return supportAnimation({ slot, seconds, fallenProgress, style: STYLE })
 }

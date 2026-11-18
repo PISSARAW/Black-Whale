@@ -80,6 +80,7 @@ export function startFighterAttack(options: {
     ...fighter,
     attack: {
       ...fighter.attack!,
+      superThrow: options.superThrow,
       kind,
       variant: options.variant,
       moveId: options.moveId,

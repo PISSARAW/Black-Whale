@@ -35,7 +35,7 @@
   import {
     createHanzoProjectionScene,
     projectionCameraSpan,
-  } from '$lib/fighting/rosterGuestScene'
+  } from '$lib/fighting/kameos/stageScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,

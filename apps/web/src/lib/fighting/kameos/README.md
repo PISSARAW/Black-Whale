@@ -68,3 +68,20 @@ que des personnages du catalogue.
 
 Le bit `kameo` est ajouté **en dernier** dans `REPLAY_INPUT_KEYS` : les replays
 existants gardent le sens de chacun de leurs bits.
+
+## Lot 6 · rendu, HUD, touches, écran de préparation
+
+- `scene.ts` : dessine le corps de chaque kaméo avec l'apparence de son personnage
+  dans la visite (`kameoAppearance`, par exemple `prince-tubeppa` ou `morena-prudo`).
+  Le corps grandit à l'entrée et s'efface à la sortie. Il prend la pose `special`
+  pendant `acting`. Un kaméo mort reste au sol pendant la seule manche de sa mort.
+- `stageScene.ts` compose cette scène avec celle des corps invités. `FightScene.svelte`
+  ne change que son chemin d'import et reste à 499 lignes.
+- `hud.ts` et `FightKameoBadge.svelte` : sous la jauge d'aura, le nom, le rôle et
+  l'état (prêt, recharge, en scène, aura épuisée, mort), avec une barre de recharge.
+- `selection.ts` et `FightKameoPicker.svelte` : l'écran de préparation propose un
+  kaméo par camp (section 05). `+page.svelte` les attache à la création du match.
+- Touches par défaut, réassignables au clavier : `<` pour P1 et `Backspace` pour P2.
+  À la manette, c'est le bouton 16 (Guide), le seul bouton standard encore libre.
+
+Le piège de Luzurus n'a pas encore de visuel au sol.

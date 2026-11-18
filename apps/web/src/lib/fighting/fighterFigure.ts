@@ -1,3 +1,4 @@
+import { kameoAppearance } from './kameos/catalogue'
 import { addBenjaminRifle } from './benjaminRifle'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
@@ -60,7 +61,8 @@ export function buildFightFigure(options: {
   palette?: Palette
 }) {
   const { THREE, glow, fighter } = options
-  const definition = fighterDefinition(battleAppearance(fighter))
+  // Kameos are ship characters outside the forty: they wear their visit likeness.
+  const definition = kameoAppearance(fighter.id) ?? fighterDefinition(battleAppearance(fighter))
   const seen: HumanLook = {
     id: `fighting-scene:${definition.modelId}`,
     kind: 'combatant',

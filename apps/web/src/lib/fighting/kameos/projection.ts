@@ -36,7 +36,9 @@ export function mergeDuel(state: FightState, projection: DuelProjection, view: F
     [side]: leader,
     kameos: {
       ...state.kameos,
-      [side]: { ...slot, fighter, phase: eliminated ? 'eliminated' : slot.phase },
+      [side]: eliminated
+        ? { ...slot, fighter, phase: 'eliminated', eliminatedRound: state.roundNumber }
+        : { ...slot, fighter },
     },
     deaths,
   }

@@ -1,4 +1,4 @@
-import type { FighterId } from '../types'
+import type { FighterDefinition, FighterId } from '../types'
 import type { KameoId } from './types'
 
 export type KameoRole = 'soin' | 'defense' | 'boost' | 'attaque' | 'piege' | 'zone'
@@ -24,6 +24,8 @@ export interface KameoTiming {
 export interface KameoDefinition {
   id: KameoId & FighterId
   name: string
+  /** Visit likeness drawn for the kameo body (`tour/humanProfiles.ts`). */
+  modelId: string
   role: KameoRole
   /** Canon ability in `data/abilities/abilities.json`. */
   abilityId: string
@@ -45,6 +47,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
   tubeppa: support({
     id: 'tubeppa',
     name: 'Tubeppa',
+    modelId: 'prince-tubeppa',
     role: 'soin',
     abilityId: 'tubeppa-guardian-synthesis',
     chapterId: 'ch-386',
@@ -52,6 +55,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
   marayam: support({
     id: 'marayam',
     name: 'Marayam',
+    modelId: 'prince-marayam',
     role: 'defense',
     abilityId: 'marayam-guardian-isolation',
     chapterId: 'ch-390',
@@ -59,6 +63,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
   zhanglei: support({
     id: 'zhanglei',
     name: 'Zhang Lei',
+    modelId: 'prince-zhanglei',
     role: 'boost',
     abilityId: 'zhanglei-guardian-coins',
     chapterId: 'ch-395',
@@ -67,6 +72,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
     ...support({
       id: 'morena',
       name: 'Morena',
+      modelId: 'morena-prudo',
       role: 'attaque',
       abilityId: 'contagion',
       chapterId: 'ch-375',
@@ -78,6 +84,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
     ...support({
       id: 'luzurus',
       name: 'Luzurus',
+      modelId: 'prince-luzurus',
       role: 'piege',
       abilityId: 'luzurus-guardian-desire-trap',
       chapterId: 'ch-386',
@@ -88,6 +95,7 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
     ...support({
       id: 'salesale',
       name: 'Salé-salé',
+      modelId: 'prince-salesale',
       role: 'zone',
       abilityId: 'salesale-guardian-smoke',
       chapterId: 'ch-386',
@@ -97,7 +105,10 @@ export const KAMEO_CATALOGUE: Readonly<Record<KameoId, KameoDefinition>> = {
   },
 }
 
-type SupportCanon = Pick<KameoDefinition, 'id' | 'name' | 'role' | 'abilityId' | 'chapterId'>
+type SupportCanon = Pick<
+  KameoDefinition,
+  'id' | 'name' | 'modelId' | 'role' | 'abilityId' | 'chapterId'
+>
 
 function support(canon: SupportCanon): KameoDefinition {
   return {
@@ -117,4 +128,13 @@ export function isKameoId(id: string): id is KameoId {
 
 export function kameoDefinition(id: KameoId): KameoDefinition {
   return KAMEO_CATALOGUE[id]
+}
+
+/** The body a kameo is drawn with; undefined for every other character. */
+export function kameoAppearance(
+  id: FighterId,
+): Pick<FighterDefinition, 'modelId' | 'modelRole'> | undefined {
+  if (!isKameoId(id)) return undefined
+  const modelId = KAMEO_CATALOGUE[id].modelId
+  return { modelId, modelRole: modelId === 'morena-prudo' ? 'morena' : 'fighter' }
 }

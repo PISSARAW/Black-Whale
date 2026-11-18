@@ -34,6 +34,8 @@ const BUTTON_INPUTS: Record<number, keyof FightInput> = {
   13: 'down',
   14: 'left',
   15: 'right',
+  // Guide: the only standard button left free; the support kameo call (KAMEOS.md).
+  16: 'kameo',
 }
 const pressed = (pad: FightPad, button: number) => Boolean(pad.buttons[button]?.pressed)
 function axisDirection(value: number, previouslyHeld: boolean, sign: -1 | 1): boolean {

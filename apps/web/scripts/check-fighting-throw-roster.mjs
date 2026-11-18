@@ -55,6 +55,11 @@ const pairs = {
   illumi: ['illumi-joint', 'illumi-puppet'],
   kalluto: ['kalluto-screen', 'kalluto-bow'],
   bonolenov: ['bonolenov-waltz', 'bonolenov-prologue'],
+  shizuku: ['shizuku-brush', 'shizuku-spring-clean'],
+  hinrigh: ['hinrigh-handshake', 'hinrigh-underboss'],
+  mizaistom: ['mizaistom-warning', 'mizaistom-custody'],
+  leorio: ['leorio-consultation', 'leorio-house-call'],
+  hanzo: ['hanzo-blind-side', 'hanzo-moonfall'],
 }
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
@@ -62,7 +67,8 @@ try {
   const selected = Object.entries(pairs)
     .filter((_, index) => {
       if (process.env.THROW_ROSTER_BATCH === 'second') return index >= 5 && index < 10
-      if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10
+      if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10 && index < 15
+      if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15
       return true
     })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))
@@ -92,6 +98,11 @@ try {
           const effect = { machi: 'thread', kalluto: 'paper', illumi: 'needles' }[id]
           assert.ok(value.audit.effects.includes(`throw-signature:${effect}`))
         }
+        if (phase === 'turn' && ['hinrigh', 'mizaistom'].includes(id))
+          assert.ok(value.audit.effects.includes(`throw-signature:${id === 'hinrigh' ? 'cuffs' : 'referee'}`))
+        if (phase === 'turn' && id === 'shizuku') assert.equal(value.audit.equipment.blinky, true)
+        if (phase === 'turn' && id === 'leorio' && powered) assert.ok(value.audit.effects.includes('throw-signature:remote'))
+        if (phase === 'turn' && id === 'hanzo' && powered) assert.ok(value.audit.scissorsGap < 0.3)
         if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
         await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
         samples.push({ id, side, powered, phase, audit: value.audit })
@@ -126,6 +137,20 @@ try {
   assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:paper'))
   await reset({ id: 'illumi', noNeedles: true })
   assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:needles'))
+  await reset({ id: 'shizuku', sealed: true })
+  const noBlinky = await seek(9)
+  assert.equal(noBlinky.audit.performance, null)
+  assert.equal(noBlinky.audit.equipment.blinky, false)
+  await reset({ id: 'hinrigh', confiscated: true })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:cuffs'))
+  await reset({ id: 'mizaistom', sealed: true })
+  const noCard = await seek(9)
+  assert.equal(noCard.audit.performance, 'mizaistom-warning')
+  assert.ok(!noCard.audit.effects.includes('throw-signature:referee'))
+  await reset({ id: 'leorio', sealed: true })
+  const doctor = await seek(9)
+  assert.equal(doctor.audit.performance, 'leorio-consultation')
+  assert.ok(!doctor.audit.effects.includes('throw-signature:remote'))
   await reset({ id: 'feitan', confiscated: true })
   assert.equal((await seek(9)).audit.equipment.umbrella, false)
   await reset({ id: 'saiyu', sealed: true })

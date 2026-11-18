@@ -13,6 +13,11 @@ import { MACHI_THROWS } from './machi'
 import { ILLUMI_THROWS } from './illumi'
 import { KALLUTO_THROWS } from './kalluto'
 import { BONOLENOV_THROWS } from './bonolenov'
+import { SHIZUKU_THROWS } from './shizuku'
+import { HINRIGH_THROWS } from './hinrigh'
+import { MIZAISTOM_THROWS } from './mizaistom'
+import { LEORIO_THROWS } from './leorio'
+import { HANZO_THROWS } from './hanzo'
 import type { FighterId } from '../types'
 import type { ThrowPerformanceId } from './types'
 
@@ -32,6 +37,11 @@ export const THROW_PERFORMANCES = [
   ...ILLUMI_THROWS,
   ...KALLUTO_THROWS,
   ...BONOLENOV_THROWS,
+  ...SHIZUKU_THROWS,
+  ...HINRIGH_THROWS,
+  ...MIZAISTOM_THROWS,
+  ...LEORIO_THROWS,
+  ...HANZO_THROWS,
 ]
 const pairs = {
   kurapika: KURAPIKA_THROWS,
@@ -49,6 +59,11 @@ const pairs = {
   illumi: ILLUMI_THROWS,
   kalluto: KALLUTO_THROWS,
   bonolenov: BONOLENOV_THROWS,
+  shizuku: SHIZUKU_THROWS,
+  hinrigh: HINRIGH_THROWS,
+  mizaistom: MIZAISTOM_THROWS,
+  leorio: LEORIO_THROWS,
+  hanzo: HANZO_THROWS,
 }
 export function throwPerformance(id?: ThrowPerformanceId) {
   return THROW_PERFORMANCES.find((entry) => entry.id === id)

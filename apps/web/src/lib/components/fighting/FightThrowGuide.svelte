@@ -37,6 +37,11 @@
         ? 'La lance participe à la super si Prologue est déjà préparé. Sinon, Bonolenov exécute Le dernier accord à mains nues.'
         : 'The spear assists the super when Prologue is already prepared. Otherwise Bonolenov performs The final chord barehanded.'}
     </p>{/if}
+  {#if fighterId === 'hinrigh'}<p>
+      {language === 'fr'
+        ? 'Un pigeon Biohazard déjà transformé et proche peut accompagner la super projection.'
+        : 'A nearby Biohazard pigeon already transformed can assist the super throw.'}
+    </p>{/if}
 </aside>
 
 <style>

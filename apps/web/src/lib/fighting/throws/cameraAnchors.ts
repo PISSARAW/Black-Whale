@@ -45,6 +45,7 @@ function propAnchor(figure: Object3D, effect: string) {
   const names: Record<string, string> = {
     paper: 'kalluto-paper-fan',
     music: 'bonolenov-prologue-spear',
+    blinky: 'shizuku-blinky',
   }
   const own = names[effect] ? figure.getObjectByName(names[effect]) : undefined
   if (own?.visible) return own
@@ -60,11 +61,12 @@ export function throwEquipmentBounds(
   frame: ThrowCinematicFrame,
 ): IntroLandmarkBounds {
   const effect = throwPerformance(frame.performance)?.effect ?? ''
-  if (!actor || !['staff', 'music'].includes(effect)) return bounds
-  const staff =
-    effect === 'music'
-      ? actor.getObjectByName('bonolenov-prologue-spear')
-      : propAnchor(actor, effect)
+  if (!actor || !['staff', 'music', 'blinky'].includes(effect)) return bounds
+  const names: Record<string, string> = {
+    music: 'bonolenov-prologue-spear',
+    blinky: 'shizuku-blinky',
+  }
+  const staff = names[effect] ? actor.getObjectByName(names[effect]) : propAnchor(actor, effect)
   if (!staff?.visible) return bounds
   const box = new Box3().setFromObject(staff)
   if (box.isEmpty()) return bounds

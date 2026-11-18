@@ -1,5 +1,6 @@
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
+import { blinkyAvailable } from '../blinky'
 import { throwPerformanceFor } from './catalogue'
 import type { FightSide, FightState } from '../types'
 import type { ThrowCinematicFrame } from '../throwCinematic'
@@ -14,7 +15,7 @@ export function selectThrowPerformance(
   const performance = throwPerformanceFor(actor.id, powered)
   if (!performance || (actor.nenOwner && actor.nenOwner !== actor.id)) return { powered }
   if (
-    ['chain', 'gum', 'staff', 'thread'].includes(performance.effect) &&
+    ['chain', 'gum', 'staff', 'thread', 'blinky', 'remote'].includes(performance.effect) &&
     !signatureNenAvailable(state, attacker)
   )
     return { powered }
@@ -34,7 +35,13 @@ function throwWitnesses(state: FightState, side: FightSide, powered: boolean) {
 
 export function signatureNenAvailable(state: FightState, side: FightSide): boolean {
   const actor = state[side]
-  const moves: Record<string, string> = { saiyu: 'saiyu:backSpecial', machi: 'machi:downSpecial' }
+  if (actor.id === 'shizuku') return blinkyAvailable(actor)
+  const moves: Record<string, string> = {
+    saiyu: 'saiyu:backSpecial',
+    machi: 'machi:downSpecial',
+    shizuku: 'shizuku:neutralSpecial',
+    leorio: 'leorio:neutralSpecial',
+  }
   const move = moves[actor.id] ?? `${actor.id}:forwardSpecial`
   return voluntaryNenAvailable(actor) && !chainAbilitySealed(actor, move)
 }

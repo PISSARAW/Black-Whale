@@ -4,7 +4,7 @@ Couverture : `fighting/throws/**`, `superThrow.ts`, `throwCinematic*.ts`,
 `throwPresentationLayer.ts`, `components/fighting/FightThrowCinematic.svelte`
 et `FightThrowGuide.svelte`.
 
-Les quinze premières paires appartiennent aux combattants du tableau. Chaque paire
+Les vingt premières paires appartiennent aux combattants du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
@@ -25,6 +25,11 @@ une trajectoire de prise et de chute, et une direction de caméra distincte.
 | Illumi | L’articulation inutile | Le pantin désaccordé |
 | Kalluto | Le paravent blanc | La révérence interrompue |
 | Bonolenov | La valse du guerrier | Prologue : le renversement / Le dernier accord |
+| Shizuku | Un coup de balai | Le grand ménage |
+| Hinrigh | La poignée de main des Xi-Yu | Le bras droit |
+| Mizaistom | Veuillez rester ici | Fin de la déposition |
+| Leorio | La consultation express | La visite à domicile |
+| Hanzo | Dans votre dos | La chute de la lune |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,
@@ -54,6 +59,21 @@ Bonolenov rythme la projection sur trois appuis. Sa super emprunte la lance déj
 invoquée par une préparation réelle de Prologue, dont la caméra cadre toute la
 longueur. Sans elle, le même renversement physique porte le titre « Le dernier
 accord ». Aucun Prologue, Jupiter ou costume n’est créé par une projection.
+
+Shizuku oriente son vrai Blinky sous les jambes pour la normale et l’utilise comme
+levier de rotation pour la super. La main de soutien rejoint l’outil et la caméra
+cadre sa géométrie complète. Aucun être vivant n’est aspiré. Hinrigh présente
+seulement des menottes effectivement portées et peut faire intervenir un pigeon
+Biohazard déjà transformé, vivant et proche. Le film ne transforme ni ne crée
+aucun objet et n’applique pas de nouvelle immobilisation. Mizaistom montre sa
+carte jaune puis exécute une prise d’arrestation ; le retournement de carte reste
+réservé à une véritable réclusion déjà obtenue. Aucune sommation ou cage n’est
+offerte par la cinématique. Leorio déséquilibre au col pour la normale ; sa super
+frappe le sol et fait surgir le poing émis existant sous le bassin adverse. Ce
+poing représente l’unique impact de la super, sans projectile ni dégât ajouté.
+Hanzo contourne réellement le corps pour sa normale et ferme ses jambes autour
+des épaules pendant le retournement aérien de sa super. Il retrouve ses appuis
+avant la reprise du combat, sans créer de double ni déclencher Hanzo Skill 4.
 
 ## Commandes et règles
 
@@ -100,20 +120,22 @@ correspondants. Le rendu ne modifie ni les coordonnées ni les blessures du mote
 
 `superThrow.test.ts` couvre le coût, la puissance et les refus des 40 combattants,
 le buffer, les deux sièges, les déprojections, la dépense unique et les chemins
-PvP/replay. Les tests de ce dossier couvrent les trente chorégraphies et les témoins
+PvP/replay. Les tests de ce dossier couvrent les quarante chorégraphies et les témoins
 conditionnels produits par les vraies commandes. `secondBatch.test.ts` vérifie
 les trajectoires des attaquants, les formes réelles et les ressources préservées.
 `thirdBatch.test.ts` couvre les accessoires conditionnels, la préparation réelle
 de Prologue, la visibilité de In et l’absence de mutation de l’état par le rendu.
+`fourthBatch.test.ts` contrôle les menottes réelles, le pigeon préparé, les refus
+de Nen, le déplacement de Hanzo et l’absence de conséquence ajoutée par le rendu.
 
-Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les trente
-projections en P1/P2 et leurs quatre plans, puis les quinze vues en 320 px. Il
+Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les quarante
+projections en P1/P2 et leurs quatre plans, puis les vingt vues en 320 px. Il
 contrôle aussi la pause, le K.-O., le nettoyage et les mouvements réduits.
 Résultats : `/tmp/black-whale-five-throws`.
 
 `THROW_ROSTER_BATCH=second` sélectionne Feitan, Saiyu, Theta, Biscuit et Phinks
 dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`.
 `THROW_ROSTER_BATCH=third` sélectionne Franklin, Machi, Illumi, Kalluto et Bonolenov.
-Pour chaque lot, le rendu exporte
-les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
+`THROW_ROSTER_BATCH=fourth` sélectionne Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
+Pour chaque lot, le rendu exporte les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
 de sortie se règle avec `THROW_RENDER_OUTPUT`.

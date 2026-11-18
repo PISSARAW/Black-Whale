@@ -31,6 +31,16 @@ export type ThrowPerformanceId =
   | 'kalluto-bow'
   | 'bonolenov-waltz'
   | 'bonolenov-prologue'
+  | 'shizuku-brush'
+  | 'shizuku-spring-clean'
+  | 'hinrigh-handshake'
+  | 'hinrigh-underboss'
+  | 'mizaistom-warning'
+  | 'mizaistom-custody'
+  | 'leorio-consultation'
+  | 'leorio-house-call'
+  | 'hanzo-blind-side'
+  | 'hanzo-moonfall'
 
 export interface ThrowBeat {
   at: number
@@ -61,6 +71,12 @@ export interface ThrowPerformance {
     | 'needle'
     | 'paper'
     | 'music'
+    | 'blinky'
+    | 'cuffs'
+    | 'referee'
+    | 'doctor'
+    | 'remote'
+    | 'ninja'
   grip?: 'both' | 'prop' | 'scissors' | 'waist'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean

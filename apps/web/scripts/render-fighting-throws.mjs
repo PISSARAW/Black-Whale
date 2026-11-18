@@ -34,7 +34,9 @@ function ffmpeg(args) {
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'third'
+  const ids = process.env.THROW_ROSTER_BATCH === 'fourth'
+    ? ['shizuku', 'hinrigh', 'mizaistom', 'leorio', 'hanzo']
+    : process.env.THROW_ROSTER_BATCH === 'third'
     ? ['franklin', 'machi', 'illumi', 'kalluto', 'bonolenov']
     : process.env.THROW_ROSTER_BATCH === 'second'
     ? ['feitan', 'saiyu', 'theta', 'biscuit', 'phinks']

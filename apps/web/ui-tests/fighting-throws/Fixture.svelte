@@ -37,6 +37,7 @@
       umbrella: boolean
       holstered: boolean
       trueForm: boolean
+      blinky: boolean
       spear: boolean
     }
   } | null = null
@@ -101,10 +102,11 @@
       holstered: Boolean(gun?.parent?.getObjectByName('fight-chest')),
       trueForm: Boolean(scene.getObjectByName('biscuit-true-form')),
       spear: Boolean(scene.getObjectByName('bonolenov-prologue-spear')?.visible),
+      blinky: Boolean(scene.getObjectByName('shizuku-blinky')?.visible),
     }
   }
   function scissorsGap(rigs: AnimatedHuman[]) {
-    const side = state.player.id === 'feitan' ? 0 : 1
+    const side = ['feitan', 'hanzo'].includes(state.player.id) ? 0 : 1
     if (!rigs[side] || !rigs[1 - side]) return null
     const centre = rigs[1 - side].head.getWorldPosition(new Vector3())
     centre.y -= 0.2

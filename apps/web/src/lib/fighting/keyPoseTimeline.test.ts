@@ -37,6 +37,14 @@ describe('key pose timeline', () => {
     expect(shoulderAt(12)).toBe(shoulderAt(13))
   })
 
+  it('samples support gestures continuously while keeping roster holds by default', () => {
+    const support = (frame: number) =>
+      sampleTimeline(timeline, { frame, frames, continuous: true }).leadShoulder?.[0]
+    expect(support(12)).not.toBe(support(13))
+    expect(support(13)).toBeGreaterThan(support(12)!)
+    expect(shoulderAt(12)).toBe(shoulderAt(13))
+  })
+
   it('settles back into the stance by the end of recovery', () => {
     expect(Math.abs(shoulderAt(22))).toBeLessThan(1e-6)
     expect(shoulderAt(14)).toBeLessThan(-0.3)

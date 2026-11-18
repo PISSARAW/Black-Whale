@@ -103,6 +103,32 @@ formes simples. Les visages spécifiques de Kurapika et Morena sont préservés.
 `humanModelFinish.test.ts` compare le constructeur d’apparitions des modes Tour
 aux quarante combattants, vérifie les exceptions et la durée de vie des buffers.
 
+`mangaTubeppaHead.ts` et `mangaTubeppaSuit.ts` suivent la référence de réception fournie :
+coupe blonde en bol, nez long, menton carré, lunettes ouvertes et boucles d’oreilles ;
+costume croisé sombre à liserés clairs. L’apparence est commune à la visite et au kaméo
+de Clash. La planche `manga-cast` construit aussi les vrais modèles de combat des kaméos.
+
+`mangaMarayamHead.ts`, `mangaMarayamClothes.ts` et `mangaMarayamProfile.ts` reprennent
+la tête ronde, les yeux noirs écartés, les cheveux turquoise, le smoking et le short.
+Son gabarit enfant garde les articulations des jambes et les attaches aux hanches.
+
+`mangaZhangLeiHead.ts` et `mangaZhangLeiProfile.ts` portent le crâne chauve, le menton
+carré, les yeux cernés, six points, la moustache et les lobes allongés de Zhang Lei.
+`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` portent tunique brodée et pantalon.
+
+`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` portent les yeux
+bruns, cheveux bleu sombre recourbés, cicatrices projetées, seize anneaux et couronne.
+`mangaMorenaClothes.ts` porte la robe noire aux épaules découvertes et les bottes ;
+sa jupe assise suit les cuisses. Ces modèles restent partagés avec la visite et Clash.
+
+`mangaLuzurusGeometry.ts`, `mangaLuzurusFace.ts` et `mangaLuzurusHair.ts` portent son visage rectangulaire,
+son nez pointu, sa barbe légère et ses deux houppes foncées. `mangaLuzurusClothes.ts` et `mangaLuzurusLimbs.ts`
+portent la veste à franges, la ceinture, le pantalon ample et les chaussures pointues, partagés avec Clash.
+
+`mangaSalesaleHead.ts`, `mangaSalesaleHair.ts` et `mangaSalesaleGeometry.ts` portent le visage plein,
+le sourire denté, les anneaux à droite et la mèche blonde du portrait fourni. `mangaSalesaleBody.ts`,
+`mangaSalesaleClothes.ts` et `mangaSalesaleLimbs.ts` portent son ventre arrondi, sa robe claire et ses bottes.
+
 `mangaCast.test.ts` contrôle les articulations, les transformations et les géométries
 communes. `node apps/web/scripts/check-manga-cast.mjs` rend tout le catalogue en WebGL :
 `MANGA_CAST_IDS` sélectionne les identités séparées par des virgules, `MANGA_CAST_VIEWS`

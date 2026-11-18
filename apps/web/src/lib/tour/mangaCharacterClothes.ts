@@ -1,4 +1,10 @@
 import { addFeitanCoat } from './mangaFeitanClothes'
+import { addTubeppaSuit } from './mangaTubeppaSuit'
+import { addMarayamTuxedo } from './mangaMarayamClothes'
+import { addZhangLeiTunic } from './mangaZhangLeiClothes'
+import { addMorenaBodice } from './mangaMorenaClothes'
+import { addLuzurusVest } from './mangaLuzurusClothes'
+import { addSalesaleRobe } from './mangaSalesaleClothes'
 import { addBodyguardReferenceSuit } from './mangaBodyguardSuits'
 import { addSaiyuCostume } from './mangaSaiyuClothes'
 import { addCluckFeatherCostume } from './mangaCluckClothes'
@@ -173,6 +179,12 @@ function tracksuit(build: HumanClothesBuild) {
 }
 
 const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
+  'prince-salesale': addSalesaleRobe,
+  'prince-luzurus': addLuzurusVest,
+  'morena-prudo': addMorenaBodice,
+  'prince-tubeppa': addTubeppaSuit,
+  'prince-marayam': addMarayamTuxedo,
+  'prince-zhanglei': addZhangLeiTunic,
   'biscuit-krueger': addBiscuitReferenceClothes,
   melody: addMelodySuit,
   padaille: addPadailleShirt,

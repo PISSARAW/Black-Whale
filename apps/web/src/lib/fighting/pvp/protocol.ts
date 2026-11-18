@@ -5,6 +5,7 @@ import { createFightEnvironment } from '../fightEnvironment'
 import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
+import { kameoSetupField, parseKameoPicks } from '../kameos/pvp'
 import { validArsenalCommand } from '../retrospectiveArsenal'
 
 export function record(value: unknown): value is Record<string, unknown> {
@@ -87,7 +88,10 @@ export function parsePvpPackets(value: unknown): PvpInputPacket[] | null {
     : null
 }
 export function parsePvpSetup(value: unknown): PvpSetup | null {
-  if (!record(value) || !only(value, ['player', 'opponent', 'formatId', 'environment'])) return null
+  if (!record(value) || !only(value, ['player', 'opponent', 'formatId', 'environment', 'kameos']))
+    return null
+  const kameos = parseKameoPicks(value.kameos)
+  if (!kameos) return null
   if (
     !member(
       value.player,
@@ -113,6 +117,7 @@ export function parsePvpSetup(value: unknown): PvpSetup | null {
         opponent: value.opponent,
         formatId: value.formatId,
         environment: env,
+        ...kameoSetupField(kameos),
       } as PvpSetup)
     : null
 }

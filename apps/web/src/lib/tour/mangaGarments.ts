@@ -22,7 +22,7 @@ export function addMangaGarments(build: HumanClothesBuild): void {
 
 export function addDeclaredGarments(build: HumanClothesBuild): boolean {
   const id = build.profile.likeness
-  if (!id || id === 'morena-prudo') return false
+  if (!id) return false
   if (id === 'kurapika') addKurapikaSuit(build)
   else addMangaGarments(build)
   return true

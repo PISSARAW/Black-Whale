@@ -1,3 +1,4 @@
+import { opposingKameoBodies } from '../kameos/pvp'
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
 import { concealDocumentWorld } from '../paperDocumentPrivacy'
 import { privateNeedleFaces } from '../illumiNeedlePrivacy'
@@ -186,6 +187,7 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
 }
 function redactGuests(view: FightState, other: FightSide): void {
   for (const guest of view.rosterGuests ?? []) if (guest.owner === other) redactEnemy(guest.fighter)
+  for (const kameo of opposingKameoBodies(view, other)) redactEnemy(kameo)
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return

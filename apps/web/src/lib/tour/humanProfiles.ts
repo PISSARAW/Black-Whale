@@ -1,4 +1,6 @@
 import appearanceFile from '../../../../../data/characters/appearance.json'
+import { MARAYAM_FRAME } from './mangaMarayamProfile'
+import { ZHANG_LEI_FRAME } from './mangaZhangLeiProfile'
 import type { Apparition } from './apparitions'
 
 /**
@@ -384,7 +386,9 @@ const FRAME_SHAPES: Record<Frame, FrameShape> = {
   infant: { head: 1.42, neck: 0.84, limb: 0.66, width: 1.16 },
 }
 
-export function frameShape(frame: Frame): FrameShape {
+export function frameShape(frame: Frame, likeness?: string | null): FrameShape {
+  if (likeness === 'prince-marayam') return MARAYAM_FRAME
+  if (likeness === 'prince-zhanglei') return ZHANG_LEI_FRAME
   return FRAME_SHAPES[frame]
 }
 

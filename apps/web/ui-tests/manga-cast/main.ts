@@ -15,13 +15,14 @@ import { buildHumanFigure } from '../../src/lib/tour/humanFigure'
 import { buildFightFigure } from '../../src/lib/fighting/fighterFigure'
 import { createFightState } from '../../src/lib/fighting/fightState'
 import { FIGHTING_ROSTER } from '../../src/lib/fighting/roster'
+import { KAMEO_CATALOGUE } from '../../src/lib/fighting/kameos/catalogue'
 import { fightBodyMotion } from '../../src/lib/fighting/fightBodyMotion'
 
 const title = document.createElement('h1')
 title.textContent = 'Personnages · modèles partagés'
 const legend = document.createElement('p')
 legend.textContent =
-  'Haut : visite du bateau · Bas : Fighting 2D, ou vue de trois quarts pour les personnages non jouables'
+  'Haut : visite du bateau · Bas : Clash (roster et kaméos), ou vue de trois quarts pour les autres personnages'
 const labels = document.createElement('div')
 document.body.style.cssText = 'margin:0;background:#f5f2eb;color:#24242b;font:16px system-ui'
 title.style.cssText = 'margin:24px 28px 8px;font-size:25px'
@@ -82,7 +83,9 @@ function setCharacters(ids: string[]) {
     const id = requestedId.split('@')[0]
     const declared = catalogue.declared.find((entry) => entry.id === id)!
     if (!declared) throw new Error(`Undeclared character: ${id}`)
-    const definition = FIGHTING_ROSTER.find((entry) => entry.modelId === id)
+    const definition =
+      FIGHTING_ROSTER.find((entry) => entry.modelId === id) ??
+      Object.values(KAMEO_CATALOGUE).find((entry) => entry.modelId === id)
     const label = document.createElement('p')
     label.textContent =
       (definition?.name ?? id.replaceAll('-', ' ')) +
@@ -202,7 +205,8 @@ function show(view: string) {
     ({ human, fighter, id, row, column, prologue, concert, crossGame, snake, pain }) => {
       human.root.visible = true
       human.animate(0, concert && !fighter ? 'flute' : 'idle')
-      human.root.rotation.y = view === 'profile' ? Math.PI / 2 : row ? -0.25 : 0
+      human.root.rotation.y =
+        view === 'left-face' ? -0.8 : view === 'profile' ? Math.PI / 2 : row ? -0.25 : 0
       if ((view === 'combat' || concert) && fighter)
         human.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
       human.root.updateMatrixWorld(true)
@@ -217,7 +221,7 @@ function show(view: string) {
         human.root.getObjectByName('face-mouth')?.parent ??
         human.root.getObjectByName('face-mouth-base')?.parent
       const target =
-        view === 'face' && head
+        (view === 'face' || view === 'left-face') && head
           ? (snake?.getObjectByName('gel-snake-head') ?? head).getWorldPosition(new THREE.Vector3())
           : new THREE.Vector3(0, 1, 0)
       if (snake && view !== 'face') target.x = 0.4
@@ -227,7 +231,7 @@ function show(view: string) {
           ? view === 'face'
             ? 0.8
             : 1.55
-          : view === 'face'
+          : view === 'face' || view === 'left-face'
             ? 0.49
             : snake
               ? 1.65

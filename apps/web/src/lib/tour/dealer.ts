@@ -2,6 +2,7 @@
 import type { Group, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
+import { animateDealerMouth } from './dealerFaceMouth'
 
 type Three = typeof import('three')
 
@@ -25,8 +26,6 @@ function named(root: Object3D, name: string): Object3D | undefined {
 export function animateDealerFace(root: Group, stage: number, seconds: number): void {
   const eyes = [named(root, 'face-eye-left'), named(root, 'face-eye-right')]
   const brows = [named(root, 'face-brow-left'), named(root, 'face-brow-right')]
-  const mouth = named(root, 'face-mouth')
-  const corners = [named(root, 'morena-mouth-left'), named(root, 'morena-mouth-right')]
   const blanks = [named(root, 'morena-blank-left'), named(root, 'morena-blank-right')]
   const blinkWindow = seconds % 4.8
   const blink = blinkWindow > 4.66 ? Math.max(0.12, Math.abs(blinkWindow - 4.73) * 12) : 1
@@ -49,17 +48,7 @@ export function animateDealerFace(root: Group, stage: number, seconds: number): 
     brow.position.y = stage === 3 ? 0.075 : 0.06
   })
 
-  const smile = stage === 1 ? 0.28 : stage === 2 ? 0.4 : stage === 3 ? -0.22 : 0.12
-  corners.forEach((corner, index) => {
-    if (!corner) return
-    const side = index === 0 ? -1 : 1
-    corner.rotation.z = side * smile
-    corner.position.y = -0.09 + Math.sin(seconds * 0.8) * 0.002
-  })
-  if (mouth) {
-    mouth.scale.x = stage === 3 ? 0.72 : stage === 2 ? 1.12 : 1
-    mouth.position.y = -0.09 + (stage === 2 ? 0.006 : 0)
-  }
+  animateDealerMouth(root, stage, seconds)
 }
 
 export function buildDealer({ THREE, glow, seen }: DealerBuild): Group {

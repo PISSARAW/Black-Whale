@@ -1,5 +1,7 @@
 import type { BufferGeometry, Mesh, Object3D } from 'three'
 import type { HumanFigureBuild } from '$lib/tour/humanFigure'
+import { prepareCurveExpressionMouth } from './fightExpressionCurveMouth'
+import { prepareToothedExpressionMouth } from './fightExpressionToothedMouth'
 
 type Three = HumanFigureBuild['THREE']
 const CACHE = new Map<string, BufferGeometry>()
@@ -7,6 +9,8 @@ const CACHE = new Map<string, BufferGeometry>()
 /** Three shared GPU morphs on the existing mouth: no additional meshes or draw calls. */
 export function prepareExpressionMouth(options: { THREE: Three; mouth: Mesh; head: Object3D }) {
   const { THREE, mouth, head } = options
+  if (mouth.userData.expressionTeeth) return prepareToothedExpressionMouth({ THREE, mouth })
+  if (mouth.userData.expressionCurve) return prepareCurveExpressionMouth({ THREE, mouth })
   const skin = expressionFaceSurface(head)
   const mesh = skin?.children.find((node) => 'geometry' in node) as Mesh | undefined
   const key = `${head.name}:${mouth.geometry.uuid}:${mesh?.geometry.uuid ?? ''}`

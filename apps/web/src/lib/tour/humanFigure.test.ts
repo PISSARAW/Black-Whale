@@ -3,6 +3,7 @@ import { MeshBasicMaterial, MeshPhysicalMaterial } from 'three'
 import * as THREE from 'three'
 import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
+import { animateDealerFace } from './dealer'
 import type { HumanAnimationLayer } from './humanAnimation'
 import type { AuraSight } from './auraSight'
 import { auraFor, CALM } from './cast/nen'
@@ -77,12 +78,24 @@ describe('shared human figure', () => {
     expect(human.root.getObjectByName('morena-seated-lap')).toBeTruthy()
     expect(human.root.getObjectByName('morena-standing-gown')).toBeUndefined()
     expect(human.root.getObjectByName('morena-decolletage')).toBeTruthy()
-    expect(human.root.getObjectByName('morena-stitch-crown')).toBeTruthy()
+    expect(human.root.getObjectByName('morena-thorn-crown')).toBeTruthy()
     expect(human.root.getObjectByName('morena-scar')).toBeTruthy()
     expect(human.root.getObjectByName('face-eye-left')).toBeTruthy()
     expect(human.root.getObjectByName('face-eye-right')).toBeTruthy()
     expect(human.root.getObjectByName('knee-left')?.rotation.x).toBeCloseTo(Math.PI / 2)
     expect(human.root.getObjectByName('knee-right')?.rotation.x).toBeCloseTo(Math.PI / 2)
+    const mouth = human.root.getObjectByName('face-mouth') as THREE.Mesh
+    const geometry = mouth.geometry
+    animateDealerFace(human.root, 2, 0)
+    expect(mouth.scale.y).toBeGreaterThan(1)
+    animateDealerFace(human.root, 3, 1)
+    expect(mouth.scale.y).toBeLessThan(0)
+    animateDealerFace(human.root, 4, 2)
+    expect(human.root.getObjectByName('face-eye-left')!.visible).toBe(false)
+    animateDealerFace(human.root, 0, 3)
+    expect(human.root.getObjectByName('face-eye-left')!.visible).toBe(true)
+    expect(mouth.position.y).toBeCloseTo(-0.108)
+    expect(mouth.geometry).toBe(geometry)
   })
 })
 

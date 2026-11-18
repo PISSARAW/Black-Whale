@@ -17,6 +17,8 @@ import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { HANZO_KEY_POSES } from './keyPosesHanzo'
 import { FEITAN_PAIN_PACKER, FEITAN_RISING_SUN } from './keyPosesFeitan'
 import { KALLUTO_KEY_POSES } from './keyPosesKalluto'
+import { KURAPIKA_REFERENCE_POSES } from './keyPosesKurapikaReference'
+import { KURAPIKA_CAST_POSES } from './keyPosesKurapikaCasts'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
@@ -29,7 +31,12 @@ import type { FighterId, MoveSlot } from './types'
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   voconte: { neutralSpecial: DOOR_LINK_POSE },
-  kurapika: { ...holdNormalContacts(KURAPIKA_KEY_POSES), ...KURAPIKA_COMMAND_POSES },
+  kurapika: {
+    ...holdNormalContacts(KURAPIKA_KEY_POSES),
+    ...KURAPIKA_COMMAND_POSES,
+    ...KURAPIKA_REFERENCE_POSES,
+    ...KURAPIKA_CAST_POSES,
+  },
   theta: THETA_SHOT_POSES,
   shizuku: SHIZUKU_KEY_POSES,
   hisoka: {

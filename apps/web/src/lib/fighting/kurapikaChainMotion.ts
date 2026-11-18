@@ -56,8 +56,8 @@ function attackChain(fighter: ArcadeFighter): ChainMotion | null {
 }
 
 function isChainAttack(attack: NonNullable<ArcadeFighter['attack']>): boolean {
-  if (attack.variant === 'throw') return false
-  return Boolean(attack.moveId?.startsWith('kurapika:') || attack.hatsuSource === 'kurapika')
+  if (attack.kind !== 'special') return false
+  return Boolean(STAGES[attack.moveId ?? ''] !== undefined || attack.hatsuSource === 'kurapika')
 }
 
 function smooth(value: number): number {

@@ -1,4 +1,5 @@
 import { wantsObservedGuard, incomingLow } from './combatPressure'
+import { moveKurapikaOpponent } from './kurapikaFootwork'
 import { hasRecoveryCancel } from './recoveryPunish'
 import { attackPhase } from './frameData'
 import { steerFighter } from './fighterMovement'
@@ -19,6 +20,12 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
   if (opponentCannotGuard(fighter)) return { ...fighter, blocking: false }
   if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter))
     return fighter
+  const kurapika = moveKurapikaOpponent(fighter, player)
+  if (kurapika) return kurapika
+  return walkFreeOpponent(fighter, player)
+}
+
+function walkFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
   const next = opponentGuardState(fighter, player, gap)

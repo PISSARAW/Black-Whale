@@ -3,6 +3,7 @@ import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
 import { kallutoAiSlots } from './kallutoAi'
+import { kurapikaCombatSlots } from './kurapikaCombatAi'
 import { BUNGEE_REST_DISTANCE } from './hisokaTechnique'
 import { aiGumLink, networkGumSlots, idleGumSlots } from './bungeeAiCombat'
 import { SENSE_BITS } from './saiyuSenses'
@@ -15,10 +16,10 @@ import {
   type ArsenalAiContext,
   type ArsenalAiPlan,
 } from './arsenalAiTypes'
-import type { FightState, MoveSlot } from './types'
+import type { FightState } from './types'
 
 export const FIRST_ARSENAL_AI = {
-  kurapika: kurapikaSlots,
+  kurapika: kurapikaCombatSlots,
   hisoka: hisokaSlots,
   chrollo: ({ state, roll, gap }) => chrolloAiSlots(state, roll, gap),
   benjamin: ({ state, roll, gap }) => benjaminAiSlots(state, roll, gap),
@@ -54,36 +55,6 @@ export const FIRST_ARSENAL_AI = {
         ? ['neutralSpecial']
         : ['standingLight', 'forwardHeavy'],
 } satisfies Record<string, ArsenalAiPlan>
-
-function kurapikaSlots({
-  state,
-  roll,
-  gap,
-}: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  const utility = kurapikaUtility(state, gap)
-  if (utility) return utility
-  return roll < 0.5
-    ? ['neutralSpecial', 'backSpecial', 'forwardSpecial']
-    : ['backSpecial', 'forwardSpecial', 'neutralSpecial']
-}
-
-function kurapikaUtility(state: FightState, gap: number): readonly MoveSlot[] | null {
-  const fighter = state.opponent
-  const target = state.player
-  if (fighter.maxHealth - fighter.health >= 25 && gap > 12) return ['downSpecial']
-  const held = fighter.kurapika?.held
-  if (held && !held.used) return ['backSpecial']
-  if (target.chainJail?.owner === 'opponent') return ['finisher', 'forwardSpecial']
-  return kurapikaTargetSlots(state, gap)
-}
-
-function kurapikaTargetSlots(state: FightState, gap: number): readonly MoveSlot[] | null {
-  if (state.opponent.kurapika?.emperorTime && !state.player.judgmentChain && gap <= 7)
-    return ['finisher']
-  return state.player.drainingChain?.owner === 'opponent'
-    ? ['forwardSpecial', 'standingLight']
-    : null
-}
 
 function hisokaSlots({
   state,

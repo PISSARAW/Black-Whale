@@ -76,14 +76,14 @@ describe('Kalluto · episode 96 reference', () => {
     const fighter = s.opponent
     const frame = attackData('special', fighter).startup
     const posed = { ...fighter, attack: { ...fighter.attack!, frame } }
-    const right = bodyPlan({ ...posed, facing: 1 }, { seconds: 1 })!.pose
-    const left = bodyPlan({ ...posed, facing: -1 }, { seconds: 1 })!.pose
+    const right = bodyPlan({ ...posed, facing: 1 }, { seconds: 1, progress: 0 })!.pose
+    const left = bodyPlan({ ...posed, facing: -1 }, { seconds: 1, progress: 0 })!.pose
     expect(right.leadShoulder![0]).toBeLessThan(-0.8)
     expect(left.rearShoulder).toEqual(right.leadShoulder)
     expect(left.rearWrist).toEqual(right.leadWrist)
     const guiding = bodyPlan(
       { ...posed, facing: 1, attack: { ...posed.attack, frame: frame + 8 } },
-      { seconds: 1.2 },
+      { seconds: 1.2, progress: 0 },
     )!.pose
     expect(guiding.leadShoulder![0]).toBeLessThan(-0.8)
   })

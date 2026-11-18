@@ -17,14 +17,22 @@ export function poseKurapikaChainHand(
   const motion =
     pose.motions.find((entry) => entry.mode === 'healing') ?? pose.motions[pose.motions.length - 1]
   if (!figure || !motion) return
+  if (martialPoseOwnsArm(pose.state, pose.side)) return
   const target = pose.side === 'player' ? 'opponent' : 'player'
+  const selfTarget = ['healing', 'dowsing'].includes(motion.mode)
   const goal = chainChest(options, {
     state: pose.state,
-    side: motion.mode === 'healing' || motion.mode === 'dowsing' ? pose.side : target,
+    side: selfTarget ? pose.side : target,
   })
-  if (motion.mode === 'healing' || motion.mode === 'dowsing') goal.y -= 0.12
+  if (selfTarget) goal.y -= 0.12
   else goal.x -= pose.state[pose.side].facing * (pose.reaches[motion.stage] + 0.28)
   aimRightArm({ THREE: options.THREE, figure, goal, blend: motion.extension })
+}
+
+/** A maintained tether follows the live hand without replacing a punch or pistol pose. */
+function martialPoseOwnsArm(state: FightState, side: FightSide): boolean {
+  const attack = state[side].attack
+  return Boolean(attack && attack.kind !== 'special')
 }
 
 function aimRightArm(options: {

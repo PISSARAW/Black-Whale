@@ -1,5 +1,9 @@
 # Fighting
 
+Le [combat de Kurapika d’après Uvogin et Phantom Rouge](./KURAPIKA_COMBAT.md)
+sépare les frappes physiques et les lancers de chaîne, avec des contres en retrait,
+une boucle du fouet divinatoire et une approche après la capture d’une cible autorisée.
+
 Le [combat de Kalluto d’après la référence de l’épisode 96](./KALLUTO_COMBAT.md)
 associe gestes d’éventail dédiés, rubans de confettis et enchaînement du marquage
 vers le serpent. La scène de contrôle vérifie les deux orientations.

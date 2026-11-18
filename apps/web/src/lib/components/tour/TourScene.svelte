@@ -72,6 +72,8 @@
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
+  import type { HumanFigure } from '$lib/tour/humanFigure'
+  import { createHumanLocomotion } from '$lib/tour/humanLocomotion'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { type CardFace, type EyeFeed } from '$lib/tour/morena'
@@ -1824,7 +1826,8 @@
         flown?: import('three').Vector3
         /** Near and far representations of a shared human, when this is one. */
         humanLod?: { near: import('three').Group; far: import('three').Group }
-        humanAnimate?: (seconds: number, pose?: HumanPose) => void
+        humanAnimate?: HumanFigure['animate']
+        humanLocomotion?: ReturnType<typeof createHumanLocomotion>
         humanPose?: HumanPose
         humanHeading?: number
         /** False only until the first authoritative position has been applied. */
@@ -2078,6 +2081,7 @@
           pane,
           humanLod,
           humanAnimate,
+          humanLocomotion: humanAnimate ? createHumanLocomotion() : undefined,
         }
       }
 
@@ -2104,17 +2108,37 @@
           keyOf: (seen) =>
             `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
           build: buildApparition,
-          preserve: (held) => ({ facing: held.facing, flown: held.flown }),
+          preserve: (held) => ({
+            facing: held.facing,
+            flown: held.flown,
+            humanLocomotion: held.humanLocomotion,
+            position: held.positioned ? held.root.position.clone() : undefined,
+            angle: held.root.rotation.y,
+          }),
           restore: (held, saved) => {
-            const previous = saved as Pick<Shown, 'facing' | 'flown'> | undefined
+            const previous = saved as
+              | (Pick<Shown, 'facing' | 'flown' | 'humanLocomotion'> & {
+                  position?: import('three').Vector3
+                  angle: number
+                })
+              | undefined
             held.facing = previous?.facing
             held.flown = previous?.flown
+            if (held.humanAnimate && previous?.humanLocomotion) {
+              held.humanLocomotion = previous.humanLocomotion
+              if (previous.position) {
+                held.root.position.copy(previous.position)
+                held.root.rotation.y = previous.angle
+                held.positioned = true
+              }
+            }
           },
           update: (held, seen) => {
             Object.assign(held, shownState(seen, seconds))
             held.root.userData.heading = seen.heading
             if (!held.positioned) {
               held.root.position.set(held.at[0], held.y, held.at[1])
+              held.root.rotation.y = held.humanHeading ?? held.facing ?? held.root.rotation.y
               held.positioned = true
             }
           },
@@ -2502,14 +2526,24 @@
             // Game simulations usually publish human positions at 30 Hz while
             // the scene renders at the display rate. Ease toward the latest
             // authoritative point instead of visibly hopping between ticks.
-            const moveX = held.at[0] - held.root.position.x
-            const moveZ = held.at[1] - held.root.position.z
-            const moving = Math.hypot(moveX, moveZ) > 0.002
-            if (moving) held.facing = Math.atan2(moveX, moveZ)
-            const follow = 1 - Math.exp(-delta * 14)
-            held.root.position.x += (held.at[0] - held.root.position.x) * follow
-            held.root.position.y += (held.y - held.root.position.y) * follow
-            held.root.position.z += (held.at[1] - held.root.position.z) * follow
+            const fallbackHeading =
+              held.humanHeading ??
+              held.facing ??
+              Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              )
+            const locomotion = held.humanLocomotion?.(
+              held.root,
+              {
+                at: held.at,
+                y: held.y,
+                pose: held.humanPose,
+                heading: fallbackHeading,
+              },
+              { seconds, delta },
+            )
+            held.facing = held.root.rotation.y
             held.root.updateMatrixWorld(true)
             // `Frustum.intersectsObject` only accepts renderable objects with
             // their own geometry. Both LODs are groups, so asking it directly
@@ -2518,18 +2552,7 @@
             HUMAN_VIEW_BOX.setFromObject(near ? held.humanLod.near : held.humanLod.far)
             const visible = HUMAN_VIEW.intersectsBox(HUMAN_VIEW_BOX)
             if (!visible) continue
-            const desiredHeading =
-              (moving ? held.facing : (held.humanHeading ?? held.facing)) ??
-              Math.atan2(
-                camera.position.x - held.root.position.x,
-                camera.position.z - held.root.position.z,
-              )
-            const turn = Math.atan2(
-              Math.sin(desiredHeading - held.root.rotation.y),
-              Math.cos(desiredHeading - held.root.rotation.y),
-            )
-            held.root.rotation.y += turn * (1 - Math.exp(-delta * 12))
-            if (near) held.humanAnimate?.(seconds, held.humanPose)
+            if (near && locomotion) held.humanAnimate?.(seconds, locomotion.pose, locomotion.layer)
             continue
           }
 

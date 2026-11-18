@@ -16,10 +16,15 @@ interface Hang {
 }
 
 interface Walking {
+  figure?: Group
   arms: Group[]
   legs: Group[]
   knees: Object3D[]
 }
+
+/** Two alternating steps, in the unit-sized rig's ground space. */
+export const WALK_STRIDE_METRES = 1.04
+export const WALK_STRIDE_SECONDS = (2 * Math.PI) / 5.2
 
 /** Keeps how this arm hangs, the first time a pose is about to move it. */
 export function rememberHang(arm: Group): void {
@@ -50,9 +55,42 @@ export function stride(rig: Walking, motion: { seconds: number; hips: readonly n
     }
     arm.rotation.x += (index === 0 ? -swing : swing) * 0.7
   })
+  const cycle = (((motion.seconds / WALK_STRIDE_SECONDS) % 1) + 1) % 1
+  const compression = 0.045
+  if (rig.figure) rig.figure.position.y -= compression * rig.legs[0].scale.y * rig.figure.scale.y
   rig.legs.forEach((leg, index) => {
-    leg.rotation.x = motion.hips[index]! + (index === 0 ? swing : -swing)
+    const knee = rig.knees[index]
+    const foot = knee.children[1]
+    if (!foot) {
+      leg.rotation.x = motion.hips[index]! + (index === 0 ? swing : -swing)
+      knee.rotation.x = Math.max(0, index === 0 ? -swing : swing) * 0.7
+      return
+    }
+    const phase = (cycle + index * 0.5) % 1
+    const swingPhase = (phase - 0.5) * 2
+    const airborne = phase >= 0.5
+    const progress = airborne ? swingPhase * swingPhase * (3 - 2 * swingPhase) : phase * 2
+    const z = ((airborne ? progress - 0.5 : 0.5 - progress) * WALK_STRIDE_METRES) / 2
+    const lift = airborne ? Math.sin(swingPhase * Math.PI) * 0.07 : 0
+    const upper = Math.abs(knee.position.y)
+    const lower = Math.hypot(foot.position.y, foot.position.z)
+    const down = upper - foot.position.y - compression - lift
+    const forward = foot.position.z + z
+    const bend = Math.acos(
+      Math.max(
+        -1,
+        Math.min(
+          1,
+          (down * down + forward * forward - upper * upper - lower * lower) / (2 * upper * lower),
+        ),
+      ),
+    )
+    const pitch =
+      Math.atan2(-forward, down) -
+      Math.atan2(lower * Math.sin(bend), upper + lower * Math.cos(bend))
+    const restPitch = Math.atan2(-foot.position.z, -foot.position.y)
+    leg.rotation.x = pitch
+    knee.rotation.x = bend - restPitch
+    foot.rotation.x = -(pitch + knee.rotation.x)
   })
-  rig.knees[0]!.rotation.x = Math.max(0, -swing) * 0.7
-  rig.knees[1]!.rotation.x = Math.max(0, swing) * 0.7
 }

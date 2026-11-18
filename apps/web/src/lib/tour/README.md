@@ -67,6 +67,20 @@ pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie
 
 ## Modèles humains communs
 
+`humanLocomotion.ts` pilote les corps rendus à partir de leur déplacement réel :
+vitesse et accélération bornées, demi-tours avec pas alternés, puis retour progressif
+à la pose de repos. `humanFootSupport.ts` conserve l'appui en coordonnées monde après
+les transitions. Le cycle de `humanWalk.ts` suit la distance parcourue ; l'horloge
+murale ne fait pas marcher un personnage immobile. La scène conserve ce contrôleur
+quand une apparence est reconstruite. `humanLocomotion.test.ts` vérifie les transitions,
+les appuis, les demi-tours, le freinage avant un changement de direction et les frames figées.
+
+Les contacts de Tour et Clash partagent `humanLimbReach.ts` et `humanJointLimits.ts` :
+le solveur garde les genoux et coudes sur leur axe de flexion, sans allonger les membres.
+La liberté de rotation du genou diminue à l'approche de l'extension.
+Le plan de flexion précédent guide les contacts mobiles ; les rotations équivalentes
+autour de ±180° sont conservées pour éviter un retournement artificiel de l'épaule.
+
 `humanFigure.ts` construit les personnages de la visite, les aperçus de sélection et
 les combattants de Fighting 2D (`apps/web/src/lib/fighting/fighterFigure.ts`). Les détails des visages,
 coiffures, mains et vêtements restent dans cette base ; les accessoires et transformations

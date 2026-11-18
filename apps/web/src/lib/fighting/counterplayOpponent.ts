@@ -1,4 +1,5 @@
 import { bashoWritingNavigation } from './bashoNavigation'
+import { paperKitNavigation } from './kallutoMaterialNavigation'
 import { deviceNavigation } from './deviceNavigation'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput, repeatedHabit } from './opponentHabits'
@@ -56,6 +57,7 @@ function respondToHabits(state: FightState): ArcadeFighter {
     ? applyResponse(fighter, input)
     : (deviceNavigation(state, fighter) ??
         bashoWritingNavigation(state, fighter) ??
+        paperKitNavigation(state, fighter) ??
         moveRememberedOpponent(state, fighter))
 }
 

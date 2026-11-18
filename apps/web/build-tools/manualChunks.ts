@@ -7,7 +7,8 @@ export function manualChunks(id: string): string | undefined {
   if (/\/i18n\/messages\/(en|fr)\.ts$/.test(id))
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
   if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
-  if (/\/fighting\/nenCanon(?:First|Second)\.ts$/.test(id)) return 'clash-nen-canon'
+  if (/\/fighting\/(?:nenCanon(?:First|Second)|nenCatalogue\.gen)\.ts$/.test(id))
+    return 'clash-nen-canon'
   if (
     /\/fighting\/(?:easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
       id,

@@ -1,5 +1,7 @@
 import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { carryKallutoPaper } from './kallutoSurveillance'
+import { personalPaperKit } from './kallutoMaterials'
+import { carryPaperWorld } from './kallutoMaterialWorld'
 import { prepareMusseHistory } from './benjaminMusseScenario'
 import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
@@ -82,7 +84,10 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
-      battlefield: carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
+      battlefield: carryPaperWorld(
+        carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
+        state,
+      ),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
       throwTech: undefined,
       voconteDoors: undefined,
@@ -166,6 +171,7 @@ function createFighter(options: {
         ? createBlackVoiceGear(options.facing === 1 ? 'player' : 'opponent')
         : undefined,
     maxHealth: options.health,
+    paperKit: personalPaperKit(options.id, options.facing),
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,

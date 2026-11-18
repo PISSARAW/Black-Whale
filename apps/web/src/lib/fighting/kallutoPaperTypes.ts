@@ -3,6 +3,8 @@ import type { FightNenZone, FightSide } from './types'
 
 export type PaperCommand = 'plant' | 'serpent' | 'doll'
 export interface PlantedPaper {
+  paperId?: string
+  materialCopyId?: string
   owner: FightSide
   ownerMember?: number
   zone: FightNenZone
@@ -13,6 +15,8 @@ export interface PaperWords {
   text: string
 }
 export interface PaperDoll {
+  paperId?: string
+  materialCopyId?: string
   target: FightSide
   targetMember?: number
   createdAt: number
@@ -28,6 +32,7 @@ export interface KallutoPaperState {
   heard?: PaperWords
 }
 export interface PaperProjectileMetadata {
+  paperId?: string
   kallutoPaper?: 'plant' | 'serpent'
   paperOwner?: DolphinBodyRef
   paperTarget?: DolphinBodyRef

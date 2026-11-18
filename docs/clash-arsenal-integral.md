@@ -932,3 +932,36 @@ Références : [chapitre 225](https://hunterxhunter.fandom.com/wiki/Chapter_225)
 Ruleset : **clash-combat-40**. Le On est conservé. Le stock matériel, son ramassage
 et les autres interactions du papier restent à compléter avant de certifier
 l’arsenal entier de Kalluto ; l’audit global reste ouvert.
+
+## Kalluto : matériel physique et dépenses réelles
+
+Kalluto porte désormais un éventail et une réserve de papier réelle. Le scénario
+fournit douze préparations de marque, six salves et six feuilles : ces quantités
+sont des réglages de duel, jamais des plafonds canoniques. Les commandes par
+éventail représentées exigent leur matériel et une main disponible. Ce choix de
+méthode montrée ne déclare pas une condition universelle du Nen non révélée.
+
+La réserve diminue quand un papier quitte effectivement l’éventail ou qu’une
+nouvelle poupée est confectionnée. Une émission manquée n’est pas remboursée ;
+un geste interrompu avant toute émission ne crée aucun papier. Chaque pièce
+émise reçoit un identifiant matériel. Réactiver une poupée existante réutilise
+cette même feuille, y compris quand l’utilisateur a déposé sa réserve.
+
+Un Hatsu copié ou prêté ne fournit ni éventail ni papier. Le matériel préparé
+dans l’arène peut être ramassé et déposé à portée réelle ; son identité, son
+intégrité et les quantités déjà dépensées sont conservées. Les récepteurs restent
+attachés à leur propriétaire quand la réserve change de mains. L’IA sait prendre
+une réserve présente et s’en approcher par un déplacement ordinaire, sans en
+créer une dans un duel vide. Les réserves portées ou déposées ne se remplissent
+pas gratuitement au passage d’une manche.
+
+Gallery Fake copie les contenus physiques restants, sans copier le Nen de
+Kalluto. Le kit, les feuilles pliées, les fragments plantés et les projectiles
+gardent la provenance de leur copie et expirent avec elle. Une pièce conjurée
+reste solide mais ne devient pas un objet ordinaire que Blinky pourrait aspirer.
+L’éventail affiché appartient au matériel porté ; une page de Kalluto seule ne
+fait plus apparaître cet objet dans une main vide.
+
+Ruleset : **clash-combat-41**. Le On reste présent et ses sceaux restent appliqués
+aux commandes de Nen. La récupération et le réemploi du papier dispersé,+l’admission d’autres cibles et les interactions matérielles restantes continuent
+à faire partie de l’audit ; cette passe ne certifie pas les quarante arsenaux.

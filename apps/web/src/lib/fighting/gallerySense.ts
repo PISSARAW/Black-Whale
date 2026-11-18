@@ -10,7 +10,7 @@ import { historicalCopyExpired } from './historicalCopyLifetime'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { PreparedEntity } from './preparationTypes'
-import type { FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface GalleryFocus {
   originalId: string
@@ -168,13 +168,19 @@ function storedKitPosition(state: FightState, id: string): { x: number; y: numbe
     const bodies = state.teamMatch?.seats[side].members ?? [state[side]]
     for (let index = 0; index < bodies.length; index++) {
       const body = physicalBodyAt(state, side, index)!
-      if (body.writingKit?.sourceId === id) return sleepingBody(body)
-      if (Object.values(body.equipmentProps ?? {}).some((prop) => prop?.entityId === id))
-        return sleepingBody(body)
+      if (holdsKit(body, id)) return sleepingBody(body)
     }
   }
   return undefined
 }
+function holdsKit(body: ArcadeFighter, id: string): boolean {
+  return (
+    body.writingKit?.sourceId === id ||
+    body.paperKit?.sourceId === id ||
+    Object.values(body.equipmentProps ?? {}).some((prop) => prop?.entityId === id)
+  )
+}
+
 function copyContacts(
   state: FightState,
   owner: FightSide,
@@ -312,6 +318,7 @@ function galleryOriginalLabel(
 }
 function galleryMaterialLabel(original: PreparedEntity, language: 'fr' | 'en'): string {
   if (original.writingKit) return language === 'fr' ? 'Matériel d’écriture' : 'Writing supplies'
+  if (original.paperKit) return language === 'fr' ? 'Éventail et papier' : 'Fan and paper'
   if (original.kind === 'room') return language === 'fr' ? 'Pièce' : 'Room'
   if (original.device) {
     const names = {

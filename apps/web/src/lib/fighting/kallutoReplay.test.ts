@@ -15,8 +15,52 @@ import { createKurapika } from './kurapika'
 import { captureDolphinAura } from './dolphinAura'
 import type { ReplayPacket } from './fightReplayTypes'
 import type { FightState } from './types'
+import type { PreparationResource } from './preparationTypes'
 
 describe('physical paper receivers at P2, replay and Dolphin boundaries', () => {
+  it('imports a recording that starts after the physical kit was dropped, with all thirteen scenario resources', () => {
+    const resources: PreparationResource[] = [
+      'animals',
+      'birds',
+      'plants',
+      'objects',
+      'flutes',
+      'needles',
+      'rooms',
+      'devices',
+      'writing',
+      'spirits',
+      'people',
+      'musse-history',
+      'paper',
+    ]
+    const base = beginFight(
+      createFight('hisoka', 'kalluto', {
+        mode: 'versus-local',
+        formatId: 'knockout',
+        environment: { preparation: { mode: 'scenario', resources, cohorts: [] } },
+      }),
+    )
+    const initial = applyPvpCommand(base, 'opponent', {
+      kind: 'arsenal',
+      command: { action: 'paper-kit-drop' },
+    })
+    expect(initial.opponent.paperKit).toBeUndefined()
+    const id = base.opponent.paperKit!.sourceId
+    const after = applyPvpCommand(initial, 'opponent', {
+      kind: 'arsenal',
+      command: { action: 'paper-kit-take', target: id },
+    })
+    expect(after.opponent.paperKit).toEqual(base.opponent.paperKit)
+    const recorder = createReplayRecorder(initial)!
+    const packet: ReplayPacket = [1 / 60, 0, 0, [panelReplayCommand(initial, after)]]
+    const final = executeReplayPacket(initial, packet)
+    recorder.append(initial, packet, final)
+    const replay = createReplayPlayer(decodeFightReplay(JSON.stringify(recorder.snapshot())))
+    for (let index = 0; !replay.done && index < 100; index++) replay.advance(0.05, 2)
+    expect(replay.error).toBe('')
+    expect(fightReplayHash(replay.state)).toBe(fightReplayHash(final))
+  })
   it('replays P2 paper contact, doll activation, actual private speech and voluntary stop', () => {
     const base = beginFight(
       createFight('hisoka', 'kalluto', { mode: 'versus-local', formatId: 'knockout' }),

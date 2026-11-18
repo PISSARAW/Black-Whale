@@ -1,4 +1,5 @@
 import { scenarioOito } from './dolphinPeopleWorld'
+import { scenarioPaperKit } from './kallutoMaterials'
 import { scenarioWeakSpirit } from './bashoWard'
 import { scenarioWritingKit } from './bashoMaterials'
 import { scenarioDevices } from './physicalDevices'
@@ -60,9 +61,7 @@ function installProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
-  if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
-  if (resources.has('writing')) entities.push(scenarioWritingKit(side))
-  if (resources.has('devices')) entities.push(...scenarioDevices(side))
+  installSupplyProps(entities, context)
   if (resources.has('animals'))
     entities.push({ ...entity('animal', side, x + 2), animalSize: 'mouse', health: 1 })
   if (resources.has('birds'))
@@ -71,6 +70,17 @@ function installProps(
   if (resources.has('objects')) entities.push(entity('crate', side, x + 4))
   if (resources.has('needles')) entities.push(entity('needles', side, x - 2))
   if (resources.has('flutes')) entities.push(entity('flute', side, x - 1))
+}
+
+function installSupplyProps(
+  entities: PreparedEntity[],
+  context: { resources: Set<string>; side: FightSide },
+) {
+  const { resources, side } = context
+  if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
+  if (resources.has('writing')) entities.push(scenarioWritingKit(side))
+  if (resources.has('paper')) entities.push(scenarioPaperKit(side))
+  if (resources.has('devices')) entities.push(...scenarioDevices(side))
 }
 
 function installRooms(entities: PreparedEntity[], side: FightSide) {

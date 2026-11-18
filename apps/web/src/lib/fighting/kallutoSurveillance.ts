@@ -1,4 +1,6 @@
 import { physicalBodyAt } from './fightBodyIdentity'
+import { existingPaperDoll, issuePaperPart } from './kallutoMaterials'
+import { historicalPartExists } from './historicalCopyLifetime'
 import type { DolphinBodyRef } from './dolphinLoanTypes'
 import type { PaperDoll } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
@@ -18,6 +20,7 @@ export function paperMarksAt(
       (paper) =>
         paper.owner === refs.owner.owner &&
         (paper.ownerMember ?? 0) === refs.owner.member &&
+        historicalPartExists(state, paper.materialCopyId) &&
         (!refs.zone || paper.zone === refs.zone),
     ),
   )
@@ -54,29 +57,47 @@ export function currentPaperDoll(state: FightState, side: FightSide): PaperDoll 
 
 /** A score reset is not physical removal of the paper or a transfer to another person. */
 export function carryKallutoPaper(fresh: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  return { ...fresh, plantedPaper: previous.plantedPaper, kallutoPaper: previous.kallutoPaper }
+  return {
+    ...fresh,
+    plantedPaper: previous.plantedPaper,
+    kallutoPaper: previous.kallutoPaper,
+    paperKit: previous.paperKit,
+  }
 }
 
 export function makePaperDoll(state: FightState, side: FightSide): ArcadeFighter {
-  const fighter = state[side]
-  const target = side === 'player' ? 'opponent' : 'player'
-  const targetMember = state.teamMatch?.seats[target].active ?? 0
-  const existing = paperDolls(fighter).find(
-    (entry) => entry.target === target && (entry.targetMember ?? 0) === targetMember,
+  const prepared = preparePaperDoll(state, side)
+  if (!prepared) return state[side]
+  const { actor, doll } = prepared
+  const old = paperDolls(actor)
+  const index = old.findIndex(
+    (entry) => entry.target === doll.target && (entry.targetMember ?? 0) === doll.targetMember,
   )
-  const doll: PaperDoll = existing
-    ? { ...existing, active: true }
-    : { target, targetMember, createdAt: state.frame, active: true }
-  const dolls = existing
-    ? paperDolls(fighter).map((entry) => (entry === existing ? doll : entry))
-    : [...paperDolls(fighter), doll]
+  const dolls = index < 0 ? [...old, doll] : old.map((entry, at) => (at === index ? doll : entry))
   return {
-    ...fighter,
-    kallutoPaper: {
-      ...fighter.kallutoPaper,
-      zone: fighter.kallutoPaper?.zone ?? 'torso',
-      doll,
-      dolls,
+    ...actor,
+    kallutoPaper: { ...actor.kallutoPaper, zone: actor.kallutoPaper?.zone ?? 'torso', doll, dolls },
+  }
+}
+
+function preparePaperDoll(
+  state: FightState,
+  side: FightSide,
+): { actor: ArcadeFighter; doll: PaperDoll } | null {
+  const existing = existingPaperDoll(state, side)
+  if (existing) return { actor: state[side], doll: { ...existing, active: true } }
+  const issued = issuePaperPart(state, side, 'doll')
+  if (!issued) return null
+  const target = side === 'player' ? 'opponent' : 'player'
+  return {
+    actor: issued.actor,
+    doll: {
+      target,
+      targetMember: state.teamMatch?.seats[target].active ?? 0,
+      createdAt: state.frame,
+      active: true,
+      paperId: issued.part.id,
+      materialCopyId: issued.part.materialCopyId,
     },
   }
 }

@@ -43,7 +43,7 @@ function preparation(value: unknown): FightPreparation | undefined {
   const entry = object(value)
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 12 ||
+    entry.resources.length > 13 ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
@@ -61,6 +61,7 @@ function preparation(value: unknown): FightPreparation | undefined {
     'spirits',
     'people',
     'musse-history',
+    'paper',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),

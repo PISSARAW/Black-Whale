@@ -76,7 +76,7 @@ describe('Kalluto paper and surveillance dolls', () => {
     'plants a physical fragment in %s through the engine',
     (zone) => {
       const state = step(cast(selectPaperTarget(duel(), 'player', zone), 'neutralSpecial'), 55)
-      expect(state.opponent.plantedPaper).toEqual([{ owner: 'player', ownerMember: 0, zone }])
+      expect(state.opponent.plantedPaper).toMatchObject([{ owner: 'player', ownerMember: 0, zone }])
       expect(state.opponent.health).toBeLessThan(state.opponent.maxHealth)
       expect(state.player.x).toBe(30)
     },
@@ -167,7 +167,7 @@ describe('Kalluto paper and surveillance dolls', () => {
   })
   it('supports P2 and preserves paper ownership', () => {
     const state = step(cast(duel('opponent'), 'neutralSpecial', 'opponent'), 55)
-    expect(state.player.plantedPaper).toEqual([
+    expect(state.player.plantedPaper).toMatchObject([
       { owner: 'opponent', ownerMember: 0, zone: 'torso' },
     ])
     expect(finisherReady(state, 'opponent')).toBe(true)
@@ -266,7 +266,7 @@ describe('Kalluto paper and surveillance dolls', () => {
       }),
       70,
     )
-    expect(state.opponent.plantedPaper?.[0]).toEqual({
+    expect(state.opponent.plantedPaper?.[0]).toMatchObject({
       owner: 'player',
       ownerMember: 0,
       zone: 'torso',
@@ -277,14 +277,14 @@ describe('Kalluto paper and surveillance dolls', () => {
     const health = state.opponent.health
     state = impactPaper(impactPaper(impactPaper(state)))
     expect(health - state.opponent.health).toBeLessThan(18)
-    expect(state.opponent.plantedPaper).toEqual([
+    expect(state.opponent.plantedPaper).toMatchObject([
       { owner: 'player', ownerMember: 0, zone: 'torso' },
     ])
   })
   it('Blinky returns swallowed paper as an ordinary object without its former manipulation', () => {
     let state = duel()
     const shot = {
-      ...launchKallutoPaper(state, 'opponent', 'serpent').projectiles[0],
+      ...launchKallutoPaper(state, 'player', 'serpent').projectiles[0],
       x: 40,
       y: 6.1,
     }

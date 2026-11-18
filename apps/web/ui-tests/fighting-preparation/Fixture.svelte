@@ -1,6 +1,7 @@
 <script lang="ts">
   import { tick } from 'svelte'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
+  import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls } from '$lib/fighting/kallutoSurveillance'
   import { createTeamFight, requestTeamAssist } from '$lib/fighting/teamMatch'
   import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
@@ -211,6 +212,7 @@
       judgment: state.opponent.judgmentChain,
       playerHeard: state.player.heardWords,
       dolls: paperDolls(state.player),
+      paperKit: state.player.paperKit,
     }
   }
 </script>
@@ -250,6 +252,7 @@
     <p>{presentation.hint}</p>
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
+    <FightKallutoSupplies {state} side="player" language="fr" />
     {#if ['kalluto', 'kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}

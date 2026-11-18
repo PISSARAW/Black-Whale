@@ -10,6 +10,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 const BODY_FIELDS = new Set([
   'secretWindow',
   'kallutoPaper',
+  'paperKit',
   'plantedPaper',
   'blackVoiceScreen',
   'stolenChainAbility',

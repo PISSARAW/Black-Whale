@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 846
+Fichiers : 847
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -738,9 +738,13 @@ Fichiers : 846
 
 - Kalluto’s multiple paper receivers bind actual bodies (chapter 225) > keeps the first marked body through a real relay and adds a second distinct receiver without replacing it
 
+## `apps/web/src/lib/fighting/kallutoMaterials.test.ts`
+
+- Kalluto uses actual paper and an actual fan rather than copied supplies > gives the native user finite personal supplies, and never creates them from a stolen page
+
 ## `apps/web/src/lib/fighting/kallutoReplay.test.ts`
 
-- physical paper receivers at P2, replay and Dolphin boundaries > replays P2 paper contact, doll activation, actual private speech and voluntary stop
+- physical paper receivers at P2, replay and Dolphin boundaries > imports a recording that starts after the physical kit was dropped, with all thirteen scenario resources
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 

@@ -1,4 +1,5 @@
 import { personDolphinOptions } from './dolphinPeopleOptions'
+import { paperKitOptions, performPaperKitCommand } from './kallutoMaterialActions'
 import { paperReceiverOptions, performPaperReceiverCommand } from './kallutoCommands'
 import { judgmentTargetLimit } from './judgmentInquiryTypes'
 import { judgmentInquiryOptions, performJudgmentInquiry } from './judgmentInquiryAction'
@@ -89,6 +90,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['paper-kit-', performPaperKitCommand],
   ['paper-stop-listening', performPaperReceiverCommand],
   ['judgment-ask', performJudgmentInquiry],
   ['judgment-answer', performJudgmentInquiry],
@@ -120,6 +122,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...paperKitOptions(state, side),
     ...paperReceiverOptions(state, side),
     ...judgmentInquiryOptions(state, side),
     ...musseArchiveOptions(state, side),

@@ -6,6 +6,7 @@ import type { FightProjectile, FightSide, FightState } from './types'
 import type { PaperCommand } from './kallutoPaper'
 import { activePaperOwner, paperMarksAt } from './kallutoSurveillance'
 import { physicalBodyAt } from './fightBodyIdentity'
+import { issuePaperPart } from './kallutoMaterials'
 
 /** Paper is physical matter. Damage/speed/lifetime are duel tuning, never an explosive charge. */
 export function launchKallutoPaper(
@@ -13,7 +14,9 @@ export function launchKallutoPaper(
   side: FightSide,
   command: PaperCommand,
 ): FightState {
-  const fighter = state[side]
+  const issued = issuePaperPart(state, side, command)
+  if (!issued) return state
+  const fighter = issued.actor
   const zone = selectedPaperZone(fighter)
   const point = paperZonePoint(fighter, zone)
   const shot: FightProjectile = {
@@ -33,7 +36,9 @@ export function launchKallutoPaper(
     targetZone: zone,
     shape: 'card',
     colour: '#f4e9e5',
-    matter: 'object',
+    matter: issued.part.materialCopyId ? 'nen' : 'object',
+    materialCopyId: issued.part.materialCopyId,
+    paperId: issued.part.id,
     age: 0,
     lifetime: 120,
     concealed: fighter.attack?.concealed,
@@ -110,7 +115,13 @@ export function plantPaperAfterHit(state: FightState, shot: FightProjectile): Fi
       ...state[target],
       plantedPaper: [
         ...(state[target].plantedPaper ?? []),
-        { owner: owner.owner, ownerMember: owner.member, zone: shot.targetZone },
+        {
+          owner: owner.owner,
+          ownerMember: owner.member,
+          zone: shot.targetZone,
+          paperId: shot.paperId,
+          materialCopyId: shot.materialCopyId,
+        },
       ],
     },
   }

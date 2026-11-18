@@ -35,6 +35,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
     paperDolls(fighter).length,
+    Boolean(fighter.paperKit?.fan),
     Boolean(fighter.illumi?.disguised),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),

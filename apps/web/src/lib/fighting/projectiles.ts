@@ -6,6 +6,7 @@ import { hasIllumiNeedles } from './illumiEquipment'
 import { travelKallutoPaper } from './kallutoFlight'
 import { interceptArenaProjectile } from './arenaSimulation'
 import { paperAvailable, paperZonePoint } from './kallutoPaper'
+import { paperStockReady } from './kallutoMaterials'
 import { illumiBodyFree } from './illumiState'
 import { battleRangedAvailable } from './battleCantabileRules'
 import { advanceJupiter } from './jupiterFlight'
@@ -218,7 +219,8 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
-  if (fighter.id === 'kalluto' && !paperAvailable(fighter)) return false
+  if (fighter.id === 'kalluto' && (!paperAvailable(fighter) || !paperStockReady(fighter, 'plant')))
+    return false
   if (fighter.id === 'illumi' && !hasIllumiNeedles(fighter)) return false
   if (!illumiBodyFree(fighter)) return false
   return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)

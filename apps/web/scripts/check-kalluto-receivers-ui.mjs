@@ -47,6 +47,8 @@ try {
     await page.evaluate(() => window.preparationFixture.prepareKallutoReceivers())
     const initial = await page.evaluate(() => window.preparationFixture.snapshot())
     assert.equal(initial.dolls.length, 2)
+    assert.equal(initial.paperKit.markers, 10)
+    assert.equal(initial.paperKit.sheets, 4)
     assert.deepEqual(
       initial.dolls.map((doll) => doll.targetMember),
       [0, 1],
@@ -78,6 +80,21 @@ try {
     assert.ok(stopped.dolls.every((doll) => doll.active === false))
     assert.equal(await receivers.getByText('Écoute interrompue', { exact: true }).count(), 2)
     assert.equal(stopped.dolls[0].heard.text, initial.dolls[0].heard.text)
+    await page
+      .getByRole('button', { name: 'Papier · Déposer éventail et réserve', exact: true })
+      .click()
+    assert.equal(
+      (await page.evaluate(() => window.preparationFixture.snapshot())).paperKit,
+      undefined,
+    )
+    await page
+      .getByRole('button', { name: 'Papier · Prendre le matériel présent', exact: true })
+      .first()
+      .click()
+    const picked = await page.evaluate(() => window.preparationFixture.snapshot())
+    assert.equal(picked.paperKit.sourceId, initial.paperKit.sourceId)
+    assert.equal(picked.paperKit.markers, 10)
+    assert.equal(picked.paperKit.sheets, 4)
     cases.push({ width })
   }
   assert.deepEqual(errors, [])

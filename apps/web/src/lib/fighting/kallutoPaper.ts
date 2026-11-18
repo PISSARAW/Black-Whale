@@ -1,5 +1,6 @@
 import { chrolloPageForMove } from './chrolloBook'
 import { paperAbilityAvailable } from './kallutoAccess'
+import { paperMaterialsReady } from './kallutoMaterials'
 export { paperAvailable } from './kallutoAccess'
 import { sleepingBody } from './hanzoProjection'
 import { paperMarksAt, activePaperOwner } from './kallutoSurveillance'
@@ -53,6 +54,7 @@ export function paperCommandReady(
   command: PaperCommand,
 ): boolean {
   if (!paperAbilityAvailable(state[side], command)) return false
+  if (!paperMaterialsReady(state, side, command)) return false
   if (command === 'plant') return true
   return hasPlantedPaper(
     state,

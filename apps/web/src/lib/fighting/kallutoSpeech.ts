@@ -4,6 +4,7 @@ import { sleepingBody } from './hanzoProjection'
 import { paperAbilityAvailable } from './kallutoAccess'
 import { paperDollBody, paperDollMarked, paperDolls } from './kallutoSurveillance'
 import { senseDeprived } from './saiyuSenses'
+import { historicalPartExists } from './historicalCopyLifetime'
 import type { DolphinBodyRef } from './dolphinLoanTypes'
 import type { PaperDoll, PaperWords } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -62,7 +63,11 @@ function heardAtDoll(
   context: { owner: DolphinBodyRef; doll: PaperDoll },
   words: PaperWords,
 ): boolean {
-  if (context.doll.active === false || !paperDollMarked(state, context.owner, context.doll))
+  if (
+    context.doll.active === false ||
+    !paperDollMarked(state, context.owner, context.doll) ||
+    !historicalPartExists(state, context.doll.materialCopyId)
+  )
     return false
   const target = paperDollBody(state, context.doll)
   if (!target) return false
@@ -76,6 +81,11 @@ export function paperOwnerListening(state: FightState, owner: DolphinBodyRef): b
   return Boolean(
     actor &&
     paperObserverReady(actor) &&
-    paperDolls(actor).some((doll) => doll.active !== false && paperDollMarked(state, owner, doll)),
+    paperDolls(actor).some(
+      (doll) =>
+        doll.active !== false &&
+        paperDollMarked(state, owner, doll) &&
+        historicalPartExists(state, doll.materialCopyId),
+    ),
   )
 }

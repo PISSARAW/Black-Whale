@@ -49,5 +49,5 @@ function missingPossession(value: unknown, path: string): boolean {
 
 /** Real possessions may be dropped, lost or absent from the opponent's private view. */
 function optionalPossession(path: string): boolean {
-  return /^(player|opponent)\.(writingKit|blackVoiceGear(?:\.phone)?)$/.test(path)
+  return /^(player|opponent)\.(writingKit|paperKit|blackVoiceGear(?:\.phone)?)$/.test(path)
 }

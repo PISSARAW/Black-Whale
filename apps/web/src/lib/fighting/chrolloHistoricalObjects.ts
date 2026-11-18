@@ -126,6 +126,9 @@ function nextCopyId(state: FightState, side: FightSide): string {
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
     blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
+    paperKit: source.paperKit
+      ? { ...source.paperKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
+      : undefined,
     writingKit: source.writingKit
       ? { ...source.writingKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
       : undefined,
@@ -151,6 +154,7 @@ function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
   if (source.kind === 'room') return undefined // An interior, not a solid crate.
   if (source.device) return undefined // Physical device collisions use the actual carried position.
   if (source.writingKit) return { width: 2, height: 1 }
+  if (source.paperKit) return { width: 2, height: 1 }
   if (source.kind === 'crate') return { width: 3, height: 8 }
   return ['puppet', 'morena', 'supporter', 'person'].includes(source.kind)
     ? { width: 2.2, height: 13 }

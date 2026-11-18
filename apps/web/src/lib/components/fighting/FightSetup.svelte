@@ -11,6 +11,8 @@
   import type { FightMode, FighterId, FightSide } from '$lib/fighting/types'
   import FighterAvatar from './FighterAvatar.svelte'
   import FightFormatPicker from './FightFormatPicker.svelte'
+  import FightKameoPicker from './FightKameoPicker.svelte'
+  import { selectionMark } from '$lib/fighting/fighterSelectionMark'
   import StagePicker from './StagePicker.svelte'
   import './FightSetup.css'
 
@@ -63,12 +65,6 @@
     onPlayer(nextPlayer)
     onOpponent(nextOpponent)
     selecting = 'player'
-  }
-
-  function selectionMark(id: FighterId, playerId: FighterId, opponentId: FighterId): string {
-    if (playerId === id && opponentId === id) return '1 · 2'
-    if (playerId === id) return '1'
-    return opponentId === id ? '2' : ''
   }
 </script>
 
@@ -177,6 +173,7 @@
 <StagePicker {environment} {language} onSelect={onEnvironment} />
 <FightPreparationSetup {environment} {player} {opponent} {language} onChange={onEnvironment} />
 <FightFormatPicker selected={format} {language} onSelect={onFormat} />
+<FightKameoPicker {language} />
 
 <div class="fight-mode-picker" aria-label={language === 'fr' ? 'Mode de jeu' : 'Game mode'}>
   {#each gameModes as option (option[0])}

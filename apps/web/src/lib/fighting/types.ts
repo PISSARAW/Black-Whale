@@ -22,6 +22,8 @@ import type { SecretWindowState } from './secretWindow'
 import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
+import type { FightKameos } from './kameos/types'
+
 export type { FightInput } from './fightInputTypes'
 export { EMPTY_INPUT } from './fightInputTypes'
 
@@ -420,6 +422,8 @@ export interface FightState {
   mode: FightMode
   player: ArcadeFighter
   opponent: ArcadeFighter
+  /** Support partners beside each leader; absent in an ordinary duel. */
+  kameos?: FightKameos
   phase: FightPhase
   frame: number
   time: number

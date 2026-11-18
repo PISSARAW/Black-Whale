@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 918
+Fichiers : 926
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -801,6 +801,31 @@ Fichiers : 918
 ## `apps/web/src/lib/fighting/kallutoScatterDolphin.test.ts`
 
 - one stolen paper-manipulation application has its actual compound commands > keeps Dolphin engaged across dispersion and reuse of the same real paper, then returns the donor’s Hatsu on release
+
+## `apps/web/src/lib/fighting/kameos/effects.test.ts`
+
+- kameo catalogue (lot 4) > holds the six support kameos, one per role
+- kameo support effects (lot 4) > heals and strengthens the leader with Tubeppa, paid from the kameo aura
+
+## `apps/web/src/lib/fighting/kameos/kameos.test.ts`
+
+- kameo state (lot 2) > attaches a full reserve body to each requested side
+
+## `apps/web/src/lib/fighting/kameos/projection.test.ts`
+
+- kameo duel projection (lot 3) > round-trips without change when nothing happens in the view
+
+## `apps/web/src/lib/fighting/kameos/pvp.test.ts`
+
+- kameos in private PvP (lot 8) > accepts only catalogue kameos keyed by seat
+
+## `apps/web/src/lib/fighting/kameos/replay.test.ts`
+
+- kameo replays (lot 8) > records a match with kameos from its very first frame
+
+## `apps/web/src/lib/fighting/kameos/runtime.test.ts`
+
+- kameo calls (lot 5) > reads the call direction relative to the leader facing
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 

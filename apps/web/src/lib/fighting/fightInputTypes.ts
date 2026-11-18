@@ -1,5 +1,7 @@
 /** Per-tick fighter input. Re-exported by types.ts; extracted to keep it under 500 lines. */
 export interface FightInput {
+  /** Calls the chosen support partner beside the leader. */
+  kameo?: boolean
   arena?: boolean
   interact?: boolean
   plugWounds?: boolean

@@ -36,6 +36,7 @@
   import { readFightSetup, saveFightSetup } from '$lib/fighting/fightSetupDraft'
   import { link, locale } from '$lib/i18n'
   import { createFight } from '$lib/fighting/engine'
+  import { withChosenKameos } from '$lib/fighting/kameos/selection'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
@@ -141,12 +142,13 @@
     navigate('battle')
     school.exit()
     practice.exit()
-    state = createFight(selectedPlayer, selectedOpponent, {
+    const options = {
       formatId: selectedFormat,
       mode: selectedMode,
       environment,
       controls: controls.schemesFor(selectedMode, coarsePointer()),
-    })
+    }
+    state = withChosenKameos(createFight(selectedPlayer, selectedOpponent, options))
     resetFightInputs()
     match.begin(state)
     paused = false

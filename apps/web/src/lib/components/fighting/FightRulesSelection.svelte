@@ -7,6 +7,7 @@
   import { link } from '$lib/i18n'
   import FightPortrait from './FightPortrait.svelte'
   import FightFormatPicker from './FightFormatPicker.svelte'
+  import FightKameoPicker from './FightKameoPicker.svelte'
   import FightPreparationSetup from './FightPreparationSetup.svelte'
   import FightArenaSetup from './FightArenaSetup.svelte'
   import FightIllumiEquipment from './FightIllumiEquipment.svelte'
@@ -53,6 +54,7 @@
             : 'Enable destructible cover and terrain abilities.'}
         </p>
       </div>
+      <FightKameoPicker {language} />
       <details class="clash-advanced">
         <summary
           >{fr ? 'Options avancées & équipement' : 'Advanced options & equipment'}<span

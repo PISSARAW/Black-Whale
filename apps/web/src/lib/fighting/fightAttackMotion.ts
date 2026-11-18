@@ -1,5 +1,6 @@
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
+import { franklinBarrageMotion } from './franklinBarrageMotion'
 import { lerpPose, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, AttackKind } from './types'
@@ -115,6 +116,8 @@ export function attackMotionAccent(options: AttackMotionOptions): FightPose {
   const { fighter, frames, authored } = options
   const attack = fighter.attack
   if (!attack || attack.variant === 'air' || attack.variant === 'throw') return NEUTRAL_POSE
+  const barrage = franklinBarrageMotion(options)
+  if (barrage) return barrage
   const family = fightFamily(fighter.id)
   const profile = fighterMotionProfile(fighter.id)
   const strength = KIND_WEIGHT[attack.kind] * profile.attack * (authored ? 0.4 : 1)

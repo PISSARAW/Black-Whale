@@ -1,5 +1,6 @@
 import { getContext } from 'svelte'
 import { attackPoseFraction, createAttackTravel } from './fightAttackTravel'
+import { closeFightPosition } from './fightCloseSpacing'
 import {
   FIGHT_VISUAL_PREDICTION,
   responsiveFightPosition,
@@ -17,11 +18,19 @@ export function createFightPresentation() {
     poseFraction: attackPoseFraction,
     bodyPosition(state: FightState, side: FightSide) {
       const prediction = read()
-      return travel[side](
+      const body = travel[side](
         responsiveFightPosition(state, side, prediction),
         visualFighter(state, side, prediction),
         state,
       )
+      return closeFightPosition(state, side, {
+        body,
+        rival: responsiveFightPosition(
+          state,
+          side === 'player' ? 'opponent' : 'player',
+          prediction,
+        ),
+      })
     },
   }
 }

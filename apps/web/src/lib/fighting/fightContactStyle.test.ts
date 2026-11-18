@@ -38,6 +38,7 @@ describe('contacts show actual public outcomes', () => {
     })
     effect.emit(state, 100)
     expect(scene.getObjectByName(`fight-contact-${kind}`)).toBeDefined()
+    expect(scene.children[0].position.y).toBeGreaterThanOrEqual(kind === 'hit' ? 1.68 : 1.08)
     const type = (scene.children[0] as THREE.Mesh).geometry.type
     expect(type).toBe({ hit: 'SphereGeometry', guard: 'BoxGeometry', parry: 'TorusGeometry' }[kind])
     const count = scene.children.length

@@ -11,6 +11,8 @@ import { AIR_POSE, CROUCH_POSE } from './fightStance'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import { sampleTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FightNenZone } from './types'
+import { shizukuHitReaction } from './shizukuHitReaction'
+import { rosterHitReaction, type StrikeContactMotion } from './rosterHitReaction'
 
 /**
  * What happens to a body when it is not the one attacking: struck, knocked
@@ -28,6 +30,8 @@ export interface ReactionContext {
   progress: number
   /** Where the last blow landed, for a struck fighter. */
   hitZone?: FightNenZone
+  strikeReaction?: 'blinky-hammer' | 'blinky-drive'
+  strikeMotion?: StrikeContactMotion
 }
 
 const HIT: Record<FightNenZone, FightPose> = {
@@ -161,14 +165,14 @@ export function reactionPlan(
       return hitPlan(fighter, context, standing)
     case 'down':
       return {
-        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        pose: fallingPose(context, grounded),
         plant: false,
         key: 'down',
         blend: 0.03,
       }
     case 'ko':
       return {
-        pose: sample(KNOCKDOWN, grounded ? progress : Math.min(progress, 0.18), false),
+        pose: fallingPose(context, grounded),
         plant: false,
         key: 'ko',
         blend: 0.03,
@@ -192,10 +196,27 @@ export function reactionPlan(
 }
 
 function hitPlan(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose): BodyPlan {
-  const recoil = sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)
+  const recoil =
+    directedRecoil(context) ?? sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)
   const airborne = fighter.y > 0
   const juggled = airborne ? addPoses(recoil, LAUNCHED) : recoil
-  return { pose: addPoses(standing, juggled), plant: !airborne, key: 'hit', blend: 0.02 }
+  return {
+    pose: addPoses(standing, juggled),
+    plant: !airborne,
+    key: context.strikeReaction ?? context.strikeMotion?.shape ?? 'hit',
+    blend: 0.02,
+  }
+}
+
+function fallingPose(context: ReactionContext, grounded: boolean): FightPose {
+  const progress = grounded ? context.progress : Math.min(context.progress, 0.18)
+  const falling = sample(KNOCKDOWN, progress, false)
+  const recoil = directedRecoil({ ...context, progress: 0 })
+  return recoil && progress < 0.18 ? lerpPose(recoil, falling, progress / 0.18) : falling
+}
+
+function directedRecoil(context: ReactionContext): FightPose | null {
+  return shizukuHitReaction(context) ?? rosterHitReaction(context)
 }
 
 function jumpPlan(progress: number, standing: FightPose): BodyPlan {

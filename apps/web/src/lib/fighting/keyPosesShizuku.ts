@@ -1,6 +1,7 @@
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { MoveSlot } from './types'
 import type { FightPose } from './fightPose'
+import { SHIZUKU_STRIKE_POSES } from './shizukuStrikeMotion'
 
 const AIM: FightPose = {
   chest: [0.04, -0.15, 0],
@@ -17,6 +18,7 @@ const VACUUM: MoveTimeline = [
   { phase: 'recovery', at: 0.8, pose: {} },
 ]
 export const SHIZUKU_KEY_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
+  ...SHIZUKU_STRIKE_POSES,
   neutralSpecial: VACUUM,
   downSpecial: VACUUM.map((key) => ({ ...key, pose: { ...key.pose, chest: [0.3, -0.15, 0] } })),
   backSpecial: VACUUM,

@@ -6,6 +6,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 interface Position {
   x: number
   y: number
+  z?: number
 }
 interface Fall {
   key: string

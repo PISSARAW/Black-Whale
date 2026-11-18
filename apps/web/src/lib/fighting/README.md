@@ -1,5 +1,9 @@
 # Fighting
 
+Les [gestes de combo et la concentration de l’aura](./COMBO_MOTION.md) relient
+les transitions des 40 combattants aux appuis et aux contacts de chaque style,
+avec une enveloppe locale et un flux pour le Ryu et le Ko réellement engagés.
+
 L’[intégration Qwen via Ollama et Tailscale](./qwen/README.md) associe une stratégie
 distante à un contrôleur rapide local pour les 40 personnages, avec replays vérifiés.
 

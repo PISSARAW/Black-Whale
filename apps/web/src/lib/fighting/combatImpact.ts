@@ -7,7 +7,7 @@ import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
 import { recordThreeCombatProjectileWound } from './threeCombatWounds'
-import { resolveIllumiContact } from './illumiImpact'
+import { resolveMindContact } from './mindContact'
 import { resolveLynchContact } from './lynchInterrogation'
 import { recordBlinkyWound } from './blinkyWounds'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -108,7 +108,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     openingMultiplier: openingDamageMultiplier(opening),
   })
   const spent = spendAttacker(attacker, defence)
-  const needle = resolveIllumiContact({ state, side, defence, spent })
+  const needle = resolveMindContact({ state, side, defence, spent })
   if (needle) return needle
   const knockdown = isJudgedKnockdown({
     attacker,

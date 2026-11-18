@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 971
+Fichiers : 975
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -760,6 +760,10 @@ Fichiers : 971
 
 - the facial injury premise and actual reconstruction commands cross P2 and replay boundaries > validates the explicit setup and keeps canonical support IDs in P2 prediction
 
+## `apps/web/src/lib/fighting/halkenburgSouls.test.ts`
+
+- Halkenburg exchanges the chosen consciousness with the real pierced body > includes Halkenburg and each real ready supporter in the random pool
+
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 
 - Hanzo’s speaking double has its own position without moving the sleeping body > replays the actual Talk input and camera recording without a state patch
@@ -767,6 +771,10 @@ Fichiers : 971
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
 - fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
+
+## `apps/web/src/lib/fighting/hatsuRegistryLater.test.ts`
+
+- fighter Hatsu registry > lets an aimed, prepared Blinky swallow named objects but never Nen constructs
 
 ## `apps/web/src/lib/fighting/hinrigh.test.ts`
 

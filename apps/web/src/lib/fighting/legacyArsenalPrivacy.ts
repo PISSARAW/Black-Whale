@@ -4,6 +4,8 @@ import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
   redactCorpsePreparation(enemy)
+  enemy.halkenburgChosenSoul = undefined
+  enemy.halkenburgSupporter = undefined
   enemy.dowsingMapSearch = undefined
   enemy.dowsingMapReading = undefined
   enemy.illumiNeedleMode = undefined

@@ -8,6 +8,7 @@ export function arsenalMindAvailable(actor: ArcadeFighter): boolean {
     actor.blackVoiceControl?.active,
     actor.needlePuppet,
     actor.arsenalSleep,
+    actor.halkenburgSleeping,
     actor.kurapika?.blackoutFrames,
     actor.dolphinLoan?.blackoutFrames,
     effects.manipulatedFrames,

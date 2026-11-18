@@ -1,16 +1,16 @@
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
-import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
+import { readyCohort } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
 import { halkenburgRosterVariant } from '../halkenburgVariant'
+import { halkenburgSoulPool, beginHalkenburgSoulExchange } from '../halkenburgSouls'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
 export { COHORT_WILL_FRAMES } from '../preparationTuning'
-const POSSESSION_FRAMES = 120
 /** Health price is duel tuning; canonical risk comes from the transfer itself. */
 const SHOT_LIFE_COST = 8
 
@@ -34,13 +34,15 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const supporters = readyCohort(state, side)
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
-  const supporter = ready ? supporters[rng % supporters.length] : undefined
+  const pool = halkenburgSoulPool(state, side)
+  const soul = ready ? pool[rng % pool.length] : undefined
   return {
     ...state,
     rng: ready ? rng : state.rng,
     [side]: {
       ...archer,
-      halkenburgSupporter: supporter?.id,
+      halkenburgSupporter: soul?.kind === 'supporter' ? soul.id : undefined,
+      halkenburgChosenSoul: soul,
       health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
@@ -54,31 +56,23 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
 /** The arrow pierces every defence, so a guarded hit still lands it. */
 function possess({ state, side, defenderSide }: HatsuImpactContext): FightState {
   const archer = state[side]
-  const supporter = state.battlefield?.entities.find(
-    (entry) => entry.id === archer.halkenburgSupporter,
-  )
-  if (
-    !archer.hatsuEffects.arrowNocked ||
-    !supporter ||
-    !liveEntity(supporter) ||
-    !supporter.consenting
-  )
-    return state
-  const target = state[defenderSide]
-  const occupied = updateEntity(state, supporter.id, { sleepingFrames: POSSESSION_FRAMES })
+  if (!archer.hatsuEffects.arrowNocked) return state
+  if (archer.id === 'halkenburg' && !archer.nenOwner && halkenburgRosterVariant(state))
+    return replaceHalkenburgBody(
+      {
+        ...state,
+        [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
+      },
+      side,
+    )
+  const occupied = beginHalkenburgSoulExchange(state, side, defenderSide)
+  if (occupied === state) return state
+  const body = occupied[side]
   const struck = {
     ...occupied,
-    [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
+    [side]: { ...body, hatsuEffects: { ...body.hatsuEffects, arrowNocked: 0 } },
   }
-  if (archer.id === 'halkenburg' && !archer.nenOwner && halkenburgRosterVariant(state))
-    return replaceHalkenburgBody(struck, side)
-  return {
-    ...struck,
-    [defenderSide]: {
-      ...target,
-      hatsuEffects: { ...target.hatsuEffects, possessedFrames: POSSESSION_FRAMES },
-    },
-  }
+  return struck
 }
 
 function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
@@ -90,7 +84,7 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
     !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
     readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
-  const possessed = effects.possessedFrames
+  const possessed = fighter.halkenburgSoul ? 0 : effects.possessedFrames
   if (will === effects.cohortWillFrames && possessed <= 0) return fighter
   return {
     ...fighter,
@@ -98,7 +92,7 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
     hatsuEffects: {
       ...effects,
       cohortWillFrames: will,
-      possessedFrames: Math.max(0, possessed - 1),
+      possessedFrames: fighter.halkenburgSoul ? 1 : Math.max(0, possessed - 1),
     },
   }
 }

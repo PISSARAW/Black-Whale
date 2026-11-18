@@ -271,8 +271,13 @@ function syncAnimatedAppearance(context: {
   syncPreparedSleep(root, entry)
   if (entry.littleEye) root.rotation.y = entry.littleEye.facing === 1 ? 0 : Math.PI
   if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -1.4 : 0
-  if (entry.kind === 'supporter') root.rotation.z = entry.sleepingFrames ? -0.5 : 0
+  if (entry.kind === 'supporter') root.rotation.z = supporterSleepAngle(entry)
   if (entry.kind === 'bird' && entry.controller) root.rotation.z = Math.sin(seconds * 12) * 0.12
+}
+
+function supporterSleepAngle(entry: PreparedEntity): number {
+  if (entry.halkenburgSleeping) return -Math.PI / 2
+  return entry.sleepingFrames ? -0.5 : 0
 }
 
 function preparedHumanIdentity(entry: PreparedEntity): string {

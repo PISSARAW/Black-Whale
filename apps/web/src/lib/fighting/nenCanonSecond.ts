@@ -57,11 +57,11 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
     condition:
       'Actual consenting supporters already bear the feather and share the user’s will; collective charge precedes the shot.',
     effect:
-      'A selected supporter sleeps while occupying the struck target’s body; the arrow passes ordinary guard.',
+      'A random group member, including Halkenburg, leaves their original body asleep and occupies the pierced body; the arrow causes no damage and passes defensive Nen.',
     prohibition:
       'No imaginary cohort, damage arrow, copied supporters or shot without shared will.',
     adaptation:
-      'Charge, life expenditure, supporter selection and possession duration tune the duel. The full group armour and soul-exchange simulation are not implemented.',
+      'Charge and numerical aura/HP costs tune the duel. A persistent native exchange and host movement are represented; sleep priority, actual deaths, full consciousness control and group armour remain incomplete.',
   },
   gel: {
     abilities: ['snake-arm'],

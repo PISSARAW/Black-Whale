@@ -199,6 +199,7 @@ function changedDolphinCounters(before: FightState, after: FightState): string[]
     for (const key of Object.keys(next) as (keyof typeof next)[])
       if (
         key !== 'witnessedAt' &&
+        !(key === 'possessedFrames' && after[target].halkenburgSoul) &&
         typeof next[key] === 'number' &&
         Number(next[key]) > Number(old[key])
       )

@@ -504,7 +504,7 @@ de couverture des profils ou un nombre de tests :
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                    |
 | Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                                                       |
 | Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. La localisation sur carte réelle est exécutable ; auditer encore les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                                                                                                                                 |
+| Halkenburg | Compléter la protection collective, les priorités de sommeil, les morts réelles et l’arsenal de la conscience hébergée. Un échange persistant, le tirage de Halkenburg et le déplacement du corps touché sont exécutables.                                                                                                                                                                                                                                                                                    |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |
@@ -1048,3 +1048,11 @@ la copie inerte du cadavre et refuse son original réel. Le contact avec la têt
 la main libre, la parole, les ordres et la tête attachée gardent leur effet.
 Le corps partagé se relève avec son cachet, sans aiguilles d’Illumi ajoutées.
 Le On et les écarts restants de l’audit sont conservés.
+
+## Premier modèle des consciences d’Halkenburg — ruleset 67
+
+Le [corps endormi et le corps touché](./clash-halkenburg-consciences.md) restent
+liés sans retour automatique après deux secondes. Halkenburg participe au tirage ;
+la conscience transférée peut déplacer son corps d’accueil. Grimmel ne cause
+plus de dégâts physiques et le On reste présent. Les priorités de sommeil,
+les morts réelles, le contrôle complet et l’armure collective restent ouverts.

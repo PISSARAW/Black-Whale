@@ -4,8 +4,7 @@ import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
 import { kallutoAiSlots } from './kallutoAi'
 import { kurapikaCombatSlots } from './kurapikaCombatAi'
-import { BUNGEE_REST_DISTANCE } from './hisokaTechnique'
-import { aiGumLink, networkGumSlots, idleGumSlots } from './bungeeAiCombat'
+import { hisokaAiSlots } from './hisokaAi'
 import { SENSE_BITS } from './saiyuSenses'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyBloodReady, blinkyState } from './blinky'
@@ -20,7 +19,7 @@ import type { FightState } from './types'
 
 export const FIRST_ARSENAL_AI = {
   kurapika: kurapikaCombatSlots,
-  hisoka: hisokaSlots,
+  hisoka: hisokaAiSlots,
   chrollo: ({ state, roll, gap }) => chrolloAiSlots(state, roll, gap),
   benjamin: ({ state, roll, gap }) => benjaminAiSlots(state, roll, gap),
   tserriednich: martialSlots,
@@ -55,22 +54,6 @@ export const FIRST_ARSENAL_AI = {
         ? ['neutralSpecial']
         : ['standingLight', 'forwardHeavy'],
 } satisfies Record<string, ArsenalAiPlan>
-
-function hisokaSlots({
-  state,
-  roll,
-  gap,
-}: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  const network = networkGumSlots(state, gap)
-  if (network) return network
-  const gum = aiGumLink(state)
-  if (textureOpening({ state, roll, gap })) return ['downSpecial']
-  if (gum?.owner !== 'opponent') return ['neutralSpecial']
-  if (!gum.retracting && gap > BUNGEE_REST_DISTANCE)
-    return [roll < 0.5 ? 'forwardSpecial' : 'backSpecial', 'finisher']
-  if (gap <= 10) return ['finisher', 'standingHeavy']
-  return idleGumSlots(state, roll)
-}
 
 function saiyuSlots({ state, roll }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
   const seals = state.player.hatsuEffects.senseSeals
@@ -122,13 +105,4 @@ function shizukuSlots({ state }: ArsenalAiContext): readonly import('./types').M
   return stored.lastObject || stored.lastArenaObject || stored.lastWasBlood
     ? ['backSpecial', 'forwardSpecial']
     : ['forwardSpecial', 'standingLight']
-}
-
-function textureOpening({ state, roll, gap }: ArsenalAiContext): boolean {
-  return (
-    !state.opponent.textureSurprise &&
-    roll > 0.85 &&
-    gap > 10 &&
-    state.bungeeGum?.owner !== 'opponent'
-  )
 }

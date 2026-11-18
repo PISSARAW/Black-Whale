@@ -44,9 +44,15 @@ function nativeRangedAiAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const fighter = state.opponent
-  if (!RANGED_ARSENALS.includes(fighter.id) || gap < 15 || !canUseRangedAttack(fighter)) return null
+  const preparedCard = fighter.id === 'hisoka' && Boolean(fighter.gumThrowReady)
+  if (
+    !RANGED_ARSENALS.includes(fighter.id) ||
+    gap < (preparedCard ? 12 : 15) ||
+    !canUseRangedAttack(fighter)
+  )
+    return null
   // Alternate a ranged action with the character's setup/utility decisions.
-  if ((state.frame + state.rng) % 3 !== 0) return null
+  if (!preparedCard && (state.frame + state.rng) % 3 !== 0) return null
   return perform({ state, side: 'opponent', kind: 'ranged', auraCharged: false })
 }
 

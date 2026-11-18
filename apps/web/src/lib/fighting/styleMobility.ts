@@ -40,11 +40,22 @@ const MOBILITY: Record<StyleRole, Mobility> = {
   },
 }
 
+const HISOKA_MOBILITY: Mobility = {
+  backWalk: 0.96,
+  forwardDash: { frames: 15, peak: 108 },
+  backDash: { frames: 12, peak: 100 },
+}
+
+const PERSONAL_MOBILITY: Partial<Record<ArcadeFighter['id'], Mobility>> = {
+  hisoka: HISOKA_MOBILITY,
+}
+
 /** Body identity only: Skill Hunter and Dolphin cannot copy someone else's footwork. */
 export function styleMobility(fighter: ArcadeFighter): Mobility & { walkScale: number } {
   const role =
     fighter.id === 'biscuit' && !fighter.biscuitTrueForm ? 'control' : styleMatchup(fighter.id).role
-  return { ...MOBILITY[role], walkScale: fightingStyle(fighter.id).moveScale }
+  const mobility = PERSONAL_MOBILITY[fighter.id] ?? MOBILITY[role]
+  return { ...mobility, walkScale: fightingStyle(fighter.id).moveScale }
 }
 
 export function styleReactionFrames(fighter: ArcadeFighter): number {

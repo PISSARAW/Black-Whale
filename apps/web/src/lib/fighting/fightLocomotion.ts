@@ -2,7 +2,8 @@ import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
-import type { ArcadeFighter } from './types'
+import type { ArcadeFighter, FighterId } from './types'
+import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
 
 /**
  * Authored locomotion poses for the short, explosive movements that should not
@@ -118,6 +119,13 @@ interface WalkStyle {
   rhythm: FightPose
 }
 
+const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
+  hisoka: HISOKA_WALK_STYLE,
+}
+const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
+  hisoka: hisokaDashPoses,
+}
+
 const WALK_STYLES: Record<FightFamily, WalkStyle> = {
   striker: {
     advance: { body: [0.08, 0, 0], chest: [0.03, -0.08, 0] },
@@ -186,9 +194,9 @@ export function dashPose(fighter: ArcadeFighter, standing: FightPose): DashPose 
   if (!dash) return null
   const forward = dash.direction === fighter.facing
   const progress = Math.min(1, Math.max(0, dash.frame / dash.frames))
-  const poses = forward
-    ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH]
-    : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH]
+  const poses =
+    PERSONAL_DASHES[fighter.id]?.(forward) ??
+    (forward ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH] : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH])
   const profile = fighterMotionProfile(fighter.id)
   const accent = dashAccent(fighter, progress, forward)
   const travel = scalePose(sampleThreeBeat(poses, progress), profile.dash)
@@ -222,7 +230,7 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
 export function walkPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose {
   const motion = motionOf(fighter)
   const advancing = motion.heldDirection === fighter.facing
-  const style = WALK_STYLES[fightFamily(fighter.id)]
+  const style = PERSONAL_WALKS[fighter.id] ?? WALK_STYLES[fightFamily(fighter.id)]
   const profile = fighterMotionProfile(fighter.id)
   const phase = Math.sin(fighter.x * fighter.facing * 0.251)
   const rhythm = scalePose(style.rhythm, phase * profile.walk * (advancing ? 1 : 0.65))

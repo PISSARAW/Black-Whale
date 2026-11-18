@@ -2,6 +2,7 @@ import { padailleKeyedMove } from './padaillePoses'
 import { musseKeyedMove } from './mussePoses'
 import { chrolloKeyedMove } from './chrolloPoses'
 import { benjaminKeyedMove } from './benjaminPoses'
+import { hisokaKeyedMove } from './hisokaCardPoses'
 import { keyedMove } from './keyPoseMoves'
 import { directionalFinishPose } from './directionalFinishPoses'
 import { rosterDirectionalMove } from './rosterDirectionalPoses'
@@ -16,6 +17,7 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
     musseKeyedMove(fighter) ??
     chrolloKeyedMove(fighter) ??
     benjaminKeyedMove(fighter) ??
+    hisokaKeyedMove(fighter) ??
     keyedMove(fighter.id, slot)
   return rosterDirectionalMove(fighter, native)
 }

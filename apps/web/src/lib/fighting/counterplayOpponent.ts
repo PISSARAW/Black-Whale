@@ -1,4 +1,5 @@
 import { reservingAura } from './combatIntentPolicy'
+import { moveHisokaOpponent } from './hisokaFootwork'
 import { recoveryPunishOptions } from './recoveryPunish'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput } from './opponentHabits'
@@ -34,12 +35,11 @@ export function moveCounterplayOpponent(options: {
   const view = { ...state, opponent: fighter, player: target }
   const cue = readCounterplay(view, 'opponent')
   fighter = rememberOpponentHabits(view, fighter, cue)
-  const projectiles = readProjectileResponse(view, fighter, cue)
-  if (projectiles)
-    return projectiles.input
-      ? applyResponse(projectiles.fighter, projectiles.input)
-      : moveRememberedOpponent(view, projectiles.fighter)
+  const projectiles = projectileMovement(view, fighter, cue)
+  if (projectiles) return projectiles
   fighter = { ...fighter, projectileDefence: undefined }
+  const hisoka = moveHisokaOpponent(fighter, target)
+  if (hisoka) return hisoka
   if (reservingAura(fighter)) return moveRememberedOpponent(view, fighter)
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
@@ -55,6 +55,18 @@ export function moveCounterplayOpponent(options: {
     },
     input,
   )
+}
+
+function projectileMovement(
+  state: FightState,
+  fighter: ArcadeFighter,
+  cue: CounterplayCue | null,
+): ArcadeFighter | null {
+  const response = readProjectileResponse(state, fighter, cue)
+  if (!response) return null
+  return response.input
+    ? applyResponse(response.fighter, response.input)
+    : moveRememberedOpponent(state, response.fighter)
 }
 
 function respondToHabits(state: FightState): ArcadeFighter {

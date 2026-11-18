@@ -10,6 +10,8 @@ import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
 import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
 import { gumNetworkAi } from './bungeeAi'
+import { perceivedProjectiles } from './projectilePerception'
+import { styleReactionFrames } from './styleMobility'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -19,7 +21,7 @@ import { canAct } from './fightActorState'
 import { LUINI_ROOM_HALF_WIDTH } from './luiniSpatial'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
-import type { FightState } from './types'
+import type { FightProjectile, FightState } from './types'
 
 /** No resources, consent, interview answers or book pages are fabricated by an AI plan. */
 export function retrospectiveAiAction(
@@ -168,6 +170,14 @@ function gumAi(state: FightState): FightState | null {
   const next = performGumCommand(state, 'opponent', { action })
   return next === state ? null : next
 }
+/** A deliberately prepared catch may replace ordinary guard, but never bypass hitstun or its cost. */
+export function hisokaInterceptionAi(state: FightState): FightState | null {
+  const fighter = state.opponent
+  if (fighter.id !== 'hisoka' || !canAct(fighter) || fighter.attack) return null
+  if (!incomingObject(state)) return null
+  const next = performGumCommand(state, 'opponent', { action: 'gum-catch' })
+  return next === state ? null : next
+}
 function shouldSealWounds(state: FightState): boolean {
   return (
     (state.opponent.openWounds ?? 0) > (state.opponent.gumWoundSeals ?? 0) &&
@@ -175,16 +185,28 @@ function shouldSealWounds(state: FightState): boolean {
   )
 }
 function incomingObject(state: FightState): boolean {
-  return state.projectiles.some(
+  return perceivedProjectiles(state, 'opponent').some(
     (shot) =>
       shot.owner === 'player' &&
       shot.matter === 'object' &&
       !shot.living &&
+      observedCatch(state, shot) &&
       perceivesProjectile(state.opponent, shot) &&
       Math.abs(shot.x - state.opponent.x) < 18 &&
       shot.velocityX * state.opponent.facing < 0 &&
       Math.abs(shot.y - state.opponent.y - 7) < 3,
   )
+}
+function observedCatch(state: FightState, shot: FightProjectile): boolean {
+  const fighter = state.opponent
+  if (fighter.id !== 'hisoka') return true
+  const memory = fighter.projectileDefence
+  const seen = memory?.ids.includes(shot.id)
+    ? memory.frames
+    : fighter.counterplayRead?.key === `projectile:${shot.id}`
+      ? fighter.counterplayRead.frames
+      : 0
+  return seen >= styleReactionFrames(fighter)
 }
 function interviewAi(state: FightState): FightState | null {
   const fighter = state.opponent

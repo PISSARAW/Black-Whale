@@ -22,7 +22,7 @@ declare module './types' {
 }
 const PLANS: Partial<Record<string, ArsenalAiPlan>> = { ...FIRST_ARSENAL_AI, ...SECOND_ARSENAL_AI }
 const RESERVE: Partial<Record<string, number>> = {
-  hisoka: 84,
+  hisoka: 40,
   machi: 84,
   kalluto: 84,
   franklin: 64,

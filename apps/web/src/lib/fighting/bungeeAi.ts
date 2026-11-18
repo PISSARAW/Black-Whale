@@ -2,19 +2,35 @@ import { ownsBungeeGum } from './bungeeAccess'
 import { performGumNetworkCommand } from './bungeeCommands'
 import { ownedGumLinks, selectedGumLink, gumNetwork } from './bungeeNetwork'
 import { gumCeilingHeight } from './bungeeGeometry'
+import { perceivedProjectiles } from './projectilePerception'
+import { futurePerceivedTarget } from './parallelFuture'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { FightState } from './types'
 
 /** Uses the same paid preparations and real objects as the player. */
 export function gumNetworkAi(state: FightState): FightState | null {
-  if (!ownsBungeeGum(state.opponent) || state.frame < 90) return null
+  if (!ownsBungeeGum(state.opponent)) return null
+  if (state.opponent.id !== 'hisoka' && state.frame < 90) return null
   const command =
-    objectPlan(state) ?? overheadPlan(state) ?? limbPlan(state) ?? prepareCardPlan(state)
+    selectBodyPlan(state) ??
+    objectPlan(state) ??
+    overheadPlan(state) ??
+    limbPlan(state) ??
+    prepareCardPlan(state)
   if (!command) return null
   const next = performGumNetworkCommand(state, 'opponent', command)
   return next === state ? null : next
 }
+function selectBodyPlan(state: FightState): ArsenalCommand | null {
+  if (state.opponent.id !== 'hisoka') return null
+  const target = futurePerceivedTarget(state, 'opponent', state.player)
+  if (Math.abs(state.opponent.x - target.x) > 12) return null
+  const link = ownedGumLinks(state, 'opponent').find((entry) => entry.target.kind === 'fighter')
+  if (!link || selectedGumLink(state, 'opponent')?.id === link.id) return null
+  return { action: 'gum-select', target: String(link.id) }
+}
 function objectPlan(state: FightState): ArsenalCommand | null {
+  if (state.opponent.id === 'hisoka' && perceivedGap(state) < 14) return null
   const object = aiObject(state)
   if (!object) return null
   const mode = object.shot.gumFlight?.mode
@@ -22,6 +38,10 @@ function objectPlan(state: FightState): ArsenalCommand | null {
   if (selectedGumLink(state, 'opponent')?.id !== object.link.id)
     return { action: 'gum-select', target: String(object.link.id) }
   return { action: mode === 'held' ? 'gum-rethrow' : 'gum-recall' }
+}
+function perceivedGap(state: FightState): number {
+  const target = futurePerceivedTarget(state, 'opponent', state.player)
+  return Math.abs(state.opponent.x - target.x)
 }
 function aiObject(state: FightState) {
   const link = ownedGumLinks(state, 'opponent').find((entry) => entry.target.kind === 'projectile')
@@ -36,7 +56,7 @@ function overheadPlan(state: FightState): ArsenalCommand | null {
   const fighter = state.opponent
   if (!overheadOpening(state)) return null
   if (ownedGumLinks(state, 'opponent').some((entry) => entry.target.kind === 'surface')) return null
-  const threatened = state.projectiles.some(
+  const threatened = perceivedProjectiles(state, 'opponent').some(
     (shot) => shot.owner === 'player' && Math.abs(shot.x - fighter.x) < 30,
   )
   return threatened && gumCeilingHeight(state) !== null
@@ -63,9 +83,14 @@ function overheadOpening(state: FightState): boolean {
   return state.opponent.y <= 8 && state.opponent.aura >= 35 && state.frame % 240 <= 20
 }
 function prepareCardPlan(state: FightState): ArsenalCommand | null {
+  // Resolve the selected body tether before committing to a new card preparation.
+  if (selectedGumLink(state, 'opponent')?.target.kind === 'fighter') return null
   if (state.opponent.id !== 'hisoka' || state.opponent.gumThrowReady || state.opponent.aura < 25)
     return null
   if (ownedGumLinks(state, 'opponent').some((link) => link.target.kind === 'projectile'))
     return null
-  return state.frame % 180 < 15 ? { action: 'gum-prepare-throw' } : null
+  const target = futurePerceivedTarget(state, 'opponent', state.player)
+  const gap = Math.abs(state.opponent.x - target.x)
+  if (gap < 16 || state.opponent.pressureRead?.move) return null
+  return { action: 'gum-prepare-throw' }
 }

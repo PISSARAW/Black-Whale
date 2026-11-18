@@ -5,7 +5,7 @@ import { reservingAura } from './combatIntentPolicy'
 import { performArsenalAction } from './arsenalExecution'
 import { priorityBusyAi } from './priorityArsenalAi'
 import { judgmentActionBreach } from './judgmentAction'
-import { retrospectiveAiAction } from './retrospectiveAi'
+import { retrospectiveAiAction, hisokaInterceptionAi } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
 import { nativeArsenalAiAction } from './arsenalAiAction'
 import { performOpponentArsenalMove } from './arsenalAiNen'
@@ -282,11 +282,12 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 export const opponentAttack = (state: FightState): FightState =>
-  projectileDefenceHolds(state)
+  hisokaInterceptionAi(state) ??
+  (projectileDefenceHolds(state)
     ? state
     : (priorityBusyAi(state, performAuraAttack) ??
       maryAiAction(state, performAuraAttack) ??
-      intentionalOpponentAttack(state))
+      intentionalOpponentAttack(state)))
 
 function intentionalOpponentAttack(state: FightState): FightState {
   const counter = nativeRecoveryCounter(state, performAuraAttack)

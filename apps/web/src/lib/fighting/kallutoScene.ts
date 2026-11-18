@@ -1,5 +1,11 @@
 import { createFineControlClock } from './fineControlPresentation'
-import { fineControlEase, fineControlReduced } from './fineControlAnchors'
+import { fineControlReduced } from './fineControlAnchors'
+import {
+  PAPER_STREAM_PIECES,
+  PAPER_SCATTER_PIECES,
+  paperRibbonFragment,
+  paperRibbonDirection,
+} from './kallutoPaperRibbon'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { FineControlFrame } from './fineControlPresentation'
@@ -8,36 +14,30 @@ import type { FineControlFrame } from './fineControlPresentation'
 export function createKallutoPaperScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
   const clock = createFineControlClock()
-  const geometry = new THREE.BoxGeometry(0.05, 0.08, 0.012)
-  const material = new THREE.MeshBasicMaterial({ color: 0xf4e9e5 })
+  const geometry = new THREE.CircleGeometry(0.045, 3)
+  const material = new THREE.MeshBasicMaterial({ color: 0xf4e9e5, side: THREE.DoubleSide })
   const group = new THREE.Group()
   group.name = 'kalluto-paper'
   const pieces = new Map<number, import('three').Mesh[]>()
   const originals = new Map<number, import('three').Object3D>()
   scene.add(group)
-  function show(shot: FightProjectile) {
+  function show(state: FightState, shot: FightProjectile) {
     let held = pieces.get(shot.id)
     if (!held) {
       held = Array.from(
-        { length: shot.kallutoPaper === 'serpent' ? 16 : 6 },
+        { length: shot.kallutoPaper === 'serpent' ? PAPER_STREAM_PIECES : PAPER_SCATTER_PIECES },
         () => new THREE.Mesh(geometry, material),
       )
       group.add(...held)
       pieces.set(shot.id, held)
     }
     const reduced = fineControlReduced(options)
-    const seconds = shot.age / 60
-    const gather = 0.55 + 0.45 * fineControlEase(shot.age / 18)
+    const direction = paperRibbonDirection(state, shot)
     held.forEach((mesh, trail) => {
-      const length = shot.kallutoPaper === 'serpent' ? 0.035 : 0.018
-      const wave = reduced ? 0 : Math.sin(seconds * 12 - trail * 0.5)
-      mesh.position.set(
-        worldX(shot.x) - Math.sign(shot.velocityX) * trail * length,
-        worldY(shot.y) + wave * (trail + 1) * 0.009 * gather,
-        0.35 + (trail % 3) * 0.006,
-      )
-      mesh.rotation.z = reduced ? trail * 0.35 : seconds * 7 + trail
-      mesh.scale.setScalar(reduced ? 1 : gather)
+      const piece = paperRibbonFragment({ shot, index: trail, reduced, direction })
+      mesh.position.set(worldX(shot.x) + piece.x, worldY(shot.y) + piece.y, 0.35 + piece.z)
+      mesh.rotation.set(reduced ? 0 : Math.sin(shot.age * 0.12 + trail) * 0.65, 0, piece.rotation)
+      mesh.scale.setScalar(piece.scale)
     })
     // The physical cluster replaces only this live projectile's generic card mesh.
     const generic = originals.get(shot.id) ?? scene.getObjectByName(`fight-projectile:${shot.id}`)
@@ -58,7 +58,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
           pieces.delete(id)
           originals.delete(id)
         }
-      shots.forEach(show)
+      shots.forEach((shot) => show(state, shot))
       for (const side of ['player', 'opponent'] as const)
         posePaper(options, { state, side, frame: frames[side] })
     },
@@ -77,11 +77,14 @@ function posePaper(
 ) {
   const reduced = fineControlReduced(options)
   const fan = options.figureOf?.(c.side)?.getObjectByName('kalluto-paper-fan')
-  if (fan)
-    fan.rotation.z =
+  if (fan) {
+    fan.rotation.y = -c.state[c.side].facing * 0.65
+    const flutter =
       reduced || c.frame.paperLaunch === null
         ? 0
         : Math.sin((Math.PI * c.frame.paperLaunch) / 18) * 0.22
+    fan.rotation.z = Math.PI + flutter
+  }
   posePlanted(options, c)
 }
 function posePlanted(

@@ -5,7 +5,7 @@ import type { ArcadeFighter } from './types'
 export function usesRightHandPose(fighter: ArcadeFighter, key: string): boolean {
   if (key === 'padaille-cuff-escape') return false
   return (
-    ['chrollo', 'kurapika', 'luini', 'shizuku'].includes(fighter.id) ||
+    ['chrollo', 'kurapika', 'luini', 'shizuku', 'kalluto'].includes(fighter.id) ||
     bodyguardFiring(fighter) ||
     key === 'roster-writing' ||
     key === 'roster-console'

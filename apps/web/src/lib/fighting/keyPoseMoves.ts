@@ -16,6 +16,7 @@ import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
 import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { HANZO_KEY_POSES } from './keyPosesHanzo'
 import { FEITAN_PAIN_PACKER, FEITAN_RISING_SUN } from './keyPosesFeitan'
+import { KALLUTO_KEY_POSES } from './keyPosesKalluto'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
@@ -37,6 +38,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
     ...HISOKA_SPECIAL_POSES,
   },
   franklin: FRANKLIN_KEY_POSES,
+  kalluto: KALLUTO_KEY_POSES,
   chrollo: { ...CHROLLO_NORMAL_POSES, ...CHROLLO_COMMAND_POSES, ...CHROLLO_KEY_POSES },
   benjamin: { ...BENJAMIN_NORMAL_POSES, ...BENJAMIN_COMMAND_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },

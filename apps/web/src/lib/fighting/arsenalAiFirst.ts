@@ -2,7 +2,7 @@ import { benjaminAiSlots } from './benjaminAi'
 import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
-import { hasPlantedPaper, paperState } from './kallutoPaper'
+import { kallutoAiSlots } from './kallutoAi'
 import { BUNGEE_REST_DISTANCE } from './hisokaTechnique'
 import { aiGumLink, networkGumSlots, idleGumSlots } from './bungeeAiCombat'
 import { SENSE_BITS } from './saiyuSenses'
@@ -41,7 +41,7 @@ export const FIRST_ARSENAL_AI = {
     varySlots(roll, ['neutralSpecial', 'forwardSpecial', 'downSpecial', 'backSpecial', 'finisher']),
   machi: machiSlots,
   illumi: ({ state, gap }) => illumiAiSlots(state, gap),
-  kalluto: kallutoSlots,
+  kalluto: kallutoAiSlots,
   bonolenov: bonolenovSlots,
   shizuku: shizukuSlots,
   hinrigh: ({ state, roll, gap }) => biohazardAiSlots(state, roll, gap),
@@ -124,13 +124,6 @@ function machiSlots({ state, gap }: ArsenalAiContext): readonly import('./types'
   const thread = machiThreadForOwner(state, 'opponent')
   if (thread?.kind === 'bind') return ['finisher']
   return thread ? ['downSpecial', 'standingLight'] : ['forwardSpecial', 'downSpecial']
-}
-
-function kallutoSlots({ state, roll }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  const paper = paperState(state.opponent)
-  if (!hasPlantedPaper(state, 'opponent', paper.zone))
-    return [roll < 0.5 ? 'neutralSpecial' : 'downSpecial']
-  return !paper.doll ? ['backSpecial'] : ['forwardSpecial', 'finisher']
 }
 
 function bonolenovSlots({

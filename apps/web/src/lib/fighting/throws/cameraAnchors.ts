@@ -24,9 +24,18 @@ export function throwDetailAnchors(
     frame.performance === 'kurapika-last-link' ? human.knees[0].children[1] : targets[target]
   return {
     from: from.getWorldPosition(new Vector3()),
-    to: node.getWorldPosition(new Vector3()),
+    to: detailTarget(from, node, performance),
     yaw: detailYaw(frame),
   }
+}
+
+function detailTarget(
+  from: Object3D,
+  node: Object3D,
+  performance: ReturnType<typeof throwPerformance>,
+) {
+  const target = performance?.effect === 'flute' ? from : node
+  return target.getWorldPosition(new Vector3())
 }
 
 function detailSource(figure: Object3D, frame: ThrowCinematicFrame): Object3D | undefined {

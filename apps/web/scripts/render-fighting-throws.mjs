@@ -32,9 +32,11 @@ function ffmpeg(args) {
   if (result.status !== 0) throw new Error(result.stderr || 'ffmpeg failed')
 }
 try {
-  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
+  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'fourth'
+  const ids = process.env.THROW_ROSTER_BATCH === 'fifth'
+    ? ['rihan', 'zakuro', 'melody', 'basho', 'camilla']
+    : process.env.THROW_ROSTER_BATCH === 'fourth'
     ? ['shizuku', 'hinrigh', 'mizaistom', 'leorio', 'hanzo']
     : process.env.THROW_ROSTER_BATCH === 'third'
     ? ['franklin', 'machi', 'illumi', 'kalluto', 'bonolenov']
@@ -48,7 +50,7 @@ try {
       const frames = path.join(output, name)
       await mkdir(frames, { recursive: true })
       await page.evaluate((options) => window.throwFixture.reset(options), {
-        id, powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
+        id, powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
       })
       await page.waitForTimeout(120)
       const count = powered ? 36 : 24

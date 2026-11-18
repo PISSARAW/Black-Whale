@@ -41,6 +41,16 @@ export type ThrowPerformanceId =
   | 'leorio-house-call'
   | 'hanzo-blind-side'
   | 'hanzo-moonfall'
+  | 'rihan-snare'
+  | 'rihan-dead-end'
+  | 'zakuro-red-step'
+  | 'zakuro-red-spiral'
+  | 'melody-offbeat'
+  | 'melody-last-bar'
+  | 'basho-fifth-verse'
+  | 'basho-full-stop'
+  | 'camilla-kiss-hand'
+  | 'camilla-dismissal'
 
 export interface ThrowBeat {
   at: number
@@ -77,6 +87,11 @@ export interface ThrowPerformance {
     | 'doctor'
     | 'remote'
     | 'ninja'
+    | 'hunter'
+    | 'blood'
+    | 'flute'
+    | 'poet'
+    | 'royal'
   grip?: 'both' | 'prop' | 'scissors' | 'waist'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean

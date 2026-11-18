@@ -60,6 +60,11 @@ const pairs = {
   mizaistom: ['mizaistom-warning', 'mizaistom-custody'],
   leorio: ['leorio-consultation', 'leorio-house-call'],
   hanzo: ['hanzo-blind-side', 'hanzo-moonfall'],
+  rihan: ['rihan-snare', 'rihan-dead-end'],
+  zakuro: ['zakuro-red-step', 'zakuro-red-spiral'],
+  melody: ['melody-offbeat', 'melody-last-bar'],
+  basho: ['basho-fifth-verse', 'basho-full-stop'],
+  camilla: ['camilla-kiss-hand', 'camilla-dismissal'],
 }
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
@@ -68,14 +73,15 @@ try {
     .filter((_, index) => {
       if (process.env.THROW_ROSTER_BATCH === 'second') return index >= 5 && index < 10
       if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10 && index < 15
-      if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15
+      if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15 && index < 20
+      if (process.env.THROW_ROSTER_BATCH === 'fifth') return index >= 20
       return true
     })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))
   const entries = process.argv.includes('--ko-only') ? [] : selected
   for (const [id, variants] of entries) {
     for (const side of ['player', 'opponent']) for (const powered of [false, true]) {
-      await reset({ id, side, powered })
+      await reset({ id, side, powered, bleed: id === 'zakuro' })
       for (const [age, phase] of [[2, 'grip'], [9, 'turn'], [16, 'slam'], [22, 'release']]) {
         const value = await seek(age)
         assert.equal(value.audit.performance, variants[Number(powered)])
@@ -103,6 +109,9 @@ try {
         if (phase === 'turn' && id === 'shizuku') assert.equal(value.audit.equipment.blinky, true)
         if (phase === 'turn' && id === 'leorio' && powered) assert.ok(value.audit.effects.includes('throw-signature:remote'))
         if (phase === 'turn' && id === 'hanzo' && powered) assert.ok(value.audit.scissorsGap < 0.3)
+        if (phase === 'turn' && id === 'zakuro') assert.ok(value.audit.effects.includes('throw-signature:blood'))
+        if (phase === 'turn' && id === 'camilla' && powered) assert.ok(value.audit.effects.includes('throw-signature:royal'))
+        if (phase === 'grip' && id === 'melody' && powered) assert.ok(value.audit.effects.includes('throw-signature:flute'))
         if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
         await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
         samples.push({ id, side, powered, phase, audit: value.audit })
@@ -137,6 +146,18 @@ try {
   assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:paper'))
   await reset({ id: 'illumi', noNeedles: true })
   assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:needles'))
+  await reset({ id: 'zakuro' })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:blood'))
+  await reset({ id: 'zakuro', bleed: true, sealed: true })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:blood'))
+  await reset({ id: 'melody', powered: true, confiscated: true })
+  assert.ok(!(await seek(2)).audit.effects.includes('throw-signature:flute'))
+  await reset({ id: 'camilla', powered: true, confiscated: true })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:royal'))
+  await reset({ id: 'basho', powered: true, poem: true })
+  const written = await seek(9)
+  assert.ok(written.audit.effects.includes('throw-signature:poet'))
+  assert.ok(!written.state.opponent.bashoBurn)
   await reset({ id: 'shizuku', sealed: true })
   const noBlinky = await seek(9)
   assert.equal(noBlinky.audit.performance, null)

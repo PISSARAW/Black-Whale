@@ -9,6 +9,8 @@
     performThrow,
     tickFight,
   } from '$lib/fighting/engine'
+  import { commandMary } from '$lib/fighting/bloodyMaryAction'
+  import { performAuraAttack } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
   import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from '$lib/fighting/types'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
@@ -130,6 +132,8 @@
       freezeKO?: boolean
       trueForm?: boolean
       confiscated?: boolean
+      bleed?: boolean
+      poem?: boolean
       prologue?: boolean
       noNeedles?: boolean
       sealed?: boolean
@@ -158,7 +162,9 @@
         throwTechFrames: options.tech ? 8 : 0,
       },
     }
-    if (options.prologue) {
+    if (options.bleed)
+      current = commandMary({ state: current, side, command: 'bleed' }, performAuraAttack)
+    if (options.prologue || options.poem) {
       current = performMove({ state: current, side, action: 'special' })
       for (let i = 0; i < 61; i++)
         current = tickFight(current, EMPTY_INPUT, {

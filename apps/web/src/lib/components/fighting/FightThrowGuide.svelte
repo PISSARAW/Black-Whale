@@ -42,6 +42,16 @@
         ? 'Un pigeon Biohazard déjà transformé et proche peut accompagner la super projection.'
         : 'A nearby Biohazard pigeon already transformed can assist the super throw.'}
     </p>{/if}
+  {#if fighterId === 'zakuro'}<p>
+      {language === 'fr'
+        ? 'Une plaie ouverte et trois unités de sang disponibles permettent à Bloody Mary d’accompagner la prise.'
+        : 'An open wound and three available blood units let Bloody Mary assist the grab.'}
+    </p>{/if}
+  {#if fighterId === 'basho'}<p>
+      {language === 'fr'
+        ? 'Basho conserve son haïku préparé pour les coups de poing suivants.'
+        : 'Basho keeps his prepared haiku for the following punches.'}
+    </p>{/if}
 </aside>
 
 <style>

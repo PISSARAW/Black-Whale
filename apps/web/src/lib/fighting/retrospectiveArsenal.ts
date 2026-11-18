@@ -1,3 +1,5 @@
+import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
+import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { personDolphinOptions } from './dolphinPeopleOptions'
 import { paperScatterOptions, performPaperScatterCommand } from './kallutoScatterCommands'
 import { paperKitOptions, performPaperKitCommand } from './kallutoMaterialActions'
@@ -91,6 +93,7 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['gum-anchor-', performGumObjectAnchorCommand],
   ['paper-release-confetti', performPaperScatterCommand],
   ['paper-kit-', performPaperKitCommand],
   ['paper-stop-listening', performPaperReceiverCommand],
@@ -152,6 +155,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...bashoWardOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
+    ...gumObjectAnchorOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),
     ...dolphinLoanOptions(state, side),

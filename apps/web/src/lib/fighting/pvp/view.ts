@@ -65,6 +65,11 @@ function localSustainedKey(value: string): string {
 }
 
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
+    ...anchor,
+    source: undefined,
+    theftId: undefined,
+  }))
   enemy.blackVoiceScreen = undefined
   enemy.littleEyeScreen = undefined
   if (enemy.blackVoiceGear)
@@ -155,6 +160,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
+  hideGumObjectAnchors(enemy)
   if (enemy.nen.in) {
     enemy.nen = createFightingNen()
     enemy.gyoFocus = undefined
@@ -165,11 +171,19 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null
 }
+function hideGumObjectAnchors(enemy: ArcadeFighter): void {
+  const anchors = enemy.gumObjectAnchors?.filter((anchor) => !anchor.hidden)
+  enemy.gumObjectAnchors = anchors?.length ? anchors : undefined
+}
 export function pvpSnapshot(state: FightState, side: FightSide) {
   const visible = privatePvpState(state, side)
   return { snapshot: encodeFightSnapshot(visible), snapshotHash: fightReplayHash(visible) }
 }
 
 function redactReserves(view: FightState, side: FightSide): void {
-  for (const member of view.teamMatch?.seats[side].members ?? []) redactEnemy(member)
+  const observer = view[side === 'player' ? 'opponent' : 'player']
+  for (const member of view.teamMatch?.seats[side].members ?? []) {
+    redactEnemy(member)
+    if (!gyoSight(observer)) hideGumObjectAnchors(member)
+  }
 }

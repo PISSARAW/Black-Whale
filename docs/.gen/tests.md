@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 850
+Fichiers : 853
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -687,6 +687,18 @@ Fichiers : 850
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/gumObjectAnchorBorrowing.test.ts`
+
+- object gum keeps the actual Hatsu’s provenance and material lifetime > requires an active Bungee Gum page and stops when that page is left without a bookmark
+
+## `apps/web/src/lib/fighting/gumObjectAnchorReplay.test.ts`
+
+- object attachments through real AI and replay commands > keeps both actual owners and shared physical supports through P2 commands, walking, reeling and replay
+
+## `apps/web/src/lib/fighting/gumObjectAnchors.test.ts`
+
+- Hisoka’s simultaneous physical object attachments > requires actual contact, then walks and jumps to another support without discarding the first strand
 
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 

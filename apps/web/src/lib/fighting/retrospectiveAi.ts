@@ -1,4 +1,5 @@
 import { littleEyeAi } from './littleEyeAi'
+import { gumObjectAnchorAi } from './gumObjectAnchorAi'
 import { paperKitAi } from './kallutoMaterialAi'
 import { judgmentInquiryAi } from './judgmentInquiryAi'
 import { dolphinLoanAi } from './dolphinAi'
@@ -11,7 +12,7 @@ import { dowsingAi } from './dowsingAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
-import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
+import { ownsBungeeGum } from './hisokaArsenal'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -182,8 +183,8 @@ function gumAi(state: FightState): FightState | null {
       : incomingObject(state)
         ? 'gum-catch'
         : null
-  if (!action) return null
-  const next = performGumCommand(state, 'opponent', { action })
+  if (!action) return gumObjectAnchorAi(state)
+  const next = performArsenalCommand(state, 'opponent', { action })
   return next === state ? null : next
 }
 function shouldSealWounds(state: FightState): boolean {

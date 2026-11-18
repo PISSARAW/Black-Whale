@@ -79,7 +79,7 @@ function sealGumWounds(state: FightState, side: FightSide): FightState {
   return { ...paid, [side]: { ...paid[side], gumWoundSeals: wounds, arenaRecovery: 18 } }
 }
 
-function spendGumUse(state: FightState, side: FightSide, cost: number): FightState {
+export function spendGumUse(state: FightState, side: FightSide, cost: number): FightState {
   const fighter = state[side],
     chain = fighter.kurapika
   return {

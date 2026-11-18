@@ -1,6 +1,7 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { bungeeVisible } from './hisokaTechnique'
 import { gyoSight } from './nenPerception'
+import { createGumObjectAnchorScene } from './gumObjectAnchorScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightState } from './types'
 import type { Mesh } from 'three'
@@ -8,6 +9,7 @@ import type { Mesh } from 'three'
 /** Deform the visit's strand along the actual tether, retaining its thickness and anchor. */
 export function createBungeeGumScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE } = options
+  const objectAnchors = createGumObjectAnchorScene(options)
   const model = createVisitHatsuModel(THREE, {
     model: 'bungee-gum',
     joints: ['gum-strand', 'gum-anchor'],
@@ -30,6 +32,7 @@ export function createBungeeGumScene(options: EffectSceneOptions): FighterEffect
   options.scene.add(model.root)
   return {
     sync(state, seconds) {
+      objectAnchors.sync(state, seconds)
       const points = gumPoints(options, state)
       model.root.visible = bungeeVisible(state, options.viewer?.() ?? 'player') && points.length > 1
       if (!model.root.visible) return
@@ -60,7 +63,10 @@ export function createBungeeGumScene(options: EffectSceneOptions): FighterEffect
         material.opacity = state.bungeeGum?.hidden ? 0.4 : 0.82
       })
     },
-    dispose: model.dispose,
+    dispose() {
+      objectAnchors.dispose()
+      model.dispose()
+    },
   }
 }
 

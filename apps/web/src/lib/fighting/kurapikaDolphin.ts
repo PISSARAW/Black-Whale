@@ -11,6 +11,7 @@ import {
 import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
+import { gumObjectAnchors } from './gumObjectAnchors'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
@@ -164,7 +165,19 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */
 export function dismissDolphinGum(state: FightState, side: FightSide): FightState {
-  return state.bungeeGum?.owner === side ? { ...state, bungeeGum: null } : state
+  const actor = state[side]
+  const held = equippedDolphin(actor)
+  const anchors = gumObjectAnchors(actor).filter(
+    (anchor) => anchor.source !== 'dolphin' || anchor.theftId !== held?.theftId,
+  )
+  const next =
+    anchors.length === gumObjectAnchors(actor).length
+      ? state
+      : {
+          ...state,
+          [side]: { ...actor, gumObjectAnchors: anchors.length ? anchors : undefined },
+        }
+  return next.bungeeGum?.owner === side ? { ...next, bungeeGum: null } : next
 }
 
 function changedDolphinCounters(before: FightState, after: FightState): string[] {
@@ -236,9 +249,16 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
 
 function gumUseBusy(fighter: ArcadeFighter): boolean {
   if (!ownsBungeeGum(fighter)) return false
+  if (borrowedObjectAnchorBusy(fighter)) return true
   if (fighter.gumWoundSeals) return true
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
+  )
+}
+function borrowedObjectAnchorBusy(fighter: ArcadeFighter): boolean {
+  const held = equippedDolphin(fighter)
+  return gumObjectAnchors(fighter).some(
+    (anchor) => anchor.source === 'dolphin' && anchor.theftId === held?.theftId,
   )
 }
 

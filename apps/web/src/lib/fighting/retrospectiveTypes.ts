@@ -35,6 +35,11 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'gum-anchor-attach',
+  'gum-anchor-self',
+  'gum-anchor-object',
+  'gum-anchor-stop',
+  'gum-anchor-release',
   'paper-release-confetti',
   'paper-kit-take',
   'paper-kit-drop',

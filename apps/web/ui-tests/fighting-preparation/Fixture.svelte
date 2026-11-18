@@ -172,6 +172,37 @@
     }
     await tick()
   }
+  export async function prepareGumObjectAnchors() {
+    player = 'hisoka'
+    opponent = 'theta'
+    reset(createFightEnvironment({ arenaInteractions: true }))
+    state = {
+      ...state,
+      player: { ...state.player, x: 28.5, aura: 100 },
+      opponent: { ...state.opponent, x: 88 },
+    }
+    state = performArsenalCommand(state, 'player', {
+      action: 'gum-anchor-attach',
+      target: 'arena:crate:34',
+    })
+    for (let index = 0; index < 20; index++) advanceFrame()
+    for (let index = 0; index < 240 && state.player.x < 59.5; index++)
+      state = tickFight(
+        state,
+        { ...EMPTY_INPUT, right: true, jump: true },
+        {
+          dt: 1 / 60,
+          opponentInput: EMPTY_INPUT,
+        },
+      )
+    for (let index = 0; index < 100 && state.player.y > 0; index++) advanceFrame()
+    state = performArsenalCommand(state, 'player', {
+      action: 'gum-anchor-attach',
+      target: 'arena:crate:66',
+    })
+    for (let index = 0; index < 20; index++) advanceFrame()
+    await tick()
+  }
   function castPaper(slot: string) {
     state = performAuraAttack({
       state,
@@ -229,6 +260,8 @@
       playerHeard: state.player.heardWords,
       dowsing: state.player.dowsingReading,
       dowsingPrompt: state.opponent.dowsingPrompt,
+      gumAnchors: state.player.gumObjectAnchors,
+      playerX: state.player.x,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
       scatters: ownedPaperScatters(state, activePaperOwner(state, 'player')),
@@ -272,7 +305,7 @@
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
     <FightKallutoSupplies {state} side="player" language="fr" />
-    {#if ['kalluto', 'kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if ['hisoka', 'kalluto', 'kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

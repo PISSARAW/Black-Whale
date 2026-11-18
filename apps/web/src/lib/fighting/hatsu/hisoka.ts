@@ -1,6 +1,7 @@
 import { ownsBungeeGum } from '../hisokaArsenal'
 import { chrolloAbilityActive } from '../chrolloAbilityActive'
 import { advanceGumArsenal } from '../hisokaArsenal'
+import { advanceGumObjectAnchors } from '../gumObjectAnchorFrames'
 import { categoryPower } from '../nenCategories'
 import { chainAbilitySealed } from '../kurapika'
 import { attackPhase } from '../frameData'
@@ -34,7 +35,8 @@ export const hisokaHatsu: FighterHatsu = {
       bungeeGum: { owner: side, target: defenderSide, hidden: concealed, retracting: false },
     }
   },
-  onFrame: (state) => advanceGumArsenal(reelIn(SIDES.reduce(advanceTechnique, state))),
+  onFrame: (state) =>
+    advanceGumObjectAnchors(advanceGumArsenal(reelIn(SIDES.reduce(advanceTechnique, state)))),
 }
 
 function advanceTechnique(state: FightState, side: FightSide): FightState {

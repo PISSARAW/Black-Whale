@@ -167,7 +167,10 @@
       <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
       <FightBattleCantabile {state} {side} {language} {onTalk} {onBattleAction} />
-      {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
+      {#if !state.battlefield || fighter.id === 'beyond'}<FightOutsideDuelStatus
+          {fighter}
+          {language}
+        />{/if}
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

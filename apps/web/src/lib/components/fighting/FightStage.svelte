@@ -9,6 +9,7 @@
   import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
+  import FightEssentialStatus from './FightEssentialStatus.svelte'
   import FightTouchControls from './FightTouchControls.svelte'
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
@@ -47,8 +48,10 @@
   $: victory.observe(state, victoryEnabled)
   $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
+  export let minimal = false
   export let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
   export let state: FightState
+  export let onMoves: (() => void) | undefined = undefined
   export let language: 'fr' | 'en'
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
   export let onAttack: (kind: AttackKind) => void
@@ -94,6 +97,7 @@
   {language}
   paused={paused || victoryActive}
   viewer={sensoryViewer}
+  showSettings={!minimal}
   bind:settings={audioSettings}
 />
 <section
@@ -143,6 +147,7 @@
       {/if}
       {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
       <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
+      {#if minimal && !throwFilm}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
     {/if}
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
@@ -151,14 +156,14 @@
     <FightThrowCinematic {state} {comfort} {language} enabled={!$victory?.active && !$intro} bind:active={throwFilm} />
   </div>
   {#if !victoryActive}
-    <FightParallelFuture
-      {state}
-      {language}
-      bind:viewer={futureViewer}
-      bind:scrub={futurePreview}
-      onOpenEyes={() => onAttack('special')}
-    />
-    <FightDecisionReadout state={visibleState} {language} />
+    {#if !minimal || state.parallelFuture}<FightParallelFuture
+        {state}
+        {language}
+        bind:viewer={futureViewer}
+        bind:scrub={futurePreview}
+        onOpenEyes={() => onAttack('special')}
+      />{/if}
+    {#if !minimal}<FightDecisionReadout state={visibleState} {language} />{/if}
     {#if showControls && !paused && !$intro}<FightTouchControls
         state={visibleState}
         {language}
@@ -166,35 +171,39 @@
         {onThrow}
         {onCall}
         {onFinisher}
+        {onMoves}
+        {onEmperor}
         {onControl}
       />{/if}
-    <FightBlinkyPanel
-      state={visibleState}
-      {language}
-      onTarget={onBlinkyTarget}
-      onCommand={onBlinkyCommand}
-      onHold={(side, key, active) =>
-        side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
-    />
-    <FightResources
-      {onOpponentControl}
-      {onTalk}
-      {onBattleAction}
-      {onControl}
-      state={visibleState}
-      {language}
-      {detailed}
-      {showControls}
-      {onEmperor}
-      onAura={(active) => onControl('aura', active)}
-    />
-    <FightEasterEggs
-      {state}
-      {language}
-      {paused}
-      bind:preferences={easterEggPreferences}
-      onPlay={onEasterEgg}
-    />
+    {#if !minimal}
+      <FightBlinkyPanel
+        state={visibleState}
+        {language}
+        onTarget={onBlinkyTarget}
+        onCommand={onBlinkyCommand}
+        onHold={(side, key, active) =>
+          side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
+      />
+      <FightResources
+        {onOpponentControl}
+        {onTalk}
+        {onBattleAction}
+        {onControl}
+        state={visibleState}
+        {language}
+        {detailed}
+        {showControls}
+        {onEmperor}
+        onAura={(active) => onControl('aura', active)}
+      />
+      <FightEasterEggs
+        {state}
+        {language}
+        {paused}
+        bind:preferences={easterEggPreferences}
+        onPlay={onEasterEgg}
+      />
+    {/if}
   {/if}
 </section>
 

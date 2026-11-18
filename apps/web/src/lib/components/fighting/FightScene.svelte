@@ -20,6 +20,7 @@
   import type { CinematicFrame } from '$lib/fighting/cinematicTrack'
   import { applyPresentationCamera } from '$lib/fighting/presentation/introCamera'
   import type { IntroFrame } from '$lib/fighting/presentation/introPlayback'
+  import { fightCameraBodyBounds } from '$lib/fighting/fightCameraBodyBounds'
   import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightReactionPresentation } from '$lib/fighting/fightReactionPresentation'
@@ -329,6 +330,7 @@
             direction,
             detail: Boolean(detail),
             detailRect,
+            fallenBounds: fightCameraBodyBounds(state, models),
             companion: visibleFutureBeastOwner(state, viewer),
             intensity: cameraIntensity(),
             minimumDistance: scenery.framing?.minimumDistance,

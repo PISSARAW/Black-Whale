@@ -1,10 +1,10 @@
 import { expect, test, type Page } from 'playwright/test'
+import { openPauseTab } from './helpers/fighting'
 
 async function lesson(page: Page, name: string) {
-  await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
-  await page.getByText('Apprendre le Nen · 20 exercices pratiques', { exact: true }).click()
+  await page.goto('/fr/fighting/academy', { waitUntil: 'networkidle' })
   await page.getByRole('button', { name, exact: true }).click()
-  await expect(page.getByRole('region', { name: 'Exercice du Nen', exact: true })).toBeVisible()
+  await expect(page.locator('.battle-objective')).toBeVisible()
   await expect(page.locator('.ready-overlay')).toHaveCount(0)
 }
 async function hatsu(page: Page, direction?: string) {
@@ -12,14 +12,15 @@ async function hatsu(page: Page, direction?: string) {
   await page.keyboard.press('l')
   if (direction) await page.keyboard.up(direction)
 }
-const panel = (page: Page) => page.getByRole('region', { name: 'Exercice du Nen', exact: true })
+const panel = (page: Page) => page.locator('.battle-objective')
 
 test('Ren is action-gated, pauses safely, retries, and returns to free training', async ({
   page,
 }) => {
   await lesson(page, '6. Ren : maintenir son aura')
-  await expect(panel(page).getByRole('button', { name: 'Exercice suivant' })).toBeDisabled()
-  await page.keyboard.press('p')
+  await openPauseTab(page, 'Entraînement')
+  await expect(page.getByRole('button', { name: 'Exercice suivant' })).toBeDisabled()
+  await page.locator('.clash-pause-menu').focus()
   await page.keyboard.down('Space')
   await page.waitForTimeout(1200)
   await expect(panel(page)).not.toContainText('Exercice réussi.')
@@ -28,9 +29,11 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
   await page.keyboard.down('Space')
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
   await page.keyboard.up('Space')
-  await panel(page).getByRole('button', { name: 'Recommencer' }).click()
+  await openPauseTab(page, 'Entraînement')
+  await page.getByRole('button', { name: 'Recommencer', exact: true }).click()
   await expect(panel(page)).not.toContainText('Exercice réussi.')
-  await panel(page).getByRole('button', { name: 'Entraînement libre' }).click()
+  await openPauseTab(page, 'Entraînement')
+  await page.getByRole('button', { name: 'Entraînement libre', exact: true }).click()
   await expect(panel(page)).toHaveCount(0)
   await expect(
     page.getByRole('region', { name: 'Laboratoire d’entraînement', exact: true }),
@@ -80,7 +83,8 @@ test('Benjamin attaches Secret Window and the lesson panel stays readable on mob
   const bounds = await panel(page).boundingBox()
   expect(bounds!.x).toBeGreaterThanOrEqual(0)
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(391)
-  const buttons = panel(page).getByRole('button')
+  await openPauseTab(page, 'Entraînement')
+  const buttons = page.locator('.lesson-panel').getByRole('button')
   for (const button of await buttons.all()) {
     const box = await button.boundingBox()
     expect(box!.x).toBeGreaterThanOrEqual(0)

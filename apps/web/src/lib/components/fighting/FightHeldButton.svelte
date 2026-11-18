@@ -26,8 +26,9 @@
   }}
   onpointerdown={(event) => {
     if (event.button !== 0) return
+    if (!held.press(`pointer:${event.pointerId}`)) return
+    event.preventDefault()
     event.currentTarget.setPointerCapture(event.pointerId)
-    held.press(`pointer:${event.pointerId}`)
   }}
   onpointerup={(event) => held.release(`pointer:${event.pointerId}`)}
   onpointercancel={() => held.cancel()}

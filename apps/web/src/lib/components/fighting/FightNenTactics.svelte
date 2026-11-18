@@ -1,6 +1,7 @@
 <script lang="ts">
   import FightNenApplications from './FightNenApplications.svelte'
   import FightNenGuide from './FightNenGuide.svelte'
+  import FightHeldButton from './FightHeldButton.svelte'
   import { enProfile } from '$lib/fighting/en/profiles'
   import { enDescription } from '$lib/fighting/en/presentation'
   import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
@@ -24,34 +25,20 @@
   aria-label={language === 'fr' ? 'Techniques Nen à maintenir' : 'Hold Nen techniques'}
 >
   {#each controls as control (control.key)}
-    <button
-      type="button"
+    <FightHeldButton
       disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
-      title={control.key === 'en' && fighter ? enDescription(fighter, language) : control.label}
-      onpointerdown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId)
-        onControl(control.key, true)
-      }}
-      onpointerup={() => onControl(control.key, false)}
-      onpointercancel={() => onControl(control.key, false)}
-      onlostpointercapture={() => onControl(control.key, false)}
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.stopPropagation()
-          onControl(control.key, true)
-        }
-      }}
-      onkeyup={(event) => {
-        event.stopPropagation()
-        onControl(control.key, false)
-      }}
-      onblur={() => onControl(control.key, false)}
-      ><kbd>{control.shortcut}</kbd>
+      label={control.key === 'en' && fighter
+        ? enDescription(fighter, language)
+        : control.label.includes('/')
+          ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
+          : control.label}
+      onHold={(active) => onControl(control.key, active)}
+    >
+      <kbd>{control.shortcut}</kbd>
       {control.label.includes('/')
         ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
-        : control.label}</button
-    >
+        : control.label}
+    </FightHeldButton>
   {/each}
   {#if fighter}<FightNenApplications {fighter} {language} {onControl} />{/if}
   <FightNenGuide {language} />
@@ -63,7 +50,7 @@
     flex-wrap: wrap;
     gap: 0.35rem;
   }
-  button {
+  .tactics :global(button) {
     min-height: 44px;
     padding: 0.35rem 0.55rem;
     border: 1px solid #6b8a9a;
@@ -73,10 +60,10 @@
     font: inherit;
     touch-action: none;
   }
-  button:active {
+  .tactics :global(button:active) {
     background: #285469;
   }
-  button:focus-visible {
+  .tactics :global(button:focus-visible) {
     outline: 2px solid #e7ca7c;
     outline-offset: 2px;
   }

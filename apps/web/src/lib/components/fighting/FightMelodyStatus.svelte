@@ -46,6 +46,18 @@
         : language === 'fr'
           ? 'régulier'
           : 'steady'} · {read.direction === 1 ? '→' : '←'}
+      {#if read.acceleration}
+        · {read.acceleration === 'sudden'
+          ? language === 'fr'
+            ? 'accélération brusque'
+            : 'sudden acceleration'
+          : language === 'fr'
+            ? 'accélération progressive'
+            : 'gradual acceleration'}
+        · {language === 'fr'
+          ? 'indice de stress · vérité indéterminée'
+          : 'stress clue · truth unknown'}
+      {/if}
       {#if read.threat === 'startup'}
         · {language === 'fr' ? 'attaque en préparation' : 'attack preparing'}{/if}
       {#if read.frames >= MELODY_LISTEN_FRAMES}

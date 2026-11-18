@@ -1,6 +1,7 @@
 <script lang="ts">
   import {
     BASHO_POEMS,
+    BASHO_TRIAL_POEMS,
     bashoCanWrite,
     recognizedBashoPoem,
     hasBashoPoem,
@@ -47,8 +48,13 @@
       >
       <p>
         {fr
-          ? 'Composition prise en charge : le haïku du chapitre 68 qui enflamme ce que frappe le poing. Les trois lignes ci-dessous en sont une traduction de sens. Les autres poèmes ne sont pas interprétés par ce duel.'
-          : 'Supported composition: the chapter 68 haiku that ignites what the fist strikes. The three lines below translate its meaning. Other poems are not interpreted by this duel.'}
+          ? 'Compositions prises en charge : les deux haïkus du chapitre 68, le poing qui enflamme et la menace du jugement du feu. Les vers sont des traductions de sens. Les autres poèmes ne sont pas interprétés par ce duel.'
+          : 'Supported compositions: the two chapter 68 haiku, the igniting fist and the trial-by-fire threat. The lines translate their meaning. Other poems are not interpreted by this duel.'}
+      </p>
+      <p>
+        {fr
+          ? 'Le jugement du feu permet de lire la menace et d’interroger dans l’arsenal. Chaque joueur décide de répondre ou de se taire. La sanction n’est pas exécutée dans la scène d’origine : aucune détection de vérité ni mort automatique n’est ajoutée.'
+          : 'Trial by fire lets you read the threat and question through the arsenal. Each player chooses whether to answer or remain silent. The source scene never executes the punishment: no truth detection or automatic death is added.'}
       </p>
       <p>
         {fr
@@ -90,6 +96,12 @@
             </button>
             <button
               type="button"
+              onclick={() => (drafts = { ...drafts, [side]: BASHO_TRIAL_POEMS[language] })}
+            >
+              {fr ? 'Recopier la menace du feu' : 'Copy the fire threat'}
+            </button>
+            <button
+              type="button"
               disabled={paused ||
                 !recognizedBashoPoem(draft(side, drafts, language)) ||
                 !bashoCanWrite(state, side)}
@@ -104,13 +116,18 @@
     {#each sides.filter((side) => poet(state, side)) as side (side)}
       {#if state[side].bashoPoem}
         <p class="status" role="status">
-          {name(side)} · {state[side].bashoPoem?.ready
+          {name(side)} · {state[side].bashoPoem?.ready &&
+          state[side].bashoPoem?.effect === 'trial-by-fire'
             ? fr
-              ? 'Poème écrit : le prochain contact du poing peut enflammer.'
-              : 'Poem written: a connecting fist can ignite.'
-            : fr
-              ? 'Écriture en cours… Restez immobile et exposé.'
-              : 'Writing… Remain still and exposed.'}
+              ? 'Menace écrite : lire le poème et interroger dans l’arsenal.'
+              : 'Threat written: read the poem and question through the arsenal.'
+            : state[side].bashoPoem?.ready
+              ? fr
+                ? 'Poème écrit : le prochain contact du poing peut enflammer.'
+                : 'Poem written: a connecting fist can ignite.'
+              : fr
+                ? 'Écriture en cours… Restez immobile et exposé.'
+                : 'Writing… Remain still and exposed.'}
         </p>
         <blockquote>{state[side].bashoPoem?.text}</blockquote>
       {/if}

@@ -2,6 +2,7 @@
   import {
     maryCommandReady,
     maryOwned,
+    maryWoundSeals,
     maryState,
     type MaryCommand,
   } from '$lib/fighting/bloodyMary'
@@ -31,6 +32,11 @@
       en: 'Eyed scouts · 3 blood + 8 aura',
     },
     { command: 'recall', fr: 'Rappeler le sang', en: 'Recall blood' },
+    {
+      command: 'scout-wall',
+      fr: 'Gouttes-yeux sur une paroi réelle',
+      en: 'Eyed scouts on a real wall',
+    },
     { command: 'infuse', fr: 'Perfusion · 2 s + 1 aura', en: 'Infusion · 2 s + 1 aura' },
   ]
   $: fr = language === 'fr'
@@ -81,6 +87,11 @@
               ? 'Plaie requise'
               : 'Wound required'}
         </p>
+        {#if maryWoundSeals(fighter) > 0}<p>
+            {fr
+              ? 'Saignement arrêté par le contrôle du sang · aucun PV rendu'
+              : 'Bleeding stopped by blood control · no HP restored'}
+          </p>{/if}
         {#if !maryHasInfusion(fighter)}<p class="warning">
             {fr
               ? 'Perfusion réelle manquante : le Hatsu ne fournit pas le matériel.'
@@ -121,7 +132,7 @@
             {blood.drops.length}
             {fr ? 'gouttes en reconnaissance' : 'scouting droplets'}
           </p>{/if}
-        {#if blood.lastSeen}<p>
+        {#if blood.lastSeen && (side === 'player' || state.mode !== 'versus-ai')}<p>
             {fr ? 'Dernière position observée' : 'Last observed position'} : {blood.lastSeen.x.toFixed(
               1,
             )} · {Math.max(0, (state.frame - blood.lastSeen.frame) / 60).toFixed(1)} s

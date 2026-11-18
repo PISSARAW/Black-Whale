@@ -1,5 +1,6 @@
 import { reservingAura } from './combatIntentPolicy'
 import { moveHisokaOpponent } from './hisokaFootwork'
+import { moveChrolloOpponent } from './chrolloFootwork'
 import { recoveryPunishOptions } from './recoveryPunish'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput } from './opponentHabits'
@@ -38,8 +39,8 @@ export function moveCounterplayOpponent(options: {
   const projectiles = projectileMovement(view, fighter, cue)
   if (projectiles) return projectiles
   fighter = { ...fighter, projectileDefence: undefined }
-  const hisoka = moveHisokaOpponent(fighter, target)
-  if (hisoka) return hisoka
+  const personal = personalFootwork(fighter, target)
+  if (personal) return personal
   if (reservingAura(fighter)) return moveRememberedOpponent(view, fighter)
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
@@ -55,6 +56,10 @@ export function moveCounterplayOpponent(options: {
     },
     input,
   )
+}
+
+function personalFootwork(fighter: ArcadeFighter, target: ArcadeFighter): ArcadeFighter | null {
+  return moveHisokaOpponent(fighter, target) ?? moveChrolloOpponent(fighter, target)
 }
 
 function projectileMovement(

@@ -1,8 +1,10 @@
 import { placeVisitHand, createVisitScenePool } from './visitSceneKit'
 import { guardianActive } from './tserriednichGuardian'
 import { voluntaryNenAvailable } from './nenAccess'
+import { chrolloKnifeHand } from './chrolloWeapon'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { HistoricalWeapon } from './historicalWeapons'
+import type { FightState, FightSide } from './types'
 
 /** The same held object becomes the released projectile; guardian anatomy comes from the archive. */
 export function createHistoricalEquipmentScene(options: EffectSceneOptions): FighterEffectScene {
@@ -45,9 +47,7 @@ export function createHistoricalEquipmentScene(options: EffectSceneOptions): Fig
         actor.historicalWeapon ??
         (!actor.historicalWeaponSpent ? actor.historicalWeaponThrow : undefined)
       if (held && !actor.weaponsConfiscated && !actor.hanzoProjection) {
-        const root = weapon(`${side}:${held}`, held)
-        placeVisitHand(options, { state, side, root })
-        root.rotateZ(actor.facing * 0.4)
+        placeHeld(state, side, held)
       }
       if (
         side === viewer ||
@@ -67,6 +67,17 @@ export function createHistoricalEquipmentScene(options: EffectSceneOptions): Fig
       )
       beast.root.rotation.y = actor.facing * 0.4
     }
+  }
+  function placeHeld(state: FightState, side: FightSide, held: HistoricalWeapon) {
+    const actor = state[side]
+    const root = weapon(`${side}:${held}`, held)
+    placeVisitHand(options, {
+      state,
+      side,
+      root,
+      ...(actor.id === 'chrollo' ? { hand: chrolloKnifeHand(actor), wrist: true } : {}),
+    })
+    root.rotateZ(actor.facing * 0.4)
   }
   return {
     sync(state) {

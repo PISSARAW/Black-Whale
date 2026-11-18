@@ -8,7 +8,16 @@ const BOOK_MOVES: Partial<Record<MoveSlot, { cost: number; tuning: Partial<MoveT
   },
   forwardSpecial: {
     cost: 30,
-    tuning: { startup: 18, damage: 0, hitstun: 0, blockstun: 0, knockback: 0, lunge: 0, reach: 6, targetZone: 'hands' },
+    tuning: {
+      startup: 18,
+      damage: 0,
+      hitstun: 0,
+      blockstun: 0,
+      knockback: 0,
+      lunge: 0,
+      reach: 6,
+      targetZone: 'hands',
+    },
   },
   backSpecial: {
     cost: 0,
@@ -24,6 +33,15 @@ const BOOK_MOVES: Partial<Record<MoveSlot, { cost: number; tuning: Partial<MoveT
   },
 }
 
+const PHYSICAL_NAMES: Partial<Record<MoveSlot, readonly [string, string]>> = {
+  standingHeavy: ['Coup de pied d’arrêt', 'Stop Kick'],
+  lowLight: ['Frappe basse', 'Low Strike'],
+  airLight: ['Main du voleur', 'Thief’s Hand'],
+  forwardLight: ['Paume rapide', 'Quick Palm'],
+  forwardHeavy: ['Coude du chef', 'Leader Elbow'],
+  backHeavy: ['Contre du voleur', 'Thief Counter'],
+}
+
 export function tuneChrolloMoveset(moveset: FighterMoveset): FighterMoveset {
   if (moveset.fighterId !== 'chrollo') return moveset
   return { ...moveset, moves: moveset.moves.map(tuneMove) }
@@ -31,5 +49,17 @@ export function tuneChrolloMoveset(moveset: FighterMoveset): FighterMoveset {
 
 function tuneMove(move: FighterMove): FighterMove {
   const spec = BOOK_MOVES[move.slot]
-  return spec ? { ...move, auraCost: spec.cost, tuning: { ...move.tuning, ...spec.tuning } } : move
+  return spec
+    ? { ...move, auraCost: spec.cost, tuning: { ...move.tuning, ...spec.tuning } }
+    : physicalMove(move)
+}
+function physicalMove(move: FighterMove): FighterMove {
+  const names = PHYSICAL_NAMES[move.slot]
+  const kick = ['standingHeavy', 'lowHeavy', 'airHeavy'].includes(move.slot)
+  return {
+    ...move,
+    nameFr: names?.[0] ?? move.nameFr,
+    nameEn: names?.[1] ?? move.nameEn,
+    tuning: { ...move.tuning, auraZone: kick ? 'feet' : 'hands' },
+  }
 }

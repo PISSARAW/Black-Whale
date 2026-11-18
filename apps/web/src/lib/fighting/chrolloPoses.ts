@@ -6,11 +6,16 @@ import {
 } from './chrolloBook'
 import { keyedMove, type KeyedMove } from './keyPoseMoves'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
+import { chrolloPhysicalMove } from './chrolloPhysicalPoses'
 import type { ArcadeFighter } from './types'
 
 /** Keep page casts on the proper hand, and reuse the stolen technique's own gesture. */
 export function chrolloKeyedMove(fighter: ArcadeFighter): KeyedMove | null {
-  if (fighter.id !== 'chrollo' || fighter.attack?.kind !== 'special') return null
+  if (fighter.id !== 'chrollo') return null
+  return chrolloPhysicalMove(fighter) ?? specialChrolloMove(fighter)
+}
+function specialChrolloMove(fighter: ArcadeFighter): KeyedMove | null {
+  if (fighter.attack?.kind !== 'special') return null
   const page = chrolloPageForMove(fighter, fighter.attack.moveId)
   if (!page) return null
   if (chrolloPageSource(page) !== 'chrollo') {

@@ -52,6 +52,11 @@ const HISOKA_MOBILITY: Mobility = {
 }
 
 const PERSONAL_MOBILITY: Partial<Record<ArcadeFighter['id'], Mobility>> = {
+  chrollo: {
+    backWalk: 0.94,
+    forwardDash: { frames: 16, peak: 110 },
+    backDash: { frames: 14, peak: 104 },
+  },
   feitan: FEITAN_MOBILITY,
   hisoka: HISOKA_MOBILITY,
 }

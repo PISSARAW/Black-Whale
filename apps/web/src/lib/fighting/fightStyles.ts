@@ -79,12 +79,13 @@ const STYLES: Record<FighterId, FightingStyle> = {
     id: 'chrollo',
     nameFr: 'Stratège de zone',
     nameEn: 'Control strategist',
-    descriptionFr: 'Patient, maintient l’espace et privilégie les ouvertures sûres.',
-    descriptionEn: 'Patiently maintains space and commits only to safe openings.',
+    descriptionFr:
+      'Observe, se dérobe puis contre avec sa main libre, ses jambes ou le couteau de Ben.',
+    descriptionEn: 'Observes, withdraws and counters with his free hand, legs or Ben’s knife.',
     preferredRange: [11, 16],
     retreatBelowHealth: 36,
     guardRange: 22,
-    moveScale: 0.92,
+    moveScale: 1.06,
     specialChance: 0.42,
     heavyThreshold: 0.54,
     attacks: {

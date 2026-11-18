@@ -1,4 +1,5 @@
 import { canAct } from './fightActorState'
+import { chrolloKnifeContact } from './chrolloWeapon'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
@@ -36,11 +37,16 @@ export function historicalBladeStrike(fighter: ArcadeFighter): boolean {
     return false
   if (fighter.id === 'feitan')
     return ['light', 'heavy'].includes(fighter.attack.kind) && fighter.attack.variant !== 'throw'
+  return ordinaryBladeStrike(fighter)
+}
+function ordinaryBladeStrike(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'chrollo' && !chrolloKnifeContact(fighter)) return false
+  const attack = fighter.attack!
   return Boolean(
     fighter.historicalWeapon &&
     fighter.historicalWeapon !== 'bokken' &&
-    ['light', 'heavy'].includes(fighter.attack.kind) &&
-    fighter.attack.variant !== 'throw',
+    ['light', 'heavy'].includes(attack.kind) &&
+    attack.variant !== 'throw',
   )
 }
 export function performHistoricalWeapon(

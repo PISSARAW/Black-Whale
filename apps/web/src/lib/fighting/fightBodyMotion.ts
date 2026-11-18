@@ -12,6 +12,7 @@ import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { usesRightHandPose } from './fightHandConvention'
 import { fighterKeyedMove } from './fighterKeyedMove'
+import { chrolloBodyStance } from './chrolloBodyStance'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
@@ -250,8 +251,9 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       blend: 0.12,
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
-  if (fighter.attack) return attackingPlan(fighter, standing, context.poseFraction)
-  return restingWithConstraint(fighter, context, standing)
+  const personal = chrolloBodyStance(fighter, standing)
+  if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
+  return restingWithConstraint(fighter, context, personal)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!fighter.luiniPassage || fighter.hitStun > 0) return null

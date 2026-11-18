@@ -1,4 +1,5 @@
 import { fourCombatAi } from './fourCombatAi'
+import { chrolloEquipmentAi } from './chrolloEquipmentAi'
 import { multiCombatAi } from './multiCombatAi'
 import { priorityArsenalAi } from './priorityArsenalAi'
 import { luiniArsenalAi } from './luiniArsenal'
@@ -30,7 +31,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    fourCombatAi(state, perform) ??
+    physicalEquipmentAi(state, perform) ??
     multiCombatAi(state) ??
     priorityArsenalAi(state) ??
     luiniArsenalAi(state, perform) ??
@@ -39,6 +40,12 @@ export function retrospectiveAiAction(
     singleCombatArsenalAi(state, perform) ??
     hatsuArsenalAi(state, perform)
   )
+}
+function physicalEquipmentAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return chrolloEquipmentAi(state, perform) ?? fourCombatAi(state, perform)
 }
 
 function supportAi(state: FightState): FightState | null {

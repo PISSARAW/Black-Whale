@@ -1,3 +1,4 @@
+import { chrolloDashPoses, CHROLLO_WALK_STYLE } from './chrolloLocomotion'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
@@ -121,10 +122,12 @@ interface WalkStyle {
 }
 
 const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
+  chrollo: CHROLLO_WALK_STYLE,
   hisoka: HISOKA_WALK_STYLE,
   feitan: FEITAN_WALK_STYLE,
 }
 const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
+  chrollo: chrolloDashPoses,
   hisoka: hisokaDashPoses,
   feitan: feitanDashPoses,
 }

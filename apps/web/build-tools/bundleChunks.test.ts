@@ -1,3 +1,4 @@
+import { SHIP_ROOM_STAGES } from '../src/lib/fighting/stageCatalogue'
 import { NEN_CANON } from '../src/lib/fighting/nenCanon'
 import { BENJAMIN_CANON } from '../src/lib/fighting/benjaminCanon'
 import { CHROLLO_CANON } from '../src/lib/fighting/chrolloCanon'
@@ -164,6 +165,7 @@ describe('production bundle partitioning', () => {
       'rosterChoreographySecond',
       'fightStancesRoster',
       'fightExpressionProfiles',
+      'stageCatalogue',
     ]
     const built = await compile(
       modules
@@ -182,11 +184,17 @@ describe('production bundle partitioning', () => {
       SECOND_ROSTER_CHOREOGRAPHY,
       ROSTER_STANCES,
       FIGHT_EXPRESSION_PROFILES,
+      SHIP_ROOM_STAGES,
     }
     for (const [name, value] of Object.entries(expected)) expect(actual[name]).toEqual(value)
     expect(
       built.result.output.some(
         (item) => item.type === 'chunk' && item.name === 'clash-presentation-catalogues',
+      ),
+    ).toBe(true)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-stage-catalogue',
       ),
     ).toBe(true)
     expect(built.warnings).toEqual([])

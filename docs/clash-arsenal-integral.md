@@ -508,6 +508,13 @@ et un travail interruptible. Elle reconnecte chaque avant-bras sans
 régénérer de chair ni rendre les PV perdus. Le livre et Dolphin conservent
 leurs conditions propres ; le On reste disponible.
 
+## Bungee Gum post-mortem — ruleset 72
+
+L’[ordre préalable au cœur et aux poumons](./clash-hisoka-reanimation.md) est
+utilisable de son vivant. La scène rétrospective du chapitre 357 fournit une
+véritable asphyxie déclarée et un contexte viable ; le pompage ne régénère
+aucun tissu et ne remplace pas les autres causes de mort. Le On est conservé.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -518,7 +525,7 @@ de couverture des profils ou un nombre de tests :
 | Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter est utilisable avec identité manuscrite et mois de scénario défini, sans prédire son propre avenir. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                                         |
-| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                                                       |
+| Hisoka     | Ordre post-mortem et scène d’asphyxie viable du chapitre 357 exécutables, sans résurrection après un KO ou une autre mort ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                |
 | Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. La localisation sur carte réelle est exécutable ; auditer encore les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
 | Halkenburg | Compléter la protection collective, les priorités après une mort réelle et l’arsenal de la conscience hébergée. Les priorités des deux consciences vivantes sont exécutables. Un échange persistant, le tirage de Halkenburg et le déplacement du corps touché sont exécutables.                                                                                                                                                                                                                              |
 

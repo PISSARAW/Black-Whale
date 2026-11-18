@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 987
+Fichiers : 990
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -771,6 +771,14 @@ Fichiers : 987
 ## `apps/web/src/lib/fighting/gumProsthesisFigure.test.ts`
 
 - rubber replacements and their real surface disguise on the articulated model > shows the actual damaged parts without erasing the rest of the rig
+
+## `apps/web/src/lib/fighting/gumResuscitationCommands.test.ts`
+
+- the post-mortem prelude blocks actual combat inputs without cleansing the other body > blocks contextual scenery actions, direct attacks, moves, throws and arsenal commands
+
+## `apps/web/src/lib/fighting/gumResuscitationIntegration.test.ts`
+
+- cardiopulmonary Bungee Gum through the actual application boundaries > lets the AI give a prior order without inventing a death certificate
 
 ## `apps/web/src/lib/fighting/gumSurfaceReplay.test.ts`
 

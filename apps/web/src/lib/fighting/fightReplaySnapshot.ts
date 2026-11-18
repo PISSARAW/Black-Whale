@@ -49,9 +49,12 @@ function missingPossession(value: unknown, path: string): boolean {
   return value === undefined && optionalPossession(path)
 }
 
-/** Real possessions may be dropped, lost or absent from the opponent's private view. */
+/** Physical possessions and consumed historical premises may be absent from a later snapshot. */
 function optionalPossession(path: string): boolean {
-  return /^(player|opponent)\.(writingKit|paperKit|blackVoiceGear(?:\.phone)?)$/.test(path)
+  if (path === 'preparedAsphyxia') return true
+  return /^(player|opponent)\.(writingKit|paperKit|blackVoiceGear(?:\.phone)?|gumResuscitationProgram|asphyxiaCertificate)$/.test(
+    path,
+  )
 }
 
 function replayBodyMatches(body: Record<string, unknown>, id: string): boolean {

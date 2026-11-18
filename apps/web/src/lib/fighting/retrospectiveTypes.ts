@@ -55,6 +55,7 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'gum-program-resuscitation',
   'gum-anchor-attach',
   'gum-anchor-self',
   'gum-anchor-object',

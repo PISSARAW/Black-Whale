@@ -23,6 +23,7 @@ function characterBusy(fighter: ArcadeFighter): boolean {
       fighter.machiSuture,
       fighter.machiReattachment,
       fighter.ghostwriterWriting,
+      fighter.gumResuscitationPaused,
       fighter.corpsePreparation,
     ].some(Boolean)
   )

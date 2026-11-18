@@ -138,6 +138,7 @@ function quietWorld(state: FightState): boolean {
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
+      state.gumResuscitation,
       state.moonlight,
       state.bungeeGum,
       gumBusy(state),

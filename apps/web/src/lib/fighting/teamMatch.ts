@@ -87,7 +87,7 @@ function relayFrame(
   const seat = state.teamMatch!.seats[side],
     relay = seat.relay
   if (!relay) return { state, input: null }
-  if ([state.hitstop, state.parallelFuture, state.catsName].some(Boolean))
+  if ([state.hitstop, state.parallelFuture, state.catsName, state.gumResuscitation].some(Boolean))
     return { state, input: EMPTY_INPUT }
   relay.frames++
   approachRelay(state, side)

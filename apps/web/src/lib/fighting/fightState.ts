@@ -1,3 +1,4 @@
+import { prepareHisokaAsphyxia } from './gumResuscitationScenario'
 import { prepareFortuneScenario } from './ghostwriterScenario'
 import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
@@ -81,7 +82,7 @@ export function createFightState(
     impact: null,
   })
   return applyControlSchemes(
-    prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created))),
+    prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
     typeof options === 'string' ? undefined : options.controls,
   )
 }
@@ -174,6 +175,8 @@ export function preserveLifespan(
     {
       ...fighter,
       personalEncounters: previous.personalEncounters,
+      gumResuscitationProgram: previous.gumResuscitationProgram,
+      gumResuscitationCompleted: previous.gumResuscitationCompleted,
       blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
     },
     previous,

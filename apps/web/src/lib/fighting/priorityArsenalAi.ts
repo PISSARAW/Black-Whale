@@ -1,3 +1,4 @@
+import { gumResuscitationAi } from './gumResuscitationAi'
 import { ghostwriterAi } from './ghostwriterAi'
 import { machiReattachmentAi } from './machiReattachmentAi'
 import { performMachiMaterial } from './machiMaterial'
@@ -10,6 +11,8 @@ import type { FightState } from './types'
 
 export function priorityArsenalAi(state: FightState): FightState | null {
   const actor = state.opponent
+  const priorOrder = gumResuscitationAi(state)
+  if (priorOrder !== state) return priorOrder
   const fortune = ghostwriterAi(state)
   if (fortune !== state) return fortune
   const stitching = machiReattachmentAi(state)

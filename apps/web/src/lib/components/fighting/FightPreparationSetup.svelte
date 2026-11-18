@@ -26,7 +26,9 @@
       scenario
         ? {
             mode: 'scenario',
-            resources: resources.map((entry) => entry.id),
+            resources: resources
+              .filter((entry) => entry.initiallySelected !== false)
+              .map((entry) => entry.id),
             cohorts: (['player', 'opponent'] as const).filter(
               (side) => (side === 'player' ? player : opponent) === 'halkenburg',
             ),

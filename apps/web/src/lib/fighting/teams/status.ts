@@ -9,6 +9,6 @@ export function teamLivingForView(state: FightState, side: FightSide): number {
   return seat.members.filter(
     (_member, index) =>
       teamMemberForView(state, side, index).health > 0 ||
-      (index === seat.active && Boolean(state.catsName)),
+      (index === seat.active && Boolean(state.catsName || state.gumResuscitation)),
   ).length
 }

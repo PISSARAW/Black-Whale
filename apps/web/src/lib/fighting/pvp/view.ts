@@ -43,6 +43,7 @@ const SIDE_FIELDS = new Set([
   'subject',
   'affected',
   'cohorts',
+  'preparedAsphyxia',
   'recipientSide',
   'from',
   'to',
@@ -76,6 +77,8 @@ function localSustainedKey(value: string): string {
 }
 
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.gumResuscitationProgram = undefined
+  enemy.asphyxiaCertificate = undefined
   enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
     ...anchor,
     source: undefined,
@@ -220,6 +223,8 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
 }
 function hideGumObjectAnchors(enemy: ArcadeFighter): void {
   const anchors = enemy.gumObjectAnchors?.filter((anchor) => !anchor.hidden)
+  enemy.gumResuscitationProgram = undefined
+  enemy.asphyxiaCertificate = undefined
   enemy.gumObjectAnchors = anchors?.length ? anchors : undefined
 }
 export function pvpSnapshot(state: FightState, side: FightSide) {

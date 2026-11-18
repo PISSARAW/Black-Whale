@@ -1,6 +1,7 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
+  | 'hisoka-asphyxia'
   | 'fortunes'
   | 'cameras'
   | 'hostages'

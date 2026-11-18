@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { GUM_RESUSCITATION_STATUS } from '$lib/fighting/gumResuscitationPresentation'
   import FightDolphinPeople from './FightDolphinPeople.svelte'
   import FightJudgmentInterview from './FightJudgmentInterview.svelte'
   import FightDowsingInterview from './FightDowsingInterview.svelte'
@@ -27,6 +28,14 @@
       ? (['player', 'opponent'] as const)
       : (['player'] as const)
 </script>
+
+{#if state.gumResuscitation}
+  <p role="status" class="resuscitation-status">
+    {state.gumResuscitation.victimSide === 'player' ? 'P1' : 'P2'} · {GUM_RESUSCITATION_STATUS[
+      language
+    ]}
+  </p>
+{/if}
 
 {#each ['player', 'opponent'] as publicSide (publicSide)}
   {@const caster = state[publicSide as FightSide]}

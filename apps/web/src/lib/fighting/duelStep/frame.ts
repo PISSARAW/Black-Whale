@@ -1,3 +1,4 @@
+import { stepGumResuscitation } from '../gumResuscitation'
 import { advanceRetrospectiveHitstop } from '../retrospectiveClocks'
 import { performArenaAction } from '../arenaActions'
 import { advanceArena, readArenaInputs } from '../arenaSimulation'
@@ -20,6 +21,7 @@ export function openFrame(
   inputs: DuelInputs,
   attack: DuelAttack,
 ): DuelPhaseResult {
+  if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }

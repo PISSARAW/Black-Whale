@@ -10,11 +10,11 @@ import type { FightFinishReason, FightSide, FightState } from './types'
 const SIDES = ['player', 'opponent'] as const
 
 export function fightResolutionPending(state: FightState): boolean {
-  return state.phase === 'finished' || Boolean(state.catsName)
+  return state.phase === 'finished' || Boolean(state.catsName || state.gumResuscitation)
 }
 
 export function fightAcceptsCommands(state: FightState): boolean {
-  return state.phase === 'fighting' && !state.catsName
+  return state.phase === 'fighting' && !state.catsName && !state.gumResuscitation
 }
 
 /** The sole verdict path for damage and attributed deaths; time and expulsion are nonlethal. */
@@ -23,7 +23,7 @@ export function resolveFightOutcome(state: FightState): FightState {
   if (fightResolutionPending(state)) return state
   const durable = preservePointHealth(releaseBiohazardWounds(state, BIOHAZARD_GRACE))
   const triggered = resolvePostMortemDeaths(durable)
-  if (triggered.catsName) return triggered
+  if (triggered.catsName || triggered.gumResuscitation) return triggered
   const cleared = { ...triggered, deaths: undefined }
   if (state.mode === 'training') return restoreTrainingCasualties(cleared)
   const playerLost = lossReason(triggered, 'player')

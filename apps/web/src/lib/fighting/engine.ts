@@ -1,3 +1,4 @@
+import { beginPreparedAsphyxia } from './gumResuscitationScenario'
 import { finishPhysicalFrame } from './physicalFrameClocks'
 import { performLegacyThrow } from './legacyThrow'
 import { expireHistoricalMatter } from './historicalMatterClock'
@@ -79,7 +80,7 @@ export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
 
 export function beginFight(state: FightState): FightState {
-  return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
+  return state.phase === 'ready' ? beginPreparedAsphyxia({ ...state, phase: 'fighting' }) : state
 }
 
 export interface FightTickOptions {
@@ -195,7 +196,7 @@ export function performMove(options: PerformMoveOptions): FightState {
 
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
-  if (state.catsName) return state
+  if (fightResolutionPending(state)) return state
   const selected = moveForAction(state[side], action, input)
   if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
   const override = characterMoveOverride(
@@ -227,6 +228,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (options.state.gumResuscitation) return options.state
   options = { ...options, state: expireHistoricalMatter(options.state) }
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
@@ -358,7 +360,7 @@ export function performThrow(state: FightState, side: FightSide): FightState {
   if (state[side].easterEgg) return state
   if (state[side].cyclotronWindup) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
-  if (state.catsName) return state
+  if (fightResolutionPending(state)) return state
   const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
   if (move) return performMove({ state, side, action: 'throw' })
   return performLegacyThrow(state, side, performAuraAttack)

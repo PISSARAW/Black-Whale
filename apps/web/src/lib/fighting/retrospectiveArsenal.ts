@@ -1,3 +1,4 @@
+import { gumResuscitationOptions } from './gumResuscitationAction'
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
@@ -214,6 +215,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...bashoWardOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
+    ...gumResuscitationOptions(state, side),
     ...textureSurfaceOptions(state, side),
     ...illumiFaceOptions(state, side),
     ...needleModeOptions(state, side),

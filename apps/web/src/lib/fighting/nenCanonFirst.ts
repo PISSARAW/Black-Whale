@@ -27,7 +27,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     effect: 'Sticky elastic aura changes spacing; Texture Surprise changes surface appearance.',
     prohibition: 'No teleportation, healing, invulnerability or physical change from a texture.',
     adaptation:
-      'One fighter-to-fighter tether, cloth preparation, reach and composed card finish tune the duel.',
+      'Multiple physical elastic links, wound seals and rubber replacements retain their supports. A prior heart/lung order is executable in the declared viable-asphyxia scene of ch.357; no generic resurrection or restored flesh. Costs and cinematic duration tune the duel.',
   },
   chrollo: {
     abilities: [

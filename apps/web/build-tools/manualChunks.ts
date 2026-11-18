@@ -26,59 +26,50 @@ function threeChunkName(id: string): string {
   return 'three-foundation'
 }
 
-function clashChunkName(id: string): string | undefined {
-  if (/\/fighting\/ghostwriterScenarioData\.ts$/.test(id)) return 'clash-fortune-scenarios'
-  if (
-    /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-physical-rules'
-  if (
-    /\/fighting\/(?:fightClock|formats|health|towerJudging|preparationTuning|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-style-catalogues'
-  if (
-    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|rosterCombatRoutes|billSupportTuning|secretWindowListeningMove|kallutoTuning|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto|bill|leorio|musse|mizaistom|padaille|rihan|feitan|camilla|hisoka|gel|chrollo|theta)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-move-catalogues'
-  if (/\/fighting\/arenaTechnique(?:Types|sFirst|sSecond)\.ts$/.test(id))
-    return 'clash-arena-catalogues'
+const CLASH_CHUNK_RULES: readonly (readonly [RegExp, string])[] = [
+  [/\/fighting\/ghostwriterScenarioData\.ts$/, 'clash-fortune-scenarios'],
+  [/\/fighting\/stageCatalogue\.ts$/, 'clash-stage-catalogue'],
+  [
+    /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter|gumResuscitationRules)\.ts$/,
+    'clash-physical-rules',
+  ],
+  [
+    /\/fighting\/(?:fightClock|formats|health|towerJudging|preparationTuning|preparationResources|trainingTypes|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/,
+    'clash-style-catalogues',
+  ],
+  [
+    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|rosterCombatRoutes|billSupportTuning|secretWindowListeningMove|kallutoTuning|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto|bill|leorio|musse|mizaistom|padaille|rihan|feitan|camilla|hisoka|gel|chrollo|theta)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/,
+    'clash-move-catalogues',
+  ],
+  [/\/fighting\/arenaTechnique(?:Types|sFirst|sSecond)\.ts$/, 'clash-arena-catalogues'],
+  [
+    /\/fighting\/kameos\/(?:catalogue|comboLessonCatalogue|comboRosterRoutes)\.ts$/,
+    'clash-kameo-catalogues',
+  ],
+  [
+    /\/fighting\/duelCombo(?:\w*(?:Profiles|Lessons)|Grammar|DerivedGrammar)\.ts$/,
+    'clash-combo-catalogues',
+  ],
+  [
+    /\/fighting\/(?:nenCanon(?:First|Second)?|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/,
+    'clash-nen-canon',
+  ],
+  [
+    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles|rosterTechniqueGestures|ghostwriterPresentation)\.ts$/,
+    'clash-presentation-catalogues',
+  ],
+  [
+    /\/fighting\/cinematic(?:Troupe|Royal|Control|Support|Object|Movement|Kurapika|Nen)Rules\.ts$/,
+    'clash-camera-catalogues',
+  ],
+  [
+    /\/fighting\/(?:arenaMap|dowsingMap(?:Ai|Body|Matter|Options|Presentation|Types)?)\.ts$/,
+    'clash-map-location',
+  ],
+  [/\/fighting\/kalluto(?:Gather|StoredPaper|CopyKit)\.ts$/, 'clash-paper-inventory'],
+  [/\/fighting\/[^/]+Options\.ts$/, 'clash-arsenal-options'],
+]
 
-  if (/\/fighting\/kameos\/(?:catalogue|comboLessonCatalogue|comboRosterRoutes)\.ts$/.test(id))
-    return 'clash-kameo-catalogues'
-  if (/\/fighting\/duelCombo(?:\w*(?:Profiles|Lessons)|Grammar|DerivedGrammar)\.ts$/.test(id))
-    return 'clash-combo-catalogues'
-  if (
-    /\/fighting\/(?:nenCanon(?:First|Second)?|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-nen-canon'
-  if (
-    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles|rosterTechniqueGestures|ghostwriterPresentation)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-presentation-catalogues'
-  if (
-    /\/fighting\/cinematic(?:Troupe|Royal|Control|Support|Object|Movement|Kurapika|Nen)Rules\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-camera-catalogues'
-  if (
-    /\/fighting\/(?:arenaMap|dowsingMap(?:Ai|Body|Matter|Options|Presentation|Types)?)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-map-location'
-  if (/\/fighting\/kalluto(?:Gather|StoredPaper|CopyKit)\.ts$/.test(id))
-    return 'clash-paper-inventory'
-  if (/\/fighting\/[^/]+Options\.ts$/.test(id)) return 'clash-arsenal-options'
-  return undefined
+function clashChunkName(id: string): string | undefined {
+  return CLASH_CHUNK_RULES.find(([pattern]) => pattern.test(id))?.[1]
 }

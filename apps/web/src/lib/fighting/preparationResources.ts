@@ -1,7 +1,18 @@
 import type { PreparationResource } from './preparationTypes'
 
 /** Explicit scenario matter, shared by the visible setup, PvP and replays. */
-export const SCENARIO_RESOURCES: readonly { id: PreparationResource; fr: string; en: string }[] = [
+export const SCENARIO_RESOURCES: readonly {
+  id: PreparationResource
+  fr: string
+  en: string
+  initiallySelected?: boolean
+}[] = [
+  {
+    id: 'hisoka-asphyxia',
+    initiallySelected: false,
+    fr: 'Hisoka · scène du chapitre 357 : ordre antérieur, asphyxie et organes viables, air rétabli',
+    en: 'Hisoka · chapter 357 scene: prior order, asphyxia, viable organs and restored air',
+  },
   {
     id: 'fortunes',
     fr: 'Lovely Ghostwriter · participant fictif, identité manuscrite, portrait et mois défini',

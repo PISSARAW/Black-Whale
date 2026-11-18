@@ -25,7 +25,8 @@
   <h2>{label} · {teamLivingForView(state, side)}/3</h2>
   {#each seat.members as stored, index (stored.id)}
     {@const member = teamMemberForView(state, side, index)}
-    {@const pendingBody = index === seat.active && Boolean(state.catsName)}
+    {@const pendingBody =
+      index === seat.active && Boolean(state.catsName || state.gumResuscitation)}
     {@const block = blocks[index]}
     <div class="member" class:eliminated={member.health <= 0 && !pendingBody}>
       <strong>{fighterDefinition(member.id).name}</strong>

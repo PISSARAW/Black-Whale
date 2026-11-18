@@ -1,9 +1,9 @@
 # Kaméos de soutien — plan de conception
 
-Statut : lots 0 à 5 faits. Le kaméo de soutien peut être appelé, entre, applique son
-effet et repart, dans le moteur. Le rendu, le HUD et les touches de l'interface
-(lot 6) restent à faire. Nom de travail « Kaméo » (terme de MK) ; un nom propre à
-Clash est à choisir pour l'interface.
+Statut : lots 0 à 6 faits. Les kaméos de soutien se choisissent à la préparation
+(un par camp), s'appellent au clavier ou à la manette, apparaissent avec le modèle de
+leur personnage et s'affichent dans le HUD. Restent les replays et le PvP (lot 8) et
+le nom définitif pour l'interface.
 
 ## Objectif (révisé : kaméos de soutien)
 

@@ -81,8 +81,8 @@ describe('nonblocking tactical scheduler', () => {
     const requested: string[] = []
     const duel = createQwenDuel({
       clock: () => now,
-      transport: (observation) => {
-        requested.push(observation.fighter)
+      transport: (observation, _signal, seat) => {
+        requested.push(`${seat}:${observation.fighter}`)
         return new Promise((resolve) => {
           deliver = resolve
         })
@@ -95,16 +95,17 @@ describe('nonblocking tactical scheduler', () => {
     duel.setEnabled(true)
     expect(duel.step(fight())).not.toBeNull()
     duel.step(fight())
-    expect(requested).toEqual(['hisoka'])
+    expect(requested).toEqual(['player:hisoka'])
     deliver(reply)
     await settle()
-    expect(status).toMatchObject({ accepted: 1 })
+    expect(status).toMatchObject({ accepted: 1, models: { player: 'qwen-test', opponent: null } })
     now = 1700
     duel.step(fight())
-    expect(requested).toEqual(['hisoka', 'machi'])
+    expect(requested).toEqual(['player:hisoka', 'opponent:machi'])
     expect(status).toMatchObject({ source: { player: 'qwen', opponent: 'local' } })
-    deliver({ ...reply, plan: { ...plan, move: 'downSpecial' } })
+    deliver({ ...reply, model: 'rival-test', plan: { ...plan, move: 'downSpecial' } })
     await settle()
+    expect(status).toMatchObject({ models: { player: 'qwen-test', opponent: 'rival-test' } })
     duel.dispose()
   })
   it('discards replies from a previous round or disabled session', async () => {

@@ -69,6 +69,12 @@ services:
       CLASH_OLLAMA_URL: ${CLASH_OLLAMA_URL:-}
       CLASH_OLLAMA_MODEL: ${CLASH_OLLAMA_MODEL:-}
       CLASH_OLLAMA_TOKEN: ${CLASH_OLLAMA_TOKEN:-}
+      CLASH_OLLAMA_MODEL_P1: ${CLASH_OLLAMA_MODEL_P1:-}
+      CLASH_OLLAMA_MODEL_P2: ${CLASH_OLLAMA_MODEL_P2:-}
+      CLASH_OLLAMA_URL_P1: ${CLASH_OLLAMA_URL_P1:-}
+      CLASH_OLLAMA_URL_P2: ${CLASH_OLLAMA_URL_P2:-}
+      CLASH_OLLAMA_TOKEN_P1: ${CLASH_OLLAMA_TOKEN_P1:-}
+      CLASH_OLLAMA_TOKEN_P2: ${CLASH_OLLAMA_TOKEN_P2:-}
       INDEXNOW_KEY: ${INDEXNOW_KEY:-}
     # Ollama runs on the host, not in this stack: this name is how the
     # container reaches it. See infrastructure/hetzner/README.md.

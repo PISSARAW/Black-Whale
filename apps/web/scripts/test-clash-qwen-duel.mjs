@@ -17,10 +17,18 @@ try {
     CLASH_OLLAMA_URL: process.env.CLASH_OLLAMA_URL ?? 'http://127.0.0.1:11439',
     CLASH_OLLAMA_MODEL: process.env.CLASH_OLLAMA_MODEL ?? 'qwen2.5:1.5b',
     CLASH_OLLAMA_TOKEN: process.env.CLASH_OLLAMA_TOKEN,
+    ...Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => /^CLASH_OLLAMA_\w+_P[12]$/.test(key)),
+    ),
   }
   const result = await testQwenDuel({
-    transport: (observation, signal) =>
-      askClashQwen({ env, observation, fetcher: (url, init) => fetch(url, { ...init, signal }) }),
+    transport: (observation, signal, seat) =>
+      askClashQwen({
+        env,
+        observation,
+        seat,
+        fetcher: (url, init) => fetch(url, { ...init, signal }),
+      }),
     progress: (value) => process.stdout.write(JSON.stringify(value) + '\n'),
   })
   const output = resolve(root, '../../output/hisoka-machi-qwen')

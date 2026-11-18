@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createFight } from '$lib/fighting/engine'
 import { observeCombat } from '$lib/fighting/qwen/observation'
-import { askClashQwen, clashQwenConfig, validCombatObservation } from './clashQwen'
+import { askClashQwen, clashQwenConfig, clashQwenSeats, validCombatObservation } from './clashQwen'
 
 const env = { CLASH_OLLAMA_URL: 'http://127.0.0.1:11439', CLASH_OLLAMA_MODEL: 'qwen2.5:1.5b' }
 const observation = () => observeCombat(createFight('hisoka', 'machi'), 'player')
@@ -9,6 +9,48 @@ describe('private Clash Ollama integration', () => {
   it('keeps Clash configuration separate from the tour gateway and credentials', () => {
     expect(clashQwenConfig({ OLLAMA_URL: 'https://tour.example', OLLAMA_MODEL: 'tour' })).toBeNull()
     expect(clashQwenConfig(env)).toMatchObject({ url: env.CLASH_OLLAMA_URL, timeoutMs: 18000 })
+  })
+  it('lets each seat override the shared model, endpoint and token', async () => {
+    const duel = {
+      ...env,
+      CLASH_OLLAMA_MODEL_P2: 'llama3.2:3b',
+      CLASH_OLLAMA_URL_P2: 'http://127.0.0.1:11440',
+      CLASH_OLLAMA_TOKEN_P2: 'seat-two',
+    }
+    expect(clashQwenConfig(duel, 'player')).toMatchObject({
+      model: 'qwen2.5:1.5b',
+      url: env.CLASH_OLLAMA_URL,
+    })
+    expect(clashQwenConfig(duel, 'opponent')).toMatchObject({
+      model: 'llama3.2:3b',
+      url: 'http://127.0.0.1:11440',
+      token: 'seat-two',
+    })
+    expect(clashQwenSeats(duel)).toEqual({ player: 'qwen2.5:1.5b', opponent: 'llama3.2:3b' })
+    let called = ''
+    let auth = ''
+    const fetcher = async (url: unknown, init: RequestInit | undefined) => {
+      called = String(url)
+      auth = String((init?.headers as Record<string, string>)?.authorization)
+      return new Response(
+        JSON.stringify({ message: { content: '{"goal":"pressure","nen":"ten","move":"none"}' } }),
+      )
+    }
+    const result = await askClashQwen({
+      env: duel,
+      observation: observation(),
+      seat: 'opponent',
+      fetcher: fetcher as typeof fetch,
+    })
+    expect(result?.model).toBe('llama3.2:3b')
+    expect(called).toContain('11440')
+    expect(auth).toBe('Bearer seat-two')
+  })
+  it('needs both seats configured before a duel', () => {
+    expect(
+      clashQwenSeats({ CLASH_OLLAMA_MODEL_P1: 'a', CLASH_OLLAMA_URL: env.CLASH_OLLAMA_URL }),
+    ).toBeNull()
+    expect(clashQwenSeats(env)).toEqual({ player: 'qwen2.5:1.5b', opponent: 'qwen2.5:1.5b' })
   })
   it('rejects malformed observations before inference', () => {
     expect(validCombatObservation(observation())).toBe(true)

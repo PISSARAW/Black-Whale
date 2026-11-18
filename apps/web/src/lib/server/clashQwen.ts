@@ -4,14 +4,30 @@ import { offeredMoves, fighterRules, allowedNen } from '$lib/fighting/qwen/catal
 export { validCombatObservation } from './clashQwenValidation'
 import { parseTacticalPlan, planSchema, QWEN_DEADLINE_MS } from '$lib/fighting/qwen/protocol'
 import type { CombatObservation, TacticalReply } from '$lib/fighting/qwen/protocol'
+import type { FightSide } from '$lib/fighting/types'
 
-export function clashQwenConfig(env: Record<string, string | undefined>) {
+const SEAT_SUFFIX: Record<FightSide, string> = { player: 'P1', opponent: 'P2' }
+
+/** A seat-suffixed variable (`CLASH_OLLAMA_MODEL_P2`) overrides the shared one for that seat. */
+function seatValue(env: Record<string, string | undefined>, name: string, seat?: FightSide) {
+  const own = seat ? env[`CLASH_OLLAMA_${name}_${SEAT_SUFFIX[seat]}`]?.trim() : undefined
+  return own || env[`CLASH_OLLAMA_${name}`]
+}
+
+export function clashQwenConfig(env: Record<string, string | undefined>, seat?: FightSide) {
   return ollamaConfig({
-    OLLAMA_URL: env.CLASH_OLLAMA_URL,
-    OLLAMA_MODEL: env.CLASH_OLLAMA_MODEL,
-    OLLAMA_TOKEN: env.CLASH_OLLAMA_TOKEN,
+    OLLAMA_URL: seatValue(env, 'URL', seat),
+    OLLAMA_MODEL: seatValue(env, 'MODEL', seat),
+    OLLAMA_TOKEN: seatValue(env, 'TOKEN', seat),
     OLLAMA_TIMEOUT_MS: String(QWEN_DEADLINE_MS),
   })
+}
+
+/** Both seats must resolve to an endpoint before an AI-versus-AI duel can start. */
+export function clashQwenSeats(env: Record<string, string | undefined>) {
+  const player = clashQwenConfig(env, 'player')
+  const opponent = clashQwenConfig(env, 'opponent')
+  return player && opponent ? { player: player.model, opponent: opponent.model } : null
 }
 
 /** The catalogue comes from the server, never from arbitrary client instructions. */
@@ -40,9 +56,10 @@ function question(observation: CombatObservation) {
 export async function askClashQwen(options: {
   env: Record<string, string | undefined>
   observation: CombatObservation
+  seat?: FightSide
   fetcher?: typeof fetch
 }): Promise<TacticalReply | null> {
-  const config = clashQwenConfig(options.env)
+  const config = clashQwenConfig(options.env, options.seat)
   if (!config) return null
   const started = Date.now()
   const raw = await askOllama(config, question(options.observation), options.fetcher)

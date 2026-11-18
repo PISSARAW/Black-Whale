@@ -47,6 +47,26 @@ CLASH_OLLAMA_URL=http://127.0.0.1:11439
 CLASH_OLLAMA_MODEL=qwen2.5:1.5b
 ```
 
+### Deux modèles différents
+
+Chaque siège peut avoir son propre modèle, son propre point d'accès et son propre
+jeton. Une variable suffixée `_P1` (siège joueur) ou `_P2` (siège
+adversaire) remplace la variable commune pour ce siège seulement :
+
+```dotenv
+CLASH_OLLAMA_URL=http://127.0.0.1:11439
+CLASH_OLLAMA_MODEL=qwen2.5:1.5b
+CLASH_OLLAMA_MODEL_P2=llama3.2:3b
+# CLASH_OLLAMA_URL_P2=http://127.0.0.1:11440   # un autre serveur Ollama
+# CLASH_OLLAMA_TOKEN_P2=
+```
+
+Le duel ne démarre que si les deux sièges ont un point d'accès et un modèle.
+L'interface affiche le modèle qui a produit le dernier plan de chaque siège.
+Le client envoie le siège en paramètre (`?seat=player|opponent`). Le serveur
+choisit seul le modèle correspondant : le navigateur ne peut pas nommer un modèle.
+Les requêtes restent alternées, une à la fois, même avec deux serveurs.
+
 `CLASH_OLLAMA_TOKEN` est facultatif pour un point d’accès privé authentifié par
 Bearer. Ces variables restent côté serveur. Elles sont séparées du gateway de
 recherche `OLLAMA_*`, qui n’accepte pas le protocole de combat. Les conteneurs

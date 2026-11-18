@@ -9,7 +9,8 @@ import { allowedNen } from './catalogue'
 
 export interface QwenStatus {
   enabled: boolean
-  model: string | null
+  /** Model that produced the latest accepted plan of each seat. */
+  models: Record<FightSide, string | null>
   pending: FightSide | null
   accepted: number
   failures: number
@@ -20,9 +21,10 @@ export interface QwenStatus {
 export type QwenTransport = (
   observation: CombatObservation,
   signal: AbortSignal,
+  seat: FightSide,
 ) => Promise<TacticalReply | null>
-async function postPlan(observation: CombatObservation, signal: AbortSignal) {
-  const response = await fetch('/fighting/qwen', {
+async function postPlan(observation: CombatObservation, signal: AbortSignal, seat: FightSide) {
+  const response = await fetch(`/fighting/qwen?seat=${seat}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(observation),
@@ -31,13 +33,13 @@ async function postPlan(observation: CombatObservation, signal: AbortSignal) {
   return response.ok ? response.json() : null
 }
 
-/** Async strategy never blocks a simulation tick. Both seats use the same local executor. */
+/** Async strategy never blocks a simulation tick. Seats may use different models, one executor. */
 export function createQwenDuel(options: { clock?: () => number; transport?: QwenTransport } = {}) {
   const clock = options.clock ?? (() => performance.now())
   const transport = options.transport ?? postPlan
   const initial = (): QwenStatus => ({
     enabled: false,
-    model: null,
+    models: { player: null, opponent: null },
     pending: null,
     accepted: 0,
     failures: 0,
@@ -61,7 +63,12 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
   let next: FightSide = 'player'
   let abort: AbortController | null = null
   const publish = () =>
-    view.set({ ...status, plans: { ...status.plans }, source: { ...status.source } })
+    view.set({
+      ...status,
+      models: { ...status.models },
+      plans: { ...status.plans },
+      source: { ...status.source },
+    })
   function cancel() {
     epoch++
     abort?.abort()
@@ -111,7 +118,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     }
     status.plans[request.side] = plan
     timestamps[request.side] = clock()
-    status.model = reply.model
+    status.models[request.side] = reply.model
     status.accepted++
     history.push({
       side: request.side,
@@ -134,7 +141,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     publish()
     const controller = abort
     const timeout = setTimeout(() => controller.abort(), QWEN_DEADLINE_MS)
-    void transport(observation, abort.signal)
+    void transport(observation, abort.signal, side)
       .then(
         (reply) => accept(reply, request),
         () => accept(null, request),

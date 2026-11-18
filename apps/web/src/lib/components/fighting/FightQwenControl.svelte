@@ -4,6 +4,7 @@
   export let disabled = false
   let checking = false
   let connection = ''
+  let configured: Record<'player' | 'opponent', string> | null = null
   async function toggle() {
     if ($qwen.enabled) {
       qwen.setEnabled(false)
@@ -14,7 +15,11 @@
       const response = await fetch('/fighting/qwen')
       const config = await response.json()
       if (response.ok && config.available) {
-        connection = config.model
+        configured = config.models
+        connection =
+          config.models.player === config.models.opponent
+            ? config.models.player
+            : `${config.models.player} contre ${config.models.opponent}`
         qwen.setEnabled(true)
       } else connection = 'Ollama non configuré côté serveur'
     } catch {
@@ -35,13 +40,13 @@
     {$qwen.enabled ? 'Arrêter Qwen · IA contre IA' : 'Activer Qwen · IA contre IA'}
   </button>
   {#if $qwen.enabled}
-    <span role="status">{$qwen.model ?? connection} · {$qwen.accepted} plans reçus</span>
+    <span role="status">{connection} · {$qwen.accepted} plans reçus</span>
     {#each ['player', 'opponent'] as seat (seat)}
       {@const side = seat as 'player' | 'opponent'}
       <span
         >{side === 'player' ? 'P1' : 'P2'} : {$qwen.source[side] === 'qwen'
-          ? `Qwen · ${$qwen.plans[side]?.goal} · ${$qwen.plans[side]?.move}`
-          : 'Contrôleur local · en attente'}</span
+          ? `${$qwen.models[side]} · ${$qwen.plans[side]?.goal} · ${$qwen.plans[side]?.move}`
+          : `Contrôleur local · en attente de ${configured?.[side] ?? 'Qwen'}`}</span
       >
     {/each}
     {#if $qwen.failures || $qwen.stale}<span

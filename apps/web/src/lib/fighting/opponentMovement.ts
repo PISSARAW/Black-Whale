@@ -1,4 +1,5 @@
 import { steerFighter } from './fighterMovement'
+import { moveBonolenovOpponent } from './bonolenovAi'
 import { EMPTY_INPUT } from './types'
 import { canMove as combatCanMove } from './fightActorState'
 import { seesCombatBody } from './fightCounterplay'
@@ -15,6 +16,8 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
   if (opponentCannotGuard(fighter)) return { ...fighter, blocking: false }
   if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter))
     return fighter
+  const bonolenov = moveBonolenovOpponent(fighter, player)
+  if (bonolenov) return bonolenov
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
   const next = opponentGuardState(fighter, player, gap)

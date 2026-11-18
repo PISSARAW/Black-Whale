@@ -7,6 +7,7 @@ import {
   stopBattleMusic,
 } from './battleCantabileRules'
 import { BATTLE_MOVES, JUPITER_RADIUS } from './battleCantabileTypes'
+import { unwrapBonolenovInstrument } from './bonolenovInstrument'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Validate after impacts too: a broken dance has no free grace frame. */
@@ -45,7 +46,8 @@ export function advanceBattleCantabile(state: FightState): FightState {
 }
 
 function advancePiece(state: FightState, side: FightSide): FightState {
-  const fighter = state[side]
+  const fighter = state.phase === 'fighting' ? unwrapBonolenovInstrument(state[side]) : state[side]
+  if (fighter !== state[side]) state = { ...state, [side]: fighter }
   const battle = fighter.battleCantabile
   if (!battle || !battleBodyAvailable(fighter)) return state
   const preparation = battle.preparation

@@ -1,35 +1,105 @@
-import type { BodyPlan, FightPose } from './fightPose'
+import { lerpPose, type BodyPlan, type FightPose } from './fightPose'
 import type { ArcadeFighter } from './types'
-import type { MoveTimeline } from './keyPoseTimeline'
+import { battleBodyAvailable, battleMindAvailable } from './battleCantabileRules'
+import { freeCombatBody } from './fightActorState'
+import { PROLOGUE_CARRY_POSE } from './keyPosesBonolenov'
+import { bonolenovStepPlan } from './bonolenovLocomotion'
 
-/** The preparation is performed by the body, with exposed holes and a repeatable dance. */
-export function bonolenovDancePlan(fighter: ArcadeFighter, seconds: number): BodyPlan | null {
-  const battle = fighter.battleCantabile
-  if ((!battle?.preparation && !battle?.prologue) || fighter.attack || fighter.hitStun > 0)
-    return null
-  const beat = Math.sin(seconds * 9)
-  const pose: FightPose = {
-    chest: [0.12, beat * 0.55, beat * 0.14],
-    leadShoulder: [-0.6, 0, -0.8 - beat * 0.25],
-    rearShoulder: [-0.6, 0, 0.8 - beat * 0.25],
-    leadHip: [-0.3 + beat * 0.25, 0, 0.1],
-    rearHip: [0.2 - beat * 0.25, 0, -0.1],
-    leadKnee: [0.4 - beat * 0.2, 0, 0],
-    rearKnee: [0.3 + beat * 0.2, 0, 0],
-  }
-  return { key: 'battle-cantabile-dance', plant: true, blend: 0.08, pose }
-}
+export { PROLOGUE_SPEAR_POSE } from './keyPosesBonolenov'
 
-export const PROLOGUE_SPEAR_POSE: MoveTimeline = [
+/** Alternating one-foot balances and open arms: reference video 1:12–1:42. */
+const DANCE: readonly FightPose[] = [
   {
-    phase: 'startup',
-    at: 0.5,
-    pose: { chest: [0.1, -0.5, 0], rearShoulder: [-0.3, -0.5, 0.1], rearElbow: [-1.2, 0, 0] },
+    chest: [0.04, -0.2, 0],
+    leadShoulder: [-0.35, 0, 0.75],
+    rearShoulder: [-0.2, 0, -0.8],
+    leadElbow: [-0.3, 0, 0],
+    rearElbow: [-0.25, 0, 0],
+    leadHip: [-0.12, 0, 0.06],
+    leadKnee: [0.18, 0, 0],
+    rearHip: [0.06, 0, -0.06],
+    rearKnee: [0.12, 0, 0],
   },
   {
-    phase: 'active',
-    at: 0,
-    ease: 'snap',
-    pose: { chest: [0.2, 0.6, 0], rearShoulder: [-1.5, 0, 0], rearElbow: [0, 0, 0] },
+    chest: [0.08, -0.3, -0.08],
+    head: [-0.06, 0, 0],
+    leadShoulder: [-1.25, 0, 0.8],
+    rearShoulder: [-0.55, 0, -1.05],
+    leadElbow: [-0.4, 0, 0],
+    rearElbow: [-0.35, 0, 0],
+    leadHip: [-1.05, 0, 0.22],
+    leadKnee: [1.75, 0, 0],
+    rearHip: [-0.08, 0, -0.04],
+    rearKnee: [0.12, 0, 0],
+  },
+  {
+    chest: [0.05, 0.2, 0.06],
+    head: [-0.03, 0, 0],
+    leadShoulder: [-0.5, 0, 1],
+    rearShoulder: [-0.9, 0, -0.9],
+    leadElbow: [-0.2, 0, 0],
+    rearElbow: [-0.45, 0, 0],
+    leadHip: [-0.12, 0, 0.06],
+    leadKnee: [0.18, 0, 0],
+    rearHip: [0.08, 0, -0.06],
+    rearKnee: [0.12, 0, 0],
+  },
+  {
+    chest: [0.07, 0.3, 0.08],
+    head: [-0.05, 0, 0],
+    leadShoulder: [-0.55, 0, 1.05],
+    rearShoulder: [-1.25, 0, -0.8],
+    leadElbow: [-0.35, 0, 0],
+    rearElbow: [-0.4, 0, 0],
+    leadHip: [-0.08, 0, 0.04],
+    leadKnee: [0.12, 0, 0],
+    rearHip: [-1.05, 0, -0.22],
+    rearKnee: [1.75, 0, 0],
   },
 ]
+
+/** Only real preparation advances the choreography; pause and hitstop cannot advance it. */
+export function bonolenovDancePlan(fighter: ArcadeFighter): BodyPlan | null {
+  const preparation = fighter.battleCantabile?.preparation
+  if (!preparation || !danceBodyReady(fighter)) return null
+  const progress = Math.max(0, Math.min(1, 1 - preparation.remaining / preparation.total))
+  const phase = progress * DANCE.length
+  const index = Math.floor(phase) % DANCE.length
+  const amount = phase - Math.floor(phase)
+  const pose = lerpPose(
+    DANCE[index],
+    DANCE[(index + 1) % DANCE.length],
+    amount * amount * (3 - 2 * amount),
+  )
+  // A complete turn and a counter-turn resolve at the initial orientation.
+  // Turning the whole body avoids twisting the lumbar spine through 360 degrees.
+  pose.body = [0.025, Math.PI * (1 - Math.cos(progress * Math.PI * 2)), 0]
+  return { key: 'battle-cantabile-dance', plant: true, blend: 0.06, pose }
+}
+
+export function bonolenovBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
+  const dance = bonolenovDancePlan(fighter)
+  if (dance) return dance
+  if (!danceBodyReady(fighter)) return null
+  const step = bonolenovStepPlan(fighter)
+  if (step) return step
+  if (
+    !fighter.battleCantabile?.prologue ||
+    fighter.pose !== 'idle' ||
+    fighter.crouching ||
+    !danceBodyReady(fighter)
+  )
+    return null
+  return { key: 'bonolenov:prologue-ready', plant: true, blend: 0.1, pose: PROLOGUE_CARRY_POSE }
+}
+
+function danceBodyReady(fighter: ArcadeFighter): boolean {
+  return (
+    battleBodyAvailable(fighter) &&
+    freeCombatBody(fighter) &&
+    battleMindAvailable(fighter) &&
+    !fighter.attack &&
+    !fighter.blocking &&
+    fighter.y === 0
+  )
+}

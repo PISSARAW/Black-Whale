@@ -18,6 +18,10 @@ acoustique `impulseResponse` de la visite. Aucun sample tiers n'est chargé.
   de Chrollo utilisent la source du Hatsu ; Black Voice et Sun and Moon ont des
   accents propres. Les pages, le Bungee Gum, la forme de Biscuit, la projection de
   Hanzo, Pain Packer, Rising Sun et les gardes LSDF suivent leurs états réels.
+- `bonolenov.ts` synthétise l'air et les résonances des orifices découverts de
+  Bonolenov pendant ses danses, ses déplacements et ses frappes. La phrase suit
+  les compteurs de mouvement et s'éteint au repos, sur interruption et pendant
+  le hitstop ; le directeur applique également pause, mute et fin de manche.
 - `director.ts` tient les ambiances, l'aura et la pression. Ten, Ren, Ken, Gyo,
   Ryu, Ko, In, En, Shu, Zetsu et On utilisent le vocabulaire sonore partagé.
   Zetsu ferme l'aura ; On gronde et bat de façon instable. Emperor Time ajoute

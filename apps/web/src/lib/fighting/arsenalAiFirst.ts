@@ -142,8 +142,9 @@ function bonolenovSlots({
   const battle = state.opponent.battleCantabile
   if (battle?.preparation) return []
   if (roll > 0.8 && canImitateModel(state)) return ['downSpecial']
-  if (gap > 12) return ['finisher', 'neutralSpecial']
-  return battle?.prologue ? ['forwardSpecial'] : ['neutralSpecial']
+  if (battle?.prologue) return ['forwardSpecial', 'forwardLight', 'backHeavy']
+  if (gap < 10) return ['backHeavy', 'lowLight', 'forwardLight']
+  return gap > 28 ? ['finisher', 'neutralSpecial'] : ['neutralSpecial', 'finisher']
 }
 
 function canImitateModel(state: FightState): boolean {

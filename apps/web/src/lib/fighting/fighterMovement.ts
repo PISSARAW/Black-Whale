@@ -166,7 +166,7 @@ function walk(fighter: ArcadeFighter, direction: -1 | 0 | 1): ArcadeFighter {
   return { ...fighter, x, pose: direction === 0 ? 'idle' : 'walk' }
 }
 
-function walkSpeed(fighter: ArcadeFighter): number {
+export function walkSpeed(fighter: ArcadeFighter): number {
   return fighterDefinition(fighter.id).speed * WALK_SCALE * styleMobility(fighter).walkScale
 }
 

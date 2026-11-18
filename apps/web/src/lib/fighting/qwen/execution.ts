@@ -1,4 +1,5 @@
 import { aiMoveInRange } from '../movesetAi'
+import { recoveryPunishOptions } from '../recoveryPunish'
 import { personalTacticalPlan } from '../nenTacticalIntent'
 import { comboChoices } from '../comboChoices'
 import { canAct } from '../fightActorState'
@@ -88,6 +89,10 @@ function selectMove(
     combo.find((row) => row.move.slot === plan.move) ??
     combo.find((row) => row.move.id !== memory.lastMove)
   if (next) return next.move
+  const punish = recoveryPunishOptions(context.state, context.side).find(
+    (option) => option.approachFrames === 0 && option.reaction === 0,
+  )
+  if (punish) return punish.move
   const planned = memory.special ? plannedMove(context, plan) : null
   return planned ?? ordinaryMove(context, memory.roll)
 }

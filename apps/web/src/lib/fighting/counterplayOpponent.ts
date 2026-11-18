@@ -1,3 +1,4 @@
+import { recoveryPunishOptions } from './recoveryPunish'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput } from './opponentHabits'
 import { projectileDefenceResponse } from './projectileDefence'
@@ -32,8 +33,7 @@ export function moveCounterplayOpponent(options: {
   const view = { ...state, opponent: fighter, player: target }
   const cue = readCounterplay(view, 'opponent')
   fighter = rememberOpponentHabits(view, fighter, cue)
-  const projectiles =
-    !cue || cue.kind === 'projectile' ? projectileDefenceResponse(view, fighter, cue) : null
+  const projectiles = readProjectileResponse(view, fighter, cue)
   if (projectiles)
     return projectiles.input
       ? applyResponse(projectiles.fighter, projectiles.input)
@@ -44,6 +44,7 @@ export function moveCounterplayOpponent(options: {
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }
   if (frames <= styleReactionFrames(fighter) || !canRespond(fighter, cue))
     return moveRememberedOpponent(view, fighter)
+  if (cannotReachRecovery(view, fighter, cue)) return moveRememberedOpponent(view, fighter)
   const input = responseInput(fighter, cue)
   return applyResponse(
     {
@@ -109,4 +110,23 @@ function heatResponse(fighter: ArcadeFighter, cue: CounterplayCue): FightInput {
   if (Math.abs(fighter.x - cue.position.x) > (cue.radius ?? 0) + 6) return { ...EMPTY_INPUT }
   const toward = cue.position.x >= fighter.x ? 1 : -1
   return directionInput(escapeDirection(fighter, toward))
+}
+
+function cannotReachRecovery(
+  state: FightState,
+  fighter: ArcadeFighter,
+  cue: CounterplayCue,
+): boolean {
+  return (
+    cue.kind === 'recovery' &&
+    recoveryPunishOptions({ ...state, opponent: fighter }, 'opponent').length === 0
+  )
+}
+
+function readProjectileResponse(
+  state: FightState,
+  fighter: ArcadeFighter,
+  cue: CounterplayCue | null,
+) {
+  return !cue || cue.kind === 'projectile' ? projectileDefenceResponse(state, fighter, cue) : null
 }

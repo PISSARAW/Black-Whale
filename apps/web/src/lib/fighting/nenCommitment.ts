@@ -1,9 +1,9 @@
+import { recoveryPunishOptions } from './recoveryPunish'
 import { attackData, attackPhase, attackTotal } from './frameData'
 import { seesCombatBody } from './fightCounterplay'
 import { gyoSight } from './nenPerception'
 import { addPoses, scalePose, type BodyPlan } from './fightPose'
 import type { ArcadeFighter, FightSide, FightState, MoveSlot } from './types'
-import { moveForSlot } from './movesets'
 import type { ArsenalAiContext } from './arsenalAiTypes'
 
 /** Body recovery is public; concealed aura distributions need the ordinary Gyo observation. */
@@ -26,14 +26,11 @@ export function readNenCommitment(state: FightState, side: FightSide, viewer: Fi
 
 /** Rank only already proposed moves; a visible opening grants no automatic hit or invulnerability. */
 export function prioritiseCommitmentPunish(context: ArsenalAiContext, slots: readonly MoveSlot[]) {
-  const cue = readNenCommitment(context.state, 'player', 'opponent')
-  if (cue?.kind !== 'recovery') return slots
-  const scored = slots.map((slot, index) => {
-    const move = moveForSlot(context.state.opponent.id, slot)
-    const fits = move && move.tuning.startup <= cue.frames && move.tuning.reach >= context.gap
-    return { slot, index, score: fits ? move.tuning.damage : 0 }
-  })
-  return scored.sort((a, b) => b.score - a.score || a.index - b.index).map(({ slot }) => slot)
+  const options = recoveryPunishOptions(context.state, 'opponent').filter(
+    (option) => option.approachFrames === 0 && option.reaction === 0,
+  )
+  const ranks = new Map(options.map((option, index) => [option.move.slot, options.length - index]))
+  return [...slots].sort((a, b) => (ranks.get(b) ?? 0) - (ranks.get(a) ?? 0))
 }
 
 /** Small preparation/recovery accents on the authored pose. Contact poses and root separation stay exact. */
@@ -59,7 +56,7 @@ export function withNenCommitment(plan: BodyPlan | null, fighter: ArcadeFighter)
     pose: addPoses(
       plan.pose,
       scalePose(
-        { chest: [0.06, 0, 0], leadShoulder: [0.1, 0, 0.04], rearKnee: [0.05, 0, 0] },
+        { chest: [0.1, 0, 0], leadShoulder: [0.18, 0, 0.06], rearKnee: [0.08, 0, 0] },
         Math.sin(remaining * Math.PI),
       ),
     ),

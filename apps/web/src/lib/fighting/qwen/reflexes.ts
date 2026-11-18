@@ -1,3 +1,5 @@
+import { hasRecoveryCancel } from '../recoveryPunish'
+import { attackPhase } from '../frameData'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -58,6 +60,7 @@ function visibleThreat(state: FightState, side: FightSide): boolean {
   const self = state[side]
   const target = state[side === 'player' ? 'opponent' : 'player']
   const attack = target.attack
+  if (attackPhase(target) === 'recovery' && !hasRecoveryCancel(target)) return false
   if (!attack || attack.frame < 10 || Math.abs(target.x - self.x) > 22) return false
   return !attack.concealed || gyoSight(self)
 }

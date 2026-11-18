@@ -1,3 +1,5 @@
+import { hasRecoveryCancel } from './recoveryPunish'
+import { attackPhase } from './frameData'
 import { steerFighter } from './fighterMovement'
 import { EMPTY_INPUT } from './types'
 import { canMove as combatCanMove } from './fightActorState'
@@ -36,7 +38,7 @@ function opponentCannotGuard(fighter: ArcadeFighter): boolean {
 
 function shouldBlock(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): boolean {
   if (!seesCombatBody(fighter)) return false
-  const threatened = player.pose === 'heavy' || player.pose === 'special'
+  const threatened = activeThreat(player)
   return shouldStyleGuard(fighter.id, { gap, threatened }) && canMove(fighter) && fighter.y === 0
 }
 
@@ -84,4 +86,9 @@ export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arc
   return illumiBodyFree(fighter)
     ? moveFreeOpponent(fighter, player)
     : { ...fighter, blocking: false }
+}
+
+function activeThreat(player: ArcadeFighter): boolean {
+  if (attackPhase(player) === 'recovery' && !hasRecoveryCancel(player)) return false
+  return player.pose === 'heavy' || player.pose === 'special'
 }

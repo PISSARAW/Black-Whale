@@ -17,3 +17,9 @@ Validation : contacts natifs pour les 40 personnages et absence de branche sans 
 Le recul des frappes ordinaires reste au sol ; balayages, projections, Ko critiques et techniques puissantes conservent leur chute. Le nouveau choc reprend une part bornée du déséquilibre précédent, y compris après un projectile, puis la dissipe en quatre frames de réaction. Aucune extension artificielle du hitstun ni déplacement visuel de la racine : le moteur conserve la séparation et les exceptions de traversée. Les auras continuent d'utiliser les couleurs natives.
 
 Validation : 40 silhouettes, chutes décisives, garde et continuité bornée sans mutation de l'état.
+
+## 4. Ripostes atteignables
+
+`recoveryPunish.ts` évalue le temps restant, le démarrage du coup, le trajet à pied et le délai de réaction du style. L'observation de la récupération est suivie dans les deux sièges ; le délai déjà écoulé n'est pas compté une seconde fois et une réaction immédiate n'est pas accordée. Il refuse une cible invisible, un corps indisponible et une pression confirmée encore annulable. Les deux contrôleurs privilégient uniquement les ripostes admissibles et ne gardent plus automatiquement face à toute récupération. Les engagements Nen bénéficient d'une accentuation corporelle pendant leur retour en garde.
+
+Validation : fenêtres de récupération sur les 40 personnages, distance, privation de vue, hitstun et pression annulable.

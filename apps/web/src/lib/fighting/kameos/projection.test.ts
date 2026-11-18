@@ -11,9 +11,9 @@ import type { KameoSlot } from './types'
 
 const slotOf = (state: FightState, side: FightSide = 'player') => state.kameos?.[side] as KameoSlot
 
-/** Leader Kurapika far left, kameo Benjamin on stage next to Morena. */
+/** Leader Kurapika far left, kameo Morena on stage next to Hisoka. */
 function stage(kameo: Partial<ArcadeFighter> = {}, opponent: Partial<ArcadeFighter> = {}) {
-  const base = beginFight(withKameos(createFight('kurapika', 'morena'), { player: 'benjamin' }))
+  const base = beginFight(withKameos(createFight('kurapika', 'hisoka'), { player: 'morena' }))
   const slot = slotOf(base)
   return {
     ...base,
@@ -55,7 +55,7 @@ describe('kameo duel projection (lot 3)', () => {
   it('does nothing for a kameo in reserve or an ordinary duel', () => {
     const reserve = { ...stage(), kameos: { player: { ...slotOf(stage()), phase: 'reserve' } } }
     expect(resolveAllKameoContacts(reserve as FightState)).toBe(reserve)
-    const duel = beginFight(createFight('kurapika', 'morena'))
+    const duel = beginFight(createFight('kurapika', 'hisoka'))
     expect(resolveAllKameoContacts(duel)).toBe(duel)
   })
 

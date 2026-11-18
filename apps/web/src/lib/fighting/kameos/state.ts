@@ -1,26 +1,17 @@
 import { createFighter } from '../fightState'
 import { fightFormat } from '../formats'
-import { setupIllumiNeedles } from '../illumiEquipment'
+import { isKameoId } from './catalogue'
 import { KAMEO_SPAWN } from './rounds'
-import type { ArcadeFighter, FightSide, FightState, FighterId } from '../types'
-import type { FightKameos, KameoPhase, KameoSlot } from './types'
+import type { ArcadeFighter, FightSide, FightState } from '../types'
+import type { FightKameos, KameoId, KameoPhase, KameoSlot } from './types'
 
-export type KameoPicks = Partial<Record<FightSide, FighterId>>
+export type KameoPicks = Partial<Record<FightSide, KameoId>>
 
 const ON_STAGE: ReadonlySet<KameoPhase> = new Set(['entering', 'acting', 'leaving'])
 
-/**
- * A fresh kameo body for one side, built like a leader at match creation: format health,
- * personal equipment and Illumi's needles. Training needle stocks belong to leaders only.
- */
-export function createKameoFighter(state: FightState, side: FightSide, id: FighterId) {
-  const body = createFighter({
-    id,
-    ...KAMEO_SPAWN[side],
-    health: fightFormat(state.formatId).health,
-  })
-  const environment = { ...state.environment, needleStock: undefined }
-  return setupIllumiNeedles({ ...state, environment, [side]: body })[side]
+/** A fresh kameo body for one side, built like a leader: format health and equipment. */
+export function createKameoFighter(state: FightState, side: FightSide, id: KameoId) {
+  return createFighter({ id, ...KAMEO_SPAWN[side], health: fightFormat(state.formatId).health })
 }
 
 export function createKameoSlot(fighter: ArcadeFighter): KameoSlot {
@@ -28,8 +19,8 @@ export function createKameoSlot(fighter: ArcadeFighter): KameoSlot {
 }
 
 /**
- * Attaches kameos before the first frame. A kameo is a second, distinct character of
- * its own side; the opposing side may still pick the same character (mirror).
+ * Attaches kameos before the first frame. Only catalogue characters are kameos: ship
+ * characters outside the playable forty. Both sides may pick the same one (mirror).
  */
 export function withKameos(state: FightState, picks: KameoPicks): FightState {
   if (state.phase !== 'ready' || state.frame !== 0) throw Error('kameo-after-start')
@@ -37,6 +28,7 @@ export function withKameos(state: FightState, picks: KameoPicks): FightState {
   for (const side of ['player', 'opponent'] as const) {
     const id = picks[side]
     if (!id) continue
+    if (!isKameoId(id)) throw Error('kameo-unknown')
     if (id === state[side].id) throw Error('kameo-is-leader')
     kameos[side] = createKameoSlot(createKameoFighter(state, side, id))
   }

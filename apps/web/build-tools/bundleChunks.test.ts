@@ -6,6 +6,8 @@ import { BONOLENOV_CANON } from '../src/lib/fighting/bonolenovCanon'
 import { afterEach, describe, expect, it } from 'vitest'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { build } from 'vite'
@@ -47,7 +49,11 @@ async function compile(entry: string) {
       rollupOptions: {
         input: join(directory, 'entry.ts'),
         preserveEntrySignatures: 'strict',
-        onwarn: (warning) => warnings.push(warning.message),
+        // These fixtures deliberately import only part of the catalogue; tree-shaken
+        // manual groups may be empty. Keep every actionable bundling warning.
+        onwarn: (warning) => {
+          if (warning.code !== 'EMPTY_BUNDLE') warnings.push(warning.message)
+        },
         output: { format: 'es', manualChunks },
       },
     },
@@ -64,6 +70,32 @@ async function compile(entry: string) {
 }
 
 describe('production bundle partitioning', () => {
+  it('initializes Cross Game and movesets regardless of which shared chunk loads first', async () => {
+    const built = await compile(
+      [
+        `export { crossGameCanWarn } from ${JSON.stringify(resolve('src/lib/fighting/crossGame.ts'))}`,
+        `export { movesetFor } from ${JSON.stringify(resolve('src/lib/fighting/movesets.ts'))}`,
+      ].join('\n'),
+    )
+    for (const chunk of built.result.output.filter((item) => item.type === 'chunk')) {
+      const url = pathToFileURL(join(built.directory, chunk.fileName)).href
+      await promisify(execFile)(process.execPath, [
+        '--input-type=module',
+        '-e',
+        `await import(${JSON.stringify(url)})`,
+      ])
+    }
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    const warning = actual
+      .movesetFor('mizaistom')
+      .moves.find((move: { slot: string }) => move.slot === 'neutralSpecial')
+    expect(warning.auraCost).toBe(40)
+    expect(warning.tuning.startup).toBe(18)
+    expect(actual.crossGameCanWarn).toBeTypeOf('function')
+  }, 30_000)
+
   it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
     const built = await compile(
       [

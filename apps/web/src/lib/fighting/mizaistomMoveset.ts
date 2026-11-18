@@ -1,4 +1,4 @@
-import { CROSS_GAME_COST, CROSS_GAME_DISPLAY } from './crossGame'
+import { CROSS_GAME_COST, CROSS_GAME_DISPLAY } from './crossGameTuning'
 import { buildMoveset } from './movesetFactory'
 import type { FighterMoveset } from './movesetTypes'
 

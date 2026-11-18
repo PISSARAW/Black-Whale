@@ -247,6 +247,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
     confirmedHit?: boolean
     comboOpening?: import('./comboOpenings').ComboOpening
     comboFollowup?: import('./comboOpenings').ComboOpening
+    directionalChain?: import('./directionalChain').DirectionalChain
     kind: AttackKind
     frame: number
     impacted: boolean
@@ -260,6 +261,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
     reversal: boolean
   } | null
   bufferedAttack: {
+    directionalChain?: import('./directionalChain').DirectionalChain
     cancelFrom?: string
     copiedPage?: ChrolloPage
     bufferFrames?: number

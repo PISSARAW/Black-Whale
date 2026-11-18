@@ -14,6 +14,8 @@
   import FightCameraDetail from './FightCameraDetail.svelte'
   import FightTrackingMarkers from './FightTrackingMarkers.svelte'
   import { createCombatCamera } from '$lib/fighting/combatCamera'
+  import { visibleSecondaryView } from '$lib/fighting/directionalComboCamera'
+  import FightDirectionalShot from './FightDirectionalShot.svelte'
   import { visibleFutureBeastOwner } from '$lib/fighting/parallelFuturePresentation'
   import { fitCinematicView, type CinematicFrame } from '$lib/fighting/cinematicTrack'
   import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
@@ -62,7 +64,6 @@
   import { drawVictoryFrame } from '$lib/fighting/victory/draw'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { ArcadeFighter, FightState } from '$lib/fighting/types'
-
   const presentation = createFightPresentation()
   const interpolatedPosition = presentation.position
   export let viewer: 'player' | 'opponent' = 'player'
@@ -83,7 +84,6 @@
   export let victoryFrame: VictoryFrame | null = null
   export let onSceneReady: () => void = () => {}
   export let onSceneFailed: () => void = () => {}
-
   export let language: 'fr' | 'en' = 'fr'
   $: backgroundDescription = stageBackgroundDescription(
     stageId,
@@ -96,7 +96,6 @@
   let ready = false
   let detail: CameraDetail | null = null
   let detailRect = cinematicDetailRect(1.7)
-
   onMount(() => {
     clashPresentation.ensureLoaded()
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -324,7 +323,7 @@
             : null
           const direction =
             cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
-          detail = direction.detail
+          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView)
           detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
@@ -454,6 +453,7 @@
 <p class="background-description">{backgroundDescription}</p>
 <div class:failed class:ready class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
+  <FightDirectionalShot {state} intensity={comfort.camera ?? 1} />
   <FightTrackingMarkers
     {state}
     {language}

@@ -2,6 +2,7 @@ import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { CameraDetailRect } from './cinematicDetailLayout'
+import { directionalCameraOffsets, previewLaunchSpeed } from './directionalComboCamera'
 
 export interface CombatCameraFrame {
   x: number
@@ -72,9 +73,10 @@ function bodyBounds(options: CombatCameraOptions): Bounds {
   const actors = [state.player, state.opponent]
   // Use velocity to begin opening the shot during takeoff, before a head reaches the HUD.
   const tops = actors.map(
-    (actor) =>
-      fightWorldY(actor.y + Math.max(0, actor.velocityY) * 0.12) +
-      (actor.id === 'biscuit' ? 2.8 : 2.22),
+    (actor, index) =>
+      fightWorldY(
+        actor.y + Math.max(0, actor.velocityY, previewLaunchSpeed(actors[1 - index])) * 0.12,
+      ) + (actor.id === 'biscuit' ? 2.8 : 2.22),
   )
   const companion = options.companion && state[options.companion]
   const beastX = companion ? fightWorldX(companion.x) - companion.facing : span.centre
@@ -156,29 +158,44 @@ function preserveSpecialFraming(state: FightState): boolean {
   )
 }
 export function combatCameraTarget(options: CombatCameraOptions) {
+  const bounds = bodyBounds(options)
+  const detail = reserveDetailSpace(options, bounds)
+  const frame = mainCameraFrame(options, { bounds, ...detail })
+  return fittedTarget({ frame, bounds, options })
+}
+
+function reserveDetailSpace(options: CombatCameraOptions, bounds: Bounds) {
+  const portrait = options.aspect < 1.15
+  const weight = options.detailWeight ?? (options.detail ? 1 : 0)
+  bounds.region = reservedRegion(portrait, weight, options.detailRect)
+  return {
+    insetOffset: portrait ? 0 : (bounds.right - bounds.left) * 0.36 * weight,
+    lift: portrait ? (bounds.top - bounds.bottom) * 0.72 * weight : 0,
+  }
+}
+
+function mainCameraFrame(
+  options: CombatCameraOptions,
+  layout: { bounds: Bounds; insetOffset: number; lift: number },
+) {
   const { state, base, span } = options
   const intensity = clamp(options.intensity, 0, 1)
-  const bounds = bodyBounds(options)
+  const shot = directionalCameraOffsets(state, intensity)
+  const { bounds, insetOffset, lift } = layout
   const focus = impactFocus(options)
   const cue = intensity > 0 ? (options.direction?.strength ?? 0) : 0
   const centre = span.centre
   const focusOffset = cameraFocus(options)
-  const portrait = options.aspect < 1.15
-  const weight = options.detailWeight ?? (options.detail ? 1 : 0)
-  bounds.region = reservedRegion(portrait, weight, options.detailRect)
-  const insetOffset = portrait ? 0 : (bounds.right - bounds.left) * 0.36 * weight
-  const x = base.x + (centre - base.x + focusOffset + insetOffset) * intensity
-  const lift = portrait ? (bounds.top - bounds.bottom) * 0.72 * weight : 0
-  const lookY = Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2 + lift)
-  const frame = {
+  const x = base.x + (centre - base.x + focusOffset + insetOffset) * intensity + shot.lead
+  const lookY = Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2 + lift) + shot.look
+  return {
     x,
     lookY,
-    y: lookY + base.y - base.lookY,
+    y: lookY + base.y - base.lookY + shot.tilt,
     z: preserveSpecialFraming(state)
       ? base.z
-      : Math.max(5.9, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95),
+      : Math.max(shot.minimum, base.z * (1 - 0.14 * intensity) - focus - cue * 0.95 + shot.zoom),
   }
-  return fittedTarget({ frame, bounds, options })
 }
 function fittedTarget({
   frame,

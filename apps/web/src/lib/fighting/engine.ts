@@ -40,6 +40,7 @@ import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
+import { performDirectionalChain } from './directionalChainCommand'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
@@ -192,6 +193,8 @@ function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
   if (state.catsName) return state
   if (!futureAcceptsMove(state, side)) return state
+  const chain = performDirectionalChain({ state, side, action, input }, performAuraAttack)
+  if (chain) return chain
   const selected = moveForAction(state[side], action, input)
   const override = characterMoveOverride(
     { state, side, action, input },

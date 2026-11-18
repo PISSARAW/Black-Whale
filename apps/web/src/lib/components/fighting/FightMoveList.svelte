@@ -75,6 +75,16 @@
       {/each}
     </div>
     <div class="routes">
+      {#if fighterId === 'kurapika' || fighterId === 'hisoka'}
+        <h3>{language === 'fr' ? 'Chaîne directionnelle' : 'Directional chain'}</h3>
+        <p><kbd>{moveInputHint('J → J → J', $bindings)}</kbd> · {language === 'fr' ? 'Fin debout à proximité' : 'Close standing finish'}</p>
+        <p><kbd>{moveInputHint('J → J → ↓ + J', $bindings)}</kbd> · {language === 'fr' ? 'Mise au sol' : 'Knockdown'}</p>
+        <p><kbd>{moveInputHint('J → J → ↑ + J', $bindings)}</kbd> · {language === 'fr' ? 'Relance aérienne' : 'Launcher'}</p>
+        <p><kbd>{moveInputHint('J → J → → + J', $bindings)}</kbd> · {language === 'fr' ? 'Poussée vers le coin' : 'Corner carry'}</p>
+        <p>{language === 'fr'
+            ? 'Les deux premiers coups doivent toucher. La poussée utilise ta technique si ses conditions sont remplies.'
+            : 'The first two strikes must hit. The carry uses your technique when its requirements are met.'}</p>
+      {/if}
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
       {#each moveset.combos as route (route.join(':'))}
         <p>{route.map(moveName).join(' → ')}</p>

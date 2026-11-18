@@ -1,5 +1,6 @@
 import { guardForVariant, type GuardRequirement } from './combatProperties'
 import { openingAllows } from './comboOpenings'
+import { directionalAllows } from './directionalChain'
 import type { FighterMove } from './movesetTypes'
 import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
@@ -95,7 +96,9 @@ export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
   if (currentMove)
     return Boolean(
       moveId &&
-      (openingAllows(fighter, moveId) || confirmedRoutes(fighter, currentMove).includes(moveId)),
+      (openingAllows(fighter, moveId) ||
+        (attack.confirmedHit && directionalAllows(fighter, moveId)) ||
+        confirmedRoutes(fighter, currentMove).includes(moveId)),
     )
   return legacyCancel(fighter, kind)
 }

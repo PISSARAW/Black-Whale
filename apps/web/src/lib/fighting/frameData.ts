@@ -27,6 +27,7 @@ import { sleepingBody } from './hanzoProjection'
 import { luiniHurtboxes } from './luiniPassage'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
+import { directionalFrameData } from './directionalChain'
 import { fightingStyle } from './fightStyles'
 import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
@@ -136,7 +137,11 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   const move = moveById(frameMoveId(fighter))
-  if (move) return blinkyAttackData(movesetAttackData(fighter, move), fighter)
+  if (move)
+    return blinkyAttackData(
+      directionalFrameData(movesetAttackData(fighter, move), fighter.attack?.directionalChain),
+      fighter,
+    )
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]

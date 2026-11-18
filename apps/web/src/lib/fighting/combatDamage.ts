@@ -6,6 +6,7 @@ import { nenAttackFactor, nenDamageFactor, releaseFocusedAura } from './nen'
 import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
+import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 
 const GROUND = 0
@@ -145,7 +146,10 @@ function launchState(options: StrikeOptions): Pick<ArcadeFighter, 'y' | 'velocit
   }
   return {
     y: Math.max(0.2, options.fighter.y),
-    velocityY: Math.max(18, options.fighter.velocityY),
+    velocityY: Math.max(
+      options.attacker.attack?.directionalChain === 'air' ? DIRECTIONAL_LAUNCH_SPEED : 18,
+      options.fighter.velocityY,
+    ),
   }
 }
 

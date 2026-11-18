@@ -13,6 +13,7 @@ import { feitanMoveAvailable } from './feitanPain'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import { observeComboMaster } from './comboMaster'
 import type { AttackKind, AttackVariant, FightSide, FightState, FighterId } from './types'
+import type { DirectionalChain } from './directionalChain'
 
 export interface AuraAttackOptions {
   state: FightState
@@ -22,6 +23,7 @@ export interface AuraAttackOptions {
   lynchQuestion?: import('./lynchTypes').LynchQuestionId
   variant?: AttackVariant
   moveId?: string
+  directionalChain?: DirectionalChain
 }
 
 interface AttackIntent {
@@ -35,30 +37,36 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   const { side, kind, auraCharged, variant, moveId } = options
   const original = options.state[side]
   if (!attackAdmission(options, intent)) return options.state
-  const { hatsuSource, concealed, resourceReady } = intent
+  const { hatsuSource, concealed } = intent
   const starts = canStartFighterAttack(original, kind, moveId)
-  const cancelFrom = cancelBufferSource(original, moveId)
-  const buffers = resourceReady && (canBufferFighterAttack(original) || Boolean(cancelFrom))
-  if (!starts && !buffers) return options.state
-  const state =
-    starts && hatsuSource
-      ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
-      : options.state
+  if (!starts) return bufferAuraAttack(options, intent)
+  const state = hatsuSource
+    ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
+    : options.state
   const fighter = state[side]
-  if (starts)
-    return observeComboMaster({
-      ...state,
-      [side]: startFighterAttack({
-        fighter,
-        kind,
-        variant,
-        moveId,
-        auraCharged,
-        concealed,
-        hatsuSource,
-        auraCost: attackAuraCost({ fighter: original, kind, moveId, concealed }),
-      }),
-    })
+  return observeComboMaster({
+    ...state,
+    [side]: startFighterAttack({
+      fighter,
+      kind,
+      variant,
+      moveId,
+      directionalChain: options.directionalChain,
+      auraCharged,
+      concealed,
+      hatsuSource,
+      auraCost: attackAuraCost({ fighter: original, kind, moveId, concealed }),
+    }),
+  })
+}
+
+function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): FightState {
+  const { state, side, kind, auraCharged, variant, moveId } = options
+  const { hatsuSource, concealed, resourceReady } = intent
+  const fighter = state[side]
+  const cancelFrom = cancelBufferSource(fighter, moveId)
+  if (options.directionalChain && !cancelFrom) return state
+  if (!resourceReady || (!cancelFrom && !canBufferFighterAttack(fighter))) return state
   return {
     ...state,
     [side]: {
@@ -67,6 +75,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
         kind,
         variant,
         moveId,
+        ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
         auraCharged,
         concealed,
         hatsuSource,

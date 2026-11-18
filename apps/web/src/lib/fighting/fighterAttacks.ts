@@ -25,6 +25,7 @@ import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
 import { canUseRangedAttack } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
+import type { DirectionalChain } from './directionalChain'
 
 const MIN_X = 7
 const MAX_X = 93
@@ -59,6 +60,7 @@ export function startFighterAttack(options: {
   moveId?: string
   hatsuSource?: FighterId | null
   auraCost?: number
+  directionalChain?: DirectionalChain
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
   const comboFollowup = openingFollowup(fighter, options.moveId)
@@ -70,6 +72,7 @@ export function startFighterAttack(options: {
       variant: options.variant,
       moveId: options.moveId,
       comboFollowup,
+      directionalChain: options.directionalChain,
     },
   })
   const usesRyu = wantsAttackRyu(fighter)
@@ -92,6 +95,7 @@ export function startFighterAttack(options: {
     attack: {
       moveId: options.moveId,
       ...(comboFollowup ? { comboFollowup } : {}),
+      ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
       kind,
       variant: options.variant,
       confirmedHit: false,

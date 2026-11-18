@@ -2,6 +2,8 @@ import { canAct } from './fightActorState'
 import { INPUT_BUFFER_FRAMES, attackData } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveById } from './movesets'
+import { directionalAllows } from './directionalChain'
+import type { FighterMove } from './movesetTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -10,9 +12,13 @@ export function cancelBufferSource(fighter: ArcadeFighter, moveId?: string): str
   const attack = fighter.attack
   const move = moveById(attack?.moveId)
   if (!attack || !move?.cancelWindow || !moveId || !canAct(fighter)) return undefined
-  if (!move.cancelInto.includes(moveId)) return undefined
+  if (!admitsEarlyCancel(fighter, move, moveId)) return undefined
   const remaining = attackData(attack.kind, fighter).startup - attack.frame
   return remaining > 0 && remaining <= INPUT_BUFFER_FRAMES ? move.id : undefined
+}
+
+function admitsEarlyCancel(fighter: ArcadeFighter, move: FighterMove, moveId: string): boolean {
+  return move.cancelInto.includes(moveId) || directionalAllows(fighter, moveId)
 }
 
 export function flushBufferedCancel(

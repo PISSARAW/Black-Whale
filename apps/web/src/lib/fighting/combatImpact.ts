@@ -24,6 +24,7 @@ export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
 import { comboOpening, type ComboOpening } from './comboOpenings'
+import { launchesWithDirectionalEnding } from './directionalChain'
 import {
   activeHitbox,
   attackData,
@@ -141,7 +142,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     attacker,
     damage,
     knockdown,
-    antiAir,
+    antiAir: launchesWithDirectionalEnding(attacker, antiAir),
     wallSplat,
     counterHit: opening.counterHit,
     comboHits,

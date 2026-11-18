@@ -1,3 +1,4 @@
+import { dowsingEvidenceOptions } from './dowsingEvidence'
 import { canAskDowsing, ownsDowsing } from './dowsingRules'
 import { performDowsingCommand } from './dowsingAction'
 import { DOWSING_QUESTIONS } from './dowsingTypes'
@@ -37,7 +38,7 @@ export function dowsingOptions(state: FightState, side: FightSide): ArsenalOptio
               : ['Mentir sciemment', 'Knowingly lie'],
         }),
       )
-  return options
+  return [...options, ...dowsingEvidenceOptions(state, side)]
 }
 function option(
   state: FightState,

@@ -18,10 +18,7 @@ export const tubeppaHatsu: FighterHatsu = {
   onTrigger: ({ state, side }) => {
     const fighter = state[side]
     const boosted = setEffect(state, side, { key: 'synthesisFrames', value: 240 })
-    return {
-      ...boosted,
-      [side]: { ...boosted[side], health: Math.min(fighter.maxHealth, fighter.health + 8) },
-    }
+    return { ...boosted, [side]: { ...boosted[side], health: Math.min(fighter.maxHealth, fighter.health + 8) } }
   },
   onImpact: unchangedImpact,
   onFrame: (state) => tickState(state, 'synthesisFrames'),
@@ -44,7 +41,8 @@ export const tysonHatsu: FighterHatsu = {
 
 export { voconteHatsu } from './voconte'
 
-type TimedKey = 'gidalCurseFrames' | 'synthesisFrames' | 'eyeWogFrames'
+type TimedKey =
+  'gidalCurseFrames' | 'synthesisFrames' | 'eyeWogFrames'
 
 function setEffect(
   state: FightState,

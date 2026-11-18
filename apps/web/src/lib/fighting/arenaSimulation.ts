@@ -128,7 +128,12 @@ function strikeArenaObject(state: FightState, side: FightSide): FightState {
 
 function ignitePunchedObject(state: FightState, side: FightSide, objectId: string): FightState {
   const fighter = state[side]
-  if (!fighter.bashoPoem?.ready || fighter.attack?.kind !== 'light' || !hasBashoPoem(fighter))
+  if (
+    !fighter.bashoPoem?.ready ||
+    fighter.bashoPoem.effect !== 'ignite-punched-target' ||
+    fighter.attack?.kind !== 'light' ||
+    !hasBashoPoem(fighter)
+  )
     return state
   const object = state.battlefield!.entities.find((entry) => entry.id === objectId)!
   return updateEntity(state, object.id, { arena: { ...object.arena!, burning: 90 } })

@@ -111,6 +111,9 @@ function escortIntruder(state: FightState, side: FightSide, guard: LsdfGuard): F
     crouching: false,
     attack: null,
     bufferedAttack: null,
+    // Removing an attack is not confiscation: the carried weapon stays unavailable after escort.
+    weaponsConfiscated: true,
+    equipment: state[guard.target].equipment?.filter((item) => item !== 'needles'),
     // Physical restraint, not a damaging hit or an aura-sealing technique.
     hitStun: Math.max(2, state[guard.target].hitStun),
   }
@@ -118,6 +121,7 @@ function escortIntruder(state: FightState, side: FightSide, guard: LsdfGuard): F
     ...state,
     [guard.target]: target,
     bungeeGum: null,
+    gumNetwork: undefined,
     lsdf: { ...state.lsdf, [side]: { ...guard, x } },
   }
   return x === guard.exitX ? expelIntruder(next, side, guard.target) : next

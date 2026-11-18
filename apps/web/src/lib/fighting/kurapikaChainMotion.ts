@@ -21,7 +21,7 @@ const STAGES: Record<string, ChainStage> = {
 export function kurapikaChainMotions(state: FightState, side: FightSide): ChainMotion[] {
   const target = state[side === 'player' ? 'opponent' : 'player']
   const motions = maintainedChains(target, side)
-  if (state[side].dowsingSession)
+  if (state[side].dowsingSession || state[side].dowsingInvestigation)
     motions.push({ stage: 0, mode: 'dowsing', extension: 1, reach: 0 })
   const attack = attackChain(state[side])
   if (attack && !motions.some((held) => held.stage === attack.stage)) motions.push(attack)

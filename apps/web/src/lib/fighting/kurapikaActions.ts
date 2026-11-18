@@ -201,8 +201,9 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
 }
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
+  if (!fighter.kurapika?.held || fighter.kurapika.held.lentTo) return false
   return (
-    dolphinBorrowingAvailable(fighter) &&
+    outsideDuelAbility(fighter.kurapika.held.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     kurapikaNenActive(fighter) &&
@@ -210,7 +211,7 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   )
 }
 
-function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
+export function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
   if (state[side].cookie) return stopCookie(state, side)
   const passage = finishBorrowedLuini(options, perform)
@@ -328,9 +329,4 @@ function aiNeedsEmperor(state: FightState): boolean {
   const held = state.opponent.kurapika?.held
   if (held && !held.used) return true
   return healthPercent(state.opponent) < 70 || state.player.chainJail?.owner === 'opponent'
-}
-
-function dolphinBorrowingAvailable(fighter: ArcadeFighter): boolean {
-  const held = fighter.kurapika?.held
-  return outsideDuelAbility(held?.moveId)?.activation !== 'post-mortem'
 }

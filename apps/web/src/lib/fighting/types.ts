@@ -430,15 +430,8 @@ export interface FightProjectile {
 
 export type ProjectileMatter = 'object' | 'nen'
 
-export interface BungeeGumAttachment {
-  owner: FightSide
-  target: FightSide
-  hidden: boolean
-  /** The owner is reeling the target in; cleared once the line goes slack. */
-  retracting: boolean
-  /** The owner launches themselves toward the stretched target attachment. */
-  rebounding?: boolean
-}
+import type { BungeeGumAttachment } from './bungeeTypes'
+export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
   throwTech?: { frame: number; sequence: number }

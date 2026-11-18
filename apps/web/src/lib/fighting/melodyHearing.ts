@@ -1,4 +1,5 @@
 import { attackPhase } from './frameData'
+import { SPEECH_PULSE_FRAMES } from './melodyInterrogation'
 import {
   canHear,
   MELODY_HEARING_RANGE,
@@ -27,7 +28,14 @@ function hearOpponent(state: FightState, side: FightSide): ArcadeFighter {
     soundDistance(fighter, opponent) > MELODY_HEARING_RANGE
   )
     return { ...fighter, melodyHearing: undefined }
-  return { ...fighter, melodyHearing: heartReading(fighter, opponent, target) }
+  const read = heartReading(fighter, opponent, target)
+  const pulse = opponent.speechPulse
+  const recent =
+    pulse && state.frame >= pulse.frame && state.frame - pulse.frame < SPEECH_PULSE_FRAMES
+  return {
+    ...fighter,
+    melodyHearing: recent ? { ...read, pulse: 'agitated', acceleration: pulse.shape } : read,
+  }
 }
 
 function heartReading(fighter: ArcadeFighter, opponent: ArcadeFighter, target: FightSide) {

@@ -1,3 +1,4 @@
+import { createMachiObjectScene } from './machiObjectScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
 import { createFineControlClock } from './fineControlPresentation'
@@ -13,6 +14,7 @@ import {
 export function createMachiThreadScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const clock = createFineControlClock()
+  const materialObjects = createMachiObjectScene(options)
   const needleGeometry = new THREE.BoxGeometry(0.025, 0.2, 0.025)
   const needleMaterial = new THREE.MeshBasicMaterial({ color: 0xe5e7eb })
   const needles = (['player', 'opponent'] as const).map((side) => {
@@ -51,6 +53,7 @@ export function createMachiThreadScene(options: EffectSceneOptions): FighterEffe
   }
   return {
     sync: (state: FightState) => {
+      materialObjects.sync(state, 0)
       const frames = clock(state)
       for (const entry of needles) {
         const target = state[entry.side]
@@ -79,6 +82,7 @@ export function createMachiThreadScene(options: EffectSceneOptions): FighterEffe
       }
     },
     dispose: () => {
+      materialObjects.dispose()
       for (const entry of needles) {
         scene.remove(entry.line, entry.needle, entry.suture)
         entry.geometry.dispose()

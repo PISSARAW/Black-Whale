@@ -134,48 +134,48 @@ Cinq essais par personnage constituent un contrôle court du roster, pas une mes
 de latence physique ni une validation exhaustive de tous les effets de Hatsu.
 Les séquences temporelles et post-mortem conservent leur repli confirmé.
 
-| Personnage | FPS | Démarrage visuel p95 |
-| --- | ---: | ---: |
-| Kurapika | 60,00 | 16,9 ms |
-| Hisoka | 60,00 | 14,5 ms |
-| Chrollo | 60,00 | 15,6 ms |
-| Benjamin | 60,00 | 12,5 ms |
-| Tserriednich | 60,00 | 12,5 ms |
-| Feitan | 60,00 | 16,2 ms |
-| Saiyu | 60,00 | 14,7 ms |
-| Theta | 60,00 | 16,5 ms |
-| Biscuit | 60,00 | 17,1 ms |
-| Phinks | 60,00 | 15,3 ms |
-| Franklin | 60,00 | 14,1 ms |
-| Machi | 60,00 | 17,2 ms |
-| Illumi | 60,00 | 16,2 ms |
-| Kalluto | 60,00 | 14,4 ms |
-| Bonolenov | 60,00 | 16,6 ms |
-| Shizuku | 60,00 | 15,6 ms |
-| Hinrigh | 60,00 | 16,6 ms |
-| Mizaistom | 60,00 | 15,8 ms |
-| Leorio | 60,00 | 17,0 ms |
-| Hanzo | 60,00 | 16,7 ms |
-| Rihan | 60,00 | 16,1 ms |
-| Zakuro | 60,00 | 16,5 ms |
-| Melody | 60,00 | 15,0 ms |
-| Basho | 60,00 | 13,3 ms |
-| Camilla | 60,00 | 16,0 ms |
-| Halkenburg | 60,00 | 15,7 ms |
-| Gel | 60,00 | 16,3 ms |
-| Lynch | 60,00 | 14,5 ms |
-| Luini | 60,00 | 14,5 ms |
-| Bill | 60,00 | 15,9 ms |
-| Furykov | 60,00 | 16,5 ms |
-| Cluck | 60,00 | 15,5 ms |
-| Beyond | 60,00 | 15,9 ms |
-| Longhi | 60,00 | 16,3 ms |
-| Musse | 60,00 | 18,9 ms |
-| Padaille | 60,00 | 15,5 ms |
-| Sayird | 60,00 | 15,9 ms |
-| Terebellum | 60,00 | 15,8 ms |
-| Voconte | 60,00 | 15,4 ms |
-| Yokotani | 60,00 | 16,4 ms |
+| Personnage   |   FPS | Démarrage visuel p95 |
+| ------------ | ----: | -------------------: |
+| Kurapika     | 60,00 |              16,9 ms |
+| Hisoka       | 60,00 |              14,5 ms |
+| Chrollo      | 60,00 |              15,6 ms |
+| Benjamin     | 60,00 |              12,5 ms |
+| Tserriednich | 60,00 |              12,5 ms |
+| Feitan       | 60,00 |              16,2 ms |
+| Saiyu        | 60,00 |              14,7 ms |
+| Theta        | 60,00 |              16,5 ms |
+| Biscuit      | 60,00 |              17,1 ms |
+| Phinks       | 60,00 |              15,3 ms |
+| Franklin     | 60,00 |              14,1 ms |
+| Machi        | 60,00 |              17,2 ms |
+| Illumi       | 60,00 |              16,2 ms |
+| Kalluto      | 60,00 |              14,4 ms |
+| Bonolenov    | 60,00 |              16,6 ms |
+| Shizuku      | 60,00 |              15,6 ms |
+| Hinrigh      | 60,00 |              16,6 ms |
+| Mizaistom    | 60,00 |              15,8 ms |
+| Leorio       | 60,00 |              17,0 ms |
+| Hanzo        | 60,00 |              16,7 ms |
+| Rihan        | 60,00 |              16,1 ms |
+| Zakuro       | 60,00 |              16,5 ms |
+| Melody       | 60,00 |              15,0 ms |
+| Basho        | 60,00 |              13,3 ms |
+| Camilla      | 60,00 |              16,0 ms |
+| Halkenburg   | 60,00 |              15,7 ms |
+| Gel          | 60,00 |              16,3 ms |
+| Lynch        | 60,00 |              14,5 ms |
+| Luini        | 60,00 |              14,5 ms |
+| Bill         | 60,00 |              15,9 ms |
+| Furykov      | 60,00 |              16,5 ms |
+| Cluck        | 60,00 |              15,5 ms |
+| Beyond       | 60,00 |              15,9 ms |
+| Longhi       | 60,00 |              16,3 ms |
+| Musse        | 60,00 |              18,9 ms |
+| Padaille     | 60,00 |              15,5 ms |
+| Sayird       | 60,00 |              15,9 ms |
+| Terebellum   | 60,00 |              15,8 ms |
+| Voconte      | 60,00 |              15,4 ms |
+| Yokotani     | 60,00 |              16,4 ms |
 
 Les **5 489 tests ciblés** passent dans 29 fichiers : roster, P2, Zetsu, commandes
 nommées, protocoles, combos, défense, Nen, séquences particulières et replays.
@@ -192,11 +192,11 @@ méthode et les empreintes des traces y figurent avec les conditions d’aliment
 Sur Apple M5 / 16 Go, Chrome 157 avec ANGLE Metal, le passage intégré produit :
 
 | Personnage | Démarrage visuel p95 avant → après | FPS après | Animations non observées avant → après |
-| --- | ---: | ---: | ---: |
-| Kurapika | 484,8 → 16,6 ms | 60,00 | 0 → 0 |
-| Hisoka | 556,3 → 22,8 ms | 59,91 | 10 → 0 |
-| Chrollo | 622,6 → 21,8 ms | 59,64 | 4 → 0 |
-| Benjamin | 1 380,4 → 20,6 ms | 59,79 | 6 → 0 |
+| ---------- | ---------------------------------: | --------: | -------------------------------------: |
+| Kurapika   |                    484,8 → 16,6 ms |     60,00 |                                  0 → 0 |
+| Hisoka     |                    556,3 → 22,8 ms |     59,91 |                                 10 → 0 |
+| Chrollo    |                    622,6 → 21,8 ms |     59,64 |                                  4 → 0 |
+| Benjamin   |                  1 380,4 → 20,6 ms |     59,79 |                                  6 → 0 |
 
 Les 92 essais « après » ont une animation observée. Le p99 des intervalles reste
 à 16,8 ms pour les quatre personnages. Sur 12 786 frames « après », 27 dépassent

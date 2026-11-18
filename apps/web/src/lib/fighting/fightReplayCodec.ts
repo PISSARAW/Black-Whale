@@ -43,7 +43,7 @@ function preparation(value: unknown): FightPreparation | undefined {
   const entry = object(value)
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 7 ||
+    entry.resources.length > 9 ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
@@ -56,6 +56,8 @@ function preparation(value: unknown): FightPreparation | undefined {
     'flutes',
     'needles',
     'rooms',
+    'cameras',
+    'hostages',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),

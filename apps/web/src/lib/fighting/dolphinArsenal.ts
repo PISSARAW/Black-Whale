@@ -12,7 +12,8 @@ export function performDolphinApplication(
   const { state, side, moveId } = options
   const fighter = state[side],
     held = fighter.kurapika?.held
-  if (!held?.loaded || fighter.id !== 'kurapika') return state
+  if (!held?.loaded) return state
+  if (!dolphinApplicationOwned(fighter)) return state
   if (!validDolphinApplication(moveId, held.moveId)) return state
   if (held.used) return continuingDolphinApplication(options, perform)
   const prepared = {
@@ -31,7 +32,7 @@ export function performDolphinApplication(
 export function dolphinArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const fighter = state[side],
     held = fighter.kurapika?.held
-  if (fighter.id !== 'kurapika' || !held?.loaded) return []
+  if (fighter.id !== 'kurapika' || !held?.loaded || held.lentTo) return []
   const prepared = {
     ...state,
     [side]: { ...fighter, id: held.source, nenOwner: fighter.id, stolenChainAbility: undefined },
@@ -93,4 +94,8 @@ function validDolphinApplication(moveId: string, heldMoveId: string): boolean {
     ['special', 'finisher'].includes(move.category) &&
     chainAbilityGroup(moveId) === chainAbilityGroup(heldMoveId),
   )
+}
+
+function dolphinApplicationOwned(fighter: FightState['player']): boolean {
+  return fighter.id === 'kurapika' && !fighter.kurapika?.held?.lentTo
 }

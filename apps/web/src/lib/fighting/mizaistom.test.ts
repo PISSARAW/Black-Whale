@@ -354,7 +354,7 @@ describe('Mizaistom — conditional yellow card', () => {
     expect(state.opponent.hatsuEffects.restrainedFrames).toBe(0)
   })
 
-  it('draws the yellow card then a rectangular cage, and disposes both', () => {
+  it('draws the yellow card then a white lattice cage, and disposes both', () => {
     const scene = new THREE.Scene()
     const effect = createCrossGameScene({ THREE, scene, worldX: (x) => x, worldY: (y) => y })
     effect.sync(warn(), 0)
@@ -366,6 +366,11 @@ describe('Mizaistom — conditional yellow card', () => {
       (object) => object instanceof THREE.LineSegments && object.visible,
     )!
     expect(cage.position.x).toBe(confined.opponent.x)
+    const lattice = cage as THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial>
+    expect(lattice.name).toBe('cross-game-cage:opponent')
+    expect(lattice.geometry.getAttribute('position').count).toBeGreaterThan(200)
+    expect(lattice.material.color.getHex()).toBe(0xf1f0e9)
+    expect(lattice.material.depthWrite).toBe(false)
     effect.sync(frames(confined, 95), 0)
     expect(scene.children.filter((object) => object.visible)).toHaveLength(0)
     effect.dispose()

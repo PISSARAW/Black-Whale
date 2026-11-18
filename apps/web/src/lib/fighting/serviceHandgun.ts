@@ -66,6 +66,10 @@ export function addServiceHandgun(options: {
 export function animateServiceHandgun(figure: Object3D, fighter: ArcadeFighter): void {
   const pistol = PISTOLS.get(figure)
   if (!pistol) return
+  if (fighter.weaponsConfiscated) {
+    pistol.held.visible = pistol.stowed.visible = pistol.flash.visible = false
+    return
+  }
   const firing = fighter.attack?.kind === 'ranged'
   pistol.held.visible = firing
   pistol.stowed.visible = !firing && !fighter.hanzoProjection

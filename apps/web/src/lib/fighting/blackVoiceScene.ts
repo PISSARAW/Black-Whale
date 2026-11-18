@@ -4,25 +4,49 @@ import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScen
 
 export function createBlackVoiceScene(options: EffectSceneOptions): FighterEffectScene {
   const pool = createVisitScenePool(options)
+  function syncGuestAntennas(state: import('./types').FightState) {
+    for (const guest of state.rosterGuests ?? []) {
+      if (guest.role !== 'puppet' || guest.phase === 'preparing') continue
+      if (!state[guest.owner].blackAntennas?.some((item) => item.guestId === guest.id)) continue
+      const pin = pool.get(`black-guest-antenna:${guest.id}`, {
+        model: 'black-voice-antenna',
+        anchor: 'floor',
+        fit: { height: 0.25 },
+      })
+      pin.root.position.set(
+        options.worldX(guest.fighter.x) + 0.12,
+        options.worldY(guest.fighter.y) + (guest.fighter.health <= 0 ? 0.35 : 1.4),
+        0.2,
+      )
+    }
+  }
   return {
     sync(state, seconds) {
       pool.hide()
+      syncGuestAntennas(state)
       for (const side of ['player', 'opponent'] as const) {
         const fighter = state[side]
         const active = fighter.id === 'chrollo' && chrolloHasActivePage(fighter, 'black-voice')
         if (active) {
-          const phone = pool.get(`black-voice-phone:${side}`, { model: 'black-voice', fit: { height: 0.3 } })
-          placeVisitHand(options, { state, side, root: phone.root,
-            hand: freeVisitHand(fighter) })
+          const phone = pool.get(`black-voice-phone:${side}`, {
+            model: 'black-voice',
+            fit: { height: 0.3 },
+          })
+          placeVisitHand(options, { state, side, root: phone.root, hand: freeVisitHand(fighter) })
           phone.root.rotateX(-0.15 + Math.sin(seconds * 3) * 0.015)
         }
         const victim = state[side === 'player' ? 'opponent' : 'player']
         if (!active || victim.hatsuEffects.manipulatedFrames <= 0) continue
         const antenna = pool.get(`black-voice-antenna:${side}`, {
-          model: 'black-voice-antenna', anchor: 'floor', fit: { height: 0.25 },
+          model: 'black-voice-antenna',
+          anchor: 'floor',
+          fit: { height: 0.25 },
         })
-        antenna.root.position.set(options.worldX(victim.x) + 0.12,
-          options.worldY(victim.y) + 1.4, 0.2)
+        antenna.root.position.set(
+          options.worldX(victim.x) + 0.12,
+          options.worldY(victim.y) + 1.4,
+          0.2,
+        )
         antenna.root.rotation.z = -0.2
       }
     },

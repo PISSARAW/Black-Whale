@@ -181,28 +181,26 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset)
-  .map(tuneFeitanMoveset)
-  .map((moveset) => {
-    if (moveset.fighterId !== 'biscuit') return moveset
-    return {
-      ...moveset,
-      moves: moveset.moves.map((move) =>
-        move.slot === 'neutralSpecial'
-          ? {
-              ...move,
-              auraCost: 0,
-              tuning: {
-                ...move.tuning,
-                damage: 0,
-                hitstun: 0,
-                blockstun: 0,
-                hitstop: 0,
-                knockback: 0,
-                lunge: 0,
-              },
-            }
-          : move,
-      ),
-    }
-  })
+export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset).map((moveset) => {
+  if (moveset.fighterId !== 'biscuit') return moveset
+  return {
+    ...moveset,
+    moves: moveset.moves.map((move) =>
+      move.slot === 'neutralSpecial'
+        ? {
+            ...move,
+            auraCost: 0,
+            tuning: {
+              ...move.tuning,
+              damage: 0,
+              hitstun: 0,
+              blockstun: 0,
+              hitstop: 0,
+              knockback: 0,
+              lunge: 0,
+            },
+          }
+        : move,
+    ),
+  }
+})

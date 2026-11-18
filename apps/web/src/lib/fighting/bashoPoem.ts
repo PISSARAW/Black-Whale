@@ -14,9 +14,16 @@ export const BASHO_POEMS = {
   en: 'Whatever I strike\nWith my fist\nWill burn',
 } as const
 
+/** Meaning translations, not a claim to reproduce a particular licensed translation. */
+export const BASHO_TRIAL_POEMS = {
+  fr: 'Si vous me mentez\nVotre corps sera livré\nAu jugement du feu',
+  en: 'If you lie to me\nYour body will be given\nTo the trial by fire',
+} as const
+
 export interface BashoPoem {
   text: string
-  effect: 'ignite-punched-target'
+  effect: 'ignite-punched-target' | 'trial-by-fire'
+  declaration?: { frame: number; question: import('./dowsingTypes').DowsingQuestion }
   sourceMoveId?: string
   writingFrames: number
   originX: number
@@ -30,8 +37,16 @@ export interface BashoBurn {
 
 /** Recognize this attested composition, never guess powers from arbitrary prose. */
 export function recognizedBashoPoem(text: string): boolean {
+  return bashoPoemEffect(text) !== null
+}
+
+export function bashoPoemEffect(text: string): BashoPoem['effect'] | null {
   const normalized = normalizePoem(text)
-  return Object.values(BASHO_POEMS).some((poem) => normalizePoem(poem) === normalized)
+  if (Object.values(BASHO_POEMS).some((poem) => normalizePoem(poem) === normalized))
+    return 'ignite-punched-target'
+  return Object.values(BASHO_TRIAL_POEMS).some((poem) => normalizePoem(poem) === normalized)
+    ? 'trial-by-fire'
+    : null
 }
 
 function normalizePoem(text: string): string {

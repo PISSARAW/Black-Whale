@@ -9,6 +9,8 @@
   import { arsenalOptions } from '$lib/fighting/retrospectiveArsenal'
   import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import FightPriorityStatus from './FightPriorityStatus.svelte'
+  import FightGumNetwork from './FightGumNetwork.svelte'
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
@@ -82,6 +84,8 @@
         </button>
         <small>{language === 'fr' ? option.conditionFr : option.conditionEn}</small>
       {/each}
+      <FightPriorityStatus {state} {side} {language} />
+      <FightGumNetwork {state} {side} {language} {paused} {onUse} />
       {#if state[side].chrolloHistorical?.phone}<span>{phoneGuidance(state, side, language)}</span
         >{/if}
       {#if state[side].gumCatch?.projectile}<span

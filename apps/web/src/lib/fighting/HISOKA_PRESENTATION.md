@@ -1,5 +1,50 @@
 # Hisoka : Bungee Gum et Texture Surprise, type 1
 
+## Attaches multiples et objets physiques
+
+`bungeeNetwork.ts` conserve des attaches indépendantes, avec origine anatomique
+main droite/gauche ou pied droit/gauche, cible, dissimulation et sélection par
+camp. `bungeeCommands.ts` prépare les ancrages au sol, aux supports en hauteur
+et aux objets réels présents. La hauteur des pièces vient du blueprint ; à la
+Tour Céleste, le support est la poutre d’éclairage. Le pont d’observation ouvert
+ne fournit pas de plafond. Aucun mur n’est inventé aux limites du ring.
+
+Le panneau « Bungee Gum » est accessible pendant le combat et dans les techniques
+du menu pause. L ajoute un lien sur un vrai contact non gardé ; → + L rappelle
+la cible ou l’objet sélectionné ; ← + L propulse le corps vers le support choisi,
+y compris verticalement. Le finisher exige une attache active sur l’adversaire
+et ne consomme que celle-ci. Les autres liens restent en place.
+
+« Lier la prochaine carte » prépare un vrai lancer U. La carte peut s’arrêter,
+être rappelée puis relancée : son identifiant et ses propriétés physiques sont
+conservés, sans duplication. Les collisions ordinaires, la garde et l’expiration
+du Shu restent actives. Un trajet ne frappe qu’une fois ; une carte immobile ou
+tenue ne frappe pas. Détacher le Gum laisse tomber l’objet réel.
+
+Les préparations sont interruptibles et les mouvements suivent les collisions
+physiques, sans dégâts automatiques ni invulnérabilité. Un impact interrompt la
+traction, un support détruit retire son lien, Zetsu ou la perte du Hatsu retire
+les attaches. La suspension en hauteur dépense de l’aura et la gravité reprend
+après interruption ou détachement. Les prévisions utilisent le même réseau ;
+PvP et spectateurs masquent séparément chaque lien dissimulé et les préparations
+privées. Les cartes réelles restent visibles sous In.
+
+La borne de quinze attaches par camp, les portées, les préparations de 18 images,
+les coûts de 12 aura par ancrage, 5 par rappel/propulsion, 6 pour préparer une
+carte et le maintien à 3 aura/s en hauteur sont des réglages du duel.
+Références : chapitres 54–55 (cartes, mouchoir et attaches multiples), 62–63
+(rappel de Gon et pierre), 162/165/168 (ballon), 351/353–355 (pied, plafond,
+objets et attaches simultanées). Texture Surprise reste un déguisement de surface.
+
+`bungeeNetwork.test.ts` couvre les commandes réelles, la préparation vulnérable,
+la montée/chute, le rappel des caisses et cartes, l’identité des objets, les deux
+camps, In/Gyo, les spectateurs et le replay déterministe. Le contrôle navigateur
+`node apps/web/scripts/check-hisoka-network.mjs` vérifie la scène et les commandes
+sur ordinateur et mobile. Le réseau fait partie des snapshots et du protocole
+PvP courants ; les archives des versions précédentes restent conservées.
+
+## Accents de présentation
+
 Les effets restent dans la vue de combat. Chaque accent dure 18 images de
 simulation (0,3 seconde), sans vue secondaire ni interruption du duel.
 

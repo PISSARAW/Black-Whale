@@ -40,12 +40,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'hisoka',
     mechanic: [
-      'L : frappe et attache Bungee Gum au contact non gardé. → + L : tire la cible attachée ; ← + L : propulse Hisoka vers elle. Rappel et rebond exigent une liaison tendue et ne frappent pas. ↓ + L : au sol, Texture Surprise masque le tissu en peau jusqu’au contact reçu, sans protection physique.',
-      'L: strike and attach Bungee Gum on unguarded contact. → + L: pull the attached target; ← + L: launch Hisoka toward it. Recall and rebound need a stretched link and do not strike. ↓ + L: grounded Texture Surprise disguises cloth as skin until incoming contact, without physical protection.',
+      'L : frappe et ajoute une attache au contact non gardé. Bungee Gum en combat : choisir la main ou le pied, l’attache active, préparer un ancrage au sol ou en hauteur, ou lier la prochaine carte avant U. → + L : rappeler la cible ou l’objet ; ← + L : se propulser vers le support, y compris verticalement. ↓ + L : Texture Surprise masque le tissu sans protection physique.',
+      'L: strike and add an attachment on unguarded contact. Combat Bungee Gum: choose a hand or foot and active link, prepare a floor or overhead anchor, or attach the next card before U. → + L: recall the target or object; ← + L: propel toward the support, including vertically. ↓ + L: Texture Surprise disguises cloth without physical protection.',
     ],
     finisherCondition: [
-      'Bungee Gum doit être attaché à l’adversaire ; la liaison est consommée si le coup touche.',
-      'Bungee Gum must be attached to the opponent; a successful strike consumes the link.',
+      'L’attache active doit viser l’adversaire ; elle seule est consommée si le coup touche.',
+      'The active attachment must target the opponent; only that link is consumed on a successful strike.',
     ],
     labels: [
       'Entaille de carte|Card Slash',

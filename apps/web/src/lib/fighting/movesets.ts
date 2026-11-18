@@ -1,11 +1,12 @@
 import { declareMoveCombatRules } from './moveCombatRules'
+import { selectedGumLink } from './bungeeNetwork'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
-import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
-import { tuneKallutoMoveset } from './kallutoMoveset'
 import { tuneBeyondMoveset } from './beyondMoveset'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
+import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
+import { tuneKallutoMoveset } from './kallutoMoveset'
 import { illumiBodyFree } from './illumiState'
 import { tuneVoconteMoveset } from './voconteMoveset'
 import { voconteMoveResources } from './voconteDoorAction'
@@ -218,6 +219,7 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (move.id === 'machi:neutralSpecial' && !fighter.openWounds) return false
   const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
   if (door !== null) return door
   const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
@@ -333,7 +335,7 @@ const opponentOf = (state: FightState, side: FightSide) =>
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   kurapika: (state, side) =>
     Boolean(state[side].kurapika?.emperorTime) && !opponentOf(state, side).judgmentChain,
-  hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
+  hisoka: (state, side) => selectedGumLink(state, side)?.target.kind === 'fighter',
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => Boolean(state[side].hatsuEffects.baton?.card),
   tserriednich: (state, side) =>

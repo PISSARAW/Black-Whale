@@ -3,6 +3,7 @@ import type { PreparedEntity } from '../preparationTypes'
 
 /** Side-owned world effects cannot be handed to a different body by a relay. */
 export function teamWorldEngaged(state: FightState, side: FightSide): boolean {
+  if (gumWorldEngaged(state, side)) return true
   if (
     state.arena &&
     [state.arena.pending[side], state.arena.tether[side], state.arena.stored[side]].some(Boolean)
@@ -10,6 +11,9 @@ export function teamWorldEngaged(state: FightState, side: FightSide): boolean {
     return true
   if (state.battlefield?.luiniAnchors?.[side]) return true
   return (state.battlefield?.entities ?? []).some((entry) => ownedEffect(entry, side))
+}
+function gumWorldEngaged(state: FightState, side: FightSide): boolean {
+  return Boolean(state.gumNetwork?.links.some((link) => link.owner === side) || state.gumNetwork?.pending[side])
 }
 function ownedEffect(entry: PreparedEntity, side: FightSide): boolean {
   if (entry.health <= 0) return false

@@ -114,9 +114,15 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
         return
       }
       if (id === 'machi') {
-        expect(armed[side].attack?.moveId).toBe('machi:neutralSpecial')
-        expect(armed[side].aura).toBe(auraBefore - moveForSlot(id, 'neutralSpecial')!.auraCost)
-        expect(advance(armed, 0.6).impact).toBeNull()
+        expect(armed).toBe(ready)
+        const wounded = {
+          ...ready,
+          [side]: { ...ready[side], openWounds: 1, health: ready[side].health - 15 },
+        }
+        const suturing = performAttack(wounded, side, 'special')
+        expect(suturing[side].attack?.moveId).toBe('machi:neutralSpecial')
+        expect(suturing[side].aura).toBe(auraBefore - moveForSlot(id, 'neutralSpecial')!.auraCost)
+        expect(advance(suturing, 0.6).impact).toBeNull()
         return
       }
       if (id === 'voconte') {

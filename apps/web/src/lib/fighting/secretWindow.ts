@@ -6,13 +6,17 @@ import type { ArcadeFighter, FightSide, FightState, FighterPose } from './types'
 
 export interface SecretWindowObservation {
   frame: number
-  action: FighterPose | 'concealed-gesture' | 'sleeping-body'
+  action: FighterPose | 'concealed-gesture' | 'sleeping-body' | 'audio-only'
 }
 
 export interface SecretWindowState {
   target: FightSide
   attachedAt: number
   observation: SecretWindowObservation
+  mode?: 'contact' | 'listening'
+  words?: { frame: number; speaker: FightSide; text: string }
+  history?: SecretWindowObservation[]
+  recordings?: { frame: number; speaker: FightSide; text: string }[]
 }
 
 /** The bird reports bodily actions, not aura, thoughts, attack names or the future. */
@@ -61,4 +65,50 @@ export function secretWindowVisibleTo(
   return (
     owner === viewer && Boolean(state[owner].secretWindow) && secretWindowNenActive(state[owner])
   )
+}
+
+/** Keep only acquired observations. This never reconstructs events before the bird existed. */
+export function advanceSecretWindowFeed(state: FightState, side: FightSide): SecretWindowState {
+  const feed = state[side].secretWindow!
+  const observation: SecretWindowObservation =
+    feed.mode === 'listening'
+      ? { frame: state.frame, action: 'audio-only' }
+      : observeSecretWindow(state, feed.target)
+  const history = feed.history ?? [feed.observation]
+  return {
+    ...feed,
+    observation,
+    history:
+      history.at(-1)?.action === observation.action
+        ? history
+        : [...history, observation].slice(-64),
+  }
+}
+
+/** Contact relays its target's speech; the shoulder bird listens through barriers.
+ * No range beyond the duel's actual participants is asserted as a canonical limit.
+ */
+export function relaySecretWindowSpeech(
+  state: FightState,
+  speaker: FightSide,
+  text: string,
+): FightState {
+  let next = state
+  for (const side of ['player', 'opponent'] as const) {
+    const feed = next[side].secretWindow
+    if (!feed || feed.target !== speaker || !secretWindowNenActive(next[side])) continue
+    const words = { frame: state.frame, speaker, text }
+    next = {
+      ...next,
+      [side]: {
+        ...next[side],
+        secretWindow: {
+          ...feed,
+          words,
+          recordings: [...(feed.recordings ?? []), words].slice(-64),
+        },
+      },
+    }
+  }
+  return next
 }

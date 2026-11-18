@@ -1,7 +1,36 @@
 # Fighting
 
+Le [lot à trois séquences de combat](../../../../../docs/clash-trois-combats.md)
+complète Kalluto et Hinrigh : dispersion et regroupement du papier, coupures,
+armes-serpents conservant leur chargeur, couteaux finis, contre du bras-hache,
+chat-caméra mobile et émetteur caché dont le récepteur se transmet.
+L'audit précise le comptage, les films vérifiés et les adaptations du duel.
+Ces applications sont enregistrées sous `clash-combat-29`.
+
+Le [lot à deux séquences de combat](../../../../../docs/clash-deux-combats.md)
+complète Zakuro, Luini et Camilla : reconnaissance sur les parois réelles,
+contrôle du saignement, choix des passages et sorties partielles vulnérables,
+couteau matériel, munitions finies et plaies fermées après résurrection.
+Leurs commandes et leur état sont enregistrés sous `clash-combat-27`.
+
+Les [six personnages prioritaires](../../../../../docs/clash-six-prioritaires.md)
+reçoivent les objets de Biohazard, les fils et sutures de Machi, les passages
+partiels de Luini et les usages d'information et contrats de Kurapika. Les
+adaptations demandées ajoutent le corps aléatoire d'Halkenburg, le pantin IA de
+Chrollo en 2 contre 1 et le tiers de Dolphin. Le [plan du roster à plusieurs
+combats](../../../../../docs/clash-combats-multiples.md) conserve le diagnostic.
+
+L'[audit des onze personnages à une seule séquence de combat](../../../../../docs/clash-combats-uniques.md)
+recoupe manga, adaptations et films. Sous `clash-combat-26`, il ajoute l'écoute
+et les observations privées de Musse, le second poème d'interrogatoire de Basho,
+la lecture cardiaque pendant l'interrogatoire de Melody, les tentatives de
+Padaille contre les menottes, les récepteurs de Sweet Home et la confiscation
+par LSDF, et corrige la dévoration de Predator. Les limites de représentation
+restent indiquées par application.
+
 Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
 complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
+Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
 observées et réglages arcade ; seules les pratiques qualifiées sont activables.
@@ -29,8 +58,6 @@ des replays pour revoir puis essayer une réponse à une erreur observable.
 
 L’[étape 6](./STEP6.md) ajoute les files non classée et classée, les séries
 vérifiées, la récupération d’identité et les tournois reliés aux résultats serveur.
-
-Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
 L’[étape 7](./STEP7.md) ajoute trois parcours scénarisés avec fins et sauvegardes,
 puis Survie, Contre-la-montre et Score Attack, sans bonus de statistiques.
@@ -99,6 +126,18 @@ ancrage, liaison des seuils, franchissement réel et fermeture confirmée.
 
 Les [retours d’information de Musse, Sayird, Furykov et Lynch](./PERCEPTION_PRESENTATION.md)
 reçoivent des accents de type 1 dans le point de vue du participant autorisé.
+
+La [croissance de Bill, la mission du pigeon de Cluck et le traitement de Cookie](./SUPPORT_HATSU_PRESENTATION.md)
+restent en type 1, sur les cibles réelles et les étapes effectivement confirmées.
+
+L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.md)
+distingue règles référencées, adaptations du duel et limites de représentation.
+`nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
+combattant ; les contrats particuliers des techniques restent prioritaires.
+Le ruleset courant `clash-combat-29` inclut le réglage du hitstun de l’étape 3,
+les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
+des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
+[usages des sept techniques avancées](./NEN_COMBAT.md).
 
 `nenAccess.ts` définit l’accès au Nen volontaire : vie, épuisement, Zetsu imposé,
 vol et sceaux. `nenActionRules.ts` applique ce contrat aux commandes directes,
@@ -201,6 +240,18 @@ punition réelle et reproductible, juggles et corps séparé. Les fenêtres et
 propriétés de combat sont des réglages arcade, pas des valeurs tirées du manga.
 
 ## Styles et contre-jeu
+
+L'[exigence d'arsenal intégral](../../../../../docs/clash-arsenal-integral.md)
+retient toutes les techniques attestées, même historiques, et conserve le On à
+la demande de l'utilisateur. Elle distingue l'usage des capacités déjà exécutables
+des extensions encore nécessaires avant de pouvoir annoncer une couverture complète.
+
+`arsenalAiFirst.ts` et `arsenalAiSecond.ts` donnent un plan aux quarante combattants.
+Les conditions du moteur restent prioritaires : aucun équipement, consentement,
+sens retiré ou charge n'est accordé par le plan. `arsenalAiAction.ts` utilise aussi
+les armes à distance ; `arsenalAiNen.ts` applique In et Ko avec les coûts et risques
+ordinaires. Les tests `arsenalAi.test.ts` et `arsenalAiNen.test.ts` vérifient les
+choix, leurs effets réels, la perception et la conservation du On.
 
 `styleMatchupsFirst.ts` et `styleMatchupsSecond.ts` donnent aux quarante
 combattants un plan de jeu et une réponse en français et en anglais. Le manuel
@@ -310,7 +361,8 @@ La présentation ne modifie aucune condition du Nen. Détails, persistance et li
 configuration confirmée, commandes exécutées par le serveur et verdict du moteur.
 Le transport vérifie les états, affiche la connexion et permet la reconnexion après
 une courte coupure. Les observations privées du Nen sont filtrées par destinataire.
-Le registre reste en mémoire d’un processus ; la prédiction visuelle couvre les 40 personnages.
+Les invitations restent en mémoire d’un processus. Une prédiction visuelle bornée
+couvre les 40 personnages hors séquences temporelles et post-mortem ; il n’y a pas de rollback complet.
 Contrats, limites et vérifications : [PVP.md](./PVP.md).
 
 ## Phase 6 : apprentissage, défis et Arcade
@@ -764,7 +816,7 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   libres. Respecter le pacte accorde au destinataire **un usage de Moonlight Act**,
   proposé depuis le panneau sans remplacer son Hatsu personnel. Les deux parties
   encourent Zetsu si elles rompent la même clause. La semaine du chapitre 401
-  est représentée par le reste du match, y compris les manches suivantes ; aucun
+  compte une semaine de simulation, avec le temps restant conservé entre les manches ; aucun
   hitstun contractuel n’est appliqué. `moonlightContract.ts` porte les signatures,
   la durée, le prêt et la sanction ; `moonlightAction.ts` contrôle le démarrage
   effectif des commandes. Les clauses de cette trêve sont une adaptation explicite,
@@ -1090,8 +1142,8 @@ sans changer les règles, les boîtes ni les données de frame.
   des privations jusqu’à la fin de manche restent des adaptations du duel ;
   le manga (ch. 349) n’en fixe pas les modalités complètes.
 
-- `fighterMovement.ts` porte la marche (recul à 80 %), le dash (18 frames) et le
-  backdash (16 frames) au double appui sous 14 frames, le prejump de 3 frames, un saut
+- `fighterMovement.ts` porte la marche, le dash et le backdash, différenciés
+  par `styleMobility.ts`, au double appui sous 14 frames, le prejump de 3 frames, un saut
   à deux gravités (environ 38 frames en l'air) dont la dérive horizontale est fixée au
   décollage, puis 3 frames de landing sans déplacement.
 - `fightInterpolation.ts` : le moteur reste à 60 Hz ; le rendu interpole entre les deux
@@ -1109,8 +1161,9 @@ sans changer les règles, les boîtes ni les données de frame.
   O pendant l’amorce adverse protège huit frames contre la projection. Une cible
   aérienne ou en hitstun/blockstun ne peut pas être projetée.
 - Sur touche confirmée uniquement, chaque coup ne peut annuler que vers les
-  destinations inscrites dans les routes de son combattant. Aucun cancel sur
-  garde, esquive ou coup dans le vide ; la route universelle J → K → L disparaît
+  destinations inscrites dans les routes de son combattant. Sur garde ordinaire,
+  seul le léger peut continuer vers le lourd explicitement déclaré. Aucun cancel
+  sur parade, esquive ou coup dans le vide ; la route universelle J → K → L disparaît
   pour les personnages dotés d’un moveset complet.
 - Les Hatsu en buffer déclenchent leurs effets et paient leur coût au départ
   effectif du coup, après revalidation des ressources.
@@ -1139,7 +1192,8 @@ sans changer les règles, les boîtes ni les données de frame.
   hurtboxes. Le dummy peut enregistrer puis rejouer déplacements, garde et attaques.
 - Le [PvP privé](./PVP.md) ajoute une couche HTTP autoritaire distincte du moteur.
   Le moteur fixe et les entrées P1/P2 séparées restent la base de resimulation ;
-  la prédiction visuelle bornée couvre les 40 personnages ; le rollback complet reste absent.
+  la prédiction visuelle bornée couvre les 40 personnages ;
+  le rollback complet n’est pas présent.
 
 ### Kurapika : chaînes et Emperor Time
 
@@ -1242,13 +1296,13 @@ Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
 | --------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | En        | R             | [             | Profils qualifiés : Hinrigh ≥ 5 m observés (20 u de jeu), Phinks portée inconnue (12 u arcade, concentration fragile). Contacts neutres, sans bonus de parade ; 9 aura/s en plus de Ren et protection dispersée (réglages de duel). Voir [EN.md](./EN.md).                           |
 | Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu.                           |
-| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle l’aura ; En seul ne révèle pas cette aura cachée.                                                 |
+| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact.                                                                           |
 | Gyo       | G             | ;             | Gyo oculaire : Ren, lecture de In et des zones adverses (6,4 aura/s). Version faible : 2,4 aura/s sans contre universel à In. G + zone : concentration corporelle ; Aura + G + zone : Ryu et lecture ; Aura + Garde + G + zone : Ko défensif. Voir [NEN_COMBAT.md](./NEN_COMBAT.md). |
 | Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                                                   |
 
 En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
-Hatsu. Son cercle utilise les mêmes distances que les collisions. Les contacts matériels
-restent perceptibles ; En seul ne révèle pas l’aura dissimulée par In.
+Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
+qui le traversent sont localisés, sans lui attribuer l’analyse visuelle de Gyo.
 L’IA lit les gestes visibles et effectue des lectures Gyo périodiques ; sa décision
 ne consulte pas un drapeau In secret ni la présence d’un projectile indétectable.
 Les commandes supplémentaires sont enregistrées par le mannequin comme les autres
@@ -1449,7 +1503,9 @@ d’aura, aux commandes silencieuses ou au futur. Le Nen indisponible, la perte 
 la page copiée, la privation d’ouïe ou les oreilles bouchées empêchent l’écoute.
 Les copies utilisent les mêmes conditions et gardent leurs propres papiers.
 
-Les quatre zones, la phrase de dialogue « Je suis ici. », les coûts, les temps,
+Le panneau permet aussi de prononcer un texte libre (160 caractères dans l’interface).
+La poupée relaie exactement ce texte s’il a été émis dans son rayon audible.
+Les quatre zones, la phrase par défaut « Je suis ici. », les coûts, les temps,
 les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
 des restrictions attribuées au manga. Le panneau expose les zones plantées,
 la confection de la poupée et la dernière parole réellement reçue.
@@ -1484,31 +1540,6 @@ et peut rétablir la main avant de rendre la capacité. Les deux copies conserve
 les frappes physiques, sans bonus général. La manche suivante efface la forme.
 `padaille.test.ts` vérifie choix, collisions, garde, interruption, buffer, copies,
 perte du Nen et position des modèles sur le bras droit.
-
-### Kalluto — papier et écoute
-
-`kallutoPaper.ts`, `kallutoFrames.ts` et `kallutoFlight.ts` séparent la pose physique
-et la manipulation. L et U lancent des fragments dans la zone sélectionnée ; ↓ L
-vise les pieds. Seul un fragment qui touche sans garde ni esquive se plante.
-→ L et H lancent un flux de papier vers un fragment appartenant à l’utilisateur,
-dans la zone sélectionnée. Aucun compteur de coups, bonus de détonation ou seuil
-de vie : le flux passe par les collisions, la défense et les dégâts ordinaires.
-Le papier planté reste physique après interruption du Nen ; le flux perd alors
-sa poursuite. Chaque nouvelle manche repart sans papier ni poupée.
-
-← L confectionne une poupée du sujet marqué. `kallutoListening.ts` relaie les
-paroles émises par T/V ou Parler à proximité de ce sujet, indépendamment de la
-distance entre le sujet et la poupée. Aucun accès aux pensées, aux statistiques
-d’aura, aux commandes silencieuses ou au futur. Le Nen indisponible, la perte de
-la page copiée, la privation d’ouïe ou les oreilles bouchées empêchent l’écoute.
-Les copies utilisent les mêmes conditions et gardent leurs propres papiers.
-
-Le panneau permet aussi de prononcer un texte libre (160 caractères dans l’interface).
-La poupée relaie exactement ce texte s’il a été émis dans son rayon audible.
-Les quatre zones, la phrase par défaut « Je suis ici. », les coûts, les temps,
-les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
-des restrictions attribuées au manga. Le panneau expose les zones plantées,
-la confection de la poupée et la dernière parole réellement reçue.
 
 ## Easter Eggs de Clash
 
@@ -1700,7 +1731,7 @@ dynamique sont documentés dans [COMBAT.md](./COMBAT.md).
 ## Cinématiques de victoire
 
 Les scènes de dix secondes d'Hisoka, Chrollo, Kurapika, Feitan, Phinks, Franklin,
-Benjamin, Tserriednich, Leorio, Halkenburg et Camilla
+Benjamin, Tserriednich, Leorio, Halkenburg, Camilla, Kalluto, Machi et Shizuku
 se déclenchent après le verdict avec le vaincu et le décor du match courant.
 Leur intégration, leur cycle de vie et leurs vérifications sont décrits dans
 [victory/README.md](./victory/README.md).

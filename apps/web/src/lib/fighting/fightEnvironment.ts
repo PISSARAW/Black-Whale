@@ -16,13 +16,7 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
   return {
     arenaInteractions: options.arenaInteractions ?? false,
     needleStock: options.needleStock ? { ...options.needleStock } : undefined,
-    preparation: options.preparation
-      ? {
-          ...options.preparation,
-          resources: [...options.preparation.resources],
-          cohorts: [...options.preparation.cohorts],
-        }
-      : undefined,
+    preparation: options.preparation ? { ...options.preparation, resources: [...options.preparation.resources], cohorts: [...options.preparation.cohorts] } : undefined,
     stageId: options.stageId ?? DEFAULT_FIGHT_STAGE,
     morenaPresent: options.morenaPresent ?? false,
     unlawfulIntruders: { player: false, opponent: false, ...options.unlawfulIntruders },

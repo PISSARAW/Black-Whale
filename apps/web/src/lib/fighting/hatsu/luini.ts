@@ -1,8 +1,9 @@
-import { unchangedFrame, unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
+import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
+import { advanceLuiniAnchors } from '../luiniSpatial'
 
 export const luiniHatsu: FighterHatsu = {
   id: 'luini',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: unchangedFrame,
+  onFrame: (state) => advanceLuiniAnchors(state),
 }

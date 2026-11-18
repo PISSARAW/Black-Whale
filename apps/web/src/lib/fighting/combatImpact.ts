@@ -5,6 +5,7 @@ import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
 import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
+import { recordThreeCombatProjectileWound } from './threeCombatWounds'
 import { resolveIllumiContact } from './illumiImpact'
 import { resolveLynchContact } from './lynchInterrogation'
 import { recordBlinkyWound } from './blinkyWounds'
@@ -17,7 +18,7 @@ import { observeComboMaster } from './comboMaster'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
-import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
+import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
 import {
   activeHitbox,
@@ -269,7 +270,7 @@ function shouldResolveHatsu(
   )
 }
 
-function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
+export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
   if (
     state.phase !== 'fighting' ||
     !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
@@ -362,7 +363,10 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     after: next,
     damagedSide: hit.defenderSide,
   })
-  const planted = plantPaperAfterHit(routed, hit.projectile)
+  const planted = recordThreeCombatProjectileWound(
+    plantPaperAfterHit(routed, hit.projectile),
+    hit.projectile,
+  )
   return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
 }
 
@@ -411,7 +415,7 @@ function resolveTrade(original: FightState, first: FightState): FightState {
       incoming: first.opponent,
       outgoing: second.opponent,
     }),
-    bungeeGum: tradeAttachment(original, first, second),
+    ...tradeGumState(original, first, second),
     score: tradeTotals({
       original: original.score,
       first: first.score,

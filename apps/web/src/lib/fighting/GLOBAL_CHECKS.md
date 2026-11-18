@@ -45,7 +45,6 @@ revalidation stricte vérifie ses checkpoints avec le moteur intégré.
 Commandes : `pnpm lint`, `pnpm test:ratchet`, `pnpm typecheck`, `pnpm test` et
 build de production du web.
 
-
 ## Résultats du 17 novembre 2026
 
 - `pnpm test` : 18 tâches réussies et 20 206 tests réussis, dont 18 667 tests

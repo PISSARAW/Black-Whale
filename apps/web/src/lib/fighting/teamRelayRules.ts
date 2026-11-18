@@ -78,11 +78,15 @@ function restingValue(value: unknown): unknown {
 function quietWorld(state: FightState): boolean {
   return (
     ![
+      state.rosterGuests?.some((guest) => guest.phase !== 'eliminated'),
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
       state.moonlight,
       state.bungeeGum,
+      state.gumNetwork?.links.length ||
+        state.gumNetwork?.pending.player ||
+        state.gumNetwork?.pending.opponent,
       state.lsdf,
       state.voconteDoors,
       state.expulsion,

@@ -12,6 +12,7 @@ export const EMPTY_PREPARATION: FightPreparation = { mode: 'duel', resources: []
 export const PREPARATION_REACH = 8
 
 export function personalEquipment(id: FighterId): FightEquipment[] {
+  if (id === 'hinrigh') return ['tracker-receiver']
   if (id === 'illumi') return ['needles']
   if (id === 'zakuro') return ['blood-infusion']
   if (id === 'melody') return ['flute']
@@ -22,10 +23,13 @@ export function createBattlefield(environment: FightEnvironment): FightBattlefie
   const preparation = environment.preparation ?? EMPTY_PREPARATION
   const entities: PreparedEntity[] = []
   if (environment.arenaInteractions)
-    for (const x of [34, 66]) entities.push({
-      ...entity('crate', 'neutral', x), id: `arena:crate:${x}`, health: 40,
-      arena: { width: 3, height: 8 },
-    })
+    for (const x of [34, 66])
+      entities.push({
+        ...entity('crate', 'neutral', x),
+        id: `arena:crate:${x}`,
+        health: 40,
+        arena: { width: 3, height: 8 },
+      })
   if (environment.morenaPresent && environment.stageId === 'heilly-hideout')
     entities.push(entity('morena', 'neutral', 50))
   if (preparation.mode === 'scenario') installScenario(entities, preparation)
@@ -52,6 +56,9 @@ function installProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
+  if (resources.has('cameras')) entities.push(entity('camera', side, x + 1))
+  if (resources.has('hostages'))
+    entities.push({ ...entity('hostage', side, x + 3), captiveOf: side })
   if (resources.has('animals')) entities.push(entity('animal', side, x + 2))
   if (resources.has('birds')) entities.push(entity('bird', side, x + 3))
   if (resources.has('plants')) entities.push(entity('seed', side, x))

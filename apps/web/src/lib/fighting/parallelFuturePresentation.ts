@@ -1,4 +1,5 @@
 import { futureCanPrepare } from './parallelFutureAbility'
+import { futureGumState } from './bungeeForecast'
 import type { FightSide, FightState } from './types'
 
 export function visibleFutureBeastOwner(state: FightState, viewer: FightSide = 'player') {
@@ -24,12 +25,14 @@ export function futureVisibleState(
   return {
     ...state,
     enReadings: undefined,
+    ...futureGumState(predicted),
     arena: predicted.arena,
     voconteDoors: predicted.voconteDoors,
     player: predicted.player,
     opponent: predicted.opponent,
     projectiles: predicted.projectiles,
     battlefield: predicted.battlefield,
+    rosterGuests: predicted.scene?.rosterGuests,
     impact: predicted.impact,
     previousPositions: {
       player: { x: predicted.player.x, y: predicted.player.y },

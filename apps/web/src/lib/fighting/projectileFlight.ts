@@ -13,7 +13,7 @@ export function travelFightProjectile(held: FightProjectile, step: number): Figh
 
 export function keepFightProjectile(projectile: FightProjectile, collided: boolean): boolean {
   return (
-    (!collided || Boolean(projectile.remotePunch)) &&
+    (!collided || Boolean(projectile.remotePunch) || Boolean(projectile.gumFlight)) &&
     projectile.age < projectile.lifetime &&
     projectile.x > 2 &&
     projectile.x < 98

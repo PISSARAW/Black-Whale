@@ -44,6 +44,8 @@ export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, st
 }
 export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
   fr: {
+    camera: 'Caméra d’enregistrement réelle',
+    hostage: 'Otages présents',
     puppet: 'Copie inerte · marionnette',
     needles: 'Aiguilles',
     morena: 'Morena',
@@ -58,6 +60,8 @@ export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, strin
     delivery: 'Point de livraison',
   },
   en: {
+    camera: 'Real recording camera',
+    hostage: 'Hostages present',
     puppet: 'Inert copy · puppet',
     needles: 'Needles',
     morena: 'Morena',

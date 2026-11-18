@@ -1,8 +1,13 @@
+import { priorityArsenalAi } from './priorityArsenalAi'
+import { luiniArsenalAi } from './luiniArsenal'
+import { biohazardDeviceAi } from './biohazardDeviceAi'
 import { dowsingAi } from './dowsingAi'
+import { singleCombatArsenalAi } from './singleCombatAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
 import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
+import { gumNetworkAi } from './bungeeAi'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -21,7 +26,11 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    priorityArsenalAi(state) ??
+    luiniArsenalAi(state, perform) ??
+    biohazardDeviceAi(state, perform) ??
     dowsingAi(state) ??
+    singleCombatArsenalAi(state, perform) ??
     hatsuArsenalAi(state, perform)
   )
 }
@@ -151,7 +160,7 @@ function gumAi(state: FightState): FightState | null {
       : incomingObject(state)
         ? 'gum-catch'
         : null
-  if (!action) return null
+  if (!action) return gumNetworkAi(state)
   const next = performGumCommand(state, 'opponent', { action })
   return next === state ? null : next
 }

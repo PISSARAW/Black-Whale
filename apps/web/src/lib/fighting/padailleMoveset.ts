@@ -46,8 +46,8 @@ export function padailleMoveset(): FighterMoveset {
   const base = buildMoveset({
     fighterId: 'padaille',
     mechanic: [
-      'Main droite : L marteau, avant + L foret, bas + L hache ; arrière + L reprend la main normale. Trois transformations choisies, sans hasard, bonus général ou arme ultime. Les frappes restent physiques : garde, distance et interruption comptent. Coûts et timings adaptés au duel.',
-      'Right hand: L hammer, forward + L drill, down + L axe; back + L restores the normal hand. Three chosen transformations, without randomness, global buffs or an ultimate weapon. Physical strikes respect guard, distance and interruption. Costs and timings are duel tuning.',
+      'Main droite : L marteau, avant + L foret, bas + L hache ; arrière + L reprend la main normale. Menotté par Biohazard : le foret permet de glisser hors de la menotte, la hache tente de la couper selon sa résistance. Préparations interruptibles. Les frappes restent physiques : garde et distance comptent. Coûts et timings adaptés au duel.',
+      'Right hand: L hammer, forward + L drill, down + L axe; back + L restores the normal hand. Cuffed by Biohazard: the drill slips out, the axe attempts a cut against actual durability. Interruptible preparation. Physical strikes respect guard and distance. Costs and timings are duel tuning.',
     ],
     finisherCondition: ['', ''],
     labels: [

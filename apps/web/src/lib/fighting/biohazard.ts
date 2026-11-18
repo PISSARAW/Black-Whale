@@ -63,7 +63,7 @@ export function biohazardPreparing(fighter: ArcadeFighter): boolean {
 }
 
 export function biohazardBodyFree(fighter: ArcadeFighter): boolean {
-  return !fighter.biohazardRestraint && !biohazardPreparing(fighter)
+  return !fighter.biohazardRecovery && !fighter.biohazardRestraint && !biohazardPreparing(fighter)
 }
 
 export function biohazardAuthority(fighter: ArcadeFighter, moveId?: string): boolean {

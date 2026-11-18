@@ -1,4 +1,5 @@
 import { ownsBungeeGum } from './hisokaArsenal'
+import { gumNetworkBusy } from './bungeeNetwork'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
@@ -33,13 +34,17 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const fighter = state[side]
   const held = fighter.kurapika?.held
   const move = moveById(held?.moveId)
-  if (!held?.loaded || held.used) return false
+  if (!availableDolphin(held)) return false
   // Preserve the actual technique's conditions and cost at the borrower's attained state.
   const actor = dolphinActor(fighter, held.source)
   const prepared = { ...state, [side]: actor }
   if (held.moveId === 'biscuit:cookie') return cookieCanStart(prepared, side, side)
   if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
   return Boolean(move && canUseMovesetMove(prepared, side, move))
+}
+
+function availableDolphin(held: StolenChainAbility | null | undefined): held is StolenChainAbility {
+  return Boolean(held?.loaded && !held.used && !held.lentTo)
 }
 
 /** Run the borrowed Hatsu's own hooks with its execution identity, then restore the body. */
@@ -50,7 +55,7 @@ export function withDolphinIdentity(
 ): FightState {
   const borrowed = (fighter: ArcadeFighter) => {
     const held = fighter.kurapika?.held
-    return held?.used && (!source || held.source === source)
+    return held?.used && !held.lentTo && (!source || held.source === source)
       ? {
           ...fighter,
           id: held.source,
@@ -106,6 +111,10 @@ export function dolphinIsBusy(
   side: FightSide,
   held: StolenChainAbility,
 ): boolean {
+  if (held.lentTo)
+    return Boolean(
+      state.rosterGuests?.some((guest) => guest.id === held.lentTo && guest.phase !== 'eliminated'),
+    )
   if (machiThreadForOwner(state, side)) return true
   if (state[side].attack?.moveId === held.moveId) return true
   return held.sustainedKeys.some((entry) => dolphinEffectActive(state, side, entry))
@@ -123,9 +132,7 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
 }
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */
-export function dismissDolphinGum(state: FightState, side: FightSide): FightState {
-  return state.bungeeGum?.owner === side ? { ...state, bungeeGum: null } : state
-}
+export { clearOwnedGum as dismissDolphinGum } from './bungeeNetwork'
 
 function changedDolphinCounters(before: FightState, after: FightState): string[] {
   const keys = new Set<string>()
@@ -165,7 +172,7 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
-    'gum-support': gumUseBusy(fighter),
+    'gum-support': gumUseBusy(fighter) || gumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
     prepared: controlledEntities(state, side).length > 0,
     'luini-anchor': Boolean(luiniAnchor(state, side)),
@@ -183,7 +190,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
     'body-and-soul': Boolean(fighter.lynchQuestion),
     poem: Boolean(fighter.bashoPoem),
-    gum: state.bungeeGum?.owner === side,
+    gum: gumNetworkBusy(state, side),
     projection: Boolean(fighter.hanzoProjection),
     texture: Boolean(fighter.textureSurprise),
     lsdf: Boolean(state.lsdf?.[side]),

@@ -1,6 +1,7 @@
 import { sleepingBody } from '../hanzoProjection'
 import { liveEntity } from '../preparationWorld'
 import { gyoSight } from '../nenCombat/sight'
+import { gumEnPresences } from '../bungeeContacts'
 import type { FightState, FightSide } from '../types'
 import { activeEnRadius } from './access'
 import {
@@ -32,15 +33,20 @@ export function enPresences(state: FightState, side: FightSide): EnPresence[] {
       key: 'double',
     })
   points.push(...entityPresences(state, side), ...projectilePresences(state, side))
+  points.push(...tetherPresences(state, side))
+  return points
+}
+function tetherPresences(state: FightState, side: FightSide): EnPresence[] {
+  if (state.gumNetwork) return gumEnPresences(state, side)
   const gum = state.bungeeGum
   if (gum && (!gum.hidden || gum.owner === side || gyoSight(state[side])))
-    points.push(
+    return [
       pointPresence('tether', {
         ...nearestPoint(state[side], state[gum.owner], state[gum.target]),
         auraReaction: true,
       }),
-    )
-  return points
+    ]
+  return []
 }
 function physicalPresence(state: FightState, side: FightSide): EnPresence {
   const target = state[side]

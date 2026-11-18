@@ -28,6 +28,7 @@ export const paperState = (fighter: ArcadeFighter): KallutoPaperState =>
 export function paperAvailable(fighter: ArcadeFighter): boolean {
   return (
     ownsPaper(fighter) &&
+    !fighter.weaponsConfiscated &&
     paperNenAvailable(fighter) &&
     !chainAbilitySealed(fighter, 'kalluto:neutralSpecial')
   )

@@ -5,9 +5,11 @@ import { createEasterEggScene } from './easterEggScene'
 import { createArenaScene } from './arenaScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
+import { createBiohazardDeviceScene } from './biohazardDeviceScene'
 import { createBiohazardScene } from './biohazardScene'
 import { createCrossGameScene } from './crossGameScene'
 import { createPreparationScene } from './preparationScene'
+import { createLuiniPassageScene } from './luiniPassageScene'
 import { createSecretWindowScene } from './secretWindowScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createBashoFireScene } from './bashoFireScene'
@@ -43,8 +45,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const paper = createKallutoPaperScene(options)
   const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
+  const bioDevices = createBiohazardDeviceScene(options)
   const biohazard = createBiohazardScene(options)
   const preparedScene = createPreparationScene(options)
+  const luini = createLuiniPassageScene(options)
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
   const crossGame = createCrossGameScene(options)
@@ -67,8 +71,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     arena.sync(state, seconds)
     paper.sync(state, seconds)
     doors.sync(state, seconds)
+    bioDevices.sync(state, seconds)
     biohazard.sync(state, seconds)
     preparedScene.sync(state, seconds)
+    luini.sync(state, seconds)
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
     crossGame.sync(state, seconds)
@@ -91,8 +97,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       arena.dispose()
       paper.dispose()
       doors.dispose()
+      bioDevices.dispose()
       biohazard.dispose()
       preparedScene.dispose()
+      luini.dispose()
       secretWindow.dispose()
       camilla.dispose()
       crossGame.dispose()

@@ -1,10 +1,9 @@
+import { advanceMachiMaterial, sutureWound } from '../machiMaterial'
 import { attackPhase } from '../frameData'
-import { fightFormat } from '../formats'
 import {
   advanceMachiThreads,
   machiMoveId,
   machiSourceActive,
-  MACHI_SUTURE_HEAL,
   releaseMachiThread,
 } from '../machiThread'
 import type { FightSide, FightState } from '../types'
@@ -14,7 +13,8 @@ export const machiHatsu: FighterHatsu = {
   id: 'machi',
   onTrigger: unchangedTrigger,
   onImpact: threadImpact,
-  onFrame: (state) => advanceMachiThreads(suture(suture(state, 'player'), 'opponent')),
+  onFrame: (state) =>
+    advanceMachiMaterial(advanceMachiThreads(suture(suture(state, 'player'), 'opponent'))),
 }
 
 function threadImpact(context: HatsuImpactContext): FightState {
@@ -40,13 +40,10 @@ function suture(state: FightState, side: FightSide): FightState {
   if (machiMoveId(fighter) !== 'machi:neutralSpecial' || !fighter.attack) return state
   if (fighter.attack.impacted || attackPhase(fighter) !== 'active' || !machiSourceActive(fighter))
     return state
-  const maximum =
-    'maxHealth' in fighter ? Number(fighter.maxHealth) : fightFormat(state.formatId).health
   return {
     ...state,
     [side]: {
-      ...fighter,
-      health: Math.min(maximum, fighter.health + MACHI_SUTURE_HEAL),
+      ...sutureWound(fighter),
       attack: { ...fighter.attack, impacted: true },
     },
   }

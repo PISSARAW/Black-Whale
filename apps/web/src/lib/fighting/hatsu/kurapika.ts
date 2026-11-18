@@ -1,3 +1,4 @@
+import { advanceJudgmentHostages } from '../judgmentHostages'
 import { advanceDowsing } from '../dowsingAction'
 import { implantJudgment } from '../judgmentAction'
 import { forceZetsu } from '../nen'
@@ -32,7 +33,7 @@ export const kurapikaHatsu: FighterHatsu = {
       const held = next[side].kurapika?.held
       if (held?.used && !dolphinIsBusy(next, side, held)) next = returnChainAbility(next, side)
     }
-    return advanceDowsing(next)
+    return advanceJudgmentHostages(advanceDowsing(next))
   },
 }
 
@@ -55,7 +56,8 @@ function chainImpact({
   }
   if (canAttachSyringe(fighter, moveId))
     return { ...state, [defenderSide]: { ...target, drainingChain: { owner: side } } }
-  if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime) return implantJudgment(state, side, defenderSide)
+  if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime)
+    return implantJudgment(state, side, defenderSide)
   return state
 }
 

@@ -27,9 +27,9 @@ export function tuneBashoMoveset(base: FighterMoveset): FighterMoveset {
     finisherConditionFr: '',
     finisherConditionEn: '',
     mechanicFr:
-      'Great Hiker : écrire le haïku attesté du chapitre 68. Seuls les coups de poing qui touchent enflamment la cible. Aucun bonus général. Écriture interrompue par un coup, un déplacement ou la garde. Durées, coût et brûlure sont des réglages de duel.',
+      'Great Hiker : écrire les haïkus attestés du chapitre 68. L’arsenal donne accès à la menace du jugement du feu et aux réponses volontaires ; sa sanction non montrée n’est pas simulée. Seuls les coups de poing qui touchent enflamment la cible. Aucun bonus général. Écriture interrompue par un coup, un déplacement ou la garde. Durées, coût et brûlure sont des réglages de duel.',
     mechanicEn:
-      'Great Hiker: write the attested chapter 68 haiku. Only connecting fist strikes ignite the target. No general boost. Being hit, moving or guarding interrupts writing. Duration, cost and burning damage are duel tuning.',
+      'Great Hiker: write the attested chapter 68 haiku. The arsenal offers the trial-by-fire threat and voluntary replies; its unshown punishment is not simulated. Only connecting fist strikes ignite the target. No general boost. Being hit, moving or guarding interrupts writing. Duration, cost and burning damage are duel tuning.',
     combos: [
       ['basho:standingLight', 'basho:standingHeavy'],
       ['basho:lowLight', 'basho:forwardLight', 'basho:standingHeavy'],

@@ -2,7 +2,12 @@ import { attackPhase, boxesOverlap, hurtboxes, otherSide, worldBox } from '../fr
 import { consumeHatsuAvoidance, hatsuAvoidsImpact } from '../hatsu'
 import { wakeHanzoBody } from '../hanzoProjection'
 import { recordDolphinEffects } from '../kurapikaDolphin'
-import { observeSecretWindow, secretWindowNenActive, secretWindowUtility } from '../secretWindow'
+import {
+  advanceSecretWindowFeed,
+  observeSecretWindow,
+  secretWindowNenActive,
+  secretWindowUtility,
+} from '../secretWindow'
 import type { FightSide, FightState } from '../types'
 import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
@@ -26,7 +31,7 @@ function tickSide(state: FightState, side: FightSide): FightState {
         ...fighter,
         secretWindow: {
           ...fighter.secretWindow,
-          observation: observeSecretWindow(state, fighter.secretWindow.target),
+          ...advanceSecretWindowFeed(state, side),
         },
       },
     }
@@ -37,6 +42,22 @@ function tickSide(state: FightState, side: FightSide): FightState {
     attackPhase(fighter) !== 'active'
   )
     return state
+  if (fighter.secretWindowMode === 'listening') {
+    const next: FightState = {
+      ...state,
+      [side]: {
+        ...fighter,
+        attack: { ...fighter.attack!, impacted: true },
+        secretWindow: {
+          target: otherSide(side),
+          attachedAt: state.frame,
+          mode: 'listening',
+          observation: { frame: state.frame, action: 'audio-only' },
+        },
+      },
+    }
+    return recordDolphinEffects(state, next, side)
+  }
   return attachAtContact(state, side)
 }
 

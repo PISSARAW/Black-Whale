@@ -11,6 +11,8 @@ const SOURCES = new Set([
   'leorio',
   'luini',
   'voconte',
+  'bill',
+  'cluck',
 ])
 function personal(detail: CameraDetail) {
   return [...SOURCES].some((source) => detail.eventId?.startsWith(`${source}.`))

@@ -1,4 +1,5 @@
 import { recordFightDeath } from './fightDeaths'
+import { bashoQuestionCurrent } from './bashoInterrogation'
 import { resolveFightOutcome } from './fightOutcome'
 import { hatsuDefenceFactor } from './hatsu'
 import { nenDamageFactor } from './nen'
@@ -21,7 +22,12 @@ export function resolveBashoPoemImpact(
 ): FightState {
   const fighter = before[side]
   const poem = fighter.bashoPoem
-  if (!poem?.ready || !hasBashoPoem(fighter, poem.sourceMoveId)) return after
+  if (
+    !poem?.ready ||
+    poem.effect !== 'ignite-punched-target' ||
+    !hasBashoPoem(fighter, poem.sourceMoveId)
+  )
+    return after
   if (!punchContact(fighter, after)) return after
   const target = side === 'player' ? 'opponent' : 'player'
   return {
@@ -43,6 +49,9 @@ export function advanceBashoPoems(state: FightState): FightState {
   if (state.phase !== 'fighting' || state.catsName) return state
   let next = { ...state, player: advancePoem(state.player), opponent: advancePoem(state.opponent) }
   for (const side of ['player', 'opponent'] as const) next = advanceBurn(next, side)
+  for (const side of ['player', 'opponent'] as const)
+    if (next[side].bashoPrompt && !bashoQuestionCurrent(next, side))
+      next = { ...next, [side]: { ...next[side], bashoPrompt: undefined } }
   return resolveFightOutcome(next)
 }
 

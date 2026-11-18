@@ -115,12 +115,7 @@ describe('Melody’s bodily hearing', () => {
         ...state.player,
         id: 'chrollo' as const,
         equipment: ['book' as const],
-        chrolloBook: {
-          pages: ['melody'] as const,
-          page: 0,
-          open: false,
-          bookmark: 'melody' as const,
-        },
+        chrolloBook: { pages: ['melody'] as const, page: 0, open: false, bookmark: 'melody' as const },
       },
     }
     expect(performAttack(chrollo, 'player', 'special')).toBe(chrollo)

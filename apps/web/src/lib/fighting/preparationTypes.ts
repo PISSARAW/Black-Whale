@@ -1,8 +1,16 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
-  'animals' | 'birds' | 'plants' | 'objects' | 'flutes' | 'needles' | 'rooms'
-export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion'
+  | 'animals'
+  | 'birds'
+  | 'plants'
+  | 'objects'
+  | 'flutes'
+  | 'needles'
+  | 'rooms'
+  | 'cameras'
+  | 'hostages'
+export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
   mode: 'duel' | 'scenario'
   resources: PreparationResource[]
@@ -11,6 +19,8 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'camera'
+  | 'hostage'
   | 'puppet'
   | 'morena'
   | 'supporter'

@@ -1,4 +1,5 @@
 import { chrolloAbilityActive } from './chrolloAbilityActive'
+import { clearOwnedGum } from './bungeeNetwork'
 import { releaseLuiniAnchor } from './luiniSpatial'
 import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
@@ -73,8 +74,12 @@ function clearPageEffects(options: {
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
-  const spatial = page === 'luini' ? releaseLuiniAnchor(cleared, side) : cleared
+  const spatial = releaseSpatialPage(cleared, side, page)
   return releaseMachiPageThread(releaseIllumiPage(spatial, side, page), side, page)
+}
+function releaseSpatialPage(state: FightState, side: FightSide, page: ChrolloPage): FightState {
+  if (page === 'luini') return releaseLuiniAnchor(state, side)
+  return page === 'hisoka' ? clearOwnedGum(state, side) : state
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {

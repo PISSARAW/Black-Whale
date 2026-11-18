@@ -1,4 +1,4 @@
-import { hatsuSealedByOn } from './onTechnique'
+import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FightProjectile, FightSide } from './types'
 
 export type BenjaminInheritance = 'air-blow' | 'secret-window' | 'culdcept'
@@ -45,12 +45,7 @@ function eligibleSoldier(soldier: BenjaminSoldier): boolean {
 }
 
 export function benjaminNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.nen.mode !== 'zetsu' &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 const INHERITED_MOVES: Readonly<Record<string, BenjaminInheritance>> = {

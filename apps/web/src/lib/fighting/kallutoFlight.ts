@@ -4,6 +4,12 @@ import { paperAvailable, paperZonePoint, hasPlantedPaper, selectedPaperZone } fr
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { PaperCommand } from './kallutoPaper'
 
+declare module './types' {
+  interface FightProjectile {
+    kallutoScatter?: { y: number; arc: number }
+  }
+}
+
 /** Paper is physical matter. Damage/speed/lifetime are duel tuning, never an explosive charge. */
 export function launchKallutoPaper(
   state: FightState,
@@ -36,10 +42,23 @@ export function launchKallutoPaper(
     concealed: fighter.attack?.concealed,
     kallutoPaper: command === 'serpent' ? 'serpent' : 'plant',
   }
+  const scattered = scattersPaper(state, side, command)
+  const shots = scattered
+    ? [-3, 0, 3].map((arc, index) => ({
+        ...shot,
+        id: shot.id + index,
+        damage: 2,
+        kallutoScatter: { y: shot.y, arc },
+      }))
+    : regroupPaper(state, shot)
+  const gathered =
+    command === 'serpent'
+      ? state.projectiles.filter((held) => held.owner !== side || !held.kallutoPaper)
+      : state.projectiles
   return {
     ...state,
-    nextProjectileId: state.nextProjectileId + 1,
-    projectiles: [...state.projectiles, commitProjectileNen(shot, fighter)],
+    nextProjectileId: state.nextProjectileId + shots.length,
+    projectiles: [...gathered, ...shots.map((held) => commitProjectileNen(held, fighter))],
     [side]: {
       ...fighter,
       attack: fighter.attack
@@ -53,13 +72,36 @@ export function launchKallutoPaper(
   }
 }
 
+function scattersPaper(state: FightState, side: FightSide, command: PaperCommand): boolean {
+  const fighter = state[side]
+  return command === 'plant' && fighter.id === 'kalluto' && fighter.attack?.kind === 'special'
+}
+
+/** Regather already flying confetti at its real positions, without affecting another user's paper. */
+function regroupPaper(state: FightState, shot: FightProjectile): FightProjectile[] {
+  if (shot.kallutoPaper !== 'serpent') return [shot]
+  const loose = state.projectiles.filter((held) => held.owner === shot.owner && held.kallutoPaper)
+  if (!loose.length) return [shot]
+  return loose.map((held, index) => ({
+    ...shot,
+    id: shot.id + index,
+    x: held.x,
+    y: held.y,
+    damage: shot.damage / loose.length,
+  }))
+}
+
 /** A stream converges on its own embedded paper, not on arbitrary unmarked body parts. */
 export function travelKallutoPaper(
   state: FightState,
   held: FightProjectile,
   step: number,
 ): FightProjectile {
-  const shot = travelFightProjectile(held, step)
+  let shot = travelFightProjectile(held, step)
+  if (held.kallutoScatter && paperAvailable(state[held.owner])) {
+    const { y, arc } = held.kallutoScatter
+    shot = { ...shot, y: y + arc * Math.sin(Math.PI * Math.min(1, shot.age / 12)) }
+  }
   if (
     held.kallutoPaper !== 'serpent' ||
     !paperAvailable(state[held.owner]) ||

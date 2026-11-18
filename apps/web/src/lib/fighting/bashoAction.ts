@@ -2,6 +2,7 @@ import { witnessedHatsuState } from './nenWitness'
 import { chrolloPageForMove, CHROLLO_SECONDARY, CHROLLO_USE } from './chrolloBook'
 import {
   BASHO_POEMS,
+  bashoPoemEffect,
   BASHO_POEM_MOVE,
   BASHO_WRITING_COST,
   BASHO_WRITING_FRAMES,
@@ -45,7 +46,7 @@ function startBashoWriting(options: {
       motion: undefined,
       bashoPoem: {
         text,
-        effect: 'ignite-punched-target',
+        effect: bashoPoemEffect(text)!,
         sourceMoveId: moveId,
         writingFrames: BASHO_WRITING_FRAMES,
         originX: fighter.x,
@@ -76,7 +77,7 @@ export function composeBashoPoem(
       ...fighter,
       bashoPoem: {
         text,
-        effect: 'ignite-punched-target' as const,
+        effect: bashoPoemEffect(text)!,
         writingFrames: 0,
         originX: fighter.x,
         ready: false,

@@ -15,6 +15,7 @@ export interface StolenChainAbility {
   loaded: boolean
   used: boolean
   /** Effects created by this single use must finish before Dolphin can be dismissed. */
+  lentTo?: string
   sustainedKeys: string[]
 }
 
@@ -133,14 +134,31 @@ export function restrictedChainAura(
   fighter: ArcadeFighter,
   input: FightInput,
 ): ArcadeFighter | null {
-  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0) return zetsuFighter(fighter)
+  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0)
+    return zetsuFighter(fighter)
   if (judgmentForbidsNen(fighter)) return judgmentInput(fighter, input)
   return null
 }
 
 function judgmentNenInput(fighter: ArcadeFighter, input: FightInput): boolean {
-  if (!voluntaryNenAvailable(fighter, { allowVoluntaryZetsu: true, requireHatsu: false, requireReserve: true })) return false
+  if (
+    !voluntaryNenAvailable(fighter, {
+      allowVoluntaryZetsu: true,
+      requireHatsu: false,
+      requireReserve: true,
+    })
+  )
+    return false
   if (input.aura) return !input.down
   if (fighter.hitStun > 0 || fighter.knockdownFrames > 0) return false
-  return [input.gyo, input.en, input.shu, input.conceal, input.focusHead, input.focusTorso, input.focusHands, input.focusFeet].some(Boolean)
+  return [
+    input.gyo,
+    input.en,
+    input.shu,
+    input.conceal,
+    input.focusHead,
+    input.focusTorso,
+    input.focusHands,
+    input.focusFeet,
+  ].some(Boolean)
 }

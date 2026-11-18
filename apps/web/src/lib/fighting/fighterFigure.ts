@@ -16,6 +16,7 @@ import { finishFightModel } from './fighterModelFinish'
 import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
+import { addLuiniKnife } from './luiniKnife'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
 import { fighterAuraHex } from './auraColours'
@@ -30,6 +31,7 @@ import type { ArcadeFighter } from './types'
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
+    fighter.id,
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
@@ -123,6 +125,7 @@ function addFighterEquipment(
 ): void {
   const { THREE, glow, fighter } = options
   addBodyguardPistol({ THREE, glow, fighter, model })
+  addLuiniKnife({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))

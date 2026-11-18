@@ -5,26 +5,22 @@ import { preparationCheck } from './preparationRequirements'
 import { scaleNenControl } from './nenHatsuEffects'
 import { predatorNenLocked } from './predatorSeal'
 import { isErigeronAction } from './billSupport'
-import { canUseHatsu } from '@black-whale/nen-engine'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { canActivateLsdf } from './lsdf'
-import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export { advanceHatsuFrames, hatsuFor } from './hatsu/registry'
 import { hatsuFor } from './hatsu/registry'
 
-/** Shared gameplay contract for every roster Hatsu. */
+/** Legacy fallback only; identified moves and copied pages pay their actual tuned cost. */
 export const FIGHT_HATSU_AURA_COST = 40
 
 export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
   if (!illumiBodyFree(fighter)) return false
   if (predatorNenLocked(fighter)) return false
   if (isErigeronAction(fighter, 'special', `${fighter.id}:neutralSpecial`)) return false
-  return (
-    fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
-  )
+  return fighter.aura >= FIGHT_HATSU_AURA_COST && voluntaryNenAvailable(fighter)
 }
 
 /**

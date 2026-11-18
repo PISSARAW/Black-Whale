@@ -1,3 +1,4 @@
+import { guestProjection, mergeGuestProjection } from './rosterGuests'
 import { finishFight } from './combatVerdict'
 import { wakeHanzoBody } from './hanzoProjection'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -8,6 +9,8 @@ export const CAT_ABSORB_END = 84
 export const CATS_NAME_FRAMES = 120
 export type CatsNamePhase = 'summon' | 'capture' | 'absorb' | 'revive'
 export interface CatsNameSequence {
+  killerBody?: string
+  victimBody?: string
   victimSide: FightSide
   killerSide: FightSide
   frame: number
@@ -37,6 +40,7 @@ export function beginCatsName(
     opponent: freezeBody(state.opponent),
     projectiles: [],
     bungeeGum: null,
+    gumNetwork: undefined,
     lsdf: undefined,
   }
 }
@@ -59,6 +63,16 @@ function freezeBody(fighter: ArcadeFighter): ArcadeFighter {
 
 /** Only the deterministic simulation advances the cat. Combat time and other Nen stay frozen. */
 export function advanceCatsName(state: FightState): FightState {
+  const cat = state.catsName
+  const guest = state.rosterGuests?.find(
+    (entry) => entry.id === cat?.killerBody || entry.id === cat?.victimBody,
+  )
+  if (!guest) return advanceCatsNameBody(state)
+  const view = guestProjection(state, guest)
+  return mergeGuestProjection(state, advanceCatsNameBody(view), guest)
+}
+
+function advanceCatsNameBody(state: FightState): FightState {
   const cat = state.catsName
   if (!cat) return state
   const frame = cat.frame + 1
@@ -86,6 +100,9 @@ function finishCatsName(state: FightState): FightState {
     [cat.victimSide]: {
       ...releaseBody(state[cat.victimSide]),
       health: state[cat.victimSide].maxHealth,
+      openWounds: 0,
+      gumWoundSeals: undefined,
+      pluggingWounds: false,
       judgmentChain: undefined,
     },
     [cat.killerSide]: { ...releaseBody(state[cat.killerSide]), health: 0, pose: 'ko' as const },

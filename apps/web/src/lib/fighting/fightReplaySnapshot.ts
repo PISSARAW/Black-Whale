@@ -19,8 +19,8 @@ function validateIdentity(value: Record<string, unknown>, setup: ReplaySetup) {
   const player = value.player as Record<string, unknown>
   const opponent = value.opponent as Record<string, unknown>
   if (
-    player.id !== setup.player ||
-    opponent.id !== setup.opponent ||
+    !replayBodyMatches(player, setup.player) ||
+    !replayBodyMatches(opponent, setup.opponent) ||
     value.mode !== setup.mode ||
     value.formatId !== setup.formatId
   )
@@ -43,4 +43,8 @@ function validateShape(value: unknown, template: unknown): void {
   }
   if (!object(value)) throw Error('invalid-replay')
   for (const [key, field] of Object.entries(template)) validateShape(value[key], field)
+}
+
+function replayBodyMatches(body: Record<string, unknown>, id: string): boolean {
+  return (body.halkenburgOrigin ?? body.id) === id
 }

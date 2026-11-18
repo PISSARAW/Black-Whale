@@ -79,7 +79,7 @@ function rested(state: FightState): FightState {
 describe('Machi real thread uses', () => {
   it('sutures only the wounded caster after preparation, without an offensive hitbox', () => {
     const state = duel()
-    const wounded = { ...state, player: { ...state.player, health: 40 } }
+    const wounded = { ...state, player: { ...state.player, health: 40, openWounds: 1 } }
     const started = cast(wounded, 'neutralSpecial')
     expect(started.player.aura).toBe(80)
     expect(advance(started, 20).player.health).toBe(40)
@@ -98,14 +98,14 @@ describe('Machi real thread uses', () => {
   it('does not heal an interrupted cast, exceed maximum health or resurrect a dead body', () => {
     const state = duel()
     const maximum = state.player.health
-    const started = cast({ ...state, player: { ...state.player, health: 40 } }, 'neutralSpecial')
+    const started = cast({ ...state, player: { ...state.player, health: 40, openWounds: 1 } }, 'neutralSpecial')
     expect(
       advance({ ...started, player: { ...started.player, attack: null, hitStun: 40 } }, 70).player
         .health,
     ).toBe(40)
     expect(
       advance(
-        cast({ ...state, player: { ...state.player, health: maximum - 2 } }, 'neutralSpecial'),
+        cast({ ...state, player: { ...state.player, health: maximum - 2, openWounds: 1 } }, 'neutralSpecial'),
         70,
       ).player.health,
     ).toBe(maximum)
@@ -236,7 +236,7 @@ describe('Machi real thread uses', () => {
 
   it('lets Skill Hunter copy the actual suture without an invisible offensive bind', () => {
     const state = beginFight(createFight('chrollo', 'hisoka', { mode: 'versus-local', formatId: 'knockout' }))
-    const copied = { ...state, player: { ...state.player, health: 40, aura: 100,
+    const copied = { ...state, player: { ...state.player, health: 40, openWounds: 1, aura: 100,
       chrolloBook: addChrolloPage(state.player.chrolloBook!, 'machi') } }
     const cast = performAuraAttack({ state: copied, side: 'player', kind: 'special', moveId: 'chrollo:neutralSpecial', auraCharged: false })
     const healed = advance(cast, 80)

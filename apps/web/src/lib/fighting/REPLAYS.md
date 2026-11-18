@@ -11,7 +11,9 @@ restaure le combat suspendu avec son état de pause. Les commandes de combat ne
 modifient pas le replay. La même bibliothèque est accessible depuis la sélection.
 La capture est bornée à vingt minutes et 300 000 paquets ; l’import à 16 Mo.
 
-Les règles En qualifiées utilisent désormais `clash-combat-21` : voir [EN.md](./EN.md).
+Les attaches multiples, ancrages et rappels d’Hisoka font partie des règles courantes :
+voir [HISOKA_PRESENTATION.md](./HISOKA_PRESENTATION.md). Les règles En sont décrites
+dans [EN.md](./EN.md).
 Les replays d’une autre version ne sont pas réinterprétés silencieusement.
 
 ## Reproductibilité
@@ -109,11 +111,11 @@ modes. L’horloge du navigateur est quantifiée : ces chiffres ne permettent pa
 d’attribuer un coût précis aux très petits écarts.
 
 | Personnage | Rendu p95 sans capture | Rendu p95 avec capture | Échantillons sans / avec |
-| --- | ---: | ---: | ---: |
-| Kurapika | 63,5 ms | 62,0 ms | 91 / 94 |
-| Hisoka | 144,2 ms | 107,3 ms | 74 / 84 |
-| Chrollo | 52,0 ms | 56,3 ms | 103 / 96 |
-| Benjamin | 176,9 ms | 68,2 ms | 52 / 80 |
+| ---------- | ---------------------: | ---------------------: | -----------------------: |
+| Kurapika   |                63,5 ms |                62,0 ms |                  91 / 94 |
+| Hisoka     |               144,2 ms |               107,3 ms |                  74 / 84 |
+| Chrollo    |                52,0 ms |                56,3 ms |                 103 / 96 |
+| Benjamin   |               176,9 ms |                68,2 ms |                  52 / 80 |
 
 Le rendu logiciel ne tient donc pas le budget de 60 FPS. Ces courtes passes
 successives ont des variations importantes et ne permettent pas d’isoler le coût

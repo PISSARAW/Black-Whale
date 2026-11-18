@@ -1,4 +1,18 @@
+import { futureAcceptsMove } from './parallelFutureAbility'
+import { traceArsenal } from './arsenalTrace'
+import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
+import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoan'
+import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
+import { performBlackVoice, blackVoiceOptions } from './blackVoiceControl'
+import { performBiohazardDevice } from './biohazardDevices'
+import { biohazardDeviceOptions } from './biohazardDeviceArsenal'
 import { performDowsingCommand } from './dowsingAction'
+import { secretWindowOptions } from './secretWindowArsenal'
+import { bashoArsenalOptions } from './bashoInterrogation'
+import { melodyQuestionOptions } from './melodyInterrogation'
+import { luiniArsenalOptions } from './luiniArsenal'
+import { sweetHomeOptions } from './sweetHomeArsenal'
+import { padailleEscapeOptions } from './padailleEscape'
 import { dowsingOptions } from './dowsingOptions'
 import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
 import { dolphinArsenalOptions } from './dolphinArsenal'
@@ -24,20 +38,50 @@ export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   )
 }
 
+const COMMAND_FAMILIES: Record<string, typeof performDowsingCommand | undefined> = {
+  dowsing: performDowsingCommand,
+  judgment: performJudgmentCommand,
+  gum: performGumCommand,
+  cookie: performCookie,
+  hunter: performHunterInterview,
+  history: performHistoricalCommand,
+}
+
+const INVOCATION_FAMILIES: Record<
+  string,
+  ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
+> = {
+  machi: performMachiMaterial,
+  dolphin: performDolphinLoan,
+  halkenburg: performHalkenburgTransfer,
+  black: performBlackVoice,
+  bio: performBiohazardDevice,
+}
+
 export function performArsenalCommand(
   state: FightState,
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
-  if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
+  return traceArsenal({ state, side, command }, executeArsenalCommand(state, side, command))
+}
+
+function executeArsenalCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  if (
+    !fightAcceptsCommands(state) ||
+    !futureAcceptsMove(state, side) ||
+    !validArsenalCommand(command)
+  )
+    return state
+  const invocation = INVOCATION_FAMILIES[command.action.split('-')[0]]
+  if (invocation) return invocation({ state, side, command })
   if (command.action === 'support-consent') return toggleConsent(state, side)
-  if (command.action.startsWith('dowsing-')) return performDowsingCommand(state, side, command)
-  if (command.action.startsWith('judgment-')) return performJudgmentCommand(state, side, command)
-  if (command.action.startsWith('gum-')) return performGumCommand(state, side, command)
-  if (command.action.startsWith('cookie-')) return performCookie(state, side, command)
-  if (command.action.startsWith('hunter-')) return performHunterInterview(state, side, command)
-  if (command.action.startsWith('history-')) return performHistoricalCommand(state, side, command)
-  return state
+  const family = COMMAND_FAMILIES[command.action.split('-')[0]]
+  return family ? family(state, side, command) : state
 }
 
 function toggleConsent(state: FightState, side: FightSide): FightState {
@@ -48,7 +92,18 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...biohazardDeviceOptions(state, side),
+    ...blackVoiceOptions(state, side),
+    ...halkenburgTransferOptions(state, side),
+    ...dolphinLoanOptions(state, side),
+    ...machiMaterialOptions(state, side),
     ...judgmentOptions(state, side),
+    ...secretWindowOptions(state, side),
+    ...bashoArsenalOptions(state, side),
+    ...melodyQuestionOptions(state, side),
+    ...luiniArsenalOptions(state, side),
+    ...sweetHomeOptions(state, side),
+    ...padailleEscapeOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...cookieOptions(state, side),

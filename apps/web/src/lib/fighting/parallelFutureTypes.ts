@@ -18,6 +18,8 @@ export interface FutureControls {
 }
 
 export interface FutureCommand {
+  arsenal?: import('./retrospectiveTypes').ArsenalCommand
+  rngBefore?: number
   kind: AttackKind
   variant?: AttackVariant
   moveId?: string
@@ -28,7 +30,9 @@ export interface FutureFrame {
   /** Presentation snapshot only; the real branch never consumes these fields. */
   scene?: Pick<
     FightState,
+    | 'rosterGuests'
     | 'bungeeGum'
+    | 'gumNetwork'
     | 'catsName'
     | 'catsNameConsumed'
     | 'moonlight'

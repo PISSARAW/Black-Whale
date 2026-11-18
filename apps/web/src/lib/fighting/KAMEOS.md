@@ -1,16 +1,68 @@
-# Kaméos complets — plan de conception
+# Kaméos de soutien — plan de conception
 
-Statut : lots 0 à 3 faits (caractérisation, scission du pas dans `duelStep/`, état et
-projection de mêlée dans `kameos/`) ; le reste est une **proposition**. Nom de travail « Kaméo » (terme de MK) ;
-un nom propre à Clash est à choisir pour l'interface.
+Statut : lots 0 à 4 faits (caractérisation, scission du pas dans `duelStep/`, état,
+projection de mêlée et catalogue des six kaméos de soutien dans `kameos/`) ; le reste
+est une **proposition**. Nom de travail « Kaméo » (terme de MK) ; un nom propre à
+Clash est à choisir pour l'interface.
 
-## Objectif
+## Objectif (révisé : kaméos de soutien)
 
-Un second personnage des quarante accompagne chaque combattant. Il entre sur appel,
-agit **en même temps** que son leader, puis ressort. C'est un vrai `ArcadeFighter` :
-son corps, ses PV, son aura, son Nen et ses Hatsu, soumis aux mêmes collisions, coûts
-et conditions que le moteur ordinaire. Il se distingue du relais de
-[PHASE9.md](./PHASE9.md), où un seul corps par groupe est en scène.
+Le kaméo est un **personnage du bateau qui ne fait pas partie des quarante**. Il entre
+sur appel à côté de son leader, déclenche un Hatsu de **soutien** (soin, défense,
+boost, attaque, piège, zone) puis ressort. Il a un vrai corps en scène : il peut être
+frappé, et il meurt pour de bon. Ce n'est plus un combattant complet joué à côté du
+leader, comme dans la première version de ce plan.
+
+Ce choix résout aussi la limite du lot 3. Le kaméo n'a pas besoin de ses propres
+horloges de Hatsu : son effet est posé **sur le leader allié ou sur l'adversaire**,
+dans les champs `hatsuEffects` que le moteur fait déjà avancer une fois par frame.
+Chrollo pose ces mêmes effets sur lui-même quand il vole les pages des princes
+(`chrolloPageEffects.ts`). Le mécanisme est donc déjà éprouvé.
+
+### Candidats : Hatsu canon déjà adaptés dans le moteur
+
+Ces onze personnages existent comme `FighterId`, avec une entrée dans
+`hatsu/registry.ts`, mais hors du roster jouable (`fighterDefinition` retombe sur
+le premier combattant). Leurs données canon sont dans `data/abilities/abilities.json`.
+
+| Rôle            | Personnage | Hatsu canon                  | Effet déjà dans le moteur                      |
+| --------------- | ---------- | ---------------------------- | ---------------------------------------------- |
+| Soin            | Tubeppa    | Collaborative Drug Synthesis | +8 PV et `synthesisFrames`                     |
+| Défense         | Marayam    | Room 1013 Isolation          | `isolationFrames` (240) : hors d'atteinte      |
+| Défense         | Kacho      | Without You                  | `kachoGuards` (1 garde)                        |
+| Esquive         | Fugetsu    | Magical Worm                 | `wormDodges` (1 esquive par la porte)          |
+| Boost           | Zhang Lei  | Guardian Coins               | `coinCharges` : dégâts +10 %, reçus −8 %/pièce |
+| Affaiblissement | Tyson      | Eye-wogs                     | `eyeWogFrames` : drain d'aura                  |
+| Attaque         | Morena     | Contagion                    | drain d'aura cumulé (3 paliers)                |
+| Piège           | Luzurus    | Desire Trap                  | `desireFrames` : immobilise 90 frames          |
+| Piège           | Momoze     | Are You Free?                | `momozeFrames` (120)                           |
+| Zone            | Salé-salé  | Diffusive Aura Smoke         | `smokeFrames` (180)                            |
+
+Exclus ou à trancher :
+
+- **Gidal** (Yomotsu Hegui) : le lanceur doit se suicider. C'est incompatible avec un
+  soutien.
+- **Kacho** : Without You ne s'active, dans le canon, qu'à la mort d'une des jumelles.
+  L'adaptation existante l'ignore.
+- **Tokarine** (portails), **Kurton** (véhicule), **Yushohi** (Stand By Me),
+  **l'utilisateur de Silent Majority** : présents dans les données, absents du moteur.
+  L'effet de Stand By Me n'est pas révélé dans le canon.
+- Les **Bêtes gardiennes** agissent sans contrôle conscient du prince, et le canon les
+  empêche d'attaquer directement les autres princes. Il faut décider si le kaméo est
+  le prince, la bête, ou les deux.
+
+### Ce qui change dans les lots
+
+- Lots 0 à 3 : inchangés. Le corps en scène réutilise `KameoSlot` et la projection
+  pour **être frappé**, et pour les rares appels offensifs au contact.
+- Lot 4 (révisé) : catalogue `kameos/catalogue.ts`. Pour chaque kaméo : son rôle, la
+  source canon (identifiant d'ability), ses trois appels avec leurs frame data, et
+  la cible de l'effet (leader allié ou adversaire). Les effets réutilisent les champs
+  `hatsuEffects` existants.
+- Lot 5 : appel, entrée, effet, sortie. Le corps en scène passe par `rosterGuests`
+  (rôle `'kameo'`) pour hériter des projectiles et du ciblage.
+- Le registre d'éligibilité aux Hatsu (ancien lot 7) disparaît : un kaméo n'utilise
+  que l'effet de soutien que le catalogue lui donne.
 
 ## Diagnostic : le moteur est un duel
 

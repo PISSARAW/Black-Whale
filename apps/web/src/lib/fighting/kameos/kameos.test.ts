@@ -24,19 +24,17 @@ function withoutKameos(state: FightState): FightState {
 describe('kameo state (lot 2)', () => {
   it('attaches a full reserve body to each requested side', () => {
     const state = withKameos(createFight('kurapika', 'hisoka'), {
-      player: 'illumi',
-      opponent: 'kurapika',
+      player: 'tubeppa',
+      opponent: 'luzurus',
     })
     const player = kameoSlot(state, 'player') as KameoSlot
     const opponent = kameoSlot(state, 'opponent') as KameoSlot
-    expect(player.fighter.id).toBe('illumi')
+    expect(player.fighter.id).toBe('tubeppa')
+    expect(opponent.fighter.id).toBe('luzurus')
     expect(player.phase).toBe('reserve')
     expect(player.fighter.health).toBe(fightFormat(state.formatId).health)
     expect(player.fighter.facing).toBe(1)
     expect(opponent.fighter.facing).toBe(-1)
-    expect(opponent.fighter.kurapika).toBeDefined()
-    expect(player.fighter.equipment).toEqual(createFight('illumi', 'hisoka').player.equipment)
-    expect(player.fighter.equipment).toContain('needles')
     expect(kameoOnStage(player)).toBe(false)
   })
 
@@ -46,17 +44,18 @@ describe('kameo state (lot 2)', () => {
     expect(state).not.toHaveProperty('kameos')
   })
 
-  it('refuses a kameo identical to its own leader, or added after the start', () => {
-    const state = createFight('kurapika', 'hisoka')
-    expect(() => withKameos(state, { player: 'kurapika' })).toThrow('kameo-is-leader')
-    expect(() => withKameos(beginFight(state), { player: 'illumi' })).toThrow('kameo-after-start')
+  it('refuses a non-catalogue kameo, a kameo equal to its leader, or a late kameo', () => {
+    const state = createFight('benjamin', 'morena')
+    expect(() => withKameos(state, { player: 'illumi' as never })).toThrow('kameo-unknown')
+    expect(() => withKameos(state, { opponent: 'morena' })).toThrow('kameo-is-leader')
+    expect(() => withKameos(beginFight(state), { player: 'tubeppa' })).toThrow('kameo-after-start')
   })
 
   it('keeps reserve kameos inert: the duel plays exactly as without them', () => {
     const duel = play(createFight('benjamin', 'morena'), 300)
     const kameos = withKameos(createFight('benjamin', 'morena'), {
-      player: 'hisoka',
-      opponent: 'chrollo',
+      player: 'zhanglei',
+      opponent: 'salesale',
     })
     const withPartners = play(kameos, 300)
     expect(fightReplayHash(withoutKameos(withPartners))).toBe(fightReplayHash(duel))
@@ -65,17 +64,17 @@ describe('kameo state (lot 2)', () => {
 
   it('includes kameos in the state fingerprint', () => {
     const state = createFight('benjamin', 'morena')
-    const partnered = withKameos(state, { player: 'hisoka' })
+    const partnered = withKameos(state, { player: 'tubeppa' })
     expect(fightReplayHash(partnered)).not.toBe(fightReplayHash(state))
-    expect(fightReplayHash(withKameos(state, { player: 'chrollo' }))).not.toBe(
+    expect(fightReplayHash(withKameos(state, { player: 'marayam' }))).not.toBe(
       fightReplayHash(partnered),
     )
   })
 
   it('returns living kameos to reserve with a fresh body at the next round', () => {
     const start = withKameos(createFight('benjamin', 'morena'), {
-      player: 'kurapika',
-      opponent: 'hisoka',
+      player: 'tubeppa',
+      opponent: 'luzurus',
     })
     const player = kameoSlot(start, 'player') as KameoSlot
     const finished: FightState = {
@@ -92,8 +91,8 @@ describe('kameo state (lot 2)', () => {
             ...player.fighter,
             health: 10,
             x: 60,
-            kurapika: { ...player.fighter.kurapika!, lifespanFrames: 240 },
           },
+          trap: { x: 40, remainingFrames: 100 },
         },
         opponent: { ...(kameoSlot(start, 'opponent') as KameoSlot), phase: 'eliminated' },
       },
@@ -104,7 +103,7 @@ describe('kameo state (lot 2)', () => {
     expect(reborn.cooldownFrames).toBe(0)
     expect(reborn.fighter.health).toBe(fightFormat(next.formatId).health)
     expect(reborn.fighter.x).toBe(22)
-    expect(reborn.fighter.kurapika?.lifespanFrames).toBe(240)
+    expect(reborn.trap).toBeUndefined()
     expect(kameoSlot(next, 'opponent')).toBe(finished.kameos?.opponent)
   })
 

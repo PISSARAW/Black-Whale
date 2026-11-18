@@ -29,3 +29,20 @@ l'identique, empreinte comprise, avec ou sans partenaires.
 désignent le **camp**, pas le corps. Les effets de Hatsu sur contact sont attribués
 au camp ; le registre du lot 7 les fermera aux kaméos par défaut. Rien n'est encore
 branché dans `stepFight` : aucun kaméo n'entre en scène avant le lot 5.
+
+## Lot 4 · catalogue des kaméos de soutien
+
+- `catalogue.ts` : les six kaméos de la première version (Tubeppa, Marayam,
+  Zhang Lei, Morena, Luzurus, Salé-salé). Pour chacun : son rôle, son ability canon
+  dans `data/abilities/abilities.json` et le chapitre où elle apparaît, son mode de
+  livraison, ses frames de présence, son temps de recharge et son coût d'aura.
+  Ces valeurs de timing sont un réglage de jeu, pas du canon.
+- `effects.ts` : `deliverKameoEffect` paie l'aura du kaméo, puis applique l'adaptation
+  du Hatsu qui existe déjà (`hatsuFor(id)`). Sur le leader allié, c'est `onTrigger`.
+  Sur l'adversaire à portée, c'est `onImpact`, et une esquive (isolement, portes,
+  gardes) est consommée à la place de l'effet. Le piège de Luzurus reste au sol 300
+  frames et se déclenche une fois au contact d'un adversaire au sol.
+
+L'effet vit dans les `hatsuEffects` du leader ou de l'adversaire. Le pas ordinaire le
+fait avancer une seule fois par frame, et un test le vérifie. `withKameos` n'accepte
+que des personnages du catalogue.

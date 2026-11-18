@@ -62,3 +62,9 @@ neuf tests des bundles compilés. Les 18 parcours UI couvrent Machi, le livre
 et Dolphin pour P1/P2 à 1100, 390 et 320 pixels. La compilation aboutit
 et les types ne signalent aucune erreur ni avertissement. Le découpage des
 catalogues purs maintient chaque bundle JavaScript sous 500 000 octets.
+
+Le contrôle `check-clash-production-arsenal.mjs` passe aussi sur la version
+de production : 120 sélections réelles à la souris (40 personnages à
+1100, 390 et 320 pixels), puis entrée dans l’arène avec Machi, sans erreur
+JavaScript. Le pied de page du sélecteur suit le défilement normal et ne
+recouvre plus les cases de combattants.

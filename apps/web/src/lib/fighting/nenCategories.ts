@@ -1,6 +1,7 @@
 import { categoryProximity, type ActiveNenCategory } from '@black-whale/nen-engine'
-import { FIGHT_NEN_PROFILES, FIGHT_ABILITY_CATEGORIES } from './nenCatalogue.gen'
+import { FIGHT_ABILITY_CATEGORIES } from './nenCatalogue.gen'
 import type { ArcadeFighter } from './types'
+import { nenMasteryProfile } from './nenMastery'
 
 export const FIGHT_CATEGORIES: readonly ActiveNenCategory[] = [
   'enhancer',
@@ -22,7 +23,7 @@ export function fightCategoryEfficiency(
   if (fighter.nen.mode === 'zetsu') return 0
   const owner = fighter.nenOwner ?? fighter.id
   if (owner === 'kurapika' && fighter.kurapika?.emperorTime) return 1
-  const affinity = FIGHT_NEN_PROFILES[owner]?.affinity ?? 'unknown'
+  const affinity = nenMasteryProfile(owner).affinity
   return affinityEfficiency(affinity, category)
 }
 
@@ -39,7 +40,7 @@ export function abilityCategories(ability: string | null): readonly ActiveNenCat
 
 /** Each component is calculated separately: there is no stacking six global buffs. */
 export function categoryPower(fighter: ArcadeFighter, category: ActiveNenCategory): number {
-  return 0.7 + 0.5 * fightCategoryEfficiency(fighter, category)
+  return 0.5 + 0.7 * fightCategoryEfficiency(fighter, category)
 }
 
 export function constructionFactor(fighter: ArcadeFighter): number {

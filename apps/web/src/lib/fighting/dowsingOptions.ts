@@ -27,7 +27,7 @@ export function dowsingOptions(state: FightState, side: FightSide): ArsenalOptio
         labels: ['Dowsing · Ranger le pendule', 'Dowsing · Put away the pendulum'],
       }),
     )
-  if (state[side].dowsingPrompt)
+  if (state[side].dowsingPrompt && state[side].dowsingPrompt?.question !== 'free')
     for (const answer of ['sincere', 'lie'])
       options.push(
         option(state, side, {

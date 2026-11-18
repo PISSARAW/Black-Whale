@@ -161,6 +161,17 @@
     for (let index = 0; index < 120; index++) advanceFrame()
     await tick()
   }
+  export async function prepareDowsingInterview() {
+    player = 'kurapika'
+    opponent = 'hisoka'
+    reset(createFightEnvironment())
+    state = {
+      ...state,
+      player: { ...state.player, x: 42, aura: 100 },
+      opponent: { ...state.opponent, x: 48 },
+    }
+    await tick()
+  }
   function castPaper(slot: string) {
     state = performAuraAttack({
       state,
@@ -216,6 +227,8 @@
       archive: state.player.hatsuEffects.baton?.musseArchive,
       judgment: state.opponent.judgmentChain,
       playerHeard: state.player.heardWords,
+      dowsing: state.player.dowsingReading,
+      dowsingPrompt: state.opponent.dowsingPrompt,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
       scatters: ownedPaperScatters(state, activePaperOwner(state, 'player')),

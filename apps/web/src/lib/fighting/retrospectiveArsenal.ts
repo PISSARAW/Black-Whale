@@ -2,7 +2,7 @@ import { personDolphinOptions } from './dolphinPeopleOptions'
 import { paperScatterOptions, performPaperScatterCommand } from './kallutoScatterCommands'
 import { paperKitOptions, performPaperKitCommand } from './kallutoMaterialActions'
 import { paperReceiverOptions, performPaperReceiverCommand } from './kallutoCommands'
-import { judgmentTargetLimit } from './judgmentInquiryTypes'
+import { arsenalCommandTargetLimit } from './arsenalCommandTargetLimit'
 import { judgmentInquiryOptions, performJudgmentInquiry } from './judgmentInquiryAction'
 import { musseArchiveOptions, performMusseArchiveCommand } from './benjaminMusseReplay'
 import { recordedWindowOptions, performRecordedWindowCommand } from './benjaminMusseRecorded'
@@ -47,7 +47,7 @@ export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   return (
     command.target === undefined ||
     (typeof command.target === 'string' &&
-      command.target.length <= judgmentTargetLimit(command.action as string))
+      command.target.length <= arsenalCommandTargetLimit(command.action as string))
   )
 }
 

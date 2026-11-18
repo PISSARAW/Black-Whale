@@ -82,6 +82,8 @@ describe('six combat exercises require actual Nen and collision outcomes', () =>
     r.step({ focusHands: true })
     expect(r.progress.step).toBe(1)
     r.step({ focusHead: true, guard: true })
+    expect(r.progress.step).toBe(1)
+    for (let i = 0; i < 10 && r.progress.step === 1; i++) r.step({ focusHead: true, guard: true })
     expect(r.progress.step).toBe(2)
     for (let i = 0; i < 200 && !r.progress.complete; i++) r.step({ focusHead: true, guard: true })
     expect(r.progress.complete, JSON.stringify({ p: r.progress, impact: r.state.impact })).toBe(

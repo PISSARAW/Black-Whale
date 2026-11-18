@@ -6,6 +6,7 @@ import { voluntaryNenAvailable } from './nenAccess'
 import { transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
 import type { ArcadeFighter, FightInput, FightNenZone } from './types'
 import { shuSupportAvailable } from './nenApplications'
+import { requestNenTransfer } from './nenTransfer'
 
 /** Duel distances/maintenance costs are tuning, not claims about manga measurements. */
 /** Legacy arcade constant, never a character range or proof of learned En. */
@@ -105,12 +106,9 @@ function advancedNenAvailable(fighter: ArcadeFighter): boolean {
 
 export function focusNenZone(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
   if (!canRedistributeAura(fighter)) return fighter
-  const distribution = { head: 8, torso: 8, hands: 8, feet: 8, [zone]: 76 }
+  const distribution = { head: 0.08, torso: 0.08, hands: 0.08, feet: 0.08, [zone]: 0.76 }
   return {
-    ...action(
-      { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
-      { type: 'RYU', distribution },
-    ),
+    ...requestNenTransfer(fighter, { zone, shares: distribution }),
     ryuWindow: 9,
   }
 }

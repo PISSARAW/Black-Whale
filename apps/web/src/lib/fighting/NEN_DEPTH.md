@@ -49,3 +49,17 @@ nouvelle attaque de Nen, sans retirer deux fois son coût ni rendre la matière
 physique inoffensive. La disparition d’un projectile libère le débit mais ne
 rembourse pas la réserve. Les deux camps et les prévisions recalculent leur
 budget depuis les mêmes effets vivants à chaque frame.
+
+## Liaisons et temps de transfert
+
+`nenTransfer.ts` conserve la dernière répartition au contact et l’interpole vers
+la nouvelle zone lors d’un cancel ou d’une commande manuelle. Une entrée maintenue
+ne recommence pas le transfert ; les parts restent conservées. L’engagement initial
+depuis le neutre utilise la préparation du coup existante. Biscuit bénéficie de
+son contrôle enseigné ; les autres cadences sont des réglages de style.
+
+Un Ko offensif ne se libère pas au milieu d’un transfert inachevé. Un changement
+de zone de Ko défensif paie son engagement une seule fois et traverse une posture
+intermédiaire avant la concentration complète. Interruption et Zetsu annulent le
+transfert ; hitstop et pause suivent les ticks autoritaires et le replay. Les
+flux de présentation lisent ces parts effectives, sans modifier leurs couleurs.

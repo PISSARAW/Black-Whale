@@ -191,7 +191,8 @@ export function hasEquipment(fighter: FightState['player'], equipment: FightEqui
 
 export function readyCohort(state: FightState, side: FightSide): PreparedEntity[] {
   return entitiesFor(state, side, 'supporter').filter(
-    (entry) => entry.consenting && entry.feather && !entry.sleepingFrames,
+    (entry) =>
+      entry.consenting && entry.feather && !entry.sleepingFrames && !entry.halkenburgPassenger,
   )
 }
 

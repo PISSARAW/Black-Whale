@@ -76,6 +76,42 @@ try {
         const later = await page.evaluate(() => window.soulFixture.snapshot())
         assert.equal(later.host.x, held.host.x)
         assert.equal(later.host.soul.id, before.host.soul.id)
+        const victimWake = page.getByRole('button', {
+          name: 'Conscience déplacée · Se réveiller',
+          exact: true,
+        })
+        assert.equal(await victimWake.isDisabled(), true)
+        await page
+          .getByRole('button', { name: 'Conscience transférée · Se reposer', exact: true })
+          .click()
+        const resting = await page.evaluate(() => window.soulFixture.snapshot())
+        assert.equal(resting.host.soul.initiatorAwake, false)
+        assert.equal(resting.host.sleeping, resting.host.soul.id)
+        await victimWake.click()
+        const victim = await page.evaluate(() => window.soulFixture.snapshot())
+        assert.equal(victim.host.soul.victimAwake, true)
+        assert.equal(victim.origin.passenger.owner, side === 'player' ? 'opponent' : 'player')
+        assert.equal(victim.cohortAvailable, mode === 'supporter' ? 2 : 3)
+        const victimDirection = side === 'player' ? 'gauche' : 'droite'
+        await page
+          .getByRole('button', {
+            name: `Conscience déplacée · Marcher à ${victimDirection}`,
+            exact: true,
+          })
+          .click()
+        await page.evaluate(() => window.soulFixture.advance(6))
+        const walkingVictim = await page.evaluate(() => window.soulFixture.snapshot())
+        assert.ok((walkingVictim.origin.x - victim.origin.x) * (side === 'player' ? -1 : 1) > 0)
+        assert.equal(walkingVictim.host.x, victim.host.x)
+        assert.equal(walkingVictim.origin.health, victim.origin.health)
+        await page
+          .getByRole('button', { name: 'Conscience transférée · Se réveiller', exact: true })
+          .click()
+        const priority = await page.evaluate(() => window.soulFixture.snapshot())
+        assert.equal(priority.host.soul.initiatorAwake, true)
+        assert.equal(priority.host.soul.victimAwake, false)
+        assert.equal(priority.origin.sleeping, priority.host.soul.id)
+        assert.equal(await victimWake.isDisabled(), true)
         await page.waitForSelector('.fight-scene.ready')
         await page.locator('.arena').scrollIntoViewIfNeeded()
         await page.evaluate(

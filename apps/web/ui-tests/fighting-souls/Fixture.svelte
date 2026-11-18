@@ -5,6 +5,8 @@
   import { soulDuel } from '$lib/fighting/halkenburgSoulTestSetup'
   import { tickFight, performAuraAttack } from '$lib/fighting/engine'
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
+  import { halkenburgMindBody } from '$lib/fighting/halkenburgMindAccess'
+  import { readyCohort } from '$lib/fighting/preparationWorld'
   import { EMPTY_INPUT, type FightSide } from '$lib/fighting/types'
   let side: FightSide = 'player'
   let state = soulDuel()
@@ -20,6 +22,10 @@
   }
   export function snapshot() {
     const target = side === 'player' ? 'opponent' : 'player'
+    const soul = state[target].halkenburgSoul
+    const origin = soul
+      ? halkenburgMindBody(state, { host: target, role: 'victim', soul })
+      : undefined
     return {
       source: { x: state[side].x, id: state[side].id, sleeping: state[side].halkenburgSleeping },
       host: {
@@ -27,7 +33,17 @@
         id: state[target].id,
         health: state[target].health,
         soul: state[target].halkenburgSoul,
+        sleeping: state[target].halkenburgSleeping,
       },
+      origin: origin
+        ? {
+            x: origin.x,
+            health: origin.health,
+            sleeping: origin.halkenburgSleeping,
+            passenger: origin.halkenburgPassenger,
+          }
+        : undefined,
+      cohortAvailable: readyCohort(state, side).length,
       sleepers: state.battlefield!.entities.filter((entry) => entry.halkenburgSleeping),
     }
   }

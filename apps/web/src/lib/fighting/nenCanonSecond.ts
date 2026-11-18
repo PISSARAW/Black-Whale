@@ -61,7 +61,7 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
     prohibition:
       'No imaginary cohort, damage arrow, copied supporters or shot without shared will.',
     adaptation:
-      'Charge and numerical aura/HP costs tune the duel. A persistent native exchange and host movement are represented; sleep priority, actual deaths, full consciousness control and group armour remain incomplete.',
+      'Charge and numerical aura/HP costs tune the duel. Persistent exchange, both living consciousnesses’ sleep priority and ordinary movement are represented. Actual deaths, personal Nen in a different body and group armour remain incomplete.',
   },
   gel: {
     abilities: ['snake-arm'],

@@ -1,3 +1,4 @@
+import { advanceHalkenburgSupporter } from './halkenburgSupporterMotion'
 import { personKeepsLittleEye } from './dolphinPeopleState'
 import { advanceLittleEyeShots } from './littleEyeCapture'
 import { advanceLittleEyeSenses } from './littleEyeSenses'
@@ -111,10 +112,10 @@ function canInteract(entry: PreparedEntity, side: FightSide): boolean {
 }
 
 function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const awake = {
+  const awake = advanceHalkenburgSupporter(state, {
     ...entry,
-    sleepingFrames: entry.halkenburgSleeping ? 1 : Math.max(0, (entry.sleepingFrames ?? 0) - 1),
-  }
+    sleepingFrames: Math.max(entry.halkenburgSleeping ? 1 : 0, (entry.sleepingFrames ?? 0) - 1),
+  })
   const control = entry.controller
   if (entry.kind === 'corpse') return awake
   if (!control) return awake

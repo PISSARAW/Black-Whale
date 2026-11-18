@@ -6,6 +6,7 @@ import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
 import { halkenburgRosterVariant } from '../halkenburgVariant'
 import { halkenburgSoulPool, beginHalkenburgSoulExchange } from '../halkenburgSouls'
+import { halkenburgOwnBody } from '../halkenburgSoulTypes'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
@@ -78,11 +79,7 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
 function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
   const fighter = state[side]
   const effects = fighter.hatsuEffects
-  const gathers =
-    ownsBow(fighter) &&
-    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
-    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
-    readyCohort(state, side).length > 0
+  const gathers = cohortGathers(state, side)
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
   const possessed = fighter.halkenburgSoul ? 0 : effects.possessedFrames
   if (will === effects.cohortWillFrames && possessed <= 0) return fighter
@@ -95,6 +92,17 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
       possessedFrames: fighter.halkenburgSoul ? 1 : Math.max(0, possessed - 1),
     },
   }
+}
+
+function cohortGathers(state: FightState, side: 'player' | 'opponent'): boolean {
+  const fighter = state[side]
+  return (
+    ownsBow(fighter) &&
+    halkenburgOwnBody(fighter) &&
+    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
+    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
+    readyCohort(state, side).length > 0
+  )
 }
 
 function ownsBow(fighter: ArcadeFighter): boolean {

@@ -21,7 +21,11 @@ import { secretWindowOptions, performSecretWindowCommand } from './secretWindowC
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
-import { performHalkenburgHostMotion, halkenburgHostOptions } from './halkenburgHostCommands'
+import {
+  performHalkenburgSoulCommand,
+  halkenburgHostOptions,
+  isHalkenburgSoulCommand,
+} from './halkenburgHostCommands'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
@@ -96,8 +100,7 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
-  if (command.action === 'halkenburg-host-motion')
-    return performHalkenburgHostMotion(state, side, command)
+  if (isHalkenburgSoulCommand(command)) return performHalkenburgSoulCommand(state, side, command)
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state

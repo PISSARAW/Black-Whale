@@ -2,11 +2,13 @@ import type { ArcadeFighter, FightState } from './types'
 import type { FightBattlefield } from './preparationTypes'
 
 export function carryHalkenburgSoul(body: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  if (!previous.halkenburgSoul && !previous.halkenburgSleeping) return body
+  if (!previous.halkenburgSoul && !previous.halkenburgSleeping && !previous.halkenburgPassenger)
+    return body
   return {
     ...body,
     halkenburgSoul: previous.halkenburgSoul,
     halkenburgSleeping: previous.halkenburgSleeping,
+    halkenburgPassenger: previous.halkenburgPassenger,
     hatsuEffects: {
       ...body.hatsuEffects,
       possessedFrames: previous.halkenburgSoul ? 1 : body.hatsuEffects.possessedFrames,

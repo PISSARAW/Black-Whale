@@ -76,6 +76,7 @@ export const ARSENAL_ACTION_IDS = [
   'dolphin-loan',
   'halkenburg-transfer',
   'halkenburg-host-motion',
+  'halkenburg-soul-rest',
   'black-roster',
   'black-order',
   'black-remove',

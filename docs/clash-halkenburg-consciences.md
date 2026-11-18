@@ -56,3 +56,34 @@ Les replays et la prédiction P2 passent par les vraies entrées d’exécution.
 Typage : zéro erreur et zéro avertissement ; lint et limite brute de 500 lignes
 des fichiers modifiés validés. Le build de production termine ; son plus gros
 module client pèse 494 363 octets, sous le plafond de 500 000 octets.
+
+## Alternance des deux consciences vivantes — ruleset 68
+
+Le repos et le réveil ordinaires sont accessibles aux deux consciences. Tant
+que l’initiateur veille, la victime ne peut pas se réveiller. Lorsqu’il dort,
+elle peut se réveiller dans le corps d’origine, y marcher, puis se rendormir.
+Son corps conserve son visage et ses propriétés physiques. Le réveil de
+l’initiateur lui retire immédiatement le contrôle et la force au sommeil,
+conformément à la priorité décrite au chapitre 404. Aucun délai de libération
+ni changement de PV n’est ajouté.
+
+Le réveil d’une conscience conserve les blessures et le knockdown du corps.
+Un sommeil imposé, notamment par Cookie, garde sa propre condition de fin.
+Le corps d’un partisan occupé par la victime ne rejoint pas la volonté commune
+de la cohorte. Les corps et leur état de veille persistent entre les manches.
+
+La victime dispose d’une demande de réveil privée sans recevoir par avance
+l’identité du corps où elle se trouve. Le serveur lui révèle ce corps après
+son réveil. Les intentions de mouvement de l’autre conscience restent privées.
+Les entrées réelles de réseau et les replays suivent les deux contrôleurs.
+Le On reste présent. Le suivi des morts réelles, la cohabitation après la mort
+d’un corps, l’arsenal personnel des consciences et l’armure restent ouverts.
+
+Validation de cette extension : 1 784 cas d’intégration, 3 167 contrôles de
+combat, 24 contrôles du dépôt et neuf tests de bundles compilés passent.
+Les douze parcours UI vérifient les deux contrôleurs à 1100, 390 et 320 pixels.
+Les quinze tests ciblés de veille et de replay couvrent les réveils bloqués,
+la priorité, les blessures, le sommeil de Cookie et la confidentialité.
+Typage sans erreur ni avertissement, lint et limite brute de 500 lignes validés.
+Les 96 flux historiques sont conservés dans une nouvelle référence.
+Le build de production termine ; le plus gros module client mesure 497 031 octets.

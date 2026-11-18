@@ -13,6 +13,55 @@ import type { ReplayPacket } from './fightReplayTypes'
 import type { FightSide } from './types'
 
 describe('a transferred consciousness commands its host through the real network and replay entry points', () => {
+  it.each([
+    ['player', 0],
+    ['player', 1],
+    ['opponent', 0],
+    ['opponent', 1],
+  ] as const)(
+    'records sleep priority and both occupied bodies for %s with seed %s',
+    (side, seed) => {
+      let state = mapFrames(shootSoul(soulDuel(side, seed), side), 35)
+      const victim = side === 'player' ? 'opponent' : 'player'
+      const id = state[victim].halkenburgSoul!.id
+      const recorder = createReplayRecorder(state)!
+      const left = side === 'player' ? 'left' : 'right'
+      const right = side === 'player' ? 'right' : 'left'
+      const plan = {
+        0: { side, action: 'halkenburg-soul-rest', target: `${id}|sleep` },
+        1: { side: victim, action: 'halkenburg-soul-rest', target: `${id}|wake` },
+        2: { side: victim, action: 'halkenburg-host-motion', target: `${id}|${left}` },
+        8: { side, action: 'halkenburg-soul-rest', target: `${id}|wake` },
+        10: { side, action: 'halkenburg-host-motion', target: `${id}|${right}` },
+        14: { side, action: 'halkenburg-host-motion', target: `${id}|stay` },
+      } as const
+      for (let frame = 0; frame < 20; frame++) {
+        const entry = plan[frame as keyof typeof plan]
+        const preview = entry
+          ? applyPvpCommand(state, entry.side, {
+              kind: 'arsenal',
+              command: { action: entry.action, target: entry.target },
+            })
+          : state
+        const packet: ReplayPacket = [
+          1 / 60,
+          0,
+          0,
+          preview !== state ? [panelReplayCommand(state, preview)] : [],
+        ]
+        const next = executeReplayPacket(state, packet)
+        recorder.append(state, packet, next)
+        state = next
+        if (frame === 1) expect(state[victim].halkenburgSoul?.victimAwake).toBe(true)
+        if (frame === 8) expect(state[victim].halkenburgSoul?.victimAwake).toBe(false)
+      }
+      const replay = createReplayPlayer(decodeFightReplay(JSON.stringify(recorder.snapshot())))
+      for (let frame = 0; frame < 40 && !replay.done; frame++) replay.advance(0.05, 2)
+      expect(replay.error).toBe('')
+      expect(replay.done).toBe(true)
+      expect(fightReplayHash(replay.state)).toBe(fightReplayHash(state))
+    },
+  )
   it.each<FightSide>(['player', 'opponent'])(
     'records and predicts ordinary host movement for %s while the original sleeps',
     (side) => {

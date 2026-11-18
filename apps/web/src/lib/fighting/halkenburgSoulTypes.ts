@@ -1,7 +1,13 @@
 import type { FightSide, ArcadeFighter } from './types'
 
 export function halkenburgOwnBody(body: ArcadeFighter): boolean {
-  return !body.halkenburgSoul && !body.halkenburgSleeping
+  return !body.halkenburgSoul && !body.halkenburgSleeping && !body.halkenburgPassenger
+}
+
+export interface HalkenburgPassenger {
+  id: string
+  owner: FightSide
+  motion?: 'left' | 'right' | 'stay'
 }
 
 export type HalkenburgSoulBody =
@@ -15,6 +21,11 @@ export interface HalkenburgSoulExchange {
   /** The source body sleeps while the initiating consciousness occupies the pierced body. */
   stage: 'exchanged'
   motion?: 'left' | 'right' | 'stay'
+  initiatorAwake?: boolean
+  victimAwake?: boolean
+  victimMotion?: 'left' | 'right' | 'stay'
+  /** Viewer-only readiness; never accepted from an input packet as authority. */
+  victimWakeReady?: boolean
 }
 
 declare module './types' {
@@ -22,10 +33,12 @@ declare module './types' {
     halkenburgChosenSoul?: HalkenburgSoulBody
     halkenburgSoul?: HalkenburgSoulExchange
     halkenburgSleeping?: string
+    halkenburgPassenger?: HalkenburgPassenger
   }
 }
 declare module './preparationTypes' {
   interface PreparedEntity {
     halkenburgSleeping?: string
+    halkenburgPassenger?: HalkenburgPassenger
   }
 }

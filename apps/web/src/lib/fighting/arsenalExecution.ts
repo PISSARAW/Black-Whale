@@ -1,3 +1,4 @@
+import { isHalkenburgSoulCommand } from './halkenburgHostCommands'
 import { performAdditionalArsenal } from './additionalArsenalExecution'
 import { performTextureApplication } from './hisokaTextureAction'
 import { traceArsenal } from './arsenalTrace'
@@ -52,8 +53,7 @@ function executeOtherBodyCommand({
   side,
   command,
 }: import('./retrospectiveTypes').ArsenalInvocation): FightState | null {
-  if (command.action === 'halkenburg-host-motion')
-    return performArsenalCommand(state, side, command)
+  if (isHalkenburgSoulCommand(command)) return performArsenalCommand(state, side, command)
   return command.action.startsWith('person-')
     ? performPersonDolphinCommand(state, side, command)
     : null

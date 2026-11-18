@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import FightStage from './FightStage.svelte'
+  import { parallelFutureCamera } from '$lib/fighting/parallelFutureCamera'
+  import type { PerceivedResultAction } from '$lib/fighting/futurePerceptionResults'
   import FightQwenControl from './FightQwenControl.svelte'
   import { supportsQwenDuel } from '$lib/fighting/qwen/observation'
   import type { QwenDuel } from '$lib/fighting/qwen/duel'
@@ -75,6 +77,15 @@
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
   $: introEnabled = !replays.active && state.mode !== 'training'
+  $: visibleState = parallelFutureCamera(state, 'player').main
+  function resultAction(action: PerceivedResultAction) {
+    if (state.phase !== 'finished') {
+      actions.queueCommand({ kind: 'perceived-result', action })
+      return
+    }
+    if (action === 'continue') actions.continueMatch()
+    else actions.rematch()
+  }
   function menuKey(event: KeyboardEvent) {
     if (event.key !== 'Escape' || event.repeat || event.defaultPrevented || paused) return
     event.preventDefault()
@@ -159,16 +170,21 @@
     >
       <FightActiveObjective {language} {lessons} {school} {practice} />
       {#if state.player.id === 'kurapika' && state.phase === 'fighting' && !pausedView}
-        <FightKurapikaLiveChains {state} {language} {actions} replay={Boolean($replays.playback)} />
+        <FightKurapikaLiveChains
+          state={visibleState}
+          {language}
+          {actions}
+          replay={Boolean($replays.playback)}
+        />
       {/if}
       {#each ['player', 'opponent'] as seat (seat)}
         {@const side = seat as FightSide}
         {#if state[side].id === 'hisoka' && (side === 'player' || state.mode === 'versus-local') && state.phase === 'fighting' && !pausedView}
-          <FightHisokaLiveGum {state} {language} {actions} {side} />
+          <FightHisokaLiveGum state={visibleState} {language} {actions} {side} />
         {/if}
         {#if state[side].id === 'chrollo' && (side === 'player' || state.mode === 'versus-local') && state.phase === 'fighting' && !pausedView}
           <FightChrolloLiveBook
-            {state}
+            state={visibleState}
             {language}
             {actions}
             {side}
@@ -178,7 +194,7 @@
       {/each}
     </FightStage>
     {#if !paused && !victoryActive}<FightMatchOverlays
-        {state}
+        state={visibleState}
         {language}
         replay={replays.active}
         {introEnabled}
@@ -186,8 +202,8 @@
           if (touchDevice) void enterFightFullscreen(target)
           actions.startFight()
         }}
-        rematch={actions.rematch}
-        continueMatch={actions.continueMatch}
+        rematch={() => resultAction('rematch')}
+        continueMatch={() => resultAction('continue')}
         chooseAgain={actions.chooseAgain}
         quitFight={actions.quitFight}
       />{/if}
@@ -204,7 +220,7 @@
       onResume={actions.togglePause}
     >
       {#if pauseTab === 'overview'}<FightPauseOverview
-          {state}
+          state={visibleState}
           {language}
           replay={replays.active}
           canRematch={!$lessons && !$school && !practice.active}
@@ -213,7 +229,7 @@
           onQuit={actions.quitFight}
         />
       {:else if pauseTab === 'techniques'}<FightPauseTechniques
-          {state}
+          state={visibleState}
           {language}
           {actions}
           replay={replays.active}

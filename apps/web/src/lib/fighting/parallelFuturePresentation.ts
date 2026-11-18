@@ -1,6 +1,7 @@
 import { futureCanPrepare } from './parallelFutureAbility'
 import { futureGumState } from './bungeeForecast'
 import { fieldDeceives } from './futureIllusion'
+import { futurePerceptionView } from './futurePerception'
 import type { FightSide, FightState } from './types'
 
 export function visibleFutureBeastOwner(state: FightState, viewer: FightSide = 'player') {
@@ -19,6 +20,8 @@ export function futureVisibleState(
   viewer: FightSide,
   previewIndex?: number | null,
 ): FightState {
+  const perception = futurePerceptionView(state, viewer)
+  if (perception) return perception
   const future = state.parallelFuture
   const fieldView = fieldViewState(state, viewer)
   if (!future || future.frames.length === 0) return fieldView

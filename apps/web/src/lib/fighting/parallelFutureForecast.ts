@@ -10,7 +10,12 @@ export function forecastParallelFuture(
   simulate: SimulateFutureFrame,
 ): readonly FutureFrame[] {
   const future = state.parallelFuture!
-  let predicted: FightState = { ...state, parallelFuture: undefined, forecastSimulation: true }
+  let predicted: FightState = {
+    ...state,
+    parallelFuture: undefined,
+    futurePerception: undefined,
+    forecastSimulation: true,
+  }
   const held = predictionControls(controls, future.owner)
   const frames: FutureFrame[] = []
   for (let frame = 0; frame < FUTURE_WINDOW_FRAMES; frame++) {

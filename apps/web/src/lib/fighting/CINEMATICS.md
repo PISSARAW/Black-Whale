@@ -118,8 +118,19 @@ les pistes de montage déjà écrites.
 `FightLiveScene` réserve l’encadré existant à la branche calculée par le moteur
 durant la vision et la divergence. La vue principale montre la réalité pour
 l’utilisateur du pouvoir, l’entraînement et le versus local partagé. L’adversaire
-en solo conserve sa perception prédite : la comparaison ne révèle pas la position
-réelle privée du prince.
+en solo conserve sa perception illusoire : ses commandes restent actives et ses
+coups, tirs, projections, dégâts apparents et sons sont simulés dans une branche
+séparée. Aucun panneau, compteur de divergence ou encadré ne lui annonce l’effet.
+Le vrai prince se déplace librement dans la simulation réelle. La fin du pouvoir
+réaffiche directement sa position et ses PV réels. Un K.-O. illusoire déclenche
+la même cinématique, le son de victoire, le score de manche et l’écran de résultats
+qu’un vrai verdict, sans mention de Laplace. Le verdict perçu garde sa frame et
+son chronomètre de fin afin que la cinématique ne redémarre pas à chaque tick réel.
+« Manche suivante » et « Rejouer le duel » poursuivent uniquement la branche
+illusoire ; le score réel, le corps du prince et la durée du pouvoir continuent
+indépendamment. La rupture du pouvoir retire immédiatement la fausse victoire.
+Le champ prolongé sous Zetsu conserve cette perception après les dix premières
+secondes, jusqu’à sa rupture.
 
 La seconde scène dispose de ses propres modèles et effets. Le code de caméra
 de `demos/fighting-showcase/cinematicCamera.ts` a été extrait dans

@@ -8,6 +8,7 @@ import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { createFightReplayController } from './fightReplayController'
 import { createResponseDiagnostics } from './fightResponseDiagnostics'
 import { tickFight, performAuraAttack } from './engine'
+import { performFuturePerceptionAction } from './futurePerception'
 import { performArsenalAction } from './arsenalExecution'
 import { createQwenDuel, type QwenDuel } from './qwen/duel'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
@@ -54,7 +55,12 @@ export function createFightMatchRuntime(
   function apply(state: FightState, command: ReplayCommand) {
     if (replays.active) return state
     const after = applyReplayCommand(state, command)
-    if (state.phase === 'ready' && after.phase === 'fighting' && state.roundNumber === 1 && !replays.practicing)
+    if (
+      state.phase === 'ready' &&
+      after.phase === 'fighting' &&
+      state.roundNumber === 1 &&
+      !replays.practicing
+    )
       trackEvent('mode_start', { variant: state.mode, format: state.formatId })
     replays.append(state, [0, 0, 0, [command]], after)
     if (!replays.practicing) boundary = after
@@ -90,7 +96,7 @@ export function createFightMatchRuntime(
           now: clock(),
         })
       } else if (item.action) {
-        next = item.action(next)
+        next = performFuturePerceptionAction(next, 'player', item.action) ?? item.action(next)
         commands.push(panelReplayCommand(before, next))
       }
     }

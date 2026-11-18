@@ -104,6 +104,7 @@ export function endFutureField(state: FightState): FightState {
     ...state,
     futureIllusion: undefined,
     parallelFuture: undefined,
+    futurePerception: undefined,
     [owner]: { ...state[owner], futureIllusionActive: false, parallelEyesClosed: false },
   }
 }

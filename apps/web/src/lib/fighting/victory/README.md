@@ -12,7 +12,12 @@ chorégraphie ; le cadrage et les accessoires utilisent les dimensions réelles
 des deux modèles. Les effets sont libérés avec le canvas.
 
 Le HUD et le panneau de résultats attendent la fin ou le passage de la scène.
-Les replays, égalités et prévisions ne déclenchent pas une nouvelle victoire.
+Les replays, égalités et visions inspectées ne déclenchent pas une nouvelle victoire.
+En arcade, un verdict perçu sous Laplace Demon peut en revanche jouer toute la
+victoire habituelle et afficher les résultats. `FightStage` utilise alors l’état
+visible pour la cinématique et le son, pendant que le moteur réel continue.
+La rupture de l’illusion retire cette présentation, sans valider de manche ni
+de progression réelle. Les boutons de résultats restent dans la branche perçue.
 Les réglages de confort et de son s'appliquent également à ces séquences.
 
 Hisoka affiche « VICTOIRE », Melody affiche « FRIENDSHIP » et les autres

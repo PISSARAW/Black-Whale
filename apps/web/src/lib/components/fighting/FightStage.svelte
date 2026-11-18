@@ -45,7 +45,7 @@
   export let victoryActive = false
   const victory = createVictoryPlayback()
   let throwFilm = false
-  $: victory.observe(state, victoryEnabled)
+  $: victory.observe(visibleState, victoryEnabled)
   $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let minimal = false
@@ -74,6 +74,10 @@
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
+  $: if (state.mode === 'versus-ai') {
+    futureViewer = 'player'
+    sensoryViewer = 'player'
+  }
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
   $: if (sceneKey) {
@@ -93,7 +97,7 @@
 </script>
 
 <FightAudio
-  {state}
+  state={visibleState}
   {language}
   paused={paused || victoryActive}
   viewer={sensoryViewer}
@@ -109,7 +113,11 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive && !$intro && !throwFilm}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive && !$intro && !throwFilm}<FightHud
+        state={visibleState}
+        {language}
+        {detailed}
+      />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -146,14 +154,20 @@
         {/key}
       {/if}
       {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
-      <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
+      <FightSaiyuSenses state={visibleState} {language} bind:viewer={sensoryViewer} />
       {#if minimal && !throwFilm}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
     {/if}
-    <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
+    <FightVictoryOverlay frame={$victory} state={visibleState} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
     <FightIntroduction playback={intro} {state} {language} {paused} />
-    <FightThrowCinematic {state} {comfort} {language} enabled={!$victory?.active && !$intro} bind:active={throwFilm} />
+    <FightThrowCinematic
+      state={visibleState}
+      {comfort}
+      {language}
+      enabled={!$victory?.active && !$intro}
+      bind:active={throwFilm}
+    />
   </div>
   {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
@@ -197,7 +211,7 @@
         onAura={(active) => onControl('aura', active)}
       />
       <FightEasterEggs
-        {state}
+        state={visibleState}
         {language}
         {paused}
         bind:preferences={easterEggPreferences}

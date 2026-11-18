@@ -5,6 +5,7 @@ import {
   stopParallelFuture,
 } from './parallelFutureAbility'
 import { fieldDeceives } from './futureIllusion'
+import { soloFutureControlsLive, simulateFuturePerception } from './futurePerception'
 import { forecastParallelFuture } from './parallelFutureForecast'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
 import type {
@@ -25,7 +26,7 @@ export function stepParallelFuture(
   engine: FutureEngine,
 ): FightState {
   const future = state.parallelFuture
-  if (!future) return engine.simulate(state, controls)
+  if (!future) return simulateFuturePerception(state, controls, engine.simulate)
   if (!futureValid(state)) return engine.simulate(stopParallelFuture(state), controls)
   if (future.phase === 'preparing') return stepPreparation(state, controls, engine.simulate)
   if (future.phase === 'vision') return stepVision(state, controls)
@@ -33,7 +34,8 @@ export function stepParallelFuture(
 }
 
 function futureValid(state: FightState): boolean {
-  const future = state.parallelFuture!
+  const future = state.parallelFuture
+  if (!future) return false
   const owner = state[future.owner]
   if (!futureNenAvailable(owner) || !futureSource(owner, future.sourceMoveId)) return false
   return future.phase === 'diverging' || owner.nen.mode === 'zetsu'
@@ -95,8 +97,12 @@ function stepDivergence(
   const replayControls =
     future.owner === 'player'
       ? { ...controls, opponent: held.opponent, ai: false }
-      : { ...controls, player: held.player }
-  let next = restorePerceivedFacing(engine.simulate(state, replayControls), state)
+      : { ...controls, player: soloFutureControlsLive(state) ? controls.player : held.player }
+  let next = restorePerceivedFacing(
+    simulateFuturePerception(state, replayControls, engine.simulate),
+    state,
+  )
+  if (!next.parallelFuture) return next
   if (future.owner === 'player' && held.ai) next = replayAi(next, state, engine.replay)
   if (next.phase !== 'fighting' || future.cursor + 1 >= FUTURE_WINDOW_FRAMES)
     return stopParallelFuture(next, next.phase === 'fighting' && Boolean(next.futureIllusion))
@@ -104,6 +110,7 @@ function stepDivergence(
 }
 
 function restorePerceivedFacing(next: FightState, original: FightState): FightState {
+  if (next.futurePerception) return next
   const future = original.parallelFuture!
   const observer = future.owner === 'player' ? 'opponent' : 'player'
   return {

@@ -1,4 +1,5 @@
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { performFuturePerceptionAction } from './futurePerception'
 import { traceArsenal } from './arsenalTrace'
 import { performFutureArsenal } from './futureIllusion'
 import { performHistoricalWeapon } from './historicalWeapons'
@@ -31,6 +32,10 @@ export function performArsenalAction(
   options: import('./retrospectiveTypes').ArsenalInvocation,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
+  const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
+    performArsenalAction({ ...options, state }, perform),
+  )
+  if (perception) return perception
   return traceArsenal(options, executeArsenalAction(options, perform))
 }
 

@@ -4,6 +4,7 @@
     FUTURE_WINDOW_FRAMES,
   } from '$lib/fighting/parallelFutureTypes'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { showFuturePanel } from '$lib/fighting/futurePerception'
   import type { FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
@@ -19,7 +20,9 @@
   $: sample = future?.frames[index]
   $: echo = future?.frames[Math.max(0, future.cursor - 1)]
   $: active = Boolean(future)
-  $: show = active || state.player.id === 'tserriednich' || state.opponent.id === 'tserriednich'
+  $: show =
+    showFuturePanel(state, viewer) &&
+    (active || state.player.id === 'tserriednich' || state.opponent.id === 'tserriednich')
   $: ownerPath =
     future?.frames
       .filter((_, i) => i % 6 === 0)

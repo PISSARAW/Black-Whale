@@ -42,6 +42,7 @@ import { thetaFirearmOptions } from './thetaFirearm'
 import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
 import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { performFuturePerceptionAction } from './futurePerception'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { performDirectionalChain } from './directionalChainCommand'
@@ -185,6 +186,10 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
+    performMove({ ...options, state }),
+  )
+  if (perception) return perception
   if (options.state[options.side].arenaRecovery) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
@@ -230,6 +235,10 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
+    performAuraAttack({ ...options, state }),
+  )
+  if (perception) return perception
   if (!pursuitAttackAllowed(options)) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
@@ -375,6 +384,10 @@ export function performThrow(
   side: FightSide,
   input: FightInput = EMPTY_INPUT,
 ): FightState {
+  const perception = performFuturePerceptionAction(state, side, (current) =>
+    performThrow(current, side, input),
+  )
+  if (perception) return perception
   if (state[side].easterEgg) return state
   if (state[side].cyclotronWindup) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state

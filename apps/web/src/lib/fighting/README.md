@@ -1039,7 +1039,17 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   anticiper un danger mais doit physiquement s'en écarter. En versus local,
   prévoir des décisions humaines est impossible : les commandes présentes sont
   prolongées lors du calcul puis rejouées pendant la fenêtre, adaptation affichée
-  dans le panneau. Deux boutons de point de vue permettent de comparer les perceptions
+  dans le panneau. En arcade contre Tserriednich, le joueur garde ses commandes :
+  `futurePerception.ts` simule ses actions contre une image dans une branche isolée.
+  Scène, PV, impacts, sons et panneaux suivent cette perception sans annoncer
+  l’activation ; le vrai prince reste libre de se déplacer. La rupture de l’illusion
+  révèle sa position et sa santé réelles. Un K.-O. apparent peut annoncer une
+  victoire, jouer la cinématique habituelle et afficher une manche remportée.
+  Les boutons de résultats poursuivent seulement l’illusion ; ni ces annonces
+  ni les dégâts apparents ne modifient le verdict ou le score réels.
+  `futurePerceptionResults.ts` et les commandes de replay correspondantes
+  conservent cette séparation jusqu’à la révélation. Le monde illusoire prolongé garde cette branche tant que son champ
+  trompe le joueur. Deux boutons de point de vue permettent de comparer les perceptions
   sur l'écran partagé. Zetsu imposé, vol, sceau de On ou changement de page interrompent
   la capacité ; les manches effacent la branche. Les gestes inventés de bête gardienne
   et l'ancienne charge d'esquive sont supprimés. Référence : chapitres 385–387.

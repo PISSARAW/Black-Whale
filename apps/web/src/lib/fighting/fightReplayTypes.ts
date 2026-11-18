@@ -4,7 +4,7 @@ import type { EasterEggSlot } from './easterEggCatalogue'
 import type { FightSide, MoveAction, FighterId, FightMode } from './types'
 
 export const REPLAY_VERSION = 1
-export const REPLAY_RULESET = 'clash-combat-59-observed-defence'
+export const REPLAY_RULESET = 'clash-combat-60-laplace-perception'
 export const REPLAY_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 export type ReplayFighter = FighterId
 export interface ReplaySetup {
@@ -21,6 +21,7 @@ export type ReplayCommand =
   | { kind: 'move'; side: FightSide; action: MoveAction | 'ranged'; input: number }
   | { kind: 'emperor'; side: FightSide }
   | { kind: 'easter'; side: FightSide; slot: EasterEggSlot }
+  | { kind: 'perceived-result'; action: import('./futurePerceptionResults').PerceivedResultAction }
   | { kind: 'start' | 'round' }
 /** Preserve the engine's actual tick batches, including zero-step batches and accumulator timing. */
 export type ReplayPacket = [dt: number, player: number, opponent: number, commands: ReplayCommand[]]

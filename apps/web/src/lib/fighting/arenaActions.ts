@@ -4,6 +4,7 @@ import { canAct } from './fightActorState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { performFuturePerceptionAction } from './futurePerception'
 import { chrolloHasActivePage } from './chrolloBook'
 import { blinkyAvailable, inBlinkyNozzle } from './blinky'
 import { resolveMoonlightAction } from './moonlightAction'
@@ -49,6 +50,10 @@ export function performArenaAction(
   side: FightSide,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
+  const perception = performFuturePerceptionAction(state, side, (current) =>
+    performArenaAction(current, side, perform),
+  )
+  if (perception) return perception
   if (!state.arena || state.phase !== 'fighting' || state.catsName) return state
   if (!futureAcceptsMove(state, side) || !arenaBodyAvailable(state[side])) return state
   const technique = arenaTechnique(state[side].id)

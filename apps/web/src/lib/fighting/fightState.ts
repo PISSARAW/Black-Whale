@@ -78,6 +78,7 @@ export function nextFightRound(state: FightState): FightState {
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
+      futurePerception: undefined,
       futureIllusion: undefined,
       toxinClouds: undefined,
       forecastSimulation: undefined,

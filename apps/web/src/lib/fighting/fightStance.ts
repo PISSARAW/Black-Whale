@@ -3,11 +3,9 @@ import { ROSTER_STANCES } from './fightStancesRoster'
 import type { FighterId } from './types'
 
 /**
- * How a fighter stands between moves: the guard a 2D fighter keeps, chest
- * turned to the camera, lead hand forward, knees soft, breathing in a bounce.
- *
- * Only fighters with a stance here are drawn by the fighting rig; the others
- * keep the visit's idle until their moves are keyed (`keyPoseMoves.ts`).
+ * Authored resting attitudes with a small procedural weight shift. Chapter
+ * and scene references (and adaptation limits) live in STANCE_REFERENCES.md.
+ * Missing entries use fightBodyMotion's plain guard, including guest fighters.
  */
 export interface FightStance {
   pose: FightPose
@@ -18,43 +16,43 @@ export interface FightStance {
 }
 
 const STANCES: Partial<Record<FighterId, FightStance>> = {
-  // Upright and exact: chain hand forward, rear fist at the chin.
+  // Ch. 83, confrontation with Uvogin: chain hand available, free hand lower.
   kurapika: {
     pose: {
-      body: [0.04, 0, 0],
-      chest: [0.05, -0.32, 0],
-      head: [0.05, 0, 0],
-      leadShoulder: [-0.75, 0, 0.12],
-      leadElbow: [-1.5, 0, 0],
-      leadWrist: [0.2, 0, 0],
-      rearShoulder: [-0.45, 0, -0.18],
-      rearElbow: [-1.9, 0, 0],
+      body: [0.02, 0, 0],
+      chest: [0.02, -0.25, 0],
+      head: [0.02, 0, 0],
+      leadShoulder: [-0.55, 0, 0.08],
+      leadElbow: [-1.2, 0, 0],
+      leadWrist: [0.08, 0, 0],
+      rearShoulder: [-0.15, 0, -0.08],
+      rearElbow: [-0.65, 0, 0],
       leadHip: [-0.25, 0, 0.04],
       leadKnee: [0.3, 0, 0],
       rearHip: [0.18, 0, -0.04],
       rearKnee: [0.08, 0, 0],
     },
-    bounce: 0.08,
-    tempo: 1.6,
+    bounce: 0.018,
+    tempo: 0.45,
   },
-  // Loose and theatrical: leaning back, hands low, a card between the fingers.
+  // Ch. 351, opening of the duel: relaxed card hand, no permanent backward lean.
   hisoka: {
     pose: {
-      body: [-0.04, 0, 0.03],
-      chest: [-0.06, -0.45, 0.05],
-      head: [0.1, 0, 0.12],
-      leadShoulder: [-0.35, 0, 0.25],
-      leadElbow: [-0.9, 0, 0],
-      leadWrist: [0.5, 0, 0],
-      rearShoulder: [-0.1, 0, -0.15],
-      rearElbow: [-0.5, 0, 0],
-      leadHip: [-0.15, 0, 0.04],
-      leadKnee: [0.18, 0, 0],
-      rearHip: [0.12, 0, -0.04],
-      rearKnee: [0.05, 0, 0],
+      body: [-0.01, 0, 0.015],
+      chest: [-0.02, -0.3, 0.02],
+      head: [0.04, 0, 0.04],
+      leadShoulder: [-0.25, 0, 0.14],
+      leadElbow: [-0.75, 0, 0],
+      leadWrist: [0.22, 0, 0],
+      rearShoulder: [0.02, 0, -0.08],
+      rearElbow: [-0.18, 0, 0],
+      leadHip: [-0.12, 0, 0.05],
+      leadKnee: [0.14, 0, 0],
+      rearHip: [0.08, 0, -0.05],
+      rearKnee: [0.04, 0, 0],
     },
-    bounce: 0.05,
-    tempo: 1,
+    bounce: 0.012,
+    tempo: 0.35,
   },
 }
 

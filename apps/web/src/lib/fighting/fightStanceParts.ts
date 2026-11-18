@@ -1,4 +1,10 @@
-import type { FightPose } from './fightPose'
+import { addPoses, type FightPose } from './fightPose'
+import type { FightStance } from './fightStance'
+
+/** Combine shared limb attitudes with authored offsets and an idle rhythm. */
+export function composeStance(parts: FightPose[], bounce: number, tempo: number): FightStance {
+  return { pose: addPoses(...parts), bounce, tempo }
+}
 
 /**
  * The vocabulary idle stances are written in: a few ways to stand and a few

@@ -21,6 +21,8 @@ import {
 } from './nenAdvanced'
 import { categoryPower, fightCategoryEfficiency, constructionFactor } from './nenCategories'
 import { abilityPower } from './nenAbility'
+import { nenBodyOutput } from './nenBudget'
+import { canReinforceStrike } from './nenStrikeAccess'
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
@@ -186,17 +188,16 @@ export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {
-  if (predatorNenLocked(fighter)) return 0.7
-  if (fighter.nen.mode === 'zetsu') return 0.7
   const zone = attackData(kind, fighter).auraZone
   // Ko protects and powers only its committed region; every other strike is purely physical.
-  if (fighter.nen.ko && fighter.nen.ko !== zone) return 0.7
+  if (!canReinforceStrike(fighter, zone)) return 0.7
   let factor = fighter.nen.mode === 'ren' ? 1.22 : 1
   const share = Number(fighter.nen.ryu[zone] ?? 0)
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  return factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
+  const full = factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
+  return 0.7 + Math.max(0, full - 0.7) * nenBodyOutput(fighter)
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
@@ -219,6 +220,7 @@ export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): num
     fighter.nen.gyo && (fighter.nen.ken || hasRyu(fighter) || fighter.nen.ko) ? 0.62 : 1
   const defence =
     regionalDefence(fighter, zone) *
+    nenBodyOutput(fighter) *
     bodyShare *
     spread *
     eyeFocus *

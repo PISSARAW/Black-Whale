@@ -34,3 +34,18 @@ module la durée des seuls projectiles dont l’Émission est déclarée ; elle 
 pas cette catégorie à toute construction. Les durées de contrôle arcade gardent
 leur facteur propre, sans modifier serment, consentement ou Zetsu imposé. Les
 balles physiques, objets en Shu et sphères matérialisées conservent leur matière.
+
+## Réserve, débit et engagements
+
+`nenBudget.ts` calcule le débit disponible séparément de la réserve restante.
+Le débit de base est un réglage dérivé du contrôle qualifié et du style martial.
+Les projectiles émis engagent six points et les supports en Shu quatre, jusqu’à
+leur disparition ou dissipation. Projection de Hanzo, musique active et suture
+ont leur engagement propre ; aucun nouvel entretien n’est imposé aux serments
+ou aux capacités post mortem. Ces valeurs sont des réglages du duel.
+
+Les engagements diminuent l’aura mobilisable sur le corps et l’admission d’une
+nouvelle attaque de Nen, sans retirer deux fois son coût ni rendre la matière
+physique inoffensive. La disparition d’un projectile libère le débit mais ne
+rembourse pas la réserve. Les deux camps et les prévisions recalculent leur
+budget depuis les mêmes effets vivants à chaque frame.

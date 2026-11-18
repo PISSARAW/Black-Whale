@@ -1,10 +1,13 @@
 import { hatsuFor } from './hatsu/registry'
+import { retainedSoulBowReady } from './halkenburgSoulBow'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { moveById } from './movesets'
 import { voluntaryNenAvailable } from './nenAccess'
 import { melodyMusicIntent } from './melodyRules'
 import type { ArcadeFighter, AttackKind, FightSide, FightState, FighterId } from './types'
+import { nenOutputAllows } from './nenBudget'
+import { attackAuraCost } from './fightAttackCost'
 
 interface NenAction {
   state: FightState
@@ -26,6 +29,7 @@ export function nenActionAllowed(options: NenAction): boolean {
   const allowVoluntaryZetsu = futureZetsuCommand(options)
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
+    nenOutputAllows(fighter, attackAuraCost({ fighter, kind: options.kind, moveId: options.moveId })) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options))
   )
 }
@@ -72,6 +76,7 @@ function nenMoveId(
 export function interruptUnavailableNen(fighter: ArcadeFighter): ArcadeFighter {
   const attack = fighter.attack
   if (!attack?.hatsuSource) return fighter
+  if (attack.hatsuSource === 'halkenburg' && retainedSoulBowReady(fighter)) return fighter
   if (
     voluntaryNenAvailable(fighter) &&
     !chainAbilitySealed(fighter, attack.moveId) &&

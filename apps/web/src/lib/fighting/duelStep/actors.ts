@@ -19,9 +19,11 @@ import { advanceFighterPhysics } from '../fighterPhysics'
 import { steerFighter } from '../fighterMovement'
 import type { ArcadeFighter, FightInput, FightState } from '../types'
 import type { DuelBodies, DuelInputs } from './types'
+import { withNenBudgets } from '../nenBudget'
 
 /** Per-body phase: inputs, AI, physics and body clocks. Runs exactly once per body and frame. */
 export function stepActors(state: FightState, inputs: DuelInputs): DuelBodies {
+  state = withNenBudgets(state)
   const player = updateControlledFighter(state.player, inputs.player)
   const opponent = inputs.opponent
     ? updateControlledFighter(state.opponent, inputs.opponent)

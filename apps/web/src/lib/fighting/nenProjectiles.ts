@@ -2,6 +2,8 @@ import { abilityPower } from './nenAbility'
 import { isBodyguardBullet } from './bodyguardFirearms'
 import { fightCategoryEfficiency } from './nenCategories'
 import { nenTransmissionLifetime } from './nenOperations'
+import { nenOperationCategory } from './nenOperations'
+import type {} from './nenBudget'
 import { fightAbility } from './nenAbility'
 import { shuObject } from './nenAdvanced'
 import type { ArcadeFighter, FightProjectile } from './types'
@@ -47,6 +49,7 @@ function commitThrownShu(projectile: FightProjectile, fighter: ArcadeFighter): F
     concealed: Boolean(projectile.concealed || (shu && fighter.nen.in)),
     nenPower: shu ? power : 1,
     shuFrames: shu ? duration : undefined,
+    nenInvestment: shu ? { amount: 4, kind: 'shu' } : undefined,
   }
 }
 
@@ -65,6 +68,9 @@ function commitEmittedAura(projectile: FightProjectile, fighter: ArcadeFighter):
     hatsuPower: 1,
     nenPower: aura ? abilityPower(fighter, ability) * ren : 0,
     lifetime: nenTransmissionLifetime(fighter, { ability, lifetime: projectile.lifetime }),
+    nenInvestment: nenOperationCategory(ability, 'projection')
+      ? { amount: 6, kind: 'emission' }
+      : undefined,
     concealed: aura && Boolean(projectile.concealed || fighter.nen.in),
   }
 }

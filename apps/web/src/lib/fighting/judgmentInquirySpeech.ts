@@ -29,6 +29,7 @@ function sameRecipient(left: SpeechRecipient, right: SpeechRecipient): boolean {
 function answersInquiry(inquiry: JudgmentInquiry, message: SpokenMessage): boolean {
   return (
     message.judgmentReply?.askedAt === inquiry.askedAt ||
+    message.replyQuestion === inquiry.text ||
     Boolean(inquiry.fact && message.statementFact === inquiry.fact)
   )
 }

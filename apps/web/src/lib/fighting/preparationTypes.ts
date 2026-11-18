@@ -29,6 +29,7 @@ export type PreparedEntityKind =
   | 'camera'
   | 'hostage'
   | 'corpse'
+  | 'paper'
   | 'person'
   | 'black-voice'
   | 'weak-spirit'

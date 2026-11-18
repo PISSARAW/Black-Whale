@@ -93,6 +93,7 @@ export const ARSENAL_ACTION_IDS = [
   'melody-answer',
   'sweet-home-object',
   'padaille-escape',
+  'paper-release-confetti',
   'paper-kit-take',
   'paper-kit-drop',
   'paper-stop-listening',

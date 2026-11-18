@@ -110,7 +110,15 @@ describe('Kalluto uses actual paper and an actual fan rather than copied supplie
       player: { ...bound.player, paperKit: { ...bound.player.paperKit!, markers: 0, salvos: 0 } },
     }
     expect(paperCommandReady(empty, 'player', 'plant')).toBe(false)
-    expect(paperCommandReady(empty, 'player', 'serpent')).toBe(false)
+    expect(paperCommandReady(empty, 'player', 'serpent')).toBe(true)
+    const noLoosePaper = {
+      ...empty,
+      battlefield: {
+        ...empty.battlefield!,
+        entities: empty.battlefield!.entities.filter((entry) => !entry.paperScatter),
+      },
+    }
+    expect(paperCommandReady(noLoosePaper, 'player', 'serpent')).toBe(false)
     expect(
       performAuraAttack({ state: empty, side: 'player', kind: 'ranged', auraCharged: false }),
     ).toBe(empty)

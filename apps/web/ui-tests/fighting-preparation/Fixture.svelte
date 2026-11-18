@@ -2,7 +2,8 @@
   import { tick } from 'svelte'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
-  import { paperDolls } from '$lib/fighting/kallutoSurveillance'
+  import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
+  import { ownedPaperScatters } from '$lib/fighting/kallutoScatter'
   import { createTeamFight, requestTeamAssist } from '$lib/fighting/teamMatch'
   import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
   import FightSecretWindowStatus from '$lib/components/fighting/FightSecretWindowStatus.svelte'
@@ -160,6 +161,17 @@
     for (let index = 0; index < 120; index++) advanceFrame()
     await tick()
   }
+  export async function prepareDowsingInterview() {
+    player = 'kurapika'
+    opponent = 'hisoka'
+    reset(createFightEnvironment())
+    state = {
+      ...state,
+      player: { ...state.player, x: 42, aura: 100 },
+      opponent: { ...state.opponent, x: 48 },
+    }
+    await tick()
+  }
   function castPaper(slot: string) {
     state = performAuraAttack({
       state,
@@ -200,6 +212,10 @@
     state = speakPaperWords(state, 'player', 'Paroles près du premier papier.')
     await tick()
   }
+  export async function reuseKallutoPaper() {
+    castPaper('forwardSpecial')
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -211,8 +227,11 @@
       archive: state.player.hatsuEffects.baton?.musseArchive,
       judgment: state.opponent.judgmentChain,
       playerHeard: state.player.heardWords,
+      dowsing: state.player.dowsingReading,
+      dowsingPrompt: state.opponent.dowsingPrompt,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
+      scatters: ownedPaperScatters(state, activePaperOwner(state, 'player')),
     }
   }
 </script>

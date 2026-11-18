@@ -4,6 +4,7 @@ import { captureSecretWindowSpeech } from './secretWindowSpeech'
 import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import { resolveJudgmentReply } from './judgmentInquirySpeech'
+import { resolveDowsingReply } from './dowsingSpeech'
 import type { SpokenMessage } from './judgmentInquiryTypes'
 import {
   speechRecipient,
@@ -44,10 +45,11 @@ export function speakPaperWords(
   next = recordHeardWords(next, recipient, { speaker, text })
   const actualRecipient = recipientBody(state, recipient)
   next = resolveJudgmentCommunication(next, speaker, actualRecipient.nenOwner ?? actualRecipient.id)
-  return resolveJudgmentReply(next, speaker, {
+  const speech = {
     recipient,
     message: declaredMessage(message, text),
-  })
+  }
+  return resolveDowsingReply(resolveJudgmentReply(next, speaker, speech), speaker, speech)
 }
 
 function declaredMessage(message: string | SpokenMessage, text: string): SpokenMessage {

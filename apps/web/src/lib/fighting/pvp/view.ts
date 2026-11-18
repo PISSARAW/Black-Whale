@@ -1,6 +1,7 @@
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
 import { redactPriorityWorld } from '../priorityPrivacy'
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
+import { concealPaperScatters } from '../kallutoScatterVisibility'
 import { concealPaperWords } from '../kallutoPrivacy'
 import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
@@ -136,6 +137,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
+  concealPaperScatters(view, side)
   redactEnemy(view[other])
   redactGuests(view, other)
   redactReserves(view, other)
@@ -160,6 +162,7 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     privateGumFuture(view, frame, side)
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
+    concealPaperScatters(frame, side)
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

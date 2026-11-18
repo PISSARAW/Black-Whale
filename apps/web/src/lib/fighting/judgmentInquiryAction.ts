@@ -62,6 +62,8 @@ function answerJudgmentQuestion(state: FightState, side: FightSide, target?: str
   return speakPaperWords(state, side, {
     ...reply,
     recipient: judgmentRecipientTarget(state, side),
+    replyQuestion: inquiry.text,
+    statementFact: inquiry.fact,
     judgmentReply: { askedAt: inquiry.askedAt, refuse: target === 'refuse' },
   })
 }

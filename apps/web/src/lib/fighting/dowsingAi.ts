@@ -10,7 +10,7 @@ export function dowsingAi(state: FightState): FightState | null {
   if (video) return video
   if (judgmentForbidsContact(state.opponent, state.player.id)) return null
   const prompt = state.opponent.dowsingPrompt
-  if (prompt && state.frame - prompt.askedAt >= 30) {
+  if (prompt && prompt.question !== 'free' && state.frame - prompt.askedAt >= 30) {
     const answered = performDowsingCommand(state, 'opponent', {
       action: 'dowsing-answer',
       target: 'sincere',

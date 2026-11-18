@@ -1,3 +1,4 @@
+import { createPaperScatterScene } from './kallutoScatterScene'
 import { createFineControlClock } from './fineControlPresentation'
 import { fineControlEase, fineControlReduced } from './fineControlAnchors'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -8,6 +9,7 @@ import type { FineControlFrame } from './fineControlPresentation'
 export function createKallutoPaperScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
   const clock = createFineControlClock()
+  const scattered = createPaperScatterScene(options)
   const geometry = new THREE.BoxGeometry(0.05, 0.08, 0.012)
   const material = new THREE.MeshBasicMaterial({ color: 0xf4e9e5 })
   const group = new THREE.Group()
@@ -47,7 +49,8 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
     }
   }
   return {
-    sync(state) {
+    sync(state, seconds) {
+      scattered.sync(state, seconds)
       const frames = clock(state)
       group.userData.events = frames
       const shots = state.projectiles.filter((shot) => Boolean(shot.kallutoPaper))
@@ -63,6 +66,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
         posePaper(options, { state, side, frame: frames[side] })
     },
     dispose() {
+      scattered.dispose()
       group.removeFromParent()
       pieces.clear()
       originals.clear()

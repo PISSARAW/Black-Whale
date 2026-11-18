@@ -6,10 +6,16 @@ import { performDowsingVideo, videoDowsingFocus } from './dowsingVideo'
 import { triggerHatsuAction } from './hatsu'
 import { judgmentActionBreach } from './judgmentAction'
 import { speakPaperWords, voiceAvailable } from './kallutoListening'
-import { dowsingAnswerText } from './dowsingAnswers'
-import { canAskDowsing, dowsingBodyReady, dowsingFaceToFace, ownsDowsing } from './dowsingRules'
-import { DOWSING_MOVE, DOWSING_COST, DOWSING_QUESTIONS } from './dowsingTypes'
-import type { DowsingQuestion, DowsingPrompt } from './dowsingTypes'
+import { dowsingInquiry, dowsingReply, type DowsingInquiry } from './dowsingInterview'
+import {
+  canAskDowsing,
+  currentDowsingQuestion,
+  dowsingBodyReady,
+  dowsingFaceToFace,
+  dowsingInterviewBodiesMatch,
+  ownsDowsing,
+} from './dowsingRules'
+import { DOWSING_MOVE, DOWSING_COST } from './dowsingTypes'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { FightSide, FightState } from './types'
 
@@ -33,12 +39,8 @@ function performDowsingQuestion(
   if (command.action === 'dowsing-video') return performDowsingVideo(state, side, command.target)
   if (command.action === 'dowsing-stop') return stopDowsing(state, side)
   if (command.action === 'dowsing-answer') return answerDowsing(state, side, command.target)
-  if (
-    command.action !== 'dowsing-ask' ||
-    !command.target ||
-    !Object.hasOwn(DOWSING_QUESTIONS, command.target)
-  )
-    return state
+  const inquiry = command.action === 'dowsing-ask' ? dowsingInquiry(command.target) : null
+  if (!inquiry) return state
   if (!ownsDowsing(state[side])) return state
   const breach = judgmentActionBreach({
     state,
@@ -49,11 +51,11 @@ function performDowsingQuestion(
   })
   if (breach) return breach
   if (!canAskDowsing(state, side)) return state
-  return askDowsing(state, side, command.target as DowsingQuestion)
+  return askDowsing(state, side, inquiry)
 }
-function askDowsing(state: FightState, side: FightSide, question: DowsingQuestion): FightState {
+function askDowsing(state: FightState, side: FightSide, inquiry: DowsingInquiry): FightState {
   const target = other(side)
-  const spoken = speakPaperWords(state, side, DOWSING_QUESTIONS[question].fr)
+  const spoken = speakPaperWords(state, side, inquiry.text)
   if (spoken.phase !== 'fighting') return spoken
   const witnessed = triggerHatsuAction({
     state: spoken,
@@ -61,52 +63,34 @@ function askDowsing(state: FightState, side: FightSide, question: DowsingQuestio
     source: 'kurapika',
     moveId: DOWSING_MOVE,
   })
+  const members = {
+    askerMember: state.teamMatch?.seats[side].active ?? 0,
+    targetMember: state.teamMatch?.seats[target].active ?? 0,
+  }
   return {
     ...witnessed,
     [side]: {
       ...witnessed[side],
       aura: state[side].aura - DOWSING_COST,
-      dowsingSession: { question, target, startedAt: state.frame },
+      dowsingSession: { ...inquiry, ...members, target, startedAt: state.frame },
     },
     [target]: {
       ...witnessed[target],
-      dowsingPrompt: { asker: side, question, askedAt: state.frame },
+      dowsingPrompt: { ...inquiry, ...members, asker: side, askedAt: state.frame },
     },
   }
 }
 function answerDowsing(state: FightState, side: FightSide, answer?: string): FightState {
-  if (!['sincere', 'lie'].includes(answer ?? '') || !voiceAvailable(state, side)) return state
   const prompt = state[side].dowsingPrompt
-  if (!prompt || !currentQuestion(state, side, prompt)) return state
-  const text = dowsingAnswerText(state[side], prompt.question, answer === 'lie')
-  const spoken = speakDeclaredFact(state, side, {
-    question: prompt.question,
-    lie: answer === 'lie',
-  })
-  if (spoken.phase !== 'fighting' || spoken.catsName || spoken[side].health <= 0) return spoken
-  // Only this explicit voluntary response declares its intent. Free text is never guessed truthful.
-  const swings = answer === 'lie'
-  return {
-    ...spoken,
-    [side]: { ...spoken[side], dowsingPrompt: undefined },
-    [prompt.asker]: {
-      ...spoken[prompt.asker],
-      dowsingSession: { ...spoken[prompt.asker].dowsingSession!, readingAt: state.frame, swings },
-      dowsingReading: { frame: state.frame, text, swings },
-    },
-  }
-}
-function currentQuestion(state: FightState, side: FightSide, prompt: DowsingPrompt): boolean {
-  const session = state[prompt.asker].dowsingSession
-  return Boolean(
-    session &&
-    session.target === side &&
-    session.startedAt === prompt.askedAt &&
-    session.question === prompt.question &&
-    session.readingAt === undefined &&
-    dowsingBodyReady(state[prompt.asker]) &&
-    dowsingFaceToFace(state, prompt.asker),
-  )
+  if (!prompt || !voiceAvailable(state, side) || !currentDowsingQuestion(state, side, prompt))
+    return state
+  const message = dowsingReply(state[side], answer)
+  if (message && prompt.question !== 'free')
+    return speakDeclaredFact(state, side, {
+      question: prompt.question,
+      lie: message.statementIntent === true,
+    })
+  return message ? speakPaperWords(state, side, message) : state
 }
 export function stopDowsing(state: FightState, side: FightSide): FightState {
   if (!state[side].dowsingSession) return state
@@ -144,6 +128,8 @@ function other(side: FightSide): FightSide {
 }
 
 function dowsingSessionFocus(state: FightState, side: FightSide): boolean {
-  const video = state[side].dowsingSession?.video
-  return video ? videoDowsingFocus(state, side, video.deviceId) : dowsingFaceToFace(state, side)
+  const session = state[side].dowsingSession!
+  const video = session.video
+  if (video) return videoDowsingFocus(state, side, video.deviceId)
+  return dowsingInterviewBodiesMatch(state, side, session) && dowsingFaceToFace(state, side)
 }

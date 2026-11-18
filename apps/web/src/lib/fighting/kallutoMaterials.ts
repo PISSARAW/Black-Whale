@@ -1,6 +1,7 @@
 import { freeDeviceHand } from './deviceHands'
 import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { paperDolls } from './kallutoSurveillance'
+import { availablePaperScatter } from './kallutoScatter'
 import type { PaperCommand } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 import type { PreparedEntity } from './preparationTypes'
@@ -79,11 +80,11 @@ export function paperMaterialsReady(
 ): boolean {
   if (state[side].weaponsConfiscated) return false
   if (command === 'doll' && existingPaperDoll(state, side)) return true
-  return (
-    paperStockReady(state[side], command) &&
-    historicalMatterExists(state, state[side].paperKit?.copyId) &&
-    Boolean(freeDeviceHand(state, side))
-  )
+  if (!historicalMatterExists(state, state[side].paperKit?.copyId) || !freeDeviceHand(state, side))
+    return false
+  if (command === 'serpent' && availablePaperScatter(state, side))
+    return scatterFanReady(state[side])
+  return paperStockReady(state[side], command)
 }
 
 /** Expend physical matter when it is actually released or folded; an interrupted windup creates none. */
@@ -92,7 +93,8 @@ export function issuePaperPart(
   side: FightSide,
   command: PaperCommand,
 ): { actor: ArcadeFighter; part: PaperPart } | null {
-  if (!paperMaterialsReady(state, side, command)) return null
+  if (!paperMaterialsReady(state, side, command) || !paperStockReady(state[side], command))
+    return null
   const actor = state[side]
   const kit = actor.paperKit
   if (!kit) return null
@@ -103,4 +105,8 @@ export function issuePaperPart(
     actor: { ...actor, paperKit: { ...kit, [resource]: kit[resource] - 1, serial } },
     part: { id: `${kit.sourceId}:paper:${serial}`, materialCopyId: kit.copyId },
   }
+}
+
+function scatterFanReady(actor: ArcadeFighter): boolean {
+  return Boolean(actor.paperKit?.fan && actor.paperKit.integrity > 0)
 }

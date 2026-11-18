@@ -1,4 +1,5 @@
 import { withLoanCarrier } from './dolphinBorrowing'
+import { paperDolphinContinues } from './kallutoScatterDolphin'
 import { stolenAuraActor } from './dolphinSupply'
 import { withDolphinIdentity, recordDolphinEffects } from './kurapikaDolphin'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -76,6 +77,9 @@ function equippedArsenalOptions(state: FightState, side: FightSide): ArsenalOpti
 }
 
 export function dolphinCanContinue(state: FightState, side: FightSide, moveId: string): boolean {
+  return paperDolphinContinues(state, side, moveId) || gumDolphinContinues(state, side, moveId)
+}
+function gumDolphinContinues(state: FightState, side: FightSide, moveId: string): boolean {
   const held = state[side].kurapika?.held
   return (
     held?.source === 'hisoka' &&
@@ -102,7 +106,7 @@ function continuingDolphinApplication(
         variant: move.variant,
         auraCharged: false,
       }),
-    'hisoka',
+    state[side].kurapika!.held!.source,
   )
   return recordDolphinEffects(state, cast, side)
 }

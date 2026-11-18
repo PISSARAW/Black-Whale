@@ -10,7 +10,9 @@ export interface SpokenMessage {
   recipient?: string
   statementIntent?: boolean
   statementFact?: DowsingQuestion
+  replyQuestion?: string
   judgmentReply?: { askedAt: number; refuse?: boolean }
+  dowsingReply?: { askedAt: number }
 }
 
 export const JUDGMENT_QUESTION_LENGTH = 160

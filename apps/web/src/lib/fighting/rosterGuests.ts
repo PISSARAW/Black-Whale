@@ -6,7 +6,7 @@ import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export interface RosterGuest {
   id: string
   owner: FightSide
-  role: 'puppet' | 'loan'
+  role: 'puppet' | 'loan' | 'soul'
   phase: 'preparing' | 'acting' | 'leaving' | 'eliminated'
   fighter: ArcadeFighter
   frames: number

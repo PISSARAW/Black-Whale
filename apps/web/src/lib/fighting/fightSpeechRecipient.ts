@@ -34,6 +34,7 @@ export function recipientHears(
   return (
     canHear(body) &&
     !body.arsenalSleep &&
+    !body.halkSoulSleep &&
     !recipientUnconscious(body) &&
     soundDistance(state[speaker], body) <= 18
   )

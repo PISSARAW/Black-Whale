@@ -68,9 +68,15 @@ function truthfulReply(state: FightState, side: FightSide): LynchReply {
     questioner: side,
     target: question.target,
   }
-  if (question.id === 'identity') return { ...reply, identity: target.nenOwner ?? target.id }
+  if (question.id === 'identity') return truthfulIdentity(reply, target)
   if (question.id === 'in') return { ...reply, concealed: target.nen.in }
   return { ...reply, nenMode: target.nen.on ? 'on' : target.nen.mode }
+}
+
+function truthfulIdentity(reply: LynchReply, target: ArcadeFighter): LynchReply {
+  if (target.halkSoul?.mind && !target.halkSoul.mind.identity)
+    return { ...reply, cohortIdentity: true }
+  return { ...reply, identity: target.halkSoul?.mind?.identity ?? target.nenOwner ?? target.id }
 }
 
 export function advanceLynchQuestions(state: FightState): FightState {

@@ -13,6 +13,7 @@ import type { ArcadeFighter, FightSide, FightState } from '../types'
 /** Presentation only: local controls always operate P1; the referee keeps canonical seats. */
 const SIDE_FIELDS = new Set([
   'owner',
+  'origin',
   'target',
   'issuer',
   'recipient',
@@ -39,8 +40,8 @@ const SIDE_FIELDS = new Set([
 ])
 export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
-  if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
-  if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'
+  const scalar = swappedScalar(value, field)
+  if (scalar !== value) return scalar
   if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
   if (!value || typeof value !== 'object') return value
   return Object.fromEntries(
@@ -50,7 +51,16 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
     ]),
   )
 }
+function swappedScalar(value: unknown, field: string): unknown {
+  if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
+  if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'
+  if (field !== 'key') return value
+  if (value === 'mind:player') return 'mind:opponent'
+  return value === 'mind:opponent' ? 'mind:player' : value
+}
 function redactEnemy(enemy: ArcadeFighter) {
+  if (enemy.halkSoul) enemy.halkSoul = { ...enemy.halkSoul, mind: undefined }
+  enemy.halkSedativeSpent = undefined
   enemy.guardianWords = undefined
   enemy.toxinExposure = undefined
   enemy.futureStoredFrames = undefined
@@ -106,6 +116,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   const view = structuredClone(futureVisibleState(state, side))
   view.toxinClouds = view.toxinClouds?.filter((cloud) => cloud.owner === side)
   view.arsenalTrace = undefined
+  redactSoulView(view, side)
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
   redactEnemy(view[other])
@@ -164,4 +175,16 @@ export function pvpSnapshot(state: FightState, side: FightSide) {
 
 function redactReserves(view: FightState, side: FightSide): void {
   for (const member of view.teamMatch?.seats[side].members ?? []) redactEnemy(member)
+}
+
+function redactSoulView(view: FightState, side: FightSide): void {
+  view.halkSoulLinks = view.halkSoulLinks?.map((link) => ({
+    ...link,
+    sourceMind:
+      link.sourceMind.side === side ? link.sourceMind : { ...link.sourceMind, identity: undefined },
+    targetMind:
+      link.targetMind.side === side ? link.targetMind : { ...link.targetMind, identity: undefined },
+    preparedSedative: link.owner === side ? link.preparedSedative : 0,
+  }))
+  if (view.halkenburgModes) view.halkenburgModes = { [side]: view.halkenburgModes[side] }
 }

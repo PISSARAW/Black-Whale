@@ -1,3 +1,4 @@
+import { advanceHalkenburgSouls } from '../halkenburgSouls'
 import { advanceRetrospectiveHitstop } from '../retrospectiveClocks'
 import { performArenaAction } from '../arenaActions'
 import { advanceArena, readArenaInputs } from '../arenaSimulation'
@@ -23,6 +24,7 @@ export function openFrame(
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
   state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { state: hitstopFrame(state), pending: true }
+  state = advanceHalkenburgSouls(state)
   state = advancePreparation(state, inputs)
   state = readArenaInputs(state, inputs, (current, side) =>
     performArenaAction(current, side, attack),

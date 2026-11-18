@@ -5,7 +5,8 @@ import type { FightState } from './types'
 
 export function lynchReplyText(reply: LynchReply, language: 'fr' | 'en'): string {
   const fr = language === 'fr'
-  if (reply.identity) return `${fr ? 'Je suis' : 'I am'} ${fighterDefinition(reply.identity).name}.`
+  const identity = replyIdentityText(reply, language)
+  if (identity) return identity
   if (reply.question === 'in')
     return reply.concealed
       ? fr
@@ -17,6 +18,14 @@ export function lynchReplyText(reply: LynchReply, language: 'fr' | 'en'): string
   return `${fr ? 'Mon état actuel est' : 'My current state is'} ${reply.nenMode?.toUpperCase()}.`
 }
 
+function replyIdentityText(reply: LynchReply, language: 'fr' | 'en'): string | null {
+  const fr = language === 'fr'
+  if (reply.cohortIdentity)
+    return fr ? 'Je suis un partisan d’Halkenburg.' : 'I am one of Halkenburg’s supporters.'
+  return reply.identity
+    ? `${fr ? 'Je suis' : 'I am'} ${fighterDefinition(reply.identity).name}.`
+    : null
+}
 export function lynchSpecialPresentation(state: FightState, language: 'fr' | 'en') {
   return {
     label: language === 'fr' ? 'Body and Soul · Question' : 'Body and Soul · Question',

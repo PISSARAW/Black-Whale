@@ -2,7 +2,12 @@ import { createHanzoProjectionScene, type ProjectionSceneOptions } from './hanzo
 import { fightWorldY } from './fightCoordinates'
 import { disposeMountedVisitHatsu } from './visitHatsuModel'
 import { FIGHT_MODEL_POSES } from './sceneMotion'
-import type { FightState } from './types'
+import type { ArcadeFighter, FightState } from './types'
+
+function guestPose(fighter: ArcadeFighter) {
+  if (fighter.health <= 0 || fighter.halkSoulSleep) return 'fallen' as const
+  return FIGHT_MODEL_POSES[fighter.pose]
+}
 
 export function createExtraBodyScenes(options: ProjectionSceneOptions) {
   const sleeping = createHanzoProjectionScene(options)
@@ -27,10 +32,7 @@ export function createExtraBodyScenes(options: ProjectionSceneOptions) {
     held.model.root.visible = true
     held.model.root.position.set(options.worldX(guest.fighter.x), fightWorldY(guest.fighter.y), 0.1)
     held.model.root.rotation.y = guest.fighter.facing * 1.25
-    held.model.animate(
-      seconds,
-      guest.fighter.health <= 0 ? 'fallen' : FIGHT_MODEL_POSES[guest.fighter.pose],
-    )
+    held.model.animate(seconds, guestPose(guest.fighter))
   }
   return {
     sync(state: FightState, seconds: number) {

@@ -1,3 +1,4 @@
+import { halkenburgMode } from '../halkenburgSoulTypes'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
@@ -22,7 +23,8 @@ const SHOT_LIFE_COST = 8
 export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
   onTrigger: nock,
-  onImpact: possess,
+  onImpact: (context) =>
+    halkenburgMode(context.state, context.side) === 'souls' ? context.state : possess(context),
   onFrame: (state) => {
     const launched = launchHalkenburgArrow(launchHalkenburgArrow(state, 'player'), 'opponent')
     return { ...launched, player: tick(launched, 'player'), opponent: tick(launched, 'opponent') }
@@ -43,7 +45,10 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
     [side]: {
       ...archer,
       halkenburgSupporter: participant,
-      health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
+      health:
+        ready && halkenburgMode(state, side) === 'roster'
+          ? Math.max(1, archer.health - SHOT_LIFE_COST)
+          : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
         arrowNocked: ready ? 1 : 0,

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightHalkenburgStatus from './FightHalkenburgStatus.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import { hasPrinceSidearm, PRINCE_SIDEARM_ROUNDS } from '$lib/fighting/princeSidearm'
@@ -21,6 +22,8 @@
     },
   }
 </script>
+
+<FightHalkenburgStatus {state} {side} {language} />
 
 <div class="multi-status" aria-live="polite">
   {#if state[side].battleCantabile?.selectedModel}

@@ -71,6 +71,8 @@ export function nextFightRound(state: FightState): FightState {
       battlefield: createBattlefield(state.environment),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
       rosterGuests: undefined,
+      halkSoulLinks: undefined,
+      halkSoulOrigins: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
@@ -84,7 +86,7 @@ export function nextFightRound(state: FightState): FightState {
       catsNameConsumed: undefined,
       player: preserveLifespan(
         createFighter({
-          id: state.player.halkenburgOrigin ?? state.player.id,
+          id: state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
           x: 22,
           facing: 1,
           health: format.health,
@@ -93,7 +95,8 @@ export function nextFightRound(state: FightState): FightState {
       ),
       opponent: preserveLifespan(
         createFighter({
-          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+          id:
+            state.halkSoulOrigins?.opponent ?? state.opponent.halkenburgOrigin ?? state.opponent.id,
           x: 78,
           facing: -1,
           health: format.health,

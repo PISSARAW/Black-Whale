@@ -60,6 +60,7 @@ function preparation(value: unknown): FightPreparation | undefined {
     'hostages',
     'corpses',
     'armed-corpses',
+    'sedatives',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),

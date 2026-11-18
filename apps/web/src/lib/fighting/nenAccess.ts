@@ -1,7 +1,8 @@
 import { canUseHatsu } from '@black-whale/nen-engine'
 import type { ArcadeFighter } from './types'
 
-export type NenAccessFailure = 'dead' | 'exhausted' | 'zetsu' | 'sealed' | 'stolen'
+export type NenAccessFailure =
+  'dead' | 'exhausted' | 'zetsu' | 'sealed' | 'stolen' | 'foreign-mind' | 'asleep'
 interface NenAccessOptions {
   allowVoluntaryZetsu?: boolean
   requireReserve?: boolean
@@ -15,12 +16,22 @@ export function nenAccessFailure(
   options: NenAccessOptions = {},
 ): NenAccessFailure | null {
   if (fighter.health <= 0) return 'dead'
+  const mindFailure = soulNenFailure(fighter, options)
+  if (mindFailure) return mindFailure
   if (reserveUnavailable(fighter, options)) return 'exhausted'
   if (zetsuBlocks(fighter, options)) return 'zetsu'
   if (onSealed(fighter)) return 'sealed'
   return options.requireHatsu !== false && fighter.hatsuEffects.hatsuStolen > 0 ? 'stolen' : null
 }
 
+function soulNenFailure(
+  fighter: ArcadeFighter,
+  options: NenAccessOptions,
+): NenAccessFailure | null {
+  if (options.requireHatsu === false) return null
+  if (fighter.halkSoulSleep) return 'asleep'
+  return fighter.halkForeignMind ? 'foreign-mind' : null
+}
 export function voluntaryNenAvailable(
   fighter: ArcadeFighter,
   options: NenAccessOptions = {},

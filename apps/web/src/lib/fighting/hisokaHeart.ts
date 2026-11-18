@@ -49,6 +49,7 @@ export function advanceGumHeart(state: FightState): FightState {
   return state
 }
 export function resolveGumHeart(state: FightState, death: FightDeath): FightState | null {
+  if (state[death.victimSide].halkForeignMind) return null
   const side = death.victimSide,
     actor = state[side]
   if (

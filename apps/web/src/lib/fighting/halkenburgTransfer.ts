@@ -1,3 +1,5 @@
+import { halkenburgMode } from './halkenburgSoulTypes'
+import { performHalkenburgSoulCommand, halkenburgSoulOptions } from './halkenburgSoulActions'
 import { drawRosterBody } from './rosterGuests'
 import { readyCohort } from './preparationWorld'
 import { COHORT_WILL_FRAMES } from './preparationTuning'
@@ -36,6 +38,9 @@ export function replaceHalkenburgBody(state: FightState, side: FightSide): Fight
 }
 
 export function performHalkenburgTransfer({ state, side, command }: ArsenalInvocation): FightState {
+  if (command.action !== 'halkenburg-transfer')
+    return performHalkenburgSoulCommand({ state, side, command })
+  if (halkenburgMode(state, side) === 'souls') return state
   const actor = state[side]
   if (command.action !== 'halkenburg-transfer' || actor.id !== 'halkenburg') return state
   if (!transferBodyReady(state, side)) return state
@@ -69,9 +74,11 @@ function transferBodyReady(state: FightState, side: FightSide): boolean {
 }
 
 export function halkenburgTransferOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  if (state[side].id !== 'halkenburg') return []
+  const modes = halkenburgSoulOptions(state, side)
+  if (state[side].id !== 'halkenburg') return modes
   const command = { action: 'halkenburg-transfer' as const }
   return [
+    ...modes,
     {
       command,
       ready: performHalkenburgTransfer({ state, side, command }) !== state,

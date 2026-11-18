@@ -24,7 +24,7 @@ export function sealedSenseCount(fighter: ArcadeFighter): number {
 }
 
 export function canSpeak(fighter: ArcadeFighter): boolean {
-  return fighter.health > 0 && !senseDeprived(fighter, 'speech')
+  return fighter.health > 0 && !fighter.halkSoulSleep && !senseDeprived(fighter, 'speech')
 }
 
 /** The shared screen follows P1 by default; local versus can select P2's perception. */

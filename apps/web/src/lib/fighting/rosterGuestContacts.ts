@@ -1,3 +1,4 @@
+import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { separateFighterPushboxes } from './fighterPhysics'
 import { resolveFightImpacts, resolveProjectileHit } from './combatImpact'
 import { resolveFightOutcome } from './fightOutcome'
@@ -72,7 +73,10 @@ export function resolveRosterProjectileHits(
   let next = state
   for (const hit of hits) {
     if (!hit.targetBody && !hit.projectile.sourceBody) continue
-    next = resolveGuestProjectile(next, hit)
+    next =
+      hit.projectile.halkenburgArrow?.mode === 'souls'
+        ? settleHalkenburgArrow(next, hit)
+        : resolveGuestProjectile(next, hit)
   }
   return next
 }

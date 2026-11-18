@@ -25,6 +25,7 @@ export interface LynchReply {
   questioner: FightSide
   target: FightSide
   identity?: FighterId
+  cohortIdentity?: boolean
   nenMode?: string
   concealed?: boolean
 }

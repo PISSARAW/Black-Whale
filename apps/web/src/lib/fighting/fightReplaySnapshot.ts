@@ -1,3 +1,5 @@
+import { FIGHTING_ROSTER } from './roster'
+import type { FighterId } from './types'
 import { decodeReplay, encodeReplay } from './clashReplayCodec'
 import { createFightState } from './fightState'
 import type { FightState } from './types'
@@ -12,15 +14,19 @@ export function decodeFightSnapshot(text: string, setup: ReplaySetup): FightStat
   if (!object(value) || !object(value.player) || !object(value.opponent))
     throw Error('invalid-replay')
   validateIdentity(value, setup)
-  validateShape(value, createFightState(setup.player, setup.opponent, setup))
+  validateShape(
+    value,
+    createFightState(physicalBodyId(value.player), physicalBodyId(value.opponent), setup),
+  )
   return value as unknown as FightState
 }
 function validateIdentity(value: Record<string, unknown>, setup: ReplaySetup) {
   const player = value.player as Record<string, unknown>
   const opponent = value.opponent as Record<string, unknown>
+  const origins = object(value.halkSoulOrigins) ? value.halkSoulOrigins : {}
   if (
-    !replayBodyMatches(player, setup.player) ||
-    !replayBodyMatches(opponent, setup.opponent) ||
+    !replayBodyMatches(player, setup.player, origins.player) ||
+    !replayBodyMatches(opponent, setup.opponent, origins.opponent) ||
     value.mode !== setup.mode ||
     value.formatId !== setup.formatId
   )
@@ -45,6 +51,12 @@ function validateShape(value: unknown, template: unknown): void {
   for (const [key, field] of Object.entries(template)) validateShape(value[key], field)
 }
 
-function replayBodyMatches(body: Record<string, unknown>, id: string): boolean {
-  return (body.halkenburgOrigin ?? body.id) === id
+function replayBodyMatches(body: Record<string, unknown>, id: string, origin: unknown): boolean {
+  if ((body.halkenburgOrigin ?? body.id) === id) return true
+  return origin === id && object(body.halkSoul) && typeof body.halkSoul.key === 'string'
+}
+function physicalBodyId(body: Record<string, unknown>): FighterId {
+  const found = FIGHTING_ROSTER.find((fighter) => fighter.id === body.id)
+  if (!found) throw Error('invalid-replay')
+  return found.id
 }

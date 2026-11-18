@@ -1,9 +1,15 @@
 import { attackPhase } from './frameData'
+import { applyHalkenburgSoulArrow } from './halkenburgSouls'
+import { halkenburgMode, soulBodyKey } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
 declare module './types' {
   interface FightProjectile {
-    halkenburgArrow?: { participant: string }
+    halkenburgArrow?: {
+      participant: string
+      mode?: import('./halkenburgSoulTypes').HalkenburgMode
+      archerBody?: string
+    }
   }
   interface ArcadeFighter {
     halkenburgGroupProtection?: boolean
@@ -45,7 +51,12 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     lifetime: 120,
     nenPower: 1,
     hatsuPower: 1,
-    halkenburgArrow: { participant: actor.halkenburgSupporter },
+    halkenburgArrow: {
+      participant: actor.halkenburgSupporter,
+      ...(halkenburgMode(state, side) === 'souls'
+        ? { mode: 'souls' as const, archerBody: soulBodyKey(state, side) }
+        : {}),
+    },
   }
   return {
     ...state,
@@ -69,6 +80,7 @@ export function resolveHalkenburgArrow(
   const { projectile, defenderSide, position } = hit,
     actor = state[projectile.owner]
   if (!projectile.halkenburgArrow || state.phase !== 'fighting') return state
+  if (projectile.halkenburgArrow.mode === 'souls') return soulArrowImpact(state, hit)
   const armed = {
     ...state,
     [projectile.owner]: {
@@ -106,6 +118,39 @@ export function resolveHalkenburgArrow(
       concealed: false,
       projectileId: projectile.id,
       position,
+    },
+  }
+}
+
+function soulArrowImpact(
+  state: FightState,
+  hit: Parameters<typeof resolveHalkenburgArrow>[1],
+): FightState {
+  const next = applyHalkenburgSoulArrow(state, hit)
+  return {
+    ...next,
+    impact: {
+      sequence: (state.impact?.sequence ?? 0) + 1,
+      attacker: hit.projectile.owner,
+      kind: 'ranged',
+      damage: 0,
+      blocked: false,
+      parried: false,
+      avoided: false,
+      invulnerable: false,
+      critical: false,
+      knockdown: false,
+      counterHit: false,
+      punish: false,
+      antiAir: false,
+      wallSplat: false,
+      comboHits: 0,
+      damageScale: 1,
+      points: 0,
+      zone: 'torso',
+      concealed: false,
+      projectileId: hit.projectile.id,
+      position: hit.position,
     },
   }
 }

@@ -229,6 +229,7 @@ function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
 
 function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
   return (
+    Boolean(fighter.halkSoulSleep) ||
     Boolean(fighter.luiniPassage) ||
     Boolean(fighter.preparationRecovery) ||
     Boolean(fighter.pluggingWounds) ||

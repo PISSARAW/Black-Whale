@@ -40,6 +40,7 @@ function removeDeadGuest(state: FightState, guest: RosterGuest, attack: DuelAtta
   return storeRosterGuest(ended, { ...current, phase: 'eliminated' })
 }
 function guestMustLeave(state: FightState, guest: RosterGuest): boolean {
+  if (guest.role === 'soul') return false
   const controlled = guest.role === 'loan' || blackVoiceAvailable(state, guest.owner)
   return !controlled || state[guest.owner].health <= 0 || guest.phase === 'leaving'
 }
@@ -63,6 +64,7 @@ function actGuest(state: FightState, guest: RosterGuest, attack: DuelAttack): Fi
     state: guestProjection(next, guest),
     side: guest.owner,
     kind,
+    variant: guestPerceivedEnemy(state, guest).halkSoulSleep ? 'low' : undefined,
     auraCharged: false,
   })
   next = mergeGuestProjection(next, used, guest)

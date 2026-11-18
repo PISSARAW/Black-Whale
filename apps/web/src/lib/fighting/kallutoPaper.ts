@@ -8,7 +8,7 @@ import type { KallutoPaperState, PaperCommand } from './kallutoPaperTypes'
 export type { KallutoPaperState, PaperCommand, PlantedPaper, PaperWords } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
-export const PAPER_COSTS = { plant: 16, serpent: 24, doll: 12 } as const
+export { PAPER_COSTS } from './kallutoTuning'
 export const PAPER_ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 export const paperState = (fighter: ArcadeFighter): KallutoPaperState =>
   fighter.kallutoPaper ?? { zone: 'torso' }

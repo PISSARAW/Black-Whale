@@ -1,6 +1,6 @@
 import { commitProjectileNen } from './nenProjectiles'
 import { travelFightProjectile } from './projectileFlight'
-import { paperZonePoint } from './kallutoPaper'
+import { paperZonePoint, paperCommandReady } from './kallutoPaper'
 import { createPaperShot } from './kallutoPaperShot'
 import { paperAbilityAvailable } from './kallutoAccess'
 import type { FightProjectile, FightSide, FightState } from './types'
@@ -8,6 +8,8 @@ import type { PaperCommand } from './kallutoPaper'
 import { activePaperOwner, paperMarksAt } from './kallutoSurveillance'
 import { physicalBodyAt } from './fightBodyIdentity'
 import { releasePaperScatter, commitPaperScatter } from './kallutoScatterFlight'
+import { dispersePaper, dispersePaperFlight, regatherFlyingPaper } from './kallutoDispersion'
+import { concentratePaperScatters } from './kallutoConcentration'
 
 /** Paper is physical matter. Damage/speed/lifetime are duel tuning, never an explosive charge. */
 export function launchKallutoPaper(
@@ -15,8 +17,14 @@ export function launchKallutoPaper(
   side: FightSide,
   command: PaperCommand,
 ): FightState {
+  if (!paperCommandReady(state, side, command)) return state
+  const gathered = command === 'serpent' ? regatherFlyingPaper(state, side) : null
+  if (gathered) return markPaperLaunched(gathered, side)
+  const concentrated = command === 'serpent' ? concentratePaperScatters(state, side) : null
+  if (concentrated) return markPaperLaunched(concentrated, side)
   const released = releasePaperScatter(state, side, command)
   if (!released) return state
+  if (command === 'plant') return markPaperLaunched(dispersePaper(released, side), side)
   const fighter = released.state[side]
   const shot = createPaperShot(released, side, command)
   const prepared = commitPaperScatter(released, shot)
@@ -37,13 +45,25 @@ export function launchKallutoPaper(
   }
 }
 
+function markPaperLaunched(state: FightState, side: FightSide): FightState {
+  const actor = state[side]
+  if (!actor.attack) return state
+  return {
+    ...state,
+    [side]: {
+      ...actor,
+      attack: { ...actor.attack, projectileSpawned: true, impacted: true },
+    },
+  }
+}
+
 /** A stream converges on its own embedded paper, not on arbitrary unmarked body parts. */
 export function travelKallutoPaper(
   state: FightState,
   held: FightProjectile,
   step: number,
 ): FightProjectile {
-  const shot = travelFightProjectile(held, step)
+  const shot = dispersePaperFlight(state, travelFightProjectile(held, step), step)
   const target = serpentTarget(state, held)
   if (!target) return shot
   const point = paperZonePoint(target, held.targetZone)

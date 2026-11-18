@@ -49,16 +49,16 @@ try {
     assert.equal(initial.dolls.length, 2)
     assert.equal(initial.paperKit.markers, 10)
     assert.equal(initial.paperKit.sheets, 4)
-    assert.equal(initial.scatters.length, 2)
+    assert.equal(initial.scatters.length, 6)
     await page.evaluate(() => window.preparationFixture.reuseKallutoPaper())
     const reused = await page.evaluate(() => window.preparationFixture.snapshot())
-    assert.equal(reused.scatters.length, 2)
+    assert.equal(reused.scatters.length, 6)
     assert.deepEqual(
       reused.scatters.map((entry) => entry.id),
       initial.scatters.map((entry) => entry.id),
     )
     assert.equal(reused.paperKit.salvos, initial.paperKit.salvos)
-    assert.ok(await page.getByText('Papier dispersé réutilisable · 2', { exact: true }).isVisible())
+    assert.ok(await page.getByText('Papier dispersé réutilisable · 6', { exact: true }).isVisible())
     assert.deepEqual(
       initial.dolls.map((doll) => doll.targetMember),
       [0, 1],
@@ -79,12 +79,12 @@ try {
     )
     await page.screenshot({
       path: path.join(output, `kalluto-${width}.png`),
-      fullPage: true,
+      fullPage: false,
       timeout: 60000,
     })
     await page
       .getByRole('button', { name: 'Papier · Arrêter l’écoute des poupées', exact: true })
-      .click()
+      .press('Enter')
     const stopped = await page.evaluate(() => window.preparationFixture.snapshot())
     assert.equal(stopped.dolls.length, 2)
     assert.ok(stopped.dolls.every((doll) => doll.active === false))
@@ -92,7 +92,7 @@ try {
     assert.equal(stopped.dolls[0].heard.text, initial.dolls[0].heard.text)
     await page
       .getByRole('button', { name: 'Papier · Déposer éventail et réserve', exact: true })
-      .click()
+      .press('Enter')
     assert.equal(
       (await page.evaluate(() => window.preparationFixture.snapshot())).paperKit,
       undefined,
@@ -100,7 +100,7 @@ try {
     await page
       .getByRole('button', { name: 'Papier · Prendre le matériel présent', exact: true })
       .first()
-      .click()
+      .press('Enter')
     const picked = await page.evaluate(() => window.preparationFixture.snapshot())
     assert.equal(picked.paperKit.sourceId, initial.paperKit.sourceId)
     assert.equal(picked.paperKit.markers, 10)

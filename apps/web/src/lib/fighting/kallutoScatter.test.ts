@@ -55,7 +55,9 @@ describe('Kalluto reuses the actual remaining confetti (chapter 226)', () => {
     const landed = advance(flying)
     expect(availablePaperScatter(landed, 'player')?.id).toBe(paper.id)
     const repeated = advance(released(landed))
-    expect(ownedPaperScatters(repeated, activePaperOwner(repeated, 'player'))).toHaveLength(1)
+    expect(
+      ownedPaperScatters(repeated, activePaperOwner(repeated, 'player')).map((entry) => entry.id),
+    ).toEqual(ownedPaperScatters(state, activePaperOwner(state, 'player')).map((entry) => entry.id))
     expect(availablePaperScatter(repeated, 'player')?.paperScatter?.paperId).toBe(
       paper.paperScatter?.paperId,
     )
@@ -83,10 +85,10 @@ describe('Kalluto reuses the actual remaining confetti (chapter 226)', () => {
   })
   it('does not rematerialize a physical swarm while Bungee Gum is actually holding it', () => {
     const flying = released(marked())
-    const shot = flying.projectiles.find((entry) => entry.paperScatterId)!
+    const shot = flying.projectiles.find((entry) => entry.paperScatterId?.endsWith(':path:1'))!
     const impact = {
       ...flying,
-      projectiles: [],
+      projectiles: flying.projectiles.filter((entry) => entry.id !== shot.id),
       opponent: { ...flying.opponent, gumCatch: { frames: 24 }, facing: -1 as const },
     }
     const captured = catchBungeeObject(impact, {
@@ -101,7 +103,9 @@ describe('Kalluto reuses the actual remaining confetti (chapter 226)', () => {
   })
   it('lets Blinky swallow loose real paper without duplicating the matter when another object becomes last', () => {
     const state = marked()
-    const paper = availablePaperScatter(state, 'player')!
+    const paper = ownedPaperScatters(state, activePaperOwner(state, 'player')).find((entry) =>
+      entry.id.endsWith(':path:1'),
+    )!
     const source = {
       ...state,
       player: {
@@ -113,7 +117,9 @@ describe('Kalluto reuses the actual remaining confetti (chapter 226)', () => {
     }
     const swallowed = swallowPaperScatter(source, 'player')
     expect(swallowed.player.blinky?.lastObject?.paperScatterId).toBe(paper.id)
-    expect(availablePaperScatter(swallowed, 'player')).toBeUndefined()
+    expect(swallowed.battlefield!.entities.find((entry) => entry.id === paper.id)?.present).toBe(
+      false,
+    )
     const notLast = {
       ...swallowed,
       player: {
@@ -121,7 +127,10 @@ describe('Kalluto reuses the actual remaining confetti (chapter 226)', () => {
         blinky: { ...swallowed.player.blinky!, lastObject: undefined },
       },
     }
-    expect(availablePaperScatter(advancePaperScatters(notLast), 'player')).toBeUndefined()
+    expect(
+      advancePaperScatters(notLast).battlefield!.entities.find((entry) => entry.id === paper.id)
+        ?.present,
+    ).toBe(false)
     const copied = {
       ...source,
       battlefield: {

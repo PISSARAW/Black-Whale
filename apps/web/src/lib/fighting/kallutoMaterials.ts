@@ -2,6 +2,7 @@ import { freeDeviceHand } from './deviceHands'
 import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { paperDolls } from './kallutoSurveillance'
 import { availablePaperScatter } from './kallutoScatter'
+import { airbornePaperFragments } from './kallutoAirborne'
 import type { PaperCommand } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 import type { PreparedEntity } from './preparationTypes'
@@ -82,7 +83,10 @@ export function paperMaterialsReady(
   if (command === 'doll' && existingPaperDoll(state, side)) return true
   if (!historicalMatterExists(state, state[side].paperKit?.copyId) || !freeDeviceHand(state, side))
     return false
-  if (command === 'serpent' && availablePaperScatter(state, side))
+  if (
+    command === 'serpent' &&
+    (availablePaperScatter(state, side) || airbornePaperFragments(state, side).length)
+  )
     return scatterFanReady(state[side])
   return paperStockReady(state[side], command)
 }

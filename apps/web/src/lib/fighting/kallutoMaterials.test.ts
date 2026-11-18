@@ -72,7 +72,9 @@ describe('Kalluto uses actual paper and an actual fan rather than copied supplie
     expect(equipped.player.paperKit?.sourceId).toBe('player:paper-kit')
     const launched = advance(cast(equipped, 'chrollo:neutralSpecial'))
     expect(launched.player.paperKit?.markers).toBe(11)
-    expect(launched.opponent.plantedPaper?.[0].paperId).toBe('player:paper-kit:paper:1')
+    expect(launched.opponent.plantedPaper?.[0].paperId).toMatch(
+      /^player:paper-kit:paper:1(?::path:[12])?$/,
+    )
   })
   it('spends a fragment only when it physically leaves the fan and does not refund a miss', () => {
     const base = setup()

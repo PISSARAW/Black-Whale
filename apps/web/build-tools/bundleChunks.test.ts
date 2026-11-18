@@ -64,6 +64,24 @@ async function compile(entry: string) {
 }
 
 describe('production bundle partitioning', () => {
+  it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
+    const built = await compile(
+      [
+        `export { beginFight, createFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { launchKallutoPaper } from ${JSON.stringify(resolve('src/lib/fighting/kallutoFlight.ts'))}`,
+      ].join('\n'),
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    const state = actual.beginFight(
+      actual.createFight('kalluto', 'hisoka', { mode: 'versus-local' }),
+    )
+    const dispersed = actual.launchKallutoPaper(state, 'player', 'plant')
+    expect(dispersed.projectiles).toHaveLength(3)
+    expect(dispersed.player.paperKit.markers).toBe(state.player.paperKit.markers - 1)
+    expect(dispersed.player.id).toBe('kalluto')
+  }, 30_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [
       'easterEggRosterOne',

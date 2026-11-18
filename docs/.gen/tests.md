@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 904
+Fichiers : 905
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -27,7 +27,7 @@ Fichiers : 904
 
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
-- production bundle partitioning > separates scene catalogues without changing authored gestures, stances or expressions
+- production bundle partitioning > loads the split paper moveset with the real combat engine and finite material emission
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 

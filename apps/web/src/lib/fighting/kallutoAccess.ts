@@ -8,6 +8,7 @@ import { stolenAuraActor } from './dolphinSupply'
 import type { ArcadeFighter } from './types'
 
 export function paperAvailable(body: ArcadeFighter): boolean {
+  if (body.weaponsConfiscated) return false
   return paperAbilityAvailable(body, 'plant') || paperAbilityAvailable(body, 'doll')
 }
 

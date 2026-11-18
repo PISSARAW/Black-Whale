@@ -1,7 +1,7 @@
 # Kalluto : réemploi des confettis
 
 Cette extension de l’[arsenal rétrospectif](./clash-arsenal-integral.md) correspond
-au ruleset **clash-combat-42**. Le On est conservé, avec ses blocages du Nen.
+aux rulesets **clash-combat-42** puis **48**. Le On est conservé, avec ses blocages du Nen.
 L’audit des quarante arsenaux reste ouvert.
 
 ## Application représentée
@@ -10,6 +10,16 @@ Le chapitre 226 montre le papier dispersé puis concentré par la manipulation d
 Kalluto. Dans le duel, une préparation de marquage contient le fragment planté et
 le reste des confettis. Les douze préparations du chargement sont des lots de
 matériel de scénario, pas douze morceaux individuels ni une limite du Hatsu.
+
+Depuis le ruleset 48, un seul lot est divisé en trois trajectoires identifiées,
+chacune avec son fragment et ses confettis. Le stock ne diminue qu'une fois.
+Le nombre de trajectoires et les budgets totaux de dégâts et de résistance
+restent des réglages du duel, répartis entre les chemins.
+
+Le papier encore en vol peut se rassembler depuis ses positions actuelles,
+même sans salve neuve ni confettis au sol. Aucun projectile, identifiant ou lot
+supplémentaire n'est créé lors de cette redirection. Les nuages disponibles
+peuvent également converger ensemble, en partageant un seul budget de dégâts.
 
 Après dispersion, les confettis existent dans l’arène. Une nouvelle commande de
 courant coupant reprend le même lot disponible, avec le même identifiant,
@@ -44,9 +54,25 @@ le rendu adverses respectent Gyo. Le snapshot privé ne livre pas les lots cach�
 ## Vérification et limites
 
 Les tests exécutent les émissions, reprises, captures, prêts et replays de P2.
+Ils revalident au départ la marque réelle, le matériel, la main et l'accès au
+Nen. Le retrait d'une marque ou de l'éventail pendant la préparation ne permet
+pas une émission devenue invalide.
 Le contrôle d’interface couvre 1 100, 390 et 320 pixels, les récepteurs multiples,
 le réemploi sans dépense supplémentaire et le dépôt puis ramassage du matériel.
 Les identifiants et stocks restent identiques après ces opérations.
+
+Quatre échecs hérités de l'exercice `kalluto:serpent` au bord de l'arène restent
+ouverts : déplacer les corps après la préparation laisse les confettis à leurs
+positions réelles, trop loin pour garantir la chaîne avant le retour de garde.
+Les tests n'ont pas été affaiblis pour présenter ces situations comme réussies.
+
+La compilation de production reste sous le plafond inchangé de 500 000 octets
+par fichier client : maximum de 498 989 octets. Les métadonnées du moveset de
+Kalluto rejoignent le catalogue existant ; les constantes de coût sont séparées
+du moteur et leur ancien export est conservé. Un test charge le moteur compilé
+et exerce l'émission réelle. Le test de compilation partielle des combos garde
+son avertissement de bloc vide, reproduit sur la base `bb76fe426` ; les sept
+autres tests de ce fichier réussissent.
 
 Le ramassage manuel des confettis dans une réserve, les autres cibles physiques
 et les interactions restantes demeurent à compléter. Cette extension ne certifie

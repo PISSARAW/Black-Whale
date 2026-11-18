@@ -30,7 +30,14 @@ function scatter(): FightState {
   })
 }
 function cut(s: FightState): FightState {
-  const launched = launchKallutoPaper(s, 'player', 'serpent')
+  const marked = {
+    ...s,
+    opponent: {
+      ...s.opponent,
+      plantedPaper: [{ owner: 'player' as const, zone: 'torso' as const }],
+    },
+  }
+  const launched = launchKallutoPaper(marked, 'player', 'serpent')
   const shot = launched.projectiles.at(-1)!
   return resolveFightImpacts(launched, [
     { projectile: shot, defenderSide: 'opponent', position: { x: s.opponent.x, y: shot.y } },

@@ -282,7 +282,7 @@ describe('Kalluto paper and surveillance dolls', () => {
     ])
   })
   it('Blinky returns swallowed paper as an ordinary object without its former manipulation', () => {
-    let state = duel()
+    let state = marked()
     const shot = {
       ...launchKallutoPaper(state, 'player', 'serpent').projectiles[0],
       x: 40,

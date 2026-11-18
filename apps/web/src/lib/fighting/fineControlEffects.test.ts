@@ -109,9 +109,9 @@ describe('fine-control material rendering', () => {
     const frozen = JSON.stringify(state)
     effect.sync(state, 0)
     const paper = scene.getObjectByName('kalluto-paper')!
-    expect(state.projectiles.filter((shot) => shot.kallutoPaper)).toHaveLength(1)
+    expect(state.projectiles.filter((shot) => shot.kallutoPaper)).toHaveLength(3)
     expect(state.projectiles[0].paperId).toBeDefined()
-    expect(paper.children).toHaveLength(6)
+    expect(paper.children).toHaveLength(18)
     expect(scene.getObjectByName(`fight-projectile:${state.projectiles[0].id}`)!.visible).toBe(
       false,
     )
@@ -131,7 +131,7 @@ describe('fine-control material rendering', () => {
     })
     comfort = { ...comfort, camera: 0, flashes: false }
     effect.sync(state, 101)
-    expect(paper.children).toHaveLength(6)
+    expect(paper.children).toHaveLength(18)
     effect.sync({ ...state, projectiles: [] }, 102)
     expect(paper.children).toHaveLength(0)
     effect.dispose()

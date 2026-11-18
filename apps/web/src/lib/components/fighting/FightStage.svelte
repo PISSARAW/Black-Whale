@@ -43,7 +43,7 @@
   export let victoryActive = false
   const victory = createVictoryPlayback()
   $: victory.observe(state, victoryEnabled)
-  $: victoryActive = Boolean($victory?.active)
+  $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
   export let state: FightState

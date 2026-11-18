@@ -62,7 +62,7 @@
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
-  import { drawVictoryFrame } from '$lib/fighting/victory/draw'
+  import { drawFightScene } from '$lib/fighting/drawFightScene'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
   const presentation = createFightPresentation()
@@ -219,9 +219,7 @@
           comfort: visualComfort,
         })
         const modelOf = createPresentedModelRefresh({ scene, models, nenKey, buildFighter })
-        const alignPhysicalContact = createFightContactAlignment(
-          (side) => models[side].model.turns,
-        )
+        const alignPhysicalContact = createFightContactAlignment((side) => models[side].model.turns)
 
         const impacts = createFightImpactScene({
           THREE,
@@ -274,6 +272,7 @@
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
           const motion = fightBodyMotion({
+            throwFrame: presentation.throwFrame(),
             introFrame: motionPreference.matches ? null : introFrame,
             side,
             fighter,
@@ -313,6 +312,8 @@
               models,
               state,
               authored: cameraFrame,
+              minimumDistance: scenery.framing?.minimumDistance,
+              throwFrame: presentation.throwFrame(),
               intro: introFrame,
               reduced: motionPreference.matches,
               intensity: cameraIntensity(),
@@ -369,6 +370,10 @@
           const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
           motionSeconds += dt
           const seconds = presentationSeconds ?? motionSeconds
+          presentation.observe(state, seconds, {
+            reduced: motionPreference.matches,
+            victory: victoryFrame,
+          })
           lastFrameAt = now
           onFrames = onClock(state, motionPreference.matches)
           animateFighter({
@@ -398,14 +403,12 @@
           collisions.sync(state)
           scenery.update?.(seconds)
           markFightRender(scene, state)
-          drawVictoryFrame({
+          drawFightScene({
             victory: victoryRenderer,
-            input: {
-              state,
-              frame: victoryFrame,
-              comfort: visualComfort(),
-              models: { player: models.player.model.root, opponent: models.opponent.model.root },
-            },
+            state,
+            frame: victoryFrame,
+            comfort: visualComfort(),
+            models: { player: models.player.model.root, opponent: models.opponent.model.root },
             draw: () => (post ? post.render() : renderer.render(scene, camera)),
             failed: onSceneFailed,
           })

@@ -59,6 +59,34 @@ exécutables, pas à une seconde liste de coups indépendante du moteur.
 
 ## Cadre et continuité
 
+### Projections au corps-à-corps
+
+`throwCinematic.ts` reconnaît une projection réellement confirmée : impact physique,
+mise au sol, attaque de type projection et absence de garde, esquive, parade ou
+invulnérabilité. Un raté ou une déprojection ne déclenche aucun plan de réussite.
+La prise, le renversement, l'arrivée au sol et le retour au jeu occupent au plus
+24 frames de récupération, sans ajouter d'immobilisation au moteur.
+
+`throwCinematicMotion.ts` et `throwPresentationLayer.ts` dessinent une courte
+trajectoire entre la prise et la vraie position de chute. Les corps restent ceux
+du match, dans le même décor ; les coordonnées et volumes de simulation ne sont
+jamais réécrits. La victime conserve sa pose au sol jusqu'à la relevée réelle.
+`throwCinematicCamera.ts` passe de la prise à une orbite de renversement puis à
+un angle bas, avec un cadrage commun aux deux silhouettes et aux formats portrait.
+Les instants suivent les frames d'attaque, donc le hitstop et la pause les figent.
+Un nouvel impact, une nouvelle manche ou une fin de contrainte annule la séquence.
+
+Un K.-O. attend la fin de cette projection avant sa cinématique de victoire ;
+les dégâts, le verdict, les fenêtres de déprojection, les replays et les commandes
+ne sont pas retardés. Caméra stable et mouvements réduits gardent les protections
+de confort existantes. Les projections astrales de Hanzo ne sont pas confondues
+avec ces prises physiques.
+
+`throwCinematic.test.ts` vérifie les quarante combattants, les deux places, les
+refus, la pause, le hitstop, les positions finales, le K.-O. et l'absence de mutation.
+Depuis `apps/web`, `node scripts/check-fighting-throws.mjs` capture les quatre
+temps de la scène de production en P1/P2, ainsi que les formats 390 et 320 px.
+
 La seconde caméra rend la même scène posée au même instant. Les sujets peuvent
 être une articulation, un accessoire visible, un projectile, une entité préparée
 ou plusieurs points de contact. Le cadrage est calculé à partir de leur volume

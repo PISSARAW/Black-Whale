@@ -176,3 +176,19 @@ cette même zone anatomique. La zone logique de défense Nen et les dégâts
 restent ceux du moteur. Les armes conservent leurs gestes spécifiques.
 `fightSurfaceContact.test.ts` mesure la distance réelle membre–surface dans
 six matchups, deux orientations, et vérifie l’absence d’état visuel périmé.
+
+## Rythme et flux continus
+
+`fightStrikeRhythm.ts` accélère le prolongement du geste et allonge son freinage
+visuel au cours de la récupération existante. Préparation, images actives,
+contact, hitstop et durée totale restent inchangés ; les coups lourds ont un
+contraste plus marqué. `fightStrikeRhythm.test.ts` vérifie les quarante profils.
+
+`nenFluxRibbon.ts` remplace les points de redistribution par des rubans continus,
+effilés, avançant à distance constante à travers les articulations posées. Le
+trajet vers un pied passe par le bassin. L’enveloppe s’épaissit avec l’arrivée
+du flux, plus fortement pour le Ko ; le trajet s’adapte à la préparation réelle
+pour atteindre le membre au contact. Couleur native, révélation par Gyo,
+mouvement réduit, consommation et hitstop gardent leurs contrats. Les géométries
+de ruban sont réutilisées puis libérées. `nenFluxRibbon.test.ts` vérifie la
+continuité, l’avancement, le suivi des articulations et la couleur conservée.

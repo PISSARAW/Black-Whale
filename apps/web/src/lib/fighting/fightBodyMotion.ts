@@ -20,6 +20,7 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
+import { strikePresentationFrame } from './fightStrikeRhythm'
 import { closeBodyPlan } from './fightClosePosture'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
@@ -340,7 +341,11 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const poseAt = (at: number) =>
     addPoses(
       base,
-      sampleTimeline(timeline, { frame: at, frames, continuous: true }),
+      sampleTimeline(timeline, {
+        frame: strikePresentationFrame(fighter, frames, at),
+        frames,
+        continuous: true,
+      }),
       attackMotionAccent({ fighter, frames, authored, frame: at }),
     )
   return {

@@ -59,6 +59,11 @@ const PERSONAL_MOBILITY: Partial<Record<ArcadeFighter['id'], Mobility>> = {
   },
   feitan: FEITAN_MOBILITY,
   hisoka: HISOKA_MOBILITY,
+  hanzo: {
+    backWalk: 0.94,
+    forwardDash: { frames: 14, peak: 122 },
+    backDash: { frames: 12, peak: 106 },
+  },
 }
 
 /** Body identity only: Skill Hunter and Dolphin cannot copy someone else's footwork. */

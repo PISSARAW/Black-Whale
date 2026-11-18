@@ -1,3 +1,5 @@
+import { HANZO_BLADE_POSES } from './keyPosesHanzoBlade'
+import { HANZO_PHYSICAL_POSES } from './keyPosesHanzoPhysical'
 import type { FightPose } from './fightPose'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { MoveSlot } from './types'
@@ -28,6 +30,8 @@ const CHOKE: FightPose = {
 
 /** The projected choke of chapter 372, rather than the generic three-strike finisher. */
 export const HANZO_KEY_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
+  ...HANZO_PHYSICAL_POSES,
+  ...HANZO_BLADE_POSES,
   finisher: [
     { phase: 'startup', at: 0.65, ease: 'out', pose: { chest: [0, 0.2, 0] } },
     { phase: 'active', at: 0, ease: 'snap', pose: CHOKE },

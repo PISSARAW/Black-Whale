@@ -62,8 +62,11 @@ function play(id: string, initial?: FightState) {
 }
 
 describe.each(FIGHTERS)('%s physical combo choices', (fighter) => {
-  it('offers eight routes and different damage, spacing and recovery tradeoffs', () => {
-    expect(combatRoutesFor(fighter)).toHaveLength(8)
+  it('offers eight core routes and different damage, spacing and recovery tradeoffs', () => {
+    // Whiff, wakeup and kameo lessons extend the catalogue beyond these eight core choices.
+    expect(
+      combatRoutesFor(fighter).filter((route) => !route.whiff && !route.wakeup && !route.kameo),
+    ).toHaveLength(8)
     const economy = play(`${fighter}:economy`)
     const carry = play(`${fighter}:carry`)
     expect(economy.spent).toBe(0)

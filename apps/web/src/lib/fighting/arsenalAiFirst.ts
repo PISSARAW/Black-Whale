@@ -1,5 +1,6 @@
-import { feitanAiSlots } from './feitanAi'
+import { hanzoAiSlots } from './hanzoAi'
 import { benjaminAiSlots } from './benjaminAi'
+import { feitanAiSlots } from './feitanAi'
 import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
@@ -43,12 +44,7 @@ export const FIRST_ARSENAL_AI = {
   hinrigh: ({ state, roll, gap }) => biohazardAiSlots(state, roll, gap),
   mizaistom: () => ['neutralSpecial'],
   leorio: () => ['neutralSpecial'],
-  hanzo: ({ state, gap }) =>
-    state.opponent.hanzoProjection
-      ? ['finisher', 'standingHeavy', 'standingLight']
-      : gap > 12
-        ? ['neutralSpecial']
-        : ['standingLight', 'forwardHeavy'],
+  hanzo: hanzoAiSlots,
 } satisfies Record<string, ArsenalAiPlan>
 
 function saiyuSlots({ state, roll }: ArsenalAiContext): readonly import('./types').MoveSlot[] {

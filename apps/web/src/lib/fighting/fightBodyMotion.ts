@@ -1,3 +1,5 @@
+import { animateHanzoBlade } from './hanzoBladeFigure'
+import { plantHanzoSoles } from './hanzoGrounding'
 import { beginSettledPose } from './fightSettledPose'
 import { feitanAirPlan } from './feitanLocomotion'
 import { feitanHandedPlan } from './feitanHandedPose'
@@ -114,6 +116,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const plan = options.plan ?? bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
     animateServiceHandgun(human.figure, fighter)
+    animateHanzoBlade(human.figure, fighter)
     syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
@@ -141,6 +144,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBonolenovSpear(rig, fighter)
     keepHumanJoints(rig)
     plantBodyFrame(rig, { anchor, pose: drawn, fighter, plan })
+    if (anchor) plantHanzoSoles(rig, fighter)
   })
 }
 

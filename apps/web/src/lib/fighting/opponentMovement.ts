@@ -1,5 +1,6 @@
-import { moveFeitanOpponent } from './feitanAi'
+import { moveHanzoOpponent } from './hanzoAi'
 import { wantsObservedGuard, incomingLow } from './combatPressure'
+import { moveFeitanOpponent } from './feitanAi'
 import { moveKurapikaOpponent } from './kurapikaFootwork'
 import { moveShizukuOpponent } from './shizukuFootwork'
 import { moveBonolenovOpponent } from './bonolenovAi'
@@ -31,6 +32,8 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
   if (feitan) return feitan
   const bonolenov = moveBonolenovOpponent(fighter, player)
   if (bonolenov) return bonolenov
+  const hanzo = moveHanzoOpponent(fighter, player)
+  if (hanzo) return hanzo
   return walkFreeOpponent(fighter, player)
 }
 

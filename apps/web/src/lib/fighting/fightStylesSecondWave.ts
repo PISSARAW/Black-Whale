@@ -55,11 +55,11 @@ export const SECOND_WAVE_STYLES: Record<SecondWaveId, FightingStyle> = {
       ranged: { startup: 0.78 },
     },
   }),
-  hanzo: style('hanzo', ['Ninjutsu mobile', 'Mobile ninjutsu'], {
-    preferredRange: [7, 12],
+  hanzo: style('hanzo', ['Ninjutsu de contrôle', 'Control ninjutsu'], {
+    preferredRange: [6, 10],
     specialChance: 0.46,
     heavyThreshold: 0.42,
-    moveScale: 1.18,
+    moveScale: 1.24,
     attacks: {
       light: { startup: 0.66, recovery: 0.76, damage: 0.88 },
       heavy: { startup: 0.8, recovery: 0.9 },

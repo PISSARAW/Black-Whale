@@ -1,3 +1,4 @@
+import { interruptHanzoBlade } from './hanzoBlade'
 import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
 import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
@@ -37,7 +38,7 @@ import {
 import { pursuitTakeoff } from './fighterMovement'
 
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
-  fighter = advanceAttackBuffer(interruptUnavailableNen(fighter))
+  fighter = advanceAttackBuffer(interruptUnavailableNen(interruptHanzoBlade(fighter)))
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1

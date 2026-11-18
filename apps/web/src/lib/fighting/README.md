@@ -16,6 +16,11 @@ Le [combat de Feitan d’après les deux vidéos contre Zazan](./FEITAN_COMBAT.m
 associe douze gestes d’arme dédiés, approches basses, dashes, bonds et choix d’IA.
 Les frappes physiques et la riposte solaire gardent des conditions distinctes.
 
+Le [combat de Hanzo d’après ses affrontements contre Gon](./HANZO_COMBAT.md)
+associe mains ouvertes, lame dissimulée au bras droit et déplacements courts.
+L’estoc et le revers déploient puis rangent l’arme physique ; les appuis et l’IA
+conservent les règles distinctes de Skill 4.
+
 Les [gestes de combo et la concentration de l’aura](./COMBO_MOTION.md) relient
 les transitions des 40 combattants aux appuis et aux contacts de chaque style,
 avec une enveloppe locale et un flux pour le Ryu et le Ko réellement engagés.

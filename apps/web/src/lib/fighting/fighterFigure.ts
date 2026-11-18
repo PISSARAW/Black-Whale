@@ -1,3 +1,4 @@
+import { addHanzoBlade } from './hanzoBladeFigure'
 import { kameoAppearance } from './kameos/catalogue'
 import { addBenjaminRifle } from './benjaminRifle'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
@@ -129,6 +130,7 @@ function addFighterEquipment(
   const { THREE, glow, fighter } = options
   addBodyguardPistol({ THREE, glow, fighter, model })
   addLuiniKnife({ THREE, glow, fighter, model })
+  addHanzoBlade({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))

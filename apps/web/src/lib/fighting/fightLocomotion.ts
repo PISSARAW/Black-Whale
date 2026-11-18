@@ -1,3 +1,4 @@
+import { hanzoDashPoses, HANZO_WALK_STYLE } from './hanzoLocomotion'
 import { chrolloDashPoses, CHROLLO_WALK_STYLE } from './chrolloLocomotion'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
@@ -125,11 +126,13 @@ const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
   chrollo: CHROLLO_WALK_STYLE,
   hisoka: HISOKA_WALK_STYLE,
   feitan: FEITAN_WALK_STYLE,
+  hanzo: HANZO_WALK_STYLE,
 }
 const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
   chrollo: chrolloDashPoses,
   hisoka: hisokaDashPoses,
   feitan: feitanDashPoses,
+  hanzo: hanzoDashPoses,
 }
 
 const WALK_STYLES: Record<FightFamily, WalkStyle> = {

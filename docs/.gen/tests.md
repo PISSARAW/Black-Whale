@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 939
+Fichiers : 952
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -849,6 +849,55 @@ Fichiers : 939
 ## `apps/web/src/lib/fighting/kallutoScatterDolphin.test.ts`
 
 - one stolen paper-manipulation application has its actual compound commands > keeps Dolphin engaged across dispersion and reuse of the same real paper, then returns the donor’s Hatsu on release
+
+## `apps/web/src/lib/fighting/kameos/effects.test.ts`
+
+- kameo catalogue (lot 4) > holds the six support kameos, one per role
+- kameo support effects (lot 4) > heals and strengthens the leader with Tubeppa, paid from the kameo aura
+
+## `apps/web/src/lib/fighting/kameos/kameos.test.ts`
+
+- kameo state (lot 2) > attaches a full reserve body to each requested side
+
+## `apps/web/src/lib/fighting/kameos/luzurusMotion.test.ts`
+
+- Luzurus support choreography and facial expressions > uses the real trap-creation frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/marayamMotion.test.ts`
+
+- Marayam support choreography and facial expressions > uses the real isolation frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/morenaMotion.test.ts`
+
+- Morena support choreography and facial expressions > uses the real Contagion frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/projection.test.ts`
+
+- kameo duel projection (lot 3) > round-trips without change when nothing happens in the view
+
+## `apps/web/src/lib/fighting/kameos/pvp.test.ts`
+
+- kameos in private PvP (lot 8) > accepts only catalogue kameos keyed by seat
+
+## `apps/web/src/lib/fighting/kameos/replay.test.ts`
+
+- kameo replays (lot 8) > records a match with kameos from its very first frame
+
+## `apps/web/src/lib/fighting/kameos/runtime.test.ts`
+
+- kameo calls (lot 5) > reads the call direction relative to the leader facing
+
+## `apps/web/src/lib/fighting/kameos/salesaleMotion.test.ts`
+
+- Salé-salé support choreography and facial expressions > uses the real smoke-delivery frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/tubeppaMotion.test.ts`
+
+- Tubeppa uses roster articulation and expressions in the real kameo scene > follows the complete support cycle and its real healing frame without mutating the replay
+
+## `apps/web/src/lib/fighting/kameos/zhangLeiMotion.test.ts`
+
+- Zhang Lei support choreography and facial expressions > uses the real coin-bonus frame and a complete call cycle without changing replay state or geometry
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 
@@ -2608,6 +2657,10 @@ Fichiers : 939
 ## `apps/web/src/lib/tour/luzurusView.test.ts`
 
 - Luzurus’s apartment against the salon panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/mangaCast.test.ts`
+
+- manga cast shared by the visit and Fighting > shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash
 
 ## `apps/web/src/lib/tour/mangaEvent.test.ts`
 

@@ -71,7 +71,9 @@ function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
   if (attack?.contact && attack.frame < attack.startup) {
     const progress = attack.frame / attack.startup
     const pose = drawStartup(state, { ...attack, contact: attack.contact })
-    return attack.pursuit ? pursuitLoad(pose, attack.pursuit, progress) : pose
+    return attack.pursuit
+      ? pursuitLoad(pose, attack.pursuit, { progress, native: plan.pose })
+      : pose
   }
   if (attack) return plan.pose
   if (plan.reactionFrame !== undefined) {

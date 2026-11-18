@@ -33,7 +33,7 @@ export function pursuitReview(id: PursuitReviewId) {
   return { states, command, launch: launchFrame, ...result }
 }
 
-function prepare(state: FightState) {
+export function prepare(state: FightState) {
   if (state.player.id === 'hisoka') return prepareCombatRoute(state, 'bungee')
   if (state.player.id !== 'hanzo') return state
   let projected = tap(state, 'special')
@@ -42,7 +42,7 @@ function prepare(state: FightState) {
   return projected
 }
 
-function step(state: FightState, guard = false) {
+export function step(state: FightState, guard = false) {
   return tickFight(state, EMPTY_INPUT, {
     dt: 1 / 60,
     ai: false,
@@ -50,7 +50,7 @@ function step(state: FightState, guard = false) {
   })
 }
 
-function tap(state: FightState, action: MoveAction, input: Partial<FightInput> = {}) {
+export function tap(state: FightState, action: MoveAction, input: Partial<FightInput> = {}) {
   return performMove({ state, side: 'player', action, input: { ...EMPTY_INPUT, ...input } })
 }
 
@@ -63,7 +63,7 @@ function playUntil(states: FightState[], limit: number, end: (state: FightState)
   throw new Error(`Poursuite incomplète à l’étape ${states.length}`)
 }
 
-function launch(states: FightState[]) {
+export function launch(states: FightState[]) {
   states[0] = tap(states[0], 'light')
   // The first hit starts from neutral and is not guarded.
   for (let f = 0; f < 20 && !states.at(-1)!.impact; f++) states.push(step(states.at(-1)!))
@@ -75,12 +75,16 @@ function launch(states: FightState[]) {
   return command
 }
 
-function followPursuit(states: FightState[], offset: number) {
+export function followPursuit(
+  states: FightState[],
+  offset: number,
+  action: MoveAction = 'special',
+) {
   const origin = states.at(-1)!
   const { startup, active } = attackData(origin.player.attack!.kind, origin.player)
   if (offset)
     playUntil(states, 60, (state) => (state.player.attack?.frame ?? 0) >= startup + active + offset)
-  let current = tap(states.at(-1)!, 'special', { right: true })
+  let current = tap(states.at(-1)!, action, { right: true })
   states[states.length - 1] = current
   let opening = -1
   for (let f = 0; f < 80; f++) {

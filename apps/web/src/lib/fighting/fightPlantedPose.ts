@@ -11,7 +11,7 @@ export function plantBodyFrame(
     pose: FightPose
     plan: BodyPlan
     fighter: ArcadeFighter
-    pursuitSupport?: { foot: 0 | 1; weight: number }
+    pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
   },
 ): void {
   if (!frame.anchor) return

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
 import { createServer } from 'vite'
+import { renderPursuitTikTok } from './render-fighting-pursuit-tiktok.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = path.resolve(process.env.PURSUIT_REVIEW_OUTPUT ?? 'output/fighting-pursuit-review')
@@ -74,6 +75,11 @@ try {
       { ...hanzo, through: double.contact - double.command + 10 },
       { ...review, through: hit + 10, holds: [ready, hit] },
     ])
+  if (process.argv.includes('--tiktok')) {
+    const page = await open('montage')
+    await page.waitForFunction(() => window.pursuitMontage, null, { timeout: 120000 })
+    await renderPursuitTikTok({ page, review, output, temporary })
+  }
   assert.deepEqual(errors, [])
   await writeFile(
     path.join(output, 'report.json'),
@@ -81,7 +87,7 @@ try {
   )
   process.stdout.write(`Poursuites vérifiées dans Chromium. ${output}\n`)
 
-  async function load(id) {
+  async function open(id) {
     const page = await browser.newPage({ viewport: { width: 540, height: 960 } })
     page.on('pageerror', (error) => {
       errors.push(error.message)
@@ -91,6 +97,11 @@ try {
       waitUntil: 'domcontentloaded',
       timeout: 120000,
     })
+    return page
+  }
+
+  async function load(id) {
+    const page = await open(id)
     await page.waitForFunction(
       () => window.pursuitReview?.ready() || window.pursuitReview?.failed(),
       {},

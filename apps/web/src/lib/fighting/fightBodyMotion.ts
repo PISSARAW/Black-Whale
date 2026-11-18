@@ -159,10 +159,8 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
 
 function attackSupport(attack: AttackFlowFrame | undefined) {
   if (!attack?.pursuit) return
-  return {
-    foot: pursuitSupport(attack.pursuit, attack.facing),
-    weight: pursuitLoadWeight(attack.frame / attack.startup),
-  }
+  const foot = pursuitSupport(attack.pursuit, attack.facing)
+  if (foot !== undefined) return { foot, weight: pursuitLoadWeight(attack.frame / attack.startup) }
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -371,7 +369,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
-  const pursuit = pursuitGesture(attack)
+  const pursuit = pursuitGesture(fighter, slot)
   const base = basePose(variant, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
@@ -409,10 +407,17 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
 
 function attackOnGround(
   fighter: ArcadeFighter,
-  timing: { variant: AttackVariant; pursuit?: string; frame: number; startup: number },
+  timing: {
+    variant: AttackVariant
+    pursuit?: ReturnType<typeof pursuitGesture>
+    frame: number
+    startup: number
+  },
 ): boolean {
   const { variant, pursuit, frame, startup } = timing
-  return fighter.y <= 0 && (variant !== 'air' || Boolean(pursuit && frame < startup))
+  if (pursuit && !pursuit.support) return false
+  if (pursuit && fighter.y <= 0.15 && frame < startup) return true
+  return fighter.y <= 0 && variant !== 'air'
 }
 
 function bridgeContact(
@@ -421,7 +426,7 @@ function bridgeContact(
     frame: number
     startup: number
     poseAt: (frame: number) => FightPose
-    pursuit?: string
+    pursuit?: ReturnType<typeof pursuitGesture>
   },
 ): FightPose | undefined {
   if (timing.frame < timing.startup && (bridgeTarget(moveId) || timing.pursuit))

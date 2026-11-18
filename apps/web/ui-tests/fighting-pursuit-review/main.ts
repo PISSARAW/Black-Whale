@@ -1,4 +1,7 @@
 import { mount } from 'svelte'
 import PursuitReview from './PursuitReview.svelte'
 
-mount(PursuitReview, { target: document.querySelector('#app')! })
+const target = document.querySelector('#app')!
+if (new URLSearchParams(location.search).has('montage'))
+  void import('./PursuitMontage.svelte').then(({ default: Montage }) => mount(Montage, { target }))
+else mount(PursuitReview, { target })

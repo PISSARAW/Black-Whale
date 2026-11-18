@@ -12,6 +12,7 @@
   import { markFightRender } from '$lib/fighting/fightRenderObservation'
   import { cinematicDetailRect, type CameraDetailRect } from '$lib/fighting/cinematicDetailLayout'
   import FightCameraDetail from './FightCameraDetail.svelte'
+  import FightPursuitRecovery from './FightPursuitRecovery.svelte'
   import FightTrackingMarkers from './FightTrackingMarkers.svelte'
   import { createCombatCamera } from '$lib/fighting/combatCamera'
   import { visibleSecondaryView } from '$lib/fighting/directionalComboCamera'
@@ -87,6 +88,8 @@
   export let onSceneFailed: () => void = () => {}
   export let language: 'fr' | 'en' = 'fr'
 
+  export let showRecovery = false
+  let recovery: FightPursuitRecovery
   let canvas: HTMLCanvasElement
   let failed = false
   let ready = false
@@ -362,15 +365,17 @@
           impacts.shake(camera, now)
         }
 
+        let drawnState: FightState | undefined
         const render = (now: number) => {
           if (disposed) return
-          if (!active) {
+          if (!active && (!showRecovery || drawnState === state)) {
             lastFrameAt = null
             animationFrame = requestAnimationFrame(render)
             return
           }
           const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
           motionSeconds += dt
+          drawnState = state
           const seconds = presentationSeconds ?? motionSeconds
           presentation.observe(state, seconds, {
             reduced: motionPreference.matches,
@@ -414,6 +419,7 @@
             draw: () => (post ? post.render() : renderer.render(scene, camera)),
             failed: onSceneFailed,
           })
+          recovery?.locate(camera, (side) => models[side].model.root)
           if (!ready) onSceneReady()
           ready = true
           if (
@@ -464,6 +470,7 @@
 <FightStageDescription {state} {stageId} {language} />
 <div class:failed class:ready class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
+  <FightPursuitRecovery bind:this={recovery} {state} {language} enabled={showRecovery} />
   <FightDirectionalShot {state} intensity={comfort.camera ?? 1} />
   <FightTrackingMarkers
     {state}

@@ -1,3 +1,4 @@
+import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { blackVoiceMoveAllowed } from './blackVoice'
 import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { cancelBufferSource } from './bufferedCancel'
@@ -86,7 +87,7 @@ function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): bool
   if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
     return false
   if (fighter.id === 'camilla' && kind === 'special') return false
-  if (!techniqueAllowed(options)) return false
+  if (!techniqueAllowed(options) || !sunMoonStrikeAllowed(options)) return false
   const move = moveById(moveId)
   if (move && !canUseMovesetMove(state, side, move)) return false
   return fighter.aura >= attackAuraCost({ fighter, kind, moveId, concealed: intent.concealed })

@@ -1,10 +1,10 @@
+import { sunMoonStrikeHandReady, sunMoonStrikeMark } from '../sunMoonStrikeHands'
 import { plantBlackVoice } from '../blackVoice'
 import { advanceBlackVoice } from '../blackVoiceFrame'
 import {
   chrolloNenActive,
   chrolloPageForMove,
   chrolloSourceFor,
-  CHROLLO_SECONDARY,
   CHROLLO_STEAL,
 } from '../chrolloBook'
 import { reconcileChrolloPages } from '../chrolloPageEffects'
@@ -46,9 +46,8 @@ function steal({ state, side, defenderSide }: HatsuImpactContext): FightState {
 
 function stamp(context: HatsuImpactContext): FightState {
   const { state, side, defenderSide, moveId } = context
-  const owner = state[side]
-  // H uses the free left hand while the book is held, the right hand once closed.
-  const moon = moveId === CHROLLO_SECONDARY && !owner.chrolloBook?.open
+  if (!sunMoonStrikeHandReady(state, side, moveId)) return state
+  const moon = sunMoonStrikeMark(state[side], moveId) === 'moon'
   const target = state[defenderSide]
   const mark = moon ? 'moonMark' : 'sunMark'
   const marked = { ...target, hatsuEffects: { ...target.hatsuEffects, [mark]: 1 } }

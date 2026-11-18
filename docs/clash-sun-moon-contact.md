@@ -74,6 +74,25 @@ frontière couvrent les replays complets de P1 et P2, leur vue privée et le
 protocole. Le contrôle navigateur exerce les deux marques pour chaque joueur
 aux largeurs 1100, 390 et 320 pixels, avec arrêt partiel puis charge complète.
 
+## Frappes natives — ruleset 76
+
+Les coups natifs de Sun and Moon vérifient maintenant la main requise avant
+l’admission et à nouveau au moment du marquage. Le catalogue de coups annonce
+la même disponibilité. Un téléphone tenu dans cette main ou un avant-bras
+manquant interdit la technique sans dépense d’aura. Une blessure acquise après
+l’admission empêche aussi l’application de la marque à l’impact.
+
+Le Soleil principal conserve la main gauche, même livre fermé avec signet ;
+la Lune secondaire utilise la main droite une fois le livre fermé. Tenir un
+objet dans l’autre main n’interdit pas automatiquement le geste. Les changements
+de page restent distincts de ces frappes. Le On est conservé.
+
+Dix-huit tests vérifient les deux joueurs, les deux frappes, la disponibilité
+publique, le téléphone matériel, les avant-bras et le contrôle à l’impact.
+La séquence Soleil, fermeture du livre puis Lune reste jouable dans le moteur.
+Les emplacements précis des marques et les combinaisons des marionnettes restent
+à compléter ; cette passe ne certifie pas l’ensemble des quarante arsenaux à 100 %.
+
 ## Références et vérification
 
 Le [chapitre 351](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-351/chapter/10532)

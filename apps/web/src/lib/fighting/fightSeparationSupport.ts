@@ -1,18 +1,23 @@
 import { Quaternion, Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
-import { fightRigOf } from './fightRig'
+import { fightRigOf, type FightRig } from './fightRig'
 import { reachLimb } from './fightLimbReach'
+import { supportCycle } from './fightSupportCycle'
 import type { ArcadeFighter } from './types'
 
-interface Support {
+interface Foot {
   anchor: Vector3
-  index: number
-  frame: number
+  from?: Vector3
+  destination?: Vector3
   age: number
-  step?: Vector3
+}
+interface Support {
+  feet: Foot[]
+  frame: number
+  ground: number
 }
 
-/** Scene-owned foot support survives Nen rebuilds and releases through an articulated catching step. */
+/** Stable two-foot support: the drive changes legs deliberately, instead of choosing the lowest foot each render. */
 export function createSeparationSupport() {
   let support: Support | undefined
   return (figure: Object3D, fighter: ArcadeFighter, timing: { frame: number; frozen: boolean }) => {
@@ -23,25 +28,33 @@ export function createSeparationSupport() {
     }
     const rig = fightRigOf(human)
     const soles = rig.ankles.map((ankle) => ankle.getWorldPosition(new Vector3()))
-    const index = soles[0].y <= soles[1].y ? 0 : 1
-    if (!support || index !== support.index || timing.frame < support.frame)
-      support = { anchor: soles[index].clone(), index, frame: timing.frame, age: 0 }
+    if (!support || timing.frame < support.frame)
+      support = {
+        feet: soles.map((anchor) => ({ anchor: anchor.clone(), age: 0 })),
+        frame: timing.frame,
+        ground: Math.min(...soles.map((p) => p.y)),
+      }
     const dt = timing.frozen ? 0 : Math.max(0, timing.frame - support.frame)
     support.frame = timing.frame
-    const sole = soles[index]
-    if (!support.step && support.anchor.distanceTo(sole) > 0.18) {
-      support.step = sole.clone()
-      support.age = 0
+    const cycle = supportCycle(fighter)
+    for (const [index, foot] of support.feet.entries()) {
+      if (cycle.free === index) {
+        releaseFoot(foot, soles[index], support.ground)
+        continue
+      }
+      const target = supportTarget(foot, soles[index], {
+        dt,
+        ground: support.ground,
+        planted: cycle.support === index,
+      })
+      pinFoot(rig, index, { target, pivot: cycle.support === index ? cycle.pivot : 0 })
     }
-    const target = supportTarget(support, dt)
-    target.y = Math.max(target.y, sole.y)
-    const ankle = rig.ankles[index]
-    const flat = ankle.getWorldQuaternion(new Quaternion())
-    reachLimb({ root: human.legs[index], hinge: human.knees[index], end: ankle }, target)
-    ankle.quaternion.copy(
-      ankle.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(flat),
-    )
   }
+}
+
+function releaseFoot(foot: Foot, sole: Vector3, ground: number) {
+  foot.anchor.set(sole.x, ground, sole.z)
+  foot.destination = undefined
 }
 
 function groundedSupport(fighter: ArcadeFighter): boolean {
@@ -49,20 +62,44 @@ function groundedSupport(fighter: ArcadeFighter): boolean {
     fighter.y <= 0 &&
     fighter.health > 0 &&
     !['down', 'ko', 'wakeup', 'walk'].includes(fighter.pose) &&
+    !fighter.motion?.dash &&
     !fighter.hanzoProjection &&
     !fighter.luiniPassage
   )
 }
 
-function supportTarget(support: Support, dt: number): Vector3 {
-  if (!support.step) return support.anchor.clone()
-  support.age += dt
-  const p = Math.min(1, support.age / 9)
-  const target = support.anchor.clone().lerp(support.step, p * p * (3 - 2 * p))
-  target.y += Math.sin(Math.PI * p) * 0.055
+function supportTarget(
+  foot: Foot,
+  sole: Vector3,
+  timing: { dt: number; ground: number; planted: boolean },
+): Vector3 {
+  const drift = Math.hypot(sole.x - foot.anchor.x, sole.z - foot.anchor.z)
+  const wantsStep = drift > (timing.planted ? 0.28 : 0.14)
+  if (!foot.destination && wantsStep) {
+    foot.from = foot.anchor.clone()
+    foot.destination = new Vector3(sole.x, timing.ground, sole.z)
+    foot.age = 0
+  }
+  if (!foot.destination) return foot.anchor.clone()
+  foot.age += timing.dt
+  const p = Math.min(1, foot.age / 9)
+  const target = foot.from!.clone().lerp(foot.destination, p * p * (3 - 2 * p))
+  target.y = timing.ground + Math.sin(Math.PI * p) * 0.065
   if (p === 1) {
-    support.anchor.copy(support.step)
-    support.step = undefined
+    foot.anchor.copy(foot.destination)
+    foot.destination = undefined
   }
   return target
+}
+
+function pinFoot(rig: FightRig, index: number, input: { target: Vector3; pivot: number }) {
+  const ankle = rig.ankles[index]
+  const flat = ankle.getWorldQuaternion(new Quaternion())
+  reachLimb(
+    { root: rig.human.legs[index], hinge: rig.human.knees[index], end: ankle },
+    input.target,
+  )
+  const turn = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), input.pivot)
+  flat.premultiply(turn)
+  ankle.quaternion.copy(ankle.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(flat))
 }

@@ -15,3 +15,15 @@ reconstructions Nen ; un nouveau geste la recalcule depuis la dernière pose.
 Les bras gardent leur chorégraphie et les techniques aériennes restent dédiées.
 `fightContactPosture.test.ts` vérifie les quarante entrées, le contact, le hitstop
 et le retour final, sans ralentir le simulateur.
+
+## 2. Poussée, transfert et freinage
+
+`fightSupportCycle.ts` choisit délibérément la jambe arrière de préparation,
+puis la jambe avant de réception. Une jambe qui frappe est libérée tandis que
+l’autre reste en appui. `fightStrikeSupport.ts` conserve la poussée du profil
+personnel au contact et fait conduire les épaules par la rotation du bassin.
+`fightSeparationSupport.ts` mémorise les deux semelles, conserve leur hauteur
+et accompagne les déplacements plus grands par un pas articulé. Il respecte
+les sauts, déplacements, passages et hitstop. `fightSupportCycle.test.ts` couvre
+les quarante styles et les deux orientations ; les tests de semelles mesurent
+leur position réelle et l’absence d’étirement des segments.

@@ -1,3 +1,5 @@
+import { aiMoveInRange } from '../movesetAi'
+import { personalTacticalPlan } from '../nenTacticalIntent'
 import { comboChoices } from '../comboChoices'
 import { canAct } from '../fightActorState'
 import { canStartFighterAttack } from '../fighterAttacks'
@@ -28,7 +30,7 @@ export function createFastController(side: FightSide, seed = 17) {
     return sequence / 4294967296
   }
   return (state: FightState, plan: TacticalPlan): FastDecision => {
-    plan = executablePlan(state, side, plan)
+    plan = resolvedTacticalPlan(state, side, plan)
     if (round !== state.roundNumber) {
       round = state.roundNumber
       due = 12
@@ -102,7 +104,7 @@ function plannedMove(context: Context, plan: TacticalPlan): FighterMove | null {
   const move = moveForSlot(context.state[context.side].id, plan.move as MoveSlot)
   if (!allowed(context, move)) return null
   if (move.category === 'normal') return inReach(context, move) ? move : null
-  if (move.tuning.reach > 0 && !inReach(context, move)) return null
+  if (!inPersonalReach(context, move)) return null
   return move
 }
 function inReach(context: Context, move: FighterMove): boolean {
@@ -139,4 +141,21 @@ function moveCommand(
   const action =
     move.category === 'finisher' || move.category === 'throw' ? move.category : move.kind
   return { kind: 'move', side, action: action as MoveAction, input: packReplayInput(input) }
+}
+
+function resolvedTacticalPlan(
+  state: FightState,
+  side: FightSide,
+  plan: TacticalPlan,
+): TacticalPlan {
+  const personal = personalTacticalPlan(state, side, plan)
+  return state[side].nenTactics?.goal === 'recover'
+    ? personal
+    : executablePlan(state, side, personal)
+}
+
+function inPersonalReach(context: Context, move: FighterMove): boolean {
+  const { state, side } = context
+  const target = state[side === 'player' ? 'opponent' : 'player']
+  return seesCombatBody(state[side]) && aiMoveInRange(move, Math.abs(state[side].x - target.x))
 }

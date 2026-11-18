@@ -14,7 +14,7 @@ export function advancedOpponentNen(state: FightState): FightState | null {
 function defaultOpponentNen(state: FightState): FightState | null {
   const fighter = state.opponent
   const target = state.player
-  if (fighter.aura < 30) return null
+  if (!canMaintain(fighter)) return null
   if (!seesCombatBody(fighter))
     return enProfile(fighter).radiusUnits !== null && state.frame % 180 < 24
       ? hold(state, { en: true })
@@ -39,4 +39,8 @@ function hiddenThreat(state: FightState): boolean {
 
 function hold(state: FightState, input: Partial<FightInput>): FightState {
   return { ...state, opponent: applyAuraContext(state.opponent, { ...EMPTY_INPUT, ...input }) }
+}
+
+function canMaintain(fighter: FightState['opponent']): boolean {
+  return fighter.aura >= 30 && fighter.nenTactics?.goal !== 'recover'
 }

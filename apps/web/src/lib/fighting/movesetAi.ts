@@ -27,7 +27,7 @@ export function chooseMovesetAttack(
   )
 }
 
-function aiMoveInRange(move: FighterMove, gap: number): boolean {
+export function aiMoveInRange(move: FighterMove, gap: number): boolean {
   if (move.tuning.damage === 0 || move.tuning.reach === 0) return true
   // These attacks release travelling matter or aura, rather than a melee hitbox.
   if (move.kind === 'special' && /^(franklin|theta|kalluto|leorio):/.test(move.id)) return true

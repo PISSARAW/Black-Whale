@@ -22,7 +22,8 @@ export function prioritiseNenSlots(
     const close =
       doctrine.affinity === 'enhancer' && context.gap <= 9 && move?.kind === 'heavy' ? 1 : 0
     const distant = rangedPreference(context, slot) ? 1 : 0
-    return { slot, index, score: weak + close + distant }
+    const personal = personalPreference(fighter, slot)
+    return { slot, index, score: personal + weak + close + distant }
   })
   return scored.sort((a, b) => b.score - a.score || a.index - b.index).map((item) => item.slot)
 }
@@ -52,5 +53,15 @@ export function doctrineOpponentNen(state: FightState): FightState | null {
 }
 
 function canPrepare(fighter: ArcadeFighter): boolean {
-  return !fighter.attack && !fighter.blocking && !fighter.hitStun && seesCombatBody(fighter)
+  return (
+    fighter.nenTactics?.goal !== 'recover' &&
+    !fighter.attack &&
+    !fighter.blocking &&
+    !fighter.hitStun &&
+    seesCombatBody(fighter)
+  )
+}
+
+function personalPreference(fighter: ArcadeFighter, slot: MoveSlot): number {
+  return fighter.nenTactics?.slots.includes(slot) ? 4 : 0
 }

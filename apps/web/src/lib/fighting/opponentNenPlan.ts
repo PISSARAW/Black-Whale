@@ -14,8 +14,8 @@ export function planOpponentNen(state: FightState): FightState {
   if (judgmentForbidsNen(opponent) || chainsImmobilize(opponent))
     return applyOpponentAura(state, { aura: true, down: true })
   if (opponent.hanzoProjection) return state
-  if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
-  if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
+  const rest = tacticalRest(opponent, gap)
+  if (rest) return applyOpponentAura(state, rest)
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
   if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
   return advancedOpponentNen(state) ?? restingOpponentNen(state, gap)
@@ -29,8 +29,16 @@ function applyOpponentAura(
   return { ...state, opponent: applyAuraContext(state.opponent, input) }
 }
 
-const needsZetsu = (fighter: ArcadeFighter) => fighter.aura < 16 && fighter.nen.mode !== 'zetsu'
-const canLeaveZetsu = (fighter: ArcadeFighter) => fighter.nen.mode === 'zetsu' && fighter.aura > 48
+function tacticalRest(fighter: ArcadeFighter, gap: number): Partial<FightInput> | null {
+  if (needsZetsu(fighter, gap)) return { aura: true, down: true }
+  return canLeaveZetsu(fighter, gap) ? {} : null
+}
+const needsZetsu = (fighter: ArcadeFighter, gap: number) =>
+  (fighter.aura < 16 || fighter.nenTactics?.goal === 'recover') &&
+  fighter.nen.mode !== 'zetsu' && gap > 24
+const canLeaveZetsu = (fighter: ArcadeFighter, gap: number) =>
+  fighter.nen.mode === 'zetsu' &&
+  (fighter.aura >= (fighter.nenTactics?.reserve || 49) || (gap <= 24 && fighter.aura >= 16))
 const needsKen = (state: FightState, gap: number) =>
   seesCombatBody(state.opponent) &&
   !state.player.attack?.concealed &&

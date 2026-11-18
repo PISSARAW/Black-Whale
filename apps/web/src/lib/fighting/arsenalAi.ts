@@ -14,10 +14,11 @@ export const ARSENAL_AI: Partial<Record<FighterId, ArsenalAiPlan>> = {
 export function arsenalAttackSlots(context: ArsenalAiContext): readonly MoveSlot[] {
   if (context.state.opponent.y > 0) return martialSlots(context)
   const plan = ARSENAL_AI[context.state.opponent.id]
+  const intent = context.state.opponent.nenTactics
   return prioritiseCommitmentPunish(
     context,
     prioritiseNenSlots(context, [
-      ...new Set([...(plan?.(context) ?? []), ...martialSlots(context)]),
+      ...new Set([...(intent?.slots ?? plan?.(context) ?? []), ...martialSlots(context)]),
     ]),
   )
 }

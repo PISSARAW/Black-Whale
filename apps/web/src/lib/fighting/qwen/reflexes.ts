@@ -17,7 +17,7 @@ export function reflexInput(state: FightState, side: FightSide, plan: TacticalPl
   const input = { ...EMPTY_INPUT }
   if (!seesCombatBody(self)) return { ...input, gyo: plan.nen === 'gyo', en: plan.nen === 'en' }
   const gap = Math.abs(target.x - self.x)
-  const desired = desiredRange(state, side, plan)
+  const desired = tacticalRange(state, side, plan)
   const direction = Math.sign(target.x - self.x)
   if (gap > desired + 2) Object.assign(input, horizontal(direction))
   if (gap < desired - 3) Object.assign(input, horizontal(-direction))
@@ -99,4 +99,9 @@ function applyHeldNen(
     input.aura = true
     input.hatsu = true
   }
+}
+
+function tacticalRange(state: FightState, side: FightSide, plan: TacticalPlan): number {
+  const range = state[side].nenTactics?.range
+  return range ? (range[0] + range[1]) / 2 : desiredRange(state, side, plan)
 }

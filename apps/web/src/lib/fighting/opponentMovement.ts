@@ -59,9 +59,10 @@ function opponentTarget(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFi
 }
 
 function opponentMotion(fighter: ArcadeFighter, gap: number): number {
-  return returningToBody(fighter)
-    ? 1
-    : nenSpacingDirection(fighter, { gap, health: healthPercent(fighter) })
+  if (returningToBody(fighter)) return 1
+  const range = fighter.nenTactics?.range
+  if (range) return gap < range[0] ? -1 : gap > range[1] ? 1 : 0
+  return nenSpacingDirection(fighter, { gap, health: healthPercent(fighter) })
 }
 
 function opponentGuardState(

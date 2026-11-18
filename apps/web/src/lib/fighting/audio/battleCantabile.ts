@@ -6,11 +6,8 @@ export function battleMusicEvents(
   after: FightState,
   side: FightSide,
 ): FightSoundEvent[] {
-  const battle = after[side].battleCantabile
-  const sounding =
-    battle?.preparation ||
-    battle?.prologue ||
-    after.projectiles.some((shot) => shot.jupiter && shot.owner === side)
+  // The articulated body has sustained voices; this cue belongs only to the existing Jupiter.
+  const sounding = after.projectiles.some((shot) => shot.jupiter && shot.owner === side)
   if (!sounding || Math.floor(before.frame / 15) === Math.floor(after.frame / 15)) return []
   return [
     {

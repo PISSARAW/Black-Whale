@@ -702,6 +702,10 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   inventée. `battleCantabileAction.ts`, `battleCantabileFrame.ts`,
   `battleConversation.ts`, `jupiterFlight.ts` et `bonolenov.test.ts` portent ces
   règles ; `ui-tests/bonolenov` et `scripts/check-bonolenov.mjs` vérifient le rendu.
+  La [révision du combat et ses références vidéo minutées](./BONOLENOV_COMBAT.md)
+  détaille les appuis alternés, les pivots et l'estoc de la main droite. Les
+  orifices restent découverts entre les coups ; leur chant synthétisé suit aussi
+  les frappes et les déplacements, puis s'éteint au repos ou sur interruption.
 - Leorio fait exception au format de quinze coups : dix coups physiques ordinaires
   et un seul Hatsu attesté, le poing transmis par une surface (chapitre 325).
   `leorioMoveset.ts` retire les variantes médicales, la double émission et le finisher.

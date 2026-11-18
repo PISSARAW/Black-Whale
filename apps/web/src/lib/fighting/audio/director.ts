@@ -1,4 +1,5 @@
 import { createMelodyVoices } from './melody'
+import { createBonolenovVoices } from './bonolenov'
 import { NEN_PRESENTATION } from '@black-whale/nen-engine'
 import { sharedAudioContext } from '$lib/audio/context'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
@@ -71,12 +72,14 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
   let mix = createFightMix(context, initial.environment.stageId)
   let stages = stageVoices(mix)
   let melodies = createMelodyVoices(mix)
+  let bodyMusic = createBonolenovVoices(mix)
   let auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   let previous: FightState | null = null
   let active = true
   let disposed = false
   const stop = () => {
     melodies.stop()
+    bodyMusic.stop()
     stages.forEach((voice) => voice.stop())
     Object.values(auras).forEach((voices) => Object.values(voices).forEach((voice) => voice.stop()))
     mix.dispose()
@@ -86,6 +89,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     mix = createFightMix(context, state.environment.stageId)
     stages = stageVoices(mix)
     melodies = createMelodyVoices(mix)
+    bodyMusic = createBonolenovVoices(mix)
     auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   }
   const update: FightAudioDirector['update'] = (state, options) => {
@@ -95,6 +99,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     active = active && saiyuAudioEnabled(state, options.viewer)
     mix.setActive(active)
     melodies.update(state, active)
+    bodyMusic.update(state, active)
     updateLevels(mix, { state, settings: options.settings, viewer: options.viewer })
     updateStagePressure(mix, stages, state)
     for (const side of ['player', 'opponent'] as const)

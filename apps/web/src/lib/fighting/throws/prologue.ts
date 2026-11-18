@@ -25,6 +25,8 @@ export function poseThrowPrologue(
   const axis = new Vector3(frame.facing, -0.12, 0.15).normalize()
   const grip = contact.clone().addScaledVector(axis, -0.55)
   reachLimb({ root: hero.arms[1], hinge: rig.elbows[1], end: rig.wrists[1] }, grip)
+  // This cinematic aims the wrist's +Z axis; restore the shaft's matching local axis.
+  spear.rotation.set(Math.PI / 2, 0, 0)
   const world = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), axis)
   rig.wrists[1].quaternion.copy(
     rig.wrists[1].parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world),

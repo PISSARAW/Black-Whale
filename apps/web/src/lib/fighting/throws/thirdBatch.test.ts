@@ -6,6 +6,7 @@ import { attackData } from '../frameData'
 import { confirmedThrow } from '../throwCinematic'
 import { throwBodyPosition } from '../throwCinematicMotion'
 import { buildFightFigure } from '../fighterFigure'
+import { fightBodyMotion } from '../fightBodyMotion'
 import { fightWorldX, fightWorldY } from '../fightCoordinates'
 import { selectThrowPerformance } from './selection'
 import { createThrowTextiles } from './textiles'
@@ -178,10 +179,21 @@ describe('third batch: personal equipment follows real combat resources', () => 
         expect(state[side].aura).toBeLessThanOrEqual(prologue ? 40 : 75)
         const view = renderer(state),
           before = structuredClone(state)
+        view.figures[side].animate(1, 'idle', {
+          transitionSeconds: 0,
+          motion: fightBodyMotion({ fighter: state[side], seconds: 1, progress: 0 }),
+        })
         view.sync()
         expect(Boolean(view.figures[side].root.getObjectByName('bonolenov-prologue-spear'))).toBe(
           prologue,
         )
+        if (prologue) {
+          const spear = view.figures[side].root.getObjectByName('bonolenov-prologue-spear')!
+          const origin = spear.getWorldPosition(new THREE.Vector3())
+          const tip = spear.localToWorld(new THREE.Vector3(0, 1.59, 0))
+          const axis = new THREE.Vector3(confirmedThrow(state)!.facing, -0.12, 0.15).normalize()
+          expect(tip.sub(origin).normalize().dot(axis)).toBeGreaterThan(0.99)
+        }
         expect(state).toEqual(before)
         expect(state.projectiles).toHaveLength(0)
         view.dispose()

@@ -6,6 +6,8 @@ export interface BattleModel {
   spoken: boolean
 }
 export interface BattleCantabile {
+  /** Presentation state: removed wrappings stay off until the next round. */
+  unwrapped?: boolean
   models: Partial<Record<FighterId, BattleModel>>
   preparation: {
     piece: BattlePiece

@@ -1093,3 +1093,23 @@ dans `lynchFatalityFilm.ts`, avec réponses privées et K.-O. natif.
 Depuis `apps/web` : `node scripts/render-lynch-fatality.mjs`. Depuis la racine :
 `node apps/web/scripts/compose-lynch-fatality.mjs`. Sortie 1080p30 :
 `output/fighting-lynch-fatality/Lynch-Fatality-10s.mp4`.
+
+## Luini — La mauvaise porte
+
+`luini-fatality.html` : dix secondes de passage personnel, retour dans une
+pièce fermée, traque et embuscade au couteau. La cible ouvre la porte et
+condamne l’ancrage avant le coup final. Paramètres `target`, `stage`,
+`side=opponent`, `reduced`. Preuve native dans `luiniFatalityFilm.ts`.
+Depuis `apps/web` : `node scripts/render-luini-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-luini-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-luini-fatality/Luini-Fatality-10s.mp4`.
+
+## Basho — Le dernier vers
+
+`basho-fatality.html` : dix secondes de Great Hiker, écriture du poème, trois
+contacts du poing, incendie et lecture finale. Paramètres `target`, `stage`,
+`side=opponent`, `reduced`. La preuve native `bashoFatalityFilm.ts` gagne par
+les pulsations de brûlure après un vrai contact, sur une cible encore vivante.
+Depuis `apps/web` : `node scripts/render-basho-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-basho-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-basho-fatality/Basho-Fatality-10s.mp4`.

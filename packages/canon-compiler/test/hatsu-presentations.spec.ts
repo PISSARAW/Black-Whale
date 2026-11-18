@@ -90,14 +90,18 @@ describe('compiling client-safe ability presentations', () => {
     expect(compiled.problems).toContainEqual(expect.stringContaining('CanonSourceRef'))
   })
 
-  it('publishes the three supported Door actions and preserves other wheels’ coverage', () => {
+  it('publishes Door actions with the LSDF refusal and preserves other wheels’ coverage', () => {
     for (const presentation of result.presentations) {
       if (presentation.abilityId === 'voconte-hideout-doors') {
         expect(presentation.actions.map(({ entry }) => entry.id).sort()).toEqual([
           'close-door',
           'open-door',
+          'transport-lsdf-guard',
           'walk-through',
         ])
+        expect(
+          presentation.actions.find(({ entry }) => entry.id === 'transport-lsdf-guard'),
+        ).toMatchObject({ entry: { visibility: 'locked' }, plan: { status: 'LOCKED' } })
         continue
       }
       expect(presentation.actions.length, presentation.abilityId).toBeGreaterThanOrEqual(4)

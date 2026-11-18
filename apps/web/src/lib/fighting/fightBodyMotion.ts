@@ -22,6 +22,8 @@ import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
 import { strikePresentationFrame } from './fightStrikeRhythm'
 import { strikeSupportPose } from './fightStrikeSupport'
+import { strikeSilhouette } from './fightStrikeSilhouette'
+import { postureSupportLeg } from './fightSupportCycle'
 import { closeBodyPlan } from './fightClosePosture'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
@@ -349,6 +351,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       }),
       attackMotionAccent({ fighter, frames, authored, frame: at }),
       strikeSupportPose(fighter, { transfer, frame: at, frames }),
+      strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
@@ -360,6 +363,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       startup: frames.startup,
       active: frames.active,
       recovery: frames.recovery,
+      supportLeg: postureSupportLeg(fighter),
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,

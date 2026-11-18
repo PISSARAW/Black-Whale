@@ -6,6 +6,7 @@ export interface AttackFlowFrame {
   startup: number
   active?: number
   recovery?: number
+  supportLeg?: 'lead' | 'rear'
   loadAt?: number
   facing: 1 | -1
   contact?: FightPose

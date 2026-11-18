@@ -5,6 +5,7 @@ import { performAuraAttack } from './engine'
 import { moveForSlot } from './movesets'
 import { attackData } from './frameData'
 import { attackTransfer } from './fightAttackWeight'
+import { fightStrikeLimb } from './fightStrikeLimb'
 import { supportCycle } from './fightSupportCycle'
 import { strikeSupportPose } from './fightStrikeSupport'
 
@@ -41,8 +42,11 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
     for (const facing of [1, -1] as const) {
       const incoming = { ...fighter, facing }
       const cycle = supportCycle(incoming)
-      if (cycle.free !== undefined) expect(cycle.support).not.toBe(cycle.free)
-      else {
+      if (cycle.free !== undefined) {
+        expect(cycle.support).not.toBe(cycle.free)
+        const limb = fightStrikeLimb(incoming, 'feet')
+        if (limb !== 'both') expect(cycle.free).toBe(limb === 'left' ? 0 : 1)
+      } else {
         expect(cycle.support).toBe(facing === 1 ? 0 : 1)
         const driven = supportCycle({
           ...incoming,

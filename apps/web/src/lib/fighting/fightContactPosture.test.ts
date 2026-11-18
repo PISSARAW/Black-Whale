@@ -43,6 +43,10 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
       contactPlan.pose.leadKnee![0] + contactPlan.pose.rearKnee![0] + 0.4,
     )
     expect(contact.leadShoulder).toEqual(contactPlan.pose.leadShoulder)
+    if (attack.supportLeg) {
+      const free = attack.supportLeg === 'lead' ? 'rearKnee' : 'leadKnee'
+      expect(contact[free]).toEqual(contactPlan.pose[free])
+    }
     expect(flow(contactPlan, 99)).toEqual(contact)
     const end = at(attack.startup + attack.active! + attack.recovery!)
     expect(withContactPosture(end, posture).pose).toEqual(end.pose)

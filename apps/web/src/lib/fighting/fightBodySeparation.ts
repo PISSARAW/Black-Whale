@@ -36,25 +36,28 @@ export function createFightBodySeparation(figureOf: (side: FightSide) => Object3
     retainOffsets(offsets, state, dt)
     roots.player.position.x += offsets.player
     roots.opponent.position.x += offsets.opponent
+    supportBodies({ supports, prepare: true }, state, figureOf)
     const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
     const shifts = displaceCores(roots, state, needed * direction)
     offsets.player += shifts.player
     offsets.opponent += shifts.opponent
-    supportBodies(supports, state, figureOf)
+    supportBodies({ supports }, state, figureOf)
   }
 }
 
 function supportBodies(
-  supports: ReturnType<typeof makeSupports>,
+  options: { supports: ReturnType<typeof makeSupports>; prepare?: boolean },
   state: FightState,
   figureOf: (side: FightSide) => Object3D,
 ) {
-  for (const side of ['player', 'opponent'] as const)
-    supports[side](figureOf(side), state[side], {
+  for (const side of ['player', 'opponent'] as const) {
+    const update = options.prepare ? options.supports[side].prepare : options.supports[side]
+    update(figureOf(side), state[side], {
       frame: state.frame,
       frozen: state.hitstop > 0,
       rival: figureOf(side === 'player' ? 'opponent' : 'player'),
     })
+  }
 }
 
 /** Only an actually projected vessel is immaterial; Ren, In, armour and ordinary invulnerability are not. */

@@ -27,6 +27,13 @@ et accompagne les déplacements plus grands par un pas articulé. Il respecte
 les sauts, déplacements, passages et hitstop. `fightSupportCycle.test.ts` couvre
 les quarante styles et les deux orientations ; les tests de semelles mesurent
 leur position réelle et l’absence d’étirement des segments.
+`fightSupportDepth.ts` conserve la flexion du genou en abaissant le bassin avant
+la séparation des corps, puis les semelles sont fixées après cette séparation.
+La jambe qui frappe garde sa chorégraphie. `fightSupportDepth.test.ts` mesure
+le bassin présenté sur les quarante corps et après reconstruction du modèle Nen.
+La continuité du roster possède son interpolation : `sceneMotion.ts` évite une
+seconde transition du modèle générique, qui réintroduisait la garde pendant
+une image à chaque changement de géométrie d’aura.
 
 ## 3. Impulsions et chutes directionnelles
 
@@ -55,3 +62,15 @@ Les frappes, projections, chopes et passages dédiés conservent leur liberté.
 Le contrôle ne constitue pas une simulation de tous les triangles de vêtements.
 `fightContactStability.test.ts` mesure le maintien du contact, la stabilité des
 corrections entre les rôles et l’écartement des pieds, sans modifier le replay.
+
+## 5. Poses fortes et contraste du rythme
+
+`fightStrikeSilhouette.ts` distingue les préparations, contacts et freinages
+selon la forme du coup et les poses personnelles de chaque combattant. Crochets,
+montées, marteaux, percées et coups de pied ont des accents différents, avec une
+amplitude plus grande pour les lourds. Les images actives conservent leur pose.
+Un lourd confirmé maintient brièvement le contact au début de sa récupération
+existante, puis rejoint sa sortie et sa garde avant la fin du même compteur.
+Un coup manqué ne reçoit pas ce maintien. Aucun hitstop, cancel, délai de commande
+ou résultat du moteur ne change. `fightStrikeSilhouette.test.ts` vérifie les
+quarante styles, les phases et les durées, avec les autres tests de rythme.

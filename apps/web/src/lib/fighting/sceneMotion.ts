@@ -2,6 +2,7 @@ import type { HumanPose } from '$lib/tour/humanAnimation'
 import type { HumanFigure } from '$lib/tour/humanFigure'
 import { attackProgress } from './frameData'
 import { jumpProgress } from './fighterMovement'
+import { physicalRosterPair } from './fightPhysicalRoster'
 import { KO_DURATION } from './fightMoves'
 import type { ArcadeFighter, FightSide, FighterPose } from './types'
 
@@ -37,6 +38,8 @@ const SNAP_POSES: ReadonlySet<FighterPose> = new Set(['light', 'heavy', 'special
 const SLOW_POSES: ReadonlySet<FighterPose> = new Set(['down', 'ko', 'wakeup'])
 
 export function transitionSecondsFor(fighter: ArcadeFighter): number {
+  // Roster plans own their continuity, including the first frame of a rebuilt Nen model.
+  if (physicalRosterPair(fighter.id, fighter.id)) return 0
   if (fighter.attack?.kind === 'light' || fighter.attack?.kind === 'ranged') return 0.008
   if (SNAP_POSES.has(fighter.pose)) return 0.016
   if (SLOW_POSES.has(fighter.pose)) return 0.12

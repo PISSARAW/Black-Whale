@@ -2,6 +2,7 @@ import { Quaternion, Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fightRigOf, type FightRig } from './fightRig'
 import { reachLimb } from './fightLimbReach'
+import { preserveSupportDepth } from './fightSupportDepth'
 import { supportCycle } from './fightSupportCycle'
 import { clearFootTarget } from './fightLimbClearance'
 import type { ArcadeFighter } from './types'
@@ -18,17 +19,24 @@ interface Support {
   ground: number
 }
 
-/** Stable two-foot support: the drive changes legs deliberately, instead of choosing the lowest foot each render. */
+type Timing = { frame: number; frozen: boolean; rival?: Object3D }
+interface Prepared {
+  figure: Object3D
+  frame: number
+  rig: FightRig
+  targets: Vector3[]
+  cycle: ReturnType<typeof supportCycle>
+}
+
+/** Prepare pelvis depth before core separation, then pin the soles after both bodies have been placed. */
 export function createSeparationSupport() {
   let support: Support | undefined
-  return (
-    figure: Object3D,
-    fighter: ArcadeFighter,
-    timing: { frame: number; frozen: boolean; rival?: Object3D },
-  ) => {
+  let prepared: Prepared | undefined
+  const prepare = (figure: Object3D, fighter: ArcadeFighter, timing: Timing) => {
     const human = humanAnimationRig(figure)
     if (!human || !groundedSupport(fighter)) {
       support = undefined
+      prepared = undefined
       return
     }
     const rig = fightRigOf(human)
@@ -42,20 +50,32 @@ export function createSeparationSupport() {
     const dt = timing.frozen ? 0 : Math.max(0, timing.frame - support.frame)
     support.frame = timing.frame
     const cycle = supportCycle(fighter)
-    for (const [index, foot] of support.feet.entries()) {
+    const targets = support.feet.map((foot, index) => {
       if (cycle.free === index) {
-        releaseFoot(foot, soles[index], support.ground)
-        continue
+        releaseFoot(foot, soles[index], support!.ground)
+        return soles[index]
       }
       const target = supportTarget(foot, soles[index], {
         dt,
-        ground: support.ground,
+        ground: support!.ground,
         planted: cycle.support === index,
       })
-      if (timing.rival) clearFootTarget(target, timing.rival, fighter.facing)
+      return timing.rival ? clearFootTarget(target, timing.rival, fighter.facing) : target
+    })
+    prepared = { figure, frame: timing.frame, rig, targets, cycle }
+    preserveSupportDepth(rig, targets, cycle.free)
+  }
+  const sync = (figure: Object3D, fighter: ArcadeFighter, timing: Timing) => {
+    if (!prepared || prepared.figure !== figure || prepared.frame !== timing.frame)
+      prepare(figure, fighter, timing)
+    if (!prepared) return
+    const { rig, targets, cycle } = prepared
+    for (const [index, target] of targets.entries()) {
+      if (cycle.free === index) continue
       pinFoot(rig, index, { target, pivot: cycle.support === index ? cycle.pivot : 0 })
     }
   }
+  return Object.assign(sync, { prepare })
 }
 
 function releaseFoot(foot: Foot, sole: Vector3, ground: number) {

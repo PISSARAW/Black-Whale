@@ -8,6 +8,7 @@ export function contactPostureFrom(from: FightPose, plan: BodyPlan): FightPose |
   if (!plan.plant || !contact || kneeDepth(from) - kneeDepth(contact) < 0.3) return undefined
   const offset: FightPose = {}
   for (const joint of LEGS) {
+    if (!keepsJoint(joint, plan.attackFlow?.supportLeg)) continue
     const a = from[joint] ?? [0, 0, 0],
       b = contact[joint] ?? [0, 0, 0]
     offset[joint] = [bounded((a[0] - b[0]) * 0.82), 0, bounded((a[2] - b[2]) * 0.5)]
@@ -33,5 +34,9 @@ function kneeDepth(pose: FightPose): number {
 }
 
 function bounded(value: number): number {
-  return Math.max(-1.1, Math.min(1.1, value))
+  return Math.max(-1.8, Math.min(1.8, value))
+}
+
+function keepsJoint(joint: string, support?: string): boolean {
+  return !support || joint.startsWith(support)
 }

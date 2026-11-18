@@ -21,8 +21,8 @@ export function strikeSupportPose(
     Math.max(0, (frame - frames.startup - frames.active) / Math.max(1, frames.recovery)),
   )
   const drive = p * p * (3 - 2 * p) * (1 - recovery * recovery * (3 - 2 * recovery))
-  const style = rosterMotionStyle(fighter.id)
-  const rotation = (style?.drive.chest?.[1] ?? -0.12) * 1.3
+  const drivePose: FightPose = rosterMotionStyle(fighter.id)?.drive ?? {}
+  const rotation = (drivePose.chest?.[1] ?? -0.12) * 1.3
   const torque: FightPose = {
     body: [0, rotation * 0.35, 0],
     chest: [0, -rotation * 0.18, 0],

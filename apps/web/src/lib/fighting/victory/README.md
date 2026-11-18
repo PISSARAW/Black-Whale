@@ -1,5 +1,8 @@
 # Cinématiques de victoire de Clash
 
+Sayird : [« Ton angle mort »](./SAYIRD.md) associe Little Eye, un insecte réel,
+six coups natifs et la chute physique du duel, avec un export de dix secondes.
+
 Les cinématiques enregistrées dans `catalogue.ts` se jouent pendant dix secondes
 après le verdict. Le gagnant, le vaincu et le lieu viennent du combat courant,
 pour les deux côtés du duel. Les scènes ne modifient jamais les PV, l’aura,

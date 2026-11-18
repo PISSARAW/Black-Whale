@@ -1019,3 +1019,10 @@ ajoute trois passages, chute, impact, fermeture et Fatality en anglais.
 Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
 contrôlent le rendu et son déclenchement automatique dans Clash.
 Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
+
+## Sayird — Ton angle mort
+
+`sayird-fatality.html` utilise le renderer de victoire du jeu et un vrai K.-O.
+physique enregistré par `sayirdFilm.ts`. Little Eye et l’animal réel fourni sont
+une prémisse de cinématique, sans commande d’activation ajoutée au duel.
+Voir [le dossier Sayird](../../src/lib/fighting/victory/SAYIRD.md).

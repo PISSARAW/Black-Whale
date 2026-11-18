@@ -2,6 +2,7 @@
   import FightHisokaFear from './FightHisokaFear.svelte'
   import FightBeyondCurse from './FightBeyondCurse.svelte'
   import FightGuardVictory from './FightGuardVictory.svelte'
+  import FightSayirdVictory from './FightSayirdVictory.svelte'
   import { isBeyondCurse } from '$lib/fighting/victory/beyondCurseSelection'
   import FightHinrighVictory from './FightHinrighVictory.svelte'
   import FightSaiyuVictory from './FightSaiyuVictory.svelte'
@@ -41,6 +42,7 @@
         {language}
       />{/if}
     {#if frame.fighter === 'hisoka'}<FightHisokaFear elapsed={frame.elapsed} />{/if}
+    {#if frame.fighter === 'sayird'}<FightSayirdVictory elapsed={frame.elapsed} />{/if}
     {#if !curse && frame.fighter === 'tserriednich'}<FightFutureVictory
         elapsed={frame.elapsed}
         {language}

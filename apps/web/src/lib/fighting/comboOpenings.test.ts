@@ -266,7 +266,7 @@ describe.each(Object.keys(ROSTER_TECHNIQUE_BRANCHES) as FighterId[])(
   (id) => {
     it.each([1, -1] as const)('lands with legal resources facing %s', (facing) => {
       for (const [opening, branches] of Object.entries(ROSTER_TECHNIQUE_BRANCHES[id]!)) {
-        const event = opening as ComboOpening
+        const event = opening as keyof typeof OPENERS
         const setup = TECHNIQUE_SETUP[id]
         const hit = OPENERS[event](id, facing, setup)
         const missingResource = id === 'theta' ? { weaponsConfiscated: true } : { aura: 0 }

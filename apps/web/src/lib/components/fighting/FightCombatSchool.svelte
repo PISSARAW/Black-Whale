@@ -11,6 +11,13 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   import type { FightState } from '$lib/fighting/types'
+  import { DEFAULT_WAKEUP, type WakeupSettings } from '$lib/fighting/combatWakeupPractice'
+  import {
+    WAKEUP_POSITIONS,
+    WAKEUP_REACTIONS,
+    WAKEUP_FOLLOWUPS,
+    wakeupPracticeLabel,
+  } from '$lib/fighting/wakeupPracticeLabels'
   export let school: CombatSchool
   export let language: 'fr' | 'en'
   export let expanded = false
@@ -20,6 +27,7 @@
   let selected: CombatFighter = $school ? ($school.id.split(':')[0] as CombatFighter) : 'kurapika'
   const bindings = useFightBindings()
   let catalog: HTMLDetailsElement
+  let wakeupSettings: WakeupSettings = { ...DEFAULT_WAKEUP }
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
   $: current = $school
@@ -76,11 +84,19 @@
       'Coup bloqué : relâche la garde et punis avec ton léger pendant sa récupération.',
       'Attack blocked: release guard and punish with your light during recovery.',
     ],
+    evade: [
+      'Recule dès que le mannequin arme son coup lourd.',
+      'Step back as soon as the dummy winds up its heavy.',
+    ],
+    'whiff-confirm': [
+      'Le coup est passé dans le vide. Rentre et lance le premier coup de la route.',
+      'The heavy missed. Step in and use the first move of the route.',
+    ],
   } as const
-  function launch(id: string, demo = false) {
+  function launch(id: string, demo = false, settings = wakeupSettings) {
     beforeLaunch()
     if (catalog) catalog.open = false
-    onLaunch(school.start(id, demo))
+    onLaunch(school.start(id, demo, settings))
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
   }
   function routeText(id: string) {
@@ -116,7 +132,7 @@
           <summary>{language === 'fr' ? 'Conditions de la route' : 'Route conditions'}</summary>
           <p>{moveInputHint(activeRoute.requirement[index], $bindings)}</p>
         </details>
-        {#if activeRoute.kind === 'punish'}<p>
+        {#if activeRoute.kind === 'punish' && !activeRoute.whiff}<p>
             {language === 'fr'
               ? 'Travaille ici la route après une grosse ouverture. L’exercice Défense enseigne le timing réel de punition.'
               : 'Practice the route after a large opening here. The Defense exercise teaches actual punish timing.'}
@@ -132,8 +148,15 @@
             : 'Punish'} : {$bindings.playerLight}
         </p>{/if}
       <p class:complete={current.complete} class:failed={current.failed} role="status">
-        {cues[current.cue][index]}
+        {current.wakeup ? wakeupPracticeLabel(current.wakeup, index) : cues[current.cue][index]}
       </p>
+      {#if current.wakeup}
+        <p>
+          {language === 'fr' ? 'Distance après le combo' : 'Distance after the combo'} · {current.wakeup.gap.toFixed(
+            1,
+          )}
+        </p>
+      {/if}
       <span
         >{current.step} / {activeRoute?.moves.length ?? 2}
         {#if (activeRoute?.hits?.[current.step] ?? 1) > 1}
@@ -142,10 +165,12 @@
         {/if}
       </span>
       <div class="actions">
-        <button type="button" onclick={() => launch(current!.id)}
+        <button type="button" onclick={() => launch(current!.id, false, current!.wakeupSettings)}
           >{language === 'fr' ? 'Réessayer l’exercice' : 'Retry exercise'}</button
         >
-        {#if activeRoute}<button type="button" onclick={() => launch(current!.id, true)}
+        {#if activeRoute}<button
+            type="button"
+            onclick={() => launch(current!.id, true, current!.wakeupSettings)}
             >{language === 'fr' ? 'Voir la démonstration' : 'Watch demonstration'}</button
           >{/if}
         <button
@@ -180,6 +205,41 @@
         ? 'Le mannequin garde après la première touche : une interruption réelle fait échouer la route. La démonstration utilise les mêmes règles, coûts et commandes que toi.'
         : 'The dummy guards after the first hit: a real gap fails the route. Demonstrations use the same rules, costs and commands as you.'}
     </p>
+    {#if routes.some((route) => route.wakeup)}
+      <fieldset>
+        <legend>{language === 'fr' ? 'Jeu à la relevée' : 'Wakeup practice'}</legend>
+        <label
+          >Position
+          <select bind:value={wakeupSettings.position} aria-label="Position">
+            {#each Object.entries(WAKEUP_POSITIONS) as [value, label] (value)}
+              <option {value}>{label[index]}</option>
+            {/each}
+          </select>
+        </label>
+        <label
+          >{language === 'fr' ? 'Réaction du défenseur' : 'Defender response'}
+          <select
+            bind:value={wakeupSettings.reaction}
+            aria-label={language === 'fr' ? 'Réaction du défenseur' : 'Defender response'}
+          >
+            {#each Object.entries(WAKEUP_REACTIONS) as [value, label] (value)}
+              <option {value}>{label[index]}</option>
+            {/each}
+          </select>
+        </label>
+        <label
+          >{language === 'fr' ? 'Suite en démonstration' : 'Demo follow-up'}
+          <select
+            bind:value={wakeupSettings.followup}
+            aria-label={language === 'fr' ? 'Suite en démonstration' : 'Demo follow-up'}
+          >
+            {#each Object.entries(WAKEUP_FOLLOWUPS) as [value, label] (value)}
+              <option {value}>{label[index]}</option>
+            {/each}
+          </select>
+        </label>
+      </fieldset>
+    {/if}
     <ol>
       {#each routes as route (route.id)}<li>
           <strong>{route.title[index]}</strong>

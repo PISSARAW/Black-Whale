@@ -129,6 +129,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       defence,
       launch: antiAir,
       counter: opening.counterHit,
+      punish: opening.punish,
       wall: wallSplat,
       knockdown,
       hits: comboHits,

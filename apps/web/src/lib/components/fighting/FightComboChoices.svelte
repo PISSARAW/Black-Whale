@@ -17,6 +17,7 @@
     tip: ['Bout de portée', 'Tip hit'],
     'anti-air': ['Anti-air', 'Anti-air'],
     'corner-counter': ['Contre au coin', 'Corner counter'],
+    'whiff-punish': ['Punition après un coup dans le vide', 'Whiff punish'],
   }
   const rewards = {
     knockdown: ['Mise au sol proche', 'Close knockdown'],

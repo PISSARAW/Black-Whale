@@ -2,6 +2,8 @@ import type { ComboOpening } from './comboOpenings'
 import type { RosterFighterId } from './rosterChoreography'
 import type { FighterId, MoveSlot } from './types'
 
+type RosterOpening = Exclude<ComboOpening, 'whiff-punish'>
+
 type PhysicalFollowup = 'standingHeavy' | 'forwardHeavy' | 'backHeavy' | 'lowHeavy' | 'forwardLight'
 type PhysicalBranch = {
   slot: PhysicalFollowup
@@ -25,7 +27,7 @@ function routes(
   tip: PhysicalFollowup,
   antiAir: PhysicalFollowup,
   corner: PhysicalFollowup,
-): Record<ComboOpening, PhysicalBranch> {
+): Record<RosterOpening, PhysicalBranch> {
   return {
     tip: physical(tip),
     'anti-air': physical(antiAir),
@@ -80,13 +82,15 @@ const ROSTER_BRANCHES = {
   yokotani: routes('standingHeavy', 'forwardLight', 'lowHeavy'),
 } satisfies Record<RosterFighterId, ReturnType<typeof routes>>
 
-const PHYSICAL_BRANCHES: Partial<Record<FighterId, Record<ComboOpening, PhysicalBranch>>> =
+const PHYSICAL_BRANCHES: Partial<Record<FighterId, Record<RosterOpening, PhysicalBranch>>> =
   ROSTER_BRANCHES
 
 export function rosterPhysicalBranch(
   id: FighterId,
   opening: ComboOpening,
 ): PhysicalBranch | undefined {
+  // The same advancing strikes that cover tip distance can bridge a retreat.
+  if (opening === 'whiff-punish') return PHYSICAL_BRANCHES[id]?.tip
   return PHYSICAL_BRANCHES[id]?.[opening]
 }
 

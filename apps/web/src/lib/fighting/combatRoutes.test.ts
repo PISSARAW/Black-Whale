@@ -89,7 +89,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
 }
 
 describe('all forty fighters’ combat routes against guard after the first hit', () => {
-  for (const route of COMBAT_ROUTES)
+  for (const route of COMBAT_ROUTES.filter((entry) => !entry.whiff))
     for (const mirrored of [false, true])
       for (const corner of [false, true])
         it.each([4, 6])(`${route.id}, mirrored=${mirrored}, corner=${corner}, gap=%s`, (gap) => {

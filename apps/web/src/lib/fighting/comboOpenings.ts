@@ -1,8 +1,9 @@
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
 import { rosterPhysicalBranch, ROSTER_TECHNIQUE_BRANCHES } from './rosterComboBranches'
+import { WHIFF_PUNISH_VARIANTS } from './whiffPunishVariants'
 
-export type ComboOpening = 'tip' | 'anti-air' | 'corner-counter'
+export type ComboOpening = 'tip' | 'anti-air' | 'corner-counter' | 'whiff-punish'
 
 type OpeningReward =
   | 'knockdown'
@@ -29,9 +30,19 @@ const PERSONAL_BRANCHES: Partial<
       { slot: 'standingHeavy', reward: 'backfist', advance: true },
       { slot: 'forwardSpecial', reward: 'chain' },
     ],
+    'whiff-punish': [
+      { slot: 'lowHeavy', reward: 'knockdown', advance: true },
+      { slot: 'standingHeavy', reward: 'backfist', advance: true },
+      { slot: 'forwardSpecial', reward: 'chain' },
+    ],
   },
   hisoka: {
     'corner-counter': [
+      { slot: 'neutralSpecial', reward: 'attach' },
+      { slot: 'finisher', reward: 'tether' },
+    ],
+    'whiff-punish': [
+      { slot: 'lowHeavy', reward: 'knockdown', advance: true },
       { slot: 'neutralSpecial', reward: 'attach' },
       { slot: 'finisher', reward: 'tether' },
     ],
@@ -46,6 +57,11 @@ const PERSONAL_BRANCHES: Partial<
       { slot: 'neutralSpecial', reward: 'long-burst' },
       { slot: 'downSpecial', reward: 'low-burst' },
     ],
+    'whiff-punish': [
+      { slot: 'standingHeavy', reward: 'advance', advance: true },
+      { slot: 'forwardSpecial', reward: 'short-burst' },
+      { slot: 'downSpecial', reward: 'low-burst' },
+    ],
   },
 }
 
@@ -58,6 +74,7 @@ type Contact = {
   defence: { blocked: boolean; avoided: boolean }
   launch: boolean
   counter: boolean
+  punish: boolean
   wall: boolean
   knockdown: boolean
   hits: number
@@ -82,12 +99,30 @@ function cleanOpener(contact: Contact): boolean {
 }
 
 function groundedOpening(contact: Contact): ComboOpening | undefined {
-  const { attacker } = contact
+  const { attacker, defender } = contact
   if (contact.counter && contact.wall && usesSlot(attacker, 'standingLight'))
     return 'corner-counter'
   if (!usesSlot(attacker, 'forwardLight') && !usesSlot(attacker, 'standingLight')) return
+  if (
+    contact.punish &&
+    missedGroundStrike(defender) &&
+    rosterPhysicalBranch(attacker.id, 'whiff-punish')
+  )
+    return 'whiff-punish'
   const distance = attacker.facing * (contact.position.x - attacker.x)
   if (distance >= contact.reach - 1.5) return 'tip'
+}
+
+function missedGroundStrike(fighter: ArcadeFighter): boolean {
+  const attack = fighter.attack
+  return Boolean(
+    attack &&
+    (attack.kind === 'light' || attack.kind === 'heavy') &&
+    attack.variant !== 'throw' &&
+    attack.variant !== 'air' &&
+    !attack.impacted &&
+    !attack.projectileSpawned,
+  )
 }
 
 function confirmedOpening(fighter: ArcadeFighter): ComboOpening | undefined {
@@ -95,7 +130,13 @@ function confirmedOpening(fighter: ArcadeFighter): ComboOpening | undefined {
 }
 
 function signatureBranches(id: FighterId, opening: ComboOpening): readonly OpeningBranch[] {
-  return PERSONAL_BRANCHES[id]?.[opening] ?? ROSTER_TECHNIQUE_BRANCHES[id]?.[opening] ?? []
+  const personal = PERSONAL_BRANCHES[id]?.[opening]
+  if (personal) return personal
+  if (opening === 'whiff-punish') {
+    const variant = WHIFF_PUNISH_VARIANTS[id]
+    return variant && !variant.via ? [{ slot: variant.slot, reward: 'technique' }] : []
+  }
+  return ROSTER_TECHNIQUE_BRANCHES[id]?.[opening] ?? []
 }
 
 function openingBranches(fighter: ArcadeFighter, opening: ComboOpening): readonly OpeningBranch[] {
@@ -157,7 +198,12 @@ export function openingFrameData(data: AttackFrameData, opening?: ComboOpening):
   }
 }
 
-const STARTUP_CAP: Record<ComboOpening, number> = { tip: 12, 'anti-air': 8, 'corner-counter': 10 }
+const STARTUP_CAP: Record<ComboOpening, number> = {
+  tip: 12,
+  'anti-air': 8,
+  'corner-counter': 10,
+  'whiff-punish': 12,
+}
 
 export function openingStartup(startup: number, opening?: ComboOpening): number {
   return opening ? Math.min(startup, STARTUP_CAP[opening]) : startup

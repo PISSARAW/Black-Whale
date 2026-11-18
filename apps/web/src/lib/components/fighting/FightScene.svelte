@@ -193,6 +193,7 @@
           worldX,
         })
         const fighterEffects = createFighterEffectScene({
+          throwFrame: presentation.throwFrame,
           comfort: visualComfort,
           viewer: () => viewer,
           THREE,
@@ -240,7 +241,7 @@
         fit()
 
         const reactionContext = createFightReactionPresentation()
-        const finishedFall = createFinishedFallPresentation()
+        const finishedFall = createFinishedFallPresentation(presentation.throwFrame)
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
         let motionSeconds = 0

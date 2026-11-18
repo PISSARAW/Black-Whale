@@ -2,6 +2,7 @@ import { bodyPlan, type BodyMotionOptions } from './fightBodyMotion'
 import { lerpPose, type BodyPlan, type FightPose } from './fightPose'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ThrowCinematicFrame } from './throwCinematic'
+import { signatureThrowPlan, signatureThrowPosition } from './throws/motion'
 
 type Position = { x: number; y: number; z?: number }
 const smooth = (value: number) => {
@@ -17,7 +18,10 @@ export function throwBodyPosition(options: {
   fallback: Position
 }): Position {
   const { state, side, frame, fallback } = options
-  if (!frame?.active || side !== frame.victim) return fallback
+  if (!frame?.active) return fallback
+  const signature = signatureThrowPosition({ state, frame, side, fallback })
+  if (signature) return signature
+  if (side !== frame.victim) return fallback
   const t = smooth(frame.age / (frame.duration * 0.78))
   const grip = state[frame.attacker].x + frame.facing * 6.5
   return {
@@ -96,6 +100,8 @@ export function throwBodyPlan(
   const actor = options.side === frame.attacker
   if (actor && !frame.active) return undefined
   if (!actor && !frame.active && options.progress >= 0.5) return undefined
+  const signature = signatureThrowPlan({ motion: options, frame, side: options.side, ordinary })
+  if (signature) return signature
   const pose = actor ? throwingPose(ordinary.pose, progress) : thrownPose(progress)
   return { key: `throw-film:${frame.sequence}:${options.side}`, pose, plant: actor, blend: 0 }
 }

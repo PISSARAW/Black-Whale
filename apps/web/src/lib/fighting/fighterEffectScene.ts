@@ -19,6 +19,7 @@ import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
 import { createChrolloEffectScene } from './chrolloEffectScene'
+import { createThrowSignatureScene } from './throws/scene'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
 import type { FightComfort } from './fightComfort'
@@ -33,6 +34,7 @@ export interface EffectSceneOptions {
   /** Live posed rig; callbacks also follow aura/body rebuilds. */
   figureOf?: (side: FightSide) => import('three').Object3D | undefined
   handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
+  throwFrame?: () => import('./throwCinematic').ThrowCinematicFrame | null
 }
 
 export interface FighterEffectScene {
@@ -63,6 +65,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
   const chrollo = createChrolloEffectScene(options)
+  const throws = createThrowSignatureScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -91,6 +94,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     historicalEquipment.sync(state, seconds)
     chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
+    throws.sync(state, seconds)
   }
 
   return {
@@ -117,6 +121,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       visitHatsu.dispose()
       retrospective.dispose()
       chrollo.dispose()
+      throws.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

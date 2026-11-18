@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightThrowCinematic from './FightThrowCinematic.svelte'
   import { onMount } from 'svelte'
   import { createVictoryPlayback } from '$lib/fighting/victory/playback'
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
@@ -42,6 +43,7 @@
   export let victoryPaused = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
+  let throwFilm = false
   $: victory.observe(state, victoryEnabled)
   $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
@@ -103,7 +105,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive && !$intro}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive && !$intro && !throwFilm}<FightHud state={visibleState} {language} {detailed} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -128,7 +130,7 @@
         <FightTrainingOverlay state={visibleState} {language} />
       {/if}
 
-      {#if visibleState.impact}
+      {#if visibleState.impact && !throwFilm}
         {#key visibleState.impact.sequence}
           {#if comfort.flashes && !visibleState.impact.avoided && !visibleState.impact.invulnerable}<div
               class:blocked={visibleState.impact.blocked}
@@ -146,6 +148,7 @@
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
     <FightIntroduction playback={intro} {state} {language} {paused} />
+    <FightThrowCinematic {state} {comfort} {language} enabled={!$victory?.active && !$intro} bind:active={throwFilm} />
   </div>
   {#if !victoryActive}
     <FightParallelFuture

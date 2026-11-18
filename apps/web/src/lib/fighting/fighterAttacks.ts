@@ -62,6 +62,7 @@ export function startFighterAttack(options: {
   fighter: ArcadeFighter
   kind: AttackKind
   auraCharged: boolean
+  superThrow?: true
   concealed: boolean
   variant?: AttackVariant
   moveId?: string
@@ -75,6 +76,7 @@ export function startFighterAttack(options: {
     ...fighter,
     attack: {
       ...fighter.attack!,
+      superThrow: options.superThrow,
       kind,
       variant: options.variant,
       moveId: options.moveId,
@@ -102,6 +104,7 @@ export function startFighterAttack(options: {
     hatsuChargeFrames: 0,
     attack: {
       moveId: options.moveId,
+      superThrow: options.superThrow,
       ...(comboFollowup ? { comboFollowup } : {}),
       ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
       kind,

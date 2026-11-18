@@ -240,6 +240,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   /** Frame of the current clockwise right-arm rotation; completed turns are stored separately. */
   cyclotronWindup?: { frame: number }
   attack: {
+    superThrow?: true
     copiedPage?: ChrolloPage
     moveId?: string
     variant?: AttackVariant
@@ -261,6 +262,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
     reversal: boolean
   } | null
   bufferedAttack: {
+    superThrow?: true
     directionalChain?: import('./directionalChain').DirectionalChain
     cancelFrom?: string
     copiedPage?: ChrolloPage

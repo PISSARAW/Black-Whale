@@ -1,10 +1,11 @@
 import type { PerspectiveCamera, Object3D, Vector3, Quaternion } from 'three'
 import { introLandmarkBounds, type IntroLandmarkBounds } from './presentation/introLandmarks'
-import { introInFrame } from './presentation/introFreeCamera'
 import type { ThrowCinematicFrame } from './throwCinematic'
 import { throwCinematicPhase } from './throwCinematic'
 import type { FightSide, FightState } from './types'
 import { fightWorldX } from './fightCoordinates'
+import { directedThrowShot, fitThrowShot } from './throws/camera'
+import { throwEquipmentBounds } from './throws/cameraAnchors'
 
 type Models = Record<FightSide, { model: { turns: Object3D } }>
 const cameraStarts = new WeakMap<
@@ -43,27 +44,24 @@ export function applyThrowCamera(
   const returnPose = options.returnToCombat
     ? { position: camera.position.clone(), quaternion: camera.quaternion.clone() }
     : base
-  const bounds = pairBounds(state, options.models)
-  const centre = (bounds.left + bounds.right) / 2
-  const lift = smooth(t / 0.5)
-  const slam = smooth((t - 0.5) / 0.3)
-  const yaw = (0.18 + lift * 0.55 - slam * 0.3) * frame.facing
-  const gaze = 1.15 + lift * 0.3 - slam * 0.9
-  const height = 1.8 + lift * 0.85 - slam * 1.8
-  let radius = Math.max(
-    3.8,
-    options.minimumDistance ?? 0,
-    Math.hypot(base.position.x - centre, base.position.z) * 0.68,
+  const bounds = throwEquipmentBounds(
+    pairBounds(state, options.models),
+    options.models?.[frame.attacker].model.turns,
+    frame,
   )
-  for (let attempt = 0; attempt < 70; attempt++) {
-    camera.position.set(centre + Math.sin(yaw) * radius, height, Math.cos(yaw) * radius)
-    camera.lookAt(centre, gaze, 0)
-    camera.updateMatrixWorld(true)
-    if (introInFrame(camera, { x: centre, height: bounds.top, landmarks: bounds, safeTop: 0.64 }))
-      break
-    radius *= 1.035
-  }
-  const weight = smooth(t / 0.12) * (1 - smooth((t - 0.82) / 0.18)) * intensity
+  const centre = (bounds.left + bounds.right) / 2
+  const shot = directedThrowShot({
+    frame,
+    bounds,
+    models: options.models,
+    minimumDistance: options.minimumDistance,
+    baseRadius: Math.max(
+      options.minimumDistance ?? 0,
+      Math.hypot(base.position.x - centre, base.position.z),
+    ),
+  })
+  fitThrowShot(camera, shot)
+  const weight = (1 - smooth((t - 0.82) / 0.18)) * intensity
   camera.position.lerpVectors(returnPose.position, camera.position.clone(), weight)
   camera.quaternion.slerpQuaternions(returnPose.quaternion, camera.quaternion.clone(), weight)
   camera.updateMatrixWorld(true)
@@ -72,6 +70,9 @@ export function applyThrowCamera(
     age: frame.age,
     attacker: frame.attacker,
     sequence: frame.sequence,
+    performance: frame.performance,
+    powered: frame.powered,
+    shot: shot.beat,
   }
   return true
 }

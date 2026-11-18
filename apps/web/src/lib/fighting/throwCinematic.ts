@@ -1,8 +1,10 @@
 import { attackData } from './frameData'
 import { attackPoseFraction } from './fightAttackTravel'
+import { selectThrowPerformance } from './throws/selection'
+import type { ThrowPerformanceId } from './throws/types'
 import type { FightImpact, FightSide, FightState } from './types'
 
-export const THROW_CINEMATIC_FRAMES = 24
+export const THROW_CINEMATIC_FRAMES = 84
 export interface ThrowCinematicFrame {
   attacker: FightSide
   victim: FightSide
@@ -11,6 +13,10 @@ export interface ThrowCinematicFrame {
   duration: number
   facing: 1 | -1
   active: boolean
+  powered?: boolean
+  performance?: ThrowPerformanceId
+  puppetId?: string
+  future?: { x: number; y: number }
 }
 
 export function throwCinematicPhase(
@@ -33,6 +39,7 @@ export function confirmedThrow(state: FightState): ThrowCinematicFrame | null {
   if (attacker.hanzoProjection || state[victim].hanzoProjection) return null
   const data = attackData(attack.kind, attacker)
   return {
+    ...selectThrowPerformance(state, impact.attacker),
     attacker: impact.attacker,
     victim,
     sequence: impact.sequence,

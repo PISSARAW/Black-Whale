@@ -64,8 +64,10 @@ exécutables, pas à une seconde liste de coups indépendante du moteur.
 `throwCinematic.ts` reconnaît une projection réellement confirmée : impact physique,
 mise au sol, attaque de type projection et absence de garde, esquive, parade ou
 invulnérabilité. Un raté ou une déprojection ne déclenche aucun plan de réussite.
-La prise, le renversement, l'arrivée au sol et le retour au jeu occupent au plus
-24 frames de récupération, sans ajouter d'immobilisation au moteur.
+La prise, le renversement, l'arrivée au sol et le retour au jeu suivent la
+récupération réelle : au moins 54 frames pour la normale et 84 pour la super.
+Les [dix premières paires personnelles](./throws/README.md) relient les vingt
+chorégraphies, leurs accessoires et leurs quatre plans au choix Aura + projection.
 
 `throwCinematicMotion.ts` et `throwPresentationLayer.ts` dessinent une courte
 trajectoire entre la prise et la vraie position de chute. Les corps restent ceux

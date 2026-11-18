@@ -56,6 +56,7 @@ function attackChain(fighter: ArcadeFighter): ChainMotion | null {
 }
 
 function isChainAttack(attack: NonNullable<ArcadeFighter['attack']>): boolean {
+  if (attack.variant === 'throw') return false
   return Boolean(attack.moveId?.startsWith('kurapika:') || attack.hatsuSource === 'kurapika')
 }
 

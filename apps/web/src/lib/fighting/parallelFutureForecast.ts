@@ -82,6 +82,7 @@ function newAttack(
     kind: attack.kind,
     moveId: attack.moveId,
     variant: attack.variant,
+    superThrow: attack.superThrow,
     auraCharged: attack.auraCharged,
   }
 }

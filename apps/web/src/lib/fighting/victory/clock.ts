@@ -26,7 +26,7 @@ export function mountVictoryClock(options: {
     options.playback.skip()
   }
   const tick = (now: number) => {
-    options.playback.advance((now - last) / 1000, hidden || options.paused())
+    options.playback.advance(Math.min(0.1, Math.max(0, (now - last) / 1000)), hidden || options.paused())
     last = now
     const pressed = Boolean(navigator.getGamepads?.()[0]?.buttons[0]?.pressed)
     if (current?.active && pressed && !held && !options.paused()) options.playback.skip()

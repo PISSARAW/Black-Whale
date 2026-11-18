@@ -66,7 +66,7 @@
     >
     <button
       type="button"
-      aria-label={language === 'fr' ? 'Projection / déprojection' : 'Throw / tech'}
+      aria-label={language === 'fr' ? 'Projection / déprojection — maintenir Aura pour une super projection' : 'Throw / tech — hold Aura for a super throw'}
       onclick={onThrow}
       >{$bindings.playerThrow} · {language === 'fr' ? 'Projection' : 'Throw'}</button
     >

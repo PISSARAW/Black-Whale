@@ -1,22 +1,30 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { Scene, type PerspectiveCamera } from 'three'
+  import { Box3, Scene, Vector3, type PerspectiveCamera } from 'three'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
-  import { beginFight, createFight, performThrow, tickFight } from '$lib/fighting/engine'
+  import { beginFight, createFight, performMove, performThrow, tickFight } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
   import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from '$lib/fighting/types'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
-  import { humanAnimationRig } from '$lib/tour/humanAnimation'
+  import { humanAnimationRig, type AnimatedHuman } from '$lib/tour/humanAnimation'
   let state = beginFight(createFight('hisoka', 'kurapika', { mode: 'versus-local' }))
   let comfort = defaultFightComfort()
   let paused = false
   let koEnabled = false
+  let freezeKO = false
   let tape: FightState[] = []
   let audit: {
     phase: string | null
+    performance: string | null
+    powered: boolean
+    shot: string | null
+    effects: string[]
     camera: number[]
     bodies: number[][]
+    origins: number[][]
     finite: boolean
+    scissorsGap: number | null
+    equipment: { staff: boolean; staffBottom: number | null; umbrella: boolean; holstered: boolean; trueForm: boolean }
   } | null = null
   const previous = Scene.prototype.onAfterRender
   Scene.prototype.onAfterRender = function (...args) {
@@ -24,46 +32,96 @@
     if (this.userData.fightView !== 'primary') return
     const camera = args[2] as PerspectiveCamera
     const bodies: number[][] = []
+    const origins: number[][] = []
+    const rigs: AnimatedHuman[] = []
     let finite = true
+    const effects: string[] = []
     this.traverse((node) => {
       finite = finite && node.position.toArray().every(Number.isFinite)
+      if (node.name.startsWith('throw-signature:') && visible(node)) effects.push(node.name)
       const rig = humanAnimationRig(node)
-      if (rig)
+      if (rig) {
+        rigs.push(rig)
+        origins.push(rig.figure.getWorldPosition(rig.figure.position.clone()).toArray())
         bodies.push([
           rig.figure.rotation.x,
           rig.figure.rotation.y,
           rig.figure.rotation.z,
           rig.figure.position.y,
         ])
+      }
     })
     audit = {
       phase: camera.userData.throwCinematic?.phase ?? null,
+      performance: camera.userData.throwCinematic?.performance ?? null,
+      powered: camera.userData.throwCinematic?.powered ?? false,
+      shot: camera.userData.throwCinematic?.shot ?? null,
+      effects,
       camera: camera.position.toArray(),
       bodies,
+      origins,
       finite,
+      equipment: auditEquipment(this),
+      scissorsGap: scissorsGap(rigs),
+    }
+    if (freezeKO && state.phase === 'finished' && audit.phase === 'turn') {
+      paused = true
+      freezeKO = false
     }
   }
   onDestroy(() => {
     Scene.prototype.onAfterRender = previous
   })
+  function visible(node: import('three').Object3D): boolean {
+    return node.visible && (!node.parent || visible(node.parent))
+  }
+  function auditEquipment(scene: Scene) {
+    const staff = scene.getObjectByName('throw-signature:staff')
+    const umbrella = scene.getObjectByName('throw-signature:umbrella')
+    const gun = scene.getObjectByName('theta-physical-handgun')
+    return {
+      staff: Boolean(staff && visible(staff)),
+      staffBottom: staff?.visible ? new Box3().setFromObject(staff).min.y : null,
+      umbrella: Boolean(umbrella && visible(umbrella)),
+      holstered: Boolean(gun?.parent?.getObjectByName('fight-chest')),
+      trueForm: Boolean(scene.getObjectByName('biscuit-true-form')),
+    }
+  }
+  function scissorsGap(rigs: AnimatedHuman[]) {
+    const side = state.player.id === 'feitan' ? 0 : 1
+    if (!rigs[side] || !rigs[1 - side]) return null
+    const centre = rigs[1 - side].head.getWorldPosition(new Vector3())
+    centre.y -= 0.2
+    return Math.max(...rigs[side].knees.map((knee, index) => {
+      const goal = centre.clone()
+      goal.z += index === 0 ? -0.18 : 0.18
+      return knee.children[1].getWorldPosition(new Vector3()).distanceTo(goal)
+    }))
+  }
   function reset(
     options: {
       side?: FightSide
       id?: FighterId
+      opponentId?: FighterId
       tech?: boolean
       miss?: boolean
       ko?: boolean
+      powered?: boolean
+      freezeKO?: boolean
+      trueForm?: boolean
+      confiscated?: boolean
+      sealed?: boolean
     } = {},
   ) {
-    const base = beginFight(
-      createFight(options.id ?? 'hisoka', 'kurapika', { mode: 'versus-local' }),
-    )
     const side = options.side ?? 'player'
+    const id = options.id ?? 'hisoka'
+    const opponentId = options.opponentId ?? 'kurapika'
+    const base = beginFight(createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, { mode: 'versus-local', formatId: 'knockout' }))
     const victim = side === 'player' ? 'opponent' : 'player'
     let current: FightState = {
       ...base,
-      player: { ...base.player, x: 46 },
-      opponent: { ...base.opponent, x: options.miss ? 85 : 51 },
+      player: { ...base.player, x: 46, aura: 100 },
+      opponent: { ...base.opponent, x: options.miss ? 85 : 51, aura: 100 },
     }
     current = {
       ...current,
@@ -73,9 +131,11 @@
         throwTechFrames: options.tech ? 8 : 0,
       },
     }
-    current = performThrow(current, side)
+    if (options.trueForm) current = performMove({ state: current, side, action: 'special' })
+    current = { ...current, [side]: { ...current[side], weaponsConfiscated: Boolean(options.confiscated), hatsuEffects: { ...current[side].hatsuEffects, hatsuStolen: options.sealed ? 1 : 0 } } }
+    current = performThrow(current, side, { ...EMPTY_INPUT, aura: Boolean(options.powered) })
     tape = [current]
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 180; i++) {
       current = tickFight(current, EMPTY_INPUT, {
         dt: 1 / 60,
         opponentInput: EMPTY_INPUT,
@@ -86,6 +146,8 @@
     state = tape[0]
     paused = false
     koEnabled = Boolean(options.ko)
+    freezeKO = Boolean(options.freezeKO)
+    comfort = defaultFightComfort()
   }
   Object.assign(window, {
     throwFixture: {
@@ -116,6 +178,7 @@
   {state}
   {comfort}
   {paused}
+  victoryPaused={paused}
   language="fr"
   victoryEnabled={koEnabled}
   onAttack={() => {}}
@@ -130,6 +193,7 @@
     margin: 0;
     background: #05070b;
   }
+  :global(.fight-audio) { display: none !important; }
   :global(.fight-stage) {
     height: 100dvh;
   }

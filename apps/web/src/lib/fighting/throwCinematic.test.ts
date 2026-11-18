@@ -7,6 +7,7 @@ import { resolveFightImpacts } from './combatImpact'
 import { confirmedThrow, createThrowCinematic, throwVictoryDelay } from './throwCinematic'
 import { throwBodyPlan, throwBodyPosition, thrownVisualFighter } from './throwCinematicMotion'
 import { createFightReactionPresentation } from './fightReactionPresentation'
+import { createFinishedFallPresentation } from './finishedFallPresentation'
 import { applyThrowCamera } from './throwCinematicCamera'
 import { createVictoryPlayback } from './victory/playback'
 import { FIGHTING_ROSTER } from './roster'
@@ -30,6 +31,17 @@ function grabbed(id: FighterId = 'hisoka', side: FightSide = 'player') {
 const enabled = { enabled: true }
 
 describe('confirmed throw cinematic', () => {
+  it('lets a KO victim complete the authored lift instead of overriding it with a generic fall', () => {
+    const real = grabbed()
+    const frame = confirmedThrow(real)!
+    const state: FightState = { ...real, phase: 'finished', winner: 'player' }
+    const fall = createFinishedFallPresentation(() => frame)
+    for (const [seconds, y] of [[0, 0], [0.3, 8], [0.5, 11], [0.8, 0]]) {
+      const position = { x: state.opponent.x, y }
+      const fighter = thrownVisualFighter({ ...state.opponent, health: 0 }, position)
+      expect(fall(state, 'opponent', { fighter, position, seconds }).position).toEqual(position)
+    }
+  })
   it.each(FIGHTING_ROSTER.map((f) => f.id))('recognizes the real confirmed throw for %s', (id) => {
     const state = grabbed(id)
     expect(state.impact?.knockdown).toBe(true)
@@ -98,13 +110,13 @@ describe('confirmed throw cinematic', () => {
     const state = grabbed()
     const before = structuredClone(state)
     const frame = confirmedThrow(state)!
-    for (const age of [0, 5, 11, 18, 24]) {
+    for (const age of [0, 5, 11, 18, frame.duration + 1]) {
       const shot = { ...frame, age, active: age < frame.duration }
       for (const side of ['player', 'opponent'] as const) {
         const fallback = { x: state[side].x, y: state[side].y }
         const position = throwBodyPosition({ state, side, frame: shot, fallback })
         expect(Object.values(position).every(Number.isFinite)).toBe(true)
-        if (age === 24) expect(position).toEqual(fallback)
+        if (age > frame.duration) expect(position).toEqual(fallback)
         const plan = throwBodyPlan({
           fighter: state[side],
           seconds: age / 60,

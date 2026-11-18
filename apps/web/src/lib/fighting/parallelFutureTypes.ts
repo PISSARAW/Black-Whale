@@ -18,6 +18,7 @@ export interface FutureControls {
 }
 
 export interface FutureCommand {
+  superThrow?: true
   arsenal?: import('./retrospectiveTypes').ArsenalCommand
   rngBefore?: number
   kind: AttackKind

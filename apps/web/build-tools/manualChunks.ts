@@ -34,7 +34,7 @@ function clashChunkName(id: string): string | undefined {
   )
     return 'clash-style-catalogues'
   if (
-    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
+    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
       id,
     )
   )

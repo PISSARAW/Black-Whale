@@ -70,6 +70,11 @@ const pairs = {
   lynch: ['lynch-answer-me', 'lynch-cross-examination'],
   luini: ['luini-wrong-door', 'luini-emergency-exit'],
   bill: ['bill-stake', 'bill-living-shield'],
+  furykov: ["furykov-blind-angle", "furykov-perfect-sequence"],
+  cluck: ["cluck-underwing", "cluck-denied-flight"],
+  beyond: ["beyond-mountain-pass", "beyond-unconquered-summit"],
+  longhi: ["longhi-exit-clause", "longhi-non-negotiable"],
+  musse: ["musse-guarded-passage", "musse-window-closes"],
 }
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
@@ -80,7 +85,8 @@ try {
       if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10 && index < 15
       if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15 && index < 20
       if (process.env.THROW_ROSTER_BATCH === 'fifth') return index >= 20 && index < 25
-      if (process.env.THROW_ROSTER_BATCH === 'sixth') return index >= 25
+      if (process.env.THROW_ROSTER_BATCH === 'sixth') return index >= 25 && index < 30
+      if (process.env.THROW_ROSTER_BATCH === 'seventh') return index >= 30
       return true
     })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))

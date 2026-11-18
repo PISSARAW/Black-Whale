@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { prepareSeventh } from './seventhPreparation'
   import { onDestroy } from 'svelte'
   import { Box3, Scene, Vector3, type PerspectiveCamera } from 'three'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
@@ -144,6 +145,10 @@
       sealed?: boolean
       plant?: boolean
       cohort?: boolean
+      bird?: boolean
+      console?: boolean
+      offer?: boolean
+      owl?: boolean
     } = {},
   ) {
     const side = options.side ?? 'player'
@@ -156,7 +161,7 @@
         environment: createFightEnvironment({
           preparation: {
             mode: 'scenario',
-            resources: options.plant ? ['plants'] : [],
+            resources: options.plant ? ['plants'] : options.bird ? ['birds'] : [],
             cohorts: options.cohort ? [side] : [],
           },
         }),
@@ -214,6 +219,8 @@
           ai: false,
         })
     }
+    if (options.bird || options.console || options.offer || options.owl)
+      current = prepareSeventh(current, { ...options, side })
     if (options.bleed)
       current = commandMary({ state: current, side, command: 'bleed' }, performAuraAttack)
     if (options.prologue || options.poem) {

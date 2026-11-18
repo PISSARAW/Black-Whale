@@ -34,7 +34,9 @@ function ffmpeg(args) {
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'sixth'
+  const ids = process.env.THROW_ROSTER_BATCH === 'seventh'
+    ? ['furykov', 'cluck', 'beyond', 'longhi', 'musse']
+    : process.env.THROW_ROSTER_BATCH === 'sixth'
     ? ['halkenburg', 'gel', 'lynch', 'luini', 'bill']
     : process.env.THROW_ROSTER_BATCH === 'fifth'
     ? ['rihan', 'zakuro', 'melody', 'basho', 'camilla']
@@ -52,7 +54,7 @@ try {
       const frames = path.join(output, name)
       await mkdir(frames, { recursive: true })
       await page.evaluate((options) => window.throwFixture.reset(options), {
-        id, powered, plant: id === 'bill' && powered, cohort: id === 'halkenburg' && powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
+        id, powered, console: id === 'furykov' && powered, bird: id === 'cluck' && powered, offer: id === 'longhi' && powered, owl: id === 'musse' && powered, plant: id === 'bill' && powered, cohort: id === 'halkenburg' && powered, bleed: id === 'zakuro', poem: id === 'basho' && powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
       })
       await page.waitForTimeout(120)
       const count = powered ? 36 : 24

@@ -5,6 +5,7 @@ import { alignThrowGrip, alignThrowPuppet } from './contacts'
 import { createThrowFuture } from './futureScene'
 import { createThrowEquipment } from './equipment'
 import { createThrowTextiles } from './textiles'
+import { createThrowSeventhScene } from './seventhScene'
 import { createThrowSixthScene } from './sixthScene'
 import { createThrowFifthScene } from './fifthScene'
 import { createThrowFourthScene } from './fourthScene'
@@ -27,6 +28,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
   const fourth = createThrowFourthScene(options)
   const fifth = createThrowFifthScene(options)
   const sixth = createThrowSixthScene(options)
+  const seventh = createThrowSeventhScene(options)
   const geometry = new THREE.RingGeometry(0.32, 0.36, 48)
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
@@ -49,6 +51,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fourth.hide()
       fifth.hide(state)
       sixth.hide()
+      seventh.hide()
       aura.visible = false
       const frame = options.throwFrame?.()
       if (!frame?.active) return
@@ -66,6 +69,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fourth.sync(state, frame)
       fifth.sync(state, frame)
       sixth.sync(state, frame)
+      seventh.sync(state, frame)
       settleThrowPhysics(options, frame)
       if (!frame.powered || options.comfort?.().flashes === false) return
       const actor = options.figureOf?.(frame.attacker)
@@ -87,6 +91,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fourth.dispose()
       fifth.dispose()
       sixth.dispose()
+      seventh.dispose()
       aura.removeFromParent()
       geometry.dispose()
       material.dispose()

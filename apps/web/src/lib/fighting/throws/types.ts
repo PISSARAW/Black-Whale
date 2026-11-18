@@ -61,6 +61,16 @@ export type ThrowPerformanceId =
   | 'luini-emergency-exit'
   | 'bill-stake'
   | 'bill-living-shield'
+  | 'furykov-blind-angle'
+  | 'furykov-perfect-sequence'
+  | 'cluck-underwing'
+  | 'cluck-denied-flight'
+  | 'beyond-mountain-pass'
+  | 'beyond-unconquered-summit'
+  | 'longhi-exit-clause'
+  | 'longhi-non-negotiable'
+  | 'musse-guarded-passage'
+  | 'musse-window-closes'
 
 export interface ThrowBeat {
   at: number
@@ -107,6 +117,11 @@ export interface ThrowPerformance {
     | 'interrogator'
     | 'passage'
     | 'growth'
+    | 'analyst'
+    | 'aviary'
+    | 'explorer'
+    | 'agreement'
+    | 'spy'
   grip?: 'both' | 'prop' | 'scissors' | 'waist'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean

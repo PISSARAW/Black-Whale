@@ -40,6 +40,11 @@ const ids = [
   'lynch',
   'luini',
   'bill',
+  'furykov',
+  'cluck',
+  'beyond',
+  'longhi',
+  'musse',
 ] as const
 function contact(options: { id: FighterId; side: FightSide; powered: boolean }) {
   const { id, side, powered } = options
@@ -64,13 +69,13 @@ function contact(options: { id: FighterId; side: FightSide; powered: boolean }) 
   )
 }
 
-describe('thirty individual pairs of authored throw performances', () => {
-  it('owns sixty distinct pairs of actor poses, victim poses, trajectories and lenses', () => {
-    expect(THROW_PERFORMANCES).toHaveLength(60)
+describe('thirty-five individual pairs of authored throw performances', () => {
+  it('owns seventy distinct pairs of actor poses, victim poses, trajectories and lenses', () => {
+    expect(THROW_PERFORMANCES).toHaveLength(70)
     const poses = THROW_PERFORMANCES.map((p) => JSON.stringify(sampleThrowBeat(p, 0.4)))
     const cameras = THROW_PERFORMANCES.map((p) => JSON.stringify(sampleThrowCamera(p, 0.4)))
-    expect(new Set(poses).size).toBe(60)
-    expect(new Set(cameras).size).toBe(60)
+    expect(new Set(poses).size).toBe(70)
+    expect(new Set(cameras).size).toBe(70)
   })
 
   it.each(ids)(

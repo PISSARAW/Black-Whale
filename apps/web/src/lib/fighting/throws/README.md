@@ -4,7 +4,7 @@ Couverture : `fighting/throws/**`, `superThrow.ts`, `throwCinematic*.ts`,
 `throwPresentationLayer.ts`, `components/fighting/FightThrowCinematic.svelte`
 et `FightThrowGuide.svelte`.
 
-Les trente premières paires appartiennent aux combattants du tableau. Chaque paire
+Les trente-cinq premières paires appartiennent aux combattants du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
@@ -40,6 +40,11 @@ une trajectoire de prise et de chute, et une direction de caméra distincte.
 | Lynch | Répondez donc | L’interrogatoire musclé |
 | Luini | Vous vous êtes trompé de porte | La sortie de secours |
 | Bill | Le tuteur | Le bouclier vivant |
+| Furykov | L’angle mort | La séquence parfaite |
+| Cluck | Sous l’aile | L’envol contrarié |
+| Beyond | Le col du géant | Le sommet infranchissable |
+| Longhi | La clause de sortie | Le point non négociable |
+| Musse | Le passage sous garde | La fenêtre se referme |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,
@@ -114,6 +119,22 @@ avant de saisir ; sa salle préparée conserve ses conditions et sa destination.
 renversement protecteur. Une plante réellement cultivée peut rester dans le champ ;
 Erigeron ne crée ni racines offensives ni bonus personnel pendant ces projections.
 
+Furykov croise le poignet et change précisément d’angle ; la super enchaîne deux
+renversements sans ajouter un deuxième impact. Une console Combo Master déjà
+ouverte reste privée et conserve seulement ses alertes réellement acquises.
+Cluck passe sous le coude puis tourne comme une aile ; la super ajoute une petite
+impulsion aérienne avec les deux pieds libres. Un véritable oiseau contrôlé et
+proche garde son vol indépendant, sans volée offerte ni attaque d’oiseau.
+Beyond baisse les hanches pour charger le corps, puis le soulève franchement.
+Sa super reste physique et n’utilise aucune malédiction sacrificielle, capacité
+d’Isaac Netero ou riposte posthume inventée. Longhi transforme la poignée de main
+en torsion puis en renversement ; la super croise les appuis. Une offre Moonlight
+Act existante peut être cadrée, sans signature forcée, récompense ou pénalité
+créée par le film. Musse protège son côté armé avant de retourner la cible. Le
+pistolet reste réellement rengainé ; aucun tir n’est ajouté. Un hibou Secret Window
+déjà maintenu suit son vrai corps cible, reste privé et conserve son véritable
+flux de gestes ou de paroles, sans nouvelle surveillance créée par la projection.
+
 ## Commandes et règles
 
 Les 40 combattants peuvent lancer une projection normale ou une super avec
@@ -178,7 +199,7 @@ correspondants. Le rendu ne modifie ni les coordonnées ni les blessures du mote
 
 `superThrow.test.ts` couvre le coût, la puissance et les refus des 40 combattants,
 le buffer, les deux sièges, les déprojections, la dépense unique et les chemins
-PvP/replay. Les tests de ce dossier couvrent les soixante chorégraphies et les témoins
+PvP/replay. Les tests de ce dossier couvrent les soixante-dix chorégraphies et les témoins
 conditionnels produits par les vraies commandes. `secondBatch.test.ts` vérifie
 les trajectoires des attaquants, les formes réelles et les ressources préservées.
 `thirdBatch.test.ts` couvre les accessoires conditionnels, la préparation réelle
@@ -189,9 +210,13 @@ de Nen, le déplacement de Hanzo et l’absence de conséquence ajoutée par le 
 flûte, les vrais poèmes, la proie de Predator et le pistolet sans Cat’s Name.
 `sixthBatch.test.ts` vérifie le bras-serpent et sa restauration, la cohorte
 réellement chargée, la plante cultivée et l’absence d’effet de jeu ajouté.
+`seventhBatch.test.ts` dessine les cinq nouveaux personnages dans les deux sièges,
+avec et sans Aura : appui libre, os rigides, décollage, sol et état de jeu préservé.
+Il prépare les vrais accessoires et vérifie la confidentialité des deux observateurs,
+le pigeon contrôlé et l’offre de contrat sans consentement fabriqué.
 
-Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les soixante
-projections en P1/P2 et leurs quatre plans, puis les trente vues en 320 px. Il
+Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les soixante-dix
+projections en P1/P2 et leurs quatre plans, puis les trente-cinq vues en 320 px. Il
 contrôle aussi la pause, le K.-O., le nettoyage et les mouvements réduits.
 Résultats : `/tmp/black-whale-five-throws`.
 
@@ -201,6 +226,7 @@ dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`.
 `THROW_ROSTER_BATCH=fourth` sélectionne Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
 `THROW_ROSTER_BATCH=fifth` sélectionne Rihan, Zakuro, Melody, Basho et Camilla.
 `THROW_ROSTER_BATCH=sixth` sélectionne Halkenburg, Gel, Lynch, Luini et Bill.
+`THROW_ROSTER_BATCH=seventh` sélectionne Furykov, Cluck, Beyond, Longhi et Musse.
 Pour chaque lot, le rendu exporte les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
 de sortie se règle avec `THROW_RENDER_OUTPUT`.
 

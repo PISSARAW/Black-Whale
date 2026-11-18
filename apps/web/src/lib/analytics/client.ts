@@ -98,3 +98,9 @@ export function trackHatsuUse(hatsu: string, kind: string, result: string) {
     typeof window === 'undefined' ? 'unknown' : analyticsContext(window.location.pathname).mode
   trackEvent('hatsu_use', { hatsu, kind, result, surface_hatsu: `${mode} / ${hatsu}` })
 }
+
+/** Count an explicit body interaction; a miss is left to the room cast. */
+export function trackBodyReach(reached: boolean, hatsu: { id: string; kind: string } | null) {
+  if (reached && hatsu) trackHatsuUse(hatsu.id, hatsu.kind, 'body')
+  return reached
+}

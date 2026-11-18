@@ -23,7 +23,7 @@
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |
 | `events/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
-| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
+| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingLifecycle.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
 | `fighting/profile` | `+page.svelte` |
 | `fighting/profile/api` | `+server.ts` |
 | `fighting/profile/solo` | `+page.svelte` |
@@ -35,6 +35,7 @@
 | `fighting/pvp/online/api` | `+server.ts` |
 | `fighting/pvp/online/tournament/[id]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/qwen` | `+server.ts` |
 | `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |
 | `health` | `+server.ts` |

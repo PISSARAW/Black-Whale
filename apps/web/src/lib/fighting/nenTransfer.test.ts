@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { beginFight, createFight, tickFight } from './engine'
 import { FIGHTING_ROSTER } from './roster'
 import { focusNenZone } from './nenAdvanced'
-import { releaseFocusedAura, applyAuraContext } from './nen'
+import { releaseFocusedAura, applyAuraContext, focusAttackRyu } from './nen'
 import { advanceNenTransfer, nenTransferFrames } from './nenTransfer'
 import { EMPTY_INPUT } from './types'
 
@@ -10,6 +10,12 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
   '%s carries outgoing aura into a different zone without teleporting it',
   (id) => {
     const fighter = createFight(id, 'hisoka').player
+    for (const kind of ['light', 'heavy', 'special', 'ranged'] as const) {
+      const focused = focusAttackRyu(fighter, kind)
+      expect(
+        Object.values(focused.nen.ryu).reduce((sum, value) => sum + Number(value), 0),
+      ).toBeCloseTo(1)
+    }
     const old = focusNenZone(fighter, 'hands')
     const incoming = focusNenZone(releaseFocusedAura(old), 'feet')
     expect(incoming.nen.ryu.hands).toBeCloseTo(0.76)

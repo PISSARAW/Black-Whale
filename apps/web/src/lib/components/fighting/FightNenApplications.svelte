@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightHeldButton from './FightHeldButton.svelte'
+  import FightNenTraining from './FightNenTraining.svelte'
   import { nenApplications, type NenApplication } from '$lib/fighting/nenApplications'
   import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
   export let fighter: ArcadeFighter
@@ -25,6 +26,7 @@
       <p>{application.condition[language === 'fr' ? 0 : 1]}</p>
     </div>
   {/each}
+  <FightNenTraining {fighter} {language} />
 </details>
 
 <style>

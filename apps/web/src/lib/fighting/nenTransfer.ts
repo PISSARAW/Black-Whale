@@ -39,6 +39,7 @@ export function requestNenTransfer(
   fighter: ArcadeFighter,
   request: { zone: FightNenZone; shares: Shares; ko?: boolean },
 ): ArcadeFighter {
+  request = { ...request, shares: normaliseShares(request.shares) }
   const held = fighter.nenTransfer
   if (held?.zone === request.zone && Boolean(held.ko) === Boolean(request.ko)) return fighter
   const from = currentAuraShares(fighter)
@@ -99,4 +100,12 @@ export function prepareDefensiveKo(
     { ...after, nen: { ...after.nen, ko: before.nen.ko } },
     { zone, shares, ko: true },
   )
+}
+
+function normaliseShares(shares: Shares): Shares {
+  const total = ZONES.reduce((sum, zone) => sum + Math.max(0, shares[zone]), 0)
+  if (Math.abs(total - 1) < 0.000001) return shares
+  return Object.fromEntries(
+    ZONES.map((zone) => [zone, total > 0 ? Math.max(0, shares[zone]) / total : 0.25]),
+  ) as Shares
 }

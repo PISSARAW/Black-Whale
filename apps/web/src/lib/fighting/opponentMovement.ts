@@ -8,7 +8,8 @@ import { bashoWriting } from './bashoPoem'
 import { musicPacifies } from './melodyRules'
 import { healthPercent } from './health'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
-import { shouldStyleGuard, styleMovement } from './fightStyles'
+import { shouldStyleGuard } from './fightStyles'
+import { nenSpacingDirection } from './nenCombatDoctrine'
 import type { ArcadeFighter } from './types'
 
 function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
@@ -60,7 +61,7 @@ function opponentTarget(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFi
 function opponentMotion(fighter: ArcadeFighter, gap: number): number {
   return returningToBody(fighter)
     ? 1
-    : styleMovement(fighter.id, { gap, health: healthPercent(fighter) })
+    : nenSpacingDirection(fighter, { gap, health: healthPercent(fighter) })
 }
 
 function opponentGuardState(

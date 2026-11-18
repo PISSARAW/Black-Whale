@@ -3,10 +3,15 @@ import { seesCombatBody } from './fightCounterplay'
 import { insideEn } from './nenPerception'
 import { shuObject } from './nenAdvanced'
 import { applyAuraContext } from './nen'
+import { doctrineOpponentNen } from './nenDoctrineActions'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 /** Decisions depend on perceived threats. En never grants an automatic dodge. */
 export function advancedOpponentNen(state: FightState): FightState | null {
+  return defaultOpponentNen(state) ?? doctrineOpponentNen(state)
+}
+
+function defaultOpponentNen(state: FightState): FightState | null {
   const fighter = state.opponent
   const target = state.player
   if (fighter.aura < 30) return null

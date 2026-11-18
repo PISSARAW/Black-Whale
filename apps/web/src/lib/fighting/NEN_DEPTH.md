@@ -63,3 +63,23 @@ de zone de Ko défensif paie son engagement une seule fois et traverse une postu
 intermédiaire avant la concentration complète. Interruption et Zetsu annulent le
 transfert ; hitstop et pause suivent les ticks autoritaires et le replay. Les
 flux de présentation lisent ces parts effectives, sans modifier leurs couleurs.
+
+## Doctrine, choix et information
+
+`nenCombatDoctrine.ts` applique une tendance par affinité : contact pour le
+Renforcement, distance pour l’Émission, portée intermédiaire pour les supports
+matérialisés ou manipulés. Les plages personnelles priment : Bill soutient,
+Leorio cherche une frappe distante reliée au sol, Franklin maintient son barrage,
+Kalluto garde ses papiers à portée. Une affinité inconnue reste inconnue et
+conserve le style écrit. Les émetteurs sans réserve reviennent au combat physique.
+
+`nenDoctrineActions.ts` réordonne les seuls coups déjà proposés par les plans
+personnels. L’IA prépare le Ryu au contact ou le Ren à distance quand ses ressources
+le permettent, après les lectures et protections existantes. Les zones faibles
+ne sont exploitées que via une lecture Gyo valable ; aucune catégorie, condition
+ou commande secrète adverse n’est utilisée par cette couche.
+
+Le panneau des applications affiche le profil propre, les catégories dont une
+application est répertoriée, le débit disponible et le transfert effectif. Une
+maîtrise non établie est présentée comme telle. Les distances, coefficients et
+seuils restent des réglages du duel, à équilibrer en combat.

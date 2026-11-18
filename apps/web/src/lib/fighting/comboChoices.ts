@@ -1,3 +1,4 @@
+import { preparedNenDestinations } from './nenPreparedBranches'
 import { nenFollowupReadiness, nenTransferWaiting } from './nenComboReadiness'
 import { hasDuelComboProfile } from './duelComboProfiles'
 import {
@@ -20,7 +21,7 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
   const fighter = state[side]
   const current = moveById(fighter.attack?.moveId)
   if (!hasDuelComboProfile(fighter.id) || !fighter.attack || !current) return []
-  const openings = openingDestinations(fighter)
+  const openings = [...openingDestinations(fighter), ...preparedNenDestinations(fighter)]
   return cancelChoices(current, openings).flatMap(({ id, link }) => {
     const move = moveById(id)
     if (!move) return []

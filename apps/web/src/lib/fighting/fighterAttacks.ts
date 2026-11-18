@@ -1,3 +1,4 @@
+import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { openingFollowup } from './comboOpenings'
 import { advanceAttackBuffer } from './attackBuffer'
@@ -89,6 +90,8 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    nenOpening: undefined,
+    nenBranchCount: nextNenBranchCount(fighter, options.moveId),
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),

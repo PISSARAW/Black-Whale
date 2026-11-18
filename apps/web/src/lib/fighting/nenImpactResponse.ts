@@ -1,3 +1,4 @@
+import { recordNenOpening } from './nenPreparedBranches'
 import { addPoses, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -30,7 +31,7 @@ export function recordNenImpact(before: FightState, after: FightState): FightSta
     zone: hit.zone,
     sourceX: projectile?.x ?? before[hit.attacker].x,
   }
-  return { ...after, impact: { ...hit, nenResponse: response } }
+  return recordNenOpening(before, { ...after, impact: { ...hit, nenResponse: response } })
 }
 
 function cleanContact(hit: NonNullable<FightState['impact']>): boolean {

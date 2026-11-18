@@ -1,3 +1,4 @@
+import { preparedNenDestinations } from './nenPreparedBranches'
 import { guardForVariant, type GuardRequirement } from './combatProperties'
 import { nenFollowupReadiness } from './nenComboReadiness'
 import { openingAllows } from './comboOpenings'
@@ -97,7 +98,9 @@ export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
     return Boolean(
       moveId &&
       nenDestinationReady(fighter, moveId) &&
-      (openingAllows(fighter, moveId) || confirmedRoutes(fighter, currentMove).includes(moveId)),
+      (preparedNenDestinations(fighter).includes(moveId) ||
+        openingAllows(fighter, moveId) ||
+        confirmedRoutes(fighter, currentMove).includes(moveId)),
     )
   return legacyCancel(fighter, kind)
 }

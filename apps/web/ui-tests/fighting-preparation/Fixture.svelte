@@ -2,6 +2,7 @@
   import { tick } from 'svelte'
   import { mixedHisokaScenario } from './mixedHisoka'
   import { prosthesisScenario } from './prostheses'
+  import { documentScenario, documentSnapshot } from './documents'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
@@ -95,6 +96,17 @@
       health: actor.health,
       aura: actor.aura,
     }
+  }
+  export async function preparePaperDocument(side: FightSide) {
+    state = documentScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function paperSnapshot(side: FightSide) {
+    return documentSnapshot(state, side)
   }
   export async function prepareOitoLoan() {
     player = 'kurapika'

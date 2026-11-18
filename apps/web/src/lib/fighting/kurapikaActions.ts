@@ -1,6 +1,7 @@
 import { littleEyeShotBusy } from './littleEyeCapture'
 import { dismissReturnedLoans } from './dolphinReturn'
 import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
+import { clearPaperTextures } from './paperTexture'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
 import { finishBorrowedBasho } from './bashoWard'
@@ -271,6 +272,8 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
   if (restored) return restored
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  const papers = clearPaperTextures(state, side, { source: 'dolphin', theftId: held.theftId })
+  if (papers !== state) return papers
   if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
   const poem = finishBorrowedBasho(state, side)
   if (poem) return poem

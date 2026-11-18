@@ -17,6 +17,9 @@ export function forecastParallelFuture(
     const before = predicted
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
     frames.push({
+      documentContext: predicted.battlefield?.entities.some((entry) => entry.document)
+        ? { frame: predicted.frame }
+        : undefined,
       scene: {
         rosterGuests: predicted.rosterGuests,
         bungeeGum: predicted.bungeeGum,

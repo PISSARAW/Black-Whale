@@ -11,6 +11,7 @@ import {
 import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { borrowedGumSupport, clearBorrowedGumSupport } from './hisokaSupportOrigin'
+import { borrowedPaperTextureBusy } from './paperTexture'
 import { gumObjectAnchors } from './gumObjectAnchors'
 import { gumSourceBusy, clearGumSource } from './bungeeScoped'
 import { cookieCanStart } from './cookie'
@@ -249,11 +250,17 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     poem: poemUseBusy(state, side),
     gum: borrowedGumNetworkBusy(state, side),
     projection: Boolean(fighter.hanzoProjection),
-    texture: Boolean(
-      fighter.textureSurprise && borrowedGumSupport(fighter, fighter.textureSurprise),
-    ),
+    texture: textureUseBusy(state, side),
     lsdf: Boolean(state.lsdf?.[side]),
   }
+}
+
+function textureUseBusy(state: FightState, side: FightSide): boolean {
+  const fighter = state[side]
+  return (
+    borrowedPaperTextureBusy(state, side) ||
+    Boolean(fighter.textureSurprise && borrowedGumSupport(fighter, fighter.textureSurprise))
+  )
 }
 
 function gumUseBusy(fighter: ArcadeFighter): boolean {

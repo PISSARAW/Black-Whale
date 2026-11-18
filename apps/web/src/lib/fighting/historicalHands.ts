@@ -1,4 +1,5 @@
 import { physicalHandOccupancy, physicalHandsBusy, type DeviceHand } from './deviceHands'
+import { originalDocumentInLeftHand } from './paperDocuments'
 import type { FightSide, FightState } from './types'
 
 /** A page or copied power supplies no additional hands for its actual material gesture. */
@@ -26,6 +27,7 @@ export function originalLeftHandReady(
 ): boolean {
   if (physicalHandsBusy(state[side])) return false
   if (!physicalHandOccupancy(state, side, { gallery: true }).has('left')) return true
+  if (originalDocumentInLeftHand(state, side, originalId)) return true
   const member = state.teamMatch?.seats[side].active ?? 0
   return Boolean(
     state.battlefield?.entities.some(

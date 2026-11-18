@@ -17,6 +17,7 @@
   $: preparation = environment.preparation ?? EMPTY_PREPARATION
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
+    { id: 'documents', fr: 'Documents papier déjà écrits', en: 'Already written paper documents' },
     {
       id: 'paper',
       fr: 'Éventails, confettis et feuilles réels',

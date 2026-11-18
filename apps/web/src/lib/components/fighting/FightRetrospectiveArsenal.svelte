@@ -17,6 +17,7 @@
   import FightMultiCombatStatus from './FightMultiCombatStatus.svelte'
   import FightPriorityStatus from './FightPriorityStatus.svelte'
   import FightGumNetwork from './FightGumNetwork.svelte'
+  import FightPaperDocument from './FightPaperDocument.svelte'
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
@@ -125,6 +126,7 @@
       <FightDolphinPeople {state} {side} {language} />
       <FightJudgmentInterview {state} {side} {language} {paused} {onUse} />
       <FightDowsingInterview {state} {side} {language} {paused} {onUse} />
+      <FightPaperDocument {state} {side} {language} {paused} {onUse} />
       <FightLittleEyeScreen screen={state[side].littleEyeScreen} {language} />
       {#if state[side].devicePlayback}
         <strong

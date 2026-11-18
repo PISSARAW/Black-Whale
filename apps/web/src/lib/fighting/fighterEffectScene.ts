@@ -1,5 +1,6 @@
 import { createBashoSupportScene } from './bashoSupportScene'
 import { createDeviceScene } from './deviceScene'
+import { createPaperDocumentScene } from './paperDocumentScene'
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
 import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
@@ -64,6 +65,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
   const devices = createDeviceScene(options)
+  const documents = createPaperDocumentScene(options)
   const bashoSupport = createBashoSupportScene(options)
   const chrollo = createChrolloEffectScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
@@ -92,6 +94,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
     devices.sync(state, seconds)
+    documents.sync(state, seconds)
     bashoSupport.sync(state, seconds)
     chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
@@ -120,6 +123,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       visitHatsu.dispose()
       retrospective.dispose()
       devices.dispose()
+      documents.dispose()
       bashoSupport.dispose()
       chrollo.dispose()
       scene.remove(...cards)

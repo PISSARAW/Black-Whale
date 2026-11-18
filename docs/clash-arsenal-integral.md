@@ -502,7 +502,7 @@ de couverture des profils ou un nombre de tests :
 | Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                  |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
+| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible et réparations du visage encore ouvertes. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                              |
 | Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                             |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
@@ -966,3 +966,10 @@ Ruleset : **clash-combat-41**. Le On reste présent et ses sceaux restent appliq
 aux commandes de Nen. Le [réemploi du papier dispersé](./clash-kalluto-confettis.md),
 l’admission d’autres cibles et les interactions matérielles restantes continuent
 à faire partie de l’audit ; cette passe ne certifie pas les quarante arsenaux.
+
+## Document physique et Texture Surprise — ruleset 55
+
+Le [suivi des documents](./clash-hisoka-documents.md) distingue le papier réel,
+l’encre sous-jacente et l’apparence de Nen. Les mains, le stock fini, les copies,
+les canaux du livre et de Dolphin, la lecture et les souvenirs restent séparés.
+Cette extension ne prédit pas l’avenir et ne change pas les contrats de Nen.

@@ -1,8 +1,10 @@
 import { ownsBungeeGum } from '../hisokaArsenal'
 import { withGumChannel } from '../bungeeChannel'
 import { newGumSource } from '../bungeeSource'
-import { maintainTextureSurprise, createTextureSurprise } from '../hisokaTextureOrigin'
+import { maintainTextureSurprise } from '../hisokaTextureOrigin'
+import { applySelectedTexture, advancePaperTextures } from '../paperTexture'
 import { advanceGumArsenal } from '../hisokaArsenal'
+import { advanceDocumentWorld } from '../paperDocumentWorld'
 import { advanceGumObjectAnchors } from '../gumObjectAnchorFrames'
 import { categoryPower } from '../nenCategories'
 import { chainAbilitySealed } from '../kurapika'
@@ -42,7 +44,11 @@ export const hisokaHatsu: FighterHatsu = {
     ),
   onFrame: (state) =>
     advanceGumObjectAnchors(
-      advanceGumArsenal(advanceGumMotion(SIDES.reduce(advanceTechnique, state))),
+      advanceGumArsenal(
+        advanceGumMotion(
+          SIDES.reduce(advanceTechnique, advancePaperTextures(advanceDocumentWorld(state))),
+        ),
+      ),
     ),
 }
 
@@ -88,15 +94,7 @@ function advanceActiveTechnique(state: FightState, side: FightSide): FightState 
     return activateGumMovement(state, side, false)
   }
   const committed = { ...fighter, attack: { ...attack, impacted: true } }
-  const texture = technique === 'texture' ? createTextureSurprise(fighter) : undefined
-  if (technique === 'texture')
-    return {
-      ...state,
-      [side]: {
-        ...committed,
-        textureSurprise: texture,
-      },
-    }
+  if (technique === 'texture') return applySelectedTexture({ ...state, [side]: committed }, side)
   return activateGumMovement({ ...state, [side]: committed }, side, technique === 'rebound')
 }
 

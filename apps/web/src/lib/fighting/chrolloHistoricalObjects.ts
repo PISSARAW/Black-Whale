@@ -1,4 +1,6 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { copiedDocumentMaterials } from './paperDocumentCopy'
+import { touchesDocument } from './paperDocuments'
 import { copyPaperKit } from './kallutoCopyKit'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { freeDeviceHand } from './deviceHands'
@@ -53,6 +55,7 @@ function createHistoricalReplica(
     material: 'nen',
     health: 40,
     ...replicaMaterials(source, id),
+    ...copiedDocumentMaterials(state, { source, id, side }),
     consenting: false,
     controller: undefined,
     sealed: source.sealed,
@@ -107,6 +110,7 @@ function copyOriginalWithinReach(
   side: FightSide,
   entry: PreparedEntity,
 ): boolean {
+  if (entry.document) return touchesDocument(state, side, entry)
   if (entry.device?.carrier) return touchesDevice(state, side, entry)
   return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 6
 }

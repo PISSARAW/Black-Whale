@@ -1,4 +1,5 @@
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
+import { concealDocumentWorld } from '../paperDocumentPrivacy'
 import { redactPriorityWorld } from '../priorityPrivacy'
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
 import { concealPaperScatters } from '../kallutoScatterVisibility'
@@ -143,6 +144,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
   concealPaperScatters(view, side)
+  concealDocumentWorld(view, side)
   redactEnemy(view[other])
   redactGuests(view, other)
   redactReserves(view, other)
@@ -168,6 +170,9 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
     concealPaperScatters(frame, side)
+    const documentView = { ...view, ...frame, ...frame.documentContext }
+    concealDocumentWorld(documentView, side)
+    frame.battlefield = documentView.battlefield
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

@@ -2,6 +2,10 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  enemy.texturePaperDraft = undefined
+  enemy.texturePaperId = undefined
+  enemy.paperTextureGeneration = undefined
+  enemy.documentReading = undefined
   concealProsthesisAppearance(enemy)
   enemy.textureTarget = undefined
   enemy.gumProsthesisGeneration = undefined

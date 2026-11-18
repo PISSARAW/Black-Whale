@@ -6,10 +6,11 @@ import { chainAbilityGroup } from './chainAbilityGroup'
 import { voluntaryNenAvailable } from './nenAccess'
 import { textureTargetAvailable } from './hisokaTextureOrigin'
 import { canUseMovesetMove, moveById } from './movesets'
+import { paperTextureOptions } from './paperTextureOptions'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-function textureSelectable(actor: ArcadeFighter): boolean {
+export function textureSelectable(actor: ArcadeFighter): boolean {
   if (!voluntaryNenAvailable(actor)) return false
   if (newGumSource(actor).source !== 'dolphin')
     return (
@@ -81,7 +82,7 @@ export function textureSurfaceOptions(state: FightState, side: FightSide): Arsen
       ready: performTextureCommand(state, side, command) !== state,
     }
   })
-  return [...options, ...nativeTextureOption(state, side)]
+  return [...options, ...paperTextureOptions(state, side), ...nativeTextureOption(state, side)]
 }
 
 function nativeTextureOption(state: FightState, side: FightSide): ArsenalOption[] {

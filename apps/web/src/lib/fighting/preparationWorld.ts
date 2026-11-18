@@ -1,4 +1,5 @@
 import { scenarioOito } from './dolphinPeopleWorld'
+import { scenarioPaperDocument } from './paperDocuments'
 import { scenarioPaperKit } from './kallutoMaterials'
 import { scenarioWeakSpirit } from './bashoWard'
 import { scenarioWritingKit } from './bashoMaterials'
@@ -81,6 +82,7 @@ function installSupplyProps(
   const { resources, side } = context
   if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
   if (resources.has('writing')) entities.push(scenarioWritingKit(side))
+  if (resources.has('documents')) entities.push(scenarioPaperDocument(side))
   if (resources.has('paper')) entities.push(scenarioPaperKit(side))
   if (resources.has('devices')) entities.push(...scenarioDevices(side))
 }

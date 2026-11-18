@@ -1,4 +1,5 @@
 import { teamWorldEngaged } from './teams/commitments'
+import { anyPaperTextureBusy } from './paperTexture'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -39,6 +40,10 @@ const BODY_FIELDS = new Set([
   'bodyDamage',
   'gumProsthesisGeneration',
   'textureTarget',
+  'texturePaperDraft',
+  'texturePaperId',
+  'paperTextureGeneration',
+  'documentReading',
   'maxHealth',
   'aura',
   'auraExhausted',
@@ -128,6 +133,7 @@ function quietWorld(state: FightState): boolean {
       state.moonlight,
       state.bungeeGum,
       gumBusy(state),
+      anyPaperTextureBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,

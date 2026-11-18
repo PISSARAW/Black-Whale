@@ -44,6 +44,9 @@ import { dolphinArsenalOptions } from './dolphinArsenal'
 import { copiedArsenalOptions } from './chrolloCopiedOptions'
 import { performGumCommand, gumArsenalOptions } from './hisokaArsenal'
 import { performTextureCommand, textureSurfaceOptions } from './hisokaTextureCommands'
+import { performPaperDocumentCommand } from './paperDocumentActions'
+import { paperDocumentOptions } from './paperDocumentOptions'
+import { performPaperTextureCommand } from './paperTextureCommands'
 import { fightAcceptsCommands } from './fightOutcome'
 import { canAct } from './fightActorState'
 import { cookieOptions, performCookie } from './cookie'
@@ -144,7 +147,9 @@ const COMMAND_HANDLERS: readonly [
   ['dowsing-', performDowsingCommand],
   ['judgment-', performJudgmentCommand],
   ['gum-', performGumCommand],
+  ['texture-paper', performPaperTextureCommand],
   ['texture-', performTextureCommand],
+  ['document-', performPaperDocumentCommand],
   ['cookie-', performCookie],
   ['hunter-', performHunterInterview],
   ['history-', performHistoricalCommand],
@@ -191,6 +196,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...textureSurfaceOptions(state, side),
+    ...paperDocumentOptions(state, side),
     ...gumObjectAnchorOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),

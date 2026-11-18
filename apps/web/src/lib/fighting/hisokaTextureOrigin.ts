@@ -1,6 +1,10 @@
 import { withGumChannel } from './bungeeChannel'
 import { newGumSource, type GumSource } from './bungeeSource'
-import { equippedDolphin, dolphinLoanActive } from './dolphinBorrowing'
+import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
+import { dolphinBody } from './dolphinBodies'
+import { stolenAuraActor } from './dolphinSupply'
+import { personalGumBody } from './gumObjectAnchorAccess'
+import { chainAbilitySealed } from './kurapika'
 import { chainAbilityGroup } from './chainAbilityGroup'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -14,11 +18,12 @@ export interface TextureSurpriseState extends GumSource {
 
 declare module './types' {
   interface ArcadeFighter {
-    textureTarget?: TextureSurpriseState['surface']
+    textureTarget?: TextureSurpriseState['surface'] | 'paper'
   }
 }
 
 export function createTextureSurprise(actor: ArcadeFighter): TextureSurpriseState | undefined {
+  if (actor.textureTarget === 'paper') return undefined
   const origin = actor.attack?.nenOrigin ?? newGumSource(actor)
   if (actor.textureTarget !== 'gum-prostheses') return { surface: 'cloth', ...origin }
   if (!textureTargetAvailable(actor)) return undefined
@@ -53,14 +58,28 @@ export function maintainTextureSurprise(state: FightState, side: FightSide): Fig
   )
 }
 function textureSourceValid(state: FightState, side: FightSide, source: GumSource): boolean {
-  const actor = state[side]
-  if (!voluntaryNenAvailable(actor)) return false
-  if (source.source !== 'dolphin') return chrolloAbilityActive(actor, 'hisoka:downSpecial')
-  return borrowedTextureValid(state, side, source)
+  return textureOriginAvailable(state, { actor: state[side], source })
 }
-function borrowedTextureValid(state: FightState, side: FightSide, source: GumSource): boolean {
-  const actor = state[side]
-  if (!textureLenderAvailable(state, side)) return false
+
+/** Resolve the creator's actual body, including a stored team member, without borrowing another channel. */
+export function textureOriginAvailable(
+  state: FightState,
+  binding: { actor: ArcadeFighter; source: GumSource },
+): boolean {
+  const { actor, source } = binding
+  if (source.source === 'dolphin') return borrowedTextureAvailable(state, binding)
+  const own = personalGumBody(actor)
+  if (!voluntaryNenAvailable(own) || chainAbilitySealed(own, 'hisoka:downSpecial')) return false
+  if (source.source === 'personal') return own.id === 'hisoka'
+  return own.id === 'chrollo' && chrolloAbilityActive(own, 'hisoka:downSpecial')
+}
+
+function borrowedTextureAvailable(
+  state: FightState,
+  { actor, source }: { actor: ArcadeFighter; source: GumSource },
+): boolean {
+  if (!textureLenderAvailable(state, actor)) return false
+  if (!voluntaryNenAvailable(stolenAuraActor(loanCarrier(actor)))) return false
   const held = equippedDolphin(actor)
   return Boolean(
     held?.used &&
@@ -70,7 +89,7 @@ function borrowedTextureValid(state: FightState, side: FightSide, source: GumSou
     chainAbilityGroup(held.moveId) === 'texture-surprise',
   )
 }
-function textureLenderAvailable(state: FightState, side: FightSide): boolean {
-  const actor = state[side]
-  return actor.dolphinLoan ? dolphinLoanActive(state, side) : Boolean(actor.kurapika?.emperorTime)
+function textureLenderAvailable(state: FightState, actor: ArcadeFighter): boolean {
+  const lender = actor.dolphinLoan ? dolphinBody(state, actor.dolphinLoan.lender) : actor
+  return Boolean(lender && lender.health > 0 && lender.kurapika?.emperorTime)
 }

@@ -4,7 +4,7 @@ import type { FightState } from './types'
 /** A round does not replenish picked-up supplies or discard a real kit left on the floor. */
 export function carryPaperWorld(fresh: FightBattlefield, previous: FightState): FightBattlefield {
   const carried = (previous.battlefield?.entities ?? [])
-    .filter((entry) => entry.paperKit || entry.paperScatter)
+    .filter((entry) => entry.paperKit || entry.paperScatter || entry.writingKit || entry.document)
     .map((entry) => ({
       ...entry,
       copy: entry.copy

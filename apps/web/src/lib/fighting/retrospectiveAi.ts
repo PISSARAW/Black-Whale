@@ -1,4 +1,5 @@
 import { littleEyeAi } from './littleEyeAi'
+import { paperTextureAi } from './paperTextureAi'
 import { prosthesisSkinAi } from './gumProsthesisAi'
 import { gumObjectAnchorAi } from './gumObjectAnchorAi'
 import { paperKitAi } from './kallutoMaterialAi'
@@ -35,6 +36,7 @@ export function retrospectiveAiAction(
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
     prosthesisSkinAi(state, perform) ??
+    paperTextureAi(state, perform) ??
     dolphinLoanAi(state, perform) ??
     paperKitAi(state) ??
     utilityArsenalAi(state, perform) ??

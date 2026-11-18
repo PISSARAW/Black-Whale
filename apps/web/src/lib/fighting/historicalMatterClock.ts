@@ -2,6 +2,7 @@ import { historicalCopyExpired, historicalPartExists } from './historicalCopyLif
 import { advanceCopiedInventory } from './copiedInventory'
 import { advancePaperScatters } from './kallutoScatterFrame'
 import { cleanStoredPaperEntity } from './kallutoStoredPaper'
+import { cleanDocumentMatter } from './paperDocuments'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
 declare module './types' {
@@ -22,7 +23,7 @@ export function expireHistoricalMatter(state: FightState): FightState {
   )
 }
 function expireWorldEntry(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const cleaned = cleanStoredPaperEntity(state, entry)
+  const cleaned = cleanDocumentMatter(state, cleanStoredPaperEntity(state, entry))
   return cleaned.copy && cleaned.present && historicalCopyExpired(state, cleaned)
     ? { ...cleaned, present: false }
     : cleaned

@@ -1,5 +1,6 @@
 import type { FightSide, FightState } from './types'
 import { bodyPartFunctional } from './bodyDamage'
+import { heldDocuments } from './paperDocuments'
 
 export type DeviceHand = 'left' | 'right'
 /** Pockets and swallowed transmitters do not occupy the hands. The open book occupies the right. */
@@ -18,6 +19,7 @@ export function physicalHandOccupancy(
   const active = state.teamMatch?.seats[side].active
   for (const entry of state.battlefield?.entities ?? [])
     if (occupiesHand(entry, side, active)) occupied.add(entry.device!.hand!)
+  for (const entry of heldDocuments(state, side)) occupied.add(entry.document!.holder!.hand)
   return occupied
 }
 function characterHandOccupancy(

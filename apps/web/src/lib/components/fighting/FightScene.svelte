@@ -47,7 +47,10 @@
   import { defaultAppearance, type CareerAppearance } from '$lib/fighting/career/types'
   import { introBodyMotion as fightBodyMotion } from '$lib/fighting/presentation/introMotion'
   import { defaultFightComfort, effectiveFightComfort } from '$lib/fighting/fightComfort'
-  import { createFightPresentation } from '$lib/fighting/fightPresentationContext'
+  import {
+    createFightPresentation,
+    fightFrameDeltaSeconds,
+  } from '$lib/fighting/fightPresentationContext'
   import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
   import { createFightRenderResources, createFightPost } from '$lib/fighting/fightRenderer'
   import { motionOf } from '$lib/fighting/fighterMovement'
@@ -314,7 +317,8 @@
             : null
           const direction =
             cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
-          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView)
+          const pursuit = combatCamera.pursuit(state)
+          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView || pursuit)
           detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
@@ -331,6 +335,7 @@
             aspect: camera.aspect,
             dt,
             direction,
+            pursuit,
             detail: Boolean(detail),
             detailRect,
             fallenBounds: fightCameraBodyBounds(state, models),
@@ -373,7 +378,10 @@
             animationFrame = requestAnimationFrame(render)
             return
           }
-          const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
+          const dt =
+            lastFrameAt === null
+              ? fightFrameDeltaSeconds(drawnState?.frame, state.frame)
+              : Math.min(0.1, (now - lastFrameAt) / 1000)
           motionSeconds += dt
           drawnState = state
           const seconds = presentationSeconds ?? motionSeconds

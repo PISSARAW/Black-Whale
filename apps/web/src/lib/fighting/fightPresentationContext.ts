@@ -35,3 +35,7 @@ export function createFightPresentation() {
     },
   })
 }
+
+export function fightFrameDeltaSeconds(previousFrame: number | undefined, frame: number) {
+  return Math.min(0.1, Math.max(0, (frame - (previousFrame ?? frame)) / 60))
+}

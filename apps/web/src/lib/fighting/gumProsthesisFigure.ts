@@ -1,6 +1,7 @@
-import type { Material, Mesh, MeshBasicMaterial, Object3D } from 'three'
+import type { Mesh, Object3D } from 'three'
 import { bodyPartFunctional, type DamagedBodyPart } from './bodyDamage'
-import { gyoSight } from './nenPerception'
+import { shapeGumSurface } from './gumSurfaceFigure'
+import { disguisedRubber, rubberVisible, rubberMaterial } from './gumProsthesisAppearance'
 import type { buildFightFigure } from './fighterFigure'
 import type { ArcadeFighter } from './types'
 
@@ -23,6 +24,7 @@ export function shapeGumProstheses(options: FigureOptions, root: Object3D): void
 }
 
 function shapePart(options: FigureOptions, root: Object3D, part: DamagedBodyPart): void {
+  if (shapeGumSurface(options, root, part)) return
   const actor = options.fighter
   const node = root.getObjectByName(part === 'left-hand' ? 'hand-left' : 'knee-right')
   if (!node) return
@@ -39,27 +41,4 @@ function shapePart(options: FigureOptions, root: Object3D, part: DamagedBodyPart
       ? mesh.material.map((material) => rubberMaterial(options, material))
       : rubberMaterial(options, mesh.material)
   })
-}
-
-function disguisedRubber(actor: ArcadeFighter): boolean {
-  return (
-    actor.textureSurprise?.surface === 'gum-prostheses' &&
-    actor.textureSurprise.supportId === actor.gumProstheses?.id
-  )
-}
-
-function rubberVisible(options: FigureOptions): boolean {
-  return (
-    disguisedRubber(options.fighter) ||
-    !options.fighter.gumProstheses?.hidden ||
-    !options.observer ||
-    gyoSight(options.observer)
-  )
-}
-
-function rubberMaterial(options: FigureOptions, material: Material): Material {
-  if (material.side === options.THREE.BackSide) return material
-  const rubber = material.clone()
-  if ('color' in rubber) (rubber as MeshBasicMaterial).color.set(0xf09ec7)
-  return rubber
 }

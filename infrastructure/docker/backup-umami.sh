@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eu
+umask 077
 mkdir -p /backups
 while :; do
   destination="/backups/umami_$(date -u '+%Y%m%dT%H%M%SZ').dump"

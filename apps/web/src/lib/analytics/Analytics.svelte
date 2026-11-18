@@ -44,7 +44,8 @@
       if (
         interacted ||
         !(event.target instanceof Element) ||
-        event.target.closest('header, footer, nav, [data-hatsu-ui]')
+        !event.target.closest('#main-content') ||
+        event.target.closest('[data-hatsu-ui]')
       )
         return
       interacted = true
@@ -61,15 +62,20 @@
         activeSeconds -= 30
       }
     }
+    const resetClock = () => {
+      lastTick = performance.now()
+    }
+    document.addEventListener('visibilitychange', resetClock)
     lastTick = performance.now()
     const clock = window.setInterval(tick, 1000)
-    document.addEventListener('pointerdown', input, { passive: true })
-    document.addEventListener('keydown', input)
+    window.addEventListener('pointerdown', input, { passive: true, capture: true })
+    window.addEventListener('keydown', input, true)
     return () => {
       mounted = false
       clearInterval(clock)
-      document.removeEventListener('pointerdown', input)
-      document.removeEventListener('keydown', input)
+      document.removeEventListener('visibilitychange', resetClock)
+      window.removeEventListener('pointerdown', input, true)
+      window.removeEventListener('keydown', input, true)
       script.remove()
       enableAnalytics(false)
     }

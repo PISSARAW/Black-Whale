@@ -2,11 +2,15 @@
 
 # Index des tests
 
-Fichiers : 918
+Fichiers : 927
 
 ## `apps/admin/src/hooks.server.test.ts`
 
 - admin handle > redirects an anonymous visitor to /login, remembering where they were going
+
+## `apps/admin/src/lib/server/analytics.test.ts`
+
+- private dashboard > shares one server-side login and aggregates activity without sending credentials to reads
 
 ## `apps/admin/src/lib/server/rate-limit.test.ts`
 
@@ -28,6 +32,10 @@ Fichiers : 918
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
 - production bundle partitioning > initializes Cross Game and movesets regardless of which shared chunk loads first
+
+## `apps/web/src/lib/analytics/hatsuTracking.test.ts`
+
+- Hatsu selection metrics > does not count session restoration as a selection
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 
@@ -926,6 +934,30 @@ Fichiers : 918
 ## `apps/web/src/lib/fighting/painPackerRig.test.ts`
 
 - reference Pain Packer outfit > shares its actual hood, grille, coat and gloves across the visit and Fighting
+
+## `apps/web/src/lib/fighting/paperDocumentCopy.test.ts`
+
+- Gallery Fake copies actual paper with actual hands and a finite life > reproduces the visible surface as an inert facsimile without copying Texture Surprise or uncovering ink
+
+## `apps/web/src/lib/fighting/paperDocumentIntegration.test.ts`
+
+- document contact, sight, AI and posed physical presentation > delivers a silent visual message through Judgment’s actual recipient rule
+
+## `apps/web/src/lib/fighting/paperDocumentReplay.test.ts`
+
+- semantic paper commands in PvP and recorded fights > replays the actual sheet, private text preparation, cast, reading and removal
+
+## `apps/web/src/lib/fighting/paperDocuments.test.ts`
+
+- actual document material and physical handling > provides only explicitly prepared notes, with no fortune or personal information
+
+## `apps/web/src/lib/fighting/paperTexture.test.ts`
+
+- Texture Surprise on existing paper > changes visible writing after the real cast while preserving the original ink and body disguise
+
+## `apps/web/src/lib/fighting/paperTextureBorrowing.test.ts`
+
+- a paper disguise retains its actual copied or borrowed source > spends only donor aura, maintains the loan and finishes without deleting the real paper
 
 ## `apps/web/src/lib/fighting/parallelFuture.test.ts`
 

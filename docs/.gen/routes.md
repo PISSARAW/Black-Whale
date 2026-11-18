@@ -77,6 +77,7 @@
 | ----- | -------- |
 | `(root)` | `+error.svelte`, `+layout.server.ts`, `+layout.svelte`, `+page.server.ts`, `+page.svelte` |
 | `abilities` | `+page.server.ts`, `+page.svelte` |
+| `analytics` | `+page.server.ts`, `+page.svelte` |
 | `api/characters` | `+server.ts` |
 | `api/characters/[slug]` | `+server.ts` |
 | `chapters` | `+page.server.ts`, `+page.svelte` |

@@ -17,7 +17,7 @@ From a clean release checkout, run `python3 infrastructure/hetzner/enable-analyt
 This generates unique secrets in `.env.production` (mode 0600), enables the
 `analytics` Compose profile, starts Umami, changes its seeded administrator
 password, registers the website without a share link, and starts backups.
-Run the standard deployment afterwards and reload Caddy:
+Run the standard deployment afterwards; it reloads Caddy:
 
 ```sh
 ./infrastructure/hetzner/deploy.sh

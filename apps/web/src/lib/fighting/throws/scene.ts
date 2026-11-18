@@ -5,6 +5,7 @@ import { alignThrowGrip, alignThrowPuppet } from './contacts'
 import { createThrowFuture } from './futureScene'
 import { createThrowEquipment } from './equipment'
 import { createThrowTextiles } from './textiles'
+import { createThrowEighthScene } from './eighthScene'
 import { createThrowSeventhScene } from './seventhScene'
 import { createThrowSixthScene } from './sixthScene'
 import { createThrowFifthScene } from './fifthScene'
@@ -16,6 +17,7 @@ import { fighterDefinition } from '../roster'
 import type { EffectSceneOptions, FighterEffectScene } from '../fighterEffectScene'
 import type { ThrowCinematicFrame } from '../throwCinematic'
 import type { FightState } from '../types'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 
 /** Scene-owned resources follow the one shared throw clock, including pause, KO and replay seeks. */
 export function createThrowSignatureScene(options: EffectSceneOptions): FighterEffectScene {
@@ -29,6 +31,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
   const fifth = createThrowFifthScene(options)
   const sixth = createThrowSixthScene(options)
   const seventh = createThrowSeventhScene(options)
+  const eighth = createThrowEighthScene(options)
   const geometry = new THREE.RingGeometry(0.32, 0.36, 48)
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
@@ -52,6 +55,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fifth.hide(state)
       sixth.hide()
       seventh.hide()
+      eighth.hide()
       aura.visible = false
       const frame = options.throwFrame?.()
       if (!frame?.active) return
@@ -70,6 +74,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fifth.sync(state, frame)
       sixth.sync(state, frame)
       seventh.sync(state, frame)
+      eighth.sync(state, frame)
+      constrainThrowBodies(options, frame)
       settleThrowPhysics(options, frame)
       if (!frame.powered || options.comfort?.().flashes === false) return
       const actor = options.figureOf?.(frame.attacker)
@@ -92,10 +98,18 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fifth.dispose()
       sixth.dispose()
       seventh.dispose()
+      eighth.dispose()
       aura.removeFromParent()
       geometry.dispose()
       material.dispose()
     },
+  }
+}
+
+function constrainThrowBodies(options: EffectSceneOptions, frame: ThrowCinematicFrame): void {
+  for (const side of [frame.attacker, frame.victim]) {
+    const figure = options.figureOf?.(side)
+    if (figure) keepHumanFigure(figure)
   }
 }
 

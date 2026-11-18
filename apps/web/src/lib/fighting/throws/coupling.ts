@@ -20,7 +20,8 @@ export function coupleThrowGrip(options: EffectSceneOptions, frame: ThrowCinemat
   const weight = throwGripWeight(frame),
     bodies = gripBodies(options, frame)
   if (weight <= 0 || !bodies) return
-  for (const index of [0, 1])
+  const indices = performance?.grip === 'left' ? [0] : [0, 1]
+  for (const index of indices)
     pullBody(bodies, { index, waist: performance?.grip === 'waist', weight })
   separateTorsos(bodies, frame.facing)
 }

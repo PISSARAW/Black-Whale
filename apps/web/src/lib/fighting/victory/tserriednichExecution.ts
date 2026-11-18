@@ -66,7 +66,7 @@ export function createFutureExecution() {
         { age } = context
       gun.visible = age >= 66
       gun.position.copy(wrist.getWorldPosition(new Vector3()))
-      gun.quaternion.copy(wrist.getWorldQuaternion(new Quaternion()))
+      gun.quaternion.copy(wrist.getWorldQuaternion(new Quaternion())).multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2))
       gun.updateWorldMatrix(true, true)
       const muzzle = gun.localToWorld(new Vector3(0, 0.048, 0.18))
       const since = Math.min(

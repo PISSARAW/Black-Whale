@@ -35,13 +35,15 @@ export function luiniPose(context: VictoryContext) {
   victim.root.position.set(track.victimX, 0, 0)
   victim.root.rotation.y = track.victimFacing
   const handle = luiniHandle(layout, track.angle)
-  const swing = ease((age - 342) / 24) * (1 - ease((age - 366) / 24))
-  victim.root.position.x += (handle.x - 0.26 - victim.root.position.x) * swing
-  victim.root.position.z = (handle.z - victim.width * 0.25) * swing
+  const opening = ease((age - 318) / 18) * (1 - ease((age - 366) / 18))
+  // Stay on the approach side of the handle. Crossing it forced the small
+  // victim's shoulder backwards while the door was swinging.
+  victim.root.position.x += (handle.x + 0.28 - victim.root.position.x) * opening
+  victim.root.position.z = (handle.z - victim.width * 0.25) * opening
   stride(
     hero,
     age,
-    Math.sin(Math.PI * ease((age - 72) / 36)) + Math.sin(Math.PI * ease((age - 120) / 66)),
+    Math.sin(Math.PI * ease((age - 72) / 36)) + Math.sin(Math.PI * ease((age - 120) / 66)) + Math.sin(Math.PI * ease((age - 366) / 30)),
   )
   stride(victim, age, Math.sin(Math.PI * ease((age - 270) / 60)))
   if (victim.height > hero.height * 1.3 && age >= 330) lowerGuardForProp(victim, hero.height * 0.8)
@@ -50,7 +52,6 @@ export function luiniPose(context: VictoryContext) {
   target.x = bounds.min.x - 0.015
   if (hero.height > victim.height * 1.15 && age >= 330) lowerGuardForProp(hero, target.y + 0.1)
   const errors = [...arms(hero), ...arms(victim)]
-  const opening = ease((age - 318) / 18) * (1 - ease((age - 366) / 18))
   const rest = localToHead(victim, new Vector3(0.16, -0.5, 0.24))
   if (age < 408) errors[3] = guardHand(victim, 'right', rest.lerp(handle, opening))
   const shoulder = hero.root.getObjectByName('shoulder-right')!.getWorldPosition(new Vector3())

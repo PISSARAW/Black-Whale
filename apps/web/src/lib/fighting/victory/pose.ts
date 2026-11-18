@@ -3,6 +3,20 @@ import type { VictoryActor, VictoryContext } from './types'
 import { reachCinematicHand } from './arm'
 import { ease } from './resources'
 import { groundVictoryActor } from './actors'
+import { humanAnimationRig } from '$lib/tour/humanAnimation'
+import { applyFightPose, borrowFightRig } from '../fightRig'
+import type { Turn } from '../fightPose'
+
+/** Move the shoulders about the waist while the supporting feet stay in place. */
+export function turnVictoryChest(context: VictoryContext, actor: VictoryActor, turn: Turn): void {
+  const human = humanAnimationRig(actor.root.children[0])
+  if (!human) return
+  const { rig, restore } = borrowFightRig(human)
+  context.save(rig.chest)
+  context.save(human.head)
+  context.defer(restore)
+  applyFightPose(rig, { chest: turn }, 1)
+}
 
 export function localToHead(actor: VictoryActor, point: Vector3) {
   return point

@@ -20,8 +20,8 @@ function floorStrike(context: VictoryContext) {
     stance = ease((age - 66) / 24) * (1 - ease((age - 356) / 45))
   const fold = stance * (0.25 + power * 1.35)
   for (const side of ['left', 'right']) {
-    hero.root.getObjectByName(`hip-${side}`)!.rotation.x = -stance * (0.25 + power)
-    hero.root.getObjectByName(`knee-${side}`)!.rotation.x = stance * (0.45 + power * 1.25)
+    hero.root.getObjectByName(`hip-${side}`)!.rotation.x = -stance * (0.25 + power * 1.3)
+    hero.root.getObjectByName(`knee-${side}`)!.rotation.x = stance * (0.45 + power * 2)
   }
   const chest = hero.root.getObjectByName('fight-chest')
   if (chest) {
@@ -33,7 +33,7 @@ function floorStrike(context: VictoryContext) {
   hero.head.rotation.x = -fold * 0.3
   groundVictoryActor(hero)
   const shoulder = hero.root.getObjectByName('shoulder-right')!.getWorldPosition(new Vector3())
-  const floor = new Vector3(shoulder.x, 0.08, shoulder.z + 0.015)
+  const floor = shoulder.clone().add(new Vector3(0, 0, hero.height * 0.16).applyQuaternion(hero.root.quaternion)).setY(0.08)
   const rest = hero.root
     .getObjectByName('shoulder-right')!
     .getWorldPosition(new Vector3())

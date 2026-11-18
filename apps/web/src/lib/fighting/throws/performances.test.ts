@@ -1,3 +1,4 @@
+import { FIGHTING_ROSTER } from '../roster'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performThrow } from '../engine'
 import { resolveFightImpacts } from '../combatImpact'
@@ -45,6 +46,11 @@ const ids = [
   'beyond',
   'longhi',
   'musse',
+  'padaille',
+  'sayird',
+  'terebellum',
+  'voconte',
+  'yokotani',
 ] as const
 function contact(options: { id: FighterId; side: FightSide; powered: boolean }) {
   const { id, side, powered } = options
@@ -69,13 +75,16 @@ function contact(options: { id: FighterId; side: FightSide; powered: boolean }) 
   )
 }
 
-describe('thirty-five individual pairs of authored throw performances', () => {
-  it('owns seventy distinct pairs of actor poses, victim poses, trajectories and lenses', () => {
-    expect(THROW_PERFORMANCES).toHaveLength(70)
+describe('forty individual pairs of authored throw performances', () => {
+  it('covers the entire playable roster with both authored variants', () => {
+    expect(ids).toEqual(FIGHTING_ROSTER.map((fighter) => fighter.id))
+  })
+  it('owns eighty distinct pairs of actor poses, victim poses, trajectories and lenses', () => {
+    expect(THROW_PERFORMANCES).toHaveLength(80)
     const poses = THROW_PERFORMANCES.map((p) => JSON.stringify(sampleThrowBeat(p, 0.4)))
     const cameras = THROW_PERFORMANCES.map((p) => JSON.stringify(sampleThrowCamera(p, 0.4)))
-    expect(new Set(poses).size).toBe(70)
-    expect(new Set(cameras).size).toBe(70)
+    expect(new Set(poses).size).toBe(80)
+    expect(new Set(cameras).size).toBe(80)
   })
 
   it.each(ids)(

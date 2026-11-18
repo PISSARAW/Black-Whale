@@ -45,7 +45,11 @@ function detailSource(figure: Object3D, frame: ThrowCinematicFrame): Object3D | 
   if (anchor === 'head' || performance.effect === 'collector')
     return humanAnimationRig(figure)?.head
   if (anchor === 'prop') return propAnchor(figure, performance.effect)
-  const names: Record<string, string> = { book: 'chrollo-open-book', chain: 'hand-right' }
+  const names: Record<string, string> = {
+    book: 'chrollo-open-book',
+    chain: 'hand-right',
+    artisan: 'hand-left',
+  }
   const name = names[performance.effect] ?? (frame.facing === 1 ? 'hand-right' : 'hand-left')
   return figure.getObjectByName(name) ?? figure.getObjectByName('hand-right')
 }

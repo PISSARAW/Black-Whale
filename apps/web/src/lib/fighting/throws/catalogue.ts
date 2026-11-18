@@ -33,6 +33,11 @@ import { CLUCK_THROWS } from './cluck'
 import { BEYOND_THROWS } from './beyond'
 import { LONGHI_THROWS } from './longhi'
 import { MUSSE_THROWS } from './musse'
+import { PADAILLE_THROWS } from './padaille'
+import { SAYIRD_THROWS } from './sayird'
+import { TEREBELLUM_THROWS } from './terebellum'
+import { VOCONTE_THROWS } from './voconte'
+import { YOKOTANI_THROWS } from './yokotani'
 import type { FighterId } from '../types'
 import type { ThrowPerformanceId } from './types'
 
@@ -72,6 +77,11 @@ export const THROW_PERFORMANCES = [
   ...BEYOND_THROWS,
   ...LONGHI_THROWS,
   ...MUSSE_THROWS,
+  ...PADAILLE_THROWS,
+  ...SAYIRD_THROWS,
+  ...TEREBELLUM_THROWS,
+  ...VOCONTE_THROWS,
+  ...YOKOTANI_THROWS,
 ]
 const pairs = {
   kurapika: KURAPIKA_THROWS,
@@ -109,6 +119,11 @@ const pairs = {
   beyond: BEYOND_THROWS,
   longhi: LONGHI_THROWS,
   musse: MUSSE_THROWS,
+  padaille: PADAILLE_THROWS,
+  sayird: SAYIRD_THROWS,
+  terebellum: TEREBELLUM_THROWS,
+  voconte: VOCONTE_THROWS,
+  yokotani: YOKOTANI_THROWS,
 }
 export function throwPerformance(id?: ThrowPerformanceId) {
   return THROW_PERFORMANCES.find((entry) => entry.id === id)

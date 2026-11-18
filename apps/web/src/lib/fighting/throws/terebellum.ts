@@ -1,0 +1,140 @@
+import { THROW_CAPTURE, THROW_LAND, type ThrowPerformance } from './types'
+import type { FightPose } from '../fightPose'
+
+const PREPARE: FightPose = {
+  body: [0.16, -0.08, 0],
+  chest: [0.08, -0.1, 0],
+  head: [-0.08, 0.1, 0],
+  leadShoulder: [-1.15, 0, 0.3],
+  rearShoulder: [-1, 0.12, -0.35],
+  leadElbow: [-0.75, 0, 0],
+  rearElbow: [-1, 0, 0],
+  leadWrist: [0.2, 0.15, 0],
+  rearWrist: [0.15, -0.3, 0],
+  leadHip: [-0.45, 0, 0.16],
+  leadKnee: [0.65, 0, 0],
+  rearKnee: [0.5, 0, 0],
+}
+const TURN: FightPose = {
+  ...PREPARE,
+  body: [0.24, -0.32, 0.07],
+  chest: [0.12, -0.25, 0],
+  leadShoulder: [-0.7, -0.2, 0.4],
+  rearShoulder: [-1.4, 0.18, -0.28],
+  leadElbow: [-1.4, 0, 0],
+  rearElbow: [-0.4, 0, 0],
+  leadKnee: [0.85, 0, 0],
+}
+export const TEREBELLUM_THROWS: readonly ThrowPerformance[] = [
+  {
+    id: 'terebellum-palm-relay',
+    name: 'Le relais des paumes',
+    effect: 'relay',
+    worldDepth: true,
+    grip: 'both',
+    rightHand: true,
+    detail: { yaw: 0.3, anchor: 'hand', victim: 'torso' },
+    beats: [
+      { at: 0, attacker: PREPARE, victim: THROW_CAPTURE, path: [0, 0, 0] },
+      {
+        at: 0.33,
+        attacker: TURN,
+        victim: {
+          ...THROW_CAPTURE,
+          body: [-0.3, 0.135, 0.1],
+          leadKnee: [0.8, 0, 0],
+          rearKnee: [0.55, 0, 0],
+        },
+        path: [0.1, 2.6, -0.18],
+        actorPath: [1.5, 0, -0.15],
+      },
+      {
+        at: 0.57,
+        attacker: TURN,
+        victim: { ...THROW_LAND, body: [-1.16, 0.3, 0.08] },
+        path: [0.85, 3.5, -0.3],
+        actorPath: [0.6, 0, -0.24],
+      },
+      {
+        at: 0.8,
+        attacker: TURN,
+        victim: { ...THROW_LAND, body: [-1.48, 0.3, 0.03] },
+        path: [1, 0, 0],
+      },
+      {
+        at: 1,
+        attacker: PREPARE,
+        victim: { ...THROW_LAND, body: [-1.48, 0.3, 0.03] },
+        path: [1, 0, 0],
+      },
+    ],
+    camera: [
+      [0.3, 1.65, 1.15, 0.78],
+      [-0.6, 2.6, 1.25, 0.87],
+      [0.65, 3.9, 0.65, 0.88],
+    ],
+  },
+  {
+    id: 'terebellum-home-delivery',
+    name: 'Livraison à domicile',
+    effect: 'relay',
+    worldDepth: true,
+    grip: 'both',
+    rightHand: true,
+    detail: { yaw: -0.6, anchor: 'hand', victim: 'torso' },
+    beats: [
+      { at: 0, attacker: PREPARE, victim: THROW_CAPTURE, path: [0, 0, 0] },
+      {
+        at: 0.28,
+        attacker: {
+          ...PREPARE,
+          body: [-0.1, -0.25, 0.08],
+          chest: [0.06, -0.3, 0],
+          leadShoulder: [-1.45, -0.1, 0.35],
+          rearShoulder: [-1.5, 0.1, -0.33],
+          leadElbow: [-0.55, 0, 0],
+          rearElbow: [-0.5, 0, 0],
+          leadKnee: [0.75, 0, 0],
+        },
+        victim: {
+          ...THROW_CAPTURE,
+          body: [-0.6, -0.2925, 0.1],
+          leadKnee: [0.8, 0, 0],
+          rearKnee: [0.55, 0, 0],
+        },
+        path: [-0.06, 4.5, -0.18],
+        actorPath: [1.5, 0, -0.15],
+      },
+      {
+        at: 0.5,
+        attacker: {
+          ...TURN,
+          body: [0.25, -0.55, 0.08],
+          leadShoulder: [-0.55, -0.25, 0.45],
+          rearShoulder: [-1.4, 0.15, -0.3],
+          rearElbow: [-0.35, 0, 0],
+        },
+        victim: { ...THROW_LAND, body: [-1.36, -0.65, 0.08] },
+        path: [0.7, 7.6, -0.3],
+        actorPath: [0.6, 0, -0.24],
+      },
+      {
+        at: 0.8,
+        attacker: TURN,
+        victim: { ...THROW_LAND, body: [-1.48, -0.65, 0.03] },
+        path: [1, 0, 0],
+      },
+      {
+        at: 1,
+        attacker: PREPARE,
+        victim: { ...THROW_LAND, body: [-1.48, -0.65, 0.03] },
+        path: [1, 0, 0],
+      },
+    ],
+    camera: [
+      [-0.6, 1.55, 1.15, 0.82],
+      [0.8, 3.4, 1.65, 0.93],
+      [-0.5, 0.65, 0.65, 0.87],
+    ],
+  },
+]

@@ -86,7 +86,8 @@ try {
       if (process.env.THROW_ROSTER_BATCH === 'fourth') return index >= 15 && index < 20
       if (process.env.THROW_ROSTER_BATCH === 'fifth') return index >= 20 && index < 25
       if (process.env.THROW_ROSTER_BATCH === 'sixth') return index >= 25 && index < 30
-      if (process.env.THROW_ROSTER_BATCH === 'seventh') return index >= 30
+      if (process.env.THROW_ROSTER_BATCH === 'seventh') return index >= 30 && index < 35
+      if (process.env.THROW_ROSTER_BATCH === 'eighth') return index >= 35
       return true
     })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))

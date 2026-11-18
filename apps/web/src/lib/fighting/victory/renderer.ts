@@ -46,6 +46,8 @@ import { createZakuroVictory } from './zakuro'
 import { createLynchVictory } from './lynch'
 import { createLuiniVictory } from './luini'
 import { createBashoVictory } from './basho'
+import { beginVictoryPose, rememberVictoryPose } from './poseContinuity'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -227,6 +229,7 @@ export function createVictoryRenderer(options: {
           save: transaction.save,
         })
         lighting.apply(options.scenery, transaction)
+        const posedRoots = new Set([hero.root, victim.root])
         const context: VictoryContext = {
           ...options,
           state,
@@ -241,6 +244,8 @@ export function createVictoryRenderer(options: {
           material: transaction.material,
           defer: transaction.defer,
           add(root) {
+            posedRoots.add(root)
+            beginVictoryPose(root, { token: frame.token, age: Math.min(599, frame.elapsed * 60) })
             if (!comfort.flashes) suppressVictoryFlashes(root, transaction.save)
             options.scene.add(root)
             root.updateMatrixWorld(true)
@@ -248,7 +253,15 @@ export function createVictoryRenderer(options: {
           },
         }
         const driver = resolveDriver(frame, drivers)
+        beginVictoryPose(hero.root, { token: frame.token, age: context.age })
+        beginVictoryPose(victim.root, { token: frame.token, age: context.age })
         driver.update(context)
+        const clock = { token: frame.token, age: context.age }
+        posedRoots.add(context.hero.root)
+        for (const root of posedRoots) {
+          keepHumanFigure(root)
+          rememberVictoryPose(root, clock)
+        }
         if (comfort.camera === 0 && !ownsComfortCamera(frame))
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)

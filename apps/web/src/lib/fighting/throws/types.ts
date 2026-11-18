@@ -71,6 +71,16 @@ export type ThrowPerformanceId =
   | 'longhi-non-negotiable'
   | 'musse-guarded-passage'
   | 'musse-window-closes'
+  | 'padaille-lever-arm'
+  | 'padaille-worksite'
+  | 'sayird-out-of-sight'
+  | 'sayird-reverse-view'
+  | 'terebellum-palm-relay'
+  | 'terebellum-home-delivery'
+  | 'voconte-after-you'
+  | 'voconte-wrong-entrance'
+  | 'yokotani-objection'
+  | 'yokotani-dismissed'
 
 export interface ThrowBeat {
   at: number
@@ -122,9 +132,16 @@ export interface ThrowPerformance {
     | 'explorer'
     | 'agreement'
     | 'spy'
-  grip?: 'both' | 'prop' | 'scissors' | 'waist'
+    | 'artisan'
+    | 'scout'
+    | 'relay'
+    | 'gatekeeper'
+    | 'bailiff'
+  grip?: 'both' | 'prop' | 'scissors' | 'waist' | 'left'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean
+  /** Keep real scenery on the same depth side when the attacker switches seats. */
+  worldDepth?: boolean
   beats: readonly ThrowBeat[]
   camera: readonly [ThrowCameraKey, ThrowCameraKey, ThrowCameraKey]
 }

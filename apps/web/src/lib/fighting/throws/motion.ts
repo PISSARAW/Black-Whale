@@ -39,25 +39,27 @@ export function signatureThrowPosition(options: {
   const performance = throwPerformance(frame.performance)
   if (!performance) return undefined
   const beat = sampleThrowBeat(performance, frame.age / frame.duration)
-  if (options.side === frame.attacker) return actorPosition(fallback, beat.actorPath!, frame.facing)
+  const depthFacing = performance.worldDepth ? 1 : frame.facing
+  if (options.side === frame.attacker)
+    return actorPosition(fallback, beat.actorPath!, { facing: frame.facing, depthFacing })
   const grip = state[frame.attacker].x + frame.facing * 5.4
   const x = grip + (fallback.x - grip) * beat.path[0]
   return {
     x: puppetApproach({ state, frame, x }),
     y: fallback.y + beat.path[1],
-    z: (fallback.z ?? 0) + beat.path[2] * frame.facing,
+    z: (fallback.z ?? 0) + beat.path[2] * depthFacing,
   }
 }
 
 function actorPosition(
   fallback: { x: number; y: number; z?: number },
   path: readonly [number, number, number],
-  facing: 1 | -1,
+  axes: { facing: 1 | -1; depthFacing: 1 | -1 },
 ) {
   return {
-    x: fallback.x + path[0] * facing,
+    x: fallback.x + path[0] * axes.facing,
     y: fallback.y + path[1],
-    z: (fallback.z ?? 0) + path[2] * facing,
+    z: (fallback.z ?? 0) + path[2] * axes.depthFacing,
   }
 }
 

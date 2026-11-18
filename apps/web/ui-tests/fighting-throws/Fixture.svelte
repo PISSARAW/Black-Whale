@@ -1,20 +1,11 @@
 <script lang="ts">
-  import { prepareSeventh } from './seventhPreparation'
+  import { prepareThrowDemo, type ThrowDemoOptions } from './preparation'
   import { onDestroy } from 'svelte'
   import { Box3, Scene, Vector3, type PerspectiveCamera } from 'three'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
-  import {
-    beginFight,
-    createFight,
-    performMove,
-    performThrow,
-    tickFight,
-  } from '$lib/fighting/engine'
-  import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
-  import { commandMary } from '$lib/fighting/bloodyMaryAction'
-  import { performAuraAttack } from '$lib/fighting/engine'
+  import { beginFight, createFight } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
-  import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from '$lib/fighting/types'
+  import type { FightState } from '$lib/fighting/types'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   import { humanAnimationRig, type AnimatedHuman } from '$lib/tour/humanAnimation'
   let state = beginFight(createFight('hisoka', 'kurapika', { mode: 'versus-local' }))
@@ -126,132 +117,8 @@
       }),
     )
   }
-  function reset(
-    options: {
-      side?: FightSide
-      id?: FighterId
-      opponentId?: FighterId
-      tech?: boolean
-      miss?: boolean
-      ko?: boolean
-      powered?: boolean
-      freezeKO?: boolean
-      trueForm?: boolean
-      confiscated?: boolean
-      bleed?: boolean
-      poem?: boolean
-      prologue?: boolean
-      noNeedles?: boolean
-      sealed?: boolean
-      plant?: boolean
-      cohort?: boolean
-      bird?: boolean
-      console?: boolean
-      offer?: boolean
-      owl?: boolean
-    } = {},
-  ) {
-    const side = options.side ?? 'player'
-    const id = options.id ?? 'hisoka'
-    const opponentId = options.opponentId ?? 'kurapika'
-    const base = beginFight(
-      createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, {
-        mode: 'versus-local',
-        formatId: 'knockout',
-        environment: createFightEnvironment({
-          preparation: {
-            mode: 'scenario',
-            resources: options.plant ? ['plants'] : options.bird ? ['birds'] : [],
-            cohorts: options.cohort ? [side] : [],
-          },
-        }),
-      }),
-    )
-    const victim = side === 'player' ? 'opponent' : 'player'
-    let current: FightState = {
-      ...base,
-      player: { ...base.player, x: 46, aura: 100 },
-      opponent: { ...base.opponent, x: options.miss ? 85 : 51, aura: 100 },
-    }
-    current = {
-      ...current,
-      [victim]: {
-        ...current[victim],
-        health: options.ko ? 1 : current[victim].health,
-        throwTechFrames: options.tech ? 8 : 0,
-      },
-    }
-    if (options.plant) {
-      const seed = current.battlefield?.entities.find(
-        (entry) => entry.kind === 'seed' && entry.owner === side,
-      )
-      if (seed) {
-        current = {
-          ...current,
-          [side]: { ...current[side], x: seed.x },
-          [victim]: { ...current[victim], x: seed.x + current[side].facing * 5 },
-        }
-        current = performMove({ state: current, side, action: 'special' })
-        for (let i = 0; i < 20; i++)
-          current = tickFight(current, EMPTY_INPUT, {
-            dt: 1 / 60,
-            opponentInput: EMPTY_INPUT,
-            ai: false,
-          })
-      }
-    }
-    if (options.cohort) {
-      const supporter = current.battlefield?.entities.find(
-        (entry) => entry.kind === 'supporter' && entry.owner === side,
-      )
-      if (supporter) {
-        const x = supporter.x + current[side].facing * 17
-        current = {
-          ...current,
-          [side]: { ...current[side], x },
-          [victim]: { ...current[victim], x: x + current[side].facing * 5 },
-        }
-      }
-      for (let i = 0; i < 480; i++)
-        current = tickFight(current, EMPTY_INPUT, {
-          dt: 1 / 60,
-          opponentInput: EMPTY_INPUT,
-          ai: false,
-        })
-    }
-    if (options.bird || options.console || options.offer || options.owl)
-      current = prepareSeventh(current, { ...options, side })
-    if (options.bleed)
-      current = commandMary({ state: current, side, command: 'bleed' }, performAuraAttack)
-    if (options.prologue || options.poem) {
-      current = performMove({ state: current, side, action: 'special' })
-      for (let i = 0; i < 61; i++)
-        current = tickFight(current, EMPTY_INPUT, {
-          dt: 1 / 60,
-          opponentInput: EMPTY_INPUT,
-          ai: false,
-        })
-    }
-    if (options.noNeedles) current = { ...current, [side]: { ...current[side], equipment: [] } }
-    if (options.trueForm) current = performMove({ state: current, side, action: 'special' })
-    current = {
-      ...current,
-      [side]: {
-        ...current[side],
-        weaponsConfiscated: Boolean(options.confiscated),
-        hatsuEffects: { ...current[side].hatsuEffects, hatsuStolen: options.sealed ? 1 : 0 },
-      },
-    }
-    current = performThrow(current, side, { ...EMPTY_INPUT, aura: Boolean(options.powered) })
-    tape = [current]
-    for (let i = 0; i < 180; i++) {
-      current = tickFight(current, EMPTY_INPUT, {
-        dt: 1 / 60,
-        opponentInput: EMPTY_INPUT,
-        ai: false,
-      })
-      tape.push(current)
-    }
+  function reset(options: ThrowDemoOptions = {}) {
+    tape = prepareThrowDemo(options)
     state = tape[0]
     paused = false
     koEnabled = Boolean(options.ko)
@@ -284,6 +151,7 @@
 </script>
 
 <FightStage
+  stageId={state.environment.stageId}
   {state}
   {comfort}
   {paused}

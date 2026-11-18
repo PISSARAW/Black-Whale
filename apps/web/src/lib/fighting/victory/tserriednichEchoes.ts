@@ -1,3 +1,6 @@
+import { aimCinematicWrist } from './wrist'
+import { registerHumanClone } from '$lib/tour/humanClone'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 import { Group, Mesh, Quaternion, Vector3 } from 'three'
 import type { Material, Object3D } from 'three'
 import type { VictoryContext } from './types'
@@ -5,6 +8,7 @@ import { victoryActor, resetVictoryActor } from './actors'
 import { guideFutureHand } from './tserriednichArms'
 import { createFuturePistol } from './tserriednichExecution'
 import { disposeVictoryObject } from './resources'
+import { beginVictoryPose, rememberVictoryPose } from './poseContinuity'
 
 /** A solid second body enacts the forecast. It is never a translucent afterimage. */
 function temporalCopy(source: Object3D) {
@@ -16,6 +20,7 @@ function temporalCopy(source: Object3D) {
   source.traverse((node) => originals.push(node))
   root.traverse((node) => copies.push(node))
   const pairs = copies.map((copy, index) => ({ source: originals[index], copy }))
+  registerHumanClone(source, new Map(pairs.map(({ source, copy }) => [source, copy])))
   const solid = (source: Material) => {
     const held = materials.get(source)
     if (held) return held
@@ -57,17 +62,22 @@ export function createFutureEchoes() {
       entry.root.position.copy(origin)
       entry.root.rotation.set(0, 1.15, 0)
       entry.root.updateWorldMatrix(true, true)
+      const clock = { token: context.frame.token, age }
+      beginVictoryPose(entry.root, clock)
       guideFutureHand(actor, 'right', { target: grippedWrist, amount: 1 })
       guideFutureHand(actor, 'left', { target: grippedWrist, amount: 0 })
       const wrist = entry.root.getObjectByName('hand-right')!
       const facing = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), new Vector3(1, 0, 0))
-      wrist.quaternion.copy(
-        wrist.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(facing),
+      aimCinematicWrist(
+        wrist,
+        facing.multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2)),
       )
       gun.position.set(0, 0, 0)
-      gun.quaternion.identity()
+      gun.rotation.set(Math.PI / 2, 0, 0)
       wrist.add(gun)
       root.add(entry.root)
+      keepHumanFigure(entry.root)
+      rememberVictoryPose(entry.root, clock)
     },
     dispose() {
       root.removeFromParent()

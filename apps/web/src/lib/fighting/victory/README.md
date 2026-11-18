@@ -104,11 +104,14 @@ puis rouvre les yeux sous une autre volonté. Le dernier plan revient sur
 Halkenburg. Le titre Fatality est ici l'habillage du verdict arcade.
 
 Le film prépare explicitement trois porteurs de plume consentants avant son
-premier état enregistré, attend la charge native et vérifie la possession
-réelle après le tir. La cinématique n'ajoute ni compagnon au combat courant,
+premier état enregistré et attend la charge native complète. Un coup physique
+obtient ensuite le K.-O. réel : Grimmel transfère une conscience sans infliger
+de dégâts et ne peut pas fournir ce verdict à lui seul. La flèche et le transfert
+sont représentés après le verdict. La cinématique n'ajoute ni compagnon au combat courant,
 ni pouvoir, ni dégâts. Les figures de soutien réutilisent les géométries humaines
 partagées sans les détruire ; la silhouette de conscience ne possède que son
-matériau. `halkenburgFilm.test.ts` vérifie les préconditions et le verdict natifs ;
+matériau. `halkenburgFilm.test.ts` vérifie la cohorte, la charge, le K.-O. physique,
+les identités préservées et les deux côtés, y compris le miroir ;
 `renderer.test.ts` vérifie les mains, le contact et la restauration des modèles.
 
 Camilla : « Le Souffle » adapte la référence existante : le chat saisit le
@@ -226,6 +229,30 @@ les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclencheme
 `render-biscuit-fatality.mjs` exporte 600 images et `compose-biscuit-fatality.mjs`
 compose la bande sonore du jeu et la vidéo de dix secondes.
 
+
+Nobunaga : « Le dernier pas » est une démo autonome : il n’appartient pas au
+roster jouable et n’est donc pas enregistré dans `catalogue.ts`. Son driver
+`nobunaga.ts` utilise le même contrat de poses, caméra et restauration, avec
+un contexte de présentation qui ne requiert aucun faux état de combat.
+Le modèle natif du navire porte son kimono et son katana articulé ; la cible
+et le décor proviennent des constructeurs de Clash.
+
+Le premier volume physique de la cible atteint exactement la sphère d’En à l’image 300.
+Le dégainé démarre à cette même image ; la pointe physique de la lame atteint
+le torse à 308. Les deux mains gardent le manche et le fourreau dans les limites
+de leurs articulations. Le corps s’effondre en deux sections stylisées à 390,
+puis la garde rejoint le fourreau à 510. Les sections conservent les géométries
+partagées et possèdent uniquement leurs matériaux. Aucune règle de combat,
+aucun Hatsu et aucun personnage jouable n’est ajouté à la simulation.
+Les hanches préparent le dégainé avant l’entrée dans En. Les deux mains se
+partagent la sortie de la lame ; la fente et l’orientation du sabre rejoignent
+le contact réel sans étirer le bras ni modifier la longueur de la lame.
+
+La bande sonore est entièrement instrumentale : pas de voix française, de
+synthèse vocale ou d’annonceur. `nobunaga.test.ts` vérifie le franchissement,
+le contact réel de la pointe, les prises, la restauration et la conservation
+des ressources. `check-nobunaga-fatality.mjs` contrôle les gabarits, les lieux,
+le miroir, les mouvements réduits, le mobile et le chargement du son.
 
 La chute de Biscuit utilise `advanceAirborne`, la progression de KO de
 `finishedFallPresentation`, `reactionPlan` et `fightGroundContact` comme le combat.
@@ -555,3 +582,25 @@ pièce fermée pour tendre une embuscade derrière sa porte, puis finit au coute
 
 Basho : [Le dernier vers](./BASHO.md) écrit la composition de Great Hiker,
 enflamme la cible avec trois poings, puis relit sa feuille devant les braises.
+
+## Continuité et limites des corps
+
+Les mains utilisent le solveur commun `tour/humanLimbReach.ts` : deux segments
+rigides et un coude en flexion, avec recherche d’un plan compatible avec l’épaule.
+La pose affichée précédente guide ce choix pour éviter un retournement du bras.
+Les limites articulaires sont appliquées avant l’ancrage au sol et après les
+couches d’accessoires, y compris sur les corps privés de Biscuit et les doubles.
+Les pistolets conservent leur décalage de prise natif sans le reporter sur le poignet.
+
+`poseContinuity.ts` conserve les valeurs affichées entre deux transactions.
+L’entrée dans une chute ou un combo rejoint la pose sortante sur six images ;
+`humanJointMotion.ts` borne aussi le trajet angulaire des articulations selon
+le temps réellement écoulé. La pause fige cette référence. Un retour arrière
+ou un saut temporel reconstruit la pose ; un corps invisible peut changer de
+pose dans un portail. Ces références ne modifient pas l’état du combat.
+
+`physicalAudit.test.ts` couvre les 33 victoires, les variantes, les deux côtés
+et les gabarits Franklin/Biscuit. Il parcourt chaque image des films de référence
+et contrôle aussi les doubles : limites, longueurs des membres et continuité.
+L’audit des prises parcourt les 40 combattants, avec et sans Aura, des deux côtés
+et contre ces deux gabarits, après toutes les couches de contacts et d’accessoires.

@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 import type { VictoryActor, VictoryContext } from './types'
-import { localToHead, reachVictoryHand } from './pose'
+import { localToHead, reachVictoryHand, turnVictoryChest } from './pose'
 import { reachCinematicHand } from './arm'
 import { groundVictoryActor } from './actors'
 import { voconteFall } from './voconteFall'
@@ -47,25 +47,26 @@ export function voconteVictoryPose(context: VictoryContext) {
   const { hero, victim } = context
   const age = Math.round(context.age * 1e6) / 1e6,
     layout = voconteLayout(context)
+  const closing = ease((age - 396) / 24) * (1 - ease((age - 468) / 24))
+  const angle = voconteDoorAngle(age)
   const track = voconteVictimTrack(age, layout),
     heroTrack = voconteHeroTrack(age, layout)
   victim.root.position.set(track.x, 0, 0)
   victim.root.rotation.y = track.facing
   victim.root.visible = !track.hidden
   stride(victim, age, ease((age - 60) / 12) * (1 - ease((age - 156) / 12)))
-  const victimArms = arms(victim, ease((age - 162) / 18))
+  const victimArms = age < VOCONTE_FALL ? arms(victim, ease((age - 162) / 18)) : []
   victim.root.position.y += track.y
   hero.root.position.set(heroTrack.x, 0, heroTrack.z)
   hero.root.rotation.y = voconteHeroFacing(age)
   hero.root.visible = !heroTrack.hidden
   const moving = voconteHeroMoving(age)
   stride(hero, age, moving ? 0.7 : 0)
+  turnVictoryChest(context, hero, [0, 0, closing * 0.35 * (1 - (2 * angle) / 1.4)])
   const heroArms = arms(hero, 0)
   hero.root.position.y += heroTrack.y
   hero.head.rotation.y = -0.25 * ease((age - 168) / 18) * (1 - ease((age - 210) / 18))
-  const angle = voconteDoorAngle(age),
-    handle = voconteHandle(layout, angle)
-  const closing = ease((age - 396) / 24) * (1 - ease((age - 468) / 24))
+  const handle = voconteHandle(layout, angle)
   const opening = 1 - ease((age - 36) / 12)
   if (age < 48)
     heroArms[1] = reachVictoryHand(context, {

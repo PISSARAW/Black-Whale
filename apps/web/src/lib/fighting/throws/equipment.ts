@@ -3,6 +3,7 @@ import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { createVisitHatsuModel } from '../visitHatsuModel'
 import { reachLimb } from '../fightLimbReach'
 import { fightRigOf } from '../fightRig'
+import { keepHumanJoint } from '$lib/tour/humanJointLimits'
 import { signatureNenAvailable } from './selection'
 import { kurapikaNenVisible } from '../kurapikaAccentScene'
 import { throwPerformance } from './catalogue'
@@ -65,6 +66,7 @@ function poseUmbrella(
     const direction = target.knees[0].getWorldPosition(new Vector3()).sub(grip).normalize()
     const world = new Quaternion().setFromUnitVectors(new Vector3(0, -1, 0), direction)
     hand.quaternion.copy(hand.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world))
+    keepHumanJoint(hand, 'wrist')
   }
   marker.visible = source.visible
   source.getWorldPosition(marker.position)

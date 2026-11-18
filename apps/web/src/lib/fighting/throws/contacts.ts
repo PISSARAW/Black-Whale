@@ -16,8 +16,7 @@ export function alignThrowGrip(options: EffectSceneOptions, frame: ThrowCinemati
   const weight = throwGripWeight(frame)
   if (weight <= 0) return
   const rig = fightRigOf(human)
-  const leftOnly = frame.performance?.startsWith('chrollo')
-  const indices = leftOnly ? [0] : [0, 1]
+  const indices = gripIndices(frame)
   for (const index of indices) {
     const waist = throwPerformance(frame.performance)?.grip === 'waist'
     const node = waist ? target.pelvis : index === 0 ? fightRigOf(target).wrists[1] : target.torso
@@ -65,4 +64,9 @@ export function alignThrowPuppet(
 function activePuppet(state: FightState, frame: ThrowCinematicFrame) {
   const entity = state.battlefield?.entities.find((entry) => entry.id === frame.puppetId)
   return entity?.present && entity.copy?.headAttached && entity.health > 0 ? entity : null
+}
+
+function gripIndices(frame: ThrowCinematicFrame) {
+  if (frame.performance?.startsWith('chrollo')) return [0]
+  return throwPerformance(frame.performance)?.grip === 'left' ? [0] : [0, 1]
 }

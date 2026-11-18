@@ -1,3 +1,4 @@
+import { aimCinematicWrist } from './wrist'
 import { Quaternion, Vector3 } from 'three'
 import type { VictoryContext } from './types'
 import { ease } from './resources'
@@ -117,7 +118,10 @@ export function tserriednichVictoryPose(context: VictoryContext) {
     aim.copy(wrist.getWorldPosition(new Vector3())).add(new Vector3(0, -1, 0.1))
   const direction = aim.clone().sub(wrist.getWorldPosition(new Vector3())).normalize()
   const world = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), direction)
-  wrist.quaternion.copy(wrist.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world))
+  aimCinematicWrist(
+    wrist,
+    world.multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2)),
+  )
   if (age >= 450) {
     fallVictoryVictim(context, { start: 450, duration: 30 })
     victim.root.rotation.z *= -1

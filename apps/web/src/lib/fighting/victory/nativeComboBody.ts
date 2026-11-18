@@ -11,6 +11,7 @@ import { fightGroundContact } from '../fightGroundContact'
 import { poseProgress } from '../sceneMotion'
 import type { ArcadeFighter } from '../types'
 import type { VictoryActor, VictoryContext } from './types'
+import { nativeComboPose, nativePoseEntry } from './poseContinuity'
 import { groundVictoryActor } from './actors'
 
 /** The exact body plan, frame data, root travel, hitstop and reaction used in live combat. */
@@ -19,6 +20,8 @@ export function drawNativeVictoryBody(
   actor: VictoryActor,
   fighter: ArcadeFighter,
 ) {
+  const clock = { token: context.frame.token, age: context.age }
+  const enter = nativePoseEntry(actor.root, { ...clock, phase: 'combo' })
   const human = humanAnimationRig(actor.root.children[0])
   if (!human) throw new Error('Native combos require the native fighting anatomy')
   context.save(human.figure)
@@ -45,8 +48,10 @@ export function drawNativeVictoryBody(
   })
   if (!plan) throw new Error('Native combo has no native body plan')
   const anchor = captureFootPlant(rig)
-  applyFightPose(rig, plan.pose, fighter.facing)
+  const drawn = nativeComboPose(actor.root, plan, clock)
+  applyFightPose(rig, drawn, fighter.facing)
   if (plan.plant) plantFeet(rig, { anchor, root: plan.pose.root, facing: fighter.facing })
+  enter()
   if (plan.plant) groundVictoryActor(actor)
   fightGroundContact(fighter)(human)
   return plan

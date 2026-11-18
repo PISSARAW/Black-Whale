@@ -28,7 +28,7 @@ export function luiniTrack(age: number, layout: LuiniLayout) {
   const { a, b } = layout
   let x = a - 0.9 + ease((age - 72) / 36) * 0.5
   if (age >= 120 && age < 234) x = b + 0.3 - ease((age - 120) / 66) * 0.7
-  if (age >= 234) x = a - 0.65 + ease((age - 366) / 30) * 0.12 + ease((age - 426) / 36) * 1.2
+  if (age >= 234) x = a - 0.65 - ease((age - 366) / 30) * 0.18 + ease((age - 426) / 36) * 1.2
   const hidden = (age >= 108 && age < 120) || (age >= 234 && age < 246)
   const victimX = a + 1.5 - ease((age - 270) / 60) * 1.18
   const angle = 1.3 * ease((age - LUINI_TIMING.open) / 24)

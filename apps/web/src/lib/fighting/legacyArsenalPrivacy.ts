@@ -2,6 +2,8 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  enemy.illumiNeedleMode = undefined
+  enemy.illumiNeedleGeneration = undefined
   enemy.illumiDisguisePlan = undefined
   if (enemy.illumi)
     enemy.illumi = {

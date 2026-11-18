@@ -37,6 +37,20 @@ simulées : c’est la borne retenue dans la fourchette annoncée au chapitre 11
 pas une durée universelle attribuée à tous les déguisements. Une seconde
 exécution permet le retour volontaire si le Nen et la main sont disponibles.
 
+Depuis le ruleset 58, les aiguilles du déguisement ont aussi leur assemblage
+matériel distinct. Les marqueurs du modèle restent une illustration, sans
+imposer un nombre canonique d’aiguilles de Gittarackur. Terminer un prêt ou
+fermer la page arrête l’apparence maintenue par ce canal mais ne supprime pas
+le métal réel. Celui-ci reste visible et peut être retiré avec une main libre,
+même sans le Hatsu ou sous On. Le même assemblage est déposé, tombe au sol,
+et garde son identité entre les manches. Il n’est créé qu’à l’achèvement de
+la préparation ; une préparation interrompue ne laisse pas un second objet.
+
+Un assemblage conjuré garde le parent et l’âge de sa matière après extraction
+et ramassage. Gallery Fake ne copie qu’un nouvel objet inerte, sans déguisement
+ou contrôle mental. Cette combinaison non montrée reste une interprétation
+matérielle du duel, distincte des scènes citées.
+
 La forme du visage et ses marques changent ; les yeux, la coiffure, les vêtements,
 les articulations, l’identité réelle et les pouvoirs du corps restent les siens.
 Le moteur ne fournit ni perruque ni tenue d’Hisoka. Le corps n’acquiert ni Bungee
@@ -66,6 +80,6 @@ l’acquisition et l’échéance privée.
 Les tests `illumiDisguise`, `illumiDisguiseBorrowing`, `illumiDisguiseFigure` et
 `illumiDisguiseReplay` complètent la suite existante. Le script
 `apps/web/scripts/check-illumi-face-ui.mjs` exerce les deux formes pour P1/P2
-à 1100, 390 et 320 pixels. La déformation du visage d’autrui et les applications
-complètes du conditionnement mental restent à compléter avant toute certification
+à 1100, 390 et 320 pixels. La [déformation du visage d’autrui](./clash-illumi-trois-aiguilles.md)
+est ajoutée au ruleset 57. Les applications complètes du conditionnement mental restent à compléter avant toute certification
 de l’arsenal d’Illumi à 100 %.

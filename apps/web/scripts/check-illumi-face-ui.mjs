@@ -70,6 +70,7 @@ try {
         assert.equal(disguised.face.disguised, true)
         assert.equal(disguised.face.disguiseMode, pinned ? 'pinned-gittarackur' : 'unpinned-hisoka')
         assert.equal(disguised.face.disguiseOrigin.source, 'personal')
+        assert.equal(Boolean(disguised.disguisePins), pinned)
         assert.deepEqual(disguised.equipment, before.equipment)
         assert.equal(disguised.health, before.health)
         if (width === 1100) {
@@ -88,12 +89,53 @@ try {
             : 'Illumi · Exécuter le remodelage du visage',
         )
         assert.equal((await snapshot()).face.disguised, false)
+        assert.equal((await snapshot()).disguisePins, undefined)
         assert.equal(
           await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1),
           false,
         )
         cases.push({ width, side, pinned })
       }
+    }
+  }
+  for (const width of [1100, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 })
+    for (const side of ['player', 'opponent']) {
+      await page.evaluate((side) => window.preparationFixture.prepareIllumiBookFace(side), side)
+      await page.waitForSelector('.fight-scene.ready')
+      const panel = page
+        .getByRole('region', { name: 'Arsenal rétrospectif' })
+        .nth(side === 'player' ? 0 : 1)
+      const press = (name) => panel.getByRole('button', { name, exact: true }).press('Enter')
+      const snapshot = () =>
+        page.evaluate((side) => window.preparationFixture.illumiFaceState(side), side)
+      await press('Page · Visage · Remodelage physique')
+      await page.evaluate(() => window.preparationFixture.advance(35))
+      const pins = (await snapshot()).disguisePins
+      assert.ok(pins.id)
+      await press('Ouvrir · Gallery Fake')
+      await page.evaluate(() => window.preparationFixture.advance(20))
+      assert.equal((await snapshot()).face.disguised, false)
+      assert.deepEqual((await snapshot()).disguisePins, pins)
+      if (width === 1100) {
+        await page.locator('.arena').scrollIntoViewIfNeeded()
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        )
+        await page
+          .locator('.arena')
+          .screenshot({ path: path.join(output, `${side}-book-ended-pins.png`) })
+      }
+      await press('Illumi · Retirer les aiguilles du visage')
+      const removed = await snapshot()
+      assert.equal(removed.disguisePins, undefined)
+      assert.deepEqual(removed.piles[0].disguisePinBundle, pins)
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1),
+        false,
+      )
+      cases.push({ width, side, book: true })
     }
   }
   assert.deepEqual(errors, [])

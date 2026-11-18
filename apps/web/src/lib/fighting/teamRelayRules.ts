@@ -1,6 +1,7 @@
 import { teamWorldEngaged } from './teams/commitments'
 import { anyPaperTextureBusy } from './paperTexture'
 import { illumiRelaySignature } from './illumiDisguiseClock'
+import { anyCopiedNeedleFaceBusy } from './illumiNeedleFaceClock'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -42,6 +43,9 @@ const BODY_FIELDS = new Set([
   'gumProsthesisGeneration',
   'textureTarget',
   'illumiDisguisePlan',
+  'illumiNeedleMode',
+  'illumiNeedleGeneration',
+  'illumiDisguisePins',
   'texturePaperDraft',
   'texturePaperId',
   'paperTextureGeneration',
@@ -137,6 +141,7 @@ function quietWorld(state: FightState): boolean {
       state.bungeeGum,
       gumBusy(state),
       anyPaperTextureBusy(state),
+      anyCopiedNeedleFaceBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 932
+Fichiers : 939
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -781,6 +781,14 @@ Fichiers : 932
 
 - the body keeps its own eyes, hair, clothes, joints and abilities under Illumi’s face alteration > uses Hisoka’s facial shell and marks while preserving the owner’s actual eyes and combat body
 
+## `apps/web/src/lib/fighting/illumiDisguisePins.test.ts`
+
+- Gittarackur’s physical needle assembly is independent of its Nen appearance > does not materialize pins for the unpinned form or an interrupted preparation
+
+## `apps/web/src/lib/fighting/illumiDisguisePinsFigure.test.ts`
+
+- the ended disguise retains visible, recoverable material > keeps physical pins on the original face after page loss, then removes their geometry on extraction
+
 ## `apps/web/src/lib/fighting/illumiDisguiseReplay.test.ts`
 
 - the real Illumi disguise controls in replays, AI and On > records and reproduces P2’s physical pins, removal, unpinned choice, alteration and reversion
@@ -788,6 +796,22 @@ Fichiers : 932
 ## `apps/web/src/lib/fighting/illumiDisguiseTeam.test.ts`
 
 - Illumi’s physical face belongs to its body through a relay > does not block a relay merely for an uncast face choice
+
+## `apps/web/src/lib/fighting/illumiNeedleBorrowing.test.ts`
+
+- other-body face shaping retains its actual acquisition > ends a book shaping effect on page closure without erasing metal or spending a loan
+
+## `apps/web/src/lib/fighting/illumiNeedleFigure.test.ts`
+
+- the face has three physical forehead pins without a Needle People marker > names the captured face application in both cast and contact shots
+
+## `apps/web/src/lib/fighting/illumiNeedleMatter.test.ts`
+
+- face pins retain actual matter and Gallery Fake parentage > retains detached pieces after other material of the same copy is destroyed, then expires them at their parent’s deadline
+
+## `apps/web/src/lib/fighting/illumiNeedleReplay.test.ts`
+
+- three forehead pins use actual commands in replays and P2 prediction > reproduces P2’s selected attack and P1’s physical removal without recording an outcome
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 

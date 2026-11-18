@@ -981,3 +981,17 @@ matérielles distinctes : aiguilles réelles pour Gittarackur, délai de quatre 
 simulées pour l’imitation sans aiguilles du chapitre 118. Le corps, les yeux,
 les vêtements et l’arsenal du personnage restent les siens. Cette extension
 ne certifie pas encore tout le contrôle mental et les usages sur autrui.
+
+## Trois aiguilles au front — ruleset 57
+
+La [déformation douloureuse du visage d’autrui](./clash-illumi-trois-aiguilles.md)
+est distincte du contrôle cérébral de Needle People. Contact réel, métal,
+extraction, copies, prêts, mains et provenance sont suivis séparément. Le On
+reste présent ; le conditionnement mental de Killua reste à compléter.
+
+## Matière du déguisement personnel — ruleset 58
+
+Les [aiguilles de Gittarackur](./clash-illumi-visages.md) ont une identité
+matérielle qui subsiste quand la copie ou le prêt termine le remodelage.
+Retrait physique sans Nen, dépôt, chute, copies inertes, âge du parent et
+conservation entre les manches suivent le même corps. Le On reste présent.

@@ -1,8 +1,7 @@
 import { littleEyeShotBusy } from './littleEyeCapture'
 import { dismissReturnedLoans } from './dolphinReturn'
 import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
-import { borrowedIllumiFaceBusy } from './illumiDisguiseClock'
-import { clearIllumiFace } from './illumiDisguise'
+import { finishBorrowedIllumi } from './illumiDolphinFinish'
 import { clearPaperTextures } from './paperTexture'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
@@ -251,7 +250,8 @@ function endActiveDolphinEffect(options: AuraAttackOptions, perform: PerformAtta
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
-  if (borrowedIllumiFaceBusy(fighter)) return { ...state, [side]: clearIllumiFace(fighter) }
+  const illumi = finishBorrowedIllumi(state, side)
+  if (illumi) return illumi
   if (controlledEntities(state, side).length || littleEyeShotBusy(state, side))
     return releasePreparedControl(state, side)
   if (borrowedDoorActive(state, side))

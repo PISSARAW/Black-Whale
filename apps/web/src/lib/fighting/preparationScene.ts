@@ -65,12 +65,15 @@ export function createPreparationScene(options: EffectSceneOptions) {
         root.add(object)
       },
       needles: () => {
-        const pin = box([0.02, 0.35, 0.02], 0xd8dce1)
-        pin.rotation.z = 1
-        pin.position.y = 0.1
-        const cap = sphere(0.055, 0xf0ca53)
-        cap.position.set(-0.13, 0.2, 0)
-        root.add(pin, cap)
+        for (let index = 0; index < (entry.detachedFaceNeedles ? 3 : 1); index++) {
+          const pin = box([0.02, 0.35, 0.02], 0xd8dce1)
+          pin.name = `prepared-needle:${index}`
+          pin.rotation.z = 1
+          pin.position.set(index * 0.08, 0.1, index * 0.04)
+          const cap = sphere(0.055, 0xf0ca53)
+          cap.position.set(-0.13 + index * 0.08, 0.2, index * 0.04)
+          root.add(pin, cap)
+        }
       },
       seed: () => seed(root),
       animal: () => animal(root),

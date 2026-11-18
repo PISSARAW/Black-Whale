@@ -12,6 +12,17 @@
   $: preparation = fighter.illumi?.preparation ?? 0
 </script>
 
+{#if fighter.illumiDisguisePins && !fighter.illumi?.disguised}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Aiguilles du déguisement toujours présentes' : 'Disguise needles remain'}</strong
+    >
+    <span
+      >{fr
+        ? 'Retrait physique possible avec une main libre.'
+        : 'Physical removal is possible with a free hand.'}</span
+    >
+  </div>
+{/if}
 {#if ownsIllumiNeedles(fighter) || fighter.illumi}
   <div class="illumi-status">
     <strong>Needle People · {fr ? 'Aiguille et consigne' : 'Needle and order'}</strong>
@@ -64,6 +75,25 @@
       >{fr
         ? 'L : implantation / Reste · → + L : Approche · ↓ + L : Éloigne-toi · ← + L : déguisement'
         : 'L: implant / Stay · → + L: Approach · ↓ + L: Retreat · ← + L: disguise'}</small
+    >
+  </div>
+{/if}
+{#if fighter.needleFace}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Trois aiguilles au front' : 'Three forehead needles'}</strong>
+    <span
+      >{fighter.needleFace.reshaping
+        ? fr
+          ? 'Visage déformé · autonomie conservée'
+          : 'Distorted face · autonomy retained'
+        : fr
+          ? 'Remodelage terminé · aiguilles toujours présentes'
+          : 'Shaping ended · needles remain'}</span
+    >
+    <small
+      >{fr
+        ? 'Une main libre permet de retirer les aiguilles après la douleur d’impact.'
+        : 'A free hand can remove the needles after impact pain.'}</small
     >
   </div>
 {/if}

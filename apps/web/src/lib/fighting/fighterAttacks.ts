@@ -97,15 +97,18 @@ export function startFighterAttack(options: {
       auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
       hatsuSource: attackHatsuSource(options),
-      nenOrigin: hisokaAttackOrigin(options),
+      nenOrigin: attackNenOrigin(options),
+      illumiNeedleMode:
+        attackHatsuSource(options) === 'illumi' ? fighter.illumiNeedleMode : undefined,
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },
     bufferedAttack: null,
   }
 }
-function hisokaAttackOrigin(options: Parameters<typeof startFighterAttack>[0]) {
-  return attackHatsuSource(options) === 'hisoka' ? newGumSource(options.fighter) : undefined
+function attackNenOrigin(options: Parameters<typeof startFighterAttack>[0]) {
+  const source = attackHatsuSource(options)
+  return source === 'hisoka' || source === 'illumi' ? newGumSource(options.fighter) : undefined
 }
 
 function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {

@@ -1,6 +1,7 @@
 import { opposingKameoBodies } from '../kameos/pvp'
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
 import { concealDocumentWorld } from '../paperDocumentPrivacy'
+import { privateNeedleFaces } from '../illumiNeedlePrivacy'
 import { redactPriorityWorld } from '../priorityPrivacy'
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
 import { concealPaperScatters } from '../kallutoScatterVisibility'
@@ -138,7 +139,7 @@ function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
   return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
-  const view = structuredClone(futureVisibleState(state, side))
+  const view = privateNeedleFaces(structuredClone(futureVisibleState(state, side)), side)
   view.arsenalTrace = undefined
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
@@ -171,7 +172,9 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
     concealPaperScatters(frame, side)
-    const documentView = { ...view, ...frame, ...frame.documentContext }
+    const documentView = privateNeedleFaces({ ...view, ...frame, ...frame.documentContext }, side)
+    frame.player = documentView.player
+    frame.opponent = documentView.opponent
     concealDocumentWorld(documentView, side)
     frame.battlefield = documentView.battlefield
     redactEnemy(frame[other])

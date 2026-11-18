@@ -32,6 +32,14 @@ export const MACHI_CAMERA_RULES = rulesFor('machi', [
 ])
 export const ILLUMI_CAMERA_RULES = rulesFor('illumi', [
   {
+    id: 'face-warp',
+    label: ['Visage · Trois aiguilles au front', 'Face · Three forehead needles'],
+    select: (c) => c.target.needleFace?.owner === c.side && c.target.needleFace.reshaping,
+    anchors: targetPart('head'),
+    frontal: true,
+    priority: 3,
+  },
+  {
     id: 'implant',
     label: ['Needle People · Implantation', 'Needle People · Implanted'],
     select: (c) => c.target.needlePuppet?.owner === c.side,

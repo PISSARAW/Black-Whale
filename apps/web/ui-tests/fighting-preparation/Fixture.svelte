@@ -3,7 +3,7 @@
   import { mixedHisokaScenario } from './mixedHisoka'
   import { prosthesisScenario } from './prostheses'
   import { documentScenario, documentSnapshot } from './documents'
-  import { illumiFaceScenario, illumiFaceSnapshot } from './illumiFaces'
+  import { illumiFaceScenario, illumiFaceSnapshot, illumiBookFaceScenario } from './illumiFaces'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
@@ -109,8 +109,8 @@
   export function paperSnapshot(side: FightSide) {
     return documentSnapshot(state, side)
   }
-  export async function prepareIllumiFace(side: FightSide, pinned: boolean) {
-    state = illumiFaceScenario(side, pinned)
+  export async function prepareIllumiFace(side: FightSide, pinned: boolean, close = false) {
+    state = illumiFaceScenario(side, pinned, close)
     player = state.player.id
     opponent = state.opponent.id
     environment = state.environment
@@ -119,6 +119,14 @@
   }
   export function illumiFaceState(side: FightSide) {
     return illumiFaceSnapshot(state, side)
+  }
+  export async function prepareIllumiBookFace(side: FightSide) {
+    state = illumiBookFaceScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
   }
   export async function prepareOitoLoan() {
     player = 'kurapika'

@@ -56,6 +56,9 @@ import { historicalOptions } from './chrolloHistoricalOptions'
 import { ARSENAL_ACTION_IDS, type ArsenalCommand, type ArsenalOption } from './retrospectiveTypes'
 import { performIllumiFaceCommand, illumiFaceOptions } from './illumiDisguise'
 import { nativeIllumiFaceOption } from './illumiDisguiseApplication'
+import { performNeedleModeCommand, needleModeOptions } from './illumiNeedleCommands'
+import { nativeIllumiNeedleOption } from './illumiNeedleApplication'
+import { performNeedleFaceRemoval, needleFaceRemovalOptions } from './illumiNeedleFaceRemoval'
 import type { FightSide, FightState } from './types'
 
 export function validArsenalCommand(value: unknown): value is ArsenalCommand {
@@ -127,6 +130,8 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['needle-face-remove', performNeedleFaceRemoval],
+  ['illumi-needle-mode', performNeedleModeCommand],
   ['illumi-face-', performIllumiFaceCommand],
   ['gum-anchor-', performGumObjectAnchorCommand],
   ['paper-release-confetti', performPaperScatterCommand],
@@ -165,6 +170,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...needleFaceRemovalOptions(state, side),
     ...paperScatterOptions(state, side),
     ...paperKitOptions(state, side),
     ...paperReceiverOptions(state, side),
@@ -200,6 +206,8 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...gumArsenalOptions(state, side),
     ...textureSurfaceOptions(state, side),
     ...illumiFaceOptions(state, side),
+    ...needleModeOptions(state, side),
+    ...nativeIllumiNeedleOption(state, side),
     ...nativeIllumiFaceOption(state, side),
     ...paperDocumentOptions(state, side),
     ...gumObjectAnchorOptions(state, side),

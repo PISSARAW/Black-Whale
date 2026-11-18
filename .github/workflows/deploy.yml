@@ -39,5 +39,5 @@ jobs:
               echo 'This commit or a newer release is already healthy; skipping stale deployment.'
               exit 0
             fi
-            git reset --hard "$candidate
+            git reset --hard "$candidate"
             ./infrastructure/hetzner/deploy.sh

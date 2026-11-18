@@ -1,10 +1,15 @@
 import { lerpPose, type FightPose } from './fightPose'
+import type { AttackWeightTransfer } from './fightWeightTransfer'
 
 export interface AttackFlowFrame {
   frame: number
   startup: number
   facing: 1 | -1
+  contact?: FightPose
+  transfer?: AttackWeightTransfer
 }
+
+export const COMBO_LINK_SECONDS = 7 / 60
 
 /** During a cancel, the torso leads and the hands finish the previous gesture. */
 export function flowIntoAttack(options: {

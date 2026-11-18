@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { buildHumanFigure } from '$lib/tour/humanFigure'
 import type { HumanPose } from '$lib/tour/humanAnimation'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
+import { duelBridge, flowThroughBridge } from './duelAttackBridges'
 import { createAttackTravel } from './fightAttackTravel'
 import { FIXED_STEP } from './fightClock'
 import { captureFootPlant, footHeight, fightRigOf } from './fightRig'
@@ -71,6 +72,22 @@ function pose(model: ReturnType<typeof figureOf>, who: ArcadeFighter, at = 1, ba
 }
 
 const context = { seconds: 1, progress: 0 }
+
+it('chambers the heel between Hisoka’s card slash and kick without changing the contact pose', () => {
+  const load = duelBridge('hisoka:standingLight', 'hisoka:standingHeavy', -1)!
+  const from = { leadKnee: [0, 0, 0] as const }
+  const contact = { leadKnee: [-0.2, 0, 0] as const }
+  const pose = (progress: number) => flowThroughBridge({ from, contact, load, progress })
+  expect(pose(0).leadKnee).toEqual(from.leadKnee)
+  expect(pose(0.5).leadKnee![0]).toBeGreaterThan(0.4)
+  expect(pose(1).leadKnee).toEqual(contact.leadKnee)
+})
+
+it('keeps the chain-arm preparation on Kurapika’s right hand even when facing left', () => {
+  const load = duelBridge('kurapika:standingLight', 'kurapika:standingHeavy', -1)!
+  expect(load.rearElbow).toEqual([-0.8, 0, 0])
+  expect(load.leadElbow).toBeUndefined()
+})
 
 it.each([1, -1] as const)('renders an attack step continuously facing %s', (facing) => {
   const travel = createAttackTravel()
@@ -221,6 +238,35 @@ describe('fighting rig', () => {
       expect(contact.toArray()).toEqual(
         isolated.root.getObjectByName('shoulder-right')!.rotation.toArray(),
       )
+    },
+  )
+
+  it.each(FIGHTING_ROSTER.map(({ id }) => id))(
+    'uses a grounded transfer on %s links and leaves the first active pose intact',
+    (id) => {
+      const linked = figureOf(id)
+      const isolated = figureOf(id)
+      const first = attacking(id, 'forwardLight', 0)
+      first.attack!.frame = attackData('light', first).startup
+      const strike = attacking(id, 'standingHeavy', 0)
+      const timing = attackData('heavy', strike)
+      expect(bodyPlan(strike, context)?.attackFlow?.transfer).toBeDefined()
+      pose(linked, first, 1)
+      pose(linked, fighter(id), 1 + FIXED_STEP)
+      pose(isolated, fighter(id), 1)
+      pose(linked, strike, 1 + 2 * FIXED_STEP)
+      pose(isolated, strike, 1 + 2 * FIXED_STEP)
+      strike.attack!.frame = Math.ceil(timing.startup / 2)
+      const time = 1 + FIXED_STEP * (2 + strike.attack!.frame)
+      pose(linked, strike, time)
+      pose(isolated, strike, time)
+      const knees = (model: ReturnType<typeof figureOf>) =>
+        ['knee-left', 'knee-right'].map((part) => model.root.getObjectByName(part)!.rotation.x)
+      expect(knees(linked)).not.toEqual(knees(isolated))
+      strike.attack!.frame = timing.startup
+      pose(linked, strike, time + FIXED_STEP)
+      pose(isolated, strike, time + FIXED_STEP)
+      expect(knees(linked)).toEqual(knees(isolated))
     },
   )
 

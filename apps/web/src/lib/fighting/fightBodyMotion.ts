@@ -22,7 +22,14 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
-import { flowIntoAttack, type AttackFlowFrame } from './fightAttackFlow'
+import { bridgeTarget, duelBridge, flowThroughBridge } from './duelAttackBridges'
+import { COMBO_LINK_SECONDS, flowIntoAttack, type AttackFlowFrame } from './fightAttackFlow'
+import {
+  attackWeightTransfer,
+  carryRecoveryWeight,
+  transferAttackWeight,
+} from './fightWeightTransfer'
+import { rosterStrikeShape } from './rosterKeyPoses'
 import { READY_ARMS } from './fightGestures'
 import {
   addPoses,
@@ -121,7 +128,13 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
-    if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
+    if (anchor)
+      plantFeet(rig, {
+        anchor,
+        root: drawn.root,
+        facing: fighter.facing,
+        transfer: Boolean(plan.attackFlow?.transfer),
+      })
   })
 }
 
@@ -132,6 +145,9 @@ interface PoseMemory {
   last: FightPose
   attack?: AttackFlowFrame
   chained?: boolean
+  bridge?: FightPose
+  shiftWeight?: boolean
+  link?: { frame: AttackFlowFrame; key: string; until: number }
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -154,25 +170,65 @@ function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
     return plan.pose
   }
   const attack = plan.attackFlow
-  if (memory.key !== plan.key || attackRestarted(memory.attack, attack)) {
-    const chained = Boolean(attack && memory.attack?.facing === attack.facing)
-    Object.assign(memory, { key: plan.key, from: memory.last, since: seconds, chained })
-  }
+  if (memory.key !== plan.key || attackRestarted(memory.attack, attack))
+    beginPoseTransition(memory, plan, seconds)
   memory.attack = attack
   if (attack) {
-    memory.last = flowIntoAttack({
-      from: memory.from,
-      to: plan.pose,
-      progress: memory.since === -Infinity ? 1 : attack.frame / Math.max(1, attack.startup),
-      chained: Boolean(memory.chained),
-    })
+    memory.last = attackTransition(memory, { pose: plan.pose, attack })
     return memory.last
   }
-  const travel =
-    plan.blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / plan.blend)) : 1
+  const blend = memory.link ? Math.max(COMBO_LINK_SECONDS, plan.blend) : plan.blend
+  const travel = blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / blend)) : 1
   const eased = travel * travel * (3 - 2 * travel)
   memory.last = travel >= 1 ? plan.pose : lerpPose(memory.from, plan.pose, eased)
   return memory.last
+}
+
+function beginPoseTransition(memory: PoseMemory, plan: BodyPlan, seconds: number): void {
+  const attack = plan.attackFlow
+  const previous =
+    memory.attack ?? (memory.link && seconds <= memory.link.until ? memory.link.frame : undefined)
+  const chained = attack !== undefined && previous?.facing === attack.facing
+  const fromKey = memory.attack ? memory.key : (memory.link?.key ?? memory.key)
+  const bridge = chained
+    ? duelBridge(fromKey.slice('attack:'.length), plan.key.slice('attack:'.length), attack.facing)
+    : undefined
+  const link =
+    memory.attack?.transfer && ['stance', 'crouch', 'battle-cantabile-dance'].includes(plan.key)
+      ? { frame: memory.attack, key: memory.key, until: seconds + COMBO_LINK_SECONDS }
+      : undefined
+  const shiftWeight = Boolean(chained && previous?.transfer)
+  Object.assign(memory, {
+    key: plan.key,
+    from: memory.last,
+    since: seconds,
+    chained,
+    bridge,
+    link,
+    shiftWeight,
+  })
+}
+
+function attackTransition(memory: PoseMemory, plan: { pose: FightPose; attack: AttackFlowFrame }) {
+  const { attack, pose } = plan
+  const progress = memory.since === -Infinity ? 1 : attack.frame / Math.max(1, attack.startup)
+  if (memory.bridge && attack.contact && progress < 1) {
+    return flowThroughBridge({
+      from: memory.from,
+      contact: attack.contact,
+      load: memory.bridge,
+      progress,
+    })
+  }
+  const drawn = flowIntoAttack({
+    from: memory.from,
+    to: pose,
+    progress,
+    chained: Boolean(memory.chained),
+  })
+  return memory.shiftWeight && attack.transfer
+    ? transferAttackWeight({ from: memory.from, pose: drawn, transfer: attack.transfer, progress })
+    : drawn
 }
 
 function attackRestarted(previous?: AttackFlowFrame, current?: AttackFlowFrame): boolean {
@@ -189,8 +245,17 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   const ordinary = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
   const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1
-    ? { ...plan, pose: rightHandedPose(plan.pose) }
+    ? rightHandedPlan(plan)
     : plan
+}
+
+function rightHandedPlan(plan: BodyPlan): BodyPlan {
+  const attack = plan.attackFlow
+  return {
+    ...plan,
+    pose: rightHandedPose(plan.pose),
+    attackFlow: attack?.contact ? { ...attack, contact: rightHandedPose(attack.contact) } : attack,
+  }
 }
 
 function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
@@ -321,15 +386,49 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = characterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
-  const keyed = sampleTimeline(timeline, { frame, frames, continuous: true })
-  const accent = attackMotionAccent({ fighter, frames, authored, frame })
+  const base = basePose(variant, standing, authored)
+  const transfer =
+    variant !== 'air' && variant !== 'throw' && fighter.y <= 0
+      ? attackWeightTransfer({
+          id: fighter.id,
+          kind: attack.kind,
+          slot,
+          shape: rosterStrikeShape(fighter.id, slot),
+        })
+      : undefined
+  const recovery =
+    transfer && attack.confirmedHit && frame > frames.startup + frames.active
+      ? carryRecoveryWeight({
+          transfer,
+          recovery: (frame - frames.startup - frames.active) / Math.max(1, frames.recovery),
+        })
+      : undefined
+  const poseAt = (at: number) =>
+    addPoses(
+      base,
+      sampleTimeline(timeline, { frame: at, frames, continuous: true }),
+      attackMotionAccent({ fighter, frames, authored, frame: at }),
+    )
   return {
-    pose: addPoses(basePose(variant, standing, authored), keyed, accent),
+    pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
-    attackFlow: { frame, startup: frames.startup, facing: fighter.facing },
+    attackFlow: {
+      frame,
+      startup: frames.startup,
+      facing: fighter.facing,
+      transfer,
+      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),
+    },
   }
+}
+
+function bridgeContact(
+  moveId: string | undefined,
+  timing: { frame: number; startup: number; poseAt: (frame: number) => FightPose },
+): FightPose | undefined {
+  if (timing.frame < timing.startup && bridgeTarget(moveId)) return timing.poseAt(timing.startup)
 }
 
 function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {

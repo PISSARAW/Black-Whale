@@ -28,6 +28,7 @@ import {
   type RosterFighterId,
   type RosterChoreography,
   type StrikeLibrary,
+  type StrikeShape,
 } from './rosterChoreography'
 import { ROSTER_TECHNIQUES, type TechniqueDirection } from './rosterTechniqueDirection'
 import { TECHNIQUE_GESTURES } from './rosterTechniqueGestures'
@@ -71,6 +72,10 @@ const SPECIALS: readonly MoveSlot[] = [
   'backSpecial',
   'finisher',
 ]
+
+export function rosterStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
+  return ROSTER_CHOREOGRAPHY[id as RosterFighterId]?.strikes[NORMALS.indexOf(slot)]
+}
 
 const CACHE = new Map<FighterId, Record<MoveSlot, MoveTimeline>>()
 

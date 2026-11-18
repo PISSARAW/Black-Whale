@@ -37,6 +37,7 @@ export interface PlantFeetOptions {
   /** Authored root travel remains visible while joint-induced foot drift is removed. */
   root?: Turn
   facing: 1 | -1
+  transfer?: boolean
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -211,7 +212,26 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const target = options.anchor.positions[support].clone()
   const root = options.root ?? [0, 0, 0]
   target.x += root[0] * options.facing
+  if (options.transfer)
+    target.y = Math.min(options.anchor.positions[0].y, options.anchor.positions[1].y)
   target.y += root[1]
   target.z += root[2]
-  human.figure.position.add(target.sub(after.positions[support]))
+  const correction = target.sub(after.positions[support])
+  if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
+  human.figure.position.add(correction)
+}
+
+function blendFootCorrections(
+  correction: Vector3,
+  options: PlantFeetOptions & { after: FootPlantAnchor; support: number },
+): void {
+  const { after, support, anchor, root, facing } = options
+  const other = 1 - support
+  const gap = Math.abs(after.positions[other].y - after.positions[support].y)
+  const t = Math.min(1, gap / 0.14)
+  const weight = (1 - t * t * (3 - 2 * t)) * 0.5
+  const x = anchor.positions[other].x - after.positions[other].x + (root?.[0] ?? 0) * facing
+  const z = anchor.positions[other].z - after.positions[other].z + (root?.[2] ?? 0)
+  correction.x += (x - correction.x) * weight
+  correction.z += (z - correction.z) * weight
 }

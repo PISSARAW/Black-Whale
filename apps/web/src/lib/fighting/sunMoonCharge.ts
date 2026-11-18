@@ -1,3 +1,6 @@
+import { resolveMoonlightAction } from './moonlightAction'
+import { resolveCrossGameCommand } from './crossGameAction'
+import { stampObjectPoint, objectMarkPoint, objectMarkAtPalm } from './sunMoonMarkPoint'
 import { witnessedHatsuState } from './nenWitness'
 import { SUN_MOON_FULL_CONTACT } from './sunMoonChargeRules'
 import { chainAbilitySealed } from './kurapika'
@@ -30,7 +33,13 @@ export function performSunMoonCharge(
   if (!admitted) return state
   const { entry, mark } = admitted
   const actor = state[side]
-  const stamped = updateEntity(state, entry.id, { arena: { ...entry.arena!, [mark]: side } })
+  const stamped = updateEntity(state, entry.id, {
+    arena: stampObjectPoint({ entry, actor, mark, side }),
+  })
+  const point = objectMarkPoint(
+    stamped.battlefield!.entities.find((e) => e.id === entry.id)!,
+    mark,
+  )!
   const witness = side === 'player' ? 'opponent' : 'player'
   const marked = {
     ...stamped,
@@ -42,7 +51,7 @@ export function performSunMoonCharge(
       },
     },
   }
-  return {
+  const after: FightState = {
     ...marked,
     arena: {
       ...state.arena,
@@ -54,7 +63,7 @@ export function performSunMoonCharge(
           mark,
           charge: true,
           frames: SUN_MOON_FULL_CONTACT,
-          contact: { x: entry.x - actor.x, y: entry.y - actor.y },
+          contact: { x: point.x - actor.x, y: point.y - actor.y },
         },
       },
     },
@@ -67,6 +76,7 @@ export function performSunMoonCharge(
       bufferedAttack: null,
     },
   }
+  return resolveMoonlightAction(state, resolveCrossGameCommand(state, after, side), side)
 }
 function chargeCommandTarget(state: FightState, side: FightSide, command: ArsenalCommand) {
   if (!['sun-moon-charge-sun', 'sun-moon-charge-moon'].includes(command.action)) return undefined
@@ -75,7 +85,7 @@ function chargeCommandTarget(state: FightState, side: FightSide, command: Arsena
   const entry = state.battlefield?.entities.find((e) => e.id === command.target)
   if (!entry || !chargeTargetReady(state, side, entry) || !chargeMarkAllowed(entry, side, mark))
     return undefined
-  return { entry, mark } as const
+  return objectMarkAtPalm(entry, state[side], mark) ? ({ entry, mark } as const) : undefined
 }
 function chargeStartReady(state: FightState, side: FightSide, mark: ObjectMark): boolean {
   const actor = state[side]
@@ -153,9 +163,12 @@ function maintainsChargeContact(context: {
   if (!pending.mark || !pending.contact || !chargeChannelReady(state, side, pending.mark))
     return false
   if (!chargeTargetReady(state, side, entry) || chargeBodyInterrupted(state, side)) return false
-  return (
+  const point = objectMarkPoint(entry, pending.mark)
+  return Boolean(
+    point &&
     entry.arena![pending.mark] === side &&
-    Math.hypot(entry.x - actor.x - pending.contact.x, entry.y - actor.y - pending.contact.y) <= 0.25
+    Math.hypot(point.x - actor.x - pending.contact.x, point.y - actor.y - pending.contact.y) <=
+      0.25,
   )
 }
 

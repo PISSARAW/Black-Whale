@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 995
+Fichiers : 996
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1318,6 +1318,10 @@ Fichiers : 995
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
+
+## `apps/web/src/lib/fighting/sunMoonMarkPoint.test.ts`
+
+- Sun and Moon detonate only when the actual indelible signs meet > does not confuse touching unmarked faces with touching signs
 
 ## `apps/web/src/lib/fighting/teamMatch.test.ts`
 

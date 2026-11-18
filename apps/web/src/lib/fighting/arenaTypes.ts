@@ -5,6 +5,9 @@ export interface ArenaObject {
   height: number
   sun?: FightSide
   moon?: FightSide
+  facing?: 1 | -1
+  sunPoint?: import('./sunMoonMarkPoint').MarkPoint
+  moonPoint?: import('./sunMoonMarkPoint').MarkPoint
   sunCharge?: number
   moonCharge?: number
   burning?: number

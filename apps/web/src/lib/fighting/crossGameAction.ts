@@ -66,6 +66,17 @@ export function resolveCrossGameCommand(
   return startsAttack || startsUtility ? confineCrossGame(before, side) : after
 }
 
+/** A successful physical manipulation also moves the body, even without spending aura. */
+export function resolveCrossGamePhysicalUtility(
+  before: FightState,
+  after: FightState,
+  side: FightSide,
+): FightState {
+  const warning = before[side].crossGame
+  if (before === after || warning?.phase !== 'warning' || warning.noticeFrames > 0) return after
+  return confineCrossGame(before, side)
+}
+
 /** Inspect locomotion before impacts/pushboxes: involuntary displacement never counts. */
 export function resolveCrossGameMovement(before: FightState, after: FightState): FightState {
   let next = after

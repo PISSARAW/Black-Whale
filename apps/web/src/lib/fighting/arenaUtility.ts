@@ -1,3 +1,4 @@
+import { stampObjectPoint } from './sunMoonMarkPoint'
 import { advanceSunMoonCharge } from './sunMoonCharge'
 import { selectedObjectMark, objectMarkHandReady, type ObjectMark } from './sunMoonObjectHands'
 import { witnessedHatsuState } from './nenWitness'
@@ -116,7 +117,9 @@ function stampObject(context: {
   const { state, side, entry, mark } = context
   if (!chrolloHasActivePage(state[side], 'sun-and-moon')) return state
   if (!objectMarkHandReady(state, side, mark)) return state
-  return updateEntity(state, entry.id, { arena: { ...entry.arena!, [mark]: side } })
+  return updateEntity(state, entry.id, {
+    arena: stampObjectPoint({ entry, actor: state[side], mark, side }),
+  })
 }
 
 function vacuumObject(state: FightState, side: FightSide, entry: PreparedEntity): FightState {

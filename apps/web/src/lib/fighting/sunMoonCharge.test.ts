@@ -133,9 +133,12 @@ describe('five real seconds of continuous Sun and Moon contact', () => {
     const quick = use(ready('player'), 'player', command())
     const full = frames(quick, 300)
     const explode = (state: FightState) => {
+      state = updateEntity(state, 'arena:crate:34', {
+        arena: { ...crate(state).arena!, facing: -1 },
+      })
       state = updateEntity(state, 'arena:crate:66', {
         x: 40,
-        arena: { width: 3, height: 8, moon: 'player' },
+        arena: { width: 3, height: 8, moon: 'player', moonPoint: { x: -3, y: 8 } },
       })
       state = {
         ...state,

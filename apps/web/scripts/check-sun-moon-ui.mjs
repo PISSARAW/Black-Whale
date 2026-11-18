@@ -66,11 +66,9 @@ try {
           await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1),
           false,
         )
-        await page
-          .locator('.arena')
-          .screenshot({
-            path: path.join(output, `charge-${side}-${moon ? 'moon' : 'sun'}-${width}.png`),
-          })
+        await page.locator('.arena').screenshot({
+          path: path.join(output, `charge-${side}-${moon ? 'moon' : 'sun'}-${width}.png`),
+        })
         await page
           .getByRole('button', { name: 'Relâcher le contact · 2.5 / 5 s', exact: true })
           .click()
@@ -87,7 +85,22 @@ try {
         state = await page.evaluate(() => window.sunMoonFixture.snapshot())
         assert.equal(state.crate.arena[moon ? 'moonCharge' : 'sunCharge'], 300)
         assert.equal(state.pending, undefined)
-        cases.push({ width, side, mark: moon ? 'moon' : 'sun', fullContact: 300 })
+        const point = state.crate.arena[moon ? 'moonPoint' : 'sunPoint']
+        assert.deepEqual(point, { x: -3, y: 8 })
+        await page
+          .locator('.arsenal')
+          .nth(side === 'player' ? 0 : 1)
+          .getByRole('button', { name: 'Retourner la caisse (34)', exact: true })
+          .click()
+        state = await page.evaluate(() => window.sunMoonFixture.snapshot())
+        assert.equal(state.crate.arena.facing, -1)
+        assert.deepEqual(state.crate.arena[moon ? 'moonPoint' : 'sunPoint'], point)
+        await page
+          .locator('.arena')
+          .screenshot({
+            path: path.join(output, `turned-${side}-${moon ? 'moon' : 'sun'}-${width}.png`),
+          })
+        cases.push({ width, side, mark: moon ? 'moon' : 'sun', fullContact: 300, turned: true })
       }
   }
   assert.deepEqual(errors, [])

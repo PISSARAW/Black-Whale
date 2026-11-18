@@ -1,31 +1,23 @@
+import { objectMarkPoint, MARK_CONTACT_TOLERANCE } from './sunMoonMarkPoint'
 import { hurtboxes } from './frameData'
 import type { PreparedEntity } from './preparationTypes'
 import type { ArcadeFighter } from './types'
 
-/** Collision tolerance and blast radius are duel calibration, not manga measurements. */
-const CONTACT_TOLERANCE = 0.15
+/** The signs themselves must touch; overlapping unmarked faces do not detonate. */
 export function markedObjectsTouch(first: PreparedEntity, second: PreparedEntity): boolean {
-  const a = first.arena!,
-    b = second.arena!
-  return (
-    Math.abs(first.x - second.x) <= a.width + b.width + CONTACT_TOLERANCE &&
-    first.y <= second.y + b.height + CONTACT_TOLERANCE &&
-    second.y <= first.y + a.height + CONTACT_TOLERANCE
+  const sun = objectMarkPoint(first, 'sun'),
+    moon = objectMarkPoint(second, 'moon')
+  return Boolean(
+    sun && moon && Math.hypot(sun.x - moon.x, sun.y - moon.y) <= MARK_CONTACT_TOLERANCE,
   )
 }
 export function objectMarkContact(
   first: PreparedEntity,
   second: PreparedEntity,
 ): { x: number; y: number } {
-  const a = first.arena!,
-    b = second.arena!
-  return {
-    x:
-      (Math.max(first.x - a.width, second.x - b.width) +
-        Math.min(first.x + a.width, second.x + b.width)) /
-      2,
-    y: (Math.max(first.y, second.y) + Math.min(first.y + a.height, second.y + b.height)) / 2,
-  }
+  const sun = objectMarkPoint(first, 'sun')!,
+    moon = objectMarkPoint(second, 'moon')!
+  return { x: (sun.x + moon.x) / 2, y: (sun.y + moon.y) / 2 }
 }
 export function markedBlastTouches(
   body: ArcadeFighter,

@@ -93,6 +93,38 @@ La séquence Soleil, fermeture du livre puis Lune reste jouable dans le moteur.
 Les emplacements précis des marques et les combinaisons des marionnettes restent
 à compléter ; cette passe ne certifie pas l’ensemble des quarante arsenaux à 100 %.
 
+## Emplacement des signes sur les objets — ruleset 77
+
+Chaque nouveau marquage d’objet conserve son point sur le support matériel.
+L’explosion demande le contact des points Soleil et Lune eux-mêmes : le contact
+de deux faces non marquées ne suffit plus. Le souffle part du point de rencontre
+des signes. Un marquage de scénario sans emplacement connu ne reçoit pas une
+position inventée pour provoquer une explosion.
+
+Une commande physique permet de retourner une caisse existante avec une main
+libre et à portée, même sans Nen. Le signe reste sur la même face matérielle ;
+son emplacement dans le monde suit l’orientation et le déplacement de la caisse.
+Le renouvellement d’une manche conserve cet emplacement et cette orientation.
+Une charge s’interrompt si le support tourne et écarte le signe de la paume.
+Elle ne reprend pas à travers la face opposée du support.
+
+Les coordonnées, la portée, la hauteur de paume et la tolérance de collision
+sont des représentations de duel. Cette passe traite les supports d’arène ;
+les emplacements anatomiques des marques sur les combattants, les fragments
+explosifs et les marionnettes à deux marques restent à compléter. Le On reste
+présent.
+
+La nouvelle commande de charge passe aussi par les contrôles communs de Cross
+Game et Moonlight Act avant la création du signe. Les tests utilisent un ordre
+réel de Mizaistom et une trêve proposée puis explicitement signée : le marquage
+ne contourne ni leur arrêt ni leur sanction. Le retournement physique d’une
+caisse respecte aussi l’ordre d’immobilité de Cross Game.
+
+Dix tests ajoutés couvrent les faces, la hauteur, les emplacements inconnus,
+la main et la portée du retournement, la charge interrompue, les manches et ces
+deux restrictions. Le contrôle navigateur des douze cas de charge exerce aussi
+le bouton de retournement et la conservation du point sur le support.
+
 ## Références et vérification
 
 Le [chapitre 351](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-351/chapter/10532)

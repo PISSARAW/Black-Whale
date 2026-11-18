@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-76`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-77`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -51,8 +51,10 @@ Le [contact matériel de Sun and Moon](./clash-sun-moon-contact.md) vérifie les
 pendant le marquage et la hauteur du contact et du souffle. Les marques maintiennent
 la matière copiée jusqu’à leur explosion, y compris entre les manches. La charge
 complète exige cinq secondes de contact continu. Les frappes natives et leur
-catalogue vérifient aussi la main, avec un second contrôle à l’impact. Les emplacements précis et les
-combinaisons avec les marionnettes restent ouverts.
+catalogue vérifient aussi la main, avec un second contrôle à l’impact. Sur les
+objets, les signes eux-mêmes doivent se toucher ; une caisse peut être retournée
+physiquement. Les emplacements anatomiques et les combinaisons avec les
+marionnettes restent ouverts.
 
 ## Périmètre et niveau de preuve
 

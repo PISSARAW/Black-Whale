@@ -55,6 +55,7 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'arena-turn-object',
   'sun-moon-charge-sun',
   'sun-moon-charge-moon',
   'sun-moon-release',

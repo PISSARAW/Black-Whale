@@ -82,7 +82,7 @@ for (const side of ['player', 'opponent'] as const) {
       expect(view.arena!.pending.player).toMatchObject({
         frames: 300,
         charge: true,
-        contact: { x: 7, y: 0 },
+        contact: { x: 4, y: 8 },
       })
       expect(
         view.battlefield!.entities.find((entry) => entry.id === 'arena:crate:34')!.arena!.sun,

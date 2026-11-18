@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack } from './engine'
 import { arenaObjects, performArenaAction } from './arenaActions'
@@ -38,6 +39,11 @@ function complete(state: FightState, side: FightSide): FightState {
 }
 function pair(): FightState {
   let state = complete(use(ready('player'), 'player'), 'player')
+  state = { ...state, player: { ...state.player, arenaRecovery: 0 } }
+  state = performArsenalCommand(state, 'player', {
+    action: 'arena-turn-object',
+    target: 'arena:crate:34',
+  })
   state = {
     ...state,
     player: {
@@ -115,9 +121,9 @@ describe('Sun and Moon scenery: physical hands and two-dimensional contact', () 
     expect(arenaObjects(advanceArena(apart))).toHaveLength(2)
     expect(arenaObjects(advanceArena(marked))).toHaveLength(0)
   })
-  it('accepts genuine edge contact between the two marked colliders', () => {
+  it('does not confuse collider edge contact with contact between vertically separated marks', () => {
     const marked = updateEntity(placePair(pair(), 0), 'arena:crate:66', { y: 8 })
-    expect(arenaObjects(advanceArena(marked))).toHaveLength(0)
+    expect(arenaObjects(advanceArena(marked))).toHaveLength(2)
   })
   it('places an airborne blast at contact height and only hits the body intersecting its radius', () => {
     const marked = placePair(pair(), 40)

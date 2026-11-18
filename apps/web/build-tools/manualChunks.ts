@@ -30,7 +30,7 @@ const CLASH_CHUNK_RULES: readonly (readonly [RegExp, string])[] = [
   [/\/fighting\/ghostwriterScenarioData\.ts$/, 'clash-fortune-scenarios'],
   [/\/fighting\/stageCatalogue\.ts$/, 'clash-stage-catalogue'],
   [
-    /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter|gumResuscitationRules)\.ts$/,
+    /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter|gumResuscitationRules|sunMoonMarkPoint|leorioAttack)\.ts$/,
     'clash-physical-rules',
   ],
   [

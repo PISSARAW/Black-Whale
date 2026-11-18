@@ -1,3 +1,5 @@
+import { performArenaObjectTurn } from './arenaObjectTurn'
+import { arenaObjectTurnOptions } from './arenaObjectTurnOptions'
 import { performSunMoonCharge } from './sunMoonCharge'
 import { sunMoonChargeOptions } from './sunMoonChargeOptions'
 import { gumResuscitationOptions } from './gumResuscitationAction'
@@ -170,6 +172,7 @@ const COMMAND_HANDLERS: readonly [
   ['document-', performPaperDocumentCommand],
   ['cookie-', performCookie],
   ['hunter-', performHunterInterview],
+  ['arena-turn-object', performArenaObjectTurn],
   ['sun-moon-', performSunMoonCharge],
   ['history-', performHistoricalCommand],
 ]
@@ -220,6 +223,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...gumArsenalOptions(state, side),
     ...gumResuscitationOptions(state, side),
     ...sunMoonChargeOptions(state, side),
+    ...arenaObjectTurnOptions(state, side),
     ...textureSurfaceOptions(state, side),
     ...illumiFaceOptions(state, side),
     ...needleModeOptions(state, side),

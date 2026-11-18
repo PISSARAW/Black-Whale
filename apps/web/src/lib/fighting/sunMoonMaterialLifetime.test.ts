@@ -47,7 +47,8 @@ function marked(side: FightSide): FightState {
     ...made,
     [side]: {
       ...made[side],
-      x: replica.x - 4,
+      x: replica.x + 4,
+      facing: -1,
       arenaRecovery: 0,
       attack: null,
       chrolloBook: { ...made[side].chrolloBook!, page: 1, open: true },
@@ -120,6 +121,7 @@ describe('Sun and Moon post-mortem protection follows matter until actual detona
         [side]: {
           ...state[side],
           x: 59,
+          facing: 1,
           arenaRecovery: 0,
           chrolloBook: { ...state[side].chrolloBook!, open: false, bookmark: 'sun-and-moon' },
         },
@@ -128,7 +130,7 @@ describe('Sun and Moon post-mortem protection follows matter until actual detona
       expect(state.arena!.pending[side]?.objectId).toBe('arena:crate:66')
       for (let i = 0; i < 18; i++) state = advanceArenaUtility(state, side)
       state = updateEntity(state, id, { x: 40 })
-      state = updateEntity(state, 'arena:crate:66', { x: 44 })
+      state = updateEntity(state, 'arena:crate:66', { x: 45.2 })
       state = dismiss(state, side)
       const exploded = advanceArena(state)
       expect(replica(exploded).health).toBe(0)
@@ -160,6 +162,7 @@ describe('Sun and Moon post-mortem protection follows matter until actual detona
       player: {
         ...state.player,
         x: 59,
+        facing: 1,
         arenaRecovery: 0,
         chrolloBook: { ...state.player.chrolloBook!, open: false, bookmark: 'sun-and-moon' },
       },

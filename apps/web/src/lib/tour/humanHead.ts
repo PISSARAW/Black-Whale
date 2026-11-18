@@ -3,6 +3,10 @@ import { addSilentMajorityMask } from './humanCostume'
 import { addHumanHair } from './humanHair'
 import { buildKurapikaHead } from './kurapikaHead'
 import { buildMangaHead } from './mangaHead'
+import { buildZhangLeiHead } from './mangaZhangLeiHead'
+import { buildMorenaHead } from './mangaMorenaHead'
+import { buildLuzurusHead } from './mangaLuzurusFace'
+import { buildSalesaleHead } from './mangaSalesaleHead'
 import {
   addEyeDetails,
   addFaceDetails,
@@ -42,6 +46,10 @@ export interface HumanHeadBuild {
 
 export function buildHumanHead(build: HumanHeadBuild): Group {
   if (build.profile.likeness === 'kurapika') return buildKurapikaHead(build)
+  if (build.profile.likeness === 'prince-zhanglei') return buildZhangLeiHead(build)
+  if (build.profile.likeness === 'morena-prudo') return buildMorenaHead(build)
+  if (build.profile.likeness === 'prince-luzurus') return buildLuzurusHead(build)
+  if (build.profile.likeness === 'prince-salesale') return buildSalesaleHead(build)
   if (build.profile.likeness && build.profile.likeness !== 'morena-prudo')
     return buildMangaHead(build)
   const { THREE, geometry, outlined, glow, profile, seen, materials } = build

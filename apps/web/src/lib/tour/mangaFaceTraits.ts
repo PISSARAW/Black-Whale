@@ -1,5 +1,6 @@
 import { addBodyguardFaces } from './mangaBodyguardFaces'
 import { addTubeppaFace } from './mangaTubeppaHead'
+import { addMarayamFace } from './mangaMarayamHead'
 import type { Group, Mesh } from 'three'
 import type { HumanHeadBuild } from './humanHead'
 import { mergeHumanDetails } from './humanDetailGeometry'
@@ -12,6 +13,7 @@ import { addBenjaminDetails } from './mangaBenjamin'
 import { addMangaFacialHair } from './mangaFacialHair'
 
 export const MANGA_FACE_SIGNATURES = new Set([
+  'lips-full',
   'face-paint-star-tear',
   'bandages-full',
   'beard-full',
@@ -100,6 +102,7 @@ export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {
   addGelFace(build, head)
   addBodyguardFaces(build, head)
   if (id === 'prince-tubeppa') addTubeppaFace(build, head)
+  if (id === 'prince-marayam') addMarayamFace(build, head)
   if (id === 'cheadle-yorkshire') {
     const nose = head.getObjectByName('face-relief') as Mesh
     nose.material = build.materials.ink

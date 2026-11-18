@@ -6,11 +6,81 @@ import { createKameoScene } from '../../src/lib/fighting/kameos/scene'
 import { withKameos } from '../../src/lib/fighting/kameos/state'
 import { EMPTY_INPUT, type FightInput, type FightState } from '../../src/lib/fighting/types'
 
+const requested = new URLSearchParams(location.search).get('character')
+const character =
+  requested === 'marayam' ||
+  requested === 'zhanglei' ||
+  requested === 'morena' ||
+  requested === 'luzurus' ||
+  requested === 'salesale'
+    ? requested
+    : 'tubeppa'
+const preview = {
+  tubeppa: {
+    name: 'Tubeppa',
+    entry: 'Ajustement des lunettes',
+    action: 'Soin · frame de déclenchement',
+    bodyRange: 1.15,
+    bodyCentre: 1,
+    faceRange: 0.235,
+    filmRange: 0.3,
+  },
+  marayam: {
+    name: 'Marayam',
+    entry: 'Salut timide',
+    action: 'Protection · déclenchement',
+    bodyRange: 0.67,
+    bodyCentre: 0.56,
+    faceRange: 0.245,
+    filmRange: 0.25,
+  },
+  zhanglei: {
+    name: 'Zhang Lei',
+    entry: 'Salut mesuré',
+    action: 'Bonus · déclenchement',
+    bodyRange: 0.95,
+    bodyCentre: 0.84,
+    faceRange: 0.255,
+    filmRange: 0.31,
+  },
+  morena: {
+    name: 'Morena',
+    entry: 'Main aux lèvres',
+    action: 'Contagion · déclenchement',
+    bodyRange: 1.12,
+    bodyCentre: 1,
+    faceRange: 0.26,
+    filmRange: 0.31,
+  },
+  luzurus: {
+    name: 'Luzurus',
+    entry: 'Examen nonchalant',
+    action: 'Piège · déclenchement',
+    bodyRange: 1.2,
+    bodyCentre: 1.04,
+    faceRange: 0.4,
+    filmRange: 0.4,
+  },
+  salesale: {
+    name: 'Salé-salé',
+    entry: 'Salut expansif',
+    action: 'Brume · déclenchement',
+    bodyRange: 1.24,
+    bodyCentre: 1.09,
+    faceRange: 0.36,
+    filmRange: 0.4,
+  },
+}[character]
+const { name, bodyRange, bodyCentre } = preview
+document.title = `${name} · animations et expressions`
+const headName =
+  character === 'morena' ? 'manga-head:morena-prudo' : `manga-head:prince-${character}`
+
 document.body.style.cssText = 'margin:0;background:#f5f2eb;color:#24242b;font:14px system-ui'
 const header = document.createElement('header')
 header.style.cssText = 'padding:20px 28px 12px'
 header.innerHTML =
-  '<h1 style="margin:0 0 7px;font-size:25px">Tubeppa · animations et expressions</h1>' +
+  `<h1 style="margin:0 0 7px;font-size:25px">${name} · animations et expressions</h1>` +
   '<p style="margin:0;color:#696770">Modèle du kaméo · articulations et expressions du roster · états issus du moteur</p>'
 const labels = document.createElement('div')
 labels.style.cssText = 'display:flex;height:30px;align-items:center;text-align:center;color:#696770'
@@ -33,13 +103,16 @@ function initial() {
       createFight('kurapika', 'hisoka', {
         mode: 'versus-local',
       }),
-      { player: 'tubeppa' },
+      { player: character },
     ),
   )
   return {
     ...state,
     player: { ...state.player, x: 20, health: 200 },
-    opponent: { ...state.opponent, x: 70 },
+    opponent: {
+      ...state.opponent,
+      x: character === 'morena' || character === 'salesale' ? 30 : 70,
+    },
   }
 }
 const tick = (state: FightState, input: FightInput = EMPTY_INPUT) =>
@@ -64,15 +137,18 @@ wounded = performAttack(
 for (let frame = 0; frame < 40 && wounded.kameos!.player!.fighter.hitStun === 0; frame++)
   wounded = tick(wounded)
 if (!wounded.kameos!.player!.fighter.hitStun)
-  throw new Error('Tubeppa did not receive the test strike')
+  throw new Error(`${name} did not receive the test strike`)
 const find = (phase: string, frame: number) =>
   sequence.find(
     (s) => s.kameos!.player!.phase === phase && s.kameos!.player!.phaseFrames === frame,
   )!
 const samples = [
   { label: 'Concentration', state: find('entering', 0) },
-  { label: 'Ajustement des lunettes', state: find('entering', 9) },
-  { label: 'Soin · frame de déclenchement', state: find('acting', 12) },
+  { label: preview.entry, state: find('entering', 9) },
+  {
+    label: preview.action,
+    state: find('acting', 12),
+  },
   { label: 'Relâchement', state: find('acting', 35) },
   { label: 'Douleur · impact réel', state: wounded },
 ]
@@ -130,7 +206,7 @@ function gallery() {
     actor.model.root.scale.setScalar(1)
     actor.model.root.rotation.y = 0.3
     render(
-      { scene: actor.scene, target: new THREE.Vector3(0, 1, 0), range: 1.15 },
+      { scene: actor.scene, target: new THREE.Vector3(0, bodyCentre, 0), range: bodyRange },
       {
         x: column * 260,
         y: 230,
@@ -138,11 +214,11 @@ function gallery() {
         height: 430,
       },
     )
-    const head = actor.model.root.getObjectByName('manga-head:prince-tubeppa')!
+    const head = actor.model.root.getObjectByName(headName)!
     const target = head.getWorldPosition(new THREE.Vector3())
     target.y -= 0.015
     render(
-      { scene: actor.scene, target, range: 0.235 },
+      { scene: actor.scene, target, range: preview.faceRange },
       {
         x: column * 260,
         y: 0,
@@ -159,7 +235,7 @@ function movie(frame: number) {
   film.kameos.sync(state, frame / 60)
   renderer.setSize(1300, 660)
   render(
-    { scene: film.scene, target: new THREE.Vector3(0, 1, 0), range: 1.17 },
+    { scene: film.scene, target: new THREE.Vector3(0, bodyCentre, 0), range: bodyRange + 0.02 },
     {
       x: 0,
       y: 0,
@@ -167,9 +243,13 @@ function movie(frame: number) {
       height: 660,
     },
   )
-  const head = film.model.root.getObjectByName('manga-head:prince-tubeppa')!
+  const head = film.model.root.getObjectByName(headName)!
   render(
-    { scene: film.scene, target: head.getWorldPosition(new THREE.Vector3()), range: 0.3 },
+    {
+      scene: film.scene,
+      target: head.getWorldPosition(new THREE.Vector3()),
+      range: preview.filmRange,
+    },
     {
       x: 650,
       y: 0,

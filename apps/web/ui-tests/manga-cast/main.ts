@@ -205,7 +205,8 @@ function show(view: string) {
     ({ human, fighter, id, row, column, prologue, concert, crossGame, snake, pain }) => {
       human.root.visible = true
       human.animate(0, concert && !fighter ? 'flute' : 'idle')
-      human.root.rotation.y = view === 'profile' ? Math.PI / 2 : row ? -0.25 : 0
+      human.root.rotation.y =
+        view === 'left-face' ? -0.8 : view === 'profile' ? Math.PI / 2 : row ? -0.25 : 0
       if ((view === 'combat' || concert) && fighter)
         human.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
       human.root.updateMatrixWorld(true)
@@ -220,7 +221,7 @@ function show(view: string) {
         human.root.getObjectByName('face-mouth')?.parent ??
         human.root.getObjectByName('face-mouth-base')?.parent
       const target =
-        view === 'face' && head
+        (view === 'face' || view === 'left-face') && head
           ? (snake?.getObjectByName('gel-snake-head') ?? head).getWorldPosition(new THREE.Vector3())
           : new THREE.Vector3(0, 1, 0)
       if (snake && view !== 'face') target.x = 0.4
@@ -230,7 +231,7 @@ function show(view: string) {
           ? view === 'face'
             ? 0.8
             : 1.55
-          : view === 'face'
+          : view === 'face' || view === 'left-face'
             ? 0.49
             : snake
               ? 1.65

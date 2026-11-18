@@ -99,8 +99,7 @@ function torsoGeometry(THREE: Three, profile: Profile): BufferGeometry {
 
 export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
   if (build.profile.likeness === 'kurapika') return buildKurapikaTrunk(build)
-  if (build.profile.likeness && build.profile.likeness !== 'morena-prudo')
-    return buildMangaTrunk(build)
+  if (build.profile.likeness) return buildMangaTrunk(build)
   const { THREE, geometry, outlined, figure, profile, frame, materials } = build
   const { cloth, ink, skin, shirt } = materials
   const width = PELVIS_WIDTH[profile.build] * frame.width

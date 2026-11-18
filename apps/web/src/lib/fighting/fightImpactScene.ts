@@ -7,6 +7,7 @@ import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import { fightContactTarget } from './fightContactAlignment'
 import { fightRigOf } from './fightRig'
+import { anatomicalContactZone, surfaceContactAt } from './fightSurfaceContact'
 import type { FightImpact, FightSide, FightState } from './types'
 
 export function createFightImpactScene(options: {
@@ -150,7 +151,12 @@ function alignPhysicalHit(
   const side = impact.attacker === 'player' ? 'opponent' : 'player'
   const human = options.figureOf && humanAnimationRig(options.figureOf(side))
   if (!human || !anatomicalPhysicalHit(state, impact)) return false
-  origin.copy(fightContactTarget(fightRigOf(human), impact.zone, state[impact.attacker].facing))
+  const attacker = state[impact.attacker]
+  const recorded =
+    options.figureOf &&
+    surfaceContactAt(options.figureOf(impact.attacker), state.frame, impact.sequence)
+  const zone = anatomicalContactZone(attacker, state[side], impact.zone)
+  origin.copy(recorded ?? fightContactTarget(fightRigOf(human), zone, attacker.facing))
   origin.z += 0.12
   return true
 }

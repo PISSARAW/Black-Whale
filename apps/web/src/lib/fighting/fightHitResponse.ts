@@ -1,6 +1,7 @@
 import { addPoses, scalePose, type FightPose } from './fightPose'
 import { rosterContactMotion } from './rosterHitReaction'
 import { physicalRosterPair } from './fightPhysicalRoster'
+import { anatomicalContactZone } from './fightSurfaceContact'
 import { fightPhysicalProfile, type FightPhysicalProfile } from './fightPhysicalProfile'
 import type { FighterId, FightNenZone, FightState } from './types'
 
@@ -35,7 +36,7 @@ export function physicalHitAtContact(
     sequence: hit.sequence,
     duration: Math.max(1, victim.hitStun),
     victim: victim.id,
-    zone: hit.zone,
+    zone: anatomicalContactZone(attacker, victim, hit.zone),
     force: heavy * power * profile.resistance,
     profile,
     twist: ['hook', 'backhand', 'slash', 'spin', 'kick'].includes(motion.shape) ? 1 : -0.4,

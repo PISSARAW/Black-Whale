@@ -7,6 +7,7 @@ import { biscuitTrueFormProfile } from './biscuitFigure'
 import type { ArcadeFighter, FighterId } from './types'
 
 export interface FightPhysicalProfile {
+  height: number
   resistance: number
   rotation: number
   step: number
@@ -49,6 +50,7 @@ export function fightPhysicalProfile(fighter: ArcadeFighter): FightPhysicalProfi
   const weight = physicalWeight(body.build)
   const mobility = fightingStyle(fighter.id).moveScale
   const result = {
+    height: body.height,
     resistance: PILOT_RESISTANCE[fighter.id] ?? clamp(1 / (weight * body.height), 0.64, 1.18),
     rotation: clamp(style?.amplitude ?? 1, 0.8, 1.15),
     step: clamp(mobility / weight, 0.65, 1.2),

@@ -78,6 +78,18 @@
       {/each}
     </div>
     <div class="routes">
+      <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
+      <p>
+        <kbd>{touch ? (language === 'fr' ? 'Kaméo' : 'Kameo') : hints.playerKameo}</kbd> · {language ===
+        'fr'
+          ? 'Selon l’exemple, appelle avec la première attaque ou après une touche. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
+          : 'Follow the example: call with the opening attack or after a hit. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}
+      </p>
+      <p>
+        {language === 'fr'
+          ? 'Luzurus peut prolonger au sol, Zhang Lei renforcer les frappes, Marayam protéger la récupération. Les six exemples sont dans Académie du Nen → Combos & défense.'
+          : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
+      </p>
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
       {#each moveset.combos as route (route.join(':'))}
         <p>{route.map(moveName).join(' → ')}</p>

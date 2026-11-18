@@ -20,11 +20,19 @@
   let selected: CombatFighter = $school ? ($school.id.split(':')[0] as CombatFighter) : 'kurapika'
   const bindings = useFightBindings()
   let catalog: HTMLDetailsElement
+  let practicePosition: 'centre' | 'corner' = 'centre'
+  const SUPPORT_POSITIONS = { centre: ['Centre', 'Midscreen'], corner: ['Coin', 'Corner'] } as const
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
+  $: catalogRoutes = routes.filter((route) => !route.kameo)
+  $: kameoRoutes = routes.filter((route) => route.kameo)
   $: current = $school
   $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
   const cues = {
+    'support-wait': [
+      'Attends l’effet du kaméo et la fin de ton geste. Le soutien ne compte pas comme une touche.',
+      'Wait for the support effect and your recovery. Support does not count as a hit.',
+    ],
     ready: [
       'Commence la route. Les directions avant / arrière sont relatives à ton personnage.',
       'Start the route. Forward / back directions are relative to your fighter.',
@@ -80,13 +88,19 @@
   function launch(id: string, demo = false) {
     beforeLaunch()
     if (catalog) catalog.open = false
-    onLaunch(school.start(id, demo))
+    onLaunch(school.start(id, demo, { position: practicePosition }))
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
   }
   function routeText(id: string) {
     const route = combatRoute(id)
     return route.moves
-      .map((slot) => moveInputHint(moveForSlot(route.fighter, slot)!.input, $bindings))
+      .map((slot, step) => {
+        const move = moveInputHint(moveForSlot(route.fighter, slot)!.input, $bindings)
+        if (!route.kameo || step + 1 !== Math.max(1, route.kameo.afterStep)) return move
+        const direction =
+          route.kameo.call === 'forward' ? '→' : route.kameo.call === 'back' ? '←' : ''
+        return `${move} (+ ${direction} ${$bindings.playerKameo})`
+      })
       .join(' → ')
   }
 </script>
@@ -180,8 +194,44 @@
         ? 'Le mannequin garde après la première touche : une interruption réelle fait échouer la route. La démonstration utilise les mêmes règles, coûts et commandes que toi.'
         : 'The dummy guards after the first hit: a real gap fails the route. Demonstrations use the same rules, costs and commands as you.'}
     </p>
+    <fieldset>
+      <legend>{language === 'fr' ? 'Kaméos dans les combos' : 'Kameos in combos'}</legend>
+      <p>
+        {language === 'fr'
+          ? `Après la première touche, appelle ton kaméo avec ${$bindings.playerKameo} et la direction indiquée, puis continue ton combo. Les directions sont relatives au combattant. Le kaméo garde ses coûts, sa portée et sa vulnérabilité.`
+          : `After the first hit, call your kameo with ${$bindings.playerKameo} and the shown direction, then continue your combo. Directions are relative to your fighter. Support keeps its costs, reach and vulnerability.`}
+      </p>
+      <label
+        >Position
+        <select
+          bind:value={practicePosition}
+          aria-label={language === 'fr' ? 'Position du combo kaméo' : 'Kameo combo position'}
+        >
+          {#each Object.entries(SUPPORT_POSITIONS) as [value, label] (value)}
+            <option {value}>{label[index]}</option>
+          {/each}
+        </select>
+      </label>
+      <ol>
+        {#each kameoRoutes as route (route.id)}
+          <li>
+            <strong>{fighterDefinition(route.fighter).name} · {route.title[index]}</strong>
+            <p class="route">{routeText(route.id)}</p>
+            <p>{route.requirement[index]}</p>
+            <div class="actions">
+              <button type="button" onclick={() => launch(route.id)}
+                >{language === 'fr' ? 'Pratiquer' : 'Practice'} · {route.title[index]}</button
+              >
+              <button type="button" onclick={() => launch(route.id, true)}
+                >{language === 'fr' ? 'Démontrer' : 'Demonstrate'} · {route.title[index]}</button
+              >
+            </div>
+          </li>
+        {/each}
+      </ol>
+    </fieldset>
     <ol>
-      {#each routes as route (route.id)}<li>
+      {#each catalogRoutes as route (route.id)}<li>
           <strong>{route.title[index]}</strong>
           <p class="route">{routeText(route.id)}</p>
           <p>{moveInputHint(route.requirement[index], $bindings)}</p>

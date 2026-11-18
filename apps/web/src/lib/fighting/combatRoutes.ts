@@ -4,6 +4,7 @@ import { ROSTER_COMBAT_ROUTES } from './rosterCombatRoutes'
 import type { RosterFighterId } from './rosterChoreography'
 import { DUEL_COMBO_LESSONS } from './duelComboLessons'
 import type { CombatRouteSetup } from './combatRouteSetup'
+import { KAMEO_COMBO_LESSONS, type KameoComboLesson } from './kameos/comboLessons'
 
 const REFERENCE_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 type ReferenceFighter = (typeof REFERENCE_FIGHTERS)[number]
@@ -18,6 +19,7 @@ export interface CombatRoute {
   moves: readonly MoveSlot[]
   requirement: readonly [string, string]
   setup?: CombatRouteSetup
+  kameo?: KameoComboLesson
   /** Expected contacts per command; a barrage is entered once and must land every bullet. */
   hits?: readonly number[]
 }
@@ -108,6 +110,7 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
     })),
   ),
   ...DUEL_COMBO_LESSONS,
+  ...KAMEO_COMBO_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)

@@ -1,6 +1,8 @@
 import { attackData } from './frameData'
 import { sampleTimeline, type MoveTimeline } from './keyPoseTimeline'
 import { strikeTimeline } from './keyPoseContact'
+import { SHIZUKU_REFERENCE_NORMALS } from './keyPosesShizukuReference'
+import { SHIZUKU_TOOL_ARCS } from './shizukuToolMotion'
 import type { ArcadeFighter, MoveSlot } from './types'
 
 /** Both hands gather the tool, the hips drive it, then the knees brake its weight. */
@@ -41,6 +43,7 @@ const HAMMER = strikeTimeline(
 )
 
 export const SHIZUKU_STRIKE_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
+  ...SHIZUKU_REFERENCE_NORMALS,
   standingHeavy: HAMMER,
   forwardSpecial: HAMMER,
 }
@@ -55,14 +58,17 @@ const TOOL_ARC: MoveTimeline = [
 
 /** An angle in the fighter's space, sampled by the simulation clock, including hitstop. */
 export function blinkyStrikeArc(fighter: ArcadeFighter) {
-  if (
-    !fighter.attack ||
-    !['shizuku:standingHeavy', 'shizuku:forwardSpecial'].includes(fighter.attack.moveId ?? '')
-  )
-    return null
-  return sampleTimeline(TOOL_ARC, {
+  if (!fighter.attack) return null
+  const id = fighter.attack.moveId ?? ''
+  const timeline = SHIZUKU_TOOL_ARCS[id] ?? hammerArc(id)
+  if (!timeline) return null
+  return sampleTimeline(timeline, {
     frame: fighter.attack.frame,
     frames: attackData(fighter.attack.kind, fighter),
     continuous: true,
   }).body!
+}
+
+function hammerArc(id: string): MoveTimeline | null {
+  return ['shizuku:standingHeavy', 'shizuku:forwardSpecial'].includes(id) ? TOOL_ARC : null
 }

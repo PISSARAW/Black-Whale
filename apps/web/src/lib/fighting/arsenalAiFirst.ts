@@ -8,7 +8,7 @@ import { kurapikaCombatSlots } from './kurapikaCombatAi'
 import { hisokaAiSlots } from './hisokaAi'
 import { SENSE_BITS } from './saiyuSenses'
 import { battleAppearance } from './battleCantabileRules'
-import { blinkyBloodReady, blinkyState } from './blinky'
+import { shizukuCombatSlots } from './shizukuCombatAi'
 import { machiThreadForOwner } from './machiThread'
 import {
   martialSlots,
@@ -39,7 +39,7 @@ export const FIRST_ARSENAL_AI = {
   illumi: ({ state, gap }) => illumiAiSlots(state, gap),
   kalluto: kallutoAiSlots,
   bonolenov: bonolenovSlots,
-  shizuku: shizukuSlots,
+  shizuku: shizukuCombatSlots,
   hinrigh: ({ state, roll, gap }) => biohazardAiSlots(state, roll, gap),
   mizaistom: () => ['neutralSpecial'],
   leorio: () => ['neutralSpecial'],
@@ -94,12 +94,4 @@ function canImitateModel(state: FightState): boolean {
   if (!battle || battle.form) return false
   const model = battle.models[battleAppearance(state.player)]
   return Boolean(model?.spoken && model.frames > 0)
-}
-
-function shizukuSlots({ state }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  if (blinkyBloodReady(state, 'opponent')) return ['finisher']
-  const stored = blinkyState(state.opponent)
-  return stored.lastObject || stored.lastArenaObject || stored.lastWasBlood
-    ? ['backSpecial', 'forwardSpecial']
-    : ['forwardSpecial', 'standingLight']
 }

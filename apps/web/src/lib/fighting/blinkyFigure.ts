@@ -1,6 +1,7 @@
 import { blinkyAvailable, blinkyCommand } from './blinky'
 import { attackPhase } from './frameData'
 import { blinkyStrikeArc } from './shizukuStrikeMotion'
+import { supportBlinkyGrip } from './shizukuGrip'
 import type { ArcadeFighter } from './types'
 import type { Object3D, Quaternion } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
@@ -39,10 +40,12 @@ export function animateBlinky(figure: Object3D, fighter: ArcadeFighter, seconds:
   const arc = blinkyStrikeArc(fighter)
   if (arc) {
     model.root.rotateX(arc[0])
+    model.root.rotateY(arc[1])
     model.root.rotateZ(arc[2])
   }
   model.root.rotateZ(sucking ? Math.sin(seconds * 22) * 0.025 : 0)
   model.root.position.set(0, -0.25, 0.08).applyQuaternion(model.root.quaternion)
   const tongue = model.joints.get('tongue')!
   tongue.rotation.x = sucking ? Math.sin(seconds * 18) * 0.07 : 0
+  supportBlinkyGrip(figure, model.root, fighter)
 }

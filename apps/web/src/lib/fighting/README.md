@@ -1,5 +1,9 @@
 # Fighting
 
+Le [combat de Shizuku d’après sa confrontation avec Pike](./SHIZUKU_COMBAT.md)
+complète les frappes de Blinky, la prise à deux mains et la gestion de la distance
+avant l’aspiration du sang par les plaies ouvertes.
+
 Le [combat de Kurapika d’après Uvogin et Phantom Rouge](./KURAPIKA_COMBAT.md)
 sépare les frappes physiques et les lancers de chaîne, avec des contres en retrait,
 une boucle du fouet divinatoire et une approche après la capture d’une cible autorisée.

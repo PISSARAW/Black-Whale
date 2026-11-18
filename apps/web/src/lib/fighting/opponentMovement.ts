@@ -1,6 +1,7 @@
 import { moveFeitanOpponent } from './feitanAi'
 import { wantsObservedGuard, incomingLow } from './combatPressure'
 import { moveKurapikaOpponent } from './kurapikaFootwork'
+import { moveShizukuOpponent } from './shizukuFootwork'
 import { moveBonolenovOpponent } from './bonolenovAi'
 import { hasRecoveryCancel } from './recoveryPunish'
 import { attackPhase } from './frameData'
@@ -24,6 +25,8 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
     return fighter
   const kurapika = moveKurapikaOpponent(fighter, player)
   if (kurapika) return kurapika
+  const shizuku = moveShizukuOpponent(fighter, player)
+  if (shizuku) return shizuku
   const feitan = moveFeitanOpponent(fighter, player)
   if (feitan) return feitan
   const bonolenov = moveBonolenovOpponent(fighter, player)

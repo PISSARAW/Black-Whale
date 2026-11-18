@@ -2,8 +2,18 @@ import { describe, it, expect } from 'vitest'
 import { KAMEO_COMBO_LESSONS } from './comboLessons'
 import { runKameoComboScenario } from './comboScenarios'
 import { KAMEO_IDS } from './catalogue'
+import { COMBAT_FIGHTERS, combatRoutesFor, combatLessonsFor } from '../combatRoutes'
+import { movesetFor } from '../movesets'
 
 describe('roster support boundaries', () => {
+  it.each(COMBAT_FIGHTERS)('%s: support lessons preserve the native combo catalogue', (fighter) => {
+    const native = combatRoutesFor(fighter)
+    const combos = movesetFor(fighter)!.combos
+    expect(native.every((route) => !route.kameo)).toBe(true)
+    expect(combos).toEqual(native.map((route) => route.moves.map((slot) => `${fighter}:${slot}`)))
+    expect(new Set(combos.map((route) => route.join(':'))).size).toBe(combos.length)
+    expect(combatLessonsFor(fighter).filter((route) => route.kameo)).toHaveLength(6)
+  })
   for (const route of KAMEO_COMBO_LESSONS)
     for (const corner of [false, true])
       it(`${route.id}, ${corner ? 'corner' : 'centre'}: immediate and late support`, () => {

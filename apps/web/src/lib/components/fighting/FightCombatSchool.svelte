@@ -1,8 +1,8 @@
 <script lang="ts">
   import {
     COMBAT_FIGHTERS,
-    COMBAT_ROUTES,
-    combatRoutesFor,
+    COMBAT_SCHOOL_ROUTES,
+    combatLessonsFor,
     combatRoute,
     type CombatFighter,
   } from '$lib/fighting/combatRoutes'
@@ -23,7 +23,7 @@
   let practicePosition: 'centre' | 'corner' = 'centre'
   const SUPPORT_POSITIONS = { centre: ['Centre', 'Midscreen'], corner: ['Coin', 'Corner'] } as const
   $: index = language === 'fr' ? 0 : 1
-  $: routes = combatRoutesFor(selected)
+  $: routes = combatLessonsFor(selected)
   $: catalogRoutes = routes.filter((route) => !route.kameo)
   $: kameoRoutes = routes.filter((route) => route.kameo)
   $: current = $school
@@ -175,8 +175,8 @@
   <details bind:this={catalog} open={expanded}>
     <summary
       >{language === 'fr'
-        ? `École de combat · ${COMBAT_ROUTES.length} routes et défense`
-        : `Combat school · ${COMBAT_ROUTES.length} routes and defense`}</summary
+        ? `École de combat · ${COMBAT_SCHOOL_ROUTES.length} routes et défense`
+        : `Combat school · ${COMBAT_SCHOOL_ROUTES.length} routes and defense`}</summary
     >
     <label
       >{language === 'fr' ? 'Personnage des exercices' : 'Exercise fighter'}

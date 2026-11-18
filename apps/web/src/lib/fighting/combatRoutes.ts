@@ -110,12 +110,18 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
     })),
   ),
   ...DUEL_COMBO_LESSONS,
+]
+/** Support exercises share native sequences but must never retune native movesets. */
+export const COMBAT_SCHOOL_ROUTES: readonly CombatRoute[] = [
+  ...COMBAT_ROUTES,
   ...KAMEO_COMBO_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)
+export const combatLessonsFor = (fighter: FighterId) =>
+  COMBAT_SCHOOL_ROUTES.filter((route) => route.fighter === fighter)
 export function combatRoute(id: string): CombatRoute {
-  const route = COMBAT_ROUTES.find((entry) => entry.id === id)
+  const route = COMBAT_SCHOOL_ROUTES.find((entry) => entry.id === id)
   if (!route) throw Error('Unknown combat route')
   return route
 }

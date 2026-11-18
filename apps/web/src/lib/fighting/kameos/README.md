@@ -265,6 +265,11 @@ sur main. Les autres soutiens n’obtiennent pas l’immobilisation de Luzurus.
 vérifie les appels tardifs, l’aura épuisée et une finition trop tardive. Les
 cadences et replays passent par `combatSchool.test.ts`.
 
+Les exercices de soutien appartiennent à `COMBAT_SCHOOL_ROUTES`. Les routes
+natives de `COMBAT_ROUTES` restent seules utilisées pour déclarer les combos du
+combattant : des exercices avec des soutiens différents peuvent partager les
+mêmes coups sans ajouter de doublons au manuel ni modifier les annulations.
+
 `node apps/web/scripts/check-fighting-kameo-combos.mjs` produit `timings.json`,
 `report.json` et les captures dans `KAMEO_COMBO_OUTPUT` (par défaut
 `output/kameo-roster/chrome`). Les catalogues inertes sont isolés dans

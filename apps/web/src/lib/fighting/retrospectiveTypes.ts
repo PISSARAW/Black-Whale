@@ -55,6 +55,9 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'sun-moon-charge-sun',
+  'sun-moon-charge-moon',
+  'sun-moon-release',
   'gum-program-resuscitation',
   'gum-anchor-attach',
   'gum-anchor-self',

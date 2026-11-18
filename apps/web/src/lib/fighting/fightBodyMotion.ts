@@ -1,3 +1,4 @@
+import { sunMoonChargeBodyPlan } from './sunMoonChargePresentation'
 import { gumResuscitationBodyPlan } from './gumResuscitationPresentation'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
@@ -164,9 +165,12 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const ordinary = gumResuscitationBodyPlan(
+  const ordinary = sunMoonChargeBodyPlan(
     fighter,
-    fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    gumResuscitationBodyPlan(
+      fighter,
+      fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    ),
   )
   const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1

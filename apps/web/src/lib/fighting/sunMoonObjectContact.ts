@@ -27,10 +27,14 @@ export function objectMarkContact(
     y: (Math.max(first.y, second.y) + Math.min(first.y + a.height, second.y + b.height)) / 2,
   }
 }
-export function markedBlastTouches(body: ArcadeFighter, centre: { x: number; y: number }): boolean {
+export function markedBlastTouches(
+  body: ArcadeFighter,
+  centre: { x: number; y: number },
+  radius = 12,
+): boolean {
   return hurtboxes(body).some((box) => {
     const x = Math.max(box.left, Math.min(box.right, centre.x))
     const y = Math.max(box.bottom, Math.min(box.top, centre.y))
-    return Math.hypot(x - centre.x, y - centre.y) <= 12
+    return Math.hypot(x - centre.x, y - centre.y) <= radius
   })
 }

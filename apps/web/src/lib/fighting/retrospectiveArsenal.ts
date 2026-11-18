@@ -1,3 +1,5 @@
+import { performSunMoonCharge } from './sunMoonCharge'
+import { sunMoonChargeOptions } from './sunMoonChargeOptions'
 import { gumResuscitationOptions } from './gumResuscitationAction'
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
@@ -168,6 +170,7 @@ const COMMAND_HANDLERS: readonly [
   ['document-', performPaperDocumentCommand],
   ['cookie-', performCookie],
   ['hunter-', performHunterInterview],
+  ['sun-moon-', performSunMoonCharge],
   ['history-', performHistoricalCommand],
 ]
 
@@ -216,6 +219,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
     ...gumResuscitationOptions(state, side),
+    ...sunMoonChargeOptions(state, side),
     ...textureSurfaceOptions(state, side),
     ...illumiFaceOptions(state, side),
     ...needleModeOptions(state, side),

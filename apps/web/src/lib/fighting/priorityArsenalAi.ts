@@ -1,3 +1,4 @@
+import { sunMoonChargeAi } from './sunMoonChargeAi'
 import { gumResuscitationAi } from './gumResuscitationAi'
 import { ghostwriterAi } from './ghostwriterAi'
 import { machiReattachmentAi } from './machiReattachmentAi'
@@ -11,6 +12,8 @@ import type { FightState } from './types'
 
 export function priorityArsenalAi(state: FightState): FightState | null {
   const actor = state.opponent
+  const bomb = sunMoonChargeAi(state)
+  if (bomb !== state) return bomb
   const priorOrder = gumResuscitationAi(state)
   if (priorOrder !== state) return priorOrder
   const fortune = ghostwriterAi(state)

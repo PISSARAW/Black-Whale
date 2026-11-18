@@ -1088,11 +1088,12 @@ d’origine quand il dort, avec les mêmes blessures et les mêmes entraves.
 Les sommeils imposés, les vues privées, le PvP, les replays et le On gardent
 leurs conditions. La mort d’un corps et le contrôle complet restent ouverts.
 
-## Sun and Moon : mains, contact et persistance — rulesets 73–74
+## Sun and Moon : mains, contact et persistance — rulesets 73–75
 
 Le [marquage matériel du décor](./clash-sun-moon-contact.md) vérifie la main requise
 pendant toute la préparation et conserve la polarité choisie. Le contact entre
 objets et le souffle utilisent désormais leurs deux dimensions. Les marques
 maintiennent la matière copiée jusqu’à leur explosion ; les objets marqués
 conservent leurs dégâts et leur âge entre les manches. Le On reste présent ;
-la charge maximale et les combinaisons de marionnettes restent ouvertes.
+la charge complète demande cinq secondes continues avec la bonne main. Les
+emplacements précis et les combinaisons de marionnettes restent ouverts.

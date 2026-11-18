@@ -1,3 +1,4 @@
+import { advanceSunMoonCharge } from './sunMoonCharge'
 import { selectedObjectMark, objectMarkHandReady, type ObjectMark } from './sunMoonObjectHands'
 import { witnessedHatsuState } from './nenWitness'
 import { arenaNenAvailable, arenaObjects } from './arenaActions'
@@ -36,6 +37,7 @@ function utilityInterrupted(state: FightState, side: FightSide, pending: Pending
 export function advanceArenaUtility(state: FightState, side: FightSide): FightState {
   const pending = state.arena!.pending[side]
   if (!pending) return state
+  if (pending.charge) return advanceSunMoonCharge(state, side, pending)
   const interrupted = utilityInterrupted(state, side, pending)
   const frames = pending.frames - 1
   state = {

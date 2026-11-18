@@ -5,6 +5,8 @@ export interface ArenaObject {
   height: number
   sun?: FightSide
   moon?: FightSide
+  sunCharge?: number
+  moonCharge?: number
   burning?: number
 }
 export interface ArenaState {
@@ -19,6 +21,8 @@ export interface ArenaState {
         kind: 'gum' | 'thread' | 'vacuum' | 'marks'
         frames: number
         mark?: import('./sunMoonObjectHands').ObjectMark
+        charge?: boolean
+        contact?: { x: number; y: number }
       }
     >
   >

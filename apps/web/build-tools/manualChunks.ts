@@ -51,7 +51,7 @@ const CLASH_CHUNK_RULES: readonly (readonly [RegExp, string])[] = [
     'clash-combo-catalogues',
   ],
   [
-    /\/fighting\/(?:nenCanon(?:First|Second)?|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/,
+    /\/fighting\/(?:nenCanon(?:First|Second)?|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov|illumi)Canon)\.ts$/,
     'clash-nen-canon',
   ],
   [

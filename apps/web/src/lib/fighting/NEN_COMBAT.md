@@ -164,3 +164,5 @@ Pendant la lecture d’un replay, ces volets montrent les états reconstruits en
 lecture seule : les commandes de page et d’Emperor Time sont verrouillées.
 
 Profils, opérations hybrides, débits et doctrines : [profondeur du Nen](./NEN_DEPTH.md).
+
+Tactiques personnelles, conversions et comparaison : [continuité des échanges](./NEN_TACTICS.md).

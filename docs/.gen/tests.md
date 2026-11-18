@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 927
+Fichiers : 933
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1078,9 +1078,13 @@ Fichiers : 927
 
 - the lens fits real cinematic equipment > includes the whole staff even when the actor’s root is unnamed
 
+## `apps/web/src/lib/fighting/throws/fifthBatch.test.ts`
+
+- fifth batch: conditioned abilities and personality stay faithful to real resources > keeps Melody’s opening close-up on her actual instrument beside a taller opponent
+
 ## `apps/web/src/lib/fighting/throws/performances.test.ts`
 
-- twenty individual pairs of authored throw performances > owns forty distinct pairs of actor poses, victim poses, trajectories and lenses
+- thirty individual pairs of authored throw performances > owns sixty distinct pairs of actor poses, victim poses, trajectories and lenses
 
 ## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
 

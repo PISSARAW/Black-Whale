@@ -85,7 +85,7 @@ export function createAnalyticsClient(config: AnalyticsConfig, fetcher: Fetch = 
         events,
       ] = await Promise.all([
         read<Stats>('stats', new URLSearchParams(base)),
-        metrics('url'),
+        metrics('path'),
         metrics('referrer'),
         metrics('device'),
         values('section_enter', 'mode'),

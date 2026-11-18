@@ -15,6 +15,11 @@ describe('private dashboard', () => {
       if (url.endsWith('/login')) return Response.json({ token: 'private-token' })
       if (url.includes('/stats?')) return Response.json({ visitors: 2, visits: 3, pageviews: 4 })
       const query = new URL(url).searchParams
+      if (
+        url.includes('/metrics?') &&
+        !['path', 'referrer', 'device', 'event'].includes(query.get('type') ?? '')
+      )
+        return new Response(null, { status: 400 })
       const event = query.get('eventName')
       if (event === 'section_enter') return Response.json([{ value: 'ship', total: 4 }])
       if (event === 'mode_active_30s') return Response.json([{ value: 'ship', total: 5 }])

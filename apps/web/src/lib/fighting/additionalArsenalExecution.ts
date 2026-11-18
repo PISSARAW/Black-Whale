@@ -6,6 +6,7 @@ import { performSweetHomeCommand } from './sweetHomeArsenal'
 import { performPadailleEscape } from './padailleEscape'
 import { performHinrighCounter } from './hinrighCounter'
 import { performIllumiDisguiseApplication } from './illumiDisguiseApplication'
+import { performIllumiNeedleApplication } from './illumiNeedleApplication'
 import type { ArsenalInvocation } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { FightState } from './types'
@@ -15,6 +16,8 @@ export function performAdditionalArsenal(
   perform: (o: AuraAttackOptions) => FightState,
 ): FightState | null {
   const { state, side, command } = options
+  if (command.action === 'illumi-needle-apply')
+    return performIllumiNeedleApplication(options, perform)
   if (command.action === 'illumi-face-apply')
     return performIllumiDisguiseApplication(options, perform)
   if (command.action === 'dolphin-loan') return performDolphinLoan(options)

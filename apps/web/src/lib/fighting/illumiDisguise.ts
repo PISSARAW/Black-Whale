@@ -11,6 +11,7 @@ import type { FightSide, FightState, ArcadeFighter } from './types'
 export { ILLUMI_UNPINNED_FRAMES } from './illumiDisguiseTuning'
 
 export function illumiDisguiseAvailable(actor: ArcadeFighter): boolean {
+  if (actor.needleFace?.reshaping) return false
   if (!illumiNenActive(actor) || !ownsIllumiNeedles(actor)) return false
   if (!faceApplicationScope(actor)) return false
   return actor.illumiDisguisePlan === 'unpinned-hisoka' || hasIllumiNeedles(actor)

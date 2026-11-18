@@ -8,6 +8,7 @@ import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { historicalPartExists } from './historicalCopyLifetime'
 import type { ArcadeFighter, FightState } from './types'
+import type { GumSource } from './bungeeSource'
 
 /** Absolute elapsed time also expires the physical alteration during hitstop and Cat's Name. */
 export function reconcileIllumiFaces(state: FightState): FightState {
@@ -22,24 +23,35 @@ export function reconcileIllumiFaces(state: FightState): FightState {
 }
 
 export function illumiFaceOriginAvailable(state: FightState, actor: ArcadeFighter): boolean {
-  const origin = actor.illumi?.disguiseOrigin
+  return illumiOriginAvailable(state, actor, actor.illumi?.disguiseOrigin)
+}
+
+export function illumiOriginAvailable(
+  state: FightState,
+  actor: ArcadeFighter,
+  origin?: GumSource,
+): boolean {
   if (!origin?.source) return true // Old recordings and an opponent's redacted acquisition.
   if (origin.source === 'personal') return true // The native physical alteration retains its own pins/deadline.
   if (origin.source === 'book') {
     const body = personalGumBody(actor)
     return body.id === 'chrollo' && chrolloAbilityActive(body, 'illumi:backSpecial')
   }
-  return borrowedFaceOriginAvailable(state, actor)
+  return borrowedFaceOriginAvailable(state, actor, origin)
 }
 
-function borrowedFaceOriginAvailable(state: FightState, actor: ArcadeFighter): boolean {
+function borrowedFaceOriginAvailable(
+  state: FightState,
+  actor: ArcadeFighter,
+  origin: GumSource,
+): boolean {
   const held = equippedDolphin(actor)
   if (!faceLenderAvailable(state, actor)) return false
   return Boolean(
     held?.used &&
     !held.returned &&
     held.source === 'illumi' &&
-    held.theftId === actor.illumi!.disguiseOrigin!.theftId &&
+    held.theftId === origin.theftId &&
     voluntaryNenAvailable(stolenAuraActor(loanCarrier(actor))),
   )
 }

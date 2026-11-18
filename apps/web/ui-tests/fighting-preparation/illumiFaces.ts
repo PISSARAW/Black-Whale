@@ -1,7 +1,7 @@
 import { beginFight, createFight } from '../../src/lib/fighting/engine'
 import type { FightSide, FightState } from '../../src/lib/fighting/types'
 
-export function illumiFaceScenario(side: FightSide, pinned: boolean): FightState {
+export function illumiFaceScenario(side: FightSide, pinned: boolean, close = false): FightState {
   const state = beginFight(
     createFight(side === 'player' ? 'illumi' : 'theta', side === 'opponent' ? 'illumi' : 'theta', {
       mode: 'versus-local',
@@ -9,7 +9,10 @@ export function illumiFaceScenario(side: FightSide, pinned: boolean): FightState
       environment: { needleStock: { player: pinned, opponent: pinned } },
     }),
   )
-  return { ...state, [side]: { ...state[side], aura: 100 } }
+  const ready = { ...state, [side]: { ...state[side], aura: 100 } }
+  return close
+    ? { ...ready, player: { ...ready.player, x: 44 }, opponent: { ...ready.opponent, x: 49 } }
+    : ready
 }
 export function illumiFaceSnapshot(state: FightState, side: FightSide) {
   const actor = state[side]
@@ -20,5 +23,9 @@ export function illumiFaceSnapshot(state: FightState, side: FightSide) {
     health: actor.health,
     aura: actor.aura,
     plan: actor.illumiDisguisePlan,
+    mode: actor.illumiNeedleMode,
+    needleFace: actor.needleFace,
+    puppet: actor.needlePuppet,
+    piles: state.battlefield?.entities.filter((entry) => entry.detachedFaceNeedles),
   }
 }

@@ -67,6 +67,25 @@
     >
   </div>
 {/if}
+{#if fighter.needleFace}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Trois aiguilles au front' : 'Three forehead needles'}</strong>
+    <span
+      >{fighter.needleFace.reshaping
+        ? fr
+          ? 'Visage déformé · autonomie conservée'
+          : 'Distorted face · autonomy retained'
+        : fr
+          ? 'Remodelage terminé · aiguilles toujours présentes'
+          : 'Shaping ended · needles remain'}</span
+    >
+    <small
+      >{fr
+        ? 'Une main libre permet de retirer les aiguilles après la douleur d’impact.'
+        : 'A free hand can remove the needles after impact pain.'}</small
+    >
+  </div>
+{/if}
 {#if fighter.needlePuppet}
   <div class="illumi-status controlled" role="status">
     <strong>{fr ? 'Needle People · Autonomie perdue' : 'Needle People · Autonomy lost'}</strong>

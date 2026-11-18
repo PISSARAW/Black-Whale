@@ -5,6 +5,7 @@ import { illumiState, type NeedlePuppet } from './illumiState'
 import { ILLUMI_UNPINNED_FRAMES } from './illumiDisguiseTuning'
 import { withGumChannel } from './bungeeChannel'
 import { observeIllumiFace } from './illumiDisguiseWitness'
+import { fallFaceNeedles } from './illumiNeedleFall'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
 
 export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -16,7 +17,9 @@ export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFi
 
 export function advanceIllumi(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
-  return advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent'))
+  return fallFaceNeedles(
+    advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent')),
+  )
 }
 
 function advanceForSide(state: FightState, side: FightSide): FightState {

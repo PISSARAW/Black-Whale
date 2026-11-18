@@ -1,10 +1,12 @@
 import type { AttackKind, AttackVariant, FighterId } from './types'
 import type { ChrolloPage } from './chrolloBook'
 import type { GumSource } from './bungeeSource'
+import type { IllumiNeedleMode } from './illumiNeedleFaceTypes'
 
 export interface FightAttack {
-  /** Execution channel captured when a Hisoka technique actually starts. */
+  /** Execution channel captured when a supported technique actually starts. */
   nenOrigin?: GumSource
+  illumiNeedleMode?: IllumiNeedleMode
   copiedPage?: ChrolloPage
   moveId?: string
   variant?: AttackVariant

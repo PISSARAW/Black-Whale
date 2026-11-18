@@ -2,6 +2,7 @@ import { activeHitbox, boxesOverlap, otherSide } from './frameData'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { illumiState } from './illumiState'
 import { recordDolphinEffects } from './kurapikaDolphin'
+import { applyNeedleFace, spentNeedleFaceCaster } from './illumiNeedleFace'
 import type { ImpactDefence } from './combatDamage'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -20,28 +21,16 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
   const targetSide = otherSide(side)
   const target = defence.fighter
   const captured = canImplant(options)
+  const warpsFace = attacker.attack.illumiNeedleMode === 'face-warp'
   const next = {
     ...state,
-    [side]: spent,
-    [targetSide]: captured
-      ? {
-          ...target,
-          needlePuppet: {
-            owner: side,
-            order: illumiState(attacker).order,
-            needleEmbedded: true,
-            mediumCopyId: attacker.equipmentProps?.needles?.copyId,
-          },
-          attack: null,
-          bufferedAttack: null,
-          blocking: false,
-          guardFrames: 0,
-        }
-      : target,
+    [side]: captured && warpsFace ? spentNeedleFaceCaster(spent) : spent,
+    [targetSide]: resolvedNeedleVictim(options, captured),
     impact: {
       sequence: (state.impact?.sequence ?? 0) + 1,
       attacker: side,
       kind: 'special' as const,
+      illumiNeedleMode: attacker.attack.illumiNeedleMode,
       damage: 0,
       blocked: defence.blocked,
       parried: defence.parried,
@@ -66,6 +55,29 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
   return recordDolphinEffects(state, next, side)
 }
 
+function resolvedNeedleVictim(
+  { state, side, defence }: NeedleContact,
+  captured: boolean,
+): ArcadeFighter {
+  const target = defence.fighter
+  if (!captured) return target
+  const attacker = state[side]
+  if (attacker.attack?.illumiNeedleMode === 'face-warp') return applyNeedleFace(state, side, target)
+  return {
+    ...target,
+    needlePuppet: {
+      owner: side,
+      order: illumiState(attacker).order,
+      needleEmbedded: true,
+      mediumCopyId: attacker.equipmentProps?.needles?.copyId,
+    },
+    attack: null,
+    bufferedAttack: null,
+    blocking: false,
+    guardFrames: 0,
+  }
+}
+
 function canImplant({ state, side, defence }: NeedleContact): boolean {
   if (defence.blocked || defence.parried || defence.avoided) return false
   const target = state[otherSide(side)]
@@ -73,8 +85,14 @@ function canImplant({ state, side, defence }: NeedleContact): boolean {
     hasIllumiNeedles(state[side]) &&
     target.health > 0 &&
     !alreadyControlled(target) &&
+    faceTargetAvailable(state[side], target) &&
     skullContact(state[side], target)
   )
+}
+
+function faceTargetAvailable(attacker: ArcadeFighter, target: ArcadeFighter): boolean {
+  if (attacker.attack?.illumiNeedleMode !== 'face-warp') return true
+  return !target.needleFace && !target.illumi?.disguised
 }
 
 function alreadyControlled(target: ArcadeFighter): boolean {

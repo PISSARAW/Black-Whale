@@ -9,6 +9,7 @@ export interface EquippedProp {
   entityId: string
   copyId?: string
   material: 'real' | 'nen'
+  detachedPart?: boolean
 }
 declare module './types' {
   interface ArcadeFighter {
@@ -27,8 +28,9 @@ export function recordEquipmentPickup(
       ...actor.equipmentProps,
       [equipment]: {
         entityId: target.id,
-        copyId: target.copy ? target.id : undefined,
+        copyId: target.detachedFaceNeedles?.mediumCopyId ?? (target.copy ? target.id : undefined),
         material: target.material,
+        ...(target.detachedFaceNeedles ? { detachedPart: true } : {}),
       },
     },
     ...(equipment === 'flute' ? { melodyFlute: true } : {}),
@@ -48,7 +50,7 @@ function cleanBodyEquipment(state: FightState, body: ArcadeFighter): ArcadeFight
   if (!trackedInventory(body)) return body
   let actor = body
   const expired = (Object.entries(body.equipmentProps ?? []) as [FightEquipment, EquippedProp][])
-    .filter(([, prop]) => !historicalMatterExists(state, prop.copyId))
+    .filter(([, prop]) => !equippedMatterExists(state, prop))
     .map(([kind]) => kind)
   if (expired.length) {
     const props = { ...actor.equipmentProps }
@@ -64,6 +66,12 @@ function cleanBodyEquipment(state: FightState, body: ArcadeFighter): ArcadeFight
     state,
     cleanStoredProjectiles(state, cleanEmbeddedNeedles(state, actor)),
   )
+}
+
+function equippedMatterExists(state: FightState, prop: EquippedProp): boolean {
+  return prop.detachedPart
+    ? historicalPartExists(state, prop.copyId)
+    : historicalMatterExists(state, prop.copyId)
 }
 function trackedInventory(body: ArcadeFighter): boolean {
   return Boolean(

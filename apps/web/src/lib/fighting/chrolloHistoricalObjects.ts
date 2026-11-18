@@ -1,5 +1,6 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
 import { copiedDocumentMaterials } from './paperDocumentCopy'
+import { copiedFaceNeedles } from './illumiNeedleMatter'
 import { touchesDocument } from './paperDocuments'
 import { copyPaperKit } from './kallutoCopyKit'
 import { expireHistoricalMatter } from './historicalMatterClock'
@@ -55,6 +56,7 @@ function createHistoricalReplica(
     material: 'nen',
     health: 40,
     ...replicaMaterials(source, id),
+    ...copiedFaceNeedles(source, id),
     ...copiedDocumentMaterials(state, { source, id, side }),
     consenting: false,
     controller: undefined,

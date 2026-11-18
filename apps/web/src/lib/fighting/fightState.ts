@@ -2,6 +2,7 @@ import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
 import { carryDocumentState } from './paperDocumentRound'
 import { carryIllumiFace } from './illumiDisguiseClock'
+import { carryNeedleFace } from './illumiNeedleMatter'
 import { carryKallutoPaper } from './kallutoSurveillance'
 import { personalPaperKit } from './kallutoMaterials'
 import { carryPaperWorld } from './kallutoMaterialWorld'
@@ -150,6 +151,7 @@ function preserveLifespan(
   elapsedFrames: number,
 ): ArcadeFighter {
   fighter = carryIllumiFace(fighter, previous, elapsedFrames)
+  fighter = carryNeedleFace(fighter, previous)
   fighter = carryBodyDamage(fighter, previous)
   fighter = carryDocumentState(fighter, previous)
   fighter = carryDolphinState(fighter, previous)

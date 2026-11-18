@@ -109,8 +109,8 @@
   export function paperSnapshot(side: FightSide) {
     return documentSnapshot(state, side)
   }
-  export async function prepareIllumiFace(side: FightSide, pinned: boolean) {
-    state = illumiFaceScenario(side, pinned)
+  export async function prepareIllumiFace(side: FightSide, pinned: boolean, close = false) {
+    state = illumiFaceScenario(side, pinned, close)
     player = state.player.id
     opponent = state.opponent.id
     environment = state.environment

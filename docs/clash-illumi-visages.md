@@ -66,6 +66,6 @@ l’acquisition et l’échéance privée.
 Les tests `illumiDisguise`, `illumiDisguiseBorrowing`, `illumiDisguiseFigure` et
 `illumiDisguiseReplay` complètent la suite existante. Le script
 `apps/web/scripts/check-illumi-face-ui.mjs` exerce les deux formes pour P1/P2
-à 1100, 390 et 320 pixels. La déformation du visage d’autrui et les applications
-complètes du conditionnement mental restent à compléter avant toute certification
+à 1100, 390 et 320 pixels. La [déformation du visage d’autrui](./clash-illumi-trois-aiguilles.md)
+est ajoutée au ruleset 57. Les applications complètes du conditionnement mental restent à compléter avant toute certification
 de l’arsenal d’Illumi à 100 %.

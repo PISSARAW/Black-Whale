@@ -30,8 +30,14 @@ function performCommand({ state, side, moveId }: AuraAttackOptions): FightState 
   if (moveId === 'illumi:downSpecial') return giveNeedleOrder(state, side, 'retreat')
   if (moveId === 'illumi:backSpecial') return disguise(state, side)
   const enemy = side === 'player' ? 'opponent' : 'player'
-  if (state[enemy].needlePuppet?.owner === side) return giveNeedleOrder(state, side, 'stay')
+  if (state[side].illumiNeedleMode !== 'face-warp' && state[enemy].needlePuppet?.owner === side)
+    return giveNeedleOrder(state, side, 'stay')
+  if (!needleHandReady(state, side)) return state
   return null
+}
+
+function needleHandReady(state: FightState, side: FightSide): boolean {
+  return !state[side].hanzoProjection && Boolean(freeDeviceHand(state, side))
 }
 
 export function giveNeedleOrder(

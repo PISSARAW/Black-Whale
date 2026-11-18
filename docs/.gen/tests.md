@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 932
+Fichiers : 937
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -788,6 +788,22 @@ Fichiers : 932
 ## `apps/web/src/lib/fighting/illumiDisguiseTeam.test.ts`
 
 - Illumi’s physical face belongs to its body through a relay > does not block a relay merely for an uncast face choice
+
+## `apps/web/src/lib/fighting/illumiNeedleBorrowing.test.ts`
+
+- other-body face shaping retains its actual acquisition > ends a book shaping effect on page closure without erasing metal or spending a loan
+
+## `apps/web/src/lib/fighting/illumiNeedleFigure.test.ts`
+
+- the face has three physical forehead pins without a Needle People marker > names the captured face application in both cast and contact shots
+
+## `apps/web/src/lib/fighting/illumiNeedleMatter.test.ts`
+
+- face pins retain actual matter and Gallery Fake parentage > retains detached pieces after other material of the same copy is destroyed, then expires them at their parent’s deadline
+
+## `apps/web/src/lib/fighting/illumiNeedleReplay.test.ts`
+
+- three forehead pins use actual commands in replays and P2 prediction > reproduces P2’s selected attack and P1’s physical removal without recording an outcome
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 

@@ -20,6 +20,7 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
+import { closeBodyPlan } from './fightClosePosture'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
 import { attackTransfer, recoveryTransfer } from './fightAttackWeight'
@@ -199,7 +200,8 @@ export interface PlanContext extends ReactionContext {
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const ordinary = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
-  const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
+  const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
+  const plan = awake && closeBodyPlan(awake, fighter, context.rival)
   return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
     ? rightHandedPlan(plan)
     : plan

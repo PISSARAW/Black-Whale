@@ -40,6 +40,7 @@ export function createFightReactionPresentation() {
       clock(side, input.fighter, { seconds: input.seconds, impact: impact?.sequence })
     rememberProgress(contacts[side], progress, input.fighter)
     return {
+      rival: rivalOf(state, side),
       ...contacts[side]?.contact,
       poseContinuity: physicalRosterPair(state.player.id, state.opponent.id)
         ? motion[side]
@@ -47,6 +48,10 @@ export function createFightReactionPresentation() {
       progress,
     }
   }
+}
+
+function rivalOf(state: FightState, side: FightSide): ArcadeFighter {
+  return state[side === 'player' ? 'opponent' : 'player']
 }
 
 function rememberProgress(

@@ -149,3 +149,17 @@ suivante conserve un résidu borné du déséquilibre précédent, dissipé sur 
 images de simulation. Aucun résidu ne passe à un nouveau combat ou à une frappe
 isolée après récupération. `fightHitBalance.test.ts` vérifie ces différences et
 le transfert au cours de six combos natifs, sans mutation des états.
+
+## Proximité, séparation et appuis
+
+`fightClosePosture.ts` prépare le buste quand l’adversaire est proche, pour
+réduire les débordements avant la correction de séparation. Le dégagement
+restant tient compte du combattant ancré, du mur, du gabarit et de la victime
+qui recule. Il se relâche sur six images, en restant figé pendant le hitstop.
+`fightSeparationSupport.ts` maintient la semelle d’appui en coordonnées monde
+avec une chaîne de deux articulations sans étirement (`fightLimbReach.ts`).
+Un déplacement plus grand libère cet appui dans un pas de rattrapage de neuf
+images. La mémoire survit à une reconstruction Nen et se réinitialise à la
+manche. Les volumes centraux restent séparés et la projection immatérielle
+explicite conserve son exception. `fightSeparationSupport.test.ts` vérifie
+l’appui, les longueurs des segments et la préparation à courte distance.

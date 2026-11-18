@@ -30,6 +30,7 @@ import { groundRecoveryPose } from './fightGroundRecovery'
  * (`sceneMotion.poseProgress`), so the timing stays the engine's.
  */
 export interface ReactionContext {
+  rival?: ArcadeFighter
   /** 0 when the state starts, 1 when it ends (`sceneMotion.poseProgress`). */
   progress: number
   /** Where the last blow landed, for a struck fighter. */

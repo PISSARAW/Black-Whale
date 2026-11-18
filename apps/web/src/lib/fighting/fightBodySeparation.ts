@@ -1,21 +1,27 @@
 import { Box3, type Mesh, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fighterAnchored } from './fighterAnchors'
+import { createSeparationSupport } from './fightSeparationSupport'
+import { fightPhysicalProfile } from './fightPhysicalProfile'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 const GAP = 0.025
 
 /** The material core has volume even when the animation leans outside its gameplay pushbox. */
 export function createFightBodySeparation(figureOf: (side: FightSide) => Object3D) {
+  let supports = makeSupports()
   let identity = '',
     previous = -1,
     clearance = 0,
     order = 1
   return (state: FightState) => {
     const key = `${state.player.id}:${state.opponent.id}:${state.roundNumber}`
-    if (identity !== key || state.frame < previous) clearance = 0
+    if (identity !== key || state.frame < previous) {
+      clearance = 0
+      supports = makeSupports()
+    }
     identity = key
-    const dt = Math.max(0, state.frame - previous)
+    const dt = state.hitstop > 0 ? 0 : Math.max(0, state.frame - previous)
     previous = state.frame
     const roots = { player: figureOf('player').parent!, opponent: figureOf('opponent').parent! }
     if (!roots.player || !roots.opponent) return
@@ -24,12 +30,14 @@ export function createFightBodySeparation(figureOf: (side: FightSide) => Object3
     if (direction !== order) clearance = 0
     order = direction
     const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
-    clearance = Math.max(needed, clearance * Math.exp(-dt / 3))
+    clearance = Math.max(needed, clearance * Math.exp(-dt / 6))
     if (projectionBody(state.player) || projectionBody(state.opponent)) {
       clearance = 0
       return
     }
     displaceCores(roots, state, clearance * direction)
+    for (const side of ['player', 'opponent'] as const)
+      supports[side](figureOf(side), state[side], { frame: state.frame, frozen: state.hitstop > 0 })
   }
 }
 
@@ -66,13 +74,25 @@ export function bodySurfaceBox(part: Object3D): Box3 {
 }
 
 function displaceCores(roots: Record<FightSide, Object3D>, state: FightState, distance: number) {
-  const playerFixed = fixedBody(state.player),
-    opponentFixed = fixedBody(state.opponent)
-  let share = 0.5
-  if (playerFixed && !opponentFixed) share = 0
-  if (opponentFixed && !playerFixed) share = 1
+  const share = separationShare(state)
   roots.player.position.x -= distance * share
   roots.opponent.position.x += distance * (1 - share)
+}
+
+function separationShare(state: FightState): number {
+  const playerFixed = fixedBody(state.player),
+    opponentFixed = fixedBody(state.opponent)
+  if (playerFixed && !opponentFixed) return 0
+  if (opponentFixed && !playerFixed) return 1
+  if (state.player.attack && state.opponent.pose === 'hit') return 0.15
+  if (state.opponent.attack && state.player.pose === 'hit') return 0.85
+  const a = fightPhysicalProfile(state.player).resistance
+  const b = fightPhysicalProfile(state.opponent).resistance
+  return a / (a + b)
+}
+
+function makeSupports() {
+  return { player: createSeparationSupport(), opponent: createSeparationSupport() }
 }
 
 function fixedBody(fighter: ArcadeFighter): boolean {

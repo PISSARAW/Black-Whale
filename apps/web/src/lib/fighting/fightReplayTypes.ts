@@ -4,7 +4,7 @@ import type { EasterEggSlot } from './easterEggCatalogue'
 import type { FightSide, MoveAction, FighterId, FightMode } from './types'
 
 export const REPLAY_VERSION = 1
-export const REPLAY_RULESET = 'clash-combat-49-nen-depth'
+export const REPLAY_RULESET = 'clash-combat-50-nen-exchanges'
 export const REPLAY_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 export type ReplayFighter = FighterId
 export interface ReplaySetup {

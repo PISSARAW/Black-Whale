@@ -1,4 +1,5 @@
 import { guardForVariant, type GuardRequirement } from './combatProperties'
+import { nenFollowupReadiness } from './nenComboReadiness'
 import { openingAllows } from './comboOpenings'
 import type { FighterMove } from './movesetTypes'
 import type { AttackFrameData } from './frameData'
@@ -95,6 +96,7 @@ export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
   if (currentMove)
     return Boolean(
       moveId &&
+      nenDestinationReady(fighter, moveId) &&
       (openingAllows(fighter, moveId) || confirmedRoutes(fighter, currentMove).includes(moveId)),
     )
   return legacyCancel(fighter, kind)
@@ -157,4 +159,9 @@ export function attackVariant(options: {
   if (options.variant) return options.variant
   if (options.kind !== 'light' && options.kind !== 'heavy') return 'standing'
   return selectedVariant(options.fighter)
+}
+
+function nenDestinationReady(fighter: ArcadeFighter, id: string): boolean {
+  const move = moveById(id)
+  return Boolean(move && nenFollowupReadiness(fighter, move) === 'ready')
 }

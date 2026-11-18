@@ -47,10 +47,10 @@ function fallKeys(hit: PhysicalHit, launch: FightPose): MoveTimeline {
   }
   return [
     { phase: 'recovery', at: 0, pose: physicalHitPose(hit, 0.15) },
-    { phase: 'recovery', at: 0.18, pose: launch, ease: 'out' },
+    { phase: 'recovery', at: 0.12, pose: launch, ease: 'out' },
     {
       phase: 'recovery',
-      at: 0.36,
+      at: 0.23,
       pose: addPoses(launch, {
         body: [-0.42, 0, 0],
         leadHip: [-0.25, 0, 0],
@@ -60,10 +60,10 @@ function fallKeys(hit: PhysicalHit, launch: FightPose): MoveTimeline {
       }),
       ease: 'in',
     },
-    { phase: 'recovery', at: 0.6, pose: lying, ease: 'in' },
+    { phase: 'recovery', at: 0.32, pose: lying, ease: 'in' },
     {
       phase: 'recovery',
-      at: 0.7,
+      at: 0.36,
       pose: addPoses(lying, {
         chest: [0.12, 0, 0],
         leadKnee: [0.18, 0, 0],
@@ -71,6 +71,6 @@ function fallKeys(hit: PhysicalHit, launch: FightPose): MoveTimeline {
       }),
       ease: 'out',
     },
-    { phase: 'recovery', at: 0.85, pose: lying, ease: 'smooth' },
+    { phase: 'recovery', at: 0.4, pose: lying, ease: 'smooth' },
   ]
 }

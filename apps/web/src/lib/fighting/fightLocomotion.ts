@@ -1,3 +1,4 @@
+import { shufflePose } from './fightShuffleStep'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
@@ -228,7 +229,7 @@ export function walkPose(fighter: ArcadeFighter, standing: FightPose): Locomotio
   const rhythm = scalePose(style.rhythm, phase * profile.walk * (advancing ? 1 : 0.65))
   const posture = scalePose(advancing ? style.advance : style.retreat, profile.walk)
   return {
-    pose: addPoses(standing, posture, rhythm),
+    pose: addPoses(standing, posture, rhythm, scalePose(shufflePose(fighter), profile.walk)),
     key: advancing ? 'walk:forward' : 'walk:backward',
     blend: 0.055,
   }

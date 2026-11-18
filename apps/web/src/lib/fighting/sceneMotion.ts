@@ -14,7 +14,7 @@ export interface FighterSceneAnimation {
 
 export const FIGHT_MODEL_POSES: Record<FighterPose, HumanPose> = {
   idle: 'idle',
-  walk: 'walk',
+  walk: 'idle',
   jump: 'idle',
   guard: 'guard',
   light: 'idle',

@@ -1,3 +1,4 @@
+import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
 import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { openingFollowup } from './comboOpenings'
@@ -35,18 +36,18 @@ import {
 } from './directionalChain'
 import { pursuitTakeoff } from './fighterMovement'
 
-const MIN_X = 7
-const MAX_X = 93
-
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
   fighter = advanceAttackBuffer(interruptUnavailableNen(fighter))
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
-  let next: ArcadeFighter = {
-    ...fighter,
-    attack: { ...fighter.attack, frame },
-  }
+  let next: ArcadeFighter = advanceAttackDrive(
+    {
+      ...fighter,
+      attack: { ...fighter.attack, frame },
+    },
+    data.startup,
+  )
   if (!fighter.attack.impacted && frame >= data.startup + data.active) {
     next = setIn(releaseFocusedAura(next), false)
   }
@@ -94,7 +95,7 @@ export function startFighterAttack(options: {
     nenBranchCount: nextNenBranchCount(fighter, options.moveId),
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
-    x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
+    ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
     aura:
       fighter.aura -
       (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
@@ -214,10 +215,6 @@ function canAct(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     !fighter.throwTechRecoveryFrames
   )
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
 }
 
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {

@@ -33,11 +33,11 @@ export function groundRecoveryPose(
   progress: number,
   poses: { fallen: FightPose; standing: FightPose },
 ): FightPose | null {
-  if (!recoveringBody(fighter) || progress < 0.52) return null
-  const t = Math.min(1, (progress - 0.52) / 0.46)
-  if (t < 0.32) return lerpPose(poses.fallen, GATHER, smooth(t / 0.32))
-  if (t < 0.68) return lerpPose(GATHER, SUPPORT, smooth((t - 0.32) / 0.36))
-  return lerpPose(SUPPORT, poses.standing, smooth((t - 0.68) / 0.32))
+  if (!recoveringBody(fighter) || progress < 0.42) return null
+  const t = Math.min(1, (progress - 0.42) / 0.56)
+  if (t < 0.36) return lerpPose(poses.fallen, GATHER, smooth(t / 0.36))
+  if (t < 0.75) return lerpPose(GATHER, SUPPORT, smooth((t - 0.36) / 0.39))
+  return lerpPose(SUPPORT, poses.standing, smooth((t - 0.75) / 0.25))
 }
 
 function recoveringBody(fighter: ArcadeFighter): boolean {

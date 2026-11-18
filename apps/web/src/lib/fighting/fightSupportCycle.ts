@@ -1,3 +1,4 @@
+import { shuffleSupport } from './fightShuffleStep'
 import { attackData } from './frameData'
 import { fightStrikeLimb } from './fightStrikeLimb'
 import { rosterMoveShape } from './rosterStrikeMotion'
@@ -20,7 +21,8 @@ export function supportCycle(fighter: ArcadeFighter): {
 } {
   const lead = fighter.facing === 1 ? 1 : 0
   const attack = fighter.attack
-  if (!attack) return { support: lead, pivot: 0 }
+  if (!attack)
+    return fighter.pose === 'walk' ? shuffleSupport(fighter) : { support: lead, pivot: 0 }
   const data = attackData(attack.kind, fighter)
   const progress = Math.min(1, attack.frame / Math.max(1, data.startup))
   if (KICKS.has(rosterMoveShape(attack.moveId) ?? '')) {

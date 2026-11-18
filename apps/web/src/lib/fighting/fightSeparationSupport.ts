@@ -56,11 +56,14 @@ export function createSeparationSupport() {
         releaseFoot(foot, soles[index], support!.ground)
         return soles[index]
       }
-      const target = supportTarget(foot, soles[index], {
-        dt,
-        ground: support!.ground,
-        planted: cycle.support === index,
-      })
+      const target =
+        fighter.pose === 'walk' && cycle.support === index
+          ? foot.anchor.clone()
+          : supportTarget(foot, soles[index], {
+              dt,
+              ground: support!.ground,
+              planted: cycle.support === index,
+            })
       return timing.rival ? clearFootTarget(target, timing.rival, fighter.facing) : target
     })
     prepared = { figure, frame: timing.frame, rig, targets, cycle }
@@ -88,7 +91,7 @@ function groundedSupport(fighter: ArcadeFighter): boolean {
   return (
     fighter.y <= 0 &&
     fighter.health > 0 &&
-    !['down', 'ko', 'wakeup', 'walk'].includes(fighter.pose) &&
+    !['down', 'ko', 'wakeup'].includes(fighter.pose) &&
     !fighter.motion?.dash &&
     !fighter.hanzoProjection &&
     !fighter.luiniPassage

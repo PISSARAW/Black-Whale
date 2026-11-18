@@ -414,9 +414,9 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
   if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
-  // The walk cycle moves the legs; the stance keeps the guard up over it.
+  // The complete combat stance carries both legs across walk/stop/attack transitions.
   if (fighter.pose === 'walk') {
-    const walking = walkPose(fighter, pickJoints(standing, UPPER_JOINTS))
+    const walking = walkPose(fighter, standing)
     return { ...walking, plant: true }
   }
   return plan(standing, 'stance')

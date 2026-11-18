@@ -1,4 +1,5 @@
 import { lerpPose, type FightPose } from './fightPose'
+import type { PursuitGesture } from './pursuitMotion'
 import type { AttackWeightTransfer } from './fightWeightTransfer'
 
 export interface AttackFlowFrame {
@@ -7,6 +8,7 @@ export interface AttackFlowFrame {
   active?: number
   recovery?: number
   supportLeg?: 'lead' | 'rear'
+  pursuit?: PursuitGesture
   loadAt?: number
   facing: 1 | -1
   contact?: FightPose

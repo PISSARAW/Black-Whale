@@ -30,6 +30,7 @@ import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
+import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { attackMotionAccent } from './fightAttackMotion'
 import { strikePresentationFrame } from './fightStrikeRhythm'
 import { strikeSupportPose } from './fightStrikeSupport'
@@ -144,9 +145,23 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBenjaminRifle(rig, fighter)
     animateBonolenovSpear(rig, fighter)
     keepHumanJoints(rig)
-    plantBodyFrame(rig, { anchor, pose: drawn, fighter, plan })
+    plantBodyFrame(rig, {
+      anchor,
+      pose: drawn,
+      fighter,
+      plan,
+      pursuitSupport: attackSupport(plan.attackFlow),
+    })
     if (anchor) plantHanzoSoles(rig, fighter)
   })
+}
+
+function attackSupport(attack: AttackFlowFrame | undefined) {
+  if (!attack?.pursuit) return
+  return {
+    foot: pursuitSupport(attack.pursuit, attack.facing),
+    weight: pursuitLoadWeight(attack.frame / attack.startup),
+  }
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -355,6 +370,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
+  const pursuit = pursuitGesture(attack)
   const base = basePose(variant, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
@@ -372,11 +388,12 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: variant !== 'air' && fighter.y <= 0,
+    plant: fighter.y <= 0 && (variant !== 'air' || Boolean(pursuit && frame < frames.startup)),
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
     attackFlow: {
       frame,
+      pursuit,
       startup: frames.startup,
       active: frames.active,
       recovery: frames.recovery,
@@ -384,16 +401,22 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,
-      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),
+      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
     },
   }
 }
 
 function bridgeContact(
   moveId: string | undefined,
-  timing: { frame: number; startup: number; poseAt: (frame: number) => FightPose },
+  timing: {
+    frame: number
+    startup: number
+    poseAt: (frame: number) => FightPose
+    pursuit?: string
+  },
 ): FightPose | undefined {
-  if (timing.frame < timing.startup && bridgeTarget(moveId)) return timing.poseAt(timing.startup)
+  if (timing.frame < timing.startup && (bridgeTarget(moveId) || timing.pursuit))
+    return timing.poseAt(timing.startup)
 }
 
 function hasTechedThrow(fighter: ArcadeFighter): boolean {

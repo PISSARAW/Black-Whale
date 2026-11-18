@@ -44,6 +44,7 @@ export interface PlantFeetOptions {
   transfer?: boolean
   support?: number
   horizontal?: boolean
+  pursuitSupport?: { foot: 0 | 1; weight: number }
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -228,8 +229,21 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   target.z += root[2]
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
+  biasPursuitSupport(correction, { ...options, after })
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
+}
+
+function biasPursuitSupport(
+  correction: Vector3,
+  options: PlantFeetOptions & { after: FootPlantAnchor },
+): void {
+  const { pursuitSupport, anchor, after } = options
+  if (!pursuitSupport?.weight) return
+  const planted = anchor.positions[pursuitSupport.foot]
+  const drawn = after.positions[pursuitSupport.foot]
+  correction.x += (planted.x - drawn.x - correction.x) * pursuitSupport.weight
+  correction.z += (planted.z - drawn.z - correction.z) * pursuitSupport.weight
 }
 
 function blendFootCorrections(

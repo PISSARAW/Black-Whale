@@ -11,6 +11,7 @@ export function plantBodyFrame(
     pose: FightPose
     plan: BodyPlan
     fighter: ArcadeFighter
+    pursuitSupport?: { foot: 0 | 1; weight: number }
   },
 ): void {
   if (!frame.anchor) return
@@ -27,5 +28,6 @@ export function plantBodyFrame(
         ? undefined
         : supportCycle(fighter).support,
     horizontal: fighter.pose !== 'walk',
+    pursuitSupport: frame.pursuitSupport,
   })
 }

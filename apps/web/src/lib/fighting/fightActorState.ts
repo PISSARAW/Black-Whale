@@ -16,12 +16,15 @@ export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
 
 function characterBusy(fighter: ArcadeFighter): boolean {
   if (
-    fighter.easterEgg ||
-    fighter.throwTechRecoveryFrames ||
-    fighter.luiniPassage ||
-    fighter.machiSuture ||
-    fighter.machiReattachment ||
-    fighter.corpsePreparation
+    [
+      fighter.easterEgg,
+      fighter.throwTechRecoveryFrames,
+      fighter.luiniPassage,
+      fighter.machiSuture,
+      fighter.machiReattachment,
+      fighter.ghostwriterWriting,
+      fighter.corpsePreparation,
+    ].some(Boolean)
   )
     return true
   if (!illumiBodyFree(fighter)) return true

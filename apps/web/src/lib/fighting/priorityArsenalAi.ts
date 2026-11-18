@@ -1,3 +1,4 @@
+import { ghostwriterAi } from './ghostwriterAi'
 import { machiReattachmentAi } from './machiReattachmentAi'
 import { performMachiMaterial } from './machiMaterial'
 import { blackVoiceAvailable } from './blackVoiceControl'
@@ -9,6 +10,8 @@ import type { FightState } from './types'
 
 export function priorityArsenalAi(state: FightState): FightState | null {
   const actor = state.opponent
+  const fortune = ghostwriterAi(state)
+  if (fortune !== state) return fortune
   const stitching = machiReattachmentAi(state)
   if (stitching !== state) return stitching
   let next = state

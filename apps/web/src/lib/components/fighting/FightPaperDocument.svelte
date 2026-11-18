@@ -24,7 +24,7 @@
 </script>
 
 {#if reading}
-  <p role="status">
+  <p role="status" class="paper-reading">
     {language === 'fr' ? 'Dernière lecture du papier' : 'Latest paper reading'} ·
     {Math.floor(reading.frame / 60)} s · {reading.text}
   </p>
@@ -70,6 +70,10 @@
 {/if}
 
 <style>
+  .paper-reading {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
   label {
     display: grid;
     gap: 0.3rem;

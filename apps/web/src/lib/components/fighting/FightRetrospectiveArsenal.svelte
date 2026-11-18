@@ -30,6 +30,11 @@
 
 {#each ['player', 'opponent'] as publicSide (publicSide)}
   {@const caster = state[publicSide as FightSide]}
+  {#if caster.ghostwriterWriting}<p role="status">
+      {publicSide === 'player' ? 'P1' : 'P2'} · Lovely Ghostwriter · {language === 'fr'
+        ? 'Écriture automatique'
+        : 'Automatic writing'} · {(caster.ghostwriterWriting.frames / 60).toFixed(1)} s
+    </p>{/if}
   {#if caster.machiReattachment}<p role="status">
       {publicSide === 'player' ? 'P1' : 'P2'} · Nen Stitches · {language === 'fr'
         ? 'Raccordement des tissus'

@@ -13,7 +13,8 @@ export function carryPaperWorld(fresh: FightBattlefield, previous: FightState): 
         entry.paperScatter ||
         entry.writingKit ||
         entry.document ||
-        entry.detachedForearm,
+        entry.detachedForearm ||
+        entry.fortunePerson,
     )
     .map((entry) => ({
       ...entry,

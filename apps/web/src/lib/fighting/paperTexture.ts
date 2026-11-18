@@ -1,3 +1,4 @@
+import { cleanFortuneInk } from './ghostwriterInk'
 import { newGumSource, sameGumSource, type GumSource } from './bungeeSource'
 import { textureOriginAvailable, createTextureSurprise } from './hisokaTextureOrigin'
 import { physicalBodyKey } from './fightBodyIdentity'
@@ -97,7 +98,7 @@ export function paperTextureLive(
 }
 
 export function displayedDocumentText(state: FightState, entry: PreparedEntity): string {
-  const paper = entry.document
+  const paper = cleanFortuneInk(state, entry).document
   if (!paper) return ''
   if (paper.appearanceText !== undefined) return paper.appearanceText
   const layers = (paper.textures ?? []).filter((layer) => paperTextureLive(state, entry, layer))

@@ -1,3 +1,4 @@
+import { advanceGhostwriter } from './ghostwriterAction'
 import { advanceHistoricalTouch } from './chrolloHistoricalTouch'
 import { chrolloHasActivePage } from './chrolloBook'
 import { updateEntity } from './preparationWorld'
@@ -51,7 +52,7 @@ export function finishHistoricalFish(state: FightState, side: FightSide): FightS
 }
 
 export function advanceHistoricalEffects(state: FightState): FightState {
-  let next = state
+  let next = advanceGhostwriter(state)
   for (const side of ['player', 'opponent'] as const) {
     next = advanceHistoricalTouch(next, side)
     next = advanceFish(next, side)

@@ -1,3 +1,4 @@
+import { concealFortuneWorld } from '../ghostwriterPrivacy'
 import { concealCorpseWorld } from '../illumiCorpsePrivacy'
 import { privateHalkenburgSouls } from '../halkenburgSoulPrivacy'
 import { opposingKameoBodies } from '../kameos/pvp'
@@ -152,6 +153,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
   concealPaperScatters(view, side)
+  concealFortuneWorld(view, side)
   concealDocumentWorld(view, side)
   concealCorpseWorld(view, side)
   redactEnemy(view[other])
@@ -185,6 +187,7 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     )
     frame.player = documentView.player
     frame.opponent = documentView.opponent
+    concealFortuneWorld(documentView, side)
     concealDocumentWorld(documentView, side)
     concealCorpseWorld(documentView, side)
     frame.battlefield = documentView.battlefield

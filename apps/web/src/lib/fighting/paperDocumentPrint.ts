@@ -8,13 +8,15 @@ export function paintDocumentCanvas(
   context.fillStyle = '#f3ebd5'
   context.fillRect(0, 0, 256, 320)
   context.fillStyle = '#25222b'
-  context.font = '18px sans-serif'
-  text
-    .match(/.{1,20}/gu)
-    ?.slice(0, plan ? 3 : 12)
-    .forEach((line, index) => {
-      context.fillText(line, 12, 30 + index * 23, 232)
-    })
+  const compact = !plan && text.length > 240
+  context.font = compact ? '10px sans-serif' : '18px sans-serif'
+  const width = compact ? 44 : 20
+  const lines = text
+    .split('\n')
+    .flatMap((line) => line.match(new RegExp(`.{1,${width}}`, 'gu')) ?? [''])
+  lines.slice(0, plan ? 3 : compact ? 30 : 12).forEach((line, index) => {
+    context.fillText(line, 12, (compact ? 17 : 30) + index * (compact ? 10 : 23), 232)
+  })
   if (plan) paintArenaPlan(context, plan)
 }
 

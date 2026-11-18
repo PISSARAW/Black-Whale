@@ -1,3 +1,4 @@
+import { visibleFortunePortrait } from './ghostwriterAccess'
 import { displayedDocumentText } from './paperTexture'
 import { visibleArenaMap } from './arenaMap'
 import { paperBodyRef } from './paperDocuments'
@@ -15,6 +16,7 @@ export function copiedDocumentMaterials(
     document: {
       text: displayedDocumentText(state, context.source),
       arenaMap: visibleArenaMap(state, context.source),
+      fortunePortrait: visibleFortunePortrait(state, context.source),
       sheetCopyId: context.id,
       holder: { ...paperBodyRef(state, context.side), hand: 'right' },
       outward: false,

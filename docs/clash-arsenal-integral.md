@@ -492,6 +492,14 @@ L'IA peut préparer les quatre étapes à partir de son propre matériel dans un
 situation de danger. Les missions, leurs effets et leur budget se rejouent par
 export/import complet. Le ruleset devient **clash-combat-28** ; le **On reste présent**.
 
+## Lovely Ghostwriter — ruleset 71
+
+L’[écriture automatique mensuelle](./clash-lovely-ghostwriter.md) est utilisable
+sur une véritable identité manuscrite, avec sujet ou portrait visible et un
+mois de scénario défini. L’instrument, l’encre, la main et le livre restent
+requis. La copie d’un autographe ne remplace pas son original et le futur
+non écrit reste privé. Le On est conservé.
+
 ## Avant-bras réels de Machi — ruleset 70
 
 La [suture des membres originaux](./clash-machi-membres.md) est utilisable
@@ -509,7 +517,7 @@ de couverture des profils ou un nombre de tests :
 
 | Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                    |
+| Chrollo    | Lovely Ghostwriter est utilisable avec identité manuscrite et mois de scénario défini, sans prédire son propre avenir. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                                         |
 | Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                                                       |
 | Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. La localisation sur carte réelle est exécutable ; auditer encore les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
 | Halkenburg | Compléter la protection collective, les priorités après une mort réelle et l’arsenal de la conscience hébergée. Les priorités des deux consciences vivantes sont exécutables. Un échange persistant, le tirage de Halkenburg et le déplacement du corps touché sont exécutables.                                                                                                                                                                                                                              |

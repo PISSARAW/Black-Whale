@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 981
+Fichiers : 987
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -735,6 +735,22 @@ Fichiers : 981
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/ghostwriterInk.test.ts`
+
+- a copied ink supply never becomes permanent ink through automatic writing > removes the copied ink at 24 hours during hitstop while keeping the original handwritten identity
+
+## `apps/web/src/lib/fighting/ghostwriterMaterials.test.ts`
+
+- the month, genuine personal data, portrait and writing support remain real conditions > rejects false personal data even when the apparent and physical ink repeat it
+
+## `apps/web/src/lib/fighting/ghostwriterReplay.test.ts`
+
+- the actual physical fortune survives the recorded command boundary > accepts the authored monthly scenario and existing typed action, never a client-written forecast
+
+## `apps/web/src/lib/fighting/ghostwriterScene.test.ts`
+
+- the known ghostwriter and all written quatrains are visible through the real renderer > uses the normal copied-Hatsu input and reuses the archive creature on its actual writing hand
 
 ## `apps/web/src/lib/fighting/gumObjectAnchorBorrowing.test.ts`
 

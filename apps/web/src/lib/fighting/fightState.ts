@@ -1,3 +1,4 @@
+import { prepareFortuneScenario } from './ghostwriterScenario'
 import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
 import { carryDocumentState } from './paperDocumentRound'
@@ -80,7 +81,7 @@ export function createFightState(
     impact: null,
   })
   return applyControlSchemes(
-    prepareBodyDamage(prepareMusseHistory(created)),
+    prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created))),
     typeof options === 'string' ? undefined : options.controls,
   )
 }

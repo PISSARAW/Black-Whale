@@ -2,6 +2,11 @@ import type { PreparationResource } from './preparationTypes'
 
 /** Explicit scenario matter, shared by the visible setup, PvP and replays. */
 export const SCENARIO_RESOURCES: readonly { id: PreparationResource; fr: string; en: string }[] = [
+  {
+    id: 'fortunes',
+    fr: 'Lovely Ghostwriter · participant fictif, identité manuscrite, portrait et mois défini',
+    en: 'Lovely Ghostwriter · fictional participant, handwritten identity, portrait and defined month',
+  },
   { id: 'corpses', fr: 'Cadavres réels à implanter', en: 'Real corpses for implantation' },
   { id: 'hostages', fr: 'Otages déjà retenus', en: 'Already held hostages' },
   { id: 'documents', fr: 'Documents papier déjà écrits', en: 'Already written paper documents' },

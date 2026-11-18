@@ -27,6 +27,13 @@ function threeChunkName(id: string): string {
 }
 
 function clashChunkName(id: string): string | undefined {
+  if (/\/fighting\/ghostwriterScenarioData\.ts$/.test(id)) return 'clash-fortune-scenarios'
+  if (
+    /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-physical-rules'
   if (
     /\/fighting\/(?:fightClock|formats|health|towerJudging|preparationTuning|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/.test(
       id,
@@ -53,7 +60,7 @@ function clashChunkName(id: string): string | undefined {
   )
     return 'clash-nen-canon'
   if (
-    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles|rosterTechniqueGestures)\.ts$/.test(
+    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles|rosterTechniqueGestures|ghostwriterPresentation)\.ts$/.test(
       id,
     )
   )

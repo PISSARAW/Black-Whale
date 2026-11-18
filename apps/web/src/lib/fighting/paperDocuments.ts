@@ -1,3 +1,4 @@
+import { cleanFortuneInk } from './ghostwriterInk'
 import { historicalPartExists } from './historicalCopyLifetime'
 import { physicalBodyAt } from './fightBodyIdentity'
 import { physicalHandFunctional } from './bodyDamage'
@@ -91,6 +92,9 @@ export function touchesDocument(
 }
 
 export function cleanDocumentMatter(state: FightState, entry: PreparedEntity): PreparedEntity {
+  return cleanDocumentSupport(state, cleanFortuneInk(state, entry))
+}
+function cleanDocumentSupport(state: FightState, entry: PreparedEntity): PreparedEntity {
   if (!entry.document) return entry
   if (!historicalPartExists(state, entry.document.sheetCopyId))
     return {

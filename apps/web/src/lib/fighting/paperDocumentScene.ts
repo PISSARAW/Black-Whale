@@ -1,3 +1,5 @@
+import { visibleFortunePortrait } from './ghostwriterAccess'
+import { paintFortunePortrait } from './ghostwriterPortraitPrint'
 import { actualDocuments } from './paperDocuments'
 import { paperDocumentWorldPoint } from './paperDocumentAnchor'
 import { paintDocumentCanvas } from './paperDocumentPrint'
@@ -34,17 +36,26 @@ export function createPaperDocumentScene(options: EffectSceneOptions): FighterEf
     const viewer = options.viewer?.() ?? 'player'
     const text = canReadDocument(state, viewer, entry) ? displayedDocumentText(state, entry) : ''
     const plan = canReadDocument(state, viewer, entry) ? visibleArenaMap(state, entry) : undefined
-    paintDocument(model, text, plan)
+    const portrait =
+      canReadDocument(state, viewer, entry) && Boolean(visibleFortunePortrait(state, entry))
+    paintDocument(model, text, { plan, portrait })
   }
-  function paintDocument(model: ReturnType<typeof make>, text: string, plan?: ArenaMap) {
+  function paintDocument(
+    model: ReturnType<typeof make>,
+    text: string,
+    visuals: { plan?: ArenaMap; portrait: boolean },
+  ) {
+    const { plan, portrait } = visuals
     model.root.userData.documentText = text
     model.root.userData.arenaMap = plan
-    const key = JSON.stringify([text, plan])
+    model.root.userData.fortunePortrait = portrait
+    const key = JSON.stringify([text, plan, portrait])
     if (key === model.text) return
     model.text = key
     const context = model.canvas?.getContext('2d')
     if (!context || !model.texture) return
     paintDocumentCanvas(context, text, plan)
+    if (portrait) paintFortunePortrait(context)
     model.texture.needsUpdate = true
   }
   return {

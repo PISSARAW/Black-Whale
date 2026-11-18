@@ -39,6 +39,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
   function build(entry: PreparedEntity) {
     if (
       entry.detachedForearm ||
+      entry.fortunePerson ||
       entry.person ||
       ['morena', 'supporter', 'puppet', 'corpse', 'hostage'].includes(entry.kind)
     )
@@ -109,8 +110,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
         role: morena ? 'morena' : 'fighter',
         identity: preparedHumanIdentity(entry),
         pose: 'idle',
-        aura:
-          entry.person || entry.copy || ['corpse', 'hostage'].includes(entry.kind) ? 'none' : 'ten',
+        aura: preparedHumanAura(entry),
       },
     }
     const figure = buildHumanFigure({
@@ -298,4 +298,13 @@ function preparedHumanIdentity(entry: PreparedEntity): string {
 
 function syncPreparedSleep(root: import('three').Group, entry: PreparedEntity) {
   if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -Math.PI / 2 : 0
+}
+
+function preparedHumanAura(entry: PreparedEntity): 'none' | 'ten' {
+  return entry.fortunePerson ||
+    entry.person ||
+    entry.copy ||
+    ['corpse', 'hostage'].includes(entry.kind)
+    ? 'none'
+    : 'ten'
 }

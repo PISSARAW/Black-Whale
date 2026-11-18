@@ -228,6 +228,7 @@ export const ARSENAL_ACTION_IDS = [
   'history-gallery-locate',
   'history-gallery-stop',
   'history-use',
+  'history-ghostwriter',
   'history-release',
   'history-order-wait',
   'history-order-attack',

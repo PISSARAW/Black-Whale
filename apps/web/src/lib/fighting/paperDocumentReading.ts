@@ -1,3 +1,4 @@
+import { priorityLineOfSight } from './priorityOptics'
 import {
   documentExists,
   documentPosition,
@@ -26,11 +27,28 @@ export function canReadDocument(
   const holder = entry.document!.holder
   if (holder && samePaperBody(holder, paperBodyRef(state, side))) return !entry.document!.outward
   const point = documentPosition(state, entry)
-  if (Math.abs(point.x - actor.x) > 6 || Math.abs(point.y - actor.y) > 9) return false
-  if ((point.x - actor.x) * actor.facing < -1) return false
+  if (!readableDocumentPoint(state, side, point)) return false
   return !holder || outwardDocumentFaces(state, side, entry)
 }
 
+function readableDocumentPoint(
+  state: FightState,
+  side: FightSide,
+  point: { x: number; y: number },
+): boolean {
+  const actor = state[side]
+  return (
+    Math.abs(point.x - actor.x) <= 6 &&
+    Math.abs(point.y - actor.y) <= 9 &&
+    (point.x - actor.x) * actor.facing >= -1 &&
+    priorityLineOfSight(state, {
+      x: actor.x,
+      y: actor.y + 10,
+      targetX: point.x,
+      targetY: point.y + 0.2,
+    })
+  )
+}
 function outwardDocumentFaces(state: FightState, side: FightSide, entry: PreparedEntity): boolean {
   const holder = entry.document!.holder!
   const actor = physicalBodyAt(state, holder.owner, holder.member)

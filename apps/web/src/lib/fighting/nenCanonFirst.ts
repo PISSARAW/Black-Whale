@@ -50,7 +50,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'Historical pages execute their separate effects. Gallery Fake copies remain inert, can be located from the original and sense contacts within their volume; Sun and Moon marks persist.',
     prohibition: 'No body, weapon, animal, ally, consent or learned model is acquired with a page.',
     adaptation:
-      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning; Lovely Ghostwriter still lacks its handwritten subject and scenario-future context, and further material interactions remain under audit.',
+      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning. Lovely Ghostwriter requires genuine handwritten identity, a visible subject or portrait, real writing material and a defined scenario month; never the caster’s own future. Further material interactions remain under audit.',
   },
   benjamin: {
     abilities: ['benjamin-baton', 'air-blow', 'secret-window', 'culdcept'],

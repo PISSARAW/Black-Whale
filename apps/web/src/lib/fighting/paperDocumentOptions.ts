@@ -1,3 +1,4 @@
+import { fortunePaperLabel } from './ghostwriterPresentation'
 import { actualDocuments, heldDocuments, paperBodyRef, samePaperBody } from './paperDocuments'
 import { performPaperDocumentCommand } from './paperDocumentActions'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
@@ -27,21 +28,24 @@ export function paperDocumentOptions(state: FightState, side: FightSide): Arsena
 }
 
 function documentLabel(command: ArsenalCommand, language: 'fr' | 'en'): string {
+  const target = paperTargetLabel(command, language)
   if (command.action === 'document-read')
-    return language === 'fr' ? `Papier · Lire ${command.target}` : `Paper · Read ${command.target}`
+    return language === 'fr' ? `Papier · Lire ${target}` : `Paper · Read ${target}`
   if (command.action === 'document-show')
-    return language === 'fr'
-      ? `Papier · Montrer ${command.target}`
-      : `Paper · Show ${command.target}`
+    return language === 'fr' ? `Papier · Montrer ${target}` : `Paper · Show ${target}`
   if (command.action === 'document-draw')
     return language === 'fr' ? 'Papier · Détacher une feuille vierge' : 'Paper · Draw a blank sheet'
   const drop = command.action === 'document-drop'
   return language === 'fr'
-    ? `Papier · ${drop ? 'Déposer' : 'Prendre'} ${command.target}`
-    : `Paper · ${drop ? 'Drop' : 'Take'} ${command.target}`
+    ? `Papier · ${drop ? 'Déposer' : 'Prendre'} ${target}`
+    : `Paper · ${drop ? 'Drop' : 'Take'} ${target}`
 }
 
 export function documentHeldBy(state: FightState, side: FightSide, id: string): boolean {
   const holder = actualDocuments(state).find((entry) => entry.id === id)?.document?.holder
   return Boolean(holder && samePaperBody(holder, paperBodyRef(state, side)))
+}
+
+function paperTargetLabel(command: ArsenalCommand, language: 'fr' | 'en') {
+  return fortunePaperLabel(command.target, language) ?? command.target
 }

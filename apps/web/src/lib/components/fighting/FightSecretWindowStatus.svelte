@@ -20,6 +20,25 @@
   <div class="secret-window-status">
     Secret Window · {action}
     {#if feed.heard}<span>« {feed.heard.text} »</span>{/if}
+    {#if feed.history?.length || feed.recordings?.length}
+      <details>
+        <summary
+          >{language === 'fr'
+            ? 'Consulter les observations reçues'
+            : 'Review received observations'}</summary
+        >
+        {#each feed.history ?? [] as observation (observation)}
+          <span
+            >{Math.floor(observation.frame / 60)} s · {WINDOW_ACTION_LABELS[observation.action][
+              language === 'fr' ? 0 : 1
+            ]}</span
+          >
+        {/each}
+        {#each feed.recordings ?? [] as words (words)}
+          <span>{Math.floor(words.frame / 60)} s · {words.text}</span>
+        {/each}
+      </details>
+    {/if}
   </div>
 {/if}
 {#if visible && listening && secretWindowNenActive(state[side])}

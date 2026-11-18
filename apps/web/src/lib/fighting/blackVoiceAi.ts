@@ -1,4 +1,5 @@
 import { blackVoiceSelfAi } from './blackVoiceSelfAi'
+import { traceArsenal } from './arsenalTrace'
 import { chrolloHasActivePage } from './chrolloBook'
 import { performBlackVoiceCommand } from './blackVoiceAction'
 import { voiceGear } from './blackVoiceGear'
@@ -22,5 +23,5 @@ export function blackVoiceAi(state: FightState): FightState | null {
     ? { action: 'voice-stay' as const, target: subject.id }
     : { action: 'voice-phone' as const }
   const next = performBlackVoiceCommand(state, 'opponent', command)
-  return next === state ? null : next
+  return next === state ? null : traceArsenal({ state, side: 'opponent', command }, next)
 }

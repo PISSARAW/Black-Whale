@@ -1021,7 +1021,7 @@ Fichiers : 913
 
 ## `apps/web/src/lib/fighting/rosterFuture.test.ts`
 
-- roster calls remain deterministic across Parallel Future > forecasts and then replays the actual Black Voice call with the same random body
+- roster calls remain deterministic across Parallel Future > forecasts and then replays Black Voice against the same physically implanted body
 
 ## `apps/web/src/lib/fighting/rosterGuests.test.ts`
 

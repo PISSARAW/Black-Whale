@@ -48,6 +48,11 @@
           : 'steady'} · {read.direction === 1 ? '→' : '←'}
       {#if read.threat === 'startup'}
         · {language === 'fr' ? 'attaque en préparation' : 'attack preparing'}{/if}
+      {#if read.acceleration === 'sudden'}
+        · {language === 'fr'
+          ? 'accélération brusque · vérité indéterminée'
+          : 'sudden acceleration · truth undetermined'}
+      {/if}
       {#if read.frames >= MELODY_LISTEN_FRAMES}
         · {language === 'fr' ? 'tempo lu · parade +3f' : 'rhythm read · parry +3f'}{/if}
     {:else}

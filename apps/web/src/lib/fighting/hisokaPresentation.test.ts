@@ -132,7 +132,11 @@ describe('Hisoka type 1 accents', () => {
         if (age !== null) ages.push(age)
         expect(camera.update(next).detail).toBeNull()
       })
-      expect(end[side].textureSurprise).toEqual({ surface: 'cloth' })
+      expect(end[side].textureSurprise).toEqual({
+        surface: 'cloth',
+        source: 'personal',
+        theftId: undefined,
+      })
       expect(end.player.health).toBe(s.player.health)
       expect(end.opponent.health).toBe(s.opponent.health)
       expect(ages).toEqual(Array.from({ length: 18 }, (_, i) => i))

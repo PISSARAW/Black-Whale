@@ -249,6 +249,7 @@ describe('Machi real thread uses', () => {
       player: {
         ...state.player,
         health: 40,
+        openWounds: 1,
         aura: 100,
         chrolloBook: addChrolloPage(state.player.chrolloBook!, 'machi'),
       },

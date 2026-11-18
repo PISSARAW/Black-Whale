@@ -21,12 +21,22 @@ const MAIN_VIEW_CHAPTERS = new Set([
   'padaille',
   'sayird',
   'voconte',
+  'melody',
+  'bill',
+  'cluck',
+  'terebellum',
 ])
 
 describe('long 1080p camera presentation', () => {
   it('covers forty continuous duels with longer shots and a strictly advancing presentation cursor', () => {
     const film = makeLongFilm()
     expect(film).toHaveLength(40)
+    expect(
+      film
+        .filter((chapter) => chapter.shots.length === 0)
+        .map((chapter) => chapter.id)
+        .sort(),
+    ).toEqual([...MAIN_VIEW_CHAPTERS].sort())
     for (const chapter of film) {
       if (MAIN_VIEW_CHAPTERS.has(chapter.id)) {
         expect(chapter.shots, chapter.id).toHaveLength(0)

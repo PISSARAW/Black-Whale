@@ -536,3 +536,9 @@ quatre liens de son propre sang et deux projections, puis rappelle sa réserve.
 
 Lynch : [Le dernier aveu](./LYNCH.md) fait répondre le corps malgré la bouche
 couverte, accélère six contacts puis termine par un coup physique sans réponse.
+
+Luini : [La mauvaise porte](./LUINI.md) utilise son aller-retour depuis une
+pièce fermée pour tendre une embuscade derrière sa porte, puis finit au couteau.
+
+Basho : [Le dernier vers](./BASHO.md) écrit la composition de Great Hiker,
+enflamme la cible avec trois poings, puis relit sa feuille devant les braises.

@@ -44,6 +44,8 @@ import { createMizaistomVictory } from './mizaistom'
 import { createRihanVictory } from './rihan'
 import { createZakuroVictory } from './zakuro'
 import { createLynchVictory } from './lynch'
+import { createLuiniVictory } from './luini'
+import { createBashoVictory } from './basho'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -77,6 +79,8 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   rihan: createRihanVictory,
   zakuro: createZakuroVictory,
   lynch: createLynchVictory,
+  luini: createLuiniVictory,
+  basho: createBashoVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -111,6 +115,8 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     rihan: 1.8,
     zakuro: 1.9,
     lynch: 1.5,
+    luini: 1.8,
+    basho: 1.8,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -165,6 +171,8 @@ function ownsComfortCamera(frame: VictoryFrame) {
       'rihan',
       'zakuro',
       'lynch',
+      'luini',
+      'basho',
     ].includes(frame.fighter)
   )
 }

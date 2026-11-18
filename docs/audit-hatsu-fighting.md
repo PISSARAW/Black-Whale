@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-72`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-73`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -46,6 +46,10 @@ Le [correctif Halkenburg du ruleset 46](./clash-halkenburg-cible.md) réserve
 le remplacement aléatoire à une variante explicitement sélectionnée.
 Le [suivi de l'aura du prêt Dolphin](./clash-dolphin-reserve-roster.md) corrige
 le canal du combattant supplémentaire et le relais après injection à un allié.
+
+Le [contact matériel de Sun and Moon](./clash-sun-moon-contact.md) vérifie les mains
+pendant le marquage et la hauteur du contact et du souffle. La charge maximale
+et les combinaisons avec les marionnettes restent ouvertes.
 
 ## Périmètre et niveau de preuve
 

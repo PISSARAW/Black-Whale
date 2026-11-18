@@ -1087,3 +1087,10 @@ respectent la priorité de l’initiateur. La victime peut déplacer le corps
 d’origine quand il dort, avec les mêmes blessures et les mêmes entraves.
 Les sommeils imposés, les vues privées, le PvP, les replays et le On gardent
 leurs conditions. La mort d’un corps et le contrôle complet restent ouverts.
+
+## Sun and Moon : mains et contact — ruleset 73
+
+Le [marquage matériel du décor](./clash-sun-moon-contact.md) vérifie la main requise
+pendant toute la préparation et conserve la polarité choisie. Le contact entre
+objets et le souffle utilisent désormais leurs deux dimensions. Le On reste
+présent ; la charge maximale et les combinaisons de marionnettes restent ouvertes.

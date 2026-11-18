@@ -14,7 +14,12 @@ export interface ArenaState {
   pending: Partial<
     Record<
       FightSide,
-      { objectId: string; kind: 'gum' | 'thread' | 'vacuum' | 'marks'; frames: number }
+      {
+        objectId: string
+        kind: 'gum' | 'thread' | 'vacuum' | 'marks'
+        frames: number
+        mark?: import('./sunMoonObjectHands').ObjectMark
+      }
     >
   >
 }

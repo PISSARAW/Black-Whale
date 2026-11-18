@@ -1,4 +1,5 @@
 import type { GuardRequirement } from './combatProperties'
+import { openingFrameData } from './comboOpenings'
 import { paperUtilityAttack } from './kallutoPaper'
 import { halkenburgArrowUtility } from './halkenburgArrow'
 import { padailleUtilityAttack } from './padailleWeapon'
@@ -180,20 +181,25 @@ function movesetAttackData(
   const data = move.tuning
   const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
-  return {
-    ...data,
-    guard: move.guard,
-    canHitDowned: move.canHitDowned,
-    reversalInvulnerableFrames: move.reversalInvulnerableFrames,
-    startup,
-    cancelEnd: move.cancelWindow ? startup + move.cancelWindow.end : data.startup + data.active + 6,
-    box: {
-      left: 1.4,
-      right: data.reach,
-      bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
-      top: antiAir ? Math.max(15, data.top) : data.top,
+  return openingFrameData(
+    {
+      ...data,
+      guard: move.guard,
+      canHitDowned: move.canHitDowned,
+      reversalInvulnerableFrames: move.reversalInvulnerableFrames,
+      startup,
+      cancelEnd: move.cancelWindow
+        ? startup + move.cancelWindow.end
+        : data.startup + data.active + 6,
+      box: {
+        left: 1.4,
+        right: data.reach,
+        bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
+        top: antiAir ? Math.max(15, data.top) : data.top,
+      },
     },
-  }
+    fighter.attack?.comboFollowup,
+  )
 }
 
 function attackReach(kind: AttackKind, reach: number, specialRange: number): number {

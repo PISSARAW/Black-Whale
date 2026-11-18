@@ -23,6 +23,7 @@ import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
+import { comboOpening, type ComboOpening } from './comboOpenings'
 import {
   activeHitbox,
   attackData,
@@ -108,9 +109,6 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
-  const spent = spendAttacker(attacker, defence)
-  const needle = resolveIllumiContact({ state, side, defence, spent })
-  if (needle) return needle
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -119,6 +117,25 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     critical,
   })
   const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
+  const spent = spendAttacker(
+    attacker,
+    defence,
+    comboOpening({
+      attacker,
+      defender: sleepingBody(defender),
+      position: collision.position,
+      reach: data.box.right,
+      damage,
+      defence,
+      launch: antiAir,
+      counter: opening.counterHit,
+      wall: wallSplat,
+      knockdown,
+      hits: comboHits,
+    }),
+  )
+  const needle = resolveIllumiContact({ state, side, defence, spent })
+  if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
     damage,
@@ -233,6 +250,7 @@ function impactPoints(options: {
 function spendAttacker(
   attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
+  opening?: ComboOpening,
 ): ArcadeFighter {
   const spent = setIn(
     releaseFocusedAura({
@@ -241,6 +259,7 @@ function spendAttacker(
         ...attacker.attack,
         impacted: true,
         confirmedHit: !defence.blocked && !defence.avoided,
+        ...(opening ? { comboOpening: opening } : {}),
         confirmedBlock: defence.blocked && !defence.parried && !defence.avoided,
         auraCharged: false,
       },

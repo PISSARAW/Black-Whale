@@ -245,6 +245,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
     variant?: AttackVariant
     confirmedBlock?: boolean
     confirmedHit?: boolean
+    comboOpening?: import('./comboOpenings').ComboOpening
+    comboFollowup?: import('./comboOpenings').ComboOpening
     kind: AttackKind
     frame: number
     impacted: boolean

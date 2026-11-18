@@ -1,4 +1,5 @@
 import { enDuringAttack } from './en/access'
+import { openingFollowup } from './comboOpenings'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -60,6 +61,7 @@ export function startFighterAttack(options: {
   auraCost?: number
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
+  const comboFollowup = openingFollowup(fighter, options.moveId)
   const data = attackData(kind, {
     ...fighter,
     attack: {
@@ -67,6 +69,7 @@ export function startFighterAttack(options: {
       kind,
       variant: options.variant,
       moveId: options.moveId,
+      comboFollowup,
     },
   })
   const usesRyu = wantsAttackRyu(fighter)
@@ -88,6 +91,7 @@ export function startFighterAttack(options: {
     hatsuChargeFrames: 0,
     attack: {
       moveId: options.moveId,
+      ...(comboFollowup ? { comboFollowup } : {}),
       kind,
       variant: options.variant,
       confirmedHit: false,

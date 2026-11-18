@@ -13,6 +13,20 @@
     wait: ['Attends la récupération', 'Wait for recovery'],
     blocked: ['Coup gardé · fin de pression', 'Blocked · pressure ends'],
   }
+  const openings = {
+    tip: ['Bout de portée', 'Tip hit'],
+    'anti-air': ['Anti-air', 'Anti-air'],
+    'corner-counter': ['Contre au coin', 'Corner counter'],
+  }
+  const rewards = {
+    knockdown: ['Mise au sol proche', 'Close knockdown'],
+    backfist: ['Avance pour prolonger', 'Steps in to extend'],
+    chain: ['Reprise à la chaîne', 'Chain conversion'],
+    attach: ['Pose une attache', 'Applies a tether'],
+    tether: ['Consomme l’attache', 'Consumes the tether'],
+    'short-burst': ['10 tirs · récupère plus vite', '10 shots · shorter recovery'],
+    'long-burst': ['20 tirs · reste exposé plus longtemps', '20 shots · longer commitment'],
+  }
   $: choices = comboChoices(state)
   $: index = language === 'fr' ? 0 : 1
 </script>
@@ -32,6 +46,8 @@
         <kbd>{moveInputHint(choice.move.input, $bindings)}</kbd>
         · {language === 'fr' ? choice.move.nameFr : choice.move.nameEn}
         · {choice.link ? (language === 'fr' ? 'liaison' : 'link') : 'cancel'}
+        {#if choice.opening}· {openings[choice.opening][index]}{/if}
+        {#if choice.reward}· {rewards[choice.reward][index]}{/if}
         · {choice.cost} aura · {labels[choice.status][index]}
       </span>
     {/each}

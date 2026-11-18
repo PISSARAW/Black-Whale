@@ -1,5 +1,3 @@
-import { loanCarrier } from './dolphinBorrowing'
-import { stolenAuraActor } from './dolphinSupply'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -7,14 +5,18 @@ import { chrolloHasActivePage } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export function ownsBungeeGum(fighter: ArcadeFighter): boolean {
-  fighter = gumSuppliedActor(fighter)
   if (!voluntaryNenAvailable(fighter) || chainAbilitySealed(fighter, 'hisoka:neutralSpecial'))
     return false
   if (fighter.id === 'hisoka') return true
   if (fighter.id === 'chrollo') return bookHasGum(fighter)
+  return loadedGum(fighter)
+}
+function loadedGum(fighter: ArcadeFighter): boolean {
   const held = fighter.kurapika?.held
   return Boolean(
     held?.loaded &&
+    !held.returned &&
+    held.source === 'hisoka' &&
     fighter.kurapika?.emperorTime &&
     chainAbilityGroup(held.moveId) === 'bungee-gum',
   )
@@ -40,15 +42,10 @@ export function spendGumUse(state: FightState, side: FightSide, cost: number): F
       ...fighter,
       aura: fighter.aura - cost,
       kurapika:
-        chain?.held?.source === 'hisoka'
+        chain?.held?.source === 'hisoka' &&
+        (fighter.dolphinExecution || (fighter.nenOwner ?? fighter.id) === 'kurapika')
           ? { ...chain, held: { ...chain.held, used: true, sustainedKeys: ['gum-support'] } }
           : chain,
     },
   }
-}
-
-function gumSuppliedActor(fighter: ArcadeFighter): ArcadeFighter {
-  return fighter.dolphinLoan?.held.source === 'hisoka' && fighter.dolphinLoan.held.used
-    ? stolenAuraActor(loanCarrier(fighter))
-    : fighter
 }

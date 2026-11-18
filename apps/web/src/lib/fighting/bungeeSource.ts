@@ -1,4 +1,4 @@
-import { equippedDolphin } from './dolphinBorrowing'
+import { equippedDolphin, dolphinLoanActive } from './dolphinBorrowing'
 import { gumAnchorNenAvailable, gumAnchorCommandScope } from './gumObjectAnchorAccess'
 import { ownsBungeeGum } from './bungeeAccess'
 import type { GumObjectAnchor } from './gumObjectAnchors'
@@ -17,6 +17,8 @@ function borrowedGumContext(actor: ArcadeFighter): boolean {
   return Boolean(actor.dolphinExecution || (actor.nenOwner ?? actor.id) === 'kurapika')
 }
 export function gumSourceAvailable(state: FightState, side: FightSide, origin: GumSource): boolean {
+  if (origin.source === 'dolphin' && state[side].dolphinLoan && !dolphinLoanActive(state, side))
+    return false
   if (!origin.source) return state.pvpSeat ? state[side].health > 0 : ownsBungeeGum(state[side])
   return gumAnchorNenAvailable(state[side], origin)
 }

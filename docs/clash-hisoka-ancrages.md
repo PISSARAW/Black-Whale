@@ -1,6 +1,6 @@
 # Hisoka : plusieurs supports physiques
 
-Les rulesets **clash-combat-45**, **50** et **51** permettent plusieurs connexions de Bungee Gum sur
+Les rulesets **clash-combat-45**, **50**, **51** et **52** permettent plusieurs connexions de Bungee Gum sur
 des supports physiques de l’arène. Elles peuvent coexister avec la liaison
 de combat entre deux personnes et avec les applications défensives admissibles.
 Le On est conservé.
@@ -58,6 +58,19 @@ un autre geste utilise une autre capacité. Quitter la page de Bungee Gum ne
 retire pas un déguisement prêté. Quitter la page de Texture Surprise retire
 son déguisement du livre et conserve le fil Dolphin admissible. Le prêt garde
 les conditions d'Emperor Time et du prélèvement effectivement utilisé.
+
+Le colmatage des plaies et l'interception d'un objet gardent aussi cette origine.
+Un prêt actif ne donne pas accès aux applications personnelles ou du livre.
+Quitter une page retire ses propres pansements ; les pansements financés par
+un prêt distinct restent admissibles. Terminer Dolphin ne retire pas les
+pansements ou le déguisement créés avec le livre. Le maintien d'un prêt exige
+toujours son prélèvement exact et un prêteur capable de maintenir Dolphin.
+
+Quand le caoutchouc d'une interception est détaché, l'objet réellement reçu
+reste tenu physiquement, sans duplication. Il ne maintient plus l'application
+de Dolphin. Le renvoi par Nen exige le canal de Nen admissible qui le retient ;
+la réserve d'un prêt ne finance pas le renvoi d'un objet retenu par le livre.
+Le colmatage ne ferme pas les blessures et ne restitue aucun point de vie.
 
 Le premier ancrage par Dolphin dépense l’aura réellement prélevée et compte
 comme son unique application. Ses commandes de maintien restent disponibles ;

@@ -151,6 +151,9 @@ function endCopiedPainPacker(fighter: CopiedFighter, page: ChrolloPage): CopiedF
 
 function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFighter {
   if (page !== 'hisoka') return fighter
+  const gumActive =
+    fighter.gumWoundOrigin?.source === 'dolphin' ||
+    chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
   return {
     ...fighter,
     textureSurprise:
@@ -158,9 +161,8 @@ function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFight
       chrolloAbilityActive(fighter, 'hisoka:downSpecial')
         ? fighter.textureSurprise
         : undefined,
-    gumWoundSeals: chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
-      ? fighter.gumWoundSeals
-      : undefined,
+    gumWoundSeals: gumActive ? fighter.gumWoundSeals : undefined,
+    gumWoundOrigin: gumActive ? fighter.gumWoundOrigin : undefined,
   }
 }
 

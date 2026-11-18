@@ -280,7 +280,10 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
       (projected) => perform({ ...options, state: projected, moveId: held.moveId }),
       held.source,
     )
-  if (fighter.textureSurprise)
+  if (
+    fighter.textureSurprise?.source === 'dolphin' &&
+    fighter.textureSurprise.theftId === held.theftId
+  )
     return { ...state, [side]: { ...fighter, textureSurprise: undefined } }
   return releaseMachiThread(dismissDolphinGum(state, side), side)
 }

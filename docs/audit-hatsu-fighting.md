@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-41`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-42`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -13,6 +13,9 @@ des réglages arcade.
 commandes nouvelles et ses écarts ouverts sont dans
 [Arsenal intégral](./clash-arsenal-integral.md). Les descriptions ci-dessous
 ne constituent pas une certification à 100 % de tous les usages du manga.
+
+Le [réemploi du papier de Kalluto](./clash-kalluto-confettis.md) complète ce suivi :
+matière dispersée persistante, manipulation continue empruntée et captures réelles.
 
 ## Périmètre et niveau de preuve
 

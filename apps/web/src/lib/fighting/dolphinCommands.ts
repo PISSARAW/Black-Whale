@@ -4,7 +4,7 @@ import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 const PREFIXES: Readonly<Record<string, readonly string[]>> = {
-  kalluto: ['paper-stop-listening'],
+  kalluto: ['paper-stop-listening', 'paper-release-confetti'],
   musse: ['window-recall', 'window-stop-listening'],
   sayird: ['little-eye-'],
   hisoka: ['gum-'],

@@ -35,6 +35,7 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'paper-release-confetti',
   'paper-kit-take',
   'paper-kit-drop',
   'paper-stop-listening',

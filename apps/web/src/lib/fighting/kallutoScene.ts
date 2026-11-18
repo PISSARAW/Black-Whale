@@ -1,8 +1,10 @@
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
+import { createPaperScatterScene } from './kallutoScatterScene'
 
 /** A swirling stream of real scraps; no explosion geometry or detonation flash. */
 export function createKallutoPaperScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene, worldX, worldY } = options
+  const scattered = createPaperScatterScene(options)
   const geometry = new THREE.BoxGeometry(0.05, 0.08, 0.012)
   const material = new THREE.MeshBasicMaterial({ color: 0xf4e9e5 })
   const group = new THREE.Group()
@@ -12,6 +14,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
   scene.add(group)
   return {
     sync: (state, seconds) => {
+      scattered.sync(state, seconds)
       const shots = state.projectiles.filter((shot) => shot.kallutoPaper === 'serpent')
       stream.forEach((mesh, index) => {
         const shot = shots[Math.floor(index / 16)]
@@ -27,6 +30,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
       })
     },
     dispose: () => {
+      scattered.dispose()
       scene.remove(group)
       geometry.dispose()
       material.dispose()

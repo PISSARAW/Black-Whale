@@ -23,6 +23,7 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'paper'
   | 'person'
   | 'black-voice'
   | 'weak-spirit'

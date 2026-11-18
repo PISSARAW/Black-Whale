@@ -94,6 +94,21 @@ describe('physical paper receivers at P2, replay and Dolphin boundaries', () => 
       for (let index = 0; index < 80; index++) packet([1 / 60, 0, 0, []])
     }
     expect(state.player.plantedPaper?.[0]).toMatchObject({ owner: 'opponent', ownerMember: 0 })
+    const scattered = state.battlefield!.entities.find((entry) => entry.paperScatter)!
+    command((before) =>
+      performAuraAttack({
+        state: before,
+        side: 'opponent',
+        kind: 'special',
+        moveId: 'kalluto:forwardSpecial',
+        auraCharged: false,
+      }),
+    )
+    for (let index = 0; index < 80; index++) packet([1 / 60, 0, 0, []])
+    expect(state.opponent.paperKit?.salvos).toBe(6)
+    expect(state.battlefield!.entities.find((entry) => entry.id === scattered.id)?.present).toBe(
+      true,
+    )
     command((before) =>
       applyPvpCommand(before, 'player', {
         kind: 'talk',

@@ -32,6 +32,8 @@ export interface KallutoPaperState {
   heard?: PaperWords
 }
 export interface PaperProjectileMetadata {
+  paperScatterId?: string
+  paperBurstId?: string
   paperId?: string
   kallutoPaper?: 'plant' | 'serpent'
   paperOwner?: DolphinBodyRef

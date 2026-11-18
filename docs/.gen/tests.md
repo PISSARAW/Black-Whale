@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 847
+Fichiers : 849
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -745,6 +745,14 @@ Fichiers : 847
 ## `apps/web/src/lib/fighting/kallutoReplay.test.ts`
 
 - physical paper receivers at P2, replay and Dolphin boundaries > imports a recording that starts after the physical kit was dropped, with all thirteen scenario resources
+
+## `apps/web/src/lib/fighting/kallutoScatter.test.ts`
+
+- Kalluto reuses the actual remaining confetti (chapter 226) > repeatedly concentrates the same dispersed paper without a fresh salvo, a cloned object or a new marking
+
+## `apps/web/src/lib/fighting/kallutoScatterDolphin.test.ts`
+
+- one stolen paper-manipulation application has its actual compound commands > keeps Dolphin engaged across dispersion and reuse of the same real paper, then returns the donor’s Hatsu on release
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 

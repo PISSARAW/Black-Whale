@@ -1,5 +1,6 @@
 import { historicalCopyExpired, historicalPartExists } from './historicalCopyLifetime'
 import { advanceCopiedInventory } from './copiedInventory'
+import { advancePaperScatters } from './kallutoScatterFrame'
 import type { FightState } from './types'
 declare module './types' {
   interface FightProjectile {
@@ -9,6 +10,7 @@ declare module './types' {
 
 /** Expire matter without advancing puppet attacks, including during a frozen combat sequence. */
 export function expireHistoricalMatter(state: FightState): FightState {
+  state = advancePaperScatters(state)
   const field = state.battlefield
   if (!field) return expireCopiedProjectiles(advanceCopiedInventory(state))
   let changed = false

@@ -2,7 +2,8 @@
   import { tick } from 'svelte'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
-  import { paperDolls } from '$lib/fighting/kallutoSurveillance'
+  import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
+  import { ownedPaperScatters } from '$lib/fighting/kallutoScatter'
   import { createTeamFight, requestTeamAssist } from '$lib/fighting/teamMatch'
   import FightRetrospectiveArsenal from '$lib/components/fighting/FightRetrospectiveArsenal.svelte'
   import FightSecretWindowStatus from '$lib/components/fighting/FightSecretWindowStatus.svelte'
@@ -200,6 +201,10 @@
     state = speakPaperWords(state, 'player', 'Paroles près du premier papier.')
     await tick()
   }
+  export async function reuseKallutoPaper() {
+    castPaper('forwardSpecial')
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -213,6 +218,7 @@
       playerHeard: state.player.heardWords,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
+      scatters: ownedPaperScatters(state, activePaperOwner(state, 'player')),
     }
   }
 </script>

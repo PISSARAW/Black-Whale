@@ -1,4 +1,8 @@
 import { NEN_CANON } from '../src/lib/fighting/nenCanon'
+import { BENJAMIN_CANON } from '../src/lib/fighting/benjaminCanon'
+import { CHROLLO_CANON } from '../src/lib/fighting/chrolloCanon'
+import { BIOHAZARD_CANON } from '../src/lib/fighting/biohazardCanon'
+import { BONOLENOV_CANON } from '../src/lib/fighting/bonolenovCanon'
 import { afterEach, describe, expect, it } from 'vitest'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -164,6 +168,28 @@ describe('production bundle partitioning', () => {
     expect(
       built.result.output.some((item) => item.type === 'chunk' && item.name === 'clash-nen-canon'),
     ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
+
+  it('loads specialized inert Nen contracts without a runtime import cycle', async () => {
+    const names = ['benjamin', 'chrollo', 'biohazard', 'bonolenov']
+    const built = await compile(
+      names
+        .map(
+          (name) => `export * from ${JSON.stringify(resolve(`src/lib/fighting/${name}Canon.ts`))}`,
+        )
+        .join('\n'),
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    for (const [name, value] of Object.entries({
+      BENJAMIN_CANON,
+      CHROLLO_CANON,
+      BIOHAZARD_CANON,
+      BONOLENOV_CANON,
+    }))
+      expect(actual[name]).toEqual(value)
     expect(built.warnings).toEqual([])
   })
 

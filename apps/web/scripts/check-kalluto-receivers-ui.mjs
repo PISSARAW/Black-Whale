@@ -49,6 +49,16 @@ try {
     assert.equal(initial.dolls.length, 2)
     assert.equal(initial.paperKit.markers, 10)
     assert.equal(initial.paperKit.sheets, 4)
+    assert.equal(initial.scatters.length, 2)
+    await page.evaluate(() => window.preparationFixture.reuseKallutoPaper())
+    const reused = await page.evaluate(() => window.preparationFixture.snapshot())
+    assert.equal(reused.scatters.length, 2)
+    assert.deepEqual(
+      reused.scatters.map((entry) => entry.id),
+      initial.scatters.map((entry) => entry.id),
+    )
+    assert.equal(reused.paperKit.salvos, initial.paperKit.salvos)
+    assert.ok(await page.getByText('Papier dispersé réutilisable · 2', { exact: true }).isVisible())
     assert.deepEqual(
       initial.dolls.map((doll) => doll.targetMember),
       [0, 1],

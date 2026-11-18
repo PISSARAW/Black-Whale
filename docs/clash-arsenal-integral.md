@@ -963,5 +963,6 @@ L’éventail affiché appartient au matériel porté ; une page de Kalluto seul
 fait plus apparaître cet objet dans une main vide.
 
 Ruleset : **clash-combat-41**. Le On reste présent et ses sceaux restent appliqués
-aux commandes de Nen. La récupération et le réemploi du papier dispersé,+l’admission d’autres cibles et les interactions matérielles restantes continuent
+aux commandes de Nen. Le [réemploi du papier dispersé](./clash-kalluto-confettis.md),
+l’admission d’autres cibles et les interactions matérielles restantes continuent
 à faire partie de l’audit ; cette passe ne certifie pas les quarante arsenaux.

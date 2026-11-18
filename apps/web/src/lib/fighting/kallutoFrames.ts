@@ -1,4 +1,5 @@
 import { attackPhase } from './frameData'
+import { advancePaperScatters } from './kallutoScatterFrame'
 import { paperCommand, paperCommandReady } from './kallutoPaper'
 import { paperAbilityAvailable } from './kallutoAccess'
 import { makePaperDoll } from './kallutoSurveillance'
@@ -8,7 +9,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { PaperCommand } from './kallutoPaperTypes'
 
 export function advanceKallutoPaper(state: FightState): FightState {
-  return stepPaper(stepPaper(state, 'player'), 'opponent')
+  return stepPaper(stepPaper(advancePaperScatters(state), 'player'), 'opponent')
 }
 function stepPaper(state: FightState, side: FightSide): FightState {
   const fighter = state[side]

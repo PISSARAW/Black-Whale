@@ -1,4 +1,5 @@
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
+import { concealPaperScatters } from '../kallutoScatterVisibility'
 import { concealPaperWords } from '../kallutoPrivacy'
 import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
@@ -126,6 +127,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
+  concealPaperScatters(view, side)
   redactEnemy(view[other])
   redactReserves(view, other)
   hideConcealedAura(view[other], view[side])
@@ -134,6 +136,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   for (const frame of view.parallelFuture?.frames ?? []) {
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
+    concealPaperScatters(frame, side)
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(

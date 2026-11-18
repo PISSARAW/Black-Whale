@@ -1,4 +1,5 @@
 import { forgetArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
+import { swallowPaperScatter } from './kallutoScatterVacuum'
 import { attackData, attackPhase } from './frameData'
 import { sleepingBody } from './hanzoProjection'
 import { recordFightDeath } from './fightDeaths'
@@ -64,7 +65,7 @@ function swallow(state: FightState, side: FightSide): FightState {
         inBlinkyNozzle(fighter, shot),
     )
     .sort((a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id - b.id)
-  if (!swallowed.length) return state
+  if (!swallowed.length) return swallowPaperScatter(state, side)
   state = forgetArenaVacuum(state, side)
   const ids = new Set(swallowed.map((shot) => shot.id))
   const lastObject = {

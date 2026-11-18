@@ -1,12 +1,13 @@
 import { commitProjectileNen } from './nenProjectiles'
 import { travelFightProjectile } from './projectileFlight'
-import { paperZonePoint, selectedPaperZone } from './kallutoPaper'
+import { paperZonePoint } from './kallutoPaper'
+import { createPaperShot } from './kallutoPaperShot'
 import { paperAbilityAvailable } from './kallutoAccess'
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { PaperCommand } from './kallutoPaper'
 import { activePaperOwner, paperMarksAt } from './kallutoSurveillance'
 import { physicalBodyAt } from './fightBodyIdentity'
-import { issuePaperPart } from './kallutoMaterials'
+import { releasePaperScatter, commitPaperScatter } from './kallutoScatterFlight'
 
 /** Paper is physical matter. Damage/speed/lifetime are duel tuning, never an explosive charge. */
 export function launchKallutoPaper(
@@ -14,40 +15,13 @@ export function launchKallutoPaper(
   side: FightSide,
   command: PaperCommand,
 ): FightState {
-  const issued = issuePaperPart(state, side, command)
-  if (!issued) return state
-  const fighter = issued.actor
-  const zone = selectedPaperZone(fighter)
-  const point = paperZonePoint(fighter, zone)
-  const shot: FightProjectile = {
-    id: state.nextProjectileId,
-    owner: side,
-    fighterId: 'kalluto',
-    x: fighter.x + fighter.facing * 3.4,
-    y: point.y,
-    velocityX: fighter.facing * 66,
-    width: command === 'serpent' ? 1 : 0.35,
-    height: 0.3,
-    damage: command === 'serpent' ? 18 : 4,
-    hitstun: 16,
-    blockstun: 8,
-    hitstop: 4,
-    knockback: 1.5,
-    targetZone: zone,
-    shape: 'card',
-    colour: '#f4e9e5',
-    matter: issued.part.materialCopyId ? 'nen' : 'object',
-    materialCopyId: issued.part.materialCopyId,
-    paperId: issued.part.id,
-    age: 0,
-    lifetime: 120,
-    concealed: fighter.attack?.concealed,
-    kallutoPaper: command === 'serpent' ? 'serpent' : 'plant',
-    paperOwner: activePaperOwner(state, side),
-    paperTarget: activePaperOwner(state, side === 'player' ? 'opponent' : 'player'),
-  }
+  const released = releasePaperScatter(state, side, command)
+  if (!released) return state
+  const fighter = released.state[side]
+  const shot = createPaperShot(released, side, command)
+  const prepared = commitPaperScatter(released, shot)
   return {
-    ...state,
+    ...prepared,
     nextProjectileId: state.nextProjectileId + 1,
     projectiles: [...state.projectiles, commitProjectileNen(shot, fighter)],
     [side]: {
@@ -87,6 +61,7 @@ export function travelKallutoPaper(
 
 function serpentTarget(state: FightState, shot: FightProjectile) {
   if (shot.kallutoPaper !== 'serpent') return undefined
+  if (!scatterSteeringAvailable(state, shot)) return undefined
   const owner = shot.paperOwner ?? activePaperOwner(state, shot.owner)
   const target =
     shot.paperTarget ?? activePaperOwner(state, shot.owner === 'player' ? 'opponent' : 'player')
@@ -139,4 +114,14 @@ function physicalPaperLanded(state: FightState, shot: FightProjectile): boolean 
   )
     return false
   return true
+}
+
+function scatterSteeringAvailable(state: FightState, shot: FightProjectile): boolean {
+  return (
+    !shot.paperScatterId ||
+    Boolean(
+      state.battlefield?.entities.find((entry) => entry.id === shot.paperScatterId)?.paperScatter
+        ?.controlled,
+    )
+  )
 }

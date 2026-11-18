@@ -1,13 +1,21 @@
-import { umbrellaCanopy, UMBRELLA_FEINT_FRAMES, UMBRELLA_OPEN_FRAMES } from './feitanUmbrella'
+import {
+  umbrellaCanopy,
+  UMBRELLA_FEINT_FRAMES,
+  UMBRELLA_OPEN_FRAMES,
+  UMBRELLA_RADIUS,
+} from './feitanUmbrella'
+import { createUmbrellaEmblem } from './feitanUmbrellaEmblem'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
 
 /** An opaque canopy and its held shaft, never an aura shield. */
 export function createUmbrellaFeintScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
-  const radius = Math.abs(options.worldY(3.5) - options.worldY(0))
-  const cloth = new THREE.MeshBasicMaterial({ color: 0x54283e, side: THREE.DoubleSide })
-  const metal = new THREE.LineBasicMaterial({ color: 0xbac2c8 })
+  const radius = Math.abs(options.worldY(UMBRELLA_RADIUS) - options.worldY(0))
+  const cloth = new THREE.MeshBasicMaterial({ color: 0x70223f, side: THREE.DoubleSide })
+  const metal = new THREE.LineBasicMaterial({ color: 0x8c7d89 })
+  const emblem = createUmbrellaEmblem(THREE, radius)
+  const orientations = umbrellaOrientations(THREE)
   const cap = new THREE.SphereGeometry(radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2)
   const ribPoints: number[] = []
   for (let rib = 0; rib < 8; rib++) {
@@ -35,7 +43,7 @@ export function createUmbrellaFeintScene(options: EffectSceneOptions) {
       canopy = new THREE.Mesh(cap, cloth)
     root.name = `feitan-umbrella:${side}`
     root.visible = false
-    canopy.add(new THREE.LineSegments(ribs, metal))
+    canopy.add(new THREE.LineSegments(ribs, metal), emblem.make())
     const shaft = new THREE.Line(new THREE.BufferGeometry(), metal)
     root.add(canopy, shaft)
     scene.add(root)
@@ -49,15 +57,12 @@ export function createUmbrellaFeintScene(options: EffectSceneOptions) {
         model.root.visible = Boolean(canopy) && state.phase === 'fighting'
         if (!canopy) continue
         model.canopy.position.set(options.worldX(canopy.x), options.worldY(canopy.y), 0.12)
-        model.canopy.rotation.z = (-actor.facing * Math.PI) / 2
+        model.canopy.quaternion.copy(orientations.get(actor.facing)!)
         const progress = (UMBRELLA_FEINT_FRAMES - actor.umbrellaFeintFrames!) / UMBRELLA_OPEN_FRAMES
-        model.canopy.scale.setScalar(Math.max(0.02, Math.min(1, progress)))
+        const spread = Math.max(0.02, Math.min(1, progress))
+        model.canopy.scale.set(spread, 0.5 + spread * 0.5, spread)
         model.shaft.geometry.setFromPoints([
-          new THREE.Vector3(
-            options.worldX(actor.x + actor.facing),
-            options.worldY(actor.y + 7),
-            0.12,
-          ),
+          umbrellaGrip(options, { side, actor }),
           new THREE.Vector3(options.worldX(canopy.x), options.worldY(canopy.y), 0.12),
         ])
       }
@@ -68,10 +73,43 @@ export function createUmbrellaFeintScene(options: EffectSceneOptions) {
         scene.remove(model.root)
       }
       cap.dispose()
+      emblem.dispose()
       ribs.dispose()
       cloth.dispose()
       metal.dispose()
       held.clear()
     },
   }
+}
+
+function umbrellaOrientations(THREE: typeof import('three')) {
+  const result = new Map<number, import('three').Quaternion>()
+  for (const facing of [1, -1]) {
+    const normal = new THREE.Vector3(facing * 0.78, 0.03, 0.62).normalize()
+    const up = new THREE.Vector3(0, 1, 0).addScaledVector(normal, -normal.y).normalize()
+    const across = normal.clone().cross(up).normalize()
+    const basis = new THREE.Matrix4().makeBasis(across, normal, up)
+    result.set(facing, new THREE.Quaternion().setFromRotationMatrix(basis))
+  }
+  return result
+}
+
+/** The feint in the reference frees the sword hand by holding the shaft at the mouth. */
+function umbrellaGrip(
+  options: EffectSceneOptions,
+  context: { side: FightSide; actor: import('./types').ArcadeFighter },
+) {
+  const { actor, side } = context
+  const point = new options.THREE.Vector3(
+    options.worldX(actor.x + actor.facing),
+    options.worldY(actor.y + 7),
+    0.12,
+  )
+  const head = options.figureOf?.(side)?.getObjectByName('manga-head:feitan-portor')
+  if (head) {
+    head.getWorldPosition(point)
+    point.y -= 0.07
+    point.x += actor.facing * 0.08
+  }
+  return point
 }

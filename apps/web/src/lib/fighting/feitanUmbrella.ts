@@ -3,9 +3,9 @@ import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Feitan distracts Zazan with the opened physical umbrella; no guaranteed hit follows. */
-export const UMBRELLA_OPEN_FRAMES = 6
-export const UMBRELLA_FEINT_FRAMES = 32
-export const UMBRELLA_RADIUS = 3.5
+export const UMBRELLA_OPEN_FRAMES = 10
+export const UMBRELLA_FEINT_FRAMES = 54
+export const UMBRELLA_RADIUS = 4.5
 export interface UmbrellaRay {
   x: number
   y: number

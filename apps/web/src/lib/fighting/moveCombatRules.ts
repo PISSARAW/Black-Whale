@@ -1,9 +1,10 @@
+import { tuneFeitanPhysicalMoveset } from './feitanCombat'
 import { tuneReferenceCombat, referencePressure } from './referenceCombat'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
 
 /** Duel balancing only: no additional Nen effect or free invulnerable Hatsu. */
 export function declareMoveCombatRules(moveset: FighterMoveset): FighterMoveset {
-  const tuned = tuneReferenceCombat(moveset)
+  const tuned = tuneFeitanPhysicalMoveset(tuneReferenceCombat(moveset))
   return { ...tuned, moves: tuned.moves.map(declareMove) }
 }
 

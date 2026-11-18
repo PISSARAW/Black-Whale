@@ -16,6 +16,7 @@ import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
 import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { HANZO_KEY_POSES } from './keyPosesHanzo'
 import { FEITAN_PAIN_PACKER, FEITAN_RISING_SUN } from './keyPosesFeitan'
+import { FEITAN_BLADE_POSES } from './keyPosesFeitanBlade'
 import { KALLUTO_KEY_POSES } from './keyPosesKalluto'
 import { KURAPIKA_REFERENCE_POSES } from './keyPosesKurapikaReference'
 import { KURAPIKA_CAST_POSES } from './keyPosesKurapikaCasts'
@@ -52,7 +53,11 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   hanzo: HANZO_KEY_POSES,
   bonolenov: { forwardSpecial: PROLOGUE_SPEAR_POSE },
   furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
-  feitan: { neutralSpecial: FEITAN_PAIN_PACKER, finisher: FEITAN_RISING_SUN },
+  feitan: {
+    ...FEITAN_BLADE_POSES,
+    neutralSpecial: FEITAN_PAIN_PACKER,
+    finisher: FEITAN_RISING_SUN,
+  },
 }
 
 export interface KeyedMove {

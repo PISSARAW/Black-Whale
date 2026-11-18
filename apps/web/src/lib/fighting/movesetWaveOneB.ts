@@ -5,25 +5,25 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'feitan',
     mechanic: [
-      'Après une blessure, L revêt Pain Packer. H libère un soleil fixe : plus la douleur est forte, plus sa chaleur porte, dure et brûle. L’armure protège de la chaleur, pas des coups.',
-      'After an injury, L dons Pain Packer. H releases a stationary sun: greater pain increases its heat, reach and duration. The outfit protects against heat, not strikes.',
+      'Approches basses, estocs au parapluie et tailles de sabre rapides. Les variantes directionnelles de L sont physiques. Après une blessure, L revêt Pain Packer ; H libère un soleil fixe proportionnel à la douleur. L’armure protège de la chaleur, pas des coups.',
+      'Low approaches, umbrella thrusts and rapid sword cuts. Directional L attacks are physical. After an injury, L dons Pain Packer; H releases a stationary sun proportional to the pain. The outfit protects against heat, not strikes.',
     ],
     finisherCondition: [
       'Pain Packer doit être revêtu et chargé de blessures. Aucun soleil ne doit être actif.',
       'Pain Packer must be worn and charged with injuries. No sun may already be active.',
     ],
     labels: [
-      'Pointe de parapluie|Umbrella Point',
+      'Estoc bref|Short Thrust',
       'Taille de sabre|Sword Cleave',
       'Entaille basse|Low Slash',
       'Fauchage éclair|Flash Sweep',
       'Pique aérienne|Aerial Point',
       'Lame descendante|Descending Blade',
-      'Pas de l’ombre|Shadow Step',
-      'Décapitation|Decapitation',
-      'Revers du bourreau|Executioner Backfist',
+      'Estoc en course basse|Low Running Thrust',
+      'Taille au cou|Neck Cut',
+      'Revers de retrait|Retreating Cut',
       'Pain Packer|Pain Packer',
-      'Estoc du parapluie|Umbrella Thrust',
+      'Estoc de lame dissimulée|Concealed Blade Thrust',
       'Entaille rasante|Sweeping Slash',
       'Revers de lame|Blade Backslash',
       'Étranglement du bourreau|Executioner Choke',
@@ -181,26 +181,28 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset).map((moveset) => {
-  if (moveset.fighterId !== 'biscuit') return moveset
-  return {
-    ...moveset,
-    moves: moveset.moves.map((move) =>
-      move.slot === 'neutralSpecial'
-        ? {
-            ...move,
-            auraCost: 0,
-            tuning: {
-              ...move.tuning,
-              damage: 0,
-              hitstun: 0,
-              blockstun: 0,
-              hitstop: 0,
-              knockback: 0,
-              lunge: 0,
-            },
-          }
-        : move,
-    ),
-  }
-})
+export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset)
+  .map(tuneFeitanMoveset)
+  .map((moveset) => {
+    if (moveset.fighterId !== 'biscuit') return moveset
+    return {
+      ...moveset,
+      moves: moveset.moves.map((move) =>
+        move.slot === 'neutralSpecial'
+          ? {
+              ...move,
+              auraCost: 0,
+              tuning: {
+                ...move.tuning,
+                damage: 0,
+                hitstun: 0,
+                blockstun: 0,
+                hitstop: 0,
+                knockback: 0,
+                lunge: 0,
+              },
+            }
+          : move,
+      ),
+    }
+  })

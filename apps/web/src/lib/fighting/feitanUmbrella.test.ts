@@ -6,6 +6,7 @@ import {
   advanceUmbrellaFeints,
   umbrellaScreensStrike,
   UMBRELLA_FEINT_FRAMES,
+  UMBRELLA_OPEN_FRAMES,
 } from './feitanUmbrella'
 import { priorityLineOfSight } from './priorityOptics'
 import { prepareDefence } from './combatDefence'
@@ -50,7 +51,7 @@ describe('Feitan’s physical umbrella feint against Zazan', () => {
     expect(feint.player.aura).toBe(s.player.aura)
     expect(feint.opponent.health).toBe(s.opponent.health)
     expect(feint.player.attack).toBeNull()
-    expect(feint.player.arenaRecovery).toBe(6)
+    expect(feint.player.arenaRecovery).toBe(UMBRELLA_OPEN_FRAMES)
     const confiscated = { ...s, player: { ...s.player, weaponsConfiscated: true } }
     expect(open(confiscated)).toBe(confiscated)
     const stolen = {
@@ -63,14 +64,14 @@ describe('Feitan’s physical umbrella feint against Zazan', () => {
   it('only occludes the opened canopy’s actual axis, not a flank or an elevated view', () => {
     const started = open()
     expect(priorityLineOfSight(started, headRay(started))).toBe(true)
-    const s = frames(started, 6)
+    const s = frames(started, UMBRELLA_OPEN_FRAMES)
     expect(priorityLineOfSight(s, headRay(s))).toBe(false)
     expect(priorityLineOfSight(s, { ...headRay(s), x: 35 })).toBe(true)
     expect(priorityLineOfSight(s, { ...headRay(s), y: 35 })).toBe(true)
-    expect(priorityLineOfSight(frames(s, 32), headRay(s))).toBe(true)
+    expect(priorityLineOfSight(frames(s, UMBRELLA_FEINT_FRAMES), headRay(s))).toBe(true)
   })
   it('allows ordinary guard, lets En sense the strike and does not turn Gyo into sight through cloth', () => {
-    const s = frames(open(), 6)
+    const s = frames(open(), UMBRELLA_OPEN_FRAMES)
     const armed = performAuraAttack({
       state: s,
       side: 'player',
@@ -99,7 +100,7 @@ describe('Feitan’s physical umbrella feint against Zazan', () => {
     ).toBe(false)
   })
   it('loses the screen after a real hit or confiscation without adding immunity', () => {
-    const s = frames(open(), 6)
+    const s = frames(open(), UMBRELLA_OPEN_FRAMES)
     const hit = { ...s, player: { ...s.player, hitStun: 12, health: s.player.health - 10 } }
     expect(priorityLineOfSight(hit, headRay(hit))).toBe(true)
     expect(advanceUmbrellaFeints(hit).player.umbrellaFeintFrames).toBeUndefined()
@@ -115,7 +116,7 @@ describe('Feitan’s physical umbrella feint against Zazan', () => {
     expect(feint.rng).toBe(s.rng)
   })
   it('renders an opaque physical canopy, freezes on a paused state and releases its geometry', () => {
-    const state = frames(open(), 6),
+    const state = frames(open(), UMBRELLA_OPEN_FRAMES),
       scene = new THREE.Scene()
     const effect = createUmbrellaFeintScene({ THREE, scene, worldX: (x) => x, worldY: (y) => y })
     effect.sync(state)

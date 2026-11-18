@@ -1,4 +1,5 @@
 import { prioritiseCommitmentPunish } from './nenCommitment'
+import { feitanArsenalSlots } from './feitanAi'
 import { FIRST_ARSENAL_AI } from './arsenalAiFirst'
 import { SECOND_ARSENAL_AI } from './arsenalAiSecond'
 import { martialSlots, type ArsenalAiContext, type ArsenalAiPlan } from './arsenalAiTypes'
@@ -13,6 +14,8 @@ export const ARSENAL_AI: Partial<Record<FighterId, ArsenalAiPlan>> = {
 
 export function arsenalAttackSlots(context: ArsenalAiContext): readonly MoveSlot[] {
   if (context.state.opponent.y > 0) return martialSlots(context)
+  const feitan = feitanArsenalSlots(context)
+  if (feitan) return prioritiseCommitmentPunish(context, feitan)
   const plan = ARSENAL_AI[context.state.opponent.id]
   const intent = context.state.opponent.nenTactics
   return prioritiseCommitmentPunish(

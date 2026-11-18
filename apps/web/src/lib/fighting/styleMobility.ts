@@ -40,6 +40,11 @@ const MOBILITY: Record<StyleRole, Mobility> = {
   },
 }
 
+const FEITAN_MOBILITY: Mobility = {
+  backWalk: 0.96,
+  forwardDash: { frames: 14, peak: 140 },
+  backDash: { frames: 12, peak: 124 },
+}
 const HISOKA_MOBILITY: Mobility = {
   backWalk: 0.96,
   forwardDash: { frames: 15, peak: 108 },
@@ -47,6 +52,7 @@ const HISOKA_MOBILITY: Mobility = {
 }
 
 const PERSONAL_MOBILITY: Partial<Record<ArcadeFighter['id'], Mobility>> = {
+  feitan: FEITAN_MOBILITY,
   hisoka: HISOKA_MOBILITY,
 }
 
@@ -59,5 +65,5 @@ export function styleMobility(fighter: ArcadeFighter): Mobility & { walkScale: n
 }
 
 export function styleReactionFrames(fighter: ArcadeFighter): number {
-  return styleMatchup(fighter.id).role === 'mobile' ? 10 : 14
+  return fighter.id === 'feitan' || styleMatchup(fighter.id).role === 'mobile' ? 10 : 14
 }

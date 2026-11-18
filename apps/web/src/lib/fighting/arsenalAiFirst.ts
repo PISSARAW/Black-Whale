@@ -1,3 +1,4 @@
+import { feitanAiSlots } from './feitanAi'
 import { benjaminAiSlots } from './benjaminAi'
 import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
@@ -23,12 +24,7 @@ export const FIRST_ARSENAL_AI = {
   chrollo: ({ state, roll, gap }) => chrolloAiSlots(state, roll, gap),
   benjamin: ({ state, roll, gap }) => benjaminAiSlots(state, roll, gap),
   tserriednich: martialSlots,
-  feitan: ({ state, gap }) =>
-    state.opponent.hatsuEffects.painPacker?.armour
-      ? ['finisher', 'standingLight']
-      : gap > 10
-        ? ['neutralSpecial', 'forwardHeavy']
-        : ['standingLight', 'forwardSpecial', 'neutralSpecial'],
+  feitan: feitanAiSlots,
   saiyu: saiyuSlots,
   theta: ({ roll }) =>
     varySlots(roll, ['neutralSpecial', 'forwardSpecial', 'downSpecial', 'backSpecial']),

@@ -8,6 +8,10 @@ Le [combat de Kalluto d’après la référence de l’épisode 96](./KALLUTO_CO
 associe gestes d’éventail dédiés, rubans de confettis et enchaînement du marquage
 vers le serpent. La scène de contrôle vérifie les deux orientations.
 
+Le [combat de Feitan d’après les deux vidéos contre Zazan](./FEITAN_COMBAT.md)
+associe douze gestes d’arme dédiés, approches basses, dashes, bonds et choix d’IA.
+Les frappes physiques et la riposte solaire gardent des conditions distinctes.
+
 Les [gestes de combo et la concentration de l’aura](./COMBO_MOTION.md) relient
 les transitions des 40 combattants aux appuis et aux contacts de chaque style,
 avec une enveloppe locale et un flux pour le Ryu et le Ko réellement engagés.

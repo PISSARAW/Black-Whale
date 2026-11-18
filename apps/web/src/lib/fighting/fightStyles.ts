@@ -178,14 +178,16 @@ const STYLES: Record<FighterId, FightingStyle> = {
   },
   feitan: {
     id: 'feitan',
-    nameFr: 'Riposte incendiaire',
-    nameEn: 'Incendiary reprisal',
-    descriptionFr: 'Esquive à courte portée puis convertit ses blessures en puissance solaire.',
-    descriptionEn: 'Evades at close range, then turns his wounds into solar power.',
+    nameFr: 'Bretteur fulgurant',
+    nameEn: 'Lightning swordsman',
+    descriptionFr:
+      'Accélère en posture basse, enchaîne estocs et tailles, puis convertit ses blessures en puissance solaire.',
+    descriptionEn:
+      'Accelerates low, chains thrusts and cuts, then turns his wounds into solar power.',
     preferredRange: [7, 10],
     retreatBelowHealth: 18,
     guardRange: 14,
-    moveScale: 1.16,
+    moveScale: 1.38,
     specialChance: 0.48,
     heavyThreshold: 0.38,
     attacks: {

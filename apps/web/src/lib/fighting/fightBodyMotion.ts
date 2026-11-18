@@ -1,4 +1,8 @@
 import { beginSettledPose } from './fightSettledPose'
+import { feitanAirPlan } from './feitanLocomotion'
+import { feitanHandedPlan } from './feitanHandedPose'
+import { feitanUmbrellaPlan } from './feitanEquipmentPose'
+import { plantBodyFrame } from './fightPlantedPose'
 import { defensiveStance } from './fightDefensiveStance'
 import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
@@ -51,7 +55,6 @@ import {
   captureFootPlant,
   fightRigOf,
   hasFightRig,
-  plantFeet,
   resetFightRig,
   type FightRig,
 } from './fightRig'
@@ -134,13 +137,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
     keepHumanJoints(rig)
-    if (anchor)
-      plantFeet(rig, {
-        anchor,
-        root: drawn.root,
-        facing: fighter.facing,
-        transfer: Boolean(plan.attackFlow?.transfer),
-      })
+    plantBodyFrame(rig, { anchor, pose: drawn, fighter, plan })
   })
 }
 
@@ -216,6 +213,7 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   const plan = awake && closeBodyPlan(awake, fighter, context.rival)
+  if (plan && fighter.id === 'feitan') return feitanHandedPlan(plan, fighter)
   return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
     ? rightHandedPlan(plan)
     : plan
@@ -444,5 +442,10 @@ function restingWithConstraint(
 ): BodyPlan | null {
   const constraint = context.nenConstraint
   if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
-  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+  return (
+    feitanUmbrellaPlan(fighter, standing) ??
+    restingPlan(fighter, standing) ??
+    feitanAirPlan(fighter, standing) ??
+    reactionPlan(fighter, context, standing)
+  )
 }

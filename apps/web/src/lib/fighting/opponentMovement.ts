@@ -1,3 +1,4 @@
+import { moveFeitanOpponent } from './feitanAi'
 import { wantsObservedGuard, incomingLow } from './combatPressure'
 import { moveKurapikaOpponent } from './kurapikaFootwork'
 import { hasRecoveryCancel } from './recoveryPunish'
@@ -22,6 +23,8 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
     return fighter
   const kurapika = moveKurapikaOpponent(fighter, player)
   if (kurapika) return kurapika
+  const feitan = moveFeitanOpponent(fighter, player)
+  if (feitan) return feitan
   return walkFreeOpponent(fighter, player)
 }
 

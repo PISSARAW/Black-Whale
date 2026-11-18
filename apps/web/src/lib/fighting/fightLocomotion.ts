@@ -3,6 +3,7 @@ import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
 import type { ArcadeFighter, FighterId } from './types'
+import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
 import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
 
 /**
@@ -121,9 +122,11 @@ interface WalkStyle {
 
 const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
   hisoka: HISOKA_WALK_STYLE,
+  feitan: FEITAN_WALK_STYLE,
 }
 const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
   hisoka: hisokaDashPoses,
+  feitan: feitanDashPoses,
 }
 
 const WALK_STYLES: Record<FightFamily, WalkStyle> = {

@@ -1,4 +1,5 @@
 import { padailleKeyedMove } from './padaillePoses'
+import { feitanEquipmentMove } from './feitanEquipmentPose'
 import { musseKeyedMove } from './mussePoses'
 import { chrolloKeyedMove } from './chrolloPoses'
 import { benjaminKeyedMove } from './benjaminPoses'
@@ -13,6 +14,7 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
   const finish = directionalFinishPose(fighter)
   if (finish) return { timeline: finish, authored: true }
   const native =
+    feitanEquipmentMove(fighter) ??
     padailleKeyedMove(fighter) ??
     musseKeyedMove(fighter) ??
     chrolloKeyedMove(fighter) ??

@@ -31,20 +31,20 @@ The main application database and its backups are separate.
 
 ## Event definitions
 
-| Event              | Trigger                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------ |
-| pageview           | Initial page and pathname navigation, without query strings, hash or page title                        |
-| `section_enter`    | One per pathname entry; locale prefixes are combined                                                   |
-| `mode_interaction` | First key/pointer interaction in page content per pathname entry                                       |
-| `mode_start`       | Fighting changes from ready to fighting; Morena deals a new hand                                       |
-| `mode_complete`    | Fighting match ends; Morena records a newly completed hand                                             |
-| `mode_action`      | A Morena command changes its game state                                                                |
-| `mode_active_30s`  | 30 seconds of visible time, after interaction, with input during the last minute                       |
-| `hatsu_panel_open` | Hatsu picker changes from closed to open                                                               |
-| `hatsu_select`     | Explicit activation, excluding session restoration                                                     |
-| `hatsu_blocked`    | Activation rejected by forced Zetsu or mode gate                                                       |
-| `hatsu_attempt`    | Document/Ship interaction with an active Hatsu                                                         |
-| `hatsu_use`        | First visual feedback per document/Ship interaction, a Tour cast result, or a Morena technique command |
+| Event              | Trigger                                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| pageview           | Initial page and pathname navigation, without query strings, hash or page title                                            |
+| `section_enter`    | One per pathname entry; locale prefixes are combined                                                                       |
+| `mode_interaction` | First key/pointer interaction in page content per pathname entry                                                           |
+| `mode_start`       | Fighting changes from ready to fighting; Morena deals a new hand                                                           |
+| `mode_complete`    | Fighting match ends; Morena records a newly completed hand                                                                 |
+| `mode_action`      | A Morena command changes its game state                                                                                    |
+| `mode_active_30s`  | 30 seconds of visible time, after interaction, with input during the last minute                                           |
+| `hatsu_panel_open` | Hatsu picker changes from closed to open                                                                                   |
+| `hatsu_select`     | Explicit activation, excluding session restoration                                                                         |
+| `hatsu_blocked`    | Activation rejected by forced Zetsu or mode gate                                                                           |
+| `hatsu_attempt`    | Document/Ship interaction with an active Hatsu                                                                             |
+| `hatsu_use`        | First visual feedback per document/Ship interaction, a Tour cast result or body interaction, or a Morena technique command |
 
 `hatsu_use` carries Hatsu, kind, mode, locale, and result. Tour results include
 refusals and missing targets: a use is a cast attempt, not proof of success.

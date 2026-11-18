@@ -15,6 +15,7 @@
   } from '$lib/tour/mangaRequest.svelte'
   import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
   import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState'
+  import { trackHatsuUse } from '$lib/analytics/client'
   import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { link, parsePathname, t } from '$lib/i18n'
@@ -529,7 +530,11 @@
     hand: CastHand = 'first',
   ) => {
     if (!hatsuSession.canUse(technique?.kind ?? null)) return
-    return bodyView.reach(Date.now()) ? undefined : castOn(spaceId, solidId, hand)
+    if (bodyView.reach(Date.now())) {
+      if (technique) trackHatsuUse(technique.id, technique.kind, 'body')
+      return
+    }
+    return castOn(spaceId, solidId, hand)
   }
   const fishEat = ticker.fishEat
   const beastStep = ticker.beastStep

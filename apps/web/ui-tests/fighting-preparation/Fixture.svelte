@@ -2,6 +2,7 @@
   import { tick } from 'svelte'
   import { mixedHisokaScenario } from './mixedHisoka'
   import { prosthesisScenario } from './prostheses'
+  import type { InjuryPreset } from '$lib/fighting/injuryPreparation'
   import { documentScenario, documentSnapshot } from './documents'
   import { illumiFaceScenario, illumiFaceSnapshot, illumiBookFaceScenario } from './illumiFaces'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
@@ -79,8 +80,8 @@
     for (let frame = 0; frame < frames; frame++) advanceFrame()
     await tick()
   }
-  export async function prepareHisokaProstheses(side: FightSide) {
-    state = prosthesisScenario(side)
+  export async function prepareHisokaProstheses(side: FightSide, preset?: InjuryPreset) {
+    state = prosthesisScenario(side, preset)
     player = state.player.id
     opponent = state.opponent.id
     environment = state.environment

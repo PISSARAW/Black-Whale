@@ -502,7 +502,7 @@ de couverture des profils ou un nombre de tests :
 | Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                  |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
-| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible et réparations du visage encore ouvertes. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                              |
+| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                    |
 | Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                             |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
@@ -995,3 +995,10 @@ Les [aiguilles de Gittarackur](./clash-illumi-visages.md) ont une identité
 matérielle qui subsiste quand la copie ou le prêt termine le remodelage.
 Retrait physique sans Nen, dépôt, chute, copies inertes, âge du parent et
 conservation entre les manches suivent le même corps. Le On reste présent.
+
+## Surfaces du visage et du cou d’Hisoka — ruleset 59
+
+Les [blessures superficielles et leur support de Nen](./clash-hisoka-visage.md)
+sont préparables pour chaque corps. Bungee Gum fournit le matériau ; Texture
+Surprise habille son support réel. Aucun PV, organe ou membre de chair n’est
+régénéré. Copies, prêts, fin du support, vues privées et On gardent leurs règles.

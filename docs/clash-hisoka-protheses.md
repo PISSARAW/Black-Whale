@@ -92,6 +92,7 @@ deux réserves, le rendu, In/Gyo, le On et le replay. Le script
 `apps/web/scripts/check-hisoka-prostheses-ui.mjs` exerce les boutons réels à
 1100, 390 et 320 pixels.
 
-La réanimation préparée du cœur et des poumons, les réparations d'apparence du
-visage et d'autres supports de Texture Surprise restent des travaux distincts.
+Les [réparations superficielles du visage et du cou](./clash-hisoka-visage.md)
+sont ajoutées au ruleset 59. La réanimation préparée du cœur et des poumons
+et les autres supports de Texture Surprise restent des travaux distincts.
 Ce jalon ne certifie pas les arsenaux des quarante personnages à 100 %.

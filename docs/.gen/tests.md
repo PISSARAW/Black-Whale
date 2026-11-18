@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 939
+Fichiers : 942
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -739,6 +739,10 @@ Fichiers : 939
 ## `apps/web/src/lib/fighting/gumProsthesisFigure.test.ts`
 
 - rubber replacements and their real surface disguise on the articulated model > shows the actual damaged parts without erasing the rest of the rig
+
+## `apps/web/src/lib/fighting/gumSurfaceReplay.test.ts`
+
+- the facial injury premise and actual reconstruction commands cross P2 and replay boundaries > validates the explicit setup and keeps canonical support IDs in P2 prediction
 
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 

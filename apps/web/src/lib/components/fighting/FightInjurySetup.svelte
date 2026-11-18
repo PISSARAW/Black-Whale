@@ -1,16 +1,15 @@
 <script lang="ts">
   import type { FightSide } from '$lib/fighting/types'
   import type { InjuryPreparation } from '$lib/fighting/injuryPreparation'
+  import { limbInjury, surfaceInjury } from '$lib/fighting/injuryPreparation'
+  import { selectInjury } from '$lib/fighting/injurySelection'
 
   export let injuries: InjuryPreparation = {}
   export let language: 'fr' | 'en'
   export let onChange: (injuries: InjuryPreparation) => void
 
   function toggle(side: FightSide, checked: boolean) {
-    const next = { ...injuries }
-    if (checked) next[side] = 'hand-and-lower-leg'
-    else delete next[side]
-    onChange(next)
+    onChange(selectInjury({ injuries, side, group: 'limbs', checked }))
   }
 </script>
 
@@ -22,12 +21,30 @@
     <label
       ><input
         type="checkbox"
-        checked={injuries[side as FightSide] === 'hand-and-lower-leg'}
+        checked={limbInjury(injuries[side as FightSide])}
         onchange={(event) => toggle(side as FightSide, event.currentTarget.checked)}
       />
       {language === 'fr'
         ? `P${index + 1} : main gauche et bas de la jambe droite endommagés`
         : `P${index + 1}: damaged left hand and lower right leg`}</label
+    >
+    <label
+      ><input
+        type="checkbox"
+        checked={surfaceInjury(injuries[side as FightSide])}
+        onchange={(event) =>
+          onChange(
+            selectInjury({
+              injuries,
+              side: side as FightSide,
+              group: 'surfaces',
+              checked: event.currentTarget.checked,
+            }),
+          )}
+      />
+      {language === 'fr'
+        ? `P${index + 1} : tissus superficiels du visage et du cou endommagés`
+        : `P${index + 1}: damaged facial and neck surface tissue`}</label
     >
   {/each}
   <p>

@@ -45,6 +45,7 @@ const BODY_FIELDS = new Set([
   'illumiDisguisePlan',
   'illumiNeedleMode',
   'illumiNeedleGeneration',
+  'illumiDisguisePins',
   'texturePaperDraft',
   'texturePaperId',
   'paperTextureGeneration',

@@ -6,6 +6,7 @@ import { ILLUMI_UNPINNED_FRAMES } from './illumiDisguiseTuning'
 import { withGumChannel } from './bungeeChannel'
 import { observeIllumiFace } from './illumiDisguiseWitness'
 import { fallFaceNeedles } from './illumiNeedleFall'
+import { attachDisguisePins } from './illumiDisguisePins'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
 
 export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -30,7 +31,7 @@ function advanceForSide(state: FightState, side: FightSide): FightState {
 }
 
 function advanceScopedIllumi(state: FightState, side: FightSide): FightState {
-  const fighter = prepareDisguise(state[side], state.frame)
+  const fighter = attachDisguisePins(state, side, prepareDisguise(state[side], state.frame))
   const observed =
     fighter === state[side]
       ? state

@@ -3,6 +3,7 @@ import { illumiAvailable, illumiMove } from './illumiAccess'
 import { illumiDisguiseAvailable, clearIllumiFace } from './illumiDisguise'
 import { newGumSource } from './bungeeSource'
 import { freeDeviceHand } from './deviceHands'
+import { removeDisguisePins } from './illumiDisguisePins'
 import {
   illumiBodyFree,
   illumiState,
@@ -58,7 +59,7 @@ function disguise(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const current = illumiState(fighter)
   if (fighter.y !== 0 || fighter.hanzoProjection || !freeDeviceHand(state, side)) return state
-  if (current.disguised) return { ...state, [side]: clearIllumiFace(fighter) }
+  if (current.disguised) return undoDisguise(state, side)
   if (fighter.aura < ILLUMI_DISGUISE_COST) return state
   return {
     ...state,
@@ -83,4 +84,9 @@ function disguise(state: FightState, side: FightSide): FightState {
 
 function canIssueCommand(fighter: import('./types').ArcadeFighter): boolean {
   return !fighter.attack && canStartFighterAttack(fighter, 'light')
+}
+function undoDisguise(state: FightState, side: FightSide): FightState {
+  return state[side].illumiDisguisePins
+    ? removeDisguisePins(state, side)
+    : { ...state, [side]: clearIllumiFace(state[side]) }
 }

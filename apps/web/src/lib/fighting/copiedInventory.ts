@@ -28,13 +28,17 @@ export function recordEquipmentPickup(
       ...actor.equipmentProps,
       [equipment]: {
         entityId: target.id,
-        copyId: target.detachedFaceNeedles?.mediumCopyId ?? (target.copy ? target.id : undefined),
+        copyId: detachedNeedleParent(target) ?? (target.copy ? target.id : undefined),
         material: target.material,
-        ...(target.detachedFaceNeedles ? { detachedPart: true } : {}),
+        ...(target.detachedFaceNeedles || target.disguisePinBundle ? { detachedPart: true } : {}),
       },
     },
     ...(equipment === 'flute' ? { melodyFlute: true } : {}),
   }
+}
+
+function detachedNeedleParent(target: PreparedEntity): string | undefined {
+  return target.detachedFaceNeedles?.mediumCopyId ?? target.disguisePinBundle?.mediumCopyId
 }
 export function advanceCopiedInventory(state: FightState): FightState {
   const next = mapPhysicalBodies(state, (body) =>

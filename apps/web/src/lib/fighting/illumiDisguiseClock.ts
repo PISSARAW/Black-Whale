@@ -1,4 +1,5 @@
 import { clearIllumiFace } from './illumiDisguise'
+import { cleanDisguisePins } from './illumiDisguisePins'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { personalGumBody } from './gumObjectAnchorAccess'
 import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
@@ -12,6 +13,7 @@ import type { GumSource } from './bungeeSource'
 
 /** Absolute elapsed time also expires the physical alteration during hitstop and Cat's Name. */
 export function reconcileIllumiFaces(state: FightState): FightState {
+  state = cleanDisguisePins(state)
   return mapPhysicalBodies(state, (actor) => {
     const face = actor.illumi
     if (!face?.disguised && !face?.preparation) return actor
@@ -93,6 +95,8 @@ export function carryIllumiFace(
 /** A completed native physical disguise has no offstage Nen action to suspend. */
 export function illumiRelaySignature(actor: ArcadeFighter): ArcadeFighter['illumi'] {
   const face = actor.illumi
-  if (!face?.disguised || face.preparation || face.mediumCopyId) return face
+  if (!face) return face
+  if (!face.disguised && !face.preparation) return undefined
+  if (face.preparation || face.mediumCopyId) return face
   return face.disguiseOrigin?.source === 'personal' ? undefined : face
 }

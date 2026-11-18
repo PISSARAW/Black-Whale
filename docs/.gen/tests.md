@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 937
+Fichiers : 939
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -780,6 +780,14 @@ Fichiers : 937
 ## `apps/web/src/lib/fighting/illumiDisguiseFigure.test.ts`
 
 - the body keeps its own eyes, hair, clothes, joints and abilities under Illumi’s face alteration > uses Hisoka’s facial shell and marks while preserving the owner’s actual eyes and combat body
+
+## `apps/web/src/lib/fighting/illumiDisguisePins.test.ts`
+
+- Gittarackur’s physical needle assembly is independent of its Nen appearance > does not materialize pins for the unpinned form or an interrupted preparation
+
+## `apps/web/src/lib/fighting/illumiDisguisePinsFigure.test.ts`
+
+- the ended disguise retains visible, recoverable material > keeps physical pins on the original face after page loss, then removes their geometry on extraction
 
 ## `apps/web/src/lib/fighting/illumiDisguiseReplay.test.ts`
 

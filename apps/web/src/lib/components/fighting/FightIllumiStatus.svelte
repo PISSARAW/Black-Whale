@@ -12,6 +12,17 @@
   $: preparation = fighter.illumi?.preparation ?? 0
 </script>
 
+{#if fighter.illumiDisguisePins && !fighter.illumi?.disguised}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Aiguilles du déguisement toujours présentes' : 'Disguise needles remain'}</strong
+    >
+    <span
+      >{fr
+        ? 'Retrait physique possible avec une main libre.'
+        : 'Physical removal is possible with a free hand.'}</span
+    >
+  </div>
+{/if}
 {#if ownsIllumiNeedles(fighter) || fighter.illumi}
   <div class="illumi-status">
     <strong>Needle People · {fr ? 'Aiguille et consigne' : 'Needle and order'}</strong>

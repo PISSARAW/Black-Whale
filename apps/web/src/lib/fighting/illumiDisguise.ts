@@ -5,6 +5,7 @@ import { illumiNenActive, ownsIllumiNeedles } from './illumiAccess'
 import { newGumSource, gumSourceCommandAllowed, sameGumSource } from './bungeeSource'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { equippedDolphin } from './dolphinBorrowing'
+import { removeDisguisePins } from './illumiDisguisePins'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState, ArcadeFighter } from './types'
 
@@ -12,6 +13,7 @@ export { ILLUMI_UNPINNED_FRAMES } from './illumiDisguiseTuning'
 
 export function illumiDisguiseAvailable(actor: ArcadeFighter): boolean {
   if (actor.needleFace?.reshaping) return false
+  if (actor.illumiDisguisePins && !actor.illumi?.disguised) return false
   if (!illumiNenActive(actor) || !ownsIllumiNeedles(actor)) return false
   if (!faceApplicationScope(actor)) return false
   return actor.illumiDisguisePlan === 'unpinned-hisoka' || hasIllumiNeedles(actor)
@@ -48,6 +50,7 @@ function faceCommandBodyFree(actor: ArcadeFighter): boolean {
 function removePinnedFace(state: FightState, side: FightSide): FightState {
   const actor = state[side],
     current = actor.illumi
+  if (actor.illumiDisguisePins) return removeDisguisePins(state, side)
   if (!current?.disguised || current.disguiseMode === 'unpinned-hisoka') return state
   if (
     !freeDeviceHand(state, side) ||
@@ -72,7 +75,7 @@ function removePinnedFace(state: FightState, side: FightSide): FightState {
 
 export function illumiFaceOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const actor = state[side]
-  if (!facePlanAvailable(actor) && !actor.illumi?.disguised) return []
+  if (!facePlanAvailable(actor) && !actor.illumi?.disguised && !actor.illumiDisguisePins) return []
   const choices: [IllumiDisguiseMode, string, string][] = [
     ['pinned-gittarackur', 'Gittarackur avec aiguilles', 'Gittarackur with needles'],
     ['unpinned-hisoka', 'Visage d’Hisoka sans aiguilles', 'Hisoka’s face without needles'],

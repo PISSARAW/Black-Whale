@@ -16,6 +16,7 @@ export function copiedFaceNeedles(source: PreparedEntity, id: string): Partial<P
 export function carryNeedleFace(actor: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
   if (
     !previous.needleFace &&
+    !previous.illumiDisguisePins &&
     previous.illumiNeedleGeneration === undefined &&
     !previous.illumiNeedleMode
   )
@@ -23,6 +24,7 @@ export function carryNeedleFace(actor: ArcadeFighter, previous: ArcadeFighter): 
   return {
     ...actor,
     needleFace: previous.needleFace,
+    illumiDisguisePins: previous.illumiDisguisePins,
     illumiNeedleGeneration: previous.illumiNeedleGeneration,
     illumiNeedleMode: previous.illumiNeedleMode,
   }
@@ -53,6 +55,7 @@ function needleParents(previous: FightState): Set<string> {
     for (const id of [
       actor.needleFace?.mediumCopyId,
       actor.illumi?.mediumCopyId,
+      actor.illumiDisguisePins?.mediumCopyId,
       actor.equipmentProps?.needles?.copyId,
     ])
       if (id) parents.add(id)

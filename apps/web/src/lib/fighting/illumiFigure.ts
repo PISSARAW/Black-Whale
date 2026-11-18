@@ -3,7 +3,12 @@ import type { HumanProfile } from '$lib/tour/humanProfiles'
 import type { ArcadeFighter } from './types'
 
 export function illumiFigureKey(fighter: ArcadeFighter) {
-  return [Boolean(fighter.illumi?.disguised), fighter.illumi?.disguiseMode, fighter.needleFace]
+  return [
+    Boolean(fighter.illumi?.disguised),
+    fighter.illumi?.disguiseMode,
+    fighter.needleFace,
+    fighter.illumiDisguisePins,
+  ]
 }
 
 /** Physical face and skin alteration; the collision body and combat values stay identical. */
@@ -43,7 +48,9 @@ export function addIllumiNeedles(options: {
 }
 
 function needleMarkers(fighter: ArcadeFighter) {
-  const pinned = fighter.illumi?.disguised && fighter.illumi.disguiseMode !== 'unpinned-hisoka'
+  const pinned =
+    fighter.illumiDisguisePins ||
+    (fighter.illumi?.disguised && fighter.illumi.disguiseMode !== 'unpinned-hisoka')
   const marks = Array.from({ length: pinned ? 7 : 0 }, (_, index) => ({
     name: 'illumi-physical-needle',
     x: Math.sin(index * 2.4) * 0.13,

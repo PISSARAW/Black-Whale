@@ -988,3 +988,10 @@ La [déformation douloureuse du visage d’autrui](./clash-illumi-trois-aiguille
 est distincte du contrôle cérébral de Needle People. Contact réel, métal,
 extraction, copies, prêts, mains et provenance sont suivis séparément. Le On
 reste présent ; le conditionnement mental de Killua reste à compléter.
+
+## Matière du déguisement personnel — ruleset 58
+
+Les [aiguilles de Gittarackur](./clash-illumi-visages.md) ont une identité
+matérielle qui subsiste quand la copie ou le prêt termine le remodelage.
+Retrait physique sans Nen, dépôt, chute, copies inertes, âge du parent et
+conservation entre les manches suivent le même corps. Le On reste présent.

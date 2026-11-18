@@ -23,9 +23,24 @@ export function illumiFaceSnapshot(state: FightState, side: FightSide) {
     health: actor.health,
     aura: actor.aura,
     plan: actor.illumiDisguisePlan,
+    disguisePins: actor.illumiDisguisePins,
     mode: actor.illumiNeedleMode,
     needleFace: actor.needleFace,
     puppet: actor.needlePuppet,
-    piles: state.battlefield?.entities.filter((entry) => entry.detachedFaceNeedles),
+    piles: state.battlefield?.entities.filter(
+      (entry) => entry.detachedFaceNeedles || entry.disguisePinBundle,
+    ),
+  }
+}
+
+export function illumiBookFaceScenario(side: FightSide): FightState {
+  const base = illumiFaceScenario(side, true)
+  return {
+    ...base,
+    [side]: {
+      ...base[side],
+      id: 'chrollo',
+      chrolloBook: { pages: ['illumi:backSpecial'], page: 0, open: true, bookmark: null },
+    },
   }
 }

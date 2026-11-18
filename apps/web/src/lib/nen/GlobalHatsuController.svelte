@@ -2,6 +2,7 @@
   import { iconForHatsu } from '$lib/nen/hatsuIcons'
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { onMount } from 'svelte'
+  import { trackEvent } from '$lib/analytics/client'
   import {
     activeHatsu,
     activateHatsu,
@@ -49,7 +50,12 @@
   onMount(() => {
     hydrateHatsuSession()
     const remembered = hatsuById(sessionStorage.getItem('black-whale:hatsu'))
-    if (remembered) activateHatsu(remembered)
+    if (remembered) activateHatsu(remembered, 'restore')
+    let panelWasOpen = false
+    const stopPanel = hatsuPanelOpen.subscribe((open) => {
+      if (open && !panelWasOpen) trackEvent('hatsu_panel_open')
+      panelWasOpen = open
+    })
 
     const clock = window.setInterval(() => {
       now = Date.now()
@@ -63,6 +69,7 @@
     }
     window.addEventListener('black-whale:activate-hatsu', handleActivate)
     return () => {
+      stopPanel()
       clearInterval(clock)
       window.removeEventListener('black-whale:activate-hatsu', handleActivate)
     }

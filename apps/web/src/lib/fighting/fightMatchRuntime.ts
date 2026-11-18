@@ -1,4 +1,5 @@
 import { panelReplayCommand } from './fightReplayPanels'
+import { trackEvent } from '$lib/analytics/client'
 import { fightReplayHash } from './fightReplayHash'
 import { FIXED_STEP } from './fightClock'
 import { fightAcceptsCommands } from './fightOutcome'
@@ -18,6 +19,15 @@ interface Queued {
   action?: (state: FightState) => FightState
   receipt: number | null
 }
+function recordCompletion(before: FightState, after: FightState, practicing: boolean) {
+  if (!before.matchWinner && after.matchWinner && !practicing)
+    trackEvent('mode_complete', {
+      variant: before.mode,
+      result: after.matchWinner,
+      format: before.formatId,
+    })
+}
+
 export function createFightMatchRuntime(
   clock: () => number = () => performance.now(),
   options: { record?: boolean; career?: CareerTracker; qwen?: QwenDuel } = {},
@@ -44,6 +54,8 @@ export function createFightMatchRuntime(
   function apply(state: FightState, command: ReplayCommand) {
     if (replays.active) return state
     const after = applyReplayCommand(state, command)
+    if (state.phase === 'ready' && after.phase === 'fighting' && state.roundNumber === 1 && !replays.practicing)
+      trackEvent('mode_start', { variant: state.mode, format: state.formatId })
     replays.append(state, [0, 0, 0, [command]], after)
     if (!replays.practicing) boundary = after
     career?.observe(state, after)
@@ -176,6 +188,7 @@ export function createFightMatchRuntime(
         },
       })
       const packet: ReplayPacket = [dt, player, opponent, applied.commands]
+      recordCompletion(state, after, replays.practicing)
       replays.append(state, packet, after)
       if (!replays.practicing) boundary = after
       return after

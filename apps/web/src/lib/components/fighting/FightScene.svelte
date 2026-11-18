@@ -32,10 +32,7 @@
   import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import {
-    createHanzoProjectionScene,
-    projectionCameraSpan,
-  } from '$lib/fighting/rosterGuestScene'
+  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/rosterGuestScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -263,7 +260,7 @@
           const { side, model, seconds } = options
           const falling = finishedFall(state, side, {
             fighter: presentation.fighter(state, side),
-            position: interpolatedPosition(state, side),
+            position: presentation.bodyPosition(state, side),
             seconds,
           })
           const fighter = falling.fighter
@@ -286,6 +283,7 @@
             progress,
             hitZone,
             onAwakeningFrame: onFrames[side],
+            poseFraction: presentation.poseFraction(state),
           })
           const modelPose = motionOf(fighter).dash ? 'idle' : FIGHT_MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {

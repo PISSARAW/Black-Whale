@@ -22,6 +22,7 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
+import { flowIntoAttack, type AttackFlowFrame } from './fightAttackFlow'
 import { READY_ARMS } from './fightGestures'
 import {
   addPoses,
@@ -67,6 +68,7 @@ import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } 
 export interface BodyMotionOptions extends ReactionContext {
   fighter: ArcadeFighter
   seconds: number
+  poseFraction?: number
   onAwakeningFrame?: number | null
   /** The motion to play when the rig has nothing for this frame. */
   fallback?: HumanMotion
@@ -125,6 +127,8 @@ interface PoseMemory {
   from: FightPose
   since: number
   last: FightPose
+  attack?: AttackFlowFrame
+  chained?: boolean
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -143,10 +147,24 @@ function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
   if (!memory) {
     // The first pose of a figure is drawn as is: there is nothing to fade from.
     remember(rig, { key: plan.key, pose: plan.pose, seconds: -Infinity })
+    MEMORY.get(rig)!.attack = plan.attackFlow
     return plan.pose
   }
-  if (memory.key !== plan.key)
-    Object.assign(memory, { key: plan.key, from: memory.last, since: seconds })
+  const attack = plan.attackFlow
+  if (memory.key !== plan.key || attackRestarted(memory.attack, attack)) {
+    const chained = Boolean(attack && memory.attack?.facing === attack.facing)
+    Object.assign(memory, { key: plan.key, from: memory.last, since: seconds, chained })
+  }
+  memory.attack = attack
+  if (attack) {
+    memory.last = flowIntoAttack({
+      from: memory.from,
+      to: plan.pose,
+      progress: memory.since === -Infinity ? 1 : attack.frame / Math.max(1, attack.startup),
+      chained: Boolean(memory.chained),
+    })
+    return memory.last
+  }
   const travel =
     plan.blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / plan.blend)) : 1
   const eased = travel * travel * (3 - 2 * travel)
@@ -154,8 +172,13 @@ function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
   return memory.last
 }
 
+function attackRestarted(previous?: AttackFlowFrame, current?: AttackFlowFrame): boolean {
+  return Boolean(previous && current && current.frame < previous.frame - 1)
+}
+
 export interface PlanContext extends ReactionContext {
   seconds: number
+  poseFraction?: number
   onAwakeningFrame?: number | null
 }
 
@@ -197,7 +220,7 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       blend: 0.12,
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
-  if (fighter.attack) return attackingPlan(fighter, standing)
+  if (fighter.attack) return attackingPlan(fighter, standing, context.poseFraction)
   return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
@@ -210,8 +233,12 @@ function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   }
 }
 
-function attackingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
-  return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
+function attackingPlan(
+  fighter: ArcadeFighter,
+  standing: FightPose,
+  fraction?: number,
+): BodyPlan | null {
+  return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing, fraction) : null
 }
 
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
@@ -282,7 +309,7 @@ const KIND_SLOTS: Record<AttackKind, Record<AttackVariant, MoveSlot>> = {
   },
 }
 
-function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): BodyPlan | null {
   const attack = fighter.attack
   // A teched throw is drawn by the scene, both fighters breaking the grab together.
   if (!attack || (attack.variant === 'throw' && fighter.throwTechFrames)) return null
@@ -290,13 +317,15 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
   const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
   const { timeline, authored } = characterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
-  const keyed = sampleTimeline(timeline, { frame: attack.frame, frames })
-  const accent = attackMotionAccent({ fighter, frames, authored })
+  const frame = attack.frame + fraction
+  const keyed = sampleTimeline(timeline, { frame, frames, continuous: true })
+  const accent = attackMotionAccent({ fighter, frames, authored, frame })
   return {
     pose: addPoses(basePose(variant, standing, authored), keyed, accent),
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
-    blend: attackBlend(attack.kind),
+    blend: 0,
+    attackFlow: { frame, startup: frames.startup, facing: fighter.facing },
   }
 }
 
@@ -308,10 +337,6 @@ function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
     benjaminKeyedMove(fighter) ??
     keyedMove(fighter.id, slot)
   )
-}
-
-function attackBlend(kind: AttackKind): number {
-  return kind === 'light' || kind === 'ranged' ? 1 / 60 : 2 / 60
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {

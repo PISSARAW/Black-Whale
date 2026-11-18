@@ -3,6 +3,8 @@ import * as THREE from 'three'
 import { buildHumanFigure } from '$lib/tour/humanFigure'
 import type { HumanPose } from '$lib/tour/humanAnimation'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
+import { createAttackTravel } from './fightAttackTravel'
+import { FIXED_STEP } from './fightClock'
 import { captureFootPlant, footHeight, fightRigOf } from './fightRig'
 import { createFightState } from './fightState'
 import { keyedMove } from './keyPoseMoves'
@@ -69,6 +71,29 @@ function pose(model: ReturnType<typeof figureOf>, who: ArcadeFighter, at = 1, ba
 }
 
 const context = { seconds: 1, progress: 0 }
+
+it.each([1, -1] as const)('renders an attack step continuously facing %s', (facing) => {
+  const travel = createAttackTravel()
+  const base = { frame: 10, roundNumber: 1, frameAccumulator: 0, hitstop: 0 }
+  const idle = fighter('hisoka', { x: 50, facing })
+  const strike = { ...attacking('hisoka', 'forwardHeavy', 0), x: 50, facing }
+  const frames = attackData('heavy', strike)
+  strike.x += facing * frames.lunge
+  const at = (attackFrame: number, accumulator = 0, hitstop = 0) => {
+    strike.attack!.frame = attackFrame
+    return travel(strike, strike, {
+      ...base,
+      frame: 11 + attackFrame,
+      frameAccumulator: accumulator,
+      hitstop,
+    }).x
+  }
+  travel(idle, idle, base)
+  expect(at(0)).toBeCloseTo(50)
+  expect(at(0, FIXED_STEP / 2, 1)).toBeCloseTo(50)
+  expect((at(1) - 50) * facing).toBeGreaterThan(0)
+  expect(at(frames.startup)).toBe(strike.x)
+})
 
 describe('fighting rig', () => {
   it('keeps the book strike on Chrollo’s actual right hand in both facings', () => {
@@ -173,6 +198,31 @@ describe('fighting rig', () => {
     pose(model, fighter('hisoka'), 1.5)
     expect(chest.rotation.x).not.toBeCloseTo(crouched, 2)
   })
+
+  it.each(FIGHTING_ROSTER.map(({ id }) => id))(
+    'carries %s contact into the next strike and lands the new pose on the active frame',
+    (id) => {
+      const model = figureOf(id)
+      const jab = attacking(id, 'standingLight', 0)
+      jab.attack!.frame = attackData('light', jab).startup
+      const followup = attacking(id, 'standingHeavy', 0)
+      const startup = attackData('heavy', followup).startup
+      const shoulder = model.root.getObjectByName('shoulder-right')!
+      pose(model, jab)
+      const outgoing = shoulder.rotation.clone()
+      pose(model, followup)
+      expect(shoulder.rotation.toArray()).toEqual(outgoing.toArray())
+      pose(model, attacking(id, 'standingHeavy', Math.max(1, startup - 2)))
+      expect(shoulder.rotation.toArray()).not.toEqual(outgoing.toArray())
+      pose(model, attacking(id, 'standingHeavy', startup))
+      const contact = shoulder.rotation.clone()
+      const isolated = figureOf(id)
+      pose(isolated, attacking(id, 'standingHeavy', startup))
+      expect(contact.toArray()).toEqual(
+        isolated.root.getObjectByName('shoulder-right')!.rotation.toArray(),
+      )
+    },
+  )
 
   it('draws a struck fighter recoiling by where the blow landed', () => {
     const struck = fighter('chrollo', { pose: 'hit' })

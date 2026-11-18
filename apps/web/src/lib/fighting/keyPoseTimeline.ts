@@ -68,10 +68,12 @@ export interface TimelineSample {
   frames: PhaseFrames
   /** Ease back into the stance after the last key (the default); off for a body left lying. */
   settle?: boolean
+  /** Live strikes sample their trajectory continuously between authored keys. */
+  continuous?: boolean
 }
 
 export function sampleTimeline(timeline: MoveTimeline, sample: TimelineSample): FightPose {
-  const frame = heldFrame(sample.frame, sample.frames)
+  const frame = sample.continuous ? sample.frame : heldFrame(sample.frame, sample.frames)
   let previous = { frame: 0, pose: NEUTRAL_POSE }
   for (const key of sample.settle === false ? timeline : [...timeline, SETTLE]) {
     const at = keyFrameOf(key, sample.frames)

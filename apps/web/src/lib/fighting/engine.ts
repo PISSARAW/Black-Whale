@@ -27,6 +27,7 @@ import { padailleBoundAction, padailleEscapeAi } from './padailleEscape'
 import { luiniArsenalAi } from './luiniArsenal'
 import { crossGameBusy } from './crossGame'
 import { planOpponentNen } from './opponentNenPlan'
+import { projectileDefenceHolds } from './projectileDefence'
 import { cyclotronAiAction } from './phinksAction'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { performMelodyAction } from './melodyAction'
@@ -263,9 +264,11 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 export const opponentAttack = (state: FightState): FightState =>
-  priorityBusyAi(state, performAuraAttack) ??
-  maryAiAction(state, performAuraAttack) ??
-  contextualOpponentAttack(state)
+  projectileDefenceHolds(state)
+    ? state
+    : (priorityBusyAi(state, performAuraAttack) ??
+      maryAiAction(state, performAuraAttack) ??
+      contextualOpponentAttack(state))
 
 function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state

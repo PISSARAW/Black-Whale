@@ -6,8 +6,8 @@ export const COUNTERPLAY_TEXT: Record<CounterplayKind, readonly [string, string]
     'Visible heat: stay outside the circle; guard does not block the sun.',
   ],
   projectile: [
-    'Projectile repéré : gardez selon sa trajectoire ou sautez pour approcher.',
-    'Detected projectile: guard its trajectory or jump to approach.',
+    'Projectile repéré : adaptez la garde, passez sous les tirs hauts ou sautez si la trajectoire le permet. Maintenez la défense pendant les rafales.',
+    'Detected projectile: adjust your guard, duck high shots or jump when the trajectory allows. Keep defending through bursts.',
   ],
   music: [
     'Performance perceptible : couvrez les oreilles ou sortez de portée. Couvrir les oreilles occupe les mains.',

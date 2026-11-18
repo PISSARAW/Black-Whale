@@ -19,7 +19,7 @@ beforeAll(async () => {
 })
 
 describe('command qualification from the frozen six-fighter states', () => {
-  it('keeps all historical input packets and the original archive intact across the current recording', async () => {
+  it('keeps the original archive and v20 input packets intact alongside current recordings', async () => {
     const historical = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
     )
@@ -32,9 +32,11 @@ describe('command qualification from the frozen six-fighter states', () => {
     // Preserve v20 as its own archive while validating the current recording separately.
     expect(previous.ruleset).toBe('clash-combat-20')
     expect(frozen.ruleset).toBe(REPLAY_RULESET)
-    expect(Object.keys(frozen.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
+    // Current routes evolve with the combo grammar; historical inputs remain in v20.
+    expect(Object.keys(frozen.tapes)).toEqual(expect.arrayContaining(Object.keys(historical.tapes)))
+    expect(Object.keys(previous.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
     for (const [id, replay] of Object.entries(historical.tapes))
-      expect(frozen.tapes[id].packets).toEqual(replay.packets)
+      expect(previous.tapes[id].packets).toEqual(replay.packets)
   })
   it('still rejects promotion of the original Kurapika trace when its checkpoints differ', async () => {
     const historical = await loadFrozenCombatTapes(

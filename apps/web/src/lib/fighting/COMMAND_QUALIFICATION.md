@@ -219,3 +219,8 @@ Les essais de fenêtres de commandes réutilisent ces entrées sous le moteur
 courant et vérifient séparément qu’une sonde ne modifie pas la simulation.
 Ils ne constituent pas une nouvelle certification des captures v17, ni une
 nouvelle campagne de mesure du rendu ou du réseau.
+
+Le contrôle d'intégrité compare les paquets v20 aux entrées originales v9 et
+conserve l'empreinte de l'archive originale. Les corpus courants peuvent ajouter
+des routes et adapter les commandes à la grammaire des combos ; leurs checkpoints
+sont vérifiés sous leur propre version, sans remplacer les archives historiques.

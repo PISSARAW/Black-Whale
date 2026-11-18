@@ -1,6 +1,6 @@
 import { strikeTimeline } from './keyPoseContact'
 import type { MoveTimeline } from './keyPoseTimeline'
-import type { DirectionalEnding } from './directionalChain'
+import { isAirPursuit, type DirectionalEnding } from './directionalChain'
 import type { ArcadeFighter } from './types'
 
 const KURAPIKA: Record<DirectionalEnding, MoveTimeline> = {
@@ -193,7 +193,7 @@ const HISOKA: Record<DirectionalEnding, MoveTimeline> = {
 
 export function directionalFinishPose(fighter: ArcadeFighter): MoveTimeline | undefined {
   const ending = fighter.attack?.directionalChain
-  if (!ending || ending === 'bridge') return
+  if (!ending || ending === 'bridge' || isAirPursuit(ending)) return
   // The native chain and tether retain their own prop-aware keys, synchronized to this move.
   if (ending === 'carry' && fighter.attack?.kind === 'special') return
   if (fighter.id === 'kurapika') return KURAPIKA[ending]

@@ -1,4 +1,5 @@
 import type { AuraAttackOptions } from './auraAttackAction'
+import { performAirPursuit } from './airPursuitCommand'
 import { directionalInput, directionalSlot, type DirectionalEnding } from './directionalChain'
 import { canUseMovesetMove, moveForSlot } from './movesets'
 import { directionalTechnique } from './directionalTechniques'
@@ -8,6 +9,8 @@ export function performDirectionalChain(
   command: { state: FightState; side: FightSide; action: MoveAction; input: FightInput },
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | undefined {
+  const pursuit = performAirPursuit(command, perform)
+  if (pursuit) return pursuit
   const { state, side, action, input } = command
   const fighter = state[side]
   const chain = directionalInput(fighter, action, input)

@@ -1,5 +1,5 @@
 import { attackData } from './frameData'
-import { DIRECTIONAL_LAUNCH_SPEED, type DirectionalEnding } from './directionalChain'
+import { DIRECTIONAL_LAUNCH_SPEED, isAirPursuit, type DirectionalEnding } from './directionalChain'
 import type { CameraDetail } from './cinematicTypes'
 import type { ArcadeFighter, FightState } from './types'
 
@@ -15,7 +15,8 @@ const PROFILES: Record<
 
 function actorShot(actor: ArcadeFighter) {
   const attack = actor.attack
-  const ending = attack?.directionalChain
+  const chain = attack?.directionalChain
+  const ending = isAirPursuit(chain) ? 'air' : chain
   if (!attack || !ending || ending === 'bridge') return
   const { startup, active, recovery } = attackData(attack.kind, actor)
   const elapsed = attack.frame

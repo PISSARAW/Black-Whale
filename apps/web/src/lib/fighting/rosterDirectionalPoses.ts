@@ -1,4 +1,4 @@
-import type { DirectionalEnding } from './directionalChain'
+import { isAirPursuit, type DirectionalEnding } from './directionalChain'
 import { addPoses, scalePose, type FightPose } from './fightPose'
 import type { KeyedMove } from './keyPoseMoves'
 import type { MoveTimeline } from './keyPoseTimeline'
@@ -40,7 +40,8 @@ const TIMELINES = new WeakMap<MoveTimeline, Map<string, MoveTimeline>>()
 /** Keep the fighter's native limb path and accent the intent and timing of this finish. */
 export function rosterDirectionalMove(fighter: ArcadeFighter, native: KeyedMove): KeyedMove {
   const ending = fighter.attack?.directionalChain
-  if (!ending || ending === 'bridge' || signaturePose(fighter)) return native
+  if (!ending || ending === 'bridge' || isAirPursuit(ending) || signaturePose(fighter))
+    return native
   if (fighter.id === 'kurapika' || fighter.id === 'hisoka') return native
   const profile = ROSTER_CHOREOGRAPHY[fighter.id as RosterFighterId]
   if (!profile) return native

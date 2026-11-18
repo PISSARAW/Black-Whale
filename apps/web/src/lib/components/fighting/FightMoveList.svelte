@@ -7,7 +7,7 @@
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
-  import { hasDirectionalChain } from '$lib/fighting/directionalChain'
+  import { hasAirPursuit, hasDirectionalChain } from '$lib/fighting/directionalChain'
 
   export let fighterId: FighterId
   export let language: 'fr' | 'en'
@@ -86,8 +86,25 @@
             ? 'Les deux premiers coups doivent toucher. Certaines fins utilisent une technique si ses conditions sont remplies.'
             : 'The first two strikes must hit. Some endings use a technique when its requirements are met.'}</p>
       {/if}
+      {#if hasAirPursuit(fighterId)}
+        <h3>{language === 'fr' ? 'Poursuite après la relance' : 'Launcher pursuit'}</h3>
+        <p>
+          <kbd>{moveInputHint('→ + J', $bindings)}</kbd>
+          · {language === 'fr'
+            ? 'Léger aérien. Enchaîner dès la relance.'
+            : 'Air light. Input as soon as the launcher hits.'}
+        </p>
+        <p>
+          <kbd>{moveInputHint('→ + L', $bindings)}</kbd>
+          · {fighterId === 'kurapika'
+            ? 'Dowsing Whip · 24 aura'
+            : language === 'fr'
+              ? 'Bungee Gum · 55 aura et lien actif sélectionné sur l’adversaire'
+              : 'Bungee Gum · 55 aura and an active selected tether on the opponent'}
+        </p>
+      {/if}
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each moveset.combos as route (route.join(':'))}
+      {#each moveset.combos as route}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

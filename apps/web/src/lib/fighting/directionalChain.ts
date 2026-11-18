@@ -3,7 +3,8 @@ import type { ArcadeFighter, FightInput, MoveAction, MoveSlot } from './types'
 import { FIGHTING_ROSTER } from './roster'
 
 export type DirectionalEnding = 'ground' | 'air' | 'close' | 'carry'
-export type DirectionalChain = 'bridge' | DirectionalEnding
+export type AirPursuit = 'pursuit' | 'pursuit-technique'
+export type DirectionalChain = 'bridge' | DirectionalEnding | AirPursuit
 export const DIRECTIONAL_LAUNCH_SPEED = 56
 
 export interface DirectionalIntent {
@@ -28,7 +29,7 @@ export function directionalInput(
   fighter: ArcadeFighter,
   action: MoveAction,
   input: FightInput,
-): DirectionalChain | undefined {
+): DirectionalEnding | 'bridge' | undefined {
   if (!directionalChainAvailable(fighter, action, input)) return
   const attack = fighter.attack!
   if (attack.directionalChain === 'bridge') return endingFor(input, fighter.facing)
@@ -57,16 +58,30 @@ export function launchesWithDirectionalEnding(fighter: ArcadeFighter, antiAir: b
   return antiAir || fighter.attack?.directionalChain === 'air'
 }
 
-export function directionalSlot(chain: DirectionalChain): MoveSlot {
+export function directionalSlot(chain: DirectionalEnding | 'bridge'): MoveSlot {
   return chain === 'bridge' ? 'forwardLight' : FINISHES[chain]
 }
 
 export function directionalSourceMatches(fighter: ArcadeFighter, chain: DirectionalChain): boolean {
   const attack = fighter.attack
   if (!attack || !hasDirectionalChain(fighter.id)) return false
+  if (isAirPursuit(chain)) return hasAirPursuit(fighter.id) && attack.directionalChain === 'air'
   return chain === 'bridge'
     ? attack.moveId === `${fighter.id}:standingLight`
     : attack.directionalChain === 'bridge'
+}
+
+export function hasAirPursuit(id: ArcadeFighter['id']): boolean {
+  return id === 'kurapika' || id === 'hisoka'
+}
+
+export function isAirPursuit(chain?: DirectionalChain): chain is AirPursuit {
+  return chain === 'pursuit' || chain === 'pursuit-technique'
+}
+
+export function pursuitWindow(frame: number, data: AttackFrameData, buffer = 0): boolean {
+  const activeEnd = data.startup + data.active
+  return frame >= activeEnd + 2 - buffer && frame < activeEnd + data.recovery
 }
 
 export function directionalFrameData(
@@ -74,6 +89,8 @@ export function directionalFrameData(
   chain?: DirectionalChain,
 ): AttackFrameData {
   if (!chain) return data
+  if (chain === 'pursuit-technique') return data
+  if (chain === 'pursuit') return { ...data, lunge: 0, damage: Math.round(data.damage * 0.85) }
   if (chain === 'bridge')
     return {
       ...data,

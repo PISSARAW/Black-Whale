@@ -27,9 +27,12 @@ import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 import {
   directionalSourceMatches,
+  isAirPursuit,
+  pursuitWindow,
   type DirectionalChain,
   type DirectionalIntent,
 } from './directionalChain'
+import { pursuitTakeoff } from './fighterMovement'
 
 const MIN_X = 7
 const MAX_X = 93
@@ -84,6 +87,7 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
     aura:
@@ -113,6 +117,11 @@ export function startFighterAttack(options: {
     },
     bufferedAttack: null,
   }
+}
+
+function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain) {
+  if (chain === 'pursuit' || (chain === 'pursuit-technique' && fighter.id === 'hisoka'))
+    return pursuitTakeoff(fighter)
 }
 
 function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
@@ -208,6 +217,7 @@ function clamp(value: number, minimum: number, maximum: number): number {
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
   if (!fighter.attack || !legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
+  if (isAirPursuit(intent.directionalChain)) return pursuitWindow(fighter.attack.frame, data)
   const window = moveById(fighter.attack.moveId)?.cancelWindow
   return (
     (!window || fighter.attack.frame >= data.startup + window.start) &&

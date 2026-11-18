@@ -1,5 +1,8 @@
 # Fighting
 
+L’[intégration Qwen via Ollama et Tailscale](./qwen/README.md) associe une stratégie
+distante à un contrôleur rapide local pour Hisoka et Machi, avec replays vérifiés.
+
 [Halkenburg propose deux modes](../../../../../docs/clash-halkenburg-deux-modes.md) :
 la variante aléatoire du roster et le transfert de conscience entre les corps
 présents. Sommeil, priorité au réveil, décès matériels et coexistence restent

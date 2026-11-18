@@ -4,7 +4,7 @@
   import { createCareerTracker } from '$lib/fighting/career/runtime'
   import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
   import FightCombatSchool from '$lib/components/fighting/FightCombatSchool.svelte'
-  import { createCombatSchool, advanceCombatSchool } from '$lib/fighting/combatSchool'
+  import { createCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
   import FightPracticeHub from '$lib/components/fighting/FightPracticeHub.svelte'
   import FightLabSession from '$lib/components/fighting/FightLabSession.svelte'
@@ -13,7 +13,9 @@
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
   import { packReplayInput } from '$lib/fighting/fightReplayInput'
   import type { ReplayCommand } from '$lib/fighting/fightReplayTypes'
-  import { listenFightEvents } from './fightingEvents'
+  import { mountFightingPage } from './fightingLifecycle'
+  import FightQwenControl from '$lib/components/fighting/FightQwenControl.svelte'
+  import { supportsQwenDuel } from '$lib/fighting/qwen/observation'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   import FightLessons from '$lib/components/fighting/FightLessons.svelte'
   import { createFightLessons } from '$lib/fighting/fightLessonController'
@@ -295,38 +297,17 @@
     easterEggPreferences = readEasterEggPreferences()
     controls.load()
     void replays.load()
-    let frame = 0
-    let last = performance.now()
-    const stopEvents = listenFightEvents({
+    return mountFightingPage({
       controls,
+      school,
+      practice,
+      match,
       handleKey,
       release: resetFightInputs,
-      hidden: () => {
-        if (replays.active) {
-          if ($replays.playback?.running) replays.toggle()
-        } else if (state?.phase === 'fighting') paused = true
-      },
+      read: () => ({ state, input, opponentInput, active: true, paused }),
+      update: (next) => (state = next),
+      pause: () => (paused = true),
     })
-    const loop = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.05)
-      last = now
-      controls.poll(state?.mode, Boolean(state?.phase === 'fighting' && !paused && !replays.active))
-      if (state && !paused)
-        state = advanceCombatSchool({
-          school,
-          match,
-          state,
-          input: controls.combine('player', input),
-          dt,
-          opponentInput: practice.opponentInput(controls.combine('opponent', opponentInput)),
-        })
-      frame = requestAnimationFrame(loop)
-    }
-    frame = requestAnimationFrame(loop)
-    return () => {
-      cancelAnimationFrame(frame)
-      stopEvents()
-    }
   })
 </script>
 
@@ -382,6 +363,9 @@
     <div class="stage-wrap" bind:this={stageElement} style={`--hud-scale:${hudScale}`}>
       {#if !replays.active}<FightCombatSchool {school} {language} {...schoolActions} />{/if}
       {#if !$lessons && !$school}<FightReplays {replays} {language} {...replayActions} />{/if}
+      {#if supportsQwenDuel(state) && !replays.active}
+        <FightQwenControl qwen={match.qwen} disabled={paused || state.phase === 'finished'} />
+      {/if}
       <FightDisplaySettings
         bind:comfort
         {language}

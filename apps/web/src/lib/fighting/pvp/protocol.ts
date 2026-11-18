@@ -121,6 +121,7 @@ function parseEnvironment(value: unknown) {
     !only(value, [
       'stageId',
       'arenaInteractions',
+      'halkenburgRosterVariant',
       'morenaPresent',
       'unlawfulIntruders',
       'needleStock',
@@ -138,8 +139,15 @@ function parseEnvironment(value: unknown) {
   )
     return null
   if (!sideFlags(value.unlawfulIntruders, false) || !sideFlags(value.needleStock, true)) return null
-  if (!validPreparation(value.preparation)) return null
+  if (!validScenarioSettings(value)) return null
   return createFightEnvironment(value as unknown as Parameters<typeof createFightEnvironment>[0])
+}
+function validScenarioSettings(value: Record<string, unknown>): boolean {
+  return (
+    validPreparation(value.preparation) &&
+    (value.halkenburgRosterVariant === undefined ||
+      typeof value.halkenburgRosterVariant === 'boolean')
+  )
 }
 function sideFlags(value: unknown, optional: boolean): boolean {
   if (value === undefined) return optional

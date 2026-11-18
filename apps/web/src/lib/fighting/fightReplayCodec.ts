@@ -97,6 +97,10 @@ function setup(value: unknown): ReplaySetup {
     environment: createFightEnvironment({
       stageId,
       arenaInteractions: boolean(env.arenaInteractions),
+      halkenburgRosterVariant:
+        env.halkenburgRosterVariant === undefined
+          ? undefined
+          : boolean(env.halkenburgRosterVariant),
       morenaPresent: boolean(env.morenaPresent),
       unlawfulIntruders: {
         player: boolean(intruders.player),

@@ -4,6 +4,7 @@ import { COHORT_WILL_FRAMES } from './preparationTuning'
 import { canAct } from './fightActorState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
+import { halkenburgRosterVariant } from './halkenburgVariant'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState, FighterId } from './types'
 
@@ -16,6 +17,7 @@ declare module './types' {
 
 /** Requested duel adaptation: Halkenburg's seat becomes the randomly drawn host body. */
 export function replaceHalkenburgBody(state: FightState, side: FightSide): FightState {
+  if (!halkenburgRosterVariant(state)) return state
   const actor = state[side]
   const drawn = drawRosterBody(state, side)
   const body = drawn.fighter
@@ -59,6 +61,7 @@ export function performHalkenburgTransfer({ state, side, command }: ArsenalInvoc
 function transferBodyReady(state: FightState, side: FightSide): boolean {
   const actor = state[side]
   return (
+    halkenburgRosterVariant(state) &&
     state.phase === 'fighting' &&
     !state.catsName &&
     canAct(actor) &&
@@ -69,7 +72,7 @@ function transferBodyReady(state: FightState, side: FightSide): boolean {
 }
 
 export function halkenburgTransferOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  if (state[side].id !== 'halkenburg') return []
+  if (state[side].id !== 'halkenburg' || !halkenburgRosterVariant(state)) return []
   const command = { action: 'halkenburg-transfer' as const }
   return [
     {
@@ -78,9 +81,9 @@ export function halkenburgTransferOptions(state: FightState, side: FightSide): A
       labelFr: 'Halkenburg · Transfert dans un corps du roster',
       labelEn: 'Halkenburg · Transfer into a roster body',
       conditionFr:
-        'Adaptation de jeu demandée : le corps tiré au sort remplace Halkenburg avec ses coups et son Hatsu. Groupe marqué, consentant et volonté réunie requis. Le transfert ne restaure pas les PV ; le choix reste aléatoire.',
+        'Variante choisie, hors canon : le corps tiré au sort remplace Halkenburg avec ses coups et son Hatsu. Groupe marqué, consentant et volonté réunie requis. Le transfert ne restaure pas les PV.',
       conditionEn:
-        'Requested game adaptation: the randomly drawn host replaces Halkenburg with its moves and Hatsu. Marked consenting cohort and gathered will required. Transfer does not restore health; the draw stays random.',
+        'Selected non-canonical variant: the drawn host replaces Halkenburg with its moves and Hatsu. Marked consenting cohort and gathered will required. The transfer does not restore health.',
     },
   ]
 }

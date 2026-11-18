@@ -5,7 +5,7 @@ import { performModelSelection } from './metamorphosenModels'
 import { performCorpseCommand } from './illumiCorpses'
 import { performMachiMaterial } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
-import { performHalkenburgTransfer } from './halkenburgTransfer'
+import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
 import { performBlackVoice } from './blackVoiceControl'
 import { performBiohazardDevice } from './legacyBiohazardDevices'
 import { personDolphinOptions } from './dolphinPeopleOptions'
@@ -195,6 +195,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...dolphinArsenalOptions(state, side),
     ...copiedArsenalOptions(state, side),
     ...historicalOptions(state, side),
+    ...halkenburgTransferOptions(state, side),
   ]
 }
 

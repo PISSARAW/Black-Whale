@@ -117,6 +117,22 @@
     })
     await tick()
   }
+  export async function prepareHalkenburgScenario() {
+    player = 'halkenburg'
+    opponent = 'hisoka'
+    reset(
+      createFightEnvironment({
+        preparation: { mode: 'scenario', resources: [], cohorts: ['player'] },
+      }),
+    )
+    state = {
+      ...state,
+      player: { ...state.player, x: 44 },
+      opponent: { ...state.opponent, x: 49 },
+    }
+    for (let index = 0; index < 480; index++) advanceFrame()
+    await tick()
+  }
   export async function prepareMusseListening(id: 'musse' | 'benjamin') {
     player = id
     opponent = 'hisoka'
@@ -261,6 +277,10 @@
       dowsing: state.player.dowsingReading,
       dowsingPrompt: state.opponent.dowsingPrompt,
       gumAnchors: state.player.gumObjectAnchors,
+      casterId: state.player.id,
+      halkenburgOrigin: state.player.halkenburgOrigin,
+      possession: state.opponent.hatsuEffects.possessedFrames,
+      rosterVariant: state.environment.halkenburgRosterVariant === true,
       playerX: state.player.x,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
@@ -305,7 +325,7 @@
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
     <FightKallutoSupplies {state} side="player" language="fr" />
-    {#if ['hisoka', 'kalluto', 'kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if ['hisoka', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

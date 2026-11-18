@@ -130,6 +130,21 @@
         >
       {/each}
     </fieldset>
+    {#if player === 'halkenburg' || opponent === 'halkenburg'}
+      <label
+        ><input
+          type="checkbox"
+          checked={environment.halkenburgRosterVariant === true}
+          onchange={(event) =>
+            onChange({
+              ...environment,
+              halkenburgRosterVariant: event.currentTarget.checked,
+            })}
+        />{language === 'fr'
+          ? 'Variante hors canon : Halkenburg prend un corps aléatoire du roster'
+          : 'Non-canonical variant: Halkenburg takes a random roster body'}</label
+      >
+    {/if}
     <p>
       {language === 'fr'
         ? 'Ces présences et préparations constituent le scénario choisi. Le vol d’un Hatsu ne les transfère pas. Les flûtes au sol doivent être ramassées.'

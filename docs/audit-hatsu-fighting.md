@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-45`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-46`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -23,6 +23,8 @@ ajoutent des connexions matérielles simultanées et leurs commandes indépendan
 L’[intégration du ruleset 45](./clash-integration-arsenal-45.md) détaille la
 fusion avec les autres développements et distingue les contrôles réussis des
 échecs antérieurs encore ouverts.
+Le [correctif Halkenburg du ruleset 46](./clash-halkenburg-cible.md) réserve
+le remplacement aléatoire à une variante explicitement sélectionnée.
 
 ## Périmètre et niveau de preuve
 

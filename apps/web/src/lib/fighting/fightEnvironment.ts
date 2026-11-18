@@ -4,6 +4,8 @@ import type { FightPreparation } from './preparationTypes'
 
 /** Match scenario, independent of the scoring format and the two fighters. */
 export interface FightEnvironment {
+  /** Explicit non-canonical experiment; absent in ordinary manga-rule scenarios. */
+  halkenburgRosterVariant?: boolean
   arenaInteractions?: boolean
   needleStock?: Partial<Record<FightSide, boolean>>
   preparation?: FightPreparation
@@ -14,6 +16,7 @@ export interface FightEnvironment {
 
 export function createFightEnvironment(options: Partial<FightEnvironment> = {}): FightEnvironment {
   return {
+    ...(options.halkenburgRosterVariant ? { halkenburgRosterVariant: true } : {}),
     arenaInteractions: options.arenaInteractions ?? false,
     needleStock: options.needleStock ? { ...options.needleStock } : undefined,
     preparation: options.preparation

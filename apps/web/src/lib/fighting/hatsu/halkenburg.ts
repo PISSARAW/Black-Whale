@@ -4,6 +4,7 @@ import { chrolloHasActivePage } from '../chrolloBook'
 import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
+import { halkenburgRosterVariant } from '../halkenburgVariant'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
@@ -14,8 +15,8 @@ const POSSESSION_FRAMES = 120
 const SHOT_LIFE_COST = 8
 
 /**
- * The marked, consenting cohort remains mandatory. The requested roster variant
- * replaces Halkenburg's own playable body, instead of stunning the duel opponent.
+ * A prepared cohort transfers consciousness into the actual struck body.
+ * The roster experiment follows its separately selected scenario rule.
  */
 export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
@@ -69,7 +70,8 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
     ...occupied,
     [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
   }
-  if (archer.id === 'halkenburg' && !archer.nenOwner) return replaceHalkenburgBody(struck, side)
+  if (archer.id === 'halkenburg' && !archer.nenOwner && halkenburgRosterVariant(state))
+    return replaceHalkenburgBody(struck, side)
   return {
     ...struck,
     [defenderSide]: {

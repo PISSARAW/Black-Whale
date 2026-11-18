@@ -27,7 +27,7 @@ Fichiers : 913
 
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
-- production bundle partitioning > loads the split paper moveset with the real combat engine and finite material emission
+- production bundle partitioning > initializes Cross Game and movesets regardless of which shared chunk loads first
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 

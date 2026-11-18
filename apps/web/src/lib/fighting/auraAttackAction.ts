@@ -12,7 +12,6 @@ import { padailleMoveAvailable } from './padailleWeapon'
 import { feitanMoveAvailable } from './feitanPain'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import { observeComboMaster } from './comboMaster'
-import { pursuitAttackAllowed } from './airPursuitCommand'
 import type { AttackKind, AttackVariant, FightSide, FightState, FighterId } from './types'
 import type { DirectionalChain } from './directionalChain'
 
@@ -92,7 +91,7 @@ function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): bool
   const { state, side, kind, moveId } = options
   const fighter = state[side]
   if (fighter.id === 'camilla' && kind === 'special') return false
-  if (!pursuitAttackAllowed(options) || !techniqueAllowed(options)) return false
+  if (!techniqueAllowed(options)) return false
   const move = moveById(moveId)
   if (move && !canUseMovesetMove(state, side, move)) return false
   return fighter.aura >= attackAuraCost({ fighter, kind, moveId, concealed: intent.concealed })

@@ -1,14 +1,22 @@
 import { describe, expect, it } from 'vitest'
 import { selectedGumLink } from './bungeeNetwork'
-import { prepareCombatRoute } from './combatRouteSetup'
+import { prepareCombatRoute, type CombatRouteSetup } from './combatRouteSetup'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { canAct } from './fightActorState'
 import { attackData } from './frameData'
-import { EMPTY_INPUT, type FightInput, type FightState, type MoveAction } from './types'
+import {
+  EMPTY_INPUT,
+  type FighterId,
+  type FightInput,
+  type FightState,
+  type MoveAction,
+} from './types'
+import { FIGHTING_ROSTER } from './roster'
 
-type Pilot = 'kurapika' | 'hisoka'
-
-function duel(id: Pilot, options: { corner?: boolean; tether?: boolean; aura?: number } = {}) {
+function duel(
+  id: FighterId,
+  options: { corner?: boolean; tether?: boolean; aura?: number; prep?: CombatRouteSetup } = {},
+) {
   const opponent = id === 'kurapika' ? 'hisoka' : 'kurapika'
   const start = beginFight(createFight(id, opponent, { mode: 'versus-local' }))
   const ready = {
@@ -16,7 +24,7 @@ function duel(id: Pilot, options: { corner?: boolean; tether?: boolean; aura?: n
     player: { ...start.player, x: 44, aura: 100 },
     opponent: { ...start.opponent, x: 50 },
   }
-  const prepared = options.tether ? prepareCombatRoute(ready, 'bungee') : ready
+  const prepared = prepareCombatRoute(ready, options.tether ? 'bungee' : options.prep)
   return {
     ...prepared,
     player: { ...prepared.player, x: options.corner ? 87 : 44, aura: options.aura ?? 100 },
@@ -108,6 +116,83 @@ describe.each(['kurapika', 'hisoka'] as const)('poursuite de %s', (id) => {
     const { state } = resolveRace(launch, tap(ready, { right: true }))
     expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
   })
+})
+
+describe.each(FIGHTING_ROSTER.map(({ id }) => id))('poursuite du roster, %s', (id) => {
+  it.each([false, true])('sépare la conversion et la reprise du défenseur, coin %s', (corner) => {
+    const launch = launcher(duel(id, { corner }))
+    const immediate = resolveRace(launch, tap(launch, { right: true }))
+    expect(immediate.defended).toBe(false)
+    expect(immediate.state.impact).toMatchObject({
+      attacker: 'player',
+      comboHits: 4,
+      blocked: false,
+    })
+    expect(immediate.state.player.attack?.moveId).toBe(`${id}:airLight`)
+
+    for (const choice of [launch, tap(afterActive(launch, 10), { right: true })]) {
+      const recovery = resolveRace(launch, choice)
+      expect(recovery.defended).toBe(true)
+      expect(recovery.state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
+    }
+  })
+})
+
+const PREPARED_STRIKES = [
+  { id: 'phinks', prep: 'cyclotron', slot: 'finisher' },
+  { id: 'bonolenov', prep: 'prologue', slot: 'forwardSpecial' },
+  { id: 'kalluto', prep: 'paper', slot: 'forwardSpecial' },
+  { id: 'biscuit', prep: 'true-form', slot: 'finisher' },
+] as const
+
+it.each(PREPARED_STRIKES)(
+  '$id exige sa préparation pour la technique en poursuite',
+  ({ id, prep, slot }) => {
+    const normal = launcher(duel(id))
+    expect(tap(normal, { right: true }, 'special')).toEqual(normal)
+    for (const corner of [false, true]) {
+      const prepared = launcher(duel(id, { corner, prep }))
+      const intent = tap(prepared, { right: true }, 'special')
+      expect(intent.player.bufferedAttack?.moveId).toBe(`${id}:${slot}`)
+      const { state, defended } = resolveRace(prepared, intent)
+      expect(defended).toBe(false)
+      expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
+      expect(state.player.attack?.directionalChain).toBe('pursuit-technique')
+      if (id === 'phinks') {
+        expect(state.player.attack?.cyclotronTurns).toBeGreaterThan(0)
+        expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+      }
+    }
+  },
+)
+
+it('Chrollo convertit une frappe copiée sans transformer la page historique en coup', () => {
+  const initial = duel('chrollo')
+  const historical = launcher(initial)
+  expect(tap(historical, { right: true }, 'special')).toEqual(historical)
+  const openBook = {
+    ...initial,
+    player: {
+      ...initial.player,
+      chrolloBook: { open: true, page: 0, bookmark: null, pages: ['gel:forwardSpecial'] as const },
+    },
+  }
+  const launch = launcher(openBook)
+  const { state, defended } = resolveRace(launch, tap(launch, { right: true }, 'special'))
+  expect(defended).toBe(false)
+  expect(state.impact?.comboHits).toBe(4)
+  expect(state.player.attack).toMatchObject({
+    moveId: 'gel:forwardSpecial',
+    hatsuSource: 'gel',
+    copiedPage: 'gel:forwardSpecial',
+  })
+})
+
+it('les Hatsu de réaction ou de contrat ne deviennent pas des frappes', () => {
+  for (const id of ['camilla', 'tserriednich', 'halkenburg', 'longhi', 'rihan'] as const) {
+    const launch = launcher(duel(id))
+    expect(tap(launch, { right: true }, 'special')).toEqual(launch)
+  }
 })
 
 it('Hisoka doit avoir un lien sélectionné sur son adversaire pour la poursuite Hatsu', () => {

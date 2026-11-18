@@ -41,6 +41,7 @@ import { futureAcceptsMove } from './parallelFutureAbility'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { performDirectionalChain } from './directionalChainCommand'
+import { pursuitAttackAllowed } from './airPursuitCommand'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
@@ -225,6 +226,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (!pursuitAttackAllowed(options)) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state

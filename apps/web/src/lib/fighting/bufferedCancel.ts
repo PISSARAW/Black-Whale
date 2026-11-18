@@ -10,6 +10,7 @@ import {
 } from './directionalChain'
 import type { FighterMove } from './movesetTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
+import { executeAirPursuit, usesNativePursuitStart } from './airPursuitCommand'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Only an authored cancel can be anticipated; a whiff never turns it into a later neutral attack. */
@@ -56,6 +57,12 @@ export function flushBufferedCancel(
   if (!intent?.cancelFrom) return null
   const cleared = { ...state, [side]: { ...fighter, bufferedAttack: null } }
   if (fighter.attack?.moveId !== intent.cancelFrom) return cleared
+  const options = { state: cleared, side, ...intent }
+  if (usesNativePursuitStart(options)) {
+    const attack = fighter.attack!
+    if (!pursuitWindow(attack.frame, attackData(attack.kind, fighter))) return state
+    return executeAirPursuit(options, perform)
+  }
   if (!canAct(fighter) || !canStartFighterAttack(fighter, intent.kind, intent)) return state
-  return perform({ state: cleared, side, ...intent })
+  return perform(options)
 }

@@ -65,14 +65,10 @@ export function directionalSlot(chain: DirectionalEnding | 'bridge'): MoveSlot {
 export function directionalSourceMatches(fighter: ArcadeFighter, chain: DirectionalChain): boolean {
   const attack = fighter.attack
   if (!attack || !hasDirectionalChain(fighter.id)) return false
-  if (isAirPursuit(chain)) return hasAirPursuit(fighter.id) && attack.directionalChain === 'air'
+  if (isAirPursuit(chain)) return attack.directionalChain === 'air'
   return chain === 'bridge'
     ? attack.moveId === `${fighter.id}:standingLight`
     : attack.directionalChain === 'bridge'
-}
-
-export function hasAirPursuit(id: ArcadeFighter['id']): boolean {
-  return id === 'kurapika' || id === 'hisoka'
 }
 
 export function isAirPursuit(chain?: DirectionalChain): chain is AirPursuit {

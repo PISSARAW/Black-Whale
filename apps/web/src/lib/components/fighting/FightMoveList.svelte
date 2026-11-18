@@ -7,13 +7,16 @@
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
-  import { hasAirPursuit, hasDirectionalChain } from '$lib/fighting/directionalChain'
+  import { hasDirectionalChain } from '$lib/fighting/directionalChain'
+  import { airPursuitTechnique } from '$lib/fighting/airPursuitTechniques'
 
   export let fighterId: FighterId
   export let language: 'fr' | 'en'
 
   $: moveset = movesetFor(fighterId)
   $: arena = arenaTechnique(fighterId)
+  $: pursuit = airPursuitTechnique(fighterId)
+  $: examples = Array.from(new Map(moveset?.combos.map((route) => [route.join(':'), route])))
   $: groups = moveset
     ? ([
         ['normal', language === 'fr' ? 'Normales' : 'Normals'],
@@ -85,8 +88,6 @@
         <p>{language === 'fr'
             ? 'Les deux premiers coups doivent toucher. Certaines fins utilisent une technique si ses conditions sont remplies.'
             : 'The first two strikes must hit. Some endings use a technique when its requirements are met.'}</p>
-      {/if}
-      {#if hasAirPursuit(fighterId)}
         <h3>{language === 'fr' ? 'Poursuite après la relance' : 'Launcher pursuit'}</h3>
         <p>
           <kbd>{moveInputHint('→ + J', $bindings)}</kbd>
@@ -94,17 +95,20 @@
             ? 'Léger aérien. Enchaîner dès la relance.'
             : 'Air light. Input as soon as the launcher hits.'}
         </p>
-        <p>
-          <kbd>{moveInputHint('→ + L', $bindings)}</kbd>
-          · {fighterId === 'kurapika'
-            ? 'Dowsing Whip · 24 aura'
-            : language === 'fr'
-              ? 'Bungee Gum · 55 aura et lien actif sélectionné sur l’adversaire'
-              : 'Bungee Gum · 55 aura and an active selected tether on the opponent'}
-        </p>
+        {#if pursuit || fighterId === 'chrollo'}
+          <p>
+            <kbd>{moveInputHint('→ + L', $bindings)}</kbd>
+            · {pursuit
+              ? (language === 'fr' ? pursuit.nameFr : pursuit.nameEn)
+              : language === 'fr' ? 'Frappe d’une page utilisable' : 'Strike from an available page'}
+          </p>
+          <p>{language === 'fr'
+            ? 'La technique exige ses ressources et sa préparation habituelles.'
+            : 'The technique requires its normal resources and preparation.'}</p>
+        {/if}
       {/if}
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each moveset.combos as route}
+      {#each examples as [key, route] (key)}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

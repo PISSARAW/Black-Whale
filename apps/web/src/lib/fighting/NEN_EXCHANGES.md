@@ -16,3 +16,14 @@ sans prolonger le hitstun pour garantir la suite. Une attente peut donc coûter
 la conversion. Les chiffres et seuils sont des règles arcade, pas des rangs du manga.
 
 Les replays passent à `clash-combat-50-nen-exchanges`.
+
+## Réactions liées au mécanisme
+
+`nenImpactResponse.ts` capture le contact résolu après les effets du Hatsu, avant
+la séparation finale. Percussion, projectile, aiguille et contrainte réellement
+appliquée sont distingués sans déduire un effet de la seule affinité. La réaction
+survit au cancel de l’émetteur et à la disparition du projectile. La force tient
+compte du profil de la victime ; les frappes physiques gardent leurs gestes propres.
+Une traction ou une immobilisation active articule la résistance du corps à sa
+position autoritaire. La présentation ne produit ni déplacement, ni dégât, ni
+nouvelle traversée. Garde, parade et esquive n’ajoutent aucune réaction de blessure.

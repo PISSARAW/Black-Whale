@@ -1,3 +1,4 @@
+import { nenConstraintPlan } from './nenImpactResponse'
 import { createFightPoseClock } from './fightPoseClock'
 import { rosterContactMotion } from './rosterHitReaction'
 import { physicalHitAtContact } from './fightHitResponse'
@@ -7,7 +8,10 @@ import type { ReactionContext } from './fightReactions'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 type Input = { fighter: ArcadeFighter; seconds: number; progress?: number }
-type Contact = Pick<ReactionContext, 'hitZone' | 'strikeReaction' | 'strikeMotion' | 'physicalHit'>
+type Contact = Pick<
+  ReactionContext,
+  'hitZone' | 'strikeReaction' | 'strikeMotion' | 'physicalHit' | 'nenResponse'
+>
 type Received = { sequence: number; contact: Contact; progress: number; reacting: boolean }
 
 /** Keep the contact's direction even when the attacker has already cancelled into another move. */
@@ -42,6 +46,7 @@ export function createFightReactionPresentation() {
     return {
       rival: rivalOf(state, side),
       ...contacts[side]?.contact,
+      nenConstraint: nenConstraintPlan(state, side),
       poseContinuity: physicalRosterPair(state.player.id, state.opponent.id)
         ? motion[side]
         : undefined,
@@ -69,7 +74,7 @@ function receivedImpact(state: FightState, side: FightSide) {
 function contactContext(state: FightState, previous?: Received): Contact {
   const impact = state.impact!
   const attacker = state[impact.attacker]
-  const ordinary = { hitZone: impact.zone }
+  const ordinary = { hitZone: impact.zone, nenResponse: impact.nenResponse }
   if (!directionalContact(state)) return ordinary
   const directed = {
     ...ordinary,

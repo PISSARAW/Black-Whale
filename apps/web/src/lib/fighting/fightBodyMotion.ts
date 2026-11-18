@@ -241,7 +241,7 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
   if (fighter.attack) return attackingPlan(fighter, standing, context.poseFraction)
-  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+  return restingWithConstraint(fighter, context, standing)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!fighter.luiniPassage || fighter.hitStun > 0) return null
@@ -428,4 +428,14 @@ function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: Arcad
     const weapon = figure.getObjectByName(name)
     if (weapon) weapon.visible = !fighter.weaponsConfiscated
   }
+}
+
+function restingWithConstraint(
+  fighter: ArcadeFighter,
+  context: PlanContext,
+  standing: FightPose,
+): BodyPlan | null {
+  const constraint = context.nenConstraint
+  if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
+  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
 }

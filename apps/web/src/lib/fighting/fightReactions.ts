@@ -1,3 +1,4 @@
+import { nenImpactBodyPlan, type NenImpactResponse } from './nenImpactResponse'
 import {
   addPoses,
   lerpPose,
@@ -38,6 +39,8 @@ export interface ReactionContext {
   strikeReaction?: 'blinky-hammer' | 'blinky-drive'
   strikeMotion?: StrikeContactMotion
   physicalHit?: PhysicalHit
+  nenResponse?: NenImpactResponse
+  nenConstraint?: BodyPlan | null
   poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
 
@@ -182,6 +185,12 @@ export function reactionPlan(
 }
 
 function hitPlan(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose): BodyPlan {
+  const nenPlan = nenImpactBodyPlan(
+    fighter,
+    { response: context.nenResponse, progress: context.progress },
+    standing,
+  )
+  if (nenPlan) return nenPlan
   if (context.physicalHit) return physicalHitPlan(fighter, context, standing)
   const recoil =
     directedRecoil(context) ?? sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)

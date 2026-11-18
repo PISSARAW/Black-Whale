@@ -1,3 +1,4 @@
+import { recordNenImpact } from '../nenImpactResponse'
 import { advanceMachiCorpses } from '../machiCorpses'
 import { advanceBenjaminToxin } from '../benjaminToxin'
 import { advanceRosterGuestActors, armRosterGuests } from '../rosterGuestActors'
@@ -83,9 +84,10 @@ export function resolveContacts(start: FightState, settled: FightState): DuelPha
       ),
     ),
   )
-  if (fightResolutionPending(resolved)) return { state: resolved, pending: true }
-  const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
-  return { state: { ...resolved, ...separated }, pending: false }
+  const reacted = recordNenImpact(armed, resolved)
+  if (fightResolutionPending(reacted)) return { state: reacted, pending: true }
+  const separated = separateFighterPushboxes(reacted.player, reacted.opponent)
+  return { state: { ...reacted, ...separated }, pending: false }
 }
 
 function flushBuffered(state: FightState, side: FightSide, attack: DuelAttack): FightState {

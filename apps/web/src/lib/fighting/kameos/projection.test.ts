@@ -107,7 +107,7 @@ describe('kameo duel projection (lot 3)', () => {
     expect(resolveAllKameoContacts(struck)).toBe(struck)
   })
 
-  it('spends a strike on one body: the leader, when both stand in reach', () => {
+  it('never spends again, after the main pair, a strike its leader already took', () => {
     const both = performAttack(stage({ x: 47 }, { x: 52 }), 'opponent', 'heavy')
     const crowded = { ...both, player: { ...both.player, x: 46 } }
     const struck = frames(crowded, 40, true)

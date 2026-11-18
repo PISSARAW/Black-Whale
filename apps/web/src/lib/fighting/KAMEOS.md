@@ -1,8 +1,8 @@
 # Kaméos de soutien — plan de conception
 
-Statut : lots 0 à 4 faits (caractérisation, scission du pas dans `duelStep/`, état,
-projection de mêlée et catalogue des six kaméos de soutien dans `kameos/`) ; le reste
-est une **proposition**. Nom de travail « Kaméo » (terme de MK) ; un nom propre à
+Statut : lots 0 à 5 faits. Le kaméo de soutien peut être appelé, entre, applique son
+effet et repart, dans le moteur. Le rendu, le HUD et les touches de l'interface
+(lot 6) restent à faire. Nom de travail « Kaméo » (terme de MK) ; un nom propre à
 Clash est à choisir pour l'interface.
 
 ## Objectif (révisé : kaméos de soutien)

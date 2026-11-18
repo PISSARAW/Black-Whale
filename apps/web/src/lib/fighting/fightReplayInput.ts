@@ -21,6 +21,8 @@ export const REPLAY_INPUT_KEYS = [
   'focusHands',
   'focusFeet',
   'call',
+  // Appended last: existing replays keep the meaning of every earlier bit.
+  'kameo',
 ] as const satisfies readonly (keyof FightInput)[]
 export const REPLAY_INPUT_MASK = 2 ** REPLAY_INPUT_KEYS.length - 1
 export function packReplayInput(input: FightInput): number {

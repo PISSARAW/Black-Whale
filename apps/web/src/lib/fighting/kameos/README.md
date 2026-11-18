@@ -46,3 +46,25 @@ branché dans `stepFight` : aucun kaméo n'entre en scène avant le lot 5.
 L'effet vit dans les `hatsuEffects` du leader ou de l'adversaire. Le pas ordinaire le
 fait avancer une seule fois par frame, et un test le vérifie. `withKameos` n'accepte
 que des personnages du catalogue.
+
+## Lot 5 · appel, présence, effet, sortie
+
+- `runtime.ts` : le bouton `kameo` (`FightInput.kameo`) appelle le kaméo depuis la
+  réserve, si le leader peut agir et si le kaméo a assez d'aura. Avec la direction
+  tenue en même temps, il apparaît à côté (+3), devant (+8) ou derrière (−6) son
+  leader. Le cycle est ensuite entering → acting → leaving → reserve, puis 600 frames
+  de recharge. L'effet tombe une seule fois, `startup` frames après le début de
+  `acting`. Un kaméo frappé avant de partir est interrompu, sans effet, et un leader
+  à terre fait partir son kaméo.
+- `ai.ts` : en versus IA, le camp IA appelle son kaméo quand le rôle s'y prête : soin
+  sous 60 % de PV, défense face à une attaque proche, piège à moyenne distance, etc.
+  La décision est déterministe.
+- `contacts.ts` · `resolveNearerKameoContacts` : un kaméo plus proche de l'attaquant
+  que son leader, et dans la hitbox active, encaisse le coup à sa place. C'est la
+  convention de `rosterGuests`. Ensuite, `resolveKameoFrameContacts` traite les coups
+  qui ont manqué le leader mais restent à portée du kaméo.
+- `frame.ts` est branché dans `stepFight` entre `settleBodies` et `resolveContacts`.
+  Sans kaméo, l'état ressort inchangé, et les empreintes de caractérisation aussi.
+
+Le bit `kameo` est ajouté **en dernier** dans `REPLAY_INPUT_KEYS` : les replays
+existants gardent le sens de chacun de leurs bits.

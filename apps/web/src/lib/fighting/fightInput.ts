@@ -17,6 +17,8 @@ export interface FightInput {
   /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
   /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
   call?: boolean
+  /** Calls the support kameo; left / right pick where it appears (KAMEOS.md). */
+  kameo?: boolean
   left: boolean
   right: boolean
   jump: boolean

@@ -52,6 +52,11 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
+  'bono-model',
+  'illumi-corpse',
+  'illumi-corpse-order',
+  'illumi-corpse-speak',
+  'illumi-corpse-release',
   'dowsing-locate',
   'dowsing-video',
   'judgment-reveal',

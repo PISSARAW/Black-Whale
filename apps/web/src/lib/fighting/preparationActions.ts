@@ -1,3 +1,4 @@
+import { releasePreparedEntity } from './preparedCorpseBody'
 import { illumiBodyFree } from './illumiState'
 import { witnessedHatsuState } from './nenWitness'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -105,7 +106,7 @@ export function releasePreparedControl(state: FightState, side: FightSide): Figh
     battlefield: {
       ...state.battlefield,
       entities: state.battlefield.entities.map((entry) =>
-        entry.controller?.side === side ? { ...entry, controller: undefined } : entry,
+        entry.controller?.side === side ? releasePreparedEntity(entry) : entry,
       ),
     },
   }

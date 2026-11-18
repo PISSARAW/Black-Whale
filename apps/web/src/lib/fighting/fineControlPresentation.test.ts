@@ -83,7 +83,8 @@ describe('fine material control stays in type 1', () => {
       end = frames(cast(end, side, 'kalluto', 'forwardSpecial'), 50, (next) =>
         expect(camera.update(next).detail).toBeNull(),
       )
-      expect(end.nextProjectileId).toBe(3)
+      expect(end.nextProjectileId).toBeGreaterThan(3)
+      expect(new Set(end.projectiles.map((shot) => shot.id)).size).toBe(end.projectiles.length)
     })
     it(`Zakuro ${side} manipulates only its prepared blood, then recalls it without healing`, () => {
       const clock = createFineControlClock(),

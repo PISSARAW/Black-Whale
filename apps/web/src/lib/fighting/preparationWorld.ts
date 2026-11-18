@@ -56,15 +56,25 @@ function installProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
-  if (resources.has('cameras')) entities.push(entity('camera', side, x + 1))
-  if (resources.has('hostages'))
-    entities.push({ ...entity('hostage', side, x + 3), captiveOf: side })
+  installEvidenceProps(entities, context)
   if (resources.has('animals')) entities.push(entity('animal', side, x + 2))
   if (resources.has('birds')) entities.push(entity('bird', side, x + 3))
   if (resources.has('plants')) entities.push(entity('seed', side, x))
   if (resources.has('objects')) entities.push(entity('crate', side, x + 4))
   if (resources.has('needles')) entities.push(entity('needles', side, x - 2))
   if (resources.has('flutes')) entities.push(entity('flute', side, x - 1))
+}
+
+function installEvidenceProps(
+  entities: PreparedEntity[],
+  context: { resources: Set<string>; side: FightSide; x: number },
+) {
+  const { resources, side, x } = context
+  if (resources.has('corpses'))
+    entities.push({ ...entity('corpse', side, x + 1), health: 60, arena: { width: 1, height: 3 } })
+  if (resources.has('cameras')) entities.push(entity('camera', side, x + 1))
+  if (resources.has('hostages'))
+    entities.push({ ...entity('hostage', side, x + 3), captiveOf: side })
 }
 
 function installRooms(entities: PreparedEntity[], side: FightSide) {

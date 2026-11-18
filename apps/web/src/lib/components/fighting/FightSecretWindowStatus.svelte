@@ -22,6 +22,7 @@
     ko: ['Corps inerte', 'Unmoving body'],
     'concealed-gesture': ['Geste observé', 'Observed gesture'],
     'sleeping-body': ['Corps endormi', 'Sleeping body'],
+    'audio-only': ['Écoute à travers les obstacles', 'Listening through obstacles'],
   }
   $: feed = state[side].secretWindow
   $: visible = side === 'player' || state.mode === 'versus-local'
@@ -29,7 +30,27 @@
 </script>
 
 {#if visible && feed && secretWindowNenActive(state[side])}
-  <div class="secret-window-status">Secret Window · {action}</div>
+  <div class="secret-window-status">
+    Secret Window · {action}
+    {#if feed.words}<p>« {feed.words.text} »</p>{/if}
+    {#if feed.history?.length || feed.recordings?.length}
+      <details>
+        <summary
+          >{language === 'fr'
+            ? 'Consulter les observations reçues'
+            : 'Review received observations'}</summary
+        >
+        {#each feed.history ?? [] as entry, index (index)}
+          <p>
+            {(entry.frame / 60).toFixed(1)} s · {ACTIONS[entry.action][language === 'fr' ? 0 : 1]}
+          </p>
+        {/each}
+        {#each feed.recordings ?? [] as entry, index (index)}
+          <p>{(entry.frame / 60).toFixed(1)} s · « {entry.text} »</p>
+        {/each}
+      </details>
+    {/if}
+  </div>
 {/if}
 
 <style>

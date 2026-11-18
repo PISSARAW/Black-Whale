@@ -1,3 +1,4 @@
+import { multiCombatAi } from './multiCombatAi'
 import { priorityArsenalAi } from './priorityArsenalAi'
 import { luiniArsenalAi } from './luiniArsenal'
 import { biohazardDeviceAi } from './biohazardDeviceAi'
@@ -26,6 +27,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    multiCombatAi(state) ??
     priorityArsenalAi(state) ??
     luiniArsenalAi(state, perform) ??
     biohazardDeviceAi(state, perform) ??

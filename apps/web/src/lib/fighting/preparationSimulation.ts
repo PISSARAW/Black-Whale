@@ -105,6 +105,7 @@ function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity
   const awake = { ...entry, sleepingFrames: Math.max(0, (entry.sleepingFrames ?? 0) - 1) }
   const control = entry.controller
   if (!control || !liveEntity(entry)) return awake
+  if (control.source === 'illumi') return awake
   if (!controllerKeepsAbility(state, entry)) return { ...awake, controller: undefined }
   if (control.source === 'sayird') return advanceAnimal(state, awake)
   return advanceCourier(state, awake)

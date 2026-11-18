@@ -1,3 +1,4 @@
+import { advanceCorpseControls } from './illumiCorpses'
 import { illumiNenActive } from './illumiAccess'
 import { illumiState, type NeedlePuppet } from './illumiState'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
@@ -11,7 +12,7 @@ export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFi
 
 export function advanceIllumi(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
-  return advanceForSide(advanceForSide(state, 'player'), 'opponent')
+  return advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent'))
 }
 
 function advanceForSide(state: FightState, side: FightSide): FightState {

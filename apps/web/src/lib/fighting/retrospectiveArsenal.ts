@@ -1,3 +1,5 @@
+import { performModelSelection, modelSelectionOptions } from './metamorphosenModels'
+import { performCorpseCommand, corpseOptions } from './illumiCorpses'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { traceArsenal } from './arsenalTrace'
 import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
@@ -51,6 +53,8 @@ const INVOCATION_FAMILIES: Record<
   string,
   ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
 > = {
+  bono: performModelSelection,
+  illumi: performCorpseCommand,
   machi: performMachiMaterial,
   dolphin: performDolphinLoan,
   halkenburg: performHalkenburgTransfer,
@@ -92,6 +96,8 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...modelSelectionOptions(state, side),
+    ...corpseOptions(state, side),
     ...biohazardDeviceOptions(state, side),
     ...blackVoiceOptions(state, side),
     ...halkenburgTransferOptions(state, side),

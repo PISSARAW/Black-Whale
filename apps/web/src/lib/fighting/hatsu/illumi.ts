@@ -6,5 +6,5 @@ export const illumiHatsu: FighterHatsu = {
   id: 'illumi',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: advanceIllumi,
+  onFrame: (state) => advanceIllumi(state),
 }

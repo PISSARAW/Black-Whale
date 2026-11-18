@@ -1,5 +1,10 @@
 # Fighting
 
+La [passe à au moins trois combats](../../../../../docs/clash-au-moins-trois-combats.md)
+ajoute les modèles mémorisés de Bonolenov, les cadavres matériels contrôlés par
+Illumi et les contrôles de matière de Blinky. Le seuil conserve les personnages
+ayant davantage de combats et signale les scènes collectives ou rapportées.
+
 Le [lot à trois séquences de combat](../../../../../docs/clash-trois-combats.md)
 complète Kalluto et Hinrigh : dispersion et regroupement du papier, coupures,
 armes-serpents conservant leur chargeur, couteaux finis, contre du bras-hache,
@@ -137,7 +142,7 @@ L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
 combattant ; les contrats particuliers des techniques restent prioritaires.
-Le ruleset courant `clash-combat-29` inclut le réglage du hitstun de l’étape 3,
+Le ruleset courant `clash-combat-33` inclut le réglage du hitstun de l’étape 3,
 les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
 des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
 [usages des sept techniques avancées](./NEN_COMBAT.md).

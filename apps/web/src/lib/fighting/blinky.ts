@@ -83,7 +83,8 @@ export function inBlinkyNozzle(fighter: ArcadeFighter, point: { x: number; y: nu
   )
 }
 export function blinkyNozzleY(fighter: ArcadeFighter): number {
-  return fighter.y + (fighter.attack?.moveId === 'shizuku:downSpecial' ? 2 : 6.1)
+  const low = fighter.crouching || fighter.attack?.moveId === 'shizuku:downSpecial'
+  return fighter.y + (low ? 2 : 6.1)
 }
 
 /** Two occupied hands can cover at most two separate wounds in this duel abstraction. */

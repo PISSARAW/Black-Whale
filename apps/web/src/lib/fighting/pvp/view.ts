@@ -1,3 +1,4 @@
+import { redactBattleModels } from '../metamorphosenModels'
 import { redactPriorityWorld } from '../priorityPrivacy'
 import { enContactReadings } from '../en/contacts'
 import { futureVisibleState } from '../parallelFuturePresentation'
@@ -50,6 +51,7 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  redactBattleModels(enemy)
   enemy.luiniExit = undefined
   enemy.luiniSelectedDestination = undefined
   enemy.luiniComplete = undefined
@@ -74,6 +76,7 @@ function redactEnemy(enemy: ArcadeFighter) {
       aiPlan: undefined,
       aiLastUse: undefined,
     }
+  enemy.heardCorpse = undefined
   enemy.bodyAndSoulReplies = undefined
   enemy.secretWindow = undefined
   enemy.secretWindowMode = undefined

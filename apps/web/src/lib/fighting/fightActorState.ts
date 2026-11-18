@@ -19,7 +19,8 @@ function characterBusy(fighter: ArcadeFighter): boolean {
     fighter.easterEgg ||
     fighter.throwTechRecoveryFrames ||
     fighter.luiniPassage ||
-    fighter.machiSuture
+    fighter.machiSuture ||
+    fighter.corpsePreparation
   )
     return true
   if (!illumiBodyFree(fighter)) return true

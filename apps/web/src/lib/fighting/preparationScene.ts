@@ -1,3 +1,4 @@
+import { posePreparedCorpse } from './corpseScene'
 import {
   buildPreparedVisitModel,
   syncPreparedVisitModel,
@@ -31,6 +32,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   function build(entry: PreparedEntity) {
     if (
+      entry.kind === 'corpse' ||
       entry.kind === 'morena' ||
       entry.kind === 'supporter' ||
       entry.kind === 'puppet' ||
@@ -121,7 +123,20 @@ export function createPreparationScene(options: EffectSceneOptions) {
       feather.position.set(0.12, 0.9, 0.2)
       figure.root.add(feather)
     }
+    addCorpseNeedles(figure.root, entry)
     return figure.root
+  }
+
+  function addCorpseNeedles(root: import('three').Group, entry: PreparedEntity) {
+    if (entry.kind !== 'corpse') return
+    const pins = new THREE.Group()
+    pins.name = 'corpse-control-needles'
+    for (const x of [-0.07, 0.07]) {
+      const pin = box([0.015, 0.18, 0.015], 0xdce3e6)
+      pin.position.set(x, 1.12, 0.08)
+      pins.add(pin)
+    }
+    root.add(pins)
   }
 
   function animal(root: import('three').Group) {
@@ -185,6 +200,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
     }
     root.visible = entry.present
     root.position.set(options.worldX(entry.x), options.worldY(entry.y), backgroundDepth(entry))
+    posePreparedCorpse(root, entry, state.frame / 60)
     syncStaticAppearance(root, entry)
     syncAnimatedAppearance({
       root,

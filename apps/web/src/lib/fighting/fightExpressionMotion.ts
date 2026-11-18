@@ -12,6 +12,8 @@ interface ExpressionContext {
   fighter: ArcadeFighter
   seconds: number
   progress: number
+  /** Visible exertion of an authored support action, without fabricating an attack. */
+  activity?: number
 }
 
 /** Presentation only: reads the same attack/reaction clocks as the existing body motion. */
@@ -28,8 +30,7 @@ export function expressiveFightMotion(
       rig.pose = null
       return
     }
-    // Melody's flute pose owns her face while she plays (eyes closed, melodyFigurePose.ts).
-    const target = fightExpressionTarget(context.fighter, context.progress)
+    const target = fightExpressionTarget(context.fighter, context.progress, context.activity)
     const pose = blendFace(rig, { target: target.pose, seconds: context.seconds })
     rig.mode = target.mode
     drawFightFace(rig, context.fighter.melodyPerformance ? { ...pose, eye: 0.12 } : pose)

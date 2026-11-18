@@ -1,4 +1,5 @@
 import type { ArcadeFighter, FighterId } from './types'
+import { KAMEO_EXPRESSION_PROFILES } from './kameos/expressionProfiles'
 
 export interface ExpressionProfile {
   direction: string
@@ -369,8 +370,8 @@ const BISCUIT_NATURAL: ExpressionProfile = {
   shoulder: 0.013,
 }
 
-export function fightExpressionProfile(fighter: ArcadeFighter) {
+export function fightExpressionProfile(fighter: Pick<ArcadeFighter, 'id' | 'biscuitTrueForm'>) {
   return fighter.id === 'biscuit' && fighter.biscuitTrueForm
     ? BISCUIT_NATURAL
-    : FIGHT_EXPRESSION_PROFILES[fighter.id]
+    : (FIGHT_EXPRESSION_PROFILES[fighter.id] ?? KAMEO_EXPRESSION_PROFILES[fighter.id])
 }

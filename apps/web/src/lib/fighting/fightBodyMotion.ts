@@ -70,6 +70,9 @@ export interface BodyMotionOptions extends ReactionContext {
   onAwakeningFrame?: number | null
   /** The motion to play when the rig has nothing for this frame. */
   fallback?: HumanMotion
+  /** A support script can author its motion on the same articulated rig as the roster. */
+  plan?: BodyPlan
+  activity?: number
 }
 
 const DEFAULT_STANCE: FightStance = {
@@ -90,7 +93,7 @@ const ATTACK_POSES = new Set<FighterPose>(['light', 'heavy', 'special', 'ranged'
 
 export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
-  const plan = bodyPlan(fighter, options)
+  const plan = options.plan ?? bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
     animateServiceHandgun(human.figure, fighter)
     syncConfiscatedWeapons(human.figure, fighter)

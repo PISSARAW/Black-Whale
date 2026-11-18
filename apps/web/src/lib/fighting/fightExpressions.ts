@@ -1,5 +1,5 @@
 import { attackData } from './frameData'
-import { FIGHT_EXPRESSION_PROFILES, fightExpressionProfile } from './fightExpressionProfiles'
+import { fightExpressionProfile } from './fightExpressionProfiles'
 import type { ArcadeFighter, FighterId } from './types'
 
 export type FightEmotion = 'concentration' | 'effort' | 'pain' | 'rest'
@@ -30,13 +30,13 @@ export const REST_FACE: Readonly<FightFacePose> = {
   shoulder: 0,
 }
 export const FACE_CONTROLS = Object.keys(REST_FACE) as (keyof FightFacePose)[]
-export const hasFightExpression = (id: FighterId) => Boolean(FIGHT_EXPRESSION_PROFILES[id])
+export const hasFightExpression = (id: FighterId) => Boolean(fightExpressionProfile({ id }))
 const clamp = (value: number) => Math.max(0, Math.min(1, value))
 
-export function fightExpressionTarget(fighter: ArcadeFighter, progress: number) {
+export function fightExpressionTarget(fighter: ArcadeFighter, progress: number, activity = 0) {
   const profile = fightExpressionProfile(fighter)
   if (!profile || fighter.easterEgg) return { mode: 'rest' as const, pose: { ...REST_FACE } }
-  const stimulus = expressionStimulus(fighter, clamp(progress))
+  const stimulus = expressionStimulus(fighter, clamp(progress), clamp(activity))
   const pain = stimulus.pain * profile.intensity
   const effort = stimulus.effort * profile.intensity
   const eyes = profile.eyeResponse ?? 1,
@@ -77,7 +77,7 @@ function constrainExpression(fighter: ArcadeFighter, pose: FightFacePose) {
   return pose
 }
 
-function expressionStimulus(fighter: ArcadeFighter, progress: number) {
+function expressionStimulus(fighter: ArcadeFighter, progress: number, activity: number) {
   // An interrupted attack must never keep a smile/effort expression over a received hit.
   if (fighter.health <= 0 || fighter.pose === 'ko')
     return { mode: 'pain' as const, pain: 0.8, effort: 0 }
@@ -87,6 +87,7 @@ function expressionStimulus(fighter: ArcadeFighter, progress: number) {
     return { mode: 'pain' as const, pain: (1 - progress) * 0.4, effort: 0 }
   if (fighter.attack) return { mode: 'effort' as const, pain: 0, effort: attackEffort(fighter) }
   if (fighter.blockStun > 0) return { mode: 'effort' as const, pain: 0, effort: 0.5 }
+  if (activity > 0) return { mode: 'effort' as const, pain: 0, effort: activity }
   return { mode: 'concentration' as const, pain: 0, effort: 0 }
 }
 

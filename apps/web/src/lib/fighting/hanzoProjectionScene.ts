@@ -1,10 +1,10 @@
 import { sleepingBody } from './hanzoProjection'
 import type { ArcadeFighter, FightSide, FightState } from './types'
-import type { HumanPose } from '$lib/tour/humanAnimation'
+import type { HumanPose, HumanAnimationLayer } from '$lib/tour/humanAnimation'
 
 interface ProjectionModel {
   root: import('three').Group
-  animate: (seconds: number, pose?: HumanPose) => void
+  animate: (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void
 }
 
 export interface ProjectionSceneOptions {

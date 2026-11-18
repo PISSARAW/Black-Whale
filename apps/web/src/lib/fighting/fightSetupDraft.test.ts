@@ -26,6 +26,22 @@ describe('Clash setup restoration', () => {
     expect(readFightSetup()).toEqual(draft)
   })
 
+  it('restores support choices and rejects invalid support ids', () => {
+    const values = storage()
+    const draft = {
+      ...defaultFightSetup(),
+      kameos: { player: 'tubeppa' as const, opponent: 'morena' as const },
+    }
+    saveFightSetup(draft)
+    expect(readFightSetup()).toEqual(draft)
+    const key = [...values.keys()][0]
+    values.set(
+      key,
+      JSON.stringify({ ...JSON.parse(values.get(key)!), kameos: { player: 'missing' } }),
+    )
+    expect(readFightSetup()).not.toHaveProperty('kameos')
+  })
+
   it('rejects obsolete selections and malformed browser storage', () => {
     const values = storage()
     saveFightSetup(defaultFightSetup())

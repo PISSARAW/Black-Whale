@@ -193,24 +193,24 @@
     },
     {
       "id": "prince-zhanglei",
-      "body": { "build": "broad", "height": 1.05, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "body": { "build": "broad", "height": 0.88, "frame": "adult", "shoulders": 1.06 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "tired" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 362 ; tunique chinoise à col droit, bleu profond",
-        "skin": "0xdbb492",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-18 : homme petit, chauve et à la peau foncée ; tunique chinoise claire à plastron sombre et motifs de nœuds, pantalon ample. Brun de peau et teintes ivoire / charbon choisis à partir de la planche monochrome et de la description.",
+        "skin": "0xa57758",
         "hair": "0x191715",
         "attire": {
-          "jacket": "0x24374b",
-          "shirt": "0xe7e2d6",
-          "trousers": "0x1a2836",
-          "accent": "0xcfae55"
+          "jacket": "0xe4dfd2",
+          "shirt": "0xf4efe3",
+          "trousers": "0xdcd6c7",
+          "accent": "0xd1c4a1"
         }
       },
       "attire": "changshan",
-      "signatures": [],
+      "signatures": ["moustache"],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
-      "note": "Corpulence tranquille, petit sourire permanent de négociant. Le changshan est déclaré ici plutôt que dérivé du rôle : `wardrobe.ts` l'habillerait en costume occidental, et c'est précisément la sorte d'erreur muette que la priorité §2.5 existe pour empêcher."
+      "note": "Référence demandée : crâne chauve, yeux carrés mi-clos et cernés, plis partant de l'arête du nez à la place des sourcils, deux colonnes de trois points au front (le plus grand en bas), moustache crayon, menton très carré et lobes allongés. Le gabarit propre raccourcit les membres et élargit la taille. La tunique claire à col droit porte un plastron sombre et des ornements de nœuds ; le pantalon est ample et resserré aux chevilles."
     },
     {
       "id": "prince-tserriednich",
@@ -246,27 +246,27 @@
     },
     {
       "id": "prince-tubeppa",
-      "body": { "build": "slim", "height": 1.0, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bowl", "expression": "severe" },
+      "body": { "build": "average", "height": 1.04, "frame": "adult", "shoulders": 1.02 },
+      "head": { "face": "square", "hairStyle": "bowl", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "Chap. 366, page de lecture 9, et chap. 388, page de lecture 16 : cheveux courts sombres, lunettes rectangulaires et blouse claire. Teintes choisies à partir des valeurs monochromes.",
+        "source": "Référence manga de la réception du départ et description fournies par le mainteneur le 2026-11-18 : coupe blonde en bol, lunettes, boucles d'oreilles et costume sombre à liserés clairs. Blond demandé explicitement ; teintes du costume choisies à partir de la planche monochrome.",
         "skin": "0xe3c6a8",
-        "hair": "0x35332e",
+        "hair": "0xe0c477",
         "attire": {
-          "jacket": "0xdad8cb",
-          "shirt": "0xeceae2",
-          "trousers": "0x212a30",
-          "accent": "0x8fa6ad"
+          "jacket": "0x202129",
+          "shirt": "0xf1ecdf",
+          "trousers": "0x24252d",
+          "accent": "0xbbaa76"
         }
       },
       "attire": "suit",
-      "signatures": ["glasses-thin"],
+      "signatures": ["glasses-thin", "earrings"],
       "verified": {
         "chapterIds": ["ch-349", "ch-358", "ch-362", "ch-366", "ch-388"],
         "status": "partial"
       },
-      "note": "Les cases du bureau montrent des lunettes rectangulaires, une coupe courte sombre et une blouse claire. Le gabarit de veste existant évoque la blouse sans en reproduire exactement la longueur ; les teintes restent choisies. Aucun gant ajouté."
+      "note": "Apparence de référence demandée : silhouette masculine, nez long, bouche longue et fine, menton carré, yeux noirs derrière des montures fines ouvertes. Coupe en bol blonde à mèches pointues, oreilles dégagées et boucles discrètes. Costume croisé sombre, chemise claire, cravate et liserés clairs sur les revers et le bas de veste, suivant la planche fournie ; cette tenue remplace la blouse du bureau pour le modèle partagé."
     },
     {
       "id": "prince-tyson",
@@ -291,45 +291,45 @@
     },
     {
       "id": "prince-luzurus",
-      "body": { "build": "average", "height": 1.06, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "swept", "expression": "tired" },
+      "body": { "build": "slim", "height": 1.06, "frame": "adult", "shoulders": 0.97 },
+      "head": { "face": "square", "hairStyle": "swept", "expression": "tired" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 362 ; tenue décontractée, palette tiède",
+        "source": "Références manga fournies par le mainteneur : cheveux foncés des apparitions récentes ; palette sable choisie pour la tenue claire en noir et blanc.",
         "skin": "0xdcb896",
         "hair": "0x33291f",
         "attire": {
-          "jacket": "0x6b6250",
+          "jacket": "0xc6b89c",
           "shirt": "0xeee7d6",
-          "trousers": "0x464034",
-          "accent": "0xa89268"
+          "trousers": "0xc3b398",
+          "accent": "0x88785d"
         }
       },
       "attire": "civilian",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
-      "note": "Détendu jusqu'à l'avachissement : les paupières tombantes sont ce que porte `tired`, et la coupe rideau encadre le visage sans le dégager."
+      "note": "Références fournies : homme mince, visage rectangulaire à mâchoire définie, grand nez pointu et yeux noirs, barbe légère hors cérémonie. Cheveux plaqués en mèches parallèles vers l’arrière et deux grandes houppes bouclées latérales ; la teinte sombre suit ses apparitions récentes plutôt que le blond décrit pour ses débuts. Veste courte ouverte avec franges, chemise à col fendu, ceinture drapée, pantalon ample et chaussures pointues à motifs. Apparence commune à la visite et au kaméo de Clash."
     },
     {
       "id": "prince-salesale",
-      "body": { "build": "broad", "height": 1.02, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "neutral" },
+      "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.02 },
+      "head": { "face": "round", "hairStyle": "swept", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 358, 366 et couleurs officielles ; cheveux blonds aux tempes, sommet dégarni",
+        "source": "Portrait et planche manga fournis par le mainteneur : cheveux blonds selon la description ; palette ivoire choisie pour les robes claires et les bottes sombres.",
         "skin": "0xd3a17c",
         "hair": "0xd2b15c",
         "attire": {
-          "jacket": "0x5c4a3c",
-          "shirt": "0xf1e9d8",
-          "trousers": "0x3b3029",
-          "accent": "0xc7883f"
+          "jacket": "0xe5dcc8",
+          "shirt": "0xf4eddf",
+          "trousers": "0x413a33",
+          "accent": "0xa6987e"
         }
       },
-      "attire": "suit",
+      "attire": "changshan",
       "signatures": ["lips-full"],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-366"], "status": "confirmed" },
-      "note": "Sommet dégarni, cheveux blonds aux tempes et lèvres énormes : `bald-crown` et `lips-full` donnent ensemble sa silhouette immédiatement reconnaissable."
+      "note": "Références fournies : homme grand et légèrement en surpoids, joues et menton pleins, petits yeux noirs étroits, large sourire montrant les dents, anneaux sombres à l’oreille droite. Cheveux blonds courts sur les côtés et mèche supérieure ondulée suivant le portrait joint. Robe claire croisée avec ceinture de tissu et bottes sombres, palette de tenue choisie pour les références en noir et blanc. Apparence commune à la visite et au kaméo de Clash."
     },
     {
       "id": "prince-halkenburg",
@@ -428,24 +428,24 @@
     },
     {
       "id": "prince-marayam",
-      "body": { "build": "average", "height": 0.62, "frame": "child" },
+      "body": { "build": "broad", "height": 0.62, "frame": "child", "shoulders": 0.94 },
       "head": { "face": "round", "hairStyle": "spiked", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 350, 359 et couleurs officielles ; cheveux turquoise hérissés, tenue princière miniature",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-18 : petit garçon aux cheveux turquoise courts et hérissés, yeux noirs écartés ; smoking sombre croisé, nœud papillon et short pour les apparitions publiques. Teintes de la tenue choisies d'après la planche monochrome.",
         "skin": "0xf0dfcb",
         "hair": "0x4b9d9a",
         "attire": {
-          "jacket": "0x39456b",
+          "jacket": "0x222734",
           "shirt": "0xf2eee5",
-          "trousers": "0x28304e",
-          "accent": "0xc9ab58"
+          "trousers": "0x222734",
+          "accent": "0xe5e1d5"
         }
       },
       "attire": "suit",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
-      "note": "Petit garçon aux cheveux turquoise hérissés, toujours près de Sevanti. Le gabarit `child` lui donne les proportions d'un enfant plutôt que celles d'un adulte réduit."
+      "note": "Le modèle partagé reprend la tenue publique de la référence : smoking à deux rangées de boutons, nœud papillon, short, jambes nues et souliers sombres. Proportions de jeune enfant : tête ronde et joues pleines, petit nez, bouche discrète, yeux noirs largement écartés et coiffure courte à pointes irrégulières. La tenue simple portée dans sa chambre reste une autre apparence, non représentée par ce modèle."
     },
     {
       "id": "prince-woble",
@@ -1593,7 +1593,7 @@
       "attire": "gown",
       "signatures": [],
       "verified": { "chapterIds": ["ch-378", "ch-391"], "status": "confirmed" },
-      "note": "La page couleur du chapitre 401 tranche la palette : les longs cheveux de Morena sont bleu sombre. Cette entrée reste l'unique source de sa ressemblance dans le tour et dans son jeu."
+      "note": "Références manga et page couleur du chapitre 401 fournies par le mainteneur : femme mince, yeux bruns en amande, longs cheveux bleu sombre sous les reins avec mèches courtes recourbées aux clavicules, deux cicatrices parallèles du centre du front à gauche de la bouche en traversant l’œil gauche, environ seize petits anneaux à l’oreille gauche, couronne d’épines et robe noire ajustée à manches longues aux épaules découvertes, bottes noires. Apparence commune à la visite, à la table de négociation et au kaméo de Clash."
     },
     {
       "id": "hinrigh-biganduffno",

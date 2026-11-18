@@ -7,7 +7,8 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-export const PVP_RULESET = `clash-pvp-5:${REPLAY_RULESET}`
+// 6: optional support kameos in the setup and the kameo call bit in inputs.
+export const PVP_RULESET = `clash-pvp-6:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -15,6 +16,8 @@ export interface PvpSetup {
   opponent: FighterId
   formatId: FightFormatId
   environment: FightEnvironment
+  /** Omitted when no camp has a kameo, so such a setup hashes as before. */
+  kameos?: import('../kameos/state').KameoPicks
 }
 /** A seat is supplied by its authenticated session, never by a client command. */
 export type PvpCommand =

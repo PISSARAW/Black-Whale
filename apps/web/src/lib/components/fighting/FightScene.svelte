@@ -32,7 +32,7 @@
   import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/rosterGuestScene'
+  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/kameos/stageScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,

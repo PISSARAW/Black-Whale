@@ -10,6 +10,9 @@
   import FightArenaSetup from '$lib/components/fighting/FightArenaSetup.svelte'
   import FightIllumiEquipment from '$lib/components/fighting/FightIllumiEquipment.svelte'
   import FightLsdfSetup from '$lib/components/fighting/FightLsdfSetup.svelte'
+  import FightKameoPicker from '$lib/components/fighting/FightKameoPicker.svelte'
+  import { chosenKameos } from '$lib/fighting/kameos/selection'
+  import { kameoSetupField } from '$lib/fighting/kameos/pvp'
   import type { FighterId } from '$lib/fighting/types'
   import type { FightFormatId } from '$lib/fighting/formats'
   import './pvp.css'
@@ -31,7 +34,7 @@
         headers: { 'content-type': 'application/json', 'x-clash-profile': rankingToken() },
         body: JSON.stringify({
           ruleset: PVP_RULESET,
-          setup: { player, opponent, formatId, environment },
+          setup: { player, opponent, formatId, environment, ...kameoSetupField($chosenKameos) },
         }),
       })
       const value = await response.json()
@@ -116,6 +119,7 @@
     {language}
     onEnvironment={(next) => (environment = next)}
   />
+  <FightKameoPicker {language} />
   <button type="button" onclick={create} disabled={creating}
     >{language === 'fr' ? 'Créer une invitation' : 'Create invite'}</button
   >

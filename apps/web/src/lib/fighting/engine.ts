@@ -38,7 +38,7 @@ import { reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { thetaFirearmOptions } from './thetaFirearm'
-import { fightAcceptsCommands } from './fightOutcome'
+import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
 import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import type { FutureControls } from './parallelFutureTypes'
@@ -64,6 +64,7 @@ import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
 import { resolveContacts, settleBodies } from './duelStep/contacts'
 import { closeFrame, openFrame } from './duelStep/frame'
+import { resolveKameoFrameContacts, stepKameoFrame } from './kameos/frame'
 import type {
   ArcadeFighter,
   AttackKind,
@@ -164,8 +165,10 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const moved = stepActors(start, inputs)
   const settled = settleBodies({ start, moved, inputs }, performAuraAttack)
   if (settled.pending) return settled.state
-  const contacts = resolveContacts(start, settled.state)
-  return contacts.pending ? contacts.state : closeFrame(start, contacts.state)
+  const contacts = resolveContacts(start, stepKameoFrame(settled.state, inputs))
+  if (contacts.pending) return contacts.state
+  const supported = resolveKameoFrameContacts(contacts.state)
+  return fightResolutionPending(supported) ? supported : closeFrame(start, supported)
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {

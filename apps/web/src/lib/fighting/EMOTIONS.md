@@ -6,6 +6,44 @@ profils sont conservés. Les autres profils adaptent le regard, les sourcils,
 la retenue, le sourire et la tension des épaules à chaque personnage.
 Ces profils sont une direction artistique du jeu.
 
+Tubeppa possède aussi une direction analytique dans `kameos/expressionProfiles.ts` :
+concentration derrière les lunettes, effort mesuré pendant le soin, douleur prioritaire
+et retour progressif au calme. Le profil du kaméo est séparé du catalogue des quarante
+combattants sélectionnables et partage leurs articulations, morphs et transitions.
+L’effort de soutien est fourni à la présentation sans créer de fausse attaque.
+
+Marayam possède un profil enfantin dans le même registre : curiosité timide,
+sursaut, attention pendant le soutien et douleur prioritaire. Sa bouche ondulée
+est préparée par `fightExpressionCurveMouth.ts` : les trois morphs GPU conservent
+la topologie du trait courbe et partagent leur géométrie entre acteurs, avec des
+poids indépendants. Les autres bouches gardent leur préparation habituelle.
+
+Zhang Lei conserve son assurance paisible et ses yeux mi-clos. Son profil de kaméo
+module discrètement les plis arqués autour du nez, sans ajouter de sourcils ; les
+six points du front et la moustache restent fixes sur la tête. Le geste du bonus
+s’accompagne d’un effort mesuré, puis d’un retour au calme. Un impact interrompt
+immédiatement cet effort et le sourire, comme pour le roster.
+
+Morena partage ces transitions avec un sourire calme, des yeux attentifs et une
+tension mesurée pendant Contagion. Sa bouche courbe conserve sa topologie et reçoit
+les morphs d’effort, de douleur et de sourire. Les cicatrices, anneaux et épines
+restent attachés à la tête ; seules les longueurs libres des cheveux reçoivent un
+léger balancement par morphs GPU partagés, avec des poids propres à chaque acteur.
+Les expressions de sa table de négociation restent pilotées par `tour/dealer.ts`.
+
+Luzurus conserve ses paupières lourdes, un léger sourire et une posture détendue.
+Le regard s’abaisse pendant la pose du piège ; effort, douleur et retour au calme
+utilisent les mêmes transitions que le roster. `kameos/luzurusPuffMotion.ts` anime
+les houppes par morphs GPU partagés, en conservant le crâne et les attaches fixes.
+Les franges suivent le torse et les plis du pantalon suivent les jambes.
+
+Salé-salé a un salut expansif, une préparation du souffle et une ouverture des bras
+sur la frame de sa brume. `fightExpressionToothedMouth.ts` prépare les mêmes trois
+morphs sur le contour natif et ses dents : le sourire reste denté, l’effort ouvre
+la bouche et la douleur la resserre immédiatement. Les géométries sont partagées,
+les poids restent propres à l’acteur et la suspension cinématique restaure les deux
+parties ensemble. Aucun dessin facial supplémentaire n’est ajouté.
+
 `fightExpressions.ts` lit la pose, l’attaque et les états de réaction existants.
 La douleur prend priorité sur une attaque interrompue ; elle supprime immédiatement
 l’effort et le sourire. La récupération du coup, le hitstun et le réveil pilotent

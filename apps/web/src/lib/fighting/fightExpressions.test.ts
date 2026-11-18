@@ -148,7 +148,7 @@ describe('the six fighters express combat through their existing face', () => {
   )
 
   it('keeps an unsupported fighter on its existing animation', () => {
-    const fighter = createFightState('marayam' as FighterId, 'hisoka').player
+    const fighter = createFightState('kacho' as FighterId, 'hisoka').player
     const model = figure(fighter)
     draw(model, fighter, 1)
     expect(fightFaceRig(model.root)).toBeUndefined()

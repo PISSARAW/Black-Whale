@@ -6,6 +6,9 @@
   import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { FightFormatId } from '$lib/fighting/formats'
   import type { FightMode, FighterId, FightState } from '$lib/fighting/types'
+  import type { FightSide } from '$lib/fighting/types'
+  import type { KameoPicks } from '$lib/fighting/kameos/state'
+  import type { KameoId } from '$lib/fighting/kameos/types'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
   import type { LessonId } from '$lib/fighting/fightLessons'
   import type { CombatSchool } from '$lib/fighting/combatSchool'
@@ -27,6 +30,8 @@
   export let format: FightFormatId
   export let mode: FightMode
   export let controls: FightControls
+  export let kameos: KameoPicks = {}
+  export let onKameo: (side: FightSide, id?: KameoId) => void = () => {}
   export let lessons: FightLessonsController
   export let school: CombatSchool
   export let practice: ClashPractice
@@ -85,6 +90,8 @@
     {onEnvironment}
     {onFormat}
     {onLaunch}
+    {kameos}
+    {onKameo}
   />
 {:else if screen === 'academy'}
   <FightAcademy

@@ -20,6 +20,7 @@
   let freezeKO = false
   let tape: FightState[] = []
   let audit: {
+    frame: number
     phase: string | null
     performance: string | null
     powered: boolean
@@ -65,6 +66,7 @@
       }
     })
     audit = {
+      frame: state.frame,
       phase: camera.userData.throwCinematic?.phase ?? null,
       performance: camera.userData.throwCinematic?.performance ?? null,
       powered: camera.userData.throwCinematic?.powered ?? false,

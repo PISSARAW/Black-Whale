@@ -28,10 +28,15 @@ page.on('pageerror', (error) => errors.push(error.message))
 page.setDefaultTimeout(90000)
 const reset = (options) => page.evaluate((value) => window.throwFixture.reset(value), options)
 const snapshot = () => page.evaluate(() => window.throwFixture.snapshot())
+const rendered = () => page.waitForFunction(() => {
+  const value = window.throwFixture.snapshot()
+  return value.audit?.frame === value.state.frame
+})
 async function seek(age) {
   await page.evaluate((value) => window.throwFixture.seek(value), age)
   await page.waitForTimeout(240)
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  await rendered()
   return snapshot()
 }
 const pairs = {
@@ -131,7 +136,7 @@ try {
   await seek(9)
   assert.equal((await snapshot()).audit.equipment.holstered, true)
   await page.evaluate(() => window.throwFixture.end())
-  await page.waitForTimeout(250)
+  await rendered()
   assert.equal((await snapshot()).audit.equipment.holstered, false)
   await reset({ id: 'hisoka', powered: true })
   await seek(9)
@@ -150,7 +155,7 @@ try {
   await page.waitForSelector('[data-victory-cinematic]')
   await reset({ id: 'hisoka', powered: true })
   await page.evaluate(() => window.throwFixture.end())
-  await page.waitForTimeout(250)
+  await rendered()
   assert.equal((await snapshot()).audit.effects.length, 0)
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await reset({ id: 'hisoka', powered: true })
@@ -158,7 +163,7 @@ try {
   assert.equal((await snapshot()).audit.effects.length, 0)
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ samples, errors }, null, 2))
-  console.log(`Verified ${samples.length} production frames, five mobile views, pause, KO and reduced motion.`)
+  console.log(`Verified ${samples.length} production frames, ${entries.length} mobile views, pause, KO and reduced motion.`)
 } catch (error) {
   await writeFile(path.join(output, 'failure.json'), JSON.stringify({ error: String(error), errors, value: await snapshot() }, null, 2))
   await page.screenshot({ path: path.join(output, 'failure.png') })

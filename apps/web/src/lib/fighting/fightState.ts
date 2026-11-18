@@ -1,3 +1,4 @@
+import { hasMarkedTerrain } from './sunMoonMaterial'
 import { prepareHisokaAsphyxia } from './gumResuscitationScenario'
 import { prepareFortuneScenario } from './ghostwriterScenario'
 import { carryDolphinPeople } from './dolphinPeopleWorld'
@@ -97,7 +98,10 @@ export function nextFightRound(state: FightState): FightState {
         carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
         state,
       ),
-      arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      arena:
+        state.environment.arenaInteractions || hasMarkedTerrain(state)
+          ? createArenaState()
+          : undefined,
       rosterGuests: undefined,
       throwTech: undefined,
       voconteDoors: undefined,

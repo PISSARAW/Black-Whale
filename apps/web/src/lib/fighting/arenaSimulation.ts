@@ -219,12 +219,20 @@ function resolveMarkedContact(state: FightState): FightState {
     if (!moon) continue
     const owner = sun.arena!.sun!
     const centre = objectMarkContact(sun, moon)
-    state = damageArenaObject(damageArenaObject(state, sun.id, sun.health), moon.id, moon.health)
+    state = consumeMarkedObject(consumeMarkedObject(state, sun), moon)
     for (const side of ['player', 'opponent'] as const)
       state = applyArenaBlast(state, { side, owner, centre })
     return resolveFightOutcome(state)
   }
   return state
+}
+
+/** Detonation consumes the indelible seal before ordinary copied-matter expiry runs. */
+function consumeMarkedObject(state: FightState, entry: PreparedEntity): FightState {
+  const consumed = updateEntity(state, entry.id, {
+    arena: { ...entry.arena!, sun: undefined, moon: undefined },
+  })
+  return damageArenaObject(consumed, entry.id, entry.health)
 }
 
 function applyArenaBlast(

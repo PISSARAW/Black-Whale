@@ -22,12 +22,33 @@ marques et les applications composées avec les marionnettes restent à complét
 Cette correction ne constitue donc pas une certification de l’arsenal à 100 %.
 **Le On reste présent.**
 
+## Persistance matérielle — ruleset 74
+
+Les marques inexplosées maintiennent la copie même lorsque son support a perdu
+ses points de vie. Les morceaux déjà détachés gardent ainsi leur durée de Nen ;
+le support détruit ne redevient pas un outil utilisable. Le véritable contact
+Soleil/Lune consomme les deux marques avant la destruction et libère cette
+protection : la matière suit alors de nouveau les limites de Gallery Fake.
+
+Un renouvellement de manche conserve les objets marqués avec leur identité,
+leur position, leurs dégâts et leur âge matériel. Le résolveur du décor reste
+présent pour ces objets même sans interactions génériques du décor. Cette
+persistance ne fournit aucune nouvelle tête détachée ou commande de marionnette.
+Les emplacements précis, les fragments explosifs et la charge maximale restent
+à compléter ; le On est conservé.
+
+`sunMoonMaterialLifetime.test.ts` ajoute douze cas couvrant les deux joueurs,
+les dégâts ordinaires, la fin des pages, la limite de 24 heures, la consommation
+par une explosion réelle et le passage à la manche suivante.
+
 ## Références et vérification
 
 Le [chapitre 351](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-351/chapter/10532)
 introduit les deux mains et les marques opposées ; le
 [chapitre 356](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-356/chapter/10537)
-montre les applications avec les marionnettes.
+montre les applications avec les marionnettes. Le maintien des copies marquées
+après désactivation de Gallery Fake est révélé au
+[chapitre 354](https://hunterxhunter.fandom.com/wiki/Chapter_354).
 
 `sunMoonObjectConditions.test.ts` exerce les gestes réels pour les deux joueurs,
 le téléphone matériel, l’interruption par blessure et par ouverture du livre,

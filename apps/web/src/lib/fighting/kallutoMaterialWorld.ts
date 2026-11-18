@@ -1,3 +1,4 @@
+import { hasSunMoonMark } from './sunMoonMaterial'
 import type { FightBattlefield } from './preparationTypes'
 import type { FightState } from './types'
 import { carryCorpseWorld } from './illumiCorpseMatter'
@@ -14,7 +15,8 @@ export function carryPaperWorld(fresh: FightBattlefield, previous: FightState): 
         entry.writingKit ||
         entry.document ||
         entry.detachedForearm ||
-        entry.fortunePerson,
+        entry.fortunePerson ||
+        hasSunMoonMark(entry),
     )
     .map((entry) => ({
       ...entry,

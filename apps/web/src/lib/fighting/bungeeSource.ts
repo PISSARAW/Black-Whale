@@ -14,12 +14,7 @@ export function newGumSource(actor: ArcadeFighter): GumSource {
   }
 }
 function borrowedGumContext(actor: ArcadeFighter): boolean {
-  const held = equippedDolphin(actor)
-  return Boolean(
-    actor.dolphinExecution ||
-    actor.id === 'kurapika' ||
-    (actor.nenOwner && held?.used && held.source === 'hisoka'),
-  )
+  return Boolean(actor.dolphinExecution || (actor.nenOwner ?? actor.id) === 'kurapika')
 }
 export function gumSourceAvailable(state: FightState, side: FightSide, origin: GumSource): boolean {
   if (!origin.source) return state.pvpSeat ? state[side].health > 0 : ownsBungeeGum(state[side])

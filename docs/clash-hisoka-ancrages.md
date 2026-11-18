@@ -1,6 +1,6 @@
 # Hisoka : plusieurs supports physiques
 
-Les rulesets **clash-combat-45** puis **50** permettent plusieurs connexions de Bungee Gum sur
+Les rulesets **clash-combat-45**, **50** et **51** permettent plusieurs connexions de Bungee Gum sur
 des supports physiques de l’arène. Elles peuvent coexister avec la liaison
 de combat entre deux personnes et avec les applications défensives admissibles.
 Le On est conservé.
@@ -48,6 +48,17 @@ finance le fil du livre ; l'aura prélevée finance le fil Dolphin. Une commande
 dans le canal du prêt ne déplace ni ne détache un fil personnel ou du livre.
 Les tests utilisent les commandes réelles, les deux camps et un plafond réel.
 
+Le geste commencé garde aussi son origine jusqu'au contact et pendant sa
+préparation. Un prêt actif ne transforme plus une attaque du livre en exécution
+du donneur. Les attaques copiées, rappels et déguisements de tissu fonctionnent
+dans leur propre canal ; la réserve du donneur ne finance pas un geste du livre.
+
+Texture Surprise conserve l'origine de son application sur le tissu, même si
+un autre geste utilise une autre capacité. Quitter la page de Bungee Gum ne
+retire pas un déguisement prêté. Quitter la page de Texture Surprise retire
+son déguisement du livre et conserve le fil Dolphin admissible. Le prêt garde
+les conditions d'Emperor Time et du prélèvement effectivement utilisé.
+
 Le premier ancrage par Dolphin dépense l’aura réellement prélevée et compte
 comme son unique application. Ses commandes de maintien restent disponibles ;
 une seconde attache fraîche n’est pas accordée après consommation de cet usage.
@@ -74,6 +85,6 @@ Référence : connexions distinctes depuis la main et la jambe vers deux têtes 
 [le déroulé du combat](https://supercorona.wordpress.com/2021/05/18/hunter-x-hunter-chapter-353-cold-blooded/).
 Le réseau intégré représente aussi plusieurs liens vers les personnes et les
 projectiles physiques conservés. Les prothèses, la réanimation préparée et les
-combinaisons de gestes du livre pendant un prêt restent à compléter ou à auditer.
+autres supports de Texture Surprise restent à compléter.
 Ce jalon ne certifie pas un arsenal
 achevé à 100 %.

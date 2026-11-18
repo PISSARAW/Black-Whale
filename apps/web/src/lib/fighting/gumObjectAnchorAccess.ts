@@ -20,7 +20,7 @@ export function gumAnchorNenAvailable(actor: ArcadeFighter, anchor: GumOrigin): 
 export function gumAnchorCommandScope(actor: ArcadeFighter, anchor: GumOrigin): boolean {
   if (actor.dolphinExecution)
     return anchor.source === 'dolphin' && anchor.theftId === equippedDolphin(actor)?.theftId
-  return anchor.source === (actor.id === 'chrollo' ? 'book' : 'personal')
+  return anchor.source === ((actor.nenOwner ?? actor.id) === 'chrollo' ? 'book' : 'personal')
 }
 function activeGumPage(actor: ArcadeFighter): boolean {
   return Boolean(

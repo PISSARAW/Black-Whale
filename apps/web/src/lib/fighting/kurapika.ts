@@ -142,13 +142,22 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = equippedDolphin(fighter)
-  return held?.used && !held.returned && fighter.attack?.moveId === held.moveId
+  return held?.used && !held.returned && dolphinAttackMatches(fighter, held)
     ? stolenAuraActor({
         ...loanCarrier(fighter),
         id: held.source,
         nenOwner: fighter.nenOwner ?? fighter.id,
       })
     : fighter
+}
+function dolphinAttackMatches(fighter: ArcadeFighter, held: StolenChainAbility): boolean {
+  const origin = fighter.attack?.nenOrigin
+  if (!origin?.source) return fighter.attack?.moveId === held.moveId
+  return (
+    origin.source === 'dolphin' &&
+    origin.theftId === held.theftId &&
+    chainAbilityGroup(fighter.attack?.moveId ?? '') === chainAbilityGroup(held.moveId)
+  )
 }
 
 export function restrictedChainAura(

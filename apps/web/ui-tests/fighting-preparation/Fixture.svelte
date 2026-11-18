@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import { mixedHisokaScenario } from './mixedHisoka'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
@@ -157,6 +158,14 @@
     }
     await tick()
   }
+  export async function prepareMixedHisoka(mode: 'book-texture' | 'loan-texture') {
+    player = 'chrollo'
+    opponent = 'kurapika'
+    state = mixedHisokaScenario(mode)
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
   export async function prepareMusseListening(id: 'musse' | 'benjamin') {
     player = id
     opponent = 'hisoka'
@@ -305,6 +314,10 @@
       halkenburgOrigin: state.player.halkenburgOrigin,
       possession: state.opponent.hatsuEffects.possessedFrames,
       rosterVariant: state.environment.halkenburgRosterVariant === true,
+      texture: state.player.textureSurprise,
+      gumNetwork: state.gumNetwork,
+      aura: state.player.aura,
+      donorAura: state.player.dolphinLoan?.held.auraSupply?.amount,
       playerX: state.player.x,
       dolls: paperDolls(state.player),
       paperKit: state.player.paperKit,
@@ -349,7 +362,7 @@
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
     <FightKallutoSupplies {state} side="player" language="fr" />
-    {#if ['hisoka', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if ['hisoka', 'chrollo', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

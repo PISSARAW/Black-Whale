@@ -153,9 +153,11 @@ function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFight
   if (page !== 'hisoka') return fighter
   return {
     ...fighter,
-    textureSurprise: chrolloAbilityActive(fighter, 'hisoka:downSpecial')
-      ? fighter.textureSurprise
-      : undefined,
+    textureSurprise:
+      fighter.textureSurprise?.source === 'dolphin' ||
+      chrolloAbilityActive(fighter, 'hisoka:downSpecial')
+        ? fighter.textureSurprise
+        : undefined,
     gumWoundSeals: chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
       ? fighter.gumWoundSeals
       : undefined,

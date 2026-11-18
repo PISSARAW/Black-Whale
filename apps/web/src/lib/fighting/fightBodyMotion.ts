@@ -19,6 +19,7 @@ import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
+import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { attackMotionAccent } from './fightAttackMotion'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
@@ -128,8 +129,17 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
         root: drawn.root,
         facing: fighter.facing,
         transfer: Boolean(plan.attackFlow?.transfer),
+        pursuitSupport: attackSupport(plan.attackFlow),
       })
   })
+}
+
+function attackSupport(attack: AttackFlowFrame | undefined) {
+  if (!attack?.pursuit) return
+  return {
+    foot: pursuitSupport(attack.pursuit, attack.facing),
+    weight: pursuitLoadWeight(attack.frame / attack.startup),
+  }
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -332,6 +342,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
+  const pursuit = pursuitGesture(attack)
   const base = basePose(variant, standing, authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
@@ -343,25 +354,32 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: variant !== 'air' && fighter.y <= 0,
+    plant: fighter.y <= 0 && (variant !== 'air' || Boolean(pursuit && frame < frames.startup)),
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
     attackFlow: {
       frame,
+      pursuit,
       startup: frames.startup,
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,
-      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),
+      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
     },
   }
 }
 
 function bridgeContact(
   moveId: string | undefined,
-  timing: { frame: number; startup: number; poseAt: (frame: number) => FightPose },
+  timing: {
+    frame: number
+    startup: number
+    poseAt: (frame: number) => FightPose
+    pursuit?: string
+  },
 ): FightPose | undefined {
-  if (timing.frame < timing.startup && bridgeTarget(moveId)) return timing.poseAt(timing.startup)
+  if (timing.frame < timing.startup && (bridgeTarget(moveId) || timing.pursuit))
+    return timing.poseAt(timing.startup)
 }
 
 function hasTechedThrow(fighter: ArcadeFighter): boolean {

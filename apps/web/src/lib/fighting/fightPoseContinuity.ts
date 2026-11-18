@@ -1,4 +1,5 @@
 import { addPoses, lerpPose, scalePose, type BodyPlan, type FightPose } from './fightPose'
+import { pursuitLoad } from './pursuitMotion'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
 
 interface Momentum {
@@ -52,16 +53,19 @@ function flowToken(plan: BodyPlan): string {
 function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
   const memory = state.pose,
     attack = plan.attackFlow
-  if (attack && attack.frame < attack.startup && attack.contact)
-    return physicalComboCurve({
+  if (attack && attack.frame < attack.startup && attack.contact) {
+    const progress = attack.frame / attack.startup
+    const pose = physicalComboCurve({
       from: memory.from,
       contact: attack.contact,
       velocity: state.outgoing,
       load: memory.bridge ?? {},
       frames: attack.startup,
-      progress: attack.frame / attack.startup,
+      progress,
       loadAt: attack.loadAt,
     })
+    return attack.pursuit ? pursuitLoad(pose, attack.pursuit, progress) : pose
+  }
   if (attack) return plan.pose
   if (plan.reactionFrame !== undefined) {
     const enter = 0.72 + 0.28 * Math.min(1, plan.reactionFrame / 2)

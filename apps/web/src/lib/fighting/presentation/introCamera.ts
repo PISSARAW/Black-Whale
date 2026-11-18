@@ -16,6 +16,7 @@ interface CameraOptions {
   models?: Record<FightSide, { model: { turns: Object3D } }>
   throwFrame?: ThrowCinematicFrame | null
   minimumDistance?: number
+  combatReady?: boolean
 }
 
 function entranceCamera(options: CameraOptions): boolean {
@@ -50,5 +51,6 @@ function throwCamera(options: CameraOptions): boolean {
     models: options.models,
     intensity: options.intensity,
     minimumDistance: options.minimumDistance,
+    returnToCombat: options.combatReady,
   })
 }

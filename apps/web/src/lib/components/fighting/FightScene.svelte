@@ -30,12 +30,10 @@
   import { clashPresentation } from '$lib/fighting/presentation/profile'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
-  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
-  import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
-  import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
+  import { liveCameraFraming } from '$lib/fighting/liveCameraFraming'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/kameos/stageScene'
+  import { createHanzoProjectionScene } from '$lib/fighting/kameos/stageScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -306,9 +304,43 @@
 
         const cameraIntensity = () => visualComfort().camera ?? 1
         const updateCombatCamera = (dt: number, now: number) => {
+          const observed = hideSecondaryView
+            ? cinematicDirector.update(state, cameraIntensity(), dt)
+            : null
+          const direction =
+            cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
+          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView)
+          detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
+          const playerX = worldX(interpolatedPosition(state, 'player').x)
+          const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
+          const framing = liveCameraFraming({
+            state,
+            positions: [playerX, opponentX],
+            aspect: camera.aspect,
+            scenery,
+          })
+          const pose = combatCamera.update({
+            state,
+            base: framing.base,
+            span: framing.span,
+            aspect: camera.aspect,
+            dt,
+            direction,
+            detail: Boolean(detail),
+            detailRect,
+            companion: visibleFutureBeastOwner(state, viewer),
+            intensity: cameraIntensity(),
+            minimumDistance: scenery.framing?.minimumDistance,
+          })
+          if (!pose.detailReady) detail = null
+          detailVisible = Boolean(detail)
+          camera.position.set(pose.x, pose.y, pose.z)
+          updateFightCameraFog(scene, camera, scenery)
+          camera.lookAt(pose.x, pose.lookY, 0)
           if (
             applyPresentationCamera({
               camera,
+              combatReady: true,
               models,
               state,
               authored: cameraFrame,
@@ -324,40 +356,7 @@
             detailVisible = false
             return
           }
-          const observed = hideSecondaryView
-            ? cinematicDirector.update(state, cameraIntensity(), dt)
-            : null
-          const direction =
-            cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
-          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView)
-          detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
-          const playerX = worldX(interpolatedPosition(state, 'player').x)
-          const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
-          const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
-          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
-          const framing = sceneryCameraFrame(
-            biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect }),
-            scenery,
-          )
-          const pose = combatCamera.update({
-            state,
-            base: framing,
-            span: catSpan,
-            aspect: camera.aspect,
-            dt,
-            direction,
-            detail: Boolean(detail),
-            detailRect,
-            companion: visibleFutureBeastOwner(state, viewer),
-            intensity: cameraIntensity(),
-            minimumDistance: scenery.framing?.minimumDistance,
-          })
-          if (!pose.detailReady) detail = null
-          detailVisible = Boolean(detail)
-          camera.position.set(pose.x, pose.y, pose.z)
-          updateFightCameraFog(scene, camera, scenery)
           impacts.shake(camera, now)
-          camera.lookAt(pose.x, pose.lookY, 0)
         }
 
         const render = (now: number) => {

@@ -1,5 +1,6 @@
 import type * as Three from 'three'
 import { comfortableImpact, type FightComfort } from './fightComfort'
+import { createCombatImpactShake } from './combatImpactShake'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import { fightContactStyle } from './fightContactStyle'
 import { closeFightPosition } from './fightCloseSpacing'
@@ -38,9 +39,10 @@ export function createFightImpactScene(options: {
     ring: boolean
   }> = []
   let last = options.initial.impact?.sequence ?? 0
-  let shake = { started: 0, until: 0, x: 0, y: 0 }
+  const shake = createCombatImpactShake()
   return {
     emit(state: FightState, now: number) {
+      shake.observe(state)
       const impact = state.impact
       if (!impact || impact.sequence === last) return
       last = impact.sequence
@@ -51,7 +53,7 @@ export function createFightImpactScene(options: {
         attacker: state[impact.attacker].id,
         comfort: comfort(),
       })
-      shake = { started: now, until: now + profile.shakeMs, x: profile.shakeX, y: profile.shakeY }
+      shake.hit(impact, { profile, facing: state[impact.attacker].facing })
       const origin = new THREE.Vector3(
         fightWorldX(impact.position.x),
         fightWorldY(displayContactHeight(state, impact)),
@@ -94,11 +96,11 @@ export function createFightImpactScene(options: {
         }
       }
     },
-    shake(camera: Three.PerspectiveCamera, now: number) {
-      if (comfort().shake <= 0 || now >= shake.until) return
-      const fade = (shake.until - now) / Math.max(1, shake.until - shake.started)
-      camera.position.x += Math.sin(now * 0.15) * shake.x * fade
-      camera.position.y += Math.cos(now * 0.19) * shake.y * fade
+    shake(camera: Three.PerspectiveCamera, _now: number) {
+      if (comfort().shake <= 0) return
+      const offset = shake.offset()
+      camera.position.x += offset.x
+      camera.position.y += offset.y
     },
     dispose() {
       for (const spark of sparks) scene.remove(spark.mesh)

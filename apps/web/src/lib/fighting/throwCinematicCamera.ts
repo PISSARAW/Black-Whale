@@ -33,12 +33,16 @@ export function applyThrowCamera(
     models?: Models
     intensity: number
     minimumDistance?: number
+    returnToCombat?: boolean
   },
 ): boolean {
   const { frame, state, intensity } = options
   if (!frame.active || intensity <= 0) return false
   const t = frame.age / frame.duration
   const base = cameraStart(camera, frame)
+  const returnPose = options.returnToCombat
+    ? { position: camera.position.clone(), quaternion: camera.quaternion.clone() }
+    : base
   const bounds = pairBounds(state, options.models)
   const centre = (bounds.left + bounds.right) / 2
   const lift = smooth(t / 0.5)
@@ -59,9 +63,9 @@ export function applyThrowCamera(
       break
     radius *= 1.035
   }
-  const weight = smooth(t / 0.12) * (1 - smooth((t - 0.78) / 0.22)) * intensity
-  camera.position.lerpVectors(base.position, camera.position.clone(), weight)
-  camera.quaternion.slerpQuaternions(base.quaternion, camera.quaternion.clone(), weight)
+  const weight = smooth(t / 0.12) * (1 - smooth((t - 0.82) / 0.18)) * intensity
+  camera.position.lerpVectors(returnPose.position, camera.position.clone(), weight)
+  camera.quaternion.slerpQuaternions(returnPose.quaternion, camera.quaternion.clone(), weight)
   camera.updateMatrixWorld(true)
   camera.userData.throwCinematic = {
     phase: throwCinematicPhase(frame),

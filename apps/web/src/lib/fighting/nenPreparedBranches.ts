@@ -10,6 +10,7 @@ declare module './types' {
   interface ArcadeFighter {
     nenOpening?: { move: string; attackFrame: number; zone: FightNenZone; share: number }
     nenBranchCount?: number
+    nenConversionCount?: number
   }
 }
 /** A successful, actually focused physical contact earns one additional personal conversion. */
@@ -49,7 +50,7 @@ export function preparedNenDestinations(fighter: ArcadeFighter): string[] {
   const attack = fighter.attack
   if (!preparedWindow(fighter)) return []
   const branch = rosterPhysicalBranch(fighter.id, 'tip')
-  const physical = [branch?.slot, 'lowHeavy', 'standingHeavy'] as const
+  const physical = [branch?.slot, 'forwardLight', 'lowHeavy', 'standingHeavy'] as const
   const own = fighter.nenTactics?.slots ?? []
   const candidates = [...physical, ...own].flatMap((slot) => {
     const move = slot && moveForSlot(fighter.id, slot)
@@ -61,7 +62,7 @@ export function preparedNenDestinations(fighter: ArcadeFighter): string[] {
 function suitable(fighter: ArcadeFighter, id: string): boolean {
   const move = moveById(id)!
   if (['normal', 'command'].includes(move.category)) return true
-  return usesVoluntaryNen(fighter, { kind: move.kind, moveId: id })
+  return move.tuning.damage > 0 && usesVoluntaryNen(fighter, { kind: move.kind, moveId: id })
 }
 export function nextNenBranchCount(fighter: ArcadeFighter, id?: string): number {
   if (!fighter.attack) return 0
@@ -76,4 +77,12 @@ function preparedWindow(fighter: ArcadeFighter): boolean {
     attack = fighter.attack
   if (!opening || !attack?.confirmedHit || opening.move !== attack.moveId) return false
   return (fighter.nenBranchCount ?? 0) < 1 && attack.frame - opening.attackFrame <= 12
+}
+
+export function preparedBranchReady(fighter: ArcadeFighter, id: string): boolean {
+  if (!preparedNenDestinations(fighter).includes(id)) return true
+  const move = moveById(id)
+  if (!move || fighter.nenTransfer) return false
+  const zone = move.tuning.auraZone
+  return fighter.nen.ko === zone || Number(fighter.nen.ryu[zone] ?? 0) >= 0.6
 }

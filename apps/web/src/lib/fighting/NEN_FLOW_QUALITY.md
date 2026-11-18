@@ -19,3 +19,11 @@ Validation : avances graduelles et figées pendant le hitstop pour les 40 person
 Le contrôleur local et le CPU natif cessent les nouvelles dépenses offensives pendant leur récupération. Les mouvements défensifs restent possibles ; aucun Zetsu n'est commandé au contact. Le contrôleur ne remplace plus un ordre de retraite par une série de coups ordinaires. Les seuils d'entrée et de sortie gardent une marge distincte, même pour une technique coûteuse.
 
 Validation : pour les quarante combattants, les deux contrôleurs honorent la récupération, s'éloignent et ne créent ni aura ni matériel. Les 58 scénarios de l'arsenal et ses conditions restent valides.
+
+## 4. Conversions exécutées et redistribution
+
+Les deux contrôleurs utilisent `nenComboDecision` : ils choisissent une continuation réellement prête, ou commandent un vrai transfert si le temps restant le permet. Le contrôleur rapide ne bloque plus une continuation derrière son délai de décision ordinaire. Les styles de proximité approchent pour leur première préparation physique avant de dépenser leur Hatsu ; les styles de distance conservent leur portée.
+
+Une branche supplémentaire exige maintenant la répartition requise dans la zone du coup suivant. La question de Lynch, un contrat de Longhi et les autres utilitaires sans frappe ne deviennent pas des branches offensives. Les techniques gardent leurs conditions natives ; aucune charge, cible, signature ni ressource n'est créée. Les flux utilisent la couleur existante de chaque propriétaire. Le CPU ne remplace pas sa répartition offensive pendant une frappe engagée.
+
+Validation : les quarante combattants consomment une branche gagnée sur une vraie touche, avec redistribution native quand nécessaire ; les 270 conversions précédentes restent valides. Les combats autonomes enregistrent les conversions consommées, au lieu de se limiter au compteur de touches.

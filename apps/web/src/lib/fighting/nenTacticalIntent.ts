@@ -1,3 +1,4 @@
+import { conversionApproach } from './nenApplicationRange'
 import { FIRST_ARSENAL_AI } from './arsenalAiFirst'
 import { SECOND_ARSENAL_AI } from './arsenalAiSecond'
 import { canUseMovesetMove, moveForSlot } from './movesets'
@@ -46,7 +47,12 @@ export function nenTacticalIntent(state: FightState, side: FightSide): NenTactic
   const reserve = cost ? Math.min(100, RESERVE[fighter.id] ?? cost + 16) : 0
   const recovering = needsReserve(fighter, { cost, reserve }, personalPreparation(view))
   const goal = tacticalGoal(recovering, personalPreparation(view), nenSlots.length > 0)
-  return { goal, reserve, slots: potential, range: recovering ? [26, 34] : base.range }
+  return {
+    goal,
+    reserve,
+    slots: potential,
+    range: recovering ? [26, 34] : conversionApproach(fighter, base.range, goal === 'prepare'),
+  }
 }
 function fundableMove(state: FightState, side: FightSide, slot: MoveSlot): boolean {
   const fighter = state[side],
@@ -71,6 +77,7 @@ function needsReserve(
   prepared: boolean,
 ): boolean {
   if (!budget.cost || (prepared && fighter.aura >= budget.cost)) return false
+  if (fighter.attack) return fighter.nenTactics?.goal === 'recover'
   if (fighter.nenTactics?.goal === 'recover') return fighter.aura < budget.reserve
   const threshold = fighter.nenTactics
     ? Math.min(budget.reserve - 8, budget.cost + 8)

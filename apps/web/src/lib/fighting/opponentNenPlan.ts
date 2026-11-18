@@ -13,7 +13,7 @@ export function planOpponentNen(state: FightState): FightState {
   if (opponent.melodyPerformance) return state
   if (judgmentForbidsNen(opponent) || chainsImmobilize(opponent))
     return applyOpponentAura(state, { aura: true, down: true })
-  if (opponent.hanzoProjection) return state
+  if (opponent.hanzoProjection || opponent.attack) return state
   const rest = tacticalRest(opponent, gap)
   if (rest) return applyOpponentAura(state, rest)
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })

@@ -1,3 +1,5 @@
+import { movesetFor } from './movesets'
+import { nativeNenCombo } from './nativeNenCombo'
 import { reservingAura } from './combatIntentPolicy'
 import { performArsenalAction } from './arsenalExecution'
 import { priorityBusyAi } from './priorityArsenalAi'
@@ -309,6 +311,10 @@ function ordinaryOpponentAttack(state: FightState): FightState {
 function unboundOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
+  return nativeNenCombo(planned, performAuraAttack) ?? availableOpponentAttack(planned)
+}
+
+function availableOpponentAttack(planned: FightState): FightState {
   const retrospective = retrospectiveAiAction(planned, performAuraAttack)
   if (retrospective) return retrospective
   const native = nativeArsenalAiAction(planned, performAuraAttack)
@@ -327,6 +333,7 @@ function unboundOpponentAttack(state: FightState): FightState {
       performAuraAttack,
     )
   }
+  if (movesetFor(rolled.opponent.id)) return rolled
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),
     canRanged: canUseRangedAttack(rolled.opponent) && gap > style.preferredRange[1],

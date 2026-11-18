@@ -1,4 +1,4 @@
-import { preparedNenDestinations } from './nenPreparedBranches'
+import { preparedNenDestinations, preparedBranchReady } from './nenPreparedBranches'
 import { nenFollowupReadiness, nenTransferWaiting } from './nenComboReadiness'
 import { hasDuelComboProfile } from './duelComboProfiles'
 import {
@@ -67,8 +67,8 @@ function choiceStatus(options: {
   const attack = fighter.attack!
   // A recovery link may require a free body (Cyclotron); preview that state only for guidance.
   const readiness = link ? { ...state, [side]: { ...fighter, attack: null } } : state
-  if (nenTransferWaiting(readiness[side], move)) return 'wait'
   if (!canUseMovesetMove(readiness, side, move)) return 'unavailable'
+  if (waitingForAura(readiness[side], move)) return 'wait'
   if (attack.confirmedBlock && !current.cancelOnBlockInto.includes(move.id)) return 'blocked'
   const target = state[side === 'player' ? 'opponent' : 'player']
   if (choiceExpired({ fighter, target, move, link })) return 'late'
@@ -91,4 +91,8 @@ function choiceExpired(options: {
 
 function unconfirmed(fighter: ArcadeFighter): boolean {
   return !fighter.attack?.confirmedHit && !fighter.attack?.confirmedBlock
+}
+
+function waitingForAura(fighter: ArcadeFighter, move: FighterMove): boolean {
+  return nenTransferWaiting(fighter, move) || !preparedBranchReady(fighter, move.id)
 }

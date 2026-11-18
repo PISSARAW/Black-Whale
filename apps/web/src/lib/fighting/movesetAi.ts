@@ -1,3 +1,5 @@
+import { personalApplicationReady } from './nenApplicationRange'
+import { nenPhysicalOpener } from './nenComboDecision'
 import { aiJudgmentSpeechAllowed } from './judgmentCommunication'
 import { habitAttackSlots } from './opponentHabits'
 import { counterplayAttackSlots } from './styleCounterAttack'
@@ -14,6 +16,8 @@ export function chooseMovesetAttack(
 ): FighterMove | null {
   const fighter = state.opponent
   if (!movesetFor(fighter.id) || !Number.isFinite(gap)) return null
+  const opener = nenPhysicalOpener(state, 'opponent')
+  if (opener) return opener
   const slots = [
     ...(counterplayAttackSlots(state, gap) ?? habitAttackSlots(state) ?? []),
     ...arsenalAttackSlots({ state, roll, gap }),
@@ -22,7 +26,12 @@ export function chooseMovesetAttack(
     slots
       .map((slot) => moveForSlot(fighter.id, slot))
       .find(
-        (move) => move && aiMoveInRange(move, gap) && aiJudgmentSpeechAllowed(state, 'opponent', move.id) && canUseMovesetMove(state, 'opponent', move),
+        (move) =>
+          move &&
+          personalApplicationReady(state,'opponent',move) &&
+          aiMoveInRange(move, gap) &&
+          aiJudgmentSpeechAllowed(state, 'opponent', move.id) &&
+          canUseMovesetMove(state, 'opponent', move),
       ) ?? null
   )
 }

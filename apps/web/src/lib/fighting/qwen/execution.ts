@@ -1,3 +1,6 @@
+import { personalApplicationReady } from '../nenApplicationRange'
+import { nenComboDecision, nenPhysicalOpener } from '../nenComboDecision'
+import { focusCommand } from '../nenFocusCommand'
 import { aiMoveInRange } from '../movesetAi'
 import { recoveryPunishOptions } from '../recoveryPunish'
 import { personalTacticalPlan } from '../nenTacticalIntent'
@@ -39,6 +42,8 @@ export function createFastController(side: FightSide, seed = 17) {
       lastMove = ''
     }
     const input = reflexInput(state, side, plan)
+    const continuation = continuedDecision({ state, side, input }, plan)
+    if (continuation) return continuation
     if (!commandWindow(state, due, plan)) return { input }
     const context = { state, side, input }
     const utility = readyUtility(context, plan, specialDue)
@@ -94,6 +99,8 @@ function selectMove(
     (option) => option.approachFrames === 0 && option.reaction === 0,
   )
   if (punish) return punish.move
+  const opener = nenPhysicalOpener(context.state, context.side)
+  if (opener) return opener
   const planned = memory.special ? plannedMove(context, plan) : null
   return planned ?? ordinaryMove(context, memory.roll)
 }
@@ -109,6 +116,7 @@ function plannedMove(context: Context, plan: TacticalPlan): FighterMove | null {
   if (plan.move === 'none' || plan.move.startsWith('utility:')) return null
   const move = moveForSlot(context.state[context.side].id, plan.move as MoveSlot)
   if (!allowed(context, move)) return null
+  if (!personalApplicationReady(context.state, context.side, move)) return null
   if (move.category === 'normal') return inReach(context, move) ? move : null
   if (!inPersonalReach(context, move)) return null
   return move
@@ -168,4 +176,12 @@ function inPersonalReach(context: Context, move: FighterMove): boolean {
 
 function commandWindow(state: FightState, due: number, plan: TacticalPlan): boolean {
   return state.phase === 'fighting' && state.frame >= due && plan.goal !== 'recover'
+}
+
+function continuedDecision(context: Context, plan: TacticalPlan): FastDecision | null {
+  if (context.state.phase !== 'fighting' || plan.goal === 'recover') return null
+  const decision = nenComboDecision(context.state, context.side)
+  if (decision.focus) return { input: focusCommand(decision.focus) }
+  if (decision.move) return { input: context.input, command: moveCommand(context, decision.move) }
+  return null
 }

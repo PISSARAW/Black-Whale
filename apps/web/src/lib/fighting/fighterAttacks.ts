@@ -93,6 +93,9 @@ export function startFighterAttack(options: {
     ...prepared,
     nenOpening: undefined,
     nenBranchCount: nextNenBranchCount(fighter, options.moveId),
+    nenConversionCount:
+      (fighter.nenConversionCount ?? 0) +
+      Number(nextNenBranchCount(fighter, options.moveId) > (fighter.nenBranchCount ?? 0)),
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),

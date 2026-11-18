@@ -1,4 +1,5 @@
-import { clearOwnedGum } from './bungeeNetwork'
+import { clearGumSource } from './bungeeScoped'
+import { gumAnchorNenAvailable } from './gumObjectAnchorAccess'
 import { releaseBlackVoicePage } from './blackVoice'
 import { mutePaperDolls } from './kallutoSurveillance'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
@@ -77,14 +78,15 @@ function clearPageEffects(options: {
     ...state,
     [side]: owner,
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
-    bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
   const spatial = releaseSpatialPage(cleared, side, page)
   return releaseCopiedBindings(spatial, side, page)
 }
 function releaseSpatialPage(state: FightState, side: FightSide, page: ChrolloPage): FightState {
   if (page === 'luini') return releaseLuiniAnchor(state, side)
-  return page === 'hisoka' ? clearOwnedGum(state, side) : state
+  return page === 'hisoka' && !gumAnchorNenAvailable(state[side], { source: 'book' })
+    ? clearGumSource(state, side, { source: 'book' })
+    : state
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {

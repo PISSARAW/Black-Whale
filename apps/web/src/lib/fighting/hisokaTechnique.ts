@@ -1,7 +1,7 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { gyoSight } from './nenPerception'
 import { chrolloCopiedMove } from './chrolloBook'
-import { selectedGumLink } from './bungeeNetwork'
+import { commandGumLink as selectedGumLink } from './bungeeScoped'
 import { gumLinkPoints } from './bungeeGeometry'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 

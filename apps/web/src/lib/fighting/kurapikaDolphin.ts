@@ -12,7 +12,7 @@ import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { gumObjectAnchors } from './gumObjectAnchors'
-import { gumNetworkBusy, clearOwnedGum } from './bungeeNetwork'
+import { gumSourceBusy, clearGumSource } from './bungeeScoped'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
@@ -183,7 +183,7 @@ export function dismissDolphinGum(state: FightState, side: FightSide): FightStat
           ...state,
           [side]: { ...actor, gumObjectAnchors: anchors.length ? anchors : undefined },
         }
-  return clearOwnedGum(next, side)
+  return clearGumSource(next, side, { source: 'dolphin', theftId: held?.theftId })
 }
 
 function changedDolphinCounters(before: FightState, after: FightState): string[] {
@@ -222,7 +222,7 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
-    'gum-support': gumUseBusy(fighter) || gumNetworkBusy(state, side),
+    'gum-support': gumUseBusy(fighter) || borrowedGumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
     'biohazard-device': Boolean(
       state.battlefield?.entities.some(
@@ -246,7 +246,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
     'body-and-soul': Boolean(fighter.lynchQuestion),
     poem: poemUseBusy(state, side),
-    gum: state.bungeeGum?.owner === side,
+    gum: borrowedGumNetworkBusy(state, side),
     projection: Boolean(fighter.hanzoProjection),
     texture: Boolean(fighter.textureSurprise),
     lsdf: Boolean(state.lsdf?.[side]),
@@ -260,6 +260,12 @@ function gumUseBusy(fighter: ArcadeFighter): boolean {
   return (
     !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
   )
+}
+function borrowedGumNetworkBusy(state: FightState, side: FightSide): boolean {
+  return gumSourceBusy(state, side, {
+    source: 'dolphin',
+    theftId: equippedDolphin(state[side])?.theftId,
+  })
 }
 function borrowedObjectAnchorBusy(fighter: ArcadeFighter): boolean {
   const held = equippedDolphin(fighter)

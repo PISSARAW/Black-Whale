@@ -7,7 +7,9 @@ import { voluntaryNenAvailable } from './nenAccess'
 import type { GumObjectAnchor } from './gumObjectAnchors'
 import type { ArcadeFighter } from './types'
 
-export function gumAnchorNenAvailable(actor: ArcadeFighter, anchor: GumObjectAnchor): boolean {
+type GumOrigin = Pick<GumObjectAnchor, 'source' | 'theftId'>
+
+export function gumAnchorNenAvailable(actor: ArcadeFighter, anchor: GumOrigin): boolean {
   if (!anchor.source) return false
   if (anchor.source === 'dolphin') return borrowedAnchorAvailable(actor, anchor)
   const own = personalGumBody(actor)
@@ -15,7 +17,7 @@ export function gumAnchorNenAvailable(actor: ArcadeFighter, anchor: GumObjectAnc
   if (anchor.source === 'personal') return own.id === 'hisoka'
   return own.id === 'chrollo' && activeGumPage(own)
 }
-export function gumAnchorCommandScope(actor: ArcadeFighter, anchor: GumObjectAnchor): boolean {
+export function gumAnchorCommandScope(actor: ArcadeFighter, anchor: GumOrigin): boolean {
   if (actor.dolphinExecution)
     return anchor.source === 'dolphin' && anchor.theftId === equippedDolphin(actor)?.theftId
   return anchor.source === (actor.id === 'chrollo' ? 'book' : 'personal')
@@ -37,10 +39,24 @@ function personalGumBody(actor: ArcadeFighter): ArcadeFighter {
     nen: context ? context.ownNen : actor.nen,
   }
 }
-function borrowedAnchorAvailable(actor: ArcadeFighter, anchor: GumObjectAnchor): boolean {
+function borrowedAnchorAvailable(actor: ArcadeFighter, anchor: GumOrigin): boolean {
   const held = equippedDolphin(actor)
-  if (!held?.used || held.returned || held.source !== 'hisoka' || held.theftId !== anchor.theftId)
+  if (
+    !held?.used ||
+    held.returned ||
+    held.source !== 'hisoka' ||
+    held.theftId !== anchor.theftId ||
+    chainAbilityGroup(held.moveId) !== 'bungee-gum'
+  )
     return false
   const carrier = actor.dolphinLoan ? loanCarrier(actor) : actor
-  return Boolean(carrier.kurapika?.emperorTime && voluntaryNenAvailable(stolenAuraActor(carrier)))
+  return Boolean(
+    carrier.kurapika?.emperorTime &&
+    voluntaryNenAvailable(
+      stolenAuraActor({
+        ...carrier,
+        stolenChainAbility: undefined,
+      }),
+    ),
+  )
 }

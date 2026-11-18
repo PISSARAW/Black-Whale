@@ -1,6 +1,6 @@
 # Hisoka : plusieurs supports physiques
 
-Le ruleset **clash-combat-45** permet plusieurs connexions de Bungee Gum sur
+Les rulesets **clash-combat-45** puis **50** permettent plusieurs connexions de Bungee Gum sur
 des supports physiques de l’arène. Elles peuvent coexister avec la liaison
 de combat entre deux personnes et avec les applications défensives admissibles.
 Le On est conservé.
@@ -36,6 +36,18 @@ ou usage prêté par Dolphin. Une page de Texture Surprise ne donne pas Bungee G
 Une page de Bungee Gum doit rester active ; le livre et le signet gardent leurs
 conditions. Une connexion prêtée ne devient pas un effet personnel du porteur.
 
+La provenance est également conservée par le réseau de connexions vers les
+combattants, surfaces et projectiles, ainsi que pendant leur préparation.
+Quitter une page du livre retire ses propres connexions ; terminer un prêt
+Dolphin retire celles de ce prélèvement. Les autres fils admissibles restent.
+Un nouveau prêt ne peut pas entretenir un fil appartenant à un ancien donneur.
+
+L'entretien et la puissance de chaque connexion utilisent leur canal de Nen
+réel, même dans une frame où un Hatsu prêté s'exécute aussi. L'aura personnelle
+finance le fil du livre ; l'aura prélevée finance le fil Dolphin. Une commande
+dans le canal du prêt ne déplace ni ne détache un fil personnel ou du livre.
+Les tests utilisent les commandes réelles, les deux camps et un plafond réel.
+
 Le premier ancrage par Dolphin dépense l’aura réellement prélevée et compte
 comme son unique application. Ses commandes de maintien restent disponibles ;
 une seconde attache fraîche n’est pas accordée après consommation de cet usage.
@@ -60,6 +72,8 @@ avec le même état final.
 Référence : connexions distinctes depuis la main et la jambe vers deux têtes au
 [chapitre 353](https://hunterxhunter.fandom.com/wiki/Chapter_353), corroborées par
 [le déroulé du combat](https://supercorona.wordpress.com/2021/05/18/hunter-x-hunter-chapter-353-cold-blooded/).
-Les attaches multiples sur des personnes, les armes détachées, les prothèses et
-la réanimation préparée restent à compléter. Ce jalon ne certifie pas un arsenal
+Le réseau intégré représente aussi plusieurs liens vers les personnes et les
+projectiles physiques conservés. Les prothèses, la réanimation préparée et les
+combinaisons de gestes du livre pendant un prêt restent à compléter ou à auditer.
+Ce jalon ne certifie pas un arsenal
 achevé à 100 %.

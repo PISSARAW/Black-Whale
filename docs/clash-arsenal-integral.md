@@ -1040,3 +1040,11 @@ La fermeture du livre, la fin du prêt ou le On arrêtent le contrôle sans effa
 le métal. Le retrait physique dépose le même assemblage réutilisable ; les
 copies matérielles restent inertes et suivent leur durée propre. Cette passe
 ne clôt pas les autres applications encore ouvertes de l’audit.
+
+## Copie de cadavre et Order Stamp — ruleset 65
+
+La [séquence montrée au chapitre 352](./clash-chrollo-cadavre-copie.md) admet
+la copie inerte du cadavre et refuse son original réel. Le contact avec la tête,
+la main libre, la parole, les ordres et la tête attachée gardent leur effet.
+Le corps partagé se relève avec son cachet, sans aiguilles d’Illumi ajoutées.
+Le On et les écarts restants de l’audit sont conservés.

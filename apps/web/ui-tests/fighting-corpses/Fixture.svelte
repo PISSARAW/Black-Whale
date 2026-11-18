@@ -12,6 +12,8 @@
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
   import { applyReplayCommand } from '$lib/fighting/fightReplayCommands'
   import { equippedDolphin } from '$lib/fighting/dolphinBorrowing'
+  import { performArsenalCommand } from '$lib/fighting/retrospectiveArsenal'
+  import { damageArenaObject } from '$lib/fighting/arenaSimulation'
   import type { LiveBookActions } from '$lib/fighting/chrolloLiveBook'
   import { EMPTY_INPUT, type FightSide } from '$lib/fighting/types'
   let side: FightSide = 'player'
@@ -34,6 +36,31 @@
       state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
     await tick()
   }
+  export async function prepareStamp(nextSide: FightSide) {
+    side = nextSide
+    state = bookCorpseSetup(side)
+    state = {
+      ...state,
+      [side]: {
+        ...state[side],
+        chrolloBook: {
+          pages: ['gallery-fake', 'order-stamp'],
+          page: 0,
+          open: false,
+          bookmark: 'gallery-fake',
+        },
+      },
+    }
+    state = performArsenalCommand(state, side, { action: 'history-use', target: `${side}:corpse` })
+    await advance(19)
+    state = performArsenalCommand(state, side, { action: 'history-page', target: 'order-stamp' })
+    await advance(13)
+  }
+  export async function severCopy() {
+    const copy = state.battlefield!.entities.find((entry) => entry.copy?.originalKind === 'corpse')!
+    state = damageArenaObject(state, copy.id, { damage: 16, zone: 'head' })
+    await advance(1)
+  }
   export function snapshot() {
     return {
       actor: {
@@ -44,6 +71,7 @@
         loan: equippedDolphin(state[side]),
       },
       corpse: corpseEntry(state, `${side}:corpse`),
+      copy: state.battlefield!.entities.find((entry) => entry.copy?.originalKind === 'corpse'),
       piles: state.battlefield!.entities.filter((entry) => entry.corpsePinBundle),
     }
   }

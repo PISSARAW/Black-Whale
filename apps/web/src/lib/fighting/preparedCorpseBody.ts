@@ -1,10 +1,11 @@
 import type { FightSide, FightState } from './types'
 import type { PreparedEntity } from './preparationTypes'
+import { corpseUpright } from './corpsePose'
 
 /** Collider and visible pose describe the same material corpse. */
 export function corpseCollider(entry: PreparedEntity): PreparedEntity {
   if (entry.kind !== 'corpse' || !entry.arena) return entry
-  const height = entry.controller?.source === 'illumi' ? 12 : 3
+  const height = corpseUpright(entry) ? 12 : 3
   return entry.arena.height === height ? entry : { ...entry, arena: { ...entry.arena, height } }
 }
 
@@ -24,7 +25,7 @@ export function corpseHeadContact(
   entry: PreparedEntity,
 ): boolean {
   const actor = state[side]
-  const headY = entry.y + (entry.controller?.source === 'illumi' ? 10 : 1.7)
+  const headY = entry.y + (corpseUpright(entry) ? 10 : 1.7)
   const handX = actor.x + Math.sign(entry.x - actor.x) * 2
   return Math.hypot(entry.x - handX, headY - (actor.y + 6)) <= 6
 }

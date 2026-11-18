@@ -1,4 +1,5 @@
 import { posePreparedCorpse } from './corpseScene'
+import { addOrderStamp } from './orderStampScene'
 import { createDolphinPeopleScene } from './dolphinPeopleScene'
 import { createLittleEyeScene } from './littleEyeScene'
 import {
@@ -122,6 +123,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
       figure.root.add(feather)
     }
     addCorpseNeedles(figure.root, entry)
+    if (entry.copy) addOrderStamp({ THREE, root: figure.root, box })
     return figure.root
   }
 
@@ -251,6 +253,8 @@ function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity
     root.traverse((part) => {
       if (part.name.startsWith('manga-head:')) part.visible = entry.copy!.headAttached
     })
+  const stamp = root.getObjectByName('order-stamp-imprint')
+  if (stamp) stamp.visible = Boolean(entry.copy?.order)
   const growth = root.getObjectByName('growth')
   if (growth) growth.scale.setScalar(entry.growth ? 1 : 0.05)
   const panel = root.getObjectByName('door-panel')

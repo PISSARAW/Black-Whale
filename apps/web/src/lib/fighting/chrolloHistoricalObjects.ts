@@ -1,4 +1,6 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { orderStampSubject } from './corpsePose'
+import { corpseCollider, corpseHeadContact } from './preparedCorpseBody'
 import { copiedCorpseNeedles } from './illumiCorpseMatter'
 import { copiedDocumentMaterials } from './paperDocumentCopy'
 import { copiedFaceNeedles } from './illumiNeedleMatter'
@@ -221,15 +223,16 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     return state
   const puppet = state.battlefield?.entities.find(
     (entry) =>
-      entry.kind === 'puppet' &&
+      orderStampSubject(entry) &&
       entry.copy?.headAttached &&
       entry.present &&
       entry.health > 0 &&
       (!id || entry.id === id) &&
-      Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8,
+      stampWithinReach(state, side, entry),
   )
   if (!puppet?.copy) return state
   const changed = updateEntity(state, puppet.id, {
+    arena: corpseCollider({ ...puppet, copy: { ...puppet.copy, order: 'attack' } }).arena,
     copy: {
       ...puppet.copy,
       owner: side,
@@ -241,6 +244,11 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     ...changed,
     [side]: { ...changed[side], aura: changed[side].aura - 10, arenaRecovery: 18 },
   }
+}
+
+function stampWithinReach(state: FightState, side: FightSide, entry: PreparedEntity): boolean {
+  if (entry.kind === 'corpse') return corpseHeadContact(state, side, entry)
+  return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8
 }
 
 export function orderHistoricalPuppets(

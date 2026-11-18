@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-64`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-65`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -25,6 +25,8 @@ sélectionnables et partagés entre interface, PvP et replay ; les commandes
 natives de contrôle des cadavres sont accessibles au joueur.
 Le [suivi matériel des aiguilles](./clash-illumi-cadavres.md) distingue aussi
 le cadavre, le contrôle, le livre et la réserve finie d’un prêt Dolphin.
+La [copie d’un cadavre sous Order Stamp](./clash-chrollo-cadavre-copie.md)
+exécute la distinction entre le défunt et sa marionnette de Gallery Fake.
 Les [ancrages de Bungee Gum sur plusieurs supports](./clash-hisoka-ancrages.md)
 ajoutent des connexions matérielles simultanées et leurs commandes indépendantes.
 Les [prothèses et leur apparence](./clash-hisoka-protheses.md) représentent les

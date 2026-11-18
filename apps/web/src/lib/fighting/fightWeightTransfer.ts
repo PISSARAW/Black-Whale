@@ -49,19 +49,38 @@ export function attackWeightTransfer(options: TransferOptions): AttackWeightTran
   return profile
 }
 
-function buildTransfer(options: TransferOptions): AttackWeightTransfer | undefined {
+interface TransferFactors {
+  strength: number
+  leadSupport: boolean
+  kicks: boolean
+  depth: number
+  reach: number
+  turn: number
+  braced: boolean
+}
+
+function transferFactors(options: TransferOptions, style: RosterChoreography): TransferFactors {
   const { id, kind, slot, shape } = options
-  const style = CHOREOGRAPHY[id]
-  if (!style) return undefined
   const character = TRANSFER_ACCENTS[id] ?? { depth: 1, reach: 1, turn: 1 }
-  const strength = style.amplitude * fighterMotionProfile(id).attack * NORMAL_STRENGTH[kind]
   const leadSupport = shape === 'spin' || (id === 'bonolenov' && slot === 'forwardSpecial')
-  const kicks = leadSupport || isLeadKick(shape)
-  const retreat = slot === 'backHeavy' || slot === 'backSpecial'
-  const depth = character.depth * (slot === 'lowHeavy' || slot === 'lowLight' ? 1.16 : 1)
-  const reach = character.reach * (retreat ? -0.7 : 1)
-  const turn = Math.sign(style.load.chest?.[1] || -1) * character.turn
-  const braced = usesBothFeet(options)
+  return {
+    strength: style.amplitude * fighterMotionProfile(id).attack * NORMAL_STRENGTH[kind],
+    leadSupport,
+    kicks: leadSupport || isLeadKick(shape),
+    depth: character.depth * slotDepth(slot),
+    reach: character.reach * slotReach(slot),
+    turn: Math.sign(style.load.chest?.[1] || -1) * character.turn,
+    braced: usesBothFeet(options),
+  }
+}
+
+function buildTransfer(options: TransferOptions): AttackWeightTransfer | undefined {
+  const style = CHOREOGRAPHY[options.id]
+  if (!style) return undefined
+  const { strength, leadSupport, kicks, depth, reach, turn, braced } = transferFactors(
+    options,
+    style,
+  )
   const load: FightPose = {
     root: [0, 0, -0.093 * reach],
     body: [-0.055 * depth, 0.105 * turn, 0],
@@ -87,6 +106,9 @@ function buildTransfer(options: TransferOptions): AttackWeightTransfer | undefin
     peak: 0.32 + style.anticipation * 0.23,
   }
 }
+
+const slotDepth = (slot: MoveSlot) => (slot === 'lowHeavy' || slot === 'lowLight' ? 1.16 : 1)
+const slotReach = (slot: MoveSlot) => (slot === 'backHeavy' || slot === 'backSpecial' ? -0.7 : 1)
 
 function isLeadKick(shape: StrikeShape | undefined) {
   return shape === 'kick' || shape === 'lowKick' || shape === 'sweep'

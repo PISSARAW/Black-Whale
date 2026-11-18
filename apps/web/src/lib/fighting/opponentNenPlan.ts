@@ -9,12 +9,10 @@ import { opponentWantsOn } from './onTechnique'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
 export function planOpponentNen(state: FightState): FightState {
+  const locked = lockedOpponentNen(state)
+  if (locked) return locked
   const gap = perceivedOpponentGap(state)
   const opponent = state.opponent
-  if (opponent.melodyPerformance) return state
-  if (judgmentForbidsNen(opponent) || chainsImmobilize(opponent))
-    return applyOpponentAura(state, { aura: true, down: true })
-  if (opponent.hanzoProjection || opponent.attack) return state
   const rest = zetsuRest(opponent, gap)
   if (rest) return applyOpponentAura(state, rest)
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
@@ -22,6 +20,16 @@ export function planOpponentNen(state: FightState): FightState {
   if (focused) return applyOpponentAura(state, focused)
   if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
   return advancedOpponentNen(state) ?? restingOpponentNen(state, gap)
+}
+
+/** States where the opponent cannot choose its Nen: performing, sealed, or committed. */
+function lockedOpponentNen(state: FightState): FightState | null {
+  const opponent = state.opponent
+  if (opponent.melodyPerformance) return state
+  if (judgmentForbidsNen(opponent) || chainsImmobilize(opponent))
+    return applyOpponentAura(state, { aura: true, down: true })
+  if (opponent.hanzoProjection || opponent.attack) return state
+  return null
 }
 
 function applyOpponentAura(state: FightState, partial: Partial<FightInput>): FightState {

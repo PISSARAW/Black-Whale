@@ -65,7 +65,7 @@
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
-  import { drawVictoryFrame } from '$lib/fighting/victory/draw'
+  import { drawFightScene } from '$lib/fighting/drawFightScene'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
   const { position: interpolatedPosition, ...presentation } = createFightPresentation()
@@ -198,6 +198,7 @@
           worldX,
         })
         const fighterEffects = createFighterEffectScene({
+          throwFrame: presentation.throwFrame,
           comfort: visualComfort,
           viewer: () => viewer,
           THREE,
@@ -235,15 +236,13 @@
         const fit = () => {
           resizeFightCanvas({ canvas, renderer, camera, post, graphics: comfort.graphics })
           // Resizing clears WebGL even when the presentation clock is paused.
-          if (!active) {
-            if (post) post.render()
-            else renderer.render(scene, camera)
-          }
+          if (!active) draw()
         }
+        const draw = () => (post ? post.render() : renderer.render(scene, camera))
         fit()
 
         const reactionContext = createFightReactionPresentation()
-        const finishedFall = createFinishedFallPresentation()
+        const finishedFall = createFinishedFallPresentation(presentation.throwFrame)
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
         let motionSeconds = 0
@@ -273,6 +272,7 @@
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
           const motion = fightBodyMotion({
+            throwFrame: presentation.throwFrame(),
             introFrame: motionPreference.matches ? null : introFrame,
             side,
             fighter,
@@ -311,6 +311,8 @@
               models,
               state,
               authored: cameraFrame,
+              minimumDistance: scenery.framing?.minimumDistance,
+              throwFrame: presentation.throwFrame(),
               intro: introFrame,
               reduced: motionPreference.matches,
               intensity: cameraIntensity(),
@@ -362,15 +364,13 @@
           camera.lookAt(pose.x, pose.lookY, 0)
         }
         const finishCombatFrame = () => {
-          drawVictoryFrame({
+          drawFightScene({
             victory: victoryRenderer,
-            input: {
-              state,
-              frame: victoryFrame,
-              comfort: visualComfort(),
-              models: { player: models.player.model.root, opponent: models.opponent.model.root },
-            },
-            draw: () => (post ? post.render() : renderer.render(scene, camera)),
+            state,
+            frame: victoryFrame,
+            comfort: visualComfort(),
+            models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            draw,
             failed: onSceneFailed,
           })
           recovery?.locate(camera, (side) => models[side].model.root)
@@ -398,6 +398,10 @@
           motionSeconds += dt
           drawnState = state
           const seconds = presentationSeconds ?? motionSeconds
+          presentation.observe(state, seconds, {
+            reduced: motionPreference.matches || cameraIntensity() === 0,
+            victory: victoryFrame,
+          })
           lastFrameAt = now
           onFrames = onClock(state, motionPreference.matches)
           animateFighter({ side: 'player', model: modelOf('player', state.player), seconds })

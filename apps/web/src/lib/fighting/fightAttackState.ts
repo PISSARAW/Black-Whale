@@ -3,6 +3,8 @@ import type { ChrolloPage } from './chrolloBook'
 import type { GumSource } from './bungeeSource'
 
 export interface FightAttack {
+  /** Bonolenov: Aura committed once to the authored projection. */
+  superThrow?: true
   /** Execution channel captured when a Hisoka technique actually starts. */
   nenOrigin?: GumSource
   copiedPage?: ChrolloPage

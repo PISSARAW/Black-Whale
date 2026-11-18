@@ -2,10 +2,12 @@ import { writable } from 'svelte/store'
 import type { FightState } from '../types'
 import { selectVictory, VICTORY_DURATION, type VictorySelection } from './catalogue'
 import { createSunMoonVictoryWitness } from '../chrolloDetonation'
+import { throwVictoryDelay } from '../throwCinematic'
 
 export interface VictoryFrame extends VictorySelection {
   elapsed: number
   active: boolean
+  pendingThrow?: number
 }
 export function createVictoryPlayback() {
   const store = writable<VictoryFrame | null>(null)
@@ -18,7 +20,12 @@ export function createVictoryPlayback() {
   const finish = () => {
     if (!frame) return
     completed = frame.token
-    frame = { ...frame, elapsed: frame.duration ?? VICTORY_DURATION, active: false }
+    frame = {
+      ...frame,
+      elapsed: frame.duration ?? VICTORY_DURATION,
+      pendingThrow: 0,
+      active: false,
+    }
     publish()
   }
   return {
@@ -39,12 +46,21 @@ export function createVictoryPlayback() {
           ? { variant: 'chrollo-sun-moon' as const, duration: 3 }
           : {}),
         elapsed: 0,
-        active: true,
+        pendingThrow: throwVictoryDelay(state),
+        active: throwVictoryDelay(state) === 0,
       }
       publish()
     },
     advance(dt: number, paused = false) {
-      if (!frame?.active || !ready || paused || !Number.isFinite(dt)) return
+      if (!frame || !ready || paused || !Number.isFinite(dt)) return
+      if (frame.pendingThrow) {
+        const used = Math.min(frame.pendingThrow, Math.max(0, dt))
+        frame.pendingThrow -= used
+        dt -= used
+        frame.active = frame.pendingThrow === 0
+        publish()
+      }
+      if (!frame.active) return
       const duration = frame.duration ?? VICTORY_DURATION
       frame.elapsed = Math.min(duration, frame.elapsed + Math.max(0, dt))
       if (frame.elapsed >= duration - 1e-8) finish()

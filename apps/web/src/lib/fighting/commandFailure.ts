@@ -4,6 +4,8 @@ import { preparationCheck } from './preparationRequirements'
 import { moveById, moveForAction } from './movesets'
 import { fightAcceptsCommands } from './fightOutcome'
 import { HANZO_BODY_REACH } from './hanzoProjection'
+import { SUPER_THROW_COST } from './superThrow'
+import { voluntaryNenAvailable } from './nenAccess'
 import type { CommandIntent } from './commandFeedback'
 import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
 
@@ -45,6 +47,8 @@ function fallbackKind(action: CommandIntent['action']) {
 
 function techniqueFailure(state: FightState, intent: CommandIntent): CommandFailure {
   const fighter = state[intent.side]
+  const grab = superThrowFailure(fighter, intent)
+  if (grab) return grab
   const { kind, moveId } = selectedCommand(fighter, intent)
   if (!nenActionAllowed({ state, side: intent.side, kind, moveId })) return 'nen'
   if (kind === 'special') {
@@ -59,6 +63,12 @@ function techniqueFailure(state: FightState, intent: CommandIntent): CommandFail
     concealed: kind === 'special' && fighter.nen.in,
   })
   return fighter.aura < cost ? 'aura' : 'condition'
+}
+
+function superThrowFailure(fighter: ArcadeFighter, intent: CommandIntent): CommandFailure | null {
+  if (fighter.id !== 'bonolenov' || intent.action !== 'throw' || !intent.input?.aura) return null
+  if (!voluntaryNenAvailable(fighter, { requireHatsu: false })) return 'nen'
+  return fighter.aura < SUPER_THROW_COST ? 'aura' : null
 }
 
 function bodyFailure(fighter: ArcadeFighter): CommandFailure | null {

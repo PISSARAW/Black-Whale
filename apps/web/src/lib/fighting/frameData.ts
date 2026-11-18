@@ -1,6 +1,7 @@
 import { halkenburgArrowUtility } from './halkenburgArrow'
 import type { GuardRequirement } from './combatProperties'
 import { openingFrameData } from './comboOpenings'
+import { superThrowFrameData } from './superThrow'
 import { paperUtilityAttack } from './kallutoPaper'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
@@ -129,8 +130,11 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   fighter = dolphinActor(fighter)
-  return blinkyAttackData(
-    cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter),
+  return superThrowFrameData(
+    blinkyAttackData(
+      cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter),
+      fighter,
+    ),
     fighter,
   )
 }

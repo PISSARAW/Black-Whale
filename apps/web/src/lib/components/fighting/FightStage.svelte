@@ -3,6 +3,7 @@
   import { createVictoryPlayback } from '$lib/fighting/victory/playback'
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
+  import FightThrowCinematic from './FightThrowCinematic.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
   import FightIntroduction from './FightIntroduction.svelte'
   import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
@@ -44,7 +45,7 @@
   export let victoryActive = false
   const victory = createVictoryPlayback()
   $: victory.observe(state, victoryEnabled)
-  $: victoryActive = Boolean($victory?.active)
+  $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let minimal = false
   export let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
@@ -70,6 +71,7 @@
   export let paused = false
   export let easterEggPreferences = defaultEasterEggPreferences()
   export let onEasterEgg: (side: FightSide, slot: EasterEggSlot) => void = () => {}
+  let throwActive = false
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
@@ -108,7 +110,11 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive && !$intro}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive && !$intro && !throwActive}<FightHud
+        state={visibleState}
+        {language}
+        {detailed}
+      />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -129,7 +135,7 @@
       />
     {/key}
 
-    {#if !victoryActive}
+    {#if !victoryActive && !throwActive}
       {#if training}
         <FightTrainingOverlay state={visibleState} {language} />
       {/if}
@@ -150,11 +156,18 @@
       {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
     {/if}
+    <FightThrowCinematic
+      state={visibleState}
+      {comfort}
+      {language}
+      enabled={!$intro && !$victory?.active}
+      bind:active={throwActive}
+    />
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
     <FightIntroduction playback={intro} {state} {language} {paused} />
   </div>
-  {#if !victoryActive}
+  {#if !victoryActive && !throwActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
         {state}
         {language}

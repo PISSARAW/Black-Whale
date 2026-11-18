@@ -1,4 +1,5 @@
 import { shuGuardFactor } from './nenCombat/protection'
+import { cinematicThrowKnockdown } from './superThrow'
 import { fightCategoryEfficiency } from './nenCategories'
 import { attackData, attackPhase } from './frameData'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
@@ -12,7 +13,6 @@ import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 const GROUND = 0
 const MIN_X = 7
 const MAX_X = 93
-const THROW_KNOCKDOWN_FRAMES = 48
 
 export interface ImpactDefence {
   fighter: ArcadeFighter
@@ -203,7 +203,7 @@ function comboState(
 
 function knockdownFrames(options: StrikeOptions): number {
   if (!options.knockdown || options.blocked) return options.fighter.knockdownFrames
-  return Math.max(options.fighter.knockdownFrames, THROW_KNOCKDOWN_FRAMES)
+  return Math.max(options.fighter.knockdownFrames, cinematicThrowKnockdown(options.attacker))
 }
 
 export function openingType(

@@ -1,4 +1,5 @@
 import { withLoanCarrier } from './dolphinBorrowing'
+import { paperDolphinContinues } from './kallutoScatterDolphin'
 import { stolenAuraActor } from './dolphinSupply'
 import { withDolphinIdentity, recordDolphinEffects } from './kurapikaDolphin'
 import { chainAbilityGroup } from './chainAbilityGroup'
@@ -14,10 +15,9 @@ export function performDolphinApplication(
   const { state, side, moveId } = options
   const fighter = state[side],
     held = fighter.kurapika?.held
-  if (!held?.loaded || fighter.id !== 'kurapika') return state
-  const move = moveById(moveId)
-  if (!move || !['special', 'finisher'].includes(move.category)) return state
-  if (chainAbilityGroup(moveId) !== chainAbilityGroup(held.moveId)) return state
+  if (!held?.loaded) return state
+  if (!dolphinApplicationOwned(fighter)) return state
+  if (!validDolphinApplication(moveId, held.moveId)) return state
   if (held.used) return continuingDolphinApplication(options, perform)
   const prepared = {
     ...state,
@@ -47,7 +47,7 @@ function withLoanOptions(state: FightState, side: FightSide): ArsenalOption[] {
 function equippedArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const fighter = state[side],
     held = fighter.kurapika?.held
-  if (fighter.id !== 'kurapika' || !held?.loaded) return []
+  if (fighter.id !== 'kurapika' || !held?.loaded || held.lentTo) return []
   const prepared = {
     ...state,
     [side]: stolenAuraActor({
@@ -77,9 +77,13 @@ function equippedArsenalOptions(state: FightState, side: FightSide): ArsenalOpti
 }
 
 export function dolphinCanContinue(state: FightState, side: FightSide, moveId: string): boolean {
+  return paperDolphinContinues(state, side, moveId) || gumDolphinContinues(state, side, moveId)
+}
+function gumDolphinContinues(state: FightState, side: FightSide, moveId: string): boolean {
   const held = state[side].kurapika?.held
   return (
     held?.source === 'hisoka' &&
+    !held.returned &&
     state.bungeeGum?.owner === side &&
     ['hisoka:forwardSpecial', 'hisoka:backSpecial'].includes(moveId)
   )
@@ -102,7 +106,20 @@ function continuingDolphinApplication(
         variant: move.variant,
         auraCharged: false,
       }),
-    'hisoka',
+    state[side].kurapika!.held!.source,
   )
   return recordDolphinEffects(state, cast, side)
+}
+
+function validDolphinApplication(moveId: string, heldMoveId: string): boolean {
+  const move = moveById(moveId)
+  return Boolean(
+    move &&
+    ['special', 'finisher'].includes(move.category) &&
+    chainAbilityGroup(moveId) === chainAbilityGroup(heldMoveId),
+  )
+}
+
+function dolphinApplicationOwned(fighter: FightState['player']): boolean {
+  return fighter.id === 'kurapika' && !fighter.kurapika?.held?.lentTo
 }

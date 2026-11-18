@@ -5,8 +5,8 @@ const DETAILS = {
   sayird: [
     'Little Eye',
     'Little Eye',
-    'Little Eye contrôle un petit animal réel, au plus de la taille d’un hamster : Sayird voit et entend par lui. Les créatures matérialisées par le Nen sont exclues.',
-    'Little Eye controls a real small animal, up to hamster size: Sayird sees and hears through it. Nen-conjured creatures are excluded.',
+    'Little Eye lance une boule d’aura et contrôle le petit animal réel qu’elle atteint, au plus de la taille d’un hamster : Sayird voit et entend par lui. Les créatures matérialisées par le Nen sont exclues.',
+    'Little Eye launches an aura ball and controls the real small animal it hits, up to hamster size: Sayird sees and hears through it. Nen-conjured creatures are excluded.',
   ],
   cluck: [
     'Courrier par pigeon',
@@ -21,6 +21,19 @@ const DETAILS = {
     'L: anchor from inside a sealed single-door room, then leave for an already visited place. Outside, L returns from anywhere. Opening the door permanently burns the room.',
   ],
 } as const
+
+const LUINI_NORMALS: Record<string, string> = {
+  standingLight: 'Pointe du couteau|Knife thrust',
+  standingHeavy: 'Entaille au couteau|Knife slash',
+  lowLight: 'Coup bas|Low kick',
+  lowHeavy: 'Balayage|Sweep',
+  airLight: 'Entaille aérienne|Air slash',
+  airHeavy: 'Talon descendant|Descending heel',
+  forwardLight: 'Pointe en avançant|Advancing thrust',
+  forwardHeavy: 'Entaille en avançant|Advancing slash',
+  backHeavy: 'Revers|Backfist',
+  throw: 'Projection|Throw',
+}
 
 /** Replace the old offensive carrier with the utility that the simulation actually performs. */
 export function tunePreparationMoveset(base: FighterMoveset): FighterMoveset {
@@ -42,12 +55,19 @@ export function tunePreparationMoveset(base: FighterMoveset): FighterMoveset {
     finisherConditionEn: travel ? '' : base.finisherConditionEn,
     moves: moves.map((move) => ({
       ...move,
+      ...luiniPhysicalLabel(id, move),
       cancelInto: move.cancelInto.filter((target) => physical.has(target)),
     })),
     combos: base.combos
       .map((combo) => combo.filter((target) => physical.has(target)))
       .filter((combo) => combo.length >= 2),
   }
+}
+function luiniPhysicalLabel(id: string, move: FighterMove) {
+  const label = id === 'luini' ? LUINI_NORMALS[move.slot] : undefined
+  if (!label) return {}
+  const [nameFr, nameEn] = label.split('|')
+  return { nameFr, nameEn }
 }
 
 function utilityMove(move: FighterMove, details: readonly string[]): FighterMove {

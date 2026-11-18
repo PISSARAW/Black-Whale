@@ -18,7 +18,7 @@ declare module './types' {
 /** A temporary execution channel: the carrier's own reserve is never replaced in saved state. */
 export function stolenAuraActor(actor: ArcadeFighter): ArcadeFighter {
   const supply = actor.kurapika?.held?.auraSupply
-  if (!supply || actor.dolphinExecution) return actor
+  if (!supply || actor.kurapika?.held?.returned || actor.dolphinExecution) return actor
   const borrowedTen = actor.nen.mode === 'zetsu'
   return {
     ...actor,

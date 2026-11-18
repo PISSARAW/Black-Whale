@@ -1,3 +1,5 @@
+import type { FightAttack } from './fightAttackState'
+import type { PaperProjectileMetadata } from './kallutoPaperTypes'
 import type { PadailleTool } from './padailleWeapon'
 import type { Numpad } from './motionInput'
 import type { ControlScheme } from './controlScheme'
@@ -178,7 +180,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: import('./dolphinAura').StealChainDrain
-  stolenChainAbility?: { owner: FightSide; ownerMember?: number; moveId: string }
+  stolenChainAbility?: import('./dolphinAura').StolenChainSeal
   judgmentChain?: import('./judgmentRules').JudgmentSeal
   id: FighterId
   x: number
@@ -228,7 +230,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   /** Biscuit has revealed her natural body; persists until the next round. */
   biscuitTrueForm?: boolean
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */
-  textureSurprise?: { surface: 'cloth' }
+  textureSurprise?: import('./hisokaTextureOrigin').TextureSurpriseState
   /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
   hanzoProjection?: {
     bodyX: number
@@ -242,26 +244,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   motion?: FighterMotion
   /** Frame of the current clockwise right-arm rotation; completed turns are stored separately. */
   cyclotronWindup?: { frame: number }
-  attack: {
-    copiedPage?: ChrolloPage
-    moveId?: string
-    variant?: AttackVariant
-    confirmedBlock?: boolean
-    /** The AI already rolled its follow-up for this contact (aiComboFollowUp.ts). */
-    aiFollowUpRolled?: boolean
-    confirmedHit?: boolean
-    kind: AttackKind
-    frame: number
-    impacted: boolean
-    auraCharged: boolean
-    concealed: boolean
-    hatsuSource: FighterId | null
-    projectileSpawned: boolean
-    projectilesSpawned?: number
-    /** Charge committed to this one right punch, including a miss. */
-    cyclotronTurns?: number
-    reversal: boolean
-  } | null
+  attack: FightAttack | null
   bufferedAttack: {
     cancelFrom?: string
     copiedPage?: ChrolloPage
@@ -371,10 +354,9 @@ export interface RemotePunchPath {
   struck: boolean
 }
 
-export interface FightProjectile {
+export interface FightProjectile extends PaperProjectileMetadata {
   guard?: Exclude<import('./combatProperties').GuardRequirement, 'throw'>
   canHitDowned?: boolean
-  kallutoPaper?: 'plant' | 'serpent'
   jupiter?: boolean
   living?: boolean
   /** A transformed living object cannot be swallowed by Blinky. */
@@ -412,15 +394,8 @@ export interface FightProjectile {
 
 export type ProjectileMatter = 'object' | 'nen'
 
-export interface BungeeGumAttachment {
-  owner: FightSide
-  target: FightSide
-  hidden: boolean
-  /** The owner is reeling the target in; cleared once the line goes slack. */
-  retracting: boolean
-  /** The owner launches themselves toward the stretched target attachment. */
-  rebounding?: boolean
-}
+import type { BungeeGumAttachment } from './bungeeTypes'
+export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
   throwTech?: { frame: number; sequence: number }

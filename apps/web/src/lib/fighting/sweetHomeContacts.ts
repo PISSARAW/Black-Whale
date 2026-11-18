@@ -1,6 +1,6 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
+import { chainAbilitySealed } from './kurapika'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide } from './frameData'
-import { hatsuSealedByOn } from './onTechnique'
 import type { FightSide, FightState } from './types'
 
 /** Contact uses a short hand box, never the special's much longer attack box. */
@@ -35,25 +35,22 @@ export function sweetHomeContacts(state: FightState, side: FightSide): SweetHome
   switch (owner.attack.moveId) {
     // An explicit two-hand link: absorb the other person's wound into one's own body.
     case 'terebellum:forwardSpecial':
-      return { right: target, left: side }
+      return { right: target, left: owner.sweetHomeObject ? null : side }
     // Absorbing without a left-hand recipient wounds the owner's left hand.
     case 'terebellum:downSpecial':
       return { right: target, left: null }
     default:
-      return { right: null, left: target }
+      return { right: null, left: owner.sweetHomeObject ? null : target }
   }
 }
 
 export function sweetHomeAvailable(state: FightState, side: FightSide): boolean {
   const owner = state[side]
   return (
-    owner.health > 0 &&
+    voluntaryNenAvailable(owner) &&
     owner.hitStun === 0 &&
     owner.blockStun === 0 &&
     owner.knockdownFrames === 0 &&
-    owner.hatsuEffects.hatsuStolen === 0 &&
-    owner.hatsuEffects.forcedZetsuFrames === 0 &&
-    canUseHatsu(owner.nen) &&
-    !hatsuSealedByOn(owner)
+    !chainAbilitySealed(owner, 'terebellum:neutralSpecial')
   )
 }

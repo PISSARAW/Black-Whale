@@ -4,14 +4,17 @@ import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 const PREFIXES: Readonly<Record<string, readonly string[]>> = {
-  hisoka: ['gum-'],
+  kalluto: ['paper-stop-listening', 'paper-release-confetti'],
+  musse: ['window-recall', 'window-stop-listening'],
+  sayird: ['little-eye-'],
+  hisoka: ['gum-', 'texture-'],
   biscuit: ['cookie-'],
   hinrigh: ['biohazard-'],
   basho: ['basho-'],
 }
 export function dolphinCommandAllowed(actor: ArcadeFighter, command: ArsenalCommand): boolean {
   const held = equippedDolphin(actor)
-  if (!held?.loaded) return false
+  if (!held?.loaded || held.returned) return false
   return (PREFIXES[held.source] ?? []).some((prefix) => command.action.startsWith(prefix))
 }
 export function performLoanCommand(

@@ -93,6 +93,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const plan = bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
     animateServiceHandgun(human.figure, fighter)
+    syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
     restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
@@ -167,8 +168,9 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
 }
 
 function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
+  if (plan.key === 'padaille-cuff-escape') return false
   return (
-    ['chrollo', 'kurapika'].includes(fighter.id) ||
+    ['chrollo', 'kurapika', 'luini'].includes(fighter.id) ||
     bodyguardFiring(fighter) ||
     plan.key === 'roster-writing' ||
     plan.key === 'roster-console'
@@ -198,13 +200,22 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
   if (fighter.attack) return attackingPlan(fighter, standing)
   return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
 }
+function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
+  if (!fighter.luiniPassage || fighter.hitStun > 0) return null
+  return {
+    key: 'luini-occupied-passage',
+    plant: false,
+    blend: 0.08,
+    pose: stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, 0),
+  }
+}
 
 function attackingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
   return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
 }
 
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const maintained = rosterSustainedMotion(fighter, context.seconds)
+  const maintained = luiniBodyPlan(fighter) ?? rosterSustainedMotion(fighter, context.seconds)
   if (maintained) return maintained
   const dance = bonolenovDancePlan(fighter, context.seconds)
   if (dance) return dance
@@ -336,4 +347,16 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     return { ...walking, plant: true }
   }
   return plan(standing, 'stance')
+}
+
+function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: ArcadeFighter): void {
+  for (const name of [
+    'theta-physical-handgun',
+    'signature-katana',
+    'signature-umbrella',
+    'luini-physical-knife',
+  ]) {
+    const weapon = figure.getObjectByName(name)
+    if (weapon) weapon.visible = !fighter.weaponsConfiscated
+  }
 }

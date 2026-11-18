@@ -1,5 +1,6 @@
 import type { FighterMove, FighterMoveset, MoveTuning } from './movesetTypes'
 import type { MoveSlot } from './types'
+import { windowListeningMove } from './secretWindowListeningMove'
 
 const UTILITY: Partial<Record<MoveSlot, Partial<MoveTuning>>> = {
   neutralSpecial: { lunge: 0, reach: 16, targetZone: 'torso', auraZone: 'hands' },
@@ -14,6 +15,7 @@ export function tuneBenjaminMoveset(moveset: FighterMoveset): FighterMoveset {
 }
 
 function tuneMove(move: FighterMove): FighterMove {
+  if (move.slot === 'backSpecial') return windowListeningMove(move)
   const tuning = UTILITY[move.slot]
   const cost = move.slot === 'finisher' ? 24 : move.auraCost
   return tuning ? { ...move, auraCost: cost, tuning: { ...move.tuning, ...tuning } } : move

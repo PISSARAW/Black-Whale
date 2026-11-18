@@ -3,7 +3,9 @@ import { biohazardAiSlots } from './biohazardAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { illumiAiSlots } from './illumiAi'
 import { hasPlantedPaper, paperState } from './kallutoPaper'
+import { currentPaperDoll } from './kallutoSurveillance'
 import { BUNGEE_REST_DISTANCE } from './hisokaTechnique'
+import { aiGumLink, networkGumSlots, idleGumSlots } from './bungeeAiCombat'
 import { SENSE_BITS } from './saiyuSenses'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyBloodReady, blinkyState } from './blinky'
@@ -89,13 +91,15 @@ function hisokaSlots({
   roll,
   gap,
 }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  const gum = state.bungeeGum
+  const network = networkGumSlots(state, gap)
+  if (network) return network
+  const gum = aiGumLink(state)
   if (textureOpening({ state, roll, gap })) return ['downSpecial']
   if (gum?.owner !== 'opponent') return ['neutralSpecial']
   if (!gum.retracting && gap > BUNGEE_REST_DISTANCE)
     return [roll < 0.5 ? 'forwardSpecial' : 'backSpecial', 'finisher']
   if (gap <= 10) return ['finisher', 'standingHeavy']
-  return !state.opponent.textureSurprise && roll > 0.8 ? ['downSpecial'] : []
+  return idleGumSlots(state, roll)
 }
 
 function saiyuSlots({ state, roll }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
@@ -112,7 +116,12 @@ function saiyuSlots({ state, roll }: ArsenalAiContext): readonly import('./types
 }
 
 function machiSlots({ state, gap }: ArsenalAiContext): readonly import('./types').MoveSlot[] {
-  if (state.opponent.maxHealth - state.opponent.health >= 24 && gap > 12) return ['neutralSpecial']
+  if (
+    state.opponent.openWounds &&
+    state.opponent.maxHealth - state.opponent.health >= 24 &&
+    gap > 12
+  )
+    return ['neutralSpecial']
   const thread = machiThreadForOwner(state, 'opponent')
   if (thread?.kind === 'bind') return ['finisher']
   return thread ? ['downSpecial', 'standingLight'] : ['forwardSpecial', 'downSpecial']
@@ -122,7 +131,7 @@ function kallutoSlots({ state, roll }: ArsenalAiContext): readonly import('./typ
   const paper = paperState(state.opponent)
   if (!hasPlantedPaper(state, 'opponent', paper.zone))
     return [roll < 0.5 ? 'neutralSpecial' : 'downSpecial']
-  return !paper.doll ? ['backSpecial'] : ['forwardSpecial', 'finisher']
+  return !currentPaperDoll(state, 'opponent') ? ['backSpecial'] : ['forwardSpecial', 'finisher']
 }
 
 function bonolenovSlots({

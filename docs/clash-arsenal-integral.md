@@ -503,7 +503,7 @@ de couverture des profils ou un nombre de tests :
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
 | Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les destinataires non éveillés et les éditeurs spécialisés du prêt de Stealth Dolphin. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                                                                                 |
+| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                             |
 | Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
@@ -638,3 +638,331 @@ ne doivent pas être transformés en trois espions interchangeables. L'écoute �
 travers une barrière et l'oiseau posé au contact sont décrits ; la fonction du
 troisième et la lecture exacte de la limite de simultanéité restent à traiter
 sans inventer de pouvoir (chapitres 366, 373 et 389).
+
+## Dolphin : restitution, fermeture et continuité des effets
+
+La fin de l'application rend désormais immédiatement le Hatsu au corps du donneur,
+sans confondre cette restitution avec la disparition du Dolphin équipé. Tant que
+le dispositif reste présent, Emperor Time continue de coûter de la vie. Le
+destinataire peut ensuite le fermer même sans aura personnelle ; le prêteur éveillé
+peut aussi fermer un prêt déjà restitué via leur connexion commune. Une capacité
+encore inutilisée ou une application maintenue ne bénéficie pas de ce raccourci.
+
+Chaque prélèvement effectif possède son identifiant. Une ancienne restitution ne
+peut donc pas effacer un vol plus récent du même Hatsu sur le même corps. Le Hatsu
+exécuté au contact de la seringue est conservé avant que la blessure et Zetsu
+n'interrompent l'action de la victime. La sélection de duel peut ainsi retenir une
+Texture Surprise réellement en cours, au lieu de revenir systématiquement au
+premier spécial une fois le drainage terminé ; cela n'ajoute aucune condition de
+connaissance ou d'observation préalable à Steal Chain.
+
+Les constructions qui apparaissent à la fin d'un démarrage sont suivies pendant
+leurs propres hooks : Texture Surprise garde son prêt tant que le support reste
+actif, et les autres Hatsu personnels du porteur ne rallongent pas cette utilisation.
+Little Eye emprunté reste contrôlé pendant l'inconscience liée, comme dans le cas
+montré d'Oito. La mort de l'animal met fin au contrôle et restitue le Hatsu avant
+la fermeture de Dolphin. Les entités mortes ne restent pas comptées comme des
+animaux contrôlés. L'observation sensorielle et l'activation complète de Little Eye
+sur une personne non éveillée restent à compléter dans le chantier suivant.
+
+Les commandes volontaires du panneau, y compris l'arrêt d'un soutien, ne passent
+plus pendant un sommeil, un blackout ou une manipulation qui retire l'autonomie.
+Les boutons concernés sont désactivés. Le On reste disponible. Cette passe porte
+le ruleset à **clash-combat-33** ; elle ne clôt pas les autres réserves de l'audit.
+
+## Little Eye : capture et perceptions réellement utilisables
+
+Little Eye lance une boule d'aura qui doit atteindre un petit être vivant réel,
+au plus de la taille d'un hamster. La capture n'est plus instantanée : un animal
+qui quitte sa trajectoire peut être manqué. Une copie de Gallery Fake, une
+créature de Nen, un animal mort ou un animal trop grand ne convient pas. Cette
+boule ne blesse ni n'étourdit les combattants. Les vitesses, distances et tailles
+de collision sont des réglages de la scène, pas des restrictions Nen annoncées
+par le manga.
+
+L'utilisateur reçoit maintenant une lecture de la vue et de l'ouïe de l'animal :
+apparences, positions et aura effectivement visible, paroles à portée de son
+corps. Cette lecture respecte l'orientation, les obstacles physiques de l'arène,
+In et Gyo. Elle ne révèle ni pensée, ni mensonge intentionnel, ni technique
+privée. Les doubles visibles de Hanzo sont distincts de son corps endormi. Le
+flux est privé dans le PvP et conservé dans le replay. Le client reçoit ces
+perceptions de l’arbitre, sans les reconstruire depuis des corps dont les données
+Nen ont été masquées.
+
+Les ordres de déplacement, d'orientation, d'arrêt et de libération passent par le
+véritable utilisateur, y compris avec un prêt de Dolphin ou une page de Skill
+Hunter. L'animal n'avance plus automatiquement vers un adversaire dont la
+position serait connue sans observation. Il conserve son dernier ordre pendant
+l'inconscience du porteur ; aucune nouvelle perception ou commande n'est alors
+reçue. L'IA s'appuie elle aussi sur l'image reçue. Un projectile qui touche
+réellement l'animal peut le tuer sans fabriquer un impact sur un combattant.
+
+Le temps de vol fait partie de l'unique application prêtée : il ne permet pas de
+rendre le Hatsu avant la capture puis de continuer à l'utiliser. Une libération
+ou la mort de l'animal termine l'application ; le dispositif équipé et Emperor
+Time conservent leur propre fermeture. Ruleset : **clash-combat-34**. Le On reste
+présent. Les destinataires non éveillés, leurs nœuds d'aura et les autres réserves
+listées plus haut restent à terminer ; cette passe ne certifie pas les 40
+arsenaux à 100 %.
+
+## Dolphin : destinataire non éveillée et ouverture des nœuds d'aura
+
+La ressource de scénario « Reine Oito » installe une seule personne physique,
+distincte des 40 combattants sélectionnables. Elle ne reçoit ni identité de
+combattant d'emprunt, ni affinité, statistiques Nen, matériel ou Hatsu personnel.
+Le prêt exige toujours un Dolphin chargé et inutilisé, la main droite disponible
+et un contact de seringue à la position réelle du destinataire. Il libère le
+stock de Steal Chain et garde le prêteur sous Emperor Time.
+
+L'activation de Little Eye utilise exactement le stock d'aura prélevé au donneur.
+Dolphin déclenche l'émission à proximité d'Oito ; la boule doit atteindre un
+petit animal réel admissible.
+Les ordres et les perceptions appartiennent à Oito, avec ses propres contrôles ;
+ils ne sont pas attribués au corps de Kurapika ou d'un autre combattant. La
+transmission de la vue et de l'ouïe s'arrête pendant le blackout partagé, tandis
+que l'animal conserve son dernier ordre et que l'application continue. Le Hatsu
+revient au donneur à la fin de cette application, mais Dolphin et le coût de vie
+continuent jusqu'à leur fermeture.
+
+Le prêt permet à Oito de voir l'aura avant sa première activation. L'activation
+entrouvre ses nœuds, sans lui attribuer Ten ou une technique personnelle ; cette
+ouverture reste après la fermeture du dispositif. Erigeron peut également être
+prêté à ce corps non éveillé et faire pousser une vraie graine au contact avec
+l'aura de Bill : c'est le mécanisme d'éveil montré pendant les leçons du chapitre
+388, sans prétendre que cette combinaison précise a été montrée sur Oito.
+L'ouverture des nœuds ne simule pas un apprentissage instantané du contrôle de
+l'aura.
+
+Ce corps vivant est une cible humaine de Black Voice, sous ses conditions
+d'antenne et de téléphone. Gallery Fake en produit une copie physique inerte,
+avec l'apparence d'Oito mais sans son prêt, ses perceptions ni ses nœuds ouverts.
+Cette copie peut être commandée par Order Stamp ; elle ne devient pas une
+utilisatrice de Nen.
+
+La personne, son Dolphin équipé, l'animal contrôlé et une éventuelle boule déjà
+émise sont conservés au changement de manche. Changer le score ne supprime donc
+pas la contrainte d'Emperor Time. Le protocole PvP distingue le prêteur, le
+donneur original et le propriétaire des contrôles du destinataire ; le replay
+conserve l'injection, l'éveil, les commandes, la restitution et la fermeture.
+
+Dolphin est visible au destinataire **et** à Kurapika, jamais aux autres
+observateurs grâce à Gyo. Cette correction concerne aussi les prêts aux
+combattants ; elle suit les chapitres [364](https://hunterxhunter.fandom.com/wiki/Chapter_364)
+et [367](https://hunterxhunter.fandom.com/wiki/Chapter_367). Les images et les
+paroles reçues par l'animal restent dans le flux privé du destinataire : la
+connexion des deux esprits n'ajoute pas un transfert automatique de toutes ses
+perceptions au prêteur.
+
+Ruleset : **clash-combat-35**. Le On reste présent. Ces applications connues sont
+exécutables ; les autres réserves de l'audit, notamment les éditeurs spécialisés,
+Lovely Ghostwriter, les prothèses et liens multiples d'Hisoka, Judgment et les
+consciences d'Halkenburg, restent ouvertes. Ce jalon ne certifie pas les 40
+arsenaux à 100 %.
+
+## Secret Window : corps marqué et flux privé partagé avec Benjamin
+
+Le contact de Musse et celui de Benjamin utilisent maintenant la même application
+de Secret Window. Le hibou transmet les gestes du corps réellement touché et les
+paroles réellement prononcées par ce corps, sans révéler l'intention, la technique
+cachée ou les pensées. Une garde ne remplace pas une esquive et n'empêche pas ce
+contact non dommageable. Le contact reste soumis à la portée physique, à la grâce
+de relevée et aux véritables évitements.
+
+La cible est conservée par membre physique d'équipe. Quand elle passe au portail,
+le hibou la suit ; le remplaçant n'hérite pas de son observation. Un Musse en
+réserve continue à recevoir ses propres observations. Le flux reste privé en PvP,
+y compris en réserve, et n'est pas recalculé depuis les informations masquées du
+client. Un esprit inconscient ne reçoit pas de nouvelles observations ni de
+paroles. Un ordre explicite permet de rappeler le hibou ; changer ensuite de cible
+demande un nouveau contact.
+
+Le bénéficiaire d'un Dolphin équipé utilise son stock emprunté pour conserver le
+flux, même si sa propre réserve ou son Hatsu personnel ne sont pas disponibles.
+Les entraves physiques au Nen et le sceau de On restent appliqués. Un changement
+de manche ne supprime pas un hibou encore lié à ce prêt et ne libère donc pas
+gratuitement le donneur ou le prêteur.
+
+Références : contact et transmission au chapitre 373, héritage aux chapitres 373
+et 389, fonctions connues résumées [ici](https://hunterworld.tokyo/en/musse/).
+L'écoute par le hibou d'épaule du chapitre 366 et la relecture développée par
+Benjamin au chapitre 413 restent à intégrer après cette correction du flux. La
+fonction propre du troisième oiseau n'est pas inventée. Ruleset :
+**clash-combat-36** ; le On reste présent et l'audit global reste ouvert.
+
+## Secret Window : application d’écoute du hibou d’épaule
+
+L’application du chapitre 366 est maintenant distincte de la pose au contact du
+chapitre 373. Musse peut invoquer le hibou d’épaule avec bas + L ou le panneau
+d’arsenal ; Benjamin l’utilise comme application de son héritage avec arrière + L
+ou le même panneau. L’IA sait employer cette écoute. Ce geste n’inflige aucun
+dégât et n’exige pas de toucher une personne.
+
+Les paroles réellement prononcées à portée du scénario traversent les parois.
+L’écoute ne fournit ni image, pensée, intention de mensonge, quantité d’aura ou
+connaissance du futur. La portée de voix de 36 unités, le coût de 16 aura et les
+temps d’animation sont des réglages du scénario, pas des conditions chiffrées du
+manga. Le hibou de contact rapporte exclusivement la voix du corps marqué : les
+paroles d’une personne voisine et celles d’un double de Hanzo ne deviennent pas
+les paroles du corps surveillé.
+
+Chrollo peut choisir cette application sur une page de Secret Window réellement
+active ; fermer le livre sans signet l’interrompt. Le sélecteur de Dolphin
+propose également cette application du même Hatsu. Son activation consomme
+l’aura réellement prélevée, reste un seul usage et lie l’effet à Emperor Time
+jusqu’à son terme. L’écoute d’un prêt actif est conservée entre les manches.
+Un ordre d’arrêt ne rappelle pas le hibou déjà posé sur une autre cible.
+
+Les deux commandes appartiennent au même Hatsu : voler Secret Window à Benjamin
+scelle son écoute et son application au contact, sans sceller ses autres héritages.
+Les paroles restent privées en PvP, y compris pour les membres en réserve ; elles
+ne sont pas reconstruites depuis un état adverse masqué. Le panneau ancien de
+Benjamin ne lit plus directement le nom technique de l’attaque adverse et son
+marquage privé n’est plus envoyé au client adverse.
+
+La représentation du hibou d’épaule sert de marqueur du flux privé ; elle ne
+certifie pas une règle d’invisibilité non démontrée pour ce premier oiseau. Le
+nombre exact et la simultanéité des trois types ne sont pas présentés comme une
+restriction révélée. La fonction propre du troisième oiseau reste inconnue. La
+relecture développée par Benjamin au chapitre 413 reste le chantier suivant.
+Références : [fonctions montrées de Secret Window](https://hunterworld.tokyo/en/musse/),
+[chapitre 366](https://hunterxhunter.fandom.com/wiki/Chapter_366).
+Ruleset : **clash-combat-37**. Le On est conservé ; l’audit des autres arsenaux
+reste ouvert et ce jalon ne certifie pas un achèvement à 100 %.
+
+## Secret Window : relecture développée par Benjamin
+
+Le scénario de préparation « historique de Musse » rend utilisable l’évolution
+montrée au chapitre 413. Il exige Benjamin, l’héritage admissible de Secret Window
+et le corps réel de Camilla, actif ou en réserve. Il déclare explicitement la
+longue surveillance continue déjà accomplie ; aucune durée numérique n’est
+inventée. Un duel ordinaire ne reçoit ni archive arbitraire ni Camilla fictive.
+
+Le panneau permet de revenir entre les dernières observations historiques de
+Musse, puis entre les gestes et paroles effectivement reçus par Benjamin pendant
+le scénario. Les deux sources restent distinctes : le premier enregistrement ne
+prétend pas montrer la résurrection de Camilla après la mort de Musse. Les vues
+reçues ensuite viennent exclusivement du flux privé du hibou hérité, sans pensée,
+nom technique caché, quantité d’aura ou futur de la cible. La limite de 256 vues
+récentes concerne le cache de présentation du scénario, pas une limite de Nen
+attribuée au manga.
+
+La relecture exige le même hibou hérité et la surveillance préparée. Rappeler ce
+hibou ou marquer une nouvelle cible ne reconstitue pas gratuitement cette
+préparation. Une manche conserve l’héritage et le flux survivants ; un relais
+conserve leurs propriétaires et les corps surveillés. Le blocage du Nen, le vol
+de Secret Window et le On empêchent son utilisation. Fermer une relecture reste
+une action d’interface d’un utilisateur conscient.
+
+Cette évolution n’est pas accordée automatiquement à Musse, à une page générique
+de Musse chez Chrollo ou à son prêt par Dolphin. Elle n’est pas présentée comme la
+fonction inconnue du troisième hibou. Le PvP masque l’archive adverse, y compris
+en réserve, et les commandes de relecture sont enregistrées dans les replays.
+
+Références : chapitre 413, recoupé dans les analyses de
+[VoraciousDrake](https://voraciousdrake.wordpress.com/2026/07/10/hxh-413-fealty/comment-page-1/)
+et de [Shimesaba](https://note.com/shimesaba2525/n/n929d34dc3981?hl=en), avec le
+contexte de la pose et de l’héritage au chapitre 373.
+Ruleset : **clash-combat-38**. Le On est conservé. L’audit des quarante arsenaux
+reste ouvert ; cette étape ne certifie pas un achèvement à 100 %.
+
+## Judgment Chain : clause de réponse sincère
+
+La clause utilisée contre Uvogin au chapitre 84 est sélectionnable avant
+l’implantation réelle dans le cœur. Elle ne force pas Zetsu. Après la pose,
+l’utilisateur peut prononcer une question à portée d’audition ; une personne
+qui ne l’a pas entendue ne reçoit pas une question par télépathie. Le membre
+physique qui a posé la chaîne reste identifié.
+
+Les faits personnels déjà représentés — identité, état de Nen et emploi de In —
+ont des réponses sincères ou mensongères calculées depuis le propre état du
+répondant. Les questions et réponses rédigées passent également par la voix
+réelle. Pour ces réponses libres, le joueur déclare explicitement son intention
+consciente : aucune analyse de texte ne prétend établir une vérité inconnue du
+scénario. La chaîne sanctionne le mensonge conscient ou le refus explicite de
+répondre. Elle n’invente ni délai fatal au silence ni réponse obligatoire d’une
+personne inconsciente ou manipulée.
+
+Les paroles empruntent le circuit commun d’audition, des enregistrements, des
+hiboux et de Dowsing. Une réponse au même fait produite par le circuit commun
+reste donc soumise à la clause ; une déclaration sans rapport ne devient pas
+automatiquement une réponse. L’IA sait poser la question représentée et répondre
+sincèrement aux faits connus, sans fabriquer de connaissance pour une question
+libre. Les commandes, intentions et clauses se conservent dans les snapshots et
+replays ; le PvP les exécute auprès de l’arbitre.
+
+La clause implantée reste active après l’arrêt d’Emperor Time et sous le sceau
+du On ; cela n’autorise aucune nouvelle implantation sans les conditions du Nen.
+Références : [chapitre 84](https://hunterxhunter.fandom.com/wiki/Chapter_84) et
+[description officielle de Judgment Chain](https://www.ntv.co.jp/hunterhunter/dictionary/index.html).
+Ruleset : **clash-combat-39**. Le On est conservé ; les clauses de secret et de
+libération d’otages restent à achever, ainsi que les autres écarts du relevé.
+
+## Kalluto : plusieurs poupées et corps réellement marqués
+
+La surveillance du chapitre 225 conserve désormais un récepteur distinct pour
+chaque personne effectivement marquée puis associée à une poupée. Créer une
+seconde poupée ne remplace plus la première. Le papier collé, son propriétaire
+et le corps surveillé gardent leur indice physique après un relais ; le
+remplaçant ne reçoit ni cette marque ni l’écoute d’un autre membre.
+
+Chaque récepteur rapporte seulement les paroles réellement prononcées autour
+de son propre papier. Le corps endormi de Hanzo reste le point d’écoute quand
+son double s’éloigne. La portée de voix de 18 unités reste un réglage du
+scénario, pas une portée canonique du lien de Nen. Les paroles ne révèlent
+aucune pensée, action silencieuse ou intention de mensonge. Un observateur
+inconscient ou privé d’ouïe ne reçoit pas de nouvelles paroles ; aucune écoute
+n’est reconstruite depuis un snapshot PvP masqué.
+
+Le panneau affiche les récepteurs séparément, et chaque poupée physique possède
+son modèle. Arrêter l’écoute conserve les poupées, les papiers et les souvenirs
+déjà reçus. Réactiver une poupée exige une activation admissible. Une page de
+Chrollo qui cesse d’être active interrompt tous ses récepteurs ; le signet conserve
+son rôle. Manipulation offensive et surveillance gardent leurs accès distincts
+lors d’un vol ou d’un prêt, avec le budget réel du donneur pour un effet emprunté.
+Une manche conserve les papiers et les récepteurs déjà préparés.
+
+Le contrôle de relais ne confond plus une rancœur passive avec un On déjà
+activé. La rancœur reste sur son propriétaire et n’est pas donnée au remplaçant ;
+le On actif et son sceau continuent à empêcher un relais qui suspendrait leurs
+effets. Les flux et leurs paroles restent privés, y compris en réserve, et les
+commandes de P2 se rejouent sans changer les corps marqués.
+
+Références : [chapitre 225](https://hunterxhunter.fandom.com/wiki/Chapter_225) et
+[applications du papier de Kalluto](https://hunterworld.tokyo/kaltzaoldyeck/).
+Ruleset : **clash-combat-40**. Le On est conservé. Le stock matériel, son ramassage
+et les autres interactions du papier restent à compléter avant de certifier
+l’arsenal entier de Kalluto ; l’audit global reste ouvert.
+
+## Kalluto : matériel physique et dépenses réelles
+
+Kalluto porte désormais un éventail et une réserve de papier réelle. Le scénario
+fournit douze préparations de marque, six salves et six feuilles : ces quantités
+sont des réglages de duel, jamais des plafonds canoniques. Les commandes par
+éventail représentées exigent leur matériel et une main disponible. Ce choix de
+méthode montrée ne déclare pas une condition universelle du Nen non révélée.
+
+La réserve diminue quand un papier quitte effectivement l’éventail ou qu’une
+nouvelle poupée est confectionnée. Une émission manquée n’est pas remboursée ;
+un geste interrompu avant toute émission ne crée aucun papier. Chaque pièce
+émise reçoit un identifiant matériel. Réactiver une poupée existante réutilise
+cette même feuille, y compris quand l’utilisateur a déposé sa réserve.
+
+Un Hatsu copié ou prêté ne fournit ni éventail ni papier. Le matériel préparé
+dans l’arène peut être ramassé et déposé à portée réelle ; son identité, son
+intégrité et les quantités déjà dépensées sont conservées. Les récepteurs restent
+attachés à leur propriétaire quand la réserve change de mains. L’IA sait prendre
+une réserve présente et s’en approcher par un déplacement ordinaire, sans en
+créer une dans un duel vide. Les réserves portées ou déposées ne se remplissent
+pas gratuitement au passage d’une manche.
+
+Gallery Fake copie les contenus physiques restants, sans copier le Nen de
+Kalluto. Le kit, les feuilles pliées, les fragments plantés et les projectiles
+gardent la provenance de leur copie et expirent avec elle. Une pièce conjurée
+reste solide mais ne devient pas un objet ordinaire que Blinky pourrait aspirer.
+L’éventail affiché appartient au matériel porté ; une page de Kalluto seule ne
+fait plus apparaître cet objet dans une main vide.
+
+Ruleset : **clash-combat-41**. Le On reste présent et ses sceaux restent appliqués
+aux commandes de Nen. Le [réemploi du papier dispersé](./clash-kalluto-confettis.md),
+l’admission d’autres cibles et les interactions matérielles restantes continuent
+à faire partie de l’audit ; cette passe ne certifie pas les quarante arsenaux.

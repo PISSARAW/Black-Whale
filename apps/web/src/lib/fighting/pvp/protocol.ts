@@ -2,6 +2,7 @@ import { FIGHTING_ROSTER } from '../roster'
 import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
+import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
 import { validArsenalCommand } from '../retrospectiveArsenal'
@@ -24,7 +25,7 @@ const ENUM_FIELDS: Record<string, [string, string[]]> = {
   'paper-target': ['zone', ['head', 'torso', 'hands', 'feet']],
   'paper-command': ['command', ['plant', 'serpent', 'doll']],
   'paper-use': ['command', ['plant', 'serpent', 'doll']],
-  mary: ['command', ['bleed', 'bind', 'slam', 'scout', 'recall', 'infuse']],
+  mary: ['command', ['bleed', 'bind', 'slam', 'scout', 'scout-wall', 'recall', 'infuse']],
   question: ['question', ['identity', 'nen', 'in']],
 }
 function validCommand(value: Record<string, unknown>): boolean {
@@ -121,6 +122,7 @@ function parseEnvironment(value: unknown) {
     !only(value, [
       'stageId',
       'arenaInteractions',
+      'halkenburgRosterVariant',
       'morenaPresent',
       'unlawfulIntruders',
       'needleStock',
@@ -138,8 +140,15 @@ function parseEnvironment(value: unknown) {
   )
     return null
   if (!sideFlags(value.unlawfulIntruders, false) || !sideFlags(value.needleStock, true)) return null
-  if (!validPreparation(value.preparation)) return null
+  if (!validScenarioSettings(value)) return null
   return createFightEnvironment(value as unknown as Parameters<typeof createFightEnvironment>[0])
+}
+function validScenarioSettings(value: Record<string, unknown>): boolean {
+  return (
+    validPreparation(value.preparation) &&
+    (value.halkenburgRosterVariant === undefined ||
+      typeof value.halkenburgRosterVariant === 'boolean')
+  )
 }
 function sideFlags(value: unknown, optional: boolean): boolean {
   if (value === undefined) return optional
@@ -150,7 +159,7 @@ function sideFlags(value: unknown, optional: boolean): boolean {
 }
 function validPreparation(value: unknown): boolean {
   if (value === undefined) return true
-  if (!record(value) || !only(value, ['mode', 'resources', 'cohorts'])) return false
+  if (!preparationHeader(value)) return false
   if (
     !member(value.mode, ['duel', 'scenario']) ||
     !Array.isArray(value.resources) ||
@@ -158,7 +167,7 @@ function validPreparation(value: unknown): boolean {
   )
     return false
   return (
-    value.resources.length <= 10 &&
+    value.resources.length <= 13 &&
     value.cohorts.length <= 2 &&
     value.resources.every((id) =>
       member(id, [
@@ -172,9 +181,20 @@ function validPreparation(value: unknown): boolean {
         'devices',
         'writing',
         'spirits',
+        'people',
+        'musse-history',
+        'paper',
       ]),
     ) &&
     value.cohorts.every((side) => member(side, ['player', 'opponent']))
+  )
+}
+
+function preparationHeader(value: unknown): value is Record<string, unknown> {
+  return (
+    record(value) &&
+    only(value, ['mode', 'resources', 'cohorts', 'injuries']) &&
+    validInjuryPreparation(value.injuries, value.mode)
   )
 }
 

@@ -1,6 +1,14 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { bungeeVisible } from './hisokaTechnique'
 import { gyoSight } from './nenPerception'
+import { createGumObjectAnchorScene } from './gumObjectAnchorScene'
+import {
+  createHisokaPresentationClock,
+  HISOKA_ACCENT_FRAMES,
+  type HisokaFrames,
+} from './hisokaPresentation'
+import { hisokaChest, hisokaHand, hisokaReduced } from './hisokaEffectAnchors'
+import { createHisokaGumAccent } from './hisokaGumAccent'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightState } from './types'
 import type { Mesh } from 'three'
@@ -8,6 +16,9 @@ import type { Mesh } from 'three'
 /** Deform the visit's strand along the actual tether, retaining its thickness and anchor. */
 export function createBungeeGumScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE } = options
+  const objectAnchors = createGumObjectAnchorScene(options)
+  const clock = createHisokaPresentationClock()
+  const accent = createHisokaGumAccent(options)
   const model = createVisitHatsuModel(THREE, {
     model: 'bungee-gum',
     joints: ['gum-strand', 'gum-anchor'],
@@ -30,8 +41,14 @@ export function createBungeeGumScene(options: EffectSceneOptions): FighterEffect
   options.scene.add(model.root)
   return {
     sync(state, seconds) {
-      const points = gumPoints(options, state)
+      objectAnchors.sync(state, seconds)
+      const frames = clock(state)
+      const age = state.bungeeGum ? frames[state.bungeeGum.owner] : null
+      const animated = hisokaReduced(options) ? null : age
+      const points = gumPoints(options, state, animated)
       model.root.visible = bungeeVisible(state, options.viewer?.() ?? 'player') && points.length > 1
+      accent.sync(model.root.visible ? points : [], animated)
+      model.root.userData.accents = age
       if (!model.root.visible) return
       const center = points[0].clone().lerp(points[points.length - 1], 0.5)
       model.root.position.copy(center)
@@ -55,35 +72,36 @@ export function createBungeeGumScene(options: EffectSceneOptions): FighterEffect
       positions.needsUpdate = true
       strand.geometry.computeBoundingSphere()
       strand.geometry.computeBoundingBox()
-      poseGumAnchor(options, { state, anchor, center, seconds })
+      poseGumAnchor(options, { state, anchor, center, points, pulse: gumPulse(animated) })
       materials.forEach((material) => {
         material.opacity = state.bungeeGum?.hidden ? 0.4 : 0.82
       })
     },
-    dispose: model.dispose,
+    dispose() {
+      objectAnchors.dispose()
+      accent.dispose()
+      model.dispose()
+    },
   }
 }
 
-function gumPoints(options: EffectSceneOptions, state: FightState) {
+function gumPulse(frames: HisokaFrames | null) {
+  const age = frames?.attach ?? frames?.pull ?? frames?.rebound
+  return age == null ? 0 : Math.sin((Math.PI * age) / HISOKA_ACCENT_FRAMES)
+}
+function gumPoints(options: EffectSceneOptions, state: FightState, frames: HisokaFrames | null) {
   const attachment = state.bungeeGum
   if (!attachment) return []
-  const owner = state[attachment.owner]
-  const target = state[attachment.target]
+  const owner = hisokaHand(options, state, attachment.owner)
+  const target = hisokaChest(options, state, attachment.target)
+  const pulse = gumPulse(frames)
+  const taut = attachment.retracting ? 0.035 : 0.12
   return Array.from({ length: 49 }, (_, index) => {
     const ratio = index / 48
-    return {
-      x: owner.x + (target.x - owner.x) * ratio,
-      y: owner.y + (target.y - owner.y) * ratio,
-      sag: Math.sin(ratio * Math.PI) * -0.32,
-    }
-  }).map(
-    (point) =>
-      new options.THREE.Vector3(
-        options.worldX(point.x),
-        options.worldY(point.y) + 1.15 + point.sag,
-        0.28,
-      ),
-  )
+    const point = owner.clone().lerp(target, ratio)
+    point.y += Math.sin(ratio * Math.PI) * (-taut + Math.sin(ratio * Math.PI * 3) * pulse * 0.08)
+    return point
+  })
 }
 
 /** Each tube ring shares one curve evaluation across all of its radial vertices. */
@@ -112,19 +130,15 @@ function poseGumAnchor(
     state: FightState
     anchor: import('three').Group
     center: import('three').Vector3
-    seconds: number
+    points: import('three').Vector3[]
+    pulse: number
   },
 ) {
-  const { state, anchor, center, seconds } = context
+  const { state, anchor, center, points, pulse } = context
   const gum = state.bungeeGum!
-  const owner = state[gum.owner]
-  const target = state[gum.target]
-  const middle = { x: (owner.x + target.x) / 2, y: (owner.y + target.y) / 2 }
   const viewer = options.viewer?.() ?? 'player'
   const hidden = gum.hidden && gum.owner !== viewer && !gyoSight(state[viewer])
   anchor.visible = !hidden
-  anchor.position
-    .set(options.worldX(middle.x), options.worldY(middle.y) + 1.15 - 0.32, 0.28)
-    .sub(center)
-  anchor.scale.set(0.65, 0.45 + Math.sin(seconds * 6) * 0.025, 0.65)
+  anchor.position.copy(points[Math.floor(points.length / 2)]).sub(center)
+  anchor.scale.set(0.65, 0.45 + pulse * 0.035, 0.65)
 }

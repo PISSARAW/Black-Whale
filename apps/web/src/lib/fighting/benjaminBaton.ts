@@ -1,9 +1,10 @@
-import { hatsuSealedByOn } from './onTechnique'
+import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FightProjectile, FightSide } from './types'
 
 export type BenjaminInheritance = 'air-blow' | 'secret-window' | 'culdcept'
 
 export interface BenjaminBatonState {
+  musseArchive?: import('./benjaminMusseArchive').MusseRetrospectiveArchive
   inherited: readonly BenjaminInheritance[]
   markedTarget: FightSide | null
   card: FightProjectile | null
@@ -45,17 +46,13 @@ function eligibleSoldier(soldier: BenjaminSoldier): boolean {
 }
 
 export function benjaminNenActive(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.nen.mode !== 'zetsu' &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
-    !hatsuSealedByOn(fighter)
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 const INHERITED_MOVES: Readonly<Record<string, BenjaminInheritance>> = {
   'benjamin:neutralSpecial': 'air-blow',
   'benjamin:forwardSpecial': 'secret-window',
+  'benjamin:backSpecial': 'secret-window',
   'benjamin:downSpecial': 'culdcept',
   'benjamin:finisher': 'culdcept',
 }
@@ -66,6 +63,7 @@ export function benjaminMoveAvailable(fighter: ArcadeFighter, moveId?: string): 
   if (!required) return true
   const baton = fighter.hatsuEffects.baton
   if (!baton?.inherited.includes(required) || !benjaminNenActive(fighter)) return false
+  if (moveId === 'benjamin:backSpecial' && fighter.secretWindowListening) return false
   return moveId !== 'benjamin:finisher' || baton.card !== null
 }
 

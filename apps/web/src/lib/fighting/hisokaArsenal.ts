@@ -1,24 +1,29 @@
-import { loanCarrier } from './dolphinBorrowing'
-import { stolenAuraActor } from './dolphinSupply'
-import { voluntaryNenAvailable } from './nenAccess'
-import { chainAbilitySealed } from './kurapika'
-import { chainAbilityGroup } from './chainAbilityGroup'
-import { chrolloHasActivePage } from './chrolloBook'
+import { ownsBungeeGum, gumLoanUsed, spendGumUse } from './bungeeAccess'
+export { ownsBungeeGum, spendGumUse } from './bungeeAccess'
+import { NETWORK_GUM_ACTIONS, performGumNetworkCommand } from './bungeeCommands'
+import { newGumSource, gumSourceCommandAllowed, sameGumSource } from './bungeeSource'
+import { gumSupportAvailable, gumSupportLive } from './hisokaSupportOrigin'
+import { performGumProsthesisCommand, advanceGumProstheses } from './gumProstheses'
 import { canAct } from './fightActorState'
+import { freeDeviceHand } from './deviceHands'
+import { performGumSpringStep } from './gumSpringStep'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 
-export function ownsBungeeGum(fighter: ArcadeFighter): boolean {
-  if (fighter.dolphinLoan?.held.source === 'hisoka' && fighter.dolphinLoan.held.used)
-    fighter = stolenAuraActor(loanCarrier(fighter))
-  if (!voluntaryNenAvailable(fighter) || chainAbilitySealed(fighter, 'hisoka:neutralSpecial'))
-    return false
-  if (fighter.id === 'hisoka') return true
-  if (fighter.id === 'chrollo') return bookHasGum(fighter)
-  return dolphinHasGum(fighter)
+export function performGumCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  if (command.action === 'gum-spring-step') return performGumSpringStep(state, side)
+  if (command.action.startsWith('gum-prosthesis'))
+    return performGumProsthesisCommand(state, side, command)
+  if (NETWORK_GUM_ACTIONS.some((action) => action === command.action))
+    return performGumNetworkCommand(state, side, command)
+  return performDefensiveGumCommand(state, side, command)
 }
 
-export function performGumCommand(
+function performDefensiveGumCommand(
   state: FightState,
   side: FightSide,
   command: ArsenalCommand,
@@ -34,64 +39,40 @@ export function performGumCommand(
 
 function prepareGumCatch(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
-  if (fighter.aura < 12 || fighter.gumCatch?.projectile) return state
+  const hand = freeDeviceHand(state, side)
+  if (!hand || fighter.aura < 12 || fighter.gumCatch?.projectile) return state
   const paid = spendGumUse(state, side, 12)
   return {
     ...paid,
     [side]: {
       ...paid[side],
       arenaRecovery: 24,
-      gumCatch: { frames: 24, hidden: fighter.nen.in },
+      gumCatch: { frames: 24, hand, hidden: fighter.nen.in, ...newGumSource(fighter) },
       blocking: false,
     },
   }
 }
 function removeGumSeals(state: FightState, side: FightSide): FightState {
   if (!state[side].gumWoundSeals) return state
-  return { ...state, [side]: { ...state[side], gumWoundSeals: undefined } }
+  return {
+    ...state,
+    [side]: { ...state[side], gumWoundSeals: undefined, gumWoundOrigin: undefined },
+  }
 }
 function gumBodyFree(fighter: ArcadeFighter): boolean {
   return canAct(fighter) && !fighter.attack && !fighter.hanzoProjection
-}
-function bookHasGum(fighter: ArcadeFighter): boolean {
-  return Boolean(
-    fighter.chrolloBook?.pages.some(
-      (page) =>
-        (page === 'hisoka' || chainAbilityGroup(page) === 'bungee-gum') &&
-        chrolloHasActivePage(fighter, page),
-    ),
-  )
-}
-function dolphinHasGum(fighter: ArcadeFighter): boolean {
-  const held = fighter.kurapika?.held
-  return Boolean(
-    held?.loaded &&
-    fighter.kurapika?.emperorTime &&
-    chainAbilityGroup(held.moveId) === 'bungee-gum',
-  )
 }
 
 function sealGumWounds(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const wounds = fighter.openWounds ?? 0
+  const origin = newGumSource(fighter)
+  if (fighter.gumWoundOrigin && !sameGumSource(fighter.gumWoundOrigin, origin)) return state
   if (fighter.aura < 10 || wounds <= (fighter.gumWoundSeals ?? 0)) return state
   const paid = spendGumUse(state, side, 10)
-  return { ...paid, [side]: { ...paid[side], gumWoundSeals: wounds, arenaRecovery: 18 } }
-}
-
-function spendGumUse(state: FightState, side: FightSide, cost: number): FightState {
-  const fighter = state[side],
-    chain = fighter.kurapika
   return {
-    ...state,
-    [side]: {
-      ...fighter,
-      aura: fighter.aura - cost,
-      kurapika:
-        chain?.held?.source === 'hisoka'
-          ? { ...chain, held: { ...chain.held, used: true, sustainedKeys: ['gum-support'] } }
-          : chain,
-    },
+    ...paid,
+    [side]: { ...paid[side], gumWoundSeals: wounds, gumWoundOrigin: origin, arenaRecovery: 18 },
   }
 }
 
@@ -99,6 +80,12 @@ function returnCaughtObject(state: FightState, side: FightSide): FightState {
   const fighter = state[side],
     shot = fighter.gumCatch?.projectile
   if (!shot || fighter.aura < 5) return state
+  if (fighter.gumCatch?.released && gumLoanUsed(fighter)) return state
+  if (
+    !gumSupportAvailable(fighter, fighter.gumCatch) ||
+    !gumSourceCommandAllowed(fighter, fighter.gumCatch!)
+  )
+    return state
   const projectile = {
     ...shot,
     id: state.nextProjectileId,
@@ -107,6 +94,8 @@ function returnCaughtObject(state: FightState, side: FightSide): FightState {
     x: fighter.x + fighter.facing * 3,
     y: fighter.y + 6,
     velocityX: (fighter.gumCatch!.incomingSpeed ?? Math.abs(shot.velocityX)) * fighter.facing,
+    gumFlight: undefined,
+    velocityY: undefined,
     age: 0,
   }
   return {
@@ -118,27 +107,68 @@ function returnCaughtObject(state: FightState, side: FightSide): FightState {
 }
 
 export function advanceGumArsenal(state: FightState): FightState {
-  let next = state
+  let next = advanceGumProstheses(state)
   for (const side of ['player', 'opponent'] as const) {
     const fighter = next[side]
-    if (!fighter.gumCatch && !fighter.gumWoundSeals) continue
-    const active = ownsBungeeGum(fighter)
-    const frames = active ? Math.max(0, (fighter.gumCatch?.frames ?? 0) - 1) : 0
+    if (!hasGumSupport(fighter)) continue
+    const sealsActive = gumSupportLive(next, side, fighter.gumWoundOrigin)
+    const catchActive = gumSupportLive(next, side, fighter.gumCatch)
     next = {
       ...next,
       [side]: {
         ...fighter,
-        gumWoundSeals: active ? fighter.gumWoundSeals : undefined,
-        gumCatch: fighter.gumCatch ? { ...fighter.gumCatch, frames } : undefined,
+        gumWoundSeals: sealsActive ? fighter.gumWoundSeals : undefined,
+        gumWoundOrigin: sealsActive ? fighter.gumWoundOrigin : undefined,
+        gumThrowReady: gumSupportLive(next, side, fighter.gumThrowReady)
+          ? fighter.gumThrowReady
+          : undefined,
+        gumCatch: maintainGumCatch(fighter.gumCatch, catchActive),
       },
     }
   }
   return next
 }
 
+function maintainGumCatch(caught: ArcadeFighter['gumCatch'], active: boolean) {
+  return caught
+    ? {
+        ...caught,
+        frames: active ? Math.max(0, caught.frames - 1) : 0,
+        released: active ? caught.released : true,
+      }
+    : undefined
+}
+
 export function gumArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   if (!ownsBungeeGum(state[side]) && !state[side].gumWoundSeals) return []
   const commands = [
+    {
+      action: 'gum-spring-step' as const,
+      fr: 'Bungee Gum · Appui élastique du pied',
+      en: 'Bungee Gum · Elastic foot step',
+      condition: [
+        'Utilise la prothèse de jambe existante au sol pour une avancée réelle. Le profil de déplacement reste celui du corps ; collisions et garde restent applicables.',
+        'Uses the existing leg prosthesis on the ground for real forward travel. The movement profile belongs to the body; collisions and guard remain applicable.',
+      ],
+    },
+    {
+      action: 'gum-prosthesis' as const,
+      fr: 'Bungee Gum · Former les prothèses',
+      en: 'Bungee Gum · Form prostheses',
+      condition: [
+        'Remplace les parties réellement endommagées par du caoutchouc de Nen, sans soin ni restitution de PV. Coût de duel : huit unités par partie.',
+        'Replaces actually damaged parts with Nen rubber, without healing or restoring HP. Duel cost: eight units per part.',
+      ],
+    },
+    {
+      action: 'gum-prosthesis-release' as const,
+      fr: 'Bungee Gum · Retirer les prothèses',
+      en: 'Bungee Gum · Remove prostheses',
+      condition: [
+        'Retire ce remplacement en Nen ; les blessures physiques restent présentes.',
+        'Removes this Nen replacement; physical injuries remain.',
+      ],
+    },
     {
       action: 'gum-seal' as const,
       fr: 'Bungee Gum · Colmater les plaies',
@@ -195,6 +225,10 @@ export function gumArsenalOptions(state: FightState, side: FightSide): ArsenalOp
   }))
 }
 
+function hasGumSupport(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.gumCatch || fighter.gumWoundSeals || fighter.gumThrowReady)
+}
+
 function releaseGumCatch(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (!fighter.gumCatch || fighter.gumCatch.released) return state
@@ -202,8 +236,4 @@ function releaseGumCatch(state: FightState, side: FightSide): FightState {
     ...state,
     [side]: { ...fighter, gumCatch: { ...fighter.gumCatch, frames: 0, released: true } },
   }
-}
-
-function gumLoanUsed(fighter: ArcadeFighter): boolean {
-  return fighter.id === 'kurapika' && Boolean(fighter.kurapika?.held?.used)
 }

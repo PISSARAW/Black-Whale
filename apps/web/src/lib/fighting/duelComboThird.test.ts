@@ -6,6 +6,7 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import { comboChoices } from './comboChoices'
 import { hasPlantedPaper } from './kallutoPaper'
+import { routeHitsBefore } from './combatRouteContacts'
 import { EMPTY_INPUT, type FightState, type MoveSlot } from './types'
 
 const FIGHTERS = ['illumi', 'kalluto', 'shizuku', 'leorio'] as const
@@ -38,8 +39,9 @@ function play(id: string, options: { initial?: FightState; steps?: number } = {}
     state = command(state, slot)
     spent += before - state.player.aura
     expect(state.player.attack?.moveId).toBe(move.id)
-    for (let i = 0; i < 120 && state.opponent.comboHits !== step + 1; i++) state = tick(state)
-    expect(state.opponent.comboHits).toBe(step + 1)
+    const expectedHits = routeHitsBefore(route, step + 1)
+    for (let i = 0; i < 120 && state.opponent.comboHits !== expectedHits; i++) state = tick(state)
+    expect(state.opponent.comboHits).toBe(expectedHits)
     expect(state.impact?.blocked).toBe(false)
     timings.push(state.frame - started)
   }
@@ -103,7 +105,7 @@ describe('third expansion personal mechanics', () => {
     const result = play('kalluto:serpent', { initial: prepared })
     expect(result.spent).toBe(24)
     expect(result.state.impact?.projectileId).toBeDefined()
-    expect(result.state.nextProjectileId - prepared.nextProjectileId).toBe(1)
+    expect(result.state.nextProjectileId - prepared.nextProjectileId).toBe(3)
     expect(hasPlantedPaper(result.state, 'player', 'torso')).toBe(true)
     let state = play('kalluto:economy', { steps: 2 }).state
     expect(hasPlantedPaper(state, 'player')).toBe(false)

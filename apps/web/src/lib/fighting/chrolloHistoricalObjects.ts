@@ -1,4 +1,5 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { copyPaperKit } from './kallutoCopyKit'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { freeDeviceHand } from './deviceHands'
 import { historicalHandsReady, originalLeftHandReady } from './historicalHands'
@@ -44,7 +45,7 @@ function createHistoricalReplica(
   const id = nextCopyId(state, side)
   return {
     id,
-    kind: ['morena', 'supporter'].includes(source.kind) ? 'puppet' : source.kind,
+    kind: ['morena', 'supporter', 'person'].includes(source.kind) ? 'puppet' : source.kind,
     owner: side,
     x: copySpawnX(state, side),
     y: source.y,
@@ -126,6 +127,7 @@ function nextCopyId(state: FightState, side: FightSide): string {
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
     blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
+    paperKit: source.paperKit ? copyPaperKit(source.paperKit, id) : undefined,
     writingKit: source.writingKit
       ? { ...source.writingKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
       : undefined,
@@ -151,8 +153,9 @@ function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
   if (source.kind === 'room') return undefined // An interior, not a solid crate.
   if (source.device) return undefined // Physical device collisions use the actual carried position.
   if (source.writingKit) return { width: 2, height: 1 }
+  if (source.paperKit) return { width: 2, height: 1 }
   if (source.kind === 'crate') return { width: 3, height: 8 }
-  return ['puppet', 'morena', 'supporter'].includes(source.kind)
+  return ['puppet', 'morena', 'supporter', 'person'].includes(source.kind)
     ? { width: 2.2, height: 13 }
     : undefined
 }
@@ -306,5 +309,8 @@ function copyField(state: FightState) {
   )
 }
 function copyAppearance(source: PreparedEntity): Partial<HistoricalCopy> {
-  return source.kind === 'puppet' ? { appearance: source.copy?.appearance } : {}
+  if (source.person) return { appearanceModel: source.person.identity }
+  return source.kind === 'puppet'
+    ? { appearance: source.copy?.appearance, appearanceModel: source.copy?.appearanceModel }
+    : {}
 }

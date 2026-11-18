@@ -1,3 +1,4 @@
+import { dolphinVisibleTo } from './dolphinVisibility'
 import { createVisitHatsuModel } from './visitHatsuModel'
 import { equippedDolphin } from './dolphinBorrowing'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -17,7 +18,8 @@ export function createStealthDolphinScene(options: EffectSceneOptions): FighterE
       for (const { side, model } of models) {
         const fighter = state[side]
         model.root.visible =
-          side === (options.viewer?.() ?? 'player') && Boolean(equippedDolphin(fighter)?.loaded)
+          dolphinVisibleTo(options.viewer?.() ?? 'player', side, fighter.dolphinLoan) &&
+          Boolean(equippedDolphin(fighter)?.loaded)
         model.root.position.set(
           options.worldX(fighter.x) - fighter.facing * 0.6,
           options.worldY(fighter.y) + 1.55 + Math.sin(seconds * 4) * 0.04,

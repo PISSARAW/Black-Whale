@@ -14,27 +14,38 @@ interface NenAction {
   moveId?: string
 }
 
-const NEN_RANGED: readonly FighterId[] = [
-  'leorio',
-  'machi',
-  'franklin',
-  'bonolenov',
-  'kalluto',
-]
+const NEN_RANGED: readonly FighterId[] = ['leorio', 'machi', 'franklin', 'bonolenov', 'kalluto']
 
 /** Shared admission check, including the direct/AI and buffered execution paths. */
 export function nenActionAllowed(options: NenAction): boolean {
   const fighter = dolphinCommandActor(options)
   const move = moveById(options.moveId)
   if (move && (move.id.split(':')[0] !== fighter.id || move.kind !== options.kind)) return false
-  if (fighter.melodyPerformance && melodyMusicIntent(fighter, options.kind, options.moveId))
-    return true
-  if (!usesVoluntaryNen(fighter, options)) return true
+  if (passiveNenCommand(options, fighter)) return true
   const allowVoluntaryZetsu =
     options.state.parallelFuture?.owner === options.side && fighter.parallelEyesClosed === true
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options))
+  )
+}
+
+function passiveNenCommand(options: NenAction, fighter: ArcadeFighter): boolean {
+  return (
+    finishedDolphinCommand(options) ||
+    Boolean(
+      fighter.melodyPerformance && melodyMusicIntent(fighter, options.kind, options.moveId),
+    ) ||
+    !usesVoluntaryNen(fighter, options)
+  )
+}
+
+function finishedDolphinCommand(options: NenAction): boolean {
+  const fighter = options.state[options.side]
+  return (
+    fighter.id === 'kurapika' &&
+    options.moveId === 'kurapika:backSpecial' &&
+    Boolean(fighter.kurapika?.held?.used)
   )
 }
 
@@ -75,9 +86,7 @@ function nenMoveId(
   action: Pick<NenAction, 'kind' | 'moveId'>,
 ): string | undefined {
   if (action.kind !== 'ranged') return action.moveId
-  return fighter.id === 'machi'
-    ? `${fighter.id}:forwardSpecial`
-    : `${fighter.id}:neutralSpecial`
+  return fighter.id === 'machi' ? `${fighter.id}:forwardSpecial` : `${fighter.id}:neutralSpecial`
 }
 
 /** Cancel a maintained action when its access is lost; released projectiles stay independent. */

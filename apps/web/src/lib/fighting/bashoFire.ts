@@ -1,6 +1,7 @@
 import { physicalHandOccupancy } from './deviceHands'
 import { writingHandsFree, writingPaperExists } from './bashoMaterials'
 import { recordFightDeath } from './fightDeaths'
+import { bashoQuestionCurrent } from './bashoInterrogation'
 import { resolveFightOutcome } from './fightOutcome'
 import { hatsuDefenceFactor } from './hatsu'
 import { nenDamageFactor } from './nen'
@@ -53,6 +54,9 @@ export function advanceBashoPoems(state: FightState): FightState {
     opponent: advancePoem(state, 'opponent'),
   }
   for (const side of ['player', 'opponent'] as const) next = advanceBurn(next, side)
+  for (const side of ['player', 'opponent'] as const)
+    if (next[side].bashoPrompt && !bashoQuestionCurrent(next, side))
+      next = { ...next, [side]: { ...next[side], bashoPrompt: undefined } }
   return resolveFightOutcome(next)
 }
 

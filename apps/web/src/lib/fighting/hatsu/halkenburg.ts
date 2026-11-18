@@ -3,24 +3,20 @@ import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
 import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
+import { replaceHalkenburgBody } from '../halkenburgTransfer'
+import { halkenburgRosterVariant } from '../halkenburgVariant'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
 export { COHORT_WILL_FRAMES } from '../preparationTuning'
-/** How long the supporter occupies the target's body. */
 const POSSESSION_FRAMES = 120
-/** Halkenburg risks his own life at every shot (ch. 400–411). */
+/** Health price is duel tuning; canonical risk comes from the transfer itself. */
 const SHOT_LIFE_COST = 8
 
 /**
- * The Boy Who Shoots the Arrow: Grimmel the Dissonance — Halkenburg.
- *
- * Canon: the arrow does not wound, it pierces every defence and swaps the
- * target's soul with a fin bearer who shares Halkenburg's will, at a risk to his
- * life. The prepared scene supplies real marked, consenting supporters. Their will
- * gathers over eight seconds (duel tuning); no arrow is available without them. Once nocked, the arrow lands even through a
- * guard and hands the body to a supporter: the target stops acting.
+ * A prepared cohort transfers consciousness into the actual struck body.
+ * The roster experiment follows its separately selected scenario rule.
  */
 export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
@@ -70,9 +66,14 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
     return state
   const target = state[defenderSide]
   const occupied = updateEntity(state, supporter.id, { sleepingFrames: POSSESSION_FRAMES })
-  return {
+  const struck = {
     ...occupied,
     [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
+  }
+  if (archer.id === 'halkenburg' && !archer.nenOwner && halkenburgRosterVariant(state))
+    return replaceHalkenburgBody(struck, side)
+  return {
+    ...struck,
     [defenderSide]: {
       ...target,
       hatsuEffects: { ...target.hatsuEffects, possessedFrames: POSSESSION_FRAMES },

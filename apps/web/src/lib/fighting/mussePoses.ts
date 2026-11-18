@@ -3,6 +3,8 @@ import type { KeyedMove } from './keyPoseMoves'
 import type { MoveTimeline } from './keyPoseTimeline'
 import { secretWindowUtility } from './secretWindow'
 import { bodyguardFiring } from './bodyguardFirearms'
+import { secretWindowListeningAttack } from './secretWindowListening'
+import { WINDOW_LISTENING_POSE } from './secretWindowListeningPose'
 
 const AIM = {
   body: [0.06, 0, 0],
@@ -30,6 +32,7 @@ const CONTACT: MoveTimeline = [
 ]
 
 export function musseKeyedMove(fighter: ArcadeFighter): KeyedMove | null {
+  if (secretWindowListeningAttack(fighter)) return WINDOW_LISTENING_POSE
   if (secretWindowUtility(fighter)) return { timeline: CONTACT, authored: false }
   return fighter.id !== 'theta' && bodyguardFiring(fighter)
     ? { timeline: HANDGUN, authored: false }

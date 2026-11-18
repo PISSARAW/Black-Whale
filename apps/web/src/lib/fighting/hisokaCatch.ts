@@ -1,4 +1,5 @@
-import { ownsBungeeGum } from './hisokaArsenal'
+import { gumSupportLive } from './hisokaSupportOrigin'
+import { freeDeviceHand, physicalHandOccupancy, physicalHandsBusy } from './deviceHands'
 import { physicalProjectile } from './projectileMatter'
 import { prepareDefence } from './combatDefence'
 import { projectileRead } from './combatRead'
@@ -11,7 +12,12 @@ import type { ArcadeFighter, FightProjectile, FightState } from './types'
 export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightState | null {
   const fighter = state[hit.defenderSide],
     shot = hit.projectile
-  if (!canCatch(fighter, shot)) return null
+  if (
+    !gumSupportLive(state, hit.defenderSide, fighter.gumCatch) ||
+    !canCatch(fighter, shot) ||
+    !catchHandReady(state, hit.defenderSide)
+  )
+    return null
   const defence = prepareDefence({ ...fighter, blocking: false }, 'hands', projectileRead(shot))
   if (defence.avoided) return null
   const damage = resolvedDamage({
@@ -43,6 +49,7 @@ export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightS
     [hit.defenderSide]: {
       ...struck,
       gumCatch: {
+        ...fighter.gumCatch,
         frames: 0,
         hidden: fighter.gumCatch?.hidden,
         projectile: { ...shot, velocityX: 0 },
@@ -57,9 +64,14 @@ export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightS
   })
 }
 
+function catchHandReady(state: FightState, side: import('./types').FightSide): boolean {
+  const actor = state[side]
+  const hand = actor.gumCatch?.hand ?? freeDeviceHand(state, side)
+  return Boolean(hand && !physicalHandsBusy(actor) && !physicalHandOccupancy(state, side).has(hand))
+}
+
 function canCatch(fighter: ArcadeFighter, shot: FightProjectile): boolean {
-  if (!fighter.gumCatch?.frames || fighter.gumCatch.projectile || !ownsBungeeGum(fighter))
-    return false
+  if (!fighter.gumCatch?.frames || fighter.gumCatch.projectile) return false
   if (!physicalProjectile(shot) || shot.living || shot.remotePunch) return false
   return shot.velocityX * fighter.facing < 0 && (shot.x - fighter.x) * fighter.facing >= -shot.width
 }

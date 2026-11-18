@@ -1,4 +1,5 @@
 import { enDuringAttack } from './en/access'
+import { newGumSource } from './bungeeSource'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -96,11 +97,15 @@ export function startFighterAttack(options: {
       auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
       hatsuSource: attackHatsuSource(options),
+      nenOrigin: hisokaAttackOrigin(options),
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },
     bufferedAttack: null,
   }
+}
+function hisokaAttackOrigin(options: Parameters<typeof startFighterAttack>[0]) {
+  return attackHatsuSource(options) === 'hisoka' ? newGumSource(options.fighter) : undefined
 }
 
 function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
@@ -202,6 +207,7 @@ function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string):
 }
 
 function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  if (kind === 'ranged' && !canUseRangedAttack(fighter)) return false
   const move = moveById(moveId)
   return move
     ? hasMoveResources(fighter, move)
@@ -229,6 +235,7 @@ function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
 
 function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
   return (
+    Boolean(fighter.luiniPassage) ||
     Boolean(fighter.preparationRecovery) ||
     Boolean(fighter.pluggingWounds) ||
     Boolean(fighter.cyclotronWindup) ||

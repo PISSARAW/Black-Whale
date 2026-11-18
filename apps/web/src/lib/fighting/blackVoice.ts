@@ -92,7 +92,9 @@ function livingHuman(target: ReturnType<typeof voiceTarget> & {}): boolean {
   if (target.health <= 0) return false
   if (target.body) return !target.body.hanzoProjection
   return Boolean(
-    target.entity && !target.entity.copy && ['supporter', 'morena'].includes(target.entity.kind),
+    target.entity &&
+    !target.entity.copy &&
+    ['supporter', 'morena', 'person'].includes(target.entity.kind),
   )
 }
 

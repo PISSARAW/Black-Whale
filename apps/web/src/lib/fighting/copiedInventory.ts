@@ -1,4 +1,5 @@
 import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
+import { cleanPaperMaterial } from './kallutoMaterialLifetime'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { reconcileMelodySound } from './melodyChannel'
 import type { FightEquipment, PreparedEntity } from './preparationTypes'
@@ -34,7 +35,9 @@ export function recordEquipmentPickup(
   }
 }
 export function advanceCopiedInventory(state: FightState): FightState {
-  const next = mapPhysicalBodies(state, (body) => cleanBodyEquipment(state, body))
+  const next = mapPhysicalBodies(state, (body) =>
+    cleanPaperMaterial(state, cleanBodyEquipment(state, body)),
+  )
   if (state.player.melodyPerformance && !next.player.melodyPerformance)
     return reconcileMelodySound(next)
   if (state.opponent.melodyPerformance && !next.opponent.melodyPerformance)

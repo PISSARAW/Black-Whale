@@ -57,6 +57,13 @@ const matchups = [
   ['longhi', 'franklin', 'whale-hold', 'opponent'],
   ['furykov', 'hisoka', 'screening-room', 'player'],
   ['sayird', 'hisoka', 'whale-hold', 'opponent'],
+  ['theta', 'rihan', 'vip-casino', 'opponent'],
+  ['mizaistom', 'zakuro', 'supreme-court', 'player'],
+  ['rihan', 'shizuku', 'whale-hold', 'opponent'],
+  ['zakuro', 'luini', 'whale-hold', 'player'],
+  ['lynch', 'hisoka', 'vip-casino', 'opponent'],
+  ['luini', 'hinrigh', 'whale-hold', 'player'],
+  ['basho', 'yokotani', 'whale-hold', 'opponent'],
 ]
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })

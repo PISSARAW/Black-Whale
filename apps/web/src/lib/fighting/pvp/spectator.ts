@@ -2,6 +2,7 @@ import { localPerspective, privatePvpState } from './view'
 import { createFightingNen } from '../nen'
 import { encodeFightSnapshot } from '../fightReplaySnapshot'
 import { fightReplayHash } from '../fightReplayHash'
+import { privateGumNetwork, privateGumProjectiles } from '../bungeePrivacy'
 import type { FightState } from '../types'
 declare module '../types' {
   interface FightState {
@@ -19,7 +20,10 @@ export function spectatorSnapshot(state: FightState) {
   view.parallelFuture = undefined
   view.commandFeedback = undefined
   view.bungeeGum = state.bungeeGum?.hidden ? null : state.bungeeGum
-  view.projectiles = state.projectiles.filter((shot) => shot.matter === 'object' || !shot.concealed)
+  view.gumNetwork = privateGumNetwork(state)
+  view.projectiles = privateGumProjectiles(state).filter(
+    (shot) => shot.matter === 'object' || !shot.concealed,
+  )
   if (view.impact?.concealed) view.impact = null
   for (const side of ['player', 'opponent'] as const) {
     const actor = view[side]

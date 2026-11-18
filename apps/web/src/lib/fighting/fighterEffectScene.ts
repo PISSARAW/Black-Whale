@@ -7,9 +7,11 @@ import { createEasterEggScene } from './easterEggScene'
 import { createArenaScene } from './arenaScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
+import { createBiohazardDeviceScene } from './biohazardDeviceScene'
 import { createBiohazardScene } from './biohazardScene'
 import { createCrossGameScene } from './crossGameScene'
 import { createPreparationScene } from './preparationScene'
+import { createLuiniPassageScene } from './luiniPassageScene'
 import { createSecretWindowScene } from './secretWindowScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createBashoFireScene } from './bashoFireScene'
@@ -17,10 +19,13 @@ import { createNenFieldScene } from './nenFieldScene'
 import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
+import { createChrolloEffectScene } from './chrolloEffectScene'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
+import type { FightComfort } from './fightComfort'
 
 export interface EffectSceneOptions {
+  comfort?: () => FightComfort
   /** The viewing side controls private props such as Combo Master's console. */
   viewer?: () => FightSide
   THREE: typeof import('three')
@@ -43,8 +48,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const paper = createKallutoPaperScene(options)
   const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
+  const bioDevices = createBiohazardDeviceScene(options)
   const biohazard = createBiohazardScene(options)
   const preparedScene = createPreparationScene(options)
+  const luini = createLuiniPassageScene(options)
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
   const crossGame = createCrossGameScene(options)
@@ -58,6 +65,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const retrospective = createRetrospectiveScene(options)
   const devices = createDeviceScene(options)
   const bashoSupport = createBashoSupportScene(options)
+  const chrollo = createChrolloEffectScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -68,8 +76,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     arena.sync(state, seconds)
     paper.sync(state, seconds)
     doors.sync(state, seconds)
+    bioDevices.sync(state, seconds)
     biohazard.sync(state, seconds)
     preparedScene.sync(state, seconds)
+    luini.sync(state, seconds)
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
     crossGame.sync(state, seconds)
@@ -83,6 +93,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     retrospective.sync(state, seconds)
     devices.sync(state, seconds)
     bashoSupport.sync(state, seconds)
+    chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
 
@@ -93,8 +104,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       arena.dispose()
       paper.dispose()
       doors.dispose()
+      bioDevices.dispose()
       biohazard.dispose()
       preparedScene.dispose()
+      luini.dispose()
       secretWindow.dispose()
       camilla.dispose()
       crossGame.dispose()
@@ -108,6 +121,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       retrospective.dispose()
       devices.dispose()
       bashoSupport.dispose()
+      chrollo.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createFightState } from '$lib/fighting/fightState'
+  import FightInjurySetup from './FightInjurySetup.svelte'
   import { EMPTY_PREPARATION } from '$lib/fighting/preparationWorld'
   import { REQUIREMENT_LABELS } from '$lib/fighting/preparationPresentation'
   import { preparationCheck } from '$lib/fighting/preparationRequirements'
@@ -17,6 +18,16 @@
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
     {
+      id: 'paper',
+      fr: 'Éventails, confettis et feuilles réels',
+      en: 'Actual fans, confetti and paper sheets',
+    },
+    {
+      id: 'musse-history',
+      fr: 'Benjamin et Camilla · hibou hérité de Musse et longue surveillance déjà accomplis',
+      en: 'Benjamin and Camilla · Musse’s owl inherited and prolonged monitoring completed',
+    },
+    {
       id: 'devices',
       fr: 'Caméras, armes, émetteurs et récepteurs réels',
       en: 'Real cameras, firearms, transmitters and receivers',
@@ -25,6 +36,11 @@
       id: 'spirits',
       fr: 'Faibles esprits pour les talismans',
       en: 'Weak spirits for protective charms',
+    },
+    {
+      id: 'people',
+      fr: 'Reine Oito · destinataire non éveillée',
+      en: 'Queen Oito · unawakened recipient',
     },
     { id: 'writing', fr: 'Papier, pinceaux et encre réels', en: 'Real paper, brushes and ink' },
     { id: 'animals', fr: 'Petits animaux réels', en: 'Real small animals' },
@@ -87,6 +103,11 @@
     >
   </div>
   {#if preparation.mode === 'scenario'}
+    <FightInjurySetup
+      injuries={preparation.injuries ?? {}}
+      {language}
+      onChange={(injuries) => change({ ...preparation, injuries })}
+    />
     <fieldset>
       <legend
         >{language === 'fr'
@@ -115,6 +136,21 @@
         >
       {/each}
     </fieldset>
+    {#if player === 'halkenburg' || opponent === 'halkenburg'}
+      <label
+        ><input
+          type="checkbox"
+          checked={environment.halkenburgRosterVariant === true}
+          onchange={(event) =>
+            onChange({
+              ...environment,
+              halkenburgRosterVariant: event.currentTarget.checked,
+            })}
+        />{language === 'fr'
+          ? 'Variante hors canon : Halkenburg prend un corps aléatoire du roster'
+          : 'Non-canonical variant: Halkenburg takes a random roster body'}</label
+      >
+    {/if}
     <p>
       {language === 'fr'
         ? 'Ces présences et préparations constituent le scénario choisi. Le vol d’un Hatsu ne les transfère pas. Les flûtes au sol doivent être ramassées.'

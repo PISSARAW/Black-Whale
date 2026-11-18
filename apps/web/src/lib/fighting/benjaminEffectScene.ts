@@ -1,12 +1,21 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
-import { benjaminNenActive } from './benjaminBaton'
+import { secretWindowTarget, secretWindowVisibleTo } from './secretWindow'
+import { secretWindowBirdHeight } from './secretWindowPlacement'
+import { sleepingBody } from './hanzoProjection'
 import { attackPhase } from './frameData'
+import { createBenjaminPresentationClock, type BenjaminFrames } from './benjaminPresentation'
+import {
+  benjaminAccentVisible,
+  createBenjaminAccentScene,
+  poseCuldcept,
+} from './benjaminAccentScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Inherited Nen effects; the physical firearm belongs to Benjamin's animated hands. */
 export function createBenjaminEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const clock = createBenjaminPresentationClock()
   const aura = new THREE.MeshBasicMaterial({ color: '#eeeeec', transparent: true, opacity: 0.8 })
   const dark = new THREE.MeshBasicMaterial({ color: '#24252a' })
   const geometries: import('three').BufferGeometry[] = []
@@ -55,45 +64,51 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
       side === 'player' ? 'benjamin-culdcept-rectangle' : `benjamin-culdcept-rectangle:${side}`
     card.name = side === 'player' ? 'benjamin-culdcept-card' : `benjamin-culdcept-card:${side}`
     scene.add(owl, rectangle, card)
-    return { owl, owlModel, rectangle, card }
+    return { owl, owlModel, rectangle, card, accents: createBenjaminAccentScene(options, side) }
   }
   const sides = { player: build('player'), opponent: build('opponent') }
-  const syncSide = (state: FightState, side: FightSide, seconds: number) => {
+  const syncOwl = (state: FightState, side: FightSide, seconds: number) => {
     const fighter = state[side]
     const held = sides[side]
     const benjamin = fighter.id === 'benjamin'
-    const activeNen = benjamin && benjaminNenActive(fighter)
-    const baton = fighter.hatsuEffects.baton
-    const target = markedFighter(state, fighter)
-    held.owl.visible = side === (options.viewer?.() ?? 'player') && Boolean(activeNen && target)
+    const target = markedWindowBody(state, fighter)
+    held.owl.visible =
+      benjamin && secretWindowVisibleTo(state, side, options.viewer?.() ?? 'player')
     if (target)
       held.owl.position.set(
-        options.worldX(target.x) - 0.3,
-        options.worldY(target.y + 12.5) + Math.sin(seconds * 5) * 0.04,
+        options.worldX(target.body.x) - 0.3,
+        options.worldY(target.body.y + target.height) + Math.sin(seconds * 5) * 0.04,
         0.35,
       )
-    held.rectangle.visible = activeNen && rectangleVisible(fighter)
-    held.rectangle.position.set(
-      options.worldX(fighter.x) + fighter.facing * 0.65,
-      options.worldY(fighter.y + 6.1),
-      0.4,
-    )
-    held.card.visible = Boolean(activeNen && baton?.card)
-    held.card.position.set(
-      options.worldX(fighter.x) - fighter.facing * 0.4,
-      options.worldY(fighter.y + 8),
-      0.4,
-    )
+  }
+  const syncSide = (
+    state: FightState,
+    side: FightSide,
+    context: { seconds: number; frame: BenjaminFrames },
+  ) => {
+    const { seconds, frame } = context
+    const fighter = state[side],
+      held = sides[side],
+      baton = fighter.hatsuEffects.baton
+    syncOwl(state, side, seconds)
+    const visible = benjaminAccentVisible(options, state, side)
+    held.rectangle.visible = visible && rectangleVisible(fighter) && !baton?.card
+    held.card.visible = Boolean(visible && baton?.card)
+    if (visible)
+      poseCuldcept(options, { state, side, frame, rectangle: held.rectangle, card: held.card })
+    held.accents.sync(state, frame)
   }
   return {
     sync: (state, seconds) => {
-      syncSide(state, 'player', seconds)
-      syncSide(state, 'opponent', seconds)
+      const frames = clock(state)
+      syncSide(state, 'player', { seconds, frame: frames.player })
+      syncSide(state, 'opponent', { seconds, frame: frames.opponent })
     },
     dispose: () => {
       for (const held of Object.values(sides)) {
         scene.remove(held.rectangle, held.card)
         held.owlModel.dispose()
+        held.accents.dispose()
       }
       geometries.forEach((geometry) => geometry.dispose())
       for (const material of [aura, dark]) material.dispose()
@@ -101,11 +116,13 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
   }
 }
 
-function markedFighter(state: FightState, fighter: ArcadeFighter): ArcadeFighter | null {
-  const target = fighter.hatsuEffects.baton?.markedTarget
-  return target ? state[target] : null
-}
-
 function rectangleVisible(fighter: ArcadeFighter): boolean {
   return fighter.attack?.moveId === 'benjamin:downSpecial' && attackPhase(fighter) !== 'recovery'
+}
+
+function markedWindowBody(state: FightState, fighter: ArcadeFighter) {
+  const original = fighter.secretWindow && secretWindowTarget(state, fighter.secretWindow)
+  return original
+    ? { body: sleepingBody(original), height: secretWindowBirdHeight(original) }
+    : null
 }

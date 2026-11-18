@@ -38,7 +38,7 @@ export const BONOLENOV_CANON: Readonly<Record<string, TechniqueCanonContract>> =
     ],
     prohibitions: ['No copied Nen ability, stat boost, invulnerability or indefinite disguise.'],
     narrativeCost:
-      'Only the opponent is supplied as a model. T/V exchanges, nearby time, fixed collision shape and preparation time adapt the dialogue to a duel.',
+      'Models must be encountered and spoken with in the actual fight; remembered models remain selectable. T/V exchanges, nearby time, fixed collision shape and preparation time adapt the dialogue to a duel.',
     narrativeEffect:
       'Adopts the model’s appearance for the earned duration, without changing the fighter’s own identity or powers.',
   },

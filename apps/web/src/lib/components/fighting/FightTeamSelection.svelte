@@ -15,6 +15,7 @@
     flute: ['flûte', 'flute'],
     book: ['livre', 'book'],
     needles: ['aiguilles', 'needles'],
+    'tracker-receiver': ['récepteur de l’émetteur', 'transmitter receiver'],
     'blood-infusion': ['perfusion de sang', 'blood infusion'],
   } as const
 </script>

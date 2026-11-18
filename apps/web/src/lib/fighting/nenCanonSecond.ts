@@ -151,12 +151,14 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
   },
   musse: {
     abilities: ['secret-window'],
-    condition: 'Attach the surveillance owl by actual contact; only its user sees the feed.',
-    effect: 'The owl reports bodily actions privately; the handgun fires physical bullets.',
+    condition:
+      'The shoulder owl eavesdrops without a mark; the surveillance owl requires actual touch. Feeds remain private.',
+    effect:
+      'The two known birds relay actual speech and contacted bodily actions; the handgun fires physical bullets.',
     prohibition:
-      'No damage, restraint, automatic dodge, aura reading, future vision or public owl.',
+      'No damage, restraint, automatic dodge, aura reading, future vision or public contact owl.',
     adaptation:
-      'One contact owl, observation vocabulary, startup, aura and interruption tune the duel.',
+      'One contact owl and one listening application; observation vocabulary, voice radius, startup and aura tune the duel. The third function is unknown.',
   },
   padaille: {
     abilities: ['padaille-weapon-transformation'],

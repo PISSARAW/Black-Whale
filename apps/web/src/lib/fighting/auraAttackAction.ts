@@ -4,6 +4,7 @@ import { cancelBufferSource } from './bufferedCancel'
 import { attackAuraCost } from './fightAttackCost'
 import { canUseMovesetMove, moveById } from './movesets'
 import { paperMoveAllowed } from './kallutoPaper'
+import { paperMaterialsReady } from './kallutoMaterials'
 import { blinkyActionAllowed } from './blinkyAction'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { isErigeronAction } from './billSupport'
@@ -82,6 +83,8 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
 function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): boolean {
   const { state, side, kind, moveId } = options
   const fighter = state[side]
+  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
+    return false
   if (fighter.id === 'camilla' && kind === 'special') return false
   if (!techniqueAllowed(options)) return false
   const move = moveById(moveId)

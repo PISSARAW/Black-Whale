@@ -1,3 +1,10 @@
+import { carryDolphinPeople } from './dolphinPeopleWorld'
+import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
+import { carryKallutoPaper } from './kallutoSurveillance'
+import { personalPaperKit } from './kallutoMaterials'
+import { carryPaperWorld } from './kallutoMaterialWorld'
+import { prepareMusseHistory } from './benjaminMusseScenario'
+import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
 import { carryVoiceAutopilot } from './blackVoiceAutopilot'
 import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
@@ -8,6 +15,7 @@ import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
+import { createBiohazardDevices } from './legacyBiohazardDevices'
 import { createBiohazardInventory } from './biohazard'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
@@ -66,7 +74,10 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
   })
-  return applyControlSchemes(created, typeof options === 'string' ? undefined : options.controls)
+  return applyControlSchemes(
+    prepareBodyDamage(prepareMusseHistory(created)),
+    typeof options === 'string' ? undefined : options.controls,
+  )
 }
 
 export function nextFightRound(state: FightState): FightState {
@@ -75,8 +86,12 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
-      battlefield: createBattlefield(state.environment),
+      battlefield: carryPaperWorld(
+        carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
+        state,
+      ),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      rosterGuests: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
@@ -87,11 +102,21 @@ export function nextFightRound(state: FightState): FightState {
       catsName: undefined,
       catsNameConsumed: undefined,
       player: preserveLifespan(
-        createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
+        createFighter({
+          id: state.player.halkenburgOrigin ?? state.player.id,
+          x: 22,
+          facing: 1,
+          health: format.health,
+        }),
         state.player,
       ),
       opponent: preserveLifespan(
-        createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+        createFighter({
+          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+          x: 78,
+          facing: -1,
+          health: format.health,
+        }),
         state.opponent,
       ),
       phase: 'ready',
@@ -106,6 +131,7 @@ export function nextFightRound(state: FightState): FightState {
       score: { player: 0, opponent: 0 },
       knockdowns: { player: 0, opponent: 0 },
       bungeeGum: null,
+      gumNetwork: undefined,
       projectiles: [],
       nextProjectileId: 1,
       impact: null,
@@ -115,7 +141,10 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = carryBodyDamage(fighter, previous)
   fighter = carryDolphinState(fighter, previous)
+  fighter = carryKallutoPaper(fighter, previous)
+  fighter = carryMusseHistory(fighter, previous)
   fighter = carryVoiceAutopilot(
     {
       ...fighter,
@@ -157,7 +186,9 @@ function createFighter(options: {
         ? createBlackVoiceGear(options.facing === 1 ? 'player' : 'opponent')
         : undefined,
     maxHealth: options.health,
+    paperKit: personalPaperKit(options.id, options.facing),
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
+    biohazardDevices: initialDeviceKit(options.id),
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
@@ -230,4 +261,8 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
     seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
   }
   return seed >>> 0
+}
+
+function initialDeviceKit(id: FighterId) {
+  return id === 'hinrigh' ? createBiohazardDevices() : undefined
 }

@@ -1,3 +1,4 @@
+import { machiMaterialHolds } from './machiMaterial'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -5,6 +6,8 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface MachiThread {
   owner: FightSide
+  length?: number
+  attached?: boolean
   kind: 'mark' | 'bind'
   x: number
   y: number
@@ -58,11 +61,7 @@ export function machiBindReady(state: FightState, side: FightSide): boolean {
 }
 
 function bindMaintained(owner: ArcadeFighter, target: ArcadeFighter): boolean {
-  return (
-    machiSourceActive(owner) &&
-    holdingBind(owner) &&
-    Math.hypot(owner.x - target.x, owner.y - target.y) <= MACHI_BIND_RANGE
-  )
+  return machiSourceActive(owner) && holdingBind(owner) && machiMaterialHolds(owner, target)
 }
 
 export function releaseMachiThread(state: FightState, side: FightSide): FightState {

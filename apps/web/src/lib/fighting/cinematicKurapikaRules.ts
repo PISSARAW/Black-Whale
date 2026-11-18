@@ -30,7 +30,7 @@ export const KURAPIKA_CAMERA_RULES = rulesFor('kurapika', [
     id: 'jail',
     label: ['Chain Jail · Capture', 'Chain Jail · Capture'],
     select: (c) => c.target.chainJail?.owner === c.side,
-    anchors: targetPart('body'),
+    anchors: (c) => [rig(c.side, 'right-hand'), rig(c.other, 'body')],
     priority: 2.5,
   },
   {
@@ -69,7 +69,7 @@ export const KURAPIKA_CAMERA_RULES = rulesFor('kurapika', [
     id: 'steal-complete',
     label: ['Steal Chain · Pouvoir dérobé', 'Steal Chain · Ability stolen'],
     select: (c) => c.self.kurapika?.held?.moveId,
-    anchors: (c) => [node(`kurapika-chains:${c.side}`, rig(c.side, 'hands'))],
+    anchors: selfPart('right-hand'),
     priority: 2.5,
   },
   {

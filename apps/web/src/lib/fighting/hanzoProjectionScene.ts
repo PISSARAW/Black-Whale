@@ -7,7 +7,7 @@ interface ProjectionModel {
   animate: (seconds: number, pose?: HumanPose) => void
 }
 
-interface ProjectionSceneOptions {
+export interface ProjectionSceneOptions {
   scene: import('three').Scene
   buildFighter: (fighter: ArcadeFighter) => ProjectionModel
   worldX: (value: number) => number
@@ -52,7 +52,10 @@ export function projectionCameraSpan(
 ) {
   for (const fighter of [state.player, state.opponent]) {
     if (fighter.hanzoProjection) positions.push(worldX(fighter.hanzoProjection.bodyX))
+    if (fighter.luiniPassage) positions.push(worldX(fighter.luiniPassage.originX))
   }
+  for (const guest of state.rosterGuests ?? [])
+    if (guest.phase !== 'eliminated') positions.push(worldX(guest.fighter.x))
   const left = Math.min(...positions)
   const right = Math.max(...positions)
   return { centre: (left + right) / 2, gap: right - left }

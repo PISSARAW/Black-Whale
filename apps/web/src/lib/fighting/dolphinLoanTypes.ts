@@ -19,6 +19,6 @@ declare module './types' {
 }
 declare module './kurapika' {
   interface KurapikaState {
-    dolphinLoans?: readonly DolphinBodyRef[]
+    dolphinLoans?: readonly import('./dolphinRecipients').DolphinRecipientRef[]
   }
 }

@@ -1,3 +1,25 @@
+import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
+import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
+import { traceArsenal } from './arsenalTrace'
+import { performModelSelection } from './metamorphosenModels'
+import { performCorpseCommand } from './illumiCorpses'
+import { performMachiMaterial } from './machiMaterial'
+import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
+import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
+import { performBlackVoice } from './blackVoiceControl'
+import { performBiohazardDevice } from './legacyBiohazardDevices'
+import { personDolphinOptions } from './dolphinPeopleOptions'
+import { paperScatterOptions, performPaperScatterCommand } from './kallutoScatterCommands'
+import { paperKitOptions, performPaperKitCommand } from './kallutoMaterialActions'
+import { paperReceiverOptions, performPaperReceiverCommand } from './kallutoCommands'
+import { arsenalCommandTargetLimit } from './arsenalCommandTargetLimit'
+import { judgmentInquiryOptions, performJudgmentInquiry } from './judgmentInquiryAction'
+import { musseArchiveOptions, performMusseArchiveCommand } from './benjaminMusseReplay'
+import { recordedWindowOptions, performRecordedWindowCommand } from './benjaminMusseRecorded'
+import { secretWindowOptions, performSecretWindowCommand } from './secretWindowCommands'
+import { performPersonDolphinCommand } from './dolphinPeopleAction'
+import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
+import { arsenalMindAvailable } from './arsenalMind'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
@@ -11,11 +33,17 @@ import { futureAcceptsMove } from './parallelFutureAbility'
 import { deviceOptions } from './deviceOptions'
 import { performDeviceCommand } from './deviceActions'
 import { performDowsingCommand } from './dowsingAction'
+import { bashoArsenalOptions } from './bashoInterrogation'
+import { melodyQuestionOptions } from './melodyInterrogation'
+import { luiniArsenalOptions } from './luiniArsenal'
+import { sweetHomeOptions } from './sweetHomeArsenal'
+import { padailleEscapeOptions } from './padailleEscape'
 import { dowsingOptions } from './dowsingOptions'
 import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
 import { dolphinArsenalOptions } from './dolphinArsenal'
 import { copiedArsenalOptions } from './chrolloCopiedOptions'
 import { performGumCommand, gumArsenalOptions } from './hisokaArsenal'
+import { performTextureCommand, textureSurfaceOptions } from './hisokaTextureCommands'
 import { fightAcceptsCommands } from './fightOutcome'
 import { canAct } from './fightActorState'
 import { cookieOptions, performCookie } from './cookie'
@@ -34,8 +62,22 @@ export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   if (command.loan !== undefined && typeof command.loan !== 'boolean') return false
   return (
     command.target === undefined ||
-    (typeof command.target === 'string' && command.target.length <= 100)
+    (typeof command.target === 'string' &&
+      command.target.length <= arsenalCommandTargetLimit(command.action as string))
   )
+}
+
+const INVOCATION_FAMILIES: Record<
+  string,
+  ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
+> = {
+  bono: performModelSelection,
+  illumi: performCorpseCommand,
+  machi: performMachiMaterial,
+  dolphin: performLegacyDolphinLoan,
+  halkenburg: performHalkenburgTransfer,
+  black: performBlackVoice,
+  bio: performBiohazardDevice,
 }
 
 export function performArsenalCommand(
@@ -44,7 +86,8 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
-  if (state[side].blackVoiceControl?.active) return state
+  if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
+  if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   if (command.loan) return performLoanCommand({ state, side, command }, performArsenalCommand)
   if (selfDolphinCommand(state, side, command))
@@ -60,7 +103,9 @@ function nativeArsenalCommand(
 ): FightState {
   if (command.action === 'support-consent') return toggleConsent(state, side)
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
-  return handler ? handler[1](state, side, command) : state
+  if (handler) return handler[1](state, side, command)
+  const legacy = INVOCATION_FAMILIES[command.action.split('-')[0]]
+  return legacy ? traceArsenal({ state, side, command }, legacy({ state, side, command })) : state
 }
 
 function selfDolphinCommand(state: FightState, side: FightSide, command: ArsenalCommand): boolean {
@@ -77,8 +122,18 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['gum-anchor-', performGumObjectAnchorCommand],
+  ['paper-release-confetti', performPaperScatterCommand],
+  ['paper-kit-', performPaperKitCommand],
+  ['paper-stop-listening', performPaperReceiverCommand],
+  ['judgment-ask', performJudgmentInquiry],
+  ['judgment-answer', performJudgmentInquiry],
+  ['window-archive', performMusseArchiveCommand],
+  ['window-recorded', performRecordedWindowCommand],
+  ['window-', performSecretWindowCommand],
   ['dolphin-lend', performDolphinLoan],
   ['voice-', performBlackVoiceCommand],
+  ['little-eye-', performLittleEyeCommand],
   ['basho-ask', performBashoQuestion],
   ['basho-answer', performBashoQuestion],
   ['basho-', performBashoWard],
@@ -89,6 +144,7 @@ const COMMAND_HANDLERS: readonly [
   ['dowsing-', performDowsingCommand],
   ['judgment-', performJudgmentCommand],
   ['gum-', performGumCommand],
+  ['texture-', performTextureCommand],
   ['cookie-', performCookie],
   ['hunter-', performHunterInterview],
   ['history-', performHistoricalCommand],
@@ -100,15 +156,32 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 }
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  return [
+  const options = [
+    ...paperScatterOptions(state, side),
+    ...paperKitOptions(state, side),
+    ...paperReceiverOptions(state, side),
+    ...judgmentInquiryOptions(state, side),
+    ...musseArchiveOptions(state, side),
+    ...recordedWindowOptions(state, side),
+    ...secretWindowOptions(state, side),
     ...nativeArsenalOptions(state, side),
+    ...luiniArsenalOptions(state, side),
+    ...sweetHomeOptions(state, side),
+    ...padailleEscapeOptions(state, side),
+    ...melodyQuestionOptions(state, side),
+    ...bashoArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),
   ]
+  const personal = arsenalMindAvailable(state[side])
+    ? options
+    : options.map((option) => ({ ...option, ready: false }))
+  return [...personal, ...personDolphinOptions(state, side)]
 }
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
     ...blackVoiceOptions(state, side),
+    ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
     ...recordedStatementOptions(state, side),
@@ -117,12 +190,15 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...bashoWardOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
+    ...textureSurfaceOptions(state, side),
+    ...gumObjectAnchorOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),
     ...dolphinLoanOptions(state, side),
     ...dolphinArsenalOptions(state, side),
     ...copiedArsenalOptions(state, side),
     ...historicalOptions(state, side),
+    ...halkenburgTransferOptions(state, side),
   ]
 }
 

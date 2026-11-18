@@ -104,6 +104,7 @@ function predictedFightState(
     parallelFuture: undefined,
     forecastSimulation: undefined,
     bungeeGum: scene.bungeeGum ?? null,
+    gumNetwork: scene.gumNetwork,
     catsName: scene.catsName,
     catsNameConsumed: scene.catsNameConsumed,
     moonlight: scene.moonlight,

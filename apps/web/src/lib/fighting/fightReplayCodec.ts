@@ -4,6 +4,7 @@ import { readPanelReplayCommand } from './fightReplayPanels'
 import { FIGHT_STAGES } from './stages'
 import { FIGHT_FORMATS } from './formats'
 import { createFightEnvironment } from './fightEnvironment'
+import { validInjuryPreparation } from './injuryPreparation'
 import type { FightPreparation, PreparationResource } from './preparationTypes'
 import { REPLAY_INPUT_MASK } from './fightReplayInput'
 import {
@@ -41,9 +42,10 @@ function boolean(value: unknown): boolean {
 function preparation(value: unknown): FightPreparation | undefined {
   if (value === undefined) return undefined
   const entry = object(value)
+  if (!validInjuryPreparation(entry.injuries, entry.mode)) return fail()
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 10 ||
+    entry.resources.length > 13 ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
@@ -59,9 +61,13 @@ function preparation(value: unknown): FightPreparation | undefined {
     'devices',
     'writing',
     'spirits',
+    'people',
+    'musse-history',
+    'paper',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),
+    ...(entry.injuries ? { injuries: { ...entry.injuries } } : {}),
     resources: entry.resources.map((id) => member(id, resources)),
     cohorts: entry.cohorts.map((side) => member(side, ['player', 'opponent'])),
   }
@@ -94,6 +100,10 @@ function setup(value: unknown): ReplaySetup {
     environment: createFightEnvironment({
       stageId,
       arenaInteractions: boolean(env.arenaInteractions),
+      halkenburgRosterVariant:
+        env.halkenburgRosterVariant === undefined
+          ? undefined
+          : boolean(env.halkenburgRosterVariant),
       morenaPresent: boolean(env.morenaPresent),
       unlawfulIntruders: {
         player: boolean(intruders.player),

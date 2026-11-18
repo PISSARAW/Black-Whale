@@ -86,6 +86,7 @@ export const THIRD_DUEL_LESSONS: readonly CombatRoute[] = [
     setup: 'paper',
     title: ['Papier planté · morsure du serpent', 'Planted paper · serpent bite'],
     moves: ['standingLight', 'standingHeavy', 'forwardSpecial'],
+    hits: [1, 1, 3],
     requirement: [
       'L’exercice plante d’abord un vrai fragment dans le torse (16 aura). Avant + L coûte ensuite 24 aura et vise cette zone ; sans papier correspondant, choisis une fin physique.',
       'The exercise first lands a real fragment in the torso (16 aura). Forward + L then costs 24 aura and targets that zone; without matching paper, choose a physical finish.',

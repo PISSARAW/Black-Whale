@@ -1,6 +1,13 @@
+import { NEN_CANON } from '../src/lib/fighting/nenCanon'
+import { BENJAMIN_CANON } from '../src/lib/fighting/benjaminCanon'
+import { CHROLLO_CANON } from '../src/lib/fighting/chrolloCanon'
+import { BIOHAZARD_CANON } from '../src/lib/fighting/biohazardCanon'
+import { BONOLENOV_CANON } from '../src/lib/fighting/bonolenovCanon'
 import { afterEach, describe, expect, it } from 'vitest'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { build } from 'vite'
@@ -42,7 +49,11 @@ async function compile(entry: string) {
       rollupOptions: {
         input: join(directory, 'entry.ts'),
         preserveEntrySignatures: 'strict',
-        onwarn: (warning) => warnings.push(warning.message),
+        // These fixtures deliberately import only part of the catalogue; tree-shaken
+        // manual groups may be empty. Keep every actionable bundling warning.
+        onwarn: (warning) => {
+          if (warning.code !== 'EMPTY_BUNDLE') warnings.push(warning.message)
+        },
         output: { format: 'es', manualChunks },
       },
     },
@@ -59,6 +70,60 @@ async function compile(entry: string) {
 }
 
 describe('production bundle partitioning', () => {
+  it('initializes Cross Game and movesets regardless of which shared chunk loads first', async () => {
+    const built = await compile(
+      [
+        `export { crossGameCanWarn } from ${JSON.stringify(resolve('src/lib/fighting/crossGame.ts'))}`,
+        `export { movesetFor } from ${JSON.stringify(resolve('src/lib/fighting/movesets.ts'))}`,
+      ].join('\n'),
+    )
+    for (const chunk of built.result.output.filter((item) => item.type === 'chunk')) {
+      const url = pathToFileURL(join(built.directory, chunk.fileName)).href
+      await promisify(execFile)(process.execPath, [
+        '--input-type=module',
+        '-e',
+        `await import(${JSON.stringify(url)})`,
+      ])
+    }
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    const warning = actual
+      .movesetFor('mizaistom')
+      .moves.find((move: { slot: string }) => move.slot === 'neutralSpecial')
+    expect(warning.auraCost).toBe(40)
+    expect(warning.tuning.startup).toBe(18)
+    expect(actual.crossGameCanWarn).toBeTypeOf('function')
+  }, 30_000)
+
+  it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
+    const built = await compile(
+      [
+        `export { beginFight, createFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { launchKallutoPaper } from ${JSON.stringify(resolve('src/lib/fighting/kallutoFlight.ts'))}`,
+        `export { performArsenalCommand } from ${JSON.stringify(resolve('src/lib/fighting/retrospectiveArsenal.ts'))}`,
+      ].join('\n'),
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    const state = actual.beginFight(
+      actual.createFight('kalluto', 'hisoka', { mode: 'versus-local' }),
+    )
+    const dispersed = actual.launchKallutoPaper(state, 'player', 'plant')
+    expect(dispersed.projectiles).toHaveLength(3)
+    expect(dispersed.player.paperKit.markers).toBe(state.player.paperKit.markers - 1)
+    expect(dispersed.player.id).toBe('kalluto')
+    const paper = dispersed.battlefield.entities.find(
+      (entry: { paperScatter?: unknown }) => entry.paperScatter,
+    )
+    const gathered = actual.performArsenalCommand(dispersed, 'player', {
+      action: 'paper-kit-gather',
+      target: paper.id,
+    })
+    expect(gathered.player.paperKit.confetti).toHaveLength(1)
+    expect(gathered.player.paperKit.confetti[0].id).toBe(paper.id)
+  }, 30_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [
       'easterEggRosterOne',
@@ -150,6 +215,41 @@ describe('production bundle partitioning', () => {
         (item) => item.type === 'chunk' && item.name === 'clash-combo-catalogues',
       ),
     ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
+
+  it('preserves all Nen conditions when their inert catalogue is loaded in a separate chunk', async () => {
+    const canon = resolve('src/lib/fighting/nenCanon.ts')
+    const built = await compile(`export { NEN_CANON } from ${JSON.stringify(canon)}`)
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    expect(actual.NEN_CANON).toEqual(NEN_CANON)
+    expect(
+      built.result.output.some((item) => item.type === 'chunk' && item.name === 'clash-nen-canon'),
+    ).toBe(true)
+    expect(built.warnings).toEqual([])
+  })
+
+  it('loads specialized inert Nen contracts without a runtime import cycle', async () => {
+    const names = ['benjamin', 'chrollo', 'biohazard', 'bonolenov']
+    const built = await compile(
+      names
+        .map(
+          (name) => `export * from ${JSON.stringify(resolve(`src/lib/fighting/${name}Canon.ts`))}`,
+        )
+        .join('\n'),
+    )
+    const actual = await import(
+      /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
+    )
+    for (const [name, value] of Object.entries({
+      BENJAMIN_CANON,
+      CHROLLO_CANON,
+      BIOHAZARD_CANON,
+      BONOLENOV_CANON,
+    }))
+      expect(actual[name]).toEqual(value)
     expect(built.warnings).toEqual([])
   })
 

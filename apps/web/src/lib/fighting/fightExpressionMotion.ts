@@ -29,11 +29,11 @@ export function expressiveFightMotion(
       return
     }
     // Melody's flute pose owns her face while she plays (eyes closed, melodyFigurePose.ts).
-    if (context.fighter.melodyPerformance) return
     const target = fightExpressionTarget(context.fighter, context.progress)
     const pose = blendFace(rig, { target: target.pose, seconds: context.seconds })
     rig.mode = target.mode
-    drawFightFace(rig, pose)
+    drawFightFace(rig, context.fighter.melodyPerformance ? { ...pose, eye: 0.12 } : pose)
+    if (context.fighter.melodyPerformance) return
     human.head.rotation.x += pose.headPitch
     human.head.rotation.y += pose.headYaw
     human.head.rotation.z += pose.headRoll * context.fighter.facing

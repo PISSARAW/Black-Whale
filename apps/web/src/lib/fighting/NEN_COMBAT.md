@@ -46,7 +46,7 @@ combat sont celles du jeu. Les sources de portée restent dans [EN.md](./EN.md).
 | Shu           | Confier de l’aura à un objet lancé.                                                           | Entretien et durée d’aura détachée sont bornés ; après expiration, l’objet reste matériel et ordinaire.                   |
 | Shu           | Conserver l’aura déjà confiée à l’objet après le Zetsu du lanceur.                            | Ne permet pas d’émettre une nouvelle aura pendant Zetsu.                                                                  |
 | Shu + Ko      | Concentrer la puissance d’une arme ou d’un objet réellement renforcé.                         | Il faut l’objet, Shu et un Ko payé dans les mains ; le reste du corps demeure exposé.                                     |
-| Ko offensif   | Concentrer le coup avant son impact.                                                          | Le lourd préparé demande de relâcher Aura au bon moment ; aucun coup n’est garanti.                                       |
+| Ko offensif   | Concentrer le coup avant son impact.                                                          | Seule la zone engagée donne le bonus critique ; le lourd préparé demande de relâcher Aura au bon moment.                  |
 | Ko défensif   | Concentrer la défense sur une zone choisie.                                                   | Un engagement coûte 20 aura ; changer de zone engage à nouveau la dépense.                                                |
 | Ko défensif   | Mieux protéger la bonne zone que la couverture uniforme de Ken.                               | Toute autre zone perd sa protection d’aura ; un autre angle, une feinte ou une projection peut punir.                     |
 | Ko + In       | Dissimuler l’aura concentrée sans dissimuler le geste physique.                               | Ne rend pas une arme ou une frappe corporelle réelle invisible.                                                           |
@@ -146,3 +146,19 @@ Hatsu restent nécessaires. Le volet affiche les effets effectivement actifs, no
 les marques, la manipulation, l’apparence, les captures et les marionnettes.
 Un corps miniaturisé et porté par Fun Fun Cloth ne repousse plus son porteur par
 collision. Sa restitution conserve sa position relative et n’ajoute aucun dégât.
+
+En versus local, le même volet est disponible pour Chrollo en P2. Les pages,
+les coûts, les effets affichés et les commandes de replay concernent alors P2 ;
+aucun contrôle de l’adversaire IA n’est exposé. Love Dial affiche le résultat
+de la recherche réellement exécutée, sans inventer une prophétie de Ghostwriter.
+La touche Hatsu de P2 suit désormais le maintien et le relâchement de P1,
+ce qui permet sa charge et le serment du On avec Aura.
+
+Kurapika dispose aussi d’un accès direct à Emperor Time pendant le combat.
+Le volet indique les heures de vie déjà perdues, la capacité retenue dans Steal
+Chain ou Dolphin et le verrouillage d’Emperor Time après chargement. Retenir
+Skill Hunter ne fournit ni son livre ni ses pages. Les clauses de Judgment Chain
+et l’immobilisation de Chain Jail restent affichées quand elles sont effectives.
+
+Pendant la lecture d’un replay, ces volets montrent les états reconstruits en
+lecture seule : les commandes de page et d’Emperor Time sont verrouillées.

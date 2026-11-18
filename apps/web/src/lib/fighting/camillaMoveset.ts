@@ -8,9 +8,9 @@ export function tuneCamillaMoveset(moveset: FighterMoveset): FighterMoveset {
   return {
     ...moveset,
     mechanicFr:
-      'U : pistolet réel, utilisable sans aura. Cat’s Name est automatique après une mort attribuée à un adversaire vivant : capture, absorption, résurrection. Points, temps et TKO ne le déclenchent pas. Les coups physiques ordinaires sont adaptés au duel.',
+      'U : pistolet réel, utilisable sans aura ; réserve de duel de 12 balles, consommées au tir. La résurrection ne recharge pas l’arme. Cat’s Name est automatique après une mort attribuée à un adversaire vivant : capture, absorption, résurrection. Points, temps et TKO ne le déclenchent pas.',
     mechanicEn:
-      'U: real pistol, usable without aura. Cat’s Name automatically answers a death attributed to a living opponent: capture, absorption, revival. Points, time and TKO never trigger it. Ordinary physical blows are duel adaptations.',
+      'U: real pistol, usable without aura; 12-round duel supply, spent on actual shots. Revival does not reload the gun. Cat’s Name automatically answers a death attributed to a living opponent: capture, absorption, revival. Points, time and TKO never trigger it.',
     finisherConditionFr: 'Automatique après la mort ; aucun seuil de PV ou bouton Hatsu.',
     finisherConditionEn: 'Automatic after death; no HP threshold or Hatsu button.',
     moves: moves.map((move) => ({

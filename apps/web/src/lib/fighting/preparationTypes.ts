@@ -1,6 +1,9 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
+  | 'cameras'
+  | 'hostages'
+  | 'corpses'
   | 'animals'
   | 'birds'
   | 'plants'
@@ -11,8 +14,13 @@ export type PreparationResource =
   | 'devices'
   | 'writing'
   | 'spirits'
-export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion'
+  | 'people'
+  | 'musse-history'
+  | 'paper'
+export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
+  /** Explicit physical injuries in this scenario; never granted by stealing a Hatsu. */
+  injuries?: import('./injuryPreparation').InjuryPreparation
   mode: 'duel' | 'scenario'
   resources: PreparationResource[]
   /** Explicit scenario premise: these allies already bear the feather and share this side's will. */
@@ -20,6 +28,11 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'camera'
+  | 'hostage'
+  | 'corpse'
+  | 'paper'
+  | 'person'
   | 'black-voice'
   | 'weak-spirit'
   | 'device'
@@ -57,7 +70,7 @@ export interface PreparedEntity {
   linkedTo?: string
   growth?: number
   delivered?: boolean
-  controller?: { side: FightSide; source: FighterId }
+  controller?: { side: FightSide; source: FighterId; member?: number; person?: string }
 }
 
 export interface FightBattlefield {

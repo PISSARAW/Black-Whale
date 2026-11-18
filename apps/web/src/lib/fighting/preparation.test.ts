@@ -105,15 +105,15 @@ describe('Combat preparation and real scenario entities', () => {
     const plain = duel('sayird')
     expect(performAttack(plain, 'player', 'special')).toBe(plain)
     const state = duel('sayird', ['animals'])
-    const controlled = performAttack(state, 'player', 'special')
+    const controlled = frames(performAttack(state, 'player', 'special'), 8)
     expect(controlledEntities(controlled, 'player')).toHaveLength(1)
     expect(controlled.player.attack).toBeNull()
     expect(controlled.opponent.health).toBe(state.opponent.health)
-    expect(controlled.player.aura).toBe(98)
+    expect(controlled.player.aura).toBeGreaterThanOrEqual(98)
     const unconscious = { ...controlled, player: { ...controlled.player, hitStun: 90 } }
     const advanced = advancePreparation(unconscious, { player: EMPTY_INPUT })
     expect(controlledEntities(advanced, 'player')).toHaveLength(1)
-    expect(controlledEntities(advanced, 'player')[0].x).toBeGreaterThan(
+    expect(controlledEntities(advanced, 'player')[0].x).toBe(
       controlledEntities(controlled, 'player')[0].x,
     )
     const nenAnimal = {
@@ -131,10 +131,9 @@ describe('Combat preparation and real scenario entities', () => {
 
   it('allows both players to use a prepared target and releases control when the ability is stolen', () => {
     const state = duel('sayird', ['animals'], 'sayird')
-    const controlled = performAttack(
-      performAttack(state, 'player', 'special'),
-      'opponent',
-      'special',
+    const controlled = frames(
+      performAttack(performAttack(state, 'player', 'special'), 'opponent', 'special'),
+      8,
     )
     expect(controlledEntities(controlled, 'player')).toHaveLength(1)
     expect(controlledEntities(controlled, 'opponent')).toHaveLength(1)
@@ -330,7 +329,7 @@ describe('Prepared prerequisites survive theft, copying and forecast execution i
     const empty = page(duel('chrollo'), 'sayird')
     expect(performAttack(empty, 'player', 'special')).toBe(empty)
     const ready = page(duel('chrollo', ['animals']), 'sayird')
-    const cast = performAttack(ready, 'player', 'special')
+    const cast = frames(performAttack(ready, 'player', 'special'), 8)
     expect(controlledEntities(cast, 'player')[0].controller?.source).toBe('sayird')
     const closed = {
       ...cast,

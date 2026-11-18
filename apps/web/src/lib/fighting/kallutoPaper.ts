@@ -1,46 +1,18 @@
-import { voluntaryNenAvailable } from './nenAccess'
-import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
-import { chainAbilitySealed } from './kurapika'
+import { chrolloPageForMove } from './chrolloBook'
+import { paperAbilityAvailable } from './kallutoAccess'
+import { paperMaterialsReady } from './kallutoMaterials'
+export { paperAvailable } from './kallutoAccess'
 import { sleepingBody } from './hanzoProjection'
+import { paperMarksAt, activePaperOwner } from './kallutoSurveillance'
+import type { KallutoPaperState, PaperCommand } from './kallutoPaperTypes'
+export type { KallutoPaperState, PaperCommand, PlantedPaper, PaperWords } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
-export type PaperCommand = 'plant' | 'serpent' | 'doll'
-export const PAPER_COSTS = { plant: 16, serpent: 24, doll: 12 } as const
-export interface PlantedPaper {
-  owner: FightSide
-  zone: FightNenZone
-}
-export interface PaperWords {
-  frame: number
-  speaker: FightSide
-  text: string
-}
-export interface KallutoPaperState {
-  zone: FightNenZone
-  command?: PaperCommand
-  doll?: { target: FightSide; createdAt: number }
-  heard?: PaperWords
-}
+export { PAPER_COSTS } from './kallutoTuning'
 export const PAPER_ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 export const paperState = (fighter: ArcadeFighter): KallutoPaperState =>
   fighter.kallutoPaper ?? { zone: 'torso' }
 
-export function paperAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    ownsPaper(fighter) &&
-    paperNenAvailable(fighter) &&
-    !chainAbilitySealed(fighter, 'kalluto:neutralSpecial')
-  )
-}
-function ownsPaper(fighter: ArcadeFighter): boolean {
-  if (fighter.id === 'kalluto') return true
-  if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'kalluto')
-  const held = fighter.kurapika?.held
-  return Boolean(held?.used && held.source === 'kalluto')
-}
-function paperNenAvailable(fighter: ArcadeFighter): boolean {
-  return voluntaryNenAvailable(fighter, { requireReserve: true })
-}
 const PAPER_COMMANDS: Readonly<Record<string, PaperCommand>> = {
   'kalluto:neutralSpecial': 'plant',
   'kalluto:downSpecial': 'plant',
@@ -70,18 +42,19 @@ export function selectedPaperZone(fighter: ArcadeFighter): FightNenZone {
 }
 export function hasPlantedPaper(state: FightState, owner: FightSide, zone?: FightNenZone): boolean {
   const target = owner === 'player' ? 'opponent' : 'player'
-  return Boolean(
-    state[target].plantedPaper?.some(
-      (paper) => paper.owner === owner && (!zone || paper.zone === zone),
-    ),
-  )
+  return paperMarksAt(state, {
+    owner: activePaperOwner(state, owner),
+    target: activePaperOwner(state, target),
+    zone,
+  })
 }
 export function paperCommandReady(
   state: FightState,
   side: FightSide,
   command: PaperCommand,
 ): boolean {
-  if (!paperAvailable(state[side])) return false
+  if (!paperAbilityAvailable(state[side], command)) return false
+  if (!paperMaterialsReady(state, side, command)) return false
   if (command === 'plant') return true
   return hasPlantedPaper(
     state,

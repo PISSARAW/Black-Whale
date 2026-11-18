@@ -11,6 +11,7 @@ import { victoryWide } from './camera'
 import { suppressVictoryFlashes } from './resources'
 import { createHisokaVictory } from './hisoka'
 import { createChrolloVictory } from './chrollo'
+import { createChrolloSunMoonVictory } from './chrolloSunMoon'
 import { createKurapikaVictory } from './kurapika'
 import { createFeitanVictory } from './feitan'
 import { createPhinksVictory } from './phinks'
@@ -39,6 +40,13 @@ import { isBeyondCurse } from './beyondCurseSelection'
 import { createLonghiVictory } from './longhi'
 import { createFurykovVictory } from './furykov'
 import { createSayirdVictory } from './sayird'
+import { createThetaVictory } from './theta'
+import { createMizaistomVictory } from './mizaistom'
+import { createRihanVictory } from './rihan'
+import { createZakuroVictory } from './zakuro'
+import { createLynchVictory } from './lynch'
+import { createLuiniVictory } from './luini'
+import { createBashoVictory } from './basho'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -68,6 +76,13 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   longhi: createLonghiVictory,
   furykov: createFurykovVictory,
   sayird: createSayirdVictory,
+  theta: createThetaVictory,
+  mizaistom: createMizaistomVictory,
+  rihan: createRihanVictory,
+  zakuro: createZakuroVictory,
+  lynch: createLynchVictory,
+  luini: createLuiniVictory,
+  basho: createBashoVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -98,6 +113,13 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     longhi: 0.4,
     furykov: 1,
     sayird: 0.6,
+    theta: 1.8,
+    mizaistom: 1.8,
+    rihan: 1.8,
+    zakuro: 1.9,
+    lynch: 1.5,
+    luini: 1.8,
+    basho: 1.8,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -113,6 +135,11 @@ function hideAuxiliaryRoots(options: {
   }
 }
 function resolveDriver(frame: VictoryFrame, drivers: Map<string, VictoryDriver>) {
+  if (frame.variant === 'chrollo-sun-moon') {
+    const driver = drivers.get(frame.variant) ?? createChrolloSunMoonVictory()
+    drivers.set(frame.variant, driver)
+    return driver
+  }
   const curse = isBeyondCurse(frame.variant)
   const key = curse ? frame.variant! : frame.fighter
   const driver = drivers.get(key) ?? (curse ? createBeyondCurseVictory() : DRIVERS[frame.fighter]())
@@ -143,6 +170,13 @@ function ownsComfortCamera(frame: VictoryFrame) {
       'longhi',
       'furykov',
       'sayird',
+      'theta',
+      'mizaistom',
+      'rihan',
+      'zakuro',
+      'lynch',
+      'luini',
+      'basho',
     ].includes(frame.fighter)
   )
 }

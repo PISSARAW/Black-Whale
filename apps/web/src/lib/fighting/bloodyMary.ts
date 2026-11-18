@@ -2,6 +2,7 @@ import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { maryHasInfusion } from './bloodyMaryEquipment'
+import { maryScoutWall } from './bloodyMaryScouts'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const MARY_CAPACITY = 6
@@ -13,7 +14,7 @@ export const MARY_SLAM_NOTICE = 30
 export const MARY_ESCAPE_FRAMES = 24
 export const MARY_SCOUT_LIFE = 30 * 60 * 60
 export const MARY_INFUSION_FRAMES = 120
-export type MaryCommand = 'bleed' | 'bind' | 'slam' | 'scout' | 'recall' | 'infuse'
+export type MaryCommand = 'bleed' | 'bind' | 'slam' | 'scout' | 'scout-wall' | 'recall' | 'infuse'
 
 export interface MaryTendril {
   phase: 'flying' | 'resting' | 'bound' | 'returning'
@@ -26,6 +27,8 @@ export interface MaryTendril {
   units: number
 }
 export interface MaryDrop {
+  wallId?: string
+  wallEdge?: -1 | 1
   id: number
   x: number
   y: number
@@ -34,6 +37,7 @@ export interface MaryDrop {
   reformFrames: number
 }
 export interface BloodyMaryState {
+  sealedWounds?: number
   available: number
   bags: number
   command?: MaryCommand
@@ -134,7 +138,15 @@ function maryNenCommandReady(state: FightState, side: FightSide, command: MaryCo
   const fighter = state[side]
   if (command === 'recall') return maryBusy(fighter)
   if (command === 'slam') return marySlamReady(state, side)
+  if (command === 'scout-wall' && !maryScoutWall(state, side)) return false
   return maryDeploymentReady(fighter, command)
+}
+
+/** Controlling the bleeding closes the flow, not the injury or lost health. */
+export function maryWoundSeals(fighter: ArcadeFighter): number {
+  return maryAuthority(fighter)
+    ? Math.min(fighter.openWounds ?? 0, fighter.bloodyMary?.sealedWounds ?? 0)
+    : 0
 }
 
 function maryPreparationReady(fighter: ArcadeFighter, command: MaryCommand): boolean | null {

@@ -46,8 +46,8 @@ describe('live cinematic direction', () => {
       expect(direction.strength).toBe(1.2)
       for (let i = 0; i < 120; i++) expect(director.update(state)).toEqual(direction)
       expect(JSON.stringify(state)).toBe(saved)
-      expect(director.update({ ...state, frame: 200 }).detail?.kind).toBe('eyes')
-      expect(director.update({ ...state, frame: 229 }).detail).toBeNull()
+      expect(director.update({ ...state, frame: 70 }).detail?.kind).toBe('eyes')
+      expect(director.update({ ...state, frame: 85 }).detail).toBeNull()
     },
   )
   it('frames both Biscuit and Pain Packer transitions and Rising Sun', () => {
@@ -100,7 +100,7 @@ describe('live cinematic direction', () => {
       }
     }
   })
-  it('zooms on a real Hatsu cast and contact in an engine-driven combo', () => {
+  it('keeps an ordinary chain cast and its real contact in type 1 without an inset', () => {
     let state = fresh()
     state = {
       ...state,
@@ -115,15 +115,13 @@ describe('live cinematic direction', () => {
       action: 'special',
       input: { ...EMPTY_INPUT, right: true },
     })
-    expect(director.update(state).detail).toMatchObject({ kind: 'chain', tip: 'pendulum' })
+    expect(director.update(state).detail).toBeNull()
     const directions = []
     for (let i = 0; i < 80; i++) {
       state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
       directions.push(director.update(state))
     }
-    expect(
-      directions.some((d) => d.detail?.kind === 'impact' && d.detail.side === 'opponent'),
-    ).toBe(true)
+    expect(directions.every((d) => d.detail === null)).toBe(true)
     expect(state.opponent.health).toBeLessThan(state.opponent.maxHealth)
   })
   it.each([{ blocked: true }, { avoided: true }, { invulnerable: true }])(

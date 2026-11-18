@@ -1,3 +1,8 @@
+import { littleEyeAi } from './littleEyeAi'
+import { prosthesisSkinAi } from './gumProsthesisAi'
+import { gumObjectAnchorAi } from './gumObjectAnchorAi'
+import { paperKitAi } from './kallutoMaterialAi'
+import { judgmentInquiryAi } from './judgmentInquiryAi'
 import { dolphinLoanAi } from './dolphinAi'
 import { blackVoiceAi } from './blackVoiceAi'
 import { bashoArsenalAi } from './bashoArsenalAi'
@@ -5,10 +10,12 @@ import { physicalProjectile } from './projectileMatter'
 import { gallerySenseAi } from './galleryAi'
 import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
+import { singleCombatArsenalAi } from './singleCombatAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
-import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
+import { ownsBungeeGum } from './hisokaArsenal'
+import { gumNetworkAi } from './bungeeAi'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -27,13 +34,12 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    prosthesisSkinAi(state, perform) ??
     dolphinLoanAi(state, perform) ??
+    paperKitAi(state) ??
     utilityArsenalAi(state, perform) ??
-    gumAi(state) ??
-    interviewAi(state) ??
-    supportAi(state) ??
-    copiedArsenalAi(state, perform) ??
-    historicalAi(state, perform)
+    singleCombatArsenalAi(state, perform) ??
+    hatsuArsenalAi(state, perform)
   )
 }
 
@@ -42,6 +48,8 @@ function utilityArsenalAi(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   return (
+    judgmentInquiryAi(state) ??
+    littleEyeAi(state) ??
     blackVoiceAi(state) ??
     bashoArsenalAi(state, perform) ??
     deviceAi(state) ??
@@ -169,6 +177,8 @@ function unstampedPuppet(entry: import('./preparationTypes').PreparedEntity): bo
 function gumAi(state: FightState): FightState | null {
   const fighter = state.opponent
   if (!ownsBungeeGum(fighter)) return null
+  const prostheses = gumProsthesisAi(state)
+  if (prostheses) return prostheses
   const action = fighter.gumCatch?.projectile
     ? 'gum-return'
     : shouldSealWounds(state)
@@ -176,9 +186,17 @@ function gumAi(state: FightState): FightState | null {
       : incomingObject(state)
         ? 'gum-catch'
         : null
-  if (!action) return null
-  const next = performGumCommand(state, 'opponent', { action })
+  if (!action) return gumObjectAnchorAi(state) ?? gumNetworkAi(state)
+  const next = performArsenalCommand(state, 'opponent', { action })
   return next === state ? null : next
+}
+
+function gumProsthesisAi(state: FightState): FightState | null {
+  if (!state.opponent.bodyDamage) return null
+  if (state.opponent.gumProstheses && Math.abs(state.opponent.x - state.player.x) <= 12) return null
+  const action = state.opponent.gumProstheses ? 'gum-spring-step' : 'gum-prosthesis'
+  const formed = performArsenalCommand(state, 'opponent', { action })
+  return formed === state ? null : formed
 }
 function shouldSealWounds(state: FightState): boolean {
   return (
@@ -214,4 +232,18 @@ function fishOpportunity(state: FightState): boolean {
 }
 function clothOpportunity(state: FightState): boolean {
   return state.player.hitStun >= 35 && !state.opponent.chrolloHistorical?.cloth
+}
+
+function hatsuArsenalAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return (
+    judgmentAiPreset(state) ??
+    gumAi(state) ??
+    interviewAi(state) ??
+    supportAi(state) ??
+    copiedArsenalAi(state, perform) ??
+    historicalAi(state, perform)
+  )
 }

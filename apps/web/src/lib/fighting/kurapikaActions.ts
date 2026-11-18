@@ -1,3 +1,5 @@
+import { littleEyeShotBusy } from './littleEyeCapture'
+import { dismissReturnedLoans } from './dolphinReturn'
 import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
@@ -42,8 +44,9 @@ import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export function toggleEmperorTime(state: FightState, side: FightSide): FightState {
+  if (!canToggleEmperor(state, state[side])) return state
+  state = dismissReturnedLoans(state, side)
   const fighter = state[side]
-  if (!canToggleEmperor(state, fighter)) return state
   const chain = fighter.kurapika ?? createKurapika()
   if (judgmentForbidsNen(fighter) && !chain.emperorTime) return chainRuleDeath(state, side)
   if (chain.emperorTime && dolphinLocksEmperor(fighter)) return state
@@ -213,8 +216,9 @@ function dolphinLocksEmperor(fighter: ArcadeFighter): boolean {
 }
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
+  if (!fighter.kurapika?.held || fighter.kurapika.held.lentTo) return false
   return (
-    outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
+    outsideDuelAbility(fighter.kurapika.held.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     dolphinActionAuraAvailable(fighter) &&
@@ -223,12 +227,17 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 }
 
 function dolphinActionAuraAvailable(fighter: ArcadeFighter): boolean {
+  if (fighter.kurapika?.held?.used) return true
   return fighter.kurapika?.held?.loaded
     ? dolphinSupplyAvailable(fighter)
     : kurapikaNenActive(fighter)
 }
 
-function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
+export function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
+  const held = options.state[options.side].kurapika!.held!
+  return held.returned ? options.state : endActiveDolphinEffect(options, perform)
+}
+function endActiveDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
   if (state[side].cookie) return stopCookie(state, side)
   const passage = finishBorrowedLuini(options, perform)
@@ -239,7 +248,8 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
-  if (controlledEntities(state, side).length) return releasePreparedControl(state, side)
+  if (controlledEntities(state, side).length || littleEyeShotBusy(state, side))
+    return releasePreparedControl(state, side)
   if (borrowedDoorActive(state, side))
     return withDolphinIdentity(
       state,
@@ -270,7 +280,10 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
       (projected) => perform({ ...options, state: projected, moveId: held.moveId }),
       held.source,
     )
-  if (fighter.textureSurprise)
+  if (
+    fighter.textureSurprise?.source === 'dolphin' &&
+    fighter.textureSurprise.theftId === held.theftId
+  )
     return { ...state, [side]: { ...fighter, textureSurprise: undefined } }
   return releaseMachiThread(dismissDolphinGum(state, side), side)
 }

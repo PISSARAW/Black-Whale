@@ -1,3 +1,4 @@
+import { dolphinRecipientLoan } from './dolphinRecipients'
 import { createKurapika } from './kurapika'
 import { dolphinBody, changeDolphinBody } from './dolphinBodies'
 import type { StolenChainAbility } from './kurapika'
@@ -64,7 +65,7 @@ export function reconcileLoanLinks(state: FightState): FightState {
         const refs = body.kurapika?.dolphinLoans
         if (!refs?.length) return body
         const present = refs.filter((ref) => {
-          const loan = dolphinBody(next, ref)?.dolphinLoan
+          const loan = dolphinRecipientLoan(next, ref)
           return loan?.lender.owner === owner && loan.lender.member === member
         })
         return present.length === refs.length

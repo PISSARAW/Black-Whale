@@ -109,8 +109,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'kalluto',
     mechanic: [
-      'Papier : L plante dans la zone choisie, ↓ L vise les pieds. → L ou H dirige un serpent de confettis vers cette zone si un papier y est planté. ← L confectionne une poupée pour écouter les paroles près de la cible marquée (T/V ou Parler). Aucun seuil de coups ni explosion. Coûts, trajectoires, zones et portée des voix : adaptation du duel.',
-      'Paper: L plants in the chosen zone; ↓ L aims at the feet. → L or H directs a confetti stream to that zone if paper is embedded there. ← L makes a doll to hear words near the marked subject (T/V or Talk). No hit threshold or explosion. Costs, trajectories, zones and voice radius adapt the duel.',
+      'Papier : L disperse des confettis dans la zone choisie, ↓ L vise les pieds. → L ou H regroupe le papier en vol vers cette zone si un fragment y est planté. ← L confectionne une poupée pour écouter les paroles près de la cible marquée (T/V ou Parler). L’éventail et le papier ouvrent des plaies sur contact réel. Coûts, trajectoires, zones et portée des voix : adaptation du duel.',
+      'Paper: L disperses confetti at the selected zone; ↓ L aims at the feet. → L or H regathers flying paper toward that zone if a fragment is embedded there. ← L makes a doll to hear nearby speech (T/V or Talk). The fan and paper open wounds on real contact. Costs, trajectories, zones and voice radius adapt the duel.',
     ],
     finisherCondition: [
       'Un papier doit être planté dans la zone choisie ; le serpent reste une attaque normale, sans exécution automatique.',

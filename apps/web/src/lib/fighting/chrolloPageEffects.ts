@@ -1,4 +1,7 @@
+import { clearGumSource } from './bungeeScoped'
+import { gumAnchorNenAvailable } from './gumObjectAnchorAccess'
 import { releaseBlackVoicePage } from './blackVoice'
+import { mutePaperDolls } from './kallutoSurveillance'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { releaseLuiniAnchor } from './luiniSpatial'
@@ -75,10 +78,15 @@ function clearPageEffects(options: {
     ...state,
     [side]: owner,
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
-    bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
-  const spatial = page === 'luini' ? releaseLuiniAnchor(cleared, side) : cleared
+  const spatial = releaseSpatialPage(cleared, side, page)
   return releaseCopiedBindings(spatial, side, page)
+}
+function releaseSpatialPage(state: FightState, side: FightSide, page: ChrolloPage): FightState {
+  if (page === 'luini') return releaseLuiniAnchor(state, side)
+  return page === 'hisoka' && !gumAnchorNenAvailable(state[side], { source: 'book' })
+    ? clearGumSource(state, side, { source: 'book' })
+    : state
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
@@ -87,8 +95,10 @@ function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): Copied
     fighter.kallutoPaper &&
     !chrolloAbilityActive(fighter, 'kalluto:backSpecial')
   )
-    return { ...fighter, kallutoPaper: { ...fighter.kallutoPaper, doll: undefined } }
-  return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
+    return mutePaperDolls(fighter)
+  return page === 'musse'
+    ? { ...fighter, secretWindow: undefined, secretWindowListening: undefined }
+    : fighter
 }
 
 function clearEffects(fighter: CopiedFighter, keys: readonly EffectKey[]): CopiedFighter {
@@ -141,14 +151,24 @@ function endCopiedPainPacker(fighter: CopiedFighter, page: ChrolloPage): CopiedF
 
 function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFighter {
   if (page !== 'hisoka') return fighter
+  return clearHisokaGumPage({
+    ...fighter,
+    textureSurprise:
+      fighter.textureSurprise?.source === 'dolphin' ||
+      chrolloAbilityActive(fighter, 'hisoka:downSpecial')
+        ? fighter.textureSurprise
+        : undefined,
+  })
+}
+
+function clearHisokaGumPage(fighter: ArcadeFighter): ArcadeFighter {
+  if (chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')) return fighter
+  const seals = fighter.gumWoundOrigin?.source === 'dolphin'
   return {
     ...fighter,
-    textureSurprise: chrolloAbilityActive(fighter, 'hisoka:downSpecial')
-      ? fighter.textureSurprise
-      : undefined,
-    gumWoundSeals: chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
-      ? fighter.gumWoundSeals
-      : undefined,
+    gumWoundSeals: seals ? fighter.gumWoundSeals : undefined,
+    gumWoundOrigin: seals ? fighter.gumWoundOrigin : undefined,
+    gumProstheses: fighter.gumProstheses?.source === 'dolphin' ? fighter.gumProstheses : undefined,
   }
 }
 

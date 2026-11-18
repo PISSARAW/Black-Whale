@@ -30,7 +30,10 @@ export const BENJAMIN_CAMERA_RULES = rulesFor('benjamin', [
     label: ['Culdcept · Restitution', 'Culdcept · Replay'],
     select: (c) => c.self.hatsuEffects.baton?.card?.id,
     edge: 'leave',
-    guard: (c) => c.state.projectiles.some((p) => p.owner === c.side),
+    guard: (c) =>
+      c.self.attack?.moveId === 'benjamin:finisher' &&
+      c.self.attack.hatsuSource === 'benjamin' &&
+      Boolean(c.self.attack.projectileSpawned),
     anchors: selfPart('hands'),
     priority: 2.5,
   },

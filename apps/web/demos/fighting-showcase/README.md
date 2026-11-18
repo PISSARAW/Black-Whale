@@ -811,7 +811,6 @@ référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
 Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
 règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
 
-
 ## Kalluto — La dernière danse du papier
 
 ```sh
@@ -879,14 +878,12 @@ sang. Le nettoyage et le bouton sont des éléments cosmétiques après verdict.
 `target`, `stage`, `side=opponent` et `reduced` contrôlent l'adaptation dans
 la même scène de production. Le catalogue compte quatorze cinématiques.
 
-
 Bonolenov — « Le dernier mouvement » : `bonolenov-fatality.html` présente dix
 secondes de Prologue et Jupiter sur le renderer du jeu. Le film valide d’abord
 une danse complète et le K.-O. natif par Jupiter. `render-bonolenov-fatality.mjs`
 exporte 600 images, `compose-bonolenov-fatality.mjs` produit la musique corporelle,
 les impacts et le son réutilisé par Clash ; `check-bonolenov-fatality.mjs` contrôle
 les gabarits, les lieux, P2, le miroir, le confort, le mobile et le déclenchement.
-
 
 Illumi — « Même après la mort » : `illumi-fatality.html` utilise le renderer de
 victoire de Clash pour les dix secondes d’implantation, perte de volonté, mort
@@ -896,7 +893,6 @@ exporte 600 images ; `compose-illumi-fatality.mjs` produit le son synchronisé e
 `check-illumi-fatality.mjs` contrôle l’intégration, P2, les tailles et le mobile.
 Le catalogue compte désormais seize cinématiques.
 
-
 Biscuit — « Le soin de grâce » : `biscuit-fatality.html` présente dix secondes
 de soin par Cookie, transformation native, direct au torse et retour au soin.
 Le film obtient un K.-O. physique après la transformation gratuite ; la lotion
@@ -905,7 +901,6 @@ reste un soin. `render-biscuit-fatality.mjs` exporte 600 images en 1080p60,
 et `check-biscuit-fatality.mjs` contrôle les modèles, les lieux, P2 et le mobile.
 Sortie : `output/fighting-biscuit-fatality/Biscuit-Fatality-10s.mp4`.
 Le catalogue compte désormais dix-sept personnages avec cinématique de victoire.
-
 
 Kurapika contre la Brigade — « La colère écarlate » : `kurapika-troupe.html`
 présente dix secondes de capture éclair, sept coups au corps et au visage,
@@ -1026,3 +1021,102 @@ Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
 physique enregistré par `sayirdFilm.ts`. Little Eye et l’animal réel fourni sont
 une prémisse de cinématique, sans commande d’activation ajoutée au duel.
 Voir [le dossier Sayird](../../src/lib/fighting/victory/SAYIRD.md).
+
+## Longhi et Furykov — Victoires personnelles
+
+`personal-guard.html?hero=longhi` montre Moonlight Act : signatures libres,
+rupture, Zetsu puis cinq coups physiques. `?hero=furykov` montre une contre-arme adaptée à l’adversaire, une parade
+puis trois frappes. Le déchiffrage et la fabrication sont supposés achevés
+avant le duel dans ce scénario. Chaque séquence
+dure dix secondes et utilise les acteurs et l’arène de Clash. `target`,
+`stage`, `side=opponent` et `reduced` permettent les adaptations.
+
+`node apps/web/scripts/render-personal-guard.mjs --longhi --inspect` exporte
+les plans de contrôle de Longhi ; sans `--longhi`, il contrôle Furykov.
+Retirer `--inspect` produit les 600 images 1080p60.
+`node apps/web/scripts/compose-personal-guard.mjs` crée les deux pistes du jeu,
+avec les impacts synchronisés et Fatality en anglais, puis assemble les
+vidéos lorsque les images existent. `--audio-only` produit uniquement le son.
+`check-personal-guard.mjs` vérifie les variantes de démonstration et
+`check-personal-guard-victories.mjs` vérifie huit victoires et revanches dans
+Clash. Sorties : `output/fighting-personal-guard/longhi/` et
+`output/fighting-personal-guard/furykov/`.
+
+## Theta — Une balle d’avance
+
+`theta-fatality.html` montre dix secondes de feinte au chargeur, esquive,
+crosse, visée et tir unique avec ralenti sur la douille. `target`, `stage`,
+`side=opponent` et `reduced` adaptent les acteurs et le décor.
+La démonstration prouve d’abord une vraie victoire au pistolet physique.
+
+`node apps/web/scripts/render-theta-fatality.mjs` exporte le film en 1080p30
+(`--inspect` : plans de contrôle). `compose-theta-fatality.mjs` produit le son
+du jeu et assemble `output/fighting-theta-fatality/Theta-Fatality-10s.mp4`.
+Le seul dialogue est l’annonce anglaise Fatality.
+`check-theta-fatality.mjs` contrôle les variantes, le mobile et l’intégration ;
+`check-theta-victories.mjs` contrôle les victoires automatiques et revanches.
+
+## Mizaistom — Dernier avertissement
+
+`mizaistom-fatality.html` montre deux désobéissances, le retournement du carton
+jaune et deux confinements brefs. Les frappes physiques attendent la libération ;
+la dernière projette la cible à travers un panneau, puis Fatality est annoncé
+en anglais. Le décor et la cible suivent `stage`, `target`, `side` et `reduced`.
+
+`render-mizaistom-fatality.mjs` exporte dix secondes en 1080p30 ; `--inspect`
+produit les plans de contrôle. `compose-mizaistom-fatality.mjs` crée le son
+du jeu et `output/fighting-mizaistom-fatality/Mizaistom-Fatality-10s.mp4`.
+Les scripts `check-mizaistom-fatality.mjs` et `check-mizaistom-victories.mjs`
+contrôlent les variantes et les victoires/rematches dans Clash.
+
+## Rihan — L’angle mort
+
+`rihan-fatality.html` montre Predator dévorant Deme-chan, puis le propre
+sceau de 48 heures de Rihan et un dernier tir physique. `target=hisoka`
+utilise Bungee Gum ; les autres cibles gardent une fin physique avec une
+analyse incomplète. `stage`, `side=opponent` et `reduced` adaptent la scène.
+
+`render-rihan-fatality.mjs` exporte dix secondes en 1080p30 (`--inspect` :
+plans de contrôle). `compose-rihan-fatality.mjs` crée les deux pistes du jeu
+et `output/fighting-rihan-fatality/Rihan-Fatality-10s.mp4`. Le seul dialogue
+est Fatality en anglais. Les scripts `check-rihan-fatality.mjs` et
+`check-rihan-victories.mjs` vérifient le rendu et les victoires dans Clash.
+
+## Zakuro — La dernière goutte
+
+`zakuro-fatality.html` : dix secondes de Bloody Mary avec trois gouttes
+éclaireuses, liens de sang, double projection et rappel. Paramètres `target`,
+`stage`, `side=opponent`, `reduced`. Preuve native continue dans
+`zakuroFatalityFilm.ts`. Rendu : `node scripts/render-zakuro-fatality.mjs`
+depuis `apps/web` ; son et assemblage :
+`node apps/web/scripts/compose-zakuro-fatality.mjs` depuis la racine.
+
+## Lynch — Le dernier aveu
+
+`lynch-fatality.html` : dix secondes de Body and Soul, bouche couverte,
+six réponses du corps puis un dernier coup physique dans le silence.
+Paramètres `target`, `stage`, `side=opponent`, `reduced`. Preuve continue
+dans `lynchFatalityFilm.ts`, avec réponses privées et K.-O. natif.
+Depuis `apps/web` : `node scripts/render-lynch-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-lynch-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-lynch-fatality/Lynch-Fatality-10s.mp4`.
+
+## Luini — La mauvaise porte
+
+`luini-fatality.html` : dix secondes de passage personnel, retour dans une
+pièce fermée, traque et embuscade au couteau. La cible ouvre la porte et
+condamne l’ancrage avant le coup final. Paramètres `target`, `stage`,
+`side=opponent`, `reduced`. Preuve native dans `luiniFatalityFilm.ts`.
+Depuis `apps/web` : `node scripts/render-luini-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-luini-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-luini-fatality/Luini-Fatality-10s.mp4`.
+
+## Basho — Le dernier vers
+
+`basho-fatality.html` : dix secondes de Great Hiker, écriture du poème, trois
+contacts du poing, incendie et lecture finale. Paramètres `target`, `stage`,
+`side=opponent`, `reduced`. La preuve native `bashoFatalityFilm.ts` gagne par
+les pulsations de brûlure après un vrai contact, sur une cible encore vivante.
+Depuis `apps/web` : `node scripts/render-basho-fatality.mjs`. Depuis la racine :
+`node apps/web/scripts/compose-basho-fatality.mjs`. Sortie 1080p30 :
+`output/fighting-basho-fatality/Basho-Fatality-10s.mp4`.

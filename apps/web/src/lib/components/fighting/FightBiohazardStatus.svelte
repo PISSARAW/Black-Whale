@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { HINRIGH_KNIVES } from '$lib/fighting/hinrighKnives'
   import {
     BIOHAZARD_CAPTURE,
     BIOHAZARD_TRANSFORM,
@@ -34,6 +35,12 @@
 {#if fighter.biohazard || biohazardAuthority(fighter)}
   <div class="biohazard-status" aria-label="Biohazard">
     <strong>Biohazard · {language === 'fr' ? 'Objets réels' : 'Physical objects'}</strong>
+    {#if fighter.id === 'hinrigh'}
+      <span
+        >{language === 'fr' ? 'Couteaux restants' : 'Remaining knives'} : {fighter.hinrighKnives ??
+          HINRIGH_KNIVES}</span
+      >
+    {/if}
     <div class="inventory">
       {#each fighter.biohazard?.objects ?? [] as object (object.id)}
         <div class:broken={object.phase === 'broken'}>

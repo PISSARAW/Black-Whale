@@ -1,4 +1,5 @@
 import { voiceSelfMissionAvailable } from './blackVoiceAutopilot'
+import { traceArsenal } from './arsenalTrace'
 import { performBlackVoiceCommand } from './blackVoiceAction'
 import { voiceGear } from './blackVoiceGear'
 import type { ArsenalCommand } from './retrospectiveTypes'
@@ -18,7 +19,9 @@ export function blackVoiceSelfAi(state: FightState): FightState | null {
     action = drawSelfStep(state)
   }
   const next = performBlackVoiceCommand(state, 'opponent', { action })
-  return next === state ? null : next
+  return next === state
+    ? null
+    : traceArsenal({ state, side: 'opponent', command: { action } }, next)
 }
 
 function selfEmergency(state: FightState): boolean {

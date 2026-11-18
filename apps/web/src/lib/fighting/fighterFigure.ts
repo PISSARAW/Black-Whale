@@ -1,8 +1,10 @@
 import { addBenjaminRifle } from './benjaminRifle'
+import { gumBodyFigureKey, shapeGumProstheses } from './gumProsthesisFigure'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
+import { paperDolls } from './kallutoSurveillance'
 import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
@@ -16,6 +18,7 @@ import { addBodyguardPistol } from './bodyguardFigure'
 import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
+import { addLuiniKnife } from './luiniKnife'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
 import { fighterAuraHex } from './auraColours'
@@ -30,10 +33,12 @@ import type { ArcadeFighter } from './types'
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
+    fighter.id,
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
-    Boolean(fighter.kallutoPaper?.doll),
+    paperDolls(fighter).length,
+    Boolean(fighter.paperKit?.fan),
     Boolean(fighter.illumi?.disguised),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),
@@ -43,6 +48,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.parallelEyesClosed),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
+    ...gumBodyFigureKey(fighter),
     Boolean(fighter.kurapika?.emperorTime),
     fighter.battleCantabile?.form?.model,
     Boolean(fighter.battleCantabile?.prologue),
@@ -105,6 +111,7 @@ export function buildFightFigure(options: {
   })
   if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
+  shapeGumProstheses(options, model.root)
   if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 
   addIllumiNeedles({ THREE, glow, fighter, model })
@@ -125,6 +132,7 @@ function addFighterEquipment(
 ): void {
   const { THREE, glow, fighter } = options
   addBodyguardPistol({ THREE, glow, fighter, model })
+  addLuiniKnife({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
@@ -153,7 +161,7 @@ function historicalFigureKey(fighter: ArcadeFighter) {
   return [fighter.chrolloHistorical?.appearance?.model, Boolean(fighter.clothCapture)]
 }
 function figureClothing(profile: ReturnType<typeof humanProfile>, fighter: ArcadeFighter) {
-  return fighter.textureSurprise ||
+  return fighter.textureSurprise?.surface === 'cloth' ||
     fighter.battleCantabile?.preparation ||
     fighter.battleCantabile?.prologue
     ? { ...profile, shirt: profile.skin }

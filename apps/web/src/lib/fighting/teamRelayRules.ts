@@ -8,6 +8,10 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'secretWindow',
+  'kallutoPaper',
+  'paperKit',
+  'plantedPaper',
   'blackVoiceScreen',
   'stolenChainAbility',
   'blackVoiceGear',
@@ -19,7 +23,9 @@ const BODY_FIELDS = new Set([
   'personalEncounters',
   'dowsingScreened',
   'heardWords',
+  'speechPulse',
   'dowsingReading',
+  'dowsingAcquaintances',
   'devicePlayback',
   'receiverReading',
   'judgmentPreset',
@@ -29,6 +35,10 @@ const BODY_FIELDS = new Set([
   'velocityY',
   'facing',
   'health',
+  'openWounds',
+  'bodyDamage',
+  'gumProsthesisGeneration',
+  'textureTarget',
   'maxHealth',
   'aura',
   'auraExhausted',
@@ -69,14 +79,20 @@ function restingSignature(actor: ArcadeFighter) {
 function restingBody(actor: ArcadeFighter): ArcadeFighter {
   const body = {
     ...actor,
+    on: actor.on?.sealFrames ? { grudge: 0, sealFrames: actor.on.sealFrames } : undefined,
     hatsuEffects: {
       ...actor.hatsuEffects,
+      baton: restingWindowBaton(actor.hatsuEffects.baton),
       witnessedHatsu: null,
       witnessedAt: undefined,
       witnessedMoveId: undefined,
     },
   }
   return actor.kurapika ? { ...body, kurapika: { ...actor.kurapika, lifespanFrames: 0 } } : body
+}
+
+function restingWindowBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
+  return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 function relayDolphinState(actor: ArcadeFighter): ArcadeFighter {
   const chain = actor.kurapika
@@ -105,16 +121,18 @@ function restingValue(value: unknown): unknown {
 function quietWorld(state: FightState): boolean {
   return (
     ![
+      state.rosterGuests?.some((guest) => guest.phase !== 'eliminated'),
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
       state.moonlight,
       state.bungeeGum,
+      gumBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
-      (state.player.bashoWard?.remainingFrames ?? 0) > 0,
-      (state.opponent.bashoWard?.remainingFrames ?? 0) > 0,
+      wardBusy(state.player),
+      wardBusy(state.opponent),
     ].some(Boolean) &&
     state.projectiles.length === 0 &&
     !state.battlefield?.entities.some(
@@ -181,4 +199,15 @@ export function teamEntry(actor: ArcadeFighter, side: FightSide): ArcadeFighter 
     blocking: false,
     guardFrames: 0,
   }
+}
+
+function gumBusy(state: FightState) {
+  return (
+    state.gumNetwork?.links.length ||
+    state.gumNetwork?.pending.player ||
+    state.gumNetwork?.pending.opponent
+  )
+}
+function wardBusy(actor: FightState['player']) {
+  return (actor.bashoWard?.remainingFrames ?? 0) > 0
 }

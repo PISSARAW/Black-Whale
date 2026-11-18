@@ -1,7 +1,7 @@
 import { seesCombatBody } from './fightCounterplay'
 import { senseDeprived } from './saiyuSenses'
 import { deviceEntity, touchesDevice } from './physicalDevices'
-import { dowsingBodyReady } from './dowsingRules'
+import { dowsingBodyReady, dowsingHandReady } from './dowsingRules'
 import { triggerHatsuAction } from './hatsu'
 import { judgmentActionBreach } from './judgmentAction'
 import { DOWSING_COST, DOWSING_MOVE } from './dowsingTypes'
@@ -17,6 +17,7 @@ export function videoDowsingFocus(state: FightState, side: FightSide, deviceId: 
     touchesDevice(state, side, camera) &&
     state[side].kurapika?.emperorTime &&
     videoSensesReady(state[side]) &&
+    dowsingHandReady(state, side) &&
     dowsingBodyReady(state[side]),
   )
 }

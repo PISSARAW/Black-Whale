@@ -6,9 +6,26 @@ import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScen
 /** Original objects remain visible after page loss; no phone is conjured just by opening a page. */
 export function createBlackVoiceScene(options: EffectSceneOptions): FighterEffectScene {
   const pool = createVisitScenePool(options)
+  function syncGuestAntennas(state: import('./types').FightState) {
+    for (const guest of state.rosterGuests ?? []) {
+      if (guest.role !== 'puppet' || guest.phase === 'preparing') continue
+      if (!state[guest.owner].blackAntennas?.some((item) => item.guestId === guest.id)) continue
+      const pin = pool.get(`black-guest-antenna:${guest.id}`, {
+        model: 'black-voice-antenna',
+        anchor: 'floor',
+        fit: { height: 0.25 },
+      })
+      pin.root.position.set(
+        options.worldX(guest.fighter.x) + 0.12,
+        options.worldY(guest.fighter.y) + (guest.fighter.health <= 0 ? 0.35 : 1.4),
+        0.2,
+      )
+    }
+  }
   return {
     sync(state) {
       pool.hide()
+      syncGuestAntennas(state)
       syncBodies(state)
       syncWorld(state)
     },

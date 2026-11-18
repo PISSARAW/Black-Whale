@@ -1,4 +1,8 @@
 <script lang="ts">
+  import FightDolphinPeople from './FightDolphinPeople.svelte'
+  import FightJudgmentInterview from './FightJudgmentInterview.svelte'
+  import FightDowsingInterview from './FightDowsingInterview.svelte'
+  import FightLittleEyeScreen from './FightLittleEyeScreen.svelte'
   import { dowsingIndication } from '$lib/fighting/dowsingPresentation'
   import {
     judgmentClauseLabel,
@@ -10,6 +14,9 @@
   import { arsenalOptions } from '$lib/fighting/retrospectiveArsenal'
   import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import FightMultiCombatStatus from './FightMultiCombatStatus.svelte'
+  import FightPriorityStatus from './FightPriorityStatus.svelte'
+  import FightGumNetwork from './FightGumNetwork.svelte'
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
@@ -115,6 +122,10 @@
           </p>
         {/each}
       {/if}
+      <FightDolphinPeople {state} {side} {language} />
+      <FightJudgmentInterview {state} {side} {language} {paused} {onUse} />
+      <FightDowsingInterview {state} {side} {language} {paused} {onUse} />
+      <FightLittleEyeScreen screen={state[side].littleEyeScreen} {language} />
       {#if state[side].devicePlayback}
         <strong
           >{language === 'fr' ? 'Dernière lecture de la caméra' : 'Latest camera playback'} · {Math.floor(
@@ -185,6 +196,9 @@
         </button>
         <small>{language === 'fr' ? option.conditionFr : option.conditionEn}</small>
       {/each}
+      <FightMultiCombatStatus {state} {side} {language} />
+      <FightPriorityStatus {state} {side} {language} />
+      <FightGumNetwork {state} {side} {language} {paused} {onUse} />
       {#if state[side].chrolloHistorical?.phone}<span>{phoneGuidance(state, side, language)}</span
         >{/if}
       {#if state[side].gumCatch?.projectile}<span

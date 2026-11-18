@@ -11,6 +11,9 @@ import { dolphinMissingBattleBody } from './battleCantabileRules'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
+  theftId?: string
+  /** The original Hatsu is already usable again; the equipped device can still await dismissal. */
+  returned?: boolean
   victim: FightSide
   victimMember?: number
   auraSupply?: import('./dolphinAura').DolphinAuraSupply
@@ -19,6 +22,7 @@ export interface StolenChainAbility {
   loaded: boolean
   used: boolean
   /** Effects created by this single use must finish before Dolphin can be dismissed. */
+  lentTo?: string
   sustainedKeys: string[]
 }
 
@@ -138,13 +142,22 @@ export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
 
 export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
   const held = equippedDolphin(fighter)
-  return held?.used && fighter.attack?.moveId === held.moveId
+  return held?.used && !held.returned && dolphinAttackMatches(fighter, held)
     ? stolenAuraActor({
         ...loanCarrier(fighter),
         id: held.source,
         nenOwner: fighter.nenOwner ?? fighter.id,
       })
     : fighter
+}
+function dolphinAttackMatches(fighter: ArcadeFighter, held: StolenChainAbility): boolean {
+  const origin = fighter.attack?.nenOrigin
+  if (!origin?.source) return fighter.attack?.moveId === held.moveId
+  return (
+    origin.source === 'dolphin' &&
+    origin.theftId === held.theftId &&
+    chainAbilityGroup(fighter.attack?.moveId ?? '') === chainAbilityGroup(held.moveId)
+  )
 }
 
 export function restrictedChainAura(

@@ -233,6 +233,7 @@ function bird(seen: Apparition, { THREE, root, skin, observerSight }: BasicAppar
       new THREE.BoxGeometry(seen.size * 1.15, seen.size * 0.05, seen.size * 0.5),
       skin,
     )
+    wing.name = `bird-wing-${side}`
     wing.position.set(side * seen.size * 0.62, 0, 0)
     wings.add(wing)
   }

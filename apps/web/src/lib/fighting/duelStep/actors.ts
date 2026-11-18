@@ -1,4 +1,6 @@
 import { recordMotion } from '../motionRecord'
+import { halkenburgBodyControl } from '../halkenburgHostMotion'
+import { halkenburgOwnBody } from '../halkenburgSoulTypes'
 import { updatePlayerGuard } from '../nenCombat/guardInput'
 import { illumiInput } from '../illumiFrame'
 import { poseFighter } from '../fightActorPose'
@@ -31,6 +33,7 @@ export function stepActors(state: FightState, inputs: DuelInputs): DuelBodies {
 }
 
 export function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (!halkenburgOwnBody(fighter)) return halkenburgBodyControl(advanceFighterPhysics(fighter))!
   if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter))
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
@@ -75,6 +78,8 @@ export function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  const soul = halkenburgBodyControl(advanced)
+  if (soul) return soul
   if (advanced.easterEgg) return poseFighter(advanced)
   if (advanced.needlePuppet) return advanced
   if (maryAiBusy(advanced)) return maryAiBody(advanced)

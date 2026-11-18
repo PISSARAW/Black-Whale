@@ -18,6 +18,7 @@ export interface RosterGuest {
 declare module './types' {
   interface FightState {
     rosterGuests?: readonly RosterGuest[]
+    rosterGuestContext?: { id: string; owner: FightSide }
   }
   interface FightProjectile {
     sourceBody?: string
@@ -71,6 +72,7 @@ export function guestProjection(state: FightState, guest: RosterGuest): FightSta
     [guest.owner]: guest.fighter,
     arena: guestArena(state, guest.owner),
     rosterGuests: undefined,
+    rosterGuestContext: { id: guest.id, owner: guest.owner },
   }
 }
 
@@ -92,6 +94,7 @@ export function mergeGuestProjection(
     roundsWon: state.roundsWon,
     matchWinner: state.matchWinner,
     teamMatch: state.teamMatch,
+    rosterGuestContext: state.rosterGuestContext,
     // Judge once with the real leader restored, so a guest never takes its team seat.
     phase: state.phase,
     winner: state.winner,

@@ -1,3 +1,4 @@
+import { halkenburgOwnBody } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightSide } from './types'
 import type { GumSource } from './bungeeSource'
 
@@ -49,6 +50,7 @@ export function illumiPreparing(fighter: ArcadeFighter): boolean {
 export function illumiBodyFree(fighter: ArcadeFighter): boolean {
   return (
     !fighter.arsenalSleep &&
+    halkenburgOwnBody(fighter) &&
     !(fighter.dolphinLoan?.blackoutFrames ?? 0) &&
     !fighter.clothCapture &&
     needleAutonomy(fighter) &&

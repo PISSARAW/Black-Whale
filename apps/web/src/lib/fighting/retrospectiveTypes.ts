@@ -75,6 +75,7 @@ export const ARSENAL_ACTION_IDS = [
   'machi-pull',
   'dolphin-loan',
   'halkenburg-transfer',
+  'halkenburg-host-motion',
   'black-roster',
   'black-order',
   'black-remove',

@@ -6,6 +6,7 @@ import { carryNeedleFace } from './illumiNeedleMatter'
 import { carryKallutoPaper } from './kallutoSurveillance'
 import { personalPaperKit } from './kallutoMaterials'
 import { carryPaperWorld } from './kallutoMaterialWorld'
+import { carryHalkenburgSoul } from './halkenburgSoulCarry'
 import { prepareMusseHistory } from './benjaminMusseScenario'
 import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
@@ -160,6 +161,7 @@ export function preserveLifespan(
   previous: ArcadeFighter,
   elapsedFrames: number,
 ): ArcadeFighter {
+  fighter = carryHalkenburgSoul(fighter, previous)
   fighter = carryIllumiFace(fighter, previous, elapsedFrames)
   fighter = carryNeedleFace(fighter, previous)
   fighter = carryBodyDamage(fighter, previous)

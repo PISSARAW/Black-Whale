@@ -34,7 +34,8 @@ function executeArsenalAction(
 ): FightState {
   const { state, side, command } = options
   if (!fightAcceptsCommands(state)) return state
-  if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
+  const otherBody = executeOtherBodyCommand(options)
+  if (otherBody) return otherBody
   if (!voluntaryArsenalReady(state, side)) return state
   if (command.action === 'texture-apply') return performTextureApplication(options, perform)
   const additional = performAdditionalArsenal(options, perform)
@@ -44,6 +45,18 @@ function executeArsenalAction(
     return executeDolphin(options, perform)
   if (command.action === 'copied-move') return executeCopied(options, perform)
   return performArsenalCommand(state, side, command)
+}
+
+function executeOtherBodyCommand({
+  state,
+  side,
+  command,
+}: import('./retrospectiveTypes').ArsenalInvocation): FightState | null {
+  if (command.action === 'halkenburg-host-motion')
+    return performArsenalCommand(state, side, command)
+  return command.action.startsWith('person-')
+    ? performPersonDolphinCommand(state, side, command)
+    : null
 }
 
 function executeCopied(

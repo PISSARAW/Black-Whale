@@ -37,6 +37,7 @@ export const VICTORY_FIGHTERS = [
   'zakuro',
   'lynch',
   'luini',
+  'basho',
 ] as const
 export type VictoryFighter = (typeof VICTORY_FIGHTERS)[number]
 export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> = {
@@ -72,6 +73,7 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   zakuro: ['La dernière goutte', 'The last drop'],
   lynch: ['Le dernier aveu', 'The final confession'],
   luini: ['La mauvaise porte', 'The wrong door'],
+  basho: ['Le dernier vers', 'The final verse'],
 }
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
   return (VICTORY_FIGHTERS as readonly string[]).includes(id)

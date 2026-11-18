@@ -95,6 +95,11 @@ Les références fournies par le mainteneur et les palettes choisies sont docume
 `data/characters/appearance.json` ; l’attribution de la tenue à capuche à Tserriednich suit
 sa confirmation explicite. `bonolenovBattleArmor.ts` fournit la forme Prologue partagée.
 
+`mangaTubeppaHead.ts` et `mangaTubeppaSuit.ts` suivent la référence de réception fournie :
+coupe blonde en bol, nez long, menton carré, lunettes ouvertes et boucles d’oreilles ;
+costume croisé sombre à liserés clairs. L’apparence est commune à la visite et au kaméo
+de Clash. La planche `manga-cast` construit aussi les vrais modèles de combat des kaméos.
+
 `mangaCast.test.ts` contrôle les articulations, les transformations et les géométries
 communes. `node apps/web/scripts/check-manga-cast.mjs` rend tout le catalogue en WebGL :
 `MANGA_CAST_IDS` sélectionne les identités séparées par des virgules, `MANGA_CAST_VIEWS`

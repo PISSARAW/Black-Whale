@@ -69,7 +69,7 @@ export function addBonolenovBattleArmor(options: {
     )
       node.visible = false
   })
-  bareArmorBody(model, glow)
+  bareBonolenovBody(model, glow)
   const costume = new THREE.Group()
   costume.name = 'bonolenov-prologue-attire'
   const skirt = new THREE.Mesh(shapes.skirt, glow(0xefede4, 1))
@@ -107,7 +107,7 @@ function recolourPart(root: Object3D, route: readonly [string, ...number[]], mat
   if (surface?.isMesh) surface.material = material
 }
 
-function bareArmorBody(model: HumanFigure, glow: HumanFigureBuild['glow']) {
+export function bareBonolenovBody(model: HumanFigure, glow: HumanFigureBuild['glow']) {
   const bare = glow(0x4b3935, 1)
   recolourPart(model.root, ['torso', 1], bare)
   for (const side of ['left', 'right']) {

@@ -6,7 +6,7 @@ import { BENJAMIN_NORMAL_POSES } from './keyPosesBenjaminNormals'
 import { DOOR_LINK_POSE } from './keyPosesVoconte'
 import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
-import { PROLOGUE_SPEAR_POSE } from './bonolenovPoses'
+import { BONOLENOV_KEY_POSES } from './keyPosesBonolenov'
 import { archetypeTimeline } from './fightArchetypes'
 import { rosterKeyPoses } from './rosterKeyPoses'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
@@ -41,7 +41,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   benjamin: { ...BENJAMIN_NORMAL_POSES, ...BENJAMIN_COMMAND_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   hanzo: HANZO_KEY_POSES,
-  bonolenov: { forwardSpecial: PROLOGUE_SPEAR_POSE },
+  bonolenov: BONOLENOV_KEY_POSES,
   furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
   feitan: { neutralSpecial: FEITAN_PAIN_PACKER, finisher: FEITAN_RISING_SUN },
 }

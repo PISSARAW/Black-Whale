@@ -10,7 +10,8 @@ import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
-import { bonolenovDancePlan } from './bonolenovPoses'
+import { bonolenovBodyPlan } from './bonolenovPoses'
+import { animateBonolenovSpear } from './bonolenovSpear'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
 import { pluggingWoundsPlan } from './blinkyPose'
@@ -124,6 +125,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
+    animateBonolenovSpear(rig, fighter)
     if (anchor)
       plantFeet(rig, {
         anchor,
@@ -267,7 +269,7 @@ function attackingPlan(
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const maintained = luiniBodyPlan(fighter) ?? rosterSustainedMotion(fighter, context.seconds)
   if (maintained) return maintained
-  const dance = bonolenovDancePlan(fighter, context.seconds)
+  const dance = bonolenovBodyPlan(fighter)
   if (dance) return dance
   const crossGame = crossGameBodyPlan(fighter)
   if (crossGame) return crossGame

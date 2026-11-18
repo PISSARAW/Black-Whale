@@ -1,5 +1,7 @@
 import { addPoses, lerpPose, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
+import { COMBO_LINK_SECONDS, type AttackFlowFrame } from './fightAttackFlow'
+import { linkedStrikePose } from './fightComboTransfer'
 
 interface Momentum {
   pose: PoseMemory
@@ -52,24 +54,31 @@ function flowToken(plan: BodyPlan): string {
 function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
   const memory = state.pose,
     attack = plan.attackFlow
-  if (attack && attack.frame < attack.startup && attack.contact)
-    return physicalComboCurve({
-      from: memory.from,
-      contact: attack.contact,
-      velocity: state.outgoing,
-      load: memory.bridge ?? {},
-      frames: attack.startup,
-      progress: attack.frame / attack.startup,
-      loadAt: attack.loadAt,
-    })
+  if (attack?.contact && attack.frame < attack.startup)
+    return drawStartup(state, { ...attack, contact: attack.contact })
   if (attack) return plan.pose
   if (plan.reactionFrame !== undefined) {
     const enter = 0.72 + 0.28 * Math.min(1, plan.reactionFrame / 2)
     return lerpPose(memory.from, plan.pose, enter)
   }
-  const duration = Math.max(1, plan.blend * 60)
+  const blend = memory.link ? Math.max(COMBO_LINK_SECONDS, plan.blend) : plan.blend
+  const duration = Math.max(1, blend * 60)
   const progress = Math.min(1, Math.max(0, ((seconds - memory.since) * 60) / duration))
   return hermite({ from: memory.from, to: plan.pose, velocity: state.outgoing, duration, progress })
+}
+
+function drawStartup(state: Momentum, attack: AttackFlowFrame & { contact: FightPose }): FightPose {
+  const input = {
+    from: state.pose.from,
+    contact: attack.contact,
+    velocity: state.outgoing,
+    load: state.pose.bridge ?? {},
+    transfer: attack.transfer,
+    frames: attack.startup,
+    progress: attack.frame / attack.startup,
+    loadAt: attack.loadAt,
+  }
+  return state.pose.chained ? linkedStrikePose(input) : physicalComboCurve(input)
 }
 
 interface Curve {

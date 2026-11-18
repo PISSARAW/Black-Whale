@@ -130,3 +130,12 @@ qui saute la pose `wakeup`. La protection de relevé conserve cette garde.
 Les KO et corps endormis restent au sol. Aucun compteur ni règle ne change.
 `fightGroundRecovery.test.ts` suit les quarante combattants jusqu’au reversal
 natif et vérifie la continuité des articulations et l’intégrité du replay.
+
+## Liaisons et appuis des combos
+
+`fightComboTransfer.ts` conserve l’élan sortant, laisse le buste conduire les
+bras, puis rassemble et pousse avec les jambes du profil personnel. Les
+passages dessinés restent utilisés ; le contact entrant garde son image exacte.
+La courte fenêtre de liaison prolonge la sortie du geste au lieu de ramener
+immédiatement à la garde. `fightComboTransfer.test.ts` vérifie les quarante
+contacts et la compression des appuis pendant une liaison.

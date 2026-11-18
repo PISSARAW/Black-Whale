@@ -49,6 +49,8 @@
     { href: '/ship', label: $t.nav.explore },
     { href: '/timeline', label: $t.nav.timeline },
     { href: '/characters', label: $t.nav.characters },
+    { href: '/tour', label: $t.nav.tour },
+    { href: '/fighting', label: $t.nav.clash },
     ...(PUBLIC_FEATURES.perspectives ? [{ href: '/perspectives', label: $t.nav.knowledge }] : []),
   ]
 
@@ -58,7 +60,6 @@
     ...(PUBLIC_FEATURES.compare ? [{ href: '/compare', label: $t.nav.comparePerspectives }] : []),
     { href: '/relationships', label: $t.nav.factionNetwork },
     { href: '/simulations', label: $t.nav.simulations },
-    { href: '/tour', label: $t.nav.virtualTour },
     { href: '/tour/modes', label: $t.nav.tourModes },
     { href: '/tour/sources', label: $t.nav.shipSources },
     { href: '/about', label: $t.discovery.about.nav },

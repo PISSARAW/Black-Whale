@@ -58,6 +58,8 @@ export const fr: Messages = {
     explore: 'Explorer',
     timeline: 'Chronologie',
     characters: 'Personnages',
+    tour: 'Tour',
+    clash: 'Clash',
     knowledge: 'Savoirs',
     abilityArchive: 'Archive des pouvoirs',
     nenArchive: 'NenDex',

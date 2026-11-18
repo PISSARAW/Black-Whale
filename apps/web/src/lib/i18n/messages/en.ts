@@ -63,6 +63,8 @@ export const en = {
     explore: 'Explore',
     timeline: 'Timeline',
     characters: 'Characters',
+    tour: 'Tour',
+    clash: 'Clash',
     knowledge: 'Knowledge',
     abilityArchive: 'Ability Archive',
     nenArchive: 'NenDex',

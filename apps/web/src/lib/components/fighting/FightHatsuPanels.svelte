@@ -1,6 +1,7 @@
 <script lang="ts">
   import FightRetrospectiveArsenal from './FightRetrospectiveArsenal.svelte'
   import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
+  import FightKurapikaLiveChains from './FightKurapikaLiveChains.svelte'
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
   import { observeFightCommand } from '$lib/fighting/commandFeedback'
   import FightKallutoPaper from './FightKallutoPaper.svelte'
@@ -34,13 +35,27 @@
   }
 </script>
 
-{#if onCommand && state.player.id === 'chrollo' && state.phase === 'fighting' && !paused && !replay}
-  <FightChrolloLiveBook
+{#if onCommand && state.player.id === 'kurapika' && state.phase === 'fighting' && !paused}
+  <FightKurapikaLiveChains
     {state}
     {language}
+    {replay}
     actions={{ queueAction: onAction, queueCommand: onCommand }}
   />
 {/if}
+
+{#each ['player', 'opponent'] as seat (seat)}
+  {@const side = seat as FightSide}
+  {#if onCommand && state[side].id === 'chrollo' && (side === 'player' || state.mode === 'versus-local') && state.phase === 'fighting' && !paused}
+    <FightChrolloLiveBook
+      {state}
+      {language}
+      {side}
+      readOnly={replay}
+      actions={{ queueAction: onAction, queueCommand: onCommand }}
+    />
+  {/if}
+{/each}
 
 <FightRetrospectiveArsenal
   {state}

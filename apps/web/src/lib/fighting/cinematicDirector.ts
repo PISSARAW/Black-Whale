@@ -1,6 +1,8 @@
 import { cameraSnapshot, cinematicEvents } from './cinematicEvents'
 import { onAwakeningDetail } from './onAwakening'
 import { feitanCinematicDetail } from './feitanPresentation'
+import { kurapikaCinematicDetail } from './kurapikaCameraPresentation'
+import { chrolloCinematicDetail } from './chrolloCameraPresentation'
 import type { FightSide, FightState } from './types'
 
 import type { CinematicCue, CinematicDirection, CameraPacing } from './cinematicTypes'
@@ -70,8 +72,12 @@ export function createCinematicDirector(
         scheduler.clear()
       }
       const { strength, side } = strongestCue(cues, frame)
-      const detail = feitanCinematicDetail(onAwakeningDetail(shot, frame), shotAge(shot, frame))
-      return { strength: strength * intensity, side, detail }
+      const age = shotAge(shot, frame)
+      const detail = kurapikaCinematicDetail(
+        feitanCinematicDetail(onAwakeningDetail(shot, frame), age),
+        { state, age },
+      )
+      return { strength: strength * intensity, side, detail: chrolloCinematicDetail(detail, age) }
     },
   }
 }

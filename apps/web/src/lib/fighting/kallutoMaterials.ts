@@ -78,11 +78,12 @@ export function paperMaterialsReady(
   side: FightSide,
   command: PaperCommand,
 ): boolean {
+  if (state[side].weaponsConfiscated) return false
   if (command === 'doll' && existingPaperDoll(state, side)) return true
   if (!historicalMatterExists(state, state[side].paperKit?.copyId) || !freeDeviceHand(state, side))
     return false
   if (command === 'serpent' && availablePaperScatter(state, side))
-    return Boolean(state[side].paperKit?.fan && state[side].paperKit!.integrity > 0)
+    return scatterFanReady(state[side])
   return paperStockReady(state[side], command)
 }
 
@@ -104,4 +105,8 @@ export function issuePaperPart(
     actor: { ...actor, paperKit: { ...kit, [resource]: kit[resource] - 1, serial } },
     part: { id: `${kit.sourceId}:paper:${serial}`, materialCopyId: kit.copyId },
   }
+}
+
+function scatterFanReady(actor: ArcadeFighter): boolean {
+  return Boolean(actor.paperKit?.fan && actor.paperKit.integrity > 0)
 }

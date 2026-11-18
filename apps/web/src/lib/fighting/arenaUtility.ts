@@ -1,6 +1,6 @@
 import { witnessedHatsuState } from './nenWitness'
 import { arenaNenAvailable, arenaObjects } from './arenaActions'
-import { storeArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
+import { storeArenaVacuum, ejectArenaVacuum, vacuumObjectAllowed } from './arenaVacuum'
 import { liveEntity, updateEntity } from './preparationWorld'
 import { chrolloHasActivePage } from './chrolloBook'
 import type { ArenaState } from './arenaTypes'
@@ -97,6 +97,7 @@ function stampObject(state: FightState, side: FightSide, entry: PreparedEntity):
 }
 
 function vacuumObject(state: FightState, side: FightSide, entry: PreparedEntity): FightState {
+  if (!vacuumObjectAllowed(entry)) return state
   return state.arena!.stored[side] === entry.id
     ? ejectArenaVacuum(state, side)
     : storeArenaVacuum(state, side, entry)

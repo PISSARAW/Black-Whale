@@ -1,4 +1,6 @@
 import type { ArcadeFighter, FightSide, FightState } from './types'
+import { gumNetwork, withGumNetwork } from './bungeeNetwork'
+import type { GumLink } from './bungeeTypes'
 
 interface TradeFighterOptions {
   original: ArcadeFighter
@@ -63,4 +65,44 @@ export function tradeAttachment(original: FightState, first: FightState, second:
   const opponentChanged = second.bungeeGum !== original.bungeeGum
   if (playerChanged && opponentChanged) return null
   return playerChanged ? first.bungeeGum : second.bungeeGum
+}
+
+export function tradeGumState(
+  original: FightState,
+  first: FightState,
+  second: FightState,
+): Pick<FightState, 'bungeeGum' | 'gumNetwork'> {
+  if (!first.gumNetwork && !second.gumNetwork)
+    return { bungeeGum: tradeAttachment(original, first, second) }
+  const base = gumNetwork(original),
+    left = gumNetwork(first),
+    right = gumNetwork(second)
+  const links = [
+    ...left.links.filter((link) => link.owner === 'player'),
+    ...right.links.filter((link) => link.owner === 'opponent'),
+  ]
+  const remapped = mergeGumIds(
+    links,
+    { player: left.selected.player, opponent: right.selected.opponent },
+    Math.max(left.nextId, right.nextId),
+  )
+  const merged = withGumNetwork(original, { ...base, ...remapped })
+  return { bungeeGum: merged.bungeeGum, gumNetwork: merged.gumNetwork }
+}
+
+/** Existing anchors keep their identity; only simultaneous newly allocated IDs can collide. */
+function mergeGumIds(
+  links: GumLink[],
+  selection: Partial<Record<FightSide, number>>,
+  nextId: number,
+) {
+  const used = new Set<number>(),
+    selected: Partial<Record<FightSide, number>> = {}
+  const merged = links.map((link) => {
+    const id = used.has(link.id) ? nextId++ : link.id
+    used.add(id)
+    if (selection[link.owner] === link.id) selected[link.owner] = id
+    return { ...link, id }
+  })
+  return { links: merged, nextId, selected }
 }

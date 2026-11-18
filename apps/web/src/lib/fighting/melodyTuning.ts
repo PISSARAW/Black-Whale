@@ -20,5 +20,6 @@ export interface MelodyHearing {
   frames: number
   direction: -1 | 1
   pulse: 'steady' | 'agitated'
+  acceleration?: 'sudden' | 'gradual'
   threat: 'startup' | 'active' | 'recovery' | null
 }

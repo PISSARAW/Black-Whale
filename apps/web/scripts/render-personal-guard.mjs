@@ -54,7 +54,10 @@ try {
   browser = await chromium.launch({
     executablePath: existsSync(chrome) ? chrome : undefined,
     headless: true,
-    args: ['--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'],
+    args: [
+      ...(process.platform === 'darwin' ? ['--use-angle=metal'] : ['--enable-unsafe-swiftshader']),
+      '--autoplay-policy=no-user-gesture-required',
+    ],
   })
   const page = await browser.newPage({
     viewport: { width: 1920, height: 1080 },
@@ -78,7 +81,7 @@ try {
     new Promise((_, reject) => page.once('pageerror', reject)),
     page.waitForFunction(() => window.fightingShowcase?.ready()),
   ])
-  await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 120000)))
+  await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 10000)))
   const report = await page.evaluate(() => window.fightingShowcase.report())
   assert.equal(report.frameCount, 600)
   assert.equal(report.duration, 10)

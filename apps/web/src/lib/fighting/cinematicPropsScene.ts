@@ -1,3 +1,6 @@
+import { bashoInk, poseBashoPen } from './bashoWritingPresentation'
+import { holdBashoPaper, poseBashoWritingHand } from './bashoWritingPose'
+import { fineControlReduced } from './fineControlAnchors'
 import { sleepingBody } from './hanzoProjection'
 import { placeVisitHand } from './visitSceneKit'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -72,7 +75,7 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
   const rightPoint = new THREE.Vector3()
   function placePoem(prop: ReturnType<typeof build>, state: FightState) {
     const actor = state[prop.side],
-      writing = (actor.bashoPoem?.writingFrames ?? 0) > 0
+      writing = isWriting(state, prop.side)
     prop.pen.visible = writing && Boolean(actor.writingKit?.brush)
     prop.root.scale.setScalar(writing ? 1 : 0.45)
     if (!writing) {
@@ -81,6 +84,10 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
       return
     }
     const right = options.figureOf?.(prop.side)?.getObjectByName('hand-right')
+    holdBashoPaper(options, { state, side: prop.side, root: prop.root })
+    poseBashoPen(prop.pen, actor.bashoPoem!, fineControlReduced(options))
+    if (prop.pen.visible) poseBashoWritingHand(options, { side: prop.side, pen: prop.pen })
+    prop.root.userData.inkProgress = bashoInk(actor.bashoPoem!).progress
     if (!right) return
     right.getWorldPosition(rightPoint)
     prop.root.updateMatrixWorld(true)
@@ -99,7 +106,6 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
         prop.root.position.z += 0.25
         prop.root.rotation.set(-0.12, 0, -0.08 * f.facing)
         if (prop.kind === 'poem') placePoem(prop, state)
-        prop.pen.rotation.z = penAngle(f.bashoPoem?.writingFrames)
         prop.write(
           prop.kind === 'poem' ? poemLines(state, prop.side) : consoleLines(state, prop.side),
         )
@@ -113,12 +119,9 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     },
   }
 }
-function penAngle(writingFrames = 0): number {
-  return -0.4 + (writingFrames > 0 ? Math.sin((writingFrames * Math.PI) / 6) * 0.12 : 0)
-}
 function poemLines(state: FightState, side: FightSide): string[] {
   const poem = state[side].bashoPoem ?? state[side].bashoArchive!.at(-1)!
-  return ['GREAT HIKER', ...(poem.ready ? poem.text.split('\n') : ['...'])]
+  return bashoInk(poem).lines
 }
 function consoleLines(state: FightState, side: FightSide): string[] {
   const alert = state[side].comboMaster?.alert
@@ -129,4 +132,8 @@ function consoleLines(state: FightState, side: FightSide): string[] {
     alert.signature ?? '?',
     alert.affected.join(' / '),
   ]
+}
+
+function isWriting(state: FightState, side: FightSide) {
+  return (state[side].bashoPoem?.writingFrames ?? 0) > 0
 }

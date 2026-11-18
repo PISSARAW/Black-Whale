@@ -16,7 +16,7 @@ export function addBlinky(options: {
   const visual = createVisitHatsuModel(options.THREE, {
     model: 'blinky',
     figureOwned: true,
-    joints: ['tongue'],
+    joints: ['tongue', 'open-mouth'],
   })
   visual.fit({ height: 0.82, width: 0.55 })
   visual.root.name = 'shizuku-blinky'

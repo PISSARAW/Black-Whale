@@ -1,6 +1,6 @@
 # Hisoka : plusieurs supports physiques
 
-Le ruleset **clash-combat-44** permet plusieurs connexions de Bungee Gum sur
+Le ruleset **clash-combat-45** permet plusieurs connexions de Bungee Gum sur
 des supports physiques de l’arène. Elles peuvent coexister avec la liaison
 de combat entre deux personnes et avec les applications défensives admissibles.
 Le On est conservé.

@@ -2,6 +2,7 @@ import type { ArcadeFighter, FightState } from './types'
 
 /** Physical needles belong to the body, never to a borrowed execution identity. */
 export function hasIllumiNeedles(fighter: ArcadeFighter): boolean {
+  if (fighter.weaponsConfiscated) return false
   return fighter.equipment?.includes('needles') ?? (fighter.nenOwner ?? fighter.id) === 'illumi'
 }
 

@@ -13,7 +13,12 @@ export function resolveJudgmentCommunication(
   speaker: FightSide,
   recipient: FighterId,
 ): FightState {
-  return judgmentForbidsContact(state[speaker], recipient) ? chainRuleDeath(state, speaker) : state
+  const disclosure =
+    judgmentClauses(state[speaker]).includes('no-disclosure') &&
+    state[speaker].judgmentDisclosure === state.frame
+  return disclosure || judgmentForbidsContact(state[speaker], recipient)
+    ? chainRuleDeath(state, speaker)
+    : state
 }
 
 export function aiJudgmentSpeechAllowed(

@@ -1,23 +1,13 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove, chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { canHear, soundDistance, musicPacifies } from './melodyRules'
-import { hatsuSealedByOn } from './onTechnique'
-import { predatorNenLocked } from './predatorSeal'
 import { canSpeak } from './saiyuSenses'
 import { LYNCH_ANSWER_COST, LYNCH_MOVE, LYNCH_QUESTION_RANGE } from './lynchTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export function lynchNenAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.health > 0 &&
-    canUseHatsu(fighter.nen) &&
-    !hatsuSealedByOn(fighter) &&
-    !predatorNenLocked(fighter) &&
-    !fighter.auraExhausted &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    !fighter.moonlightZetsu
-  )
+  return voluntaryNenAvailable(fighter)
 }
 
 export function hasBodyAndSoul(fighter: ArcadeFighter, moveId?: string): boolean {

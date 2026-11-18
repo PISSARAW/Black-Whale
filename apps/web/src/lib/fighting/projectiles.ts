@@ -1,20 +1,20 @@
-import { interceptSmallAnimalProjectile } from './littleEyeImpact'
-import { interceptDeviceProjectile } from './deviceImpact'
+import { interceptProjectileWorld } from './projectileInterception'
+import { rosterProjectileTarget } from './rosterGuestContacts'
 import { canReceiveCombatHit } from './combatTargets'
 import { BODYGUARD_PISTOL, hasBodyguardFirearm, bodyguardShotHeight } from './bodyguardFirearms'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { travelKallutoPaper } from './kallutoFlight'
-import { interceptArenaProjectile } from './arenaSimulation'
 import { paperAvailable, paperZonePoint } from './kallutoPaper'
 import { paperStockReady } from './kallutoMaterials'
 import { illumiBodyFree } from './illumiState'
 import { battleRangedAvailable } from './battleCantabileRules'
 import { advanceJupiter } from './jupiterFlight'
 import { commitProjectileNen } from './nenProjectiles'
-import { interceptBiohazardProjectile } from './biohazardImpact'
 import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
 import { predatorNenLocked } from './predatorSeal'
-import { CAMILLA_PISTOL } from './camillaWeapon'
+import { CAMILLA_PISTOL, camillaCanFire, spendCamillaRound } from './camillaWeapon'
+import { hinrighCanThrow, spendHinrighKnife, hinrighRangedBody } from './hinrighKnives'
+import { spendBiohazardGunRound } from './biohazardGun'
 import { thetaShotAim } from './thetaFirearm'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
@@ -22,6 +22,13 @@ import { benjaminBurstReady } from './benjaminWeapon'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
+import {
+  bindGumThrow,
+  travelGumProjectile,
+  gumProjectileCanHit,
+  settleGumProjectile,
+  advanceGumObjectNen,
+} from './bungeeProjectiles'
 import type {
   ArcadeFighter,
   FightProjectile,
@@ -219,11 +226,21 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (physicalRangedUnavailable(fighter)) return false
   if (fighter.id === 'kalluto' && (!paperAvailable(fighter) || !paperStockReady(fighter, 'plant')))
     return false
   if (fighter.id === 'illumi' && !hasIllumiNeedles(fighter)) return false
   if (!illumiBodyFree(fighter)) return false
   return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)
+}
+function physicalRangedUnavailable(fighter: ArcadeFighter): boolean {
+  return (
+    !camillaCanFire(fighter) ||
+    !hinrighCanThrow(fighter) ||
+    fighter.biohazardGunRounds === 0 ||
+    Boolean(fighter.biohazardGun) ||
+    Boolean(fighter.weaponsConfiscated && projectileProfile(fighter.id).matter === 'object')
+  )
 }
 
 function standardRangedAvailable(fighter: ArcadeFighter): boolean {
@@ -251,9 +268,9 @@ export function spawnRangedProjectiles(state: FightState): FightState {
 }
 
 function spawnForSide(state: FightState, side: FightSide): FightState {
-  const fighter = state[side]
+  const fighter = hinrighRangedBody(state[side])
   if (
-    fighter.id === 'bonolenov' ||
+    physicalRangedUnavailable(fighter) ||
     ['bonolenov', 'leorio', 'franklin', 'kalluto'].includes(fighter.id) ||
     fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
@@ -291,10 +308,11 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     age: 0,
     lifetime: 120,
   }
+  const gum = bindGumThrow(state, projectile)
   return {
-    ...state,
+    ...gum.state,
     [side]: {
-      ...fighter,
+      ...spendRangedObject(gum.state[side]),
       attack: {
         ...fighter.attack,
         projectileSpawned: true,
@@ -303,8 +321,8 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
       },
     },
     projectiles: [
-      ...state.projectiles,
-      { ...commitProjectileNen(projectile, fighter), hatsuPower: 1 },
+      ...gum.state.projectiles,
+      { ...commitProjectileNen(gum.shot, fighter), hatsuPower: 1 },
     ],
     nextProjectileId: state.nextProjectileId + 1,
   }
@@ -319,6 +337,7 @@ function rangedMaterial(
 }
 
 export interface ProjectileHit {
+  targetBody?: string
   projectile: FightProjectile
   defenderSide: FightSide
   position: { x: number; y: number }
@@ -333,38 +352,48 @@ export function advanceProjectiles(
   for (const held of state.projectiles) {
     const projectile = advanceProjectileMotion(state, held, step)
     if (!projectile) continue
-    const terrain = interceptArenaProjectile(state, projectile, held.x)
-    state = terrain.state
-    if (terrain.intercepted) continue
-    const intercepted = interceptBiohazardProjectile(state, {
-      projectile,
-      previousX: held.x,
-    })
-    state = intercepted.state
-    if (intercepted.intercepted) continue
-    const deviceCollision = interceptDeviceProjectile(state, { projectile, previousX: held.x })
-    state = deviceCollision.state
-    if (deviceCollision.intercepted) continue
-    const animalCollision = interceptSmallAnimalProjectile(state, { projectile, previousX: held.x })
-    state = animalCollision.state
-    if (animalCollision.intercepted) continue
-    const defenderSide = otherSide(projectile.owner)
-    const collision = projectileCollision(projectile, state[defenderSide])
-    if (collision) {
-      hits.push({ projectile, defenderSide, position: collision })
+    const contact = interceptProjectileWorld(state, { projectile, previousX: held.x })
+    state = contact.state
+    if (contact.intercepted) {
+      if (contact.terrain && projectile.gumFlight) kept.push(settleGumProjectile(projectile, true))
+      continue
+    }
+    const hit = projectileHit(state, projectile)
+    if (hit) {
+      hits.push(hit)
       if (projectile.remotePunch)
         projectile.remotePunch = { ...projectile.remotePunch, struck: true }
     }
-    if (keepFightProjectile(projectile, Boolean(collision))) kept.push(projectile)
+    if (keepFightProjectile(projectile, Boolean(hit)))
+      kept.push(settleGumProjectile(projectile, Boolean(hit)))
   }
   return { state: { ...state, projectiles: kept }, hits }
+}
+function projectileHit(state: FightState, projectile: FightProjectile): ProjectileHit | null {
+  const defenderSide = otherSide(projectile.owner)
+  const contact = rosterProjectileTarget(
+    state,
+    { projectile, main: projectileCollision(projectile, state[defenderSide]) },
+    projectileCollision,
+  )
+  if (!contact) return null
+  return {
+    projectile,
+    defenderSide,
+    position: contact.position,
+    ...(contact.targetBody ? { targetBody: contact.targetBody } : {}),
+  }
 }
 
 function projectileCollision(
   projectile: FightProjectile,
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
-  if (!remotePunchCanHit(projectile) || !canReceiveCombatHit(defender, projectile.canHitDowned))
+  if (
+    !gumProjectileCanHit(projectile) ||
+    !remotePunchCanHit(projectile) ||
+    !canReceiveCombatHit(defender, projectile.canHitDowned)
+  )
     return null
   if (projectile.kallutoPaper) {
     const point = paperZonePoint(defender, projectile.targetZone)
@@ -400,8 +429,15 @@ function advanceProjectileMotion(
   held: FightProjectile,
   step: number,
 ): FightProjectile | null {
+  if (held.gumFlight) return advanceGumObjectNen(travelGumProjectile(state, held, step))
   if (held.jupiter) return advanceJupiter(state, held, step) ?? null
   return held.kallutoPaper
     ? travelKallutoPaper(state, held, step)
     : travelFightProjectile(held, step)
+}
+
+function spendRangedObject(fighter: ArcadeFighter): ArcadeFighter {
+  fighter = hinrighRangedBody(fighter)
+  const spent = spendHinrighKnife(spendCamillaRound(fighter))
+  return (fighter.nenOwner ?? fighter.id) === 'camilla' ? spent : spendBiohazardGunRound(spent)
 }

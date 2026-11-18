@@ -42,9 +42,9 @@ export function tuneZakuroMoveset(base: FighterMoveset): FighterMoveset {
   return {
     ...base,
     mechanicFr:
-      'Bloody Mary : votre propre sang et une perfusion réelle. Ouvrir une plaie avant de déployer le sang ; une prise doit atteindre la cible pour permettre la projection. Les gouttes-yeux explorent sans attaquer. Réserve et poches limitées, aucun vol de sang ni exsanguination.',
+      'Bloody Mary : votre propre sang et une perfusion réelle. Une blessure existante suffit pour déployer le sang ; la prise doit atteindre la cible avant la projection. Les gouttes-yeux explorent le sol et les parois réelles sans attaquer. Le rappel arrête le saignement sans soigner. Réserve et poches limitées.',
     mechanicEn:
-      'Bloody Mary: your own blood and real infusion equipment. Open a wound before deploying blood; a capture must physically reach the target before a slam. Eyed droplets scout without attacking. Limited blood and bags; no stolen blood or exsanguination.',
+      'Bloody Mary: your own blood and real infusion equipment. An existing wound is enough to deploy blood; capture must physically reach the target before a slam. Eyed droplets scout floors and real walls without attacking. Recall stops bleeding without healing. Limited blood and bags.',
     finisherConditionFr: '',
     finisherConditionEn: '',
     moves: base.moves.filter((move) => move.category !== 'finisher').map(tuneMove),

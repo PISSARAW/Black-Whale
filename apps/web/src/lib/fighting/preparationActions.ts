@@ -1,3 +1,4 @@
+import { releasePreparedEntity } from './preparedCorpseBody'
 import { arsenalMindAvailable } from './arsenalMind'
 import { launchLittleEye, littleEyeShotBusy } from './littleEyeCapture'
 import { illumiBodyFree } from './illumiState'
@@ -139,7 +140,7 @@ export function releasePreparedControl(
             ),
       entities: state.battlefield.entities.map((entry) =>
         controlledEntities(state, side, source).some((held) => held.id === entry.id)
-          ? { ...entry, controller: undefined, littleEye: undefined }
+          ? { ...releasePreparedEntity(entry), littleEye: undefined }
           : entry,
       ),
     },

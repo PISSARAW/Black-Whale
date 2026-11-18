@@ -3,6 +3,7 @@ import { sleepingBody } from './hanzoProjection'
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { ComboMasterAlert } from './comboMasterTypes'
 import { comboMasterMonitoring } from './comboMasterAvailability'
+import { hiddenGumAffects } from './bungeeContacts'
 
 /** Observe committed threats only. This reducer changes no combat statistic or hidden effect. */
 export function observeComboMaster(
@@ -31,8 +32,7 @@ function readAlert(
     [...state.projectiles, ...incoming].some((projectile) =>
       concealedProjectile(state, side, projectile),
     )
-  const gum = state.bungeeGum
-  const affected = gum?.hidden && gum.target === side && gum.owner === source ? [side] : []
+  const affected = hiddenGumAffects(state, side) ? [side] : []
   if (!targeted && affected.length === 0) return null
   return {
     incoming: targeted,

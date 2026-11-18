@@ -84,6 +84,9 @@ les parties d’équilibrage ; les essais automatisés ne remplacent pas ces par
 
 ## Caméra
 
+Le catalogue des 40 combattants, les cadrages et les contrôles sont décrits dans
+[CINEMATICS.md](./CINEMATICS.md).
+
 La caméra suit le centre du duel, rapproche le cadre à courte distance et accompagne
 brièvement les impacts confirmés. Elle élargit immédiatement le cadre si une
 séparation ou un saut l’exige ; le rapprochement et le suivi sont amortis en fonction
@@ -96,6 +99,39 @@ La préférence est sauvegardée, y compris avec les anciennes préférences de 
 La réduction des animations du système impose le cadrage stable et désactive les
 secousses. Le suivi nécessaire pour garder les corps à l’écran reste disponible.
 La caméra n’écrit jamais dans la simulation, les positions ou les hitboxes.
+
+Le directeur `cinematicDirector.ts` reprend les mouvements des démos vidéo pour
+les combats jouables : poussées sur les combos confirmés, Hatsu, Ko, gardes lourdes,
+On et victoire, puis retour progressif au plan d’ensemble. La vitesse verticale
+anticipe l’ouverture du cadre au décollage. Les événements suivent les frames
+simulées, donc une pause ne relance ni n’écourte les plans ; après le verdict,
+les plans se terminent même si le moteur s’arrête.
+
+Une seconde caméra montre simultanément les yeux d’Emperor Time, l’armure de
+Pain Packer, Rising Sun, la forme véritable de Biscuit, les chaînes et les impacts
+réels de Hatsu ou projectiles. Les éveils ont priorité pendant 1,8 seconde ; un
+Hatsu raté, esquivé ou bloqué n’affiche pas de gros plan d’impact réussi. Chaque
+camp possède ses propres déclencheurs, y compris dans un duel miroir. Les plans
+se réinitialisent au changement de manche, au retour en arrière et au reset.
+
+Le panneau réserve sa place progressivement avant d’apparaître : à droite sur
+ordinateur, au-dessus des corps sur mobile. Le cadre principal conserve les deux
+combattants, y compris pendant les sauts et changements de côté. La seconde passe
+utilise la scène posée au même instant, puis restaure visibilité, brouillard,
+viewport, scissor et cible de rendu. Une pointe absente masque simplement son
+panneau. Le cadrage stable et la réduction des animations désactivent les zooms
+et les gros plans. Les exports vidéo gardent leur propre piste de caméra.
+
+`cinematicDirector.test.ts` vérifie les événements et les contacts du moteur ;
+`cinematicFraming.test.ts` projette les corps sur cinq formats avec le panneau.
+`cinematicKurapika.test.ts` couvre le serment fatal de Chain Jail pour les deux
+camps, sa distinction avec un K.-O. ou Judgment Chain et son reset à la manche
+suivante. Le signal typé `kurapika.vowBroken` survit au verdict qui vide les causes
+temporaires de décès ; le motif de fin reste `knockout`. La caméra ne déclenche
+aucun plan fatal lorsque l’entraînement restaure le combattant.
+`node apps/web/scripts/check-fighting-camera.mjs` vérifie les deux camps à
+1440, 390 et 320 px, les yeux, transformations, chaînes, impacts, le cadrage stable
+et la réduction des animations, avec captures dans `/tmp/black-whale-camera-ui`.
 
 ## Vérifications
 
@@ -118,7 +154,7 @@ compare les empreintes moteur avec et sans capture et mesure le coût de la cam�
 ## Mesure du 16 novembre 2026
 
 Configuration : Mac17,3, Apple M5 (10 cœurs, 16 Go), Chrome 157.0.8103.78 en mode
-headless, rendu matériel Metal vérifié dans WebGL, DPR 1, viewport 1280 × 900,
+headless, rendu matériel Metal vérifié dans WebGL, DPR 1, viewport 1328 × 900,
 arène Tour Céleste de 560 px. Sources Vite en développement, charge des autres
 applications non contrôlée. Chaque passe de rendu comporte deux secondes de
 chauffe puis au moins cinq secondes de mesure.

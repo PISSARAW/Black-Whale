@@ -1,3 +1,4 @@
+import { phinksImpactEvents } from './phinksCameraPresentation'
 import { moveById } from './movesets'
 import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, point, rig, ruleChanged, ruleEvent } from './cinematicRules'
@@ -73,7 +74,7 @@ function impactDetail(state: FightState, before: CameraSnapshot): CameraDetail {
     labelEn: `${move?.nameEn ?? label} · Impact`,
     offset: { x: hit.position.x - state[side].x, y: hit.position.y - state[side].y },
     eventId: `impact:${hit.sequence}`,
-    source: old?.source,
+    source: move?.id.startsWith('kurapika:') ? 'kurapika' : old?.source,
     sourceSide: hit.attacker,
     aura: hit.concealed,
     anchors: impactAnchors(state, side),
@@ -125,7 +126,7 @@ export function cinematicEvents(
     ...nenCues(state, before),
     ...personalEvents(state, before, after),
     ...cinematicWorldEvents(state, before),
-    ...impactEvents(state, before),
+    ...phinksImpactEvents(state, before, impactEvents(state, before)),
   ]
   if (state.phase === 'finished' && before.phase === 'fighting')
     events.push({

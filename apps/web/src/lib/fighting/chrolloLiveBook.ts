@@ -4,7 +4,7 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { voluntaryNenAvailable } from './nenAccess'
 import { canUseMovesetMove, moveForSlot } from './movesets'
 import { packReplayInput } from './fightReplayInput'
-import { EMPTY_INPUT, type FightState } from './types'
+import { EMPTY_INPUT, type FightSide, type FightState } from './types'
 import type { ReplayCommand } from './fightReplayTypes'
 
 export type LiveBookMove = 'use' | 'bookmark' | 'secondary'
@@ -18,8 +18,8 @@ const SLOTS = {
   secondary: 'finisher',
 } as const
 
-export function liveBookReady(state: FightState): boolean {
-  const fighter = state.player
+export function liveBookReady(state: FightState, side: FightSide = 'player'): boolean {
+  const fighter = state[side]
   return (
     state.phase === 'fighting' &&
     canAct(fighter) &&
@@ -28,43 +28,45 @@ export function liveBookReady(state: FightState): boolean {
   )
 }
 
-export function liveBookMoveReady(state: FightState, action: LiveBookMove): boolean {
-  if (action === 'bookmark' && !liveBookReady(state)) return false
+export function liveBookMoveReady(
+  state: FightState,
+  action: LiveBookMove,
+  side: FightSide = 'player',
+): boolean {
+  if (action === 'bookmark' && !liveBookReady(state, side)) return false
   const move = moveForSlot('chrollo', SLOTS[action])
   return (
     state.phase === 'fighting' &&
-    canAct(state.player) &&
+    canAct(state[side]) &&
     Boolean(
       move &&
-      canUseMovesetMove(state, 'player', move) &&
-      canStartFighterAttack(state.player, move.kind, move.id),
+      canUseMovesetMove(state, side, move) &&
+      canStartFighterAttack(state[side], move.kind, move.id),
     )
   )
 }
 
 /** Same neutral/down/finisher inputs as the keyboard and gamepad, with ordinary recovery. */
-export function liveBookMove(action: LiveBookMove): ReplayCommand {
+export function liveBookMove(action: LiveBookMove, side: FightSide = 'player'): ReplayCommand {
   return {
     kind: 'move',
-    side: 'player',
+    side,
     action: action === 'secondary' ? 'finisher' : 'special',
     input: packReplayInput({ ...EMPTY_INPUT, down: action === 'bookmark' }),
   }
 }
 
-export function liveBookEffects(state: FightState, language: 'fr' | 'en'): string[] {
-  const effect = state.player.chrolloHistorical ?? {}
-  const target = state.opponent.hatsuEffects
-  const copies =
-    state.battlefield?.entities.filter(
-      (entry) => entry.present && entry.copy?.owner === 'player',
-    ) ?? []
-  const attacking = chrolloHasActivePage(state.player, 'order-stamp')
-    ? copies.filter(
-        (entry) => entry.copy?.order === 'attack' && entry.copy.headAttached && entry.health > 0,
-      ).length
-    : 0
+export function liveBookEffects(
+  state: FightState,
+  language: 'fr' | 'en',
+  side: FightSide = 'player',
+): string[] {
+  const effect = state[side].chrolloHistorical ?? {}
+  const target = state[side === 'player' ? 'opponent' : 'player'].hatsuEffects
+  const { count, attacking } = liveBookCopies(state, side)
+  const phone = liveBookPhone(state, side)
   const rows = [
+    phone,
     [target.sunMark, 'Soleil posé', 'Sun mark applied'],
     [target.moonMark, 'Lune posée', 'Moon mark applied'],
     [
@@ -84,9 +86,9 @@ export function liveBookEffects(state: FightState, language: 'fr' | 'en'): strin
       `Indoor Fish · deferred wounds: ${effect.fish?.wounds ?? 0}`,
     ],
     [
-      copies.length,
-      `Gallery Fake · copies présentes : ${copies.length}`,
-      `Gallery Fake · copies present: ${copies.length}`,
+      count,
+      `Gallery Fake · copies présentes : ${count}`,
+      `Gallery Fake · copies present: ${count}`,
     ],
     [
       attacking,
@@ -97,16 +99,41 @@ export function liveBookEffects(state: FightState, language: 'fr' | 'en'): strin
   return rows.filter((row) => Boolean(row[0])).map((row) => String(row[language === 'fr' ? 1 : 2]))
 }
 
-export function liveFishRoomCue(state: FightState, language: 'fr' | 'en'): string {
+function liveBookPhone(state: FightState, side: FightSide) {
+  const phone = state[side].chrolloHistorical?.phone
+  const calls = phone?.calls ?? 0
+  const kind = phone?.guidance?.kind ?? ''
+  return [
+    phone?.guidance,
+    `Love Dial · appels : ${calls} · ${kind}`,
+    `Love Dial · calls: ${calls} · ${kind}`,
+  ]
+}
+function liveBookCopies(state: FightState, side: FightSide) {
+  const copies =
+    state.battlefield?.entities.filter((entry) => entry.present && entry.copy?.owner === side) ?? []
+  const attacking = chrolloHasActivePage(state[side], 'order-stamp')
+    ? copies.filter(
+        (entry) => entry.copy?.order === 'attack' && entry.copy.headAttached && entry.health > 0,
+      ).length
+    : 0
+  return { count: copies.length, attacking }
+}
+
+export function liveFishRoomCue(
+  state: FightState,
+  language: 'fr' | 'en',
+  side: FightSide = 'player',
+): string {
   const rooms =
     state.battlefield?.entities.filter(
       (entry) => entry.kind === 'room' && entry.present && entry.sealed,
     ) ?? []
   const room = rooms.sort(
-    (a, b) => Math.abs(a.x - state.player.x) - Math.abs(b.x - state.player.x),
+    (a, b) => Math.abs(a.x - state[side].x) - Math.abs(b.x - state[side].x),
   )[0]
   if (!room) return language === 'fr' ? 'Aucune pièce close préparée' : 'No prepared closed room'
-  const arrow = room.x >= state.player.x ? '→' : '←'
-  const distance = Math.abs(room.x - state.player.x).toFixed(1)
+  const arrow = room.x >= state[side].x ? '→' : '←'
+  const distance = Math.abs(room.x - state[side].x).toFixed(1)
   return `${language === 'fr' ? 'Pièce close' : 'Closed room'} ${arrow} · ${distance} u`
 }

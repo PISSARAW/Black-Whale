@@ -71,7 +71,9 @@ function maryScoutingPlan(
   const gap = Math.abs(state.player.x - state.opponent.x)
   if (maryState(state.opponent).drops.length)
     return gap < 22 && maryCommandReady(state, 'opponent', 'recall') ? 'recall' : null
-  return gap >= 22 && maryCommandReady(state, 'opponent', 'scout') ? 'scout' : undefined
+  if (gap < 22) return undefined
+  if (maryCommandReady(state, 'opponent', 'scout-wall')) return 'scout-wall'
+  return maryCommandReady(state, 'opponent', 'scout') ? 'scout' : undefined
 }
 
 export function maryAiBusy(fighter: ArcadeFighter): boolean {

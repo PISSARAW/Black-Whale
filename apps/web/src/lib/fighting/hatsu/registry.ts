@@ -1,8 +1,8 @@
+import { runRosterHatsu } from '../dolphinLoan'
 import { settleDolphinLoans } from '../dolphinLoanFrame'
 import type { FighterHatsu } from './contract'
 import { beyondHatsu } from './beyond'
 import { fightResolutionPending } from '../fightOutcome'
-import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
 import { musseHatsu } from './musse'
@@ -120,7 +120,7 @@ export function advanceHatsuFrames(state: FightState): FightState {
   const next = Object.values(HATSU_REGISTRY).reduce((next, resolve) => {
     if (fightResolutionPending(next)) return next
     const hatsu = resolve()
-    return withDolphinIdentity(next, hatsu.onFrame, hatsu.id)
+    return runRosterHatsu(next, hatsu)
   }, state)
   return settleDolphinLoans(next)
 }

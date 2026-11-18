@@ -1,5 +1,13 @@
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
+import { traceArsenal } from './arsenalTrace'
+import { performModelSelection } from './metamorphosenModels'
+import { performCorpseCommand } from './illumiCorpses'
+import { performMachiMaterial } from './machiMaterial'
+import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
+import { performHalkenburgTransfer } from './halkenburgTransfer'
+import { performBlackVoice } from './blackVoiceControl'
+import { performBiohazardDevice } from './legacyBiohazardDevices'
 import { personDolphinOptions } from './dolphinPeopleOptions'
 import { paperScatterOptions, performPaperScatterCommand } from './kallutoScatterCommands'
 import { paperKitOptions, performPaperKitCommand } from './kallutoMaterialActions'
@@ -25,6 +33,11 @@ import { futureAcceptsMove } from './parallelFutureAbility'
 import { deviceOptions } from './deviceOptions'
 import { performDeviceCommand } from './deviceActions'
 import { performDowsingCommand } from './dowsingAction'
+import { bashoArsenalOptions } from './bashoInterrogation'
+import { melodyQuestionOptions } from './melodyInterrogation'
+import { luiniArsenalOptions } from './luiniArsenal'
+import { sweetHomeOptions } from './sweetHomeArsenal'
+import { padailleEscapeOptions } from './padailleEscape'
 import { dowsingOptions } from './dowsingOptions'
 import { performJudgmentCommand, judgmentOptions } from './judgmentAction'
 import { dolphinArsenalOptions } from './dolphinArsenal'
@@ -53,6 +66,19 @@ export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   )
 }
 
+const INVOCATION_FAMILIES: Record<
+  string,
+  ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
+> = {
+  bono: performModelSelection,
+  illumi: performCorpseCommand,
+  machi: performMachiMaterial,
+  dolphin: performLegacyDolphinLoan,
+  halkenburg: performHalkenburgTransfer,
+  black: performBlackVoice,
+  bio: performBiohazardDevice,
+}
+
 export function performArsenalCommand(
   state: FightState,
   side: FightSide,
@@ -76,7 +102,9 @@ function nativeArsenalCommand(
 ): FightState {
   if (command.action === 'support-consent') return toggleConsent(state, side)
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
-  return handler ? handler[1](state, side, command) : state
+  if (handler) return handler[1](state, side, command)
+  const legacy = INVOCATION_FAMILIES[command.action.split('-')[0]]
+  return legacy ? traceArsenal({ state, side, command }, legacy({ state, side, command })) : state
 }
 
 function selfDolphinCommand(state: FightState, side: FightSide, command: ArsenalCommand): boolean {
@@ -135,6 +163,11 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
     ...recordedWindowOptions(state, side),
     ...secretWindowOptions(state, side),
     ...nativeArsenalOptions(state, side),
+    ...luiniArsenalOptions(state, side),
+    ...sweetHomeOptions(state, side),
+    ...padailleEscapeOptions(state, side),
+    ...melodyQuestionOptions(state, side),
+    ...bashoArsenalOptions(state, side),
     ...loanCommandOptions(state, side, nativeArsenalOptions),
   ]
   const personal = arsenalMindAvailable(state[side])

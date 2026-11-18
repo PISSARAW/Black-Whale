@@ -1,11 +1,10 @@
 import { finishPhysicalFrame } from './physicalFrameClocks'
 import { performLegacyThrow } from './legacyThrow'
-import { updatePlayerGuard } from './nenCombat/guardInput'
 import { expireHistoricalMatter } from './historicalMatterClock'
-import { judgmentActionBreach } from './judgmentAction'
-import { recordMotion } from './motionRecord'
 import { moveAdmitted } from './moveAdmission'
-import { advanceRetrospectiveHitstop } from './retrospectiveClocks'
+import { performArsenalAction } from './arsenalExecution'
+import { priorityBusyAi } from './priorityArsenalAi'
+import { judgmentActionBreach } from './judgmentAction'
 import { retrospectiveAiAction } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
 import { nativeArsenalAiAction } from './arsenalAiAction'
@@ -13,79 +12,58 @@ import { performOpponentArsenalMove } from './arsenalAiNen'
 import { simulateClashFrame } from './fightFrameSimulation'
 import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
-import { flushBufferedCancel } from './bufferedCancel'
 import { nenActionAllowed } from './nenActionRules'
-import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
+import { parallelFutureAiAction } from './parallelFutureAi'
 import { advanceEasterEggs } from './easterEggs'
 import { illumiBodyFree } from './illumiState'
 import { performArenaAction, nearestArenaObject } from './arenaActions'
-import {
-  advanceArena,
-  collideArenaBodies,
-  readArenaInputs,
-  resolveArenaStrikes,
-} from './arenaSimulation'
-import { illumiInput } from './illumiFrame'
+import { readArenaInputs } from './arenaSimulation'
 import { poseFighter } from './fightActorPose'
-import { holdMary, maryHeld } from './bloodyMary'
-import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
-import { resolveFighterSpeech } from './battleConversation'
+import { maryHeld } from './bloodyMary'
+import { maryAiAction } from './bloodyMaryAi'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
-import { battleInput, battlePreparing } from './battleCantabileRules'
-import { canAct, canMove, playerCanJump, auraAttackBodyFree } from './fightActorState'
+import { canAct, auraAttackBodyFree } from './fightActorState'
 import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
-import { advancePreparation } from './preparationSimulation'
 import { preparationCheck } from './preparationRequirements'
-import { blinkyAiDefense } from './blinkyWounds'
-import { plugWoundsInput } from './blinky'
-import { resolveCrossGameCommand, resolveCrossGameMovement } from './crossGameAction'
+import { resolveCrossGameCommand } from './crossGameAction'
+import { padailleBoundAction, padailleEscapeAi } from './padailleEscape'
+import { luiniArsenalAi } from './luiniArsenal'
 import { crossGameBusy } from './crossGame'
 import { planOpponentNen } from './opponentNenPlan'
-import { steerCyclotron } from './phinksCyclotron'
 import { cyclotronAiAction } from './phinksAction'
 import { stepPostMortemOrFuture } from './camillaFrame'
-import { advancePredatorClock } from './predatorSeal'
-import { resolvePredatorThreats } from './predatorCombat'
 import { performMelodyAction } from './melodyAction'
-import { melodyInput, reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
-import { advanceMelodyHearing } from './melodyHearing'
+import { reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { thetaFirearmOptions } from './thetaFirearm'
-import { advanceCatsName } from './camillaCat'
-import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
-import { futurePerceivedTarget, stepParallelFuture } from './parallelFuture'
-import { closeFutureEyes, futureAcceptsMove } from './parallelFutureAbility'
+import { fightAcceptsCommands } from './fightOutcome'
+import { stepParallelFuture } from './parallelFuture'
+import { futureAcceptsMove } from './parallelFutureAbility'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
 import { callHanzoBody } from './hanzoBodyCall'
-import { advanceEmperorClock, kurapikaAiActivation, resolveJudgmentDeaths } from './kurapikaActions'
-import { withDolphinIdentity } from './kurapikaDolphin'
-import { recordFightInjuries } from './feitanPain'
+import { kurapikaAiActivation } from './kurapikaActions'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
-import { canRejoinHanzoBody, steerHanzoProjection, wakeHanzoBody } from './hanzoProjection'
+import { wakeHanzoBody } from './hanzoProjection'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
-import { finishExpiredFight } from './fightTimeout'
-import { advanceHatsuFrames } from './hatsu'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
-import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
-import { resolveOnImpacts } from './onTechnique'
 import { fighterDefinition } from './roster'
-import { moveCounterplayOpponent } from './counterplayOpponent'
-import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
-import { resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
+import { canUseRangedAttack } from './projectiles'
+import { TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
 import { canUseMovesetMove, moveForAction } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
-import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
-import { steerFighter } from './fighterMovement'
 import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
+import { stepActors } from './duelStep/actors'
+import { resolveContacts, settleBodies } from './duelStep/contacts'
+import { closeFrame, openFrame } from './duelStep/frame'
 import type {
   ArcadeFighter,
   AttackKind,
@@ -141,11 +119,16 @@ export function tickFight(
           {
             simulate: simulateFightFrame,
             replay: (current, command) =>
-              performAuraAttack({
-                state: current,
-                side: 'opponent',
-                ...command,
-              }),
+              command.arsenal
+                ? performArsenalAction(
+                    { state: current, side: 'opponent', command: command.arsenal },
+                    performAuraAttack,
+                  )
+                : performAuraAttack({
+                    state: current,
+                    side: 'opponent',
+                    ...command,
+                  }),
           },
         ),
       ),
@@ -172,121 +155,17 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
   )
 }
 
+/** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
-  state = advancePredatorClock(state)
-  state = advanceEmperorClock(state)
-  if (state.catsName) return advanceCatsName(state)
-  if (state.hitstop > 0)
-    return advanceRetrospectiveHitstop({
-      ...state,
-      frame: state.frame + 1,
-      hitstop: state.hitstop - 1,
-    })
-  state = advancePreparation(state, { player: input, opponent: opponentInput })
-  state = readArenaInputs(state, { player: input, opponent: opponentInput }, (current, side) =>
-    performArenaAction(current, side, performAuraAttack),
-  )
-  state = advanceArena(state)
-  if (fightResolutionPending(state)) return state
-  const player = updateControlledFighter(state.player, input)
-  const opponent = opponentInput
-    ? updateControlledFighter(state.opponent, opponentInput)
-    : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
-  const judged = resolveJudgmentDeaths(
-    resolveCrossGameMovement(state, collideArenaBodies(state, { ...state, player, opponent })),
-  )
-  if (fightResolutionPending(judged)) return judged
-  const buffered = flushBuffered(
-    flushBuffered(resolveFighterSpeech(judged, input, opponentInput), 'player'),
-    'opponent',
-  )
-  const withHatsu = advanceMelodyHearing(advanceHatsuFrames(buffered))
-  if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
-  const armed = resolveArenaStrikes(withDolphinIdentity(withHatsu, spawnRangedProjectiles))
-  const flight = advanceProjectiles(resolvePredatorThreats(armed), FIXED_STEP)
-  const resolved = reconcileBattleCantabile(
-    reconcileMelodySound(
-      recordFightInjuries(
-        state,
-        resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
-      ),
-    ),
-  )
-  if (fightResolutionPending(resolved)) return resolved
-  const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
-  const remainingFrames =
-    state.mode === 'training' ? state.remainingFrames : Math.max(0, state.remainingFrames - 1)
-  const next = {
-    ...resolved,
-    ...separated,
-    frame: state.frame + 1,
-    remainingFrames,
-    time: remainingFrames / FIGHT_FPS,
-  }
-  return reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))
-}
-
-function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter))
-  fighter = illumiInput(fighter, input)
-  const advanced = advanceFighterPhysics(
-    plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
-  )
-  if (advanced.needlePuppet) return advanced
-  if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))
-  if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
-  const winding = steerCyclotron(advanced, input)
-  if (winding) return winding
-  if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
-  let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
-  next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
-  const steered = steerFighter(next, {
-    input,
-    mobile: canMove(next),
-    jumpable: playerCanJump(next, input),
-  })
-  return recordMotion(poseFighter(steered), input)
-}
-
-function updateHatsuCharge(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  let next = fighter
-  const chargingHatsu = input.hatsu && canAct(next) && next.attack === null
-  const hatsuChargeFrames = chargingHatsu ? next.hatsuChargeFrames + 1 : next.hatsuChargeFrames
-  if (activatesIn(next, chargingHatsu, hatsuChargeFrames)) next = setIn(next, true)
-  if (!input.conceal && releasesIn(next, chargingHatsu)) next = setIn(next, false)
-  return { ...next, hatsuChargeFrames }
-}
-
-function activatesIn(fighter: ArcadeFighter, charging: boolean, frames: number): boolean {
-  return charging && frames >= IN_CHARGE_FRAMES
-}
-
-function releasesIn(fighter: ArcadeFighter, charging: boolean): boolean {
-  return !charging && !fighter.attack?.concealed && fighter.nen.in
-}
-
-function updateOpponent(
-  fighter: ArcadeFighter,
-  player: ArcadeFighter,
-  state: FightState,
-): ArcadeFighter {
-  const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
-  if (advanced.easterEgg) return poseFighter(advanced)
-  if (advanced.needlePuppet) return advanced
-  if (maryAiBusy(advanced)) return maryAiBody(advanced)
-  if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }
-  const winding = steerCyclotron(advanced)
-  if (winding) return winding
-  if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
-  if (shouldRejoinHanzoBody(advanced)) return wakeHanzoBody(advanced)
-  return poseFighter(
-    steerFutureAi(state, advanced) ??
-      moveCounterplayOpponent({ state, fighter: advanced, target: player }),
-  )
-}
-
-function shouldRejoinHanzoBody(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.hanzoProjection) && canRejoinHanzoBody(fighter) && fighter.aura < 16
+  const inputs = { player: input, opponent: opponentInput }
+  const opened = openFrame(state, inputs, performAuraAttack)
+  if (opened.pending) return opened.state
+  const start = opened.state
+  const moved = stepActors(start, inputs)
+  const settled = settleBodies({ start, moved, inputs }, performAuraAttack)
+  if (settled.pending) return settled.state
+  const contacts = resolveContacts(start, settled.state)
+  return contacts.pending ? contacts.state : closeFrame(start, contacts.state)
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
@@ -360,6 +239,10 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
+  return padailleBoundAction(options, performAuraAttack) ?? executeUnboundAuraAttack(options)
+}
+
+function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
   if (!auraAttackBodyFree(options.state[options.side])) return options.state
   options = thetaFirearmOptions(options)
   const { side, kind } = options
@@ -384,7 +267,9 @@ function executeAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 export const opponentAttack = (state: FightState): FightState =>
-  maryAiAction(state, performAuraAttack) ?? contextualOpponentAttack(state)
+  priorityBusyAi(state, performAuraAttack) ??
+  maryAiAction(state, performAuraAttack) ??
+  contextualOpponentAttack(state)
 
 function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state
@@ -405,6 +290,14 @@ function contextualOpponentAttack(state: FightState): FightState {
 }
 
 function ordinaryOpponentAttack(state: FightState): FightState {
+  return (
+    luiniArsenalAi(state, performAuraAttack) ??
+    padailleEscapeAi(state, performAuraAttack) ??
+    unboundOpponentAttack(state)
+  )
+}
+
+function unboundOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
   const retrospective = retrospectiveAiAction(planned, performAuraAttack)
@@ -456,16 +349,6 @@ function randomValue(state: FightState): [FightState, number] {
 
 export function displayPose(fighter: ArcadeFighter): FighterPose {
   return poseFighter(fighter).pose
-}
-
-function flushBuffered(state: FightState, side: FightSide): FightState {
-  const canceled = flushBufferedCancel(state, side, performAuraAttack)
-  if (canceled) return canceled
-  const fighter = state[side]
-  const intent = fighter.bufferedAttack
-  if (!intent || fighter.attack || !canAct(fighter)) return state
-  const cleared = { ...state, [side]: { ...fighter, bufferedAttack: null } }
-  return performAuraAttack({ state: cleared, side, ...intent })
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {

@@ -12,6 +12,7 @@ import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { gumObjectAnchors } from './gumObjectAnchors'
+import { gumNetworkBusy, clearOwnedGum } from './bungeeNetwork'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
@@ -177,7 +178,7 @@ export function dismissDolphinGum(state: FightState, side: FightSide): FightStat
           ...state,
           [side]: { ...actor, gumObjectAnchors: anchors.length ? anchors : undefined },
         }
-  return next.bungeeGum?.owner === side ? { ...next, bungeeGum: null } : next
+  return clearOwnedGum(next, side)
 }
 
 function changedDolphinCounters(before: FightState, after: FightState): string[] {
@@ -216,7 +217,7 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
-    'gum-support': gumUseBusy(fighter),
+    'gum-support': gumUseBusy(fighter) || gumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
     'biohazard-device': Boolean(
       state.battlefield?.entities.some(

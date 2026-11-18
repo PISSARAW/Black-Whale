@@ -1,8 +1,12 @@
 import type { ArcadeFighter, FightSide } from './types'
 
-export type JudgmentClause = 'zetsu' | 'no-troupe-contact' | 'truthful-answers'
-export type JudgmentPreset = 'nen' | 'contact' | 'nen-contact' | 'answers'
+export type JudgmentClause =
+  'zetsu' | 'no-troupe-contact' | 'truthful-answers' | 'no-disclosure' | 'return-hostage'
+export type JudgmentPreset =
+  'nen' | 'contact' | 'nen-contact' | 'answers' | 'secret' | 'hostage-secret'
 export interface JudgmentSeal {
+  hostageId?: string
+  deadlineFrame?: number
   owner: FightSide
   ownerMember?: number
   rule: JudgmentClause
@@ -11,6 +15,8 @@ export interface JudgmentSeal {
   lastInquiryAt?: number
 }
 export const JUDGMENT_PRESETS: Record<JudgmentPreset, readonly JudgmentClause[]> = {
+  secret: ['no-disclosure'],
+  'hostage-secret': ['return-hostage', 'no-disclosure'],
   nen: ['zetsu'],
   contact: ['no-troupe-contact'],
   'nen-contact': ['zetsu', 'no-troupe-contact'],

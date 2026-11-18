@@ -49,3 +49,11 @@ export function ejectArenaVacuum(state: FightState, side: FightSide): FightState
     return state
   return forgetArenaVacuum(updateEntity(state, entry.id, { present: true, x, y: 0 }), side)
 }
+
+/** Physical dead matter is eligible; a Nen copy and a living subject never are. */
+export function vacuumObjectAllowed(entry: PreparedEntity): boolean {
+  return (
+    entry.material === 'real' &&
+    !['morena', 'supporter', 'hostage', 'animal', 'bird', 'seed'].includes(entry.kind)
+  )
+}

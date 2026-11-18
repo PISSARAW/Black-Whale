@@ -1,8 +1,8 @@
 import { arenaObjects } from './arenaActions'
 import { ownsBungeeGum } from './hisokaArsenal'
 import { gumObjectAnchors } from './gumObjectAnchors'
-import { performArsenalCommand } from './retrospectiveArsenal'
-import { stolenAuraActor } from './dolphinSupply'
+import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
+import { stolenAuraActor, withDolphinSupply } from './dolphinSupply'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState } from './types'
 
@@ -49,7 +49,10 @@ function option(
     command: { action, target },
     labelFr: `Bungee Gum · ${command.fr}`,
     labelEn: `Bungee Gum · ${command.en}`,
-    ready: performArsenalCommand(state, side, { action, target }) !== state,
+    ready:
+      withDolphinSupply(state, side, (supplied) =>
+        performGumObjectAnchorCommand(supplied, side, { action, target }),
+      ) !== state,
     conditionFr:
       'Support physique réel et contact avant adhésion. Chaque fil reste indépendant ; traction matérielle, sans invulnérabilité. Coût et vitesse : réglages de duel.',
     conditionEn:

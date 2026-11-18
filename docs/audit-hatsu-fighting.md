@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-44`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-45`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -20,6 +20,9 @@ L’[interrogatoire libre par Dowsing](./clash-dowsing-interrogatoire.md) étend
 les questions vocales et le contrôle matériel de la main droite.
 Les [ancrages de Bungee Gum sur plusieurs supports](./clash-hisoka-ancrages.md)
 ajoutent des connexions matérielles simultanées et leurs commandes indépendantes.
+L’[intégration du ruleset 45](./clash-integration-arsenal-45.md) détaille la
+fusion avec les autres développements et distingue les contrôles réussis des
+échecs antérieurs encore ouverts.
 
 ## Périmètre et niveau de preuve
 

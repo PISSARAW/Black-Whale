@@ -22,6 +22,7 @@ import { benjaminUtilityMove } from './benjaminBaton'
 import { feitanUtilityMove } from './feitanPain'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { sleepingBody } from './hanzoProjection'
+import { luiniHurtboxes } from './luiniPassage'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { fightingStyle } from './fightStyles'
@@ -273,6 +274,7 @@ export function isAntiAir(fighter: ArcadeFighter): boolean {
 
 export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
   if (fighter.clothCapture) return []
+  if (fighter.luiniPassage) return luiniHurtboxes(fighter)
   if (fighter.hanzoProjection) return hurtboxes({ ...sleepingBody(fighter), knockdownFrames: 1 })
   if (fighter.knockdownFrames > 0 || fighter.arsenalSleep) {
     return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]

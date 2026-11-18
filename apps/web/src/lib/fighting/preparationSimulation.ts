@@ -117,6 +117,7 @@ function canInteract(entry: PreparedEntity, side: FightSide): boolean {
 function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity {
   const awake = { ...entry, sleepingFrames: Math.max(0, (entry.sleepingFrames ?? 0) - 1) }
   const control = entry.controller
+  if (entry.kind === 'corpse') return awake
   if (!control) return awake
   if (!liveEntity(entry) || !controllerKeepsAbility(state, entry))
     return { ...awake, controller: undefined }

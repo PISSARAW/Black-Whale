@@ -29,12 +29,12 @@ ou fabrication instantanée n’est ajoutée au duel.
 
 `furykovCounterPlan.ts` choisit une création spécifique au profil adverse :
 
-| Profil | Arme préparée | Mise en scène |
-| --- | --- | --- |
-| Hisoka, Machi | Coupe-liens | Capture puis section des attaches de Nen |
-| Franklin, Illumi, Kalluto, Musse, Leorio | Lame-bouclier | Interception de projectiles |
-| Biscuit, Phinks, Benjamin, Bonolenov, Beyond | Poinçon de rupture | Pénétration d’une garde renforcée |
-| Autres adversaires | Lame d’allonge | Frappes au-delà de la prise adverse |
+| Profil                                       | Arme préparée      | Mise en scène                            |
+| -------------------------------------------- | ------------------ | ---------------------------------------- |
+| Hisoka, Machi                                | Coupe-liens        | Capture puis section des attaches de Nen |
+| Franklin, Illumi, Kalluto, Musse, Leorio     | Lame-bouclier      | Interception de projectiles              |
+| Biscuit, Phinks, Benjamin, Bonolenov, Beyond | Poinçon de rupture | Pénétration d’une garde renforcée        |
+| Autres adversaires                           | Lame d’allonge     | Frappes au-delà de la prise adverse      |
 
 Ces modèles et leurs contre-effets sont des créations de cinématique pour le
 jeu, sans prétention d’avoir été montrés dans le manga. Ce ne sont ni des

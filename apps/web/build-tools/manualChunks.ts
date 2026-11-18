@@ -6,19 +6,8 @@ export function manualChunks(id: string): string | undefined {
   if (fragment) return fragment
   if (/\/i18n\/messages\/(en|fr)\.ts$/.test(id))
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
-  if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
-  if (
-    /\/fighting\/(?:nenCanon(?:First|Second)|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-nen-canon'
-  if (
-    /\/fighting\/(?:easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
-      id,
-    )
-  )
-    return 'clash-presentation-catalogues'
+  const clash = clashChunkName(id)
+  if (clash) return clash
   if (!id.includes('/three/src/')) return undefined
   if (/\/Three(?:\.Core)?\.js$/.test(id)) return undefined
   return threeChunkName(id)
@@ -35,4 +24,43 @@ function threeChunkName(id: string): string {
   if (/\/renderers\/(WebGLRenderer\.js|webgl\/|webxr\/WebXRManager\.js)/.test(id))
     return 'three-renderer'
   return 'three-foundation'
+}
+
+function clashChunkName(id: string): string | undefined {
+  if (
+    /\/fighting\/(?:fightClock|preparationTuning|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-style-catalogues'
+  if (
+    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-move-catalogues'
+  if (/\/fighting\/arenaTechnique(?:Types|sFirst|sSecond)\.ts$/.test(id))
+    return 'clash-arena-catalogues'
+
+  if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
+  if (
+    /\/fighting\/(?:nenCanon(?:First|Second)|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-nen-canon'
+  if (
+    /\/fighting\/(?:easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-presentation-catalogues'
+  if (
+    /\/fighting\/cinematic(?:Troupe|Royal|Control|Support|Object|Movement|Kurapika|Nen)Rules\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-camera-catalogues'
+  if (/\/fighting\/[^/]+Options\.ts$/.test(id)) return 'clash-arsenal-options'
+  return undefined
 }

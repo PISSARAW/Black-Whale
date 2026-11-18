@@ -5,6 +5,9 @@ import { advanceGumObjectAnchors } from '../gumObjectAnchorFrames'
 import { categoryPower } from '../nenCategories'
 import { chainAbilitySealed } from '../kurapika'
 import { attackPhase } from '../frameData'
+import { addGumLink, selectedGumLink, moveGumLink, removeGumLinks } from '../bungeeNetwork'
+import { advanceGumNetwork } from '../bungeeMotion'
+import { armGumRecall } from '../bungeeProjectiles'
 import {
   BUNGEE_REST_DISTANCE,
   hisokaNenActive,
@@ -27,16 +30,21 @@ export const hisokaHatsu: FighterHatsu = {
   onImpact: ({ state, side, defenderSide, moveId, blocked, concealed }) => {
     if (blocked || !hisokaNenActive(state[side])) return state
     const technique = hisokaTechnique(state[side], moveId)
-    if (technique === 'finish')
-      return state.bungeeGum?.owner === side ? { ...state, bungeeGum: null } : state
-    if (technique !== 'attach') return state
-    return {
-      ...state,
-      bungeeGum: { owner: side, target: defenderSide, hidden: concealed, retracting: false },
+    if (technique === 'finish') {
+      const link = selectedGumLink(state, side)
+      return link ? removeGumLinks(state, (entry) => entry.id === link.id) : state
     }
+    if (technique !== 'attach') return state
+    return addGumLink(state, {
+      side,
+      target: { kind: 'fighter', side: defenderSide },
+      hidden: concealed,
+    })
   },
   onFrame: (state) =>
-    advanceGumObjectAnchors(advanceGumArsenal(reelIn(SIDES.reduce(advanceTechnique, state)))),
+    advanceGumObjectAnchors(
+      advanceGumArsenal(advanceGumMotion(SIDES.reduce(advanceTechnique, state))),
+    ),
 }
 
 function advanceTechnique(state: FightState, side: FightSide): FightState {
@@ -52,16 +60,27 @@ function advanceTechnique(state: FightState, side: FightSide): FightState {
   if (technique === 'finish') {
     // This composed card strike reels in its attached target and consumes
     // the link only when it actually lands.
-    return { ...state, bungeeGum: { ...state.bungeeGum!, retracting: true, rebounding: false } }
+    return activateGumMovement(state, side, false)
   }
   const committed = { ...fighter, attack: { ...attack, impacted: true } }
   if (technique === 'texture')
     return { ...state, [side]: { ...committed, textureSurprise: { surface: 'cloth' } } }
+  return activateGumMovement({ ...state, [side]: committed }, side, technique === 'rebound')
+}
+
+function activateGumMovement(state: FightState, side: FightSide, rebound: boolean): FightState {
+  if (state.gumNetwork) {
+    const moved = moveGumLink(state, side, rebound ? 'rebound' : 'recall')
+    return rebound ? moved : armGumRecall(moved, side)
+  }
   return {
     ...state,
-    [side]: committed,
-    bungeeGum: { ...state.bungeeGum!, retracting: true, rebounding: technique === 'rebound' },
+    bungeeGum: { ...state.bungeeGum!, retracting: true, rebounding: rebound },
   }
+}
+
+function advanceGumMotion(state: FightState): FightState {
+  return state.gumNetwork ? advanceGumNetwork(state) : reelIn(state)
 }
 
 function activeTechnique(fighter: ArcadeFighter) {

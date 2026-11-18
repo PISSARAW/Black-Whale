@@ -14,11 +14,13 @@ export function forecastParallelFuture(
   const held = predictionControls(controls, future.owner)
   const frames: FutureFrame[] = []
   for (let frame = 0; frame < FUTURE_WINDOW_FRAMES; frame++) {
-    const before = predicted.opponent.attack
+    const before = predicted
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
     frames.push({
       scene: {
+        rosterGuests: predicted.rosterGuests,
         bungeeGum: predicted.bungeeGum,
+        gumNetwork: predicted.gumNetwork,
         catsName: predicted.catsName,
         catsNameConsumed: predicted.catsNameConsumed,
         moonlight: predicted.moonlight,
@@ -41,7 +43,7 @@ export function forecastParallelFuture(
       phase: predicted.phase,
       rng: predicted.rng,
       aiCooldown: predicted.aiCooldown,
-      command: newAttack(before, predicted.opponent),
+      command: futureCommand(before, predicted),
     })
   }
   return immutableFightSnapshot(frames)
@@ -55,6 +57,18 @@ function predictionControls(
   return owner === 'player'
     ? { ...controls, player: closed }
     : { ...controls, opponent: closed, ai: false }
+}
+
+function futureCommand(before: FightState, after: FightState): FutureFrame['command'] {
+  const trace = after.arsenalTrace
+  if (trace && trace !== before.arsenalTrace && trace.side === 'opponent')
+    return {
+      kind: 'special',
+      auraCharged: false,
+      arsenal: trace.command,
+      rngBefore: trace.rngBefore,
+    }
+  return newAttack(before.opponent.attack, after.opponent)
 }
 
 function newAttack(

@@ -1,3 +1,5 @@
+import { releasePreparedEntity } from './preparedCorpseBody'
+import { advanceCorpseControls } from './illumiCorpses'
 import { illumiNenActive } from './illumiAccess'
 import { illumiState, type NeedlePuppet } from './illumiState'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
@@ -11,7 +13,7 @@ export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFi
 
 export function advanceIllumi(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
-  return advanceForSide(advanceForSide(state, 'player'), 'opponent')
+  return advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent'))
 }
 
 function advanceForSide(state: FightState, side: FightSide): FightState {
@@ -94,11 +96,23 @@ function orderedPosition(
 
 export function releaseIllumiPage(state: FightState, side: FightSide, page: string): FightState {
   const targetSide = side === 'player' ? 'opponent' : 'player'
-  if (page !== 'illumi' || state[targetSide].needlePuppet?.owner !== side) return state
+  if (page !== 'illumi') return state
+  state = releaseCorpsePage(state, side)
+  if (state[targetSide].needlePuppet?.owner !== side) return state
   return consumeControlNeedle(state, targetSide)
 }
 
 export function ownsNeedlePuppet(state: FightState, side: FightSide): boolean {
   const puppet = state[side === 'player' ? 'opponent' : 'player'].needlePuppet
   return puppet?.owner === side && puppet.needleEmbedded
+}
+
+function releaseCorpsePage(state: FightState, side: FightSide): FightState {
+  if (!state.battlefield) return state
+  const entities = state.battlefield.entities.map((entry) =>
+    entry.kind === 'corpse' && entry.controller?.side === side
+      ? releasePreparedEntity(entry)
+      : entry,
+  )
+  return { ...state, battlefield: { ...state.battlefield, entities } }
 }

@@ -24,7 +24,7 @@ const ENUM_FIELDS: Record<string, [string, string[]]> = {
   'paper-target': ['zone', ['head', 'torso', 'hands', 'feet']],
   'paper-command': ['command', ['plant', 'serpent', 'doll']],
   'paper-use': ['command', ['plant', 'serpent', 'doll']],
-  mary: ['command', ['bleed', 'bind', 'slam', 'scout', 'recall', 'infuse']],
+  mary: ['command', ['bleed', 'bind', 'slam', 'scout', 'scout-wall', 'recall', 'infuse']],
   question: ['question', ['identity', 'nen', 'in']],
 }
 function validCommand(value: Record<string, unknown>): boolean {

@@ -6,6 +6,7 @@ import {
 } from './remotePunchTiming'
 import type { ProjectileSceneOptions } from './projectileScene'
 import type { FightProjectile } from './types'
+import { fineControlEase, fineControlReduced } from './fineControlAnchors'
 
 interface PunchVisual {
   model: VisitHatsuModel
@@ -13,6 +14,8 @@ interface PunchVisual {
   fist: import('three').Group
   trace: import('three').Mesh
   exit: import('three').Mesh
+  entry: import('three').Mesh
+  pulse: import('three').Mesh
 }
 
 /** A pale emitted fist, not a teleported sleeve or a free-flying aura ball. */
@@ -24,6 +27,7 @@ export function createRemotePunchScene(options: ProjectileSceneOptions) {
       const active = new Set(punches.map((projectile) => projectile.id))
       for (const projectile of punches) {
         const visual = visuals.get(projectile.id) ?? buildPunch(options)
+        visual.root.name = `remote-punch-path:${projectile.id}`
         visual.fist.name = `remote-punch:${projectile.id}`
         visuals.set(projectile.id, visual)
         posePunch(visual, projectile, options)
@@ -60,10 +64,15 @@ function buildPunch(options: ProjectileSceneOptions): PunchVisual {
     geometry(new THREE.RingGeometry(0.16, 0.21, 24)),
     options.glow(0xbcecff, 0.65),
   )
+  const entry = exit.clone()
+  entry.name = 'remote-punch-entry'
+  const pulse = new THREE.Mesh(geometry(new THREE.RingGeometry(0.06, 0.1, 16)), exit.material)
+  pulse.name = 'remote-punch-transmission'
   exit.rotation.x = -Math.PI / 2
-  root.add(fist, trace, exit)
+  entry.rotation.x = pulse.rotation.x = -Math.PI / 2
+  root.add(fist, trace, exit, entry, pulse)
   options.scene.add(root)
-  return { root, fist, trace, exit, model }
+  return { root, fist, trace, exit, entry, pulse, model }
 }
 
 function posePunch(
@@ -76,12 +85,23 @@ function posePunch(
   const origin = options.worldX(remote.originX)
   const target = options.worldX(remote.targetX)
   const current = options.worldX(projectile.x)
+  const reduced = fineControlReduced(options)
+  const accents = !reduced && options.comfort?.().flashes !== false
   // The thin trace is a presentation cue on the surface; its underground phase cannot hit.
   visual.trace.visible = emerging < 0
   visual.trace.position.set((origin + current) / 2, 0.012, 0)
   visual.trace.scale.set(Math.max(0.02, Math.abs(current - origin)), 0.018, 0.045)
   visual.exit.position.set(target, 0.018, 0)
-  visual.exit.scale.setScalar(emerging < 0 ? 0.65 : 1.2)
+  visual.exit.scale.setScalar(emerging < 0 ? 0.65 : 0.65 + 0.55 * fineControlEase(emerging / 4))
+  visual.entry.visible = accents && projectile.age < 18
+  visual.entry.position.set(origin, 0.018, 0)
+  visual.entry.scale.setScalar(0.55 + 0.65 * fineControlEase(projectile.age / 18))
+  visual.pulse.visible = accents && emerging < 0
+  visual.pulse.position.set(current, 0.025, 0)
+  visual.pulse.scale.setScalar(
+    0.8 + Math.sin((projectile.age / remote.travelFrames) * Math.PI) * 0.3,
+  )
+  visual.root.userData.stage = emerging < 0 ? 'transmission' : 'emergence'
   visual.fist.visible = emerging >= 0
   const retract = Math.max(0, (emerging - 8) / (REMOTE_PUNCH_VISIBLE_FRAMES - 8))
   const rise = Math.min(1, Math.max(0, emerging / REMOTE_PUNCH_RISE_FRAMES)) * (1 - retract)

@@ -4,6 +4,7 @@ export const WINDOW_ACTION_LABELS: Record<
   SecretWindowObservation['action'],
   readonly [string, string]
 > = {
+  'audio-only': ['Écoute à travers les obstacles', 'Listening through obstacles'],
   idle: ['Attente', 'Idle'],
   walk: ['Déplacement', 'Movement'],
   jump: ['Saut', 'Jump'],

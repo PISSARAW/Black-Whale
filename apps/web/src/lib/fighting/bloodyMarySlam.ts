@@ -42,6 +42,7 @@ export function slamMary(state: FightState, side: FightSide): FightState {
       bloodyMary: {
         ...blood,
         command: undefined,
+        sealedWounds: state[side].openWounds ?? 0,
         tendril: blood.tendril ? { ...blood.tendril, phase: 'returning' } : undefined,
       },
     },

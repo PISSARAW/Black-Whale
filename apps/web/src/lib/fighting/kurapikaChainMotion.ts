@@ -7,6 +7,7 @@ export interface ChainMotion {
   mode: 'attack' | 'jail' | 'drain' | 'healing' | 'dowsing'
   extension: number
   reach: number
+  returning?: boolean
 }
 const STAGES: Record<string, ChainStage> = {
   'kurapika:neutralSpecial': 2,
@@ -20,7 +21,7 @@ const STAGES: Record<string, ChainStage> = {
 export function kurapikaChainMotions(state: FightState, side: FightSide): ChainMotion[] {
   const target = state[side === 'player' ? 'opponent' : 'player']
   const motions = maintainedChains(target, side)
-  if (state[side].dowsingSession)
+  if (state[side].dowsingSession || state[side].dowsingInvestigation)
     motions.push({ stage: 0, mode: 'dowsing', extension: 1, reach: 0 })
   const attack = attackChain(state[side])
   if (attack && !motions.some((held) => held.stage === attack.stage)) motions.push(attack)
@@ -50,6 +51,7 @@ function attackChain(fighter: ArcadeFighter): ChainMotion | null {
     mode: stage === 3 ? 'healing' : 'attack',
     extension: 0.06 + progress * 0.94,
     reach: data.box.right,
+    returning: recovery > 0,
   }
 }
 

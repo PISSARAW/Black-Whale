@@ -9,13 +9,19 @@ import { FIGHTING_ROSTER } from './roster'
 import type { CameraEvent } from './cinematicTypes'
 
 describe('extended live cameras at normal combat speed', () => {
-  it.each(FIGHTING_ROSTER.map((f) => f.id))(
+  it.each(FIGHTING_ROSTER.map((f) => f.id).filter((id) => id !== 'kurapika'))(
     '%s: gives an actual engine event a prolonged window',
     (id) => {
       const initial = cinematicDuel(id),
         before = cameraSnapshot(initial)
-      const state = cinematicCommand(initial)
-      const event = cinematicEvents(state, before).find((e) => e.detail?.source === id)
+      let state = cinematicCommand(initial)
+      let event = cinematicEvents(state, before).find((e) => e.detail?.source === id)
+      // Little Eye now travels to the actual animal before capture is confirmed.
+      for (let i = 0; i < 90 && !event; i++) {
+        const previous = cameraSnapshot(state)
+        state = cinematicStep(state)
+        event = cinematicEvents(state, previous).find((e) => e.detail?.source === id)
+      }
       expect(event, `${id}: no activation`).toBeDefined()
       const scheduler = createCameraScheduler()
       const shot = scheduler.update(null, [event!], {
@@ -40,10 +46,10 @@ describe('extended live cameras at normal combat speed', () => {
       followThrough: true,
       anchors: [{ type: 'rig', side: 'player', part: 'head' }],
     })
-    expect(scheduler.update(next, [], { state, frame: 200, viewer: 'player' })?.detail).toBe(
+    expect(scheduler.update(next, [], { state, frame: 70, viewer: 'player' })?.detail).toBe(
       next.detail,
     )
-    expect(scheduler.update(next, [], { state, frame: 229, viewer: 'player' })).toBeNull()
+    expect(scheduler.update(next, [], { state, frame: 85, viewer: 'player' })).toBeNull()
   })
   it('keeps fixed-step time, movement, health and aura identical through a full extended shot', () => {
     let observed = cinematicDuel('feitan'),

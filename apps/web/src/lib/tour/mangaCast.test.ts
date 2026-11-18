@@ -214,6 +214,7 @@ describe('manga cast shared by the visit and Fighting', () => {
     const fighter = createFightState('melody', 'hanzo').player
     const model = buildFightFigure({ THREE, glow, fighter })
     const common = buildHumanFigure({ THREE, glow, seen: seen('melody') })
+    model.animate(0, 'idle', { motion: fightBodyMotion({ fighter, seconds: 0, progress: 0 }) })
     const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
     expect(hair.geometry).toBe(
       (common.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry,

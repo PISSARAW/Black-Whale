@@ -22,6 +22,7 @@ export interface StolenChainAbility {
   loaded: boolean
   used: boolean
   /** Effects created by this single use must finish before Dolphin can be dismissed. */
+  lentTo?: string
   sustainedKeys: string[]
 }
 

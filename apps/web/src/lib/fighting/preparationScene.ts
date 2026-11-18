@@ -1,3 +1,4 @@
+import { posePreparedCorpse } from './corpseScene'
 import { createDolphinPeopleScene } from './dolphinPeopleScene'
 import { createLittleEyeScene } from './littleEyeScene'
 import {
@@ -5,6 +6,7 @@ import {
   syncPreparedVisitModel,
   disposePreparedVisitModels,
 } from './preparedVisitModels'
+import { fineControlReduced } from './fineControlAnchors'
 import { LUINI_ROOM_HALF_WIDTH, LUINI_ROOM_HEIGHT } from './luiniSpatial'
 import { buildHumanFigure, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
@@ -50,6 +52,13 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   function decorate(root: import('three').Group, entry: PreparedEntity) {
     const builders: Partial<Record<PreparedEntity['kind'], () => void>> = {
+      camera: () => {
+        const body = box([0.35, 0.23, 0.2], 0x283d43)
+        const lens = sphere(0.08, 0x6bc4d4)
+        lens.position.z = 0.13
+        root.add(body, lens)
+        root.position.y = 0.18
+      },
       crate: () => {
         const object = box([0.65, 0.75, 0.6], 0x8e623c)
         object.position.y = 0.38
@@ -113,7 +122,20 @@ export function createPreparationScene(options: EffectSceneOptions) {
       feather.position.set(0.12, 0.9, 0.2)
       figure.root.add(feather)
     }
+    addCorpseNeedles(figure.root, entry)
     return figure.root
+  }
+
+  function addCorpseNeedles(root: import('three').Group, entry: PreparedEntity) {
+    if (entry.kind !== 'corpse') return
+    const pins = new THREE.Group()
+    pins.name = 'corpse-control-needles'
+    for (const x of [-0.07, 0.07]) {
+      const pin = box([0.015, 0.18, 0.015], 0xdce3e6)
+      pin.position.set(x, 1.12, 0.08)
+      pins.add(pin)
+    }
+    root.add(pins)
   }
 
   function animal(root: import('three').Group) {
@@ -135,13 +157,14 @@ export function createPreparationScene(options: EffectSceneOptions) {
     pot.position.y = 0.13
     const plant = new THREE.Group()
     plant.name = 'growth'
+    plant.position.y = 0.25
     const stem = box([0.03, 0.65, 0.03], 0x709f4a)
-    stem.position.y = 0.56
+    stem.position.y = 0.31
     plant.add(stem)
     for (const direction of [-1, 1]) {
       const leaf = sphere(0.14, 0x7db954)
       leaf.scale.set(1, 0.3, 0.6)
-      leaf.position.set(direction * 0.11, 0.58, 0)
+      leaf.position.set(direction * 0.11, 0.33, 0)
       plant.add(leaf)
     }
     root.add(pot, plant)
@@ -166,6 +189,26 @@ export function createPreparationScene(options: EffectSceneOptions) {
     root.add(ceiling)
   }
 
+  function syncEntry(context: { entry: PreparedEntity; state: FightState; seconds: number }) {
+    const { entry, state, seconds } = context
+    let root = models.get(entry.id)
+    if (!root) {
+      root = build(entry)
+      models.set(entry.id, root)
+      scene.add(root)
+    }
+    root.visible = entry.present
+    root.position.set(options.worldX(entry.x), options.worldY(entry.y), backgroundDepth(entry))
+    posePreparedCorpse(root, entry, state.frame / 60)
+    syncStaticAppearance(root, entry)
+    syncAnimatedAppearance({
+      root,
+      entry,
+      seconds: fineControlReduced(options) ? 0 : state.frame / 60,
+    })
+    syncPreparedVisitModel(options, { root, entry, state, seconds })
+  }
+
   return {
     sync(state: FightState, seconds: number) {
       littleEye.sync(state)
@@ -174,19 +217,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
         (entry) => entry.kind !== 'device' && !entry.writingKit && !entry.weakSpirit,
       )
       const active = new Set(entries.map((entry) => entry.id))
-      for (const entry of entries) {
-        let root = models.get(entry.id)
-        if (!root) {
-          root = build(entry)
-          models.set(entry.id, root)
-          scene.add(root)
-        }
-        root.visible = entry.present
-        root.position.set(options.worldX(entry.x), options.worldY(entry.y), backgroundDepth(entry))
-        syncStaticAppearance(root, entry)
-        syncAnimatedAppearance({ root, entry, seconds })
-        syncPreparedVisitModel(options, { root, entry, state, seconds })
-      }
+      for (const entry of entries) syncEntry({ entry, state, seconds })
       for (const [id, root] of models) {
         if (active.has(id)) continue
         disposePreparedVisitModels(root)

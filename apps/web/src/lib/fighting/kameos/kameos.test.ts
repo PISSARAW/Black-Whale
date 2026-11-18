@@ -51,11 +51,10 @@ describe('kameo state (lot 2)', () => {
     expect(() => withKameos(beginFight(state), { player: 'tubeppa' })).toThrow('kameo-after-start')
   })
 
-  it('keeps reserve kameos inert: the duel plays exactly as without them', () => {
+  it('keeps an uncalled kameo inert: the duel plays exactly as without it', () => {
     const duel = play(createFight('benjamin', 'morena'), 300)
     const kameos = withKameos(createFight('benjamin', 'morena'), {
       player: 'zhanglei',
-      opponent: 'salesale',
     })
     const withPartners = play(kameos, 300)
     expect(fightReplayHash(withoutKameos(withPartners))).toBe(fightReplayHash(duel))

@@ -19,6 +19,8 @@ export type PreparationResource =
   | 'paper'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
+  /** Explicit physical injuries in this scenario; never granted by stealing a Hatsu. */
+  injuries?: import('./injuryPreparation').InjuryPreparation
   mode: 'duel' | 'scenario'
   resources: PreparationResource[]
   /** Explicit scenario premise: these allies already bear the feather and share this side's will. */

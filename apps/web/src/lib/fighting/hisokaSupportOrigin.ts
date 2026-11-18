@@ -29,6 +29,10 @@ export function clearBorrowedGumSupport(actor: ArcadeFighter): ArcadeFighter {
     ...actor,
     gumWoundSeals: seals ? undefined : actor.gumWoundSeals,
     gumWoundOrigin: seals ? undefined : actor.gumWoundOrigin,
+    gumProstheses:
+      actor.gumProstheses && borrowedGumSupport(actor, actor.gumProstheses)
+        ? undefined
+        : actor.gumProstheses,
     gumCatch: caught ? { ...actor.gumCatch!, frames: 0, released: true } : actor.gumCatch,
     gumThrowReady:
       actor.gumThrowReady && borrowedGumSupport(actor, actor.gumThrowReady)

@@ -1,4 +1,5 @@
 import { addBenjaminRifle } from './benjaminRifle'
+import { gumBodyFigureKey, shapeGumProstheses } from './gumProsthesisFigure'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
@@ -47,6 +48,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.parallelEyesClosed),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
+    ...gumBodyFigureKey(fighter),
     Boolean(fighter.kurapika?.emperorTime),
     fighter.battleCantabile?.form?.model,
     Boolean(fighter.battleCantabile?.prologue),
@@ -109,6 +111,7 @@ export function buildFightFigure(options: {
   })
   if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
+  shapeGumProstheses(options, model.root)
   if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 
   addIllumiNeedles({ THREE, glow, fighter, model })
@@ -158,7 +161,7 @@ function historicalFigureKey(fighter: ArcadeFighter) {
   return [fighter.chrolloHistorical?.appearance?.model, Boolean(fighter.clothCapture)]
 }
 function figureClothing(profile: ReturnType<typeof humanProfile>, fighter: ArcadeFighter) {
-  return fighter.textureSurprise ||
+  return fighter.textureSurprise?.surface === 'cloth' ||
     fighter.battleCantabile?.preparation ||
     fighter.battleCantabile?.prologue
     ? { ...profile, shirt: profile.skin }

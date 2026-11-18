@@ -97,7 +97,8 @@ Référence : connexions distinctes depuis la main et la jambe vers deux têtes 
 [chapitre 353](https://hunterxhunter.fandom.com/wiki/Chapter_353), corroborées par
 [le déroulé du combat](https://supercorona.wordpress.com/2021/05/18/hunter-x-hunter-chapter-353-cold-blooded/).
 Le réseau intégré représente aussi plusieurs liens vers les personnes et les
-projectiles physiques conservés. Les prothèses, la réanimation préparée et les
-autres supports de Texture Surprise restent à compléter.
+projectiles physiques conservés. Les [prothèses du ruleset 53](./clash-hisoka-protheses.md)
+ajoutent la main, la partie basse de jambe et leur apparence sur du caoutchouc réel.
+La réanimation préparée et d'autres supports de Texture Surprise restent à compléter.
 Ce jalon ne certifie pas un arsenal
 achevé à 100 %.

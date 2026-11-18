@@ -1,4 +1,5 @@
 import type { FightSide, FightState } from './types'
+import { bodyPartFunctional } from './bodyDamage'
 
 export type DeviceHand = 'left' | 'right'
 /** Pockets and swallowed transmitters do not occupy the hands. The open book occupies the right. */
@@ -24,10 +25,17 @@ function characterHandOccupancy(
   ignored: { gallery?: boolean; book?: boolean },
 ): Set<DeviceHand> {
   const occupied = new Set<DeviceHand>()
+  if (!bodyPartFunctional(actor, 'left-hand')) occupied.add('left')
   if (!ignored.gallery && actor.chrolloHistorical?.galleryFocus) occupied.add('left')
   if (!ignored.book && actor.chrolloBook?.open) occupied.add('right')
-  for (const hand of voiceHands(actor)) occupied.add(hand)
+  for (const hand of retainedHands(actor)) occupied.add(hand)
   return occupied
+}
+
+function retainedHands(actor: FightState['player']): DeviceHand[] {
+  const hands = voiceHands(actor)
+  if (actor.gumCatch?.projectile && actor.gumCatch.hand) hands.push(actor.gumCatch.hand)
+  return hands
 }
 export function physicalHandsBusy(actor: FightState['player']): boolean {
   return Boolean(

@@ -1,4 +1,5 @@
 import { carryDolphinPeople } from './dolphinPeopleWorld'
+import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
 import { carryKallutoPaper } from './kallutoSurveillance'
 import { personalPaperKit } from './kallutoMaterials'
 import { carryPaperWorld } from './kallutoMaterialWorld'
@@ -74,7 +75,7 @@ export function createFightState(
     impact: null,
   })
   return applyControlSchemes(
-    prepareMusseHistory(created),
+    prepareBodyDamage(prepareMusseHistory(created)),
     typeof options === 'string' ? undefined : options.controls,
   )
 }
@@ -140,6 +141,7 @@ export function nextFightRound(state: FightState): FightState {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = carryBodyDamage(fighter, previous)
   fighter = carryDolphinState(fighter, previous)
   fighter = carryKallutoPaper(fighter, previous)
   fighter = carryMusseHistory(fighter, previous)

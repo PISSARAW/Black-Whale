@@ -2,6 +2,11 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  concealProsthesisAppearance(enemy)
+  enemy.textureTarget = undefined
+  enemy.gumProsthesisGeneration = undefined
+  if (enemy.gumProstheses)
+    enemy.gumProstheses = { ...enemy.gumProstheses, source: undefined, theftId: undefined }
   if (enemy.gumWoundOrigin) enemy.gumWoundOrigin = {}
   if (enemy.gumCatch) enemy.gumCatch = { ...enemy.gumCatch, source: undefined, theftId: undefined }
   if (enemy.attack) enemy.attack = { ...enemy.attack, nenOrigin: undefined }
@@ -21,4 +26,15 @@ export function redactLegacyArsenal(enemy: ArcadeFighter) {
   }))
   enemy.secretWindowMode = undefined
   enemy.sweetHomeObject = undefined
+}
+
+function concealProsthesisAppearance(enemy: ArcadeFighter): void {
+  if (
+    enemy.textureSurprise?.surface !== 'gum-prostheses' ||
+    enemy.textureSurprise.supportId !== enemy.gumProstheses?.id
+  )
+    return
+  enemy.bodyDamage = undefined
+  enemy.gumProstheses = undefined
+  enemy.textureSurprise = undefined
 }

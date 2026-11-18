@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createFightState } from '$lib/fighting/fightState'
+  import FightInjurySetup from './FightInjurySetup.svelte'
   import { EMPTY_PREPARATION } from '$lib/fighting/preparationWorld'
   import { REQUIREMENT_LABELS } from '$lib/fighting/preparationPresentation'
   import { preparationCheck } from '$lib/fighting/preparationRequirements'
@@ -102,6 +103,11 @@
     >
   </div>
   {#if preparation.mode === 'scenario'}
+    <FightInjurySetup
+      injuries={preparation.injuries ?? {}}
+      {language}
+      onChange={(injuries) => change({ ...preparation, injuries })}
+    />
     <fieldset>
       <legend
         >{language === 'fr'

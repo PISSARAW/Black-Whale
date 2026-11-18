@@ -151,18 +151,24 @@ function endCopiedPainPacker(fighter: CopiedFighter, page: ChrolloPage): CopiedF
 
 function clearHisokaPage(fighter: ArcadeFighter, page: ChrolloPage): ArcadeFighter {
   if (page !== 'hisoka') return fighter
-  const gumActive =
-    fighter.gumWoundOrigin?.source === 'dolphin' ||
-    chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')
-  return {
+  return clearHisokaGumPage({
     ...fighter,
     textureSurprise:
       fighter.textureSurprise?.source === 'dolphin' ||
       chrolloAbilityActive(fighter, 'hisoka:downSpecial')
         ? fighter.textureSurprise
         : undefined,
-    gumWoundSeals: gumActive ? fighter.gumWoundSeals : undefined,
-    gumWoundOrigin: gumActive ? fighter.gumWoundOrigin : undefined,
+  })
+}
+
+function clearHisokaGumPage(fighter: ArcadeFighter): ArcadeFighter {
+  if (chrolloAbilityActive(fighter, 'hisoka:neutralSpecial')) return fighter
+  const seals = fighter.gumWoundOrigin?.source === 'dolphin'
+  return {
+    ...fighter,
+    gumWoundSeals: seals ? fighter.gumWoundSeals : undefined,
+    gumWoundOrigin: seals ? fighter.gumWoundOrigin : undefined,
+    gumProstheses: fighter.gumProstheses?.source === 'dolphin' ? fighter.gumProstheses : undefined,
   }
 }
 

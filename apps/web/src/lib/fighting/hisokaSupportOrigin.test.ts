@@ -5,6 +5,7 @@ import { createKurapika } from './kurapika'
 import { captureDolphinAura } from './dolphinAura'
 import { CHROLLO_TURN, type ChrolloPage } from './chrolloBook'
 import { advanceGumArsenal } from './hisokaArsenal'
+import { physicalHandOccupancy } from './deviceHands'
 import { exposedBlinkyWounds } from './blinky'
 import { dismissDolphinGum, dolphinIsBusy } from './kurapikaDolphin'
 import { privatePvpState } from './pvp/view'
@@ -208,6 +209,12 @@ describe('Bungee Gum support keeps its acquisition and its physical object', () 
       expect(state[side].gumCatch?.projectile?.matter).toBe('object')
       expect(state[side].gumCatch?.source).toBe('dolphin')
       const shot = state[side].gumCatch!.projectile
+      const hand = state[side].gumCatch!.hand!
+      expect(physicalHandOccupancy(state, side).has(hand)).toBe(true)
+      const released = command(state, side, { action: 'gum-release', loan: true })
+      expect(released[side].gumCatch?.released).toBe(true)
+      expect(physicalHandOccupancy(released, side).has(hand)).toBe(true)
+      expect(command(released, side, { action: 'gum-return', loan: true })).toBe(released)
       const ended = dismissDolphinGum(state, side)
       expect(ended[side].gumCatch?.projectile).toBe(shot)
       expect(ended[side].gumCatch?.released).toBe(true)

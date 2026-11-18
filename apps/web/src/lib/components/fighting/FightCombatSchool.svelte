@@ -11,7 +11,6 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   import type { FightState } from '$lib/fighting/types'
-  import { KAMEO_COMBO_LESSONS } from '$lib/fighting/kameos/comboLessons'
   export let school: CombatSchool
   export let language: 'fr' | 'en'
   export let expanded = false
@@ -26,6 +25,7 @@
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
   $: catalogRoutes = routes.filter((route) => !route.kameo)
+  $: kameoRoutes = routes.filter((route) => route.kameo)
   $: current = $school
   $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
   const cues = {
@@ -213,7 +213,7 @@
         </select>
       </label>
       <ol>
-        {#each KAMEO_COMBO_LESSONS as route (route.id)}
+        {#each kameoRoutes as route (route.id)}
           <li>
             <strong>{fighterDefinition(route.fighter).name} · {route.title[index]}</strong>
             <p class="route">{routeText(route.id)}</p>

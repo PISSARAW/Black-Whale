@@ -1,0 +1,35 @@
+import { describe, it, expect } from 'vitest'
+import { KAMEO_COMBO_LESSONS } from './comboLessons'
+import { runKameoComboScenario } from './comboScenarios'
+import { KAMEO_IDS } from './catalogue'
+
+describe('roster support boundaries', () => {
+  for (const route of KAMEO_COMBO_LESSONS)
+    for (const corner of [false, true])
+      it(`${route.id}, ${corner ? 'corner' : 'centre'}: immediate and late support`, () => {
+        const immediate = runKameoComboScenario(route, { corner, response: 'guard' })
+        expect(immediate.guaranteed, JSON.stringify({ ...immediate, state: undefined })).toBe(true)
+        expect(immediate.defenderCanActAt).toBeGreaterThan(immediate.finishedAt)
+        const late = runKameoComboScenario(route, { corner, callDelay: 60, response: 'jab' })
+        if (route.kameo!.id === 'luzurus') {
+          expect(late.guaranteed).toBe(false)
+          expect(late.replySentAt).toBeGreaterThan(0)
+          expect(late.replyHitAt).toBeGreaterThan(late.replySentAt)
+          expect(late.replyDamage).toBeGreaterThan(0)
+          const held = runKameoComboScenario(route, { corner, finishDelay: 90, response: 'guard' })
+          expect(held.guaranteed).toBe(false)
+          expect(held.defenderCanActAt).toBeGreaterThan(held.supportAt)
+        }
+      })
+  for (const id of KAMEO_IDS)
+    it(`${id}: an exhausted support cannot guarantee the exercise`, () => {
+      const route = KAMEO_COMBO_LESSONS.find(
+        (route) => route.fighter === 'kurapika' && route.kameo!.id === id,
+      )!
+      const result = runKameoComboScenario(route, { supportAura: 0, response: 'jab' })
+      expect(result.guaranteed).toBe(false)
+      expect(result.supportAt).toBe(-1)
+      expect(result.defenderCanActAt).toBeGreaterThan(result.firstHitAt)
+      expect(result.replySentAt).toBeGreaterThan(0)
+    })
+})

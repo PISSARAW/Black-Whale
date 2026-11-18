@@ -8,6 +8,7 @@ export interface NenImpactResponse {
   force: number
   zone: 'head' | 'torso' | 'hands' | 'feet'
   sourceX: number
+  duration?: number
 }
 declare module './types' {
   interface FightImpact {
@@ -25,6 +26,7 @@ export function recordNenImpact(before: FightState, after: FightState): FightSta
   const kind = responseKind(constrained, projectile?.shape, hit.projectileId)
   const response: NenImpactResponse = {
     kind,
+    duration: Math.max(1, after[side].hitStun),
     force:
       Math.min(1.35, Math.max(0.35, hit.damage / 24)) *
       fightPhysicalProfile(after[side]).resistance,
@@ -52,7 +54,7 @@ function becameBound(before: ArcadeFighter, after: ArcadeFighter): boolean {
 /** A projectile recoils locally before the body catches up; a bind gathers the limbs instead. */
 export function nenImpactBodyPlan(
   fighter: ArcadeFighter,
-  context: { response?: NenImpactResponse; progress: number },
+  context: { response?: NenImpactResponse; progress: number; carry?: FightPose },
   standing: FightPose,
 ): BodyPlan | null {
   const response = context.response
@@ -65,7 +67,11 @@ export function nenImpactBodyPlan(
       ? bindPose()
       : projectilePose(response, lag, Math.sign(response.sourceX - fighter.x) * fighter.facing)
   return {
-    pose: addPoses(standing, scalePose(pose, response.force * release)),
+    pose: continuedNenPose(
+      standing,
+      { pose, force: response.force * release, duration: response.duration ?? 20 },
+      context,
+    ),
     plant: fighter.y === 0,
     key: `nen-response:${response.kind}`,
     blend: 0.025,
@@ -135,4 +141,16 @@ function responseKind(
 }
 function canResist(fighter: ArcadeFighter): boolean {
   return !fighter.attack && fighter.y <= 0 && fighter.health > 0 && fighter.hitStun <= 0
+}
+
+function continuedNenPose(
+  standing: FightPose,
+  incoming: { pose: FightPose; force: number; duration: number },
+  context: { progress: number; carry?: FightPose },
+): FightPose {
+  const age = context.progress * incoming.duration
+  const weight = Math.min(1, Math.max(0, age / 4))
+  const carry = scalePose(context.carry ?? {}, 1 - weight)
+  const entry = context.carry ? 0.25 + 0.75 * weight : 0.65 + 0.35 * weight
+  return addPoses(standing, carry, scalePose(incoming.pose, incoming.force * entry))
 }

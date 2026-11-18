@@ -1,3 +1,4 @@
+import { residualNenReaction } from './nenReactionCarry'
 import { nenConstraintPlan } from './nenImpactResponse'
 import { createFightPoseClock } from './fightPoseClock'
 import { rosterContactMotion } from './rosterHitReaction'
@@ -10,7 +11,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 type Input = { fighter: ArcadeFighter; seconds: number; progress?: number }
 type Contact = Pick<
   ReactionContext,
-  'hitZone' | 'strikeReaction' | 'strikeMotion' | 'physicalHit' | 'nenResponse'
+  'hitZone' | 'strikeReaction' | 'strikeMotion' | 'physicalHit' | 'nenResponse' | 'nenCarry'
 >
 type Received = { sequence: number; contact: Contact; progress: number; reacting: boolean }
 
@@ -74,7 +75,12 @@ function receivedImpact(state: FightState, side: FightSide) {
 function contactContext(state: FightState, previous?: Received): Contact {
   const impact = state.impact!
   const attacker = state[impact.attacker]
-  const ordinary = { hitZone: impact.zone, nenResponse: impact.nenResponse }
+  const victim = state[impact.attacker === 'player' ? 'opponent' : 'player']
+  const ordinary = {
+    hitZone: impact.zone,
+    nenResponse: impact.nenResponse,
+    nenCarry: residualNenReaction(victim, previous),
+  }
   if (!directionalContact(state)) return ordinary
   const directed = {
     ...ordinary,

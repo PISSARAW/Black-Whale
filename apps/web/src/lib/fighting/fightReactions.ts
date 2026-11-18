@@ -40,6 +40,7 @@ export interface ReactionContext {
   strikeMotion?: StrikeContactMotion
   physicalHit?: PhysicalHit
   nenResponse?: NenImpactResponse
+  nenCarry?: FightPose
   nenConstraint?: BodyPlan | null
   poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
@@ -187,7 +188,7 @@ export function reactionPlan(
 function hitPlan(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose): BodyPlan {
   const nenPlan = nenImpactBodyPlan(
     fighter,
-    { response: context.nenResponse, progress: context.progress },
+    { response: context.nenResponse, progress: context.progress, carry: context.nenCarry },
     standing,
   )
   if (nenPlan) return nenPlan

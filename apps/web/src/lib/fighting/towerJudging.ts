@@ -1,3 +1,4 @@
+import { groundedImpactFinishes } from './groundedImpactFinish'
 import { fightFormat } from './formats'
 import type { ArcadeFighter, FightFinishReason, FightSide, FightState } from './types'
 
@@ -27,7 +28,9 @@ interface KnockdownJudgment {
 export function isJudgedKnockdown(judgment: KnockdownJudgment): boolean {
   if (judgment.blocked || judgment.avoided) return false
   return (
-    judgment.critical || judgment.attacker.attack?.variant === 'throw' || judgment.knockback >= 3
+    judgment.critical ||
+    judgment.attacker.attack?.variant === 'throw' ||
+    groundedImpactFinishes(judgment.attacker, judgment.knockback)
   )
 }
 

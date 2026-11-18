@@ -11,3 +11,9 @@ Validation : symétrie des 40 personnages, ressources absentes, pureté de l'év
 Une vraie touche physique renforcée par Ko ou un Ryu d'au moins 60 % ouvre une conversion personnelle supplémentaire. Il faut une confirmation, une maîtrise du renforcement et une fenêtre de douze frames d'attaque ; une seule branche ajoutée par séquence empêche les boucles. Les coûts et conditions du coup suivant restent contrôlés par le moteur. Un projectile ne valide pas par erreur la préparation du coup physique en cours.
 
 Validation : contacts natifs pour les 40 personnages et absence de branche sans préparation.
+
+## 3. Réactions continues et chutes motivées
+
+Le recul des frappes ordinaires reste au sol ; balayages, projections, Ko critiques et techniques puissantes conservent leur chute. Le nouveau choc reprend une part bornée du déséquilibre précédent, y compris après un projectile, puis la dissipe en quatre frames de réaction. Aucune extension artificielle du hitstun ni déplacement visuel de la racine : le moteur conserve la séparation et les exceptions de traversée. Les auras continuent d'utiliser les couleurs natives.
+
+Validation : 40 silhouettes, chutes décisives, garde et continuité bornée sans mutation de l'état.

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 955
+Fichiers : 957
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -801,6 +801,10 @@ Fichiers : 955
 
 - Illumi’s physical face belongs to its body through a relay > does not block a relay merely for an uncast face choice
 
+## `apps/web/src/lib/fighting/illumiKameoMatter.test.ts`
+
+- Illumi material and borrowed effects follow actual support bodies off stage > hits the real support body and ends its book shaping after it leaves the arena, preserving physical pins
+
 ## `apps/web/src/lib/fighting/illumiNeedleBorrowing.test.ts`
 
 - other-body face shaping retains its actual acquisition > ends a book shaping effect on page closure without erasing metal or spending a loan
@@ -870,6 +874,10 @@ Fichiers : 955
 ## `apps/web/src/lib/fighting/kameos/marayamMotion.test.ts`
 
 - Marayam support choreography and facial expressions > uses the real isolation frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/materialScene.test.ts`
+
+- support scene material changes follow the actual body geometry > rebuilds the face when physical pins appear or end, while movement alone keeps the existing rig
 
 ## `apps/web/src/lib/fighting/kameos/morenaMotion.test.ts`
 

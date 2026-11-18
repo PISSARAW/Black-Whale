@@ -1002,3 +1002,10 @@ Les [blessures superficielles et leur support de Nen](./clash-hisoka-visage.md)
 sont préparables pour chaque corps. Bungee Gum fournit le matériau ; Texture
 Surprise habille son support réel. Aucun PV, organe ou membre de chair n’est
 régénéré. Copies, prêts, fin du support, vues privées et On gardent leurs règles.
+
+## Corps de soutien et durées matérielles — ruleset 60
+
+L’[intégration avec les kaméos](./clash-integration-arsenal-60.md) garde les
+horloges, les origines privées et les prêts actifs sur les corps hors scène.
+Les nouvelles références préservent les anciens enregistrements. Le On reste
+présent et les écarts de l’audit global restent ouverts.

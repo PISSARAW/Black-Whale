@@ -1,4 +1,4 @@
-import { mapPhysicalBodies } from './physicalBodyMap'
+import { mapPhysicalBodies, somePhysicalBody } from './physicalBodyMap'
 import { physicalBodyAt } from './fightBodyIdentity'
 import { illumiOriginAvailable } from './illumiDisguiseClock'
 import { historicalPartExists } from './historicalCopyLifetime'
@@ -30,8 +30,8 @@ export function cleanDetachedFaceNeedles(state: FightState, entry: PreparedEntit
 export function borrowedNeedleFaceBusy(state: FightState, side: FightSide): boolean {
   const member = state.teamMatch?.seats[side].active ?? 0
   const held = equippedDolphin(state[side])
-  return (['player', 'opponent'] as const).some((target) => {
-    const face = state[target].needleFace
+  return somePhysicalBody(state, (actor) => {
+    const face = actor.needleFace
     return Boolean(
       face?.reshaping &&
       face.owner === side &&
@@ -60,8 +60,8 @@ export function finishBorrowedNeedleFace(state: FightState, side: FightSide): Fi
 }
 
 export function anyCopiedNeedleFaceBusy(state: FightState): boolean {
-  return (['player', 'opponent'] as const).some((side) => {
-    const face = state[side].needleFace
+  return somePhysicalBody(state, (actor) => {
+    const face = actor.needleFace
     return Boolean(face?.reshaping && face.origin.source && face.origin.source !== 'personal')
   })
 }

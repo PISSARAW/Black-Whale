@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 962
+Fichiers : 963
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1100,6 +1100,10 @@ Fichiers : 962
 
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
+
+## `apps/web/src/lib/fighting/preparationResources.test.ts`
+
+- visible physical scenario resources survive network and replay validation > accepts the entire visible catalogue and materializes real bodies without granting Nen
 
 ## `apps/web/src/lib/fighting/presentation/presentation.test.ts`
 

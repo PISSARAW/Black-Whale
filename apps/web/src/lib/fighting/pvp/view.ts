@@ -36,6 +36,7 @@ const SIDE_FIELDS = new Set([
   'questioner',
   'asker',
   'carrier',
+  'captiveOf',
   'subject',
   'affected',
   'cohorts',

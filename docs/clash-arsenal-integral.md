@@ -1023,3 +1023,11 @@ direction abstraite par une feuille lisible et un corps rencontré. Le point
 est daté, les copies suivent leur support réel, et Texture Surprise peut cacher
 le diagramme. La commande fonctionne pour P1, P2, l’IA et les replays ; le On
 reste présent. Les autres écarts du tableau restent ouverts.
+
+## Corps et otages sélectionnables — ruleset 63
+
+Les [ressources physiques de scénario](./clash-ressources-physiques.md) et les
+commandes natives de contrôle des cadavres ne sont plus réservées aux scénarios
+écrits et à l’IA. Les cases de préparation, le PvP et les replays partagent leur
+catalogue ; le duel strict ne fournit aucun de ces corps. Le On est conservé.
+Les limites de copie, de prêt et les autres écarts restent dans le périmètre.

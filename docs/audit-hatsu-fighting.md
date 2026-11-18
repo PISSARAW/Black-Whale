@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-62`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-63`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -20,6 +20,9 @@ L’[interrogatoire libre par Dowsing](./clash-dowsing-interrogatoire.md) étend
 les questions vocales et le contrôle matériel de la main droite.
 La [localisation sur carte physique](./clash-dowsing-carte.md) utilise un vrai
 plan imprimé et un corps rencontré, avec lecture ponctuelle privée.
+Les [corps et otages de scénario](./clash-ressources-physiques.md) sont
+sélectionnables et partagés entre interface, PvP et replay ; les commandes
+natives de contrôle des cadavres sont accessibles au joueur.
 Les [ancrages de Bungee Gum sur plusieurs supports](./clash-hisoka-ancrages.md)
 ajoutent des connexions matérielles simultanées et leurs commandes indépendantes.
 Les [prothèses et leur apparence](./clash-hisoka-protheses.md) représentent les

@@ -2,7 +2,7 @@ import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
 import { performModelSelection } from './metamorphosenModels'
-import { performCorpseCommand } from './illumiCorpses'
+import { performCorpseCommand, corpseOptions } from './illumiCorpses'
 import { performMachiMaterial } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
 import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
@@ -195,6 +195,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
   return [
     consentOption(state, side),
     ...blackVoiceOptions(state, side),
+    ...corpseOptions(state, side),
     ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),

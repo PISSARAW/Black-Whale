@@ -169,10 +169,11 @@ function nextCommand(options: {
 }): ReplayCommand[] {
   const { tape, route, sent, tick } = options
   if (routeHitsBefore(route, sent) !== tape.contacts.length || sent >= route.moves.length) return []
-  if (waitingForComboSupport(tape.state, route, sent)) return []
   if (sent === 0 && route.kind === 'air' && tick < 27) return []
   const slot = route.moves[sent]
   const move = moveForSlot(route.fighter, slot)!
+  if (waitingForComboSupport(tape.state, route, { step: sent, startup: move.tuning.startup }))
+    return []
   if (!canStartFighterAttack(tape.state.player, move.kind, move.id)) return []
   return [
     {

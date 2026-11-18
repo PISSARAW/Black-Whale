@@ -17,6 +17,7 @@ import { manualChunks } from './manualChunks'
 import { bundleBudget } from './bundleBudget'
 import { DUEL_COMBO_FIGHTERS, tuneDuelComboProfile } from '../src/lib/fighting/duelComboProfiles'
 import { DUEL_COMBO_LESSONS } from '../src/lib/fighting/duelComboLessons'
+import { KAMEO_COMBO_LESSONS } from '../src/lib/fighting/kameos/comboLessons'
 import type { FighterMoveset } from '../src/lib/fighting/movesetTypes'
 import { EASTER_ROSTER_ONE } from '../src/lib/fighting/easterEggRosterOne'
 import { EASTER_ROSTER_TWO } from '../src/lib/fighting/easterEggRosterTwo'
@@ -224,14 +225,22 @@ describe('production bundle partitioning', () => {
   it('splits existing combo catalogues without changing lessons or forty-fighter tuning', async () => {
     const profiles = resolve('src/lib/fighting/duelComboProfiles.ts')
     const lessons = resolve('src/lib/fighting/duelComboLessons.ts')
+    const supports = resolve('src/lib/fighting/kameos/comboLessonCatalogue.ts')
     const built = await compile(
-      `export * from ${JSON.stringify(profiles)}\nexport { DUEL_COMBO_LESSONS } from ${JSON.stringify(lessons)}`,
+      `export * from ${JSON.stringify(profiles)}\nexport { DUEL_COMBO_LESSONS } from ${JSON.stringify(lessons)}\nexport { KAMEO_COMBO_LESSONS } from ${JSON.stringify(supports)}`,
     )
     const actual = await import(
       /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
     )
     expect(actual.DUEL_COMBO_FIGHTERS).toEqual(DUEL_COMBO_FIGHTERS)
     expect(actual.DUEL_COMBO_LESSONS).toEqual(DUEL_COMBO_LESSONS)
+    expect(actual.KAMEO_COMBO_LESSONS).toEqual(KAMEO_COMBO_LESSONS)
+    expect(actual.KAMEO_COMBO_LESSONS).toHaveLength(240)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-kameo-catalogues',
+      ),
+    ).toBe(true)
     for (const fighterId of DUEL_COMBO_FIGHTERS) {
       const moveset = {
         fighterId,

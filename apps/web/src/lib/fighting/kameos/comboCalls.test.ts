@@ -117,7 +117,7 @@ describe('six support lessons use real effects, costs and continuous contacts', 
           match.enqueue(state, { kind: 'move', side: 'opponent', action: 'light', input: 0 })
         }
         const input =
-          opening >= 0 && state.frame >= opening + 30
+          opening >= 0 && state.frame >= opening + 80
             ? school.input(state, EMPTY_INPUT)
             : EMPTY_INPUT
         state = match.advance(state, input, { dt: 1 / 60, opponentInput: EMPTY_INPUT })

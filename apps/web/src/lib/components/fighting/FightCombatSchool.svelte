@@ -96,7 +96,7 @@
     return route.moves
       .map((slot, step) => {
         const move = moveInputHint(moveForSlot(route.fighter, slot)!.input, $bindings)
-        if (!route.kameo || step + 1 !== route.kameo.afterStep) return move
+        if (!route.kameo || step + 1 !== Math.max(1, route.kameo.afterStep)) return move
         const direction =
           route.kameo.call === 'forward' ? '→' : route.kameo.call === 'back' ? '←' : ''
         return `${move} (+ ${direction} ${$bindings.playerKameo})`

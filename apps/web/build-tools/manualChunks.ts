@@ -42,6 +42,8 @@ function clashChunkName(id: string): string | undefined {
   if (/\/fighting\/arenaTechnique(?:Types|sFirst|sSecond)\.ts$/.test(id))
     return 'clash-arena-catalogues'
 
+  if (/\/fighting\/kameos\/(?:catalogue|comboLessonCatalogue|comboRosterRoutes)\.ts$/.test(id))
+    return 'clash-kameo-catalogues'
   if (/\/fighting\/duelCombo(?:\w*(?:Profiles|Lessons)|Grammar|DerivedGrammar)\.ts$/.test(id))
     return 'clash-combo-catalogues'
   if (

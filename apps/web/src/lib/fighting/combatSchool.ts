@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import { combatRoute, combatRoutesFor, type CombatFighter } from './combatRoutes'
+import { combatRoute, combatRoutesFor, type CombatFighter, type CombatRoute } from './combatRoutes'
 import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './combatRouteFight'
 import {
   initialCombatProgress,
@@ -162,11 +162,12 @@ function demonstrationCommand(
 ): ReplayCommand | null {
   if (!progress.demo || sentStep === progress.step) return null
   const route = combatRoute(progress.id)
-  if (progress.step >= route.moves.length || waitingForComboSupport(state, route, progress.step))
-    return null
-  if (progress.step === 0 && route.kind === 'air' && state.frame < 27) return null
+  if (progress.step >= route.moves.length) return null
+  if (!demoOpeningReady(state, route, progress.step)) return null
   const slot = route.moves[progress.step]
   const move = moveForSlot(route.fighter, slot)!
+  if (waitingForComboSupport(state, route, { step: progress.step, startup: move.tuning.startup }))
+    return null
   if (
     state.player.attack?.moveId === move.id ||
     !canStartFighterAttack(state.player, move.kind, move.id)
@@ -178,4 +179,8 @@ function demonstrationCommand(
     action: combatRouteAction(slot),
     input: packReplayInput(combatRouteInput(slot, state.player.facing)),
   }
+}
+
+function demoOpeningReady(state: FightState, route: CombatRoute, step: number) {
+  return step !== 0 || route.kind !== 'air' || state.frame >= 27
 }

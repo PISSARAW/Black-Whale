@@ -130,10 +130,11 @@ function supportProgress(
   }
 }
 function routeCue(progress: CombatProgress, state: FightState, route: CombatRoute): CombatCue {
-  if (progress.step === route.moves.length || waitingForComboSupport(state, route, progress.step))
-    return 'support-wait'
+  if (progress.step === route.moves.length) return 'support-wait'
   if (progress.step === 0) return 'ready'
   const move = moveForSlot(route.fighter, route.moves[progress.step])!
+  if (waitingForComboSupport(state, route, { step: progress.step, startup: move.tuning.startup }))
+    return 'support-wait'
   if (state.player.attack?.moveId === move.id)
     return routeStepHits(route, progress.step) > 1 ? 'volley' : 'wait'
   return continuationCue(progress, state, route)

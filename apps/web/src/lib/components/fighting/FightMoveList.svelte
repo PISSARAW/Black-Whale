@@ -82,8 +82,8 @@
       <p>
         <kbd>{touch ? (language === 'fr' ? 'Kaméo' : 'Kameo') : hints.playerKameo}</kbd> · {language ===
         'fr'
-          ? 'Appelle après une touche et continue ton combo. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
-          : 'Call after a hit and keep attacking. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}
+          ? 'Selon l’exemple, appelle avec la première attaque ou après une touche. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
+          : 'Follow the example: call with the opening attack or after a hit. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}
       </p>
       <p>
         {language === 'fr'

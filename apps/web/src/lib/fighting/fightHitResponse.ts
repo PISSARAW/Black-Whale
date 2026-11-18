@@ -2,6 +2,7 @@ import { addPoses, scalePose, type FightPose } from './fightPose'
 import { rosterContactMotion } from './rosterHitReaction'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import { anatomicalContactZone } from './fightSurfaceContact'
+import { directionalImpulse, impactTwist } from './fightDirectionalImpulse'
 import { fightPhysicalProfile, type FightPhysicalProfile } from './fightPhysicalProfile'
 import type { FighterId, FightNenZone, FightState } from './types'
 
@@ -37,9 +38,9 @@ export function physicalHitAtContact(
     duration: Math.max(1, victim.hitStun),
     victim: victim.id,
     zone: anatomicalContactZone(attacker, victim, hit.zone),
-    force: heavy * power * profile.resistance,
+    force: heavy * power * profile.resistance * motion.weight,
     profile,
-    twist: ['hook', 'backhand', 'slash', 'spin', 'kick'].includes(motion.shape) ? 1 : -0.4,
+    twist: impactTwist(attacker, motion.shape),
     crush: motion.shape === 'hammer' || motion.shape === 'dive',
     rising: motion.shape === 'uppercut',
     carry: prior ? residualBalance(physicalHitPose(prior.hit, prior.progress)) : undefined,
@@ -49,16 +50,17 @@ export function physicalHitAtContact(
 /** Local deformation leads the chest; the pelvis and catching step follow after hitstop. */
 export function physicalHitPose(hit: PhysicalHit, progress: number): FightPose {
   const age = progress * hit.duration
-  const settle = smooth((progress - 0.55) / 0.45)
+  const settle = smooth((progress - 0.68) / 0.32)
   const impulse = hit.force * (1 - settle * 0.82)
-  const local = 0.8 + 0.35 * Math.sin(Math.min(1, age / 5) * Math.PI)
-  const chest = 0.55 + 0.45 * smooth(age / 3)
-  const pelvis = 0.15 + 0.85 * smooth(age / 6)
+  const local = 0.8 + 0.2 * smooth(age / 2)
+  const chest = 0.3 + 0.7 * smooth(age / 4)
+  const pelvis = 0.08 + 0.92 * smooth((age - 2) / 7)
   return addPoses(
     scalePose(hit.carry ?? {}, 1 - smooth(age / 8)),
     scalePose(localReaction(hit), impulse * local),
     scalePose(chestReaction(hit), impulse * chest),
     scalePose(catchingStep(hit, age), impulse * pelvis),
+    scalePose(directionalImpulse(hit, age), 1 - settle * 0.82),
   )
 }
 

@@ -1,3 +1,4 @@
+import { PHINKS_IMPACT_EVENT, PHINKS_IMPACT_FRAMES } from './phinksAnimation'
 import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, ruleValue, rig } from './cinematicRules'
 import type { CameraAnchor, CameraDetail, CameraPacing } from './cinematicTypes'
@@ -12,6 +13,7 @@ export function cameraDuration(
   duration: number | undefined,
   pacing: CameraPacing,
 ) {
+  if (detail.eventId === PHINKS_IMPACT_EVENT) return PHINKS_IMPACT_FRAMES
   const kurapika = kurapikaCameraDuration(detail)
   if (kurapika !== null) return kurapika
   const chrollo = chrolloCameraDuration(detail)
@@ -75,6 +77,7 @@ export function cameraContinuation(detail: CameraDetail): CameraDetail {
   }
 }
 export function cameraDwell(detail: CameraDetail) {
+  if (detail.eventId === PHINKS_IMPACT_EVENT) return 24
   if (kurapikaCameraDuration(detail) !== null) return 24
   if (chrolloCameraDuration(detail) !== null) return 24
   if (AWAKENINGS.has(detail.kind)) return 90

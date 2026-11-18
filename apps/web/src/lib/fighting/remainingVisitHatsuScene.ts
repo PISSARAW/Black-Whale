@@ -14,6 +14,8 @@ import { createPassageAccentScene } from './passageAccentScene'
 import { createPerceptionAccentScene } from './perceptionAccentScene'
 import { createSupportHatsuScene } from './supportHatsuScene'
 import { createPerformanceHatsuScene } from './performanceHatsuScene'
+import { createSweetHomeAccentScene } from './sweetHomeAccentScene'
+import { createPhinksAccentScene } from './phinksAccentScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 
 export function createRemainingVisitHatsuScene(options: EffectSceneOptions): FighterEffectScene {
@@ -34,6 +36,8 @@ export function createRemainingVisitHatsuScene(options: EffectSceneOptions): Fig
     createPerceptionAccentScene,
     createSupportHatsuScene,
     createPerformanceHatsuScene,
+    createSweetHomeAccentScene,
+    createPhinksAccentScene,
   ].map((create) => create(options))
   return {
     sync(state, seconds) {

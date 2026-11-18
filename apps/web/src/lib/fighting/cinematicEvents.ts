@@ -1,3 +1,4 @@
+import { phinksImpactEvents } from './phinksCameraPresentation'
 import { moveById } from './movesets'
 import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, point, rig, ruleChanged, ruleEvent } from './cinematicRules'
@@ -125,7 +126,7 @@ export function cinematicEvents(
     ...nenCues(state, before),
     ...personalEvents(state, before, after),
     ...cinematicWorldEvents(state, before),
-    ...impactEvents(state, before),
+    ...phinksImpactEvents(state, before, impactEvents(state, before)),
   ]
   if (state.phase === 'finished' && before.phase === 'fighting')
     events.push({

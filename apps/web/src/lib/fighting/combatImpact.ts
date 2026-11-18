@@ -1,3 +1,4 @@
+import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
 import { catchBungeeObject } from './hisokaCatch'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
@@ -56,9 +57,10 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
   )
   if (state.catsName || state.phase !== 'fighting') return state
   const trade = canTrade(state)
-  let next = resolveAttack(state, 'player')
+  let next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
   if (trade) next = resolveTrade(state, next)
-  else if (next.phase === 'fighting') next = resolveAttack(next, 'opponent')
+  else if (next.phase === 'fighting')
+    next = recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
   return resolveFightOutcome(projectiles.reduce(resolveProjectileHit, next))
 }
 
@@ -401,7 +403,7 @@ function finishAfterImpact(
 }
 
 function resolveTrade(original: FightState, first: FightState): FightState {
-  const second = resolveAttack(original, 'opponent')
+  const second = recordCyclotronContact(original, resolveAttack(original, 'opponent'), 'opponent')
   if (first === original || second === original) return first
   const traded: FightState = {
     ...original,
@@ -416,6 +418,7 @@ function resolveTrade(original: FightState, first: FightState): FightState {
       outgoing: second.opponent,
     }),
     ...tradeGumState(original, first, second),
+    ...mergeCyclotronContacts(first, second),
     score: tradeTotals({
       original: original.score,
       first: first.score,

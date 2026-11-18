@@ -138,6 +138,12 @@ restent en type 1, sur les cibles réelles et les étapes effectivement confirm�
 L’[interprétation de Melody, l’écriture de Basho et l’observation de Rihan](./PERFORMANCE_PRESENTATION.md)
 restent en type 1 : flûte réelle, tracé progressif et concentration privée.
 
+L’[absorption et le transfert de blessures de Terebellum](./SWEET_HOME_PRESENTATION.md)
+restent en type 1 sur les mains et le réceptacle effectivement concernés.
+
+Les [rotations complètes de Phinks](./PHINKS_PRESENTATION.md) restent en type 1 ;
+seul l'impact confirmé du poing chargé déclenche un plan de type 2 de 1,4 seconde.
+
 L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.md)
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque

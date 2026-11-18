@@ -1,3 +1,4 @@
+import { cyclotronContactKeys } from './phinksAnimation'
 import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, ruleValue } from './cinematicRules'
 import type { FightState } from './types'
@@ -9,6 +10,7 @@ export function cameraSnapshot(state: FightState) {
     frame: state.frame,
     phase: state.phase,
     impact: state.impact?.sequence,
+    cyclotronContacts: cyclotronContactKeys(state),
     actors: (['player', 'opponent'] as const).map((side) => {
       const f = state[side]
       const c = actorContext(state, side)
@@ -19,6 +21,7 @@ export function cameraSnapshot(state: FightState) {
         health: f.health,
         move: f.attack?.moveId,
         attackFrame: f.attack?.frame ?? -1,
+        cyclotronTurns: f.attack?.cyclotronTurns ?? 0,
         kind: f.attack?.kind,
         source: f.attack?.hatsuSource,
         mode: f.nen.mode,

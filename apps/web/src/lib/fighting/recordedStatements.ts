@@ -38,6 +38,7 @@ export function speakDeclaredFact(
   return speakPaperWords(state, side, {
     text: dowsingAnswerText(state[side], question, lie),
     statementIntent: lie,
+    statementFact: question,
   })
 }
 

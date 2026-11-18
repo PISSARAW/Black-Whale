@@ -3,6 +3,8 @@ import { captureLittleEyeSpeech } from './littleEyeSenses'
 import { captureSecretWindowSpeech } from './secretWindowSpeech'
 import { captureDeviceSpeech } from './deviceRecording'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
+import { resolveJudgmentReply } from './judgmentInquirySpeech'
+import type { SpokenMessage } from './judgmentInquiryTypes'
 import {
   speechRecipient,
   recipientBody,
@@ -32,7 +34,7 @@ export function paperListening(state: FightState, owner: FightSide): boolean {
 export function speakPaperWords(
   state: FightState,
   speaker: FightSide,
-  message: string | { text: string; recipient?: string; statementIntent?: boolean } = 'I am here.',
+  message: string | SpokenMessage = 'I am here.',
 ): FightState {
   const { text, target, intent } = normalizeSpokenWords(message)
   if (!text) return state
@@ -59,7 +61,15 @@ export function speakPaperWords(
   if (!recipient || !recipientHears(state, speaker, recipient)) return next
   next = recordHeardWords(next, recipient, { speaker, text })
   const actualRecipient = recipientBody(state, recipient)
-  return resolveJudgmentCommunication(next, speaker, actualRecipient.nenOwner ?? actualRecipient.id)
+  next = resolveJudgmentCommunication(next, speaker, actualRecipient.nenOwner ?? actualRecipient.id)
+  return resolveJudgmentReply(next, speaker, {
+    recipient,
+    message: declaredMessage(message, text),
+  })
+}
+
+function declaredMessage(message: string | SpokenMessage, text: string): SpokenMessage {
+  return typeof message === 'string' ? { text } : { ...message, text }
 }
 
 export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
@@ -76,9 +86,7 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
   )
 }
 
-function normalizeSpokenWords(
-  message: string | { text: string; recipient?: string; statementIntent?: boolean },
-) {
+function normalizeSpokenWords(message: string | SpokenMessage) {
   return typeof message === 'string'
     ? { text: message.trim(), target: undefined, intent: undefined }
     : { text: message.text.trim(), target: message.recipient, intent: message.statementIntent }

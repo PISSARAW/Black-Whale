@@ -3,6 +3,7 @@ import type { JudgmentClause } from './judgmentRules'
 import type { ArcadeFighter } from './types'
 
 const LABELS: Record<JudgmentClause, [string, string]> = {
+  'truthful-answers': ['Réponses sincères obligatoires', 'Truthful answers required'],
   zetsu: ['Nen interdit', 'Nen prohibited'],
   'no-troupe-contact': [
     'Communication avec la Brigade interdite',

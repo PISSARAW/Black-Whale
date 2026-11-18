@@ -66,6 +66,7 @@ function answer(state: FightState, side: FightSide, choice?: string): FightState
   const spoken = speakPaperWords(state, side, {
     text: dowsingAnswerText(state[side], prompt.question, lie),
     statementIntent: lie,
+    statementFact: prompt.question,
   })
   if (spoken.phase !== 'fighting' || spoken.catsName || spoken[side].health <= 0) return spoken
   const cleared = {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightDolphinPeople from './FightDolphinPeople.svelte'
+  import FightJudgmentInterview from './FightJudgmentInterview.svelte'
   import FightLittleEyeScreen from './FightLittleEyeScreen.svelte'
   import { dowsingIndication } from '$lib/fighting/dowsingPresentation'
   import {
@@ -118,6 +119,7 @@
         {/each}
       {/if}
       <FightDolphinPeople {state} {side} {language} />
+      <FightJudgmentInterview {state} {side} {language} {paused} {onUse} />
       <FightLittleEyeScreen screen={state[side].littleEyeScreen} {language} />
       {#if state[side].devicePlayback}
         <strong

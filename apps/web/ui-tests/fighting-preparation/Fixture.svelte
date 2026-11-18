@@ -4,6 +4,7 @@
   import FightSecretWindowStatus from '$lib/components/fighting/FightSecretWindowStatus.svelte'
   import { speakPaperWords } from '$lib/fighting/kallutoListening'
   import { performArsenalAction } from '$lib/fighting/arsenalExecution'
+  import { performArsenalCommand } from '$lib/fighting/retrospectiveArsenal'
   import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
   import FightPreparationSetup from '$lib/components/fighting/FightPreparationSetup.svelte'
@@ -134,6 +135,27 @@
     input = { ...EMPTY_INPUT }
     await tick()
   }
+  export async function prepareJudgmentInterview() {
+    player = 'kurapika'
+    opponent = 'hisoka'
+    reset(createFightEnvironment())
+    state = {
+      ...state,
+      player: { ...state.player, x: 42, aura: 100 },
+      opponent: { ...state.opponent, x: 48 },
+    }
+    state = performArsenalCommand(state, 'player', { action: 'judgment-preset', target: 'answers' })
+    state = toggleEmperorTime(state, 'player')
+    state = performAuraAttack({
+      state,
+      side: 'player',
+      kind: 'special',
+      moveId: 'kurapika:finisher',
+      auraCharged: false,
+    })
+    for (let index = 0; index < 120; index++) advanceFrame()
+    await tick()
+  }
   export function snapshot() {
     return {
       battlefield: state.battlefield,
@@ -143,6 +165,8 @@
       nocked: state.player.hatsuEffects.arrowNocked,
       listening: state.player.secretWindowListening,
       archive: state.player.hatsuEffects.baton?.musseArchive,
+      judgment: state.opponent.judgmentChain,
+      playerHeard: state.player.heardWords,
     }
   }
 </script>
@@ -181,7 +205,7 @@
     >
     <p>{presentation.hint}</p>
     <FightSecretWindowStatus {state} side="player" language="fr" />
-    {#if ['musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if ['kurapika', 'musse', 'benjamin'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

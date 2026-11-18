@@ -1,4 +1,5 @@
 import { littleEyeAi } from './littleEyeAi'
+import { judgmentInquiryAi } from './judgmentInquiryAi'
 import { dolphinLoanAi } from './dolphinAi'
 import { blackVoiceAi } from './blackVoiceAi'
 import { bashoArsenalAi } from './bashoArsenalAi'
@@ -43,6 +44,7 @@ function utilityArsenalAi(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   return (
+    judgmentInquiryAi(state) ??
     littleEyeAi(state) ??
     blackVoiceAi(state) ??
     bashoArsenalAi(state, perform) ??

@@ -102,6 +102,8 @@ export const ARSENAL_ACTION_IDS = [
   'judgment-preset',
   'judgment-release',
   'judgment-call',
+  'judgment-ask',
+  'judgment-answer',
   'dolphin-lend',
   'dolphin-use',
   'dolphin-move',

@@ -864,3 +864,35 @@ et de [Shimesaba](https://note.com/shimesaba2525/n/n929d34dc3981?hl=en), avec le
 contexte de la pose et de l’héritage au chapitre 373.
 Ruleset : **clash-combat-38**. Le On est conservé. L’audit des quarante arsenaux
 reste ouvert ; cette étape ne certifie pas un achèvement à 100 %.
+
+## Judgment Chain : clause de réponse sincère
+
+La clause utilisée contre Uvogin au chapitre 84 est sélectionnable avant
+l’implantation réelle dans le cœur. Elle ne force pas Zetsu. Après la pose,
+l’utilisateur peut prononcer une question à portée d’audition ; une personne
+qui ne l’a pas entendue ne reçoit pas une question par télépathie. Le membre
+physique qui a posé la chaîne reste identifié.
+
+Les faits personnels déjà représentés — identité, état de Nen et emploi de In —
+ont des réponses sincères ou mensongères calculées depuis le propre état du
+répondant. Les questions et réponses rédigées passent également par la voix
+réelle. Pour ces réponses libres, le joueur déclare explicitement son intention
+consciente : aucune analyse de texte ne prétend établir une vérité inconnue du
+scénario. La chaîne sanctionne le mensonge conscient ou le refus explicite de
+répondre. Elle n’invente ni délai fatal au silence ni réponse obligatoire d’une
+personne inconsciente ou manipulée.
+
+Les paroles empruntent le circuit commun d’audition, des enregistrements, des
+hiboux et de Dowsing. Une réponse au même fait produite par le circuit commun
+reste donc soumise à la clause ; une déclaration sans rapport ne devient pas
+automatiquement une réponse. L’IA sait poser la question représentée et répondre
+sincèrement aux faits connus, sans fabriquer de connaissance pour une question
+libre. Les commandes, intentions et clauses se conservent dans les snapshots et
+replays ; le PvP les exécute auprès de l’arbitre.
+
+La clause implantée reste active après l’arrêt d’Emperor Time et sous le sceau
+du On ; cela n’autorise aucune nouvelle implantation sans les conditions du Nen.
+Références : [chapitre 84](https://hunterxhunter.fandom.com/wiki/Chapter_84) et
+[description officielle de Judgment Chain](https://www.ntv.co.jp/hunterhunter/dictionary/index.html).
+Ruleset : **clash-combat-39**. Le On est conservé ; les clauses de secret et de
+libération d’otages restent à achever, ainsi que les autres écarts du relevé.

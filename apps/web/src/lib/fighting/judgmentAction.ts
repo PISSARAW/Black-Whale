@@ -30,7 +30,7 @@ export function declareJudgment(state: FightState, side: FightSide, moveId?: str
   }
 }
 export function implantJudgment(state: FightState, side: FightSide, target: FightSide): FightState {
-  const seal = createJudgmentSeal(state[side], side)
+  const seal = createJudgmentSeal(state[side], side, state.teamMatch?.seats[side].active ?? 0)
   const forbidsNen = (seal.clauses ?? [seal.rule]).includes('zetsu')
   const body = forbidsNen ? forceZetsu(state[target]) : state[target]
   return {
@@ -107,6 +107,7 @@ function judgmentCommandReady(
   return performJudgmentCommand(state, side, command) !== state
 }
 const PRESET_NAMES: Record<JudgmentPreset, [string, string]> = {
+  answers: ['Répondre sincèrement à mes questions', 'Answer my questions truthfully'],
   nen: ['Ne pas utiliser de Nen', 'Do not use Nen'],
   contact: ['Ne pas communiquer avec la Brigade', 'Do not contact the Troupe'],
   'nen-contact': [
@@ -159,13 +160,16 @@ export function judgmentAiPreset(state: FightState): FightState | null {
   const actor = state.opponent
   if (actor.id !== 'kurapika' || !actor.kurapika?.emperorTime || state.player.judgmentChain)
     return null
-  const desired = opposingTroupeReserve(state) ? 'nen-contact' : 'nen'
+  const desired = opposingTroupeReserve(state) ? 'nen-contact' : ordinaryAiPreset(state)
   if (actor.judgmentPreset === desired) return null
   const next = performJudgmentCommand(state, 'opponent', {
     action: 'judgment-preset',
     target: desired,
   })
   return next === state ? null : next
+}
+function ordinaryAiPreset(state: FightState): JudgmentPreset {
+  return state.rng % 3 === 1 ? 'answers' : 'nen'
 }
 function opposingTroupeReserve(state: FightState): boolean {
   const seat = state.teamMatch?.seats.player

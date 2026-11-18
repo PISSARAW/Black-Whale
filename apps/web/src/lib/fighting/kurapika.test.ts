@@ -312,6 +312,7 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const judged = advance(cast(active, 'finisher'), 70)
     expect(judged.opponent.judgmentChain).toEqual({
       owner: 'player',
+      ownerMember: 0,
       rule: 'zetsu',
     })
     expect(judged.opponent.health).toBe(judged.opponent.maxHealth)

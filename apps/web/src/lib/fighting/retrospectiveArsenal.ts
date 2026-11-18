@@ -1,4 +1,6 @@
 import { personDolphinOptions } from './dolphinPeopleOptions'
+import { judgmentTargetLimit } from './judgmentInquiryTypes'
+import { judgmentInquiryOptions, performJudgmentInquiry } from './judgmentInquiryAction'
 import { musseArchiveOptions, performMusseArchiveCommand } from './benjaminMusseReplay'
 import { recordedWindowOptions, performRecordedWindowCommand } from './benjaminMusseRecorded'
 import { secretWindowOptions, performSecretWindowCommand } from './secretWindowCommands'
@@ -41,7 +43,8 @@ export function validArsenalCommand(value: unknown): value is ArsenalCommand {
   if (command.loan !== undefined && typeof command.loan !== 'boolean') return false
   return (
     command.target === undefined ||
-    (typeof command.target === 'string' && command.target.length <= 100)
+    (typeof command.target === 'string' &&
+      command.target.length <= judgmentTargetLimit(command.action as string))
   )
 }
 
@@ -85,6 +88,8 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['judgment-ask', performJudgmentInquiry],
+  ['judgment-answer', performJudgmentInquiry],
   ['window-archive', performMusseArchiveCommand],
   ['window-recorded', performRecordedWindowCommand],
   ['window-', performSecretWindowCommand],
@@ -113,6 +118,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...judgmentInquiryOptions(state, side),
     ...musseArchiveOptions(state, side),
     ...recordedWindowOptions(state, side),
     ...secretWindowOptions(state, side),

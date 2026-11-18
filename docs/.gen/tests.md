@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 843
+Fichiers : 844
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -725,6 +725,10 @@ Fichiers : 843
 
 - Judgment Chain declares immutable independent clauses before heart contact > allows a communication-only clause without imposing Zetsu or blocking voluntary Nen
 - a no-contact clause follows actual initiated communications, not proximity or disguises > allows speech to Kurapika, then kills on an actual greeting received by a Troupe teammate at the gate
+
+## `apps/web/src/lib/fighting/judgmentInquiry.test.ts`
+
+- Judgment Chain’s demonstrated truthful-answer clause (chapter 84) > is declared before real implantation, does not impose Zetsu, and accepts a voluntary truthful answer
 
 ## `apps/web/src/lib/fighting/kalluto.test.ts`
 

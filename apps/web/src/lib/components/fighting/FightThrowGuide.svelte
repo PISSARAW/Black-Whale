@@ -32,6 +32,11 @@
         ? 'La super révèle le futur manqué si une prévision est déjà en phase de divergence.'
         : 'The super reveals the missed future when an existing forecast is diverging.'}
     </p>{/if}
+  {#if fighterId === 'bonolenov'}<p>
+      {language === 'fr'
+        ? 'La lance participe à la super si Prologue est déjà préparé. Sinon, Bonolenov exécute Le dernier accord à mains nues.'
+        : 'The spear assists the super when Prologue is already prepared. Otherwise Bonolenov performs The final chord barehanded.'}
+    </p>{/if}
 </aside>
 
 <style>

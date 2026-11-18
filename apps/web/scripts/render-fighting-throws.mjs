@@ -34,7 +34,9 @@ function ffmpeg(args) {
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
   await page.waitForSelector('.fight-scene.ready')
-  const ids = process.env.THROW_ROSTER_BATCH === 'second'
+  const ids = process.env.THROW_ROSTER_BATCH === 'third'
+    ? ['franklin', 'machi', 'illumi', 'kalluto', 'bonolenov']
+    : process.env.THROW_ROSTER_BATCH === 'second'
     ? ['feitan', 'saiyu', 'theta', 'biscuit', 'phinks']
     : ['kurapika', 'hisoka', 'chrollo', 'benjamin', 'tserriednich']
   const selected = process.env.THROW_RENDER_IDS?.split(',') ?? ids
@@ -44,7 +46,7 @@ try {
       const frames = path.join(output, name)
       await mkdir(frames, { recursive: true })
       await page.evaluate((options) => window.throwFixture.reset(options), {
-        id, powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
+        id, powered, prologue: id === 'bonolenov' && powered, trueForm: id === 'biscuit' && powered, opponentId: id === 'hisoka' ? 'kurapika' : 'hisoka',
       })
       await page.waitForTimeout(120)
       const count = powered ? 36 : 24

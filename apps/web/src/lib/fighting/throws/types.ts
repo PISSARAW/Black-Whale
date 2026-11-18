@@ -21,6 +21,16 @@ export type ThrowPerformanceId =
   | 'biscuit-correction'
   | 'phinks-wringer'
   | 'phinks-reverse'
+  | 'franklin-cargo'
+  | 'franklin-unload'
+  | 'machi-cross-stitch'
+  | 'machi-spool'
+  | 'illumi-joint'
+  | 'illumi-puppet'
+  | 'kalluto-screen'
+  | 'kalluto-bow'
+  | 'bonolenov-waltz'
+  | 'bonolenov-prologue'
 
 export interface ThrowBeat {
   at: number
@@ -46,6 +56,11 @@ export interface ThrowPerformance {
     | 'bodyguard'
     | 'shingen'
     | 'powerhouse'
+    | 'giant'
+    | 'thread'
+    | 'needle'
+    | 'paper'
+    | 'music'
   grip?: 'both' | 'prop' | 'scissors' | 'waist'
   detail?: { yaw: number; anchor: 'hand' | 'head' | 'prop'; victim: 'wrist' | 'knee' | 'torso' }
   rightHand?: boolean

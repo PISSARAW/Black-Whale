@@ -27,7 +27,10 @@
       ? 'Double Face'
       : frame?.performance === 'tserriednich-future' && !frame.future
         ? 'Composition brisée'
-        : name
+        : frame?.performance === 'bonolenov-prologue' &&
+            !state[frame.attacker].battleCantabile?.prologue
+          ? 'Le dernier accord'
+          : name
 </script>
 
 {#if active && frame}

@@ -45,12 +45,21 @@ const pairs = {
   theta: ['theta-disarm', 'theta-blind-spot'],
   biscuit: ['biscuit-lesson', 'biscuit-correction'],
   phinks: ['phinks-wringer', 'phinks-reverse'],
+  franklin: ['franklin-cargo', 'franklin-unload'],
+  machi: ['machi-cross-stitch', 'machi-spool'],
+  illumi: ['illumi-joint', 'illumi-puppet'],
+  kalluto: ['kalluto-screen', 'kalluto-bow'],
+  bonolenov: ['bonolenov-waltz', 'bonolenov-prologue'],
 }
 try {
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`)
   await page.waitForSelector('.fight-scene.ready')
   const selected = Object.entries(pairs)
-    .filter((_, index) => process.env.THROW_ROSTER_BATCH !== 'second' || index >= 5)
+    .filter((_, index) => {
+      if (process.env.THROW_ROSTER_BATCH === 'second') return index >= 5 && index < 10
+      if (process.env.THROW_ROSTER_BATCH === 'third') return index >= 10
+      return true
+    })
     .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))
   const entries = process.argv.includes('--ko-only') ? [] : selected
   for (const [id, variants] of entries) {
@@ -74,6 +83,10 @@ try {
         if (phase === 'turn' && powered && ['feitan', 'saiyu'].includes(id))
           assert.ok(value.audit.origins[side === 'player' ? 0 : 1][1] > 0.4)
         if (phase === 'turn' && powered && id === 'feitan') assert.ok(value.audit.scissorsGap < 0.3, `Scissor contact error: ${value.audit.scissorsGap}`)
+        if (phase === 'turn' && ['machi', 'kalluto', 'illumi'].includes(id)) {
+          const effect = { machi: 'thread', kalluto: 'paper', illumi: 'needles' }[id]
+          assert.ok(value.audit.effects.includes(`throw-signature:${effect}`))
+        }
         if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
         await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
         samples.push({ id, side, powered, phase, audit: value.audit })
@@ -93,6 +106,21 @@ try {
     assert.equal(adult.audit.performance, 'biscuit-correction')
     await page.screenshot({ path: path.join(output, `biscuit-true-form-${side}.png`) })
   }
+  for (const side of ['player', 'opponent']) {
+    await reset({ id: 'bonolenov', side, powered: true, prologue: true })
+    const armed = await seek(9)
+    assert.equal(armed.audit.performance, 'bonolenov-prologue')
+    assert.equal(armed.audit.equipment.spear, true)
+    await page.screenshot({ path: path.join(output, `bonolenov-prologue-${side}.png`) })
+  }
+  await reset({ id: 'bonolenov', powered: true })
+  assert.equal((await seek(9)).audit.equipment.spear, false)
+  await reset({ id: 'machi', sealed: true })
+  assert.equal((await seek(9)).audit.performance, null)
+  await reset({ id: 'kalluto', confiscated: true })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:paper'))
+  await reset({ id: 'illumi', noNeedles: true })
+  assert.ok(!(await seek(9)).audit.effects.includes('throw-signature:needles'))
   await reset({ id: 'feitan', confiscated: true })
   assert.equal((await seek(9)).audit.equipment.umbrella, false)
   await reset({ id: 'saiyu', sealed: true })

@@ -2,7 +2,13 @@
   import { onDestroy } from 'svelte'
   import { Box3, Scene, Vector3, type PerspectiveCamera } from 'three'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
-  import { beginFight, createFight, performMove, performThrow, tickFight } from '$lib/fighting/engine'
+  import {
+    beginFight,
+    createFight,
+    performMove,
+    performThrow,
+    tickFight,
+  } from '$lib/fighting/engine'
   import { confirmedThrow } from '$lib/fighting/throwCinematic'
   import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from '$lib/fighting/types'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
@@ -24,7 +30,14 @@
     origins: number[][]
     finite: boolean
     scissorsGap: number | null
-    equipment: { staff: boolean; staffBottom: number | null; umbrella: boolean; holstered: boolean; trueForm: boolean }
+    equipment: {
+      staff: boolean
+      staffBottom: number | null
+      umbrella: boolean
+      holstered: boolean
+      trueForm: boolean
+      spear: boolean
+    }
   } | null = null
   const previous = Scene.prototype.onAfterRender
   Scene.prototype.onAfterRender = function (...args) {
@@ -85,6 +98,7 @@
       umbrella: Boolean(umbrella && visible(umbrella)),
       holstered: Boolean(gun?.parent?.getObjectByName('fight-chest')),
       trueForm: Boolean(scene.getObjectByName('biscuit-true-form')),
+      spear: Boolean(scene.getObjectByName('bonolenov-prologue-spear')?.visible),
     }
   }
   function scissorsGap(rigs: AnimatedHuman[]) {
@@ -92,11 +106,13 @@
     if (!rigs[side] || !rigs[1 - side]) return null
     const centre = rigs[1 - side].head.getWorldPosition(new Vector3())
     centre.y -= 0.2
-    return Math.max(...rigs[side].knees.map((knee, index) => {
-      const goal = centre.clone()
-      goal.z += index === 0 ? -0.18 : 0.18
-      return knee.children[1].getWorldPosition(new Vector3()).distanceTo(goal)
-    }))
+    return Math.max(
+      ...rigs[side].knees.map((knee, index) => {
+        const goal = centre.clone()
+        goal.z += index === 0 ? -0.18 : 0.18
+        return knee.children[1].getWorldPosition(new Vector3()).distanceTo(goal)
+      }),
+    )
   }
   function reset(
     options: {
@@ -110,13 +126,20 @@
       freezeKO?: boolean
       trueForm?: boolean
       confiscated?: boolean
+      prologue?: boolean
+      noNeedles?: boolean
       sealed?: boolean
     } = {},
   ) {
     const side = options.side ?? 'player'
     const id = options.id ?? 'hisoka'
     const opponentId = options.opponentId ?? 'kurapika'
-    const base = beginFight(createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, { mode: 'versus-local', formatId: 'knockout' }))
+    const base = beginFight(
+      createFight(side === 'player' ? id : opponentId, side === 'opponent' ? id : opponentId, {
+        mode: 'versus-local',
+        formatId: 'knockout',
+      }),
+    )
     const victim = side === 'player' ? 'opponent' : 'player'
     let current: FightState = {
       ...base,
@@ -131,8 +154,25 @@
         throwTechFrames: options.tech ? 8 : 0,
       },
     }
+    if (options.prologue) {
+      current = performMove({ state: current, side, action: 'special' })
+      for (let i = 0; i < 61; i++)
+        current = tickFight(current, EMPTY_INPUT, {
+          dt: 1 / 60,
+          opponentInput: EMPTY_INPUT,
+          ai: false,
+        })
+    }
+    if (options.noNeedles) current = { ...current, [side]: { ...current[side], equipment: [] } }
     if (options.trueForm) current = performMove({ state: current, side, action: 'special' })
-    current = { ...current, [side]: { ...current[side], weaponsConfiscated: Boolean(options.confiscated), hatsuEffects: { ...current[side].hatsuEffects, hatsuStolen: options.sealed ? 1 : 0 } } }
+    current = {
+      ...current,
+      [side]: {
+        ...current[side],
+        weaponsConfiscated: Boolean(options.confiscated),
+        hatsuEffects: { ...current[side].hatsuEffects, hatsuStolen: options.sealed ? 1 : 0 },
+      },
+    }
     current = performThrow(current, side, { ...EMPTY_INPUT, aura: Boolean(options.powered) })
     tape = [current]
     for (let i = 0; i < 180; i++) {
@@ -193,7 +233,9 @@
     margin: 0;
     background: #05070b;
   }
-  :global(.fight-audio) { display: none !important; }
+  :global(.fight-audio) {
+    display: none !important;
+  }
   :global(.fight-stage) {
     height: 100dvh;
   }

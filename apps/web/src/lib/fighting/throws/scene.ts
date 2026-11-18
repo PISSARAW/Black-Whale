@@ -2,6 +2,8 @@ import { createThrowBindings } from './bindings'
 import { alignThrowGrip, alignThrowPuppet } from './contacts'
 import { createThrowFuture } from './futureScene'
 import { createThrowEquipment } from './equipment'
+import { createThrowTextiles } from './textiles'
+import { createThrowThirdDetails } from './thirdDetails'
 import { signatureNenAvailable } from './selection'
 import { throwPerformance } from './catalogue'
 import { fighterDefinition } from '../roster'
@@ -15,6 +17,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
   const bindings = createThrowBindings(options)
   const future = createThrowFuture(options)
   const equipment = createThrowEquipment(options)
+  const textiles = createThrowTextiles(options)
+  const details = createThrowThirdDetails(options)
   const geometry = new THREE.RingGeometry(0.32, 0.36, 48)
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
@@ -32,6 +36,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       bindings.hide()
       future.hide()
       equipment.reset()
+      textiles.hide()
+      details.hide()
       aura.visible = false
       const frame = options.throwFrame?.()
       if (!frame?.active) return
@@ -42,6 +48,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       future.sync(frame)
       poseBook(options, state, frame)
       equipment.sync(state, frame)
+      textiles.sync(state, frame)
+      details.sync(state, frame)
       if (!frame.powered || options.comfort?.().flashes === false) return
       const actor = options.figureOf?.(frame.attacker)
       if (!actor) return
@@ -57,6 +65,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       bindings.dispose()
       future.dispose()
       equipment.dispose()
+      textiles.dispose()
+      details.dispose()
       aura.removeFromParent()
       geometry.dispose()
       material.dispose()

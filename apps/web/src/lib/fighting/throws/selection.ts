@@ -14,7 +14,7 @@ export function selectThrowPerformance(
   const performance = throwPerformanceFor(actor.id, powered)
   if (!performance || (actor.nenOwner && actor.nenOwner !== actor.id)) return { powered }
   if (
-    ['chain', 'gum', 'staff'].includes(performance.effect) &&
+    ['chain', 'gum', 'staff', 'thread'].includes(performance.effect) &&
     !signatureNenAvailable(state, attacker)
   )
     return { powered }
@@ -34,7 +34,8 @@ function throwWitnesses(state: FightState, side: FightSide, powered: boolean) {
 
 export function signatureNenAvailable(state: FightState, side: FightSide): boolean {
   const actor = state[side]
-  const move = actor.id === 'saiyu' ? 'saiyu:backSpecial' : `${actor.id}:forwardSpecial`
+  const moves: Record<string, string> = { saiyu: 'saiyu:backSpecial', machi: 'machi:downSpecial' }
+  const move = moves[actor.id] ?? `${actor.id}:forwardSpecial`
   return voluntaryNenAvailable(actor) && !chainAbilitySealed(actor, move)
 }
 

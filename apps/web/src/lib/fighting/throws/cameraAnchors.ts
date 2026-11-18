@@ -42,9 +42,16 @@ function detailSource(figure: Object3D, frame: ThrowCinematicFrame): Object3D | 
 }
 
 function propAnchor(figure: Object3D, effect: string) {
+  const names: Record<string, string> = {
+    paper: 'kalluto-paper-fan',
+    music: 'bonolenov-prologue-spear',
+  }
+  const own = names[effect] ? figure.getObjectByName(names[effect]) : undefined
+  if (own?.visible) return own
   let scene = figure
   while (scene.parent) scene = scene.parent
-  return scene.getObjectByName(`throw-signature:${effect}`) ?? figure.getObjectByName('hand-right')
+  const prop = scene.getObjectByName(`throw-signature:${effect}`)
+  return prop?.visible ? prop : figure.getObjectByName('hand-right')
 }
 
 export function throwEquipmentBounds(
@@ -52,8 +59,12 @@ export function throwEquipmentBounds(
   actor: Object3D | undefined,
   frame: ThrowCinematicFrame,
 ): IntroLandmarkBounds {
-  if (!actor || throwPerformance(frame.performance)?.effect !== 'staff') return bounds
-  const staff = propAnchor(actor, 'staff')
+  const effect = throwPerformance(frame.performance)?.effect ?? ''
+  if (!actor || !['staff', 'music'].includes(effect)) return bounds
+  const staff =
+    effect === 'music'
+      ? actor.getObjectByName('bonolenov-prologue-spear')
+      : propAnchor(actor, effect)
   if (!staff?.visible) return bounds
   const box = new Box3().setFromObject(staff)
   if (box.isEmpty()) return bounds

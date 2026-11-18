@@ -4,7 +4,7 @@ Couverture : `fighting/throws/**`, `superThrow.ts`, `throwCinematic*.ts`,
 `throwPresentationLayer.ts`, `components/fighting/FightThrowCinematic.svelte`
 et `FightThrowGuide.svelte`.
 
-Les dix premières paires appartiennent aux combattants du tableau. Chaque paire
+Les quinze premières paires appartiennent aux combattants du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
@@ -20,6 +20,11 @@ une trajectoire de prise et de chute, et une direction de caméra distincte.
 | Theta | Désarmer la menace | Angle mort |
 | Biscuit | La leçon de politesse | La correction magistrale |
 | Phinks | L'essoreuse | Le changement de vitesse |
+| Franklin | Le lancer de cargaison | Le débarquement |
+| Machi | Le point de croix | La bobine |
+| Illumi | L’articulation inutile | Le pantin désaccordé |
+| Kalluto | Le paravent blanc | La révérence interrompue |
+| Bonolenov | La valse du guerrier | Prologue : le renversement / Le dernier accord |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,
@@ -35,6 +40,20 @@ Theta range temporairement son propre pistolet et le reprend ensuite : aucune
 balle n'est tirée. Biscuit conserve le corps réellement choisi, compact ou naturel,
 sans transformation offerte par la super. Phinks fait tourner le corps adverse ;
 la super inverse sa trajectoire, sans charger ni consommer Ripper Cyclotron.
+
+Franklin soulève la cible à deux bras et la lance en hauteur ; sa super la porte
+avant de la décharger en rotation. Aucun tir de doigt n’accompagne ces prises.
+Machi croise un poignet et une cheville, puis enroule le torse dans sa super.
+Les fils suivent les repères réels et respectent Nen, In et Gyo, sans créer
+d’attachement de combat. Illumi plie les articulations et montre ses aiguilles
+seulement si elles sont réellement disponibles ; aucune aiguille n’est implantée
+et aucun contrôle mental n’est offert par le film. Kalluto dissimule la prise
+physique derrière un écran de papier et finit sa super sur une révérence ; les
+confettis n’infligent aucun dégât et ne plantent aucun papier de surveillance.
+Bonolenov rythme la projection sur trois appuis. Sa super emprunte la lance déjà
+invoquée par une préparation réelle de Prologue, dont la caméra cadre toute la
+longueur. Sans elle, le même renversement physique porte le titre « Le dernier
+accord ». Aucun Prologue, Jupiter ou costume n’est créé par une projection.
 
 ## Commandes et règles
 
@@ -81,16 +100,20 @@ correspondants. Le rendu ne modifie ni les coordonnées ni les blessures du mote
 
 `superThrow.test.ts` couvre le coût, la puissance et les refus des 40 combattants,
 le buffer, les deux sièges, les déprojections, la dépense unique et les chemins
-PvP/replay. Les tests de ce dossier couvrent les vingt chorégraphies et les témoins
+PvP/replay. Les tests de ce dossier couvrent les trente chorégraphies et les témoins
 conditionnels produits par les vraies commandes. `secondBatch.test.ts` vérifie
 les trajectoires des attaquants, les formes réelles et les ressources préservées.
+`thirdBatch.test.ts` couvre les accessoires conditionnels, la préparation réelle
+de Prologue, la visibilité de In et l’absence de mutation de l’état par le rendu.
 
-Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les vingt
-projections en P1/P2 et leurs quatre plans, puis les dix vues en 320 px. Il
+Depuis `apps/web`, `node scripts/check-fighting-throw-roster.mjs` capture les trente
+projections en P1/P2 et leurs quatre plans, puis les quinze vues en 320 px. Il
 contrôle aussi la pause, le K.-O., le nettoyage et les mouvements réduits.
 Résultats : `/tmp/black-whale-five-throws`.
 
 `THROW_ROSTER_BATCH=second` sélectionne Feitan, Saiyu, Theta, Biscuit et Phinks
-dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`. Le rendu exporte
+dans ce contrôle ou dans `scripts/render-fighting-throws.mjs`.
+`THROW_ROSTER_BATCH=third` sélectionne Franklin, Machi, Illumi, Kalluto et Bonolenov.
+Pour chaque lot, le rendu exporte
 les dix films, cinq comparaisons normale/super et leurs aperçus GIF. Le répertoire
 de sortie se règle avec `THROW_RENDER_OUTPUT`.

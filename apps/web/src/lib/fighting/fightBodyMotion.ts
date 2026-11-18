@@ -1,3 +1,5 @@
+import { beginSettledPose } from './fightSettledPose'
+import { defensiveStance } from './fightDefensiveStance'
 import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
@@ -37,8 +39,8 @@ import {
   lerpPose,
   NEUTRAL_POSE,
   pickJoints,
-  STANCE_FRAME_JOINTS,
   UPPER_JOINTS,
+  STANCE_FRAME_JOINTS,
   type BodyPlan,
   type FightPose,
 } from './fightPose'
@@ -115,6 +117,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     }
     const rig = fightRigOf(human)
     resetFightRig(rig)
+    beginSettledPose(rig, fighter.facing, options.poseContinuity?.observe)
     if (!plan) {
       remember(rig, { key: 'fallback', pose: NEUTRAL_POSE, seconds })
       fallback?.(human)
@@ -410,10 +413,10 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   const landing = landingPose(fighter, standing)
   if (landing) return { ...landing, plant: true }
   if (fighter.crouching) {
-    const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
+    const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
-  if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
+  if (guarding) return plan(defensiveStance(standing), 'guard')
   // The complete combat stance carries both legs across walk/stop/attack transitions.
   if (fighter.pose === 'walk') {
     const walking = walkPose(fighter, standing)

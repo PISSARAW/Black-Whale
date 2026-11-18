@@ -1,3 +1,4 @@
+import { wantsObservedGuard, incomingLow } from '../combatPressure'
 import { focusFlags } from '../nenFocusCommand'
 import { hasRecoveryCancel } from '../recoveryPunish'
 import { attackPhase, attackData } from '../frameData'
@@ -50,7 +51,7 @@ function defend(
   const { state, side, plan } = context
   const target = state[side === 'player' ? 'opponent' : 'player']
   input.guard = true
-  input.down = target.attack?.variant === 'low'
+  input.down = incomingLow(target)
   input.aura = state[side].aura > 35 && plan.nen === 'ken'
   input.left = false
   input.right = false
@@ -60,6 +61,7 @@ function defend(
 function visibleThreat(state: FightState, side: FightSide): boolean {
   const self = state[side]
   const target = state[side === 'player' ? 'opponent' : 'player']
+  if (self.pressureRead) return wantsObservedGuard(self, target)
   const attack = target.attack
   if (attackPhase(target) === 'recovery' && !hasRecoveryCancel(target)) return false
   if (!attack || attack.frame < 10 || Math.abs(target.x - self.x) > 22) return false

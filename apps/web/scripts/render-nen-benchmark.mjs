@@ -81,7 +81,7 @@ try {
         ko: report.ko,
       }) + '\n',
     )
-    await page.evaluate(() => window.nenFilm.seek(150))
+    await page.evaluate((n) => window.nenFilm.seek(n), Number(process.env.NEN_PREVIEW_FRAME ?? 150))
     await page.screenshot({ path: path.join(output, `bout-${index + 1}.png`) })
     if (inspect) continue
     const encoder = spawn(

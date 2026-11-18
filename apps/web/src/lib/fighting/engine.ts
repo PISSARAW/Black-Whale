@@ -1,3 +1,4 @@
+import { nativeRecoveryCounter } from './recoveryCounterAction'
 import { movesetFor } from './movesets'
 import { nativeNenCombo } from './nativeNenCombo'
 import { reservingAura } from './combatIntentPolicy'
@@ -279,6 +280,8 @@ export const opponentAttack = (state: FightState): FightState =>
       intentionalOpponentAttack(state))
 
 function intentionalOpponentAttack(state: FightState): FightState {
+  const counter = nativeRecoveryCounter(state, performAuraAttack)
+  if (counter) return counter
   return reservingAura(state.opponent) ? planOpponentNen(state) : contextualOpponentAttack(state)
 }
 

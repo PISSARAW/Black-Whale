@@ -11,6 +11,7 @@ interface Momentum {
   seconds: number
   token: string
   posture?: FightPose
+  settled?: FightPose
 }
 
 /** Scene-owned, rather than rig-owned: changing Nen geometry cannot erase the outgoing gesture. */
@@ -22,7 +23,7 @@ export function createFightPoseContinuity() {
     seconds: 0,
     token: '',
   }
-  return (plan: BodyPlan, seconds: number): FightPose => {
+  const draw = (plan: BodyPlan, seconds: number): FightPose => {
     const token = flowToken(plan)
     if (token && token === state.token) return state.pose.last
     const memory = state.pose
@@ -34,6 +35,8 @@ export function createFightPoseContinuity() {
     const restarted =
       plan.attackFlow && memory.attack && plan.attackFlow.frame < memory.attack.frame
     if (plan.key !== memory.key || restarted) {
+      if (state.settled) memory.last = state.settled
+      state.settled = undefined
       state.outgoing = state.velocity
       beginPoseTransition(memory, plan, seconds)
       state.posture = contactPostureFrom(memory.from, plan)
@@ -47,6 +50,11 @@ export function createFightPoseContinuity() {
     state.token = token
     return drawn
   }
+  return Object.assign(draw, {
+    observe: (pose: FightPose) => {
+      state.settled = { ...state.pose.last, ...pose }
+    },
+  })
 }
 
 function flowToken(plan: BodyPlan): string {

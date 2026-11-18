@@ -1,6 +1,6 @@
-import { Quaternion, Vector3, type Object3D } from 'three'
+import { Vector3, type Object3D } from 'three'
 import { constrainCombatJoint } from './fightAnatomy'
-import { combatBendDirection, reachBasis } from './fightReachBasis'
+import { aimCombatChain } from './fightReachBasis'
 
 export interface LimbChain {
   root: Object3D
@@ -47,15 +47,8 @@ function solveHinge(
 function orientChain(chain: LimbChain, input: { origin: Vector3; target: Vector3 }): void {
   const { origin, target } = input
   const axis = chain.end.getWorldPosition(new Vector3()).sub(origin)
-  const pole = chain.hinge.getWorldPosition(new Vector3()).sub(origin)
-  const direction = target.clone().sub(origin).normalize()
-  if (direction.lengthSq() < 0.5) return
-  const bend = combatBendDirection(chain.root, chain.hinge.name.startsWith('knee'), direction)
-  const turn = reachBasis(direction, bend).multiply(reachBasis(axis, pole).invert())
-  const parent = chain.root.parent!.getWorldQuaternion(new Quaternion())
-  turn.premultiply(parent.clone().invert()).multiply(parent)
-  chain.root.quaternion.premultiply(turn)
-  chain.root.updateWorldMatrix(false, true)
+  const direction = target.clone().sub(origin)
+  aimCombatChain(chain.root, axis, direction)
 }
 function error(chain: LimbChain, target: Vector3): number {
   return chain.end.getWorldPosition(new Vector3()).distanceTo(target)

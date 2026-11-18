@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 933
+Fichiers : 941
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1084,7 +1084,15 @@ Fichiers : 933
 
 ## `apps/web/src/lib/fighting/throws/performances.test.ts`
 
-- thirty individual pairs of authored throw performances > owns sixty distinct pairs of actor poses, victim poses, trajectories and lenses
+- thirty-five individual pairs of authored throw performances > owns seventy distinct pairs of actor poses, victim poses, trajectories and lenses
+
+## `apps/web/src/lib/fighting/throws/physics.test.ts`
+
+- throw weight, pivot and support > continues moving through an intermediate lift key instead of stopping at each pose
+
+## `apps/web/src/lib/fighting/throws/seventhBatch.test.ts`
+
+- seventh batch on the corrected cinematic physics > Furykov witnesses a console opened by a real action, privately, without creating a new alert
 
 ## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
 

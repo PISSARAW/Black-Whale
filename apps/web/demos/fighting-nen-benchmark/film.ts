@@ -99,6 +99,10 @@ export function boutEvidence(bout: ReturnType<typeof makeNenBout>) {
     verified: bout.verified,
     moves: { player: moves('player'), opponent: moves('opponent') },
     impacts: [...impacts.values()],
+    conversions: {
+      player: Math.max(...bout.states.map((s) => s.player.nenConversionCount ?? 0)),
+      opponent: Math.max(...bout.states.map((s) => s.opponent.nenConversionCount ?? 0)),
+    },
     maxCombo: Math.max(...bout.states.flatMap((s) => [s.player.comboHits, s.opponent.comboHits])),
     transfers: bout.states.filter((s) => s.player.nenTransfer || s.opponent.nenTransfer).length,
     ko: bout.states.filter((s) => s.player.nen.ko || s.opponent.nen.ko).length,

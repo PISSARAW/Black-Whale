@@ -16,7 +16,7 @@ export const FIGHT_MODEL_POSES: Record<FighterPose, HumanPose> = {
   idle: 'idle',
   walk: 'idle',
   jump: 'idle',
-  guard: 'guard',
+  guard: 'idle',
   light: 'idle',
   heavy: 'idle',
   special: 'idle',

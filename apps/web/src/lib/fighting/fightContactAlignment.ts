@@ -1,3 +1,4 @@
+import { settleObservedPose } from './fightSettledPose'
 import { constrainFightRig } from './fightAnatomy'
 import { Vector3, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
@@ -52,6 +53,7 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       alignStrike(ownRig, fighter, { target, weight })
       rememberImpactSurface(figureOf(side), { state, side, zone, position: target })
     }
+    settleBothBodies(figureOf)
   }
 }
 
@@ -158,4 +160,11 @@ function materialStrike(fighter: ArcadeFighter, rival: ArcadeFighter): boolean {
     !projectionBody(rival) &&
     Boolean(rosterMoveShape(fighter.attack?.moveId))
   )
+}
+
+function settleBothBodies(figureOf: (side: FightSide) => Object3D): void {
+  for (const side of ['player', 'opponent'] as const) {
+    const human = humanAnimationRig(figureOf(side))
+    if (human) settleObservedPose(fightRigOf(human))
+  }
 }

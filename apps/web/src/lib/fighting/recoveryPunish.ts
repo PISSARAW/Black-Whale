@@ -1,3 +1,5 @@
+import { preparedNenDestinations } from './nenPreparedBranches'
+import { openingDestinations } from './comboOpenings'
 import { attackData, attackPhase, attackTotal } from './frameData'
 import { walkSpeed } from './fighterMovement'
 import { styleReactionFrames } from './styleMobility'
@@ -12,7 +14,7 @@ export function hasRecoveryCancel(fighter: ArcadeFighter): boolean {
     move = moveById(attack?.moveId)
   if (!attack || !move || attack.frame > attackData(attack.kind, fighter).cancelEnd) return false
   return Boolean(
-    (attack.confirmedHit && move.cancelInto.length) ||
+    (attack.confirmedHit && hasHitContinuation(fighter)) ||
     (attack.confirmedBlock && move.cancelOnBlockInto.length),
   )
 }
@@ -23,7 +25,8 @@ export function recoveryPunishOptions(state: FightState, side: FightSide) {
   const attack = target.attack!
   const frames = attackTotal(attackData(attack.kind, target)) - attack.frame
   const gap = Math.abs(target.x - fighter.x)
-  const reaction = Math.max(0, styleReactionFrames(fighter) - (fighter.recoveryWatch?.frames ?? 0))
+  const observed = Math.max(fighter.recoveryWatch?.frames ?? 0, fighter.pressureRead?.seen ?? 0)
+  const reaction = Math.max(0, styleReactionFrames(fighter) - observed)
   return (movesetFor(fighter.id)?.moves ?? [])
     .flatMap((move) => {
       if (!['normal', 'command'].includes(move.category) || move.variant === 'air') return []
@@ -52,5 +55,13 @@ function readableRecovery(fighter: ArcadeFighter, target: ArcadeFighter): boolea
     target.y === 0 &&
     attackPhase(target) === 'recovery' &&
     !hasRecoveryCancel(target)
+  )
+}
+
+function hasHitContinuation(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    moveById(fighter.attack?.moveId)?.cancelInto.length ||
+    preparedNenDestinations(fighter).length ||
+    openingDestinations(fighter).length,
   )
 }

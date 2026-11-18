@@ -27,3 +27,11 @@ Les deux contrôleurs utilisent `nenComboDecision` : ils choisissent une continu
 Une branche supplémentaire exige maintenant la répartition requise dans la zone du coup suivant. La question de Lynch, un contrat de Longhi et les autres utilitaires sans frappe ne deviennent pas des branches offensives. Les techniques gardent leurs conditions natives ; aucune charge, cible, signature ni ressource n'est créée. Les flux utilisent la couleur existante de chaque propriétaire. Le CPU ne remplace pas sa répartition offensive pendant une frappe engagée.
 
 Validation : les quarante combattants consomment une branche gagnée sur une vraie touche, avec redistribution native quand nécessaire ; les 270 conversions précédentes restent valides. Les combats autonomes enregistrent les conversions consommées, au lieu de se limiter au compteur de touches.
+
+## 5. Continuité finale, réactions et riposte
+
+La transition suivante part du corps réellement affiché après contacts, appuis et contraintes, puis retrouve la garde personnelle. L'observation ne se réinjecte qu'au changement de geste : afficher plusieurs fois la même image de hitstop ne cumule pas les corrections. L'orientation minimale du solveur conserve le plan de flexion de la pose au lieu de le reconstruire près de l'extension. Les touches légères reviennent plus tôt vers une garde active, sans raccourcir le hitstun.
+
+Les deux contrôleurs observent les attaques visibles pendant les vrais ticks. Une première attaque demande le délai de réaction du style ; une pression récemment subie peut être anticipée après la sortie du hitstun. La garde distingue les coups bas. Une récupération réellement punissable déclenche une frappe existante dans sa portée et sa fenêtre ; le temps déjà observé compte dans la réaction. Les continuations légales empêchent de déclarer une fausse ouverture. Les attaques cachées, les ressources, les conditions de Hatsu et les traversées gardent leurs règles natives.
+
+Validation : 40 scénarios de pression reçue, 42 fenêtres de récupération, répétition d'une image figée, relecture déterministe et 4 516 tests de règles, import, routes et engagements. Les trois films sont des échanges autonomes courts : ils montrent des conversions, des flux, des gardes et une punition, mais ne prouvent ni l'équilibrage complet du roster ni la présence de Ko dans ces extraits.

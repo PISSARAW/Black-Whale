@@ -1,3 +1,4 @@
+import { withCombatPressure } from '../combatPressure'
 import { withRecoveryObservations } from '../recoveryObservation'
 import { withNenTactics } from '../nenTacticalIntent'
 import { updatePlayerGuard } from '../nenCombat/guardInput'
@@ -25,7 +26,7 @@ import { withNenBudgets } from '../nenBudget'
 
 /** Per-body phase: inputs, AI, physics and body clocks. Runs exactly once per body and frame. */
 export function stepActors(state: FightState, inputs: DuelInputs): DuelBodies {
-  state = withRecoveryObservations(withNenTactics(withNenBudgets(state)))
+  state = withCombatPressure(withRecoveryObservations(withNenTactics(withNenBudgets(state))))
   const player = updateControlledFighter(state.player, inputs.player)
   const opponent = inputs.opponent
     ? updateControlledFighter(state.opponent, inputs.opponent)

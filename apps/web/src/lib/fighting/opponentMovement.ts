@@ -1,3 +1,4 @@
+import { wantsObservedGuard, incomingLow } from './combatPressure'
 import { hasRecoveryCancel } from './recoveryPunish'
 import { attackPhase } from './frameData'
 import { steerFighter } from './fighterMovement'
@@ -38,6 +39,7 @@ function opponentCannotGuard(fighter: ArcadeFighter): boolean {
 
 function shouldBlock(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): boolean {
   if (!seesCombatBody(fighter)) return false
+  if (fighter.pressureRead) return wantsObservedGuard(fighter, player)
   const threatened = activeThreat(player)
   return shouldStyleGuard(fighter.id, { gap, threatened }) && canMove(fighter) && fighter.y === 0
 }
@@ -77,6 +79,7 @@ function opponentGuardState(
   return {
     ...fighter,
     blocking,
+    crouching: blocking && incomingLow(player),
     guardFrames: blocking ? (fighter.blocking ? fighter.guardFrames + 1 : 1) : 0,
     ryuWindow: releasedGuard ? 10 : fighter.ryuWindow,
   }

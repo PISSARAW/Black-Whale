@@ -21,17 +21,21 @@ principal reste actif ; les vues secondaires et le tremblement sont désactivés
 pour rendre la comparaison des corps lisible.
 
 Pour l'avant/après livré, le même dossier de démonstration et le même script
-sont exécutés sur l'archive du moteur `f0f4978733ce3677fd2d1990b9c004c0fe7e0fb5`
-puis sur les quatre améliorations. Seuls les moteurs diffèrent. Les commandes
+sont exécutés sur l'archive du moteur `679bac8d3e5d24b315b768ec90a284930186ae49`
+puis sur les cinq améliorations. Seuls les moteurs diffèrent. Les commandes
 peuvent diverger lorsque les situations divergent ; les six replays enregistrent
 les commandes réellement jouées et vérifient leurs checkpoints par resimulation.
 Les fichiers `bout-N-evidence.json` contiennent les coups, impacts et ressources.
 `combat-report.json` indique les erreurs navigateur, la cadence et la vérification.
 
-Voir [les cinq points et leurs limites](../../src/lib/fighting/NEN_TACTICS.md).
+Voir [les cinq points et leurs limites](../../src/lib/fighting/NEN_FLOW_QUALITY.md).
 
 Assembler les trois comparaisons côte à côte (son de la version après) :
 
 ```sh
 node apps/web/scripts/compare-nen-benchmark.mjs /tmp/clash-before /tmp/clash-after /tmp/clash-comparison
 ```
+
+Le rapport indique aussi les branches Nen effectivement consommées (`conversions`).
+Pour choisir une image de contrôle sans changer le combat, utiliser
+`NEN_PREVIEW_FRAME=480` avec `--inspect`.

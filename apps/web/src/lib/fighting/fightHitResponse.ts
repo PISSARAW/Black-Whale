@@ -31,7 +31,7 @@ export function physicalHitAtContact(
   const motion = rosterContactMotion(state)
   if (!motion) return undefined
   const profile = fightPhysicalProfile(victim)
-  const heavy = hit.kind === 'heavy' ? 1 : 0.64
+  const heavy = hit.kind === 'heavy' ? 1 : 0.5
   const power = hit.critical || hit.counterHit ? 1.25 : 1
   return {
     sequence: hit.sequence,
@@ -50,7 +50,8 @@ export function physicalHitAtContact(
 /** Local deformation leads the chest; the pelvis and catching step follow after hitstop. */
 export function physicalHitPose(hit: PhysicalHit, progress: number): FightPose {
   const age = progress * hit.duration
-  const settle = smooth((progress - 0.68) / 0.32)
+  const settleAt = hit.force < 0.8 ? 0.42 : 0.58
+  const settle = smooth((progress - settleAt) / (1 - settleAt))
   const impulse = hit.force * (1 - settle * 0.82)
   const local = 0.45 + 0.55 * smooth(age / 2)
   const chest = 0.3 + 0.7 * smooth(age / 4)

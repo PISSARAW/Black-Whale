@@ -1,3 +1,4 @@
+import { recoveryCounter } from '../recoveryCounterAction'
 import { personalApplicationReady } from '../nenApplicationRange'
 import { nenComboDecision, nenPhysicalOpener } from '../nenComboDecision'
 import { focusCommand } from '../nenFocusCommand'
@@ -179,7 +180,10 @@ function commandWindow(state: FightState, due: number, plan: TacticalPlan): bool
 }
 
 function continuedDecision(context: Context, plan: TacticalPlan): FastDecision | null {
-  if (context.state.phase !== 'fighting' || plan.goal === 'recover') return null
+  if (context.state.phase !== 'fighting') return null
+  const counter = recoveryCounter(context.state, context.side)
+  if (counter) return { input: context.input, command: moveCommand(context, counter) }
+  if (plan.goal === 'recover') return null
   const decision = nenComboDecision(context.state, context.side)
   if (decision.focus) return { input: focusCommand(decision.focus) }
   if (decision.move) return { input: context.input, command: moveCommand(context, decision.move) }

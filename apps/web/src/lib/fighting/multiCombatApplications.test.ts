@@ -119,7 +119,7 @@ describe('applications from at least three distinct combats', () => {
   it('moves the same material cadaver, leaves health unchanged and collapses it after needle removal', () => {
     const s = controlled(),
       corpse = s.battlefield!.entities.find((body) => body.id === 'player:corpse')!
-    expect(corpse.controller).toEqual({ side: 'player', source: 'illumi' })
+    expect(corpse.controller).toEqual({ side: 'player', source: 'illumi', member: 0 })
     const ordered = command(s, { action: 'illumi-corpse-order', target: `${corpse.id}|retreat` })
     const moved = frames(ordered, 10),
       target = moved.battlefield!.entities.find((body) => body.id === corpse.id)!

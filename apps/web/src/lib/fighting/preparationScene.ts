@@ -35,12 +35,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
     mesh(new THREE.BoxGeometry(...size), color)
 
   function build(entry: PreparedEntity) {
-    if (
-      entry.person ||
-      entry.kind === 'morena' ||
-      entry.kind === 'supporter' ||
-      entry.kind === 'puppet'
-    )
+    if (entry.person || ['morena', 'supporter', 'puppet', 'corpse', 'hostage'].includes(entry.kind))
       return human(entry)
     const shared = buildPreparedVisitModel(options, entry)
     if (shared) return shared
@@ -108,7 +103,8 @@ export function createPreparationScene(options: EffectSceneOptions) {
         role: morena ? 'morena' : 'fighter',
         identity: preparedHumanIdentity(entry),
         pose: 'idle',
-        aura: entry.person || entry.copy ? 'none' : 'ten',
+        aura:
+          entry.person || entry.copy || ['corpse', 'hostage'].includes(entry.kind) ? 'none' : 'ten',
       },
     }
     const figure = buildHumanFigure({
@@ -131,14 +127,18 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   function addCorpseNeedles(root: import('three').Group, entry: PreparedEntity) {
     if (entry.kind !== 'corpse') return
+    const head = root.getObjectByName('face-mouth')?.parent
+    if (!head) return
+    root.updateWorldMatrix(true, true)
+    root.userData.corpseHeadAnchor = root.worldToLocal(head.getWorldPosition(new THREE.Vector3()))
     const pins = new THREE.Group()
     pins.name = 'corpse-control-needles'
     for (const x of [-0.07, 0.07]) {
-      const pin = box([0.015, 0.18, 0.015], 0xdce3e6)
-      pin.position.set(x, 1.12, 0.08)
+      const pin = box([0.015, 0.015, 0.18], 0xdce3e6)
+      pin.position.set(x, 0.08, -0.23)
       pins.add(pin)
     }
-    root.add(pins)
+    head.add(pins)
   }
 
   function animal(root: import('three').Group) {
@@ -243,7 +243,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 }
 
 function backgroundDepth(entry: PreparedEntity): number {
-  return ['person', 'morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
+  return ['person', 'hostage', 'morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
 }
 
 function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity) {

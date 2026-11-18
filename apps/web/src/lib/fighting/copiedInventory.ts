@@ -30,7 +30,9 @@ export function recordEquipmentPickup(
         entityId: target.id,
         copyId: detachedNeedleParent(target) ?? (target.copy ? target.id : undefined),
         material: target.material,
-        ...(target.detachedFaceNeedles || target.disguisePinBundle ? { detachedPart: true } : {}),
+        ...(target.detachedFaceNeedles || target.disguisePinBundle || target.corpsePinBundle
+          ? { detachedPart: true }
+          : {}),
       },
     },
     ...(equipment === 'flute' ? { melodyFlute: true } : {}),
@@ -38,7 +40,11 @@ export function recordEquipmentPickup(
 }
 
 function detachedNeedleParent(target: PreparedEntity): string | undefined {
-  return target.detachedFaceNeedles?.mediumCopyId ?? target.disguisePinBundle?.mediumCopyId
+  return (
+    target.detachedFaceNeedles?.mediumCopyId ??
+    target.disguisePinBundle?.mediumCopyId ??
+    target.corpsePinBundle?.mediumCopyId
+  )
 }
 export function advanceCopiedInventory(state: FightState): FightState {
   const next = mapPhysicalBodies(state, (body) =>

@@ -1,7 +1,9 @@
+import { redactCorpsePreparation } from './illumiCorpsePrivacy'
 import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  redactCorpsePreparation(enemy)
   enemy.dowsingMapSearch = undefined
   enemy.dowsingMapReading = undefined
   enemy.illumiNeedleMode = undefined

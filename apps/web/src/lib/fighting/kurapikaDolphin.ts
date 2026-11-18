@@ -17,6 +17,7 @@ import { gumSourceBusy, clearGumSource } from './bungeeScoped'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
+import { borrowedCorpseBusy } from './illumiCorpseDolphin'
 import { ownsNeedlePuppet } from './illumiFrame'
 import { borrowedIllumiFaceBusy } from './illumiDisguiseClock'
 import { borrowedNeedleFaceBusy } from './illumiNeedleFaceClock'
@@ -116,7 +117,7 @@ export function recordDolphinEffects(
   const held = equippedDolphin(after[side])
   if (!held?.used || held.returned || !dolphinEffectScope(after[side], held)) return after
   const keys = new Set(held.sustainedKeys)
-  if (controlledEntities(after, side).length || littleEyeShotBusy(after, side)) keys.add('prepared')
+  if (preparedEffectBusy(after, side)) keys.add('prepared')
   for (const key of changedDolphinCounters(before, after)) keys.add(key)
   for (const key of dolphinEffectFlags(before, after, side)) keys.add(key)
   return writeDolphinKeys(after, side, [...keys])
@@ -241,6 +242,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'needle-puppet': ownsNeedlePuppet(state, side),
     'illumi-face': borrowedIllumiFaceBusy(fighter),
     'needle-face': borrowedNeedleFaceBusy(state, side),
+    'corpse-control': borrowedCorpseBusy(state, side),
     'secret-window': secretWindowBusy(fighter),
     'paper-doll': paperDolls(fighter).some((doll) => doll.active !== false),
     'paper-control': paperControlBusy(state, side),
@@ -314,5 +316,9 @@ function poemUseBusy(state: FightState, side: FightSide): boolean {
 }
 
 function preparedEffectBusy(state: FightState, side: FightSide): boolean {
-  return controlledEntities(state, side).length > 0 || littleEyeShotBusy(state, side)
+  if (equippedDolphin(state[side])?.source === 'illumi') return false
+  return (
+    controlledEntities(state, side).some((entry) => entry.kind !== 'corpse') ||
+    littleEyeShotBusy(state, side)
+  )
 }

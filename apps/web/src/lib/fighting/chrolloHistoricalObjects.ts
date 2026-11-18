@@ -1,4 +1,5 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { copiedCorpseNeedles } from './illumiCorpseMatter'
 import { copiedDocumentMaterials } from './paperDocumentCopy'
 import { copiedFaceNeedles } from './illumiNeedleMatter'
 import { copiedDisguisePins } from './illumiDisguisePins'
@@ -58,6 +59,7 @@ function createHistoricalReplica(
     health: 40,
     ...replicaMaterials(source, id),
     ...copiedFaceNeedles(source, id),
+    ...copiedCorpseNeedles(source, id),
     ...copiedDisguisePins(source, id),
     ...copiedDocumentMaterials(state, { source, id, side }),
     consenting: false,

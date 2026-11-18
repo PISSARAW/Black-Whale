@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 963
+Fichiers : 968
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -792,6 +792,26 @@ Fichiers : 963
 
 - Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
 - Illumi conditions and borrowed needles > can commit exactly forty aura and still implant the charged needle
+
+## `apps/web/src/lib/fighting/illumiCorpseBorrowing.test.ts`
+
+- corpse control through one finite Dolphin use > uses only donor aura, stays busy during actual implantation and control, and dismisses without deleting the pins
+
+## `apps/web/src/lib/fighting/illumiCorpseBoundary.test.ts`
+
+- corpse controls retain their actual body through PvP and replacement > keeps canonical pin IDs and the same book source when P2 predicts the real application
+
+## `apps/web/src/lib/fighting/illumiCorpseMetal.test.ts`
+
+- corpse needles remain actual finite material through extraction and copies > moves a retrieved assembly from the floor into the next corpse without multiplying it
+
+## `apps/web/src/lib/fighting/illumiCorpseOrigin.test.ts`
+
+- corpse control owns actual embedded metal and its original Nen source > enforces an existing Judgment clause before paying or inserting metal
+
+## `apps/web/src/lib/fighting/illumiCorpseScene.test.ts`
+
+- physical corpse needles stay on the actual shared head > keeps one articulated body, leaves metal visible after Nen ends, then removes that same assembly
 
 ## `apps/web/src/lib/fighting/illumiDisguiseBorrowing.test.ts`
 

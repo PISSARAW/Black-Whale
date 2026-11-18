@@ -6,7 +6,7 @@ import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor } from './dolphinSupply'
 import { advanceLuiniAnchors } from './luiniSpatial'
 import { advanceCopiedInventory, recordEquipmentPickup } from './copiedInventory'
-import { historicalMatterExists } from './historicalCopyLifetime'
+import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { illumiBodyFree } from './illumiState'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -74,11 +74,7 @@ function pickPreparationEquipment(
 ): FightState {
   const fighter = state[side]
   const equipment = target.kind === 'needles' ? 'needles' : 'flute'
-  if (
-    hasEquipment(fighter, equipment) ||
-    !historicalMatterExists(state, target.copy ? target.id : undefined)
-  )
-    return state
+  if (hasEquipment(fighter, equipment) || !preparedMatterExists(state, target)) return state
   const picked = updateEntity(state, target.id, { present: false })
   return {
     ...picked,
@@ -210,7 +206,7 @@ export function preparationInteractionTarget(
     .filter(
       (entry) =>
         canInteract(entry, side) &&
-        historicalMatterExists(state, entry.copy ? entry.id : undefined) &&
+        preparedMatterExists(state, entry) &&
         needsPreparedEquipment(fighter, entry) &&
         Math.hypot(entry.x - fighter.x, entry.y - fighter.y) <= PREPARATION_REACH,
     )
@@ -223,4 +219,11 @@ function needsPreparedEquipment(fighter: FightState['player'], entry: PreparedEn
   return entry.kind === 'flute' || entry.kind === 'needles'
     ? !hasEquipment(fighter, entry.kind)
     : true
+}
+
+function preparedMatterExists(state: FightState, entry: PreparedEntity): boolean {
+  const pins = entry.detachedFaceNeedles ?? entry.disguisePinBundle ?? entry.corpsePinBundle
+  return pins
+    ? historicalPartExists(state, pins.mediumCopyId)
+    : historicalMatterExists(state, entry.copy ? entry.id : undefined)
 }

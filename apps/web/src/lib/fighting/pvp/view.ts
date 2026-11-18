@@ -1,3 +1,4 @@
+import { concealCorpseWorld } from '../illumiCorpsePrivacy'
 import { opposingKameoBodies } from '../kameos/pvp'
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
 import { concealDocumentWorld } from '../paperDocumentPrivacy'
@@ -148,6 +149,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   concealDolphinPeople(view, side)
   concealPaperScatters(view, side)
   concealDocumentWorld(view, side)
+  concealCorpseWorld(view, side)
   redactEnemy(view[other])
   redactGuests(view, other)
   redactReserves(view, other)
@@ -177,6 +179,7 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     frame.player = documentView.player
     frame.opponent = documentView.opponent
     concealDocumentWorld(documentView, side)
+    concealCorpseWorld(documentView, side)
     frame.battlefield = documentView.battlefield
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])

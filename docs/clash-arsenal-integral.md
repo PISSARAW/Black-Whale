@@ -1031,3 +1031,12 @@ commandes natives de contrôle des cadavres ne sont plus réservées aux scénar
 écrits et à l’IA. Les cases de préparation, le PvP et les replays partagent leur
 catalogue ; le duel strict ne fournit aucun de ces corps. Le On est conservé.
 Les limites de copie, de prêt et les autres écarts restent dans le périmètre.
+
+## Aiguilles et contrôle des cadavres — ruleset 64
+
+Le [contrôle matériel des corps morts](./clash-illumi-cadavres.md) suit
+l’assemblage d’aiguilles, la main utilisée et le corps qui a lancé le Nen.
+La fermeture du livre, la fin du prêt ou le On arrêtent le contrôle sans effacer
+le métal. Le retrait physique dépose le même assemblage réutilisable ; les
+copies matérielles restent inertes et suivent leur durée propre. Cette passe
+ne clôt pas les autres applications encore ouvertes de l’audit.

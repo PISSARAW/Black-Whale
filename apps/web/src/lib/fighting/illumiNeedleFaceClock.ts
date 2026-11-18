@@ -21,7 +21,7 @@ function cleanNeedleFace(state: FightState, actor: ArcadeFighter): ArcadeFighter
 }
 
 export function cleanDetachedFaceNeedles(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const bundle = entry.detachedFaceNeedles ?? entry.disguisePinBundle
+  const bundle = entry.detachedFaceNeedles ?? entry.disguisePinBundle ?? entry.corpsePinBundle
   return bundle && entry.present && !historicalPartExists(state, bundle.mediumCopyId)
     ? { ...entry, present: false }
     : entry

@@ -2,6 +2,7 @@ import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
 import { performModelSelection } from './metamorphosenModels'
+import { corpseRemovalOptions } from './illumiCorpsePins'
 import { performCorpseCommand, corpseOptions } from './illumiCorpses'
 import { performMachiMaterial } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
@@ -171,6 +172,7 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
     ...needleFaceRemovalOptions(state, side),
+    ...corpseRemovalOptions(state, side),
     ...paperScatterOptions(state, side),
     ...paperKitOptions(state, side),
     ...paperReceiverOptions(state, side),

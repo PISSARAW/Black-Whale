@@ -473,6 +473,11 @@ La nouvelle piste sonore conserve le combat, réduit l'ambiance avant le choc,
 puis ajoute froissement, tension grave, claquement, souffle, débris et quatre pas.
 La durée totale reste 45,3667 secondes et la fin seule dure dix secondes.
 
+## Leorio × Franklin — chambre funéraire des princes
+
+Les deux chorégraphies, les gros plans et leurs commandes d’export sont
+décrits dans [ranged-duels.md](./ranged-duels.md).
+
 ## Kurapika × Chrollo — Le jugement écarlate
 
 ```sh
@@ -767,6 +772,11 @@ de la projection est une chorégraphie après le verdict natif, sans changer
 la simulation. Le lot comporte désormais huit fatalities et la victoire
 d'Hisoka.
 
+## Le dernier contact — Hisoka × Chrollo
+
+La version de trois minutes, les expressions faciales et les preuves du duel sont
+décrites dans [last-contact.md](./last-contact.md).
+
 ## Halkenburg — Une seule volonté
 
 ```sh
@@ -783,8 +793,9 @@ Grimmel part à 5 s, frappe à 5,4 s, puis le transfert de conscience prend
 le relais. Le gros plan des yeux de la cible montre le changement de volonté.
 
 Le moteur résout d'abord le scénario avec trois compagnons consentants, la
-charge complète et une possession réelle. Le renderer de victoire reconstruit
-ensuite ces étapes sans modifier l'état natif. Le mix associe trois voix
+charge complète, puis un K.-O. physique. Grimmel ne cause aucun dégât : le
+renderer de victoire illustre sa flèche et le transfert après le verdict,
+sans modifier l'état natif ni changer les corps du duel. Le mix associe trois voix
 synthétiques, la tension de corde, le départ de flèche et le transfert.
 `target`, `stage`, `side=opponent` et `reduced` permettent les contrôles des
 modèles et décors. Le lot compte dix cinématiques de victoire.
@@ -810,7 +821,6 @@ commence à l'image 558. La composition reprend la bande originale de la
 référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
 Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
 règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
-
 
 ## Kalluto — La dernière danse du papier
 
@@ -907,6 +917,18 @@ Sortie : `output/fighting-biscuit-fatality/Biscuit-Fatality-10s.mp4`.
 Le catalogue compte désormais dix-sept personnages avec cinématique de victoire.
 
 
+Nobunaga — « Le dernier pas » : `nobunaga-fatality.html` est une démo autonome de
+dix secondes avec le modèle natif de Nobunaga. Le personnage ne fait pas encore
+partie du roster jouable : aucun résultat de combat fictif ni déclenchement de
+victoire n’est fabriqué. `target`, `stage`, `reduced` et `capture` configurent la
+présentation ; le bouton de lecture permet de revoir la séquence avec son.
+La cible franchit En à l’image 300, le dégainé commence immédiatement et la
+pointe touche le torse à 308. Le rengainé se termine à 510.
+`render-nobunaga-fatality.mjs` exporte les 600 images 1080p60,
+`compose-nobunaga-fatality.mjs` ajoute une bande instrumentale sans aucune voix,
+et `check-nobunaga-fatality.mjs` contrôle la présentation et l’adaptation.
+Sortie : `output/fighting-nobunaga-fatality/Nobunaga-Fatality-10s.mp4`.
+
 Kurapika contre la Brigade — « La colère écarlate » : `kurapika-troupe.html`
 présente dix secondes de capture éclair, sept coups au corps et au visage,
 puis une projection finale inspirée de son affrontement avec Uvogin. Les yeux
@@ -923,6 +945,7 @@ Les cibles hors Brigade conservent leur variante Judgment Chain.
 instrumentale, sans voix. `check-kurapika-troupe.mjs` vérifie le déclenchement,
 le son, les deux côtés, les gabarits, les lieux, le mobile et le confort.
 Sortie : `output/fighting-kurapika-troupe/Kurapika-Brigade-Fatality-10s.mp4`.
+
 
 ## Saiyu — Les trois silences
 
@@ -941,6 +964,7 @@ La version sensorielle montre un noir complet, des yeux sans regard, les mains
 aux oreilles, une onde sonore devenue plate et une bouche ouverte en cri muet.
 Le mix est entièrement silencieux entre 2,9 et 4,7 secondes.
 
+
 ## Melody — Un champ au printemps
 
 `node apps/web/scripts/render-melody-fatality.mjs --inspect` exporte les plans
@@ -955,6 +979,7 @@ perception du personnage enchanté ; Melody ne tue pas avec sa musique.
 La simulation préalable obtient une victoire native à la décision, après une
 vraie performance qui pacifie la cible sans lui infliger de dégâts.
 Sortie : `output/fighting-melody-fatality/Melody-Friendship-10s.mp4`.
+
 
 ## Hanzo — Derrière toi
 
@@ -978,6 +1003,7 @@ Les deux cinématiques sont enregistrées dans Clash et utilisent les acteurs
 et l’arène du combat courant. `check-hanzo-bill-victories.mjs` vérifie huit
 victoires automatiques, dont les rematches des deux côtés, et leurs sons.
 
+
 ## Hinrigh — Pièce à conviction
 
 `hinrigh-fatality.html` présente dix secondes de Biohazard : transformation
@@ -990,6 +1016,7 @@ ajoute le mix original, Fatality en anglais et le son chargé dans Clash.
 `check-hinrigh-fatality.mjs` et `check-hinrigh-victories.mjs` contrôlent la démo
 et son déclenchement automatique.
 Sortie : `output/fighting-hinrigh-fatality/Hinrigh-Fatality-10s.mp4`.
+
 
 ## Terebellum — Retour à l’envoyeur
 
@@ -1005,6 +1032,7 @@ Les scripts `check-terebellum-fatality.mjs` et `check-terebellum-victories.mjs`
 contrôlent le combat natif, le rendu et le déclenchement dans Clash.
 Sortie : `output/fighting-terebellum-fatality/Terebellum-Fatality-10s.mp4`.
 
+
 ## Voconte — Aller simple
 
 `voconte-fatality.html` présente dix secondes de poursuite piégée : Voconte
@@ -1019,6 +1047,7 @@ ajoute trois passages, chute, impact, fermeture et Fatality en anglais.
 Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
 contrôlent le rendu et son déclenchement automatique dans Clash.
 Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
+
 
 ## Longhi et Furykov — Victoires personnelles
 
@@ -1118,3 +1147,30 @@ les pulsations de brûlure après un vrai contact, sur une cible encore vivante.
 Depuis `apps/web` : `node scripts/render-basho-fatality.mjs`. Depuis la racine :
 `node apps/web/scripts/compose-basho-fatality.mjs`. Sortie 1080p30 :
 `output/fighting-basho-fatality/Basho-Fatality-10s.mp4`.
+
+## Vérifier la préparation des victoires
+
+Depuis la racine :
+
+```sh
+pnpm --filter @black-whale/web exec vitest run src/lib/fighting/victory/demoPreparation.test.ts
+node apps/web/scripts/check-victory-preparations.mjs
+```
+
+La matrice couvre les 38 préparations natives, leurs variantes de côté, les
+gabarits Franklin/Biscuit et les miroirs autorisés par chaque pouvoir. Elle
+contrôle le verdict, les identités, le lieu, la continuité et les images du
+montage. Le contrôle navigateur parcourt les 39 pages de victoire, y compris
+les deux gardes et la démo autonome de Nobunaga. Il enregistre les captures
+et le bilan dans `output/victory-preparations`.
+
+Pour revoir uniquement les anciens montages corrigés :
+
+```sh
+node apps/web/scripts/check-victory-preparations.mjs --only=hisoka-victory,kurapika-victory,kurapika-fatality
+```
+
+Le préambule d’Hisoka garde assez de temps de manche pour attacher le lien,
+le tendre et obtenir le K.-O. par rappel. Kurapika active Emperor Time et
+capture Chrollo avant sa séquence physique. Les préparations ne réinitialisent
+ni le chronomètre ni les réserves pendant le duel.

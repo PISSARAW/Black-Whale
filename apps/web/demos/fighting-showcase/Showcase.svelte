@@ -11,21 +11,24 @@
   import FightHud from '../../src/lib/components/fighting/FightHud.svelte'
   import { nenStatus } from '../../src/lib/fighting/nen'
   import SolarStatus from './SolarStatus.svelte'
-  import { FIGHT_STAGES } from '../../src/lib/fighting/stages'
+  import { showcaseStageName } from './showcaseLabels'
   import { renderShowcaseAudio } from './audio'
-  import { createCinematicTrack } from './cinematicCamera'
-  import { createCloseupTrack } from './closeupTrack'
   import { captureShowcaseScene } from './showcaseSceneCapture'
   import CloseupOverlay from './CloseupOverlay.svelte'
   import { fighterDefinition } from '../../src/lib/fighting/roster'
 
-  const { film, continuous, cinematic, solar, ballroom, longForm, judgment, cats } = selectShowcase(
-    window.location.search,
-  )
-  const closeupTrack = longForm ? createCloseupTrack(film.states) : null
-  const cameraTrack = cinematic
-    ? createCinematicTrack(film.states, closeupTrack?.frames.map(Boolean))
-    : null
+  const {
+    film,
+    continuous,
+    cinematic,
+    solar,
+    ballroom,
+    judgment,
+    cats,
+    rangedDuel,
+    closeupTrack,
+    cameraTrack,
+  } = selectShowcase(window.location.search)
   const solarVision = solar ? createSolarVision(film.states, cameraTrack?.frames) : null
   const spectacle = new URLSearchParams(window.location.search).has('spectacle')
     ? createCatsSpectacle(film)
@@ -35,15 +38,11 @@
   const playerName = fighterDefinition(film.state.player.id).name.toUpperCase()
   const opponentName = fighterDefinition(film.state.opponent.id).name.toUpperCase()
   const stageId = film.state.environment.stageId
-  const stageName =
-    solar || judgment || cats
-      ? FIGHT_STAGES.find((s) => s.id === stageId)!.nameFr.toUpperCase()
-      : ballroom
-        ? 'SALLE DE BAL'
-        : 'TOUR CÉLESTE'
+  const stageName = showcaseStageName(stageId, ballroom)
   let index = 0
   let view = playback[0]
   const capture = captureShowcaseScene({
+    ranged: rangedDuel,
     camera: () =>
       spectacle?.shots[index]?.camera ??
       (prediction ? solarVision?.camera.frames[index] : cameraTrack?.frames[index]),
@@ -96,7 +95,7 @@
     <FightScene
       state={view.state}
       {stageId}
-      keepCombatantMarkers={!spectacle}
+      keepCombatantMarkers={!spectacle && !rangedDuel}
       presentationSeconds={spectacle ? index / 60 : undefined}
       comfort={{ camera: 0, shake: 1, flashes: true, highContrast: false }}
     />
@@ -122,7 +121,11 @@
         DU JEU{/if}
     </div>
     {#if impactFresh && impact && !impact.avoided && !view.state.catsName}
-      <aside class:magenta={impact.attacker === 'player'} class="impact">
+      <aside
+        style={rangedDuel ? 'left: 56px; right: auto; top: 200px' : ''}
+        class:magenta={impact.attacker === 'player'}
+        class="impact"
+      >
         <strong
           >{impact.blocked
             ? 'GARDE'

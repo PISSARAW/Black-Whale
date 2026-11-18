@@ -1,4 +1,6 @@
 import { presentCamillaFace, camillaFaceAudit } from './camillaFaceCamera'
+import { presentRangedAura } from './rangedAuraPresentation'
+import { drawRangedCloseup, rangedCloseupAudit } from './rangedCloseupRenderer'
 import { presentCatsCrush, catsGripAudit } from './catsCrushPresentation'
 import type { CatShot } from './catsSpectacle'
 import { PerspectiveCamera, Scene } from 'three'
@@ -11,7 +13,9 @@ export function captureShowcaseScene(options: {
   camera: () => CinematicFrame | undefined
   detail: () => CloseupFrame | null | undefined
   spectacle?: () => CatShot | undefined
+  ranged?: boolean
 }) {
+  let restoreAura: (() => void) | null = null
   let restoreFace: (() => void) | null = null
   let restoreCrush: (() => void) | null = null
   let renders = 0
@@ -29,12 +33,15 @@ export function captureShowcaseScene(options: {
       restoreCrush?.()
       restoreCamera?.()
       restoreCamera = applyCinematicFrame(camera, frame)
+      restoreAura = options.ranged ? presentRangedAura(scene) : null
       restoreCrush = presentCatsCrush(scene, options.spectacle?.())
       restoreFace = presentCamillaFace(scene, camera, options.spectacle?.())
     }
   }
   Scene.prototype.onAfterRender = function (renderer, scene) {
     if (drawingDetail) return
+    restoreAura?.()
+    restoreAura = null
     restoreFace?.()
     restoreFace = null
     restoreCrush?.()
@@ -46,7 +53,8 @@ export function captureShowcaseScene(options: {
       if (frame) {
         drawingDetail = true
         try {
-          drawCloseup(renderer, scene, frame)
+          if (options.ranged) drawRangedCloseup(renderer, scene, frame)
+          else drawCloseup(renderer, scene, frame)
         } finally {
           drawingDetail = false
         }
@@ -56,6 +64,10 @@ export function captureShowcaseScene(options: {
   }
   return {
     ready: () => renders > 3,
-    diagnostics: () => ({ grip: catsGripAudit(), face: camillaFaceAudit() }),
+    diagnostics: () => ({
+      grip: catsGripAudit(),
+      face: camillaFaceAudit(),
+      ranged: rangedCloseupAudit(),
+    }),
   }
 }

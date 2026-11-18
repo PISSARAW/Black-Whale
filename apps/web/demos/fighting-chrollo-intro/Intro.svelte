@@ -1,0 +1,177 @@
+<script lang="ts">
+  import { tick } from 'svelte'
+  import FightScene from '$lib/components/fighting/FightScene.svelte'
+  import FightLiveScene from '$lib/components/fighting/FightLiveScene.svelte'
+  import { defaultFightComfort } from '$lib/fighting/fightComfort'
+  import { nenStatus } from '$lib/fighting/nen'
+  import { fighterAuraHex } from '$lib/fighting/auraColours'
+  import type { HeroConfig } from './hero'
+  import { buildTimeline, type Shot } from './timeline'
+  import { TECHNIQUES, techniqueOf } from './techniques'
+  import IntroOverlay from './IntroOverlay.svelte'
+  import { installPortraitCamera, portraitAudit } from './portraitCamera'
+
+  let { hero }: { hero: HeroConfig } = $props()
+  const segments = hero.build()
+  const timeline = buildTimeline(segments)
+  const comfort = { ...defaultFightComfort(), graphics: 'quality' as const, camera: 1 as const }
+
+  /** Techniques lit so far: everything the engine reported on the hero up to that frame. */
+  const lit: number[][] = []
+  let carried = 0
+  for (const segment of segments) {
+    const masks: number[] = []
+    let mask = carried
+    for (const state of segment.states) {
+      for (const status of nenStatus(state.player)) {
+        const i = TECHNIQUES.indexOf(techniqueOf(status) as (typeof TECHNIQUES)[number])
+        if (i >= 0) mask |= 1 << i
+      }
+      if (state.player.attack?.kind === 'special' || state.parallelFuture?.owner === 'player')
+        mask |= 1 << TECHNIQUES.indexOf('HATSU')
+      if (state.player.attack?.variant === 'throw') mask |= 1 << TECHNIQUES.indexOf('THROW')
+      if (state.opponent.comboHits >= 3) mask |= 1 << TECHNIQUES.indexOf('COMBO')
+      masks.push(mask)
+    }
+    carried = mask
+    lit.push(masks)
+  }
+
+  let index = $state(0)
+  let shot: Shot = $derived(timeline.shots[index])
+  let segmentIndex = $derived(shot.kind === 'clip' ? shot.clip : -1)
+  let segment = $derived(segmentIndex >= 0 ? segments[segmentIndex] : undefined)
+  /** The renderer feeds every simulation frame between two captures, as the live game does. */
+  let simOverride = $state<number | null>(null)
+  let state = $derived(
+    segment && shot.kind === 'clip'
+      ? segment.states[Math.floor(simOverride ?? shot.sim)]
+      : undefined,
+  )
+  let mask = $derived(
+    shot.kind === 'clip'
+      ? lit[shot.clip][Math.floor(shot.sim)]
+      : shot.kind === 'outro'
+        ? carried
+        : 0,
+  )
+
+  /** The closing shot pushes in on the hero. */
+  let push = $derived(
+    shot.kind === 'clip' && shot.clip === segments.length - 1
+      ? 1 + 0.75 * (1 - Math.pow(1 - Math.min(1, shot.local / (shot.length * 0.45)), 3))
+      : 1,
+  )
+
+  installPortraitCamera(hero.id, () => (shot.kind === 'clip' ? shot.portrait : null))
+
+  /** Presentation clock per output frame (ms): exactly the simulated time it shows. */
+  function presentationClock(shots: Shot[]) {
+    return shots.map((s, i) => {
+      const prev = shots[i - 1]
+      if (s.kind !== 'clip' || !prev || prev.kind !== 'clip' || prev.clip !== s.clip) return 33
+      return Math.min(120, Math.max(1, ((s.sim - prev.sim) * 1000) / 60))
+    })
+  }
+
+  export async function seekSim(frame: number, sim: number) {
+    index = frame
+    simOverride = sim
+    await tick()
+  }
+  export async function seek(frame: number) {
+    simOverride = null
+    index = frame
+    await tick()
+  }
+  export function report() {
+    return {
+      fps: timeline.fps,
+      bpm: timeline.bpm,
+      beat: timeline.beat,
+      frames: timeline.shots.length,
+      duration: timeline.shots.length / timeline.fps,
+      cues: timeline.cues,
+      portrait: portraitAudit(),
+      clock: presentationClock(timeline.shots),
+      sims: timeline.shots.map((s) => (s.kind === 'clip' ? s.sim : null)),
+      cuts: timeline.shots.flatMap((s, i) => (s.kind === 'clip' && s.local === 0 ? [i] : [])),
+      lit: TECHNIQUES.filter((_, i) => carried & (1 << i)),
+      missing: TECHNIQUES.filter((_, i) => !(carried & (1 << i))),
+      failures: segments.filter((s) => s.error).map((s) => `${s.id}: ${s.error}`),
+      clips: segments.map((s) => ({
+        id: s.id,
+        stage: s.stage,
+        opponent: s.opponent,
+        frames: s.states.length,
+        beats: s.beats.map((b) => b.word),
+        impacts: s.impacts.length,
+        observed: s.observed,
+        events: s.events,
+        error: s.error,
+      })),
+    }
+  }
+</script>
+
+<main style={`--aura:#${fighterAuraHex(hero.id).toString(16).padStart(6, '0')}`}>
+  {#if segment && state && shot.kind === 'clip'}
+    <div
+      class="camera"
+      style={`transform: translate(${shot.fx.shakeX}px, ${shot.fx.shakeY}px) rotate(${shot.fx.tilt}deg) scale(${shot.fx.zoom * push}); transform-origin: ${push > 1 ? '40% 50%' : '50% 58%'}; filter: contrast(${1.1 + shot.fx.split * 0.1}) saturate(${1.2 + shot.fx.split * 0.25});`}
+    >
+      {#key segmentIndex}
+        {#if segment.live}
+          <FightLiveScene {state} {comfort} language="en" stageId={segment.stage} viewer="player" />
+        {:else}
+          <FightScene
+            {state}
+            {comfort}
+            language="en"
+            stageId={segment.stage}
+            viewer="player"
+            keepCombatantMarkers={false}
+            hideSecondaryView
+          />
+        {/if}
+      {/key}
+    </div>
+  {/if}
+  <IntroOverlay {shot} {mask} {hero} />
+</main>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+  :global(html),
+  :global(body) {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #05070b;
+  }
+  main {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #05070b;
+  }
+  .camera {
+    position: absolute;
+    inset: -3%;
+    transform-origin: 50% 58%;
+  }
+  .camera :global(.live-scene) {
+    position: absolute;
+    inset: 0;
+  }
+  .camera :global(.fight-scene) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

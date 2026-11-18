@@ -15,7 +15,10 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
   const preparation = combatRouteScenario(route.setup)
   let state = createFightState(
     route.fighter,
-    opponent ?? route.whiff?.opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
+    opponent ??
+      route.wakeup ??
+      route.whiff?.opponent ??
+      (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
     {
       mode: 'training',
       formatId: 'knockout',

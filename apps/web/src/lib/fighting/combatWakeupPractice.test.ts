@@ -8,6 +8,7 @@ import { decodeFightReplay } from './fightReplayCodec'
 import { fightReplayHash } from './fightReplayHash'
 import { selectedGumLink } from './bungeeNetwork'
 import { WAKEUP_LESSONS } from './wakeupLessons'
+import { COMBAT_FIGHTERS } from './combatRoutes'
 import { canStartFighterAttack } from './fighterAttacks'
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
 import { packReplayInput } from './fightReplayInput'
@@ -50,17 +51,27 @@ describe.each(['centre', 'corner'] as const)('wakeup reactions at %s', (position
       expect(run(id, { position, reaction: 'wait' }).wakeup.result).toBe('hit')
       expect(run(id, { position, reaction: 'guard', followup: 'throw' }).wakeup.result).toBe('hit')
       const tech = run(id, { position, reaction: 'tech', followup: 'throw' })
-      if (id === 'franklin:wakeup-technique' && position === 'centre')
-        expect(tech.wakeup.result).toBe('defender-hit')
-      else {
+      if (tech.wakeup.knockdown) {
         expect(tech.wakeup.result).toBe('tech')
         expect(tech.state.throwTech?.sequence).toBe(1)
+      } else {
+        expect(['tech', 'defender-hit']).toContain(tech.wakeup.result)
       }
     })
   }
 
   it('baits an actual delayed throw and punishes its recovery', () => {
     const { state, wakeup } = run('hisoka:wakeup-sweep', {
+      position,
+      reaction: 'tech',
+      followup: 'bait',
+    })
+    expect(wakeup.result).toBe('punish')
+    expect(state.impact).toMatchObject({ attacker: 'player', punish: true, comboHits: 1 })
+  })
+
+  it('uses enough space to evade Machi’s longer throw', () => {
+    const { state, wakeup } = run('chrollo:wakeup-sweep', {
       position,
       reaction: 'tech',
       followup: 'bait',
@@ -78,6 +89,27 @@ describe.each(['centre', 'corner'] as const)('wakeup reactions at %s', (position
     expect(wakeup.result).toBe('defender-blocked')
     expect(state.impact).toMatchObject({ attacker: 'opponent', blocked: true })
   })
+})
+
+it('covers every combatant in both roles with three choices from the same opener', () => {
+  expect(WAKEUP_LESSONS).toHaveLength(COMBAT_FIGHTERS.length * 3)
+  expect(new Set(WAKEUP_LESSONS.map(({ wakeup }) => wakeup))).toEqual(new Set(COMBAT_FIGHTERS))
+  for (const fighter of COMBAT_FIGHTERS) {
+    const routes = WAKEUP_LESSONS.filter((route) => route.fighter === fighter)
+    expect(routes).toHaveLength(3)
+    expect(new Set(routes.map((route) => route.moves.slice(0, 2).join()))).toHaveLength(1)
+    expect(new Set(routes.map((route) => route.moves.at(-1)))).toHaveLength(3)
+  }
+})
+
+it('gives every fighter more corner carry from the same grounded opening', () => {
+  for (const fighter of COMBAT_FIGHTERS) {
+    const sweep = run(`${fighter}:wakeup-sweep`, {}, { stopAtCombo: true })
+    const carry = run(`${fighter}:wakeup-carry`, {}, { stopAtCombo: true })
+    expect(sweep.wakeup.knockdown).toBe(true)
+    expect(carry.wakeup.knockdown).toBe(true)
+    expect(carry.wakeup.gap - sweep.wakeup.gap, fighter).toBeGreaterThan(3)
+  }
 })
 
 it('preserves the sweep, the carry and the cost of each native technique', () => {

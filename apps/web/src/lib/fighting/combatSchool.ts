@@ -70,7 +70,7 @@ export function createCombatSchool() {
       view.set(route.wakeup ? { ...progress, wakeupSettings: { ...wakeup } } : progress)
       // A common, genuinely punishable heavy keeps this lesson stable across personal links.
       const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
-      const state = createCombatRouteFight(route, route.wakeup ?? defensePartner)
+      const state = createCombatRouteFight(route, defensePartner)
       whiffAt = state.frame + WHIFF_PUNISH_START
       if (route.wakeup) return prepareWakeupFight(state, wakeup)
       return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state

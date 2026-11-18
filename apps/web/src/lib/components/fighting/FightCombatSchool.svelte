@@ -30,6 +30,8 @@
   let wakeupSettings: WakeupSettings = { ...DEFAULT_WAKEUP }
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
+  $: wakeupRoutes = routes.filter((route) => route.wakeup)
+  $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup)]
   $: current = $school
   $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
   const cues = {
@@ -205,7 +207,7 @@
         ? 'Le mannequin garde après la première touche : une interruption réelle fait échouer la route. La démonstration utilise les mêmes règles, coûts et commandes que toi.'
         : 'The dummy guards after the first hit: a real gap fails the route. Demonstrations use the same rules, costs and commands as you.'}
     </p>
-    {#if routes.some((route) => route.wakeup)}
+    {#if wakeupRoutes.length}
       <fieldset>
         <legend>{language === 'fr' ? 'Jeu à la relevée' : 'Wakeup practice'}</legend>
         <label
@@ -241,7 +243,7 @@
       </fieldset>
     {/if}
     <ol>
-      {#each routes as route (route.id)}<li>
+      {#each catalogRoutes as route (route.id)}<li>
           <strong>{route.title[index]}</strong>
           <p class="route">{routeText(route.id)}</p>
           <p>{moveInputHint(route.requirement[index], $bindings)}</p>

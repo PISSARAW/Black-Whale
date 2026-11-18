@@ -1,5 +1,5 @@
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
-import { attackPhase } from './frameData'
+import { attackPhase, hurtboxes } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import { setTrainingDummy } from './trainingSession'
@@ -49,7 +49,8 @@ export interface WakeupProgress {
 }
 
 const CLOSE = 5.9
-const BAIT_DISTANCE = 10
+const MIN_BAIT_DISTANCE = 10
+const BAIT_MARGIN = 0.6
 const EXCHANGE_FRAMES = 145
 
 export function prepareWakeupFight(state: FightState, settings: WakeupSettings): FightState {
@@ -128,10 +129,21 @@ export function wakeupDemoInput(state: FightState, followup: WakeupFollowup): Fi
     return { ...EMPTY_INPUT, guard: true }
   }
   if (followup === 'bait' && opponent.knockdownFrames <= 14)
-    return gap(state) < BAIT_DISTANCE
+    return gap(state) < baitDistance(state)
       ? combatRouteInput('backHeavy', player.facing)
       : { ...EMPTY_INPUT, guard: true }
   return gap(state) > CLOSE ? combatRouteInput('forwardLight', player.facing) : EMPTY_INPUT
+}
+
+function baitDistance({ player, opponent }: FightState): number {
+  const { reach, lunge } = moveForSlot(opponent.id, 'throw')!.tuning
+  const extent = Math.max(
+    0,
+    ...hurtboxes(player).map(({ left, right }) =>
+      player.facing === 1 ? right - player.x : player.x - left,
+    ),
+  )
+  return Math.max(MIN_BAIT_DISTANCE, reach + extent + lunge + BAIT_MARGIN)
 }
 
 function ready(state: FightState, side: FightSide, slot: MoveSlot) {

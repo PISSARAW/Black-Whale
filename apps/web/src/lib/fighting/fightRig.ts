@@ -38,7 +38,7 @@ export interface PlantFeetOptions {
   root?: Turn
   facing: 1 | -1
   transfer?: boolean
-  pursuitSupport?: { foot: 0 | 1; weight: number }
+  pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -229,10 +229,14 @@ function biasPursuitSupport(
 ): void {
   const { pursuitSupport, anchor, after } = options
   if (!pursuitSupport?.weight) return
-  const planted = anchor.positions[pursuitSupport.foot]
-  const drawn = after.positions[pursuitSupport.foot]
-  correction.x += (planted.x - drawn.x - correction.x) * pursuitSupport.weight
-  correction.z += (planted.z - drawn.z - correction.z) * pursuitSupport.weight
+  const feet = pursuitSupport.foot === 'both' ? [0, 1] : [pursuitSupport.foot]
+  const drift = feet.reduce(
+    (total, foot) => total.add(anchor.positions[foot]).sub(after.positions[foot]),
+    correction.clone().set(0, 0, 0),
+  )
+  drift.divideScalar(feet.length)
+  correction.x += (drift.x - correction.x) * pursuitSupport.weight
+  correction.z += (drift.z - correction.z) * pursuitSupport.weight
 }
 
 function blendFootCorrections(

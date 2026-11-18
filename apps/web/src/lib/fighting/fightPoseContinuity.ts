@@ -64,7 +64,9 @@ function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
       progress,
       loadAt: attack.loadAt,
     })
-    return attack.pursuit ? pursuitLoad(pose, attack.pursuit, progress) : pose
+    return attack.pursuit
+      ? pursuitLoad(pose, attack.pursuit, { progress, native: plan.pose })
+      : pose
   }
   if (attack) return plan.pose
   if (plan.reactionFrame !== undefined) {

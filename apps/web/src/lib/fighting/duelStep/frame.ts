@@ -13,6 +13,7 @@ import { FIGHT_FPS } from '../fightClock'
 import { finishExpiredFight } from '../fightTimeout'
 import type { FightState } from '../types'
 import type { DuelAttack, DuelInputs, DuelPhaseResult } from './types'
+import { bufferKameoCalls } from '../kameos/buffer'
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -23,7 +24,8 @@ export function openFrame(
   state = advancePredatorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
   state = advanceEmperorClock(state)
-  if (state.hitstop > 0) return { state: hitstopFrame(state), pending: true }
+  if (state.hitstop > 0)
+    return { state: hitstopFrame(bufferKameoCalls(state, inputs)), pending: true }
   state = advanceHalkenburgSouls(state)
   state = advancePreparation(state, inputs)
   state = readArenaInputs(state, inputs, (current, side) =>

@@ -79,6 +79,13 @@
       {/each}
     </div>
     <div class="routes">
+      <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
+      <p><kbd>{$bindings.playerKameo}</kbd> · {language === 'fr'
+        ? 'Appelle après une touche et continue ton combo. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
+        : 'Call after a hit and keep attacking. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}</p>
+      <p>{language === 'fr'
+        ? 'Luzurus peut prolonger au sol, Zhang Lei renforcer les frappes, Marayam protéger la récupération. Les six exemples sont dans Académie du Nen → Combos & défense.'
+        : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}</p>
       {#if hasDirectionalChain(fighterId)}
         <h3>{language === 'fr' ? 'Chaîne directionnelle' : 'Directional chain'}</h3>
         <p><kbd>{moveInputHint('J → J → J', $bindings)}</kbd> · {language === 'fr' ? 'Fin debout à proximité' : 'Close standing finish'}</p>

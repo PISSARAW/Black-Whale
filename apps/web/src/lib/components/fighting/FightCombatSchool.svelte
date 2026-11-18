@@ -12,6 +12,7 @@
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   import type { FightState } from '$lib/fighting/types'
   import { DEFAULT_WAKEUP, type WakeupSettings } from '$lib/fighting/combatWakeupPractice'
+  import { KAMEO_COMBO_LESSONS } from '$lib/fighting/kameos/comboLessons'
   import {
     WAKEUP_POSITIONS,
     WAKEUP_REACTIONS,
@@ -31,10 +32,14 @@
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
   $: wakeupRoutes = routes.filter((route) => route.wakeup)
-  $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup)]
+  $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup && !route.kameo)]
   $: current = $school
   $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
   const cues = {
+    'support-wait': [
+      'Attends l’effet du kaméo et la fin de ton geste. Le soutien ne compte pas comme une touche.',
+      'Wait for the support effect and your recovery. Support does not count as a hit.',
+    ],
     ready: [
       'Commence la route. Les directions avant / arrière sont relatives à ton personnage.',
       'Start the route. Forward / back directions are relative to your fighter.',
@@ -104,7 +109,13 @@
   function routeText(id: string) {
     const route = combatRoute(id)
     return route.moves
-      .map((slot) => moveInputHint(moveForSlot(route.fighter, slot)!.input, $bindings))
+      .map((slot, step) => {
+        const move = moveInputHint(moveForSlot(route.fighter, slot)!.input, $bindings)
+        if (!route.kameo || step + 1 !== route.kameo.afterStep) return move
+        const direction =
+          route.kameo.call === 'forward' ? '→' : route.kameo.call === 'back' ? '←' : ''
+        return `${move} (+ ${direction} ${$bindings.playerKameo})`
+      })
       .join(' → ')
   }
 </script>
@@ -242,6 +253,42 @@
         </label>
       </fieldset>
     {/if}
+    <fieldset>
+      <legend>{language === 'fr' ? 'Kaméos dans les combos' : 'Kameos in combos'}</legend>
+      <p>
+        {language === 'fr'
+          ? `Après la première touche, appelle ton kaméo avec ${$bindings.playerKameo} et la direction indiquée, puis continue ton combo. Les directions sont relatives au combattant. Le kaméo garde ses coûts, sa portée et sa vulnérabilité.`
+          : `After the first hit, call your kameo with ${$bindings.playerKameo} and the shown direction, then continue your combo. Directions are relative to your fighter. Support keeps its costs, reach and vulnerability.`}
+      </p>
+      <label
+        >Position
+        <select
+          bind:value={wakeupSettings.position}
+          aria-label={language === 'fr' ? 'Position du combo kaméo' : 'Kameo combo position'}
+        >
+          {#each Object.entries(WAKEUP_POSITIONS) as [value, label] (value)}
+            <option {value}>{label[index]}</option>
+          {/each}
+        </select>
+      </label>
+      <ol>
+        {#each KAMEO_COMBO_LESSONS as route (route.id)}
+          <li>
+            <strong>{fighterDefinition(route.fighter).name} · {route.title[index]}</strong>
+            <p class="route">{routeText(route.id)}</p>
+            <p>{route.requirement[index]}</p>
+            <div class="actions">
+              <button type="button" onclick={() => launch(route.id)}
+                >{language === 'fr' ? 'Pratiquer' : 'Practice'} · {route.title[index]}</button
+              >
+              <button type="button" onclick={() => launch(route.id, true)}
+                >{language === 'fr' ? 'Démontrer' : 'Demonstrate'} · {route.title[index]}</button
+              >
+            </div>
+          </li>
+        {/each}
+      </ol>
+    </fieldset>
     <ol>
       {#each catalogRoutes as route (route.id)}<li>
           <strong>{route.title[index]}</strong>

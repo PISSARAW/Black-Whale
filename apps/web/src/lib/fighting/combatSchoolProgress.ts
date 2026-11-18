@@ -5,6 +5,7 @@ import type { CombatRoute } from './combatRoutes'
 import type { FightState } from './types'
 import { routeStepHits, routeHitsBefore } from './combatRouteContacts'
 import { attackPhase } from './frameData'
+import { comboSupportLanded, waitingForComboSupport } from './kameos/comboLessons'
 
 export type CombatCue =
   | 'ready'
@@ -24,6 +25,7 @@ export type CombatCue =
   | 'punish'
   | 'evade'
   | 'whiff-confirm'
+  | 'support-wait'
 export interface CombatProgress {
   id: string
   step: number
@@ -35,6 +37,7 @@ export interface CombatProgress {
   complete: boolean
   demo: boolean
   stepHits: number
+  supportLanded?: boolean
 }
 export function initialCombatProgress(id: string, demo: boolean, whiff = false): CombatProgress {
   return {
@@ -66,20 +69,13 @@ function routeContact(
   if (rejectedContact(state)) return { ...next, cue: 'blocked', failed: true }
   if (route.whiff && progress.step === 0 && state.player.attack?.comboOpening !== 'whiff-punish')
     return { ...next, cue: 'wrong', failed: true }
-  const expected = `${route.fighter}:${route.moves[progress.step]}`
   const hits = (state.impact!.comboHits ?? 0) - routeHitsBefore(route, progress.step)
   const gained = hits - progress.stepHits
-  const continuous = state.impact!.sequence - progress.lastImpact === gained
-  if (
-    state.player.attack?.moveId !== expected ||
-    gained < 1 ||
-    hits > routeStepHits(route, progress.step) ||
-    !continuous
-  )
+  if (!validRouteHit(state, progress, { route, hits, gained }))
     return { ...next, cue: 'wrong', failed: true }
   const finishedStep = hits === routeStepHits(route, progress.step)
   const step = progress.step + Number(finishedStep)
-  const complete = step === route.moves.length
+  const complete = routeFinished(route, step, progress.supportLanded)
   return {
     ...next,
     step,
@@ -89,37 +85,88 @@ function routeContact(
     cue: complete ? 'complete' : 'wait',
   }
 }
+
+function validRouteHit(
+  state: FightState,
+  progress: CombatProgress,
+  contact: { route: CombatRoute; hits: number; gained: number },
+) {
+  const { route, hits, gained } = contact
+  return (
+    state.player.attack?.moveId === `${route.fighter}:${route.moves[progress.step]}` &&
+    gained >= 1 &&
+    hits <= routeStepHits(route, progress.step) &&
+    state.impact!.sequence - progress.lastImpact === gained
+  )
+}
+
+function routeFinished(route: CombatRoute, step: number, supportLanded?: boolean) {
+  return step === route.moves.length && (!route.kameo || supportLanded === true)
+}
+
+function missedWhiffPunish(progress: CombatProgress, state: FightState, route: CombatRoute) {
+  return (
+    route.whiff && progress.cue === 'whiff-confirm' && !state.opponent.attack && progress.step === 0
+  )
+}
+
+function comboDropped(progress: CombatProgress, state: FightState) {
+  return progress.step > 0 && state.opponent.hitStun === 0 && state.hitstop === 0
+}
 export function observeCombatRoute(
   progress: CombatProgress,
   state: FightState,
   route: CombatRoute,
 ): CombatProgress {
   if (inactive(progress, state)) return progress
-  let next = { ...progress, lastFrame: state.frame }
+  let next = supportProgress({ ...progress, lastFrame: state.frame }, state, route)
   if (state.impact && state.impact.sequence !== progress.lastImpact)
     next = routeContact(next, state, route)
   if (next.failed || next.complete) return next
-  if (route.whiff && progress.cue === 'whiff-confirm' && !state.opponent.attack && next.step === 0)
-    return { ...next, cue: 'defense-late', failed: true }
-  if (next.step > 0 && state.opponent.hitStun === 0 && state.hitstop === 0)
-    return { ...next, cue: 'dropped', failed: true }
+  if (routeFinished(route, next.step, next.supportLanded))
+    return { ...next, complete: true, cue: 'complete' }
+  if (missedWhiffPunish(next, state, route)) return { ...next, cue: 'defense-late', failed: true }
+  if (comboDropped(next, state)) return { ...next, cue: 'dropped', failed: true }
   return { ...next, cue: routeCue(next, state, route) }
 }
+
+function supportProgress(
+  progress: CombatProgress,
+  state: FightState,
+  route: CombatRoute,
+): CombatProgress {
+  if (!route.kameo) return progress
+  return {
+    ...progress,
+    supportLanded: progress.supportLanded || comboSupportLanded(state, route.kameo.id),
+  }
+}
 function routeCue(progress: CombatProgress, state: FightState, route: CombatRoute): CombatCue {
-  if (progress.step === 0)
-    return route.whiff
-      ? attackPhase(state.opponent) === 'recovery'
-        ? 'whiff-confirm'
-        : 'evade'
-      : 'ready'
+  if (progress.step === route.moves.length || waitingForComboSupport(state, route, progress.step))
+    return 'support-wait'
+  if (progress.step === 0) return openingCue(state, route)
   const move = moveForSlot(route.fighter, route.moves[progress.step])!
   if (state.player.attack?.moveId === move.id)
     return routeStepHits(route, progress.step) > 1 ? 'volley' : 'wait'
+  return continuationCue(progress, state, route)
+}
+
+function continuationCue(
+  progress: CombatProgress,
+  state: FightState,
+  route: CombatRoute,
+): CombatCue {
+  const move = moveForSlot(route.fighter, route.moves[progress.step])!
   if (state.opponent.hitStun <= move.tuning.startup) return 'late'
   const previous = moveForSlot(route.fighter, route.moves[progress.step - 1])!
   if (previous.linkInto?.includes(move.id))
     return canStartFighterAttack(state.player, move.kind, move.id) ? 'link' : 'link-wait'
   return canStartFighterAttack(state.player, move.kind, move.id) ? 'cancel' : 'wait'
+}
+
+function openingCue(state: FightState, route: CombatRoute): CombatCue {
+  if (!route.whiff) return 'ready'
+  return attackPhase(state.opponent) === 'recovery' ? 'whiff-confirm' : 'evade'
 }
 function defenseContact(progress: CombatProgress, state: FightState): CombatProgress {
   const impact = state.impact!

@@ -49,13 +49,19 @@ function advanceSlot(state: FightState, side: FightSide, call?: KameoCallId): Fi
 }
 
 function reserve(state: FightState, side: FightSide, call?: KameoCallId): FightState {
-  const slot = state.kameos![side]!
+  let slot = state.kameos![side]!
+  if (slot.bufferedCall) {
+    const { bufferedCall, ...ready } = slot
+    state = withSlot(state, side, ready)
+    slot = ready
+    call ??= bufferedCall
+  }
   if (slot.cooldownFrames > 0)
     return withSlot(state, side, { ...slot, cooldownFrames: slot.cooldownFrames - 1 })
-  return call && canCall(state, side, slot) ? enter(state, side, call) : state
+  return call && canCallKameo(state, side, slot) ? enter(state, side, call) : state
 }
 
-function canCall(state: FightState, side: FightSide, slot: KameoSlot): boolean {
+export function canCallKameo(state: FightState, side: FightSide, slot: KameoSlot): boolean {
   const cost = kameoDefinition(slot.fighter.id as KameoId).auraCost
   return canAct(state[side]) && slot.fighter.health > 0 && slot.fighter.aura >= cost
 }

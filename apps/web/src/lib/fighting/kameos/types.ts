@@ -27,6 +27,8 @@ export interface KameoSlot {
   cooldownFrames: number
   /** Frames spent in the current phase. */
   phaseFrames: number
+  /** A ready call pressed during hitstop; consumed on the first unfrozen frame. */
+  bufferedCall?: KameoCallId
   trap?: KameoTrap
   /** Round in which the kameo died; its body lies on the floor until that round ends. */
   eliminatedRound?: number

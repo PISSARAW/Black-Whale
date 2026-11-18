@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightHeldButton from './FightHeldButton.svelte'
+  import FightKameoCall from './FightKameoCall.svelte'
   import FightHanzoCall from './FightHanzoCall.svelte'
   import { useFightBindings } from '$lib/fighting/fightControlHints'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
@@ -49,6 +50,7 @@
     {/if}
   </div>
   <div class="touch-group">
+    <FightKameoCall {state} {language} {onControl} />
     <FightHanzoCall {state} {language} {onCall} />
     <button
       type="button"

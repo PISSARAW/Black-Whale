@@ -8,6 +8,7 @@ import { WHIFF_PUNISH_LESSONS } from './whiffPunishLessons'
 import { ROSTER_WHIFF_PUNISH_LESSONS } from './rosterWhiffPunishLessons'
 import type { CombatWhiffPractice } from './combatWhiffPractice'
 import { WAKEUP_LESSONS } from './wakeupLessons'
+import { KAMEO_COMBO_LESSONS, type KameoComboLesson } from './kameos/comboLessons'
 
 const REFERENCE_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
 type ReferenceFighter = (typeof REFERENCE_FIGHTERS)[number]
@@ -24,6 +25,7 @@ export interface CombatRoute {
   setup?: CombatRouteSetup
   whiff?: CombatWhiffPractice
   wakeup?: FighterId
+  kameo?: KameoComboLesson
   /** Expected contacts per command; a barrage is entered once and must land every bullet. */
   hits?: readonly number[]
 }
@@ -117,6 +119,7 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
   ...WHIFF_PUNISH_LESSONS,
   ...ROSTER_WHIFF_PUNISH_LESSONS,
   ...WAKEUP_LESSONS,
+  ...KAMEO_COMBO_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)

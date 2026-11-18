@@ -18,7 +18,7 @@ const server = await createServer({
   resolve: { alias: { $lib: path.join(root, 'apps/web/src/lib') } },
   css: { postcss: { plugins: [] } },
   optimizeDeps: { entries: ['ui-tests/fighting-preparation/index.html'] },
-  server: { host: '127.0.0.1', port: 0 },
+  server: { host: '127.0.0.1', port: 0, watch: null, hmr: false },
   logLevel: 'error',
 })
 await server.listen()

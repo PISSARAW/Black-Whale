@@ -63,6 +63,53 @@ function read(state: FightState, side: FightSide = 'player') {
 }
 
 describe('Dowsing screens a real video with Emperor Time and actual prior familiarity', () => {
+  it.each<FightSide>(['player', 'opponent'])(
+    'rejects the obsolete metadata-only command rather than bypassing actual prior encounters for %s',
+    (side) => {
+      const base = filmed(side)
+      const other = side === 'player' ? 'opponent' : 'player'
+      const state: FightState = {
+        ...base,
+        [side]: { ...base[side], personalEncounters: undefined },
+        battlefield: {
+          ...base.battlefield!,
+          entities: [
+            ...base.battlefield!.entities,
+            {
+              id: 'legacy-metadata-camera',
+              kind: 'camera',
+              owner: side,
+              x: base[side].x,
+              y: 0,
+              present: true,
+              material: 'real',
+              health: 40,
+              statements: [
+                {
+                  frame: 1,
+                  sequence: 1,
+                  subject: base[other].id,
+                  appearance: base[other].id,
+                  text: 'Ancienne métadonnée.',
+                  consciousLie: true,
+                },
+              ],
+            },
+          ],
+        },
+      }
+      expect(use(state, side, 'dowsing-video', 'legacy-metadata-camera|1')).toBe(state)
+      expect(read(state, side)).toBe(state)
+      const legitimate = {
+        ...state,
+        [side]: { ...state[side], personalEncounters: base[side].personalEncounters },
+      }
+      expect(read(legitimate, side)[side].dowsingReading?.source?.deviceId).toBe(
+        `${side}:device:camera`,
+      )
+      expect(read(legitimate, side)[side].dowsingReading?.swings).toBe(true)
+    },
+  )
   it.each(['sincere', 'lie'] as const)(
     'screens a recorded %s statement without the subject still facing Kurapika',
     (intent) => {

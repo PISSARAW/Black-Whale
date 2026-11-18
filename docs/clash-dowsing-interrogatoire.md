@@ -41,3 +41,23 @@ face-à-face et vidéo du chapitre 348 ; récapitulatif des applications chez
 [HUNTER×WORLD](https://hunterworld.tokyo/krapika/).
 La recherche sur carte et les autres écarts de l’audit restent ouverts :
 cette étape ne certifie pas un achèvement à 100 %.
+
+## Accès vidéo unique — ruleset 61
+
+Un ancien chemin de commande acceptait aussi une paire `caméra|numéro` issue
+de métadonnées de parole. Il pouvait contourner la rencontre du corps réel,
+le visage filmé, la disponibilité de la main et les autres conditions de la
+lecture vidéo. Ce chemin est retiré ; il ne fournit plus de verdict, même
+sous Emperor Time. Les métadonnées historiques seules ne sont pas une vidéo.
+
+La commande visible du lecteur continue à sélectionner un échantillon du
+véritable appareil. Le moteur recoupe ce qui est lu avec l’enregistrement,
+la rencontre personnelle, le visage, l’accès à la caméra, les sens et la
+main droite. Les paroles libres sans intention représentée restent indéterminées.
+Les tests vérifient le rejet de l’ancien chemin pour P1 et P2 tout en conservant
+une analyse positive du véritable enregistrement.
+
+La recherche directionnelle déjà adaptée dans le duel respecte désormais
+également la main de la chaîne et les clauses implantées de Judgment. Cette
+correction ne remplace pas une recherche sur carte physique par une direction
+abstraite ; cette partie reste à compléter. Le On est conservé.

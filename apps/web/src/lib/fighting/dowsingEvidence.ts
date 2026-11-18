@@ -1,7 +1,8 @@
 import { priorityLineOfSight } from './priorityOptics'
-import { dowsingBodyReady, ownsDowsing } from './dowsingRules'
+import { dowsingBodyReady, dowsingHandReady, ownsDowsing } from './dowsingRules'
+import { judgmentActionBreach } from './judgmentAction'
+import { DOWSING_MOVE } from './dowsingTypes'
 import { battleAppearance } from './battleCantabileRules'
-import { canHear } from './melodyRules'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState, FighterId } from './types'
 
@@ -74,13 +75,13 @@ export function performDowsingEvidence({ state, side, command }: ArsenalInvocati
   if (
     !ownsDowsing(actor) ||
     !dowsingBodyReady(actor) ||
+    !dowsingHandReady(state, side) ||
     actor.aura < 3 ||
     actor.dowsingInvestigation
   )
     return state
   if (command.action === 'dowsing-locate') return locatePerson(state, side, command.target)
-  if (command.action !== 'dowsing-video' || !actor.kurapika?.emperorTime) return state
-  return analyseVideo(state, side, command.target)
+  return state
 }
 function locatePerson(state: FightState, side: FightSide, key?: string): FightState {
   const actor = state[side]
@@ -95,6 +96,14 @@ function locatePerson(state: FightState, side: FightSide, key?: string): FightSt
   ]
   const target = bodies.find((body) => body.id === known.subject && body.health > 0)
   if (!target) return state
+  const breach = judgmentActionBreach({
+    state,
+    side,
+    kind: 'special',
+    moveId: DOWSING_MOVE,
+    auraCharged: false,
+  })
+  if (breach) return breach
   const difference = target.x - actor.x
   return {
     ...state,
@@ -110,39 +119,6 @@ function locatePerson(state: FightState, side: FightSide, key?: string): FightSt
     },
   }
 }
-function analyseVideo(state: FightState, side: FightSide, target?: string): FightState {
-  const actor = state[side]
-  const split = target?.lastIndexOf('|') ?? -1
-  if (split < 0) return state
-  const cameraId = target!.slice(0, split),
-    sequence = Number(target!.slice(split + 1))
-  const camera = state.battlefield?.entities.find(
-    (entry) =>
-      entry.id === cameraId && entry.kind === 'camera' && entry.present && entry.health > 0,
-  )
-  if (!camera || Math.hypot(camera.x - actor.x, camera.y - actor.y) > 6 || !canHear(actor))
-    return state
-  const statement = camera.statements?.find(
-    (entry) =>
-      entry.sequence === sequence &&
-      actor.dowsingAcquaintances?.some((known) => known.subject === entry.subject),
-  )
-  if (!statement) return state
-  return {
-    ...state,
-    [side]: {
-      ...actor,
-      aura: actor.aura - 3,
-      dowsingInvestigation: { remainingFrames: 30, mode: 'video' },
-      dowsingReading: {
-        frame: state.frame,
-        text: statement.text,
-        swings: statement.consciousLie === true,
-      },
-    },
-  }
-}
-
 /** Meeting a visible person is recorded independently from whether a later answer is truthful. */
 export function advanceDowsingEvidence(state: FightState): FightState {
   let next = state
@@ -202,15 +178,6 @@ export function dowsingEvidenceOptions(state: FightState, side: FightSide): Arse
     fr: `Dowsing · Localiser ${known.appearance}`,
     en: `Dowsing · Locate ${known.appearance}`,
   }))
-  for (const camera of state.battlefield?.entities ?? []) {
-    if (camera.kind !== 'camera' || !camera.present) continue
-    for (const statement of camera.statements ?? [])
-      choices.push({
-        command: { action: 'dowsing-video', target: `${camera.id}|${statement.sequence}` },
-        fr: `Dowsing · Analyser la vidéo (${Math.floor(statement.frame / 60)} s)`,
-        en: `Dowsing · Analyse video (${Math.floor(statement.frame / 60)} s)`,
-      })
-  }
   return choices.map(({ command, fr, en }) => ({
     command,
     labelFr: fr,

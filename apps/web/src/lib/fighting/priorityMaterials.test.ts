@@ -148,7 +148,7 @@ describe('material applications preserve their conditions', () => {
     expect(emerged.player.luiniPassage).toBeUndefined()
     expect(emerged.player.x).toBe(85)
   })
-  it('analyses a real recorded statement only under Emperor Time after meeting the subject', () => {
+  it('rejects metadata-only camera statements even under Emperor Time after meeting the subject', () => {
     let s: FightState = advanceDowsingEvidence(ready('kurapika'))
     s = recordDowsingStatement(s, { speaker: 'opponent', text: 'Je suis Kurapika.', lie: true })
     const camera = s.battlefield!.entities.find((entry) => entry.id === 'player:camera')!
@@ -160,7 +160,8 @@ describe('material applications preserve their conditions', () => {
     expect(performArsenalCommand(s, 'player', command)).toBe(s)
     s = { ...s, player: { ...s.player, kurapika: { ...s.player.kurapika!, emperorTime: true } } }
     const reading = performArsenalCommand(s, 'player', command)
-    expect(reading.player.dowsingReading).toMatchObject({ text: 'Je suis Kurapika.', swings: true })
+    expect(reading).toBe(s)
+    expect(reading.player.dowsingReading).toBeUndefined()
   })
   it('gives a direction for a known person without exposing intent or exact coordinates', () => {
     const met = advanceDowsingEvidence(ready('kurapika'))
@@ -172,6 +173,39 @@ describe('material applications preserve their conditions', () => {
     })
     expect(located.player.dowsingLocation).toMatchObject({ direction: 'right' })
     expect(located.player.dowsingLocation).not.toHaveProperty('x')
+  })
+  it('requires the chain hand for the directional application and keeps Judgment applicable', () => {
+    const base = beginFight(
+      createFight('kurapika', 'hisoka', {
+        mode: 'versus-local',
+        environment: { preparation: { mode: 'scenario', resources: ['devices'], cohorts: [] } },
+      }),
+    )
+    const met = advanceDowsingEvidence({
+      ...base,
+      player: { ...base.player, x: 25, aura: 100 },
+      opponent: { ...base.opponent, x: 40 },
+    })
+    const command = {
+      action: 'dowsing-locate' as const,
+      target: met.player.dowsingAcquaintances![0].key,
+    }
+    const occupied = performArsenalCommand(met, 'player', {
+      action: 'device-pickup',
+      target: 'player:device:camera',
+    })
+    expect(occupied).not.toBe(met)
+    expect(performArsenalCommand(occupied, 'player', command)).toBe(occupied)
+    const bound = {
+      ...met,
+      player: {
+        ...met.player,
+        judgmentChain: { owner: 'opponent' as const, rule: 'zetsu' as const },
+      },
+    }
+    const attempted = performArsenalCommand(bound, 'player', command)
+    expect(attempted.player.health).toBe(0)
+    expect(attempted.player.dowsingLocation).toBeUndefined()
   })
   it('enforces a secret clause on real spoken disclosure and keeps existing clauses independent', () => {
     const s = ready('kurapika')

@@ -24,11 +24,7 @@ export function performDowsingCommand(
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
-  if (
-    command.action === 'dowsing-locate' ||
-    (command.action === 'dowsing-video' && command.target?.includes('|'))
-  )
-    return performDowsingEvidence({ state, side, command })
+  if (command.action === 'dowsing-locate') return performDowsingEvidence({ state, side, command })
   return performDowsingQuestion(state, side, command)
 }
 function performDowsingQuestion(

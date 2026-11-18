@@ -17,10 +17,10 @@
   $: outsideDuel = outsideDuelAbility(held?.moveId)
   $: missingBody = dolphinMissingBattleBody(fighter)
   $: ability = outsideDuel ?? moveById(held?.moveId)
-  $: hours = ((chain?.lifespanFrames ?? 0) / 60).toLocaleString(
-    language === 'fr' ? 'fr-FR' : 'en-US',
-    { maximumFractionDigits: 2 },
-  )
+  $: hourFormat = new Intl.NumberFormat(language === 'fr' ? 'fr-FR' : 'en-US', {
+    maximumFractionDigits: 2,
+  })
+  $: hours = hourFormat.format((chain?.lifespanFrames ?? 0) / 60)
 </script>
 
 {#if chain || fighter.chainJail || fighter.judgmentChain || fighter.stolenChainAbility || fighter.drainingChain}
@@ -48,7 +48,13 @@
             ? 'Stealth Dolphin'
             : 'Steal Chain'}
         </div>
-        {#if (outsideDuel && (!state.battlefield || outsideDuel.id === BEYOND_CURSE.id)) || missingBody}
+        {#if held.source === 'chrollo' && !fighter.chrolloBook}
+          <div>
+            {language === 'fr'
+              ? 'Skill Hunter : livre et conditions d’acquisition requis ; aucun Hatsu gratuit.'
+              : 'Skill Hunter requires its book and acquisition conditions; no free Hatsu.'}
+          </div>
+        {:else if (outsideDuel && (!state.battlefield || outsideDuel.id === BEYOND_CURSE.id)) || missingBody}
           <div>
             {missingBody
               ? language === 'fr'

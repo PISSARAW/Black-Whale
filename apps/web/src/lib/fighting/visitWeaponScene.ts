@@ -9,6 +9,7 @@ import {
   placeVisitHand,
 } from './visitSceneKit'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
+import { fineControlEase } from './fineControlAnchors'
 
 /** Shared conjured props follow the actual user's rig, including active page/loan uses. */
 export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffectScene {
@@ -17,7 +18,7 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
   const up = new options.THREE.Vector3(0, 1, 0)
   const direction = new options.THREE.Vector3()
   return {
-    sync(state, seconds) {
+    sync(state) {
       restoreSnakeHands(hiddenHands)
       pool.hide()
       for (const side of ['player', 'opponent'] as const) {
@@ -43,12 +44,13 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
         const target = state[side === 'player' ? 'opponent' : 'player']
         direction.set(options.worldX(target.x) - snake.root.position.x, 0.03, 0).normalize()
         snake.root.quaternion.setFromUnitVectors(up, direction)
-        const extension = armExtension(fighter) + Math.sin(seconds * 10) * 0.025
+        const extension = armExtension(fighter)
         snake.body.scale.y = extension
         const head = snake.joints.get('gel-snake-head')!
         head.rotation.set(0, direction.x >= 0 ? -Math.PI / 2 : Math.PI / 2, 0)
         head.rotateX(Math.PI / 2)
         head.scale.z = 1 / extension
+        snake.root.userData.extension = extension
       }
     },
     dispose() {
@@ -68,7 +70,7 @@ function armExtension(fighter: ArcadeFighter): number {
   const data = attackData(attack.kind, fighter)
   const phase = attackPhase(fighter)
   if (phase === 'startup')
-    return 0.45 + 0.55 * Math.min(1, attack.frame / Math.max(1, data.startup))
+    return 0.45 + 0.55 * fineControlEase(attack.frame / Math.max(1, data.startup))
   if (phase === 'active') return 1
   const recovery = (attack.frame - data.startup - data.active) / Math.max(1, data.recovery)
   return 1 - Math.min(1, recovery) * 0.65

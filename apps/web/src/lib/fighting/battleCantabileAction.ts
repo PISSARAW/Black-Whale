@@ -1,3 +1,4 @@
+import { selectedBattleModel } from './metamorphosenModels'
 import { triggerHatsu } from './hatsu'
 import { freeCombatBody } from './fightActorState'
 import {
@@ -8,7 +9,6 @@ import {
   type BattlePiece,
 } from './battleCantabileTypes'
 import {
-  battleAppearance,
   battleCommand,
   battleMindAvailable,
   battlePreparing,
@@ -56,9 +56,11 @@ function pieceConditions(state: FightState, side: FightSide, piece: BattlePiece)
 
 function learnedModelReady(state: FightState, side: FightSide): boolean {
   const fighter = state[side]
-  const model = battleAppearance(state[side === 'player' ? 'opponent' : 'player'])
+  const model = selectedBattleModel(state, side)
   const known = fighter.battleCantabile?.models[model]
-  return Boolean(known?.spoken && known.frames > 0 && !fighter.battleCantabile?.form)
+  return Boolean(
+    known?.spoken && known.frames > 0 && fighter.battleCantabile?.form?.model !== model,
+  )
 }
 
 /** Only the spear thrust uses the shared strike path; each piece starts with a real dance. */
@@ -81,7 +83,7 @@ function beginBattlePiece(options: {
   const { state, side, piece } = options
   const fighter = state[side]
   const battle = fighter.battleCantabile ?? emptyBattleCantabile()
-  const model = battleAppearance(state[side === 'player' ? 'opponent' : 'player'])
+  const model = selectedBattleModel(state, side)
   const total = BATTLE_DANCE_FRAMES[piece]
   const witnessed = triggerHatsu(state, side, 'bonolenov')
   return {

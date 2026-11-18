@@ -7,9 +7,9 @@ export function tuneMachiMoveset(moveset: FighterMoveset): FighterMoveset {
   return {
     ...moveset,
     mechanicFr:
-      'L : suture personnelle préparée, interrompue par un coup. → + L / U : aiguille de pistage, sans immobilisation. ↓ + L : ligature au contact, maintenue par un fil court. ← + L : lâcher le fil. Un fil trop long ou lâché conserve seulement le pistage ; aucun stun automatique.',
+      'L : suture d’une plaie ouverte, préparée et interrompue par un coup. → + L / U : aiguille de pistage, sans immobilisation. ↓ + L : ligature au contact, maintenue par un fil court. ← + L : lâcher le fil. Un fil trop long ou lâché conserve seulement le pistage ; aucun stun automatique.',
     mechanicEn:
-      'L: prepared self-suture, interrupted by a hit. → + L / U: tracking needle, no restraint. ↓ + L: contact bind maintained by a short thread. ← + L: release the thread. A long or released grip only tracks; no automatic stun.',
+      'L: prepared open-wound suture, interrupted by a hit. → + L / U: tracking needle, no restraint. ↓ + L: contact bind maintained by a short thread. ← + L: release the thread. A long or released grip only tracks; no automatic stun.',
     finisherConditionFr: 'Un véritable fil de ligature court doit encore relier Machi à la cible.',
     finisherConditionEn:
       'A maintained short binding thread must still connect Machi to the target.',

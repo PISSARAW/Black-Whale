@@ -10,6 +10,7 @@ import {
 import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { ownsBungeeGum } from './hisokaArsenal'
+import { gumNetworkBusy } from './bungeeNetwork'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
@@ -162,9 +163,7 @@ export function returnChainAbility(state: FightState, side: FightSide): FightSta
 }
 
 /** Gum may be detached voluntarily; a curse or timed effect must run its course. */
-export function dismissDolphinGum(state: FightState, side: FightSide): FightState {
-  return state.bungeeGum?.owner === side ? { ...state, bungeeGum: null } : state
-}
+export { clearOwnedGum as dismissDolphinGum } from './bungeeNetwork'
 
 function changedDolphinCounters(before: FightState, after: FightState): string[] {
   const keys = new Set<string>()
@@ -202,7 +201,7 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
-    'gum-support': gumUseBusy(fighter),
+    'gum-support': gumUseBusy(fighter) || gumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
     'biohazard-device': Boolean(
       state.battlefield?.entities.some(

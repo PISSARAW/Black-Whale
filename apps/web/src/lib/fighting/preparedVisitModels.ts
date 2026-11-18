@@ -1,6 +1,7 @@
 import { createVisitHatsuModel, disposeMountedVisitHatsu } from './visitHatsuModel'
 import { BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
 import { gyoSight } from './nenPerception'
+import { fineControlReduced, controlHand } from './fineControlAnchors'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
@@ -14,6 +15,7 @@ export function buildPreparedVisitModel(options: EffectSceneOptions, entry: Prep
     model: entry.kind === 'flute' ? 'melody-flute' : 'controlled-bird',
     anchor: 'floor',
     figureOwned: true,
+    joints: entry.kind === 'bird' ? ['bird-wing--1', 'bird-wing-1'] : [],
   })
   model.fit(entry.kind === 'flute' ? { width: 0.65 } : { width: 0.5, depth: 0.45 })
   model.root.position.y = entry.kind === 'flute' ? 0.06 : 0.03
@@ -34,7 +36,8 @@ export function syncPreparedVisitModel(
     seconds: number
   },
 ) {
-  const { root, entry, state, seconds } = context
+  const { root, entry, state } = context
+  const seconds = fineControlReduced(options) ? 0 : state.frame / 60
   if (entry.kind !== 'bird') return
   const bird = root.getObjectByName('visit-hatsu:controlled-bird')!
   const previous = bird.userData.lastX ?? entry.x
@@ -61,16 +64,9 @@ function syncBirdTether(
   const { root, bird, entry, state } = context
   const tether = bird.getObjectByName(BIRD_TETHER) as Line<BufferGeometry>
   const controller = entry.controller
-  tether.visible = controller?.source === 'cluck' && gyoSight(state.player)
+  tether.visible = controller?.source === 'cluck' && gyoSight(state[options.viewer?.() ?? 'player'])
   if (!controller || !tether.visible) return
-  const owner = state[controller.side]
-  const point = new options.THREE.Vector3(
-    options.worldX(owner.x),
-    options.worldY(owner.y) + 1.1,
-    0.3,
-  )
-  const hand = options.figureOf?.(controller.side)?.getObjectByName('hand-right')
-  hand?.getWorldPosition(point)
+  const point = controlHand(options, state, controller.side)
   root.updateWorldMatrix(true, true)
   tether.parent!.worldToLocal(point)
   const positions = tether.geometry.attributes.position

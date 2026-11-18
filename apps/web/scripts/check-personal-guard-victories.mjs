@@ -55,6 +55,7 @@ try {
           mode: repeat === 0 ? 'versus-ai' : 'versus-local',
         }
         process.stdout.write(`Checking ${winner}: ${side}, victory ${repeat + 1}\n`)
+        await page.evaluate(() => window.victoryFixture.pause(true))
         await page.evaluate((options) => window.victoryFixture.configure(options), options)
         await page.locator('.fight-scene.ready').waitFor()
         process.stdout.write('Scene ready\n')
@@ -78,7 +79,10 @@ try {
           (await page.request.get(`${base}/clash-victories/${winner}.m4a`)).status(),
           200,
         )
-        await page.locator('.skip-victory').click()
+        if (side === 'player' && repeat === 0)
+          await page.evaluate(() => window.victoryFixture.pause(false))
+        if (side !== 'player' || repeat !== 0)
+          await page.evaluate(() => document.querySelector('.skip-victory')?.click())
         await overlay.waitFor({ state: 'detached' })
         assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().active), false)
         await page

@@ -9,6 +9,7 @@ const PAPER_CANON: TechniqueCanonContract = {
   conditions: [
     'A physical fragment must embed in the chosen zone before a stream can converge there.',
     'A matching paper doll and a fragment attached to its subject relay words near that subject.',
+    'The fan disperses physical confetti along several paths; flying paper can regroup toward its own mark.',
   ],
   prohibitions: [
     'No explosive marks, hit-count threshold, mind reading, aura drain or automatic execution.',
@@ -16,7 +17,7 @@ const PAPER_CANON: TechniqueCanonContract = {
   narrativeCost:
     'Zone coordinates, projectile damage/speed, startup, aura costs and voice radius tune the duel.',
   narrativeEffect:
-    'Manipulate paper into a cutting stream targeting embedded fragments; eavesdrop through a doll.',
+    'Disperse and regroup cutting paper toward embedded fragments; the Shu-coated fan has a real cutting edge. Eavesdrop through a doll.',
 }
 
 export function tuneKallutoMoveset(moveset: FighterMoveset): FighterMoveset {

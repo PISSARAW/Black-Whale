@@ -40,10 +40,14 @@ function cinematicStage(id: FighterId) {
   return id === 'yokotani' ? ('heilly-hideout' as const) : ('heavens-arena' as const)
 }
 function prepareAction(state: FightState, id: FighterId, side: FightSide): FightState {
-  if (id === 'feitan' || id === 'terebellum')
+  if (['feitan', 'terebellum', 'machi'].includes(id))
     state = recordFightInjuries(state, {
       ...state,
-      [side]: { ...state[side], health: state[side].health - 35 },
+      [side]: {
+        ...state[side],
+        health: state[side].health - 35,
+        openWounds: id === 'machi' ? 1 : state[side].openWounds,
+      },
     })
   if (id === 'halkenburg') for (let i = 0; i < 480; i++) state = cinematicStep(state)
   if (id === 'rihan') {

@@ -17,6 +17,7 @@ export const EMPTY_PREPARATION: FightPreparation = { mode: 'duel', resources: []
 export const PREPARATION_REACH = 8
 
 export function personalEquipment(id: FighterId): FightEquipment[] {
+  if (id === 'hinrigh') return ['tracker-receiver']
   if (id === 'illumi') return ['needles']
   if (id === 'zakuro') return ['blood-infusion']
   if (id === 'melody') return ['flute']
@@ -62,6 +63,7 @@ function installProps(
 ) {
   const { resources, side, x } = context
   installSupplyProps(entities, context)
+  installLegacyProps(entities, context)
   if (resources.has('animals'))
     entities.push({ ...entity('animal', side, x + 2), animalSize: 'mouse', health: 1 })
   if (resources.has('birds'))
@@ -195,4 +197,19 @@ function changedEntity(entry: PreparedEntity, change: Partial<PreparedEntity>): 
   return entry.kind === 'room'
     ? { ...next, invalidated: entry.invalidated || next.invalidated || next.sealed === false }
     : next
+}
+
+function installLegacyProps(
+  entities: PreparedEntity[],
+  c: { resources: Set<string>; side: FightSide; x: number },
+) {
+  if (c.resources.has('cameras')) entities.push(entity('camera', c.side, c.x + 1))
+  if (c.resources.has('hostages'))
+    entities.push({ ...entity('hostage', c.side, c.x + 3), captiveOf: c.side })
+  if (c.resources.has('corpses'))
+    entities.push({
+      ...entity('corpse', c.side, c.x + 1),
+      health: 60,
+      arena: { width: 1, height: 3 },
+    })
 }

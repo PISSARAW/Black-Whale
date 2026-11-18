@@ -1,6 +1,7 @@
 import { chrolloHasActivePage } from './chrolloBook'
 import { hatsuSourceFor } from './hatsu'
-import { hatsuSealedByOn } from './onTechnique'
+import { voluntaryNenAvailable } from './nenAccess'
+import { chainAbilitySealed } from './kurapika'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { DoorFrame, DoorPositions, DoorTransit } from './voconteDoorTypes'
 
@@ -16,13 +17,8 @@ const SIDES: readonly FightSide[] = ['player', 'opponent']
 
 export function doorNenAvailable(fighter: ArcadeFighter): boolean {
   return (
-    fighter.health > 0 &&
-    fighter.aura > 0 &&
-    !fighter.auraExhausted &&
-    fighter.nen.mode !== 'zetsu' &&
-    !hatsuSealedByOn(fighter) &&
-    fighter.hatsuEffects.forcedZetsuFrames === 0 &&
-    fighter.hatsuEffects.hatsuStolen === 0 &&
+    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
+    !chainAbilitySealed(fighter, DOOR_MOVE) &&
     ownsDoor(fighter)
   )
 }

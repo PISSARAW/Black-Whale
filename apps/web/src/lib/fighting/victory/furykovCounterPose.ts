@@ -34,7 +34,8 @@ export function furykovCounterPose(context: VictoryContext, plan: FurykovCounter
   const { hero, victim, age } = context
   const strike = Math.max(...FURYKOV_COUNTER_HITS.map((peak) => pulse(age, peak)))
   if (age < 415) {
-    const chest = victim.root.getObjectByName('fight-chest') ?? victim.root.getObjectByName('torso')!
+    const chest =
+      victim.root.getObjectByName('fight-chest') ?? victim.root.getObjectByName('torso')!
     context.save(chest)
     chest.rotation.x = -strike * 0.12
     victim.head.rotation.x = -strike * 0.25

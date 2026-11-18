@@ -1,5 +1,6 @@
 import type { FightSide, FightState, FighterId } from '../types'
 import { troupeMember } from '../troupeMembership'
+import { rihanPlan } from './rihanPlan'
 import { beyondCurseVariant, type BeyondCurseVariant } from './beyondCurseSelection'
 
 export const VICTORY_DURATION = 10
@@ -30,6 +31,11 @@ export const VICTORY_FIGHTERS = [
   'voconte',
   'longhi',
   'furykov',
+  'theta',
+  'mizaistom',
+  'rihan',
+  'zakuro',
+  'lynch',
 ] as const
 export type VictoryFighter = (typeof VICTORY_FIGHTERS)[number]
 export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> = {
@@ -59,13 +65,24 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   voconte: ['Aller simple', 'One-way trip'],
   longhi: ['Tu avais signé', 'You signed it'],
   furykov: ['La réponse était prête', 'The answer was ready'],
+  theta: ['Une balle d’avance', 'One round ahead'],
+  mizaistom: ['Dernier avertissement', 'Final warning'],
+  rihan: ['L’angle mort', 'The blind spot'],
+  zakuro: ['La dernière goutte', 'The last drop'],
+  lynch: ['Le dernier aveu', 'The final confession'],
 }
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
   return (VICTORY_FIGHTERS as readonly string[]).includes(id)
 }
 export interface VictorySelection {
   token: string
-  variant?: 'kurapika-judgment' | 'kurapika-troupe' | BeyondCurseVariant
+  variant?:
+    | 'kurapika-judgment'
+    | 'kurapika-troupe'
+    | 'chrollo-sun-moon'
+    | 'rihan-physical'
+    | BeyondCurseVariant
+  duration?: number
   fighter: VictoryFighter
   winner: FightSide
   loser: FightSide
@@ -99,6 +116,7 @@ function victoryVariant(
   fighter: VictoryFighter,
   target: FighterId,
 ): Pick<VictorySelection, 'variant'> {
+  if (fighter === 'rihan') return rihanPlan(target).prey ? {} : { variant: 'rihan-physical' }
   if (fighter !== 'kurapika') return {}
   return { variant: troupeMember(target) ? 'kurapika-troupe' : 'kurapika-judgment' }
 }

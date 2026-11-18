@@ -1,3 +1,4 @@
+import { bashoQuestionCurrent } from './bashoInterrogation'
 import { bashoEffectPoem, availableBashoPoem } from './bashoPoem'
 import { dowsingAnswerText } from './dowsingAnswers'
 import { DOWSING_QUESTIONS, type DowsingQuestion } from './dowsingTypes'
@@ -15,6 +16,8 @@ interface BashoInquiry {
   paperId: string
 }
 interface BashoPrompt {
+  owner?: FightSide
+  askedAt?: number
   asker: FightSide
   question: DowsingQuestion
   frame: number
@@ -95,6 +98,7 @@ function answer(state: FightState, side: FightSide, choice?: string): FightState
   )
 }
 function validQuestion(state: FightState, side: FightSide, prompt: BashoPrompt): boolean {
+  if (prompt.owner !== undefined) return bashoQuestionCurrent(state, side)
   const inquiry = state[prompt.asker].bashoInquiry
   return Boolean(
     inquiry &&

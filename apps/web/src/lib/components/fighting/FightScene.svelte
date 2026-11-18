@@ -32,10 +32,7 @@
   import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import {
-    createHanzoProjectionScene,
-    projectionCameraSpan,
-  } from '$lib/fighting/hanzoProjectionScene'
+  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/rosterGuestScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -55,6 +52,7 @@
     FIGHT_MODEL_POSES,
     createStrideClocks,
     transitionSecondsFor,
+    type FighterSceneAnimation,
   } from '$lib/fighting/sceneMotion'
   import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
@@ -186,6 +184,8 @@
         })
         const collisions = createFightCollisionScene({ THREE, scene })
         const projectileScene = createProjectileScene({
+          viewer: () => viewer,
+          comfort: visualComfort,
           THREE,
           scene,
           glow,
@@ -199,6 +199,7 @@
           worldX,
         })
         const fighterEffects = createFighterEffectScene({
+          comfort: visualComfort,
           viewer: () => viewer,
           THREE,
           scene,
@@ -255,12 +256,7 @@
           player: createFighterFacing(state.player.facing),
           opponent: createFighterFacing(state.opponent.facing),
         }
-        interface AnimateFighterOptions {
-          side: 'player' | 'opponent'
-          model: ReturnType<typeof buildFighter>
-          seconds: number
-        }
-        const animateFighter = (options: AnimateFighterOptions) => {
+        const animateFighter = (options: FighterSceneAnimation) => {
           const { side, model, seconds } = options
           const falling = finishedFall(state, side, {
             fighter: presentation.fighter(state, side),
@@ -375,7 +371,7 @@
             model: modelOf('player', state.player),
             seconds,
           })
-          projectileScene.sync(arsenalProjectilePresentation(state), seconds, state.player)
+          projectileScene.sync(arsenalProjectilePresentation(state), seconds, state[viewer])
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
           feitanScene.sync(state, seconds)

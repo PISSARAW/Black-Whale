@@ -1,7 +1,9 @@
 import { blinkyAvailable, blinkyUtilityAttack, plugWoundsInput } from './blinky'
+import { luiniKnifeStrike } from './luiniKnife'
+import { kallutoFanStrike } from './threeCombatWounds'
 import { EMPTY_INPUT, type ArcadeFighter, type FightSide, type FightState } from './types'
 
-/** A landed vacuum blow creates one separate opening; ordinary hitstun is not a wound. */
+/** A landed vacuum blow or actual knife cut opens a wound; ordinary hitstun does not. */
 export function recordBlinkyWound(
   before: FightState,
   after: FightState,
@@ -9,13 +11,21 @@ export function recordBlinkyWound(
 ): FightState {
   const hit = after.impact
   if (!eligibleWoundImpact(hit)) return after
-  if (!blinkyAvailable(before[side]) || blinkyUtilityAttack(before[side])) return after
+  if (!woundingStrike(before[side])) return after
   const target = side === 'player' ? 'opponent' : 'player'
   if (after[target].health >= before[target].health) return after
   return {
     ...after,
     [target]: { ...after[target], openWounds: (after[target].openWounds ?? 0) + 1 },
   }
+}
+function woundingStrike(fighter: ArcadeFighter): boolean {
+  return (
+    Boolean(fighter.hinrighAxeCounter) ||
+    kallutoFanStrike(fighter) ||
+    luiniKnifeStrike(fighter) ||
+    (blinkyAvailable(fighter) && !blinkyUtilityAttack(fighter))
+  )
 }
 
 /** AI reacts to visible suction; it can cover two wounds or keep fighting if there are more. */

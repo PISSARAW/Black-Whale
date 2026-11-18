@@ -1,4 +1,15 @@
+import { phinksCameraEvent } from './phinksCameraPresentation'
+import { PHINKS_IMPACT_EVENT } from './phinksAnimation'
 import { gyoSight } from './nenPerception'
+import { kurapikaCameraEvent } from './kurapikaCameraPresentation'
+import { chrolloCameraEvent } from './chrolloCameraPresentation'
+import { hisokaCameraEvent } from './hisokaCameraPresentation'
+import { benjaminCameraEvent } from './benjaminCameraPresentation'
+import { franklinCameraEvent } from './franklinCameraPresentation'
+import { fineControlCameraEvent } from './fineControlCamera'
+import { performanceCameraEvent } from './performanceCamera'
+import { sweetHomeCameraEvent } from './sweetHomeCamera'
+import { perceptionCameraAllowed, perceptionCameraEvent } from './perceptionCamera'
 import {
   cameraContinuation,
   cameraDuration,
@@ -43,11 +54,15 @@ const key = (detail: CameraDetail) =>
 function group(event: CameraEvent, c: Context) {
   const d = event.detail!
   const side = d.sourceSide ?? d.side
-  if (d.kind === 'impact')
-    return `impact:${side}:${c.state[side].attack?.moveId ?? d.source ?? c.state.impact?.kind}`
+  if (d.eventId === PHINKS_IMPACT_EVENT) return `phinks:${side}:${event.cue.frame}`
+  if (d.kind === 'impact') return impactGroup(d, c)
   if (d.eventId?.startsWith('camilla.cat-') || d.eventId === 'camilla.revived')
     return `camilla:${side}`
   return key(d)
+}
+function impactGroup(detail: CameraDetail, c: Context) {
+  const side = detail.sourceSide ?? detail.side
+  return `impact:${side}:${c.state[side].attack?.moveId ?? detail.source ?? c.state.impact?.kind}`
 }
 function continuing(shot: CameraShot | null, c: Context, pacing: CameraPacing) {
   if (!shot || c.frame >= shot.until || !cameraDetailAllowed(shot.detail, c.viewer, c.state))
@@ -168,7 +183,32 @@ export function visibleCameraEvents(
   events: CameraEvent[],
   c: { state: FightState; viewer: FightSide },
 ) {
-  return events.filter((e) => !e.detail || cameraDetailAllowed(e.detail, c.viewer, c.state))
+  return events
+    .filter((e) => !e.detail || cameraDetailAllowed(e.detail, c.viewer, c.state))
+    .filter((e) => perceptionCameraAllowed(e, c))
+    .map((event) =>
+      phinksCameraEvent(
+        sweetHomeCameraEvent(
+          performanceCameraEvent(
+            perceptionCameraEvent(
+              fineControlCameraEvent(
+                franklinCameraEvent(
+                  benjaminCameraEvent(
+                    hisokaCameraEvent(chrolloCameraEvent(kurapikaCameraEvent(event, c)), c),
+                    c.state,
+                  ),
+                  c,
+                ),
+                c.state,
+              ),
+              c.state,
+            ),
+          ),
+          c,
+        ),
+        c,
+      ),
+    )
 }
 function pendingValid(event: CameraEvent, c: Context, pacing: CameraPacing) {
   if (!event.detail || c.frame - event.cue.frame >= (event.duration ?? 42)) return false

@@ -1,7 +1,7 @@
 import { illumiSoundTransitions } from '../illumiAudio'
-import { battleMusicEvents } from './battleCantabile'
 import type { FightSide, FightState, FighterHatsuEffects } from '../types'
 import { fighterEvent, type FightSoundEvent } from './events'
+import { battleMusicEvents } from './battleCantabile'
 
 /** Sustained techniques announce their actual state transition, including utility moves. */
 export function characterSoundEvents(
@@ -60,10 +60,12 @@ function emperorEvents(before: FightState, after: FightState, side: FightSide): 
   return events
 }
 
+type BodyTransition = [unknown, unknown, FightSoundEvent['kind']]
+
 function bodyEvents(before: FightState, after: FightState, side: FightSide): FightSoundEvent[] {
   const previous = before[side]
   const fighter = after[side]
-  const transitions: [unknown, unknown, FightSoundEvent['kind']][] = [
+  const transitions: BodyTransition[] = [
     [previous.biscuitTrueForm, fighter.biscuitTrueForm, 'transform'],
     ...illumiSoundTransitions(previous, fighter),
     [previous.hanzoProjection, fighter.hanzoProjection, 'projection'],

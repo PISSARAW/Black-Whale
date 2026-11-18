@@ -1,3 +1,4 @@
+import { advanceJudgmentHostages } from '../judgmentHostages'
 import { physicalBodyKey } from '../fightBodyIdentity'
 import { captureDolphinAura } from '../dolphinAura'
 import { advanceDowsing } from '../dowsingAction'
@@ -34,7 +35,7 @@ export const kurapikaHatsu: FighterHatsu = {
       const held = next[side].kurapika?.held
       if (held?.used && !dolphinIsBusy(next, side, held)) next = returnChainAbility(next, side)
     }
-    return advanceDowsing(next)
+    return advanceJudgmentHostages(advanceDowsing(next))
   },
 }
 

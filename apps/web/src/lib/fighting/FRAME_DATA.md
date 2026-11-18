@@ -400,13 +400,13 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 
 | Coup | Slot | Garde | Démarrage | Actif | Récup. | Touche | Garde |
 | ---- | ---- | ----- | --------: | ----: | -----: | -----: | ----: |
-| Pique du passage | `standingLight` | mid | 4 | 3 | 6 | +4 | 0 |
-| Lame du Heil-Ly | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
-| Faille basse | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
-| Balayage déphasé | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas de traversée | `forwardLight` | mid | 6 | 3 | 9 | +4 | 0 |
-| Entaille hors axe | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Repli dimensionnel | `backHeavy` | mid | 8 | 4 | 12 | +4 | 0 |
+| Pointe du couteau | `standingLight` | mid | 4 | 3 | 6 | +4 | 0 |
+| Entaille au couteau | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
+| Coup bas | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
+| Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
+| Pointe en avançant | `forwardLight` | mid | 6 | 3 | 9 | +4 | 0 |
+| Entaille en avançant | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Revers | `backHeavy` | mid | 8 | 4 | 12 | +4 | 0 |
 
 ### Bill
 

@@ -26,16 +26,16 @@ prétention canonique sur l’aspect ou les étapes exactes de la malédiction.
 
 ## Dix secondes à 60 images/s
 
-| Image | Action |
-| --- | --- |
-| 60 | Coup physique du prince sur la surface réelle du torse |
-| 72 | Mort du porteur, début de sa chute native |
-| 156 | L’œil sous la langue s’ouvre, plan rapproché |
-| 234 | Le Nen post mortem sort du corps |
-| 306 | La malédiction atteint le prince désigné |
-| 336–431 | Gros plan sur la lutte et la panique du prince |
-| 432 | Mort du prince et seconde chute native |
-| 510 | Fatality, les deux corps restent présents |
+| Image   | Action                                                 |
+| ------- | ------------------------------------------------------ |
+| 60      | Coup physique du prince sur la surface réelle du torse |
+| 72      | Mort du porteur, début de sa chute native              |
+| 156     | L’œil sous la langue s’ouvre, plan rapproché           |
+| 234     | Le Nen post mortem sort du corps                       |
+| 306     | La malédiction atteint le prince désigné               |
+| 336–431 | Gros plan sur la lutte et la panique du prince         |
+| 432     | Mort du prince et seconde chute native                 |
+| 510     | Fatality, les deux corps restent présents              |
 
 Les deux effondrements utilisent `nativeVictoryFall`, ses contacts physiques
 et ses poses de KO. Aucun `root.rotation.z` n’imite une chute. Les rôles sont

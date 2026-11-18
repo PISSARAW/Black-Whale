@@ -15,7 +15,14 @@ export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
 }
 
 function characterBusy(fighter: ArcadeFighter): boolean {
-  if (fighter.easterEgg || fighter.throwTechRecoveryFrames) return true
+  if (
+    fighter.easterEgg ||
+    fighter.throwTechRecoveryFrames ||
+    fighter.luiniPassage ||
+    fighter.machiSuture ||
+    fighter.corpsePreparation
+  )
+    return true
   if (!illumiBodyFree(fighter)) return true
   return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }

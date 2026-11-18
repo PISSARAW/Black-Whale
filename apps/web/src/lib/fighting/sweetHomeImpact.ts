@@ -13,11 +13,22 @@ export function resolveSweetHomeImpact(options: {
   after: FightState
   damagedSide: FightSide
 }): FightState {
-  const { before, after, damagedSide } = options
+  const { after } = options
   const impact = after.impact
   if (!impact || impact.avoided || impact.damage <= 0) return after
+  return transferIntoObject(options) ?? transferBetweenBodies(options)
+}
+function transferIntoObject(
+  options: Parameters<typeof resolveSweetHomeImpact>[0],
+): FightState | null {
+  const { before, after, damagedSide } = options
+  return transferWoundToObject({ before, after, source: damagedSide, explicitOnly: true })
+}
+function transferBetweenBodies(options: Parameters<typeof resolveSweetHomeImpact>[0]): FightState {
+  const { before, after, damagedSide } = options
+  const impact = after.impact!
   const transfer = findTransfer(before, damagedSide)
-  if (!transfer) return transferWoundToObject(before, after, damagedSide) ?? after
+  if (!transfer) return transferWoundToObject({ before, after, source: damagedSide }) ?? after
   if (transfer.to === damagedSide) return after
   const recipient = wakeHanzoBody(after[transfer.to])
   const credit = otherSide(transfer.to)

@@ -383,7 +383,6 @@ adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.
 `check-hanzo-bill-victories.mjs` vérifie le déclenchement dans Clash, les
 rematches des deux côtés et les bandes sonores sans modifier le résultat.
 
-
 Hinrigh : « Pièce à conviction » transforme au contact les trois objets de sa
 mallette : caméra à 30, menottes à 54 et pistolet à 78. Le chat-caméra enregistre
 la scène. Deux paires de pigeons rejoignent les poignets à 174 et les chevilles
@@ -409,7 +408,6 @@ deux côtés, gabarits, miroir, lieux, mobile, confort, rematches et chargement 
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie aussi la fin naturelle à dix secondes
 et le retour aux résultats.
-
 
 Terebellum : « Retour à l’envoyeur » reçoit deux coups de couteau et un coup
 au torse. À 120, la blessure et le même couteau apparaissent dans la canette
@@ -473,7 +471,6 @@ la mort à 390. La géométrie partagée du visage reste intacte et se restaure
 après chaque image. Les souffles et les derniers battements s’accélèrent
 jusqu’à 6,5 s, avant le silence et la réception à 7,08 s.
 
-
 Voconte : « Aller simple » fait du choix de la destination un piège. Voconte
 franchit A à 90, s’écarte sur la passerelle de B et laisse sa cible le poursuivre
 à 156. B est un cadre physique ancré sur un plancher en hauteur, dont le bord
@@ -501,7 +498,6 @@ quatre motifs de victoire, IA/local et rematches. Les contrôles navigateur
 `check-voconte-fatality.mjs` et `check-voconte-victories.mjs` vérifient le rendu,
 le mobile, le confort, le son et le retour aux résultats à dix secondes.
 
-
 Longhi et Furykov possèdent chacun une cinématique personnelle de dix secondes,
 enregistrée après leurs victoires éligibles avec la cible et le lieu du combat.
 Longhi fait signer Moonlight Act aux deux parties, montre la rupture et le
@@ -525,3 +521,18 @@ les arènes, les deux côtés, IA/local et les quatre motifs de victoire.
 la restauration et les conditions natives des Hatsu. Les scripts
 `check-personal-guard.mjs` et `check-personal-guard-victories.mjs` couvrent les
 démos, mobile, confort, sons et huit victoires automatiques avec revanches.
+
+Theta : [Une balle d’avance](./THETA.md) utilise le chargeur comme leurre,
+un coup de crosse puis l’unique balle restée dans la chambre.
+
+Mizaistom : [Dernier avertissement](./MIZAISTOM.md) alterne deux cartons jaunes
+retournés, des contraintes brèves et des frappes physiques après libération.
+
+Rihan : [L’angle mort](./RIHAN.md) montre une prédation ciblée de Deme-chan
+ou de Bungee Gum, son propre sceau de 48 heures, puis une fin physique.
+
+Zakuro : [La dernière goutte](./ZAKURO.md) utilise ses gouttes éclaireuses,
+quatre liens de son propre sang et deux projections, puis rappelle sa réserve.
+
+Lynch : [Le dernier aveu](./LYNCH.md) fait répondre le corps malgré la bouche
+couverte, accélère six contacts puis termine par un coup physique sans réponse.

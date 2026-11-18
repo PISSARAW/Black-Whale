@@ -8,10 +8,12 @@ import { physicalProjectile } from './projectileMatter'
 import { gallerySenseAi } from './galleryAi'
 import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
+import { singleCombatArsenalAi } from './singleCombatAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
 import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
+import { gumNetworkAi } from './bungeeAi'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -33,11 +35,8 @@ export function retrospectiveAiAction(
     dolphinLoanAi(state, perform) ??
     paperKitAi(state) ??
     utilityArsenalAi(state, perform) ??
-    gumAi(state) ??
-    interviewAi(state) ??
-    supportAi(state) ??
-    copiedArsenalAi(state, perform) ??
-    historicalAi(state, perform)
+    singleCombatArsenalAi(state, perform) ??
+    hatsuArsenalAi(state, perform)
   )
 }
 
@@ -182,7 +181,7 @@ function gumAi(state: FightState): FightState | null {
       : incomingObject(state)
         ? 'gum-catch'
         : null
-  if (!action) return null
+  if (!action) return gumNetworkAi(state)
   const next = performGumCommand(state, 'opponent', { action })
   return next === state ? null : next
 }
@@ -220,4 +219,18 @@ function fishOpportunity(state: FightState): boolean {
 }
 function clothOpportunity(state: FightState): boolean {
   return state.player.hitStun >= 35 && !state.opponent.chrolloHistorical?.cloth
+}
+
+function hatsuArsenalAi(
+  state: FightState,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  return (
+    judgmentAiPreset(state) ??
+    gumAi(state) ??
+    interviewAi(state) ??
+    supportAi(state) ??
+    copiedArsenalAi(state, perform) ??
+    historicalAi(state, perform)
+  )
 }

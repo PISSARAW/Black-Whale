@@ -1,3 +1,4 @@
+import { multiCombatAi } from './multiCombatAi'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { perceivedOpponentGap } from './opponentAwareness'
 import { canAct } from './fightActorState'
@@ -27,7 +28,9 @@ export function nativeArsenalAiAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const fighter = state.opponent
-  if (!canAct(fighter) || fighter.attack || fighter.coveringEars) return null
+  if (!nativeArsenalBodyReady(fighter)) return null
+  const corpse = multiCombatAi(state)
+  if (corpse) return corpse
   const gap = perceivedOpponentGap(state)
   if (!Number.isFinite(gap)) return null
   if (shouldSpeakToModel(state, gap)) return speakBattleWords(state, 'opponent')
@@ -54,4 +57,8 @@ function canDiscussModel(state: FightState): boolean {
     return false
   if (battle?.preparation || battle?.form) return false
   return !battle?.models[battleAppearance(state.player)]?.spoken
+}
+
+function nativeArsenalBodyReady(fighter: FightState['opponent']) {
+  return canAct(fighter) && !fighter.attack && !fighter.coveringEars
 }

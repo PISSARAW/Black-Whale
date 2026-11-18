@@ -77,6 +77,7 @@ export function paperMaterialsReady(
   side: FightSide,
   command: PaperCommand,
 ): boolean {
+  if (state[side].weaponsConfiscated) return false
   if (command === 'doll' && existingPaperDoll(state, side)) return true
   return (
     paperStockReady(state[side], command) &&

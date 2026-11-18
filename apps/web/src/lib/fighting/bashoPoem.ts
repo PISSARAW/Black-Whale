@@ -17,6 +17,11 @@ export const BASHO_POEMS = {
   en: 'Whatever I strike\nWith my fist\nWill burn',
 } as const
 
+export const BASHO_TRIAL_POEMS = {
+  fr: 'Si vous me mentez\nVotre corps sera livré\nAu jugement du feu',
+  en: 'If you lie to me\nYour body will be given\nTo the trial by fire',
+} as const
+
 export const BASHO_ATTESTED_POEMS = {
   'ignite-punched-target': BASHO_POEMS,
   'ignite-liar': {
@@ -31,9 +36,10 @@ export const BASHO_ATTESTED_POEMS = {
 export type BashoEffect = keyof typeof BASHO_ATTESTED_POEMS
 
 export interface BashoPoem {
+  declaration?: { frame: number; question: import('./dowsingTypes').DowsingQuestion }
   loan?: boolean
   text: string
-  effect: BashoEffect
+  effect: BashoEffect | 'trial-by-fire'
   paperId?: string
   paperCopyId?: string
   sourceMoveId?: string
@@ -49,13 +55,16 @@ export interface BashoBurn {
 
 /** Recognize this attested composition, never guess powers from arbitrary prose. */
 export function recognizedBashoPoem(text: string): boolean {
-  const normalized = normalizePoem(text)
-  return Object.values(BASHO_ATTESTED_POEMS).some((pair) =>
-    Object.values(pair).some((poem) => normalizePoem(poem) === normalized),
-  )
+  return bashoPoemEffect(text) !== null
 }
 
-export function recognizedBashoEffect(text: string): BashoEffect | undefined {
+export function bashoPoemEffect(text: string): BashoPoem['effect'] | null {
+  return recognizedBashoEffect(text) ?? null
+}
+
+export function recognizedBashoEffect(text: string): BashoPoem['effect'] | undefined {
+  if (Object.values(BASHO_TRIAL_POEMS).some((poem) => normalizePoem(poem) === normalizePoem(text)))
+    return 'trial-by-fire'
   const normalized = normalizePoem(text)
   return (Object.keys(BASHO_ATTESTED_POEMS) as BashoEffect[]).find((effect) =>
     Object.values(BASHO_ATTESTED_POEMS[effect]).some((poem) => normalizePoem(poem) === normalized),
@@ -63,7 +72,7 @@ export function recognizedBashoEffect(text: string): BashoEffect | undefined {
 }
 export function bashoEffectPoem(
   fighter: ArcadeFighter,
-  effect: BashoEffect,
+  effect: BashoEffect | 'trial-by-fire',
 ): BashoPoem | undefined {
   return [fighter.bashoPoem, ...(fighter.bashoArchive ?? [])].find(
     (poem) =>
@@ -73,7 +82,7 @@ export function bashoEffectPoem(
 export function availableBashoPoem(
   state: FightState,
   side: 'player' | 'opponent',
-  effect: BashoEffect,
+  effect: BashoEffect | 'trial-by-fire',
 ): BashoPoem | undefined {
   const actor = state[side]
   return [actor.bashoPoem, ...(actor.bashoArchive ?? [])].find(

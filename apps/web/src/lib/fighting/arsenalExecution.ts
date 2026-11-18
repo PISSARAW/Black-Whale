@@ -1,3 +1,5 @@
+import { performAdditionalArsenal } from './additionalArsenalExecution'
+import { traceArsenal } from './arsenalTrace'
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { arsenalMindAvailable } from './arsenalMind'
 import { withDolphinSupply } from './dolphinSupply'
@@ -15,6 +17,13 @@ import type { FightSide, FightState } from './types'
 
 /** Native move callbacks are trusted local code, never supplied by a network packet. */
 export function performArsenalAction(
+  options: import('./retrospectiveTypes').ArsenalInvocation,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState {
+  return traceArsenal(options, executeArsenalAction(options, perform))
+}
+
+function executeArsenalAction(
   options: {
     state: FightState
     side: FightSide
@@ -26,6 +35,8 @@ export function performArsenalAction(
   if (!fightAcceptsCommands(state)) return state
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!voluntaryArsenalReady(state, side)) return state
+  const additional = performAdditionalArsenal(options, perform)
+  if (additional) return additional
   if (command.action === 'window-listen') return executeListening(options, perform)
   if (command.action.startsWith('dolphin-') && command.action !== 'dolphin-lend')
     return executeDolphin(options, perform)

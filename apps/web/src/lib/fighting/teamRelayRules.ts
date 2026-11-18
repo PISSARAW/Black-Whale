@@ -23,6 +23,7 @@ const BODY_FIELDS = new Set([
   'personalEncounters',
   'dowsingScreened',
   'heardWords',
+  'speechPulse',
   'dowsingReading',
   'devicePlayback',
   'receiverReading',
@@ -33,6 +34,7 @@ const BODY_FIELDS = new Set([
   'velocityY',
   'facing',
   'health',
+  'openWounds',
   'maxHealth',
   'aura',
   'auraExhausted',
@@ -115,16 +117,18 @@ function restingValue(value: unknown): unknown {
 function quietWorld(state: FightState): boolean {
   return (
     ![
+      state.rosterGuests?.some((guest) => guest.phase !== 'eliminated'),
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
       state.moonlight,
       state.bungeeGum,
+      gumBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
-      (state.player.bashoWard?.remainingFrames ?? 0) > 0,
-      (state.opponent.bashoWard?.remainingFrames ?? 0) > 0,
+      wardBusy(state.player),
+      wardBusy(state.opponent),
     ].some(Boolean) &&
     state.projectiles.length === 0 &&
     !state.battlefield?.entities.some(
@@ -191,4 +195,15 @@ export function teamEntry(actor: ArcadeFighter, side: FightSide): ArcadeFighter 
     blocking: false,
     guardFrames: 0,
   }
+}
+
+function gumBusy(state: FightState) {
+  return (
+    state.gumNetwork?.links.length ||
+    state.gumNetwork?.pending.player ||
+    state.gumNetwork?.pending.opponent
+  )
+}
+function wardBusy(actor: FightState['player']) {
+  return (actor.bashoWard?.remainingFrames ?? 0) > 0
 }

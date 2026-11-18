@@ -1,5 +1,6 @@
-import { maryPredatorPrey } from './bloodyMaryPredator'
 import { withArenaPrey } from './arenaPredator'
+import { ownedGumLinks, clearOwnedGum } from './bungeeNetwork'
+import { maryPredatorPrey } from './bloodyMaryPredator'
 import { consumeControlNeedle } from './illumiFrame'
 import { chrolloHasActivePage } from './chrolloBook'
 import { wakeHanzoBody } from './hanzoProjection'
@@ -25,8 +26,9 @@ const CORE_PREDATOR_PREY: readonly PredatorPrey[] = [
     source: 'hisoka',
     nameFr: 'Bungee Gum',
     nameEn: 'Bungee Gum',
-    live: (s, side) => s.bungeeGum?.owner === side,
-    consume: (s) => ({ ...s, bungeeGum: null }),
+    live: (s, side) => ownedGumLinks(s, side).length > 0,
+    // Resolve the imported binding at execution time; the combat modules have an import cycle.
+    consume: (state, side) => clearOwnedGum(state, side),
     point: (s, side) => ({ x: (s[side].x + s[other(side)].x) / 2, y: 7 }),
   },
   {

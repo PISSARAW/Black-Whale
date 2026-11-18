@@ -115,7 +115,11 @@ function replayAi(next: FightState, original: FightState, replay: ReplayFutureCo
   const future = original.parallelFuture!
   const frame = future.frames[future.cursor]
   if (next.phase !== 'fighting') return next
-  const prepared = { ...next, parallelFuture: { ...future, replaying: true } }
+  const prepared = {
+    ...next,
+    rng: frame.command?.rngBefore ?? next.rng,
+    parallelFuture: { ...future, replaying: true },
+  }
   const acted = frame.command ? replay(prepared, frame.command) : prepared
   return {
     ...acted,

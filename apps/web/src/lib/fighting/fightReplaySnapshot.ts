@@ -19,13 +19,15 @@ function validateIdentity(value: Record<string, unknown>, setup: ReplaySetup) {
   const player = value.player as Record<string, unknown>
   const opponent = value.opponent as Record<string, unknown>
   if (
-    player.id !== setup.player ||
-    opponent.id !== setup.opponent ||
+    !replayBodyMatches(player, setup.player) ||
+    !replayBodyMatches(opponent, setup.opponent) ||
     value.mode !== setup.mode ||
     value.formatId !== setup.formatId
   )
     throw Error('invalid-replay')
-  const seed = value.rng
+  validateSeed(value.rng)
+}
+function validateSeed(seed: unknown) {
   if (typeof seed !== 'number' || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff)
     throw Error('invalid-replay')
 }
@@ -50,4 +52,8 @@ function missingPossession(value: unknown, path: string): boolean {
 /** Real possessions may be dropped, lost or absent from the opponent's private view. */
 function optionalPossession(path: string): boolean {
   return /^(player|opponent)\.(writingKit|paperKit|blackVoiceGear(?:\.phone)?)$/.test(path)
+}
+
+function replayBodyMatches(body: Record<string, unknown>, id: string): boolean {
+  return (body.halkenburgOrigin ?? body.id) === id
 }

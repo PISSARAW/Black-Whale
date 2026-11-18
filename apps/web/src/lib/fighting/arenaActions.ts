@@ -1,3 +1,4 @@
+import { vacuumObjectAllowed } from './arenaVacuum'
 import { arenaTechnique } from './arenaTechnique'
 import { canAct } from './fightActorState'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -102,16 +103,15 @@ function utilityTarget(state: FightState, side: FightSide, kind: Utility) {
   if (kind === 'vacuum' && stored)
     return state.battlefield?.entities.find((entry) => entry.id === stored)
   const target = nearestArenaObject(state, side, kind === 'gum' ? 24 : 8)
-  if (
-    kind === 'vacuum' &&
-    target &&
-    !inBlinkyNozzle(state[side], {
-      x: target.x,
-      y: target.y + target.arena!.height / 2,
-    })
+  return kind === 'vacuum' && target && !vacuumTargetAllowed(state, side, target)
+    ? undefined
+    : target
+}
+function vacuumTargetAllowed(state: FightState, side: FightSide, target: PreparedEntity): boolean {
+  return (
+    vacuumObjectAllowed(target) &&
+    inBlinkyNozzle(state[side], { x: target.x, y: target.y + target.arena!.height / 2 })
   )
-    return undefined
-  return target
 }
 
 function beginArenaUtility(state: FightState, side: FightSide, kind: Utility): FightState {

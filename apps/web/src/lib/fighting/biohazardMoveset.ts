@@ -12,9 +12,9 @@ export function tuneBiohazardMoveset(moveset: FighterMoveset): FighterMoveset {
   return {
     ...moveset,
     mechanicFr:
-      'L : transforme une paire de menottes portée en pigeon. ↓+L : rappel des pigeons libres, ouverture au contact. Deux objets réels, récupérables au sol. Garde, saut ou frappe évitent la capture ; elle cesse sur blessure ou après 0,8 s. U : couteau réel (adaptation de duel).',
+      'L : transforme les menottes en pigeon. ↓+L : rappel, ouverture au contact. Garde, saut ou frappe évitent la capture ; elle cesse sur blessure ou après 0,8 s. U : couteaux réels en nombre limité. Le panneau propose arme-serpent, chat-caméra mobile, enregistrement, émetteur-huître, récepteur à transmettre et retour de hache au contact. Quantités et durées de combat : réglages du duel.',
     mechanicEn:
-      'L: turn carried handcuffs into a pigeon. ↓+L: recall free pigeons, unlock at contact. Two real objects, recoverable on the ground. Guard, jump or strike to avoid capture; injury or 0.8 s ends it. U: real thrown knife (duel adaptation).',
+      'L: turn handcuffs into a pigeon. ↓+L: recall, unlock at contact. Guard, jump or strike to avoid capture; injury or 0.8 s ends it. U: finite real knives. The panel offers snake guns, a moving cat camera, recordings, an oyster transmitter, receiver handover and a close axe counter. Combat quantities and timings are duel tuning.',
     finisherConditionFr: 'Aucun finisher : Biohazard transforme des objets, sans bonus personnel.',
     finisherConditionEn: 'No super: Biohazard transforms objects, without a personal buff.',
     moves: retained.map((move) => {

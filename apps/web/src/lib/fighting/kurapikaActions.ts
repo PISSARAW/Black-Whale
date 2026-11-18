@@ -216,8 +216,9 @@ function dolphinLocksEmperor(fighter: ArcadeFighter): boolean {
 }
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
+  if (!fighter.kurapika?.held || fighter.kurapika.held.lentTo) return false
   return (
-    outsideDuelAbility(fighter.kurapika?.held?.moveId)?.activation !== 'post-mortem' &&
+    outsideDuelAbility(fighter.kurapika.held.moveId)?.activation !== 'post-mortem' &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     dolphinActionAuraAvailable(fighter) &&
@@ -232,7 +233,7 @@ function dolphinActionAuraAvailable(fighter: ArcadeFighter): boolean {
     : kurapikaNenActive(fighter)
 }
 
-function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
+export function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const held = options.state[options.side].kurapika!.held!
   return held.returned ? options.state : endActiveDolphinEffect(options, perform)
 }

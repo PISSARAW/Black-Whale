@@ -22,6 +22,7 @@ const WEAPONS: Readonly<Partial<Record<ArcadeFighter['id'], string>>> = {
   shizuku: 'blinky',
   illumi: 'needles',
   kalluto: 'paper',
+  hinrigh: 'knives',
 }
 
 export function shuObject(fighter: ArcadeFighter): string {
@@ -33,6 +34,7 @@ export function conjuredWeapon(fighter: ArcadeFighter): boolean {
 }
 
 export function weaponUsesShu(fighter: ArcadeFighter): boolean {
+  if (fighter.weaponsConfiscated && !conjuredWeapon(fighter)) return false
   return Boolean(WEAPONS[fighter.id] && fighter.nen.shu.includes(shuObject(fighter)))
 }
 

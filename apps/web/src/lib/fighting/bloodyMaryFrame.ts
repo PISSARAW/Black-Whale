@@ -15,6 +15,8 @@ import {
   type MaryTendril,
 } from './bloodyMary'
 import type { FightSide, FightState } from './types'
+import { moveMaryScout, maryScoutSees } from './bloodyMaryScouts'
+import { sleepingBody } from './hanzoProjection'
 
 export function advanceBloodyMary(state: FightState): FightState {
   if (state.phase !== 'fighting' || state.catsName) return state
@@ -50,7 +52,14 @@ function dropMary(state: FightState, side: FightSide): FightState {
     ...released,
     [side]: {
       ...released[side],
-      bloodyMary: { ...blood, tendril: undefined, drops: [], returning: false, command: undefined },
+      bloodyMary: {
+        ...blood,
+        tendril: undefined,
+        drops: [],
+        returning: false,
+        command: undefined,
+        sealedWounds: 0,
+      },
     },
   }
 }
@@ -125,7 +134,7 @@ function advanceDrops(state: FightState, side: FightSide): FightState {
   for (const old of blood.drops) {
     const drop = stepDrop(next, side, old)
     if (drop.remainingFrames <= 0) continue
-    if (blood.returning && Math.abs(drop.x - state[side].x) < 1) {
+    if (blood.returning && Math.hypot(drop.x - state[side].x, drop.y - state[side].y - 1) < 1) {
       const current = maryState(next[side])
       next = storeBlood(next, side, {
         ...current,
@@ -142,25 +151,16 @@ function advanceDrops(state: FightState, side: FightSide): FightState {
 }
 
 function stepDrop(state: FightState, side: FightSide, drop: MaryDrop): MaryDrop {
-  const blood = maryState(state[side])
   const remainingFrames = drop.remainingFrames - 1
   if (drop.reformFrames > 0)
     return { ...drop, remainingFrames, reformFrames: drop.reformFrames - 1 }
   if (maryStruckAt(state, side, drop)) return { ...drop, remainingFrames, reformFrames: 30 }
-  const direction = blood.returning ? (state[side].x < drop.x ? -1 : 1) : drop.direction
-  const x = drop.x + direction * 0.15
-  return {
-    ...drop,
-    x: Math.max(7, Math.min(93, x)),
-    remainingFrames,
-    direction: x <= 7 ? 1 : x >= 93 ? -1 : direction,
-  }
+  return { ...moveMaryScout(state, side, drop), remainingFrames }
 }
 
 function observeWithDrop(state: FightState, side: FightSide, drop: MaryDrop): FightState {
-  const target = state[side === 'player' ? 'opponent' : 'player']
-  if (drop.reformFrames > 0 || Math.hypot(drop.x - target.x, drop.y - target.y - 2) > 6)
-    return state
+  const target = sleepingBody(state[side === 'player' ? 'opponent' : 'player'])
+  if (!maryScoutSees(state, side, drop)) return state
   return storeBlood(state, side, {
     ...maryState(state[side]),
     lastSeen: { x: target.x, y: target.y, frame: state.frame },

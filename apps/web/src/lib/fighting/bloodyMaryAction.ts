@@ -12,6 +12,7 @@ import {
   type MaryCommand,
 } from './bloodyMary'
 import { slamMary } from './bloodyMarySlam'
+import { maryScoutWall } from './bloodyMaryScouts'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { FightSide, FightState } from './types'
 
@@ -44,7 +45,7 @@ function executeMary(options: {
   if (command === 'slam') return slamMary(state, side)
   if (command === 'recall') return recallMary(state, side)
   const fighter = state[side]
-  const blood = { ...maryState(fighter), command: undefined, sourceMoveId: moveId }
+  const blood = { ...maryState(fighter), command: undefined, sourceMoveId: moveId, sealedWounds: 0 }
   const target = state[side === 'player' ? 'opponent' : 'player']
   const spent = command === 'bind' ? MARY_BIND_COST : 8
   const active =
@@ -73,6 +74,7 @@ function executeMary(options: {
             direction: (id === 1 ? -1 : 1) as -1 | 1,
             remainingFrames: MARY_SCOUT_LIFE,
             reformFrames: 0,
+            ...scoutWallTarget(state, side, command),
           })),
         }
   const other = side === 'player' ? 'opponent' : 'player'
@@ -107,6 +109,7 @@ export function recallMary(state: FightState, side: FightSide): FightState {
         ...blood,
         command: undefined,
         returning: true,
+        sealedWounds: state[side].openWounds ?? 0,
         tendril: blood.tendril ? { ...blood.tendril, phase: 'returning' } : undefined,
       },
     },
@@ -115,6 +118,11 @@ export function recallMary(state: FightState, side: FightSide): FightState {
         ? { ...target, maryCapture: undefined, maryGraceFrames: 60 }
         : target,
   }
+}
+function scoutWallTarget(state: FightState, side: FightSide, command: MaryCommand) {
+  if (command !== 'scout-wall') return {}
+  const wall = maryScoutWall(state, side)
+  return wall ? { wallId: wall.id, wallEdge: (state[side].x < wall.x ? -1 : 1) as -1 | 1 } : {}
 }
 
 /** Material preparation does not consume a borrowed Hatsu and cannot conjure a blood kit. */
@@ -129,7 +137,15 @@ export function commandMary(
     return resolveMoonlightAction(state, resolveCrossGameCommand(state, next, side), side)
   }
   const fighter = state[side]
-  const draft = { ...state, [side]: { ...fighter, bloodyMary: { ...maryState(fighter), command } } }
+  const held = fighter.kurapika?.held
+  const kurapika =
+    fighter.id === 'kurapika' && held?.source === 'zakuro' && !held.used
+      ? { ...fighter.kurapika!, held: { ...held, moveId: maryApplicationMove(command) } }
+      : fighter.kurapika
+  const draft = {
+    ...state,
+    [side]: { ...fighter, kurapika, bloodyMary: { ...maryState(fighter), command } },
+  }
   const next = perform({
     state: draft,
     side,
@@ -181,7 +197,14 @@ function maryInputMove(state: FightState, side: FightSide, command: MaryCommand)
   if (fighter.id === 'chrollo')
     return chrolloPageForMove(fighter) === 'zakuro' ? CHROLLO_USE : CHROLLO_SECONDARY
   if (fighter.id === 'kurapika') return 'kurapika:backSpecial'
-  return Object.keys(COMMANDS).find((key) => COMMANDS[key] === command) ?? 'zakuro:neutralSpecial'
+  return maryApplicationMove(command)
+}
+function maryApplicationMove(command: MaryCommand): string {
+  return (
+    Object.keys(COMMANDS).find(
+      (key) => COMMANDS[key] === (command === 'scout-wall' ? 'scout' : command),
+    ) ?? 'zakuro:neutralSpecial'
+  )
 }
 
 function selectedMaryCommand(fighter: FightState['player'], moveId?: string): MaryCommand {

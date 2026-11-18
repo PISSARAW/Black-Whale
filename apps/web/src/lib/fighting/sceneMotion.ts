@@ -1,8 +1,15 @@
 import type { HumanPose } from '$lib/tour/humanAnimation'
+import type { HumanFigure } from '$lib/tour/humanFigure'
 import { attackProgress } from './frameData'
 import { jumpProgress } from './fighterMovement'
 import { KO_DURATION } from './fightMoves'
 import type { ArcadeFighter, FightSide, FighterPose } from './types'
+
+export interface FighterSceneAnimation {
+  side: FightSide
+  model: HumanFigure
+  seconds: number
+}
 
 export const FIGHT_MODEL_POSES: Record<FighterPose, HumanPose> = {
   idle: 'idle',

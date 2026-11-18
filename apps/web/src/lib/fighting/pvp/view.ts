@@ -1,9 +1,12 @@
+import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
+import { redactPriorityWorld } from '../priorityPrivacy'
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
 import { concealPaperWords } from '../kallutoPrivacy'
 import { enContactReadings } from '../en/contacts'
 import { concealDeviceMedia } from '../devicePrivacy'
 import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
+import { privateGumNetwork, privateGumFuture, privateGumProjectiles } from '../bungeePrivacy'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
 import { createFightingNen } from '../nen'
 import { encodeFightSnapshot } from '../fightReplaySnapshot'
@@ -20,6 +23,7 @@ const SIDE_FIELDS = new Set([
   'victimSide',
   'victim',
   'killerSide',
+  'weaponSide',
   'attacker',
   'side',
   'winner',
@@ -64,6 +68,7 @@ function localSustainedKey(value: string): string {
 }
 
 function redactEnemy(enemy: ArcadeFighter) {
+  redactLegacyArsenal(enemy)
   enemy.blackVoiceScreen = undefined
   enemy.littleEyeScreen = undefined
   if (enemy.blackVoiceGear)
@@ -80,6 +85,8 @@ function redactEnemy(enemy: ArcadeFighter) {
   enemy.devicePlayback = undefined
   enemy.receiverReading = undefined
   enemy.dowsingReading = undefined
+  enemy.dowsingAcquaintances = undefined
+  enemy.dowsingLocation = undefined
   enemy.judgmentPreset = undefined
   enemy.heardWords = undefined
   enemy.hunterInterview = undefined
@@ -92,10 +99,12 @@ function redactEnemy(enemy: ArcadeFighter) {
       aiPlan: undefined,
       aiLastUse: undefined,
     }
+  enemy.heardCorpse = undefined
   enemy.bodyAndSoulReplies = undefined
   enemy.secretWindow = undefined
   enemy.secretWindowListening = undefined
   enemy.melodyHearing = undefined
+  enemy.speechPulse = undefined
   enemy.comboMaster = undefined
   enemy.bufferedAttack = null
   enemy.predator = enemy.predator ? { ...enemy.predator, known: [], analysis: null } : undefined
@@ -122,16 +131,33 @@ function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
+  view.arsenalTrace = undefined
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
   redactEnemy(view[other])
+  redactGuests(view, other)
   redactReserves(view, other)
+  redactPriorityWorld(view, side)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
+  redactForecast(view, side, other)
+  if (view.parallelFuture) view.parallelFuture.controls = null
+  view.bungeeGum = bungeeVisible(view, side) ? view.bungeeGum : null
+  view.projectiles = privateGumProjectiles(view, side)
+  view.gumNetwork = privateGumNetwork(view, side)
+  view.projectiles = view.projectiles.filter(
+    (shot) => shot.owner === side || perceivesProjectile(state[side], shot),
+  )
+  // No second perspective selector or opponent-private controls in the ordinary HUD.
+  const result = localPerspective(view, side === 'opponent') as FightState
+  return { ...result, mode: 'versus-ai', pvpSeat: side }
+}
+function redactForecast(view: FightState, side: FightSide, other: FightSide): void {
   for (const frame of view.parallelFuture?.frames ?? []) {
+    privateGumFuture(view, frame, side)
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
     redactEnemy(frame[other])
@@ -141,14 +167,9 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
     )
     frame.command = null
   }
-  if (view.parallelFuture) view.parallelFuture.controls = null
-  view.bungeeGum = bungeeVisible(state, side) ? view.bungeeGum : null
-  view.projectiles = view.projectiles.filter(
-    (shot) => shot.owner === side || perceivesProjectile(state[side], shot),
-  )
-  // No second perspective selector or opponent-private controls in the ordinary HUD.
-  const result = localPerspective(view, side === 'opponent') as FightState
-  return { ...result, mode: 'versus-ai', pvpSeat: side }
+}
+function redactGuests(view: FightState, other: FightSide): void {
+  for (const guest of view.rosterGuests ?? []) if (guest.owner === other) redactEnemy(guest.fighter)
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return

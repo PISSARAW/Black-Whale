@@ -6,6 +6,7 @@ import { physicalBodyAt } from './fightBodyIdentity'
 import { createSecretWindowListeningScene } from './secretWindowListeningScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
+import { fineControlReduced } from './fineControlAnchors'
 
 /** The default scene is P1's view: an enemy observer's private bird stays invisible. */
 export function createSecretWindowScene(options: EffectSceneOptions): FighterEffectScene {
@@ -42,9 +43,11 @@ export function createSecretWindowScene(options: EffectSceneOptions): FighterEff
     if (!original) return
     const target = sleepingBody(original)
     const height = secretWindowBirdHeight(original)
+    const low = Boolean(original.hanzoProjection) || target.knockdownFrames > 0
+    seconds = fineControlReduced(options) ? 0 : state.frame / 60
     model.owl.position.set(
       worldX(target.x) - 0.2,
-      worldY(target.y + height) + Math.sin(seconds * 4) * 0.035,
+      worldY(target.y + height) + (low ? 0 : Math.sin(seconds * 4) * 0.035),
       0.25,
     )
     model.owl.rotation.z = Math.sin(seconds * 5) * 0.04

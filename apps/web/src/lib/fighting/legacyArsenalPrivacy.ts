@@ -1,0 +1,18 @@
+import { redactBattleModels } from './metamorphosenModels'
+import type { ArcadeFighter } from './types'
+
+export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  redactBattleModels(enemy)
+  if (enemy.bloodyMary) enemy.bloodyMary = { ...enemy.bloodyMary, lastSeen: undefined }
+  enemy.luiniExit = undefined
+  enemy.luiniSelectedDestination = undefined
+  enemy.luiniComplete = undefined
+  enemy.biohazardFootage = undefined
+  enemy.biohazardSignal = undefined
+  enemy.biohazardDevices = enemy.biohazardDevices?.map((item) => ({
+    ...item,
+    recordings: undefined,
+  }))
+  enemy.secretWindowMode = undefined
+  enemy.sweetHomeObject = undefined
+}

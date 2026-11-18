@@ -14,6 +14,7 @@ import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
+import { createBiohazardDevices } from './legacyBiohazardDevices'
 import { createBiohazardInventory } from './biohazard'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
@@ -89,6 +90,7 @@ export function nextFightRound(state: FightState): FightState {
         state,
       ),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      rosterGuests: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
@@ -99,11 +101,21 @@ export function nextFightRound(state: FightState): FightState {
       catsName: undefined,
       catsNameConsumed: undefined,
       player: preserveLifespan(
-        createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
+        createFighter({
+          id: state.player.halkenburgOrigin ?? state.player.id,
+          x: 22,
+          facing: 1,
+          health: format.health,
+        }),
         state.player,
       ),
       opponent: preserveLifespan(
-        createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+        createFighter({
+          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+          x: 78,
+          facing: -1,
+          health: format.health,
+        }),
         state.opponent,
       ),
       phase: 'ready',
@@ -118,6 +130,7 @@ export function nextFightRound(state: FightState): FightState {
       score: { player: 0, opponent: 0 },
       knockdowns: { player: 0, opponent: 0 },
       bungeeGum: null,
+      gumNetwork: undefined,
       projectiles: [],
       nextProjectileId: 1,
       impact: null,
@@ -173,6 +186,7 @@ function createFighter(options: {
     maxHealth: options.health,
     paperKit: personalPaperKit(options.id, options.facing),
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
+    biohazardDevices: initialDeviceKit(options.id),
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
@@ -245,4 +259,8 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
     seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
   }
   return seed >>> 0
+}
+
+function initialDeviceKit(id: FighterId) {
+  return id === 'hinrigh' ? createBiohazardDevices() : undefined
 }

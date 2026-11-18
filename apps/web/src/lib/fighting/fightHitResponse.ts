@@ -52,7 +52,7 @@ export function physicalHitPose(hit: PhysicalHit, progress: number): FightPose {
   const age = progress * hit.duration
   const settle = smooth((progress - 0.68) / 0.32)
   const impulse = hit.force * (1 - settle * 0.82)
-  const local = 0.8 + 0.2 * smooth(age / 2)
+  const local = 0.45 + 0.55 * smooth(age / 2)
   const chest = 0.3 + 0.7 * smooth(age / 4)
   const pelvis = 0.08 + 0.92 * smooth((age - 2) / 7)
   return addPoses(

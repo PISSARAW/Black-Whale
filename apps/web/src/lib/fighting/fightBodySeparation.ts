@@ -10,14 +10,14 @@ const GAP = 0.025
 /** The material core has volume even when the animation leans outside its gameplay pushbox. */
 export function createFightBodySeparation(figureOf: (side: FightSide) => Object3D) {
   let supports = makeSupports()
+  let offsets = { player: 0, opponent: 0 }
   let identity = '',
     previous = -1,
-    clearance = 0,
     order = 1
   return (state: FightState) => {
     const key = `${state.player.id}:${state.opponent.id}:${state.roundNumber}`
     if (identity !== key || state.frame < previous) {
-      clearance = 0
+      offsets = { player: 0, opponent: 0 }
       supports = makeSupports()
     }
     identity = key
@@ -27,18 +27,34 @@ export function createFightBodySeparation(figureOf: (side: FightSide) => Object3
     if (!roots.player || !roots.opponent) return
     const direction =
       Math.sign(roots.opponent.position.x - roots.player.position.x) || state.player.facing
-    if (direction !== order) clearance = 0
+    if (direction !== order) offsets = { player: 0, opponent: 0 }
     order = direction
-    const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
-    clearance = Math.max(needed, clearance * Math.exp(-dt / 6))
     if (projectionBody(state.player) || projectionBody(state.opponent)) {
-      clearance = 0
+      offsets = { player: 0, opponent: 0 }
       return
     }
-    displaceCores(roots, state, clearance * direction)
-    for (const side of ['player', 'opponent'] as const)
-      supports[side](figureOf(side), state[side], { frame: state.frame, frozen: state.hitstop > 0 })
+    retainOffsets(offsets, state, dt)
+    roots.player.position.x += offsets.player
+    roots.opponent.position.x += offsets.opponent
+    const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
+    const shifts = displaceCores(roots, state, needed * direction)
+    offsets.player += shifts.player
+    offsets.opponent += shifts.opponent
+    supportBodies(supports, state, figureOf)
   }
+}
+
+function supportBodies(
+  supports: ReturnType<typeof makeSupports>,
+  state: FightState,
+  figureOf: (side: FightSide) => Object3D,
+) {
+  for (const side of ['player', 'opponent'] as const)
+    supports[side](figureOf(side), state[side], {
+      frame: state.frame,
+      frozen: state.hitstop > 0,
+      rival: figureOf(side === 'player' ? 'opponent' : 'player'),
+    })
 }
 
 /** Only an actually projected vessel is immaterial; Ren, In, armour and ordinary invulnerability are not. */
@@ -75,8 +91,26 @@ export function bodySurfaceBox(part: Object3D): Box3 {
 
 function displaceCores(roots: Record<FightSide, Object3D>, state: FightState, distance: number) {
   const share = separationShare(state)
-  roots.player.position.x -= distance * share
-  roots.opponent.position.x += distance * (1 - share)
+  const shifts = { player: -distance * share, opponent: distance * (1 - share) }
+  roots.player.position.x += shifts.player
+  roots.opponent.position.x += shifts.opponent
+  return shifts
+}
+
+function retainOffsets(offsets: Record<FightSide, number>, state: FightState, dt: number) {
+  const engaged = Math.abs(state.player.x - state.opponent.x) < 15 && exchanging(state)
+  const release = engaged ? 1 : Math.exp(-dt / 12)
+  for (const side of ['player', 'opponent'] as const)
+    offsets[side] = fixedBody(state[side]) ? 0 : offsets[side] * release
+}
+
+function exchanging(state: FightState): boolean {
+  return Boolean(
+    state.player.attack ||
+    state.opponent.attack ||
+    state.player.hitStun > 0 ||
+    state.opponent.hitStun > 0,
+  )
 }
 
 function separationShare(state: FightState): number {

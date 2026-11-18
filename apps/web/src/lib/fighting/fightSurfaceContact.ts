@@ -17,8 +17,10 @@ export function anatomicalContactZone(
   zone: FightNenZone,
 ): FightNenZone {
   if (zone !== 'head' || attacker.y > 0 || defender.y > 0) return zone
-  const ratio = fightPhysicalProfile(defender).height / fightPhysicalProfile(attacker).height
-  return ratio > 1.3 ? 'torso' : zone
+  const own = fightPhysicalProfile(attacker),
+    rival = fightPhysicalProfile(defender)
+  // Reserve horizontal reach: the arm cannot spend its full length only on the height difference.
+  return rival.chinHeight - own.shoulderHeight > own.armReach * 0.65 ? 'torso' : zone
 }
 
 export function rememberSurfaceContact(figure: Object3D, contact: SurfaceContact): void {

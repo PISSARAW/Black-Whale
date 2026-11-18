@@ -173,8 +173,8 @@ L’alignement utilise maintenant une chaîne de deux segments, sans changer leu
 longueur. Il rejoint progressivement la surface pendant la préparation puis
 la tient au contact. Le point proche du membre est préféré au centre de la
 zone ; `fightSurfaceContact.ts` mémorise cette surface pour l’effet du même
-impact. Une petite silhouette au sol face à un adversaire plus de 30 % plus
-grand frappe visuellement le thorax accessible : réaction et effet utilisent
+impact. Une silhouette au sol dont le bras ne peut rejoindre le menton adverse
+frappe visuellement le thorax accessible : réaction et effet utilisent
 cette même zone anatomique. La zone logique de défense Nen et les dégâts
 restent ceux du moteur. Les armes conservent leurs gestes spécifiques.
 `fightSurfaceContact.test.ts` mesure la distance réelle membre–surface dans

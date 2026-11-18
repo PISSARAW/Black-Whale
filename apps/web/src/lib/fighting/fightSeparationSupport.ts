@@ -3,6 +3,7 @@ import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fightRigOf, type FightRig } from './fightRig'
 import { reachLimb } from './fightLimbReach'
 import { supportCycle } from './fightSupportCycle'
+import { clearFootTarget } from './fightLimbClearance'
 import type { ArcadeFighter } from './types'
 
 interface Foot {
@@ -20,7 +21,11 @@ interface Support {
 /** Stable two-foot support: the drive changes legs deliberately, instead of choosing the lowest foot each render. */
 export function createSeparationSupport() {
   let support: Support | undefined
-  return (figure: Object3D, fighter: ArcadeFighter, timing: { frame: number; frozen: boolean }) => {
+  return (
+    figure: Object3D,
+    fighter: ArcadeFighter,
+    timing: { frame: number; frozen: boolean; rival?: Object3D },
+  ) => {
     const human = humanAnimationRig(figure)
     if (!human || !groundedSupport(fighter)) {
       support = undefined
@@ -47,6 +52,7 @@ export function createSeparationSupport() {
         ground: support.ground,
         planted: cycle.support === index,
       })
+      if (timing.rival) clearFootTarget(target, timing.rival, fighter.facing)
       pinFoot(rig, index, { target, pivot: cycle.support === index ? cycle.pivot : 0 })
     }
   }

@@ -1,4 +1,5 @@
-import { humanProfile } from '$lib/tour/humanProfiles'
+import { humanProfile, frameShape } from '$lib/tour/humanProfiles'
+import { CANON, stance } from '$lib/tour/humanProportions'
 import { fighterDefinition } from './roster'
 import { rosterMotionStyle } from './rosterStrikeMotion'
 import { fightingStyle } from './fightStyles'
@@ -8,6 +9,9 @@ import type { ArcadeFighter, FighterId } from './types'
 
 export interface FightPhysicalProfile {
   height: number
+  shoulderHeight: number
+  chinHeight: number
+  armReach: number
   resistance: number
   rotation: number
   step: number
@@ -46,11 +50,21 @@ export function fightPhysicalProfile(fighter: ArcadeFighter): FightPhysicalProfi
     human: { role: definition.modelRole, identity: definition.modelId, pose: 'idle', aura: 'none' },
   })
   const body = trueForm ? biscuitTrueFormProfile(compact) : compact
+  const frame = frameShape(body.frame, body.likeness)
+  const ground = stance(frame)
+  const unit = body.height * ground.stature
   const style = rosterMotionStyle(fighter.id)
   const weight = physicalWeight(body.build)
   const mobility = fightingStyle(fighter.id).moveScale
   const result = {
-    height: body.height,
+    shoulderHeight: unit * (CANON.shoulderY * frame.neck + ground.lift),
+    chinHeight:
+      unit * (CANON.headY * frame.neck - 0.2128 * CANON.headScale * frame.head + ground.lift),
+    armReach: unit * (CANON.upperArm + CANON.forearm) * frame.limb,
+    height:
+      body.height *
+      ground.stature *
+      (CANON.headY * frame.neck + 0.2128 * CANON.headScale * frame.head + ground.lift),
     resistance: PILOT_RESISTANCE[fighter.id] ?? clamp(1 / (weight * body.height), 0.64, 1.18),
     rotation: clamp(style?.amplitude ?? 1, 0.8, 1.15),
     step: clamp(mobility / weight, 0.65, 1.2),

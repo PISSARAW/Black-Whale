@@ -39,3 +39,19 @@ précédent reste borné et les retours périodiques du buste sont réduits.
 bras et la réception au sol. Les KO ne se relèvent pas. Les quarante profils
 sont vérifiés dans `fightDirectionalImpulse.test.ts`, en complément des combos
 natifs, reconstructions Nen et relevés déjà contrôlés.
+
+## 4. Écartement et point de contact stables
+
+L’écartement est mémorisé séparément pour chaque corps pendant l’échange : un
+changement de rôle attaquant/victime ne redistribue plus brusquement la correction.
+La sortie vers le neutre le relâche progressivement, avec priorité à la séparation
+matérielle et aux ancrages. `fightContactLatch.ts` conserve un point local de la
+surface pendant les images actives ; il résiste au hitstop et aux reconstructions.
+La portée visuelle tête/torse tient compte de l’épaule, du menton et de la longueur
+des bras dans les proportions réellement dessinées. Le membre vise avant la
+surface pour y présenter son extrémité. `fightLimbClearance.ts` replie les bras
+passifs trop engagés et garde les appuis hors du volume des pieds adverses.
+Les frappes, projections, chopes et passages dédiés conservent leur liberté.
+Le contrôle ne constitue pas une simulation de tous les triangles de vêtements.
+`fightContactStability.test.ts` mesure le maintien du contact, la stabilité des
+corrections entre les rôles et l’écartement des pieds, sans modifier le replay.

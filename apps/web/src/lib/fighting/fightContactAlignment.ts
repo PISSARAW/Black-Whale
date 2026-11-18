@@ -6,6 +6,8 @@ import { rosterMoveShape } from './rosterStrikeMotion'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import { attackData } from './frameData'
 import { reachLimb } from './fightLimbReach'
+import { createFightContactLatch } from './fightContactLatch'
+import { clearPassiveArms } from './fightLimbClearance'
 import { anatomicalContactZone, rememberSurfaceContact } from './fightSurfaceContact'
 import { createFightBodySeparation, bodySurfaceBox, projectionBody } from './fightBodySeparation'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
@@ -13,26 +15,37 @@ import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types
 /** Bounded anatomical correction after both actors have been posed, before aura and impacts. */
 export function createFightContactAlignment(figureOf: (side: FightSide) => Object3D) {
   const separateBodies = createFightBodySeparation(figureOf)
+  const latches = { player: createFightContactLatch(), opponent: createFightContactLatch() }
   return (state: FightState) => {
     separateBodies(state)
     if (!physicalRosterPair(state.player.id, state.opponent.id)) return
     for (const side of ['player', 'opponent'] as const) {
       const fighter = state[side],
         other = side === 'player' ? 'opponent' : 'player'
-      const weight = contactWeight(fighter, state[other])
-      if (weight <= 0) continue
       const own = humanAnimationRig(figureOf(side)),
         rival = humanAnimationRig(figureOf(other))
       if (!own || !rival) continue
+      if (!projectionBody(fighter) && !projectionBody(state[other]))
+        clearPassiveArms(fightRigOf(own), figureOf(other), fighter)
+      const weight = contactWeight(fighter, state[other])
+      if (weight <= 0) continue
       const zone = anatomicalContactZone(
         fighter,
         state[other],
         attackData(fighter.attack!.kind, fighter).targetZone,
       )
       const ownRig = fightRigOf(own)
-      const target = fightContactSurface(fightRigOf(rival), zone, {
+      const fresh = fightContactSurface(fightRigOf(rival), zone, {
         facing: fighter.facing,
         near: strikeRoot(ownRig, fighter).getWorldPosition(new Vector3()),
+      })
+      const data = attackData(fighter.attack!.kind, fighter)
+      const target = latches[side](fighter, contactPart(fightRigOf(rival), zone), {
+        position: fresh,
+        active:
+          fighter.attack!.frame >= data.startup &&
+          fighter.attack!.frame < data.startup + data.active,
+        identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
       })
       alignStrike(ownRig, fighter, { target, weight })
       rememberImpactSurface(figureOf(side), { state, side, zone, position: target })
@@ -100,7 +113,9 @@ function alignStrike(
   const indices = limb === 'both' ? [0, 1] : [limb === 'left' ? 0 : 1]
   for (const index of indices) {
     const { root, hinge, end } = strikeParts(rig, { fighter, feet, index })
-    reachLimb({ root, hinge, end }, options.target, options.weight)
+    const target = options.target.clone()
+    target.x -= fighter.facing * (feet ? 0.08 : 0.045)
+    reachLimb({ root, hinge, end }, target, options.weight)
   }
 }
 

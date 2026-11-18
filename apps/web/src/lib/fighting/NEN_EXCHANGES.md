@@ -27,3 +27,21 @@ compte du profil de la victime ; les frappes physiques gardent leurs gestes prop
 Une traction ou une immobilisation active articule la résistance du corps à sa
 position autoritaire. La présentation ne produit ni déplacement, ni dégât, ni
 nouvelle traversée. Garde, parade et esquive n’ajoutent aucune réaction de blessure.
+
+## Engagements visibles et réponses
+
+`nenCommitment.ts` distingue récupération corporelle visible et redistribution
+d’aura observable. In exige le Gyo adverse pour cette seconde lecture ; la cécité
+refuse les deux. L’IA classe les coups déjà proposés selon leur portée et leur
+préparation dans la fenêtre de récupération courante, puis subit les admissions
+normales. Aucun contre automatique, nouvelle invulnérabilité ou prolongation de
+stun n’est accordé. Les accents de préparation et de récupération complètent les
+poses personnelles ; la pose active de contact et la racine restent intactes.
+
+`nenFluxTiming.ts` suit l’âge et la destination du transfert autoritaire, même
+quand les parts changent à chaque frame. Le flux ne redémarre plus à chaque part
+interpolée ; son horloge se fige avec le hitstop. Enveloppes et flux gardent
+`fighterAuraHex`, la confidentialité de In et les préférences de confort.
+
+Les [combats autonomes](../../../demos/fighting-nen-exchanges/README.md) filment
+trois extraits continus à vitesse normale et exportent les replays vérifiés.

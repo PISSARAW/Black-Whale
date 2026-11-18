@@ -1,3 +1,4 @@
+import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
@@ -203,7 +204,10 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const ordinary = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
+  const ordinary = withNenCommitment(
+    fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    fighter,
+  )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   const plan = awake && closeBodyPlan(awake, fighter, context.rival)
   return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1

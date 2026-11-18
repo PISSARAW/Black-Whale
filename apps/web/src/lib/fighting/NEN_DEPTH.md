@@ -83,3 +83,6 @@ Le panneau des applications affiche le profil propre, les catégories dont une
 application est répertoriée, le débit disponible et le transfert effectif. Une
 maîtrise non établie est présentée comme telle. Les distances, coefficients et
 seuils restent des réglages du duel, à équilibrer en combat.
+
+Les [échanges du Nen](./NEN_EXCHANGES.md) relient ces états aux suites de coups,
+aux réactions par mécanisme et aux engagements observables.

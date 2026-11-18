@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 923
+Fichiers : 927
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1080,7 +1080,7 @@ Fichiers : 923
 
 ## `apps/web/src/lib/fighting/throws/performances.test.ts`
 
-- fifteen individual pairs of authored throw performances > owns thirty distinct pairs of actor poses, victim poses, trajectories and lenses
+- twenty individual pairs of authored throw performances > owns forty distinct pairs of actor poses, victim poses, trajectories and lenses
 
 ## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
 

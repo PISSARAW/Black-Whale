@@ -6,7 +6,7 @@ import { fluxRibbonGeometry, drawFluxRibbon } from './nenFluxRibbon'
 import { fineControlReduced, threadVisible } from './fineControlAnchors'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
-import { attackData } from './frameData'
+import { nenFluxTiming } from './nenFluxTiming'
 
 type Rig = ReturnType<typeof createNenConcentrationRig>
 type Held = { figure: import('three').Object3D; rig: Rig }
@@ -62,23 +62,24 @@ export function createNenConcentrationScene(options: EffectSceneOptions) {
     const actual = visible ? auraConcentration(state[side]) : null
     const frame = clocks[side](state, actual)
     const concentration = visible ? frame.concentration : null
-    const attack = state[side].attack
-    const travel = attack
-      ? frame.age + attackData(attack.kind, state[side]).startup - attack.frame
-      : 8
-    const travelFrames = Math.max(2, Math.min(8, travel))
-    rig.sync(concentration, frame.time / 60, {
-      strength: frame.strength,
-      age: frame.age,
-      travelFrames,
-    })
-    if (!actual || fineControlReduced(options) || frame.age >= 14) return
-    drawFlux(rig, { age: frame.age, offset: side === 'player' ? 0 : 12, travelFrames })
+    const timing = nenFluxTiming(state[side], frame)
+    rig.sync(concentration, frame.time / 60, { strength: frame.strength, ...timing })
+    if (!actual || fineControlReduced(options) || timing.age >= 14) return
+    drawFlux(rig, { ...timing, offset: side === 'player' ? 0 : 12 })
   }
-  function drawFlux(rig: Rig, timing: { age: number; offset: number; travelFrames: number }) {
+
+  function drawFlux(
+    rig: Rig,
+    timing: {
+      age: number
+      offset: number
+      travelFrames: number
+      zone?: import('./types').FightNenZone
+    },
+  ) {
     const { age, offset, travelFrames } = timing
-    const destinations = rig.regions.filter(
-      (region) => region.material.uniforms.u_share.value >= 0.5,
+    const destinations = rig.regions.filter((region) =>
+      timing.zone ? region.zone === timing.zone : region.material.uniforms.u_share.value >= 0.5,
     )
     let index = offset
     for (const region of destinations) {

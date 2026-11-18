@@ -13,11 +13,16 @@ export function bashoInk(poem: BashoPoem) {
   return { progress, lines: ['GREAT HIKER', ...lines] }
 }
 export function poseBashoPen(pen: Object3D, poem: BashoPoem, reduced: boolean) {
-  const { progress } = bashoInk(poem)
-  const line = Math.min(2, Math.floor(progress * 3))
-  const along = (progress * 3) % 1
+  const { progress, lines } = bashoInk(poem)
+  const line = Math.min(2, lines.length - 2)
+  const full = Array.from(poem.text.split('\n')[line] ?? '').length
+  const along = Array.from(lines.at(-1) ?? '').length / Math.max(1, full)
   pen.visible = poem.writingFrames > 0
-  pen.position.set(reduced ? 0.27 : -0.25 + along * 0.5, reduced ? 0.04 : 0.04 - line * 0.059, 0.04)
+  pen.position.set(
+    reduced ? 0.15 : -0.36 + along * 0.56,
+    reduced ? 0.205 : 0.205 - line * 0.059,
+    0.04,
+  )
   pen.rotation.set(0, 0, reduced ? -0.4 : -0.4 + Math.sin(progress * Math.PI * 24) * 0.08)
   pen.userData.progress = progress
 }

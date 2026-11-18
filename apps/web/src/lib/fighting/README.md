@@ -130,6 +130,9 @@ reçoivent des accents de type 1 dans le point de vue du participant autorisé.
 La [croissance de Bill, la mission du pigeon de Cluck et le traitement de Cookie](./SUPPORT_HATSU_PRESENTATION.md)
 restent en type 1, sur les cibles réelles et les étapes effectivement confirmées.
 
+L’[interprétation de Melody, l’écriture de Basho et l’observation de Rihan](./PERFORMANCE_PRESENTATION.md)
+restent en type 1 : flûte réelle, tracé progressif et concentration privée.
+
 L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.md)
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque

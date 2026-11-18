@@ -1,3 +1,6 @@
+import { holdBashoPaper, poseBashoWritingHand } from './bashoWritingPose'
+import { bashoInk, poseBashoPen } from './bashoWritingPresentation'
+import { fineControlReduced } from './fineControlAnchors'
 import { placeVisitHand } from './visitSceneKit'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightSide, FightState } from './types'
@@ -26,6 +29,7 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     root.name = kind === 'poem' ? `basho-poem:${side}` : `combo-master:${side}`
     root.add(new THREE.Mesh(geometry, material))
     const pen = new THREE.Mesh(penGeometry, penMaterial)
+    pen.name = kind === 'poem' ? `basho-pen:${side}` : ''
     pen.position.set(0.28, 0.05, 0.04)
     pen.rotation.z = -0.4
     pen.visible = kind === 'poem'
@@ -62,23 +66,27 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     build(side, 'poem'),
     build(side, 'console'),
   ])
+  function syncProp(prop: ReturnType<typeof build>, state: FightState) {
+    const f = state[prop.side]
+    prop.root.visible =
+      prop.kind === 'poem'
+        ? Boolean(f.bashoPoem)
+        : Boolean(f.comboMaster && prop.side === (options.viewer?.() ?? 'player'))
+    if (!prop.root.visible) return
+    placeVisitHand(options, { state, side: prop.side, root: prop.root, hand: 'left' })
+    prop.root.position.z += 0.25
+    prop.root.rotation.set(-0.12, 0, -0.08 * f.facing)
+    if (prop.kind === 'poem') {
+      holdBashoPaper(options, { state, side: prop.side, root: prop.root })
+      poseBashoPen(prop.pen, f.bashoPoem!, fineControlReduced(options))
+      if (prop.pen.visible) poseBashoWritingHand(options, { side: prop.side, pen: prop.pen })
+      prop.root.userData.inkProgress = bashoInk(f.bashoPoem!).progress
+    }
+    prop.write(prop.kind === 'poem' ? poemLines(state, prop.side) : consoleLines(state, prop.side))
+  }
   return {
     sync(state) {
-      for (const prop of props) {
-        const f = state[prop.side]
-        prop.root.visible =
-          prop.kind === 'poem'
-            ? Boolean(f.bashoPoem)
-            : Boolean(f.comboMaster && prop.side === (options.viewer?.() ?? 'player'))
-        if (!prop.root.visible) continue
-        placeVisitHand(options, { state, side: prop.side, root: prop.root, hand: 'left' })
-        prop.root.position.z += 0.25
-        prop.root.rotation.set(-0.12, 0, -0.08 * f.facing)
-        prop.pen.rotation.z = penAngle(f.bashoPoem?.writingFrames)
-        prop.write(
-          prop.kind === 'poem' ? poemLines(state, prop.side) : consoleLines(state, prop.side),
-        )
-      }
+      for (const prop of props) syncProp(prop, state)
     },
     dispose() {
       props.forEach((prop) => prop.dispose())
@@ -88,12 +96,8 @@ export function createCinematicPropsScene(options: EffectSceneOptions): FighterE
     },
   }
 }
-function penAngle(writingFrames = 0): number {
-  return -0.4 + (writingFrames > 0 ? Math.sin((writingFrames * Math.PI) / 6) * 0.12 : 0)
-}
 function poemLines(state: FightState, side: FightSide): string[] {
-  const poem = state[side].bashoPoem!
-  return ['GREAT HIKER', ...(poem.ready ? poem.text.split('\n') : ['...'])]
+  return bashoInk(state[side].bashoPoem!).lines
 }
 function consoleLines(state: FightState, side: FightSide): string[] {
   const alert = state[side].comboMaster?.alert

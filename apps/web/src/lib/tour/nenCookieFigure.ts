@@ -153,7 +153,11 @@ export function buildCookieFigure(seen: Apparition, context: BasicApparitionCont
         [side * 0.29, 0.87, 0.27],
       ],
     })
+    const hand = new context.THREE.Group()
+    hand.name = `massage-hand-${side}`
+    context.root.add(hand)
     k.hand({
+      into: hand,
       name: `massage-hand-${side}`,
       at: [side * 0.29, 0.87, 0.27],
       scale: 0.3,
@@ -193,5 +197,15 @@ export function buildCookieFigure(seen: Apparition, context: BasicApparitionCont
     colour: BONE,
   })
   cookieHead(seen, context)
+  // Keep the dress, portrait and arms together when Cookie bends over a resting body.
+  const upper = new context.THREE.Group()
+  upper.name = 'cookie-upper-body'
+  upper.position.y = 0.65 * seen.size
+  for (const part of [...context.root.children]) {
+    if (part.name.startsWith('leg-') || part.name.startsWith('shoe-')) continue
+    upper.add(part)
+    part.position.y -= upper.position.y
+  }
+  context.root.add(upper)
   return context.root
 }

@@ -12,6 +12,8 @@ import { createBodyHatsuScene } from './bodyHatsuScene'
 import { createBlinkySuctionScene } from './blinkySuctionScene'
 import { createPassageAccentScene } from './passageAccentScene'
 import { createPerceptionAccentScene } from './perceptionAccentScene'
+import { createSupportHatsuScene } from './supportHatsuScene'
+import { createPerformanceHatsuScene } from './performanceHatsuScene'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 
 export function createRemainingVisitHatsuScene(options: EffectSceneOptions): FighterEffectScene {
@@ -30,6 +32,8 @@ export function createRemainingVisitHatsuScene(options: EffectSceneOptions): Fig
     createFranklinAccentScene,
     createCinematicPropsScene,
     createPerceptionAccentScene,
+    createSupportHatsuScene,
+    createPerformanceHatsuScene,
   ].map((create) => create(options))
   return {
     sync(state, seconds) {

@@ -1,6 +1,6 @@
 # Audit courant — règles du Nen des 40 personnages de Clash
 
-**Revu le 18 novembre 2026 — ruleset courant `clash-combat-46`.** Ce document remplace
+**Revu le 18 novembre 2026 — ruleset courant `clash-combat-47`.** Ce document remplace
 les anciens tableaux A/B/C/D : ils mélangeaient des constats initiaux et des
 corrections déjà livrées. Les anciens totaux ne décrivaient plus le jeu courant.
 
@@ -25,6 +25,8 @@ fusion avec les autres développements et distingue les contrôles réussis des
 échecs antérieurs encore ouverts.
 Le [correctif Halkenburg du ruleset 46](./clash-halkenburg-cible.md) réserve
 le remplacement aléatoire à une variante explicitement sélectionnée.
+Le [suivi de l'aura du prêt Dolphin](./clash-dolphin-reserve-roster.md) corrige
+le canal du combattant supplémentaire et le relais après injection à un allié.
 
 ## Périmètre et niveau de preuve
 

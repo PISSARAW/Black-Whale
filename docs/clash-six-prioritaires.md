@@ -42,7 +42,8 @@ l'a tuée, les PV de Chrollo ne sont pas consommés à sa place.
 
 **Kurapika** peut prêter la technique chargée dans Stealth Dolphin à un
 volontaire aléatoire du roster. Ce corps apparaît pour en effectuer un usage
-contre l'adversaire, avec sa propre aura et ses ressources. Il n'utilise pas
+contre l'adversaire, avec l'aura prélevée au donneur, son propre corps et ses
+ressources matérielles. Il n'utilise pas
 son Hatsu personnel à la place de la technique prêtée. Kurapika continue à agir
 et supporte le coût d'Emperor Time jusqu'à la fin de l'usage. L'aptitude est alors
 rendue à sa source et le tiers ressort.

@@ -25,6 +25,7 @@ const BODY_FIELDS = new Set([
   'heardWords',
   'speechPulse',
   'dowsingReading',
+  'dowsingAcquaintances',
   'devicePlayback',
   'receiverReading',
   'judgmentPreset',

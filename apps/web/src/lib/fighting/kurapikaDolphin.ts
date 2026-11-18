@@ -148,6 +148,11 @@ export function dolphinIsBusy(
   held: StolenChainAbility,
 ): boolean {
   if (held.returned) return false
+  if (
+    held.lentTo &&
+    state.rosterGuests?.some((guest) => guest.id === held.lentTo && guest.phase === 'acting')
+  )
+    return true
   if (machiThreadForOwner(state, side)) return true
   if (state[side].attack?.moveId === held.moveId) return true
   return held.sustainedKeys.some((entry) => dolphinEffectActive(state, side, entry))

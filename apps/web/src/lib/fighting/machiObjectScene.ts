@@ -11,6 +11,27 @@ export function createMachiObjectScene(options: EffectSceneOptions): FighterEffe
     scene.add(line)
     return { side, line }
   })
+  const corpseLines = (['player', 'opponent'] as const).flatMap((side) =>
+    [0, 1].map((index) => {
+      const line = new THREE.Line(new THREE.BufferGeometry(), material)
+      line.name = `machi-corpse-thread:${side}:${index}`
+      scene.add(line)
+      return { side, index, line }
+    }),
+  )
+  function drawCorpses(state: FightState) {
+    for (const { side, index, line } of corpseLines) {
+      const link = state[side].corpseStrings?.[index]
+      const body = state.battlefield?.entities.find((e) => e.id === link?.id && e.present)
+      line.visible = Boolean(body)
+      if (!body) continue
+      line.geometry.setFromPoints([
+        controlHand(options, state, side),
+        new THREE.Vector3(options.worldX(body.x), options.worldY(body.y + 9), 0.3),
+      ])
+      line.geometry.computeBoundingSphere()
+    }
+  }
   function draw(state: FightState, side: FightSide, line: import('three').Line) {
     const actor = state[side],
       anchor = actor.machiAnchor,
@@ -35,9 +56,10 @@ export function createMachiObjectScene(options: EffectSceneOptions): FighterEffe
   return {
     sync(state) {
       lines.forEach(({ side, line }) => draw(state, side, line))
+      drawCorpses(state)
     },
     dispose() {
-      lines.forEach(({ line }) => {
+      ;[...lines, ...corpseLines].forEach(({ line }) => {
         scene.remove(line)
         line.geometry.dispose()
       })

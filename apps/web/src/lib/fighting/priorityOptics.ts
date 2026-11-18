@@ -1,3 +1,4 @@
+import { umbrellaBlocksSight } from './feitanUmbrella'
 import type { FightState } from './types'
 
 /** Real cover occludes the segment between the lens/eyes and the observed body. */
@@ -5,6 +6,7 @@ export function priorityLineOfSight(
   state: FightState,
   ray: { x: number; y: number; targetX: number; targetY: number },
 ): boolean {
+  if (umbrellaBlocksSight(state, ray)) return false
   const gap = ray.targetX - ray.x
   if (Math.abs(gap) < 0.001) return true
   return !(state.battlefield?.entities ?? []).some((entry) => {

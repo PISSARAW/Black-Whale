@@ -1,3 +1,4 @@
+import { advanceUmbrellaFeints } from '../feitanUmbrella'
 import { attackData } from '../frameData'
 import { feitanMoveAvailable, feitanNenActive, painPackerAction } from '../feitanPain'
 import { createRisingSun, resolveSolarHeat } from '../feitanSun'
@@ -14,6 +15,7 @@ export const feitanHatsu: FighterHatsu = {
 
 function advancePainPacker(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
+  state = advanceUmbrellaFeints(state)
   return resolveSolarHeat({
     ...state,
     player: advanceFighter(state.player),

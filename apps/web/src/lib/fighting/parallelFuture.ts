@@ -4,6 +4,7 @@ import {
   futureSource,
   stopParallelFuture,
 } from './parallelFutureAbility'
+import { fieldDeceives } from './futureIllusion'
 import { forecastParallelFuture } from './parallelFutureForecast'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
 import type {
@@ -98,7 +99,7 @@ function stepDivergence(
   let next = restorePerceivedFacing(engine.simulate(state, replayControls), state)
   if (future.owner === 'player' && held.ai) next = replayAi(next, state, engine.replay)
   if (next.phase !== 'fighting' || future.cursor + 1 >= FUTURE_WINDOW_FRAMES)
-    return stopParallelFuture(next)
+    return stopParallelFuture(next, next.phase === 'fighting' && Boolean(next.futureIllusion))
   return { ...next, parallelFuture: { ...future, cursor: future.cursor + 1 } }
 }
 
@@ -136,6 +137,9 @@ export function futurePerceivedTarget(
   actual: ArcadeFighter,
 ): ArcadeFighter {
   const future = state.parallelFuture
+  if (state.futureIllusion && !fieldDeceives(state, observer)) return actual
+  if (fieldDeceives(state, observer) && future?.phase !== 'diverging')
+    return state.futureIllusion!.echo
   if (future?.phase !== 'diverging' || observer === future.owner) return actual
   const frame = future.frames[Math.max(0, future.cursor - 1)]
   return frame[future.owner]

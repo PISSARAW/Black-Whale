@@ -5,6 +5,9 @@
     biohazardAuthority,
   } from '$lib/fighting/biohazard'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import { HINRIGH_KNIVES } from '$lib/fighting/hinrighKnives'
+  import { fighterDefinition } from '$lib/fighting/roster'
+  import { hasEquipment } from '$lib/fighting/preparationWorld'
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
@@ -34,6 +37,12 @@
 {#if fighter.biohazard || biohazardAuthority(fighter)}
   <div class="biohazard-status" aria-label="Biohazard">
     <strong>Biohazard · {language === 'fr' ? 'Objets réels' : 'Physical objects'}</strong>
+    {#if fighter.id === 'hinrigh'}
+      <span
+        >{language === 'fr' ? 'Couteaux restants' : 'Knives remaining'} : {fighter.hinrighKnives ??
+          HINRIGH_KNIVES}</span
+      >
+    {/if}
     <div class="inventory">
       {#each fighter.biohazard?.objects ?? [] as object (object.id)}
         <div class:broken={object.phase === 'broken'}>
@@ -46,6 +55,40 @@
               aria-label={labels[language].transforming}
             ></progress>
           {/if}
+        </div>
+      {/each}
+      {#each fighter.biohazardDevices ?? [] as device (device.id)}
+        <div>
+          <span
+            >{device.kind === 'camera'
+              ? language === 'fr'
+                ? 'Caméra-chat'
+                : 'Cat camera'
+              : device.kind === 'gun'
+                ? language === 'fr'
+                  ? 'Arme-serpent'
+                  : 'Snake gun'
+                : language === 'fr'
+                  ? 'Émetteur-huître'
+                  : 'Oyster transmitter'}</span
+          >
+          <b
+            >{device.phase === 'active'
+              ? language === 'fr'
+                ? 'Transformé'
+                : 'Transformed'
+              : device.phase === 'preparing'
+                ? labels[language].transforming
+                : device.phase === 'dropped'
+                  ? language === 'fr'
+                    ? 'Objet d’origine'
+                    : 'Original object'
+                  : device.phase === 'carried'
+                    ? labels[language].carried
+                    : labels[language].broken}{device.kind === 'gun'
+              ? ` · ${device.ammo ?? 0}`
+              : ''}</b
+          >
         </div>
       {/each}
       {#if !fighter.biohazard?.objects.length}
@@ -67,6 +110,28 @@
         : 'Guard, jump or strike to avoid capture. No damage or Zetsu.'}</small
     >
   </div>
+{/if}
+{#if hasEquipment(fighter, 'tracker-receiver')}
+  <small
+    >{language === 'fr' ? 'Récepteur en main' : 'Receiver in hand'}{fighter.biohazardSignal
+      ? ` · ${language === 'fr' ? 'Position relevée' : 'Last reading'} : ${fighter.biohazardSignal.x.toFixed(1)}, ${fighter.biohazardSignal.y.toFixed(1)} · f${fighter.biohazardSignal.frame}`
+      : ''}</small
+  >
+{/if}
+{#if fighter.biohazardFootage}
+  <details>
+    <summary
+      >{language === 'fr' ? 'Enregistrement consulté' : 'Reviewed footage'} · {fighter
+        .biohazardFootage.length}</summary
+    >
+    {#each fighter.biohazardFootage.slice(-8) as sample, index (index)}
+      <small
+        >f{sample.frame} · {fighterDefinition(sample.appearance).name} · {sample.x.toFixed(1)}, {sample.y.toFixed(
+          1,
+        )}</small
+      >
+    {/each}
+  </details>
 {/if}
 {#if !fighter.biohazardRestraint && (fighter.biohazardGraceFrames ?? 0) > 0}
   <small class="grace"

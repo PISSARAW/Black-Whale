@@ -6,11 +6,14 @@ import { shuObject } from './nenAdvanced'
 import type { ArcadeFighter, FightProjectile } from './types'
 
 export function isFirearmProjectile(projectile: FightProjectile): boolean {
+  if (projectile.corpseGun) return true
   return (
     projectile.matter === 'object' &&
     projectile.shape === 'bullet' &&
     (isBodyguardBullet(projectile) ||
-      ['benjamin', 'camilla', 'feitan'].includes(projectile.fighterId))
+      ['benjamin', 'camilla', 'feitan', 'tserriednich', 'halkenburg'].includes(
+        projectile.fighterId,
+      ))
   )
 }
 

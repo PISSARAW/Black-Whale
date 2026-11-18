@@ -51,6 +51,12 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
   )
 }
 function redactEnemy(enemy: ArcadeFighter) {
+  enemy.guardianWords = undefined
+  enemy.toxinExposure = undefined
+  enemy.futureStoredFrames = undefined
+  enemy.futureIllusionMode = undefined
+  enemy.gumHeartArmed = undefined
+  enemy.gumHeartPreparation = undefined
   redactBattleModels(enemy)
   enemy.luiniExit = undefined
   enemy.luiniSelectedDestination = undefined
@@ -98,6 +104,7 @@ function redactEnemy(enemy: ArcadeFighter) {
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
   const view = structuredClone(futureVisibleState(state, side))
+  view.toxinClouds = view.toxinClouds?.filter((cloud) => cloud.owner === side)
   view.arsenalTrace = undefined
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
@@ -108,6 +115,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
   if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
+  if (view.futureIllusion?.owner !== side) view.futureIllusion = undefined
   redactForecast(view, side, other)
   if (view.parallelFuture) view.parallelFuture.controls = null
   view.bungeeGum = bungeeVisible(view, side) ? view.bungeeGum : null

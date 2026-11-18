@@ -1,7 +1,7 @@
 import type { ProjectileProfile } from './projectiles'
 import type { ArcadeFighter, AttackKind, FightProjectile, FighterId } from './types'
 
-/** Royal bodyguards in this roster receive service equipment for the duel.
+/** Royal bodyguards and the two armed princes receive physical duel equipment.
  * Kurapika, Bill, Furykov, Theta and Musse explicitly carry firearms in the manga.
  * A shared pistol for the other guards is a loadout convention, not an attested model/calibre.
  */
@@ -18,6 +18,8 @@ export const BODYGUARD_FIREARMS = [
   'melody',
   'hanzo',
   'biscuit',
+  'tserriednich',
+  'halkenburg',
 ] as const satisfies readonly FighterId[]
 
 const GUARDS: ReadonlySet<FighterId> = new Set(BODYGUARD_FIREARMS)

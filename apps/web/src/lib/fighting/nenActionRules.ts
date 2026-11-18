@@ -13,13 +13,7 @@ interface NenAction {
   moveId?: string
 }
 
-const NEN_RANGED: readonly FighterId[] = [
-  'leorio',
-  'machi',
-  'franklin',
-  'bonolenov',
-  'kalluto',
-]
+const NEN_RANGED: readonly FighterId[] = ['leorio', 'machi', 'franklin', 'bonolenov', 'kalluto']
 
 /** Shared admission check, including the direct/AI and buffered execution paths. */
 export function nenActionAllowed(options: NenAction): boolean {
@@ -29,11 +23,20 @@ export function nenActionAllowed(options: NenAction): boolean {
   if (fighter.melodyPerformance && melodyMusicIntent(fighter, options.kind, options.moveId))
     return true
   if (!usesVoluntaryNen(fighter, options)) return true
-  const allowVoluntaryZetsu =
-    options.state.parallelFuture?.owner === options.side && fighter.parallelEyesClosed === true
+  const allowVoluntaryZetsu = futureZetsuCommand(options)
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options))
+  )
+}
+
+function futureZetsuCommand(options: NenAction): boolean {
+  const actor = options.state[options.side]
+  if (options.state.parallelFuture?.owner === options.side && actor.parallelEyesClosed) return true
+  return Boolean(
+    actor.futureIllusionActive &&
+    options.kind === 'special' &&
+    options.moveId === 'tserriednich:neutralSpecial',
   )
 }
 
@@ -62,9 +65,7 @@ function nenMoveId(
   action: Pick<NenAction, 'kind' | 'moveId'>,
 ): string | undefined {
   if (action.kind !== 'ranged') return action.moveId
-  return fighter.id === 'machi'
-    ? `${fighter.id}:forwardSpecial`
-    : `${fighter.id}:neutralSpecial`
+  return fighter.id === 'machi' ? `${fighter.id}:forwardSpecial` : `${fighter.id}:neutralSpecial`
 }
 
 /** Cancel a maintained action when its access is lost; released projectiles stay independent. */

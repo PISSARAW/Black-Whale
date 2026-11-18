@@ -1,3 +1,4 @@
+import { futurePerceivedTarget } from './parallelFuture'
 import { seesCombatBody } from './fightCounterplay'
 import { insideEn } from './nenPerception'
 import { sleepingBody } from './hanzoProjection'
@@ -8,7 +9,7 @@ import type { ArcadeFighter, FightState } from './types'
 export function currentlyLocatedTarget(
   state: FightState,
 ): { x: number; y: number; at: number } | null {
-  const body = sleepingBody(state.player)
+  const body = sleepingBody(futurePerceivedTarget(state, 'opponent', state.player))
   const observer = state.opponent
   if (seesCombatBody(observer) || insideEn(observer, body))
     return { x: body.x, y: body.y, at: state.frame }
@@ -27,7 +28,8 @@ export function perceivedOpponentGap(state: FightState): number {
 export function approximateTarget(state: FightState, fighter: ArcadeFighter): ArcadeFighter | null {
   const known = knownOpponentTarget({ ...state, opponent: fighter })
   if (!known) return null
-  if (seesCombatBody(fighter)) return sleepingBody(state.player)
+  if (seesCombatBody(fighter))
+    return sleepingBody(futurePerceivedTarget(state, 'opponent', state.player))
   return {
     ...fighter,
     x: known.x,

@@ -1,4 +1,6 @@
 import { advanceCorpseControls } from './illumiCorpses'
+import { advanceIllumiMask } from './illumiMask'
+import { advanceConditionedNeedles } from './illumiConditioning'
 import { illumiNenActive } from './illumiAccess'
 import { illumiState, type NeedlePuppet } from './illumiState'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
@@ -12,7 +14,11 @@ export function illumiInput(fighter: ArcadeFighter, input: FightInput): ArcadeFi
 
 export function advanceIllumi(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
-  return advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent'))
+  return advanceIllumiMask(
+    advanceConditionedNeedles(
+      advanceCorpseControls(advanceForSide(advanceForSide(state, 'player'), 'opponent')),
+    ),
+  )
 }
 
 function advanceForSide(state: FightState, side: FightSide): FightState {

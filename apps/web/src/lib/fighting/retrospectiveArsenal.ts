@@ -1,6 +1,17 @@
+import { performMachiCorpse, machiCorpseOptions } from './machiCorpses'
+import { performBenjaminToxin, benjaminToxinOptions } from './benjaminToxin'
+import { performUmbrellaFeint, umbrellaOptions } from './feitanUmbrella'
 import { performModelSelection, modelSelectionOptions } from './metamorphosenModels'
-import { performCorpseCommand, corpseOptions } from './illumiCorpses'
+import { corpseOptions } from './illumiCorpses'
+import { illumiMaskOptions } from './illumiMask'
+import { performGuardianStatement, guardianStatementOptions } from './tserriednichGuardian'
+import { performFutureField, futureFieldOptions } from './futureIllusion'
+import { performFranklinAim, franklinAimOptions } from './franklinAim'
+import { performBlinkyEvidence, blinkyEvidenceOptions } from './blinkyEvidence'
+import { performIllumiSupplement, conditioningOptions } from './illumiConditioning'
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { historicalWeaponOptions } from './historicalWeapons'
+import { performGumHeart, gumHeartOptions } from './hisokaHeart'
 import { traceArsenal } from './arsenalTrace'
 import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoan'
@@ -53,13 +64,22 @@ const INVOCATION_FAMILIES: Record<
   string,
   ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
 > = {
+  umbrella: performUmbrellaFeint,
   bono: performModelSelection,
-  illumi: performCorpseCommand,
-  machi: performMachiMaterial,
+  illumi: performIllumiSupplement,
+  machi: (options) =>
+    options.command.action.startsWith('machi-corpse')
+      ? performMachiCorpse(options)
+      : performMachiMaterial(options),
   dolphin: performDolphinLoan,
   halkenburg: performHalkenburgTransfer,
   black: performBlackVoice,
   bio: performBiohazardDevice,
+  benjamin: performBenjaminToxin,
+  guardian: performGuardianStatement,
+  future: performFutureField,
+  franklin: performFranklinAim,
+  blinky: performBlinkyEvidence,
 }
 
 export function performArsenalCommand(
@@ -83,6 +103,7 @@ function executeArsenalCommand(
     return state
   const invocation = INVOCATION_FAMILIES[command.action.split('-')[0]]
   if (invocation) return invocation({ state, side, command })
+  if (command.action === 'gum-heart') return performGumHeart({ state, side, command })
   if (command.action === 'support-consent') return toggleConsent(state, side)
   const family = COMMAND_FAMILIES[command.action.split('-')[0]]
   return family ? family(state, side, command) : state
@@ -96,8 +117,19 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...umbrellaOptions(state, side),
+    ...historicalWeaponOptions(state, side),
+    ...gumHeartOptions(state, side),
     ...modelSelectionOptions(state, side),
     ...corpseOptions(state, side),
+    ...illumiMaskOptions(state, side),
+    ...guardianStatementOptions(state, side),
+    ...benjaminToxinOptions(state, side),
+    ...machiCorpseOptions(state, side),
+    ...futureFieldOptions(state, side),
+    ...franklinAimOptions(state, side),
+    ...blinkyEvidenceOptions(state, side),
+    ...conditioningOptions(state, side),
     ...biohazardDeviceOptions(state, side),
     ...blackVoiceOptions(state, side),
     ...halkenburgTransferOptions(state, side),

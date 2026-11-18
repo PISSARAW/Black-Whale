@@ -50,7 +50,7 @@ export function createFightingNen() {
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (!illumiBodyFree(fighter)) return fighter
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
-  if (fighter.moonlightZetsu) return forceZetsu(fighter)
+  if (maintainsZetsu(fighter, input)) return forceZetsu(fighter)
   const restricted = restrictedChainAura(fighter, input)
   if (restricted) return restricted
   const sworn = applyOnContext(fighter, input)
@@ -61,6 +61,10 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   if (committed) return committed
   if (fighter.defensiveKo) fighter = { ...fighter, defensiveKo: undefined }
   return applyAdvancedNen(heldAuraContext(fighter, input), input)
+}
+
+function maintainsZetsu(fighter: ArcadeFighter, input: FightInput): boolean {
+  return Boolean(fighter.moonlightZetsu || (fighter.futureIllusionActive && !input.aura))
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {

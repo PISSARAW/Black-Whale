@@ -4,6 +4,8 @@ import { chrolloHasActivePage } from '../chrolloBook'
 import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
+import { launchHalkenburgArrow, resolveHalkenburgArrow } from '../halkenburgArrow'
+import type { ProjectileHit } from '../projectiles'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
@@ -21,11 +23,10 @@ export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
   onTrigger: nock,
   onImpact: possess,
-  onFrame: (state) => ({
-    ...state,
-    player: tick(state, 'player'),
-    opponent: tick(state, 'opponent'),
-  }),
+  onFrame: (state) => {
+    const launched = launchHalkenburgArrow(launchHalkenburgArrow(state, 'player'), 'opponent')
+    return { ...launched, player: tick(launched, 'player'), opponent: tick(launched, 'opponent') }
+  },
 }
 
 function nock({ state, side }: HatsuTriggerContext): FightState {
@@ -33,13 +34,15 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const supporters = readyCohort(state, side)
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
-  const supporter = ready ? supporters[rng % supporters.length] : undefined
+  const participants = supporters.map((entry) => entry.id)
+  if (archer.id === 'halkenburg' && !archer.nenOwner) participants.push(`self:${side}`)
+  const participant = ready ? participants[rng % participants.length] : undefined
   return {
     ...state,
     rng: ready ? rng : state.rng,
     [side]: {
       ...archer,
-      halkenburgSupporter: supporter?.id,
+      halkenburgSupporter: participant,
       health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
@@ -56,15 +59,14 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
   const supporter = state.battlefield?.entities.find(
     (entry) => entry.id === archer.halkenburgSupporter,
   )
+  const self = archer.halkenburgSupporter === `self:${side}`
   if (
     !archer.hatsuEffects.arrowNocked ||
-    !supporter ||
-    !liveEntity(supporter) ||
-    !supporter.consenting
+    (!self && (!supporter || !liveEntity(supporter) || !supporter.consenting))
   )
     return state
   const target = state[defenderSide]
-  const occupied = updateEntity(state, supporter.id, { sleepingFrames: POSSESSION_FRAMES })
+  const occupied = supporter ? updateEntity(state, supporter.id, { sleepingFrames: 999999 }) : state
   const struck = {
     ...occupied,
     [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
@@ -89,9 +91,11 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
     readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
   const possessed = effects.possessedFrames
-  if (will === effects.cohortWillFrames && possessed <= 0) return fighter
+  const protection = groupProtection(fighter, gathers)
+  if (tickUnchanged(fighter, { will, possessed, protection })) return fighter
   return {
     ...fighter,
+    halkenburgGroupProtection: protection,
     hitStun: possessed > 0 ? Math.max(fighter.hitStun, 2) : fighter.hitStun,
     hatsuEffects: {
       ...effects,
@@ -99,6 +103,36 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
       possessedFrames: Math.max(0, possessed - 1),
     },
   }
+}
+
+function groupProtection(fighter: ArcadeFighter, gathers: boolean): boolean {
+  return (
+    gathers &&
+    Boolean(fighter.hatsuEffects.arrowNocked) &&
+    fighter.attack?.hatsuSource === 'halkenburg'
+  )
+}
+function tickUnchanged(
+  fighter: ArcadeFighter,
+  next: { will: number; possessed: number; protection: boolean },
+): boolean {
+  return (
+    next.will === fighter.hatsuEffects.cohortWillFrames &&
+    next.possessed <= 0 &&
+    fighter.halkenburgGroupProtection === next.protection
+  )
+}
+export function settleHalkenburgArrow(state: FightState, hit: ProjectileHit): FightState {
+  return resolveHalkenburgArrow(state, hit, (current, side, defenderSide) =>
+    possess({
+      state: current,
+      side,
+      defenderSide,
+      source: 'halkenburg',
+      blocked: false,
+      concealed: false,
+    }),
+  )
 }
 
 function ownsBow(fighter: ArcadeFighter): boolean {

@@ -1,11 +1,13 @@
 import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
 import { catchBungeeObject } from './hisokaCatch'
+import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
 import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
+import { recordHistoricalWeaponHit, recordHistoricalBladeProjectile } from './historicalWeaponFrame'
 import { recordThreeCombatProjectileWound } from './threeCombatWounds'
 import { resolveIllumiContact } from './illumiImpact'
 import { resolveLynchContact } from './lynchInterrogation'
@@ -87,7 +89,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (!collision) return state
   if (throwTechPossible(attacker, defender)) return resolveThrowTech(state, side)
   const data = attackData(attacker.attack.kind, attacker)
-  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker))
+  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker, defender))
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const antiAir = launchesTarget(attacker, defender)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
@@ -179,7 +181,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       transferred.impact!.attacker,
       otherSide(transferred.impact!.attacker),
     )
-  next = recordBlinkyWound(state, scorched, side)
+  next = recordHistoricalWeaponHit(state, recordBlinkyWound(state, scorched, side), side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
     next = resolveHatsuImpact({
@@ -273,11 +275,8 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (
-    state.phase !== 'fighting' ||
-    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
-  )
-    return state
+  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
+  if (!projectileTargetReady(state, hit)) return state
   const captured = captureIncomingProjectile(state, hit)
   if (captured) return captured
   const side = hit.projectile.owner
@@ -369,7 +368,11 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     plantPaperAfterHit(routed, hit.projectile),
     hit.projectile,
   )
-  return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
+  return finishAfterImpact(
+    recordHistoricalBladeProjectile(planted, hit.projectile),
+    planted.impact!.attacker,
+    otherSide(planted.impact!.attacker),
+  )
 }
 
 function attackCanResolve(
@@ -394,12 +397,28 @@ function finishAfterImpact(
 ): FightState {
   const impact = state.impact
   const owner = impact?.transfer?.owner ?? attackerSide
-  const cause = impact?.transfer ? 'transfer' : impact?.projectileId ? 'projectile' : 'strike'
+  const cause = impactDeathCause(state, attackerSide)
   return recordFightDeath(state, {
     victimSide: defenderSide,
     killerSide: owner === defenderSide ? null : owner,
     cause,
   })
+}
+
+function projectileTargetReady(state: FightState, hit: ProjectileHit): boolean {
+  return (
+    state.phase === 'fighting' &&
+    canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
+  )
+}
+function impactDeathCause(
+  state: FightState,
+  side: FightSide,
+): import('./fightDeaths').FightDeath['cause'] {
+  if (state.impact?.transfer) return 'transfer'
+  if (state.impact?.projectileId) return 'projectile'
+  const actor = state[side]
+  return actor.hanzoProjection && actor.attack?.moveId === 'hanzo:finisher' ? 'asphyxia' : 'strike'
 }
 
 function resolveTrade(original: FightState, first: FightState): FightState {

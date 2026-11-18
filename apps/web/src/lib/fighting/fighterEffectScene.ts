@@ -1,4 +1,5 @@
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
+import { createHistoricalEquipmentScene } from './historicalEquipmentScene'
 import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
 import { createEasterEggScene } from './easterEggScene'
@@ -42,6 +43,7 @@ export interface FighterEffectScene {
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const arena = createArenaScene(options)
+  const historicalEquipment = createHistoricalEquipmentScene(options)
   const paper = createKallutoPaperScene(options)
   const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
@@ -86,6 +88,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     machi.sync(state, seconds)
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
+    historicalEquipment.sync(state, seconds)
     chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
   }
@@ -95,6 +98,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     dispose: () => {
       easterEggs.dispose()
       arena.dispose()
+      historicalEquipment.dispose()
       paper.dispose()
       doors.dispose()
       bioDevices.dispose()

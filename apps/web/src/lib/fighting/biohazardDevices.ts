@@ -5,6 +5,7 @@ import { hasEquipment } from './preparationWorld'
 import { battleAppearance } from './battleCantabileRules'
 import { hasBiohazardGun, touchedBiohazardGun, snakeBullet } from './biohazardGun'
 import { performBiohazardReceiver } from './biohazardReceiver'
+import { hasPrinceSidearm } from './princeSidearm'
 import { biohazardHidingPlace } from './biohazardPrivacy'
 import type { ProjectileProfile } from './projectiles'
 import type { ArsenalInvocation } from './retrospectiveTypes'
@@ -169,6 +170,7 @@ function fireSnakeGun(state: FightState, side: FightSide, id?: string): FightSta
     [weaponSide]: {
       ...next[weaponSide],
       biohazardGunRounds: item.ammo - 1,
+      ...(hasPrinceSidearm(next[weaponSide]) ? { princeSidearmRounds: item.ammo - 1 } : {}),
       ...((next[weaponSide].nenOwner ?? next[weaponSide].id) === 'camilla'
         ? { camillaRounds: item.ammo - 1 }
         : {}),

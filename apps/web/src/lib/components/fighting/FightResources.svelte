@@ -6,6 +6,7 @@
   import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightBiohazardStatus from './FightBiohazardStatus.svelte'
+  import FightMultiCombatStatus from './FightMultiCombatStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightArenaStatus from './FightArenaStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
@@ -83,6 +84,7 @@
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       <FightBiohazardStatus {state} {side} {language} />
+      <FightMultiCombatStatus {state} {side} {language} />
       {#if side === 'player'}
         <FightNenControls
           {fighter}

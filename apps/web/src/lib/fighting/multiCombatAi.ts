@@ -1,9 +1,11 @@
 import { performArsenalCommand } from './retrospectiveArsenal'
 import { corpseOptions } from './illumiCorpses'
+import { perceivedOpponentGap } from './opponentAwareness'
 import type { FightState } from './types'
 
-/** Only physically present corpses are candidates; no random subject is summoned. */
+/** Uses physical equipment and present corpses, with the opponent's perceived distance. */
 export function multiCombatAi(state: FightState): FightState | null {
+  if (state.opponent.id === 'feitan') return feitanFeintAi(state)
   if (state.opponent.id !== 'illumi' || state.frame % 120 !== 0) return null
   const option = corpseOptions(state, 'opponent').find(
     (entry) =>
@@ -13,5 +15,12 @@ export function multiCombatAi(state: FightState): FightState | null {
   )
   if (!option) return null
   const next = performArsenalCommand(state, 'opponent', option.command)
+  return next === state ? null : next
+}
+
+function feitanFeintAi(state: FightState): FightState | null {
+  const gap = perceivedOpponentGap(state)
+  if (state.frame % 180 > 10 || gap < 8 || gap > 18) return null
+  const next = performArsenalCommand(state, 'opponent', { action: 'umbrella-feint' })
   return next === state ? null : next
 }

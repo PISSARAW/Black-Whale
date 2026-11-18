@@ -19,6 +19,8 @@ export function prepareDefence(
   read: CombatRead,
 ): ImpactDefence {
   fighter = wakeHanzoBody(fighter)
+  if (fighter.halkenburgGroupProtection)
+    return { fighter, blocked: true, parried: false, avoided: true, invulnerable: false }
   const blocked = !melodyRestrictsCombat(fighter) && blocksGuardRequirement(fighter, read.guard)
   const visible = readableImpact(fighter, read)
   const bonus = nenReadBonus(fighter, { ...fighter, ...read.position })

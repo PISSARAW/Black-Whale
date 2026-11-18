@@ -70,6 +70,14 @@ function installEvidenceProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
+  if (resources.has('armed-corpses'))
+    entities.push({
+      ...entity('corpse', side, x + 3),
+      id: `${side}:armed-corpse`,
+      health: 60,
+      arena: { width: 1, height: 3 },
+      corpseGunRounds: 12,
+    })
   if (resources.has('corpses'))
     entities.push({ ...entity('corpse', side, x + 1), health: 60, arena: { width: 1, height: 3 } })
   if (resources.has('cameras')) entities.push(entity('camera', side, x + 1))

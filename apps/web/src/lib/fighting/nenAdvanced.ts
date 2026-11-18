@@ -26,6 +26,7 @@ const WEAPONS: Readonly<Partial<Record<ArcadeFighter['id'], string>>> = {
 }
 
 export function shuObject(fighter: ArcadeFighter): string {
+  if (fighter.historicalWeapon) return fighter.historicalWeapon
   return WEAPONS[fighter.id] ?? 'stone'
 }
 
@@ -35,7 +36,10 @@ export function conjuredWeapon(fighter: ArcadeFighter): boolean {
 
 export function weaponUsesShu(fighter: ArcadeFighter): boolean {
   if (fighter.weaponsConfiscated && !conjuredWeapon(fighter)) return false
-  return Boolean(WEAPONS[fighter.id] && fighter.nen.shu.includes(shuObject(fighter)))
+  return Boolean(
+    (WEAPONS[fighter.id] || fighter.historicalWeapon) &&
+    fighter.nen.shu.includes(shuObject(fighter)),
+  )
 }
 
 export function selectedNenZone(input: FightInput): FightNenZone | null {

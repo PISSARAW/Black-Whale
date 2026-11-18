@@ -1,4 +1,5 @@
 import { ownsBungeeGum } from '../hisokaArsenal'
+import { advanceGumHeart } from '../hisokaHeart'
 import { chrolloAbilityActive } from '../chrolloAbilityActive'
 import { advanceGumArsenal } from '../hisokaArsenal'
 import { categoryPower } from '../nenCategories'
@@ -34,9 +35,14 @@ export const hisokaHatsu: FighterHatsu = {
       return link ? removeGumLinks(state, (entry) => entry.id === link.id) : state
     }
     if (technique !== 'attach') return state
-    return addGumLink(state, { side, target: { kind: 'fighter', side: defenderSide }, hidden: concealed })
+    return addGumLink(state, {
+      side,
+      target: { kind: 'fighter', side: defenderSide },
+      hidden: concealed,
+    })
   },
-  onFrame: (state) => advanceGumArsenal(advanceGumMotion(SIDES.reduce(advanceTechnique, state))),
+  onFrame: (state) =>
+    advanceGumHeart(advanceGumArsenal(advanceGumMotion(SIDES.reduce(advanceTechnique, state)))),
 }
 
 function advanceTechnique(state: FightState, side: FightSide): FightState {

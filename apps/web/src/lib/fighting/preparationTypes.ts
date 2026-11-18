@@ -11,6 +11,7 @@ export type PreparationResource =
   | 'cameras'
   | 'hostages'
   | 'corpses'
+  | 'armed-corpses'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
   mode: 'duel' | 'scenario'

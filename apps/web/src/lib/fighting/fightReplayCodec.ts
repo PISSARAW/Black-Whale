@@ -59,6 +59,7 @@ function preparation(value: unknown): FightPreparation | undefined {
     'cameras',
     'hostages',
     'corpses',
+    'armed-corpses',
   ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),

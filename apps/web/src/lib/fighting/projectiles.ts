@@ -15,6 +15,7 @@ import { predatorNenLocked } from './predatorSeal'
 import { CAMILLA_PISTOL, camillaCanFire, spendCamillaRound } from './camillaWeapon'
 import { hinrighCanThrow, spendHinrighKnife, hinrighRangedBody } from './hinrighKnives'
 import { spendBiohazardGunRound } from './biohazardGun'
+import { princeCanFire, spendPrinceRound } from './princeSidearm'
 import { thetaShotAim } from './thetaFirearm'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
@@ -221,6 +222,7 @@ function projectile(options: ProjectileOptions): ProjectileProfile {
 }
 
 export function projectileProfile(id: FighterId): ProjectileProfile {
+  if (id === 'tserriednich' || id === 'halkenburg') return CAMILLA_PISTOL
   if (id === 'camilla') return CAMILLA_PISTOL
   return CANONICAL_PROJECTILES[id] ?? (hasBodyguardFirearm(id) ? BODYGUARD_PISTOL : THROWN_STONE)
 }
@@ -235,6 +237,7 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 function physicalRangedUnavailable(fighter: ArcadeFighter): boolean {
   return (
     !camillaCanFire(fighter) ||
+    !princeCanFire(fighter) ||
     !hinrighCanThrow(fighter) ||
     fighter.biohazardGunRounds === 0 ||
     Boolean(fighter.biohazardGun) ||
@@ -256,7 +259,10 @@ export function rangedAuraCost(id: FighterId): number {
   if (hasBodyguardFirearm(id)) return 0
   if (id === 'bonolenov') return 55
   if (id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (['benjamin', 'theta', 'camilla', 'hinrigh', 'musse'].includes(id)) return 0
+  if (
+    ['benjamin', 'theta', 'camilla', 'hinrigh', 'musse', 'tserriednich', 'halkenburg'].includes(id)
+  )
+    return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 
@@ -304,6 +310,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     colour: profile.colour,
     matter: profile.matter,
     concealed: fighter.attack.concealed,
+    illusionHarmless: Boolean(fighter.futureIllusionActive),
     age: 0,
     lifetime: 120,
   }
@@ -329,7 +336,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
 
 function spendRangedObject(fighter: ArcadeFighter): ArcadeFighter {
   fighter = hinrighRangedBody(fighter)
-  const spent = spendHinrighKnife(spendCamillaRound(fighter))
+  const spent = spendPrinceRound(spendHinrighKnife(spendCamillaRound(fighter)))
   // Camilla owns her existing magazine; the generic stock is for other seized firearms.
   return (fighter.nenOwner ?? fighter.id) === 'camilla' ? spent : spendBiohazardGunRound(spent)
 }
@@ -350,7 +357,7 @@ export function advanceProjectiles(
   for (const held of state.projectiles) {
     const projectile = advanceProjectileMotion(state, held, step)
     if (!projectile) continue
-    const terrain = gumProjectileCanHit(projectile)
+    const terrain = terrainCanIntercept(projectile)
       ? interceptArenaProjectile(state, projectile, held.x)
       : { state, intercepted: false }
     state = terrain.state
@@ -358,10 +365,7 @@ export function advanceProjectiles(
       if (projectile.gumFlight) kept.push(settleGumProjectile(projectile, true))
       continue
     }
-    const intercepted = interceptBiohazardProjectile(state, {
-      projectile,
-      previousX: held.x,
-    })
+    const intercepted = interceptPhysicalBiohazard(state, projectile, held.x)
     state = intercepted.state
     if (intercepted.intercepted) continue
     const hit = projectileHit(state, projectile)
@@ -374,6 +378,14 @@ export function advanceProjectiles(
       kept.push(settleGumProjectile(projectile, Boolean(hit)))
   }
   return { state: { ...state, projectiles: kept }, hits }
+}
+function terrainCanIntercept(shot: FightProjectile): boolean {
+  return gumProjectileCanHit(shot) && !shot.halkenburgArrow && !shot.illusionHarmless
+}
+function interceptPhysicalBiohazard(state: FightState, shot: FightProjectile, previousX: number) {
+  return shot.halkenburgArrow || shot.illusionHarmless
+    ? { state, intercepted: false }
+    : interceptBiohazardProjectile(state, { projectile: shot, previousX })
 }
 function projectileHit(state: FightState, projectile: FightProjectile): ProjectileHit | null {
   const defenderSide = otherSide(projectile.owner)
@@ -395,10 +407,11 @@ function projectileCollision(
   projectile: FightProjectile,
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
+  if (projectile.illusionHarmless) return null
   if (
     !gumProjectileCanHit(projectile) ||
     !remotePunchCanHit(projectile) ||
-    !canReceiveCombatHit(defender, projectile.canHitDowned)
+    (!projectile.halkenburgArrow && !canReceiveCombatHit(defender, projectile.canHitDowned))
   )
     return null
   if (projectile.kallutoPaper) {
@@ -425,7 +438,9 @@ function projectileCollision(
 
 function ordinaryRangedReady(fighter: ArcadeFighter): boolean {
   return (
-    ['benjamin', 'theta', 'camilla', 'hinrigh'].includes(fighter.id) ||
+    ['benjamin', 'theta', 'camilla', 'hinrigh', 'tserriednich', 'halkenburg'].includes(
+      fighter.id,
+    ) ||
     (fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu')
   )
 }

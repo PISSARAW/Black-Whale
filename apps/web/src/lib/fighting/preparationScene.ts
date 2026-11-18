@@ -124,9 +124,26 @@ export function createPreparationScene(options: EffectSceneOptions) {
       figure.root.add(feather)
     }
     addCorpseNeedles(figure.root, entry)
+    addCorpseWeapon(figure.root, entry)
     return figure.root
   }
 
+  function addCorpseWeapon(root: import('three').Group, entry: PreparedEntity) {
+    if (entry.kind !== 'corpse' || entry.corpseGunRounds === undefined) return
+    const gun = new THREE.Group()
+    gun.name = 'corpse-physical-pistol'
+    const barrel = box([0.25, 0.07, 0.07], 0x283039),
+      grip = box([0.07, 0.15, 0.065], 0x171b20)
+    barrel.position.x = 0.09
+    grip.position.y = -0.06
+    gun.add(barrel, grip)
+    const hand = root.getObjectByName('hand-right')
+    if (hand) hand.add(gun)
+    else {
+      gun.position.set(0.3, 0.95, 0.2)
+      root.add(gun)
+    }
+  }
   function addCorpseNeedles(root: import('three').Group, entry: PreparedEntity) {
     if (entry.kind !== 'corpse') return
     const pins = new THREE.Group()

@@ -16,9 +16,10 @@ export function createFutureBeastScene(options: EffectSceneOptions): FighterEffe
         fit: { height: 1.6, width: 1.8 },
       })
       const owner = state[side]
+      const anchor = state.futureIllusion?.owner === side ? state.futureIllusion : owner
       beast.root.position.set(
-        options.worldX(owner.x) - owner.facing * 1.0,
-        options.worldY(owner.y) + 0.04 + Math.sin(seconds * 2.5) * 0.025,
+        options.worldX(anchor.x) - owner.facing * 1.0,
+        options.worldY(anchor.y) + 0.04 + Math.sin(seconds * 2.5) * 0.025,
         -0.35,
       )
       beast.root.rotation.y = owner.facing * 0.4

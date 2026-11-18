@@ -1,4 +1,5 @@
 import { voluntaryNenAvailable } from './nenAccess'
+import { startFutureField } from './futureIllusion'
 import { transitionNen } from '@black-whale/nen-engine'
 import { hatsuSourceFor, triggerHatsu } from './hatsu'
 import type { AuraAttackOptions } from './auraAttackAction'
@@ -9,6 +10,7 @@ export function futureNenAvailable(fighter: ArcadeFighter): boolean {
 }
 
 export function futureCanPrepare(fighter: ArcadeFighter): boolean {
+  if (fighter.futureIllusionMode && !fighter.futureStoredFrames) return false
   return (
     futureNenAvailable(fighter) &&
     fighter.y === 0 &&
@@ -44,21 +46,31 @@ export function closeFutureEyes(fighter: ArcadeFighter): ArcadeFighter {
   }
 }
 
-export function stopParallelFuture(state: FightState): FightState {
+export function stopParallelFuture(state: FightState, keepField = false): FightState {
   return {
     ...state,
     parallelFuture: undefined,
-    player: { ...state.player, parallelEyesClosed: false },
-    opponent: { ...state.opponent, parallelEyesClosed: false },
+    futureIllusion: keepField ? state.futureIllusion : undefined,
+    player: {
+      ...state.player,
+      parallelEyesClosed: false,
+      futureIllusionActive: keepField && state.player.futureIllusionActive,
+    },
+    opponent: {
+      ...state.opponent,
+      parallelEyesClosed: false,
+      futureIllusionActive: keepField && state.opponent.futureIllusionActive,
+    },
   }
 }
 
 export function beginFutureDivergence(state: FightState, side: FightSide): FightState {
   const future = state.parallelFuture
   if (future?.owner !== side || future.phase !== 'vision') return state
+  const field = startFutureField(state, side)
   return {
-    ...state,
-    [side]: { ...state[side], parallelEyesClosed: false },
+    ...field,
+    [side]: { ...field[side], parallelEyesClosed: false },
     parallelFuture: { ...future, phase: 'diverging', cursor: 0 },
   }
 }

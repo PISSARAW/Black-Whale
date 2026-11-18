@@ -1,5 +1,12 @@
 # Fighting
 
+Le [lot à quatre combats et plus](../../../../../docs/clash-quatre-combats-et-plus.md)
+audite le corpus de 17 personnages et ses cas limites, films compris. Il complète les armes physiques,
+les préparations d'Hisoka et d'Illumi, les corps suspendus et armés de Machi,
+Blinky, Franklin, la flèche d'Halkenburg et les applications récentes de
+Tserriednich et Benjamin. Les conditions, les sources secondaires et les
+adaptations du duel sont détaillées dans l'audit. Règles : `clash-combat-35`.
+
 La [passe à au moins trois combats](../../../../../docs/clash-au-moins-trois-combats.md)
 ajoute les modèles mémorisés de Bonolenov, les cadavres matériels contrôlés par
 Illumi et les contrôles de matière de Blinky. Le seuil conserve les personnages
@@ -148,7 +155,7 @@ L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
 combattant ; les contrats particuliers des techniques restent prioritaires.
-Le ruleset courant `clash-combat-33` inclut le réglage du hitstun de l’étape 3,
+Le ruleset courant `clash-combat-35` inclut le réglage du hitstun de l’étape 3,
 les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
 des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
 [usages des sept techniques avancées](./NEN_COMBAT.md).

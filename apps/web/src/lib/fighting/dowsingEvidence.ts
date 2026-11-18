@@ -1,4 +1,5 @@
 import { priorityLineOfSight } from './priorityOptics'
+import { resolveGuardianLie } from './tserriednichGuardian'
 import { dowsingBodyReady, ownsDowsing } from './dowsingRules'
 import { battleAppearance } from './battleCantabileRules'
 import { canHear } from './melodyRules'
@@ -31,6 +32,7 @@ export function recordDowsingStatement(
   state: FightState,
   options: { speaker: FightSide; text: string; lie: boolean },
 ): FightState {
+  state = resolveGuardianLie(state, options.speaker, options.lie)
   if (!state.battlefield) return state
   const speaker = state[options.speaker]
   const statement: RecordedStatement = {

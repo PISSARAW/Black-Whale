@@ -1,4 +1,5 @@
 import { forgetArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
+import { advanceBlinkyEvidence } from './blinkyEvidence'
 import { attackData, attackPhase } from './frameData'
 import { sleepingBody } from './hanzoProjection'
 import { recordFightDeath } from './fightDeaths'
@@ -16,7 +17,7 @@ import {
 import type { FightSide, FightState } from './types'
 
 export function advanceBlinky(state: FightState): FightState {
-  const next = stepBlinky(stepBlinky(state, 'player'), 'opponent')
+  const next = advanceBlinkyEvidence(stepBlinky(stepBlinky(state, 'player'), 'opponent'))
   return next.deaths !== state.deaths ? resolveFightOutcome(next) : next
 }
 function stepBlinky(state: FightState, side: FightSide): FightState {
@@ -59,6 +60,7 @@ function swallow(state: FightState, side: FightSide): FightState {
     .filter(
       (shot) =>
         shot.matter === 'object' &&
+        !shot.illusionHarmless &&
         !shot.living &&
         shot.shape === memory.target &&
         inBlinkyNozzle(fighter, shot),

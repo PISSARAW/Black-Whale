@@ -1,3 +1,4 @@
+import { fourCombatAi } from './fourCombatAi'
 import { multiCombatAi } from './multiCombatAi'
 import { priorityArsenalAi } from './priorityArsenalAi'
 import { luiniArsenalAi } from './luiniArsenal'
@@ -27,6 +28,7 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
+    fourCombatAi(state, perform) ??
     multiCombatAi(state) ??
     priorityArsenalAi(state) ??
     luiniArsenalAi(state, perform) ??

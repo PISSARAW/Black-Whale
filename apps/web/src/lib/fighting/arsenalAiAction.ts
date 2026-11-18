@@ -20,6 +20,8 @@ const RANGED_ARSENALS: readonly FighterId[] = [
   'illumi',
   'camilla',
   'musse',
+  'tserriednich',
+  'halkenburg',
 ]
 
 export function nativeArsenalAiAction(

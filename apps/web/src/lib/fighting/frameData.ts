@@ -1,5 +1,6 @@
 import type { GuardRequirement } from './combatProperties'
 import { paperUtilityAttack } from './kallutoPaper'
+import { halkenburgArrowUtility } from './halkenburgArrow'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
 import { battleUtilityAttack } from './bonolenovMoveset'
@@ -232,6 +233,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (supplementaryUtility(fighter)) return null
   if (paperUtilityAttack(fighter)) return null
   if (blinkyUtilityAttack(fighter)) return null
   if (secretWindowUtility(fighter)) return null
@@ -240,6 +242,14 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')
     return null
   return worldBox(fighter, attackData(fighter.attack.kind, fighter).box)
+}
+
+function supplementaryUtility(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    fighter.futureIllusionActive ||
+    halkenburgArrowUtility(fighter) ||
+    fighter.historicalWeaponThrow,
+  )
 }
 
 function utilityAttack(fighter: ArcadeFighter): boolean {

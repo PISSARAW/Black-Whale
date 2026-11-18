@@ -1,5 +1,7 @@
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { traceArsenal } from './arsenalTrace'
+import { performFutureArsenal } from './futureIllusion'
+import { performHistoricalWeapon } from './historicalWeapons'
 import { performDolphinLoan } from './dolphinLoan'
 import { performDolphinApplication } from './dolphinArsenal'
 import { performSecretWindowCommand } from './secretWindowArsenal'
@@ -20,6 +22,8 @@ const CALLBACK_FAMILIES: Record<string, typeof performLuiniCommand | undefined> 
   luini: performLuiniCommand,
   window: performSecretWindowCommand,
   basho: performBashoArsenal,
+  weapon: performHistoricalWeapon,
+  future: performFutureArsenal,
 }
 
 /** Native move callbacks are trusted local code, never supplied by a network packet. */

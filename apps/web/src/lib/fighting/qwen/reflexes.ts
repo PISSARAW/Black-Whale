@@ -1,4 +1,10 @@
-import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from '../types'
+import {
+  EMPTY_INPUT,
+  type FightInput,
+  type FightSide,
+  type FightState,
+  type MoveSlot,
+} from '../types'
 import { seesCombatBody, readCounterplay } from '../fightCounterplay'
 import { gyoSight } from '../nenPerception'
 import { opponentWantsOn } from '../onTechnique'
@@ -23,7 +29,10 @@ export function reflexInput(state: FightState, side: FightSide, plan: TacticalPl
 }
 function desiredRange(state: FightState, side: FightSide, plan: TacticalPlan) {
   if (plan.goal !== 'zone') return { pressure: 5, bait: 11, recover: 30 }[plan.goal]
-  const move = plan.move === 'none' ? null : moveForSlot(state[side].id, plan.move)
+  const move =
+    plan.move === 'none' || plan.move.startsWith('utility:')
+      ? null
+      : moveForSlot(state[side].id, plan.move as MoveSlot)
   return Math.max(6, Math.min(18, (move?.tuning.reach ?? 12) - 2))
 }
 

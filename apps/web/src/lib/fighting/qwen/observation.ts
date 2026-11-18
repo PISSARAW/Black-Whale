@@ -4,12 +4,11 @@ import { ownedGumLinks } from '../bungeeNetwork'
 import { machiThreadForOwner } from '../machiThread'
 import type { FightSide, FightState } from '../types'
 import type { CombatObservation } from './protocol'
+import { isQwenFighter } from './catalogue'
+import { observeUtilities } from './utilities'
 
 export function supportsQwenDuel(state: FightState): boolean {
-  return (
-    state.mode === 'versus-local' &&
-    [state.player.id, state.opponent.id].every((id) => id === 'hisoka' || id === 'machi')
-  )
+  return state.mode === 'versus-local' && [state.player.id, state.opponent.id].every(isQwenFighter)
 }
 
 /** Only the viewer's resources and visible bodily cues cross the inference boundary. */
@@ -18,7 +17,7 @@ export function observeCombat(state: FightState, side: FightSide): CombatObserva
   const enemy = state[side === 'player' ? 'opponent' : 'player']
   const visible = seesCombatBody(self)
   return {
-    fighter: self.id as CombatObservation['fighter'],
+    fighter: self.id,
     round: state.roundNumber,
     frame: state.frame,
     self: {
@@ -36,6 +35,7 @@ export function observeCombat(state: FightState, side: FightSide): CombatObserva
         }
       : null,
     recent: [],
+    utilities: observeUtilities(state, side),
     moves: (movesetFor(self.id)?.moves ?? []).map((move) => ({
       slot: move.slot,
       name: move.nameEn,

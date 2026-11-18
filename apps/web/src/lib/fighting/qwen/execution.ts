@@ -9,10 +9,13 @@ import type { ReplayCommand } from '../fightReplayTypes'
 import type { FightInput, FightSide, FightState, MoveAction, MoveSlot } from '../types'
 import type { TacticalPlan } from './protocol'
 import { reflexInput } from './reflexes'
+import { plannedUtility } from './utilities'
+import type { ArsenalCommand } from '../retrospectiveTypes'
 
 export interface FastDecision {
   input: FightInput
   command?: Extract<ReplayCommand, { kind: 'move' }>
+  utility?: { side: FightSide; command: ArsenalCommand }
 }
 export function createFastController(side: FightSide, seed = 17) {
   let due = 0
@@ -33,9 +36,14 @@ export function createFastController(side: FightSide, seed = 17) {
       lastMove = ''
     }
     const input = reflexInput(state, side, plan)
-    if (state.phase !== 'fighting' || state.frame < due || !canAct(state[side])) return { input }
-    if (holdsDefense(input)) return { input }
+    if (state.phase !== 'fighting' || state.frame < due) return { input }
     const context = { state, side, input }
+    const utility = readyUtility(context, plan, specialDue)
+    if (utility) {
+      specialDue = state.frame + 100
+      return { input, utility: { side, command: utility } }
+    }
+    if (!canAct(state[side]) || holdsDefense(input)) return { input }
     const move = selectMove(context, plan, {
       lastMove,
       special: state.frame >= specialDue,
@@ -62,6 +70,12 @@ interface Context {
   side: FightSide
   input: FightInput
 }
+function readyUtility(context: Context, plan: TacticalPlan, readyAt: number) {
+  const { state, side } = context
+  if (state.frame < readyAt) return null
+  return plannedUtility(state, side, plan)
+}
+
 function selectMove(
   context: Context,
   plan: TacticalPlan,
@@ -84,8 +98,8 @@ function allowed(context: Context, move: FighterMove | null): move is FighterMov
   )
 }
 function plannedMove(context: Context, plan: TacticalPlan): FighterMove | null {
-  if (plan.move === 'none') return null
-  const move = moveForSlot(context.state[context.side].id, plan.move)
+  if (plan.move === 'none' || plan.move.startsWith('utility:')) return null
+  const move = moveForSlot(context.state[context.side].id, plan.move as MoveSlot)
   if (!allowed(context, move)) return null
   if (move.category === 'normal') return inReach(context, move) ? move : null
   if (move.tuning.reach > 0 && !inReach(context, move)) return null

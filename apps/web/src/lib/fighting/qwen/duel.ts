@@ -5,6 +5,7 @@ import { createFastController } from './execution'
 import { FALLBACK_PLAN, parseTacticalPlan, QWEN_DEADLINE_MS, QWEN_PLAN_TTL_MS } from './protocol'
 import { createPerceptionHistory } from './perceptionHistory'
 import type { CombatObservation, TacticalPlan, TacticalReply } from './protocol'
+import { allowedNen } from './catalogue'
 
 export interface QwenStatus {
   enabled: boolean
@@ -92,7 +93,11 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     }
     const plan = parseTacticalPlan(
       reply.plan,
-      request.observation.moves.map((move) => move.slot),
+      [
+        ...request.observation.moves.map((move) => move.slot),
+        ...(request.observation.utilities ?? []).map((utility) => utility.key),
+      ],
+      allowedNen(request.observation.fighter),
     )
     if (!plan || typeof reply.model !== 'string' || typeof reply.requestId !== 'string') {
       status.failures++
@@ -158,6 +163,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
       player: decisions[0].input,
       opponent: decisions[1].input,
       commands: decisions.flatMap((decision) => (decision.command ? [decision.command] : [])),
+      utilities: decisions.flatMap((decision) => (decision.utility ? [decision.utility] : [])),
     }
   }
   return {

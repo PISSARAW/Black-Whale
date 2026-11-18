@@ -41,7 +41,7 @@ describe('perceived Qwen observations', () => {
     expect(supportsQwenDuel(fight())).toBe(true)
     expect(observeCombat(fight(), 'opponent').fighter).toBe('machi')
     expect(supportsQwenDuel(createFight('hisoka', 'machi'))).toBe(false)
-    expect(supportsQwenDuel(createFight('chrollo', 'machi', { mode: 'versus-local' }))).toBe(false)
+    expect(supportsQwenDuel(createFight('chrollo', 'machi', { mode: 'versus-local' }))).toBe(true)
   })
 })
 

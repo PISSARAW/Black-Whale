@@ -1,9 +1,33 @@
 # Qwen · stratégie distante et exécution locale
 
-Le premier périmètre est **Hisoka et Machi, dans les deux sièges**, en mode
+Les **40 personnages sélectionnables** sont pris en charge dans les deux sièges, en mode
 Versus local. Le bouton « Activer Qwen · IA contre IA » du combat confie les deux
 combattants au même contrôleur rapide. L’IA native adversaire est désactivée par
 ce mode. Aucun moteur, dégât, coût, combo ou pouvoir de Nen n’est modifié.
+
+## Couverture du roster
+
+Les noms, les coûts, les conditions et les règles des Hatsu proviennent des
+catalogues existants de `movesetFor`, sans nouvelle règle du Nen. Les choix sont
+filtrés par les disponibilités natives de la situation, puis vérifiés à nouveau
+au moment de l’exécution. Chain Jail garde sa restriction aux Araignées ; les
+copies, les cibles préparées, les blessures, les munitions et les contrats ne
+sont jamais créés pour satisfaire une demande du modèle. En n’est proposé que
+pour les profils déjà qualifiés du jeu.
+
+Les commandes de panneaux natives passent par `arsenalOptions` et
+`performArsenalAction`, y compris les applications copiées légalement. Chaque
+jeton comprend l’action et sa cible : un changement d’ordre du panneau ne peut
+pas réaffecter un ancien plan à une autre cible. Les commandes de consentement
+au soutien ne sont pas automatisées. Les actions de libération restent possibles
+pendant une immobilisation lorsque leur panneau natif les autorise.
+
+Une observation expose au plus huit commandes de panneau, avec rotation dans
+les longues listes ; une requête au modèle en retient trois pour borner le
+contexte sur le serveur CPU. Le contrôleur enregistre leur exécution séquentielle
+dans les replays natifs et ne conserve aucune réponse du modèle pour les rejouer.
+La couverture des 40 personnages ne signifie pas que chaque Hatsu sera choisi,
+ni qu’un soutien non offensif dispose soudain d’une attaque supplémentaire.
 
 ## Connexion privée
 
@@ -60,9 +84,12 @@ Le raisonnement du modèle ne remplace pas la validation des conditions du Nen.
 ## Vérification reproductible
 
 ```sh
-pnpm --filter @black-whale/web exec vitest run src/lib/fighting/qwen/qwen.test.ts src/lib/server/clashQwen.test.ts
+pnpm --filter @black-whale/web exec vitest run src/lib/fighting/qwen src/lib/server/clashQwen.test.ts src/lib/server/clashQwenRoster.test.ts
 node apps/web/scripts/test-clash-qwen-duel.mjs
 ```
+
+Les essais du roster simulent quarante confrontations et vérifient leurs replays,
+les deux sièges, les ressources épuisées et les restrictions particulières.
 
 Le second essai exige le vrai Ollama accessible par le tunnel. Il joue le moteur
 en temps réel, sans santé modifiée et sans vainqueur imposé. Il refuse de réussir

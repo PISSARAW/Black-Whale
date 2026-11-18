@@ -40,7 +40,8 @@ export interface RetrospectiveFighterState {
   hunterQuestion?: { owner: FightSide; askedAt: number }
   moonlightPenaltyFrames?: number
   gumWoundSeals?: number
-  gumCatch?: {
+  gumWoundOrigin?: import('./bungeeSource').GumSource
+  gumCatch?: import('./bungeeSource').GumSource & {
     frames: number
     hidden?: boolean
     released?: boolean

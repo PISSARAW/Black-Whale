@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 911
+Fichiers : 913
 
 ## `apps/admin/src/hooks.server.test.ts`
 

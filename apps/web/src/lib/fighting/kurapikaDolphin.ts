@@ -10,7 +10,7 @@ import {
 } from './dolphinBorrowing'
 import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
-import { ownsBungeeGum } from './hisokaArsenal'
+import { borrowedGumSupport, clearBorrowedGumSupport } from './hisokaSupportOrigin'
 import { gumObjectAnchors } from './gumObjectAnchors'
 import { gumSourceBusy, clearGumSource } from './bungeeScoped'
 import { cookieCanStart } from './cookie'
@@ -176,12 +176,13 @@ export function dismissDolphinGum(state: FightState, side: FightSide): FightStat
   const anchors = gumObjectAnchors(actor).filter(
     (anchor) => anchor.source !== 'dolphin' || anchor.theftId !== held?.theftId,
   )
+  const cleared = clearBorrowedGumSupport(actor)
   const next =
     anchors.length === gumObjectAnchors(actor).length
-      ? state
+      ? { ...state, [side]: cleared }
       : {
           ...state,
-          [side]: { ...actor, gumObjectAnchors: anchors.length ? anchors : undefined },
+          [side]: { ...cleared, gumObjectAnchors: anchors.length ? anchors : undefined },
         }
   return clearGumSource(next, side, { source: 'dolphin', theftId: held?.theftId })
 }
@@ -248,17 +249,20 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     poem: poemUseBusy(state, side),
     gum: borrowedGumNetworkBusy(state, side),
     projection: Boolean(fighter.hanzoProjection),
-    texture: Boolean(fighter.textureSurprise),
+    texture: Boolean(
+      fighter.textureSurprise && borrowedGumSupport(fighter, fighter.textureSurprise),
+    ),
     lsdf: Boolean(state.lsdf?.[side]),
   }
 }
 
 function gumUseBusy(fighter: ArcadeFighter): boolean {
-  if (!ownsBungeeGum(fighter)) return false
   if (borrowedObjectAnchorBusy(fighter)) return true
-  if (fighter.gumWoundSeals) return true
+  if (fighter.gumWoundSeals && borrowedGumSupport(fighter, fighter.gumWoundOrigin)) return true
   return (
-    !fighter.gumCatch?.released && Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
+    borrowedGumSupport(fighter, fighter.gumCatch) &&
+    !fighter.gumCatch?.released &&
+    Boolean(fighter.gumCatch?.frames || fighter.gumCatch?.projectile)
   )
 }
 function borrowedGumNetworkBusy(state: FightState, side: FightSide): boolean {

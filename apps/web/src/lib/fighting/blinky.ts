@@ -1,5 +1,5 @@
 import { maryWoundSeals } from './bloodyMary'
-import { ownsBungeeGum } from './hisokaArsenal'
+import { gumSupportAvailable } from './hisokaSupportOrigin'
 import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
@@ -92,7 +92,7 @@ export function exposedBlinkyWounds(fighter: ArcadeFighter): number {
   return Math.max(
     0,
     (fighter.openWounds ?? 0) -
-      (ownsBungeeGum(fighter) ? (fighter.gumWoundSeals ?? 0) : 0) -
+      (gumSupportAvailable(fighter, fighter.gumWoundOrigin) ? (fighter.gumWoundSeals ?? 0) : 0) -
       maryWoundSeals(fighter) -
       (fighter.pluggingWounds ? 2 : 0),
   )

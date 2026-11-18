@@ -42,7 +42,7 @@ describe('Texture Surprise and Hisoka presentation', () => {
       expect(armed[side].textureSurprise).toBeUndefined()
       expect(frames(armed, startup - 1)[side].textureSurprise).toBeUndefined()
       const masked = frames(armed, startup)
-      expect(masked[side].textureSurprise).toEqual({ surface: 'cloth' })
+      expect(masked[side].textureSurprise).toEqual({ surface: 'cloth', source: 'personal' })
       expect(masked.bungeeGum).toBeNull()
       expect(masked.impact).toBeNull()
       expect(masked.score).toEqual(state.score)
@@ -51,7 +51,10 @@ describe('Texture Surprise and Hisoka presentation', () => {
       expect(hurtboxes(masked[side])).toEqual(hurtboxes(state[side]))
       expect(hatsuDamageFactor(masked[side])).toBe(hatsuDamageFactor(state[side]))
       expect(hatsuDefenceFactor(masked[side])).toBe(hatsuDefenceFactor(state[side]))
-      expect(frames(masked, 300)[side].textureSurprise).toEqual({ surface: 'cloth' })
+      expect(frames(masked, 300)[side].textureSurprise).toEqual({
+        surface: 'cloth',
+        source: 'personal',
+      })
     },
   )
 

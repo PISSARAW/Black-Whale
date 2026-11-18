@@ -1,6 +1,8 @@
 import { ownsBungeeGum, gumLoanUsed, spendGumUse } from './bungeeAccess'
 export { ownsBungeeGum, spendGumUse } from './bungeeAccess'
 import { NETWORK_GUM_ACTIONS, performGumNetworkCommand } from './bungeeCommands'
+import { newGumSource, gumSourceCommandAllowed, sameGumSource } from './bungeeSource'
+import { gumSupportAvailable, gumSupportLive } from './hisokaSupportOrigin'
 import { canAct } from './fightActorState'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
@@ -30,14 +32,17 @@ function prepareGumCatch(state: FightState, side: FightSide): FightState {
     [side]: {
       ...paid[side],
       arenaRecovery: 24,
-      gumCatch: { frames: 24, hidden: fighter.nen.in },
+      gumCatch: { frames: 24, hidden: fighter.nen.in, ...newGumSource(fighter) },
       blocking: false,
     },
   }
 }
 function removeGumSeals(state: FightState, side: FightSide): FightState {
   if (!state[side].gumWoundSeals) return state
-  return { ...state, [side]: { ...state[side], gumWoundSeals: undefined } }
+  return {
+    ...state,
+    [side]: { ...state[side], gumWoundSeals: undefined, gumWoundOrigin: undefined },
+  }
 }
 function gumBodyFree(fighter: ArcadeFighter): boolean {
   return canAct(fighter) && !fighter.attack && !fighter.hanzoProjection
@@ -46,15 +51,25 @@ function gumBodyFree(fighter: ArcadeFighter): boolean {
 function sealGumWounds(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const wounds = fighter.openWounds ?? 0
+  const origin = newGumSource(fighter)
+  if (fighter.gumWoundOrigin && !sameGumSource(fighter.gumWoundOrigin, origin)) return state
   if (fighter.aura < 10 || wounds <= (fighter.gumWoundSeals ?? 0)) return state
   const paid = spendGumUse(state, side, 10)
-  return { ...paid, [side]: { ...paid[side], gumWoundSeals: wounds, arenaRecovery: 18 } }
+  return {
+    ...paid,
+    [side]: { ...paid[side], gumWoundSeals: wounds, gumWoundOrigin: origin, arenaRecovery: 18 },
+  }
 }
 
 function returnCaughtObject(state: FightState, side: FightSide): FightState {
   const fighter = state[side],
     shot = fighter.gumCatch?.projectile
   if (!shot || fighter.aura < 5) return state
+  if (
+    !gumSupportAvailable(fighter, fighter.gumCatch) ||
+    !gumSourceCommandAllowed(fighter, fighter.gumCatch!)
+  )
+    return state
   const projectile = {
     ...shot,
     id: state.nextProjectileId,
@@ -80,19 +95,32 @@ export function advanceGumArsenal(state: FightState): FightState {
   for (const side of ['player', 'opponent'] as const) {
     const fighter = next[side]
     if (!hasGumSupport(fighter)) continue
-    const active = ownsBungeeGum(fighter)
-    const frames = active ? Math.max(0, (fighter.gumCatch?.frames ?? 0) - 1) : 0
+    const sealsActive = gumSupportLive(next, side, fighter.gumWoundOrigin)
+    const catchActive = gumSupportLive(next, side, fighter.gumCatch)
     next = {
       ...next,
       [side]: {
         ...fighter,
-        gumWoundSeals: active ? fighter.gumWoundSeals : undefined,
-        gumThrowReady: active ? fighter.gumThrowReady : undefined,
-        gumCatch: fighter.gumCatch ? { ...fighter.gumCatch, frames } : undefined,
+        gumWoundSeals: sealsActive ? fighter.gumWoundSeals : undefined,
+        gumWoundOrigin: sealsActive ? fighter.gumWoundOrigin : undefined,
+        gumThrowReady: gumSupportLive(next, side, fighter.gumThrowReady)
+          ? fighter.gumThrowReady
+          : undefined,
+        gumCatch: maintainGumCatch(fighter.gumCatch, catchActive),
       },
     }
   }
   return next
+}
+
+function maintainGumCatch(caught: ArcadeFighter['gumCatch'], active: boolean) {
+  return caught
+    ? {
+        ...caught,
+        frames: active ? Math.max(0, caught.frames - 1) : 0,
+        released: active ? caught.released : true,
+      }
+    : undefined
 }
 
 export function gumArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {

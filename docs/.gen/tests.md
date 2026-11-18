@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 957
+Fichiers : 962
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -476,6 +476,22 @@ Fichiers : 957
 ## `apps/web/src/lib/fighting/dowsing.test.ts`
 
 - Dowsing Chain screens an actual voluntary statement without becoming a truth oracle > questions face to face without Emperor Time, damage, or a forced answer
+
+## `apps/web/src/lib/fighting/dowsingMapAi.test.ts`
+
+- the AI uses the same physical map action as the player > locates a previously met body during a distant opening and remembers the result
+
+## `apps/web/src/lib/fighting/dowsingMapMaterials.test.ts`
+
+- map location obeys physical paper and its real Nen sources > cannot read or reproduce a diagram under a real Texture Surprise film
+
+## `apps/web/src/lib/fighting/dowsingMapReplay.test.ts`
+
+- map location crosses replay and P2 boundaries without an injected result > accepts the real scenario plan and preserves the canonical searched body in P2 prediction
+
+## `apps/web/src/lib/fighting/dowsingMapScene.test.ts`
+
+- the visible map pendulum and physical printed sheet > uses the same sheet anchor and dated point without replacing the paper mesh
 
 ## `apps/web/src/lib/fighting/dowsingScene.test.ts`
 

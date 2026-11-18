@@ -43,6 +43,7 @@ function facingSubject(actor: ArcadeFighter, subject: ArcadeFighter): boolean {
 export function canAskDowsing(state: FightState, side: FightSide): boolean {
   return (
     !state[side].dowsingSession &&
+    !state[side].dowsingMapSearch &&
     dowsingBodyReady(state[side]) &&
     voiceAvailable(state, side) &&
     state[side].aura >= DOWSING_COST &&

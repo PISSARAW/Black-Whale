@@ -18,6 +18,7 @@ export type PreparationResource =
   | 'musse-history'
   | 'paper'
   | 'documents'
+  | 'maps'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
   /** Explicit physical injuries in this scenario; never granted by stealing a Hatsu. */

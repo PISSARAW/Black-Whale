@@ -18,6 +18,7 @@
   $: preview = createFightState(player, opponent, { environment })
   const resources: { id: PreparationResource; fr: string; en: string }[] = [
     { id: 'documents', fr: 'Documents papier déjà écrits', en: 'Already written paper documents' },
+    { id: 'maps', fr: 'Plans papier de l’arène', en: 'Paper arena maps' },
     {
       id: 'paper',
       fr: 'Éventails, confettis et feuilles réels',

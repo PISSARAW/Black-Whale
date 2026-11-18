@@ -28,13 +28,13 @@ function threeChunkName(id: string): string {
 
 function clashChunkName(id: string): string | undefined {
   if (
-    /\/fighting\/(?:fightClock|preparationTuning|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/.test(
+    /\/fighting\/(?:fightClock|formats|health|towerJudging|preparationTuning|fightStyles\w*|styleMatchups\w*|roster(?:ThirdWave|FourthWave|CombatCompletion)?)\.ts$/.test(
       id,
     )
   )
     return 'clash-style-catalogues'
   if (
-    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
+    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|billSupportTuning|secretWindowListeningMove|kallutoTuning|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto|bill|leorio|musse|mizaistom|padaille|rihan|feitan)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
       id,
     )
   )
@@ -42,15 +42,16 @@ function clashChunkName(id: string): string | undefined {
   if (/\/fighting\/arenaTechnique(?:Types|sFirst|sSecond)\.ts$/.test(id))
     return 'clash-arena-catalogues'
 
-  if (/\/fighting\/duelCombo\w*(?:Profiles|Lessons)\.ts$/.test(id)) return 'clash-combo-catalogues'
+  if (/\/fighting\/duelCombo(?:\w*(?:Profiles|Lessons)|Grammar|DerivedGrammar)\.ts$/.test(id))
+    return 'clash-combo-catalogues'
   if (
-    /\/fighting\/(?:nenCanon(?:First|Second)|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/.test(
+    /\/fighting\/(?:nenCanon(?:First|Second)?|nenCatalogue\.gen|(?:benjamin|chrollo|biohazard|bonolenov)Canon)\.ts$/.test(
       id,
     )
   )
     return 'clash-nen-canon'
   if (
-    /\/fighting\/(?:easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
+    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
       id,
     )
   )
@@ -61,6 +62,12 @@ function clashChunkName(id: string): string | undefined {
     )
   )
     return 'clash-camera-catalogues'
+  if (
+    /\/fighting\/(?:arenaMap|dowsingMap(?:Ai|Body|Matter|Options|Presentation|Types)?)\.ts$/.test(
+      id,
+    )
+  )
+    return 'clash-map-location'
   if (/\/fighting\/kalluto(?:Gather|StoredPaper|CopyKit)\.ts$/.test(id))
     return 'clash-paper-inventory'
   if (/\/fighting\/[^/]+Options\.ts$/.test(id)) return 'clash-arsenal-options'

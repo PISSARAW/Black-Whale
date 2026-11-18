@@ -3,6 +3,7 @@
   import { documentById } from '$lib/fighting/paperDocuments'
   import { performArsenalCommand } from '$lib/fighting/retrospectiveArsenal'
   import { equippedDolphin } from '$lib/fighting/dolphinBorrowing'
+  import FightArenaMap from './FightArenaMap.svelte'
   import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
@@ -27,6 +28,9 @@
     {language === 'fr' ? 'Dernière lecture du papier' : 'Latest paper reading'} ·
     {Math.floor(reading.frame / 60)} s · {reading.text}
   </p>
+{/if}
+{#if reading?.arenaMap}
+  <FightArenaMap map={reading.arenaMap} {language} />
 {/if}
 
 {#if selected}

@@ -199,6 +199,7 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
     enemy.gyoLow = undefined
     enemy.defensiveKo = undefined
     enemy.dowsingSession = undefined
+    enemy.dowsingMapPose = undefined
   }
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null

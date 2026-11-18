@@ -1,4 +1,5 @@
 import { displayedDocumentText } from './paperTexture'
+import { visibleArenaMap } from './arenaMap'
 import { canReadDocument } from './paperDocumentReading'
 import { paperBodyRef, samePaperBody } from './paperDocuments'
 import type { FightSide, FightState } from './types'
@@ -15,7 +16,13 @@ export function concealDocumentWorld(state: FightState, viewer: FightSide): void
     const own = paper.textures?.filter((layer) => samePaperBody(layer.owner, owner))
     return {
       ...entry,
-      document: { ...paper, text, appearanceText: text, textures: own?.length ? own : undefined },
+      document: {
+        ...paper,
+        text,
+        appearanceText: text,
+        textures: own?.length ? own : undefined,
+        arenaMap: canReadDocument(state, viewer, entry) ? visibleArenaMap(state, entry) : undefined,
+      },
     }
   })
 }

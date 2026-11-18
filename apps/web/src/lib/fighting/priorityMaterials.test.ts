@@ -4,6 +4,7 @@ import { performArsenalAction } from './arsenalExecution'
 import { performMachiMaterial, machiThreadStrength } from './machiMaterial'
 import { advanceMachiThreads } from './machiThread'
 import { performArsenalCommand } from './retrospectiveArsenal'
+import { observePersonalEncounters } from './personalEncounters'
 import { advanceDowsingEvidence, recordDowsingStatement } from './dowsingEvidence'
 import { declareJudgment, implantJudgment } from './judgmentAction'
 import { advanceJudgmentHostages } from './judgmentHostages'
@@ -163,7 +164,7 @@ describe('material applications preserve their conditions', () => {
     expect(reading).toBe(s)
     expect(reading.player.dowsingReading).toBeUndefined()
   })
-  it('gives a direction for a known person without exposing intent or exact coordinates', () => {
+  it('rejects an abstract direction query without a physical map or a body-matched encounter', () => {
     const met = advanceDowsingEvidence(ready('kurapika'))
     const moved = { ...met, opponent: { ...met.opponent, x: 80 } }
     const key = moved.player.dowsingAcquaintances![0].key
@@ -171,24 +172,26 @@ describe('material applications preserve their conditions', () => {
       action: 'dowsing-locate',
       target: key,
     })
-    expect(located.player.dowsingLocation).toMatchObject({ direction: 'right' })
-    expect(located.player.dowsingLocation).not.toHaveProperty('x')
+    expect(located).toBe(moved)
+    expect(located.player.dowsingMapReading).toBeUndefined()
   })
-  it('requires the chain hand for the directional application and keeps Judgment applicable', () => {
+  it('requires the chain hand for the physical map search and keeps Judgment applicable', () => {
     const base = beginFight(
       createFight('kurapika', 'hisoka', {
         mode: 'versus-local',
-        environment: { preparation: { mode: 'scenario', resources: ['devices'], cohorts: [] } },
+        environment: {
+          preparation: { mode: 'scenario', resources: ['devices', 'maps'], cohorts: [] },
+        },
       }),
     )
-    const met = advanceDowsingEvidence({
+    const met = observePersonalEncounters({
       ...base,
       player: { ...base.player, x: 25, aura: 100 },
       opponent: { ...base.opponent, x: 40 },
     })
     const command = {
       action: 'dowsing-locate' as const,
-      target: met.player.dowsingAcquaintances![0].key,
+      target: met.player.personalEncounters![0].bodyKey,
     }
     const occupied = performArsenalCommand(met, 'player', {
       action: 'device-pickup',
@@ -205,7 +208,7 @@ describe('material applications preserve their conditions', () => {
     }
     const attempted = performArsenalCommand(bound, 'player', command)
     expect(attempted.player.health).toBe(0)
-    expect(attempted.player.dowsingLocation).toBeUndefined()
+    expect(attempted.player.dowsingMapReading).toBeUndefined()
   })
   it('enforces a secret clause on real spoken disclosure and keeps existing clauses independent', () => {
     const s = ready('kurapika')

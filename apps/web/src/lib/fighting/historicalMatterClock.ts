@@ -1,3 +1,4 @@
+import { reconcileDowsingMapMatter } from './dowsingMapMatter'
 import { historicalCopyExpired, historicalPartExists } from './historicalCopyLifetime'
 import { advanceCopiedInventory } from './copiedInventory'
 import { advancePaperScatters } from './kallutoScatterFrame'
@@ -15,7 +16,7 @@ declare module './types' {
 
 /** Expire matter without advancing puppet attacks, including during a frozen combat sequence. */
 export function expireHistoricalMatter(state: FightState): FightState {
-  state = reconcileNeedleFaces(reconcileIllumiFaces(state))
+  state = reconcileDowsingMapMatter(reconcileNeedleFaces(reconcileIllumiFaces(state)))
   state = advancePaperScatters(state)
   const field = state.battlefield
   if (!field) return expireCopiedProjectiles(advanceCopiedInventory(state))

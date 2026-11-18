@@ -10,6 +10,7 @@ import { senseDeprived } from './saiyuSenses'
 import { displayedDocumentText } from './paperTexture'
 import { resolveJudgmentCommunication } from './judgmentCommunication'
 import { replaceDocument } from './paperDocumentActions'
+import { visibleArenaMap } from './arenaMap'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightSide, FightState } from './types'
 
@@ -51,6 +52,7 @@ export function readDocument(
         text: displayedDocumentText(state, entry),
         frame: state.frame,
         round: state.roundNumber,
+        ...(visibleArenaMap(state, entry) ? { arenaMap: visibleArenaMap(state, entry) } : {}),
       },
     },
   }

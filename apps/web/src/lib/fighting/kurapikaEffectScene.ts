@@ -52,7 +52,8 @@ export function createKurapikaEffectScene(options: EffectSceneOptions): FighterE
       model.seal.rotation.x = Math.PI / 2
     }
     for (const motion of motions) {
-      if (motion.mode === 'dowsing' && !dowsingVisible(state, side, options.viewer)) continue
+      if (['dowsing', 'map'].includes(motion.mode) && !dowsingVisible(state, side, options.viewer))
+        continue
       // Once planted, Judgment Chain's one blade remains at the heart, not in the hand too.
       if (motion.stage === 4 && model.seal.visible) continue
       model.draw(

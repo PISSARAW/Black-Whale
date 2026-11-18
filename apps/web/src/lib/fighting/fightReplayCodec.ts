@@ -45,13 +45,14 @@ function preparation(value: unknown): FightPreparation | undefined {
   if (!validInjuryPreparation(entry.injuries, entry.mode)) return fail()
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 14 ||
+    entry.resources.length > 15 ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
     return fail()
   const resources: PreparationResource[] = [
     'documents',
+    'maps',
     'animals',
     'birds',
     'plants',

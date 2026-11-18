@@ -172,11 +172,12 @@ function validPreparation(value: unknown): boolean {
   )
     return false
   return (
-    value.resources.length <= 14 &&
+    value.resources.length <= 15 &&
     value.cohorts.length <= 2 &&
     value.resources.every((id) =>
       member(id, [
         'documents',
+        'maps',
         'animals',
         'birds',
         'plants',

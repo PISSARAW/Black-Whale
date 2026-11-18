@@ -33,6 +33,12 @@ declare module './types' {
     texturePaperId?: string
     texturePaperDraft?: string
     paperTextureGeneration?: number
-    documentReading?: { id: string; text: string; frame: number; round: number }
+    documentReading?: {
+      id: string
+      text: string
+      frame: number
+      round: number
+      arenaMap?: import('./arenaMap').ArenaMap
+    }
   }
 }

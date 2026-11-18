@@ -39,7 +39,8 @@ Références : détection de mensonge montrée dès le
 [chapitre 68](https://hunterxhunter.fandom.com/wiki/Chapter_68), explication
 face-à-face et vidéo du chapitre 348 ; récapitulatif des applications chez
 [HUNTER×WORLD](https://hunterworld.tokyo/krapika/).
-La recherche sur carte et les autres écarts de l’audit restent ouverts :
+La [recherche sur carte physique](./clash-dowsing-carte.md) est ajoutée au ruleset 62.
+Les autres écarts de l’audit restent ouverts :
 cette étape ne certifie pas un achèvement à 100 %.
 
 ## Accès vidéo unique — ruleset 61

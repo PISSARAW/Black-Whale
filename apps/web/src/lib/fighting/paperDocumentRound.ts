@@ -6,6 +6,7 @@ export function carryDocumentState(actor: ArcadeFighter, previous: ArcadeFighter
     !actor.writingKit &&
     !previous.writingKit &&
     !previous.documentReading &&
+    !previous.dowsingMapReading &&
     previous.paperTextureGeneration === undefined
   )
     return actor
@@ -13,6 +14,7 @@ export function carryDocumentState(actor: ArcadeFighter, previous: ArcadeFighter
     ...actor,
     writingKit: previous.writingKit,
     documentReading: previous.documentReading,
+    dowsingMapReading: previous.dowsingMapReading,
     paperTextureGeneration: previous.paperTextureGeneration,
     texturePaperId: previous.texturePaperId,
     texturePaperDraft: previous.texturePaperDraft,

@@ -1,4 +1,7 @@
-import { actualDocuments, documentPosition, paperBodyRef, samePaperBody } from './paperDocuments'
+import { actualDocuments } from './paperDocuments'
+import { paperDocumentWorldPoint } from './paperDocumentAnchor'
+import { paintDocumentCanvas } from './paperDocumentPrint'
+import { visibleArenaMap, type ArenaMap } from './arenaMap'
 import { displayedDocumentText } from './paperTexture'
 import { canReadDocument } from './paperDocumentReading'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
@@ -25,37 +28,23 @@ export function createPaperDocumentScene(options: EffectSceneOptions): FighterEf
   }
   function syncDocument(state: FightState, entry: PreparedEntity, model: ReturnType<typeof make>) {
     const holder = entry.document!.holder
-    const point = documentPosition(state, entry)
     model.root.visible = true
-    model.root.position.set(options.worldX(point.x), options.worldY(point.y) + 0.015, 0.48)
+    model.root.position.copy(paperDocumentWorldPoint(options, state, entry))
     model.root.rotation.set(holder ? 0 : -Math.PI / 2, 0, 0)
-    carrierHand(state, entry)?.getWorldPosition(model.root.position)
     const viewer = options.viewer?.() ?? 'player'
     const text = canReadDocument(state, viewer, entry) ? displayedDocumentText(state, entry) : ''
-    paintDocument(model, text)
+    const plan = canReadDocument(state, viewer, entry) ? visibleArenaMap(state, entry) : undefined
+    paintDocument(model, text, plan)
   }
-  function carrierHand(state: FightState, entry: PreparedEntity) {
-    const holder = entry.document!.holder
-    if (!holder || state[holder.owner].hanzoProjection) return undefined
-    if (!samePaperBody(holder, paperBodyRef(state, holder.owner))) return undefined
-    return options.handAnchor?.(holder.owner, holder.hand === 'left' ? 'rear' : 'lead')
-  }
-  function paintDocument(model: ReturnType<typeof make>, text: string) {
+  function paintDocument(model: ReturnType<typeof make>, text: string, plan?: ArenaMap) {
     model.root.userData.documentText = text
-    if (text === model.text) return
-    model.text = text
+    model.root.userData.arenaMap = plan
+    const key = JSON.stringify([text, plan])
+    if (key === model.text) return
+    model.text = key
     const context = model.canvas?.getContext('2d')
     if (!context || !model.texture) return
-    context.fillStyle = '#f3ebd5'
-    context.fillRect(0, 0, 256, 320)
-    context.fillStyle = '#25222b'
-    context.font = '18px sans-serif'
-    text
-      .match(/.{1,20}/gu)
-      ?.slice(0, 12)
-      .forEach((line, index) => {
-        context.fillText(line, 12, 30 + index * 23, 232)
-      })
+    paintDocumentCanvas(context, text, plan)
     model.texture.needsUpdate = true
   }
   return {

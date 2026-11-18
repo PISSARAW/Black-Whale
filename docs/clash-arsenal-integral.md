@@ -172,8 +172,8 @@ la question. Les snapshots conservent le même résultat après restauration.
 Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
 et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
 
-La localisation par radiesthésie et les questions fondées sur d'autres souvenirs
-restent à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La localisation par radiesthésie est ajoutée au ruleset 62 ; les questions
+fondées sur d’autres souvenirs demandent encore un audit. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
 La distinction entre mensonge conscient et connaissance objective est recoupée
 avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
 notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
@@ -499,12 +499,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                   |
-| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                      |
-| Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. Auditer encore la localisation, les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                                                                                                |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                    |
+| Hisoka     | Préparation post-mortem avec une véritable cause de mort admissible encore ouverte ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                                                       |
+| Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. La localisation sur carte réelle est exécutable ; auditer encore les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
+| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                                                                                                                                 |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |
@@ -1015,3 +1015,11 @@ présent et les écarts de l’audit global restent ouverts.
 L’[ancien accès par métadonnées](./clash-dowsing-interrogatoire.md) ne contourne
 plus les conditions de l’analyse d’un enregistrement réel. La main droite,
 Judgment et le On conservent leur effet. La recherche sur carte reste ouverte.
+
+## Dowsing sur carte physique — ruleset 62
+
+La [recherche sur un vrai plan](./clash-dowsing-carte.md) remplace l’ancienne
+direction abstraite par une feuille lisible et un corps rencontré. Le point
+est daté, les copies suivent leur support réel, et Texture Surprise peut cacher
+le diagramme. La commande fonctionne pour P1, P2, l’IA et les replays ; le On
+reste présent. Les autres écarts du tableau restent ouverts.

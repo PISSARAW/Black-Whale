@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import { mapScenario } from './maps'
   import { mixedHisokaScenario } from './mixedHisoka'
   import { prosthesisScenario } from './prostheses'
   import type { InjuryPreset } from '$lib/fighting/injuryPreparation'
@@ -262,6 +263,23 @@
     })
     for (let index = 0; index < 120; index++) advanceFrame()
     await tick()
+  }
+  export async function prepareDowsingMap(side: FightSide) {
+    state = mapScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function mapSnapshot(side: FightSide) {
+    return {
+      search: state[side].dowsingMapSearch,
+      reading: state[side].dowsingMapReading,
+      pose: state[side].dowsingMapPose,
+      health: state[side].health,
+      aura: state[side].aura,
+    }
   }
   export async function prepareDowsingInterview() {
     player = 'kurapika'

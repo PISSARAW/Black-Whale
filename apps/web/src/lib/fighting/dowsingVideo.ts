@@ -65,6 +65,7 @@ function videoWord(state: FightState, side: FightSide, index: number): RecordedS
 export function canReadDowsingVideo(state: FightState, side: FightSide, index: number): boolean {
   return (
     !state[side].dowsingSession &&
+    !state[side].dowsingMapSearch &&
     state[side].aura >= DOWSING_COST &&
     Boolean(eligibleVideoPlayback(state, side, index))
   )

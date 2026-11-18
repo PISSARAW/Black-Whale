@@ -54,7 +54,7 @@ async function compile(entry: string) {
         onwarn: (warning) => {
           if (warning.code !== 'EMPTY_BUNDLE') warnings.push(warning.message)
         },
-        output: { format: 'es', manualChunks },
+        output: { format: 'es', manualChunks, onlyExplicitManualChunks: true },
       },
     },
   })
@@ -99,7 +99,8 @@ describe('production bundle partitioning', () => {
   it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
     const built = await compile(
       [
-        `export { beginFight, createFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { beginFight, createFight, tickFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { EMPTY_INPUT } from ${JSON.stringify(resolve('src/lib/fighting/types.ts'))}`,
         `export { launchKallutoPaper } from ${JSON.stringify(resolve('src/lib/fighting/kallutoFlight.ts'))}`,
         `export { performArsenalCommand } from ${JSON.stringify(resolve('src/lib/fighting/retrospectiveArsenal.ts'))}`,
       ].join('\n'),
@@ -123,6 +124,34 @@ describe('production bundle partitioning', () => {
     })
     expect(gathered.player.paperKit.confetti).toHaveLength(1)
     expect(gathered.player.paperKit.confetti[0].id).toBe(paper.id)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-map-location',
+      ),
+    ).toBe(true)
+    const fresh = actual.beginFight(
+      actual.createFight('kurapika', 'hisoka', {
+        mode: 'versus-local',
+        formatId: 'knockout',
+        environment: {
+          preparation: { mode: 'scenario', resources: ['maps'], cohorts: [] },
+        },
+      }),
+    )
+    const empty = actual.EMPTY_INPUT
+    let search = actual.tickFight(
+      { ...fresh, player: { ...fresh.player, x: 25 }, opponent: { ...fresh.opponent, x: 40 } },
+      empty,
+      { dt: 1 / 60, opponentInput: empty },
+    )
+    search = actual.performArsenalCommand(search, 'player', {
+      action: 'dowsing-locate',
+      target: 'opponent:0',
+    })
+    expect(search.player.dowsingMapSearch?.origin.source).toBe('personal')
+    for (let index = 0; index < 30; index++)
+      search = actual.tickFight(search, empty, { dt: 1 / 60, opponentInput: empty })
+    expect(search.player.dowsingMapReading?.point?.x).toBeCloseTo(33 / 86)
   }, 30_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [

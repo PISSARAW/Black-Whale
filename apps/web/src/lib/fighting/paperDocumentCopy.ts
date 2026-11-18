@@ -1,4 +1,5 @@
 import { displayedDocumentText } from './paperTexture'
+import { visibleArenaMap } from './arenaMap'
 import { paperBodyRef } from './paperDocuments'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightSide, FightState } from './types'
@@ -13,6 +14,7 @@ export function copiedDocumentMaterials(
     health: context.source.health,
     document: {
       text: displayedDocumentText(state, context.source),
+      arenaMap: visibleArenaMap(state, context.source),
       sheetCopyId: context.id,
       holder: { ...paperBodyRef(state, context.side), hand: 'right' },
       outward: false,

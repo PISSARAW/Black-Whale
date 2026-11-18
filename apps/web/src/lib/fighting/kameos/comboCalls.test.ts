@@ -172,13 +172,13 @@ describe('six support lessons use real effects, costs and continuous contacts', 
           expect(get(school)).toMatchObject({ complete: true, failed: false, supportLanded: true })
           expect(comboSupportLanded(state, route.kameo!.id)).toBe(true)
           expect(escaped).toBe(false)
-          const expected = route.kameo!.id === 'luzurus' ? 3 : 12
+          const expected = route.moves.reduce((sum, _, step) => sum + (route.hits?.[step] ?? 1), 0)
           expect(hits).toEqual(Array.from({ length: expected }, (_, i) => i + 1))
           expect(state.kameos!.player!.fighter.aura).toBeLessThan(40)
         })
 
   it('does not award the exercise when the player omits the call', () => {
-    const route = KAMEO_COMBO_LESSONS.find((entry) => entry.kameo!.id === 'zhanglei')!
+    const route = KAMEO_COMBO_LESSONS.find((entry) => entry.id === 'franklin:kameo-zhanglei')!
     const school = createCombatSchool()
     const match = createFightMatchRuntime(undefined, { record: false })
     match.observeFrames(school.observe)

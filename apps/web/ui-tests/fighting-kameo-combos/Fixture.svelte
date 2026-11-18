@@ -8,6 +8,8 @@
   import { createCombatSchool, advanceCombatSchool } from '$lib/fighting/combatSchool'
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
   import { EMPTY_INPUT, type FightState } from '$lib/fighting/types'
+  import { KAMEO_COMBO_LESSONS } from '$lib/fighting/kameos/comboLessons'
+  import { runKameoComboScenario } from '$lib/fighting/kameos/comboScenarios'
   const school = createCombatSchool()
   const match = createFightMatchRuntime(undefined, { record: false })
   match.observeFrames(school.observe)
@@ -38,6 +40,47 @@
         opponentInput: EMPTY_INPUT,
       })
     await tick()
+  }
+  export function catalogue() {
+    return KAMEO_COMBO_LESSONS.map((route) => ({
+      id: route.id,
+      fighter: route.fighter,
+      title: route.title,
+      hits: route.moves.reduce((sum, _, step) => sum + (route.hits?.[step] ?? 1), 0),
+    }))
+  }
+  export function measure(fighter: string) {
+    return KAMEO_COMBO_LESSONS.filter((route) => route.fighter === fighter).flatMap((route) =>
+      [false, true].flatMap((corner) =>
+        [0, 10, 30, 60].flatMap((callDelay) =>
+          (['guard', 'jab'] as const).map((response) => {
+            const { state: _final, ...result } = runKameoComboScenario(route, {
+              corner,
+              callDelay,
+              response,
+            })
+            return result
+          }),
+        ),
+      ),
+    )
+  }
+  export function finishWindows(fighter: string) {
+    const route = KAMEO_COMBO_LESSONS.find(
+      (route) => route.fighter === fighter && route.kameo!.id === 'luzurus',
+    )!
+    return [false, true].flatMap((corner) =>
+      [5, 10, 20, 90].flatMap((finishDelay) =>
+        (['guard', 'jab'] as const).map((response) => {
+          const { state: _final, ...result } = runKameoComboScenario(route, {
+            corner,
+            finishDelay,
+            response,
+          })
+          return result
+        }),
+      ),
+    )
   }
   export function snapshot() {
     return { state, progress: get(school) }

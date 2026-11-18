@@ -212,7 +212,9 @@ La réserve, la recharge, l’aura et la capacité d’agir sont vérifiées à 
 Le HUD indique « Appel mémorisé ». Ce comportement passe les replays en v47 ; le
 ruleset PvP en hérite.
 
-`comboLessons.ts` fournit six exercices dans Académie du Nen → Combos & défense :
+`comboLessons.ts` fournit six exercices par combattant (240 routes), dans
+Académie du Nen → Combos & défense. Le sélecteur de personnage affiche ses six soutiens.
+Les deux pilotes restent accessibles :
 
 - Hisoka appelle Luzurus après le premier léger, frappe lourd, récupère puis place
   un léger avant pendant l’immobilisation réelle. Le piège n’attrape qu’au sol.
@@ -227,9 +229,55 @@ Les soutiens ne créent aucune touche ni prise aérienne, et conservent les coû
 timings, interruptions et gardes du moteur. Les appels sont disponibles aux quarante
 leaders, au clavier, à la manette et au bouton tactile Kaméo.
 
-`comboCalls.test.ts` couvre les quarante leaders dans les deux camps, les six
+`comboCalls.test.ts` couvre les quarante leaders dans les deux camps, les 240
 exercices au centre et au coin dans les deux orientations, et les ripostes après
 un appel tardif. Les démonstrations et leurs replays passent par `combatSchool.test.ts`.
 `node apps/web/scripts/check-fighting-kameo-combos.mjs` lance les exercices depuis
 l’interface avec les corps WebGL de production et écrit captures et rapport dans
-`KAMEO_COMBO_OUTPUT` (par défaut `/tmp/black-whale-kameo-combos`).
+`KAMEO_COMBO_OUTPUT` (par défaut `output/kameo-roster/chrome`).
+
+`comboScenarios.ts` exécute les mêmes commandes natives pour mesurer les limites.
+Il distingue le combo physique, l’effet réellement reçu avant sa dernière touche,
+la première frame où le défenseur peut agir et le contact éventuel de sa riposte.
+Le hitstop ne compte pas dans les délais d’appel ou de finition. `rosterScenarios.test.ts`
+vérifie les appels immédiats, tardifs et sans aura, ainsi qu’une finition trop tardive
+après le piège. Les timings, coûts, portées, gardes, évitements et interruptions
+restent ceux de `catalogue.ts`, `effects.ts`, `runtime.ts` et des Hatsu existants.
+
+Les routes physiques passent par les propres cancels, liens et récupérations du
+leader. Kurapika et Benjamin utilisent leur revers ; Feitan et Hanzo ajoutent un
+léger avant ; Shizuku et Leorio prennent un appui supplémentaire. Chrollo peut
+annuler son revers confirmé après l’effet du soutien, selon ses cancels natifs.
+Aucun personnage n’obtient de Hatsu gratuit ni de réduction de récupération.
+La rafale de Franklin conserve ses conditions et son coût habituel.
+
+### Mesures Chrome de l’extension aux quarante
+
+Le banc vérifie 4 480 situations et lance 100 exercices avec la scène WebGL.
+L’appel immédiat valide les 240 routes au centre et au coin, contre la garde et
+contre une tentative de léger dès la reprise (960 cas). Le soutien doit réellement
+agir avant la fin, les touches rester continues et le défenseur ne disposer
+d’aucune frame d’action avant la dernière touche.
+
+Pour Luzurus, contre la garde après la première touche :
+
+| Retard de l’appel (frames actives) | Routes garanties, centre + coin |
+| ---------------------------------- | ------------------------------- |
+| 0                                  | 80 / 80                         |
+| 10                                 | 50 / 80                         |
+| 30                                 | 0 / 80                          |
+| 60                                 | 0 / 80                          |
+
+À +10, Franklin–Luzurus est interrompu au centre mais conserve sa troisième touche
+au coin. Au centre, le défenseur peut agir à F56 et son léger touche à F60 ; au
+coin, la troisième frappe de Franklin touche à F62 sans fenêtre préalable.
+Avec l’appel immédiat, retarder la finition de Luzurus de 5, 10 ou 20 frames reste
+garanti dans les 80 cas ; à 90 frames, le défenseur reprend la main dans les 80 cas.
+Ces délais décrivent les exercices, avec leurs distances et ressources initiales.
+Le mannequin est Chrollo, sauf pour Chrollo qui affronte Hisoka.
+Les autres rôles ne gagnent pas l’immobilisation de Luzurus.
+
+Les sorties `timings.json` et `report.json` dans `KAMEO_COMBO_OUTPUT` conservent les
+résultats par combattant, position, retard et réaction, ainsi que les frames de
+reprise et de contact. Une chaîne physique réussie ne suffit pas à valider un
+soutien arrivé trop tard : les deux résultats sont conservés séparément.

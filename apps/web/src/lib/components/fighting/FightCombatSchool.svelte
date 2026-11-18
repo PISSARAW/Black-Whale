@@ -12,7 +12,6 @@
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   import type { FightState } from '$lib/fighting/types'
   import { DEFAULT_WAKEUP, type WakeupSettings } from '$lib/fighting/combatWakeupPractice'
-  import { KAMEO_COMBO_LESSONS } from '$lib/fighting/kameos/comboLessons'
   import {
     WAKEUP_POSITIONS,
     WAKEUP_REACTIONS,
@@ -32,6 +31,7 @@
   $: index = language === 'fr' ? 0 : 1
   $: routes = combatRoutesFor(selected)
   $: wakeupRoutes = routes.filter((route) => route.wakeup)
+  $: kameoRoutes = routes.filter((route) => route.kameo)
   $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup && !route.kameo)]
   $: current = $school
   $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
@@ -272,7 +272,7 @@
         </select>
       </label>
       <ol>
-        {#each KAMEO_COMBO_LESSONS as route (route.id)}
+        {#each kameoRoutes as route (route.id)}
           <li>
             <strong>{fighterDefinition(route.fighter).name} · {route.title[index]}</strong>
             <p class="route">{routeText(route.id)}</p>

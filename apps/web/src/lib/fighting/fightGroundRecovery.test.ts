@@ -48,7 +48,10 @@ describe('ground recovery before a buffered reversal', () => {
   )
   it('keeps a dead or sleeping body down', () => {
     const state = beginFight(createFight('benjamin', 'hisoka', 'knockout'))
-    for (const extra of [{ health: 0 }, { arsenalSleep: true }]) {
+    for (const extra of [
+      { health: 0 },
+      { arsenalSleep: { owner: 'opponent' as const, cause: 'cookie' as const } },
+    ]) {
       const fighter = { ...state.player, ...extra, pose: 'down' as const, knockdownFrames: 1 }
       expect(bodyPlan(fighter, { seconds: 1, progress: 0.99 })!.pose.body![0]).toBeLessThan(-1)
     }

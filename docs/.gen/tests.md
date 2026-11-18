@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 977
+Fichiers : 981
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1001,6 +1001,14 @@ Fichiers : 977
 ## `apps/web/src/lib/fighting/machiPresentation.test.ts`
 
 - Machi thread presentation uses actual engine links > renders a thread to the attached target, hides it after release and disposes its resources
+
+## `apps/web/src/lib/fighting/machiReattachmentReplay.test.ts`
+
+- original limb surgery through the serialized command boundary > accepts the explicit injury premise and surgery command without client-supplied new flesh
+
+## `apps/web/src/lib/fighting/machiReattachmentScene.test.ts`
+
+- the real shared forearm moves from the floor back to the injured articulated body > keeps the elbow and hand together, then restores skin rather than Nen rubber
 
 ## `apps/web/src/lib/fighting/melody.test.ts`
 

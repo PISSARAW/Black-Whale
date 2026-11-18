@@ -3,6 +3,7 @@ import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  concealMachiSurgerySource(enemy)
   redactCorpsePreparation(enemy)
   enemy.halkenburgChosenSoul = undefined
   enemy.halkenburgSupporter = undefined
@@ -57,4 +58,9 @@ function concealProsthesisAppearance(enemy: ArcadeFighter): void {
   enemy.bodyDamage = undefined
   enemy.gumProstheses = undefined
   enemy.textureSurprise = undefined
+}
+
+function concealMachiSurgerySource(enemy: ArcadeFighter): void {
+  if (enemy.machiReattachment)
+    enemy.machiReattachment = { ...enemy.machiReattachment, origin: undefined }
 }

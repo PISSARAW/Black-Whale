@@ -1,5 +1,5 @@
 import type { FightSide, FightState } from './types'
-import { bodyPartFunctional } from './bodyDamage'
+import { physicalHandFunctional } from './bodyDamage'
 import { heldDocuments } from './paperDocuments'
 
 export type DeviceHand = 'left' | 'right'
@@ -27,7 +27,8 @@ function characterHandOccupancy(
   ignored: { gallery?: boolean; book?: boolean },
 ): Set<DeviceHand> {
   const occupied = new Set<DeviceHand>()
-  if (!bodyPartFunctional(actor, 'left-hand')) occupied.add('left')
+  for (const hand of ['left', 'right'] as const)
+    if (!physicalHandFunctional(actor, hand)) occupied.add(hand)
   if (!ignored.gallery && actor.chrolloHistorical?.galleryFocus) occupied.add('left')
   if (!ignored.book && actor.chrolloBook?.open) occupied.add('right')
   for (const hand of retainedHands(actor)) occupied.add(hand)

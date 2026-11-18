@@ -1,3 +1,4 @@
+import { forearmNode, type SeveredForearm } from './severedForearms'
 import type { Mesh, Object3D } from 'three'
 import { bodyPartFunctional, type DamagedBodyPart } from './bodyDamage'
 import { shapeGumSurface } from './gumSurfaceFigure'
@@ -26,7 +27,12 @@ export function shapeGumProstheses(options: FigureOptions, root: Object3D): void
 function shapePart(options: FigureOptions, root: Object3D, part: DamagedBodyPart): void {
   if (shapeGumSurface(options, root, part)) return
   const actor = options.fighter
-  const node = root.getObjectByName(part === 'left-hand' ? 'hand-left' : 'knee-right')
+  const name = part.endsWith('forearm')
+    ? forearmNode(part as SeveredForearm)
+    : part === 'left-hand'
+      ? 'hand-left'
+      : 'knee-right'
+  const node = root.getObjectByName(name)
   if (!node) return
   node.visible = bodyPartFunctional(actor, part) && rubberVisible(options)
   if (!node.visible) return

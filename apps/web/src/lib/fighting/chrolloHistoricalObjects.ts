@@ -140,6 +140,7 @@ function nextCopyId(state: FightState, side: FightSide): string {
 }
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
+    detachedForearm: source.detachedForearm ? { ...source.detachedForearm } : undefined,
     blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
     paperKit: source.paperKit ? copyPaperKit(source.paperKit, id) : undefined,
     writingKit: source.writingKit

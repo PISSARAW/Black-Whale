@@ -30,6 +30,11 @@
 
 {#each ['player', 'opponent'] as publicSide (publicSide)}
   {@const caster = state[publicSide as FightSide]}
+  {#if caster.machiReattachment}<p role="status">
+      {publicSide === 'player' ? 'P1' : 'P2'} · Nen Stitches · {language === 'fr'
+        ? 'Raccordement des tissus'
+        : 'Reconnecting tissues'} · {(caster.machiReattachment.frames / 60).toFixed(1)} s
+    </p>{/if}
   {#if caster.attack?.moveId === 'kurapika:finisher' && caster.judgmentDeclaration}
     <p role="status">
       {fighterDefinition(caster.id).name} · Judgment : {judgmentClauseLabel(

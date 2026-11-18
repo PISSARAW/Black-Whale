@@ -69,6 +69,7 @@ export const ARSENAL_ACTION_IDS = [
   'judgment-reveal',
   'judgment-return-hostage',
   'machi-suture',
+  'machi-reattach',
   'machi-length',
   'machi-detach',
   'machi-anchor',

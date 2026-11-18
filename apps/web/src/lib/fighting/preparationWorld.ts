@@ -20,7 +20,7 @@ export const PREPARATION_REACH = 8
 
 export function personalEquipment(id: FighterId): FightEquipment[] {
   if (id === 'hinrigh') return ['tracker-receiver']
-  if (id === 'illumi') return ['needles']
+  if (id === 'illumi' || id === 'machi') return ['needles']
   if (id === 'zakuro') return ['blood-infusion']
   if (id === 'melody') return ['flute']
   return id === 'chrollo' ? ['book'] : []

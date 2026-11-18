@@ -8,7 +8,10 @@
   export let onEnvironment: (next: FightEnvironment) => void
 
   function equipped(side: FightSide): boolean {
-    return environment.needleStock?.[side] ?? (side === 'player' ? player : opponent) === 'illumi'
+    return (
+      environment.needleStock?.[side] ??
+      ['illumi', 'machi'].includes(side === 'player' ? player : opponent)
+    )
   }
   function change(side: FightSide, checked: boolean): void {
     onEnvironment({
@@ -22,7 +25,7 @@
   }
 </script>
 
-{#if [player, opponent].some((id) => ['illumi', 'chrollo', 'kurapika'].includes(id))}
+{#if [player, opponent].some((id) => ['illumi', 'machi', 'chrollo', 'kurapika'].includes(id))}
   <fieldset class="needle-equipment">
     <legend>{language === 'fr' ? 'Aiguilles physiques portées' : 'Physical needles carried'}</legend
     >
@@ -40,8 +43,8 @@
     {/each}
     <small
       >{language === 'fr'
-        ? 'Needle People ne fournit aucun équipement à son copieur.'
-        : 'Copying Needle People does not supply its equipment.'}</small
+        ? 'Copier Needle People ou Nen Stitches ne fournit aucune aiguille.'
+        : 'Copying Needle People or Nen Stitches supplies no needle.'}</small
     >
   </fieldset>
 {/if}

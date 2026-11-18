@@ -20,6 +20,7 @@ function characterBusy(fighter: ArcadeFighter): boolean {
     fighter.throwTechRecoveryFrames ||
     fighter.luiniPassage ||
     fighter.machiSuture ||
+    fighter.machiReattachment ||
     fighter.corpsePreparation
   )
     return true

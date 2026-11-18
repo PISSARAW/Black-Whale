@@ -1,6 +1,6 @@
 import { historicalPartExists } from './historicalCopyLifetime'
 import { physicalBodyAt } from './fightBodyIdentity'
-import { bodyPartFunctional } from './bodyDamage'
+import { physicalHandFunctional } from './bodyDamage'
 import { sleepingBody } from './hanzoProjection'
 import { freeDeviceHand, physicalHandsBusy } from './deviceHands'
 import type { PaperBodyRef } from './paperDocumentTypes'
@@ -116,5 +116,5 @@ function validDocumentGrip(
   actor: import('./types').ArcadeFighter,
   hand: import('./deviceHands').DeviceHand,
 ): boolean {
-  return hand !== 'left' || bodyPartFunctional(actor, 'left-hand')
+  return physicalHandFunctional(actor, hand)
 }

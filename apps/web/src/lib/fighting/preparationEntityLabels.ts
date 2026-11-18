@@ -2,6 +2,7 @@ import type { PreparedEntityKind } from './preparationTypes'
 
 export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
   fr: {
+    'body-part': 'Membre sectionné',
     corpse: 'Cadavre',
     camera: 'Caméra',
     hostage: 'Otage',
@@ -24,6 +25,7 @@ export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, strin
     delivery: 'Point de livraison',
   },
   en: {
+    'body-part': 'Severed limb',
     corpse: 'Corpse',
     camera: 'Camera',
     hostage: 'Hostage',

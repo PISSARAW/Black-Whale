@@ -1,6 +1,11 @@
 import type { FightSide } from './types'
 
-export const INJURY_PRESETS = ['hand-and-lower-leg', 'face-and-neck', 'post-explosion'] as const
+export const INJURY_PRESETS = [
+  'hand-and-lower-leg',
+  'face-and-neck',
+  'post-explosion',
+  'severed-forearms',
+] as const
 export type InjuryPreset = (typeof INJURY_PRESETS)[number]
 export type InjuryPreparation = Partial<Record<FightSide, InjuryPreset>>
 

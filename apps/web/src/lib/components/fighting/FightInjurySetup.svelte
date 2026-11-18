@@ -46,11 +46,25 @@
         ? `P${index + 1} : tissus superficiels du visage et du cou endommagés`
         : `P${index + 1}: damaged facial and neck surface tissue`}</label
     >
+    <label
+      ><input
+        type="checkbox"
+        checked={injuries[side as FightSide] === 'severed-forearms'}
+        onchange={(event) => {
+          const next = { ...injuries }
+          if (event.currentTarget.checked) next[side as FightSide] = 'severed-forearms'
+          else delete next[side as FightSide]
+          onChange(next)
+        }}
+      />{language === 'fr'
+        ? `P${index + 1} : avant-bras sectionnés, membres originaux au sol`
+        : `P${index + 1}: severed forearms, original limbs on the floor`}</label
+    >
   {/each}
   <p>
     {language === 'fr'
-      ? 'Prémisse du scénario, inspirée des blessures d’Hisoka au chapitre 357. Elle ne fournit ni prothèse, ni soin, ni pouvoir supplémentaire.'
-      : 'Scenario premise based on Hisoka’s injuries in chapter 357. It supplies no prosthesis, healing or additional power.'}
+      ? 'Prémisse du scénario, inspirée des blessures d’Hisoka aux chapitres 55 et 357. Elle ne fournit ni prothèse, ni soin, ni pouvoir supplémentaire.'
+      : 'Scenario premise based on Hisoka’s injuries in chapters 55 and 357. It supplies no prosthesis, healing or additional power.'}
   </p>
 </fieldset>
 

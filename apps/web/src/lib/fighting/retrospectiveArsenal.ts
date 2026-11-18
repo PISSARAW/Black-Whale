@@ -4,7 +4,7 @@ import { traceArsenal } from './arsenalTrace'
 import { performModelSelection } from './metamorphosenModels'
 import { corpseRemovalOptions } from './illumiCorpsePins'
 import { performCorpseCommand, corpseOptions } from './illumiCorpses'
-import { performMachiMaterial } from './machiMaterial'
+import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
 import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
 import { performBlackVoice } from './blackVoiceControl'
@@ -203,6 +203,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
   return [
     consentOption(state, side),
     ...blackVoiceOptions(state, side),
+    ...machiMaterialOptions(state, side),
     ...corpseOptions(state, side),
     ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),

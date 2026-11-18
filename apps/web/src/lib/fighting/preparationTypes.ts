@@ -30,6 +30,7 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'body-part'
   | 'camera'
   | 'hostage'
   | 'corpse'

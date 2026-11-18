@@ -34,7 +34,7 @@ function clashChunkName(id: string): string | undefined {
   )
     return 'clash-style-catalogues'
   if (
-    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|billSupportTuning|secretWindowListeningMove|kallutoTuning|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto|bill|leorio|musse|mizaistom|padaille|rihan|feitan)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
+    /\/fighting\/(?:movesetWave\w+|movesetRosterFinal|movesetFactory|rosterCombatRoutes|billSupportTuning|secretWindowListeningMove|kallutoTuning|(?:phinks|longhi|voconte|parallelFuture|kurapika|machi|kalluto|bill|leorio|musse|mizaistom|padaille|rihan|feitan|camilla|hisoka|gel|chrollo|theta)Moveset|bonolenovMovesetTuning|retrospectiveTypes|deviceTypes|bungeeTypes|battleCantabileTypes|lynchTypes|melodyTuning|predatorTuning|crossGameTuning|combatProperties|techniqueCatalogue)\.ts$/.test(
       id,
     )
   )
@@ -53,7 +53,7 @@ function clashChunkName(id: string): string | undefined {
   )
     return 'clash-nen-canon'
   if (
-    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles)\.ts$/.test(
+    /\/fighting\/(?:easterEggAuthoring|fightPose|fightStanceParts|kameos\/expressionProfiles|easterEggRoster(?:One|Two|Three|Four)|rosterChoreography(?:First|Second)|fightStancesRoster|fightExpressionProfiles|rosterTechniqueGestures)\.ts$/.test(
       id,
     )
   )

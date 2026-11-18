@@ -129,12 +129,13 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
   machi: {
     abilities: ['nen-stitches'],
     condition:
-      'Suture, tracking and restraint use actual threads; length and continued control matter.',
-    effect: 'Repair through suture, mark a target or maintain a physical tether.',
+      'Suture, tracking and restraint use actual threads. Reattaching a forearm needs its original material, a physical needle, free hands, a consenting living patient and relaxed arm aura.',
+    effect:
+      'Reconnect the original forearm without restoring lost HP or regrowing flesh; suture a wound, mark a target or maintain a physical tether.',
     prohibition:
       'No generic timed paralysis, remote healing unrelated to suture or free binding without a thread.',
     adaptation:
-      'Self-suture health, tether range and martial carriers tune the duel; wounds are represented by HP.',
+      'Open-wound HP recovery, contact ranges and operation timing tune the duel. Severed forearms are explicit physical injuries with original material; reconnection does not restore HP.',
   },
   illumi: {
     abilities: ['illumi-needle-people'],

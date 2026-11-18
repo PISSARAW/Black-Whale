@@ -10,6 +10,7 @@ const PREFIXES: Readonly<Record<string, readonly string[]>> = {
   sayird: ['little-eye-'],
   hisoka: ['gum-', 'texture-'],
   biscuit: ['cookie-'],
+  machi: ['machi-reattach'],
   hinrigh: ['biohazard-'],
   basho: ['basho-'],
 }

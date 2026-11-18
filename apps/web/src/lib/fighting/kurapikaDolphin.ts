@@ -1,3 +1,4 @@
+import { borrowedMachiReattachmentBusy } from './machiReattachmentAccess'
 import { littleEyeShotBusy } from './littleEyeCapture'
 import { paperDolls } from './kallutoSurveillance'
 import { paperControlBusy } from './kallutoScatter'
@@ -230,6 +231,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   return {
     'gum-support': gumUseBusy(fighter) || borrowedGumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
+    'machi-reattachment': borrowedMachiReattachmentBusy(state, side),
     'biohazard-device': Boolean(
       state.battlefield?.entities.some(
         (entry) => entry.device?.form?.owner === side || entry.device?.transforming?.owner === side,

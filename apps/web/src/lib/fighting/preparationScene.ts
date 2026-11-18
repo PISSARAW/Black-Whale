@@ -1,3 +1,4 @@
+import { poseDetachedForearm } from './severedForearmScene'
 import { posePreparedCorpse } from './corpseScene'
 import { addOrderStamp } from './orderStampScene'
 import { createDolphinPeopleScene } from './dolphinPeopleScene'
@@ -36,7 +37,11 @@ export function createPreparationScene(options: EffectSceneOptions) {
     mesh(new THREE.BoxGeometry(...size), color)
 
   function build(entry: PreparedEntity) {
-    if (entry.person || ['morena', 'supporter', 'puppet', 'corpse', 'hostage'].includes(entry.kind))
+    if (
+      entry.detachedForearm ||
+      entry.person ||
+      ['morena', 'supporter', 'puppet', 'corpse', 'hostage'].includes(entry.kind)
+    )
       return human(entry)
     const shared = buildPreparedVisitModel(options, entry)
     if (shared) return shared
@@ -122,6 +127,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
       feather.position.set(0.12, 0.9, 0.2)
       figure.root.add(feather)
     }
+    poseDetachedForearm(figure.root, entry.detachedForearm?.part)
     addCorpseNeedles(figure.root, entry)
     if (entry.copy) addOrderStamp({ THREE, root: figure.root, box })
     return figure.root
@@ -281,6 +287,7 @@ function supporterSleepAngle(entry: PreparedEntity): number {
 }
 
 function preparedHumanIdentity(entry: PreparedEntity): string {
+  if (entry.detachedForearm) return fighterDefinition(entry.detachedForearm.appearance).modelId
   if (entry.person) return entry.person.identity
   if (entry.copy?.appearanceModel) return entry.copy.appearanceModel
   if (entry.copy?.appearance) return fighterDefinition(entry.copy.appearance).modelId

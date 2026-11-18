@@ -492,6 +492,14 @@ L'IA peut préparer les quatre étapes à partir de son propre matériel dans un
 situation de danger. Les missions, leurs effets et leur budget se rejouent par
 export/import complet. Le ruleset devient **clash-combat-28** ; le **On reste présent**.
 
+## Avant-bras réels de Machi — ruleset 70
+
+La [suture des membres originaux](./clash-machi-membres.md) est utilisable
+avec un patient consentant, l’aura des bras relâchée, une aiguille physique
+et un travail interruptible. Elle reconnecte chaque avant-bras sans
+régénérer de chair ni rendre les PV perdus. Le livre et Dolphin conservent
+leurs conditions propres ; le On reste disponible.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante

@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { teamLivingForView, teamMemberForView } from '$lib/fighting/teams/status'
+  import {
+    teamLivingForView,
+    teamMemberForView,
+    teamMemberStatus,
+  } from '$lib/fighting/teams/status'
+  import { teamMemberAlive } from '$lib/fighting/teamTypes'
   import { teamAssistOptions, TEAM_ASSIST_LABELS } from '$lib/fighting/teams/availability'
   import { nextTeamIndex } from '$lib/fighting/teams/next'
   import { fighterDefinition } from '$lib/fighting/roster'
@@ -23,33 +28,27 @@
 
 <section aria-label={label}>
   <h2>{label} · {teamLivingForView(state, side)}/3</h2>
-  {#each seat.members as stored, index (stored.id)}
+  {#each seat.members as _stored, index (index)}
     {@const member = teamMemberForView(state, side, index)}
     {@const pendingBody = index === seat.active && Boolean(state.catsName)}
     {@const block = blocks[index]}
-    <div class="member" class:eliminated={member.health <= 0 && !pendingBody}>
-      <strong>{fighterDefinition(member.id).name}</strong>
-      <span
-        >{member.health <= 0
-          ? pendingBody
+    {@const alive = teamMemberAlive(member)}
+    <div class="member" class:eliminated={!alive && !pendingBody}>
+      <strong>{fighterDefinition(seat.roster[index]).name}</strong>
+      <span>{teamMemberStatus(state, side, index)[fr ? 0 : 1]}</span>
+      {#if member.halkSoul && (member.halkCohortBody || member.id !== seat.roster[index])}
+        <span
+          >{fr ? 'Corps occupé' : 'Occupied body'} : {member.halkCohortBody
             ? fr
-              ? 'Résolution en cours'
-              : 'Resolution pending'
-            : fr
-              ? 'Éliminé'
-              : 'Eliminated'
-          : index === seat.active
-            ? fr
-              ? 'En scène'
-              : 'On stage'
-            : fr
-              ? 'En réserve'
-              : 'Reserve'}</span
-      >
+              ? 'Partisan'
+              : 'Supporter'
+            : fighterDefinition(member.id).name}</span
+        >
+      {/if}
       <p>
         {fr ? 'PV' : 'HP'} : {member.health}/{member.maxHealth} · Aura : {member.aura.toFixed(1)}
       </p>
-      {#if member.health > 0 && index !== seat.active}
+      {#if alive && index !== seat.active}
         <button
           type="button"
           disabled={paused || Boolean(block)}

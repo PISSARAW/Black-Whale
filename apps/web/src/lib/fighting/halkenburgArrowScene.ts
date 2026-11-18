@@ -23,7 +23,11 @@ export function createHalkenburgArrowScene(options: EffectSceneOptions): Fighter
       arrow.root.userData.visualOnly = true
       placeVisitHand(options, { state, side, root: arrow.root })
       const target = state[side === 'player' ? 'opponent' : 'player']
-      targetPoint.set(options.worldX(target.x), options.worldY(target.y) + 1.1, 0.3)
+      targetPoint.set(
+        options.worldX(target.x),
+        options.worldY(target.y) + (fighter.halkSoulLowShot ? 0.4 : 1.1),
+        0.3,
+      )
       direction.copy(targetPoint).sub(arrow.root.position)
       if (direction.lengthSq() < 0.0001) direction.set(fighter.facing, 0, 0)
       arrow.root.quaternion.setFromUnitVectors(forward, direction.normalize())

@@ -1,4 +1,5 @@
 import { halkenburgMode } from '../halkenburgSoulTypes'
+import { retainedSoulBowReady } from '../halkenburgSoulBow'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
@@ -8,6 +9,7 @@ import { replaceHalkenburgBody } from '../halkenburgTransfer'
 import { launchHalkenburgArrow, resolveHalkenburgArrow } from '../halkenburgArrow'
 import type { ProjectileHit } from '../projectiles'
 import type { ArcadeFighter, FightState } from '../types'
+import type { PreparedEntity } from '../preparationTypes'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
@@ -37,7 +39,7 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
   const participants = supporters.map((entry) => entry.id)
-  if (archer.id === 'halkenburg' && !archer.nenOwner) participants.push(`self:${side}`)
+  if (participatesPersonally(archer)) participants.push(`self:${side}`)
   const participant = ready ? participants[rng % participants.length] : undefined
   return {
     ...state,
@@ -57,6 +59,12 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
     },
   }
 }
+function participatesPersonally(archer: ArcadeFighter): boolean {
+  return (
+    archer.halkSoul?.mind?.identity === 'halkenburg' ||
+    (archer.id === 'halkenburg' && !archer.halkCohortBody && !archer.nenOwner)
+  )
+}
 
 /** The arrow pierces every defence, so a guarded hit still lands it. */
 function possess({ state, side, defenderSide }: HatsuImpactContext): FightState {
@@ -65,11 +73,7 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
     (entry) => entry.id === archer.halkenburgSupporter,
   )
   const self = archer.halkenburgSupporter === `self:${side}`
-  if (
-    !archer.hatsuEffects.arrowNocked ||
-    (!self && (!supporter || !liveEntity(supporter) || !supporter.consenting))
-  )
-    return state
+  if (!rosterParticipantReady(archer, supporter, self)) return state
   const target = state[defenderSide]
   const occupied = supporter ? updateEntity(state, supporter.id, { sleepingFrames: 999999 }) : state
   const struck = {
@@ -85,13 +89,24 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
     },
   }
 }
+function rosterParticipantReady(
+  archer: ArcadeFighter,
+  supporter: PreparedEntity | undefined,
+  self: boolean,
+): boolean {
+  return Boolean(
+    archer.hatsuEffects.arrowNocked &&
+    !archer.halkSoul?.linked &&
+    (self || (supporter && liveEntity(supporter) && supporter.consenting)),
+  )
+}
 
 function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
   const fighter = state[side]
   const effects = fighter.hatsuEffects
   const gathers =
     ownsBow(fighter) &&
-    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
+    hasBowReserve(fighter) &&
     !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
     readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
@@ -108,6 +123,12 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
       possessedFrames: Math.max(0, possessed - 1),
     },
   }
+}
+function hasBowReserve(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.aura > 0 &&
+    (retainedSoulBowReady(fighter) || voluntaryNenAvailable(fighter, { requireReserve: true }))
+  )
 }
 
 function groupProtection(fighter: ArcadeFighter, gathers: boolean): boolean {
@@ -141,6 +162,7 @@ export function settleHalkenburgArrow(state: FightState, hit: ProjectileHit): Fi
 }
 
 function ownsBow(fighter: ArcadeFighter): boolean {
+  if (retainedSoulBowReady(fighter)) return true
   if (fighter.id === 'halkenburg') return true
   if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'halkenburg')
   return fighter.kurapika?.held?.loaded === true && fighter.kurapika.held.source === 'halkenburg'

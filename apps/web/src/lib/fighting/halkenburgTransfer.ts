@@ -1,4 +1,4 @@
-import { halkenburgMode } from './halkenburgSoulTypes'
+import { halkenburgMode, preserveRosterSoul } from './halkenburgSoulTypes'
 import { performHalkenburgSoulCommand, halkenburgSoulOptions } from './halkenburgSoulActions'
 import { drawRosterBody } from './rosterGuests'
 import { readyCohort } from './preparationWorld'
@@ -23,7 +23,7 @@ export function replaceHalkenburgBody(state: FightState, side: FightSide): Fight
   const body = drawn.fighter
   return {
     ...drawn.state,
-    [side]: {
+    [side]: preserveRosterSoul(actor, {
       ...body,
       x: actor.x,
       y: actor.y,
@@ -33,7 +33,7 @@ export function replaceHalkenburgBody(state: FightState, side: FightSide): Fight
       aura: Math.min(actor.aura, body.aura),
       halkenburgOrigin: actor.halkenburgOrigin ?? actor.id,
       halkenburgTransferFrame: state.frame,
-    },
+    }),
   }
 }
 
@@ -67,6 +67,7 @@ function transferBodyReady(state: FightState, side: FightSide): boolean {
     state.phase === 'fighting' &&
     !state.catsName &&
     canAct(actor) &&
+    !actor.halkSoul?.linked &&
     !actor.attack &&
     voluntaryNenAvailable(actor) &&
     !chainAbilitySealed(actor, 'halkenburg:neutralSpecial')

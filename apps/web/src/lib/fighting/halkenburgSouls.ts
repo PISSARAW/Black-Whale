@@ -1,5 +1,7 @@
 import { collectSoulBodies, promoteCohortBody, routeSoulBodies } from './halkenburgSoulBodies'
-import { bodyInSoulLink, setSoulOccupant, soulBodyKey } from './halkenburgSoulTypes'
+import { controlledSoulKey, soulBodyKey } from './halkenburgSoulTypes'
+import { exchangeSoulMinds, settleSoulGraph } from './halkenburgSoulGraph'
+import { interruptSoulTeamRelays, syncSoulTeamSeats } from './halkenburgSoulTeams'
 import { readyCohort, updateEntity } from './preparationWorld'
 import type { SoulBodyRecord } from './halkenburgSoulBodies'
 import type { HalkenburgSoulLink } from './halkenburgSoulTypes'
@@ -16,13 +18,14 @@ export function applyHalkenburgSoulArrow(state: FightState, hit: ProjectileHit):
   const source = participantBody(state, hit, bodies)
   const archer = bodies.find((record) => record.key === shot.archerBody)
   if (!archer || archer.body.health <= 0) return state
-  if (!source || !target || !transferPairReady(state, source, target)) return state
+  if (!source || !target || !transferPairReady(source, target)) return state
   if (!bodies.includes(source)) {
     bodies.push(source)
     const id = source.body.halkCohortBody!
     state = updateEntity(state, id, { present: false, sleepingFrames: 0 })
   }
-  state = appendSoulLink(state, { side, source, target })
+  const minds = exchangeSoulMinds({ state, bodies, source, target })
+  state = { ...appendSoulLink(state, { side, source, target }), halkSoulMinds: minds }
   // Only the participating bodies are stopped; unrelated leaders retain their own action.
   source.body = { ...source.body, halkSoul: { ...source.body.halkSoul!, linked: true } }
   target.body = { ...target.body, halkSoul: { ...target.body.halkSoul!, linked: true } }
@@ -51,12 +54,11 @@ function appendSoulLink(
     player: state.player.halkenburgOrigin ?? state.player.id,
     opponent: state.opponent.halkenburgOrigin ?? state.opponent.id,
   }
-  return { ...state, halkSoulLinks: links, halkSoulOrigins: origins }
+  return interruptSoulTeamRelays({ ...state, halkSoulLinks: links, halkSoulOrigins: origins })
 }
 function soulShotAdmitted(state: FightState, hit: ProjectileHit): boolean {
   return (
     state.phase === 'fighting' &&
-    !state.teamMatch &&
     hit.projectile.halkenburgArrow?.mode === 'souls' &&
     !state.rosterProjection
   )
@@ -81,27 +83,30 @@ function participantBody(
   const shot = hit.projectile.halkenburgArrow!,
     side = hit.projectile.owner
   if (shot.participant === `self:${side}`)
-    return bodies.find((record) => record.key === shot.archerBody)
+    return bodies.find(
+      (record) =>
+        record.key === shot.archerBody &&
+        (!shot.participantMind || record.body.halkSoul?.mind?.key === shot.participantMind),
+    )
   const supporter = readyCohort(state, side).find((entry) => entry.id === shot.participant)
   return supporter ? promoteCohortBody(state, side, supporter) : undefined
 }
-function transferPairReady(
-  state: FightState,
-  source: SoulBodyRecord,
-  target: SoulBodyRecord,
-): boolean {
+function transferPairReady(source: SoulBodyRecord, target: SoulBodyRecord): boolean {
   return (
     target.originalGuest?.role !== 'puppet' &&
     source.key !== target.key &&
     eligibleBody(source.body) &&
     eligibleBody(target.body) &&
-    !bodyInSoulLink(state, source.key) &&
-    !bodyInSoulLink(state, target.key)
+    participantsPresent(source, target)
   )
+}
+function participantsPresent(source: SoulBodyRecord, target: SoulBodyRecord): boolean {
+  return Boolean(source.body.halkSoul?.mind && target.body.halkSoul?.mind)
 }
 function eligibleBody(body: ArcadeFighter): boolean {
   return (
     body.health > 0 &&
+    !body.halkSoul?.offstage &&
     !body.hanzoProjection &&
     !body.needlePuppet &&
     body.hatsuEffects.manipulatedFrames <= 0 &&
@@ -123,73 +128,27 @@ export function advanceHalkenburgSouls(state: FightState): FightState {
     targetSleep: Math.max(0, link.targetSleep - 1),
     preparedSedative: Math.max(0, link.preparedSedative - 1),
   }))
-  return reconcileHalkenburgSouls({ ...state, halkSoulLinks: links })
+  const minds = state.halkSoulMinds?.map((item) => ({
+    ...item,
+    sleep: Math.max(0, item.sleep - 1),
+  }))
+  return reconcileHalkenburgSouls({ ...state, halkSoulLinks: links, halkSoulMinds: minds })
 }
 function settleLinks(state: FightState, bodies: SoulBodyRecord[]): FightState {
-  const links = state.halkSoulLinks!.map((link) => settleLink(link, bodies))
-  const routed = routeSoulBodies({ ...state, halkSoulLinks: links }, bodies)
-  return {
-    ...routed,
-    player: principalSurvival(routed, 'player', bodies),
-    opponent: principalSurvival(routed, 'opponent', bodies),
-  }
-}
-function settleLink(link: HalkenburgSoulLink, bodies: SoulBodyRecord[]): HalkenburgSoulLink {
-  const a = bodies.find((record) => record.key === link.sourceBody),
-    b = bodies.find((record) => record.key === link.targetBody)
-  if (!a || !b) return link
-  if (b.body.health <= 0) return sourceLost(link, a, b)
-  if (a.body.health <= 0) return cohabit(link, a, b)
-  const sourceAwake = link.sourceSleep === 0 && !externalSleep(b.body)
-  a.body = setSoulOccupant(
-    a.body,
-    link.targetMind,
-    sourceAwake || link.targetSleep > 0 || externalSleep(a.body),
+  const settled = settleSoulGraph(state, bodies)
+  const routed = routeSoulBodies(settled, bodies)
+  return syncSoulTeamSeats(
+    {
+      ...routed,
+      player: principalSurvival(routed, 'player'),
+      opponent: principalSurvival(routed, 'opponent'),
+    },
+    bodies,
   )
-  b.body = setSoulOccupant(b.body, link.sourceMind, !sourceAwake)
-  return link
 }
-function sourceLost(
-  link: HalkenburgSoulLink,
-  a: SoulBodyRecord,
-  b: SoulBodyRecord,
-): HalkenburgSoulLink {
-  a.body = setSoulOccupant(a.body, link.targetMind, link.targetSleep > 0 || externalSleep(a.body))
-  b.body = setSoulOccupant(b.body, undefined, true)
-  return { ...link, phase: a.body.health > 0 ? 'source-lost' : 'ended' }
-}
-function cohabit(
-  link: HalkenburgSoulLink,
-  a: SoulBodyRecord,
-  b: SoulBodyRecord,
-): HalkenburgSoulLink {
-  const first = link.phase !== 'cohabiting'
-  const targetSleep = first ? Math.max(link.targetSleep, link.preparedSedative) : link.targetSleep
-  const targetAwake = targetSleep === 0
-  a.body = setSoulOccupant(a.body, undefined, true)
-  b.body = setSoulOccupant(
-    b.body,
-    targetAwake ? link.targetMind : link.sourceMind,
-    (!targetAwake && link.sourceSleep > 0) || externalSleep(b.body),
-  )
-  return { ...link, targetSleep, preparedSedative: 0, phase: 'cohabiting' }
-}
-function principalSurvival(
-  state: FightState,
-  side: FightSide,
-  bodies: SoulBodyRecord[],
-): ArcadeFighter {
-  const key = `mind:${side}`,
-    link = state.halkSoulLinks!.find(
-      (item) => item.sourceMind.key === key || item.targetMind.key === key,
-    )
-  if (!link) return { ...state[side], halkSoulAlive: state[side].health > 0 }
-  const a = bodies.find((record) => record.key === link.sourceBody)!.body,
-    b = bodies.find((record) => record.key === link.targetBody)!.body
-  const alive = link.sourceMind.key === key ? b.health > 0 : a.health > 0 || b.health > 0
+function principalSurvival(state: FightState, side: FightSide): ArcadeFighter {
+  const key = controlledSoulKey(state, side)
+  const item = state.halkSoulMinds?.find((item) => item.mind.key === key)
+  const alive = item ? item.alive && !item.eliminated : state[side].health > 0
   return { ...state[side], halkSoulAlive: alive }
-}
-
-function externalSleep(body: ArcadeFighter): boolean {
-  return Boolean(body.arsenalSleep) || (body.kurapika?.blackoutFrames ?? 0) > 0
 }

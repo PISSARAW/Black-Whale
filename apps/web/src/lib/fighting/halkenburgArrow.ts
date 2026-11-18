@@ -1,6 +1,6 @@
 import { attackPhase } from './frameData'
 import { applyHalkenburgSoulArrow } from './halkenburgSouls'
-import { halkenburgMode, soulBodyKey } from './halkenburgSoulTypes'
+import { controlledSoulKey, halkenburgMode, soulBodyKey } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
 declare module './types' {
@@ -9,6 +9,7 @@ declare module './types' {
       participant: string
       mode?: import('./halkenburgSoulTypes').HalkenburgMode
       archerBody?: string
+      participantMind?: string
     }
   }
   interface ArcadeFighter {
@@ -34,7 +35,7 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     owner: side,
     fighterId: 'halkenburg',
     x: actor.x + actor.facing * 3,
-    y: actor.y + 6,
+    y: actor.y + (actor.halkSoulLowShot ? 3 : 6),
     velocityX: actor.facing * 150,
     width: 1,
     height: 0.5,
@@ -51,12 +52,7 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     lifetime: 120,
     nenPower: 1,
     hatsuPower: 1,
-    halkenburgArrow: {
-      participant: actor.halkenburgSupporter,
-      ...(halkenburgMode(state, side) === 'souls'
-        ? { mode: 'souls' as const, archerBody: soulBodyKey(state, side) }
-        : {}),
-    },
+    halkenburgArrow: committedSoulShot(state, side),
   }
   return {
     ...state,
@@ -65,9 +61,23 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     [side]: {
       ...actor,
       halkenburgGroupProtection: false,
+      halkSoulLowShot: undefined,
       hatsuEffects: { ...actor.hatsuEffects, arrowNocked: 0 },
       attack: { ...attack, projectileSpawned: true, impacted: true },
     },
+  }
+}
+function committedSoulShot(state: FightState, side: FightSide): FightProjectile['halkenburgArrow'] {
+  const actor = state[side]
+  return {
+    participant: actor.halkenburgSupporter!,
+    ...(halkenburgMode(state, side) === 'souls'
+      ? {
+          mode: 'souls' as const,
+          archerBody: soulBodyKey(state, side),
+          participantMind: actor.halkSoul?.mind?.key ?? controlledSoulKey(state, side),
+        }
+      : {}),
   }
 }
 

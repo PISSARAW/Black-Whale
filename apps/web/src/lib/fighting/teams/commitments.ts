@@ -13,7 +13,11 @@ export function teamWorldEngaged(state: FightState, side: FightSide): boolean {
   return (state.battlefield?.entities ?? []).some((entry) => ownedEffect(entry, side))
 }
 function gumWorldEngaged(state: FightState, side: FightSide): boolean {
-  return Boolean(state.gumNetwork?.links.some((link) => link.owner === side) || state.gumNetwork?.pending[side])
+  return Boolean(
+    state.halkSoulLinks?.length ||
+    state.gumNetwork?.links.some((link) => link.owner === side) ||
+    state.gumNetwork?.pending[side],
+  )
 }
 function ownedEffect(entry: PreparedEntity, side: FightSide): boolean {
   if (entry.health <= 0) return false

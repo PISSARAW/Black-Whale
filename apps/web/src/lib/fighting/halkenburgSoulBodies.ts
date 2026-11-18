@@ -1,5 +1,7 @@
 import { createFightState } from './fightState'
-import { principalMind, soulBodyKey, stopSoulBody } from './halkenburgSoulTypes'
+import { controlledSoulKey, principalMind, soulBodyKey, stopSoulBody } from './halkenburgSoulTypes'
+import { teamSoulBodies } from './halkenburgSoulTeams'
+import { teamEntry } from './teamRelayRules'
 import type { HalkenburgMind } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { PreparedEntity } from './preparationTypes'
@@ -15,7 +17,7 @@ export function collectSoulBodies(state: FightState): SoulBodyRecord[] {
     key: soulBodyKey(state, side),
     body: markMainBody(state, side),
   }))
-  return [
+  const records: SoulBodyRecord[] = [
     ...main,
     ...(state.rosterGuests ?? []).map((guest) => ({
       key: guest.fighter.halkSoul?.key ?? `guest:${guest.id}`,
@@ -36,7 +38,11 @@ export function collectSoulBodies(state: FightState): SoulBodyRecord[] {
             },
           },
     })),
+    ...teamSoulBodies(state),
   ]
+  const unique = new Map<string, SoulBodyRecord>()
+  for (const record of records) if (!unique.has(record.key)) unique.set(record.key, record)
+  return [...unique.values()]
 }
 function markMainBody(state: FightState, side: FightSide): ArcadeFighter {
   const body = state[side]
@@ -79,10 +85,14 @@ export function routeSoulBodies(state: FightState, bodies: SoulBodyRecord[]): Fi
   const chosen = new Map<FightSide, SoulBodyRecord>()
   for (const side of ['player', 'opponent'] as const) {
     const candidates = bodies.filter(
-      ({ body }) => body.halkSoul?.mind?.principal && body.halkSoul.mind.side === side,
+      ({ body }) => body.halkSoul?.mind?.key === controlledSoulKey(state, side),
     )
     candidates.sort((a, b) => priority(b.body) - priority(a.body))
-    if (candidates[0]) chosen.set(side, candidates[0])
+    if (candidates[0]) {
+      const record = candidates[0]
+      enterSoulBody(record, side)
+      chosen.set(side, record)
+    }
   }
   for (const side of ['player', 'opponent'] as const) {
     if (chosen.has(side)) continue
@@ -94,13 +104,20 @@ export function routeSoulBodies(state: FightState, bodies: SoulBodyRecord[]): Fi
   // Every supported transfer starts with two real seats and never duplicates a body.
   if (!chosen.get('player') || !chosen.get('opponent')) return state
   const rosterGuests = bodies
-    .filter((record) => ![...chosen.values()].includes(record))
+    .filter((record) => ![...chosen.values()].includes(record) && !record.body.halkSoul?.offstage)
     .map(soulGuest)
   return {
     ...state,
     player: chosen.get('player')!.body,
     opponent: chosen.get('opponent')!.body,
     rosterGuests: rosterGuests.length ? rosterGuests : undefined,
+  }
+}
+function enterSoulBody(record: SoulBodyRecord, side: FightSide) {
+  if (!record.body.halkSoul?.offstage) return
+  record.body = {
+    ...teamEntry(record.body, side),
+    halkSoul: { ...record.body.halkSoul, offstage: false },
   }
 }
 function priority(body: ArcadeFighter): number {

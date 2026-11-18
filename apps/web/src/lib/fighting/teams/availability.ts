@@ -1,6 +1,7 @@
 import { atTeamGate, teamRelayBlock } from '../teamRelayRules'
 import type { FightSide, FightState } from '../types'
 import type { TeamSeat } from '../teamTypes'
+import { teamMemberAlive } from '../teamTypes'
 export type TeamAssistBlock =
   'phase' | 'used' | 'relay' | 'reserve' | 'gate' | 'body' | 'commitment'
 export function teamAssistBlock(
@@ -34,7 +35,7 @@ function reserveAvailable(seat: TeamSeat, index: number) {
     index >= 0 &&
     index < seat.members.length &&
     index !== seat.active &&
-    seat.members[index].health > 0
+    teamMemberAlive(seat.members[index])
   )
 }
 export const TEAM_ASSIST_LABELS: Record<TeamAssistBlock, readonly [string, string]> = {

@@ -6,6 +6,17 @@ export interface HalkenburgMind {
   side: FightSide
   principal: boolean
   identity?: FighterId
+  teamIndex?: number
+}
+/** Authoritative position of a mind; links are transfer history, never copies of occupants. */
+export interface HalkenburgMindState {
+  mind: HalkenburgMind
+  body: string
+  returnBody?: string
+  priority: number
+  sleep: number
+  alive: boolean
+  eliminated?: boolean
 }
 export interface HalkenburgSoulLink {
   id: number
@@ -25,6 +36,7 @@ export interface HalkenburgSoulBody {
   linked?: boolean
   origin: FightSide
   mind?: HalkenburgMind
+  offstage?: boolean
 }
 declare module './types' {
   interface ArcadeFighter {
@@ -34,11 +46,15 @@ declare module './types' {
     halkForeignMind?: boolean
     halkCohortBody?: string
     halkSedativeSpent?: boolean
+    halkTeamMind?: string
+    halkRosterMind?: string
+    halkSoulLowShot?: boolean
   }
   interface FightState {
     halkenburgModes?: Partial<Record<FightSide, HalkenburgMode>>
     halkSoulLinks?: HalkenburgSoulLink[]
     halkSoulOrigins?: Record<FightSide, FighterId>
+    halkSoulMinds?: HalkenburgMindState[]
   }
 }
 
@@ -48,18 +64,23 @@ export function halkenburgMode(state: FightState, side: FightSide): HalkenburgMo
 export function soulBodyKey(state: FightState, side: FightSide): string {
   const body = state[side]
   if (body.halkSoul) return body.halkSoul.key
-  const key = `main:${body.id}:${body.halkenburgTransferFrame ?? 0}:${state.teamMatch?.seats[side].active ?? 0}`
+  if (state.teamMatch) return `team:${side}:${state.teamMatch.seats[side].active}`
+  const key = `main:${body.id}:${body.halkenburgTransferFrame ?? 0}:0`
   const other = side === 'player' ? 'opponent' : 'player'
   // A mirror match contains two distinct material bodies with the same roster identity.
   return state[other].id === body.id ? `${key}:${side}` : key
 }
 export function principalMind(state: FightState, side: FightSide): HalkenburgMind {
   return {
-    key: `mind:${side}`,
+    key: controlledSoulKey(state, side),
     side,
     principal: true,
-    identity: state.halkSoulOrigins?.[side] ?? state[side].id,
+    identity: state[side].halkenburgOrigin ?? state[side].id,
+    ...(state.teamMatch ? { teamIndex: state.teamMatch.seats[side].active } : {}),
   }
+}
+export function controlledSoulKey(state: FightState, side: FightSide): string {
+  return state.teamMatch ? `mind:${side}:${state.teamMatch.seats[side].active}` : `mind:${side}`
 }
 export function bodyInSoulLink(state: FightState, key: string): boolean {
   return Boolean(
@@ -76,9 +97,25 @@ export function setSoulOccupant(
     ...body,
     halkSoul: { ...body.halkSoul!, mind },
     halkSoulSleep: sleeping,
-    halkForeignMind: !mind?.identity || mind.identity !== body.id,
+    halkForeignMind: soulIsForeign(body, mind),
   }
   return changed ? stopSoulBody(next) : next
+}
+function soulIsForeign(body: ArcadeFighter, mind: HalkenburgMind | undefined): boolean {
+  if (mind && body.halkRosterMind === mind.key) return false
+  return Boolean(body.halkCohortBody) || !mind?.identity || mind.identity !== body.id
+}
+/** Preserve the requested variant's existing grant only for its own roster mind. */
+export function preserveRosterSoul(actor: ArcadeFighter, body: ArcadeFighter): ArcadeFighter {
+  if (!actor.halkSoul) return body
+  return {
+    ...body,
+    halkSoul: actor.halkSoul,
+    halkSoulAlive: actor.halkSoulAlive,
+    halkTeamMind: actor.halkTeamMind,
+    halkRosterMind: actor.halkSoul.mind?.key,
+    halkForeignMind: false,
+  }
 }
 export function stopSoulBody(body: ArcadeFighter): ArcadeFighter {
   return {
@@ -90,6 +127,7 @@ export function stopSoulBody(body: ArcadeFighter): ArcadeFighter {
     wakeupInvulnerableFrames: 0,
     reversalWindow: 0,
     hatsuChargeFrames: 0,
+    halkSoulLowShot: undefined,
     motion: undefined,
     pose: body.halkSoulSleep ? 'down' : 'idle',
   }

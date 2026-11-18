@@ -1,3 +1,4 @@
+import { createPursuitCameraHold } from './pursuitCamera'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -35,6 +36,7 @@ export interface CombatCameraOptions {
   detailWeight?: number
   detailRect?: CameraDetailRect
   companion?: FightSide
+  pursuit?: boolean
 }
 interface SafeRegion {
   left: number
@@ -184,7 +186,7 @@ function mainCameraFrame(
 ) {
   const { state, base, span } = options
   const intensity = clamp(options.intensity, 0, 1)
-  const shot = directionalCameraOffsets(state, intensity)
+  const shot = directionalCameraOffsets(state, intensity, options.pursuit)
   const { bounds, insetOffset, lift } = layout
   const focus = impactFocus(options)
   const cue = intensity > 0 ? (options.direction?.strength ?? 0) : 0
@@ -232,8 +234,11 @@ export function createCombatCamera() {
   let lastFrame = -1
   let pair = ''
   let detailWeight = 0
+  const pursuit = createPursuitCameraHold()
   return {
-    update(options: CombatCameraOptions): CombatCameraFrame {
+    pursuit,
+    update(input: CombatCameraOptions): CombatCameraFrame {
+      const options = { ...input, pursuit: input.pursuit ?? pursuit(input.state) }
       const key = `${options.state.player.id}:${options.state.opponent.id}:${options.state.roundNumber}`
       const reset = !held || lastFrame > options.state.frame || key !== pair
       if (reset) detailWeight = 0
@@ -279,6 +284,8 @@ function nextCameraDepth(previous: number, target: number, options: CombatCamera
   const change = (target - previous) * fraction
   // A narrow frame can afford to close quickly on paper; limit the visible push-in.
   const controlled =
-    inward && directionalComboShot(options.state) ? Math.max(change, -8 * dt) : change
+    inward && directionalComboShot(options.state, options.pursuit)
+      ? Math.max(change, -8 * dt)
+      : change
   return previous + controlled
 }

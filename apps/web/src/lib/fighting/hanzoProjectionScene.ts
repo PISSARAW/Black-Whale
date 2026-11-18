@@ -1,3 +1,4 @@
+import { pursuitCameraActive, pursuitSleeperEdge } from './pursuitCamera'
 import { sleepingBody } from './hanzoProjection'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { HumanPose, HumanAnimationLayer } from '$lib/tour/humanAnimation'
@@ -48,15 +49,21 @@ export function createHanzoProjectionScene(options: ProjectionSceneOptions) {
 export function projectionCameraSpan(
   state: FightState,
   positions: number[],
-  worldX: (x: number) => number,
+  camera: { worldX: (x: number) => number; aspect: number },
 ) {
+  const { worldX, aspect } = camera
+  const positionsInShot = [...positions]
+  const tightPursuit = aspect < 1 && pursuitCameraActive(state)
   for (const fighter of [state.player, state.opponent]) {
-    if (fighter.hanzoProjection) positions.push(worldX(fighter.hanzoProjection.bodyX))
-    if (fighter.luiniPassage) positions.push(worldX(fighter.luiniPassage.originX))
+    if (fighter.hanzoProjection) {
+      const bodyX = worldX(fighter.hanzoProjection.bodyX)
+      positionsInShot.push(tightPursuit ? pursuitSleeperEdge(bodyX, positions) : bodyX)
+    }
+    if (fighter.luiniPassage) positionsInShot.push(worldX(fighter.luiniPassage.originX))
   }
   for (const guest of state.rosterGuests ?? [])
-    if (guest.phase !== 'eliminated') positions.push(worldX(guest.fighter.x))
-  const left = Math.min(...positions)
-  const right = Math.max(...positions)
+    if (guest.phase !== 'eliminated') positionsInShot.push(worldX(guest.fighter.x))
+  const left = Math.min(...positionsInShot)
+  const right = Math.max(...positionsInShot)
   return { centre: (left + right) / 2, gap: right - left }
 }

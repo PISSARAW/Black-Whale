@@ -1,3 +1,4 @@
+import { pursuitCameraActive } from './pursuitCamera'
 import { attackData } from './frameData'
 import { DIRECTIONAL_LAUNCH_SPEED, isAirPursuit, type DirectionalEnding } from './directionalChain'
 import type { CameraDetail } from './cinematicTypes'
@@ -28,13 +29,14 @@ function actorShot(actor: ArcadeFighter) {
   return { ending, weight, ...profile, lead: profile.lead * actor.facing }
 }
 
-export function directionalComboShot(state: FightState) {
+export function directionalComboShot(state: FightState, pursuit = pursuitCameraActive(state)) {
   if (state.phase !== 'fighting') return
+  if (pursuit) return { ending: 'air' as const, ...PROFILES.air, weight: 1, lead: 0 }
   return actorShot(state.player) ?? actorShot(state.opponent)
 }
 
-export function directionalCameraOffsets(state: FightState, intensity: number) {
-  const shot = intensity > 0 ? directionalComboShot(state) : undefined
+export function directionalCameraOffsets(state: FightState, intensity: number, pursuit?: boolean) {
+  const shot = intensity > 0 ? directionalComboShot(state, pursuit) : undefined
   if (!shot) return { zoom: 0, look: 0, tilt: 0, lead: 0, minimum: 5.9 }
   const weight = shot.weight * intensity
   return {

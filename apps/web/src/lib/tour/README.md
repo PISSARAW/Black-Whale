@@ -55,31 +55,15 @@ Le plan courant compte 429 espaces sur 46 niveaux, dont 35 niveaux intérieurs.
 
 ## Navigation de la visite
 
-`TourWorkspace.svelte` garde la scène montée sur toute la largeur. La barre propose le
-pont, les plans, la recherche et le plein écran ; le panneau Options regroupe Confort,
-Lieux / Nen, Commandes et Sources. Les outils photo et Gyo restent dans la vue.
+`TourWorkspace.svelte` garde la scène montée sur toute la largeur. La barre propose le pont, les plans, la recherche et le plein écran ; le panneau Options regroupe Confort, Lieux / Nen, Commandes et Sources. Les outils photo et Gyo restent dans la vue.
 
-Le sélecteur de `TourPlanDialog.svelte` consulte les ponts et les intérieurs sans déplacer
-le visiteur. Seule la sélection d’une pièce déclenche le déplacement. « Ma position »
-revient au niveau parcouru ; le marqueur de position ne figure que sur ce niveau.
-`TourPlanViewport.svelte` porte le zoom et le déplacement du plan, sans sélectionner une
-pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie sous le plan.
+Le sélecteur de `TourPlanDialog.svelte` consulte les ponts et les intérieurs sans déplacer le visiteur. Seule la sélection d’une pièce déclenche le déplacement. « Ma position » revient au niveau parcouru ; le marqueur de position ne figure que sur ce niveau. `TourPlanViewport.svelte` porte le zoom et le déplacement du plan, sans sélectionner une pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie sous le plan.
 
 ## Modèles humains communs
 
-`humanLocomotion.ts` pilote les corps rendus à partir de leur déplacement réel :
-vitesse et accélération bornées, demi-tours avec pas alternés, puis retour progressif
-à la pose de repos. `humanFootSupport.ts` conserve l'appui en coordonnées monde après
-les transitions. Le cycle de `humanWalk.ts` suit la distance parcourue ; l'horloge
-murale ne fait pas marcher un personnage immobile. La scène conserve ce contrôleur
-quand une apparence est reconstruite. `humanLocomotion.test.ts` vérifie les transitions,
-les appuis, les demi-tours, le freinage avant un changement de direction et les frames figées.
+`humanLocomotion.ts` pilote les corps rendus à partir de leur déplacement réel : vitesse et accélération bornées, demi-tours avec pas alternés, puis retour progressif à la pose de repos. `humanFootSupport.ts` conserve l'appui en coordonnées monde après les transitions. Le cycle de `humanWalk.ts` suit la distance parcourue ; l'horloge murale ne fait pas marcher un personnage immobile. La scène conserve ce contrôleur quand une apparence est reconstruite. `humanLocomotion.test.ts` vérifie les transitions, les appuis, les demi-tours, le freinage avant un changement de direction et les frames figées.
 
-Les contacts de Tour et Clash partagent `humanLimbReach.ts` et `humanJointLimits.ts` :
-le solveur garde les genoux et coudes sur leur axe de flexion, sans allonger les membres.
-La liberté de rotation du genou diminue à l'approche de l'extension.
-Le plan de flexion précédent guide les contacts mobiles ; les rotations équivalentes
-autour de ±180° sont conservées pour éviter un retournement artificiel de l'épaule.
+Les contacts de Tour et Clash partagent `humanLimbReach.ts` et `humanJointLimits.ts` : le solveur garde les genoux et coudes sur leur axe de flexion, sans allonger les membres. La liberté de rotation du genou diminue à l'approche de l'extension. Le plan de flexion précédent guide les contacts mobiles ; les rotations équivalentes autour de ±180° sont conservées pour éviter un retournement artificiel de l'épaule.
 
 `humanFigure.ts` construit les personnages de la visite, les aperçus de sélection et
 les combattants de Fighting 2D (`apps/web/src/lib/fighting/fighterFigure.ts`). Les détails des visages,

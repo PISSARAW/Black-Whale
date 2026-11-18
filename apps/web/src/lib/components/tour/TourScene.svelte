@@ -73,7 +73,7 @@
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import type { HumanFigure } from '$lib/tour/humanFigure'
-  import { createHumanLocomotion } from '$lib/tour/humanLocomotion'
+  import * as humanCarry from '$lib/tour/humanSceneCarry'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { type CardFace, type EyeFeed } from '$lib/tour/morena'
@@ -1827,7 +1827,7 @@
         /** Near and far representations of a shared human, when this is one. */
         humanLod?: { near: import('three').Group; far: import('three').Group }
         humanAnimate?: HumanFigure['animate']
-        humanLocomotion?: ReturnType<typeof createHumanLocomotion>
+        humanLocomotion?: ReturnType<typeof humanCarry.createLocomotion>
         humanPose?: HumanPose
         humanHeading?: number
         /** False only until the first authoritative position has been applied. */
@@ -2081,7 +2081,7 @@
           pane,
           humanLod,
           humanAnimate,
-          humanLocomotion: humanAnimate ? createHumanLocomotion() : undefined,
+          humanLocomotion: humanAnimate ? humanCarry.createLocomotion() : undefined,
         }
       }
 
@@ -2108,31 +2108,8 @@
           keyOf: (seen) =>
             `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
           build: buildApparition,
-          preserve: (held) => ({
-            facing: held.facing,
-            flown: held.flown,
-            humanLocomotion: held.humanLocomotion,
-            position: held.positioned ? held.root.position.clone() : undefined,
-            angle: held.root.rotation.y,
-          }),
-          restore: (held, saved) => {
-            const previous = saved as
-              | (Pick<Shown, 'facing' | 'flown' | 'humanLocomotion'> & {
-                  position?: import('three').Vector3
-                  angle: number
-                })
-              | undefined
-            held.facing = previous?.facing
-            held.flown = previous?.flown
-            if (held.humanAnimate && previous?.humanLocomotion) {
-              held.humanLocomotion = previous.humanLocomotion
-              if (previous.position) {
-                held.root.position.copy(previous.position)
-                held.root.rotation.y = previous.angle
-                held.positioned = true
-              }
-            }
-          },
+          preserve: humanCarry.preserve,
+          restore: humanCarry.restore,
           update: (held, seen) => {
             Object.assign(held, shownState(seen, seconds))
             held.root.userData.heading = seen.heading
@@ -2526,24 +2503,7 @@
             // Game simulations usually publish human positions at 30 Hz while
             // the scene renders at the display rate. Ease toward the latest
             // authoritative point instead of visibly hopping between ticks.
-            const fallbackHeading =
-              held.humanHeading ??
-              held.facing ??
-              Math.atan2(
-                camera.position.x - held.root.position.x,
-                camera.position.z - held.root.position.z,
-              )
-            const locomotion = held.humanLocomotion?.(
-              held.root,
-              {
-                at: held.at,
-                y: held.y,
-                pose: held.humanPose,
-                heading: fallbackHeading,
-              },
-              { seconds, delta },
-            )
-            held.facing = held.root.rotation.y
+            const locomotion = humanCarry.step(held, camera, { seconds, delta })
             held.root.updateMatrixWorld(true)
             // `Frustum.intersectsObject` only accepts renderable objects with
             // their own geometry. Both LODs are groups, so asking it directly

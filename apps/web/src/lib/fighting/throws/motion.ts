@@ -4,6 +4,7 @@ import { rightHandedPose } from '../fightHandedPose'
 import type { ThrowCinematicFrame } from '../throwCinematic'
 import type { FightSide, FightState } from '../types'
 import { throwPerformance } from './catalogue'
+import { balancedThrowPose } from './balance'
 import { sampleThrowBeat, returningThrowPose } from './sample'
 
 export function signatureThrowPlan(options: {
@@ -22,9 +23,9 @@ export function signatureThrowPlan(options: {
   if (actor && performance.rightHand && motion.fighter.facing === -1) pose = rightHandedPose(pose)
   return {
     key: `throw:${performance.id}:${frame.sequence}:${side}`,
-    pose,
+    pose: actor && beat.actorPath![1] <= 0.01 ? balancedThrowPose(pose) : pose,
     blend: 0,
-    plant: actor && beat.actorPath![1] === 0,
+    plant: false,
   }
 }
 

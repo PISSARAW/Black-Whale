@@ -132,6 +132,23 @@ hitstop compris. Une super garde les mêmes possibilités de déprojection.
 Les commandes locales, tactiles, manette, PvP et replays partagent ce chemin.
 La règle de replay passe à `clash-combat-48`.
 
+## Poids et appuis
+
+Le film tourne les corps autour du bassin. Le lanceur baisse son centre de gravité
+et transfère ses appuis, avec un pied libre pendant le pivot ; les deux semelles
+ne sont pas verrouillées pendant toute la prise. Les jambes utilisent deux os de
+longueur constante et un genou à charnière. Les inclinaisons du lanceur au sol
+restent mesurées et la rotation passe par les hanches et les pas.
+
+Les trajectoires et les articulations conservent leur vitesse entre les poses
+intermédiaires. Après le sommet, la descente accélère jusqu’à l’impact. La prise
+physique reste à portée réelle des bras jusqu’au lâcher et les torses ne sont
+pas autorisés à se traverser pendant le maintien. Chaînes, gum et autres liens
+gardent leur mécanisme propre. Le corps projeté rejoint le sol entier à la fin,
+sans modifier les positions, collisions ou dégâts calculés par le moteur.
+`physics.test.ts` vérifie le pivot, les vitesses, la chute, les longueurs d’os,
+le contact au sol et les deux sièges. Il utilise les couches du rendu de combat.
+
 ## Plans et conditions
 
 `camera.ts` dirige quatre plans : détail de la prise ou de l'accessoire,

@@ -1,4 +1,5 @@
-import { lerpPose, type FightPose } from '../fightPose'
+import { throwTravel, sampleThrowChannel } from './trajectory'
+import { FIGHT_JOINTS, lerpPose, type FightPose } from '../fightPose'
 import type { ThrowPerformance, ThrowBeat, ThrowCameraKey } from './types'
 
 export const throwSmooth = (value: number) => {
@@ -9,31 +10,30 @@ const mix = (a: number, b: number, t: number) => a + (b - a) * t
 
 export function sampleThrowBeat(performance: ThrowPerformance, progress: number): ThrowBeat {
   const t = Math.max(0, Math.min(1, progress))
-  const keys = performance.beats
-  const index = Math.max(
-    1,
-    keys.findIndex((beat) => beat.at >= t),
-  )
-  const a = keys[index - 1],
-    b = keys[index]
-  const f = throwSmooth((t - a.at) / (b.at - a.at))
   return {
     at: t,
-    attacker: lerpPose(a.attacker, b.attacker, f),
-    victim: lerpPose(a.victim, b.victim, f),
-    path: [
-      mix(a.path[0], b.path[0], f),
-      mix(a.path[1], b.path[1], f),
-      mix(a.path[2], b.path[2], f),
-    ],
-    actorPath: actorTravel(a, b, f),
+    attacker: continuousThrowPose(performance, t, 'attacker'),
+    victim: continuousThrowPose(performance, t, 'victim'),
+    path: throwTravel(performance, t, 'path'),
+    actorPath: throwTravel(performance, t, 'actorPath'),
   }
 }
 
-function actorTravel(a: ThrowBeat, b: ThrowBeat, f: number): readonly [number, number, number] {
-  const from = a.actorPath ?? [0, 0, 0],
-    to = b.actorPath ?? [0, 0, 0]
-  return [mix(from[0], to[0], f), mix(from[1], to[1], f), mix(from[2], to[2], f)]
+function continuousThrowPose(
+  performance: ThrowPerformance,
+  t: number,
+  role: 'attacker' | 'victim',
+): FightPose {
+  return Object.fromEntries(
+    FIGHT_JOINTS.filter((joint) => performance.beats.some((beat) => beat[role][joint])).map(
+      (joint) => [
+        joint,
+        [0, 1, 2].map((axis) =>
+          sampleThrowChannel(performance.beats, t, (beat) => beat[role][joint]?.[axis] ?? 0),
+        ),
+      ],
+    ),
+  ) as FightPose
 }
 
 export function sampleThrowCamera(performance: ThrowPerformance, progress: number): ThrowCameraKey {

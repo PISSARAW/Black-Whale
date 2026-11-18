@@ -1,3 +1,5 @@
+import { coupleThrowGrip } from './coupling'
+import { poseThrowPhysics, settleThrowPhysics } from './physics'
 import { createThrowBindings } from './bindings'
 import { alignThrowGrip, alignThrowPuppet } from './contacts'
 import { createThrowFuture } from './futureScene'
@@ -50,6 +52,8 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       aura.visible = false
       const frame = options.throwFrame?.()
       if (!frame?.active) return
+      poseThrowPhysics(options, frame)
+      coupleThrowGrip(options, frame)
       const performance = throwPerformance(frame.performance)
       if (physicalGrip(performance)) alignThrowGrip(options, frame)
       alignThrowPuppet(options, state, frame)
@@ -62,6 +66,7 @@ export function createThrowSignatureScene(options: EffectSceneOptions): FighterE
       fourth.sync(state, frame)
       fifth.sync(state, frame)
       sixth.sync(state, frame)
+      settleThrowPhysics(options, frame)
       if (!frame.powered || options.comfort?.().flashes === false) return
       const actor = options.figureOf?.(frame.attacker)
       if (!actor) return

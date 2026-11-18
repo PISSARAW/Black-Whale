@@ -5,7 +5,7 @@ import { fightRigOf } from '../fightRig'
 import type { EffectSceneOptions } from '../fighterEffectScene'
 import type { ThrowCinematicFrame } from '../throwCinematic'
 import type { FightState } from '../types'
-import { throwSmooth } from './sample'
+import { throwGripWeight } from './coupling'
 import { throwPerformance } from './catalogue'
 
 /** Both bodies are already posed; keep the gripping hand on the actual victim's anatomy. */
@@ -13,15 +13,14 @@ export function alignThrowGrip(options: EffectSceneOptions, frame: ThrowCinemati
   const bodies = throwBodies(options, frame)
   if (!bodies) return
   const { human, target } = bodies
-  const t = frame.age / frame.duration
-  const weight = 1 - throwSmooth((t - 0.3) / 0.28)
+  const weight = throwGripWeight(frame)
   if (weight <= 0) return
   const rig = fightRigOf(human)
   const leftOnly = frame.performance?.startsWith('chrollo')
   const indices = leftOnly ? [0] : [0, 1]
   for (const index of indices) {
     const waist = throwPerformance(frame.performance)?.grip === 'waist'
-    const node = waist ? target.pelvis : index === 0 ? target.arms[1].children[1] : target.torso
+    const node = waist ? target.pelvis : index === 0 ? fightRigOf(target).wrists[1] : target.torso
     const goal = node.getWorldPosition(new Vector3())
     goal.z += (index === 0 ? -1 : 1) * 0.08
     reachLimb(

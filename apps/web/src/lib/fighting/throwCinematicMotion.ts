@@ -1,3 +1,4 @@
+import { balancedThrowPose } from './throws/balance'
 import { bodyPlan, type BodyMotionOptions } from './fightBodyMotion'
 import { lerpPose, type BodyPlan, type FightPose } from './fightPose'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -102,8 +103,15 @@ export function throwBodyPlan(
   if (!actor && !frame.active && options.progress >= 0.5) return undefined
   const signature = signatureThrowPlan({ motion: options, frame, side: options.side, ordinary })
   if (signature) return signature
-  const pose = actor ? throwingPose(ordinary.pose, progress) : thrownPose(progress)
-  return { key: `throw-film:${frame.sequence}:${options.side}`, pose, plant: actor, blend: 0 }
+  const pose = actor
+    ? balancedThrowPose(throwingPose(ordinary.pose, progress))
+    : thrownPose(progress)
+  return {
+    key: `throw-film:${frame.sequence}:${options.side}`,
+    pose,
+    plant: false,
+    blend: 0,
+  }
 }
 
 function throwingPose(ordinary: FightPose, progress: number): FightPose {

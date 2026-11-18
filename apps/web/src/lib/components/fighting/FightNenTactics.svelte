@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightNenApplications from './FightNenApplications.svelte'
   import FightNenGuide from './FightNenGuide.svelte'
   import { enProfile } from '$lib/fighting/en/profiles'
   import { enDescription } from '$lib/fighting/en/presentation'
@@ -52,6 +53,7 @@
         : control.label}</button
     >
   {/each}
+  {#if fighter}<FightNenApplications {fighter} {language} {onControl} />{/if}
   <FightNenGuide {language} />
 </div>
 

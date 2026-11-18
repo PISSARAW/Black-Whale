@@ -315,7 +315,8 @@ describe('Nen techniques in an actual 2D duel', () => {
       { dt: FIXED_STEP, opponentInput: { ...EMPTY_INPUT, shu: true, focusHands: true } },
     )
     expect(next.player.nen.en).not.toBeNull()
-    expect(next.opponent.nen.shu.length).toBe(1)
+    // No equipped Shu support is supplied to this opponent.
+    expect(next.opponent.nen.shu.length).toBe(0)
     expect(next.opponent.nen.ryu.hands).toBe(0.76)
     const drained = advanceNen({ ...next.player, aura: 0.01 }, 1)
     expect(drained).toMatchObject({

@@ -5,6 +5,7 @@ import { activeEnRadius, canMaintainEn } from './en/access'
 import { voluntaryNenAvailable } from './nenAccess'
 import { transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
 import type { ArcadeFighter, FightInput, FightNenZone } from './types'
+import { shuSupportAvailable } from './nenApplications'
 
 /** Duel distances/maintenance costs are tuning, not claims about manga measurements. */
 /** Legacy arcade constant, never a character range or proof of learned En. */
@@ -58,7 +59,7 @@ export function applyAdvancedNen(fighter: ArcadeFighter, input: FightInput): Arc
   fighter = clearBodyGyo(fighter)
   const available = advancedNenAvailable(fighter)
   const en = available && Boolean(input.en) && canMaintainEn(fighter, input)
-  const shu = available && Boolean(input.shu)
+  const shu = available && Boolean(input.shu) && shuSupportAvailable(fighter)
   if (fighter.nen.ko) {
     const overlaid = action(fighter, { type: 'SHU', objectId: shuObject(fighter), on: shu })
     return applySightInputs(overlaid, input, available)

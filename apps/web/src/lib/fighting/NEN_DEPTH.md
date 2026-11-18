@@ -16,3 +16,12 @@ niveau appris, fournir un objet ou supprimer une condition.
 `nenCategories.ts` distingue davantage les rendements tout en conservant le
 maximum antérieur. Le niveau appris sert à l’admission des applications et au
 contrôle, sans seconde pénalité identique appliquée aux dégâts.
+
+## Applications accessibles
+
+`nenApplications.ts` et le panneau des tactiques proposent des commandes de maintien
+ordinaires : Ryu offensif, Ken, Shu sur un support disponible et l’action personnelle
+existante. Une application n’ajoute ni projectile, ni matériel, ni propriété nouvelle.
+Les commandes passent par les entrées et admissions du moteur, donc les replays et
+les conditions propres continuent de s’appliquer. Shu ne couvre plus une pierre
+fictive dans une main vide ; le lancer physique ordinaire reste une adaptation.

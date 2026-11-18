@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 913
+Fichiers : 918
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -723,6 +723,14 @@ Fichiers : 913
 ## `apps/web/src/lib/fighting/gumObjectAnchors.test.ts`
 
 - Hisoka’s simultaneous physical object attachments > requires actual contact, then walks and jumps to another support without discarding the first strand
+
+## `apps/web/src/lib/fighting/gumProsthesesReplay.test.ts`
+
+- physical injury premises and prosthesis commands across the real network and replay boundary > preserves the chosen side without providing a Hatsu or a ready-made prosthesis
+
+## `apps/web/src/lib/fighting/gumProsthesisFigure.test.ts`
+
+- rubber replacements and their real surface disguise on the articulated model > shows the actual damaged parts without erasing the rest of the rig
 
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 

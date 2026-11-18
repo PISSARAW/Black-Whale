@@ -14,11 +14,20 @@ export function dolphinLoanAi(
 ): FightState | null {
   if (!state.opponent.dolphinLoan) return null
   return (
+    prosthesisLoanAi(state) ??
     cookieLoanAi(state) ??
     loanAttackAi(state, perform) ??
     preparedLoanAi(state, perform) ??
     finishLoanAi(state, perform)
   )
+}
+
+function prosthesisLoanAi(state: FightState): FightState | null {
+  if (!state.opponent.bodyDamage) return null
+  if (state.opponent.gumProstheses && Math.abs(state.opponent.x - state.player.x) <= 12) return null
+  const action = state.opponent.gumProstheses ? 'gum-spring-step' : 'gum-prosthesis'
+  const next = performArsenalCommand(state, 'opponent', { action, loan: true })
+  return next === state ? null : next
 }
 function cookieLoanAi(state: FightState): FightState | null {
   const held = state.opponent.dolphinLoan!.held

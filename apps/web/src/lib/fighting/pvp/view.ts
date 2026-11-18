@@ -181,6 +181,7 @@ function redactGuests(view: FightState, other: FightSide): void {
 }
 function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
+  if (enemy.gumProstheses?.hidden) enemy.gumProstheses = undefined
   hideGumObjectAnchors(enemy)
   if (enemy.nen.in) {
     enemy.nen = createFightingNen()

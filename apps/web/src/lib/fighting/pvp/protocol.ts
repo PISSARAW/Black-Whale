@@ -2,6 +2,7 @@ import { FIGHTING_ROSTER } from '../roster'
 import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
+import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
 import { validArsenalCommand } from '../retrospectiveArsenal'
@@ -158,7 +159,7 @@ function sideFlags(value: unknown, optional: boolean): boolean {
 }
 function validPreparation(value: unknown): boolean {
   if (value === undefined) return true
-  if (!record(value) || !only(value, ['mode', 'resources', 'cohorts'])) return false
+  if (!preparationHeader(value)) return false
   if (
     !member(value.mode, ['duel', 'scenario']) ||
     !Array.isArray(value.resources) ||
@@ -186,6 +187,14 @@ function validPreparation(value: unknown): boolean {
       ]),
     ) &&
     value.cohorts.every((side) => member(side, ['player', 'opponent']))
+  )
+}
+
+function preparationHeader(value: unknown): value is Record<string, unknown> {
+  return (
+    record(value) &&
+    only(value, ['mode', 'resources', 'cohorts', 'injuries']) &&
+    validInjuryPreparation(value.injuries, value.mode)
   )
 }
 

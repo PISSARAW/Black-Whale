@@ -257,8 +257,13 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
 }
 
 function gumUseBusy(fighter: ArcadeFighter): boolean {
+  if (fighter.gumProstheses && borrowedGumSupport(fighter, fighter.gumProstheses)) return true
   if (borrowedObjectAnchorBusy(fighter)) return true
   if (fighter.gumWoundSeals && borrowedGumSupport(fighter, fighter.gumWoundOrigin)) return true
+  return borrowedCatchBusy(fighter)
+}
+
+function borrowedCatchBusy(fighter: ArcadeFighter): boolean {
   return (
     borrowedGumSupport(fighter, fighter.gumCatch) &&
     !fighter.gumCatch?.released &&

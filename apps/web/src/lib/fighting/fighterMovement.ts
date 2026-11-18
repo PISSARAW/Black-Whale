@@ -1,4 +1,5 @@
 import { styleMobility } from './styleMobility'
+import { bodyLegFactor } from './bodyDamage'
 import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, FightInput, FighterDash, FighterMotion } from './types'
@@ -140,7 +141,7 @@ function advancePrejump(fighter: ArcadeFighter): ArcadeFighter {
   if (prejumpFrames > 0) return withMotion({ ...fighter, blocking: false }, { prejumpFrames })
   const velocityX = motion.jumpDirection * walkSpeed(fighter) * JUMP_DRIFT_RATIO
   return withMotion(
-    { ...fighter, velocityY: JUMP_SPEED, pose: 'jump', blocking: false },
+    { ...fighter, velocityY: JUMP_SPEED * bodyLegFactor(fighter), pose: 'jump', blocking: false },
     { prejumpFrames: 0, velocityX },
   )
 }

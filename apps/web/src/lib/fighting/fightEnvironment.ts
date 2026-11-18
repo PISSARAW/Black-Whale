@@ -22,6 +22,9 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
     preparation: options.preparation
       ? {
           ...options.preparation,
+          ...(options.preparation.injuries
+            ? { injuries: { ...options.preparation.injuries } }
+            : {}),
           resources: [...options.preparation.resources],
           cohorts: [...options.preparation.cohorts],
         }

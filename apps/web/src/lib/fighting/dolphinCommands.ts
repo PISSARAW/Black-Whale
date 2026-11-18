@@ -7,7 +7,7 @@ const PREFIXES: Readonly<Record<string, readonly string[]>> = {
   kalluto: ['paper-stop-listening', 'paper-release-confetti'],
   musse: ['window-recall', 'window-stop-listening'],
   sayird: ['little-eye-'],
-  hisoka: ['gum-'],
+  hisoka: ['gum-', 'texture-'],
   biscuit: ['cookie-'],
   hinrigh: ['biohazard-'],
   basho: ['basho-'],

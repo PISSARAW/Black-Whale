@@ -3,7 +3,10 @@ export { ownsBungeeGum, spendGumUse } from './bungeeAccess'
 import { NETWORK_GUM_ACTIONS, performGumNetworkCommand } from './bungeeCommands'
 import { newGumSource, gumSourceCommandAllowed, sameGumSource } from './bungeeSource'
 import { gumSupportAvailable, gumSupportLive } from './hisokaSupportOrigin'
+import { performGumProsthesisCommand, advanceGumProstheses } from './gumProstheses'
 import { canAct } from './fightActorState'
+import { freeDeviceHand } from './deviceHands'
+import { performGumSpringStep } from './gumSpringStep'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 
@@ -12,8 +15,19 @@ export function performGumCommand(
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
+  if (command.action === 'gum-spring-step') return performGumSpringStep(state, side)
+  if (command.action.startsWith('gum-prosthesis'))
+    return performGumProsthesisCommand(state, side, command)
   if (NETWORK_GUM_ACTIONS.some((action) => action === command.action))
     return performGumNetworkCommand(state, side, command)
+  return performDefensiveGumCommand(state, side, command)
+}
+
+function performDefensiveGumCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
   const fighter = state[side]
   if (command.action === 'gum-release') return releaseGumCatch(state, side)
   if (command.action === 'gum-unseal') return removeGumSeals(state, side)
@@ -25,14 +39,15 @@ export function performGumCommand(
 
 function prepareGumCatch(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
-  if (fighter.aura < 12 || fighter.gumCatch?.projectile) return state
+  const hand = freeDeviceHand(state, side)
+  if (!hand || fighter.aura < 12 || fighter.gumCatch?.projectile) return state
   const paid = spendGumUse(state, side, 12)
   return {
     ...paid,
     [side]: {
       ...paid[side],
       arenaRecovery: 24,
-      gumCatch: { frames: 24, hidden: fighter.nen.in, ...newGumSource(fighter) },
+      gumCatch: { frames: 24, hand, hidden: fighter.nen.in, ...newGumSource(fighter) },
       blocking: false,
     },
   }
@@ -65,6 +80,7 @@ function returnCaughtObject(state: FightState, side: FightSide): FightState {
   const fighter = state[side],
     shot = fighter.gumCatch?.projectile
   if (!shot || fighter.aura < 5) return state
+  if (fighter.gumCatch?.released && gumLoanUsed(fighter)) return state
   if (
     !gumSupportAvailable(fighter, fighter.gumCatch) ||
     !gumSourceCommandAllowed(fighter, fighter.gumCatch!)
@@ -91,7 +107,7 @@ function returnCaughtObject(state: FightState, side: FightSide): FightState {
 }
 
 export function advanceGumArsenal(state: FightState): FightState {
-  let next = state
+  let next = advanceGumProstheses(state)
   for (const side of ['player', 'opponent'] as const) {
     const fighter = next[side]
     if (!hasGumSupport(fighter)) continue
@@ -126,6 +142,33 @@ function maintainGumCatch(caught: ArcadeFighter['gumCatch'], active: boolean) {
 export function gumArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   if (!ownsBungeeGum(state[side]) && !state[side].gumWoundSeals) return []
   const commands = [
+    {
+      action: 'gum-spring-step' as const,
+      fr: 'Bungee Gum · Appui élastique du pied',
+      en: 'Bungee Gum · Elastic foot step',
+      condition: [
+        'Utilise la prothèse de jambe existante au sol pour une avancée réelle. Le profil de déplacement reste celui du corps ; collisions et garde restent applicables.',
+        'Uses the existing leg prosthesis on the ground for real forward travel. The movement profile belongs to the body; collisions and guard remain applicable.',
+      ],
+    },
+    {
+      action: 'gum-prosthesis' as const,
+      fr: 'Bungee Gum · Former les prothèses',
+      en: 'Bungee Gum · Form prostheses',
+      condition: [
+        'Remplace les parties réellement endommagées par du caoutchouc de Nen, sans soin ni restitution de PV. Coût de duel : huit unités par partie.',
+        'Replaces actually damaged parts with Nen rubber, without healing or restoring HP. Duel cost: eight units per part.',
+      ],
+    },
+    {
+      action: 'gum-prosthesis-release' as const,
+      fr: 'Bungee Gum · Retirer les prothèses',
+      en: 'Bungee Gum · Remove prostheses',
+      condition: [
+        'Retire ce remplacement en Nen ; les blessures physiques restent présentes.',
+        'Removes this Nen replacement; physical injuries remain.',
+      ],
+    },
     {
       action: 'gum-seal' as const,
       fr: 'Bungee Gum · Colmater les plaies',

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { tick } from 'svelte'
   import { mixedHisokaScenario } from './mixedHisoka'
+  import { prosthesisScenario } from './prostheses'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
@@ -24,7 +25,7 @@
   } from '$lib/fighting/engine'
   import { createFightEnvironment, type FightEnvironment } from '$lib/fighting/fightEnvironment'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
-  import { EMPTY_INPUT, type FightInput, type FighterId } from '$lib/fighting/types'
+  import { EMPTY_INPUT, type FightInput, type FighterId, type FightSide } from '$lib/fighting/types'
   import type { PreparationResource } from '$lib/fighting/preparationTypes'
 
   let player: FighterId = 'bill'
@@ -75,6 +76,25 @@
   export async function advance(frames: number) {
     for (let frame = 0; frame < frames; frame++) advanceFrame()
     await tick()
+  }
+  export async function prepareHisokaProstheses(side: FightSide) {
+    state = prosthesisScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function prosthesisSnapshot(side: FightSide) {
+    const actor = state[side]
+    return {
+      damage: actor.bodyDamage,
+      rubber: actor.gumProstheses,
+      skin: actor.textureSurprise,
+      target: actor.textureTarget,
+      health: actor.health,
+      aura: actor.aura,
+    }
   }
   export async function prepareOitoLoan() {
     player = 'kurapika'
@@ -362,7 +382,7 @@
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
     <FightKallutoSupplies {state} side="player" language="fr" />
-    {#if ['hisoka', 'chrollo', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(player) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if [player, opponent].some( (id) => ['hisoka', 'chrollo', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(id) ) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

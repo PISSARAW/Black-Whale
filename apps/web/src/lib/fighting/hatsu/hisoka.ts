@@ -1,7 +1,7 @@
 import { ownsBungeeGum } from '../hisokaArsenal'
 import { withGumChannel } from '../bungeeChannel'
 import { newGumSource } from '../bungeeSource'
-import { maintainTextureSurprise } from '../hisokaTextureOrigin'
+import { maintainTextureSurprise, createTextureSurprise } from '../hisokaTextureOrigin'
 import { advanceGumArsenal } from '../hisokaArsenal'
 import { advanceGumObjectAnchors } from '../gumObjectAnchorFrames'
 import { categoryPower } from '../nenCategories'
@@ -88,15 +88,13 @@ function advanceActiveTechnique(state: FightState, side: FightSide): FightState 
     return activateGumMovement(state, side, false)
   }
   const committed = { ...fighter, attack: { ...attack, impacted: true } }
+  const texture = technique === 'texture' ? createTextureSurprise(fighter) : undefined
   if (technique === 'texture')
     return {
       ...state,
       [side]: {
         ...committed,
-        textureSurprise: {
-          surface: 'cloth',
-          ...(fighter.attack?.nenOrigin ?? newGumSource(fighter)),
-        },
+        textureSurprise: texture,
       },
     }
   return activateGumMovement({ ...state, [side]: committed }, side, technique === 'rebound')

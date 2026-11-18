@@ -43,6 +43,7 @@ export interface RetrospectiveFighterState {
   gumWoundOrigin?: import('./bungeeSource').GumSource
   gumCatch?: import('./bungeeSource').GumSource & {
     frames: number
+    hand?: import('./deviceHands').DeviceHand
     hidden?: boolean
     released?: boolean
     projectile?: import('./types').FightProjectile
@@ -178,6 +179,12 @@ export const ARSENAL_ACTION_IDS = [
   'dolphin-move',
   'copied-move',
   'gum-seal',
+  'gum-prosthesis',
+  'gum-prosthesis-release',
+  'gum-spring-step',
+  'texture-target',
+  'texture-remove',
+  'texture-apply',
   'gum-unseal',
   'gum-release',
   'gum-catch',

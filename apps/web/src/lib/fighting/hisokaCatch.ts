@@ -1,4 +1,5 @@
 import { gumSupportLive } from './hisokaSupportOrigin'
+import { freeDeviceHand, physicalHandOccupancy, physicalHandsBusy } from './deviceHands'
 import { physicalProjectile } from './projectileMatter'
 import { prepareDefence } from './combatDefence'
 import { projectileRead } from './combatRead'
@@ -11,7 +12,11 @@ import type { ArcadeFighter, FightProjectile, FightState } from './types'
 export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightState | null {
   const fighter = state[hit.defenderSide],
     shot = hit.projectile
-  if (!gumSupportLive(state, hit.defenderSide, fighter.gumCatch) || !canCatch(fighter, shot))
+  if (
+    !gumSupportLive(state, hit.defenderSide, fighter.gumCatch) ||
+    !canCatch(fighter, shot) ||
+    !catchHandReady(state, hit.defenderSide)
+  )
     return null
   const defence = prepareDefence({ ...fighter, blocking: false }, 'hands', projectileRead(shot))
   if (defence.avoided) return null
@@ -57,6 +62,12 @@ export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightS
     killerSide: shot.owner,
     cause: 'projectile',
   })
+}
+
+function catchHandReady(state: FightState, side: import('./types').FightSide): boolean {
+  const actor = state[side]
+  const hand = actor.gumCatch?.hand ?? freeDeviceHand(state, side)
+  return Boolean(hand && !physicalHandsBusy(actor) && !physicalHandOccupancy(state, side).has(hand))
 }
 
 function canCatch(fighter: ArcadeFighter, shot: FightProjectile): boolean {

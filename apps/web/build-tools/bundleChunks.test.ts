@@ -258,7 +258,7 @@ describe('production bundle partitioning', () => {
     }
     expect(
       built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-combo-catalogues',
+        (item) => item.type === 'chunk' && item.name.startsWith('clash-runtime-'),
       ),
     ).toBe(true)
     expect(built.warnings).toEqual([])

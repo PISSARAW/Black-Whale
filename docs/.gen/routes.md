@@ -36,6 +36,7 @@
 | `fighting/pvp/online/api` | `+server.ts` |
 | `fighting/pvp/online/tournament/[id]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/qwen` | `+server.ts` |
 | `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |
 | `health` | `+server.ts` |

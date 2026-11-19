@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 996
+Fichiers : 1107
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -240,6 +240,10 @@ Fichiers : 996
 
 - AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
 
+## `apps/web/src/lib/fighting/audio/bonolenov.test.ts`
+
+- Bonolenov body instrument > unwraps once through simulation, sounds ordinary combat on both sides, and keeps holes exposed at rest
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -320,6 +324,17 @@ Fichiers : 996
 
 - Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
 
+## `apps/web/src/lib/fighting/bonolenovCombat.test.ts`
+
+- Bonolenov reference combat > starts the same dance on every activation and freezes it when simulation counters freeze
+
+## `apps/web/src/lib/fighting/bungeeNetwork.test.ts`
+
+- Hisoka’s independent Bungee Gum attachments > preserves existing link identifiers through an unrelated simultaneous exchange
+- physical linked cards and recalls > requires preparation before throwing and keeps the same object through recall and rethrow
+- network privacy and deterministic replay > keeps a real card visible under In without transmitting its hidden attachment metadata
+- borrowed Bungee Gum > keeps Dolphin locked while its paid scenery anchor remains and refuses a second creation
+
 ## `apps/web/src/lib/fighting/career/career.test.ts`
 
 - persistent local Clash career > starts empty, bounds text and sanitizes names without interpreting markup
@@ -336,6 +351,10 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/chrolloAnimation.test.ts`
 
 - Chrollo animations follow executable effects > accents page handling for 18 simulation frames, without a camera inset
+
+## `apps/web/src/lib/fighting/chrolloCombat.test.ts`
+
+- Chrollo — Zoldyck reference combat > varies physical counters and kicks instead of turning pages at empty range
 
 ## `apps/web/src/lib/fighting/chrolloCopiedArsenal.test.ts`
 
@@ -383,6 +402,10 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/combatBaseline.test.ts`
 
 - six-fighter fixed starting situations > starts the approach trial clear of both interactive crates
+
+## `apps/web/src/lib/fighting/combatCameraPhrase.test.ts`
+
+- short ranked camera impulses > gives light hits less camera travel than heavy hits and never stacks them
 
 ## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
 
@@ -571,6 +594,12 @@ Fichiers : 996
 
 - hitstun tuning is limited to long grounded physical combos > replays the actual escape from a long corner string with identical checkpoints
 
+## `apps/web/src/lib/fighting/feitanCombat.test.ts`
+
+- Feitan — the two Zazan video references > authors moving cuts and holds only the straight thrust contacts
+- Feitan reference corrections > keeps normal blade pressure ahead of the generic Nen preparation projection
+- Feitan physical sword presentation > keeps the left sword and right umbrella together, rebuilds, confiscates and disposes
+
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
@@ -583,6 +612,10 @@ Fichiers : 996
 
 - Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
 
+## `apps/web/src/lib/fighting/feitanUmbrella.test.ts`
+
+- Feitan’s physical umbrella feint against Zazan > needs the real weapon and free hands, spends no aura and does not attack or injure on opening
+
 ## `apps/web/src/lib/fighting/fightAdvancedLessons.test.ts`
 
 - five advanced practical exercises use real engine outcomes > extends the curriculum while preserving the fifteen existing lesson identities
@@ -591,6 +624,10 @@ Fichiers : 996
 
 - fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
 - keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
+## `apps/web/src/lib/fighting/fightBodySeparation.test.ts`
+
+- material bodies cannot occupy the same space > moves the available body at the arena wall and preserves the anchored one
 
 ## `apps/web/src/lib/fighting/fightComfortControls.test.ts`
 
@@ -616,6 +653,10 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
+## `apps/web/src/lib/fighting/fightJointLimits.test.ts`
+
+- fighters only move like a human body > never plays the civilian walking stride in a duel
 
 ## `apps/web/src/lib/fighting/fightMobile.test.ts`
 
@@ -704,6 +745,26 @@ Fichiers : 996
 
 - 2D fight formats > keeps Tour judging separate from health-based duels
 
+## `apps/web/src/lib/fighting/fourCombatControl.test.ts`
+
+- four-plus encounters: physical identity, autonomy and post-mortem orders > implants a removable conditioning needle through a real skull hit, without making Needle People
+
+## `apps/web/src/lib/fighting/fourCombatEvidence.test.ts`
+
+- four-plus encounters: evidence, guardian and group arrow > removes a real dead body and restores that same body through Blinky’s last-object command
+
+## `apps/web/src/lib/fighting/fourCombatFuture.test.ts`
+
+- four-plus encounters: sustained Zetsu illusion application > charges only with available Nen outside Zetsu and caps the duel reserve
+
+## `apps/web/src/lib/fighting/fourCombatMachi.test.ts`
+
+- Machi’s manually operated armed bodies, ch. 97 > suspends the same actual body, draws its physical strings and fires its own finite ammunition
+
+## `apps/web/src/lib/fighting/fourCombatWeapons.test.ts`
+
+- four-plus encounters: physical equipment and emission > throws Leorio’s single real knife only at release, without a duplicate melee hit
+
 ## `apps/web/src/lib/fighting/frameDataTable.test.ts`
 
 - generated frame data table > is up to date with the movesets (run `pnpm fighting:frames`)
@@ -719,6 +780,14 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/furykov.test.ts`
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
+
+## `apps/web/src/lib/fighting/futureParticipants.test.ts`
+
+- the fixed illusion field captures actual bodies present at activation > does not capture a person outside at activation who enters later
+
+## `apps/web/src/lib/fighting/futurePerception.test.ts`
+
+- being deceived by Laplace Demon in arcade > keeps live movement and new attacks instead of replaying the inputs held at activation
 
 ## `apps/web/src/lib/fighting/galleryIntegration.test.ts`
 
@@ -784,9 +853,25 @@ Fichiers : 996
 
 - the facial injury premise and actual reconstruction commands cross P2 and replay boundaries > validates the explicit setup and keeps canonical support IDs in P2 prediction
 
+## `apps/web/src/lib/fighting/halkenburgSoulChains.test.ts`
+
+- Halkenburg transfers through a connected chain of actual bodies > moves into a third body already involved in a transfer without copying any mind or healing
+
+## `apps/web/src/lib/fighting/halkenburgSoulIntegration.test.ts`
+
+- Halkenburg’s selectable mind mode in the complete duel > keeps both prepared bodies physically vulnerable and resolves a real low strike on the sleeping one
+
+## `apps/web/src/lib/fighting/halkenburgSoulTeams.test.ts`
+
+- Halkenburg’s material minds in three-member team sets > keeps an untouched Camilla’s actual Cat’s Name revival in the stock count despite an earlier transfer chain
+
 ## `apps/web/src/lib/fighting/halkenburgSouls.test.ts`
 
 - Halkenburg exchanges the chosen consciousness with the real pierced body > includes Halkenburg and each real ready supporter in the random pool
+
+## `apps/web/src/lib/fighting/hanzoCombat.test.ts`
+
+- Hanzo — Hunter Exam hand-to-hand combat > holds each authored hand or leg contact throughout its actual active frames
 
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 
@@ -811,6 +896,10 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
 
 - Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
+## `apps/web/src/lib/fighting/hisokaCombat.test.ts`
+
+- Hisoka reference combat > mixes cards, sweeping kicks and a contact attachment instead of always opening with Gum
 
 ## `apps/web/src/lib/fighting/hisokaEffects.test.ts`
 
@@ -1042,6 +1131,10 @@ Fichiers : 996
 
 - Melody’s bodily hearing > listens passively in Zetsu, with stolen Nen and without Gyo
 
+## `apps/web/src/lib/fighting/melodyInterrogation.test.ts`
+
+- Melody’s chapter 68 physiological questioning > asks audibly without Nen, with no forced response or hidden truth verdict
+
 ## `apps/web/src/lib/fighting/mizaistom.test.ts`
 
 - Mizaistom — conditional yellow card > gives a moving player time to read the warning and stop without being punished
@@ -1058,6 +1151,10 @@ Fichiers : 996
 
 - Musse — handgun and Secret Window > keeps the two demonstrated owl applications and physical normals without an execution finisher
 
+## `apps/web/src/lib/fighting/nenAudit.test.ts`
+
+- current Nen reference for all forty playable fighters > covers the exact roster, explicit conditions and only existing catalogue abilities
+
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
 - Nen techniques in an actual 2D duel > En detects bodies in Zetsu and accessible projectiles, while In hides aura
@@ -1066,6 +1163,11 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/nenCombat/advanced.test.ts`
 
 - advanced combinations from the supplied Nen excerpt > distinguishes low-output aura observation from Ren-based ocular detection of In
+
+## `apps/web/src/lib/fighting/nenCombat/aiReads.test.ts`
+
+- defensive Ko balance > guards its zone better than Ken without nearing invulnerability
+- AI Nen reads > answers a visible strike only after the reaction delay, on the aimed zone
 
 ## `apps/web/src/lib/fighting/nenCombat/combat.test.ts`
 
@@ -1107,6 +1209,10 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/padaille.test.ts`
 
 - Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
+
+## `apps/web/src/lib/fighting/padailleEscape.test.ts`
+
+- Padaille’s shown handcuff applications > pays for the drill transformation and slips a real cuff after an interruptible preparation
 
 ## `apps/web/src/lib/fighting/painPackerRig.test.ts`
 
@@ -1165,6 +1271,14 @@ Fichiers : 996
 
 - visible physical scenario resources survive network and replay validation > accepts the entire visible catalogue and materializes real bodies without granting Nen
 
+## `apps/web/src/lib/fighting/presentation/intro.test.ts`
+
+- combat entrances > waits for the first rendered scene, plays both fighters, then starts exactly once
+
+## `apps/web/src/lib/fighting/presentation/introPerformances.test.ts`
+
+- individual entrance direction > authors a distinct choreography and orbit for exactly the forty selectable fighters
+
 ## `apps/web/src/lib/fighting/presentation/presentation.test.ts`
 
 - original presentation without private knowledge or Nen changes > covers precisely the forty selected fighters with distinct bilingual lines
@@ -1173,6 +1287,11 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/priorityMaterials.test.ts`
 
 - material applications preserve their conditions > shortens a real strand, weakens it after detachment and releases the held body
+
+## `apps/web/src/lib/fighting/projectileDefence.test.ts`
+
+- projectile collision anticipation > prioritises a farther fast shot over a nearer slow one by time to collision
+- trajectory-based ordinary defences > crouches under high shots rather than jumping into their path
 
 ## `apps/web/src/lib/fighting/projectileResources.test.ts`
 
@@ -1222,6 +1341,24 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 
 - read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
+
+## `apps/web/src/lib/fighting/qwen/qwen.test.ts`
+
+- perceived Qwen observations > does not expose enemy aura, In, inputs, buffered commands or hidden effects
+- bounded tactics and legal execution > rejects invented moves, arbitrary Nen and extra state-writing fields
+- nonblocking tactical scheduler > keeps one inference in flight, then alternates seats and applies a validated reply
+
+## `apps/web/src/lib/fighting/qwen/roster.test.ts`
+
+- Qwen covers the selected roster > contains exactly 40 real selectable fighters, with no guessed identifiers
+
+## `apps/web/src/lib/fighting/qwen/runtimeUtilities.test.ts`
+
+- Qwen panel execution through the match runtime > records sequential native panel actions from both seats and replays both changes
+
+## `apps/web/src/lib/fighting/referenceExchange.test.ts`
+
+- momentum and hitstop > preserves a nonzero outgoing tangent, and the exact contact endpoint
 
 ## `apps/web/src/lib/fighting/replayCoach.test.ts`
 
@@ -1361,6 +1498,38 @@ Fichiers : 996
 ## `apps/web/src/lib/fighting/threeCombatKalluto.test.ts`
 
 - Kalluto: chapter 226 applications > fans real confetti along three distinct paths for one paid preparation
+
+## `apps/web/src/lib/fighting/throwCinematic.test.ts`
+
+- confirmed throw cinematic > lets a KO victim complete the authored lift instead of overriding it with a generic fall
+
+## `apps/web/src/lib/fighting/throws/cameraAnchors.test.ts`
+
+- the lens fits real cinematic equipment > includes the whole staff even when the actor’s root is unnamed
+
+## `apps/web/src/lib/fighting/throws/eighthBatch.test.ts`
+
+- the final five pairs preserve corrected physics and native ability conditions > Sayird borrows a real controlled animal without inventing or moving it
+
+## `apps/web/src/lib/fighting/throws/fifthBatch.test.ts`
+
+- fifth batch: conditioned abilities and personality stay faithful to real resources > keeps Melody’s opening close-up on her actual instrument beside a taller opponent
+
+## `apps/web/src/lib/fighting/throws/performances.test.ts`
+
+- forty individual pairs of authored throw performances > covers the entire playable roster with both authored variants
+
+## `apps/web/src/lib/fighting/throws/physics.test.ts`
+
+- throw weight, pivot and support > continues moving through an intermediate lift key instead of stopping at each pose
+
+## `apps/web/src/lib/fighting/throws/seventhBatch.test.ts`
+
+- seventh batch on the corrected cinematic physics > Furykov witnesses a console opened by a real action, privately, without creating a new alert
+
+## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
+
+- the throw film witnesses real conditional manifestations > borrows a real diverging forecast, never a preparation or a detached vision
 
 ## `apps/web/src/lib/fighting/training.test.ts`
 
@@ -2048,6 +2217,10 @@ Fichiers : 996
 
 - authenticated snapshot stream > pushes only the authenticated perspective and never renews presence on outgoing traffic
 
+## `apps/web/src/lib/server/clashQwen.test.ts`
+
+- private Clash Ollama integration > keeps Clash configuration separate from the tour gateway and credentials
+
 ## `apps/web/src/lib/server/clashSeasonFile.test.ts`
 
 - durable PvP seasons > restores identities, ratings and duplicate receipts after a server restart without persisting bearer tokens
@@ -2704,6 +2877,10 @@ Fichiers : 996
 - the hair, which is what the reader recognises first > draws a shape for every style in the closed vocabulary
 - the three gabarits > gives a baby a head that is a quarter of it and an adult one a seventh
 - the second tone > bakes exactly two values into every mass, in the geometry
+
+## `apps/web/src/lib/tour/humanLocomotion.test.ts`
+
+- the rendered Tour walk > eases guard-to-walk shoulders instead of jumping by 57 degrees in one frame
 
 ## `apps/web/src/lib/tour/humanProfiles.test.ts`
 

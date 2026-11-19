@@ -103,12 +103,12 @@ function utilityRouteContact(state: FightState, progress: CombatProgress, route:
   const expected = moveForSlot(route.fighter, route.moves[progress.step])
   return Boolean(
     expected &&
-      expected.tuning.damage === 0 &&
-      expected.tuning.hitstun === 0 &&
-      state.player.attack?.moveId === expected.id &&
-      impact.attacker === 'player' &&
-      !impact.avoided &&
-      !impact.invulnerable,
+    expected.tuning.damage === 0 &&
+    expected.tuning.hitstun === 0 &&
+    state.player.attack?.moveId === expected.id &&
+    impact.attacker === 'player' &&
+    !impact.avoided &&
+    !impact.invulnerable,
   )
 }
 

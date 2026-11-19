@@ -57,7 +57,9 @@ function practice(fighter: Fighter): CombatWhiffPractice {
 function lesson(fighter: Fighter): CombatRoute {
   const whiff = practice(fighter)
   const ender =
-    fighter === 'feitan' ? ('forwardHeavy' as const) : rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
+    fighter === 'feitan'
+      ? ('forwardHeavy' as const)
+      : rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
   return {
     id: `${fighter}:whiff-punish`,
     fighter,

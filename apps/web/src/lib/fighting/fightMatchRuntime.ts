@@ -97,7 +97,9 @@ export function createFightMatchRuntime(
           now: clock(),
         })
       } else if (item.action) {
-        next = performFuturePerceptionAction(next, item.side ?? 'player', item.action) ?? item.action(next)
+        next =
+          performFuturePerceptionAction(next, item.side ?? 'player', item.action) ??
+          item.action(next)
         commands.push(panelReplayCommand(before, next))
       }
     }

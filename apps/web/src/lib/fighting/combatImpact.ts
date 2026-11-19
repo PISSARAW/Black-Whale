@@ -400,7 +400,11 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     hit.projectile,
   )
   const archived = recordHistoricalBladeProjectile(planted, hit.projectile)
-  return finishAfterImpact(archived, archived.impact!.attacker, otherSide(archived.impact!.attacker))
+  return finishAfterImpact(
+    archived,
+    archived.impact!.attacker,
+    otherSide(archived.impact!.attacker),
+  )
 }
 
 function attackCanResolve(

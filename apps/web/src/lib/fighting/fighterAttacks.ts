@@ -84,7 +84,6 @@ export function startFighterAttack(options: {
       kind,
       variant: options.variant,
       moveId: options.moveId,
-      superThrow: options.superThrow,
       comboFollowup,
       directionalChain: options.directionalChain,
     },

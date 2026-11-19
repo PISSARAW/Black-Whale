@@ -170,7 +170,7 @@ describe('Bonolenov cinematic throw integration', () => {
     },
   )
 
-  it('never enables the cinematic or changes throw recovery for another character', () => {
+  it('keeps another character on the shared personal-throw contract', () => {
     const initial = beginFight(createFight('hisoka', 'kurapika', { mode: 'versus-local' }))
     let state = performThrow(
       {
@@ -180,10 +180,15 @@ describe('Bonolenov cinematic throw integration', () => {
       },
       'player',
     )
-    expect(attackData('heavy', state.player).recovery).toBeLessThan(54)
+    expect(attackData('heavy', state.player).recovery).toBe(54)
     for (let i = 0; i < 12; i++) state = tick(state)
     expect(state.impact?.knockdown).toBe(true)
-    expect(confirmedThrow(state)).toBeNull()
+    expect(confirmedThrow(state)).toMatchObject({
+      attacker: 'player',
+      victim: 'opponent',
+      powered: false,
+      performance: 'hisoka-return',
+    })
   })
 
   it.each(['player', 'opponent'] as const)(

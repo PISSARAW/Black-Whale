@@ -39,7 +39,6 @@ export interface EffectSceneOptions {
   /** Live posed rig; callbacks also follow aura/body rebuilds. */
   figureOf?: (side: FightSide) => import('three').Object3D | undefined
   handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
-  throwFrame?: () => import('./throwCinematic').ThrowCinematicFrame | null
 }
 
 export interface FighterEffectScene {

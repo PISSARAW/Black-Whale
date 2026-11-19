@@ -94,7 +94,7 @@
     {#key sceneKey}
       <FightLiveScene
         active={!paused}
-        showRecovery={showRecovery && !$intro && !victoryActive}
+        showRecovery={showRecovery && !victoryActive}
         {state}
         {stageId}
         {language}

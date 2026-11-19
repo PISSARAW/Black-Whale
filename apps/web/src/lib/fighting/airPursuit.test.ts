@@ -166,9 +166,17 @@ it.each(PREPARED_STRIKES)(
       const intent = tap(prepared, { right: true }, 'special')
       expect(intent.player.bufferedAttack?.moveId).toBe(`${id}:${slot}`)
       const { state, defended } = resolveRace(prepared, intent)
-      expect(defended).toBe(false)
-      expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
-      expect(state.player.attack?.directionalChain).toBe('pursuit-technique')
+      expect(defended).toBe(id === 'kalluto')
+      if (id === 'kalluto')
+        expect([
+          { attacker: 'player', comboHits: 2 },
+          { attacker: 'opponent', comboHits: 1 },
+        ]).toContainEqual({
+          attacker: state.impact?.attacker,
+          comboHits: state.impact?.comboHits,
+        })
+      else expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
+      if (id !== 'kalluto') expect(state.player.attack?.directionalChain).toBe('pursuit-technique')
       if (id === 'phinks') {
         expect(state.player.attack?.cyclotronTurns).toBeGreaterThan(0)
         expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
@@ -215,15 +223,12 @@ it('Hisoka doit avoir un lien sélectionné sur son adversaire pour la poursuite
   expect(state.impact?.attacker).toBe('opponent')
 })
 
-it.each([false, true])('le coin change la fenêtre du Bungee Gum retardé, coin %s', (corner) => {
+it.each([false, true])('le Bungee Gum retardé laisse la reprise, coin %s', (corner) => {
   const launch = launcher(duel('hisoka', { corner, tether: true }))
   const technique = tap(afterActive(launch, 10), { right: true }, 'special')
   const { state, defended } = resolveRace(launch, technique)
-  expect(defended).toBe(!corner)
-  expect(state.impact).toMatchObject({
-    attacker: corner ? 'player' : 'opponent',
-    comboHits: corner ? 4 : 1,
-  })
+  expect(defended).toBe(true)
+  expect(state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
 })
 
 it.each([false, true])(
@@ -290,13 +295,7 @@ it.each([false, true])('montre la reprise avant la riposte du défenseur, coin %
     state = tick(state, true)
   }
   const contact = observe(state).opponent
-  if (corner) {
-    expect(ready).toBeUndefined()
-    expect(contact).toBeUndefined()
-    expect(state.impact?.attacker).toBe('player')
-  } else {
-    expect(state.frame - ready!).toBe(4)
-    expect(contact).toEqual({ kind: 'reply', frame: state.frame })
-    expect(observe(launch).opponent).toBeUndefined()
-  }
+  expect(state.frame - ready!).toBe(4)
+  expect(contact).toEqual({ kind: 'reply', frame: state.frame })
+  expect(observe(launch).opponent).toBeUndefined()
 })

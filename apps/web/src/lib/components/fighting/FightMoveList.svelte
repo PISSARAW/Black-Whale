@@ -51,9 +51,11 @@
     </header>
     <FightStyleGuide {fighterId} {language} />
     {#if fighterId === 'bonolenov'}
-      <p>{language === 'fr'
-        ? 'Aura + Projection : renversement renforcé, 25 Nen. La lance de Prologue doit avoir été préparée ; sans elle, la prise reste physique.'
-        : 'Aura + Throw: enhanced reversal, 25 Nen. The Prologue spear must be prepared beforehand; without it, the grab stays physical.'}</p>
+      <p>
+        {language === 'fr'
+          ? 'Aura + Projection : renversement renforcé, 25 Nen. La lance de Prologue doit avoir été préparée ; sans elle, la prise reste physique.'
+          : 'Aura + Throw: enhanced reversal, 25 Nen. The Prologue spear must be prepared beforehand; without it, the grab stays physical.'}
+      </p>
     {/if}
     {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
     {#if arena}

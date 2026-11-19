@@ -1,4 +1,5 @@
 import { canAct, canMove } from './fightActorState'
+import { motionOf } from './fighterMovement'
 import type { ArcadeFighter, FightInput } from './types'
 
 declare module './types' {
@@ -26,13 +27,12 @@ export function applyAirRecovery(fighter: ArcadeFighter, input: FightInput): Arc
 }
 
 function steerRecovery(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  if (!fighter.motion) return fighter
   const descent = input.down && input.guard && !input.aura
   const direction = Number(input.right) - Number(input.left)
   const velocityX = !descent && direction === -fighter.facing ? direction * RETREAT_SPEED : 0
   return {
     ...fighter,
     velocityY: descent ? Math.min(fighter.velocityY, -DESCENT_SPEED) : fighter.velocityY,
-    motion: { ...fighter.motion, velocityX },
+    motion: { ...motionOf(fighter), velocityX },
   }
 }

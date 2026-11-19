@@ -101,6 +101,8 @@ export type Signature = (typeof SIGNATURES)[number]
 export type Frame = (typeof FRAMES)[number]
 
 export interface HumanProfile {
+  /** Optional face shell only; eyes, hair, clothing and the body's rig retain their own identity. */
+  faceLike?: string
   build: 'slim' | 'average' | 'broad'
   height: number
   shoulders: number

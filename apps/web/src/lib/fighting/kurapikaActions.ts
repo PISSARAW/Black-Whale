@@ -1,6 +1,8 @@
 import { littleEyeShotBusy } from './littleEyeCapture'
 import { dismissReturnedLoans } from './dolphinReturn'
 import { advanceDolphinLoanClocks } from './dolphinLoanFrame'
+import { finishBorrowedIllumi } from './illumiDolphinFinish'
+import { clearPaperTextures } from './paperTexture'
 import { mapPhysicalBodies } from './physicalBodyMap'
 import { stolenAuraActor, restoreStolenAura, dolphinSupplyAvailable } from './dolphinSupply'
 import { finishBorrowedBasho } from './bashoWard'
@@ -248,6 +250,8 @@ function endActiveDolphinEffect(options: AuraAttackOptions, perform: PerformAtta
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  const illumi = finishBorrowedIllumi(state, side)
+  if (illumi) return illumi
   if (controlledEntities(state, side).length || littleEyeShotBusy(state, side))
     return releasePreparedControl(state, side)
   if (borrowedDoorActive(state, side))
@@ -271,6 +275,8 @@ function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack
   if (restored) return restored
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  const papers = clearPaperTextures(state, side, { source: 'dolphin', theftId: held.theftId })
+  if (papers !== state) return papers
   if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
   const poem = finishBorrowedBasho(state, side)
   if (poem) return poem
@@ -334,7 +340,7 @@ function performBorrowedMove(
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
-  if (fighter.easterEgg) return false
+  if (fighter.easterEgg || fighter.gumResuscitationPaused) return false
   if (!illumiBodyFree(fighter)) return false
   return (
     fighter.health > 0 &&

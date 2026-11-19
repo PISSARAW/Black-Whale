@@ -1,3 +1,4 @@
+import { hanzoBladeAvailable, hanzoBladeMove } from './hanzoBlade'
 import { constructionFactor } from './nenCategories'
 import { createNenTechniqueState } from '@black-whale/nen-engine'
 import { chrolloPageForMove } from './chrolloBook'
@@ -90,17 +91,25 @@ export function isHanzoProjectionMove(fighter: ArcadeFighter, moveId?: string): 
   return fighter.id === 'chrollo' && chrolloPageForMove(fighter, moveId) === 'hanzo'
 }
 
-/** Resource overrides only for projection commands; other moves keep their own rules. */
+/** Skill 4 keeps its preparation rules; armed physical moves require the carried blade. */
 export function hanzoMoveResources(
   fighter: ArcadeFighter,
   moveId: string,
   kind: AttackKind,
 ): boolean | null {
+  const physical = hanzoMartialResources(fighter, moveId)
+  if (physical !== null) return physical
   if (isHanzoProjectionMove(fighter, moveId)) {
     if (fighter.hanzoProjection) return canRejoinHanzoBody(fighter)
     if (fighter.id === 'hanzo' && fighter.hatsuEffects.hatsuStolen > 0) return false
   }
   return fighter.hanzoProjection && kind === 'ranged' ? false : null
+}
+
+function hanzoMartialResources(fighter: ArcadeFighter, moveId: string): boolean | null {
+  if (fighter.id !== 'hanzo') return null
+  if (hanzoBladeMove(moveId)) return hanzoBladeAvailable(fighter)
+  return moveId === 'hanzo:downSpecial' ? true : null
 }
 
 /** The double floats freely and passes through matter; it does not jump or dash. */

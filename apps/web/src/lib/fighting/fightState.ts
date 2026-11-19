@@ -1,8 +1,15 @@
+import { hasMarkedTerrain } from './sunMoonMaterial'
+import { prepareHisokaAsphyxia } from './gumResuscitationScenario'
+import { prepareFortuneScenario } from './ghostwriterScenario'
 import { carryDolphinPeople } from './dolphinPeopleWorld'
 import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
+import { carryDocumentState } from './paperDocumentRound'
+import { carryIllumiFace } from './illumiDisguiseClock'
+import { carryNeedleFace } from './illumiNeedleMatter'
 import { carryKallutoPaper } from './kallutoSurveillance'
 import { personalPaperKit } from './kallutoMaterials'
 import { carryPaperWorld } from './kallutoMaterialWorld'
+import { carryHalkenburgSoul } from './halkenburgSoulCarry'
 import { prepareMusseHistory } from './benjaminMusseScenario'
 import { carryMusseHistory } from './benjaminMusseRound'
 import { carryDolphinState } from './dolphinRound'
@@ -76,7 +83,7 @@ export function createFightState(
     impact: null,
   })
   return applyControlSchemes(
-    prepareBodyDamage(prepareMusseHistory(created)),
+    prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
     typeof options === 'string' ? undefined : options.controls,
   )
 }
@@ -91,10 +98,11 @@ export function nextFightRound(state: FightState): FightState {
         carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
         state,
       ),
-      arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      arena:
+        state.environment.arenaInteractions || hasMarkedTerrain(state)
+          ? createArenaState()
+          : undefined,
       rosterGuests: undefined,
-      halkSoulLinks: undefined,
-      halkSoulOrigins: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
@@ -106,24 +114,33 @@ export function nextFightRound(state: FightState): FightState {
       catsNameConsumed: undefined,
       player: preserveLifespan(
         createFighter({
-          id: state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
+          id: state.player.halkenburgOrigin ?? state.player.id,
           x: 22,
           facing: 1,
           health: format.health,
         }),
         state.player,
+        state.frame,
       ),
       opponent: preserveLifespan(
         createFighter({
-          id:
-            state.halkSoulOrigins?.opponent ?? state.opponent.halkenburgOrigin ?? state.opponent.id,
+          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
           x: 78,
           facing: -1,
           health: format.health,
         }),
         state.opponent,
+        state.frame,
       ),
-      ...roundKameoState(state, format.health),
+      ...(state.kameos && {
+        kameos: nextRoundKameos(state.kameos, (fighter, side) =>
+          preserveLifespan(
+            createFighter({ id: fighter.id, ...KAMEO_SPAWN[side], health: format.health }),
+            fighter,
+            state.frame,
+          ),
+        ),
+      }),
       phase: 'ready',
       frame: 0,
       time: format.roundFrames / FIGHT_FPS,
@@ -145,17 +162,16 @@ export function nextFightRound(state: FightState): FightState {
   )
 }
 
-function roundKameoState(state: FightState, health: number): Pick<FightState, 'kameos'> {
-  if (!state.kameos) return {}
-  return {
-    kameos: nextRoundKameos(state.kameos, (fighter, side) =>
-      preserveLifespan(createFighter({ id: fighter.id, ...KAMEO_SPAWN[side], health }), fighter),
-    ),
-  }
-}
-
-export function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+export function preserveLifespan(
+  fighter: ArcadeFighter,
+  previous: ArcadeFighter,
+  elapsedFrames: number,
+): ArcadeFighter {
+  fighter = carryHalkenburgSoul(fighter, previous)
+  fighter = carryIllumiFace(fighter, previous, elapsedFrames)
+  fighter = carryNeedleFace(fighter, previous)
   fighter = carryBodyDamage(fighter, previous)
+  fighter = carryDocumentState(fighter, previous)
   fighter = carryDolphinState(fighter, previous)
   fighter = carryKallutoPaper(fighter, previous)
   fighter = carryMusseHistory(fighter, previous)
@@ -163,6 +179,8 @@ export function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter
     {
       ...fighter,
       personalEncounters: previous.personalEncounters,
+      gumResuscitationProgram: previous.gumResuscitationProgram,
+      gumResuscitationCompleted: previous.gumResuscitationCompleted,
       blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
     },
     previous,

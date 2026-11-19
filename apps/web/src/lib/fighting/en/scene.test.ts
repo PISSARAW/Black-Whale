@@ -37,8 +37,8 @@ describe('neutral En contact rendering', () => {
   it('uses the selected observer without revealing an In-concealed field or a technique model', () => {
     const { state, scene, fields, view } = setup()
     fields.sync(state)
-    expect(scene.children[0].visible).toBe(true)
-    expect(scene.children[1].visible).toBe(false)
+    expect(scene.getObjectByName('en-field:player')!.visible).toBe(true)
+    expect(scene.getObjectByName('en-field:opponent')!.visible).toBe(false)
     const point = scene.getObjectByName('en-contact') as THREE.Mesh
     expect(point.visible).toBe(true)
     expect(point.geometry.type).toBe('BoxGeometry')
@@ -47,7 +47,7 @@ describe('neutral En contact rendering', () => {
     expect(point.children).toHaveLength(0)
     view('opponent')
     fields.sync(state)
-    expect(scene.children[1].visible).toBe(true)
+    expect(scene.getObjectByName('en-field:opponent')!.visible).toBe(true)
     expect(point.position.x).toBe(40)
     state.opponent.nen.en = null
     fields.sync(state)
@@ -90,8 +90,11 @@ describe('neutral En contact rendering', () => {
     expect(points).toHaveLength(MAX_EN_CONTACTS)
     expect(new Set(points.map((point) => point.geometry)).size).toBe(1)
     expect(new Set(points.map((point) => point.material)).size).toBe(1)
+    const pooled = scene.children.length
     fields.sync(state)
-    expect(scene.children).toHaveLength(MAX_EN_CONTACTS * 2 + 2)
+    expect(scene.children).toHaveLength(pooled)
+    const enObjects = scene.children.filter((mesh) => /^en-(contact|motion|field:)/.test(mesh.name))
+    expect(enObjects).toHaveLength(MAX_EN_CONTACTS * 2 + 2)
     state.enReadings = []
     fields.sync(state)
     expect(points.every((point) => !point.visible)).toBe(true)

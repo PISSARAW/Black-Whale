@@ -1,11 +1,18 @@
 <script lang="ts">
   import type { ArcadeFighter } from '$lib/fighting/types'
+  import { camillaRounds, CAMILLA_MAGAZINE_ROUNDS } from '$lib/fighting/camillaWeapon'
   export let fighter: ArcadeFighter
   export let language: 'fr' | 'en'
 </script>
 
 {#if fighter.id === 'camilla'}
   <div class="camilla-status">
+    <span
+      >{language === 'fr' ? 'Chargeur' : 'Magazine'} : {camillaRounds(
+        fighter,
+      )}/{CAMILLA_MAGAZINE_ROUNDS}
+      · {language === 'fr' ? 'réserve de duel' : 'duel supply'}</span
+    >
     <strong
       >Cat’s Name · {language === 'fr'
         ? 'automatique après sa mort'

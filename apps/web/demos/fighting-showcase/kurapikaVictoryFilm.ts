@@ -23,48 +23,25 @@ export function createKurapikaVictoryFilm() {
   f.chain('opponent', ['standingLight', 'backHeavy'])
   f.close('opponent')
   f.hit('opponent', 'neutralSpecial')
-  f.held.player = { down: true, aura: true }
-  f.chain('opponent', ['lowLight', 'standingHeavy'])
-  f.held.player = {}
-  f.chain('player', ['lowLight', 'standingHeavy'])
+  // Capture during a live round, before the physical sequence that earns the knockout.
   f.recover('player')
-  f.close('player')
-  f.hit('player', 'forwardSpecial')
-  f.aerial('opponent')
-  f.chain('player', ['standingLight', 'backHeavy'])
-  f.recover('opponent')
-  f.book('backSpecial')
-  f.close('opponent')
-  f.hit('opponent', 'neutralSpecial')
-  for (
-    let i = 0;
-    i < 14 && f.states.length < 1680 && f.state.opponent.health > 70 && f.state.player.health > 90;
-    i++
-  ) {
-    f.chain('player', i % 2 ? ['standingLight', 'standingHeavy'] : ['lowLight', 'standingHeavy'])
-    if (i % 3 === 1) f.aerial('opponent')
-    else f.chain('opponent', ['standingLight', 'backHeavy'])
-  }
-  f.held = { player: {}, opponent: {} }
-  for (let i = 0; f.state.opponent.health > 18 && i < 40; i++) {
-    f.until(() => f.free('player') && f.free('opponent'))
-    f.close('player')
-    f.hit('player', f.state.opponent.health > 45 ? 'standingHeavy' : 'standingLight')
-  }
-  f.recover('player')
-  f.close('player', 7)
+  f.close('player', 5)
   const start = f.states.length
-  f.state = toggleEmperorTime(f.state, 'player')
+  if (!f.state.player.kurapika?.emperorTime) f.state = toggleEmperorTime(f.state, 'player')
   f.advance(12)
   f.hit('player', 'neutralSpecial')
   f.until(() => Boolean(f.state.opponent.chainJail))
   const capture = f.states.findIndex((s, i) => i >= start && Boolean(s.opponent.chainJail))
   if (capture < start || f.state.opponent.nen.mode !== 'zetsu')
-    throw new Error('Chain Jail must bind Chrollo and force Zetsu')
+    throw new Error(
+      `Chain Jail must bind Chrollo and force Zetsu: ${JSON.stringify({ phase: f.state.phase, health: [f.state.player.health, f.state.opponent.health], aura: f.state.player.aura, nen: f.state.player.nen.mode, emperor: f.state.player.kurapika?.emperorTime, last: f.audit.slice(-5) })}`,
+    )
   f.advance(18)
-  f.close('player', 4.5)
-  f.hit('player', 'standingHeavy')
-  f.until(() => f.state.phase === 'finished')
+  for (let hit = 0; f.state.phase === 'fighting' && hit < 65; hit++) {
+    f.until(() => f.free('player') && f.free('opponent'))
+    f.close('player', 4)
+    f.hit('player', 'standingHeavy')
+  }
   if (f.state.winner !== 'player')
     throw new Error(
       JSON.stringify({

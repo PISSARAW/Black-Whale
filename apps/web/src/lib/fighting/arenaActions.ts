@@ -1,9 +1,11 @@
+import { selectedObjectMark, objectMarkHandReady } from './sunMoonObjectHands'
 import { vacuumObjectAllowed } from './arenaVacuum'
 import { arenaTechnique } from './arenaTechnique'
 import { canAct } from './fightActorState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { performFuturePerceptionAction } from './futurePerception'
 import { chrolloHasActivePage } from './chrolloBook'
 import { blinkyAvailable, inBlinkyNozzle } from './blinky'
 import { resolveMoonlightAction } from './moonlightAction'
@@ -49,6 +51,10 @@ export function performArenaAction(
   side: FightSide,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
+  const perception = performFuturePerceptionAction(state, side, (current) =>
+    performArenaAction(current, side, perform),
+  )
+  if (perception) return perception
   if (!state.arena || state.phase !== 'fighting' || state.catsName) return state
   if (!futureAcceptsMove(state, side) || !arenaBodyAvailable(state[side])) return state
   const technique = arenaTechnique(state[side].id)
@@ -114,6 +120,16 @@ function vacuumTargetAllowed(state: FightState, side: FightSide, target: Prepare
   )
 }
 
+function objectMarkAllowed(context: {
+  state: FightState
+  side: FightSide
+  target: PreparedEntity
+  mark: import('./sunMoonObjectHands').ObjectMark
+}): boolean {
+  const { state, side, target, mark } = context
+  return objectMarkHandReady(state, side, mark) && !target.arena?.sun && !target.arena?.moon
+}
+
 function beginArenaUtility(state: FightState, side: FightSide, kind: Utility): FightState {
   if (!utilityPermitted(state, side, kind)) return state
   const toggled = toggleTether(state, side, kind)
@@ -121,12 +137,16 @@ function beginArenaUtility(state: FightState, side: FightSide, kind: Utility): F
   const fighter = state[side]
   const target = utilityTarget(state, side, kind)
   if (!target || fighter.aura < 12) return state
-  if (kind === 'marks' && (target.arena?.sun || target.arena?.moon)) return state
+  const mark = kind === 'marks' ? selectedObjectMark(state, side) : undefined
+  if (mark && !objectMarkAllowed({ state, side, target, mark })) return state
   return {
     ...state,
     arena: {
       ...state.arena!,
-      pending: { ...state.arena!.pending, [side]: { objectId: target.id, kind, frames: 18 } },
+      pending: {
+        ...state.arena!.pending,
+        [side]: { objectId: target.id, kind, frames: 18, mark },
+      },
     },
     [side]: {
       ...fighter,

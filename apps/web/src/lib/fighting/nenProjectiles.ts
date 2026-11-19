@@ -1,16 +1,22 @@
 import { abilityPower } from './nenAbility'
 import { isBodyguardBullet } from './bodyguardFirearms'
-import { abilityCategories, categoryPower, fightCategoryEfficiency } from './nenCategories'
+import { fightCategoryEfficiency } from './nenCategories'
+import { nenTransmissionLifetime } from './nenOperations'
+import { nenOperationCategory } from './nenOperations'
+import type {} from './nenBudget'
 import { fightAbility } from './nenAbility'
 import { shuObject } from './nenAdvanced'
 import type { ArcadeFighter, FightProjectile } from './types'
 
 export function isFirearmProjectile(projectile: FightProjectile): boolean {
+  if (projectile.corpseGun) return true
   return (
     projectile.matter === 'object' &&
     projectile.shape === 'bullet' &&
     (isBodyguardBullet(projectile) ||
-      ['benjamin', 'camilla', 'feitan'].includes(projectile.fighterId))
+      ['benjamin', 'camilla', 'feitan', 'tserriednich', 'halkenburg'].includes(
+        projectile.fighterId,
+      ))
   )
 }
 
@@ -43,6 +49,7 @@ function commitThrownShu(projectile: FightProjectile, fighter: ArcadeFighter): F
     concealed: Boolean(projectile.concealed || (shu && fighter.nen.in)),
     nenPower: shu ? power : 1,
     shuFrames: shu ? duration : undefined,
+    nenInvestment: shu ? { amount: 4, kind: 'shu' } : undefined,
   }
 }
 
@@ -54,13 +61,16 @@ export function advanceProjectileNen(projectile: FightProjectile): FightProjecti
 
 function commitEmittedAura(projectile: FightProjectile, fighter: ArcadeFighter): FightProjectile {
   const aura = fighter.nen.mode !== 'zetsu' && !fighter.nen.on
-  const categories = abilityCategories(fightAbility(fighter))
-  const emitted = categories.includes('emitter') ? 1 : categoryPower(fighter, 'emitter')
+  const ability = fightAbility(fighter)
   const ren = fighter.nen.mode === 'ren' ? 1.22 : 1
   return {
     ...projectile,
     hatsuPower: 1,
-    nenPower: aura ? abilityPower(fighter) * emitted * ren : 0,
+    nenPower: aura ? abilityPower(fighter, ability) * ren : 0,
+    lifetime: nenTransmissionLifetime(fighter, { ability, lifetime: projectile.lifetime }),
+    nenInvestment: nenOperationCategory(ability, 'projection')
+      ? { amount: 6, kind: 'emission' }
+      : undefined,
     concealed: aura && Boolean(projectile.concealed || fighter.nen.in),
   }
 }

@@ -10,6 +10,7 @@ interface Clock {
   prior: AuraConcentration | null
   release: { aura: AuraConcentration; at: number; move?: string } | null
   sequence: number
+  transfer: boolean
 }
 
 /** The engine spends focus at contact. Its visible discharge holds in hitstop, then dissipates. */
@@ -23,6 +24,7 @@ export function createConcentrationClock(side: FightSide) {
     prior: null,
     release: null,
     sequence: 0,
+    transfer: false,
   }
   return (state: FightState, actual: AuraConcentration | null) => {
     const reset = advanceClock(clock, state, side)
@@ -32,8 +34,9 @@ export function createConcentrationClock(side: FightSide) {
     const next = JSON.stringify(concentration)
     if (next !== clock.key) {
       clock.key = next
-      clock.since = reset ? -Infinity : clock.time
+      if (!clock.transfer) clock.since = reset ? -Infinity : clock.time
     }
+    clock.transfer = Boolean(state[side].nenTransfer)
     return { concentration, strength, time: clock.time, age: clock.time - clock.since }
   }
 }
@@ -49,6 +52,7 @@ function advanceClock(clock: Clock, state: FightState, side: FightSide) {
       time: 0,
       previousFrame: state.frame,
       sequence: 0,
+      transfer: false,
     })
   }
   clock.identity = identity

@@ -2,6 +2,7 @@ import { createBonolenovThrowScene } from './throws/bonolenovScene'
 import type { ThrowCinematicFrame } from './throwCinematic'
 import { createBashoSupportScene } from './bashoSupportScene'
 import { createDeviceScene } from './deviceScene'
+import { createPaperDocumentScene } from './paperDocumentScene'
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
 import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
@@ -67,6 +68,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
   const devices = createDeviceScene(options)
+  const documents = createPaperDocumentScene(options)
   const bashoSupport = createBashoSupportScene(options)
   const chrollo = createChrolloEffectScene(options)
   const throws = createBonolenovThrowScene(options)
@@ -96,6 +98,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
     devices.sync(state, seconds)
+    documents.sync(state, seconds)
     bashoSupport.sync(state, seconds)
     chrollo.sync(state, seconds)
     throws.sync(state, seconds)
@@ -125,6 +128,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       visitHatsu.dispose()
       retrospective.dispose()
       devices.dispose()
+      documents.dispose()
       bashoSupport.dispose()
       chrollo.dispose()
       throws.dispose()

@@ -10,13 +10,21 @@ export function forecastParallelFuture(
   simulate: SimulateFutureFrame,
 ): readonly FutureFrame[] {
   const future = state.parallelFuture!
-  let predicted: FightState = { ...state, parallelFuture: undefined, forecastSimulation: true }
+  let predicted: FightState = {
+    ...state,
+    parallelFuture: undefined,
+    futurePerception: undefined,
+    forecastSimulation: true,
+  }
   const held = predictionControls(controls, future.owner)
   const frames: FutureFrame[] = []
   for (let frame = 0; frame < FUTURE_WINDOW_FRAMES; frame++) {
     const before = predicted
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
     frames.push({
+      documentContext: predicted.battlefield?.entities.some((entry) => entry.document)
+        ? { frame: predicted.frame }
+        : undefined,
       scene: {
         rosterGuests: predicted.rosterGuests,
         bungeeGum: predicted.bungeeGum,
@@ -82,6 +90,7 @@ function newAttack(
     kind: attack.kind,
     moveId: attack.moveId,
     variant: attack.variant,
+    superThrow: attack.superThrow,
     auraCharged: attack.auraCharged,
   }
 }

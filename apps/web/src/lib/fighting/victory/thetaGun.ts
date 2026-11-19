@@ -1,3 +1,4 @@
+import { aimCinematicWrist } from './wrist'
 import * as T from 'three'
 import type { VictoryContext } from './types'
 import type { ThetaVictoryPose } from './thetaPose'
@@ -69,9 +70,17 @@ export function createThetaGun() {
       if (age > 444) gun.rotateX(ease((age - 444) / 42) * 0.85)
       gun.updateWorldMatrix(true, true)
       const wrist = context.hero.root.getObjectByName('hand-right')!
-      wrist.quaternion.copy(
-        wrist.parent!.getWorldQuaternion(new T.Quaternion()).invert().multiply(gun.quaternion),
+      aimCinematicWrist(
+        wrist,
+        gun.quaternion
+          .clone()
+          .multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), -Math.PI / 2)),
       )
+      gun.position.copy(wrist.getWorldPosition(new T.Vector3()))
+      gun.quaternion
+        .copy(wrist.getWorldQuaternion(new T.Quaternion()))
+        .multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), Math.PI / 2))
+      gun.updateWorldMatrix(true, true)
       loaded.visible = age < THETA_TIMING.shot
       const since = age - THETA_TIMING.shot
       slide.position.z = 0.085 - slideTravel(since)

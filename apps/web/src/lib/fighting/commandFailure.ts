@@ -66,7 +66,7 @@ function techniqueFailure(state: FightState, intent: CommandIntent): CommandFail
 }
 
 function superThrowFailure(fighter: ArcadeFighter, intent: CommandIntent): CommandFailure | null {
-  if (fighter.id !== 'bonolenov' || intent.action !== 'throw' || !intent.input?.aura) return null
+  if (intent.action !== 'throw' || !intent.input?.aura) return null
   if (!voluntaryNenAvailable(fighter, { requireHatsu: false })) return 'nen'
   return fighter.aura < SUPER_THROW_COST ? 'aura' : null
 }

@@ -1,7 +1,11 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import { mapScenario } from './maps'
   import { mixedHisokaScenario } from './mixedHisoka'
   import { prosthesisScenario } from './prostheses'
+  import type { InjuryPreset } from '$lib/fighting/injuryPreparation'
+  import { documentScenario, documentSnapshot } from './documents'
+  import { illumiFaceScenario, illumiFaceSnapshot, illumiBookFaceScenario } from './illumiFaces'
   import FightKallutoReceivers from '$lib/components/fighting/FightKallutoReceivers.svelte'
   import FightKallutoSupplies from '$lib/components/fighting/FightKallutoSupplies.svelte'
   import { paperDolls, activePaperOwner } from '$lib/fighting/kallutoSurveillance'
@@ -77,8 +81,8 @@
     for (let frame = 0; frame < frames; frame++) advanceFrame()
     await tick()
   }
-  export async function prepareHisokaProstheses(side: FightSide) {
-    state = prosthesisScenario(side)
+  export async function prepareHisokaProstheses(side: FightSide, preset?: InjuryPreset) {
+    state = prosthesisScenario(side, preset)
     player = state.player.id
     opponent = state.opponent.id
     environment = state.environment
@@ -95,6 +99,36 @@
       health: actor.health,
       aura: actor.aura,
     }
+  }
+  export async function preparePaperDocument(side: FightSide) {
+    state = documentScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function paperSnapshot(side: FightSide) {
+    return documentSnapshot(state, side)
+  }
+  export async function prepareIllumiFace(side: FightSide, pinned: boolean, close = false) {
+    state = illumiFaceScenario(side, pinned, close)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function illumiFaceState(side: FightSide) {
+    return illumiFaceSnapshot(state, side)
+  }
+  export async function prepareIllumiBookFace(side: FightSide) {
+    state = illumiBookFaceScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
   }
   export async function prepareOitoLoan() {
     player = 'kurapika'
@@ -229,6 +263,23 @@
     })
     for (let index = 0; index < 120; index++) advanceFrame()
     await tick()
+  }
+  export async function prepareDowsingMap(side: FightSide) {
+    state = mapScenario(side)
+    player = state.player.id
+    opponent = state.opponent.id
+    environment = state.environment
+    input = { ...EMPTY_INPUT }
+    await tick()
+  }
+  export function mapSnapshot(side: FightSide) {
+    return {
+      search: state[side].dowsingMapSearch,
+      reading: state[side].dowsingMapReading,
+      pose: state[side].dowsingMapPose,
+      health: state[side].health,
+      aura: state[side].aura,
+    }
   }
   export async function prepareDowsingInterview() {
     player = 'kurapika'
@@ -382,7 +433,7 @@
     <FightSecretWindowStatus {state} side="player" language="fr" />
     <FightKallutoReceivers {state} side="player" language="fr" />
     <FightKallutoSupplies {state} side="player" language="fr" />
-    {#if [player, opponent].some( (id) => ['hisoka', 'chrollo', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg'].includes(id) ) || state.battlefield?.entities.some((entry) => entry.person)}
+    {#if [player, opponent].some( (id) => ['hisoka', 'chrollo', 'kalluto', 'kurapika', 'musse', 'benjamin', 'halkenburg', 'illumi'].includes(id) ) || state.battlefield?.entities.some((entry) => entry.person)}
       <FightRetrospectiveArsenal
         {state}
         language="fr"

@@ -1,3 +1,6 @@
+import { interruptHanzoBlade } from './hanzoBlade'
+import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
+import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { newGumSource } from './bungeeSource'
 import { openingFollowup } from './comboOpenings'
@@ -35,18 +38,18 @@ import {
 } from './directionalChain'
 import { pursuitTakeoff } from './fighterMovement'
 
-const MIN_X = 7
-const MAX_X = 93
-
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
-  fighter = advanceAttackBuffer(interruptUnavailableNen(fighter))
+  fighter = advanceAttackBuffer(interruptUnavailableNen(interruptHanzoBlade(fighter)))
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
-  let next: ArcadeFighter = {
-    ...fighter,
-    attack: { ...fighter.attack, frame },
-  }
+  let next: ArcadeFighter = advanceAttackDrive(
+    {
+      ...fighter,
+      attack: { ...fighter.attack, frame },
+    },
+    data.startup,
+  )
   if (!fighter.attack.impacted && frame >= data.startup + data.active) {
     next = setIn(releaseFocusedAura(next), false)
   }
@@ -90,9 +93,14 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    nenOpening: undefined,
+    nenBranchCount: nextNenBranchCount(fighter, options.moveId),
+    nenConversionCount:
+      (fighter.nenConversionCount ?? 0) +
+      Number(nextNenBranchCount(fighter, options.moveId) > (fighter.nenBranchCount ?? 0)),
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
-    x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
+    ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
     aura:
       fighter.aura -
       (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
@@ -116,20 +124,24 @@ export function startFighterAttack(options: {
       auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
       hatsuSource: attackHatsuSource(options),
-      nenOrigin: hisokaAttackOrigin(options),
+      nenOrigin: attackNenOrigin(options),
+      illumiNeedleMode:
+        attackHatsuSource(options) === 'illumi' ? fighter.illumiNeedleMode : undefined,
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },
     bufferedAttack: null,
   }
 }
-function hisokaAttackOrigin(options: Parameters<typeof startFighterAttack>[0]) {
-  return attackHatsuSource(options) === 'hisoka' ? newGumSource(options.fighter) : undefined
-}
 
 function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain) {
   if (chain === 'pursuit' || (chain === 'pursuit-technique' && fighter.id === 'hisoka'))
     return pursuitTakeoff(fighter)
+}
+
+function attackNenOrigin(options: Parameters<typeof startFighterAttack>[0]) {
+  const source = attackHatsuSource(options)
+  return source === 'hisoka' || source === 'illumi' ? newGumSource(options.fighter) : undefined
 }
 
 function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
@@ -216,10 +228,6 @@ function canAct(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     !fighter.throwTechRecoveryFrames
   )
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
 }
 
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {

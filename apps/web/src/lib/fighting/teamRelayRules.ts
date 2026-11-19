@@ -1,4 +1,7 @@
 import { teamWorldEngaged } from './teams/commitments'
+import { anyPaperTextureBusy } from './paperTexture'
+import { illumiRelaySignature } from './illumiDisguiseClock'
+import { anyCopiedNeedleFaceBusy } from './illumiNeedleFaceClock'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -26,6 +29,7 @@ const BODY_FIELDS = new Set([
   'speechPulse',
   'dowsingReading',
   'dowsingAcquaintances',
+  'dowsingMapReading',
   'devicePlayback',
   'receiverReading',
   'judgmentPreset',
@@ -39,6 +43,14 @@ const BODY_FIELDS = new Set([
   'bodyDamage',
   'gumProsthesisGeneration',
   'textureTarget',
+  'illumiDisguisePlan',
+  'illumiNeedleMode',
+  'illumiNeedleGeneration',
+  'illumiDisguisePins',
+  'texturePaperDraft',
+  'texturePaperId',
+  'paperTextureGeneration',
+  'documentReading',
   'maxHealth',
   'aura',
   'auraExhausted',
@@ -79,6 +91,7 @@ function restingSignature(actor: ArcadeFighter) {
 function restingBody(actor: ArcadeFighter): ArcadeFighter {
   const body = {
     ...actor,
+    illumi: illumiRelaySignature(actor),
     on: actor.on?.sealFrames ? { grudge: 0, sealFrames: actor.on.sealFrames } : undefined,
     hatsuEffects: {
       ...actor.hatsuEffects,
@@ -125,9 +138,12 @@ function quietWorld(state: FightState): boolean {
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
+      state.gumResuscitation,
       state.moonlight,
       state.bungeeGum,
       gumBusy(state),
+      anyPaperTextureBusy(state),
+      anyCopiedNeedleFaceBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,

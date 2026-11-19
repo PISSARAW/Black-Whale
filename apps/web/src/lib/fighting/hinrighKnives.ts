@@ -5,7 +5,7 @@ export const HINRIGH_KNIVES = 4
 
 /** Borrowing Biohazard supplies no physical knives; ordinary ranged attacks keep the real body's kit. */
 export function hinrighRangedBody(fighter: ArcadeFighter): ArcadeFighter {
-  return fighter.id === 'hinrigh' && fighter.nenOwner
+  return ['hinrigh', 'tserriednich', 'halkenburg'].includes(fighter.id) && fighter.nenOwner
     ? { ...fighter, id: fighter.nenOwner }
     : fighter
 }

@@ -6,6 +6,20 @@ la resimulation privée.
 
 - `client.ts` valide les vues, coordonne transport, génération et présentation.
 - `serverMatch.ts` est le seul arbitre qui avance le moteur et attribue les ticks.
+- `rollback/frameInput.ts` définit l'entrée d'une frame (commandes et contrôles tenus des
+  deux places) et le pas commun `stepPvpFrame` : place 1 puis place 2, puis le tick. L'arbitre
+  l'utilise ; la session de rollback (lot L2 de
+  [clash-netcode-rollback.md](../../../../../../docs/clash-netcode-rollback.md)) l'utilisera.
+- `rollback/session.ts` est la session de rollback, sans réseau ni horloge : délai d'entrée
+  commun, prédiction « dernière entrée tenue, aucune commande », resimulation depuis la
+  première frame mal prédite, attente au-delà de la fenêtre, empreintes des frames confirmées
+  échangées pour détecter une désynchronisation. Les états sont gardés par référence.
+- `rollback/loopback.ts` relie deux sessions par un canal en mémoire (délai, gigue, pertes,
+  réordonnancement) et les compare à une simulation de référence ; il ne sert qu'aux tests.
+  `session.long.test.ts` (activé par `ROLLBACK_LONG=1`) porte le critère complet du lot L2.
+- `rollback/codec.ts`, `timeSync.ts` et `socketClient.ts` portent la session sur le socket
+  du relais (`$lib/server/clashRollbackRelay.ts`, `clashRollbackSocket.ts`) ; le client ne
+  dépend que d'une interface WebSocket minimale. Le duel ne s'en sert pas encore (lot L3).
 - `controlUpload.ts` exige manche/génération à la frontière HTTP ; `inputReceipt.ts`
   distingue les reçus courants des réponses périmées.
 - `controlGate.ts` exige le relâchement après une nouvelle génération de duel.

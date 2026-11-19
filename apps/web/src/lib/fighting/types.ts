@@ -23,7 +23,6 @@ import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
 import type { FightKameos } from './kameos/types'
-
 export type { FightInput } from './fightInputTypes'
 export { EMPTY_INPUT } from './fightInputTypes'
 
@@ -413,6 +412,8 @@ export interface FightState {
   catsNameConsumed?: FightSide
   moonlight?: import('./moonlightContract').MoonlightState
   parallelFuture?: ParallelFutureState
+  /** Interactive solo illusion, isolated from authoritative damage, resources and verdicts. */
+  futurePerception?: FightState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
   /** Fatal causes collected before one common verdict, including simultaneous hits. */
@@ -424,7 +425,7 @@ export interface FightState {
   mode: FightMode
   player: ArcadeFighter
   opponent: ArcadeFighter
-  /** Support partners beside each leader; absent in an ordinary duel. */
+  /** Kameo partners beside each leader (KAMEOS.md); absent in an ordinary duel. */
   kameos?: FightKameos
   phase: FightPhase
   frame: number

@@ -23,9 +23,14 @@
   $: active = Boolean(frame && frame.age < frame.duration)
   $: name = throwPerformance(frame?.performance)?.name
   $: title =
-    frame?.performance === 'bonolenov-prologue' && !state[frame.attacker].battleCantabile?.prologue
-      ? 'Le dernier accord'
-      : name
+    frame?.performance === 'chrollo-public' && !frame.puppetId
+      ? 'Double Face'
+      : frame?.performance === 'tserriednich-future' && !frame.future
+        ? 'Composition brisée'
+        : frame?.performance === 'bonolenov-prologue' &&
+            !state[frame.attacker].battleCantabile?.prologue
+          ? 'Le dernier accord'
+          : name
 </script>
 
 {#if active && frame}

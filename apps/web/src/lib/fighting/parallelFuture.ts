@@ -4,7 +4,10 @@ import {
   futureSource,
   stopParallelFuture,
 } from './parallelFutureAbility'
+import { fieldDeceives } from './futureIllusion'
+import { soloFutureControlsLive, simulateFuturePerception } from './futurePerception'
 import { forecastParallelFuture } from './parallelFutureForecast'
+import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
 import type {
   FutureControls,
@@ -24,7 +27,7 @@ export function stepParallelFuture(
   engine: FutureEngine,
 ): FightState {
   const future = state.parallelFuture
-  if (!future) return engine.simulate(state, controls)
+  if (!future) return simulateFuturePerception(state, controls, engine.simulate)
   if (!futureValid(state)) return engine.simulate(stopParallelFuture(state), controls)
   if (future.phase === 'preparing') return stepPreparation(state, controls, engine.simulate)
   if (future.phase === 'vision') return stepVision(state, controls)
@@ -32,7 +35,8 @@ export function stepParallelFuture(
 }
 
 function futureValid(state: FightState): boolean {
-  const future = state.parallelFuture!
+  const future = state.parallelFuture
+  if (!future) return false
   const owner = state[future.owner]
   if (!futureNenAvailable(owner) || !futureSource(owner, future.sourceMoveId)) return false
   return future.phase === 'diverging' || owner.nen.mode === 'zetsu'
@@ -52,8 +56,8 @@ function stepPreparation(
   if (preparation < FUTURE_PREPARATION_FRAMES) return prepared
   const held = {
     ...controls,
-    player: { ...controls.player },
-    opponent: controls.opponent && { ...controls.opponent },
+    player: unpackReplayInput(packReplayInput(controls.player)),
+    opponent: controls.opponent && unpackReplayInput(packReplayInput(controls.opponent)),
   }
   const frames = forecastParallelFuture(prepared, held, simulate)
   return {
@@ -94,15 +98,20 @@ function stepDivergence(
   const replayControls =
     future.owner === 'player'
       ? { ...controls, opponent: held.opponent, ai: false }
-      : { ...controls, player: held.player }
-  let next = restorePerceivedFacing(engine.simulate(state, replayControls), state)
+      : { ...controls, player: soloFutureControlsLive(state) ? controls.player : held.player }
+  let next = restorePerceivedFacing(
+    simulateFuturePerception(state, replayControls, engine.simulate),
+    state,
+  )
+  if (!next.parallelFuture) return next
   if (future.owner === 'player' && held.ai) next = replayAi(next, state, engine.replay)
   if (next.phase !== 'fighting' || future.cursor + 1 >= FUTURE_WINDOW_FRAMES)
-    return stopParallelFuture(next)
+    return stopParallelFuture(next, next.phase === 'fighting' && Boolean(next.futureIllusion))
   return { ...next, parallelFuture: { ...future, cursor: future.cursor + 1 } }
 }
 
 function restorePerceivedFacing(next: FightState, original: FightState): FightState {
+  if (next.futurePerception) return next
   const future = original.parallelFuture!
   const observer = future.owner === 'player' ? 'opponent' : 'player'
   return {
@@ -136,6 +145,9 @@ export function futurePerceivedTarget(
   actual: ArcadeFighter,
 ): ArcadeFighter {
   const future = state.parallelFuture
+  if (state.futureIllusion && !fieldDeceives(state, observer)) return actual
+  if (fieldDeceives(state, observer) && future?.phase !== 'diverging')
+    return state.futureIllusion!.echo
   if (future?.phase !== 'diverging' || observer === future.owner) return actual
   const frame = future.frames[Math.max(0, future.cursor - 1)]
   return frame[future.owner]

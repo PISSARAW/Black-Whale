@@ -1,10 +1,13 @@
 import { teamLiving, type TeamSeat } from './teamTypes'
+import { settleSoulTeamVerdict } from './halkenburgSoulTeams'
 import type { FightSide, FightState } from './types'
 
 /** A lethal command can finish between ticks; record the actual bodies before the next team round. */
 export function settleTeamBodyOutcome(state: FightState): FightState {
   const team = state.teamMatch
   if (!team || state.phase !== 'finished' || !state.winner) return state
+  const soulVerdict = settleSoulTeamVerdict(state)
+  if (soulVerdict) return soulVerdict
   const seats = { player: settledSeat(state, 'player'), opponent: settledSeat(state, 'opponent') }
   const alive = (['player', 'opponent'] as const).filter((side) => teamLiving(seats[side]) > 0)
   const winner = alive.length === 2 ? null : (alive[0] ?? 'draw')

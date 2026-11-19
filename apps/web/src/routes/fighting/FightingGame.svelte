@@ -36,7 +36,7 @@
   import { readFightSetup, saveFightSetup } from '$lib/fighting/fightSetupDraft'
   import { link, locale } from '$lib/i18n'
   import { createFight } from '$lib/fighting/engine'
-  import { withChosenKameos } from '$lib/fighting/kameos/selection'
+  import { withKameos, type KameoPicks } from '$lib/fighting/kameos/state'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
@@ -61,6 +61,7 @@
       environment,
       format: selectedFormat,
       mode: selectedMode,
+      kameos,
     })
   const navigate = (destination: string) => void goto($link(`/fighting/${destination}`))
   afterNavigate(() => {
@@ -74,6 +75,7 @@
   let environment = createFightEnvironment({ arenaInteractions: true })
   let selectedFormat: FightFormatId = DEFAULT_FIGHT_FORMAT
   let selectedMode: FightMode = 'versus-ai'
+  let kameos: KameoPicks = {}
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
   let opponentInput: FightInput = { ...EMPTY_INPUT }
@@ -142,13 +144,15 @@
     navigate('battle')
     school.exit()
     practice.exit()
-    const options = {
-      formatId: selectedFormat,
-      mode: selectedMode,
-      environment,
-      controls: controls.schemesFor(selectedMode, coarsePointer()),
-    }
-    state = withChosenKameos(createFight(selectedPlayer, selectedOpponent, options))
+    state = withKameos(
+      createFight(selectedPlayer, selectedOpponent, {
+        formatId: selectedFormat,
+        mode: selectedMode,
+        environment,
+        controls: controls.schemesFor(selectedMode, coarsePointer()),
+      }),
+      kameos,
+    )
     resetFightInputs()
     match.begin(state)
     paused = false
@@ -369,6 +373,7 @@
     environment = draft.environment
     selectedFormat = draft.format
     selectedMode = draft.mode
+    kameos = draft.kameos ?? {}
     mounted = true
     if (screen === 'battle' && !state) void goto($link('/fighting/options'), { replaceState: true })
     easterEggPreferences = readEasterEggPreferences()
@@ -400,6 +405,8 @@
       format={selectedFormat}
       mode={selectedMode}
       {controls}
+      {kameos}
+      onKameo={(side, id) => (kameos = { ...kameos, [side]: id })}
       {lessons}
       {school}
       {practice}
@@ -425,7 +432,6 @@
       {replays}
       {pausePlan}
       {diagnostics}
-      qwen={match.qwen}
       {lessons}
       {school}
       {practice}

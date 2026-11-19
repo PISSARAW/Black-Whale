@@ -2,11 +2,15 @@
 
 # Index des tests
 
-Fichiers : 926
+Fichiers : 1112
 
 ## `apps/admin/src/hooks.server.test.ts`
 
 - admin handle > redirects an anonymous visitor to /login, remembering where they were going
+
+## `apps/admin/src/lib/server/analytics.test.ts`
+
+- private dashboard > shares one server-side login and aggregates activity without sending credentials to reads
 
 ## `apps/admin/src/lib/server/rate-limit.test.ts`
 
@@ -28,6 +32,10 @@ Fichiers : 926
 ## `apps/web/build-tools/bundleChunks.test.ts`
 
 - production bundle partitioning > initializes Cross Game and movesets regardless of which shared chunk loads first
+
+## `apps/web/src/lib/analytics/hatsuTracking.test.ts`
+
+- Hatsu selection metrics > does not count session restoration as a selection
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 
@@ -232,6 +240,10 @@ Fichiers : 926
 
 - AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
 
+## `apps/web/src/lib/fighting/audio/bonolenov.test.ts`
+
+- Bonolenov body instrument > unwraps once through simulation, sounds ordinary combat on both sides, and keeps holes exposed at rest
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -312,6 +324,17 @@ Fichiers : 926
 
 - Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
 
+## `apps/web/src/lib/fighting/bonolenovCombat.test.ts`
+
+- Bonolenov reference combat > starts the same dance on every activation and freezes it when simulation counters freeze
+
+## `apps/web/src/lib/fighting/bungeeNetwork.test.ts`
+
+- Hisoka’s independent Bungee Gum attachments > preserves existing link identifiers through an unrelated simultaneous exchange
+- physical linked cards and recalls > requires preparation before throwing and keeps the same object through recall and rethrow
+- network privacy and deterministic replay > keeps a real card visible under In without transmitting its hidden attachment metadata
+- borrowed Bungee Gum > keeps Dolphin locked while its paid scenery anchor remains and refuses a second creation
+
 ## `apps/web/src/lib/fighting/career/career.test.ts`
 
 - persistent local Clash career > starts empty, bounds text and sanitizes names without interpreting markup
@@ -328,6 +351,10 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/chrolloAnimation.test.ts`
 
 - Chrollo animations follow executable effects > accents page handling for 18 simulation frames, without a camera inset
+
+## `apps/web/src/lib/fighting/chrolloCombat.test.ts`
+
+- Chrollo — Zoldyck reference combat > varies physical counters and kicks instead of turning pages at empty range
 
 ## `apps/web/src/lib/fighting/chrolloCopiedArsenal.test.ts`
 
@@ -375,6 +402,10 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/combatBaseline.test.ts`
 
 - six-fighter fixed starting situations > starts the approach trial clear of both interactive crates
+
+## `apps/web/src/lib/fighting/combatCameraPhrase.test.ts`
+
+- short ranked camera impulses > gives light hits less camera travel than heavy hits and never stacks them
 
 ## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
 
@@ -469,6 +500,22 @@ Fichiers : 926
 
 - Dowsing Chain screens an actual voluntary statement without becoming a truth oracle > questions face to face without Emperor Time, damage, or a forced answer
 
+## `apps/web/src/lib/fighting/dowsingMapAi.test.ts`
+
+- the AI uses the same physical map action as the player > locates a previously met body during a distant opening and remembers the result
+
+## `apps/web/src/lib/fighting/dowsingMapMaterials.test.ts`
+
+- map location obeys physical paper and its real Nen sources > cannot read or reproduce a diagram under a real Texture Surprise film
+
+## `apps/web/src/lib/fighting/dowsingMapReplay.test.ts`
+
+- map location crosses replay and P2 boundaries without an injected result > accepts the real scenario plan and preserves the canonical searched body in P2 prediction
+
+## `apps/web/src/lib/fighting/dowsingMapScene.test.ts`
+
+- the visible map pendulum and physical printed sheet > uses the same sheet anchor and dated point without replacing the paper mesh
+
 ## `apps/web/src/lib/fighting/dowsingScene.test.ts`
 
 - the real Dowsing pendulum follows simulation and perception > swings the ring-finger tip on a knowing lie, then hides it when the live Hatsu is stopped
@@ -547,6 +594,12 @@ Fichiers : 926
 
 - hitstun tuning is limited to long grounded physical combos > replays the actual escape from a long corner string with identical checkpoints
 
+## `apps/web/src/lib/fighting/feitanCombat.test.ts`
+
+- Feitan — the two Zazan video references > authors moving cuts and holds only the straight thrust contacts
+- Feitan reference corrections > keeps normal blade pressure ahead of the generic Nen preparation projection
+- Feitan physical sword presentation > keeps the left sword and right umbrella together, rebuilds, confiscates and disposes
+
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
@@ -559,6 +612,10 @@ Fichiers : 926
 
 - Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
 
+## `apps/web/src/lib/fighting/feitanUmbrella.test.ts`
+
+- Feitan’s physical umbrella feint against Zazan > needs the real weapon and free hands, spends no aura and does not attack or injure on opening
+
 ## `apps/web/src/lib/fighting/fightAdvancedLessons.test.ts`
 
 - five advanced practical exercises use real engine outcomes > extends the curriculum while preserving the fifteen existing lesson identities
@@ -567,6 +624,10 @@ Fichiers : 926
 
 - fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
 - keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
+## `apps/web/src/lib/fighting/fightBodySeparation.test.ts`
+
+- material bodies cannot occupy the same space > moves the available body at the arena wall and preserves the anchored one
 
 ## `apps/web/src/lib/fighting/fightComfortControls.test.ts`
 
@@ -592,6 +653,10 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
+## `apps/web/src/lib/fighting/fightJointLimits.test.ts`
+
+- fighters only move like a human body > never plays the civilian walking stride in a duel
 
 ## `apps/web/src/lib/fighting/fightMobile.test.ts`
 
@@ -680,6 +745,26 @@ Fichiers : 926
 
 - 2D fight formats > keeps Tour judging separate from health-based duels
 
+## `apps/web/src/lib/fighting/fourCombatControl.test.ts`
+
+- four-plus encounters: physical identity, autonomy and post-mortem orders > implants a removable conditioning needle through a real skull hit, without making Needle People
+
+## `apps/web/src/lib/fighting/fourCombatEvidence.test.ts`
+
+- four-plus encounters: evidence, guardian and group arrow > removes a real dead body and restores that same body through Blinky’s last-object command
+
+## `apps/web/src/lib/fighting/fourCombatFuture.test.ts`
+
+- four-plus encounters: sustained Zetsu illusion application > charges only with available Nen outside Zetsu and caps the duel reserve
+
+## `apps/web/src/lib/fighting/fourCombatMachi.test.ts`
+
+- Machi’s manually operated armed bodies, ch. 97 > suspends the same actual body, draws its physical strings and fires its own finite ammunition
+
+## `apps/web/src/lib/fighting/fourCombatWeapons.test.ts`
+
+- four-plus encounters: physical equipment and emission > throws Leorio’s single real knife only at release, without a duplicate melee hit
+
 ## `apps/web/src/lib/fighting/frameDataTable.test.ts`
 
 - generated frame data table > is up to date with the movesets (run `pnpm fighting:frames`)
@@ -696,6 +781,14 @@ Fichiers : 926
 
 - Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
 
+## `apps/web/src/lib/fighting/futureParticipants.test.ts`
+
+- the fixed illusion field captures actual bodies present at activation > does not capture a person outside at activation who enters later
+
+## `apps/web/src/lib/fighting/futurePerception.test.ts`
+
+- being deceived by Laplace Demon in arcade > keeps live movement and new attacks instead of replaying the inputs held at activation
+
 ## `apps/web/src/lib/fighting/galleryIntegration.test.ts`
 
 - Gallery Fake command and simulation boundaries > maps P2’s local body reference back to the canonical original and keeps the resulting reading private
@@ -711,6 +804,22 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/gel.test.ts`
 
 - Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/ghostwriterInk.test.ts`
+
+- a copied ink supply never becomes permanent ink through automatic writing > removes the copied ink at 24 hours during hitstop while keeping the original handwritten identity
+
+## `apps/web/src/lib/fighting/ghostwriterMaterials.test.ts`
+
+- the month, genuine personal data, portrait and writing support remain real conditions > rejects false personal data even when the apparent and physical ink repeat it
+
+## `apps/web/src/lib/fighting/ghostwriterReplay.test.ts`
+
+- the actual physical fortune survives the recorded command boundary > accepts the authored monthly scenario and existing typed action, never a client-written forecast
+
+## `apps/web/src/lib/fighting/ghostwriterScene.test.ts`
+
+- the known ghostwriter and all written quatrains are visible through the real renderer > uses the normal copied-Hatsu input and reuses the archive creature on its actual writing hand
 
 ## `apps/web/src/lib/fighting/gumObjectAnchorBorrowing.test.ts`
 
@@ -732,6 +841,38 @@ Fichiers : 926
 
 - rubber replacements and their real surface disguise on the articulated model > shows the actual damaged parts without erasing the rest of the rig
 
+## `apps/web/src/lib/fighting/gumResuscitationCommands.test.ts`
+
+- the post-mortem prelude blocks actual combat inputs without cleansing the other body > blocks contextual scenery actions, direct attacks, moves, throws and arsenal commands
+
+## `apps/web/src/lib/fighting/gumResuscitationIntegration.test.ts`
+
+- cardiopulmonary Bungee Gum through the actual application boundaries > lets the AI give a prior order without inventing a death certificate
+
+## `apps/web/src/lib/fighting/gumSurfaceReplay.test.ts`
+
+- the facial injury premise and actual reconstruction commands cross P2 and replay boundaries > validates the explicit setup and keeps canonical support IDs in P2 prediction
+
+## `apps/web/src/lib/fighting/halkenburgSoulChains.test.ts`
+
+- Halkenburg transfers through a connected chain of actual bodies > moves into a third body already involved in a transfer without copying any mind or healing
+
+## `apps/web/src/lib/fighting/halkenburgSoulIntegration.test.ts`
+
+- Halkenburg’s selectable mind mode in the complete duel > keeps both prepared bodies physically vulnerable and resolves a real low strike on the sleeping one
+
+## `apps/web/src/lib/fighting/halkenburgSoulTeams.test.ts`
+
+- Halkenburg’s material minds in three-member team sets > keeps an untouched Camilla’s actual Cat’s Name revival in the stock count despite an earlier transfer chain
+
+## `apps/web/src/lib/fighting/halkenburgSouls.test.ts`
+
+- Halkenburg exchanges the chosen consciousness with the real pierced body > includes Halkenburg and each real ready supporter in the random pool
+
+## `apps/web/src/lib/fighting/hanzoCombat.test.ts`
+
+- Hanzo — Hunter Exam hand-to-hand combat > holds each authored hand or leg contact throughout its actual active frames
+
 ## `apps/web/src/lib/fighting/hanzoSpeech.test.ts`
 
 - Hanzo’s speaking double has its own position without moving the sleeping body > replays the actual Talk input and camera recording without a state patch
@@ -739,6 +880,10 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
 - fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
+
+## `apps/web/src/lib/fighting/hatsuRegistryLater.test.ts`
+
+- fighter Hatsu registry > lets an aimed, prepared Blinky swallow named objects but never Nen constructs
 
 ## `apps/web/src/lib/fighting/hinrigh.test.ts`
 
@@ -752,6 +897,10 @@ Fichiers : 926
 
 - Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
 
+## `apps/web/src/lib/fighting/hisokaCombat.test.ts`
+
+- Hisoka reference combat > mixes cards, sweeping kicks and a contact attachment instead of always opening with Gum
+
 ## `apps/web/src/lib/fighting/hisokaEffects.test.ts`
 
 - Hisoka accents follow the live scene > mounts the elastic on the posed hand and chest, freezes with simulation time, and leaves no phantom strand
@@ -764,6 +913,70 @@ Fichiers : 926
 
 - Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
 - Illumi conditions and borrowed needles > can commit exactly forty aura and still implant the charged needle
+
+## `apps/web/src/lib/fighting/illumiCorpseBorrowing.test.ts`
+
+- corpse control through one finite Dolphin use > uses only donor aura, stays busy during actual implantation and control, and dismisses without deleting the pins
+
+## `apps/web/src/lib/fighting/illumiCorpseBoundary.test.ts`
+
+- corpse controls retain their actual body through PvP and replacement > keeps canonical pin IDs and the same book source when P2 predicts the real application
+
+## `apps/web/src/lib/fighting/illumiCorpseMetal.test.ts`
+
+- corpse needles remain actual finite material through extraction and copies > moves a retrieved assembly from the floor into the next corpse without multiplying it
+
+## `apps/web/src/lib/fighting/illumiCorpseOrigin.test.ts`
+
+- corpse control owns actual embedded metal and its original Nen source > enforces an existing Judgment clause before paying or inserting metal
+
+## `apps/web/src/lib/fighting/illumiCorpseScene.test.ts`
+
+- physical corpse needles stay on the actual shared head > keeps one articulated body, leaves metal visible after Nen ends, then removes that same assembly
+
+## `apps/web/src/lib/fighting/illumiDisguiseBorrowing.test.ts`
+
+- the selected disguise uses its actual acquisition and actual body > executes an unpinned copy without conjuring needles and ends it on closing its page
+
+## `apps/web/src/lib/fighting/illumiDisguiseFigure.test.ts`
+
+- the body keeps its own eyes, hair, clothes, joints and abilities under Illumi’s face alteration > uses Hisoka’s facial shell and marks while preserving the owner’s actual eyes and combat body
+
+## `apps/web/src/lib/fighting/illumiDisguisePins.test.ts`
+
+- Gittarackur’s physical needle assembly is independent of its Nen appearance > does not materialize pins for the unpinned form or an interrupted preparation
+
+## `apps/web/src/lib/fighting/illumiDisguisePinsFigure.test.ts`
+
+- the ended disguise retains visible, recoverable material > keeps physical pins on the original face after page loss, then removes their geometry on extraction
+
+## `apps/web/src/lib/fighting/illumiDisguiseReplay.test.ts`
+
+- the real Illumi disguise controls in replays, AI and On > records and reproduces P2’s physical pins, removal, unpinned choice, alteration and reversion
+
+## `apps/web/src/lib/fighting/illumiDisguiseTeam.test.ts`
+
+- Illumi’s physical face belongs to its body through a relay > does not block a relay merely for an uncast face choice
+
+## `apps/web/src/lib/fighting/illumiKameoMatter.test.ts`
+
+- Illumi material and borrowed effects follow actual support bodies off stage > hits the real support body and ends its book shaping after it leaves the arena, preserving physical pins
+
+## `apps/web/src/lib/fighting/illumiNeedleBorrowing.test.ts`
+
+- other-body face shaping retains its actual acquisition > ends a book shaping effect on page closure without erasing metal or spending a loan
+
+## `apps/web/src/lib/fighting/illumiNeedleFigure.test.ts`
+
+- the face has three physical forehead pins without a Needle People marker > names the captured face application in both cast and contact shots
+
+## `apps/web/src/lib/fighting/illumiNeedleMatter.test.ts`
+
+- face pins retain actual matter and Gallery Fake parentage > retains detached pieces after other material of the same copy is destroyed, then expires them at their parent’s deadline
+
+## `apps/web/src/lib/fighting/illumiNeedleReplay.test.ts`
+
+- three forehead pins use actual commands in replays and P2 prediction > reproduces P2’s selected attack and P1’s physical removal without recording an outcome
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
@@ -811,6 +1024,22 @@ Fichiers : 926
 
 - kameo state (lot 2) > attaches a full reserve body to each requested side
 
+## `apps/web/src/lib/fighting/kameos/luzurusMotion.test.ts`
+
+- Luzurus support choreography and facial expressions > uses the real trap-creation frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/marayamMotion.test.ts`
+
+- Marayam support choreography and facial expressions > uses the real isolation frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/materialScene.test.ts`
+
+- support scene material changes follow the actual body geometry > rebuilds the face when physical pins appear or end, while movement alone keeps the existing rig
+
+## `apps/web/src/lib/fighting/kameos/morenaMotion.test.ts`
+
+- Morena support choreography and facial expressions > uses the real Contagion frame and a complete call cycle without changing replay state or geometry
+
 ## `apps/web/src/lib/fighting/kameos/projection.test.ts`
 
 - kameo duel projection (lot 3) > round-trips without change when nothing happens in the view
@@ -826,6 +1055,18 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/kameos/runtime.test.ts`
 
 - kameo calls (lot 5) > reads the call direction relative to the leader facing
+
+## `apps/web/src/lib/fighting/kameos/salesaleMotion.test.ts`
+
+- Salé-salé support choreography and facial expressions > uses the real smoke-delivery frame and a complete call cycle without changing replay state or geometry
+
+## `apps/web/src/lib/fighting/kameos/tubeppaMotion.test.ts`
+
+- Tubeppa uses roster articulation and expressions in the real kameo scene > follows the complete support cycle and its real healing frame without mutating the replay
+
+## `apps/web/src/lib/fighting/kameos/zhangLeiMotion.test.ts`
+
+- Zhang Lei support choreography and facial expressions > uses the real coin-bonus frame and a complete call cycle without changing replay state or geometry
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 
@@ -874,6 +1115,14 @@ Fichiers : 926
 
 - Machi thread presentation uses actual engine links > renders a thread to the attached target, hides it after release and disposes its resources
 
+## `apps/web/src/lib/fighting/machiReattachmentReplay.test.ts`
+
+- original limb surgery through the serialized command boundary > accepts the explicit injury premise and surgery command without client-supplied new flesh
+
+## `apps/web/src/lib/fighting/machiReattachmentScene.test.ts`
+
+- the real shared forearm moves from the floor back to the injured articulated body > keeps the elbow and hand together, then restores skin rather than Nen rubber
+
 ## `apps/web/src/lib/fighting/melody.test.ts`
 
 - Melody’s continuous music > stops with L, even without aura, releasing the listener immediately
@@ -881,6 +1130,10 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/melodyHearing.test.ts`
 
 - Melody’s bodily hearing > listens passively in Zetsu, with stolen Nen and without Gyo
+
+## `apps/web/src/lib/fighting/melodyInterrogation.test.ts`
+
+- Melody’s chapter 68 physiological questioning > asks audibly without Nen, with no forced response or hidden truth verdict
 
 ## `apps/web/src/lib/fighting/mizaistom.test.ts`
 
@@ -898,6 +1151,10 @@ Fichiers : 926
 
 - Musse — handgun and Secret Window > keeps the two demonstrated owl applications and physical normals without an execution finisher
 
+## `apps/web/src/lib/fighting/nenAudit.test.ts`
+
+- current Nen reference for all forty playable fighters > covers the exact roster, explicit conditions and only existing catalogue abilities
+
 ## `apps/web/src/lib/fighting/nenCombat.test.ts`
 
 - Nen techniques in an actual 2D duel > En detects bodies in Zetsu and accessible projectiles, while In hides aura
@@ -906,6 +1163,11 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/nenCombat/advanced.test.ts`
 
 - advanced combinations from the supplied Nen excerpt > distinguishes low-output aura observation from Ren-based ocular detection of In
+
+## `apps/web/src/lib/fighting/nenCombat/aiReads.test.ts`
+
+- defensive Ko balance > guards its zone better than Ken without nearing invulnerability
+- AI Nen reads > answers a visible strike only after the reaction delay, on the aimed zone
 
 ## `apps/web/src/lib/fighting/nenCombat/combat.test.ts`
 
@@ -948,9 +1210,37 @@ Fichiers : 926
 
 - Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
 
+## `apps/web/src/lib/fighting/padailleEscape.test.ts`
+
+- Padaille’s shown handcuff applications > pays for the drill transformation and slips a real cuff after an interruptible preparation
+
 ## `apps/web/src/lib/fighting/painPackerRig.test.ts`
 
 - reference Pain Packer outfit > shares its actual hood, grille, coat and gloves across the visit and Fighting
+
+## `apps/web/src/lib/fighting/paperDocumentCopy.test.ts`
+
+- Gallery Fake copies actual paper with actual hands and a finite life > reproduces the visible surface as an inert facsimile without copying Texture Surprise or uncovering ink
+
+## `apps/web/src/lib/fighting/paperDocumentIntegration.test.ts`
+
+- document contact, sight, AI and posed physical presentation > delivers a silent visual message through Judgment’s actual recipient rule
+
+## `apps/web/src/lib/fighting/paperDocumentReplay.test.ts`
+
+- semantic paper commands in PvP and recorded fights > replays the actual sheet, private text preparation, cast, reading and removal
+
+## `apps/web/src/lib/fighting/paperDocuments.test.ts`
+
+- actual document material and physical handling > provides only explicitly prepared notes, with no fortune or personal information
+
+## `apps/web/src/lib/fighting/paperTexture.test.ts`
+
+- Texture Surprise on existing paper > changes visible writing after the real cast while preserving the original ink and body disguise
+
+## `apps/web/src/lib/fighting/paperTextureBorrowing.test.ts`
+
+- a paper disguise retains its actual copied or borrowed source > spends only donor aura, maintains the loan and finishes without deleting the real paper
 
 ## `apps/web/src/lib/fighting/parallelFuture.test.ts`
 
@@ -977,6 +1267,18 @@ Fichiers : 926
 - Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
 - Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
 
+## `apps/web/src/lib/fighting/preparationResources.test.ts`
+
+- visible physical scenario resources survive network and replay validation > accepts the entire visible catalogue and materializes real bodies without granting Nen
+
+## `apps/web/src/lib/fighting/presentation/intro.test.ts`
+
+- combat entrances > waits for the first rendered scene, plays both fighters, then starts exactly once
+
+## `apps/web/src/lib/fighting/presentation/introPerformances.test.ts`
+
+- individual entrance direction > authors a distinct choreography and orbit for exactly the forty selectable fighters
+
 ## `apps/web/src/lib/fighting/presentation/presentation.test.ts`
 
 - original presentation without private knowledge or Nen changes > covers precisely the forty selected fighters with distinct bilingual lines
@@ -985,6 +1287,11 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/priorityMaterials.test.ts`
 
 - material applications preserve their conditions > shortens a real strand, weakens it after detachment and releases the held body
+
+## `apps/web/src/lib/fighting/projectileDefence.test.ts`
+
+- projectile collision anticipation > prioritises a farther fast shot over a nearer slow one by time to collision
+- trajectory-based ordinary defences > crouches under high shots rather than jumping into their path
 
 ## `apps/web/src/lib/fighting/projectileResources.test.ts`
 
@@ -1022,6 +1329,14 @@ Fichiers : 926
 
 - stream reconciliation and bounded input traffic > clears old uploads on a round change even when the intermission views were missed
 
+## `apps/web/src/lib/fighting/pvp/rollback/frameInput.test.ts`
+
+- PvP frame input (rollback lot L1) > resolves place 1 before place 2 within a frame
+
+## `apps/web/src/lib/fighting/pvp/rollback/timeSync.test.ts`
+
+- rollback time sync (lot L3) > measures the round trip with a smoothed average
+
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
 - server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
@@ -1034,6 +1349,24 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
 
 - read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
+
+## `apps/web/src/lib/fighting/qwen/qwen.test.ts`
+
+- perceived Qwen observations > does not expose enemy aura, In, inputs, buffered commands or hidden effects
+- bounded tactics and legal execution > rejects invented moves, arbitrary Nen and extra state-writing fields
+- nonblocking tactical scheduler > keeps one inference in flight, then alternates seats and applies a validated reply
+
+## `apps/web/src/lib/fighting/qwen/roster.test.ts`
+
+- Qwen covers the selected roster > contains exactly 40 real selectable fighters, with no guessed identifiers
+
+## `apps/web/src/lib/fighting/qwen/runtimeUtilities.test.ts`
+
+- Qwen panel execution through the match runtime > records sequential native panel actions from both seats and replays both changes
+
+## `apps/web/src/lib/fighting/referenceExchange.test.ts`
+
+- momentum and hitstop > preserves a nonzero outgoing tangent, and the exact contact endpoint
 
 ## `apps/web/src/lib/fighting/replayCoach.test.ts`
 
@@ -1131,6 +1464,10 @@ Fichiers : 926
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
 
+## `apps/web/src/lib/fighting/sunMoonMarkPoint.test.ts`
+
+- Sun and Moon detonate only when the actual indelible signs meet > does not confuse touching unmarked faces with touching signs
+
 ## `apps/web/src/lib/fighting/teamMatch.test.ts`
 
 - local three-fighter teams > requires three distinct known characters on each side
@@ -1169,6 +1506,38 @@ Fichiers : 926
 ## `apps/web/src/lib/fighting/threeCombatKalluto.test.ts`
 
 - Kalluto: chapter 226 applications > fans real confetti along three distinct paths for one paid preparation
+
+## `apps/web/src/lib/fighting/throwCinematic.test.ts`
+
+- confirmed throw cinematic > lets a KO victim complete the authored lift instead of overriding it with a generic fall
+
+## `apps/web/src/lib/fighting/throws/cameraAnchors.test.ts`
+
+- the lens fits real cinematic equipment > includes the whole staff even when the actor’s root is unnamed
+
+## `apps/web/src/lib/fighting/throws/eighthBatch.test.ts`
+
+- the final five pairs preserve corrected physics and native ability conditions > Sayird borrows a real controlled animal without inventing or moving it
+
+## `apps/web/src/lib/fighting/throws/fifthBatch.test.ts`
+
+- fifth batch: conditioned abilities and personality stay faithful to real resources > keeps Melody’s opening close-up on her actual instrument beside a taller opponent
+
+## `apps/web/src/lib/fighting/throws/performances.test.ts`
+
+- forty individual pairs of authored throw performances > covers the entire playable roster with both authored variants
+
+## `apps/web/src/lib/fighting/throws/physics.test.ts`
+
+- throw weight, pivot and support > continues moving through an intermediate lift key instead of stopping at each pose
+
+## `apps/web/src/lib/fighting/throws/seventhBatch.test.ts`
+
+- seventh batch on the corrected cinematic physics > Furykov witnesses a console opened by a real action, privately, without creating a new alert
+
+## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
+
+- the throw film witnesses real conditional manifestations > borrows a real diverging forecast, never a preparation or a detached vision
 
 ## `apps/web/src/lib/fighting/training.test.ts`
 
@@ -1856,6 +2225,15 @@ Fichiers : 926
 
 - authenticated snapshot stream > pushes only the authenticated perspective and never renews presence on outgoing traffic
 
+## `apps/web/src/lib/server/clashQwen.test.ts`
+
+- private Clash Ollama integration > keeps Clash configuration separate from the tour gateway and credentials
+
+## `apps/web/src/lib/server/clashRollbackSocket.test.ts`
+
+- Clash rollback relay over a real WebSocket (lot L3) > plays 600 frames between two clients that agree with the reference
+- rollback wire codec > round-trips frames, commands, checksums, pings and peer notices
+
 ## `apps/web/src/lib/server/clashSeasonFile.test.ts`
 
 - durable PvP seasons > restores identities, ratings and duplicate receipts after a server restart without persisting bearer tokens
@@ -2513,6 +2891,10 @@ Fichiers : 926
 - the three gabarits > gives a baby a head that is a quarter of it and an adult one a seventh
 - the second tone > bakes exactly two values into every mass, in the geometry
 
+## `apps/web/src/lib/tour/humanLocomotion.test.ts`
+
+- the rendered Tour walk > eases guard-to-walk shoulders instead of jumping by 57 degrees in one frame
+
 ## `apps/web/src/lib/tour/humanProfiles.test.ts`
 
 - shared human profiles > keeps one identity visually stable
@@ -2561,6 +2943,10 @@ Fichiers : 926
 ## `apps/web/src/lib/tour/luzurusView.test.ts`
 
 - Luzurus’s apartment against the salon panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/mangaCast.test.ts`
+
+- manga cast shared by the visit and Fighting > shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash
 
 ## `apps/web/src/lib/tour/mangaEvent.test.ts`
 

@@ -7,7 +7,6 @@ import {
   replaceHalkenburgBody,
 } from './halkenburgTransfer'
 import { COHORT_WILL_FRAMES } from './preparationTuning'
-import { readyCohort } from './preparationWorld'
 import { applyAuraContext } from './nen'
 import { createReplayRecorder } from './fightReplayRecorder'
 import { executeReplayPacket } from './fightReplayCommands'
@@ -65,7 +64,7 @@ function shoot(state: FightState, side: FightSide) {
 
 describe('Halkenburg target and explicit roster experiment', () => {
   for (const side of ['player', 'opponent'] as const) {
-    it(`keeps the struck physical target and sleeps its chosen supporter for ${side}`, () => {
+    it(`keeps the struck physical target when Halkenburg himself is drawn for ${side}`, () => {
       const state = ready(side)
       const target = side === 'player' ? 'opponent' : 'player'
       const struck = shoot(state, side)
@@ -74,10 +73,13 @@ describe('Halkenburg target and explicit roster experiment', () => {
       expect(struck[target].id).toBe('hisoka')
       expect(struck[target].hatsuEffects.possessedFrames).toBeGreaterThan(0)
       const sleeping = struck.battlefield!.entities.filter((entry) => entry.sleepingFrames)
-      expect(sleeping).toHaveLength(1)
-      expect(sleeping[0].id).toBe(struck[side].halkenburgSupporter)
-      expect(sleeping[0].sleepingFrames).toBe(struck[target].hatsuEffects.possessedFrames)
-      expect(readyCohort(struck, side)).not.toContainEqual(sleeping[0])
+      expect(sleeping).toHaveLength(0)
+      expect(struck[target].halkenburgSoul?.donor).toMatchObject({
+        kind: 'fighter',
+        owner: side,
+        member: 0,
+      })
+      expect(struck[side].halkenburgSleeping).toBe(struck[target].halkenburgSoul?.id)
     })
     it(`refuses unselected roster replacement even with all resources ready for ${side}`, () => {
       const state = ready(side)

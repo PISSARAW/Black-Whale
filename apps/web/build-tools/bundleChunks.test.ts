@@ -1,3 +1,4 @@
+import { SHIP_ROOM_STAGES } from '../src/lib/fighting/stageCatalogue'
 import { NEN_CANON } from '../src/lib/fighting/nenCanon'
 import { BENJAMIN_CANON } from '../src/lib/fighting/benjaminCanon'
 import { CHROLLO_CANON } from '../src/lib/fighting/chrolloCanon'
@@ -17,6 +18,7 @@ import { manualChunks } from './manualChunks'
 import { bundleBudget } from './bundleBudget'
 import { DUEL_COMBO_FIGHTERS, tuneDuelComboProfile } from '../src/lib/fighting/duelComboProfiles'
 import { DUEL_COMBO_LESSONS } from '../src/lib/fighting/duelComboLessons'
+import { KAMEO_COMBO_LESSONS } from '../src/lib/fighting/kameos/comboLessons'
 import type { FighterMoveset } from '../src/lib/fighting/movesetTypes'
 import { EASTER_ROSTER_ONE } from '../src/lib/fighting/easterEggRosterOne'
 import { EASTER_ROSTER_TWO } from '../src/lib/fighting/easterEggRosterTwo'
@@ -54,7 +56,7 @@ async function compile(entry: string) {
         onwarn: (warning) => {
           if (warning.code !== 'EMPTY_BUNDLE') warnings.push(warning.message)
         },
-        output: { format: 'es', manualChunks },
+        output: { format: 'es', manualChunks, onlyExplicitManualChunks: true },
       },
     },
   })
@@ -99,7 +101,8 @@ describe('production bundle partitioning', () => {
   it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
     const built = await compile(
       [
-        `export { beginFight, createFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { beginFight, createFight, tickFight } from ${JSON.stringify(resolve('src/lib/fighting/engine.ts'))}`,
+        `export { EMPTY_INPUT } from ${JSON.stringify(resolve('src/lib/fighting/types.ts'))}`,
         `export { launchKallutoPaper } from ${JSON.stringify(resolve('src/lib/fighting/kallutoFlight.ts'))}`,
         `export { performArsenalCommand } from ${JSON.stringify(resolve('src/lib/fighting/retrospectiveArsenal.ts'))}`,
       ].join('\n'),
@@ -123,6 +126,34 @@ describe('production bundle partitioning', () => {
     })
     expect(gathered.player.paperKit.confetti).toHaveLength(1)
     expect(gathered.player.paperKit.confetti[0].id).toBe(paper.id)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-map-location',
+      ),
+    ).toBe(true)
+    const fresh = actual.beginFight(
+      actual.createFight('kurapika', 'hisoka', {
+        mode: 'versus-local',
+        formatId: 'knockout',
+        environment: {
+          preparation: { mode: 'scenario', resources: ['maps'], cohorts: [] },
+        },
+      }),
+    )
+    const empty = actual.EMPTY_INPUT
+    let search = actual.tickFight(
+      { ...fresh, player: { ...fresh.player, x: 25 }, opponent: { ...fresh.opponent, x: 40 } },
+      empty,
+      { dt: 1 / 60, opponentInput: empty },
+    )
+    search = actual.performArsenalCommand(search, 'player', {
+      action: 'dowsing-locate',
+      target: 'opponent:0',
+    })
+    expect(search.player.dowsingMapSearch?.origin.source).toBe('personal')
+    for (let index = 0; index < 30; index++)
+      search = actual.tickFight(search, empty, { dt: 1 / 60, opponentInput: empty })
+    expect(search.player.dowsingMapReading?.point?.x).toBeCloseTo(33 / 86)
   }, 30_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [
@@ -134,6 +165,7 @@ describe('production bundle partitioning', () => {
       'rosterChoreographySecond',
       'fightStancesRoster',
       'fightExpressionProfiles',
+      'stageCatalogue',
     ]
     const built = await compile(
       modules
@@ -152,11 +184,17 @@ describe('production bundle partitioning', () => {
       SECOND_ROSTER_CHOREOGRAPHY,
       ROSTER_STANCES,
       FIGHT_EXPRESSION_PROFILES,
+      SHIP_ROOM_STAGES,
     }
     for (const [name, value] of Object.entries(expected)) expect(actual[name]).toEqual(value)
     expect(
       built.result.output.some(
         (item) => item.type === 'chunk' && item.name === 'clash-presentation-catalogues',
+      ),
+    ).toBe(true)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-stage-catalogue',
       ),
     ).toBe(true)
     expect(built.warnings).toEqual([])
@@ -195,14 +233,22 @@ describe('production bundle partitioning', () => {
   it('splits existing combo catalogues without changing lessons or forty-fighter tuning', async () => {
     const profiles = resolve('src/lib/fighting/duelComboProfiles.ts')
     const lessons = resolve('src/lib/fighting/duelComboLessons.ts')
+    const supports = resolve('src/lib/fighting/kameos/comboLessonCatalogue.ts')
     const built = await compile(
-      `export * from ${JSON.stringify(profiles)}\nexport { DUEL_COMBO_LESSONS } from ${JSON.stringify(lessons)}`,
+      `export * from ${JSON.stringify(profiles)}\nexport { DUEL_COMBO_LESSONS } from ${JSON.stringify(lessons)}\nexport { KAMEO_COMBO_LESSONS } from ${JSON.stringify(supports)}`,
     )
     const actual = await import(
       /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
     )
     expect(actual.DUEL_COMBO_FIGHTERS).toEqual(DUEL_COMBO_FIGHTERS)
     expect(actual.DUEL_COMBO_LESSONS).toEqual(DUEL_COMBO_LESSONS)
+    expect(actual.KAMEO_COMBO_LESSONS).toEqual(KAMEO_COMBO_LESSONS)
+    expect(actual.KAMEO_COMBO_LESSONS).toHaveLength(240)
+    expect(
+      built.result.output.some(
+        (item) => item.type === 'chunk' && item.name === 'clash-kameo-catalogues',
+      ),
+    ).toBe(true)
     for (const fighterId of DUEL_COMBO_FIGHTERS) {
       const moveset = {
         fighterId,
@@ -212,7 +258,7 @@ describe('production bundle partitioning', () => {
     }
     expect(
       built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-combo-catalogues',
+        (item) => item.type === 'chunk' && item.name.startsWith('clash-runtime-'),
       ),
     ).toBe(true)
     expect(built.warnings).toEqual([])

@@ -1,4 +1,6 @@
 import { recordMotion } from '../motionRecord'
+import { halkenburgBodyControl } from '../halkenburgHostMotion'
+import { halkenburgOwnBody } from '../halkenburgSoulTypes'
 import { updatePlayerGuard } from '../nenCombat/guardInput'
 import { illumiInput } from '../illumiFrame'
 import { poseFighter } from '../fightActorPose'
@@ -31,14 +33,14 @@ export function stepActors(state: FightState, inputs: DuelInputs): DuelBodies {
 }
 
 export function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter))
+  if (!halkenburgOwnBody(fighter))
+    return halkenburgBodyControl(advanceFighterPhysics(fighter, input))!
+  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter, input))
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
     input,
   )
-  if (advanced.halkSoulSleep)
-    return poseFighter({ ...advanced, attack: null, bufferedAttack: null, blocking: false })
   if (advanced.needlePuppet) return advanced
   if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
@@ -78,9 +80,9 @@ export function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  const soul = halkenburgBodyControl(advanced)
+  if (soul) return soul
   if (advanced.easterEgg) return poseFighter(advanced)
-  if (advanced.halkSoulSleep)
-    return poseFighter({ ...advanced, attack: null, bufferedAttack: null, blocking: false })
   if (advanced.needlePuppet) return advanced
   if (maryAiBusy(advanced)) return maryAiBody(advanced)
   if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }

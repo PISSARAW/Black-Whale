@@ -1015,13 +1015,6 @@ Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
 contrôlent le rendu et son déclenchement automatique dans Clash.
 Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
 
-## Sayird — Ton angle mort
-
-`sayird-fatality.html` utilise le renderer de victoire du jeu et un vrai K.-O.
-physique enregistré par `sayirdFilm.ts`. Little Eye et l’animal réel fourni sont
-une prémisse de cinématique, sans commande d’activation ajoutée au duel.
-Voir [le dossier Sayird](../../src/lib/fighting/victory/SAYIRD.md).
-
 ## Longhi et Furykov — Victoires personnelles
 
 `personal-guard.html?hero=longhi` montre Moonlight Act : signatures libres,
@@ -1120,3 +1113,10 @@ les pulsations de brûlure après un vrai contact, sur une cible encore vivante.
 Depuis `apps/web` : `node scripts/render-basho-fatality.mjs`. Depuis la racine :
 `node apps/web/scripts/compose-basho-fatality.mjs`. Sortie 1080p30 :
 `output/fighting-basho-fatality/Basho-Fatality-10s.mp4`.
+
+## Sayird — Ton angle mort
+
+`sayird-fatality.html` utilise le renderer de victoire du jeu et un vrai K.-O.
+physique enregistré par `sayirdFilm.ts`. Little Eye et l’animal réel fourni sont
+une prémisse de cinématique, sans commande d’activation ajoutée au duel.
+Voir [le dossier Sayird](../../src/lib/fighting/victory/SAYIRD.md).

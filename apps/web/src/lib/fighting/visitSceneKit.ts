@@ -1,4 +1,5 @@
 import { hatsuSourceFor } from './hatsu'
+import { retainedSoulBowReady } from './halkenburgSoulBow'
 import { createVisitHatsuModel, type VisitHatsuModel } from './visitHatsuModel'
 import { chrolloHasActivePage } from './chrolloBook'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -51,6 +52,8 @@ export function freeVisitHand(fighter: ArcadeFighter): 'left' | 'right' {
 }
 
 export function visitAttackSource(fighter: ArcadeFighter): FighterId | null {
+  if (fighter.attack?.hatsuSource === 'halkenburg' && retainedSoulBowReady(fighter))
+    return 'halkenburg'
   if (!fighter.attack || !voluntaryNenAvailable(fighter)) return null
   const borrowed = fighter.kurapika?.held
   if (borrowed?.used) return borrowed.source

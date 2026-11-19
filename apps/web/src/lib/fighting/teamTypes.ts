@@ -16,5 +16,5 @@ declare module './types' {
     teamMatch?: TeamMatch
   }
 }
-export const teamLiving = (seat: TeamSeat) =>
-  seat.members.filter((member) => member.health > 0).length
+export const teamMemberAlive = (member: ArcadeFighter) => member.halkSoulAlive ?? member.health > 0
+export const teamLiving = (seat: TeamSeat) => seat.members.filter(teamMemberAlive).length

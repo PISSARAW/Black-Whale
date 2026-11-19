@@ -22,6 +22,7 @@ export function createNenFieldScene(options: EffectSceneOptions) {
       depthWrite: false,
     })
     const mesh = new THREE.Mesh(geometry, material)
+    mesh.name = `en-field:${side}`
     mesh.rotation.x = -Math.PI / 2
     scene.add(mesh)
     return { side, mesh, material }

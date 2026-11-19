@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { get } from 'svelte/store'
-import { COMBAT_ROUTES, COMBAT_FIGHTERS } from './combatRoutes'
+import { COMBAT_SCHOOL_ROUTES, COMBAT_FIGHTERS } from './combatRoutes'
 import { createCombatSchool, advanceCombatSchool } from './combatSchool'
 import { createFightMatchRuntime } from './fightMatchRuntime'
 import { createReplayPlayer } from './fightReplayPlayer'
@@ -11,7 +11,7 @@ import { EMPTY_INPUT } from './types'
 
 for (const dt of [1 / 120, 1 / 60, 1 / 30, 0.05]) {
   describe(`combat demonstrations at ${Math.round(1 / dt)} render batches/s`, () => {
-    for (const route of COMBAT_ROUTES)
+    for (const route of COMBAT_SCHOOL_ROUTES)
       it(route.id, () => {
         const school = createCombatSchool()
         const match = createFightMatchRuntime(undefined, { record: false })
@@ -97,7 +97,7 @@ describe('defense training follows actual block and recovery events', () => {
 })
 
 describe('combat school remains reproducible after queue release and replay', () => {
-  for (const route of COMBAT_ROUTES)
+  for (const route of COMBAT_SCHOOL_ROUTES)
     it(`replays ${route.id}`, async () => {
       const school = createCombatSchool()
       const match = createFightMatchRuntime()

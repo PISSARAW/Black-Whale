@@ -1,7 +1,11 @@
 import { beginFight, createFight } from '../../src/lib/fighting/engine'
 import type { FightSide, FightState } from '../../src/lib/fighting/types'
+import type { InjuryPreset } from '../../src/lib/fighting/injuryPreparation'
 
-export function prosthesisScenario(side: FightSide): FightState {
+export function prosthesisScenario(
+  side: FightSide,
+  preset: InjuryPreset = 'hand-and-lower-leg',
+): FightState {
   const state = beginFight(
     createFight(side === 'player' ? 'hisoka' : 'theta', side === 'opponent' ? 'hisoka' : 'theta', {
       mode: 'versus-local',
@@ -11,7 +15,7 @@ export function prosthesisScenario(side: FightSide): FightState {
           mode: 'scenario',
           resources: [],
           cohorts: [],
-          injuries: { [side]: 'hand-and-lower-leg' },
+          injuries: { [side]: preset },
         },
       },
     }),

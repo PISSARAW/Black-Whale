@@ -1,4 +1,4 @@
-import { advanceHalkenburgSouls } from '../halkenburgSouls'
+import { stepGumResuscitation } from '../gumResuscitation'
 import { advanceRetrospectiveHitstop } from '../retrospectiveClocks'
 import { performArenaAction } from '../arenaActions'
 import { advanceArena, readArenaInputs } from '../arenaSimulation'
@@ -13,6 +13,7 @@ import { FIGHT_FPS } from '../fightClock'
 import { finishExpiredFight } from '../fightTimeout'
 import type { FightState } from '../types'
 import type { DuelAttack, DuelInputs, DuelPhaseResult } from './types'
+import { bufferKameoCalls } from '../kameos/buffer'
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -20,11 +21,12 @@ export function openFrame(
   inputs: DuelInputs,
   attack: DuelAttack,
 ): DuelPhaseResult {
+  if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
-  if (state.hitstop > 0) return { state: hitstopFrame(state), pending: true }
-  state = advanceHalkenburgSouls(state)
+  if (state.hitstop > 0)
+    return { state: hitstopFrame(bufferKameoCalls(state, inputs)), pending: true }
   state = advancePreparation(state, inputs)
   state = readArenaInputs(state, inputs, (current, side) =>
     performArenaAction(current, side, attack),

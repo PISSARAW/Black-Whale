@@ -1,3 +1,3 @@
-/** Shared input contract; retained for callers of the kameo branch. */
+/** Compatibility path for support actors; keep one authoritative input schema. */
 export type { FightInput } from './fightInputTypes'
 export { EMPTY_INPUT } from './fightInputTypes'

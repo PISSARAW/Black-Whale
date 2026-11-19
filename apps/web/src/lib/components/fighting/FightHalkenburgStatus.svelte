@@ -2,6 +2,7 @@
   import { halkenburgMode } from '$lib/fighting/halkenburgSoulTypes'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightState, FightSide } from '$lib/fighting/types'
+  import FightHalkenburgChain from './FightHalkenburgChain.svelte'
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
@@ -58,12 +59,12 @@
         >{language === 'fr' ? 'Échange' : 'Exchange'}
         {link.id} · {link.phase === 'swapped'
           ? language === 'fr'
-            ? 'Deux corps, une conscience éveillée'
-            : 'Two bodies, one awake mind'
+            ? 'Corps de départ et d’arrivée vivants'
+            : 'Departure and arrival bodies alive'
           : link.phase === 'cohabiting'
             ? language === 'fr'
-              ? 'Coexistence · priorité à la conscience revenue'
-              : 'Coexistence · returning mind has priority'
+              ? 'Corps de départ mort · retour de conscience'
+              : 'Departure body dead · returning mind'
             : language === 'fr'
               ? 'Corps occupé perdu'
               : 'Occupied body lost'}</span
@@ -76,6 +77,7 @@
           )} s</span
         >{/if}
     {/each}
+    <FightHalkenburgChain {state} {language} />
   </div>
 {/if}
 

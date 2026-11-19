@@ -1,3 +1,4 @@
+import { hasSunMoonMark } from './sunMoonMaterial'
 import { chrolloHasActivePage } from './chrolloBook'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
@@ -19,7 +20,7 @@ export function historicalPartExists(state: FightState, copyId?: string): boolea
 }
 
 export function historicalCopyExpired(state: FightState, entry: PreparedEntity): boolean {
-  if (persistentMark(entry)) return false
+  if (hasSunMoonMark(entry)) return false
   const copy = entry.copy!
   if (state.frame - copy.createdAt >= GALLERY_FAKE_LIFETIME) return true
   const owner = state[copy.owner]
@@ -27,7 +28,4 @@ export function historicalCopyExpired(state: FightState, entry: PreparedEntity):
   // a client may still predict its known age limit or the source body's death.
   if (owner.chrolloBook?.pagesPrivate) return owner.health <= 0
   return !chrolloHasActivePage(owner, 'gallery-fake')
-}
-function persistentMark(entry: PreparedEntity): boolean {
-  return entry.health > 0 && Boolean(entry.arena?.sun || entry.arena?.moon)
 }

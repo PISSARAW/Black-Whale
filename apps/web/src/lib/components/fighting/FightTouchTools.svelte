@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightHeldButton from './FightHeldButton.svelte'
+  import FightKameoCall from './FightKameoCall.svelte'
   import FightNenTactics from './FightNenTactics.svelte'
   import FightHanzoCall from './FightHanzoCall.svelte'
   import type { FightInput, FightState } from '$lib/fighting/types'
@@ -14,6 +15,7 @@
 </script>
 
 <div class="touch-tools">
+  <FightKameoCall {state} {language} {onControl} />
   {#if onMoves}<button type="button" class="touch-tools-toggle touch-moves" onclick={onMoves}
       >Combos</button
     >{/if}

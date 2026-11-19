@@ -7,7 +7,7 @@ import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
 import { paperDolls } from './kallutoSurveillance'
 import { addPadailleWeapon } from './padailleFigure'
-import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
+import { illumiFaceProfile, addIllumiNeedles, illumiFigureKey } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
@@ -35,13 +35,12 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.id,
-    fighter.halkCohortBody,
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
     paperDolls(fighter).length,
     Boolean(fighter.paperKit?.fan),
-    Boolean(fighter.illumi?.disguised),
+    ...illumiFigureKey(fighter),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
@@ -83,7 +82,7 @@ export function buildFightFigure(options: {
     hidden: false,
     human: {
       role: definition.modelRole,
-      identity: fighter.halkCohortBody ? 'halkenburg-supporter' : definition.modelId,
+      identity: definition.modelId,
       pose: 'idle',
       aura: fighter.nen.mode,
       nen: { ...fighter.nen, en: null },

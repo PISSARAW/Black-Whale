@@ -36,6 +36,7 @@
 | `fighting/pvp/online/api` | `+server.ts` |
 | `fighting/pvp/online/tournament/[id]` | `+page.svelte`, `+page.ts` |
 | `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/qwen` | `+server.ts` |
 | `fighting/teams` | `+page.svelte` |
 | `fighting/tournament` | `+page.svelte` |
 | `health` | `+server.ts` |
@@ -77,6 +78,7 @@
 | ----- | -------- |
 | `(root)` | `+error.svelte`, `+layout.server.ts`, `+layout.svelte`, `+page.server.ts`, `+page.svelte` |
 | `abilities` | `+page.server.ts`, `+page.svelte` |
+| `analytics` | `+page.server.ts`, `+page.svelte` |
 | `api/characters` | `+server.ts` |
 | `api/characters/[slug]` | `+server.ts` |
 | `chapters` | `+page.server.ts`, `+page.svelte` |

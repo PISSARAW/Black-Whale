@@ -68,7 +68,10 @@ it.each(['franklin', 'kalluto', 'voconte'] as const)(
           })!
           const audit = scene.userData.voconteVictory
           expect(audit).toBeDefined()
-          expect(Math.max(...audit.grips), `${target}, ${side}, frame ${age}`).toBeLessThan(0.06)
+          expect(
+            Math.max(...audit.grips),
+            `${target}, ${side}, frame ${age}: ${audit.grips}`,
+          ).toBeLessThan(0.06)
           expect(audit.hidden).toBe([156, 161].includes(age))
           expect(audit.heroHidden).toBe([90, 95, 246, 251].includes(age))
           expect(audit.doorB[0] - audit.doorA[0]).toBeCloseTo(2.6)

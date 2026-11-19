@@ -1,3 +1,4 @@
+import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { blackVoiceMoveAllowed } from './blackVoice'
 import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { cancelBufferSource } from './bufferedCancel'
@@ -103,9 +104,11 @@ function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): Fig
 function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): boolean {
   const { state, side, kind, moveId } = options
   const fighter = state[side]
-  if (!attackMaterialsAvailable(options)) return false
+  if (options.superThrow && !superThrowAvailable(fighter)) return false
+  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
+    return false
   if (fighter.id === 'camilla' && kind === 'special') return false
-  if (!techniqueAllowed(options)) return false
+  if (!techniqueAllowed(options) || !sunMoonStrikeAllowed(options)) return false
   const move = moveById(moveId)
   if (move && !canUseMovesetMove(state, side, move)) return false
   return (
@@ -131,12 +134,4 @@ function techniqueAllowed(options: AuraAttackOptions): boolean {
   if (!paperMoveAllowed(state, side, moveId)) return false
   if (isErigeronAction(state[side], kind, moveId)) return false
   return hisokaTechniqueAllowed(state, side, moveId) && feitanMoveAvailable(state[side], moveId)
-}
-
-function attackMaterialsAvailable(options: AuraAttackOptions): boolean {
-  const { state, side, kind } = options
-  const fighter = state[side]
-  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
-    return false
-  return !options.superThrow || superThrowAvailable(fighter)
 }

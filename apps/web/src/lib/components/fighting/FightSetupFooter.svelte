@@ -24,8 +24,7 @@
 
 <style>
   .clash-setup-footer {
-    position: sticky;
-    bottom: 0;
+    position: relative;
     z-index: 20;
     display: flex;
     align-items: center;

@@ -1,35 +1,62 @@
 import { Box3, type Mesh, type Object3D } from 'three'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 import { fighterAnchored } from './fighterAnchors'
+import { createSeparationSupport } from './fightSeparationSupport'
+import { fightPhysicalProfile } from './fightPhysicalProfile'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 const GAP = 0.025
 
 /** The material core has volume even when the animation leans outside its gameplay pushbox. */
 export function createFightBodySeparation(figureOf: (side: FightSide) => Object3D) {
+  let supports = makeSupports()
+  let offsets = { player: 0, opponent: 0 }
   let identity = '',
     previous = -1,
-    clearance = 0,
     order = 1
   return (state: FightState) => {
     const key = `${state.player.id}:${state.opponent.id}:${state.roundNumber}`
-    if (identity !== key || state.frame < previous) clearance = 0
+    if (identity !== key || state.frame < previous) {
+      offsets = { player: 0, opponent: 0 }
+      supports = makeSupports()
+    }
     identity = key
-    const dt = Math.max(0, state.frame - previous)
+    const dt = state.hitstop > 0 ? 0 : Math.max(0, state.frame - previous)
     previous = state.frame
     const roots = { player: figureOf('player').parent!, opponent: figureOf('opponent').parent! }
     if (!roots.player || !roots.opponent) return
     const direction =
       Math.sign(roots.opponent.position.x - roots.player.position.x) || state.player.facing
-    if (direction !== order) clearance = 0
+    if (direction !== order) offsets = { player: 0, opponent: 0 }
     order = direction
-    const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
-    clearance = Math.max(needed, clearance * Math.exp(-dt / 3))
     if (projectionBody(state.player) || projectionBody(state.opponent)) {
-      clearance = 0
+      offsets = { player: 0, opponent: 0 }
       return
     }
-    displaceCores(roots, state, clearance * direction)
+    retainOffsets(offsets, state, dt)
+    roots.player.position.x += offsets.player
+    roots.opponent.position.x += offsets.opponent
+    supportBodies({ supports, prepare: true }, state, figureOf)
+    const needed = coreOverlap(figureOf('player'), figureOf('opponent'), direction)
+    const shifts = displaceCores(roots, state, needed * direction)
+    offsets.player += shifts.player
+    offsets.opponent += shifts.opponent
+    supportBodies({ supports }, state, figureOf)
+  }
+}
+
+function supportBodies(
+  options: { supports: ReturnType<typeof makeSupports>; prepare?: boolean },
+  state: FightState,
+  figureOf: (side: FightSide) => Object3D,
+) {
+  for (const side of ['player', 'opponent'] as const) {
+    const update = options.prepare ? options.supports[side].prepare : options.supports[side]
+    update(figureOf(side), state[side], {
+      frame: state.frame,
+      frozen: state.hitstop > 0,
+      rival: figureOf(side === 'player' ? 'opponent' : 'player'),
+    })
   }
 }
 
@@ -66,13 +93,43 @@ export function bodySurfaceBox(part: Object3D): Box3 {
 }
 
 function displaceCores(roots: Record<FightSide, Object3D>, state: FightState, distance: number) {
+  const share = separationShare(state)
+  const shifts = { player: -distance * share, opponent: distance * (1 - share) }
+  roots.player.position.x += shifts.player
+  roots.opponent.position.x += shifts.opponent
+  return shifts
+}
+
+function retainOffsets(offsets: Record<FightSide, number>, state: FightState, dt: number) {
+  const engaged = Math.abs(state.player.x - state.opponent.x) < 15 && exchanging(state)
+  const release = engaged ? 1 : Math.exp(-dt / 12)
+  for (const side of ['player', 'opponent'] as const)
+    offsets[side] = fixedBody(state[side]) ? 0 : offsets[side] * release
+}
+
+function exchanging(state: FightState): boolean {
+  return Boolean(
+    state.player.attack ||
+    state.opponent.attack ||
+    state.player.hitStun > 0 ||
+    state.opponent.hitStun > 0,
+  )
+}
+
+function separationShare(state: FightState): number {
   const playerFixed = fixedBody(state.player),
     opponentFixed = fixedBody(state.opponent)
-  let share = 0.5
-  if (playerFixed && !opponentFixed) share = 0
-  if (opponentFixed && !playerFixed) share = 1
-  roots.player.position.x -= distance * share
-  roots.opponent.position.x += distance * (1 - share)
+  if (playerFixed && !opponentFixed) return 0
+  if (opponentFixed && !playerFixed) return 1
+  if (state.player.attack && state.opponent.pose === 'hit') return 0.15
+  if (state.opponent.attack && state.player.pose === 'hit') return 0.85
+  const a = fightPhysicalProfile(state.player).resistance
+  const b = fightPhysicalProfile(state.opponent).resistance
+  return a / (a + b)
+}
+
+function makeSupports() {
+  return { player: createSeparationSupport(), opponent: createSeparationSupport() }
 }
 
 function fixedBody(fighter: ArcadeFighter): boolean {

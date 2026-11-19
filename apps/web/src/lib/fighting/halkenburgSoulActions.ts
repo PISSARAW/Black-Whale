@@ -3,6 +3,7 @@ import { voiceAvailable } from './kallutoListening'
 import { canAct } from './fightActorState'
 import { halkenburgMode } from './halkenburgSoulTypes'
 import { reconcileHalkenburgSouls } from './halkenburgSouls'
+import { performSoulBow, soulBowOptions } from './halkenburgSoulBow'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState } from './types'
 
@@ -12,17 +13,30 @@ export const SOUL_SEDATIVE_FRAMES = 600
 export function performHalkenburgSoulCommand(options: ArsenalInvocation): FightState {
   const { state, side, command } = options
   if (command.action === 'halkenburg-mode') return selectMode(options)
+  if (command.action === 'halkenburg-arrow') return performSoulBow(options)
   if (!soulCommandReady(state, side)) return state
-  const mind = state[side].halkSoul?.mind
   const index = soulCommandIndex(options)
   if (index < 0) return state
-  const link = state.halkSoulLinks![index]
   if (command.action === 'halkenburg-sedative') return prepareSedative(state, side, index)
   if (command.action !== 'halkenburg-sleep') return state
+  return sleepMind({ state, side, command, index })
+}
+function sleepMind({
+  state,
+  side,
+  command,
+  index,
+}: ArsenalInvocation & { index: number }): FightState {
+  const mind = state[side].halkSoul?.mind,
+    link = state.halkSoulLinks![index]
   const source = Boolean(command.target?.startsWith('ally:')) || link.sourceMind.key === mind!.key
   const changed = { ...link, [source ? 'sourceSleep' : 'targetSleep']: SOUL_SLEEP_FRAMES }
+  const key = source ? link.sourceMind.key : link.targetMind.key
   return reconcileHalkenburgSouls({
     ...state,
+    halkSoulMinds: state.halkSoulMinds?.map((item) =>
+      item.mind.key === key ? { ...item, sleep: SOUL_SLEEP_FRAMES } : item,
+    ),
     halkSoulLinks: state.halkSoulLinks!.map((item, i) => (i === index ? changed : item)),
   })
 }
@@ -30,7 +44,7 @@ function soulCommandIndex({ state, side, command }: ArsenalInvocation): number {
   const mind = state[side].halkSoul?.mind
   if (command.target?.startsWith('ally:')) return allySleepIndex(state, side, command.target)
   return (
-    state.halkSoulLinks?.findIndex(
+    state.halkSoulLinks?.findLastIndex(
       (link) => link.sourceMind.key === mind?.key || link.targetMind.key === mind?.key,
     ) ?? -1
   )
@@ -70,16 +84,22 @@ function selectMode({ state, side, command }: ArsenalInvocation): FightState {
     !['roster', 'souls'].includes(command.target ?? '')
   )
     return state
-  if (!modeChangeReady(state, side) || halkenburgMode(state, side) === command.target) return state
+  if (
+    !modeChangeReady(state, side, command.target!) ||
+    halkenburgMode(state, side) === command.target
+  )
+    return state
   return { ...state, halkenburgModes: { ...state.halkenburgModes, [side]: command.target } }
 }
-function modeChangeReady(state: FightState, side: FightSide): boolean {
+function modeChangeReady(state: FightState, side: FightSide, target: string): boolean {
   return (
     soulCommandReady(state, side) &&
-    !state.teamMatch &&
-    !state.halkSoulLinks?.length &&
+    modeGraphReady(state, side, target) &&
     !state.projectiles.some((shot) => shot.owner === side && shot.halkenburgArrow)
   )
+}
+function modeGraphReady(state: FightState, side: FightSide, target: string): boolean {
+  return !state.halkSoulLinks?.length || (target === 'souls' && !state[side].halkSoul?.linked)
 }
 function prepareSedative(state: FightState, side: FightSide, index: number): FightState {
   const actor = state[side],
@@ -104,7 +124,12 @@ function prepareSedative(state: FightState, side: FightSide, index: number): Fig
   }
 }
 export function halkenburgSoulOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  return [...modeOptions(state, side), ...mindOptions(state, side), ...allyOptions(state, side)]
+  return [
+    ...modeOptions(state, side),
+    ...mindOptions(state, side),
+    ...allyOptions(state, side),
+    ...soulBowOptions(state, side),
+  ]
 }
 function modeOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const actor = state[side],
@@ -121,9 +146,9 @@ function modeOptions(state: FightState, side: FightSide): ArsenalOption[] {
             : 'Halkenburg · Transfert de conscience',
         labelEn: target === 'roster' ? 'Halkenburg · Roster variant' : 'Halkenburg · Mind transfer',
         conditionFr:
-          'Choix avant le tir, en duel. La variante conserve le tirage de corps et ses techniques ; le transfert déplace deux consciences entre les corps réellement présents, sans soin ni Hatsu du corps obtenu. Un seul échange par corps à la fois. Le mode ne change pas un projectile déjà lancé.',
+          'Choix avant le tir, en duel ou en équipes. Le transfert échange les consciences présentes, sans soin ni Hatsu du corps obtenu. Les tirs successifs conservent chaque conscience et les corps déjà occupés. Le mode ne change pas une flèche lancée.',
         conditionEn:
-          'Choose before firing, in a duel. The variant keeps random roster casting and its techniques; mind transfer swaps two minds between present bodies, without healing or acquiring the host’s Hatsu. One exchange per body at a time. Mode changes cannot rewrite a released arrow.',
+          'Choose before firing, in a duel or teams. Transfer swaps present minds, without healing or acquiring the host’s Hatsu. Successive shots preserve each mind and previously occupied bodies. Mode changes cannot rewrite a released arrow.',
       })
     }
   return entries

@@ -1,3 +1,4 @@
+import { dowsingMapAi } from './dowsingMapAi'
 import { dowsingVideoOptions, performDowsingVideo } from './dowsingVideo'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { canAskDowsing } from './dowsingRules'
@@ -6,6 +7,8 @@ import type { DowsingQuestion } from './dowsingTypes'
 import type { FightState } from './types'
 
 export function dowsingAi(state: FightState): FightState | null {
+  const map = dowsingMapAi(state)
+  if (map) return map
   const video = videoAi(state)
   if (video) return video
   if (judgmentForbidsContact(state.opponent, state.player.id)) return null

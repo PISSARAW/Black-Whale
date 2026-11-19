@@ -1,8 +1,17 @@
+import { beginGumResuscitation } from './gumResuscitation'
 import { resolveDeathHatsu } from './hatsu'
 import type { FightSide, FightState } from './types'
 
 export type FightDeathCause =
-  'strike' | 'projectile' | 'heat' | 'transfer' | 'judgment' | 'vow' | 'blood'
+  | 'strike'
+  | 'projectile'
+  | 'heat'
+  | 'transfer'
+  | 'judgment'
+  | 'vow'
+  | 'blood'
+  | 'asphyxia'
+  | 'toxin'
 export interface FightDeath {
   victimSide: FightSide
   killerSide: FightSide | null
@@ -24,6 +33,8 @@ export function explicitDeath(death: FightDeath): boolean {
 /** All casualties of a batch are known before post-mortem Nen is asked to act. */
 export function resolvePostMortemDeaths(state: FightState): FightState {
   for (const death of state.deaths ?? []) {
+    const pumping = beginGumResuscitation(state, death)
+    if (pumping) return pumping
     if (!hasLivingKiller(state, death)) continue
     const triggered = resolveDeathHatsu(state, death.killerSide!, death.victimSide)
     if (triggered) return { ...triggered, deaths: undefined }

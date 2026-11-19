@@ -1,3 +1,4 @@
+import { performGumResuscitation } from './gumResuscitationAction'
 import { ownsBungeeGum, gumLoanUsed, spendGumUse } from './bungeeAccess'
 export { ownsBungeeGum, spendGumUse } from './bungeeAccess'
 import { NETWORK_GUM_ACTIONS, performGumNetworkCommand } from './bungeeCommands'
@@ -15,6 +16,8 @@ export function performGumCommand(
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
+  if (command.action === 'gum-program-resuscitation')
+    return performGumResuscitation(state, side, command)
   if (command.action === 'gum-spring-step') return performGumSpringStep(state, side)
   if (command.action.startsWith('gum-prosthesis'))
     return performGumProsthesisCommand(state, side, command)

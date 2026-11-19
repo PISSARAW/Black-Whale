@@ -1,3 +1,4 @@
+import { objectMarkPoint } from './sunMoonMarkPoint'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState, FightSide } from './types'
@@ -93,6 +94,25 @@ export function createArenaScene({ THREE, scene, worldX, worldY }: EffectSceneOp
     return held
   }
 
+  function syncMarks(held: ReturnType<typeof ensureObject>, entry: PreparedEntity) {
+    const sunPoint = objectMarkPoint(entry, 'sun'),
+      moonPoint = objectMarkPoint(entry, 'moon')
+    if (sunPoint)
+      held.sun.position.set(
+        worldX(sunPoint.x) - worldX(entry.x),
+        worldY(sunPoint.y) - worldY(entry.y),
+        0.34,
+      )
+    if (moonPoint)
+      held.moon.position.set(
+        worldX(moonPoint.x) - worldX(entry.x),
+        worldY(moonPoint.y) - worldY(entry.y),
+        0.34,
+      )
+    held.sun.visible = entry.health > 0 && Boolean(sunPoint && entry.arena!.sun)
+    held.moon.visible = entry.health > 0 && Boolean(moonPoint && entry.arena!.moon)
+  }
+
   function syncObject(state: FightState, entry: PreparedEntity, seconds: number) {
     const held = ensureObject(entry)
     if (held.health > 0 && entry.health <= 0) held.brokenAt = state.frame
@@ -101,8 +121,7 @@ export function createArenaScene({ THREE, scene, worldX, worldY }: EffectSceneOp
     const breaking = age >= 0 && age < 36 && entry.health <= 0
     held.root.visible = entry.present
     held.root.position.set(worldX(entry.x), worldY(entry.y), 0.4)
-    held.sun.visible = entry.health > 0 && Boolean(entry.arena!.sun)
-    held.moon.visible = entry.health > 0 && Boolean(entry.arena!.moon)
+    syncMarks(held, entry)
     held.flame.visible = entry.health > 0 && Boolean(entry.arena!.burning)
     held.flame.scale.set(1 + Math.sin(seconds * 17) * 0.15, 0.8 + Math.cos(seconds * 13) * 0.25, 1)
     held.shock.visible = breaking

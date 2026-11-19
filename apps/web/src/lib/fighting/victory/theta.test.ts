@@ -65,6 +65,22 @@ it.each(['franklin', 'biscuit', 'theta'] as const)(
           frame: { ...selectVictory(state)!, active: true, elapsed: age / 60 },
         })!
         const audit = scene.userData.thetaVictory
+        const gun = scene.getObjectByName('theta-last-chamber')!.children[0]
+        const wrist = models.player.getObjectByName('hand-right')!
+        expect(
+          gun
+            .getWorldPosition(new THREE.Vector3())
+            .distanceTo(wrist.getWorldPosition(new THREE.Vector3())),
+        ).toBeLessThan(1e-9)
+        expect(
+          new THREE.Vector3(0, 0, 1)
+            .applyQuaternion(gun.getWorldQuaternion(new THREE.Quaternion()))
+            .dot(
+              new THREE.Vector3(0, -1, 0).applyQuaternion(
+                wrist.getWorldQuaternion(new THREE.Quaternion()),
+              ),
+            ),
+        ).toBeCloseTo(1, 9)
         expect(audit.shots).toBe(Number(age >= 372))
         expect(audit.chambered).toBe(age < 372)
         expect(audit.magazineRemoved).toBe(age >= 54)
@@ -72,7 +88,10 @@ it.each(['franklin', 'biscuit', 'theta'] as const)(
           expect(
             audit.target.clone().sub(audit.muzzle).normalize().dot(audit.barrelDirection),
           ).toBeGreaterThan(0.99)
-        expect(Math.max(...audit.handErrors), `target ${target}, age ${age}`).toBeLessThan(0.06)
+        expect(
+          Math.max(...audit.handErrors),
+          `target ${target}, age ${age}, hands ${audit.handErrors}`,
+        ).toBeLessThan(0.06)
         if (age >= 120) expect(audit.magazine.y).toBeCloseTo(0.04, 3)
         if (age === 570) expect(audit.fall.floor).toBeCloseTo(0.012, 5)
         restore()

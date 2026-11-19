@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { GUM_RESUSCITATION_STATUS } from '$lib/fighting/gumResuscitationPresentation'
   import FightDolphinPeople from './FightDolphinPeople.svelte'
   import FightJudgmentInterview from './FightJudgmentInterview.svelte'
   import FightDowsingInterview from './FightDowsingInterview.svelte'
@@ -17,6 +18,7 @@
   import FightMultiCombatStatus from './FightMultiCombatStatus.svelte'
   import FightPriorityStatus from './FightPriorityStatus.svelte'
   import FightGumNetwork from './FightGumNetwork.svelte'
+  import FightPaperDocument from './FightPaperDocument.svelte'
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
@@ -27,8 +29,26 @@
       : (['player'] as const)
 </script>
 
+{#if state.gumResuscitation}
+  <p role="status" class="resuscitation-status">
+    {state.gumResuscitation.victimSide === 'player' ? 'P1' : 'P2'} · {GUM_RESUSCITATION_STATUS[
+      language
+    ]}
+  </p>
+{/if}
+
 {#each ['player', 'opponent'] as publicSide (publicSide)}
   {@const caster = state[publicSide as FightSide]}
+  {#if caster.ghostwriterWriting}<p role="status">
+      {publicSide === 'player' ? 'P1' : 'P2'} · Lovely Ghostwriter · {language === 'fr'
+        ? 'Écriture automatique'
+        : 'Automatic writing'} · {(caster.ghostwriterWriting.frames / 60).toFixed(1)} s
+    </p>{/if}
+  {#if caster.machiReattachment}<p role="status">
+      {publicSide === 'player' ? 'P1' : 'P2'} · Nen Stitches · {language === 'fr'
+        ? 'Raccordement des tissus'
+        : 'Reconnecting tissues'} · {(caster.machiReattachment.frames / 60).toFixed(1)} s
+    </p>{/if}
   {#if caster.attack?.moveId === 'kurapika:finisher' && caster.judgmentDeclaration}
     <p role="status">
       {fighterDefinition(caster.id).name} · Judgment : {judgmentClauseLabel(
@@ -125,6 +145,7 @@
       <FightDolphinPeople {state} {side} {language} />
       <FightJudgmentInterview {state} {side} {language} {paused} {onUse} />
       <FightDowsingInterview {state} {side} {language} {paused} {onUse} />
+      <FightPaperDocument {state} {side} {language} {paused} {onUse} />
       <FightLittleEyeScreen screen={state[side].littleEyeScreen} {language} />
       {#if state[side].devicePlayback}
         <strong

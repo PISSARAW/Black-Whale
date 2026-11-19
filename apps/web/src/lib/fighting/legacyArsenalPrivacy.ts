@@ -1,7 +1,28 @@
+import { redactCorpsePreparation } from './illumiCorpsePrivacy'
 import { redactBattleModels } from './metamorphosenModels'
 import type { ArcadeFighter } from './types'
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
+  concealMachiSurgerySource(enemy)
+  redactCorpsePreparation(enemy)
+  enemy.halkenburgChosenSoul = undefined
+  enemy.halkenburgSupporter = undefined
+  enemy.dowsingMapSearch = undefined
+  enemy.dowsingMapReading = undefined
+  enemy.illumiNeedleMode = undefined
+  enemy.illumiNeedleGeneration = undefined
+  enemy.illumiDisguisePlan = undefined
+  if (enemy.illumi)
+    enemy.illumi = {
+      ...enemy.illumi,
+      disguiseOrigin: undefined,
+      disguiseExpiresAt: undefined,
+      anchor: undefined,
+    }
+  enemy.texturePaperDraft = undefined
+  enemy.texturePaperId = undefined
+  enemy.paperTextureGeneration = undefined
+  enemy.documentReading = undefined
   concealProsthesisAppearance(enemy)
   enemy.textureTarget = undefined
   enemy.gumProsthesisGeneration = undefined
@@ -37,4 +58,9 @@ function concealProsthesisAppearance(enemy: ArcadeFighter): void {
   enemy.bodyDamage = undefined
   enemy.gumProstheses = undefined
   enemy.textureSurprise = undefined
+}
+
+function concealMachiSurgerySource(enemy: ArcadeFighter): void {
+  if (enemy.machiReattachment)
+    enemy.machiReattachment = { ...enemy.machiReattachment, origin: undefined }
 }

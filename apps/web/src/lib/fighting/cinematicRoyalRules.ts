@@ -43,6 +43,7 @@ export const TSERRIEDNICH_CAMERA_RULES = rulesFor('tserriednich', [
     id: 'zetsu',
     label: ['Futur parallèle · Yeux fermés', 'Parallel Future · Eyes closed'],
     select: (c) => Boolean(c.self.parallelEyesClosed),
+    private: true,
     anchors: selfPart('head'),
     frontal: true,
     priority: 3,
@@ -62,6 +63,7 @@ export const TSERRIEDNICH_CAMERA_RULES = rulesFor('tserriednich', [
     label: ['Futur parallèle · Divergence', 'Parallel Future · Divergence'],
     select: (c) =>
       c.state.parallelFuture?.owner === c.side && c.state.parallelFuture.phase === 'diverging',
+    private: true,
     anchors: selfPart('head'),
     frontal: true,
     priority: 3,
@@ -76,6 +78,7 @@ export const TSERRIEDNICH_CAMERA_RULES = rulesFor('tserriednich', [
       c.state.parallelFuture?.owner === c.side && c.state.parallelFuture.phase === 'preparing',
     edge: 'leave',
     guard: (c) => !c.state.parallelFuture && c.self.hitStun > 0,
+    private: true,
     anchors: selfPart('body'),
   },
 ])

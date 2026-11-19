@@ -3,6 +3,7 @@ import type { Apparition } from './apparitions'
 import { raiseConcertFlute } from './humanFlutePose'
 import { HUMAN_REST_POSES } from './humanRestPoses'
 import { rememberHang, stride } from './humanWalk'
+import { rememberHumanReach } from './humanReachMemory'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
 
@@ -37,6 +38,11 @@ export function humanAnimationRig(figure: Object3D): AnimatedHuman | undefined {
   return ANIMATION_RIGS.get(figure)
 }
 
+/** Register the independent anatomy of a scene-owned body clone. */
+export function registerHumanAnimationRig(rig: AnimatedHuman): void {
+  ANIMATION_RIGS.set(rig.figure, rig)
+}
+
 export interface HumanAnimationLayer {
   motion?: HumanMotion
   /** Final contact constraints run after all pose cross-fades and motion layers. */
@@ -69,6 +75,7 @@ function animatedParts(rig: AnimatedHuman): Object3D[] {
     ...rig.arms.map((arm) => arm.children[1]),
     ...rig.legs,
     ...rig.knees,
+    ...rig.knees.flatMap((knee) => (knee.children[1] ? [knee.children[1]] : [])),
   ]
 }
 
@@ -168,7 +175,7 @@ export function poseHuman(rig: PosedHuman): void {
 export function humanAnimation(
   rig: AnimatedHuman,
 ): (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void {
-  ANIMATION_RIGS.set(rig.figure, rig)
+  registerHumanAnimationRig(rig)
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
   const flute = rig.figure.getObjectByName('signature-flute')
   const fluteBasePosition = flute?.position.clone()
@@ -181,6 +188,8 @@ export function humanAnimation(
   const hipBasePosition = rig.legs.map((leg) => leg.position.clone())
   const hipBase: Euler[] = rig.legs.map((leg) => leg.rotation.clone())
   const kneeBase: Euler[] = rig.knees.map((knee) => knee.rotation.clone())
+  const feet = rig.knees.map((knee) => knee.children[1])
+  const footBase = feet.map((foot) => foot?.rotation.clone())
   const headBase = rig.head.rotation.clone()
   const torsoBaseY = rig.torso.position.y
   const pelvisBaseX = rig.pelvis.position.x
@@ -292,6 +301,8 @@ export function humanAnimation(
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
+    rig.arms.forEach(rememberHumanReach)
+    rig.legs.forEach(rememberHumanReach)
     syncTransition(seconds, pose, layer)
     rig.figure.position.copy(figureBasePosition)
     rig.figure.rotation.copy(figureBaseRotation)
@@ -304,6 +315,7 @@ export function humanAnimation(
       leg.position.copy(hipBasePosition[index])
       leg.rotation.copy(hipBase[index])
       rig.knees[index].rotation.copy(kneeBase[index])
+      if (feet[index] && footBase[index]) feet[index].rotation.copy(footBase[index])
     })
 
     const breath = Math.sin(seconds * 1.7) * 0.008
@@ -316,7 +328,7 @@ export function humanAnimation(
     layer?.motion?.(rig)
     if (transitionFrom) {
       const amount = Math.min(1, Math.max(0, (seconds - transitionStarted) / transitionSeconds))
-      blendFrame(parts, transitionFrom, amount)
+      blendFrame(parts, transitionFrom, amount * amount * (3 - 2 * amount))
       if (amount === 1) transitionFrom = null
     }
     layer?.afterMotion?.(rig)

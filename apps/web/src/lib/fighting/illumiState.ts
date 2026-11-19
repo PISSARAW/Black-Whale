@@ -1,4 +1,8 @@
+import { halkenburgOwnBody } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightSide } from './types'
+import type { GumSource } from './bungeeSource'
+
+export type IllumiDisguiseMode = 'pinned-gittarackur' | 'unpinned-hisoka'
 
 export type NeedleOrder = 'stay' | 'approach' | 'retreat'
 export interface IllumiState {
@@ -7,6 +11,14 @@ export interface IllumiState {
   disguised: boolean
   preparation: number
   anchor?: { x: number; y: number }
+  disguiseMode?: IllumiDisguiseMode
+  disguiseOrigin?: GumSource
+  disguiseExpiresAt?: number
+}
+declare module './types' {
+  interface ArcadeFighter {
+    illumiDisguisePlan?: IllumiDisguiseMode
+  }
 }
 export interface NeedlePuppet {
   mediumCopyId?: string
@@ -38,6 +50,7 @@ export function illumiPreparing(fighter: ArcadeFighter): boolean {
 export function illumiBodyFree(fighter: ArcadeFighter): boolean {
   return (
     !fighter.arsenalSleep &&
+    halkenburgOwnBody(fighter) &&
     !(fighter.dolphinLoan?.blackoutFrames ?? 0) &&
     !fighter.clothCapture &&
     needleAutonomy(fighter) &&

@@ -1,3 +1,4 @@
+import { nenImpactBodyPlan, type NenImpactResponse } from './nenImpactResponse'
 import {
   addPoses,
   lerpPose,
@@ -7,7 +8,7 @@ import {
   type BodyPlan,
   type FightPose,
 } from './fightPose'
-import { AIR_POSE, CROUCH_POSE } from './fightStance'
+import { AIR_POSE } from './fightStance'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import { sampleTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FightNenZone } from './types'
@@ -16,6 +17,7 @@ import { rosterHitReaction, type StrikeContactMotion } from './rosterHitReaction
 import { physicalHitPose, type PhysicalHit } from './fightHitResponse'
 import type { createFightPoseContinuity } from './fightPoseContinuity'
 import { physicalFallPose } from './fightFallResponse'
+import { groundRecoveryPose } from './fightGroundRecovery'
 
 /**
  * What happens to a body when it is not the one attacking: struck, knocked
@@ -29,6 +31,7 @@ import { physicalFallPose } from './fightFallResponse'
  * (`sceneMotion.poseProgress`), so the timing stays the engine's.
  */
 export interface ReactionContext {
+  rival?: ArcadeFighter
   /** 0 when the state starts, 1 when it ends (`sceneMotion.poseProgress`). */
   progress: number
   /** Where the last blow landed, for a struck fighter. */
@@ -36,6 +39,9 @@ export interface ReactionContext {
   strikeReaction?: 'blinky-hammer' | 'blinky-drive'
   strikeMotion?: StrikeContactMotion
   physicalHit?: PhysicalHit
+  nenResponse?: NenImpactResponse
+  nenCarry?: FightPose
+  nenConstraint?: BodyPlan | null
   poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
 
@@ -111,19 +117,6 @@ const LAUNCHED: FightPose = {
   leadKnee: [0.8, 0, 0],
 }
 
-const SITTING_UP: FightPose = {
-  body: [-0.6, 0, 0],
-  chest: [0.3, 0, 0],
-  leadHip: [-1.3, 0, 0.1],
-  leadKnee: [1.8, 0, 0],
-  rearHip: [-1, 0, -0.1],
-  rearKnee: [2, 0, 0],
-  leadShoulder: [0.4, 0, 0.4],
-  rearShoulder: [0.6, 0, -0.4],
-  leadElbow: [1.4, 0, 0],
-  rearElbow: [1.7, 0, 0],
-}
-
 /** Progress is drawn on a hundred-frame scale so the timeline's keys read as percentages. */
 const SCALE = { startup: 0, active: 0, recovery: 100 }
 
@@ -151,12 +144,6 @@ function fallTimeline(stagger: FightPose): MoveTimeline {
 }
 
 const KNOCKDOWN = fallTimeline(HIT.head)
-const WAKEUP: MoveTimeline = [
-  key(0, LYING, 'snap'),
-  key(0.35, SITTING_UP, 'out'),
-  key(0.7, CROUCH_POSE, 'smooth'),
-]
-
 /** A plan for every non-attacking state the rig draws; `null` leaves it to the scene. */
 export function reactionPlan(
   fighter: ArcadeFighter,
@@ -170,7 +157,7 @@ export function reactionPlan(
       return hitPlan(fighter, context, standing)
     case 'down':
       return {
-        pose: fallingPose(context, grounded),
+        pose: recoveringFallPose(fighter, context, standing),
         plant: false,
         key: context.physicalHit ? `physical-down:${context.physicalHit.sequence}` : 'down',
         blend: 0.03,
@@ -186,11 +173,7 @@ export function reactionPlan(
       }
     case 'wakeup':
       return {
-        pose: lerpPose(
-          sample(WAKEUP, progress, false),
-          standing,
-          Math.max(0, (progress - 0.7) / 0.3),
-        ),
+        pose: standing,
         plant: false,
         key: 'wakeup',
         blend: 0.05,
@@ -203,6 +186,12 @@ export function reactionPlan(
 }
 
 function hitPlan(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose): BodyPlan {
+  const nenPlan = nenImpactBodyPlan(
+    fighter,
+    { response: context.nenResponse, progress: context.progress, carry: context.nenCarry },
+    standing,
+  )
+  if (nenPlan) return nenPlan
   if (context.physicalHit) return physicalHitPlan(fighter, context, standing)
   const recoil =
     directedRecoil(context) ?? sample(hitTimeline(context.hitZone ?? 'torso'), context.progress)
@@ -247,6 +236,16 @@ function fallingPose(context: ReactionContext, grounded: boolean): FightPose {
   const falling = sample(KNOCKDOWN, progress, false)
   const recoil = directedRecoil({ ...context, progress: 0 })
   return recoil && progress < 0.18 ? lerpPose(recoil, falling, progress / 0.18) : falling
+}
+
+function recoveringFallPose(fighter: ArcadeFighter, context: ReactionContext, standing: FightPose) {
+  return (
+    groundRecoveryPose(fighter, context.progress, {
+      fallen: fallingPose({ ...context, progress: 1 }, true),
+      standing,
+    }) ??
+    fallingPose({ ...context, progress: Math.min(1, context.progress / 0.52) }, fighter.y <= 0)
+  )
 }
 
 function directedRecoil(context: ReactionContext): FightPose | null {

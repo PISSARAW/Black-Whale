@@ -1,10 +1,13 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
+  import FightDowsingMap from './FightDowsingMap.svelte'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let side: FightSide
   export let language: 'fr' | 'en'
 </script>
+
+<FightDowsingMap {state} {side} {language} />
 
 {#if state[side].biohazardFootage}
   <details>

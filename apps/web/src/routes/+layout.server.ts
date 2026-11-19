@@ -1,6 +1,7 @@
 import { readDataFile } from '$lib/server/data-files'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import type { LayoutServerLoad } from './$types'
+import { env } from '$env/dynamic/private'
 
 interface CatalogChapter {
   number: number
@@ -22,6 +23,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
   const numbers = chapters.map((chapter) => chapter.number)
 
   return {
+    analyticsWebsiteId: env.UMAMI_WEBSITE_ID || null,
     spoilerFilter: {
       limit: readSpoilerLimit(cookies) ?? null,
       // Bounds for the chapter field. The catalogue is the only thing that knows

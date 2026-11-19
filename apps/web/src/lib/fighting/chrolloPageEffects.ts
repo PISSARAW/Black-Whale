@@ -1,4 +1,5 @@
 import { clearGumSource } from './bungeeScoped'
+import { advancePaperTextures } from './paperTexture'
 import { gumAnchorNenAvailable } from './gumObjectAnchorAccess'
 import { releaseBlackVoicePage } from './blackVoice'
 import { mutePaperDolls } from './kallutoSurveillance'
@@ -56,8 +57,10 @@ export function reconcileChrolloPages(
       (book?.bookmark === page || (book?.open && book.pages[book.page] === page)) &&
       !chrolloHasActivePage(after[side], page),
   )
-  return expireHistoricalMatter(
-    lost.reduce((state, page) => clearPageEffects({ state, side, page }), after),
+  return advancePaperTextures(
+    expireHistoricalMatter(
+      lost.reduce((state, page) => clearPageEffects({ state, side, page }), after),
+    ),
   )
 }
 

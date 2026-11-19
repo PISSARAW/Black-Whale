@@ -60,6 +60,7 @@ function makeBullet(options: {
   const salvo = franklinSalvo(fighter)
   const hand = shot % 2
   const finger = Math.floor(shot / 2) % 5
+  const low = salvo.height < 4
   const direction = fighter.franklinAim === 'split' && hand === 0 ? -fighter.facing : fighter.facing
   const sweep = fighter.franklinAim === 'sweep' ? [2.5, 6, 10.1, 6][shot % 4] : salvo.height
   return {
@@ -75,7 +76,7 @@ function makeBullet(options: {
     hitstun: 12,
     blockstun: 8,
     ...bulletImpact(fighter, shot, salvo.shots),
-    targetZone: sweep < 4 ? 'feet' : 'torso',
+    targetZone: low || sweep < 4 ? 'feet' : 'torso',
     shape: 'bullet',
     colour: '#ef4444',
     matter: 'nen',
@@ -100,6 +101,6 @@ function checkMuzzlePath(state: FightState, bullet: FightProjectile): FightProje
   }
   const contact = hurtboxes(state[otherSide(bullet.owner)]).find((box) => boxesOverlap(ray, box))
   if (!contact) return bullet
-  const edge = fighter.facing === 1 ? contact.left : contact.right
+  const edge = bullet.velocityX > 0 ? contact.left : contact.right
   return { ...bullet, x: Math.max(ray.left, Math.min(ray.right, edge)) }
 }

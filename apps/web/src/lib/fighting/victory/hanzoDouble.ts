@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { buildFightFigure } from '../fighterFigure'
 import type { VictoryContext } from './types'
 import { victoryActor, resetVictoryActor } from './actors'
+import { beginVictoryPose } from './poseContinuity'
 
 /** A second complete native Hanzo; only its private materials flicker or become translucent. */
 export function createHanzoVictoryDouble() {
@@ -39,6 +40,7 @@ export function createHanzoVictoryDouble() {
       resetVictoryActor(actor, () => {})
       model.root.position.set(0, 0, 0)
       model.root.rotation.set(0, -1.15, 0)
+      beginVictoryPose(model.root, { token: context.frame.token, age: context.age })
       return actor
     },
     style(opacity: number, phase: boolean) {

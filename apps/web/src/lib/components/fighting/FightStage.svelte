@@ -3,10 +3,7 @@
   import { createVictoryPlayback } from '$lib/fighting/victory/playback'
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
-  import FightThrowCinematic from './FightThrowCinematic.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
-  import FightIntroduction from './FightIntroduction.svelte'
-  import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
   import FightEssentialStatus from './FightEssentialStatus.svelte'
@@ -35,17 +32,11 @@
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let victoryEnabled = true
-  export let introEnabled = false
-  export let onIntroComplete: () => void = () => {}
-  const intro = createIntroPlayback(
-    () => onIntroComplete(),
-    () => paused,
-  )
   export let victoryPaused = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
   $: victory.observe(state, victoryEnabled)
-  $: victoryActive = Boolean($victory?.active || $victory?.pendingThrow)
+  $: victoryActive = Boolean($victory?.active)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let minimal = false
   export let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
@@ -71,25 +62,12 @@
   export let paused = false
   export let easterEggPreferences = defaultEasterEggPreferences()
   export let onEasterEgg: (side: FightSide, slot: EasterEggSlot) => void = () => {}
-  let throwActive = false
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
-  $: if (sceneKey) {
-    victory.sceneLoading()
-    intro.sceneLoading()
-  }
-  $: intro.observe(state, { enabled: introEnabled, mode: $clashCareer.appearance.intro })
-  function sceneReady() {
-    victory.sceneReady()
-    intro.sceneReady()
-  }
-  function sceneFailed() {
-    victory.sceneFailed()
-    intro.sceneFailed()
-  }
+  $: if (sceneKey) victory.sceneLoading()
   $: throwTech = isThrowTech(visibleState)
 </script>
 
@@ -110,17 +88,13 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive && !$intro && !throwActive}<FightHud
-        state={visibleState}
-        {language}
-        {detailed}
-      />
+    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
       <FightLiveScene
         active={!paused}
-        showRecovery={showRecovery && !$intro && !victoryActive}
+        showRecovery={showRecovery && !victoryActive}
         {state}
         {stageId}
         {language}
@@ -129,13 +103,12 @@
         previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
         victoryFrame={$victory}
-        introFrame={$intro}
-        onSceneReady={sceneReady}
-        onSceneFailed={sceneFailed}
+        onSceneReady={victory.sceneReady}
+        onSceneFailed={victory.sceneFailed}
       />
     {/key}
 
-    {#if !victoryActive && !throwActive}
+    {#if !victoryActive}
       {#if training}
         <FightTrainingOverlay state={visibleState} {language} />
       {/if}
@@ -156,18 +129,10 @@
       {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
     {/if}
-    <FightThrowCinematic
-      state={visibleState}
-      {comfort}
-      {language}
-      enabled={!$intro && !$victory?.active}
-      bind:active={throwActive}
-    />
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
-    <FightIntroduction playback={intro} {state} {language} {paused} />
   </div>
-  {#if !victoryActive && !throwActive}
+  {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
         {state}
         {language}
@@ -176,7 +141,7 @@
         onOpenEyes={() => onAttack('special')}
       />{/if}
     {#if !minimal}<FightDecisionReadout state={visibleState} {language} />{/if}
-    {#if showControls && !paused && !$intro}<FightTouchControls
+    {#if showControls && !paused}<FightTouchControls
         state={visibleState}
         {language}
         {onAttack}

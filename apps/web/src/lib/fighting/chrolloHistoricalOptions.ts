@@ -1,3 +1,4 @@
+import { ghostwriterOptions } from './ghostwriterAction'
 import { performHistoricalCommand } from './chrolloHistoricalAction'
 import { gallerySenseOptions } from './gallerySense'
 import { chrolloPageForMove } from './chrolloBook'
@@ -39,10 +40,12 @@ export function historicalOptions(state: FightState, side: FightSide): ArsenalOp
       en: 'Release target / fish',
       condition: ['Fin de l’effet maintenu.', 'End the maintained effect.'],
     })
-  return [...options, ...gallerySenseOptions(state, side)].map((option) => ({
-    ...option,
-    ready: ready && performHistoricalCommand(state, side, option.command) !== state,
-  }))
+  return [...options, ...gallerySenseOptions(state, side), ...ghostwriterOptions(state, side)].map(
+    (option) => ({
+      ...option,
+      ready: ready && performHistoricalCommand(state, side, option.command) !== state,
+    }),
+  )
 }
 
 interface HistoricalOption {
@@ -123,17 +126,7 @@ function addPageOptions({ state, side, page, add }: PageOptionsContext) {
         'Both hands free and simultaneous contact.',
       ],
     })
-  } else if (page === 'lovely-ghostwriter')
-    add({
-      action: 'history-use',
-      fr: 'Lovely Ghostwriter · Rédiger une prophétie',
-      en: 'Lovely Ghostwriter · Write a fortune',
-      condition: [
-        'Identité manuscrite complète et futur de scénario requis ; jamais son propre avenir. Ce contexte manque dans le duel actuel.',
-        'Complete handwritten identity and a scenario future required; never the caster’s own future. This context is unavailable in the current duel.',
-      ],
-    })
-  else if (page === 'indoor-fish')
+  } else if (page === 'indoor-fish')
     add({
       action: 'history-use',
       fr: 'Indoor Fish · Lâcher les poissons',

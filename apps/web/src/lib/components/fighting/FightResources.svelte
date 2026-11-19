@@ -6,6 +6,7 @@
   import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightBiohazardStatus from './FightBiohazardStatus.svelte'
+  import FightMultiCombatStatus from './FightMultiCombatStatus.svelte'
   import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightArenaStatus from './FightArenaStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
@@ -83,6 +84,7 @@
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       <FightBiohazardStatus {state} {side} {language} />
+      <FightMultiCombatStatus {state} {side} {language} />
       {#if side === 'player'}
         <FightNenControls
           {fighter}
@@ -165,7 +167,10 @@
       <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
       <FightBattleCantabile {state} {side} {language} {onTalk} {onBattleAction} />
-      {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
+      {#if !state.battlefield || fighter.id === 'beyond'}<FightOutsideDuelStatus
+          {fighter}
+          {language}
+        />{/if}
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

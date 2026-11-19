@@ -79,12 +79,13 @@ const STYLES: Record<FighterId, FightingStyle> = {
     id: 'chrollo',
     nameFr: 'Stratège de zone',
     nameEn: 'Control strategist',
-    descriptionFr: 'Patient, maintient l’espace et privilégie les ouvertures sûres.',
-    descriptionEn: 'Patiently maintains space and commits only to safe openings.',
+    descriptionFr:
+      'Observe, se dérobe puis contre avec sa main libre, ses jambes ou le couteau de Ben.',
+    descriptionEn: 'Observes, withdraws and counters with his free hand, legs or Ben’s knife.',
     preferredRange: [11, 16],
     retreatBelowHealth: 36,
     guardRange: 22,
-    moveScale: 0.92,
+    moveScale: 1.06,
     specialChance: 0.42,
     heavyThreshold: 0.54,
     attacks: {
@@ -178,14 +179,16 @@ const STYLES: Record<FighterId, FightingStyle> = {
   },
   feitan: {
     id: 'feitan',
-    nameFr: 'Riposte incendiaire',
-    nameEn: 'Incendiary reprisal',
-    descriptionFr: 'Esquive à courte portée puis convertit ses blessures en puissance solaire.',
-    descriptionEn: 'Evades at close range, then turns his wounds into solar power.',
+    nameFr: 'Bretteur fulgurant',
+    nameEn: 'Lightning swordsman',
+    descriptionFr:
+      'Accélère en posture basse, enchaîne estocs et tailles, puis convertit ses blessures en puissance solaire.',
+    descriptionEn:
+      'Accelerates low, chains thrusts and cuts, then turns his wounds into solar power.',
     preferredRange: [7, 10],
     retreatBelowHealth: 18,
     guardRange: 14,
-    moveScale: 1.16,
+    moveScale: 1.38,
     specialChance: 0.48,
     heavyThreshold: 0.38,
     attacks: {

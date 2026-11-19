@@ -1,4 +1,5 @@
-import { performDowsingEvidence, advanceDowsingEvidence } from './dowsingEvidence'
+import { advanceDowsingEvidence } from './dowsingEvidence'
+import { performMapDowsing, advanceMapDowsing, stopMapDowsing } from './dowsingMap'
 export { dowsingAnswerText } from './dowsingAnswers'
 import { speakDeclaredFact } from './recordedStatements'
 import { observePersonalEncounters } from './personalEncounters'
@@ -24,11 +25,7 @@ export function performDowsingCommand(
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
-  if (
-    command.action === 'dowsing-locate' ||
-    (command.action === 'dowsing-video' && command.target?.includes('|'))
-  )
-    return performDowsingEvidence({ state, side, command })
+  if (command.action === 'dowsing-locate') return performMapDowsing(state, side, command.target)
   return performDowsingQuestion(state, side, command)
 }
 function performDowsingQuestion(
@@ -37,7 +34,7 @@ function performDowsingQuestion(
   command: ArsenalCommand,
 ): FightState {
   if (command.action === 'dowsing-video') return performDowsingVideo(state, side, command.target)
-  if (command.action === 'dowsing-stop') return stopDowsing(state, side)
+  if (command.action === 'dowsing-stop') return stopDowsing(stopMapDowsing(state, side), side)
   if (command.action === 'dowsing-answer') return answerDowsing(state, side, command.target)
   const inquiry = command.action === 'dowsing-ask' ? dowsingInquiry(command.target) : null
   if (!inquiry) return state
@@ -117,7 +114,7 @@ export function advanceDowsing(state: FightState): FightState {
     )
       next = stopDowsing(next, side)
   }
-  return advanceDowsingEvidence(next)
+  return advanceMapDowsing(advanceDowsingEvidence(next))
 }
 function readingAnimationOver(state: FightState, side: FightSide): boolean {
   const at = state[side].dowsingSession?.readingAt

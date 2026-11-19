@@ -90,10 +90,11 @@ describe('Nen perception in the rendered duel', () => {
     const state = createFight('phinks', 'hinrigh')
     state.opponent = aura(state.opponent, { en: true, conceal: true })
     fields.sync(state)
-    expect(scene.children[1].visible).toBe(false)
+    const hostileField = scene.getObjectByName('en-field:opponent')!
+    expect(hostileField.visible).toBe(false)
     state.player = aura(state.player, { gyo: true })
     fields.sync(state)
-    expect(scene.children[1].visible).toBe(true)
+    expect(hostileField.visible).toBe(true)
     fields.dispose()
   })
 

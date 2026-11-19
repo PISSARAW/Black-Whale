@@ -87,8 +87,8 @@ les parties d’équilibrage ; les essais automatisés ne remplacent pas ces par
 Le catalogue des 40 combattants, les cadrages et les contrôles sont décrits dans
 [CINEMATICS.md](./CINEMATICS.md).
 
-La caméra suit le centre du duel, rapproche le cadre à courte distance et accompagne
-brièvement les impacts confirmés. Elle élargit immédiatement le cadre si une
+La [continuité de caméra par combo](./CAMERA_MOTION.md) coordonne le suivi du duo,
+les accents de frappe et le retour des projections vers le combat courant. Elle élargit immédiatement le cadre si une
 séparation ou un saut l’exige ; le rapprochement et le suivi sont amortis en fonction
 du temps écoulé. Des marges protègent les corps, les pieds et les têtes sous le HUD.
 Le cadrage spécial de Biscuit, de la projection de Hanzo et du chat de Camilla
@@ -100,9 +100,9 @@ La réduction des animations du système impose le cadrage stable et désactive 
 secousses. Le suivi nécessaire pour garder les corps à l’écran reste disponible.
 La caméra n’écrit jamais dans la simulation, les positions ou les hitboxes.
 
-Le directeur `cinematicDirector.ts` reprend les mouvements des démos vidéo pour
-les combats jouables : poussées sur les combos confirmés, Hatsu, Ko, gardes lourdes,
-On et victoire, puis retour progressif au plan d’ensemble. La vitesse verticale
+Le directeur `cinematicDirector.ts` observe les combos, Hatsu, Ko, gardes lourdes,
+On et verdicts. La caméra principale retient un accent dominant, sans additionner
+les zooms ; les détails personnels gardent leur cadrage dédié. La vitesse verticale
 anticipe l’ouverture du cadre au décollage. Les événements suivent les frames
 simulées, donc une pause ne relance ni n’écourte les plans ; après le verdict,
 les plans se terminent même si le moteur s’arrête.

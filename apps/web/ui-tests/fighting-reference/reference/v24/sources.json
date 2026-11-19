@@ -1,6 +1,6 @@
 {
   "scope": "Combat TypeScript excluding tests",
-  "sourceFingerprint": "d3ca2591cb2c73cb4e05d9fbc7da0438e5fb21d0ad2e14820097f40ccf074a45",
+  "sourceFingerprint": "7c3b7d66929c82d6c6e2feec622bdfc1df9b2948a4b3db595a775c50c6a23b5b",
   "files": [
     {
       "path": "apps/web/src/lib/fighting/aiCadence.ts",
@@ -16,7 +16,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/arenaScene.ts",
-      "sha256": "5df11902083a40ebba5003ca52f8fb5e3df9eac927302b84036b63c1ec30ead9"
+      "sha256": "f1381dff6bbea6ad25f7fe23fa98901d8c3143f3335b45a5f7a176543081d976"
     },
     {
       "path": "apps/web/src/lib/fighting/arenaSimulation.ts",
@@ -148,7 +148,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/audio/states.ts",
-      "sha256": "9140422927fa2d52f14576b096ea1f379444e777ec32ed5e5cef15c121ca2288"
+      "sha256": "0c585a961195c63e9ba518f75ea91d8b7a68e95c7491ec0d842199fd64ad255e"
     },
     {
       "path": "apps/web/src/lib/fighting/audio/techniques.ts",
@@ -216,7 +216,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/benjaminBaton.ts",
-      "sha256": "2b17699485cd96dcd63ff1a76124680cb8b468740b18cab2642fa3d6a55b2356"
+      "sha256": "050ccb867c44072323883a08a9cfbb31a09156030e7bf372c074016ab2c11cf7"
     },
     {
       "path": "apps/web/src/lib/fighting/benjaminCanon.ts",
@@ -748,7 +748,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/combatImpact.ts",
-      "sha256": "abee9ef80177066387b12ed163bbb4e3a1047c7ca82d93e42cd597b05a194f5d"
+      "sha256": "408821b37c8c701e0b8abf03f79d7830e69c9e415337f099f7382aed76c11b81"
     },
     {
       "path": "apps/web/src/lib/fighting/combatProperties.ts",
@@ -801,6 +801,10 @@
     {
       "path": "apps/web/src/lib/fighting/comboChoices.ts",
       "sha256": "2f0d6b5ca9cfc09d63d9e1e50b4f15620ad0fb76eb1b1056ccfd8a9a10247fdf"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/comboDamageScale.ts",
+      "sha256": "a2ea4e7ab2f6d3f1be07a3cee4d33a5e15b737ed0d06690ec1f6d10e6b3d96df"
     },
     {
       "path": "apps/web/src/lib/fighting/comboMaster.ts",
@@ -915,8 +919,12 @@
       "sha256": "171e3344b334ee9d28fa15221170392e6f7cd74e9faf333a1e3209023d32f9b6"
     },
     {
+      "path": "apps/web/src/lib/fighting/duelComboGrammar.ts",
+      "sha256": "3fe17d1d2b25b650177efc8f169aed2057cf5491ab19a56cb9b0e4b8e435bd5d"
+    },
+    {
       "path": "apps/web/src/lib/fighting/duelComboLessons.ts",
-      "sha256": "33862fc841d17d903075fd29f09ff4c84e0a25c89163ec41cd6855dbbc03ac0a"
+      "sha256": "c7682c8aaf98ff56e51a35f7f81d0af60065db717d336f883b43e8bf3a021c30"
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboNinthLessons.ts",
@@ -928,7 +936,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboProfiles.ts",
-      "sha256": "9481d4d2b1bc059a141fe8bb35301ea357fa1473a9887e4f4a21314b21bd723a"
+      "sha256": "a18266cbfe9c874fe261fe987c6b3c32653d78562a62a72a724218de457cbd73"
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboRosterLessons.ts",
@@ -964,7 +972,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboTenthLessons.ts",
-      "sha256": "fb8e1966d32818dbc501813de6738edfbb8c6bb6638050abace2aec2c16012cc"
+      "sha256": "2e61257596ea6d85adda7c499bbf2fd81a0052c2d41b088215389438100e4d27"
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboTenthProfiles.ts",
@@ -980,7 +988,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/duelComboTypes.ts",
-      "sha256": "b6325a99d63252c07b9688fe64ec041a7b05d7eea4168ffbcf08add08a006b29"
+      "sha256": "63949c7966831ef9c6b5f61ca8a3aed7ad985a0a758cbd87cbbdc202fe0e7ad6"
     },
     {
       "path": "apps/web/src/lib/fighting/duelMoves.ts",
@@ -1159,6 +1167,10 @@
       "sha256": "2c001004b4d1f8d6dd39e14da61f548bb128b4a279295eb0053c1eb7f34d37a8"
     },
     {
+      "path": "apps/web/src/lib/fighting/fightBattleActions.ts",
+      "sha256": "0f5ae720f82ff6e6b108a7b3ce7a0381c4a7a107c75a5e52b6cf7195a130f5bf"
+    },
+    {
       "path": "apps/web/src/lib/fighting/fightBodyMotion.ts",
       "sha256": "ba02874205acc2f0e7cb49379d6efbb43fb60cf66a6c1780505fc4ca89dfa3a2"
     },
@@ -1208,7 +1220,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/fightEnvironment.ts",
-      "sha256": "0ad7e066311f847d01ba81ef9d98a378d1781ed7cebe8494c617a598157b8b9f"
+      "sha256": "c22c04ff555f90c20af9d54fa9280b5ce8e491227d0258757e77382135cdaf58"
     },
     {
       "path": "apps/web/src/lib/fighting/fighterAnchors.ts",
@@ -1291,6 +1303,10 @@
       "sha256": "60ae6b2464a747fac34f9a3b815a513ad249d4f2a365ced5b4fb13d9d6533a95"
     },
     {
+      "path": "apps/web/src/lib/fighting/fightFullscreen.ts",
+      "sha256": "5d82cfdefb529611b44c018d5a1d2baf65a60ff695874f0ab3e88db852cafdbe"
+    },
+    {
       "path": "apps/web/src/lib/fighting/fightGamepad.ts",
       "sha256": "7b41537bf3446995267c46cd541a33a2ba5a7da51c9075f9f07c3d7cca7e682b"
     },
@@ -1355,8 +1371,16 @@
       "sha256": "445d7b859dacc2f87a3166fcefb0930f215693cca668d7c80c4092fc1bfb3d31"
     },
     {
+      "path": "apps/web/src/lib/fighting/fightNavigation.ts",
+      "sha256": "a115b6efdbf6960560b286d775f043da33014da229850f8a5aec27885904d6c3"
+    },
+    {
       "path": "apps/web/src/lib/fighting/fightOutcome.ts",
       "sha256": "e71f0147556bbe77f9ba62181fdf5b3f4db98df68c8e1b064f0d49f3f0b2f616"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightPausePlan.ts",
+      "sha256": "f0e2ccdb31c0ed2b73ba09df03c5e388ca3d85ef6a99c59b3a2636a5e9e3fef3"
     },
     {
       "path": "apps/web/src/lib/fighting/fightPose.ts",
@@ -1459,8 +1483,12 @@
       "sha256": "908a088cda0d00785dec70a3dbbcdacd663e73644f5274730011192b80487ac2"
     },
     {
+      "path": "apps/web/src/lib/fighting/fightSetupDraft.ts",
+      "sha256": "1da3f16574bb9b677f016bd44748a44069e45852825a69302eca78003cdd16fc"
+    },
+    {
       "path": "apps/web/src/lib/fighting/fightSpecialPresentation.ts",
-      "sha256": "ea91ab198d367e6f48412995479db5dd17516aee653730c34cb006f403cd9fca"
+      "sha256": "1cb681a83e3df9378fa1db8ff8aa9e931bbeef5d47c17db5589583adbc927da7"
     },
     {
       "path": "apps/web/src/lib/fighting/fightSpeechRecipient.ts",
@@ -1511,6 +1539,14 @@
       "sha256": "f6be93180247395462e3061e4607b749913f5bf37f2e08b26e3401cd433ca1bb"
     },
     {
+      "path": "apps/web/src/lib/fighting/fightTouchDirection.ts",
+      "sha256": "f02b8546fa11d0c3925d64cd62e7cdb8efa50cd4032c615812fb888868a2f575"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/fightTouchHints.ts",
+      "sha256": "ac87d3c89d2371d51f5ca5ce34dc4522386f09e359640cac0558726225c47182"
+    },
+    {
       "path": "apps/web/src/lib/fighting/fightVisualPrediction.ts",
       "sha256": "d77ab1cd43ad48bc0c9045fde47aa83f08d122aeaa72ae7c3b77d7d28b43d34f"
     },
@@ -1529,6 +1565,10 @@
     {
       "path": "apps/web/src/lib/fighting/frameData.ts",
       "sha256": "17ecc0a9cb41489ffe666811a3d077a0d61e7da749c227fd4b3225be0da41876"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/frameDataTable.ts",
+      "sha256": "68b8e5ce5b8d70212375d8f8c21c22af20532225cffe7a6ed65e9083d8caaec3"
     },
     {
       "path": "apps/web/src/lib/fighting/franklinAttack.ts",
@@ -1567,8 +1607,12 @@
       "sha256": "cab6016fb7a84e171cb4868b706a1885918e27c8f19724207ba9a152d2fc4a86"
     },
     {
+      "path": "apps/web/src/lib/fighting/grammarWallSplat.ts",
+      "sha256": "cc36d6d7480a5b80eabef0831718c31a88e47a430828d39bb4dda961a81596c2"
+    },
+    {
       "path": "apps/web/src/lib/fighting/groundedComboStun.ts",
-      "sha256": "1cd4ccf529eaf8feecb7341d93f510558bdcb4ef2b267b80411a72541ed1eb3f"
+      "sha256": "d610ad1e6bfb038cebada8ed79c9374d3b987842a599f1155fb2ddab59fad01f"
     },
     {
       "path": "apps/web/src/lib/fighting/guardRecoil.ts",
@@ -1596,7 +1640,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/hatsu.ts",
-      "sha256": "a84a2d2f70e6432a0d8c8381cebedcdd0e782a67afd80f653a9bb207a45c0623"
+      "sha256": "b14bd8d5da5a4543a04a236bcc16c6943dab4cd2d01355fae86ed9f6f494a41f"
     },
     {
       "path": "apps/web/src/lib/fighting/hatsu/basho.ts",
@@ -1636,7 +1680,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/hatsu/combatCompletion.ts",
-      "sha256": "b1aa0eee5462cbe851272892c77486fe77bc7df573761cc9452d10edb263c72f"
+      "sha256": "5fa38c627ab4529a4dd271e1fc9d7a8812f70ba16ad71dd201285f014a74c531"
     },
     {
       "path": "apps/web/src/lib/fighting/hatsu/contract.ts",
@@ -1808,7 +1852,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/heldFightControl.ts",
-      "sha256": "3da83ca950fe8692c1ce6ad2ebbc86ab9212d45042dd215ba17c6174a7ef7829"
+      "sha256": "28a03a017c6b796e395e2068e0c822d2dab54367b51c3daaecc73243d281010c"
     },
     {
       "path": "apps/web/src/lib/fighting/hisokaArsenal.ts",
@@ -2120,7 +2164,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/lynchRules.ts",
-      "sha256": "82bbbfe09fd557cadf5c3e452bcdc7cd96c7a6fa796b173f7ce79c91bca93329"
+      "sha256": "4d42d37ef5e0674b81e6497f90d215af7c799ed278faba6c814bb2b4b6b912d5"
     },
     {
       "path": "apps/web/src/lib/fighting/lynchTypes.ts",
@@ -2207,6 +2251,10 @@
       "sha256": "84417e30a76f087b6c93ceb9edd354697f051a04d35becd422e751b90945fe28"
     },
     {
+      "path": "apps/web/src/lib/fighting/moveFrameAdvantage.ts",
+      "sha256": "98ab9245b1108e593dbfd697838cda4f2c5b4273635c2f60b5f4119dc22f2e00"
+    },
+    {
       "path": "apps/web/src/lib/fighting/movesetAi.ts",
       "sha256": "65f4bd8432539120f1445a9fd3abf24e40a027499b0eb58c0b3e88ad420fbf78"
     },
@@ -2224,7 +2272,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/movesets.ts",
-      "sha256": "7843064d4004bb6763ddd04bb184bff24d35511aa5014209419994c09ecf3695"
+      "sha256": "7695dbd50bab7d30ffc48a1c4392d58dcb76fc4fe03e0a20bad07e8a13614f63"
     },
     {
       "path": "apps/web/src/lib/fighting/movesetTypes.ts",
@@ -2244,7 +2292,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/movesetWaveOneB.ts",
-      "sha256": "0ebc36a012ad108de6abcf1c3d2087a43b792b18252b52f2475d6678c7afaff2"
+      "sha256": "a63d58f72960a60260ffa46f53beafdacc0f365f34d81b5280743ad1f747c95b"
     },
     {
       "path": "apps/web/src/lib/fighting/movesetWaveThreeA.ts",
@@ -2544,7 +2592,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/predatorPrey.ts",
-      "sha256": "87dd30f83ce280af717ecb13201e549988a2849b2ea2af94fe1e728eb395118e"
+      "sha256": "eac2988ecd73cac8547a9e095ed9f8deaa2580c634071365175ddba732524f59"
     },
     {
       "path": "apps/web/src/lib/fighting/predatorScene.ts",
@@ -3092,7 +3140,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/sweetHomeContacts.ts",
-      "sha256": "54dbb362f1626930d0378b0656e06dfbe6ffda4c6faffa8320a08fdf1d167e61"
+      "sha256": "e40b92b4a44495dfe7922d5f46c8439fd383f376b18fac0616d921e30bc73b32"
     },
     {
       "path": "apps/web/src/lib/fighting/sweetHomeImpact.ts",
@@ -3168,7 +3216,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/towerJudging.ts",
-      "sha256": "6dd0ed376655efd49a90bfa8c9ba3b90cada00a777d6469759e0e54ebcac242e"
+      "sha256": "fb4336e1d7b0acd455bf2580037d5aa3559738fa60145c6d5b16e30daeb93af5"
     },
     {
       "path": "apps/web/src/lib/fighting/trainingAction.ts",
@@ -3328,7 +3376,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/victory/camera.ts",
-      "sha256": "35d1f01f05e702f92a7be429e470131c8426b28c9dec8fbd3fd0c16f4ee86817"
+      "sha256": "f3b3deeb21def12a5b0875ce15af01e95ac7c2370630996e4e2d5abaa72e4680"
     },
     {
       "path": "apps/web/src/lib/fighting/victory/camilla.ts",
@@ -3599,6 +3647,38 @@
       "sha256": "a492ad858afe78267e29da58eb710eb78069b29ea138dfb5154fa7bda29ac264"
     },
     {
+      "path": "apps/web/src/lib/fighting/victory/nobunaga.ts",
+      "sha256": "3efb834f49cced858aab7971dadbb93c92278ccc1fa67d479113ab41c56b8c0e"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaBoundary.ts",
+      "sha256": "1b8d3bdbd76509a6d62690a5446d3cd8b356bf23b0eef25973b45cc7734d42c9"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaCut.ts",
+      "sha256": "d844ec7060bff48216eb1f5a6d5ac531305f583de58051f613d0b22b2ed4b3a1"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaCutBounds.ts",
+      "sha256": "869c446cf3fb0259a3f19ce65a2a0ad856d543af744a3c6eeea3f2148b929c9e"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaEn.ts",
+      "sha256": "37b59e4285a1120d1c1e60d60e58e42c6fb140223eafbe84aa8b502725ed2176"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaKatana.ts",
+      "sha256": "c585f009365d9265deb4932d794c234684d47dd1fcdfc86cd27335d70d91083e"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaPose.ts",
+      "sha256": "d85e20210e8430af92b1af059f44f7b0cd80bbc049876200117ad13bbb229b5a"
+    },
+    {
+      "path": "apps/web/src/lib/fighting/victory/nobunagaTypes.ts",
+      "sha256": "32b42185fbd132f0e8bdfbd7aa6b404789c750c84e5370f4759e895a04662b48"
+    },
+    {
       "path": "apps/web/src/lib/fighting/victory/phinks.ts",
       "sha256": "4daf47a5bfb279c127d7b1778e7ecbf536368ba9e68951df667394bd21a07fd7"
     },
@@ -3740,7 +3820,7 @@
     },
     {
       "path": "apps/web/src/lib/fighting/voconteDoors.ts",
-      "sha256": "0d3cbe4306bb8a8ce8c26a0aa22fbf40fb54292685dcab2dfcdef755e84e18ba"
+      "sha256": "e81decde2eb1799cf72ac4a81e2df7a96d9b65bb33e09056d693105d3e78f9ca"
     },
     {
       "path": "apps/web/src/lib/fighting/voconteDoorScene.ts",

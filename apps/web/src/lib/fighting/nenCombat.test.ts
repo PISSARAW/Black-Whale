@@ -315,7 +315,8 @@ describe('Nen techniques in an actual 2D duel', () => {
       { dt: FIXED_STEP, opponentInput: { ...EMPTY_INPUT, shu: true, focusHands: true } },
     )
     expect(next.player.nen.en).not.toBeNull()
-    expect(next.opponent.nen.shu.length).toBe(1)
+    // No equipped Shu support is supplied to this opponent.
+    expect(next.opponent.nen.shu.length).toBe(0)
     expect(next.opponent.nen.ryu.hands).toBe(0.76)
     const drained = advanceNen({ ...next.player, aura: 0.01 }, 1)
     expect(drained).toMatchObject({
@@ -338,14 +339,10 @@ describe('Category components and Emperor Time', () => {
     expect(fightCategoryEfficiency(enhancer, 'specialist')).toBe(0)
   })
 
-  it('resolves mixed Hatsu by their declared components, without transferring the owner’s innate type', () => {
+  it('resolves a Hatsu contact by its operative category without transferring the owner’s innate type', () => {
     const hisoka = duel().player
     expect(abilityCategories('bungee-gum')).toEqual(['transmuter', 'emitter', 'manipulator'])
-    const expected = Math.cbrt(
-      categoryPower(hisoka, 'transmuter') *
-        categoryPower(hisoka, 'emitter') *
-        categoryPower(hisoka, 'manipulator'),
-    )
+    const expected = categoryPower(hisoka, 'transmuter')
     expect(abilityPower(hisoka, 'bungee-gum')).toBeCloseTo(expected)
     const chrollo = duel('chrollo').player
     chrollo.chrolloBook = { pages: ['hisoka'], page: 0, open: true, bookmark: null }
@@ -358,7 +355,7 @@ describe('Category components and Emperor Time', () => {
     const franklin = duel('franklin').player
     const kurapika = duel('kurapika').player
     expect(commitProjectileNen(shot(), franklin).nenPower).toBeGreaterThan(
-      commitProjectileNen(shot(), kurapika).nenPower!,
+      commitProjectileNen(shot(), { ...kurapika, id: 'franklin', nenOwner: 'kurapika' }).nenPower!,
     )
     const cold = createRisingSun(duel('kurapika').player, 40)
     const hot = createRisingSun(duel('feitan').player, 40)
@@ -393,8 +390,16 @@ describe('Category components and Emperor Time', () => {
     expect(nenDamageFactor(active.player, 'torso')).toBeLessThan(
       nenDamageFactor(state.player, 'torso'),
     )
-    expect(commitProjectileNen(shot('kurapika'), active.player).nenPower).toBeGreaterThan(
+    expect(commitProjectileNen(shot('kurapika'), active.player).nenPower).toBe(
       commitProjectileNen(shot('kurapika'), state.player).nenPower!,
+    )
+    // Conjuration was already efficient; Emperor Time improves a learned emitted component instead.
+    expect(
+      commitProjectileNen(shot(), { ...active.player, id: 'franklin', nenOwner: 'kurapika' })
+        .lifetime,
+    ).toBeGreaterThan(
+      commitProjectileNen(shot(), { ...state.player, id: 'franklin', nenOwner: 'kurapika' })
+        .lifetime,
     )
     const later = tickFight(active, EMPTY_INPUT, { dt: FIXED_STEP, opponentInput: EMPTY_INPUT })
     expect(later.player.kurapika!.lifespanFrames).toBeGreaterThan(

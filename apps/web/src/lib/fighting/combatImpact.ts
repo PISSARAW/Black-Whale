@@ -1,6 +1,6 @@
-import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
 import { catchBungeeObject } from './hisokaCatch'
+import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
@@ -8,7 +8,8 @@ import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
 import { recordThreeCombatProjectileWound } from './threeCombatWounds'
-import { resolveIllumiContact } from './illumiImpact'
+import { recordHistoricalWeaponHit, recordHistoricalBladeProjectile } from './historicalWeaponFrame'
+import { resolveMindContact } from './mindContact'
 import { resolveLynchContact } from './lynchInterrogation'
 import { recordBlinkyWound } from './blinkyWounds'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -95,7 +96,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (!collision) return state
   if (throwTechPossible(attacker, defender)) return resolveThrowTech(state, side)
   const data = attackData(attacker.attack.kind, attacker)
-  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker))
+  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker, defender))
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const antiAir = launchesTarget(attacker, defender)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
@@ -136,7 +137,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       hits: comboHits,
     }),
   )
-  const needle = resolveIllumiContact({ state, side, defence, spent })
+  const needle = resolveMindContact({ state, side, defence, spent })
   if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
@@ -204,7 +205,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       transferred.impact!.attacker,
       otherSide(transferred.impact!.attacker),
     )
-  next = recordBlinkyWound(state, scorched, side)
+  next = recordHistoricalWeaponHit(state, recordBlinkyWound(state, scorched, side), side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
     next = resolveHatsuImpact({
@@ -301,13 +302,14 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
+  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
   if (
     state.phase !== 'fighting' ||
     !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
   )
     return state
-  const handled = alternateProjectileResolution(state, hit)
-  if (handled) return handled
+  const captured = captureIncomingProjectile(state, hit)
+  if (captured) return captured
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
@@ -397,7 +399,12 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     plantPaperAfterHit(routed, hit.projectile),
     hit.projectile,
   )
-  return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
+  const archived = recordHistoricalBladeProjectile(planted, hit.projectile)
+  return finishAfterImpact(
+    archived,
+    archived.impact!.attacker,
+    otherSide(archived.impact!.attacker),
+  )
 }
 
 function attackCanResolve(
@@ -474,13 +481,11 @@ function impactWallSplat(options: {
 }): boolean {
   return (
     !options.defence.avoided &&
-    (options.attacker.attack?.directionalChain === 'air' ||
-      grammarAllowsWallSplat(options.attacker, options.knockback)) &&
+    grammarAllowsWallSplat(options.attacker, options.knockback) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }
 
-function alternateProjectileResolution(state: FightState, hit: ProjectileHit): FightState | null {
-  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
+function captureIncomingProjectile(state: FightState, hit: ProjectileHit): FightState | null {
   return catchBungeeObject(state, hit) ?? captureCuldceptProjectile(state, hit)
 }

@@ -30,7 +30,7 @@ function releaseProstheses(state: FightState, side: FightSide): FightState {
 function formProstheses(state: FightState, side: FightSide): FightState {
   const actor = state[side]
   if (!ownsBungeeGum(actor) || gumLoanUsed(actor) || actor.gumProstheses) return state
-  const parts = actor.bodyDamage?.parts
+  const parts = actor.bodyDamage?.parts.filter((part) => !part.endsWith('forearm'))
   if (!parts?.length || actor.aura < parts.length * COST_PER_PART) return state
   const paid = spendGumUse(state, side, parts.length * COST_PER_PART)
   const generation = (actor.gumProsthesisGeneration ?? 0) + 1

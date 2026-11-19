@@ -149,18 +149,20 @@ describe('Bonolenov reference combat', () => {
       ...state.player,
       x: 40,
       facing: 1 as const,
-      observedHabits: {
-        lastFrame: 24,
-        seenAttackFrame: 16,
-        firstSeenAt: 24 - styleReactionFrames(state.player),
-        sightings: [],
+      pressureRead: {
+        clock: 24,
+        move: 'hisoka:standingHeavy',
+        attackFrame: 16,
+        seen: styleReactionFrames(state.player),
+        lastHit: -1000,
+        impact: -1,
       },
     }
     const target = { ...state.opponent, x: 50 }
-    expect(moveBonolenovOpponent({ ...fighter, observedHabits: undefined }, target)).toBeNull()
+    expect(moveBonolenovOpponent({ ...fighter, pressureRead: undefined }, target)).toBeNull()
     expect(
       moveBonolenovOpponent(
-        { ...fighter, observedHabits: { ...fighter.observedHabits, firstSeenAt: 23 } },
+        { ...fighter, pressureRead: { ...fighter.pressureRead, seen: 1 } },
         target,
       ),
     ).toBeNull()

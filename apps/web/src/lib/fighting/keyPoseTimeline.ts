@@ -68,7 +68,7 @@ export interface TimelineSample {
   frames: PhaseFrames
   /** Ease back into the stance after the last key (the default); off for a body left lying. */
   settle?: boolean
-  /** Live strikes sample their trajectory continuously between authored keys. */
+  /** Sample every frame for continuous support gestures. */
   continuous?: boolean
 }
 

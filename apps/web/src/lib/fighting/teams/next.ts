@@ -1,7 +1,6 @@
 import type { TeamSeat } from '../teamTypes'
+import { teamMemberAlive } from '../teamTypes'
 export function nextTeamIndex(seat: TeamSeat): number {
   const leader = seat.relay?.leader ?? seat.active
-  return seat.members[leader].health > 0
-    ? leader
-    : seat.members.findIndex((member) => member.health > 0)
+  return teamMemberAlive(seat.members[leader]) ? leader : seat.members.findIndex(teamMemberAlive)
 }

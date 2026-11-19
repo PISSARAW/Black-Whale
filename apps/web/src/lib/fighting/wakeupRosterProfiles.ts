@@ -11,7 +11,7 @@ export interface WakeupSignature {
   setup?: CombatRouteSetup
 }
 
-type Finish = 'backHeavy' | 'forwardLight' | WakeupSignature
+type Finish = 'backHeavy' | 'forwardLight' | 'forwardHeavy' | WakeupSignature
 
 export const ROSTER_WAKEUP_PAIRS = [
   ['chrollo', 'machi'],
@@ -44,7 +44,7 @@ export const WAKEUP_ROSTER_FINISHES = {
       'Apply the Sun mark with Sun and Moon open and a free hand. The defender recovers standing.',
     ],
   },
-  tserriednich: 'forwardLight',
+  tserriednich: 'forwardHeavy',
   feitan: {
     slot: 'forwardSpecial',
     requirement: [
@@ -116,14 +116,8 @@ export const WAKEUP_ROSTER_FINISHES = {
   hinrigh: 'backHeavy',
   mizaistom: 'backHeavy',
   leorio: 'backHeavy',
-  hanzo: {
-    slot: 'downSpecial',
-    requirement: [
-      'Termine avec l’attaque du corps réel. La préparation du double reste une action exposée.',
-      'Finish with the physical body’s attack. Preparing the double remains a vulnerable action.',
-    ],
-  },
-  rihan: 'forwardLight',
+  hanzo: 'forwardHeavy',
+  rihan: 'forwardHeavy',
   zakuro: 'forwardLight',
   melody: 'forwardLight',
   basho: 'backHeavy',
@@ -146,7 +140,7 @@ export const WAKEUP_ROSTER_FINISHES = {
     ],
   },
   longhi: 'forwardLight',
-  musse: 'forwardLight',
+  musse: 'forwardHeavy',
   padaille: {
     slot: 'neutralSpecial',
     requirement: [
@@ -154,7 +148,7 @@ export const WAKEUP_ROSTER_FINISHES = {
       'Confirm the hammer with the right hand available and the required aura.',
     ],
   },
-  sayird: 'forwardLight',
+  sayird: 'forwardHeavy',
   terebellum: {
     slot: 'neutralSpecial',
     requirement: [
@@ -162,6 +156,6 @@ export const WAKEUP_ROSTER_FINISHES = {
       'Finish with the physical left-hand strike. Sweet Home still requires a new injury and valid contact.',
     ],
   },
-  voconte: 'forwardLight',
+  voconte: 'forwardHeavy',
   yokotani: 'backHeavy',
 } satisfies Record<WakeupRosterFighter, Finish>

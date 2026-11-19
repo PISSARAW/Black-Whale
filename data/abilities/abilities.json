@@ -222,8 +222,8 @@
     "categoryAudit": {
       "reviewedAt": "2026-11-13",
       "conclusion": "canon-unrevealed",
-      "sourceChapterId": "ch-352",
-      "note": "Chapter 352 demonstrates the cards but does not explicitly establish Mizaistom's natural Nen category."
+      "sourceChapterId": "ch-343",
+      "note": "Chapter 343 demonstrates the cards but does not explicitly establish Mizaistom's natural Nen category."
     },
     "cards": [
       {
@@ -242,11 +242,11 @@
     "description": "Mizaistom uses three cards to restrict a person's actions. The blue card admits her into the court, the yellow card places her under his control and the red card expels her. With the yellow card, he first shows the card and issues a warning. If the target ignores it, he turns the card over and announces “Restraint”: a rectangular parallelepiped confines him and prevents him from moving, without preventing him from speaking. The effect is brief, but can be reapplied as many times as necessary and used against multiple targets simultaneously.",
     "canonStatus": "canon",
     "moduleKey": "cross-game",
-    "firstVisibleChapterId": "ch-352",
+    "firstVisibleChapterId": "ch-343",
     "modifiedAt": "2026-11-13",
     "sources": [
       {
-        "chapterId": "ch-352"
+        "chapterId": "ch-343"
       }
     ]
   },

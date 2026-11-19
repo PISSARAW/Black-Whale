@@ -1,3 +1,4 @@
+import { borrowedMachiReattachmentBusy } from './machiReattachmentAccess'
 import { littleEyeShotBusy } from './littleEyeCapture'
 import { paperDolls } from './kallutoSurveillance'
 import { paperControlBusy } from './kallutoScatter'
@@ -11,12 +12,16 @@ import {
 import { restoreDolphinDonor } from './dolphinReturn'
 import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
 import { borrowedGumSupport, clearBorrowedGumSupport } from './hisokaSupportOrigin'
+import { borrowedPaperTextureBusy } from './paperTexture'
 import { gumObjectAnchors } from './gumObjectAnchors'
 import { gumSourceBusy, clearGumSource } from './bungeeScoped'
 import { cookieCanStart } from './cookie'
 import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
+import { borrowedCorpseBusy } from './illumiCorpseDolphin'
 import { ownsNeedlePuppet } from './illumiFrame'
+import { borrowedIllumiFaceBusy } from './illumiDisguiseClock'
+import { borrowedNeedleFaceBusy } from './illumiNeedleFaceClock'
 import { machiThreadForOwner } from './machiThread'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { preparedActionReady, controlledEntities } from './preparationActions'
@@ -113,7 +118,7 @@ export function recordDolphinEffects(
   const held = equippedDolphin(after[side])
   if (!held?.used || held.returned || !dolphinEffectScope(after[side], held)) return after
   const keys = new Set(held.sustainedKeys)
-  if (controlledEntities(after, side).length || littleEyeShotBusy(after, side)) keys.add('prepared')
+  if (preparedEffectBusy(after, side)) keys.add('prepared')
   for (const key of changedDolphinCounters(before, after)) keys.add(key)
   for (const key of dolphinEffectFlags(before, after, side)) keys.add(key)
   return writeDolphinKeys(after, side, [...keys])
@@ -195,6 +200,7 @@ function changedDolphinCounters(before: FightState, after: FightState): string[]
     for (const key of Object.keys(next) as (keyof typeof next)[])
       if (
         key !== 'witnessedAt' &&
+        !(key === 'possessedFrames' && after[target].halkenburgSoul) &&
         typeof next[key] === 'number' &&
         Number(next[key]) > Number(old[key])
       )
@@ -225,6 +231,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   return {
     'gum-support': gumUseBusy(fighter) || borrowedGumNetworkBusy(state, side),
     cookie: Boolean(fighter.cookie),
+    'machi-reattachment': borrowedMachiReattachmentBusy(state, side),
     'biohazard-device': Boolean(
       state.battlefield?.entities.some(
         (entry) => entry.device?.form?.owner === side || entry.device?.transforming?.owner === side,
@@ -236,6 +243,9 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     'padaille-weapon': Boolean(fighter.padailleTool),
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
+    'illumi-face': borrowedIllumiFaceBusy(fighter),
+    'needle-face': borrowedNeedleFaceBusy(state, side),
+    'corpse-control': borrowedCorpseBusy(state, side),
     'secret-window': secretWindowBusy(fighter),
     'paper-doll': paperDolls(fighter).some((doll) => doll.active !== false),
     'paper-control': paperControlBusy(state, side),
@@ -249,11 +259,17 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     poem: poemUseBusy(state, side),
     gum: borrowedGumNetworkBusy(state, side),
     projection: Boolean(fighter.hanzoProjection),
-    texture: Boolean(
-      fighter.textureSurprise && borrowedGumSupport(fighter, fighter.textureSurprise),
-    ),
+    texture: textureUseBusy(state, side),
     lsdf: Boolean(state.lsdf?.[side]),
   }
+}
+
+function textureUseBusy(state: FightState, side: FightSide): boolean {
+  const fighter = state[side]
+  return (
+    borrowedPaperTextureBusy(state, side) ||
+    Boolean(fighter.textureSurprise && borrowedGumSupport(fighter, fighter.textureSurprise))
+  )
 }
 
 function gumUseBusy(fighter: ArcadeFighter): boolean {
@@ -303,5 +319,9 @@ function poemUseBusy(state: FightState, side: FightSide): boolean {
 }
 
 function preparedEffectBusy(state: FightState, side: FightSide): boolean {
-  return controlledEntities(state, side).length > 0 || littleEyeShotBusy(state, side)
+  if (equippedDolphin(state[side])?.source === 'illumi') return false
+  return (
+    controlledEntities(state, side).some((entry) => entry.kind !== 'corpse') ||
+    littleEyeShotBusy(state, side)
+  )
 }

@@ -1,3 +1,4 @@
+import { SCENARIO_RESOURCE_IDS } from '../preparationResources'
 import { FIGHTING_ROSTER } from '../roster'
 import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
@@ -172,25 +173,9 @@ function validPreparation(value: unknown): boolean {
   )
     return false
   return (
-    value.resources.length <= 13 &&
+    value.resources.length <= SCENARIO_RESOURCE_IDS.length &&
     value.cohorts.length <= 2 &&
-    value.resources.every((id) =>
-      member(id, [
-        'animals',
-        'birds',
-        'plants',
-        'objects',
-        'flutes',
-        'needles',
-        'rooms',
-        'devices',
-        'writing',
-        'spirits',
-        'people',
-        'musse-history',
-        'paper',
-      ]),
-    ) &&
+    value.resources.every((id) => member(id, SCENARIO_RESOURCE_IDS)) &&
     value.cohorts.every((side) => member(side, ['player', 'opponent']))
   )
 }

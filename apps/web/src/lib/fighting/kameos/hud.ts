@@ -39,7 +39,7 @@ export function kameoBadge(
     name: definition.name,
     role: ROLES[definition.role][lang],
     status: kameoStatus(slot, lang, definition.auraCost),
-    ready: ready && slot.fighter.aura >= definition.auraCost,
+    ready: ready && !slot.bufferedCall && slot.fighter.aura >= definition.auraCost,
     cooldown: slot.phase === 'reserve' ? slot.cooldownFrames / definition.cooldownFrames : 0,
   }
 }
@@ -51,6 +51,7 @@ function kameoStatus(
 ): string {
   if (slot.phase === 'eliminated') return ['Mort', 'Dead'][lang]
   if (slot.phase !== 'reserve') return ['En scène', 'On stage'][lang]
+  if (slot.bufferedCall) return ['Appel mémorisé', 'Call buffered'][lang]
   if (slot.cooldownFrames > 0) {
     const seconds = Math.ceil(slot.cooldownFrames / FIGHT_FPS)
     return [`Recharge ${seconds} s`, `Cooldown ${seconds}s`][lang]

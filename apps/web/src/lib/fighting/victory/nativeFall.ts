@@ -8,6 +8,7 @@ import { applyFightPose, borrowFightRig, resetFightRig } from '../fightRig'
 import { fightGroundContact, lowestBodyHeight } from '../fightGroundContact'
 import type { ArcadeFighter } from '../types'
 import type { VictoryContext } from './types'
+import { nativePoseEntry } from './poseContinuity'
 
 const WORLD_UNIT = 0.12
 
@@ -41,6 +42,12 @@ export function nativeVictoryFall(
   options: { start: number; velocityY?: number; velocityX?: number; height?: number },
 ) {
   const { victim, age } = context
+  const enter = nativePoseEntry(victim.root, {
+    token: context.frame.token,
+    phase: `fall:${options.start}`,
+    age: context.frame.elapsed * 60,
+    start: options.start,
+  })
   const human = humanAnimationRig(victim.root.children[0])
   if (!human) throw new Error('Victory requires the native victim anatomy')
   const samples = victoryFallTrajectory(context.state[context.frame.loser], {
@@ -69,6 +76,7 @@ export function nativeVictoryFall(
   victim.root.position.x += (x - samples[0].x) * WORLD_UNIT
   victim.root.position.y += y * WORLD_UNIT
   applyFightPose(rig, plan.pose, fighter.facing)
+  enter()
   fightGroundContact(fighter)(human)
   victim.root.traverse((node) => {
     if (node.name !== 'contact-shadow') return

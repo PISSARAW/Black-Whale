@@ -1,4 +1,4 @@
-import { canUseRangedAttack } from './projectiles'
+import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
 import { schemeSlot } from './controlScheme'
@@ -185,8 +185,8 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
-  if (move.kind === 'ranged' && !canUseRangedAttack(state[side])) return false
-  if (!nenActionAllowed({ state, side, kind: move.kind, moveId: move.id })) return false
+  const intent = { state, side, kind: move.kind, moveId: move.id }
+  if (!nenActionAllowed(intent) || !sunMoonStrikeAllowed(intent)) return false
   return contextualMoveAllowed(state, side, move)
 }
 

@@ -105,6 +105,10 @@ export class ClashPvpRegistry {
     lobby.status = 'ready'
     return session(id, 'opponent', token)
   }
+  /** The seat a token holds in this match; throws like every other access. */
+  seatFor(id: string, token: string): FightSide {
+    return this.access(id, token).side
+  }
   view(id: string, token: string): PvpView {
     const { lobby, side } = this.access(id, token)
     this.advance(lobby)
@@ -293,12 +297,6 @@ export class ClashPvpRegistry {
       winner,
     })
   }
-  private rankingStatus(lobby: Lobby): PvpView['ranking'] {
-    const a = lobby.profiles.player,
-      b = lobby.profiles.opponent
-    if (!a || !b || a.id === b.id || lobby.status !== 'finished') return 'unranked'
-    return lobby.ranked ? 'counted' : 'pending'
-  }
   private detectDisconnect(lobby: Lobby) {
     if (!lobby.seats.opponent) return
     if (lobby.match.snapshot().phase === 'ready') return
@@ -309,6 +307,12 @@ export class ClashPvpRegistry {
     if (lobby.status !== status) lobby.match.release()
     lobby.status = status
     lobby.disconnectedSide = missing
+  }
+  private rankingStatus(lobby: Lobby): PvpView['ranking'] {
+    const a = lobby.profiles.player,
+      b = lobby.profiles.opponent
+    if (!a || !b || a.id === b.id || lobby.status !== 'finished') return 'unranked'
+    return lobby.ranked ? 'counted' : 'pending'
   }
   private resume(lobby: Lobby) {
     if (lobby.status === 'ready') {

@@ -1,3 +1,5 @@
+import { preparedNenDestinations, preparedBranchReady } from './nenPreparedBranches'
+import { nenFollowupReadiness, nenTransferWaiting } from './nenComboReadiness'
 import { hasDuelComboProfile } from './duelComboProfiles'
 import {
   openingDestinations,
@@ -19,7 +21,7 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
   const fighter = state[side]
   const current = moveById(fighter.attack?.moveId)
   if (!hasDuelComboProfile(fighter.id) || !fighter.attack || !current) return []
-  const openings = openingDestinations(fighter)
+  const openings = [...openingDestinations(fighter), ...preparedNenDestinations(fighter)]
   return cancelChoices(current, openings).flatMap(({ id, link }) => {
     const move = moveById(id)
     if (!move) return []
@@ -31,7 +33,17 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
     })
     const status = choiceStatus({ state, side, current, move, link })
     const opening = openings.includes(id) ? fighter.attack?.comboOpening : undefined
-    return [{ move, link, cost, status, opening, reward: openingReward(fighter, id) }]
+    return [
+      {
+        move,
+        link,
+        cost,
+        status,
+        nenReadiness: nenFollowupReadiness(fighter, move),
+        opening,
+        reward: openingReward(fighter, id),
+      },
+    ]
   })
 }
 
@@ -56,10 +68,11 @@ function choiceStatus(options: {
   // A recovery link may require a free body (Cyclotron); preview that state only for guidance.
   const readiness = link ? { ...state, [side]: { ...fighter, attack: null } } : state
   if (!canUseMovesetMove(readiness, side, move)) return 'unavailable'
+  if (waitingForAura(readiness[side], move)) return 'wait'
   if (attack.confirmedBlock && !current.cancelOnBlockInto.includes(move.id)) return 'blocked'
   const target = state[side === 'player' ? 'opponent' : 'player']
   if (choiceExpired({ fighter, target, move, link })) return 'late'
-  if (!attack.confirmedHit && !attack.confirmedBlock) return 'confirm'
+  if (unconfirmed(fighter)) return 'confirm'
   return canStartFighterAttack(fighter, move.kind, move.id) ? 'ready' : 'wait'
 }
 
@@ -74,4 +87,12 @@ function choiceExpired(options: {
   const startup = openingStartup(move.tuning.startup, openingFollowup(fighter, move.id))
   if (attack.confirmedHit && target.hitStun <= startup) return true
   return !link && attack.frame > attackData(attack.kind, fighter).cancelEnd
+}
+
+function unconfirmed(fighter: ArcadeFighter): boolean {
+  return !fighter.attack?.confirmedHit && !fighter.attack?.confirmedBlock
+}
+
+function waitingForAura(fighter: ArcadeFighter, move: FighterMove): boolean {
+  return nenTransferWaiting(fighter, move) || !preparedBranchReady(fighter, move.id)
 }

@@ -1,6 +1,9 @@
 import { addPoses, lerpPose, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { pursuitLoad } from './pursuitMotion'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
+import { COMBO_LINK_SECONDS, type AttackFlowFrame } from './fightAttackFlow'
+import { linkedStrikePose } from './fightComboTransfer'
+import { contactPostureFrom, withContactPosture } from './fightContactPosture'
 
 interface Momentum {
   pose: PoseMemory
@@ -8,6 +11,8 @@ interface Momentum {
   outgoing: FightPose
   seconds: number
   token: string
+  posture?: FightPose
+  settled?: FightPose
 }
 
 /** Scene-owned, rather than rig-owned: changing Nen geometry cannot erase the outgoing gesture. */
@@ -19,7 +24,7 @@ export function createFightPoseContinuity() {
     seconds: 0,
     token: '',
   }
-  return (plan: BodyPlan, seconds: number): FightPose => {
+  const draw = (plan: BodyPlan, seconds: number): FightPose => {
     const token = flowToken(plan)
     if (token && token === state.token) return state.pose.last
     const memory = state.pose
@@ -31,11 +36,14 @@ export function createFightPoseContinuity() {
     const restarted =
       plan.attackFlow && memory.attack && plan.attackFlow.frame < memory.attack.frame
     if (plan.key !== memory.key || restarted) {
+      if (state.settled) memory.last = state.settled
+      state.settled = undefined
       state.outgoing = state.velocity
       beginPoseTransition(memory, plan, seconds)
+      state.posture = contactPostureFrom(memory.from, plan)
     }
     memory.attack = plan.attackFlow
-    const drawn = drawFlow(state, plan, seconds)
+    const drawn = drawFlow(state, withContactPosture(plan, state.posture), seconds)
     const dt = Math.min(2, Math.max(0.25, (seconds - state.seconds) * 60))
     state.velocity = difference(drawn, memory.last, dt)
     memory.last = drawn
@@ -43,6 +51,13 @@ export function createFightPoseContinuity() {
     state.token = token
     return drawn
   }
+  return Object.assign(draw, {
+    observe: (pose: FightPose) => {
+      // Floor/support offsets are constraints, not authored root travel. Feeding
+      // them into the next plan applies the same pelvis correction a second time.
+      state.settled = { ...state.pose.last, ...pose, root: state.pose.last.root }
+    },
+  })
 }
 
 function flowToken(plan: BodyPlan): string {
@@ -53,17 +68,9 @@ function flowToken(plan: BodyPlan): string {
 function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
   const memory = state.pose,
     attack = plan.attackFlow
-  if (attack && attack.frame < attack.startup && attack.contact) {
+  if (attack?.contact && attack.frame < attack.startup) {
     const progress = attack.frame / attack.startup
-    const pose = physicalComboCurve({
-      from: memory.from,
-      contact: attack.contact,
-      velocity: state.outgoing,
-      load: memory.bridge ?? {},
-      frames: attack.startup,
-      progress,
-      loadAt: attack.loadAt,
-    })
+    const pose = drawStartup(state, { ...attack, contact: attack.contact })
     return attack.pursuit
       ? pursuitLoad(pose, attack.pursuit, { progress, native: plan.pose })
       : pose
@@ -73,9 +80,24 @@ function drawFlow(state: Momentum, plan: BodyPlan, seconds: number): FightPose {
     const enter = 0.72 + 0.28 * Math.min(1, plan.reactionFrame / 2)
     return lerpPose(memory.from, plan.pose, enter)
   }
-  const duration = Math.max(1, plan.blend * 60)
+  const blend = memory.link ? Math.max(COMBO_LINK_SECONDS, plan.blend) : plan.blend
+  const duration = Math.max(1, blend * 60)
   const progress = Math.min(1, Math.max(0, ((seconds - memory.since) * 60) / duration))
   return hermite({ from: memory.from, to: plan.pose, velocity: state.outgoing, duration, progress })
+}
+
+function drawStartup(state: Momentum, attack: AttackFlowFrame & { contact: FightPose }): FightPose {
+  const input = {
+    from: state.pose.from,
+    contact: attack.contact,
+    velocity: state.outgoing,
+    load: state.pose.bridge ?? {},
+    transfer: attack.transfer,
+    frames: attack.startup,
+    progress: attack.frame / attack.startup,
+    loadAt: attack.loadAt,
+  }
+  return state.pose.chained ? linkedStrikePose(input) : physicalComboCurve(input)
 }
 
 interface Curve {

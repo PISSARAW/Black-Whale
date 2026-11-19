@@ -1,7 +1,7 @@
 <script lang="ts">
+  import FightIllumiEquipment from './FightIllumiEquipment.svelte'
   import FightPreparationSetup from './FightPreparationSetup.svelte'
   import FightArenaSetup from './FightArenaSetup.svelte'
-  import FightIllumiEquipment from './FightIllumiEquipment.svelte'
   import { createFight } from '$lib/fighting/engine'
   import { fightingStyle } from '$lib/fighting/fightStyles'
   import type { FightFormatId } from '$lib/fighting/formats'

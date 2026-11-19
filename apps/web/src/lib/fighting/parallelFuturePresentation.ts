@@ -1,13 +1,18 @@
 import { futureCanPrepare } from './parallelFutureAbility'
 import { futureGumState } from './bungeeForecast'
+import { fieldDeceives } from './futureIllusion'
+import { futurePerceptionView } from './futurePerception'
 import type { FightSide, FightState } from './types'
 
 export function visibleFutureBeastOwner(state: FightState, viewer: FightSide = 'player') {
-  const future = state.parallelFuture
-  if (!future || future.phase === 'preparing') return undefined
-  return future.owner === viewer || state.mode === 'versus-local' || state.mode === 'training'
-    ? future.owner
-    : undefined
+  const owner = state.futureIllusion?.owner ?? visibleWindowOwner(state)
+  return owner && canSeeFutureBeast(state, owner, viewer) ? owner : undefined
+}
+function visibleWindowOwner(state: FightState): FightSide | undefined {
+  return state.parallelFuture?.phase !== 'preparing' ? state.parallelFuture?.owner : undefined
+}
+function canSeeFutureBeast(state: FightState, owner: FightSide, viewer: FightSide): boolean {
+  return owner === viewer || state.mode === 'versus-local' || state.mode === 'training'
 }
 
 export function futureVisibleState(
@@ -15,11 +20,14 @@ export function futureVisibleState(
   viewer: FightSide,
   previewIndex?: number | null,
 ): FightState {
+  const perception = futurePerceptionView(state, viewer)
+  if (perception) return perception
   const future = state.parallelFuture
-  if (!future || future.frames.length === 0) return state
+  const fieldView = fieldViewState(state, viewer)
+  if (!future || future.frames.length === 0) return fieldView
   const preview = future.phase === 'vision' && viewer === future.owner
-  const deceived = future.phase === 'diverging' && viewer !== future.owner
-  if (!preview && !deceived) return state
+  const deceived = futureDeceives(state, viewer)
+  if (!preview && !deceived) return fieldView
   const index = preview ? (previewIndex ?? future.previewCursor) : Math.max(0, future.cursor - 1)
   const predicted = future.frames[index]
   return {
@@ -41,6 +49,24 @@ export function futureVisibleState(
   }
 }
 
+function fieldViewState(state: FightState, viewer: FightSide): FightState {
+  const field = state.futureIllusion
+  return field && fieldDeceives(state, viewer)
+    ? {
+        ...state,
+        [field.owner]: field.echo,
+        projectiles: state.projectiles.filter((s) => !s.illusionHarmless),
+      }
+    : state
+}
+function futureDeceives(state: FightState, viewer: FightSide): boolean {
+  const future = state.parallelFuture
+  return (
+    future?.phase === 'diverging' &&
+    viewer !== future.owner &&
+    (!state.futureIllusion || fieldDeceives(state, viewer))
+  )
+}
 export function futureSpecialPresentation(state: FightState, language: 'fr' | 'en') {
   const future = state.parallelFuture
   const owns = future?.owner === 'player'

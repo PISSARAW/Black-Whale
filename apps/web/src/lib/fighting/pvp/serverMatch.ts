@@ -1,7 +1,4 @@
-import { tickFight } from '../engine'
-import { FIXED_STEP } from '../fightClock'
-import { unpackReplayInput } from '../fightReplayInput'
-import { applyPvpCommand } from './commands'
+import { stepPvpFrame, type PvpFrameInput, type PvpSeatFrame } from './rollback/frameInput'
 import type { FightSide, FightState } from '../types'
 import type { PvpCommand, PvpInputPacket } from './types'
 import { createMatchPractice } from '../career/practice'
@@ -84,19 +81,18 @@ export class AuthoritativeClashMatch {
   advance(now: number) {
     if (this.current.phase !== 'fighting') return
     const before = this.current
-    for (const side of SIDES) {
-      const commands = this.pending[side].splice(0, 8)
-      for (const { command } of commands)
-        this.current = applyPvpCommand(this.current, side, command)
-      if (now - this.inputAt[side] > 250) this.inputs[side] = 0
-    }
-    this.current = tickFight(this.current, unpackReplayInput(this.inputs.player), {
-      dt: FIXED_STEP,
-      opponentInput: unpackReplayInput(this.inputs.opponent),
-      ai: false,
-    })
+    this.current = stepPvpFrame(this.current, this.frameInput(now))
     this.tick += 1
     for (const side of SIDES) this.acknowledge(side)
     this.practice.observe(before, this.current)
+  }
+  /** Server policy only: at most 8 queued commands per seat, held input expires after 250 ms. */
+  private frameInput(now: number): PvpFrameInput {
+    const seat = (side: FightSide): PvpSeatFrame => {
+      const commands = this.pending[side].splice(0, 8).map(({ command }) => command)
+      if (now - this.inputAt[side] > 250) this.inputs[side] = 0
+      return { input: this.inputs[side], commands }
+    }
+    return { player: seat('player'), opponent: seat('opponent') }
   }
 }

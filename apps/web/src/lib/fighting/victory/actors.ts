@@ -3,6 +3,7 @@ import type { Object3D } from 'three'
 import { fighterDefinition } from '../roster'
 import type { FighterId } from '../types'
 import type { VictoryActor } from './types'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 
 export function victoryActor(root: Object3D, id: FighterId): VictoryActor {
   const head =
@@ -45,6 +46,7 @@ export function resetVictoryActor(actor: VictoryActor, save: (node: Object3D) =>
   })
 }
 export function groundVictoryActor(actor: VictoryActor) {
+  keepHumanFigure(actor.root)
   const feet = ['left', 'right']
     .map((side) => actor.root.getObjectByName(`knee-${side}`)?.children[1])
     .filter((node): node is Object3D => Boolean(node))

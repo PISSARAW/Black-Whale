@@ -1,8 +1,13 @@
+import { hanzoDashPoses, HANZO_WALK_STYLE } from './hanzoLocomotion'
+import { chrolloDashPoses, CHROLLO_WALK_STYLE } from './chrolloLocomotion'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
-import type { ArcadeFighter } from './types'
+import type { ArcadeFighter, FighterId } from './types'
+import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
+import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
+import { shufflePose } from './fightShuffleStep'
 
 /**
  * Authored locomotion poses for the short, explosive movements that should not
@@ -118,6 +123,19 @@ interface WalkStyle {
   rhythm: FightPose
 }
 
+const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
+  chrollo: CHROLLO_WALK_STYLE,
+  hisoka: HISOKA_WALK_STYLE,
+  feitan: FEITAN_WALK_STYLE,
+  hanzo: HANZO_WALK_STYLE,
+}
+const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
+  chrollo: chrolloDashPoses,
+  hisoka: hisokaDashPoses,
+  feitan: feitanDashPoses,
+  hanzo: hanzoDashPoses,
+}
+
 const WALK_STYLES: Record<FightFamily, WalkStyle> = {
   striker: {
     advance: { body: [0.08, 0, 0], chest: [0.03, -0.08, 0] },
@@ -186,9 +204,9 @@ export function dashPose(fighter: ArcadeFighter, standing: FightPose): DashPose 
   if (!dash) return null
   const forward = dash.direction === fighter.facing
   const progress = Math.min(1, Math.max(0, dash.frame / dash.frames))
-  const poses = forward
-    ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH]
-    : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH]
+  const poses =
+    PERSONAL_DASHES[fighter.id]?.(forward) ??
+    (forward ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH] : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH])
   const profile = fighterMotionProfile(fighter.id)
   const accent = dashAccent(fighter, progress, forward)
   const travel = scalePose(sampleThreeBeat(poses, progress), profile.dash)
@@ -197,7 +215,7 @@ export function dashPose(fighter: ArcadeFighter, standing: FightPose): DashPose 
 
 export function prejumpPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose | null {
   const frames = motionOf(fighter).prejumpFrames
-  if (frames <= 0) return null
+  if (!(frames > 0)) return null
   const profile = fighterMotionProfile(fighter.id)
   const compression = 1 - frames / PREJUMP_FRAMES
   return {
@@ -209,7 +227,7 @@ export function prejumpPose(fighter: ArcadeFighter, standing: FightPose): Locomo
 
 export function landingPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose | null {
   const frames = motionOf(fighter).landingFrames
-  if (frames <= 0) return null
+  if (!(frames > 0)) return null
   const profile = fighterMotionProfile(fighter.id)
   const compression = frames / LANDING_FRAMES
   return {
@@ -222,13 +240,14 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
 export function walkPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose {
   const motion = motionOf(fighter)
   const advancing = motion.heldDirection === fighter.facing
-  const style = WALK_STYLES[fightFamily(fighter.id)]
+  const style = PERSONAL_WALKS[fighter.id] ?? WALK_STYLES[fightFamily(fighter.id)]
   const profile = fighterMotionProfile(fighter.id)
   const phase = Math.sin(fighter.x * fighter.facing * 0.251)
   const rhythm = scalePose(style.rhythm, phase * profile.walk * (advancing ? 1 : 0.65))
   const posture = scalePose(advancing ? style.advance : style.retreat, profile.walk)
+  const steps = shufflePose(fighter)
   return {
-    pose: addPoses(standing, posture, rhythm),
+    pose: addPoses(standing, posture, rhythm, scalePose(steps, profile.walk)),
     key: advancing ? 'walk:forward' : 'walk:backward',
     blend: 0.055,
   }

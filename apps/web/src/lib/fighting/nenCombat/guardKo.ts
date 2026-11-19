@@ -2,6 +2,7 @@ import { transitionNen } from '@black-whale/nen-engine'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { shuObject } from '../nenAdvanced'
 import type { ArcadeFighter, FightInput, FightNenZone } from '../types'
+import { prepareDefensiveKo } from '../nenTransfer'
 declare module '../types' {
   interface ArcadeFighter {
     defensiveKo?: FightNenZone
@@ -22,7 +23,8 @@ export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFi
   const zone = requestedZone(input)
   if (!zone) return null
   if (!voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })) return null
-  const continuing = fighter.defensiveKo === zone && fighter.nen.ko === zone
+  const continuing = continuesKo(fighter, zone)
+  if (pendingKo(fighter, continuing)) return fighter
   if ([fighter.hitStun, fighter.knockdownFrames].some(Boolean)) return null
   if (fighter.attack && !continuing) return null
   if (!continuing && fighter.aura < DEFENSIVE_KO_COST) return null
@@ -30,14 +32,26 @@ export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFi
     { ...coatedNen(fighter, input), mode: 'ren' as const, gyo: false, en: null, ken: false },
     { type: 'KO', zone },
   ).state
-  return {
-    ...fighter,
-    nen,
-    gyoFocus: undefined,
-    gyoLow: undefined,
-    defensiveKo: zone,
-    aura: fighter.aura - Number(!continuing) * DEFENSIVE_KO_COST,
-  }
+  return prepareDefensiveKo(
+    fighter,
+    {
+      ...fighter,
+      nen,
+      gyoFocus: undefined,
+      gyoLow: undefined,
+      defensiveKo: zone,
+      aura: fighter.aura - Number(!continuing) * DEFENSIVE_KO_COST,
+    },
+    zone,
+  )
+}
+
+function continuesKo(fighter: ArcadeFighter, zone: FightNenZone): boolean {
+  return (
+    fighter.defensiveKo === zone &&
+    (fighter.nen.ko === zone ||
+      (fighter.nenTransfer?.ko === true && fighter.nenTransfer.zone === zone))
+  )
 }
 
 function coatedNen(fighter: ArcadeFighter, input: FightInput) {
@@ -47,4 +61,8 @@ function coatedNen(fighter: ArcadeFighter, input: FightInput) {
     on: Boolean(input.shu),
   }).state
   return { ...coating, in: Boolean(input.conceal || fighter.attack?.concealed) }
+}
+
+function pendingKo(fighter: ArcadeFighter, continuing: boolean): boolean {
+  return continuing && fighter.nenTransfer?.ko === true
 }

@@ -2,6 +2,7 @@ import { buildFightFigure } from './fighterFigure'
 import { FIGHTING_ROSTER } from './roster'
 import * as THREE from 'three'
 import { createKallutoPaperScene } from './kallutoScene'
+import { PAPER_STREAM_PIECES } from './kallutoPaperRibbon'
 import { advanceBlinky } from './blinkyFrames'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight, nextRound } from './engine'
@@ -325,7 +326,7 @@ describe('Kalluto paper and surveillance dolls', () => {
     state = launchKallutoPaper(state, 'player', 'serpent')
     effect.sync(state, 1)
     const group = scene.getObjectByName('kalluto-paper')!
-    expect(group.children.filter((child) => child.visible)).toHaveLength(16)
+    expect(group.children.filter((child) => child.visible)).toHaveLength(PAPER_STREAM_PIECES)
     const build = (side: FightSide) =>
       buildFightFigure({
         THREE,

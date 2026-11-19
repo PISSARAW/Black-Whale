@@ -4,11 +4,11 @@
     trackFightOpponent,
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
-  import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
-  import { attackProgress } from '$lib/fighting/frameData'
+  import { MODEL_POSES, avatarPoseProgress } from '$lib/fighting/fighterAvatarPose'
+  import { snapshotFighterPreview } from '$lib/fighting/fighterPreviewSnapshot'
+  import { fightMove } from '$lib/fighting/fightMoves'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { ArcadeFighter, FighterPose } from '$lib/fighting/types'
-  import type { HumanPose } from '$lib/tour/humanAnimation'
   import { onMount } from 'svelte'
 
   export let fighter: ArcadeFighter
@@ -18,21 +18,6 @@
   let snapshot: string | null = null
   let failed = false
 
-  const MODEL_POSES: Record<FighterPose, HumanPose> = {
-    idle: 'idle',
-    walk: 'walk',
-    jump: 'idle',
-    guard: 'guard',
-    light: 'idle',
-    heavy: 'idle',
-    special: 'idle',
-    ranged: 'idle',
-    hit: 'idle',
-    down: 'fallen',
-    wakeup: 'idle',
-    ko: 'idle',
-  }
-
   $: definition = fighterDefinition(fighter.id)
 
   onMount(() => {
@@ -40,6 +25,21 @@
     let frame = 0
     let resize: ResizeObserver | null = null
     let teardown: () => void = () => undefined
+
+    // Portraits share one offscreen context: a roster would exhaust the browser's cap.
+    async function mountPreview() {
+      try {
+        const still = await snapshotFighterPreview({
+          fighter,
+          width: canvas.clientWidth,
+          height: canvas.clientHeight,
+          cancelled: () => disposed,
+        })
+        if (!disposed && still) snapshot = still
+      } catch {
+        failed = true
+      }
+    }
 
     async function mountModel() {
       try {
@@ -55,16 +55,15 @@
         const renderer = new THREE.WebGLRenderer({
           canvas,
           alpha: true,
-          antialias: !preview,
-          powerPreference: preview ? 'low-power' : 'high-performance',
-          preserveDrawingBuffer: preview,
+          antialias: true,
+          powerPreference: 'high-performance',
         })
         renderer.setClearColor(0x000000, 0)
         renderer.outputColorSpace = THREE.SRGBColorSpace
 
         const scene = new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera(preview ? 24 : 27, 1, 0.1, 20)
-        camera.position.set(0, preview ? 1.05 : 1, preview ? 5.2 : 4.15)
+        const camera = new THREE.PerspectiveCamera(27, 1, 0.1, 20)
+        camera.position.set(0, 1, 4.15)
         camera.lookAt(0, 0.92, 0)
 
         const materials: Array<[string, import('three').MeshBasicMaterial]> = []
@@ -83,7 +82,6 @@
         }
 
         const model = buildFightFigure({ THREE, glow, fighter })
-        if (preview) model.root.scale.setScalar(0.9)
         scene.add(model.root)
         let renderedPose: FighterPose = fighter.pose
         let poseStarted = performance.now() / 1000
@@ -93,26 +91,12 @@
           if (!canvas) return
           const width = Math.max(1, canvas.clientWidth)
           const height = Math.max(1, canvas.clientHeight)
-          const ratio = Math.min(window.devicePixelRatio || 1, preview ? 1.25 : 1.75)
-          renderer.setPixelRatio(ratio)
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
           renderer.setSize(width, height, false)
           camera.aspect = width / height
           camera.updateProjectionMatrix()
         }
         fit()
-
-        function poseProgress(seconds: number) {
-          let progress = attackProgress(fighter)
-          if (fighter.pose === 'jump') {
-            progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
-          } else if (fighter.pose === 'hit') {
-            progress = Math.min(1, Math.max(0, 1 - fighter.hitStun / 26))
-          } else if (fighter.pose === 'ko') {
-            // The match loop stops on K.O.; the fall finishes on the render clock.
-            progress = Math.max(progress, Math.min(1, (seconds - poseStarted) / KO_DURATION))
-          }
-          return progress
-        }
 
         const render = (time: number) => {
           if (disposed) return
@@ -121,57 +105,39 @@
             renderedPose = fighter.pose
             poseStarted = seconds
           }
-          const pose = MODEL_POSES[fighter.pose]
-          const progress = poseProgress(seconds)
-          const bodyAngle = preview ? -0.28 : updateFighterFacing(facing, fighter.facing, seconds)
+          const progress = avatarPoseProgress(fighter, seconds - poseStarted)
+          const bodyAngle = updateFighterFacing(facing, fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const motion = fightBodyMotion({
             fighter,
-            seconds: preview ? 0 : seconds,
+            seconds,
             progress,
             fallback: fightMove(fighter, progress),
           })
-          model.animate(seconds, pose, {
-            motion: preview
-              ? motion
-              : trackFightOpponent({
-                  fighter,
-                  bodyAngle,
-                  seconds,
-                  motion,
-                }),
+          model.animate(seconds, MODEL_POSES[fighter.pose], {
+            motion: trackFightOpponent({ fighter, bodyAngle, seconds, motion }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
-            transitionSeconds: preview ? 0 : undefined,
           })
           renderer.render(scene, camera)
-          if (!preview) frame = requestAnimationFrame(render)
+          frame = requestAnimationFrame(render)
         }
         render(performance.now())
 
-        const release = () => {
+        teardown = () => {
           cancelAnimationFrame(frame)
           resize?.disconnect()
           disposeMountedVisitHatsu(model.root)
           materials.forEach(([, material]) => material.dispose())
           renderer.dispose()
-          if (preview) renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext()
         }
-        teardown = release
-
-        if (preview) {
-          snapshot = canvas.toDataURL('image/webp', 0.9)
-          release()
-          teardown = () => undefined
-        } else {
-          resize = new ResizeObserver(fit)
-          resize.observe(canvas)
-        }
+        resize = new ResizeObserver(fit)
+        resize.observe(canvas)
       } catch {
         failed = true
       }
     }
 
-    void mountModel()
+    void (preview ? mountPreview() : mountModel())
     return () => {
       disposed = true
       teardown()

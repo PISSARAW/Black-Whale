@@ -80,8 +80,7 @@ existants gardent le sens de chacun de leurs bits.
 - `hud.ts` et `FightKameoBadge.svelte` : sous la jauge d'aura, le nom, le rôle et
   l'état (prêt, recharge, en scène, aura épuisée, mort), avec une barre de recharge.
 - `selection.ts` et `FightKameoPicker.svelte` : l'écran de préparation propose un
-  kaméo par camp (section 05), dans `FightRulesSelection.svelte`.
-  `FightingGame.svelte` les attache à la création du match.
+  kaméo par camp (section 05). `+page.svelte` les attache à la création du match.
 - Touches par défaut, réassignables au clavier : `<` pour P1 et `Backspace` pour P2.
   À la manette, c'est le bouton 16 (Guide), le seul bouton standard encore libre.
 
@@ -202,3 +201,77 @@ capture ses expressions ; `KAMEO_ANIMATION_FILM=1` ajoute le cycle complet.
   le leader adverse, et l'échange de perspective (`localPerspective`) montre à
   chaque joueur son propre kaméo côté `player`. Le ruleset passe à `clash-pvp-6`.
 - L'écran de création du duel privé propose le même sélecteur de kaméos.
+
+## Kaméos dans les combos
+
+`buffer.ts` conserve une pression manuelle pendant le hitstop : le corps et ses
+horloges restent figés, puis l’appel part à la première frame libre. La direction
+est mémorisée relativement au leader. Réserve, recharge, aura et capacité d’agir
+sont vérifiées à la saisie et à la reprise ; un appel devenu invalide est abandonné.
+Le HUD indique « Appel mémorisé ». Ce comportement utilise le ruleset de replay v66,
+également inclus dans le ruleset PvP.
+
+`comboLessonCatalogue.ts` fournit six exercices par combattant (240 routes), dans
+Académie du Nen → Combos & défense. Le sélecteur affiche les six soutiens du
+personnage choisi. `comboRosterRoutes.ts` décrit les chaînes et liens natifs de la
+grammaire actuelle de main. Les neuf personnages aux séquences les plus courtes
+appellent certains soutiens avec l’attaque d’ouverture ; les autres appels suivent
+la première touche. Les commandes et conditions de chaque route l’indiquent.
+
+Luzurus immobilise une cible au sol et permet une frappe après récupération.
+Zhang Lei renforce un contact réel avec sa pièce ; Marayam protège la fin et la
+récupération ; Tubeppa soigne un combattant blessé ; Morena et Salé-salé doivent
+atteindre une cible à portée. Franklin conserve sa rafale et son coût d’aura.
+Pour le dernier revers d’Hisoka, l’exercice lit le startup natif et les frames
+restantes du soutien afin que l’effet arrive avant ou sur le contact.
+
+Les exercices exigent les touches continues et l’effet réellement reçu avant leur
+fin. Un appel payé, hors de portée ou interrompu ne suffit pas. Les timings,
+coûts, gardes, évitements, interruptions et conditions des Hatsu ne changent pas.
+Tubeppa commence avec 40 PV manquants dans son exercice ; les autres préparations
+n’accordent aucun Hatsu gratuit au leader. Les soutiens n’ajoutent pas de touche
+ni de prise aérienne. Le bouton tactile utilise `FightKameoCall.svelte` dans les
+outils tactiles de main.
+
+`comboScenarios.ts` exécute les mêmes commandes natives pour mesurer les limites.
+Il distingue la chaîne physique (`comboGuaranteed`), le soutien reçu avant sa fin
+(`supportInCombo`), leur réussite conjointe (`guaranteed`), la première frame où
+le défenseur peut agir et le contact éventuel de sa riposte. Les délais ignorent
+le hitstop ; les frames de contact et de reprise incluent la simulation complète.
+Le délai zéro suit l’appel de la route (ouverture ou première touche).
+
+### Validation sur main
+
+Le banc Chrome mesure 4 480 situations et lance 100 exercices avec le rendu WebGL.
+Les 240 routes passent au centre et au coin, contre la garde et contre un léger
+entré dès la reprise (960 cas immédiats). Pour Luzurus, contre la garde après
+la première touche :
+
+| Retard de l’appel (frames actives) | Routes garanties, centre + coin |
+| ---------------------------------- | ------------------------------- |
+| 0                                  | 80 / 80                         |
+| 10                                 | 6 / 80                          |
+| 30                                 | 0 / 80                          |
+| 60                                 | 0 / 80                          |
+
+Avec l’appel immédiat, retarder la finition de Luzurus de 5, 10 ou 20 frames reste
+garanti dans les 80 cas ; à 90 frames, le défenseur reprend la main dans les 80 cas.
+Le mannequin est Chrollo, sauf pour Chrollo qui affronte Hisoka. Ces résultats
+concernent les distances et ressources des exercices, et la grammaire actuelle
+sur main. Les autres soutiens n’obtiennent pas l’immobilisation de Luzurus.
+
+`comboCalls.test.ts` couvre les quarante leaders dans les deux camps, puis les
+240 exercices au centre et au coin dans les deux orientations. `rosterScenarios.test.ts`
+vérifie les appels tardifs, l’aura épuisée et une finition trop tardive. Les
+cadences et replays passent par `combatSchool.test.ts`.
+
+Les exercices de soutien appartiennent à `COMBAT_SCHOOL_ROUTES`. Les routes
+natives de `COMBAT_ROUTES` restent seules utilisées pour déclarer les combos du
+combattant : des exercices avec des soutiens différents peuvent partager les
+mêmes coups sans ajouter de doublons au manuel ni modifier les annulations.
+
+`node apps/web/scripts/check-fighting-kameo-combos.mjs` produit `timings.json`,
+`report.json` et les captures dans `KAMEO_COMBO_OUTPUT` (par défaut
+`output/kameo-roster/chrome`). Les catalogues inertes sont isolés dans
+`clash-kameo-catalogues` ; le test de partitionnement vérifie leurs données et
+leur chargement, sans relever le budget JavaScript de 500 kB.

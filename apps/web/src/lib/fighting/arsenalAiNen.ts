@@ -1,3 +1,4 @@
+import { preparePhysicalFocus } from './nenFocusCommand'
 import { applyAuraContext, KO_COST, setIn } from './nen'
 import { attackPhase } from './frameData'
 import { seesCombatBody } from './fightCounterplay'
@@ -18,8 +19,13 @@ export function performOpponentArsenalMove(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState {
   const { state, move, roll } = options
-  const prepared = prepareConcealment(state, move, roll)
+  let prepared = prepareConcealment(state, move, roll)
   const charged = shouldUseKo(prepared, move, roll)
+  if (!charged && ['light', 'heavy'].includes(move.kind))
+    prepared = {
+      ...prepared,
+      opponent: preparePhysicalFocus(prepared.opponent, move.tuning.auraZone),
+    }
   const next = perform({
     state: prepared,
     side: 'opponent',

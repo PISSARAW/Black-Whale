@@ -247,6 +247,7 @@ const PIECES: Record<Signature, Piece> = {
       make: () => new THREE.ConeGeometry(0.075, 0.2, 8),
       material: paint.cloth,
       at: [0, -0.05, 0.02],
+      name: 'signature-umbrella-cloth',
     })
   },
 

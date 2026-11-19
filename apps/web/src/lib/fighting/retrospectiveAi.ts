@@ -1,4 +1,6 @@
 import { littleEyeAi } from './littleEyeAi'
+import { paperTextureAi } from './paperTextureAi'
+import { illumiDisguiseAi } from './illumiDisguiseAi'
 import { prosthesisSkinAi } from './gumProsthesisAi'
 import { gumObjectAnchorAi } from './gumObjectAnchorAi'
 import { paperKitAi } from './kallutoMaterialAi'
@@ -35,6 +37,8 @@ export function retrospectiveAiAction(
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
     prosthesisSkinAi(state, perform) ??
+    paperTextureAi(state, perform) ??
+    illumiDisguiseAi(state, perform) ??
     dolphinLoanAi(state, perform) ??
     paperKitAi(state) ??
     utilityArsenalAi(state, perform) ??
@@ -188,6 +192,15 @@ function gumAi(state: FightState): FightState | null {
         : null
   if (!action) return gumObjectAnchorAi(state) ?? gumNetworkAi(state)
   const next = performArsenalCommand(state, 'opponent', { action })
+  return next === state ? null : next
+}
+
+/** A deliberately prepared catch may replace ordinary guard, but never bypass hitstun or its cost. */
+export function hisokaInterceptionAi(state: FightState): FightState | null {
+  const fighter = state.opponent
+  if (fighter.id !== 'hisoka' || !canAct(fighter) || fighter.attack || !incomingObject(state))
+    return null
+  const next = performArsenalCommand(state, 'opponent', { action: 'gum-catch' })
   return next === state ? null : next
 }
 

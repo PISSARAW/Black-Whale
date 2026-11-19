@@ -4,7 +4,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 export type ChainStage = 0 | 1 | 2 | 3 | 4
 export interface ChainMotion {
   stage: ChainStage
-  mode: 'attack' | 'jail' | 'drain' | 'healing' | 'dowsing'
+  mode: 'attack' | 'jail' | 'drain' | 'healing' | 'dowsing' | 'map'
   extension: number
   reach: number
   returning?: boolean
@@ -23,6 +23,7 @@ export function kurapikaChainMotions(state: FightState, side: FightSide): ChainM
   const motions = maintainedChains(target, side)
   if (state[side].dowsingSession || state[side].dowsingInvestigation)
     motions.push({ stage: 0, mode: 'dowsing', extension: 1, reach: 0 })
+  if (state[side].dowsingMapPose) motions.push({ stage: 0, mode: 'map', extension: 1, reach: 0 })
   const attack = attackChain(state[side])
   if (attack && !motions.some((held) => held.stage === attack.stage)) motions.push(attack)
   return motions
@@ -56,7 +57,8 @@ function attackChain(fighter: ArcadeFighter): ChainMotion | null {
 }
 
 function isChainAttack(attack: NonNullable<ArcadeFighter['attack']>): boolean {
-  return Boolean(attack.moveId?.startsWith('kurapika:') || attack.hatsuSource === 'kurapika')
+  if (attack.kind !== 'special') return false
+  return Boolean(STAGES[attack.moveId ?? ''] !== undefined || attack.hatsuSource === 'kurapika')
 }
 
 function smooth(value: number): number {

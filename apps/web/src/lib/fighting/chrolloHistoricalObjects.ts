@@ -1,4 +1,11 @@
 import { historicalCopyExpired } from './historicalCopyLifetime'
+import { orderStampSubject } from './corpsePose'
+import { corpseCollider, corpseHeadContact } from './preparedCorpseBody'
+import { copiedCorpseNeedles } from './illumiCorpseMatter'
+import { copiedDocumentMaterials } from './paperDocumentCopy'
+import { copiedFaceNeedles } from './illumiNeedleMatter'
+import { copiedDisguisePins } from './illumiDisguisePins'
+import { touchesDocument } from './paperDocuments'
 import { copyPaperKit } from './kallutoCopyKit'
 import { expireHistoricalMatter } from './historicalMatterClock'
 import { freeDeviceHand } from './deviceHands'
@@ -45,7 +52,9 @@ function createHistoricalReplica(
   const id = nextCopyId(state, side)
   return {
     id,
-    kind: ['morena', 'supporter', 'person'].includes(source.kind) ? 'puppet' : source.kind,
+    kind: ['morena', 'supporter', 'person', 'hostage'].includes(source.kind)
+      ? 'puppet'
+      : source.kind,
     owner: side,
     x: copySpawnX(state, side),
     y: source.y,
@@ -53,6 +62,10 @@ function createHistoricalReplica(
     material: 'nen',
     health: 40,
     ...replicaMaterials(source, id),
+    ...copiedFaceNeedles(source, id),
+    ...copiedCorpseNeedles(source, id),
+    ...copiedDisguisePins(source, id),
+    ...copiedDocumentMaterials(state, { source, id, side }),
     consenting: false,
     controller: undefined,
     sealed: source.sealed,
@@ -107,6 +120,7 @@ function copyOriginalWithinReach(
   side: FightSide,
   entry: PreparedEntity,
 ): boolean {
+  if (entry.document) return touchesDocument(state, side, entry)
   if (entry.device?.carrier) return touchesDevice(state, side, entry)
   return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 6
 }
@@ -126,6 +140,7 @@ function nextCopyId(state: FightState, side: FightSide): string {
 }
 function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
   return {
+    detachedForearm: source.detachedForearm ? { ...source.detachedForearm } : undefined,
     blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
     paperKit: source.paperKit ? copyPaperKit(source.paperKit, id) : undefined,
     writingKit: source.writingKit
@@ -155,7 +170,7 @@ function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
   if (source.writingKit) return { width: 2, height: 1 }
   if (source.paperKit) return { width: 2, height: 1 }
   if (source.kind === 'crate') return { width: 3, height: 8 }
-  return ['puppet', 'morena', 'supporter', 'person'].includes(source.kind)
+  return ['puppet', 'morena', 'supporter', 'person', 'hostage'].includes(source.kind)
     ? { width: 2.2, height: 13 }
     : undefined
 }
@@ -211,15 +226,16 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     return state
   const puppet = state.battlefield?.entities.find(
     (entry) =>
-      entry.kind === 'puppet' &&
+      orderStampSubject(entry) &&
       entry.copy?.headAttached &&
       entry.present &&
       entry.health > 0 &&
       (!id || entry.id === id) &&
-      Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8,
+      stampWithinReach(state, side, entry),
   )
   if (!puppet?.copy) return state
   const changed = updateEntity(state, puppet.id, {
+    arena: corpseCollider({ ...puppet, copy: { ...puppet.copy, order: 'attack' } }).arena,
     copy: {
       ...puppet.copy,
       owner: side,
@@ -231,6 +247,11 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     ...changed,
     [side]: { ...changed[side], aura: changed[side].aura - 10, arenaRecovery: 18 },
   }
+}
+
+function stampWithinReach(state: FightState, side: FightSide, entry: PreparedEntity): boolean {
+  if (entry.kind === 'corpse') return corpseHeadContact(state, side, entry)
+  return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8
 }
 
 export function orderHistoricalPuppets(

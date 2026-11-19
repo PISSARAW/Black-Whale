@@ -1,6 +1,7 @@
 import { blinkyAvailable, blinkyUtilityAttack, plugWoundsInput } from './blinky'
 import { luiniKnifeStrike } from './luiniKnife'
 import { kallutoFanStrike } from './threeCombatWounds'
+import { historicalBladeStrike } from './historicalWeapons'
 import { EMPTY_INPUT, type ArcadeFighter, type FightSide, type FightState } from './types'
 
 /** A landed vacuum blow or actual knife cut opens a wound; ordinary hitstun does not. */
@@ -23,6 +24,7 @@ function woundingStrike(fighter: ArcadeFighter): boolean {
   return (
     Boolean(fighter.hinrighAxeCounter) ||
     kallutoFanStrike(fighter) ||
+    historicalBladeStrike(fighter) ||
     luiniKnifeStrike(fighter) ||
     (blinkyAvailable(fighter) && !blinkyUtilityAttack(fighter))
   )

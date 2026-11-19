@@ -172,8 +172,8 @@ la question. Les snapshots conservent le même résultat après restauration.
 Le coût de trois points d'aura, la portée de voix et l'animation d'une seconde
 et demie sont des réglages de duel. Le ruleset devient **clash-combat-19**.
 
-La localisation par radiesthésie et les questions fondées sur d'autres souvenirs
-restent à réaliser. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
+La localisation par radiesthésie est ajoutée au ruleset 62 ; les questions
+fondées sur d’autres souvenirs demandent encore un audit. Cette passe ne certifie donc pas l'intégralité de Dowsing Chain.
 La distinction entre mensonge conscient et connaissance objective est recoupée
 avec la description de [Kurapika](https://hunterxhunter.fandom.com/wiki/Kurapika),
 notamment les chapitres 348 et 371 ; les synthèses ne remplacent pas les planches.
@@ -492,6 +492,29 @@ L'IA peut préparer les quatre étapes à partir de son propre matériel dans un
 situation de danger. Les missions, leurs effets et leur budget se rejouent par
 export/import complet. Le ruleset devient **clash-combat-28** ; le **On reste présent**.
 
+## Lovely Ghostwriter — ruleset 71
+
+L’[écriture automatique mensuelle](./clash-lovely-ghostwriter.md) est utilisable
+sur une véritable identité manuscrite, avec sujet ou portrait visible et un
+mois de scénario défini. L’instrument, l’encre, la main et le livre restent
+requis. La copie d’un autographe ne remplace pas son original et le futur
+non écrit reste privé. Le On est conservé.
+
+## Avant-bras réels de Machi — ruleset 70
+
+La [suture des membres originaux](./clash-machi-membres.md) est utilisable
+avec un patient consentant, l’aura des bras relâchée, une aiguille physique
+et un travail interruptible. Elle reconnecte chaque avant-bras sans
+régénérer de chair ni rendre les PV perdus. Le livre et Dolphin conservent
+leurs conditions propres ; le On reste disponible.
+
+## Bungee Gum post-mortem — ruleset 72
+
+L’[ordre préalable au cœur et aux poumons](./clash-hisoka-reanimation.md) est
+utilisable de son vivant. La scène rétrospective du chapitre 357 fournit une
+véritable asphyxie déclarée et un contexte viable ; le pompage ne régénère
+aucun tissu et ne remplace pas les autres causes de mort. Le On est conservé.
+
 ## Écarts qui empêchent encore d'annoncer « 100 % »
 
 Les extensions ci-dessus ne terminent pas tout l'arsenal rétrospectif. L'[audit des quarante
@@ -499,12 +522,12 @@ combattants](./audit-hatsu-fighting.md) conserve les limites par personnage.
 Les écarts suivants restent ouverts et ne doivent pas être masqués par un taux
 de couverture des profils ou un nombre de tests :
 
-| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                  |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chrollo    | Lovely Ghostwriter reste à représenter avec identité manuscrite, impossibilité de prédire son propre avenir et un contexte de futur défini. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon. |
-| Hisoka     | Réseau de plusieurs liens simultanés, prothèses fonctionnelles et préparation post-mortem avec une véritable cause de mort admissible. L'interception et le colmatage sont désormais exécutables.                                                                                                                                                                                                          |
-| Kurapika   | Ajouter les clauses de secret et de libération des otages de Judgment, la localisation et les autres questions de Dowsing Chain, puis achever les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité.                                             |
-| Halkenburg | Représenter la protection collective et les consciences au lieu de réduire la possession à un arrêt temporaire du combattant.                                                                                                                                                                                                                                                                              |
+| Personnage | Extension ou correction encore nécessaire                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrollo    | Lovely Ghostwriter est utilisable avec identité manuscrite et mois de scénario défini, sans prédire son propre avenir. Le repérage de Gallery Fake et le téléphone avec les deux antennes de Black Voice sont exécutables. L’auto-manipulation est exécutable en duel simple ; restent sa généralisation à plusieurs ennemis et l’audit des applications et contacts de Sun and Moon.                                                                                                                         |
+| Hisoka     | Ordre post-mortem et scène d’asphyxie viable du chapitre 357 exécutables, sans résurrection après un KO ou une autre mort ; surfaces du visage et du cou exécutables sur blessures explicites. Réseau de liens multiples, interception, colmatage, prothèses fonctionnelles et maquillage d'un document réel sont exécutables.                                                                                                                                                                                |
+| Kurapika   | Les clauses de secret et de restitution d’un otage de Judgment sont exécutables ; leur délai de trente secondes reste un réglage de duel, distinct du minuit de la scène du manga. La localisation sur carte réelle est exécutable ; auditer encore les autres questions de Dowsing Chain et les éditeurs spécialisés du prêt de Stealth Dolphin. Les applications de Little Eye et d’Erigeron sur Oito non éveillée sont représentées. Les chaînes ne doivent pas partager leurs restrictions par commodité. |
+| Halkenburg | Compléter la protection collective, les priorités après une mort réelle et l’arsenal de la conscience hébergée. Les priorités des deux consciences vivantes sont exécutables. Un échange persistant, le tirage de Halkenburg et le déplacement du corps touché sont exécutables.                                                                                                                                                                                                                              |
 
 | Hinrigh | Caméra-chat, canon-serpent et huître-émetteur sont exécutables avec du matériel réel. Auditer encore les couteaux, le budget matériel et les interactions restantes avant de certifier l'intégralité. |
 | Basho | Les trois effets attestés sont accessibles avec leur matériel. Les réponses conditionnelles portent sur les faits représentés ; aucun jugement automatique de texte libre ni score littéraire universel. |
@@ -966,3 +989,114 @@ Ruleset : **clash-combat-41**. Le On reste présent et ses sceaux restent appliq
 aux commandes de Nen. Le [réemploi du papier dispersé](./clash-kalluto-confettis.md),
 l’admission d’autres cibles et les interactions matérielles restantes continuent
 à faire partie de l’audit ; cette passe ne certifie pas les quarante arsenaux.
+
+## Document physique et Texture Surprise — ruleset 55
+
+Le [suivi des documents](./clash-hisoka-documents.md) distingue le papier réel,
+l’encre sous-jacente et l’apparence de Nen. Les mains, le stock fini, les copies,
+les canaux du livre et de Dolphin, la lecture et les souvenirs restent séparés.
+Cette extension ne prédit pas l’avenir et ne change pas les contrats de Nen.
+
+## Visages d’Illumi — ruleset 56
+
+Les [deux préparations du visage](./clash-illumi-visages.md) ont leurs conditions
+matérielles distinctes : aiguilles réelles pour Gittarackur, délai de quatre heures
+simulées pour l’imitation sans aiguilles du chapitre 118. Le corps, les yeux,
+les vêtements et l’arsenal du personnage restent les siens. Cette extension
+ne certifie pas encore tout le contrôle mental et les usages sur autrui.
+
+## Trois aiguilles au front — ruleset 57
+
+La [déformation douloureuse du visage d’autrui](./clash-illumi-trois-aiguilles.md)
+est distincte du contrôle cérébral de Needle People. Contact réel, métal,
+extraction, copies, prêts, mains et provenance sont suivis séparément. Le On
+reste présent ; le conditionnement mental de Killua reste à compléter.
+
+## Matière du déguisement personnel — ruleset 58
+
+Les [aiguilles de Gittarackur](./clash-illumi-visages.md) ont une identité
+matérielle qui subsiste quand la copie ou le prêt termine le remodelage.
+Retrait physique sans Nen, dépôt, chute, copies inertes, âge du parent et
+conservation entre les manches suivent le même corps. Le On reste présent.
+
+## Surfaces du visage et du cou d’Hisoka — ruleset 59
+
+Les [blessures superficielles et leur support de Nen](./clash-hisoka-visage.md)
+sont préparables pour chaque corps. Bungee Gum fournit le matériau ; Texture
+Surprise habille son support réel. Aucun PV, organe ou membre de chair n’est
+régénéré. Copies, prêts, fin du support, vues privées et On gardent leurs règles.
+
+## Corps de soutien et durées matérielles — ruleset 60
+
+L’[intégration avec les kaméos](./clash-integration-arsenal-60.md) garde les
+horloges, les origines privées et les prêts actifs sur les corps hors scène.
+Les nouvelles références préservent les anciens enregistrements. Le On reste
+présent et les écarts de l’audit global restent ouverts.
+
+## Dowsing et lecture vidéo réelle — ruleset 61
+
+L’[ancien accès par métadonnées](./clash-dowsing-interrogatoire.md) ne contourne
+plus les conditions de l’analyse d’un enregistrement réel. La main droite,
+Judgment et le On conservent leur effet. La recherche sur carte reste ouverte.
+
+## Dowsing sur carte physique — ruleset 62
+
+La [recherche sur un vrai plan](./clash-dowsing-carte.md) remplace l’ancienne
+direction abstraite par une feuille lisible et un corps rencontré. Le point
+est daté, les copies suivent leur support réel, et Texture Surprise peut cacher
+le diagramme. La commande fonctionne pour P1, P2, l’IA et les replays ; le On
+reste présent. Les autres écarts du tableau restent ouverts.
+
+## Corps et otages sélectionnables — ruleset 63
+
+Les [ressources physiques de scénario](./clash-ressources-physiques.md) et les
+commandes natives de contrôle des cadavres ne sont plus réservées aux scénarios
+écrits et à l’IA. Les cases de préparation, le PvP et les replays partagent leur
+catalogue ; le duel strict ne fournit aucun de ces corps. Le On est conservé.
+Les limites de copie, de prêt et les autres écarts restent dans le périmètre.
+
+## Aiguilles et contrôle des cadavres — ruleset 64
+
+Le [contrôle matériel des corps morts](./clash-illumi-cadavres.md) suit
+l’assemblage d’aiguilles, la main utilisée et le corps qui a lancé le Nen.
+La fermeture du livre, la fin du prêt ou le On arrêtent le contrôle sans effacer
+le métal. Le retrait physique dépose le même assemblage réutilisable ; les
+copies matérielles restent inertes et suivent leur durée propre. Cette passe
+ne clôt pas les autres applications encore ouvertes de l’audit.
+
+## Copie de cadavre et Order Stamp — ruleset 65
+
+La [séquence montrée au chapitre 352](./clash-chrollo-cadavre-copie.md) admet
+la copie inerte du cadavre et refuse son original réel. Le contact avec la tête,
+la main libre, la parole, les ordres et la tête attachée gardent leur effet.
+Le corps partagé se relève avec son cachet, sans aiguilles d’Illumi ajoutées.
+Le On et les écarts restants de l’audit sont conservés.
+
+## Premier modèle des consciences d’Halkenburg — ruleset 67
+
+Le [corps endormi et le corps touché](./clash-halkenburg-consciences.md) restent
+liés sans retour automatique après deux secondes. Halkenburg participe au tirage ;
+la conscience transférée peut déplacer son corps d’accueil. Grimmel ne cause
+plus de dégâts physiques et le On reste présent. Les priorités de sommeil,
+les morts réelles, le contrôle complet et l’armure collective restent ouverts.
+
+## Priorité des consciences vivantes — ruleset 68
+
+Le [repos et le réveil des deux consciences](./clash-halkenburg-consciences.md)
+respectent la priorité de l’initiateur. La victime peut déplacer le corps
+d’origine quand il dort, avec les mêmes blessures et les mêmes entraves.
+Les sommeils imposés, les vues privées, le PvP, les replays et le On gardent
+leurs conditions. La mort d’un corps et le contrôle complet restent ouverts.
+
+## Sun and Moon : mains, contact et persistance — rulesets 73–77
+
+Le [marquage matériel du décor](./clash-sun-moon-contact.md) vérifie la main requise
+pendant toute la préparation et conserve la polarité choisie. Le contact entre
+objets et le souffle utilisent désormais leurs deux dimensions. Les marques
+maintiennent la matière copiée jusqu’à leur explosion ; les objets marqués
+conservent leurs dégâts et leur âge entre les manches. Le On reste présent ;
+la charge complète demande cinq secondes continues avec la bonne main. Les coups
+natifs et leur disponibilité vérifient aussi cette main avant le départ et à
+l’impact. Les points des signes suivent le support et son orientation ; les
+faces non marquées ne déclenchent plus l’explosion. Les emplacements anatomiques
+et les combinaisons de marionnettes restent ouverts.

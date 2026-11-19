@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render } from 'svelte/server'
 import * as THREE from 'three'
 import Status from '$lib/components/fighting/FightHalkenburgStatus.svelte'
+import TeamRoster from '$lib/components/fighting/FightTeamRoster.svelte'
+import { soulTeam } from './halkenburgChainTestKit'
 import { soulDuel, soulHit } from './halkenburgSoulTestKit'
 import { multiCommand, multiActive } from './fourCombatTestKit'
 import { createFight, performMove, nextRound, performAuraAttack } from './engine'
@@ -74,6 +76,22 @@ describe('Halkenburg’s selectable mind mode in the complete duel', () => {
         'fr',
       ),
     ).toContain('partisan')
+  })
+  it('renders a team’s surviving minds by original roster slot when a stock’s original body is dead', () => {
+    const base = soulHit(soulTeam())
+    const s = resolveFightOutcome({ ...base, opponent: { ...base.opponent, health: 0 } })
+    const roster = render(TeamRoster, {
+      props: { state: s, side: 'player', language: 'fr', paused: false, onAssist: () => {} },
+    }).body
+    expect(roster).toContain('3/3')
+    expect(roster).toContain('Halkenburg')
+    expect(roster).toContain('Corps occupé')
+    expect(roster).toContain('Benjamin')
+    expect(roster).toContain('Conscience en attente')
+    expect(roster).not.toContain('Éliminé')
+    const html = render(Status, { props: { state: s, side: 'player', language: 'fr' } }).body
+    expect(html).toContain('consciences vivantes')
+    expect(html).toContain('corps mort')
   })
   it('keeps the inherited body and its ally active without Black Voice or an extra body appearing', () => {
     const s = soulHit(soulDuel(), false),

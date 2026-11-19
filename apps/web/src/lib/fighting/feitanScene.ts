@@ -1,3 +1,5 @@
+import { createUmbrellaFeintScene } from './feitanUmbrellaScene'
+import { createFeitanBladeScene } from './feitanBladeScene'
 import { PAIN_PACKER_JOINTS } from '$lib/tour/painPackerModel'
 import { syncPainPackerRig, restorePainPackerWearer } from './painPackerRig'
 import { CANON } from '$lib/tour/humanProportions'
@@ -20,6 +22,8 @@ interface FeitanSceneOptions extends EffectSceneOptions {
 /** The outfit follows the rig; the sun and its readable heat boundary stay in world space. */
 export function createFeitanScene(options: FeitanSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const umbrella = createUmbrellaFeintScene(options)
+  const blade = createFeitanBladeScene(options)
   const clock = createFeitanPresentationClock(options.initial)
   const reducedMotion = () =>
     options.reducedMotion?.() ??
@@ -113,6 +117,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
   }
   return {
     sync(state: FightState, _seconds: number) {
+      blade.sync(state, _seconds)
+      umbrella.sync(state)
       const frames = clock(state)
       for (const side of ['player', 'opponent'] as const) {
         syncArmour(side, state, frames)
@@ -120,6 +126,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
       }
     },
     dispose() {
+      blade.dispose()
+      umbrella.dispose()
       for (const drawn of Object.values(held)) {
         restorePainPackerWearer(drawn.armour)
         drawn.outfit.dispose()

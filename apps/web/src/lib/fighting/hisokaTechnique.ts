@@ -4,6 +4,7 @@ import { chrolloCopiedMove } from './chrolloBook'
 import { commandGumLink as selectedGumLink } from './bungeeScoped'
 import { gumLinkPoints } from './bungeeGeometry'
 import { textureTargetAvailable } from './hisokaTextureOrigin'
+import { paperTextureReady } from './paperTexture'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BUNGEE_REST_DISTANCE = 8
@@ -47,7 +48,7 @@ export function hisokaTechniqueAllowed(
   const technique = hisokaTechnique(fighter, moveId)
   if (!technique) return true
   if (!hisokaNenActive(fighter)) return false
-  if (technique === 'texture') return textureAllowed(fighter)
+  if (technique === 'texture') return textureAllowed(state, side)
   if (technique === 'attach') return true
   if (state.gumNetwork) return networkTechniqueAllowed(state, side, technique)
   const gum = ownedBungee(state, side)
@@ -56,7 +57,9 @@ export function hisokaTechniqueAllowed(
   return !gum.retracting && Math.abs(state[gum.target].x - fighter.x) > BUNGEE_REST_DISTANCE
 }
 
-function textureAllowed(actor: ArcadeFighter): boolean {
+function textureAllowed(state: FightState, side: FightSide): boolean {
+  const actor = state[side]
+  if (actor.textureTarget === 'paper') return actor.y === 0 && paperTextureReady(state, side)
   return actor.y === 0 && !actor.textureSurprise && textureTargetAvailable(actor)
 }
 

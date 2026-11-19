@@ -160,3 +160,8 @@ The `Restore drill` GitHub workflow runs the same scripts every Monday against a
 
 See [Tour inference and site-wide search over Tailscale](tour-ai.md) for
 gateway installation, credentials, deployment, validation and rollback.
+
+## 8. Private usage statistics
+
+See [Umami setup and event definitions](analytics.md) for private visitor,
+game mode and Hatsu statistics, initialization, backups, and verification.

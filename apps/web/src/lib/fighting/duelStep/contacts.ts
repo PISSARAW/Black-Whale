@@ -1,3 +1,6 @@
+import { recordNenImpact } from '../nenImpactResponse'
+import { advanceMachiCorpses } from '../machiCorpses'
+import { advanceBenjaminToxin } from '../benjaminToxin'
 import { advanceRosterGuestActors, armRosterGuests } from '../rosterGuestActors'
 import {
   resolveGuestFirstContacts,
@@ -19,6 +22,7 @@ import { withDolphinIdentity } from '../kurapikaDolphin'
 import { recordFightInjuries } from '../feitanPain'
 import { FIXED_STEP } from '../fightClock'
 import { advanceHatsuFrames } from '../hatsu'
+import { advanceHistoricalWeapons } from '../historicalWeaponFrame'
 import { resolveOnImpacts } from '../onTechnique'
 import { advanceProjectiles, spawnRangedProjectiles } from '../projectiles'
 import { resolveFightImpacts } from '../combatImpact'
@@ -46,7 +50,11 @@ export function settleBodies(frame: SettleBodiesFrame, attack: DuelAttack): Duel
   const spoken = resolveFighterSpeech(judged, inputs.player, inputs.opponent)
   const buffered = flushBuffered(flushBuffered(spoken, 'player', attack), 'opponent', attack)
   const withHatsu = advanceRosterGuestActors(
-    advanceMelodyHearing(advanceHatsuFrames(buffered)),
+    advanceMelodyHearing(
+      advanceMachiCorpses(
+        advanceHatsuFrames(advanceBenjaminToxin(advanceHistoricalWeapons(buffered))),
+      ),
+    ),
     attack,
   )
   if (fightResolutionPending(withHatsu))
@@ -76,9 +84,10 @@ export function resolveContacts(start: FightState, settled: FightState): DuelPha
       ),
     ),
   )
-  if (fightResolutionPending(resolved)) return { state: resolved, pending: true }
-  const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
-  return { state: { ...resolved, ...separated }, pending: false }
+  const reacted = recordNenImpact(armed, resolved)
+  if (fightResolutionPending(reacted)) return { state: reacted, pending: true }
+  const separated = separateFighterPushboxes(reacted.player, reacted.opponent)
+  return { state: { ...reacted, ...separated }, pending: false }
 }
 
 function flushBuffered(state: FightState, side: FightSide, attack: DuelAttack): FightState {

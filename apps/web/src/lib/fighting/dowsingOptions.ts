@@ -1,3 +1,4 @@
+import { dowsingMapOptions } from './dowsingMapOptions'
 import { dowsingVideoOptions } from './dowsingVideo'
 import { canAskDowsing, ownsDowsing } from './dowsingRules'
 import { performDowsingCommand } from './dowsingAction'
@@ -38,7 +39,7 @@ export function dowsingOptions(state: FightState, side: FightSide): ArsenalOptio
               : ['Mentir sciemment', 'Knowingly lie'],
         }),
       )
-  return [...options, ...dowsingVideoOptions(state, side)]
+  return [...options, ...dowsingVideoOptions(state, side), ...dowsingMapOptions(state, side)]
 }
 function option(
   state: FightState,

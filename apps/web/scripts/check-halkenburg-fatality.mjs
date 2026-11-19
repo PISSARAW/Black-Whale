@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
@@ -27,11 +28,17 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true })
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: existsSync(chrome) ? chrome : undefined,
+  args: ['--enable-unsafe-swiftshader'],
+})
 const errors = [],
   results = []
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+  page.setDefaultTimeout(120000)
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -55,7 +62,8 @@ try {
     assert.equal(report.target, options.target)
     assert.equal(report.stageId, options.stage)
     assert.equal(report.consentingSupporters, 3)
-    assert.ok(report.possessionFrames > 0)
+    assert.equal(report.cohortWillFrames, 480)
+    assert.equal(report.nativeFinalMove, 'halkenburg:standingHeavy')
     assert.equal(report.victory.impactFrame, 324)
     for (const age of [132, 258, 300, 324, 372, 430, 510]) {
       await page.evaluate((age) => window.fightingShowcase.seek(age), age)

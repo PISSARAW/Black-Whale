@@ -39,7 +39,6 @@ import { createBeyondCurseVictory } from './beyondCurse'
 import { isBeyondCurse } from './beyondCurseSelection'
 import { createLonghiVictory } from './longhi'
 import { createFurykovVictory } from './furykov'
-import { createSayirdVictory } from './sayird'
 import { createThetaVictory } from './theta'
 import { createMizaistomVictory } from './mizaistom'
 import { createRihanVictory } from './rihan'
@@ -47,6 +46,7 @@ import { createZakuroVictory } from './zakuro'
 import { createLynchVictory } from './lynch'
 import { createLuiniVictory } from './luini'
 import { createBashoVictory } from './basho'
+import { createSayirdVictory } from './sayird'
 
 const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   hisoka: createHisokaVictory,
@@ -75,7 +75,6 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   voconte: createVoconteVictory,
   longhi: createLonghiVictory,
   furykov: createFurykovVictory,
-  sayird: createSayirdVictory,
   theta: createThetaVictory,
   mizaistom: createMizaistomVictory,
   rihan: createRihanVictory,
@@ -83,6 +82,7 @@ const DRIVERS: Record<VictoryFighter, () => VictoryDriver> = {
   lynch: createLynchVictory,
   luini: createLuiniVictory,
   basho: createBashoVictory,
+  sayird: createSayirdVictory,
 }
 function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
   const base = {
@@ -112,7 +112,6 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     voconte: 2,
     longhi: 0.4,
     furykov: 1,
-    sayird: 0.6,
     theta: 1.8,
     mizaistom: 1.8,
     rihan: 1.8,
@@ -120,6 +119,7 @@ function victoryGap(context: Pick<VictoryContext, 'frame' | 'victim'>) {
     lynch: 1.5,
     luini: 1.8,
     basho: 1.8,
+    sayird: 0.6,
   }
   return Math.min(3.5, base[context.frame.fighter] + context.victim.width * 0.5)
 }
@@ -169,7 +169,6 @@ function ownsComfortCamera(frame: VictoryFrame) {
       'voconte',
       'longhi',
       'furykov',
-      'sayird',
       'theta',
       'mizaistom',
       'rihan',
@@ -177,6 +176,7 @@ function ownsComfortCamera(frame: VictoryFrame) {
       'lynch',
       'luini',
       'basho',
+      'sayird',
     ].includes(frame.fighter)
   )
 }

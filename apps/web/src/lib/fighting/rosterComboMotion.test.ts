@@ -83,7 +83,9 @@ describe.each(ids)('%s roster motion', (id) => {
     const contact = read(state, 'opponent', { fighter: state.opponent, seconds: state.frame / 60 })
     expect(contact.strikeMotion ?? contact.strikeReaction).toBeDefined()
     const after = { ...state, player: { ...state.player, attack: null } }
-    expect(read(after, 'opponent', { fighter: after.opponent, seconds: 9 })).toEqual(contact)
+    const retained = read(after, 'opponent', { fighter: after.opponent, seconds: 9 })
+    expect(retained).toEqual({ ...contact, rival: after.player })
+    expect(retained.physicalHit).toBe(contact.physicalHit)
     const pose = reactionPlan(state.opponent, contact, {})!.pose
     expect(Object.values(pose).flat().every(Number.isFinite)).toBe(true)
     const guarded = {

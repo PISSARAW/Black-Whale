@@ -1,9 +1,12 @@
-import type { FightState } from '../../src/lib/fighting/types'
+import type { FightSide, FightState } from '../../src/lib/fighting/types'
 
 export interface CloseupFrame {
-  kind: 'eyes' | 'chain' | 'seal'
+  kind: 'eyes' | 'chain' | 'seal' | 'face' | 'remote' | 'barrage'
   label: string
   tip?: string
+  side?: FightSide
+  projectileId?: number
+  targetX?: number
 }
 
 /** Detail shots share the main simulation frame: no replay or pause. */

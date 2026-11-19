@@ -70,8 +70,7 @@ function waitForHits(state: FightState, count: number, down = false) {
       opponentInput: { ...EMPTY_INPUT, guard: count > 1, down },
     })
   }
-  expect(state.impact).toMatchObject({ attacker: 'player', blocked: false })
-  expect(state.impact!.comboHits).toBeGreaterThanOrEqual(count)
+  expect(state.impact).toMatchObject({ attacker: 'player', comboHits: count, blocked: false })
   return state
 }
 
@@ -121,22 +120,6 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('%s four directional chains',
       const middle = readyForFinish(openingState(fighter, { facing: 1, corner, technique: true }))
       const started = pressLight(middle, finishInput(ending, 1))
       expect(started.player.attack?.moveId).toBe(`${fighter}:${signature}`)
-      if (fighter === 'kalluto') {
-        let flight = started
-        for (
-          let frame = 0;
-          frame < 40 && flight.nextProjectileId === started.nextProjectileId;
-          frame++
-        )
-          flight = tickFight(flight, EMPTY_INPUT, {
-            dt: 1 / 60,
-            ai: false,
-            opponentInput: { ...EMPTY_INPUT, guard: true },
-          })
-        expect(flight.nextProjectileId).toBeGreaterThan(started.nextProjectileId)
-        expect(flight.player.attack?.directionalChain).toBe(ending)
-        return
-      }
       const finished = waitForHits(started, fighter === 'franklin' ? 12 : 3)
       expect(finished.player.attack?.directionalChain).toBe(ending)
       if (fighter === 'hisoka') expect(selectedGumLink(finished, 'player')).toBeUndefined()

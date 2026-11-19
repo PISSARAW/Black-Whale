@@ -29,7 +29,7 @@ function activeGumPage(actor: ArcadeFighter): boolean {
     ),
   )
 }
-function personalGumBody(actor: ArcadeFighter): ArcadeFighter {
+export function personalGumBody(actor: ArcadeFighter): ArcadeFighter {
   const context = actor.dolphinExecution
   return {
     ...actor,

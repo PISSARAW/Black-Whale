@@ -1,5 +1,6 @@
 import type { FightSide, FightState } from './types'
-import { bodyPartFunctional } from './bodyDamage'
+import { physicalHandFunctional } from './bodyDamage'
+import { heldDocuments } from './paperDocuments'
 
 export type DeviceHand = 'left' | 'right'
 /** Pockets and swallowed transmitters do not occupy the hands. The open book occupies the right. */
@@ -18,6 +19,7 @@ export function physicalHandOccupancy(
   const active = state.teamMatch?.seats[side].active
   for (const entry of state.battlefield?.entities ?? [])
     if (occupiesHand(entry, side, active)) occupied.add(entry.device!.hand!)
+  for (const entry of heldDocuments(state, side)) occupied.add(entry.document!.holder!.hand)
   return occupied
 }
 function characterHandOccupancy(
@@ -25,7 +27,8 @@ function characterHandOccupancy(
   ignored: { gallery?: boolean; book?: boolean },
 ): Set<DeviceHand> {
   const occupied = new Set<DeviceHand>()
-  if (!bodyPartFunctional(actor, 'left-hand')) occupied.add('left')
+  for (const hand of ['left', 'right'] as const)
+    if (!physicalHandFunctional(actor, hand)) occupied.add(hand)
   if (!ignored.gallery && actor.chrolloHistorical?.galleryFocus) occupied.add('left')
   if (!ignored.book && actor.chrolloBook?.open) occupied.add('right')
   for (const hand of retainedHands(actor)) occupied.add(hand)

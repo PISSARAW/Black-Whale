@@ -30,7 +30,7 @@ export const WHIFF_PUNISH_LESSONS: readonly CombatRoute[] = [
     fighter: 'hisoka',
     kind: 'punish',
     title: ['Faire manquer puis exploiter le lien', 'Make it miss and use the tether'],
-    moves: ['forwardLight', 'finisher'],
+    moves: ['forwardLight', 'forwardHeavy', 'finisher'],
     requirement: [
       'Le Bungee Gum est déjà attaché au début de cet exercice. Le coup final requiert un lien actif et 55 points d’aura.',
       'Bungee Gum is already attached for this drill. The finisher requires an active tether and 55 aura.',

@@ -7,6 +7,8 @@ import { performEasterEgg } from './easterEggs'
 import { unpackReplayInput } from './fightReplayInput'
 import type { ReplayCommand, ReplayPacket, ReplaySetup } from './fightReplayTypes'
 import type { FightState } from './types'
+import { performFuturePerceptionAction } from './futurePerception'
+import { performPerceivedResult } from './futurePerceptionResults'
 
 export function initialReplayState(setup: ReplaySetup): FightState {
   if (setup.initial) return decodeFightSnapshot(setup.initial, setup)
@@ -14,7 +16,16 @@ export function initialReplayState(setup: ReplaySetup): FightState {
   return setup.seed === undefined ? state : { ...state, rng: setup.seed }
 }
 export function applyReplayCommand(state: FightState, command: ReplayCommand): FightState {
+  const perception =
+    'side' in command
+      ? performFuturePerceptionAction(state, command.side, (current) =>
+          applyReplayCommand(current, command),
+        )
+      : null
+  if (perception) return perception
   switch (command.kind) {
+    case 'perceived-result':
+      return performPerceivedResult(state, command.action)
     case 'panel':
       return applyPanelReplay(state, command)
     case 'start':

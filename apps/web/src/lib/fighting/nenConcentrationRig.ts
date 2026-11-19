@@ -99,7 +99,14 @@ export function createNenConcentrationRig(THREE: Three, figure: Object3D, colour
   return {
     regions,
     torso,
-    sync(concentration: AuraConcentration | null, seconds: number, strength = 1) {
+    sync(
+      concentration: AuraConcentration | null,
+      seconds: number,
+      timing: { strength: number; age: number; travelFrames: number },
+    ) {
+      const { strength, age, travelFrames } = timing
+      const arrival = 0.35 + 0.65 * Math.min(1, Math.max(0, age / travelFrames))
+      const thickness = concentration?.technique === 'ko' ? 0.095 : 0.07
       for (const item of suppressed) item.node.visible = concentration ? false : item.visible
       for (const region of regions) {
         const share = concentration ? concentrationShare(concentration, region) : 0
@@ -107,7 +114,7 @@ export function createNenConcentrationRig(THREE: Three, figure: Object3D, colour
           mesh.visible = Boolean(concentration && share > 0 && strength > 0)
         })
         region.material.uniforms.u_share.value = share
-        region.material.uniforms.u_thickness.value = 0.012 + share * 0.065
+        region.material.uniforms.u_thickness.value = 0.012 + share * thickness * arrival
         region.material.uniforms.u_time.value = seconds
         region.material.uniforms.u_strength.value = strength
       }
@@ -131,7 +138,10 @@ function flowPath(figure: Object3D, target: Object3D, region: Pick<Region, 'zone
     region.zone === 'hands'
       ? [`shoulder-${region.limb}`, `elbow-${region.limb}`]
       : [`hip-${region.limb}`, `knee-${region.limb}`]
-  const names = region.limb ? ['torso', ...middle] : ['torso']
+  const source = region.zone === 'feet' ? ['torso', 'pelvis'] : ['torso']
+  const names = region.limb
+    ? [...source, ...middle]
+    : [region.zone === 'torso' ? 'pelvis' : 'torso']
   return [...names.map((name) => figure.getObjectByName(name)).filter(defined), target]
 }
 

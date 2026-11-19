@@ -133,7 +133,7 @@ describe('wave one movesets', () => {
     expect(kurapika.combos.every((route) => route.length <= 5)).toBe(true)
   })
 
-  it('makes Dowsing Chain Kurapika’s standard weapon', () => {
+  it('separates Kurapika’s martial strikes from Dowsing Chain', () => {
     const kurapika = movesetFor('kurapika')!
     const standardSlots = new Set([
       'standingLight',
@@ -145,12 +145,11 @@ describe('wave one movesets', () => {
       'forwardLight',
       'forwardHeavy',
       'backHeavy',
-      'forwardSpecial',
-      'throw',
     ])
     const standardMoves = kurapika.moves.filter((move) => standardSlots.has(move.slot))
-    expect(standardMoves).toHaveLength(11)
-    expect(standardMoves.every((move) => move.nameEn.includes('Dowsing'))).toBe(true)
+    expect(standardMoves).toHaveLength(9)
+    expect(standardMoves.every((move) => !move.nameEn.includes('Dowsing'))).toBe(true)
+    expect(moveForSlot('kurapika', 'forwardSpecial')?.nameEn).toContain('Dowsing')
   })
 
   it('reserves Chain Jail for active Phantom Troupe opponents', () => {

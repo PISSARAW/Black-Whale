@@ -1002,6 +1002,13 @@ citée ici est **montrée** au manga :
 
 ### 8.5 État au 2026-08-03 — la vague des emplois est passée
 
+**Précision du 2026-11-16.** Le bilan chiffré ci-dessous est historique. La
+médiane d’au moins quatre entrées reste une cible éditoriale, sans autoriser
+l’invention d’emplois du Nen. Door de Voconte conserve trois actions représentées
+(relier, franchir, refermer), avec installation et entretien signalés comme
+adaptations aux conditions complètes inconnues. Son test verrouille cette liste
+exacte ; les autres roues conservent leur seuil et tous les contrôles de provenance.
+
 Les huit lots (A à K) sont livrés, dans `packages/ability-modules` uniquement, comme
 le §8.4 le prévoyait : aucun changement dans `apps/web`.
 

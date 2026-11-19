@@ -1,16 +1,15 @@
 <script lang="ts">
   import type { FightSide } from '$lib/fighting/types'
   import type { InjuryPreparation } from '$lib/fighting/injuryPreparation'
+  import { limbInjury, surfaceInjury } from '$lib/fighting/injuryPreparation'
+  import { selectInjury } from '$lib/fighting/injurySelection'
 
   export let injuries: InjuryPreparation = {}
   export let language: 'fr' | 'en'
   export let onChange: (injuries: InjuryPreparation) => void
 
   function toggle(side: FightSide, checked: boolean) {
-    const next = { ...injuries }
-    if (checked) next[side] = 'hand-and-lower-leg'
-    else delete next[side]
-    onChange(next)
+    onChange(selectInjury({ injuries, side, group: 'limbs', checked }))
   }
 </script>
 
@@ -22,18 +21,50 @@
     <label
       ><input
         type="checkbox"
-        checked={injuries[side as FightSide] === 'hand-and-lower-leg'}
+        checked={limbInjury(injuries[side as FightSide])}
         onchange={(event) => toggle(side as FightSide, event.currentTarget.checked)}
       />
       {language === 'fr'
         ? `P${index + 1} : main gauche et bas de la jambe droite endommagés`
         : `P${index + 1}: damaged left hand and lower right leg`}</label
     >
+    <label
+      ><input
+        type="checkbox"
+        checked={surfaceInjury(injuries[side as FightSide])}
+        onchange={(event) =>
+          onChange(
+            selectInjury({
+              injuries,
+              side: side as FightSide,
+              group: 'surfaces',
+              checked: event.currentTarget.checked,
+            }),
+          )}
+      />
+      {language === 'fr'
+        ? `P${index + 1} : tissus superficiels du visage et du cou endommagés`
+        : `P${index + 1}: damaged facial and neck surface tissue`}</label
+    >
+    <label
+      ><input
+        type="checkbox"
+        checked={injuries[side as FightSide] === 'severed-forearms'}
+        onchange={(event) => {
+          const next = { ...injuries }
+          if (event.currentTarget.checked) next[side as FightSide] = 'severed-forearms'
+          else delete next[side as FightSide]
+          onChange(next)
+        }}
+      />{language === 'fr'
+        ? `P${index + 1} : avant-bras sectionnés, membres originaux au sol`
+        : `P${index + 1}: severed forearms, original limbs on the floor`}</label
+    >
   {/each}
   <p>
     {language === 'fr'
-      ? 'Prémisse du scénario, inspirée des blessures d’Hisoka au chapitre 357. Elle ne fournit ni prothèse, ni soin, ni pouvoir supplémentaire.'
-      : 'Scenario premise based on Hisoka’s injuries in chapter 357. It supplies no prosthesis, healing or additional power.'}
+      ? 'Prémisse du scénario, inspirée des blessures d’Hisoka aux chapitres 55 et 357. Elle ne fournit ni prothèse, ni soin, ni pouvoir supplémentaire.'
+      : 'Scenario premise based on Hisoka’s injuries in chapters 55 and 357. It supplies no prosthesis, healing or additional power.'}
   </p>
 </fieldset>
 

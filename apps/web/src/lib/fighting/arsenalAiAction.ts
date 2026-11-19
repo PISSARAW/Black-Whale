@@ -1,5 +1,6 @@
 import { multiCombatAi } from './multiCombatAi'
 import { judgmentForbidsContact } from './judgmentCommunication'
+import { soulBowAiAction } from './halkenburgSoulBow'
 import { perceivedOpponentGap } from './opponentAwareness'
 import { canAct } from './fightActorState'
 import { canUseRangedAttack } from './projectiles'
@@ -21,6 +22,8 @@ const RANGED_ARSENALS: readonly FighterId[] = [
   'illumi',
   'camilla',
   'musse',
+  'tserriednich',
+  'halkenburg',
 ]
 
 export function nativeArsenalAiAction(
@@ -33,10 +36,26 @@ export function nativeArsenalAiAction(
   if (corpse) return corpse
   const gap = perceivedOpponentGap(state)
   if (!Number.isFinite(gap)) return null
+  const soulBow = soulBowAiAction(state)
+  if (soulBow) return soulBow
   if (shouldSpeakToModel(state, gap)) return speakBattleWords(state, 'opponent')
-  if (!RANGED_ARSENALS.includes(fighter.id) || gap < 15 || !canUseRangedAttack(fighter)) return null
+  return nativeRangedAiAction(state, gap, perform)
+}
+function nativeRangedAiAction(
+  state: FightState,
+  gap: number,
+  perform: (options: AuraAttackOptions) => FightState,
+): FightState | null {
+  const fighter = state.opponent
+  const preparedCard = fighter.id === 'hisoka' && Boolean(fighter.gumThrowReady)
+  if (
+    !RANGED_ARSENALS.includes(fighter.id) ||
+    gap < (preparedCard ? 12 : 15) ||
+    !canUseRangedAttack(fighter)
+  )
+    return null
   // Alternate a ranged action with the character's setup/utility decisions.
-  if ((state.frame + state.rng) % 3 !== 0) return null
+  if (!preparedCard && (state.frame + state.rng) % 3 !== 0) return null
   return perform({ state, side: 'opponent', kind: 'ranged', auraCharged: false })
 }
 

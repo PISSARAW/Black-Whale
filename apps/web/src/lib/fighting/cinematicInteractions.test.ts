@@ -194,6 +194,21 @@ describe('confirmed cinematic interactions', () => {
     if (later.detail) expect(cameraDetailAllowed(later.detail, 'player', state)).toBe(true)
     expect(later.strength).toBeLessThanOrEqual(early.strength)
   })
+  it('does not identify the enemy Laplace activation through an automatic close-up', () => {
+    const base = cinematicDuel('tserriednich', 'opponent')
+    const observer = createCinematicDirector({ viewer: () => 'player' })
+    const owner = createCinematicDirector({ viewer: () => 'opponent' })
+    observer.update(base)
+    owner.update(base)
+    const preparing = performMove({ state: base, side: 'opponent', action: 'special' })
+    expect(owner.update(preparing).detail?.eventId).toBe('tserriednich.zetsu')
+    expect(observer.update(preparing).detail?.eventId ?? '').not.toMatch(/^tserriednich\./)
+    let state = preparing
+    for (let frame = 0; frame < 32; frame++) {
+      state = cinematicStep(state)
+      expect(observer.update(state).detail?.eventId ?? '').not.toMatch(/^tserriednich\./)
+    }
+  })
   it('waits for actual Predator readiness instead of treating a newly discovered prey as completed analysis', () => {
     const s = beginFight(createFight('rihan', 'hisoka', { mode: 'versus-local' }))
     const ready: FightState = {

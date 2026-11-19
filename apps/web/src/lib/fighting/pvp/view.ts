@@ -1,5 +1,10 @@
+import { concealFortuneWorld } from '../ghostwriterPrivacy'
+import { concealCorpseWorld } from '../illumiCorpsePrivacy'
+import { privateHalkenburgSouls } from '../halkenburgSoulPrivacy'
 import { opposingKameoBodies } from '../kameos/pvp'
 import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
+import { concealDocumentWorld } from '../paperDocumentPrivacy'
+import { privateNeedleFaces } from '../illumiNeedlePrivacy'
 import { redactPriorityWorld } from '../priorityPrivacy'
 import { concealDolphinPeople } from '../dolphinPeoplePrivacy'
 import { concealPaperScatters } from '../kallutoScatterVisibility'
@@ -19,7 +24,6 @@ import type { ArcadeFighter, FightSide, FightState } from '../types'
 const SIDE_FIELDS = new Set([
   'owner',
   'originalId',
-  'origin',
   'target',
   'issuer',
   'recipient',
@@ -35,9 +39,11 @@ const SIDE_FIELDS = new Set([
   'questioner',
   'asker',
   'carrier',
+  'captiveOf',
   'subject',
   'affected',
   'cohorts',
+  'preparedAsphyxia',
   'recipientSide',
   'from',
   'to',
@@ -50,8 +56,7 @@ const SIDE_FIELDS = new Set([
 export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
   if (field === 'sustainedKeys' && typeof value === 'string') return localSustainedKey(value)
-  const scalar = swappedScalar(value, field)
-  if (scalar !== value) return scalar
+  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
   if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
   if (!value || typeof value !== 'object') return value
   return Object.fromEntries(
@@ -60,12 +65,6 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
       localPerspective(entry, true, key),
     ]),
   )
-}
-function swappedScalar(value: unknown, field: string): unknown {
-  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
-  if (field !== 'key') return value
-  if (value === 'mind:player') return 'mind:opponent'
-  return value === 'mind:opponent' ? 'mind:player' : value
 }
 function localSide(value: string): string {
   if (value === 'player') return 'opponent'
@@ -78,7 +77,13 @@ function localSustainedKey(value: string): string {
 }
 
 function redactEnemy(enemy: ArcadeFighter) {
-  redactPrivateMaterials(enemy)
+  enemy.gumResuscitationProgram = undefined
+  enemy.asphyxiaCertificate = undefined
+  enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
+    ...anchor,
+    source: undefined,
+    theftId: undefined,
+  }))
   redactLegacyArsenal(enemy)
   enemy.blackVoiceScreen = undefined
   enemy.littleEyeScreen = undefined
@@ -137,38 +142,23 @@ function redactEnemy(enemy: ArcadeFighter) {
     }
 }
 
-function redactPrivateMaterials(enemy: ArcadeFighter) {
-  enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
-    ...anchor,
-    source: undefined,
-    theftId: undefined,
-  }))
-  if (enemy.halkSoul) enemy.halkSoul = { ...enemy.halkSoul, mind: undefined }
-  enemy.halkSedativeSpent = undefined
-  enemy.luiniExit = undefined
-  enemy.luiniSelectedDestination = undefined
-  enemy.luiniComplete = undefined
-  if (enemy.bloodyMary) enemy.bloodyMary = { ...enemy.bloodyMary, lastSeen: undefined }
-  enemy.biohazardFootage = undefined
-  enemy.biohazardSignal = undefined
-  enemy.biohazardDevices = enemy.biohazardDevices?.map((item) => ({
-    ...item,
-    recordings: undefined,
-  }))
-}
-
 function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
   return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
 export function privatePvpState(state: FightState, side: FightSide): FightState {
-  const view = structuredClone(futureVisibleState(state, side))
+  const view = privateHalkenburgSouls(
+    privateNeedleFaces(structuredClone(futureVisibleState(state, side)), side),
+    side,
+  )
   view.arsenalTrace = undefined
-  redactSoulView(view, side)
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)
   concealDeviceMedia(view.battlefield)
   concealDolphinPeople(view, side)
   concealPaperScatters(view, side)
+  concealFortuneWorld(view, side)
+  concealDocumentWorld(view, side)
+  concealCorpseWorld(view, side)
   redactEnemy(view[other])
   redactGuests(view, other)
   redactReserves(view, other)
@@ -194,6 +184,16 @@ function redactForecast(view: FightState, side: FightSide, other: FightSide): vo
     concealDeviceMedia(frame.battlefield)
     concealDolphinPeople(frame, side)
     concealPaperScatters(frame, side)
+    const documentView = privateHalkenburgSouls(
+      privateNeedleFaces({ ...view, ...frame, ...frame.documentContext }, side),
+      side,
+    )
+    frame.player = documentView.player
+    frame.opponent = documentView.opponent
+    concealFortuneWorld(documentView, side)
+    concealDocumentWorld(documentView, side)
+    concealCorpseWorld(documentView, side)
+    frame.battlefield = documentView.battlefield
     redactEnemy(frame[other])
     hideConcealedAura(frame[other], frame[side])
     frame.projectiles = frame.projectiles.filter(
@@ -216,12 +216,15 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
     enemy.gyoLow = undefined
     enemy.defensiveKo = undefined
     enemy.dowsingSession = undefined
+    enemy.dowsingMapPose = undefined
   }
   if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
   if (enemy.attack?.concealed) enemy.attack = null
 }
 function hideGumObjectAnchors(enemy: ArcadeFighter): void {
   const anchors = enemy.gumObjectAnchors?.filter((anchor) => !anchor.hidden)
+  enemy.gumResuscitationProgram = undefined
+  enemy.asphyxiaCertificate = undefined
   enemy.gumObjectAnchors = anchors?.length ? anchors : undefined
 }
 export function pvpSnapshot(state: FightState, side: FightSide) {
@@ -235,16 +238,4 @@ function redactReserves(view: FightState, side: FightSide): void {
     redactEnemy(member)
     if (!gyoSight(observer)) hideGumObjectAnchors(member)
   }
-}
-
-function redactSoulView(view: FightState, side: FightSide): void {
-  view.halkSoulLinks = view.halkSoulLinks?.map((link) => ({
-    ...link,
-    sourceMind:
-      link.sourceMind.side === side ? link.sourceMind : { ...link.sourceMind, identity: undefined },
-    targetMind:
-      link.targetMind.side === side ? link.targetMind : { ...link.targetMind, identity: undefined },
-    preparedSedative: link.owner === side ? link.preparedSedative : 0,
-  }))
-  if (view.halkenburgModes) view.halkenburgModes = { [side]: view.halkenburgModes[side] }
 }

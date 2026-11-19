@@ -1,4 +1,5 @@
 import { Quaternion, Vector3 } from 'three'
+import { keepHumanJoint } from '$lib/tour/humanJointLimits'
 import type { VictoryContext } from './types'
 import { localToHead, reachVictoryHand } from './pose'
 import { groundVictoryActor } from './actors'
@@ -83,6 +84,7 @@ export function kurapikaTroupePunch(context: VictoryContext) {
     new Quaternion().setFromUnitVectors(new Vector3(0, -1, 0), direction),
     extension,
   )
+  keepHumanJoint(hand, 'wrist')
   hero.root.updateWorldMatrix(true, true)
   const fist = hand.localToWorld(new Vector3(0, -0.065, 0))
   return { punch, extension, contact, fist, contactError: fist.distanceTo(contact) }

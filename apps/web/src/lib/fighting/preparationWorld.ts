@@ -1,4 +1,6 @@
 import { scenarioOito } from './dolphinPeopleWorld'
+import { scenarioPaperDocument } from './paperDocuments'
+import { scenarioArenaMap } from './arenaMap'
 import { scenarioPaperKit } from './kallutoMaterials'
 import { scenarioWeakSpirit } from './bashoWard'
 import { scenarioWritingKit } from './bashoMaterials'
@@ -18,7 +20,7 @@ export const PREPARATION_REACH = 8
 
 export function personalEquipment(id: FighterId): FightEquipment[] {
   if (id === 'hinrigh') return ['tracker-receiver']
-  if (id === 'illumi') return ['needles']
+  if (id === 'illumi' || id === 'machi') return ['needles']
   if (id === 'zakuro') return ['blood-infusion']
   if (id === 'melody') return ['flute']
   return id === 'chrollo' ? ['book'] : []
@@ -81,6 +83,8 @@ function installSupplyProps(
   const { resources, side } = context
   if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
   if (resources.has('writing')) entities.push(scenarioWritingKit(side))
+  if (resources.has('documents')) entities.push(scenarioPaperDocument(side))
+  if (resources.has('maps')) entities.push(scenarioArenaMap(side))
   if (resources.has('paper')) entities.push(scenarioPaperKit(side))
   if (resources.has('devices')) entities.push(...scenarioDevices(side))
 }
@@ -187,7 +191,8 @@ export function hasEquipment(fighter: FightState['player'], equipment: FightEqui
 
 export function readyCohort(state: FightState, side: FightSide): PreparedEntity[] {
   return entitiesFor(state, side, 'supporter').filter(
-    (entry) => entry.consenting && entry.feather && !entry.sleepingFrames,
+    (entry) =>
+      entry.consenting && entry.feather && !entry.sleepingFrames && !entry.halkenburgPassenger,
   )
 }
 

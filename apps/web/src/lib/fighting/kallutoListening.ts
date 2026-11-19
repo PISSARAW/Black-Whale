@@ -63,7 +63,6 @@ export function voiceAvailable(state: FightState, speaker: FightSide): boolean {
     !state.catsName &&
     canSpeak(fighter) &&
     !projectionPreparing(fighter) &&
-    !fighter.halkSoulSleep &&
     !fighter.arsenalSleep &&
     !fighter.needlePuppet &&
     !fighter.blackVoiceControl?.active &&

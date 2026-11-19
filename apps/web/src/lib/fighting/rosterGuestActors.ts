@@ -79,15 +79,15 @@ function moveGuest(state: FightState, guest: RosterGuest): RosterGuest {
 }
 
 function guestAttackKind(state: FightState, guest: RosterGuest) {
-  const other = guest.owner === 'player' ? 'opponent' : 'player'
-  const gap = Math.abs(guest.fighter.x - state[other].x)
+  const enemy = guestPerceivedEnemy(state, guest)
+  const gap = Math.abs(guest.fighter.x - enemy.x)
   if (gap > 18) return 'ranged' as const
   if (gap > 9) return null
   return guest.frames % 3 ? ('light' as const) : ('heavy' as const)
 }
 
 function guestInput(state: FightState, guest: RosterGuest): FightInput {
-  const enemy = state[guest.owner === 'player' ? 'opponent' : 'player']
+  const enemy = guestPerceivedEnemy(state, guest)
   const order = state[guest.owner].blackOrder ?? 'attack'
   if (guest.role === 'loan' || order === 'wait') return EMPTY_INPUT
   if (order === 'guard') return { ...EMPTY_INPUT, guard: true }

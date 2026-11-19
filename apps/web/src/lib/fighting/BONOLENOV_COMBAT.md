@@ -80,13 +80,6 @@ Prologue seule ne déclenche plus une boucle sonore.
 
 ## Vérification reproductible
 
-Intégration dans `main` : l'IA utilise sa mémoire d'observation existante
-(`observedHabits`), avec le même délai avant le recul. Les
-[projections de Bonolenov](./throws/README.md) et leur correctif de lance sont
-également intégrés : deux corps articulés, appuis, prise et caméra suivent le
-contact confirmé. Le ruleset de replay porte le suffixe `bonolenov-throws`, car
-les déplacements d'IA, l'état des bandages et la variante de projection sont simulés.
-
 Depuis `apps/web` :
 
 ```sh

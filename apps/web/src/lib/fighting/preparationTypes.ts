@@ -1,6 +1,10 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
+  | 'armed-corpses'
+  | 'sedatives'
+  | 'hisoka-asphyxia'
+  | 'fortunes'
   | 'cameras'
   | 'hostages'
   | 'corpses'
@@ -17,11 +21,8 @@ export type PreparationResource =
   | 'people'
   | 'musse-history'
   | 'paper'
-  | 'cameras'
-  | 'hostages'
-  | 'corpses'
-  | 'armed-corpses'
-  | 'sedatives'
+  | 'documents'
+  | 'maps'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
   /** Explicit physical injuries in this scenario; never granted by stealing a Hatsu. */
@@ -33,6 +34,7 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
+  | 'body-part'
   | 'camera'
   | 'hostage'
   | 'corpse'

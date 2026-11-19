@@ -27,7 +27,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     effect: 'Sticky elastic aura changes spacing; Texture Surprise changes surface appearance.',
     prohibition: 'No teleportation, healing, invulnerability or physical change from a texture.',
     adaptation:
-      'One fighter-to-fighter tether, cloth preparation, reach and composed card finish tune the duel.',
+      'Multiple physical elastic links, wound seals and rubber replacements retain their supports. A prior heart/lung order is executable in the declared viable-asphyxia scene of ch.357; no generic resurrection or restored flesh. Costs and cinematic duration tune the duel.',
   },
   chrollo: {
     abilities: [
@@ -50,7 +50,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'Historical pages execute their separate effects. Gallery Fake copies remain inert, can be located from the original and sense contacts within their volume; Sun and Moon marks persist.',
     prohibition: 'No body, weapon, animal, ally, consent or learned model is acquired with a page.',
     adaptation:
-      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning; Lovely Ghostwriter still lacks its handwritten subject and scenario-future context, and further material interactions remain under audit.',
+      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning. Lovely Ghostwriter requires genuine handwritten identity, a visible subject or portrait, real writing material and a defined scenario month; never the caster’s own future. Further material interactions remain under audit.',
   },
   benjamin: {
     abilities: ['benjamin-baton', 'air-blow', 'secret-window', 'culdcept'],
@@ -129,18 +129,20 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
   machi: {
     abilities: ['nen-stitches'],
     condition:
-      'Suture, tracking and restraint use actual threads; length and continued control matter.',
-    effect: 'Repair through suture, mark a target or maintain a physical tether.',
+      'Suture, tracking and restraint use actual threads. Reattaching a forearm needs its original material, a physical needle, free hands, a consenting living patient and relaxed arm aura.',
+    effect:
+      'Reconnect the original forearm without restoring lost HP or regrowing flesh; suture a wound, mark a target or maintain a physical tether.',
     prohibition:
       'No generic timed paralysis, remote healing unrelated to suture or free binding without a thread.',
     adaptation:
-      'Self-suture health, tether range and martial carriers tune the duel; wounds are represented by HP.',
+      'Open-wound HP recovery, contact ranges and operation timing tune the duel. Severed forearms are explicit physical injuries with original material; reconnection does not restore HP.',
   },
   illumi: {
     abilities: ['illumi-needle-people'],
     condition:
       'Physical needles, skull implantation and an explicit order are required for Needle People.',
-    effect: 'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen.',
+    effect:
+      'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen. Face alteration includes pinned Gittarackur and the temporary unpinned Hisoka face, with the original eyes and no copied Hatsu.',
     prohibition:
       'No aura drain, automatic two-second recovery, defensive disguise bonus or invented finisher.',
     adaptation:

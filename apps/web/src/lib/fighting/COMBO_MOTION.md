@@ -1,5 +1,8 @@
 # Gestes de combo et concentration de l’aura
 
+La [continuité contextuelle des contacts et appuis](./CONTEXTUAL_MOTION.md)
+précise les variantes basses, les réactions et la stabilité à courte distance.
+
 La présentation conserve les commandes, amorces, contacts, récupérations, dégâts
 et règles de Nen du moteur. Elle ne modifie aucun état de combat.
 
@@ -120,3 +123,75 @@ reconstruction du modèle, séparation des corps, couleurs des enveloppes et
 flux, articulations finies et absence de mutation de l’état. Le rapport et
 une capture par personnage sont écrits dans `PHYSICAL_ROSTER_OUTPUT`.
 Ce banc contrôle la présentation ; il ne mesure pas la cadence GPU d’un match.
+
+## Relevés et continuité après mise au sol
+
+`fightGroundRecovery.ts` place le regroupement, l’appui puis la remontée
+dans les dernières 48 % du compteur de mise au sol. Le corps retrouve sa
+garde avant la reprise des commandes, y compris lors d’un reversal bufferisé
+qui saute la pose `wakeup`. La protection de relevé conserve cette garde.
+Les KO et corps endormis restent au sol. Aucun compteur ni règle ne change.
+`fightGroundRecovery.test.ts` suit les quarante combattants jusqu’au reversal
+natif et vérifie la continuité des articulations et l’intégrité du replay.
+
+## Liaisons et appuis des combos
+
+`fightComboTransfer.ts` conserve l’élan sortant, laisse le buste conduire les
+bras, puis rassemble et pousse avec les jambes du profil personnel. Les
+passages dessinés restent utilisés ; le contact entrant garde son image exacte.
+La courte fenêtre de liaison prolonge la sortie du geste au lieu de ramener
+immédiatement à la garde. `fightComboTransfer.test.ts` vérifie les quarante
+contacts et la compression des appuis pendant une liaison.
+
+## Réactions locales et déséquilibre conservé
+
+Les réactions distinguent davantage tête, abdomen et perte d’appui : les bras
+protègent le ventre, la jambe touchée cède et le thorax absorbe avant le bassin.
+L’inclinaison du corps entier est réduite. Lors d’un combo confirmé, la réaction
+suivante conserve un résidu borné du déséquilibre précédent, dissipé sur huit
+images de simulation. Aucun résidu ne passe à un nouveau combat ou à une frappe
+isolée après récupération. `fightHitBalance.test.ts` vérifie ces différences et
+le transfert au cours de six combos natifs, sans mutation des états.
+
+## Proximité, séparation et appuis
+
+`fightClosePosture.ts` prépare le buste quand l’adversaire est proche, pour
+réduire les débordements avant la correction de séparation. Le dégagement
+restant tient compte du combattant ancré, du mur, du gabarit et de la victime
+qui recule. Il se relâche sur six images, en restant figé pendant le hitstop.
+`fightSeparationSupport.ts` maintient la semelle d’appui en coordonnées monde
+avec une chaîne de deux articulations sans étirement (`fightLimbReach.ts`).
+Un déplacement plus grand libère cet appui dans un pas de rattrapage de neuf
+images. La mémoire survit à une reconstruction Nen et se réinitialise à la
+manche. Les volumes centraux restent séparés et la projection immatérielle
+explicite conserve son exception. `fightSeparationSupport.test.ts` vérifie
+l’appui, les longueurs des segments et la préparation à courte distance.
+
+## Surface commune du geste et de l’impact
+
+L’alignement utilise maintenant une chaîne de deux segments, sans changer leur
+longueur. Il rejoint progressivement la surface pendant la préparation puis
+la tient au contact. Le point proche du membre est préféré au centre de la
+zone ; `fightSurfaceContact.ts` mémorise cette surface pour l’effet du même
+impact. Une silhouette au sol dont le bras ne peut rejoindre le menton adverse
+frappe visuellement le thorax accessible : réaction et effet utilisent
+cette même zone anatomique. La zone logique de défense Nen et les dégâts
+restent ceux du moteur. Les armes conservent leurs gestes spécifiques.
+`fightSurfaceContact.test.ts` mesure la distance réelle membre–surface dans
+six matchups, deux orientations, et vérifie l’absence d’état visuel périmé.
+
+## Rythme et flux continus
+
+`fightStrikeRhythm.ts` accélère le prolongement du geste et allonge son freinage
+visuel au cours de la récupération existante. Préparation, images actives,
+contact, hitstop et durée totale restent inchangés ; les coups lourds ont un
+contraste plus marqué. `fightStrikeRhythm.test.ts` vérifie les quarante profils.
+
+`nenFluxRibbon.ts` remplace les points de redistribution par des rubans continus,
+effilés, avançant à distance constante à travers les articulations posées. Le
+trajet vers un pied passe par le bassin. L’enveloppe s’épaissit avec l’arrivée
+du flux, plus fortement pour le Ko ; le trajet s’adapte à la préparation réelle
+pour atteindre le membre au contact. Couleur native, révélation par Gyo,
+mouvement réduit, consommation et hitstop gardent leurs contrats. Les géométries
+de ruban sont réutilisées puis libérées. `nenFluxRibbon.test.ts` vérifie la
+continuité, l’avancement, le suivi des articulations et la couleur conservée.

@@ -7,26 +7,34 @@ export function createHisokaVictoryFilm() {
   const command = film.audit.findLast(
     (event) => event.kind === 'command' && event.move === 'hisoka:finisher',
   )!
-  const cut = Math.round(Number(command.second) * 60)
+  // Keep a real opening exchange and enough round time for the prepared finish.
+  const cut = Math.min(Math.round(Number(command.second) * 60), 12 * 60)
   film.states = film.states.slice(0, cut)
   film.frames = film.frames.slice(0, cut)
-  film.audit = film.audit.filter((event) => Number(event.second) < Number(command.second))
+  film.audit = film.audit.filter((event) => Number(event.second) < cut / 60)
   film.state = film.states.at(-1)!
   film.held = { player: {}, opponent: {} }
-  for (let hit = 0; film.state.opponent.health > 40 && hit < 30; hit++) {
+  for (
+    let hit = 0;
+    film.state.phase === 'fighting' && film.state.opponent.health > 40 && hit < 30;
+    hit++
+  ) {
     film.until(() => film.free('player') && film.free('opponent'))
-    film.close('player')
+    film.close('player', 4)
     film.hit('player', film.state.opponent.health > 65 ? 'standingHeavy' : 'standingLight')
   }
   film.until(() => film.free('player') && film.free('opponent'))
-  film.close('player')
+  film.close('player', 4)
   film.held.player = { down: true, aura: true }
   film.until(() => film.state.player.aura >= 99.9, 600)
   film.held.player = {}
   film.advance()
   film.hit('player', 'neutralSpecial')
   film.until(() => film.free('player') && film.free('opponent'))
-  if (!film.state.bungeeGum) throw new Error('Native tether must be attached')
+  if (!film.state.bungeeGum)
+    throw new Error(
+      `Native tether must be attached: ${JSON.stringify({ phase: film.state.phase, health: [film.state.player.health, film.state.opponent.health], aura: film.state.player.aura, nen: film.state.player.nen.mode, last: film.audit.slice(-5) })}`,
+    )
   const start = film.states.length
   film.retreat('player', 32)
   const recall = film.states.length

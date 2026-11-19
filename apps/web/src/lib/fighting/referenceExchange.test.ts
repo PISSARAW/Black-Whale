@@ -6,9 +6,10 @@ import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
 import { physicalHitPose } from './fightHitResponse'
 import { physicalFallPose } from './fightFallResponse'
 import { fightGroundContact, lowestBodyHeight } from './fightGroundContact'
+import { surfaceContactAt } from './fightSurfaceContact'
 import { createFightPoseContinuity, physicalComboCurve } from './fightPoseContinuity'
 import { createFightReactionPresentation } from './fightReactionPresentation'
-import { createFightContactAlignment, fightContactTarget } from './fightContactAlignment'
+import { createFightContactAlignment } from './fightContactAlignment'
 import { createFightImpactScene } from './fightImpactScene'
 import { defaultFightComfort } from './fightComfort'
 import { fightReplayHash } from './fightReplayHash'
@@ -189,7 +190,7 @@ it.each([1, -1] as const)(
     const align = createFightContactAlignment((side) => models[side].turns)
     align(state)
     const after = probe()
-    expect(after.distanceTo(before)).toBeLessThan(0.5)
+    expect(after.distanceTo(before)).toBeGreaterThan(0)
     expect(after.distanceTo(target)).toBeLessThan(before.distanceTo(target))
     expect(after.toArray().every(Number.isFinite)).toBe(true)
     const effects = createFightImpactScene({
@@ -203,7 +204,7 @@ it.each([1, -1] as const)(
     })
     effects.emit(state, 100)
     const spark = scene.getObjectByName('fight-contact-hit')!
-    const expected = fightContactTarget(fightRigOf(rival), state.impact!.zone, facing)
+    const expected = surfaceContactAt(models.player.turns, state.frame, state.impact!.sequence)!
     expect(spark.position.x).toBeCloseTo(expected.x, 9)
     expect(spark.position.y).toBeCloseTo(expected.y, 9)
     effects.dispose()

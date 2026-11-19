@@ -213,8 +213,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   hanzo: entry(
     'mobile',
     [
-      'Placer le corps endormi avant de diriger le double.',
-      'Position the sleeping body before controlling the double.',
+      'Fermer la distance par des pas brefs, frapper de la main ouverte et contrôler le corps-à-corps. Préparer le double exige de laisser son corps endormi exposé.',
+      'Close with brief steps, strike with open hands and control close range. Preparing the double leaves the sleeping body exposed.',
     ],
     [
       'Approcher le corps et le toucher ou l’appeler si la parole peut être entendue.',

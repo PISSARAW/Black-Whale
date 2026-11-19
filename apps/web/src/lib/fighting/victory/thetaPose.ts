@@ -48,8 +48,24 @@ function stageTheta(context: VictoryContext) {
     lowerGuardForProp(hero, hero.height + (head.y - hero.height) * ease((age - 168) / 48))
   hero.head.rotation.x = 0.03 + 0.1 * ease((age - 510) / 36)
   victim.head.rotation.z = 0.1 * (1 - rush) - 0.18 * ease((age - 252) / 18)
+  stageFiringDistance(context)
   hero.root.updateWorldMatrix(true, true)
   victim.root.updateWorldMatrix(true, true)
+}
+function stageFiringDistance({ hero, victim, age }: VictoryContext): void {
+  const ready = ease((age - 276) / 60)
+  const head = victim.head.getWorldPosition(new Vector3())
+  const away = hero.root.position.clone().sub(head).setY(0)
+  const distance = away.length()
+  if (distance < 0.9 && distance > 0.001)
+    hero.root.position.addScaledVector(away, ((0.9 - distance) * ready) / distance)
+  const step = Math.sin((age - 276) * 0.22) * Math.sin(ready * Math.PI) * 0.18
+  for (const [i, side] of ['left', 'right'].entries()) {
+    const swing = step * (i ? -1 : 1)
+    hero.root.getObjectByName(`hip-${side}`)!.rotation.x += swing
+    hero.root.getObjectByName(`knee-${side}`)!.rotation.x += Math.max(0, -swing) * 1.2
+  }
+  groundVictoryActor(hero)
 }
 export function thetaVictoryPose(context: VictoryContext) {
   const { hero, victim, age } = context
@@ -63,7 +79,10 @@ export function thetaVictoryPose(context: VictoryContext) {
   const direction = target.clone().sub(shoulder).normalize()
   const aim = shoulder
     .clone()
-    .addScaledVector(direction, Math.min(hero.height * 0.24, target.distanceTo(shoulder) - 0.34))
+    .addScaledVector(
+      direction,
+      Math.min(hero.height * 0.24, Math.max(0.34, target.distanceTo(shoulder) - 0.34)),
+    )
   const stock = ease((age - 228) / 24) * (1 - ease((age - 252) / 24))
   const firing = ease((age - 288) / 54) * (1 - ease((age - 444) / 42))
   const right = rest.clone().lerp(aim, firing)

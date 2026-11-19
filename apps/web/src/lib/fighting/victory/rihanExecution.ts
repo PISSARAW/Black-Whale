@@ -1,3 +1,4 @@
+import { aimCinematicWrist } from './wrist'
 import * as T from 'three'
 import type { VictoryContext } from './types'
 import type { RihanPose } from './rihanPose'
@@ -48,9 +49,17 @@ export function createRihanExecution() {
       gun.visible = age >= 330 && age < 480
       gun.updateWorldMatrix(true, true)
       const wrist = context.hero.root.getObjectByName('hand-right')!
-      wrist.quaternion.copy(
-        wrist.parent!.getWorldQuaternion(new T.Quaternion()).invert().multiply(gun.quaternion),
+      aimCinematicWrist(
+        wrist,
+        gun.quaternion
+          .clone()
+          .multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), -Math.PI / 2)),
       )
+      gun.position.copy(wrist.getWorldPosition(new T.Vector3()))
+      gun.quaternion
+        .copy(wrist.getWorldQuaternion(new T.Quaternion()))
+        .multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), Math.PI / 2))
+      gun.updateWorldMatrix(true, true)
       const muzzle = gun.localToWorld(new T.Vector3(0, 0.048, 0.18))
       const since = age - RIHAN_TIMING.shot
       flash.visible = since >= 0 && since < 3 && context.comfort.flashes

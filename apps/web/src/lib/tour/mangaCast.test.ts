@@ -89,7 +89,7 @@ describe('manga cast shared by the visit and Fighting', () => {
   it('shares Luzurus’s swept puffs, face and articulated reference outfit with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-luzurus') })
     const fighter = createFightState('luzurus', 'hisoka').player
-    const fighting = buildFightFigure({ THREE, glow, fighter })
+    const fighting = buildFightFigure({ THREE, glow, fighter, readability: false })
     for (const name of [
       'face-relief',
       'luzurus-light-stubble',

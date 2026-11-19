@@ -65,39 +65,25 @@ describe('kameos in private PvP (lot 8)', () => {
       player: 'tubeppa',
       opponent: 'morena',
     })
-    const secret: typeof state = {
+    const secret = {
       ...state,
       kameos: {
         player: {
           ...state.kameos!.player!,
-          fighter: {
-            ...state.kameos!.player!.fighter,
-            heardWords: { frame: 1, speaker: 'kurapika', text: 'a' },
-          },
+          fighter: { ...state.kameos!.player!.fighter, heardWords: ['a'] },
         },
         opponent: {
           ...state.kameos!.opponent!,
-          fighter: {
-            ...state.kameos!.opponent!.fighter,
-            heardWords: { frame: 2, speaker: 'hisoka', text: 'b' },
-          },
+          fighter: { ...state.kameos!.opponent!.fighter, heardWords: ['b'] },
         },
       },
-    }
+    } as unknown as typeof state
     const host = privatePvpState(secret, 'player')
-    expect(host.kameos?.player?.fighter.heardWords).toEqual({
-      frame: 1,
-      speaker: 'kurapika',
-      text: 'a',
-    })
+    expect(host.kameos?.player?.fighter.heardWords).toEqual(['a'])
     expect(host.kameos?.opponent?.fighter.heardWords).toBeUndefined()
     const guest = privatePvpState(secret, 'opponent')
     expect(guest.kameos?.player?.fighter.id).toBe('morena')
-    expect(guest.kameos?.player?.fighter.heardWords).toEqual({
-      frame: 2,
-      speaker: 'hisoka',
-      text: 'b',
-    })
+    expect(guest.kameos?.player?.fighter.heardWords).toEqual(['b'])
     expect(guest.kameos?.opponent?.fighter.id).toBe('tubeppa')
     expect(guest.kameos?.opponent?.fighter.heardWords).toBeUndefined()
   })

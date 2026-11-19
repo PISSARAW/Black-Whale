@@ -101,6 +101,40 @@ describe('dynamic combat framing', () => {
     expect(JSON.stringify(state)).toBe(saved)
   })
 
+  it.each(['bonolenov', 'shizuku'] as const)(
+    'pans into the open lane as %s knocks a right-side opponent down',
+    (id) => {
+      const fresh = createFight(id, 'chrollo')
+      const state = {
+        ...fresh,
+        player: { ...fresh.player, x: 85 },
+        opponent: { ...fresh.opponent, x: 94 },
+      }
+      const camera = createCombatCamera()
+      const options = {
+        state,
+        base,
+        span: { centre: fightWorldX(89.5), gap: 1.035 },
+        aspect: 16 / 9,
+        intensity: 1,
+        dt: 1 / 60,
+        detail: true,
+      }
+      let before = camera.update(options)
+      for (let frame = 1; frame <= 45; frame++)
+        before = camera.update({ ...options, state: { ...state, frame } })
+      for (let step = 0; step < 16; step++) {
+        const after = camera.update({
+          ...options,
+          state: { ...state, frame: 46 + step, opponent: { ...state.opponent, pose: 'down' } },
+          fallenBounds: { opponent: { left: 4.8, right: 5.6 + step * 0.09 } },
+        })
+        expect(Math.abs(after.z - before.z)).toBeLessThan(0.35)
+        before = after
+      }
+    },
+  )
+
   it.each([0.35, 0.65, 1.4, 2.4])(
     'keeps a fallen body’s full length visible at aspect %s',
     (aspect) => {

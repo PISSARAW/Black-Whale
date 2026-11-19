@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { combatRoute, combatRoutesFor } from './combatRoutes'
+import { combatRoute, combatRoutesFor, combatLessonsFor } from './combatRoutes'
 import { combatRouteAction, combatRouteInput, createCombatRouteFight } from './combatRouteFight'
 import { performMove, tickFight } from './engine'
 import { canStartFighterAttack } from './fighterAttacks'
@@ -56,8 +56,9 @@ function play(id: string, options: { initial?: FightState; steps?: number } = {}
 }
 
 describe.each(FIGHTERS)('%s conversion choices', (fighter) => {
-  it('offers eight routes and distinct free sweep and carry outcomes', () => {
-    expect(combatRoutesFor(fighter)).toHaveLength(8)
+  it('keeps eight native routes plus six support routes and distinct free sweep and carry outcomes', () => {
+    expect(combatRoutesFor(fighter).filter((route) => !route.kameo)).toHaveLength(8)
+    expect(combatLessonsFor(fighter).filter((route) => route.kameo)).toHaveLength(6)
     const sweep = play(`${fighter}:economy`)
     const carry = play(`${fighter}:carry`)
     expect(sweep.spent).toBe(0)
@@ -150,10 +151,11 @@ describe('roster completion and returning conversion branches', () => {
 
 describe.each(['kurapika', 'benjamin'] as const)('%s returning branches', (fighter) => {
   it('retains the eight previous examples and adds four recovery conversions', () => {
-    expect(combatRoutesFor(fighter)).toHaveLength(12)
-    expect(combatRoutesFor(fighter).filter((route) => !route.id.includes('recovery'))).toHaveLength(
-      8,
-    )
+    expect(combatRoutesFor(fighter).filter((route) => !route.kameo)).toHaveLength(12)
+    expect(combatLessonsFor(fighter).filter((route) => route.kameo)).toHaveLength(6)
+    expect(
+      combatRoutesFor(fighter).filter((route) => !route.kameo && !route.id.includes('recovery')),
+    ).toHaveLength(8)
     const state = play(`${fighter}:recovery-sweep`, { steps: 1 }).state
     const choice = comboChoices(state).find((entry) => entry.move.slot === 'forwardLight')
     expect(choice).toMatchObject({ link: true, status: 'wait' })

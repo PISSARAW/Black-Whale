@@ -1,3 +1,4 @@
+import { keepHumanJoint } from '$lib/tour/humanJointLimits'
 import { Matrix4, Quaternion, Vector3 } from 'three'
 import type { Object3D } from 'three'
 import type { VictoryContext } from './types'
@@ -20,6 +21,7 @@ function openPalm(hand: Object3D, target: Vector3) {
   const up = normal.clone().cross(right).normalize()
   const world = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(right, up, normal))
   hand.quaternion.copy(hand.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world))
+  keepHumanJoint(hand, 'wrist')
   hand.updateWorldMatrix(true, true)
 }
 function march(context: VictoryContext) {
@@ -43,6 +45,7 @@ function saluteHand(context: VictoryContext, amount: number) {
   const world = context.hero.head.getWorldQuaternion(new Quaternion()).multiply(local)
   const orientation = hand.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world)
   hand.quaternion.slerp(orientation, amount)
+  keepHumanJoint(hand, 'wrist')
 }
 function followPressureImpact(context: VictoryContext) {
   const heads = [context.hero, context.victim].map((actor) =>

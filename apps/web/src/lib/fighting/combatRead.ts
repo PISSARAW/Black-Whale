@@ -1,3 +1,4 @@
+import { umbrellaScreensStrike } from './feitanUmbrella'
 import { attackData } from './frameData'
 import type { GuardRequirement } from './combatProperties'
 import type { ArcadeFighter, FightProjectile } from './types'
@@ -5,15 +6,18 @@ import type { ArcadeFighter, FightProjectile } from './types'
 export interface CombatRead {
   attacker?: ArcadeFighter
   guard: GuardRequirement
+  physicalScreened?: boolean
   concealed: boolean
   position: { x: number; y: number }
 }
 
 export function strikeRead(
   attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
+  observer?: ArcadeFighter,
 ): CombatRead {
   return {
     attacker,
+    physicalScreened: Boolean(observer && umbrellaScreensStrike(attacker, observer)),
     guard: attackData(attacker.attack.kind, attacker).guard,
     concealed: attacker.attack.concealed && Boolean(attacker.attack.hatsuSource),
     position: attacker,

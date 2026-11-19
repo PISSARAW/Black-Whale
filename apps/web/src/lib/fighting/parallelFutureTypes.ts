@@ -18,6 +18,7 @@ export interface FutureControls {
 }
 
 export interface FutureCommand {
+  superThrow?: true
   arsenal?: import('./retrospectiveTypes').ArsenalCommand
   rngBefore?: number
   kind: AttackKind
@@ -27,6 +28,7 @@ export interface FutureCommand {
 }
 
 export interface FutureFrame {
+  documentContext?: Pick<FightState, 'frame'>
   /** Presentation snapshot only; the real branch never consumes these fields. */
   scene?: Pick<
     FightState,

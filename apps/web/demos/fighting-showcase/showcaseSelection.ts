@@ -1,3 +1,6 @@
+import { createRangedDuel } from './rangedDuelChoreography'
+import { createDynamicRangedDuel } from './rangedDynamicChoreography'
+import { createShowcaseTracks } from './showcaseTracks'
 import { createCatsShowcase } from './catsChoreography'
 import { createShowcase } from './choreography'
 import { createContinuousShowcase } from './continuousChoreography'
@@ -17,21 +20,27 @@ export function selectShowcase(search: string) {
     longForm: query.has('long'),
     judgment: query.has('judgment'),
     cats: query.has('cats'),
+    rangedDuel: query.has('ranged'),
+    rangedDynamic: query.has('dynamic'),
   }
-  const film = flags.cats
-    ? createCatsShowcase()
-    : flags.judgment
-      ? createJudgmentShowcase()
-      : flags.solar
-        ? createSolarShowcase()
-        : flags.longForm
-          ? createLongBallroomShowcase()
-          : flags.ballroom
-            ? createBallroomShowcase()
-            : query.has('manga')
-              ? createMangaShowcase()
-              : flags.continuous
-                ? createContinuousShowcase()
-                : createShowcase()
-  return { ...flags, film }
+  const film = flags.rangedDuel
+    ? flags.rangedDynamic
+      ? createDynamicRangedDuel()
+      : createRangedDuel()
+    : flags.cats
+      ? createCatsShowcase()
+      : flags.judgment
+        ? createJudgmentShowcase()
+        : flags.solar
+          ? createSolarShowcase()
+          : flags.longForm
+            ? createLongBallroomShowcase()
+            : flags.ballroom
+              ? createBallroomShowcase()
+              : query.has('manga')
+                ? createMangaShowcase()
+                : flags.continuous
+                  ? createContinuousShowcase()
+                  : createShowcase()
+  return { ...flags, film, ...createShowcaseTracks(film.states, flags) }
 }

@@ -1,10 +1,18 @@
-import { performFranklinAim, franklinAimOptions } from './franklinAim'
+import { performArenaObjectTurn } from './arenaObjectTurn'
+import { performMachiCorpse, machiCorpseOptions } from './machiCorpses'
+import { performBenjaminToxin, benjaminToxinOptions } from './benjaminToxin'
+import { performUmbrellaFeint, umbrellaOptions } from './feitanUmbrella'
+import { arenaObjectTurnOptions } from './arenaObjectTurnOptions'
+import { performSunMoonCharge } from './sunMoonCharge'
+import { sunMoonChargeOptions } from './sunMoonChargeOptions'
+import { gumResuscitationOptions } from './gumResuscitationAction'
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
-import { performModelSelection } from './metamorphosenModels'
-import { performCorpseCommand } from './illumiCorpses'
-import { performMachiMaterial } from './machiMaterial'
+import { performModelSelection, modelSelectionOptions } from './metamorphosenModels'
+import { corpseRemovalOptions } from './illumiCorpsePins'
+import { corpseOptions } from './illumiCorpses'
+import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
 import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
 import { performBlackVoice } from './blackVoiceControl'
@@ -21,6 +29,20 @@ import { secretWindowOptions, performSecretWindowCommand } from './secretWindowC
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
+import { illumiMaskOptions } from './illumiMask'
+import { performGuardianStatement, guardianStatementOptions } from './tserriednichGuardian'
+import { performFutureField, futureFieldOptions } from './futureIllusion'
+import { performFranklinAim, franklinAimOptions } from './franklinAim'
+import { performBlinkyEvidence, blinkyEvidenceOptions } from './blinkyEvidence'
+import { performIllumiSupplement, conditioningOptions } from './illumiConditioning'
+import { historicalWeaponOptions } from './historicalWeapons'
+import { gumHeartOptions } from './hisokaHeart'
+import { biohazardDeviceOptions } from './biohazardDeviceArsenal'
+import {
+  performHalkenburgSoulCommand,
+  halkenburgHostOptions,
+  isHalkenburgSoulCommand,
+} from './halkenburgHostCommands'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
@@ -45,6 +67,9 @@ import { dolphinArsenalOptions } from './dolphinArsenal'
 import { copiedArsenalOptions } from './chrolloCopiedOptions'
 import { performGumCommand, gumArsenalOptions } from './hisokaArsenal'
 import { performTextureCommand, textureSurfaceOptions } from './hisokaTextureCommands'
+import { performPaperDocumentCommand } from './paperDocumentActions'
+import { paperDocumentOptions } from './paperDocumentOptions'
+import { performPaperTextureCommand } from './paperTextureCommands'
 import { fightAcceptsCommands } from './fightOutcome'
 import { canAct } from './fightActorState'
 import { cookieOptions, performCookie } from './cookie'
@@ -52,6 +77,11 @@ import { hunterOptions, performHunterInterview } from './skillHunterAcquisition'
 import { performHistoricalCommand } from './chrolloHistoricalAction'
 import { historicalOptions } from './chrolloHistoricalOptions'
 import { ARSENAL_ACTION_IDS, type ArsenalCommand, type ArsenalOption } from './retrospectiveTypes'
+import { performIllumiFaceCommand, illumiFaceOptions } from './illumiDisguise'
+import { nativeIllumiFaceOption } from './illumiDisguiseApplication'
+import { performNeedleModeCommand, needleModeOptions } from './illumiNeedleCommands'
+import { nativeIllumiNeedleOption } from './illumiNeedleApplication'
+import { performNeedleFaceRemoval, needleFaceRemovalOptions } from './illumiNeedleFaceRemoval'
 import type { FightSide, FightState } from './types'
 
 export function validArsenalCommand(value: unknown): value is ArsenalCommand {
@@ -72,13 +102,19 @@ const INVOCATION_FAMILIES: Record<
   string,
   ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
 > = {
+  umbrella: performUmbrellaFeint,
   bono: performModelSelection,
-  illumi: performCorpseCommand,
+  illumi: performIllumiSupplement,
   machi: performMachiMaterial,
   dolphin: performLegacyDolphinLoan,
   halkenburg: performHalkenburgTransfer,
   black: performBlackVoice,
   bio: performBiohazardDevice,
+  benjamin: performBenjaminToxin,
+  guardian: performGuardianStatement,
+  future: performFutureField,
+  franklin: performFranklinAim,
+  blinky: performBlinkyEvidence,
 }
 
 export function performArsenalCommand(
@@ -87,6 +123,7 @@ export function performArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
+  if (isHalkenburgSoulCommand(command)) return performHalkenburgSoulCommand(state, side, command)
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
@@ -103,6 +140,8 @@ function nativeArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (command.action === 'support-consent') return toggleConsent(state, side)
+  if (command.action.startsWith('machi-corpse'))
+    return traceArsenal({ state, side, command }, performMachiCorpse({ state, side, command }))
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
   if (handler) return handler[1](state, side, command)
   const legacy = INVOCATION_FAMILIES[command.action.split('-')[0]]
@@ -123,8 +162,10 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  ['needle-face-remove', performNeedleFaceRemoval],
+  ['illumi-needle-mode', performNeedleModeCommand],
+  ['illumi-face-', performIllumiFaceCommand],
   ['gum-anchor-', performGumObjectAnchorCommand],
-  ['franklin-aim', (state, side, command) => performFranklinAim({ state, side, command })],
   ['paper-release-confetti', performPaperScatterCommand],
   ['paper-kit-', performPaperKitCommand],
   ['paper-stop-listening', performPaperReceiverCommand],
@@ -146,9 +187,13 @@ const COMMAND_HANDLERS: readonly [
   ['dowsing-', performDowsingCommand],
   ['judgment-', performJudgmentCommand],
   ['gum-', performGumCommand],
+  ['texture-paper', performPaperTextureCommand],
   ['texture-', performTextureCommand],
+  ['document-', performPaperDocumentCommand],
   ['cookie-', performCookie],
   ['hunter-', performHunterInterview],
+  ['arena-turn-object', performArenaObjectTurn],
+  ['sun-moon-', performSunMoonCharge],
   ['history-', performHistoricalCommand],
 ]
 
@@ -159,6 +204,8 @@ function toggleConsent(state: FightState, side: FightSide): FightState {
 
 export function arsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   const options = [
+    ...needleFaceRemovalOptions(state, side),
+    ...corpseRemovalOptions(state, side),
     ...paperScatterOptions(state, side),
     ...paperKitOptions(state, side),
     ...paperReceiverOptions(state, side),
@@ -177,13 +224,27 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
   const personal = arsenalMindAvailable(state[side])
     ? options
     : options.map((option) => ({ ...option, ready: false }))
-  return [...personal, ...personDolphinOptions(state, side)]
+  return [...personal, ...personDolphinOptions(state, side), ...halkenburgHostOptions(state, side)]
 }
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...umbrellaOptions(state, side),
+    ...historicalWeaponOptions(state, side),
+    ...gumHeartOptions(state, side),
+    ...modelSelectionOptions(state, side),
+    ...illumiMaskOptions(state, side),
+    ...guardianStatementOptions(state, side),
+    ...benjaminToxinOptions(state, side),
+    ...machiCorpseOptions(state, side),
+    ...futureFieldOptions(state, side),
     ...franklinAimOptions(state, side),
+    ...blinkyEvidenceOptions(state, side),
+    ...conditioningOptions(state, side),
+    ...biohazardDeviceOptions(state, side),
     ...blackVoiceOptions(state, side),
+    ...machiMaterialOptions(state, side),
+    ...corpseOptions(state, side),
     ...littleEyeOptions(state, side),
     ...judgmentOptions(state, side),
     ...deviceOptions(state, side),
@@ -193,7 +254,15 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...bashoWardOptions(state, side),
     ...dowsingOptions(state, side),
     ...gumArsenalOptions(state, side),
+    ...gumResuscitationOptions(state, side),
+    ...sunMoonChargeOptions(state, side),
+    ...arenaObjectTurnOptions(state, side),
     ...textureSurfaceOptions(state, side),
+    ...illumiFaceOptions(state, side),
+    ...needleModeOptions(state, side),
+    ...nativeIllumiNeedleOption(state, side),
+    ...nativeIllumiFaceOption(state, side),
+    ...paperDocumentOptions(state, side),
     ...gumObjectAnchorOptions(state, side),
     ...cookieOptions(state, side),
     ...hunterOptions(state, side),

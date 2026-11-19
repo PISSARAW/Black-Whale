@@ -1,12 +1,134 @@
+import { KURAPIKA_THROWS } from './kurapika'
+import { HISOKA_THROWS } from './hisoka'
+import { CHROLLO_THROWS } from './chrollo'
+import { BENJAMIN_THROWS } from './benjamin'
+import { TSERRIEDNICH_THROWS } from './tserriednich'
+import { FEITAN_THROWS } from './feitan'
+import { SAIYU_THROWS } from './saiyu'
+import { THETA_THROWS } from './theta'
+import { BISCUIT_THROWS } from './biscuit'
+import { PHINKS_THROWS } from './phinks'
+import { FRANKLIN_THROWS } from './franklin'
+import { MACHI_THROWS } from './machi'
+import { ILLUMI_THROWS } from './illumi'
+import { KALLUTO_THROWS } from './kalluto'
 import { BONOLENOV_THROWS } from './bonolenov'
+import { SHIZUKU_THROWS } from './shizuku'
+import { HINRIGH_THROWS } from './hinrigh'
+import { MIZAISTOM_THROWS } from './mizaistom'
+import { LEORIO_THROWS } from './leorio'
+import { HANZO_THROWS } from './hanzo'
+import { RIHAN_THROWS } from './rihan'
+import { ZAKURO_THROWS } from './zakuro'
+import { MELODY_THROWS } from './melody'
+import { BASHO_THROWS } from './basho'
+import { CAMILLA_THROWS } from './camilla'
+import { HALKENBURG_THROWS } from './halkenburg'
+import { GEL_THROWS } from './gel'
+import { LYNCH_THROWS } from './lynch'
+import { LUINI_THROWS } from './luini'
+import { BILL_THROWS } from './bill'
+import { FURYKOV_THROWS } from './furykov'
+import { CLUCK_THROWS } from './cluck'
+import { BEYOND_THROWS } from './beyond'
+import { LONGHI_THROWS } from './longhi'
+import { MUSSE_THROWS } from './musse'
+import { PADAILLE_THROWS } from './padaille'
+import { SAYIRD_THROWS } from './sayird'
+import { TEREBELLUM_THROWS } from './terebellum'
+import { VOCONTE_THROWS } from './voconte'
+import { YOKOTANI_THROWS } from './yokotani'
 import type { FighterId } from '../types'
 import type { ThrowPerformanceId } from './types'
 
-/** Only Bonolenov's existing pair is integrated in this release. */
-export const THROW_PERFORMANCES = BONOLENOV_THROWS
+export const THROW_PERFORMANCES = [
+  ...KURAPIKA_THROWS,
+  ...HISOKA_THROWS,
+  ...CHROLLO_THROWS,
+  ...BENJAMIN_THROWS,
+  ...TSERRIEDNICH_THROWS,
+  ...FEITAN_THROWS,
+  ...SAIYU_THROWS,
+  ...THETA_THROWS,
+  ...BISCUIT_THROWS,
+  ...PHINKS_THROWS,
+  ...FRANKLIN_THROWS,
+  ...MACHI_THROWS,
+  ...ILLUMI_THROWS,
+  ...KALLUTO_THROWS,
+  ...BONOLENOV_THROWS,
+  ...SHIZUKU_THROWS,
+  ...HINRIGH_THROWS,
+  ...MIZAISTOM_THROWS,
+  ...LEORIO_THROWS,
+  ...HANZO_THROWS,
+  ...RIHAN_THROWS,
+  ...ZAKURO_THROWS,
+  ...MELODY_THROWS,
+  ...BASHO_THROWS,
+  ...CAMILLA_THROWS,
+  ...HALKENBURG_THROWS,
+  ...GEL_THROWS,
+  ...LYNCH_THROWS,
+  ...LUINI_THROWS,
+  ...BILL_THROWS,
+  ...FURYKOV_THROWS,
+  ...CLUCK_THROWS,
+  ...BEYOND_THROWS,
+  ...LONGHI_THROWS,
+  ...MUSSE_THROWS,
+  ...PADAILLE_THROWS,
+  ...SAYIRD_THROWS,
+  ...TEREBELLUM_THROWS,
+  ...VOCONTE_THROWS,
+  ...YOKOTANI_THROWS,
+]
+const pairs = {
+  kurapika: KURAPIKA_THROWS,
+  hisoka: HISOKA_THROWS,
+  chrollo: CHROLLO_THROWS,
+  benjamin: BENJAMIN_THROWS,
+  tserriednich: TSERRIEDNICH_THROWS,
+  feitan: FEITAN_THROWS,
+  saiyu: SAIYU_THROWS,
+  theta: THETA_THROWS,
+  biscuit: BISCUIT_THROWS,
+  phinks: PHINKS_THROWS,
+  franklin: FRANKLIN_THROWS,
+  machi: MACHI_THROWS,
+  illumi: ILLUMI_THROWS,
+  kalluto: KALLUTO_THROWS,
+  bonolenov: BONOLENOV_THROWS,
+  shizuku: SHIZUKU_THROWS,
+  hinrigh: HINRIGH_THROWS,
+  mizaistom: MIZAISTOM_THROWS,
+  leorio: LEORIO_THROWS,
+  hanzo: HANZO_THROWS,
+  rihan: RIHAN_THROWS,
+  zakuro: ZAKURO_THROWS,
+  melody: MELODY_THROWS,
+  basho: BASHO_THROWS,
+  camilla: CAMILLA_THROWS,
+  halkenburg: HALKENBURG_THROWS,
+  gel: GEL_THROWS,
+  lynch: LYNCH_THROWS,
+  luini: LUINI_THROWS,
+  bill: BILL_THROWS,
+  furykov: FURYKOV_THROWS,
+  cluck: CLUCK_THROWS,
+  beyond: BEYOND_THROWS,
+  longhi: LONGHI_THROWS,
+  musse: MUSSE_THROWS,
+  padaille: PADAILLE_THROWS,
+  sayird: SAYIRD_THROWS,
+  terebellum: TEREBELLUM_THROWS,
+  voconte: VOCONTE_THROWS,
+  yokotani: YOKOTANI_THROWS,
+}
 export function throwPerformance(id?: ThrowPerformanceId) {
   return THROW_PERFORMANCES.find((entry) => entry.id === id)
 }
 export function throwPerformanceFor(id: FighterId, powered: boolean) {
-  return id === 'bonolenov' ? BONOLENOV_THROWS[Number(powered)] : undefined
+  const pair = pairs[id as keyof typeof pairs]
+  return pair?.[Number(powered)]
 }

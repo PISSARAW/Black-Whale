@@ -1,59 +1,6 @@
 # Fighting
 
 Le menu, le combat tactile et la pause sont décrits dans [LOBBY.md](./LOBBY.md).
-
-Les [gestes de combo et la concentration de l’aura](./COMBO_MOTION.md) relient
-les transitions des 40 combattants aux appuis et aux contacts de chaque style,
-avec une enveloppe locale et un flux pour le Ryu et le Ko réellement engagés.
-
-L’[intégration Qwen via Ollama et Tailscale](./qwen/README.md) associe une stratégie
-distante à un contrôleur rapide local pour les 40 personnages, avec replays vérifiés.
-
-[Halkenburg propose deux modes](../../../../../docs/clash-halkenburg-deux-modes.md) :
-la variante aléatoire du roster et le transfert de conscience entre les corps
-présents. Sommeil, priorité au réveil, décès matériels et coexistence restent
-séparés des adaptations numériques du duel. Règles : `clash-combat-36`.
-
-Le [lot à quatre combats et plus](../../../../../docs/clash-quatre-combats-et-plus.md)
-audite le corpus de 17 personnages et ses cas limites, films compris. Il complète les armes physiques,
-les préparations d'Hisoka et d'Illumi, les corps suspendus et armés de Machi,
-Blinky, Franklin, la flèche d'Halkenburg et les applications récentes de
-Tserriednich et Benjamin. Les conditions, les sources secondaires et les
-adaptations du duel sont détaillées dans l'audit. Règles : `clash-combat-35`.
-
-La [passe à au moins trois combats](../../../../../docs/clash-au-moins-trois-combats.md)
-ajoute les modèles mémorisés de Bonolenov, les cadavres matériels contrôlés par
-Illumi et les contrôles de matière de Blinky. Le seuil conserve les personnages
-ayant davantage de combats et signale les scènes collectives ou rapportées.
-
-Le [lot à trois séquences de combat](../../../../../docs/clash-trois-combats.md)
-complète Kalluto et Hinrigh : dispersion et regroupement du papier, coupures,
-armes-serpents conservant leur chargeur, couteaux finis, contre du bras-hache,
-chat-caméra mobile et émetteur caché dont le récepteur se transmet.
-L'audit précise le comptage, les films vérifiés et les adaptations du duel.
-Ces applications sont enregistrées sous `clash-combat-29`.
-
-Le [lot à deux séquences de combat](../../../../../docs/clash-deux-combats.md)
-complète Zakuro, Luini et Camilla : reconnaissance sur les parois réelles,
-contrôle du saignement, choix des passages et sorties partielles vulnérables,
-couteau matériel, munitions finies et plaies fermées après résurrection.
-Leurs commandes et leur état sont enregistrés sous `clash-combat-27`.
-
-Les [six personnages prioritaires](../../../../../docs/clash-six-prioritaires.md)
-reçoivent les objets de Biohazard, les fils et sutures de Machi, les passages
-partiels de Luini et les usages d'information et contrats de Kurapika. Les
-adaptations demandées ajoutent le corps aléatoire d'Halkenburg, le pantin IA de
-Chrollo en 2 contre 1 et le tiers de Dolphin. Le [plan du roster à plusieurs
-combats](../../../../../docs/clash-combats-multiples.md) conserve le diagnostic.
-
-L'[audit des onze personnages à une seule séquence de combat](../../../../../docs/clash-combats-uniques.md)
-recoupe manga, adaptations et films. Sous `clash-combat-26`, il ajoute l'écoute
-et les observations privées de Musse, le second poème d'interrogatoire de Basho,
-la lecture cardiaque pendant l'interrogatoire de Melody, les tentatives de
-Padaille contre les menottes, les récepteurs de Sweet Home et la confiscation
-par LSDF, et corrige la dévoration de Predator. Les limites de représentation
-restent indiquées par application.
-
 Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
 complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
@@ -169,7 +116,7 @@ L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
 combattant ; les contrats particuliers des techniques restent prioritaires.
-Le ruleset `clash-combat-33` inclut le réglage du hitstun de l’étape 3,
+Le ruleset courant `clash-combat-33` inclut le réglage du hitstun de l’étape 3,
 les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
 des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
 [usages des sept techniques avancées](./NEN_COMBAT.md).

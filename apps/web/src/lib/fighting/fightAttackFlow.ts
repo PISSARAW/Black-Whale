@@ -5,6 +5,9 @@ import type { AttackWeightTransfer } from './fightWeightTransfer'
 export interface AttackFlowFrame {
   frame: number
   startup: number
+  active?: number
+  recovery?: number
+  supportLeg?: 'lead' | 'rear'
   pursuit?: PursuitGesture
   loadAt?: number
   facing: 1 | -1

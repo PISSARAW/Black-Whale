@@ -33,7 +33,6 @@ export function confirmedThrow(state: FightState): ThrowCinematicFrame | null {
   const impact = state.impact
   if (!impact || !validThrowImpact(impact)) return null
   const attacker = state[impact.attacker]
-  if (attacker.id !== 'bonolenov') return null
   const attack = attacker.attack
   if (attack?.variant !== 'throw' || !attack.confirmedHit) return null
   const victim = impact.attacker === 'player' ? 'opponent' : 'player'

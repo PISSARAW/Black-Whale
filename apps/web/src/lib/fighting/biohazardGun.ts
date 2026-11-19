@@ -1,4 +1,5 @@
 import { camillaRounds, spendCamillaRound } from './camillaWeapon'
+import { hasPrinceSidearm, PRINCE_SIDEARM_ROUNDS } from './princeSidearm'
 import { projectileProfile } from './projectiles'
 import { hasBodyguardFirearm } from './bodyguardFirearms'
 import { commitProjectileNen } from './nenProjectiles'
@@ -14,9 +15,13 @@ declare module './types' {
 }
 
 export function hasBiohazardGun(fighter: ArcadeFighter): boolean {
-  return hasBodyguardFirearm(fighter.id) || ['camilla', 'benjamin'].includes(fighter.id)
+  return (
+    hasBodyguardFirearm(fighter.id) ||
+    ['camilla', 'benjamin', 'tserriednich', 'halkenburg'].includes(fighter.id)
+  )
 }
 export function biohazardGunRounds(fighter: ArcadeFighter): number {
+  if (hasPrinceSidearm(fighter)) return fighter.princeSidearmRounds ?? PRINCE_SIDEARM_ROUNDS
   return (fighter.nenOwner ?? fighter.id) === 'camilla'
     ? camillaRounds(fighter)
     : (fighter.biohazardGunRounds ?? 6)

@@ -11,8 +11,11 @@ export function setupIllumiNeedles(state: FightState): FightState {
   const stock = state.environment.needleStock
   return {
     ...state,
-    player: supply(state.player, stock?.player ?? state.player.id === 'illumi'),
-    opponent: supply(state.opponent, stock?.opponent ?? state.opponent.id === 'illumi'),
+    player: supply(state.player, stock?.player ?? ['illumi', 'machi'].includes(state.player.id)),
+    opponent: supply(
+      state.opponent,
+      stock?.opponent ?? ['illumi', 'machi'].includes(state.opponent.id),
+    ),
   }
 }
 

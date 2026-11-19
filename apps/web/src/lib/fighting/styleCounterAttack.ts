@@ -1,3 +1,4 @@
+import { recoveryPunishOptions } from './recoveryPunish'
 import { readCounterplay } from './fightCounterplay'
 import { styleReactionFrames } from './styleMobility'
 import type { FightState, MoveSlot } from './types'
@@ -8,6 +9,10 @@ export function counterplayAttackSlots(state: FightState, gap: number): readonly
   const cue = readCounterplay(state, 'opponent')
   if (!read || !cue || read.key !== cue.key || read.frames <= styleReactionFrames(state.opponent))
     return null
+  if (cue.kind === 'recovery')
+    return recoveryPunishOptions(state, 'opponent')
+      .filter((option) => option.approachFrames === 0 && option.reaction === 0)
+      .map((option) => option.move.slot)
   if (gap > 10 || !['preparation', 'recovery', 'sleeping-body', 'tether'].includes(cue.kind))
     return null
   return ['standingLight', 'forwardLight']

@@ -1,4 +1,5 @@
 import { panelReplayCommand } from './fightReplayPanels'
+import { trackEvent } from '$lib/analytics/client'
 import { fightReplayHash } from './fightReplayHash'
 import { FIXED_STEP } from './fightClock'
 import { fightAcceptsCommands } from './fightOutcome'
@@ -7,17 +8,28 @@ import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { createFightReplayController } from './fightReplayController'
 import { createResponseDiagnostics } from './fightResponseDiagnostics'
 import { tickFight, performAuraAttack } from './engine'
+import { performFuturePerceptionAction } from './futurePerception'
 import { performArsenalAction } from './arsenalExecution'
 import { createQwenDuel, type QwenDuel } from './qwen/duel'
-import { EMPTY_INPUT, type FightInput, type FightState } from './types'
+import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
 import type { ReplayCommand, ReplayPacket } from './fightReplayTypes'
 import type { CareerTracker } from './career/runtime'
 
 interface Queued {
   command?: ReplayCommand
   action?: (state: FightState) => FightState
+  side?: FightSide
   receipt: number | null
 }
+function recordCompletion(before: FightState, after: FightState, practicing: boolean) {
+  if (!before.matchWinner && after.matchWinner && !practicing)
+    trackEvent('mode_complete', {
+      variant: before.mode,
+      result: after.matchWinner,
+      format: before.formatId,
+    })
+}
+
 export function createFightMatchRuntime(
   clock: () => number = () => performance.now(),
   options: { record?: boolean; career?: CareerTracker; qwen?: QwenDuel } = {},
@@ -44,6 +56,13 @@ export function createFightMatchRuntime(
   function apply(state: FightState, command: ReplayCommand) {
     if (replays.active) return state
     const after = applyReplayCommand(state, command)
+    if (
+      state.phase === 'ready' &&
+      after.phase === 'fighting' &&
+      state.roundNumber === 1 &&
+      !replays.practicing
+    )
+      trackEvent('mode_start', { variant: state.mode, format: state.formatId })
     replays.append(state, [0, 0, 0, [command]], after)
     if (!replays.practicing) boundary = after
     career?.observe(state, after)
@@ -78,7 +97,9 @@ export function createFightMatchRuntime(
           now: clock(),
         })
       } else if (item.action) {
-        next = item.action(next)
+        next =
+          performFuturePerceptionAction(next, item.side ?? 'player', item.action) ??
+          item.action(next)
         commands.push(panelReplayCommand(before, next))
       }
     }
@@ -109,6 +130,7 @@ export function createFightMatchRuntime(
       pending.push({
         action: (current) =>
           performArsenalAction({ state: current, ...utility }, performAuraAttack),
+        side: utility.side,
         receipt: null,
       })
   }
@@ -176,6 +198,7 @@ export function createFightMatchRuntime(
         },
       })
       const packet: ReplayPacket = [dt, player, opponent, applied.commands]
+      recordCompletion(state, after, replays.practicing)
       replays.append(state, packet, after)
       if (!replays.practicing) boundary = after
       return after

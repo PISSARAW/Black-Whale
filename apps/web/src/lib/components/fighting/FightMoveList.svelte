@@ -8,8 +8,6 @@
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
-  import { hasDirectionalChain } from '$lib/fighting/directionalChain'
-  import { airPursuitTechnique } from '$lib/fighting/airPursuitTechniques'
 
   export let touch = false
   export let fighterId: FighterId
@@ -18,8 +16,6 @@
   $: hints = touch ? fightTouchBindings(language) : $bindings
   $: moveset = movesetFor(fighterId)
   $: arena = arenaTechnique(fighterId)
-  $: pursuit = airPursuitTechnique(fighterId)
-  $: examples = Array.from(new Map(moveset?.combos.map((route) => [route.join(':'), route])))
   $: groups = moveset
     ? ([
         ['normal', language === 'fr' ? 'Normales' : 'Normals'],
@@ -55,9 +51,11 @@
     </header>
     <FightStyleGuide {fighterId} {language} />
     {#if fighterId === 'bonolenov'}
-      <p>{language === 'fr'
-        ? 'Aura + Projection : renversement renforcé, 25 Nen. La lance de Prologue doit avoir été préparée ; sans elle, la prise reste physique.'
-        : 'Aura + Throw: enhanced reversal, 25 Nen. The Prologue spear must be prepared beforehand; without it, the grab stays physical.'}</p>
+      <p>
+        {language === 'fr'
+          ? 'Aura + Projection : renversement renforcé, 25 Nen. La lance de Prologue doit avoir été préparée ; sans elle, la prise reste physique.'
+          : 'Aura + Throw: enhanced reversal, 25 Nen. The Prologue spear must be prepared beforehand; without it, the grab stays physical.'}
+      </p>
     {/if}
     {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
     {#if arena}
@@ -87,39 +85,20 @@
       {/each}
     </div>
     <div class="routes">
-      {#if hasDirectionalChain(fighterId)}
-        <h3>{language === 'fr' ? 'Chaîne directionnelle' : 'Directional chain'}</h3>
-        <p><kbd>{moveInputHint('J → J → J', $bindings)}</kbd> · {language === 'fr' ? 'Fin debout à proximité' : 'Close standing finish'}</p>
-        <p><kbd>{moveInputHint('J → J → ↓ + J', $bindings)}</kbd> · {language === 'fr' ? 'Mise au sol' : 'Knockdown'}</p>
-        <p><kbd>{moveInputHint('J → J → ↑ + J', $bindings)}</kbd> · {language === 'fr' ? 'Relance aérienne' : 'Launcher'}</p>
-        <p><kbd>{moveInputHint('J → J → → + J', $bindings)}</kbd> · {language === 'fr' ? 'Poussée vers le coin' : 'Corner carry'}</p>
-        <p>{language === 'fr'
-            ? 'Les deux premiers coups doivent toucher. Certaines fins utilisent une technique si ses conditions sont remplies.'
-            : 'The first two strikes must hit. Some endings use a technique when its requirements are met.'}</p>
-        <h3>{language === 'fr' ? 'Poursuite après la relance' : 'Launcher pursuit'}</h3>
-        <p>
-          <kbd>{moveInputHint('→ + J', $bindings)}</kbd>
-          · {language === 'fr'
-            ? 'Léger aérien. Enchaîner dès la relance.'
-            : 'Air light. Input as soon as the launcher hits.'}
-        </p>
-        {#if pursuit || fighterId === 'chrollo'}
-          <p>
-            <kbd>{moveInputHint('→ + L', $bindings)}</kbd>
-            · {pursuit
-              ? (language === 'fr' ? pursuit.nameFr : pursuit.nameEn)
-              : language === 'fr' ? 'Frappe d’une page utilisable' : 'Strike from an available page'}
-          </p>
-          <p>{language === 'fr'
-            ? 'La technique exige ses ressources et sa préparation habituelles.'
-            : 'The technique requires its normal resources and preparation.'}</p>
-        {/if}
-        <p>{language === 'fr'
-          ? `En défense après la relance, reculez, ripostez avec ${moveInputHint('J', $bindings)} ou maintenez ↓ + ${$bindings.playerGuard} pour redescendre et garder à l’atterrissage.`
-          : `After recovering from a launch, drift back, strike with ${moveInputHint('J', $bindings)} or hold ↓ + ${$bindings.playerGuard} to descend and guard on landing.`}</p>
-      {/if}
+      <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
+      <p>
+        <kbd>{touch ? (language === 'fr' ? 'Kaméo' : 'Kameo') : hints.playerKameo}</kbd> · {language ===
+        'fr'
+          ? 'Selon l’exemple, appelle avec la première attaque ou après une touche. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
+          : 'Follow the example: call with the opening attack or after a hit. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}
+      </p>
+      <p>
+        {language === 'fr'
+          ? 'Luzurus peut prolonger au sol, Zhang Lei renforcer les frappes, Marayam protéger la récupération. Les six exemples sont dans Académie du Nen → Combos & défense.'
+          : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
+      </p>
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each examples as [key, route] (key)}
+      {#each moveset.combos as route (route.join(':'))}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

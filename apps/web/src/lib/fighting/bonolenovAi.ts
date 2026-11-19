@@ -12,22 +12,17 @@ export function moveBonolenovOpponent(
   if (fighter.id !== 'bonolenov' || !canMove(fighter) || fighter.y > 0) return null
   const motion = motionOf(fighter)
   if (motion.dash) return step(fighter, motion.dash.direction)
-  const read = fighter.observedHabits
-  if (!read || !seesCombatBody(fighter) || read.lastFrame % 24 !== 0) return null
+  const read = fighter.pressureRead
+  if (!read || !seesCombatBody(fighter) || read.clock % 24 !== 0) return null
   const direction = pivotDirection(fighter, target)
   return direction ? pivot(fighter, direction) : null
 }
 
 function pivotDirection(fighter: ArcadeFighter, target: ArcadeFighter): 1 | -1 | null {
-  const read = fighter.observedHabits!
+  const read = fighter.pressureRead!
   const gap = Math.abs(target.x - fighter.x)
   const away = target.x >= fighter.x ? -1 : 1
-  if (
-    read.seenAttackFrame !== null &&
-    read.lastFrame - read.firstSeenAt >= styleReactionFrames(fighter) &&
-    gap < 18
-  )
-    return away
+  if (read.move && read.seen >= styleReactionFrames(fighter) && gap < 18) return away
   // A prepared spear approaches its actual reach instead of standing still or starting Jupiter.
   if (canApproachWithSpear(fighter, gap)) return away === 1 ? -1 : 1
   return null
@@ -35,10 +30,7 @@ function pivotDirection(fighter: ArcadeFighter, target: ArcadeFighter): 1 | -1 |
 
 function canApproachWithSpear(fighter: ArcadeFighter, gap: number): boolean {
   return Boolean(
-    fighter.battleCantabile?.prologue &&
-    fighter.observedHabits?.seenAttackFrame === null &&
-    gap > 20 &&
-    gap < 34,
+    fighter.battleCantabile?.prologue && !fighter.pressureRead?.move && gap > 20 && gap < 34,
   )
 }
 

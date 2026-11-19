@@ -1,3 +1,4 @@
+import { performGhostwriter } from './ghostwriterAction'
 import { performHistoricalPhone } from './chrolloHistoricalPhone'
 import { performGallerySense } from './gallerySense'
 import { skillHunterBookHandReady } from './historicalHands'
@@ -32,6 +33,8 @@ export function performHistoricalCommand(
 ): FightState {
   const caster = state[side]
   if (!historicalBodyAvailable(caster)) return state
+  if (command.action === 'history-ghostwriter')
+    return performGhostwriter(state, side, command.target)
   if (command.action === 'history-page') return selectHistoricalPage(state, side, command.target)
   if (command.action === 'history-release') return releaseSelected(state, side)
   if (command.action.startsWith('history-gallery-'))
@@ -120,6 +123,8 @@ function teleportHistoricalTarget(
 
 type HistoricalAction = (state: FightState, side: FightSide, command: ArsenalCommand) => FightState
 const HISTORICAL_ACTIONS: Record<string, HistoricalAction> = {
+  'lovely-ghostwriter': (state, side, command) =>
+    command.action === 'history-use' ? performGhostwriter(state, side, command.target) : state,
   'love-dial-6700': performHistoricalPhone,
   'gallery-fake': (state, side, command) =>
     command.action === 'history-use' ? copyHistoricalObject(state, side, command.target) : state,

@@ -1,5 +1,5 @@
 import type { AuraAttackOptions } from './auraAttackAction'
-import { commandGumLink } from './bungeeScoped'
+import { selectedGumLink } from './bungeeNetwork'
 import { hasDirectionalChain, isAirPursuit, pursuitWindow } from './directionalChain'
 import { currentPursuitTechnique, requiresNativeStrikeStart } from './airPursuitTechniques'
 import { canAct } from './fightActorState'
@@ -70,7 +70,7 @@ function selectedPursuitAvailable({ state, side, moveId }: AuraAttackOptions): b
 }
 
 function tetheredToOpponent(state: FightState, side: FightSide): boolean {
-  const link = commandGumLink(state, side)
+  const link = selectedGumLink(state, side)
   return link?.target.kind === 'fighter' && link.target.side !== side
 }
 

@@ -1,5 +1,6 @@
 <script lang="ts">
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
+  import Analytics from '$lib/analytics/Analytics.svelte'
   import '../app.css'
   import AppFooter from '$lib/components/AppFooter.svelte'
   import { routeTransitionKey } from '$lib/fighting/fightNavigation'
@@ -51,6 +52,8 @@
     { href: '/ship', label: $t.nav.explore },
     { href: '/timeline', label: $t.nav.timeline },
     { href: '/characters', label: $t.nav.characters },
+    { href: '/tour', label: $t.nav.tour },
+    { href: '/fighting', label: $t.nav.clash },
     ...(PUBLIC_FEATURES.perspectives ? [{ href: '/perspectives', label: $t.nav.knowledge }] : []),
   ]
 
@@ -60,7 +63,6 @@
     ...(PUBLIC_FEATURES.compare ? [{ href: '/compare', label: $t.nav.comparePerspectives }] : []),
     { href: '/relationships', label: $t.nav.factionNetwork },
     { href: '/simulations', label: $t.nav.simulations },
-    { href: '/tour', label: $t.nav.virtualTour },
     { href: '/tour/modes', label: $t.nav.tourModes },
     { href: '/tour/sources', label: $t.nav.shipSources },
     { href: '/about', label: $t.discovery.about.nav },
@@ -117,6 +119,7 @@
 </svelte:head>
 
 <svelte:window onkeydown={handleKeydown} />
+<Analytics websiteId={data.analyticsWebsiteId} />
 
 <div class="app-shell">
   <a class="skip-link" href="#main-content">{$t.layout.skipToContent}</a>

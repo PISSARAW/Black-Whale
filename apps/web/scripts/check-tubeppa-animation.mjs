@@ -58,7 +58,7 @@ try {
     path.join(output, 'report.json'),
     JSON.stringify({ passed: true, report, errors }, null, 2),
   )
-  console.log(`${character}: expressions and production kameo scene verified. ${output}`)
+  process.stdout.write(`${character}: expressions and production kameo scene verified. ${output}`)
 } finally {
   await browser?.close()
   await server.close()

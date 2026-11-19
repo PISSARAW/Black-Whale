@@ -59,6 +59,36 @@ exécutables, pas à une seconde liste de coups indépendante du moteur.
 
 ## Cadre et continuité
 
+### Projections au corps-à-corps
+
+`throwCinematic.ts` reconnaît une projection réellement confirmée : impact physique,
+mise au sol, attaque de type projection et absence de garde, esquive, parade ou
+invulnérabilité. Un raté ou une déprojection ne déclenche aucun plan de réussite.
+La prise, le renversement, l'arrivée au sol et le retour au jeu suivent la
+récupération réelle : au moins 54 frames pour la normale et 84 pour la super.
+Les [dix premières paires personnelles](./throws/README.md) relient les vingt
+chorégraphies, leurs accessoires et leurs quatre plans au choix Aura + projection.
+
+`throwCinematicMotion.ts` et `throwPresentationLayer.ts` dessinent une courte
+trajectoire entre la prise et la vraie position de chute. Les corps restent ceux
+du match, dans le même décor ; les coordonnées et volumes de simulation ne sont
+jamais réécrits. La victime conserve sa pose au sol jusqu'à la relevée réelle.
+`throwCinematicCamera.ts` passe de la prise à une orbite de renversement puis à
+un angle bas, avec un cadrage commun aux deux silhouettes et aux formats portrait.
+Les instants suivent les frames d'attaque, donc le hitstop et la pause les figent.
+Un nouvel impact, une nouvelle manche ou une fin de contrainte annule la séquence.
+
+Un K.-O. attend la fin de cette projection avant sa cinématique de victoire ;
+les dégâts, le verdict, les fenêtres de déprojection, les replays et les commandes
+ne sont pas retardés. Caméra stable et mouvements réduits gardent les protections
+de confort existantes. Les projections astrales de Hanzo ne sont pas confondues
+avec ces prises physiques.
+
+`throwCinematic.test.ts` vérifie les quarante combattants, les deux places, les
+refus, la pause, le hitstop, les positions finales, le K.-O. et l'absence de mutation.
+Depuis `apps/web`, `node scripts/check-fighting-throws.mjs` capture les quatre
+temps de la scène de production en P1/P2, ainsi que les formats 390 et 320 px.
+
 La seconde caméra rend la même scène posée au même instant. Les sujets peuvent
 être une articulation, un accessoire visible, un projectile, une entité préparée
 ou plusieurs points de contact. Le cadrage est calculé à partir de leur volume
@@ -88,8 +118,19 @@ les pistes de montage déjà écrites.
 `FightLiveScene` réserve l’encadré existant à la branche calculée par le moteur
 durant la vision et la divergence. La vue principale montre la réalité pour
 l’utilisateur du pouvoir, l’entraînement et le versus local partagé. L’adversaire
-en solo conserve sa perception prédite : la comparaison ne révèle pas la position
-réelle privée du prince.
+en solo conserve sa perception illusoire : ses commandes restent actives et ses
+coups, tirs, projections, dégâts apparents et sons sont simulés dans une branche
+séparée. Aucun panneau, compteur de divergence ou encadré ne lui annonce l’effet.
+Le vrai prince se déplace librement dans la simulation réelle. La fin du pouvoir
+réaffiche directement sa position et ses PV réels. Un K.-O. illusoire déclenche
+la même cinématique, le son de victoire, le score de manche et l’écran de résultats
+qu’un vrai verdict, sans mention de Laplace. Le verdict perçu garde sa frame et
+son chronomètre de fin afin que la cinématique ne redémarre pas à chaque tick réel.
+« Manche suivante » et « Rejouer le duel » poursuivent uniquement la branche
+illusoire ; le score réel, le corps du prince et la durée du pouvoir continuent
+indépendamment. La rupture du pouvoir retire immédiatement la fausse victoire.
+Le champ prolongé sous Zetsu conserve cette perception après les dix premières
+secondes, jusqu’à sa rupture.
 
 La seconde scène dispose de ses propres modèles et effets. Le code de caméra
 de `demos/fighting-showcase/cinematicCamera.ts` a été extrait dans

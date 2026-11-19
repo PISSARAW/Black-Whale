@@ -1,3 +1,5 @@
+import { validateRangedDuel } from './showcase-ranged-validation.mjs'
+import { inspectRangedDynamic } from './showcase-ranged-inspection.mjs'
 import { inspectCatsSpectacle } from './showcase-cats-inspection.mjs'
 import { validateCatsReport } from './showcase-cats-validation.mjs'
 import { validateJudgmentReport } from './showcase-judgment-validation.mjs'
@@ -14,6 +16,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
+const rangedDuel = process.argv.includes('--ranged-duel')
 const still = process.argv.includes('--cats-still')
 const faceOnly = still || process.argv.includes('--cats-face')
 const grip = faceOnly || process.argv.includes('--cats-grip')
@@ -25,13 +28,19 @@ const manga = process.argv.includes('--manga')
 const longForm = process.argv.includes('--ballroom-long')
 const ballroom = longForm || process.argv.includes('--ballroom')
 const cinematic =
-  cats || judgment || solar || ballroom || manga || process.argv.includes('--cinematic')
+  rangedDuel ||
+  cats ||
+  judgment ||
+  solar ||
+  ballroom ||
+  manga ||
+  process.argv.includes('--cinematic')
 const continuous = cinematic || process.argv.includes('--continuous')
 const output =
   process.env.FIGHT_SHOWCASE_OUTPUT ??
   path.resolve(
     root,
-    `../../output/${still ? 'fighting-cats-still' : faceOnly ? 'fighting-cats-awakening' : grip ? 'fighting-cats-grip' : cats ? 'fighting-cats-name' : judgment ? 'fighting-judgment' : solar ? 'fighting-solar' : longForm ? 'fighting-ballroom-long' : ballroom ? 'fighting-ballroom' : manga ? 'fighting-manga' : cinematic ? 'fighting-cinematic' : continuous ? 'fighting-continuous' : 'fighting-showcase'}`,
+    `../../output/${rangedDuel ? 'fighting-ranged-duel' : still ? 'fighting-cats-still' : faceOnly ? 'fighting-cats-awakening' : grip ? 'fighting-cats-grip' : cats ? 'fighting-cats-name' : judgment ? 'fighting-judgment' : solar ? 'fighting-solar' : longForm ? 'fighting-ballroom-long' : ballroom ? 'fighting-ballroom' : manga ? 'fighting-manga' : cinematic ? 'fighting-cinematic' : continuous ? 'fighting-continuous' : 'fighting-showcase'}`,
   )
 const inspect = process.argv.includes('--inspect')
 const predictionOnly = process.argv.includes('--prediction-only')
@@ -98,7 +107,7 @@ try {
   })
   await page.clock.install()
   await page.goto(
-    `http://127.0.0.1:${server.httpServer.address().port}/demos/fighting-showcase/${continuous ? '?continuous=1' : ''}${cinematic ? '&cinematic=1' : ''}${manga ? '&manga=1' : ''}${ballroom ? '&ballroom=1' : ''}${longForm ? '&long=1' : ''}${solar ? '&solar=1' : ''}${judgment ? '&judgment=1' : ''}${cats ? '&cats=1' : ''}${spectacle ? '&spectacle=1' : ''}${still ? '&still=1' : ''}`,
+    `http://127.0.0.1:${server.httpServer.address().port}/demos/fighting-showcase/${continuous ? '?continuous=1' : ''}${cinematic ? '&cinematic=1' : ''}${manga ? '&manga=1' : ''}${ballroom ? '&ballroom=1' : ''}${longForm ? '&long=1' : ''}${solar ? '&solar=1' : ''}${judgment ? '&judgment=1' : ''}${cats ? '&cats=1' : ''}${spectacle ? '&spectacle=1' : ''}${still ? '&still=1' : ''}${rangedDuel ? '&ranged=1' : ''}${process.argv.includes('--ranged-dynamic') ? '&dynamic=1' : ''}`,
     {
       waitUntil: 'domcontentloaded',
     },
@@ -112,6 +121,9 @@ try {
     JSON.stringify(
       {
         duration: report.duration,
+        rangedSeconds: report.rangedSeconds,
+        projectilesEmitted: report.projectilesEmitted,
+        remoteHits: report.remoteHits,
         apparentKnockoutSecond: report.apparentKnockoutSecond,
         contactsBySide: report.contactsBySide,
         catFrames: report.catFrames,
@@ -161,7 +173,7 @@ try {
     )
     assert.ok(report.camera.maximumDollyStep < 0.06, 'The camera must move continuously')
     assert.ok(
-      report.camera.cueCount >= (cats ? 15 : solar ? 12 : 25),
+      report.camera.cueCount >= (rangedDuel ? 10 : cats ? 15 : solar ? 12 : 25),
       'Combos and Hatsu must trigger camera cues',
     )
   }
@@ -227,9 +239,11 @@ try {
     }
   }
   if (spectacle) await inspectCatsSpectacle(page, { report, output })
+  if (rangedDuel) await inspectRangedDynamic(page, { report, output })
   if (inspect) process.stdout.write(`Inspection: ${output}\n`)
   else {
-    if (cats) validateCatsReport(report)
+    if (rangedDuel) validateRangedDuel(report)
+    else if (cats) validateCatsReport(report)
     else if (judgment) validateJudgmentReport(report)
     else if (solar) validateSolarReport(report)
     else {
@@ -348,31 +362,33 @@ try {
     else {
       let destination = path.join(
         output,
-        cats
-          ? spectacle
-            ? grip
-              ? faceOnly
-                ? still
-                  ? 'Chrollo-vs-Camilla-Le-Souffle.mp4'
-                  : 'Chrollo-vs-Camilla-Reveil-Dramatique.mp4'
-                : 'Chrollo-vs-Camilla-Prise-et-Resurrection.mp4'
-              : 'Chrollo-vs-Camilla-Cat-s-Name-Spectaculaire.mp4'
-            : 'Chrollo-vs-Camilla-Nen-Post-Mortem.mp4'
-          : judgment
-            ? 'Mizaistom-vs-Biscuit-Duel-Strategique.mp4'
-            : solar
-              ? 'Feitan-vs-Tserriednich-Rising-Sun.mp4'
-              : longForm
-                ? 'Kurapika-vs-Benjamin-Version-Longue.mp4'
-                : ballroom
-                  ? 'Kurapika-vs-Benjamin-Salle-de-Bal.mp4'
-                  : manga
-                    ? 'Hisoka-vs-Chrollo-Duel-Strategique.mp4'
-                    : cinematic
-                      ? 'Hisoka-vs-Chrollo-Camera-Cinema.mp4'
-                      : continuous
-                        ? 'Hisoka-vs-Chrollo-Combat-Continu.mp4'
-                        : 'Hisoka-vs-Chrollo-Tour-Celeste.mp4',
+        rangedDuel
+          ? 'Leorio-vs-Franklin-Chambre-Funeraire.mp4'
+          : cats
+            ? spectacle
+              ? grip
+                ? faceOnly
+                  ? still
+                    ? 'Chrollo-vs-Camilla-Le-Souffle.mp4'
+                    : 'Chrollo-vs-Camilla-Reveil-Dramatique.mp4'
+                  : 'Chrollo-vs-Camilla-Prise-et-Resurrection.mp4'
+                : 'Chrollo-vs-Camilla-Cat-s-Name-Spectaculaire.mp4'
+              : 'Chrollo-vs-Camilla-Nen-Post-Mortem.mp4'
+            : judgment
+              ? 'Mizaistom-vs-Biscuit-Duel-Strategique.mp4'
+              : solar
+                ? 'Feitan-vs-Tserriednich-Rising-Sun.mp4'
+                : longForm
+                  ? 'Kurapika-vs-Benjamin-Version-Longue.mp4'
+                  : ballroom
+                    ? 'Kurapika-vs-Benjamin-Salle-de-Bal.mp4'
+                    : manga
+                      ? 'Hisoka-vs-Chrollo-Duel-Strategique.mp4'
+                      : cinematic
+                        ? 'Hisoka-vs-Chrollo-Camera-Cinema.mp4'
+                        : continuous
+                          ? 'Hisoka-vs-Chrollo-Combat-Continu.mp4'
+                          : 'Hisoka-vs-Chrollo-Tour-Celeste.mp4',
       )
       if (pictureOnly)
         destination = destination.replace(
@@ -419,15 +435,17 @@ try {
           '+faststart',
           '-shortest',
           '-metadata',
-          cats
-            ? 'title=Black Whale — Chrollo × Camilla / Nen post mortem'
-            : judgment
-              ? 'title=Black Whale — Mizaistom × Biscuit / Duel stratégique'
-              : solar
-                ? 'title=Black Whale — Feitan × Tserriednich / Rising Sun'
-                : ballroom
-                  ? 'title=Black Whale — Kurapika × Benjamin / Salle de bal'
-                  : 'title=Black Whale — Hisoka × Chrollo / Tour céleste',
+          rangedDuel
+            ? 'title=Black Whale — Leorio × Franklin / Chambre funéraire'
+            : cats
+              ? 'title=Black Whale — Chrollo × Camilla / Nen post mortem'
+              : judgment
+                ? 'title=Black Whale — Mizaistom × Biscuit / Duel stratégique'
+                : solar
+                  ? 'title=Black Whale — Feitan × Tserriednich / Rising Sun'
+                  : ballroom
+                    ? 'title=Black Whale — Kurapika × Benjamin / Salle de bal'
+                    : 'title=Black Whale — Hisoka × Chrollo / Tour céleste',
           destination,
         ],
         { stdio: ['pipe', 'inherit', 'inherit'] },

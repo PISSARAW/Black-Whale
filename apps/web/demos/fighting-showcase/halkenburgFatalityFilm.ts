@@ -28,6 +28,7 @@ export function createHalkenburgFatalityFilm(
     preparation: { mode: 'scenario', resources: [], cohorts: [side] },
   }
   f.state.battlefield = createBattlefield(f.state.environment)
+  f.state.rng = 0
   const cohort = readyCohort(f.state, side).length
   f.advance()
   for (let i = 0; f.state[loser].health > 18 && i < 65; i++) {
@@ -42,8 +43,8 @@ export function createHalkenburgFatalityFilm(
   )
   f.close(side, 4)
   f.hit(side, 'neutralSpecial')
-  f.until(() => f.state.phase === 'finished')
-  if (f.state.winner !== side || f.state[loser].health !== 0 || !f.state[side].halkenburgSupporter)
+  f.until(() => f.state.phase === 'finished', f.state.remainingFrames + 60)
+  if (f.state.winner !== side || f.state[loser].health <= 0 || !f.state[side].halkenburgSupporter)
     throw new Error(
       `Halkenburg requires a charged native Grimmel verdict: ${JSON.stringify({ winner: f.state.winner, health: f.state[loser].health, effects: f.state[side].hatsuEffects, supporter: f.state[side].halkenburgSupporter })}`,
     )
@@ -61,7 +62,7 @@ export function createHalkenburgFatalityFilm(
       chosenSupporter: f.state[side].halkenburgSupporter,
       possessionFrames: f.state[loser].hatsuEffects.possessedFrames,
       source:
-        'Native shared-will scenario with three consenting feather bearers. The real Grimmel arrow awards the arcade verdict. The following ten seconds portray the consciousness transfer without extra damage or ability acquisition.',
+        'Native shared-will scenario with three consenting feather bearers. Grimmel swaps consciousness without damage; the ordinary round timer adjudicates the competitive verdict. The following ten seconds portray the transfer without extra damage or ability acquisition.',
       victory: {
         cohortFrame: 66,
         fullDrawFrame: 258,

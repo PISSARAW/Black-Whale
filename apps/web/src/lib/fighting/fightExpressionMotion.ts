@@ -30,7 +30,6 @@ export function expressiveFightMotion(
       rig.pose = null
       return
     }
-    // Melody's flute pose owns her face while she plays (eyes closed, melodyFigurePose.ts).
     const target = fightExpressionTarget(context.fighter, context.progress, context.activity)
     const pose = blendFace(rig, { target: target.pose, seconds: context.seconds })
     rig.mode = target.mode

@@ -21,7 +21,7 @@ describe('Qwen panel execution through the match runtime', () => {
       clock: () => now,
       transport: async (observation) => {
         const option = observation.utilities!.find(
-          (entry) => entry.command.action === 'franklin-aim' && entry.command.target === 'sweep',
+          (entry) => entry.command.action === 'weapon-ready',
         )!
         expect(option).toBeTruthy()
         return {
@@ -33,7 +33,7 @@ describe('Qwen panel execution through the match runtime', () => {
       },
     })
     const match = createFightMatchRuntime(() => now, { qwen })
-    let state = { ...createFight('franklin', 'franklin', { mode: 'versus-local' }), frame: 20 }
+    let state = { ...createFight('leorio', 'hanzo', { mode: 'versus-local' }), frame: 20 }
     match.begin(state)
     state = match.apply(state, { kind: 'start' })
     qwen.setEnabled(true)
@@ -48,8 +48,8 @@ describe('Qwen panel execution through the match runtime', () => {
     await settle()
     for (let frame = 0; frame < 12; frame++) advance()
     expect(qwen.evidence.map((entry) => entry.side)).toEqual(['player', 'opponent'])
-    expect(state.player.franklinAim).toBe('sweep')
-    expect(state.opponent.franklinAim).toBe('sweep')
+    expect(state.player.historicalWeapon).toBeTruthy()
+    expect(state.opponent.historicalWeapon).toBeTruthy()
     const entry = await match.replays.save()
     const replay = entry!.replay
     expect(

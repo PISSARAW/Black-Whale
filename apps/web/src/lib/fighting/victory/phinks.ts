@@ -22,14 +22,22 @@ function phinksArm(context: VictoryContext, turns: number) {
   crouchToVictoryTarget(context, strike * (1 - settle))
   turnVictoryHero(context)
   const shoulder = hero.root.getObjectByName('shoulder-right')!
-  shoulder.rotation.x = -turns * Math.PI * 2
+  // Circumduction uses shoulder swing and abduction together; repeatedly
+  // subtracting full turns from flexion drove the arm through its own torso.
+  const winding = turns * Math.PI * 2
+  shoulder.rotation.set(
+    -1.1 + Math.cos(winding) * 1.6,
+    Math.sin(winding) * 0.35,
+    0.85 + Math.sin(winding) * 0.65,
+  )
   hero.root.getObjectByName('elbow-right')!.rotation.x = -0.16
   hero.root.updateWorldMatrix(true, true)
-  if (age >= 228) {
+  if (age >= 210) {
     const target = victimTorso(context).add(new Vector3(-victim.width * 0.55, 0.05, 0))
     const hand = localToHead(hero, new Vector3(0.24, -0.35, -0.22)).lerp(target, strike)
     hand.lerp(localToHead(hero, new Vector3(0.24, -0.6, 0.07)), settle)
-    reachVictoryHand(context, { side: 'right', target: hand })
+    const carried = hero.root.getObjectByName('hand-right')!.getWorldPosition(new Vector3())
+    reachVictoryHand(context, { side: 'right', target: carried.lerp(hand, ease((age - 210) / 18)) })
   }
   reachVictoryHand(context, {
     side: 'left',

@@ -14,6 +14,7 @@ import { packReplayInput } from './fightReplayInput'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 import type { ReplayCommand } from './fightReplayTypes'
 import { FIXED_STEP } from './fightClock'
+import { comboSupportInput, waitingForComboSupport } from './kameos/comboLessons'
 import {
   beginWakeup,
   DEFAULT_WAKEUP,
@@ -58,21 +59,34 @@ export function createCombatSchool() {
     },
     get useFixedTiming() {
       const current = get(view)
-      return Boolean(current?.wakeupSettings || (current?.demo && definition(current.id).whiff))
+      return Boolean(
+        current?.wakeupSettings ||
+        (current && definition(current.id).kameo) ||
+        (current?.demo && definition(current.id).whiff),
+      )
     },
-    start(id: string, demo = false, wakeup: WakeupSettings = DEFAULT_WAKEUP): FightState {
+    start(id: string, demo = false, wakeup: Partial<WakeupSettings> = DEFAULT_WAKEUP): FightState {
+      const settings: WakeupSettings = { ...DEFAULT_WAKEUP, ...wakeup }
       const route = definition(id)
       if (!route) throw Error('Unknown combat exercise')
       sentStep = -1
       opponentAt = -1000
       wakeupSent = { player: false, opponent: false }
       const progress = initialCombatProgress(id, demo, Boolean(route.whiff))
-      view.set(route.wakeup ? { ...progress, wakeupSettings: { ...wakeup } } : progress)
+      view.set(route.wakeup ? { ...progress, wakeupSettings: settings } : progress)
       // A common, genuinely punishable heavy keeps this lesson stable across personal links.
       const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
       const state = createCombatRouteFight(route, defensePartner)
       whiffAt = state.frame + WHIFF_PUNISH_START
-      if (route.wakeup) return prepareWakeupFight(state, wakeup)
+      if (route.wakeup) return prepareWakeupFight(state, settings)
+      if (route.kameo) {
+        const x = settings.position === 'corner' ? 93 : 50
+        return {
+          ...state,
+          player: { ...state.player, x: x - 6 },
+          opponent: { ...state.opponent, x },
+        }
+      }
       return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
     },
     release() {
@@ -105,9 +119,8 @@ export function createCombatSchool() {
           ? EMPTY_INPUT
           : wakeupDemoInput(state, current.wakeupSettings.followup)
       const route = definition(current.id)
-      return route.whiff
-        ? whiffDemonstrationInput(state, route.whiff, { at: whiffAt, step: current.step })
-        : { ...EMPTY_INPUT, jump: route.kind === 'air' && state.frame < 4 }
+      if (current.complete || current.failed) return EMPTY_INPUT
+      return demonstrationInput(state, route, { step: current.step, whiffAt })
     },
     opponentInput(input: FightInput): FightInput {
       const current = get(view)
@@ -151,6 +164,18 @@ export function createCombatSchool() {
   }
 }
 export type CombatSchool = ReturnType<typeof createCombatSchool>
+
+function demonstrationInput(
+  state: FightState,
+  route: CombatRoute,
+  timing: { step: number; whiffAt: number },
+) {
+  const { step, whiffAt } = timing
+  if (route.kameo) return comboSupportInput(state, route.kameo, step)
+  return route.whiff
+    ? whiffDemonstrationInput(state, route.whiff, { at: whiffAt, step })
+    : { ...EMPTY_INPUT, jump: route.kind === 'air' && state.frame < 4 }
+}
 
 function observeSchoolProgress(
   current: SchoolProgress,
@@ -231,9 +256,12 @@ function demonstrationCommand(
 ): ReplayCommand | null {
   if (!progress.demo || sentStep === progress.step) return null
   const route = combatRoute(progress.id)
+  if (progress.step >= route.moves.length) return null
+  const move = moveForSlot(route.fighter, route.moves[progress.step])!
+  if (waitingForComboSupport(state, route, { step: progress.step, startup: move.tuning.startup }))
+    return null
   if (progress.step === 0 && !demonstrationOpeningReady(state, route)) return null
   const slot = route.moves[progress.step]
-  const move = moveForSlot(route.fighter, slot)!
   if (
     state.player.attack?.moveId === move.id ||
     !canStartFighterAttack(state.player, move.kind, move.id)

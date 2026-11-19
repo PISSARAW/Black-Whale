@@ -1,6 +1,8 @@
+import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FightPose, Turn } from './fightPose'
+import { humanChestTurn, keepHumanJoint, keepHumanJoints } from './fightJointLimits'
 
 /**
  * The shared human figure, seen with the joints a duel needs.
@@ -18,6 +20,8 @@ import type { FightPose, Turn } from './fightPose'
  */
 export interface FightRig {
   human: AnimatedHuman
+  /** The current authored plan owns whether the soles may be constrained. */
+  planted?: boolean
   chest: Group
   waist: number
   elbows: readonly Object3D[]
@@ -38,6 +42,8 @@ export interface PlantFeetOptions {
   root?: Turn
   facing: 1 | -1
   transfer?: boolean
+  support?: number
+  horizontal?: boolean
   pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
 }
 
@@ -149,8 +155,10 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
   }
   turnBy(human.figure, pose.body, mirror)
   turnBy(human.head, pose.head, mirror)
-  applyChest(rig, pose.chest, mirror)
+  applyChest(rig, pose.chest && humanChestTurn(pose.chest), mirror)
   applyLimbs(rig, pose, sides)
+  keepHumanJoints(rig)
+  constrainFightRig(rig)
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {
@@ -207,9 +215,11 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)
     ankle.rotation.x += Math.min(MAX_ANKLE, Math.max(-MAX_ANKLE, level))
+    keepHumanJoint(ankle, 'ankle')
+    constrainCombatJoint(ankle, 'ankle')
   })
   const after = captureFootPlant(rig)
-  const support = after.positions[0].y <= after.positions[1].y ? 0 : 1
+  const support = options.support ?? (after.positions[0].y <= after.positions[1].y ? 0 : 1)
   const target = options.anchor.positions[support].clone()
   const root = options.root ?? [0, 0, 0]
   target.x += root[0] * options.facing
@@ -220,6 +230,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
   biasPursuitSupport(correction, { ...options, after })
+  if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
 }
 

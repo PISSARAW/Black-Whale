@@ -1,3 +1,12 @@
+import { animateHanzoBlade } from './hanzoBladeFigure'
+import { plantHanzoSoles } from './hanzoGrounding'
+import { beginSettledPose } from './fightSettledPose'
+import { feitanAirPlan } from './feitanLocomotion'
+import { feitanHandedPlan } from './feitanHandedPose'
+import { feitanUmbrellaPlan } from './feitanEquipmentPose'
+import { plantBodyFrame } from './fightPlantedPose'
+import { defensiveStance } from './fightDefensiveStance'
+import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
@@ -5,6 +14,7 @@ import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { usesRightHandPose } from './fightHandConvention'
 import { fighterKeyedMove } from './fighterKeyedMove'
+import { chrolloBodyStance } from './chrolloBodyStance'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
@@ -23,6 +33,11 @@ import { animateChrolloBook } from './chrolloFigure'
 import { pursuitRecoveryPose } from './pursuitRecoveryPose'
 import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { attackMotionAccent } from './fightAttackMotion'
+import { strikePresentationFrame } from './fightStrikeRhythm'
+import { strikeSupportPose } from './fightStrikeSupport'
+import { strikeSilhouette } from './fightStrikeSilhouette'
+import { postureSupportLeg } from './fightSupportCycle'
+import { closeBodyPlan } from './fightClosePosture'
 import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
 import { attackTransfer, recoveryTransfer } from './fightAttackWeight'
@@ -34,18 +49,18 @@ import {
   lerpPose,
   NEUTRAL_POSE,
   pickJoints,
-  STANCE_FRAME_JOINTS,
   UPPER_JOINTS,
+  STANCE_FRAME_JOINTS,
   type BodyPlan,
   type FightPose,
 } from './fightPose'
 import { reactionPlan, type ReactionContext } from './fightReactions'
+import { keepHumanJoints } from './fightJointLimits'
 import {
   applyFightPose,
   captureFootPlant,
   fightRigOf,
   hasFightRig,
-  plantFeet,
   resetFightRig,
   type FightRig,
 } from './fightRig'
@@ -55,6 +70,7 @@ import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
+import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 
 /**
@@ -102,6 +118,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const plan = options.plan ?? bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
     animateServiceHandgun(human.figure, fighter)
+    animateHanzoBlade(human.figure, fighter)
     syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
@@ -112,6 +129,8 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     }
     const rig = fightRigOf(human)
     resetFightRig(rig)
+    rig.planted = Boolean(plan?.plant)
+    beginSettledPose(rig, fighter.facing, options.poseContinuity?.observe)
     if (!plan) {
       remember(rig, { key: 'fallback', pose: NEUTRAL_POSE, seconds })
       fallback?.(human)
@@ -126,14 +145,15 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
     animateBonolenovSpear(rig, fighter)
-    if (anchor)
-      plantFeet(rig, {
-        anchor,
-        root: drawn.root,
-        facing: fighter.facing,
-        transfer: Boolean(plan.attackFlow?.transfer),
-        pursuitSupport: attackSupport(plan.attackFlow),
-      })
+    keepHumanJoints(rig)
+    plantBodyFrame(rig, {
+      anchor,
+      pose: drawn,
+      fighter,
+      plan,
+      pursuitSupport: attackSupport(plan.attackFlow),
+    })
+    if (anchor) plantHanzoSoles(rig, fighter)
   })
 }
 
@@ -209,8 +229,13 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const ordinary = fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context)
-  const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
+  const ordinary = withNenCommitment(
+    fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    fighter,
+  )
+  const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
+  const plan = awake && closeBodyPlan(awake, fighter, context.rival)
+  if (plan && fighter.id === 'feitan') return feitanHandedPlan(plan, fighter)
   return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
     ? rightHandedPlan(plan)
     : plan
@@ -245,8 +270,9 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       blend: 0.12,
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
-  if (fighter.attack) return attackingPlan(fighter, standing, context.poseFraction)
-  return readyPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+  const personal = chrolloBodyStance(fighter, standing)
+  if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
+  return restingWithConstraint(fighter, context, personal)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!fighter.luiniPassage || fighter.hitStun > 0) return null
@@ -344,14 +370,20 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
   const pursuit = pursuitGesture(fighter, slot)
-  const base = basePose(variant, standing, authored)
+  const base = basePose(variant, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
   const poseAt = (at: number) =>
     addPoses(
       base,
-      sampleTimeline(timeline, { frame: at, frames, continuous: true }),
+      sampleTimeline(timeline, {
+        frame: strikePresentationFrame(fighter, frames, at),
+        frames,
+        continuous: true,
+      }),
       attackMotionAccent({ fighter, frames, authored, frame: at }),
+      strikeSupportPose(fighter, { transfer, frame: at, frames }),
+      strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
@@ -362,6 +394,9 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       frame,
       pursuit,
       startup: frames.startup,
+      active: frames.active,
+      recovery: frames.recovery,
+      supportLeg: postureSupportLeg(fighter),
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,
@@ -429,15 +464,12 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   const landing = landingPose(fighter, standing)
   if (landing) return { ...landing, plant: true }
   if (fighter.crouching) {
-    const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
+    const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
-  if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
-  // The walk cycle moves the legs; the stance keeps the guard up over it.
-  if (fighter.pose === 'walk') {
-    const walking = walkPose(fighter, pickJoints(standing, UPPER_JOINTS))
-    return { ...walking, plant: true }
-  }
+  if (guarding) return plan(defensiveStance(standing), 'guard')
+  // A fighter never strolls: it shuffles in its whole stance, guard and legs.
+  if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')
 }
 
@@ -451,4 +483,19 @@ function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: Arcad
     const weapon = figure.getObjectByName(name)
     if (weapon) weapon.visible = !fighter.weaponsConfiscated
   }
+}
+
+function restingWithConstraint(
+  fighter: ArcadeFighter,
+  context: PlanContext,
+  standing: FightPose,
+): BodyPlan | null {
+  const constraint = context.nenConstraint
+  if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
+  return (
+    feitanUmbrellaPlan(fighter, standing) ??
+    readyPlan(fighter, standing) ??
+    feitanAirPlan(fighter, standing) ??
+    reactionPlan(fighter, context, standing)
+  )
 }

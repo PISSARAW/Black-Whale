@@ -12,9 +12,9 @@ export function tuneIllumiMoveset(moveset: FighterMoveset): FighterMoveset {
     ...moveset,
     moves,
     mechanicFr:
-      'L : implanter une aiguille spéciale au crâne avec la consigne « Reste ». → + L : approche ; ↓ + L : éloigne-toi. Sans aiguille implantée, ces commandes préparent la prochaine consigne. La victime perd son autonomie jusqu’à la fin de la manche ; aucun drainage d’aura ni retour après deux secondes. ← + L prépare un visage remodelé, sans bonus défensif ; répéter retire le déguisement.',
+      'L : implanter une aiguille spéciale au crâne avec la consigne « Reste ». → + L : approche ; ↓ + L : éloigne-toi. Sans aiguille implantée, ces commandes préparent la prochaine consigne. La victime perd son autonomie jusqu’à la fin de la manche ; aucun drainage d’aura ni retour après deux secondes. ← + L prépare le visage choisi dans le panneau : Gittarackur avec aiguilles ou visage d’Hisoka sans aiguilles. Répéter revient au visage d’origine, sans bonus défensif.',
     mechanicEn:
-      'L: implant a special skull needle with the Stay order. → + L: approach; ↓ + L: retreat. Without an implanted needle, these select its next order. The victim loses autonomy for the round, without aura drain or a two-second release. ← + L prepares an altered face, without defence bonuses; repeat to remove the disguise.',
+      'L: implant a special skull needle with the Stay order. → + L: approach; ↓ + L: retreat. Without an implanted needle, these select its next order. The victim loses autonomy for the round, without aura drain or a two-second release. ← + L prepares the face selected in the panel: Gittarackur with needles or Hisoka’s face without needles. Repeat to revert, without defence bonuses.',
     finisherConditionFr:
       'Aucun finisher offensif attesté. L sur une marionnette ordonne de rester.',
     finisherConditionEn: 'No attested offensive finisher. L orders an existing puppet to stay.',
@@ -34,7 +34,7 @@ function tuneMove(move: FighterMove): FighterMove {
     ],
     forwardSpecial: ['Ordre · Approche', 'Order · Approach'],
     downSpecial: ['Ordre · Éloigne-toi', 'Order · Retreat'],
-    backSpecial: ['Aiguilles · Visage remodelé', 'Needles · Altered face'],
+    backSpecial: ['Visage · Remodelage physique', 'Face · Physical alteration'],
   }
   const implant = move.slot === 'neutralSpecial'
   const [nameFr, nameEn] = labels[move.slot]

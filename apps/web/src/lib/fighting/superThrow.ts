@@ -10,16 +10,11 @@ export const THROW_RECOVERY = 54
 export const SUPER_THROW_RECOVERY = 84
 
 export function superThrowAvailable(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.id === 'bonolenov' &&
-    fighter.aura >= SUPER_THROW_COST &&
-    voluntaryNenAvailable(fighter, { requireHatsu: false })
-  )
+  return fighter.aura >= SUPER_THROW_COST && voluntaryNenAvailable(fighter, { requireHatsu: false })
 }
 
 /** A super grab commits its own Nen; releasing Aura must not purchase Ko again. */
 export function throwAttackOptions(options: AuraAttackOptions): AuraAttackOptions {
-  if (options.state[options.side].id !== 'bonolenov') return options
   if (options.variant !== 'throw' || !(options.superThrow || options.auraCharged)) return options
   return { ...options, superThrow: true, auraCharged: false }
 }
@@ -28,7 +23,7 @@ export function superThrowFrameData(
   data: AttackFrameData,
   fighter: ArcadeFighter,
 ): AttackFrameData {
-  if (fighter.id !== 'bonolenov' || fighter.attack?.variant !== 'throw') return data
+  if (fighter.attack?.variant !== 'throw') return data
   if (!fighter.attack.superThrow)
     return { ...data, recovery: Math.max(data.recovery, THROW_RECOVERY) }
   return {
@@ -42,6 +37,6 @@ export function superThrowFrameData(
 }
 
 export function cinematicThrowKnockdown(attacker: ArcadeFighter): number {
-  if (attacker.id !== 'bonolenov' || attacker.attack?.variant !== 'throw') return 48
+  if (attacker.attack?.variant !== 'throw') return 48
   return attacker.attack.superThrow ? SUPER_THROW_RECOVERY + 8 : THROW_RECOVERY + 8
 }

@@ -1,3 +1,4 @@
+import { SCENARIO_RESOURCE_IDS } from './preparationResources'
 import { FIGHTING_ROSTER } from './roster'
 import { decodeFightSnapshot } from './fightReplaySnapshot'
 import { readPanelReplayCommand } from './fightReplayPanels'
@@ -5,7 +6,7 @@ import { FIGHT_STAGES } from './stages'
 import { FIGHT_FORMATS } from './formats'
 import { createFightEnvironment } from './fightEnvironment'
 import { validInjuryPreparation } from './injuryPreparation'
-import type { FightPreparation, PreparationResource } from './preparationTypes'
+import type { FightPreparation } from './preparationTypes'
 import { REPLAY_INPUT_MASK } from './fightReplayInput'
 import {
   MAX_REPLAY_BYTES,
@@ -45,35 +46,15 @@ function preparation(value: unknown): FightPreparation | undefined {
   if (!validInjuryPreparation(entry.injuries, entry.mode)) return fail()
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 13 ||
+    entry.resources.length > SCENARIO_RESOURCE_IDS.length ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
     return fail()
-  const resources: PreparationResource[] = [
-    'animals',
-    'birds',
-    'plants',
-    'objects',
-    'flutes',
-    'needles',
-    'rooms',
-    'devices',
-    'writing',
-    'spirits',
-    'people',
-    'musse-history',
-    'paper',
-    'cameras',
-    'hostages',
-    'corpses',
-    'armed-corpses',
-    'sedatives',
-  ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),
     ...(entry.injuries ? { injuries: { ...entry.injuries } } : {}),
-    resources: entry.resources.map((id) => member(id, resources)),
+    resources: entry.resources.map((id) => member(id, SCENARIO_RESOURCE_IDS)),
     cohorts: entry.cohorts.map((side) => member(side, ['player', 'opponent'])),
   }
 }

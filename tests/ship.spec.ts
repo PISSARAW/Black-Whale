@@ -308,8 +308,15 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   await expect(stoppedAtEnd).toBeDisabled()
 })
 
-test('the ship still hands off to the 3D tour', async ({ page }) => {
-  await page.getByRole('link', { name: 'Visite virtuelle', exact: true }).click()
+test('the ship still hands off to the 3D tour', async ({ page, isMobile }) => {
+  if (isMobile) {
+    await page.getByRole('button', { name: 'Ouvrir le menu de navigation', exact: true }).click()
+  }
+  const navigation = page.getByRole('navigation', {
+    name: isMobile ? 'Sections principales' : 'Navigation principale',
+    exact: true,
+  })
+  await navigation.getByRole('link', { name: 'Tour', exact: true }).click()
   await expect(page).toHaveURL(/\/fr\/tour$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 })

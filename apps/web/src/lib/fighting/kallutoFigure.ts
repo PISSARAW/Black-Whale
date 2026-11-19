@@ -9,8 +9,8 @@ const SHAPES = new WeakMap<Three, ReturnType<typeof makeShapes>>()
 function makeShapes(THREE: Three) {
   const shapes = {
     scrap: new THREE.BoxGeometry(0.045, 0.065, 0.012),
-    fan: new THREE.CircleGeometry(0.2, 12, 0, Math.PI),
-    rib: new THREE.BoxGeometry(0.008, 0.19, 0.016),
+    fan: new THREE.CircleGeometry(0.26, 12, 0, Math.PI),
+    rib: new THREE.BoxGeometry(0.008, 0.25, 0.016),
   }
   Object.values(shapes).forEach((shape) => (shape.userData.sharedHuman = true))
   return shapes
@@ -54,13 +54,16 @@ function addFan(
 ) {
   const { THREE, glow, model, fighter } = options
   const paper = glow(0xf4e9e5, 1)
+  paper.side = THREE.DoubleSide
   const fan = new THREE.Group()
   fan.name = 'kalluto-paper-fan'
+  fan.position.set(0, -0.015, 0.055)
+  fan.rotation.z = Math.PI
   fan.add(new THREE.Mesh(shapes.fan, paper))
   for (let i = 0; i < 7; i++) {
     const angle = (i / 6) * Math.PI
     const rib = new THREE.Mesh(shapes.rib, glow(0x796f66, 1))
-    rib.position.set(Math.cos(angle) * 0.09, Math.sin(angle) * 0.09, 0.01)
+    rib.position.set(Math.cos(angle) * 0.12, Math.sin(angle) * 0.12, 0.01)
     rib.rotation.z = angle - Math.PI / 2
     fan.add(rib)
   }

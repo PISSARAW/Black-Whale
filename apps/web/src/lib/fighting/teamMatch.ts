@@ -5,6 +5,7 @@ import { nextTeamIndex } from './teams/next'
 import { carryTeamTerrain } from './teams/terrain'
 import { validTeamRoster } from './teams/draft'
 import { settleTeamBodyOutcome } from './teamOutcome'
+import { nextSoulTeamRound } from './halkenburgSoulTeams'
 import { FIXED_STEP } from './fightClock'
 import {
   EMPTY_INPUT,
@@ -87,7 +88,7 @@ function relayFrame(
   const seat = state.teamMatch!.seats[side],
     relay = seat.relay
   if (!relay) return { state, input: null }
-  if ([state.hitstop, state.parallelFuture, state.catsName].some(Boolean))
+  if ([state.hitstop, state.parallelFuture, state.catsName, state.gumResuscitation].some(Boolean))
     return { state, input: EMPTY_INPUT }
   relay.frames++
   approachRelay(state, side)
@@ -140,6 +141,8 @@ export function nextTeamRound(state: FightState): FightState {
   if (!state.teamMatch || state.phase !== 'finished' || state.teamMatch.winner) return state
   state = settleTeamBodyOutcome(state)
   if (state.teamMatch!.winner) return state
+  const soulRound = nextSoulTeamRound(state)
+  if (soulRound) return soulRound
   const team: TeamMatch = structuredClone(state.teamMatch!)
   const bodies = {} as Pick<FightState, 'player' | 'opponent'>
   for (const side of SIDES) {

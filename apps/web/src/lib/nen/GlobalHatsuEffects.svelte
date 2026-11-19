@@ -1,5 +1,6 @@
 <script lang="ts">
   import { iconForHatsu } from '$lib/nen/hatsuIcons'
+  import { trackEvent, trackHatsuUse } from '$lib/analytics/client'
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu, localizeHatsuList, manifestationFor } from '$lib/i18n/hatsu'
@@ -620,7 +621,12 @@
       .slice(0, 34)
   }
 
+  let interactionTracked = false
   function addPoint({ x, y }: ScreenPoint, label: string, extras: PointDetail = {}) {
+    if (profile && !interactionTracked) {
+      interactionTracked = true
+      trackHatsuUse(profile.id, profile.kind, extras.alert ? 'blocked' : 'feedback')
+    }
     points = [...points.slice(-7), { x, y, label, id: ++sequence, ...extras }]
   }
 
@@ -1050,6 +1056,8 @@
     const eventElement = event.target as Element
     if (puppetExecuting) return
     if (!profile || eventElement.closest('[data-hatsu-ui], [data-hatsu-pass]')) return
+    interactionTracked = false
+    trackEvent('hatsu_attempt', { hatsu: profile.id, kind: profile.kind })
     playSiteHatsuInteraction(profile.id, profile.kind)
     if (profile.kind === 'elastic' && bungeeFilterActive) return
     if (profile.kind === 'guardian') {

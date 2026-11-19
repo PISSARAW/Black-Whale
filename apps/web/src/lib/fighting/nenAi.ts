@@ -3,13 +3,18 @@ import { seesCombatBody } from './fightCounterplay'
 import { insideEn } from './nenPerception'
 import { shuObject } from './nenAdvanced'
 import { applyAuraContext } from './nen'
+import { doctrineOpponentNen } from './nenDoctrineActions'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 /** Decisions depend on perceived threats. En never grants an automatic dodge. */
 export function advancedOpponentNen(state: FightState): FightState | null {
+  return defaultOpponentNen(state) ?? doctrineOpponentNen(state)
+}
+
+function defaultOpponentNen(state: FightState): FightState | null {
   const fighter = state.opponent
   const target = state.player
-  if (fighter.aura < 30) return null
+  if (!canMaintain(fighter)) return null
   if (!seesCombatBody(fighter))
     return enProfile(fighter).radiusUnits !== null && state.frame % 180 < 24
       ? hold(state, { en: true })
@@ -22,16 +27,16 @@ export function advancedOpponentNen(state: FightState): FightState | null {
 }
 
 function hiddenThreat(state: FightState): boolean {
-  // Read visible concentration/gestures and scan periodically; do not inspect
-  // an opponent's hidden In flag or undiscovered projectiles to choose a defence.
-  return (
-    (seesCombatBody(state.opponent) &&
-      state.player.pose === 'special' &&
-      !state.player.attack?.concealed) ||
-    state.frame % 180 < 24
-  )
+  // A visible gesture or a held guard is a reason to look with Gyo; the hidden
+  // In flag and undiscovered projectiles are never inspected to choose it.
+  const cue = state.player.pose === 'special' || state.player.blocking
+  return (seesCombatBody(state.opponent) && cue) || state.frame % 180 < 24
 }
 
 function hold(state: FightState, input: Partial<FightInput>): FightState {
   return { ...state, opponent: applyAuraContext(state.opponent, { ...EMPTY_INPUT, ...input }) }
+}
+
+function canMaintain(fighter: FightState['opponent']): boolean {
+  return fighter.aura >= 30 && fighter.nenTactics?.goal !== 'recover'
 }

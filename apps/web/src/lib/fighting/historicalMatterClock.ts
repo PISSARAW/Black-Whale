@@ -1,7 +1,13 @@
+import { cleanCorpseMatter } from './illumiCorpseMatter'
+import { reconcileCorpsePreparations } from './illumiCorpsePreparationClock'
+import { reconcileDowsingMapMatter } from './dowsingMapMatter'
 import { historicalCopyExpired, historicalPartExists } from './historicalCopyLifetime'
 import { advanceCopiedInventory } from './copiedInventory'
 import { advancePaperScatters } from './kallutoScatterFrame'
 import { cleanStoredPaperEntity } from './kallutoStoredPaper'
+import { cleanDocumentMatter } from './paperDocuments'
+import { reconcileIllumiFaces } from './illumiDisguiseClock'
+import { reconcileNeedleFaces, cleanDetachedFaceNeedles } from './illumiNeedleFaceClock'
 import type { PreparedEntity } from './preparationTypes'
 import type { FightState } from './types'
 declare module './types' {
@@ -12,6 +18,8 @@ declare module './types' {
 
 /** Expire matter without advancing puppet attacks, including during a frozen combat sequence. */
 export function expireHistoricalMatter(state: FightState): FightState {
+  state = reconcileCorpsePreparations(state)
+  state = reconcileDowsingMapMatter(reconcileNeedleFaces(reconcileIllumiFaces(state)))
   state = advancePaperScatters(state)
   const field = state.battlefield
   if (!field) return expireCopiedProjectiles(advanceCopiedInventory(state))
@@ -22,7 +30,13 @@ export function expireHistoricalMatter(state: FightState): FightState {
   )
 }
 function expireWorldEntry(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const cleaned = cleanStoredPaperEntity(state, entry)
+  const cleaned = cleanCorpseMatter(
+    state,
+    cleanDetachedFaceNeedles(
+      state,
+      cleanDocumentMatter(state, cleanStoredPaperEntity(state, entry)),
+    ),
+  )
   return cleaned.copy && cleaned.present && historicalCopyExpired(state, cleaned)
     ? { ...cleaned, present: false }
     : cleaned

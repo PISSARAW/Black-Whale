@@ -1,4 +1,7 @@
 import { performArenaObjectTurn } from './arenaObjectTurn'
+import { performMachiCorpse, machiCorpseOptions } from './machiCorpses'
+import { performBenjaminToxin, benjaminToxinOptions } from './benjaminToxin'
+import { performUmbrellaFeint, umbrellaOptions } from './feitanUmbrella'
 import { arenaObjectTurnOptions } from './arenaObjectTurnOptions'
 import { performSunMoonCharge } from './sunMoonCharge'
 import { sunMoonChargeOptions } from './sunMoonChargeOptions'
@@ -6,9 +9,9 @@ import { gumResuscitationOptions } from './gumResuscitationAction'
 import { performGumObjectAnchorCommand } from './gumObjectAnchorCommands'
 import { gumObjectAnchorOptions } from './gumObjectAnchorOptions'
 import { traceArsenal } from './arsenalTrace'
-import { performModelSelection } from './metamorphosenModels'
+import { performModelSelection, modelSelectionOptions } from './metamorphosenModels'
 import { corpseRemovalOptions } from './illumiCorpsePins'
-import { performCorpseCommand, corpseOptions } from './illumiCorpses'
+import { corpseOptions } from './illumiCorpses'
 import { performMachiMaterial, machiMaterialOptions } from './machiMaterial'
 import { performDolphinLoan as performLegacyDolphinLoan } from './dolphinLoan'
 import { performHalkenburgTransfer, halkenburgTransferOptions } from './halkenburgTransfer'
@@ -26,6 +29,15 @@ import { secretWindowOptions, performSecretWindowCommand } from './secretWindowC
 import { performPersonDolphinCommand } from './dolphinPeopleAction'
 import { littleEyeOptions, performLittleEyeCommand } from './littleEyeActions'
 import { arsenalMindAvailable } from './arsenalMind'
+import { illumiMaskOptions } from './illumiMask'
+import { performGuardianStatement, guardianStatementOptions } from './tserriednichGuardian'
+import { performFutureField, futureFieldOptions } from './futureIllusion'
+import { performFranklinAim, franklinAimOptions } from './franklinAim'
+import { performBlinkyEvidence, blinkyEvidenceOptions } from './blinkyEvidence'
+import { performIllumiSupplement, conditioningOptions } from './illumiConditioning'
+import { historicalWeaponOptions } from './historicalWeapons'
+import { gumHeartOptions } from './hisokaHeart'
+import { biohazardDeviceOptions } from './biohazardDeviceArsenal'
 import {
   performHalkenburgSoulCommand,
   halkenburgHostOptions,
@@ -90,13 +102,19 @@ const INVOCATION_FAMILIES: Record<
   string,
   ((options: import('./retrospectiveTypes').ArsenalInvocation) => FightState) | undefined
 > = {
+  umbrella: performUmbrellaFeint,
   bono: performModelSelection,
-  illumi: performCorpseCommand,
+  illumi: performIllumiSupplement,
   machi: performMachiMaterial,
   dolphin: performLegacyDolphinLoan,
   halkenburg: performHalkenburgTransfer,
   black: performBlackVoice,
   bio: performBiohazardDevice,
+  benjamin: performBenjaminToxin,
+  guardian: performGuardianStatement,
+  future: performFutureField,
+  franklin: performFranklinAim,
+  blinky: performBlinkyEvidence,
 }
 
 export function performArsenalCommand(
@@ -122,6 +140,8 @@ function nativeArsenalCommand(
   command: ArsenalCommand,
 ): FightState {
   if (command.action === 'support-consent') return toggleConsent(state, side)
+  if (command.action.startsWith('machi-corpse'))
+    return traceArsenal({ state, side, command }, performMachiCorpse({ state, side, command }))
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
   if (handler) return handler[1](state, side, command)
   const legacy = INVOCATION_FAMILIES[command.action.split('-')[0]]
@@ -209,6 +229,19 @@ export function arsenalOptions(state: FightState, side: FightSide): ArsenalOptio
 function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption[] {
   return [
     consentOption(state, side),
+    ...umbrellaOptions(state, side),
+    ...historicalWeaponOptions(state, side),
+    ...gumHeartOptions(state, side),
+    ...modelSelectionOptions(state, side),
+    ...illumiMaskOptions(state, side),
+    ...guardianStatementOptions(state, side),
+    ...benjaminToxinOptions(state, side),
+    ...machiCorpseOptions(state, side),
+    ...futureFieldOptions(state, side),
+    ...franklinAimOptions(state, side),
+    ...blinkyEvidenceOptions(state, side),
+    ...conditioningOptions(state, side),
+    ...biohazardDeviceOptions(state, side),
     ...blackVoiceOptions(state, side),
     ...machiMaterialOptions(state, side),
     ...corpseOptions(state, side),

@@ -49,9 +49,11 @@ export function createFastController(side: FightSide, seed = 17) {
     const context = { state, side, input }
     const utility = readyUtility(context, plan, specialDue)
     if (utility) {
+      due = state.frame + 100
       specialDue = state.frame + 100
       return { input, utility: { side, command: utility } }
     }
+    if (plan.move.startsWith('utility:')) return { input }
     if (!canAct(state[side]) || holdsDefense(input)) return { input }
     const move = selectMove(context, plan, {
       lastMove,
@@ -82,7 +84,7 @@ interface Context {
 }
 function readyUtility(context: Context, plan: TacticalPlan, readyAt: number) {
   const { state, side } = context
-  if (state.frame < readyAt) return null
+  if (state.frame < readyAt && !plan.move.startsWith('utility:')) return null
   return plannedUtility(state, side, plan)
 }
 

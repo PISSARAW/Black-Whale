@@ -24,7 +24,7 @@ const CHROLLO_GAPS = {
   hinrigh: 10.5,
   mizaistom: 11,
   leorio: 11,
-  hanzo: 9.5,
+  hanzo: 9,
   rihan: 11,
   zakuro: 10.5,
   melody: 11,
@@ -56,7 +56,8 @@ function practice(fighter: Fighter): CombatWhiffPractice {
 
 function lesson(fighter: Fighter): CombatRoute {
   const whiff = practice(fighter)
-  const ender = rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
+  const ender =
+    fighter === 'feitan' ? ('forwardHeavy' as const) : rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
   return {
     id: `${fighter}:whiff-punish`,
     fighter,

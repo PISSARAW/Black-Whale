@@ -66,6 +66,18 @@ function routeContact(
   route: CombatRoute,
 ): CombatProgress {
   const next = { ...progress, lastImpact: state.impact!.sequence }
+  if (utilityRouteContact(state, progress, route)) {
+    const step = progress.step + 1
+    const complete = routeFinished(route, step, progress.supportLanded)
+    return {
+      ...next,
+      step,
+      stepHits: 0,
+      lastContact: state.frame,
+      complete,
+      cue: complete ? 'complete' : 'wait',
+    }
+  }
   if (rejectedContact(state)) return { ...next, cue: 'blocked', failed: true }
   if (route.whiff && progress.step === 0 && state.player.attack?.comboOpening !== 'whiff-punish')
     return { ...next, cue: 'wrong', failed: true }
@@ -84,6 +96,20 @@ function routeContact(
     complete,
     cue: complete ? 'complete' : 'wait',
   }
+}
+
+function utilityRouteContact(state: FightState, progress: CombatProgress, route: CombatRoute) {
+  const impact = state.impact!
+  const expected = moveForSlot(route.fighter, route.moves[progress.step])
+  return Boolean(
+    expected &&
+      expected.tuning.damage === 0 &&
+      expected.tuning.hitstun === 0 &&
+      state.player.attack?.moveId === expected.id &&
+      impact.attacker === 'player' &&
+      !impact.avoided &&
+      !impact.invulnerable,
+  )
 }
 
 function validRouteHit(
@@ -110,8 +136,10 @@ function missedWhiffPunish(progress: CombatProgress, state: FightState, route: C
   )
 }
 
-function comboDropped(progress: CombatProgress, state: FightState) {
-  return progress.step > 0 && state.opponent.hitStun === 0 && state.hitstop === 0
+function comboDropped(progress: CombatProgress, state: FightState, route: CombatRoute) {
+  if (progress.step === 0 || state.opponent.hitStun > 0 || state.hitstop > 0) return false
+  const expected = moveForSlot(route.fighter, route.moves[progress.step])
+  return state.player.attack?.moveId !== expected?.id
 }
 export function observeCombatRoute(
   progress: CombatProgress,
@@ -126,7 +154,7 @@ export function observeCombatRoute(
   if (routeFinished(route, next.step, next.supportLanded))
     return { ...next, complete: true, cue: 'complete' }
   if (missedWhiffPunish(next, state, route)) return { ...next, cue: 'defense-late', failed: true }
-  if (comboDropped(next, state)) return { ...next, cue: 'dropped', failed: true }
+  if (comboDropped(next, state, route)) return { ...next, cue: 'dropped', failed: true }
   return { ...next, cue: routeCue(next, state, route) }
 }
 

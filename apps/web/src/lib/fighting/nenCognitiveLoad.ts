@@ -2,6 +2,16 @@ import { hatsuSourceFor } from './hatsu'
 import { nenMasteryProfile } from './nenMastery'
 import type { AttackKind, FightSide, FightState } from './types'
 
+/** Integer hundredths of a fatigue point: 10_000 is 100%. */
+export const MAX_NEN_MENTAL_FATIGUE = 10_000
+
+declare module './types' {
+  interface ArcadeFighter {
+    /** Optional only for replay snapshots created before this system. */
+    nenMentalFatigue?: number
+  }
+}
+
 export type NenAttentionMode = 'passive' | 'maintained' | 'directed'
 
 export interface NenAttentionCommitment {
@@ -24,17 +34,27 @@ export interface NenCognitiveAction {
   moveId?: string
 }
 
+export function nenMentalFatigueRatio(fighter: FightState[FightSide]): number {
+  return Math.max(0, Math.min(1, (fighter.nenMentalFatigue ?? 0) / MAX_NEN_MENTAL_FATIGUE))
+}
+
 /**
  * Mental bandwidth is independent from aura reserve and output. Values are duel tuning:
  * mastery evidence raises capacity, while simultaneous directed work raises load.
  */
-export function nenCognitiveCapacity(state: FightState, side: FightSide): number {
+export function nenCognitiveBaseCapacity(state: FightState, side: FightSide): number {
   const fighter = state[side]
   const profile = nenMasteryProfile(fighter.nenOwner ?? fighter.id)
   const trainedCategories = Object.values(profile.training).filter(
     (training) => training.level === 2,
   ).length
   return Math.min(100, 72 + profile.training.enhancer.level * 8 + trainedCategories * 4)
+}
+
+/** Long-term fatigue can remove at most 35% of bandwidth; it never rewrites mastery. */
+export function nenCognitiveCapacity(state: FightState, side: FightSide): number {
+  const fatigue = nenMentalFatigueRatio(state[side])
+  return nenCognitiveBaseCapacity(state, side) * (1 - fatigue * 0.35)
 }
 
 /** Recomputed exclusively from live effects, so rollback and replay cannot accumulate drift. */
@@ -56,7 +76,10 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
   if (fighter.hanzoProjection) add('hanzo-projection', 'directed', 26)
   if (fighter.melodyPerformance) add('melody-performance', 'directed', 24)
   if (fighter.machiSuture) add('machi-suture', 'directed', 22)
-  if (fighter.attack?.hatsuSource) add('active-hatsu', 'directed', 12)
+  if (fighter.attack?.hatsuSource) {
+    const unfamiliar = fighter.attack.hatsuSource !== (fighter.nenOwner ?? fighter.id)
+    add('active-hatsu', 'directed', unfamiliar ? 16 : 12)
+  }
 
   const shots = state.projectiles.filter(
     (shot) =>
@@ -108,6 +131,32 @@ export function nenCognitiveAllows(
   if (cost === 0) return true
   const cognitive = readNenCognitiveLoad(state, side)
   return cognitive.load + cost <= cognitive.capacity
+}
+
+/**
+ * Advances only authoritative simulation frames. Instantaneous load stays derived, while this
+ * quantised residue is the sole cognitive value that rollback snapshots must retain.
+ */
+export function advanceNenMentalFatigue(state: FightState): FightState {
+  if (state.forecastSimulation) return state
+  const player = advanceSideFatigue(state, 'player')
+  const opponent = advanceSideFatigue(state, 'opponent')
+  if (player === state.player && opponent === state.opponent) return state
+  return { ...state, player, opponent }
+}
+
+function advanceSideFatigue(state: FightState, side: FightSide): FightState[FightSide] {
+  const fighter = state[side]
+  const { ratio } = readNenCognitiveLoad(state, side)
+  const delta = fatigueDelta(ratio)
+  const current = fighter.nenMentalFatigue ?? 0
+  const next = Math.max(0, Math.min(MAX_NEN_MENTAL_FATIGUE, current + delta))
+  return next === current ? fighter : { ...fighter, nenMentalFatigue: next }
+}
+
+function fatigueDelta(loadRatio: number): number {
+  if (loadRatio > 0.7) return Math.max(1, Math.ceil((loadRatio - 0.7) ** 2 * 24))
+  return loadRatio < 0.5 ? -1 : 0
 }
 
 function concurrentCost(count: number, first: number, extra: number): number {

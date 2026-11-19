@@ -167,6 +167,11 @@ export function preserveLifespan(
   previous: ArcadeFighter,
   elapsedFrames: number,
 ): ArcadeFighter {
+  fighter = {
+    ...fighter,
+    // A round break recovers one quarter; the remaining residue lasts for the match.
+    nenMentalFatigue: Math.round((previous.nenMentalFatigue ?? 0) * 0.75),
+  }
   fighter = carryHalkenburgSoul(fighter, previous)
   fighter = carryIllumiFace(fighter, previous, elapsedFrames)
   fighter = carryNeedleFace(fighter, previous)
@@ -225,6 +230,7 @@ export function createFighter(options: {
     y: 0,
     velocityY: 0,
     aura: 55,
+    nenMentalFatigue: 0,
     nen: createFightingNen(),
     pose: 'idle',
     hitStun: 0,

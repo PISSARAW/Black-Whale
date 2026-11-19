@@ -1,5 +1,6 @@
 import { fightingStyle } from './fightStyles'
 import { fighterNenTraining } from './nenMastery'
+import { nenMentalFatigueRatio } from './nenCognitiveLoad'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -21,9 +22,14 @@ const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
 export function nenTransferFrames(fighter: ArcadeFighter): number {
   // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
-  if ((fighter.nenOwner ?? fighter.id) === 'biscuit') return 2
   const trained = fighterNenTraining(fighter, 'enhancer').level
-  return Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
+  const base =
+    (fighter.nenOwner ?? fighter.id) === 'biscuit'
+      ? 2
+      : Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
+  const fatigue = nenMentalFatigueRatio(fighter)
+  const slowdown = fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
+  return Math.max(2, Math.round(base * slowdown))
 }
 
 export function currentAuraShares(fighter: ArcadeFighter): Shares | undefined {

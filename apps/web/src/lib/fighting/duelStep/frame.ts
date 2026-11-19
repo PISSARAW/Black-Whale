@@ -14,6 +14,7 @@ import { finishExpiredFight } from '../fightTimeout'
 import type { FightState } from '../types'
 import type { DuelAttack, DuelInputs, DuelPhaseResult } from './types'
 import { bufferKameoCalls } from '../kameos/buffer'
+import { advanceNenMentalFatigue } from '../nenCognitiveLoad'
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -27,6 +28,7 @@ export function openFrame(
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
   if (state.hitstop > 0)
     return { state: hitstopFrame(bufferKameoCalls(state, inputs)), pending: true }
+  state = advanceNenMentalFatigue(state)
   state = advancePreparation(state, inputs)
   state = readArenaInputs(state, inputs, (current, side) =>
     performArenaAction(current, side, attack),

@@ -139,6 +139,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter extends RetrospectiveFighterState {
+  /** Repeated limb trauma retained until this match ends. */
+  bodyMemory?: import('./bodyMemory').BodyMemoryState
   throwTechRecoveryFrames?: number
   /** Cosmetic scenes; their props never enter battlefield or projectile state. */
   easterEgg?: import('./easterEggs').EasterEggPlayback

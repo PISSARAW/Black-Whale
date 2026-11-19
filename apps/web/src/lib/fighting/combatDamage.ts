@@ -8,6 +8,7 @@ import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
+import { rememberBodyHit } from './bodyMemory'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 
 const GROUND = 0
@@ -76,6 +77,7 @@ function attackDamage(
 }
 
 interface StrikeOptions {
+  zone?: FightNenZone
   melee?: boolean
   fighter: ArcadeFighter
   attacker: ArcadeFighter
@@ -109,7 +111,7 @@ function struckFighter(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
 ): ArcadeFighter {
   const direction = options.fighter.x > options.attacker.x ? 1 : -1
-  return {
+  const struck = {
     ...options.fighter,
     ...launchState(options),
     airRecovery: airRecoveryOnHit(options),
@@ -134,6 +136,7 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
+  return rememberBodyHit(struck, options.zone, options.damage, options.blocked)
 }
 
 function airRecoveryOnHit(options: StrikeOptions): true | undefined {

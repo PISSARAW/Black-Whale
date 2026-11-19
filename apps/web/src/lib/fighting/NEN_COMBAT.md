@@ -86,6 +86,11 @@ combinaisons View + LB/RB pour oreilles/plaies restent disponibles sans croix.
 - Gyo oculaire normal utilise Ren : **6,4 aura/s**. La version faible utilise
   l’aura apparente : **2,4 aura/s**. Le Gyo corporel coûte **6,4 aura/s**.
 - Ryu conserve **6 aura/s** ; Ryu + lecture oculaire coûte **8,4 aura/s**.
+- **Mémoire du corps :** trois coups non gardés sur les bras ou les jambes
+  fragilisent cette zone pour le reste du match. Y concentrer Ryu ajoute
+  **3 aura/s** et continuer à frapper avec ce membre réduit sa puissance de
+  **18 %**. Le HUD signale la zone atteinte ; protéger le membre empêche les
+  coups gardés d’alimenter cette mémoire.
 - Ko défensif coûte **20 aura à l’engagement**, puis le maintien de Ren et des
   overlays éventuels. Le coût n’est pas répété par frame. Le facteur de défense
   de la zone est **1,2**, les autres reçoivent **0** d’aura. La puissance physique

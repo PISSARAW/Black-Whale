@@ -204,6 +204,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
+    zone: data.targetZone,
     damage,
     knockdown,
     antiAir: launchesWithDirectionalEnding(attacker, antiAir),
@@ -411,6 +412,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     : strikeProjectileDefender({
         fighter: defence.fighter,
         attacker,
+        zone: hit.projectile.targetZone,
         projectile: hit.projectile,
         damage,
         blocked: defence.blocked,

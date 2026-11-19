@@ -36,6 +36,7 @@ import { createFightingNen } from './nen'
 import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
+import { carryBodyMemory } from './bodyMemory'
 
 interface CreateFightOptions {
   formatId?: FightFormatId
@@ -114,25 +115,31 @@ export function nextFightRound(state: FightState): FightState {
       attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
-      player: preserveLifespan(
-        createFighter({
-          id: state.player.halkenburgOrigin ?? state.player.id,
-          x: 22,
-          facing: 1,
-          health: format.health,
-        }),
+      player: carryBodyMemory(
+        preserveLifespan(
+          createFighter({
+            id: state.player.halkenburgOrigin ?? state.player.id,
+            x: 22,
+            facing: 1,
+            health: format.health,
+          }),
+          state.player,
+          state.frame,
+        ),
         state.player,
-        state.frame,
       ),
-      opponent: preserveLifespan(
-        createFighter({
-          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
-          x: 78,
-          facing: -1,
-          health: format.health,
-        }),
+      opponent: carryBodyMemory(
+        preserveLifespan(
+          createFighter({
+            id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+            x: 78,
+            facing: -1,
+            health: format.health,
+          }),
+          state.opponent,
+          state.frame,
+        ),
         state.opponent,
-        state.frame,
       ),
       ...(state.kameos && {
         kameos: nextRoundKameos(state.kameos, (fighter, side) =>

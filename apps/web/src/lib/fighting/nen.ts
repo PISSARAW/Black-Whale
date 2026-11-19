@@ -25,6 +25,7 @@ import { abilityPower } from './nenAbility'
 import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nenTransfer'
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
+import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -123,6 +124,7 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
   if (fighter.nen.on) return 0
   return (
     baseAuraFlow(fighter) -
+    bodyMemoryRyuDrain(fighter) -
     advancedAuraDrain(fighter) -
     Number(fighter.nen.gyo || Boolean(bodyGyoZone(fighter))) * BODY_GYO_DRAIN
   )
@@ -190,7 +192,12 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  return factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
+  return (
+    factor *
+    attackCategoryPower(fighter, kind) *
+    weaponPower(fighter, zone) *
+    bodyMemoryAttackFactor(fighter, zone)
+  )
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {

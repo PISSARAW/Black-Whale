@@ -242,10 +242,17 @@ jobs:
           pnpm --filter "@black-whale/canon-compiler" compile:chapters:dev
 
       - name: Install Playwright browsers
-        # GitHub-hosted runners already ship Chromium's system libraries.
-        # Avoid apt here: transient Ubuntu mirror DNS failures otherwise block
-        # the suite before Playwright can download the browser itself.
-        run: pnpm exec playwright install chromium webkit
+        # WebKit needs native libraries that are not present on every runner.
+        # Ubuntu mirrors occasionally time out, so retry the idempotent install
+        # instead of losing every shard to a transient package-server failure.
+        run: |
+          for attempt in 1 2 3; do
+            pnpm exec playwright install --with-deps chromium webkit && exit 0
+            if [ "$attempt" -lt 3 ]; then
+              sleep "$((attempt * 10))"
+            fi
+          done
+          exit 1
 
       - name: Run end-to-end tests
         run: pnpm test:e2e --project=${{ matrix.project }} --shard=${{ matrix.shard }}

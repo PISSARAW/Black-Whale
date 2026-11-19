@@ -104,21 +104,55 @@ délai d'entrée plus grand. La session de L2 mesure ce coût en continu.
 
 ## Parallel Future
 
-Le pas d'activation de la vision de Tserriednich simule la fenêtre de prévision en une fois
-et range les frames prévues dans `state.parallelFuture.frames`. Trois parades, à choisir en L2 :
+Le pas d'activation de la vision de Tserriednich simule d'un coup les 600 frames de la fenêtre
+de prévision (`parallelFutureForecast.ts`, `FUTURE_WINDOW_FRAMES`), puis les fige dans
+`state.parallelFuture.frames`.
 
-- **Mémoïser la prévision.** Rejouée avec les mêmes entrées, la frame d'activation produit la
-  même prévision : la session de rollback peut la réutiliser au lieu de la recalculer. Ne
-  touche pas aux règles ; demande une clé fiable (empreinte de l'état d'entrée).
-- **Étaler la prévision** sur plusieurs frames. Change le moment où la vision devient
-  disponible, donc les règles et `REPLAY_RULESET`.
-- **Interdire le rollback au-delà de l'activation confirmée** : l'activation devient un point
-  de synchronisation où le client attend la confirmation adverse. Simple, au prix d'un bref
-  gel à chaque activation.
+### La mémoïsation ne suffit pas (mesure du 19 novembre 2026)
 
-La première est recommandée : elle garde le moteur intact et le surcoût n'apparaît qu'une
-fois, comme aujourd'hui. L'empreinte de l'état (0,2 ms au p99 hors Parallel Future) doit
-être mesurée sur l'état d'activation avant de la retenir.
+Un rollback ne resimule que lorsqu'une entrée adverse a été mal prédite. Pour que la prévision
+mise en cache serve, il faudrait que cette entrée mal prédite n'ait rien changé à l'état
+d'activation ni à l'entrée adverse tenue à cette frame. Essai jetable (Vitest, non conservé) sur la bande de stress
+Parallel Future, avec une entrée adverse « humaine » qui change toutes les 6, 12 ou 24 frames
+et une prédiction « dernière entrée connue », pour chaque rollback de 1 à 8 frames qui
+traverse l'une des 4 activations :
+
+| Changement d'entrée adverse | rollbacks mal prédits traversant l'activation | prévision réutilisable |
+| --------------------------: | --------------------------------------------: | ---------------------: |
+|                tous les 6 f |                                            32 |                      0 |
+|               tous les 12 f |                                            12 |                      0 |
+|               tous les 24 f |                                            12 |                      0 |
+
+**0 réussite sur 56.** La clé d'un cache serait pourtant bon marché : l'empreinte de l'état
+d'activation coûte 0,14 à 0,39 ms pour un état de 5 à 10 Ko (les 2,4 Mo n'existent qu'après
+la prévision). La mémoïsation reste utile en appoint, pas comme parade.
+
+### Parade recommandée : prévision calculée au fil de la lecture
+
+Le moteur lit les frames prévues dans l'ordre : `previewCursor` avance de 4 frames par pas
+pendant la vision (`stepVision`), `cursor` d'une frame par pas pendant la divergence
+(`parallelFuture.ts`, `parallelFutureAi.ts`, `throws/selection.ts`). La prévision ne dépend
+que de l'état d'activation et des commandes tenues, fixés à l'activation : la calculer à la
+demande, frame après frame, donne exactement les mêmes frames sans changer les règles ni
+`REPLAY_RULESET`.
+
+- Coût par pas : environ 4 pas moteur pendant la vision, soit 1 à 4 ms selon le p99 d'un pas
+  mesuré en Node (à mesurer sur les pas de prévision eux-mêmes), un seul pendant la
+  divergence. Un rollback de 8 frames juste après l'activation ne recalcule qu'environ
+  32 frames prévues au lieu de 600.
+- À adapter : les lecteurs qui parcourent toutes les frames d'un coup, à savoir l'estimation de
+  danger de l'IA (`parallelFutureAi.ts`, hors PvP), la piste de caméra
+  (`parallelFutureCamera.ts`), l'empreinte (`fightReplayHash.ts`), le masquage
+  (`pvp/view.ts`) et les instantanés de replay.
+- À prouver : la prévision paresseuse produit, frame par frame, les mêmes empreintes que la
+  prévision actuelle sur les tests de Parallel Future existants.
+
+### Alternative simple
+
+**Point de synchronisation à l'activation.** Le client ne calcule la prévision qu'une fois la
+frame d'activation confirmée par les deux entrées. Un seul calcul par activation (130 ms en
+CPU normal, jusqu'à 500 ms ralenti ×4 dans Chrome) : un gel visible à chaque activation, mais
+aucun dans les rollbacks qui suivent.
 
 ## Registre des informations privées (D1-a)
 
@@ -197,6 +231,6 @@ se fera en L5 ; ce registre en donne le périmètre.
 ## Suite
 
 - L1 peut commencer : le déterminisme qu'il suppose est vérifié.
-- Avant L2 : choisir la parade de Parallel Future et mesurer l'empreinte de l'état
-  d'activation.
+- Avant L2 : choisir entre la prévision au fil de la lecture (recommandée) et le point de
+  synchronisation. La mémoïsation seule est écartée par la mesure.
 - Avant la bascule (L6) : un test de vue locale pour chaque ligne **Aucun** du registre.

@@ -64,11 +64,14 @@ avec plusieurs pages, ni kaméos. Le lot L0 refait la mesure sur ces pires cas.
    sons de victoire suivent les frames simulées. Une resimulation peut annuler un impact déjà
    montré : chaque effet doit pouvoir être retiré ou confirmé.
 
-## Décisions à trancher avant L2
+## Décisions
 
-**D1 — Information cachée.** Trois voies :
+**D1 — Information cachée. Tranchée le 19 novembre 2026 : voie (a).** Le rollback s'applique
+aux 40 personnages, sans mode de repli selon la sélection. La fuite possible vers un client
+modifié est acceptée en connaissance de cause ; la confidentialité à l'écran et l'arbitrage
+serveur des résultats restent garantis. Les voies écartées sont conservées pour mémoire.
 
-- **(a) État complet sur les clients, filtrage local (recommandé).** C'est le modèle des jeux de
+- **(a) État complet sur les clients, filtrage local (retenue).** C'est le modèle des jeux de
   combat commerciaux. Les clients honnêtes appliquent toujours `view.ts` avant l'affichage ;
   le serveur rejoue les entrées confirmées et reste seul juge du résultat. Coût : un client
   modifié peut voir les informations privées (équivalent d'un « wallhack »). Le classé garde
@@ -79,13 +82,13 @@ avec plusieurs pages, ni kaméos. Le lot L0 refait la mesure sur ces pires cas.
 - **(c) Rollback avec secrets chiffrés révélés à la frame d'effet.** Juste mais très coûteux :
   chaque Hatsu privé doit séparer son engagement de sa révélation. Hors de portée de ce plan.
 
-**D2 — Topologie.** Recommandé : **relais serveur** par WebSocket. Le serveur reçoit les
+**D2 — Topologie. À trancher avant L3.** Recommandé : **relais serveur** par WebSocket. Le serveur reçoit les
 entrées horodatées, les retransmet immédiatement à l'adversaire et simule en retard, une fois
 les deux entrées d'une frame connues. Le pair-à-pair WebRTC gagne la moitié du trajet serveur,
 mais demande STUN/TURN, expose les adresses IP et sépare l'arbitre du chemin des entrées. Il
 reste une option de L7.
 
-**D3 — Délai d'entrée.** Recommandé : 2 frames par défaut, réglable de 0 à 4 dans les options,
+**D3 — Délai d'entrée. À trancher avant L6.** Recommandé : 2 frames par défaut, réglable de 0 à 4 dans les options,
 avec un rollback maximal de 8 frames. Au-delà, la frame locale attend (gel bref) plutôt que
 de resimuler davantage.
 
@@ -127,9 +130,11 @@ la valeur par défaut jusqu'à L6. Tous les nouveaux fichiers respectent les bor
 Banc permanent `rollbackBudget.test.ts` (ou script `check-fighting-rollback.mjs`) dans le
 navigateur réel : coût de `tickFight`, clone et empreinte sur les pires cas (Parallel Future
 actif, Chrollo à plusieurs pages, kaméos, terrain interactif). Recensement des données retirées
-par `view.ts`, par personnage, pour éclairer D1. Recensement des effets de présentation
-déclenchés par frame. _Fini quand_ : un tableau p50/p95/p99 par personnage, y compris sur un
-profil CPU ralenti ×4, et la liste des personnages concernés par D1.
+par `view.ts`, par personnage : avec D1-a, chacune doit avoir un filtre appliqué localement
+avant l'affichage, et la liste sert de registre public de ce qu'un client modifié peut lire.
+Recensement des effets de présentation déclenchés par frame. _Fini quand_ : un tableau
+p50/p95/p99 par personnage, y compris sur un profil CPU ralenti ×4, et le registre des
+informations privées, chacune reliée à son filtre local et à son test.
 
 **L1 — Commandes dans le pas de simulation.**
 Les `PvpCommand` deviennent des éléments de l'entrée d'une frame, appliqués dans un ordre fixe

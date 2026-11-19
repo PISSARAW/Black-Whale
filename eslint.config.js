@@ -198,6 +198,7 @@ export default tseslint.config(
       'packages/database/**/*.{ts,mjs}',
       'packages/canon-compiler/src/cli/**/*.ts',
       'apps/*/bench/**/*.ts',
+      'apps/*/scripts/**/*.{ts,mjs}',
       'scripts/**/*.{ts,mjs}',
     ],
     rules: {

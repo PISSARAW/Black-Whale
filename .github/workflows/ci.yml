@@ -11,6 +11,10 @@ env:
   POSTGRES_USER: bw_user
   POSTGRES_PASSWORD: bw_password
   POSTGRES_DB: black_whale_test
+  # The Clash catalogues now push ESLint and Vite beyond Node's ~2 GiB
+  # default heap on Linux runners. Keep the limit below the runner's memory
+  # ceiling while giving both tools enough room to finish.
+  NODE_OPTIONS: --max-old-space-size=4096
 
 jobs:
   build-and-test:

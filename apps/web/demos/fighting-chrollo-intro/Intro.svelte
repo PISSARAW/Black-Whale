@@ -10,6 +10,9 @@
   import { TECHNIQUES, techniqueOf } from './techniques'
   import IntroOverlay from './IntroOverlay.svelte'
   import { installPortraitCamera, portraitAudit } from './portraitCamera'
+  import { filmAt } from './victoryFilm'
+  import { companionAt, companionAudit, installCompanion } from './companion'
+  import { bodyVoice, jupiterBeat } from './bodyMusic'
 
   let { hero }: { hero: HeroConfig } = $props()
   const segments = hero.build()
@@ -48,6 +51,10 @@
       ? segment.states[Math.floor(simOverride ?? shot.sim)]
       : undefined,
   )
+  /** The hero's own victory cinematic, after a real KO, at the time the shot's keys give. */
+  let victoryFrame = $derived(
+    segment && shot.kind === 'clip' ? filmAt(segment, simOverride ?? shot.sim) : null,
+  )
   let mask = $derived(
     shot.kind === 'clip'
       ? lit[shot.clip][Math.floor(shot.sim)]
@@ -58,12 +65,16 @@
 
   /** The closing shot pushes in on the hero. */
   let push = $derived(
-    shot.kind === 'clip' && shot.clip === segments.length - 1
+    // A creature towering over the hero needs the whole frame: no push-in on it.
+    shot.kind === 'clip' && shot.clip === segments.length - 1 && !segments[shot.clip].companion
       ? 1 + 0.75 * (1 - Math.pow(1 - Math.min(1, shot.local / (shot.length * 0.45)), 3))
       : 1,
   )
 
   installPortraitCamera(hero.id, () => (shot.kind === 'clip' ? shot.portrait : null))
+  installCompanion(hero.id, () =>
+    segment && shot.kind === 'clip' ? companionAt(segment, simOverride ?? shot.sim) : null,
+  )
 
   /** Presentation clock per output frame (ms): exactly the simulated time it shows. */
   function presentationClock(shots: Shot[]) {
@@ -93,8 +104,15 @@
       duration: timeline.shots.length / timeline.fps,
       cues: timeline.cues,
       portrait: portraitAudit(),
+      companion: companionAudit(),
       clock: presentationClock(timeline.shots),
       sims: timeline.shots.map((s) => (s.kind === 'clip' ? s.sim : null)),
+      body: timeline.shots.map((s) =>
+        s.kind === 'clip' ? bodyVoice(segments[s.clip].states[Math.floor(s.sim)]) : null,
+      ),
+      jupiter: timeline.shots.map((s) =>
+        s.kind === 'clip' ? jupiterBeat(segments[s.clip].states[Math.floor(s.sim)]) : null,
+      ),
       cuts: timeline.shots.flatMap((s, i) => (s.kind === 'clip' && s.local === 0 ? [i] : [])),
       lit: TECHNIQUES.filter((_, i) => carried & (1 << i)),
       missing: TECHNIQUES.filter((_, i) => !(carried & (1 << i))),
@@ -132,6 +150,7 @@
             viewer="player"
             keepCombatantMarkers={false}
             hideSecondaryView
+            {victoryFrame}
           />
         {/if}
       {/key}

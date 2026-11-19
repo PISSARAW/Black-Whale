@@ -101,6 +101,64 @@ const hidden: Scene = () => {
   return s
 }
 
+/** Double tap: the engine's own dash, a real physical burst subject to collisions. */
+function dash(s: Shot, direction: 'right' | 'left') {
+  s.step(2, { [direction]: true })
+  s.step(2)
+  s.step(12, { [direction]: true })
+}
+
+/** Knocked down or rising: a hit there is avoided, so the next strike waits. */
+const wakingUp = (s: Shot) =>
+  s.state.opponent.knockdownFrames > 0 || (s.state.opponent.wakeupInvulnerableFrames ?? 0) > 0
+
+/** The sword lives in the umbrella: dash in, low cut, retreating slash, overhead. */
+const blade: Scene = () => {
+  const s = shot('whale-hold', 'leorio', { gap: 22 })
+  s.step(6)
+  s.beat('DASH', 'Low and fast')
+  dash(s, 'right')
+  s.approach('player', 6)
+  s.move('downSpecial')
+  s.beat('LOW CUT', '↓ Special')
+  s.hits(1, 'player', 50)
+  s.idle()
+  s.move('backSpecial')
+  s.beat('RETREAT SLASH', '← Special. Cut, then gone.')
+  s.hits(1, 'player', 50)
+  s.idle()
+  for (let i = 0; i < 90 && wakingUp(s); i++) s.step()
+  s.approach('player', 4.5)
+  s.move('forwardHeavy')
+  s.beat('OVERHEAD', '→ Heavy')
+  s.hits(1, 'player', 60)
+  s.step(30)
+  return s
+}
+
+/** He jumps over, strikes from the air, lands low and sweeps. */
+const agility: Scene = () => {
+  const s = shot('banquet-hall', 'kalluto', { gap: 9 })
+  s.step(6)
+  s.approach('player', 5)
+  s.step(4, { jump: true })
+  s.step(6)
+  s.beat('AIR', 'Above the guard')
+  s.press('heavy', { right: true })
+  s.hits(1, 'player', 60)
+  for (let i = 0; i < 60 && s.state.player.y > 0; i++) s.step(1, { down: true })
+  for (let i = 0; i < 90 && wakingUp(s); i++) s.step(1, { down: true })
+  s.approach('player', 6)
+  s.held.player = { down: true }
+  s.press('heavy', { down: true })
+  s.beat('SWEEP', 'Then under it')
+  s.hits(1, 'player', 60)
+  s.held.player = {}
+  s.idle()
+  s.step(30)
+  return s
+}
+
 const vanish: Scene = () => {
   const s = shot('observation-deck', 'machi', { gap: 12 })
   s.step(6)
@@ -185,7 +243,8 @@ const signature: Scene = () => {
   s.step(4)
   takeHits(s, () => s.state.player.health < s.state.player.maxHealth - 40, 3)
   s.beat('SIGNATURE COMBO', 'Hurt him. That is the mistake.')
-  for (let i = 0; i < 90 && (s.state.player.hitStun || s.state.player.knockdownFrames); i++) s.step()
+  for (let i = 0; i < 90 && (s.state.player.hitStun || s.state.player.knockdownFrames); i++)
+    s.step()
   s.approach('player', 5)
   s.held.player = { focusHands: true }
   s.cut('banquet-hall')
@@ -218,6 +277,8 @@ const SCENES: Array<[string, Scene]> = [
   ['aura', aura],
   ['combo', combo],
   ['projection', projection],
+  ['blade', blade],
+  ['agility', agility],
   ['hidden', hidden],
   ['vanish', vanish],
   ['sight', sight],

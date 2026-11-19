@@ -9,6 +9,7 @@ import { physicalRosterPair } from './fightPhysicalRoster'
 import { attackData } from './frameData'
 import { reachLimb } from './fightLimbReach'
 import { keepHumanJoints } from './fightJointLimits'
+import { settleFightSupport } from './fightSeparationSupport'
 import { createFightContactLatch } from './fightContactLatch'
 import { clearPassiveArms } from './fightLimbClearance'
 import { anatomicalContactZone, rememberSurfaceContact } from './fightSurfaceContact'
@@ -56,15 +57,18 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
     }
     // This is the final pose boundary: support IK, contact IK, passive arms,
     // expressions and head tracking have all run by now.
-    keepFinalJoints(figureOf)
+    keepFinalJoints(figureOf, state)
     settleBothBodies(figureOf)
   }
 }
 
-function keepFinalJoints(figureOf: (side: FightSide) => Object3D): void {
+function keepFinalJoints(figureOf: (side: FightSide) => Object3D, state: FightState): void {
   for (const side of ['player', 'opponent'] as const) {
     const human = humanAnimationRig(figureOf(side))
-    if (human) keepHumanJoints(fightRigOf(human))
+    if (!human) continue
+    const rig = fightRigOf(human)
+    keepHumanJoints(rig)
+    settleFightSupport(rig, state[side])
   }
 }
 

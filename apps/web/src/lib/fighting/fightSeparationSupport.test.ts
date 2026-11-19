@@ -4,12 +4,32 @@ import { createFightState } from './fightState'
 import { buildFightFigure } from './fighterFigure'
 import { fightBodyMotion, bodyPlan } from './fightBodyMotion'
 import { fightRigOf } from './fightRig'
-import { createSeparationSupport } from './fightSeparationSupport'
+import { createSeparationSupport, settleFightSupport } from './fightSeparationSupport'
 import { reachLimb } from './fightLimbReach'
 import { closeBodyPlan } from './fightClosePosture'
 import { humanAnimationRig } from '$lib/tour/humanAnimation'
 
 const glow = (color: number) => new THREE.MeshBasicMaterial({ color })
+
+it('leaves authored airborne choreography free even when simulation y is still on the floor', () => {
+  const { fighter, model, rig } = setup()
+  model.animate(1, 'idle', {
+    motion: fightBodyMotion({
+      fighter,
+      seconds: 1,
+      progress: 0,
+      plan: { key: 'throw-lift', plant: false, blend: 0, pose: { root: [0, 1.2, 0] } },
+    }),
+  })
+  const before = rig.ankles.map((ankle) => ankle.getWorldPosition(new THREE.Vector3()).toArray())
+  const support = createSeparationSupport()
+  support.prepare(model.turns, fighter, { frame: 60, frozen: false })
+  support(model.turns, fighter, { frame: 60, frozen: false })
+  settleFightSupport(rig, fighter)
+  expect(rig.ankles.map((ankle) => ankle.getWorldPosition(new THREE.Vector3()).toArray())).toEqual(
+    before,
+  )
+})
 function setup() {
   const fighter = createFightState('benjamin', 'leorio').player
   const model = buildFightFigure({ THREE, glow, fighter })

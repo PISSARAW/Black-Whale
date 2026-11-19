@@ -25,3 +25,12 @@ it('carries the settled joint into a new gesture without accumulating IK during 
   expect(flow(attack, 2 / 60)).toEqual(first)
   expect(flow(attack, 3 / 60)).toEqual(first)
 })
+
+it('keeps floor corrections out of authored root travel when starting the next gesture', () => {
+  const flow = createFightPoseContinuity()
+  flow({ key: 'walk', pose: { root: [0.02, -0.01, 0] }, plant: true, blend: 0.1 }, 0)
+  flow.observe({ root: [0.1, -0.4, 0.2], leadKnee: [0.4, 0, 0] })
+  const next = flow({ key: 'stance', pose: {}, plant: true, blend: 0.1 }, 1 / 60)
+  expect(next.root).toEqual([0.02, -0.01, 0])
+  expect(next.leadKnee).toEqual([0.4, 0, 0])
+})

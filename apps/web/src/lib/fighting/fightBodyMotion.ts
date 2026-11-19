@@ -127,6 +127,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     }
     const rig = fightRigOf(human)
     resetFightRig(rig)
+    rig.planted = Boolean(plan?.plant)
     beginSettledPose(rig, fighter.facing, options.poseContinuity?.observe)
     if (!plan) {
       remember(rig, { key: 'fallback', pose: NEUTRAL_POSE, seconds })

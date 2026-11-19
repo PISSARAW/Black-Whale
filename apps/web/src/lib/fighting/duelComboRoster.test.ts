@@ -65,8 +65,10 @@ function pivot(fighter: (typeof FIGHTERS)[number]) {
 }
 
 describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
-  it('offers eight executable examples with distinct free finish outcomes', () => {
-    expect(combatRoutesFor(fighter)).toHaveLength(8)
+  it('offers executable economy and carry examples with distinct free finish outcomes', () => {
+    expect(combatRoutesFor(fighter).map((route) => route.id)).toEqual(
+      expect.arrayContaining([`${fighter}:economy`, `${fighter}:carry`]),
+    )
     const economy = execute(`${fighter}:economy`)
     const carry = execute(`${fighter}:carry`)
     expect(economy.spent).toBe(0)
@@ -74,7 +76,8 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
     expect(carry.distance).toBeGreaterThan(economy.distance + 2)
     expect(carry.damage).toBeGreaterThan(economy.damage)
     expect(economy.state.opponent.knockdownFrames).toBeGreaterThan(0)
-    expect(carry.state.opponent.knockdownFrames).toBeGreaterThan(0)
+    if (fighter === 'chrollo') expect(carry.state.opponent.knockdownFrames).toBe(0)
+    else expect(carry.state.opponent.knockdownFrames).toBeGreaterThan(0)
   })
 
   it('honors the exact physical finisher selected after a common opening', () => {
@@ -87,7 +90,11 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
       const next = command(state, slot)
       expect(next.player.attack?.moveId).toBe(`${fighter}:${slot}`)
       expect(next.player.aura).toBe(state.player.aura)
-      expect(contact(next).opponent.knockdownFrames).toBeGreaterThan(0)
+      const landed = contact(next)
+      if (fighter === 'chrollo' && slot === 'forwardLight') {
+        expect(landed.opponent.knockdownFrames).toBe(0)
+        expect(landed.opponent.x).toBeGreaterThan(state.opponent.x)
+      } else expect(landed.opponent.knockdownFrames).toBeGreaterThan(0)
     }
   })
 
@@ -159,7 +166,7 @@ describe('personal powers and recovery links', () => {
   it('executes Feitan’s longer blade routes without granting injuries, armor or a sun', () => {
     const fast = execute('feitan:speed')
     const long = execute('feitan:speed-economy')
-    expect(fast.spent).toBe(24)
+    expect(fast.spent).toBe(0)
     expect(long.spent).toBe(0)
     expect(long.state.opponent.comboHits).toBe(5)
     expect(fast.state.player.hatsuEffects.painPacker).toMatchObject({

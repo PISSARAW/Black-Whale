@@ -42,7 +42,9 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
     expect(contact.leadKnee![0] + contact.rearKnee![0]).toBeGreaterThan(
       contactPlan.pose.leadKnee![0] + contactPlan.pose.rearKnee![0] + 0.4,
     )
-    expect(contact.leadShoulder).toEqual(contactPlan.pose.leadShoulder)
+    contact.leadShoulder!.forEach((angle, axis) =>
+      expect(angle).toBeCloseTo(contactPlan.pose.leadShoulder![axis], 12),
+    )
     if (attack.supportLeg) {
       const free = attack.supportLeg === 'lead' ? 'rearKnee' : 'leadKnee'
       expect(contact[free]).toEqual(contactPlan.pose[free])

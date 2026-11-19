@@ -105,7 +105,7 @@ export const ROSTER_DUEL_LESSONS: readonly CombatRoute[] = [
     id: 'feitan:carry',
     fighter: 'feitan',
     kind: 'confirm',
-    title: ['Placement · décapitation', 'Position · decapitation'],
+    title: ['Placement · taille au cou', 'Position · neck cut'],
     moves: ['standingLight', 'standingHeavy', 'forwardHeavy'],
     requirement: [
       'Aucune dépense d’aura. La grande taille gagne du terrain et des dégâts, avec une récupération plus longue.',
@@ -119,8 +119,8 @@ export const ROSTER_DUEL_LESSONS: readonly CombatRoute[] = [
     title: ['Vitesse · prolonger vers l’estoc', 'Speed · extend into thrust'],
     moves: ['standingLight', 'forwardLight', 'backHeavy', 'forwardSpecial'],
     requirement: [
-      'Confirme le pas puis le revers. L’estoc final coûte 24 aura ; ce coup de parapluie n’est ni Pain Packer ni Rising Sun.',
-      'Confirm the step and backslash. The final thrust costs 24 aura; this umbrella strike is neither Pain Packer nor Rising Sun.',
+      'Confirme le pas puis le revers. L’estoc final est un coup de lame physique sans coût d’aura ; Pain Packer reste conditionné aux blessures reçues.',
+      'Confirm the step and backslash. The final thrust is a physical blade strike with no aura cost; Pain Packer still requires actual injuries.',
     ],
   },
   {

@@ -22,6 +22,7 @@ export function withContactPosture(plan: BodyPlan, posture?: FightPose): BodyPla
   const recovery = Math.max(0, attack.frame - attack.startup - (attack.active ?? 0))
   const p = Math.min(1, recovery / Math.max(1, attack.recovery ?? 12))
   const weight = 1 - p * p * (3 - 2 * p)
+  if (weight === 0) return plan
   return {
     ...plan,
     pose: addPoses(plan.pose, scalePose(posture, weight)),

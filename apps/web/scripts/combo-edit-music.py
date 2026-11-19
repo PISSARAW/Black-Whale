@@ -129,6 +129,52 @@ def riser(length):
     return (out * 0.35 + tone) * (t / length) ** 1.5
 
 
+def smooth(x, tau):
+    """One-pole smoothing, like WebAudio setTargetAtTime with time constant `tau`."""
+    a = 1 - np.exp(-1 / (SR * tau))
+    out = np.empty_like(x)
+    acc = x[0]
+    for i in range(0, len(x), 64):  # block-wise: cheap and inaudible at 64 samples
+        acc = acc + (x[i] - acc) * (1 - (1 - a) ** 64)
+        out[i:i + 64] = acc
+    return out
+
+
+def body_music(report, length):
+    """Bonolenov's body instrument: the game's own phrase per frame (hz, level, pan),
+    voiced like its live mixer - partials x1, x2.003, x3.01 and breath under hz x5."""
+    track = report.get("body")
+    out = np.zeros((2, length))
+    if not track or not any(track):
+        return out
+    fps = report["fps"]
+    frames = np.array([v if v else [0, 0, 0] for v in track], dtype=float)
+    t = np.arange(length) / SR * fps
+    idx = np.clip(t, 0, len(frames) - 1)
+    hz = np.interp(idx, np.arange(len(frames)), np.where(frames[:, 0] > 0, frames[:, 0], 220))
+    level = np.interp(idx, np.arange(len(frames)), frames[:, 1])
+    pan = np.interp(idx, np.arange(len(frames)), frames[:, 2])
+    hz, level, pan = smooth(hz, 0.025), smooth(level, 0.015), smooth(pan, 0.04)
+    voice = np.zeros(length)
+    for ratio, weight in ((1, 1), (2.003, 0.32), (3.01, 0.12)):
+        voice += np.sin(2 * np.pi * np.cumsum(hz * ratio) / SR) * weight
+    breath = lowpass(rng.standard_normal(length), 1100) * 0.22 * 2.5
+    voice = (voice + breath) * level * 9
+    out[0] = voice * np.clip(1 - pan, 0, 1)
+    out[1] = voice * np.clip(1 + pan, 0, 1)
+    return out
+
+
+def hollow(hz):
+    """Jupiter's hollow percussion: a dropping body tone and a short breath of air."""
+    n = int(SR * 0.42)
+    t = np.arange(n) / SR
+    f = hz * (1 + 0.8 * np.exp(-t / 0.04))
+    tone = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(n, 0.002, 0.18)
+    air = lowpass(rng.standard_normal(n), hz * 6) * env(n, 0.001, 0.05) * 0.5
+    return np.tanh((tone + air) * 1.6) * 0.8
+
+
 def place(buf, sound, at, gain=1.0, pan=0.0):
     i = int(at * SR)
     if i >= buf.shape[1]:
@@ -196,10 +242,19 @@ def main():
             place(fx, key_click(), at, 0.8, pan=0.15)
         elif kind == "drop":
             place(fx, boom(), at, 0.8)
-    # Duck the music under the hits so each contact reads.
+    # Jupiter's existing cue: one hollow beat per 15 simulated frames, motif 0 7 10 5.
+    previous = None
+    for frame, value in enumerate(report.get("jupiter") or []):
+        if value is not None and value != previous:
+            note = [0, 7, 10, 5][value % 4]
+            place(fx, hollow(110 * 2 ** (note / 12)), frame / fps, 0.9)
+        previous = value
+    body = body_music(report, music.shape[1])
+    # Duck the music under the hits and under his body, so each contact and note reads.
     level = lowpass(np.abs(fx).mean(axis=0), 30)
-    duck = 1 - np.clip(level * 2.5, 0, 0.55)
-    mix = music * duck + fx
+    sounding = lowpass(np.abs(body).mean(axis=0), 10)
+    duck = 1 - np.clip(level * 2.5 + sounding * 3, 0, 0.6)
+    mix = music * duck + fx + body
     mix = np.tanh(mix * 0.7) * 0.92
     data = (np.clip(mix.T, -1, 1) * 32767).astype("<i2")
     with wave.open(sys.argv[2], "wb") as w:

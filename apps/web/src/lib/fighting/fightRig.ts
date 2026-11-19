@@ -20,6 +20,8 @@ import { humanChestTurn, keepHumanJoint, keepHumanJoints } from './fightJointLim
  */
 export interface FightRig {
   human: AnimatedHuman
+  /** The current authored plan owns whether the soles may be constrained. */
+  planted?: boolean
   chest: Group
   waist: number
   elbows: readonly Object3D[]
@@ -40,6 +42,8 @@ export interface PlantFeetOptions {
   root?: Turn
   facing: 1 | -1
   transfer?: boolean
+  support?: number
+  horizontal?: boolean
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -214,7 +218,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
     constrainCombatJoint(ankle, 'ankle')
   })
   const after = captureFootPlant(rig)
-  const support = after.positions[0].y <= after.positions[1].y ? 0 : 1
+  const support = options.support ?? (after.positions[0].y <= after.positions[1].y ? 0 : 1)
   const target = options.anchor.positions[support].clone()
   const root = options.root ?? [0, 0, 0]
   target.x += root[0] * options.facing
@@ -224,6 +228,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   target.z += root[2]
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
+  if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
 }
 

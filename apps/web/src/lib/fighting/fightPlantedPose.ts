@@ -1,4 +1,5 @@
 import { plantFeet, type FightRig, type FootPlantAnchor } from './fightRig'
+import { supportCycle } from './fightSupportCycle'
 import type { BodyPlan, FightPose } from './fightPose'
 import type { ArcadeFighter } from './types'
 
@@ -19,5 +20,12 @@ export function plantBodyFrame(
     root: frame.pose.root,
     facing: fighter.facing,
     transfer: Boolean(frame.plan.attackFlow?.transfer),
+    // Authored one-leg balances choose their support from the lower sole. A
+    // fixed idle support would pin the raised leg when the dance alternates.
+    support:
+      fighter.attack || frame.plan.key === 'battle-cantabile-dance'
+        ? undefined
+        : supportCycle(fighter).support,
+    horizontal: fighter.pose !== 'walk',
   })
 }

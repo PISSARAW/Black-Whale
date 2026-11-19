@@ -1,5 +1,6 @@
 import { Shot, type Segment } from './reel'
 import type { BuiltSegment } from './hero'
+import { KIT_SCENES as kit } from './chrolloKit'
 
 type Scene = () => Shot
 
@@ -228,12 +229,18 @@ export const SCENES: Array<[string, Scene]> = [
   ['aura', aura],
   ['combo', combo],
   ['projection', projection],
+  ['steal', kit.steal],
+  ['knife', kit.knife],
   ['voice', voice],
+  ['copies', kit.copies],
   ['vanish', vanish],
   ['sight', sight],
   ['defence', defence],
   ['reinforcement', reinforcement],
   ['pages', pages],
+  ['hands', kit.hands],
+  ['cloth', kit.cloth],
+  ['phone', kit.phone],
   ['oath', oath],
   ['signature', signature],
 ]
@@ -259,6 +266,13 @@ export function split(id: string, whole: Segment): Built[] {
         .filter((p) => p.to > from && p.from < to)
         .map((p) => ({ ...p, from: p.from - from, to: p.to - from })),
       splits: [],
+      victory: whole.victory
+        ?.filter((key) => key.at < to)
+        .map((key) => ({ ...key, at: key.at - from })),
+      companion:
+        whole.companion && whole.companion.at < to
+          ? { ...whole.companion, at: whole.companion.at - from }
+          : undefined,
       part: whole.splits.length > 0,
       card: i === 0 ? whole.card : undefined,
     }

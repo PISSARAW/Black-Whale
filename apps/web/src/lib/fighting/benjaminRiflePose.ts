@@ -1,6 +1,8 @@
 import type { Object3D, Quaternion, Vector3 } from 'three'
 import { benjaminBurstFlash, benjaminGunHeld, benjaminRifleFor } from './benjaminRifle'
 import type { FightRig } from './fightRig'
+import { hingeArm, type HingeScratch } from './fightHingeArm'
+import { keepHumanJoint } from './fightJointLimits'
 import type { ArcadeFighter } from './types'
 
 const SCRATCH = new WeakMap<FightRig, ReturnType<typeof makeScratch>>()
@@ -22,6 +24,18 @@ function makeScratch(rig: FightRig) {
     delta: q(),
     aim: q(),
     yaw: q().setFromAxisAngle(v().set(0, 1, 0), -0.35),
+    hinge: {
+      shoulder: v(),
+      elbow: v(),
+      hand: v(),
+      axis: v(),
+      bend: v(),
+      side: v(),
+      local: v(),
+      basis: rig.human.figure.matrix.clone(),
+      world: q(),
+      parent: q(),
+    } satisfies HingeScratch,
   }
 }
 type Scratch = ReturnType<typeof makeScratch>
@@ -44,11 +58,18 @@ export function animateBenjaminRifle(rig: FightRig, fighter: ArcadeFighter): voi
   if (rifle.muzzle.visible) scratch.target.z -= 0.025
   poseArm({ rig, index: right, target: scratch.target, scratch })
   rig.chest.getWorldQuaternion(scratch.aim).multiply(scratch.yaw)
-  orientWrist(rig.wrists[right], scratch.aim, scratch)
+  holdWrist(rig.wrists[right], scratch.aim, scratch)
   rifle.support.getWorldPosition(scratch.target)
   rig.chest.worldToLocal(scratch.target)
   poseArm({ rig, index: left, target: scratch.target, scratch })
-  orientWrist(rig.wrists[left], scratch.aim, scratch)
+  holdWrist(rig.wrists[left], scratch.aim, scratch)
+}
+
+/** Aim the hand with the rifle, as far as a wrist bends; the elbow is already a hinge. */
+function holdWrist(hand: Object3D, aim: Quaternion, s: Scratch) {
+  orientWrist(hand, aim, s)
+  keepHumanJoint(hand, 'wrist')
+  hand.updateMatrixWorld(true)
 }
 
 function orientWrist(hand: Object3D, aim: Quaternion, s: Scratch) {
@@ -84,6 +105,7 @@ function poseArm(options: { rig: FightRig; index: number; target: Vector3; scrat
     if (hand.getWorldPosition(s.end).distanceToSquared(s.target) < 0.000004) break
     for (const joint of [elbow, arm]) aimJoint({ joint, hand, scratch: s })
   }
+  hingeArm({ arm, elbow, hand }, s.hinge)
 }
 
 function aimJoint(options: { joint: Object3D; hand: Object3D; scratch: Scratch }) {

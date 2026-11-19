@@ -1,22 +1,22 @@
 import { PerspectiveCamera, Quaternion, Scene, Vector3, type Object3D } from 'three'
 
-export type Portrait = 'face' | 'eyes' | 'front' | 'bust' | 'quarter'
+export type Portrait = 'face' | 'eyes' | 'front' | 'bust' | 'quarter' | 'tower'
 
 /**
  * Telephoto framings outside the aura shell. `audience` turns the axis from the face's own
  * front toward the audience side of the stage, so the opponent never stands in the line.
  */
-const FRAMING: Record<
-  Portrait,
-  { distance: number; aim: number; fov: number; audience: number }
-> = {
-  face: { distance: 2.6, aim: -0.06, fov: 15, audience: 0.4 },
-  eyes: { distance: 2.2, aim: -0.04, fov: 9.5, audience: 0.45 },
-  front: { distance: 3.3, aim: -0.3, fov: 34, audience: 0.1 },
-  /** Facing the hero from the audience side, for blows landed in contact. */
-  quarter: { distance: 3.8, aim: -0.12, fov: 34, audience: 0.6 },
-  bust: { distance: 2.8, aim: 0.02, fov: 26, audience: 0.15 },
-}
+const FRAMING: Record<Portrait, { distance: number; aim: number; fov: number; audience: number }> =
+  {
+    face: { distance: 2.6, aim: -0.06, fov: 15, audience: 0.4 },
+    eyes: { distance: 2.2, aim: -0.04, fov: 9.5, audience: 0.45 },
+    front: { distance: 3.3, aim: -0.3, fov: 34, audience: 0.1 },
+    /** Facing the hero from the audience side, for blows landed in contact. */
+    quarter: { distance: 3.8, aim: -0.12, fov: 34, audience: 0.6 },
+    bust: { distance: 2.8, aim: 0.02, fov: 26, audience: 0.15 },
+    /** Facing the hero, wide and low enough to hold what towers behind him. */
+    tower: { distance: 7.5, aim: 0.55, fov: 44, audience: 0.55 },
+  }
 
 let audit: Record<string, unknown> = {}
 export const portraitAudit = () => audit

@@ -52,7 +52,9 @@ export function createFightPoseContinuity() {
   }
   return Object.assign(draw, {
     observe: (pose: FightPose) => {
-      state.settled = { ...state.pose.last, ...pose }
+      // Floor/support offsets are constraints, not authored root travel. Feeding
+      // them into the next plan applies the same pelvis correction a second time.
+      state.settled = { ...state.pose.last, ...pose, root: state.pose.last.root }
     },
   })
 }

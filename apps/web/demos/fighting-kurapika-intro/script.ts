@@ -1,6 +1,7 @@
 import { Shot } from '../fighting-chrollo-intro/reel'
 import { split } from '../fighting-chrollo-intro/script'
 import type { BuiltSegment } from '../fighting-chrollo-intro/hero'
+import { KIT_SCENES as kit } from './kurapikaKit'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 import type { FighterId } from '../../src/lib/fighting/types'
 
@@ -153,9 +154,9 @@ const reinforcement: Scene = () => {
   return s
 }
 
-/** Real wounds, Holy Chain closes them; Steal Chain then drains Hisoka's own Hatsu. */
+/** Real wounds, and Holy Chain closes them (Steal Chain plays out in the Dolphin shot). */
 const chains: Scene = () => {
-  const s = shot('heilly-hideout', 'hisoka', { gap: 6, opponentAura: 24 })
+  const s = shot('heilly-hideout', 'hisoka', { gap: 6 })
   s.step(4)
   takeHits(s, () => s.state.player.health < s.state.player.maxHealth - 30, 2)
   for (let i = 0; i < 60 && (s.state.player.hitStun || s.state.player.attack); i++) s.step()
@@ -163,12 +164,6 @@ const chains: Scene = () => {
   s.move('downSpecial')
   s.beat('HOLY CHAIN', 'The thumb heals')
   s.idle('player', 90)
-  s.step(10)
-  s.approach('player', 6)
-  s.move('backSpecial')
-  s.beat('STEAL CHAIN', 'Drain the aura. Take the ability.')
-  for (let i = 0; i < 160 && !s.state.player.kurapika?.held; i++) s.step()
-  s.beat('STOLEN', 'Bungee Gum now belongs to Kurapika')
   s.step(30)
   return s
 }
@@ -251,8 +246,11 @@ const SCENES: Array<[string, Scene]> = [
   ['sight', sight],
   ['defence', defence],
   ['reinforcement', reinforcement],
+  ['dowsing', kit.dowsing],
   ['chains', chains],
+  ['dolphin', kit.dolphin],
   ['emperor', emperor],
+  ['judgment', kit.judgment],
   ['oath', oath],
   ['signature', signature],
 ]

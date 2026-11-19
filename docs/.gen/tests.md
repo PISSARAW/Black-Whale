@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 938
+Fichiers : 982
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -240,6 +240,10 @@ Fichiers : 938
 
 - AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
 
+## `apps/web/src/lib/fighting/audio/bonolenov.test.ts`
+
+- Bonolenov body instrument > unwraps once through simulation, sounds ordinary combat on both sides, and keeps holes exposed at rest
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -284,6 +288,10 @@ Fichiers : 938
 
 - Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
 
+## `apps/web/src/lib/fighting/bonolenovCombat.test.ts`
+
+- Bonolenov reference combat > starts the same dance on every activation and freezes it when simulation counters freeze
+
 ## `apps/web/src/lib/fighting/bungeeNetwork.test.ts`
 
 - Hisoka’s independent Bungee Gum attachments > preserves existing link identifiers through an unrelated simultaneous exchange
@@ -307,6 +315,10 @@ Fichiers : 938
 ## `apps/web/src/lib/fighting/chrolloAnimation.test.ts`
 
 - Chrollo animations follow executable effects > accents page handling for 18 simulation frames, without a camera inset
+
+## `apps/web/src/lib/fighting/chrolloCombat.test.ts`
+
+- Chrollo — Zoldyck reference combat > varies physical counters and kicks instead of turning pages at empty range
 
 ## `apps/web/src/lib/fighting/chrolloCopiedArsenal.test.ts`
 
@@ -463,6 +475,12 @@ Fichiers : 938
 
 - hitstun tuning is limited to long grounded physical combos > replays the actual escape from a long corner string with identical checkpoints
 
+## `apps/web/src/lib/fighting/feitanCombat.test.ts`
+
+- Feitan — the two Zazan video references > authors moving cuts and holds only the straight thrust contacts
+- Feitan reference corrections > keeps normal blade pressure ahead of the generic Nen preparation projection
+- Feitan physical sword presentation > keeps the left sword and right umbrella together, rebuilds, confiscates and disposes
+
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
@@ -516,6 +534,10 @@ Fichiers : 938
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
+## `apps/web/src/lib/fighting/fightJointLimits.test.ts`
+
+- fighters only move like a human body > never plays the civilian walking stride in a duel
 
 ## `apps/web/src/lib/fighting/fightMobile.test.ts`
 
@@ -640,6 +662,10 @@ Fichiers : 938
 
 - the fixed illusion field captures actual bodies present at activation > does not capture a person outside at activation who enters later
 
+## `apps/web/src/lib/fighting/futurePerception.test.ts`
+
+- being deceived by Laplace Demon in arcade > keeps live movement and new attacks instead of replaying the inputs held at activation
+
 ## `apps/web/src/lib/fighting/gamepadDiagnostics.test.ts`
 
 - local Xbox hardware diagnostics > shows analog trigger travel without guessing a digital press
@@ -665,6 +691,10 @@ Fichiers : 938
 - Halkenburg: two selectable rulesets and material consciousness transfer > defaults to the requested roster variant and refuses its direct transformation in mind mode
 - Halkenburg: body death, priority and the chapter 404 scenario > returns the victim’s mind to its own surviving body when the original source body dies
 
+## `apps/web/src/lib/fighting/hanzoCombat.test.ts`
+
+- Hanzo — Hunter Exam hand-to-hand combat > holds each authored hand or leg contact throughout its actual active frames
+
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
 - fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
@@ -680,6 +710,10 @@ Fichiers : 938
 ## `apps/web/src/lib/fighting/hisokaArsenal.test.ts`
 
 - Hisoka’s physical defensive applications > covers open wounds without restoring health or removing the wounds
+
+## `apps/web/src/lib/fighting/hisokaCombat.test.ts`
+
+- Hisoka reference combat > mixes cards, sweeping kicks and a contact attachment instead of always opening with Gum
 
 ## `apps/web/src/lib/fighting/hisokaEffects.test.ts`
 
@@ -1131,9 +1165,25 @@ Fichiers : 938
 
 - the lens fits real cinematic equipment > includes the whole staff even when the actor’s root is unnamed
 
+## `apps/web/src/lib/fighting/throws/eighthBatch.test.ts`
+
+- the final five pairs preserve corrected physics and native ability conditions > Sayird borrows a real controlled animal without inventing or moving it
+
+## `apps/web/src/lib/fighting/throws/fifthBatch.test.ts`
+
+- fifth batch: conditioned abilities and personality stay faithful to real resources > keeps Melody’s opening close-up on her actual instrument beside a taller opponent
+
 ## `apps/web/src/lib/fighting/throws/performances.test.ts`
 
-- fifteen individual pairs of authored throw performances > owns thirty distinct pairs of actor poses, victim poses, trajectories and lenses
+- forty individual pairs of authored throw performances > covers the entire playable roster with both authored variants
+
+## `apps/web/src/lib/fighting/throws/physics.test.ts`
+
+- throw weight, pivot and support > continues moving through an intermediate lift key instead of stopping at each pose
+
+## `apps/web/src/lib/fighting/throws/seventhBatch.test.ts`
+
+- seventh batch on the corrected cinematic physics > Furykov witnesses a console opened by a real action, privately, without creating a new alert
 
 ## `apps/web/src/lib/fighting/throws/witnesses.test.ts`
 
@@ -2485,6 +2535,10 @@ Fichiers : 938
 - the hair, which is what the reader recognises first > draws a shape for every style in the closed vocabulary
 - the three gabarits > gives a baby a head that is a quarter of it and an adult one a seventh
 - the second tone > bakes exactly two values into every mass, in the geometry
+
+## `apps/web/src/lib/tour/humanLocomotion.test.ts`
+
+- the rendered Tour walk > eases guard-to-walk shoulders instead of jumping by 57 degrees in one frame
 
 ## `apps/web/src/lib/tour/humanProfiles.test.ts`
 

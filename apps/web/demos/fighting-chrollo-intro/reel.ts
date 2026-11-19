@@ -52,6 +52,10 @@ export interface Segment {
   live?: boolean
   /** One piece of a fight cut across stages: it may be as short as two beats. */
   part?: boolean
+  /** Victory cinematic keys: from `at` on, the film plays from `elapsed` seconds. */
+  victory?: { at: number; elapsed: number }[]
+  /** The hero's own Nen creature, rising on him from `at` over `rise` frames. */
+  companion?: { at: number; rise: number; model: import('./companion').Companion['model'] }
   error?: string
 }
 
@@ -70,6 +74,8 @@ export class Shot {
   splits: Segment['splits'] = []
   card?: Segment['card']
   live?: boolean
+  victory: NonNullable<Segment['victory']> = []
+  companion?: Segment['companion']
   private sequence = -1
 
   constructor(
@@ -85,6 +91,8 @@ export class Shot {
       opponentAura?: number
       /** Real stage objects (crates) the fighters can use. */
       arena?: boolean
+      /** Scenario start: a last round, so the finale's KO comes within one combo. */
+      opponentHealth?: number
     } = {},
   ) {
     const fresh = beginFight(
@@ -120,7 +128,12 @@ export class Shot {
           ? { chrolloBook: { ...fresh.player.chrolloBook, open: false } }
           : {}),
       },
-      opponent: { ...fresh.opponent, x: centre + gap / 2, aura: options.opponentAura ?? 100 },
+      opponent: {
+        ...fresh.opponent,
+        x: centre + gap / 2,
+        aura: options.opponentAura ?? 100,
+        health: options.opponentHealth ?? fresh.opponent.health,
+      },
     }
     this.states.push(this.state)
   }
@@ -133,6 +146,14 @@ export class Shot {
     this.portraits.push({ from: this.frame + offset, to: this.frame + offset + frames, mode })
   }
   /** Keep fighting, but show what follows on another stage. */
+  /** From this frame on, the victory cinematic shows its own film from `elapsed` seconds. */
+  film(elapsed: number) {
+    this.victory.push({ at: this.frame, elapsed })
+  }
+  /** From this frame on, the hero's Nen creature rises on him over `rise` frames. */
+  summon(model: NonNullable<Segment['companion']>['model'], rise = 40) {
+    this.companion = { at: this.frame, rise, model }
+  }
   cut(stage: FightStageId) {
     this.splits.push({ at: this.frame, stage })
   }
@@ -144,7 +165,11 @@ export class Shot {
       this.state = tickFight(
         this.state,
         { ...EMPTY_INPUT, ...this.held.player, ...player },
-        { dt: 1 / 60, ai: false, opponentInput: { ...EMPTY_INPUT, ...this.held.opponent, ...opponent } },
+        {
+          dt: 1 / 60,
+          ai: false,
+          opponentInput: { ...EMPTY_INPUT, ...this.held.opponent, ...opponent },
+        },
       )
       this.record()
     }
@@ -155,7 +180,8 @@ export class Shot {
     const impact = this.state.impact
     if (!impact || impact.sequence === this.sequence) return
     this.sequence = impact.sequence
-    if (impact.blocked) this.events.add(`blocked-by-${impact.attacker === 'player' ? 'opponent' : 'player'}`)
+    if (impact.blocked)
+      this.events.add(`blocked-by-${impact.attacker === 'player' ? 'opponent' : 'player'}`)
     if (impact.parried) return
     this.impacts.push({
       at: this.frame,
@@ -253,12 +279,15 @@ export class Shot {
   private scan() {
     for (let i = 1; i < this.states.length; i++) {
       const [a, b] = [this.states[i - 1], this.states[i]]
-      if (b.opponent.hatsuEffects.sunMark && !a.opponent.hatsuEffects.sunMark) this.events.add('sun-mark')
+      if (b.opponent.hatsuEffects.sunMark && !a.opponent.hatsuEffects.sunMark)
+        this.events.add('sun-mark')
       if (b.opponent.hatsuEffects.manipulatedFrames && !a.opponent.hatsuEffects.manipulatedFrames)
         this.events.add('black-voice')
-      if (b.player.chrolloHistorical?.fish && !a.player.chrolloHistorical?.fish) this.events.add('indoor-fish')
+      if (b.player.chrolloHistorical?.fish && !a.player.chrolloHistorical?.fish)
+        this.events.add('indoor-fish')
       if (Math.abs(b.opponent.x - a.opponent.x) > 8) this.events.add('teleported')
-      if (b.player.chrolloBook?.open === false && a.player.chrolloBook?.open) this.events.add(`book-closed@${i}`)
+      if (b.player.chrolloBook?.open === false && a.player.chrolloBook?.open)
+        this.events.add(`book-closed@${i}`)
       if (b.player.nen.on && !a.player.nen.on) this.events.add('on')
       const [ka, kb] = [a.player.kurapika, b.player.kurapika]
       if (kb?.emperorTime && !ka?.emperorTime) this.events.add('emperor-time')
@@ -277,11 +306,13 @@ export class Shot {
       if (hb.arrowNocked && !ha.arrowNocked) this.events.add('arrow-nocked')
       if (b.player.halkenburgGroupProtection && !a.player.halkenburgGroupProtection)
         this.events.add('group-protection')
-      if ((b.halkSoulLinks?.length ?? 0) > (a.halkSoulLinks?.length ?? 0)) this.events.add('mind-transfer')
+      if ((b.halkSoulLinks?.length ?? 0) > (a.halkSoulLinks?.length ?? 0))
+        this.events.add('mind-transfer')
       if (b.player.id !== a.player.id) this.events.add(`new-body:${b.player.id}`)
       const sleeping = (x: FightState) => x.halkSoulMinds?.some((m) => m.sleep) ?? false
       if (sleeping(b) && !sleeping(a)) this.events.add('mind-sleep')
-      const sedated = (x: FightState) => (x.halkSoulLinks ?? []).some((l) => (l as { preparedSedative?: number }).preparedSedative)
+      const sedated = (x: FightState) =>
+        (x.halkSoulLinks ?? []).some((l) => (l as { preparedSedative?: number }).preparedSedative)
       if (sedated(b) && !sedated(a)) this.events.add('sedative')
       if (b.player.umbrellaFeintFrames && !a.player.umbrellaFeintFrames) this.events.add('umbrella')
       const links = (x: FightState) => x.gumNetwork?.links?.length ?? 0
@@ -298,7 +329,11 @@ export class Shot {
       if (ba?.card && !bb?.card) this.events.add('culdcept-release')
       const [fa, fb] = [a.parallelFuture?.phase, b.parallelFuture?.phase]
       if (fb && fb !== fa) this.events.add(`future:${fb}`)
-      if (a.opponent.hatsuEffects.sunMark && !b.opponent.hatsuEffects.sunMark && b.opponent.health < a.opponent.health)
+      if (
+        a.opponent.hatsuEffects.sunMark &&
+        !b.opponent.hatsuEffects.sunMark &&
+        b.opponent.health < a.opponent.health
+      )
         this.events.add('sun-moon-detonation')
     }
   }
@@ -316,6 +351,8 @@ export class Shot {
       splits: this.splits,
       card: this.card,
       live: this.live,
+      victory: this.victory.length ? this.victory : undefined,
+      companion: this.companion,
       error,
     }
   }

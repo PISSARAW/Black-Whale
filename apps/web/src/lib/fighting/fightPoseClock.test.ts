@@ -3,7 +3,11 @@ import { createFightPoseClock } from './fightPoseClock'
 import { createStrideClocks } from './sceneMotion'
 import { createFightState } from './fightState'
 import { keyedMove } from './keyPoseMoves'
-import { sampleTimeline } from './keyPoseTimeline'
+import { keyFrameOf, sampleTimeline, type MoveTimeline, type PhaseFrames } from './keyPoseTimeline'
+import { bodyPlan } from './fightBodyMotion'
+import { createFightPoseContinuity } from './fightPoseContinuity'
+import { FIGHT_JOINTS, type FightPose } from './fightPose'
+import { performAuraAttack } from './engine'
 import { moveForSlot } from './movesets'
 import { FIGHTING_ROSTER } from './roster'
 import type { FighterId, MoveSlot } from './types'
@@ -70,9 +74,67 @@ const normals: MoveSlot[] = [
   'backHeavy',
 ]
 const fighters: FighterId[] = FIGHTING_ROSTER.map((fighter) => fighter.id)
+const feitanCuts = new Set<MoveSlot>([
+  'standingHeavy',
+  'lowHeavy',
+  'airHeavy',
+  'forwardHeavy',
+  'backHeavy',
+])
+
+function expectPoseMatches(actual: FightPose, expected: FightPose) {
+  for (const joint of FIGHT_JOINTS)
+    expect(actual[joint] ?? [0, 0, 0], joint).toEqual(expected[joint] ?? [0, 0, 0])
+}
+
+/** Feitan's blade crosses the target during active frames; thrusts keep their contact silhouette. */
+function expectMovingCut(timeline: MoveTimeline, frames: PhaseFrames, direction: 1 | -1) {
+  const contact = timeline.find((key) => key.phase === 'active' && key.at === 0)!
+  const cut = timeline.find((key) => key.phase === 'active' && key.at > 0)!
+  expect(cut).toBeDefined()
+  expectPoseMatches(sampleTimeline(timeline, { frame: frames.startup, frames }), contact.pose)
+  expectPoseMatches(sampleTimeline(timeline, { frame: keyFrameOf(cut, frames), frames }), cut.pose)
+  let previous = contact.pose
+  for (let frame = frames.startup + 1; frame < frames.startup + frames.active; frame++) {
+    const pose = sampleTimeline(timeline, { frame, frames })
+    expect(pose.leadShoulder![0]).toBeGreaterThanOrEqual(previous.leadShoulder![0])
+    expect(pose.leadShoulder![0]).toBeLessThanOrEqual(cut.pose.leadShoulder![0])
+    expect(pose.chest![1] * direction).toBeGreaterThanOrEqual(previous.chest![1] * direction)
+    expect(pose.chest![1] * direction).toBeLessThanOrEqual(cut.pose.chest![1] * direction)
+    previous = pose
+  }
+  expect(previous.leadShoulder![0] - contact.pose.leadShoulder![0]).toBeGreaterThan(0.3)
+  expect((previous.chest![1] - contact.pose.chest![1]) * direction).toBeGreaterThan(0.1)
+}
+
+function expectCutHitstop(slot: MoveSlot) {
+  const move = moveForSlot('feitan', slot)!
+  for (const facing of [1, -1] as const) {
+    const state = createFightState('feitan', 'hisoka', { mode: 'versus-local' })
+    state.phase = 'fighting'
+    state.player = { ...state.player, facing, y: move.variant === 'air' ? 4 : 0 }
+    const fighter = performAuraAttack({
+      state,
+      side: 'player',
+      kind: move.kind,
+      moveId: move.id,
+      auraCharged: false,
+    }).player
+    expect(fighter.attack?.moveId).toBe(move.id)
+    fighter.attack = { ...fighter.attack!, frame: move.tuning.startup + 1 }
+    const flow = createFightPoseContinuity()
+    const draw = (seconds: number) => flow(bodyPlan(fighter, { seconds, progress: 0 })!, seconds)
+    const frozen = draw(1)
+    expect(draw(10)).toEqual(frozen)
+    fighter.attack = { ...fighter.attack, frame: fighter.attack.frame + 1 }
+    const weaponShoulder = facing === 1 ? 'rearShoulder' : 'leadShoulder'
+    expect(draw(10 + 1 / 60)[weaponShoulder]).not.toEqual(frozen[weaponShoulder])
+  }
+}
+
 describe.each(fighters)('%s authored contact silhouettes', (id) => {
   it.each(normals)(
-    'holds %s through its actual active frames and settles after recovery',
+    'follows the authored %s contact through active frames and settles after recovery',
     (slot) => {
       const move = moveForSlot(id, slot)!
       const { timeline, authored } = keyedMove(id, slot)
@@ -82,9 +144,14 @@ describe.each(fighters)('%s authored contact silhouettes', (id) => {
         active: move.tuning.active,
         recovery: move.tuning.recovery,
       }
-      const contact = sampleTimeline(timeline, { frame: frames.startup, frames })
-      for (let frame = frames.startup; frame < frames.startup + frames.active; frame++)
-        expect(sampleTimeline(timeline, { frame, frames })).toEqual(contact)
+      if (id === 'feitan' && feitanCuts.has(slot)) {
+        expectMovingCut(timeline, frames, slot === 'backHeavy' ? 1 : -1)
+        expectCutHitstop(slot)
+      } else {
+        const contact = sampleTimeline(timeline, { frame: frames.startup, frames })
+        for (let frame = frames.startup; frame < frames.startup + frames.active; frame++)
+          expect(sampleTimeline(timeline, { frame, frames })).toEqual(contact)
+      }
       const end = sampleTimeline(timeline, {
         frame: frames.startup + frames.active + frames.recovery + 2,
         frames,

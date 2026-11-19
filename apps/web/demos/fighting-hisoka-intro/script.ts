@@ -1,6 +1,7 @@
 import { Shot } from '../fighting-chrollo-intro/reel'
 import { split } from '../fighting-chrollo-intro/script'
 import type { BuiltSegment } from '../fighting-chrollo-intro/hero'
+import { KIT_SCENES as kit } from './hisokaKit'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 import type { FighterId } from '../../src/lib/fighting/types'
 
@@ -130,17 +131,6 @@ const objects: Scene = () => {
   return s
 }
 
-/** Texture Surprise changes how a cloth looks, never what lies under it. */
-const texture: Scene = () => {
-  const s = shot('observation-deck', 'machi', { gap: 10 })
-  s.step(6)
-  s.move('downSpecial')
-  s.beat('TEXTURE SURPRISE', 'Thin as paper. Fake as a card trick.')
-  s.idle('player', 90)
-  s.step(40)
-  return s
-}
-
 const vanish: Scene = () => {
   const s = shot('observation-deck', 'machi', { gap: 12 })
   s.step(6)
@@ -259,14 +249,20 @@ const SCENES: Array<[string, Scene]> = [
   ['combo', combo],
   ['projection', projection],
   ['hidden', hidden],
+  ['limbs', kit.limbs],
   ['objects', objects],
-  ['texture', texture],
+  ['card', kit.card],
+  ['ceiling', kit.ceiling],
+  ['catch', kit.catchShot],
+  ['repair', kit.repair],
+  ['mask', kit.mask],
   ['vanish', vanish],
   ['sight', sight],
   ['defence', defence],
   ['reinforcement', reinforcement],
   ['oath', oath],
   ['signature', signature],
+  ['finale', kit.finale],
 ]
 
 export function buildHisokaReel(): BuiltSegment[] {

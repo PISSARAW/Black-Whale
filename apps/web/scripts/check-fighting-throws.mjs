@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import assert from 'node:assert/strict'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -21,7 +22,9 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined,
   headless: true,
   args: [
     '--no-proxy-server',
@@ -61,7 +64,13 @@ try {
       assert.equal(value.audit.finite, true)
       if (phase === 'slam' || phase === 'release') {
         const victim = side === 'player' ? 1 : 0
-        assert.ok(value.audit.bodies[victim][0] < -1, 'The thrown fighter must land on the floor')
+        const pitch = value.audit.bodies[victim][0]
+        assert.ok(
+          phase === 'slam' ? Math.abs(pitch) > 0.5 : pitch < -1,
+          phase === 'slam'
+            ? 'The thrown fighter must leave their upright pose'
+            : 'The thrown fighter must land on the floor',
+        )
       }
       await page.screenshot({ path: path.join(output, `${side}-${phase}.png`) })
       samples.push({ side, phase, ...value.audit })

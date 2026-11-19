@@ -1,6 +1,7 @@
 import { Shot } from '../fighting-chrollo-intro/reel'
 import { split } from '../fighting-chrollo-intro/script'
 import type { BuiltSegment } from '../fighting-chrollo-intro/hero'
+import { KIT_SCENES as kit } from './benjaminKit'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 import type { FighterId } from '../../src/lib/fighting/types'
 
@@ -224,7 +225,8 @@ const signature: Scene = () => {
   s.held.player = {}
   s.beat('AIR BLOW', 'J · J · →J')
   s.idle()
-  for (let i = 0; i < 90 && (s.state.opponent.hitStun || s.state.opponent.knockdownFrames); i++) s.step()
+  for (let i = 0; i < 90 && (s.state.opponent.hitStun || s.state.opponent.knockdownFrames); i++)
+    s.step()
   s.cut('benjamin-salon')
   s.portrait('front', 70, -2)
   s.press('special', { down: true })
@@ -254,6 +256,7 @@ const SCENES: Array<[string, Scene]> = [
   ['reinforcement', reinforcement],
   ['oath', oath],
   ['signature', signature],
+  ['guardian', kit.guardian],
 ]
 
 export function buildBenjaminReel(): BuiltSegment[] {

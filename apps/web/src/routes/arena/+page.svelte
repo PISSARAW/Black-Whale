@@ -11,7 +11,8 @@
   import ArenaBriefing from '$lib/components/arena/ArenaBriefing.svelte'
   import ArenaSetupPanel from '$lib/components/arena/ArenaSetupPanel.svelte'
   import ArenaFightingControls from '$lib/components/arena/ArenaFightingControls.svelte'
-  import ArenaPovHands from '$lib/components/arena/ArenaPovHands.svelte'
+  import ArenaNenDock from '$lib/components/arena/ArenaNenDock.svelte'
+  import ArenaGyoSight from '$lib/components/arena/ArenaGyoSight.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -88,6 +89,7 @@
   import { arenaMoveSlot, createHeldDirection, type ArenaDirection } from '$lib/arena/moveSlot'
   import { standardNenCommand, type CommandAnimation } from '$lib/arena/nenCommands'
   import { comboCount } from '$lib/combat/moveChain'
+  import { arenaSelfBody } from '$lib/arena/selfBody'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
@@ -269,6 +271,16 @@
       pick: true,
     },
   ])
+  let selfActor = $derived(
+    arenaSelfBody({
+      fighter: playerFighter,
+      state: game.player,
+      motion: playerMotion,
+      at: position,
+      heading,
+      place: { spaceId: terrain.id, tierId: terrain.tierId, ground },
+    }),
+  )
   let opponentWalls = $derived(blockerAt(game.opponent.position, terrain.id))
   let selectedChallenge = $derived(
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
@@ -854,7 +866,7 @@
     inputDisabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
-    extras={opponentActor}
+    extras={[...opponentActor, selfActor]}
     collisionWalls={[...terrain.walls, ...opponentWalls]}
     aiming={true}
     castOnClick={true}
@@ -912,12 +924,7 @@
     <ArenaHatsuFx profile={$activeHatsu} sequence={hatsuAnimationSeq} />
   {/if}
 
-  <ArenaPovHands
-    fighter={playerFighter}
-    motion={playerMotion}
-    charging={Boolean(game.player.ko)}
-    mode={game.player.mode}
-  />
+  <ArenaGyoSight active={game.player.gyo} />
 
   {#if playerMotion === 'hit' || playerMotion === 'down'}
     <div class="impact-wash hit" aria-hidden="true"></div>
@@ -1028,45 +1035,25 @@
   {/if}
 
   {#if game.outcome === 'playing'}
-    <nav class="arena-action-dock" aria-label={$t.arena.ui.quickActions}>
-      <button
-        class="primary"
-        data-arena-action="strike"
-        onclick={() => {
-          arenaPanel = null
-          strike()
-        }}><kbd>{$t.arena.keys.strike}</kbd><span>{$t.arena.action.strike}</span></button
-      >
-      <button
-        data-arena-action="guard"
-        onclick={() => {
-          arenaPanel = null
-          guard()
-        }}><kbd>⇧</kbd><span>{$t.arena.ui.guard}</span></button
-      >
-      <button
-        class="ko-action"
-        data-arena-action="ko"
-        onclick={() => {
-          arenaPanel = null
-          gatherKo()
-        }}><kbd>{$t.arena.keys.ko}</kbd><span>{$t.arena.action.ko}</span></button
-      >
-      <button
-        class:active={arenaPanel === 'ryu'}
-        aria-expanded={arenaPanel === 'ryu'}
-        onclick={() => toggleArenaPanel('ryu')}
-        ><kbd>1–4</kbd><span>Ryu · {Math.round(game.player.attackShare * 100)}%</span></button
-      >
-      <button
-        class="hatsu-action"
-        data-arena-action="hatsu"
-        onclick={() => {
-          arenaPanel = null
-          castHatsu()
-        }}><kbd>H</kbd><span>{carriedHatsu?.name ?? 'Hatsu'}</span></button
-      >
-    </nav>
+    <ArenaNenDock
+      player={game.player}
+      aimed={aimedZone}
+      ryuOpen={arenaPanel === 'ryu'}
+      hatsuName={carriedHatsu?.name ?? 'Hatsu'}
+      onCommand={(nen) => {
+        arenaPanel = null
+        command(nen.action, nen.animation)
+      }}
+      onGuard={() => {
+        arenaPanel = null
+        guard()
+      }}
+      onRyu={() => toggleArenaPanel('ryu')}
+      onHatsu={() => {
+        arenaPanel = null
+        castHatsu()
+      }}
+    />
   {/if}
 
   {#if lesson < 4 && game.outcome === 'playing' && arenaPanel === null}

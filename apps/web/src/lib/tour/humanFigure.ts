@@ -17,6 +17,7 @@ import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 import { auraLayersFor, type AuraSight } from './auraSight'
+import { firstPersonArms } from './humanFirstPerson'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -60,6 +61,7 @@ export function humanStateKey(seen: Apparition): string {
     role: seen.human.role,
     identity: seen.human.identity,
     aura: seen.human.aura,
+    firstPerson: seen.human.firstPerson,
     likeness,
   })
 }
@@ -232,6 +234,7 @@ export function buildHumanFigure({
   if (profile.likeness === 'kurapika') head.scale.x *= 1.12
   if (profile.likeness === 'melody') head.scale.multiplyScalar(1.2)
   head.position.y *= frame.neck
+  head.visible = !seen.human?.firstPerson
   figure.add(head)
 
   addHumanClothes({
@@ -359,8 +362,10 @@ export function buildHumanFigure({
   far.rotation.copy(figure.rotation)
   const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
   const animateAura = animateHumanAura(aura)
+  const firstPerson = seen.human?.firstPerson === true
   const animate: ReturnType<typeof humanAnimation> = (seconds, nextPose, layer) => {
     animateHuman(seconds, nextPose, layer)
+    if (firstPerson) firstPersonArms({ root, arms }, nextPose ?? pose)
     animateAura(seconds)
   }
   finishHumanModel({ THREE, glow, model: { root }, profile })

@@ -77,6 +77,7 @@
         type="button"
         disabled={disabled || !move.name}
         title={move.slot}
+        data-arena-action={move.action === 'light' ? 'strike' : undefined}
         onclick={() => onMove(move.action)}
       >
         <kbd>{move.key}</kbd>

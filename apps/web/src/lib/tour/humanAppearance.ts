@@ -46,4 +46,10 @@ export interface HumanAppearance {
   alert?: boolean
   /** The beat this body walks, when it does not simply stand. See `cast/pace.ts`. */
   pace?: Pace
+  /**
+   * The body the camera is wearing: its head is not drawn, because the eyes
+   * are inside it, and what is left is what a fighter sees of their own arms,
+   * chest and feet.
+   */
+  firstPerson?: boolean
 }

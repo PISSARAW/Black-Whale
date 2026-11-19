@@ -21,6 +21,10 @@ export function shownState(seen: Apparition, seconds: number) {
     pair: seen.pair,
     humanPose: step?.walking ? ('walk' as const) : seen.human?.pose,
     humanHeading: seen.heading,
+    humanPinned: wornByCamera(seen),
     pick: seen.pick ?? false,
   }
 }
+
+/** The body the camera is wearing goes where the eyes go, without walking. */
+const wornByCamera = (seen: Apparition) => seen.human?.firstPerson === true

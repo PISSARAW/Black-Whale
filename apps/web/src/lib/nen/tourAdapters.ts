@@ -20,9 +20,22 @@ export function arenaNen(fighter: FighterState): TourNenState {
   state.en = fighter.en === null ? null : { radius: fighter.en }
   state.shu = fighter.shuObjectId ? [fighter.shuObjectId] : []
   state.ko = fighter.ko ? zone(fighter.ko.zone) : null
-  const attack = Math.max(0, Math.min(1, fighter.attackShare))
-  state.ryu = state.ko ? { [state.ko]: 1 } : { hands: attack, [zone(fighter.guard)]: 1 - attack }
+  state.ryu = arenaRyu(fighter, state.ko)
   return state
+}
+
+/** Arena's balanced starting split, which Clash would call plain Ten. */
+const BALANCED_RYU = 0.5
+
+/**
+ * Arena always holds a Ryu split, but only a moved one is a technique: a body
+ * that has not shifted its aura shows Ten, not the flux of a Ko or a Ryu.
+ */
+function arenaRyu(fighter: FighterState, ko: TourNenZone | null): TourNenState['ryu'] {
+  if (ko) return { [ko]: 1 }
+  const attack = Math.max(0, Math.min(1, fighter.attackShare))
+  if (Math.abs(attack - BALANCED_RYU) < 0.01 && !fighter.ryuShift) return {}
+  return { hands: attack, [zone(fighter.guard)]: 1 - attack }
 }
 
 /** Projects Hunt's duel without changing its costs, timers or resolution. */

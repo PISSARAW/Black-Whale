@@ -20,9 +20,13 @@ Arena is split into three deterministic layers:
 locomotion, walls and aiming, while
 [combat/fightingMove.ts](../combat/fightingMove.ts) projects Fighting's authored
 startup, reach, recovery, aura cost and strength onto each attacker's local 3D
-axis. The page renders the player's roster identity as POV hands and signature
-equipment, and the opponent with the matching shared character rig. Hisoka's
-special is routed through Arena's persistent Bungee Gum tether rule.
+axis. The camera wears the player's own fighter model
+([selfBody.ts](selfBody.ts)): its head is not drawn, the body stands just
+behind the eyes and turns with them, so looking down shows the chest and feet,
+and a guard or a strike lifts its arms into view
+([tour/humanFirstPerson.ts](../tour/humanFirstPerson.ts)). The opponent uses the
+same shared character rig. Hisoka's special is routed through Arena's
+persistent Bungee Gum tether rule.
 
 ### Clash combat grammar in first person
 
@@ -65,6 +69,12 @@ Arena keeps its open room; the duel inside it speaks Clash.
   permanent split, mapped onto Clash's four zones. Nen categories are not
   modelled. Replays recorded before this flag, Hunt duels and Hatsu keep
   Arena's own rules.
+- **Nen bar** — [nenDock.ts](nenDock.ts) lays out Clash's techniques above the
+  move row: guard, Ten, Ren, Ken, Zetsu, Gyo, In, Ko, Ryu and Hatsu, with what
+  is held lit. Ten is lit by default and Ko only once engaged; a resting body
+  is drawn in Ten, the Ryu flux only once the split is moved. Gyo sharpens the
+  whole view ([ArenaGyoSight](../components/arena/ArenaGyoSight.svelte)) and
+  draws nothing in front of the eyes.
 - **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
   follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
 

@@ -340,6 +340,8 @@ export interface FightImpact {
   zone: FightNenZone
   concealed: boolean
   avoided: boolean
+  /** A last-health On heavy consumed the attacker's grudge for one lethal strike. */
+  onRage?: boolean
   projectileId: number | null
   position: { x: number; y: number }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */

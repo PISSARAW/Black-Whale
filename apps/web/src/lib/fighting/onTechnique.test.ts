@@ -7,7 +7,9 @@ import {
   ON_BLOCKED_BURN,
   ON_KEN_BURN,
   ON_OATH_GRUDGE,
+  ON_RAGE_GRUDGE,
   ON_SEAL_FRAMES,
+  onRageReady,
   resolveOnImpacts,
 } from './onTechnique'
 import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
@@ -34,6 +36,18 @@ function sworn(fighter: ArcadeFighter, grudge = 80): ArcadeFighter {
 function advance(state: FightState, seconds: number, input = EMPTY_INPUT) {
   let next = state
   for (let elapsed = 0; elapsed < seconds; elapsed += 0.02) next = tickFight(next, input, 0.02)
+  return next
+}
+
+function advanceControlled(
+  state: FightState,
+  frames: number,
+  opponentInput = EMPTY_INPUT,
+): FightState {
+  let next = state
+  for (let frame = 0; frame < frames && next.phase === 'fighting'; frame += 1) {
+    next = tickFight(next, EMPTY_INPUT, { dt: 0.02, opponentInput })
+  }
   return next
 }
 
@@ -131,6 +145,47 @@ describe('On (The Last Mission)', () => {
     }
     const kenned = resolveOnImpacts(kenBefore, { ...kenBefore, impact })
     expect(kenned.player.on!.grudge).toBe(80 - ON_KEN_BURN)
+  })
+
+  it('turns one clean heavy into a lethal rage strike below 20% health', () => {
+    const state = duel()
+    const rage = {
+      ...state,
+      player: { ...sworn(state.player, ON_RAGE_GRUDGE + 20), health: 59 },
+    }
+    expect(onRageReady(rage.player)).toBe(true)
+
+    const struck = advanceControlled(performAttack(rage, 'player', 'heavy'), 50)
+
+    expect(struck.impact?.onRage).toBe(true)
+    expect(struck.opponent.health).toBe(0)
+    expect(struck.player.on?.grudge).toBe(0)
+    expect(struck.player.nen.on).toBe(false)
+  })
+
+  it('does not spend last-health rage on a light hit or through guard', () => {
+    const state = duel()
+    const rage = {
+      ...state,
+      player: { ...sworn(state.player, ON_RAGE_GRUDGE + 20), health: 59 },
+    }
+    const light = advanceControlled(performAttack(rage, 'player', 'light'), 30)
+    expect(light.impact?.onRage).toBe(false)
+    expect(light.opponent.health).toBeGreaterThan(0)
+
+    const guarded = advanceControlled(performAttack(rage, 'player', 'heavy'), 50, {
+      ...EMPTY_INPUT,
+      guard: true,
+    })
+    expect(guarded.impact?.blocked).toBe(true)
+    expect(guarded.impact?.onRage).toBe(false)
+    expect(guarded.opponent.health).toBeGreaterThan(0)
+  })
+
+  it('opens rage strictly below, not at, 20% health', () => {
+    const state = duel()
+    expect(onRageReady({ ...sworn(state.player), health: 60 })).toBe(false)
+    expect(onRageReady({ ...sworn(state.player), health: 59.9 })).toBe(true)
   })
 
   it('is sworn by the CPU when cornered with a ripe grudge', () => {

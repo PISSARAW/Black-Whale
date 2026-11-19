@@ -18,6 +18,7 @@ import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { observeComboMaster } from './comboMaster'
+import { onRageDamage } from './onTechnique'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
@@ -102,7 +103,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = attackerComboScale(attacker, comboHits)
   const critical = isCriticalAuraStrike(attacker)
-  const damage = resolvedDamage({
+  const ordinaryDamage = resolvedDamage({
     attacker,
     defence,
     base: data.damage,
@@ -111,6 +112,15 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
+  const rageStrike = onRageDamage(
+    attacker,
+    sleepingBody(defender),
+    attacker.attack.kind,
+    ordinaryDamage,
+    defence.blocked,
+    defence.avoided,
+  )
+  const damage = rageStrike.damage
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -184,6 +194,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
       avoided: defence.avoided,
+      onRage: rageStrike.rage,
       projectileId: null,
       position: collision.position,
     },

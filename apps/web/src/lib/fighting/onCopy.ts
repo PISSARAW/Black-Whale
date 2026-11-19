@@ -1,4 +1,4 @@
-import { ON_HEALTH_PER_SECOND, ON_OATH_GRUDGE, onOf } from './onTechnique'
+import { ON_HEALTH_PER_SECOND, ON_OATH_GRUDGE, onOf, onRageReady } from './onTechnique'
 import type { ArcadeFighter } from './types'
 
 type Language = 'fr' | 'en'
@@ -7,11 +7,13 @@ type Language = 'fr' | 'en'
 export function onTacticalCopy(language: Language): { benefit: string; risk: string } {
   return language === 'fr'
     ? {
-        benefit: 'Défense 90 % partout · coups +30 % · un coup net scelle le Hatsu adverse',
+        benefit:
+          'Défense 90 % partout · coups +30 % · coup net : Hatsu scellé · sous 20 % de PV : lourd fatal',
         risk: 'CONTRAT · Hatsu, Ken et Ko scellés · la garde adverse consume la rancune',
       }
     : {
-        benefit: '90% defence everywhere · strikes +30% · a clean hit seals the enemy Hatsu',
+        benefit:
+          '90% defence everywhere · strikes +30% · clean hit: Hatsu sealed · below 20% HP: lethal heavy',
         risk: 'CONTRACT · Hatsu, Ken and Ko sealed · enemy guard burns the grudge',
       }
 }
@@ -27,6 +29,7 @@ export interface GrudgeGauge {
   ready: boolean
   burning: boolean
   sealed: boolean
+  rage: boolean
   label: string
 }
 
@@ -35,14 +38,26 @@ export function grudgeGauge(fighter: ArcadeFighter, language: Language): GrudgeG
   const burning = fighter.nen.on
   const ready = !burning && on.grudge >= ON_OATH_GRUDGE
   const sealed = on.sealFrames > 0
+  const rage = onRageReady(fighter)
   const name = language === 'fr' ? 'Rancune' : 'Grudge'
-  const state = burning ? 'On' : ready ? (language === 'fr' ? 'On prêt' : 'On ready') : ''
+  const state = rage
+    ? language === 'fr'
+      ? 'Rage · lourd fatal'
+      : 'Rage · lethal heavy'
+    : burning
+      ? 'On'
+      : ready
+        ? language === 'fr'
+          ? 'On prêt'
+          : 'On ready'
+        : ''
   const seal = sealed ? (language === 'fr' ? 'Hatsu scellé' : 'Hatsu sealed') : ''
   return {
     share: on.grudge / 100,
     ready,
     burning,
     sealed,
+    rage,
     label: [`${name} ${Math.floor(on.grudge)}`, state, seal].filter(Boolean).join(' · '),
   }
 }

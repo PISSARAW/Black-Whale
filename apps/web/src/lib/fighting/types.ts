@@ -414,6 +414,8 @@ import type { BungeeGumAttachment } from './bungeeTypes'
 export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
+  /** A wall-breaking KO has carried the round into an adjacent ship room. */
+  stageTransition?: import('./stageTransition').FightStageTransition
   /** Latest same-frame Ko collision; separate from impacts because neither strike lands. */
   attackClash?: FightAttackClash
   throwTech?: { frame: number; sequence: number }

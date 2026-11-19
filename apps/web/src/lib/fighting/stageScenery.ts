@@ -87,13 +87,26 @@ async function buildBaseScenery(kit: SceneryKit, stageId: FightStageId): Promise
   return buildHoldScenery(kit)
 }
 
+async function buildTransitionedScenery(
+  kit: SceneryKit,
+  stageId: FightStageId,
+  context: StageBackgroundContext,
+): Promise<FightScenery> {
+  const target = context.fight?.().stageTransition?.toSpaceId
+  if (!target) return buildBaseScenery(kit, stageId)
+  const { buildShipRoomScenery } = await import('./stageShipRoom')
+  return buildShipRoomScenery(kit, target)
+}
+
 /** Compose Easter Eggs after the room computes its collision-free fighting lane. */
 export async function buildFightScenery(
   kit: SceneryKit,
   stageId: FightStageId,
   context: StageBackgroundContext = {},
 ): Promise<FightScenery> {
-  const scenery = await buildBaseScenery(kit, stageId)
+  const scenery = await buildTransitionedScenery(kit, stageId, context)
+  // Props and spectators from the starting room do not follow through the wall.
+  if (context.fight?.().stageTransition) return scenery
   const background = buildStageBackground(kit, stageId, context)
   scenery.root.add(background.root)
   return {

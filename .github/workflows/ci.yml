@@ -8,9 +8,6 @@ on:
     branches: [main, develop]
 
 env:
-  # Match the production image build: the web bundle exceeds Node's default
-  # ~2 GiB heap on hosted runners, including builds started by Playwright.
-  NODE_OPTIONS: --max-old-space-size=4096
   POSTGRES_USER: bw_user
   POSTGRES_PASSWORD: bw_password
   POSTGRES_DB: black_whale_test

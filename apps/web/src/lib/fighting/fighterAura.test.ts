@@ -91,16 +91,24 @@ describe('Fighting 2D visitor aura', () => {
     expect(steady.material).toBe(hostile.material)
     expect(steady.userData.renExpression).toEqual({ pressure: 0.38, stability: 0.92, intent: 0.12 })
     expect(hostile.userData.renExpression).toEqual({ pressure: 0.91, stability: 0.34, intent: 0.88 })
+    expect(hostile.scale.x).toBeGreaterThan(steady.scale.x)
+    expect(hostile.scale.y).toBeGreaterThan(steady.scale.y)
 
     ;(steady.onBeforeRender as () => void)()
     expect(steady.material.uniforms.u_renPressure.value).toBe(0.38)
     expect(steady.material.uniforms.u_renStability.value).toBe(0.92)
     expect(steady.material.uniforms.u_renIntent.value).toBe(0.12)
+    expect(steady.material.uniforms.u_opacity.value).toBeCloseTo(
+      0.22 + Math.pow(0.38, 1.3) * 0.78,
+    )
 
     ;(hostile.onBeforeRender as () => void)()
     expect(hostile.material.uniforms.u_renPressure.value).toBe(0.91)
     expect(hostile.material.uniforms.u_renStability.value).toBe(0.34)
     expect(hostile.material.uniforms.u_renIntent.value).toBe(0.88)
+    expect(hostile.material.uniforms.u_opacity.value).toBeCloseTo(
+      0.22 + Math.pow(0.91, 1.3) * 0.78,
+    )
     expect(hostile.material.uniforms.u_colorCore.value.getHex()).toBe(
       NEN_PRESENTATION.ren.colours[0],
     )

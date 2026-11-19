@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1107
+Fichiers : 1112
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1329,6 +1329,14 @@ Fichiers : 1107
 
 - stream reconciliation and bounded input traffic > clears old uploads on a round change even when the intermission views were missed
 
+## `apps/web/src/lib/fighting/pvp/rollback/frameInput.test.ts`
+
+- PvP frame input (rollback lot L1) > resolves place 1 before place 2 within a frame
+
+## `apps/web/src/lib/fighting/pvp/rollback/timeSync.test.ts`
+
+- rollback time sync (lot L3) > measures the round trip with a smoothed average
+
 ## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
 
 - server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
@@ -2220,6 +2228,11 @@ Fichiers : 1107
 ## `apps/web/src/lib/server/clashQwen.test.ts`
 
 - private Clash Ollama integration > keeps Clash configuration separate from the tour gateway and credentials
+
+## `apps/web/src/lib/server/clashRollbackSocket.test.ts`
+
+- Clash rollback relay over a real WebSocket (lot L3) > plays 600 frames between two clients that agree with the reference
+- rollback wire codec > round-trips frames, commands, checksums, pings and peer notices
 
 ## `apps/web/src/lib/server/clashSeasonFile.test.ts`
 

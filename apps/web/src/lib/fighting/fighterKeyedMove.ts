@@ -7,6 +7,7 @@ import { hisokaKeyedMove } from './hisokaCardPoses'
 import { keyedMove } from './keyPoseMoves'
 import { directionalFinishPose } from './directionalFinishPoses'
 import { rosterDirectionalMove } from './rosterDirectionalPoses'
+import { naturalTechniqueTimeline } from './naturalTechniqueTimeline'
 import type { ArcadeFighter, MoveSlot } from './types'
 
 /** The same equipment-aware timeline feeds the drawn body and its aura allocation. */
@@ -21,5 +22,9 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
     benjaminKeyedMove(fighter) ??
     hisokaKeyedMove(fighter) ??
     keyedMove(fighter.id, slot)
-  return rosterDirectionalMove(fighter, native)
+  const directed = rosterDirectionalMove(fighter, native)
+  return {
+    ...directed,
+    timeline: naturalTechniqueTimeline(fighter.id, slot, directed.timeline),
+  }
 }

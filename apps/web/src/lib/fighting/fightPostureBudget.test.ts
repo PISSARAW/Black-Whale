@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { bodyPlan } from './fightBodyMotion'
-import { FIGHT_LEAN_BUDGETS, keepFightPosture } from './fightPostureBudget'
+import { ATTACK_KNEE_FLEXION_MAX, FIGHT_LEAN_BUDGETS, keepFightPosture } from './fightPostureBudget'
 import { createFightState } from './fightState'
 import type { BodyPlan } from './fightPose'
 import { attackData } from './frameData'
@@ -56,6 +56,33 @@ describe('fight posture budget', () => {
       pose: { body: [-1.5, 0, 0], chest: [0.8, 0, 0] },
     }
     expect(keepFightPosture(plan, fighter)).toBe(plan)
+  })
+
+  it('limits layered crouch flexion before the rendered joint clamp', () => {
+    const fighter = createFightState('bonolenov', 'hisoka').player
+    const plan: BodyPlan = {
+      key: 'deep-low',
+      blend: 0,
+      plant: true,
+      pose: { leadKnee: [2.7, 0.1, 0], rearKnee: [3.4, -0.1, 0.2] },
+    }
+    const limited = keepFightPosture(plan, {
+      ...fighter,
+      pose: 'heavy',
+      attack: {
+        kind: 'heavy',
+        variant: 'low',
+        frame: 8,
+        impacted: false,
+        auraCharged: false,
+        concealed: false,
+        hatsuSource: null,
+        projectileSpawned: false,
+        reversal: false,
+      },
+    })
+    expect(limited.pose.leadKnee).toEqual([ATTACK_KNEE_FLEXION_MAX, 0.1, 0])
+    expect(limited.pose.rearKnee).toEqual([ATTACK_KNEE_FLEXION_MAX, -0.1, 0.2])
   })
 
   it('bounds the real idle, walk and dash plans after all motion layers are composed', () => {

@@ -10,9 +10,10 @@ import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter } from './types'
 
 const LARGE_FRAMES = ['beyond', 'franklin'] as const
+const NATURAL_LUNGES = ['halkenburg', 'terebellum', 'biscuit'] as const
 
 describe('upright fighters strike from a lunge', () => {
-  it.each(['benjamin', 'tserriednich', ...LARGE_FRAMES] as const)(
+  it.each(['benjamin', 'tserriednich', ...LARGE_FRAMES, ...NATURAL_LUNGES] as const)(
     '%s steps the lead foot forward',
     (id) => {
       const standing = fightStance(id)!.pose
@@ -31,55 +32,64 @@ describe('upright fighters strike from a lunge', () => {
   })
 })
 
-it.each(LARGE_FRAMES)('%s drives its heavy strike through a continuous lunge', (id) => {
-  const idle = createFightState(id, 'hisoka').player
-  const move = moveForSlot(id, 'standingHeavy')!
-  const fighter: ArcadeFighter = {
-    ...idle,
-    pose: move.kind,
-    attack: {
-      kind: move.kind,
-      variant: move.variant,
-      moveId: move.id,
-      frame: 0,
-      impacted: false,
-      auraCharged: false,
-      concealed: false,
-      hatsuSource: null,
-      projectileSpawned: false,
-      reversal: false,
-    },
-  }
-  const frames = attackData(move.kind, fighter)
-  const continuity = createFightPoseContinuity()
-  continuity(bodyPlan(idle, { seconds: 0, progress: 0 })!, 0)
+it.each([...LARGE_FRAMES, ...NATURAL_LUNGES] as const)(
+  '%s drives its heavy strike through a continuous lunge',
+  (id) => {
+    const idle = createFightState(id, 'hisoka').player
+    const move = moveForSlot(id, 'standingHeavy')!
+    const fighter: ArcadeFighter = {
+      ...idle,
+      pose: move.kind,
+      attack: {
+        kind: move.kind,
+        variant: move.variant,
+        moveId: move.id,
+        frame: 0,
+        impacted: false,
+        auraCharged: false,
+        concealed: false,
+        hatsuSource: null,
+        projectileSpawned: false,
+        reversal: false,
+      },
+    }
+    const frames = attackData(move.kind, fighter)
+    const continuity = createFightPoseContinuity()
+    continuity(bodyPlan(idle, { seconds: 0, progress: 0 })!, 0)
 
-  let previous: readonly number[] | undefined
-  let largestJointStep = 0
-  let contact: FightPose | undefined
-  for (let frame = 0; frame <= frames.startup; frame++) {
-    fighter.attack = { ...fighter.attack!, frame }
-    const seconds = (frame + 1) / 60
-    const pose = continuity(bodyPlan(fighter, { seconds, progress: 0 })!, seconds)
-    const legs = [
-      pose.leadHip?.[0] ?? 0,
-      pose.leadKnee?.[0] ?? 0,
-      pose.rearHip?.[0] ?? 0,
-      pose.rearKnee?.[0] ?? 0,
-    ]
-    if (previous)
-      largestJointStep = Math.max(
-        largestJointStep,
-        ...legs.map((value, index) => Math.abs(value - previous![index])),
-      )
-    previous = legs
-    contact = pose
-  }
+    let previous: readonly number[] | undefined
+    let largestJointStep = 0
+    let contact: FightPose | undefined
+    for (let frame = 0; frame <= frames.startup; frame++) {
+      fighter.attack = { ...fighter.attack!, frame }
+      const seconds = (frame + 1) / 60
+      const pose = continuity(bodyPlan(fighter, { seconds, progress: 0 })!, seconds)
+      const legs = [
+        pose.leadHip?.[0] ?? 0,
+        pose.leadKnee?.[0] ?? 0,
+        pose.rearHip?.[0] ?? 0,
+        pose.rearKnee?.[0] ?? 0,
+      ]
+      if (previous)
+        largestJointStep = Math.max(
+          largestJointStep,
+          ...legs.map((value, index) => Math.abs(value - previous![index])),
+        )
+      previous = legs
+      contact = pose
+    }
 
-  expect(contact?.root?.[2] ?? 0).toBeGreaterThan(0.05)
-  expect(contact?.leadHip?.[0] ?? 0).toBeLessThan(-0.4)
-  expect(contact?.leadKnee?.[0] ?? 0).toBeGreaterThan(0.8)
-  expect(contact?.rearHip?.[0] ?? 0).toBeGreaterThan(0.25)
-  expect(contact?.rearKnee?.[0] ?? 0).toBeGreaterThan(0.5)
-  expect(largestJointStep).toBeLessThan(0.23)
-})
+    expect(contact?.root?.[2] ?? 0).toBeGreaterThan(0.05)
+    expect(contact?.leadHip?.[0] ?? 0).toBeLessThan(-0.4)
+    expect(contact?.rearHip?.[0] ?? 0).toBeGreaterThan(0.25)
+    if (id === 'beyond' || id === 'franklin') {
+      expect(contact?.leadKnee?.[0] ?? 0).toBeGreaterThan(0.8)
+      expect(contact?.rearKnee?.[0] ?? 0).toBeGreaterThan(0.5)
+    } else {
+      const standing = fightStance(id)!.pose
+      expect(contact?.leadKnee?.[0] ?? 0).toBeGreaterThan(standing.leadKnee?.[0] ?? 0)
+      expect(contact?.rearKnee?.[0] ?? 0).toBeGreaterThan(standing.rearKnee?.[0] ?? 0)
+    }
+    expect(largestJointStep).toBeLessThan(0.23)
+  },
+)

@@ -1,6 +1,6 @@
 import { guardForVariant } from './combatProperties'
 import type { FighterMoveset, MoveCategory, MoveTuning } from './movesetTypes'
-import { techniqueContract } from './techniqueContracts'
+import { techniqueContract } from './techniqueCatalogue'
 import type { AttackKind, AttackVariant, FighterId, MoveSlot } from './types'
 
 export const MOVE_SLOTS: readonly MoveSlot[] = [

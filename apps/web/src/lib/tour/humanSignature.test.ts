@@ -71,7 +71,7 @@ describe('the signature pieces', () => {
   it('gives the acceptance scene the faces it names', () => {
     // ADR-005 §6, read off the rig: the crown and Kakin robe in the King's Living
     // Quarters (clean-shaven per ch. 358), the beard on Beyond, the cross on
-    // Chrollo's forehead. The current aboard reference leaves Hisoka unpainted.
+    // Chrollo's forehead, and Hisoka’s unpainted face in his ship disguise.
     expect(build('nasubi-hui-guo-rou').root.getObjectByName('signature-crown')).toBeTruthy()
     expect(build('nasubi-hui-guo-rou').root.getObjectByName('attire-kakin-robe')).toBeTruthy()
     expect(build('nasubi-hui-guo-rou').root.getObjectByName('signature-beard')).toBeUndefined()

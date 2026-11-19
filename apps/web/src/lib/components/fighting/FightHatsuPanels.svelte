@@ -77,8 +77,8 @@
   {language}
   {paused}
   {onEditing}
-  onCompose={(side, text) =>
-    dispatch(side, (current) => composeBashoPoem({ state: current, side, text }, perform))}
+  onCompose={(side, text, loan) =>
+    dispatch(side, (current) => composeBashoPoem({ state: current, side, text, loan }, perform))}
 />
 <FightMoonlightPanel
   {state}

@@ -1,4 +1,4 @@
-import type { BiohazardDevice } from './biohazardDevices'
+import type { BiohazardDevice } from './legacyBiohazardDevices'
 import type { FightSide, FightState } from './types'
 
 export function biohazardHidingPlace(state: FightState, side: FightSide) {

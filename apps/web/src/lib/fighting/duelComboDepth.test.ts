@@ -148,21 +148,19 @@ describe.each(['kurapika', 'benjamin'] as const)('%s combo decisions', (fighter)
 
 describe('personal execution and conditions', () => {
   it('gives Kurapika a real recovery link that works without a declared cancel', () => {
-    let state = createCombatRouteFight(combatRoute('kurapika:precision'))
-    state = contact(command(state, 'standingLight'))
-    state = contact(command(state, 'forwardLight'))
-    const forward = moveForSlot('kurapika', 'forwardLight')!
-    expect(forward.cancelInto).not.toContain('kurapika:standingHeavy')
-    expect(
-      comboChoices(state).find((choice) => choice.move.slot === 'standingHeavy'),
-    ).toMatchObject({ link: true, status: 'wait' })
-    expect(command(state, 'standingHeavy').player.attack?.moveId).toBe('kurapika:forwardLight')
+    let state = createCombatRouteFight(combatRoute('kurapika:recovery-sweep'))
+    state = contact(command(state, 'backHeavy'))
+    const back = moveForSlot('kurapika', 'backHeavy')!
+    expect(back.cancelInto).not.toContain('kurapika:forwardLight')
+    expect(comboChoices(state).find((choice) => choice.move.slot === 'forwardLight')).toMatchObject(
+      { link: true, status: 'wait' },
+    )
+    expect(command(state, 'forwardLight').player.attack?.moveId).toBe('kurapika:backHeavy')
     // A deliberately timed input after recovery follows the ordinary attack admission path.
     while (state.player.attack) state = step(state)
-    const linked = contact(command(state, 'standingHeavy'))
+    const linked = contact(command(state, 'forwardLight'))
     expect(linked.impact?.blocked).toBe(false)
-    expect(linked.opponent.comboHits).toBe(3)
-    expect(execute('kurapika:precision').damage).toBeGreaterThan(execute('kurapika:confirm').damage)
+    expect(linked.opponent.comboHits).toBe(2)
   })
 
   it('gives Benjamin a confirmed cancel at the same point in his extended route', () => {

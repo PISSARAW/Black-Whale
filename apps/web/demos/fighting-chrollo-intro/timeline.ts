@@ -83,10 +83,7 @@ function fxAt(local: number, kicks: { at: number; power: number }[], length: num
 
 function segmentShots(segment: Segment, place: { index: number; start: number; last: boolean }) {
   const { index, start, last } = place
-  const beats = Math.min(
-    10,
-    Math.max(segment.part ? 2 : 4, Math.round(natural(segment) / BEAT / 2) * 2),
-  )
+  const beats = Math.min(10, Math.max(segment.part ? 2 : 4, Math.round(natural(segment) / BEAT / 2) * 2))
   const length = beats * BEAT
   const scale = natural(segment) / length
   const shots: Shot[] = []

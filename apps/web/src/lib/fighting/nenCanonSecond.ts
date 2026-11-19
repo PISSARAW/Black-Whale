@@ -34,13 +34,14 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
   },
   basho: {
     abilities: ['great-haiku'],
-    condition: 'Write a complete three-line poem before invoking its represented effect.',
+    condition:
+      'Write an attested three-line poem using actual paper, brush and ink, with both hands free. Each completed composition retains its own trigger.',
     effect:
-      'The completed poem can produce its supported fire effect; writing remains interruptible.',
+      'Completed compositions ignite fist contacts, punish conscious lies in reply to actual questions, or charge paper charms that repel weak spirits. Writing remains interruptible.',
     prohibition:
       'No automatic aura burn, immediate writing completion or unrestricted free-form wish engine.',
     adaptation:
-      'The supported poem vocabulary, quality assessment, writing duration and fire tune the duel.',
+      'Three represented effects; no automatic literary quality score. Paper stocks, writing duration, ordinary burning and charm lifetime are duel tuning.',
   },
   camilla: {
     abilities: ['cats-name'],
@@ -56,11 +57,11 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
     condition:
       'Actual consenting supporters already bear the feather and share the user’s will; collective charge precedes the shot.',
     effect:
-      'A selected supporter sleeps while occupying the struck target’s body; the arrow passes ordinary guard.',
+      'A random group member, including Halkenburg, leaves their original body asleep and occupies the pierced body; the arrow causes no damage and passes defensive Nen.',
     prohibition:
       'No imaginary cohort, damage arrow, copied supporters or shot without shared will.',
     adaptation:
-      'Charge, life expenditure, supporter selection and possession duration tune the duel. The full group armour and soul-exchange simulation are not implemented.',
+      'Charge and numerical aura/HP costs tune the duel. Persistent exchange, both living consciousnesses’ sleep priority and ordinary movement are represented. Actual deaths, personal Nen in a different body and group armour remain incomplete.',
   },
   gel: {
     abilities: ['snake-arm'],
@@ -150,12 +151,14 @@ export const NEN_CANON_SECOND: NenCanonProfiles = {
   },
   musse: {
     abilities: ['secret-window'],
-    condition: 'Attach the surveillance owl by actual contact; only its user sees the feed.',
-    effect: 'The owl reports bodily actions privately; the handgun fires physical bullets.',
+    condition:
+      'The shoulder owl eavesdrops without a mark; the surveillance owl requires actual touch. Feeds remain private.',
+    effect:
+      'The two known birds relay actual speech and contacted bodily actions; the handgun fires physical bullets.',
     prohibition:
-      'No damage, restraint, automatic dodge, aura reading, future vision or public owl.',
+      'No damage, restraint, automatic dodge, aura reading, future vision or public contact owl.',
     adaptation:
-      'One contact owl, observation vocabulary, startup, aura and interruption tune the duel.',
+      'One contact owl and one listening application; observation vocabulary, voice radius, startup and aura tune the duel. The third function is unknown.',
   },
   padaille: {
     abilities: ['padaille-weapon-transformation'],

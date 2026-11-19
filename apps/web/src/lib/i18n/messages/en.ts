@@ -73,6 +73,8 @@ export const en = {
     simulations: 'Simulations',
     virtualTour: 'Virtual Tour',
     tourModes: 'Tour Modes',
+    clash: 'Clash',
+    backToTour: 'Back to the Tour',
     shipSources: 'Ship Sources',
     arena: 'Black Whale Arena',
     reconstruction: 'Living Reconstruction',
@@ -302,7 +304,7 @@ export const en = {
     modes: {
       seoTitle: 'Tour Modes — Choose your Black Whale experience',
       seoDescription:
-        'Choose between the free tour, Morena’s table, living reconstruction, infiltration, hunt, arena, investigation and strategy modes aboard the Black Whale.',
+        'Choose between the free tour, Morena’s table, living reconstruction, infiltration, hunt, arena, Clash, investigation and strategy modes aboard the Black Whale.',
       eyebrow: 'Black Whale experiences',
       title: 'Choose your mode',
       intro:
@@ -313,6 +315,13 @@ export const en = {
         tag: 'Explore',
         description:
           'Walk the reconstructed ship at your own pace, from room to room and deck to deck.',
+      },
+      clash: {
+        title: 'Black Whale Clash',
+        tag: 'Real-time combat · 40 fighters',
+        description:
+          'Choose from 40 fighters and use their Hatsu in real-time duels against the AI, in local versus or online.',
+        play: 'Play Clash',
       },
       morena: {
         title: 'Morena',

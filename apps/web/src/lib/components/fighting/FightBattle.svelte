@@ -1,20 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import FightStage from './FightStage.svelte'
-  import { parallelFutureCamera } from '$lib/fighting/parallelFutureCamera'
-  import type { PerceivedResultAction } from '$lib/fighting/futurePerceptionResults'
-  import FightQwenControl from './FightQwenControl.svelte'
-  import { supportsQwenDuel } from '$lib/fighting/qwen/observation'
-  import type { QwenDuel } from '$lib/fighting/qwen/duel'
-  import FightKurapikaLiveChains from './FightKurapikaLiveChains.svelte'
-  import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
-  import FightHisokaLiveGum from './FightHisokaLiveGum.svelte'
   import FightFullscreenButton from './FightFullscreenButton.svelte'
   import { enterFightFullscreen, mountFightViewport } from '$lib/fighting/fightFullscreen'
   import FightPauseMenu from './FightPauseMenu.svelte'
   import FightPauseOverview from './FightPauseOverview.svelte'
   import FightPauseDisplay from './FightPauseDisplay.svelte'
   import FightPauseTechniques from './FightPauseTechniques.svelte'
+  import FightChrolloLiveBook from './FightChrolloLiveBook.svelte'
   import FightPauseTraining from './FightPauseTraining.svelte'
   import FightActiveObjective from './FightActiveObjective.svelte'
   import FightMatchOverlays from './FightMatchOverlays.svelte'
@@ -38,11 +31,10 @@
   import type { CombatSchool } from '$lib/fighting/combatSchool'
   import type { ClashPractice } from '$lib/fighting/clashPractice'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
-  import type { FightSide, FightState } from '$lib/fighting/types'
+  import type { FightState } from '$lib/fighting/types'
   import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
   import './fightBattle.css'
   export let language: 'fr' | 'en'
-  export let qwen: QwenDuel | undefined = undefined
   export let state: FightState
   export let paused: boolean
   export let controls: FightControls
@@ -76,16 +68,6 @@
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
-  $: introEnabled = !replays.active && state.mode !== 'training'
-  $: visibleState = parallelFutureCamera(state, 'player').main
-  function resultAction(action: PerceivedResultAction) {
-    if (state.phase !== 'finished') {
-      actions.queueCommand({ kind: 'perceived-result', action })
-      return
-    }
-    if (action === 'continue') actions.continueMatch()
-    else actions.rematch()
-  }
   function menuKey(event: KeyboardEvent) {
     if (event.key !== 'Escape' || event.repeat || event.defaultPrevented || paused) return
     event.preventDefault()
@@ -131,9 +113,6 @@
       >
     </div>
   </header>
-  {#if qwen && supportsQwenDuel(state) && !$replays.playback}
-    <FightQwenControl {qwen} disabled={paused || state.phase === 'finished'} />
-  {/if}
   <div class="battle-surface match-area" tabindex="-1">
     <FightStage
       {state}
@@ -142,8 +121,6 @@
       {showControls}
       {detailed}
       minimal
-      {introEnabled}
-      onIntroComplete={actions.startFight}
       onMoves={() => {
         pauseTab = 'moves'
         actions.togglePause()
@@ -169,41 +146,20 @@
       {...battleStageCallbacks(actions.queueAction)}
     >
       <FightActiveObjective {language} {lessons} {school} {practice} />
-      {#if state.player.id === 'kurapika' && state.phase === 'fighting' && !pausedView}
-        <FightKurapikaLiveChains
-          state={visibleState}
-          {language}
-          {actions}
-          replay={Boolean($replays.playback)}
-        />
-      {/if}
-      {#each ['player', 'opponent'] as seat (seat)}
-        {@const side = seat as FightSide}
-        {#if state[side].id === 'hisoka' && (side === 'player' || state.mode === 'versus-local') && state.phase === 'fighting' && !pausedView}
-          <FightHisokaLiveGum state={visibleState} {language} {actions} {side} />
-        {/if}
-        {#if state[side].id === 'chrollo' && (side === 'player' || state.mode === 'versus-local') && state.phase === 'fighting' && !pausedView}
-          <FightChrolloLiveBook
-            state={visibleState}
-            {language}
-            {actions}
-            {side}
-            readOnly={Boolean($replays.playback)}
-          />
-        {/if}
-      {/each}
     </FightStage>
+    {#if state.player.id === 'chrollo' && state.phase === 'fighting' && !pausedView && !replays.active && !victoryActive}
+      <FightChrolloLiveBook {state} {language} {actions} />
+    {/if}
     {#if !paused && !victoryActive}<FightMatchOverlays
-        state={visibleState}
+        {state}
         {language}
         replay={replays.active}
-        {introEnabled}
         startFight={() => {
           if (touchDevice) void enterFightFullscreen(target)
           actions.startFight()
         }}
-        rematch={() => resultAction('rematch')}
-        continueMatch={() => resultAction('continue')}
+        rematch={actions.rematch}
+        continueMatch={actions.continueMatch}
         chooseAgain={actions.chooseAgain}
         quitFight={actions.quitFight}
       />{/if}
@@ -220,7 +176,7 @@
       onResume={actions.togglePause}
     >
       {#if pauseTab === 'overview'}<FightPauseOverview
-          state={visibleState}
+          {state}
           {language}
           replay={replays.active}
           canRematch={!$lessons && !$school && !practice.active}
@@ -229,7 +185,7 @@
           onQuit={actions.quitFight}
         />
       {:else if pauseTab === 'techniques'}<FightPauseTechniques
-          state={visibleState}
+          {state}
           {language}
           {actions}
           replay={replays.active}

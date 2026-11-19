@@ -1,10 +1,12 @@
+import { SCENARIO_RESOURCE_IDS } from './preparationResources'
 import { FIGHTING_ROSTER } from './roster'
 import { decodeFightSnapshot } from './fightReplaySnapshot'
 import { readPanelReplayCommand } from './fightReplayPanels'
 import { FIGHT_STAGES } from './stages'
 import { FIGHT_FORMATS } from './formats'
 import { createFightEnvironment } from './fightEnvironment'
-import type { FightPreparation, PreparationResource } from './preparationTypes'
+import { validInjuryPreparation } from './injuryPreparation'
+import type { FightPreparation } from './preparationTypes'
 import { REPLAY_INPUT_MASK } from './fightReplayInput'
 import {
   MAX_REPLAY_BYTES,
@@ -41,30 +43,18 @@ function boolean(value: unknown): boolean {
 function preparation(value: unknown): FightPreparation | undefined {
   if (value === undefined) return undefined
   const entry = object(value)
+  if (!validInjuryPreparation(entry.injuries, entry.mode)) return fail()
   if (
     !Array.isArray(entry.resources) ||
-    entry.resources.length > 10 ||
+    entry.resources.length > SCENARIO_RESOURCE_IDS.length ||
     !Array.isArray(entry.cohorts) ||
     entry.cohorts.length > 2
   )
     return fail()
-  const resources: PreparationResource[] = [
-    'animals',
-    'birds',
-    'plants',
-    'objects',
-    'flutes',
-    'needles',
-    'rooms',
-    'cameras',
-    'hostages',
-    'corpses',
-    'armed-corpses',
-    'sedatives',
-  ]
   return {
     mode: member(entry.mode, ['duel', 'scenario']),
-    resources: entry.resources.map((id) => member(id, resources)),
+    ...(entry.injuries ? { injuries: { ...entry.injuries } } : {}),
+    resources: entry.resources.map((id) => member(id, SCENARIO_RESOURCE_IDS)),
     cohorts: entry.cohorts.map((side) => member(side, ['player', 'opponent'])),
   }
 }
@@ -96,6 +86,10 @@ function setup(value: unknown): ReplaySetup {
     environment: createFightEnvironment({
       stageId,
       arenaInteractions: boolean(env.arenaInteractions),
+      halkenburgRosterVariant:
+        env.halkenburgRosterVariant === undefined
+          ? undefined
+          : boolean(env.halkenburgRosterVariant),
       morenaPresent: boolean(env.morenaPresent),
       unlawfulIntruders: {
         player: boolean(intruders.player),
@@ -113,19 +107,9 @@ function setup(value: unknown): ReplaySetup {
 }
 function command(value: unknown): ReplayCommand {
   const entry = object(value)
-  const kind = member(entry.kind, [
-    'start',
-    'round',
-    'move',
-    'emperor',
-    'easter',
-    'panel',
-    'perceived-result',
-  ])
+  const kind = member(entry.kind, ['start', 'round', 'move', 'emperor', 'easter', 'panel'])
   if (kind === 'start' || kind === 'round') return { kind }
   if (kind === 'panel') return readPanelReplayCommand(entry)
-  if (kind === 'perceived-result')
-    return { kind, action: member(entry.action, ['continue', 'rematch']) }
   const side = member(entry.side, ['player', 'opponent'])
   if (kind === 'emperor') return { kind, side }
   if (kind === 'easter') {

@@ -6,7 +6,7 @@ import { EMPTY_INPUT } from './types'
 import type { AttackKind, FightInput, FightMode, FightSide, FightState } from './types'
 
 // Characterization of the duel engine (KAMEOS.md, lot 0). These hashes freeze the
-// observable behaviour of tickFight before the stepActor / resolveContacts split.
+// observable behaviour of tickFight under the current combat rules.
 // A refactor must keep them identical; a deliberate combat change re-records them.
 
 const FRAMES = 360

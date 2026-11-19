@@ -1,3 +1,5 @@
+import type { Vector3 } from 'three'
+import { dowsingMapContact } from './dowsingMapPresentation'
 import { chainChest, chainFinger } from './kurapikaChainAnchors'
 import type { EffectSceneOptions } from './fighterEffectScene'
 import type { ChainMotion } from './kurapikaChainMotion'
@@ -24,7 +26,10 @@ export function kurapikaChainPath(
   const centre = chainChest(options, { state, side: targetSide })
   const direction = new THREE.Vector3(fighter.facing, 0, 0)
   const contact = centre.clone().add(new THREE.Vector3(-fighter.facing * 0.18, 0, 0.15))
-  if (motion.mode === 'dowsing') {
+  if (motion.mode === 'map') {
+    contact.copy(mapContact(options, { state, side, fallback: contact }))
+    direction.set(0, -1, 0)
+  } else if (motion.mode === 'dowsing') {
     const swing = dowsingSwing(state, side)
     contact.copy(start).add(new THREE.Vector3(fighter.facing * 0.12 + swing, -0.65, 0.2))
     direction.set(0, -1, 0)
@@ -77,4 +82,11 @@ function freeChainPoints(
 function dowsingSwing(state: FightState, side: FightSide): number {
   const session = state[side].dowsingSession
   return session?.swings ? Math.sin((state.frame - (session.readingAt ?? 0)) * 0.28) * 0.22 : 0
+}
+
+function mapContact(
+  options: EffectSceneOptions,
+  context: { state: FightState; side: FightSide; fallback: Vector3 },
+) {
+  return dowsingMapContact(options, context.state, context.side) ?? context.fallback
 }

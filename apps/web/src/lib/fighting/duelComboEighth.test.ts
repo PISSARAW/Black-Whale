@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { describe, expect, it } from 'vitest'
 import { combatRoute, combatRoutesFor } from './combatRoutes'
 import { combatRouteAction, combatRouteInput, createCombatRouteFight } from './combatRouteFight'
@@ -124,11 +125,12 @@ describe('eighth expansion scenario prerequisites', () => {
       1,
     )
     expect(result.state.projectiles).toHaveLength(0)
+    // Lot 4 of COMBO_GRAMMAR.md: the former recovery link is a chain under the derived grammar.
     const waiting = play('bill:precision', { steps: 2 }).state
     expect(
       comboChoices(waiting).find((choice) => choice.move.slot === 'standingHeavy'),
-    ).toMatchObject({ link: true, status: 'wait' })
-    expect(command(waiting, 'standingHeavy').player.attack).toBe(waiting.player.attack)
+    ).toMatchObject({ link: false, status: 'ready' })
+    expect(command(waiting, 'standingHeavy').player.attack?.moveId).toBe('bill:standingHeavy')
   })
 
   it('Cluck’s pigeon travels and completes its actual delivery without creating extra hits', () => {
@@ -154,8 +156,12 @@ describe('eighth expansion scenario prerequisites', () => {
     expect(state.impact!.sequence).toBe(sequence)
   })
 
-  it('Sayird’s real animal remains a moving observation subject while physical hits do the damage', () => {
-    const initial = createCombatRouteFight(combatRoute('sayird:little-eye'))
+  it('Sayird’s real animal follows its ordered destination while physical hits do the damage', () => {
+    const initial = performArsenalCommand(
+      createCombatRouteFight(combatRoute('sayird:little-eye')),
+      'player',
+      { action: 'little-eye-right' },
+    )
     const animal = controlledEntities(initial, 'player', 'sayird')[0]
     expect(animal).toMatchObject({
       kind: 'animal',

@@ -1,9 +1,12 @@
 <script lang="ts">
   import { KAMEO_CATALOGUE, KAMEO_IDS } from '$lib/fighting/kameos/catalogue'
   import { chosenKameos, kameoPick } from '$lib/fighting/kameos/selection'
+  import type { KameoPicks } from '$lib/fighting/kameos/state'
   import type { FightSide } from '$lib/fighting/types'
 
   export let language: 'fr' | 'en'
+  export let picks: KameoPicks | undefined = undefined
+  export let onPick: ((side: FightSide, id: KameoPicks['player']) => void) | undefined = undefined
 
   const ROLE: Record<string, [string, string]> = {
     soin: ['Soin', 'Healing'],
@@ -20,7 +23,8 @@
   $: lang = language === 'fr' ? 0 : 1
 
   function choose(side: FightSide, value: string) {
-    chosenKameos.update((picks) => ({ ...picks, [side]: kameoPick(value) }))
+    if (onPick) onPick(side, kameoPick(value))
+    else chosenKameos.update((current) => ({ ...current, [side]: kameoPick(value) }))
   }
 </script>
 
@@ -36,7 +40,7 @@
       <label>
         <strong>{seat}</strong>
         <select
-          value={$chosenKameos[side] ?? ''}
+          value={(picks ?? $chosenKameos)[side] ?? ''}
           onchange={(event) => choose(side, event.currentTarget.value)}
         >
           <option value="">{language === 'fr' ? 'Aucun' : 'None'}</option>

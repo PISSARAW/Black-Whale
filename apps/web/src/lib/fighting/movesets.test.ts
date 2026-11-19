@@ -126,6 +126,8 @@ describe('wave one movesets', () => {
     ])
     expect(moveForSlot('kurapika', 'backHeavy')?.cancelInto).toEqual([
       'kurapika:standingHeavy',
+      'kurapika:lowHeavy',
+      'kurapika:forwardHeavy',
       'kurapika:forwardSpecial',
     ])
     expect(kurapika.combos.every((route) => route.length <= 5)).toBe(true)

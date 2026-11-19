@@ -110,6 +110,7 @@ describe('fine-control material rendering', () => {
     effect.sync(state, 0)
     const paper = scene.getObjectByName('kalluto-paper')!
     expect(state.projectiles.filter((shot) => shot.kallutoPaper)).toHaveLength(3)
+    expect(state.projectiles[0].paperId).toBeDefined()
     expect(paper.children).toHaveLength(18)
     expect(scene.getObjectByName(`fight-projectile:${state.projectiles[0].id}`)!.visible).toBe(
       false,

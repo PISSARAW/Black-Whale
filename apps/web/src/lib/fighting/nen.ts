@@ -2,6 +2,7 @@ import { defensiveKo } from './nenCombat/guardKo'
 import { regionalDefence } from './nenCombat/protection'
 import { bodyGyoZone, BODY_GYO_DRAIN, gyoStatus } from './nenCombat/bodyGyo'
 import { activeEnRadius } from './en/access'
+import { physicalNenBody } from './physicalNenBody'
 import { illumiBodyFree } from './illumiState'
 import { enforcePredatorSeal, predatorNenLocked } from './predatorSeal'
 import {
@@ -10,7 +11,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { attackData } from './frameData'
-import { restrictedChainAura } from './kurapika'
+import { restrictedChainAura, dolphinActor } from './kurapika'
 import {
   applyAdvancedNen,
   advancedAuraDrain,
@@ -21,9 +22,6 @@ import {
 } from './nenAdvanced'
 import { categoryPower, fightCategoryEfficiency, constructionFactor } from './nenCategories'
 import { abilityPower } from './nenAbility'
-import { nenBodyOutput } from './nenBudget'
-import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nenTransfer'
-import { canReinforceStrike } from './nenStrikeAccess'
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
@@ -53,7 +51,7 @@ export function createFightingNen() {
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (!illumiBodyFree(fighter)) return fighter
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
-  if (maintainsZetsu(fighter, input)) return forceZetsu(fighter)
+  if (fighter.moonlightZetsu) return forceZetsu(fighter)
   const restricted = restrictedChainAura(fighter, input)
   if (restricted) return restricted
   const sworn = applyOnContext(fighter, input)
@@ -64,10 +62,6 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   if (committed) return committed
   if (fighter.defensiveKo) fighter = { ...fighter, defensiveKo: undefined }
   return applyAdvancedNen(heldAuraContext(fighter, input), input)
-}
-
-function maintainsZetsu(fighter: ArcadeFighter, input: FightInput): boolean {
-  return Boolean(fighter.moonlightZetsu || (fighter.futureIllusionActive && !input.aura))
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -96,7 +90,6 @@ function holdsRyu(fighter: ArcadeFighter): boolean {
 
 function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.attack?.auraCharged || fighter.attack.impacted || fighter.nen.ko) return fighter
-  if (fighter.nenTransfer) return fighter
   if (fighter.aura < KO_COST) {
     return {
       ...withAction(fighter, { type: 'TEN' }),
@@ -113,7 +106,6 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
-  fighter = advanceNenTransfer(fighter, dt)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (fighter.drainingChain) return advanceOn(fighter)
   const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
@@ -145,9 +137,16 @@ function baseAuraFlow(fighter: ArcadeFighter): number {
 export function focusGuardRyu(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
-  const distribution = { head: 0.08, torso: 0.08, hands: 0.08, feet: 0.08, [zone]: 0.76 }
+  const otherZones = (['head', 'torso', 'hands', 'feet'] as const).filter(
+    (candidate) => candidate !== zone,
+  )
+  const distribution: Partial<Record<FightNenZone, number>> = { [zone]: 76 }
+  for (const other of otherZones) distribution[other] = 8
   return {
-    ...requestNenTransfer(fighter, { zone, shares: distribution }),
+    ...withAction(
+      { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
+      { type: 'RYU', distribution },
+    ),
     ryuWindow: 9,
   }
 }
@@ -156,22 +155,22 @@ export function focusAttackRyu(fighter: ArcadeFighter, kind: AttackKind): Arcade
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
   const zone = attackData(kind, fighter).auraZone
-  const distribution = {
-    head: 0.08,
-    torso: 0.12,
-    hands: 0.08,
-    feet: 0.08,
-    [zone]: 0.72,
+  const distribution: Partial<Record<FightNenZone, number>> = {
+    head: 8,
+    torso: 12,
+    hands: 8,
+    feet: 8,
+    [zone]: 72,
   }
-  return requestNenTransfer(fighter, { zone, shares: distribution })
+  return withAction(
+    { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
+    { type: 'RYU', distribution },
+  )
 }
 
 export function releaseFocusedAura(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.nen.ko && !hasRyu(fighter)) return fighter
-  return withAction(
-    { ...fighter, lastAuraShares: currentAuraShares(fighter), nenTransfer: undefined },
-    { type: 'TEN' },
-  )
+  return withAction(fighter, { type: 'TEN' })
 }
 
 export function setIn(fighter: ArcadeFighter, on: boolean): ArcadeFighter {
@@ -184,16 +183,18 @@ export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {
+  fighter = dolphinActor(fighter)
+  if (predatorNenLocked(fighter)) return 0.7
+  if (fighter.nen.mode === 'zetsu') return 0.7
   const zone = attackData(kind, fighter).auraZone
   // Ko protects and powers only its committed region; every other strike is purely physical.
-  if (!canReinforceStrike(fighter, zone)) return 0.7
+  if (fighter.nen.ko && fighter.nen.ko !== zone) return 0.7
   let factor = fighter.nen.mode === 'ren' ? 1.22 : 1
   const share = Number(fighter.nen.ryu[zone] ?? 0)
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  const full = factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
-  return 0.7 + Math.max(0, full - 0.7) * nenBodyOutput(fighter)
+  return factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
@@ -209,14 +210,13 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 }
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
-  fighter = enforcePredatorSeal(fighter)
+  fighter = enforcePredatorSeal(physicalNenBody(fighter))
   const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
   const spread = activeEnRadius(fighter) ? 0.45 : 1
   const eyeFocus =
     fighter.nen.gyo && (fighter.nen.ken || hasRyu(fighter) || fighter.nen.ko) ? 0.62 : 1
   const defence =
     regionalDefence(fighter, zone) *
-    nenBodyOutput(fighter) *
     bodyShare *
     spread *
     eyeFocus *

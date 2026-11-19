@@ -42,9 +42,7 @@
   let state = $derived(
     clip && shot.kind === 'clip' ? clip.states[Math.floor(simOverride ?? shot.sim)] : undefined,
   )
-  let aura = $derived(
-    clip ? `#${fighterAuraHex(clip.id).toString(16).padStart(6, '0')}` : '#d9b674',
-  )
+  let aura = $derived(clip ? `#${fighterAuraHex(clip.id).toString(16).padStart(6, '0')}` : '#d9b674')
 
   /** Presentation clock per output frame (ms): exactly the simulated time it shows. */
   function presentationClock(shots: Shot[]) {

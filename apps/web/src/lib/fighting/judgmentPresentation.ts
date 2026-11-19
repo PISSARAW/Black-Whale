@@ -3,11 +3,9 @@ import type { JudgmentClause } from './judgmentRules'
 import type { ArcadeFighter } from './types'
 
 const LABELS: Record<JudgmentClause, [string, string]> = {
-  'no-disclosure': ['Secret de Kurapika protégé', 'Keep Kurapika’s secret'],
-  'return-hostage': [
-    'Rendre l’otage avant le délai annoncé',
-    'Return hostage before announced deadline',
-  ],
+  'no-disclosure': ['Secret conservé', 'No disclosure'],
+  'return-hostage': ['Restituer l’otage', 'Return hostage'],
+  'truthful-answers': ['Réponses sincères obligatoires', 'Truthful answers required'],
   zetsu: ['Nen interdit', 'Nen prohibited'],
   'no-troupe-contact': [
     'Communication avec la Brigade interdite',

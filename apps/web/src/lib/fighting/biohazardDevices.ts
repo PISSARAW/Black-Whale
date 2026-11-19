@@ -1,298 +1,271 @@
-import { biohazardAuthority, biohazardBodyFree, biohazardNen } from './biohazard'
-import { canAct } from './fightActorState'
-import { priorityLineOfSight } from './priorityOptics'
-import { hasEquipment } from './preparationWorld'
-import { battleAppearance } from './battleCantabileRules'
-import { hasBiohazardGun, touchedBiohazardGun, snakeBullet } from './biohazardGun'
-import { performBiohazardReceiver } from './biohazardReceiver'
-import { hasPrinceSidearm } from './princeSidearm'
-import { biohazardHidingPlace } from './biohazardPrivacy'
-import type { ProjectileProfile } from './projectiles'
-import type { ArsenalInvocation } from './retrospectiveTypes'
-import type { FightSide, FightState, FighterId } from './types'
+import { freeDeviceHand } from './deviceHands'
+import { chrolloAbilityActive } from './chrolloAbilityActive'
+import { chainAbilitySealed } from './kurapika'
+import { voluntaryNenAvailable } from './nenAccess'
+import { triggerHatsuAction } from './hatsu'
+import { judgmentActionBreach } from './judgmentAction'
+import {
+  changeDevice,
+  holdsDevice,
+  deviceBodyFree,
+  deviceEntity,
+  devicePosition,
+  touchesDevice,
+} from './physicalDevices'
+import {
+  DEVICE_FORM_FRAMES,
+  DEVICE_TRANSFORM_COST,
+  DEVICE_TRANSFORM_FRAMES,
+  OYSTER_AURA_FRAMES,
+} from './deviceTypes'
+import type { BiohazardDeviceForm, PhysicalDeviceKind } from './deviceTypes'
+import type { PreparedEntity } from './preparationTypes'
+import type { FightSide, FightState } from './types'
 
-export interface CameraSample {
-  frame: number
-  x: number
-  y: number
-  appearance: FighterId
+export const BIOHAZARD_DEVICE_MOVE = 'hinrigh:neutralSpecial'
+const FORMS: Partial<Record<PhysicalDeviceKind, BiohazardDeviceForm>> = {
+  camera: 'cat',
+  firearm: 'snake',
+  transmitter: 'oyster',
 }
-export interface BiohazardDevice {
-  id: string
-  kind: 'camera' | 'transmitter' | 'gun'
-  phase: 'carried' | 'preparing' | 'active' | 'dropped' | 'broken'
-  x: number
-  y: number
-  frames: number
-  life: number
-  ammo?: number
-  weaponSide?: FightSide
-  weaponId?: FighterId
-  gunProfile?: ProjectileProfile
-  destinationX?: number
-  concealedUnder?: string
-  swallowed?: boolean
-  recordings?: readonly CameraSample[]
+export function ownsDeviceBiohazard(state: FightState, side: FightSide): boolean {
+  const fighter = state[side]
+  if (chainAbilitySealed(fighter, BIOHAZARD_DEVICE_MOVE)) return false
+  if (fighter.id === 'hinrigh') return true
+  if (fighter.id === 'chrollo') return chrolloAbilityActive(fighter, BIOHAZARD_DEVICE_MOVE)
+  return Boolean(
+    fighter.kurapika?.held?.loaded &&
+    fighter.kurapika.held.source === 'hinrigh' &&
+    fighter.kurapika.emperorTime,
+  )
 }
-declare module './types' {
-  interface ArcadeFighter {
-    biohazardDevices?: readonly BiohazardDevice[]
-    biohazardGun?: { owner: FightSide; deviceId: string }
-    biohazardFootage?: readonly CameraSample[]
-    biohazardSignal?: { frame: number; x: number; y: number }
-  }
-}
-
-/** Physical carried equipment. Borrowing the Hatsu does not manufacture this kit. */
-export function createBiohazardDevices(): readonly BiohazardDevice[] {
-  return ['camera', 'transmitter'].map((kind) => ({
-    id: `kit:${kind}`,
-    kind: kind as 'camera' | 'transmitter',
-    phase: 'carried',
-    x: 0,
-    y: 0,
-    frames: 0,
-    life: 0,
-  }))
-}
-
-export function biohazardDeviceReady(state: FightState, side: FightSide): boolean {
-  const actor = state[side]
+export function deviceBiohazardActive(state: FightState, side: FightSide): boolean {
   return (
-    state.phase === 'fighting' &&
-    !state.catsName &&
-    canAct(actor) &&
-    !actor.attack &&
-    biohazardBodyFree(actor) &&
-    !actor.hanzoProjection &&
-    !actor.biohazardDevices?.some((item) => item.phase === 'preparing')
+    ownsDeviceBiohazard(state, side) && voluntaryNenAvailable(state[side], { requireReserve: true })
   )
 }
-
-export function performBiohazardDevice({ state, side, command }: ArsenalInvocation): FightState {
-  if (!biohazardDeviceReady(state, side)) return state
-  const physical = physicalDeviceCommand({ state, side, command })
-  if (physical) return physical
-  if (!biohazardAuthority(state[side]) || !biohazardNen(state[side])) return state
-  if (command.action === 'bio-camera-move') return moveCamera(state, side, command.target)
-  if (command.action === 'bio-gun-fire') return fireSnakeGun(state, side, command.target)
-  return command.action === 'bio-transform' ? transformDevice(state, side, command.target) : state
+export function transformDevice(state: FightState, side: FightSide, id?: string): FightState {
+  const entry = deviceEntity(state, id)
+  if (!entry || !FORMS[entry.device!.kind] || !ownsDeviceBiohazard(state, side)) return state
+  const breach = judgmentActionBreach({
+    state,
+    side,
+    kind: 'special',
+    moveId: BIOHAZARD_DEVICE_MOVE,
+    auraCharged: false,
+  })
+  if (breach) return breach
+  if (!canTransformDevice(state, side, entry)) return state
+  const witnessed = triggerHatsuAction({
+    state,
+    side,
+    source: 'hinrigh',
+    moveId: BIOHAZARD_DEVICE_MOVE,
+  })
+  const spent = spendDeviceUse(witnessed, side)
+  const paid = { ...spent, [side]: { ...spent[side], deviceTouchId: entry.id } }
+  return changeDevice(paid, entry, {
+    transforming: { owner: side, frames: DEVICE_TRANSFORM_FRAMES, originX: state[side].x },
+  })
 }
-
-function physicalDeviceCommand({
-  state,
-  side,
-  command,
-}: ArsenalInvocation): FightState | undefined {
-  if (command.action === 'bio-receiver-give') return performBiohazardReceiver(state, side)
-  if (command.action === 'bio-camera-read') return readCamera(state, side)
-  if (command.action === 'bio-signal') return readSignal(state, side)
-  if (command.action === 'bio-recover') return recoverDevice(state, side, command.target)
-  if (command.action === 'bio-oyster-hide') return hideOyster(state, side)
-  return undefined
+function canTransformDevice(state: FightState, side: FightSide, entry: PreparedEntity): boolean {
+  if (!deviceBodyFree(state, side) || !deviceBiohazardActive(state, side)) return false
+  if (!holdsDevice(state, side, entry) && !freeDeviceHand(state, side)) return false
+  if (entry.device!.form || entry.device!.transforming || !touchesDevice(state, side, entry))
+    return false
+  return state[side].aura >= DEVICE_TRANSFORM_COST && !deviceLoanUsed(state, side)
 }
-
-function transformDevice(state: FightState, side: FightSide, id?: string): FightState {
-  if (state[side].aura < 20) return state
-  const actor = state[side]
-  const other = side === 'player' ? 'opponent' : 'player'
-  if (id === other) id = `weapon:${other}`
-  const gun = id === `weapon:${other}` && touchGun(state, side)
-  const item = gun ? touchedBiohazardGun(state, other) : carriedDevice(actor, id)
-  if (!item) return state
-  const active: BiohazardDevice = {
-    ...item,
-    phase: 'preparing',
-    ...devicePosition({ gun, item, actor }),
-    frames: 0,
-    life: bioDeviceLifetime(item.kind),
-  }
-  const devices = [
-    ...(actor.biohazardDevices ?? []).filter((entry) => entry.id !== item.id),
-    active,
-  ]
-  return {
-    ...state,
-    [side]: { ...actor, aura: actor.aura - 20, biohazardDevices: devices },
-    ...(gun
-      ? {
-          [other]: {
-            ...state[other],
-            biohazardGunRounds: item.ammo,
-            biohazardGun: { owner: side, deviceId: item.id },
-          },
-        }
-      : {}),
-  }
+function deviceLoanUsed(state: FightState, side: FightSide): boolean {
+  const held = state[side].kurapika?.held
+  return held?.source === 'hinrigh' && held.used
 }
-
-function devicePosition({
-  gun,
-  item,
-  actor,
-}: {
-  gun: boolean
-  item: BiohazardDevice
-  actor: FightState['player']
-}): { x: number; y: number } {
-  return gun ? { x: item.x, y: item.y } : { x: actor.x, y: actor.y }
-}
-
-function bioDeviceLifetime(kind: BiohazardDevice['kind']): number {
-  return kind === 'transmitter' ? 2 * 60 * 60 * 60 : 300 * 60
-}
-
-function carriedDevice(actor: FightState['player'], id?: string): BiohazardDevice | undefined {
-  return actor.biohazardDevices?.find((entry) => entry.id === id && entry.phase === 'carried')
-}
-
-export function touchGun(state: FightState, side: FightSide): boolean {
-  const other = side === 'player' ? 'opponent' : 'player'
-  const target = state[other]
-  return (
-    hasBiohazardGun(target) &&
-    !target.biohazardGun &&
-    !target.weaponsConfiscated &&
-    !target.hanzoProjection &&
-    Math.hypot(state[side].x - target.x, state[side].y - target.y) <= 6
-  )
-}
-
-function fireSnakeGun(state: FightState, side: FightSide, id?: string): FightState {
-  const item = state[side].biohazardDevices?.find((entry) => entry.id === id)
-  if (!item || item.kind !== 'gun' || item.phase !== 'active' || !item.ammo) return state
-  const next = storeBioDevice(state, side, { ...item, ammo: item.ammo - 1 })
-  const weaponSide = item.weaponSide
-  if (!weaponSide) return state
-  return {
-    ...next,
-    [side]: { ...next[side], biohazardRecovery: 12 },
-    [weaponSide]: {
-      ...next[weaponSide],
-      biohazardGunRounds: item.ammo - 1,
-      ...(hasPrinceSidearm(next[weaponSide]) ? { princeSidearmRounds: item.ammo - 1 } : {}),
-      ...((next[weaponSide].nenOwner ?? next[weaponSide].id) === 'camilla'
-        ? { camillaRounds: item.ammo - 1 }
-        : {}),
-    },
-    nextProjectileId: state.nextProjectileId + 1,
-    projectiles: [...state.projectiles, snakeBullet(state, side, item)],
-  }
-}
-
-function readCamera(state: FightState, side: FightSide): FightState {
-  const item = state[side].biohazardDevices?.find((entry) => entry.kind === 'camera')
-  if (!item || item.phase === 'broken' || !deviceInReach(state, side, item)) return state
-  return { ...state, [side]: { ...state[side], biohazardFootage: [...(item.recordings ?? [])] } }
-}
-
-function readSignal(state: FightState, side: FightSide): FightState {
-  const receiver = state[side].biohazardReceiver ?? { owner: side, deviceId: 'kit:transmitter' }
-  const item = state[receiver.owner].biohazardDevices?.find(
-    (entry) => entry.id === receiver.deviceId,
-  )
-  if (!item || item.phase === 'broken' || !hasEquipment(state[side], 'tracker-receiver'))
-    return state
+function spendDeviceUse(state: FightState, side: FightSide): FightState {
+  const fighter = state[side],
+    chain = fighter.kurapika,
+    held = chain?.held
   return {
     ...state,
     [side]: {
-      ...state[side],
-      biohazardSignal: {
-        frame: state.frame,
-        x: item.phase === 'carried' || item.swallowed ? state[receiver.owner].x : item.x,
-        y: item.phase === 'carried' || item.swallowed ? state[receiver.owner].y + 4 : item.y,
-      },
+      ...fighter,
+      aura: fighter.aura - DEVICE_TRANSFORM_COST,
+      kurapika:
+        held?.source === 'hinrigh'
+          ? { ...chain!, held: { ...held, used: true, sustainedKeys: ['biohazard-device'] } }
+          : chain,
     },
   }
 }
 
-function moveCamera(state: FightState, side: FightSide, target?: string): FightState {
-  const item = state[side].biohazardDevices?.find((entry) => entry.kind === 'camera')
-  if (!item || item.phase !== 'active' || !['left', 'right', 'stop'].includes(target ?? ''))
-    return state
-  const destinationX = target === 'stop' ? item.x : target === 'left' ? 7 : 93
-  if (destinationX === item.destinationX) return state
-  return storeBioDevice(state, side, { ...item, destinationX })
+export function advanceBiohazardDevices(state: FightState): FightState {
+  const advanced = (state.battlefield?.entities ?? [])
+    .filter((entry) => entry.device)
+    .reduce(advanceOneDevice, state)
+  return clearMissingDeviceTouch(clearMissingDeviceTouch(advanced, 'player'), 'opponent')
 }
-
-function hideOyster(state: FightState, side: FightSide): FightState {
-  const item = state[side].biohazardDevices?.find((entry) => entry.kind === 'transmitter')
-  if (!item?.swallowed || !['active', 'dropped'].includes(item.phase)) return state
-  const cover = biohazardHidingPlace(state, side)
-  return storeBioDevice(state, side, {
-    ...item,
-    swallowed: false,
-    x: cover?.x ?? state[side].x,
-    y: cover?.y ?? 0,
-    concealedUnder: cover?.id,
+function advanceOneDevice(state: FightState, entry: PreparedEntity): FightState {
+  if (!entry.present || entry.health <= 0)
+    return changeDevice(clearDeviceTouch(state, entry), entry, {
+      form: undefined,
+      transforming: undefined,
+      recording: false,
+    })
+  if (entry.device!.transforming) return advanceDeviceTouch(state, entry)
+  return entry.device!.form ? advanceDeviceForm(state, entry) : state
+}
+/** Hitstop pauses touching and walking; the aura already stored in an oyster still ages. */
+export function advanceBiohazardDeviceClocks(state: FightState): FightState {
+  return (state.battlefield?.entities ?? [])
+    .filter((entry) => entry.device?.form)
+    .reduce((next, entry) => expireDeviceForm(next, entry), state)
+}
+function expireDeviceForm(state: FightState, entry: PreparedEntity): FightState {
+  const form = entry.device!.form!,
+    remainingFrames = form.remainingFrames - 1
+  return changeDevice(state, entry, {
+    form:
+      remainingFrames > 0 && deviceBiohazardActive(state, form.owner)
+        ? { ...form, remainingFrames }
+        : undefined,
   })
 }
-
-function recoverDevice(state: FightState, side: FightSide, id?: string): FightState {
-  const item = state[side].biohazardDevices?.find((entry) => entry.id === id)
-  if (!item || item.phase === 'broken' || !deviceInReach(state, side, item)) return state
-  const next = storeBioDevice(state, side, {
-    ...item,
-    phase: 'carried',
-    swallowed: false,
-    destinationX: undefined,
-    concealedUnder: undefined,
+function advanceDeviceTouch(state: FightState, entry: PreparedEntity): FightState {
+  const preparation = entry.device!.transforming!,
+    side = preparation.owner
+  if (
+    !deviceTouchBodyFree(state, side) ||
+    !deviceBiohazardActive(state, side) ||
+    !touchesDevice(state, side, entry)
+  )
+    return changeDevice(clearDeviceTouch(state, entry), entry, { transforming: undefined })
+  if (state[side].x !== preparation.originX)
+    return changeDevice(clearDeviceTouch(state, entry), entry, { transforming: undefined })
+  const frames = preparation.frames - 1
+  if (frames > 0) return changeDevice(state, entry, { transforming: { ...preparation, frames } })
+  const kind = FORMS[entry.device!.kind]!
+  return changeDevice(clearDeviceTouch(state, entry), entry, {
+    transforming: undefined,
+    form: {
+      kind,
+      owner: side,
+      remainingFrames: kind === 'oyster' ? OYSTER_AURA_FRAMES : DEVICE_FORM_FRAMES,
+      sourceMoveId: BIOHAZARD_DEVICE_MOVE,
+    },
   })
-  return releaseDeviceGun(next, side, item)
 }
-
-export function deviceInReach(state: FightState, side: FightSide, item: BiohazardDevice): boolean {
-  return item.phase === 'carried' || Math.hypot(item.x - state[side].x, item.y - state[side].y) <= 6
+function advanceDeviceForm(state: FightState, entry: PreparedEntity): FightState {
+  const form = entry.device!.form!,
+    remainingFrames = form.remainingFrames - 1
+  if (!deviceBiohazardActive(state, form.owner) || remainingFrames <= 0)
+    return changeDevice(state, entry, { form: undefined })
+  let next = changeDevice(state, entry, { form: { ...form, remainingFrames } })
+  if (form.targetX === undefined || entry.device!.carrier || form.kind !== 'cat') return next
+  const x =
+    entry.x + Math.sign(form.targetX - entry.x) * Math.min(0.12, Math.abs(form.targetX - entry.x))
+  next = {
+    ...next,
+    battlefield: {
+      ...next.battlefield!,
+      entities: next.battlefield!.entities.map((held) =>
+        held.id === entry.id ? { ...held, x } : held,
+      ),
+    },
+  }
+  return next
 }
-
-export function storeBioDevice(
+export function deviceAnimalCommand(
   state: FightState,
   side: FightSide,
-  item: BiohazardDevice,
+  options: { action: string; target?: string },
 ): FightState {
+  const entry = deviceEntity(state, options.target),
+    form = entry?.device?.form
+  if (!entry || !form || !deviceBodyFree(state, side)) return state
+  if (options.action === 'biohazard-swallow') return swallowDevice(state, side, entry)
+  if (options.action === 'biohazard-place') return placeDevice(state, side, entry)
+  return ownedAnimalCommand(state, side, { entry, action: options.action })
+}
+function ownedAnimalCommand(
+  state: FightState,
+  side: FightSide,
+  options: { entry: PreparedEntity; action: string },
+): FightState {
+  const { entry, action } = options
+  if (entry.device!.form!.owner !== side || !deviceBiohazardActive(state, side)) return state
+  if (action === 'biohazard-device-end') return changeDevice(state, entry, { form: undefined })
+  return walkCameraCat(state, entry, action)
+}
+function swallowDevice(state: FightState, side: FightSide, entry: PreparedEntity): FightState {
+  if (
+    entry.device!.form?.kind !== 'oyster' ||
+    !touchesDevice(state, side, entry) ||
+    (!holdsDevice(state, side, entry) && !freeDeviceHand(state, side))
+  )
+    return state
+  return changeDevice(state, entry, {
+    carrier: side,
+    carrierMember: state.teamMatch?.seats[side].active,
+    swallowed: true,
+    hand: undefined,
+  })
+}
+function placeDevice(state: FightState, side: FightSide, entry: PreparedEntity): FightState {
+  if (!holdsDevice(state, side, entry) || !entry.device!.swallowed) return state
+  const position = devicePosition(state, entry),
+    placed = changeDevice(state, entry, {
+      carrier: undefined,
+      carrierMember: undefined,
+      hand: undefined,
+      swallowed: false,
+      depositedAt: state.frame,
+    })
   return {
-    ...state,
-    [side]: {
-      ...state[side],
-      biohazardDevices: state[side].biohazardDevices!.map((entry) =>
-        entry.id === item.id ? item : entry,
+    ...placed,
+    battlefield: {
+      ...placed.battlefield!,
+      entities: placed.battlefield!.entities.map((held) =>
+        held.id === entry.id ? { ...held, x: position.x, y: 0 } : held,
       ),
     },
   }
 }
-
-export function releaseDeviceGun(
-  state: FightState,
-  side: FightSide,
-  item: BiohazardDevice,
-): FightState {
-  const victim = item.weaponSide
-  if (!victim || state[victim].biohazardGun?.owner !== side) return state
-  return {
-    ...state,
-    [side]: {
-      ...state[side],
-      biohazardDevices: state[side].biohazardDevices?.filter((held) => held.id !== item.id),
-    },
-    [victim]: { ...state[victim], biohazardGun: undefined },
-  }
+function walkCameraCat(state: FightState, entry: PreparedEntity, action: string): FightState {
+  const form = entry.device!.form!
+  if (form.kind !== 'cat' || entry.device!.carrier) return state
+  const targetX =
+    action === 'biohazard-cat-recall'
+      ? state[form.owner].x
+      : action === 'biohazard-cat-left'
+        ? 7
+        : action === 'biohazard-cat-right'
+          ? 93
+          : entry.x
+  return form.targetX === targetX
+    ? state
+    : changeDevice(state, entry, { form: { ...form, targetX } })
 }
 
-/** Normal optics records appearances, never hidden Nen, true identity or future inputs. */
-export function cameraSees(
+function deviceTouchBodyFree(state: FightState, side: FightSide): boolean {
+  return deviceBodyFree({ ...state, [side]: { ...state[side], deviceTouchId: undefined } }, side)
+}
+function clearDeviceTouch(state: FightState, entry: PreparedEntity): FightState {
+  const side = (['player', 'opponent'] as const).find(
+    (owner) => state[owner].deviceTouchId === entry.id,
+  )
+  if (!side) return state
+  return { ...state, [side]: { ...state[side], deviceTouchId: undefined } }
+}
+export function cancelDeviceTransformation(
   state: FightState,
-  item: BiohazardDevice,
   side: FightSide,
-): CameraSample | null {
-  const target = state[side === 'player' ? 'opponent' : 'player']
-  if (Math.abs(target.x - item.x) > 30) return null
-  const blocked = !priorityLineOfSight(state, {
-    x: item.x,
-    y: item.y + 2,
-    targetX: target.x,
-    targetY: target.y + 10,
-  })
-  return blocked
-    ? null
-    : { frame: state.frame, x: target.x, y: target.y, appearance: battleAppearance(target) }
+  id?: string,
+): FightState {
+  const entry = deviceEntity(state, id)
+  if (entry?.device?.transforming?.owner !== side) return state
+  return changeDevice(clearDeviceTouch(state, entry), entry, { transforming: undefined })
+}
+
+function clearMissingDeviceTouch(state: FightState, side: FightSide): FightState {
+  const id = state[side].deviceTouchId
+  if (!id || deviceEntity(state, id)?.device?.transforming?.owner === side) return state
+  return { ...state, [side]: { ...state[side], deviceTouchId: undefined } }
 }

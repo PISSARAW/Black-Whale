@@ -1,4 +1,4 @@
-import { advanceHalkenburgSouls } from '../halkenburgSouls'
+import { stepGumResuscitation } from '../gumResuscitation'
 import { advanceRetrospectiveHitstop } from '../retrospectiveClocks'
 import { performArenaAction } from '../arenaActions'
 import { advanceArena, readArenaInputs } from '../arenaSimulation'
@@ -21,12 +21,12 @@ export function openFrame(
   inputs: DuelInputs,
   attack: DuelAttack,
 ): DuelPhaseResult {
+  if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = advancePredatorClock(state)
-  if (state.catsName) return { state: advanceCatsName(state), pending: true }
   state = advanceEmperorClock(state)
+  if (state.catsName) return { state: advanceCatsName(state), pending: true }
   if (state.hitstop > 0)
     return { state: hitstopFrame(bufferKameoCalls(state, inputs)), pending: true }
-  state = advanceHalkenburgSouls(state)
   state = advancePreparation(state, inputs)
   state = readArenaInputs(state, inputs, (current, side) =>
     performArenaAction(current, side, attack),

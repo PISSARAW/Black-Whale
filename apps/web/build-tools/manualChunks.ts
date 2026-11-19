@@ -153,14 +153,6 @@ function threeChunkName(id: string): string {
 const CLASH_CHUNK_RULES: readonly (readonly [RegExp, string])[] = [
   [/\/fighting\/ghostwriterScenarioData\.ts$/, 'clash-fortune-scenarios'],
   [/\/fighting\/stageCatalogue\.ts$/, 'clash-stage-catalogue'],
-  [/\/fighting\/solo\/[^/]+\.ts$/, 'clash-solo-catalogue'],
-  [/\/fighting\/(?:keyPoses\w*|\w+PhysicalPoses|fightStance|strikingLegs)\.ts$/, 'clash-key-poses'],
-  [
-    /\/fighting\/(?:normalFightMoves|fightMoves|movesets|moveEffects|moveVariants)\.ts$/,
-    'clash-move-runtime',
-  ],
-  [/\/fighting\/stageBackground\w*\.ts$/, 'clash-stage-visuals'],
-  [/\/fighting\/cinematic\w+\.ts$/, 'clash-camera-runtime'],
   [
     /\/fighting\/(?:en\/profiles|physicalBodyMap|bodyguardFirearms|luiniKnife|illumiNeedleMatter|gumResuscitationRules|sunMoonMarkPoint|leorioAttack)\.ts$/,
     'clash-physical-rules',

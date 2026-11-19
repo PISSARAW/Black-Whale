@@ -7,11 +7,11 @@ export const CHROLLO_CANON: Record<string, TechniqueCanonContract> = {
     evidence: 'gameplay-abstraction',
     conditions: [
       'Use the open page, or the bookmarked page with the book closed.',
-      'Black Voice requires an antenna strike; Sun is applied with the left hand.',
+      'Black Voice uses Shalnark’s original paired phone and one of his two physical antennas; Sun uses the left hand.',
     ],
     prohibitions: ['Stored pages are not all active at once. A single mark cannot explode.'],
     narrativeCost:
-      'The open book occupies the right hand; costs and the retreat order are duel tuning.',
+      'The open book occupies the right hand. Phone commands persist until the antenna is removed, the subject dies or the active page is lost; movement speed is duel tuning.',
     narrativeEffect:
       'Uses the selected ability. Two contacts on one target abstract the marks meeting.',
   },

@@ -12,7 +12,7 @@
    * three.js is pulled in on mount so the server never evaluates WebGL to render a page.
    */
   import { onMount, untrack } from 'svelte'
-  import { touchForce, touchKind, touchTurn } from '$lib/tour/auraTouch'
+  import { touchDisplacement, touchKind, touchTurn } from '$lib/tour/auraTouch'
   import {
     createNenTechniqueState,
     isAuraAtRest,
@@ -3188,7 +3188,7 @@
           const dx = target.at[0] - pointer[0]
           const dz = target.at[1] - pointer[1]
           const distance = Math.max(0.001, Math.hypot(dx, dz))
-          const force = touchForce(kind, effectiveNen, effectiveNen.shu.includes(target.id))
+          const force = touchDisplacement(kind, effectiveNen, effectiveNen.shu.includes(target.id))
           const held = world.solids[target.id] ?? {}
           world.solids[target.id] = {
             ...held,

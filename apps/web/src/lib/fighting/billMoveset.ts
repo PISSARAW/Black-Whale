@@ -1,4 +1,4 @@
-import { ERIGERON_SUPPORT } from './billSupport'
+import { ERIGERON_SUPPORT } from './billSupportTuning'
 import { buildMoveset } from './movesetFactory'
 import type { FighterMoveset } from './movesetTypes'
 

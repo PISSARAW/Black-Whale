@@ -77,7 +77,7 @@ describe('Kalluto paper and surveillance dolls', () => {
     'plants a physical fragment in %s through the engine',
     (zone) => {
       const state = step(cast(selectPaperTarget(duel(), 'player', zone), 'neutralSpecial'), 55)
-      expect(state.opponent.plantedPaper).toEqual([{ owner: 'player', zone }])
+      expect(state.opponent.plantedPaper).toMatchObject([{ owner: 'player', ownerMember: 0, zone }])
       expect(state.opponent.health).toBeLessThan(state.opponent.maxHealth)
       expect(state.player.x).toBe(30)
     },
@@ -168,7 +168,9 @@ describe('Kalluto paper and surveillance dolls', () => {
   })
   it('supports P2 and preserves paper ownership', () => {
     const state = step(cast(duel('opponent'), 'neutralSpecial', 'opponent'), 55)
-    expect(state.player.plantedPaper).toEqual([{ owner: 'opponent', zone: 'torso' }])
+    expect(state.player.plantedPaper).toMatchObject([
+      { owner: 'opponent', ownerMember: 0, zone: 'torso' },
+    ])
     expect(finisherReady(state, 'opponent')).toBe(true)
   })
   it('requires attached paper for a doll, then hears actual remote speech', () => {
@@ -265,19 +267,25 @@ describe('Kalluto paper and surveillance dolls', () => {
       }),
       70,
     )
-    expect(state.opponent.plantedPaper?.[0]).toEqual({ owner: 'player', zone: 'torso' })
+    expect(state.opponent.plantedPaper?.[0]).toMatchObject({
+      owner: 'player',
+      ownerMember: 0,
+      zone: 'torso',
+    })
   })
   it('never adds a third-hit bonus to repeated paper impacts', () => {
     let state = duel()
     const health = state.opponent.health
     state = impactPaper(impactPaper(impactPaper(state)))
     expect(health - state.opponent.health).toBeLessThan(18)
-    expect(state.opponent.plantedPaper).toEqual([{ owner: 'player', zone: 'torso' }])
+    expect(state.opponent.plantedPaper).toMatchObject([
+      { owner: 'player', ownerMember: 0, zone: 'torso' },
+    ])
   })
   it('Blinky returns swallowed paper as an ordinary object without its former manipulation', () => {
-    let state = duel()
+    let state = marked()
     const shot = {
-      ...launchKallutoPaper(state, 'opponent', 'serpent').projectiles[0],
+      ...launchKallutoPaper(state, 'player', 'serpent').projectiles[0],
       x: 40,
       y: 6.1,
     }
@@ -331,10 +339,10 @@ describe('Kalluto paper and surveillance dolls', () => {
     effect.dispose()
     expect(scene.getObjectByName('kalluto-paper')).toBeUndefined()
   })
-  it('clears paper and dolls for the next round', () => {
+  it('keeps actual paper and receiver bindings through a score reset', () => {
     const state = step(cast(marked(), 'backSpecial'), 35)
     const next = nextRound({ ...state, phase: 'finished', winner: 'player' })
-    expect(next.opponent.plantedPaper).toBeUndefined()
-    expect(next.player.kallutoPaper).toBeUndefined()
+    expect(next.opponent.plantedPaper).toEqual(state.opponent.plantedPaper)
+    expect(next.player.kallutoPaper).toEqual(state.player.kallutoPaper)
   })
 })

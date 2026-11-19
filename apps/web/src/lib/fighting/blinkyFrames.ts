@@ -1,5 +1,5 @@
 import { forgetArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
-import { advanceBlinkyEvidence } from './blinkyEvidence'
+import { swallowPaperScatter } from './kallutoScatterVacuum'
 import { attackData, attackPhase } from './frameData'
 import { sleepingBody } from './hanzoProjection'
 import { recordFightDeath } from './fightDeaths'
@@ -17,7 +17,7 @@ import {
 import type { FightSide, FightState } from './types'
 
 export function advanceBlinky(state: FightState): FightState {
-  const next = advanceBlinkyEvidence(stepBlinky(stepBlinky(state, 'player'), 'opponent'))
+  const next = stepBlinky(stepBlinky(state, 'player'), 'opponent')
   return next.deaths !== state.deaths ? resolveFightOutcome(next) : next
 }
 function stepBlinky(state: FightState, side: FightSide): FightState {
@@ -60,18 +60,19 @@ function swallow(state: FightState, side: FightSide): FightState {
     .filter(
       (shot) =>
         shot.matter === 'object' &&
-        !shot.illusionHarmless &&
         !shot.living &&
         shot.shape === memory.target &&
         inBlinkyNozzle(fighter, shot),
     )
     .sort((a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id - b.id)
-  if (!swallowed.length) return state
+  if (!swallowed.length) return swallowPaperScatter(state, side)
   state = forgetArenaVacuum(state, side)
   const ids = new Set(swallowed.map((shot) => shot.id))
   const lastObject = {
     ...swallowed[swallowed.length - 1],
     kallutoPaper: undefined,
+    paperOwner: undefined,
+    paperTarget: undefined,
     nenPower: 1,
     hatsuPower: 1,
     shuCharged: false,

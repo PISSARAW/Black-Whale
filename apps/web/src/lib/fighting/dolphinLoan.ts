@@ -9,6 +9,8 @@ import {
   type RosterGuest,
 } from './rosterGuests'
 import { createKurapika } from './kurapika'
+import { stolenAuraActor, restoreStolenAura } from './dolphinSupply'
+import { syncRosterDolphinSupply } from './dolphinRosterSupply'
 import {
   recordDolphinEffects,
   dolphinIsBusy,
@@ -67,7 +69,12 @@ export function performDolphinLoan({ state, side, command }: ArsenalInvocation):
 function loanLoaded(state: FightState, side: FightSide): boolean {
   const actor = state[side],
     held = actor.kurapika?.held
-  return actor.id === 'kurapika' && Boolean(held?.loaded && !held.used && !held.lentTo)
+  return (
+    actor.id === 'kurapika' &&
+    Boolean(
+      held?.loaded && !held.used && !held.lentTo && held.auraSupply && held.auraSupply.amount > 0,
+    )
+  )
 }
 function loanBodyReady(state: FightState, side: FightSide): boolean {
   const actor = state[side]
@@ -121,7 +128,14 @@ function launchLoan(state: FightState, guest: RosterGuest, attack: DuelAttack): 
   const body = guest.fighter
   const move = moveById(guest.loanMove)
   if (!move) return finishLoan(state, guest, false)
-  const proxy = { ...view, [guest.owner]: { ...body, id: guest.loanSource!, nenOwner: body.id } }
+  const proxy = {
+    ...view,
+    [guest.owner]: stolenAuraActor({
+      ...body,
+      id: guest.loanSource!,
+      nenOwner: body.id,
+    }),
+  }
   const cast = attack({
     state: proxy,
     side: guest.owner,
@@ -135,20 +149,27 @@ function launchLoan(state: FightState, guest: RosterGuest, attack: DuelAttack): 
   const recorded = recordDolphinEffects(view, cast, guest.owner)
   const restored = {
     ...recorded,
-    [guest.owner]: { ...recorded[guest.owner], id: body.id, nenOwner: body.nenOwner },
+    [guest.owner]: {
+      ...restoreStolenAura(body, recorded[guest.owner]),
+      id: body.id,
+      nenOwner: body.nenOwner,
+    },
   }
   const merged = mergeGuestProjection(state, restored, guest)
   const updated = merged.rosterGuests!.find((held) => held.id === guest.id)!
   const projectiles = merged.projectiles.map((shot) =>
     shot.id >= state.nextProjectileId ? { ...shot, sourceBody: guest.id } : shot,
   )
-  return storeRosterGuest(
-    {
-      ...merged,
-      projectiles,
-      [guest.owner]: { ...merged[guest.owner], dolphinLoanResult: 'cast' },
-    },
-    { ...updated, used: true },
+  return syncRosterDolphinSupply(
+    storeRosterGuest(
+      {
+        ...merged,
+        projectiles,
+        [guest.owner]: { ...merged[guest.owner], dolphinLoanResult: 'cast' },
+      },
+      { ...updated, used: true },
+    ),
+    guest,
   )
 }
 
@@ -196,7 +217,7 @@ export function runRosterHatsu(state: FightState, hatsu: FighterHatsu): FightSta
   if (!guest) return withDolphinIdentity(state, hatsu.onFrame, hatsu.id)
   const view = guestProjection(state, guest)
   const run = withDolphinIdentity(view, hatsu.onFrame, hatsu.id)
-  return mergeGuestProjection(state, run, guest)
+  return syncRosterDolphinSupply(mergeGuestProjection(state, run, guest), guest)
 }
 
 export function dolphinLoanOptions(state: FightState, side: FightSide): ArsenalOption[] {
@@ -209,9 +230,9 @@ export function dolphinLoanOptions(state: FightState, side: FightSide): ArsenalO
       labelFr: 'Dolphin · Prêter à un tiers du roster',
       labelEn: 'Dolphin · Lend to a roster ally',
       conditionFr:
-        'Adaptation de jeu : un volontaire du roster apparaît pour un usage de la technique chargée. Il paie son aura et respecte les conditions et ressources du Hatsu. Emperor Time reste à la charge de Kurapika jusqu’à la fin de l’usage. Aucun pouvoir offensif n’est inventé si les conditions échouent.',
+        'Adaptation de scénario : un volontaire du roster apparaît pour un usage de la technique chargée. Il utilise l’aura prélevée au donneur et respecte les conditions, son corps et le matériel du Hatsu. Kurapika maintient Emperor Time jusqu’à la fin de l’usage.',
       conditionEn:
-        'Game adaptation: a roster volunteer appears for one use of the loaded ability. Its own aura, body and resources must satisfy that Hatsu. Kurapika maintains Emperor Time until completion. Missing conditions do not produce an invented offensive effect.',
+        'Scenario adaptation: a roster volunteer appears for one use of the loaded ability. It spends the stolen donor aura and must satisfy the Hatsu’s conditions with its own body and real equipment. Kurapika maintains Emperor Time until completion.',
     },
   ]
 }

@@ -1,7 +1,9 @@
+import { equippedDolphin } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { luiniPhasePresentation } from './luiniPresentation'
 import { preparationCheck } from './preparationRequirements'
 import { preparedSource, preparedActionReady, controlledEntities } from './preparationActions'
-import type { HatsuRequirement, PreparedEntityKind } from './preparationTypes'
+import type { HatsuRequirement } from './preparationTypes'
 import type { FightSide, FightState } from './types'
 
 export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, string>> = {
@@ -42,48 +44,17 @@ export const REQUIREMENT_LABELS: Record<'fr' | 'en', Record<HatsuRequirement, st
     'visited-destination': 'Destination visited by this user',
   },
 }
-export const ENTITY_LABELS: Record<'fr' | 'en', Record<PreparedEntityKind, string>> = {
-  fr: {
-    corpse: 'Cadavre matériel',
-    camera: 'Caméra d’enregistrement réelle',
-    hostage: 'Otages présents',
-    puppet: 'Copie inerte · marionnette',
-    needles: 'Aiguilles',
-    morena: 'Morena',
-    supporter: 'Partisan marqué',
-    animal: 'Souris réelle',
-    bird: 'Pigeon réel',
-    seed: 'Graine vivante',
-    crate: 'Caisse',
-    flute: 'Flûte',
-    room: 'Pièce d’ancrage',
-    destination: 'Lieu visité',
-    delivery: 'Point de livraison',
-  },
-  en: {
-    corpse: 'Physical corpse',
-    camera: 'Real recording camera',
-    hostage: 'Hostages present',
-    puppet: 'Inert copy · puppet',
-    needles: 'Needles',
-    morena: 'Morena',
-    supporter: 'Marked supporter',
-    animal: 'Real mouse',
-    bird: 'Real pigeon',
-    seed: 'Living seed',
-    crate: 'Crate',
-    flute: 'Flute',
-    room: 'Anchor room',
-    destination: 'Visited place',
-    delivery: 'Delivery point',
-  },
-}
+export { ENTITY_LABELS } from './preparationEntityLabels'
 
 export function visiblePreparationCheck(state: FightState, side: FightSide) {
   const fighter = state[side]
-  const held = fighter.kurapika?.held
+  const held = equippedDolphin(fighter)
   if (!held) return preparationCheck(state, side)
-  const actor = { ...fighter, id: held.source, nenOwner: fighter.id }
+  const actor = stolenAuraActor({
+    ...fighter,
+    id: held.source,
+    nenOwner: fighter.nenOwner ?? fighter.id,
+  })
   return preparationCheck({ ...state, [side]: actor }, side, held.moveId)
 }
 

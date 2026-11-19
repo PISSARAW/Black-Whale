@@ -1,4 +1,4 @@
-import { biohazardDeviceReady, performBiohazardDevice, touchGun } from './biohazardDevices'
+import { biohazardDeviceReady, performBiohazardDevice, touchGun } from './legacyBiohazardDevices'
 import { biohazardAuthority } from './biohazard'
 import { hasEquipment } from './preparationWorld'
 import { hinrighCounterOptions } from './hinrighCounter'

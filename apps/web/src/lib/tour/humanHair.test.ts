@@ -109,7 +109,7 @@ describe('the hair, which is what the reader recognises first', () => {
     }
   })
 
-  it('gives Kurapika a bob and Nobunaga a topknot, from the catalogue alone', () => {
+  it('keeps Kurapika’s bob, Nobunaga’s topknot and Biscuit’s sourced ponytails', () => {
     expect(humanProfile(person('kurapika')).hairStyle).toBe('bob')
     expect(humanProfile(person('nobunaga-hazama')).hairStyle).toBe('chonmage')
     expect(humanProfile(person('biscuit-krueger')).hairStyle).toBe('ponytail')

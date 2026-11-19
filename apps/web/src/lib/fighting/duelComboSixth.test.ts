@@ -164,8 +164,9 @@ describe('sixth expansion personal mechanics', () => {
     expect(result.state.player.comboMaster).toEqual({ alert: null })
     expect(play('furykov:economy', { initial }).damage).toBe(play('furykov:economy').damage)
     const waiting = play('furykov:console', { initial, steps: 3 }).state
+    // The former recovery link is a chain under the derived grammar (COMBO_GRAMMAR.md, lot 4).
     expect(comboChoices(waiting).find((choice) => choice.move.slot === 'backHeavy')?.status).toBe(
-      'wait',
+      'ready',
     )
   })
 

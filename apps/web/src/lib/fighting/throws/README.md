@@ -8,48 +8,48 @@ Les quarante paires couvrent tout le roster du tableau. Chaque paire
 fournit des poses articulées pour les deux corps,
 une trajectoire de prise et de chute, et une direction de caméra distincte.
 
-| Combattant   | Projection                     | Aura + projection                              |
-| ------------ | ------------------------------ | ---------------------------------------------- |
-| Kurapika     | Le pendule du jugement         | Le dernier maillon                             |
-| Hisoka       | Retour à l'envoyeur            | Le trapèze                                     |
-| Chrollo      | La page tournée                | Le public participe / Double Face              |
-| Benjamin     | Neutralisation réglementaire   | Mise aux arrêts                                |
-| Tserriednich | La pièce de collection         | Le futur manqué / Composition brisée           |
-| Feitan       | Le parapluie se referme        | La petite roue                                 |
-| Saiyu        | Le grand levier                | La roue du singe                               |
-| Theta        | Désarmer la menace             | Angle mort                                     |
-| Biscuit      | La leçon de politesse          | La correction magistrale                       |
-| Phinks       | L'essoreuse                    | Le changement de vitesse                       |
-| Franklin     | Le lancer de cargaison         | Le débarquement                                |
-| Machi        | Le point de croix              | La bobine                                      |
-| Illumi       | L’articulation inutile         | Le pantin désaccordé                           |
-| Kalluto      | Le paravent blanc              | La révérence interrompue                       |
-| Bonolenov    | La valse du guerrier           | Prologue : le renversement / Le dernier accord |
-| Shizuku      | Un coup de balai               | Le grand ménage                                |
-| Hinrigh      | La poignée de main des Xi-Yu   | Le bras droit                                  |
-| Mizaistom    | Veuillez rester ici            | Fin de la déposition                           |
-| Leorio       | La consultation express        | La visite à domicile                           |
-| Hanzo        | Dans votre dos                 | La chute de la lune                            |
-| Rihan        | Le piège patient               | L’impasse                                      |
-| Zakuro       | Le faux pas écarlate           | La spirale écarlate                            |
-| Melody       | Le contretemps                 | La dernière mesure                             |
-| Basho        | Le cinquième vers              | Le point final                                 |
-| Camilla      | Le baisemain forcé             | L’audience est levée                           |
-| Halkenburg   | La ligne brisée                | Le rempart du prince                           |
-| Gel          | Le bracelet vivant             | L’anneau du serpent                            |
-| Lynch        | Répondez donc                  | L’interrogatoire musclé                        |
-| Luini        | Vous vous êtes trompé de porte | La sortie de secours                           |
-| Bill         | Le tuteur                      | Le bouclier vivant                             |
-| Furykov      | L’angle mort                   | La séquence parfaite                           |
-| Cluck        | Sous l’aile                    | L’envol contrarié                              |
-| Beyond       | Le col du géant                | Le sommet infranchissable                      |
-| Longhi       | La clause de sortie            | Le point non négociable                        |
-| Musse        | Le passage sous garde          | La fenêtre se referme                          |
-| Padaille     | Le bras de levier              | Le levier de chantier                          |
-| Sayird       | Hors du champ                  | Le changement de perspective                   |
-| Terebellum   | Le relais des paumes           | Livraison à domicile                           |
-| Voconte      | Après vous                     | La mauvaise entrée                             |
-| Yokotani     | Fin de non-recevoir            | Veuillez quitter les lieux                     |
+| Combattant | Projection | Aura + projection |
+|---|---|---|
+| Kurapika | Le pendule du jugement | Le dernier maillon |
+| Hisoka | Retour à l'envoyeur | Le trapèze |
+| Chrollo | La page tournée | Le public participe / Double Face |
+| Benjamin | Neutralisation réglementaire | Mise aux arrêts |
+| Tserriednich | La pièce de collection | Le futur manqué / Composition brisée |
+| Feitan | Le parapluie se referme | La petite roue |
+| Saiyu | Le grand levier | La roue du singe |
+| Theta | Désarmer la menace | Angle mort |
+| Biscuit | La leçon de politesse | La correction magistrale |
+| Phinks | L'essoreuse | Le changement de vitesse |
+| Franklin | Le lancer de cargaison | Le débarquement |
+| Machi | Le point de croix | La bobine |
+| Illumi | L’articulation inutile | Le pantin désaccordé |
+| Kalluto | Le paravent blanc | La révérence interrompue |
+| Bonolenov | La valse du guerrier | Prologue : le renversement / Le dernier accord |
+| Shizuku | Un coup de balai | Le grand ménage |
+| Hinrigh | La poignée de main des Xi-Yu | Le bras droit |
+| Mizaistom | Veuillez rester ici | Fin de la déposition |
+| Leorio | La consultation express | La visite à domicile |
+| Hanzo | Dans votre dos | La chute de la lune |
+| Rihan | Le piège patient | L’impasse |
+| Zakuro | Le faux pas écarlate | La spirale écarlate |
+| Melody | Le contretemps | La dernière mesure |
+| Basho | Le cinquième vers | Le point final |
+| Camilla | Le baisemain forcé | L’audience est levée |
+| Halkenburg | La ligne brisée | Le rempart du prince |
+| Gel | Le bracelet vivant | L’anneau du serpent |
+| Lynch | Répondez donc | L’interrogatoire musclé |
+| Luini | Vous vous êtes trompé de porte | La sortie de secours |
+| Bill | Le tuteur | Le bouclier vivant |
+| Furykov | L’angle mort | La séquence parfaite |
+| Cluck | Sous l’aile | L’envol contrarié |
+| Beyond | Le col du géant | Le sommet infranchissable |
+| Longhi | La clause de sortie | Le point non négociable |
+| Musse | Le passage sous garde | La fenêtre se referme |
+| Padaille | Le bras de levier | Le levier de chantier |
+| Sayird | Hors du champ | Le changement de perspective |
+| Terebellum | Le relais des paumes | Livraison à domicile |
+| Voconte | Après vous | La mauvaise entrée |
+| Yokotani | Fin de non-recevoir | Veuillez quitter les lieux |
 
 Ces gestes et leurs noms sont des créations arcade pour Clash. Les chaînes
 réutilisent les maillons et le pendule de la visite, le gum son modèle existant,

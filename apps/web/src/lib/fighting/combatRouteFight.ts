@@ -14,11 +14,15 @@ import {
 
 export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId): FightState {
   const preparation = combatRouteScenario(route.setup)
-  let state = createFightState(route.fighter, opponent ?? routeOpponent(route), {
-    mode: 'training',
-    formatId: 'knockout',
-    environment: { stageId: 'heavens-arena', arenaInteractions: false, preparation },
-  })
+  let state = createFightState(
+    route.fighter,
+    opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo'),
+    {
+      mode: 'training',
+      formatId: 'knockout',
+      environment: { stageId: 'heavens-arena', arenaInteractions: false, preparation },
+    },
+  )
   if (route.kameo) state = withKameos(state, { player: route.kameo.id })
   state = {
     ...state,
@@ -35,14 +39,7 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
   state = prepareCombatRoute(state, route.setup)
   if (route.kameo?.id === 'tubeppa')
     state = { ...state, player: { ...state.player, health: state.player.maxHealth - 40 } }
-  if (route.whiff) state = { ...state, player: { ...state.player, x: 50 - route.whiff.gap } }
   return setTrainingDummy(state, { behavior: 'guard-after-hit' })
-}
-
-function routeOpponent(route: CombatRoute): FighterId {
-  return (
-    route.wakeup ?? route.whiff?.opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo')
-  )
 }
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {

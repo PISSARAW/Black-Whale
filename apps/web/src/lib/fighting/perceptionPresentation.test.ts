@@ -101,6 +101,8 @@ describe('private type 1 surveillance, perception and replies', () => {
       let s = duel('sayird', side, true)
       clock(s, side)
       s = performAttack(s, side, 'special')
+      expect(clock(s, side)).toEqual([])
+      s = frames(s, 8)
       const events = clock(s, side)
       expect(events).toMatchObject([
         { source: 'sayird', kind: 'watch', owner: side, subject: `${side}:animal` },

@@ -3,6 +3,7 @@ import type { KeyedMove } from './keyPoseMoves'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FightJoint, FightPose } from './fightPose'
 import type { ArcadeFighter } from './types'
+import { WINDOW_LISTENING_POSE } from './secretWindowListeningPose'
 
 const GUN_POSE = {
   body: [0.08, 0, 0],
@@ -75,6 +76,7 @@ export function benjaminKeyedMove(fighter: ArcadeFighter): KeyedMove | null {
   if (fighter.id !== 'benjamin' || !attack) return null
   if (attack.kind === 'ranged') return { timeline: GUN_TIMELINE, authored: false }
   if (attack.kind !== 'special') return null
+  if (attack.moveId === 'benjamin:backSpecial') return WINDOW_LISTENING_POSE
   if (attack.moveId === 'benjamin:downSpecial') return { timeline: RECTANGLE, authored: false }
   if (!attack.moveId || attack.moveId === 'benjamin:neutralSpecial')
     return { timeline: fighter.facing === 1 ? LEFT_PALM_REAR : PALM_TIMELINE, authored: false }

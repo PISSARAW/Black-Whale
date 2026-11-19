@@ -45,10 +45,7 @@ try {
       if (phase === 'active') {
         const contacts = await page.evaluate(() => window.feitanCombatFixture.diagnostics())
         for (const contact of contacts.slice(0, 12))
-          assert.ok(
-            (contact.tip[0] - contact.hand[0]) * facing > 0.1,
-            `${contact.slot}: weapon must face its hitbox`,
-          )
+          assert.ok((contact.tip[0] - contact.hand[0]) * facing > 0.1, `${contact.slot}: weapon must face its hitbox`)
         await writeFile(
           path.join(output, `contacts-${facing}.json`),
           JSON.stringify(contacts, null, 2),

@@ -130,13 +130,10 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   fighter = dolphinActor(fighter)
-  return superThrowFrameData(
-    blinkyAttackData(
-      cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter),
-      fighter,
-    ),
+  return superThrowFrameData(blinkyAttackData(
+    cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter),
     fighter,
-  )
+  ), fighter)
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {

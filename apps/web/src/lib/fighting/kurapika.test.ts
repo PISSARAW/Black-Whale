@@ -70,7 +70,9 @@ function rested(state: FightState): FightState {
   }
 }
 function stolen(opponent: FighterId = 'hisoka'): FightState {
-  const drained = advance(cast(duel(opponent), 'backSpecial'), 90)
+  const initial = duel(opponent)
+  initial.opponent.aura = 50
+  const drained = advance(cast(initial, 'backSpecial'), 130)
   expect(drained.player.kurapika?.held).not.toBeNull()
   return rested(drained)
 }
@@ -278,8 +280,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const used = cast(loaded, 'backSpecial')
     expect(used.player.attack?.moveId).toBe('hisoka:neutralSpecial')
     expect(used.player.attack?.hatsuSource).toBe('hisoka')
-    expect(used.player.aura).toBe(
-      loaded.player.aura - moveForSlot('hisoka', 'neutralSpecial')!.auraCost,
+    expect(used.player.aura).toBe(loaded.player.aura)
+    expect(used.player.kurapika?.held?.auraSupply?.amount).toBe(
+      loaded.player.kurapika!.held!.auraSupply!.amount -
+        moveForSlot('hisoka', 'neutralSpecial')!.auraCost,
     )
     const stuck = advance(used, 80)
     expect(stuck.bungeeGum?.owner).toBe('player')
@@ -308,6 +312,7 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const judged = advance(cast(active, 'finisher'), 70)
     expect(judged.opponent.judgmentChain).toEqual({
       owner: 'player',
+      ownerMember: 0,
       rule: 'zetsu',
     })
     expect(judged.opponent.health).toBe(judged.opponent.maxHealth)

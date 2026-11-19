@@ -33,8 +33,7 @@ export function lineup(only?: readonly string[]) {
     const plain = pool.findIndex(
       (id) => !directionalTechnique(id, 'carry') && !directionalTechnique(id, 'close'),
     )
-    const pick =
-      wants >= 0 && ending !== 'ground' && ending !== 'air' ? wants : plain >= 0 ? plain : 0
+    const pick = wants >= 0 && ending !== 'ground' && ending !== 'air' ? wants : plain >= 0 ? plain : 0
     order.push({ id: pool.splice(pick, 1)[0], ending })
   }
   return order

@@ -34,7 +34,7 @@ function stageTheta(context: VictoryContext) {
     hero.root.position.x - victim.root.position.x,
     hero.root.position.z,
   )
-  const kneel = ease((age - 216) / 72)
+  const kneel = ease((age - 204) / 60)
   bend(victim, Math.min(2.35, 1.1 + Math.max(0, victim.height - hero.height) * 0.8) * kneel)
   for (const side of ['left', 'right']) {
     const sign = side === 'left' ? 1 : -1

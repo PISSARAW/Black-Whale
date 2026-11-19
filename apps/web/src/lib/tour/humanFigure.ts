@@ -6,6 +6,7 @@ import { addPrisonBook } from './humanPrisonProps'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { addMorenaSkirt } from './mangaMorenaClothes'
 import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
+import { finishHumanModel } from './humanModelFinish'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
 import { CANON, stance } from './humanProportions'
@@ -362,5 +363,6 @@ export function buildHumanFigure({
     animateHuman(seconds, nextPose, layer)
     animateAura(seconds)
   }
+  finishHumanModel({ THREE, glow, model: { root }, profile })
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

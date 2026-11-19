@@ -1,11 +1,8 @@
-import { personalApplicationReady } from './nenApplicationRange'
-import { nenPhysicalOpener } from './nenComboDecision'
 import { aiJudgmentSpeechAllowed } from './judgmentCommunication'
 import { habitAttackSlots } from './opponentHabits'
 import { counterplayAttackSlots } from './styleCounterAttack'
 import { arsenalAttackSlots } from './arsenalAi'
 import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
-import { preferOpenZones, readDefensiveKo } from './nenCombat/aiReads'
 import type { FighterMove } from './movesetTypes'
 import type { FightState } from './types'
 
@@ -17,28 +14,24 @@ export function chooseMovesetAttack(
 ): FighterMove | null {
   const fighter = state.opponent
   if (!movesetFor(fighter.id) || !Number.isFinite(gap)) return null
-  const opener = nenPhysicalOpener(state, 'opponent')
-  if (opener) return opener
   const slots = [
     ...(counterplayAttackSlots(state, gap) ?? habitAttackSlots(state) ?? []),
     ...arsenalAttackSlots({ state, roll, gap }),
   ]
-  const moves = slots
-    .map((slot) => moveForSlot(fighter.id, slot))
-    .filter((move): move is FighterMove => move !== null)
   return (
-    preferOpenZones(moves, readDefensiveKo(fighter, state.player)).find(
-      (move) =>
-        move &&
-        personalApplicationReady(state, 'opponent', move) &&
-        aiMoveInRange(move, gap) &&
-        aiJudgmentSpeechAllowed(state, 'opponent', move.id) &&
-        canUseMovesetMove(state, 'opponent', move),
-    ) ?? null
+    slots
+      .map((slot) => moveForSlot(fighter.id, slot))
+      .find(
+        (move) =>
+          move &&
+          aiMoveInRange(move, gap) &&
+          aiJudgmentSpeechAllowed(state, 'opponent', move.id) &&
+          canUseMovesetMove(state, 'opponent', move),
+      ) ?? null
   )
 }
 
-export function aiMoveInRange(move: FighterMove, gap: number): boolean {
+function aiMoveInRange(move: FighterMove, gap: number): boolean {
   if (move.tuning.damage === 0 || move.tuning.reach === 0) return true
   // These attacks release travelling matter or aura, rather than a melee hitbox.
   if (move.kind === 'special' && /^(franklin|theta|kalluto|leorio):/.test(move.id)) return true

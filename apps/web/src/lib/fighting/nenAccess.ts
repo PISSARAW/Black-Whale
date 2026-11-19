@@ -44,7 +44,11 @@ function onSealed(fighter: ArcadeFighter): boolean {
 }
 
 function reserveUnavailable(fighter: ArcadeFighter, options: NenAccessOptions): boolean {
-  return fighter.auraExhausted || (options.requireReserve === true && fighter.aura <= 0)
+  return fighter.auraExhausted || (options.requireReserve === true && !availableAura(fighter))
+}
+
+function availableAura(fighter: ArcadeFighter): boolean {
+  return fighter.aura > 0 || (fighter.dolphinExecution?.supply.committed ?? 0) > 0
 }
 
 function zetsuBlocks(fighter: ArcadeFighter, options: NenAccessOptions): boolean {
@@ -54,9 +58,17 @@ function zetsuBlocks(fighter: ArcadeFighter, options: NenAccessOptions): boolean
 function forcedZetsu(fighter: ArcadeFighter): boolean {
   return Boolean(
     fighter.chainJail ||
+    fighter.drainingChain ||
     fighter.moonlightZetsu ||
     fighter.hatsuEffects.forcedZetsuFrames > 0 ||
     (fighter.predator?.sealFrames ?? 0) > 0 ||
-    (fighter.kurapika?.blackoutFrames ?? 0) > 0,
+    emperorBlackout(fighter),
+  )
+}
+
+function emperorBlackout(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    (fighter.kurapika?.blackoutFrames || fighter.dolphinLoan?.blackoutFrames) &&
+    !fighter.dolphinExecution,
   )
 }

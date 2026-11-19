@@ -1,7 +1,6 @@
 <script lang="ts">
-  import FightNenApplications from './FightNenApplications.svelte'
-  import FightNenGuide from './FightNenGuide.svelte'
   import FightHeldButton from './FightHeldButton.svelte'
+  import FightNenGuide from './FightNenGuide.svelte'
   import { enProfile } from '$lib/fighting/en/profiles'
   import { enDescription } from '$lib/fighting/en/presentation'
   import type { ArcadeFighter, FightInput } from '$lib/fighting/types'
@@ -26,12 +25,12 @@
 >
   {#each controls as control (control.key)}
     <FightHeldButton
-      disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
       label={control.key === 'en' && fighter
         ? enDescription(fighter, language)
         : control.label.includes('/')
           ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
           : control.label}
+      disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
       onHold={(active) => onControl(control.key, active)}
     >
       <kbd>{control.shortcut}</kbd>
@@ -40,7 +39,6 @@
         : control.label}
     </FightHeldButton>
   {/each}
-  {#if fighter}<FightNenApplications {fighter} {language} {onControl} />{/if}
   <FightNenGuide {language} />
 </div>
 

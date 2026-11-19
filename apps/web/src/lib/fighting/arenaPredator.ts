@@ -1,4 +1,5 @@
 import { arenaObjects } from './arenaActions'
+import { gumObjectAnchors, gumObjectAnchorTarget } from './gumObjectAnchors'
 import type { PredatorPrey } from './predatorPrey'
 import type { PredatorPreyId } from './predatorTypes'
 import type { FightSide, FightState } from './types'
@@ -17,6 +18,10 @@ export function withArenaPrey(prey: PredatorPrey): PredatorPrey {
 }
 
 function arenaPreyPoint(state: FightState, side: FightSide, preyId: PredatorPreyId) {
+  if (preyId === 'bungee-gum') {
+    const point = gumObjectsPreyPoint(state, side)
+    if (point) return point
+  }
   if (preyId === 'sun-and-moon') {
     const entry = arenaObjects(state).find(
       (object) => object.arena!.sun === side || object.arena!.moon === side,
@@ -31,6 +36,8 @@ function arenaPreyPoint(state: FightState, side: FightSide, preyId: PredatorPrey
 }
 
 function consumeArenaPrey(state: FightState, side: FightSide, preyId: PredatorPreyId): FightState {
+  if (preyId === 'bungee-gum' && state[side].gumObjectAnchors)
+    state = { ...state, [side]: { ...state[side], gumObjectAnchors: undefined } }
   if (!state.arena) return state
   if (preyId !== 'sun-and-moon')
     return {
@@ -55,4 +62,11 @@ function consumeArenaPrey(state: FightState, side: FightSide, preyId: PredatorPr
       }),
     },
   }
+}
+function gumObjectsPreyPoint(state: FightState, side: FightSide) {
+  if (state.bungeeGum?.owner === side && !state.bungeeGum.hidden) return null
+  const anchors = gumObjectAnchors(state[side])
+  const anchor = anchors.find((entry) => !entry.hidden) ?? anchors[0]
+  const entry = anchor && gumObjectAnchorTarget(state, anchor.objectId)
+  return entry ? { x: (entry.x + state[side].x) / 2, y: (entry.y + state[side].y) / 2 + 5 } : null
 }

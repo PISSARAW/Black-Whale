@@ -72,7 +72,7 @@
         "locationSlug": "tier-1-royal-residential-sector-room-1014",
         "precision": "EXACT_ROOM",
         "certainty": "CONFIRMED",
-        "tourAnchor": "classroom-table",
+        "tourAnchor": "tier-1-royal-residential-sector-room-1014-living",
         "note": "Le verre est posé sur la table mobile de la salle de cours de Woble."
       }
     ]

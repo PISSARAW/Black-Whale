@@ -35,7 +35,7 @@
   {language}
   {paused}
   {onEditing}
-  onCompose={(side, text) => send(side, { kind: 'poem', text })}
+  onCompose={(side, text, loan) => send(side, { kind: 'poem', text, loan })}
 />
 <FightMoonlightPanel
   {state}

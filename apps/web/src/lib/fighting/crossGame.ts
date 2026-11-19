@@ -1,7 +1,14 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { canSpeak, senseDeprived } from './saiyuSenses'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
+import {
+  CROSS_GAME_RANGE,
+  CROSS_GAME_COST,
+  CROSS_GAME_RESTRAINT,
+  CROSS_GAME_DISPLAY,
+} from './crossGameTuning'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+export * from './crossGameTuning'
 
 export interface CrossGameState {
   owner: FightSide
@@ -10,12 +17,6 @@ export interface CrossGameState {
   x: number
   y: number
 }
-
-export const CROSS_GAME_MOVE = 'mizaistom:neutralSpecial'
-export const CROSS_GAME_RANGE = 28
-export const CROSS_GAME_COST = 40
-export const CROSS_GAME_RESTRAINT = 90
-export const CROSS_GAME_DISPLAY = 18
 
 export function crossGameIntent(fighter: ArcadeFighter, moveId?: string): boolean {
   return fighter.id === 'mizaistom' || chrolloPageForMove(fighter, moveId) === 'mizaistom'

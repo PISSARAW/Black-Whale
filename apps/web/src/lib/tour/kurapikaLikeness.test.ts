@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { buildHumanFigure, type HumanLook } from './humanFigure'
 import { humanProfile } from './humanProfiles'
 import { buildFightFigure } from '../fighting/fighterFigure'
+import { combatFaceGeometry } from '../fighting/fightFaceReadability'
 import { createFightState } from '../fighting/fightState'
 import { fightBodyMotion } from '../fighting/fightBodyMotion'
 
@@ -52,9 +53,12 @@ describe('Kurapika likeness from the supplied manga reference', () => {
   it('shares the custom head, hair and tailored panels between the visit and Fighting', () => {
     const common = tour()
     const { model } = fight()
-    for (const name of ['kurapika-shirt', 'kurapika-tie', 'eye-pupil', 'face-relief']) {
+    for (const name of ['kurapika-shirt', 'kurapika-tie', 'eye-pupil']) {
       expect(mesh(model.root, name).geometry).toBe(mesh(common.root, name).geometry)
     }
+    expect(mesh(model.root, 'face-relief').geometry).toBe(
+      combatFaceGeometry(mesh(common.root, 'face-relief').geometry),
+    )
     const a = common.root.getObjectByName('kurapika-layered-bob')!
     const b = model.root.getObjectByName('kurapika-layered-bob')!
     expect((a.children[0] as THREE.Mesh).geometry).toBe((b.children[0] as THREE.Mesh).geometry)

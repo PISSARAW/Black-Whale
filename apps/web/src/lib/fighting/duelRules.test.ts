@@ -11,7 +11,8 @@ import {
 import { EMPTY_INPUT, type FightState } from './types'
 import { resolveFightImpacts } from './combatImpact'
 import { attackData } from './frameData'
-import { moveForSlot } from './movesets'
+import { moveById, moveForSlot } from './movesets'
+import { cancelGrammarFor } from './duelComboProfiles'
 
 function close(): FightState {
   const state = beginFight(createFight('kurapika', 'hisoka'))
@@ -122,10 +123,14 @@ describe('duel rules', () => {
     const state = beginFight(createFight('franklin', 'hisoka', { mode: 'versus-local' }))
     state.player = { ...state.player, x: 46, aura: 100 }
     state.opponent = { ...state.opponent, x: 51 }
-    expect(moveForSlot('franklin', 'standingLight')!.cancelOnBlockInto).toEqual([
-      'franklin:standingHeavy',
-    ])
-    expect(moveForSlot('franklin', 'standingHeavy')!.cancelOnBlockInto).toEqual([])
+    // Derived tiered grammar (COMBO_GRAMMAR.md, lot 4): blocked normals reach the chains and
+    // the physical enders, never a Hatsu; the enders end the pressure.
+    const enders = cancelGrammarFor('franklin')!.specials.map((slot) => `franklin:${slot}`)
+    const lightOnBlock = moveForSlot('franklin', 'standingLight')!.cancelOnBlockInto
+    expect(lightOnBlock).toContain('franklin:standingHeavy')
+    expect(moveForSlot('franklin', 'standingHeavy')!.cancelOnBlockInto).toEqual(enders)
+    for (const id of lightOnBlock) expect(moveById(id)!.category).not.toBe('special')
+    for (const id of enders) expect(moveById(id)!.cancelOnBlockInto).toEqual([])
     const whiff = performAttack(state, 'player', 'light')
     expect(performAttack(whiff, 'player', 'heavy').player.attack?.kind).toBe('light')
     whiff.opponent.blocking = true

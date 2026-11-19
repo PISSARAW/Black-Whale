@@ -61,7 +61,7 @@ export function copiedHandsAvailable(
   source: string,
 ): boolean {
   return (
-    !['kurapika', 'padaille', 'melody', 'phinks'].includes(source) ||
+    !['kurapika', 'padaille', 'melody', 'phinks', 'basho'].includes(source) ||
     fighter.chrolloBook?.open === false
   )
 }
@@ -84,7 +84,7 @@ export function performChrolloSelectedMove(
   if (fighter.id !== 'chrollo') return state
   const page = fighter.chrolloBook?.pages.find(
     (entry) =>
-      entry.includes(':') &&
+      (entry.includes(':') || entry === 'musse') &&
       chainAbilityGroup(entry) === chainAbilityGroup(moveId) &&
       chrolloHasActivePage(fighter, entry),
   )

@@ -59,7 +59,10 @@ export function createBiohazardInventory(count = 2): BiohazardInventory {
 }
 
 export function biohazardPreparing(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.biohazard?.objects.some((object) => object.phase === 'transforming'))
+  return Boolean(
+    fighter.deviceTouchId ||
+    fighter.biohazard?.objects.some((object) => object.phase === 'transforming'),
+  )
 }
 
 export function biohazardBodyFree(fighter: ArcadeFighter): boolean {

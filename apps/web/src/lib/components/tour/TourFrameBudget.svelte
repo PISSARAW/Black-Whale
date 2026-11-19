@@ -42,6 +42,9 @@
   -->
   <div
     id="tour-frame-budget"
+    data-tier={reading.tier}
+    data-triangles={reading.snapshot.triangles}
+    data-calls={reading.snapshot.calls}
     aria-hidden="true"
     class="pointer-events-none absolute left-16 top-3 z-40 max-w-[calc(100%-5rem)] rounded border bg-[#050505]/85 px-2 py-1 font-mono text-[10px] leading-relaxed {alert
       ? 'border-[#ef3340]/70 text-[#ef8a90]'

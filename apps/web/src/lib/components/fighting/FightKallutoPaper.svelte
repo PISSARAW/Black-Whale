@@ -1,4 +1,6 @@
 <script lang="ts">
+  import FightKallutoReceivers from './FightKallutoReceivers.svelte'
+  import FightKallutoSupplies from './FightKallutoSupplies.svelte'
   import {
     PAPER_ZONES,
     PAPER_COSTS,
@@ -118,6 +120,8 @@
               ? `${memory.heard.speaker === 'player' ? 'P1' : 'P2'} · « ${language === 'fr' && memory.heard.text === 'I am here.' ? 'Je suis ici.' : memory.heard.text} »`
               : '—'}
           </p>
+          <FightKallutoReceivers {state} {side} {language} />
+          <FightKallutoSupplies {state} {side} {language} />
           <small
             >{language === 'fr'
               ? `${specialKey} : planter · ↓ ${specialKey} : pieds · → ${specialKey} / ${finishKey} : serpent vers la zone choisie · ← ${specialKey} : poupée. Un papier suffit à désigner sa zone ; aucune explosion ni exécution automatique.`

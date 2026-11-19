@@ -45,13 +45,10 @@ function zetsuRest(fighter: ArcadeFighter, gap: number): Partial<FightInput> | n
 /** Zetsu doubles as a wound multiplier: the AI only rests in it out of striking range. */
 const ZETSU_SAFE_GAP = 24
 const needsZetsu = (fighter: ArcadeFighter, gap: number) =>
-  (fighter.aura < 16 || fighter.nenTactics?.goal === 'recover') &&
-  fighter.nen.mode !== 'zetsu' &&
-  gap > ZETSU_SAFE_GAP
+  (fighter.aura < 16 || fighter.nenTactics?.goal === 'recover') && fighter.nen.mode !== 'zetsu' && gap > ZETSU_SAFE_GAP
 const canLeaveZetsu = (fighter: ArcadeFighter, gap: number) =>
   fighter.nen.mode === 'zetsu' &&
-  (fighter.aura >= (fighter.nenTactics?.reserve || 49) ||
-    (gap <= ZETSU_SAFE_GAP && fighter.aura >= 16))
+  (fighter.aura >= (fighter.nenTactics?.reserve || 49) || (gap <= ZETSU_SAFE_GAP && fighter.aura >= 16))
 const needsKen = (state: FightState, gap: number) =>
   seesCombatBody(state.opponent) &&
   (!state.player.attack || perceivesAttack(state.opponent, state.player)) &&

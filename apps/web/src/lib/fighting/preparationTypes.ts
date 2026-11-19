@@ -1,6 +1,11 @@
 import type { FightSide, FighterId } from './types'
 
 export type PreparationResource =
+  | 'hisoka-asphyxia'
+  | 'fortunes'
+  | 'cameras'
+  | 'hostages'
+  | 'corpses'
   | 'animals'
   | 'birds'
   | 'plants'
@@ -8,13 +13,18 @@ export type PreparationResource =
   | 'flutes'
   | 'needles'
   | 'rooms'
-  | 'cameras'
-  | 'hostages'
-  | 'corpses'
-  | 'armed-corpses'
-  | 'sedatives'
+  | 'devices'
+  | 'writing'
+  | 'spirits'
+  | 'people'
+  | 'musse-history'
+  | 'paper'
+  | 'documents'
+  | 'maps'
 export type FightEquipment = 'flute' | 'book' | 'needles' | 'blood-infusion' | 'tracker-receiver'
 export interface FightPreparation {
+  /** Explicit physical injuries in this scenario; never granted by stealing a Hatsu. */
+  injuries?: import('./injuryPreparation').InjuryPreparation
   mode: 'duel' | 'scenario'
   resources: PreparationResource[]
   /** Explicit scenario premise: these allies already bear the feather and share this side's will. */
@@ -22,9 +32,15 @@ export interface FightPreparation {
 }
 
 export type PreparedEntityKind =
-  | 'corpse'
+  | 'body-part'
   | 'camera'
   | 'hostage'
+  | 'corpse'
+  | 'paper'
+  | 'person'
+  | 'black-voice'
+  | 'weak-spirit'
+  | 'device'
   | 'puppet'
   | 'morena'
   | 'supporter'
@@ -38,6 +54,7 @@ export type PreparedEntityKind =
   | 'destination'
   | 'delivery'
 export interface PreparedEntity {
+  device?: import('./deviceTypes').PhysicalDevice
   copy?: import('./chrolloHistoricalTypes').HistoricalCopy
   arena?: import('./arenaTypes').ArenaObject
   id: string
@@ -58,7 +75,7 @@ export interface PreparedEntity {
   linkedTo?: string
   growth?: number
   delivered?: boolean
-  controller?: { side: FightSide; source: FighterId }
+  controller?: { side: FightSide; source: FighterId; member?: number; person?: string }
 }
 
 export interface FightBattlefield {

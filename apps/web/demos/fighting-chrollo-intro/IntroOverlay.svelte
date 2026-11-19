@@ -39,12 +39,8 @@
   <div class="who">{hero.first}</div>
   {#if callout}
     <div class="callout" style={`opacity:${callout.age > 28 ? 1 - (callout.age - 28) / 6 : 1}`}>
-      {#if callout.word}<b class:long={callout.word.length > 7} style={slam(callout.age)}
-          >{callout.word}</b
-        >{/if}
-      {#if callout.line}<span class:big={!callout.word} style={slam(callout.age, 3)}
-          >{callout.line}</span
-        >{/if}
+      {#if callout.word}<b class:long={callout.word.length > 7} style={slam(callout.age)}>{callout.word}</b>{/if}
+      {#if callout.line}<span class:big={!callout.word} style={slam(callout.age, 3)}>{callout.line}</span>{/if}
     </div>
   {/if}
   <div class="flash" style={`opacity:${fx.flash}`}></div>
@@ -107,10 +103,7 @@
     position: absolute;
     top: 66px;
     left: 34px;
-    font:
-      24px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 24px/1 Impact, 'Arial Black', sans-serif;
     color: rgba(255, 255, 255, 0.85);
     text-shadow: 0 2px 0 #000;
   }
@@ -118,10 +111,7 @@
     position: absolute;
     top: 58px;
     right: 34px;
-    font:
-      40px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 40px/1 Impact, 'Arial Black', sans-serif;
     color: #fff;
     letter-spacing: 2px;
     text-shadow: 0 3px 0 #000;
@@ -135,10 +125,7 @@
   }
   .callout b {
     display: block;
-    font:
-      150px/0.95 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 150px/0.95 Impact, 'Arial Black', sans-serif;
     font-weight: normal;
     color: #fff;
     -webkit-text-stroke: 4px #000;
@@ -156,10 +143,7 @@
     padding: 8px 16px;
     background: var(--aura);
     color: #05070b;
-    font:
-      34px/1.1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 34px/1.1 Impact, 'Arial Black', sans-serif;
   }
   .callout span.big {
     margin-top: 820px;
@@ -182,10 +166,7 @@
     border-radius: 6px;
     background: rgba(5, 7, 11, 0.6);
     color: rgba(255, 255, 255, 0.35);
-    font:
-      normal 24px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: normal 24px/1 Impact, 'Arial Black', sans-serif;
     letter-spacing: 1px;
   }
   .strip i.on {
@@ -223,10 +204,7 @@
   }
   .word {
     position: relative;
-    font:
-      150px/0.9 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 150px/0.9 Impact, 'Arial Black', sans-serif;
     color: #fff;
     -webkit-text-stroke: 4px #000;
     text-shadow:
@@ -241,20 +219,14 @@
   }
   .kicker {
     position: relative;
-    font:
-      34px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 34px/1 Impact, 'Arial Black', sans-serif;
     color: #c8d3de;
     letter-spacing: 2px;
   }
   .tag {
     position: relative;
     margin-top: 30px;
-    font:
-      64px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 64px/1 Impact, 'Arial Black', sans-serif;
     color: #fff;
     -webkit-text-stroke: 2px #000;
   }
@@ -264,9 +236,6 @@
     padding: 14px 22px;
     background: #d9b674;
     color: #05070b;
-    font:
-      38px/1 Impact,
-      'Arial Black',
-      sans-serif;
+    font: 38px/1 Impact, 'Arial Black', sans-serif;
   }
 </style>

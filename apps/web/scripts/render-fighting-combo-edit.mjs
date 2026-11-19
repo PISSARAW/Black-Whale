@@ -16,16 +16,7 @@ const short = process.argv.includes('--short')
 const demo = process.argv.find((a) => a.startsWith('--demo='))?.slice(7) ?? 'combo-edit'
 const only = process.argv.find((a) => a.startsWith('--only='))?.slice(7)
 const stills = process.argv.find((a) => a.startsWith('--stills='))?.slice(9)
-const output =
-  process.env.COMBO_EDIT_OUTPUT ??
-  path.join(
-    root,
-    demo !== 'combo-edit'
-      ? `output/fighting-${demo}`
-      : short
-        ? 'output/fighting-combo-edit-short'
-        : 'output/fighting-combo-edit',
-  )
+const output = process.env.COMBO_EDIT_OUTPUT ?? path.join(root, demo !== 'combo-edit' ? `output/fighting-${demo}` : short ? 'output/fighting-combo-edit-short' : 'output/fighting-combo-edit')
 const silent = path.join(output, 'video.mp4')
 await mkdir(path.join(output, 'stills'), { recursive: true })
 
@@ -57,10 +48,7 @@ try {
     headless: true,
     args: ['--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-gpu'],
   })
-  const page = await browser.newPage({
-    viewport: { width: 720, height: 1280 },
-    deviceScaleFactor: 1.5,
-  })
+  const page = await browser.newPage({ viewport: { width: 720, height: 1280 }, deviceScaleFactor: 1.5 })
   page.setDefaultTimeout(600000)
   page.on('pageerror', (e) => {
     errors.push(e.message)
@@ -100,8 +88,7 @@ try {
         ? `  ${c.id.padEnd(14)} ${c.ending.padEnd(7)} ${(c.signature ? '*' : ' ') + c.finish.slice(0, 30).padEnd(31)} ko=${c.koFrames} ryu=${c.ryuFrames} ${c.hits} hits ${c.damage} dmg\n`
         : `  ${c.id.padEnd(14)} ${c.stage.padEnd(24)} ${c.frames}f hits=${c.impacts} [${c.observed.join(' ')}] {${c.events.join(' ')}}${c.error ? ' ERROR ' + c.error : ''}\n`,
     )
-  if (report.lit)
-    process.stdout.write(`lit: ${report.lit.join(' ')}\nmissing: ${report.missing.join(' ')}\n`)
+  if (report.lit) process.stdout.write(`lit: ${report.lit.join(' ')}\nmissing: ${report.missing.join(' ')}\n`)
   for (const f of report.failures) process.stdout.write(`  FAIL ${f}\n`)
 
   // The scene's transitions and stride clocks must see the simulated time, not a fixed 33 ms.
@@ -178,14 +165,7 @@ try {
       'ffmpeg',
       [
         ...['-hide_banner', '-loglevel', 'error', '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg'],
-        ...[
-          '-framerate',
-          String(report.fps),
-          '-i',
-          'pipe:0',
-          '-vf',
-          'scale=1080:1920:flags=lanczos',
-        ],
+        ...['-framerate', String(report.fps), '-i', 'pipe:0', '-vf', 'scale=1080:1920:flags=lanczos'],
         ...['-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', silent],
       ],
       { stdio: ['pipe', 'inherit', 'inherit'] },
@@ -215,14 +195,7 @@ try {
       path.join(output, 'edit-report.json'),
       wav,
     ])
-    const final = path.join(
-      output,
-      demo.endsWith('-intro')
-        ? `Black-Whale-Clash-${demo[0].toUpperCase()}${demo.slice(1, -6)}-Presentation.mp4`
-        : short
-          ? 'Black-Whale-Clash-Top-16-Combos-45s.mp4'
-          : 'Black-Whale-Clash-40-Combos-Vertical.mp4',
-    )
+    const final = path.join(output, demo.endsWith('-intro') ? `Black-Whale-Clash-${demo[0].toUpperCase()}${demo.slice(1, -6)}-Presentation.mp4` : short ? 'Black-Whale-Clash-Top-16-Combos-45s.mp4' : 'Black-Whale-Clash-40-Combos-Vertical.mp4')
     await run('ffmpeg', [
       ...['-hide_banner', '-loglevel', 'error', '-y', '-i', silent, '-i', wav],
       ...['-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart'],

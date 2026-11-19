@@ -5,12 +5,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'halkenburg',
     mechanic: [
-      'Grimmel : la volonté de sa cohorte se rassemble pendant le combat ; la flèche perce alors toute garde et livre le corps de la cible à un partisan, au prix de la vie de Halkenburg.',
-      'Grimmel: his cohort’s will gathers during the fight; the arrow then pierces any guard and hands the target’s body to a supporter, at the cost of Halkenburg’s life.',
+      'Grimmel : une cohorte réelle réunit sa volonté. La flèche échange la conscience de la cible avec un membre tiré au sort, Halkenburg inclus, dont le corps s’endort. Aucun dégât de la flèche ; coûts d’aura et de PV réglés pour le duel.',
+      'Grimmel: a real cohort gathers its will. The arrow swaps the target’s consciousness with a randomly chosen member, including Halkenburg, whose body falls asleep. The arrow causes no damage; aura and HP costs are duel tuning.',
     ],
     finisherCondition: [
-      'Le corps de la cible doit être occupé par un partisan.',
-      'The target’s body must be occupied by a supporter.',
+      'Le corps touché est occupé par la conscience transférée ; la flèche elle-même ne donne aucun KO physique.',
+      'The pierced body holds the transferred consciousness; the arrow itself causes no physical knockout.',
     ],
     labels: [
       'Direct du prince|Prince Straight',

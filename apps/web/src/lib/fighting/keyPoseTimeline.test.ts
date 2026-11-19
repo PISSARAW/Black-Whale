@@ -37,11 +37,12 @@ describe('key pose timeline', () => {
     expect(shoulderAt(12)).toBe(shoulderAt(13))
   })
 
-  it('samples strikes continuously without moving the authored contact frame', () => {
-    const sample = (frame: number) => sampleTimeline(timeline, { frame, frames, continuous: true })
-    expect(sample(1.5).leadShoulder?.[0]).toBeGreaterThan(sample(1).leadShoulder?.[0] ?? 0)
-    expect(sample(5.5).leadShoulder?.[0]).toBeGreaterThan(-1.5)
-    expect(sample(6)).toEqual(contact)
+  it('samples support gestures continuously while keeping roster holds by default', () => {
+    const support = (frame: number) =>
+      sampleTimeline(timeline, { frame, frames, continuous: true }).leadShoulder?.[0]
+    expect(support(12)).not.toBe(support(13))
+    expect(support(13)).toBeGreaterThan(support(12)!)
+    expect(shoulderAt(12)).toBe(shoulderAt(13))
   })
 
   it('settles back into the stance by the end of recovery', () => {

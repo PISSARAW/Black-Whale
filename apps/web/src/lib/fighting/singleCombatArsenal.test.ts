@@ -1,3 +1,4 @@
+import { captureDolphinAura } from './dolphinAura'
 import { describe, expect, it } from 'vitest'
 import {
   beginFight,
@@ -8,7 +9,7 @@ import {
   tickFight,
 } from './engine'
 import { performArsenalAction } from './arsenalExecution'
-import { arsenalOptions, validArsenalCommand } from './retrospectiveArsenal'
+import { arsenalOptions, validArsenalCommand, performArsenalCommand } from './retrospectiveArsenal'
 import { speakPaperWords } from './kallutoListening'
 import { privatePvpState } from './pvp/view'
 import { BASHO_TRIAL_POEMS } from './bashoPoem'
@@ -24,9 +25,20 @@ import type { ArsenalCommand } from './retrospectiveTypes'
 import { EMPTY_INPUT, type FightState, type FighterId, type FightSide } from './types'
 
 function duel(id: FighterId = 'musse'): FightState {
-  const state = beginFight(
-    createFight(id, 'hisoka', { mode: 'versus-local', formatId: 'knockout' }),
+  let state = beginFight(
+    createFight(id, 'hisoka', {
+      mode: 'versus-local',
+      formatId: 'knockout',
+      environment: { preparation: { mode: 'scenario', resources: ['writing'], cohorts: [] } },
+    }),
   )
+  if (id === 'basho' || id === 'kurapika') {
+    state = { ...state, player: { ...state.player, x: 25 } }
+    state = performArsenalCommand(state, 'player', {
+      action: 'writing-take',
+      target: 'player:writing-kit',
+    })
+  }
   return {
     ...state,
     player: { ...state.player, x: 40, aura: 100 },
@@ -51,19 +63,17 @@ describe('single-encounter arsenal: observed applications', () => {
     const started = command(initial, { action: 'window-listen' })
     expect(started.player.aura).toBe(initial.player.aura - 16)
     const state = frames(started, 35)
-    expect(state.player.secretWindow).toMatchObject({
-      mode: 'listening',
-      target: 'opponent',
-      observation: { action: 'audio-only' },
-    })
+    expect(state.player.secretWindowListening).toMatchObject({ activatedAt: expect.any(Number) })
+    expect(state.player.secretWindow).toBeUndefined()
     expect(state.opponent.health).toBe(initial.opponent.health)
     expect(command(state, { action: 'window-listen' })).toBe(state)
-    const switched = frames(command(state, { action: 'window-contact' }), 35)
+    const stopped = command(state, { action: 'window-stop-listening' })
+    const switched = frames(performAttack(stopped, 'player', 'special'), 35)
     // Switching dismisses the shoulder bird, but does not attach out of reach.
     expect(switched.player.secretWindow).toBeUndefined()
   })
 
-  it('relays actual distant speech privately and retains received speech for review', () => {
+  it('relays actual distant speech privately and keeps the latest received words', () => {
     const state = listen()
     const first = speakPaperWords(state, 'opponent', 'Première parole.')
     const second = speakPaperWords(
@@ -72,14 +82,11 @@ describe('single-encounter arsenal: observed applications', () => {
       'Deuxième parole.',
     )
     expect(second.player.heardWords).toBeUndefined() // outside ordinary voice range
-    expect(second.player.secretWindow?.words?.text).toBe('Deuxième parole.')
-    expect(second.player.secretWindow?.recordings?.map((entry) => entry.text)).toEqual([
-      'Première parole.',
+    expect(second.player.secretWindowListening?.heard?.text).toBe('Deuxième parole.')
+    expect(privatePvpState(second, 'opponent').opponent.secretWindowListening).toBeUndefined()
+    expect(privatePvpState(second, 'player').player.secretWindowListening?.heard?.text).toBe(
       'Deuxième parole.',
-    ])
-    expect(privatePvpState(second, 'opponent').opponent.secretWindow).toBeUndefined()
-    expect(privatePvpState(second, 'opponent').opponent.secretWindowMode).toBeUndefined()
-    expect(privatePvpState(second, 'player').player.secretWindow?.recordings).toHaveLength(2)
+    )
     const silent = {
       ...state,
       opponent: {
@@ -97,14 +104,14 @@ describe('single-encounter arsenal: observed applications', () => {
       35,
     )
     const spoken = speakPaperWords(state, 'opponent', 'Je réponds.')
-    expect(spoken.player.secretWindow?.words?.text).toBe('Je réponds.')
+    expect(spoken.player.secretWindow?.heard?.text).toBe('Je réponds.')
     const moving = tickFight(spoken, EMPTY_INPUT, {
       dt: 1 / 60,
       opponentInput: { ...EMPTY_INPUT, right: true },
     })
-    expect(moving.player.secretWindow?.history?.some((entry) => entry.action === 'walk')).toBe(true)
+    expect(moving.player.secretWindow?.observation.action).toBe('walk')
     expect(moving.player.secretWindow?.observation).not.toHaveProperty('aura')
-    expect(command(moving, { action: 'window-stop' }).player.secretWindow).toBeUndefined()
+    expect(command(moving, { action: 'window-recall' }).player.secretWindow).toBeUndefined()
   })
 
   it('keeps both birds behind Nen access, real startup, stolen pages and the shared command validator', () => {
@@ -138,36 +145,52 @@ describe('single-encounter arsenal: observed applications', () => {
   it('preserves the selected listening application through Skill Hunter and single-use Dolphin', () => {
     const base = duel()
     const chrollo = createFight('chrollo', 'hisoka').player
-    const copied = listen({
-      ...base,
-      player: {
-        ...chrollo,
-        x: 40,
-        chrolloBook: { pages: ['musse'], page: 0, open: true, bookmark: null },
-      },
-    })
-    expect(copied.player.secretWindow?.mode).toBe('listening')
-    const kurapika = createFight('kurapika', 'hisoka').player
-    const borrowed = listen({
-      ...base,
-      player: {
-        ...kurapika,
-        x: 40,
-        kurapika: {
-          ...kurapika.kurapika!,
-          emperorTime: true,
-          held: {
-            source: 'musse',
-            moveId: 'musse:neutralSpecial',
-            victim: 'opponent',
-            loaded: true,
-            used: false,
-            sustainedKeys: [],
+    const copied = frames(
+      command(
+        {
+          ...base,
+          player: {
+            ...chrollo,
+            x: 40,
+            chrolloBook: { pages: ['musse'], page: 0, open: true, bookmark: null },
           },
         },
-      },
-    })
-    expect(borrowed.player.secretWindow?.mode).toBe('listening')
+        { action: 'copied-move', target: 'musse:downSpecial' },
+      ),
+      35,
+    )
+    expect(copied.player.secretWindowListening).toBeDefined()
+    const kurapika = createFight('kurapika', 'hisoka').player
+    const borrowed = frames(
+      command(
+        {
+          ...base,
+          player: {
+            ...kurapika,
+            x: 40,
+            kurapika: {
+              ...kurapika.kurapika!,
+              emperorTime: true,
+              held: {
+                source: 'musse',
+                auraSupply: {
+                  ...captureDolphinAura(createFight('musse', 'hisoka').player),
+                  amount: 60,
+                },
+                moveId: 'musse:neutralSpecial',
+                victim: 'opponent',
+                loaded: true,
+                used: false,
+                sustainedKeys: [],
+              },
+            },
+          },
+        },
+        { action: 'dolphin-move', target: 'musse:downSpecial' },
+      ),
+      35,
+    )
+    expect(borrowed.player.secretWindowListening).toBeDefined()
     expect(borrowed.player.kurapika?.held?.used).toBe(true)
     expect(command(borrowed, { action: 'window-contact' })).toBe(borrowed)
   })
@@ -325,6 +348,10 @@ describe('single-encounter arsenal: observed applications', () => {
           emperorTime: true,
           held: {
             source: 'basho' as const,
+            auraSupply: {
+              ...captureDolphinAura(createFight('basho', 'hisoka').player),
+              amount: 80,
+            },
             moveId: 'basho:neutralSpecial',
             victim: 'opponent' as const,
             loaded: true,

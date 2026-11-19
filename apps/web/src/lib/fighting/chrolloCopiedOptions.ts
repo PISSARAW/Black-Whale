@@ -10,7 +10,7 @@ export function copiedArsenalOptions(state: FightState, side: FightSide): Arsena
   if (fighter.id !== 'chrollo') return []
   const pages =
     fighter.chrolloBook?.pages.filter(
-      (page) => page.includes(':') && chrolloHasActivePage(fighter, page),
+      (page) => (page.includes(':') || page === 'musse') && chrolloHasActivePage(fighter, page),
     ) ?? []
   return pages.flatMap((page) => {
     const source = chrolloPageSource(page)

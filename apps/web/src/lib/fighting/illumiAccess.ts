@@ -3,6 +3,7 @@ import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { illumiBodyFree, ILLUMI_IMPLANT } from './illumiState'
+import { illumiDisguiseAvailable } from './illumiDisguise'
 import type { ArcadeFighter } from './types'
 
 export function illumiNenActive(fighter: ArcadeFighter): boolean {
@@ -37,5 +38,7 @@ export function illumiAvailable(fighter: ArcadeFighter): boolean {
 /** Null leaves other Hatsu and physical moves to their own resource checks. */
 export function illumiResources(fighter: ArcadeFighter, moveId?: string): boolean | null {
   if (!illumiMove(fighter, moveId)) return null
-  return illumiBodyFree(fighter) && illumiAvailable(fighter)
+  const available =
+    moveId === 'illumi:backSpecial' ? illumiDisguiseAvailable(fighter) : illumiAvailable(fighter)
+  return illumiBodyFree(fighter) && available
 }

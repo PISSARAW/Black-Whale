@@ -37,18 +37,30 @@ function validateSeed(seed: unknown) {
   if (typeof seed !== 'number' || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff)
     throw Error('invalid-replay')
 }
-function validateShape(value: unknown, template: unknown): void {
-  if (template === null || template === undefined) return
-  if (Array.isArray(template)) {
-    if (!Array.isArray(value)) throw Error('invalid-replay')
-    return
-  }
-  if (!object(template)) {
-    if (typeof value !== typeof template) throw Error('invalid-replay')
+function validateShape(value: unknown, template: unknown, path = ''): void {
+  if (template === null || template === undefined || missingPossession(value, path)) return
+  if (Array.isArray(template) || !object(template)) {
+    validateLeaf(value, template)
     return
   }
   if (!object(value)) throw Error('invalid-replay')
-  for (const [key, field] of Object.entries(template)) validateShape(value[key], field)
+  for (const [key, field] of Object.entries(template))
+    validateShape(value[key], field, [path, key].filter(Boolean).join('.'))
+}
+function validateLeaf(value: unknown, template: unknown): void {
+  const valid = Array.isArray(template) ? Array.isArray(value) : typeof value === typeof template
+  if (!valid) throw Error('invalid-replay')
+}
+function missingPossession(value: unknown, path: string): boolean {
+  return value === undefined && optionalPossession(path)
+}
+
+/** Physical possessions and consumed historical premises may be absent from a later snapshot. */
+function optionalPossession(path: string): boolean {
+  if (path === 'preparedAsphyxia') return true
+  return /^(player|opponent)\.(writingKit|paperKit|blackVoiceGear(?:\.phone)?|gumResuscitationProgram|asphyxiaCertificate)$/.test(
+    path,
+  )
 }
 
 function replayBodyMatches(body: Record<string, unknown>, id: string, origin: unknown): boolean {

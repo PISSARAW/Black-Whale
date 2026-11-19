@@ -1,8 +1,10 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { gyoSight } from './nenPerception'
 import { chrolloCopiedMove } from './chrolloBook'
-import { selectedGumLink } from './bungeeNetwork'
+import { commandGumLink as selectedGumLink } from './bungeeScoped'
 import { gumLinkPoints } from './bungeeGeometry'
+import { textureTargetAvailable } from './hisokaTextureOrigin'
+import { paperTextureReady } from './paperTexture'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BUNGEE_REST_DISTANCE = 8
@@ -46,14 +48,19 @@ export function hisokaTechniqueAllowed(
   const technique = hisokaTechnique(fighter, moveId)
   if (!technique) return true
   if (!hisokaNenActive(fighter)) return false
-  // The duel uses the flat front of his existing shirt as its cloth support.
-  if (technique === 'texture') return fighter.y === 0 && !fighter.textureSurprise
+  if (technique === 'texture') return textureAllowed(state, side)
   if (technique === 'attach') return true
   if (state.gumNetwork) return networkTechniqueAllowed(state, side, technique)
   const gum = ownedBungee(state, side)
   if (!gum) return false
   if (technique === 'finish') return true
   return !gum.retracting && Math.abs(state[gum.target].x - fighter.x) > BUNGEE_REST_DISTANCE
+}
+
+function textureAllowed(state: FightState, side: FightSide): boolean {
+  const actor = state[side]
+  if (actor.textureTarget === 'paper') return actor.y === 0 && paperTextureReady(state, side)
+  return actor.y === 0 && !actor.textureSurprise && textureTargetAvailable(actor)
 }
 
 function networkTechniqueAllowed(

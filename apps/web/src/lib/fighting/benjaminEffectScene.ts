@@ -1,5 +1,7 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
-import { benjaminNenActive } from './benjaminBaton'
+import { secretWindowTarget, secretWindowVisibleTo } from './secretWindow'
+import { secretWindowBirdHeight } from './secretWindowPlacement'
+import { sleepingBody } from './hanzoProjection'
 import { attackPhase } from './frameData'
 import { createBenjaminPresentationClock, type BenjaminFrames } from './benjaminPresentation'
 import {
@@ -66,15 +68,16 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
   }
   const sides = { player: build('player'), opponent: build('opponent') }
   const syncOwl = (state: FightState, side: FightSide, seconds: number) => {
-    const fighter = state[side],
-      held = sides[side]
-    const activeNen = fighter.id === 'benjamin' && benjaminNenActive(fighter)
-    const target = markedFighter(state, fighter)
-    held.owl.visible = side === (options.viewer?.() ?? 'player') && Boolean(activeNen && target)
+    const fighter = state[side]
+    const held = sides[side]
+    const benjamin = fighter.id === 'benjamin'
+    const target = markedWindowBody(state, fighter)
+    held.owl.visible =
+      benjamin && secretWindowVisibleTo(state, side, options.viewer?.() ?? 'player')
     if (target)
       held.owl.position.set(
-        options.worldX(target.x) - 0.3,
-        options.worldY(target.y + 12.5) + Math.sin(seconds * 5) * 0.04,
+        options.worldX(target.body.x) - 0.3,
+        options.worldY(target.body.y + target.height) + Math.sin(seconds * 5) * 0.04,
         0.35,
       )
   }
@@ -113,11 +116,13 @@ export function createBenjaminEffectScene(options: EffectSceneOptions): FighterE
   }
 }
 
-function markedFighter(state: FightState, fighter: ArcadeFighter): ArcadeFighter | null {
-  const target = fighter.hatsuEffects.baton?.markedTarget
-  return target ? state[target] : null
-}
-
 function rectangleVisible(fighter: ArcadeFighter): boolean {
   return fighter.attack?.moveId === 'benjamin:downSpecial' && attackPhase(fighter) !== 'recovery'
+}
+
+function markedWindowBody(state: FightState, fighter: ArcadeFighter) {
+  const original = fighter.secretWindow && secretWindowTarget(state, fighter.secretWindow)
+  return original
+    ? { body: sleepingBody(original), height: secretWindowBirdHeight(original) }
+    : null
 }

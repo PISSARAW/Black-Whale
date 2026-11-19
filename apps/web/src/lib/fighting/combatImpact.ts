@@ -1,15 +1,13 @@
 import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
 import { catchBungeeObject } from './hisokaCatch'
-import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
 import { recoilGuardedAttack } from './guardRecoil'
-import { strikeRead, projectileRead } from './combatRead'
+import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
-import { recordHistoricalWeaponHit, recordHistoricalBladeProjectile } from './historicalWeaponFrame'
 import { recordThreeCombatProjectileWound } from './threeCombatWounds'
-import { resolveIllumiContact } from './illumiImpact'
+import { resolveMindContact } from './mindContact'
 import { resolveLynchContact } from './lynchInterrogation'
 import { recordBlinkyWound } from './blinkyWounds'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -23,8 +21,6 @@ import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
-import { comboOpening, type ComboOpening } from './comboOpenings'
-import { launchesWithDirectionalEnding } from './directionalChain'
 import {
   activeHitbox,
   attackData,
@@ -39,7 +35,6 @@ import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
-  comboScale,
   nextComboHits,
   openingDamageMultiplier,
   openingType,
@@ -49,6 +44,8 @@ import {
   type ImpactDefence,
 } from './combatDamage'
 import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
+import { attackerComboScale } from './comboDamageScale'
+import { grammarAllowsWallSplat } from './grammarWallSplat'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -95,11 +92,11 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (!collision) return state
   if (throwTechPossible(attacker, defender)) return resolveThrowTech(state, side)
   const data = attackData(attacker.attack.kind, attacker)
-  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker, defender))
+  const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker))
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const antiAir = launchesTarget(attacker, defender)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
-  const damageScale = comboScale(comboHits)
+  const damageScale = attackerComboScale(attacker, comboHits)
   const critical = isCriticalAuraStrike(attacker)
   const damage = resolvedDamage({
     attacker,
@@ -110,6 +107,9 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
+  const spent = spendAttacker(attacker, defence)
+  const needle = resolveMindContact({ state, side, defence, spent })
+  if (needle) return needle
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -118,31 +118,11 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     critical,
   })
   const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
-  const spent = spendAttacker(
-    attacker,
-    defence,
-    comboOpening({
-      attacker,
-      defender: sleepingBody(defender),
-      position: collision.position,
-      reach: data.box.right,
-      damage,
-      defence,
-      launch: antiAir,
-      counter: opening.counterHit,
-      punish: opening.punish,
-      wall: wallSplat,
-      knockdown,
-      hits: comboHits,
-    }),
-  )
-  const needle = resolveIllumiContact({ state, side, defence, spent })
-  if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
     damage,
     knockdown,
-    antiAir: launchesWithDirectionalEnding(attacker, antiAir),
+    antiAir,
     wallSplat,
     counterHit: opening.counterHit,
     comboHits,
@@ -204,7 +184,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       transferred.impact!.attacker,
       otherSide(transferred.impact!.attacker),
     )
-  next = recordHistoricalWeaponHit(state, recordBlinkyWound(state, scorched, side), side)
+  next = recordBlinkyWound(state, scorched, side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
     next = resolveHatsuImpact({
@@ -213,6 +193,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       defenderSide,
       source: attacker.attack.hatsuSource,
       moveId: attacker.attack.moveId,
+      defenderMoveId: interruptedHatsuMove(defender),
       blocked: defence.blocked,
       concealed: attacker.attack.concealed,
     })
@@ -252,7 +233,6 @@ function impactPoints(options: {
 function spendAttacker(
   attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
-  opening?: ComboOpening,
 ): ArcadeFighter {
   const spent = setIn(
     releaseFocusedAura({
@@ -261,7 +241,6 @@ function spendAttacker(
         ...attacker.attack,
         impacted: true,
         confirmedHit: !defence.blocked && !defence.avoided,
-        ...(opening ? { comboOpening: opening } : {}),
         confirmedBlock: defence.blocked && !defence.parried && !defence.avoided,
         auraCharged: false,
       },
@@ -300,8 +279,11 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
-  if (!projectileTargetReady(state, hit)) return state
+  if (
+    state.phase !== 'fighting' ||
+    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
+  )
+    return state
   const captured = captureIncomingProjectile(state, hit)
   if (captured) return captured
   const side = hit.projectile.owner
@@ -314,7 +296,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
   )
   const opening = openingType(sleepingBody(defender), defence.blocked)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
-  const damageScale = comboScale(comboHits)
+  const damageScale = attackerComboScale(attacker, comboHits)
   const damage = resolvedDamage({
     attacker,
     defence,
@@ -393,11 +375,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     plantPaperAfterHit(routed, hit.projectile),
     hit.projectile,
   )
-  return finishAfterImpact(
-    recordHistoricalBladeProjectile(planted, hit.projectile),
-    planted.impact!.attacker,
-    otherSide(planted.impact!.attacker),
-  )
+  return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
 }
 
 function attackCanResolve(
@@ -422,28 +400,12 @@ function finishAfterImpact(
 ): FightState {
   const impact = state.impact
   const owner = impact?.transfer?.owner ?? attackerSide
-  const cause = impactDeathCause(state, attackerSide)
+  const cause = impact?.transfer ? 'transfer' : impact?.projectileId ? 'projectile' : 'strike'
   return recordFightDeath(state, {
     victimSide: defenderSide,
     killerSide: owner === defenderSide ? null : owner,
     cause,
   })
-}
-
-function projectileTargetReady(state: FightState, hit: ProjectileHit): boolean {
-  return (
-    state.phase === 'fighting' &&
-    canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
-  )
-}
-function impactDeathCause(
-  state: FightState,
-  side: FightSide,
-): import('./fightDeaths').FightDeath['cause'] {
-  if (state.impact?.transfer) return 'transfer'
-  if (state.impact?.projectileId) return 'projectile'
-  const actor = state[side]
-  return actor.hanzoProjection && actor.attack?.moveId === 'hanzo:finisher' ? 'asphyxia' : 'strike'
 }
 
 function resolveTrade(original: FightState, first: FightState): FightState {
@@ -490,6 +452,7 @@ function impactWallSplat(options: {
 }): boolean {
   return (
     !options.defence.avoided &&
+    grammarAllowsWallSplat(options.attacker, options.knockback) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }

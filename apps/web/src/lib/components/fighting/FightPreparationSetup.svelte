@@ -1,5 +1,7 @@
 <script lang="ts">
   import { createFightState } from '$lib/fighting/fightState'
+  import FightInjurySetup from './FightInjurySetup.svelte'
+  import { SCENARIO_RESOURCES } from '$lib/fighting/preparationResources'
   import { EMPTY_PREPARATION } from '$lib/fighting/preparationWorld'
   import { REQUIREMENT_LABELS } from '$lib/fighting/preparationPresentation'
   import { preparationCheck } from '$lib/fighting/preparationRequirements'
@@ -15,32 +17,7 @@
   export let onChange: (environment: FightEnvironment) => void
   $: preparation = environment.preparation ?? EMPTY_PREPARATION
   $: preview = createFightState(player, opponent, { environment })
-  const resources: { id: PreparationResource; fr: string; en: string }[] = [
-    {
-      id: 'sedatives',
-      fr: 'Sédatif de scénario pour le retour de conscience',
-      en: 'Scenario sedative for the returning mind',
-    },
-    { id: 'corpses', fr: 'Cadavres matériels', en: 'Physical corpses' },
-    {
-      id: 'armed-corpses',
-      fr: 'Corps de mafieux avec pistolet · 12 cartouches',
-      en: 'Mafia bodies with pistol · 12 rounds',
-    },
-    { id: 'cameras', fr: 'Caméras pour les témoignages', en: 'Cameras for statements' },
-    { id: 'hostages', fr: 'Otages présents dans la scène', en: 'Hostages present in the scene' },
-    { id: 'animals', fr: 'Petits animaux réels', en: 'Real small animals' },
-    { id: 'birds', fr: 'Pigeons et points de livraison', en: 'Pigeons and delivery points' },
-    { id: 'plants', fr: 'Graines vivantes à faire germer', en: 'Living seeds to germinate' },
-    { id: 'objects', fr: 'Caisses réelles pour Sweet Home', en: 'Real crates for Sweet Home' },
-    { id: 'needles', fr: 'Aiguilles réelles à ramasser', en: 'Real needles to pick up' },
-    { id: 'flutes', fr: 'Flûtes à ramasser', en: 'Flutes to pick up' },
-    {
-      id: 'rooms',
-      fr: 'Pièces d’ancrage fermées et destinations déjà visitées',
-      en: 'Sealed anchor rooms and already visited destinations',
-    },
-  ]
+  const resources = SCENARIO_RESOURCES
   function change(next: FightPreparation) {
     onChange({ ...environment, preparation: next })
   }
@@ -49,7 +26,9 @@
       scenario
         ? {
             mode: 'scenario',
-            resources: resources.map((entry) => entry.id),
+            resources: resources
+              .filter((entry) => entry.initiallySelected !== false)
+              .map((entry) => entry.id),
             cohorts: (['player', 'opponent'] as const).filter(
               (side) => (side === 'player' ? player : opponent) === 'halkenburg',
             ),
@@ -89,6 +68,11 @@
     >
   </div>
   {#if preparation.mode === 'scenario'}
+    <FightInjurySetup
+      injuries={preparation.injuries ?? {}}
+      {language}
+      onChange={(injuries) => change({ ...preparation, injuries })}
+    />
     <fieldset>
       <legend
         >{language === 'fr'
@@ -117,6 +101,21 @@
         >
       {/each}
     </fieldset>
+    {#if player === 'halkenburg' || opponent === 'halkenburg'}
+      <label
+        ><input
+          type="checkbox"
+          checked={environment.halkenburgRosterVariant === true}
+          onchange={(event) =>
+            onChange({
+              ...environment,
+              halkenburgRosterVariant: event.currentTarget.checked,
+            })}
+        />{language === 'fr'
+          ? 'Variante hors canon : Halkenburg prend un corps aléatoire du roster'
+          : 'Non-canonical variant: Halkenburg takes a random roster body'}</label
+      >
+    {/if}
     <p>
       {language === 'fr'
         ? 'Ces présences et préparations constituent le scénario choisi. Le vol d’un Hatsu ne les transfère pas. Les flûtes au sol doivent être ramassées.'

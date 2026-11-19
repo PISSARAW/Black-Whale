@@ -26,7 +26,10 @@ describe('Basho poem panel', () => {
     expect(body).toContain('25 aura')
     expect(body).toContain('Aucun bonus général')
     expect(body).toContain('parade, coup de pied, projection et projectile')
-    expect(body).toContain('Les autres poèmes ne sont pas interprétés')
+    expect(body).toContain('aucun souhait libre n’est interprété')
+    expect(body).toContain('Réponses mensongères')
+    expect(body).toContain('Talisman hivernal')
+    expect(body).toContain('Feuilles restantes : 3')
     expect(body).not.toContain('Poème funéraire')
   })
 

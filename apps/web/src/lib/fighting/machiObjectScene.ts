@@ -1,5 +1,7 @@
-import { controlChest, controlHand } from './fineControlAnchors'
+import { reattachmentPoint } from './machiReattachmentScene'
+import { controlChest, controlHand, threadVisible } from './fineControlAnchors'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
+import type { PreparedEntity } from './preparationTypes'
 import type { FightSide, FightState } from './types'
 
 export function createMachiObjectScene(options: EffectSceneOptions): FighterEffectScene {
@@ -35,15 +37,14 @@ export function createMachiObjectScene(options: EffectSceneOptions): FighterEffe
   function draw(state: FightState, side: FightSide, line: import('three').Line) {
     const actor = state[side],
       anchor = actor.machiAnchor,
-      suture = actor.machiSuture
+      suture = actor.machiSuture ?? actor.machiReattachment
     const object = state.battlefield?.entities.find(
       (entry) => entry.id === anchor?.objectId && entry.present && entry.health > 0,
     )
-    line.visible = Boolean(suture || (anchor?.attached && object))
+    line.visible =
+      Boolean(suture || (anchor?.attached && object)) && threadVisible(options, state, side)
     if (!line.visible) return
-    const end = suture
-      ? controlChest(options, state, suture.target)
-      : new THREE.Vector3(options.worldX(object!.x), options.worldY(object!.y + 4), 0.3)
+    const end = threadEnd(state, side, object)
     const start = controlHand(options, state, side)
     const points = [start]
     if (suture)
@@ -52,6 +53,15 @@ export function createMachiObjectScene(options: EffectSceneOptions): FighterEffe
     points.push(end)
     line.geometry.setFromPoints(points)
     line.geometry.computeBoundingSphere()
+  }
+  function threadEnd(state: FightState, side: FightSide, object?: PreparedEntity) {
+    const suture = state[side].machiSuture ?? state[side].machiReattachment
+    return (
+      reattachmentPoint(options, state, side) ??
+      (suture
+        ? controlChest(options, state, suture.target)
+        : new THREE.Vector3(options.worldX(object!.x), options.worldY(object!.y + 4), 0.3))
+    )
   }
   return {
     sync(state) {

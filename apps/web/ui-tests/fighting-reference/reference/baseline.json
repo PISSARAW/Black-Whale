@@ -11,7 +11,10 @@
       "id": "kurapika:confirm",
       "fighter": "kurapika",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -37,7 +40,9 @@
             "kurapika:forwardSpecial"
           ],
           "linkInto": [],
-          "cancelOnBlockInto": ["kurapika:standingHeavy"]
+          "cancelOnBlockInto": [
+            "kurapika:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -57,7 +62,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -93,7 +102,10 @@
       "id": "kurapika:low",
       "fighter": "kurapika",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -113,7 +125,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["kurapika:forwardLight", "kurapika:standingHeavy"],
+          "cancelInto": [
+            "kurapika:forwardLight",
+            "kurapika:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -135,8 +150,13 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardSpecial"],
-          "linkInto": ["kurapika:standingHeavy"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardSpecial"
+          ],
+          "linkInto": [
+            "kurapika:standingHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -171,7 +191,10 @@
       "id": "kurapika:punish",
       "fighter": "kurapika",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "backHeavy",
@@ -191,7 +214,10 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:standingHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:standingHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -227,7 +253,10 @@
       "id": "kurapika:air",
       "fighter": "kurapika",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -247,7 +276,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:airHeavy"],
+          "cancelInto": [
+            "kurapika:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -283,7 +314,10 @@
       "id": "kurapika:economy",
       "fighter": "kurapika",
       "kind": "confirm",
-      "title": ["Économie · finir au sol", "Economy · knockdown finish"],
+      "title": [
+        "Économie · finir au sol",
+        "Economy · knockdown finish"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -309,7 +343,9 @@
             "kurapika:forwardSpecial"
           ],
           "linkInto": [],
-          "cancelOnBlockInto": ["kurapika:standingHeavy"]
+          "cancelOnBlockInto": [
+            "kurapika:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -329,7 +365,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -365,7 +405,10 @@
       "id": "kurapika:carry",
       "fighter": "kurapika",
       "kind": "confirm",
-      "title": ["Placement · pousser au coin", "Position · carry to the corner"],
+      "title": [
+        "Placement · pousser au coin",
+        "Position · carry to the corner"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -391,7 +434,9 @@
             "kurapika:forwardSpecial"
           ],
           "linkInto": [],
-          "cancelOnBlockInto": ["kurapika:standingHeavy"]
+          "cancelOnBlockInto": [
+            "kurapika:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -411,7 +456,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -447,7 +496,10 @@
       "id": "kurapika:precision",
       "fighter": "kurapika",
       "kind": "confirm",
-      "title": ["Précision · liaison puis fouet", "Precision · link into whip"],
+      "title": [
+        "Précision · liaison puis fouet",
+        "Precision · link into whip"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -473,7 +525,9 @@
             "kurapika:forwardSpecial"
           ],
           "linkInto": [],
-          "cancelOnBlockInto": ["kurapika:standingHeavy"]
+          "cancelOnBlockInto": [
+            "kurapika:standingHeavy"
+          ]
         },
         {
           "slot": "forwardLight",
@@ -493,8 +547,13 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardSpecial"],
-          "linkInto": ["kurapika:standingHeavy"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardSpecial"
+          ],
+          "linkInto": [
+            "kurapika:standingHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -515,7 +574,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -551,7 +614,10 @@
       "id": "kurapika:precision-economy",
       "fighter": "kurapika",
       "kind": "low",
-      "title": ["Précision · départ bas sans dépense", "Precision · meterless low route"],
+      "title": [
+        "Précision · départ bas sans dépense",
+        "Precision · meterless low route"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -571,7 +637,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["kurapika:forwardLight", "kurapika:standingHeavy"],
+          "cancelInto": [
+            "kurapika:forwardLight",
+            "kurapika:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -593,8 +662,13 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardSpecial"],
-          "linkInto": ["kurapika:standingHeavy"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardSpecial"
+          ],
+          "linkInto": [
+            "kurapika:standingHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -615,7 +689,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["kurapika:lowHeavy", "kurapika:forwardHeavy", "kurapika:forwardSpecial"],
+          "cancelInto": [
+            "kurapika:lowHeavy",
+            "kurapika:forwardHeavy",
+            "kurapika:forwardSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -651,7 +729,10 @@
       "id": "benjamin:confirm",
       "fighter": "benjamin",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -671,9 +752,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:standingHeavy", "benjamin:forwardLight"],
+          "cancelInto": [
+            "benjamin:standingHeavy",
+            "benjamin:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["benjamin:standingHeavy"]
+          "cancelOnBlockInto": [
+            "benjamin:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -693,7 +779,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:lowHeavy", "benjamin:forwardHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:lowHeavy",
+            "benjamin:forwardHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -729,7 +819,10 @@
       "id": "benjamin:low",
       "fighter": "benjamin",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -749,7 +842,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["benjamin:forwardLight", "benjamin:standingHeavy"],
+          "cancelInto": [
+            "benjamin:forwardLight",
+            "benjamin:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -811,7 +907,10 @@
       "id": "benjamin:punish",
       "fighter": "benjamin",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "backHeavy",
@@ -831,7 +930,10 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:standingHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:standingHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -867,7 +969,10 @@
       "id": "benjamin:air",
       "fighter": "benjamin",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -887,7 +992,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:airHeavy"],
+          "cancelInto": [
+            "benjamin:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -923,7 +1030,10 @@
       "id": "benjamin:economy",
       "fighter": "benjamin",
       "kind": "confirm",
-      "title": ["Économie · balayage tactique", "Economy · tactical sweep"],
+      "title": [
+        "Économie · balayage tactique",
+        "Economy · tactical sweep"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -943,9 +1053,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:standingHeavy", "benjamin:forwardLight"],
+          "cancelInto": [
+            "benjamin:standingHeavy",
+            "benjamin:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["benjamin:standingHeavy"]
+          "cancelOnBlockInto": [
+            "benjamin:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -965,7 +1080,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:lowHeavy", "benjamin:forwardHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:lowHeavy",
+            "benjamin:forwardHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1001,7 +1120,10 @@
       "id": "benjamin:carry",
       "fighter": "benjamin",
       "kind": "confirm",
-      "title": ["Placement · charge blindée", "Position · armored charge"],
+      "title": [
+        "Placement · charge blindée",
+        "Position · armored charge"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1021,9 +1143,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:standingHeavy", "benjamin:forwardLight"],
+          "cancelInto": [
+            "benjamin:standingHeavy",
+            "benjamin:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["benjamin:standingHeavy"]
+          "cancelOnBlockInto": [
+            "benjamin:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -1043,7 +1170,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:lowHeavy", "benjamin:forwardHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:lowHeavy",
+            "benjamin:forwardHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1079,7 +1210,10 @@
       "id": "benjamin:power",
       "fighter": "benjamin",
       "kind": "confirm",
-      "title": ["Puissance · prolonger vers Air Blow", "Power · extend into Air Blow"],
+      "title": [
+        "Puissance · prolonger vers Air Blow",
+        "Power · extend into Air Blow"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1099,9 +1233,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:standingHeavy", "benjamin:forwardLight"],
+          "cancelInto": [
+            "benjamin:standingHeavy",
+            "benjamin:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["benjamin:standingHeavy"]
+          "cancelOnBlockInto": [
+            "benjamin:standingHeavy"
+          ]
         },
         {
           "slot": "forwardLight",
@@ -1147,7 +1286,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:lowHeavy", "benjamin:forwardHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:lowHeavy",
+            "benjamin:forwardHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1183,7 +1326,10 @@
       "id": "benjamin:power-economy",
       "fighter": "benjamin",
       "kind": "low",
-      "title": ["Puissance · départ bas sans dépense", "Power · meterless low route"],
+      "title": [
+        "Puissance · départ bas sans dépense",
+        "Power · meterless low route"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -1203,7 +1349,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["benjamin:forwardLight", "benjamin:standingHeavy"],
+          "cancelInto": [
+            "benjamin:forwardLight",
+            "benjamin:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1251,7 +1400,11 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["benjamin:lowHeavy", "benjamin:forwardHeavy", "benjamin:neutralSpecial"],
+          "cancelInto": [
+            "benjamin:lowHeavy",
+            "benjamin:forwardHeavy",
+            "benjamin:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1287,7 +1440,10 @@
       "id": "hisoka:confirm",
       "fighter": "hisoka",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1307,9 +1463,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:standingHeavy", "hisoka:forwardLight"],
+          "cancelInto": [
+            "hisoka:standingHeavy",
+            "hisoka:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["hisoka:standingHeavy"]
+          "cancelOnBlockInto": [
+            "hisoka:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -1370,7 +1531,10 @@
       "id": "hisoka:low",
       "fighter": "hisoka",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -1390,7 +1554,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["hisoka:forwardLight", "hisoka:standingHeavy"],
+          "cancelInto": [
+            "hisoka:forwardLight",
+            "hisoka:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1412,7 +1579,11 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:forwardHeavy", "hisoka:neutralSpecial", "hisoka:standingHeavy"],
+          "cancelInto": [
+            "hisoka:forwardHeavy",
+            "hisoka:neutralSpecial",
+            "hisoka:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1448,7 +1619,10 @@
       "id": "hisoka:punish",
       "fighter": "hisoka",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "forwardHeavy",
@@ -1468,7 +1642,9 @@
             "targetZone": "torso",
             "auraZone": "feet"
           },
-          "cancelInto": ["hisoka:neutralSpecial"],
+          "cancelInto": [
+            "hisoka:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1504,7 +1680,10 @@
       "id": "hisoka:air",
       "fighter": "hisoka",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -1524,7 +1703,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:airHeavy"],
+          "cancelInto": [
+            "hisoka:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1560,7 +1741,10 @@
       "id": "hisoka:economy",
       "fighter": "hisoka",
       "kind": "confirm",
-      "title": ["Économie · balayage trompeur", "Economy · deceptive sweep"],
+      "title": [
+        "Économie · balayage trompeur",
+        "Economy · deceptive sweep"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1580,9 +1764,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:standingHeavy", "hisoka:forwardLight"],
+          "cancelInto": [
+            "hisoka:standingHeavy",
+            "hisoka:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["hisoka:standingHeavy"]
+          "cancelOnBlockInto": [
+            "hisoka:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -1643,7 +1832,10 @@
       "id": "hisoka:carry",
       "fighter": "hisoka",
       "kind": "confirm",
-      "title": ["Placement · revers élastique", "Position · elastic backfist"],
+      "title": [
+        "Placement · revers élastique",
+        "Position · elastic backfist"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1663,9 +1855,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:standingHeavy", "hisoka:forwardLight"],
+          "cancelInto": [
+            "hisoka:standingHeavy",
+            "hisoka:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["hisoka:standingHeavy"]
+          "cancelOnBlockInto": [
+            "hisoka:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -1726,7 +1923,10 @@
       "id": "hisoka:extension",
       "fighter": "hisoka",
       "kind": "confirm",
-      "title": ["Attache · prolongation du magicien", "Attach · magician extension"],
+      "title": [
+        "Attache · prolongation du magicien",
+        "Attach · magician extension"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1746,9 +1946,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:standingHeavy", "hisoka:forwardLight"],
+          "cancelInto": [
+            "hisoka:standingHeavy",
+            "hisoka:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["hisoka:standingHeavy"]
+          "cancelOnBlockInto": [
+            "hisoka:standingHeavy"
+          ]
         },
         {
           "slot": "forwardLight",
@@ -1768,7 +1973,11 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:forwardHeavy", "hisoka:neutralSpecial", "hisoka:standingHeavy"],
+          "cancelInto": [
+            "hisoka:forwardHeavy",
+            "hisoka:neutralSpecial",
+            "hisoka:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1790,7 +1999,9 @@
             "targetZone": "torso",
             "auraZone": "feet"
           },
-          "cancelInto": ["hisoka:neutralSpecial"],
+          "cancelInto": [
+            "hisoka:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1827,7 +2038,10 @@
       "fighter": "hisoka",
       "kind": "confirm",
       "setup": "bungee",
-      "title": ["Liaison existante · exécution élastique", "Existing tether · elastic execution"],
+      "title": [
+        "Liaison existante · exécution élastique",
+        "Existing tether · elastic execution"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1847,9 +2061,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["hisoka:standingHeavy", "hisoka:forwardLight"],
+          "cancelInto": [
+            "hisoka:standingHeavy",
+            "hisoka:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["hisoka:standingHeavy"]
+          "cancelOnBlockInto": [
+            "hisoka:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -1910,7 +2129,10 @@
       "id": "chrollo:confirm",
       "fighter": "chrollo",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -1930,9 +2152,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:backHeavy", "chrollo:standingHeavy"],
+          "cancelInto": [
+            "chrollo:backHeavy",
+            "chrollo:standingHeavy"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["chrollo:backHeavy"]
+          "cancelOnBlockInto": [
+            "chrollo:backHeavy"
+          ]
         },
         {
           "slot": "backHeavy",
@@ -1952,7 +2179,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -1988,7 +2219,10 @@
       "id": "chrollo:low",
       "fighter": "chrollo",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -2008,7 +2242,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["chrollo:standingHeavy", "chrollo:backHeavy"],
+          "cancelInto": [
+            "chrollo:standingHeavy",
+            "chrollo:backHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2030,8 +2267,14 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
-          "linkInto": ["chrollo:backHeavy"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
+          "linkInto": [
+            "chrollo:backHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -2066,7 +2309,10 @@
       "id": "chrollo:punish",
       "fighter": "chrollo",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "forwardHeavy",
@@ -2086,7 +2332,9 @@
             "targetZone": "torso",
             "auraZone": "feet"
           },
-          "cancelInto": ["chrollo:neutralSpecial"],
+          "cancelInto": [
+            "chrollo:neutralSpecial"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2122,7 +2370,10 @@
       "id": "chrollo:air",
       "fighter": "chrollo",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -2142,7 +2393,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:airHeavy"],
+          "cancelInto": [
+            "chrollo:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2178,7 +2431,10 @@
       "id": "chrollo:economy",
       "fighter": "chrollo",
       "kind": "confirm",
-      "title": ["Économie · fauchage silencieux", "Economy · silent reap"],
+      "title": [
+        "Économie · fauchage silencieux",
+        "Economy · silent reap"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2198,9 +2454,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:backHeavy", "chrollo:standingHeavy"],
+          "cancelInto": [
+            "chrollo:backHeavy",
+            "chrollo:standingHeavy"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["chrollo:backHeavy"]
+          "cancelOnBlockInto": [
+            "chrollo:backHeavy"
+          ]
         },
         {
           "slot": "backHeavy",
@@ -2220,7 +2481,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2256,7 +2521,10 @@
       "id": "chrollo:carry",
       "fighter": "chrollo",
       "kind": "confirm",
-      "title": ["Placement · signet brutal", "Position · bookmark blow"],
+      "title": [
+        "Placement · signet brutal",
+        "Position · bookmark blow"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2276,9 +2544,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:backHeavy", "chrollo:standingHeavy"],
+          "cancelInto": [
+            "chrollo:backHeavy",
+            "chrollo:standingHeavy"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["chrollo:backHeavy"]
+          "cancelOnBlockInto": [
+            "chrollo:backHeavy"
+          ]
         },
         {
           "slot": "backHeavy",
@@ -2298,7 +2571,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2334,7 +2611,10 @@
       "id": "chrollo:precision",
       "fighter": "chrollo",
       "kind": "confirm",
-      "title": ["Précision · liaison et marque", "Precision · link into mark"],
+      "title": [
+        "Précision · liaison et marque",
+        "Precision · link into mark"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2354,9 +2634,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:backHeavy", "chrollo:standingHeavy"],
+          "cancelInto": [
+            "chrollo:backHeavy",
+            "chrollo:standingHeavy"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["chrollo:backHeavy"]
+          "cancelOnBlockInto": [
+            "chrollo:backHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -2376,8 +2661,14 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
-          "linkInto": ["chrollo:backHeavy"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
+          "linkInto": [
+            "chrollo:backHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -2398,7 +2689,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2434,7 +2729,10 @@
       "id": "chrollo:low-control",
       "fighter": "chrollo",
       "kind": "low",
-      "title": ["Contrôle · départ bas et placement", "Control · low opening and position"],
+      "title": [
+        "Contrôle · départ bas et placement",
+        "Control · low opening and position"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -2454,7 +2752,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["chrollo:standingHeavy", "chrollo:backHeavy"],
+          "cancelInto": [
+            "chrollo:standingHeavy",
+            "chrollo:backHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2476,8 +2777,14 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["chrollo:neutralSpecial", "chrollo:lowHeavy", "chrollo:forwardLight"],
-          "linkInto": ["chrollo:backHeavy"],
+          "cancelInto": [
+            "chrollo:neutralSpecial",
+            "chrollo:lowHeavy",
+            "chrollo:forwardLight"
+          ],
+          "linkInto": [
+            "chrollo:backHeavy"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -2512,7 +2819,10 @@
       "id": "feitan:confirm",
       "fighter": "feitan",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2532,9 +2842,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:standingHeavy", "feitan:forwardLight"],
+          "cancelInto": [
+            "feitan:standingHeavy",
+            "feitan:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["feitan:standingHeavy"]
+          "cancelOnBlockInto": [
+            "feitan:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -2600,7 +2915,10 @@
       "id": "feitan:low",
       "fighter": "feitan",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -2620,7 +2938,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["feitan:forwardLight", "feitan:standingHeavy"],
+          "cancelInto": [
+            "feitan:forwardLight",
+            "feitan:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2683,7 +3004,10 @@
       "id": "feitan:punish",
       "fighter": "feitan",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "backHeavy",
@@ -2703,7 +3027,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:forwardHeavy", "feitan:forwardSpecial", "feitan:lowHeavy"],
+          "cancelInto": [
+            "feitan:forwardHeavy",
+            "feitan:forwardSpecial",
+            "feitan:lowHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2739,7 +3067,10 @@
       "id": "feitan:air",
       "fighter": "feitan",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -2759,7 +3090,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:airHeavy"],
+          "cancelInto": [
+            "feitan:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -2795,7 +3128,10 @@
       "id": "feitan:economy",
       "fighter": "feitan",
       "kind": "confirm",
-      "title": ["Économie · fauchage éclair", "Economy · flash sweep"],
+      "title": [
+        "Économie · fauchage éclair",
+        "Economy · flash sweep"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2815,9 +3151,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:standingHeavy", "feitan:forwardLight"],
+          "cancelInto": [
+            "feitan:standingHeavy",
+            "feitan:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["feitan:standingHeavy"]
+          "cancelOnBlockInto": [
+            "feitan:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -2878,7 +3219,10 @@
       "id": "feitan:carry",
       "fighter": "feitan",
       "kind": "confirm",
-      "title": ["Placement · décapitation", "Position · decapitation"],
+      "title": [
+        "Placement · décapitation",
+        "Position · decapitation"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2898,9 +3242,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:standingHeavy", "feitan:forwardLight"],
+          "cancelInto": [
+            "feitan:standingHeavy",
+            "feitan:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["feitan:standingHeavy"]
+          "cancelOnBlockInto": [
+            "feitan:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -2961,7 +3310,10 @@
       "id": "feitan:speed",
       "fighter": "feitan",
       "kind": "confirm",
-      "title": ["Vitesse · prolonger vers l’estoc", "Speed · extend into thrust"],
+      "title": [
+        "Vitesse · prolonger vers l’estoc",
+        "Speed · extend into thrust"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -2981,9 +3333,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:standingHeavy", "feitan:forwardLight"],
+          "cancelInto": [
+            "feitan:standingHeavy",
+            "feitan:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["feitan:standingHeavy"]
+          "cancelOnBlockInto": [
+            "feitan:standingHeavy"
+          ]
         },
         {
           "slot": "forwardLight",
@@ -3030,7 +3387,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:forwardHeavy", "feitan:forwardSpecial", "feitan:lowHeavy"],
+          "cancelInto": [
+            "feitan:forwardHeavy",
+            "feitan:forwardSpecial",
+            "feitan:lowHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3066,7 +3427,10 @@
       "id": "feitan:speed-economy",
       "fighter": "feitan",
       "kind": "low",
-      "title": ["Vitesse · cinq frappes sans dépense", "Speed · five meterless strikes"],
+      "title": [
+        "Vitesse · cinq frappes sans dépense",
+        "Speed · five meterless strikes"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -3086,7 +3450,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["feitan:forwardLight", "feitan:standingHeavy"],
+          "cancelInto": [
+            "feitan:forwardLight",
+            "feitan:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3162,7 +3529,11 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["feitan:forwardHeavy", "feitan:forwardSpecial", "feitan:lowHeavy"],
+          "cancelInto": [
+            "feitan:forwardHeavy",
+            "feitan:forwardSpecial",
+            "feitan:lowHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3198,7 +3569,10 @@
       "id": "phinks:confirm",
       "fighter": "phinks",
       "kind": "confirm",
-      "title": ["Confirmer une touche", "Confirm a hit"],
+      "title": [
+        "Confirmer une touche",
+        "Confirm a hit"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -3218,9 +3592,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardLight"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["phinks:standingHeavy"]
+          "cancelOnBlockInto": [
+            "phinks:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -3240,8 +3619,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -3276,7 +3660,10 @@
       "id": "phinks:low",
       "fighter": "phinks",
       "kind": "low",
-      "title": ["Conversion sur attaque basse", "Convert a low hit"],
+      "title": [
+        "Conversion sur attaque basse",
+        "Convert a low hit"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -3296,7 +3683,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["phinks:forwardLight", "phinks:standingHeavy"],
+          "cancelInto": [
+            "phinks:forwardLight",
+            "phinks:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3318,7 +3708,10 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardHeavy"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3340,8 +3733,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         }
       ],
@@ -3354,7 +3752,10 @@
       "id": "phinks:punish",
       "fighter": "phinks",
       "kind": "punish",
-      "title": ["Punition engagée", "Committed punish"],
+      "title": [
+        "Punition engagée",
+        "Committed punish"
+      ],
       "moves": [
         {
           "slot": "backHeavy",
@@ -3374,7 +3775,10 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:forwardHeavy", "phinks:forwardLight"],
+          "cancelInto": [
+            "phinks:forwardHeavy",
+            "phinks:forwardLight"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3410,7 +3814,10 @@
       "id": "phinks:air",
       "fighter": "phinks",
       "kind": "air",
-      "title": ["Conversion aérienne", "Air conversion"],
+      "title": [
+        "Conversion aérienne",
+        "Air conversion"
+      ],
       "moves": [
         {
           "slot": "airLight",
@@ -3430,7 +3837,9 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:airHeavy"],
+          "cancelInto": [
+            "phinks:airHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3466,7 +3875,10 @@
       "id": "phinks:economy",
       "fighter": "phinks",
       "kind": "confirm",
-      "title": ["Économie · conserver les rotations", "Economy · preserve rotations"],
+      "title": [
+        "Économie · conserver les rotations",
+        "Economy · preserve rotations"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -3486,9 +3898,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardLight"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["phinks:standingHeavy"]
+          "cancelOnBlockInto": [
+            "phinks:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -3508,8 +3925,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -3544,7 +3966,10 @@
       "id": "phinks:carry",
       "fighter": "phinks",
       "kind": "confirm",
-      "title": ["Placement · prolonger la poussée", "Position · extended carry"],
+      "title": [
+        "Placement · prolonger la poussée",
+        "Position · extended carry"
+      ],
       "moves": [
         {
           "slot": "standingLight",
@@ -3564,9 +3989,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardLight"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["phinks:standingHeavy"]
+          "cancelOnBlockInto": [
+            "phinks:standingHeavy"
+          ]
         },
         {
           "slot": "forwardLight",
@@ -3586,7 +4016,10 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardHeavy"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3608,8 +4041,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -3644,7 +4082,10 @@
       "id": "phinks:precision",
       "fighter": "phinks",
       "kind": "low",
-      "title": ["Contrôle · quatre frappes sans dépense", "Control · four meterless strikes"],
+      "title": [
+        "Contrôle · quatre frappes sans dépense",
+        "Control · four meterless strikes"
+      ],
       "moves": [
         {
           "slot": "lowLight",
@@ -3664,7 +4105,10 @@
             "targetZone": "feet",
             "auraZone": "feet"
           },
-          "cancelInto": ["phinks:forwardLight", "phinks:standingHeavy"],
+          "cancelInto": [
+            "phinks:forwardLight",
+            "phinks:standingHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3686,7 +4130,10 @@
             "targetZone": "hands",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardHeavy"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardHeavy"
+          ],
           "linkInto": [],
           "cancelOnBlockInto": []
         },
@@ -3708,8 +4155,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         },
         {
@@ -3768,9 +4220,14 @@
             "targetZone": "head",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:standingHeavy", "phinks:forwardLight"],
+          "cancelInto": [
+            "phinks:standingHeavy",
+            "phinks:forwardLight"
+          ],
           "linkInto": [],
-          "cancelOnBlockInto": ["phinks:standingHeavy"]
+          "cancelOnBlockInto": [
+            "phinks:standingHeavy"
+          ]
         },
         {
           "slot": "standingHeavy",
@@ -3790,8 +4247,13 @@
             "targetZone": "torso",
             "auraZone": "hands"
           },
-          "cancelInto": ["phinks:lowHeavy", "phinks:forwardHeavy"],
-          "linkInto": ["phinks:finisher"],
+          "cancelInto": [
+            "phinks:lowHeavy",
+            "phinks:forwardHeavy"
+          ],
+          "linkInto": [
+            "phinks:finisher"
+          ],
           "cancelOnBlockInto": []
         },
         {

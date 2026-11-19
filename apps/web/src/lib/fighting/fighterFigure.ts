@@ -1,20 +1,21 @@
-import { addHanzoBlade } from './hanzoBladeFigure'
 import { kameoAppearance } from './kameos/catalogue'
 import { addBenjaminRifle } from './benjaminRifle'
+import { gumBodyFigureKey, shapeGumProstheses } from './gumProsthesisFigure'
 import { wardrobePalette, wardrobeProfile } from './presentation/wardrobe'
 import type { Palette } from './presentation/collection'
 import { addHanzoProjectionMantle } from '$lib/tour/mangaHanzoProjection'
 import { addKallutoPaper } from './kallutoFigure'
+import { paperDolls } from './kallutoSurveillance'
 import { addPadailleWeapon } from './padailleFigure'
-import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
+import { illumiFaceProfile, addIllumiNeedles, illumiFigureKey } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
-import { addBodyguardPistol } from './bodyguardFigure'
+import { improveFightFace } from './fightFaceReadability'
 import { shapeFightEyes } from './fightFigureEyes'
-import { finishFightModel } from './fighterModelFinish'
+import { addBodyguardPistol } from './bodyguardFigure'
 import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
@@ -34,12 +35,12 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.id,
-    fighter.halkCohortBody,
     // En is drawn by the effect scene, never by this figure (see buildFightFigure).
     { ...fighter.nen, en: null },
     fighter.plantedPaper,
-    Boolean(fighter.kallutoPaper?.doll),
-    Boolean(fighter.illumi?.disguised),
+    paperDolls(fighter).length,
+    Boolean(fighter.paperKit?.fan),
+    ...illumiFigureKey(fighter),
     ...historicalFigureKey(fighter),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
@@ -48,6 +49,7 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.parallelEyesClosed),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
+    ...gumBodyFigureKey(fighter),
     Boolean(fighter.kurapika?.emperorTime),
     fighter.battleCantabile?.form?.model,
     Boolean(fighter.battleCantabile?.prologue),
@@ -60,6 +62,8 @@ export function buildFightFigure(options: {
   glow: HumanFigureBuild['glow']
   fighter: ArcadeFighter
   observer?: ArcadeFighter
+  /** Reference captures can compare the unchanged shared model. */
+  readability?: boolean
   palette?: Palette
 }) {
   const { THREE, glow, fighter } = options
@@ -78,7 +82,7 @@ export function buildFightFigure(options: {
     hidden: false,
     human: {
       role: definition.modelRole,
-      identity: fighter.halkCohortBody ? 'halkenburg-supporter' : definition.modelId,
+      identity: definition.modelId,
       pose: 'idle',
       aura: fighter.nen.mode,
       nen: { ...fighter.nen, en: null },
@@ -107,8 +111,9 @@ export function buildFightFigure(options: {
     seen,
     profile: finalProfile,
   })
-  finishFightModel({ THREE, glow: figureGlow, model, profile: finalProfile })
+  if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
+  shapeGumProstheses(options, model.root)
   if (fighter.clothCapture) model.root.scale.multiplyScalar(0.08)
 
   addIllumiNeedles({ THREE, glow, fighter, model })
@@ -130,7 +135,6 @@ function addFighterEquipment(
   const { THREE, glow, fighter } = options
   addBodyguardPistol({ THREE, glow, fighter, model })
   addLuiniKnife({ THREE, glow, fighter, model })
-  addHanzoBlade({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
@@ -159,7 +163,7 @@ function historicalFigureKey(fighter: ArcadeFighter) {
   return [fighter.chrolloHistorical?.appearance?.model, Boolean(fighter.clothCapture)]
 }
 function figureClothing(profile: ReturnType<typeof humanProfile>, fighter: ArcadeFighter) {
-  return fighter.textureSurprise ||
+  return fighter.textureSurprise?.surface === 'cloth' ||
     fighter.battleCantabile?.preparation ||
     fighter.battleCantabile?.prologue
     ? { ...profile, shirt: profile.skin }

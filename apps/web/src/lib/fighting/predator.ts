@@ -4,6 +4,7 @@ import {
   PREDATOR_MAX_HUNT_FRAMES,
 } from './predatorTuning'
 import { witnessedHatsuState } from './nenWitness'
+import { gumManifestationHidden } from './gumObjectAnchors'
 import { voluntaryNenAvailable } from './nenAccess'
 import { needleAutonomy } from './illumiState'
 import { senseDeprived } from './saiyuSenses'
@@ -44,7 +45,9 @@ export function canSeePrey(
   const owner = state[analysis.owner]
   if (senseDeprived(viewer, 'sight') || viewer.hitStun > 0 || viewer.knockdownFrames > 0)
     return false
-  const hidden = owner.nen.in || (analysis.preyId === 'bungee-gum' && state.bungeeGum?.hidden)
+  const hidden =
+    owner.nen.in ||
+    (analysis.preyId === 'bungee-gum' && gumManifestationHidden(state, analysis.owner))
   if (hidden && !viewer.nen.gyo) return false
   const point = preyPosition(state, analysis.owner, analysis.preyId)
   return Math.abs(viewer.x - point.x) <= 80 && (point.x - viewer.x) * viewer.facing >= -2

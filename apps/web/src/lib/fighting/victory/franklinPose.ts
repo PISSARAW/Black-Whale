@@ -32,7 +32,7 @@ export function franklinVictoryPose(context: VictoryContext): GunPose {
       z = row.clone().cross(y).normalize()
     const world = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(row, y, z))
     hand.quaternion.copy(hand.parent!.getWorldQuaternion(new Quaternion()).invert().multiply(world))
-    keepHumanJoint(hand, 'wrist')
+  keepHumanJoint(hand, 'wrist')
     hand.updateWorldMatrix(true, true)
     hands.push(hand)
     const fingers = positionFranklinFingers({

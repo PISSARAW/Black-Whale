@@ -1,4 +1,4 @@
-import { PAPER_COSTS } from './kallutoPaper'
+import { PAPER_COSTS } from './kallutoTuning'
 import type { FighterMoveset } from './movesetTypes'
 import type { TechniqueCanonContract } from './techniqueContracts'
 

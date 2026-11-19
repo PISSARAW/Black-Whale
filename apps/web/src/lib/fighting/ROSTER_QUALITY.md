@@ -28,12 +28,15 @@ gardent leur main anatomique quand l’auteur change de côté.
 
 ## Modèles et sélection
 
-`fighterModelFinish.ts` ajoute des contours de paupières, pupilles, fibres d’iris
+`tour/humanModelFinish.ts`, appelé par `buildHumanFigure`, ajoute des contours de paupières, pupilles, fibres d’iris
 et reliefs du visage adaptés à la forme déjà déclarée. Les détails suivent les
 yeux fermés, les transformations et les articulations. Kurapika conserve son
 visage spécifique ; les bandages de Bonolenov et le col de Feitan restent des
 occlusions ; les yeux noirs d’Illumi gardent leur traitement propre. Les buffers
-sont mis en cache et ne sont pas recréés à chaque frame.
+sont mis en cache et ne sont pas recréés à chaque frame. Tour, Chasse, Infiltration,
+Arène et Clash utilisent cette même finition de proximité. Le modèle lointain garde
+ses trois masses simples. `fighterModelFinish.ts` conserve une façade compatible
+et idempotente pour les anciens appelants.
 
 Les portraits utilisent désormais `buildFightFigure` et `fightBodyMotion`, comme
 le combat, avec l’équipement réel et la garde personnelle. La capture statique
@@ -45,6 +48,12 @@ leurs plans et contre-jeux individuels. Les sept derniers titres sont propres
 aux personnages. `FightFighterDossier.svelte` donne pour chacun le plan de jeu,
 le pouvoir et ses conditions, le contre-jeu et les exercices de l’Académie,
 en français et en anglais, avec les touches configurées.
+
+## Lisibilité pendant le combat
+
+La [lisibilité des visages](./FACE_READABILITY.md) combine vue de trois quarts,
+reliefs précalculés, cadrage plus proche et portraits fixes dans les jauges.
+Le banc de comparaison et ses limites de mesure y sont documentés.
 
 ## Combat et apprentissage
 

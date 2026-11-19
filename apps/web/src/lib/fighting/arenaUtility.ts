@@ -1,3 +1,6 @@
+import { stampObjectPoint } from './sunMoonMarkPoint'
+import { advanceSunMoonCharge } from './sunMoonCharge'
+import { selectedObjectMark, objectMarkHandReady, type ObjectMark } from './sunMoonObjectHands'
 import { witnessedHatsuState } from './nenWitness'
 import { arenaNenAvailable, arenaObjects } from './arenaActions'
 import { storeArenaVacuum, ejectArenaVacuum, vacuumObjectAllowed } from './arenaVacuum'
@@ -23,10 +26,20 @@ function arenaUtilityInterrupted(fighter: ArcadeFighter): boolean {
   return arenaWounded(fighter) || Boolean(fighter.attack)
 }
 
+function utilityInterrupted(state: FightState, side: FightSide, pending: Pending): boolean {
+  if (arenaUtilityInterrupted(state[side]) || !arenaNenAvailable(state, side)) return true
+  if (pending.kind !== 'marks') return false
+  return (
+    !chrolloHasActivePage(state[side], 'sun-and-moon') ||
+    !objectMarkHandReady(state, side, pending.mark ?? selectedObjectMark(state, side))
+  )
+}
+
 export function advanceArenaUtility(state: FightState, side: FightSide): FightState {
   const pending = state.arena!.pending[side]
   if (!pending) return state
-  const interrupted = arenaUtilityInterrupted(state[side]) || !arenaNenAvailable(state, side)
+  if (pending.charge) return advanceSunMoonCharge(state, side, pending)
+  const interrupted = utilityInterrupted(state, side, pending)
   const frames = pending.frames - 1
   state = {
     ...state,
@@ -73,7 +86,13 @@ function completeUtility(context: {
         },
       },
     }
-  else if (pending.kind === 'marks') next = stampObject(state, side, entry)
+  else if (pending.kind === 'marks')
+    next = stampObject({
+      state,
+      side,
+      entry,
+      mark: pending.mark ?? selectedObjectMark(state, side),
+    })
   else next = vacuumObject(state, side, entry)
   if (next === state) return state
   const witness = side === 'player' ? 'opponent' : 'player'
@@ -89,11 +108,18 @@ function completeUtility(context: {
   }
 }
 
-function stampObject(state: FightState, side: FightSide, entry: PreparedEntity): FightState {
-  const fighter = state[side]
-  if (!chrolloHasActivePage(fighter, 'sun-and-moon')) return state
-  const mark = fighter.chrolloBook?.open ? 'sun' : 'moon'
-  return updateEntity(state, entry.id, { arena: { ...entry.arena!, [mark]: side } })
+function stampObject(context: {
+  state: FightState
+  side: FightSide
+  entry: PreparedEntity
+  mark: ObjectMark
+}): FightState {
+  const { state, side, entry, mark } = context
+  if (!chrolloHasActivePage(state[side], 'sun-and-moon')) return state
+  if (!objectMarkHandReady(state, side, mark)) return state
+  return updateEntity(state, entry.id, {
+    arena: stampObjectPoint({ entry, actor: state[side], mark, side }),
+  })
 }
 
 function vacuumObject(state: FightState, side: FightSide, entry: PreparedEntity): FightState {

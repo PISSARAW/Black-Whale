@@ -1,34 +1,37 @@
+import { withDolphinSupply } from './dolphinSupply'
 import { corpseCollider } from './preparedCorpseBody'
-import { triggerHatsu } from './hatsu'
 import { canAct } from './fightActorState'
 import { illumiAvailable } from './illumiAccess'
+import { ownsCorpseTechnique, corpseNenReady } from './illumiCorpseAccess'
+import { beginCorpseImplant, advanceCorpseImplant, usableCorpse } from './illumiCorpseImplant'
+import { corpseControlLive, corpseControllerBody } from './illumiCorpseMatter'
+import { removeCorpsePins } from './illumiCorpsePins'
+import { sameGumSource, newGumSource } from './bungeeSource'
+import { releasePreparedEntity } from './preparedCorpseBody'
 import { updateEntity, liveEntity } from './preparationWorld'
 import { speakThroughCorpse } from './illumiCorpseSpeech'
-import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
+import type { ArsenalInvocation, ArsenalOption, ArsenalCommand } from './retrospectiveTypes'
 import type { PreparedEntity } from './preparationTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 type CorpseOrder = 'stay' | 'approach' | 'retreat'
-declare module './types' {
-  interface ArcadeFighter {
-    corpsePreparation?: { target: string; frames: number; x: number; y: number }
-  }
-}
 declare module './preparationTypes' {
   interface PreparedEntity {
     corpseOrder?: CorpseOrder
   }
 }
-const PREPARE_FRAMES = 60
 
 export function performCorpseCommand({ state, side, command }: ArsenalInvocation): FightState {
   const actor = state[side]
-  if (state.phase !== 'fighting' || state.catsName) return state
-  if (!canCommand(actor) || !illumiAvailable(actor)) return state
+  if (!corpseCommandsOpen(state)) return state
   const [id, argument] = (command.target ?? '').split('|')
-  const corpse = state.battlefield?.entities.find((entry) => entry.id === id && usableCorpse(entry))
+  const corpse = state.battlefield?.entities.find(
+    (entry) => entry.id === id && entry.kind === 'corpse',
+  )
   if (!corpse) return state
-  if (command.action === 'illumi-corpse') return beginCorpseControl(state, side, corpse)
+  if (command.action === 'illumi-corpse-release') return removeCorpsePins(state, side, corpse)
+  if (!corpseCommandReady(actor, corpse)) return state
+  if (command.action === 'illumi-corpse') return beginCorpseImplant(state, side, corpse)
   return commandControlledCorpse({ state, side, command }, corpse, argument)
 }
 function commandControlledCorpse(
@@ -36,43 +39,16 @@ function commandControlledCorpse(
   corpse: PreparedEntity,
   argument?: string,
 ): FightState {
-  const actor = state[side]
   if (corpse.controller?.side !== side || corpse.controller.source !== 'illumi') return state
+  if (!corpseCommandScope(state, side, corpse)) return state
   if (command.action === 'illumi-corpse-speak')
     return speakThroughCorpse(state, corpse, 'Je vais bien. Tout est sous contrôle.')
   if (command.action === 'illumi-corpse-order') return setOrder(state, corpse, argument)
-  if (command.action !== 'illumi-corpse-release' || distance(actor, corpse) > 6) return state
-  return updateEntity(state, corpse.id, {
-    controller: undefined,
-    corpseOrder: undefined,
-    arena: corpse.arena ? { ...corpse.arena, height: 3 } : undefined,
-  })
+  return state
 }
 
-function usableCorpse(entry: PreparedEntity): boolean {
-  return entry.kind === 'corpse' && entry.material === 'real' && liveEntity(entry)
-}
 function canCommand(actor: ArcadeFighter): boolean {
   return canAct(actor) && !actor.attack
-}
-function distance(actor: { x: number; y: number }, target: { x: number; y: number }): number {
-  return Math.hypot(actor.x - target.x, actor.y - target.y)
-}
-function beginCorpseControl(
-  state: FightState,
-  side: FightSide,
-  corpse: PreparedEntity,
-): FightState {
-  const actor = state[side]
-  if (corpse.controller || actor.aura < 30 || distance(actor, corpse) > 6) return state
-  return {
-    ...state,
-    [side]: {
-      ...actor,
-      aura: actor.aura - 30,
-      corpsePreparation: { target: corpse.id, frames: PREPARE_FRAMES, x: actor.x, y: actor.y },
-    },
-  }
 }
 function setOrder(state: FightState, corpse: PreparedEntity, order?: string): FightState {
   if (!['stay', 'approach', 'retreat'].includes(order ?? '')) return state
@@ -82,7 +58,7 @@ function setOrder(state: FightState, corpse: PreparedEntity, order?: string): Fi
 
 export function advanceCorpseControls(state: FightState): FightState {
   let next = state
-  for (const side of ['player', 'opponent'] as const) next = advanceImplant(next, side)
+  for (const side of ['player', 'opponent'] as const) next = advanceCorpseImplant(next, side)
   for (const corpse of next.battlefield?.entities ?? []) {
     const pose = corpseCollider(corpse)
     if (pose !== corpse) next = updateEntity(next, pose.id, pose)
@@ -92,12 +68,12 @@ export function advanceCorpseControls(state: FightState): FightState {
 }
 function advanceControlledCorpse(state: FightState, corpse: PreparedEntity): FightState {
   if (corpse.kind !== 'corpse' || corpse.controller?.source !== 'illumi') return state
-  const owner = state[corpse.controller.side]
-  if (!illumiAvailable(owner) || !usableCorpse(corpse))
+  const owner = corpseControllerBody(state, corpse) ?? state[corpse.controller.side]
+  const available = corpse.corpseControl ? corpseControlLive(state, corpse) : illumiAvailable(owner)
+  if (!available || !usableCorpse(corpse))
     return updateEntity(state, corpse.id, {
-      controller: undefined,
-      corpseOrder: undefined,
-      arena: corpse.arena ? { ...corpse.arena, height: 3 } : undefined,
+      ...releasePreparedEntity(corpse),
+      corpseControl: undefined,
     })
   const x = corpsePosition(corpse, owner)
   return x !== corpse.x && corpsePathClear(state, corpse, x)
@@ -115,42 +91,6 @@ function corpsePathClear(state: FightState, corpse: PreparedEntity, x: number): 
   )
 }
 
-function advanceImplant(state: FightState, side: FightSide): FightState {
-  const actor = state[side],
-    preparation = actor.corpsePreparation
-  if (!preparation) return state
-  const corpse = state.battlefield?.entities.find((entry) => entry.id === preparation.target)
-  const clear = { ...state, [side]: { ...actor, corpsePreparation: undefined } }
-  if (!implantContinues({ actor, corpse, preparation })) return clear
-  if (preparation.frames > 1)
-    return {
-      ...state,
-      [side]: { ...actor, corpsePreparation: { ...preparation, frames: preparation.frames - 1 } },
-    }
-  return updateEntity(triggerHatsu(clear, side, 'illumi'), corpse!.id, {
-    controller: { side, source: 'illumi' },
-    corpseOrder: 'stay',
-    arena: { ...corpse!.arena!, height: 12 },
-  })
-}
-function implantContinues(context: {
-  actor: ArcadeFighter
-  corpse?: PreparedEntity
-  preparation: NonNullable<ArcadeFighter['corpsePreparation']>
-}): boolean {
-  const { actor, corpse, preparation } = context
-  if (!corpse || !usableCorpse(corpse) || corpse.controller) return false
-  return (
-    canActDuringImplant(actor) &&
-    illumiAvailable(actor) &&
-    distance(actor, preparation) < 0.1 &&
-    distance(actor, corpse) <= 6
-  )
-}
-function canActDuringImplant(actor: ArcadeFighter): boolean {
-  return canAct({ ...actor, corpsePreparation: undefined }) && !actor.attack
-}
-
 function corpsePosition(corpse: PreparedEntity, owner: ArcadeFighter): number {
   const order = corpse.corpseOrder
   if (!order || order === 'stay') return corpse.x
@@ -161,7 +101,7 @@ function corpsePosition(corpse: PreparedEntity, owner: ArcadeFighter): number {
 }
 
 export function corpseOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  if (state[side].id !== 'illumi') return []
+  if (!ownsCorpseTechnique(state[side])) return []
   return (state.battlefield?.entities ?? []).filter(usableCorpse).flatMap((corpse) => {
     const items = !corpse.controller
       ? [
@@ -179,7 +119,7 @@ export function corpseOptions(state: FightState, side: FightSide): ArsenalOption
         command,
         labelFr: `Illumi · ${fr}`,
         labelEn: `Illumi · ${en}`,
-        ready: performCorpseCommand({ state, side, command }) !== state,
+        ready: previewCorpseCommand(state, side, command) !== state,
         conditionFr:
           'Cadavre matériel présent, aiguilles réelles et Nen requis. Implantation au contact, lente et interruptible. Les ordres déplacent le même corps ; les paroles sont un texte imposé, sans résurrection ni souvenirs de la victime.',
         conditionEn:
@@ -202,11 +142,35 @@ function corpseOrders(corpse: PreparedEntity) {
       fr: 'Faire parler le cadavre',
       en: 'Make the corpse speak',
     },
-    {
-      action: 'illumi-corpse-release' as const,
-      target: corpse.id,
-      fr: 'Retirer les aiguilles du cadavre',
-      en: 'Remove the corpse’s needles',
-    },
   ]
+}
+
+function corpseCommandScope(state: FightState, side: FightSide, corpse: PreparedEntity): boolean {
+  const control = corpse.corpseControl
+  if (!control) return true
+  return (
+    control.owner.owner === side &&
+    control.owner.member === (state.teamMatch?.seats[side].active ?? 0) &&
+    sameGumSource(control.origin ?? {}, newGumSource(state[side])) &&
+    corpseControlLive(state, corpse)
+  )
+}
+
+function corpseCommandsOpen(state: FightState): boolean {
+  return state.phase === 'fighting' && !state.catsName
+}
+function corpseCommandReady(actor: ArcadeFighter, corpse: PreparedEntity): boolean {
+  return canCommand(actor) && corpseNenReady(actor) && usableCorpse(corpse)
+}
+
+function previewCorpseCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  return state[side].id === 'kurapika'
+    ? withDolphinSupply(state, side, (supplied) =>
+        performCorpseCommand({ state: supplied, side, command }),
+      )
+    : performCorpseCommand({ state, side, command })
 }

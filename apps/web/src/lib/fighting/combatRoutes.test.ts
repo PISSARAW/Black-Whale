@@ -20,8 +20,20 @@ function prepare(id: string, options: { mirrored: boolean; corner: boolean; gap:
   let state = createCombatRouteFight(route)
   const facing = options.mirrored ? -1 : 1
   const target = options.corner ? (options.mirrored ? 7 : 93) : 50
+  const relocate = (x: number) => target + facing * (x - state.opponent.x)
   state = {
     ...state,
+    battlefield: state.battlefield && {
+      ...state.battlefield,
+      entities: state.battlefield.entities.map((entity) =>
+        entity.paperScatter ? { ...entity, x: relocate(entity.x) } : entity,
+      ),
+    },
+    projectiles: state.projectiles.map((shot) =>
+      shot.kallutoPaper
+        ? { ...shot, x: relocate(shot.x), velocityX: shot.velocityX * facing }
+        : shot,
+    ),
     player: { ...state.player, x: target - facing * options.gap, facing },
     opponent: {
       ...state.opponent,

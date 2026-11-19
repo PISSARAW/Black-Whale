@@ -96,10 +96,7 @@ function applyNen(
   const flag = direct[plan.nen as keyof typeof direct]
   if (flag && self.aura > 25) input[flag] = true
   if (plan.nen === 'ryu' && self.aura > 8)
-    Object.assign(
-      input,
-      focusFlags(self.attack ? attackData(self.attack.kind, self).auraZone : 'hands'),
-    )
+    Object.assign(input, focusFlags(self.attack ? attackData(self.attack.kind,self).auraZone : 'hands'))
   applyHeldNen(input, context)
 }
 function applyHeldNen(

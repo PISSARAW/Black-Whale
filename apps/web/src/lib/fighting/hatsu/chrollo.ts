@@ -1,16 +1,17 @@
-import { implantBlackVoice } from '../blackVoiceControl'
-import { advanceBlackPrimaries } from '../blackVoiceFrame'
+import { sunMoonStrikeHandReady, sunMoonStrikeMark } from '../sunMoonStrikeHands'
+import { plantBlackVoice } from '../blackVoice'
+import { advanceBlackVoice } from '../blackVoiceFrame'
 import {
   chrolloNenActive,
   chrolloPageForMove,
   chrolloSourceFor,
-  CHROLLO_SECONDARY,
   CHROLLO_STEAL,
 } from '../chrolloBook'
 import { reconcileChrolloPages } from '../chrolloPageEffects'
 import { completeSkillHunter } from '../skillHunterAcquisition'
 import { advanceHistoricalEffects } from '../chrolloHistoricalEffects'
 import { advanceHistoricalCopies } from '../chrolloHistoricalObjects'
+import { advanceGallerySenses } from '../gallerySense'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { unchangedTrigger, type FighterHatsu, type HatsuImpactContext } from './contract'
 
@@ -25,13 +26,15 @@ export const chrolloHatsu: FighterHatsu = {
     if (context.blocked) return context.state
     if (context.moveId === CHROLLO_STEAL) return steal(context)
     const page = chrolloPageForMove(context.state[context.side], context.moveId)
-    if (page === 'black-voice') return blackVoice(context)
+    if (page === 'black-voice') return plantBlackVoice(context)
     return page === 'sun-and-moon' ? stamp(context) : context.state
   },
   onFrame: (state) =>
-    advanceBlackPrimaries(
+    advanceGallerySenses(
       advanceHistoricalCopies(
-        advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+        advanceBlackVoice(
+          advanceHistoricalEffects(advanceBook(advanceBook(state, 'player'), 'opponent')),
+        ),
       ),
     ),
 }
@@ -41,15 +44,10 @@ function steal({ state, side, defenderSide }: HatsuImpactContext): FightState {
   return completeSkillHunter(state, side)
 }
 
-function blackVoice({ state, side, defenderSide }: HatsuImpactContext): FightState {
-  return implantBlackVoice(state, side, defenderSide)
-}
-
 function stamp(context: HatsuImpactContext): FightState {
   const { state, side, defenderSide, moveId } = context
-  const owner = state[side]
-  // H uses the free left hand while the book is held, the right hand once closed.
-  const moon = moveId === CHROLLO_SECONDARY && !owner.chrolloBook?.open
+  if (!sunMoonStrikeHandReady(state, side, moveId)) return state
+  const moon = sunMoonStrikeMark(state[side], moveId) === 'moon'
   const target = state[defenderSide]
   const mark = moon ? 'moonMark' : 'sunMark'
   const marked = { ...target, hatsuEffects: { ...target.hatsuEffects, [mark]: 1 } }

@@ -11,56 +11,40 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const output = process.env.THROW_ROSTER_OUTPUT ?? '/tmp/black-whale-five-throws'
 await mkdir(output, { recursive: true })
 const server = await createServer({
-  configFile: false,
-  root,
-  publicDir: 'static',
+  configFile: false, root, publicDir: 'static',
   plugins: [svelte({ configFile: false })],
   resolve: { alias: { $lib: path.join(root, 'src/lib') } },
   css: { postcss: { plugins: [] } },
   optimizeDeps: { entries: ['ui-tests/fighting-throws/index.html'], holdUntilCrawlEnd: false },
   cacheDir: path.join(output, 'vite-cache'),
-  server: { host: '127.0.0.1', port: 0, hmr: false, watch: null },
-  logLevel: 'error',
+  server: { host: '127.0.0.1', port: 0, hmr: false, watch: null }, logLevel: 'error',
 })
 await server.listen()
 const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const browser = await chromium.launch({
-  executablePath: existsSync(chrome) ? chrome : undefined,
-  headless: true,
-  args: [
-    '--no-proxy-server',
-    '--use-gl=angle',
-    `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`,
-    '--enable-unsafe-swiftshader',
-  ],
-})
+  executablePath: existsSync(chrome) ? chrome : undefined, headless: true, args: [
+  '--no-proxy-server', '--use-gl=angle', `--use-angle=${process.env.THROW_CAPTURE_ANGLE ?? 'swiftshader'}`, '--enable-unsafe-swiftshader',
+] })
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
-const errors = [],
-  samples = []
+const errors = [], samples = []
 page.on('pageerror', (error) => errors.push(error.message))
 page.setDefaultTimeout(90000)
 const reset = (options) => page.evaluate((value) => window.throwFixture.reset(value), options)
 const snapshot = () => page.evaluate(() => window.throwFixture.snapshot())
-const rendered = () =>
-  page.waitForFunction(() => {
-    const value = window.throwFixture.snapshot()
-    return value.audit?.frame === value.state.frame
-  })
+const rendered = () => page.waitForFunction(() => {
+  const value = window.throwFixture.snapshot()
+  return value.audit?.frame === value.state.frame
+})
 async function seek(age) {
   await page.evaluate((value) => window.throwFixture.seek(value), age)
   await page.waitForTimeout(240)
-  await page.evaluate(
-    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-  )
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await rendered()
   return snapshot()
 }
 
 try {
-  await page.goto(
-    `http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`,
-    { waitUntil: 'domcontentloaded', timeout: 180000 },
-  )
+  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-throws/`, { waitUntil: 'domcontentloaded', timeout: 180000 })
   await page.waitForSelector('.fight-scene.ready')
   const pairs = await page.evaluate(() => window.throwFixture.catalogue())
   const selected = pairs
@@ -74,138 +58,72 @@ try {
       if (process.env.THROW_ROSTER_BATCH === 'eighth') return index >= 35
       return true
     })
-    .filter(
-      ([id]) =>
-        !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id),
-    )
+    .filter(([id]) => !process.env.THROW_ROSTER_IDS || process.env.THROW_ROSTER_IDS.split(',').includes(id))
   const entries = process.argv.includes('--ko-only') ? [] : selected
   for (const [id, variants] of entries) {
-    for (const side of ['player', 'opponent'])
-      for (const powered of [false, true]) {
-        await page.evaluate(
-          ({ id, side, powered }) => {
-            window.throwFixture.reset(window.throwFixture.preparedOptions(id, powered, side))
-          },
-          { id, side, powered },
-        )
-        for (const [age, phase] of [
-          [2, 'grip'],
-          [9, 'turn'],
-          [16, 'slam'],
-          [22, 'release'],
-        ]) {
-          const value = await seek(age)
-          assert.equal(value.audit.performance, variants[Number(powered)])
-          assert.equal(value.audit.powered, powered)
-          assert.equal(value.audit.phase, phase)
-          assert.equal(
-            value.audit.shot,
-            { grip: 'grip-detail', turn: 'turn-orbit', slam: 'impact', release: 'aftermath' }[
-              phase
-            ],
-          )
-          assert.equal(value.audit.finite, true)
-          if (phase === 'turn' && ['kurapika', 'hisoka'].includes(id))
-            assert.ok(
-              value.audit.effects.includes(
-                `throw-signature:${id === 'kurapika' ? 'chain' : 'gum'}`,
-              ),
-            )
-          if (phase === 'turn' && id === 'feitan')
-            assert.equal(value.audit.equipment.umbrella, true)
-          if (phase === 'turn' && id === 'saiyu') {
-            assert.equal(value.audit.equipment.staff, true)
-            if (powered) assert.ok(value.audit.equipment.staffBottom > -0.04)
-          }
-          if (phase === 'turn' && id === 'theta')
-            assert.equal(value.audit.equipment.holstered, true)
-          if (phase === 'turn' && powered && ['feitan', 'saiyu'].includes(id))
-            assert.ok(value.audit.origins[side === 'player' ? 0 : 1][1] > 0.4)
-          if (phase === 'turn' && powered && id === 'feitan')
-            assert.ok(
-              value.audit.scissorsGap < 0.3,
-              `Scissor contact error: ${value.audit.scissorsGap}`,
-            )
-          if (phase === 'turn' && ['machi', 'kalluto', 'illumi'].includes(id)) {
-            const effect = { machi: 'thread', kalluto: 'paper', illumi: 'needles' }[id]
-            assert.ok(value.audit.effects.includes(`throw-signature:${effect}`))
-          }
-          if (phase === 'turn' && ['hinrigh', 'mizaistom'].includes(id))
-            assert.ok(
-              value.audit.effects.includes(
-                `throw-signature:${id === 'hinrigh' ? 'cuffs' : 'referee'}`,
-              ),
-            )
-          if (phase === 'turn' && id === 'shizuku') assert.equal(value.audit.equipment.blinky, true)
-          if (phase === 'turn' && id === 'leorio' && powered)
-            assert.ok(value.audit.effects.includes('throw-signature:remote'))
-          if (phase === 'turn' && id === 'hanzo' && powered)
-            assert.ok(value.audit.scissorsGap < 0.3)
-          if (phase === 'turn' && id === 'zakuro')
-            assert.ok(value.audit.effects.includes('throw-signature:blood'))
-          if (phase === 'turn' && id === 'camilla' && powered)
-            assert.ok(value.audit.effects.includes('throw-signature:royal'))
-          if (phase === 'grip' && id === 'melody' && powered)
-            assert.ok(value.audit.effects.includes('throw-signature:flute'))
-          if (phase === 'turn' && id === 'gel')
-            assert.ok(value.audit.effects.includes('throw-signature:serpent'))
-          if (id === 'cluck' && powered) {
-            const bird = value.state.battlefield.entities.find(
-              (entity) =>
-                entity.kind === 'bird' &&
-                entity.controller?.side === side &&
-                entity.controller.source === 'cluck',
-            )
-            const nearby = Boolean(bird && Math.abs(bird.x - value.state[side].x) < 15)
-            assert.equal(
-              value.audit.effects.includes('throw-signature:aviary'),
-              nearby,
-              'The native bird may leave the shot on its delivery route',
-            )
-          }
-          if (phase === 'turn') {
-            const preparedEffects = {
-              bill: 'growth',
-              halkenburg: 'archer',
-              longhi: 'agreement',
-              sayird: 'scout',
-              terebellum: 'relay',
-              yokotani: 'bailiff',
-              basho: 'poet',
-            }
-            if (powered && preparedEffects[id])
-              assert.ok(
-                value.audit.effects.includes(`throw-signature:${preparedEffects[id]}`),
-                `${id}: missing prepared accessory`,
-              )
-            if (['furykov', 'musse'].includes(id) && powered) {
-              const effect = id === 'furykov' ? 'analyst' : 'spy'
-              assert.equal(
-                value.audit.effects.includes(`throw-signature:${effect}`),
-                side === 'player',
-                `${id}: private accessory visibility`,
-              )
-            }
-            if (id === 'padaille')
-              assert.ok(value.audit.effects.includes('throw-signature:artisan'))
-            if (id === 'voconte')
-              assert.ok(value.audit.effects.includes('throw-signature:gatekeeper'))
-            if (id === 'bonolenov') assert.equal(value.audit.equipment.spear, powered)
-            if (id === 'biscuit') assert.equal(value.audit.equipment.trueForm, powered)
-          }
-          if (phase === 'release')
-            assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
-          await page.screenshot({
-            path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`),
-          })
-          samples.push({ id, side, powered, phase, audit: value.audit })
+    for (const side of ['player', 'opponent']) for (const powered of [false, true]) {
+      await page.evaluate(({ id, side, powered }) => {
+        window.throwFixture.reset(window.throwFixture.preparedOptions(id, powered, side))
+      }, { id, side, powered })
+      for (const [age, phase] of [[2, 'grip'], [9, 'turn'], [16, 'slam'], [22, 'release']]) {
+        const value = await seek(age)
+        assert.equal(value.audit.performance, variants[Number(powered)])
+        assert.equal(value.audit.powered, powered)
+        assert.equal(value.audit.phase, phase)
+        assert.equal(value.audit.shot, ({ grip: 'grip-detail', turn: 'turn-orbit', slam: 'impact', release: 'aftermath' })[phase])
+        assert.equal(value.audit.finite, true)
+        if (phase === 'turn' && ['kurapika', 'hisoka'].includes(id))
+          assert.ok(value.audit.effects.includes(`throw-signature:${id === 'kurapika' ? 'chain' : 'gum'}`))
+        if (phase === 'turn' && id === 'feitan') assert.equal(value.audit.equipment.umbrella, true)
+        if (phase === 'turn' && id === 'saiyu') {
+          assert.equal(value.audit.equipment.staff, true)
+          if (powered) assert.ok(value.audit.equipment.staffBottom > -0.04)
         }
+        if (phase === 'turn' && id === 'theta') assert.equal(value.audit.equipment.holstered, true)
+        if (phase === 'turn' && powered && ['feitan', 'saiyu'].includes(id))
+          assert.ok(value.audit.origins[side === 'player' ? 0 : 1][1] > 0.4)
+        if (phase === 'turn' && powered && id === 'feitan') assert.ok(value.audit.scissorsGap < 0.3, `Scissor contact error: ${value.audit.scissorsGap}`)
+        if (phase === 'turn' && ['machi', 'kalluto', 'illumi'].includes(id)) {
+          const effect = { machi: 'thread', kalluto: 'paper', illumi: 'needles' }[id]
+          assert.ok(value.audit.effects.includes(`throw-signature:${effect}`))
+        }
+        if (phase === 'turn' && ['hinrigh', 'mizaistom'].includes(id))
+          assert.ok(value.audit.effects.includes(`throw-signature:${id === 'hinrigh' ? 'cuffs' : 'referee'}`))
+        if (phase === 'turn' && id === 'shizuku') assert.equal(value.audit.equipment.blinky, true)
+        if (phase === 'turn' && id === 'leorio' && powered) assert.ok(value.audit.effects.includes('throw-signature:remote'))
+        if (phase === 'turn' && id === 'hanzo' && powered) assert.ok(value.audit.scissorsGap < 0.3)
+        if (phase === 'turn' && id === 'zakuro') assert.ok(value.audit.effects.includes('throw-signature:blood'))
+        if (phase === 'turn' && id === 'camilla' && powered) assert.ok(value.audit.effects.includes('throw-signature:royal'))
+        if (phase === 'grip' && id === 'melody' && powered) assert.ok(value.audit.effects.includes('throw-signature:flute'))
+        if (phase === 'turn' && id === 'gel') assert.ok(value.audit.effects.includes('throw-signature:serpent'))
+        if (id === 'cluck' && powered) {
+          const bird = value.state.battlefield.entities.find(entity => entity.kind === 'bird' && entity.controller?.side === side && entity.controller.source === 'cluck')
+          const nearby = Boolean(bird && Math.abs(bird.x - value.state[side].x) < 15)
+          assert.equal(value.audit.effects.includes('throw-signature:aviary'), nearby, 'The native bird may leave the shot on its delivery route')
+        }
+        if (phase === 'turn') {
+          const preparedEffects = {
+            bill: 'growth', halkenburg: 'archer', longhi: 'agreement',
+            sayird: 'scout', terebellum: 'relay', yokotani: 'bailiff', basho: 'poet',
+          }
+          if (powered && preparedEffects[id])
+            assert.ok(value.audit.effects.includes(`throw-signature:${preparedEffects[id]}`), `${id}: missing prepared accessory`)
+          if (['furykov', 'musse'].includes(id) && powered) {
+            const effect = id === 'furykov' ? 'analyst' : 'spy'
+            assert.equal(value.audit.effects.includes(`throw-signature:${effect}`), side === 'player', `${id}: private accessory visibility`)
+          }
+          if (id === 'padaille') assert.ok(value.audit.effects.includes('throw-signature:artisan'))
+          if (id === 'voconte') assert.ok(value.audit.effects.includes('throw-signature:gatekeeper'))
+          if (id === 'bonolenov') assert.equal(value.audit.equipment.spear, powered)
+          if (id === 'biscuit') assert.equal(value.audit.equipment.trueForm, powered)
+        }
+        if (phase === 'release') assert.ok(value.audit.bodies[side === 'player' ? 1 : 0][0] < -1.2)
+        await page.screenshot({ path: path.join(output, `${id}-${powered ? 'super' : 'normal'}-${side}-${phase}.png`) })
+        samples.push({ id, side, powered, phase, audit: value.audit })
       }
+    }
     await page.setViewportSize({ width: 320, height: 720 })
-    await page.evaluate(
-      (id) => window.throwFixture.reset(window.throwFixture.preparedOptions(id, true, 'opponent')),
-      id,
-    )
+    await page.evaluate((id) => window.throwFixture.reset(window.throwFixture.preparedOptions(id, true, 'opponent')), id)
     const portrait = await seek(9)
     assert.equal(portrait.audit.finite, true)
     await page.screenshot({ path: path.join(output, `${id}-mobile-320.png`) })
@@ -312,17 +230,9 @@ try {
   assert.equal((await snapshot()).audit.effects.length, 0)
   assert.deepEqual(errors, [])
   await writeFile(path.join(output, 'report.json'), JSON.stringify({ samples, errors }, null, 2))
-  process.stdout.write(
-    `Verified ${samples.length} production frames, ${entries.length} mobile views, pause, KO and reduced motion.\n`,
-  )
+  process.stdout.write(`Verified ${samples.length} production frames, ${entries.length} mobile views, pause, KO and reduced motion.\n`)
 } catch (error) {
-  await writeFile(
-    path.join(output, 'failure.json'),
-    JSON.stringify({ error: String(error), errors, value: await snapshot() }, null, 2),
-  )
+  await writeFile(path.join(output, 'failure.json'), JSON.stringify({ error: String(error), errors, value: await snapshot() }, null, 2))
   await page.screenshot({ path: path.join(output, 'failure.png') })
   throw error
-} finally {
-  await browser.close()
-  await server.close()
-}
+} finally { await browser.close(); await server.close() }

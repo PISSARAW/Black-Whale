@@ -63,7 +63,8 @@ describe('graphics profiles leave gameplay information intact', () => {
       forceContextLoss = vi.fn()
     class Renderer {
       setClearColor() {}
-      render = vi.fn()
+      // reuseFightRenderMatrices wraps the renderer's own render method.
+      render() {}
       dispose = dispose
       forceContextLoss = forceContextLoss
     }

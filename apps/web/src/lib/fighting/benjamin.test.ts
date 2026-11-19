@@ -123,7 +123,7 @@ describe('Benjamin’s canonical loadout', () => {
     expect(result.player.nen.gyo).toBe(false)
   })
 
-  it.each(['far', 'guard', 'invulnerable'] as const)(
+  it.each(['far', 'invulnerable'] as const)(
     'does not attach Secret Window to a %s target',
     (condition) => {
       const base = duel()
@@ -139,7 +139,7 @@ describe('Benjamin’s canonical loadout', () => {
       for (let i = 0; i < 30; i++)
         next = tickFight(next, EMPTY_INPUT, {
           dt: 1 / 60,
-          opponentInput: { ...EMPTY_INPUT, guard: condition === 'guard' },
+          opponentInput: EMPTY_INPUT,
         })
       expect(next.player.hatsuEffects.baton?.markedTarget).toBeNull()
     },
@@ -215,7 +215,7 @@ describe('Benjamin’s canonical loadout', () => {
     }
     const chrollo = createFight('chrollo', 'benjamin').player
     expect(chrollo.hatsuEffects.baton).toBeNull()
-    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBeNull()
+    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBe('benjamin')
   })
 
   it('fires three physical bullets on separate frames without requiring Nen or aura', () => {

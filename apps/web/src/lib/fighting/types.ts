@@ -1,4 +1,8 @@
+import type { FightAttack } from './fightAttackState'
+import type { PaperProjectileMetadata } from './kallutoPaperTypes'
 import type { PadailleTool } from './padailleWeapon'
+import type { Numpad } from './motionInput'
+import type { ControlScheme } from './controlScheme'
 import type { RetrospectiveFighterState } from './retrospectiveTypes'
 import type { IllumiState, NeedlePuppet } from './illumiState'
 import type { MachiThread } from './machiThread'
@@ -19,9 +23,8 @@ import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
 import type { FightKameos } from './kameos/types'
-
-export type { FightInput } from './fightInput'
-export { EMPTY_INPUT } from './fightInput'
+export type { FightInput } from './fightInputTypes'
+export { EMPTY_INPUT } from './fightInputTypes'
 
 export type FighterId =
   | 'kurapika'
@@ -177,8 +180,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   moonlightZetsu?: boolean
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
-  drainingChain?: { owner: FightSide }
-  stolenChainAbility?: { owner: FightSide; moveId: string }
+  drainingChain?: import('./dolphinAura').StealChainDrain
+  stolenChainAbility?: import('./dolphinAura').StolenChainSeal
   judgmentChain?: import('./judgmentRules').JudgmentSeal
   id: FighterId
   x: number
@@ -195,6 +198,9 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   hitStun: number
   blockStun: number
   crouching?: boolean
+  /** Relative numpad directions of the last ticks, for classic motions (motionInput.ts). */
+  motionLog?: readonly Numpad[]
+  controlScheme?: ControlScheme
   throwTechFrames?: number
   knockdownFrames: number
   wakeupInvulnerableFrames: number
@@ -225,7 +231,7 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   /** Biscuit has revealed her natural body; persists until the next round. */
   biscuitTrueForm?: boolean
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */
-  textureSurprise?: { surface: 'cloth' }
+  textureSurprise?: import('./hisokaTextureOrigin').TextureSurpriseState
   /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
   hanzoProjection?: {
     bodyX: number
@@ -239,31 +245,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   motion?: FighterMotion
   /** Frame of the current clockwise right-arm rotation; completed turns are stored separately. */
   cyclotronWindup?: { frame: number }
-  attack: {
-    superThrow?: true
-    copiedPage?: ChrolloPage
-    moveId?: string
-    variant?: AttackVariant
-    confirmedBlock?: boolean
-    confirmedHit?: boolean
-    comboOpening?: import('./comboOpenings').ComboOpening
-    comboFollowup?: import('./comboOpenings').ComboOpening
-    directionalChain?: import('./directionalChain').DirectionalChain
-    kind: AttackKind
-    frame: number
-    impacted: boolean
-    auraCharged: boolean
-    concealed: boolean
-    hatsuSource: FighterId | null
-    projectileSpawned: boolean
-    projectilesSpawned?: number
-    /** Charge committed to this one right punch, including a miss. */
-    cyclotronTurns?: number
-    reversal: boolean
-  } | null
+  attack: FightAttack | null
   bufferedAttack: {
-    superThrow?: true
-    directionalChain?: import('./directionalChain').DirectionalChain
     cancelFrom?: string
     copiedPage?: ChrolloPage
     bufferFrames?: number
@@ -372,10 +355,9 @@ export interface RemotePunchPath {
   struck: boolean
 }
 
-export interface FightProjectile {
+export interface FightProjectile extends PaperProjectileMetadata {
   guard?: Exclude<import('./combatProperties').GuardRequirement, 'throw'>
   canHitDowned?: boolean
-  kallutoPaper?: 'plant' | 'serpent'
   jupiter?: boolean
   living?: boolean
   /** A transformed living object cannot be swallowed by Blinky. */
@@ -428,8 +410,6 @@ export interface FightState {
   catsNameConsumed?: FightSide
   moonlight?: import('./moonlightContract').MoonlightState
   parallelFuture?: ParallelFutureState
-  /** Interactive solo illusion, isolated from authoritative damage, resources and verdicts. */
-  futurePerception?: FightState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
   /** Fatal causes collected before one common verdict, including simultaneous hits. */

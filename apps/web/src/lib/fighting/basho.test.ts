@@ -9,6 +9,8 @@ import {
   tickFight,
   opponentAttack,
 } from './engine'
+import { performArsenalCommand } from './retrospectiveArsenal'
+import { scenarioWritingKit } from './bashoMaterials'
 import { composeBashoPoem } from './bashoAction'
 import { BASHO_POEMS, BASHO_WRITING_FRAMES, recognizedBashoPoem } from './bashoPoem'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -39,6 +41,19 @@ function ready(state = duel()): FightState {
   return advance(write(state), BASHO_WRITING_FRAMES)
 }
 
+function supplyWriting(state: FightState): FightState {
+  if (state.player.writingKit) return state
+  const kit = { ...scenarioWritingKit('player'), x: state.player.x }
+  return performArsenalCommand(
+    {
+      ...state,
+      battlefield: { ...state.battlefield!, entities: [...state.battlefield!.entities, kit] },
+    },
+    'player',
+    { action: 'writing-take', target: kit.id },
+  )
+}
+
 describe('Basho’s written Great Hiker poem', () => {
   it('preserves a bookmarked copy’s composition and requires its page to remain available', () => {
     const base = duel()
@@ -51,12 +66,12 @@ describe('Basho’s written Great Hiker poem', () => {
         chrolloBook: {
           pages: ['hisoka' as const, 'basho' as const],
           page: 0,
-          open: true,
+          open: false,
           bookmark: 'basho' as const,
         },
       },
     }
-    const written = ready(state)
+    const written = ready(supplyWriting(state))
     expect(written.player.bashoPoem?.ready).toBe(true)
     expect(written.player.bashoPoem?.sourceMoveId).toBe('chrollo:finisher')
   })
@@ -99,7 +114,7 @@ describe('Basho’s written Great Hiker poem', () => {
       },
     }
     const invoked = performMove({
-      state,
+      state: supplyWriting(state),
       side: 'player',
       action: 'special',
       input: { ...EMPTY_INPUT, left: true },
@@ -255,7 +270,7 @@ describe('Basho’s written Great Hiker poem', () => {
     expect(advance(lost, 1).player.bashoPoem).toBeUndefined()
   })
 
-  it('lets Chrollo copy the written condition and removes it when the page is closed', () => {
+  it('lets Chrollo write with actual supplies and both hands, then removes the effect with the bookmark', () => {
     const base = duel()
     const chrollo = createFight('chrollo', 'hisoka').player
     const state = {
@@ -263,14 +278,22 @@ describe('Basho’s written Great Hiker poem', () => {
       player: {
         ...chrollo,
         x: 42,
-        chrolloBook: { pages: ['basho' as const], page: 0, open: true, bookmark: null },
+        chrolloBook: {
+          pages: ['basho' as const],
+          page: 0,
+          open: false,
+          bookmark: 'basho' as const,
+        },
       },
     }
-    const written = ready(state)
+    const written = ready(supplyWriting(state))
     expect(written.player.bashoPoem?.ready).toBe(true)
     const closed = {
       ...written,
-      player: { ...written.player, chrolloBook: { ...written.player.chrolloBook!, open: false } },
+      player: {
+        ...written.player,
+        chrolloBook: { ...written.player.chrolloBook!, open: false, bookmark: null },
+      },
     }
     expect(advance(closed, 1).player.bashoPoem).toBeUndefined()
   })

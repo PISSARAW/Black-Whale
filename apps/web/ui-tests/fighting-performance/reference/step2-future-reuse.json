@@ -25,17 +25,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [5.26953125, 5.65283203125, 7.935546875],
+          "load": [
+            5.26953125,
+            5.65283203125,
+            7.935546875
+          ],
           "freeMemory": 2098249728
         },
         {
           "elapsed": 10,
-          "load": [4.83349609375, 5.5478515625, 7.87158203125],
+          "load": [
+            4.83349609375,
+            5.5478515625,
+            7.87158203125
+          ],
           "freeMemory": 738017280
         },
         {
           "elapsed": 20,
-          "load": [4.79150390625, 5.51318359375, 7.83154296875],
+          "load": [
+            4.79150390625,
+            5.51318359375,
+            7.83154296875
+          ],
           "freeMemory": 106283008
         }
       ],
@@ -63,7 +75,10 @@
       "renderCallback": 3,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,

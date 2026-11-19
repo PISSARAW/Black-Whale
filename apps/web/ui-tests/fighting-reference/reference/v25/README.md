@@ -1,18 +1,14 @@
-# Clash · Bungee Gum · règles 25
+# Référence de combat 25
 
-Cette référence conserve les 96 flux de commandes de l’archive d’origine et
-les rejoue sous `clash-combat-25`. Les états initiaux sont vérifiés avant tout
-réenregistrement ; les paquets de commandes restent identiques. Les archives
-précédentes, dont v24, restent conservées.
+Les 96 flux de commandes originaux, rejoués sous `clash-combat-25` : lot 2 de la
+[grammaire de combo](../../../../src/lib/fighting/COMBO_GRAMMAR.md). Les flux figés
+utilisent le schéma simplifié par défaut ; les supers de Kurapika et Benjamin y
+perdent 20 % de dégâts. Le schéma classique et ses manipulations sont vérifiés par
+`controlScheme.test.ts`, car aucun flux figé ne contient de quart de cercle.
 
-Le changement porte sur les attaches multiples d’Hisoka, les origines mains/pieds,
-les ancrages du décor, la mobilité verticale, les objets rappelables et l’IA.
-Les liens et objets participent aux snapshots, aux prévisions et à la visibilité
-privée du PvP. Les objets réels gardent leur identité pendant rappel et relance.
+Le numéro 24 est volontairement sauté : une autre branche l’utilise pour les
+techniques avancées du Nen. Les archives antérieures restent intactes.
 
-`baseline.json` donne les empreintes par séquence, `sources.json` les sources
-mesurées, `SHA256SUMS` la somme de l’archive `replays.tar.gz`.
-
-Contrôles complémentaires : `bungeeNetwork.test.ts`, les suites Hisoka,
-projectiles, arène, équipes, copies de Chrollo, En, Furykov, PvP et Parallel Future,
-ainsi que `node apps/web/scripts/check-hisoka-network.mjs` sur ordinateur et mobile.
+`baseline.json` décrit chaque état initial et final, `replays.tar.gz` contient les
+replays avec leurs checkpoints, `sources.json` identifie les sources utilisées et
+`SHA256SUMS` permet de vérifier les fichiers archivés.

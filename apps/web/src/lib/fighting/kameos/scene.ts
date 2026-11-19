@@ -1,4 +1,5 @@
 import { fightWorldY } from '../fightCoordinates'
+import { fightFigureKey } from '../fighterFigure'
 import { FIGHT_MODEL_POSES } from '../sceneMotion'
 import { disposeMountedVisitHatsu } from '../visitHatsuModel'
 import type { ProjectionSceneOptions } from '../hanzoProjectionScene'
@@ -24,7 +25,7 @@ const ANIMATIONS: Partial<Record<FighterId, typeof tubeppaAnimation>> = {
 }
 interface HeldModel {
   model: Model
-  id: string
+  key: string
   fallFrame?: number
   lastFrame?: number
 }
@@ -79,12 +80,13 @@ export function createKameoScene(options: ProjectionSceneOptions) {
   const held = new Map<FightSide, HeldModel>()
   function modelFor(side: FightSide, slot: KameoSlot): Model {
     const current = held.get(side)
-    if (current?.id === slot.fighter.id) return current.model
+    const key = fightFigureKey(slot.fighter)
+    if (current?.key === key) return current.model
     if (current) remove(current.model)
     const model = options.buildFighter(slot.fighter)
     model.root.name = `kameo:${side}`
     options.scene.add(model.root)
-    held.set(side, { model, id: slot.fighter.id })
+    held.set(side, { ...current, model, key })
     return model
   }
   function remove(model: Model) {

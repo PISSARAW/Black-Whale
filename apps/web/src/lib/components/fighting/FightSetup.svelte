@@ -168,8 +168,8 @@
   </div>
 </section>
 
-<FightArenaSetup {environment} {language} {onEnvironment} />
-<FightIllumiEquipment {environment} {player} {opponent} {language} {onEnvironment} />
+  <FightArenaSetup {environment} {language} {onEnvironment} />
+  <FightIllumiEquipment {environment} {player} {opponent} {language} {onEnvironment} />
 <StagePicker {environment} {language} onSelect={onEnvironment} />
 <FightPreparationSetup {environment} {player} {opponent} {language} onChange={onEnvironment} />
 <FightFormatPicker selected={format} {language} onSelect={onFormat} />

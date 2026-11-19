@@ -25,11 +25,7 @@ function phinksArm(context: VictoryContext, turns: number) {
   // Circumduction uses shoulder swing and abduction together; repeatedly
   // subtracting full turns from flexion drove the arm through its own torso.
   const winding = turns * Math.PI * 2
-  shoulder.rotation.set(
-    -1.1 + Math.cos(winding) * 1.6,
-    Math.sin(winding) * 0.35,
-    0.85 + Math.sin(winding) * 0.65,
-  )
+  shoulder.rotation.set(-1.1 + Math.cos(winding) * 1.6, Math.sin(winding) * 0.35, 0.85 + Math.sin(winding) * 0.65)
   hero.root.getObjectByName('elbow-right')!.rotation.x = -0.16
   hero.root.updateWorldMatrix(true, true)
   if (age >= 210) {

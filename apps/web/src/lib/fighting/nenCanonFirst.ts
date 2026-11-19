@@ -12,7 +12,7 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
       'emperor-time',
     ],
     condition:
-      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation and Dolphin require Emperor Time.',
+      'Each finger has its own chain. Chain Jail binds active Spiders only; Judgment implantation, Dolphin and video Dowsing require Emperor Time. Video screening also requires a previously met subject and real recorded media.',
     effect:
       'Restraint, directed chain, healing, aura drain and a single stolen use remain distinct.',
     prohibition:
@@ -27,16 +27,30 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     effect: 'Sticky elastic aura changes spacing; Texture Surprise changes surface appearance.',
     prohibition: 'No teleportation, healing, invulnerability or physical change from a texture.',
     adaptation:
-      'One fighter-to-fighter tether, cloth preparation, reach and composed card finish tune the duel.',
+      'Multiple physical elastic links, wound seals and rubber replacements retain their supports. A prior heart/lung order is executable in the declared viable-asphyxia scene of ch.357; no generic resurrection or restored flesh. Costs and cinematic duration tune the duel.',
   },
   chrollo: {
-    abilities: ['skill-hunter', 'double-face', 'sun-and-moon', 'black-voice'],
+    abilities: [
+      'skill-hunter',
+      'double-face',
+      'sun-and-moon',
+      'black-voice',
+      'indoor-fish',
+      'fun-fun-cloth',
+      'chrollo-teleportation',
+      'order-stamp',
+      'convert-hands',
+      'gallery-fake',
+      'love-dial-6700',
+      'lovely-ghostwriter',
+    ],
     condition:
-      'A stolen ability needs its page and the book or single bookmark; copies keep body, material and target requirements.',
-    effect: 'Pages and bookmark control active powers; Sun and Moon marks survive page closure.',
+      'Acquisition needs witnessing, answered questions, a palm on the cover and completion within one hour. Active pages require the right-hand book or the unique bookmark; copied powers retain their own conditions.',
+    effect:
+      'Historical pages execute their separate effects. Gallery Fake copies remain inert, can be located from the original and sense contacts within their volume; Sun and Moon marks persist.',
     prohibition: 'No body, weapon, animal, ally, consent or learned model is acquired with a page.',
     adaptation:
-      'Historical Hisoka-duel loadout; witnessing plus contact abbreviates acquisition. The complete canonical theft sequence is not simulated.',
+      'Retrospective pages combine demonstrated eras. Timings, dimensions and stocks are duel tuning. Lovely Ghostwriter requires genuine handwritten identity, a visible subject or portrait, real writing material and a defined scenario month; never the caster’s own future. Further material interactions remain under audit.',
   },
   benjamin: {
     abilities: ['benjamin-baton', 'air-blow', 'secret-window', 'culdcept'],
@@ -115,18 +129,20 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
   machi: {
     abilities: ['nen-stitches'],
     condition:
-      'Suture, tracking and restraint use actual threads; length and continued control matter.',
-    effect: 'Repair through suture, mark a target or maintain a physical tether.',
+      'Suture, tracking and restraint use actual threads. Reattaching a forearm needs its original material, a physical needle, free hands, a consenting living patient and relaxed arm aura.',
+    effect:
+      'Reconnect the original forearm without restoring lost HP or regrowing flesh; suture a wound, mark a target or maintain a physical tether.',
     prohibition:
       'No generic timed paralysis, remote healing unrelated to suture or free binding without a thread.',
     adaptation:
-      'Self-suture health, tether range and martial carriers tune the duel; wounds are represented by HP.',
+      'Open-wound HP recovery, contact ranges and operation timing tune the duel. Severed forearms are explicit physical injuries with original material; reconnection does not restore HP.',
   },
   illumi: {
     abilities: ['illumi-needle-people'],
     condition:
       'Physical needles, skull implantation and an explicit order are required for Needle People.',
-    effect: 'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen.',
+    effect:
+      'Commands overwrite autonomy; bodily consequences remain distinct from maintained Nen. Face alteration includes pinned Gittarackur and the temporary unpinned Hisoka face, with the original eyes and no copied Hatsu.',
     prohibition:
       'No aura drain, automatic two-second recovery, defensive disguise bonus or invented finisher.',
     adaptation:
@@ -169,11 +185,12 @@ export const NEN_CANON_FIRST: NenCanonProfiles = {
     abilities: ['biohazard-hinrigh'],
     condition:
       'Touch a real object; transformed animals retain the object’s function and finite aura.',
-    effect: 'Carried handcuffs become pigeons that can physically latch and be recovered.',
+    effect:
+      'Handcuff pigeons restrain; a camera cat records for physical retrieval, a snake barrel fires the actual ammunition, and an oyster preserves its swallowed transmitter and radio signal.',
     prohibition:
       'No animal from nothing, copied inventory, self-transformation, generic boost or forced Zetsu.',
     adaptation:
-      'Two pairs, transformation time, durability, capture grace and lifetime tune the duel; the knife remains physical.',
+      'Two cuff pairs, device stocks, transformation time, durability and most lifetimes tune the duel. The oyster estimate remains two simulated hours; the knife remains physical.',
   },
   mizaistom: {
     abilities: ['cross-game'],

@@ -2,11 +2,12 @@ import { describe, expect, it, vi } from 'vitest'
 
 describe('Nen contracts do not depend on module initialization order', () => {
   it.each([
-    './engine',
     './movesets',
     './hatsu/registry',
     './preparationRequirements',
     './outsideDuelAbility',
+    './combatRouteFight',
+    './combatRouteSetup',
   ])('retains hooks and the passive ability after importing %s first', async (entry) => {
     vi.resetModules()
     await import(entry)

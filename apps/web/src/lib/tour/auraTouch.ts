@@ -64,5 +64,18 @@ export function touchForce(
 export const pressureThroughShu = (force: number, wrappedWithShu: boolean) =>
   force * (wrappedWithShu ? 0.4 : 1)
 
+/**
+ * How far the targeted solid yields to this incoming touch.
+ *
+ * `touchForce(..., true)` remains the force a wrapped solid transmits when it
+ * is used against something else. The target here is instead receiving the
+ * visitor's pressure, so only its 40% yield belongs in its displacement.
+ */
+export const touchDisplacement = (
+  kind: NenObjectInteraction,
+  nen: NenTechniqueState,
+  wrappedWithShu = false,
+) => pressureThroughShu(touchForce(kind, nen), wrappedWithShu)
+
 /** How far a touch of this kind turns the solid. */
 export const touchTurn = (kind: NenObjectInteraction) => TURN[kind]

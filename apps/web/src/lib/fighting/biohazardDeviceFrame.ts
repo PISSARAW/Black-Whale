@@ -6,7 +6,7 @@ import {
   releaseDeviceGun,
   storeBioDevice,
   type BiohazardDevice,
-} from './biohazardDevices'
+} from './legacyBiohazardDevices'
 import type { FightSide, FightState } from './types'
 import { priorityLineOfSight } from './priorityOptics'
 

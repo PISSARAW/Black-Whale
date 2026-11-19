@@ -25,17 +25,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [2.74951171875, 3.912109375, 6.54833984375],
+          "load": [
+            2.74951171875,
+            3.912109375,
+            6.54833984375
+          ],
           "freeMemory": 1914486784
         },
         {
           "elapsed": 10,
-          "load": [2.78759765625, 3.88134765625, 6.50634765625],
+          "load": [
+            2.78759765625,
+            3.88134765625,
+            6.50634765625
+          ],
           "freeMemory": 1436729344
         },
         {
           "elapsed": 20,
-          "load": [2.80029296875, 3.85107421875, 6.46435546875],
+          "load": [
+            2.80029296875,
+            3.85107421875,
+            6.46435546875
+          ],
           "freeMemory": 1337999360
         }
       ],
@@ -57,7 +69,10 @@
       "renderCallback": 3,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -166,17 +181,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [2.92333984375, 3.81103515625, 6.388671875],
+          "load": [
+            2.92333984375,
+            3.81103515625,
+            6.388671875
+          ],
           "freeMemory": 732184576
         },
         {
           "elapsed": 10,
-          "load": [3.02099609375, 3.80078125, 6.3544921875],
+          "load": [
+            3.02099609375,
+            3.80078125,
+            6.3544921875
+          ],
           "freeMemory": 1286553600
         },
         {
           "elapsed": 20,
-          "load": [2.94384765625, 3.75732421875, 6.30908203125],
+          "load": [
+            2.94384765625,
+            3.75732421875,
+            6.30908203125
+          ],
           "freeMemory": 1177403392
         }
       ],
@@ -198,7 +225,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1575, 697],
+      "resolution": [
+        1575,
+        697
+      ],
       "pixelRatio": 1.25,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -307,17 +337,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [2.66357421875, 3.64208984375, 6.2080078125],
+          "load": [
+            2.66357421875,
+            3.64208984375,
+            6.2080078125
+          ],
           "freeMemory": 386940928
         },
         {
           "elapsed": 10,
-          "load": [2.5546875, 3.58740234375, 6.158203125],
+          "load": [
+            2.5546875,
+            3.58740234375,
+            6.158203125
+          ],
           "freeMemory": 102875136
         },
         {
           "elapsed": 20,
-          "load": [3.05859375, 3.66552734375, 6.15576171875],
+          "load": [
+            3.05859375,
+            3.66552734375,
+            6.15576171875
+          ],
           "freeMemory": 159547392
         }
       ],
@@ -339,7 +381,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [2205, 976],
+      "resolution": [
+        2205,
+        976
+      ],
       "pixelRatio": 1.75,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -448,17 +493,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [2.76220703125, 3.5673828125, 6.07666015625],
+          "load": [
+            2.76220703125,
+            3.5673828125,
+            6.07666015625
+          ],
           "freeMemory": 81674240
         },
         {
           "elapsed": 10,
-          "load": [3.31396484375, 3.66259765625, 6.0810546875],
+          "load": [
+            3.31396484375,
+            3.66259765625,
+            6.0810546875
+          ],
           "freeMemory": 71254016
         },
         {
           "elapsed": 20,
-          "load": [3.18505859375, 3.62353515625, 6.0390625],
+          "load": [
+            3.18505859375,
+            3.62353515625,
+            6.0390625
+          ],
           "freeMemory": 72515584
         }
       ],
@@ -486,7 +543,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -595,17 +655,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [3.720703125, 3.72509765625, 6.01953125],
+          "load": [
+            3.720703125,
+            3.72509765625,
+            6.01953125
+          ],
           "freeMemory": 122699776
         },
         {
           "elapsed": 10,
-          "load": [3.38818359375, 3.65185546875, 5.96630859375],
+          "load": [
+            3.38818359375,
+            3.65185546875,
+            5.96630859375
+          ],
           "freeMemory": 640057344
         },
         {
           "elapsed": 20,
-          "load": [3.6962890625, 3.71142578125, 5.96044921875],
+          "load": [
+            3.6962890625,
+            3.71142578125,
+            5.96044921875
+          ],
           "freeMemory": 499040256
         }
       ],
@@ -633,7 +705,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1575, 697],
+      "resolution": [
+        1575,
+        697
+      ],
       "pixelRatio": 1.25,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -742,17 +817,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [3.97412109375, 3.763671875, 5.92578125],
+          "load": [
+            3.97412109375,
+            3.763671875,
+            5.92578125
+          ],
           "freeMemory": 99450880
         },
         {
           "elapsed": 10,
-          "load": [3.4365234375, 3.65576171875, 5.86181640625],
+          "load": [
+            3.4365234375,
+            3.65576171875,
+            5.86181640625
+          ],
           "freeMemory": 112230400
         },
         {
           "elapsed": 20,
-          "load": [3.369140625, 3.6337890625, 5.82763671875],
+          "load": [
+            3.369140625,
+            3.6337890625,
+            5.82763671875
+          ],
           "freeMemory": 167575552
         }
       ],
@@ -780,7 +867,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [2205, 976],
+      "resolution": [
+        2205,
+        976
+      ],
       "pixelRatio": 1.75,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -889,17 +979,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [4.4462890625, 3.85302734375, 5.8544921875],
+          "load": [
+            4.4462890625,
+            3.85302734375,
+            5.8544921875
+          ],
           "freeMemory": 77086720
         },
         {
           "elapsed": 10,
-          "load": [4.14990234375, 3.80810546875, 5.81494140625],
+          "load": [
+            4.14990234375,
+            3.80810546875,
+            5.81494140625
+          ],
           "freeMemory": 1134641152
         },
         {
           "elapsed": 20,
-          "load": [3.73876953125, 3.7314453125, 5.76416015625],
+          "load": [
+            3.73876953125,
+            3.7314453125,
+            5.76416015625
+          ],
           "freeMemory": 948305920
         }
       ],
@@ -921,7 +1023,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1030,17 +1135,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [3.58740234375, 3.69921875, 5.705078125],
+          "load": [
+            3.58740234375,
+            3.69921875,
+            5.705078125
+          ],
           "freeMemory": 341082112
         },
         {
           "elapsed": 10,
-          "load": [3.18896484375, 3.60986328125, 5.6494140625],
+          "load": [
+            3.18896484375,
+            3.60986328125,
+            5.6494140625
+          ],
           "freeMemory": 328237056
         },
         {
           "elapsed": 20,
-          "load": [3.07958984375, 3.57275390625, 5.6123046875],
+          "load": [
+            3.07958984375,
+            3.57275390625,
+            5.6123046875
+          ],
           "freeMemory": 315392000
         }
       ],
@@ -1062,7 +1179,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1575, 697],
+      "resolution": [
+        1575,
+        697
+      ],
       "pixelRatio": 1.25,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1171,17 +1291,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [2.962890625, 3.5263671875, 5.5595703125],
+          "load": [
+            2.962890625,
+            3.5263671875,
+            5.5595703125
+          ],
           "freeMemory": 188284928
         },
         {
           "elapsed": 10,
-          "load": [3.36865234375, 3.591796875, 5.55859375],
+          "load": [
+            3.36865234375,
+            3.591796875,
+            5.55859375
+          ],
           "freeMemory": 347701248
         },
         {
           "elapsed": 20,
-          "load": [3.83984375, 3.6865234375, 5.5693359375],
+          "load": [
+            3.83984375,
+            3.6865234375,
+            5.5693359375
+          ],
           "freeMemory": 100761600
         }
       ],
@@ -1203,7 +1335,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [2205, 976],
+      "resolution": [
+        2205,
+        976
+      ],
       "pixelRatio": 1.75,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1312,17 +1447,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [3.66259765625, 3.6572265625, 5.5146484375],
+          "load": [
+            3.66259765625,
+            3.6572265625,
+            5.5146484375
+          ],
           "freeMemory": 291700736
         },
         {
           "elapsed": 10,
-          "load": [3.86767578125, 3.70068359375, 5.5078125],
+          "load": [
+            3.86767578125,
+            3.70068359375,
+            5.5078125
+          ],
           "freeMemory": 90406912
         },
         {
           "elapsed": 20,
-          "load": [4.03466796875, 3.74267578125, 5.5009765625],
+          "load": [
+            4.03466796875,
+            3.74267578125,
+            5.5009765625
+          ],
           "freeMemory": 81084416
         }
       ],
@@ -1344,7 +1491,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1453,17 +1603,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [3.98388671875, 3.755859375, 5.46484375],
+          "load": [
+            3.98388671875,
+            3.755859375,
+            5.46484375
+          ],
           "freeMemory": 142802944
         },
         {
           "elapsed": 10,
-          "load": [4.3671875, 3.845703125, 5.4765625],
+          "load": [
+            4.3671875,
+            3.845703125,
+            5.4765625
+          ],
           "freeMemory": 191168512
         },
         {
           "elapsed": 20,
-          "load": [9.9345703125, 5.09228515625, 5.90185546875],
+          "load": [
+            9.9345703125,
+            5.09228515625,
+            5.90185546875
+          ],
           "freeMemory": 279658496
         }
       ],
@@ -1485,7 +1647,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1575, 697],
+      "resolution": [
+        1575,
+        697
+      ],
       "pixelRatio": 1.25,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1594,17 +1759,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [9.02685546875, 5.26171875, 5.93896484375],
+          "load": [
+            9.02685546875,
+            5.26171875,
+            5.93896484375
+          ],
           "freeMemory": 235208704
         },
         {
           "elapsed": 10,
-          "load": [10.06005859375, 5.61328125, 6.0556640625],
+          "load": [
+            10.06005859375,
+            5.61328125,
+            6.0556640625
+          ],
           "freeMemory": 235061248
         },
         {
           "elapsed": 20,
-          "load": [12.89794921875, 6.36669921875, 6.3173828125],
+          "load": [
+            12.89794921875,
+            6.36669921875,
+            6.3173828125
+          ],
           "freeMemory": 94044160
         }
       ],
@@ -1626,7 +1803,10 @@
       "renderCallback": 3,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [2205, 976],
+      "resolution": [
+        2205,
+        976
+      ],
       "pixelRatio": 1.75,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1735,17 +1915,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [36.44921875, 12.84033203125, 8.673828125],
+          "load": [
+            36.44921875,
+            12.84033203125,
+            8.673828125
+          ],
           "freeMemory": 752844800
         },
         {
           "elapsed": 10,
-          "load": [37.19970703125, 13.76953125, 9.05126953125],
+          "load": [
+            37.19970703125,
+            13.76953125,
+            9.05126953125
+          ],
           "freeMemory": 371376128
         },
         {
           "elapsed": 20,
-          "load": [36.95703125, 14.49853515625, 9.365234375],
+          "load": [
+            36.95703125,
+            14.49853515625,
+            9.365234375
+          ],
           "freeMemory": 106446848
         }
       ],
@@ -1767,7 +1959,10 @@
       "renderCallback": 3,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1260, 558],
+      "resolution": [
+        1260,
+        558
+      ],
       "pixelRatio": 1,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -1876,17 +2071,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [48.20458984375, 18.72265625, 11.02294921875],
+          "load": [
+            48.20458984375,
+            18.72265625,
+            11.02294921875
+          ],
           "freeMemory": 116899840
         },
         {
           "elapsed": 10,
-          "load": [59.037109375, 21.99560546875, 12.27294921875],
+          "load": [
+            59.037109375,
+            21.99560546875,
+            12.27294921875
+          ],
           "freeMemory": 91963392
         },
         {
           "elapsed": 20,
-          "load": [64.70947265625, 24.44482421875, 13.255859375],
+          "load": [
+            64.70947265625,
+            24.44482421875,
+            13.255859375
+          ],
           "freeMemory": 90193920
         }
       ],
@@ -1908,7 +2115,10 @@
       "renderCallback": 2,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [1575, 697],
+      "resolution": [
+        1575,
+        697
+      ],
       "pixelRatio": 1.25,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,
@@ -2017,17 +2227,29 @@
       "hostLoad": [
         {
           "elapsed": 0,
-          "load": [88.826171875, 34.04736328125, 17.11767578125],
+          "load": [
+            88.826171875,
+            34.04736328125,
+            17.11767578125
+          ],
           "freeMemory": 146292736
         },
         {
           "elapsed": 10,
-          "load": [80.19775390625, 34.0107421875, 17.30224609375],
+          "load": [
+            80.19775390625,
+            34.0107421875,
+            17.30224609375
+          ],
           "freeMemory": 435650560
         },
         {
           "elapsed": 20,
-          "load": [75.19580078125, 34.46875, 17.66015625],
+          "load": [
+            75.19580078125,
+            34.46875,
+            17.66015625
+          ],
           "freeMemory": 160759808
         }
       ],
@@ -2049,7 +2271,10 @@
       "renderCallback": 3,
       "gpuSupported": true,
       "gpuDisjoint": 0,
-      "resolution": [2205, 976],
+      "resolution": [
+        2205,
+        976
+      ],
       "pixelRatio": 1.75,
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)",
       "verified": 1,

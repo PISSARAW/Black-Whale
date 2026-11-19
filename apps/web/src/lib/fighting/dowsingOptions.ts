@@ -1,4 +1,5 @@
-import { dowsingEvidenceOptions } from './dowsingEvidence'
+import { dowsingMapOptions } from './dowsingMapOptions'
+import { dowsingVideoOptions } from './dowsingVideo'
 import { canAskDowsing, ownsDowsing } from './dowsingRules'
 import { performDowsingCommand } from './dowsingAction'
 import { DOWSING_QUESTIONS } from './dowsingTypes'
@@ -27,7 +28,7 @@ export function dowsingOptions(state: FightState, side: FightSide): ArsenalOptio
         labels: ['Dowsing · Ranger le pendule', 'Dowsing · Put away the pendulum'],
       }),
     )
-  if (state[side].dowsingPrompt)
+  if (state[side].dowsingPrompt && state[side].dowsingPrompt?.question !== 'free')
     for (const answer of ['sincere', 'lie'])
       options.push(
         option(state, side, {
@@ -38,7 +39,7 @@ export function dowsingOptions(state: FightState, side: FightSide): ArsenalOptio
               : ['Mentir sciemment', 'Knowingly lie'],
         }),
       )
-  return [...options, ...dowsingEvidenceOptions(state, side)]
+  return [...options, ...dowsingVideoOptions(state, side), ...dowsingMapOptions(state, side)]
 }
 function option(
   state: FightState,

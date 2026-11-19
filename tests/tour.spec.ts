@@ -31,6 +31,26 @@ const ready = async (page: import('playwright/test').Page) => {
   return canvas
 }
 
+const ROYAL_NEN_SCENE =
+  '/tour?eventId=ch-369-the-princes-send-their-guards-to-the-first-nen-class&space=tier-1-royal-residential-sector-room-1014-entrance'
+const SIMULATION_KEY = 'black-whale:tour:simulation:v1'
+
+async function raiseRen(page: import('playwright/test').Page) {
+  await page.getByRole('button', { name: /^Nen ·/ }).click()
+  await page.getByRole('button', { name: 'Ten', exact: true }).click()
+  const ren = page.getByRole('button', { name: 'Ren', exact: true })
+  await expect(ren).toBeEnabled()
+  await ren.click()
+}
+
+async function readyNenScene(page: import('playwright/test').Page) {
+  const canvas = await ready(page)
+  await expect(canvas).toHaveAttribute('data-engine', /three\.js/)
+  // Let the renderer publish the actual interior/visitor position while the
+  // one-second aura beat stays paused.
+  await page.clock.runFor(34)
+}
+
 test.describe('the walk', () => {
   test('boots the deck and says where the visitor is', async ({ page }) => {
     const response = await page.goto('/tour')
@@ -112,21 +132,15 @@ test.describe('the walk', () => {
     // The counters have to be the whole frame and not its last draw call — the
     // reason `meteredFrame` turns `info.autoReset` off. A deck that reached the
     // screen drew triangles.
-    // Parsed rather than pattern-matched: `Intl` groups thousands with a narrow
-    // no-break space, and a regex written against an ordinary one would pass on
-    // a broken "0 tri" and fail on a healthy "41 203 tri".
-    const counters = async () => {
-      const readout = (await meter.textContent()) ?? ''
-      const countBefore = (unit: string) => {
-        const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)(?:${unit})`).exec(readout)?.[1] ?? ''
-        return Number(raw.replace(/\D/g, ''))
-      }
-      return {
-        tier: /\blow\b/.test(readout) ? ('low' as const) : ('high' as const),
-        triangles: countBefore('tri'),
-        calls: countBefore('calls|appels'),
-      }
-    }
+    // Read one atomic measurement. textContent can join adjacent flex items
+    // ("cpu 62" + "41 calls" becomes "cpu 6241 calls"), and translations
+    // change the units and thousands separators.
+    const counters = () =>
+      meter.evaluate((node) => ({
+        tier: node.dataset.tier === 'low' ? ('low' as const) : ('high' as const),
+        triangles: Number(node.dataset.triangles),
+        calls: Number(node.dataset.calls),
+      }))
 
     // The first half-second can still contain the deck's one-off upload and
     // shader compilation. A budget describes the settled walk, so wait for a
@@ -190,6 +204,8 @@ test.describe('the walk', () => {
     page,
     browserName,
   }) => {
+    // Two complete scene boots plus a high-quality software-rendered capture.
+    test.setTimeout(120_000)
     test.skip(browserName !== 'chromium', 'Regression specific to the Chrome/ANGLE render path')
 
     const shaderFailures: string[] = []
@@ -245,5 +261,63 @@ test.describe('the walk', () => {
     expect(sample.brightest).toBeGreaterThan(60)
     expect(sample.visibleShare).toBeGreaterThan(0.01)
     expect(shaderFailures).toEqual([])
+  })
+
+  test('persists witnessed hostile Nen only in simulated royal life', async ({ page }) => {
+    // This exercises three scene boots. Keep the state/persistence check off
+    // the expensive high-quality path, covered by the shader test above.
+    test.setTimeout(180_000)
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.clock.install({ time: new Date('2026-11-16T12:00:00Z') })
+    await page.addInitScript(() => {
+      localStorage.setItem('black-whale:tour-comfort', JSON.stringify({ quality: 'low' }))
+    })
+    await page.goto('/')
+    // This checks storage and mode boundaries, not the separately tested aura
+    // economy. Pause the simulation beat before opening the royal scene so
+    // software rendering cannot exhaust Ten/Ren between two pointer actions.
+    await page.clock.pauseAt(new Date('2026-11-16T12:01:00Z'))
+    await page.evaluate(() => localStorage.clear())
+    await page.goto(ROYAL_NEN_SCENE)
+    await readyNenScene(page)
+    await raiseRen(page)
+    await expect
+      .poll(() => page.evaluate((key) => localStorage.getItem(key), SIMULATION_KEY))
+      .toBeNull()
+
+    await page.evaluate(() => localStorage.clear())
+    await page.goto(`${ROYAL_NEN_SCENE}&world=free`)
+    await readyNenScene(page)
+    await raiseRen(page)
+
+    await expect
+      .poll(
+        () =>
+          page.evaluate((key) => {
+            const stored = localStorage.getItem(key)
+            if (!stored) return null
+            const state = JSON.parse(stored)
+            return state.incidents.find((entry: string) => entry.startsWith('hostile-nen:')) ?? null
+          }, SIMULATION_KEY),
+        { timeout: 20_000 },
+      )
+      .not.toBeNull()
+
+    await page.reload()
+    await readyNenScene(page)
+    await expect
+      .poll(() =>
+        page.evaluate((key) => {
+          const state = JSON.parse(localStorage.getItem(key) ?? 'null')
+          return state
+            ? {
+                incident: state.incidents.some((entry: string) => entry.startsWith('hostile-nen:')),
+                reputation: state.reputation['prince-woble'],
+                mode: state.player.nen.mode,
+              }
+            : null
+        }, SIMULATION_KEY),
+      )
+      .toEqual({ incident: true, reputation: -10, mode: 'ren' })
   })
 })

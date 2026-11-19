@@ -19,11 +19,11 @@ Nœuds : 25 · Arêtes uniques : 59
 | `lib:audio` | `package:@black-whale/nen-engine` | 4 |
 | `lib:combat` | `lib:tour` | 8 |
 | `lib:components` | `package:@black-whale/domain` | 11 |
-| `lib:components` | `package:@black-whale/nen-engine` | 2 |
+| `lib:components` | `package:@black-whale/nen-engine` | 3 |
 | `lib:fighting` | `lib:components` | 2 |
 | `lib:fighting` | `lib:tour` | 83 |
 | `lib:fighting` | `package:@black-whale/domain` | 1 |
-| `lib:fighting` | `package:@black-whale/nen-engine` | 25 |
+| `lib:fighting` | `package:@black-whale/nen-engine` | 24 |
 | `lib:hunt` | `lib:arena` | 3 |
 | `lib:hunt` | `lib:combat` | 1 |
 | `lib:hunt` | `lib:nen` | 1 |
@@ -48,7 +48,7 @@ Nœuds : 25 · Arêtes uniques : 59
 | `lib:strategy` | `package:@black-whale/canon-engine` | 12 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 2 |
-| `lib:tour` | `lib:fighting` | 15 |
+| `lib:tour` | `lib:fighting` | 22 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 13 |
 | `lib:tour` | `package:@black-whale/domain` | 4 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 36 |

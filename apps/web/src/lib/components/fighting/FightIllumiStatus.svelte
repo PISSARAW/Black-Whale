@@ -12,14 +12,25 @@
   $: preparation = fighter.illumi?.preparation ?? 0
 </script>
 
+{#if fighter.illumiDisguisePins && !fighter.illumi?.disguised}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Aiguilles du déguisement toujours présentes' : 'Disguise needles remain'}</strong
+    >
+    <span
+      >{fr
+        ? 'Retrait physique possible avec une main libre.'
+        : 'Physical removal is possible with a free hand.'}</span
+    >
+  </div>
+{/if}
 {#if ownsIllumiNeedles(fighter) || fighter.illumi}
   <div class="illumi-status">
     <strong>Needle People · {fr ? 'Aiguille et consigne' : 'Needle and order'}</strong>
     {#if !hasIllumiNeedles(fighter)}
       <span class="warning"
         >{fr
-          ? 'Aiguilles physiques requises ; la copie ne les fournit pas.'
-          : 'Physical needles required; copying does not supply them.'}</span
+          ? 'Needle People : aiguilles physiques requises ; la copie ne les fournit pas.'
+          : 'Needle People requires physical needles; copying does not supply them.'}</span
       >
     {/if}
     <span
@@ -40,16 +51,49 @@
           : 'Altering face · interrupted by movement or injury'}</span
       >
     {:else if fighter.illumi?.disguised}
-      <span
-        >{fr
-          ? 'Visage remodelé · aucune protection supplémentaire'
-          : 'Altered face · no extra protection'}</span
-      >
+      {#if fighter.illumi.disguiseMode === 'unpinned-hisoka'}
+        <span
+          >{fr
+            ? 'Visage d’Hisoka · sans aiguilles · yeux d’origine'
+            : 'Hisoka’s face · no needles · original eyes'}</span
+        >
+        {#if fighter.illumi.disguiseExpiresAt !== undefined}
+          <span
+            >{fr ? 'Retour dans' : 'Reverts in'}
+            {Math.max(0, Math.ceil((fighter.illumi.disguiseExpiresAt - state.frame) / 3600))} min</span
+          >
+        {/if}
+      {:else}
+        <span
+          >{fr
+            ? 'Visage remodelé · aucune protection supplémentaire'
+            : 'Altered face · no extra protection'}</span
+        >
+      {/if}
     {/if}
     <small
       >{fr
         ? 'L : implantation / Reste · → + L : Approche · ↓ + L : Éloigne-toi · ← + L : déguisement'
         : 'L: implant / Stay · → + L: Approach · ↓ + L: Retreat · ← + L: disguise'}</small
+    >
+  </div>
+{/if}
+{#if fighter.needleFace}
+  <div class="illumi-status" role="status">
+    <strong>{fr ? 'Trois aiguilles au front' : 'Three forehead needles'}</strong>
+    <span
+      >{fighter.needleFace.reshaping
+        ? fr
+          ? 'Visage déformé · autonomie conservée'
+          : 'Distorted face · autonomy retained'
+        : fr
+          ? 'Remodelage terminé · aiguilles toujours présentes'
+          : 'Shaping ended · needles remain'}</span
+    >
+    <small
+      >{fr
+        ? 'Une main libre permet de retirer les aiguilles après la douleur d’impact.'
+        : 'A free hand can remove the needles after impact pain.'}</small
     >
   </div>
 {/if}

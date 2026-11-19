@@ -21,7 +21,9 @@ export function spectatorSnapshot(state: FightState) {
   view.commandFeedback = undefined
   view.bungeeGum = state.bungeeGum?.hidden ? null : state.bungeeGum
   view.gumNetwork = privateGumNetwork(state)
-  view.projectiles = privateGumProjectiles(state).filter((shot) => shot.matter === 'object' || !shot.concealed)
+  view.projectiles = privateGumProjectiles(state).filter(
+    (shot) => shot.matter === 'object' || !shot.concealed,
+  )
   if (view.impact?.concealed) view.impact = null
   for (const side of ['player', 'opponent'] as const) {
     const actor = view[side]

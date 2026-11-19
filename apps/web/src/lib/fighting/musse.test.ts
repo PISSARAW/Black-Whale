@@ -156,9 +156,16 @@ describe('Musse — handgun and Secret Window', () => {
       },
     }
     const started = performAttack(blinky, 'opponent', 'special')
-    const suction = { ...started, opponent: { ...started.opponent,
-      attack: { ...started.opponent.attack!, frame: attackData('special', started.opponent).startup },
-    } }
+    const suction = {
+      ...started,
+      opponent: {
+        ...started.opponent,
+        attack: {
+          ...started.opponent.attack!,
+          frame: attackData('special', started.opponent).startup,
+        },
+      },
+    }
     const highBullet = firedBullet(suction)
     // The raised handgun fires above the standing nozzle's aperture.
     expect(advanceBlinky(highBullet).projectiles).toHaveLength(1)
@@ -196,7 +203,11 @@ describe('Musse — handgun and Secret Window', () => {
     const base = duel()
     const result = advance(performAttack(base, 'player', 'special'), 35, true)
     expect(result.player.secretWindow).toBeDefined()
-    expect(result.opponent).toMatchObject({ blocking: true, health: base.opponent.health, blockStun: 0 })
+    expect(result.opponent).toMatchObject({
+      blocking: true,
+      health: base.opponent.health,
+      blockStun: 0,
+    })
   })
 
   it('cannot attach out of reach, during wakeup grace or after interrupted startup', () => {

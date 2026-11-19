@@ -151,7 +151,10 @@ function koFollowUp(base: Take): Take | null {
       take.focus = {}
       take.tick(delay)
       const before = take.state.player.attack
-      take.press({ aura: true }, { key: action === 'heavy' ? 'Ko K' : 'Ko J', technique: 'ko', action })
+      take.press(
+        { aura: true },
+        { key: action === 'heavy' ? 'Ko K' : 'Ko J', technique: 'ko', action },
+      )
       const started = take.state.player.attack
       if (!started || started === before || !started.auraCharged) continue
       for (let i = 0; i < 50 && take.impacts.length < 4; i++) take.tick()

@@ -7,7 +7,8 @@ export function createStealthDolphinScene(options: EffectSceneOptions): FighterE
   const models = (['player', 'opponent'] as const).map((side) => {
     const model = createVisitHatsuModel(options.THREE, { model: 'stealth-dolphin' })
     model.fit({ width: 0.7, height: 0.58 })
-    model.root.name = side === 'player' ? 'kurapika-stealth-dolphin' : `kurapika-stealth-dolphin:${side}`
+    model.root.name =
+      side === 'player' ? 'kurapika-stealth-dolphin' : `kurapika-stealth-dolphin:${side}`
     options.scene.add(model.root)
     return { side, model }
   })

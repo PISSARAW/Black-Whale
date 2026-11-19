@@ -163,4 +163,9 @@
   }
 }
 
-.clash-match-navigation { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; }
+.clash-match-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+}

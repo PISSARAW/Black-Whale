@@ -215,7 +215,9 @@ describe('Kalluto paper and surveillance dolls', () => {
     ]) {
       const muted = { ...state, player }
       expect(paperListening(muted, 'player')).toBe(false)
-      expect(paperState(speakPaperWords(muted, 'opponent').player).heard).toEqual(paperState(muted.player).heard)
+      expect(paperState(speakPaperWords(muted, 'opponent').player).heard).toEqual(
+        paperState(muted.player).heard,
+      )
     }
   })
   it('keeps the physical doll through Zetsu but pauses its relay', () => {

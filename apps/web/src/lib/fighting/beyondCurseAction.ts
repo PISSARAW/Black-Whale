@@ -10,7 +10,6 @@ export function beyondCurseUnavailable(options: {
 }): boolean {
   if (options.moveId === BEYOND_CURSE.id || options.moveId === 'beyond:finisher') return true
   return (
-    options.kind === 'special' &&
-    chrolloPageForMove(options.fighter, options.moveId) === 'beyond'
+    options.kind === 'special' && chrolloPageForMove(options.fighter, options.moveId) === 'beyond'
   )
 }

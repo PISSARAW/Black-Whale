@@ -48,7 +48,7 @@ describe('simultaneous combat and detail framing', () => {
         }
         for (let step = 0; step < 50; step++) {
           const pose = rig.update(options)
-            expect(pose.z).toBeLessThan(500)
+          expect(pose.z).toBeLessThan(500)
           camera.position.set(pose.x, pose.y, pose.z)
           camera.lookAt(pose.x, pose.lookY, 0)
           camera.updateMatrixWorld(true)

@@ -663,15 +663,15 @@ sont restaurés après chaque passe de rendu.
 Une fatality doit rendre la mise à mort lisible dans la scène. Un K.-O. natif,
 une explosion ou un carton de victoire ne suffisent pas à la valider.
 
-| Personnage | État du lot |
-| --- | --- |
-| Kurapika | Fatality : Chain Jail, traction, chute et verdict écarlate |
-| Feitan | Fatality : Pain Packer, Rising Sun et incinération |
-| Phinks | Fatality : six rotations, Ripper Cyclotron et pulvérisation |
-| Franklin | Fatality : Double Machine Gun, impacts multiples et chute ; canons corrigés |
-| Hisoka | Cinématique de victoire : rappel au Bungee Gum, K.-O., carte et sourire ; mise à mort non explicite |
-| Chrollo | Cinématique de victoire explosive : fermeture du livre et Sun and Moon ; sort de la victime insuffisamment lisible |
-| Camilla | Référence initiale dans un autre chat ; non réauditée ici |
+| Personnage | État du lot                                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| Kurapika   | Fatality : Chain Jail, traction, chute et verdict écarlate                                                         |
+| Feitan     | Fatality : Pain Packer, Rising Sun et incinération                                                                 |
+| Phinks     | Fatality : six rotations, Ripper Cyclotron et pulvérisation                                                        |
+| Franklin   | Fatality : Double Machine Gun, impacts multiples et chute ; canons corrigés                                        |
+| Hisoka     | Cinématique de victoire : rappel au Bungee Gum, K.-O., carte et sourire ; mise à mort non explicite                |
+| Chrollo    | Cinématique de victoire explosive : fermeture du livre et Sun and Moon ; sort de la victime insuffisamment lisible |
+| Camilla    | Référence initiale dans un autre chat ; non réauditée ici                                                          |
 
 Le bilan vérifié dans cette série est donc de quatre fatalities et de deux
 cinématiques de victoire à convertir. Camilla reste comptée séparément comme
@@ -889,14 +889,12 @@ sang. Le nettoyage et le bouton sont des éléments cosmétiques après verdict.
 `target`, `stage`, `side=opponent` et `reduced` contrôlent l'adaptation dans
 la même scène de production. Le catalogue compte quatorze cinématiques.
 
-
 Bonolenov — « Le dernier mouvement » : `bonolenov-fatality.html` présente dix
 secondes de Prologue et Jupiter sur le renderer du jeu. Le film valide d’abord
 une danse complète et le K.-O. natif par Jupiter. `render-bonolenov-fatality.mjs`
 exporte 600 images, `compose-bonolenov-fatality.mjs` produit la musique corporelle,
 les impacts et le son réutilisé par Clash ; `check-bonolenov-fatality.mjs` contrôle
 les gabarits, les lieux, P2, le miroir, le confort, le mobile et le déclenchement.
-
 
 Illumi — « Même après la mort » : `illumi-fatality.html` utilise le renderer de
 victoire de Clash pour les dix secondes d’implantation, perte de volonté, mort
@@ -906,7 +904,6 @@ exporte 600 images ; `compose-illumi-fatality.mjs` produit le son synchronisé e
 `check-illumi-fatality.mjs` contrôle l’intégration, P2, les tailles et le mobile.
 Le catalogue compte désormais seize cinématiques.
 
-
 Biscuit — « Le soin de grâce » : `biscuit-fatality.html` présente dix secondes
 de soin par Cookie, transformation native, direct au torse et retour au soin.
 Le film obtient un K.-O. physique après la transformation gratuite ; la lotion
@@ -915,7 +912,6 @@ reste un soin. `render-biscuit-fatality.mjs` exporte 600 images en 1080p60,
 et `check-biscuit-fatality.mjs` contrôle les modèles, les lieux, P2 et le mobile.
 Sortie : `output/fighting-biscuit-fatality/Biscuit-Fatality-10s.mp4`.
 Le catalogue compte désormais dix-sept personnages avec cinématique de victoire.
-
 
 Nobunaga — « Le dernier pas » : `nobunaga-fatality.html` est une démo autonome de
 dix secondes avec le modèle natif de Nobunaga. Le personnage ne fait pas encore
@@ -946,7 +942,6 @@ instrumentale, sans voix. `check-kurapika-troupe.mjs` vérifie le déclenchement
 le son, les deux côtés, les gabarits, les lieux, le mobile et le confort.
 Sortie : `output/fighting-kurapika-troupe/Kurapika-Brigade-Fatality-10s.mp4`.
 
-
 ## Saiyu — Les trois silences
 
 `node apps/web/scripts/render-saiyu-fatality.mjs --inspect` produit les plans de
@@ -964,7 +959,6 @@ La version sensorielle montre un noir complet, des yeux sans regard, les mains
 aux oreilles, une onde sonore devenue plate et une bouche ouverte en cri muet.
 Le mix est entièrement silencieux entre 2,9 et 4,7 secondes.
 
-
 ## Melody — Un champ au printemps
 
 `node apps/web/scripts/render-melody-fatality.mjs --inspect` exporte les plans
@@ -979,7 +973,6 @@ perception du personnage enchanté ; Melody ne tue pas avec sa musique.
 La simulation préalable obtient une victoire native à la décision, après une
 vraie performance qui pacifie la cible sans lui infliger de dégâts.
 Sortie : `output/fighting-melody-fatality/Melody-Friendship-10s.mp4`.
-
 
 ## Hanzo — Derrière toi
 
@@ -1003,7 +996,6 @@ Les deux cinématiques sont enregistrées dans Clash et utilisent les acteurs
 et l’arène du combat courant. `check-hanzo-bill-victories.mjs` vérifie huit
 victoires automatiques, dont les rematches des deux côtés, et leurs sons.
 
-
 ## Hinrigh — Pièce à conviction
 
 `hinrigh-fatality.html` présente dix secondes de Biohazard : transformation
@@ -1016,7 +1008,6 @@ ajoute le mix original, Fatality en anglais et le son chargé dans Clash.
 `check-hinrigh-fatality.mjs` et `check-hinrigh-victories.mjs` contrôlent la démo
 et son déclenchement automatique.
 Sortie : `output/fighting-hinrigh-fatality/Hinrigh-Fatality-10s.mp4`.
-
 
 ## Terebellum — Retour à l’envoyeur
 
@@ -1032,7 +1023,6 @@ Les scripts `check-terebellum-fatality.mjs` et `check-terebellum-victories.mjs`
 contrôlent le combat natif, le rendu et le déclenchement dans Clash.
 Sortie : `output/fighting-terebellum-fatality/Terebellum-Fatality-10s.mp4`.
 
-
 ## Voconte — Aller simple
 
 `voconte-fatality.html` présente dix secondes de poursuite piégée : Voconte
@@ -1047,7 +1037,6 @@ ajoute trois passages, chute, impact, fermeture et Fatality en anglais.
 Les scripts `check-voconte-fatality.mjs` et `check-voconte-victories.mjs`
 contrôlent le rendu et son déclenchement automatique dans Clash.
 Sortie : `output/fighting-voconte-fatality/Voconte-Aller-Simple-10s.mp4`.
-
 
 ## Longhi et Furykov — Victoires personnelles
 

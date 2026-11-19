@@ -90,7 +90,9 @@ describe('fighter Hatsu registry', () => {
     const answered = performHunterInterview(asked, 'opponent', { action: 'hunter-answer' })
     const stolen = chrolloStrike(answered, 'forwardSpecial')
     expect(stolen.player.hatsuEffects.stolenHatsu).toBe('illumi')
-    expect(stolen.opponent.skillHunterStolen).toEqual([{ owner: 'player', moveId: 'illumi:neutralSpecial' }])
+    expect(stolen.opponent.skillHunterStolen).toEqual([
+      { owner: 'player', moveId: 'illumi:neutralSpecial' },
+    ])
     // The owner cannot use an ability while it is held in the book.
     expect(hatsuSourceFor(stolen.opponent)).toBeNull()
     // Only Skill Hunter opens the stolen page; his own techniques stay his.
@@ -252,7 +254,11 @@ describe('fighter Hatsu registry', () => {
 
   it('never creates Cyclotron rotations or a global damage bonus through a carrier hook', () => {
     const base = closeFight('phinks', 'hisoka')
-    const triggered = hatsuFor('phinks').onTrigger({ state: base, side: 'player', source: 'phinks' })
+    const triggered = hatsuFor('phinks').onTrigger({
+      state: base,
+      side: 'player',
+      source: 'phinks',
+    })
     expect(triggered).toBe(base)
     expect(triggered.player.hatsuEffects.cyclotronTurns).toBe(0)
     base.player.hatsuEffects.cyclotronTurns = 15
@@ -301,10 +307,15 @@ describe('fighter Hatsu registry', () => {
     const state = closeFight('kalluto', 'hisoka')
     const impact = hatsuFor('kalluto').onImpact
     let next = state
-    for (let strike = 0; strike < 3; strike += 1) next = impact({
-      state: next, side: 'player', defenderSide: 'opponent', source: 'kalluto',
-      blocked: false, concealed: false,
-    })
+    for (let strike = 0; strike < 3; strike += 1)
+      next = impact({
+        state: next,
+        side: 'player',
+        defenderSide: 'opponent',
+        source: 'kalluto',
+        blocked: false,
+        concealed: false,
+      })
     expect(next).toBe(state)
     expect(next.opponent.plantedPaper).toBeUndefined()
   })
@@ -338,20 +349,38 @@ describe('fighter Hatsu registry', () => {
   it('lets an aimed, prepared Blinky swallow named objects but never Nen constructs', () => {
     const ready = closeFight('shizuku', 'theta')
     const armed = performAttack(ready, 'player', 'special')
-    const fighter = { ...armed.player, attack: { ...armed.player.attack!, frame: attackData('special', armed.player).startup } }
+    const fighter = {
+      ...armed.player,
+      attack: { ...armed.player.attack!, frame: attackData('special', armed.player).startup },
+    }
     const shot = (id: number, x: number, matter: FightProjectile['matter']) => ({
-      ...SAMPLE_PROJECTILE, id, x, y: fighter.y + 6.1, shape: 'bullet' as const, matter,
+      ...SAMPLE_PROJECTILE,
+      id,
+      x,
+      y: fighter.y + 6.1,
+      shape: 'bullet' as const,
+      matter,
     })
-    const cleaned = hatsuFor('shizuku').onFrame({ ...armed, player: fighter, projectiles: [
-      shot(1, fighter.x + 6, 'object'), shot(2, fighter.x + 6, 'nen'), shot(3, fighter.x + 40, 'object'),
-    ] })
+    const cleaned = hatsuFor('shizuku').onFrame({
+      ...armed,
+      player: fighter,
+      projectiles: [
+        shot(1, fighter.x + 6, 'object'),
+        shot(2, fighter.x + 6, 'nen'),
+        shot(3, fighter.x + 40, 'object'),
+      ],
+    })
     expect(cleaned.projectiles.map((projectile) => projectile.id)).toEqual([2, 3])
     expect(cleaned.player.blinky?.lastObject?.id).toBe(1)
   })
 
   it('keeps Biohazard free of personal attack, armour and self-stun buffs', () => {
     const ready = closeFight('hinrigh', 'hisoka')
-    const triggered = hatsuFor('hinrigh').onTrigger({ state: ready, side: 'player', source: 'hinrigh' })
+    const triggered = hatsuFor('hinrigh').onTrigger({
+      state: ready,
+      side: 'player',
+      source: 'hinrigh',
+    })
     expect(triggered).toBe(ready)
     expect(hatsuDamageFactor(triggered.player)).toBe(1)
     expect(hatsuDefenceFactor(triggered.player)).toBe(1)

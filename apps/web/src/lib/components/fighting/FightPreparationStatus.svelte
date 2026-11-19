@@ -55,42 +55,42 @@
       >{language === 'fr' ? 'Actions de soutien accomplies' : 'Completed support actions'} : {completed}</span
     >{/if}
   {#if state.mode === 'versus-local' || side === 'player'}
-  {#if state.arena || state.environment.preparation?.mode === 'scenario'}
-    <button
-      type="button"
-      onpointerdown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId)
-        onControl('interact', true)
-      }}
-      onpointerup={() => onControl('interact', false)}
-      onpointercancel={() => onControl('interact', false)}
-      onlostpointercapture={() => onControl('interact', false)}
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.stopPropagation()
+    {#if state.arena || state.environment.preparation?.mode === 'scenario'}
+      <button
+        type="button"
+        onpointerdown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId)
           onControl('interact', true)
-        }
-      }}
-      onkeyup={(event) => {
-        event.stopPropagation()
-        onControl('interact', false)
-      }}
-      onblur={() => onControl('interact', false)}
-    >
-      <kbd>{side === 'player' ? '6' : '='}</kbd>
-      {nearby
-        ? ENTITY_LABELS[language][nearby.kind]
-        : language === 'fr'
-          ? 'Aucune interaction à portée'
-          : 'No interaction in range'}
-    </button>
-    <small
-      >{language === 'fr'
-        ? 'Pousser une caisse · ramasser l’équipement · ouvrir une porte · demander le retrait d’un partisan.'
-        : 'Push a crate · pick up equipment · open a door · ask a supporter to withdraw.'}</small
-    >
-  {/if}
+        }}
+        onpointerup={() => onControl('interact', false)}
+        onpointercancel={() => onControl('interact', false)}
+        onlostpointercapture={() => onControl('interact', false)}
+        onkeydown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            event.stopPropagation()
+            onControl('interact', true)
+          }
+        }}
+        onkeyup={(event) => {
+          event.stopPropagation()
+          onControl('interact', false)
+        }}
+        onblur={() => onControl('interact', false)}
+      >
+        <kbd>{side === 'player' ? '6' : '='}</kbd>
+        {nearby
+          ? ENTITY_LABELS[language][nearby.kind]
+          : language === 'fr'
+            ? 'Aucune interaction à portée'
+            : 'No interaction in range'}
+      </button>
+      <small
+        >{language === 'fr'
+          ? 'Pousser une caisse · ramasser l’équipement · ouvrir une porte · demander le retrait d’un partisan.'
+          : 'Push a crate · pick up equipment · open a door · ask a supporter to withdraw.'}</small
+      >
+    {/if}
   {/if}
 </div>
 

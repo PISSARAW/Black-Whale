@@ -113,7 +113,12 @@ describe('Benjamin’s canonical loadout', () => {
   it('marks at contact without damage, stun, knockback, score or aura vision', () => {
     const result = advance(technique(duel(), 'forwardSpecial'), 30)
     expect(result.player.hatsuEffects.baton?.markedTarget).toBe('opponent')
-    expect(result.opponent).toMatchObject({ health: result.opponent.maxHealth, hitStun: 0, blockStun: 0, x: 48 })
+    expect(result.opponent).toMatchObject({
+      health: result.opponent.maxHealth,
+      hitStun: 0,
+      blockStun: 0,
+      x: 48,
+    })
     expect(result.score.player).toBe(0)
     expect(result.player.nen.gyo).toBe(false)
   })

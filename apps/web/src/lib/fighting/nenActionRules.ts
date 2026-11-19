@@ -29,7 +29,10 @@ export function nenActionAllowed(options: NenAction): boolean {
   const allowVoluntaryZetsu = futureZetsuCommand(options)
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
-    nenOutputAllows(fighter, attackAuraCost({ fighter, kind: options.kind, moveId: options.moveId })) &&
+    nenOutputAllows(
+      fighter,
+      attackAuraCost({ fighter, kind: options.kind, moveId: options.moveId }),
+    ) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options))
   )
 }

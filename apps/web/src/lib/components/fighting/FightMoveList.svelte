@@ -85,21 +85,44 @@
     </div>
     <div class="routes">
       <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
-      <p><kbd>{touch ? (language === 'fr' ? 'Kaméo' : 'Kameo') : hints.playerKameo}</kbd> · {language === 'fr'
-        ? 'Appelle après une touche et continue ton combo. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
-        : 'Call after a hit and keep attacking. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}</p>
-      <p>{language === 'fr'
-        ? 'Luzurus peut prolonger au sol, Zhang Lei renforcer les frappes, Marayam protéger la récupération. Les six exemples sont dans Académie du Nen → Combos & défense.'
-        : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}</p>
+      <p>
+        <kbd>{touch ? (language === 'fr' ? 'Kaméo' : 'Kameo') : hints.playerKameo}</kbd> · {language ===
+        'fr'
+          ? 'Appelle après une touche et continue ton combo. Avant place le kaméo devant toi, arrière le garde derrière. Une pression pendant l’arrêt sur impact est mémorisée.'
+          : 'Call after a hit and keep attacking. Forward places support ahead, back keeps it behind you. A press during hitstop is buffered.'}
+      </p>
+      <p>
+        {language === 'fr'
+          ? 'Luzurus peut prolonger au sol, Zhang Lei renforcer les frappes, Marayam protéger la récupération. Les six exemples sont dans Académie du Nen → Combos & défense.'
+          : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
+      </p>
       {#if hasDirectionalChain(fighterId)}
         <h3>{language === 'fr' ? 'Chaîne directionnelle' : 'Directional chain'}</h3>
-        <p><kbd>{moveInputHint('J → J → J', hints)}</kbd> · {language === 'fr' ? 'Fin debout à proximité' : 'Close standing finish'}</p>
-        <p><kbd>{moveInputHint('J → J → ↓ + J', hints)}</kbd> · {language === 'fr' ? 'Mise au sol' : 'Knockdown'}</p>
-        <p><kbd>{moveInputHint('J → J → ↑ + J', hints)}</kbd> · {language === 'fr' ? 'Relance aérienne' : 'Launcher'}</p>
-        <p><kbd>{moveInputHint('J → J → → + J', hints)}</kbd> · {language === 'fr' ? 'Poussée vers le coin' : 'Corner carry'}</p>
-        <p>{language === 'fr'
+        <p>
+          <kbd>{moveInputHint('J → J → J', hints)}</kbd> · {language === 'fr'
+            ? 'Fin debout à proximité'
+            : 'Close standing finish'}
+        </p>
+        <p>
+          <kbd>{moveInputHint('J → J → ↓ + J', hints)}</kbd> · {language === 'fr'
+            ? 'Mise au sol'
+            : 'Knockdown'}
+        </p>
+        <p>
+          <kbd>{moveInputHint('J → J → ↑ + J', hints)}</kbd> · {language === 'fr'
+            ? 'Relance aérienne'
+            : 'Launcher'}
+        </p>
+        <p>
+          <kbd>{moveInputHint('J → J → → + J', hints)}</kbd> · {language === 'fr'
+            ? 'Poussée vers le coin'
+            : 'Corner carry'}
+        </p>
+        <p>
+          {language === 'fr'
             ? 'Les deux premiers coups doivent toucher. Certaines fins utilisent une technique si ses conditions sont remplies.'
-            : 'The first two strikes must hit. Some endings use a technique when its requirements are met.'}</p>
+            : 'The first two strikes must hit. Some endings use a technique when its requirements are met.'}
+        </p>
         <h3>{language === 'fr' ? 'Poursuite après la relance' : 'Launcher pursuit'}</h3>
         <p>
           <kbd>{moveInputHint('→ + J', hints)}</kbd>
@@ -111,16 +134,24 @@
           <p>
             <kbd>{moveInputHint('→ + L', hints)}</kbd>
             · {pursuit
-              ? (language === 'fr' ? pursuit.nameFr : pursuit.nameEn)
-              : language === 'fr' ? 'Frappe d’une page utilisable' : 'Strike from an available page'}
+              ? language === 'fr'
+                ? pursuit.nameFr
+                : pursuit.nameEn
+              : language === 'fr'
+                ? 'Frappe d’une page utilisable'
+                : 'Strike from an available page'}
           </p>
-          <p>{language === 'fr'
-            ? 'La technique exige ses ressources et sa préparation habituelles.'
-            : 'The technique requires its normal resources and preparation.'}</p>
+          <p>
+            {language === 'fr'
+              ? 'La technique exige ses ressources et sa préparation habituelles.'
+              : 'The technique requires its normal resources and preparation.'}
+          </p>
         {/if}
-        <p>{language === 'fr'
-          ? `En défense après la relance, reculez, ripostez avec ${moveInputHint('J', hints)} ou maintenez ↓ + ${hints.playerGuard} pour redescendre et garder à l’atterrissage.`
-          : `After recovering from a launch, drift back, strike with ${moveInputHint('J', hints)} or hold ↓ + ${hints.playerGuard} to descend and guard on landing.`}</p>
+        <p>
+          {language === 'fr'
+            ? `En défense après la relance, reculez, ripostez avec ${moveInputHint('J', hints)} ou maintenez ↓ + ${hints.playerGuard} pour redescendre et garder à l’atterrissage.`
+            : `After recovering from a launch, drift back, strike with ${moveInputHint('J', hints)} or hold ↓ + ${hints.playerGuard} to descend and guard on landing.`}
+        </p>
       {/if}
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
       {#each examples as [key, route] (key)}

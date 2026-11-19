@@ -1,4 +1,8 @@
-import { performDowsingEvidence, advanceDowsingEvidence, recordDowsingStatement } from './dowsingEvidence'
+import {
+  performDowsingEvidence,
+  advanceDowsingEvidence,
+  recordDowsingStatement,
+} from './dowsingEvidence'
 import { triggerHatsuAction } from './hatsu'
 import { judgmentActionBreach } from './judgmentAction'
 import { speakPaperWords, voiceAvailable } from './kallutoListening'
@@ -9,8 +13,13 @@ import type { DowsingQuestion, DowsingPrompt } from './dowsingTypes'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-export function performDowsingCommand(state: FightState, side: FightSide, command: ArsenalCommand): FightState {
-  if (['dowsing-locate', 'dowsing-video'].includes(command.action)) return performDowsingEvidence({ state, side, command })
+export function performDowsingCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  if (['dowsing-locate', 'dowsing-video'].includes(command.action))
+    return performDowsingEvidence({ state, side, command })
   return performDowsingQuestion(state, side, command)
 }
 function performDowsingQuestion(
@@ -66,7 +75,11 @@ function answerDowsing(state: FightState, side: FightSide, answer?: string): Fig
   const prompt = state[side].dowsingPrompt
   if (!prompt || !currentQuestion(state, side, prompt)) return state
   const text = dowsingAnswerText(state[side], prompt.question, answer === 'lie')
-  const spoken = recordDowsingStatement(speakPaperWords(state, side, text), { speaker: side, text, lie: answer === 'lie' })
+  const spoken = recordDowsingStatement(speakPaperWords(state, side, text), {
+    speaker: side,
+    text,
+    lie: answer === 'lie',
+  })
   if (spoken.phase !== 'fighting') return spoken
   // Only this explicit voluntary response declares its intent. Free text is never guessed truthful.
   const swings = answer === 'lie'

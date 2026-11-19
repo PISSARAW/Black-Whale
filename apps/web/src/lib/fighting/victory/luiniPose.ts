@@ -43,7 +43,9 @@ export function luiniPose(context: VictoryContext) {
   stride(
     hero,
     age,
-    Math.sin(Math.PI * ease((age - 72) / 36)) + Math.sin(Math.PI * ease((age - 120) / 66)) + Math.sin(Math.PI * ease((age - 366) / 30)),
+    Math.sin(Math.PI * ease((age - 72) / 36)) +
+      Math.sin(Math.PI * ease((age - 120) / 66)) +
+      Math.sin(Math.PI * ease((age - 366) / 30)),
   )
   stride(victim, age, Math.sin(Math.PI * ease((age - 270) / 60)))
   if (victim.height > hero.height * 1.3 && age >= 330) lowerGuardForProp(victim, hero.height * 0.8)

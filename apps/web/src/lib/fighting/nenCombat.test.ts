@@ -394,8 +394,12 @@ describe('Category components and Emperor Time', () => {
       commitProjectileNen(shot('kurapika'), state.player).nenPower!,
     )
     // Conjuration was already efficient; Emperor Time improves a learned emitted component instead.
-    expect(commitProjectileNen(shot(), { ...active.player, id: 'franklin', nenOwner: 'kurapika' }).lifetime).toBeGreaterThan(
-      commitProjectileNen(shot(), { ...state.player, id: 'franklin', nenOwner: 'kurapika' }).lifetime,
+    expect(
+      commitProjectileNen(shot(), { ...active.player, id: 'franklin', nenOwner: 'kurapika' })
+        .lifetime,
+    ).toBeGreaterThan(
+      commitProjectileNen(shot(), { ...state.player, id: 'franklin', nenOwner: 'kurapika' })
+        .lifetime,
     )
     const later = tickFight(active, EMPTY_INPUT, { dt: FIXED_STEP, opponentInput: EMPTY_INPUT })
     expect(later.player.kurapika!.lifespanFrames).toBeGreaterThan(

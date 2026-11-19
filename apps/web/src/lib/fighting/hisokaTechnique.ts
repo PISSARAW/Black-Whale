@@ -56,14 +56,21 @@ export function hisokaTechniqueAllowed(
   return !gum.retracting && Math.abs(state[gum.target].x - fighter.x) > BUNGEE_REST_DISTANCE
 }
 
-function networkTechniqueAllowed(state: FightState, side: FightSide, technique: HisokaTechnique): boolean {
+function networkTechniqueAllowed(
+  state: FightState,
+  side: FightSide,
+  technique: HisokaTechnique,
+): boolean {
   const link = selectedGumLink(state, side)
   if (!link) return false
   if (technique === 'finish') return link.target.kind === 'fighter'
   if (technique === 'recall' && link.target.kind === 'surface') return false
   if (technique === 'rebound' && link.target.kind === 'projectile') return false
   const points = gumLinkPoints(state, link)
-  return link.motion === 'idle' && Boolean(points && Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) > 3)
+  return (
+    link.motion === 'idle' &&
+    Boolean(points && Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) > 3)
+  )
 }
 
 function ownedBungee(state: FightState, side: FightSide) {

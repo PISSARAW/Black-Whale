@@ -17,8 +17,10 @@ export function createJupiterScene(options: ProjectileSceneOptions) {
           planets.set(shot.id, model)
           options.scene.add(model.root)
         }
-        model.fit({ width: Math.abs(options.worldX(shot.width) - options.worldX(0)),
-          height: Math.abs(options.worldY(shot.height) - options.worldY(0)) })
+        model.fit({
+          width: Math.abs(options.worldX(shot.width) - options.worldX(0)),
+          height: Math.abs(options.worldY(shot.height) - options.worldY(0)),
+        })
         model.root.position.set(options.worldX(shot.x), options.worldY(shot.y), 0)
         model.root.rotation.y = seconds * 0.8
       }
@@ -28,6 +30,9 @@ export function createJupiterScene(options: ProjectileSceneOptions) {
         planets.delete(id)
       }
     },
-    dispose() { planets.forEach((model) => model.dispose()); planets.clear() },
+    dispose() {
+      planets.forEach((model) => model.dispose())
+      planets.clear()
+    },
   }
 }

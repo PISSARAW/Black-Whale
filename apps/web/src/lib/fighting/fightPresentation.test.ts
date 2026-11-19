@@ -120,12 +120,13 @@ describe('fight presentation', () => {
     const frames = attackData('special', base)
     const recoveryStart = frames.startup + frames.active
     const early = { ...base, attack: { ...base.attack!, frame: recoveryStart } }
-    const late = { ...base, attack: { ...base.attack!, frame: recoveryStart + frames.recovery - 1 } }
+    const late = {
+      ...base,
+      attack: { ...base.attack!, frame: recoveryStart + frames.recovery - 1 },
+    }
     const overshoot = attackMotionAccent({ fighter: early, frames, authored: false })
     const settled = attackMotionAccent({ fighter: late, frames, authored: false })
-    expect(Math.abs(overshoot.body?.[0] ?? 0)).toBeGreaterThan(
-      Math.abs(settled.body?.[0] ?? 0),
-    )
+    expect(Math.abs(overshoot.body?.[0] ?? 0)).toBeGreaterThan(Math.abs(settled.body?.[0] ?? 0))
   })
 
   it('gives heavier and decisive impacts more visual weight', () => {
@@ -156,7 +157,9 @@ describe('fight presentation', () => {
         expect(value).toBeGreaterThan(0.75)
         expect(value).toBeLessThan(1.3)
       })
-      return Object.values(profile).map((value) => value.toFixed(3)).join(':')
+      return Object.values(profile)
+        .map((value) => value.toFixed(3))
+        .join(':')
     })
     expect(new Set(signatures).size).toBeGreaterThan(FIGHTING_ROSTER.length * 0.75)
   })

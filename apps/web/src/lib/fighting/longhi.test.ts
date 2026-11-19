@@ -95,11 +95,7 @@ describe('Longhi’s voluntary Moonlight Act', () => {
 
   it('does not accept a signature from a manipulated or entranced recipient', () => {
     const offered = propose()
-    for (const key of [
-      'manipulatedFrames',
-      'entrancedFrames',
-      'possessedFrames',
-    ] as const) {
+    for (const key of ['manipulatedFrames', 'entrancedFrames', 'possessedFrames'] as const) {
       const controlled = {
         ...offered,
         opponent: {

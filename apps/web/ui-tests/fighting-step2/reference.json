@@ -11,10 +11,7 @@
       "commands": 0,
       "hash": "a2d6c727",
       "graphics": "performance",
-      "frameBuffer": [
-        1244,
-        518
-      ],
+      "frameBuffer": [1244, 518],
       "ratio": 1,
       "contacts": [],
       "impact": null,
@@ -29,10 +26,7 @@
       "commands": 0,
       "hash": "a2d6c727",
       "graphics": "balanced",
-      "frameBuffer": [
-        1555,
-        647
-      ],
+      "frameBuffer": [1555, 647],
       "ratio": 1.25,
       "contacts": [],
       "impact": null,
@@ -47,10 +41,7 @@
       "commands": 0,
       "hash": "a2d6c727",
       "graphics": "quality",
-      "frameBuffer": [
-        2177,
-        906
-      ],
+      "frameBuffer": [2177, 906],
       "ratio": 1.75,
       "contacts": [],
       "impact": null,
@@ -65,10 +56,7 @@
       "commands": 0,
       "hash": "bde64c91",
       "graphics": "quality",
-      "frameBuffer": [
-        2177,
-        906
-      ],
+      "frameBuffer": [2177, 906],
       "ratio": 1.75,
       "contacts": [
         "fight-contact-hit",
@@ -95,10 +83,7 @@
       "commands": 0,
       "hash": "e0367256",
       "graphics": "quality",
-      "frameBuffer": [
-        2177,
-        906
-      ],
+      "frameBuffer": [2177, 906],
       "ratio": 1.75,
       "contacts": [
         "fight-contact-hit",
@@ -133,10 +118,7 @@
       "commands": 0,
       "hash": "db233025",
       "graphics": "quality",
-      "frameBuffer": [
-        2177,
-        906
-      ],
+      "frameBuffer": [2177, 906],
       "ratio": 1.75,
       "contacts": [
         "fight-contact-hit",

@@ -120,7 +120,9 @@ describe('Bandit’s Secret and Double Face', () => {
       page: 2,
       open: true,
     })
-    expect(acquired.opponent.skillHunterStolen).toEqual([{ owner: 'player', moveId: 'illumi:neutralSpecial' }])
+    expect(acquired.opponent.skillHunterStolen).toEqual([
+      { owner: 'player', moveId: 'illumi:neutralSpecial' },
+    ])
     expect(hatsuSourceFor(acquired.opponent)).toBeNull()
     expect(hatsuSourceFor(acquired.player, CHROLLO_USE)).toBe('illumi')
     const turned = action(acquired, CHROLLO_TURN)
@@ -163,7 +165,9 @@ describe('Bandit’s Secret and Double Face', () => {
         needlePuppet: { owner: 'player' as const, order: 'stay' as const, needleEmbedded: true },
       },
     }
-    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({ needleEmbedded: false })
+    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({
+      needleEmbedded: false,
+    })
     const closed = action(controlled, CHROLLO_BOOKMARK)
     const kept = action(advance(closed), CHROLLO_TURN)
     expect(kept.opponent.needlePuppet?.needleEmbedded).toBe(true)

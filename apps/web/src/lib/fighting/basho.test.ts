@@ -43,9 +43,19 @@ describe('Basho’s written Great Hiker poem', () => {
   it('preserves a bookmarked copy’s composition and requires its page to remain available', () => {
     const base = duel()
     const fighter = createFight('chrollo', 'hisoka').player
-    const state = { ...base, player: { ...fighter, x: 42,
-      chrolloBook: { pages: ['hisoka' as const, 'basho' as const], page: 0, open: true, bookmark: 'basho' as const },
-    } }
+    const state = {
+      ...base,
+      player: {
+        ...fighter,
+        x: 42,
+        chrolloBook: {
+          pages: ['hisoka' as const, 'basho' as const],
+          page: 0,
+          open: true,
+          bookmark: 'basho' as const,
+        },
+      },
+    }
     const written = ready(state)
     expect(written.player.bashoPoem?.ready).toBe(true)
     expect(written.player.bashoPoem?.sourceMoveId).toBe('chrollo:finisher')
@@ -54,9 +64,14 @@ describe('Basho’s written Great Hiker poem', () => {
   it('preserves post-mortem attribution when its fire kills Camilla', () => {
     const base = duel()
     const camilla = createFight('basho', 'camilla').opponent
-    const burning = { ...base, opponent: { ...camilla, health: 1,
-      bashoBurn: { owner: 'player' as const, remainingFrames: 1 },
-    } }
+    const burning = {
+      ...base,
+      opponent: {
+        ...camilla,
+        health: 1,
+        bashoBurn: { owner: 'player' as const, remainingFrames: 1 },
+      },
+    }
     const next = advance(burning, 1)
     expect(next.catsName?.killerSide).toBe('player')
   })

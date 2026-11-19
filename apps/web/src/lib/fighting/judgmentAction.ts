@@ -1,4 +1,9 @@
-import { performJudgmentExtra, judgmentExtraOptions, judgmentHostage, HOSTAGE_DEADLINE_FRAMES } from './judgmentHostages'
+import {
+  performJudgmentExtra,
+  judgmentExtraOptions,
+  judgmentHostage,
+  HOSTAGE_DEADLINE_FRAMES,
+} from './judgmentHostages'
 import { troupeMember } from './troupeMembership'
 import { fighterDefinition } from './roster'
 import { usesVoluntaryNen } from './nenActionRules'
@@ -36,7 +41,9 @@ export function implantJudgment(state: FightState, side: FightSide, target: Figh
   const needsHostage = (base.clauses ?? [base.rule]).includes('return-hostage')
   const hostageId = state[side].judgmentDeclaration?.hostageId
   if (needsHostage && !hostageId) return state
-  const seal = needsHostage ? { ...base, hostageId, deadlineFrame: state.frame + HOSTAGE_DEADLINE_FRAMES } : base
+  const seal = needsHostage
+    ? { ...base, hostageId, deadlineFrame: state.frame + HOSTAGE_DEADLINE_FRAMES }
+    : base
   const forbidsNen = (seal.clauses ?? [seal.rule]).includes('zetsu')
   const body = forbidsNen ? forceZetsu(state[target]) : state[target]
   return {
@@ -49,8 +56,13 @@ export function implantJudgment(state: FightState, side: FightSide, target: Figh
     },
   }
 }
-export function performJudgmentCommand(state: FightState, side: FightSide, command: ArsenalCommand): FightState {
-  if (['judgment-reveal', 'judgment-return-hostage'].includes(command.action)) return performJudgmentExtra({ state, side, command })
+export function performJudgmentCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  if (['judgment-reveal', 'judgment-return-hostage'].includes(command.action))
+    return performJudgmentExtra({ state, side, command })
   return performJudgmentBase(state, side, command)
 }
 function performJudgmentBase(
@@ -64,7 +76,11 @@ function performJudgmentBase(
   if (command.action === 'judgment-release') return releaseJudgment(state, side)
   if (!validJudgmentPreset(command)) return state
   if (chainAbilitySealed(fighter, 'kurapika:finisher')) return state
-  if (command.target === 'hostage-secret' && !judgmentHostage(state, side === 'player' ? 'opponent' : 'player')) return state
+  if (
+    command.target === 'hostage-secret' &&
+    !judgmentHostage(state, side === 'player' ? 'opponent' : 'player')
+  )
+    return state
   return { ...state, [side]: { ...fighter, judgmentPreset: command.target as JudgmentPreset } }
 }
 function releaseJudgment(state: FightState, side: FightSide): FightState {
@@ -114,7 +130,10 @@ function judgmentCommandReady(
 }
 const PRESET_NAMES: Record<JudgmentPreset, [string, string]> = {
   secret: ['Ne rien révéler sur Kurapika', 'Do not disclose Kurapika’s secret'],
-  'hostage-secret': ['Rendre l’otage sous 30 s et garder le secret', 'Return hostage within 30s and keep the secret'],
+  'hostage-secret': [
+    'Rendre l’otage sous 30 s et garder le secret',
+    'Return hostage within 30s and keep the secret',
+  ],
   nen: ['Ne pas utiliser de Nen', 'Do not use Nen'],
   contact: ['Ne pas communiquer avec la Brigade', 'Do not contact the Troupe'],
   'nen-contact': [

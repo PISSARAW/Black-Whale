@@ -33,7 +33,10 @@ function floorStrike(context: VictoryContext) {
   hero.head.rotation.x = -fold * 0.3
   groundVictoryActor(hero)
   const shoulder = hero.root.getObjectByName('shoulder-right')!.getWorldPosition(new Vector3())
-  const floor = shoulder.clone().add(new Vector3(0, 0, hero.height * 0.16).applyQuaternion(hero.root.quaternion)).setY(0.08)
+  const floor = shoulder
+    .clone()
+    .add(new Vector3(0, 0, hero.height * 0.16).applyQuaternion(hero.root.quaternion))
+    .setY(0.08)
   const rest = hero.root
     .getObjectByName('shoulder-right')!
     .getWorldPosition(new Vector3())

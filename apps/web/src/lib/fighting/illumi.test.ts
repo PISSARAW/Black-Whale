@@ -333,11 +333,14 @@ describe('Illumi conditions and borrowed needles', () => {
   })
 })
 
-
 it('respects both explicit needle loadouts and preserves the stock across rounds', () => {
-  const state = beginFight(createFight('illumi', 'chrollo', { environment: {
-    needleStock: { player: false, opponent: true },
-  } }))
+  const state = beginFight(
+    createFight('illumi', 'chrollo', {
+      environment: {
+        needleStock: { player: false, opponent: true },
+      },
+    }),
+  )
   expect(hasIllumiNeedles(state.player)).toBe(false)
   expect(hasIllumiNeedles(state.opponent)).toBe(true)
   expect(canUseRangedAttack(state.player)).toBe(false)

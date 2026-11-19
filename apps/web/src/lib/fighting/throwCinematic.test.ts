@@ -36,7 +36,12 @@ describe('confirmed throw cinematic', () => {
     const frame = confirmedThrow(real)!
     const state: FightState = { ...real, phase: 'finished', winner: 'player' }
     const fall = createFinishedFallPresentation(() => frame)
-    for (const [seconds, y] of [[0, 0], [0.3, 8], [0.5, 11], [0.8, 0]]) {
+    for (const [seconds, y] of [
+      [0, 0],
+      [0.3, 8],
+      [0.5, 11],
+      [0.8, 0],
+    ]) {
       const position = { x: state.opponent.x, y }
       const fighter = thrownVisualFighter({ ...state.opponent, health: 0 }, position)
       expect(fall(state, 'opponent', { fighter, position, seconds }).position).toEqual(position)

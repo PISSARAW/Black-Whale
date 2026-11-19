@@ -85,7 +85,13 @@
     {/each}
   </div>
   <div class="clash-menu-links">
-    <a href={$link('/fighting/profile')}><span aria-hidden="true">◇</span><span><strong>{fr ? 'Profil et saisons' : 'Profile and seasons'}</strong><small>{fr ? 'Historique, maîtrise et tournois' : 'History, mastery and tournaments'}</small></span><span aria-hidden="true">→</span></a>
+    <a href={$link('/fighting/profile')}
+      ><span aria-hidden="true">◇</span><span
+        ><strong>{fr ? 'Profil et saisons' : 'Profile and seasons'}</strong><small
+          >{fr ? 'Historique, maîtrise et tournois' : 'History, mastery and tournaments'}</small
+        ></span
+      ><span aria-hidden="true">→</span></a
+    >
     <a href={$link('/fighting/academy')}
       ><span class="menu-link-icon" aria-hidden="true">⌁</span><span
         ><strong>{fr ? 'Académie du Nen' : 'Nen Academy'}</strong><small

@@ -58,7 +58,10 @@ export const voconteHideoutDoors = defineAbility({
   actions: {
     'open-door': {
       label: 'Relier les huisseries',
-      evidence: asserted({ kind: 'other', label: 'Installation simulée ; conditions canoniques complètes inconnues' }),
+      evidence: asserted({
+        kind: 'other',
+        label: 'Installation simulée ; conditions canoniques complètes inconnues',
+      }),
       conditions: [
         requiresParameter('fromLocationId', 'Une pièce de départ est choisie'),
         requiresParameter('locationId', 'Une pièce d’arrivée est choisie'),
@@ -81,7 +84,10 @@ export const voconteHideoutDoors = defineAbility({
 
     'close-door': {
       label: 'Refermer une porte',
-      evidence: asserted({ kind: 'other', label: 'Fermeture simulée ; entretien canonique inconnu' }),
+      evidence: asserted({
+        kind: 'other',
+        label: 'Fermeture simulée ; entretien canonique inconnu',
+      }),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

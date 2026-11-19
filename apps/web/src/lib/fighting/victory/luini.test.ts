@@ -87,7 +87,10 @@ it.each(['franklin', 'biscuit', 'luini', 'hisoka'] as const)(
         expect(audit.singleDoor).toBe(true)
         expect(audit.anchorLost).toBe(age > 342)
         if (age >= 342) expect(audit.activePortals).toBe(0)
-        expect(Math.max(...audit.handErrors), `target ${target}, age ${age}, hands ${audit.handErrors}`).toBeLessThan(0.07)
+        expect(
+          Math.max(...audit.handErrors),
+          `target ${target}, age ${age}, hands ${audit.handErrors}`,
+        ).toBeLessThan(0.07)
         if (age === 396)
           expect(audit.tip.distanceTo(audit.target), `blade ${target}`).toBeLessThan(0.07)
         if (age === 570) expect(audit.fall.floor).toBeCloseTo(0.012, 5)

@@ -143,7 +143,11 @@ export function respondMoonlightContract(options: {
   const offer = state.moonlight?.offer
   if (state.phase !== 'fighting' || !offer || offer.recipient !== side) return state
   if (!accept)
-    return resolveJudgmentCommunication({ ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } }, side, state[offer.issuer].id)
+    return resolveJudgmentCommunication(
+      { ...state, moonlight: { cooldownFrames: 120, outcome: { kind: 'refused', side } } },
+      side,
+      state[offer.issuer].id,
+    )
   if (
     !moonlightSigningAvailable(state) ||
     !hasMoonlightAuthority(state[offer.issuer], offer.sourceMoveId)

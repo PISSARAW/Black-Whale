@@ -12,6 +12,9 @@ export function triggerAttackHatsu(options: {
   concealed?: boolean
 }): FightState {
   const { side, source, moveId } = options
-  const triggered = source === 'kurapika' ? declareJudgment(triggerHatsuAction(options), side, moveId) : triggerHatsuAction(options)
+  const triggered =
+    source === 'kurapika'
+      ? declareJudgment(triggerHatsuAction(options), side, moveId)
+      : triggerHatsuAction(options)
   return source === 'padaille' ? startPadailleTool(triggered, side, moveId) : triggered
 }

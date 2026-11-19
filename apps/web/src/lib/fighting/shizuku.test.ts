@@ -324,7 +324,12 @@ describe('Blinky: named matter, last object and exposed wounds', () => {
   })
 
   it('preserves the chosen Blinky command instead of replacing it with a combo route', () => {
-    const low = performMove({ state: duel(), side: 'player', action: 'light', input: { ...EMPTY_INPUT, down: true } })
+    const low = performMove({
+      state: duel(),
+      side: 'player',
+      action: 'light',
+      input: { ...EMPTY_INPUT, down: true },
+    })
     for (const slot of ['finisher', 'backSpecial', 'neutralSpecial'] as const) {
       const selected = moveForSlot('shizuku', slot)!
       expect(routedFightMove(low.player, selected)).toBe(selected)

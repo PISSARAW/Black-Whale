@@ -7,8 +7,20 @@ import {
 
 // These chapters use the documented type 1 accents in the continuous main view.
 const MAIN_VIEW_CHAPTERS = new Set([
-  'hisoka', 'franklin', 'machi', 'kalluto', 'shizuku', 'leorio', 'zakuro',
-  'gel', 'lynch', 'luini', 'musse', 'padaille', 'sayird', 'voconte',
+  'hisoka',
+  'franklin',
+  'machi',
+  'kalluto',
+  'shizuku',
+  'leorio',
+  'zakuro',
+  'gel',
+  'lynch',
+  'luini',
+  'musse',
+  'padaille',
+  'sayird',
+  'voconte',
 ])
 
 describe('long 1080p camera presentation', () => {

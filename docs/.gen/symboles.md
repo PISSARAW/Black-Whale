@@ -96,7 +96,7 @@ Entrées analysées : 11
 | `biscuitBodyTransformation` | `packages/ability-modules/src/biscuit/module.ts:153` |
 | `blackVoice` | `packages/ability-modules/src/chrollo-stolen/black-voice.ts:23` |
 | `blinky` | `packages/ability-modules/src/troupe/module.ts:33` |
-| `bloodyMary` | `packages/ability-modules/src/heil-ly/module.ts:109` |
+| `bloodyMary` | `packages/ability-modules/src/heil-ly/module.ts:115` |
 | `bodyAndSoul` | `packages/ability-modules/src/mafia/module.ts:142` |
 | `bohemianRhapsody` | `packages/ability-modules/src/bohemian-rhapsody/module.ts:20` |
 | `bungeeGum` | `packages/ability-modules/src/bungee-gum/module.ts:46` |
@@ -154,7 +154,7 @@ Entrées analysées : 11
 | `needsAChoice` | `packages/ability-modules/src/contagion/game.ts:804` |
 | `nenStitches` | `packages/ability-modules/src/nen-stitches/module.ts:27` |
 | `orderStamp` | `packages/ability-modules/src/chrollo-stolen/order-stamp.ts:26` |
-| `padailleWeaponTransformation` | `packages/ability-modules/src/heil-ly/module.ts:226` |
+| `padailleWeaponTransformation` | `packages/ability-modules/src/heil-ly/module.ts:232` |
 | `painPacker` | `packages/ability-modules/src/feitan/module.ts:36` |
 | `parallelFuture` | `packages/ability-modules/src/parallel-future/module.ts:30` |
 | `playTechnique` | `packages/ability-modules/src/contagion/game.ts:534` |
@@ -171,7 +171,7 @@ Entrées analysées : 11
 | `sheWillNotPlay` | `packages/ability-modules/src/contagion/game.ts:324` |
 | `silentMajority` | `packages/ability-modules/src/silent-majority/module.ts:36` |
 | `skillHunter` | `packages/ability-modules/src/skill-hunter/module.ts:36` |
-| `snakeArm` | `packages/ability-modules/src/heil-ly/module.ts:330` |
+| `snakeArm` | `packages/ability-modules/src/heil-ly/module.ts:336` |
 | `spentOn` | `packages/ability-modules/src/contagion/table.ts:239` |
 | `standByMe` | `packages/ability-modules/src/stand-by-me/module.ts:20` |
 | `stealChain` | `packages/ability-modules/src/steal-chain/module.ts:25` |

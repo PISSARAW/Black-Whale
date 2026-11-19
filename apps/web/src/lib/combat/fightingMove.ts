@@ -84,6 +84,7 @@ function fightingIntent(options: {
     recovery: (move.tuning.active + move.tuning.recovery) / 60,
     moveId: move.id,
     combo: comboHistory(fighter, move, chained),
+    scored: chained ? (fighter.chain?.points ?? 0) : 0,
   }
 }
 

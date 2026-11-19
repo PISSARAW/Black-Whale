@@ -41,11 +41,17 @@ Arena keeps its open room; the duel inside it speaks Clash.
   buffered for 0.2 s and released on impact.
 - **Throws** ignore the active guard window and take an unguarded zone. The
   **finisher** is Arena's combo ender: only against a staggered or downed body.
+- **Scoring** — the aura contest still decides blocked or connected, but the
+  move's authored damage, after Clash's `tieredComboScale`, caps the impact:
+  under 9 at most clean, under 15 at most critical, above that knockdown. Only
+  the finisher can knock out. A combo scores once, at its best hit, and a move
+  without damage scores nothing. Knockback can carry the opponent out of a
+  short move's reach; closing the gap is the player's job, since Clash's lunge
+  is not projected yet.
 - **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
   follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
 
-Still Clash-only, in rough order of value: jump and air moves; scoring from
-authored damage instead of the aura ratio (a clean head jab is still a KO);
+Still Clash-only, in rough order of value: jump and air moves; lunge;
 hitstop and camera shake; per-fighter Hatsu systems behind the specials;
 psychology, expressions and Ren presentation; frame data, training and
 lessons; replay coaching; rollback PvP.

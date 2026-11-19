@@ -34,6 +34,8 @@ export interface AttackIntent {
   moveId?: string
   /** Clash moves of the running combo, this one included. */
   combo?: readonly string[]
+  /** Points the combo had already scored when this move was prepared. */
+  scored?: number
 }
 
 export interface ElasticTether {

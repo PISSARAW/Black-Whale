@@ -1,3 +1,4 @@
+import { tieredComboScale } from '../fighting/comboDamageScale'
 import { moveById } from '../fighting/movesets'
 import type { FighterMove } from '../fighting/movesetTypes'
 import { resolveMovement, wallsNear } from '../tour/navigation'
@@ -10,6 +11,7 @@ import {
   type CombatSide,
   type CombatState,
   type FighterState,
+  type Impact,
 } from './types'
 
 /** Clash frame data is authored at 60 fps; Arena counts seconds. */
@@ -27,6 +29,8 @@ export interface MoveChain {
   until: number
   /** Moves of the running combo, oldest first. */
   history: readonly string[]
+  /** Points the combo has scored so far: its best impact, not the sum of its hits. */
+  points: number
 }
 
 /** A move pressed while the previous one was still running. */
@@ -69,6 +73,32 @@ export function throwOpening(state: CombatState, side: CombatSide, intent: Attac
   return { state: { ...state, [defenderSide]: { ...defender, guardWindow: 0 } }, zone }
 }
 
+/** Authored damage, after Clash's combo scaling, that a move needs for each impact. */
+export const CLEAN_BELOW = 9
+export const CRITICAL_BELOW = 15
+
+/**
+ * What a Clash move may do in Arena's exchange. The aura contest still decides
+ * between blocked and connected, but the authored damage caps the impact: a jab
+ * cannot knock out. Only the finisher, Arena's combo ender, can. A combo scores
+ * once, the value of its best hit, and a move without damage scores nothing.
+ */
+export function clashExchange(intent: AttackIntent): { ceiling?: Impact; scored?: number } {
+  const move = moveById(intent.moveId)
+  if (!move) return {}
+  if (move.category === 'finisher') return { ceiling: 'ko', scored: intent.scored }
+  const superMove = move.category === 'special'
+  const hitsBefore = Math.max(0, (intent.combo?.length ?? 1) - 1)
+  const damage = move.tuning.damage * tieredComboScale(hitsBefore, superMove)
+  const scored = move.tuning.damage === 0 ? Number.POSITIVE_INFINITY : intent.scored
+  return { ceiling: impactCeiling(damage), scored }
+}
+
+function impactCeiling(damage: number): Impact {
+  if (damage < CLEAN_BELOW) return 'clean'
+  return damage < CRITICAL_BELOW ? 'critical' : 'knockdown'
+}
+
 interface Settlement {
   before: CombatState
   after: CombatState
@@ -97,7 +127,8 @@ export function settleFightingMove({ before, after, side, intent }: Settlement):
     metres: connected === 'hit' ? move.tuning.knockback * LANE_METRE : 0,
     walls: after.terrain.walls,
   })
-  const chain = openChain({ move, connected, clock: after.clock, history: intent.combo })
+  const points = (intent.scored ?? 0) + event.points
+  const chain = openChain({ move, connected, clock: after.clock, history: intent.combo, points })
   return { ...after, [side]: { ...after[side], chain }, [defenderSide]: defender }
 }
 
@@ -106,14 +137,16 @@ function openChain(options: {
   connected: MoveChain['connected']
   clock: number
   history?: readonly string[]
+  points: number
 }): MoveChain {
-  const { move, connected, clock, history } = options
+  const { move, connected, clock, history, points } = options
   const window = move.cancelWindow?.end ?? move.tuning.recovery
   return {
     moveId: move.id,
     connected,
     until: clock + window * FRAME,
     history: history ?? [move.id],
+    points,
   }
 }
 

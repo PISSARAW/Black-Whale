@@ -1,6 +1,6 @@
 import { resolveExchange } from './resolve'
 import { releaseBufferedMove } from './fightingMove'
-import { settleFightingMove, throwOpening } from './moveChain'
+import { clashExchange, settleFightingMove, throwOpening } from './moveChain'
 import { pointInPolygon } from '../tour/geometry'
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
@@ -23,6 +23,7 @@ import {
   type CombatSide,
   type CombatState,
   type FighterState,
+  type Impact,
 } from './types'
 
 /** One blow, described fully enough that the resolver needs nothing else. */
@@ -35,6 +36,10 @@ export interface StrikeRequest {
   range?: number
   targetAt?: Vec2
   recovery?: number
+  /** Strongest impact allowed, from a Clash move's authored damage. */
+  ceiling?: Impact
+  /** Points the running combo has already scored; the exchange only adds what exceeds them. */
+  scored?: number
 }
 
 /**
@@ -87,6 +92,7 @@ export function landReadyIntent(state: CombatState): CombatState {
       power: intent.power,
       range: intent.range,
       recovery: intent.recovery,
+      ...clashExchange(intent),
     })
     current = intent.moveId
       ? releaseBufferedMove(settleFightingMove({ before, after: struck, side, intent }), side)
@@ -168,11 +174,11 @@ export function strike(request: StrikeRequest): CombatState {
     range: request.range,
     targetAt: request.targetAt,
     recovery: request.recovery,
+    ceiling: request.ceiling,
   })
-  const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
-  const event = counterBonus
-    ? { ...result.event, points: result.event.points + counterBonus }
-    : result.event
+  const owed = Math.max(0, result.event.points - (request.scored ?? 0))
+  const counterBonus = state[defenderSide].recoveryWindow > 0 && owed > 0 ? 1 : 0
+  const event = { ...result.event, points: owed + counterBonus }
   const scored = {
     ...result.attacker,
     score: result.attacker.score + event.points,

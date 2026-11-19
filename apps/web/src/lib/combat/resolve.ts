@@ -14,6 +14,8 @@ interface Exchange {
   range?: number
   targetAt?: FighterState['position']
   recovery?: number
+  /** Strongest impact the move may deal, whatever the aura contest says. */
+  ceiling?: Impact
   clock: number
   walls: WallSegment[]
 }
@@ -37,7 +39,7 @@ export function resolveExchange(exchange: Exchange): ExchangeResult {
 
   const offence = offensiveAura(exchange.attacker, exchange.technique) * (exchange.power ?? 1)
   const defence = defensiveAura(exchange.defender, exchange.zone)
-  const impact = impactOf(offence, defence)
+  const impact = capImpact(impactOf(offence, defence), exchange.ceiling)
   return resultOf(exchange, impact)
 }
 
@@ -116,6 +118,13 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
   const reserve = Object.values(distribution.defence).reduce((sum, share) => sum + share, 0)
   if (zone === fighter.guard) return output * reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
   return output * reserve * 0.45
+}
+
+const IMPACT_ORDER: readonly Impact[] = ['miss', 'blocked', 'clean', 'critical', 'knockdown', 'ko']
+
+function capImpact(impact: Impact, ceiling: Impact | undefined): Impact {
+  if (!ceiling) return impact
+  return IMPACT_ORDER.indexOf(impact) > IMPACT_ORDER.indexOf(ceiling) ? ceiling : impact
 }
 
 export function impactOf(offence: number, defence: number): Impact {

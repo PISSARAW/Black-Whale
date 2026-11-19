@@ -63,6 +63,7 @@ import { TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
 import { canUseMovesetMove, moveForAction } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
+import { applyRivalryRules } from './rivalryRules'
 import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
@@ -80,7 +81,11 @@ import type {
 } from './types'
 
 export { TOWER_WIN_SCORE }
-export { createFightState as createFight, nextFightRound as nextRound }
+export { nextFightRound as nextRound }
+
+export function createFight(...args: Parameters<typeof createFightState>): FightState {
+  return applyRivalryRules(createFightState(...args))
+}
 
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state

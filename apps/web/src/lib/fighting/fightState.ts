@@ -35,6 +35,7 @@ import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats
 import { createFightingNen } from './nen'
 import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
+import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
 
 interface CreateFightOptions {
   formatId?: FightFormatId
@@ -172,11 +173,7 @@ export function preserveLifespan(
     // A round break recovers one quarter; the remaining residue lasts for the match.
     nenMentalFatigue: Math.round((previous.nenMentalFatigue ?? 0) * 0.75),
     // The break halves emotional residue and recentres composure/resolve toward neutral.
-    nenPsychology: {
-      composure: Math.round(7_000 + ((previous.nenPsychology?.composure ?? 7_000) - 7_000) * 0.5),
-      apprehension: Math.round((previous.nenPsychology?.apprehension ?? 0) * 0.5),
-      resolve: Math.round(5_000 + ((previous.nenPsychology?.resolve ?? 5_000) - 5_000) * 0.5),
-    },
+    nenPsychology: restedNenPsychology(fighter.id, previous.nenPsychology),
   }
   fighter = carryHalkenburgSoul(fighter, previous)
   fighter = carryIllumiFace(fighter, previous, elapsedFrames)
@@ -237,7 +234,7 @@ export function createFighter(options: {
     velocityY: 0,
     aura: 55,
     nenMentalFatigue: 0,
-    nenPsychology: { composure: 7_000, apprehension: 0, resolve: 5_000 },
+    nenPsychology: initialNenPsychology(options.id),
     nen: createFightingNen(),
     pose: 'idle',
     hitStun: 0,

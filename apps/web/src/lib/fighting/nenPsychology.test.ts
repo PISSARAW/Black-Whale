@@ -59,8 +59,12 @@ it('reacts once to an authoritative impact and ignores speculative futures', () 
   const contact = { ...before, impact: impact() }
   const reacted = advanceNenPsychology(before, contact)
   expect(reacted.opponent.nenPsychology!.apprehension).toBeGreaterThan(0)
-  expect(reacted.opponent.nenPsychology!.composure).toBeLessThan(7_000)
-  expect(reacted.player.nenPsychology!.resolve).toBeGreaterThan(5_000)
+  expect(reacted.opponent.nenPsychology!.composure).toBeLessThan(
+    before.opponent.nenPsychology!.composure,
+  )
+  expect(reacted.player.nenPsychology!.resolve).toBeGreaterThan(
+    before.player.nenPsychology!.resolve,
+  )
 
   const settled = advanceNenPsychology(reacted, reacted)
   expect(settled.opponent.nenPsychology!.apprehension).toBeLessThan(
@@ -80,7 +84,9 @@ it('reacts once to an authoritative impact and ignores speculative futures', () 
       },
     },
   }
-  expect(advanceNenPsychology(before, witnessed).opponent.nenPsychology?.apprehension).toBe(90)
+  expect(
+    advanceNenPsychology(before, witnessed).opponent.nenPsychology?.apprehension,
+  ).toBeGreaterThan(0)
 })
 
 it('turns overwhelming aura into caution, not damage, and recentres between rounds', () => {
@@ -114,8 +120,8 @@ it('turns overwhelming aura into caution, not damage, and recentres between roun
   }
   const next = nextRound(finished)
   expect(next.player.nenPsychology).toEqual({
-    composure: 6_000,
+    composure: 6_600,
     apprehension: 2_000,
-    resolve: 6_000,
+    resolve: 7_750,
   })
 })

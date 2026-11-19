@@ -1,7 +1,8 @@
 import { insideEn, perceivesAura } from './nenPerception'
 import { gyoSight } from './nenCombat/sight'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
-import type { ArcadeFighter, FightImpact, FightSide, FightState } from './types'
+import { initialNenPsychology, nenPsychologyProfile } from './nenPsychologyProfiles'
+import type { ArcadeFighter, FightImpact, FightSide, FightState, FighterId } from './types'
 
 export const MAX_NEN_PSYCHOLOGY = 10_000
 export const BASE_NEN_COMPOSURE = 7_000
@@ -35,12 +36,14 @@ export interface PerceivedAuraPsychology {
   }
 }
 
-export function createNenPsychology(): NenPsychologicalState {
-  return { composure: BASE_NEN_COMPOSURE, apprehension: 0, resolve: BASE_NEN_RESOLVE }
+export function createNenPsychology(id?: FighterId): NenPsychologicalState {
+  return id
+    ? initialNenPsychology(id)
+    : { composure: BASE_NEN_COMPOSURE, apprehension: 0, resolve: BASE_NEN_RESOLVE }
 }
 
 export function nenPsychologyOf(fighter: ArcadeFighter): NenPsychologicalState {
-  return fighter.nenPsychology ?? createNenPsychology()
+  return fighter.nenPsychology ?? createNenPsychology(fighter.id)
 }
 
 /** Internal emotion and visible aura are separate: this derives only the outward expression. */
@@ -112,10 +115,11 @@ export function advanceNenPsychology(before: FightState, after: FightState): Fig
 
 function settlePsychology(fighter: ArcadeFighter): ArcadeFighter {
   const current = nenPsychologyOf(fighter)
+  const profile = nenPsychologyProfile(fighter.id)
   const next = {
-    composure: approach(current.composure, BASE_NEN_COMPOSURE, 1),
-    apprehension: Math.max(0, current.apprehension - 1),
-    resolve: approach(current.resolve, BASE_NEN_RESOLVE, 1),
+    composure: approach(current.composure, profile.composure, profile.recovery.composure),
+    apprehension: Math.max(0, current.apprehension - profile.recovery.apprehension),
+    resolve: approach(current.resolve, profile.resolve, profile.recovery.resolve),
   }
   return samePsychology(current, next) ? fighter : { ...fighter, nenPsychology: next }
 }
@@ -126,14 +130,20 @@ function reactToImpact(
 ): Pick<FightState, 'player' | 'opponent'> {
   const defenderSide: FightSide = impact.attacker === 'player' ? 'opponent' : 'player'
   if (impact.avoided || impact.parried) {
+    const defenderProfile = nenPsychologyProfile(fighters[defenderSide].id)
+    const attackerProfile = nenPsychologyProfile(fighters[impact.attacker].id)
     const defender = shiftPsychology(fighters[defenderSide], {
-      resolve: impact.parried ? 180 : 100,
+      resolve: scaled(impact.parried ? 180 : 100, defenderProfile.successResolve),
       composure: 60,
     })
-    const attacker = shiftPsychology(fighters[impact.attacker], { apprehension: 60 })
+    const attacker = shiftPsychology(fighters[impact.attacker], {
+      apprehension: scaled(60, attackerProfile.impactApprehension),
+    })
     return { ...fighters, [defenderSide]: defender, [impact.attacker]: attacker }
   }
   const defender = fighters[defenderSide]
+  const defenderProfile = nenPsychologyProfile(defender.id)
+  const attackerProfile = nenPsychologyProfile(fighters[impact.attacker].id)
   const damageShock = Math.round((impact.damage / Math.max(1, defender.maxHealth)) * 2_500)
   const openingShock = impact.counterHit || impact.punish ? 160 : 0
   const shock = Math.max(30, Math.min(700, damageShock + openingShock))
@@ -141,11 +151,14 @@ function reactToImpact(
   return {
     ...fighters,
     [defenderSide]: shiftPsychology(defender, {
-      apprehension: Math.round(shock * guarded),
-      composure: -Math.round(shock * guarded * 0.5),
+      apprehension: scaled(shock * guarded, defenderProfile.impactApprehension),
+      composure: -scaled(shock * guarded * 0.5, defenderProfile.impactComposureLoss),
     }),
     [impact.attacker]: shiftPsychology(fighters[impact.attacker], {
-      resolve: impact.counterHit || impact.punish ? 180 : 70,
+      resolve: scaled(
+        impact.counterHit || impact.punish ? 180 : 70,
+        attackerProfile.successResolve,
+      ),
       composure: impact.counterHit ? 70 : 20,
     }),
   }
@@ -156,7 +169,11 @@ function reactToWitness(before: ArcadeFighter, after: ArcadeFighter): ArcadeFigh
   const witnessed = after.hatsuEffects.witnessedAt
   if (witnessed === undefined || witnessed === previous) return after
   // A newly manifested Hatsu creates caution, never automatic panic or knowledge of its rules.
-  return shiftPsychology(after, { apprehension: 90, composure: -30 })
+  const caution = nenPsychologyProfile(after.id).hatsuCaution
+  return shiftPsychology(after, {
+    apprehension: scaled(90, caution),
+    composure: -scaled(30, caution),
+  })
 }
 
 function shiftPsychology(
@@ -209,6 +226,10 @@ function approach(value: number, target: number, step: number): number {
 
 function bounded(value: number): number {
   return Math.max(0, Math.min(MAX_NEN_PSYCHOLOGY, Math.round(value)))
+}
+
+function scaled(value: number, percent: number): number {
+  return Math.round((value * percent) / 100)
 }
 
 function clamp01(value: number): number {

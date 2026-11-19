@@ -98,7 +98,7 @@
           : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
       </p>
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each moveset.combos as route (route.join(':'))}
+      {#each moveset.combos as route, index (`${index}:${route.join(':')}`)}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

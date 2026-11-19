@@ -104,9 +104,7 @@ function bufferAuraAttack(options: AuraAttackOptions, intent: AttackIntent): Fig
 function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): boolean {
   const { state, side, kind, moveId } = options
   const fighter = state[side]
-  if (options.superThrow && !superThrowAvailable(fighter)) return false
-  if (fighter.id === 'kalluto' && kind === 'ranged' && !paperMaterialsReady(state, side, 'plant'))
-    return false
+  if (!attackMaterialsAvailable(options)) return false
   if (fighter.id === 'camilla' && kind === 'special') return false
   if (!techniqueAllowed(options) || !sunMoonStrikeAllowed(options)) return false
   const move = moveById(moveId)
@@ -121,6 +119,13 @@ function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): bool
       superThrow: options.superThrow,
     })
   )
+}
+
+function attackMaterialsAvailable(options: AuraAttackOptions): boolean {
+  const { state, side, kind } = options
+  const fighter = state[side]
+  if (options.superThrow && !superThrowAvailable(fighter)) return false
+  return fighter.id !== 'kalluto' || kind !== 'ranged' || paperMaterialsReady(state, side, 'plant')
 }
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {

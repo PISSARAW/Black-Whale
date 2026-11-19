@@ -18,19 +18,27 @@ export function performAdditionalArsenal(
   perform: (o: AuraAttackOptions) => FightState,
 ): FightState | null {
   const { state, side, command } = options
-  if (command.action.startsWith('weapon-')) return performHistoricalWeapon(options, perform)
-  if (command.action.startsWith('future-')) return performFutureArsenal(options, perform)
-  if (command.action === 'illumi-needle-apply')
-    return performIllumiNeedleApplication(options, perform)
-  if (command.action === 'illumi-face-apply')
-    return performIllumiDisguiseApplication(options, perform)
-  if (command.action === 'dolphin-loan') return performDolphinLoan(options)
+  const equipment = performEquipmentArsenal(options, perform)
+  if (equipment) return equipment
   if (command.action.startsWith('luini-')) return performLuiniCommand(options, perform)
   if (command.action.startsWith('melody-')) return performMelodyQuestion(options)
   if (command.action === 'sweet-home-object') return performSweetHomeCommand(state, side, command)
   if (command.action === 'padaille-escape') return performPadailleEscape(options, perform)
   if (command.action === 'bio-axe-counter') return performHinrighCounter(options, perform)
   return legacyBasho(options) ? performBashoArsenal(options, perform) : null
+}
+function performEquipmentArsenal(
+  options: ArsenalInvocation,
+  perform: (o: AuraAttackOptions) => FightState,
+): FightState | null {
+  const { command } = options
+  if (command.action.startsWith('weapon-')) return performHistoricalWeapon(options, perform)
+  if (command.action.startsWith('future-')) return performFutureArsenal(options, perform)
+  if (command.action === 'illumi-needle-apply')
+    return performIllumiNeedleApplication(options, perform)
+  if (command.action === 'illumi-face-apply')
+    return performIllumiDisguiseApplication(options, perform)
+  return command.action === 'dolphin-loan' ? performDolphinLoan(options) : null
 }
 function legacyBasho({ state, side, command }: ArsenalInvocation) {
   if (command.action === 'basho-compose') return true

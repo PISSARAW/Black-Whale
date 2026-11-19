@@ -68,6 +68,7 @@
   import { drawFightScene } from '$lib/fighting/drawFightScene'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
+  import './FightScene.css'
   const presentation = createFightPresentation()
   const interpolatedPosition = presentation.position
   export let viewer: 'player' | 'opponent' = 'player'
@@ -370,6 +371,26 @@
           impacts.shake(camera, now)
         }
 
+        const finishCombatFrame = () => {
+          drawFightScene({
+            victory: victoryRenderer,
+            state,
+            frame: victoryFrame,
+            comfort: visualComfort(),
+            models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            draw: () => (post ? post.render() : renderer.render(scene, camera)),
+            failed: onSceneFailed,
+          })
+          recovery?.locate(camera, (side) => models[side].model.root)
+          if (!ready) onSceneReady()
+          ready = true
+          if (
+            detail &&
+            !hideSecondaryView &&
+            !detailScene.draw({ renderer, state, detail, rect: detailRect })
+          )
+            detail = null
+        }
         let drawnState: FightState | undefined
         const render = (now: number) => {
           if (disposed) return
@@ -418,24 +439,7 @@
           collisions.sync(state)
           scenery.update?.(seconds)
           markFightRender(scene, state)
-          drawFightScene({
-            victory: victoryRenderer,
-            state,
-            frame: victoryFrame,
-            comfort: visualComfort(),
-            models: { player: models.player.model.root, opponent: models.opponent.model.root },
-            draw: () => (post ? post.render() : renderer.render(scene, camera)),
-            failed: onSceneFailed,
-          })
-          recovery?.locate(camera, (side) => models[side].model.root)
-          if (!ready) onSceneReady()
-          ready = true
-          if (
-            detail &&
-            !hideSecondaryView &&
-            !detailScene.draw({ renderer, state, detail, rect: detailRect })
-          )
-            detail = null
+          finishCombatFrame()
           animationFrame = requestAnimationFrame(render)
         }
 
@@ -492,23 +496,3 @@
     />{/if}
   {#if failed}<span>3D</span>{/if}
 </div>
-
-<style>
-  .fight-scene {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: radial-gradient(ellipse at 50% 42%, #162e3a, #05090d 70%);
-  }
-  canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .failed {
-    display: grid;
-    place-items: center;
-    color: #8096a3;
-    font: 700 1rem/1 var(--font-mono);
-  }
-</style>

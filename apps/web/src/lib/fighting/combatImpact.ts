@@ -302,14 +302,8 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
-  if (
-    state.phase !== 'fighting' ||
-    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
-  )
-    return state
-  const captured = captureIncomingProjectile(state, hit)
-  if (captured) return captured
+  const immediate = immediateProjectileResolution(state, hit)
+  if (immediate) return immediate
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
@@ -405,6 +399,16 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     archived.impact!.attacker,
     otherSide(archived.impact!.attacker),
   )
+}
+
+function immediateProjectileResolution(state: FightState, hit: ProjectileHit): FightState | null {
+  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
+  if (
+    state.phase !== 'fighting' ||
+    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
+  )
+    return state
+  return captureIncomingProjectile(state, hit)
 }
 
 function attackCanResolve(

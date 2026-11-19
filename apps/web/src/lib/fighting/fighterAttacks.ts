@@ -108,7 +108,7 @@ export function startFighterAttack(options: {
     blocking: false,
     guardFrames: 0,
     wakeupInvulnerableFrames: 0,
-    throwTechFrames: options.variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames,
+    throwTechFrames: throwTechFramesFor(fighter, options.variant),
     ryuWindow: usesRyu ? 10 : fighter.ryuWindow,
     hatsuChargeFrames: 0,
     attack: {
@@ -132,6 +132,10 @@ export function startFighterAttack(options: {
     },
     bufferedAttack: null,
   }
+}
+
+function throwTechFramesFor(fighter: ArcadeFighter, variant?: AttackVariant) {
+  return variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames
 }
 
 function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain) {

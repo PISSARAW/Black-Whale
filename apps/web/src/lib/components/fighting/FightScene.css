@@ -1,0 +1,19 @@
+.fight-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 42%, #162e3a, #05090d 70%);
+}
+
+.fight-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fight-scene.failed {
+  display: grid;
+  place-items: center;
+  color: #8096a3;
+  font: 700 1rem/1 var(--font-mono);
+}

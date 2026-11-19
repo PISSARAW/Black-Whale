@@ -80,7 +80,6 @@ import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } 
  * has none yet), attacks through its keyed moves (`keyPoseMoves.ts`) and reacts
  * through `fightReactions.ts`. Only a throw tech still falls back to the motion
  * the scene computed.
- *
  * Changing from one plan to another — a stance into a move, a move back to the
  * stance, a hit — cross-fades from the pose last drawn, so the extra joints the
  * visit's animation does not blend (chest, wrists) never jump.

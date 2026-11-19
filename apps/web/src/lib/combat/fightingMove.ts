@@ -4,6 +4,22 @@ import type { BodyZone, CombatAction, CombatState } from './types'
 
 type FightingMoveAction = Extract<CombatAction, { type: 'FIGHTING_MOVE' }>
 
+/** Named specials whose canonical Arena rule already exists bypass the generic strike projection. */
+export function fightingHatsuAction(
+  action: FightingMoveAction,
+): Extract<CombatAction, { type: 'HATSU' }> | null {
+  if (action.fighterId !== 'hisoka' || action.slot !== 'neutralSpecial') return null
+  const move = moveForSlot(action.fighterId, action.slot)
+  return {
+    type: 'HATSU',
+    side: action.side,
+    effect: 'bind',
+    zone: 'arms',
+    hatsuId: 'bungee-gum',
+    cost: move?.auraCost,
+  }
+}
+
 /**
  * Projects authored Fighting frame data onto the attacker's local 3D combat axis.
  * Arena keeps ownership of locomotion and walls; Fighting supplies the move identity,

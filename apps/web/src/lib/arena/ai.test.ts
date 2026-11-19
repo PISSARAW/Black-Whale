@@ -102,6 +102,21 @@ describe('the arena opponent', () => {
     expect(state.opponent.intent ?? state.opponent.feint).not.toBeNull()
   })
 
+  it('projects the selected roster moveset onto close-range AI attacks', () => {
+    const base = initialCombatState()
+    const state = {
+      ...base,
+      clock: 0.44,
+      player: { ...base.player, position: [0, 0] as [number, number] },
+      opponent: { ...base.opponent, position: [1.5, 0] as [number, number] },
+    }
+
+    const next = advanceArena(state, 0.02, { fighterId: 'hisoka' })
+
+    expect(next.opponent.intent).toMatchObject({ technique: 'strike' })
+    expect(next.opponent.intent?.remaining).toBeGreaterThan(0)
+  })
+
   it('builds hypotheses from visible attacks without learning concealed zones', () => {
     let state = initialCombatState()
     state = {

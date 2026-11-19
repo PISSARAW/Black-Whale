@@ -16,12 +16,17 @@ Arena is split into three deterministic layers:
 - `apps/web/src/lib/arena/match.ts` owns formats and boss setup. It may end a running combat, but never replaces a terminal combat verdict.
 - `apps/web/src/lib/arena/replay/` records commands plus the complete match configuration and uses the same referee as the live page.
 
-`FIGHTING_MOVE` is the first shared combat bridge. Arena keeps planar locomotion,
-walls and aiming, while [combat/fightingMove.ts](../combat/fightingMove.ts) projects
-Fighting's authored startup, reach, recovery, aura cost and strength onto the
-attacker's local 3D axis.
-The selected fighter is stored in the match and each replay command carries the
-fighter and move slot, so replay validation never depends on mutable UI state.
+`FIGHTING_MOVE` is the shared first-person combat bridge. Arena keeps planar
+locomotion, walls and aiming, while
+[combat/fightingMove.ts](../combat/fightingMove.ts) projects Fighting's authored
+startup, reach, recovery, aura cost and strength onto each attacker's local 3D
+axis. The page renders the player's roster identity as POV hands and signature
+equipment, and the opponent with the matching shared character rig. Hisoka's
+special is routed through Arena's persistent Bungee Gum tether rule.
+
+Both roster identities are stored in the match. Each player command also carries
+its fighter and move slot, while the opponent AI reuses its recorded roster
+moveset. Replay validation therefore never depends on mutable UI state.
 
 ## Match lifecycle
 

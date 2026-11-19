@@ -11,6 +11,7 @@
   import ArenaBriefing from '$lib/components/arena/ArenaBriefing.svelte'
   import ArenaSetupPanel from '$lib/components/arena/ArenaSetupPanel.svelte'
   import ArenaFightingControls from '$lib/components/arena/ArenaFightingControls.svelte'
+  import ArenaPovHands from '$lib/components/arena/ArenaPovHands.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -38,8 +39,9 @@
   import { replayFromUrl } from '$lib/arena/replay/share'
   import { eventsFromReplay, playReplay } from '$lib/arena/replay/player'
   import { forkReplayAtTick } from '$lib/arena/replay/branch'
+  import { replayArenaHref } from '$lib/arena/replay/navigation'
   import { arenaRyuAction, auraPercent } from '$lib/arena/controls'
-  import { arenaFightingMove } from '$lib/arena/fighting'
+  import { arenaFighter, arenaFighterColour, arenaFightingMove } from '$lib/arena/fighting'
   import { handleArenaKey } from '$lib/arena/keyboard'
   import {
     arenaFormatGoal,
@@ -174,12 +176,14 @@
   const initialOpponentId = untrack(() => data.opponentId)
   const initialMissionId = untrack(() => data.missionId)
   const initialFighterId = untrack(() => data.fighterId)
+  const initialOpponentFighterId = untrack(() => data.opponentFighterId)
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
   let formatId = $state<ArenaFormatId>(initialFormatId)
   let opponentId = $state<ArenaOpponentId>(initialOpponentId)
   let fighterId = $state<FighterId>(initialFighterId)
+  let opponentFighterId = $state<FighterId>(initialOpponentFighterId)
   let recorder = new ArenaRecorder({
     setup: combatSetup(),
     doctrine: initialDoctrine,
@@ -191,6 +195,7 @@
       challengeId: initialChallengeId,
       missionId: initialMissionId,
       fighterId: initialFighterId,
+      opponentFighterId: initialOpponentFighterId,
     },
   })
   let lastReplay = $state<ArenaReplay | null>(null)
@@ -238,6 +243,8 @@
     on: extendedNen.value.on,
   })
   let opponentNen = $derived(arenaNen(game.opponent))
+  let playerFighter = $derived(arenaFighter(fighterId))
+  let opponentFighter = $derived(arenaFighter(opponentFighterId))
   let opponentActor = $derived<Apparition[]>([
     {
       id: 'arena-opponent',
@@ -248,11 +255,11 @@
       heading: game.opponent.facing,
       y: ground,
       size: 1,
-      colour: 0xc36f68,
+      colour: arenaFighterColour(opponentFighterId),
       stage: actorStage(),
       human: {
-        role: 'fighter',
-        identity: `arena:${opponentDoctrine}`,
+        role: opponentFighter.modelRole,
+        identity: opponentFighter.modelId,
         pose:
           game.opponent.condition === 'down' || game.opponent.condition === 'ko'
             ? 'fallen'
@@ -276,13 +283,7 @@
   )
   let activeFormat = $derived(ARENA_FORMATS.find(({ id }) => id === formatId) ?? ARENA_FORMATS[0])
   let activeOpponentProfile = $derived(V3_OPPONENTS.find(({ id }) => id === opponentId) ?? null)
-  let opponentDisplayName = $derived(
-    activeOpponentProfile
-      ? $locale === 'fr'
-        ? activeOpponentProfile.nameFr
-        : activeOpponentProfile.nameEn
-      : OPPONENT_DOCTRINES[opponentDoctrine].name,
-  )
+  let opponentDisplayName = $derived(opponentFighter.name)
   let remainingSeconds = $derived(
     activeFormat.timeLimit === null ? null : Math.max(0, activeFormat.timeLimit - game.clock),
   )
@@ -324,6 +325,7 @@
       missionId,
       bossRule: activeOpponentProfile?.bossRule ?? null,
       fighterId,
+      opponentFighterId,
     }
   }
 
@@ -547,7 +549,11 @@
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
       const previous = game.lastEvent
-      game = advanceArena(game, DT, { doctrine: opponentDoctrine, difficulty })
+      game = advanceArena(game, DT, {
+        doctrine: opponentDoctrine,
+        difficulty,
+        fighterId: opponentFighterId,
+      })
       game = applyArenaMatchRules(game, replayMatch(), actionCounts)
       recorder.advance()
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
@@ -716,6 +722,7 @@
     search.set('format', formatId)
     search.set('opponent', opponentId)
     search.set('fighter', fighterId)
+    search.set('enemy', opponentFighterId)
     return `?${search}`
   }
 
@@ -771,19 +778,7 @@
     const sharedReplay = replayFromUrl(window.location.href)
     if (sharedReplay) {
       if (sharedReplay.setup.terrain.id !== terrain.id) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('terrain', sharedReplay.setup.terrain.id)
-        url.searchParams.set('doctrine', sharedReplay.doctrine)
-        url.searchParams.set('difficulty', sharedReplay.difficulty)
-        url.searchParams.set('format', sharedReplay.match.formatId)
-        url.searchParams.set('opponent', sharedReplay.match.opponentId)
-        if (sharedReplay.match.challengeId)
-          url.searchParams.set('challenge', sharedReplay.match.challengeId)
-        if (sharedReplay.match.missionId)
-          url.searchParams.set('mission', sharedReplay.match.missionId)
-        if (sharedReplay.match.fighterId)
-          url.searchParams.set('fighter', sharedReplay.match.fighterId)
-        window.location.replace(url)
+        window.location.replace(replayArenaHref(window.location.href, sharedReplay))
         return
       }
       lastReplay = sharedReplay
@@ -797,6 +792,7 @@
       selectedChallengeId = sharedReplay.match.challengeId
       missionId = sharedReplay.match.missionId
       fighterId = sharedReplay.match.fighterId ?? fighterId
+      opponentFighterId = sharedReplay.match.opponentFighterId ?? opponentFighterId
       stats = eventsFromReplay(sharedReplay).reduce(recordEvent, { ...EMPTY_STATS })
       graded = true
       replayOrigin = 'shared'
@@ -947,18 +943,12 @@
     <ArenaHatsuFx profile={$activeHatsu} sequence={hatsuAnimationSeq} />
   {/if}
 
-  <div
-    class="combat-hands"
-    class:striking={playerMotion === 'attack'}
-    class:guarding={playerMotion === 'guard'}
-    class:charging={Boolean(game.player.ko)}
-    class:ren={game.player.mode === 'ren'}
-    class:zetsu={game.player.mode === 'zetsu'}
-    aria-hidden="true"
-  >
-    <i class="hand left-hand"><b></b></i>
-    <i class="hand right-hand"><b></b></i>
-  </div>
+  <ArenaPovHands
+    fighter={playerFighter}
+    motion={playerMotion}
+    charging={Boolean(game.player.ko)}
+    mode={game.player.mode}
+  />
 
   {#if playerMotion === 'hit' || playerMotion === 'down'}
     <div class="impact-wash hit" aria-hidden="true"></div>
@@ -1124,17 +1114,24 @@
 
   <section class="combat-console">
     <ArenaFightingControls
-      {fighterId}
+      playerFighterId={fighterId}
+      {opponentFighterId}
       french={$locale === 'fr'}
       disabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
-      onFighterChange={(selected) => {
+      onPlayerChange={(selected) => {
         fighterId = selected
+        applyOptions()
+      }}
+      onOpponentChange={(selected) => {
+        opponentFighterId = selected
         applyOptions()
       }}
       onMove={fightingMove}
     />
     <article class="status-card" class:expanded={arenaPanel === 'status'}>
-      <header><strong>{$t.arena.you}</strong><span>{$t.arena.mode[game.player.mode]}</span></header>
+      <header>
+        <strong>{playerFighter.name}</strong><span>{$t.arena.mode[game.player.mode]}</span>
+      </header>
       <div class="meter">
         <i style:width={`${auraPercent(game.player.aura, game.player.capacity)}%`}></i>
       </div>

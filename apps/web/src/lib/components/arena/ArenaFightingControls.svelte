@@ -3,29 +3,57 @@
   import type { FighterId } from '$lib/fighting/types'
 
   interface Props {
-    fighterId: FighterId
+    playerFighterId: FighterId
+    opponentFighterId: FighterId
     french: boolean
     disabled: boolean
-    onFighterChange: (fighterId: FighterId) => void
+    onPlayerChange: (fighterId: FighterId) => void
+    onOpponentChange: (fighterId: FighterId) => void
     onMove: (slot: 'standingLight' | 'standingHeavy' | 'neutralSpecial') => void
   }
 
-  let { fighterId, french, disabled, onFighterChange, onMove }: Props = $props()
-  let moves = $derived(arenaMoveLabels(fighterId, french))
+  let {
+    playerFighterId,
+    opponentFighterId,
+    french,
+    disabled,
+    onPlayerChange,
+    onOpponentChange,
+    onMove,
+  }: Props = $props()
+  let moves = $derived(arenaMoveLabels(playerFighterId, french))
 </script>
 
 <article class="fighting-controls">
   <header>
-    <span>{french ? 'Style de Fighting' : 'Fighting style'}</span>
-    <select
-      value={fighterId}
-      aria-label={french ? 'Combattant' : 'Fighter'}
-      onchange={(event) => onFighterChange(event.currentTarget.value as FighterId)}
-    >
-      {#each ARENA_FIGHTERS as fighter (fighter.id)}
-        <option value={fighter.id}>{fighter.name}</option>
-      {/each}
-    </select>
+    <span>{french ? 'Duel en vue subjective' : 'First-person duel'}</span>
+    <div class="fighters">
+      <label>
+        <small>{french ? 'Vous' : 'You'}</small>
+        <select
+          value={playerFighterId}
+          aria-label={french ? 'Personnage incarné' : 'Player fighter'}
+          onchange={(event) => onPlayerChange(event.currentTarget.value as FighterId)}
+        >
+          {#each ARENA_FIGHTERS as fighter (fighter.id)}
+            <option value={fighter.id}>{fighter.name}</option>
+          {/each}
+        </select>
+      </label>
+      <b>VS</b>
+      <label>
+        <small>{french ? 'Adversaire' : 'Opponent'}</small>
+        <select
+          value={opponentFighterId}
+          aria-label={french ? 'Personnage adverse' : 'Opponent fighter'}
+          onchange={(event) => onOpponentChange(event.currentTarget.value as FighterId)}
+        >
+          {#each ARENA_FIGHTERS as fighter (fighter.id)}
+            <option value={fighter.id}>{fighter.name}</option>
+          {/each}
+        </select>
+      </label>
+    </div>
   </header>
   <div>
     {#each moves as move, index (move.slot)}
@@ -63,6 +91,22 @@
   header {
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  .fighters,
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  label small {
+    color: #9eb7bd;
+  }
+
+  .fighters b {
+    color: #ffd700;
+    font-size: 0.58rem;
   }
 
   header span,
@@ -118,6 +162,7 @@
     }
 
     header span,
+    label small,
     button small {
       display: none;
     }

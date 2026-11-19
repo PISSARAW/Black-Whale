@@ -31,6 +31,7 @@ export function stateAtTick(replay: ArenaReplay, requestedTick: number) {
     state = advanceArena(state, 1 / replay.tickRate, {
       doctrine: replay.doctrine,
       difficulty: replay.difficulty,
+      fighterId: replay.match.opponentFighterId,
     })
     state = applyArenaMatchRules(state, replay.match, actions)
   }

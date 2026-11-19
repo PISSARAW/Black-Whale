@@ -2,6 +2,7 @@ import { readAura } from '../combat/perception'
 import { STRIKE_RANGE } from '../combat/resolve'
 import { combatReducer } from '../combat/reducer'
 import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
+import type { FighterId } from '../fighting/types'
 
 const THINK_EVERY = 0.45
 export type ArenaDifficulty = 'initiate' | 'fighter' | 'master'
@@ -27,21 +28,29 @@ export const OPPONENT_DOCTRINES: Record<
 export interface ArenaOpponentOptions {
   doctrine?: OpponentDoctrine
   difficulty?: ArenaDifficulty
+  fighterId?: FighterId
 }
 
 export function advanceArena(
   state: CombatState,
   dt: number,
-  { doctrine = 'counter', difficulty = 'fighter' }: ArenaOpponentOptions = {},
+  { doctrine = 'counter', difficulty = 'fighter', fighterId }: ArenaOpponentOptions = {},
 ): CombatState {
   const ticked = rememberObservedStrike(combatReducer(state, { type: 'TICK', dt }))
   if (ticked.outcome !== 'playing') return ticked
   const cadence = DIFFICULTY_CADENCE[difficulty]
   if (Math.floor(ticked.clock / cadence) === Math.floor(state.clock / cadence)) return ticked
-  return decide(ticked, doctrine, cadence)
+  return decide(ticked, { doctrine, cadence, fighterId })
 }
 
-function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number): CombatState {
+interface ArenaDecisionOptions {
+  doctrine: OpponentDoctrine
+  cadence: number
+  fighterId?: FighterId
+}
+
+function decide(state: CombatState, options: ArenaDecisionOptions): CombatState {
+  const { doctrine, cadence, fighterId } = options
   const ai = state.opponent
   if (ai.condition !== 'ready') return state
   if (ai.intent) return state
@@ -114,7 +123,15 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
     doctrine === 'deceiver' ||
     (Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30)
   current = combatReducer(current, { type: 'IN', side: 'opponent', on: hidden })
-  return combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
+  return fighterId
+    ? combatReducer(current, {
+        type: 'FIGHTING_MOVE',
+        side: 'opponent',
+        fighterId,
+        slot: Math.floor(current.clock / cadence) % 3 === 0 ? 'standingHeavy' : 'standingLight',
+        targetAt: current.player.position,
+      })
+    : combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
 }
 
 function rememberObservedStrike(state: CombatState): CombatState {

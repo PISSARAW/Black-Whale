@@ -26,7 +26,7 @@ describe('Fighting moves in the 3D Arena', () => {
     expect(state.player.cooldown).toBeGreaterThan(0)
   })
 
-  it('uses the selected character special and pays its Fighting aura cost', () => {
+  it('routes Hisoka special through the real Bungee Gum Arena rule', () => {
     const state = combatReducer(initialCombatState(setup), {
       type: 'FIGHTING_MOVE',
       side: 'player',
@@ -36,8 +36,9 @@ describe('Fighting moves in the 3D Arena', () => {
     })
 
     expect(state.player.aura).toBe(60)
-    expect(state.player.intent?.technique).toBe('hatsu')
-    expect(state.player.intent?.range).toBeGreaterThan(3)
+    expect(state.tethers).toHaveLength(1)
+    expect(state.tethers[0]).toMatchObject({ owner: 'player', subject: 'opponent' })
+    expect(state.lastHatsuBySide.player).toBe('bungee-gum')
   })
 
   it('refuses a special when the Arena fighter cannot pay its cost', () => {

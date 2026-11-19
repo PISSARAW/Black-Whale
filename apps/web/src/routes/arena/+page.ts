@@ -4,7 +4,7 @@ import type { ArenaDifficulty, OpponentDoctrine } from '$lib/arena/ai'
 import type { ArenaFormatId } from '$lib/arena/formats'
 import type { ArenaOpponentId } from '$lib/arena/experience'
 import { ARENA_CAMPAIGN } from '$lib/arena/campaign'
-import { arenaFighterId } from '$lib/arena/fighting'
+import { arenaFighterId, DEFAULT_ARENA_OPPONENT } from '$lib/arena/fighting'
 import type { PageLoad } from './$types'
 
 export const load: PageLoad = ({ url }) => ({
@@ -44,6 +44,7 @@ export const load: PageLoad = ({ url }) => ({
     ? url.searchParams.get('mission')
     : null,
   fighterId: arenaFighterId(url.searchParams.get('fighter')),
+  opponentFighterId: arenaFighterId(url.searchParams.get('enemy'), DEFAULT_ARENA_OPPONENT),
 })
 
 function option(value: string | null, allowed: string[], fallback: string): string {

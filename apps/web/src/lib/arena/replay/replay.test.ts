@@ -4,7 +4,9 @@ import { advanceArena } from '../ai'
 import { ArenaRecorder } from './recorder'
 import { playReplay } from './player'
 import { parseReplay, serializeReplay } from './codec'
+import { replayArenaHref } from './navigation'
 import { projectFrame } from './perspective'
+import { DEFAULT_REPLAY_MATCH } from './types'
 
 describe('deterministic Arena replay', () => {
   it('reconstructs player commands, movement and AI to the same checksum', () => {
@@ -14,6 +16,12 @@ describe('deterministic Arena replay', () => {
       setup: combatSetup,
       doctrine: 'artillery',
       difficulty: 'master',
+      match: {
+        ...DEFAULT_REPLAY_MATCH,
+        legacyRules: true,
+        fighterId: 'kurapika',
+        opponentFighterId: 'hisoka',
+      },
     })
     let state = initialCombatState(combatSetup)
 
@@ -33,7 +41,11 @@ describe('deterministic Arena replay', () => {
         recorder.record(action)
         state = combatReducer(state, action)
       }
-      state = advanceArena(state, 1 / 60, { doctrine: 'artillery', difficulty: 'master' })
+      state = advanceArena(state, 1 / 60, {
+        doctrine: 'artillery',
+        difficulty: 'master',
+        fighterId: 'hisoka',
+      })
       recorder.advance()
     }
 
@@ -42,6 +54,9 @@ describe('deterministic Arena replay', () => {
     expect(played.checksum).toBe(replay.checksum)
     expect(playReplay(replay).checksum).toBe(played.checksum)
     expect(parseReplay(serializeReplay(replay))).toEqual(replay)
+    const replayUrl = new URL(replayArenaHref('https://example.test/arena?enemy=kurapika', replay))
+    expect(replayUrl.searchParams.get('fighter')).toBe('kurapika')
+    expect(replayUrl.searchParams.get('enemy')).toBe('hisoka')
   })
 
   it('projects concealed information according to each observer', () => {

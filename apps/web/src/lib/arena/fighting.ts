@@ -7,15 +7,21 @@ import { strikeTarget } from './controls'
 
 export const ARENA_FIGHTERS = FIGHTING_ROSTER
 export const DEFAULT_ARENA_FIGHTER: FighterId = 'kurapika'
+export const DEFAULT_ARENA_OPPONENT: FighterId = 'hisoka'
 
-export function arenaFighterId(value: string | null): FighterId {
-  return FIGHTING_ROSTER.some(({ id }) => id === value)
-    ? (value as FighterId)
-    : DEFAULT_ARENA_FIGHTER
+export function arenaFighterId(
+  value: string | null,
+  fallback: FighterId = DEFAULT_ARENA_FIGHTER,
+): FighterId {
+  return FIGHTING_ROSTER.some(({ id }) => id === value) ? (value as FighterId) : fallback
 }
 
 export function arenaFighter(id: FighterId) {
   return fighterDefinition(id)
+}
+
+export function arenaFighterColour(id: FighterId): number {
+  return Number.parseInt(fighterDefinition(id).colour.replace('#', ''), 16)
 }
 
 export function arenaFightingMove(options: {

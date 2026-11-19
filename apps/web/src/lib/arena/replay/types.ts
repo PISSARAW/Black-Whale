@@ -23,6 +23,8 @@ export interface ArenaReplayMatch {
   bossRule: ArenaBossRule | null
   /** Fighting moveset projected onto the player's local 3D combat axis. */
   fighterId?: FighterId
+  /** Roster body and moveset controlled by the Arena opponent AI. */
+  opponentFighterId?: FighterId
   /** Set only while importing a V1 replay that used the raw combat rules. */
   legacyRules?: boolean
 }

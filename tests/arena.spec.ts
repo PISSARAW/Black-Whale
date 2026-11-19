@@ -87,9 +87,9 @@ test.describe('Arena playable journey', () => {
     isMobile,
   }) => {
     test.skip(isMobile, 'configuration semantics only need one browser viewport')
-    await page.goto('/arena?opponent=custom&doctrine=binder&difficulty=master')
+    await page.goto('/arena?opponent=custom&doctrine=binder&difficulty=master&enemy=hisoka')
     await page.getByRole('button', { name: 'Enter the arena' }).click()
-    await expect(page.locator('.opponent-card strong')).toHaveText("L'Entraveuse")
+    await expect(page.locator('.opponent-card strong')).toHaveText('Hisoka')
 
     await activate(page.getByRole('button', { name: 'Map' }), false)
     await expect(page.locator('.arena-map-panel')).toBeVisible()
@@ -105,10 +105,10 @@ test.describe('Arena playable journey', () => {
     )
 
     await page.goto(
-      '/arena?terrain=tier-2-screening-room&challenge=in-gyo&doctrine=deceiver&difficulty=fighter&format=first-to-three&opponent=in-examiner&mission=hidden-aura',
+      '/arena?terrain=tier-2-screening-room&challenge=in-gyo&doctrine=deceiver&difficulty=fighter&format=first-to-three&opponent=in-examiner&mission=hidden-aura&enemy=chrollo',
     )
     await page.getByRole('button', { name: 'Enter the arena' }).click()
-    await expect(page.locator('.opponent-card strong')).toHaveText('In Examiner')
+    await expect(page.locator('.opponent-card strong')).toHaveText('Chrollo')
     await expect(page.getByLabel('Difficulty')).toHaveValue('fighter')
   })
 

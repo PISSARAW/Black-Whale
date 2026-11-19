@@ -45,7 +45,7 @@
     "panzoom": "^9.4.4",
     "svelte": "^5.0.0",
     "three": "^0.185.1",
-    "ws": "8.18.0"
+    "ws": "8.21.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^5.0.0",

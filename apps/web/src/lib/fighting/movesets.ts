@@ -1,25 +1,26 @@
-import { nenFollowupReadiness } from './nenComboReadiness'
-import { declareMoveCombatRules } from './moveCombatRules'
-import { canUseRangedAttack } from './projectiles'
+import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { selectedGumLink } from './bungeeNetwork'
+import { declareMoveCombatRules } from './moveCombatRules'
+import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
 import { tuneBeyondMoveset } from './beyondMoveset'
-import { equipmentMoveResources } from './equipmentMoveResources'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
 import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
 import { tuneKallutoMoveset } from './kallutoMoveset'
 import { illumiBodyFree } from './illumiState'
 import { tuneVoconteMoveset } from './voconteMoveset'
+import { voconteMoveResources } from './voconteDoorAction'
 import { illumiMoveReadiness } from './illumiPresentation'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
 import { tuneIllumiMoveset } from './illumiMoveset'
+import { illumiResources } from './illumiAccess'
 import { tuneMachiMoveset } from './machiMoveset'
 import { machiBindReady } from './machiThread'
 import { tuneZakuroMoveset, zakuroMoveReady } from './bloodyMaryMoveset'
 import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
-import { tuneBiohazardMoveset } from './biohazardMoveset'
+import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
 import { preparedSource, preparedActionReady } from './preparationActions'
 import { tunePreparationMoveset } from './preparationMoveset'
 import { preparationCheck } from './preparationRequirements'
@@ -158,22 +159,25 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    [
-      'leorio',
-      'yokotani',
-      'bill',
-      'lynch',
-      'longhi',
-      'melody',
-      'basho',
-      'musse',
-      'mizaistom',
-      'phinks',
-      'voconte',
-    ].includes(fighter.id) && action === 'special'
-      ? 'neutralSpecial'
-      : slotForAction(fighter, action, input)
-  return moveset.moves.find((move) => move.slot === slot) ?? null
+    fighter.id === 'musse' && action === 'special' && input.down
+      ? 'downSpecial'
+      : [
+            'leorio',
+            'yokotani',
+            'bill',
+            'lynch',
+            'longhi',
+            'melody',
+            'basho',
+            'musse',
+            'mizaistom',
+            'phinks',
+            'voconte',
+          ].includes(fighter.id) && action === 'special'
+        ? 'neutralSpecial'
+        : slotForAction(fighter, action, input)
+  const chosen = schemeSlot({ fighter, action, input, slot })
+  return moveset.moves.find((move) => move.slot === chosen) ?? null
 }
 
 export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove | null {
@@ -181,9 +185,8 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
-  if (nenFollowupReadiness(state[side], move) !== 'ready') return false
-  if (move.kind === 'ranged' && !canUseRangedAttack(state[side])) return false
-  if (!nenActionAllowed({ state, side, kind: move.kind, moveId: move.id })) return false
+  const intent = { state, side, kind: move.kind, moveId: move.id }
+  if (!nenActionAllowed(intent) || !sunMoonStrikeAllowed(intent)) return false
   return contextualMoveAllowed(state, side, move)
 }
 
@@ -223,8 +226,12 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (move.id === 'machi:neutralSpecial' && !fighter.openWounds) return false
-  const equipment = equipmentMoveResources(fighter, move)
-  if (equipment !== null) return equipment
+  const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
+  if (door !== null) return door
+  const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
+  if (needles !== null) return needles && fighter.aura >= move.auraCost
+  const biohazard = biohazardMoveResources(fighter, move.id)
+  if (biohazard !== null) return biohazard
   return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
 }
 

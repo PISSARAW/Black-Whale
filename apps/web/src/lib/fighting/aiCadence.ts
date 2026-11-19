@@ -1,3 +1,4 @@
+import { aiComboFollowUp } from './aiComboFollowUp'
 import type { FightState } from './types'
 
 /** The AI picks an action every 16–24 frames (about a third of a second). */
@@ -13,6 +14,9 @@ export function advanceAiCadence(
   decide: (state: FightState) => FightState,
 ): FightState {
   if (state.phase !== 'fighting') return state
+  // Cancels must land inside their window, so a confirmed contact is answered at once.
+  const followUp = aiComboFollowUp(state)
+  if (followUp) return followUp
   const cooldown = (state.aiCooldown ?? AI_MIN_FRAMES + 4) - 1
   if (cooldown > 0) return { ...state, aiCooldown: cooldown }
   const decided = decide(state)

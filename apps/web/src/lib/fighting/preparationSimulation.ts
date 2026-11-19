@@ -1,4 +1,13 @@
+import { advanceHalkenburgSupporter } from './halkenburgSupporterMotion'
+import { personKeepsLittleEye } from './dolphinPeopleState'
+import { advanceLittleEyeShots } from './littleEyeCapture'
+import { advanceLittleEyeSenses } from './littleEyeSenses'
+import { dolphinBody } from './dolphinBodies'
+import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
+import { stolenAuraActor } from './dolphinSupply'
 import { advanceLuiniAnchors } from './luiniSpatial'
+import { advanceCopiedInventory, recordEquipmentPickup } from './copiedInventory'
+import { historicalMatterExists, historicalPartExists } from './historicalCopyLifetime'
 import { illumiBodyFree } from './illumiState'
 import { chrolloHasActivePage } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
@@ -13,12 +22,12 @@ export function advancePreparation(
   inputs: { player: FightInput; opponent?: FightInput },
 ): FightState {
   if (!state.battlefield) return state
-  let next = state
+  let next = advanceLittleEyeShots(state)
   for (const side of ['player', 'opponent'] as const)
     next = readInteraction(next, side, Boolean(inputs[side]?.interact))
   const entities = next.battlefield!.entities.map((entry) => advanceEntity(next, entry))
   next = { ...next, battlefield: { ...next.battlefield!, entities } }
-  return advanceLuiniAnchors(completeDeliveries(state, next))
+  return advanceLittleEyeSenses(advanceLuiniAnchors(completeDeliveries(state, next)))
 }
 
 function readInteraction(state: FightState, side: FightSide, pressed: boolean): FightState {
@@ -46,19 +55,39 @@ function completeDeliveries(before: FightState, after: FightState): FightState {
 }
 
 export function interactWithPreparation(state: FightState, side: FightSide): FightState {
+  state = advanceCopiedInventory(state)
   const fighter = state[side]
   if (!state.battlefield || !canInteractBody(fighter)) return state
   const target = preparationInteractionTarget(state, side)
   if (!target) return state
-  if (target.arena && target.kind === 'crate') return pushPreparedCrate(state, side, target)
+  if (target.arena && target.kind === 'crate') return pushPreparationCrate(state, side, target)
   if (target.kind === 'needles' || target.kind === 'flute')
-    return pickPreparedEquipment(state, side, target)
+    return pickPreparationEquipment(state, side, target)
   if (target.kind === 'room')
     return updateEntity(state, target.id, { sealed: false, invalidated: true })
   return updateEntity(state, target.id, { consenting: false })
 }
 
-function pushPreparedCrate(state: FightState, side: FightSide, target: PreparedEntity): FightState {
+function pickPreparationEquipment(
+  state: FightState,
+  side: FightSide,
+  target: PreparedEntity,
+): FightState {
+  const fighter = state[side]
+  const equipment = target.kind === 'needles' ? 'needles' : 'flute'
+  if (hasEquipment(fighter, equipment) || !preparedMatterExists(state, target)) return state
+  const picked = updateEntity(state, target.id, { present: false })
+  return {
+    ...picked,
+    [side]: recordEquipmentPickup(fighter, target, equipment),
+  }
+}
+
+function pushPreparationCrate(
+  state: FightState,
+  side: FightSide,
+  target: PreparedEntity,
+): FightState {
   const fighter = state[side]
   const proposed = Math.max(10, Math.min(90, target.x + fighter.facing * 3))
   const blocker = state.battlefield!.entities.find(
@@ -74,25 +103,6 @@ function pushPreparedCrate(state: FightState, side: FightSide, target: PreparedE
   return updateEntity(state, target.id, { x })
 }
 
-function pickPreparedEquipment(
-  state: FightState,
-  side: FightSide,
-  target: PreparedEntity,
-): FightState {
-  const fighter = state[side]
-  const flute = target.kind === 'flute'
-  if (flute && hasEquipment(fighter, 'flute')) return state
-  const equipment = [
-    ...(fighter.equipment ?? []),
-    flute ? ('flute' as const) : ('needles' as const),
-  ]
-  const picked = updateEntity(state, target.id, { present: false })
-  return {
-    ...picked,
-    [side]: { ...fighter, equipment, ...(flute ? { melodyFlute: true } : {}) },
-  }
-}
-
 function canInteract(entry: PreparedEntity, side: FightSide): boolean {
   if (!liveEntity(entry)) return false
   if (entry.arena && entry.kind === 'crate') return true
@@ -102,19 +112,23 @@ function canInteract(entry: PreparedEntity, side: FightSide): boolean {
 }
 
 function advanceEntity(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const awake = { ...entry, sleepingFrames: Math.max(0, (entry.sleepingFrames ?? 0) - 1) }
+  const awake = advanceHalkenburgSupporter(state, {
+    ...entry,
+    sleepingFrames: Math.max(entry.halkenburgSleeping ? 1 : 0, (entry.sleepingFrames ?? 0) - 1),
+  })
   const control = entry.controller
-  if (!control || !liveEntity(entry)) return awake
-  if (control.source === 'illumi') return awake
-  if (!controllerKeepsAbility(state, entry)) return { ...awake, controller: undefined }
-  if (control.source === 'sayird') return advanceAnimal(state, awake)
+  if (entry.kind === 'corpse') return awake
+  if (!control) return awake
+  if (!liveEntity(entry) || !controllerKeepsAbility(state, entry))
+    return { ...awake, controller: undefined }
+  if (control.source === 'sayird') return advanceAnimal(awake)
   return advanceCourier(state, awake)
 }
 
-function advanceAnimal(state: FightState, entry: PreparedEntity): PreparedEntity {
-  const side = entry.controller!.side === 'player' ? 'opponent' : 'player'
-  const target = state[side]
-  return { ...entry, x: approach(entry.x, target.x, 0.12), y: entry.kind === 'bird' ? 5 : 0 }
+function advanceAnimal(entry: PreparedEntity): PreparedEntity {
+  if (!entry.littleEye || entry.sleepingFrames) return entry
+  const target = entry.littleEye.destinationX ?? entry.x
+  return { ...entry, x: approach(entry.x, target, 0.12) }
 }
 
 function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntity {
@@ -135,9 +149,18 @@ function advanceCourier(state: FightState, entry: PreparedEntity): PreparedEntit
 }
 
 function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boolean {
-  const { side, source } = entry.controller!
-  const fighter = state[side]
-  if (fighter.hatsuEffects.hatsuStolen > 0) return false
+  if (entry.controller?.person) return personKeepsLittleEye(state, entry.controller.person)
+  const { side, source, member } = entry.controller!
+  const body = dolphinBody(state, { owner: side, member: member ?? 0 })
+  if (!body) return false
+  return bodyKeepsPreparedAbility(preparedControllerBody(body, source), source)
+}
+
+function bodyKeepsPreparedAbility(
+  fighter: FightState['player'],
+  source: FightState['player']['id'],
+): boolean {
+  if (fighter.health <= 0 || fighter.hatsuEffects.hatsuStolen > 0) return false
   if (fighter.id === 'chrollo')
     return chrolloHasActivePage(fighter, source as Exclude<typeof source, 'chrollo'>)
   if (fighter.kurapika?.held?.used) return fighter.kurapika.held.source === source
@@ -146,6 +169,13 @@ function controllerKeepsAbility(state: FightState, entry: PreparedEntity): boole
     fighter,
     source === 'sayird' ? 'sayird:littleEye' : 'cluck:birdManipulation',
   )
+}
+
+function preparedControllerBody(actor: FightState['player'], source: FightState['player']['id']) {
+  const held = equippedDolphin(actor)
+  return held?.used && !held.returned && held.source === source
+    ? stolenAuraActor(loanCarrier(actor))
+    : actor
 }
 
 function approach(from: number, to: number, speed: number): number {
@@ -180,10 +210,24 @@ export function preparationInteractionTarget(
     .filter(
       (entry) =>
         canInteract(entry, side) &&
-        (entry.kind !== 'flute' || !hasEquipment(fighter, 'flute')) &&
+        preparedMatterExists(state, entry) &&
+        needsPreparedEquipment(fighter, entry) &&
         Math.hypot(entry.x - fighter.x, entry.y - fighter.y) <= PREPARATION_REACH,
     )
     .sort(
       (a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id.localeCompare(b.id),
     )[0]
+}
+
+function needsPreparedEquipment(fighter: FightState['player'], entry: PreparedEntity): boolean {
+  return entry.kind === 'flute' || entry.kind === 'needles'
+    ? !hasEquipment(fighter, entry.kind)
+    : true
+}
+
+function preparedMatterExists(state: FightState, entry: PreparedEntity): boolean {
+  const pins = entry.detachedFaceNeedles ?? entry.disguisePinBundle ?? entry.corpsePinBundle
+  return pins
+    ? historicalPartExists(state, pins.mediumCopyId)
+    : historicalMatterExists(state, entry.copy ? entry.id : undefined)
 }

@@ -1,4 +1,8 @@
+import { poseDetachedForearm } from './severedForearmScene'
 import { posePreparedCorpse } from './corpseScene'
+import { addOrderStamp } from './orderStampScene'
+import { createDolphinPeopleScene } from './dolphinPeopleScene'
+import { createLittleEyeScene } from './littleEyeScene'
 import {
   buildPreparedVisitModel,
   syncPreparedVisitModel,
@@ -15,6 +19,8 @@ import type { FightState } from './types'
 
 export function createPreparationScene(options: EffectSceneOptions) {
   const { THREE, scene } = options
+  const littleEye = createLittleEyeScene(options)
+  const people = createDolphinPeopleScene(options)
   const models = new Map<string, import('three').Group>()
   const geometries: import('three').BufferGeometry[] = []
   const materials = new Map<number, import('three').MeshBasicMaterial>()
@@ -32,11 +38,10 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   function build(entry: PreparedEntity) {
     if (
-      entry.kind === 'corpse' ||
-      entry.kind === 'morena' ||
-      entry.kind === 'supporter' ||
-      entry.kind === 'puppet' ||
-      entry.kind === 'hostage'
+      entry.detachedForearm ||
+      entry.fortunePerson ||
+      entry.person ||
+      ['morena', 'supporter', 'puppet', 'corpse', 'hostage'].includes(entry.kind)
     )
       return human(entry)
     const shared = buildPreparedVisitModel(options, entry)
@@ -62,12 +67,15 @@ export function createPreparationScene(options: EffectSceneOptions) {
         root.add(object)
       },
       needles: () => {
-        const pin = box([0.02, 0.35, 0.02], 0xd8dce1)
-        pin.rotation.z = 1
-        pin.position.y = 0.1
-        const cap = sphere(0.055, 0xf0ca53)
-        cap.position.set(-0.13, 0.2, 0)
-        root.add(pin, cap)
+        for (let index = 0; index < (entry.detachedFaceNeedles ? 3 : 1); index++) {
+          const pin = box([0.02, 0.35, 0.02], 0xd8dce1)
+          pin.name = `prepared-needle:${index}`
+          pin.rotation.z = 1
+          pin.position.set(index * 0.08, 0.1, index * 0.04)
+          const cap = sphere(0.055, 0xf0ca53)
+          cap.position.set(-0.13 + index * 0.08, 0.2, index * 0.04)
+          root.add(pin, cap)
+        }
       },
       seed: () => seed(root),
       animal: () => animal(root),
@@ -86,7 +94,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
   }
 
   function human(entry: PreparedEntity) {
-    const morena = entry.kind === 'morena'
+    const morena = entry.kind === 'morena' || entry.copy?.originalKind === 'morena'
     const seen: HumanLook = {
       id: `prepared:${entry.id}`,
       kind: 'combatant',
@@ -100,13 +108,9 @@ export function createPreparationScene(options: EffectSceneOptions) {
       hidden: false,
       human: {
         role: morena ? 'morena' : 'fighter',
-        identity: entry.copy?.appearance
-          ? fighterDefinition(entry.copy.appearance).modelId
-          : morena
-            ? 'morena-prudo'
-            : 'halkenburg-supporter',
+        identity: preparedHumanIdentity(entry),
         pose: 'idle',
-        aura: 'ten',
+        aura: preparedHumanAura(entry),
       },
     }
     const figure = buildHumanFigure({
@@ -123,37 +127,26 @@ export function createPreparationScene(options: EffectSceneOptions) {
       feather.position.set(0.12, 0.9, 0.2)
       figure.root.add(feather)
     }
+    poseDetachedForearm(figure.root, entry.detachedForearm?.part)
     addCorpseNeedles(figure.root, entry)
-    addCorpseWeapon(figure.root, entry)
+    if (entry.copy) addOrderStamp({ THREE, root: figure.root, box })
     return figure.root
   }
 
-  function addCorpseWeapon(root: import('three').Group, entry: PreparedEntity) {
-    if (entry.kind !== 'corpse' || entry.corpseGunRounds === undefined) return
-    const gun = new THREE.Group()
-    gun.name = 'corpse-physical-pistol'
-    const barrel = box([0.25, 0.07, 0.07], 0x283039),
-      grip = box([0.07, 0.15, 0.065], 0x171b20)
-    barrel.position.x = 0.09
-    grip.position.y = -0.06
-    gun.add(barrel, grip)
-    const hand = root.getObjectByName('hand-right')
-    if (hand) hand.add(gun)
-    else {
-      gun.position.set(0.3, 0.95, 0.2)
-      root.add(gun)
-    }
-  }
   function addCorpseNeedles(root: import('three').Group, entry: PreparedEntity) {
     if (entry.kind !== 'corpse') return
+    const head = root.getObjectByName('face-mouth')?.parent
+    if (!head) return
+    root.updateWorldMatrix(true, true)
+    root.userData.corpseHeadAnchor = root.worldToLocal(head.getWorldPosition(new THREE.Vector3()))
     const pins = new THREE.Group()
     pins.name = 'corpse-control-needles'
     for (const x of [-0.07, 0.07]) {
-      const pin = box([0.015, 0.18, 0.015], 0xdce3e6)
-      pin.position.set(x, 1.12, 0.08)
+      const pin = box([0.015, 0.015, 0.18], 0xdce3e6)
+      pin.position.set(x, 0.08, -0.23)
       pins.add(pin)
     }
-    root.add(pins)
+    head.add(pins)
   }
 
   function animal(root: import('three').Group) {
@@ -229,7 +222,11 @@ export function createPreparationScene(options: EffectSceneOptions) {
 
   return {
     sync(state: FightState, seconds: number) {
-      const entries = state.battlefield?.entities ?? []
+      littleEye.sync(state)
+      people.sync(state, seconds)
+      const entries = (state.battlefield?.entities ?? []).filter(
+        (entry) => entry.kind !== 'device' && !entry.writingKit && !entry.weakSpirit,
+      )
       const active = new Set(entries.map((entry) => entry.id))
       for (const entry of entries) syncEntry({ entry, state, seconds })
       for (const [id, root] of models) {
@@ -240,6 +237,8 @@ export function createPreparationScene(options: EffectSceneOptions) {
       }
     },
     dispose() {
+      littleEye.dispose()
+      people.dispose()
       for (const root of models.values()) {
         disposePreparedVisitModels(root)
         scene.remove(root)
@@ -252,7 +251,7 @@ export function createPreparationScene(options: EffectSceneOptions) {
 }
 
 function backgroundDepth(entry: PreparedEntity): number {
-  return ['morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
+  return ['person', 'hostage', 'morena', 'supporter', 'room'].includes(entry.kind) ? -1.4 : 0.4
 }
 
 function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity) {
@@ -260,6 +259,8 @@ function syncStaticAppearance(root: import('three').Group, entry: PreparedEntity
     root.traverse((part) => {
       if (part.name.startsWith('manga-head:')) part.visible = entry.copy!.headAttached
     })
+  const stamp = root.getObjectByName('order-stamp-imprint')
+  if (stamp) stamp.visible = Boolean(entry.copy?.order)
   const growth = root.getObjectByName('growth')
   if (growth) growth.scale.setScalar(entry.growth ? 1 : 0.05)
   const panel = root.getObjectByName('door-panel')
@@ -273,6 +274,37 @@ function syncAnimatedAppearance(context: {
   seconds: number
 }) {
   const { root, entry, seconds } = context
-  if (entry.kind === 'supporter') root.rotation.z = entry.sleepingFrames ? -0.5 : 0
+  syncPreparedSleep(root, entry)
+  if (entry.littleEye) root.rotation.y = entry.littleEye.facing === 1 ? 0 : Math.PI
+  if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -1.4 : 0
+  if (entry.kind === 'supporter') root.rotation.z = supporterSleepAngle(entry)
   if (entry.kind === 'bird' && entry.controller) root.rotation.z = Math.sin(seconds * 12) * 0.12
+}
+
+function supporterSleepAngle(entry: PreparedEntity): number {
+  if (entry.halkenburgSleeping) return -Math.PI / 2
+  return entry.sleepingFrames ? -0.5 : 0
+}
+
+function preparedHumanIdentity(entry: PreparedEntity): string {
+  if (entry.detachedForearm) return fighterDefinition(entry.detachedForearm.appearance).modelId
+  if (entry.person) return entry.person.identity
+  if (entry.copy?.appearanceModel) return entry.copy.appearanceModel
+  if (entry.copy?.appearance) return fighterDefinition(entry.copy.appearance).modelId
+  return entry.kind === 'morena' || entry.copy?.originalKind === 'morena'
+    ? 'morena-prudo'
+    : 'halkenburg-supporter'
+}
+
+function syncPreparedSleep(root: import('three').Group, entry: PreparedEntity) {
+  if (entry.person) root.rotation.z = entry.person.loan?.blackoutFrames ? -Math.PI / 2 : 0
+}
+
+function preparedHumanAura(entry: PreparedEntity): 'none' | 'ten' {
+  return entry.fortunePerson ||
+    entry.person ||
+    entry.copy ||
+    ['corpse', 'hostage'].includes(entry.kind)
+    ? 'none'
+    : 'ten'
 }

@@ -1,8 +1,10 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { gyoSight } from './nenPerception'
 import { chrolloCopiedMove } from './chrolloBook'
-import { selectedGumLink } from './bungeeNetwork'
+import { commandGumLink as selectedGumLink } from './bungeeScoped'
 import { gumLinkPoints } from './bungeeGeometry'
+import { textureTargetAvailable } from './hisokaTextureOrigin'
+import { paperTextureReady } from './paperTexture'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BUNGEE_REST_DISTANCE = 8
@@ -46,8 +48,7 @@ export function hisokaTechniqueAllowed(
   const technique = hisokaTechnique(fighter, moveId)
   if (!technique) return true
   if (!hisokaNenActive(fighter)) return false
-  // The duel uses the flat front of his existing shirt as its cloth support.
-  if (technique === 'texture') return fighter.y === 0 && !fighter.textureSurprise
+  if (technique === 'texture') return textureAllowed(state, side)
   if (technique === 'attach') return true
   if (state.gumNetwork) return networkTechniqueAllowed(state, side, technique)
   const gum = ownedBungee(state, side)
@@ -56,14 +57,27 @@ export function hisokaTechniqueAllowed(
   return !gum.retracting && Math.abs(state[gum.target].x - fighter.x) > BUNGEE_REST_DISTANCE
 }
 
-function networkTechniqueAllowed(state: FightState, side: FightSide, technique: HisokaTechnique): boolean {
+function textureAllowed(state: FightState, side: FightSide): boolean {
+  const actor = state[side]
+  if (actor.textureTarget === 'paper') return actor.y === 0 && paperTextureReady(state, side)
+  return actor.y === 0 && !actor.textureSurprise && textureTargetAvailable(actor)
+}
+
+function networkTechniqueAllowed(
+  state: FightState,
+  side: FightSide,
+  technique: HisokaTechnique,
+): boolean {
   const link = selectedGumLink(state, side)
   if (!link) return false
   if (technique === 'finish') return link.target.kind === 'fighter'
   if (technique === 'recall' && link.target.kind === 'surface') return false
   if (technique === 'rebound' && link.target.kind === 'projectile') return false
   const points = gumLinkPoints(state, link)
-  return link.motion === 'idle' && Boolean(points && Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) > 3)
+  return (
+    link.motion === 'idle' &&
+    Boolean(points && Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) > 3)
+  )
 }
 
 function ownedBungee(state: FightState, side: FightSide) {

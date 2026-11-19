@@ -1,4 +1,6 @@
 import { mount } from 'svelte'
 import '../../src/app.css'
 import Fixture from './Fixture.svelte'
-Object.assign(window, { sixPriorityFixture: mount(Fixture, { target: document.getElementById('app')! }) })
+Object.assign(window, {
+  sixPriorityFixture: mount(Fixture, { target: document.getElementById('app')! }),
+})

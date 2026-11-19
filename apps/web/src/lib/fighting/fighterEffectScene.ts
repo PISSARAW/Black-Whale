@@ -1,5 +1,7 @@
+import { createBashoSupportScene } from './bashoSupportScene'
+import { createDeviceScene } from './deviceScene'
+import { createPaperDocumentScene } from './paperDocumentScene'
 import { createRemainingVisitHatsuScene } from './remainingVisitHatsuScene'
-import { createHistoricalEquipmentScene } from './historicalEquipmentScene'
 import { createRetrospectiveScene } from './retrospectiveScene'
 import { createKallutoPaperScene } from './kallutoScene'
 import { createEasterEggScene } from './easterEggScene'
@@ -19,13 +21,13 @@ import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
 import { createChrolloEffectScene } from './chrolloEffectScene'
-import { createThrowSignatureScene } from './throws/scene'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
 import type { FightComfort } from './fightComfort'
 
 export interface EffectSceneOptions {
   comfort?: () => FightComfort
+  /** The viewing side controls private props such as Combo Master's console. */
   viewer?: () => FightSide
   THREE: typeof import('three')
   scene: import('three').Scene
@@ -34,7 +36,6 @@ export interface EffectSceneOptions {
   /** Live posed rig; callbacks also follow aura/body rebuilds. */
   figureOf?: (side: FightSide) => import('three').Object3D | undefined
   handAnchor?: (side: FightSide, hand: 'lead' | 'rear') => import('three').Object3D | undefined
-  throwFrame?: () => import('./throwCinematic').ThrowCinematicFrame | null
 }
 
 export interface FighterEffectScene {
@@ -45,7 +46,6 @@ export interface FighterEffectScene {
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const arena = createArenaScene(options)
-  const historicalEquipment = createHistoricalEquipmentScene(options)
   const paper = createKallutoPaperScene(options)
   const easterEggs = createEasterEggScene(options)
   const doors = createVoconteDoorScene(options)
@@ -64,8 +64,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const machi = createMachiThreadScene(options)
   const visitHatsu = createRemainingVisitHatsuScene(options)
   const retrospective = createRetrospectiveScene(options)
+  const devices = createDeviceScene(options)
+  const documents = createPaperDocumentScene(options)
+  const bashoSupport = createBashoSupportScene(options)
   const chrollo = createChrolloEffectScene(options)
-  const throws = createThrowSignatureScene(options)
   const cardMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e7 })
   const cardGeometry = new THREE.BoxGeometry(0.16, 0.24, 0.018)
   const cards = Array.from({ length: 4 }, () => new THREE.Mesh(cardGeometry, cardMaterial))
@@ -91,10 +93,11 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     machi.sync(state, seconds)
     visitHatsu.sync(state, seconds)
     retrospective.sync(state, seconds)
-    historicalEquipment.sync(state, seconds)
+    devices.sync(state, seconds)
+    documents.sync(state, seconds)
+    bashoSupport.sync(state, seconds)
     chrollo.sync(state, seconds)
     syncCards(options, { state, meshes: cards, seconds })
-    throws.sync(state, seconds)
   }
 
   return {
@@ -102,7 +105,6 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     dispose: () => {
       easterEggs.dispose()
       arena.dispose()
-      historicalEquipment.dispose()
       paper.dispose()
       doors.dispose()
       bioDevices.dispose()
@@ -120,8 +122,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       kurapika.dispose()
       visitHatsu.dispose()
       retrospective.dispose()
+      devices.dispose()
+      documents.dispose()
+      bashoSupport.dispose()
       chrollo.dispose()
-      throws.dispose()
       scene.remove(...cards)
       cardGeometry.dispose()
       cardMaterial.dispose()

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { buildHumanFigure, type HumanLook } from './humanFigure'
 import { buildFightFigure } from '../fighting/fighterFigure'
+import { combatFaceGeometry } from '../fighting/fightFaceReadability'
 import { createFightState } from '../fighting/fightState'
 import { fightBodyMotion } from '../fighting/fightBodyMotion'
 import { fighterDefinition } from '../fighting/roster'
@@ -35,7 +36,7 @@ function mesh(root: THREE.Object3D, name: string): THREE.Mesh {
 
 describe('shared model detail integration', () => {
   it.each(['kurapika', 'hisoka', 'biscuit', 'franklin'] as const)(
-    'shares cached facial and hand detail buffers with Fighting: %s',
+    'shares detail buffers and caches combat-only skin shading: %s',
     (id) => {
       const tour = buildHumanFigure({ THREE, glow, seen: visitor(id) })
       const fight = buildFightFigure({
@@ -43,13 +44,14 @@ describe('shared model detail integration', () => {
         glow,
         fighter: createFightState(id, 'hisoka').player,
       })
-      const shared =
-        id === 'franklin'
-          ? ['eye-pupil', 'face-relief']
-          : ['hand-left', 'hand-right', 'eye-pupil', 'face-relief']
+      const shared = id === 'franklin' ? ['eye-pupil'] : ['hand-left', 'hand-right', 'eye-pupil']
       for (const name of shared) {
         expect(mesh(fight.root, name).geometry).toBe(mesh(tour.root, name).geometry)
       }
+      expect(mesh(fight.root, 'face-relief').geometry).toBe(
+        combatFaceGeometry(mesh(tour.root, 'face-relief').geometry),
+      )
+      expect(mesh(tour.root, 'face-relief').geometry.getAttribute('color')).toBeUndefined()
       // The distant representation still has only its three original masses.
       expect(tour.lod.far.children).toHaveLength(3)
       expect(tour.lod.far.getObjectByName('eye-pupil')).toBeUndefined()

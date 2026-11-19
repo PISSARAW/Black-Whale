@@ -1,3 +1,4 @@
+import { littleEyeTarget } from './littleEyeTypes'
 import {
   luiniAnchor,
   luiniDestination,
@@ -5,7 +6,7 @@ import {
   luiniRoomAtBody,
   validLuiniRooms,
 } from './luiniSpatial'
-import { chrolloPageForMove, chrolloPageSource } from './chrolloBook'
+import { chrolloPageForMove, chrolloPageSource, chrolloCopiedMove } from './chrolloBook'
 import { hasEquipment, liveEntity, nearEntity, readyCohort } from './preparationWorld'
 import type { HatsuRequirement, PreparationCheck } from './preparationTypes'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
@@ -41,16 +42,24 @@ export function preparationCheck(
   moveId?: string,
 ): PreparationCheck {
   const source = preparationSource(state[side], moveId)
-  const ids =
+  let ids =
     source === 'luini'
       ? luiniRequirements(state, side)
       : [...(REQUIREMENTS[source as FighterId] ?? [])]
+  if (source === 'illumi' && unpinnedIllumiApplication(state[side], moveId)) ids = []
   if (state[side].id === 'chrollo') ids.push('book')
   const requirements = ids.map((id) => ({
     id,
     satisfied: requirementSatisfied({ state, side, id }),
   }))
   return { source, requirements, ready: requirements.every((entry) => entry.satisfied) }
+}
+
+function unpinnedIllumiApplication(actor: ArcadeFighter, moveId?: string): boolean {
+  if (actor.illumiDisguisePlan !== 'unpinned-hisoka') return false
+  return (
+    moveId === 'illumi:backSpecial' || chrolloCopiedMove(actor, moveId) === 'illumi:backSpecial'
+  )
 }
 
 function requirementSatisfied(context: {
@@ -85,7 +94,9 @@ function requirementSatisfied(context: {
 
 export function animalTarget(state: FightState, side: FightSide, kind: 'animal' | 'bird') {
   return (state.battlefield?.entities ?? [])
-    .filter((entry) => entry.kind === kind && liveEntity(entry))
+    .filter((entry) =>
+      kind === 'animal' ? littleEyeTarget(entry) : entry.kind === kind && liveEntity(entry),
+    )
     .find(
       (entry) =>
         entry.material === 'real' &&

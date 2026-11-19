@@ -1,4 +1,4 @@
-import { performJudgmentExtra, judgmentExtraOptions, judgmentHostage, HOSTAGE_DEADLINE_FRAMES } from './judgmentHostages'
+import { performJudgmentExtra, judgmentExtraOptions, judgmentHostage } from './judgmentHostages'
 import { troupeMember } from './troupeMembership'
 import { fighterDefinition } from './roster'
 import { usesVoluntaryNen } from './nenActionRules'
@@ -32,11 +32,8 @@ export function declareJudgment(state: FightState, side: FightSide, moveId?: str
   }
 }
 export function implantJudgment(state: FightState, side: FightSide, target: FightSide): FightState {
-  const base = createJudgmentSeal(state[side], side)
-  const needsHostage = (base.clauses ?? [base.rule]).includes('return-hostage')
-  const hostageId = state[side].judgmentDeclaration?.hostageId
-  if (needsHostage && !hostageId) return state
-  const seal = needsHostage ? { ...base, hostageId, deadlineFrame: state.frame + HOSTAGE_DEADLINE_FRAMES } : base
+  const initial = createJudgmentSeal(state[side], side, state.teamMatch?.seats[side].active ?? 0)
+  const seal = withHostageDeadline(initial, state, side)
   const forbidsNen = (seal.clauses ?? [seal.rule]).includes('zetsu')
   const body = forbidsNen ? forceZetsu(state[target]) : state[target]
   return {
@@ -49,8 +46,13 @@ export function implantJudgment(state: FightState, side: FightSide, target: Figh
     },
   }
 }
-export function performJudgmentCommand(state: FightState, side: FightSide, command: ArsenalCommand): FightState {
-  if (['judgment-reveal', 'judgment-return-hostage'].includes(command.action)) return performJudgmentExtra({ state, side, command })
+export function performJudgmentCommand(
+  state: FightState,
+  side: FightSide,
+  command: ArsenalCommand,
+): FightState {
+  if (['judgment-reveal', 'judgment-return-hostage'].includes(command.action))
+    return performJudgmentExtra({ state, side, command })
   return performJudgmentBase(state, side, command)
 }
 function performJudgmentBase(
@@ -64,7 +66,11 @@ function performJudgmentBase(
   if (command.action === 'judgment-release') return releaseJudgment(state, side)
   if (!validJudgmentPreset(command)) return state
   if (chainAbilitySealed(fighter, 'kurapika:finisher')) return state
-  if (command.target === 'hostage-secret' && !judgmentHostage(state, side === 'player' ? 'opponent' : 'player')) return state
+  if (
+    command.target === 'hostage-secret' &&
+    !judgmentHostage(state, side === 'player' ? 'opponent' : 'player')
+  )
+    return state
   return { ...state, [side]: { ...fighter, judgmentPreset: command.target as JudgmentPreset } }
 }
 function releaseJudgment(state: FightState, side: FightSide): FightState {
@@ -113,8 +119,12 @@ function judgmentCommandReady(
   return performJudgmentCommand(state, side, command) !== state
 }
 const PRESET_NAMES: Record<JudgmentPreset, [string, string]> = {
-  secret: ['Ne rien révéler sur Kurapika', 'Do not disclose Kurapika’s secret'],
-  'hostage-secret': ['Rendre l’otage sous 30 s et garder le secret', 'Return hostage within 30s and keep the secret'],
+  secret: ['Conserver le secret', 'Keep the secret'],
+  'hostage-secret': [
+    'Restituer l’otage et conserver le secret',
+    'Return hostage and keep the secret',
+  ],
+  answers: ['Répondre sincèrement à mes questions', 'Answer my questions truthfully'],
   nen: ['Ne pas utiliser de Nen', 'Do not use Nen'],
   contact: ['Ne pas communiquer avec la Brigade', 'Do not contact the Troupe'],
   'nen-contact': [
@@ -167,13 +177,16 @@ export function judgmentAiPreset(state: FightState): FightState | null {
   const actor = state.opponent
   if (actor.id !== 'kurapika' || !actor.kurapika?.emperorTime || state.player.judgmentChain)
     return null
-  const desired = opposingTroupeReserve(state) ? 'nen-contact' : 'nen'
+  const desired = opposingTroupeReserve(state) ? 'nen-contact' : ordinaryAiPreset(state)
   if (actor.judgmentPreset === desired) return null
   const next = performJudgmentCommand(state, 'opponent', {
     action: 'judgment-preset',
     target: desired,
   })
   return next === state ? null : next
+}
+function ordinaryAiPreset(state: FightState): JudgmentPreset {
+  return state.rng % 3 === 1 ? 'answers' : 'nen'
 }
 function opposingTroupeReserve(state: FightState): boolean {
   const seat = state.teamMatch?.seats.player
@@ -194,4 +207,17 @@ function validJudgmentPreset(command: ArsenalCommand): boolean {
 
 function judgmentActorReady(fighter: FightState['player']): boolean {
   return fighter.id === 'kurapika' && canAct(fighter) && !fighter.attack
+}
+
+function withHostageDeadline(
+  seal: import('./judgmentRules').JudgmentSeal,
+  state: FightState,
+  side: FightSide,
+) {
+  if (!(seal.clauses ?? [seal.rule]).includes('return-hostage')) return seal
+  return {
+    ...seal,
+    hostageId: state[side].judgmentDeclaration?.hostageId,
+    deadlineFrame: state.frame + 1800,
+  }
 }

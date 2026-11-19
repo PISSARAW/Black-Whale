@@ -80,10 +80,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Great Hiker : écrire le poème attesté ; seuls les contacts du poing enflamment leur cible.',
       'Great Hiker: write the attested poem; only fist contacts ignite their target.',
     ],
-    finisherCondition: [
-      'Aucun finisher offensif attesté.',
-      'No attested offensive finisher.',
-    ],
+    finisherCondition: ['Aucun finisher offensif attesté.', 'No attested offensive finisher.'],
     labels: [
       'Pinceau direct|Brush Straight',
       'Coude du poète|Poet Elbow',

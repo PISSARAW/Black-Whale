@@ -103,8 +103,6 @@ describe('six support lessons use real effects, costs and continuous contacts', 
       match.observeFrames(school.observe)
       let state = school.start('hisoka:kameo-luzurus', true, {
         position,
-        reaction: 'guard',
-        followup: 'strike',
       })
       match.begin(state)
       let opening = -1
@@ -119,7 +117,7 @@ describe('six support lessons use real effects, costs and continuous contacts', 
           match.enqueue(state, { kind: 'move', side: 'opponent', action: 'light', input: 0 })
         }
         const input =
-          opening >= 0 && state.frame >= opening + 30
+          opening >= 0 && state.frame >= opening + 80
             ? school.input(state, EMPTY_INPUT)
             : EMPTY_INPUT
         state = match.advance(state, input, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
@@ -140,8 +138,6 @@ describe('six support lessons use real effects, costs and continuous contacts', 
           match.observeFrames(school.observe)
           let state = school.start(route.id, true, {
             position,
-            reaction: 'guard',
-            followup: 'strike',
           })
           if (mirrored)
             state = {

@@ -7,7 +7,6 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let replay = false
-  export let introEnabled = false
   export let startFight: () => void
   export let rematch: () => void
   export let continueMatch: () => void
@@ -16,7 +15,7 @@
   $: copy = fightingCopy(language)
 </script>
 
-{#if state.phase === 'ready' && !replay && !introEnabled}
+{#if state.phase === 'ready' && !replay}
   <div class="match-overlay ready-overlay">
     <FightCeremony {state} {language} />
     <p>

@@ -14,27 +14,25 @@
   import FightCameraDetail from './FightCameraDetail.svelte'
   import FightTrackingMarkers from './FightTrackingMarkers.svelte'
   import { createCombatCamera } from '$lib/fighting/combatCamera'
-  import { visibleSecondaryView } from '$lib/fighting/directionalComboCamera'
-  import FightDirectionalShot from './FightDirectionalShot.svelte'
   import { visibleFutureBeastOwner } from '$lib/fighting/parallelFuturePresentation'
-  import type { CinematicFrame } from '$lib/fighting/cinematicTrack'
-  import { applyPresentationCamera } from '$lib/fighting/presentation/introCamera'
-  import type { IntroFrame } from '$lib/fighting/presentation/introPlayback'
-  import { fightCameraBodyBounds } from '$lib/fighting/fightCameraBodyBounds'
+  import { fitCinematicView, type CinematicFrame } from '$lib/fighting/cinematicTrack'
   import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
-  import { createFightReactionPresentation } from '$lib/fighting/fightReactionPresentation'
-  import { createPresentedModelRefresh } from '$lib/fighting/refreshPresentedModel'
-  import { createFightContactAlignment } from '$lib/fighting/fightContactAlignment'
-  import FightStageDescription from './FightStageDescription.svelte'
+  import { createFightPoseClock } from '$lib/fighting/fightPoseClock'
+  import {
+    backgroundParticipants,
+    stageBackgroundDescription,
+  } from '$lib/fighting/stageBackgroundCatalogue'
   import { presentedFigures } from '$lib/fighting/presentation/figures'
   import { clashPresentation } from '$lib/fighting/presentation/profile'
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
-  import { liveCameraFraming } from '$lib/fighting/liveCameraFraming'
+  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
+  import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
+  import { sceneryCameraFrame } from '$lib/fighting/stageCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import { createHanzoProjectionScene } from '$lib/fighting/kameos/stageScene'
+  import { createHanzoProjectionScene, projectionCameraSpan } from '$lib/fighting/kameos/stageScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -44,7 +42,7 @@
   import { fightSceneReaction } from '$lib/fighting/sceneReaction'
   import { victoryMotion } from '$lib/fighting/career/presentation'
   import { defaultAppearance, type CareerAppearance } from '$lib/fighting/career/types'
-  import { introBodyMotion as fightBodyMotion } from '$lib/fighting/presentation/introMotion'
+  import { fightBodyMotion } from '$lib/fighting/fightBodyMotion'
   import { defaultFightComfort, effectiveFightComfort } from '$lib/fighting/fightComfort'
   import { createFightPresentation } from '$lib/fighting/fightPresentationContext'
   import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
@@ -58,12 +56,12 @@
   } from '$lib/fighting/sceneMotion'
   import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
-  import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
-  import { drawFightScene } from '$lib/fighting/drawFightScene'
+  import { drawVictoryFrame } from '$lib/fighting/victory/draw'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
-  import type { FightState } from '$lib/fighting/types'
+  import type { ArcadeFighter, FightState } from '$lib/fighting/types'
+
   const presentation = createFightPresentation()
   const interpolatedPosition = presentation.position
   export let viewer: 'player' | 'opponent' = 'player'
@@ -82,16 +80,22 @@
   export let detailVisible = false
   export let viewRole: 'primary' | 'prediction' = 'primary'
   export let victoryFrame: VictoryFrame | null = null
-  export let introFrame: IntroFrame | null = null
   export let onSceneReady: () => void = () => {}
   export let onSceneFailed: () => void = () => {}
+
   export let language: 'fr' | 'en' = 'fr'
+  $: backgroundDescription = stageBackgroundDescription(
+    stageId,
+    backgroundParticipants(state),
+    language,
+  )
 
   let canvas: HTMLCanvasElement
   let failed = false
   let ready = false
   let detail: CameraDetail | null = null
   let detailRect = cinematicDetailRect(1.7)
+
   onMount(() => {
     clashPresentation.ensureLoaded()
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -109,6 +113,7 @@
         const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
         const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         const { createVictoryRenderer } = await import('$lib/fighting/victory/renderer')
+        const { createFighterEffectScene } = await import('$lib/fighting/fighterEffectScene')
         if (disposed || !canvas) return
 
         const {
@@ -194,7 +199,6 @@
           worldX,
         })
         const fighterEffects = createFighterEffectScene({
-          throwFrame: presentation.throwFrame,
           comfort: visualComfort,
           viewer: () => viewer,
           THREE,
@@ -218,31 +222,33 @@
           figureOf: (side) => models[side].model.turns,
           comfort: visualComfort,
         })
-        const modelOf = createPresentedModelRefresh({ scene, models, nenKey, buildFighter })
-        const alignPhysicalContact = createFightContactAlignment((side) => models[side].model.turns)
+        const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
+          const held = models[side]
+          const nen = nenKey(fighter)
+          if (held.nen === nen) return held.model
+          disposeMountedVisitHatsu(held.model.root)
+          scene.remove(held.model.root)
+          held.model = buildFighter(fighter)
+          held.nen = nen
+          scene.add(held.model.root)
+          return held.model
+        }
 
         const impacts = createFightImpactScene({
           THREE,
           scene,
           initial: state,
           comfort: visualComfort,
-          figureOf: (side) => models[side].model.turns,
           geometry,
           glow,
         })
 
-        const fit = () => {
+        const fit = () =>
           resizeFightCanvas({ canvas, renderer, camera, post, graphics: comfort.graphics })
-          // Resizing clears WebGL even when the presentation clock is paused.
-          if (!active) {
-            if (post) post.render()
-            else renderer.render(scene, camera)
-          }
-        }
         fit()
 
-        const reactionContext = createFightReactionPresentation()
-        const finishedFall = createFinishedFallPresentation(presentation.throwFrame)
+        const poseClock = createFightPoseClock()
+        const finishedFall = createFinishedFallPresentation()
         const strideClock = createStrideClocks()
         let lastFrameAt: number | null = null
         let motionSeconds = 0
@@ -254,33 +260,29 @@
           const { side, model, seconds } = options
           const falling = finishedFall(state, side, {
             fighter: presentation.fighter(state, side),
-            position: presentation.bodyPosition(state, side),
+            position: interpolatedPosition(state, side),
             seconds,
           })
           const fighter = falling.fighter
           const opponent = presentation.fighter(state, side === 'player' ? 'opponent' : 'player')
           trackingSilhouettes.sync(model.root, { state, side, keep: keepCombatantMarkers })
-          const reaction = reactionContext(state, side, {
-            fighter,
-            seconds,
-            progress: falling.progress,
-          })
-          const { progress } = reaction
+          const impact = state.impact?.attacker === side ? null : state.impact
+          const receivedImpact = impact?.sequence
+          const progress =
+            falling.progress ?? poseClock(side, fighter, { seconds, impact: receivedImpact })
           const drawn = falling.position
-          model.root.position.set(worldX(drawn.x), worldY(drawn.y), drawn.z ?? 0)
+          model.root.position.set(worldX(drawn.x), worldY(drawn.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
+          const hitZone = impact?.zone
           const motion = fightBodyMotion({
-            throwFrame: presentation.throwFrame(),
-            introFrame: motionPreference.matches ? null : introFrame,
-            side,
             fighter,
             seconds,
             fallback,
-            ...reaction,
+            progress,
+            hitZone,
             onAwakeningFrame: onFrames[side],
-            poseFraction: presentation.poseFraction(state),
           })
           const modelPose = motionOf(fighter).dash ? 'idle' : FIGHT_MODEL_POSES[fighter.pose]
           model.animate(seconds, modelPose, {
@@ -306,31 +308,39 @@
 
         const cameraIntensity = () => visualComfort().camera ?? 1
         const updateCombatCamera = (dt: number, now: number) => {
+          if (cameraFrame && !motionPreference.matches) {
+            const pose = fitCinematicView(cameraFrame, state, camera.aspect)
+            camera.position.set(pose.x, pose.y, pose.z)
+            camera.lookAt(pose.x, pose.lookY, 0)
+            updateFightCameraFog(scene, camera, scenery)
+            detail = null
+            detailVisible = false
+            return
+          }
           const observed = hideSecondaryView
             ? cinematicDirector.update(state, cameraIntensity(), dt)
             : null
           const direction =
             cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
-          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView)
+          detail = direction.detail
           detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
-          const framing = liveCameraFraming({
-            state,
-            positions: [playerX, opponentX],
-            aspect: camera.aspect,
+          const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
+          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
+          const framing = sceneryCameraFrame(
+            biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect }),
             scenery,
-          })
+          )
           const pose = combatCamera.update({
             state,
-            base: framing.base,
-            span: framing.span,
+            base: framing,
+            span: catSpan,
             aspect: camera.aspect,
             dt,
             direction,
             detail: Boolean(detail),
             detailRect,
-            fallenBounds: fightCameraBodyBounds(state, models),
             companion: visibleFutureBeastOwner(state, viewer),
             intensity: cameraIntensity(),
             minimumDistance: scenery.framing?.minimumDistance,
@@ -339,27 +349,8 @@
           detailVisible = Boolean(detail)
           camera.position.set(pose.x, pose.y, pose.z)
           updateFightCameraFog(scene, camera, scenery)
-          camera.lookAt(pose.x, pose.lookY, 0)
-          if (
-            applyPresentationCamera({
-              camera,
-              combatReady: true,
-              models,
-              state,
-              authored: cameraFrame,
-              minimumDistance: scenery.framing?.minimumDistance,
-              throwFrame: presentation.throwFrame(),
-              intro: introFrame,
-              reduced: motionPreference.matches,
-              intensity: cameraIntensity(),
-            })
-          ) {
-            updateFightCameraFog(scene, camera, scenery)
-            detail = null
-            detailVisible = false
-            return
-          }
           impacts.shake(camera, now)
+          camera.lookAt(pose.x, pose.lookY, 0)
         }
 
         const render = (now: number) => {
@@ -372,11 +363,8 @@
           const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
           motionSeconds += dt
           const seconds = presentationSeconds ?? motionSeconds
-          presentation.observe(state, seconds, {
-            reduced: motionPreference.matches,
-            victory: victoryFrame,
-          })
           lastFrameAt = now
+          impacts.emit(state, now)
           onFrames = onClock(state, motionPreference.matches)
           animateFighter({
             side: 'player',
@@ -393,8 +381,6 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
-          alignPhysicalContact(state)
-          impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
           onAwakening.sync(state, onFrames)
 
@@ -405,12 +391,14 @@
           collisions.sync(state)
           scenery.update?.(seconds)
           markFightRender(scene, state)
-          drawFightScene({
+          drawVictoryFrame({
             victory: victoryRenderer,
-            state,
-            frame: victoryFrame,
-            comfort: visualComfort(),
-            models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            input: {
+              state,
+              frame: victoryFrame,
+              comfort: visualComfort(),
+              models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            },
             draw: () => (post ? post.render() : renderer.render(scene, camera)),
             failed: onSceneFailed,
           })
@@ -461,14 +449,13 @@
   })
 </script>
 
-<FightStageDescription {state} {stageId} {language} />
+<p class="background-description">{backgroundDescription}</p>
 <div class:failed class:ready class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
-  <FightDirectionalShot {state} intensity={comfort.camera ?? 1} />
   <FightTrackingMarkers
     {state}
     {language}
-    enabled={keepCombatantMarkers && !victoryFrame?.active && !introFrame}
+    enabled={keepCombatantMarkers && !victoryFrame?.active}
   />
   {#if detail && !hideSecondaryView && !failed}<FightCameraDetail
       {detail}
@@ -479,6 +466,16 @@
 </div>
 
 <style>
+  .background-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .fight-scene {
     position: absolute;
     inset: 0;

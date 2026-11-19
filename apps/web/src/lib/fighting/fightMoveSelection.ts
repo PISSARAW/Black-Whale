@@ -23,7 +23,8 @@ export function routedFightMove(
 ): FighterMove | null {
   // These fighters expose directional combo branches; preserve the player's exact choice.
   if (hasDuelComboProfile(fighter.id)) return selected
-  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id)) return selected
+  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id))
+    return selected
   if (['shizuku', 'kalluto'].includes(fighter.id)) return selected
   const current = moveById(fighter.attack?.moveId)
   return (
@@ -79,9 +80,21 @@ function selectedChainOverride(
   )
 }
 
-function judgmentOverride(options: MoveContext & { selected: FighterMove | null }, perform: PerformAttack): FightState | null {
+function judgmentOverride(
+  options: MoveContext & { selected: FighterMove | null },
+  perform: PerformAttack,
+): FightState | null {
   const { state, side, action, input } = options
   if (!judgmentForbidsNen(state[side])) return null
   if (action !== 'special' && action !== 'finisher' && !input.aura) return null
-  return performKurapikaAction({ state, side, kind: options.selected?.kind ?? 'special', moveId: options.selected?.id, auraCharged: input.aura }, perform)
+  return performKurapikaAction(
+    {
+      state,
+      side,
+      kind: options.selected?.kind ?? 'special',
+      moveId: options.selected?.id,
+      auraCharged: input.aura,
+    },
+    perform,
+  )
 }

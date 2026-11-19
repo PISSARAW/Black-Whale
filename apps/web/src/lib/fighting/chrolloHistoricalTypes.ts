@@ -1,6 +1,8 @@
 import type { FightSide, FighterId } from './types'
 
 export interface ChrolloHistoricalState {
+  galleryFocus?: import('./gallerySense').GalleryFocus
+  galleryReading?: import('./gallerySense').GalleryReading
   aiPlan?: { page: string; startedAt: number }
   aiLastUse?: number
   touch?: {
@@ -22,6 +24,11 @@ export interface ChrolloHistoricalState {
   appearance?: { owner: FightSide; model: FighterId }
 }
 export interface HistoricalCopy {
+  /** Physical likeness only; a copied non-fighter never inherits her aura nodes or Dolphin. */
+  appearanceModel?: 'queen-oito'
+  originalMember?: number
+  originalKind?: import('./preparationTypes').PreparedEntityKind
+  inertDeviceForm?: import('./deviceTypes').BiohazardDeviceForm
   owner: FightSide
   originalId: string
   createdAt: number

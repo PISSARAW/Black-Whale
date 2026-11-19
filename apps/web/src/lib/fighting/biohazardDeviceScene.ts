@@ -1,5 +1,5 @@
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
-import type { BiohazardDevice } from './biohazardDevices'
+import type { BiohazardDevice } from './legacyBiohazardDevices'
 
 /** The cat lens, gun barrel and transmitter shells remain visible material objects. */
 export function createBiohazardDeviceScene(options: EffectSceneOptions): FighterEffectScene {

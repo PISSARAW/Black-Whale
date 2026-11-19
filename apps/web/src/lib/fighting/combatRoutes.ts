@@ -4,10 +4,6 @@ import { ROSTER_COMBAT_ROUTES } from './rosterCombatRoutes'
 import type { RosterFighterId } from './rosterChoreography'
 import { DUEL_COMBO_LESSONS } from './duelComboLessons'
 import type { CombatRouteSetup } from './combatRouteSetup'
-import { WHIFF_PUNISH_LESSONS } from './whiffPunishLessons'
-import { ROSTER_WHIFF_PUNISH_LESSONS } from './rosterWhiffPunishLessons'
-import type { CombatWhiffPractice } from './combatWhiffPractice'
-import { WAKEUP_LESSONS } from './wakeupLessons'
 import { KAMEO_COMBO_LESSONS, type KameoComboLesson } from './kameos/comboLessons'
 
 const REFERENCE_FIGHTERS = ['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const
@@ -23,8 +19,6 @@ export interface CombatRoute {
   moves: readonly MoveSlot[]
   requirement: readonly [string, string]
   setup?: CombatRouteSetup
-  whiff?: CombatWhiffPractice
-  wakeup?: FighterId
   kameo?: KameoComboLesson
   /** Expected contacts per command; a barrage is entered once and must land every bullet. */
   hits?: readonly number[]
@@ -116,15 +110,18 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
     })),
   ),
   ...DUEL_COMBO_LESSONS,
-  ...WHIFF_PUNISH_LESSONS,
-  ...ROSTER_WHIFF_PUNISH_LESSONS,
-  ...WAKEUP_LESSONS,
+]
+/** Support exercises share native sequences but must never retune native movesets. */
+export const COMBAT_SCHOOL_ROUTES: readonly CombatRoute[] = [
+  ...COMBAT_ROUTES,
   ...KAMEO_COMBO_LESSONS,
 ]
 export const combatRoutesFor = (fighter: FighterId) =>
   COMBAT_ROUTES.filter((route) => route.fighter === fighter)
+export const combatLessonsFor = (fighter: FighterId) =>
+  COMBAT_SCHOOL_ROUTES.filter((route) => route.fighter === fighter)
 export function combatRoute(id: string): CombatRoute {
-  const route = COMBAT_ROUTES.find((entry) => entry.id === id)
+  const route = COMBAT_SCHOOL_ROUTES.find((entry) => entry.id === id)
   if (!route) throw Error('Unknown combat route')
   return route
 }

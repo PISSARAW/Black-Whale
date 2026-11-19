@@ -37,7 +37,10 @@ function advance(state: FightState, frames: number, input: FightInput = EMPTY_IN
 }
 
 function wounded(damage = 40, state = duel()): FightState {
-  return recordFightInjuries(state, { ...state, player: { ...state.player, health: state.player.health - damage } })
+  return recordFightInjuries(state, {
+    ...state,
+    player: { ...state.player, health: state.player.health - damage },
+  })
 }
 
 function armoured(damage = 40): FightState {

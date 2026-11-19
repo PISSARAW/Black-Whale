@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from '$lib/i18n'
+  import { link, t } from '$lib/i18n'
   import { tourWords } from '$lib/tour/workspaceWords'
 
   interface DeckOption {
@@ -60,6 +60,9 @@
       {#if props.hasTechnique}<span class="nen-dot" aria-hidden="true"></span>Nen ·
       {/if}{$tourWords.options}
     </button>
+    {#if props.immersive}<a class="clash-link" href={$link('/fighting')}
+        >{$t.tour.modes.clash.play}</a
+      >{/if}
     <button
       type="button"
       class="fullscreen-button"
@@ -112,7 +115,8 @@
     display: flex;
     gap: 0.4rem;
   }
-  button {
+  button,
+  .clash-link {
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -126,9 +130,14 @@
     font-size: 0.8rem;
     white-space: nowrap;
   }
-  button:hover {
+  button:hover,
+  .clash-link:hover {
     color: var(--text-primary);
     border-color: var(--accent-gold-bright);
+  }
+  .clash-link {
+    text-decoration: none;
+    color: var(--accent-gold-bright);
   }
   .plan-button {
     color: var(--accent-gold-bright);
@@ -160,6 +169,7 @@
       flex: 1 1 100%;
     }
     .toolbar-actions {
+      flex-wrap: wrap;
       width: 100%;
     }
     button {

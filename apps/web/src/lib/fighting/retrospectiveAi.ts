@@ -1,18 +1,23 @@
-import { fourCombatAi } from './fourCombatAi'
-import { chrolloEquipmentAi } from './chrolloEquipmentAi'
-import { multiCombatAi } from './multiCombatAi'
-import { priorityArsenalAi } from './priorityArsenalAi'
-import { luiniArsenalAi } from './luiniArsenal'
-import { biohazardDeviceAi } from './biohazardDeviceAi'
+import { littleEyeAi } from './littleEyeAi'
+import { paperTextureAi } from './paperTextureAi'
+import { illumiDisguiseAi } from './illumiDisguiseAi'
+import { prosthesisSkinAi } from './gumProsthesisAi'
+import { gumObjectAnchorAi } from './gumObjectAnchorAi'
+import { paperKitAi } from './kallutoMaterialAi'
+import { judgmentInquiryAi } from './judgmentInquiryAi'
+import { dolphinLoanAi } from './dolphinAi'
+import { blackVoiceAi } from './blackVoiceAi'
+import { bashoArsenalAi } from './bashoArsenalAi'
+import { physicalProjectile } from './projectileMatter'
+import { gallerySenseAi } from './galleryAi'
+import { deviceAi } from './deviceAi'
 import { dowsingAi } from './dowsingAi'
 import { singleCombatArsenalAi } from './singleCombatAi'
 import { judgmentAiPreset } from './judgmentAction'
 import { judgmentForbidsContact } from './judgmentCommunication'
 import { copiedArsenalAi } from './copiedArsenalAi'
-import { performGumCommand, ownsBungeeGum } from './hisokaArsenal'
+import { ownsBungeeGum } from './hisokaArsenal'
 import { gumNetworkAi } from './bungeeAi'
-import { perceivedProjectiles } from './projectilePerception'
-import { styleReactionFrames } from './styleMobility'
 import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -22,7 +27,7 @@ import { canAct } from './fightActorState'
 import { LUINI_ROOM_HALF_WIDTH } from './luiniSpatial'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
-import type { FightProjectile, FightState } from './types'
+import type { FightState } from './types'
 
 /** No resources, consent, interview answers or book pages are fabricated by an AI plan. */
 export function retrospectiveAiAction(
@@ -31,21 +36,31 @@ export function retrospectiveAiAction(
 ): FightState | null {
   if (!canAct(state.opponent) || state.opponent.attack) return null
   return (
-    physicalEquipmentAi(state, perform) ??
-    multiCombatAi(state) ??
-    priorityArsenalAi(state) ??
-    luiniArsenalAi(state, perform) ??
-    biohazardDeviceAi(state, perform) ??
-    dowsingAi(state) ??
+    prosthesisSkinAi(state, perform) ??
+    paperTextureAi(state, perform) ??
+    illumiDisguiseAi(state, perform) ??
+    dolphinLoanAi(state, perform) ??
+    paperKitAi(state) ??
+    utilityArsenalAi(state, perform) ??
     singleCombatArsenalAi(state, perform) ??
     hatsuArsenalAi(state, perform)
   )
 }
-function physicalEquipmentAi(
+
+function utilityArsenalAi(
   state: FightState,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
-  return chrolloEquipmentAi(state, perform) ?? fourCombatAi(state, perform)
+  return (
+    judgmentInquiryAi(state) ??
+    littleEyeAi(state) ??
+    blackVoiceAi(state) ??
+    bashoArsenalAi(state, perform) ??
+    deviceAi(state) ??
+    dowsingAi(state) ??
+    gallerySenseAi(state) ??
+    judgmentAiPreset(state)
+  )
 }
 
 function supportAi(state: FightState): FightState | null {
@@ -166,6 +181,8 @@ function unstampedPuppet(entry: import('./preparationTypes').PreparedEntity): bo
 function gumAi(state: FightState): FightState | null {
   const fighter = state.opponent
   if (!ownsBungeeGum(fighter)) return null
+  const prostheses = gumProsthesisAi(state)
+  if (prostheses) return prostheses
   const action = fighter.gumCatch?.projectile
     ? 'gum-return'
     : shouldSealWounds(state)
@@ -173,17 +190,17 @@ function gumAi(state: FightState): FightState | null {
       : incomingObject(state)
         ? 'gum-catch'
         : null
-  if (!action) return gumNetworkAi(state)
-  const next = performGumCommand(state, 'opponent', { action })
+  if (!action) return gumObjectAnchorAi(state) ?? gumNetworkAi(state)
+  const next = performArsenalCommand(state, 'opponent', { action })
   return next === state ? null : next
 }
-/** A deliberately prepared catch may replace ordinary guard, but never bypass hitstun or its cost. */
-export function hisokaInterceptionAi(state: FightState): FightState | null {
-  const fighter = state.opponent
-  if (fighter.id !== 'hisoka' || !canAct(fighter) || fighter.attack) return null
-  if (!incomingObject(state)) return null
-  const next = performGumCommand(state, 'opponent', { action: 'gum-catch' })
-  return next === state ? null : next
+
+function gumProsthesisAi(state: FightState): FightState | null {
+  if (!state.opponent.bodyDamage) return null
+  if (state.opponent.gumProstheses && Math.abs(state.opponent.x - state.player.x) <= 12) return null
+  const action = state.opponent.gumProstheses ? 'gum-spring-step' : 'gum-prosthesis'
+  const formed = performArsenalCommand(state, 'opponent', { action })
+  return formed === state ? null : formed
 }
 function shouldSealWounds(state: FightState): boolean {
   return (
@@ -192,28 +209,16 @@ function shouldSealWounds(state: FightState): boolean {
   )
 }
 function incomingObject(state: FightState): boolean {
-  return perceivedProjectiles(state, 'opponent').some(
+  return state.projectiles.some(
     (shot) =>
       shot.owner === 'player' &&
-      shot.matter === 'object' &&
+      physicalProjectile(shot) &&
       !shot.living &&
-      observedCatch(state, shot) &&
       perceivesProjectile(state.opponent, shot) &&
       Math.abs(shot.x - state.opponent.x) < 18 &&
       shot.velocityX * state.opponent.facing < 0 &&
       Math.abs(shot.y - state.opponent.y - 7) < 3,
   )
-}
-function observedCatch(state: FightState, shot: FightProjectile): boolean {
-  const fighter = state.opponent
-  if (fighter.id !== 'hisoka') return true
-  const memory = fighter.projectileDefence
-  const seen = memory?.ids.includes(shot.id)
-    ? memory.frames
-    : fighter.counterplayRead?.key === `projectile:${shot.id}`
-      ? fighter.counterplayRead.frames
-      : 0
-  return seen >= styleReactionFrames(fighter)
 }
 function interviewAi(state: FightState): FightState | null {
   const fighter = state.opponent

@@ -1,0 +1,73 @@
+import { prepareSeveredForearms, type SeveredForearm } from './severedForearms'
+import { gumSupportAvailable } from './hisokaSupportOrigin'
+import { limbInjury, surfaceInjury } from './injuryPreparation'
+import type { GumSource } from './bungeeSource'
+import type { ArcadeFighter, FightState } from './types'
+
+export const DAMAGED_BODY_PARTS = ['left-hand', 'right-lower-leg'] as const
+export const DAMAGED_SURFACES = ['facial-surface', 'neck-surface'] as const
+export type DamagedBodyPart =
+  SeveredForearm | (typeof DAMAGED_BODY_PARTS)[number] | (typeof DAMAGED_SURFACES)[number]
+export interface GumProstheses extends GumSource {
+  id: string
+  hidden?: boolean
+  parts: readonly DamagedBodyPart[]
+}
+declare module './types' {
+  interface ArcadeFighter {
+    bodyDamage?: { parts: readonly DamagedBodyPart[] }
+    gumProstheses?: GumProstheses
+    gumProsthesisGeneration?: number
+  }
+}
+
+/** A rubber replacement does not repair the underlying flesh or restore hit points. */
+export function bodyPartFunctional(actor: ArcadeFighter, part: DamagedBodyPart): boolean {
+  if (!actor.bodyDamage?.parts.includes(part)) return true
+  return Boolean(
+    actor.gumProstheses?.parts.includes(part) && gumSupportAvailable(actor, actor.gumProstheses),
+  )
+}
+
+/** A detached forearm also removes the hand carried by that physical limb. */
+export function physicalHandFunctional(actor: ArcadeFighter, hand: 'left' | 'right'): boolean {
+  if (!bodyPartFunctional(actor, hand === 'left' ? 'left-forearm' : 'right-forearm')) return false
+  return hand !== 'left' || bodyPartFunctional(actor, 'left-hand')
+}
+
+/** This mobility reduction is duel tuning, not a numerical rule from the manga. */
+export function bodyLegFactor(actor: ArcadeFighter): number {
+  return bodyPartFunctional(actor, 'right-lower-leg') ? 1 : 0.5
+}
+
+export function prepareBodyDamage(state: FightState): FightState {
+  const injuries = state.environment.preparation?.injuries
+  if (state.environment.preparation?.mode !== 'scenario' || !injuries) return state
+  let next = state
+  for (const side of ['player', 'opponent'] as const) {
+    if (injuries[side] === 'severed-forearms') {
+      next = prepareSeveredForearms(next, side)
+      continue
+    }
+    const parts: DamagedBodyPart[] = [
+      ...(limbInjury(injuries[side]) ? DAMAGED_BODY_PARTS : []),
+      ...(surfaceInjury(injuries[side]) ? DAMAGED_SURFACES : []),
+    ]
+    if (parts.length) next = { ...next, [side]: { ...next[side], bodyDamage: { parts } } }
+  }
+  return next
+}
+
+export function carryBodyDamage(actor: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  if (!previous.bodyDamage) return actor
+  return {
+    ...actor,
+    bodyDamage: previous.bodyDamage,
+    gumProstheses: previous.gumProstheses,
+    gumProsthesisGeneration: previous.gumProsthesisGeneration,
+    textureSurprise:
+      previous.textureSurprise?.surface === 'gum-prostheses'
+        ? previous.textureSurprise
+        : actor.textureSurprise,
+  }
+}

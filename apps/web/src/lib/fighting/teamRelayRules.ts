@@ -1,4 +1,7 @@
 import { teamWorldEngaged } from './teams/commitments'
+import { anyPaperTextureBusy } from './paperTexture'
+import { illumiRelaySignature } from './illumiDisguiseClock'
+import { anyCopiedNeedleFaceBusy } from './illumiNeedleFaceClock'
 import { createFightState } from './fightState'
 import { canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
@@ -8,8 +11,27 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 // Body bookkeeping, inert speech history and uncast clause choices may differ off stage.
 // All other fields must match the resting character: no clock, loan, seal or Hatsu is suspended.
 const BODY_FIELDS = new Set([
+  'secretWindow',
+  'kallutoPaper',
+  'paperKit',
+  'plantedPaper',
+  'blackVoiceScreen',
+  'stolenChainAbility',
+  'blackVoiceGear',
+  'equipment',
+  'equipmentProps',
+  'melodyFlute',
+  'writingKit',
+  'bashoWard',
+  'personalEncounters',
+  'dowsingScreened',
   'heardWords',
+  'speechPulse',
   'dowsingReading',
+  'dowsingAcquaintances',
+  'dowsingMapReading',
+  'devicePlayback',
+  'receiverReading',
   'judgmentPreset',
   'judgmentDeclaration',
   'x',
@@ -17,6 +39,18 @@ const BODY_FIELDS = new Set([
   'velocityY',
   'facing',
   'health',
+  'openWounds',
+  'bodyDamage',
+  'gumProsthesisGeneration',
+  'textureTarget',
+  'illumiDisguisePlan',
+  'illumiNeedleMode',
+  'illumiNeedleGeneration',
+  'illumiDisguisePins',
+  'texturePaperDraft',
+  'texturePaperId',
+  'paperTextureGeneration',
+  'documentReading',
   'maxHealth',
   'aura',
   'auraExhausted',
@@ -50,15 +84,18 @@ function restingNen(actor: ArcadeFighter): boolean {
 }
 function restingSignature(actor: ArcadeFighter) {
   const values = Object.fromEntries(
-    Object.entries(restingBody(actor)).filter(([key]) => !BODY_FIELDS.has(key)),
+    Object.entries(restingBody(relayDolphinState(actor))).filter(([key]) => !BODY_FIELDS.has(key)),
   )
   return replayChecksum(restingValue(values))
 }
 function restingBody(actor: ArcadeFighter): ArcadeFighter {
   const body = {
     ...actor,
+    illumi: illumiRelaySignature(actor),
+    on: actor.on?.sealFrames ? { grudge: 0, sealFrames: actor.on.sealFrames } : undefined,
     hatsuEffects: {
       ...actor.hatsuEffects,
+      baton: restingWindowBaton(actor.hatsuEffects.baton),
       witnessedHatsu: null,
       witnessedAt: undefined,
       witnessedMoveId: undefined,
@@ -66,6 +103,25 @@ function restingBody(actor: ArcadeFighter): ArcadeFighter {
   }
   return actor.kurapika ? { ...body, kurapika: { ...actor.kurapika, lifespanFrames: 0 } } : body
 }
+
+function restingWindowBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
+  return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
+}
+function relayDolphinState(actor: ArcadeFighter): ArcadeFighter {
+  const chain = actor.kurapika
+  let next = actor
+  if (actor.dolphinLoan && !actor.dolphinLoan.held.used) next = { ...next, dolphinLoan: undefined }
+  if (!chain) return next
+  const normalized = { ...chain, lifespanFrames: 0 }
+  if (chain.dolphinLoans?.length && !chain.held?.loaded) {
+    normalized.emperorTime = false
+    normalized.continuousFrames = 0
+    normalized.dolphinLoans = undefined
+    normalized.held = null
+  }
+  return { ...next, kurapika: normalized }
+}
+
 function restingValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(restingValue)
   if (!value || typeof value !== 'object') return value
@@ -82,15 +138,23 @@ function quietWorld(state: FightState): boolean {
       state.parallelFuture,
       state.forecastSimulation,
       state.catsName,
+      state.gumResuscitation,
       state.moonlight,
       state.bungeeGum,
-      state.gumNetwork?.links.length ||
-        state.gumNetwork?.pending.player ||
-        state.gumNetwork?.pending.opponent,
+      gumBusy(state),
+      anyPaperTextureBusy(state),
+      anyCopiedNeedleFaceBusy(state),
       state.lsdf,
       state.voconteDoors,
       state.expulsion,
-    ].some(Boolean) && state.projectiles.length === 0
+      wardBusy(state.player),
+      wardBusy(state.opponent),
+    ].some(Boolean) &&
+    state.projectiles.length === 0 &&
+    !state.battlefield?.entities.some(
+      (entry) =>
+        entry.device?.form || entry.device?.transforming || entry.blackVoiceControl?.active,
+    )
   )
 }
 export function teamRelayBlock(state: FightState, side: FightSide): 'body' | 'commitment' | null {
@@ -98,6 +162,8 @@ export function teamRelayBlock(state: FightState, side: FightSide): 'body' | 'co
   if (!relayBodyFree(actor)) return 'body'
   const target = state[side === 'player' ? 'opponent' : 'player']
   const links = [
+    target.blackVoiceControl?.active,
+    target.blackVoiceControl?.active,
     target.chainJail,
     target.drainingChain,
     target.judgmentChain,
@@ -119,6 +185,7 @@ function relayBodyFree(actor: ArcadeFighter) {
   const motion = motionOf(actor)
   return (
     canMove(actor) &&
+    (actor.bashoWard?.remainingFrames ?? 0) === 0 &&
     actor.y === 0 &&
     ![
       actor.bufferedAttack,
@@ -148,4 +215,15 @@ export function teamEntry(actor: ArcadeFighter, side: FightSide): ArcadeFighter 
     blocking: false,
     guardFrames: 0,
   }
+}
+
+function gumBusy(state: FightState) {
+  return (
+    state.gumNetwork?.links.length ||
+    state.gumNetwork?.pending.player ||
+    state.gumNetwork?.pending.opponent
+  )
+}
+function wardBusy(actor: FightState['player']) {
+  return (actor.bashoWard?.remainingFrames ?? 0) > 0
 }

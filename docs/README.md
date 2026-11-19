@@ -42,6 +42,10 @@ Ce dépôt utilise une doc **ancrée** ([ADR-006](decision/adr-006-la-doc-ancree
 - [Décisions d'architecture](decision/) — ADR-001 à ADR-006
 - [Backlogs et audits clos](archive/) — lecture seule
 
+## Contrôles visuels
+
+- [Tour et Clash — comparaison des 40 personnages](comparaisons/tour-clash-40/README.md)
+
 ## Généré
 
 - [`.gen/`](.gen/) — routes, tests, symboles, dépendances, données, bornes, hatsu

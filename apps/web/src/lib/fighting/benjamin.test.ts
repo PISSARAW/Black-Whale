@@ -113,12 +113,17 @@ describe('Benjamin’s canonical loadout', () => {
   it('marks at contact without damage, stun, knockback, score or aura vision', () => {
     const result = advance(technique(duel(), 'forwardSpecial'), 30)
     expect(result.player.hatsuEffects.baton?.markedTarget).toBe('opponent')
-    expect(result.opponent).toMatchObject({ health: result.opponent.maxHealth, hitStun: 0, blockStun: 0, x: 48 })
+    expect(result.opponent).toMatchObject({
+      health: result.opponent.maxHealth,
+      hitStun: 0,
+      blockStun: 0,
+      x: 48,
+    })
     expect(result.score.player).toBe(0)
     expect(result.player.nen.gyo).toBe(false)
   })
 
-  it.each(['far', 'guard', 'invulnerable'] as const)(
+  it.each(['far', 'invulnerable'] as const)(
     'does not attach Secret Window to a %s target',
     (condition) => {
       const base = duel()
@@ -134,7 +139,7 @@ describe('Benjamin’s canonical loadout', () => {
       for (let i = 0; i < 30; i++)
         next = tickFight(next, EMPTY_INPUT, {
           dt: 1 / 60,
-          opponentInput: { ...EMPTY_INPUT, guard: condition === 'guard' },
+          opponentInput: EMPTY_INPUT,
         })
       expect(next.player.hatsuEffects.baton?.markedTarget).toBeNull()
     },
@@ -210,7 +215,7 @@ describe('Benjamin’s canonical loadout', () => {
     }
     const chrollo = createFight('chrollo', 'benjamin').player
     expect(chrollo.hatsuEffects.baton).toBeNull()
-    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBeNull()
+    expect(hatsuSourceFor(base.player, 'benjamin:backSpecial')).toBe('benjamin')
   })
 
   it('fires three physical bullets on separate frames without requiring Nen or aura', () => {

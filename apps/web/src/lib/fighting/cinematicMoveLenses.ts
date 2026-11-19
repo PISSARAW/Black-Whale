@@ -1,5 +1,6 @@
 import { moveById } from './movesets'
 import { bodyguardShotDetail } from './bodyguardCamera'
+import { needleFaceCamera } from './illumiNeedleCamera'
 import { fighterDefinition } from './roster'
 import { rig, prop, node } from './cinematicRules'
 import type { CameraDetail, CameraPart } from './cinematicTypes'
@@ -84,7 +85,8 @@ function chainTip(source: FighterId, slot?: string) {
   return source === 'kurapika' ? TIPS[slot ?? 'neutralSpecial'] : undefined
 }
 export function castCameraDetail(state: FightState, side: FightSide): CameraDetail {
-  return bodyguardShotDetail(state, side) ?? ordinaryCastCameraDetail(state, side)
+  const detail = bodyguardShotDetail(state, side) ?? ordinaryCastCameraDetail(state, side)
+  return needleFaceCamera(detail, state[side].attack?.illumiNeedleMode)
 }
 
 function ordinaryCastCameraDetail(state: FightState, side: FightSide): CameraDetail {

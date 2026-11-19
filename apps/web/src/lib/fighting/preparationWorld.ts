@@ -1,3 +1,10 @@
+import { scenarioOito } from './dolphinPeopleWorld'
+import { scenarioPaperDocument } from './paperDocuments'
+import { scenarioArenaMap } from './arenaMap'
+import { scenarioPaperKit } from './kallutoMaterials'
+import { scenarioWeakSpirit } from './bashoWard'
+import { scenarioWritingKit } from './bashoMaterials'
+import { scenarioDevices } from './physicalDevices'
 import type { FightEnvironment } from './fightEnvironment'
 import type {
   FightBattlefield,
@@ -13,7 +20,7 @@ export const PREPARATION_REACH = 8
 
 export function personalEquipment(id: FighterId): FightEquipment[] {
   if (id === 'hinrigh') return ['tracker-receiver']
-  if (id === 'illumi') return ['needles']
+  if (id === 'illumi' || id === 'machi') return ['needles']
   if (id === 'zakuro') return ['blood-infusion']
   if (id === 'melody') return ['flute']
   return id === 'chrollo' ? ['book'] : []
@@ -42,6 +49,7 @@ export function createBattlefield(environment: FightEnvironment): FightBattlefie
 
 function installScenario(entities: PreparedEntity[], preparation: FightPreparation) {
   const resources = new Set(preparation.resources)
+  if (resources.has('people')) entities.push(scenarioOito())
   for (const side of ['player', 'opponent'] as const) {
     const x = side === 'player' ? 25 : 75
     installProps(entities, { resources, side, x })
@@ -56,33 +64,29 @@ function installProps(
   context: { resources: Set<string>; side: FightSide; x: number },
 ) {
   const { resources, side, x } = context
-  installEvidenceProps(entities, context)
-  if (resources.has('animals')) entities.push(entity('animal', side, x + 2))
-  if (resources.has('birds')) entities.push(entity('bird', side, x + 3))
+  installSupplyProps(entities, context)
+  installLegacyProps(entities, context)
+  if (resources.has('animals'))
+    entities.push({ ...entity('animal', side, x + 2), animalSize: 'mouse', health: 1 })
+  if (resources.has('birds'))
+    entities.push({ ...entity('bird', side, x + 3), animalSize: 'larger' })
   if (resources.has('plants')) entities.push(entity('seed', side, x))
   if (resources.has('objects')) entities.push(entity('crate', side, x + 4))
   if (resources.has('needles')) entities.push(entity('needles', side, x - 2))
   if (resources.has('flutes')) entities.push(entity('flute', side, x - 1))
 }
 
-function installEvidenceProps(
+function installSupplyProps(
   entities: PreparedEntity[],
-  context: { resources: Set<string>; side: FightSide; x: number },
+  context: { resources: Set<string>; side: FightSide },
 ) {
-  const { resources, side, x } = context
-  if (resources.has('armed-corpses'))
-    entities.push({
-      ...entity('corpse', side, x + 3),
-      id: `${side}:armed-corpse`,
-      health: 60,
-      arena: { width: 1, height: 3 },
-      corpseGunRounds: 12,
-    })
-  if (resources.has('corpses'))
-    entities.push({ ...entity('corpse', side, x + 1), health: 60, arena: { width: 1, height: 3 } })
-  if (resources.has('cameras')) entities.push(entity('camera', side, x + 1))
-  if (resources.has('hostages'))
-    entities.push({ ...entity('hostage', side, x + 3), captiveOf: side })
+  const { resources, side } = context
+  if (resources.has('spirits')) entities.push(scenarioWeakSpirit(side))
+  if (resources.has('writing')) entities.push(scenarioWritingKit(side))
+  if (resources.has('documents')) entities.push(scenarioPaperDocument(side))
+  if (resources.has('maps')) entities.push(scenarioArenaMap(side))
+  if (resources.has('paper')) entities.push(scenarioPaperKit(side))
+  if (resources.has('devices')) entities.push(...scenarioDevices(side))
 }
 
 function installRooms(entities: PreparedEntity[], side: FightSide) {
@@ -187,7 +191,8 @@ export function hasEquipment(fighter: FightState['player'], equipment: FightEqui
 
 export function readyCohort(state: FightState, side: FightSide): PreparedEntity[] {
   return entitiesFor(state, side, 'supporter').filter(
-    (entry) => entry.consenting && entry.feather && !entry.sleepingFrames,
+    (entry) =>
+      entry.consenting && entry.feather && !entry.sleepingFrames && !entry.halkenburgPassenger,
   )
 }
 
@@ -197,4 +202,19 @@ function changedEntity(entry: PreparedEntity, change: Partial<PreparedEntity>): 
   return entry.kind === 'room'
     ? { ...next, invalidated: entry.invalidated || next.invalidated || next.sealed === false }
     : next
+}
+
+function installLegacyProps(
+  entities: PreparedEntity[],
+  c: { resources: Set<string>; side: FightSide; x: number },
+) {
+  if (c.resources.has('cameras')) entities.push(entity('camera', c.side, c.x + 1))
+  if (c.resources.has('hostages'))
+    entities.push({ ...entity('hostage', c.side, c.x + 3), captiveOf: c.side })
+  if (c.resources.has('corpses'))
+    entities.push({
+      ...entity('corpse', c.side, c.x + 1),
+      health: 60,
+      arena: { width: 1, height: 3 },
+    })
 }

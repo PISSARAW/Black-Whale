@@ -12,6 +12,7 @@
     "test": "turbo test",
     "test:ratchet": "vitest run",
     "test:balance": "tsx scripts/report-fighting-balance.ts",
+    "fighting:frames": "tsx scripts/report-fighting-frames.ts",
     "test:combat-reference": "tsx scripts/run-combat-reference.ts",
     "test:command-qualification": "tsx scripts/report-command-qualification.ts",
     "typecheck": "turbo typecheck",

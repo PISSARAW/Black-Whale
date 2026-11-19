@@ -87,11 +87,13 @@
               ? 'Plaie requise'
               : 'Wound required'}
         </p>
-        {#if maryWoundSeals(fighter) > 0}<p>
-            {fr
-              ? 'Saignement arrêté par le contrôle du sang · aucun PV rendu'
-              : 'Bleeding stopped by blood control · no HP restored'}
-          </p>{/if}
+        {#if maryWoundSeals(fighter) > 0}
+          <p role="status">
+            {fr ? 'Saignement arrêté' : 'Bleeding stopped'} · {fr
+              ? 'La plaie reste ouverte'
+              : 'The wound remains open'}
+          </p>
+        {/if}
         {#if !maryHasInfusion(fighter)}<p class="warning">
             {fr
               ? 'Perfusion réelle manquante : le Hatsu ne fournit pas le matériel.'
@@ -132,7 +134,7 @@
             {blood.drops.length}
             {fr ? 'gouttes en reconnaissance' : 'scouting droplets'}
           </p>{/if}
-        {#if blood.lastSeen && (side === 'player' || state.mode !== 'versus-ai')}<p>
+        {#if blood.lastSeen && (side === 'player' || state.mode === 'versus-local')}<p>
             {fr ? 'Dernière position observée' : 'Last observed position'} : {blood.lastSeen.x.toFixed(
               1,
             )} · {Math.max(0, (state.frame - blood.lastSeen.frame) / 60).toFixed(1)} s

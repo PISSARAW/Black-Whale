@@ -1,13 +1,14 @@
 import { buildMoveset } from './movesetFactory'
 import type { FighterMoveset } from './movesetTypes'
+import { windowListeningMove } from './secretWindowListeningMove'
 
-/** Chapter 373: an ordinary handgun and a contact surveillance bird, no execution Hatsu. */
+/** Chapters 366/373: handgun, shoulder eavesdropping and contact surveillance. */
 export function musseMoveset(): FighterMoveset {
   const base = buildMoveset({
     fighterId: 'musse',
     mechanic: [
-      'U : tir au pistolet, sans aura. L : poser Secret Window au contact ; gestes et paroles sont transmis en privé. L’arsenal propose aussi le hibou d’écoute à l’épaule, à travers les obstacles, et le rappel. Un seul hibou actif ; les observations reçues restent consultables pendant son maintien. Aucun dégât, entrave ou lecture de pensée.',
-      'U: fire the handgun without aura. L: attach Secret Window by touch; actions and speech are relayed privately. The arsenal also offers the shoulder listening bird through obstacles, and dismissal. One active bird; received observations can be reviewed while maintained. No damage, restraint or thought reading.',
+      'U : tir au pistolet, sans aura. L : poser Secret Window au contact ; bas + L : écouter avec le hibou d’épaule. Le hibou transmet les gestes de la cible sans dégâts, entrave ni lecture d’aura. La garde ne supprime pas un contact réel. Le hibou n’est visible que de son utilisateur.',
+      'U: fire the handgun without aura. L: attach Secret Window by touch; down + L: summon the shoulder listening owl. Its owl reports the target’s gestures without damage, restraint or aura reading. Guard does not negate physical touch. Only the user sees the owl.',
     ],
     finisherCondition: ['', ''],
     labels: [
@@ -40,7 +41,11 @@ export function musseMoveset(): FighterMoveset {
     ...base,
     moves: base.moves
       .filter((move) => move.category !== 'finisher')
-      .filter((move) => move.category !== 'special' || move.slot === 'neutralSpecial')
+      .filter(
+        (move) =>
+          move.category !== 'special' || ['neutralSpecial', 'downSpecial'].includes(move.slot),
+      )
+      .map((move) => (move.slot === 'downSpecial' ? windowListeningMove(move) : move))
       .map((move) =>
         move.slot !== 'neutralSpecial'
           ? move

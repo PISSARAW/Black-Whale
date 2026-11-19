@@ -55,15 +55,17 @@ Le plan courant compte 429 espaces sur 46 niveaux, dont 35 niveaux intérieurs.
 
 ## Navigation de la visite
 
-`TourWorkspace.svelte` garde la scène montée sur toute la largeur. La barre propose le pont, les plans, la recherche et le plein écran ; le panneau Options regroupe Confort, Lieux / Nen, Commandes et Sources. Les outils photo et Gyo restent dans la vue.
+`TourWorkspace.svelte` garde la scène montée sur toute la largeur. La barre propose le
+pont, les plans, la recherche et le plein écran ; le panneau Options regroupe Confort,
+Lieux / Nen, Commandes et Sources. Les outils photo et Gyo restent dans la vue.
 
-Le sélecteur de `TourPlanDialog.svelte` consulte les ponts et les intérieurs sans déplacer le visiteur. Seule la sélection d’une pièce déclenche le déplacement. « Ma position » revient au niveau parcouru ; le marqueur de position ne figure que sur ce niveau. `TourPlanViewport.svelte` porte le zoom et le déplacement du plan, sans sélectionner une pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie sous le plan.
+Le sélecteur de `TourPlanDialog.svelte` consulte les ponts et les intérieurs sans déplacer
+le visiteur. Seule la sélection d’une pièce déclenche le déplacement. « Ma position »
+revient au niveau parcouru ; le marqueur de position ne figure que sur ce niveau.
+`TourPlanViewport.svelte` porte le zoom et le déplacement du plan, sans sélectionner une
+pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie sous le plan.
 
 ## Modèles humains communs
-
-`humanLocomotion.ts` pilote les corps rendus à partir de leur déplacement réel : vitesse et accélération bornées, demi-tours avec pas alternés, puis retour progressif à la pose de repos. `humanFootSupport.ts` conserve l'appui en coordonnées monde après les transitions. Le cycle de `humanWalk.ts` suit la distance parcourue ; l'horloge murale ne fait pas marcher un personnage immobile. La scène conserve ce contrôleur quand une apparence est reconstruite. `humanLocomotion.test.ts` vérifie les transitions, les appuis, les demi-tours, le freinage avant un changement de direction et les frames figées.
-
-Les contacts de Tour et Clash partagent `humanLimbReach.ts` et `humanJointLimits.ts` : le solveur garde les genoux et coudes sur leur axe de flexion, sans allonger les membres. La liberté de rotation du genou diminue à l'approche de l'extension. Le plan de flexion précédent guide les contacts mobiles ; les rotations équivalentes autour de ±180° sont conservées pour éviter un retournement artificiel de l'épaule.
 
 `humanFigure.ts` construit les personnages de la visite, les aperçus de sélection et
 les combattants de Fighting 2D (`apps/web/src/lib/fighting/fighterFigure.ts`). Les détails des visages,
@@ -93,31 +95,31 @@ Les références fournies par le mainteneur et les palettes choisies sont docume
 `data/characters/appearance.json` ; l’attribution de la tenue à capuche à Tserriednich suit
 sa confirmation explicite. `bonolenovBattleArmor.ts` fournit la forme Prologue partagée.
 
+`humanModelFinish.ts` ajoute la finition des yeux et du visage directement dans
+`buildHumanFigure`. Elle est ainsi utilisée par la visite, Chasse, Infiltration,
+Arène et Clash, avec les mêmes buffers partagés et les mêmes articulations.
+Les détails restent dans le modèle proche ; le LOD lointain conserve ses trois
+formes simples. Les visages spécifiques de Kurapika et Morena sont préservés.
+`humanModelFinish.test.ts` compare le constructeur d’apparitions des modes Tour
+aux quarante combattants, vérifie les exceptions et la durée de vie des buffers.
+
 `mangaTubeppaHead.ts` et `mangaTubeppaSuit.ts` suivent la référence de réception fournie :
 coupe blonde en bol, nez long, menton carré, lunettes ouvertes et boucles d’oreilles ;
 costume croisé sombre à liserés clairs. L’apparence est commune à la visite et au kaméo
 de Clash. La planche `manga-cast` construit aussi les vrais modèles de combat des kaméos.
 
 `mangaMarayamHead.ts`, `mangaMarayamClothes.ts` et `mangaMarayamProfile.ts` reprennent
-la tenue publique de Marayam : tête ronde, yeux noirs écartés, cheveux turquoise courts,
-smoking croisé, nœud papillon et short. Son gabarit propre raccourcit le cou et les
-membres tout en agrandissant la tête ; les pièces de short suivent chaque hanche
-et les jambes nues conservent leurs articulations. L’apparence est partagée avec Clash.
+la tête ronde, les yeux noirs écartés, les cheveux turquoise, le smoking et le short.
+Son gabarit enfant garde les articulations des jambes et les attaches aux hanches.
 
-`mangaZhangLeiHead.ts` construit le crâne chauve, le menton carré, les yeux cernés,
-les six points du front, la moustache crayon et les lobes allongés de Zhang Lei.
-`mangaZhangLeiProfile.ts` conserve des proportions d’adulte petit et trapu.
-`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` reprennent sa tunique claire
-à plastron sombre, ses broderies et son pantalon ample resserré aux chevilles.
-Ces modèles et leurs géométries restent communs à la visite et au kaméo de Clash.
+`mangaZhangLeiHead.ts` et `mangaZhangLeiProfile.ts` portent le crâne chauve, le menton
+carré, les yeux cernés, six points, la moustache et les lobes allongés de Zhang Lei.
+`mangaZhangLeiClothes.ts` et `mangaZhangLeiLimbs.ts` portent tunique brodée et pantalon.
 
-`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` reprennent
-les yeux bruns en amande de Morena, ses longs cheveux bleu sombre aux mèches
-recourbées, ses deux cicatrices sur l’œil gauche, les seize anneaux à l’oreille
-gauche et sa couronne d’épines. Les cicatrices sont projetées sur la surface du
-visage à la construction. `mangaMorenaClothes.ts` porte la robe noire ajustée,
-les épaules découvertes, les manches longues et les bottes ; la pose assise garde
-sa propre jupe sur les cuisses. L’apparence est commune à la visite et à Clash.
+`mangaMorenaHead.ts`, `mangaMorenaHair.ts` et `mangaMorenaMarks.ts` portent les yeux
+bruns, cheveux bleu sombre recourbés, cicatrices projetées, seize anneaux et couronne.
+`mangaMorenaClothes.ts` porte la robe noire aux épaules découvertes et les bottes ;
+sa jupe assise suit les cuisses. Ces modèles restent partagés avec la visite et Clash.
 
 `mangaLuzurusGeometry.ts`, `mangaLuzurusFace.ts` et `mangaLuzurusHair.ts` portent son visage rectangulaire,
 son nez pointu, sa barbe légère et ses deux houppes foncées. `mangaLuzurusClothes.ts` et `mangaLuzurusLimbs.ts`

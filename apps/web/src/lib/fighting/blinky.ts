@@ -1,9 +1,9 @@
-import { ownsBungeeGum } from './hisokaArsenal'
+import { maryWoundSeals } from './bloodyMary'
+import { gumSupportAvailable } from './hisokaSupportOrigin'
 import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
-import { maryWoundSeals } from './bloodyMary'
 import type { ArcadeFighter, FightInput, FightProjectile, FightSide, FightState } from './types'
 
 export type BlinkyTarget = 'bullet' | 'card' | 'stone' | 'needle'
@@ -92,7 +92,7 @@ export function exposedBlinkyWounds(fighter: ArcadeFighter): number {
   return Math.max(
     0,
     (fighter.openWounds ?? 0) -
-      (ownsBungeeGum(fighter) ? (fighter.gumWoundSeals ?? 0) : 0) -
+      (gumSupportAvailable(fighter, fighter.gumWoundOrigin) ? (fighter.gumWoundSeals ?? 0) : 0) -
       maryWoundSeals(fighter) -
       (fighter.pluggingWounds ? 2 : 0),
   )

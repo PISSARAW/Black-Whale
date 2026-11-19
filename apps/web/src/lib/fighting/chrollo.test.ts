@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { describe, expect, it } from 'vitest'
 import {
   beginFight,
@@ -120,7 +121,9 @@ describe('Bandit’s Secret and Double Face', () => {
       page: 2,
       open: true,
     })
-    expect(acquired.opponent.skillHunterStolen).toEqual([{ owner: 'player', moveId: 'illumi:neutralSpecial' }])
+    expect(acquired.opponent.skillHunterStolen).toEqual([
+      { owner: 'player', moveId: 'illumi:neutralSpecial' },
+    ])
     expect(hatsuSourceFor(acquired.opponent)).toBeNull()
     expect(hatsuSourceFor(acquired.player, CHROLLO_USE)).toBe('illumi')
     const turned = action(acquired, CHROLLO_TURN)
@@ -163,7 +166,9 @@ describe('Bandit’s Secret and Double Face', () => {
         needlePuppet: { owner: 'player' as const, order: 'stay' as const, needleEmbedded: true },
       },
     }
-    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({ needleEmbedded: false })
+    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({
+      needleEmbedded: false,
+    })
     const closed = action(controlled, CHROLLO_BOOKMARK)
     const kept = action(advance(closed), CHROLLO_TURN)
     expect(kept.opponent.needlePuppet?.needleEmbedded).toBe(true)
@@ -202,8 +207,14 @@ describe('Bandit’s Secret and Double Face', () => {
       ...base,
       player: { ...base.player, chrolloBook: { ...base.player.chrolloBook!, page: 1 } },
     }
-    const planted = impact(voice, CHROLLO_USE)
-    const ordered = hatsuFor('chrollo').onFrame(planted)
+    const armed = performArsenalCommand(voice, 'player', { action: 'voice-arm' })
+    const planted = impact(armed, CHROLLO_USE)
+    const phone = performArsenalCommand(planted, 'player', { action: 'voice-phone' })
+    const command = performArsenalCommand(phone, 'player', {
+      action: 'voice-retreat',
+      target: 'opponent',
+    })
+    const ordered = hatsuFor('chrollo').onFrame(command)
     expect(ordered.opponent.x).toBeGreaterThan(planted.opponent.x)
     expect(ordered.opponent.blocking).toBe(false)
     expect(action(ordered, CHROLLO_TURN).opponent.hatsuEffects.manipulatedFrames).toBe(0)

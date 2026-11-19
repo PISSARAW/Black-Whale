@@ -4,6 +4,7 @@ import type { ArcadeFighter, FightProjectile, FightSide } from './types'
 export type BenjaminInheritance = 'air-blow' | 'secret-window' | 'culdcept'
 
 export interface BenjaminBatonState {
+  musseArchive?: import('./benjaminMusseArchive').MusseRetrospectiveArchive
   inherited: readonly BenjaminInheritance[]
   markedTarget: FightSide | null
   card: FightProjectile | null
@@ -51,6 +52,7 @@ export function benjaminNenActive(fighter: ArcadeFighter): boolean {
 const INHERITED_MOVES: Readonly<Record<string, BenjaminInheritance>> = {
   'benjamin:neutralSpecial': 'air-blow',
   'benjamin:forwardSpecial': 'secret-window',
+  'benjamin:backSpecial': 'secret-window',
   'benjamin:downSpecial': 'culdcept',
   'benjamin:finisher': 'culdcept',
 }
@@ -61,6 +63,7 @@ export function benjaminMoveAvailable(fighter: ArcadeFighter, moveId?: string): 
   if (!required) return true
   const baton = fighter.hatsuEffects.baton
   if (!baton?.inherited.includes(required) || !benjaminNenActive(fighter)) return false
+  if (moveId === 'benjamin:backSpecial' && fighter.secretWindowListening) return false
   return moveId !== 'benjamin:finisher' || baton.card !== null
 }
 

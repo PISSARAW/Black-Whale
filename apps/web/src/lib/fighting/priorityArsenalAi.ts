@@ -1,3 +1,7 @@
+import { sunMoonChargeAi } from './sunMoonChargeAi'
+import { gumResuscitationAi } from './gumResuscitationAi'
+import { ghostwriterAi } from './ghostwriterAi'
+import { machiReattachmentAi } from './machiReattachmentAi'
 import { performMachiMaterial } from './machiMaterial'
 import { blackVoiceAvailable } from './blackVoiceControl'
 import { luiniArsenalAi } from './luiniArsenal'
@@ -8,6 +12,14 @@ import type { FightState } from './types'
 
 export function priorityArsenalAi(state: FightState): FightState | null {
   const actor = state.opponent
+  const bomb = sunMoonChargeAi(state)
+  if (bomb !== state) return bomb
+  const priorOrder = gumResuscitationAi(state)
+  if (priorOrder !== state) return priorOrder
+  const fortune = ghostwriterAi(state)
+  if (fortune !== state) return fortune
+  const stitching = machiReattachmentAi(state)
+  if (stitching !== state) return stitching
   let next = state
   if (actor.id === 'halkenburg')
     next = performArsenalCommand(state, 'opponent', { action: 'halkenburg-transfer' })

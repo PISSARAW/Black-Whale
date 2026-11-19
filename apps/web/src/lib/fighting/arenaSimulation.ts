@@ -1,3 +1,7 @@
+import { releaseSunMoonContact } from './sunMoonCharge'
+import { sunMoonBlastPower } from './sunMoonChargeRules'
+import { markedObjectsTouch, objectMarkContact, markedBlastTouches } from './sunMoonObjectContact'
+import { physicalHandOccupancy } from './deviceHands'
 import { activeHitbox, attackData, boxesOverlap, otherSide } from './frameData'
 import { arenaObjects } from './arenaActions'
 import { updateEntity } from './preparationWorld'
@@ -6,7 +10,8 @@ import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { hatsuDamageFactor } from './hatsu'
 import { remotePunchCanHit } from './remotePunch'
-import { hasBashoPoem } from './bashoPoem'
+import { bashoEffectPoem } from './bashoPoem'
+import { bashoFistAttack } from './bashoFire'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { nenDamageFactor } from './nen'
 import type { PreparedEntity } from './preparationTypes'
@@ -129,10 +134,9 @@ function strikeArenaObject(state: FightState, side: FightSide): FightState {
 function ignitePunchedObject(state: FightState, side: FightSide, objectId: string): FightState {
   const fighter = state[side]
   if (
-    !fighter.bashoPoem?.ready ||
-    fighter.bashoPoem.effect !== 'ignite-punched-target' ||
-    fighter.attack?.kind !== 'light' ||
-    !hasBashoPoem(fighter)
+    !bashoEffectPoem(fighter, 'ignite-punched-target') ||
+    !bashoFistAttack(fighter) ||
+    physicalHandOccupancy(state, side).size >= 2
   )
     return state
   const object = state.battlefield!.entities.find((entry) => entry.id === objectId)!
@@ -212,30 +216,47 @@ function resolveMarkedContact(state: FightState): FightState {
         entry.id !== sun.id &&
         entry.arena!.moon &&
         entry.arena!.moon === sun.arena!.sun &&
-        Math.abs(entry.x - sun.x) <= entry.arena!.width + sun.arena!.width + 0.15,
+        markedObjectsTouch(sun, entry),
     )
     if (!moon) continue
     const owner = sun.arena!.sun!
-    const centre = (sun.x + moon.x) / 2
-    state = damageArenaObject(damageArenaObject(state, sun.id, sun.health), moon.id, moon.health)
+    const centre = objectMarkContact(sun, moon)
+    const power = sunMoonBlastPower(sun, moon)
+    state = consumeMarkedObject(consumeMarkedObject(state, sun), moon)
     for (const side of ['player', 'opponent'] as const)
-      state = applyArenaBlast(state, { side, owner, centre })
+      state = applyArenaBlast(state, { side, owner, centre, power })
     return resolveFightOutcome(state)
   }
   return state
 }
 
+/** Detonation consumes the indelible seal before ordinary copied-matter expiry runs. */
+function consumeMarkedObject(state: FightState, entry: PreparedEntity): FightState {
+  const consumed = updateEntity(state, entry.id, {
+    arena: { ...entry.arena!, sun: undefined, moon: undefined },
+  })
+  return damageArenaObject(releaseSunMoonContact(consumed, entry.id), entry.id, entry.health)
+}
+
 function applyArenaBlast(
   state: FightState,
-  blast: { side: FightSide; owner: FightSide; centre: number },
+  blast: {
+    side: FightSide
+    owner: FightSide
+    centre: { x: number; y: number }
+    power: ReturnType<typeof sunMoonBlastPower>
+  },
 ): FightState {
-  const { side, owner, centre } = blast
+  const { side, owner, centre, power } = blast
   const fighter = state[side]
   const body = sleepingBody(fighter)
-  if (Math.hypot(body.x - centre, body.y) > 12 || fighter.wakeupInvulnerableFrames > 0) return state
+  if (!markedBlastTouches(body, centre, power.radius) || fighter.wakeupInvulnerableFrames > 0)
+    return state
   const damage = Math.max(
     1,
-    Math.round((fighter.blocking ? 5 : 20) * nenDamageFactor(body, 'torso')),
+    Math.round(
+      (fighter.blocking ? power.guardDamage : power.damage) * nenDamageFactor(body, 'torso'),
+    ),
   )
   state = {
     ...state,

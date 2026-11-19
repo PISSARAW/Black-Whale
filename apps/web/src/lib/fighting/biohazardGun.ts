@@ -3,7 +3,7 @@ import { hasPrinceSidearm, PRINCE_SIDEARM_ROUNDS } from './princeSidearm'
 import { projectileProfile } from './projectiles'
 import { hasBodyguardFirearm } from './bodyguardFirearms'
 import { commitProjectileNen } from './nenProjectiles'
-import type { BiohazardDevice } from './biohazardDevices'
+import type { BiohazardDevice } from './legacyBiohazardDevices'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
 declare module './types' {

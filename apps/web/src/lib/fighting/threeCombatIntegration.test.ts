@@ -2,12 +2,14 @@ import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 import { render } from 'svelte/server'
 import BiohazardStatus from '$lib/components/fighting/FightBiohazardStatus.svelte'
+import PriorityStatus from '$lib/components/fighting/FightPriorityStatus.svelte'
+import { biohazardDeviceOptions } from './biohazardDeviceArsenal'
+import { arsenalOptions } from './retrospectiveArsenal'
 import { beginFight, createFight, performAuraAttack } from './engine'
 import { performArsenalAction } from './arsenalExecution'
 import { advanceBiohazardDevices } from './biohazardDeviceFrame'
 import { createBiohazardDeviceScene } from './biohazardDeviceScene'
 import { biohazardDeviceAi } from './biohazardDeviceAi'
-import { arsenalOptions } from './retrospectiveArsenal'
 import { applyPvpCommand } from './pvp/commands'
 import { parsePvpPacket } from './pvp/protocol'
 import { privatePvpState } from './pvp/view'
@@ -90,11 +92,14 @@ describe('three-encounter integration', () => {
       expect(fightReplayHash(replay.state)).toBe(fightReplayHash(state))
     },
   )
-  it('routes P2’s local touch command to the real P1 gun', () => {
+  it('routes P2’s legacy touch command without offering a phantom gun in the current UI', () => {
     let s = beginFight(createFight('theta', 'hinrigh', { mode: 'versus-local' }))
     s = { ...s, player: { ...s.player, x: 27 }, opponent: { ...s.opponent, x: 29 } }
     const view = privatePvpState(s, 'opponent')
-    const option = arsenalOptions(view, 'player').find(
+    expect(
+      arsenalOptions(view, 'player').some((entry) => entry.command.action === 'bio-transform'),
+    ).toBe(false)
+    const option = biohazardDeviceOptions(view, 'player').find(
       (o) => o.command.action === 'bio-transform' && o.command.target === 'opponent',
     )!
     expect(option.ready).toBe(true)
@@ -185,14 +190,15 @@ describe('three-encounter integration', () => {
       ...s,
       player: { ...s.player, hinrighKnives: 0, biohazardSignal: { frame: 30, x: 26, y: 0 } },
     }
-    const html = render(BiohazardStatus, {
-      props: { state: s, side: 'player', language: 'fr' },
-    }).body
+    const html =
+      render(BiohazardStatus, {
+        props: { state: s, side: 'player', language: 'fr' },
+      }).body + render(PriorityStatus, { props: { state: s, side: 'player', language: 'fr' } }).body
     expect(html).toContain('Couteaux restants')
-    expect(html).toContain('Caméra-chat')
-    expect(html).toContain('Enregistrement consulté')
-    expect(html).toContain('26.0, 0.0')
-    expect(html).toContain('f30')
+    expect(html).toMatch(/Couteaux restants\s*:\s*0/)
+    expect(html).toContain('Enregistrement de la caméra')
+    expect(html).toContain('26.0, y 0.0')
+    expect(s.player.biohazardSignal?.frame).toBe(30)
   })
   it('gives the cat AI a fixed patrol order and records only its own observations', () => {
     const original = activeCamera()
@@ -245,7 +251,7 @@ describe('three-encounter integration', () => {
     const view = privatePvpState(s, 'opponent')
     expect(view.opponent.biohazardDevices!.some((d) => d.kind === 'transmitter')).toBe(false)
     expect(
-      arsenalOptions(view, 'player').find((o) => o.command.action === 'bio-signal')?.ready,
+      biohazardDeviceOptions(view, 'player').find((o) => o.command.action === 'bio-signal')?.ready,
     ).toBe(true)
     const read = applyPvpCommand(s, 'opponent', {
       kind: 'arsenal',

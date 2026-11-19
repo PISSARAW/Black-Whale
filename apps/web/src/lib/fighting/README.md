@@ -1,79 +1,6 @@
 # Fighting
 
-Le [combat de Shizuku d’après sa confrontation avec Pike](./SHIZUKU_COMBAT.md)
-complète les frappes de Blinky, la prise à deux mains et la gestion de la distance
-avant l’aspiration du sang par les plaies ouvertes.
-
-Le [combat de Kurapika d’après Uvogin et Phantom Rouge](./KURAPIKA_COMBAT.md)
-sépare les frappes physiques et les lancers de chaîne, avec des contres en retrait,
-une boucle du fouet divinatoire et une approche après la capture d’une cible autorisée.
-
-Le [combat de Kalluto d’après la référence de l’épisode 96](./KALLUTO_COMBAT.md)
-associe gestes d’éventail dédiés, rubans de confettis et enchaînement du marquage
-vers le serpent. La scène de contrôle vérifie les deux orientations.
-
-Le [combat de Feitan d’après les deux vidéos contre Zazan](./FEITAN_COMBAT.md)
-associe douze gestes d’arme dédiés, approches basses, dashes, bonds et choix d’IA.
-Les frappes physiques et la riposte solaire gardent des conditions distinctes.
-
-Le [combat de Hanzo d’après ses affrontements contre Gon](./HANZO_COMBAT.md)
-associe mains ouvertes, lame dissimulée au bras droit et déplacements courts.
-L’estoc et le revers déploient puis rangent l’arme physique ; les appuis et l’IA
-conservent les règles distinctes de Skill 4.
-
-Les [gestes de combo et la concentration de l’aura](./COMBO_MOTION.md) relient
-les transitions des 40 combattants aux appuis et aux contacts de chaque style,
-avec une enveloppe locale et un flux pour le Ryu et le Ko réellement engagés.
-
-L’[intégration Qwen via Ollama et Tailscale](./qwen/README.md) associe une stratégie
-distante à un contrôleur rapide local pour les 40 personnages, avec replays vérifiés.
-
-[Halkenburg propose deux modes](../../../../../docs/clash-halkenburg-deux-modes.md) :
-la variante aléatoire du roster et le transfert de conscience entre les corps
-présents. Sommeil, priorité au réveil, décès matériels et coexistence restent
-séparés des adaptations numériques du duel. Le transfert fonctionne aussi en équipes
-et dans les chaînes de plusieurs corps. Règles : `clash-combat-37`.
-
-Le [lot à quatre combats et plus](../../../../../docs/clash-quatre-combats-et-plus.md)
-audite le corpus de 17 personnages et ses cas limites, films compris. Il complète les armes physiques,
-les préparations d'Hisoka et d'Illumi, les corps suspendus et armés de Machi,
-Blinky, Franklin, la flèche d'Halkenburg et les applications récentes de
-Tserriednich et Benjamin. Les conditions, les sources secondaires et les
-adaptations du duel sont détaillées dans l'audit. Règles : `clash-combat-35`.
-
-La [passe à au moins trois combats](../../../../../docs/clash-au-moins-trois-combats.md)
-ajoute les modèles mémorisés de Bonolenov, les cadavres matériels contrôlés par
-Illumi et les contrôles de matière de Blinky. Le seuil conserve les personnages
-ayant davantage de combats et signale les scènes collectives ou rapportées.
-
-Le [lot à trois séquences de combat](../../../../../docs/clash-trois-combats.md)
-complète Kalluto et Hinrigh : dispersion et regroupement du papier, coupures,
-armes-serpents conservant leur chargeur, couteaux finis, contre du bras-hache,
-chat-caméra mobile et émetteur caché dont le récepteur se transmet.
-L'audit précise le comptage, les films vérifiés et les adaptations du duel.
-Ces applications sont enregistrées sous `clash-combat-29`.
-
-Le [lot à deux séquences de combat](../../../../../docs/clash-deux-combats.md)
-complète Zakuro, Luini et Camilla : reconnaissance sur les parois réelles,
-contrôle du saignement, choix des passages et sorties partielles vulnérables,
-couteau matériel, munitions finies et plaies fermées après résurrection.
-Leurs commandes et leur état sont enregistrés sous `clash-combat-27`.
-
-Les [six personnages prioritaires](../../../../../docs/clash-six-prioritaires.md)
-reçoivent les objets de Biohazard, les fils et sutures de Machi, les passages
-partiels de Luini et les usages d'information et contrats de Kurapika. Les
-adaptations demandées ajoutent le corps aléatoire d'Halkenburg, le pantin IA de
-Chrollo en 2 contre 1 et le tiers de Dolphin. Le [plan du roster à plusieurs
-combats](../../../../../docs/clash-combats-multiples.md) conserve le diagnostic.
-
-L'[audit des onze personnages à une seule séquence de combat](../../../../../docs/clash-combats-uniques.md)
-recoupe manga, adaptations et films. Sous `clash-combat-26`, il ajoute l'écoute
-et les observations privées de Musse, le second poème d'interrogatoire de Basho,
-la lecture cardiaque pendant l'interrogatoire de Melody, les tentatives de
-Padaille contre les menottes, les récepteurs de Sweet Home et la confiscation
-par LSDF, et corrige la dévoration de Predator. Les limites de représentation
-restent indiquées par application.
-
+Le menu, le combat tactile et la pause sont décrits dans [LOBBY.md](./LOBBY.md).
 Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
 complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
@@ -189,7 +116,7 @@ L’[audit courant des 40 personnages](../../../../../docs/audit-hatsu-fighting.
 distingue règles référencées, adaptations du duel et limites de représentation.
 `nenCanonFirst.ts` et `nenCanonSecond.ts` donnent un contrat explicite à chaque
 combattant ; les contrats particuliers des techniques restent prioritaires.
-Le ruleset courant `clash-combat-37` inclut le réglage du hitstun de l’étape 3,
+Le ruleset courant `clash-combat-33` inclut le réglage du hitstun de l’étape 3,
 les évolutions des combos, les décisions d'arsenal de l'IA, les armes de service
 des gardes du corps, la grammaire à niveaux de Kurapika et Benjamin et les
 [usages des sept techniques avancées](./NEN_COMBAT.md).
@@ -622,7 +549,8 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   L’arsenal initial est celui du duel contre Hisoka : Sun and Moon et Black Voice ;
   ce choix ne suppose pas que Black Voice soit encore disponible sur le navire.
   **L** utilise la page ouverte, ou celle au signet si le livre est fermé ;
-  **avant + L** vole au contact un Hatsu observé et ajoute sa page ;
+  **avant + L** termine un vol préparé : Hatsu observé, questions effectivement
+  répondues et paume de la victime sur la couverture dans la limite d’une heure ;
   **arrière + L** ouvre la page suivante ; **bas + L** place le signet et ferme
   le livre, rouvre un livre fermé, ou retire le signet d’une page ouverte déjà marquée.
   **H** utilise la page au signet. Une page ouverte et une page au signet peuvent
@@ -634,13 +562,38 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   H pose aussi le Soleil si le livre est ouvert, et la Lune à droite uniquement
   si le livre est fermé. Deux contacts sur une cible représentent la rencontre
   des marques ; charge et puissance restent réglées pour le duel.
-  Black Voice exige une antenne au contact puis ordonne un recul limité à 90 frames,
-  tant que sa page reste active. Le vol désactive le Hatsu adverse même quand sa page
-  est refermée. L’entretien est abrégé ; les manches restent sous la limite canon
-  d’une heure. Les conditions supplémentaires inconnues de Double Face ne sont pas
+  Black Voice transporte le téléphone original de Shalnark et ses deux antennes
+  matérielles : aucune page acquise ne les conjure. L'implantation libère la main
+  qui tenait l'antenne ; le téléphone associé permet ensuite les ordres d'arrêt,
+  approche, recul et attaque, ainsi que la vue transmise par les yeux du sujet.
+  Le contrôle dure jusqu'au retrait de l'antenne, à la mort du sujet ou à la perte
+  de la page. L'objet implanté demeure réel lorsque le Nen cesse. Livre, téléphone
+  et antenne respectent les mains disponibles ; dépôt, ramassage et nombre de
+  pièces sont conservés, sans reconstitution gratuite à la manche suivante.
+  Les ordres déjà donnés sont autonomes ; ranger le téléphone ne libère pas la cible.
+  L'auto-manipulation est exécutable en duel K.-O. contre un seul ennemi visible :
+  antenne sur soi, téléphone original, mission autonome sans annulation volontaire.
+  La fin de mission conserve au moins deux jours simulés de douleurs et de faiblesse,
+  même entre les manches, pendant le hitstop et Cat’s Name. Le corps n'ajoute pas
+  les événements de la mission à ses souvenirs conscients. Coûts et multiplicateurs
+  restent des réglages de duel ; les missions contre plusieurs ennemis restent ouvertes.
+  Le vol désactive le Hatsu adverse même quand sa page
+  est refermée. L’entretien et la paume sont des commandes réelles ; observer le
+  Hatsu puis frapper ne suffit pas. Les conditions supplémentaires inconnues de Double Face ne sont pas
   inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban
   rendent les états visibles. Livre et vols repartent à zéro à la manche suivante.
   Les commandes fonctionnent aussi en versus local et au tactile.
+  Gallery Fake permet aussi le repérage des copies depuis le contact de la main
+  gauche avec l'original (`gallerySense.ts`). Le relevé privé reste daté après
+  interruption ; il ne dévoile que les positions et contacts dans les volumes
+  réellement copiés. Les originaux humains et les appareils portés suivent leurs
+  corps effectifs, y compris lors d'un relais d'équipe. L'ouverture du livre et
+  les gestes historiques utilisent les mains réellement disponibles. Voir
+  [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
+  Les outils ramassés et leurs pièces détachées conservent la provenance de leur
+  matière Nen : flûte, aiguilles, balles, feuilles et objets retenus ne deviennent
+  pas permanents par ramassage ou stockage. Les réserves, prévisions, replays et
+  séquences de Cat's Name suivent la même disparition matérielle.
 - Feitan mémorise les PV effectivement perdus pendant la manche (`feitanPain.ts`).
   Après une blessure, L revêt Pain Packer sans soin ni frappe ; H libère le soleil
   fixe de `feitanSun.ts`. Les blessures engagées augmentent la chaleur, le rayon et
@@ -711,10 +664,6 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   inventée. `battleCantabileAction.ts`, `battleCantabileFrame.ts`,
   `battleConversation.ts`, `jupiterFlight.ts` et `bonolenov.test.ts` portent ces
   règles ; `ui-tests/bonolenov` et `scripts/check-bonolenov.mjs` vérifient le rendu.
-  La [révision du combat et ses références vidéo minutées](./BONOLENOV_COMBAT.md)
-  détaille les appuis alternés, les pivots et l'estoc de la main droite. Les
-  orifices restent découverts entre les coups ; leur chant synthétisé suit aussi
-  les frappes et les déplacements, puis s'éteint au repos ou sur interruption.
 - Leorio fait exception au format de quinze coups : dix coups physiques ordinaires
   et un seul Hatsu attesté, le poing transmis par une surface (chapitre 325).
   `leorioMoveset.ts` retire les variantes médicales, la double émission et le finisher.
@@ -834,22 +783,24 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   conservent les conditions matérielles et le prêt de Dolphin ne déploie qu’un lot.
   Une nouvelle manche réinitialise les réserves et les captures. L’ancien
   `bloodBoundFrames` est retiré, et Predator observe la matière réellement active.
-- Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
-  `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
-  composition : les textes libres non reconnus ne coûtent rien et ne créent aucun
-  pouvoir. L recopie la composition attestée ; le panneau permet de
-  la saisir et de la relire avant de l’écrire. L’écriture prend une seconde et
-  25 aura, sans frappe ni bonus général ; bouger, garder ou être frappé l’interrompt.
-  Une fois écrite, la condition ne s’applique qu’à un contact du poing : un échec,
-  une parade, un coup de pied, une projection ou un projectile n’allume aucun feu.
-  Un contact sur garde peut enflammer. `bashoFire.ts` produit une brûlure visible
-  de 90 frames, avec trois pulsations de 2 dégâts avant défense Nen ; ni paralysie,
-  bonus à tous les coups, « Encre terrestre » ou finisher inventé. Ces chiffres et
-  le maintien du poème tant que le Nen reste disponible sont des adaptations de
-  duel, sans notation littéraire automatique : la qualité compte dans le manga,
-  mais une seule composition attestée est prise en charge ici. Les nouvelles
-  manches réinitialisent papier et feu. Les copies conservent l’écriture et ses
-  conditions ; les brûlures portent l’identité du lanceur pour le verdict.
+- Basho dispose des trois compositions attestées des chapitres 68, 402 et 404 dans
+  `FightBashoPoem.svelte` : poing incendiaire, réponse mensongère punie par le feu
+  mortel, talisman contre les faibles esprits. `bashoPoem.ts` reconnaît les
+  adaptations FR/EN proposées, sans interpréter les souhaits libres ou noter leur
+  qualité littéraire. Les feuilles, le pinceau et l'encre sont physiques ; les
+  copies du Hatsu n'en reçoivent pas gratuitement. Une feuille est consommée dès
+  le début, les deux mains sont occupées et le mouvement, la garde ou une frappe
+  interrompent l'écriture. Les papiers prêts restent distincts dans l'archive.
+  Le poing exige un vrai contact, pas un coup de pied ou un projectile. Les
+  questions exigent une parole audible et une réponse volontaire sur un fait
+  représenté ; le silence et le texte libre ne sont pas jugés automatiquement.
+  Le talisman exige une bande écrite et un contact, sans soin ou exorcisme de
+  malédiction puissante. Les faibles esprits suivent le corps réellement visé.
+  Trois feuilles, une seconde d'écriture, 25 aura, le feu de contact de 90 frames
+  et la minute du talisman sont des réglages de duel. Les copies conservent
+  les conditions du pouvoir et la durée de vie de leur support matériel ; les
+  effets portent l'identité du lanceur pour le verdict. Les nouvelles manches
+  réinitialisent ces préparations. Voir [l'extension détaillée](../../../../../docs/clash-arsenal-integral.md).
 
 - Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
   `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),
@@ -1024,6 +975,9 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   Le coût d'aura, les 24 frames de préparation et les dégâts restent des réglages
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
+  Le double peut parler et écouter à sa propre position ; parler près du double
+  ne réveille pas le corps distant. Le papier planté sur le corps y reste, tandis
+  que la caméra capte la voix à son lieu d'émission et filme les deux corps visibles.
   La portée audible de 18 unités est une abstraction du duel.
 - Sweet Home (`hatsu/terebellum.ts`, `sweetHomeImpact.ts`) vérifie les contacts
   pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures
@@ -1064,17 +1018,7 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   anticiper un danger mais doit physiquement s'en écarter. En versus local,
   prévoir des décisions humaines est impossible : les commandes présentes sont
   prolongées lors du calcul puis rejouées pendant la fenêtre, adaptation affichée
-  dans le panneau. En arcade contre Tserriednich, le joueur garde ses commandes :
-  `futurePerception.ts` simule ses actions contre une image dans une branche isolée.
-  Scène, PV, impacts, sons et panneaux suivent cette perception sans annoncer
-  l’activation ; le vrai prince reste libre de se déplacer. La rupture de l’illusion
-  révèle sa position et sa santé réelles. Un K.-O. apparent peut annoncer une
-  victoire, jouer la cinématique habituelle et afficher une manche remportée.
-  Les boutons de résultats poursuivent seulement l’illusion ; ni ces annonces
-  ni les dégâts apparents ne modifient le verdict ou le score réels.
-  `futurePerceptionResults.ts` et les commandes de replay correspondantes
-  conservent cette séparation jusqu’à la révélation. Le monde illusoire prolongé garde cette branche tant que son champ
-  trompe le joueur. Deux boutons de point de vue permettent de comparer les perceptions
+  dans le panneau. Deux boutons de point de vue permettent de comparer les perceptions
   sur l'écran partagé. Zetsu imposé, vol, sceau de On ou changement de page interrompent
   la capacité ; les manches effacent la branche. Les gestes inventés de bête gardienne
   et l'ancienne charge d'esquive sont supprimés. Référence : chapitres 385–387.

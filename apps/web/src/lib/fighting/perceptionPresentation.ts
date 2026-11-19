@@ -25,7 +25,7 @@ function musse(state: FightState, viewer: FightSide) {
   if (!feed || !secretWindowVisibleTo(state, viewer, viewer)) return { key: '', observation: '' }
   return {
     key: `${feed.attachedAt}:${feed.target}:${feed.mode}`,
-    observation: `${feed.observation.action}:${feed.words?.frame ?? -1}`,
+    observation: `${feed.observation.action}:${feed.heard?.frame ?? feed.words?.frame ?? -1}`,
   }
 }
 function scouts(state: FightState, viewer: FightSide) {

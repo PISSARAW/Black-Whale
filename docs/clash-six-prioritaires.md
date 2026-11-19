@@ -8,7 +8,8 @@ supplémentaires révélés dans le manga.
 
 ## Corps du roster et adaptations demandées
 
-**Halkenburg** peut être remplacé par un corps tiré au sort dans le roster. Le
+**Halkenburg**, uniquement avec la case « Variante hors canon » cochée dans la
+préparation scénarisée, peut être remplacé par un corps tiré au sort dans le roster. Le
 joueur continue à contrôler ce camp, avec le modèle, les coups, les ressources
 personnelles et le Hatsu du nouveau corps. Le tirage exclut les personnages
 principaux présents. Le transfert conserve la proportion de PV, sans soin
@@ -19,9 +20,11 @@ cette application.
 
 Cette variante répond au choix de gameplay « comme s'il s'était transformé ».
 Elle ne prétend pas que Halkenburg possède canoniquement tous les Hatsu des
-personnes dont il pourrait occuper le corps. Le remplacement aléatoire concerne
-également la réussite de sa flèche ; celle-ci n'est plus une courte paralysie de
-l'adversaire principal.
+personnes dont il pourrait occuper le corps. Dans cette variante seulement, le
+remplacement aléatoire concerne également la réussite de sa flèche. Sans cette
+option, la flèche affecte la cible effectivement touchée et endort le partisan
+sélectionné. La durée d'immobilisation reste un réglage de duel : les échanges de
+conscience et leurs suites ne sont pas encore entièrement représentés.
 
 **Chrollo** peut préparer un pantin tiré au sort lorsque Black Voice est actif.
 Le corps apparaît près de lui ; l'implantation de l'antenne exige une préparation
@@ -39,7 +42,8 @@ l'a tuée, les PV de Chrollo ne sont pas consommés à sa place.
 
 **Kurapika** peut prêter la technique chargée dans Stealth Dolphin à un
 volontaire aléatoire du roster. Ce corps apparaît pour en effectuer un usage
-contre l'adversaire, avec sa propre aura et ses ressources. Il n'utilise pas
+contre l'adversaire, avec l'aura prélevée au donneur, son propre corps et ses
+ressources matérielles. Il n'utilise pas
 son Hatsu personnel à la place de la technique prêtée. Kurapika continue à agir
 et supporte le coût d'Emperor Time jusqu'à la fin de l'usage. L'aptitude est alors
 rendue à sa source et le tiers ressort.

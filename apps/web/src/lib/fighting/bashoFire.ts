@@ -1,3 +1,5 @@
+import { physicalHandOccupancy } from './deviceHands'
+import { writingHandsFree, writingPaperExists } from './bashoMaterials'
 import { recordFightDeath } from './fightDeaths'
 import { bashoQuestionCurrent } from './bashoInterrogation'
 import { resolveFightOutcome } from './fightOutcome'
@@ -7,6 +9,7 @@ import {
   BASHO_FIRE_FRAMES,
   BASHO_FIRE_INTERVAL,
   bashoWriting,
+  bashoEffectPoem,
   hasBashoPoem,
   writingBodyAvailable,
 } from './bashoPoem'
@@ -21,14 +24,9 @@ export function resolveBashoPoemImpact(
   side: FightSide,
 ): FightState {
   const fighter = before[side]
-  const poem = fighter.bashoPoem
-  if (
-    !poem?.ready ||
-    poem.effect !== 'ignite-punched-target' ||
-    !hasBashoPoem(fighter, poem.sourceMoveId)
-  )
-    return after
-  if (!punchContact(fighter, after)) return after
+  const poem = bashoEffectPoem(fighter, 'ignite-punched-target')
+  if (!poem?.ready || !hasBashoPoem(fighter, poem.sourceMoveId, poem.loan)) return after
+  if (!punchContact(fighter, after) || physicalHandOccupancy(before, side).size >= 2) return after
   const target = side === 'player' ? 'opponent' : 'player'
   return {
     ...after,
@@ -39,6 +37,9 @@ export function resolveBashoPoemImpact(
 function punchContact(fighter: ArcadeFighter, state: FightState): boolean {
   const impact = state.impact
   if (!impact || impact.avoided || impact.parried || impact.projectileId !== null) return false
+  return bashoFistAttack(fighter)
+}
+export function bashoFistAttack(fighter: ArcadeFighter): boolean {
   const attack = fighter.attack
   if (!attack || !['light', 'heavy'].includes(attack.kind)) return false
   if (!attack.moveId) return attack.kind === 'light' && attack.variant !== 'throw'
@@ -47,7 +48,11 @@ function punchContact(fighter: ArcadeFighter, state: FightState): boolean {
 
 export function advanceBashoPoems(state: FightState): FightState {
   if (state.phase !== 'fighting' || state.catsName) return state
-  let next = { ...state, player: advancePoem(state.player), opponent: advancePoem(state.opponent) }
+  let next = {
+    ...state,
+    player: advancePoem(state, 'player'),
+    opponent: advancePoem(state, 'opponent'),
+  }
   for (const side of ['player', 'opponent'] as const) next = advanceBurn(next, side)
   for (const side of ['player', 'opponent'] as const)
     if (next[side].bashoPrompt && !bashoQuestionCurrent(next, side))
@@ -55,12 +60,22 @@ export function advanceBashoPoems(state: FightState): FightState {
   return resolveFightOutcome(next)
 }
 
-function advancePoem(fighter: ArcadeFighter): ArcadeFighter {
+function advancePoem(state: FightState, side: FightSide): ArcadeFighter {
+  let fighter = state[side]
+  fighter = maintainPoemArchive(state, fighter)
   const poem = fighter.bashoPoem
   if (!poem) return fighter
-  if (!hasBashoPoem(fighter, poem.sourceMoveId)) return { ...fighter, bashoPoem: undefined }
+  if (
+    !hasBashoPoem(fighter, poem.sourceMoveId, poem.loan) ||
+    !writingPaperExists(state, poem.paperCopyId)
+  )
+    return { ...fighter, bashoPoem: undefined }
   if (!bashoWriting(fighter)) return fighter
-  if (!writingBodyAvailable(fighter) || fighter.x !== poem.originX)
+  if (
+    !writingBodyAvailable(fighter) ||
+    !writingHandsFree(state, side) ||
+    fighter.x !== poem.originX
+  )
     return { ...fighter, bashoPoem: undefined }
   const writingFrames = poem.writingFrames - 1
   return { ...fighter, bashoPoem: { ...poem, writingFrames, ready: writingFrames === 0 } }
@@ -84,4 +99,16 @@ function advanceBurn(state: FightState, side: FightSide): FightState {
     },
   }
   return recordFightDeath(next, { victimSide: side, killerSide: burn.owner, cause: 'heat' })
+}
+
+function maintainPoemArchive(state: FightState, fighter: ArcadeFighter): ArcadeFighter {
+  const live = fighter.bashoArchive?.filter(
+    (poem) =>
+      hasBashoPoem(fighter, poem.sourceMoveId, poem.loan) &&
+      writingPaperExists(state, poem.paperCopyId),
+  )
+  const archive = live?.length ? live : undefined
+  return archive?.length !== fighter.bashoArchive?.length
+    ? { ...fighter, bashoArchive: archive }
+    : fighter
 }

@@ -1,3 +1,8 @@
+import {
+  performMachiReattachment,
+  advanceMachiReattachment,
+  machiReattachmentOptions,
+} from './machiReattachment'
 import { canAct } from './fightActorState'
 import { machiSourceActive, MACHI_SUTURE_HEAL } from './machiThread'
 import { isBiscuitTrueForm } from './biscuitForm'
@@ -38,6 +43,7 @@ export function sutureWound(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function performMachiMaterial({ state, side, command }: ArsenalInvocation): FightState {
+  if (command.action === 'machi-reattach') return performMachiReattachment({ state, side, command })
   if (!machiMaterialReady(state, side)) return state
   if (command.action === 'machi-suture') return startSuture(state, side, command.target)
   if (command.action === 'machi-anchor') return anchorObject(state, side, command.target)
@@ -52,6 +58,7 @@ function machiMaterialReady(state: FightState, side: FightSide): boolean {
     canAct(actor) &&
     !actor.attack &&
     !actor.machiSuture &&
+    !actor.machiReattachment &&
     machiSourceActive(actor)
   )
 }
@@ -169,7 +176,7 @@ function sutureInterrupted(actor: ArcadeFighter, target: ArcadeFighter): boolean
 }
 
 export function advanceMachiMaterial(state: FightState): FightState {
-  let next = clearBrokenAnchors(state)
+  let next = advanceMachiReattachment(clearBrokenAnchors(state))
   for (const side of ['player', 'opponent'] as const) {
     const actor = next[side],
       suture = actor.machiSuture
@@ -200,7 +207,7 @@ function clearBrokenAnchors(state: FightState): FightState {
 }
 
 export function machiMaterialOptions(state: FightState, side: FightSide): ArsenalOption[] {
-  if (!machiSourceActive(state[side])) return []
+  if (!machiSourceActive(state[side])) return machiReattachmentOptions(state, side)
   const entries: { command: ArsenalInvocation['command']; fr: string; en: string }[] = [
     ...(['player', 'opponent'] as const).map((target) => ({
       command: { action: 'machi-suture' as const, target },
@@ -232,14 +239,17 @@ export function machiMaterialOptions(state: FightState, side: FightSide): Arsena
         en: `Attach thread · ${entry.id}`,
       })),
   ]
-  return entries.map(({ command, fr, en }) => ({
-    command,
-    labelFr: fr,
-    labelEn: en,
-    ready: performMachiMaterial({ state, side, command }) !== state,
-    conditionFr:
-      'Fil court plus résistant ; détaché des doigts, il s’affaiblit et ne maintient plus la ligature. La suture exige une plaie réelle, du temps et le consentement d’autrui. Elle ne recrée aucun membre. Longueurs, force et soin : réglages du duel.',
-    conditionEn:
-      'Shorter threads are stronger; detaching from fingers weakens them and releases the bind. Suturing requires a real wound, time and consent from another recipient. It cannot regrow a limb. Lengths, force and healing are duel tuning.',
-  }))
+  return [
+    ...machiReattachmentOptions(state, side),
+    ...entries.map(({ command, fr, en }) => ({
+      command,
+      labelFr: fr,
+      labelEn: en,
+      ready: performMachiMaterial({ state, side, command }) !== state,
+      conditionFr:
+        'Fil court plus résistant ; détaché des doigts, il s’affaiblit et ne maintient plus la ligature. La suture exige une plaie réelle, du temps et le consentement d’autrui. Elle ne recrée aucun membre. Longueurs, force et soin : réglages du duel.',
+      conditionEn:
+        'Shorter threads are stronger; detaching from fingers weakens them and releases the bind. Suturing requires a real wound, time and consent from another recipient. It cannot regrow a limb. Lengths, force and healing are duel tuning.',
+    })),
+  ]
 }

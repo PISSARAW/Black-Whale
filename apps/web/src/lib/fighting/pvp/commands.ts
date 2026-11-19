@@ -23,7 +23,7 @@ export function applyPvpCommand(
   side: FightSide,
   command: PvpCommand,
 ): FightState {
-  if (!fightAcceptsCommands(state)) return state
+  if (!fightAcceptsCommands(state) || state[side].blackVoiceControl?.active) return state
   const run = (current: FightState) =>
     runOutsideEasterEgg(current, side, (next) => execute(next, side, command))
   return command.kind === 'move'
@@ -72,7 +72,10 @@ function executeTraditional(
     case 'talk':
       return speakBattleWords(state, side, command.words)
     case 'poem':
-      return composeBashoPoem({ state, side, text: command.text }, performAuraAttack)
+      return composeBashoPoem(
+        { state, side, text: command.text, loan: command.loan },
+        performAuraAttack,
+      )
     case 'mary':
       return commandMary({ state, side, command: command.command }, performAuraAttack)
     default:
@@ -117,14 +120,15 @@ function paperUse(state: FightState, side: FightSide, command: 'plant' | 'serpen
 }
 
 function arsenalTarget(target: string | undefined, side: FightSide): string | undefined {
-  if (target?.startsWith('reserve:')) return reserveTarget(target, side)
+  if (target?.startsWith('reserve:') || target?.startsWith('body:'))
+    return memberTarget(target, side)
   if (target === 'player') return side
   return target === 'opponent' ? (side === 'player' ? 'opponent' : 'player') : target
 }
 
-function reserveTarget(target: string, side: FightSide): string {
-  const match = /^reserve:(player|opponent):([0-2])$/.exec(target)
+function memberTarget(target: string, side: FightSide): string {
+  const match = /^(reserve|body):(player|opponent):([0-2])$/.exec(target)
   if (!match) return target
-  const seat = match[1] === 'player' ? side : side === 'player' ? 'opponent' : 'player'
-  return `reserve:${seat}:${match[2]}`
+  const seat = match[2] === 'player' ? side : side === 'player' ? 'opponent' : 'player'
+  return `${match[1]}:${seat}:${match[3]}`
 }

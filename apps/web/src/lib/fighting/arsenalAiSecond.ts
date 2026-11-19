@@ -1,3 +1,4 @@
+import { preparedControlBusy } from './preparationActions'
 import { predatorAiSlots } from './predatorAi'
 import { voconteAiSlots } from './vocontePresentation'
 import { controlledEntities } from './preparationActions'
@@ -32,12 +33,14 @@ export const SECOND_ARSENAL_AI = {
   musse: ({ state, gap }) =>
     gap <= 6 && !state.opponent.secretWindow
       ? ['neutralSpecial']
-      : ['standingLight', 'forwardLight', 'standingHeavy'],
+      : !state.opponent.secretWindowListening
+        ? ['downSpecial', 'standingLight']
+        : ['standingLight', 'forwardLight', 'standingHeavy'],
   padaille: ({ roll }) => [
     roll < 0.33 ? 'neutralSpecial' : roll < 0.66 ? 'forwardSpecial' : 'downSpecial',
   ],
   sayird: ({ state }) =>
-    controlledEntities(state, 'opponent', 'sayird').length ? [] : ['neutralSpecial'],
+    preparedControlBusy(state, 'opponent', 'sayird') ? [] : ['neutralSpecial'],
   terebellum: ({ state, gap }) =>
     gap <= 7 && state.player.attack && !state.player.attack.concealed
       ? ['neutralSpecial', 'backSpecial']

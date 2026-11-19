@@ -1,21 +1,14 @@
+import { beginGumResuscitation } from './gumResuscitation'
 import { resolveDeathHatsu } from './hatsu'
-import { resolveGumHeart } from './hisokaHeart'
 import type { FightSide, FightState } from './types'
 
 export type FightDeathCause =
-  | 'strike'
-  | 'projectile'
-  | 'heat'
-  | 'transfer'
-  | 'judgment'
-  | 'vow'
-  | 'blood'
-  | 'asphyxia'
-  | 'toxin'
+  'strike' | 'projectile' | 'heat' | 'transfer' | 'judgment' | 'vow' | 'blood' | 'asphyxia'
 export interface FightDeath {
   victimSide: FightSide
   killerSide: FightSide | null
   cause: FightDeathCause
+  fatalCondition?: boolean
 }
 
 /** Record the actual fatal source before judging; never infer a murderer from score or position. */
@@ -26,20 +19,14 @@ export function recordFightDeath(state: FightState, death: FightDeath): FightSta
 }
 
 export function explicitDeath(death: FightDeath): boolean {
-  return death.cause === 'judgment' || death.cause === 'vow'
+  return death.cause === 'judgment' || death.cause === 'vow' || death.fatalCondition === true
 }
 
 /** All casualties of a batch are known before post-mortem Nen is asked to act. */
 export function resolvePostMortemDeaths(state: FightState): FightState {
   for (const death of state.deaths ?? []) {
-    const restarted = resolveGumHeart(state, death)
-    if (restarted) {
-      state = {
-        ...restarted,
-        deaths: restarted.deaths?.filter((pending) => pending.victimSide !== death.victimSide),
-      }
-      continue
-    }
+    const pumping = beginGumResuscitation(state, death)
+    if (pumping) return pumping
     if (!hasLivingKiller(state, death)) continue
     const triggered = resolveDeathHatsu(state, death.killerSide!, death.victimSide)
     if (triggered) return { ...triggered, deaths: undefined }

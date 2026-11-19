@@ -5,7 +5,24 @@ import { setTrainingDummy } from './trainingSession'
 import { performTrainingAction } from './trainingAction'
 import { tickFight } from './engine'
 import { EMPTY_INPUT, type FightState } from './types'
-import { hasDuelComboProfile } from './duelComboProfiles'
+import { cancelGrammarFor, hasDuelComboProfile } from './duelComboProfiles'
+import { moveForSlot, movesetFor } from './movesets'
+import type { FighterId, MoveSlot } from './types'
+
+/**
+ * Under the tiered grammar a blocked normal may chain into another normal (a target combo
+ * on guard). Pressure still ends at the paid technique, which never cancels on block.
+ */
+function pressureEnd(fighter: FighterId, heavy: MoveSlot, next: MoveSlot): MoveSlot {
+  const blockable = moveForSlot(fighter, heavy)!.cancelOnBlockInto
+  if (!cancelGrammarFor(fighter) || !blockable.includes(`${fighter}:${next}`)) return next
+  const hatsu = movesetFor(fighter)!.moves.filter(
+    (move) => move.category === 'special' && !blockable.includes(move.id),
+  )
+  const paid = hatsu.find((move) => move.auraCost > 0) ?? hatsu[0]
+  // Camilla has no Hatsu command at all: her throw cannot cancel a blocked heavy either.
+  return cancelGrammarFor(fighter)!.supers[0] ?? paid?.slot ?? 'throw'
+}
 
 function step(state: FightState) {
   return tickFight(state, EMPTY_INPUT, {
@@ -38,7 +55,7 @@ describe.each(COMBAT_FIGHTERS)('%s pressure gives the defender a turn', (fighter
     state = untilContact(state, state.impact!.sequence)
     expect(state.impact?.blocked).toBe(true)
     const aura = state.player.aura
-    const special = route.moves[2]
+    const special = pressureEnd(fighter, heavy, route.moves[2])
     const refused = performTrainingAction({
       state,
       side: 'player',

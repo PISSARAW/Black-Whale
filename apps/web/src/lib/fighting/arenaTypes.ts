@@ -5,6 +5,11 @@ export interface ArenaObject {
   height: number
   sun?: FightSide
   moon?: FightSide
+  facing?: 1 | -1
+  sunPoint?: import('./sunMoonMarkPoint').MarkPoint
+  moonPoint?: import('./sunMoonMarkPoint').MarkPoint
+  sunCharge?: number
+  moonCharge?: number
   burning?: number
 }
 export interface ArenaState {
@@ -14,7 +19,14 @@ export interface ArenaState {
   pending: Partial<
     Record<
       FightSide,
-      { objectId: string; kind: 'gum' | 'thread' | 'vacuum' | 'marks'; frames: number }
+      {
+        objectId: string
+        kind: 'gum' | 'thread' | 'vacuum' | 'marks'
+        frames: number
+        mark?: import('./sunMoonObjectHands').ObjectMark
+        charge?: boolean
+        contact?: { x: number; y: number }
+      }
     >
   >
 }

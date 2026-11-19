@@ -12,7 +12,9 @@ export function privateGumNetwork(state: FightState, side?: FightSide): GumNetwo
   )
   return {
     ...network,
-    links,
+    links: links.map((link) =>
+      link.owner === side ? link : { ...link, source: undefined, theftId: undefined },
+    ),
     nextId: Math.max(0, ...links.map((link) => link.id)) + 1,
     limbs: side ? { [side]: network.limbs[side] } : {},
     pending: side ? { [side]: network.pending[side] } : {},

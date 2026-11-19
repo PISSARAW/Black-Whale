@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { describe, expect, it, vi } from 'vitest'
 import { createFightState } from './fightState'
 import { createVisitHatsuModel, type VisitHatsuKind } from './visitHatsuModel'
+import { createBlackVoiceGear } from './blackVoiceTypes'
 import { createBlackVoiceScene } from './blackVoiceScene'
 import { createMoonlightScene } from './moonlightScene'
 import { createFutureBeastScene } from './futureBeastScene'
@@ -84,10 +85,13 @@ describe('remaining visit models in fighting', () => {
     model.dispose()
   })
 
-  it('holds Black Voice in the free left hand, follows rebuilds and hides it when its page closes', () => {
+  // Since 3263f8f1b only Shalnark's real phone is drawn: an open page conjures nothing, and
+  // the original object stays visible after page loss (blackVoiceIntegration.test.ts).
+  it('holds the real Black Voice phone in the left hand, follows rebuilds and never conjures one', () => {
     const { state, options } = setup('chrollo')
     state.player.chrolloBook = { pages: ['black-voice'], page: 0, open: true, bookmark: null }
-    state.opponent.hatsuEffects.manipulatedFrames = 30
+    const gear = createBlackVoiceGear('player')
+    state.player.blackVoiceGear = gear
     let figure = new THREE.Group()
     const hand = new THREE.Group()
     hand.name = 'hand-left'
@@ -95,11 +99,14 @@ describe('remaining visit models in fighting', () => {
     figure.add(hand)
     options.scene.add(figure)
     const effects = createBlackVoiceScene({ ...options, figureOf: () => figure })
-    const before = structuredClone(state)
+    const phoneId = gear.phone!.id
     effects.sync(state, 0)
-    const phone = options.scene.getObjectByName('black-voice-phone:player')!
+    expect(options.scene.getObjectByName(phoneId)).toBeUndefined()
+    state.player.blackVoiceGear = { ...gear, phone: { ...gear.phone!, hand: 'left' } }
+    const before = structuredClone(state)
+    effects.sync(state, 1)
+    const phone = options.scene.getObjectByName(phoneId)!
     expect(phone.position.toArray()).toEqual([1, 1.2, 0.25])
-    expect(options.scene.getObjectByName('black-voice-antenna:player')?.visible).toBe(true)
     expect(state).toEqual(before)
     options.scene.remove(figure)
     figure = new THREE.Group()
@@ -108,12 +115,11 @@ describe('remaining visit models in fighting', () => {
     replacement.position.set(2, 1.2, 0.25)
     figure.add(replacement)
     options.scene.add(figure)
-    effects.sync(state, 1)
+    effects.sync(state, 2)
     expect(phone.position.x).toBe(2)
     state.player.chrolloBook.open = false
-    effects.sync(state, 2)
-    expect(phone.visible).toBe(false)
-    expect(options.scene.getObjectByName('black-voice-antenna:player')?.visible).toBe(false)
+    effects.sync(state, 3)
+    expect(phone.visible).toBe(true)
     effects.dispose()
     expect(options.scene.children).toEqual([figure])
   })

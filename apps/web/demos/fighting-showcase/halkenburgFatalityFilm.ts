@@ -4,7 +4,7 @@ import { COHORT_WILL_FRAMES } from '../../src/lib/fighting/preparationTuning'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 
-/** Prepare real shared will, then earn the verdict physically: Grimmel itself deals no damage. */
+/** Explicit consenting cohort at setup; the production engine charges and resolves Grimmel. */
 export function createHalkenburgFatalityFilm(
   options: { target?: FighterId; stageId?: FightStageId; side?: FightSide } = {},
 ) {
@@ -23,16 +23,30 @@ export function createHalkenburgFatalityFilm(
     tags: ['SHARED WILL', 'GRIMMEL'],
     ren: false,
   })
-  prepareCohort(f, side)
-  for (let i = 0; f.state.phase === 'fighting' && i < 65; i++) {
+  f.state.environment = {
+    ...f.state.environment,
+    preparation: { mode: 'scenario', resources: [], cohorts: [side] },
+  }
+  f.state.battlefield = createBattlefield(f.state.environment)
+  f.state.rng = 0
+  const cohort = readyCohort(f.state, side).length
+  f.advance()
+  for (let i = 0; f.state[loser].health > 18 && i < 65; i++) {
     f.until(() => f.free(side) && f.free(loser))
     f.close(side, 4)
     f.hit(side, 'standingHeavy')
   }
-  const last = f.audit.filter((event) => event.kind === 'impact').at(-1)
-  if (f.state.winner !== side || f.state[loser].health !== 0 || f.state[side].id !== 'halkenburg')
+  f.until(() => f.free(side) && f.free(loser))
+  f.until(
+    () => f.state[side].hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES,
+    COHORT_WILL_FRAMES,
+  )
+  f.close(side, 4)
+  f.hit(side, 'neutralSpecial')
+  f.until(() => f.state.phase === 'finished', f.state.remainingFrames + 60)
+  if (f.state.winner !== side || f.state[loser].health <= 0 || !f.state[side].halkenburgSupporter)
     throw new Error(
-      `Halkenburg requires a native physical knockout: ${JSON.stringify({ winner: f.state.winner, health: f.state[loser].health, fighter: f.state[side].id })}`,
+      `Halkenburg requires a charged native Grimmel verdict: ${JSON.stringify({ winner: f.state.winner, health: f.state[loser].health, effects: f.state[side].hatsuEffects, supporter: f.state[side].halkenburgSupporter })}`,
     )
   return {
     state: f.state,
@@ -44,14 +58,11 @@ export function createHalkenburgFatalityFilm(
       target,
       stageId,
       winner: side,
-      nativeFrameCount: f.states.length,
-      nativeFinalMove: last?.move,
-      consentingSupporters: readyCohort(f.state, side).length,
-      cohortWillFrames: f.state[side].hatsuEffects.cohortWillFrames,
+      consentingSupporters: cohort,
       chosenSupporter: f.state[side].halkenburgSupporter,
       possessionFrames: f.state[loser].hatsuEffects.possessedFrames,
       source:
-        'Uninterrupted production duel with three consenting feather bearers and fully gathered shared will. A physical strike earns the knockout. Grimmel deals no damage; the following ten-second victory presentation illustrates the arrow and consciousness transfer without changing the native verdict, bodies or abilities.',
+        'Native shared-will scenario with three consenting feather bearers. Grimmel swaps consciousness without damage; the ordinary round timer adjudicates the competitive verdict. The following ten seconds portray the transfer without extra damage or ability acquisition.',
       victory: {
         cohortFrame: 66,
         fullDrawFrame: 258,
@@ -63,21 +74,4 @@ export function createHalkenburgFatalityFilm(
       },
     },
   }
-}
-
-function prepareCohort(f: ContinuousDirector, side: FightSide): void {
-  f.state.environment = {
-    ...f.state.environment,
-    preparation: { mode: 'scenario', resources: [], cohorts: [side] },
-  }
-  f.state.battlefield = createBattlefield(f.state.environment)
-  f.until(
-    () => f.state[side].hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES,
-    COHORT_WILL_FRAMES,
-  )
-  if (
-    readyCohort(f.state, side).length !== 3 ||
-    f.state[side].hatsuEffects.cohortWillFrames < COHORT_WILL_FRAMES
-  )
-    throw new Error('Halkenburg requires three consenting feather bearers and fully gathered will')
 }

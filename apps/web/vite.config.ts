@@ -28,6 +28,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     rollupOptions: {
       output: {
         manualChunks: isSsrBuild ? undefined : manualChunks,
+        onlyExplicitManualChunks: true,
       },
     },
   },

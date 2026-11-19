@@ -196,7 +196,10 @@ describe('Melody’s continuous music', () => {
 
   it('resolves simultaneous performers without side priority', () => {
     const base = ready()
-    const both = { ...base, opponent: { ...base.opponent, id: 'melody' as const, equipment: ['flute' as const] } }
+    const both = {
+      ...base,
+      opponent: { ...base.opponent, id: 'melody' as const, equipment: ['flute' as const] },
+    }
     const singing = frames(play(play(both), 'opponent'), MELODY_STARTUP)
     expect(singing.player.melodyPerformance).toBeUndefined()
     expect(singing.opponent.melodyPerformance).toBeUndefined()

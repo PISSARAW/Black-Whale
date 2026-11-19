@@ -1,4 +1,7 @@
+import { performGhostwriter } from './ghostwriterAction'
 import { performHistoricalPhone } from './chrolloHistoricalPhone'
+import { performGallerySense } from './gallerySense'
+import { skillHunterBookHandReady } from './historicalHands'
 import { beginHistoricalTouch } from './chrolloHistoricalTouch'
 import { addChrolloPage, chrolloPageForMove } from './chrolloBook'
 import { historicalChrolloPage } from './chrolloHistoricalPages'
@@ -29,18 +32,27 @@ export function performHistoricalCommand(
   command: ArsenalCommand,
 ): FightState {
   const caster = state[side]
-  if (caster.id !== 'chrollo' || !voluntaryNenAvailable(caster) || !canAct(caster) || caster.attack)
-    return state
+  if (!historicalBodyAvailable(caster)) return state
+  if (command.action === 'history-ghostwriter')
+    return performGhostwriter(state, side, command.target)
   if (command.action === 'history-page') return selectHistoricalPage(state, side, command.target)
   if (command.action === 'history-release') return releaseSelected(state, side)
+  if (command.action.startsWith('history-gallery-'))
+    return performGallerySense(state, side, command)
   const page = chrolloPageForMove(caster)
   if (!page) return state
   return HISTORICAL_ACTIONS[page]?.(state, side, command) ?? state
+}
+function historicalBodyAvailable(caster: FightState['player']): boolean {
+  return (
+    caster.id === 'chrollo' && voluntaryNenAvailable(caster) && canAct(caster) && !caster.attack
+  )
 }
 
 function selectHistoricalPage(state: FightState, side: FightSide, target?: string): FightState {
   const book = state[side].chrolloBook
   if (!book || !target || !historicalChrolloPage(target)) return state
+  if (!skillHunterBookHandReady(state, side)) return state
   const next = {
     ...state,
     [side]: { ...state[side], chrolloBook: addChrolloPage(book, target), arenaRecovery: 12 },
@@ -111,8 +123,11 @@ function teleportHistoricalTarget(
 
 type HistoricalAction = (state: FightState, side: FightSide, command: ArsenalCommand) => FightState
 const HISTORICAL_ACTIONS: Record<string, HistoricalAction> = {
+  'lovely-ghostwriter': (state, side, command) =>
+    command.action === 'history-use' ? performGhostwriter(state, side, command.target) : state,
   'love-dial-6700': performHistoricalPhone,
-  'gallery-fake': (state, side, command) => copyHistoricalObject(state, side, command.target),
+  'gallery-fake': (state, side, command) =>
+    command.action === 'history-use' ? copyHistoricalObject(state, side, command.target) : state,
   'order-stamp': puppetCommand,
   'convert-hands': beginHistoricalTouch,
   'indoor-fish': summonHistoricalFish,

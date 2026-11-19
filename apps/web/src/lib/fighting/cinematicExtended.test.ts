@@ -14,8 +14,14 @@ describe('extended live cameras at normal combat speed', () => {
     (id) => {
       const initial = cinematicDuel(id),
         before = cameraSnapshot(initial)
-      const state = cinematicCommand(initial)
-      const event = cinematicEvents(state, before).find((e) => e.detail?.source === id)
+      let state = cinematicCommand(initial)
+      let event = cinematicEvents(state, before).find((e) => e.detail?.source === id)
+      // Little Eye now travels to the actual animal before capture is confirmed.
+      for (let i = 0; i < 90 && !event; i++) {
+        const previous = cameraSnapshot(state)
+        state = cinematicStep(state)
+        event = cinematicEvents(state, previous).find((e) => e.detail?.source === id)
+      }
       expect(event, `${id}: no activation`).toBeDefined()
       const scheduler = createCameraScheduler()
       const shot = scheduler.update(null, [event!], {

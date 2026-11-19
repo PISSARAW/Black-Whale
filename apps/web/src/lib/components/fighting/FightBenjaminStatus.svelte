@@ -2,7 +2,6 @@
   import { useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { benjaminNenActive } from '$lib/fighting/benjaminBaton'
-  import { moveById } from '$lib/fighting/movesets'
   import type { FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
@@ -14,31 +13,6 @@
   $: baton = fighter.hatsuEffects.baton
   $: active = benjaminNenActive(fighter)
   $: cardKey = side === 'player' ? $bindings.playerFinisher : $bindings.opponentFinisher
-  $: target = baton?.markedTarget ? state[baton.markedTarget] : null
-  $: move = moveById(target?.attack?.moveId)
-  $: action = target?.attack?.concealed
-    ? language === 'fr'
-      ? 'Mouvement observé'
-      : 'Observed movement'
-    : move
-      ? language === 'fr'
-        ? move.nameFr
-        : move.nameEn
-      : target?.attack?.kind === 'ranged'
-        ? language === 'fr'
-          ? 'Tir'
-          : 'Ranged attack'
-        : target?.blocking
-          ? language === 'fr'
-            ? 'Garde'
-            : 'Guard'
-          : target?.y
-            ? language === 'fr'
-              ? 'Saut'
-              : 'Jump'
-            : language === 'fr'
-              ? 'Déplacement / attente'
-              : 'Movement / idle'
 </script>
 
 {#if fighter.id === 'benjamin' && baton}
@@ -61,7 +35,6 @@
             ? 'sans carte'
             : 'no card'}</span
       >
-      {#if target}<span>Secret Window · {action}</span>{/if}
     {/if}
   </div>
 {/if}

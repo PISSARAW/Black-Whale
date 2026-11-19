@@ -1,4 +1,6 @@
 import { releasePreparedEntity } from './preparedCorpseBody'
+import { arsenalMindAvailable } from './arsenalMind'
+import { launchLittleEye, littleEyeShotBusy } from './littleEyeCapture'
 import { illumiBodyFree } from './illumiState'
 import { witnessedHatsuState } from './nenWitness'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -6,7 +8,7 @@ import { performLuiniAction } from './luiniSpatial'
 import { PREPARED_COSTS } from './preparationTuning'
 import { chainAbilitySealed } from './kurapika'
 import { preparationCheck, preparationSource, animalTarget } from './preparationRequirements'
-import { nearEntity, updateEntity } from './preparationWorld'
+import { nearEntity, liveEntity, updateEntity } from './preparationWorld'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -30,7 +32,7 @@ export function preparedSource(
 export function preparedActionReady(state: FightState, side: FightSide, moveId?: string): boolean {
   const source = preparedSource(state, side, moveId)
   if (!source || !preparedUserAvailable(state, side, source)) return false
-  if (controlledEntities(state, side, source).length) return true
+  if (preparedControlBusy(state, side, source)) return true
   return (
     preparationCheck(state, side, moveId).ready && state[side].aura >= (PREPARED_COSTS[source] ?? 0)
   )
@@ -43,7 +45,7 @@ export function performPreparedAction(options: AuraAttackOptions): FightState | 
   const source = preparedSource(state, side, moveId)
   if (!source) return null
   if (!preparedActionReady(state, side, moveId)) return state
-  if (controlledEntities(state, side, source).length) return releasePreparedControl(state, side)
+  if (preparedControlBusy(state, side, source)) return releasePreparedControl(state, side, source)
   const activated = activate(state, side, source)
   if (activated === state) return state
   const witness = side === 'player' ? 'opponent' : 'player'
@@ -65,17 +67,21 @@ export function performPreparedAction(options: AuraAttackOptions): FightState | 
 }
 
 function activate(state: FightState, side: FightSide, source: FighterId): FightState {
+  if (source === 'sayird') return launchLittleEye(state, side)
   if (source === 'bill') return growSeed(state, side)
   if (source === 'luini') return performLuiniAction(state, side)
-  const target = animalTarget(state, side, source === 'sayird' ? 'animal' : 'bird')
+  const target = animalTarget(state, side, 'bird')
   return target
-    ? updateEntity(state, target.id, { controller: { side, source }, delivered: false })
+    ? updateEntity(state, target.id, {
+        controller: { side, source, member: state.teamMatch?.seats[side].active ?? 0 },
+        delivered: false,
+      })
     : state
 }
 
 function growSeed(state: FightState, side: FightSide): FightState {
   const seed = nearEntity(state, side, 'seed')
-  if (!seed || seed.growth) return state
+  if (!seed || seed.copy || seed.growth) return state
   const grown = updateEntity(state, seed.id, { growth: 1 })
   return completePreparation(grown, side)
 }
@@ -95,18 +101,47 @@ export function completePreparation(state: FightState, side: FightSide): FightSt
 
 export function controlledEntities(state: FightState, side: FightSide, source?: FighterId) {
   return (state.battlefield?.entities ?? []).filter(
-    (entry) => entry.controller?.side === side && (!source || entry.controller.source === source),
+    (entry) =>
+      liveEntity(entry) &&
+      entry.controller?.side === side &&
+      !entry.controller.person &&
+      (entry.controller.member ?? 0) === (state.teamMatch?.seats[side].active ?? 0) &&
+      (!source || entry.controller.source === source),
   )
 }
 
-export function releasePreparedControl(state: FightState, side: FightSide): FightState {
+export function preparedControlBusy(
+  state: FightState,
+  side: FightSide,
+  source?: FighterId,
+): boolean {
+  return Boolean(
+    controlledEntities(state, side, source).length ||
+    (source === 'sayird' && littleEyeShotBusy(state, side)),
+  )
+}
+
+export function releasePreparedControl(
+  state: FightState,
+  side: FightSide,
+  source?: FighterId,
+): FightState {
   if (!state.battlefield) return state
   return {
     ...state,
     battlefield: {
       ...state.battlefield,
+      littleEyeShots:
+        source && source !== 'sayird'
+          ? state.battlefield.littleEyeShots
+          : state.battlefield.littleEyeShots?.filter(
+              (shot) =>
+                shot.owner !== side || shot.member !== (state.teamMatch?.seats[side].active ?? 0),
+            ),
       entities: state.battlefield.entities.map((entry) =>
-        entry.controller?.side === side ? releasePreparedEntity(entry) : entry,
+        controlledEntities(state, side, source).some((held) => held.id === entry.id)
+          ? { ...releasePreparedEntity(entry), littleEye: undefined }
+          : entry,
       ),
     },
   }
@@ -119,6 +154,7 @@ export function preparedUserAvailable(
 ): boolean {
   const fighter = state[side]
   return (
+    arsenalMindAvailable(fighter) &&
     preparedBodyFree(fighter) &&
     preparationAuraAvailable(fighter) &&
     !chainAbilitySealed(fighter, CANONICAL_MOVE[source])

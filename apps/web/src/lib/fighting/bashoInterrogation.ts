@@ -66,7 +66,17 @@ function askBasho({ state, side, command }: ArsenalInvocation): FightState {
       ...spoken[side],
       bashoPoem: { ...poem, declaration: { frame: state.frame, question } },
     },
-    [other]: { ...spoken[other], bashoPrompt: { owner: side, askedAt: state.frame, question } },
+    [other]: {
+      ...spoken[other],
+      bashoPrompt: {
+        owner: side,
+        askedAt: state.frame,
+        question,
+        asker: side,
+        frame: state.frame,
+        paperId: poem.paperId ?? '',
+      },
+    },
   }
 }
 
@@ -87,14 +97,11 @@ export function canAskBasho(state: FightState, side: FightSide): boolean {
 export function bashoQuestionCurrent(state: FightState, target: FightSide): boolean {
   const prompt = state[target].bashoPrompt
   if (!prompt) return false
-  const actor = state[prompt.owner],
+  const actor = state[prompt.owner ?? prompt.asker],
     poem = actor.bashoPoem
   return Boolean(
-    poem?.ready &&
-    poem.effect === 'trial-by-fire' &&
-    poem.declaration?.frame === prompt.askedAt &&
-    poem.declaration.question === prompt.question &&
-    hasBashoPoem(actor, poem.sourceMoveId) &&
+    currentTrialPoem(poem, prompt) &&
+    hasBashoPoem(actor, poem?.sourceMoveId) &&
     canHear(actor) &&
     soundDistance(actor, state[target]) <= PAPER_VOICE_RANGE,
   )
@@ -154,7 +161,7 @@ function bashoAnswerOptions(state: FightState, side: FightSide): ArsenalOption[]
 function readyTrial(actor: ArcadeFighter): boolean {
   const poem = actor.bashoPoem
   return Boolean(
-    poem?.ready && poem.effect === 'trial-by-fire' && hasBashoPoem(actor, poem.sourceMoveId),
+    poem?.ready && poem.effect === 'trial-by-fire' && hasBashoPoem(actor, poem?.sourceMoveId),
   )
 }
 
@@ -168,5 +175,17 @@ function availableListener(target: ArcadeFighter): boolean {
     !target.arsenalSleep &&
     !target.hanzoProjection &&
     !target.kurapika?.blackoutFrames
+  )
+}
+
+function currentTrialPoem(
+  poem: import('./bashoPoem').BashoPoem | undefined,
+  prompt: NonNullable<FightState['player']['bashoPrompt']>,
+) {
+  return Boolean(
+    poem?.ready &&
+    poem.effect === 'trial-by-fire' &&
+    poem.declaration?.frame === prompt.askedAt &&
+    poem.declaration?.question === prompt.question,
   )
 }

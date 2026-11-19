@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { link, t } from '$lib/i18n'
   import { tourWords } from '$lib/tour/workspaceWords'
   interface Props {
     title: string
@@ -20,17 +21,20 @@
     <h1>{title}</h1>
     <p class="tour-hint">{$tourWords.hint}</p>
   </div>
-  <details class="about-visit">
-    <summary>{$tourWords.about}</summary>
-    <div class="about-content">
-      <p>{intro}</p>
-      <p class="tour-counts">{counts} · {scale}</p>
-      <nav aria-label={modesTitle}>
-        <a href={modesHref}>{modesTitle} <span aria-hidden="true">→</span></a>
-        <a href={morenaHref}>{morenaTitle} <span aria-hidden="true">→</span></a>
-      </nav>
-    </div>
-  </details>
+  <div class="tour-heading-actions">
+    <a class="clash-link" href={$link('/fighting')}>{$t.tour.modes.clash.play}</a>
+    <details class="about-visit">
+      <summary>{$tourWords.about}</summary>
+      <div class="about-content">
+        <p>{intro}</p>
+        <p class="tour-counts">{counts} · {scale}</p>
+        <nav aria-label={modesTitle}>
+          <a href={modesHref}>{modesTitle} <span aria-hidden="true">→</span></a>
+          <a href={morenaHref}>{morenaTitle} <span aria-hidden="true">→</span></a>
+        </nav>
+      </div>
+    </details>
+  </div>
 </header>
 
 <style>
@@ -57,6 +61,26 @@
   }
   h1 {
     font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .tour-heading-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+  .clash-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--accent-gold);
+    border-radius: 4px;
+    color: var(--accent-gold-bright);
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+  .clash-link:hover {
+    background: rgb(255 215 0 / 8%);
   }
   .about-visit {
     position: relative;

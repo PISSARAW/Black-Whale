@@ -62,19 +62,21 @@ function changedFighter(state: FightState, patch: Partial<ArcadeFighter>): Fight
 }
 
 describe('Musse — handgun and Secret Window', () => {
-  it('keeps one contact Hatsu and physical normals, without an invented execution finisher', () => {
+  it('keeps the two demonstrated owl applications and physical normals without an execution finisher', () => {
     const moveset = movesetFor('musse')!
-    expect(moveset.moves).toHaveLength(11)
-    expect(moveset.moves.filter((move) => move.category === 'special')).toHaveLength(1)
+    expect(moveset.moves).toHaveLength(12)
+    expect(moveset.moves.filter((move) => move.category === 'special')).toHaveLength(2)
     expect(moveForSlot('musse', 'finisher')).toBeNull()
     expect(finisherReady(duel(), 'player')).toBe(false)
     for (const input of [
       EMPTY_INPUT,
       { ...EMPTY_INPUT, right: true },
       { ...EMPTY_INPUT, left: true },
-      { ...EMPTY_INPUT, down: true },
     ])
       expect(moveForAction(duel().player, 'special', input)?.id).toBe('musse:neutralSpecial')
+    expect(moveForAction(duel().player, 'special', { ...EMPTY_INPUT, down: true })?.id).toBe(
+      'musse:downSpecial',
+    )
     expect(moveForSlot('musse', 'neutralSpecial')?.tuning).toMatchObject({
       damage: 0,
       hitstun: 0,
@@ -156,9 +158,16 @@ describe('Musse — handgun and Secret Window', () => {
       },
     }
     const started = performAttack(blinky, 'opponent', 'special')
-    const suction = { ...started, opponent: { ...started.opponent,
-      attack: { ...started.opponent.attack!, frame: attackData('special', started.opponent).startup },
-    } }
+    const suction = {
+      ...started,
+      opponent: {
+        ...started.opponent,
+        attack: {
+          ...started.opponent.attack!,
+          frame: attackData('special', started.opponent).startup,
+        },
+      },
+    }
     const highBullet = firedBullet(suction)
     // The raised handgun fires above the standing nozzle's aperture.
     expect(advanceBlinky(highBullet).projectiles).toHaveLength(1)
@@ -196,7 +205,11 @@ describe('Musse — handgun and Secret Window', () => {
     const base = duel()
     const result = advance(performAttack(base, 'player', 'special'), 35, true)
     expect(result.player.secretWindow).toBeDefined()
-    expect(result.opponent).toMatchObject({ blocking: true, health: base.opponent.health, blockStun: 0 })
+    expect(result.opponent).toMatchObject({
+      blocking: true,
+      health: base.opponent.health,
+      blockStun: 0,
+    })
   })
 
   it('cannot attach out of reach, during wakeup grace or after interrupted startup', () => {
@@ -369,7 +382,7 @@ describe('Musse — handgun and Secret Window', () => {
     const state = duel()
     const ai = { ...state, opponent: { ...state.player, facing: -1 as const, x: 48 } }
     expect(chooseMovesetAttack(ai, 0.5, 6)?.id).toBe('musse:neutralSpecial')
-    expect(chooseMovesetAttack(ai, 0.5, 20)).toBeNull()
+    expect(chooseMovesetAttack(ai, 0.5, 20)?.id).toBe('musse:downSpecial')
     expect(
       chooseMovesetAttack(
         {
@@ -377,6 +390,7 @@ describe('Musse — handgun and Secret Window', () => {
           opponent: {
             ...ai.opponent,
             secretWindow: { ...attach().player.secretWindow!, target: 'player' },
+            secretWindowListening: { activatedAt: state.frame },
           },
         },
         0.5,

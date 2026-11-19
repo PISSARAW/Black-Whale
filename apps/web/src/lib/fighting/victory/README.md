@@ -12,12 +12,7 @@ chorégraphie ; le cadrage et les accessoires utilisent les dimensions réelles
 des deux modèles. Les effets sont libérés avec le canvas.
 
 Le HUD et le panneau de résultats attendent la fin ou le passage de la scène.
-Les replays, égalités et visions inspectées ne déclenchent pas une nouvelle victoire.
-En arcade, un verdict perçu sous Laplace Demon peut en revanche jouer toute la
-victoire habituelle et afficher les résultats. `FightStage` utilise alors l’état
-visible pour la cinématique et le son, pendant que le moteur réel continue.
-La rupture de l’illusion retire cette présentation, sans valider de manche ni
-de progression réelle. Les boutons de résultats restent dans la branche perçue.
+Les replays, égalités et prévisions ne déclenchent pas une nouvelle victoire.
 Les réglages de confort et de son s'appliquent également à ces séquences.
 
 Hisoka affiche « VICTOIRE », Melody affiche « FRIENDSHIP » et les autres
@@ -109,14 +104,11 @@ puis rouvre les yeux sous une autre volonté. Le dernier plan revient sur
 Halkenburg. Le titre Fatality est ici l'habillage du verdict arcade.
 
 Le film prépare explicitement trois porteurs de plume consentants avant son
-premier état enregistré et attend la charge native complète. Un coup physique
-obtient ensuite le K.-O. réel : Grimmel transfère une conscience sans infliger
-de dégâts et ne peut pas fournir ce verdict à lui seul. La flèche et le transfert
-sont représentés après le verdict. La cinématique n'ajoute ni compagnon au combat courant,
+premier état enregistré, attend la charge native et vérifie la possession
+réelle après le tir. La cinématique n'ajoute ni compagnon au combat courant,
 ni pouvoir, ni dégâts. Les figures de soutien réutilisent les géométries humaines
 partagées sans les détruire ; la silhouette de conscience ne possède que son
-matériau. `halkenburgFilm.test.ts` vérifie la cohorte, la charge, le K.-O. physique,
-les identités préservées et les deux côtés, y compris le miroir ;
+matériau. `halkenburgFilm.test.ts` vérifie les préconditions et le verdict natifs ;
 `renderer.test.ts` vérifie les mains, le contact et la restauration des modèles.
 
 Camilla : « Le Souffle » adapte la référence existante : le chat saisit le
@@ -202,8 +194,7 @@ géométries partagées sans les détruire. Les contrôles couvrent le contact a
 la surface de Jupiter, la restauration, les tailles, P2, le miroir et le mobile.
 
 Illumi : « Même après la mort » commence par son regard vide et une aiguille à
-tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image
-132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles
+tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image 132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles
 supplémentaires arrivent au front à 282 et 300. La chute commence à 348. Le corps
 sans vie se relève à partir de 420 et s’incline à 468, avant le portrait final.
 Les trois pointes suivent les coordonnées locales de la tête pendant la chute,
@@ -217,7 +208,6 @@ aucun dégât, soin, contrôle supplémentaire ou résurrection n’est envoyé 
 La caméra normale contient le corps entier pendant sa chute ; le réglage de
 confort conserve un seul plan fixe. Les contrôles couvrent les contacts, les
 articulations, la restauration, P2, les gabarits, le miroir et le mobile.
-
 
 Biscuit : « Le soin de grâce » commence par Cookie massant sa main avec sa lotion,
 puis révèle son corps naturel à l’image 210. Un unique direct touche le torse
@@ -234,31 +224,6 @@ les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclencheme
 `render-biscuit-fatality.mjs` exporte 600 images et `compose-biscuit-fatality.mjs`
 compose la bande sonore du jeu et la vidéo de dix secondes.
 
-
-Nobunaga : « Le dernier pas » est une démo autonome : il n’appartient pas au
-roster jouable et n’est donc pas enregistré dans `catalogue.ts`. Son driver
-`nobunaga.ts` utilise le même contrat de poses, caméra et restauration, avec
-un contexte de présentation qui ne requiert aucun faux état de combat.
-Le modèle natif du navire porte son kimono et son katana articulé ; la cible
-et le décor proviennent des constructeurs de Clash.
-
-Le premier volume physique de la cible atteint exactement la sphère d’En à l’image 300.
-Le dégainé démarre à cette même image ; la pointe physique de la lame atteint
-le torse à 308. Les deux mains gardent le manche et le fourreau dans les limites
-de leurs articulations. Le corps s’effondre en deux sections stylisées à 390,
-puis la garde rejoint le fourreau à 510. Les sections conservent les géométries
-partagées et possèdent uniquement leurs matériaux. Aucune règle de combat,
-aucun Hatsu et aucun personnage jouable n’est ajouté à la simulation.
-Les hanches préparent le dégainé avant l’entrée dans En. Les deux mains se
-partagent la sortie de la lame ; la fente et l’orientation du sabre rejoignent
-le contact réel sans étirer le bras ni modifier la longueur de la lame.
-
-La bande sonore est entièrement instrumentale : pas de voix française, de
-synthèse vocale ou d’annonceur. `nobunaga.test.ts` vérifie le franchissement,
-le contact réel de la pointe, les prises, la restauration et la conservation
-des ressources. `check-nobunaga-fatality.mjs` contrôle les gabarits, les lieux,
-le miroir, les mouvements réduits, le mobile et le chargement du son.
-
 La chute de Biscuit utilise `advanceAirborne`, la progression de KO de
 `finishedFallPresentation`, `reactionPlan` et `fightGroundContact` comme le combat.
 Le vaincu quitte sa garde, reçoit le coup, puis se couche sur le dos sans rotation
@@ -267,7 +232,6 @@ natif est emprunté sans avancer sa mémoire d’animation et tous ses changemen
 sont restaurés après le rendu. Le cadrage réserve la longueur du corps couché,
 y compris avec la caméra réduite sur mobile. Le mix ne contient aucune réplique
 française ; seuls les bruitages et l’annonce « Fatality » sont conservés.
-
 
 Kurapika hors Brigade : « La dernière condition » active visuellement Emperor
 Time, déploie Judgment Chain depuis le petit doigt droit, implante le pieu au
@@ -311,7 +275,6 @@ P2, les gabarits, les lieux, le mobile, le confort et le branchement dans Clash.
 `render-kurapika-troupe.mjs` et `compose-kurapika-troupe.mjs` produisent dix
 secondes en 1080p60 et `kurapika-troupe.m4a`, sans aucune voix.
 
-
 Hanzo : « Derrière toi » laisse le corps natif en méditation, yeux fermés.
 Un deuxième modèle complet apparaît à l’image 72, traverse une cloison solide
 à 138 et rejoint le cou de la cible à 216. Les deux articulations de chaque
@@ -340,12 +303,10 @@ partagées restent conservées lors de la libération du double.
 `check-hanzo-fatality.mjs` produisent la vidéo de dix secondes, le son du jeu
 `hanzo.m4a` et les vérifications navigateur (P2, mobile, miroir et confort).
 
-
 Saiyu : « Les trois silences » utilise trois manifestations graphiques distinctes
 de Mizaru, Kikazaru et Iwazaru. L’archive du projet ne possède pas leur anatomie
 révélée : ces signes expriment leurs fonctions, sans inventer un modèle de bête.
-Les contacts aux yeux, à l’oreille et à la bouche arrivent aux images 90, 162 et
-234. Le cadre se ferme brièvement, le son s’étouffe puis la tentative de cri
+Les contacts aux yeux, à l’oreille et à la bouche arrivent aux images 90, 162 et 234. Le cadre se ferme brièvement, le son s’étouffe puis la tentative de cri
 reste muette. La cible porte successivement les mains à ses yeux, ses oreilles
 et sa bouche. Le bâton natif s’allonge à 282, touche la surface réelle du torse
 à 360 et projette le vaincu avec la gravité, la pose de KO et le sol du combat.
@@ -359,7 +320,6 @@ en anglais arrive à 8,1 secondes, après le retour du son, sans réplique fran�
 `saiyu.test.ts` vérifie contacts, prises, chute et restauration sur les gabarits
 extrêmes et le miroir ; `saiyuFilm.test.ts` vérifie la simulation des deux côtés.
 `check-saiyu-fatality.mjs` vérifie le mobile, le confort et le déclenchement réel.
-
 
 La version sensorielle de Saiyu garde le cadre totalement noir de 98 à 130,
 puis révèle des iris pâles sans reflets. À 162, la cible se prend les oreilles
@@ -415,7 +375,6 @@ Le mix utilise une phrase de flûte originale et l’annonce anglaise « Friends
 à 8,1 secondes, sans dialogue français. La scène est branchée aux victoires de
 Melody et s’adapte à l’arène et aux acteurs du combat courant.
 
-
 `check-saiyu-melody-victories.mjs` contrôle huit victoires réelles dans le
 composant Clash, avec rematches, modes IA/local, deux côtés, deux arènes,
 verdicts et chargement des sons. `saiyuMelodyPlayback.test.ts` couvre tous les
@@ -423,7 +382,6 @@ adversaires et lieux du catalogue ainsi que les quatre motifs de victoire.
 
 `check-hanzo-bill-victories.mjs` vérifie le déclenchement dans Clash, les
 rematches des deux côtés et les bandes sonores sans modifier le résultat.
-
 
 Hinrigh : « Pièce à conviction » transforme au contact les trois objets de sa
 mallette : caméra à 30, menottes à 54 et pistolet à 78. Le chat-caméra enregistre
@@ -450,7 +408,6 @@ deux côtés, gabarits, miroir, lieux, mobile, confort, rematches et chargement 
 les quatre motifs de victoire, les deux côtés, les modes IA/local et les
 rematches. Le contrôle navigateur vérifie aussi la fin naturelle à dix secondes
 et le retour aux résultats.
-
 
 Terebellum : « Retour à l’envoyeur » reçoit deux coups de couteau et un coup
 au torse. À 120, la blessure et le même couteau apparaissent dans la canette
@@ -514,7 +471,6 @@ la mort à 390. La géométrie partagée du visage reste intacte et se restaure
 après chaque image. Les souffles et les derniers battements s’accélèrent
 jusqu’à 6,5 s, avant le silence et la réception à 7,08 s.
 
-
 Voconte : « Aller simple » fait du choix de la destination un piège. Voconte
 franchit A à 90, s’écarte sur la passerelle de B et laisse sa cible le poursuivre
 à 156. B est un cadre physique ancré sur un plancher en hauteur, dont le bord
@@ -541,7 +497,6 @@ continuité. `vocontePlayback.test.ts` parcourt tous les adversaires et lieux,
 quatre motifs de victoire, IA/local et rematches. Les contrôles navigateur
 `check-voconte-fatality.mjs` et `check-voconte-victories.mjs` vérifient le rendu,
 le mobile, le confort, le son et le retour aux résultats à dix secondes.
-
 
 Longhi et Furykov possèdent chacun une cinématique personnelle de dix secondes,
 enregistrée après leurs victoires éligibles avec la cible et le lieu du combat.
@@ -587,25 +542,3 @@ pièce fermée pour tendre une embuscade derrière sa porte, puis finit au coute
 
 Basho : [Le dernier vers](./BASHO.md) écrit la composition de Great Hiker,
 enflamme la cible avec trois poings, puis relit sa feuille devant les braises.
-
-## Continuité et limites des corps
-
-Les mains utilisent le solveur commun `tour/humanLimbReach.ts` : deux segments
-rigides et un coude en flexion, avec recherche d’un plan compatible avec l’épaule.
-La pose affichée précédente guide ce choix pour éviter un retournement du bras.
-Les limites articulaires sont appliquées avant l’ancrage au sol et après les
-couches d’accessoires, y compris sur les corps privés de Biscuit et les doubles.
-Les pistolets conservent leur décalage de prise natif sans le reporter sur le poignet.
-
-`poseContinuity.ts` conserve les valeurs affichées entre deux transactions.
-L’entrée dans une chute ou un combo rejoint la pose sortante sur six images ;
-`humanJointMotion.ts` borne aussi le trajet angulaire des articulations selon
-le temps réellement écoulé. La pause fige cette référence. Un retour arrière
-ou un saut temporel reconstruit la pose ; un corps invisible peut changer de
-pose dans un portail. Ces références ne modifient pas l’état du combat.
-
-`physicalAudit.test.ts` couvre les 33 victoires, les variantes, les deux côtés
-et les gabarits Franklin/Biscuit. Il parcourt chaque image des films de référence
-et contrôle aussi les doubles : limites, longueurs des membres et continuité.
-L’audit des prises parcourt les 40 combattants, avec et sans Aura, des deux côtés
-et contre ces deux gabarits, après toutes les couches de contacts et d’accessoires.

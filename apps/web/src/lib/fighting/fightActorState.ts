@@ -11,17 +11,21 @@ import type { ArcadeFighter, FightInput } from './types'
 const GROUND = 0
 
 export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
-  return !fighter.halkSoulSleep && !fighter.arenaRecovery && biohazardBodyFree(fighter)
+  return !fighter.arenaRecovery && biohazardBodyFree(fighter)
 }
 
 function characterBusy(fighter: ArcadeFighter): boolean {
   if (
-    fighter.halkSoulSleep ||
-    fighter.easterEgg ||
-    fighter.throwTechRecoveryFrames ||
-    fighter.luiniPassage ||
-    fighter.machiSuture ||
-    fighter.corpsePreparation
+    [
+      fighter.easterEgg,
+      fighter.throwTechRecoveryFrames,
+      fighter.luiniPassage,
+      fighter.machiSuture,
+      fighter.machiReattachment,
+      fighter.ghostwriterWriting,
+      fighter.gumResuscitationPaused,
+      fighter.corpsePreparation,
+    ].some(Boolean)
   )
     return true
   if (!illumiBodyFree(fighter)) return true

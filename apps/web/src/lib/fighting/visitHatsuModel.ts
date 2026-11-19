@@ -33,14 +33,31 @@ export function createVisitHatsuModel(THREE: Three, options: ModelOptions) {
   const materials = new Map<string, import('three').MeshBasicMaterial>()
   const glow: BasicApparitionContext['glow'] = (color, opacity) => {
     const key = `${color}:${opacity}`
-    if (!materials.has(key)) materials.set(key, new THREE.MeshBasicMaterial({
-      color, opacity, transparent: opacity < 1, toneMapped: false,
-    }))
+    if (!materials.has(key))
+      materials.set(
+        key,
+        new THREE.MeshBasicMaterial({
+          color,
+          opacity,
+          transparent: opacity < 1,
+          toneMapped: false,
+        }),
+      )
     return materials.get(key)!
   }
-  const seen: Apparition = { id: root.name, kind: spec.apparitionKind, at: [0, 0], y: 0,
-    size: 1, colour: spec.colour, stage: options.stage ?? spec.stage,
-    hidden: false, spaceId: 'fighting', tierId: 'fighting', climb: options.climb }
+  const seen: Apparition = {
+    id: root.name,
+    kind: spec.apparitionKind,
+    at: [0, 0],
+    y: 0,
+    size: 1,
+    colour: spec.colour,
+    stage: options.stage ?? spec.stage,
+    hidden: false,
+    spaceId: 'fighting',
+    tierId: 'fighting',
+    climb: options.climb,
+  }
   spec.build(seen, { THREE, root: body, glow, skin: glow(spec.colour, 1) })
   const joints = retainJoints(THREE, body, options.joints ?? [])
   batchNenModel(body)
@@ -60,11 +77,16 @@ export function createVisitHatsuModel(THREE: Three, options: ModelOptions) {
   }
   if (options.figureOwned) MOUNTED.set(root, dispose)
   return {
-    root, body, size, joints,
+    root,
+    body,
+    size,
+    joints,
     fit(dimensions: { width?: number; height?: number; depth?: number }) {
-      const limits = [dimensions.width ? dimensions.width / size.x : Infinity,
+      const limits = [
+        dimensions.width ? dimensions.width / size.x : Infinity,
         dimensions.height ? dimensions.height / size.y : Infinity,
-        dimensions.depth ? dimensions.depth / size.z : Infinity]
+        dimensions.depth ? dimensions.depth / size.z : Infinity,
+      ]
       const scale = Math.min(...limits)
       root.scale.setScalar(Number.isFinite(scale) && scale > 0 ? scale : 1)
       return root
@@ -76,7 +98,8 @@ export function createVisitHatsuModel(THREE: Three, options: ModelOptions) {
 export type VisitHatsuModel = ReturnType<typeof createVisitHatsuModel>
 
 function modelSource(model: VisitHatsuKind) {
-  if (model in EXTRA_VISIT_MODELS) return EXTRA_VISIT_MODELS[model as keyof typeof EXTRA_VISIT_MODELS]
+  if (model in EXTRA_VISIT_MODELS)
+    return EXTRA_VISIT_MODELS[model as keyof typeof EXTRA_VISIT_MODELS]
   return CANONICAL_MODELS[model as ArchiveModel]
 }
 
@@ -103,7 +126,10 @@ function retainJoints(THREE: Three, body: Group, names: readonly string[]): Map<
 /** Figure rebuilds release attached Hatsu, while scene-owned effects may be reparented. */
 export function disposeMountedVisitHatsu(figure: Object3D): void {
   const disposers: Array<() => void> = []
-  figure.traverse((part) => { const dispose = MOUNTED.get(part); if (dispose) disposers.push(dispose) })
+  figure.traverse((part) => {
+    const dispose = MOUNTED.get(part)
+    if (dispose) disposers.push(dispose)
+  })
   disposers.forEach((dispose) => dispose())
 }
 

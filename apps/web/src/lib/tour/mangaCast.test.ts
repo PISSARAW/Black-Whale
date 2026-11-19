@@ -7,6 +7,7 @@ import { FIGHTING_ROSTER } from '../fighting/roster'
 import { projectHanzo } from '../fighting/hanzoProjection'
 import { fightFigureKey } from '../fighting/fighterFigure'
 import { buildFightFigure } from '../fighting/fighterFigure'
+import { combatFaceGeometry } from '../fighting/fightFaceReadability'
 import { createFightState } from '../fighting/fightState'
 import { addBonolenovBattleArmor } from './bonolenovBattleArmor'
 import { emptyBattleCantabile } from '../fighting/battleCantabileTypes'
@@ -88,7 +89,7 @@ describe('manga cast shared by the visit and Fighting', () => {
   it('shares Luzurus’s swept puffs, face and articulated reference outfit with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-luzurus') })
     const fighter = createFightState('luzurus', 'hisoka').player
-    const fighting = buildFightFigure({ THREE, glow, fighter })
+    const fighting = buildFightFigure({ THREE, glow, fighter, readability: false })
     for (const name of [
       'face-relief',
       'luzurus-light-stubble',
@@ -349,7 +350,6 @@ describe('manga cast shared by the visit and Fighting', () => {
     const model = buildFightFigure({ THREE, glow, fighter })
     const common = buildHumanFigure({ THREE, glow, seen: seen('melody') })
     model.animate(0, 'idle', { motion: fightBodyMotion({ fighter, seconds: 0, progress: 0 }) })
-    const openEyeScale = model.root.getObjectByName('face-eye-left')!.scale.y
     const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
     expect(hair.geometry).toBe(
       (common.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry,
@@ -382,7 +382,8 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(flute.parent).toBe(rest.parent)
     expect(flute.position.toArray()).toEqual(rest.position.toArray())
     expect(flute.scale.toArray()).toEqual(rest.scale.toArray())
-    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBe(openEyeScale)
+    // Combat expressions resume after the flute: the concentration face is close to rest.
+    expect(model.root.getObjectByName('face-eye-left')!.scale.y).toBeCloseTo(1, 1)
   })
   it('shares Yokotani’s smiling face, bob and carried law book with Fighting', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('yokotani') })
@@ -479,14 +480,18 @@ describe('manga cast shared by the visit and Fighting', () => {
     const fighting = buildFightFigure({ THREE, glow, fighter })
     for (const name of [
       'saiyu-gold-circlet',
-      'saiyu-large-ears',
-      'saiyu-shaved-heart',
       'saiyu-curled-tail',
       'saiyu-knee-scroll',
       'saiyu-abdominal-lines',
       'saiyu-gold-emblem-top',
     ])
       expect(mesh(fighting.root, name).geometry).toBe(mesh(common.root, name).geometry)
+    for (const name of ['saiyu-large-ears', 'saiyu-shaved-heart']) {
+      expect(mesh(fighting.root, name).geometry).toBe(
+        combatFaceGeometry(mesh(common.root, name).geometry),
+      )
+      expect(mesh(common.root, name).geometry.getAttribute('color')).toBeUndefined()
+    }
     const tail = mesh(fighting.root, 'saiyu-curled-tail')
     const rest = tail.position.clone()
     for (const facing of [-1, 1] as const) {

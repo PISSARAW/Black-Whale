@@ -13,9 +13,8 @@ import type { AttackPhase } from './types'
  * The rhythm is the one 2D fighters are animated in:
  * - anticipation eases in during startup;
  * - the strike snaps into contact in a frame or two;
- * - thrusts hold contact through active frames; authored cuts can continue
- *   along their arc while the hitbox is live;
- * - hitstop freezes either trajectory because the move's frame counter stops;
+ * - contact holds through the active frames (and through hitstop, since the
+ *   move's frame counter stops while the game is frozen);
  * - recovery settles back slowly.
  * Outside the active frames poses are held on twos, like hand-keyed animation,
  * instead of being interpolated on every frame.
@@ -69,7 +68,7 @@ export interface TimelineSample {
   frames: PhaseFrames
   /** Ease back into the stance after the last key (the default); off for a body left lying. */
   settle?: boolean
-  /** Live strikes sample their trajectory continuously between authored keys. */
+  /** Sample every frame for continuous support gestures. */
   continuous?: boolean
 }
 

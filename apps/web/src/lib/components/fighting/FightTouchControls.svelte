@@ -58,7 +58,7 @@
       className="heavy-button"
       onPress={() => onAttack('heavy')}>{fr ? 'Lourd' : 'Heavy'}</FightTouchButton
     >
-    <FightTouchButton label={fr ? 'Projection / déprojection — maintenir Aura pour une super projection' : 'Throw / tech — hold Aura for a super throw'} onPress={onThrow}
+    <FightTouchButton label={fr ? 'Projection / déprojection' : 'Throw / tech'} onPress={onThrow}
       >{fr ? 'Proj.' : 'Throw'}</FightTouchButton
     >
     <FightTouchButton

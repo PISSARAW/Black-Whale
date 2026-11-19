@@ -45,7 +45,10 @@ function bashoSpeechAi(
 ): FightState | null {
   const actor = state.opponent
   if (!judgmentForbidsContact(actor, state.player.id)) {
-    if (actor.bashoPrompt && state.frame - actor.bashoPrompt.askedAt >= 30) {
+    if (
+      actor.bashoPrompt &&
+      state.frame - (actor.bashoPrompt.askedAt ?? actor.bashoPrompt.frame) >= 30
+    ) {
       const answered = performBashoArsenal(
         { state, side: 'opponent', command: { action: 'basho-answer', target: 'sincere' } },
         perform,

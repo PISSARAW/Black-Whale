@@ -48240,9 +48240,7 @@
       "type": "emitter",
       "typeLabel": "Emission",
       "overview": "Voconte uses directional doorframes to transport people. The full installation and maintenance conditions remain unknown.",
-      "abilityIds": [
-        "voconte-hideout-doors"
-      ]
+      "abilityIds": ["voconte-hideout-doors"]
     }
   },
   {

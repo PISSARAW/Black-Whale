@@ -9,9 +9,14 @@ export function ownsBungeeGum(fighter: ArcadeFighter): boolean {
     return false
   if (fighter.id === 'hisoka') return true
   if (fighter.id === 'chrollo') return bookHasGum(fighter)
+  return loadedGum(fighter)
+}
+function loadedGum(fighter: ArcadeFighter): boolean {
   const held = fighter.kurapika?.held
   return Boolean(
     held?.loaded &&
+    !held.returned &&
+    held.source === 'hisoka' &&
     fighter.kurapika?.emperorTime &&
     chainAbilityGroup(held.moveId) === 'bungee-gum',
   )
@@ -37,7 +42,8 @@ export function spendGumUse(state: FightState, side: FightSide, cost: number): F
       ...fighter,
       aura: fighter.aura - cost,
       kurapika:
-        chain?.held?.source === 'hisoka'
+        chain?.held?.source === 'hisoka' &&
+        (fighter.dolphinExecution || (fighter.nenOwner ?? fighter.id) === 'kurapika')
           ? { ...chain, held: { ...chain.held, used: true, sustainedKeys: ['gum-support'] } }
           : chain,
     },

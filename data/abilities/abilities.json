@@ -1651,9 +1651,7 @@
     "id": "voconte-hideout-doors",
     "ownerId": "voconte",
     "name": "Door",
-    "alternateNames": [
-      "Hideout Doors (descriptive name)"
-    ],
+    "alternateNames": ["Hideout Doors (descriptive name)"],
     "category": "emitter",
     "abilityType": "hideout-door-network",
     "description": "Voconte connects directional doorframes. People actually entering a triggering threshold are transported, including unsuspecting entrants to Room 3101; the return threshold changes their facing. Thrown weapons and Yokotani’s Nen constructs were not transported. The complete installation, selection and maintenance conditions remain unknown.",

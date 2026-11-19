@@ -1,4 +1,8 @@
 <script lang="ts">
+  import FightKameoPicker from './FightKameoPicker.svelte'
+  import type { KameoPicks } from '$lib/fighting/kameos/state'
+  import type { KameoId } from '$lib/fighting/kameos/types'
+  import type { FightSide } from '$lib/fighting/types'
   import { fightStage } from '$lib/fighting/stages'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
@@ -7,7 +11,6 @@
   import { link } from '$lib/i18n'
   import FightPortrait from './FightPortrait.svelte'
   import FightFormatPicker from './FightFormatPicker.svelte'
-  import FightKameoPicker from './FightKameoPicker.svelte'
   import FightPreparationSetup from './FightPreparationSetup.svelte'
   import FightArenaSetup from './FightArenaSetup.svelte'
   import FightIllumiEquipment from './FightIllumiEquipment.svelte'
@@ -24,6 +27,8 @@
   export let onEnvironment: (next: FightEnvironment) => void
   export let onFormat: (id: FightFormatId) => void
   export let onLaunch: () => void
+  export let kameos: KameoPicks = {}
+  export let onKameo: (side: FightSide, id?: KameoId) => void = () => {}
   $: fr = language === 'fr'
   $: stage = fightStage(environment.stageId)
   $: modeLabel = {
@@ -46,6 +51,7 @@
   <div class="rules-layout">
     <div class="rules-main">
       <FightFormatPicker selected={format} {language} onSelect={onFormat} />
+      <FightKameoPicker {language} picks={kameos} onPick={onKameo} />
       <div class="arena-option">
         <FightArenaSetup {environment} {language} {onEnvironment} />
         <p>
@@ -54,7 +60,6 @@
             : 'Enable destructible cover and terrain abilities.'}
         </p>
       </div>
-      <FightKameoPicker {language} />
       <details class="clash-advanced">
         <summary
           >{fr ? 'Options avancées & équipement' : 'Advanced options & equipment'}<span

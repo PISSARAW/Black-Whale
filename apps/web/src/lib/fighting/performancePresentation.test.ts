@@ -116,7 +116,7 @@ describe('Melody, Basho and Rihan: type 1 performance, writing and observation',
       expect(bashoInk(s[side].bashoPoem!).lines).toEqual(['GREAT HIKER', ''])
       const health = s[other].health
       scene.sync(s)
-      const pen = scene.scene.getObjectByName(`basho-pen:${side}`)!
+      const pen = scene.scene.getObjectByName(`basho-brush:${side}`)!
       const first = pen.position.toArray()
       s = frames(s, 30, (n) => {
         clock(n, side)
@@ -259,7 +259,7 @@ describe('Melody, Basho and Rihan: type 1 performance, writing and observation',
     scene.sync(s)
     s = frames(performAttack(s, 'player', 'special'), 9)
     scene.sync(s)
-    const pen = scene.scene.getObjectByName('basho-pen:player')!
+    const pen = scene.scene.getObjectByName('basho-brush:player')!
     const paper = scene.scene.getObjectByName('basho-poem:player')!
     const pose = [pen.position.toArray(), pen.quaternion.toArray(), paper.position.toArray()]
     scene.sync(s, 999)

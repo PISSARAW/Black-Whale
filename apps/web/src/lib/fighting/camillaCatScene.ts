@@ -38,7 +38,9 @@ export function createCamillaCatScene(options: EffectSceneOptions): FighterEffec
     return mesh
   }
   const catModel = createVisitHatsuModel(THREE, {
-    model: 'cats-name', anchor: 'floor', joints: ['arm--1', 'arm-1', 'hand--1', 'hand-1', 'cat-tail'],
+    model: 'cats-name',
+    anchor: 'floor',
+    joints: ['arm--1', 'arm-1', 'hand--1', 'hand-1', 'cat-tail'],
   })
   catModel.fit({ height: 2.8, width: 2.4 })
   const catScale = catModel.root.scale.x

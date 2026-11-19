@@ -88,7 +88,7 @@ function finishShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {
   for (const knee of limbs.knees) {
     const shoe = knee.children[1]
     const sole = shoe.getObjectByName('shoe-sole-and-toecap')
-    // Bare feet deliberately omit shoe details and must retain their own shape.
+    // Beyond’s reclining prison pose has bare feet instead of a shoe rig.
     if (!sole) continue
     shoe.children.slice(0, 2).forEach((node) => {
       ;(node as Mesh).geometry = shape

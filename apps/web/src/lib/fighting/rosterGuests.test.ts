@@ -1,3 +1,4 @@
+import { captureDolphinAura } from './dolphinAura'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, tickFight, performAuraAttack } from './engine'
 import { performArsenalAction } from './arsenalExecution'
@@ -16,12 +17,15 @@ import { privatePvpState } from './pvp/view'
 import { encodeFightSnapshot, decodeFightSnapshot } from './fightReplaySnapshot'
 import { EMPTY_INPUT, type FightState } from './types'
 
-function ready(id: 'chrollo' | 'halkenburg' | 'kurapika' = 'chrollo') {
+function ready(id: 'chrollo' | 'halkenburg' | 'kurapika' = 'chrollo', rosterVariant = false) {
   const s = beginFight(
     createFight(id, 'hisoka', {
       mode: 'versus-local',
       formatId: 'knockout',
-      environment: { preparation: { mode: 'scenario', resources: [], cohorts: ['player'] } },
+      environment: {
+        halkenburgRosterVariant: rosterVariant,
+        preparation: { mode: 'scenario', resources: [], cohorts: ['player'] },
+      },
     }),
   )
   return {
@@ -97,7 +101,7 @@ describe('roster bodies operate in the real combat world', () => {
     expect(recovered.player.blackAntennas![0]).toEqual({ id: 0 })
   })
   it('replaces Halkenburg with the drawn body, changes the real moveset and preserves the health ratio', () => {
-    const initial = ready('halkenburg')
+    const initial = ready('halkenburg', true)
     const s = {
       ...initial,
       player: {
@@ -207,7 +211,7 @@ describe('roster bodies operate in the real combat world', () => {
     expect(next.phase).toBe('fighting')
   })
   it('replaces native Halkenburg after a real arrow impact as well as the explicit transfer command', () => {
-    const s = ready('halkenburg')
+    const s = ready('halkenburg', true)
     const supporter = s.battlefield!.entities.find(
       (entry) => entry.owner === 'player' && entry.kind === 'supporter',
     )!
@@ -233,7 +237,7 @@ describe('roster bodies operate in the real combat world', () => {
     expect(struck.opponent.hatsuEffects.possessedFrames).toBe(0)
   })
   it('refuses Halkenburg transfer without the marked consenting cohort and gathered will', () => {
-    const s = ready('halkenburg')
+    const s = ready('halkenburg', true)
     expect(
       performHalkenburgTransfer({
         state: s,
@@ -254,6 +258,10 @@ describe('roster bodies operate in the real combat world', () => {
           held: {
             victim: 'opponent',
             source: 'franklin',
+            auraSupply: {
+              ...captureDolphinAura(createFight('franklin', 'hisoka').player),
+              amount: 80,
+            },
             moveId: 'franklin:neutralSpecial',
             loaded: true,
             used: false,
@@ -293,6 +301,10 @@ describe('roster bodies operate in the real combat world', () => {
           held: {
             victim: 'opponent',
             source: 'franklin',
+            auraSupply: {
+              ...captureDolphinAura(createFight('franklin', 'hisoka').player),
+              amount: 80,
+            },
             moveId: 'franklin:neutralSpecial',
             loaded: true,
             used: false,

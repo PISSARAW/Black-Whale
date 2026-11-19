@@ -1,9 +1,28 @@
+import { hasMarkedTerrain } from './sunMoonMaterial'
+import { prepareHisokaAsphyxia } from './gumResuscitationScenario'
+import { prepareFortuneScenario } from './ghostwriterScenario'
+import { carryDolphinPeople } from './dolphinPeopleWorld'
+import { prepareBodyDamage, carryBodyDamage } from './bodyDamage'
+import { carryDocumentState } from './paperDocumentRound'
+import { carryIllumiFace } from './illumiDisguiseClock'
+import { carryNeedleFace } from './illumiNeedleMatter'
+import { carryKallutoPaper } from './kallutoSurveillance'
+import { personalPaperKit } from './kallutoMaterials'
+import { carryPaperWorld } from './kallutoMaterialWorld'
+import { carryHalkenburgSoul } from './halkenburgSoulCarry'
+import { prepareMusseHistory } from './benjaminMusseScenario'
+import { carryMusseHistory } from './benjaminMusseRound'
+import { carryDolphinState } from './dolphinRound'
+import { carryVoiceAutopilot } from './blackVoiceAutopilot'
+import { createBlackVoiceGear, restingBlackVoiceGear } from './blackVoiceTypes'
+import { createWritingKit } from './bashoMaterials'
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
+import { applyControlSchemes, keepControlScheme, type ControlSchemes } from './controlScheme'
 import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
-import { createBiohazardDevices } from './biohazardDevices'
+import { createBiohazardDevices } from './legacyBiohazardDevices'
 import { createBiohazardInventory } from './biohazard'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
@@ -21,6 +40,8 @@ interface CreateFightOptions {
   formatId?: FightFormatId
   mode?: FightMode
   environment?: Partial<FightEnvironment>
+  /** Per-side command scheme (controlScheme.ts); omitted sides stay simplified. */
+  controls?: ControlSchemes
 }
 
 export function createFightState(
@@ -33,7 +54,7 @@ export function createFightState(
   const mode = typeof options === 'string' ? 'versus-ai' : (options.mode ?? 'versus-ai')
   const format = fightFormat(formatId)
   const environment = createFightEnvironment(typeof options === 'string' ? {} : options.environment)
-  return setupIllumiNeedles({
+  const created = setupIllumiNeedles({
     training: mode === 'training' ? createTrainingState(format.health) : undefined,
     arena: environment.arenaInteractions ? createArenaState() : undefined,
     battlefield: createBattlefield(environment),
@@ -61,6 +82,10 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
   })
+  return applyControlSchemes(
+    prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
+    typeof options === 'string' ? undefined : options.controls,
+  )
 }
 
 export function nextFightRound(state: FightState): FightState {
@@ -69,18 +94,18 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
-      battlefield: createBattlefield(state.environment),
-      arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      battlefield: carryPaperWorld(
+        carryDolphinPeople(createBattlefield(state.environment), state.battlefield),
+        state,
+      ),
+      arena:
+        state.environment.arenaInteractions || hasMarkedTerrain(state)
+          ? createArenaState()
+          : undefined,
       rosterGuests: undefined,
-      halkSoulLinks: undefined,
-      halkSoulOrigins: undefined,
-      halkSoulMinds: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
-      futurePerception: undefined,
-      futureIllusion: undefined,
-      toxinClouds: undefined,
       forecastSimulation: undefined,
       lsdf: undefined,
       expulsion: undefined,
@@ -89,24 +114,33 @@ export function nextFightRound(state: FightState): FightState {
       catsNameConsumed: undefined,
       player: preserveLifespan(
         createFighter({
-          id: state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
+          id: state.player.halkenburgOrigin ?? state.player.id,
           x: 22,
           facing: 1,
           health: format.health,
         }),
         state.player,
+        state.frame,
       ),
       opponent: preserveLifespan(
         createFighter({
-          id:
-            state.halkSoulOrigins?.opponent ?? state.opponent.halkenburgOrigin ?? state.opponent.id,
+          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
           x: 78,
           facing: -1,
           health: format.health,
         }),
         state.opponent,
+        state.frame,
       ),
-      ...roundKameoState(state, format.health),
+      ...(state.kameos && {
+        kameos: nextRoundKameos(state.kameos, (fighter, side) =>
+          preserveLifespan(
+            createFighter({ id: fighter.id, ...KAMEO_SPAWN[side], health: format.health }),
+            fighter,
+            state.frame,
+          ),
+        ),
+      }),
       phase: 'ready',
       frame: 0,
       time: format.roundFrames / FIGHT_FPS,
@@ -128,17 +162,33 @@ export function nextFightRound(state: FightState): FightState {
   )
 }
 
-function roundKameoState(state: FightState, health: number): Pick<FightState, 'kameos'> {
-  if (!state.kameos) return {}
-  return {
-    kameos: nextRoundKameos(state.kameos, (fighter, side) =>
-      preserveLifespan(createFighter({ id: fighter.id, ...KAMEO_SPAWN[side], health }), fighter),
-    ),
-  }
-}
-
-export function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
+export function preserveLifespan(
+  fighter: ArcadeFighter,
+  previous: ArcadeFighter,
+  elapsedFrames: number,
+): ArcadeFighter {
+  fighter = carryHalkenburgSoul(fighter, previous)
+  fighter = carryIllumiFace(fighter, previous, elapsedFrames)
+  fighter = carryNeedleFace(fighter, previous)
+  fighter = carryBodyDamage(fighter, previous)
+  fighter = carryDocumentState(fighter, previous)
+  fighter = carryDolphinState(fighter, previous)
+  fighter = carryKallutoPaper(fighter, previous)
+  fighter = carryMusseHistory(fighter, previous)
+  fighter = carryVoiceAutopilot(
+    {
+      ...fighter,
+      personalEncounters: previous.personalEncounters,
+      gumResuscitationProgram: previous.gumResuscitationProgram,
+      gumResuscitationCompleted: previous.gumResuscitationCompleted,
+      blackVoiceGear: restingBlackVoiceGear(previous.blackVoiceGear),
+    },
+    previous,
+  )
+  fighter = keepControlScheme(
+    preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous),
+    previous,
+  )
   return fighter.kurapika
     ? {
         ...fighter,
@@ -159,9 +209,18 @@ export function createFighter(options: {
   return {
     ...options,
     equipment: personalEquipment(options.id),
+    writingKit:
+      options.id === 'basho'
+        ? createWritingKit(`${options.facing === 1 ? 'player' : 'opponent'}:basho:kit`)
+        : undefined,
+    blackVoiceGear:
+      options.id === 'chrollo'
+        ? createBlackVoiceGear(options.facing === 1 ? 'player' : 'opponent')
+        : undefined,
     maxHealth: options.health,
+    paperKit: personalPaperKit(options.id, options.facing),
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
-    biohazardDevices: options.id === 'hinrigh' ? createBiohazardDevices() : undefined,
+    biohazardDevices: initialDeviceKit(options.id),
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
@@ -234,4 +293,8 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
     seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
   }
   return seed >>> 0
+}
+
+function initialDeviceKit(id: FighterId) {
+  return id === 'hinrigh' ? createBiohazardDevices() : undefined
 }

@@ -17,11 +17,12 @@ export interface RetrospectiveFighterState {
   padailleEscape?: import('./padailleEscape').PadailleEscape
   weaponsConfiscated?: boolean
   sweetHomeObject?: string
-  bashoPrompt?: {
-    owner: FightSide
-    askedAt: number
-    question: import('./dowsingTypes').DowsingQuestion
-  }
+
+  personalEncounters?: readonly import('./personalEncounters').PersonalEncounter[]
+  deviceTouchId?: string
+  devicePlayback?: import('./deviceTypes').DevicePlayback
+  receiverReading?: import('./deviceTypes').ReceiverReading
+  dowsingScreened?: readonly { deviceId: string; sampleId: number }[]
   dowsingSession?: import('./dowsingTypes').DowsingSession
   dowsingPrompt?: import('./dowsingTypes').DowsingPrompt
   dowsingReading?: import('./dowsingTypes').DowsingReading
@@ -39,8 +40,10 @@ export interface RetrospectiveFighterState {
   hunterQuestion?: { owner: FightSide; askedAt: number }
   moonlightPenaltyFrames?: number
   gumWoundSeals?: number
-  gumCatch?: {
+  gumWoundOrigin?: import('./bungeeSource').GumSource
+  gumCatch?: import('./bungeeSource').GumSource & {
     frames: number
+    hand?: import('./deviceHands').DeviceHand
     hidden?: boolean
     released?: boolean
     projectile?: import('./types').FightProjectile
@@ -52,43 +55,34 @@ export interface RetrospectiveFighterState {
 }
 
 export const ARSENAL_ACTION_IDS = [
-  'umbrella-feint',
-  'future-blink',
-  'illumi-mask',
-  'guardian-answer',
-  'benjamin-toxin',
-  'future-field-mode',
-  'future-field-stop',
-  'franklin-aim',
-  'blinky-evidence',
-  'illumi-needle-mode',
-  'illumi-needle-remove',
-  'gum-heart',
-  'weapon-ready',
-  'weapon-throw',
-  'weapon-contain',
+  'arena-turn-object',
+  'sun-moon-charge-sun',
+  'sun-moon-charge-moon',
+  'sun-moon-release',
+  'gum-program-resuscitation',
+  'gum-anchor-attach',
+  'gum-anchor-self',
+  'gum-anchor-object',
+  'gum-anchor-stop',
+  'gum-anchor-release',
   'bono-model',
   'illumi-corpse',
   'illumi-corpse-order',
   'illumi-corpse-speak',
   'illumi-corpse-release',
   'dowsing-locate',
-  'dowsing-video',
   'judgment-reveal',
   'judgment-return-hostage',
   'machi-suture',
+  'machi-reattach',
   'machi-length',
   'machi-detach',
   'machi-anchor',
-  'machi-corpse',
-  'machi-corpse-fire',
   'machi-pull',
   'dolphin-loan',
   'halkenburg-transfer',
-  'halkenburg-mode',
-  'halkenburg-arrow',
-  'halkenburg-sleep',
-  'halkenburg-sedative',
+  'halkenburg-host-motion',
+  'halkenburg-soul-rest',
   'black-roster',
   'black-order',
   'black-remove',
@@ -107,25 +101,112 @@ export const ARSENAL_ACTION_IDS = [
   'bio-receiver-give',
   'bio-signal',
   'bio-oyster-hide',
-  'window-listen',
   'window-contact',
   'window-stop',
   'basho-compose',
-  'basho-ask',
-  'basho-answer',
   'melody-ask',
   'melody-answer',
   'sweet-home-object',
   'padaille-escape',
+  'paper-release-confetti',
+  'paper-kit-take',
+  'paper-kit-drop',
+  'paper-kit-gather',
+  'paper-stop-listening',
+  'window-recall',
+  'window-stop-listening',
+  'window-listen',
+  'window-archive',
+  'window-archive-close',
+  'window-recorded',
+  'person-dolphin-use',
+  'person-dolphin-close',
+  'person-eye-left',
+  'person-eye-right',
+  'person-eye-look-left',
+  'person-eye-look-right',
+  'person-eye-stay',
+  'person-eye-release',
+  'little-eye-left',
+  'little-eye-right',
+  'little-eye-stay',
+  'little-eye-look-left',
+  'little-eye-look-right',
+  'little-eye-release',
+  'voice-self-implant',
+  'voice-autopilot',
+  'voice-watch',
+  'voice-arm',
+  'voice-phone',
+  'voice-pocket',
+  'voice-drop',
+  'voice-pickup',
+  'voice-implant',
+  'voice-remove',
+  'voice-stay',
+  'voice-retreat',
+  'voice-approach',
+  'voice-attack',
+  'voice-spoken-attack',
+  'biohazard-device',
+  'biohazard-device-cancel',
+  'biohazard-device-end',
+  'biohazard-swallow',
+  'biohazard-place',
+  'biohazard-cat-left',
+  'biohazard-cat-right',
+  'biohazard-cat-stay',
+  'biohazard-cat-recall',
+  'device-pickup',
+  'device-drop',
+  'device-record',
+  'device-watch',
+  'device-fire',
+  'device-signal',
+  'device-face-left',
+  'device-face-right',
+  'basho-ask',
+  'basho-answer',
+  'basho-ward',
+  'basho-remove-ward',
+  'writing-take',
+  'writing-drop',
+  'statement-sincere',
+  'statement-lie',
+  'dowsing-video',
   'dowsing-ask',
   'dowsing-answer',
   'dowsing-stop',
   'judgment-preset',
   'judgment-release',
   'judgment-call',
+  'judgment-ask',
+  'judgment-answer',
+  'dolphin-lend',
+  'dolphin-use',
   'dolphin-move',
   'copied-move',
   'gum-seal',
+  'gum-prosthesis',
+  'gum-prosthesis-release',
+  'gum-spring-step',
+  'texture-target',
+  'texture-remove',
+  'texture-apply',
+  'document-draw',
+  'illumi-face-mode',
+  'illumi-needle-mode',
+  'illumi-needle-apply',
+  'needle-face-remove',
+  'illumi-face-apply',
+  'illumi-face-remove',
+  'document-take',
+  'document-drop',
+  'document-read',
+  'document-show',
+  'texture-paper',
+  'texture-paper-text',
+  'texture-paper-remove',
   'gum-unseal',
   'gum-release',
   'gum-catch',
@@ -149,7 +230,10 @@ export const ARSENAL_ACTION_IDS = [
   'history-phone-criteria',
   'history-phone-call',
   'history-page',
+  'history-gallery-locate',
+  'history-gallery-stop',
   'history-use',
+  'history-ghostwriter',
   'history-release',
   'history-order-wait',
   'history-order-attack',
@@ -161,8 +245,10 @@ export type ArsenalActionId = (typeof ARSENAL_ACTION_IDS)[number]
 export interface ArsenalCommand {
   action: ArsenalActionId
   target?: string
+  loan?: boolean
 }
 export interface CookieSession {
+  loan?: boolean
   target: FightSide
   mode: 'massage' | 'piano'
   frames: number

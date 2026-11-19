@@ -34,14 +34,20 @@ function hideFight(options: FightLifecycleOptions) {
 }
 
 function advancePage(options: FightLifecycleOptions, dt: number) {
-  const frame = options.read()
+  const beforeInput = options.read()
   const { controls, school, practice, match } = options
-  const playing = frame.active && !frame.paused
   controls.poll(
-    frame.state?.mode,
-    Boolean(playing && frame.state?.phase === 'fighting' && !match.replays.active),
+    beforeInput.state?.mode,
+    Boolean(
+      beforeInput.active &&
+      !beforeInput.paused &&
+      beforeInput.state?.phase === 'fighting' &&
+      !match.replays.active,
+    ),
   )
-  if (!frame.state || !playing) return
+  // Start/Pause can change the match synchronously while the pads are sampled.
+  const frame = options.read()
+  if (!frame.state || !frame.active || frame.paused) return
   options.update(
     advanceCombatSchool({
       school,
@@ -72,7 +78,6 @@ export function mountFightingPage(options: FightLifecycleOptions): () => void {
   }
   frame = requestAnimationFrame(loop)
   return () => {
-    options.match.qwen.dispose()
     cancelAnimationFrame(frame)
     stopEvents()
   }

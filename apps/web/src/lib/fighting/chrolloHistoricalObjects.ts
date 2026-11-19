@@ -1,4 +1,17 @@
-import { sleepingBody } from './hanzoProjection'
+import { historicalCopyExpired } from './historicalCopyLifetime'
+import { orderStampSubject } from './corpsePose'
+import { corpseCollider, corpseHeadContact } from './preparedCorpseBody'
+import { copiedCorpseNeedles } from './illumiCorpseMatter'
+import { copiedDocumentMaterials } from './paperDocumentCopy'
+import { copiedFaceNeedles } from './illumiNeedleMatter'
+import { copiedDisguisePins } from './illumiDisguisePins'
+import { touchesDocument } from './paperDocuments'
+import { copyPaperKit } from './kallutoCopyKit'
+import { expireHistoricalMatter } from './historicalMatterClock'
+import { freeDeviceHand } from './deviceHands'
+import { historicalHandsReady, originalLeftHandReady } from './historicalHands'
+import { touchesDevice } from './physicalDevices'
+import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { createArenaState } from './arenaTypes'
 import { chrolloHasActivePage } from './chrolloBook'
 import { battleAppearance } from './battleCantabileRules'
@@ -9,47 +22,157 @@ import type { PreparedEntity } from './preparationTypes'
 import type { HistoricalCopy } from './chrolloHistoricalTypes'
 import type { FightSide, FightState } from './types'
 
-export const GALLERY_FAKE_LIFETIME = 24 * 60 * 60 * 60
+export { GALLERY_FAKE_LIFETIME, historicalCopyExpired } from './historicalCopyLifetime'
 
 export function copyHistoricalObject(
   state: FightState,
   side: FightSide,
   targetId?: string,
 ): FightState {
-  if (!chrolloHasActivePage(state[side], 'gallery-fake') || state[side].chrolloBook?.open)
-    return state // Left touches; right creates the copy.
-  const source = copySource(state, side, targetId)
+  const target = targetId ?? (side === 'player' ? 'opponent' : 'player')
+  if (!galleryCopyHandsReady(state, side, target)) return state // Left touches; right creates the copy.
+  const source = copySource(state, side, target)
   if (!source || state[side].aura < 20) return state
-  const count =
-    state.battlefield?.entities.filter((entry) => entry.copy?.owner === side).length ?? 0
-  const id = `gallery:${side}:${state.frame}:${count}`
-  const copy: PreparedEntity = {
-    ...source,
+  const copy = createHistoricalReplica(state, side, source)
+  const field = copyField(state)
+  const touched = touchCopiedBody(state, source.id)
+  return {
+    ...touched,
+    arena: state.arena ?? createArenaState(),
+    [side]: copiedCaster(touched, side, source.id),
+    battlefield: { ...field, entities: [...field.entities, copy] },
+  }
+}
+
+function createHistoricalReplica(
+  state: FightState,
+  side: FightSide,
+  source: PreparedEntity,
+): PreparedEntity {
+  const id = nextCopyId(state, side)
+  return {
     id,
+    kind: ['morena', 'supporter', 'person', 'hostage'].includes(source.kind)
+      ? 'puppet'
+      : source.kind,
     owner: side,
     x: copySpawnX(state, side),
+    y: source.y,
     present: true,
     material: 'nen',
     health: 40,
+    ...replicaMaterials(source, id),
+    ...copiedFaceNeedles(source, id),
+    ...copiedCorpseNeedles(source, id),
+    ...copiedDisguisePins(source, id),
+    ...copiedDocumentMaterials(state, { source, id, side }),
     consenting: false,
     controller: undefined,
-    arena: source.arena ?? { width: 2.2, height: 13 },
+    sealed: source.sealed,
+    singleDoor: source.singleDoor,
+    growth: source.growth,
     copy: {
       owner: side,
+      inertDeviceForm: source.device?.form?.kind ?? source.copy?.inertDeviceForm,
       originalId: source.id,
+      originalKind: source.copy?.originalKind ?? source.kind,
+      originalMember: originalMember(state, source.id),
       createdAt: state.frame,
-      headAttached: true,
-      headHealth: 15,
+      ...replicaHead(source),
       ...copyAppearance(source),
     },
   }
-  const field = copyField(state)
+}
+function replicaHead(source: PreparedEntity): Pick<HistoricalCopy, 'headAttached' | 'headHealth'> {
   return {
-    ...state,
-    arena: state.arena ?? createArenaState(),
-    [side]: { ...state[side], aura: state[side].aura - 20, arenaRecovery: 18 },
-    battlefield: { ...field, entities: [...field.entities, copy] },
+    headAttached: source.copy?.headAttached ?? true,
+    headHealth: source.copy?.headHealth ?? 15,
   }
+}
+
+function galleryCopyHandsReady(state: FightState, side: FightSide, originalId: string): boolean {
+  return (
+    chrolloHasActivePage(state[side], 'gallery-fake') &&
+    !state[side].hanzoProjection &&
+    historicalHandsReady(state, side, ['right']) &&
+    originalLeftHandReady(state, side, originalId)
+  )
+}
+function copiedCaster(
+  state: FightState,
+  side: FightSide,
+  originalId: string,
+): FightState['player'] {
+  const actor = state[side],
+    history = actor.chrolloHistorical
+  const focus = history?.galleryFocus
+  const same =
+    focus?.originalId === originalId && focus.originalMember === originalMember(state, originalId)
+  return {
+    ...actor,
+    aura: actor.aura - 20,
+    arenaRecovery: 18,
+    chrolloHistorical: history ? { ...history, galleryFocus: same ? focus : undefined } : undefined,
+  }
+}
+function copyOriginalWithinReach(
+  state: FightState,
+  side: FightSide,
+  entry: PreparedEntity,
+): boolean {
+  if (entry.document) return touchesDocument(state, side, entry)
+  if (entry.device?.carrier) return touchesDevice(state, side, entry)
+  return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 6
+}
+function touchCopiedBody(state: FightState, target: string): FightState {
+  return (target === 'player' || target === 'opponent') && state[target].hanzoProjection
+    ? { ...state, [target]: wakeHanzoBody(state[target]) }
+    : state
+}
+function originalMember(state: FightState, id: string): number | undefined {
+  return id === 'player' || id === 'opponent' ? (state.teamMatch?.seats[id].active ?? 0) : undefined
+}
+
+function nextCopyId(state: FightState, side: FightSide): string {
+  const count =
+    state.battlefield?.entities.filter((entry) => entry.copy?.owner === side).length ?? 0
+  return `gallery:${side}:${state.frame}:${count}`
+}
+function replicaMaterials(source: PreparedEntity, id: string): Partial<PreparedEntity> {
+  return {
+    detachedForearm: source.detachedForearm ? { ...source.detachedForearm } : undefined,
+    blackVoiceProp: source.blackVoicePiece?.part ?? source.blackVoiceProp,
+    paperKit: source.paperKit ? copyPaperKit(source.paperKit, id) : undefined,
+    writingKit: source.writingKit
+      ? { ...source.writingKit, sourceId: id, copyId: id, serial: 0, integrity: 40 }
+      : undefined,
+    weakSpirit: undefined,
+    device: source.device
+      ? {
+          ...source.device,
+          carrier: undefined,
+          carrierMember: undefined,
+          hand: undefined,
+          swallowed: false,
+          form: undefined,
+          transforming: undefined,
+        }
+      : undefined,
+    arena: source.arena
+      ? { width: source.arena.width, height: source.arena.height }
+      : replicaBounds(source),
+  }
+}
+
+function replicaBounds(source: PreparedEntity): PreparedEntity['arena'] {
+  if (source.kind === 'room') return undefined // An interior, not a solid crate.
+  if (source.device) return undefined // Physical device collisions use the actual carried position.
+  if (source.writingKit) return { width: 2, height: 1 }
+  if (source.paperKit) return { width: 2, height: 1 }
+  if (source.kind === 'crate') return { width: 3, height: 8 }
+  return ['puppet', 'morena', 'supporter', 'person', 'hostage'].includes(source.kind)
+    ? { width: 2.2, height: 13 }
+    : undefined
 }
 
 function copySpawnX(state: FightState, side: FightSide): number {
@@ -86,13 +209,16 @@ function copySource(state: FightState, side: FightSide, targetId?: string): Prep
       (entry) =>
         entry.id === target &&
         entry.present &&
-        Math.hypot(entry.x - caster.x, entry.y - caster.y) <= 6,
+        !entry.weakSpirit &&
+        !['destination', 'delivery'].includes(entry.kind) &&
+        copyOriginalWithinReach(state, side, entry),
     ) ?? null
   )
 }
 
 export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: string): FightState {
   if (
+    !freeDeviceHand(state, side) ||
     !canSpeak(state[side]) ||
     state[side].aura < 10 ||
     !chrolloHasActivePage(state[side], 'order-stamp')
@@ -100,15 +226,16 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     return state
   const puppet = state.battlefield?.entities.find(
     (entry) =>
-      entry.kind === 'puppet' &&
+      orderStampSubject(entry) &&
       entry.copy?.headAttached &&
       entry.present &&
       entry.health > 0 &&
       (!id || entry.id === id) &&
-      Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8,
+      stampWithinReach(state, side, entry),
   )
   if (!puppet?.copy) return state
   const changed = updateEntity(state, puppet.id, {
+    arena: corpseCollider({ ...puppet, copy: { ...puppet.copy, order: 'attack' } }).arena,
     copy: {
       ...puppet.copy,
       owner: side,
@@ -120,6 +247,11 @@ export function stampHistoricalPuppet(state: FightState, side: FightSide, id?: s
     ...changed,
     [side]: { ...changed[side], aura: changed[side].aura - 10, arenaRecovery: 18 },
   }
+}
+
+function stampWithinReach(state: FightState, side: FightSide, entry: PreparedEntity): boolean {
+  if (entry.kind === 'corpse') return corpseHeadContact(state, side, entry)
+  return Math.hypot(entry.x - state[side].x, entry.y - state[side].y) <= 8
 }
 
 export function orderHistoricalPuppets(
@@ -148,11 +280,12 @@ export function orderHistoricalPuppets(
 
 /** Marks keep a copy in existence after Gallery Fake is closed, until its destruction. */
 export function advanceHistoricalCopies(state: FightState): FightState {
+  state = expireHistoricalMatter(state)
   if (!state.battlefield) return state
   let next = state
   for (const entry of state.battlefield.entities) {
     if (!entry.copy || !entry.present) continue
-    if (copyExpired(state, entry)) {
+    if (historicalCopyExpired(state, entry)) {
       next = updateEntity(next, entry.id, { present: false })
       continue
     }
@@ -197,13 +330,8 @@ function copyField(state: FightState) {
   )
 }
 function copyAppearance(source: PreparedEntity): Partial<HistoricalCopy> {
-  return source.kind === 'puppet' ? { appearance: source.copy?.appearance } : {}
-}
-function copyExpired(state: FightState, entry: PreparedEntity): boolean {
-  if (entry.arena?.sun || entry.arena?.moon) return false
-  const copy = entry.copy!
-  return (
-    !chrolloHasActivePage(state[copy.owner], 'gallery-fake') ||
-    state.frame - copy.createdAt >= GALLERY_FAKE_LIFETIME
-  )
+  if (source.person) return { appearanceModel: source.person.identity }
+  return source.kind === 'puppet'
+    ? { appearance: source.copy?.appearance, appearanceModel: source.copy?.appearanceModel }
+    : {}
 }

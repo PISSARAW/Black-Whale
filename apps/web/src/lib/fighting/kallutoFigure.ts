@@ -1,7 +1,7 @@
 import { createVisitHatsuModel } from './visitHatsuModel'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import { CANON } from '$lib/tour/humanProportions'
-import { paperAvailable } from './kallutoPaper'
+import { paperDolls } from './kallutoSurveillance'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Three = HumanFigureBuild['THREE']
@@ -38,20 +38,21 @@ export function addKallutoPaper(options: {
     scrap.rotation.z = 0.35
     at.parent.add(scrap)
   }
-  if (fighter.id === 'kalluto' || paperAvailable(fighter)) addFan(options, shapes)
-  if (!fighter.kallutoPaper?.doll) return
-  const visual = createVisitHatsuModel(THREE, { model: 'paper-doll', figureOwned: true })
-  visual.fit({ height: 0.25, width: 0.2 })
-  const doll = visual.root
-  doll.name = 'kalluto-listening-doll'
-  doll.position.z = 0.025
-  model.root.getObjectByName('hand-left')?.add(doll)
+  if (fighter.paperKit?.fan && fighter.paperKit.integrity > 0) addFan(options, shapes)
+  paperDolls(fighter).forEach((_, index) => {
+    const visual = createVisitHatsuModel(THREE, { model: 'paper-doll', figureOwned: true })
+    visual.fit({ height: 0.25, width: 0.2 })
+    const doll = visual.root
+    doll.name = index === 0 ? 'kalluto-listening-doll' : `kalluto-listening-doll:${index}`
+    doll.position.set((index % 3) * 0.055, Math.floor(index / 3) * 0.055, 0.025 + index * 0.012)
+    model.root.getObjectByName('hand-left')?.add(doll)
+  })
 }
 function addFan(
   options: Parameters<typeof addKallutoPaper>[0],
   shapes: ReturnType<typeof makeShapes>,
 ) {
-  const { THREE, glow, model } = options
+  const { THREE, glow, model, fighter } = options
   const paper = glow(0xf4e9e5, 1)
   paper.side = THREE.DoubleSide
   const fan = new THREE.Group()
@@ -66,7 +67,7 @@ function addFan(
     rib.rotation.z = angle - Math.PI / 2
     fan.add(rib)
   }
-  model.root.getObjectByName('hand-right')?.add(fan)
+  model.root.getObjectByName(fighter.chrolloBook?.open ? 'hand-left' : 'hand-right')?.add(fan)
 }
 
 function paperAttachment(model: HumanFigure, zone: FightNenZone) {

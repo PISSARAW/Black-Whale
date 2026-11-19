@@ -1,3 +1,4 @@
+import { prepareBlackVoice } from './blackVoice'
 import { declareJudgment } from './judgmentAction'
 import { triggerHatsuAction } from './hatsu'
 import { startPadailleTool } from './padailleWeapon'
@@ -12,6 +13,11 @@ export function triggerAttackHatsu(options: {
   concealed?: boolean
 }): FightState {
   const { side, source, moveId } = options
-  const triggered = source === 'kurapika' ? declareJudgment(triggerHatsuAction(options), side, moveId) : triggerHatsuAction(options)
+  if (source === 'chrollo')
+    options = { ...options, state: prepareBlackVoice(options.state, side, moveId) }
+  const triggered =
+    source === 'kurapika'
+      ? declareJudgment(triggerHatsuAction(options), side, moveId)
+      : triggerHatsuAction(options)
   return source === 'padaille' ? startPadailleTool(triggered, side, moveId) : triggered
 }

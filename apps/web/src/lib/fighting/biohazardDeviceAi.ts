@@ -1,5 +1,5 @@
 import { biohazardAuthority } from './biohazard'
-import { performBiohazardDevice, touchGun } from './biohazardDevices'
+import { performBiohazardDevice, touchGun } from './legacyBiohazardDevices'
 import { performHinrighCounter } from './hinrighCounter'
 import { traceArsenal } from './arsenalTrace'
 import type { AuraAttackOptions } from './auraAttackAction'

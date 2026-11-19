@@ -1,4 +1,5 @@
 import { beginFight, createFight, nextRound, performMove, tickFight } from './engine'
+import { prepareMusseHistory } from './benjaminMusseScenario'
 import { teamAssistBlock } from './teams/availability'
 import { nextTeamIndex } from './teams/next'
 import { carryTeamTerrain } from './teams/terrain'
@@ -36,11 +37,11 @@ export function createTeamFight(
     relay: null,
     members: rosters[side].map((id) => createFight(id, id, { formatId: 'knockout' })[side]),
   })
-  return {
+  return prepareMusseHistory({
     ...state,
     roundsWon: { player: 1, opponent: 1 },
     teamMatch: { seats: { player: seat('player'), opponent: seat('opponent') }, winner: null },
-  }
+  })
 }
 function sync(state: FightState): FightState {
   const previous = state.teamMatch!
@@ -87,7 +88,7 @@ function relayFrame(
   const seat = state.teamMatch!.seats[side],
     relay = seat.relay
   if (!relay) return { state, input: null }
-  if ([state.hitstop, state.parallelFuture, state.catsName].some(Boolean))
+  if ([state.hitstop, state.parallelFuture, state.catsName, state.gumResuscitation].some(Boolean))
     return { state, input: EMPTY_INPUT }
   relay.frames++
   approachRelay(state, side)

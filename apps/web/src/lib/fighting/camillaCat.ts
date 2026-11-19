@@ -61,7 +61,8 @@ function freezeBody(fighter: ArcadeFighter): ArcadeFighter {
   }
 }
 
-/** Only the deterministic simulation advances the cat. Combat time and other Nen stay frozen. */
+/** Only the deterministic simulation advances the cat. Combat hazards stay frozen;
+ * the living Emperor Time clock is advanced by the caller. */
 export function advanceCatsName(state: FightState): FightState {
   const cat = state.catsName
   const guest = state.rosterGuests?.find(

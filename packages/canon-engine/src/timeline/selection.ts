@@ -10,6 +10,8 @@
 /** The minimum an event row must expose to be selectable. */
 export interface SelectableEvent {
   id: string
+  /** Stable public catalogue id, alongside the database's generated id. */
+  sourceId?: string | null
   sequence: number
 }
 
@@ -39,7 +41,10 @@ export function selectEvent<E extends SelectableEvent>(
   events: E[],
   request: EventSelectionRequest = {},
 ): EventSelection<E> {
-  const byId = request.eventId ? events.find((event) => event.id === request.eventId) : undefined
+  const byId = request.eventId
+    ? (events.find((event) => event.id === request.eventId) ??
+      events.find((event) => event.sourceId === request.eventId))
+    : undefined
 
   const bySequence =
     !byId && request.sequence !== undefined && request.sequence !== null

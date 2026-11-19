@@ -1,4 +1,5 @@
 import { phinksImpactEvents } from './phinksCameraPresentation'
+import { needleFaceCamera } from './illumiNeedleCamera'
 import { moveById } from './movesets'
 import { ALL_CINEMATIC_RULES } from './cinematicCatalogue'
 import { actorContext, point, rig, ruleChanged, ruleEvent } from './cinematicRules'
@@ -106,7 +107,13 @@ function impactEvents(state: FightState, before: CameraSnapshot): CameraEvent[] 
         hold: 10,
         release: 44,
       },
-      ...(detailed ? { detail: impactDetail(state, before), duration: 42, priority: 2 } : {}),
+      ...(detailed
+        ? {
+            detail: needleFaceCamera(impactDetail(state, before), hit.illumiNeedleMode),
+            duration: 42,
+            priority: 2,
+          }
+        : {}),
     },
   ]
 }

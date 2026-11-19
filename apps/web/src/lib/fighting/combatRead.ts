@@ -31,3 +31,8 @@ export function projectileRead(projectile: FightProjectile): CombatRead {
     position: projectile,
   }
 }
+
+/** Preserve the real Hatsu in progress before a contact cancels the victim’s attack. */
+export function interruptedHatsuMove(fighter: ArcadeFighter): string | undefined {
+  return fighter.attack?.hatsuSource ? fighter.attack.moveId : undefined
+}

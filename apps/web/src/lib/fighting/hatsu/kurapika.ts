@@ -1,4 +1,6 @@
 import { advanceJudgmentHostages } from '../judgmentHostages'
+import { physicalBodyKey } from '../fightBodyIdentity'
+import { captureDolphinAura } from '../dolphinAura'
 import { advanceDowsing } from '../dowsingAction'
 import { implantJudgment } from '../judgmentAction'
 import { forceZetsu } from '../nen'
@@ -41,6 +43,7 @@ function chainImpact({
   state,
   side,
   defenderSide,
+  defenderMoveId,
   moveId,
   blocked,
 }: HatsuImpactContext): FightState {
@@ -55,10 +58,32 @@ function chainImpact({
     }
   }
   if (canAttachSyringe(fighter, moveId))
-    return { ...state, [defenderSide]: { ...target, drainingChain: { owner: side } } }
+    return attachStealSyringe(state, side, { targetSide: defenderSide, moveId: defenderMoveId })
   if (moveId === 'kurapika:finisher' && fighter.kurapika?.emperorTime)
     return implantJudgment(state, side, defenderSide)
   return state
+}
+
+function attachStealSyringe(
+  state: FightState,
+  side: FightSide,
+  contact: { targetSide: FightSide; moveId?: string },
+): FightState {
+  const { targetSide, moveId } = contact
+  const target = state[targetSide]
+  return {
+    ...state,
+    [targetSide]: {
+      ...forceZetsu(target),
+      drainingChain: {
+        moveId: stealableChainMove(target, moveId),
+        theftId: `steal:${state.roundNumber}:${state.frame}:${physicalBodyKey(state, side)}:${physicalBodyKey(state, targetSide)}`,
+        owner: side,
+        ownerMember: state.teamMatch?.seats[side].active ?? 0,
+        supply: captureDolphinAura(target),
+      },
+    },
+  }
 }
 
 function bind(target: ArcadeFighter): ArcadeFighter {
@@ -94,19 +119,51 @@ function drainChain(state: FightState, side: FightSide): FightState {
   if (!drainConnectionValid(owner, target))
     return { ...state, [side]: { ...target, drainingChain: undefined } }
   const aura = Math.max(0, target.aura - STEAL_DRAIN_PER_SECOND / 60)
-  if (aura > 0) return { ...state, [side]: { ...target, aura } }
-  const moveId = stealableChainMove(target)
+  const initial = target.drainingChain!.supply ?? captureDolphinAura(target)
+  const supply = { ...initial, amount: initial.amount + target.aura - aura }
+  if (aura > 0)
+    return {
+      ...state,
+      [side]: { ...forceZetsu(target), aura, drainingChain: { ...target.drainingChain!, supply } },
+    }
+  const moveId = target.drainingChain!.moveId ?? stealableChainMove(target)
   const drained = { ...forceZetsu(target), aura: 0, auraExhausted: true, drainingChain: undefined }
   if (!moveId) return { ...state, [side]: drained }
+  return storeDrainedAbility(state, side, { ownerSide, supply, moveId, drained })
+}
+function storeDrainedAbility(
+  state: FightState,
+  side: FightSide,
+  completed: {
+    ownerSide: FightSide
+    supply: import('../dolphinAura').DolphinAuraSupply
+    moveId: string
+    drained: ArcadeFighter
+  },
+): FightState {
+  const { ownerSide, supply, moveId, drained } = completed
+  const owner = state[ownerSide],
+    target = state[side]
   return {
     ...state,
-    [side]: { ...drained, stolenChainAbility: { owner: ownerSide, moveId } },
+    [side]: {
+      ...drained,
+      stolenChainAbility: {
+        theftId: target.drainingChain?.theftId,
+        owner: ownerSide,
+        ownerMember: target.drainingChain?.ownerMember ?? 0,
+        moveId,
+      },
+    },
     [ownerSide]: {
       ...owner,
       kurapika: {
         ...(owner.kurapika ?? createKurapika()),
         held: {
+          theftId: target.drainingChain?.theftId,
           victim: side,
+          victimMember: state.teamMatch?.seats[side].active ?? 0,
+          auraSupply: supply,
           source: target.id,
           moveId,
           loaded: false,
@@ -181,8 +238,7 @@ function canAttachSyringe(fighter: ArcadeFighter, moveId?: string): boolean {
 function drainConnectionValid(owner: ArcadeFighter, target: ArcadeFighter): boolean {
   return (
     kurapikaNenActive(owner) &&
-    owner.hitStun === 0 &&
-    owner.knockdownFrames === 0 &&
+    target.health > 0 &&
     !owner.kurapika?.held &&
     Math.hypot(target.x - owner.x, target.y - owner.y) <= STEAL_TETHER_RANGE
   )

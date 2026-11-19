@@ -36,7 +36,8 @@ describe('grounded exchanges retain a defensive opportunity', () => {
 })
 
 function attack(side: FightSide = 'player') {
-  const state = beginFight(createFight('hisoka', 'bill', { mode: 'versus-local' }))
+  // Phinks stays outside the tiered grammar, so the grounded hitstun decay still applies.
+  const state = beginFight(createFight('phinks', 'bill', { mode: 'versus-local' }))
   return performMove({ state, side, action: 'light', input: EMPTY_INPUT })
 }
 
@@ -128,9 +129,12 @@ describe('hitstun tuning is limited to long grounded physical combos', () => {
       'clash-combat-20',
       'clash-combat-22',
       'clash-combat-23',
+      'clash-combat-52',
+      'clash-combat-53',
     ])
       expect(() => decodeFightReplay(JSON.stringify({ ...replay, ruleset }))).toThrow(
         'replay-version',
       )
+    expect(REPLAY_RULESET).toBe('clash-combat-77')
   })
 })

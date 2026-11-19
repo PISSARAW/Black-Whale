@@ -1,5 +1,5 @@
 import { currentlyLocatedTarget } from './opponentAwareness'
-import { readCounterplay, seesCombatBody, type CounterplayCue } from './fightCounterplay'
+import { readCounterplay, seesCombatBody } from './fightCounterplay'
 import { styleReactionFrames } from './styleMobility'
 import {
   EMPTY_INPUT,
@@ -25,12 +25,9 @@ declare module './types' {
 }
 
 /** Remember manifested actions only: no input buffers, analysis, private replies or future branch. */
-export function rememberOpponentHabits(
-  state: FightState,
-  fighter: ArcadeFighter,
-  observedCue?: CounterplayCue | null,
-): ArcadeFighter {
-  if (state.forecastSimulation || state.parallelFuture) return fighter
+export function rememberOpponentHabits(state: FightState, fighter: ArcadeFighter): ArcadeFighter {
+  if (state.forecastSimulation || state.parallelFuture || fighter.blackVoiceAutopilot)
+    return fighter
   const memory = fighter.observedHabits ?? {
     lastFrame: -1,
     seenAttackFrame: null,
@@ -44,10 +41,7 @@ export function rememberOpponentHabits(
     { ...memory, lastFrame: state.frame, target: target ?? memory.target },
     fighter,
   )
-  const cue =
-    observedCue === undefined
-      ? readCounterplay({ ...state, opponent: fighter }, 'opponent')
-      : observedCue
+  const cue = readCounterplay({ ...state, opponent: fighter }, 'opponent')
   if (cue?.kind === 'projectile' && cue.key !== next.lastProjectile)
     next = {
       ...next,

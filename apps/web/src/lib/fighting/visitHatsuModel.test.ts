@@ -20,17 +20,29 @@ function names(root: THREE.Object3D): string[] {
   return result
 }
 function setup() {
-  return { THREE, scene: new THREE.Scene(), worldX: (x: number) => x / 6,
-    worldY: (y: number) => y / 6 }
+  return {
+    THREE,
+    scene: new THREE.Scene(),
+    worldX: (x: number) => x / 6,
+    worldY: (y: number) => y / 6,
+  }
 }
 
 describe('visit Hatsu adapted to the duel', () => {
   it.each([
-    ['blinky', 'hoover'], ['jupiter', 'jupiter'], ['cats-name', 'cat'],
-    ['predator', 'predator-salesale'], ['secret-window', 'owl'],
-    ['pain-packer', 'pain-armour'], ['stealth-dolphin', 'dolphin'],
-    ['skill-book', 'book'], ['paper-doll', 'paper'], ['biohazard', 'animal-object'],
-    ['sun-mark', 'sun-mark'], ['moon-mark', 'moon-mark'], ['emitted-fist', 'mark'],
+    ['blinky', 'hoover'],
+    ['jupiter', 'jupiter'],
+    ['cats-name', 'cat'],
+    ['predator', 'predator-salesale'],
+    ['secret-window', 'owl'],
+    ['pain-packer', 'pain-armour'],
+    ['stealth-dolphin', 'dolphin'],
+    ['skill-book', 'book'],
+    ['paper-doll', 'paper'],
+    ['biohazard', 'animal-object'],
+    ['sun-mark', 'sun-mark'],
+    ['moon-mark', 'moon-mark'],
+    ['emitted-fist', 'mark'],
   ] as const)('fits %s without flattening its anatomy', (kind: VisitHatsuKind, apparition) => {
     const model = createVisitHatsuModel(THREE, { model: kind, anchor: 'floor' })
     model.fit({ width: 0.65, height: 0.9, depth: 0.8 })
@@ -50,9 +62,12 @@ describe('visit Hatsu adapted to the duel', () => {
 
   it('keeps the visit cat’s hands and tail available for capture animation', () => {
     const model = createVisitHatsuModel(THREE, {
-      model: 'cats-name', joints: ['hand--1', 'hand-1', 'cat-tail'],
+      model: 'cats-name',
+      joints: ['hand--1', 'hand-1', 'cat-tail'],
     })
-    expect(names(model.root)).toEqual(expect.arrayContaining(['cat-head', 'cat-torso', 'curved-tail']))
+    expect(names(model.root)).toEqual(
+      expect.arrayContaining(['cat-head', 'cat-torso', 'curved-tail']),
+    )
     expect(model.joints.size).toBe(3)
     const hand = model.joints.get('hand-1')!
     const before = hand.position.x
@@ -85,8 +100,10 @@ describe('visit Hatsu adapted to the duel', () => {
 
   it('attaches the same Blinky to an active stolen page and rebuilds when that page closes', () => {
     const fighter = createFightState('chrollo', 'hisoka').player
-    const copied: ArcadeFighter = { ...fighter, chrolloBook: { pages: ['shizuku'],
-      page: 0, open: true, bookmark: null } }
+    const copied: ArcadeFighter = {
+      ...fighter,
+      chrolloBook: { pages: ['shizuku'], page: 0, open: true, bookmark: null },
+    }
     const model = buildFightFigure({ THREE, glow, fighter: copied })
     const blinky = model.root.getObjectByName('shizuku-blinky')!
     expect(blinky.userData.visitModel).toBe('blinky')
@@ -103,10 +120,16 @@ describe('visit Hatsu adapted to the duel', () => {
     const options = setup()
     const effects = createSecretWindowScene(options)
     const state = createFightState('musse', 'musse')
-    state.player.secretWindow = { target: 'opponent', attachedAt: 0,
-      observation: { frame: 0, action: 'idle' } }
-    state.opponent.secretWindow = { target: 'player', attachedAt: 0,
-      observation: { frame: 0, action: 'idle' } }
+    state.player.secretWindow = {
+      target: 'opponent',
+      attachedAt: 0,
+      observation: { frame: 0, action: 'idle' },
+    }
+    state.opponent.secretWindow = {
+      target: 'player',
+      attachedAt: 0,
+      observation: { frame: 0, action: 'idle' },
+    }
     const before = structuredClone(state)
     effects.sync(state, 1)
     expect(options.scene.getObjectByName('secret-window-player')?.visible).toBe(true)
@@ -175,8 +198,14 @@ describe('visit Hatsu adapted to the duel', () => {
     const options = setup()
     const effects = createStealthDolphinScene(options)
     const state = createFightState('kurapika', 'kurapika')
-    state.opponent.kurapika!.held = { source: 'hisoka', moveId: 'hisoka:neutralSpecial',
-      victim: 'player', loaded: true, used: false, sustainedKeys: [] }
+    state.opponent.kurapika!.held = {
+      source: 'hisoka',
+      moveId: 'hisoka:neutralSpecial',
+      victim: 'player',
+      loaded: true,
+      used: false,
+      sustainedKeys: [],
+    }
     effects.sync(state, 0)
     const dolphin = options.scene.getObjectByName('kurapika-stealth-dolphin')!
     expect(dolphin.visible).toBe(false)
@@ -190,11 +219,41 @@ describe('visit Hatsu adapted to the duel', () => {
     effects.dispose()
   })
 
+  it('keeps a recipient’s private Dolphin visible during the linked blackout', () => {
+    const options = setup()
+    const effects = createStealthDolphinScene(options)
+    const state = createFightState('biscuit', 'kurapika')
+    state.player.dolphinLoan = {
+      lender: { owner: 'opponent', member: 0 },
+      blackoutFrames: 200,
+      held: {
+        source: 'hisoka',
+        moveId: 'hisoka:neutralSpecial',
+        victim: 'opponent',
+        loaded: true,
+        used: true,
+        sustainedKeys: [],
+      },
+    }
+    state.player.nen.mode = 'zetsu'
+    effects.sync(state, 0)
+    expect(options.scene.getObjectByName('kurapika-stealth-dolphin')!.visible).toBe(true)
+    expect(state.player.kurapika).toBeUndefined()
+    effects.dispose()
+  })
+
   it('releases a removed Jupiter immediately and sizes it to its real projectile volume', () => {
     const options = setup()
     const effects = createProjectileScene({ ...options, glow, geometry: (made) => made })
-    const shot = { id: 81, owner: 'player', jupiter: true, x: 40, y: 12,
-      width: 12, height: 12 } as FightProjectile
+    const shot = {
+      id: 81,
+      owner: 'player',
+      jupiter: true,
+      x: 40,
+      y: 12,
+      width: 12,
+      height: 12,
+    } as FightProjectile
     effects.sync([shot], 0)
     const planet = options.scene.getObjectByName('bonolenov-jupiter:81')!
     const size = new THREE.Box3().setFromObject(planet).getSize(new THREE.Vector3())

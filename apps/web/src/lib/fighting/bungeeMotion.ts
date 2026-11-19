@@ -1,5 +1,6 @@
 import { freeCombatBody } from './fightActorState'
-import { ownsBungeeGum } from './bungeeAccess'
+import { gumSourceAvailable } from './bungeeSource'
+import { withGumChannel } from './bungeeChannel'
 import { categoryPower } from './nenCategories'
 import { otherSide } from './frameData'
 import { liveEntity, updateEntity } from './preparationWorld'
@@ -23,18 +24,22 @@ export function advanceGumNetwork(state: FightState): FightState {
   state = withGumNetwork(state, gumNetwork(state))
   state = removeGumLinks(state, (link) => !linkSurvives(state, link))
   for (const side of ['player', 'opponent'] as const) state = advancePendingGum(state, side)
-  for (const link of [...state.gumNetwork!.links]) state = advanceLink(state, link)
+  for (const link of [...state.gumNetwork!.links])
+    state = withGumChannel(state, { ...link, side: link.owner }, (scoped) =>
+      advanceLink(scoped, link),
+    )
   return state
 }
 function linkSurvives(state: FightState, link: GumLink): boolean {
-  return ownsBungeeGum(state[link.owner]) && Boolean(gumTargetPoint(state, link.target))
+  return gumSourceAvailable(state, link.owner, link) && Boolean(gumTargetPoint(state, link.target))
 }
 function advancePendingGum(state: FightState, side: FightSide): FightState {
   const network = gumNetwork(state),
     pending = network.pending[side]
   if (!pending) return state
   const fighter = state[side]
-  const active = ownsBungeeGum(fighter) && freeCombatBody(fighter) && !fighter.attack
+  const active =
+    gumSourceAvailable(state, side, pending) && freeCombatBody(fighter) && !fighter.attack
   const frames = pending.frames - 1
   state = withGumNetwork(state, {
     ...network,

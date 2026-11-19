@@ -4,6 +4,7 @@
   import { moveById } from '$lib/fighting/movesets'
   import type { FightState } from '$lib/fighting/types'
   import FightComboChoices from './FightComboChoices.svelte'
+  import { formatFrameAdvantage, moveFrameAdvantage } from '$lib/fighting/moveFrameAdvantage'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -11,6 +12,7 @@
   $: measurement = state.training?.measurement
   $: data = state.player.attack ? attackData(state.player.attack.kind, state.player) : null
   $: move = moveById(state.player.attack?.moveId)
+  $: expected = move ? moveFrameAdvantage(move) : null
 </script>
 
 <div class="training-frame-data">
@@ -24,6 +26,15 @@
   {#if data}
     <span>F{state.player.attack?.frame} · {attackPhase(state.player)?.toUpperCase()}</span>
     <span>S {data.startup} · A {data.active} · R {data.recovery}</span>
+    {#if expected}
+      <span
+        >{language === 'fr' ? 'ATTENDU' : 'EXPECTED'} · HIT {formatFrameAdvantage(
+          expected.onHit,
+          language,
+        )} · {language === 'fr' ? 'GARDE' : 'BLOCK'}
+        {formatFrameAdvantage(expected.onBlock, language)}</span
+      >
+    {/if}
     <span>{GUARD_LABELS[data.guard][language === 'fr' ? 0 : 1]}</span>
   {:else}
     <span>—</span>

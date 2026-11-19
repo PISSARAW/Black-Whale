@@ -40,8 +40,25 @@ export function createRetrospectiveScene(options: EffectSceneOptions): FighterEf
         model.root.name = `chrollo-fish:${side}:${i}`
         model.root.rotation.y = angle
       }
+    syncGhostwriter(state, side)
     if (fighter.chrolloHistorical?.cloth)
       show(`${side}:cloth`, 'fun-fun-cloth', { x: fighter.x, y: fighter.y + 5, height: 0.35 })
+  }
+  function syncGhostwriter(state: FightState, side: FightSide) {
+    const fighter = state[side]
+    const writing = fighter.ghostwriterWriting
+    if (writing && visibleGum(state, side, options.viewer?.() ?? 'player')) {
+      const ghost = show(`${side}:ghostwriter`, 'ghostwriter', {
+        x: fighter.x,
+        y: fighter.y + 7,
+        height: 0.55,
+      })
+      ghost.root.name = `chrollo-ghostwriter:${side}`
+      const hand = options
+        .figureOf?.(side)
+        ?.getObjectByName(writing.hand === 'left' ? 'hand-left' : 'hand-right')
+      if (hand) ghost.root.position.copy(hand.getWorldPosition(new options.THREE.Vector3()))
+    }
   }
   function syncGum(state: FightState, side: FightSide) {
     const fighter = state[side]

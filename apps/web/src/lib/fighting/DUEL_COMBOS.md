@@ -1,5 +1,8 @@
 # Quarante profils de combos
 
+Une [proposition de grammaire de combo](./COMBO_GRAMMAR.md) (non adoptée) décrit
+ce qui sépare ces profils des combos de Street Fighter et comment s’en rapprocher.
+
 Les quarante personnages ont désormais un profil de combo indépendant des exemples.
 Halkenburg et Yokotani complètent la couverture. Kurapika et Benjamin passent à
 douze exemples chacun ; les trente-huit autres en ont huit. Les quatre routes
@@ -43,16 +46,27 @@ lourd déclaré, puis le défenseur retrouve son tour.
 
 ## Les deux premiers profils
 
-Kurapika peut passer de léger à avant + léger, puis attendre la récupération pour
-placer le lourd. Avant + léger **ne se cancel pas** vers lourd : c’est une liaison
-ordinaire, rendue possible par son avantage sur touche et ses portées. Il peut
-ensuite finir par le fouet ou le balayage. Une commande tardive laisse la cible
-garder ; le buffer ordinaire de six frames reste applicable.
+Depuis le lot 1 de la [grammaire de combo](./COMBO_GRAMMAR.md), ces deux profils
+suivent la **grammaire à niveaux** (`duelComboGrammar.ts`). `into` ne déclare plus
+que les chaînes entre normaux : léger → avant + léger → lourd, bas + léger vers
+avant + léger ou lourd, arrière + lourd → lourd. Chaque normal au sol s’annule en
+plus dans les fins physiques (bas + lourd, avant + lourd), sur touche comme sur
+garde, et dans le Hatsu payant (fouet ou Air Blow) sur touche seulement. Une fin
+physique confirmée s’annule dans ce Hatsu ; le Hatsu ne s’annule pas.
 
-Benjamin peut prolonger léger → avant + léger → lourd par des cancels confirmés,
-puis choisir Air Blow ou une fin physique. Leurs fenêtres de cancel sont définies
-par attaque, relativement à la première frame active. Un coup dans le vide ou
-paré n’autorise pas un cancel sur touche.
+Les normaux sont entre +2 et +4 sur touche et aucun ne se lie sur lui-même.
+L’arrière + lourd est un coup d’ouverture que rien n’enchaîne : à +9 (Kurapika) ou
++11 (Benjamin), il se lie à avant + léger avec trois frames de marge et au léger
+debout avec cinq ou six. Une fenêtre d’une frame ratait les démonstrations à 20 et
+30 Hz. Au coin, seul un coup assez fort pour mettre au sol plaque au mur
+(`grammarWallSplat.ts`) : sinon les +5 frames du mur bouclaient le léger.
+
+La décroissance du hitstun ne s’applique plus à ces deux combattants ;
+`comboDamageScale.ts` garde deux touches pleines puis retire 10 points par touche
+(plancher 10 %, 50 % pour le Hatsu final). `duelComboGrammar.test.ts` vérifie que
+chaînes, cancels et liens ne forment aucune boucle. Une commande tardive laisse la
+cible garder ; le buffer ordinaire de six frames reste applicable, liens compris.
+Un coup dans le vide ou paré n’autorise aucun cancel.
 
 Chain Jail, Steal Chain, Holy Chain, Judgment Chain, Secret Window et Culdcept ne
 deviennent pas des coups de combo. Leurs conditions actuelles sont conservées.
@@ -61,12 +75,21 @@ restent des actions séparées après l’échange, avec leurs risques habituels
 
 ## Quatre autres façons de convertir une ouverture
 
-| Personnage | Fins physiques                                                            | Choix personnel                                                                                                                                                                     |
-| ---------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hisoka     | Bas + lourd pour rester proche, arrière + lourd pour repousser            | Attacher Bungee Gum pour 40 aura, ou dépenser 55 aura dans le finisher si une liaison existe déjà ; le finisher consomme la liaison au contact                                      |
-| Chrollo    | Bas + lourd pour les dégâts et la mise au sol, avant + léger pour pousser | Poser une marque Soleil avec la page Sun and Moon ouverte et une main libre, pour 24 aura et moins de dégâts immédiats ; lourd → arrière + lourd est une liaison après récupération |
-| Feitan     | Balayage rapide ou grande taille qui repousse davantage                   | Prolongation rapide vers l’estoc de lame ou cinq frappes physiques, sans dépense d’aura et soumises à la réduction du hitstun                                                       |
-| Phinks     | Balayage proche ou grande frappe avant, en conservant les tours accumulés | Après récupération du lourd, placer le poing chargé ; une rotation complète est requise et toute la charge est engagée au départ du poing                                           |
+Depuis le lot 3 de la [grammaire de combo](./COMBO_GRAMMAR.md), Hisoka, Chrollo et
+Feitan suivent aussi la grammaire à niveaux, avec des normaux entre +2 et +3 sur
+touche. Le lourd → arrière + lourd de Chrollo est désormais une chaîne et non une
+liaison après récupération. Depuis le lot 4, les autres profils reçoivent une
+grammaire dérivée automatiquement (`duelComboDerivedGrammar.ts`) : leurs liaisons
+après récupération entre normaux deviennent des chaînes. Phinks, Leorio, Bonolenov
+et Padaille gardent leurs règles, car leur technique lente se place par une liaison
+qui créerait une boucle sous la grammaire.
+
+| Personnage | Fins physiques                                                            | Choix personnel                                                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hisoka     | Bas + lourd pour rester proche, arrière + lourd pour repousser            | Attacher Bungee Gum pour 40 aura, ou dépenser 55 aura dans le finisher si une liaison existe déjà ; le finisher consomme la liaison au contact                          |
+| Chrollo    | Bas + lourd pour les dégâts et la mise au sol, avant + léger pour pousser | Poser une marque Soleil avec la page Sun and Moon ouverte et une main libre, pour 24 aura et moins de dégâts immédiats ; lourd → arrière + lourd est une chaîne (lot 3) |
+| Feitan     | Balayage rapide ou grande taille qui repousse davantage                   | Prolongation rapide vers l’estoc du parapluie (24 aura), ou cinq frappes physiques sans dépense, soumises à la réduction du hitstun                                     |
+| Phinks     | Balayage proche ou grande frappe avant, en conservant les tours accumulés | Après récupération du lourd, placer le poing chargé ; une rotation complète est requise et toute la charge est engagée au départ du poing                               |
 
 Les quatre routes de base de chaque personnage sont conservées. Chez Hisoka,
 le lourd avant reste un intermédiaire vers l’attache ; la poussée de fin utilise
@@ -317,7 +340,8 @@ au centre et au coin, face à la garde après la première touche.
 `combatSchool.test.ts` couvre les démonstrations à plusieurs cadences et leurs
 replays ; `pvp/impactNetwork.test.ts` vérifie les commandes et impacts sous latence.
 
-Le ruleset des replays passe à `clash-combat-17` : les anciens enregistrements
+Le ruleset des replays passe à `clash-combat-23` (lot 1 de la grammaire) : les
+anciens enregistrements
 sont rejetés explicitement, car leurs timings et commandes ne correspondent
 plus à cette simulation. Les valeurs de dégâts, portées et timings sont des
 réglages de duel qui demandent aussi des essais avec des joueurs.

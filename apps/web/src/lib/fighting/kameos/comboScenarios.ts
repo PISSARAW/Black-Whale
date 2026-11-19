@@ -12,7 +12,7 @@ import { comboSupportInput, comboSupportLanded, waitingForComboSupport } from '.
 export interface KameoComboScenario {
   corner?: boolean
   mirrored?: boolean
-  /** Unfrozen simulation frames after the first hit. Zero also accepts the hitstop input. */
+  /** Unfrozen simulation frames after the first hit. Zero follows the authored opening call or hitstop input. */
   callDelay?: number
   /** Unfrozen frames after the final attack is available. */
   finishDelay?: number
@@ -128,10 +128,7 @@ function stepScenario(frame: ScenarioFrame) {
   observeReadiness(state, progress)
   enqueueAttack({ state, match, route, options, progress })
   enqueueReply({ state, match, options, progress })
-  const input =
-    progress.openingClock >= 0 && progress.clock - progress.openingClock >= (options.callDelay ?? 0)
-      ? comboSupportInput(state, route.kameo!, progress.hits > 0 ? 1 : 0)
-      : EMPTY_INPUT
+  const input = scenarioSupportInput(frame)
   const guarding = options.response !== 'jab' && progress.hits > 0
   state = match.advance(state, input, {
     dt: 1 / 60,
@@ -158,9 +155,10 @@ function enqueueAttack({ state, match, route, options, progress }: ScenarioFrame
     progress.hits !== routeHitsBefore(route, progress.sent)
   )
     return
-  if (waitingForComboSupport(state, route, progress.sent)) return
   const slot = route.moves[progress.sent]
   const move = moveForSlot(route.fighter, slot)!
+  if (waitingForComboSupport(state, route, { step: progress.sent, startup: move.tuning.startup }))
+    return
   if (!canStartFighterAttack(state.player, move.kind, move.id)) return
   if (progress.sent === route.moves.length - 1) {
     if (progress.finalReady < 0) progress.finalReady = progress.clock
@@ -237,4 +235,16 @@ function supportInCombo(progress: Progress) {
 
 function rejectedSupportContact(impact: NonNullable<FightState['impact']>) {
   return impact.blocked || impact.avoided || impact.invulnerable
+}
+
+function scenarioSupportInput({ state, route, options, progress }: ScenarioFrame) {
+  const lesson = route.kameo!
+  if (lesson.afterStep === 0 && !options.callDelay)
+    return comboSupportInput(state, lesson, progress.hits)
+  if (
+    progress.openingClock < 0 ||
+    progress.clock - progress.openingClock < (options.callDelay ?? 0)
+  )
+    return EMPTY_INPUT
+  return comboSupportInput(state, lesson, progress.hits > 0 ? 1 : 0)
 }

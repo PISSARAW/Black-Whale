@@ -6,6 +6,8 @@ export type ChrolloSourcePage = HistoricalChrolloPage | Exclude<FighterId, 'chro
 export type ChrolloPage = ChrolloSourcePage | `${FighterId}:${MoveSlot}` | 'biscuit:cookie'
 
 export interface ChrolloBookState {
+  /** Presentation only: absent page details in an opponent view are not proof of an absent power. */
+  pagesPrivate?: boolean
   pages: readonly ChrolloPage[]
   page: number
   open: boolean

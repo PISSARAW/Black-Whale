@@ -11,10 +11,11 @@ import { kurapikaPanel } from './kurapikaGeometry'
 
 export function buildMangaHead(build: HumanHeadBuild): Group {
   const { THREE, geometry, outlined, materials, profile } = build
-  const look = mangaLikeness(profile)
+  const faceProfile = profile.faceLike ? { ...profile, likeness: profile.faceLike } : profile
+  const look = mangaLikeness(faceProfile)
   const head = new THREE.Group()
   head.name = `manga-head:${profile.likeness}`
-  head.position.y = look.headY
+  head.position.y = mangaLikeness(profile).headY
   const face = outlined({
     THREE,
     geometry: geometry(
@@ -107,7 +108,7 @@ export function buildMangaHead(build: HumanHeadBuild): Group {
   }
   if (profile.likeness === 'prince-tserriednich') addMangaHood(build, head)
   else addMangaHair(build, head)
-  addMangaFaceTraits(build, head)
+  addMangaFaceTraits({ ...build, profile: faceProfile }, head)
   addMangaHeadwear(build, head)
   if (profile.likeness === 'bonolenov-ndongo') addMangaBandagedHead(build, head)
   return head

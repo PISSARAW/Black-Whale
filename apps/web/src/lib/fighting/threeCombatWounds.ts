@@ -4,6 +4,7 @@ import type { ArcadeFighter, FightProjectile, FightState } from './types'
 export function kallutoFanStrike(fighter: ArcadeFighter): boolean {
   return (
     fighter.id === 'kalluto' &&
+    Boolean(fighter.paperKit?.fan && fighter.paperKit.integrity > 0) &&
     !fighter.weaponsConfiscated &&
     Boolean(
       fighter.attack &&

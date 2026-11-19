@@ -58,7 +58,8 @@
           aria-label={fr ? 'Personnage Arcade' : 'Arcade fighter'}
           value={player}
           onchange={(event) => onPlayer(event.currentTarget.value as FighterId)}
-          >{#each FIGHTING_ROSTER as fighter (fighter.id)}<option value={fighter.id}>{fighter.name}</option
+          >{#each FIGHTING_ROSTER as fighter (fighter.id)}<option value={fighter.id}
+              >{fighter.name}</option
             >{/each}</select
         ></label
       ><FightPracticeHub

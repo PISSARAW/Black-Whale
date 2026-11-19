@@ -1,4 +1,4 @@
-import { ownsBungeeGum } from './bungeeAccess'
+import { gumSourceAvailable } from './bungeeSource'
 import { advanceProjectileNen } from './nenProjectiles'
 import { addGumLink, gumNetwork, ownedGumLinks, selectedGumLink } from './bungeeNetwork'
 import { gumLimbPoint } from './bungeeGeometry'
@@ -36,7 +36,10 @@ export function bindGumThrow(
   const prepared = state[shot.owner].gumThrowReady
   if (!prepared || shot.matter !== 'object' || shot.living) return { state, shot }
   const cleared = { ...state, [shot.owner]: { ...state[shot.owner], gumThrowReady: undefined } }
-  if (!ownsBungeeGum(state[shot.owner]) || ownedGumLinks(state, shot.owner).length >= MAX_GUM_LINKS)
+  if (
+    !gumSourceAvailable(state, shot.owner, prepared) ||
+    ownedGumLinks(state, shot.owner).length >= MAX_GUM_LINKS
+  )
     return { state: cleared, shot }
   return {
     state: addGumLink(cleared, {
@@ -60,7 +63,8 @@ export function travelGumProjectile(
   const mode = shot.gumFlight!.mode
   if (mode === 'falling') return fallObject(shot, step)
   const link = gumProjectileLink(state, shot)
-  if (!link || !ownsBungeeGum(state[link.owner])) return fallObject(fallingGumObject(shot), step)
+  if (!link || !gumSourceAvailable(state, link.owner, link))
+    return fallObject(fallingGumObject(shot), step)
   if (mode === 'returning') return recallObject(state, shot, { link, step })
   if (mode === 'held') {
     const point = gumLimbPoint(state, link.owner, link.limb)

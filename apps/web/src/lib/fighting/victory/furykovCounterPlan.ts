@@ -3,20 +3,8 @@ import { fighterDefinition } from '../roster'
 
 export type FurykovCounterKind = 'sever' | 'intercept' | 'pierce' | 'reach'
 const LINKS: readonly FighterId[] = ['hisoka', 'machi']
-const PROJECTILES: readonly FighterId[] = [
-  'franklin',
-  'illumi',
-  'kalluto',
-  'musse',
-  'leorio',
-]
-const ARMOUR: readonly FighterId[] = [
-  'biscuit',
-  'phinks',
-  'benjamin',
-  'bonolenov',
-  'beyond',
-]
+const PROJECTILES: readonly FighterId[] = ['franklin', 'illumi', 'kalluto', 'musse', 'leorio']
+const ARMOUR: readonly FighterId[] = ['biscuit', 'phinks', 'benjamin', 'bonolenov', 'beyond']
 const DESIGNS = {
   sever: {
     nameFr: 'Coupe-liens',

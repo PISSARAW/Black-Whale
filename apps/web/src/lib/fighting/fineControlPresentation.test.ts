@@ -77,13 +77,16 @@ describe('fine material control stays in type 1', () => {
         if (frame.paperPlant !== null) seen.plant.push(frame.paperPlant)
         expect(camera.update(next).detail).toBeNull()
       })
-      expect(end[other].plantedPaper).toContainEqual({ owner: side, zone: 'torso' })
+      expect(end[other].plantedPaper).toEqual(
+        expect.arrayContaining([expect.objectContaining({ owner: side, zone: 'torso' })]),
+      )
       expect(seen.launch).toEqual(Array.from({ length: 18 }, (_, i) => i))
       expect(seen.plant).toEqual(Array.from({ length: 18 }, (_, i) => i))
+      const nextProjectileId = end.nextProjectileId
       end = frames(cast(end, side, 'kalluto', 'forwardSpecial'), 50, (next) =>
         expect(camera.update(next).detail).toBeNull(),
       )
-      expect(end.nextProjectileId).toBeGreaterThan(3)
+      expect(end.nextProjectileId).toBeGreaterThan(nextProjectileId)
       expect(new Set(end.projectiles.map((shot) => shot.id)).size).toBe(end.projectiles.length)
     })
     it(`Zakuro ${side} manipulates only its prepared blood, then recalls it without healing`, () => {

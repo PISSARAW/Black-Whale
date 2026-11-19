@@ -1,6 +1,8 @@
 import { expect, test } from 'playwright/test'
 
-test('preparation pages keep the matchup and stage through back navigation and reload', async ({ page }) => {
+test('preparation pages keep the matchup and stage through back navigation and reload', async ({
+  page,
+}) => {
   await page.goto('/fr/fighting', { waitUntil: 'networkidle' })
   await expect(page.getByRole('heading', { name: 'À TOI DE JOUER.' })).toBeVisible()
   await expect(page.getByLabel('Liste des combattants')).toHaveCount(0)
@@ -18,9 +20,15 @@ test('preparation pages keep the matchup and stage through back navigation and r
   await expect(page.getByLabel('Récapitulatif du combat')).toContainText('Chrollo')
   await expect(page.getByLabel('Récapitulatif du combat')).toContainText('Tour Céleste')
   await page.getByRole('link', { name: '← Retour', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Tour Céleste', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Tour Céleste', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await page.reload({ waitUntil: 'networkidle' })
-  await expect(page.getByRole('button', { name: 'Tour Céleste', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Tour Céleste', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await page.getByRole('button', { name: 'Règles du combat', exact: true }).click()
   await page.getByRole('button', { name: 'Entrer dans l’arène', exact: true }).click()
   await expect(page).toHaveURL(/\/fighting\/battle$/)

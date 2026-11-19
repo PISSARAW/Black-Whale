@@ -1,4 +1,5 @@
 import { gyoSight } from './nenPerception'
+import { newGumSource, type GumSource } from './bungeeSource'
 import {
   fallingGumObject,
   MAX_GUM_LINKS,
@@ -19,6 +20,7 @@ export function gumNetwork(state: FightState): GumNetwork {
         target: { kind: 'fighter', side: legacy.target },
         hidden: legacy.hidden,
         motion: legacy.retracting ? (legacy.rebounding ? 'rebound' : 'recall') : 'idle',
+        ...newGumSource(state[legacy.owner]),
       }
     : undefined
   return {
@@ -90,7 +92,12 @@ function selectedFrom(network: GumNetwork, side: FightSide) {
 }
 export function addGumLink(
   state: FightState,
-  options: { side: FightSide; target: GumTarget; hidden: boolean; limb?: GumLink['limb'] },
+  options: GumSource & {
+    side: FightSide
+    target: GumTarget
+    hidden: boolean
+    limb?: GumLink['limb']
+  },
 ): FightState {
   const network = gumNetwork(state)
   if (ownedGumLinks(state, options.side).length >= MAX_GUM_LINKS) return state
@@ -103,6 +110,9 @@ export function addGumLink(
     hidden: options.hidden,
     limb,
     motion: 'idle',
+    ...(options.source
+      ? { source: options.source, theftId: options.theftId }
+      : newGumSource(state[options.side])),
   }
   return withGumNetwork(state, {
     ...network,

@@ -1,3 +1,4 @@
+import { performArsenalCommand } from './retrospectiveArsenal'
 import { predatorPrey, preyIsLive } from './predatorPrey'
 import { advanceBlinky } from './blinkyFrames'
 import { attackData } from './frameData'
@@ -216,6 +217,10 @@ describe('forty arena applications and real cover', () => {
   it('marks distinct objects using the correct free hand, preserves marks when the page closes, and explodes only on contact', () => {
     let state = frames(use(nearby(duel('chrollo'))), 20)
     expect(arenaObjects(state)[0].arena!.sun).toBe('player')
+    state = performArsenalCommand(state, 'player', {
+      action: 'arena-turn-object',
+      target: 'arena:crate:34',
+    })
     state = {
       ...state,
       player: {

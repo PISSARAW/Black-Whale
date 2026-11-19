@@ -1,7 +1,9 @@
+import { SCENARIO_RESOURCE_IDS } from '../preparationResources'
 import { FIGHTING_ROSTER } from '../roster'
 import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
+import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
 import { kameoSetupField, parseKameoPicks } from '../kameos/pvp'
@@ -43,6 +45,7 @@ function validCommand(value: Record<string, unknown>): boolean {
   return textCommand(value)
 }
 function textCommand(value: Record<string, unknown>): boolean {
+  if (value.kind === 'poem') return validPoem(value)
   const fields: Record<string, [string, number]> = {
     battle: ['moveId', 100],
     talk: ['words', 160],
@@ -53,6 +56,15 @@ function textCommand(value: Record<string, unknown>): boolean {
   const text = value[field[0]]
   return only(value, ['kind', field[0]]) && typeof text === 'string' && text.length <= field[1]
 }
+function validPoem(value: Record<string, unknown>): boolean {
+  return (
+    only(value, ['kind', 'text', 'loan']) &&
+    typeof value.text === 'string' &&
+    value.text.length <= 240 &&
+    (value.loan === undefined || typeof value.loan === 'boolean')
+  )
+}
+
 export function parsePvpPacket(value: unknown): PvpInputPacket | null {
   if (!record(value) || !only(value, ['sequence', 'input', 'commands'])) return null
   if (
@@ -116,6 +128,7 @@ function parseEnvironment(value: unknown) {
     !only(value, [
       'stageId',
       'arenaInteractions',
+      'halkenburgRosterVariant',
       'morenaPresent',
       'unlawfulIntruders',
       'needleStock',
@@ -133,8 +146,15 @@ function parseEnvironment(value: unknown) {
   )
     return null
   if (!sideFlags(value.unlawfulIntruders, false) || !sideFlags(value.needleStock, true)) return null
-  if (!validPreparation(value.preparation)) return null
+  if (!validScenarioSettings(value)) return null
   return createFightEnvironment(value as unknown as Parameters<typeof createFightEnvironment>[0])
+}
+function validScenarioSettings(value: Record<string, unknown>): boolean {
+  return (
+    validPreparation(value.preparation) &&
+    (value.halkenburgRosterVariant === undefined ||
+      typeof value.halkenburgRosterVariant === 'boolean')
+  )
 }
 function sideFlags(value: unknown, optional: boolean): boolean {
   if (value === undefined) return optional
@@ -145,7 +165,7 @@ function sideFlags(value: unknown, optional: boolean): boolean {
 }
 function validPreparation(value: unknown): boolean {
   if (value === undefined) return true
-  if (!record(value) || !only(value, ['mode', 'resources', 'cohorts'])) return false
+  if (!preparationHeader(value)) return false
   if (
     !member(value.mode, ['duel', 'scenario']) ||
     !Array.isArray(value.resources) ||
@@ -153,12 +173,18 @@ function validPreparation(value: unknown): boolean {
   )
     return false
   return (
-    value.resources.length <= 7 &&
+    value.resources.length <= SCENARIO_RESOURCE_IDS.length &&
     value.cohorts.length <= 2 &&
-    value.resources.every((id) =>
-      member(id, ['animals', 'birds', 'plants', 'objects', 'flutes', 'needles', 'rooms']),
-    ) &&
+    value.resources.every((id) => member(id, SCENARIO_RESOURCE_IDS)) &&
     value.cohorts.every((side) => member(side, ['player', 'opponent']))
+  )
+}
+
+function preparationHeader(value: unknown): value is Record<string, unknown> {
+  return (
+    record(value) &&
+    only(value, ['mode', 'resources', 'cohorts', 'injuries']) &&
+    validInjuryPreparation(value.injuries, value.mode)
   )
 }
 

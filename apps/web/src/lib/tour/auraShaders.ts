@@ -103,6 +103,9 @@ export const tenFragmentShader = `
 // REN
 export const renVertexShader = `
   uniform float u_time;
+  uniform float u_renPressure;
+  uniform float u_renStability;
+  uniform float u_renIntent;
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vViewPosition;
@@ -110,13 +113,17 @@ export const renVertexShader = `
   void main() {
     vUv = uv;
     vNormal = normalize(normalMatrix * normal);
-    vec3 noisePos = position * 3.0;
-    noisePos.y += u_time * 4.0;
+    float tempo = mix(1.3, 0.85, u_renStability) * (1.0 + u_renIntent * 0.25);
+    float reach = mix(0.75, 1.25, u_renPressure);
+    float turbulence = mix(1.35, 0.7, u_renStability);
+    vec3 noisePos = position * mix(3.8, 2.6, u_renStability);
+    noisePos.y += u_time * 4.0 * tempo;
     float noiseVal = cnoise(noisePos);
-    vec3 newPosition = position + normal * noiseVal * 0.2;
+    vec3 newPosition = position + normal * noiseVal * 0.2 * reach * turbulence;
     if(position.y > 0.0) {
-        newPosition.x += cnoise(vec3(position.x, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
-        newPosition.z += cnoise(vec3(position.x + 10.0, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
+        float sway = 0.3 * reach * mix(1.3, 0.72, u_renStability);
+        newPosition.x += cnoise(vec3(position.x, position.y + u_time * 5.0 * tempo, position.z)) * sway * position.y;
+        newPosition.z += cnoise(vec3(position.x + 10.0, position.y + u_time * 5.0 * tempo, position.z)) * sway * position.y;
     }
     vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
     vViewPosition = -mvPosition.xyz;
@@ -129,14 +136,18 @@ export const renFragmentShader = `
   uniform vec3 u_colorCore;
   uniform vec3 u_colorEdge;
   uniform float u_opacity;
+  uniform float u_renPressure;
+  uniform float u_renStability;
+  uniform float u_renIntent;
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vViewPosition;
   ${commonShaderFunctions}
   void main() {
     vec2 noiseUv = vUv;
-    noiseUv.y -= u_time * 2.5;
-    float noiseVal = cnoise(vec3(noiseUv * 8.0, u_time * 1.5));
+    float tempo = mix(1.25, 0.9, u_renStability) * (1.0 + u_renIntent * 0.2);
+    noiseUv.y -= u_time * 2.5 * tempo;
+    float noiseVal = cnoise(vec3(noiseUv * mix(9.5, 7.0, u_renStability), u_time * 1.5 * tempo));
     noiseVal = noiseVal * 0.5 + 0.5;
     
     vec3 normal = normalize(vNormal);
@@ -145,7 +156,8 @@ export const renFragmentShader = `
     fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
     fresnel = pow(fresnel, 1.5);
     
-    float intensity = noiseVal * fresnel * 2.5;
+    float pulse = 1.0 + sin(u_time * (2.0 + u_renIntent * 6.0)) * u_renIntent * 0.16;
+    float intensity = noiseVal * fresnel * 2.5 * mix(0.72, 1.28, u_renPressure) * pulse;
     vec3 color = mix(u_colorCore, u_colorEdge, min(1.0, intensity));
     
     // Saturate to white at high intensity

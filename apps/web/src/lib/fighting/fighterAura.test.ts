@@ -10,6 +10,7 @@ import {
 import { buildHumanFigure, type HumanFigureBuild } from '$lib/tour/humanFigure'
 import { buildFightFigure } from './fighterFigure'
 import { createFightState } from './fightState'
+import { renExpression, syncRenExpression } from './nenRenPresentation'
 import type { ArcadeFighter, FighterId } from './types'
 
 const glow: HumanFigureBuild['glow'] = (color, opacity) =>
@@ -76,6 +77,41 @@ describe('Fighting 2D visitor aura', () => {
     kurapika.geometry.computeBoundingBox()
     expect(kurapika.geometry.boundingBox!.min.y + kurapika.position.y).toBeCloseTo(-0.2)
     expect(kurapika.geometry.boundingBox!.max.y + kurapika.position.y).toBeCloseTo(2.2)
+  })
+
+  it('expresses each fighter pressure, stability and intent without leaking shared uniforms', () => {
+    const steadyModel = figure({ mode: 'ren' }, 'kurapika')
+    const hostileModel = figure({ mode: 'ren' }, 'hisoka')
+    const steady = shell(steadyModel, 'ren')
+    const hostile = shell(hostileModel, 'ren')
+
+    syncRenExpression(steadyModel.root, { pressure: 38, stability: 0.92, intent: 0.12 })
+    syncRenExpression(hostileModel.root, { pressure: 91, stability: 0.34, intent: 0.88 })
+
+    expect(steady.material).toBe(hostile.material)
+    expect(steady.userData.renExpression).toEqual({ pressure: 0.38, stability: 0.92, intent: 0.12 })
+    expect(hostile.userData.renExpression).toEqual({ pressure: 0.91, stability: 0.34, intent: 0.88 })
+
+    ;(steady.onBeforeRender as () => void)()
+    expect(steady.material.uniforms.u_renPressure.value).toBe(0.38)
+    expect(steady.material.uniforms.u_renStability.value).toBe(0.92)
+    expect(steady.material.uniforms.u_renIntent.value).toBe(0.12)
+
+    ;(hostile.onBeforeRender as () => void)()
+    expect(hostile.material.uniforms.u_renPressure.value).toBe(0.91)
+    expect(hostile.material.uniforms.u_renStability.value).toBe(0.34)
+    expect(hostile.material.uniforms.u_renIntent.value).toBe(0.88)
+    expect(hostile.material.uniforms.u_colorCore.value.getHex()).toBe(
+      NEN_PRESENTATION.ren.colours[0],
+    )
+  })
+
+  it('bounds malformed or legacy psychology values before they reach the Ren shader', () => {
+    expect(renExpression({ pressure: 140, stability: -0.2, intent: 2 })).toEqual({
+      pressure: 1,
+      stability: 0,
+      intent: 1,
+    })
   })
 
   it.each([

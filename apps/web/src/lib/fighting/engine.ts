@@ -1,12 +1,11 @@
-import { beginPreparedAsphyxia } from './gumResuscitationScenario'
-import { finishPhysicalFrame } from './physicalFrameClocks'
-import { performLegacyThrow } from './legacyThrow'
-import { expireHistoricalMatter } from './historicalMatterClock'
-import { moveAdmitted } from './moveAdmission'
+import { nativeRecoveryCounter } from './recoveryCounterAction'
+import { movesetFor } from './movesets'
+import { nativeNenCombo } from './nativeNenCombo'
+import { reservingAura } from './combatIntentPolicy'
 import { performArsenalAction } from './arsenalExecution'
 import { priorityBusyAi } from './priorityArsenalAi'
 import { judgmentActionBreach } from './judgmentAction'
-import { retrospectiveAiAction } from './retrospectiveAi'
+import { retrospectiveAiAction, hisokaInterceptionAi } from './retrospectiveAi'
 import { perceivedOpponentGap, opponentCanAttemptCall } from './opponentAwareness'
 import { nativeArsenalAiAction } from './arsenalAiAction'
 import { performOpponentArsenalMove } from './arsenalAiNen'
@@ -23,7 +22,7 @@ import { poseFighter } from './fightActorPose'
 import { maryHeld } from './bloodyMary'
 import { maryAiAction } from './bloodyMaryAi'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
-import { canAct, auraAttackBodyFree } from './fightActorState'
+import { canAct, canMove, auraAttackBodyFree } from './fightActorState'
 import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
 import { preparationCheck } from './preparationRequirements'
@@ -32,6 +31,7 @@ import { padailleBoundAction, padailleEscapeAi } from './padailleEscape'
 import { luiniArsenalAi } from './luiniArsenal'
 import { crossGameBusy } from './crossGame'
 import { planOpponentNen } from './opponentNenPlan'
+import { projectileDefenceHolds } from './projectileDefence'
 import { cyclotronAiAction } from './phinksAction'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { performMelodyAction } from './melodyAction'
@@ -42,8 +42,11 @@ import { thetaFirearmOptions } from './thetaFirearm'
 import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
 import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
+import { performFuturePerceptionAction } from './futurePerception'
 import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
+import { performDirectionalChain } from './directionalChainCommand'
+import { pursuitAttackAllowed } from './airPursuitCommand'
 import { resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
@@ -80,7 +83,7 @@ export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
 
 export function beginFight(state: FightState): FightState {
-  return state.phase === 'ready' ? beginPreparedAsphyxia({ ...state, phase: 'fighting' }) : state
+  return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
 
 export interface FightTickOptions {
@@ -147,14 +150,12 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return finishPhysicalFrame(
-    simulateClashFrame(state, controls, {
-      step: stepFight,
-      decide: opponentAttack,
-      attack: (state, action, input) =>
-        performTrainingAction({ state, side: 'opponent', action, input }),
-    }),
-  )
+  return simulateClashFrame(state, controls, {
+    step: stepFight,
+    decide: opponentAttack,
+    attack: (state, action, input) =>
+      performTrainingAction({ state, side: 'opponent', action, input }),
+  })
 }
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
@@ -185,6 +186,10 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
+    performMove({ ...options, state }),
+  )
+  if (perception) return perception
   if (options.state[options.side].arenaRecovery) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
@@ -196,9 +201,11 @@ export function performMove(options: PerformMoveOptions): FightState {
 
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
-  if (fightResolutionPending(state)) return state
+  if (state.catsName) return state
+  if (!futureAcceptsMove(state, side)) return state
+  const chain = performDirectionalChain({ state, side, action, input }, performAuraAttack)
+  if (chain) return chain
   const selected = moveForAction(state[side], action, input)
-  if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
   const override = characterMoveOverride(
     { state, side, action, input },
     selected,
@@ -207,7 +214,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
   if (override) return override
   const move = routedFightMove(state[side], selected)
   if (!move) {
-    if (action === 'throw') return performLegacyThrow(state, side, performAuraAttack)
+    if (action === 'throw') return performLegacyThrow(state, side, input)
     if (action === 'finisher') return state
     return performAuraAttack({
       state,
@@ -228,8 +235,11 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
-  if (options.state.gumResuscitation) return options.state
-  options = { ...options, state: expireHistoricalMatter(options.state) }
+  const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
+    performAuraAttack({ ...options, state }),
+  )
+  if (perception) return perception
+  if (!pursuitAttackAllowed(options)) return options.state
   if (options.state[options.side].easterEgg) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
@@ -272,9 +282,18 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 export const opponentAttack = (state: FightState): FightState =>
-  priorityBusyAi(state, performAuraAttack) ??
-  maryAiAction(state, performAuraAttack) ??
-  contextualOpponentAttack(state)
+  hisokaInterceptionAi(state) ??
+  (projectileDefenceHolds(state)
+    ? state
+    : (priorityBusyAi(state, performAuraAttack) ??
+      maryAiAction(state, performAuraAttack) ??
+      intentionalOpponentAttack(state)))
+
+function intentionalOpponentAttack(state: FightState): FightState {
+  const counter = nativeRecoveryCounter(state, performAuraAttack)
+  if (counter) return counter
+  return reservingAura(state.opponent) ? planOpponentNen(state) : contextualOpponentAttack(state)
+}
 
 function contextualOpponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state
@@ -305,6 +324,10 @@ function ordinaryOpponentAttack(state: FightState): FightState {
 function unboundOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
+  return nativeNenCombo(planned, performAuraAttack) ?? availableOpponentAttack(planned)
+}
+
+function availableOpponentAttack(planned: FightState): FightState {
   const retrospective = retrospectiveAiAction(planned, performAuraAttack)
   if (retrospective) return retrospective
   const native = nativeArsenalAiAction(planned, performAuraAttack)
@@ -323,6 +346,7 @@ function unboundOpponentAttack(state: FightState): FightState {
       performAuraAttack,
     )
   }
+  if (movesetFor(rolled.opponent.id)) return rolled
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),
     canRanged: canUseRangedAttack(rolled.opponent) && gap > style.preferredRange[1],
@@ -356,12 +380,33 @@ export function displayPose(fighter: ArcadeFighter): FighterPose {
   return poseFighter(fighter).pose
 }
 
-export function performThrow(state: FightState, side: FightSide): FightState {
+export function performThrow(
+  state: FightState,
+  side: FightSide,
+  input: FightInput = EMPTY_INPUT,
+): FightState {
+  const perception = performFuturePerceptionAction(state, side, (current) =>
+    performThrow(current, side, input),
+  )
+  if (perception) return perception
   if (state[side].easterEgg) return state
   if (state[side].cyclotronWindup) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
-  if (fightResolutionPending(state)) return state
-  const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
-  if (move) return performMove({ state, side, action: 'throw' })
-  return performLegacyThrow(state, side, performAuraAttack)
+  if (state.catsName) return state
+  const move = moveForAction(state[side], 'throw', input)
+  if (move) return performMove({ state, side, action: 'throw', input })
+  return performLegacyThrow(state, side, input)
+}
+
+function performLegacyThrow(state: FightState, side: FightSide, input: FightInput): FightState {
+  const fighter = state[side]
+  if (fighter.y > 0) return state
+  if (!canMove(fighter)) return state
+  return performAuraAttack({
+    state,
+    side,
+    kind: 'heavy',
+    variant: 'throw',
+    auraCharged: input.aura,
+  })
 }

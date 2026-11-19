@@ -73,7 +73,6 @@ export const en = {
     simulations: 'Simulations',
     virtualTour: 'Virtual Tour',
     tourModes: 'Tour Modes',
-    clash: 'Clash',
     backToTour: 'Back to the Tour',
     shipSources: 'Ship Sources',
     arena: 'Black Whale Arena',

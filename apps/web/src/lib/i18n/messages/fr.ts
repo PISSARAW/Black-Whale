@@ -68,7 +68,6 @@ export const fr: Messages = {
     simulations: 'Simulations',
     virtualTour: 'Visite virtuelle',
     tourModes: 'Modes de la visite',
-    clash: 'Clash',
     backToTour: 'Retour à la visite',
     shipSources: 'Sources du vaisseau',
     arena: 'Arène du Black Whale',

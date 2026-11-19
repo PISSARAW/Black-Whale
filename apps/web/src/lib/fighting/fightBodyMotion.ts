@@ -1,57 +1,74 @@
-import { sunMoonChargeBodyPlan } from './sunMoonChargePresentation'
-import { gumResuscitationBodyPlan } from './gumResuscitationPresentation'
+import { animateHanzoBlade } from './hanzoBladeFigure'
+import { plantHanzoSoles } from './hanzoGrounding'
+import { beginSettledPose } from './fightSettledPose'
+import { feitanAirPlan } from './feitanLocomotion'
+import { feitanHandedPlan } from './feitanHandedPose'
+import { feitanUmbrellaPlan } from './feitanEquipmentPose'
+import { plantBodyFrame } from './fightPlantedPose'
+import { defensiveStance } from './fightDefensiveStance'
+import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
+import { usesRightHandPose } from './fightHandConvention'
+import { fighterKeyedMove } from './fighterKeyedMove'
+import { chrolloBodyStance } from './chrolloBodyStance'
+import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
-import { padailleKeyedMove } from './padaillePoses'
-import { bonolenovDancePlan } from './bonolenovPoses'
+import { bonolenovBodyPlan } from './bonolenovPoses'
+import { animateBonolenovSpear } from './bonolenovSpear'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
 import { pluggingWoundsPlan } from './blinkyPose'
 import { animateServiceHandgun } from './serviceHandgun'
-import { bodyguardFiring } from './bodyguardFirearms'
-import { musseKeyedMove } from './mussePoses'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
-import { benjaminKeyedMove } from './benjaminPoses'
-import { chrolloKeyedMove } from './chrolloPoses'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
+import { strikePresentationFrame } from './fightStrikeRhythm'
+import { strikeSupportPose } from './fightStrikeSupport'
+import { strikeSilhouette } from './fightStrikeSilhouette'
+import { postureSupportLeg } from './fightSupportCycle'
+import { closeBodyPlan } from './fightClosePosture'
+import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
+import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
+import { attackTransfer, recoveryTransfer } from './fightAttackWeight'
+import { COMBO_LINK_SECONDS, flowIntoAttack, type AttackFlowFrame } from './fightAttackFlow'
+import { transferAttackWeight } from './fightWeightTransfer'
 import { READY_ARMS } from './fightGestures'
 import {
   addPoses,
   lerpPose,
   NEUTRAL_POSE,
   pickJoints,
-  STANCE_FRAME_JOINTS,
   UPPER_JOINTS,
+  STANCE_FRAME_JOINTS,
   type BodyPlan,
   type FightPose,
 } from './fightPose'
 import { reactionPlan, type ReactionContext } from './fightReactions'
+import { keepHumanJoints } from './fightJointLimits'
 import {
   applyFightPose,
   captureFootPlant,
   fightRigOf,
   hasFightRig,
-  plantFeet,
   resetFightRig,
   type FightRig,
 } from './fightRig'
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
 import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
-import { keyedMove } from './keyPoseMoves'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
+import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 
 /**
@@ -69,6 +86,7 @@ import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } 
 export interface BodyMotionOptions extends ReactionContext {
   fighter: ArcadeFighter
   seconds: number
+  poseFraction?: number
   onAwakeningFrame?: number | null
   /** The motion to play when the rig has nothing for this frame. */
   fallback?: HumanMotion
@@ -98,6 +116,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const plan = options.plan ?? bodyPlan(fighter, options)
   return expressiveFightMotion(options, (human) => {
     animateServiceHandgun(human.figure, fighter)
+    animateHanzoBlade(human.figure, fighter)
     syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
@@ -108,31 +127,33 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     }
     const rig = fightRigOf(human)
     resetFightRig(rig)
+    rig.planted = Boolean(plan?.plant)
+    beginSettledPose(rig, fighter.facing, options.poseContinuity?.observe)
     if (!plan) {
       remember(rig, { key: 'fallback', pose: NEUTRAL_POSE, seconds })
       fallback?.(human)
       return
     }
     const anchor = plan.plant ? captureFootPlant(rig) : null
-    const drawn = blended(rig, plan, seconds)
+    const drawn = drawBodyPose(options, rig, plan)
     applyFightPose(rig, drawn, fighter.facing)
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
     animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
-    if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
+    animateBonolenovSpear(rig, fighter)
+    keepHumanJoints(rig)
+    plantBodyFrame(rig, { anchor, pose: drawn, fighter, plan })
+    if (anchor) plantHanzoSoles(rig, fighter)
   })
 }
 
-interface PoseMemory {
-  key: string
-  from: FightPose
-  since: number
-  last: FightPose
-}
-
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
+
+function drawBodyPose(options: BodyMotionOptions, rig: FightRig, plan: BodyPlan): FightPose {
+  return options.poseContinuity?.(plan, options.seconds) ?? blended(rig, plan, options.seconds)
+}
 
 function remember(rig: FightRig, drawn: { key: string; pose: FightPose; seconds: number }): void {
   MEMORY.set(rig, {
@@ -148,44 +169,71 @@ function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
   if (!memory) {
     // The first pose of a figure is drawn as is: there is nothing to fade from.
     remember(rig, { key: plan.key, pose: plan.pose, seconds: -Infinity })
+    MEMORY.get(rig)!.attack = plan.attackFlow
     return plan.pose
   }
-  if (memory.key !== plan.key)
-    Object.assign(memory, { key: plan.key, from: memory.last, since: seconds })
-  const travel =
-    plan.blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / plan.blend)) : 1
+  const attack = plan.attackFlow
+  if (memory.key !== plan.key || attackRestarted(memory.attack, attack))
+    beginPoseTransition(memory, plan, seconds)
+  memory.attack = attack
+  if (attack) {
+    memory.last = attackTransition(memory, { pose: plan.pose, attack })
+    return memory.last
+  }
+  const blend = memory.link ? Math.max(COMBO_LINK_SECONDS, plan.blend) : plan.blend
+  const travel = blend > 0 ? Math.min(1, Math.max(0, (seconds - memory.since) / blend)) : 1
   const eased = travel * travel * (3 - 2 * travel)
   memory.last = travel >= 1 ? plan.pose : lerpPose(memory.from, plan.pose, eased)
   return memory.last
 }
 
+function attackTransition(memory: PoseMemory, plan: { pose: FightPose; attack: AttackFlowFrame }) {
+  const { attack, pose } = plan
+  const progress = memory.since === -Infinity ? 1 : attack.frame / Math.max(1, attack.startup)
+  const drawn =
+    memory.bridge && attack.contact && progress < 1
+      ? flowThroughBridge({
+          from: memory.from,
+          contact: attack.contact,
+          load: memory.bridge,
+          progress,
+        })
+      : flowIntoAttack({ from: memory.from, to: pose, progress, chained: Boolean(memory.chained) })
+  return memory.shiftWeight && attack.transfer
+    ? transferAttackWeight({ from: memory.from, pose: drawn, transfer: attack.transfer, progress })
+    : drawn
+}
+
+function attackRestarted(previous?: AttackFlowFrame, current?: AttackFlowFrame): boolean {
+  return Boolean(previous && current && current.frame < previous.frame - 1)
+}
+
 export interface PlanContext extends ReactionContext {
   seconds: number
+  poseFraction?: number
   onAwakeningFrame?: number | null
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const ordinary = sunMoonChargeBodyPlan(
+  const ordinary = withNenCommitment(
+    fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
     fighter,
-    gumResuscitationBodyPlan(
-      fighter,
-      fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
-    ),
   )
-  const plan = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
-  return plan && usesRightHandPose(fighter, plan) && fighter.facing === -1
-    ? { ...plan, pose: rightHandedPose(plan.pose) }
+  const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
+  const plan = awake && closeBodyPlan(awake, fighter, context.rival)
+  if (plan && fighter.id === 'feitan') return feitanHandedPlan(plan, fighter)
+  return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
+    ? rightHandedPlan(plan)
     : plan
 }
 
-function usesRightHandPose(fighter: ArcadeFighter, plan: BodyPlan): boolean {
-  if (plan.key === 'padaille-cuff-escape') return false
-  return (
-    ['chrollo', 'kurapika', 'luini'].includes(fighter.id) ||
-    bodyguardFiring(fighter) ||
-    plan.key === 'roster-writing' ||
-    plan.key === 'roster-console'
-  )
+function rightHandedPlan(plan: BodyPlan): BodyPlan {
+  const attack = plan.attackFlow
+  return {
+    ...plan,
+    pose: rightHandedPose(plan.pose),
+    attackFlow: attack?.contact ? { ...attack, contact: rightHandedPose(attack.contact) } : attack,
+  }
 }
 
 function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
@@ -208,8 +256,9 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       blend: 0.12,
     }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
-  if (fighter.attack) return attackingPlan(fighter, standing)
-  return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+  const personal = chrolloBodyStance(fighter, standing)
+  if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
+  return restingWithConstraint(fighter, context, personal)
 }
 function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   if (!fighter.luiniPassage || fighter.hitStun > 0) return null
@@ -221,14 +270,18 @@ function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
   }
 }
 
-function attackingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
-  return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
+function attackingPlan(
+  fighter: ArcadeFighter,
+  standing: FightPose,
+  fraction?: number,
+): BodyPlan | null {
+  return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing, fraction) : null
 }
 
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const maintained = luiniBodyPlan(fighter) ?? rosterSustainedMotion(fighter, context.seconds)
   if (maintained) return maintained
-  const dance = bonolenovDancePlan(fighter, context.seconds)
+  const dance = bonolenovBodyPlan(fighter)
   if (dance) return dance
   const crossGame = crossGameBodyPlan(fighter)
   if (crossGame) return crossGame
@@ -293,36 +346,58 @@ const KIND_SLOTS: Record<AttackKind, Record<AttackVariant, MoveSlot>> = {
   },
 }
 
-function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): BodyPlan | null {
   const attack = fighter.attack
   // A teched throw is drawn by the scene, both fighters breaking the grab together.
-  if (!attack || (attack.variant === 'throw' && fighter.throwTechFrames)) return null
+  if (!attack || hasTechedThrow(fighter)) return null
   const variant = attack.variant ?? 'standing'
   const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
-  const { timeline, authored } = characterKeyedMove(fighter, slot)
+  const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
-  const keyed = sampleTimeline(timeline, { frame: attack.frame, frames })
-  const accent = attackMotionAccent({ fighter, frames, authored })
+  const frame = attack.frame + fraction
+  const base = basePose(variant, strikingStance(fighter.id, standing), authored)
+  const transfer = attackTransfer(fighter, slot)
+  const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
+  const poseAt = (at: number) =>
+    addPoses(
+      base,
+      sampleTimeline(timeline, {
+        frame: strikePresentationFrame(fighter, frames, at),
+        frames,
+        continuous: true,
+      }),
+      attackMotionAccent({ fighter, frames, authored, frame: at }),
+      strikeSupportPose(fighter, { transfer, frame: at, frames }),
+      strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
+    )
   return {
-    pose: addPoses(basePose(variant, standing, authored), keyed, accent),
+    pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
-    blend: attackBlend(attack.kind),
+    blend: 0,
+    attackFlow: {
+      frame,
+      startup: frames.startup,
+      active: frames.active,
+      recovery: frames.recovery,
+      supportLeg: postureSupportLeg(fighter),
+      loadAt: fightPhysicalProfile(fighter).loadAt,
+      facing: fighter.facing,
+      transfer,
+      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),
+    },
   }
 }
 
-function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
-  return (
-    padailleKeyedMove(fighter) ??
-    musseKeyedMove(fighter) ??
-    chrolloKeyedMove(fighter) ??
-    benjaminKeyedMove(fighter) ??
-    keyedMove(fighter.id, slot)
-  )
+function bridgeContact(
+  moveId: string | undefined,
+  timing: { frame: number; startup: number; poseAt: (frame: number) => FightPose },
+): FightPose | undefined {
+  if (timing.frame < timing.startup && bridgeTarget(moveId)) return timing.poseAt(timing.startup)
 }
 
-function attackBlend(kind: AttackKind): number {
-  return kind === 'light' || kind === 'ranged' ? 1 / 60 : 2 / 60
+function hasTechedThrow(fighter: ArcadeFighter): boolean {
+  return fighter.attack?.variant === 'throw' && Boolean(fighter.throwTechFrames)
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
@@ -348,15 +423,12 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   const landing = landingPose(fighter, standing)
   if (landing) return { ...landing, plant: true }
   if (fighter.crouching) {
-    const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
+    const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
-  if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
-  // The walk cycle moves the legs; the stance keeps the guard up over it.
-  if (fighter.pose === 'walk') {
-    const walking = walkPose(fighter, pickJoints(standing, UPPER_JOINTS))
-    return { ...walking, plant: true }
-  }
+  if (guarding) return plan(defensiveStance(standing), 'guard')
+  // A fighter never strolls: it shuffles in its whole stance, guard and legs.
+  if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')
 }
 
@@ -370,4 +442,19 @@ function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: Arcad
     const weapon = figure.getObjectByName(name)
     if (weapon) weapon.visible = !fighter.weaponsConfiscated
   }
+}
+
+function restingWithConstraint(
+  fighter: ArcadeFighter,
+  context: PlanContext,
+  standing: FightPose,
+): BodyPlan | null {
+  const constraint = context.nenConstraint
+  if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
+  return (
+    feitanUmbrellaPlan(fighter, standing) ??
+    restingPlan(fighter, standing) ??
+    feitanAirPlan(fighter, standing) ??
+    reactionPlan(fighter, context, standing)
+  )
 }

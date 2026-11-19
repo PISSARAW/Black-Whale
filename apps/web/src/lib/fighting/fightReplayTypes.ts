@@ -21,6 +21,7 @@ export type ReplayCommand =
   | { kind: 'move'; side: FightSide; action: MoveAction | 'ranged'; input: number }
   | { kind: 'emperor'; side: FightSide }
   | { kind: 'easter'; side: FightSide; slot: EasterEggSlot }
+  | { kind: 'perceived-result'; action: import('./futurePerceptionResults').PerceivedResultAction }
   | { kind: 'start' | 'round' }
 /** Preserve the engine's actual tick batches, including zero-step batches and accumulator timing. */
 export type ReplayPacket = [dt: number, player: number, opponent: number, commands: ReplayCommand[]]

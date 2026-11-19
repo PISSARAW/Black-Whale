@@ -5,10 +5,11 @@ import { performCorpseCommand } from './illumiCorpses'
 import { priorityLineOfSight } from './priorityOptics'
 import type { FightSide, FightState } from './types'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
+import type { IllumiNeedleMode } from './illumiNeedleFaceTypes'
 
 declare module './types' {
   interface ArcadeFighter {
-    illumiNeedleMode?: 'people' | 'condition'
+    illumiNeedleMode?: IllumiNeedleMode
     conditionedNeedle?: { owner: FightSide; implantedAt: number }
     needleRemoval?: { frames: number; x: number; health: number }
   }

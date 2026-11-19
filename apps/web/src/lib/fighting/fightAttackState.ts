@@ -4,6 +4,7 @@ import type { GumSource } from './bungeeSource'
 import type { IllumiNeedleMode } from './illumiNeedleFaceTypes'
 
 export interface FightAttack {
+  superThrow?: true
   /** Execution channel captured when a supported technique actually starts. */
   nenOrigin?: GumSource
   illumiNeedleMode?: IllumiNeedleMode
@@ -14,6 +15,9 @@ export interface FightAttack {
   /** The AI already rolled its follow-up for this contact (aiComboFollowUp.ts). */
   aiFollowUpRolled?: boolean
   confirmedHit?: boolean
+  comboOpening?: import('./comboOpenings').ComboOpening
+  comboFollowup?: import('./comboOpenings').ComboOpening
+  directionalChain?: import('./directionalChain').DirectionalChain
   kind: AttackKind
   frame: number
   impacted: boolean

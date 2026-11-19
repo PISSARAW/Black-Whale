@@ -195,6 +195,15 @@ function gumAi(state: FightState): FightState | null {
   return next === state ? null : next
 }
 
+/** A deliberately prepared catch may replace ordinary guard, but never bypass hitstun or its cost. */
+export function hisokaInterceptionAi(state: FightState): FightState | null {
+  const fighter = state.opponent
+  if (fighter.id !== 'hisoka' || !canAct(fighter) || fighter.attack || !incomingObject(state))
+    return null
+  const next = performArsenalCommand(state, 'opponent', { action: 'gum-catch' })
+  return next === state ? null : next
+}
+
 function gumProsthesisAi(state: FightState): FightState | null {
   if (!state.opponent.bodyDamage) return null
   if (state.opponent.gumProstheses && Math.abs(state.opponent.x - state.player.x) <= 12) return null

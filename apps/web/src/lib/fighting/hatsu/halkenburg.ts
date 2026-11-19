@@ -1,33 +1,36 @@
+import { halkenburgMode } from '../halkenburgSoulTypes'
+import { retainedSoulBowReady } from '../halkenburgSoulBow'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
 import { chrolloHasActivePage } from '../chrolloBook'
-import { readyCohort } from '../preparationWorld'
+import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
-import { halkenburgRosterVariant } from '../halkenburgVariant'
-import { halkenburgSoulPool, beginHalkenburgSoulExchange } from '../halkenburgSouls'
-import { halkenburgOwnBody } from '../halkenburgSoulTypes'
+import { launchHalkenburgArrow, resolveHalkenburgArrow } from '../halkenburgArrow'
+import type { ProjectileHit } from '../projectiles'
 import type { ArcadeFighter, FightState } from '../types'
+import type { PreparedEntity } from '../preparationTypes'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
 /** Eight seconds for the cohort's shared will to gather behind the bow. */
 export { COHORT_WILL_FRAMES } from '../preparationTuning'
+const POSSESSION_FRAMES = 120
 /** Health price is duel tuning; canonical risk comes from the transfer itself. */
 const SHOT_LIFE_COST = 8
 
 /**
- * A prepared cohort transfers consciousness into the actual struck body.
- * The roster experiment follows its separately selected scenario rule.
+ * The marked, consenting cohort remains mandatory. The requested roster variant
+ * replaces Halkenburg's own playable body, instead of stunning the duel opponent.
  */
 export const halkenburgHatsu: FighterHatsu = {
   id: 'halkenburg',
   onTrigger: nock,
-  onImpact: possess,
-  onFrame: (state) => ({
-    ...state,
-    player: tick(state, 'player'),
-    opponent: tick(state, 'opponent'),
-  }),
+  onImpact: (context) =>
+    halkenburgMode(context.state, context.side) === 'souls' ? context.state : possess(context),
+  onFrame: (state) => {
+    const launched = launchHalkenburgArrow(launchHalkenburgArrow(state, 'player'), 'opponent')
+    return { ...launched, player: tick(launched, 'player'), opponent: tick(launched, 'opponent') }
+  },
 }
 
 function nock({ state, side }: HatsuTriggerContext): FightState {
@@ -35,16 +38,19 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const supporters = readyCohort(state, side)
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
-  const pool = halkenburgSoulPool(state, side)
-  const soul = ready ? pool[rng % pool.length] : undefined
+  const participants = supporters.map((entry) => entry.id)
+  if (participatesPersonally(archer)) participants.push(`self:${side}`)
+  const participant = ready ? participants[rng % participants.length] : undefined
   return {
     ...state,
     rng: ready ? rng : state.rng,
     [side]: {
       ...archer,
-      halkenburgSupporter: soul?.kind === 'supporter' ? soul.id : undefined,
-      halkenburgChosenSoul: soul,
-      health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
+      halkenburgSupporter: participant,
+      health:
+        ready && halkenburgMode(state, side) === 'roster'
+          ? Math.max(1, archer.health - SHOT_LIFE_COST)
+          : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
         arrowNocked: ready ? 1 : 0,
@@ -53,59 +59,110 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
     },
   }
 }
+function participatesPersonally(archer: ArcadeFighter): boolean {
+  return (
+    archer.halkSoul?.mind?.identity === 'halkenburg' ||
+    (archer.id === 'halkenburg' && !archer.halkCohortBody && !archer.nenOwner)
+  )
+}
 
 /** The arrow pierces every defence, so a guarded hit still lands it. */
 function possess({ state, side, defenderSide }: HatsuImpactContext): FightState {
   const archer = state[side]
-  if (!archer.hatsuEffects.arrowNocked) return state
-  if (archer.id === 'halkenburg' && !archer.nenOwner && halkenburgRosterVariant(state))
-    return replaceHalkenburgBody(
-      {
-        ...state,
-        [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
-      },
-      side,
-    )
-  const occupied = beginHalkenburgSoulExchange(state, side, defenderSide)
-  if (occupied === state) return state
-  const body = occupied[side]
+  const supporter = state.battlefield?.entities.find(
+    (entry) => entry.id === archer.halkenburgSupporter,
+  )
+  const self = archer.halkenburgSupporter === `self:${side}`
+  if (!rosterParticipantReady(archer, supporter, self)) return state
+  const target = state[defenderSide]
+  const occupied = supporter ? updateEntity(state, supporter.id, { sleepingFrames: 999999 }) : state
   const struck = {
     ...occupied,
-    [side]: { ...body, hatsuEffects: { ...body.hatsuEffects, arrowNocked: 0 } },
+    [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
   }
-  return struck
+  if (archer.id === 'halkenburg' && !archer.nenOwner) return replaceHalkenburgBody(struck, side)
+  return {
+    ...struck,
+    [defenderSide]: {
+      ...target,
+      hatsuEffects: { ...target.hatsuEffects, possessedFrames: POSSESSION_FRAMES },
+    },
+  }
+}
+function rosterParticipantReady(
+  archer: ArcadeFighter,
+  supporter: PreparedEntity | undefined,
+  self: boolean,
+): boolean {
+  return Boolean(
+    archer.hatsuEffects.arrowNocked &&
+    !archer.halkSoul?.linked &&
+    (self || (supporter && liveEntity(supporter) && supporter.consenting)),
+  )
 }
 
 function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
   const fighter = state[side]
   const effects = fighter.hatsuEffects
-  const gathers = cohortGathers(state, side)
+  const gathers =
+    ownsBow(fighter) &&
+    hasBowReserve(fighter) &&
+    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
+    readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
-  const possessed = fighter.halkenburgSoul ? 0 : effects.possessedFrames
-  if (will === effects.cohortWillFrames && possessed <= 0) return fighter
+  const possessed = effects.possessedFrames
+  const protection = groupProtection(fighter, gathers)
+  if (tickUnchanged(fighter, { will, possessed, protection })) return fighter
   return {
     ...fighter,
+    halkenburgGroupProtection: protection,
     hitStun: possessed > 0 ? Math.max(fighter.hitStun, 2) : fighter.hitStun,
     hatsuEffects: {
       ...effects,
       cohortWillFrames: will,
-      possessedFrames: fighter.halkenburgSoul ? 1 : Math.max(0, possessed - 1),
+      possessedFrames: Math.max(0, possessed - 1),
     },
   }
 }
-
-function cohortGathers(state: FightState, side: 'player' | 'opponent'): boolean {
-  const fighter = state[side]
+function hasBowReserve(fighter: ArcadeFighter): boolean {
   return (
-    ownsBow(fighter) &&
-    halkenburgOwnBody(fighter) &&
-    voluntaryNenAvailable(fighter, { requireReserve: true }) &&
-    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
-    readyCohort(state, side).length > 0
+    fighter.aura > 0 &&
+    (retainedSoulBowReady(fighter) || voluntaryNenAvailable(fighter, { requireReserve: true }))
+  )
+}
+
+function groupProtection(fighter: ArcadeFighter, gathers: boolean): boolean {
+  return (
+    gathers &&
+    Boolean(fighter.hatsuEffects.arrowNocked) &&
+    fighter.attack?.hatsuSource === 'halkenburg'
+  )
+}
+function tickUnchanged(
+  fighter: ArcadeFighter,
+  next: { will: number; possessed: number; protection: boolean },
+): boolean {
+  return (
+    next.will === fighter.hatsuEffects.cohortWillFrames &&
+    next.possessed <= 0 &&
+    fighter.halkenburgGroupProtection === next.protection
+  )
+}
+export function settleHalkenburgArrow(state: FightState, hit: ProjectileHit): FightState {
+  return resolveHalkenburgArrow(state, hit, (current, side, defenderSide) =>
+    possess({
+      state: current,
+      side,
+      defenderSide,
+      source: 'halkenburg',
+      blocked: false,
+      concealed: false,
+    }),
   )
 }
 
 function ownsBow(fighter: ArcadeFighter): boolean {
+  if (retainedSoulBowReady(fighter)) return true
   if (fighter.id === 'halkenburg') return true
   if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'halkenburg')
   return fighter.kurapika?.held?.loaded === true && fighter.kurapika.held.source === 'halkenburg'

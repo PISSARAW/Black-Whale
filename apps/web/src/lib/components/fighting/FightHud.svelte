@@ -4,6 +4,7 @@
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import { bodyMemoryLabel } from '$lib/fighting/bodyMemory'
+  import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
@@ -23,6 +24,7 @@
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
     {@const memory = bodyMemoryLabel(fighter, language)}
+    {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
       {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
       <div class="fighter-gauges">
@@ -43,13 +45,18 @@
         <FightHealth {fighter} {language} {mirrored} {detailed} />
         {#if !state.spectatorView}<div
             class="aura"
+            class:hidden={!auraKnown}
             role="meter"
-            aria-label="Aura"
+            aria-label={auraKnown
+              ? 'Aura'
+              : language === 'fr'
+                ? 'Aura dissimulée'
+                : 'Concealed aura'}
             aria-valuemin="0"
             aria-valuemax="100"
-            aria-valuenow={fighter.aura}
+            aria-valuenow={auraKnown ? fighter.aura : undefined}
           >
-            <span style={`width:${fighter.aura}%`}></span>
+            <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
           </div>{/if}
         <div class="nen-status">
           <span
@@ -59,13 +66,15 @@
                 : 'Public view'
               : !mirrored
                 ? nenStatus(fighter).join(' · ')
-                : state.player.nen.gyo
+                : auraKnown
                   ? auraDistribution(fighter)
                   : language === 'fr'
                     ? 'Nen masqué'
                     : 'Nen hidden'}</span
           >
-          {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
+          {#if !state.spectatorView}<b
+              >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
+            >{/if}
         </div>
         {#if memory}<div class="body-memory">{memory}</div>{/if}
         {#if !state.spectatorView}<div
@@ -177,6 +186,9 @@
     display: block;
     height: 100%;
     background: #7ad4ee;
+  }
+  .aura.hidden > span {
+    background: repeating-linear-gradient(135deg, #24333d 0 7px, #111b22 7px 14px);
   }
   .nen-status {
     margin-top: 0.3rem;

@@ -154,11 +154,32 @@ comportement visible. _Fini quand_ : les tests `pvp/*.test.ts` et les replays de
 passent, et deux simulations alimentées par les mêmes entrées par frame donnent la même
 empreinte pour les 40 personnages.
 
-**L2 — Session de rollback locale.**
+**L2 — Session de rollback locale. Fait le 19 novembre 2026.**
 `session.ts`, prédiction, anneau d'états, resimulation et détection de désynchronisation,
 testés **sans réseau** : deux sessions reliées par un faux canal à délai, gigue et pertes.
 _Fini quand_ : 10 000 frames par personnage avec 0 à 150 ms de délai simulé finissent avec des
 empreintes identiques entre A, B et une simulation de référence.
+
+> **Fait le 19 novembre 2026.** `pvp/rollback/session.ts` et `loopback.ts`. Les 40 duels de
+> 10 020 frames, à 0, 100 et 150 ms d'aller-retour (gigue 10 ms, 2 % de pertes), donnent des
+> empreintes identiques sur A, B et la référence : **120 essais sur 120, aucune
+> désynchronisation**. La suite courte (`session.test.ts`, 46 tests) couvre aussi 0 à 150 ms
+> avec 5 % de pertes, l'attente au-delà de la fenêtre et la détection d'une désynchronisation.
+>
+> | Aller-retour | rollbacks (A + B, 40 duels) | frames resimulées par frame | longueur moyenne | plus long | attentes |
+> | -----------: | --------------------------: | --------------------------: | ---------------: | --------: | -------: |
+> |         0 ms |                          40 |                        0,00 |             1,00 |         1 |        0 |
+> |       100 ms |                     133 960 |                        0,26 |             1,53 |         3 |        0 |
+> |       150 ms |                     136 360 |                        0,51 |             3,02 |         5 |        0 |
+>
+> Avec 2 frames de délai d'entrée, un rollback ne couvre que la part de latence au-delà de ce
+> délai : 3 frames en moyenne à 150 ms. Les duels de Tserriednich restent les plus lents
+> (17 à 23 s pour 10 020 frames, contre 6 à 8 s au p50) : D4 n'est pas encore implémenté.
+>
+> Limites, reportées aux lots suivants : les deux sessions partagent ici la même horloge, sans
+> synchronisation du temps (`timeSync.ts`, L3) ; le changement de manche reste hors du flux
+> d'entrées et devra devenir une entrée de frame (L4) ; les deux places doivent avoir le même
+> délai d'entrée.
 
 **L3 — Transport WebSocket et relais.**
 Route WebSocket sur l'adaptateur Node (vérifier le passage par Caddy, déjà compatible avec

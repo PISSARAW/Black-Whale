@@ -10,6 +10,13 @@ la resimulation privée.
   deux places) et le pas commun `stepPvpFrame` : place 1 puis place 2, puis le tick. L'arbitre
   l'utilise ; la session de rollback (lot L2 de
   [clash-netcode-rollback.md](../../../../../../docs/clash-netcode-rollback.md)) l'utilisera.
+- `rollback/session.ts` est la session de rollback, sans réseau ni horloge : délai d'entrée
+  commun, prédiction « dernière entrée tenue, aucune commande », resimulation depuis la
+  première frame mal prédite, attente au-delà de la fenêtre, empreintes des frames confirmées
+  échangées pour détecter une désynchronisation. Les états sont gardés par référence.
+- `rollback/loopback.ts` relie deux sessions par un canal en mémoire (délai, gigue, pertes,
+  réordonnancement) et les compare à une simulation de référence ; il ne sert qu'aux tests.
+  `session.long.test.ts` (activé par `ROLLBACK_LONG=1`) porte le critère complet du lot L2.
 - `controlUpload.ts` exige manche/génération à la frontière HTTP ; `inputReceipt.ts`
   distingue les reçus courants des réponses périmées.
 - `controlGate.ts` exige le relâchement après une nouvelle génération de duel.

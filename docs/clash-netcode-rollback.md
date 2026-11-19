@@ -147,7 +147,7 @@ Recensement des effets de présentation déclenchés par frame. _Fini quand_ : u
 p50/p95/p99 par personnage, y compris sur un profil CPU ralenti ×4, et le registre des
 informations privées, chacune reliée à son filtre local et à son test.
 
-**L1 — Commandes dans le pas de simulation.**
+**L1 — Commandes dans le pas de simulation. Fait le 19 novembre 2026.**
 Les `PvpCommand` deviennent des éléments de l'entrée d'une frame, appliqués dans un ordre fixe
 (place 1 puis place 2) au début du pas. Le mode actuel adopte ce chemin sans changer de
 comportement visible. _Fini quand_ : les tests `pvp/*.test.ts` et les replays de référence

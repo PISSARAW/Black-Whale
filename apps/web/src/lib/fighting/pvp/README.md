@@ -6,6 +6,10 @@ la resimulation privée.
 
 - `client.ts` valide les vues, coordonne transport, génération et présentation.
 - `serverMatch.ts` est le seul arbitre qui avance le moteur et attribue les ticks.
+- `rollback/frameInput.ts` définit l'entrée d'une frame (commandes et contrôles tenus des
+  deux places) et le pas commun `stepPvpFrame` : place 1 puis place 2, puis le tick. L'arbitre
+  l'utilise ; la session de rollback (lot L2 de
+  [clash-netcode-rollback.md](../../../../../../docs/clash-netcode-rollback.md)) l'utilisera.
 - `controlUpload.ts` exige manche/génération à la frontière HTTP ; `inputReceipt.ts`
   distingue les reçus courants des réponses périmées.
 - `controlGate.ts` exige le relâchement après une nouvelle génération de duel.

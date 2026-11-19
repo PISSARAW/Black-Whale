@@ -83,6 +83,10 @@ export class RollbackSession {
     this.localAcked = options.inputDelay - 1
   }
 
+  /** The seat this client drives. */
+  get side(): FightSide {
+    return this.options.local
+  }
   get state(): FightState {
     return this.states.get(this.frame)!
   }

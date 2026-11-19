@@ -86,7 +86,7 @@ serveur des résultats restent garantis. Les voies écartées sont conservées p
 - **(c) Rollback avec secrets chiffrés révélés à la frame d'effet.** Juste mais très coûteux :
   chaque Hatsu privé doit séparer son engagement de sa révélation. Hors de portée de ce plan.
 
-**D2 — Topologie. À trancher avant L3.** Recommandé : **relais serveur** par WebSocket. Le serveur reçoit les
+**D2 — Topologie. Tranchée le 19 novembre 2026 : relais serveur par WebSocket.** Le serveur reçoit les
 entrées horodatées, les retransmet immédiatement à l'adversaire et simule en retard, une fois
 les deux entrées d'une frame connues. Le pair-à-pair WebRTC gagne la moitié du trajet serveur,
 mais demande STUN/TURN, expose les adresses IP et sépare l'arbitre du chemin des entrées. Il
@@ -181,11 +181,40 @@ empreintes identiques entre A, B et une simulation de référence.
 > d'entrées et devra devenir une entrée de frame (L4) ; les deux places doivent avoir le même
 > délai d'entrée.
 
-**L3 — Transport WebSocket et relais.**
+**L3 — Transport WebSocket et relais. Transport fait ; intégration au duel restante.**
 Route WebSocket sur l'adaptateur Node (vérifier le passage par Caddy, déjà compatible avec
 les WebSockets), authentifiée par le jeton de place existant. Paquets binaires compacts,
 redondance des entrées, ping applicatif. _Fini quand_ : `check-fighting-pvp.mjs` joue un duel
 complet entre deux contextes navigateurs à travers le relais.
+
+> **Transport fait le 19 novembre 2026 ; critère de fin pas encore atteint.** Livré :
+>
+> - `pvp/rollback/codec.ts` : format binaire versionné (environ 9 octets par entrée, commandes
+>   en JSON, 4 empreintes au plus), refus de tout message tronqué ou trop long ;
+> - `server/clashRollbackRelay.ts` : relais indépendant du transport, qui valide chaque
+>   commande avec le contrat HTTP existant (`parsePvpPacket`), plafonne à 150 messages par
+>   seconde et par place, transmet tel quel à l'autre place, fait voyager les pings jusqu'à
+>   l'adversaire et annonce son arrivée ou son départ ;
+> - `server/clashRollbackSocket.ts` : `/fighting/pvp/socket/<matchId>`, sous-protocole
+>   `clash-rollback-1` suivi du jeton de place (jamais dans l'URL), refus 400/401/403 avant la
+>   mise à niveau (protocole, jeton, origine étrangère), messages de 8 Ko au plus ;
+> - `apps/web/server.js` (production, nouvelle commande de `Dockerfile.web`) et
+>   `build-tools/clashSocket.ts` (développement) donnent au socket le serveur HTTP ;
+>   dépendance ajoutée : `ws` 8.18.0 ;
+> - `pvp/rollback/timeSync.ts` et `socketClient.ts` : estimation de l'avance sur l'adversaire,
+>   attente d'une frame au plus toutes les 10, client indépendant du navigateur.
+>
+> Vérifié : deux vrais clients WebSocket jouent 600 frames à travers le relais et retrouvent
+> l'empreinte de référence (`clashRollbackSocket.test.ts`) ; refus, message invalide (4002) et
+> connexion remplacée (4001) testés ; chemin de développement essayé dans un navigateur réel
+> (salon créé par l'API HTTP, deux sockets, ping transmis, jeton inconnu refusé) ; `server.js`
+> essayé autour d'un build simulé. **Non vérifié** : le build de production réel, qui échoue
+> sur la branche pour une raison indépendante (exports Halkenburg manquants depuis la fusion
+> `e8af4bd45`), et donc l'image Docker.
+>
+> Reste pour atteindre le critère : brancher `RollbackSocketClient` dans le duel
+> (`PvpDuel.svelte`, contrôles, rendu de l'état local, masquage D1-a de `view.ts` côté client)
+> derrière une option de salon, puis faire jouer `check-fighting-pvp.mjs` à travers le relais.
 
 **L4 — Arbitre en retard confirmé.**
 `refereeMatch.ts` simule à partir des entrées confirmées, publie les verdicts et une empreinte

@@ -72,7 +72,9 @@ class Link {
 }
 
 /** The straight simulation every client must agree with, from the same scripted inputs. */
-export function referenceChecksum(options: LoopbackOptions): string {
+export function referenceChecksum(
+  options: Pick<LoopbackOptions, 'initial' | 'script' | 'frames' | 'inputDelay'>,
+): string {
   const delay = options.inputDelay ?? 2
   let state = options.initial
   for (let frame = 0; frame < options.frames; frame++) {

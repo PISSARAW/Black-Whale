@@ -17,6 +17,9 @@ la resimulation privée.
 - `rollback/loopback.ts` relie deux sessions par un canal en mémoire (délai, gigue, pertes,
   réordonnancement) et les compare à une simulation de référence ; il ne sert qu'aux tests.
   `session.long.test.ts` (activé par `ROLLBACK_LONG=1`) porte le critère complet du lot L2.
+- `rollback/codec.ts`, `timeSync.ts` et `socketClient.ts` portent la session sur le socket
+  du relais (`$lib/server/clashRollbackRelay.ts`, `clashRollbackSocket.ts`) ; le client ne
+  dépend que d'une interface WebSocket minimale. Le duel ne s'en sert pas encore (lot L3).
 - `controlUpload.ts` exige manche/génération à la frontière HTTP ; `inputReceipt.ts`
   distingue les reçus courants des réponses périmées.
 - `controlGate.ts` exige le relâchement après une nouvelle génération de duel.

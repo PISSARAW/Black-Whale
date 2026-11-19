@@ -3,6 +3,8 @@ import { rateLimit } from '$lib/server/rateLimit'
 import { cachePolicyFor } from '$lib/server/httpCache'
 import { describeError, errorReference, log } from '$lib/server/log'
 import { LOCALE_TAGS, parsePathname } from '$lib/i18n/config'
+// Registers the Clash rollback socket's upgrade handler for server.js (see that file).
+import '$lib/server/clashRollbackSocket'
 
 // Simulation branches are created and mutated by unauthenticated visitors and
 // persist rows. These actions used to be throttled by the API; they are served

@@ -103,6 +103,11 @@ function readTotals(value: Record<string, unknown>) {
           .filter((id): id is string => typeof id === 'string' && id.length <= 100)
           .slice(-2000)
       : [],
+    moraleSeen: Array.isArray(value.moraleSeen)
+      ? value.moraleSeen
+          .filter((id): id is string => typeof id === 'string' && id.length <= 100)
+          .slice(-2000)
+      : [],
   }
 }
 export function cleanCareerName(value: unknown): string {

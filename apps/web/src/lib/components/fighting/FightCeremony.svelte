@@ -4,6 +4,7 @@
   import { clashPresentation } from '$lib/fighting/presentation/profile'
   import { titleLabel } from '$lib/fighting/presentation/collection'
   import { ceremonyText, winnerForCeremony } from '$lib/fighting/career/presentation'
+  import { careerMoraleLabel } from '$lib/fighting/career/morale'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightState } from '$lib/fighting/types'
@@ -16,9 +17,9 @@
   onMount(() => clashPresentation.ensureLoaded())
 </script>
 
-{#if (ready && appearance.intro !== 'off') || winner}
+{#if (ready && (appearance.intro !== 'off' || (state.roundNumber === 1 && state.careerMorale))) || winner}
   <div class="ceremony" data-theme={appearance.theme} class:brief={appearance.intro !== 'full'}>
-    {#if ready}<div class="lineup">
+    {#if ready && appearance.intro !== 'off'}<div class="lineup">
         {#each ['player', 'opponent'] as const as side (side)}<div>
             <strong>{fighterDefinition(state[side].id).name}</strong
             >{#if appearance.intro === 'full'}<p>{ceremonyText(state, language, side)}</p>{/if}
@@ -26,6 +27,9 @@
       </div>
     {:else if winner}<strong>{fighterDefinition(state[winner].id).name}</strong>
       <p>{ending(state, language)}</p>{/if}
+    {#if ready && state.roundNumber === 1 && state.careerMorale}<p class="morale" role="status">
+        {careerMoraleLabel(state.careerMorale, language)}
+      </p>{/if}
     {#if title}<small>{language === 'fr' ? 'Profil local' : 'Local profile'} · {title}</small>{/if}
     <small
       >{language === 'fr' ? 'Dialogues originaux pour Clash' : 'Original dialogue for Clash'}</small
@@ -62,6 +66,10 @@
   p {
     margin: 0.5rem 0;
     font-size: 0.8rem;
+  }
+  .morale {
+    color: var(--accent);
+    font-weight: 700;
   }
   small {
     display: block;

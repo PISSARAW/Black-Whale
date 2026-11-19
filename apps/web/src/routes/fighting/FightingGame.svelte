@@ -1,6 +1,7 @@
 <script lang="ts">
   import { clashCareer } from '$lib/fighting/career/profile'
   import { createCareerTracker } from '$lib/fighting/career/runtime'
+  import { applyCareerMorale } from '$lib/fighting/career/morale'
   import { createCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
@@ -144,14 +145,17 @@
     navigate('battle')
     school.exit()
     practice.exit()
-    state = withKameos(
-      createFight(selectedPlayer, selectedOpponent, {
-        formatId: selectedFormat,
-        mode: selectedMode,
-        environment,
-        controls: controls.schemesFor(selectedMode, coarsePointer()),
-      }),
-      kameos,
+    state = applyCareerMorale(
+      withKameos(
+        createFight(selectedPlayer, selectedOpponent, {
+          formatId: selectedFormat,
+          mode: selectedMode,
+          environment,
+          controls: controls.schemesFor(selectedMode, coarsePointer()),
+        }),
+        kameos,
+      ),
+      $clashCareer,
     )
     resetFightInputs()
     match.begin(state)
@@ -159,7 +163,10 @@
   }
   function startFight() {
     paused = false
-    if (state) state = match.apply(state, { kind: 'start' })
+    if (state) {
+      if (state.careerMorale) clashCareer.consumeMorale(state.careerMorale.sourceMatchId)
+      state = match.apply(state, { kind: 'start' })
+    }
   }
   function rematch() {
     prepareFight()

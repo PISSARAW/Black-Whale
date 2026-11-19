@@ -49,6 +49,20 @@ export function createCareerProfile(
       }
       write(addCareerMatch(base, match))
     },
+    consumeMorale(matchId: string) {
+      const current = get(store),
+        saved = readCareer(storage())
+      const base = saved.revision > current.revision ? saved : current
+      if (base.moraleSeen.includes(matchId)) {
+        store.set(base)
+        return
+      }
+      write({
+        ...base,
+        revision: base.revision + 1,
+        moraleSeen: [...base.moraleSeen, matchId].slice(-2000),
+      })
+    },
     clear() {
       write({
         ...emptyCareer(),

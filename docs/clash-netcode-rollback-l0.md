@@ -127,27 +127,48 @@ traverse l'une des 4 activations :
 d'activation coûte 0,14 à 0,39 ms pour un état de 5 à 10 Ko (les 2,4 Mo n'existent qu'après
 la prévision). La mémoïsation reste utile en appoint, pas comme parade.
 
-### Parade recommandée : prévision calculée au fil de la lecture
+### Parade retenue : prévision calculée au fil de la lecture (D4, 19 novembre 2026)
 
-Le moteur lit les frames prévues dans l'ordre : `previewCursor` avance de 4 frames par pas
-pendant la vision (`stepVision`), `cursor` d'une frame par pas pendant la divergence
-(`parallelFuture.ts`, `parallelFutureAi.ts`, `throws/selection.ts`). La prévision ne dépend
-que de l'état d'activation et des commandes tenues, fixés à l'activation : la calculer à la
-demande, frame après frame, donne exactement les mêmes frames sans changer les règles ni
-`REPLAY_RULESET`.
+Le moteur lit les frames prévues dans l'ordre :
 
-- Coût par pas : environ 4 pas moteur pendant la vision, soit 1 à 4 ms selon le p99 d'un pas
-  mesuré en Node (à mesurer sur les pas de prévision eux-mêmes), un seul pendant la
-  divergence. Un rollback de 8 frames juste après l'activation ne recalcule qu'environ
-  32 frames prévues au lieu de 600.
-- À adapter : les lecteurs qui parcourent toutes les frames d'un coup, à savoir l'estimation de
-  danger de l'IA (`parallelFutureAi.ts`, hors PvP), la piste de caméra
-  (`parallelFutureCamera.ts`), l'empreinte (`fightReplayHash.ts`), le masquage
-  (`pvp/view.ts`) et les instantanés de replay.
-- À prouver : la prévision paresseuse produit, frame par frame, les mêmes empreintes que la
-  prévision actuelle sur les tests de Parallel Future existants.
+- pendant la vision, `previewCursor` avance de 4 frames par pas (`stepVision`, présentation) ;
+  l'IA adverse, propriétaire de la vision en versus-ai seulement, passe tout de suite en
+  divergence ;
+- pendant la divergence, `cursor` avance d'une frame par pas (`parallelFuture.ts`,
+  `throws/selection.ts`) ; l'IA lit en plus les 60 frames suivantes (`steerFutureAi` dans
+  `parallelFutureAi.ts`).
 
-### Alternative simple
+La prévision ne dépend que de l'état d'activation et des commandes tenues, fixés à
+l'activation. La calculer par tranches donne les mêmes frames, à condition que la tranche
+calculée à chaque pas soit une fonction de l'état seul (jamais du fait qu'on resimule) :
+
+- `parallelFuture` garde, en données ordinaires, l'état prédit courant (5 à 10 Ko) et les
+  frames déjà calculées ; chaque pas complète jusqu'à
+  `max(previewCursor + 4, cursor + 1, cursor + 60 si l'IA possède la vision)`, plafonné à 600 ;
+- chaque tranche est figée à part (`immutableFightSnapshot`) pour que l'empreinte réutilise
+  les digests des frames déjà vues, au lieu de recopier tout le tableau.
+
+Ce que cela coûte et change :
+
+- **Jeu inchangé, replays non.** Les règles et les frames lues sont identiques, mais l'état
+  contient désormais une prévision partielle, donc les empreintes diffèrent : `REPLAY_RULESET`
+  et `PVP_RULESET` changent, et les anciens replays sont refusés comme à chaque changement de
+  règles.
+- **Coût par pas pendant la vision : 4 pas de prévision**, soit environ 2 ms au p99 dans
+  Chrome (CPU ×1) et 9 ms ralenti ×4, d'après le p99 d'un pas ordinaire ; à mesurer sur les
+  pas de prévision eux-mêmes. Une fois les 600 frames calculées (150 pas), plus rien.
+- **Rollback juste après l'activation : environ 32 pas de prévision en plus** au lieu de 600,
+  soit de l'ordre de 16 ms dans Chrome au p99 et 70 ms ralenti ×4. C'est beaucoup mieux que
+  73 à 500 ms, sans tenir dans une frame sur une machine lente. Le levier restant est la
+  vitesse de l'aperçu : 2 frames par pas au lieu de 4 divisent ce coût par deux, au prix d'un
+  aperçu deux fois plus lent (présentation seulement). À trancher avec les mesures de L2.
+- À adapter : la piste de caméra (`parallelFutureCamera.ts`, qui parcourt toutes les frames),
+  l'empreinte (`fightReplayHash.ts`), le masquage (`pvp/view.ts`), la présentation
+  (`parallelFuturePresentation.ts`) et les instantanés de replay.
+- À prouver : sur les tests de Parallel Future existants, chaque frame lue par le moteur est
+  identique à celle de la prévision complète actuelle.
+
+### Alternative écartée
 
 **Point de synchronisation à l'activation.** Le client ne calcule la prévision qu'une fois la
 frame d'activation confirmée par les deux entrées. Un seul calcul par activation (130 ms en
@@ -231,6 +252,6 @@ se fera en L5 ; ce registre en donne le périmètre.
 ## Suite
 
 - L1 peut commencer : le déterminisme qu'il suppose est vérifié.
-- Avant L2 : choisir entre la prévision au fil de la lecture (recommandée) et le point de
-  synchronisation. La mémoïsation seule est écartée par la mesure.
+- Parallel Future : prévision au fil de la lecture retenue (D4). Elle s'implémente avec L2,
+  vitesse de l'aperçu à fixer d'après ses mesures.
 - Avant la bascule (L6) : un test de vue locale pour chaque ligne **Aucun** du registre.

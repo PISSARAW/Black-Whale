@@ -349,6 +349,15 @@ export interface FightImpact {
   transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean }
 }
 
+export interface FightAttackClash {
+  sequence: number
+  frame: number
+  winner: FightSide | null
+  playerRen: number
+  opponentRen: number
+  position: { x: number; y: number }
+}
+
 export type ProjectileShape =
   'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone' | 'needle' | 'remote-fist'
 
@@ -403,6 +412,8 @@ import type { BungeeGumAttachment } from './bungeeTypes'
 export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
+  /** Latest same-frame Ko collision; separate from impacts because neither strike lands. */
+  attackClash?: FightAttackClash
   throwTech?: { frame: number; sequence: number }
   training?: import('./trainingTypes').TrainingState
   arena?: import('./arenaTypes').ArenaState

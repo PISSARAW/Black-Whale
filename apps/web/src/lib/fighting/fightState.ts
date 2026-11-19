@@ -111,6 +111,7 @@ export function nextFightRound(state: FightState): FightState {
       lsdf: undefined,
       expulsion: undefined,
       deaths: undefined,
+      attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
       player: preserveLifespan(

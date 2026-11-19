@@ -6,6 +6,7 @@
   "scripts": {
     "test:performance": "svelte-kit sync && node scripts/check-fighting-performance.mjs",
     "test:performance:stress": "svelte-kit sync && node scripts/check-fighting-performance.mjs --stress",
+    "test:rollback-budget": "node scripts/check-fighting-rollback.mjs",
     "test:step2-ui": "svelte-kit sync && node scripts/check-fighting-step2.mjs",
     "test:training-ui": "svelte-kit sync && node scripts/check-fighting-training.mjs",
     "test:kameo-combos-ui": "svelte-kit sync && node scripts/check-fighting-kameo-combos.mjs",

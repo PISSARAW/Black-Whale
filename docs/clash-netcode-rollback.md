@@ -38,11 +38,15 @@ Sonde jetable lancée le 19 novembre 2026 sous Vitest/Node, Apple M5, 40 duels d
 | `fightReplayHash`       | 0,06 ms | 0,09 ms | 0,21 ms | 0,44 ms |
 | État sérialisé (JSON)   |  4,4 Ko |  4,7 Ko |  4,9 Ko |  5,0 Ko |
 
-Une resimulation de 8 frames coûte donc environ 2,6 ms au p99 sur cette machine, ce qui tient
-dans une frame de 16,7 ms même avec un rendu à environ 13 ms. **Ces chiffres ne valent pas
-garantie :** Node n'est pas un navigateur, le M5 n'est pas une machine modeste, et la sonde n'a
+Une resimulation de 8 frames coûte donc environ 2,6 ms au p99 sur cette machine, sur une
+frame de 16,7 ms qui doit aussi contenir le rendu. **Ces chiffres ne valent pas garantie :** Node n'est pas un navigateur, le M5 n'est pas une machine modeste, et la sonde n'a
 déclenché ni Parallel Future (qui stocke des frames de prévision dans l'état), ni Chrollo
 avec plusieurs pages, ni kaméos. Le lot L0 refait la mesure sur ces pires cas.
+
+> **Mise à jour L0 (19 novembre 2026).** Mesures complètes, dans Chrome et avec le CPU ralenti
+> ×4, dans le [rapport du lot L0](clash-netcode-rollback-l0.md) : moteur déterministe sous
+> rollback, états réutilisables sans copie, Parallel Future comme seul bloqueur, fenêtre de
+> 8 frames trop large sur une machine lente.
 
 ## Ce qui bloque
 
@@ -126,7 +130,7 @@ Chaque lot est livrable seul, derrière l'option `rollback` du salon, l'ancien m
 la valeur par défaut jusqu'à L6. Tous les nouveaux fichiers respectent les bornes de
 `CLAUDE.md` ; aucun fichier existant ne grossit pour accueillir ce code.
 
-**L0 — Mesures et inventaire (aucune livraison joueur).**
+**L0 — Mesures et inventaire (aucune livraison joueur). Fait : [rapport](clash-netcode-rollback-l0.md).**
 Banc permanent `rollbackBudget.test.ts` (ou script `check-fighting-rollback.mjs`) dans le
 navigateur réel : coût de `tickFight`, clone et empreinte sur les pires cas (Parallel Future
 actif, Chrollo à plusieurs pages, kaméos, terrain interactif). Recensement des données retirées

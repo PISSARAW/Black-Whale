@@ -96,6 +96,12 @@ reste une option de L7.
 avec un rollback maximal de 8 frames. Au-delà, la frame locale attend (gel bref) plutôt que
 de resimuler davantage.
 
+**D4 — Prévision de Parallel Future. Tranchée le 19 novembre 2026 : calcul au fil de la
+lecture.** La prévision de 600 frames n'est plus calculée d'un coup à l'activation mais par
+tranches, au rythme où le moteur la lit. Le jeu ne change pas ; `REPLAY_RULESET` change parce
+que l'état porte une prévision partielle. La mémoïsation a été mesurée et écartée (0 réussite
+sur 56 rollbacks mal prédits). Détail et coûts : [rapport L0](clash-netcode-rollback-l0.md#parallel-future).
+
 ## Architecture cible
 
 ```
@@ -121,7 +127,8 @@ présentation filtrée (view.ts)   verdicts de manche et de match              p
 - **Présentation** : les effets portent l'identifiant de la frame qui les a produits. Un effet
   dont la frame est resimulée sans lui est retiré (son coupé, plan de caméra abandonné).
 
-Le moteur, les règles du Nen et `REPLAY_RULESET` ne changent pas. Un match à rollback produit
+Les règles du combat et du Nen ne changent pas ; seule la forme de la prévision de Parallel
+Future change (D4), ce qui change `REPLAY_RULESET`. Un match à rollback produit
 le même replay qu'un match local qui aurait reçu les mêmes entrées par frame.
 
 ## Lots
@@ -197,7 +204,7 @@ flux d'entrées plutôt que par des vues, coordinateur partagé pour plusieurs i
 | Risque                                                 | Parade                                                                           |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------- |
 | Pic de `tickFight` (5,4 ms observé une fois)           | L0 attribue le pic ; resimulation étalée ou plafond de rollback abaissé          |
-| Parallel Future gonfle l'état et le clone              | L0 mesure ; anneau d'états avec partage structurel si nécessaire                 |
+| Parallel Future gonfle l'état et le clone              | mesuré en L0 : états gardés sans copie ; prévision au fil de la lecture (D4)     |
 | Effets de présentation déclenchés deux fois            | identifiant de frame sur chaque effet (L5)                                       |
 | Commandes textuelles longues (poème, parole) en paquet | envoyées une seule fois avec accusé, référencées par identifiant dans les frames |
 | Fuite d'information cachée (D1-a)                      | décision assumée et documentée ; le résultat reste arbitré par le serveur        |

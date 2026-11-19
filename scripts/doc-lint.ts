@@ -119,6 +119,10 @@ function extractCodePaths(source: string): string[] {
     if (!text.includes('/') && !text.includes('\\')) continue
     if (/^https?:\/\//.test(text)) continue
     if (/^\//.test(text)) continue
+    // Rendered demos are intentionally gitignored. Their documented output
+    // paths are contracts for the renderer, not source files that a clean
+    // checkout can contain.
+    if (/^(?:output|apps\/[^/]+\/output)\//.test(text)) continue
     if (/\s/.test(text)) continue
     if (text.length < 3) continue
     paths.add(text.replace(/^\.\//, ''))

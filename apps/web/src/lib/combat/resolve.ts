@@ -13,6 +13,7 @@ interface Exchange {
   power?: number
   range?: number
   targetAt?: FighterState['position']
+  recovery?: number
   clock: number
   walls: WallSegment[]
 }
@@ -131,7 +132,10 @@ export function impactOf(offence: number, defence: number): Impact {
 function resultOf(exchange: Exchange, impact: Impact): ExchangeResult {
   const points = pointsFor(impact)
   return {
-    attacker: { ...exchange.attacker, cooldown: exchange.technique === 'ko' ? 1.1 : 0.65 },
+    attacker: {
+      ...exchange.attacker,
+      cooldown: exchange.recovery ?? (exchange.technique === 'ko' ? 1.1 : 0.65),
+    },
     defender: applyImpact(exchange.defender, impact),
     event: {
       at: exchange.clock,

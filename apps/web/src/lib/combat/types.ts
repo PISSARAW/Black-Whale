@@ -26,6 +26,10 @@ export interface AttackIntent {
   zone: BodyZone
   remaining: number
   targetAt: Vec2
+  technique?: 'strike' | 'hatsu'
+  power?: number
+  range?: number
+  recovery?: number
 }
 
 export interface ElasticTether {
@@ -153,6 +157,13 @@ export type CombatAction =
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
+  | {
+      type: 'FIGHTING_MOVE'
+      side: CombatSide
+      fighterId: import('../fighting/types').FighterId
+      slot: import('../fighting/types').MoveSlot
+      targetAt: Vec2
+    }
   | { type: 'PREPARE_HATSU'; side: CombatSide; hatsuId: 'parallel-future' | 'rihan-predator' }
   | {
       type: 'HATSU'

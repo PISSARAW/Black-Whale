@@ -16,6 +16,13 @@ Arena is split into three deterministic layers:
 - `apps/web/src/lib/arena/match.ts` owns formats and boss setup. It may end a running combat, but never replaces a terminal combat verdict.
 - `apps/web/src/lib/arena/replay/` records commands plus the complete match configuration and uses the same referee as the live page.
 
+`FIGHTING_MOVE` is the first shared combat bridge. Arena keeps planar locomotion,
+walls and aiming, while [combat/fightingMove.ts](../combat/fightingMove.ts) projects
+Fighting's authored startup, reach, recovery, aura cost and strength onto the
+attacker's local 3D axis.
+The selected fighter is stored in the match and each replay command carries the
+fighter and move slot, so replay validation never depends on mutable UI state.
+
 ## Match lifecycle
 
 The page resolves the URL into one `ArenaReplayMatch`, creates the initial state with `initialArenaMatchState`, then calls `applyArenaMatchRules` after every accepted command and simulation tick. `finishRun` is the only local completion path.

@@ -2,6 +2,7 @@ import type { ArenaDifficulty, OpponentDoctrine } from '../ai'
 import type { CombatAction, CombatSetup, CombatState } from '../../combat/types'
 import type { ArenaFormatId } from '../formats'
 import type { ArenaOpponentId } from '../experience'
+import type { FighterId } from '../../fighting/types'
 
 export const ARENA_REPLAY_VERSION = 2
 
@@ -20,6 +21,8 @@ export interface ArenaReplayMatch {
   challengeId: string | null
   missionId: string | null
   bossRule: ArenaBossRule | null
+  /** Fighting moveset projected onto the player's local 3D combat axis. */
+  fighterId?: FighterId
   /** Set only while importing a V1 replay that used the raw combat rules. */
   legacyRules?: boolean
 }

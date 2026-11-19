@@ -32,6 +32,7 @@ export interface StrikeRequest {
   power?: number
   range?: number
   targetAt?: Vec2
+  recovery?: number
 }
 
 /**
@@ -78,8 +79,11 @@ export function landReadyIntent(state: CombatState): CombatState {
       state: current,
       side,
       zone: intent.zone,
-      technique: 'strike',
+      technique: intent.technique ?? 'strike',
       targetAt: intent.targetAt,
+      power: intent.power,
+      range: intent.range,
+      recovery: intent.recovery,
     })
   }
   return current
@@ -157,6 +161,7 @@ export function strike(request: StrikeRequest): CombatState {
     power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
     range: request.range,
     targetAt: request.targetAt,
+    recovery: request.recovery,
   })
   const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
   const event = counterBonus

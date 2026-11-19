@@ -10,6 +10,7 @@
   import ArenaHatsuFx from '$lib/components/arena/ArenaHatsuFx.svelte'
   import ArenaBriefing from '$lib/components/arena/ArenaBriefing.svelte'
   import ArenaSetupPanel from '$lib/components/arena/ArenaSetupPanel.svelte'
+  import ArenaFightingControls from '$lib/components/arena/ArenaFightingControls.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -37,7 +38,15 @@
   import { replayFromUrl } from '$lib/arena/replay/share'
   import { eventsFromReplay, playReplay } from '$lib/arena/replay/player'
   import { forkReplayAtTick } from '$lib/arena/replay/branch'
-  import { arenaRyuAction, auraPercent, strikeTarget } from '$lib/arena/controls'
+  import { arenaRyuAction, auraPercent } from '$lib/arena/controls'
+  import { arenaFightingMove } from '$lib/arena/fighting'
+  import { handleArenaKey } from '$lib/arena/keyboard'
+  import {
+    arenaFormatGoal,
+    reactionFor,
+    reactionTime,
+    type ArenaCombatMotion,
+  } from '$lib/arena/presentation'
   import { resolveArenaExperience, type ArenaOpponentId } from '$lib/arena/experience'
   import { ARENA_CAMPAIGN } from '$lib/arena/campaign'
   import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
@@ -55,13 +64,7 @@
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer } from '$lib/combat/reducer'
-  import {
-    BODY_ZONES,
-    type BodyZone,
-    type CombatAction,
-    type CombatEvent,
-    type Impact,
-  } from '$lib/combat/types'
+  import { BODY_ZONES, type BodyZone, type CombatAction, type CombatEvent } from '$lib/combat/types'
   import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -79,6 +82,7 @@
   import { arenaNen } from '$lib/nen/tourAdapters'
   import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
+  import type { FighterId, MoveSlot } from '$lib/fighting/types'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
@@ -140,9 +144,8 @@
   let frame = 0
   let owed = 0
   let last = 0
-  type CombatMotion = 'idle' | 'guard' | 'hit' | 'down' | 'attack'
-  let playerMotion = $state<CombatMotion>('idle')
-  let opponentMotion = $state<CombatMotion>('idle')
+  let playerMotion = $state<ArenaCombatMotion>('idle')
+  let opponentMotion = $state<ArenaCombatMotion>('idle')
   let eventVisible = $state(false)
   let playerMotionSeq = 0
   let opponentMotionSeq = 0
@@ -170,11 +173,13 @@
   const initialFormatId = untrack(() => data.formatId)
   const initialOpponentId = untrack(() => data.opponentId)
   const initialMissionId = untrack(() => data.missionId)
+  const initialFighterId = untrack(() => data.fighterId)
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
   let formatId = $state<ArenaFormatId>(initialFormatId)
   let opponentId = $state<ArenaOpponentId>(initialOpponentId)
+  let fighterId = $state<FighterId>(initialFighterId)
   let recorder = new ArenaRecorder({
     setup: combatSetup(),
     doctrine: initialDoctrine,
@@ -185,6 +190,7 @@
       opponentId: initialOpponentId,
       challengeId: initialChallengeId,
       missionId: initialMissionId,
+      fighterId: initialFighterId,
     },
   })
   let lastReplay = $state<ArenaReplay | null>(null)
@@ -306,17 +312,6 @@
     return `${$t.arena.ui.objective.use} ${objective.action} × ${objective.count}`
   }
 
-  function formatGoal(): string {
-    if (activeFormat.timeLimit !== null) {
-      return $locale === 'fr'
-        ? `Prenez l’avantage avant la fin des ${activeFormat.timeLimit} secondes. Une attaque ne touche qu’à courte portée.`
-        : `Take the lead before ${activeFormat.timeLimit} seconds expire. Attacks only connect at close range.`
-    }
-    return $locale === 'fr'
-      ? `Le premier à ${activeFormat.scoreToWin} point${activeFormat.scoreToWin > 1 ? 's' : ''} gagne. Surveillez la distance en haut de l’écran.`
-      : `First to ${activeFormat.scoreToWin} point${activeFormat.scoreToWin > 1 ? 's' : ''} wins. Watch the distance at the top of the screen.`
-  }
-
   function freshGame(match: ArenaReplayMatch = DEFAULT_REPLAY_MATCH) {
     return initialArenaMatchState(combatSetup(), match)
   }
@@ -328,6 +323,7 @@
       challengeId: selectedChallengeId,
       missionId,
       bossRule: activeOpponentProfile?.bossRule ?? null,
+      fighterId,
     }
   }
 
@@ -366,7 +362,8 @@
     if (lesson === 0 && action.type === 'RYU') lesson = 1
     else if (lesson === 1 && action.type === 'GUARD') lesson = 2
     else if (lesson === 2 && action.type === 'FEINT') lesson = 3
-    else if (lesson === 3 && action.type === 'STRIKE') lesson = 4
+    else if (lesson === 3 && (action.type === 'STRIKE' || action.type === 'FIGHTING_MOVE'))
+      lesson = 4
   }
 
   function command(action: CombatAction, animation: CommandAnimation): boolean {
@@ -430,13 +427,18 @@
   }
 
   function strike() {
+    fightingMove('standingLight')
+  }
+
+  function fightingMove(slot: MoveSlot) {
     command(
-      {
-        type: 'STRIKE',
+      arenaFightingMove({
         side: 'player',
-        zone: aimedZone,
-        targetAt: strikeTarget(game.player.position, heading, STRIKE_RANGE),
-      },
+        fighterId,
+        slot,
+        position: game.player.position,
+        heading,
+      }),
       'strike',
     )
   }
@@ -491,33 +493,25 @@
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (event.metaKey || event.ctrlKey) return
-    if (event.key === 'Escape' && arenaPanel) {
-      arenaPanel = null
-      event.preventDefault()
-      return
-    }
-    if (event.key === '?') {
-      arenaPanel = null
-      manualOpen = !manualOpen
-      event.preventDefault()
-      return
-    }
-    if (manualOpen || briefingOpen || arenaPanel) return
-    if (isNenControlCode(event.code)) return
-    if (isMovement(event.code)) {
-      started = true
-      return
-    }
-    if (event.repeat || game.outcome !== 'playing') return
-
-    if (event.code === 'Space') strike()
-    else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
-    else if (event.code === 'KeyV') feint()
-    else if (event.code === 'KeyJ') evade(-1)
-    else if (event.code === 'KeyL') evade(1)
-    else return
-    event.preventDefault()
+    handleArenaKey(event, {
+      blocked: () => manualOpen || briefingOpen || Boolean(arenaPanel),
+      panelOpen: () => Boolean(arenaPanel),
+      closePanel: () => (arenaPanel = null),
+      toggleManual: () => {
+        arenaPanel = null
+        manualOpen = !manualOpen
+      },
+      start: () => (started = true),
+      finished: () => game.outcome !== 'playing',
+      nenKey: isNenControlCode,
+      movementKey: isMovement,
+      light: strike,
+      heavy: () => fightingMove('standingHeavy'),
+      special: () => fightingMove('neutralSpecial'),
+      guard,
+      feint,
+      evade,
+    })
   }
 
   function reportWalk() {
@@ -619,7 +613,7 @@
     const mode = { ten: 0, ren: 1, zetsu: 2 }[game.opponent.mode]
     const fallen = game.opponent.condition === 'down' || game.opponent.condition === 'ko'
     const pose = fallen ? 'down' : game.opponent.intent ? 'attack' : opponentMotion
-    const poseIndex: Record<CombatMotion, number> = {
+    const poseIndex: Record<ArenaCombatMotion, number> = {
       idle: 0,
       guard: 1,
       hit: 2,
@@ -660,19 +654,7 @@
     }
   }
 
-  function reactionFor(impact: Impact): CombatMotion {
-    if (impact === 'blocked') return 'guard'
-    if (impact === 'knockdown' || impact === 'ko') return 'down'
-    if (impact === 'clean' || impact === 'critical') return 'hit'
-    return 'idle'
-  }
-
-  function reactionTime(impact: Impact): number {
-    if (impact === 'knockdown' || impact === 'ko') return 900
-    return impact === 'critical' ? 520 : 360
-  }
-
-  function playPlayer(motion: CombatMotion, duration: number) {
+  function playPlayer(motion: ArenaCombatMotion, duration: number) {
     const sequence = ++playerMotionSeq
     playerMotion = motion
     later(() => {
@@ -680,7 +662,7 @@
     }, duration)
   }
 
-  function playOpponent(motion: CombatMotion, duration: number) {
+  function playOpponent(motion: ArenaCombatMotion, duration: number) {
     const sequence = ++opponentMotionSeq
     opponentMotion = motion
     later(() => {
@@ -733,6 +715,7 @@
     search.set('difficulty', difficulty)
     search.set('format', formatId)
     search.set('opponent', opponentId)
+    search.set('fighter', fighterId)
     return `?${search}`
   }
 
@@ -798,6 +781,8 @@
           url.searchParams.set('challenge', sharedReplay.match.challengeId)
         if (sharedReplay.match.missionId)
           url.searchParams.set('mission', sharedReplay.match.missionId)
+        if (sharedReplay.match.fighterId)
+          url.searchParams.set('fighter', sharedReplay.match.fighterId)
         window.location.replace(url)
         return
       }
@@ -811,6 +796,7 @@
       opponentId = sharedReplay.match.opponentId
       selectedChallengeId = sharedReplay.match.challengeId
       missionId = sharedReplay.match.missionId
+      fighterId = sharedReplay.match.fighterId ?? fighterId
       stats = eventsFromReplay(sharedReplay).reduce(recordEvent, { ...EMPTY_STATS })
       graded = true
       replayOrigin = 'shared'
@@ -878,7 +864,10 @@
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}
-    <ArenaBriefing goal={formatGoal()} onStart={() => (briefingOpen = false)} />
+    <ArenaBriefing
+      goal={arenaFormatGoal(activeFormat, $locale === 'fr')}
+      onStart={() => (briefingOpen = false)}
+    />
   {/if}
   <TourScene
     {ship}
@@ -1134,6 +1123,16 @@
   {/if}
 
   <section class="combat-console">
+    <ArenaFightingControls
+      {fighterId}
+      french={$locale === 'fr'}
+      disabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
+      onFighterChange={(selected) => {
+        fighterId = selected
+        applyOptions()
+      }}
+      onMove={fightingMove}
+    />
     <article class="status-card" class:expanded={arenaPanel === 'status'}>
       <header><strong>{$t.arena.you}</strong><span>{$t.arena.mode[game.player.mode]}</span></header>
       <div class="meter">

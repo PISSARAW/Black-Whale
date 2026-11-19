@@ -47,6 +47,7 @@ import type { Vec2 } from '../tour/types'
 import { advancePersistentNenEffects } from './effects'
 import { advanceEnvironment, reactEnvironment } from './environment'
 import { resolveNamedHatsu } from './hatsu'
+import { prepareFightingMove } from './fightingMove'
 import {
   initialCombatState,
   otherSide,
@@ -97,6 +98,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
+  if (action.type === 'FIGHTING_MOVE') return prepareFightingMove(state, action)
   if (action.type === 'PREPARE_HATSU') return prepareHatsu(state, action.side, action.hatsuId)
   if (action.type === 'HATSU') {
     const cast = castHatsu(state, action)

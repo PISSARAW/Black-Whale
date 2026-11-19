@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../combat/reducer'
-import { applyArenaMatchRules, initialArenaMatchState } from './match'
+import { applyArenaMatchRules, countArenaAction, initialArenaMatchState } from './match'
 import { DEFAULT_REPLAY_MATCH, type ArenaReplayMatch } from './replay/types'
 
 const match = (overrides: Partial<ArenaReplayMatch> = {}): ArenaReplayMatch => ({
@@ -46,5 +46,26 @@ describe('Arena match referee', () => {
       terrain: initialCombatState().terrain,
     }
     expect(initialArenaMatchState(setup, match({ bossRule: 'aura-tax' })).player.aura).toBe(80)
+  })
+
+  it('counts Fighting normals and specials in the existing Arena objectives', () => {
+    const normal = countArenaAction(
+      {},
+      {
+        type: 'FIGHTING_MOVE',
+        side: 'player',
+        fighterId: 'kurapika',
+        slot: 'standingLight',
+        targetAt: [2, 0],
+      },
+    )
+    const special = countArenaAction(normal, {
+      type: 'FIGHTING_MOVE',
+      side: 'player',
+      fighterId: 'kurapika',
+      slot: 'neutralSpecial',
+      targetAt: [2, 0],
+    })
+    expect(special).toEqual({ STRIKE: 1, HATSU: 1 })
   })
 })

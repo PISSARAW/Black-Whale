@@ -36,5 +36,11 @@ export function countArenaAction(
   action: CombatAction,
 ): ArenaActionCounts {
   if (action.type === 'TICK') return actions
-  return { ...actions, [action.type]: (actions[action.type] ?? 0) + 1 }
+  const type =
+    action.type === 'FIGHTING_MOVE'
+      ? action.slot === 'neutralSpecial'
+        ? 'HATSU'
+        : 'STRIKE'
+      : action.type
+  return { ...actions, [type]: (actions[type] ?? 0) + 1 }
 }

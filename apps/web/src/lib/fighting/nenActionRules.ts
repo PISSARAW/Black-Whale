@@ -5,6 +5,7 @@ import { stolenAuraActor } from './dolphinSupply'
 import { moveById } from './movesets'
 import { voluntaryNenAvailable } from './nenAccess'
 import { melodyMusicIntent } from './melodyRules'
+import { nenCognitiveAllows } from './nenCognitiveLoad'
 import type { ArcadeFighter, AttackKind, FightSide, FightState, FighterId } from './types'
 
 interface NenAction {
@@ -26,7 +27,8 @@ export function nenActionAllowed(options: NenAction): boolean {
     options.state.parallelFuture?.owner === options.side && fighter.parallelEyesClosed === true
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
-    !chainAbilitySealed(fighter, nenMoveId(fighter, options))
+    !chainAbilitySealed(fighter, nenMoveId(fighter, options)) &&
+    nenCognitiveAllows(options.state, options.side, options)
   )
 }
 

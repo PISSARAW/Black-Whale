@@ -110,7 +110,14 @@ describe('four-plus encounters: integrations', () => {
           form: null,
           selectedModel: 'hisoka' as const,
         },
-        corpsePreparation: { target: 'body', frames: 60, x: 30, y: 0 },
+        corpsePreparation: {
+          target: 'body',
+          frames: 60,
+          x: 30,
+          y: 0,
+          hand: 'left' as const,
+          owner: { owner: 'player' as const, member: 0 },
+        },
         heardCorpse: {
           frame: s.frame,
           text: 'La voix imposée.',

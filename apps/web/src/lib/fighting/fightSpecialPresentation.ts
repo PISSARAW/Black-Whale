@@ -77,7 +77,8 @@ function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): Sp
 }
 
 function specialLabel(state: FightState, language: 'fr' | 'en'): string {
-  if (state.player.id === 'chrollo') return chrolloPageName(chrolloPageForMove(state.player), language)
+  if (state.player.id === 'chrollo')
+    return chrolloPageName(chrolloPageForMove(state.player), language)
   if (isLsdfMove(state.player)) return 'LSDF'
   if (state.player.hanzoProjection) return language === 'fr' ? 'Réintégrer le corps' : 'Rejoin body'
   return ordinarySpecialLabel(state, language)

@@ -244,7 +244,9 @@ function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: Direction
 function legalCancel(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
   const { directionalChain, moveId } = intent
   if (!directionalChain) return canCancel(fighter, kind, moveId)
-  return Boolean(fighter.attack?.confirmedHit && directionalSourceMatches(fighter, directionalChain))
+  return Boolean(
+    fighter.attack?.confirmedHit && directionalSourceMatches(fighter, directionalChain),
+  )
 }
 
 function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {

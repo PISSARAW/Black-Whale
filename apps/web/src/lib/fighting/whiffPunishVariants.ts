@@ -3,7 +3,7 @@ import type { FighterId, MoveSlot } from './types'
 
 interface WhiffPunishVariant {
   slot: Extract<MoveSlot, 'neutralSpecial' | 'forwardSpecial' | 'downSpecial' | 'finisher'>
-  via?: 'forwardHeavy'
+  via?: MoveSlot
   setup?: CombatRouteSetup
   requirement: readonly [string, string]
 }
@@ -48,6 +48,7 @@ export const WHIFF_PUNISH_VARIANTS: Partial<Record<FighterId, WhiffPunishVariant
   },
   biscuit: {
     slot: 'finisher',
+    via: 'standingHeavy',
     setup: 'true-form',
     requirement: [
       'Biscuit révèle son corps naturel avant l’exercice. Le coup final exige cette forme et 55 points d’aura.',

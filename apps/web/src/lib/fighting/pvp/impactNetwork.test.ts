@@ -8,7 +8,10 @@ import { runImpactNetwork } from '../../../../ui-tests/fighting-response/impactN
 import { combatRouteContacts } from '../combatRouteContacts'
 
 describe('actual combo impacts across the input pipeline, authority and replay', () => {
-  for (const route of COMBAT_ROUTES)
+  const nativeCombos = COMBAT_ROUTES.filter(
+    (route) => !route.whiff && !route.wakeup && !route.kameo,
+  )
+  for (const route of nativeCombos)
     for (const side of ['player', 'opponent'] as const)
       it.each([0, 50, 100, 150])(`${route.id}, ${side}, RTT %sms`, async (rtt) => {
         const result = await runImpactNetwork({

@@ -6,7 +6,7 @@ import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export interface RosterGuest {
   id: string
   owner: FightSide
-  role: 'puppet' | 'loan'
+  role: 'puppet' | 'loan' | 'soul'
   phase: 'preparing' | 'acting' | 'leaving' | 'eliminated'
   fighter: ArcadeFighter
   frames: number
@@ -18,6 +18,7 @@ export interface RosterGuest {
 declare module './types' {
   interface FightState {
     rosterGuests?: readonly RosterGuest[]
+    rosterProjection?: { owner: FightSide; guestId: string }
     rosterGuestContext?: { id: string; owner: FightSide }
   }
   interface FightProjectile {

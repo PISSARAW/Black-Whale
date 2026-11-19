@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import type { FightSide, FightState } from '../types'
+import { EMPTY_INPUT, type FightSide, type FightState } from '../types'
 import { observeCombat, supportsQwenDuel } from './observation'
 import { createFastController } from './execution'
 import { FALLBACK_PLAN, parseTacticalPlan, QWEN_DEADLINE_MS, QWEN_PLAN_TTL_MS } from './protocol'
@@ -161,6 +161,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     perception.observe(state)
     poll(state)
     const decisions = (['player', 'opponent'] as const).map((side) => {
+      if (status.pending === side) return { input: EMPTY_INPUT }
       const fresh = clock() - timestamps[side] <= QWEN_PLAN_TTL_MS
       status.source[side] = fresh ? 'qwen' : 'local'
       return controllers[side](state, fresh ? status.plans[side]! : FALLBACK_PLAN)

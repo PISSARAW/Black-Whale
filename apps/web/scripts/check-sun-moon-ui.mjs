@@ -95,11 +95,9 @@ try {
         state = await page.evaluate(() => window.sunMoonFixture.snapshot())
         assert.equal(state.crate.arena.facing, -1)
         assert.deepEqual(state.crate.arena[moon ? 'moonPoint' : 'sunPoint'], point)
-        await page
-          .locator('.arena')
-          .screenshot({
-            path: path.join(output, `turned-${side}-${moon ? 'moon' : 'sun'}-${width}.png`),
-          })
+        await page.locator('.arena').screenshot({
+          path: path.join(output, `turned-${side}-${moon ? 'moon' : 'sun'}-${width}.png`),
+        })
         cases.push({ width, side, mark: moon ? 'moon' : 'sun', fullContact: 300, turned: true })
       }
   }

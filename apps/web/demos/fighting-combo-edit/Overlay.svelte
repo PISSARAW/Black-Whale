@@ -36,7 +36,10 @@
   <div class="site">{SITE}</div>
   <div class="index">{String(shot.clip + 1).padStart(2, '0')}<small>/{total}</small></div>
   {#if nameOut < 1}
-    <div class="nameplate" style={`opacity:${1 - nameOut};transform:translateX(${-nameOut * 80}px)`}>
+    <div
+      class="nameplate"
+      style={`opacity:${1 - nameOut};transform:translateX(${-nameOut * 80}px)`}
+    >
       <div class="name" style={slam(shot.local)}>{clip.name.toUpperCase()}</div>
       <div class="route" style={slam(shot.local, 4)}>{ENDING_LABEL[clip.ending]}</div>
     </div>
@@ -52,7 +55,11 @@
     {/each}
   </div>
   {#if shot.hits >= 2}
-    <div class="counter" class:final={shot.final} style={`transform:scale(${counterPop}) rotate(-6deg)`}>
+    <div
+      class="counter"
+      class:final={shot.final}
+      style={`transform:scale(${counterPop}) rotate(-6deg)`}
+    >
       <b>{shot.hits}</b><span>HITS</span>
       {#if shot.final}<em>{clip.damage} DÉGÂTS</em>{/if}
     </div>
@@ -115,7 +122,10 @@
     position: absolute;
     top: 58px;
     right: 34px;
-    font: 54px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      54px/1 Impact,
+      'Arial Black',
+      sans-serif;
     color: #fff;
     text-shadow: 0 4px 0 #000;
   }
@@ -131,7 +141,10 @@
   }
   .name {
     transform-origin: 0 50%;
-    font: 108px/0.92 Impact, 'Arial Black', sans-serif;
+    font:
+      108px/0.92 Impact,
+      'Arial Black',
+      sans-serif;
     color: #fff;
     letter-spacing: 1px;
     -webkit-text-stroke: 3px #000;
@@ -148,7 +161,10 @@
     padding: 6px 14px;
     background: var(--aura);
     color: #000;
-    font: 30px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      30px/1 Impact,
+      'Arial Black',
+      sans-serif;
     text-transform: uppercase;
   }
   .counter {
@@ -206,7 +222,10 @@
   }
   .word {
     position: relative;
-    font: 190px/0.9 Impact, 'Arial Black', sans-serif;
+    font:
+      190px/0.9 Impact,
+      'Arial Black',
+      sans-serif;
     color: #fff;
     -webkit-text-stroke: 4px #000;
     text-shadow:
@@ -230,7 +249,10 @@
   .tag {
     position: relative;
     margin-top: 36px;
-    font: 64px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      64px/1 Impact,
+      'Arial Black',
+      sans-serif;
     color: #fff;
     letter-spacing: 2px;
     -webkit-text-stroke: 2px #000;
@@ -241,14 +263,20 @@
     padding: 14px 22px;
     background: #d9b674;
     color: #05070b;
-    font: 38px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      38px/1 Impact,
+      'Arial Black',
+      sans-serif;
     letter-spacing: 1px;
   }
   .site {
     position: absolute;
     top: 66px;
     left: 34px;
-    font: 24px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      24px/1 Impact,
+      'Arial Black',
+      sans-serif;
     color: rgba(255, 255, 255, 0.85);
     letter-spacing: 1px;
     text-shadow: 0 2px 0 #000;
@@ -259,7 +287,10 @@
     right: 30px;
     top: 330px;
     text-align: center;
-    font: 64px/1 Impact, 'Arial Black', sans-serif;
+    font:
+      64px/1 Impact,
+      'Arial Black',
+      sans-serif;
     color: var(--aura);
     -webkit-text-stroke: 2px #000;
     text-shadow: 0 6px 18px #000;

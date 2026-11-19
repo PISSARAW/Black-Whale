@@ -11,13 +11,14 @@ import { tickFight, performAuraAttack } from './engine'
 import { performFuturePerceptionAction } from './futurePerception'
 import { performArsenalAction } from './arsenalExecution'
 import { createQwenDuel, type QwenDuel } from './qwen/duel'
-import { EMPTY_INPUT, type FightInput, type FightState } from './types'
+import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
 import type { ReplayCommand, ReplayPacket } from './fightReplayTypes'
 import type { CareerTracker } from './career/runtime'
 
 interface Queued {
   command?: ReplayCommand
   action?: (state: FightState) => FightState
+  side?: FightSide
   receipt: number | null
 }
 function recordCompletion(before: FightState, after: FightState, practicing: boolean) {
@@ -96,7 +97,9 @@ export function createFightMatchRuntime(
           now: clock(),
         })
       } else if (item.action) {
-        next = performFuturePerceptionAction(next, 'player', item.action) ?? item.action(next)
+        next =
+          performFuturePerceptionAction(next, item.side ?? 'player', item.action) ??
+          item.action(next)
         commands.push(panelReplayCommand(before, next))
       }
     }
@@ -127,6 +130,7 @@ export function createFightMatchRuntime(
       pending.push({
         action: (current) =>
           performArsenalAction({ state: current, ...utility }, performAuraAttack),
+        side: utility.side,
         receipt: null,
       })
   }

@@ -16,11 +16,12 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
   '%s keeps its presented pelvis low through a crouch-to-strike contact',
   (id) => {
     const state = { ...createFightState(id, 'leorio'), phase: 'fighting' as const }
-    const makeModel = (fighter: typeof state.player) => buildFightFigure({
-      THREE,
-      glow: (color) => new THREE.MeshBasicMaterial({ color }),
-      fighter,
-    })
+    const makeModel = (fighter: typeof state.player) =>
+      buildFightFigure({
+        THREE,
+        glow: (color) => new THREE.MeshBasicMaterial({ color }),
+        fighter,
+      })
     const scene = new THREE.Scene()
     let model = makeModel(state.player)
     scene.add(model.root)
@@ -59,7 +60,10 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
     scene.remove(model.root)
     model = makeModel(fighter)
     scene.add(model.root)
-    const rebuilt = draw({ ...fighter, attack: { ...fighter.attack!, frame: frames.startup } }, frames.startup + 1)
+    const rebuilt = draw(
+      { ...fighter, attack: { ...fighter.attack!, frame: frames.startup } },
+      frames.startup + 1,
+    )
     expect(Math.abs(rebuilt - after)).toBeLessThan(0.08)
   },
 )

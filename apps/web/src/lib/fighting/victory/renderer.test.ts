@@ -588,12 +588,20 @@ describe('live victory renderer', () => {
         })!
         const audit = fixture.scene.userData.halkenburgVictory
         expect(audit.supporters).toBe(3)
-        expect(new THREE.Vector3(...audit.grip).distanceTo(
-          fixture.models.opponent.getObjectByName('hand-left')!.getWorldPosition(new THREE.Vector3()),
-        )).toBeLessThan(1e-10)
-        expect(new THREE.Vector3(...audit.nock).distanceTo(
-          fixture.models.opponent.getObjectByName('hand-right')!.getWorldPosition(new THREE.Vector3()),
-        )).toBeLessThan(1e-10)
+        expect(
+          new THREE.Vector3(...audit.grip).distanceTo(
+            fixture.models.opponent
+              .getObjectByName('hand-left')!
+              .getWorldPosition(new THREE.Vector3()),
+          ),
+        ).toBeLessThan(1e-10)
+        expect(
+          new THREE.Vector3(...audit.nock).distanceTo(
+            fixture.models.opponent
+              .getObjectByName('hand-right')!
+              .getWorldPosition(new THREE.Vector3()),
+          ),
+        ).toBeLessThan(1e-10)
         if (age === 324) expect(audit.contactError).toBeLessThan(1e-6)
         restore()
         expect(snapshot(fixture.scene)).toEqual(before)

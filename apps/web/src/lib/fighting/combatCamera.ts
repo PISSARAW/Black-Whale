@@ -2,6 +2,14 @@ import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import type { CameraDetailRect } from './cinematicDetailLayout'
+import type { FallenBodyBounds } from './fightCameraBodyBounds'
+import { previewLaunchSpeed } from './directionalComboCamera'
+import {
+  dominantCameraAccent,
+  REST_CAMERA_ACCENT,
+  type CombatCameraAccent,
+} from './combatCameraAccent'
+import { createCombatCameraPhrase } from './combatCameraPhrase'
 
 export interface CombatCameraFrame {
   x: number
@@ -30,6 +38,8 @@ export interface CombatCameraOptions {
   detailWeight?: number
   detailRect?: CameraDetailRect
   companion?: FightSide
+  fallenBounds?: FallenBodyBounds
+  accent?: CombatCameraAccent
 }
 interface SafeRegion {
   left: number
@@ -52,17 +62,6 @@ function reservedRegion(portrait: boolean, weight: number, rect?: CameraDetailRe
     right: portrait ? 0.84 : 0.84 + (right - 0.84) * weight,
   }
 }
-function cameraFocus(options: CombatCameraOptions): number {
-  const direction = options.direction
-  if (!direction?.side) return 0
-  return (fightWorldX(options.state[direction.side].x) - options.span.centre) * 0.12
-}
-function impactFocus(options: CombatCameraOptions): number {
-  const { state } = options
-  if (state.phase !== 'fighting' || !state.impact || state.impact.blocked || state.impact.avoided)
-    return 0
-  return clamp(state.hitstop / 12, 0, 1) * 0.22 * options.intensity
-}
 function actorHalfWidth(actor: ArcadeFighter): number {
   // A body on its back extends far beyond the upright hurtbox, including large forms.
   return ['down', 'ko', 'wakeup'].includes(actor.pose) ? 3.2 : 0.8
@@ -72,26 +71,47 @@ function bodyBounds(options: CombatCameraOptions): Bounds {
   const actors = [state.player, state.opponent]
   // Use velocity to begin opening the shot during takeoff, before a head reaches the HUD.
   const tops = actors.map(
-    (actor) =>
-      fightWorldY(actor.y + Math.max(0, actor.velocityY) * 0.12) +
-      (actor.id === 'biscuit' ? 2.8 : 2.22),
+    (actor, index) =>
+      fightWorldY(
+        actor.y + Math.max(0, actor.velocityY, previewLaunchSpeed(actors[1 - index])) * 0.12,
+      ) + (actor.id === 'biscuit' ? 2.8 : 2.22),
   )
   const companion = options.companion && state[options.companion]
   const beastX = companion ? fightWorldX(companion.x) - companion.facing : span.centre
+  const limbs = (['player', 'opponent'] as const).map((side) => {
+    const actor = state[side]
+    const x = fightWorldX(actor.x)
+    const width = actorHalfWidth(actor)
+    return options.fallenBounds?.[side] ?? { left: x - width, right: x + width }
+  })
   return {
     left: Math.min(
       span.centre - span.gap / 2 - 0.8,
       beastX - (companion ? 0.15 : 0) - 0.8,
-      ...actors.map((a) => fightWorldX(a.x) - actorHalfWidth(a)),
+      ...limbs.map((body) => body.left),
     ),
     right: Math.max(
       span.centre + span.gap / 2 + 0.8,
       beastX + (companion ? 0.15 : 0) + 0.8,
-      ...actors.map((a) => fightWorldX(a.x) + actorHalfWidth(a)),
+      ...limbs.map((body) => body.right),
     ),
     bottom: Math.min(0, ...actors.map((a) => fightWorldY(a.y))) - 0.08,
     top: Math.max(...tops) + 0.2,
   }
+}
+
+/** Pan within the open combat lane before asking the lens to move farther back. */
+function fitLandscapeX(frame: CombatCameraFrame, bounds: Bounds, aspect: number) {
+  const region = bounds.region ?? DEFAULT_REGION
+  if (region.right >= DEFAULT_REGION.right || aspect < 1.15) return frame
+  const length = Math.hypot(frame.z, frame.y - frame.lookY)
+  const tilt = (frame.y - frame.lookY) / length
+  const depth = length - tilt * (bounds.top - frame.lookY)
+  const projection = TAN_FOV * aspect * depth
+  const left = bounds.right - region.right * projection
+  const right = bounds.left - region.left * projection
+  const x = left <= right ? clamp(frame.x, left, right) : (left + right) / 2
+  return { ...frame, x }
 }
 function fitsCameraBounds(frame: CombatCameraFrame, bounds: Bounds, aspect: number) {
   const region = bounds.region ?? DEFAULT_REGION
@@ -117,7 +137,7 @@ export function combatCameraDistance(
 ): number {
   let z = 4.8
   for (let attempt = 0; attempt < 240; attempt++) {
-    if (fitsCameraBounds({ ...frame, z }, bounds, aspect)) return z
+    if (fitsCameraBounds(fitLandscapeX({ ...frame, z }, bounds, aspect), bounds, aspect)) return z
     z *= 1.025
   }
   return z
@@ -156,29 +176,44 @@ function preserveSpecialFraming(state: FightState): boolean {
   )
 }
 export function combatCameraTarget(options: CombatCameraOptions) {
-  const { state, base, span } = options
-  const intensity = clamp(options.intensity, 0, 1)
   const bounds = bodyBounds(options)
-  const focus = impactFocus(options)
-  const cue = intensity > 0 ? (options.direction?.strength ?? 0) : 0
-  const centre = span.centre
-  const focusOffset = cameraFocus(options)
+  const detail = reserveDetailSpace(options, bounds)
+  const frame = mainCameraFrame(options, { bounds, ...detail })
+  return fittedTarget({ frame, bounds, options })
+}
+
+function reserveDetailSpace(options: CombatCameraOptions, bounds: Bounds) {
   const portrait = options.aspect < 1.15
   const weight = options.detailWeight ?? (options.detail ? 1 : 0)
   bounds.region = reservedRegion(portrait, weight, options.detailRect)
-  const insetOffset = portrait ? 0 : (bounds.right - bounds.left) * 0.36 * weight
-  const x = base.x + (centre - base.x + focusOffset + insetOffset) * intensity
-  const lift = portrait ? (bounds.top - bounds.bottom) * 0.72 * weight : 0
-  const lookY = Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2 + lift)
-  const frame = {
+  return {
+    insetOffset: portrait ? 0 : (bounds.right - bounds.left) * 0.36 * weight,
+    lift: portrait ? (bounds.top - bounds.bottom) * 0.72 * weight : 0,
+  }
+}
+
+function mainCameraFrame(
+  options: CombatCameraOptions,
+  layout: { bounds: Bounds; insetOffset: number; lift: number },
+) {
+  const { state, base, span } = options
+  const intensity = clamp(options.intensity, 0, 1)
+  const shot = dominantCameraAccent(options.accent ?? REST_CAMERA_ACCENT, options.direction)
+  const { bounds, insetOffset, lift } = layout
+  const centre = span.centre
+  const focusOffset = shot.side ? (fightWorldX(state[shot.side].x) - centre) * 0.025 : 0
+  const x = base.x + (centre - base.x + focusOffset + insetOffset + shot.lead) * intensity
+  const lookY =
+    Math.max(base.lookY, (bounds.top + bounds.bottom) / 2 + 0.2 + lift) + shot.look * intensity
+  return {
     x,
     lookY,
-    y: lookY + base.y - base.lookY,
-    z: preserveSpecialFraming(state)
-      ? base.z
-      : Math.max(4.8, base.z * (1 - 0.32 * intensity) - focus - cue * 0.95),
+    y: lookY + base.y - base.lookY + shot.tilt * intensity,
+    z: Math.max(
+      preserveSpecialFraming(state) ? base.z : 5.9,
+      base.z * (1 - 0.04 * intensity) - shot.push * intensity,
+    ),
   }
-  return fittedTarget({ frame, bounds, options })
 }
 function fittedTarget({
   frame,
@@ -202,10 +237,15 @@ function fittedTarget({
     options.minimumDistance ?? 0,
     combatCameraDistance(frame, bounds, options.aspect),
   )
-  return { ...frame, z: Math.max(minimum, frame.z), bounds, minimum }
+  return {
+    ...fitLandscapeX({ ...frame, z: Math.max(minimum, frame.z) }, bounds, options.aspect),
+    bounds,
+    minimum,
+  }
 }
 /** Camera motion is presentation only: it never changes positions, hitboxes, hitstop or RNG. */
 export function createCombatCamera() {
+  const phrase = createCombatCameraPhrase()
   let held: CombatCameraFrame | null = null
   let lastFrame = -1
   let pair = ''
@@ -217,17 +257,17 @@ export function createCombatCamera() {
       if (reset) detailWeight = 0
       const step = clamp(options.dt, 0, 0.1) / 0.3
       detailWeight = clamp(detailWeight + (options.detail ? step : -step), 0, 1)
-      const target = combatCameraTarget({ ...options, detailWeight })
+      const accent = phrase(options.state, options.intensity > 0, clamp(options.dt, 0, 0.1) * 60)
+      const target = combatCameraTarget({ ...options, detailWeight, accent })
       if (reset || !held) held = { ...target }
       const ease = 1 - Math.exp(-10 * clamp(options.dt, 0, 0.1))
-      const zoomEase = 1 - Math.exp(-(target.z < held.z ? 10 : 3.4) * clamp(options.dt, 0, 0.1))
-      const x = held.x + (target.x - held.x) * ease
+      const x = Math.abs(target.x - held.x) < 0.025 ? held.x : held.x + (target.x - held.x) * ease
       const lookY = held.lookY + (target.lookY - held.lookY) * ease
       let pose = {
         x,
         lookY,
-        y: lookY + target.y - target.lookY,
-        z: held.z + (target.z - held.z) * zoomEase,
+        y: lookY + held.y - held.lookY + (target.y - target.lookY - held.y + held.lookY) * ease,
+        z: nextCameraDepth(held.z, target.z, options),
       }
       // Open the shot immediately when needed; easing must never crop a fighter.
       if (target.bounds.region!.top < 0)
@@ -237,16 +277,27 @@ export function createCombatCamera() {
           aspect: options.aspect,
           minimum: Math.max(pose.z, target.minimum),
         })
-      else
+      else {
         pose.z = Math.max(
           pose.z,
           target.minimum,
           combatCameraDistance(pose, target.bounds, options.aspect),
         )
+        pose = fitLandscapeX(pose, target.bounds, options.aspect)
+      }
       held = pose
       lastFrame = options.state.frame
       pair = key
       return { ...pose, detailReady: detailWeight >= 1 }
     },
   }
+}
+
+function nextCameraDepth(previous: number, target: number, options: CombatCameraOptions): number {
+  const dt = clamp(options.dt, 0, 0.1)
+  const inward = target < previous
+  const fraction = 1 - Math.exp(-(inward ? 10 : 3.4) * dt)
+  const change = (target - previous) * fraction
+  // Safety fitting may open faster; expressive motion always has a bounded speed.
+  return previous + clamp(change, -2.4 * dt, 4.8 * dt)
 }

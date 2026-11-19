@@ -247,6 +247,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   cyclotronWindup?: { frame: number }
   attack: FightAttack | null
   bufferedAttack: {
+    superThrow?: true
+    directionalChain?: import('./directionalChain').DirectionalChain
     cancelFrom?: string
     copiedPage?: ChrolloPage
     bufferFrames?: number
@@ -410,6 +412,8 @@ export interface FightState {
   catsNameConsumed?: FightSide
   moonlight?: import('./moonlightContract').MoonlightState
   parallelFuture?: ParallelFutureState
+  /** Interactive solo illusion, isolated from authoritative damage, resources and verdicts. */
+  futurePerception?: FightState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
   /** Fatal causes collected before one common verdict, including simultaneous hits. */

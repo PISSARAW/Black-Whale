@@ -23,16 +23,16 @@ const base = `
   .brand { position: absolute; left: 0; right: 0; top: 120px; text-align: center }
 `
 const cards = {
-  'a1': `<div class="wrap"><div class="serif shadow" style="font-size:84px;font-style:italic">Sur le Black Whale,</div></div>`,
-  'a2': `<div class="wrap"><div class="serif shadow" style="font-size:84px;font-style:italic;line-height:1.15">chaque duel<br>a une fin.</div></div>`,
-  'brand': `<div class="brand"><div class="sans shadow" style="font-size:30px;letter-spacing:.5em">Black Whale <span style="color:${GOLD}">Clash</span></div></div>`,
-  'b1': `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:64px;line-height:1.3">40<br>combattants</div></div>`,
-  'b2': `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:58px;line-height:1.3">Un Nen<br>pour chacun</div></div>`,
-  'slam': `<div class="wrap" style="background:#05070b">
+  a1: `<div class="wrap"><div class="serif shadow" style="font-size:84px;font-style:italic">Sur le Black Whale,</div></div>`,
+  a2: `<div class="wrap"><div class="serif shadow" style="font-size:84px;font-style:italic;line-height:1.15">chaque duel<br>a une fin.</div></div>`,
+  brand: `<div class="brand"><div class="sans shadow" style="font-size:30px;letter-spacing:.5em">Black Whale <span style="color:${GOLD}">Clash</span></div></div>`,
+  b1: `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:64px;line-height:1.3">40<br>combattants</div></div>`,
+  b2: `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:58px;line-height:1.3">Un Nen<br>pour chacun</div></div>`,
+  slam: `<div class="wrap" style="background:#05070b">
       <div class="serif" style="font-size:190px;color:${GOLD};letter-spacing:.03em;
         text-shadow:0 0 60px rgba(217,130,60,.55)">FATALITY</div></div>`,
-  'c1': `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:56px;line-height:1.3">Chaque fin<br>est unique</div></div>`,
-  'd1': `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:66px;font-weight:700;line-height:1.25">Choisis ton<br>combattant</div></div>`,
+  c1: `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:56px;line-height:1.3">Chaque fin<br>est unique</div></div>`,
+  d1: `<div class="top"><div class="rule"></div><div class="sans shadow" style="font-size:66px;font-weight:700;line-height:1.25">Choisis ton<br>combattant</div></div>`,
   'end-bg': `<div class="wrap" style="background:radial-gradient(circle at 50% 42%, #172131, #05070b 70%)"></div>`,
   'end-logo': `<div class="wrap" style="padding-bottom:330px">
       <div class="sans" style="font-size:104px;letter-spacing:.24em;font-weight:700;line-height:1.15;margin-right:-.24em">Black<br>Whale</div>
@@ -52,7 +52,9 @@ const browser = await chromium.launch({
 })
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } })
 for (const [name, body] of Object.entries(cards)) {
-  await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${base}</style></head><body>${body}</body></html>`)
+  await page.setContent(
+    `<!doctype html><html><head><meta charset="utf-8"><style>${base}</style></head><body>${body}</body></html>`,
+  )
   await page.evaluate(() => document.fonts.ready)
   await page.screenshot({ path: path.join(out, `${name}.png`), omitBackground: true })
 }

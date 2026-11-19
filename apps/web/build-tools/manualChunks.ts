@@ -39,9 +39,7 @@ export function manualChunks(id: string, graph?: ChunkGraph): string | undefined
  * at the same dependency depth, so no packed chunk can point back to itself.
  */
 function fightingGraphChunks(graph: ChunkGraph): Map<string, string> {
-  const modules = [...graph.getModuleIds()].filter((id) =>
-    /\/src\/lib\/fighting\/.*\.ts$/.test(id),
-  )
+  const modules = [...graph.getModuleIds()].filter((id) => /\/src\/lib\/fighting\/.*\.ts$/.test(id))
   const included = new Set(modules)
   const indexById = new Map<string, number>()
   const lowById = new Map<string, number>()
@@ -97,8 +95,7 @@ function fightingGraphChunks(graph: ChunkGraph): Map<string, string> {
     const known = depths.get(componentId)
     if (known !== undefined) return known
     const depth =
-      1 +
-      Math.max(-1, ...[...dependencies[componentId]].map((dependency) => depthOf(dependency)))
+      1 + Math.max(-1, ...[...dependencies[componentId]].map((dependency) => depthOf(dependency)))
     depths.set(componentId, depth)
     return depth
   }

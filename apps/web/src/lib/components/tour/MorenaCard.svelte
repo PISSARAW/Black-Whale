@@ -16,6 +16,7 @@
    * says which state a card is in, and this draws it.
    */
   import type { CardFace } from '$lib/tour/morena'
+  import { ANSWER_CARD_STOCK } from '$lib/tour/cardArt'
   import MorenaCardArt from './MorenaCardArt.svelte'
 
   let {
@@ -40,6 +41,17 @@
 
   const buried = $derived(state === 'buried')
   const spent = $derived(state === 'spent')
+  /** An answer is printed on its own colour; a question on white stock. */
+  const stock = $derived(ANSWER_CARD_STOCK[face])
+  const paper = $derived(
+    stock
+      ? spent
+        ? `color-mix(in srgb, ${stock} 82%, #2a2228)`
+        : stock
+      : spent
+        ? '#d3ccc1'
+        : '#f6f3ec',
+  )
 </script>
 
 <figure
@@ -47,7 +59,8 @@
   class:opacity-45={buried}
   class:grayscale={buried}
   style:border-color={buried ? '#4a4a52' : ink}
-  style:background={state === 'hidden' ? '#140f13' : spent ? '#d3ccc1' : '#f6f3ec'}
+  style:background={state === 'hidden' ? '#140f13' : paper}
+  style:border-radius={stock ? '7px' : undefined}
 >
   {#if state === 'hidden'}
     <!-- Her side of the table. Seven of these, and the whole of the game is
@@ -56,16 +69,19 @@
   {:else}
     <div
       class="flex min-h-0 flex-1 items-center justify-center px-1.5 pt-1.5"
-      style:--card-face={spent ? '#d3ccc1' : '#f6f3ec'}
+      style:--card-face={paper}
       style:color={buried ? '#8b8b94' : '#141018'}
     >
       <MorenaCardArt {face} />
     </div>
     <figcaption
       class="overflow-hidden text-ellipsis whitespace-nowrap border-t px-0.5 py-[3px] text-center text-[7px] font-bold uppercase leading-tight tracking-[0.06em]"
-      style:border-color={buried ? '#4a4a52' : ink}
+      style:border-color={stock ? 'transparent' : buried ? '#4a4a52' : ink}
       style:color={buried ? '#8b8b94' : '#141018'}
-      style:background={buried ? 'transparent' : `color-mix(in srgb, ${ink} 22%, transparent)`}
+      style:background={stock || buried
+        ? 'transparent'
+        : `color-mix(in srgb, ${ink} 22%, transparent)`}
+      style:letter-spacing={stock ? '0.16em' : undefined}
     >
       {label}
     </figcaption>

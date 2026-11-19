@@ -5,6 +5,7 @@ import { dataChunks } from './build-tools/dataChunks'
 import { manualChunks } from './build-tools/manualChunks'
 import { clientChunks } from './build-tools/clientChunks'
 import { bundleBudget } from './build-tools/bundleBudget'
+import { clashSocket } from './build-tools/clashSocket'
 
 const require = createRequire(import.meta.url)
 const threeSource = require.resolve('three/src/Three.js')
@@ -33,5 +34,5 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   resolve: { alias: [{ find: /^three$/, replacement: threeSource }] },
-  plugins: [...dataChunks(), sveltekit(), clientChunks(), bundleBudget()],
+  plugins: [...dataChunks(), sveltekit(), clientChunks(), bundleBudget(), clashSocket()],
 }))

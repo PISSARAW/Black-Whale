@@ -44,13 +44,15 @@
     "html-to-image": "^1.11.11",
     "panzoom": "^9.4.4",
     "svelte": "^5.0.0",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "ws": "8.18.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^5.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@types/three": "^0.185.1",
+    "@types/ws": "8.5.13",
     "@vitest/coverage-v8": "^2.0.0",
     "autoprefixer": "^10.4.0",
     "magic-string": "0.30.21",

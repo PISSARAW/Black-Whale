@@ -105,6 +105,10 @@ export class ClashPvpRegistry {
     lobby.status = 'ready'
     return session(id, 'opponent', token)
   }
+  /** The seat a token holds in this match; throws like every other access. */
+  seatFor(id: string, token: string): FightSide {
+    return this.access(id, token).side
+  }
   view(id: string, token: string): PvpView {
     const { lobby, side } = this.access(id, token)
     this.advance(lobby)

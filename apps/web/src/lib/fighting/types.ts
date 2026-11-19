@@ -141,6 +141,8 @@ export interface FighterDefinition {
 export interface ArcadeFighter extends RetrospectiveFighterState {
   /** Repeated limb trauma retained until this match ends. */
   bodyMemory?: import('./bodyMemory').BodyMemoryState
+  /** Defensive Burst aftermath: voluntary Nen remains sealed for this many frames. */
+  burstZetsuFrames?: number
   throwTechRecoveryFrames?: number
   /** Cosmetic scenes; their props never enter battlefield or projectile state. */
   easterEgg?: import('./easterEggs').EasterEggPlayback
@@ -414,6 +416,10 @@ import type { BungeeGumAttachment } from './bungeeTypes'
 export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
+  /** One defensive Burst per seat and round; optional only for older snapshots. */
+  burstAvailable?: Record<FightSide, boolean>
+  /** Latest defensive Burst, retained as a deterministic presentation event. */
+  burst?: { side: FightSide; frame: number; sequence: number }
   /** A wall-breaking KO has carried the round into an adjacent ship room. */
   stageTransition?: import('./stageTransition').FightStageTransition
   /** Latest same-frame Ko collision; separate from impacts because neither strike lands. */

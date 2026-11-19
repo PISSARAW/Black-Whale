@@ -16,6 +16,7 @@ import type { DuelAttack, DuelInputs, DuelPhaseResult } from './types'
 import { bufferKameoCalls } from '../kameos/buffer'
 import { advanceNenMentalFatigue } from '../nenCognitiveLoad'
 import { advanceNenPsychology } from '../nenPsychology'
+import { advanceBurstZetsu, resolveBurstInputs } from '../fightBurst'
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -24,6 +25,7 @@ export function openFrame(
   attack: DuelAttack,
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
+  state = resolveBurstInputs(state, inputs)
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
@@ -51,7 +53,7 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
   const remainingFrames =
     start.mode === 'training' ? start.remainingFrames : Math.max(0, start.remainingFrames - 1)
   const next = {
-    ...advanceNenPsychology(start, resolved),
+    ...advanceNenPsychology(start, advanceBurstZetsu(resolved, start.frame)),
     frame: start.frame + 1,
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,

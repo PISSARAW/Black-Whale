@@ -123,6 +123,12 @@
         {/key}
       {/if}
       {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
+      {#if state.burst && state.frame - state.burst.frame < 20}
+        {#key state.burst.sequence}
+          <div class:from-player={state.burst.side === 'player'} class="burst-release"></div>
+          <div class:from-player={state.burst.side === 'player'} class="burst-callout">BURST</div>
+        {/key}
+      {/if}
       <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
       {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
@@ -257,6 +263,42 @@
   .damage-callout.from-player {
     left: 62%;
   }
+  .burst-release {
+    position: absolute;
+    z-index: 12;
+    top: 50%;
+    left: 73%;
+    width: 34vmin;
+    aspect-ratio: 1;
+    border: 5px solid #bff7ff;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0 5%, #69e8ff99 18%, transparent 62%);
+    box-shadow:
+      0 0 50px #51dfff,
+      inset 0 0 32px #fff;
+    pointer-events: none;
+    animation: burst-release 420ms cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+  }
+  .burst-release.from-player {
+    left: 27%;
+  }
+  .burst-callout {
+    position: absolute;
+    z-index: 14;
+    top: 38%;
+    left: 70%;
+    color: #d9fbff;
+    font: 900 2rem/1 var(--font-display);
+    letter-spacing: 0.14em;
+    text-shadow:
+      0 0 16px #42dfff,
+      0 3px 4px #000;
+    pointer-events: none;
+    animation: callout 700ms ease-out forwards;
+  }
+  .burst-callout.from-player {
+    left: 20%;
+  }
   .stage-breach {
     position: absolute;
     z-index: 18;
@@ -333,6 +375,16 @@
     }
     to {
       opacity: 0;
+    }
+  }
+  @keyframes burst-release {
+    from {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.05);
+    }
+    to {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(2.8);
     }
   }
   @keyframes breach-shard {

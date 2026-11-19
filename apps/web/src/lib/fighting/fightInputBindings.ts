@@ -16,6 +16,7 @@ export const CONTROL_KEYS = {
   playerCall: 't',
   playerArena: 'F3',
   playerKameo: '<',
+  playerBurst: 'CapsLock',
   opponentLeft: 'ArrowLeft',
   opponentRight: 'ArrowRight',
   opponentJump: 'ArrowUp',
@@ -31,6 +32,7 @@ export const CONTROL_KEYS = {
   opponentCall: 'v',
   opponentArena: 'F10',
   opponentKameo: 'Backspace',
+  opponentBurst: 'Delete',
   pause: 'p',
 } as const
 export type ControlCommand = keyof typeof CONTROL_KEYS
@@ -51,6 +53,7 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
   playerCall: ['P1 · Parler', 'P1 · Speak'],
   playerArena: ['P1 · Arène', 'P1 · Arena'],
   playerKameo: ['P1 · Kaméo', 'P1 · Kameo'],
+  playerBurst: ['P1 · Burst', 'P1 · Burst'],
   opponentLeft: ['P2 · Gauche', 'P2 · Left'],
   opponentRight: ['P2 · Droite', 'P2 · Right'],
   opponentJump: ['P2 · Saut', 'P2 · Jump'],
@@ -66,6 +69,7 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
   opponentCall: ['P2 · Parler', 'P2 · Speak'],
   opponentArena: ['P2 · Arène', 'P2 · Arena'],
   opponentKameo: ['P2 · Kaméo', 'P2 · Kameo'],
+  opponentBurst: ['P2 · Burst', 'P2 · Burst'],
   pause: ['Pause / Reprendre', 'Pause / Resume'],
 }
 const STORAGE_KEY = 'black-whale:fighting-controls:v1'

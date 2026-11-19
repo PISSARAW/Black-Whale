@@ -68,6 +68,17 @@
           {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
         </div>
         {#if memory}<div class="body-memory">{memory}</div>{/if}
+        {#if !state.spectatorView}<div
+            class:spent={state.burstAvailable?.[side] === false}
+            class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
+            class="burst-status"
+          >
+            {state.burstAvailable?.[side] === false
+              ? (fighter.burstZetsuFrames ?? 0) > 0
+                ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
+                : 'BURST · SPENT'
+              : 'BURST · READY'}
+          </div>{/if}
         <FightComboMaster {state} {side} {language} compact />
         <FightKameoBadge {state} {side} {language} />
       </div>
@@ -182,6 +193,12 @@
     color: #a6b7c6;
     font-size: inherit;
   }
+  .burst-status {
+    margin-top: 0.2rem;
+    color: #8ff3ff;
+    font: 800 calc(0.65rem * var(--hud-scale, 1))/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
   .body-memory {
     margin-top: 0.2rem;
     color: #ffad96;
@@ -189,6 +206,15 @@
     text-transform: uppercase;
   }
   .opponent-meter .body-memory {
+    text-align: right;
+  }
+  .burst-status.spent {
+    color: #667782;
+  }
+  .burst-status.zetsu {
+    color: #ff9b8d;
+  }
+  .opponent-meter .burst-status {
     text-align: right;
   }
   .opponent-meter .meter-label,

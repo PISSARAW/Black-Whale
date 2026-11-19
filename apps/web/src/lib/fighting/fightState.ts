@@ -83,6 +83,7 @@ export function createFightState(
     projectiles: [],
     nextProjectileId: 1,
     impact: null,
+    burstAvailable: { player: true, opponent: true },
   })
   return applyControlSchemes(
     prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
@@ -115,6 +116,8 @@ export function nextFightRound(state: FightState): FightState {
       attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
+      burst: undefined,
+      burstAvailable: { player: true, opponent: true },
       player: carryBodyMemory(
         preserveLifespan(
           createFighter({
@@ -240,6 +243,7 @@ export function createFighter(options: {
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
+    burstZetsuFrames: 0,
     aura: 55,
     nenMentalFatigue: 0,
     nenPsychology: initialNenPsychology(options.id),

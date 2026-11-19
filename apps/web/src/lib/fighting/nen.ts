@@ -52,6 +52,7 @@ export function createFightingNen() {
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (!illumiBodyFree(fighter)) return fighter
+  if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (fighter.moonlightZetsu) return forceZetsu(fighter)
   const restricted = restrictedChainAura(fighter, input)

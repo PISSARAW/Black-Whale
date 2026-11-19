@@ -40,7 +40,7 @@
   import { eventsFromReplay, playReplay } from '$lib/arena/replay/player'
   import { forkReplayAtTick } from '$lib/arena/replay/branch'
   import { replayArenaHref } from '$lib/arena/replay/navigation'
-  import { arenaRyuAction, auraPercent } from '$lib/arena/controls'
+  import { auraPercent } from '$lib/arena/controls'
   import { arenaFighter, arenaFighterColour, arenaFightingMove } from '$lib/arena/fighting'
   import { handleArenaKey } from '$lib/arena/keyboard'
   import {
@@ -84,7 +84,10 @@
   import { arenaNen } from '$lib/nen/tourAdapters'
   import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
-  import type { FighterId, MoveSlot } from '$lib/fighting/types'
+  import type { FighterId, MoveAction } from '$lib/fighting/types'
+  import { arenaMoveSlot, createHeldDirection, type ArenaDirection } from '$lib/arena/moveSlot'
+  import { standardNenCommand, type CommandAnimation } from '$lib/arena/nenCommands'
+  import { comboCount } from '$lib/combat/moveChain'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
@@ -151,20 +154,9 @@
   let eventVisible = $state(false)
   let playerMotionSeq = 0
   let opponentMotionSeq = 0
-  type CommandAnimation =
-    | 'strike'
-    | 'ko'
-    | 'ryu-up'
-    | 'ryu-down'
-    | `zone-${BodyZone}`
-    | 'ten'
-    | 'ren'
-    | 'zetsu'
-    | 'gyo'
-    | 'in'
-    | 'ken'
-    | 'hatsu'
   let commandAnimation = $state<CommandAnimation | null>(null)
+  const heldDirection = createHeldDirection()
+  let moveDirection = $state<ArenaDirection>(null)
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
   let lesson = $state(0)
@@ -377,51 +369,9 @@
   }
 
   function useStandardNen(action: NenTechniqueAction) {
-    if (action.type === 'EN')
-      return command({ type: 'EN', side: 'player', radius: action.radius }, 'gyo')
-    if (action.type === 'SHU')
-      return command(
-        { type: 'SHU', side: 'player', objectId: action.objectId, on: action.on },
-        'hatsu',
-      )
-    if (action.type === 'ON') return extendedNen.use(action)
-    if (action.type === 'TEN' || action.type === 'REN' || action.type === 'ZETSU')
-      return command(
-        {
-          type: 'MODE',
-          side: 'player',
-          mode: action.type.toLowerCase() as 'ten' | 'ren' | 'zetsu',
-        },
-        action.type.toLowerCase() as 'ten' | 'ren' | 'zetsu',
-      )
-    if (action.type === 'GYO' || action.type === 'IN' || action.type === 'KEN')
-      return command(
-        { type: action.type, side: 'player', on: action.on },
-        action.type.toLowerCase() as 'gyo' | 'in' | 'ken',
-      )
-    if (action.type === 'KO' && action.zone)
-      return command(
-        {
-          type: 'KO',
-          side: 'player',
-          zone:
-            action.zone === 'feet'
-              ? 'legs'
-              : action.zone === 'hands'
-                ? 'arms'
-                : (action.zone as BodyZone),
-        },
-        'ko',
-      )
-    if (action.type === 'RYU') {
-      const ryu = arenaRyuAction(action, game.player)
-      return command(
-        ryu,
-        (ryu.attackShare ?? game.player.attackShare) >= game.player.attackShare
-          ? 'ryu-up'
-          : 'ryu-down',
-      )
-    }
+    const nen = standardNenCommand(action, game.player)
+    if (nen === 'extended') return extendedNen.use(action)
+    return nen ? command(nen.action, nen.animation) : undefined
   }
 
   function setZone(zone: BodyZone) {
@@ -429,10 +379,16 @@
   }
 
   function strike() {
-    fightingMove('standingLight')
+    fightingMove('light')
   }
 
-  function fightingMove(slot: MoveSlot) {
+  function fightingMove(action: MoveAction) {
+    const slot = arenaMoveSlot({
+      fighterId,
+      action,
+      direction: heldDirection.current(),
+      aimed: aimedZone,
+    })
     command(
       arenaFightingMove({
         side: 'player',
@@ -495,6 +451,8 @@
   }
 
   function onKeyDown(event: KeyboardEvent) {
+    heldDirection.down(event.code)
+    moveDirection = heldDirection.current()
     handleArenaKey(event, {
       blocked: () => manualOpen || briefingOpen || Boolean(arenaPanel),
       panelOpen: () => Boolean(arenaPanel),
@@ -507,13 +465,17 @@
       finished: () => game.outcome !== 'playing',
       nenKey: isNenControlCode,
       movementKey: isMovement,
-      light: strike,
-      heavy: () => fightingMove('standingHeavy'),
-      special: () => fightingMove('neutralSpecial'),
+      move: fightingMove,
       guard,
       feint,
       evade,
     })
+  }
+
+  function onKeyUp(event: KeyboardEvent | FocusEvent) {
+    if ('code' in event) heldDirection.up(event.code)
+    else heldDirection.clear()
+    moveDirection = heldDirection.current()
   }
 
   function reportWalk() {
@@ -806,12 +768,16 @@
           : 'Arena only offers Hatsu whose rules apply to a direct duel.',
     })
     window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('blur', onKeyUp)
     frame = requestAnimationFrame(tick)
   })
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
     window.removeEventListener('keydown', onKeyDown)
+    window.removeEventListener('keyup', onKeyUp)
+    window.removeEventListener('blur', onKeyUp)
     cancelAnimationFrame(frame)
     for (const timer of motionTimers) window.clearTimeout(timer)
     closeHatsuGate()
@@ -1118,6 +1084,9 @@
       {opponentFighterId}
       french={$locale === 'fr'}
       disabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
+      direction={moveDirection}
+      aimed={aimedZone}
+      combo={comboCount(game.player, game.clock)}
       onPlayerChange={(selected) => {
         fighterId = selected
         applyOptions()

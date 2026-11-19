@@ -1,3 +1,6 @@
+import type { MoveAction } from '../fighting/types'
+import { arenaMoveAction } from './fighting'
+
 interface ArenaKeyboardOptions {
   blocked: () => boolean
   panelOpen: () => boolean
@@ -7,9 +10,7 @@ interface ArenaKeyboardOptions {
   finished: () => boolean
   nenKey: (code: string) => boolean
   movementKey: (code: string) => boolean
-  light: () => void
-  heavy: () => void
-  special: () => void
+  move: (action: MoveAction) => void
   guard: () => void
   feint: () => void
   evade: (side: -1 | 1) => void
@@ -41,9 +42,8 @@ function inactive(event: KeyboardEvent, options: ArenaKeyboardOptions): boolean 
 }
 
 function keyAction(code: string, options: ArenaKeyboardOptions): (() => void) | null {
-  if (code === 'Space') return options.light
-  if (code === 'KeyX') return options.heavy
-  if (code === 'KeyC') return options.special
+  const move = arenaMoveAction(code)
+  if (move) return () => options.move(move)
   if (code === 'ShiftLeft' || code === 'ShiftRight') return options.guard
   if (code === 'KeyV') return options.feint
   if (code === 'KeyJ') return () => options.evade(-1)

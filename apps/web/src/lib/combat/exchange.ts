@@ -1,4 +1,6 @@
 import { resolveExchange } from './resolve'
+import { releaseBufferedMove } from './fightingMove'
+import { settleFightingMove, throwOpening } from './moveChain'
 import { pointInPolygon } from '../tour/geometry'
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
@@ -74,17 +76,21 @@ export function landReadyIntent(state: CombatState): CombatState {
   for (const side of ['player', 'opponent'] as const) {
     const intent = current[side].intent
     if (!intent || intent.remaining > 0 || current.outcome !== 'playing') continue
-    current = replace(current, side, { ...current[side], intent: null })
-    current = strike({
-      state: current,
+    const before = replace(current, side, { ...current[side], intent: null })
+    const opening = throwOpening(before, side, intent)
+    const struck = strike({
+      state: opening.state,
       side,
-      zone: intent.zone,
+      zone: opening.zone,
       technique: intent.technique ?? 'strike',
       targetAt: intent.targetAt,
       power: intent.power,
       range: intent.range,
       recovery: intent.recovery,
     })
+    current = intent.moveId
+      ? releaseBufferedMove(settleFightingMove({ before, after: struck, side, intent }), side)
+      : struck
   }
   return current
 }

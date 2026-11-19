@@ -1,7 +1,8 @@
 import { FIGHTING_ROSTER, fighterDefinition } from '../fighting/roster'
 import { moveForSlot } from '../fighting/movesets'
-import type { FighterId, MoveSlot } from '../fighting/types'
-import type { CombatAction, CombatSide } from '../combat/types'
+import type { FighterId, MoveAction, MoveSlot } from '../fighting/types'
+import type { BodyZone, CombatAction, CombatSide } from '../combat/types'
+import { arenaMoveSlot, type ArenaDirection } from './moveSlot'
 import type { Vec2 } from '../tour/types'
 import { strikeTarget } from './controls'
 
@@ -43,12 +44,37 @@ export function arenaFightingMove(options: {
   }
 }
 
-export function arenaMoveLabels(fighterId: FighterId, french: boolean) {
-  return (['standingLight', 'standingHeavy', 'neutralSpecial'] as const).map((slot) => {
+/**
+ * Keys of the five Clash commands. X and C stay with Zetsu and Ko, and E with
+ * the Tour scene's passage link.
+ */
+export const ARENA_MOVE_KEYS: Record<MoveAction, { code: string; label: string }> = {
+  light: { code: 'Space', label: 'Espace' },
+  heavy: { code: 'KeyB', label: 'B' },
+  special: { code: 'KeyY', label: 'Y' },
+  throw: { code: 'KeyM', label: 'M' },
+  finisher: { code: 'KeyP', label: 'P' },
+}
+
+export function arenaMoveAction(code: string): MoveAction | null {
+  const entry = Object.entries(ARENA_MOVE_KEYS).find(([, key]) => key.code === code)
+  return entry ? (entry[0] as MoveAction) : null
+}
+
+/** The variant each command performs right now, given the held direction and the aim. */
+export function arenaMoveLabels(
+  fighterId: FighterId,
+  french: boolean,
+  context: { direction: ArenaDirection; aimed: BodyZone },
+) {
+  return (Object.keys(ARENA_MOVE_KEYS) as MoveAction[]).map((action) => {
+    const slot = arenaMoveSlot({ fighterId, action, ...context })
     const move = moveForSlot(fighterId, slot)
     return {
+      action,
       slot,
-      name: move ? (french ? move.nameFr : move.nameEn) : slot,
+      key: ARENA_MOVE_KEYS[action].label,
+      name: move ? (french ? move.nameFr : move.nameEn) : null,
       auraCost: move?.auraCost ?? 0,
     }
   })

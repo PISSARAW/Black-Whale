@@ -1,15 +1,20 @@
 <script lang="ts">
   import { ARENA_FIGHTERS, arenaMoveLabels } from '$lib/arena/fighting'
-  import type { FighterId } from '$lib/fighting/types'
+  import type { ArenaDirection } from '$lib/arena/moveSlot'
+  import type { BodyZone } from '$lib/combat/types'
+  import type { FighterId, MoveAction } from '$lib/fighting/types'
 
   interface Props {
     playerFighterId: FighterId
     opponentFighterId: FighterId
     french: boolean
     disabled: boolean
+    direction: ArenaDirection
+    aimed: BodyZone
+    combo: number
     onPlayerChange: (fighterId: FighterId) => void
     onOpponentChange: (fighterId: FighterId) => void
-    onMove: (slot: 'standingLight' | 'standingHeavy' | 'neutralSpecial') => void
+    onMove: (action: MoveAction) => void
   }
 
   let {
@@ -17,16 +22,22 @@
     opponentFighterId,
     french,
     disabled,
+    direction,
+    aimed,
+    combo,
     onPlayerChange,
     onOpponentChange,
     onMove,
   }: Props = $props()
-  let moves = $derived(arenaMoveLabels(playerFighterId, french))
+  let moves = $derived(arenaMoveLabels(playerFighterId, french, { direction, aimed }))
 </script>
 
 <article class="fighting-controls">
   <header>
-    <span>{french ? 'Duel en vue subjective' : 'First-person duel'}</span>
+    <span>
+      {#if combo > 1}<b class="combo" role="status">{combo} {french ? 'coups' : 'hits'}</b
+        >{:else}{french ? 'Duel en vue subjective' : 'First-person duel'}{/if}
+    </span>
     <div class="fighters">
       <label>
         <small>{french ? 'Vous' : 'You'}</small>
@@ -55,11 +66,21 @@
       </label>
     </div>
   </header>
-  <div>
-    {#each moves as move, index (move.slot)}
-      <button type="button" {disabled} onclick={() => onMove(move.slot)}>
-        <kbd>{index === 0 ? 'Espace' : index === 1 ? 'X' : 'C'}</kbd>
-        <strong>{move.name}</strong>
+  <div
+    class="moves"
+    title={french
+      ? 'Avancer / reculer et viser les jambes changent la variante. Enchaîne pendant l’impact.'
+      : 'Moving forward / back and aiming at the legs change the variant. Chain on impact.'}
+  >
+    {#each moves as move (move.action)}
+      <button
+        type="button"
+        disabled={disabled || !move.name}
+        title={move.slot}
+        onclick={() => onMove(move.action)}
+      >
+        <kbd>{move.key}</kbd>
+        <strong>{move.name ?? '—'}</strong>
         {#if move.auraCost > 0}<small>−{move.auraCost} aura</small>{/if}
       </button>
     {/each}
@@ -72,7 +93,7 @@
     bottom: 1rem;
     left: 50%;
     display: grid;
-    width: min(38rem, calc(100vw - 2rem));
+    width: min(46rem, calc(100vw - 2rem));
     gap: 0.5rem;
     padding: 0.65rem;
     border: 1px solid rgb(255 215 0 / 24%);
@@ -155,6 +176,10 @@
     font-size: 0.58rem;
   }
 
+  .combo {
+    color: #fffff0;
+  }
+
   @media (max-width: 680px) {
     .fighting-controls {
       bottom: 0.5rem;
@@ -167,9 +192,14 @@
       display: none;
     }
 
-    div {
+    .fighters {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+    }
+
+    .moves {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
     }
 
     button {

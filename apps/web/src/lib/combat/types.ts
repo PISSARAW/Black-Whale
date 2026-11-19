@@ -30,6 +30,10 @@ export interface AttackIntent {
   power?: number
   range?: number
   recovery?: number
+  /** Clash move this intent performs; absent for Arena's own strikes. */
+  moveId?: string
+  /** Clash moves of the running combo, this one included. */
+  combo?: readonly string[]
 }
 
 export interface ElasticTether {
@@ -85,6 +89,10 @@ export interface FighterState {
   condition: FighterCondition
   recovery: number
   score: number
+  /** Cancel window left open by the last landed Clash move. */
+  chain?: import('./moveChain').MoveChain | null
+  /** Clash move pressed before the running one landed. */
+  buffered?: import('./moveChain').BufferedMove | null
 }
 
 export interface CombatEvent {

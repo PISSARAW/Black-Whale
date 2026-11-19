@@ -3,6 +3,7 @@ import { STRIKE_RANGE } from '../combat/resolve'
 import { combatReducer } from '../combat/reducer'
 import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
 import type { FighterId } from '../fighting/types'
+import { aiOpeningSlot, continueAiCombo } from './aiCombo'
 
 const THINK_EVERY = 0.45
 export type ArenaDifficulty = 'initiate' | 'fighter' | 'master'
@@ -38,6 +39,8 @@ export function advanceArena(
 ): CombatState {
   const ticked = rememberObservedStrike(combatReducer(state, { type: 'TICK', dt }))
   if (ticked.outcome !== 'playing') return ticked
+  const combo = fighterId ? continueAiCombo(ticked, fighterId, difficulty) : null
+  if (combo) return combo
   const cadence = DIFFICULTY_CADENCE[difficulty]
   if (Math.floor(ticked.clock / cadence) === Math.floor(state.clock / cadence)) return ticked
   return decide(ticked, { doctrine, cadence, fighterId })
@@ -128,7 +131,7 @@ function decide(state: CombatState, options: ArenaDecisionOptions): CombatState 
         type: 'FIGHTING_MOVE',
         side: 'opponent',
         fighterId,
-        slot: Math.floor(current.clock / cadence) % 3 === 0 ? 'standingHeavy' : 'standingLight',
+        slot: aiOpeningSlot(fighterId, Math.floor(current.clock / cadence)),
         targetAt: current.player.position,
       })
     : combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })

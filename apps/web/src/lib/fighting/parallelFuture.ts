@@ -7,6 +7,7 @@ import {
 import { fieldDeceives } from './futureIllusion'
 import { soloFutureControlsLive, simulateFuturePerception } from './futurePerception'
 import { forecastParallelFuture } from './parallelFutureForecast'
+import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
 import type {
   FutureControls,
@@ -55,8 +56,8 @@ function stepPreparation(
   if (preparation < FUTURE_PREPARATION_FRAMES) return prepared
   const held = {
     ...controls,
-    player: { ...controls.player },
-    opponent: controls.opponent && { ...controls.opponent },
+    player: unpackReplayInput(packReplayInput(controls.player)),
+    opponent: controls.opponent && unpackReplayInput(packReplayInput(controls.opponent)),
   }
   const frames = forecastParallelFuture(prepared, held, simulate)
   return {

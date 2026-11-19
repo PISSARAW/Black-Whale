@@ -1,5 +1,9 @@
+import { interruptHanzoBlade } from './hanzoBlade'
+import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
+import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { newGumSource } from './bungeeSource'
+import { openingFollowup } from './comboOpenings'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -25,19 +29,27 @@ import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
 import { canUseRangedAttack } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
-
-const MIN_X = 7
-const MAX_X = 93
+import {
+  directionalSourceMatches,
+  isAirPursuit,
+  pursuitWindow,
+  type DirectionalChain,
+  type DirectionalIntent,
+} from './directionalChain'
+import { pursuitTakeoff } from './fighterMovement'
 
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
-  fighter = advanceAttackBuffer(interruptUnavailableNen(fighter))
+  fighter = advanceAttackBuffer(interruptUnavailableNen(interruptHanzoBlade(fighter)))
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
-  let next: ArcadeFighter = {
-    ...fighter,
-    attack: { ...fighter.attack, frame },
-  }
+  let next: ArcadeFighter = advanceAttackDrive(
+    {
+      ...fighter,
+      attack: { ...fighter.attack, frame },
+    },
+    data.startup,
+  )
   if (!fighter.attack.impacted && frame >= data.startup + data.active) {
     next = setIn(releaseFocusedAura(next), false)
   }
@@ -54,13 +66,16 @@ export function startFighterAttack(options: {
   fighter: ArcadeFighter
   kind: AttackKind
   auraCharged: boolean
+  superThrow?: true
   concealed: boolean
   variant?: AttackVariant
   moveId?: string
   hatsuSource?: FighterId | null
   auraCost?: number
+  directionalChain?: DirectionalChain
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
+  const comboFollowup = openingFollowup(fighter, options.moveId)
   const data = attackData(kind, {
     ...fighter,
     attack: {
@@ -68,6 +83,9 @@ export function startFighterAttack(options: {
       kind,
       variant: options.variant,
       moveId: options.moveId,
+      superThrow: options.superThrow,
+      comboFollowup,
+      directionalChain: options.directionalChain,
     },
   })
   const usesRyu = wantsAttackRyu(fighter)
@@ -75,8 +93,14 @@ export function startFighterAttack(options: {
   const prepared = concealed ? setIn(focused, true) : focused
   return {
     ...prepared,
+    nenOpening: undefined,
+    nenBranchCount: nextNenBranchCount(fighter, options.moveId),
+    nenConversionCount:
+      (fighter.nenConversionCount ?? 0) +
+      Number(nextNenBranchCount(fighter, options.moveId) > (fighter.nenBranchCount ?? 0)),
+    ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
-    x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
+    ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
     aura:
       fighter.aura -
       (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
@@ -89,6 +113,9 @@ export function startFighterAttack(options: {
     hatsuChargeFrames: 0,
     attack: {
       moveId: options.moveId,
+      superThrow: options.superThrow,
+      ...(comboFollowup ? { comboFollowup } : {}),
+      ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
       kind,
       variant: options.variant,
       confirmedHit: false,
@@ -106,6 +133,12 @@ export function startFighterAttack(options: {
     bufferedAttack: null,
   }
 }
+
+function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain) {
+  if (chain === 'pursuit' || (chain === 'pursuit-technique' && fighter.id === 'hisoka'))
+    return pursuitTakeoff(fighter)
+}
+
 function attackNenOrigin(options: Parameters<typeof startFighterAttack>[0]) {
   const source = attackHatsuSource(options)
   return source === 'hisoka' || source === 'illumi' ? newGumSource(options.fighter) : undefined
@@ -120,16 +153,18 @@ function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): F
 export function canStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
-  moveId?: string,
+  destination?: string | DirectionalIntent,
 ): boolean {
-  return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, moveId)
+  const intent = typeof destination === 'string' ? { moveId: destination } : (destination ?? {})
+  return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, intent)
 }
 
 function ordinaryCanStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
-  moveId?: string,
+  intent: DirectionalIntent,
 ): boolean {
+  const { moveId } = intent
   if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
   if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
@@ -137,7 +172,7 @@ function ordinaryCanStartFighterAttack(
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&
-    (fighter.attack === null || cancelReady(fighter, kind, moveId)) &&
+    (fighter.attack === null ? !intent.directionalChain : cancelReady(fighter, kind, intent)) &&
     resourceReady
   )
 }
@@ -195,18 +230,21 @@ function canAct(fighter: ArcadeFighter): boolean {
   )
 }
 
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
-}
-
-function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
-  if (!canCancel(fighter, kind, moveId) || !fighter.attack) return false
+function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
+  if (!fighter.attack || !legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
+  if (isAirPursuit(intent.directionalChain)) return pursuitWindow(fighter.attack.frame, data)
   const window = moveById(fighter.attack.moveId)?.cancelWindow
   return (
     (!window || fighter.attack.frame >= data.startup + window.start) &&
     fighter.attack.frame <= data.cancelEnd
   )
+}
+
+function legalCancel(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
+  const { directionalChain, moveId } = intent
+  if (!directionalChain) return canCancel(fighter, kind, moveId)
+  return Boolean(fighter.attack?.confirmedHit && directionalSourceMatches(fighter, directionalChain))
 }
 
 function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
@@ -238,6 +276,7 @@ function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
 
 function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
   return (
+    Boolean(fighter.halkSoulSleep) ||
     Boolean(fighter.luiniPassage) ||
     Boolean(fighter.preparationRecovery) ||
     Boolean(fighter.pluggingWounds) ||

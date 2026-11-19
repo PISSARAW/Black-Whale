@@ -20,12 +20,19 @@ export function bundleBudget(): Plugin {
           file: item.fileName,
           name: item.name,
           bytes: Buffer.byteLength(item.code),
+          modules: Object.entries(item.modules)
+            .map(([id, module]) => ({ id, bytes: module.renderedLength }))
+            .sort((a, b) => b.bytes - a.bytes),
         }))
         .sort((a, b) => b.bytes - a.bytes)
       for (const chunk of chunks) {
         if (chunk.bytes > MAX_JAVASCRIPT_BYTES)
           this.error(
-            `${chunk.file} exceeds the unchanged 500 kB JavaScript budget (${chunk.bytes} bytes)`,
+            `${chunk.file} (${chunk.name}) exceeds the unchanged 500 kB JavaScript budget (${chunk.bytes} bytes)\n` +
+              chunk.modules
+                .slice(0, 12)
+                .map((module) => `  ${module.bytes} ${module.id}`)
+                .join('\n'),
           )
       }
       this.emitFile({

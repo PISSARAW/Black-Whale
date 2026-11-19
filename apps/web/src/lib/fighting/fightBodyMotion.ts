@@ -16,6 +16,7 @@ import { usesRightHandPose } from './fightHandConvention'
 import { fighterKeyedMove } from './fighterKeyedMove'
 import { chrolloBodyStance } from './chrolloBodyStance'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
+import { keepFightPosture } from './fightPostureBudget'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
@@ -221,10 +222,13 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   const plan = awake && closeBodyPlan(awake, fighter, context.rival)
-  if (plan && fighter.id === 'feitan') return feitanHandedPlan(plan, fighter)
-  return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
-    ? rightHandedPlan(plan)
-    : plan
+  const handed =
+    plan && fighter.id === 'feitan'
+      ? feitanHandedPlan(plan, fighter)
+      : plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
+        ? rightHandedPlan(plan)
+        : plan
+  return handed && keepFightPosture(handed, fighter)
 }
 
 function rightHandedPlan(plan: BodyPlan): BodyPlan {

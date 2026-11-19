@@ -25,16 +25,27 @@ export interface ArenaReplayMatch {
   fighterId?: FighterId
   /** Roster body and moveset controlled by the Arena opponent AI. */
   opponentFighterId?: FighterId
+  /**
+   * `clash`: the duel runs Clash's Nen economy and exchange factors. Absent in
+   * replays recorded before the alignment, which therefore keep Arena's own rules.
+   */
+  nenRules?: 'clash'
   /** Set only while importing a V1 replay that used the raw combat rules. */
   legacyRules?: boolean
 }
 
-export const DEFAULT_REPLAY_MATCH: ArenaReplayMatch = {
+/** The default match as it was before Clash's Nen: what V1 imports and legacy recordings replay under. */
+export const PRE_CLASH_REPLAY_MATCH: ArenaReplayMatch = {
   formatId: 'first-to-three',
   opponentId: 'custom',
   challengeId: null,
   missionId: null,
   bossRule: null,
+}
+
+export const DEFAULT_REPLAY_MATCH: ArenaReplayMatch = {
+  ...PRE_CLASH_REPLAY_MATCH,
+  nenRules: 'clash',
 }
 
 export interface ArenaReplay {

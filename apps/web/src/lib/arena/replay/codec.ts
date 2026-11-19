@@ -1,5 +1,5 @@
 import { playReplay } from './player'
-import { ARENA_REPLAY_VERSION, DEFAULT_REPLAY_MATCH, type ArenaReplay } from './types'
+import { ARENA_REPLAY_VERSION, PRE_CLASH_REPLAY_MATCH, type ArenaReplay } from './types'
 
 export function serializeReplay(replay: ArenaReplay): string {
   return JSON.stringify(replay)
@@ -19,7 +19,7 @@ export function parseReplay(serialized: string): ArenaReplay {
   const formatted: ArenaReplay = {
     ...legacy,
     version: ARENA_REPLAY_VERSION,
-    match: structuredClone(DEFAULT_REPLAY_MATCH),
+    match: structuredClone(PRE_CLASH_REPLAY_MATCH),
   }
   if (playReplay(formatted).checksum === formatted.checksum) return formatted
   const engineOnly = {

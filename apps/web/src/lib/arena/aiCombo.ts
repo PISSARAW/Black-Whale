@@ -1,6 +1,7 @@
 import { combatReducer } from '../combat/reducer'
-import type { CombatState } from '../combat/types'
-import { moveById, movesetFor } from '../fighting/movesets'
+import type { BodyZone, CombatState } from '../combat/types'
+import { arenaZone } from '../combat/clashNen'
+import { moveById, moveForSlot, movesetFor } from '../fighting/movesets'
 import type { FighterId, MoveSlot } from '../fighting/types'
 import type { ArenaDifficulty } from './ai'
 
@@ -18,6 +19,12 @@ export function aiOpeningSlot(fighterId: FighterId, beat: number): MoveSlot {
   const routes = groundRoutes(fighterId)
   if (!routes.length) return beat % 3 === 0 ? 'standingHeavy' : 'standingLight'
   return moveById(routes[beat % routes.length][0])?.slot ?? 'standingLight'
+}
+
+/** Under Clash rules a Ko powers only its limb: engage it where the next opening strikes. */
+export function aiKoZone(fighterId: FighterId, beat: number): BodyZone {
+  const move = moveForSlot(fighterId, aiOpeningSlot(fighterId, beat))
+  return arenaZone(move?.tuning.auraZone ?? 'hands')
 }
 
 /**

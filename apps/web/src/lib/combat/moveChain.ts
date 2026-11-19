@@ -1,5 +1,7 @@
 import { tieredComboScale } from '../fighting/comboDamageScale'
 import { moveById } from '../fighting/movesets'
+import { clashGrade, type ExchangeGrade } from './clashGrade'
+import { usesClashNen } from './clashNen'
 import type { FighterMove } from '../fighting/movesetTypes'
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
@@ -83,15 +85,29 @@ export const CRITICAL_BELOW = 15
  * cannot knock out. Only the finisher, Arena's combo ender, can. A combo scores
  * once, the value of its best hit, and a move without damage scores nothing.
  */
-export function clashExchange(intent: AttackIntent): { ceiling?: Impact; scored?: number } {
+export function clashExchange(state: CombatState, intent: AttackIntent): ClashExchange {
   const move = moveById(intent.moveId)
   if (!move) return {}
+  if (usesClashNen(state)) return clashRulesExchange(move, intent)
   if (move.category === 'finisher') return { ceiling: 'ko', scored: intent.scored }
   const superMove = move.category === 'special'
   const hitsBefore = Math.max(0, (intent.combo?.length ?? 1) - 1)
   const damage = move.tuning.damage * tieredComboScale(hitsBefore, superMove)
   const scored = move.tuning.damage === 0 ? Number.POSITIVE_INFINITY : intent.scored
   return { ceiling: impactCeiling(damage), scored }
+}
+
+/** Clash rules: Nen factors grade the blow; scoring stays once per combo. */
+function clashRulesExchange(move: FighterMove, intent: AttackIntent): ClashExchange {
+  const hitsBefore = Math.max(0, (intent.combo?.length ?? 1) - 1)
+  const scored = move.tuning.damage === 0 ? Number.POSITIVE_INFINITY : intent.scored
+  return { grade: clashGrade(move, hitsBefore), scored }
+}
+
+interface ClashExchange {
+  ceiling?: Impact
+  grade?: ExchangeGrade
+  scored?: number
 }
 
 function impactCeiling(damage: number): Impact {

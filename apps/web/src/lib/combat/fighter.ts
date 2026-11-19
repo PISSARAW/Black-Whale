@@ -1,5 +1,6 @@
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
+import { clashAuraFlow, usesClashNen } from './clashNen'
 import type { BodyZone, CombatAction, CombatSide, CombatState, FighterState, Impact } from './types'
 
 /** What a fighter needs to know about the world for one frame of the clock. */
@@ -44,7 +45,9 @@ export function advanceFighter(
   context: TickContext,
 ): FighterState {
   const recovered = recoverCondition(fighter, context.dt)
-  const charged = chargeContinuous(recovered, context.dt)
+  const charged = usesClashNen(context.state)
+    ? chargeClashAura(recovered, context.dt)
+    : chargeContinuous(recovered, context.dt)
   const shifted = settleRyu(charged, context.dt)
   const moved = move(shifted, rival, context)
   return {
@@ -103,6 +106,18 @@ export function chargeContinuous(fighter: FighterState, dt: number): FighterStat
     (fighter.shuObjectId ? SHU_PER_SECOND : 0)
   const cost = rate * dt
   if (cost <= fighter.aura) return { ...fighter, aura: fighter.aura - cost }
+  return exhausted(fighter)
+}
+
+/** Clash's flow: Ten breathes aura back, Zetsu recovers fastest and closes every technique. */
+export function chargeClashAura(fighter: FighterState, dt: number): FighterState {
+  const aura = fighter.aura + clashAuraFlow(fighter) * dt
+  if (fighter.mode === 'zetsu')
+    return { ...chargeContinuous(fighter, 0), aura: Math.min(fighter.capacity, aura) }
+  return aura < 0 ? exhausted(fighter) : { ...fighter, aura: Math.min(fighter.capacity, aura) }
+}
+
+function exhausted(fighter: FighterState): FighterState {
   return {
     ...fighter,
     aura: 0,
@@ -121,7 +136,9 @@ export function move(
   rival: FighterState,
   context: TickContext,
 ): FighterState {
-  if (fighter.condition !== 'ready' || fighter.ko || fighter.intent || fighter.bound > 0)
+  // Arena's Ko is a stance being gathered; Clash's is aura engaged on a limb, and the body still walks.
+  const gathering = fighter.ko && !usesClashNen(context.state)
+  if (fighter.condition !== 'ready' || gathering || fighter.intent || fighter.bound > 0)
     return { ...fighter, movement: [0, 0] }
   const proposed: Vec2 = [
     fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,

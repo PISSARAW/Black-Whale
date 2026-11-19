@@ -6,7 +6,8 @@ import { playReplay } from './player'
 import { parseReplay, serializeReplay } from './codec'
 import { replayArenaHref } from './navigation'
 import { projectFrame } from './perspective'
-import { DEFAULT_REPLAY_MATCH } from './types'
+import { DEFAULT_REPLAY_MATCH, PRE_CLASH_REPLAY_MATCH } from './types'
+import { applyArenaMatchRules, countArenaAction, initialArenaMatchState } from '../match'
 
 describe('deterministic Arena replay', () => {
   it('reconstructs player commands, movement and AI to the same checksum', () => {
@@ -17,7 +18,7 @@ describe('deterministic Arena replay', () => {
       doctrine: 'artillery',
       difficulty: 'master',
       match: {
-        ...DEFAULT_REPLAY_MATCH,
+        ...PRE_CLASH_REPLAY_MATCH,
         legacyRules: true,
         fighterId: 'kurapika',
         opponentFighterId: 'hisoka',
@@ -57,6 +58,52 @@ describe('deterministic Arena replay', () => {
     const replayUrl = new URL(replayArenaHref('https://example.test/arena?enemy=kurapika', replay))
     expect(replayUrl.searchParams.get('fighter')).toBe('kurapika')
     expect(replayUrl.searchParams.get('enemy')).toBe('hisoka')
+  })
+
+  it('replays a duel under Clash Nen rules, Ko and Clash moves included, to the same checksum', () => {
+    const setup = {
+      playerAt: [0, 0] as const,
+      opponentAt: [3, 0] as const,
+      terrain: initialCombatState().terrain,
+    }
+    const match = {
+      ...DEFAULT_REPLAY_MATCH,
+      fighterId: 'kurapika' as const,
+      opponentFighterId: 'hisoka' as const,
+    }
+    const recorder = new ArenaRecorder({ setup, doctrine: 'counter', difficulty: 'master', match })
+    let state = initialArenaMatchState(setup, match)
+    expect(state.nenRules).toBe('clash')
+    let actions = {}
+    const commands = {
+      2: { type: 'MODE', side: 'player', mode: 'ren' },
+      30: { type: 'KO', side: 'player', zone: 'arms' },
+      32: {
+        type: 'FIGHTING_MOVE',
+        side: 'player',
+        fighterId: 'kurapika',
+        slot: 'standingLight',
+        targetAt: [4, 0],
+      },
+    } as const
+    for (let tick = 0; tick < 240 && state.outcome === 'playing'; tick += 1) {
+      const action = commands[tick as keyof typeof commands]
+      if (action) {
+        recorder.record(action)
+        actions = countArenaAction(actions, action)
+        state = applyArenaMatchRules(combatReducer(state, action), match, actions)
+      }
+      state = advanceArena(state, 1 / 60, {
+        doctrine: 'counter',
+        difficulty: 'master',
+        fighterId: 'hisoka',
+      })
+      state = applyArenaMatchRules(state, match, actions)
+      recorder.advance()
+    }
+
+    const replay = recorder.finish(state)
+    expect(playReplay(replay).checksum).toBe(replay.checksum)
   })
 
   it('projects concealed information according to each observer', () => {

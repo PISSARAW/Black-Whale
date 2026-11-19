@@ -16,6 +16,8 @@ interface Exchange {
   recovery?: number
   /** Strongest impact the move may deal, whatever the aura contest says. */
   ceiling?: Impact
+  /** Clash rules: grades the blow instead of Arena's aura ratio (combat/clashGrade.ts). */
+  grade?: import('./clashGrade').ExchangeGrade
   clock: number
   walls: WallSegment[]
 }
@@ -37,6 +39,8 @@ export function resolveExchange(exchange: Exchange): ExchangeResult {
   )
     return resultOf(exchange, 'miss')
 
+  if (exchange.grade)
+    return resultOf(exchange, exchange.grade(exchange.attacker, exchange.defender, exchange.zone))
   const offence = offensiveAura(exchange.attacker, exchange.technique) * (exchange.power ?? 1)
   const defence = defensiveAura(exchange.defender, exchange.zone)
   const impact = capImpact(impactOf(offence, defence), exchange.ceiling)

@@ -3,7 +3,7 @@ import { STRIKE_RANGE } from '../combat/resolve'
 import { combatReducer } from '../combat/reducer'
 import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
 import type { FighterId } from '../fighting/types'
-import { aiOpeningSlot, continueAiCombo } from './aiCombo'
+import { aiKoZone, aiOpeningSlot, continueAiCombo } from './aiCombo'
 
 const THINK_EVERY = 0.45
 export type ArenaDifficulty = 'initiate' | 'fighter' | 'master'
@@ -120,7 +120,11 @@ function decide(state: CombatState, options: ArenaDecisionOptions): CombatState 
   }
 
   if (current.opponent.aura >= 35 && current.clock % 3 < THINK_EVERY) {
-    return combatReducer(current, { type: 'KO', side: 'opponent', zone })
+    const koZone =
+      current.nenRules === 'clash' && fighterId
+        ? aiKoZone(fighterId, Math.floor(current.clock / cadence) + 1)
+        : zone
+    return combatReducer(current, { type: 'KO', side: 'opponent', zone: koZone })
   }
   const hidden =
     doctrine === 'deceiver' ||

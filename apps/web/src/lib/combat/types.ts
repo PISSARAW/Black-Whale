@@ -117,6 +117,8 @@ export interface CombatState {
   nenEffects: PersistentNenEffect[]
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
+  /** `clash`: Arena duels use Clash's Nen economy and exchange factors (combat/clashNen.ts). */
+  nenRules?: 'clash'
   environment: {
     context: ArenaDuelContext
     noise: number

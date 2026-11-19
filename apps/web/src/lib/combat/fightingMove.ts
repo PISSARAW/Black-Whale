@@ -2,6 +2,7 @@ import { moveForSlot } from '../fighting/movesets'
 import type { FighterMove } from '../fighting/movesetTypes'
 import type { FightNenZone } from '../fighting/types'
 import { CHAIN_BUFFER, chainAccepts, comboHistory } from './moveChain'
+import { usesClashNen } from './clashNen'
 import {
   otherSide,
   type AttackIntent,
@@ -63,7 +64,9 @@ export function prepareFightingMove(
 
 function canPerform(state: CombatState, side: CombatSide, move: FighterMove): boolean {
   const fighter = state[side]
-  if (fighter.condition !== 'ready' || fighter.ko || fighter.aura < move.auraCost) return false
+  if (fighter.condition !== 'ready' || fighter.aura < move.auraCost) return false
+  // Under Clash rules a held Ko waits for this very move.
+  if (fighter.ko && !usesClashNen(state)) return false
   return finisherOpen(state, side, move)
 }
 

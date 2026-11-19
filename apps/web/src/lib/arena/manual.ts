@@ -35,5 +35,9 @@ export const ARENA_MANUAL_CONTROLS = [
     descriptionFr: 'Déplacer la garde Ryu',
   },
   { keys: ['−', '='], description: 'Adjust Ryu', descriptionFr: 'Ajuster le Ryu' },
-  { keys: ['C'], description: 'Gather Ko', descriptionFr: 'Rassembler Ko' },
+  {
+    keys: ['C'],
+    description: 'Ko on the next attack (hands, feet when aiming low)',
+    descriptionFr: 'Ko sur la prochaine attaque (mains, pieds en visant bas)',
+  },
 ]

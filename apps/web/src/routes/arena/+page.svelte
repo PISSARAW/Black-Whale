@@ -318,6 +318,7 @@
       bossRule: activeOpponentProfile?.bossRule ?? null,
       fighterId,
       opponentFighterId,
+      nenRules: 'clash',
     }
   }
 
@@ -401,8 +402,10 @@
     )
   }
 
+  /** Clash's Ko powers the striking limb of the next move: the hands, or the feet when aiming low. */
   function gatherKo() {
-    command({ type: 'KO', side: 'player', zone: game.player.guard }, 'ko')
+    const zone = aimedZone === 'legs' ? 'legs' : 'arms'
+    command({ type: 'KO', side: 'player', zone }, 'ko')
   }
 
   function guard() {

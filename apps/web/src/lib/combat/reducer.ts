@@ -48,6 +48,7 @@ import { advancePersistentNenEffects } from './effects'
 import { advanceEnvironment, reactEnvironment } from './environment'
 import { resolveNamedHatsu } from './hatsu'
 import { fightingHatsuAction, prepareFightingMove } from './fightingMove'
+import { usesClashNen } from './clashNen'
 import {
   initialCombatState,
   otherSide,
@@ -70,7 +71,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, setMovement(state[action.side], action.vector))
   if (action.type === 'MODE')
     return replace(state, action.side, setMode(state[action.side], action.mode))
-  if (action.type === 'RYU') return replace(state, action.side, setRyu(state[action.side], action))
+  if (action.type === 'RYU') return ryu(state, action)
   if (action.type === 'GYO')
     return replace(state, action.side, toggle(state[action.side], 'gyo', action.on))
   if (action.type === 'IN')
@@ -124,6 +125,12 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
 }
 
 export { initialCombatState }
+
+/** Under Clash rules a held Ko cannot be redistributed: the aura is already engaged. */
+function ryu(state: CombatState, action: Extract<CombatAction, { type: 'RYU' }>): CombatState {
+  if (usesClashNen(state) && state[action.side].ko) return state
+  return replace(state, action.side, setRyu(state[action.side], action))
+}
 
 function tick(state: CombatState, dt: number): CombatState {
   const context = { dt, state }

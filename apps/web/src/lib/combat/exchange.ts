@@ -1,6 +1,7 @@
 import { resolveExchange } from './resolve'
 import { releaseBufferedMove } from './fightingMove'
 import { clashExchange, settleFightingMove, throwOpening } from './moveChain'
+import { engageClashKo, expireClashKo, spentKo, usesClashNen } from './clashNen'
 import { pointInPolygon } from '../tour/geometry'
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
@@ -38,6 +39,7 @@ export interface StrikeRequest {
   recovery?: number
   /** Strongest impact allowed, from a Clash move's authored damage. */
   ceiling?: Impact
+  grade?: import('./clashGrade').ExchangeGrade
   /** Points the running combo has already scored; the exchange only adds what exceeds them. */
   scored?: number
 }
@@ -92,10 +94,13 @@ export function landReadyIntent(state: CombatState): CombatState {
       power: intent.power,
       range: intent.range,
       recovery: intent.recovery,
-      ...clashExchange(intent),
+      ...clashExchange(current, intent),
     })
     current = intent.moveId
-      ? releaseBufferedMove(settleFightingMove({ before, after: struck, side, intent }), side)
+      ? releaseBufferedMove(
+          spentKo(settleFightingMove({ before, after: struck, side, intent }), side),
+          side,
+        )
       : struck
   }
   return current
@@ -135,6 +140,7 @@ export function ringOut(state: CombatState): CombatState {
 }
 
 export function landReadyKo(state: CombatState): CombatState {
+  if (usesClashNen(state)) return expireClashKo(state)
   let current = state
   if (current.player.ko && current.player.ko.remaining <= 0) {
     current = strike({
@@ -159,7 +165,7 @@ export function strike(request: StrikeRequest): CombatState {
   const { state, side, zone, technique } = request
   const attacker = state[side]
   if (attacker.cooldown > 0 || attacker.condition !== 'ready') return state
-  if (technique === 'strike' && attacker.ko) return state
+  if (technique === 'strike' && attacker.ko && !request.grade) return state
 
   const defenderSide = otherSide(side)
   const result = resolveExchange({
@@ -175,6 +181,7 @@ export function strike(request: StrikeRequest): CombatState {
     targetAt: request.targetAt,
     recovery: request.recovery,
     ceiling: request.ceiling,
+    grade: request.grade,
   })
   const owed = Math.max(0, result.event.points - (request.scored ?? 0))
   const counterBonus = state[defenderSide].recoveryWindow > 0 && owed > 0 ? 1 : 0
@@ -209,6 +216,7 @@ export function outcomeOf(side: CombatSide, attacker: FighterState, defender: Fi
 }
 
 export function chargeKo(state: CombatState, side: CombatSide, zone: BodyZone): CombatState {
+  if (usesClashNen(state)) return engageClashKo(state, side, zone)
   const fighter = state[side]
   if (
     fighter.aura < KO_COST ||

@@ -48,6 +48,23 @@ Arena keeps its open room; the duel inside it speaks Clash.
   without damage scores nothing. Knockback can carry the opponent out of a
   short move's reach; closing the gap is the player's job, since Clash's lunge
   is not projected yet.
+- **Nen** — Arena matches carry `nenRules: 'clash'`
+  ([combat/clashNen.ts](../combat/clashNen.ts)). Aura flows at Clash's rates:
+  Ten +1.4/s, Ren −4, Ken −8, Zetsu +10, plus Gyo −2.4, In −3, En −9 and
+  Shu −4. A Clash move is graded by
+  [combat/clashGrade.ts](../combat/clashGrade.ts): the guard command blocks
+  (throws excepted); otherwise authored damage × combo scaling × the
+  attacker's Nen on the striking limb (Ren ×1.22, Ryu share, Ko +0.82, Zetsu
+  0.7) × what the shared `nenDefenceFactor` of
+  [nen-engine](../../../../../packages/nen-engine/src/techniques.ts) lets
+  through (Zetsu ×1.45). Under 12 clean, under 20 critical, then knockdown.
+  Ko no longer strikes by itself: C engages it (20 aura, 2.5 s) on the hands,
+  or the feet when aiming low; a jab on that limb is at least critical, a blow
+  from another limb is purely physical and every other zone is bare until the
+  move lands. A held Ko cannot be redistributed by Ryu. Arena's Ryu stays a
+  permanent split, mapped onto Clash's four zones. Nen categories are not
+  modelled. Replays recorded before this flag, Hunt duels and Hatsu keep
+  Arena's own rules.
 - **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
   follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
 

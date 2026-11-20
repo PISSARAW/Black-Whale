@@ -30,6 +30,19 @@ blessures bouchées restent prises en compte. Ces distances sont des réglages d
 L’aspiration d’objet exige un projectile visible, matériel, admissible et dans
 l’ouverture du tuyau. Le rejet offensif exige un véritable dernier objet stocké ;
 le simple souvenir d’une aspiration de sang ne déclenche pas ce rejet.
+
+## Sacrifier ce qui était stocké
+
+Chaque aspiration avale **un seul** objet : le plus proche de la matière nommée,
+réelle et non vivante, dans l’ouverture du tuyau (`blinkyTargeting.ts`). Les
+autres objets de cette matière restent en vol ; une création de Nen ou une aura
+émise n’est jamais candidate. Le tuyau exige un trajet libre : une couverture
+réelle ou l’ombrelle de Feitan entre la bouche et la cible arrête l’aspiration,
+pour un objet comme pour le sang (`blinkyPathClear`). Le sang exige en outre une
+plaie ouverte non couverte. Seul le dernier objet avalé peut être restitué :
+aspirer un nouveau danger abandonne définitivement le précédent, sans historique.
+`blinkyTargeting.test.ts` vérifie ces règles.
+
 Les règles existantes de `blinky.ts` et `blinkyFrames.ts` conservent les matières
 admissibles, les plaies, les coûts, les dégâts et les possibilités de défense.
 Cette adaptation utilise le ruleset `clash-combat-67-shizuku-pike`.

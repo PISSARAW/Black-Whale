@@ -10,10 +10,12 @@ import {
   blinkyNozzleY,
   blinkyState,
   inBlinkyNozzle,
+  blinkyPathClear,
   exposedBlinkyWounds,
   BLINKY_BLOOD_DAMAGE,
   BLINKY_BLOOD_INTERVAL,
 } from './blinky'
+import { blinkyNamedObject } from './blinkyTargeting'
 import type { FightSide, FightState } from './types'
 
 export function advanceBlinky(state: FightState): FightState {
@@ -56,20 +58,14 @@ function stepBlinky(state: FightState, side: FightSide): FightState {
 function swallow(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const memory = blinkyState(fighter)
-  const swallowed = state.projectiles
-    .filter(
-      (shot) =>
-        shot.matter === 'object' &&
-        !shot.living &&
-        shot.shape === memory.target &&
-        inBlinkyNozzle(fighter, shot),
-    )
-    .sort((a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id - b.id)
-  if (!swallowed.length) return swallowPaperScatter(state, side)
+  // One explicitly named object per suction: the rest of that kind is left in flight.
+  if (fighter.attack?.blinkySwallowed) return state
+  const target = blinkyNamedObject(state, side)
+  if (!target) return swallowPaperScatter(state, side)
   state = forgetArenaVacuum(state, side)
-  const ids = new Set(swallowed.map((shot) => shot.id))
+  // Swallowing a new danger gives up for good whatever Blinky held before.
   const lastObject = {
-    ...swallowed[swallowed.length - 1],
+    ...target,
     kallutoPaper: undefined,
     paperOwner: undefined,
     paperTarget: undefined,
@@ -81,10 +77,11 @@ function swallow(state: FightState, side: FightSide): FightState {
   }
   return {
     ...state,
-    projectiles: state.projectiles.filter((shot) => !ids.has(shot.id)),
+    projectiles: state.projectiles.filter((shot) => shot.id !== target.id),
     [side]: {
       ...fighter,
       blinky: { ...memory, lastObject, lastWasBlood: false, lastArenaObject: undefined },
+      attack: { ...fighter.attack!, blinkySwallowed: true },
     },
   }
 }
@@ -139,7 +136,8 @@ function drawBlood(state: FightState, side: FightSide, elapsed: number): FightSt
   const target = side === 'player' ? 'opponent' : 'player'
   const defender = state[target]
   const body = sleepingBody(defender)
-  if (!inBlinkyNozzle(state[side], { x: body.x, y: body.y + 6.1 })) return state
+  const wound = { x: body.x, y: body.y + 6.1 }
+  if (!inBlinkyNozzle(state[side], wound) || !blinkyPathClear(state, side, wound)) return state
   const wounds = exposedBlinkyWounds(defender)
   if (!wounds || defender.health <= 0) return state
   state = forgetArenaVacuum(state, side)

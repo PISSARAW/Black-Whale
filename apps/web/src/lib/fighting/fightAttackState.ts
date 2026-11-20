@@ -26,6 +26,8 @@ export interface FightAttack {
   hatsuSource: FighterId | null
   projectileSpawned: boolean
   projectilesSpawned?: number
+  /** Blinky already swallowed its one named object during this suction. */
+  blinkySwallowed?: true
   /** Charge committed to this one right punch, including a miss. */
   cyclotronTurns?: number
   reversal: boolean

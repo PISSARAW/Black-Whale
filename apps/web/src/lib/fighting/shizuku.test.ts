@@ -130,8 +130,10 @@ describe('Blinky: named matter, last object and exposed wounds', () => {
         shot(8, x + facing * 7, { owner: side }),
       ]
       const result = blinkyFrame(active(state, side))
-      expect(result.projectiles.map((p) => p.id)).toEqual([2, 3, 4, 5, 6, 7])
-      expect(blinkyState(result[side]).lastObject?.id).toBe(8)
+      // One named object per suction: the equally near bullet 8 stays in flight.
+      expect(result.projectiles.map((p) => p.id)).toEqual([2, 3, 4, 5, 6, 7, 8])
+      expect(blinkyState(result[side]).lastObject?.id).toBe(1)
+      expect(blinkyFrame(result).projectiles.map((p) => p.id)).toContain(8)
       expect(result[side].health).toBe(state[side].health)
     },
   )
@@ -149,13 +151,15 @@ describe('Blinky: named matter, last object and exposed wounds', () => {
   it('returns only the last actual object once, with a fresh identity and no stored Nen buff', () => {
     const state = duel()
     state.projectiles = [
-      shot(10, 38),
-      shot(11, 40, { damage: 7, shuCharged: true, nenPower: 4, concealed: true }),
+      shot(10, 40),
+      shot(11, 38, { damage: 7, shuCharged: true, nenPower: 4, concealed: true }),
     ]
     const swallowed = blinkyFrame(active(state))
     expect(blinkyState(swallowed.player).lastObject?.id).toBe(11)
+    expect(swallowed.projectiles.map((p) => p.id)).toEqual([10])
     const idle = {
       ...swallowed,
+      projectiles: [],
       nextProjectileId: 50,
       player: { ...swallowed.player, aura: 100, attack: null },
     }

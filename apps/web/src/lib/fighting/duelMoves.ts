@@ -5,6 +5,7 @@ import { openingAllows } from './comboOpenings'
 import type { FighterMove } from './movesetTypes'
 import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
+import { accelAdmitted } from './accelCancel'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
 type CancelMove = `${AttackVariant}:${AttackKind}`
@@ -107,7 +108,8 @@ export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 }
 
 function confirmedRoutes(fighter: ArcadeFighter, move: FighterMove): readonly string[] {
-  if (fighter.attack?.confirmedHit) return move.cancelInto
+  if (fighter.attack?.confirmedHit)
+    return move.cancelInto.filter((id) => accelAdmitted(fighter, id))
   return fighter.attack?.confirmedBlock ? move.cancelOnBlockInto : []
 }
 

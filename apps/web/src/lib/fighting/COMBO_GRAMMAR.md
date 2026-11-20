@@ -268,3 +268,31 @@ Chaque lot change le ruleset de replay et garde les tests de combo verts.
 - Un combo de six touches inflige moins que la somme brute de ses coups, et la courbe
   est documentée.
 - La liste des coups affiche l’avantage sur touche et sur garde, ainsi que le niveau de cancel.
+
+## 9. Seconde phase : prolonger après le premier spécial
+
+Après le lot 5, un combo s’arrête au premier spécial : il ne mène plus qu’à une super.
+Les combos longs de certains jeux de combat récents reposent sur ce qui suit ce premier
+spécial. Ces lots en reprennent les mécaniques avec des noms tirés du Nen.
+
+1. **Relance et surchauffe du Ren** (livré, sans essais joueurs). `accelCancel.ts` :
+   sur touche, un spécial de la grammaire s’annule dans un spécial placé **après lui**
+   dans `specials`. L’ordre garde le graphe de cancel sans boucle. Une relance chauffe
+   le Ren de 50 points sur 100. La jauge refroidit de 0,25 par frame, soit 200 frames
+   pour une relance. À 100, le combattant est en surchauffe : aucune relance jusqu’à ce
+   que la jauge soit vide. Les autres cancels ne changent pas. Le spécial relancé peut
+   toucher le corps que son prédécesseur vient de mettre au sol (`FightAttack.accel`).
+   Sans cela, la relance n’aurait aucune cible : les deux fins mettent au sol. Activé
+   par `CancelGrammar.accel` pour Kurapika et Benjamin seulement. Route : léger → lourd
+   → balayage → (relance) avant + lourd. Pas encore de version renforcée des spéciaux,
+   ni d’affichage de la jauge. Ruleset `clash-combat-83`.
+2. **Frein** : couper un spécial en plein mouvement pour enchaîner, en priorité sur
+   Phinks, Leorio, Bonolenov et Padaille (§ 6, lot 4).
+3. **Feintes** : un spécial de 0 dégât à récupération courte, sur les profils de référence.
+4. **État conditionné par la vie** : un serment choisi à la préparation, actif dans un
+   tiers de la barre de vie, déclenchable en plein combo.
+5. **Académie et IA** : routes de relance, décision de relance à chaque frame.
+
+**Constat (antérieur au lot 1) :** après une fin qui met au sol, la super déclarée
+(fouet de Kurapika, Air Blow de Benjamin) part mais ne touche pas, car elle ne frappe
+pas un corps à terre. La route _fin physique → super_ n’existe donc que sur le papier.

@@ -209,6 +209,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   knockdownFrames: number
   wakeupInvulnerableFrames: number
   reversalWindow: number
+  /** Relance heat (accelCancel.ts); absent while cold. */
+  accelHeat?: import('./accelCancel').AccelHeat
   comboHits: number
   comboDamage: number
   juggleCount: number

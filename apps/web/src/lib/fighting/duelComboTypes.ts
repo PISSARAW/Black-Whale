@@ -23,4 +23,6 @@ export interface DuelComboProfile {
 export interface CancelGrammar {
   specials: readonly MoveSlot[]
   supers: readonly MoveSlot[]
+  /** Relance: a special also cancels on hit into the specials listed after it (accelCancel.ts). */
+  accel?: true
 }

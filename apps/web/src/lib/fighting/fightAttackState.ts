@@ -17,6 +17,8 @@ export interface FightAttack {
   confirmedHit?: boolean
   comboOpening?: import('./comboOpenings').ComboOpening
   comboFollowup?: import('./comboOpenings').ComboOpening
+  /** Started by a relance; it may strike a body put down by its predecessor. */
+  accel?: true
   directionalChain?: import('./directionalChain').DirectionalChain
   kind: AttackKind
   frame: number

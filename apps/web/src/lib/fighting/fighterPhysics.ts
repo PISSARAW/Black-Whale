@@ -9,6 +9,7 @@ import { advanceAirborne } from './fighterMovement'
 import { applyAirRecovery } from './airRecovery'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
 import { advanceNen } from './nen'
+import { coolAccelHeat } from './accelCancel'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
 const GROUND = 0
@@ -39,6 +40,7 @@ export function advanceFighterPhysics(
     blockStun: Math.max(0, fighter.blockStun - 1),
     ryuWindow: Math.max(0, fighter.ryuWindow - 1),
     throwTechFrames: Math.max(0, (fighter.throwTechFrames ?? 0) - 1),
+    ...(fighter.accelHeat ? { accelHeat: coolAccelHeat(fighter.accelHeat) } : {}),
   })
   return holdMary(holdCrossGame(advanceNen(advanced, FIXED_STEP)))
 }

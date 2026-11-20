@@ -4,6 +4,7 @@ import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { newGumSource } from './bungeeSource'
 import { openingFollowup } from './comboOpenings'
+import { accelStart } from './accelCancel'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -62,6 +63,12 @@ export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
     : next
 }
 
+/** An explicit cost (copied page, buffered cancel) wins over the move's own cost. */
+function startingAuraCost(options: Parameters<typeof startFighterAttack>[0]): number {
+  const { fighter, kind, moveId, concealed } = options
+  return options.auraCost ?? attackAuraCost({ fighter, kind, moveId, concealed })
+}
+
 export function startFighterAttack(options: {
   fighter: ArcadeFighter
   kind: AttackKind
@@ -76,6 +83,7 @@ export function startFighterAttack(options: {
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
   const comboFollowup = openingFollowup(fighter, options.moveId)
+  const accel = accelStart(fighter, options.moveId)
   const data = attackData(kind, {
     ...fighter,
     attack: {
@@ -101,9 +109,7 @@ export function startFighterAttack(options: {
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
-    aura:
-      fighter.aura -
-      (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
+    aura: fighter.aura - startingAuraCost(options),
     pose: kind,
     blocking: false,
     guardFrames: 0,
@@ -111,10 +117,12 @@ export function startFighterAttack(options: {
     throwTechFrames: options.variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames,
     ryuWindow: usesRyu ? 10 : fighter.ryuWindow,
     hatsuChargeFrames: 0,
+    ...accel.fighter,
     attack: {
       moveId: options.moveId,
       superThrow: options.superThrow,
       ...(comboFollowup ? { comboFollowup } : {}),
+      ...accel.attack,
       ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
       kind,
       variant: options.variant,

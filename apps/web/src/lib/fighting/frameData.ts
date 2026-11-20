@@ -194,7 +194,7 @@ function movesetAttackData(
     {
       ...data,
       guard: move.guard,
-      canHitDowned: move.canHitDowned,
+      canHitDowned: move.canHitDowned || Boolean(fighter.attack?.accel),
       reversalInvulnerableFrames: move.reversalInvulnerableFrames,
       startup,
       cancelEnd: move.cancelWindow

@@ -82,10 +82,11 @@ describe('tiered cancel grammar', () => {
       'lowHeavy',
       'forwardHeavy',
     ])
-    for (const ender of ['lowHeavy', 'forwardHeavy'] as const) {
-      expect(move(fighter, ender).cancelInto.map(slot)).toEqual([superSlot])
+    // The sweep also relaunches into the forward heavy (accelCancel.test.ts).
+    expect(move(fighter, 'lowHeavy').cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
+    expect(move(fighter, 'forwardHeavy').cancelInto.map(slot)).toEqual([superSlot])
+    for (const ender of ['lowHeavy', 'forwardHeavy'] as const)
       expect(move(fighter, ender).cancelOnBlockInto).toEqual([])
-    }
     expect(move(fighter, superSlot).cancelInto).toEqual([])
     expect(move(fighter, 'airLight').cancelInto.map(slot)).toEqual(['airHeavy'])
   })

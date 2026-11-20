@@ -23,7 +23,8 @@ export interface PvpSetup {
 export type PvpCommand =
   | { kind: 'arsenal'; command: import('../retrospectiveTypes').ArsenalCommand }
   | { kind: 'move'; action: MoveAction | 'ranged'; input: number }
-  | { kind: 'emperor' | 'call' | 'offer' }
+  | { kind: 'emperor' | 'call' }
+  | { kind: 'offer'; clause?: import('../moonlightClauses').MoonlightClauseId }
   | { kind: 'easter'; slot: 1 | 2 | 3 | 4 }
   | { kind: 'battle'; moveId: string }
   | { kind: 'talk'; words: string }

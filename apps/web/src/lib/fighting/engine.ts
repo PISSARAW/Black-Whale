@@ -47,7 +47,7 @@ import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { performDirectionalChain } from './directionalChainCommand'
 import { pursuitAttackAllowed } from './airPursuitCommand'
-import { resolveMoonlightAction } from './moonlightAction'
+import { moonlightAiBareHands, resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
 import { callHanzoBody } from './hanzoBodyCall'
@@ -297,7 +297,14 @@ export const opponentAttack = (state: FightState): FightState =>
 function intentionalOpponentAttack(state: FightState): FightState {
   const counter = nativeRecoveryCounter(state, performAuraAttack)
   if (counter) return counter
+  // Bare strikes cost no aura, so a bare-hands pact keeps the AI fighting even while it recovers.
+  const bareHands = fightAcceptsCommands(state) && moonlightAiBareHands(state, aiBareStrike)
+  if (bareHands) return bareHands
   return reservingAura(state.opponent) ? planOpponentNen(state) : contextualOpponentAttack(state)
+}
+
+function aiBareStrike(state: FightState, kind: 'light' | 'heavy'): FightState {
+  return performAttack(state, 'opponent', kind)
 }
 
 function contextualOpponentAttack(state: FightState): FightState {

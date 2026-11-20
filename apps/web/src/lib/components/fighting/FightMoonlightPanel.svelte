@@ -1,18 +1,23 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
   import { hasMoonlightAuthority, moonlightSigningAvailable } from '$lib/fighting/moonlightContract'
+  import { agreementClause, MOONLIGHT_CLAUSE_IDS } from '$lib/fighting/moonlightClauses'
+  import type { MoonlightClauseId } from '$lib/fighting/moonlightClauses'
   import type { FightSide, FightState } from '$lib/fighting/types'
+  import FightMoonlightClause from './FightMoonlightClause.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
-  export let onOffer: (side: FightSide) => void
+  export let onOffer: (side: FightSide, clause: MoonlightClauseId) => void
   export let onRespond: (side: FightSide, accept: boolean) => void
 
   const sides: FightSide[] = ['player', 'opponent']
   $: fr = language === 'fr'
   $: offer = state.moonlight?.offer
   $: active = state.moonlight?.active
+  $: pending = offer ?? active
+  $: offerers = sides.filter((side) => human(side) && hasMoonlightAuthority(state[side]))
   $: relevant =
     state.player.id === 'longhi' ||
     state.opponent.id === 'longhi' ||
@@ -34,10 +39,10 @@
         ? 'Proposition expirée. Aucun accord tacite.'
         : 'Offer expired. Silence is not consent.',
       fulfilled: fr
-        ? `${who} a respecté le pacte et reçoit un usage de Moonlight Act.`
-        : `${who} fulfilled the pact and receives one use of Moonlight Act.`,
+        ? 'Pacte respecté : la récompense annoncée est versée.'
+        : 'Pact fulfilled: the disclosed reward is paid.',
       breached: fr
-        ? `${who} a rompu la clause : Zetsu jusqu’à la fin du match.`
+        ? `${who} a rompu la clause : Zetsu pour une semaine de simulation.`
         : `${who} breached the clause: Zetsu for one simulated week.`,
     }
     return messages[result.kind]
@@ -51,16 +56,9 @@
         >{fr ? 'Pacte de duel · adaptation' : 'Duel pact · adaptation'}</span
       >
     </header>
-    <p class="terms">
-      {fr
-        ? 'Les deux signataires s’engagent à ne lancer aucun coup, projectile ni technique pendant 5 secondes de combat. Déplacements, garde et Nen de base restent libres.'
-        : 'Both signatories agree to start no strikes, projectiles or techniques for 5 seconds of combat. Movement, guard and basic Nen remain available.'}
-    </p>
-    <p class="terms">
-      {fr
-        ? 'Récompense : le destinataire reçoit un usage de Moonlight Act si le pacte est respecté. Sanction pour chacun : Zetsu en cas de violation — une semaine de simulation, conservée entre les manches.'
-        : 'Reward: the recipient receives one use of Moonlight Act on fulfilment. Either signatory incurs Zetsu on breach — one simulated week, retained across rounds.'}
-    </p>
+    {#if pending}
+      <FightMoonlightClause clause={agreementClause(pending).id} {language} />
+    {/if}
     {#if offer}
       <p class="status">
         {name(offer.issuer)} → {name(offer.recipient)} · {fr
@@ -106,24 +104,30 @@
       <p class="status" role="status">
         {outcome() ||
           (fr
-            ? 'L propose le pacte. Une touche ne vaut jamais signature.'
-            : 'L offers the pact. A hit is never a signature.')}
+            ? 'L propose la trêve mutuelle. Une touche ne vaut jamais signature.'
+            : 'L offers the mutual truce. A hit is never a signature.')}
       </p>
-      <div class="actions">
-        {#each sides.filter(human) as side (side)}
-          {#if hasMoonlightAuthority(state[side])}
-            <button
-              type="button"
-              disabled={!canSign || (state.moonlight?.cooldownFrames ?? 0) > 0}
-              onclick={() => onOffer(side)}
-            >
-              {name(side)} · {fr ? 'Proposer le pacte' : 'Offer the pact'}
-              {#if (state[side].moonlightLoan ?? 0) > 0}
-                ({state[side].moonlightLoan}){/if}
-            </button>
-          {/if}
-        {/each}
-      </div>
+      {#if offerers.length}
+        <div class="catalogue">
+          {#each MOONLIGHT_CLAUSE_IDS as clause (clause)}
+            <FightMoonlightClause {clause} {language}>
+              <div class="actions">
+                {#each offerers as side (side)}
+                  <button
+                    type="button"
+                    disabled={!canSign || (state.moonlight?.cooldownFrames ?? 0) > 0}
+                    onclick={() => onOffer(side, clause)}
+                  >
+                    {name(side)} · {fr ? 'Proposer ce pacte' : 'Offer this pact'}
+                    {#if (state[side].moonlightLoan ?? 0) > 0}
+                      ({state[side].moonlightLoan}){/if}
+                  </button>
+                {/each}
+              </div>
+            </FightMoonlightClause>
+          {/each}
+        </div>
+      {/if}
     {/if}
     {#if state.player.moonlightZetsu || state.opponent.moonlightZetsu}
       <p class="penalty">
@@ -168,6 +172,11 @@
   }
   .penalty {
     color: #f7bb9f;
+  }
+  .catalogue {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
   }
   .actions {
     display: flex;

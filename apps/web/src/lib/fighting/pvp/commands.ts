@@ -66,7 +66,7 @@ function executeTraditional(
     case 'call':
       return callHanzoBody(state, side)
     case 'offer':
-      return offerMoonlightContract({ state, side })
+      return offerMoonlightContract({ state, side, clause: command.clause })
     case 'respond':
       return respondMoonlightContract({ state, side, accept: command.accept })
     case 'talk':

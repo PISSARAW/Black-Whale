@@ -11,8 +11,16 @@ import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloPageForMove } from './chrolloBook'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 import { moonlightBinds, rewardMoonlightParty, teamMoonlightSigners } from './moonlightParties'
+import {
+  agreementClause,
+  moonlightClause,
+  type MoonlightClauseId,
+  type MoonlightPenalty,
+  type MoonlightReward,
+  type MoonlightTerms,
+} from './moonlightClauses'
 
-export const MOONLIGHT_TRUCE_FRAMES = 300
+export const MOONLIGHT_TRUCE_FRAMES = moonlightClause('truce').durationFrames
 export const MOONLIGHT_OFFER_FRAMES = 480
 export const MOONLIGHT_SIGNING_RANGE = 12
 export const MOONLIGHT_MOVE = 'longhi:neutralSpecial'
@@ -22,10 +30,12 @@ export interface MoonlightAgreement {
   sourceMoveId?: string
   issuer: FightSide
   recipient: FightSide
+  /** Which predefined contract was offered; absent on agreements from before the catalogue. */
+  clause?: MoonlightClauseId
   /** Both signatures bind the same disclosed rules; these cannot change after acceptance. */
-  terms: 'no-attacks'
-  reward: 'one-use-of-moonlight-act'
-  penalty: 'one-week-zetsu'
+  terms: MoonlightTerms
+  reward: MoonlightReward
+  penalty: MoonlightPenalty
   remainingFrames: number
 }
 
@@ -102,8 +112,10 @@ export function offerMoonlightContract(options: {
   state: FightState
   side: FightSide
   moveId?: string
+  clause?: MoonlightClauseId
 }): FightState {
   const { state, side, moveId } = options
+  const clause = moonlightClause(options.clause)
   if (state.moonlight?.offer || state.moonlight?.active) return state
   if ((state.moonlight?.cooldownFrames ?? 0) > 0) return state
   if (!moonlightSigningAvailable(state) || !hasMoonlightAuthority(state[side], moveId)) return state
@@ -123,9 +135,10 @@ export function offerMoonlightContract(options: {
         issuer: side,
         recipient,
         sourceMoveId: moveId,
-        terms: 'no-attacks',
-        reward: 'one-use-of-moonlight-act',
-        penalty: 'one-week-zetsu',
+        clause: clause.id,
+        terms: clause.terms,
+        reward: clause.reward,
+        penalty: clause.penalty,
         remainingFrames: MOONLIGHT_OFFER_FRAMES,
       },
     },
@@ -158,7 +171,7 @@ export function respondMoonlightContract(options: {
   const signed: FightState = {
     ...state,
     [offer.issuer]: { ...issuer, moonlightLoan: loan > 0 ? loan - 1 : loan },
-    moonlight: { active: { ...offer, remainingFrames: MOONLIGHT_TRUCE_FRAMES } },
+    moonlight: { active: { ...offer, remainingFrames: agreementClause(offer).durationFrames } },
   }
   return resolveJudgmentCommunication(signed, side, state[offer.issuer].id)
 }
@@ -236,8 +249,10 @@ function moonlightAiLoanOffer(state: FightState): FightState {
   return state.opponent.aura < 45 ? offerMoonlightContract({ state, side: 'opponent' }) : state
 }
 
+/** A full truce freezes the AI; a bare-hands pact lets it keep fighting with plain strikes. */
 export function moonlightAiWaiting(state: FightState): boolean {
-  return Boolean(state.moonlight?.active || state.moonlight?.offer?.issuer === 'opponent')
+  if (state.moonlight?.offer?.issuer === 'opponent') return true
+  return state.moonlight?.active?.terms === 'no-attacks'
 }
 
 export function carryMoonlightRound(next: FightState, previous: FightState): FightState {

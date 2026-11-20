@@ -831,6 +831,14 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   la durée, le prêt et la sanction ; `moonlightAction.ts` contrôle le démarrage
   effectif des commandes. Les clauses de cette trêve sont une adaptation explicite,
   pas un contrat montré au manga. Une nouvelle partie réinitialise prêts et sanctions.
+  Le panneau propose un **catalogue fermé** (`moonlightClauses.ts`), jamais un
+  éditeur libre : trêve mutuelle (5 s, un usage au destinataire), duel à mains
+  nues (8 s, coups physiques sans aura chargée seulement, +20 d’aura à chaque
+  signataire) et longue trêve (10 s, aucune attaque, +35 d’aura à chaque
+  signataire). La touche L offre la trêve mutuelle. Toute l’entente — termes,
+  durée, récompense, sanction — est copiée dans l’offre et affichée au
+  destinataire avant signature ; la récompense ne touche que les signataires.
+  Sous mains nues, l’IA continue de frapper à mains nues et ne lance rien d’autre.
 - Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**
   si **Morena est présente** et si son adversaire est déclaré **intrus en infraction**
   dans la préparation du duel. `fightEnvironment.ts` transmet ce scénario au moteur.

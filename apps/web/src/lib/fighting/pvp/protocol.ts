@@ -3,11 +3,13 @@ import { FIGHTING_ROSTER } from '../roster'
 import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
+import { parseDoorFramePicks } from '../voconteDoorSites'
 import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
 import { kameoSetupField, parseKameoPicks } from '../kameos/pvp'
 import { validArsenalCommand } from '../retrospectiveArsenal'
+import { isMoonlightClause } from '../moonlightClauses'
 
 export function record(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
@@ -34,7 +36,8 @@ function validCommand(value: Record<string, unknown>): boolean {
   const kind = String(value.kind)
   if (kind === 'arsenal')
     return only(value, ['kind', 'command']) && validArsenalCommand(value.command)
-  if (['emperor', 'call', 'offer'].includes(kind)) return only(value, ['kind'])
+  const bare = bareCommand(kind, value)
+  if (bare !== null) return bare
   if (kind === 'move') return validMove(value)
   if (kind === 'easter') return validEasterCommand(value)
   if (kind === 'respond')
@@ -43,6 +46,15 @@ function validCommand(value: Record<string, unknown>): boolean {
   if (enumField)
     return only(value, ['kind', enumField[0]]) && member(value[enumField[0]], enumField[1])
   return textCommand(value)
+}
+/** Commands with no payload, or only the Moonlight contract chosen from the fixed catalogue. */
+function bareCommand(kind: string, value: Record<string, unknown>): boolean | null {
+  if (kind === 'emperor' || kind === 'call') return only(value, ['kind'])
+  if (kind !== 'offer') return null
+  return (
+    only(value, ['kind', 'clause']) &&
+    (value.clause === undefined || isMoonlightClause(value.clause))
+  )
 }
 function textCommand(value: Record<string, unknown>): boolean {
   if (value.kind === 'poem') return validPoem(value)
@@ -128,6 +140,7 @@ function parseEnvironment(value: unknown) {
     !only(value, [
       'stageId',
       'arenaInteractions',
+      'doorFrames',
       'halkenburgRosterVariant',
       'morenaPresent',
       'unlawfulIntruders',
@@ -152,6 +165,7 @@ function parseEnvironment(value: unknown) {
 function validScenarioSettings(value: Record<string, unknown>): boolean {
   return (
     validPreparation(value.preparation) &&
+    parseDoorFramePicks(value.doorFrames) !== null &&
     (value.halkenburgRosterVariant === undefined ||
       typeof value.halkenburgRosterVariant === 'boolean')
   )

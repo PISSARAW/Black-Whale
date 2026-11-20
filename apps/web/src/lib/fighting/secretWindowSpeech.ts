@@ -2,6 +2,7 @@ import { arsenalMindAvailable } from './arsenalMind'
 import { captureShoulderWindowSpeech } from './secretWindowListening'
 import { recordWindowObservation } from './benjaminMusseRecording'
 import { mapPhysicalBodies } from './physicalBodyMap'
+import { journalObservation, journalWords } from './secretWindowJournal'
 import {
   secretWindowTarget,
   secretWindowNenActive,
@@ -26,11 +27,14 @@ export function captureSecretWindowSpeech(
       state,
       {
         ...owner,
-        secretWindow: {
-          ...feed,
-          observation: observeSecretWindow(state, feed.target, feed.targetMember),
-          heard: { frame: state.frame, text: speech.text },
-        },
+        secretWindow: journalWords(
+          journalObservation({
+            ...feed,
+            observation: observeSecretWindow(state, feed.target, feed.targetMember),
+            heard: { frame: state.frame, text: speech.text },
+          }),
+          { frame: state.frame, speaker: speech.side, text: speech.text },
+        ),
       },
       { frame: state.frame, text: speech.text },
     )

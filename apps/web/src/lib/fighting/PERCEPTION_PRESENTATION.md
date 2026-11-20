@@ -17,6 +17,16 @@ les informations réellement acquises dans la vue de combat.
   du poing. Le marqueur est accessible aux deux participants autorisés à entendre
   la réponse ; son texte reste dans le panneau privé existant.
 
+Le journal privé de Secret Window (`secretWindowJournal.ts`) conserve, pour le
+seul propriétaire, chaque changement de geste du corps marqué et ses paroles
+relayées, y compris lorsque la cible se cache derrière un obstacle ; le hibou
+d’épaule tient son propre journal des paroles entendues. Il ne contient ni
+pensées, ni aura, ni nom de technique, ni avenir, et se limite aux 64 dernières
+entrées acquises. Le consulter dans le panneau du HUD est une lecture : aucune
+pause, aucun malus ni coût n’est appliqué au personnage. Le hibou ne blesse pas,
+ne paralyse pas, et aucun troisième oiseau n’existe dans le duel.
+`secretWindowJournal.test.ts` vérifie ces règles.
+
 `perceptionPresentation.ts` lit seulement les faits acquis par le participant dont
 le point de vue est actif. Ses événements ne contiennent ni paroles, ni réponses,
 ni identités ou signatures. Un changement de spectateur, une reconstruction ou

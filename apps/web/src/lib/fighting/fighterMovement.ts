@@ -105,6 +105,11 @@ function inputDirection(input: FightInput): -1 | 0 | 1 {
   return (Number(input.right) - Number(input.left)) as -1 | 0 | 1
 }
 
+/** The direction a double tap completes on this frame's input, without consuming it. */
+export function doubleTapDirection(fighter: ArcadeFighter, input: FightInput): -1 | 0 | 1 {
+  return trackTaps(fighter, inputDirection(input)).dash
+}
+
 function trackTaps(
   fighter: ArcadeFighter,
   direction: -1 | 0 | 1,

@@ -1,4 +1,5 @@
 import { ownsBungeeGum } from '../hisokaArsenal'
+import { advanceElasticHold } from '../elasticHold'
 import { withGumChannel } from '../bungeeChannel'
 import { newGumSource } from '../bungeeSource'
 import { maintainTextureSurprise } from '../hisokaTextureOrigin'
@@ -43,10 +44,12 @@ export const hisokaHatsu: FighterHatsu = {
       (state) => applyGumImpact({ ...context, state }),
     ),
   onFrame: (state) =>
-    advanceGumObjectAnchors(
-      advanceGumArsenal(
-        advanceGumMotion(
-          SIDES.reduce(advanceTechnique, advancePaperTextures(advanceDocumentWorld(state))),
+    advanceElasticHold(
+      advanceGumObjectAnchors(
+        advanceGumArsenal(
+          advanceGumMotion(
+            SIDES.reduce(advanceTechnique, advancePaperTextures(advanceDocumentWorld(state))),
+          ),
         ),
       ),
     ),

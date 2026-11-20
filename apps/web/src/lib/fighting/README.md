@@ -5,6 +5,9 @@ Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
 complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
+Les [combos signature](./SIGNATURE_COMBOS.md) de Kurapika et d’Hisoka tiennent dans un
+seul compteur, du premier coup à la technique finale, par les vraies commandes.
+
 Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
 observées et réglages arcade ; seules les pratiques qualifiées sont activables.
 

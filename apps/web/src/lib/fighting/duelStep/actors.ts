@@ -20,6 +20,7 @@ import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from '../nen'
 import { moveCounterplayOpponent } from '../counterplayOpponent'
 import { advanceFighterPhysics } from '../fighterPhysics'
 import { steerFighter } from '../fighterMovement'
+import { dashCancel } from '../dashCancel'
 import type { ArcadeFighter, FightInput, FightState } from '../types'
 import type { DuelBodies, DuelInputs } from './types'
 
@@ -47,6 +48,7 @@ export function updateControlledFighter(fighter: ArcadeFighter, input: FightInpu
   if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
   let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
+  next = dashCancel(next, input) ?? next
   const steered = steerFighter(next, {
     input,
     mobile: canMove(next),

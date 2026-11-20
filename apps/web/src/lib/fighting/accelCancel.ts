@@ -49,10 +49,16 @@ export function heatAfterAccel(fighter: ArcadeFighter): AccelHeat {
   return { heat, overheated: heat >= ACCEL_HEAT_MAX }
 }
 
-/** Fields a starting attack takes when it is a relance; empty otherwise. */
+/** Fields a starting attack takes when it is a relance or ends an accélération; empty otherwise. */
 export function accelStart(fighter: ArcadeFighter, moveId?: string) {
-  if (!isAccelCancel(fighter, moveId)) return { fighter: {}, attack: {} }
-  return { fighter: { accelHeat: heatAfterAccel(fighter) }, attack: { accel: true as const } }
+  if (isAccelCancel(fighter, moveId))
+    return { fighter: { accelHeat: heatAfterAccel(fighter) }, attack: { accel: true as const } }
+  // The accélération already paid its heat (dashCancel.ts).
+  if (!fighter.attack && fighter.motion?.dash?.accel)
+    return { fighter: {}, attack: { accel: true as const } }
+  // A body held by tension élastique (elasticHold.ts) stays within reach of the combo.
+  if (fighter.elasticHold) return { fighter: {}, attack: { accel: true as const } }
+  return { fighter: {}, attack: {} }
 }
 
 /** Per-frame cooling; the overheat lock lifts only once the gauge is empty. */

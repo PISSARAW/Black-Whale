@@ -8,11 +8,12 @@ export const THROW_TECH_RECOVERY_FRAMES = 12
 export const WAKEUP_INVULNERABLE_FRAMES = 10
 export const REVERSAL_WINDOW_FRAMES = 5
 
-export function throwImmune(fighter: ArcadeFighter): boolean {
+/** A capture that ends an accélération (dashCancel.ts) seizes a body still in hitstun or down. */
+export function throwImmune(fighter: ArcadeFighter, comboCapture?: boolean): boolean {
   const body = sleepingBody(fighter)
+  if (body.y > 0 || body.health <= 0) return true
+  if (comboCapture) return false
   return (
-    body.y > 0 ||
-    body.health <= 0 ||
     body.hitStun > 0 ||
     body.blockStun > 0 ||
     body.knockdownFrames > 0 ||
@@ -48,4 +49,15 @@ function techBody(fighter: ArcadeFighter, opponent: ArcadeFighter): ArcadeFighte
     motion: undefined,
     pose: 'idle',
   }
+}
+
+export function throwTechPossible(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
+  return attacker.attack?.variant === 'throw' && canTechThrow(defender)
+}
+
+export function throwMisses(
+  attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
+  defender: ArcadeFighter,
+): boolean {
+  return attacker.attack.variant === 'throw' && throwImmune(defender, attacker.attack.accel)
 }

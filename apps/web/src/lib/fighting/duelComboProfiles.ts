@@ -66,6 +66,9 @@ const KURAPIKA: Partial<Record<MoveSlot, ComboMove>> = {
   },
   airLight: { tuning: { hitstun: 17, knockback: 1.4 }, into: ['airHeavy'] },
   airHeavy: { into: [] },
+  // Verdict écarlate: the capture holds the target for Judgment Chain (signatureCombos.ts).
+  throw: { into: ['finisher'] },
+  neutralSpecial: { into: ['finisher'] },
 }
 
 const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
@@ -122,7 +125,13 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
     moves: KURAPIKA,
     window: 6,
     block: 'standingHeavy',
-    grammar: { specials: ENDERS, supers: ['forwardSpecial'], accel: true },
+    grammar: {
+      specials: ENDERS,
+      supers: ['forwardSpecial'],
+      accel: true,
+      // Verdict écarlate (signatureCombos.ts): back from the hook, forward from the whip.
+      dash: { standingHeavy: 'back', forwardSpecial: 'forward' },
+    },
   },
   benjamin: {
     moves: BENJAMIN,

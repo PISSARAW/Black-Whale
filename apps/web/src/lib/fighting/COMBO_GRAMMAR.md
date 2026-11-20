@@ -286,6 +286,10 @@ spécial. Ces lots en reprennent les mécaniques avec des noms tirés du Nen.
    par `CancelGrammar.accel` pour Kurapika et Benjamin seulement. Route : léger → lourd
    → balayage → (relance) avant + lourd. Pas encore de version renforcée des spéciaux,
    ni d’affichage de la jauge. Ruleset `clash-combat-83`.
+   **Accélération** (livré, sans essais joueurs) : sur touche, un coup listé dans
+   `CancelGrammar.dash` s’annule dans un dash ordinaire par double appui (`dashCancel.ts`).
+   Elle chauffe le Ren comme une relance. Elle sert aux [combos signature](./SIGNATURE_COMBOS.md)
+   de Kurapika et d’Hisoka. Ruleset `clash-combat-84`.
 2. **Frein** : couper un spécial en plein mouvement pour enchaîner, en priorité sur
    Phinks, Leorio, Bonolenov et Padaille (§ 6, lot 4).
 3. **Feintes** : un spécial de 0 dégât à récupération courte, sur les profils de référence.

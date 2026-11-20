@@ -9,6 +9,7 @@ import { paperMaterialsReady } from './kallutoMaterials'
 import { blinkyActionAllowed } from './blinkyAction'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { isErigeronAction } from './billSupport'
+import { comboAdmissionBody, comboAuraCost } from './comboAuraCost'
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { triggerAttackHatsu } from './attackHatsuTrigger'
 import { padailleMoveAvailable } from './padailleWeapon'
@@ -44,7 +45,8 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   const original = options.state[side]
   if (!attackAdmission(options, intent)) return options.state
   const { hatsuSource, concealed } = intent
-  const starts = canStartFighterAttack(original, kind, options)
+  const admitted = comboAdmissionBody(options.state, side, moveById(moveId))
+  const starts = canStartFighterAttack(admitted, kind, options)
   if (!starts) return bufferAuraAttack(options, intent)
   const state = hatsuSource
     ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
@@ -62,13 +64,15 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
       superThrow: options.superThrow,
       concealed,
       hatsuSource,
-      auraCost: attackAuraCost({
-        fighter: original,
-        kind,
-        moveId,
-        concealed,
-        superThrow: options.superThrow,
-      }),
+      auraCost:
+        comboAuraCost(options.state, side, moveId) ??
+        attackAuraCost({
+          fighter: original,
+          kind,
+          moveId,
+          concealed,
+          superThrow: options.superThrow,
+        }),
     }),
   })
 }
@@ -112,7 +116,7 @@ function attackAdmission(options: AuraAttackOptions, intent: AttackIntent): bool
   const move = moveById(moveId)
   if (move && !canUseMovesetMove(state, side, move)) return false
   return (
-    fighter.aura >=
+    comboAdmissionBody(state, side, move).aura >=
     attackAuraCost({
       fighter,
       kind,

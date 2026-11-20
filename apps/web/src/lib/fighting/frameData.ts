@@ -1,3 +1,4 @@
+import { throwKnockback } from './comboCapture'
 import type { GuardRequirement } from './combatProperties'
 import { openingFrameData } from './comboOpenings'
 import { superThrowFrameData } from './superThrow'
@@ -195,6 +196,7 @@ function movesetAttackData(
       ...data,
       guard: move.guard,
       canHitDowned: move.canHitDowned || Boolean(fighter.attack?.accel),
+      knockback: throwKnockback(move, fighter, data.knockback),
       reversalInvulnerableFrames: move.reversalInvulnerableFrames,
       startup,
       cancelEnd: move.cancelWindow

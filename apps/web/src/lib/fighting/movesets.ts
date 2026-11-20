@@ -1,4 +1,5 @@
 import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
+import { comboAdmissionBody } from './comboAuraCost'
 import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
 import { schemeSlot } from './controlScheme'
@@ -219,7 +220,7 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
   )
     return false
   if (!lsdfMoveAllowed(state, side, move)) return false
-  if (!hasMoveResources(fighter, move)) return false
+  if (!hasMoveResources(comboAdmissionBody(state, side, move), move)) return false
   if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
 }

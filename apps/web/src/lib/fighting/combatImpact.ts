@@ -3,7 +3,7 @@ import { catchBungeeObject } from './hisokaCatch'
 import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
-import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
+import { resolveThrowTech, throwMisses, throwTechPossible } from './throwRules'
 import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
@@ -340,17 +340,6 @@ function spendAttacker(
 
 function launchesTarget(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
   return isAntiAir(attacker) && sleepingBody(defender).y > 0
-}
-
-function throwTechPossible(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
-  return attacker.attack?.variant === 'throw' && canTechThrow(defender)
-}
-
-function throwMisses(
-  attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
-  defender: ArcadeFighter,
-): boolean {
-  return attacker.attack.variant === 'throw' && throwImmune(defender)
 }
 
 function shouldResolveHatsu(

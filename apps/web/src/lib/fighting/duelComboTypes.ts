@@ -25,4 +25,6 @@ export interface CancelGrammar {
   supers: readonly MoveSlot[]
   /** Relance: a special also cancels on hit into the specials listed after it (accelCancel.ts). */
   accel?: true
+  /** Accélération: moves that cancel on hit into a dash in that direction (dashCancel.ts). */
+  dash?: Partial<Record<MoveSlot, 'back' | 'forward'>>
 }

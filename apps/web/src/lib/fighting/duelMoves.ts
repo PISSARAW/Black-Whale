@@ -93,7 +93,8 @@ export function variantData(options: {
 
 export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   const attack = fighter.attack
-  if (!attack || attack.variant === 'throw') return false
+  // Only a combo capture (throwRules.ts) may cancel, through its authored routes.
+  if (!attack || (attack.variant === 'throw' && !attack.accel)) return false
   const currentMove = moveById(attack.moveId)
   if (currentMove)
     return Boolean(

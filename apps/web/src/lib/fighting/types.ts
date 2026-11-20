@@ -211,6 +211,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   reversalWindow: number
   /** Relance heat (accelCancel.ts); absent while cold. */
   accelHeat?: import('./accelCancel').AccelHeat
+  /** Frames of tension élastique spent in the current combo (elasticHold.ts). */
+  elasticHold?: number
   comboHits: number
   comboDamage: number
   juggleCount: number
@@ -273,6 +275,8 @@ export interface FighterDash {
   frame: number
   frames: number
   peak: number
+  /** Started by an accélération (dashCancel.ts). */
+  accel?: true
 }
 
 export interface FighterMotion {

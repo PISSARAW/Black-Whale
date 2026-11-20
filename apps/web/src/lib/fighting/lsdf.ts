@@ -6,6 +6,12 @@ import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { inMorenasHideout } from './fightEnvironment'
 import { finishFight } from './combatVerdict'
 import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
+import {
+  LSDF_GRAVITY,
+  qualifyLsdfInfraction,
+  withoutPortableWeapons,
+  type LsdfInfraction,
+} from './lsdfInfraction'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface LsdfGuard {
@@ -14,6 +20,8 @@ export interface LsdfGuard {
   level: number
   phase: 'approaching' | 'escorting'
   exitX: 0 | 100
+  /** The infraction Yokotani qualified when he introduced himself; it sets the first level. */
+  infraction?: LsdfInfraction
 }
 
 /** Chapter 399: introduction to an unlawful intruder, in Morena's occupied hideout. */
@@ -22,7 +30,7 @@ export function lsdfJurisdiction(state: FightState, side: FightSide): boolean {
   return (
     inMorenasHideout(state.environment) &&
     morenaPresent(state) &&
-    state.environment.unlawfulIntruders[target] &&
+    qualifyLsdfInfraction(state, side) !== null &&
     state[target].id !== 'morena'
   )
 }
@@ -56,10 +64,12 @@ export function canActivateLsdf(state: FightState, side: FightSide): boolean {
 export function introduceLsdf(state: FightState, side: FightSide): FightState {
   if (state.phase !== 'fighting' || !canActivateLsdf(state, side)) return state
   const target = side === 'player' ? 'opponent' : 'player'
+  const infraction = qualifyLsdfInfraction(state, side)!
   const guard: LsdfGuard = {
     target,
     x: state[side].x,
-    level: 1,
+    level: LSDF_GRAVITY[infraction],
+    infraction,
     phase: 'approaching',
     exitX: state[target].x < 50 ? 0 : 100,
   }
@@ -99,7 +109,8 @@ function advanceGuard(state: FightState, side: FightSide, guard: LsdfGuard): Fig
 }
 
 function escortIntruder(state: FightState, side: FightSide, guard: LsdfGuard): FightState {
-  const x = approach(guard.x, guard.exitX, 0.6)
+  // A graver intervention carries the intruder out faster; it never strikes harder.
+  const x = approach(guard.x, guard.exitX, 0.6 + (guard.level - 1) * 0.1)
   const target: ArcadeFighter = {
     ...wakeHanzoBody(state[guard.target]),
     x,
@@ -113,7 +124,7 @@ function escortIntruder(state: FightState, side: FightSide, guard: LsdfGuard): F
     bufferedAttack: null,
     // Removing an attack is not confiscation: the carried weapon stays unavailable after escort.
     weaponsConfiscated: true,
-    equipment: state[guard.target].equipment?.filter((item) => item !== 'needles'),
+    equipment: withoutPortableWeapons(state[guard.target]),
     // Physical restraint, not a damaging hit or an aura-sealing technique.
     hitStun: Math.max(2, state[guard.target].hitStun),
   }

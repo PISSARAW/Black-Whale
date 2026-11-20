@@ -1,4 +1,5 @@
 import { lsdfCanPersist } from './lsdf'
+import { LSDF_INFRACTION_LABEL } from './lsdfInfraction'
 import type { FightSide, FightState } from './types'
 
 export function lsdfFighterVisible(state: FightState, side: FightSide): boolean {
@@ -39,6 +40,14 @@ export function lsdfHint(state: FightState, side: FightSide, language: 'fr' | 'e
     return copy.lawful
   if (!lsdfCanPersist(state, side)) return copy.sealed
   const guard = state.lsdf?.[side]
-  if (guard) return `${copy.guards} ${guard.level} · ${copy[guard.phase]}`
+  if (guard)
+    return `${copy.guards} ${guard.level} · ${charged(guard, language)}${copy[guard.phase]}`
   return state[side].aura < 40 ? copy.aura : copy.ready
+}
+
+function charged(
+  guard: { infraction?: keyof typeof LSDF_INFRACTION_LABEL },
+  language: 'fr' | 'en',
+) {
+  return guard.infraction ? `${LSDF_INFRACTION_LABEL[guard.infraction][language]} · ` : ''
 }

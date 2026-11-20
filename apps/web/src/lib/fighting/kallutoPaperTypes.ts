@@ -8,6 +8,11 @@ export interface PlantedPaper {
   owner: FightSide
   ownerMember?: number
   zone: FightNenZone
+  /**
+   * Committed to a listening doll: it feeds receivers but no longer guides attack paper.
+   * Loose confetti never carry this flag — only a fragment fixed to a person can listen.
+   */
+  listening?: boolean
 }
 export interface PaperWords {
   frame: number

@@ -112,9 +112,22 @@ describe('Kalluto uses actual paper and an actual fan rather than copied supplie
       player: { ...bound.player, paperKit: { ...bound.player.paperKit!, markers: 0, salvos: 0 } },
     }
     expect(paperCommandReady(empty, 'player', 'plant')).toBe(false)
-    expect(paperCommandReady(empty, 'player', 'serpent')).toBe(true)
-    const noLoosePaper = {
+    // The doll committed the only fixed fragment to listening: it no longer guides confetti.
+    expect(empty.opponent.plantedPaper?.every((paper) => paper.listening)).toBe(true)
+    expect(paperCommandReady(empty, 'player', 'serpent')).toBe(false)
+    const guided = {
       ...empty,
+      opponent: {
+        ...empty.opponent,
+        plantedPaper: [
+          ...empty.opponent.plantedPaper!,
+          { owner: 'player' as const, ownerMember: 0, zone: 'torso' as const },
+        ],
+      },
+    }
+    expect(paperCommandReady(guided, 'player', 'serpent')).toBe(true)
+    const noLoosePaper = {
+      ...guided,
       battlefield: {
         ...empty.battlefield!,
         entities: empty.battlefield!.entities.filter((entry) => !entry.paperScatter),

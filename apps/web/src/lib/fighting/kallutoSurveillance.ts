@@ -2,17 +2,25 @@ import { physicalBodyAt } from './fightBodyIdentity'
 import { existingPaperDoll, issuePaperPart } from './kallutoMaterials'
 import { historicalPartExists } from './historicalCopyLifetime'
 import type { DolphinBodyRef } from './dolphinLoanTypes'
-import type { PaperDoll } from './kallutoPaperTypes'
+import type { PaperDoll, PlantedPaper } from './kallutoPaperTypes'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
 export function activePaperOwner(state: FightState, side: FightSide): DolphinBodyRef {
   return { owner: side, member: state.teamMatch?.seats[side].active ?? 0 }
 }
 
-/** A marking belongs to its actual user and actual carrier, never a relay replacement. */
+/**
+ * A marking belongs to its actual user and actual carrier, never a relay replacement.
+ * `use` separates the two jobs: `guide` ignores listening fragments, `listening` keeps only them.
+ */
 export function paperMarksAt(
   state: FightState,
-  refs: { owner: DolphinBodyRef; target: DolphinBodyRef; zone?: FightNenZone },
+  refs: {
+    owner: DolphinBodyRef
+    target: DolphinBodyRef
+    zone?: FightNenZone
+    use?: 'guide' | 'listening'
+  },
 ): boolean {
   const body = physicalBodyAt(state, refs.target.owner, refs.target.member)
   return Boolean(
@@ -21,9 +29,16 @@ export function paperMarksAt(
         paper.owner === refs.owner.owner &&
         (paper.ownerMember ?? 0) === refs.owner.member &&
         historicalPartExists(state, paper.materialCopyId) &&
-        (!refs.zone || paper.zone === refs.zone),
+        (!refs.zone || paper.zone === refs.zone) &&
+        markServes(paper, refs.use),
     ),
   )
+}
+
+function markServes(paper: PlantedPaper, use?: 'guide' | 'listening'): boolean {
+  if (use === 'guide') return !paper.listening
+  if (use === 'listening') return paper.listening === true
+  return true
 }
 
 export function paperDolls(actor: ArcadeFighter): readonly PaperDoll[] {
@@ -43,6 +58,7 @@ export function paperDollMarked(
   return paperMarksAt(state, {
     owner,
     target: { owner: doll.target, member: doll.targetMember ?? 0 },
+    use: 'listening',
   })
 }
 

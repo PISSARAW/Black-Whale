@@ -1544,6 +1544,17 @@ de vie : le flux passe par les collisions, la défense et les dégâts ordinaire
 Le papier planté reste physique après interruption du Nen ; le flux perd alors
 sa poursuite. Chaque nouvelle manche repart sans papier ni poupée.
 
+Écoute et attaque utilisent des papiers distincts. Seul un fragment **fixé à une
+personne** peut alimenter une poupée : confectionner la poupée engage un fragment
+déjà planté sur le sujet (`kallutoListeningFragment.ts`), celui de la zone
+sélectionnée, sinon le plus récent, un seul par sujet. Ce fragment d’écoute
+(`listening` sur `PlantedPaper`) ne guide plus le serpent ni ne bloque une
+nouvelle marque dans sa zone ; les marques de guidage, elles, n’alimentent aucune
+poupée. Espionner coûte donc une marque offensive : il faut replanter pour
+attaquer. Les confettis dispersés restent une matière physique, ramassable et
+réutilisable par le serpent, et ne deviennent jamais des capteurs. Aucun papier
+n’est créé : la poupée et le fragment sortent de la réserve finie.
+
 ← L confectionne une poupée du sujet marqué. `kallutoListening.ts` relaie les
 paroles émises par T/V ou Parler à proximité de ce sujet, indépendamment de la
 distance entre le sujet et la poupée. Aucun accès aux pensées, aux statistiques

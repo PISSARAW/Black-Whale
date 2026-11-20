@@ -40,12 +40,14 @@ export function paperUtilityAttack(fighter: ArcadeFighter): boolean {
 export function selectedPaperZone(fighter: ArcadeFighter): FightNenZone {
   return fighter.attack?.moveId === 'kalluto:downSpecial' ? 'feet' : paperState(fighter).zone
 }
+/** With a zone, only a guide mark counts: a fragment committed to listening steers nothing. */
 export function hasPlantedPaper(state: FightState, owner: FightSide, zone?: FightNenZone): boolean {
   const target = owner === 'player' ? 'opponent' : 'player'
   return paperMarksAt(state, {
     owner: activePaperOwner(state, owner),
     target: activePaperOwner(state, target),
     zone,
+    use: zone ? 'guide' : undefined,
   })
 }
 export function paperCommandReady(

@@ -140,7 +140,10 @@ describe('Hanzo’s speaking double has its own position without moving the slee
     const base = projected('kalluto')
     const state: FightState = {
       ...base,
-      player: { ...base.player, plantedPaper: [{ owner: 'opponent', zone: 'torso' }] },
+      player: {
+        ...base.player,
+        plantedPaper: [{ owner: 'opponent', zone: 'torso', listening: true }],
+      },
       opponent: {
         ...base.opponent,
         kallutoPaper: { zone: 'torso', doll: { target: 'player', createdAt: 0 } },

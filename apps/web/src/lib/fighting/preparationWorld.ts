@@ -6,6 +6,7 @@ import { scenarioPaperKit } from './kallutoMaterials'
 import { scenarioWeakSpirit } from './bashoWard'
 import { scenarioWritingKit } from './bashoMaterials'
 import { scenarioDevices } from './physicalDevices'
+import { installHinrighKits } from './hinrighKitWorld'
 import type { FightEnvironment } from './fightEnvironment'
 import type {
   FightBattlefield,
@@ -42,7 +43,7 @@ export function createBattlefield(environment: FightEnvironment): FightBattlefie
     entities.push(entity('morena', 'neutral', 50))
   if (preparation.mode === 'scenario') installScenario(entities, preparation)
   return {
-    entities,
+    entities: installHinrighKits(entities, preparation),
     interactionHeld: { player: false, opponent: false },
     completed: { player: 0, opponent: 0 },
   }

@@ -6,6 +6,7 @@ import { FIGHT_STAGES } from './stages'
 import { FIGHT_FORMATS } from './formats'
 import { createFightEnvironment } from './fightEnvironment'
 import { validInjuryPreparation } from './injuryPreparation'
+import { parseHinrighKit } from './hinrighKit'
 import type { FightPreparation } from './preparationTypes'
 import { REPLAY_INPUT_MASK } from './fightReplayInput'
 import {
@@ -51,11 +52,14 @@ function preparation(value: unknown): FightPreparation | undefined {
     entry.cohorts.length > 2
   )
     return fail()
+  const hinrighKit = parseHinrighKit(entry.hinrighKit)
+  if (hinrighKit === null) return fail()
   return {
     mode: member(entry.mode, ['duel', 'scenario']),
     ...(entry.injuries ? { injuries: { ...entry.injuries } } : {}),
     resources: entry.resources.map((id) => member(id, SCENARIO_RESOURCE_IDS)),
     cohorts: entry.cohorts.map((side) => member(side, ['player', 'opponent'])),
+    ...(hinrighKit ? { hinrighKit } : {}),
   }
 }
 function setup(value: unknown): ReplaySetup {

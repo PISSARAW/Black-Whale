@@ -27,6 +27,7 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
             : {}),
           resources: [...options.preparation.resources],
           cohorts: [...options.preparation.cohorts],
+          ...copyHinrighKit(options.preparation.hinrighKit),
         }
       : undefined,
     stageId: options.stageId ?? DEFAULT_FIGHT_STAGE,
@@ -37,4 +38,13 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
 
 export function inMorenasHideout(environment: FightEnvironment): boolean {
   return environment.stageId === 'heilly-hideout' && environment.morenaPresent
+}
+
+function copyHinrighKit(kit: import('./hinrighKit').HinrighKit | undefined) {
+  if (!kit) return {}
+  return {
+    hinrighKit: Object.fromEntries(
+      Object.entries(kit).map(([side, items]) => [side, [...(items ?? [])]]),
+    ),
+  }
 }

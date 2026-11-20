@@ -4,6 +4,7 @@ import { FIGHT_FORMATS } from '../formats'
 import { FIGHT_STAGES } from '../stages'
 import { createFightEnvironment } from '../fightEnvironment'
 import { parseDoorFramePicks } from '../voconteDoorSites'
+import { parseHinrighKit } from '../hinrighKit'
 import { validInjuryPreparation } from '../injuryPreparation'
 import { REPLAY_INPUT_MASK } from '../fightReplayInput'
 import type { PvpInputPacket, PvpSetup } from './types'
@@ -190,14 +191,15 @@ function validPreparation(value: unknown): boolean {
     value.resources.length <= SCENARIO_RESOURCE_IDS.length &&
     value.cohorts.length <= 2 &&
     value.resources.every((id) => member(id, SCENARIO_RESOURCE_IDS)) &&
-    value.cohorts.every((side) => member(side, ['player', 'opponent']))
+    value.cohorts.every((side) => member(side, ['player', 'opponent'])) &&
+    parseHinrighKit(value.hinrighKit) !== null
   )
 }
 
 function preparationHeader(value: unknown): value is Record<string, unknown> {
   return (
     record(value) &&
-    only(value, ['mode', 'resources', 'cohorts', 'injuries']) &&
+    only(value, ['mode', 'resources', 'cohorts', 'injuries', 'hinrighKit']) &&
     validInjuryPreparation(value.injuries, value.mode)
   )
 }

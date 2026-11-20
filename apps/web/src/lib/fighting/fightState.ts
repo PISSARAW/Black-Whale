@@ -24,6 +24,7 @@ import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
 import { createBiohazardDevices } from './legacyBiohazardDevices'
 import { createBiohazardInventory } from './biohazard'
+import { prepareHinrighKits } from './hinrighKitFighters'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
 import { createChrolloBook } from './chrolloBook'
@@ -86,7 +87,12 @@ export function createFightState(
     burstAvailable: { player: true, opponent: true },
   })
   return applyControlSchemes(
-    prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
+    prepareHinrighKits(
+      prepareHisokaAsphyxia(
+        prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created))),
+      ),
+      createBiohazardInventory,
+    ),
     typeof options === 'string' ? undefined : options.controls,
   )
 }
@@ -94,7 +100,7 @@ export function createFightState(
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
-  return carryMoonlightRound(
+  const next = carryMoonlightRound(
     {
       ...state,
       battlefield: carryPaperWorld(
@@ -172,6 +178,7 @@ export function nextFightRound(state: FightState): FightState {
     },
     state,
   )
+  return prepareHinrighKits(next, createBiohazardInventory)
 }
 
 export function preserveLifespan(

@@ -11,7 +11,8 @@ import { performanceCameraEvent } from './performanceCamera'
 import { bashoInk } from './bashoWritingPresentation'
 import { BASHO_WRITING_FRAMES } from './bashoPoem'
 import { MELODY_STARTUP } from './melodyTuning'
-import { PREDATOR_ANALYSIS_FRAMES, advancePredator, launchPredator } from './predator'
+import { PREDATOR_ANALYSIS_FRAMES, advancePredator } from './predator'
+import { investigationStep } from './predatorFixtures'
 import { defaultFightComfort } from './fightComfort'
 import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from './types'
 
@@ -149,23 +150,29 @@ describe('Melody, Basho and Rihan: type 1 performance, writing and observation',
       foreign(s, other)
       camera.update(s)
       const health = s[other].health
-      s = cinematicCommand(s, side)
+      // The gum is laid again under Rihan's eyes so that its trigger is personally witnessed.
+      const { bungeeGum, gumNetwork } = s
+      s = cinematicCommand({ ...s, bungeeGum: null, gumNetwork: undefined }, side)
       expect(clock(s, side)).toMatchObject([{ kind: 'watch', owner: side }])
       expect(foreign(s, other)).toEqual([])
+      s = { ...cinematicStep(s), bungeeGum, gumNetwork }
       const found = new Set<string>()
-      for (let i = 0; i < PREDATOR_ANALYSIS_FRAMES; i++) {
-        s = cinematicStep(s)
+      let ready = s
+      for (let i = 0; i < 300 && !found.has('ready'); i++) {
+        s = investigationStep(s, side, i)
         clock(s, side).forEach((e) => found.add(e.kind))
         expect(foreign(s, other)).toEqual([])
         expect(camera.update(s).detail).toBeNull()
+        ready = s
       }
       expect(found.has('study')).toBe(true)
       expect(found.has('ready')).toBe(true)
-      expect(privateRihanFocus(s, side).frames).toBe(PREDATOR_ANALYSIS_FRAMES)
+      expect(privateRihanFocus(ready, side).frames).toBe(PREDATOR_ANALYSIS_FRAMES)
       expect(JSON.stringify(clock(s, side))).not.toMatch(/bungee|preyId|hisoka|known|signature/)
       expect(s[other].health).toBe(health)
       expect(s[side].predator?.hunt).toBeNull()
-      expect(camera.update(launchPredator(s, side)).detail?.eventId).toBe('rihan.hunt')
+      // No release command: the completed sheet sends Predator on the next frame by itself.
+      expect(camera.update(cinematicStep(s)).detail?.eventId).toBe('rihan.hunt')
     })
   }
   it('does not turn watching an empty duel into an acquired analysis', () => {

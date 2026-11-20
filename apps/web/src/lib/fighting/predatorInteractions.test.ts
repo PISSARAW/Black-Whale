@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { completePredatorSheet } from './predatorSheet'
 import { beginFight, createFight, performAttack, performMove, tickFight } from './engine'
 import { FIXED_STEP, activeHitbox, attackData } from './frameData'
 import { advancePredator, PREDATOR_ANALYSIS_FRAMES } from './predator'
 import { predatorAiSlots } from './predatorAi'
 import { resolvePredatorThreats } from './predatorCombat'
 import { PREDATOR_SEAL_FRAMES } from './predatorSeal'
+import { investigatePredator } from './predatorFixtures'
 import { EMPTY_INPUT, type FightProjectile, type FightState } from './types'
 
 function frames(state: FightState, count: number): FightState {
@@ -14,14 +16,16 @@ function frames(state: FightState, count: number): FightState {
 }
 
 function hunting(): FightState {
-  let state = beginFight(createFight('rihan', 'hisoka', { mode: 'versus-local' }))
+  const state = beginFight(createFight('rihan', 'hisoka', { mode: 'versus-local' }))
   state.player.aura = 100
-  state.bungeeGum = { owner: 'opponent', target: 'player', hidden: false, retracting: false }
-  state = frames(
-    performMove({ state, side: 'player', action: 'special' }),
-    PREDATOR_ANALYSIS_FRAMES,
-  )
-  return performMove({ state, side: 'player', action: 'finisher' })
+  return investigatePredator({
+    state,
+    side: 'player',
+    manifest: (s) => ({
+      ...s,
+      bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+    }),
+  })
 }
 
 describe('Predator interactions', () => {
@@ -80,12 +84,15 @@ describe('Predator interactions', () => {
     let state = beginFight(createFight('rihan', 'hanzo', { mode: 'versus-local' }))
     state.player.aura = 100
     state.opponent.aura = 100
-    state = performAttack(state, 'opponent', 'special')
-    state = frames(performMove({ state, side: 'player', action: 'special' }), 210)
-    expect(state.player.predator?.analysis?.preyId).toBe('hanzo-skill-4')
-    expect(state.opponent.hanzoProjection).toBeTruthy()
     const health = state.opponent.health
-    state = performMove({ state, side: 'player', action: 'finisher' })
+    state = investigatePredator({
+      state,
+      side: 'player',
+      manifest: (s) => performAttack(s, 'opponent', 'special'),
+    })
+    expect(state.player.predator?.analysis?.preyId).toBe('hanzo-skill-4')
+    expect(state.player.predator?.hunt).toBeTruthy()
+    expect(state.opponent.hanzoProjection).toBeTruthy()
     for (let n = 0; n < 180 && !state.player.predator?.sealFrames; n++) state = frames(state, 1)
     expect(state.opponent.hanzoProjection).toBeUndefined()
     expect(state.opponent.health).toBe(health)
@@ -100,7 +107,12 @@ describe('Predator interactions', () => {
     state.opponent.predator = {
       ...state.player.predator!,
       hunt: null,
-      analysis: { owner: 'player', preyId: 'bungee-gum', observedFrames: PREDATOR_ANALYSIS_FRAMES },
+      analysis: {
+        owner: 'player',
+        preyId: 'bungee-gum',
+        observedFrames: PREDATOR_ANALYSIS_FRAMES,
+        sheet: completePredatorSheet(),
+      },
     }
     state.player.id = 'hisoka'
     state.bungeeGum = { owner: 'player', target: 'opponent', hidden: false, retracting: false }
@@ -122,23 +134,26 @@ describe('Predator interactions', () => {
         sustainedKeys: [],
       },
     }
-    state.bungeeGum = { owner: 'opponent', target: 'player', hidden: false, retracting: false }
-    state = performMove({
+    const borrow = (s: FightState) =>
+      performMove({
+        state: s,
+        side: 'player',
+        action: 'special',
+        input: { ...EMPTY_INPUT, left: true },
+      })
+    const watching = borrow(state)
+    expect(watching.player.kurapika?.held?.used).toBe(true)
+    expect(watching.player.predator?.watching).toBe(true)
+    state = investigatePredator({
       state,
       side: 'player',
-      action: 'special',
-      input: { ...EMPTY_INPUT, left: true },
+      watch: borrow,
+      manifest: (s) => ({
+        ...s,
+        bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+      }),
     })
-    expect(state.player.kurapika?.held?.used).toBe(true)
-    expect(state.player.predator?.watching).toBe(true)
-    state = frames(state, PREDATOR_ANALYSIS_FRAMES)
     expect(state.player.kurapika?.held).toBeTruthy()
-    state = performMove({
-      state,
-      side: 'player',
-      action: 'special',
-      input: { ...EMPTY_INPUT, left: true },
-    })
     expect(state.player.predator?.hunt).toBeTruthy()
     for (let n = 0; n < 180 && !state.player.predator?.sealFrames; n++) state = frames(state, 1)
     expect(state.bungeeGum).toBeNull()

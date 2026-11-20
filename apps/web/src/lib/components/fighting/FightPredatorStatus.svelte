@@ -26,13 +26,18 @@
       <progress
         max="100"
         value={status.progress}
-        aria-label={fr ? 'Analyse de Predator' : 'Predator analysis'}
+        aria-label={fr ? 'Fiche d’enquête de Predator' : 'Predator investigation sheet'}
       ></progress>
+      <ul class="sheet" aria-label={fr ? 'Fiche d’enquête' : 'Investigation sheet'}>
+        {#each status.facets as facet (facet.id)}
+          <li class:filled={facet.filled}>{facet.filled ? '✓' : '·'} {facet.label}</li>
+        {/each}
+      </ul>
       <span
         >{status.progress} % · {status.ready
           ? fr
-            ? 'prédation prête · 40 aura'
-            : 'predation ready · 40 aura'
+            ? 'fiche complète · Predator attend 40 aura'
+            : 'sheet complete · Predator awaits 40 aura'
           : fighter.predator?.watching
             ? fr
               ? 'observation personnelle'
@@ -43,8 +48,8 @@
       >
       <small
         >{fr
-          ? 'L : analyser · →/← + L : choisir · ↓ + L : abandonner · H : Predator'
-          : 'L: study · →/← + L: select · ↓ + L: abandon · H: Predator'}</small
+          ? 'L : observer soi-même · →/← + L : changer d’enquête · ↓ + L : abandonner · Predator part seul'
+          : 'L: observe in person · →/← + L: switch investigation · ↓ + L: abandon · Predator leaves on its own'}</small
       >
     {/if}
   </div>
@@ -65,6 +70,18 @@
     width: 100%;
     height: 0.4rem;
     accent-color: #a3bf6b;
+  }
+  .sheet {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #7f8f86;
+  }
+  .sheet .filled {
+    color: #d5e7bc;
   }
   small {
     color: #aab9c4;

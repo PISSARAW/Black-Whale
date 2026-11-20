@@ -7,9 +7,7 @@ describe('live Nen admission across AI and replay imports', () => {
       vi.resetModules()
       await import(entry)
       const engine = await import('./engine')
-      const { EMPTY_INPUT } = await import('./types')
-      const { predatorReady, PREDATOR_ANALYSIS_FRAMES } = await import('./predator')
-      const { finisherReady } = await import('./movesets')
+      const { investigatePredator } = await import('./predatorFixtures')
       let state = engine.beginFight(
         engine.createFight('rihan', 'hisoka', { mode: 'versus-local', formatId: 'knockout' }),
       )
@@ -17,18 +15,15 @@ describe('live Nen admission across AI and replay imports', () => {
         ...state,
         player: { ...state.player, aura: 100 },
         opponent: { ...state.opponent, aura: 100 },
-        bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
       }
-      state = engine.performMove({ state, side: 'player', action: 'special' })
-      for (let i = 0; i < PREDATOR_ANALYSIS_FRAMES; i++)
-        state = engine.tickFight(state, EMPTY_INPUT, {
-          dt: 1 / 60,
-          opponentInput: EMPTY_INPUT,
-          ai: false,
-        })
-      expect(predatorReady(state, 'player')).toBe(true)
-      expect(finisherReady(state, 'player')).toBe(true)
-      const launched = engine.performMove({ state, side: 'player', action: 'finisher' })
+      const launched = investigatePredator({
+        state,
+        side: 'player',
+        manifest: (s) => ({
+          ...s,
+          bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+        }),
+      })
       expect(launched.player.predator?.hunt?.preyId).toBe('bungee-gum')
     },
   )

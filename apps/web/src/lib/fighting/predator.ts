@@ -11,10 +11,20 @@ import { senseDeprived } from './saiyuSenses'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { enforcePredatorSeal, PREDATOR_SEAL_FRAMES } from './predatorSeal'
 import { PREDATOR_PREY, predatorPrey, preyIsLive, preyPosition } from './predatorPrey'
-import { createPredatorState, type PredatorAnalysis, type PredatorState } from './predatorTypes'
+import { emptyPredatorSheet, observeSheet, sheetComplete } from './predatorSheet'
+import {
+  createPredatorState,
+  type PredatorAnalysis,
+  type PredatorPreyId,
+  type PredatorState,
+} from './predatorTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-/** Duel abstraction: three seconds of direct study of this particular live manifestation. */
+/**
+ * Duel abstraction of Rihan's investigation: a five-line sheet (trigger, target, range,
+ * conditions, behaviour) filled by his own sight of this live manifestation. Once complete,
+ * Predator produces the matching counter by itself; the player never picks the creature.
+ */
 export {
   PREDATOR_ANALYSIS_FRAMES,
   PREDATOR_AURA_COST,
@@ -58,7 +68,7 @@ export function predatorReady(state: FightState, side: FightSide): boolean {
   const analysis = fighter.predator?.analysis
   if (!analysis || fighter.predator?.hunt || !predatorNenAvailable(fighter)) return false
   return (
-    analysis.observedFrames >= PREDATOR_ANALYSIS_FRAMES &&
+    sheetComplete(analysis) &&
     fighter.aura >= PREDATOR_AURA_COST &&
     preyIsLive(state, analysis.owner, analysis.preyId)
   )
@@ -68,7 +78,14 @@ export function beginPredatorAnalysis(state: FightState, side: FightSide): Fight
   const fighter = state[side]
   const predator = fighter.predator ?? createPredatorState()
   if (!predatorNenAvailable(fighter) || predator.hunt) return state
-  return { ...state, [side]: { ...fighter, predator: { ...predator, watching: true } } }
+  const liveBefore = predator.watching ? predator.liveBefore : livePrey(state, opposite(side))
+  return { ...state, [side]: { ...fighter, predator: { ...predator, watching: true, liveBefore } } }
+}
+
+const opposite = (side: FightSide): FightSide => (side === 'player' ? 'opponent' : 'player')
+
+function livePrey(state: FightState, owner: FightSide): readonly PredatorPreyId[] {
+  return PREDATOR_PREY.filter((prey) => preyIsLive(state, owner, prey.id)).map((prey) => prey.id)
 }
 
 export function choosePredatorPrey(
@@ -89,7 +106,8 @@ export function choosePredatorPrey(
       predator: {
         ...predator,
         watching: true,
-        analysis: { owner: side === 'player' ? 'opponent' : 'player', preyId, observedFrames: 0 },
+        liveBefore: predator.watching ? predator.liveBefore : livePrey(state, opposite(side)),
+        analysis: { owner: opposite(side), preyId, observedFrames: 0, sheet: emptyPredatorSheet() },
       },
     },
   }
@@ -132,6 +150,8 @@ function advanceForSide(state: FightState, side: FightSide): FightState {
   if (!predatorNenAvailable(fighter)) return suspendPredator(state, side)
   if (predator.hunt) return advanceHunt(state, side)
   if (!predator.watching) return state
+  // A sheet completed last frame decides the counter: Predator leaves with no player choice.
+  if (predatorReady(state, side)) return launchPredator(state, side)
   return studyPrey(state, side, predator)
 }
 
@@ -146,23 +166,35 @@ function suspendPredator(state: FightState, side: FightSide): FightState {
 }
 
 function studyPrey(state: FightState, side: FightSide, predator: PredatorState): FightState {
-  const owner: FightSide = side === 'player' ? 'opponent' : 'player'
-  const seen = PREDATOR_PREY.filter((prey) => preyIsLive(state, owner, prey.id))
-    .map((prey) => ({ owner, preyId: prey.id, observedFrames: 0 }))
+  const owner = opposite(side)
+  const live = livePrey(state, owner)
+  const seen: PredatorAnalysis[] = live
+    .map((preyId) => ({ owner, preyId, observedFrames: 0, sheet: emptyPredatorSheet() }))
     .filter((prey) => canSeePrey(state, side, prey))
   const known = [...new Set([...predator.known, ...seen.map((prey) => prey.preyId)])]
   const analysis = predator.analysis ?? seen[0] ?? null
   const visible = analysis && seen.some((prey) => prey.preyId === analysis.preyId)
-  const studied =
-    analysis && visible
-      ? {
-          ...analysis,
-          observedFrames: Math.min(PREDATOR_ANALYSIS_FRAMES, analysis.observedFrames + 1),
-        }
-      : analysis
+  const studied = analysis && visible ? observe(state, side, analysis) : analysis
+  // A Hatsu that appeared during the watch stays "new" until Rihan first lays eyes on it,
+  // even if it struck him while he reeled; one active before the watch never becomes new.
+  const before = predator.liveBefore ?? []
+  const liveBefore = live.filter((id) => before.includes(id) || (visible && analysis.preyId === id))
   return {
     ...state,
-    [side]: { ...state[side], predator: { ...predator, known, analysis: studied } },
+    [side]: { ...state[side], predator: { ...predator, known, analysis: studied, liveBefore } },
+  }
+}
+
+function observe(state: FightState, side: FightSide, analysis: PredatorAnalysis): PredatorAnalysis {
+  const before = state[side].predator?.liveBefore ?? []
+  return {
+    ...analysis,
+    observedFrames: Math.min(PREDATOR_ANALYSIS_FRAMES, analysis.observedFrames + 1),
+    sheet: observeSheet(analysis.sheet, {
+      viewer: state[side],
+      owner: state[analysis.owner],
+      onset: !before.includes(analysis.preyId),
+    }),
   }
 }
 

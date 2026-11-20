@@ -737,9 +737,18 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
 - Rihan étudie personnellement **un Hatsu précis** avec L (`predator.ts`).
   Seules les manifestations actives qu’il voit entrent dans son catalogue ; In
   exige Gyo, une information rapportée ou un simple indicateur de Hatsu aperçu ne
-  suffit pas. Avant/arrière + L change de proie et recommence son analyse ; bas + L
-  l’abandonne. Après 180 frames d’observation cumulée de cette manifestation, H
-  (ou L) matérialise Predator pour 40 aura. La durée, le coût, le déplacement et
+  suffit pas. Avant/arrière + L change d’enquête et recommence la fiche ; bas + L
+  l’abandonne. La fiche (`predatorSheet.ts`) a cinq lignes, chacune remplie par ce
+  que Rihan voit lui-même : **déclencheur** (une apparition survenue pendant son
+  observation, même s’il encaissait le coup à ce moment — une manifestation déjà
+  active avant l’observation ne le documente pas), **cible**
+  (manifestation et utilisateur à vue ensemble), **portée** (tenue malgré un écart
+  entre combattants qui varie de 6 unités), **conditions** (tenue pendant qu’un des
+  deux combattants change d’état : attaque, saut, garde, choc) et **comportement**
+  (180 frames d’observation cumulée). Fiche complète, Predator part seul la frame
+  suivante pour 40 aura (dès que l’aura est disponible) : le joueur ne choisit ni
+  le moment ni la créature, et le contre vise toujours la manifestation étudiée —
+  jamais de « mauvais Predator » aléatoire. La durée, le coût, le déplacement et
   la dissipation du chasseur en un coup sont des adaptations de duel, sans
   prétendre simuler toutes les déductions du manga.
   `predatorPrey.ts` limite la prédation aux manifestations prises en charge,
@@ -756,8 +765,8 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   persiste entre les manches et après fermeture du livre ou restitution de la
   capacité copiée ; les commandes Nen, On et attaques chargées restent bloquées.
   Le combat physique continue. Un nouveau match réinitialise ce prix, comme les
-  autres états du duel. Le HUD montre la technique ciblée, la progression et le
-  compte à rebours ; l’IA étudie avant de lancer Predator.
+  autres états du duel. Le HUD montre la technique ciblée, les cinq lignes de la
+  fiche, la progression et le compte à rebours ; l’IA étudie et Predator part seul.
 - Zakuro utilise son propre sang avec la perfusion réelle portée dès le début du
   duel (`blood-infusion` dans `preparationTypes.ts`). `bloodyMary.ts` sépare sang,
   poches, matière déployée et prise physique ; le Hatsu ne copie aucun matériel

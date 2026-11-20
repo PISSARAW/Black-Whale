@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { completePredatorSheet } from '../predatorSheet'
 import { AuthoritativeClashMatch } from './serverMatch'
 import { applyPvpCommand } from './commands'
 import { beginFight, createFight, tickFight, performMove } from '../engine'
@@ -203,7 +204,12 @@ describe('seat-specific Nen information', () => {
     state.opponent.predator = {
       watching: true,
       known: ['bungee-gum'],
-      analysis: { owner: 'player', preyId: 'bungee-gum', observedFrames: 180 },
+      analysis: {
+        owner: 'player',
+        preyId: 'bungee-gum',
+        observedFrames: 180,
+        sheet: completePredatorSheet(),
+      },
       hunt: null,
       successes: 0,
       sealFrames: 0,

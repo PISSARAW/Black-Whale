@@ -1,3 +1,4 @@
+import { ignoresWorldObstacles } from './halkenburgCollective'
 import { interceptSmallAnimalProjectile } from './littleEyeImpact'
 import { interceptDeviceProjectile } from './deviceImpact'
 import { interceptArenaProjectile } from './arenaSimulation'
@@ -9,6 +10,7 @@ export function interceptProjectileWorld(
   state: FightState,
   c: { projectile: FightProjectile; previousX: number },
 ) {
+  if (ignoresWorldObstacles(c.projectile)) return { state, intercepted: false, terrain: false }
   const terrain = gumProjectileCanHit(c.projectile)
     ? interceptArenaProjectile(state, c.projectile, c.previousX)
     : { state, intercepted: false }

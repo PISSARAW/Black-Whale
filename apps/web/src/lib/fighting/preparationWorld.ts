@@ -1,3 +1,4 @@
+import { cohortMemberReady } from './halkenburgCollective'
 import { scenarioOito } from './dolphinPeopleWorld'
 import { scenarioPaperDocument } from './paperDocuments'
 import { scenarioArenaMap } from './arenaMap'
@@ -190,9 +191,8 @@ export function hasEquipment(fighter: FightState['player'], equipment: FightEqui
 }
 
 export function readyCohort(state: FightState, side: FightSide): PreparedEntity[] {
-  return entitiesFor(state, side, 'supporter').filter(
-    (entry) =>
-      entry.consenting && entry.feather && !entry.sleepingFrames && !entry.halkenburgPassenger,
+  return entitiesFor(state, side, 'supporter').filter((entry) =>
+    cohortMemberReady(state, side, entry),
   )
 }
 

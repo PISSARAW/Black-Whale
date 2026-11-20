@@ -1,3 +1,4 @@
+import { SECOND_SIGNATURE_COMBOS } from './signatureCombosSecond'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { CombatFighter } from './combatRoutes'
 import type { FighterId, MoveSlot } from './types'
@@ -11,9 +12,14 @@ import type { FighterId, MoveSlot } from './types'
 export type SignatureStep =
   /** `hit: false` marks a technique that moves bodies without striking (recall, rebound). */
   | { move: MoveSlot; hit?: false }
-  | { dash: 'back' | 'forward' }
+  /** `through` crosses the other body (signatureCrossing.ts). */
+  | { dash: 'back' | 'forward' | 'through' }
   | { emperor: true }
   | { command: ArsenalCommand }
+  /** Parallel Future: close the eyes in Zetsu, wait for the vision, open them to diverge. */
+  | { future: 'close' | 'vision' | 'open' }
+  /** The opponent strikes back with this move; the step ends once the player is hurt. */
+  | { riposte: MoveSlot }
 
 export interface SignatureCombo {
   id: string
@@ -35,7 +41,7 @@ const VERDICT_OPENING: readonly SignatureStep[] = [
   { dash: 'forward' },
 ]
 
-export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
+const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   {
     id: 'kurapika:scarlet-verdict',
     fighter: 'kurapika',
@@ -87,6 +93,11 @@ export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   },
 ]
 
+export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
+  ...FIRST_SIGNATURE_COMBOS,
+  ...SECOND_SIGNATURE_COMBOS,
+]
+
 export const signatureCombosFor = (fighter: FighterId) =>
   SIGNATURE_COMBOS.filter((combo) => combo.fighter === fighter)
 
@@ -99,3 +110,17 @@ export function signatureCombo(id: string): SignatureCombo {
 /** Striking steps, in order: the moves that must each add one hit to the combo. */
 export const signatureHits = (combo: SignatureCombo): MoveSlot[] =>
   combo.steps.flatMap((step) => ('move' in step && step.hit !== false ? [step.move] : []))
+
+/**
+ * Expected combo counter of each striking step. A riposte, or closing the eyes for a
+ * vision, is a deliberate break: the next strike opens a new combo.
+ */
+export function signatureComboCounts(combo: SignatureCombo): number[] {
+  let count = 0
+  return combo.steps.flatMap((step) => {
+    if ('riposte' in step || ('future' in step && step.future === 'close')) count = 0
+    if (!('move' in step) || step.hit === false) return []
+    count += 1
+    return [count]
+  })
+}

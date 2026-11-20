@@ -67,3 +67,10 @@ export function coolAccelHeat(heat: AccelHeat | undefined): AccelHeat | undefine
   const next = Math.max(0, heat.heat - ACCEL_HEAT_DRAIN)
   return next === 0 ? undefined : { heat: next, overheated: heat.overheated }
 }
+
+/** Chains a move gains when it was started out of an accélération (`CancelGrammar.accelInto`). */
+export function accelChains(fighter: ArcadeFighter, move: { slot: MoveSlot }): string[] {
+  if (!fighter.attack?.accel) return []
+  const chains = cancelGrammarFor(fighter.id)?.accelInto?.[move.slot] ?? []
+  return chains.map((slot) => `${fighter.id}:${slot}`)
+}

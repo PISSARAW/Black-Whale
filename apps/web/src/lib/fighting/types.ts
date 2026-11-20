@@ -195,6 +195,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   health: number
   /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
   parallelEyesClosed?: boolean
+  /** Owner of a Parallel Future in its diverging phase (parallelFutureAbility.ts). */
+  futureDiverging?: true
   aura: number
   nen: NenTechniqueState<FightNenZone>
   facing: -1 | 1
@@ -277,6 +279,8 @@ export interface FighterDash {
   peak: number
   /** Started by an accélération (dashCancel.ts). */
   accel?: true
+  /** Passes through the other body: no pushbox (signatureCrossing.ts). Hurtboxes stay. */
+  through?: true
 }
 
 export interface FighterMotion {

@@ -1,4 +1,5 @@
 import { styleMobility } from './styleMobility'
+import { crossingDash } from './signatureCrossing'
 import { bodyLegFactor } from './bodyDamage'
 import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
@@ -135,7 +136,7 @@ function canDash(fighter: ArcadeFighter, dash: -1 | 0 | 1): dash is -1 | 1 {
 function startDash(fighter: ArcadeFighter, direction: -1 | 1): FighterDash {
   const mobility = styleMobility(fighter)
   const profile = direction === fighter.facing ? mobility.forwardDash : mobility.backDash
-  return { direction, frame: 0, ...profile }
+  return { direction, frame: 0, ...profile, ...crossingDash(fighter, direction) }
 }
 
 function advanceDash(fighter: ArcadeFighter, dash: FighterDash): ArcadeFighter {

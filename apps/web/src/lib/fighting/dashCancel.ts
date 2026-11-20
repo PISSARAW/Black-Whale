@@ -7,6 +7,7 @@ import { canAct } from './fightActorState'
 import { doubleTapDirection, motionOf } from './fighterMovement'
 import { releaseFocusedAura, setIn } from './nen'
 import { styleMobility } from './styleMobility'
+import { CROSSING_SPEED } from './signatureCrossing'
 import type { ArcadeFighter, FightInput } from './types'
 
 /**
@@ -32,7 +33,7 @@ export function dashCancel(fighter: ArcadeFighter, input: FightInput): ArcadeFig
       heldDirection: direction,
       tapDirection: 0,
       tapWindow: 0,
-      dash: { direction, frame: 0, ...profile, accel: true },
+      dash: { direction, frame: 0, ...profile, accel: true, ...crossing(fighter, profile.peak) },
     },
   }
 }
@@ -40,7 +41,7 @@ export function dashCancel(fighter: ArcadeFighter, input: FightInput): ArcadeFig
 function dashCancelReady(fighter: ArcadeFighter, direction: -1 | 1): boolean {
   const wanted = dashDirection(fighter)
   if (!wanted || accelOverheated(fighter) || !canAct(fighter) || fighter.y > 0) return false
-  if ((wanted === 'forward') !== (direction === fighter.facing)) return false
+  if ((wanted !== 'back') !== (direction === fighter.facing)) return false
   const attack = fighter.attack!
   const data = attackData(attack.kind, fighter)
   return attack.frame >= data.startup && attack.frame <= data.cancelEnd
@@ -52,4 +53,12 @@ function dashDirection(fighter: ArcadeFighter) {
   if (!attack?.confirmedHit) return undefined
   const move = moveById(attack.moveId)
   return move && cancelGrammarFor(fighter.id)?.dash?.[move.slot]
+}
+
+/** A `through` accélération crosses the other body, faster (signatureCrossing.ts). */
+function crossing(fighter: ArcadeFighter, peak: number): { through?: true; peak?: number } {
+  const move = moveById(fighter.attack?.moveId)
+  return move && cancelGrammarFor(fighter.id)?.dash?.[move.slot] === 'through'
+    ? { through: true, peak: peak * CROSSING_SPEED }
+    : {}
 }

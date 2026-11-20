@@ -1,4 +1,16 @@
-import type { DuelComboProfile } from './duelComboTypes'
+import type { CancelGrammar, DuelComboProfile } from './duelComboTypes'
+
+/**
+ * Douleur en vitesse (signatureCombosSecond.ts): the running thrust crosses the opponent,
+ * and the retreating cut that ends that crossing chains into the cleave. Only out of an
+ * accélération, so the Ren heat bounds the cleave > thrust > cut cycle to two laps.
+ */
+const FEITAN_GRAMMAR: CancelGrammar = {
+  specials: ['lowHeavy', 'forwardHeavy'],
+  supers: ['forwardSpecial'],
+  dash: { forwardLight: 'through' },
+  accelInto: { backHeavy: ['standingHeavy'] },
+}
 
 export const ROSTER_DUEL_PROFILES = {
   hisoka: {
@@ -89,7 +101,7 @@ export const ROSTER_DUEL_PROFILES = {
   feitan: {
     window: 5,
     block: 'standingHeavy',
-    grammar: { specials: ['lowHeavy', 'forwardHeavy'], supers: ['forwardSpecial'] },
+    grammar: FEITAN_GRAMMAR,
     moves: {
       standingLight: {
         tuning: { startup: 3, hitstun: 11, knockback: 0.8 },

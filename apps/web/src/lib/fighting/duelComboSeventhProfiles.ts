@@ -4,6 +4,8 @@ export const SEVENTH_DUEL_PROFILES = {
   tserriednich: {
     window: 6,
     block: 'standingHeavy',
+    // Dix secondes d'avance (signatureCombosSecond.ts): Calculated Sweep relaunches into Blind Spot.
+    relance: true,
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },

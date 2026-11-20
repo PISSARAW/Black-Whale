@@ -6,11 +6,12 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import { performTrainingAction } from './trainingAction'
 import { signatureHits, type SignatureCombo, type SignatureStep } from './signatureCombos'
+import { dummyInput, futureStep, riposteStep } from './signatureComboSteps'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 /** Frames of the double tap: press, release, press. */
 const TAP_FRAMES = 3
-const MAX_FRAMES = 420
+const MAX_FRAMES = 900
 
 export interface SignatureContact {
   move: string | undefined
@@ -23,10 +24,16 @@ export interface SignatureRun {
   /** Index of the first step that never ran; equals the step count once complete. */
   reached: number
 }
+/** The guarding dummy by default; `ai` lets the opponent's own AI fight back instead. */
+export interface SignatureDummy {
+  ai?: boolean
+}
 interface Cursor {
   state: FightState
   index: number
   tap: number
+  /** Player health when a riposte step began. */
+  health?: number
 }
 
 /** The fight a signature demonstration starts from: full aura, the dummy guards after a hit. */
@@ -54,7 +61,11 @@ export function createSignatureFight(
 }
 
 /** Plays the combo through the ordinary commands; each step waits until it can really run. */
-export function playSignatureCombo(combo: SignatureCombo, start: FightState): SignatureRun {
+export function playSignatureCombo(
+  combo: SignatureCombo,
+  start: FightState,
+  dummy: SignatureDummy = {},
+): SignatureRun {
   let cursor: Cursor = { state: start, index: 0, tap: -1 }
   let lastImpact = start.impact?.sequence ?? 0
   const contacts: SignatureContact[] = []
@@ -63,8 +74,10 @@ export function playSignatureCombo(combo: SignatureCombo, start: FightState): Si
     const { cursor: next, input } = step ? attempt(cursor, step) : { cursor, input: EMPTY_INPUT }
     const state = tickFight(next.state, input, {
       dt: 1 / 60,
-      ai: false,
-      opponentInput: { ...EMPTY_INPUT, guard: contacts.length > 0 },
+      ai: Boolean(dummy.ai),
+      opponentInput: dummy.ai
+        ? undefined
+        : dummyInput(contacts.length > 0 && !(step && 'riposte' in step)),
     })
     cursor = { ...next, state }
     lastImpact = recordContact(state, lastImpact, contacts)
@@ -78,6 +91,7 @@ function finished(combo: SignatureCombo, cursor: Cursor, contacts: SignatureCont
 
 function attempt(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: FightInput } {
   if ('dash' in step) return dashFrame(cursor, step.dash)
+  if ('future' in step || 'riposte' in step) return hingeStep(cursor, step)
   const state = cursor.state
   let after = state
   if ('move' in step) after = startMove(state, step.move)
@@ -90,6 +104,20 @@ function attempt(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: 
   const done = 'emperor' in step ? Boolean(after.player.kurapika?.emperorTime) : after !== state
   return {
     cursor: { ...cursor, state: after, index: cursor.index + Number(done) },
+    input: EMPTY_INPUT,
+  }
+}
+
+/** The deliberate break of a combo: a Parallel Future command or a riposte taken on purpose. */
+function hingeStep(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: FightInput } {
+  const health = cursor.health ?? cursor.state.player.health
+  const result =
+    'future' in step
+      ? futureStep(cursor.state, step.future)
+      : riposteStep(cursor.state, 'riposte' in step ? step.riposte : 'standingLight', health)
+  const index = cursor.index + Number(result.done)
+  return {
+    cursor: { ...cursor, state: result.state, index, health: result.done ? undefined : health },
     input: EMPTY_INPUT,
   }
 }
@@ -125,12 +153,11 @@ function emperorTime(state: FightState): FightState {
 }
 
 /** A double tap entered once the hit is confirmed and the hitstop has ended. */
-function dashFrame(cursor: Cursor, dash: 'back' | 'forward') {
+function dashFrame(cursor: Cursor, dash: 'back' | 'forward' | 'through') {
   const { state } = cursor
-  if (cursor.tap < 0 && !(state.player.attack?.confirmedHit && state.hitstop === 0))
-    return { cursor, input: EMPTY_INPUT }
+  if (cursor.tap < 0 && !dashReady(state)) return { cursor, input: EMPTY_INPUT }
   const tap = cursor.tap + 1
-  const direction = dash === 'forward' ? state.player.facing : -state.player.facing
+  const direction = dash === 'back' ? -state.player.facing : state.player.facing
   const held = tap !== 1
   const input = { ...EMPTY_INPUT, right: held && direction === 1, left: held && direction === -1 }
   const done = tap === TAP_FRAMES - 1
@@ -140,11 +167,19 @@ function dashFrame(cursor: Cursor, dash: 'back' | 'forward') {
   }
 }
 
+/** After a confirmed hit (accélération), or from a free stance (a diverging Tserriednich). */
+function dashReady(state: FightState): boolean {
+  const attack = state.player.attack
+  return state.hitstop === 0 && (attack ? Boolean(attack.confirmedHit) : !state.player.hitStun)
+}
+
 const CONTACT_GAP = 6
 
 function closingDash(state: FightState): boolean {
   const dash = state.player.motion?.dash
   const gap = Math.abs(state.opponent.x - state.player.x)
+  // A crossing dash runs until the body is past the opponent and facing it again.
+  if (dash?.through) return dash.direction === state.player.facing
   return Boolean(dash?.accel && dash.direction === state.player.facing && gap > CONTACT_GAP)
 }
 

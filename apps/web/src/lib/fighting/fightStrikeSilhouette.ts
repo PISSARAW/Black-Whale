@@ -1,5 +1,6 @@
+import { fighterMotionStyle } from './biscuitBody'
 import { addPoses, scalePose, type FightPose } from './fightPose'
-import { rosterMoveShape, rosterMotionStyle } from './rosterStrikeMotion'
+import { rosterMoveShape } from './rosterStrikeMotion'
 import type { PhaseFrames } from './keyPoseTimeline'
 import type { ArcadeFighter } from './types'
 
@@ -11,7 +12,7 @@ export function strikeSilhouette(
   const attack = fighter.attack
   if (!attack || fighter.y > 0 || attack.variant === 'throw') return {}
   const shape = rosterMoveShape(attack.moveId),
-    style = rosterMotionStyle(fighter.id)
+    style = fighterMotionStyle(fighter)
   if (!shape || !style) return {}
   const { frame, frames } = timing
   const p = Math.min(1, Math.max(0, frame / Math.max(1, frames.startup)))

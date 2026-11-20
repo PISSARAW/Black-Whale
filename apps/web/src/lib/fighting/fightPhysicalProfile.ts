@@ -1,7 +1,7 @@
+import { fighterMotionStyle } from './biscuitBody'
 import { humanProfile, frameShape } from '$lib/tour/humanProfiles'
 import { CANON, stance } from '$lib/tour/humanProportions'
 import { fighterDefinition } from './roster'
-import { rosterMotionStyle } from './rosterStrikeMotion'
 import { fightingStyle } from './fightStyles'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { biscuitTrueFormProfile } from './biscuitFigure'
@@ -53,7 +53,7 @@ export function fightPhysicalProfile(fighter: ArcadeFighter): FightPhysicalProfi
   const frame = frameShape(body.frame, body.likeness)
   const ground = stance(frame)
   const unit = body.height * ground.stature
-  const style = rosterMotionStyle(fighter.id)
+  const style = fighterMotionStyle(fighter)
   const weight = physicalWeight(body.build)
   const mobility = fightingStyle(fighter.id).moveScale
   const result = {

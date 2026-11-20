@@ -1,3 +1,4 @@
+import { fighterStance } from './biscuitBody'
 import { animateHanzoBlade } from './hanzoBladeFigure'
 import { plantHanzoSoles } from './hanzoGrounding'
 import { beginSettledPose } from './fightSettledPose'
@@ -242,7 +243,7 @@ function rightHandedPlan(plan: BodyPlan): BodyPlan {
 
 function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   if (!['down', 'ko', 'wakeup'].includes(fighter.pose)) return null
-  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
   return reactionPlan(fighter, context, standing)
 }
 
@@ -259,7 +260,7 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       key: 'astral-double',
       blend: 0.12,
     }
-  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
   const personal = chrolloBodyStance(fighter, standing)
   if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
   return restingWithConstraint(fighter, context, personal)
@@ -270,7 +271,7 @@ function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
     key: 'luini-occupied-passage',
     plant: false,
     blend: 0.08,
-    pose: stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, 0),
+    pose: stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, 0),
   }
 }
 

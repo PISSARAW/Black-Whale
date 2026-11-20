@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createFightState } from '$lib/fighting/fightState'
   import FightInjurySetup from './FightInjurySetup.svelte'
+  import FightDoorSetup from './FightDoorSetup.svelte'
   import FightHinrighKitSetup from './FightHinrighKitSetup.svelte'
   import { SCENARIO_RESOURCES } from '$lib/fighting/preparationResources'
   import { EMPTY_PREPARATION } from '$lib/fighting/preparationWorld'
@@ -68,6 +69,7 @@
       >{language === 'fr' ? 'Combat scénarisé' : 'Scenario combat'}</button
     >
   </div>
+  <FightDoorSetup {environment} fighters={{ player, opponent }} {language} {onChange} />
   <FightHinrighKitSetup
     {preparation}
     fighters={{ player, opponent }}

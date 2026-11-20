@@ -5,6 +5,7 @@ import { readPanelReplayCommand } from './fightReplayPanels'
 import { FIGHT_STAGES } from './stages'
 import { FIGHT_FORMATS } from './formats'
 import { createFightEnvironment } from './fightEnvironment'
+import { parseDoorFramePicks } from './voconteDoorSites'
 import { validInjuryPreparation } from './injuryPreparation'
 import { parseHinrighKit } from './hinrighKit'
 import type { FightPreparation } from './preparationTypes'
@@ -62,6 +63,10 @@ function preparation(value: unknown): FightPreparation | undefined {
     ...(hinrighKit ? { hinrighKit } : {}),
   }
 }
+function doorFrames(value: unknown) {
+  const picks = parseDoorFramePicks(value)
+  return picks === null ? fail() : picks
+}
 function setup(value: unknown): ReplaySetup {
   const entry = object(value)
   const env = object(entry.environment)
@@ -90,6 +95,7 @@ function setup(value: unknown): ReplaySetup {
     environment: createFightEnvironment({
       stageId,
       arenaInteractions: boolean(env.arenaInteractions),
+      doorFrames: doorFrames(env.doorFrames),
       halkenburgRosterVariant:
         env.halkenburgRosterVariant === undefined
           ? undefined

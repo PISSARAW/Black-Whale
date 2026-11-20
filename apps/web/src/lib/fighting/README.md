@@ -1484,13 +1484,25 @@ interrogatoire et rend ensuite la capacité, sans effacer l’information appris
 
 `voconteDoors.ts` transporte les corps réels qui franchissent une huisserie active,
 avec leur trajectoire simulée avant les collisions puis après une éventuelle poussée.
-L relie ou referme deux cadres physiques fournis par le duel : A à x=30, vers la
-droite, mène à B ; B à x=70, vers la gauche, ramène à A. Le seuil de retour fixe
-l’orientation d’arrivée. Les deux combattants peuvent subir le transport, sans
-nettoyage du hitstun, invulnérabilité, impact offensif ou charge d’esquive.
-Marcher à contresens ou sauter au-dessus du linteau ne déclenche rien. Les
-projectiles, armes lancées et constructions de Nen ne sont pas transportés ;
-le double contrôlé de Hanzo ne se substitue pas à son corps endormi.
+L relie ou referme deux cadres physiques du niveau. Avant la manche, chaque siège
+capable de Door (`DOOR_CAPABLE_FIGHTERS`) choisit deux huisseries parmi celles du
+décor (`voconteDoorSites.ts`, catalogue par type de scène, écart minimal de 20) ;
+le choix vit dans `environment.doorFrames`, passe par la relecture et le protocole
+PvP, et ne change plus pendant la manche. Sans choix valide, la paire historique
+A à x=30 / B à x=70 s’applique. Le cadre de gauche est A (franchi vers la droite,
+mène à B), celui de droite B (franchi vers la gauche, ramène à A). Le seuil de
+retour fixe l’orientation d’arrivée. Les deux combattants peuvent subir le
+transport, sans nettoyage du hitstun, invulnérabilité, impact offensif ou charge
+d’esquive. Marcher à contresens ou sauter au-dessus du linteau ne déclenche rien.
+
+`voconteDoorProjectiles.ts` fait passer les projectiles **matériels** (`matter:
+'object'`) qui franchissent réellement un cadre ouvert, dans son sens et sous le
+linteau : vitesse et cap conservés, sortie de l’autre côté du cadre lié, et le
+monde situé entre les deux cadres (couverts, caisses) est sauté. L’aura émise,
+les tirs attachés (Bungee Gum, poing télécommandé) et les constructions de Nen ne
+passent pas ; le double contrôlé de Hanzo ne se substitue pas à son corps endormi.
+Ce passage des objets est un choix de jeu explicite qui s’écarte de la lecture
+du manga citée ci-dessous.
 
 La préparation de 18 frames est interruptible. Les deux cadres fournis, leur
 position, leurs dimensions, la sortie à deux unités, le coût de 20 aura, la

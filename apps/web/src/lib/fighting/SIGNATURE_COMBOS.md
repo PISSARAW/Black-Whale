@@ -54,5 +54,15 @@ Rebond déplacent les corps sans frapper.
 | Emperor Time en capture | `kurapikaActions.ts`                  | Activable pendant une capture ou une Chain Jail confirmée.                                                                                                                                                  |
 
 Une commande entrée pendant le hitstop est perdue : le double appui d’une accélération
-se joue après l’impact. Les deux combos ne sont pas encore proposés comme leçons de
-l’Académie, dont les routes ne connaissent que des coups.
+se joue après l’impact.
+
+## Dans l’Académie
+
+École de combat → « Combos signature » propose chaque combo en pratique et en
+démonstration (`signatureSchool.ts`, `FightSignatureLessons.svelte`). L’exercice suit
+les étapes réellement jouées : un coup qui démarre, une accélération, Emperor Time,
+la pose de l’ancrage. Chaque touche doit prolonger le même combo ; une garde, un coup
+hors route ou une cible qui se relève fait échouer l’essai. La démonstration passe par
+les mêmes commandes de relecture, et l’ancrage par `match.queue`. Seuls les combos dont
+toutes les étapes sont connues de l’Académie y figurent (`ACADEMY_SIGNATURES`) : un
+combo qui demande une préparation ou un tir n’y apparaît pas encore.

@@ -10,6 +10,7 @@
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
+  import FightAccelHeat from './FightAccelHeat.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -88,6 +89,7 @@
                 : 'BURST · SPENT'
               : 'BURST · READY'}
           </div>{/if}
+        {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
         <FightComboMaster {state} {side} {language} compact />
         <FightKameoBadge {state} {side} {language} />
       </div>

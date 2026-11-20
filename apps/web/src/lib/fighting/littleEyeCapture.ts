@@ -1,4 +1,5 @@
 import { emitLittleEyeBall } from './littleEyeBall'
+import { littleEyeAnimalFraction, littleEyeCoverFraction } from './littleEyeCover'
 import { animalTarget } from './preparationRequirements'
 import { littleEyeTarget, type LittleEyeShot } from './littleEyeTypes'
 import { updateEntity } from './preparationWorld'
@@ -27,7 +28,7 @@ export function advanceLittleEyeShots(state: FightState): FightState {
       y: shot.y + shot.velocityY / 60,
       age: shot.age + 1,
     }
-    const target = firstContact(next, shot, moved)
+    const { target, stopped } = shotContact(next, shot, moved)
     if (target)
       next = updateEntity(next, target.id, {
         controller: {
@@ -38,9 +39,17 @@ export function advanceLittleEyeShots(state: FightState): FightState {
         },
         littleEye: { facing: shot.velocityX < 0 ? -1 : 1 },
       })
-    else if (shotInScene(moved)) kept.push(moved)
+    else if (!stopped && shotInScene(moved)) kept.push(moved)
   }
   return { ...next, battlefield: { ...next.battlefield!, littleEyeShots: kept } }
+}
+/** The ball captures the first animal it meets, unless real cover stands in front of it. */
+function shotContact(state: FightState, from: LittleEyeShot, to: LittleEyeShot) {
+  const cover = littleEyeCoverFraction(state, from, to)
+  const found = firstContact(state, from, to)
+  if (found && (cover === null || littleEyeAnimalFraction(from, to, found) <= cover))
+    return { target: found, stopped: false }
+  return { target: undefined, stopped: cover !== null }
 }
 function firstContact(state: FightState, from: LittleEyeShot, to: LittleEyeShot) {
   return (state.battlefield?.entities ?? [])

@@ -931,6 +931,12 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   reste utilisable en Zetsu ou si son Hatsu est volé. Le modèle tient le pistolet
   en main droite, vise, produit un éclair au départ du tir puis le rengaine.
   **L**, avec ou sans direction, pose **Secret Window** par contact (chapitre 373),
+  La boule d’aura voyage réellement : une couverture réelle de l’arène entre
+  Sayird et l’animal l’arrête. Les seuls ordres sont se déplacer, regarder,
+  rester et libérer — l’animal n’a aucune attaque. Le corps de Sayird reste
+  frappable pendant le pilotage. Un projectile réel ou un coup bas (accroupi
+  ou visant les pieds) qui balaie l’animal le blesse ou le tue, et le contrôle
+  se perd.
   y compris sur un bras en garde, sans dégâts, stun, recul, points ou bonus défensif.
   Hors de portée, pendant une invulnérabilité ou après interruption du geste,
   aucun hibou n’est attaché. Une esquive effective empêche le contact.

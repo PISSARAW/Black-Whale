@@ -2,6 +2,7 @@ import { advanceHalkenburgSupporter } from './halkenburgSupporterMotion'
 import { personKeepsLittleEye } from './dolphinPeopleState'
 import { advanceLittleEyeShots } from './littleEyeCapture'
 import { advanceLittleEyeSenses } from './littleEyeSenses'
+import { strikeSmallAnimals } from './littleEyeStrike'
 import { dolphinBody } from './dolphinBodies'
 import { equippedDolphin, loanCarrier } from './dolphinBorrowing'
 import { stolenAuraActor } from './dolphinSupply'
@@ -22,7 +23,7 @@ export function advancePreparation(
   inputs: { player: FightInput; opponent?: FightInput },
 ): FightState {
   if (!state.battlefield) return state
-  let next = advanceLittleEyeShots(state)
+  let next = strikeSmallAnimals(advanceLittleEyeShots(state))
   for (const side of ['player', 'opponent'] as const)
     next = readInteraction(next, side, Boolean(inputs[side]?.interact))
   const entities = next.battlefield!.entities.map((entry) => advanceEntity(next, entry))

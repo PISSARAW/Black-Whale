@@ -1,5 +1,7 @@
 import { advanceMachiMaterial, sutureWound } from '../machiMaterial'
 import { attackPhase } from '../frameData'
+import { machiStrikeThreadAvailable } from '../machiSpool'
+import { advanceMachiTraps } from '../machiTraps'
 import {
   advanceMachiThreads,
   machiMoveId,
@@ -14,7 +16,9 @@ export const machiHatsu: FighterHatsu = {
   onTrigger: unchangedTrigger,
   onImpact: threadImpact,
   onFrame: (state) =>
-    advanceMachiMaterial(advanceMachiThreads(suture(suture(state, 'player'), 'opponent'))),
+    advanceMachiMaterial(
+      advanceMachiThreads(advanceMachiTraps(suture(suture(state, 'player'), 'opponent'))),
+    ),
 }
 
 function threadImpact(context: HatsuImpactContext): FightState {
@@ -23,7 +27,7 @@ function threadImpact(context: HatsuImpactContext): FightState {
   if (moveId === 'machi:finisher') return releaseMachiThread(state, side)
   const kind =
     moveId === 'machi:forwardSpecial' ? 'mark' : moveId === 'machi:downSpecial' ? 'bind' : null
-  if (!kind) return state
+  if (!kind || !machiStrikeThreadAvailable(state, side)) return state
   const target = state[defenderSide]
   return {
     ...state,

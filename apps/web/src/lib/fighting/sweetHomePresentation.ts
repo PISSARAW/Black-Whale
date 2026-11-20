@@ -11,8 +11,13 @@ export interface SweetHomeAccent {
   recipient: SweetHomeRecipient
   backlash: boolean
   damage: number
+  /** The wound came from the owner's kameo, received by the right hand. */
+  ally?: true
   started: number
   age: number
+}
+function allyFlag(ally: true | undefined): { ally?: true } {
+  return ally ? { ally } : {}
 }
 function confirmedTransfer(state: FightState): Omit<SweetHomeAccent, 'started' | 'age'> | null {
   const hit = state.impact
@@ -30,6 +35,7 @@ function confirmedTransfer(state: FightState): Omit<SweetHomeAccent, 'started' |
       recipient: { kind: 'object', id: target.id, x: target.x, y: target.y },
       backlash: false,
       damage: object.damage,
+      ...allyFlag(object.ally),
     }
   }
   if (!hit.transfer || hit.damage <= 0) return null
@@ -40,6 +46,7 @@ function confirmedTransfer(state: FightState): Omit<SweetHomeAccent, 'started' |
     recipient: { kind: 'body', side: hit.transfer.to },
     backlash: hit.transfer.backlash,
     damage: hit.damage,
+    ...allyFlag(hit.transfer.ally),
   }
 }
 /** A confirmed injury transfer is presentation input, never an input press or a stored wound. */

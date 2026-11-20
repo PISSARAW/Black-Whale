@@ -70,8 +70,9 @@ export function createSweetHomeAnchors(options: EffectSceneOptions) {
       if (old && same(old.observed, observed)) return old.path
       const right = hand(options, { state, side: event.owner, hand: 'right' })
       const left = hand(options, { state, side: event.owner, hand: 'left' })
-      const points = [controlChest(options, state, event.from)]
-      if (event.from !== event.owner) points.push(right)
+      // An ally's wound enters at the right hand; the kameo has no figure of its own here.
+      const points = event.ally ? [right] : [controlChest(options, state, event.from)]
+      if (event.from !== event.owner && !event.ally) points.push(right)
       points.push(left, destination(options, { state, event, left }))
       const path = { points, right, left }
       cache.set(event.id, { observed, path })

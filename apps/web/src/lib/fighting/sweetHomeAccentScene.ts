@@ -77,7 +77,7 @@ export function createSweetHomeAccentScene(options: EffectSceneOptions): Fighter
     held.recipient.position.copy(path.points.at(-1)!)
     held.source.scale.setScalar(1.1 - progress * 0.65)
     held.source.visible = event.age < 8
-    held.right.visible = event.from !== event.owner && event.age < 11
+    held.right.visible = (event.ally || event.from !== event.owner) && event.age < 11
     held.left.visible = event.age >= 4
     held.recipient.visible = event.age >= 8 && !event.backlash
     held.recipient.scale.setScalar(0.75 + progress * 0.6)

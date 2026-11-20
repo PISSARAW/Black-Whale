@@ -349,8 +349,9 @@ export interface FightImpact {
   projectileId: number | null
   position: { x: number; y: number }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
-  objectTransfer?: { objectId: string; owner: FightSide; damage: number }
-  transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean }
+  /** `ally`: the wound came from the owner's own kameo, held by the right hand. */
+  objectTransfer?: { objectId: string; owner: FightSide; damage: number; ally?: true }
+  transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean; ally?: true }
 }
 
 export interface FightAttackClash {

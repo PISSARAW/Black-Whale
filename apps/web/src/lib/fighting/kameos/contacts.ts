@@ -1,6 +1,7 @@
 import { resolveMeleePair } from '../combatImpact'
 import { activeHitbox, boxesOverlap, hurtboxes, otherSide } from '../frameData'
 import type { FightSide, FightState } from '../types'
+import { guardAllyWound } from '../sweetHomeAlly'
 import { mergeDuel, projectDuel } from './projection'
 import { kameoOnStage, kameoSlot } from './state'
 
@@ -16,7 +17,9 @@ export function resolveKameoContacts(state: FightState, side: FightSide): FightS
   if (state.catsName || state.phase !== 'fighting') return state
   const projection = projectDuel(state, side, slot)
   const view = resolveMeleePair(projection.view)
-  return view === projection.view ? state : mergeDuel(state, projection, view)
+  if (view === projection.view) return state
+  // Terebellum's right hand may take the ally's wound out through her left hand.
+  return guardAllyWound({ before: state, after: mergeDuel(state, projection, view), side })
 }
 
 /** Both camps, player first, as the main pair resolves its own attacks. */

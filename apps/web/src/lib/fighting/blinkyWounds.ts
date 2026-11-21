@@ -1,5 +1,6 @@
 import { blinkyAvailable, blinkyUtilityAttack, plugWoundsInput } from './blinky'
 import { luiniKnifeStrike } from './luiniKnife'
+import { machiElbowWound } from './machiWound'
 import { kallutoFanStrike } from './threeCombatWounds'
 import { historicalBladeStrike } from './historicalWeapons'
 import { EMPTY_INPUT, type ArcadeFighter, type FightSide, type FightState } from './types'
@@ -12,7 +13,7 @@ export function recordBlinkyWound(
 ): FightState {
   const hit = after.impact
   if (!eligibleWoundImpact(hit)) return after
-  if (!woundingStrike(before[side])) return after
+  if (!woundingStrike(before[side]) && !machiElbowWound(before[side], hit)) return after
   const target = side === 'player' ? 'opponent' : 'player'
   if (after[target].health >= before[target].health) return after
   return {

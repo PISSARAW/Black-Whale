@@ -15,6 +15,8 @@ export interface DuelComboProfile {
   grammar?: CancelGrammar
   /** A derived grammar (duelComboDerivedGrammar.ts) that also allows the relance. */
   relance?: true
+  /** Accélération for a derived grammar (duelComboDerivedGrammar.ts); see CancelGrammar.dash. */
+  dash?: CancelGrammar['dash']
 }
 
 /**

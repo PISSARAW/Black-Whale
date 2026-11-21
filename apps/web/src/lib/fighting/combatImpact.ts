@@ -4,6 +4,8 @@ import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
 import { resolveThrowTech, throwMisses, throwTechPossible } from './throwRules'
+import { confirmShot } from './shotConfirm'
+import { attackCanResolve, launchesTarget } from './impactAdmission'
 import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
@@ -30,11 +32,9 @@ import { launchesWithDirectionalEnding } from './directionalChain'
 import {
   activeHitbox,
   attackData,
-  attackPhase,
   boxesOverlap,
   contactPoint,
   hurtboxes,
-  isAntiAir,
   otherSide,
 } from './frameData'
 import { resolveHatsuImpact } from './hatsu'
@@ -338,10 +338,6 @@ function spendAttacker(
   return spent
 }
 
-function launchesTarget(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
-  return isAntiAir(attacker) && sleepingBody(defender).y > 0
-}
-
 function shouldResolveHatsu(
   fighter: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
@@ -416,7 +412,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   const next = {
     ...state,
-    [side]: attacker,
+    [side]: confirmShot(attacker, hit.projectile, defence),
     [hit.defenderSide]: struck,
     score,
     knockdowns,
@@ -460,12 +456,6 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     archived.impact!.attacker,
     otherSide(archived.impact!.attacker),
   )
-}
-
-function attackCanResolve(
-  fighter: ArcadeFighter,
-): fighter is ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> } {
-  return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {

@@ -4,6 +4,8 @@ export const SIXTH_DUEL_PROFILES = {
   theta: {
     window: 6,
     block: 'standingHeavy',
+    // Leçon de tir (signatureCombosSenses.ts): forward from the covering shot, back from the sweep.
+    dash: { backSpecial: 'forward', lowHeavy: 'back' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },

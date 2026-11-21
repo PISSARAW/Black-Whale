@@ -182,7 +182,8 @@ export function tuneDuelComboProfile(moveset: FighterMoveset): FighterMoveset {
   if (!authored) return moveset
   const derive = !authored.grammar && !DERIVATION_EXCLUDED.has(moveset.fighterId)
   const profile = derive ? deriveGrammarProfile(moveset, authored) : authored
-  if (derive && profile.grammar) DERIVED_GRAMMARS.set(moveset.fighterId, profile.grammar)
+  if (derive && profile.grammar)
+    DERIVED_GRAMMARS.set(moveset.fighterId, { ...profile.grammar, dash: authored.dash })
   return { ...moveset, moves: moveset.moves.map((move) => tune(move, profile)) }
 }
 

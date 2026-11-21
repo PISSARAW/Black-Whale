@@ -21,6 +21,16 @@
         "--strictPort"
       ],
       "port": 3100
+    },
+    {
+      "name": "signature-combos",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "apps/web/scripts/serve-fighting-demo.mjs",
+        "--demo=signature-combos",
+        "--port=3210"
+      ],
+      "port": 3210
     }
   ]
 }

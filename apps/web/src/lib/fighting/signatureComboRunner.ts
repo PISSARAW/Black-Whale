@@ -27,6 +27,8 @@ export interface SignatureRun {
 /** The guarding dummy by default; `ai` lets the opponent's own AI fight back instead. */
 export interface SignatureDummy {
   ai?: boolean
+  /** Sees every simulated frame with the index of the step being attempted (demonstrations). */
+  onFrame?: (state: FightState, step: number) => void
 }
 interface Cursor {
   state: FightState
@@ -72,17 +74,19 @@ export function playSignatureCombo(
   for (let frame = 0; frame < MAX_FRAMES && !finished(combo, cursor, contacts); frame++) {
     const step = combo.steps[cursor.index]
     const { cursor: next, input } = step ? attempt(cursor, step) : { cursor, input: EMPTY_INPUT }
-    const state = tickFight(next.state, input, {
-      dt: 1 / 60,
-      ai: Boolean(dummy.ai),
-      opponentInput: dummy.ai
-        ? undefined
-        : dummyInput(contacts.length > 0 && !(step && 'riposte' in step)),
-    })
+    const state = tickFight(next.state, input, opponentControls(dummy, step, contacts.length > 0))
     cursor = { ...next, state }
     lastImpact = recordContact(state, lastImpact, contacts)
+    dummy.onFrame?.(state, cursor.index)
   }
   return { state: cursor.state, contacts, reached: cursor.index }
+}
+
+/** The AI fights on its own; the dummy guards once struck, except while striking back. */
+function opponentControls(dummy: SignatureDummy, step: SignatureStep | undefined, struck: boolean) {
+  if (dummy.ai) return { dt: 1 / 60, ai: true }
+  const riposte = Boolean(step && 'riposte' in step)
+  return { dt: 1 / 60, ai: false, opponentInput: dummyInput(struck && !riposte) }
 }
 
 function finished(combo: SignatureCombo, cursor: Cursor, contacts: SignatureContact[]) {

@@ -3,9 +3,15 @@ import { comboAdmissionBody } from './comboAuraCost'
 import { performAuraAttack, tickFight } from './engine'
 import { performArsenalAction } from './arsenalExecution'
 import { canStartFighterAttack } from './fighterAttacks'
+import { attackPhase } from './frameData'
 import { moveForSlot } from './movesets'
 import { performTrainingAction } from './trainingAction'
-import { signatureHits, type SignatureCombo, type SignatureStep } from './signatureCombos'
+import { setTrainingResources } from './trainingSession'
+import {
+  signatureHits,
+  type SignatureCombo,
+  type SignaturePreparationStep,
+} from './signatureCombos'
 import { dummyInput, futureStep, riposteStep } from './signatureComboSteps'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
@@ -43,7 +49,7 @@ export function createSignatureFight(
   combo: SignatureCombo,
   options: { mirrored: boolean; gap: number },
 ) {
-  const state = createCombatRouteFight(
+  const route = createCombatRouteFight(
     {
       id: combo.id,
       fighter: combo.fighter,
@@ -54,6 +60,7 @@ export function createSignatureFight(
     },
     combo.opponent,
   )
+  const state = prepareSignature(combo, route)
   const facing = options.mirrored ? -1 : 1
   return {
     ...state,
@@ -62,43 +69,87 @@ export function createSignatureFight(
   } satisfies FightState
 }
 
+const SETTLE_FRAMES = 240
+
+/** Preparation runs at contact range, then both bodies settle before the combo begins. */
+function prepareSignature(combo: SignatureCombo, start: FightState): FightState {
+  const steps = combo.preparation
+  if (!steps) return start
+  const hits = steps.filter((step) => 'move' in step && step.hit !== false).length
+  let state = playSignatureSteps({ steps, hits }, start).state
+  for (let i = 0; i < SETTLE_FRAMES && !settled(state); i++)
+    state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: false, opponentInput: EMPTY_INPUT })
+  // A new exercise: the dummy guards only after the combo's own first hit, aura is refilled.
+  const training = state.training && { ...state.training, firstHitTaken: false }
+  return setTrainingResources({ ...state, impact: null, training }, 'player', {
+    aura: 100,
+    infiniteAura: false,
+    infiniteHealth: false,
+  })
+}
+
+function settled(state: FightState): boolean {
+  const idle = (side: 'player' | 'opponent') => {
+    const body = state[side]
+    return !body.attack && !body.hitStun && !body.blockStun && !body.knockdownFrames
+  }
+  return !state.hitstop && !state.projectiles.length && idle('player') && idle('opponent')
+}
+
 /** Plays the combo through the ordinary commands; each step waits until it can really run. */
 export function playSignatureCombo(
   combo: SignatureCombo,
   start: FightState,
   dummy: SignatureDummy = {},
 ): SignatureRun {
+  return playSignatureSteps({ steps: combo.steps, hits: signatureHits(combo).length, dummy }, start)
+}
+
+/** Steps are played in order; the run ends once every step ran and `hits` contacts landed. */
+export function playSignatureSteps(
+  plan: { steps: readonly SignaturePreparationStep[]; hits: number; dummy?: SignatureDummy },
+  start: FightState,
+): SignatureRun {
+  const { steps, hits, dummy = {} } = plan
   let cursor: Cursor = { state: start, index: 0, tap: -1 }
   let lastImpact = start.impact?.sequence ?? 0
   const contacts: SignatureContact[] = []
-  for (let frame = 0; frame < MAX_FRAMES && !finished(combo, cursor, contacts); frame++) {
-    const step = combo.steps[cursor.index]
+  const shots = new Map<number, string>()
+  const finished = () => cursor.index >= steps.length && contacts.length >= hits
+  for (let frame = 0; frame < MAX_FRAMES && !finished(); frame++) {
+    const step = steps[cursor.index]
     const { cursor: next, input } = step ? attempt(cursor, step) : { cursor, input: EMPTY_INPUT }
     const state = tickFight(next.state, input, opponentControls(dummy, step, contacts.length > 0))
     cursor = { ...next, state }
-    lastImpact = recordContact(state, lastImpact, contacts)
+    labelShots(state, shots)
+    lastImpact = recordContact(state, lastImpact, { contacts, shots })
     dummy.onFrame?.(state, cursor.index)
   }
   return { state: cursor.state, contacts, reached: cursor.index }
 }
 
 /** The AI fights on its own; the dummy guards once struck, except while striking back. */
-function opponentControls(dummy: SignatureDummy, step: SignatureStep | undefined, struck: boolean) {
+function opponentControls(
+  dummy: SignatureDummy,
+  step: SignaturePreparationStep | undefined,
+  struck: boolean,
+) {
   if (dummy.ai) return { dt: 1 / 60, ai: true }
   const riposte = Boolean(step && 'riposte' in step)
   return { dt: 1 / 60, ai: false, opponentInput: dummyInput(struck && !riposte) }
 }
 
-function finished(combo: SignatureCombo, cursor: Cursor, contacts: SignatureContact[]) {
-  return cursor.index >= combo.steps.length && contacts.length >= signatureHits(combo).length
-}
-
-function attempt(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: FightInput } {
+function attempt(
+  cursor: Cursor,
+  step: SignaturePreparationStep,
+): { cursor: Cursor; input: FightInput } {
   if ('dash' in step) return dashFrame(cursor, step.dash)
   if ('future' in step || 'riposte' in step) return hingeStep(cursor, step)
   const state = cursor.state
   let after = state
   if ('move' in step) after = startMove(state, step.move)
+  else if ('ranged' in step) after = fire(state, 'player')
+  else if ('incoming' in step) after = incoming(state)
   else if ('emperor' in step) after = emperorTime(state)
   else
     after = performArsenalAction(
@@ -113,7 +164,10 @@ function attempt(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: 
 }
 
 /** The deliberate break of a combo: a Parallel Future command or a riposte taken on purpose. */
-function hingeStep(cursor: Cursor, step: SignatureStep): { cursor: Cursor; input: FightInput } {
+function hingeStep(
+  cursor: Cursor,
+  step: SignaturePreparationStep,
+): { cursor: Cursor; input: FightInput } {
   const health = cursor.health ?? cursor.state.player.health
   const result =
     'future' in step
@@ -144,6 +198,19 @@ function startMove(state: FightState, slot: Parameters<typeof moveForSlot>[1]): 
   const started =
     after.player.attack?.moveId === move.id && after.player.attack !== state.player.attack
   return started ? after : state
+}
+
+/** The ordinary ranged command; unchanged state when the engine refuses it. */
+function fire(state: FightState, side: 'player' | 'opponent'): FightState {
+  const after = performAuraAttack({ state, side, kind: 'ranged', auraCharged: false })
+  const started = after[side].attack?.kind === 'ranged' && after[side].attack !== state[side].attack
+  return started ? after : state
+}
+
+/** The opponent fires into the player's technique once it is active (a capture window). */
+function incoming(state: FightState): FightState {
+  if (state.player.attack && attackPhase(state.player) !== 'active') return state
+  return fire(state, 'opponent')
 }
 
 /** Aura + finisher toggles Emperor Time; it is retried until a capture lets it start. */
@@ -187,13 +254,31 @@ function closingDash(state: FightState): boolean {
   return Boolean(dash?.accel && dash.direction === state.player.facing && gap > CONTACT_GAP)
 }
 
+/** A projectile is credited to the move that fired it, even once a later move has started. */
+function labelShots(state: FightState, shots: Map<number, string>) {
+  for (const shot of state.projectiles)
+    if (shot.owner === 'player' && !shots.has(shot.id))
+      shots.set(shot.id, state.player.attack?.moveId ?? `${state.player.id}:ranged`)
+}
+
+/** A shot is credited to its move; one fired point-blank lands on the frame it appears. */
+function contactMove(state: FightState, shots: Map<number, string>): string | undefined {
+  const id = state.impact?.projectileId
+  if (id === null || id === undefined) return state.player.attack?.moveId
+  return shots.get(id) ?? state.player.attack?.moveId ?? `${state.player.id}:ranged`
+}
+
 /** Appends the player's new contact, if this frame produced one; returns the impact seen. */
-function recordContact(state: FightState, seen: number, contacts: SignatureContact[]): number {
+function recordContact(
+  state: FightState,
+  seen: number,
+  record: { contacts: SignatureContact[]; shots: Map<number, string> },
+): number {
   const impact = state.impact
   if (!impact || impact.sequence === seen) return seen
   if (impact.attacker === 'player')
-    contacts.push({
-      move: state.player.attack?.moveId,
+    record.contacts.push({
+      move: contactMove(state, record.shots),
       combo: impact.comboHits ?? 0,
       blocked: Boolean(impact.blocked),
     })

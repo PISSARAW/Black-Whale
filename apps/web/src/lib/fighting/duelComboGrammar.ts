@@ -25,7 +25,8 @@ export function grammarCancels(
   if (grammar.supers.includes(move.slot)) return { cancelInto: [], cancelOnBlockInto: [] }
   if (grammar.specials.includes(move.slot))
     return {
-      cancelInto: ids(fighter, [...accelTargets(grammar, move.slot), ...grammar.supers]),
+      // A special keeps its written chains (target combos, e.g. Double page).
+      cancelInto: ids(fighter, [...chains, ...accelTargets(grammar, move.slot), ...grammar.supers]),
       cancelOnBlockInto: [],
     }
   if (!GROUND_NORMALS.has(move.category) || move.variant === 'air')

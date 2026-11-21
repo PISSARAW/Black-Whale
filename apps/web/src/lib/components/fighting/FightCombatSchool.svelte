@@ -18,6 +18,10 @@
     WAKEUP_FOLLOWUPS,
     wakeupPracticeLabel,
   } from '$lib/fighting/wakeupPracticeLabels'
+  import { isSignatureLesson } from '$lib/fighting/signatureSchool'
+  import { signatureCombo } from '$lib/fighting/signatureCombos'
+  import { signatureStepLabel } from '$lib/fighting/signatureLessonText'
+  import FightSignatureLessons from './FightSignatureLessons.svelte'
   export let school: CombatSchool
   export let language: 'fr' | 'en'
   export let expanded = false
@@ -34,7 +38,11 @@
   $: kameoRoutes = routes.filter((route) => route.kameo)
   $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup && !route.kameo)]
   $: current = $school
-  $: activeRoute = current && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
+  $: activeSignature = current && isSignatureLesson(current.id) ? signatureCombo(current.id) : null
+  $: activeRoute =
+    current && !activeSignature && !current.id.endsWith(':defense') ? combatRoute(current.id) : null
+  $: nextSignatureStep =
+    activeSignature && current ? activeSignature.steps[current.step] : undefined
   const cues = {
     'support-wait': [
       'Attends l’effet du kaméo et la fin de ton geste. Le soutien ne compte pas comme une touche.',
@@ -136,9 +144,11 @@
             ? 'Exercice'
             : 'Exercise'} · {activeRoute
           ? activeRoute.title[index]
-          : language === 'fr'
-            ? 'Bloquer puis punir'
-            : 'Block and punish'}</strong
+          : activeSignature
+            ? activeSignature.title[index]
+            : language === 'fr'
+              ? 'Bloquer puis punir'
+              : 'Block and punish'}</strong
       >
       {#if activeRoute}<p class="route">{routeText(activeRoute.id)}</p>
         <details>
@@ -154,6 +164,18 @@
             {language === 'fr'
               ? 'Saute sur place, attends la descente, puis enchaîne tes deux attaques aériennes.'
               : 'Jump in place, wait until descending, then connect your two air attacks.'}
+          </p>{/if}
+      {:else if activeSignature}
+        <details>
+          <summary>{language === 'fr' ? 'Conditions de la route' : 'Route conditions'}</summary>
+          <p>{activeSignature.requirement[index]}</p>
+        </details>
+        {#if nextSignatureStep && !current.failed}<p class="route">
+            {language === 'fr' ? 'Étape suivante' : 'Next step'} · {signatureStepLabel(
+              activeSignature,
+              nextSignatureStep,
+              { language: index ? 1 : 0, bindings: $bindings },
+            )}
           </p>{/if}
       {:else}<p>
           {language === 'fr' ? 'Garde' : 'Guard'} : {$bindings.playerGuard} · {language === 'fr'
@@ -171,7 +193,7 @@
         </p>
       {/if}
       <span
-        >{current.step} / {activeRoute?.moves.length ?? 2}
+        >{current.step} / {activeSignature?.steps.length ?? activeRoute?.moves.length ?? 2}
         {#if (activeRoute?.hits?.[current.step] ?? 1) > 1}
           · {language === 'fr' ? 'Impacts de la rafale' : 'Barrage impacts'} : {current.stepHits} / {activeRoute!
             .hits![current.step]}
@@ -181,7 +203,7 @@
         <button type="button" onclick={() => launch(current!.id, false, current!.wakeupSettings)}
           >{language === 'fr' ? 'Réessayer l’exercice' : 'Retry exercise'}</button
         >
-        {#if activeRoute}<button
+        {#if activeRoute || activeSignature}<button
             type="button"
             onclick={() => launch(current!.id, true, current!.wakeupSettings)}
             >{language === 'fr' ? 'Voir la démonstration' : 'Watch demonstration'}</button
@@ -253,6 +275,11 @@
         </label>
       </fieldset>
     {/if}
+    <FightSignatureLessons
+      fighter={selected}
+      {language}
+      onLaunch={(id, demo) => launch(id, demo)}
+    />
     <fieldset>
       <legend>{language === 'fr' ? 'Kaméos dans les combos' : 'Kameos in combos'}</legend>
       <p>

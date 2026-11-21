@@ -3,11 +3,12 @@
 Un combo signature tient dans **un seul compteur**, du premier coup à la technique
 finale, contre un mannequin qui garde dès qu’il le peut. Il passe par les vraies
 commandes : déplacements et commandes de Hatsu sont des étapes à part entière.
-Les définitions sont dans `signatureCombos.ts` et `signatureCombosSecond.ts`, le
-lecteur de route dans `signatureComboRunner.ts` (étapes hors frappe dans
-`signatureComboSteps.ts`) et les vérifications dans `signatureCombos.test.ts`
-(miroir et deux distances de départ) et `signatureCombosSecond.test.ts`.
-Ruleset `clash-combat-85`.
+Les définitions sont dans `signatureCombos.ts`, `signatureCombosBookArmy.ts` et
+`signatureCombosSecond.ts`, le lecteur de route dans `signatureComboRunner.ts` (étapes
+hors frappe dans `signatureComboSteps.ts`) et les vérifications dans
+`signatureCombos.test.ts` (miroir et deux distances de départ) et les suites propres à
+chaque lot. Ruleset `clash-combat-86` (84 pour Kurapika et Hisoka, 85 pour Chrollo et
+Benjamin).
 
 Deux routes contiennent une **coupure voulue** : fermer les yeux pour la vision de
 Tserriednich, encaisser la riposte de Feitan. La frappe suivante ouvre un nouveau
@@ -50,6 +51,43 @@ Rebond déplacent les corps sans frapper.
 - **Plongeon.** En combo, lancer la Hache aérienne pendant le rebond lâche l’ancrage
   du plafond, reprend le lien sur la cible et fait plonger Hisoka pour que les frames
   actives arrivent au sol.
+
+## Préparation
+
+Un combo peut déclarer une `preparation` : des étapes jouées par les vraies commandes,
+à portée de contact, avant le combo. Le combo commence une fois les deux corps revenus
+au neutre ; le laboratoire remet alors l’aura à 100 et le mannequin oublie la touche de
+préparation, comme pour un nouvel exercice. Marques, pages et cartes ne viennent que de
+là : aucune n’apparaît pendant le combo. L’étape `incoming` fait tirer l’adversaire
+(son attaque à distance ordinaire) dès que la technique du joueur est active.
+
+## Double page — Chrollo
+
+Préparation : la page active pose le Soleil, puis Double Face place Sun and Moon au signet
+et ferme le livre. Combo : Pique du voleur → Coup de pied d’arrêt → Contre du voleur →
+Fauchage silencieux → accélération → Paume rapide → page au signet. La Lune rejoint le
+Soleil et les deux marques détonent. Six touches ; aucun Hatsu n’est volé pendant le combo.
+
+- Paume rapide s’enchaîne dans la page au signet par une chaîne écrite ; l’accélération
+  part du Fauchage silencieux (`duelComboRosterProfiles.ts`).
+- Sans Soleil préparé, la page au signet ne pose que la Lune : pas de détonation.
+
+## Commandement absolu — Benjamin
+
+Préparation : Secret Window marque la cible, puis le Rectangle d’aura capture un projectile
+de Nen adverse (référence : Franklin ; Culdcept ne garde qu’une carte, le reste de la
+rafale touche Benjamin). Combo : Direct militaire → Percée de garde → Marteau royal → Air
+Blow → accélération avant → Plaquage du premier prince → Rectangle d’aura → rafale de
+mitraillette → Jouer la carte. Neuf touches, 84 aura (Air Blow 40, Rectangle 20, carte 24).
+
+- **Secret Window** donne l’information seulement : avec ou sans marque, le combo inflige
+  exactement les mêmes dégâts (`signatureCombosBookArmy.test.ts`).
+- **Rafale** : arme réelle, jamais capturée. La carte jouée est celle de la préparation ;
+  sans carte, Jouer la carte reste refusée.
+- **Prise de Culdcept** (`culdceptHold.ts`) : le Rectangle ouvert depuis une capture de
+  combo garde le corps tenu tant qu’il dure ; actif, il s’annule dans la rafale. La rafale
+  qui a tiré ses trois balles s’annule dans Jouer la carte. Les tirs qui prolongent un
+  combo visent le corps au sol.
 
 ## Dix secondes d’avance — Tserriednich (Spécialisation)
 
@@ -103,11 +141,24 @@ puis la projection et la chaleur.
 | Accélération            | `dashCancel.ts`, `CancelGrammar.dash` | Sur touche, un coup listé s’annule dans un dash par double appui. Chauffe le Ren de 50, comme une relance : deux au plus avant la surchauffe. Le coup qui interrompt ce dash peut toucher un corps à terre. |
 | Capture en combo        | `throwRules.ts`, `duelMoves.ts`       | Une projection qui termine une accélération saisit un corps étourdi ou à terre (jamais en l’air), le retient sans le projeter et peut s’annuler par ses chaînes écrites.                                    |
 | Emperor Time en capture | `kurapikaActions.ts`                  | Activable pendant une capture ou une Chain Jail confirmée.                                                                                                                                                  |
+| Chaînes des spéciaux    | `duelComboGrammar.ts`                 | Un spécial de la grammaire garde aussi ses chaînes écrites. Seule Paume rapide → page au signet (Chrollo) en déclare une ; aucun normal n’ouvre la page au signet.                                          |
+| Portée prolongée        | `accelCancel.ts`                      | Un coup annulé depuis un coup qui a atteint un corps à terre l’atteint aussi : la portée tient jusqu’à la fin de la route.                                                                                  |
+| Corps plaqué au sol     | `groundedPin.ts`, `combatDamage.ts`   | Un coup de route (accélération, prise) qui atteint un corps à terre le pousse de 1,5 au plus.                                                                                                               |
 | Passage                 | `signatureCrossing.ts`                | Une accélération `through`, ou le dash avant de Tserriednich pendant sa divergence, ignore les boîtes de poussée. Volumes touchables et gardes inchangés.                                                   |
 | Chaînes d’accélération  | `CancelGrammar.accelInto`             | Un coup lancé depuis une accélération gagne les chaînes listées ; la chauffe du Ren les borne.                                                                                                              |
 | Relance dérivée         | `DuelComboProfile.relance`            | Un profil à grammaire dérivée peut activer la relance (spécial → spécial plus tardif sur touche).                                                                                                           |
 | Zone chaude             | `comboCapture.ts`                     | Sous Pain Packer revêtu, la projection de Feitan retient sa cible sans la projeter.                                                                                                                         |
 
 Une commande entrée pendant le hitstop est perdue : le double appui d’une accélération
-se joue après l’impact. Les combos signature ne sont pas encore proposés comme leçons
-de l’Académie, dont les routes ne connaissent que des coups.
+se joue après l’impact.
+
+## Dans l’Académie
+
+École de combat → « Combos signature » propose chaque combo en pratique et en
+démonstration (`signatureSchool.ts`, `FightSignatureLessons.svelte`). L’exercice suit
+les étapes réellement jouées : un coup qui démarre, une accélération, Emperor Time,
+la pose de l’ancrage. Chaque touche doit prolonger le même combo ; une garde, un coup
+hors route ou une cible qui se relève fait échouer l’essai. La démonstration passe par
+les mêmes commandes de relecture, et l’ancrage par `match.queue`. Tous les combos y
+figurent : la préparation est jouée au lancement de l’exercice, le tir est une étape
+(commande Tir) et chacune de ses balles compte comme une touche du combo.

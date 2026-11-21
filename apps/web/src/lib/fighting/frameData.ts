@@ -32,6 +32,7 @@ import { fighterDefinition } from './roster'
 import { directionalFrameData } from './directionalChain'
 import { fightingStyle } from './fightStyles'
 import { moveById } from './movesets'
+import { biscuitReach } from './biscuitForm'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
 
 export { FIGHT_FPS, FIXED_STEP, ROUND_FRAMES, INPUT_BUFFER_FRAMES } from './fightClock'
@@ -204,7 +205,7 @@ function movesetAttackData(
         : data.startup + data.active + 6,
       box: {
         left: 1.4,
-        right: data.reach,
+        right: biscuitReach(fighter, data.reach),
         bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
         top: antiAir ? Math.max(15, data.top) : data.top,
       },

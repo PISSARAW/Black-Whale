@@ -376,6 +376,61 @@ export interface Seal {
   reasonFr: string
 }
 
+/**
+ * What falling from a boundary means, in the physics of the expulsion.
+ *
+ * `overboard` is the open edge that leads out of the ship; `fall` is one that
+ * hangs over whatever is beneath it.
+ */
+export interface ArenaHazard {
+  kind: 'fall' | 'overboard'
+  /** Height of the fall in metres; 0 when the hazard is not a fall. */
+  drop: number
+}
+
+/** A solid edge: a wall of the room, or a structure standing in it. */
+export interface WallBoundary {
+  kind: 'wall'
+  wall: WallSegment
+}
+
+/**
+ * An open way out: the edge itself, and where it leads. Crossing one is a
+ * repositioning — a change of room, a broken line of sight — never a KO.
+ */
+export interface PassageBoundary {
+  kind: 'passage'
+  /** The open edge being crossed, wound as in the footprint. */
+  edge: Segment
+  /** The room the way out leads to; `null` when it opens to the ship exterior. */
+  targetSpaceId: string | null
+  /** The authored opening this edge is, when the blueprint has one. */
+  doorway?: Doorway | null
+  /** The tier-to-tier crossing, when it is not a plain doorway. */
+  link?: Link | null
+}
+
+/**
+ * An exposed edge that may expel a fighter: a balcony, a deck's rim, a gap in a
+ * cage. `barrierHeight` is the barrier on the edge — 0 for an open edge, where
+ * walking off is a fall, and above 0 a railing that blocks the walk but yields
+ * to a jump or a knockback.
+ */
+export interface DangerBoundary {
+  kind: 'danger'
+  /** The open edge the hazard hangs off, wound as in the footprint. */
+  edge: Segment
+  hazard: ArenaHazard
+  barrierHeight: number
+}
+
+/**
+ * The boundaries a footprint edge can be met with that are not solid colliders:
+ * ways out (`passage`) and exposed hazards (`danger`). Solid edges are carried
+ * by `CombatState.terrain.walls` instead, which is the single collider list.
+ */
+export type CombatBoundary = PassageBoundary | DangerBoundary
+
 export interface Blueprint {
   meta: {
     unit: string

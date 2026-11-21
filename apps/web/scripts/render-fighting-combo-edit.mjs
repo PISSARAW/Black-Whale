@@ -152,11 +152,19 @@ try {
     await advance(Math.max(1, Math.round(total)))
   }
   const waitReady = async () => {
-    for (let i = 0; i < 300 && !(await page.locator('.fight-scene.ready').count()); i++) {
+    // A split-screen shot has two scenes: wait until every one of them is ready.
+    const counts = async () => [
+      await page.locator('.fight-scene.ready').count(),
+      await page.locator('.fight-scene').count(),
+    ]
+    for (let i = 0; i < 300; i++) {
+      const [ready, total] = await counts()
+      if (total > 0 && ready === total) break
       await new Promise((r) => setTimeout(r, 100))
       await advance(16)
     }
-    assert.equal(await page.locator('.fight-scene.ready').count(), 1, 'scene failed to load')
+    const [ready, total] = await counts()
+    assert.ok(total > 0 && ready === total, 'scene failed to load')
     await advance(300)
   }
   const wanted = stills ? stills.split(',').map(Number) : null
@@ -219,7 +227,17 @@ try {
       output,
       demo.endsWith('-intro')
         ? `Black-Whale-Clash-${demo[0].toUpperCase()}${demo.slice(1, -6)}-Presentation.mp4`
-        : short
+        : demo === 'nen-explained'
+          ? 'Black-Whale-Clash-Nen-Explained.mp4'
+          : demo === 'nen-cinematic'
+            ? 'Black-Whale-Clash-Nen-Explained-Cinematic.mp4'
+            : demo === 'clash-systems'
+              ? 'Black-Whale-Clash-What-Makes-It-Different.mp4'
+              : demo === 'clash-new-rules'
+                ? 'Black-Whale-Clash-How-A-Fight-Turns.mp4'
+                : demo === 'hisoka-chrollo'
+                  ? 'Black-Whale-Clash-Hisoka-vs-Chrollo.mp4'
+          : short
           ? 'Black-Whale-Clash-Top-16-Combos-45s.mp4'
           : 'Black-Whale-Clash-40-Combos-Vertical.mp4',
     )

@@ -7,6 +7,7 @@ import {
   tickFight,
 } from '../../src/lib/fighting/engine'
 import { performArsenalCommand } from '../../src/lib/fighting/retrospectiveArsenal'
+import { withKameos } from '../../src/lib/fighting/kameos/state'
 import { nenStatus } from '../../src/lib/fighting/nen'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
 import type { FightStageId } from '../../src/lib/fighting/stages'
@@ -56,6 +57,14 @@ export interface Segment {
   victory?: { at: number; elapsed: number }[]
   /** The hero's own Nen creature, rising on him from `at` over `rise` frames. */
   companion?: { at: number; rise: number; model: import('./companion').Companion['model'] }
+  /** The fighter the shot is about (videos with one hero per scene). */
+  hero?: FighterId
+  /** A second fight filmed in lockstep, shown at the same time in the lower half. */
+  twin?: Segment
+  /** Slow motion: below 1, every simulated frame stays longer on screen. */
+  slow?: number
+  /** A victory film variant the engine's own witness confirmed (Sun and Moon). */
+  filmVariant?: { variant: 'chrollo-sun-moon'; duration: number }
   error?: string
 }
 
@@ -75,6 +84,10 @@ export class Shot {
   card?: Segment['card']
   live?: boolean
   victory: NonNullable<Segment['victory']> = []
+  filmVariant?: Segment['filmVariant']
+  readonly hero: FighterId
+  /** Set on a shot that shares the screen with another, cut on the same frames. */
+  twin?: Shot
   companion?: Segment['companion']
   private sequence = -1
 
@@ -93,10 +106,17 @@ export class Shot {
       arena?: boolean
       /** Scenario start: a last round, so the finale's KO comes within one combo. */
       opponentHealth?: number
+      /** Scenario start for the hero, when the scene is about the hero's own death. */
+      heroHealth?: number
+      /** Support kameos chosen before the fight, as on the preparation screen. */
+      kameos?: Parameters<typeof withKameos>[1]
     } = {},
   ) {
+    this.hero = options.hero ?? 'chrollo'
+    const created = (state: FightState) =>
+      options.kameos ? withKameos(state, options.kameos) : state
     const fresh = beginFight(
-      createFight(options.hero ?? 'chrollo', opponent, {
+      created(createFight(options.hero ?? 'chrollo', opponent, {
         mode: 'versus-local',
         formatId: 'knockout',
         environment: {
@@ -113,7 +133,7 @@ export class Shot {
               }
             : {}),
         },
-      } as Parameters<typeof createFight>[2]),
+      } as Parameters<typeof createFight>[2])),
     )
     const gap = options.gap ?? 8
     const centre = options.centre ?? 50
@@ -123,6 +143,7 @@ export class Shot {
         ...fresh.player,
         x: centre - gap / 2,
         aura: 100,
+        health: options.heroHealth ?? fresh.player.health,
         // Shots whose technique forces the book shut start with it already closed.
         ...(options.bookClosed && fresh.player.chrolloBook
           ? { chrolloBook: { ...fresh.player.chrolloBook, open: false } }
@@ -353,6 +374,9 @@ export class Shot {
       live: this.live,
       victory: this.victory.length ? this.victory : undefined,
       companion: this.companion,
+      filmVariant: this.filmVariant,
+      hero: this.hero,
+      twin: this.twin?.segment(),
       error,
     }
   }

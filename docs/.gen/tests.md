@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1112
+Fichiers : 1150
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -80,6 +80,15 @@ Fichiers : 1112
 ## `apps/web/src/lib/arena/journey.test.ts`
 
 - Arena journey controls > maps desktop and mobile guard to the same authoritative action
+
+## `apps/web/src/lib/arena/moveSlot.test.ts`
+
+- Clash commands in first person > reads direction and aim like Clash reads its stick
+- Arena opponent on authored Clash routes > opens with the first move of a ground route
+
+## `apps/web/src/lib/arena/pov.test.ts`
+
+- the arena POV projection > masks a concealed opponent attack while the observer has no Gyo and reveals it with Gyo
 
 ## `apps/web/src/lib/arena/profile.test.ts`
 
@@ -203,6 +212,18 @@ Fichiers : 1112
 
 - reactive Arena environment > alerts witnesses and schedules guards after noisy clandestine Hatsu
 
+## `apps/web/src/lib/combat/fightingMove.test.ts`
+
+- Fighting moves in the 3D Arena > projects authored startup, reach and recovery onto the Arena plane
+
+## `apps/web/src/lib/combat/moveChain.test.ts`
+
+- Clash combat grammar in the 3D Arena > applies authored hitstun and knockback, then opens the cancel window
+
+## `apps/web/src/lib/combat/moveScoring.test.ts`
+
+- Clash damage scoring in Arena > caps a jab to an unguarded head at a clean hit instead of a knockout
+
 ## `apps/web/src/lib/combat/ryu.test.ts`
 
 - detailed Ryu distribution > conserves aura while exposing unguarded zones
@@ -239,6 +260,10 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/arsenalAiNen.test.ts`
 
 - AI aura techniques pay the same price and expose the same body as player commands > conceals a real attachment and pays its actual In surcharge once
+
+## `apps/web/src/lib/fighting/attackClash.test.ts`
+
+- same-frame Ko attack clashes > cancels both Ko at hitbox contact before either body takes damage
 
 ## `apps/web/src/lib/fighting/audio/bonolenov.test.ts`
 
@@ -304,6 +329,10 @@ Fichiers : 1112
 
 - physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
 
+## `apps/web/src/lib/fighting/biscuitBody.test.ts`
+
+- Biscuit’s two bodies fight with two plans > keeps the compact choreography until she voluntarily reveals her natural body
+
 ## `apps/web/src/lib/fighting/blackVoice.test.ts`
 
 - Black Voice original phone and two physical antennas > does not conjure replacement gear from a page or ordinary needles
@@ -319,6 +348,18 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/blackVoiceSelfReplay.test.ts`
 
 - self-manipulation is a simulated mission in full replays > replays the actual pin, phone, aura budget, autonomous kicks and aftermath without rewriting HP
+
+## `apps/web/src/lib/fighting/blinkyTargeting.test.ts`
+
+- Blinky · sacrificing what was stored > swallows exactly one named object per suction and leaves the rest in flight
+
+## `apps/web/src/lib/fighting/bloodyMaryReserve.test.ts`
+
+- Bloody Mary draws on a material reserve > takes deployed blood out of the reserve
+
+## `apps/web/src/lib/fighting/bodyMemory.test.ts`
+
+- body memory > weakens a repeatedly struck limb, but ignores guarded blows and non-limb zones
 
 ## `apps/web/src/lib/fighting/bonolenov.test.ts`
 
@@ -339,6 +380,10 @@ Fichiers : 1112
 
 - persistent local Clash career > starts empty, bounds text and sanitizes names without interpreting markup
 - career observes actual referee states > never grants career progress while playing a recorded match
+
+## `apps/web/src/lib/fighting/career/morale.test.ts`
+
+- career morale between matches > carries apprehension after a severe loss and resolve after a clear win
 
 ## `apps/web/src/lib/fighting/career/tournament.test.ts`
 
@@ -530,7 +575,7 @@ Fichiers : 1112
 
 ## `apps/web/src/lib/fighting/duelComboGrammar.test.ts`
 
-- tiered cancel grammar > covers every profile except the four recovery links into slow techniques
+- tiered cancel grammar > covers every duel profile through the universal cancel grammar
 
 ## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
 
@@ -629,6 +674,10 @@ Fichiers : 1112
 
 - material bodies cannot occupy the same space > moves the available body at the arena wall and preserves the anchored one
 
+## `apps/web/src/lib/fighting/fightBurst.test.ts`
+
+- defensive Burst > breaks a suffered combo, spends half the current reserve and repels without damage
+
 ## `apps/web/src/lib/fighting/fightComfortControls.test.ts`
 
 - visual comfort is presentation only > persists validated settings and tolerates corrupt, stale or inaccessible storage
@@ -681,6 +730,10 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/fightPoseClock.test.ts`
 
 - distance-driven walk cadence > keeps the same stride at 60 Hz and at 20 Hz instead of freezing the legs
+
+## `apps/web/src/lib/fighting/fightPostureBudget.test.ts`
+
+- fight posture budget > limits the composed body and trunk without changing twist or side bend
 
 ## `apps/web/src/lib/fighting/fightPresentation.test.ts`
 
@@ -821,6 +874,11 @@ Fichiers : 1112
 
 - the known ghostwriter and all written quatrains are visible through the real renderer > uses the normal copied-Hatsu input and reuses the archive creature on its actual writing hand
 
+## `apps/web/src/lib/fighting/groundedLinkLoops.test.ts`
+
+- Feitan jab loop > lets the guard return before the jab after a forward light, instead of looping forever
+- corner pushback > hands the refused grounded pushback to the attacker instead of pinning the combo at the wall
+
 ## `apps/web/src/lib/fighting/gumObjectAnchorBorrowing.test.ts`
 
 - object gum keeps the actual Hatsu’s provenance and material lifetime > requires an active Bungee Gum page and stops when that page is left without a bookmark
@@ -852,6 +910,10 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/gumSurfaceReplay.test.ts`
 
 - the facial injury premise and actual reconstruction commands cross P2 and replay boundaries > validates the explicit setup and keeps canonical support IDs in P2 prediction
+
+## `apps/web/src/lib/fighting/halkenburgCollective.test.ts`
+
+- Halkenburg’s collective weapon > counts only real, marked, consenting, awake partisans near the archer
 
 ## `apps/web/src/lib/fighting/halkenburgSoulChains.test.ts`
 
@@ -888,6 +950,10 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/hinrigh.test.ts`
 
 - Hinrigh’s physical Biohazard objects > starts with two real pairs; activation transforms one without a damaging attack or stat buff
+
+## `apps/web/src/lib/fighting/hinrighKit.test.ts`
+
+- Hinrigh packs a real inventory before the fight > keeps the default carried kit when nothing was packed
 
 ## `apps/web/src/lib/fighting/hisoka.test.ts`
 
@@ -999,6 +1065,10 @@ Fichiers : 1112
 
 - Kalluto’s multiple paper receivers bind actual bodies (chapter 225) > keeps the first marked body through a real relay and adds a second distinct receiver without replacing it
 
+## `apps/web/src/lib/fighting/kallutoListeningFragment.test.ts`
+
+- Kalluto separates listening fragments from attack paper > commits the fragment in the selected zone, not every fixed fragment
+
 ## `apps/web/src/lib/fighting/kallutoMaterials.test.ts`
 
 - Kalluto uses actual paper and an actual fan rather than copied supplies > gives the native user finite personal supplies, and never creates them from a stolen page
@@ -1090,6 +1160,10 @@ Fichiers : 1112
 
 - Little Eye uses actual emitted capture and the animal’s senses > travels before capture, can miss an escaping animal, and never damages or stuns a human
 
+## `apps/web/src/lib/fighting/littleEyeExposure.test.ts`
+
+- Little Eye: the ball must reach a real animal, and Sayird stays exposed > lets real cover between Sayird and the animal stop the aura ball
+
 ## `apps/web/src/lib/fighting/longhi.test.ts`
 
 - Longhi’s voluntary Moonlight Act > offers disclosed terms without a hitbox, damage, movement, aura charge or signature on hit
@@ -1122,6 +1196,10 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/machiReattachmentScene.test.ts`
 
 - the real shared forearm moves from the floor back to the injured articulated body > keeps the elbow and hand together, then restores skin rather than Nen rubber
+
+## `apps/web/src/lib/fighting/machiSpool.test.ts`
+
+- Machi’s finite thread > counts every engaged strand against one physical spool
 
 ## `apps/web/src/lib/fighting/melody.test.ts`
 
@@ -1182,9 +1260,21 @@ Fichiers : 1112
 
 - advanced Nen input playback > reconstructs focused Gyo, weak sight, paid defensive Ko and En from recorded inputs
 
+## `apps/web/src/lib/fighting/nenInformationWar.test.ts`
+
+- In/Gyo information war > conceals aura expenditure, Ryu and prepared conditions from an uncommitted observer
+
 ## `apps/web/src/lib/fighting/nenPresentation.test.ts`
 
 - Nen perception in the rendered duel > keeps a concealed projectile hidden under En while Gyo reveals its visual form
+
+## `apps/web/src/lib/fighting/nenPsychologyProfiles.test.ts`
+
+- personal aura psychology profiles > covers every selectable fighter with an explicit qualitative basis
+
+## `apps/web/src/lib/fighting/nenTransferPresentation.test.ts`
+
+- Ryu transfer presentation > keeps the visible allocation moving monotonically after the gameplay transfer ends
 
 ## `apps/web/src/lib/fighting/nenWitnessMove.test.ts`
 
@@ -1381,6 +1471,10 @@ Fichiers : 1112
 
 - complete retrospective scenarios export and import their real resources > replays writing, a physical charm, weak spirits, transformation and the camera under all ten preparation resources
 
+## `apps/web/src/lib/fighting/rivalryRules.test.ts`
+
+- canonical rivalry rules > prepares Chrollo’s five Heavens Arena pages only against Hisoka
+
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
 - fighting roster models > uses catalogued identities and declared likenesses when available
@@ -1414,6 +1508,10 @@ Fichiers : 1112
 
 - Secret Window follows actual bodies and private recipients > keeps the original marked body when an opponent relays, including the owl model
 
+## `apps/web/src/lib/fighting/secretWindowJournal.test.ts`
+
+- Secret Window · private journal of relayed facts > needs an actual touch before anything is journaled
+
 ## `apps/web/src/lib/fighting/secretWindowListening.test.ts`
 
 - Secret Window shoulder-owl eavesdropping > keeps the marked-body voice distinct from ambient eavesdropping
@@ -1425,6 +1523,13 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 
 - Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
+
+## `apps/web/src/lib/fighting/signatureCombos.test.ts`
+
+- Élastique meurtrier > lands the execution with a single full aura bar and consumes the link
+- accélération > cancels a confirmed hit into a dash in the listed direction
+- combo capture > seizes a stunned or downed body only when it ends an accélération
+- Hisoka combo prices and tension élastique > discounts recall, rebound and execution only while the opponent is held in the combo
 
 ## `apps/web/src/lib/fighting/singleCombatArsenal.test.ts`
 
@@ -1460,13 +1565,25 @@ Fichiers : 1112
 
 - static room clipping prepass > removes only whole triangles already discarded by the intersection shader
 
+## `apps/web/src/lib/fighting/stageTransition.test.ts`
+
+- destructible Clash stage walls > sends a wall-splat KO into a real neighbouring room and places both bodies there
+
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
 
+## `apps/web/src/lib/fighting/strikingLegs.test.ts`
+
+- upright fighters strike from a lunge > leaves every other fighter on its own stance
+
 ## `apps/web/src/lib/fighting/sunMoonMarkPoint.test.ts`
 
 - Sun and Moon detonate only when the actual indelible signs meet > does not confuse touching unmarked faces with touching signs
+
+## `apps/web/src/lib/fighting/sweetHomeAlly.test.ts`
+
+- Terebellum · manual transfer circuit around an ally > lets the kameo take the strike when the right hand is not on it
 
 ## `apps/web/src/lib/fighting/teamMatch.test.ts`
 
@@ -1577,6 +1694,12 @@ Fichiers : 1112
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 
 - Voconte — Door, actual directional passage > connects existing frames after a vulnerable startup, without teleporting or attacking
+
+## `apps/web/src/lib/fighting/voconteDoorSites.test.ts`
+
+- Voconte — Door frames chosen before the round > keeps the historic 30/70 pair when nothing is chosen
+- Voconte — projectiles physically crossing a frame > carries a thrown object across, keeping speed and heading, skipping the world between
+- Voconte — door picks on the wire > round-trips a pick through the private match setup
 
 ## `apps/web/src/lib/fighting/zakuro.test.ts`
 

@@ -1,7 +1,9 @@
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { CombatFighter } from './combatRoutes'
 import type { FighterId, MoveSlot } from './types'
+import type { SignatureMotionStep } from './signatureMotionSteps'
 import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
+import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -12,11 +14,15 @@ import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
 export type SignatureStep =
   /** `hit: false` marks a technique that moves bodies without striking (recall, rebound). */
   | { move: MoveSlot; hit?: false }
-  | { dash: 'back' | 'forward' }
+  /** `free`: a dash from neutral, not an accélération; `low`: Phinks's low dodge (down held). */
+  | { dash: 'back' | 'forward'; free?: true; low?: true }
   | { emperor: true }
   | { command: ArsenalCommand }
   /** The fighter's ranged attack; `hits` is the number of projectiles that must land. */
   | { ranged: true; hits: number }
+  /** Biscuit reveals her natural body: a state for the round, not a strike (biscuitForm.ts). */
+  | { trueForm: true }
+  | SignatureMotionStep
 
 /** Preparation also lets the opponent fire its ranged attack (a projectile to capture). */
 export type SignaturePreparationStep = SignatureStep | { incoming: true }
@@ -94,6 +100,7 @@ export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
     ],
   },
   ...BOOK_AND_ARMY_SIGNATURES,
+  ...BISCUIT_AND_PHINKS_SIGNATURES,
 ]
 
 export const signatureCombosFor = (fighter: FighterId) =>

@@ -5,17 +5,19 @@ import type { FightSide, FightState } from './types'
  * Élastique meurtrier (signatureCombos.ts): while Hisoka's opponent is still held in his
  * combo, recalling or rebounding an existing link costs what the network command costs,
  * and the Elastic Execution that closes a combo held by tension élastique (elasticHold.ts)
- * costs 40 instead of 55. Duel tuning, not canon.
+ * costs 40 instead of 55. Retour à la vraie forme (signatureCombosBiscuitPhinks.ts): Full
+ * Impact that closes a combo still holding the target costs 40 instead of 55. Duel tuning.
  */
 const COMBO_COSTS: Readonly<Record<string, number>> = {
   'hisoka:forwardSpecial': GUM_RECALL_COST,
   'hisoka:backSpecial': GUM_RECALL_COST,
   'hisoka:finisher': 40,
+  'biscuit:finisher': 40,
 }
 
 export function comboAuraCost(state: FightState, side: FightSide, moveId?: string) {
   const cost = moveId === undefined ? undefined : COMBO_COSTS[moveId]
-  if (cost === undefined || state[side].id !== 'hisoka') return undefined
+  if (cost === undefined || moveId?.split(':')[0] !== state[side].id) return undefined
   if (!opponentHeldInCombo(state, side)) return undefined
   // The discounted execution concludes Élastique meurtrier only: tension élastique was used.
   return moveId !== 'hisoka:finisher' || state[side].elasticHold ? cost : undefined

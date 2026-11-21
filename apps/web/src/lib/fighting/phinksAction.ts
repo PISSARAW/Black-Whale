@@ -11,6 +11,7 @@ import {
   pauseCyclotron,
 } from './phinksCyclotron'
 import type { AuraAttackOptions } from './auraAttackAction'
+import { cyclotronComboRelease } from './phinksComboRelease'
 import type { ArcadeFighter, FightState } from './types'
 
 export function cyclotronIntent(fighter: ArcadeFighter, moveId?: string): 'wind' | 'punch' | null {
@@ -25,10 +26,13 @@ export function cyclotronIntent(fighter: ArcadeFighter, moveId?: string): 'wind'
 export function performCyclotronAction(options: AuraAttackOptions): FightState | null {
   const { state, side, kind, moveId } = options
   const fighter = state[side]
-  if (kind !== 'special') return fighter.cyclotronWindup ? state : null
+  // Ordinary blows go on while the arm turns (rotation en mouvement, phinksCyclotron.ts).
+  if (kind !== 'special') return null
   const intent = cyclotronIntent(fighter, moveId)
   if (!intent) return null
-  if (state.phase !== 'fighting' || !cyclotronCanAct(fighter)) return state
+  if (state.phase !== 'fighting') return state
+  if (intent === 'punch' && cyclotronComboRelease(fighter)) return releaseCyclotron(options, true)
+  if (!cyclotronCanAct(fighter)) return state
   if (intent === 'punch') return releaseCyclotron(options)
   if (fighter.cyclotronWindup) return { ...state, [side]: pauseCyclotron(fighter) }
   if (fighter.aura < CYCLOTRON_ROTATION_AURA) return state
@@ -39,9 +43,9 @@ export function performCyclotronAction(options: AuraAttackOptions): FightState |
   }
 }
 
-function releaseCyclotron({ state, side, moveId }: AuraAttackOptions): FightState {
+function releaseCyclotron({ state, side, moveId }: AuraAttackOptions, combo = false): FightState {
   const fighter = state[side]
-  if (!cyclotronPunchReady(fighter)) return state
+  if (!combo && !cyclotronPunchReady(fighter)) return state
   const turns = fighter.hatsuEffects.cyclotronTurns
   const prepared = {
     ...pauseCyclotron(fighter),
@@ -62,7 +66,13 @@ function releaseCyclotron({ state, side, moveId }: AuraAttackOptions): FightStat
     ...state,
     [side]: {
       ...started,
-      attack: { ...started.attack!, moveId: executedMove, cyclotronTurns: turns },
+      attack: {
+        ...started.attack!,
+        moveId: executedMove,
+        cyclotronTurns: turns,
+        // A combo release reaches the body the cancelled blow put down.
+        ...(combo ? { accel: true as const } : {}),
+      },
     },
   }
 }
@@ -71,7 +81,7 @@ function releaseCyclotron({ state, side, moveId }: AuraAttackOptions): FightStat
 export function cyclotronMoveResources(fighter: ArcadeFighter, moveId: string): boolean | null {
   const intent = cyclotronIntent(fighter, moveId)
   if (!intent) return null
-  if (intent === 'punch') return cyclotronPunchReady(fighter)
+  if (intent === 'punch') return cyclotronPunchReady(fighter) || cyclotronComboRelease(fighter)
   return (
     cyclotronNenActive(fighter) &&
     (Boolean(fighter.cyclotronWindup) || fighter.aura >= CYCLOTRON_ROTATION_AURA)

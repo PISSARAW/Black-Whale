@@ -103,6 +103,6 @@ démonstration (`signatureSchool.ts`, `FightSignatureLessons.svelte`). L’exerc
 les étapes réellement jouées : un coup qui démarre, une accélération, Emperor Time,
 la pose de l’ancrage. Chaque touche doit prolonger le même combo ; une garde, un coup
 hors route ou une cible qui se relève fait échouer l’essai. La démonstration passe par
-les mêmes commandes de relecture, et l’ancrage par `match.queue`. Seuls les combos dont
-toutes les étapes sont connues de l’Académie y figurent (`ACADEMY_SIGNATURES`) : un
-combo qui demande une préparation ou un tir n’y apparaît pas encore.
+les mêmes commandes de relecture, et l’ancrage par `match.queue`. Tous les combos y
+figurent : la préparation est jouée au lancement de l’exercice, le tir est une étape
+(commande Tir) et chacune de ses balles compte comme une touche du combo.

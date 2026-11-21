@@ -28,14 +28,8 @@ export interface SignatureProgress extends CombatProgress {
   tapFrom?: number
 }
 
-/** Combos whose every step this lesson can observe and demonstrate (no preparation phase). */
-export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS.filter(
-  (combo) =>
-    !('preparation' in combo && combo.preparation) &&
-    combo.steps.every(
-      (step) => 'move' in step || 'dash' in step || 'emperor' in step || 'command' in step,
-    ),
-)
+/** Every signature combo; a preparation is played when the lesson starts (createSignatureFight). */
+export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS
 export const isSignatureLesson = (id: string) => ACADEMY_SIGNATURES.some((combo) => combo.id === id)
 
 export function startSignatureLesson(id: string, demo: boolean) {
@@ -95,14 +89,20 @@ function advanceSteps(combo: SignatureCombo, progress: SignatureProgress, state:
 }
 
 function stepDone(step: SignatureStep, state: FightState): boolean {
-  const player = state.player
-  if ('move' in step) return startedNow(state) && player.attack?.moveId === moveId(state, step.move)
+  if ('move' in step || 'ranged' in step)
+    return (
+      startedNow(state) && attackId(state) === moveId(state, 'move' in step ? step.move : 'ranged')
+    )
   if ('dash' in step) return dashing(state, step.dash)
-  if ('emperor' in step) return Boolean(player.kurapika?.emperorTime)
+  if ('emperor' in step) return Boolean(state.player.kurapika?.emperorTime)
   return Boolean(state.gumNetwork?.pending.player) || ceilingLinked(state)
 }
 
-const moveId = (state: FightState, slot: MoveSlot) => `${state.player.id}:${slot}`
+const moveId = (state: FightState, slot: MoveSlot | 'ranged') => `${state.player.id}:${slot}`
+
+/** The player's attack as a step names it: a ranged attack has no move of its own. */
+const attackId = (state: FightState) =>
+  state.player.attack?.kind === 'ranged' ? moveId(state, 'ranged') : state.player.attack?.moveId
 
 /** An attack is new on its first simulated frames. */
 const startedNow = (state: FightState) => (state.player.attack?.frame ?? 99) <= 1
@@ -129,9 +129,9 @@ function startsWrongAttack(combo: SignatureCombo, progress: SignatureProgress, s
   if (!attack || !startedNow(state)) return false
   const expected = combo.steps
     .slice(0, progress.step)
-    .filter((step): step is { move: MoveSlot } => 'move' in step)
+    .flatMap((step) => ('move' in step ? [step.move] : 'ranged' in step ? ['ranged' as const] : []))
     .at(-1)
-  return attack.moveId !== (expected ? moveId(state, expected.move) : undefined)
+  return attackId(state) !== (expected ? moveId(state, expected) : undefined)
 }
 
 function observeContact(combo: SignatureCombo, progress: SignatureProgress, state: FightState) {
@@ -140,7 +140,7 @@ function observeContact(combo: SignatureCombo, progress: SignatureProgress, stat
   if (impact.attacker !== 'player') return fail(next, 'blocked')
   if (impact.blocked || impact.avoided || impact.invulnerable) return fail(next, 'blocked')
   const expected = signatureHits(combo)[progress.hits]
-  if (state.player.attack?.moveId !== `${combo.fighter}:${expected}`) return fail(next, 'wrong')
+  if (attackId(state) !== `${combo.fighter}:${expected}`) return fail(next, 'wrong')
   if ((impact.comboHits ?? 0) !== progress.hits + 1) return fail(next, 'dropped')
   return { ...next, hits: progress.hits + 1, lastContact: state.frame }
 }
@@ -156,6 +156,7 @@ export function signatureDemoCommand(
     return capturing(state) && !state.player.kurapika?.emperorTime
       ? { kind: 'emperor', side: 'player' }
       : null
+  if ('ranged' in step) return rangedReady(state) ? RANGED_COMMAND : null
   if (!('move' in step) || !moveReady(state, step.move)) return null
   return {
     kind: 'move',
@@ -185,6 +186,17 @@ function moveReady(state: FightState, slot: MoveSlot): boolean {
   if (!move || state.player.attack?.moveId === move.id) return false
   if ((move.variant === 'air' && state.player.y <= 0) || closingDash(state)) return false
   return canStartFighterAttack(comboAdmissionBody(state, 'player', move), move.kind, move.id)
+}
+
+function rangedReady(state: FightState): boolean {
+  return state.player.attack?.kind !== 'ranged' && canStartFighterAttack(state.player, 'ranged')
+}
+
+const RANGED_COMMAND: ReplayCommand = {
+  kind: 'move',
+  side: 'player',
+  action: 'ranged',
+  input: packReplayInput(EMPTY_INPUT),
 }
 
 /** The demonstration's Hatsu command that is not an attack, journaled by the match. */

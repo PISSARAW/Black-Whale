@@ -39,12 +39,14 @@ for (const dt of [1 / 120, 1 / 60, 1 / 30, 0.05])
       })
   })
 
-it('offers the Kurapika and Hisoka signatures in the Academy', () => {
+it('offers every signature in the Academy', () => {
   expect(ACADEMY_SIGNATURES.map((combo) => combo.id)).toEqual(
     expect.arrayContaining([
       'kurapika:scarlet-verdict',
       'kurapika:scarlet-verdict-troupe',
       'hisoka:elastic-murder',
+      'chrollo:double-page',
+      'benjamin:absolute-command',
     ]),
   )
 })

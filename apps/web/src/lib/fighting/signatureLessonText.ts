@@ -18,6 +18,10 @@ export function signatureStepLabel(
     return `${name} (${moveInputHint(move.input, bindings)})`
   }
   if ('dash' in step) return dashLabel(step.dash, language)
+  if ('ranged' in step)
+    return language === 0
+      ? `Tir (${bindings.playerRanged}, ${step.hits} balles)`
+      : `Ranged (${bindings.playerRanged}, ${step.hits} shots)`
   if ('emperor' in step)
     return language === 0
       ? `Emperor Time (Aura + ${bindings.playerFinisher}, pendant la capture)`

@@ -1,21 +1,24 @@
 import type * as Three from 'three'
 import { sceneryBox, type FightScenery, type SceneryKit } from './stageKit'
+import {
+  BALCONY,
+  PIT,
+  RING,
+  STAND_START,
+  STAND_WIDTH,
+  TIERS,
+  TIER_DEPTH,
+  TIER_RISE,
+} from './heavensArenaLayout'
 
 /**
  * The Heavens Arena ring: a raised stone platform under spotlights, with the
  * stands climbing into the dark behind it.
  *
  * Authored, unlike the ship rooms — the tower is not aboard the Black Whale and
- * the blueprint has nothing to raise it from. The fighters stand on `y = 0`,
- * which is the top of the platform; the hall floor is `PIT` below it.
+ * the blueprint has nothing to raise it from. Dimensions live in
+ * `heavensArenaLayout.ts`, shared with the playable stands of the death match.
  */
-const PIT = 0.7
-const RING: readonly [number, number] = [14, 7.4]
-const TIERS = 9
-const TIER_RISE = 0.85
-const TIER_DEPTH = 1.5
-const STAND_WIDTH = 46
-const STAND_START = -9
 const CROWD_PALETTE = [0x6f5a4c, 0x8a6d5a, 0x4d5b70, 0x7a4040, 0x5d6b4a, 0x9a8a72, 0x3f4656]
 
 /** A fixed sequence, so the crowd sits in the same seats on every visit. */
@@ -100,6 +103,21 @@ function addCrowd(kit: SceneryKit, root: Three.Group): void {
   root.add(crowd)
 }
 
+/** The second level along the back wall, with its rail: the one Hisoka climbs to. */
+function addBalcony(kit: SceneryKit, root: Three.Group): void {
+  const depth = BALCONY.zFront - BALCONY.zBack
+  const width = BALCONY.halfWidth * 2
+  const z = (BALCONY.zFront + BALCONY.zBack) / 2
+  root.add(
+    sceneryBox(kit, { size: [width, 0.3, depth], at: [0, BALCONY.y - 0.15, z], colour: 0x2a2530 }),
+    sceneryBox(kit, {
+      size: [width, 1, 0.08],
+      at: [0, BALCONY.y + 0.5, BALCONY.zFront],
+      colour: 0x4a3b2c,
+    }),
+  )
+}
+
 function addHall(kit: SceneryKit, root: Three.Group): void {
   const back = STAND_START - TIERS * TIER_DEPTH - 0.4
   root.add(sceneryBox(kit, { size: [60, 22, 0.4], at: [0, 9, back], colour: 0x15131b }))
@@ -144,6 +162,7 @@ export function buildHeavensArenaScenery(kit: SceneryKit): FightScenery {
   const root = new kit.THREE.Group()
   addRing(kit, root)
   addStands(kit, root)
+  addBalcony(kit, root)
   addCrowd(kit, root)
   addHall(kit, root)
   addLights(kit, root)

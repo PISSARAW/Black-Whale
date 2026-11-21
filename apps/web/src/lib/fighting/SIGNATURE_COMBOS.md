@@ -93,7 +93,7 @@ mitraillette → Jouer la carte. Neuf touches, 84 aura (Air Blow 40, Rectangle 2
 
 Direct Shingen → Pas du maître → Crochet de maître → Balayage de pierre → accélération
 avant → Projection Shingen → Vraie forme → Ken parfait → Poing de Ko → Impact total.
-Huit touches ; Ken parfait 28, Poing de Ko 20, Impact total 40 en combo (55 hors combo).
+Huit touches ; Ken parfait 28, Poing de Ko 20, Impact total 40 quand il conclut Ken parfait → Poing de Ko sur une cible tenue (55 sinon).
 
 - **Vraie forme pendant la capture** (`biscuitFormAction.ts`) : révéler le corps naturel
   ne frappe pas et ne démarre aucun coup ; pendant une capture de combo, la Projection

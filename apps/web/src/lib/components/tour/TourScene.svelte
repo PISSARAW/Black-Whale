@@ -69,7 +69,8 @@
   import { comfort, reducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
-  import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
+  import { humanStateKey } from '$lib/tour/humanFigure'
+  import { showHumanLod } from '$lib/tour/humanLodView'
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import type { HumanFigure } from '$lib/tour/humanFigure'
@@ -2495,9 +2496,7 @@
 
           if (held.humanLod) {
             const distance = camera.position.distanceTo(held.root.position)
-            const near = distance <= HUMAN_LOD_DISTANCE
-            held.humanLod.near.visible = near
-            held.humanLod.far.visible = !near
+            const near = showHumanLod(held.humanLod, distance)
             // Position remains authoritative even off-screen; pose animation and
             // orientation work do not run until the figure can be seen again.
             // Game simulations usually publish human positions at 30 Hz while

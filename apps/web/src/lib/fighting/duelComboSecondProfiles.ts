@@ -4,6 +4,10 @@ export const SECOND_DUEL_PROFILES = {
   machi: {
     window: 6,
     block: 'standingHeavy',
+    // Fil court (signatureCombosArmory.ts): a short step back from the bind, thread kept short.
+    dash: { downSpecial: 'back' },
+    // From that step: stitched sweep, Troupe Bind, final tension.
+    accelInto: { lowHeavy: ['throw'], throw: ['finisher'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 18, knockback: 0.8 },
@@ -15,7 +19,8 @@ export const SECOND_DUEL_PROFILES = {
       },
       standingHeavy: {
         tuning: { startup: 8, active: 4, recovery: 12, hitstun: 29, knockback: 1.4, reach: 12 },
-        into: ['forwardLight', 'lowHeavy', 'forwardHeavy'],
+        // Fil court (signatureCombosArmory.ts): the elbow that opened the wound binds at contact.
+        into: ['forwardLight', 'lowHeavy', 'forwardHeavy', 'downSpecial'],
         links: ['backHeavy'],
       },
       forwardLight: {
@@ -85,6 +90,14 @@ export const SECOND_DUEL_PROFILES = {
   franklin: {
     window: 8,
     block: 'standingHeavy',
+    // Feu de suppression (signatureCombosArmory.ts): after the grazing volley, after the rams.
+    dash: { downSpecial: 'forward', forwardHeavy: 'back' },
+    // After the short recoil: Double Machine Gun, crossed volley, bullet curtain, extended burst.
+    accelInto: {
+      neutralSpecial: ['forwardSpecial'],
+      forwardSpecial: ['backSpecial'],
+      backSpecial: ['finisher'],
+    },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 20, knockback: 1 },
@@ -114,8 +127,11 @@ export const SECOND_DUEL_PROFILES = {
         tuning: { startup: 16, recovery: 27, damage: 20, knockback: 8, reach: 17 },
         into: [],
       },
-      forwardSpecial: { into: [] },
-      neutralSpecial: { into: [] },
+      // Feu de suppression: each volley fires in full before it cancels (its last shot).
+      downSpecial: { into: [], windowStart: 18 },
+      neutralSpecial: { into: [], windowStart: 38 },
+      forwardSpecial: { into: [], windowStart: 18 },
+      backSpecial: { into: [], windowStart: 38 },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
       airHeavy: { into: [] },
     },

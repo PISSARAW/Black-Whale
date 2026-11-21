@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { FIXED_STEP } from './fightClock'
 import { TIERED_SUPER_FLOOR, tieredComboScale } from './comboDamageScale'
-import { DUEL_COMBO_FIGHTERS, hasCancelGrammar } from './duelComboProfiles'
+import { cancelGrammarFor, DUEL_COMBO_FIGHTERS, hasCancelGrammar } from './duelComboProfiles'
 import { groundedComboStun } from './groundedComboStun'
 import { linkWindow, moveFrameAdvantage } from './moveFrameAdvantage'
 import { moveForSlot, movesetFor } from './movesets'
@@ -23,7 +23,11 @@ function comboGraph(fighter: FighterId): Map<string, string[]> {
       const links = frames
         ? grounded.filter((next) => linkWindow(frames, moveFrameAdvantage(next)!) > 0)
         : []
-      return [move.id, [...move.cancelInto, ...links.map((next) => next.id)]]
+      // A super's own written chains heat the Ren like a relance (accelCancel.ts): bounded,
+      // so they are left out of the search for unbounded loops.
+      const bounded = cancelGrammarFor(fighter)?.supers.includes(move.slot)
+      const cancels = bounded ? [] : move.cancelInto
+      return [move.id, [...cancels, ...links.map((next) => next.id)]]
     }),
   )
 }

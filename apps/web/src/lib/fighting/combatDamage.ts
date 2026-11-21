@@ -10,7 +10,7 @@ import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
-import { pinnedKnockback } from './groundedPin'
+import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
 const GROUND = 0
 const MIN_X = 7
@@ -119,8 +119,7 @@ function struckFighter(
     ...stunState(options),
     ...comboState(options),
     x: clamp(
-      options.fighter.x +
-        direction * pinnedKnockback(options.fighter, options.attacker, options.knockback),
+      options.fighter.x + direction * pinnedKnockback(options, options.knockback),
       MIN_X,
       MAX_X,
     ),
@@ -210,8 +209,8 @@ function comboState(
   }
 }
 
-function knockdownFrames(options: StrikeOptions): number {
-  if (!options.knockdown || options.blocked) return options.fighter.knockdownFrames
+function knockdownFrames(options: StrikeOptions & { hitstun: number }): number {
+  if (!options.knockdown || options.blocked) return pinnedKnockdown(options, options.hitstun)
   return Math.max(options.fighter.knockdownFrames, cinematicThrowKnockdown(options.attacker))
 }
 
@@ -236,6 +235,7 @@ export function openingDamageMultiplier(opening: { counterHit: boolean; punish: 
 export function nextComboHits(defender: ArcadeFighter, defence: ImpactDefence): number {
   if (defence.blocked || defence.avoided) return 0
   const continuing =
+    defender.machiThread?.kind === 'bind' ||
     defender.hitStun > 0 ||
     defender.knockdownFrames > 0 ||
     defender.y > GROUND ||

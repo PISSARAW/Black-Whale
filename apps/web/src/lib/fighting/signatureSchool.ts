@@ -105,18 +105,21 @@ function stepDone(step: SignatureStep, state: FightState): boolean {
   const motion = motionLessonDone(step, state)
   if (motion !== null) return motion
   if ('move' in step || 'ranged' in step)
-    return (
-      startedNow(state) && attackId(state) === moveId(state, 'move' in step ? step.move : 'ranged')
-    )
+    return startedNow(state) && attackMatches(state, 'move' in step ? step.move : 'ranged')
   if ('dash' in step) return dashing(state, step.dash)
   return Boolean(state.gumNetwork?.pending.player) || ceilingLinked(state)
 }
 
 const moveId = (state: FightState, slot: MoveSlot | 'ranged') => `${state.player.id}:${slot}`
 
-/** The player's attack as a step names it: a ranged attack has no move of its own. */
-const attackId = (state: FightState) =>
-  state.player.attack?.kind === 'ranged' ? moveId(state, 'ranged') : state.player.attack?.moveId
+/**
+ * Whether the player's attack is the one a step names: a `ranged` step accepts any ranged
+ * attack (a burst has no move of its own); a move step needs that move, shot moves included.
+ */
+const attackMatches = (state: FightState, slot: MoveSlot | 'ranged') =>
+  slot === 'ranged'
+    ? state.player.attack?.kind === 'ranged'
+    : state.player.attack?.moveId === moveId(state, slot)
 
 /** An attack is new on its first simulated frames. */
 const startedNow = (state: FightState) => (state.player.attack?.frame ?? 99) <= 1
@@ -145,7 +148,24 @@ function startsWrongAttack(combo: SignatureCombo, progress: SignatureProgress, s
     .slice(0, progress.step)
     .flatMap((step) => ('move' in step ? [step.move] : 'ranged' in step ? ['ranged' as const] : []))
     .at(-1)
-  return attackId(state) !== (expected ? moveId(state, expected) : undefined)
+  return !expected || !attackMatches(state, expected)
+}
+
+/**
+ * The contact belongs to the expected move: the current attack, or for a bullet still in
+ * flight, the move of the previous step (the last bullets of a volley land after the next starts).
+ */
+function contactMatches(
+  lesson: { combo: SignatureCombo; progress: SignatureProgress },
+  state: FightState,
+  expected: MoveSlot | 'ranged',
+): boolean {
+  if (attackMatches(state, expected)) return true
+  if (state.impact?.projectileId === undefined) return false
+  const moves = lesson.combo.steps
+    .slice(0, lesson.progress.step)
+    .flatMap((step) => ('move' in step ? [step.move] : []))
+  return moves.at(-2) === expected
 }
 
 function observeContact(combo: SignatureCombo, progress: SignatureProgress, state: FightState) {
@@ -154,7 +174,7 @@ function observeContact(combo: SignatureCombo, progress: SignatureProgress, stat
   if (impact.attacker !== 'player') return fail(next, 'blocked')
   if (impact.blocked || impact.avoided || impact.invulnerable) return fail(next, 'blocked')
   const expected = signatureHits(combo)[progress.hits]
-  if (attackId(state) !== `${combo.fighter}:${expected}`) return fail(next, 'wrong')
+  if (!expected || !contactMatches({ combo, progress }, state, expected)) return fail(next, 'wrong')
   if ((impact.comboHits ?? 0) !== progress.hits + 1) return fail(next, 'dropped')
   return { ...next, hits: progress.hits + 1, lastContact: state.frame }
 }
@@ -224,8 +244,8 @@ export function signatureDemoInput(
   if (!('dash' in step)) return { input: EMPTY_INPUT }
   const tapFrom = progress.tapFrom ?? (dashTapReady(step, state) ? state.frame : undefined)
   if (tapFrom === undefined) return { input: EMPTY_INPUT }
-  const held = state.frame - tapFrom !== 1
   const direction = step.dash === 'back' ? -state.player.facing : state.player.facing
+  const held = tapHeld(state, direction)
   return {
     tapFrom,
     input: {
@@ -235,4 +255,14 @@ export function signatureDemoInput(
       left: held && direction === -1,
     },
   }
+}
+
+/**
+ * Press, release, press, read from the engine's own tap tracking rather than counted frames:
+ * inputs entered during hitstop (every other frame of a volley) would otherwise be lost.
+ */
+function tapHeld(state: FightState, direction: number): boolean {
+  const motion = state.player.motion
+  if (motion?.tapDirection !== direction) return true
+  return motion.heldDirection !== direction
 }

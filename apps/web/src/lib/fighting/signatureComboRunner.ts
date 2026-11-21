@@ -1,4 +1,5 @@
 import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './combatRouteFight'
+import { dashWindowOpen } from './dashCancel'
 import { comboAdmissionBody } from './comboAuraCost'
 import { performAuraAttack, tickFight } from './engine'
 import { performArsenalAction } from './arsenalExecution'
@@ -248,6 +249,8 @@ function dashFrame(
   const { state } = cursor
   const ready = step.free ? freeToDash(state) : tapReady(state)
   if (cursor.tap < 0 && !ready) return { cursor, input: EMPTY_INPUT }
+  // The engine reads no input during hitstop (a volley strikes every other frame): wait it out.
+  if (cursor.tap >= 0 && state.hitstop > 0) return { cursor, input: EMPTY_INPUT }
   const tap = cursor.tap + 1
   const direction = step.dash === 'back' ? -state.player.facing : state.player.facing
   const held = tap !== 1
@@ -267,8 +270,7 @@ function dashFrame(
 /** A dash from neutral waits for the body to be free and any previous dash to end. */
 const freeToDash = (state: FightState) => !state.player.attack && !state.player.motion?.dash
 
-const tapReady = (state: FightState) =>
-  Boolean(state.player.attack?.confirmedHit) && state.hitstop === 0
+const tapReady = (state: FightState) => dashWindowOpen(state.player) && state.hitstop === 0
 
 const CONTACT_GAP = 6
 

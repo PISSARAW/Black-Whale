@@ -1,4 +1,5 @@
 import { packReplayInput } from './fightReplayInput'
+import { dashWindowOpen } from './dashCancel'
 import type { ReplayCommand } from './fightReplayTypes'
 import type { SignatureStep } from './signatureCombos'
 import { isMotionStep, motionStepDone, motionStepFrame } from './signatureMotionSteps'
@@ -58,5 +59,5 @@ export function motionDemoInput(step: SignatureStep, state: FightState): FightIn
 /** A dash from neutral waits for a free body; an accélération for a confirmed hit. */
 export function dashTapReady(step: Dash, state: FightState): boolean {
   if (step.free) return !state.player.attack && !state.player.motion?.dash
-  return Boolean(state.player.attack?.confirmedHit) && state.hitstop === 0
+  return dashWindowOpen(state.player) && state.hitstop === 0
 }

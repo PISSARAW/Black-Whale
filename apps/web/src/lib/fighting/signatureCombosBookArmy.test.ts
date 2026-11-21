@@ -68,8 +68,8 @@ describe('grounded pin', () => {
     const down = { knockdownFrames: 4 } as ArcadeFighter
     const route = { attack: { accel: true } } as ArcadeFighter
     const native = { attack: {} } as ArcadeFighter
-    expect(pinnedKnockback({ ...down, knockdownFrames: 0 }, route, 6.8)).toBe(6.8)
-    expect(pinnedKnockback(down, native, 6.8)).toBe(6.8)
-    expect(pinnedKnockback(down, route, 6.8)).toBe(GROUNDED_PIN_KNOCKBACK)
+    expect(pinnedKnockback({ fighter: { ...down, knockdownFrames: 0 }, attacker: route, melee: true }, 6.8)).toBe(6.8)
+    expect(pinnedKnockback({ fighter: down, attacker: native, melee: true }, 6.8)).toBe(6.8)
+    expect(pinnedKnockback({ fighter: down, attacker: route, melee: true }, 6.8)).toBe(GROUNDED_PIN_KNOCKBACK)
   })
 })

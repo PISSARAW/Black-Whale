@@ -7,6 +7,7 @@ import { canCancel } from './duelMoves'
 import { canStartFighterAttack } from './fighterAttacks'
 import { canAct } from './fightActorState'
 import { moveById, movesetFor } from './movesets'
+import { cancelGrammarFor } from './duelComboProfiles'
 import { FIGHTING_ROSTER } from './roster'
 import { FIXED_STEP, INPUT_BUFFER_FRAMES } from './fightClock'
 import {
@@ -351,6 +352,8 @@ describe('confirmed cancels, pressure and reproducible punishment', () => {
         function visit(moveId: string, path: Set<string>): void {
           expect(path.has(moveId), [...path, moveId].join(' -> ')).toBe(false)
           const move = moveById(moveId)!
+          // A super's own written chains heat the Ren like a relance (accelCancel.ts): bounded.
+          if (cancelGrammarFor(id)?.supers.includes(move.slot)) return
           for (const target of move[property]) visit(target, new Set([...path, moveId]))
         }
         for (const move of moves) visit(move.id, new Set())

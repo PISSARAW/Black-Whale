@@ -5,6 +5,8 @@ export interface ComboMove {
   tuning?: Partial<MoveTuning>
   into: readonly MoveSlot[]
   window?: number
+  /** First frame after startup where the move may cancel (a volley fires in full first). */
+  windowStart?: number
   links?: readonly MoveSlot[]
 }
 export interface DuelComboProfile {
@@ -17,6 +19,8 @@ export interface DuelComboProfile {
   relance?: true
   /** Accélération for a derived grammar (duelComboDerivedGrammar.ts); see CancelGrammar.dash. */
   dash?: CancelGrammar['dash']
+  /** Chains out of an accélération for a derived grammar; see CancelGrammar.accelInto. */
+  accelInto?: CancelGrammar['accelInto']
 }
 
 /**

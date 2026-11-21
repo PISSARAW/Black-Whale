@@ -1,4 +1,5 @@
 import { GUM_RECALL_COST } from './bungeeTypes'
+import { halfPriceCost } from './comboHalfPrice'
 import type { FightSide, FightState } from './types'
 
 /**
@@ -36,6 +37,15 @@ export function opponentHeldInCombo(state: FightState, side: FightSide): boolean
   return target.comboHits > 0 && (target.hitStun > 0 || target.knockdownFrames > 0)
 }
 
+/** The combo price of a move: its own table entry, else the half price of comboHalfPrice.ts. */
+export function comboMoveCost(
+  state: FightState,
+  side: FightSide,
+  move: { id: string; auraCost: number } | null | undefined,
+): number | undefined {
+  return comboAuraCost(state, side, move?.id) ?? halfPriceCost(state, side, move)
+}
+
 /** The body that admission checks see: credited with the combo discount, never paid with it. */
 export function comboAdmissionBody(
   state: FightState,
@@ -43,7 +53,7 @@ export function comboAdmissionBody(
   move: { id: string; auraCost: number } | null | undefined,
 ) {
   const fighter = state[side]
-  const cost = comboAuraCost(state, side, move?.id)
+  const cost = comboMoveCost(state, side, move)
   return cost === undefined || !move || move.auraCost <= cost
     ? fighter
     : { ...fighter, aura: fighter.aura + move.auraCost - cost }

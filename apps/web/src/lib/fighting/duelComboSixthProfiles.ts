@@ -6,6 +6,12 @@ export const SIXTH_DUEL_PROFILES = {
     block: 'standingHeavy',
     // Leçon de tir (signatureCombosSenses.ts): forward from the covering shot, back from the sweep.
     dash: { backSpecial: 'forward', lowHeavy: 'back' },
+    // After the back accélération: low shot, shooting step, disarm, aimed shot.
+    accelInto: {
+      downSpecial: ['forwardLight'],
+      forwardLight: ['throw'],
+      throw: ['forwardSpecial'],
+    },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -17,8 +23,7 @@ export const SIXTH_DUEL_PROFILES = {
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
-        // Leçon de tir: the shooting step closes in for the disarm.
-        into: ['standingHeavy', 'forwardHeavy', 'throw'],
+        into: ['standingHeavy', 'forwardHeavy'],
       },
       standingHeavy: {
         tuning: { startup: 8, active: 4, recovery: 16, hitstun: 32, knockback: 1.3, reach: 13 },
@@ -42,9 +47,7 @@ export const SIXTH_DUEL_PROFILES = {
       // Only shot timing changes: damage and collision come from the travelling metal bullet.
       neutralSpecial: { tuning: { startup: 12 }, into: [] },
       forwardSpecial: { tuning: { startup: 10 }, into: [] },
-      // Leçon de tir: the low shot that lands opens the shooting step; the disarm, the aimed shot.
-      downSpecial: { tuning: { startup: 9 }, into: ['forwardLight'], window: 14 },
-      throw: { into: ['forwardSpecial'] },
+      downSpecial: { tuning: { startup: 9 }, into: [] },
     },
   },
   musse: {

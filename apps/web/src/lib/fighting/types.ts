@@ -213,6 +213,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   reversalWindow: number
   /** Relance heat (accelCancel.ts); absent while cold. */
   accelHeat?: import('./accelCancel').AccelHeat
+  /** Techniques started in the current combo, for the reduced price (comboHalfPrice.ts). */
+  comboTechniques?: import('./comboHalfPrice').ComboTechniques
   /** Frames of tension élastique spent in the current combo (elasticHold.ts). */
   elasticHold?: number
   comboHits: number

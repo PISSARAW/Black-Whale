@@ -70,7 +70,9 @@ function advanceCombo(
   wakeup: Pick<ArcadeFighter, 'knockdownFrames'>,
 ): Pick<ArcadeFighter, 'comboHits' | 'comboDamage' | 'juggleCount'> {
   const standing = y === GROUND && wakeup.knockdownFrames === 0
-  const resetCombo = standing && fighter.hitStun <= 1 && fighter.knockdownFrames === 0
+  // A body held by Machi's bind cannot defend: the combo it is in goes on (machiThread.ts).
+  const bound = fighter.machiThread?.kind === 'bind'
+  const resetCombo = standing && fighter.hitStun <= 1 && fighter.knockdownFrames === 0 && !bound
   return {
     comboHits: resetCombo ? 0 : fighter.comboHits,
     comboDamage: resetCombo ? 0 : fighter.comboDamage,

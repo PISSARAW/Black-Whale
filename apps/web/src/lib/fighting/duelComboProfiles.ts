@@ -172,7 +172,11 @@ export function tuneDuelComboProfile(moveset: FighterMoveset): FighterMoveset {
   const derive = !authored.grammar
   const profile = derive ? deriveGrammarProfile(moveset, authored) : authored
   if (derive && profile.grammar)
-    DERIVED_GRAMMARS.set(moveset.fighterId, { ...profile.grammar, dash: authored.dash })
+    DERIVED_GRAMMARS.set(moveset.fighterId, {
+      ...profile.grammar,
+      dash: authored.dash,
+      accelInto: authored.accelInto,
+    })
   return { ...moveset, moves: moveset.moves.map((move) => tune(move, profile)) }
 }
 
@@ -189,9 +193,11 @@ function tune(move: FighterMove, profile: DuelComboProfile): FighterMove {
     tuning,
     ...(profile.grammar ? grammarCancels(move, spec, profile.grammar) : authored),
     linkInto: (spec?.links ?? []).map((slot) => `${fighter}:${slot}`),
-    cancelWindow: {
-      start: 0,
-      end: tuning.active + (spec?.window ?? profile.window),
-    },
+    cancelWindow: cancelWindow(tuning.active, spec, profile),
   }
+}
+
+/** Cancel window after startup; a volley may open it only once fired in full (windowStart). */
+function cancelWindow(active: number, spec: ComboMove | undefined, profile: DuelComboProfile) {
+  return { start: spec?.windowStart ?? 0, end: active + (spec?.window ?? profile.window) }
 }

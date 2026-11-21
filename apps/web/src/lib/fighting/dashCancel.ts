@@ -42,9 +42,16 @@ function dashCancelReady(fighter: ArcadeFighter, direction: -1 | 1): boolean {
   const wanted = dashDirection(fighter)
   if (!wanted || accelOverheated(fighter) || !canAct(fighter) || fighter.y > 0) return false
   if ((wanted !== 'back') !== (direction === fighter.facing)) return false
-  const attack = fighter.attack!
+  return dashWindowOpen(fighter)
+}
+
+/** The confirmed attack is inside its cancel window; a volley fires in full before it opens. */
+export function dashWindowOpen(fighter: ArcadeFighter): boolean {
+  const attack = fighter.attack
+  if (!attack?.confirmedHit) return false
   const data = attackData(attack.kind, fighter)
-  return attack.frame >= data.startup && attack.frame <= data.cancelEnd
+  const start = data.startup + (moveById(attack.moveId)?.cancelWindow?.start ?? 0)
+  return attack.frame >= start && attack.frame <= data.cancelEnd
 }
 
 /** The direction the current, confirmed attack may dash-cancel into, if any. */

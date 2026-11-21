@@ -5,6 +5,8 @@ import type { FighterId, MoveSlot } from './types'
 import type { SignatureMotionStep } from './signatureMotionSteps'
 import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
 import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
+import { SENSES_SIGNATURE_COMBOS } from './signatureCombosSenses'
+import { ARMORY_SIGNATURE_COMBOS } from './signatureCombosArmory'
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -14,7 +16,8 @@ import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
  */
 export type SignatureStep =
   /** `hit: false` marks a technique that moves bodies without striking (recall, rebound). */
-  | { move: MoveSlot; hit?: false }
+  /** `hits`: contacts the move must land, for a volley (each bullet is one hit of the combo). */
+  | { move: MoveSlot; hit?: false; hits?: number }
   /**
    * `through` crosses the other body (signatureCrossing.ts); `free`: a dash from neutral, not
    * an accélération; `low`: Phinks's low dodge (down held).
@@ -109,6 +112,8 @@ const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   },
   ...BOOK_AND_ARMY_SIGNATURES,
   ...BISCUIT_AND_PHINKS_SIGNATURES,
+  ...SENSES_SIGNATURE_COMBOS,
+  ...ARMORY_SIGNATURE_COMBOS,
 ]
 
 export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
@@ -129,18 +134,25 @@ export function signatureCombo(id: string): SignatureCombo {
 export const signatureHits = (combo: SignatureCombo): (MoveSlot | 'ranged')[] =>
   combo.steps.flatMap((step) => {
     if ('ranged' in step) return Array<'ranged'>(step.hits).fill('ranged')
-    return 'move' in step && step.hit !== false ? [step.move] : []
+    if (!('move' in step) || step.hit === false) return []
+    return Array<MoveSlot>(step.hits ?? 1).fill(step.move)
   })
 
 /**
  * Expected combo counter of each striking step. A riposte, or closing the eyes for a
  * vision, is a deliberate break: the next strike opens a new combo.
  */
+/** Contacts a move step must land: none for a technique that only moves bodies. */
+function moveHits(step: SignatureStep): number {
+  if (!('move' in step) || step.hit === false) return 0
+  return step.hits ?? 1
+}
+
 export function signatureComboCounts(combo: SignatureCombo): number[] {
   let count = 0
   return combo.steps.flatMap((step) => {
     if ('riposte' in step || ('future' in step && step.future === 'close')) count = 0
-    const hits = 'ranged' in step ? step.hits : Number('move' in step && step.hit !== false)
+    const hits = 'ranged' in step ? step.hits : moveHits(step)
     return Array.from({ length: hits }, () => ++count)
   })
 }

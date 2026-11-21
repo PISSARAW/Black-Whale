@@ -35,6 +35,18 @@ export function mangaFeitanHair(kit: MangaHairKit) {
       ],
     })
   }
+  // Two stray strands standing off the crown, the reference model's cowlick.
+  for (const lean of [1, -0.6])
+    kit.lock({
+      width: 0.016,
+      depth: 0.008,
+      points: [
+        [lean * 0.01, 0.232, 0.01],
+        [lean * 0.02, 0.29, 0.025],
+        [lean * 0.05, 0.315, 0.05],
+        [lean * 0.075, 0.3, 0.075],
+      ],
+    })
   for (const side of [-1, 1]) {
     for (let i = 0; i < 7; i++) {
       const z = 0.09 - i * 0.035
@@ -72,7 +84,9 @@ export function addFeitanScarf(build: HumanHeadBuild, head: Group) {
     return part
   }
   mesh('feitan-skull-scarf', profile.shirt, () =>
-    new THREE.CylinderGeometry(0.157, 0.173, 0.17, 32).scale(1, 1, 0.85).translate(0, -0.135, 0.02),
+    // A high collar down to the shoulders, as the reference model wears it:
+    // no bare neck between the scarf and the coat.
+    new THREE.CylinderGeometry(0.157, 0.19, 0.27, 32).scale(1, 1, 0.85).translate(0, -0.185, 0.02),
   )
   mesh('feitan-scarf-flap', profile.shirt, () =>
     kurapikaPanel(THREE, [
@@ -83,11 +97,19 @@ export function addFeitanScarf(build: HumanHeadBuild, head: Group) {
       [-0.116, -0.23, 0.19],
     ]),
   )
+  // The reference model's trim is a broad grey band: round the rim of the
+  // collar, down to a V on the chest, and the same V again between the shoulders.
   mesh('feitan-scarf-trim', profile.accent, () =>
     mergeHumanDetails([
-      new THREE.PlaneGeometry(0.318, 0.017).translate(0, -0.048, 0.173),
-      new THREE.PlaneGeometry(0.019, 0.23).rotateZ(0.61).translate(-0.065, -0.239, 0.204),
-      new THREE.PlaneGeometry(0.019, 0.23).rotateZ(-0.61).translate(0.065, -0.239, 0.204),
+      new THREE.PlaneGeometry(0.322, 0.03).translate(0, -0.054, 0.173),
+      new THREE.PlaneGeometry(0.034, 0.24).rotateZ(0.61).translate(-0.067, -0.241, 0.204),
+      new THREE.PlaneGeometry(0.034, 0.24).rotateZ(-0.61).translate(0.067, -0.241, 0.204),
+      ...[-1, 1].map((side) =>
+        new THREE.PlaneGeometry(0.034, 0.25)
+          .rotateZ(side * 0.68)
+          .rotateY(Math.PI)
+          .translate(side * 0.072, -0.152, -0.132),
+      ),
     ]),
   )
   mesh('feitan-scarf-hatching', 0x313848, () => {
@@ -109,8 +131,19 @@ export function addFeitanScarf(build: HumanHeadBuild, head: Group) {
   })
   mesh('feitan-scarf-emblem', 0xf0eee6, () =>
     mergeHumanDetails([
-      new THREE.CircleGeometry(0.031, 24).scale(1, 0.94, 1).translate(0, -0.13, 0.207),
-      new THREE.PlaneGeometry(0.031, 0.025).translate(0, -0.156, 0.207),
+      new THREE.CircleGeometry(0.036, 24).scale(1, 0.94, 1).translate(0, -0.128, 0.207),
+      new THREE.PlaneGeometry(0.036, 0.028).translate(0, -0.157, 0.207),
+      // Crossbones behind the skull, knuckled at each end.
+      ...[-1, 1].flatMap((side) => [
+        new THREE.PlaneGeometry(0.13, 0.016).rotateZ(side * 0.62).translate(0, -0.145, 0.2065),
+        ...[-1, 1].map((end) =>
+          new THREE.CircleGeometry(0.012, 12).translate(
+            end * 0.053,
+            -0.145 + end * side * 0.039,
+            0.2065,
+          ),
+        ),
+      ]),
     ]),
   )
   mesh('feitan-scarf-skull-holes', 0x12141a, () =>
@@ -123,18 +156,4 @@ export function addFeitanScarf(build: HumanHeadBuild, head: Group) {
       ),
     ]),
   )
-  mesh('feitan-scarf-magenta-wings', 0x9e3d73, () => {
-    const parts = [-1, 1].map((side) =>
-      kurapikaPanel(THREE, [
-        [side * 0.039, -0.11, 0.208],
-        [side * 0.073, -0.098, 0.208],
-        [side * 0.065, -0.124, 0.208],
-        [side * 0.055, -0.128, 0.208],
-        [side * 0.063, -0.136, 0.208],
-        [side * 0.055, -0.159, 0.208],
-        [side * 0.037, -0.157, 0.208],
-      ]),
-    )
-    return mergeHumanDetails(parts)
-  })
 }

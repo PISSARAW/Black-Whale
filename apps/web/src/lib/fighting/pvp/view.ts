@@ -78,6 +78,9 @@ function localSustainedKey(value: string): string {
 
 function redactEnemy(enemy: ArcadeFighter) {
   enemy.gumResuscitationProgram = undefined
+  // A gum order around the heart is given in secret: the other player cannot see it.
+  enemy.gumHeartArmed = undefined
+  enemy.gumHeartPreparation = undefined
   enemy.asphyxiaCertificate = undefined
   enemy.gumObjectAnchors = enemy.gumObjectAnchors?.map((anchor) => ({
     ...anchor,

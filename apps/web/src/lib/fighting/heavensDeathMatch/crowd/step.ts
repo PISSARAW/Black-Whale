@@ -168,7 +168,7 @@ function separate(pass: ContactPass, index: number): void {
   // A Black Voice carrier is forced through the press until its Moon-marked hand reaches
   // the Sun target. Crowd separation previously cancelled every forward step in a dense
   // section and froze the linked-head explosion several metres away.
-  if (spectator.order === 'touch-sun') return
+  if (spectator.order === 'touch-sun' || spectator.order === 'pile-on-hisoka') return
   const { push, dense } = contactsOf(pass, index)
   const target = { ...spectator.at, x: spectator.at.x + push.x, z: spectator.at.z + push.z }
   const at = railBetween(spectator.at, target) ? spectator.at : target

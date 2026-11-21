@@ -88,6 +88,15 @@ describe('the death match inside the duel', () => {
     expect(withKameos(state, { opponent: 'luzurus' }).kameos).toBeUndefined()
   })
 
+  it('finishes the historical fight in the real duel engine after the body pile', () => {
+    let state = historicalFight()
+    for (let frame = 0; frame < 60 * 240 && state.phase === 'fighting'; frame += 1)
+      state = tickFight(state, EMPTY_INPUT, { dt: FIXED_STEP, ai: true })
+    expect(state.deathMatch?.scenario.done).toContain('hisoka-buried')
+    expect(state.deathMatch?.scenario.done).toContain('hisoka-asphyxiated')
+    expect(state.phase).toBe('finished')
+  })
+
   it('takes Chrollo into the stands, out of reach on the lane and drawn where he stands', () => {
     let state = historicalFight()
     for (let frame = 0; frame < 60 * 30 && !chrolloInStands(state.deathMatch!); frame += 60)

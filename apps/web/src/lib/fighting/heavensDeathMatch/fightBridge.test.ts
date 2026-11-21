@@ -4,6 +4,7 @@ import { beginFight, createFight, opponentAttack, tickFight } from '../engine'
 import { FIXED_STEP } from '../fightClock'
 import { createFightEnvironment } from '../fightEnvironment'
 import { EMPTY_INPUT, type FightState } from '../types'
+import { withKameos } from '../kameos/state'
 import { chrolloInStands, deathMatchBodyPosition, hallToLane, laneToHall } from './fightBridge'
 import { duelFormat, historicalEnvironment, historicalSeats } from './historicalSetup'
 import { DEATH_MATCH_FORMAT } from './loadout'
@@ -68,6 +69,23 @@ describe('the death match inside the duel', () => {
     }
     expect(chrolloAttacked).toBe(true)
     expect(next.deathMatch?.scenario.done).toContain('chrollo-feint-kick-flurry')
+  })
+
+  it('marks the referee before Hisoka cuts him and reaches the first explosion', () => {
+    const state = run(historicalFight(), 60 * 20)
+    const referee = state.deathMatch?.crowd.spectators.find((body) => body.id === 'referee')
+    expect(state.deathMatch?.scenario.done).toContain('first-explosion')
+    expect(referee?.cause).toBe('blast')
+  })
+
+  it('drops ordinary lobby kameos from the historical reconstruction', () => {
+    const seats = historicalSeats('opponent')
+    const environment = historicalEnvironment(createFightEnvironment())
+    const state = createFight(seats.player, seats.opponent, {
+      formatId: DEATH_MATCH_FORMAT,
+      environment,
+    })
+    expect(withKameos(state, { opponent: 'luzurus' }).kameos).toBeUndefined()
   })
 
   it('takes Chrollo into the stands, out of reach on the lane and drawn where he stands', () => {

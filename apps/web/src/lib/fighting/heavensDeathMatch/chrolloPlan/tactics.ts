@@ -157,7 +157,11 @@ function chargeBomb(world: DeathMatchWorld): ChrolloIntent {
     if (trigger)
       return distance(trigger.at, linked.at) <= TOUCH
         ? { kind: 'detonate-linked', target: linked.id }
-        : { kind: 'drive-trigger', target: trigger.id }
+        : trigger.order === 'touch-sun'
+          // The antenna carrier already knows where to go. Chrollo must clear its path;
+          // standing beside it makes the fighter collision pass shove it away forever.
+          ? { kind: 'retreat', to: hidingSpot(world) }
+          : { kind: 'drive-trigger', target: trigger.id }
     const carrier = nearest(
       world,
       (spectator) =>
@@ -201,7 +205,7 @@ function broadcast(world: DeathMatchWorld): ChrolloIntent {
 /** Copies marked and stamped together before the next batch: the stamp closes Gallery Fake. */
 export const ASSAULT_BATCH = 20
 /** Living puppets the last assault needs before the order to explode is given. */
-export const ASSAULT_ARMY = 110
+export const ASSAULT_ARMY = 85
 
 const awayFromHisoka = (world: DeathMatchWorld) => (spectator: Spectator) =>
   distance(spectator.at, world.hisoka.at) > SAFE_DISTANCE + 1
@@ -275,10 +279,12 @@ function encircle(world: DeathMatchWorld): ChrolloIntent {
   if (census.copies >= ASSAULT_ARMY && census.bombs >= FINAL_BOMBS)
     return { kind: 'order', order: 'explode-near-hisoka' }
   const copied = new Set(world.crowd.spectators.map((spectator) => spectator.copyOf))
-  const source = nearest(
-    world,
-    (spectator) => unseenHuman(world)(spectator) && !copied.has(spectator.id),
-  )
+  const source =
+    nearest(world, (spectator) => unseenHuman(world)(spectator) && !copied.has(spectator.id)) ??
+    // Gallery Fake may reproduce the same original again after the unique hidden sources
+    // have fled. Otherwise the late wave runs out of candidates below the canonical army.
+    nearest(world, unseenHuman(world)) ??
+    nearest(world, anyHuman)
   return reach(world, source, (target) => ({ kind: 'copy', target }))
 }
 
@@ -287,11 +293,24 @@ function detonateReferee(world: DeathMatchWorld): ChrolloIntent {
   // Alive or already cut down by Hisoka, the referee goes off until he has.
   if (!referee || referee.cause === 'blast') return { kind: 'retreat', to: hidingSpot(world) }
   if (!referee.marks.sun) return reach(world, referee, (target) => ({ kind: 'mark-sun', target }))
+  // The Sun is already hidden on him, but Chrollo waits for Hisoka's throat cut before
+  // touching it with the Moon. Detonating during the gum beat skips the canonical kill.
+  if (!world.scenario.done.includes('referee-throat-cut')) return { kind: 'hold' }
   return { kind: 'detonate', target: REFEREE_ID }
 }
 
 /** Puppets keep Hisoka's hands full; Chrollo slips behind him for the blow. */
 function harass(world: DeathMatchWorld): ChrolloIntent {
+  // Once Hisoka has taken the first puppet's head, Chrollo uses that recovery beat to
+  // close from behind under Convert Hands. The detached head is the durable evidence of
+  // the opening; relying only on two puppets overlapping Hisoka made the window one frame
+  // long and left Chrollo wandering in the stands forever.
+  if (headsOf(world.crowd).some((head) => !head.spent)) {
+    const gap = distance(world.chrollo.at, world.hisoka.at)
+    if (gap <= 1.5) return { kind: 'surprise-strike' }
+    const { at, facing } = world.hisoka
+    return { kind: 'move', to: { ...at, x: at.x - facing.x, z: at.z - facing.z } }
+  }
   if (hisokaBusy(world)) {
     const { at, facing } = world.hisoka
     return { kind: 'move', to: { ...at, x: at.x - facing.x, z: at.z - facing.z } }
@@ -371,6 +390,14 @@ function reflex(world: DeathMatchWorld, phase: ChrolloPhase): ChrolloIntent | nu
     return { kind: 'retreat', to: hidingSpot(world) }
   const opening = hisokaBusy(world) && !hisokaSeesChrollo(world)
   if (opening && gap <= 1.5) return { kind: 'surprise-strike' }
+  // Convert Hands keeps the approach invisible after Hisoka has committed to the puppet.
+  // Let the harass tactic finish that approach instead of triggering the generic retreat.
+  if (
+    phase === 'harass' &&
+    world.chrollo.disguisedAs &&
+    headsOf(world.crowd).some((head) => !head.spent)
+  )
+    return null
   if (gap < SAFE_DISTANCE && !opening) return { kind: 'retreat', to: hidingSpot(world) }
   return null
 }

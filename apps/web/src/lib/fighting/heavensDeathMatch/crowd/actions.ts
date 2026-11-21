@@ -81,7 +81,7 @@ export function throwSpectator(crowd: CrowdState, id: string, velocity: Vec3): C
 /** Bungee Gum sticks to a body: it is held until pulled or released. */
 export function attachGum(crowd: CrowdState, id: string): CrowdState {
   return updateSpectator(crowd, id, (spectator) =>
-    spectator.posture === 'vanished'
+    !living(spectator)
       ? spectator
       : { ...spectator, gum: true, posture: 'held', fear: Math.max(spectator.fear, PANIC_FEAR) },
   )

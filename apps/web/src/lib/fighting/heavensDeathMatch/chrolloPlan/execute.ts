@@ -139,7 +139,11 @@ const APPLY: Partial<Record<ChrolloIntent['kind'], Applier>> = {
       y: 3,
       z: ((intent.at.z - from.z) / flat) * 8,
     }
-    return withCrowd(world, throwSpectator(world.crowd, intent.target, velocity))
+    const thrown = withCrowd(world, throwSpectator(world.crowd, intent.target, velocity))
+    // The thrown body crosses and breaks the active Bungee Gum web. Without consuming
+    // those lines, Chrollo repeats the same interruption forever and never resumes arming
+    // the puppet wave.
+    return { ...thrown, hisoka: { ...thrown.hisoka, gumAnchors: [] } }
   },
 }
 

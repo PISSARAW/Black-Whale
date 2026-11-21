@@ -16,7 +16,9 @@ import { REFEREE_ID, chrolloHidden, distance, type DeathMatchWorld } from './wor
 
 /** Thresholds at which the world shows a canonical beat; estimates, like the chapter ranges. */
 export const ARMY_SHOWN = 20
-export const PUPPET_WAVE = 100
+// The hall has already seen well over a hundred copies by this point; 75 survivors form
+// the visible wave after Hisoka's counters, falls and evacuations have thinned the crowd.
+export const PUPPET_WAVE = 75
 export const NET_BOMBS = 10
 export const FINAL_BLASTS = 5
 

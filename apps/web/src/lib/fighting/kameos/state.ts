@@ -1,5 +1,6 @@
 import { createFighter } from '../fightState'
 import { fightFormat } from '../formats'
+import { DEATH_MATCH_FORMAT } from '../heavensDeathMatch/loadout'
 import { isKameoId } from './catalogue'
 import { KAMEO_SPAWN } from './rounds'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
@@ -24,6 +25,9 @@ export function createKameoSlot(fighter: ArcadeFighter): KameoSlot {
  */
 export function withKameos(state: FightState, picks: KameoPicks): FightState {
   if (state.phase !== 'ready' || state.frame !== 0) throw Error('kameo-after-start')
+  // Hisoka–Chrollo is a closed historical reconstruction: lobby selections from an
+  // ordinary duel must not inject support characters into the arena.
+  if (state.formatId === DEATH_MATCH_FORMAT) return state
   const kameos: FightKameos = { ...state.kameos }
   for (const side of ['player', 'opponent'] as const) {
     const id = picks[side]

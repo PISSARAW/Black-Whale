@@ -199,7 +199,7 @@ export function steerPuppets(
 
 function orderGoal(
   order: PuppetOrder,
-  targets: { hisoka: Vec3; chrollo: Vec3 },
+  targets: { hisoka: Vec3; chrollo: Vec3; sun?: Vec3 },
   slot: number,
 ): Vec3 | undefined {
   const angle = slot * 2.39996
@@ -226,11 +226,11 @@ function orderGoal(
 
 export const BOMB_TRIGGER_DISTANCE = 1.2
 
-const armedBeside = (hisoka: Vec3) => (spectator: Spectator) =>
+const armedBeside = (hisoka: Vec3, triggerDistance: number) => (spectator: Spectator) =>
   isBomb(spectator) &&
   spectator.order === 'explode-near-hisoka' &&
   Math.hypot(spectator.at.x - hisoka.x, spectator.at.y - hisoka.y, spectator.at.z - hisoka.z) <=
-    BOMB_TRIGGER_DISTANCE
+    triggerDistance
 
 /**
  * "Explode when you are beside Hisoka": bombs close enough join hands and go off together,
@@ -240,8 +240,9 @@ export function triggerBombs(
   crowd: CrowdState,
   hisoka: Vec3,
   quorum = 1,
+  triggerDistance = BOMB_TRIGGER_DISTANCE,
 ): { crowd: CrowdState; blasts: Blast[] } {
-  const beside = armedBeside(hisoka)
+  const beside = armedBeside(hisoka, triggerDistance)
   if (crowd.spectators.filter(beside).length < quorum) return { crowd, blasts: [] }
   const blasts: Blast[] = []
   const spectators = crowd.spectators.map((spectator) => {

@@ -99,7 +99,10 @@ export function stepDeathMatchWorld(world: DeathMatchWorld, input: WorldInput = 
   const struck = headOnChrollo(next)
   next = struck.world
   // The last assault waits for the net to close, then every bomb beside him goes at once.
-  const bombs = triggerBombs(next.crowd, next.hisoka.at, BOMB_QUORUM)
+  // Once the ten-body net has closed, the mass detonation covers the whole three-metre
+  // pocket around Hisoka; it does not wait for every body centre to overlap his model.
+  const triggerDistance = next.scenario.done.includes('net-closes') ? 3 : undefined
+  const bombs = triggerBombs(next.crowd, next.hisoka.at, BOMB_QUORUM, triggerDistance)
   const blasts = [...outcome.blasts, ...bombs.blasts]
   const damage = advanceDamage(bombs.blasts.reduce(damageFromBlast, next.damage))
   next = { ...next, crowd: bombs.crowd, damage }
@@ -116,8 +119,17 @@ export function stepDeathMatchWorld(world: DeathMatchWorld, input: WorldInput = 
     decision,
   }
   const beats = [...(input.reported ?? []), ...observedBeats(next, facts)]
+  const diedAt = next.scenario.survival.deathFrame
+  const narrativeFrame =
+    diedAt !== null && next.hisoka.wounds.deadFor !== null
+      ? diedAt + next.hisoka.wounds.deadFor
+      : next.crowd.frame
+  // Post-match rescue advances on narrative time (deadFor), while the fight itself uses
+  // rendered crowd frames. Keeping the larger clock lets the short aftermath replay cross
+  // the ten-minute rescue delay without simulating 36,000 empty visual frames.
+  const eventFrame = Math.max(next.crowd.frame, next.scenario.frame, narrativeFrame)
   const scenario = beats.reduce(
-    (state, beat) => advanceDeathMatch(state, { beat, frame: next.crowd.frame }),
+    (state, beat) => advanceDeathMatch(state, { beat, frame: eventFrame }),
     next.scenario,
   )
   return { world: { ...next, scenario }, decision, outcome, blasts, chrolloHit: struck.hit }

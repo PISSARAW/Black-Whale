@@ -1,6 +1,12 @@
 import { TRUSS } from '../../heavensArenaLayout'
 import { headsOf } from '../crowd/heads'
-import { living, type DetachedHead, type HisokaLimb, type Spectator } from '../crowd/types'
+import {
+  living,
+  present,
+  type DetachedHead,
+  type HisokaLimb,
+  type Spectator,
+} from '../crowd/types'
 import { BALCONY, type Vec3 } from '../stands/geometry'
 import { REFEREE_ID, distance, hisokaSeesChrollo, type DeathMatchWorld } from '../chrolloPlan/world'
 import { hisokaPhase, type HisokaPhase } from './phases'
@@ -60,7 +66,11 @@ function cutAttacker(world: DeathMatchWorld): HisokaIntent | null {
   return inReach(world, puppet) ? { kind: 'decapitate', target: puppet.id } : null
 }
 
-function reachThen(world: DeathMatchWorld, body: Spectator | undefined, act: HisokaIntent) {
+function reachThen(
+  world: DeathMatchWorld,
+  body: Spectator | undefined,
+  act: HisokaIntent,
+): HisokaIntent {
   if (!body) return { kind: 'scan' } as const
   return distance(body.at, world.hisoka.at) <= REACH ? act : { kind: 'move', to: body.at }
 }
@@ -70,7 +80,8 @@ const referee = (world: DeathMatchWorld) =>
 
 function looseHead(world: DeathMatchWorld): DetachedHead | undefined {
   return headsOf(world.crowd).find(
-    (head) => !head.spent && !head.tiedTo && distance(head.at, world.hisoka.at) < 2.5,
+    (head) =>
+      !head.spent && !head.tiedTo && !head.flying && distance(head.at, world.hisoka.at) < 2.5,
   )
 }
 const tiedHead = (world: DeathMatchWorld, limb: HisokaLimb) =>
@@ -95,7 +106,9 @@ function doubleHead(world: DeathMatchWorld): HisokaIntent {
   const hand = tiedHead(world, 'left-hand')
   const foot = tiedHead(world, 'left-foot')
   const head = looseHead(world)
-  if (!hand && head) return { kind: 'tie-head', head: head.id, limb: 'left-hand' }
+  // After the hand head is launched as a feint, keep the foot head armed for the real hit.
+  // Re-tying the missed hand head here created an endless feint loop.
+  if (!hand && !foot && head) return { kind: 'tie-head', head: head.id, limb: 'left-hand' }
   if (!foot && head) return { kind: 'tie-head', head: head.id, limb: 'left-foot' }
   if (!foot) return cutAttacker(world) ?? { kind: 'scan' }
   if (!swingReady(world)) return { kind: 'scan' }
@@ -111,7 +124,9 @@ function doubleHead(world: DeathMatchWorld): HisokaIntent {
 
 function launchCrowd(world: DeathMatchWorld): HisokaIntent {
   const anchored = world.hisoka.gumAnchors.filter((id) =>
-    world.crowd.spectators.some((spectator) => spectator.id === id && living(spectator)),
+    // Bungee Gum can still sling an attached corpse; the exploded referee remains one
+    // of the five physical anchors even though he is no longer a living target.
+    world.crowd.spectators.some((spectator) => spectator.id === id && present(spectator)),
   )
   if (anchored.length >= CROWD_LAUNCH) return { kind: 'launch-crowd', targets: anchored }
   const body = nearestTo(
@@ -159,9 +174,19 @@ const TACTICS: Record<HisokaPhase, Tactic> = {
   prepare: () => ({ kind: 'hold' }),
   duel: () => ({ kind: 'hold' }),
   'gum-referee': (world) => reachThen(world, referee(world), { kind: 'gum', target: REFEREE_ID }),
-  'cut-referee': (world) => reachThen(world, referee(world), { kind: 'cut', target: REFEREE_ID }),
+  // Chrollo must finish placing the hidden Sun before Hisoka cuts the referee down.
+  // Otherwise the plan tries to mark an already dead body and the opening deadlocks.
+  'cut-referee': (world) => {
+    const body = referee(world)
+    return body?.marks.sun
+      ? reachThen(world, body, { kind: 'cut', target: REFEREE_ID })
+      : { kind: 'hold' }
+  },
   ceiling: () => ({ kind: 'move', to: { x: 0, y: TRUSS.y - 1.8, z: TRUSS.z } }),
-  search: (world) => cutAttacker(world) ?? { kind: 'scan' },
+  search: (world) =>
+    world.hisoka.at.y > 0.2
+      ? { kind: 'move', to: { x: world.hisoka.at.x, y: 0, z: 0 } }
+      : (cutAttacker(world) ?? { kind: 'scan' }),
   decapitate: (world) => cutAttacker(world) ?? { kind: 'scan' },
   'head-hammer': headHammer,
   'double-head': doubleHead,

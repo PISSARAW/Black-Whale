@@ -9,7 +9,7 @@ Nœuds : 25 · Arêtes uniques : 62
 | Source | Cible | Occurrences |
 | ------ | ----- | ----------- |
 | `lib:arena` | `lib:combat` | 62 |
-| `lib:arena` | `lib:fighting` | 14 |
+| `lib:arena` | `lib:fighting` | 18 |
 | `lib:arena` | `lib:nen` | 9 |
 | `lib:arena` | `lib:tour` | 18 |
 | `lib:arena` | `package:@black-whale/nen-engine` | 5 |
@@ -19,7 +19,7 @@ Nœuds : 25 · Arêtes uniques : 62
 | `lib:audio` | `lib:infiltration` | 1 |
 | `lib:audio` | `package:@black-whale/nen-engine` | 4 |
 | `lib:combat` | `lib:fighting` | 12 |
-| `lib:combat` | `lib:tour` | 10 |
+| `lib:combat` | `lib:tour` | 13 |
 | `lib:combat` | `package:@black-whale/nen-engine` | 1 |
 | `lib:components` | `package:@black-whale/domain` | 11 |
 | `lib:components` | `package:@black-whale/nen-engine` | 3 |

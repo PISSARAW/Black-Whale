@@ -34,7 +34,7 @@ function queue(state: FightState) {
   })
 }
 describe('anticipated confirmed cancels', () => {
-  it.each([1, 6])(
+  it.each([1, 4])(
     'holds a command %i frame(s) before impact until ordinary confirmation',
     (before) => {
       let state = ready(before)

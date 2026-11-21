@@ -34,9 +34,22 @@ function isEnder(move: FighterMove, profile: DuelComboProfile): boolean {
 }
 
 /** Paid techniques the authored profile already placed in combos. */
+const TECHNIQUE_SLOTS: ReadonlySet<MoveSlot> = new Set([
+  'throw',
+  'neutralSpecial',
+  'forwardSpecial',
+  'downSpecial',
+  'backSpecial',
+  'finisher',
+])
+
 function authoredSupers({ moveset, profile }: Derivation): MoveSlot[] {
+  // Only the normals' routes name supers; a technique's own chains (a capture into Perfect Ken)
+  // stay target combos and never open that technique to every normal.
   const named = new Set(
-    Object.values(profile.moves).flatMap((spec) => [...(spec?.into ?? []), ...(spec?.links ?? [])]),
+    Object.entries(profile.moves)
+      .filter(([slot]) => !TECHNIQUE_SLOTS.has(slot as MoveSlot))
+      .flatMap(([, spec]) => [...(spec?.into ?? []), ...(spec?.links ?? [])]),
   )
   return moveset.moves
     .filter((move) => SUPER_CATEGORIES.has(move.category) && named.has(move.slot))

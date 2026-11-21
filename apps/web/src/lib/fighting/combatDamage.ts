@@ -257,6 +257,27 @@ export function atWall(
   return destination <= MIN_X || destination >= MAX_X
 }
 
+/**
+ * Grounded pushback the defender could not absorb before the wall: the remaining distance
+ * is transferred to the attacker, as in Street Fighter, so a grounded combo cannot loop in
+ * the corner once hitstun no longer decays.
+ */
+export function cornerPushbackTransfer(
+  attacker: ArcadeFighter,
+  defender: ArcadeFighter,
+  knockback: number,
+): ArcadeFighter {
+  const direction = defender.x > attacker.x ? 1 : -1
+  const landing = defender.x + direction * knockback
+  const wall = direction > 0 ? MAX_X : MIN_X
+  const missing = direction > 0 ? Math.max(0, landing - wall) : Math.max(0, wall - landing)
+  if (missing <= 0) return attacker
+  // The refused pushback goes to the attacker, pushed away from the defender: against a right
+  // wall the attacker retreats to the left, against a left wall it advances to the right.
+  const x = direction > 0 ? attacker.x - missing : attacker.x + missing
+  return { ...attacker, x: clamp(x, MIN_X, MAX_X) }
+}
+
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value))
 }

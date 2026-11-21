@@ -54,6 +54,19 @@ Ces corrections ont été introduites avec `clash-combat-65-feitan-motion` et so
 conservées dans les rulesets suivants.
 Les replays et clients d’une version antérieure ne doivent pas être mélangés.
 
+### Boucle du jab (`clash-combat-78`)
+
+Le léger debout de Feitan démarre en 3 frames. Le lourd debout, l’avant + léger et
+l’arrière + lourd laissaient +4 sur touche : le jab s’y liait, puis se rechaînait
+dans le lourd et l’avant + léger. Comme Feitan suit la grammaire de cancels, la
+réduction du hitstun au sol (`groundedComboStun.ts`) ne s’applique pas à lui, et la
+boucle jab > lourd > avant + léger enchaînait 60 touches au coin sans garde possible.
+Ces trois normaux perdent une frame de hitstun (+3 sur touche) : plus aucun link
+vers le jab. Le bas + léger garde +4, car rien ne se rechaîne vers lui. Les cancels,
+les dégâts et les timings ne changent pas. `groundedLinkLoops.test.ts` vérifie, pour
+chaque personnage à grammaire, qu’aucun link ne mène à un coup qui se rechaîne vers
+le coup de départ.
+
 Le jeu adapte ces gestes à un plan de combat en 2D : les déplacements circulaires
 et les changements de caméra de l’animé ne peuvent pas être reproduits à l’identique.
 

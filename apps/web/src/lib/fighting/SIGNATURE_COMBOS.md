@@ -3,12 +3,12 @@
 Un combo signature tient dans **un seul compteur**, du premier coup à la technique
 finale, contre un mannequin qui garde dès qu’il le peut. Il passe par les vraies
 commandes : déplacements et commandes de Hatsu sont des étapes à part entière.
-Les définitions sont dans `signatureCombos.ts`, `signatureCombosBookArmy.ts` et
-`signatureCombosSecond.ts`, le lecteur de route dans `signatureComboRunner.ts` (étapes
+Les définitions sont dans `signatureCombos.ts`, `signatureCombosBookArmy.ts`,
+`signatureCombosBiscuitPhinks.ts` et `signatureCombosSecond.ts`, le lecteur de route dans `signatureComboRunner.ts` (étapes
 hors frappe dans `signatureComboSteps.ts`) et les vérifications dans
 `signatureCombos.test.ts` (miroir et deux distances de départ) et les suites propres à
-chaque lot. Ruleset `clash-combat-86` (84 pour Kurapika et Hisoka, 85 pour Chrollo et
-Benjamin).
+chaque lot. Ruleset `clash-combat-88` (84 pour Kurapika et Hisoka, 85 pour Chrollo et
+Benjamin, 86 pour Biscuit et Phinks).
 
 Deux routes contiennent une **coupure voulue** : fermer les yeux pour la vision de
 Tserriednich, encaisser la riposte de Feitan. La frappe suivante ouvre un nouveau
@@ -88,6 +88,39 @@ mitraillette → Jouer la carte. Neuf touches, 84 aura (Air Blow 40, Rectangle 2
   combo garde le corps tenu tant qu’il dure ; actif, il s’annule dans la rafale. La rafale
   qui a tiré ses trois balles s’annule dans Jouer la carte. Les tirs qui prolongent un
   combo visent le corps au sol.
+
+## Retour à la vraie forme — Biscuit
+
+Direct Shingen → Pas du maître → Crochet de maître → Balayage de pierre → accélération
+avant → Projection Shingen → Vraie forme → Ken parfait → Poing de Ko → Impact total.
+Huit touches ; Ken parfait 28, Poing de Ko 20, Impact total 40 en combo (55 hors combo).
+
+- **Vraie forme pendant la capture** (`biscuitFormAction.ts`) : révéler le corps naturel
+  ne frappe pas et ne démarre aucun coup ; pendant une capture de combo, la Projection
+  continue. La forme reste pour la manche : puissance (×1,35, `hatsu.ts`), inertie du
+  corps plus lourd (`fightPhysicalProfile.ts`) et portée (×1,12, `biscuitForm.ts`).
+- **Chaînes de techniques** : capture → Ken parfait → Poing de Ko → Impact total sont
+  des chaînes écrites ; aucun normal ne s’annule pour autant dans Ken parfait ou Poing
+  de Ko (`duelComboDerivedGrammar.ts`).
+
+## Dix tours, un poing — Phinks
+
+Démarrer Ripper Cyclotron → accélération arrière en tournant → esquive basse en tournant
+→ saut croisé → atterrissage derrière la cible → Direct de météore → Crochet de la Brigade
+→ Épaule blindée → terminer le dernier tour → libérer Ripper Cyclotron. Quatre touches.
+
+- **Rotation en mouvement** (`phinksCyclotron.ts`), dans tous les combats : le bras droit
+  continue de tourner pendant les déplacements, les sauts, l’accroupi et les coups
+  ordinaires. La garde, un coup reçu, une prise, une projection, une autre technique ou
+  la libération l’arrêtent. Les coups ne reçoivent aucun bonus.
+- **Esquive basse** (`phinksLowDodge.ts`) : bas maintenu + double appui avant, Phinks
+  avance d’environ six unités accroupi au lieu de dasher.
+- **Saut croisé** : le moteur ne pousse pas deux corps dont l’un dépasse 7 de hauteur ;
+  après l’esquive, le saut passe au-dessus de la cible.
+- **Libération en combo** (`phinksComboRelease.ts`) : avec au moins un tour complet, le
+  poing droit annule un coup ordinaire confirmé dont la chaîne écrite le nomme (Épaule
+  blindée), avance de 4 et atteint le corps que ce coup a mis au sol. Seule la
+  libération consomme les tours.
 
 ## Dix secondes d’avance — Tserriednich (Spécialisation)
 

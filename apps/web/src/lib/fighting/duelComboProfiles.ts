@@ -160,17 +160,6 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
 }
 export const DUEL_COMBO_FIGHTERS = Object.keys(PROFILES) as FighterId[]
 export const hasDuelComboProfile = (fighter: string): boolean => Object.hasOwn(PROFILES, fighter)
-/**
- * Kept outside the derived grammar: each places a slow technique that cannot be cancelled
- * (Phinks' charged punch, Leorio's remote punch, Bonolenov's spear, Padaille's drill into
- * the sweep) through a recovery link, which needs a big plus that also links into the jab.
- */
-const DERIVATION_EXCLUDED: ReadonlySet<FighterId> = new Set([
-  'phinks',
-  'leorio',
-  'bonolenov',
-  'padaille',
-])
 /** Grammars derived while the movesets are built (lot 4); authored grammars win. */
 const DERIVED_GRAMMARS = new Map<string, CancelGrammar>()
 export const cancelGrammarFor = (fighter: string): CancelGrammar | undefined =>
@@ -180,7 +169,7 @@ export const hasCancelGrammar = (fighter: string): boolean => Boolean(cancelGram
 export function tuneDuelComboProfile(moveset: FighterMoveset): FighterMoveset {
   const authored = PROFILES[moveset.fighterId]
   if (!authored) return moveset
-  const derive = !authored.grammar && !DERIVATION_EXCLUDED.has(moveset.fighterId)
+  const derive = !authored.grammar
   const profile = derive ? deriveGrammarProfile(moveset, authored) : authored
   if (derive && profile.grammar)
     DERIVED_GRAMMARS.set(moveset.fighterId, { ...profile.grammar, dash: authored.dash })

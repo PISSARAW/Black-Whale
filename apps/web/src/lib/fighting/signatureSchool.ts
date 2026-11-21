@@ -13,6 +13,12 @@ import {
   type SignatureStep,
 } from './signatureCombos'
 import { createSignatureFight } from './signatureComboRunner'
+import {
+  dashTapReady,
+  motionDemoCommand,
+  motionDemoInput,
+  motionLessonDone,
+} from './signatureSchoolMotion'
 import { EMPTY_INPUT, type FightInput, type FightState, type MoveSlot } from './types'
 
 /**
@@ -96,12 +102,13 @@ function advanceSteps(combo: SignatureCombo, progress: SignatureProgress, state:
 }
 
 function stepDone(step: SignatureStep, state: FightState): boolean {
+  const motion = motionLessonDone(step, state)
+  if (motion !== null) return motion
   if ('move' in step || 'ranged' in step)
     return (
       startedNow(state) && attackId(state) === moveId(state, 'move' in step ? step.move : 'ranged')
     )
   if ('dash' in step) return dashing(state, step.dash)
-  if ('emperor' in step) return Boolean(state.player.kurapika?.emperorTime)
   return Boolean(state.gumNetwork?.pending.player) || ceilingLinked(state)
 }
 
@@ -159,24 +166,15 @@ export function signatureDemoCommand(
 ): ReplayCommand | null {
   const step = demoStep(progress)
   if (!step) return null
-  if ('emperor' in step)
-    return capturing(state) && !state.player.kurapika?.emperorTime
-      ? { kind: 'emperor', side: 'player' }
-      : null
   if ('ranged' in step) return rangedReady(state) ? RANGED_COMMAND : null
-  if (!('move' in step) || !moveReady(state, step.move)) return null
+  if (!('move' in step)) return motionDemoCommand(step, state)
+  if (!moveReady(state, step.move)) return null
   return {
     kind: 'move',
     side: 'player',
     action: combatRouteAction(step.move),
     input: packReplayInput(combatRouteInput(step.move, state.player.facing)),
   }
-}
-
-/** Emperor Time waits for a confirmed capture or Chain Jail, as in signatureComboRunner.ts. */
-function capturing(state: FightState): boolean {
-  const attack = state.player.attack
-  return Boolean(attack?.confirmedHit && /:(throw|neutralSpecial)$/.test(attack.moveId ?? ''))
 }
 
 const CONTACT_GAP = 6
@@ -220,16 +218,21 @@ export function signatureDemoInput(
   state: FightState,
 ): { input: FightInput; tapFrom?: number } {
   const step = demoStep(progress)
-  if (!step || !('dash' in step)) return { input: EMPTY_INPUT }
-  const tapFrom = progress.tapFrom ?? (tapReady(state) ? state.frame : undefined)
+  if (!step) return { input: EMPTY_INPUT }
+  const motion = motionDemoInput(step, state)
+  if (motion) return { input: motion }
+  if (!('dash' in step)) return { input: EMPTY_INPUT }
+  const tapFrom = progress.tapFrom ?? (dashTapReady(step, state) ? state.frame : undefined)
   if (tapFrom === undefined) return { input: EMPTY_INPUT }
   const held = state.frame - tapFrom !== 1
   const direction = step.dash === 'back' ? -state.player.facing : state.player.facing
   return {
     tapFrom,
-    input: { ...EMPTY_INPUT, right: held && direction === 1, left: held && direction === -1 },
+    input: {
+      ...EMPTY_INPUT,
+      down: Boolean(step.low),
+      right: held && direction === 1,
+      left: held && direction === -1,
+    },
   }
 }
-
-const tapReady = (state: FightState) =>
-  Boolean(state.player.attack?.confirmedHit) && state.hitstop === 0

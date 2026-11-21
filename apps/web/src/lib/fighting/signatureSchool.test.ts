@@ -47,6 +47,8 @@ it('offers every signature in the Academy', () => {
       'hisoka:elastic-murder',
       'chrollo:double-page',
       'benjamin:absolute-command',
+      'biscuit:true-form-return',
+      'phinks:ten-turns-one-fist',
     ]),
   )
 })

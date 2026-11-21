@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1149
+Fichiers : 1156
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -85,6 +85,10 @@ Fichiers : 1149
 
 - Clash commands in first person > reads direction and aim like Clash reads its stick
 - Arena opponent on authored Clash routes > opens with the first move of a ground route
+
+## `apps/web/src/lib/arena/pov.test.ts`
+
+- the arena POV projection > masks a concealed opponent attack while the observer has no Gyo and reveals it with Gyo
 
 ## `apps/web/src/lib/arena/profile.test.ts`
 
@@ -244,6 +248,10 @@ Fichiers : 1149
 ## `apps/web/src/lib/components/map/projection/tierAnchors.test.ts`
 
 - anchors > gives every reconstructed room a place of its own to stand
+
+## `apps/web/src/lib/fighting/accelHeatPresentation.test.ts`
+
+- relance heat in the HUD > is shown only for fighters with the relance
 
 ## `apps/web/src/lib/fighting/arenaTechnique.test.ts`
 
@@ -571,7 +579,7 @@ Fichiers : 1149
 
 ## `apps/web/src/lib/fighting/duelComboGrammar.test.ts`
 
-- tiered cancel grammar > covers every profile except the four recovery links into slow techniques
+- tiered cancel grammar > covers every duel profile through the universal cancel grammar
 
 ## `apps/web/src/lib/fighting/duelComboNinth.test.ts`
 
@@ -869,6 +877,11 @@ Fichiers : 1149
 ## `apps/web/src/lib/fighting/ghostwriterScene.test.ts`
 
 - the known ghostwriter and all written quatrains are visible through the real renderer > uses the normal copied-Hatsu input and reuses the archive creature on its actual writing hand
+
+## `apps/web/src/lib/fighting/groundedLinkLoops.test.ts`
+
+- Feitan jab loop > lets the guard return before the jab after a forward light, instead of looping forever
+- corner pushback > hands the refused grounded pushback to the attacker instead of pinning the combo at the wall
 
 ## `apps/web/src/lib/fighting/gumObjectAnchorBorrowing.test.ts`
 
@@ -1191,6 +1204,10 @@ Fichiers : 1149
 ## `apps/web/src/lib/fighting/machiSpool.test.ts`
 
 - Machi’s finite thread > counts every engaged strand against one physical spool
+
+## `apps/web/src/lib/fighting/machiWound.test.ts`
+
+- Fil court: the Seamstress Elbow opens a wound inside a combo > opens one when it continues a combo
 
 ## `apps/web/src/lib/fighting/melody.test.ts`
 
@@ -1521,6 +1538,17 @@ Fichiers : 1149
 - accélération > cancels a confirmed hit into a dash in the listed direction
 - combo capture > seizes a stunned or downed body only when it ends an accélération
 - Hisoka combo prices and tension élastique > discounts recall, rebound and execution only while the opponent is held in the combo
+
+## `apps/web/src/lib/fighting/signatureCombosBiscuitPhinks.test.ts`
+
+- Retour à la vraie forme > reveals True Form during the capture and keeps it for the round
+- Dix tours, un poing > keeps winding through the back dash, the low dodge and the cross-up jump
+
+## `apps/web/src/lib/fighting/signatureCombosBookArmy.test.ts`
+
+- Double page > prepares Sun and the bookmark before the combo, never during it
+- Commandement absolu > plays the card captured in preparation, never a bullet of its own burst
+- grounded pin > limits only the push of a combo route on a body lying on the ground
 
 ## `apps/web/src/lib/fighting/signatureCombosSecond.test.ts`
 

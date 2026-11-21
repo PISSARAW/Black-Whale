@@ -7,6 +7,7 @@ import { attackPhase } from './frameData'
 import { moveForSlot } from './movesets'
 import { performTrainingAction } from './trainingAction'
 import { setTrainingResources } from './trainingSession'
+import { isMotionStep, motionStepFrame, type SignatureMotionStep } from './signatureMotionSteps'
 import {
   signatureHits,
   type SignatureCombo,
@@ -143,24 +144,28 @@ function attempt(
   cursor: Cursor,
   step: SignaturePreparationStep,
 ): { cursor: Cursor; input: FightInput } {
-  if ('dash' in step) return dashFrame(cursor, step.dash)
+  if ('dash' in step) return dashFrame(cursor, step)
   if ('future' in step || 'riposte' in step) return hingeStep(cursor, step)
+  if (isMotionStep(step)) return motionAttempt(cursor, step)
   const state = cursor.state
-  let after = state
-  if ('move' in step) after = startMove(state, step.move)
-  else if ('ranged' in step) after = fire(state, 'player')
-  else if ('incoming' in step) after = incoming(state)
-  else if ('emperor' in step) after = emperorTime(state)
-  else
-    after = performArsenalAction(
-      { state, side: 'player', command: step.command },
-      performAuraAttack,
-    )
+  const after = commandStep(state, step)
   const done = 'emperor' in step ? Boolean(after.player.kurapika?.emperorTime) : after !== state
   return {
     cursor: { ...cursor, state: after, index: cursor.index + Number(done) },
     input: EMPTY_INPUT,
   }
+}
+
+/** One command attempt; the unchanged state when the engine refuses it this frame. */
+function commandStep(state: FightState, step: SignaturePreparationStep): FightState {
+  if ('move' in step) return startMove(state, step.move)
+  if ('ranged' in step) return fire(state, 'player')
+  if ('incoming' in step) return incoming(state)
+  if ('trueForm' in step) return revealTrueForm(state)
+  if ('emperor' in step) return emperorTime(state)
+  if ('command' in step)
+    return performArsenalAction({ state, side: 'player', command: step.command }, performAuraAttack)
+  return state
 }
 
 /** The deliberate break of a combo: a Parallel Future command or a riposte taken on purpose. */
@@ -207,6 +212,18 @@ function fire(state: FightState, side: 'player' | 'opponent'): FightState {
   return started ? after : state
 }
 
+function motionAttempt(cursor: Cursor, step: SignatureMotionStep) {
+  const frame = motionStepFrame(cursor.state, step)
+  const index = cursor.index + Number(frame.done)
+  return { cursor: { ...cursor, state: frame.state, index }, input: frame.input }
+}
+
+/** Neutral special reveals the natural body; only a real change of form counts as done. */
+function revealTrueForm(state: FightState): FightState {
+  const after = performTrainingAction({ state, side: 'player', action: 'special' })
+  return after.player.biscuitTrueForm && !state.player.biscuitTrueForm ? after : state
+}
+
 /** The opponent fires into the player's technique once it is active (a capture window). */
 function incoming(state: FightState): FightState {
   if (state.player.attack && attackPhase(state.player) !== 'active') return state
@@ -224,13 +241,22 @@ function emperorTime(state: FightState): FightState {
 }
 
 /** A double tap entered once the hit is confirmed and the hitstop has ended. */
-function dashFrame(cursor: Cursor, dash: 'back' | 'forward' | 'through') {
+function dashFrame(
+  cursor: Cursor,
+  step: { dash: 'back' | 'forward' | 'through'; free?: true; low?: true },
+) {
   const { state } = cursor
-  if (cursor.tap < 0 && !dashReady(state)) return { cursor, input: EMPTY_INPUT }
+  const ready = step.free ? freeToDash(state) : tapReady(state)
+  if (cursor.tap < 0 && !ready) return { cursor, input: EMPTY_INPUT }
   const tap = cursor.tap + 1
-  const direction = dash === 'back' ? -state.player.facing : state.player.facing
+  const direction = step.dash === 'back' ? -state.player.facing : state.player.facing
   const held = tap !== 1
-  const input = { ...EMPTY_INPUT, right: held && direction === 1, left: held && direction === -1 }
+  const input = {
+    ...EMPTY_INPUT,
+    down: Boolean(step.low),
+    right: held && direction === 1,
+    left: held && direction === -1,
+  }
   const done = tap === TAP_FRAMES - 1
   return {
     cursor: { ...cursor, tap: done ? -1 : tap, index: cursor.index + Number(done) },
@@ -238,11 +264,11 @@ function dashFrame(cursor: Cursor, dash: 'back' | 'forward' | 'through') {
   }
 }
 
-/** After a confirmed hit (accélération), or from a free stance (a diverging Tserriednich). */
-function dashReady(state: FightState): boolean {
-  const attack = state.player.attack
-  return state.hitstop === 0 && (attack ? Boolean(attack.confirmedHit) : !state.player.hitStun)
-}
+/** A dash from neutral waits for the body to be free and any previous dash to end. */
+const freeToDash = (state: FightState) => !state.player.attack && !state.player.motion?.dash
+
+const tapReady = (state: FightState) =>
+  Boolean(state.player.attack?.confirmedHit) && state.hitstop === 0
 
 const CONTACT_GAP = 6
 

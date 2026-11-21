@@ -17,17 +17,13 @@ export function signatureStepLabel(
     const name = language === 0 ? move.nameFr : move.nameEn
     return `${name} (${moveInputHint(move.input, bindings)})`
   }
-  if ('dash' in step) return dashLabel(step.dash, language)
+  if ('dash' in step)
+    return step.free ? freeDashLabel(step, language) : dashLabel(step.dash, language)
   if ('future' in step || 'riposte' in step) return hingeLabel(step, language)
-  return commandLabel(step, options)
+  return motionLabel(step, language, bindings) ?? techniqueLabel(step, language, bindings)
 }
 
-/** Ranged fire, Emperor Time and the gum anchor: commands rather than moves. */
-function commandLabel(
-  step: SignatureStep,
-  options: { language: Language; bindings: KeyboardBindings },
-): string {
-  const { language, bindings } = options
+function techniqueLabel(step: SignatureStep, language: Language, bindings: KeyboardBindings) {
   if ('ranged' in step)
     return language === 0
       ? `Tir (${bindings.playerRanged}, ${step.hits} balles)`
@@ -54,6 +50,34 @@ function hingeLabel(
     open: ['Ouverture des yeux · Diverger', 'Open eyes · Diverge'],
   } as const
   return labels[step.future][language]
+}
+
+function freeDashLabel(
+  step: { dash: 'back' | 'forward' | 'through'; low?: true },
+  language: Language,
+) {
+  if (step.low) return language === 0 ? 'Esquive basse (↓ + → →)' : 'Low dodge (↓ + → →)'
+  const arrows = step.dash === 'back' ? '← ←' : '→ →'
+  return language === 0 ? `Dash (${arrows})` : `Dash (${arrows})`
+}
+
+const MOTION_LABELS: Record<string, readonly [string, string]> = {
+  trueForm: ['Vraie forme (L, pendant la capture)', 'True Form (L, during the capture)'],
+  wind: ['Démarrer Ripper Cyclotron (L)', 'Start Ripper Cyclotron (L)'],
+  jump: ['Saut croisé (↑ + →)', 'Cross-up jump (↑ + →)'],
+  land: ['Atterrir derrière la cible', 'Land behind the target'],
+  turn: ['Terminer le dernier tour', 'Finish the last turn'],
+}
+
+/** Steps that are neither a move nor a dash; null for the others. */
+function motionLabel(
+  step: SignatureStep,
+  language: Language,
+  bindings: KeyboardBindings,
+): string | null {
+  const key = Object.keys(MOTION_LABELS).find((name) => name in step)
+  if (!key) return null
+  return MOTION_LABELS[key][language].replace('(L', `(${bindings.playerSpecial}`)
 }
 
 function dashLabel(dash: 'back' | 'forward' | 'through', language: Language): string {

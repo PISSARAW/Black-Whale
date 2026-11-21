@@ -33,8 +33,8 @@ function closeBook(s: Shot) {
 }
 
 /** He must see the Hatsu, ask how it works, hear the answer and touch with the book. */
-const steal: Scene = () => {
-  const s = new Shot('tserriednich-salon', 'franklin', { gap: 16 })
+const steal = (opponentHealth?: number): Shot => {
+  const s = new Shot('tserriednich-salon', 'franklin', { gap: 16, opponentHealth })
   s.step(6)
   s.held.player = { guard: true }
   s.move('neutralSpecial', {}, 'opponent')

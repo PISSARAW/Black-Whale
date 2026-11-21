@@ -18,7 +18,8 @@ export function filmAt(
   if (!key) return null
   const selection = selectVictory(segment.states[Math.max(0, keys[0].at)])
   if (!selection) return null
-  const duration = selection.duration ?? VICTORY_DURATION
+  const chosen = { ...selection, ...segment.filmVariant }
+  const duration = chosen.duration ?? VICTORY_DURATION
   const elapsed = Math.min(duration - 1e-3, key.elapsed + (sim - key.at) / 60)
-  return { ...selection, elapsed, active: true }
+  return { ...chosen, elapsed, active: true }
 }

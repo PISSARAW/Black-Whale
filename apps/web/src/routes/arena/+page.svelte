@@ -64,6 +64,7 @@
   import { loadReplayLibrary } from '$lib/arena/replay/library'
   import { ARENA_MANUAL_CONTROLS } from '$lib/arena/manual'
   import { safeStorageGet, safeStorageSet } from '$lib/arena/storage'
+  import { arenaPov } from '$lib/arena/pov'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer } from '$lib/combat/reducer'
@@ -220,7 +221,8 @@
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const motionTimers = new Set<number>()
 
-  let reading = $derived(readAura(game.player, game.opponent))
+  let pov = $derived(arenaPov(game, 'player'))
+  let reading = $derived(readAura(pov.player, pov.opponent))
   let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
   let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
   let hatsuDefinition = $derived(arenaDefinition($activeHatsu))
@@ -236,7 +238,7 @@
     shu: extendedNen.value.shu,
     on: extendedNen.value.on,
   })
-  let opponentNen = $derived(arenaNen(game.opponent))
+  let opponentNen = $derived(arenaNen(pov.opponent))
   let playerFighter = $derived(arenaFighter(fighterId))
   let opponentFighter = $derived(arenaFighter(opponentFighterId))
   let opponentActor = $derived<Apparition[]>([
@@ -257,7 +259,7 @@
         pose:
           game.opponent.condition === 'down' || game.opponent.condition === 'ko'
             ? 'fallen'
-            : (!hideOpponentIntent && game.opponent.intent) || opponentMotion === 'attack'
+            : (!hideOpponentIntent && pov.opponent.intent) || opponentMotion === 'attack'
               ? 'attack'
               : opponentMotion === 'guard'
                 ? 'guard'
@@ -595,7 +597,7 @@
   function actorStage(): number {
     const mode = { ten: 0, ren: 1, zetsu: 2 }[game.opponent.mode]
     const fallen = game.opponent.condition === 'down' || game.opponent.condition === 'ko'
-    const pose = fallen ? 'down' : game.opponent.intent ? 'attack' : opponentMotion
+    const pose = fallen ? 'down' : pov.opponent.intent ? 'attack' : opponentMotion
     const poseIndex: Record<ArenaCombatMotion, number> = {
       idle: 0,
       guard: 1,
@@ -882,7 +884,7 @@
     <span>{$t.arena.zone[aimedZone]}</span>
   </div>
 
-  {#if (game.opponent.intent || game.opponent.ko) && !hideOpponentIntent}
+  {#if (pov.opponent.intent || pov.opponent.ko) && !hideOpponentIntent}
     <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">
       {#if reading.intentZone}
         <small>{$t.arena.ui.intentRead}</small>
@@ -894,7 +896,7 @@
         <small>{$t.arena.ui.koRead}</small>
         <strong>{$t.arena.zone[reading.koZone]}</strong>
         <i
-          style:--threat-progress={`${Math.max(0, 1 - (game.opponent.ko?.remaining ?? 0) / 0.8) * 100}%`}
+          style:--threat-progress={`${Math.max(0, 1 - (pov.opponent.ko?.remaining ?? 0) / 0.8) * 100}%`}
         ></i>
       {:else}
         <small>{$t.arena.ui.auraDisturbance}</small>
@@ -903,10 +905,10 @@
     </div>
   {/if}
 
-  {#if game.tethers.length > 0}
+  {#if pov.tethers.length > 0}
     <div class="elastic-readout" aria-live="polite">
-      BUNGEE GUM · {game.tethers[0].anchor ? $t.arena.ui.scenery : opponentDisplayName}
-      · {game.tethers[0].remaining.toFixed(1)}s
+      BUNGEE GUM · {pov.tethers[0].anchor ? $t.arena.ui.scenery : opponentDisplayName}
+      · {pov.tethers[0].remaining.toFixed(1)}s
     </div>
   {/if}
 
@@ -1164,16 +1166,16 @@
       <header>
         <strong>{opponentDisplayName}</strong>
         <span
-          >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[game.opponent.mode]}</span
+          >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[pov.opponent.mode]}</span
         >
       </header>
       <div class="meter enemy">
         <i
-          style:width={`${game.player.gyo ? auraPercent(game.opponent.aura, game.opponent.capacity) : 0}%`}
+          style:width={`${game.player.gyo ? auraPercent(pov.opponent.aura, pov.opponent.capacity) : 0}%`}
         ></i>
       </div>
       <p>
-        {#if game.player.gyo}{$t.arena.aura} · {Math.ceil(game.opponent.aura)}{:else}—{/if}
+        {#if game.player.gyo}{$t.arena.aura} · {Math.ceil(pov.opponent.aura)}{:else}—{/if}
       </p>
       <div class="tags">
         {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}

@@ -4,12 +4,14 @@ import { hatsuSourceFor } from './hatsu'
 import { applyAuraContext } from './nen'
 import { canStartFighterAttack } from './fighterAttacks'
 import type { AttackFrameData } from './frameData'
-import type { ArcadeFighter, FightInput } from './types'
+import type { ArcadeFighter, AttackKind, FightInput } from './types'
 
 /** Duel tuning, not a canonical cadence, aura price or damage formula. */
 export const CYCLOTRON_ROTATION_FRAMES = 36
 export const CYCLOTRON_ROTATION_AURA = 2
 export const CYCLOTRON_PUNCH = 'phinks:finisher'
+/** Step-in of a combo release (phinksComboRelease.ts): covers the carry of the blow it cancels. */
+export const CYCLOTRON_COMBO_LUNGE = 4
 
 export function cyclotronNenActive(fighter: ArcadeFighter): boolean {
   return voluntaryNenAvailable(fighter, { requireReserve: true }) && cyclotronOwned(fighter)
@@ -62,19 +64,48 @@ export function clearCyclotron(fighter: ArcadeFighter): ArcadeFighter {
   }
 }
 
+/**
+ * Rotation en mouvement (Dix tours, un poing, signatureCombosBiscuitPhinks.ts): the right arm
+ * keeps turning while Phinks moves, crouches, jumps and lands ordinary blows. Guard, a hit
+ * taken, a hold, a throw, a technique or the release stop it. The blows gain nothing from it.
+ */
+export function cyclotronKeepsTurning(fighter: ArcadeFighter): boolean {
+  if (!cyclotronNenActive(fighter) || fighter.blocking || cyclotronBodyHeld(fighter)) return false
+  return !fighter.attack || cyclotronAllowsAttack(fighter, fighter.attack.kind, fighter.attack)
+}
+
+function cyclotronBodyHeld(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    fighter.hitStun ||
+    fighter.knockdownFrames ||
+    fighter.blockStun ||
+    fighter.chainJail ||
+    fighter.drainingChain,
+  )
+}
+
+/** While winding, only ordinary blows and the release may start; never a throw or a technique. */
+export function cyclotronAllowsAttack(
+  fighter: ArcadeFighter,
+  kind: AttackKind,
+  attack?: { variant?: string; moveId?: string },
+): boolean {
+  if (!fighter.cyclotronWindup || attack?.moveId === CYCLOTRON_PUNCH) return true
+  return (kind === 'light' || kind === 'heavy') && attack?.variant !== 'throw'
+}
+
 /** Advances once per simulated frame; hitstop and pause never complete a rotation. */
 export function advanceCyclotron(fighter: ArcadeFighter): ArcadeFighter {
   if (!cyclotronBusy(fighter)) return fighter
   if (!cyclotronNenActive(fighter)) return clearCyclotron(fighter)
   const windup = fighter.cyclotronWindup
   if (!windup) return fighter
-  if (!cyclotronCanAct(fighter)) return pauseCyclotron(fighter)
+  if (!cyclotronKeepsTurning(fighter)) return pauseCyclotron(fighter)
   const frame = windup.frame + 1
-  if (frame < CYCLOTRON_ROTATION_FRAMES)
-    return { ...holdCyclotron(fighter), cyclotronWindup: { frame } }
+  if (frame < CYCLOTRON_ROTATION_FRAMES) return { ...fighter, cyclotronWindup: { frame } }
   if (fighter.aura < CYCLOTRON_ROTATION_AURA) return pauseCyclotron(fighter)
   return {
-    ...holdCyclotron(fighter),
+    ...fighter,
     aura: fighter.aura - CYCLOTRON_ROTATION_AURA,
     hatsuEffects: {
       ...fighter.hatsuEffects,
@@ -92,11 +123,11 @@ export function cyclotronBusy(fighter: ArcadeFighter): boolean {
   )
 }
 
-/** Basic Nen controls may interrupt winding; movement and ordinary guard cannot coexist with it. */
+/** Basic Nen controls may interrupt winding; movement goes on (rotation en mouvement). */
 export function steerCyclotron(fighter: ArcadeFighter, input?: FightInput): ArcadeFighter | null {
   if (!fighter.cyclotronWindup) return null
   const next = input ? applyAuraContext(fighter, input) : fighter
-  return cyclotronNenActive(next) ? holdCyclotron(next) : clearCyclotron(next)
+  return cyclotronNenActive(next) ? null : clearCyclotron(next)
 }
 
 export function cyclotronPunchReady(fighter: ArcadeFighter): boolean {
@@ -120,7 +151,7 @@ export function cyclotronAttackData(
     blockstun: 14,
     hitstop: 8,
     knockback: 5,
-    lunge: 0,
+    lunge: fighter.attack?.accel ? CYCLOTRON_COMBO_LUNGE : 0,
     targetZone: 'torso',
     auraZone: 'hands',
     cancelEnd: 0,

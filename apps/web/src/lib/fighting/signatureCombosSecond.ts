@@ -13,15 +13,16 @@ export const SECOND_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
     opponent: 'kurapika',
     title: ['Dix secondes d’avance', 'Ten Seconds Ahead'],
     requirement: [
-      'Recul tactique, Zetsu yeux fermés, vision du futur, ouverture des yeux, accélération vers l’angle sûr, Tir aux jambes, Pas princier, Coup de crosse, Fauchage calculé, Angle mort. L’adversaire garde contre l’image prévue : seule une divergence choisie le prend à revers. Le futur n’esquive jamais à sa place.',
-      'Tactical Retreat, Zetsu with closed eyes, future vision, open eyes, accélération to the safe angle, Leg Shot, Princely Step, Pistol Whip, Calculated Sweep, Blind Spot. The opponent guards against the predicted image: only a chosen divergence takes them from behind. The future never dodges for him.',
+      'Recul tactique, Zetsu yeux fermés, vision du futur, ouverture des yeux, accélération vers l’angle sûr, Tir aux jambes, Pas princier, Coup de crosse, Fauchage calculé, Angle mort. L’adversaire rejoue le futur qu’il a vu : seule une divergence choisie gagne l’échange. Le futur n’esquive jamais à sa place.',
+      'Tactical Retreat, Zetsu with closed eyes, future vision, open eyes, accélération to the safe angle, Leg Shot, Princely Step, Pistol Whip, Calculated Sweep, Blind Spot. The opponent replays the future it was shown: only a chosen divergence wins the exchange. The future never dodges for him.',
     ],
     steps: [
       { move: 'backHeavy' },
       { future: 'close' },
       { future: 'vision' },
       { future: 'open' },
-      { dash: 'through' },
+      // From neutral: diverging, he is free; the crossing comes from signatureCrossing.ts.
+      { dash: 'through', free: true },
       { move: 'lowLight' },
       { move: 'forwardLight' },
       { move: 'standingHeavy' },

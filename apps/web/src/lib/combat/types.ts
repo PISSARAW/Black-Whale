@@ -1,4 +1,4 @@
-import type { Polygon, Vec2, WallSegment } from '../tour/types'
+import type { DangerBoundary, PassageBoundary, Polygon, Vec2, WallSegment } from '../tour/types'
 
 export type CombatSide = 'player' | 'opponent'
 export type BodyZone = 'head' | 'torso' | 'arms' | 'legs'
@@ -144,6 +144,12 @@ export interface CombatTerrainPhysics {
   id: string
   footprint: Polygon
   walls: WallSegment[]
+  /**
+   * The footprint's open edges: ways out (`passage`) and exposed hazards
+   * (`danger`). Solid edges are colliders carried by `walls` and are not repeated
+   * here, which keeps the two from drifting apart.
+   */
+  boundaries?: Array<PassageBoundary | DangerBoundary>
 }
 
 export interface CombatSetup {

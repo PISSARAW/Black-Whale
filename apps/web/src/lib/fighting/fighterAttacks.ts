@@ -1,4 +1,5 @@
 import { interruptHanzoBlade } from './hanzoBlade'
+import { cyclotronAllowsAttack } from './phinksCyclotron'
 import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
 import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
@@ -192,6 +193,8 @@ function characterAttackAvailable(
 ): boolean {
   if (fighter.id === 'theta' && kind === 'special') return false
   if (chainsImmobilize(fighter)) return false
+  // Winding Phinks still strikes with ordinary blows (rotation en mouvement).
+  if (!cyclotronAllowsAttack(fighter, kind, { moveId })) return false
   if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
@@ -290,7 +293,6 @@ function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
     Boolean(fighter.luiniPassage) ||
     Boolean(fighter.preparationRecovery) ||
     Boolean(fighter.pluggingWounds) ||
-    Boolean(fighter.cyclotronWindup) ||
     crossGameBusy(fighter) ||
     melodyRestrictsCombat(fighter) ||
     battlePreparing(fighter) ||

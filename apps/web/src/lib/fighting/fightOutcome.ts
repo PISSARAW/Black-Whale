@@ -39,8 +39,10 @@ export function resolveFightOutcome(state: FightState): FightState {
   return opponentLost ? finishFight(cleared, 'player', opponentLost) : cleared
 }
 
+/** Points and death-match bouts both survive zero HP unless a death was recorded. */
 function preservePointHealth(state: FightState): FightState {
-  if (fightFormat(state.formatId).victory !== 'points') return state
+  const format = fightFormat(state.formatId)
+  if (format.victory !== 'points' && !format.lethalOnly) return state
   let next = state
   for (const side of SIDES) {
     const forced = state.deaths?.some((death) => death.victimSide === side && explicitDeath(death))

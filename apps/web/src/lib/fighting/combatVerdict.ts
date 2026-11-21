@@ -1,6 +1,7 @@
 import { settleTeamBodyOutcome } from './teamOutcome'
 import { applyKnockoutStageTransition } from './stageTransition'
 import { wakeHanzoBody } from './hanzoProjection'
+import { fightFormat } from './formats'
 import type { FightFinishReason, FightSide, FightState } from './types'
 
 export function finishFight(
@@ -10,7 +11,8 @@ export function finishFight(
 ): FightState {
   const loser = winner === 'player' ? 'opponent' : 'player'
   const roundsWon = { ...state.roundsWon, [winner]: state.roundsWon[winner] + 1 }
-  const matchWinner = roundsWon[winner] >= 2 ? winner : null
+  const singleBout = fightFormat(state.formatId).singleBout === true
+  const matchWinner = singleBout || roundsWon[winner] >= 2 ? winner : null
   const finished = settleTeamBodyOutcome({
     ...state,
     player: wakeHanzoBody(state.player),

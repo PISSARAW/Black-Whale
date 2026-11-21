@@ -3,6 +3,7 @@ import { finishFight } from './combatVerdict'
 import type { FightState } from './types'
 
 export function finishExpiredFight(state: FightState): FightState {
+  if (fightFormat(state.formatId).timeLimit === false) return state
   return state.remainingFrames === 0 && state.mode !== 'training' ? finishByTime(state) : state
 }
 

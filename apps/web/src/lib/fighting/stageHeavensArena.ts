@@ -1,4 +1,7 @@
 import type * as Three from 'three'
+import { createCrowd } from './heavensDeathMatch/crowd/create'
+import { buildCrowdScene } from './heavensDeathMatch/render/crowdScene'
+import type { StageBackgroundContext } from './stageBackgroundTypes'
 import { sceneryBox, type FightScenery, type SceneryKit } from './stageKit'
 import {
   BALCONY,
@@ -19,17 +22,6 @@ import {
  * the blueprint has nothing to raise it from. Dimensions live in
  * `heavensArenaLayout.ts`, shared with the playable stands of the death match.
  */
-const CROWD_PALETTE = [0x6f5a4c, 0x8a6d5a, 0x4d5b70, 0x7a4040, 0x5d6b4a, 0x9a8a72, 0x3f4656]
-
-/** A fixed sequence, so the crowd sits in the same seats on every visit. */
-function sequence(seed: number): () => number {
-  let state = seed >>> 0
-  return () => {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0
-    return state / 0x100000000
-  }
-}
-
 function addRing(kit: SceneryKit, root: Three.Group): void {
   const [width, depth] = RING
   root.add(
@@ -73,34 +65,24 @@ function addStands(kit: SceneryKit, root: Three.Group): void {
   )
 }
 
-function addCrowd(kit: SceneryKit, root: Three.Group): void {
-  const { THREE, glow, geometry } = kit
-  const seats = Math.floor(STAND_WIDTH / 0.62)
-  const crowd = new THREE.InstancedMesh(
-    geometry(new THREE.BoxGeometry(0.36, 0.52, 0.3)),
-    glow(0xffffff, 1),
-    TIERS * seats,
-  )
-  const next = sequence(1999)
-  const placed = new THREE.Object3D()
-  const colour = new THREE.Color()
-  let index = 0
-  for (let tier = 0; tier < TIERS; tier += 1) {
-    const top = -PIT + (tier + 1) * TIER_RISE
-    for (let seat = 0; seat < seats; seat += 1) {
-      const x = -STAND_WIDTH / 2 + 0.4 + seat * 0.62 + (next() - 0.5) * 0.12
-      placed.position.set(x, top + 0.26 + next() * 0.07, STAND_START - tier * TIER_DEPTH)
-      // One seat in nine is empty: a full house reads as a wall, not a crowd.
-      placed.scale.setScalar(next() < 0.11 ? 0 : 0.9 + next() * 0.2)
-      placed.updateMatrix()
-      crowd.setMatrixAt(index, placed.matrix)
-      const shade = 0.3 + next() * 0.22 - tier * 0.015
-      colour.setHex(CROWD_PALETTE[Math.floor(next() * CROWD_PALETTE.length)])
-      crowd.setColorAt(index, colour.multiplyScalar(Math.max(0.18, shade)))
-      index += 1
-    }
+/** Seats in an ordinary duel: a full, calm house, the same people on every visit. */
+const DUEL_CROWD = 560
+/** Bodies the live crowd may hold: the spectators, the referee and every copy. */
+const LIVE_CROWD_CAPACITY = 640
+
+/**
+ * The crowd drawn from `crowdInstances`. In the death match it is the live simulation;
+ * in any other duel, a seated crowd that never moves.
+ */
+function addCrowd(kit: SceneryKit, root: Three.Group, context: StageBackgroundContext) {
+  const live = () => context.fight?.().deathMatch?.crowd
+  const scene = buildCrowdScene(kit, live() ? LIVE_CROWD_CAPACITY : DUEL_CROWD)
+  root.add(scene.root)
+  scene.sync(live() ?? createCrowd({ count: DUEL_CROWD }))
+  return () => {
+    const crowd = live()
+    if (crowd) scene.sync(crowd)
   }
-  root.add(crowd)
 }
 
 /** The second level along the back wall, with its rail: the one Hisoka climbs to. */
@@ -158,12 +140,15 @@ function addLights(kit: SceneryKit, root: Three.Group): void {
   root.add(pool)
 }
 
-export function buildHeavensArenaScenery(kit: SceneryKit): FightScenery {
+export function buildHeavensArenaScenery(
+  kit: SceneryKit,
+  context: StageBackgroundContext = {},
+): FightScenery {
   const root = new kit.THREE.Group()
   addRing(kit, root)
   addStands(kit, root)
   addBalcony(kit, root)
-  addCrowd(kit, root)
+  const syncCrowd = addCrowd(kit, root, context)
   addHall(kit, root)
   addLights(kit, root)
   return {
@@ -171,6 +156,7 @@ export function buildHeavensArenaScenery(kit: SceneryKit): FightScenery {
     fog: { kind: 'linear', colour: 0x0c0a10, near: 9, far: 46 },
     cameraFar: 80,
     clipped: false,
+    update: syncCrowd,
     dispose: () => undefined,
   }
 }

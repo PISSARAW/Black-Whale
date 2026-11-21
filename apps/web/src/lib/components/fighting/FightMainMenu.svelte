@@ -8,6 +8,7 @@
   export let player: FighterId
   export let opponent: FighterId
   export let onMode: (mode: FightMode) => void
+  export let onHistorical: () => void = () => {}
   $: fr = language === 'fr'
   $: modes = [
     {
@@ -84,6 +85,18 @@
       </button>
     {/each}
   </div>
+  <button type="button" class="clash-historical" onclick={onHistorical}>
+    <span class="mode-meta"
+      ><span>04 /</span><span>{fr ? 'CHAPITRES 351–357' : 'CHAPTERS 351–357'}</span></span
+    >
+    <strong>{fr ? 'Combat historique' : 'Historical fight'}</strong>
+    <span class="mode-description"
+      >{fr
+        ? 'Hisoka contre Chrollo, à mort, au sommet de la Tour Céleste.'
+        : 'Hisoka versus Chrollo, to the death, atop Heavens Arena.'}</span
+    >
+    <span class="mode-action">{fr ? 'Revivre' : 'Relive'}<span aria-hidden="true">↗</span></span>
+  </button>
   <div class="clash-menu-links">
     <a href={$link('/fighting/profile')}
       ><span aria-hidden="true">◇</span><span
@@ -117,6 +130,21 @@
 </section>
 
 <style>
+  .clash-historical {
+    background: linear-gradient(110deg, #2a1230, #17111e 60%);
+    border: 1px solid #7a3b63;
+    color: #f4ecf7;
+    cursor: pointer;
+    display: grid;
+    gap: 0.35rem;
+    margin: 1rem 0 0;
+    padding: 1.1rem 1.3rem;
+    text-align: left;
+    width: 100%;
+  }
+  .clash-historical strong {
+    font-size: 1.35rem;
+  }
   .clash-menu {
     padding-bottom: 1.5rem;
   }

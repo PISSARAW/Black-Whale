@@ -452,7 +452,8 @@ export interface FightState {
   futurePerception?: FightState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
-  /** Fatal causes collected before one common verdict, including simultaneous hits. */
+  /** Hall, crowd and scenario of the Hisoka-Chrollo death match (heavensDeathMatch/). */
+  deathMatch?: import('./heavensDeathMatch/chrolloPlan/world').DeathMatchWorld
   environment: FightEnvironment
   /** Autonomous, invulnerable guards; these are never avoidance charges on a fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>

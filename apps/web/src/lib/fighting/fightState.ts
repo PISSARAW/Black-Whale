@@ -29,6 +29,7 @@ import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
 import { createChrolloBook } from './chrolloBook'
 import { prepareDeathMatchLoadout } from './heavensDeathMatch/loadout'
+import { prepareDeathMatchWorld } from './heavensDeathMatch/prepare'
 import { createKurapika } from './kurapika'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import { createPainPacker } from './feitanPain'
@@ -91,7 +92,9 @@ export function createFightState(
     prepareHinrighKits(
       prepareHisokaAsphyxia(
         prepareFortuneScenario(
-          prepareBodyDamage(prepareMusseHistory(prepareDeathMatchLoadout(created))),
+          prepareBodyDamage(
+            prepareMusseHistory(prepareDeathMatchWorld(prepareDeathMatchLoadout(created))),
+          ),
         ),
       ),
       createBiohazardInventory,

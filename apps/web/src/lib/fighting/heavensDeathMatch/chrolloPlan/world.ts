@@ -40,7 +40,8 @@ export const REFEREE_ID = 'referee'
 export const COMMENTATOR_BOOTH: Vec3 = { x: -21, y: 2.0, z: -12 }
 
 function referee(): Spectator {
-  const at = { x: 0, y: 0, z: 0.3 }
+  // Behind the duel lane, at the back of the ring, between the two Floor Masters.
+  const at = { x: 0, y: 0, z: -1.5 }
   return {
     id: REFEREE_ID,
     look: { palette: 0, height: 1.75, build: 0.5, hair: 0 },

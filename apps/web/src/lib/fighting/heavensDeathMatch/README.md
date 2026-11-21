@@ -54,6 +54,23 @@ rien tant qu'aucune mort n'est enregistrée (`../fightOutcome.ts`).
 `canonicalRun.test.ts` joue le plan du début à l'explosion finale en mode scripté, avec
 un remplaçant du camp d'Hisoka, et vérifie qu'il se rejoue à l'identique.
 
-Reste à brancher : l'entrée « Combat historique » du menu, le pas du monde dans la boucle
-du duel (positions 3D des combattants ↔ voie 2D), le rendu de la foule depuis
-`crowdInstances`, l'IA d'Hisoka (P1) et les blessures mesurées par le moteur (P1).
+## Dans le jeu
+
+- **Menu** — la carte « Combat historique » du menu Clash ouvre `/fighting/historical`
+  (`FightHistoricalSetup.svelte`) : camp, déroulement, difficulté, aides de déduction.
+  `historicalSetup.ts` installe Hisoka et Chrollo, le format à mort et la Tour ; les
+  options voyagent dans `environment.deathMatch`, donc les replays les rejouent
+  (`optionsCodec.ts`).
+- **Boucle du duel** — `prepare.ts` crée le monde avec le combat ; `engine.ts` appelle
+  `stepDeathMatchFight` (`fightBridge.ts`) après chaque frame. La voie (x de 0 à 100)
+  passe en mètres par `fightWorldX`, sur l'axe du ring (z = 0). Le plan déplace Chrollo
+  quand il est l'IA ; un joueur qui l'incarne garde son corps dans le ring. Dans les
+  gradins, la voie le garde à sa projection, intouchable, et le rendu le dessine à sa vraie
+  place (`deathMatchBodyPosition`). Les souffles proches blessent Hisoka ; l'asphyxie
+  enregistrée termine le combat.
+- **Rendu** — `render/crowdScene.ts` dessine la foule de la Tour depuis `crowdInstances` :
+  la simulation vivante dans ce scénario, une salle assise et immobile dans les duels.
+
+Limites actuelles : les temps forts d'Hisoka et ses blessures sont crédités par un
+remplaçant après deux secondes d'attente (`STAND_IN_DELAY`) jusqu'à son IA (P1) ; la
+difficulté est enregistrée mais ne règle encore rien ; l'arbitre n'a pas de figure propre.

@@ -1,4 +1,5 @@
 import { nativeRecoveryCounter } from './recoveryCounterAction'
+import { stepDeathMatchFight } from './heavensDeathMatch/fightBridge'
 import { movesetFor } from './movesets'
 import { nativeNenCombo } from './nativeNenCombo'
 import { reservingAura } from './combatIntentPolicy'
@@ -144,7 +145,7 @@ export function tickFight(
       ),
       frameAccumulator: accumulator,
     }
-    next = { ...next, previousPositions }
+    next = stepDeathMatchFight({ ...next, previousPositions }, performAttack)
     if (next.phase === 'finished') {
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }

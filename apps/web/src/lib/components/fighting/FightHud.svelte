@@ -18,6 +18,8 @@
 
   const sides: FightSide[] = ['player', 'opponent']
   $: format = fightFormat(state.formatId)
+  /** Training and the death match have no clock: the bout ends otherwise. */
+  $: untimed = state.mode === 'training' || format.timeLimit === false
 </script>
 
 <div class="hud">
@@ -96,8 +98,8 @@
     </div>
   {/each}
   <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>
-    <div class="timer" class:urgent={state.mode !== 'training' && state.time <= 10}>
-      {state.mode === 'training' ? '∞' : Math.ceil(state.time)}
+    <div class="timer" class:urgent={untimed === false && state.time <= 10}>
+      {untimed ? '∞' : Math.ceil(state.time)}
     </div>
     {#if format.hitTarget !== null}
       <div class="point-score" aria-label="Points">

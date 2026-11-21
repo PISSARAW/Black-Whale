@@ -11,6 +11,8 @@ export interface FightEnvironment {
   doorFrames?: Partial<Record<FightSide, import('./voconteDoorTypes').DoorFramePick>>
   needleStock?: Partial<Record<FightSide, boolean>>
   preparation?: FightPreparation
+  /** Options of the historical Hisoka-Chrollo scenario; only read by its format. */
+  deathMatch?: Partial<import('./heavensDeathMatch/scenario').DeathMatchOptions>
   stageId: FightStageId
   morenaPresent: boolean
   unlawfulIntruders: Record<FightSide, boolean>
@@ -22,17 +24,8 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
     arenaInteractions: options.arenaInteractions ?? false,
     ...(options.doorFrames ? { doorFrames: { ...options.doorFrames } } : {}),
     needleStock: options.needleStock ? { ...options.needleStock } : undefined,
-    preparation: options.preparation
-      ? {
-          ...options.preparation,
-          ...(options.preparation.injuries
-            ? { injuries: { ...options.preparation.injuries } }
-            : {}),
-          resources: [...options.preparation.resources],
-          cohorts: [...options.preparation.cohorts],
-          ...copyHinrighKit(options.preparation.hinrighKit),
-        }
-      : undefined,
+    preparation: copyPreparation(options.preparation),
+    ...(options.deathMatch ? { deathMatch: { ...options.deathMatch } } : {}),
     stageId: options.stageId ?? DEFAULT_FIGHT_STAGE,
     morenaPresent: options.morenaPresent ?? false,
     unlawfulIntruders: { player: false, opponent: false, ...options.unlawfulIntruders },
@@ -41,6 +34,17 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
 
 export function inMorenasHideout(environment: FightEnvironment): boolean {
   return environment.stageId === 'heilly-hideout' && environment.morenaPresent
+}
+
+function copyPreparation(preparation: FightPreparation | undefined): FightPreparation | undefined {
+  if (!preparation) return undefined
+  return {
+    ...preparation,
+    ...(preparation.injuries ? { injuries: { ...preparation.injuries } } : {}),
+    resources: [...preparation.resources],
+    cohorts: [...preparation.cohorts],
+    ...copyHinrighKit(preparation.hinrighKit),
+  }
 }
 
 function copyHinrighKit(kit: import('./hinrighKit').HinrighKit | undefined) {

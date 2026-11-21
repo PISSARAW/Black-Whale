@@ -77,9 +77,13 @@ export function preloadFightStage(stageId: FightStageId): void {
  * The ship rooms are imported on demand: they bring the blueprint and the
  * visit's mesh builder with them, which the two authored stages never need.
  */
-async function buildBaseScenery(kit: SceneryKit, stageId: FightStageId): Promise<FightScenery> {
+async function buildBaseScenery(
+  kit: SceneryKit,
+  stageId: FightStageId,
+  context: StageBackgroundContext,
+): Promise<FightScenery> {
   const stage = fightStage(stageId)
-  if (stage.kind === 'heavens-arena') return buildHeavensArenaScenery(kit)
+  if (stage.kind === 'heavens-arena') return buildHeavensArenaScenery(kit, context)
   if (stage.kind === 'ship-room' && stage.spaceId) {
     const { buildShipRoomScenery } = await import('./stageShipRoom')
     return buildShipRoomScenery(kit, stage.spaceId)
@@ -93,7 +97,7 @@ async function buildTransitionedScenery(
   context: StageBackgroundContext,
 ): Promise<FightScenery> {
   const target = context.fight?.().stageTransition?.toSpaceId
-  if (!target) return buildBaseScenery(kit, stageId)
+  if (!target) return buildBaseScenery(kit, stageId, context)
   const { buildShipRoomScenery } = await import('./stageShipRoom')
   return buildShipRoomScenery(kit, target)
 }

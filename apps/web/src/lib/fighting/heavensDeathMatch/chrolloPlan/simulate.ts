@@ -2,7 +2,7 @@ import { stepCrowd } from '../crowd/step'
 import type { CrowdState } from '../crowd/types'
 import { closeGalleryFake, pageActive, steerPuppets, triggerBombs } from '../puppets/pipeline'
 import { advanceDeathMatch } from '../scenario'
-import { advanceDamage, damageFromBlast } from '../stands/damage'
+import { advanceDamage, damageFromBlast, type Blast } from '../stands/damage'
 import { FINAL_BLASTS, observedBeats } from './bridge'
 import { executeChrollo, type ChrolloOutcome } from './execute'
 import { decideChrollo, type ChrolloDecision } from './tactics'
@@ -15,6 +15,8 @@ export interface WorldFrame {
   world: DeathMatchWorld
   decision: ChrolloDecision
   outcome: ChrolloOutcome
+  /** Every detonation of the frame: Chrollo's own and the bombs beside Hisoka. */
+  blasts: readonly Blast[]
 }
 
 /** Copies Hisoka watches break or vanish no longer pass for people in his eyes. */
@@ -75,5 +77,5 @@ export function stepDeathMatchWorld(world: DeathMatchWorld, input: WorldInput = 
     (state, beat) => advanceDeathMatch(state, { beat, frame: next.crowd.frame }),
     next.scenario,
   )
-  return { world: { ...next, scenario }, decision, outcome }
+  return { world: { ...next, scenario }, decision, outcome, blasts }
 }

@@ -2,6 +2,7 @@ import { getContext } from 'svelte'
 import { attackPoseFraction, createAttackTravel } from './fightAttackTravel'
 import { closeFightPosition } from './fightCloseSpacing'
 import { withThrowPresentation } from './throwPresentationLayer'
+import { deathMatchBodyPosition } from './heavensDeathMatch/fightBridge'
 import {
   FIGHT_VISUAL_PREDICTION,
   responsiveFightPosition,
@@ -24,7 +25,7 @@ export function createFightPresentation() {
         visualFighter(state, side, prediction),
         state,
       )
-      return closeFightPosition(state, side, {
+      const lane = closeFightPosition(state, side, {
         body,
         rival: responsiveFightPosition(
           state,
@@ -32,6 +33,8 @@ export function createFightPresentation() {
           prediction,
         ),
       })
+      // In the death match, Chrollo is drawn where the plan put him in the stands.
+      return deathMatchBodyPosition(state, side, lane)
     },
   })
 }

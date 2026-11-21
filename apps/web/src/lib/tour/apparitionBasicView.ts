@@ -6,11 +6,6 @@ import { buildHumanFigure, type HumanFigure } from './humanFigure'
 import type { Glass } from './humanAura'
 import { seesConcealed, type AuraSight } from './auraSight'
 import { residue } from './apparitionResidue'
-import {
-  characterBodyMeshes,
-  wearCharacterModel,
-  wearsCharacterModel,
-} from './characterModelFigure'
 
 type Three = typeof import('three')
 type Glow = (colour: number, opacity: number) => MeshBasicMaterial
@@ -101,14 +96,7 @@ function human(
     ...(observerSight ? { observerSight } : {}),
   })
   root.add(figure.root)
-  const modelId = seen.human?.identity
-  if (wearsCharacterModel(modelId)) {
-    const body = characterBodyMeshes(figure.turns)
-    wearCharacterModel({ THREE, figure, modelId, body, clips: true })
-  }
-  // Read at call time: a GLB that arrives later wraps `animate` with its walk clip.
-  const humanAnimate: HumanFigure['animate'] = (...args) => figure.animate(...args)
-  return { turns: figure.turns, humanLod: figure.lod, humanAnimate }
+  return { turns: figure.turns, humanLod: figure.lod, humanAnimate: figure.animate }
 }
 
 function card(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {

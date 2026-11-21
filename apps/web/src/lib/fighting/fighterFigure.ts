@@ -29,7 +29,6 @@ import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { biscuitTrueFormProfile, shapeBiscuitTrueForm } from './biscuitFigure'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { fighterDefinition } from './roster'
-import { fightBodyMeshes, wearFightModel } from './fightCharacterModel'
 import type { ArcadeFighter } from './types'
 
 /** Geometry state only: attacks and movement animate the existing model. */
@@ -112,7 +111,6 @@ export function buildFightFigure(options: {
     seen,
     profile: finalProfile,
   })
-  const body = fightBodyMeshes(definition.modelId, model)
   if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
   shapeGumProstheses(options, model.root)
@@ -123,7 +121,6 @@ export function buildFightFigure(options: {
   addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
   registerFightExpression({ THREE, model, fighter })
-  wearFightModel(THREE, model, { modelId: definition.modelId, body })
   return model
 }
 

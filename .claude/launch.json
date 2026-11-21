@@ -4,11 +4,7 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": [
-        "--filter",
-        "@black-whale/web",
-        "dev"
-      ],
+      "runtimeArgs": ["--filter", "@black-whale/web", "dev"],
       "port": 3000
     },
     {
@@ -35,16 +31,6 @@
         "--port=3210"
       ],
       "port": 3210
-    },
-    {
-      "name": "feitan-intro",
-      "runtimeExecutable": "node",
-      "runtimeArgs": [
-        "apps/web/scripts/serve-fighting-demo.mjs",
-        "--demo=feitan-intro",
-        "--port=3211"
-      ],
-      "port": 3211
     }
   ]
 }

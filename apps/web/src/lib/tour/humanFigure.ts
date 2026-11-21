@@ -36,8 +36,7 @@ export interface HumanFigureBuild {
 export interface HumanFigure {
   root: Group
   turns: Object3D
-  /** `detail` lets a worn GLB pick its own near range inside `near`; see `characterModelFigure`. */
-  lod: { near: Group; far: Group; detail?: (distance: number) => void }
+  lod: { near: Group; far: Group }
   animate: ReturnType<typeof humanAnimation>
 }
 

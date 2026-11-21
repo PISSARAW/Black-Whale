@@ -108,10 +108,7 @@
     async function mountScene() {
       try {
         const THREE = await import('three')
-        const { buildFightFigure, fightFigureKey, fightHandAnchor } =
-          await import('$lib/fighting/fightCharacterModel').then((loaded) =>
-            loaded.prepareFightFigures(THREE, state),
-          )
+        const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
         const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         const { createVictoryRenderer } = await import('$lib/fighting/victory/renderer')
         if (disposed || !canvas) return
@@ -207,8 +204,11 @@
           worldX,
           worldY,
           figureOf: (side) => models[side].model.turns,
-          handAnchor: (side, hand) =>
-            fightHandAnchor(models[side].model.root, { facing: state[side].facing, hand }),
+          handAnchor: (side, hand) => {
+            const lead = state[side].facing === 1 ? 'right' : 'left'
+            const limb = hand === 'lead' ? lead : lead === 'right' ? 'left' : 'right'
+            return models[side].model.root.getObjectByName(`hand-${limb}`)
+          },
         })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })

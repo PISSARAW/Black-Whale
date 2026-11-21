@@ -287,13 +287,20 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
   return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
 }
 
-export const opponentAttack = (state: FightState): FightState =>
-  hisokaInterceptionAi(state) ??
-  (projectileDefenceHolds(state)
-    ? state
-    : (priorityBusyAi(state, performAuraAttack) ??
-      maryAiAction(state, performAuraAttack) ??
-      intentionalOpponentAttack(state)))
+export const opponentAttack = (state: FightState): FightState => {
+  // The historical hall has its own frame-by-frame plans for Chrollo and CPU Hisoka.
+  // Letting the generic duel AI run too makes it spend frames on Ken and blocks the
+  // canonical feints, retreats and surprise strikes executed after the duel frame.
+  if (state.deathMatch) return state
+  return (
+    hisokaInterceptionAi(state) ??
+    (projectileDefenceHolds(state)
+      ? state
+      : (priorityBusyAi(state, performAuraAttack) ??
+        maryAiAction(state, performAuraAttack) ??
+        intentionalOpponentAttack(state)))
+  )
+}
 
 function intentionalOpponentAttack(state: FightState): FightState {
   const counter = nativeRecoveryCounter(state, performAuraAttack)

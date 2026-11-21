@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { describe, expect, it } from 'vitest'
-import { beginFight, createFight, tickFight } from '../engine'
+import { beginFight, createFight, opponentAttack, tickFight } from '../engine'
 import { FIXED_STEP } from '../fightClock'
 import { createFightEnvironment } from '../fightEnvironment'
 import { EMPTY_INPUT, type FightState } from '../types'
@@ -50,6 +50,24 @@ describe('the death match inside the duel', () => {
     const state = run(historicalFight(), 60 * 4)
     expect(state.deathMatch?.crowd.frame).toBe(60 * 4)
     expect(state.deathMatch?.scenario.done).toContain('referee-marked-black-voice')
+  })
+
+  it('leaves the opponent to the historical plan instead of the generic Ken AI', () => {
+    const state = historicalFight()
+    expect(opponentAttack(state)).toBe(state)
+    let next = state
+    let chrolloAttacked = false
+    for (let frame = 0; frame < 60 * 12 && !chrolloAttacked; frame += 1) {
+      next = tickFight(next, EMPTY_INPUT, {
+        dt: FIXED_STEP,
+        ai: true,
+        onFrame: (_before, after) => {
+          chrolloAttacked ||= after.opponent.attack !== null
+        },
+      })
+    }
+    expect(chrolloAttacked).toBe(true)
+    expect(next.deathMatch?.scenario.done).toContain('chrollo-feint-kick-flurry')
   })
 
   it('takes Chrollo into the stands, out of reach on the lane and drawn where he stands', () => {

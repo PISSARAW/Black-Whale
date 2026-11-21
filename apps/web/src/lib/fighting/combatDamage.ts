@@ -10,6 +10,7 @@ import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
+import { pinnedKnockback } from './groundedPin'
 
 const GROUND = 0
 const MIN_X = 7
@@ -117,7 +118,12 @@ function struckFighter(
     airRecovery: airRecoveryOnHit(options),
     ...stunState(options),
     ...comboState(options),
-    x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
+    x: clamp(
+      options.fighter.x +
+        direction * pinnedKnockback(options.fighter, options.attacker, options.knockback),
+      MIN_X,
+      MAX_X,
+    ),
     health: Math.max(0, options.fighter.health - options.damage),
     aura:
       options.blocked && options.fighter.nen.ken

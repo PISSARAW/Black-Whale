@@ -58,6 +58,8 @@ export function accelStart(fighter: ArcadeFighter, moveId?: string) {
     return { fighter: {}, attack: { accel: true as const } }
   // A body held by tension élastique (elasticHold.ts) stays within reach of the combo.
   if (fighter.elasticHold) return { fighter: {}, attack: { accel: true as const } }
+  // A cancel out of a move that already reached the body keeps that reach to the route's end.
+  if (fighter.attack?.accel) return { fighter: {}, attack: { accel: true as const } }
   return { fighter: {}, attack: {} }
 }
 

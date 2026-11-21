@@ -1,6 +1,7 @@
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { CombatFighter } from './combatRoutes'
 import type { FighterId, MoveSlot } from './types'
+import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -14,6 +15,11 @@ export type SignatureStep =
   | { dash: 'back' | 'forward' }
   | { emperor: true }
   | { command: ArsenalCommand }
+  /** The fighter's ranged attack; `hits` is the number of projectiles that must land. */
+  | { ranged: true; hits: number }
+
+/** Preparation also lets the opponent fire its ranged attack (a projectile to capture). */
+export type SignaturePreparationStep = SignatureStep | { incoming: true }
 
 export interface SignatureCombo {
   id: string
@@ -22,6 +28,8 @@ export interface SignatureCombo {
   opponent: FighterId
   title: readonly [string, string]
   requirement: readonly [string, string]
+  /** Played and settled before the combo: marks, pages and cards are never spontaneous. */
+  preparation?: readonly SignaturePreparationStep[]
   steps: readonly SignatureStep[]
 }
 
@@ -85,6 +93,7 @@ export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
       { move: 'finisher' },
     ],
   },
+  ...BOOK_AND_ARMY_SIGNATURES,
 ]
 
 export const signatureCombosFor = (fighter: FighterId) =>
@@ -96,6 +105,9 @@ export function signatureCombo(id: string): SignatureCombo {
   return combo
 }
 
-/** Striking steps, in order: the moves that must each add one hit to the combo. */
-export const signatureHits = (combo: SignatureCombo): MoveSlot[] =>
-  combo.steps.flatMap((step) => ('move' in step && step.hit !== false ? [step.move] : []))
+/** Striking steps, in order: each move, or each projectile of a ranged step, adds one hit. */
+export const signatureHits = (combo: SignatureCombo): (MoveSlot | 'ranged')[] =>
+  combo.steps.flatMap((step) => {
+    if ('ranged' in step) return Array<'ranged'>(step.hits).fill('ranged')
+    return 'move' in step && step.hit !== false ? [step.move] : []
+  })

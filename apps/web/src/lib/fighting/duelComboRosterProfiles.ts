@@ -50,7 +50,12 @@ export const ROSTER_DUEL_PROFILES = {
   chrollo: {
     window: 6,
     block: 'backHeavy',
-    grammar: { specials: ['lowHeavy', 'forwardLight'], supers: ['neutralSpecial'] },
+    grammar: {
+      specials: ['lowHeavy', 'forwardLight'],
+      supers: ['neutralSpecial'],
+      // Double page (signatureCombosBookArmy.ts): the Silent Reap opens the accélération.
+      dash: { lowHeavy: 'forward' },
+    },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 14, knockback: 0.7 },
@@ -79,7 +84,8 @@ export const ROSTER_DUEL_PROFILES = {
       },
       forwardLight: {
         tuning: { startup: 9, recovery: 22, damage: 12, knockback: 6.8, reach: 14 },
-        into: [],
+        // Double page: the Quick Palm alone opens the bookmarked page; no normal does.
+        into: ['finisher'],
       },
       neutralSpecial: { into: [] },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },

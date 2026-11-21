@@ -5,7 +5,7 @@ finale, contre un mannequin qui garde dès qu’il le peut. Il passe par les vra
 commandes : déplacements et commandes de Hatsu sont des étapes à part entière.
 Les définitions sont dans `signatureCombos.ts`, le lecteur de route dans
 `signatureComboRunner.ts` et les vérifications dans `signatureCombos.test.ts`
-(miroir et deux distances de départ). Ruleset `clash-combat-84`.
+(miroir et deux distances de départ). Ruleset `clash-combat-85` (84 pour Kurapika et Hisoka).
 
 Les réglages ci-dessous (fenêtres, coûts, durées) sont des réglages de duel, pas
 des mesures du manga.
@@ -45,6 +45,43 @@ Rebond déplacent les corps sans frapper.
   du plafond, reprend le lien sur la cible et fait plonger Hisoka pour que les frames
   actives arrivent au sol.
 
+## Préparation
+
+Un combo peut déclarer une `preparation` : des étapes jouées par les vraies commandes,
+à portée de contact, avant le combo. Le combo commence une fois les deux corps revenus
+au neutre ; le laboratoire remet alors l’aura à 100 et le mannequin oublie la touche de
+préparation, comme pour un nouvel exercice. Marques, pages et cartes ne viennent que de
+là : aucune n’apparaît pendant le combo. L’étape `incoming` fait tirer l’adversaire
+(son attaque à distance ordinaire) dès que la technique du joueur est active.
+
+## Double page — Chrollo
+
+Préparation : la page active pose le Soleil, puis Double Face place Sun and Moon au signet
+et ferme le livre. Combo : Pique du voleur → Coup de pied d’arrêt → Contre du voleur →
+Fauchage silencieux → accélération → Paume rapide → page au signet. La Lune rejoint le
+Soleil et les deux marques détonent. Six touches ; aucun Hatsu n’est volé pendant le combo.
+
+- Paume rapide s’enchaîne dans la page au signet par une chaîne écrite ; l’accélération
+  part du Fauchage silencieux (`duelComboRosterProfiles.ts`).
+- Sans Soleil préparé, la page au signet ne pose que la Lune : pas de détonation.
+
+## Commandement absolu — Benjamin
+
+Préparation : Secret Window marque la cible, puis le Rectangle d’aura capture un projectile
+de Nen adverse (référence : Franklin ; Culdcept ne garde qu’une carte, le reste de la
+rafale touche Benjamin). Combo : Direct militaire → Percée de garde → Marteau royal → Air
+Blow → accélération avant → Plaquage du premier prince → Rectangle d’aura → rafale de
+mitraillette → Jouer la carte. Neuf touches, 84 aura (Air Blow 40, Rectangle 20, carte 24).
+
+- **Secret Window** donne l’information seulement : avec ou sans marque, le combo inflige
+  exactement les mêmes dégâts (`signatureCombosBookArmy.test.ts`).
+- **Rafale** : arme réelle, jamais capturée. La carte jouée est celle de la préparation ;
+  sans carte, Jouer la carte reste refusée.
+- **Prise de Culdcept** (`culdceptHold.ts`) : le Rectangle ouvert depuis une capture de
+  combo garde le corps tenu tant qu’il dure ; actif, il s’annule dans la rafale. La rafale
+  qui a tiré ses trois balles s’annule dans Jouer la carte. Les tirs qui prolongent un
+  combo visent le corps au sol.
+
 ## Règles générales ajoutées
 
 | Règle                   | Fichier                               | Effet                                                                                                                                                                                                       |
@@ -52,6 +89,9 @@ Rebond déplacent les corps sans frapper.
 | Accélération            | `dashCancel.ts`, `CancelGrammar.dash` | Sur touche, un coup listé s’annule dans un dash par double appui. Chauffe le Ren de 50, comme une relance : deux au plus avant la surchauffe. Le coup qui interrompt ce dash peut toucher un corps à terre. |
 | Capture en combo        | `throwRules.ts`, `duelMoves.ts`       | Une projection qui termine une accélération saisit un corps étourdi ou à terre (jamais en l’air), le retient sans le projeter et peut s’annuler par ses chaînes écrites.                                    |
 | Emperor Time en capture | `kurapikaActions.ts`                  | Activable pendant une capture ou une Chain Jail confirmée.                                                                                                                                                  |
+| Chaînes des spéciaux    | `duelComboGrammar.ts`                 | Un spécial de la grammaire garde aussi ses chaînes écrites. Seule Paume rapide → page au signet (Chrollo) en déclare une ; aucun normal n’ouvre la page au signet.                                          |
+| Portée prolongée        | `accelCancel.ts`                      | Un coup annulé depuis un coup qui a atteint un corps à terre l’atteint aussi : la portée tient jusqu’à la fin de la route.                                                                                  |
+| Corps plaqué au sol     | `groundedPin.ts`, `combatDamage.ts`   | Un coup de route (accélération, prise) qui atteint un corps à terre le pousse de 1,5 au plus.                                                                                                               |
 
 Une commande entrée pendant le hitstop est perdue : le double appui d’une accélération
 se joue après l’impact.

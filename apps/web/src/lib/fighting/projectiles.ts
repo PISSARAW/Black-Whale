@@ -20,6 +20,7 @@ import { thetaShotAim } from './thetaFirearm'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
 import { benjaminBurstReady } from './benjaminWeapon'
+import { comboShotHeight } from './culdceptHold'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
@@ -290,7 +291,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     owner: side,
     fighterId: fighter.id,
     x: fighter.x + fighter.facing * 3.4,
-    y: fighter.y + aim.y,
+    y: comboShotHeight(state, side, fighter.y + aim.y),
     velocityX: fighter.facing * profile.speed,
     width: profile.width,
     height: profile.height,
@@ -301,7 +302,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     knockback: profile.knockback,
     targetZone: aim.targetZone,
     guard: 'mid',
-    canHitDowned: false,
+    canHitDowned: Boolean(fighter.attack.accel),
     shape: profile.shape,
     colour: profile.colour,
     ...rangedMaterial(fighter, profile),

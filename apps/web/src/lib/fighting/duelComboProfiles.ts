@@ -116,6 +116,8 @@ const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
   },
   airLight: { tuning: { hitstun: 18, knockback: 1.4 }, into: ['airHeavy'] },
   airHeavy: { into: [] },
+  // Commandement absolu: the capture holds the target while the Aura Rectangle opens.
+  throw: { into: ['downSpecial'] },
 }
 
 const ENDERS: readonly MoveSlot[] = ['lowHeavy', 'forwardHeavy']
@@ -137,7 +139,13 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
     moves: BENJAMIN,
     window: 8,
     block: 'standingHeavy',
-    grammar: { specials: ENDERS, supers: ['neutralSpecial'], accel: true },
+    // Commandement absolu (signatureCombosBookArmy.ts): forward from Air Blow into the capture.
+    grammar: {
+      specials: ENDERS,
+      supers: ['neutralSpecial'],
+      accel: true,
+      dash: { neutralSpecial: 'forward' },
+    },
   },
   ...ROSTER_DUEL_PROFILES,
   ...SECOND_DUEL_PROFILES,

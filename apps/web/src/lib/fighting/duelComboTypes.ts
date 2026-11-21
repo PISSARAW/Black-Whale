@@ -13,6 +13,8 @@ export interface DuelComboProfile {
   block: MoveSlot
   /** Opt-in tiered cancel grammar (COMBO_GRAMMAR.md); absent profiles keep authored routes. */
   grammar?: CancelGrammar
+  /** Accélération for a derived grammar (duelComboDerivedGrammar.ts); see CancelGrammar.dash. */
+  dash?: CancelGrammar['dash']
 }
 
 /**

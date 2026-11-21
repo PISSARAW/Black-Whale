@@ -41,6 +41,14 @@ const PHASE_OF: Partial<Record<DeathMatchBeat, ChrolloPhase>> = {
   'puppet-wave': 'encircle',
   'net-closes': 'close-net',
   'final-explosion': 'close-net',
+  'hisoka-buried': 'close-net',
+  'hisoka-asphyxiated': 'close-net',
+  'chrollo-declared-winner': 'aftermath',
+  'rescue-arrives': 'aftermath',
+  'troupe-gathers': 'aftermath',
+  resuscitation: 'aftermath',
+  'prosthetics-formed': 'aftermath',
+  'machi-bound': 'aftermath',
 }
 
 /** Beats Hisoka drives: Chrollo keeps building in the background instead of waiting. */

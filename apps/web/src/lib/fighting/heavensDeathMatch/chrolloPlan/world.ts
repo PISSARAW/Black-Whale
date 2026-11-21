@@ -5,6 +5,7 @@ import { createDeathMatchChrolloBook } from '../loadout'
 import { createDeathMatch, type DeathMatchOptions, type DeathMatchState } from '../scenario'
 import { NO_DAMAGE, type StandsDamage, visibilityThroughSmoke } from '../stands/damage'
 import type { Vec3 } from '../stands/geometry'
+import { HEALTHY, type HisokaWounds } from '../wounds'
 
 export interface ChrolloBody {
   at: Vec3
@@ -25,6 +26,21 @@ export interface HisokaBody {
   gumAnchors: readonly string[]
   /** Fighting puppets, swinging or recovering: a moment Chrollo may strike. */
   busy: boolean
+  /** Each wound on its own: fingers, leg, burns, breath. */
+  wounds: HisokaWounds
+  /** Bodies tied by gum into the five-body hammer. */
+  hammer: readonly string[]
+  /** The hammer has been swung at least once (so its emptying means it broke). */
+  hammerSwung: boolean
+  /** A maimed puppet he keeps on a gum line. */
+  hostage: string | null
+  /** Crowd frame of his last swing or throw, for cadence. */
+  lastSwing: number
+  reattached: boolean
+  /** The order left in Bungee Gum before the final blast. */
+  resuscitationProgrammed: boolean
+  prosthetics: boolean
+  machiBound: boolean
 }
 
 /** Everything the canonical plan reads and changes, apart from the fighters' own engine. */
@@ -80,7 +96,21 @@ export function createDeathMatchWorld(options: WorldOptions = {}): DeathMatchWor
       microphone: false,
       withdrawal: 0,
     },
-    hisoka: { at: { x: -3, y: 0, z: 0.3 }, facing: { x: 1, z: 0 }, gumAnchors: [], busy: false },
+    hisoka: {
+      at: { x: -3, y: 0, z: 0.3 },
+      facing: { x: 1, z: 0 },
+      gumAnchors: [],
+      busy: false,
+      wounds: HEALTHY,
+      hammer: [],
+      hammerSwung: false,
+      hostage: null,
+      lastSwing: -999,
+      reattached: false,
+      resuscitationProgrammed: false,
+      prosthetics: false,
+      machiBound: false,
+    },
   }
 }
 

@@ -2,7 +2,8 @@ import type { ChrolloPage } from '../../chrolloBook'
 import type { PuppetOrder, Spectator } from '../crowd/types'
 import { living } from '../crowd/types'
 import { puppetCensus } from '../puppets/census'
-import { FULL_SUN_CHARGE } from '../puppets/pipeline'
+import { headsOf } from '../crowd/heads'
+import { FULL_SUN_CHARGE, isBomb } from '../puppets/pipeline'
 import type { Vec3 } from '../stands/geometry'
 import { arenaGraph } from '../stands/navigation'
 import { chrolloPhase, inCrowdPhase, type ChrolloPhase } from './phases'
@@ -33,6 +34,9 @@ export type ChrolloIntent =
   | { kind: 'convert-hands'; target: string }
   | { kind: 'charge-sun'; targets: string[] }
   | { kind: 'detonate'; target: string }
+  /** The body tied to the head Hisoka holds: body and head go off together. */
+  | { kind: 'detonate-linked'; target: string }
+  | { kind: 'drive-trigger'; target: string }
   | { kind: 'order'; order: PuppetOrder }
   | { kind: 'order-one'; target: string; order: PuppetOrder }
   | { kind: 'throw'; target: string; at: Vec3 }
@@ -54,6 +58,7 @@ export const PAGES_FOR: Partial<Record<ChrolloIntent['kind'], readonly ChrolloPa
   'convert-hands': ['convert-hands', 'gallery-fake'],
   'charge-sun': ['sun-and-moon'],
   detonate: ['sun-and-moon'],
+  'detonate-linked': ['sun-and-moon'],
 }
 
 type Tactic = (world: DeathMatchWorld) => ChrolloIntent
@@ -131,7 +136,40 @@ function buildArmy(world: DeathMatchWorld): ChrolloIntent {
   return reach(world, source, (target) => ({ kind: 'copy', target }))
 }
 
+/** The body whose head hangs from Hisoka's gum, if it bears the Sun. */
+export function linkedBody(world: DeathMatchWorld): Spectator | undefined {
+  const head = headsOf(world.crowd).find((entry) => !entry.spent && entry.tiedTo)
+  if (!head) return undefined
+  return world.crowd.spectators.find(
+    (spectator) => spectator.id === head.bodyId && spectator.marks.sun,
+  )
+}
+
 function chargeBomb(world: DeathMatchWorld): ChrolloIntent {
+  // He knows which body each head belongs to: he charges that one while feigning the hit.
+  const linked = linkedBody(world)
+  if (linked) {
+    if (linked.marks.sunCharge < FULL_SUN_CHARGE)
+      return { kind: 'charge-sun', targets: [linked.id] }
+    const trigger = world.crowd.spectators.find(
+      (spectator) => living(spectator) && spectator.marks.moon && spectator.marks.blackVoice,
+    )
+    if (trigger)
+      return distance(trigger.at, linked.at) <= TOUCH
+        ? { kind: 'detonate-linked', target: linked.id }
+        : { kind: 'drive-trigger', target: trigger.id }
+    const carrier = nearest(
+      world,
+      (spectator) =>
+        spectator.id !== REFEREE_ID &&
+        spectator.id !== linked.id &&
+        spectator.nature !== 'copy',
+    )
+    if (!carrier) return { kind: 'hold' }
+    if (!carrier.marks.moon)
+      return reach(world, carrier, (target) => ({ kind: 'mark-moon', target }))
+    return reach(world, carrier, (target) => ({ kind: 'black-voice', target }))
+  }
   const marked = world.crowd.spectators.filter(
     (spectator) => living(spectator) && spectator.marks.sun,
   )
@@ -203,8 +241,35 @@ function arm(world: DeathMatchWorld): ChrolloIntent | null {
   return moonless ? reach(world, moonless, (target) => ({ kind: 'mark-moon', target })) : null
 }
 
+/** One charged bomb at his feet before the last assault: the blast that takes his leg. */
+function legBlast(world: DeathMatchWorld): ChrolloIntent | null {
+  if (world.hisoka.wounds.rightLowerLeg) return null
+  const bomb = nearestTo(world, world.hisoka.at, isBomb)
+  if (!bomb || distance(bomb.at, world.hisoka.at) > 3) return null
+  if (distance(bomb.at, world.hisoka.at) > 1.2)
+    return bomb.order === 'charge' ? null : { kind: 'order-one', target: bomb.id, order: 'charge' }
+  return bomb.marks.sunCharge >= FULL_SUN_CHARGE
+    ? { kind: 'detonate', target: bomb.id }
+    : { kind: 'charge-sun', targets: [bomb.id] }
+}
+
+function nearestTo(
+  world: DeathMatchWorld,
+  from: Vec3,
+  keep: (spectator: Spectator) => boolean,
+): Spectator | undefined {
+  let best: Spectator | undefined
+  let bestDistance = Infinity
+  for (const spectator of world.crowd.spectators) {
+    if (!keep(spectator)) continue
+    const gap = distance(spectator.at, from)
+    if (gap < bestDistance) [best, bestDistance] = [spectator, gap]
+  }
+  return best
+}
+
 function encircle(world: DeathMatchWorld): ChrolloIntent {
-  const step = throwAcrossGum(world) ?? arm(world)
+  const step = throwAcrossGum(world) ?? legBlast(world) ?? arm(world)
   if (step) return step
   const census = puppetCensus(world.crowd)
   if (census.copies >= ASSAULT_ARMY && census.bombs >= FINAL_BOMBS)
@@ -219,7 +284,8 @@ function encircle(world: DeathMatchWorld): ChrolloIntent {
 
 function detonateReferee(world: DeathMatchWorld): ChrolloIntent {
   const referee = world.crowd.spectators.find((spectator) => spectator.id === REFEREE_ID)
-  if (!referee || !living(referee)) return { kind: 'retreat', to: hidingSpot(world) }
+  // Alive or already cut down by Hisoka, the referee goes off until he has.
+  if (!referee || referee.cause === 'blast') return { kind: 'retreat', to: hidingSpot(world) }
   if (!referee.marks.sun) return reach(world, referee, (target) => ({ kind: 'mark-sun', target }))
   return { kind: 'detonate', target: REFEREE_ID }
 }
@@ -232,7 +298,8 @@ function harass(world: DeathMatchWorld): ChrolloIntent {
   }
   const idle = nearest(
     world,
-    (spectator) => spectator.nature === 'copy' && spectator.order !== 'charge',
+    (spectator) =>
+      spectator.nature === 'copy' && spectator.marks.sun && spectator.order !== 'charge',
   )
   if (!idle) return buildArmy(world)
   if (!idle.marks.stamped) return reach(world, idle, (target) => ({ kind: 'stamp', target }))
@@ -284,7 +351,12 @@ const TACTICS: Record<ChrolloPhase, Tactic> = {
   'charge-bomb': chargeBomb,
   broadcast,
   encircle,
-  'close-net': () => ({ kind: 'order', order: 'explode-near-hisoka' }),
+  'close-net': (world) => ({
+    kind: 'order',
+    order: world.scenario.done.includes('final-explosion')
+      ? 'pile-on-hisoka'
+      : 'explode-near-hisoka',
+  }),
   aftermath: () => ({ kind: 'hold' }),
 }
 

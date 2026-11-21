@@ -87,6 +87,25 @@ describe('the puppet pipeline', () => {
     expect(puppetCensus(driven).controlled).toBe(2)
   })
 
+  it('lets a Black Voice carrier take the Moon mark to a remote Sun-marked body', () => {
+    const crowd = markMoon(createCrowd({ count: 3 }), 's0', STAMP)
+    expect(crowd.spectators[0].marks.moon).toBe(true)
+    const sun = crowd.spectators[1].at
+    const controlled = controlWithBlackVoice(crowd, 's0', book('black-voice'))
+    const commanded = {
+      ...controlled,
+      spectators: controlled.spectators.map((spectator) =>
+        spectator.id === 's0' ? { ...spectator, order: 'touch-sun' as const } : spectator,
+      ),
+    }
+    const driven = steerPuppets(
+      commanded,
+      { hisoka: { x: 0, y: 0, z: 0 }, chrollo: { x: 2, y: 0, z: 0 }, sun },
+    )
+    expect(driven.spectators[0].marks.blackVoice).toBe(true)
+    expect(driven.spectators[0].goal).toBe(sun)
+  })
+
   it('splits shown copies from the reserve made out of Hisoka’s sight', () => {
     const shown = copies(createCrowd({ count: 80 }), 25, true)
     let reserve = shown

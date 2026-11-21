@@ -1,27 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { beatSpec, type DeathMatchBeat } from '../acts'
 import { puppetCensus } from '../puppets/census'
+import { advanceDeathMatch } from '../scenario'
 import { deathMatchDigest } from '../script'
+import { RESCUE_DELAY_FRAMES } from '../verdict'
 import { frontierBeat } from './phases'
 import { stepDeathMatchWorld } from './simulate'
 import { createDeathMatchWorld, type DeathMatchWorld } from './world'
 
-/** Beats the fight engine measures (wounds, burial) until the Hisoka side reports them itself. */
-const ENGINE_REPORTED = new Set<DeathMatchBeat>([
-  'true-face-revealed',
-  'head-body-link-tracked',
-  'hand-destroyed',
-  'leg-destroyed',
-])
-
-/** A stand-in for Hisoka's side: it plays his beats two seconds after they come up. */
+/** Both hierarchical plans play the deterministic canonical reconstruction. */
 function canonicalRun(limit: number): { world: DeathMatchWorld; frames: number } {
   let world = createDeathMatchWorld({ scenario: { playMode: 'scripted' } })
   for (let frame = 0; frame < limit; frame += 1) {
-    const front = frontierBeat(world.scenario)
-    const external = front && (beatSpec(front).actor === 'hisoka' || ENGINE_REPORTED.has(front))
-    const reported = external && frame % 120 === 0 ? [front] : []
-    world = stepDeathMatchWorld(world, { reported }).world
+    world = stepDeathMatchWorld(world, { hisokaPlan: true }).world
     if (world.scenario.done.includes('final-explosion')) return { world, frames: frame }
   }
   return { world, frames: limit }
@@ -47,5 +37,41 @@ describe('the canonical plan, played to the final explosion', () => {
   it('replays to the same frames', () => {
     const again = canonicalRun(run.frames + 1)
     expect(deathMatchDigest(again.world.scenario)).toBe(deathMatchDigest(run.world.scenario))
+  })
+
+  it('continues through rescue, post-mortem resuscitation, prostheses and Machi', () => {
+    let frame = run.world.crowd.frame
+    const scenario = ['hisoka-buried', 'hisoka-asphyxiated', 'chrollo-declared-winner'].reduce(
+      (state, beat) => advanceDeathMatch(state, { beat, frame: (frame += 1) }),
+      run.world.scenario,
+    )
+    let world: DeathMatchWorld = {
+      ...run.world,
+      scenario,
+      hisoka: {
+        ...run.world.hisoka,
+        resuscitationProgrammed: true,
+        wounds: {
+          ...run.world.hisoka.wounds,
+          oxygen: 0,
+          deadFor: RESCUE_DELAY_FRAMES,
+          cause: 'asphyxia',
+        },
+      },
+    }
+    for (let step = 0; step < 12; step += 1)
+      world = stepDeathMatchWorld(world, { hisokaPlan: true }).world
+    expect(world.scenario.done).toEqual(
+      expect.arrayContaining([
+        'rescue-arrives',
+        'troupe-gathers',
+        'resuscitation',
+        'prosthetics-formed',
+        'machi-bound',
+      ]),
+    )
+    expect(world.scenario.survival.hisoka).toBe('revived')
+    expect(world.hisoka.wounds.leftFingers).toBe(4)
+    expect(world.hisoka.wounds.rightLowerLeg).toBe(true)
   })
 })

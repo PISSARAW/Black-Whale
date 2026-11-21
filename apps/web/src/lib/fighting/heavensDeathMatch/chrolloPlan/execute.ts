@@ -1,5 +1,6 @@
-import { throwSpectator } from '../crowd/actions'
-import { spectatorById } from '../crowd/create'
+import { applyBlast, throwSpectator } from '../crowd/actions'
+import { detonateBodyAndHead } from '../crowd/heads'
+import { spectatorById, updateSpectator } from '../crowd/create'
 import { DT } from '../crowd/step'
 import {
   chargeSun,
@@ -11,6 +12,7 @@ import {
   markSun,
   orderPuppet,
   stampCopy,
+  sunPower,
   wearChrolloFace,
 } from '../puppets/pipeline'
 import { damageFromBlast, type Blast } from '../stands/damage'
@@ -30,7 +32,8 @@ export interface ChrolloOutcome {
   bookStep: BookStep | null
   /** Intents the fight engine performs with Chrollo's own body (strikes, feints). */
   engineIntent: ChrolloIntent | null
-  blast: Blast | null
+  /** Detonations Chrollo set off this frame (a linked body goes off with its head). */
+  blasts: readonly Blast[]
 }
 
 function moveChrollo(world: DeathMatchWorld, to: Vec3): DeathMatchWorld {
@@ -75,19 +78,19 @@ function convertHands(world: DeathMatchWorld, target: string): DeathMatchWorld {
 function detonate(
   world: DeathMatchWorld,
   target: string,
-): { world: DeathMatchWorld; blast: Blast | null } {
+): { world: DeathMatchWorld; blasts: readonly Blast[] } {
   const body = spectatorById(world.crowd, target)
   // A body bearing both marks joins its own hands; otherwise the Moon is Chrollo's palm.
   if (!body || (!body.marks.moon && distance(body.at, world.chrollo.at) > TOUCH))
-    return { world: body ? moveChrollo(world, body.at) : world, blast: null }
+    return { world: body ? moveChrollo(world, body.at) : world, blasts: [] }
   const result = detonateMark(world.crowd, target)
-  if (!result.blast) return { world, blast: null }
+  if (!result.blast) return { world, blasts: [] }
   return {
     world: {
       ...withCrowd(world, result.crowd),
       damage: damageFromBlast(world.damage, result.blast),
     },
-    blast: result.blast,
+    blasts: [result.blast],
   }
 }
 
@@ -120,6 +123,14 @@ const APPLY: Partial<Record<ChrolloIntent['kind'], Applier>> = {
   order,
   'order-one': (world, intent: { target: string; order: Parameters<typeof orderPuppet>[2] }) =>
     withCrowd(world, orderPuppet(world.crowd, intent.target, intent.order)),
+  'drive-trigger': (world, intent: { target: string }) =>
+    withCrowd(
+      world,
+      updateSpectator(world.crowd, intent.target, (spectator) => ({
+        ...spectator,
+        order: 'touch-sun',
+      })),
+    ),
   throw: (world, intent: { target: string; at: Vec3 }) => {
     const from = spectatorById(world.crowd, intent.target)?.at ?? world.chrollo.at
     const flat = Math.hypot(intent.at.x - from.x, intent.at.z - from.z) || 1
@@ -141,6 +152,35 @@ const ENGINE_INTENTS: ReadonlySet<ChrolloIntent['kind']> = new Set([
 /** Each surprise blow is followed by this long a fall back into the crowd. */
 export const WITHDRAWAL_FRAMES = 3 * 60
 
+/** Body and head of a linked puppet go off together, wherever the head is. */
+function detonateLinked(world: DeathMatchWorld, target: string) {
+  const body = spectatorById(world.crowd, target)
+  const result = detonateBodyAndHead(world.crowd, target, body ? sunPower(body) : 1)
+  const damage = result.blasts.reduce(damageFromBlast, world.damage)
+  const crowd = result.blasts.reduce(applyBlast, result.crowd)
+  return { world: { ...world, crowd, damage }, blasts: result.blasts }
+}
+
+type Special = (world: DeathMatchWorld, intent: ChrolloIntent) => ChrolloOutcome
+const quiet = { bookStep: null, engineIntent: null } as const
+
+const SPECIAL: Partial<Record<ChrolloIntent['kind'], Special>> = {
+  detonate: (world, intent) => ({
+    ...detonate(world, (intent as { target: string }).target),
+    ...quiet,
+  }),
+  'detonate-linked': (world, intent) => ({
+    ...detonateLinked(world, (intent as { target: string }).target),
+    ...quiet,
+  }),
+  'surprise-strike': (world, intent) => ({
+    world: { ...world, chrollo: { ...world.chrollo, withdrawal: WITHDRAWAL_FRAMES } },
+    bookStep: null,
+    engineIntent: intent,
+    blasts: [],
+  }),
+}
+
 /** Turns a decision into one frame of action: the book first, then the gesture itself. */
 export function executeChrollo(world: DeathMatchWorld, decision: ChrolloDecision): ChrolloOutcome {
   const { intent } = decision
@@ -153,22 +193,18 @@ export function executeChrollo(world: DeathMatchWorld, decision: ChrolloDecision
         world: { ...world, chrollo: { ...world.chrollo, book } },
         bookStep: step,
         engineIntent: null,
-        blast: null,
+        blasts: [],
       }
     }
   }
-  if (intent.kind === 'detonate')
-    return { ...detonate(world, intent.target), bookStep: null, engineIntent: null }
-  if (intent.kind === 'surprise-strike') {
-    const chrollo = { ...world.chrollo, withdrawal: WITHDRAWAL_FRAMES }
-    return { world: { ...world, chrollo }, bookStep: null, engineIntent: intent, blast: null }
-  }
+  const special = SPECIAL[intent.kind]
+  if (special) return special(world, intent)
   const apply = APPLY[intent.kind] as
     ((world: DeathMatchWorld, intent: ChrolloIntent) => DeathMatchWorld) | undefined
   return {
     world: apply ? apply(world, intent) : world,
     bookStep: null,
     engineIntent: ENGINE_INTENTS.has(intent.kind) ? intent : null,
-    blast: null,
+    blasts: [],
   }
 }

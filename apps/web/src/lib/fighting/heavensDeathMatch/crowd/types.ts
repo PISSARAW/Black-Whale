@@ -27,7 +27,15 @@ export interface SpectatorLook {
 }
 
 export type PuppetOrder =
-  'hold' | 'surround-hisoka' | 'explode-near-hisoka' | 'charge' | 'shield-chrollo'
+  | 'hold'
+  | 'surround-hisoka'
+  | 'explode-near-hisoka'
+  | 'charge'
+  | 'shield-chrollo'
+  /** Black Voice carrier bringing the Moon to the linked Sun-marked torso. */
+  | 'touch-sun'
+  /** After the last blast: climb on Hisoka until he is buried. */
+  | 'pile-on-hisoka'
 
 export interface SpectatorMarks {
   sun: boolean
@@ -36,6 +44,8 @@ export interface SpectatorMarks {
   blackVoice: boolean
   /** Frames the Sun mark has been charged; a full charge strengthens the blast. */
   sunCharge: number
+  /** Where the Sun was drawn; a mark on the head leaves with the head. */
+  sunSite?: 'head' | 'body'
 }
 
 export interface Spectator {
@@ -65,6 +75,25 @@ export interface Spectator {
   /** Hisoka saw it break, bleed or vanish like a copy. */
   revealedToHisoka: boolean
   cause?: 'trauma' | 'crush' | 'blast' | 'fall'
+  /** The head was taken off; it lives on as a `DetachedHead`. */
+  headless?: boolean
+}
+
+/** A limb of Hisoka's a gum line may tie a head to. */
+export type HisokaLimb = 'left-hand' | 'right-hand' | 'left-foot' | 'right-foot'
+
+/** A head cut from its body, still bound to it: detonating the body detonates the head. */
+export interface DetachedHead {
+  id: string
+  bodyId: string
+  at: Vec3
+  velocity: Vec3
+  /** Gum ties it to one of Hisoka's limbs; null lies loose or flies. */
+  tiedTo: HisokaLimb | null
+  flying: boolean
+  /** Carries the Sun when it was drawn on the head. */
+  sun: boolean
+  spent: boolean
 }
 
 export interface CrowdState {
@@ -72,6 +101,7 @@ export interface CrowdState {
   rng: number
   spectators: readonly Spectator[]
   nextId: number
+  heads?: readonly DetachedHead[]
 }
 
 export const NO_MARKS: SpectatorMarks = {

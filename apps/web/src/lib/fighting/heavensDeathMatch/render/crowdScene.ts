@@ -1,5 +1,6 @@
 import type * as Three from 'three'
 import type { SceneryKit } from '../../stageKit'
+import { headsOf } from '../crowd/heads'
 import { crowdInstances, type CrowdInstance } from '../crowd/lod'
 import type { CrowdState } from '../crowd/types'
 
@@ -43,17 +44,25 @@ interface Meshes {
   skin: Three.Color
 }
 
-function place(meshes: Meshes, body: CrowdInstance, index: number): void {
+function placeBody(
+  meshes: Meshes,
+  body: CrowdInstance,
+  bodyIndex: number,
+  headIndex: number,
+): number {
   const { placed, colour } = meshes
   const pose = poseOf(body)
   placed.position.set(body.at.x, pose.centreY, body.at.z)
   placed.rotation.set(pose.lying ? Math.PI / 2 : 0, 0, 0)
   placed.scale.set(pose.scale, pose.height * pose.scale, pose.scale)
   placed.updateMatrix()
-  meshes.bodies.setMatrixAt(index, placed.matrix)
+  meshes.bodies.setMatrixAt(bodyIndex, placed.matrix)
   const dim = body.posture === 'dead' ? 0.45 : 1
-  colour.setHex(CROWD_PALETTE[body.palette % CROWD_PALETTE.length]).multiplyScalar(0.42 * dim)
-  meshes.bodies.setColorAt(index, colour)
+  colour
+    .setHex(CROWD_PALETTE[body.palette % CROWD_PALETTE.length])
+    .multiplyScalar(0.42 * dim)
+  meshes.bodies.setColorAt(bodyIndex, colour)
+  if (body.headless) return headIndex
   // The head sits on top of the body, or beyond its end when the body lies down.
   const reach = pose.height / 2 + HEAD_RADIUS
   placed.position.set(
@@ -64,9 +73,21 @@ function place(meshes: Meshes, body: CrowdInstance, index: number): void {
   placed.rotation.set(0, 0, 0)
   placed.scale.setScalar(pose.scale)
   placed.updateMatrix()
+  meshes.heads.setMatrixAt(headIndex, placed.matrix)
+  colour.setHex(body.chrolloFace ? CHROLLO_HEAD : HAIR[bodyIndex % HAIR.length])
+  meshes.heads.setColorAt(headIndex, colour.lerp(meshes.skin, 0.35 * dim))
+  return headIndex + 1
+}
+
+function placeDetachedHead(meshes: Meshes, at: { x: number; y: number; z: number }, index: number) {
+  const { placed, colour } = meshes
+  placed.position.set(at.x, at.y, at.z)
+  placed.rotation.set(0, 0, 0)
+  placed.scale.setScalar(1)
+  placed.updateMatrix()
   meshes.heads.setMatrixAt(index, placed.matrix)
-  colour.setHex(body.chrolloFace ? CHROLLO_HEAD : HAIR[index % HAIR.length])
-  meshes.heads.setColorAt(index, colour.lerp(meshes.skin, 0.35 * dim))
+  colour.setHex(HAIR[index % HAIR.length])
+  meshes.heads.setColorAt(index, colour.lerp(meshes.skin, 0.35))
 }
 
 /** Instanced bodies and heads, one pair per spectator, up to `capacity` (copies included). */
@@ -93,9 +114,18 @@ export function buildCrowdScene(kit: SceneryKit, capacity: number): CrowdScene {
     root,
     sync(crowd) {
       const bodies = crowdInstances(crowd).slice(0, capacity)
-      bodies.forEach((body, index) => place(meshes, body, index))
+      let headCount = 0
+      bodies.forEach((body, index) => {
+        headCount = placeBody(meshes, body, index, headCount)
+      })
+      for (const head of headsOf(crowd)) {
+        if (head.spent || headCount >= capacity) continue
+        placeDetachedHead(meshes, head.at, headCount)
+        headCount += 1
+      }
+      meshes.bodies.count = bodies.length
+      meshes.heads.count = headCount
       for (const mesh of [meshes.bodies, meshes.heads]) {
-        mesh.count = bodies.length
         mesh.instanceMatrix.needsUpdate = true
         if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
       }

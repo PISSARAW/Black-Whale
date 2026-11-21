@@ -179,6 +179,8 @@ function separate(pass: ContactPass, index: number): void {
 function shove(spectator: Spectator, fighter: Vec3): Spectator {
   if (!living(spectator) || spectator.posture === 'airborne' || spectator.posture === 'held')
     return spectator
+  // The bodies ordered onto him are not shoved off: that is how he is buried.
+  if (spectator.order === 'pile-on-hisoka') return spectator
   const dx = spectator.at.x - fighter.x
   const dz = spectator.at.z - fighter.z
   const distance = Math.hypot(dx, dz)

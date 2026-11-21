@@ -31,6 +31,7 @@ export interface CrowdInstance {
   posture: Spectator['posture']
   /** Chrollo's face worn by a spectator: the renderer draws his head, not theirs. */
   chrolloFace: boolean
+  headless: boolean
 }
 
 /** What the renderer needs per body. The nature is deliberately absent. */
@@ -42,5 +43,6 @@ export function crowdInstances(crowd: CrowdState): CrowdInstance[] {
     height: spectator.look.height,
     posture: spectator.posture,
     chrolloFace: spectator.face === 'chrollo',
+    headless: Boolean(spectator.headless),
   }))
 }

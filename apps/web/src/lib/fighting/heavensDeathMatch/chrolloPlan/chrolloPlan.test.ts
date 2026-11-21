@@ -11,9 +11,10 @@ import { stepDeathMatchWorld } from './simulate'
 import { SAFE_DISTANCE, decideChrollo } from './tactics'
 import { createDeathMatchWorld, distance, type DeathMatchWorld } from './world'
 
-function steps(world: DeathMatchWorld, frames: number): DeathMatchWorld {
+function steps(world: DeathMatchWorld, frames: number, hisokaPlan = false): DeathMatchWorld {
   let next = world
-  for (let frame = 0; frame < frames; frame += 1) next = stepDeathMatchWorld(next).world
+  for (let frame = 0; frame < frames; frame += 1)
+    next = stepDeathMatchWorld(next, { hisokaPlan }).world
   return next
 }
 
@@ -50,7 +51,7 @@ describe('the hierarchical plan', () => {
 
   it('opens the fight: referee under Black Voice, feint, abilities, then the first explosion', () => {
     let world = createDeathMatchWorld({ scenario: { playMode: 'free' }, crowd: { count: 80 } })
-    world = steps(world, 60 * 20)
+    world = steps(world, 60 * 20, true)
     expect(world.scenario.done).toEqual(
       expect.arrayContaining([
         'floor-masters-enter',

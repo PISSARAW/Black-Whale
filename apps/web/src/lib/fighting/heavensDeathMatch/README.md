@@ -42,17 +42,24 @@ rien tant qu'aucune mort n'est enregistrée (`../fightOutcome.ts`).
   la nature réelle (humain, copie, contrôlé) n'est jamais exposée au rendu.
 - `puppets/` — Gallery Fake → Soleil → Order Stamp → ordre collectif → bombes à deux
   marques. Fermer Gallery Fake efface les copies non marquées ; deux antennes Black Voice
-  au plus ; charge de 3 s = souffle triple ; quorum de la nasse ; recensement réel
-  (réserve hors de la vue d'Hisoka comprise).
+  au plus ; un humain contrôlé peut porter la Lune jusqu'au corps lié à une tête ; charge
+  de 3 s = souffle triple ; quorum de la nasse ; recensement réel (réserve hors de la vue
+  d'Hisoka comprise).
 - `chrolloPlan/` — l'IA hiérarchique : phase stratégique lue sur le scénario
   (`phases.ts`), tactiques par phase et réflexes (jamais de face-à-face, frappe dans le
   dos d'un Hisoka occupé puis repli, `tactics.ts`), gestes du livre page → signet →
   réouverture → page (`book.ts`), exécution (`execute.ts`), pont vers les temps forts
   (`bridge.ts`) et pas de simulation complet (`simulate.ts`). Le camp d'Hisoka et le
-  moteur signalent leurs propres temps forts (`reported`) : blessures, ensevelissement.
+  moteur peuvent signaler leurs propres temps forts (`reported`) en mode libre.
+- `hisokaPlan/`, `wounds.ts` et `crowd/heads.ts` — le plan canonique d'Hisoka joue ses
+  mouvements en mode scripté ou CPU : gomme sur l'arbitre, décapitations, têtes liées
+  aux membres, otage, projections et marteau de cinq corps. Les blessures anatomiques,
+  la compression, l'oxygène et les têtes encore liées à leur corps sont simulés. Après
+  le verdict, le délai des secours, l'ordre post-mortem, la réanimation, les prothèses
+  et l'immobilisation de Machi prolongent la machine jusqu'à la fin du chapitre 357.
 
-`canonicalRun.test.ts` joue le plan du début à l'explosion finale en mode scripté, avec
-un remplaçant du camp d'Hisoka, et vérifie qu'il se rejoue à l'identique.
+`canonicalRun.test.ts` joue les deux plans du début à l'explosion finale en mode scripté
+et vérifie qu'ils se rejouent à l'identique.
 
 ## Dans le jeu
 
@@ -63,14 +70,14 @@ un remplaçant du camp d'Hisoka, et vérifie qu'il se rejoue à l'identique.
   (`optionsCodec.ts`).
 - **Boucle du duel** — `prepare.ts` crée le monde avec le combat ; `engine.ts` appelle
   `stepDeathMatchFight` (`fightBridge.ts`) après chaque frame. La voie (x de 0 à 100)
-  passe en mètres par `fightWorldX`, sur l'axe du ring (z = 0). Le plan déplace Chrollo
-  quand il est l'IA ; un joueur qui l'incarne garde son corps dans le ring. Dans les
+  passe en mètres par `fightWorldX`, sur l'axe du ring (z = 0). Les plans déplacent les
+  deux combattants en mode scripté et le combattant CPU dans les autres modes. Dans les
   gradins, la voie le garde à sa projection, intouchable, et le rendu le dessine à sa vraie
-  place (`deathMatchBodyPosition`). Les souffles proches blessent Hisoka ; l'asphyxie
-  enregistrée termine le combat.
+  place (`deathMatchBodyPosition`). Les souffles détruisent réellement la main et la
+  jambe d'Hisoka dans le moteur ; l'asphyxie enregistrée termine le combat.
 - **Rendu** — `render/crowdScene.ts` dessine la foule de la Tour depuis `crowdInstances` :
   la simulation vivante dans ce scénario, une salle assise et immobile dans les duels.
 
-Limites actuelles : les temps forts d'Hisoka et ses blessures sont crédités par un
-remplaçant après deux secondes d'attente (`STAND_IN_DELAY`) jusqu'à son IA (P1) ; la
-difficulté est enregistrée mais ne règle encore rien ; l'arbitre n'a pas de figure propre.
+Limites actuelles : les commandes gestuelles du joueur Hisoka ne sont pas encore
+traduites en actions complexes de foule en modes semi-libre et libre ; la difficulté est
+enregistrée mais ne règle encore rien ; l'arbitre n'a pas de figure propre.

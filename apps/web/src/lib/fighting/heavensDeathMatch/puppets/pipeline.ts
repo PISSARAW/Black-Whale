@@ -71,9 +71,14 @@ function mark(
 
 export function markSun(crowd: CrowdState, id: string, book: ChrolloBookState): CrowdState {
   if (!pageActive(book, 'sun-and-moon')) return crowd
+  // On a puppet the palm goes to the forehead: the mark leaves with the head if it is cut.
   return mark(crowd, id, (spectator) => ({
     ...spectator,
-    marks: { ...spectator.marks, sun: true },
+    marks: {
+      ...spectator.marks,
+      sun: true,
+      sunSite: spectator.nature === 'copy' ? 'head' : 'body',
+    },
   }))
 }
 
@@ -81,7 +86,7 @@ export function markSun(crowd: CrowdState, id: string, book: ChrolloBookState): 
 export function markMoon(crowd: CrowdState, id: string, book: ChrolloBookState): CrowdState {
   if (!pageActive(book, 'sun-and-moon')) return crowd
   return mark(crowd, id, (spectator) =>
-    spectator.nature === 'copy' && spectator.marks.stamped
+    spectator.nature !== 'copy' || spectator.marks.stamped
       ? { ...spectator, marks: { ...spectator.marks, moon: true } }
       : null,
   )
@@ -173,7 +178,7 @@ export function isBomb(spectator: Spectator): boolean {
 /** Each stamped copy walks toward where its order sends it. */
 export function steerPuppets(
   crowd: CrowdState,
-  targets: { hisoka: Vec3; chrollo: Vec3 },
+  targets: { hisoka: Vec3; chrollo: Vec3; sun?: Vec3 },
 ): CrowdState {
   let slot = 0
   const spectators = crowd.spectators.map((spectator) => {
@@ -208,9 +213,12 @@ function orderGoal(
       return around(targets.hisoka, 2 + (slot % 4) * 0.6)
     case 'explode-near-hisoka':
     case 'charge':
+    case 'pile-on-hisoka':
       return targets.hisoka
     case 'shield-chrollo':
       return around(targets.chrollo, 1.5)
+    case 'touch-sun':
+      return targets.sun
     default:
       return undefined
   }

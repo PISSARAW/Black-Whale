@@ -10,6 +10,7 @@ import { DEATH_MATCH_FORMAT } from './loadout'
 import { parseDeathMatchOptions } from './optionsCodec'
 import { buildCrowdScene } from './render/crowdScene'
 import { createCrowd } from './crowd/create'
+import { decapitate } from './crowd/heads'
 
 function historicalFight(chrolloSide: 'player' | 'opponent' = 'opponent'): FightState {
   const seats = historicalSeats(chrolloSide)
@@ -62,7 +63,8 @@ describe('the death match inside the duel', () => {
     expect(state.opponent.x).toBeLessThanOrEqual(100)
     const drawn = deathMatchBodyPosition(state, 'opponent', { x: state.opponent.x, y: 0 })
     expect(drawn.z).toBeCloseTo(world.chrollo.at.z)
-    expect(deathMatchBodyPosition(state, 'player', { x: 10, y: 0 })).toEqual({ x: 10, y: 0 })
+    const hisokaDrawn = deathMatchBodyPosition(state, 'player', { x: 10, y: 0 })
+    expect(hisokaDrawn.z).toBeCloseTo(world.hisoka.at.z)
   })
 
   it('follows the chosen side', () => {
@@ -112,5 +114,14 @@ describe('the drawn crowd', () => {
     }
     scene.sync(gone)
     expect(bodies.count).toBe(250)
+  })
+
+  it('moves a severed head off its body without changing the instance budget', () => {
+    const scene = buildCrowdScene(kit as never, 400)
+    const crowd = createCrowd({ count: 20 })
+    scene.sync(decapitate(crowd, crowd.spectators[0].id))
+    const [bodies, heads] = scene.root.children as THREE.InstancedMesh[]
+    expect(bodies.count).toBe(20)
+    expect(heads.count).toBe(20)
   })
 })

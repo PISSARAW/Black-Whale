@@ -61,8 +61,12 @@ export interface Segment {
   hero?: FighterId
   /** A second fight filmed in lockstep, shown at the same time in the lower half. */
   twin?: Segment
+  /** Entrance animations: the intro clock (seconds) at this segment's first frame. */
+  entrance?: number
   /** Slow motion: below 1, every simulated frame stays longer on screen. */
   slow?: number
+  /** Real-time pacing and plain cuts, for a fight edited like a film. */
+  steady?: boolean
   /** A victory film variant the engine's own witness confirmed (Sun and Moon). */
   filmVariant?: { variant: 'chrollo-sun-moon'; duration: number }
   error?: string
@@ -85,7 +89,10 @@ export class Shot {
   live?: boolean
   victory: NonNullable<Segment['victory']> = []
   filmVariant?: Segment['filmVariant']
+  entrance?: number
   readonly hero: FighterId
+  /** The opponent fights with the game's own AI while this is set. */
+  ai = false
   /** Set on a shot that shares the screen with another, cut on the same frames. */
   twin?: Shot
   companion?: Segment['companion']
@@ -108,6 +115,10 @@ export class Shot {
       opponentHealth?: number
       /** Scenario start for the hero, when the scene is about the hero's own death. */
       heroHealth?: number
+      /** Scenario start for the hero's aura (a fight carried over several shots). */
+      heroAura?: number
+      /** Stay in the ready phase: the fighters' entrance animations play on this shot. */
+      ready?: boolean
       /** Support kameos chosen before the fight, as on the preparation screen. */
       kameos?: Parameters<typeof withKameos>[1]
     } = {},
@@ -115,7 +126,8 @@ export class Shot {
     this.hero = options.hero ?? 'chrollo'
     const created = (state: FightState) =>
       options.kameos ? withKameos(state, options.kameos) : state
-    const fresh = beginFight(
+    const begin = options.ready ? (state: FightState) => state : beginFight
+    const fresh = begin(
       created(createFight(options.hero ?? 'chrollo', opponent, {
         mode: 'versus-local',
         formatId: 'knockout',
@@ -142,7 +154,7 @@ export class Shot {
       player: {
         ...fresh.player,
         x: centre - gap / 2,
-        aura: 100,
+        aura: options.heroAura ?? 100,
         health: options.heroHealth ?? fresh.player.health,
         // Shots whose technique forces the book shut start with it already closed.
         ...(options.bookClosed && fresh.player.chrolloBook
@@ -186,11 +198,14 @@ export class Shot {
       this.state = tickFight(
         this.state,
         { ...EMPTY_INPUT, ...this.held.player, ...player },
-        {
-          dt: 1 / 60,
-          ai: false,
-          opponentInput: { ...EMPTY_INPUT, ...this.held.opponent, ...opponent },
-        },
+        // With `ai`, the opponent is the game's own CPU instead of scripted input.
+        this.ai
+          ? { dt: 1 / 60, ai: true }
+          : {
+              dt: 1 / 60,
+              ai: false,
+              opponentInput: { ...EMPTY_INPUT, ...this.held.opponent, ...opponent },
+            },
       )
       this.record()
     }
@@ -211,6 +226,15 @@ export class Shot {
       critical: impact.critical,
       blocked: impact.blocked,
     })
+  }
+  /** The ready phase does not tick: the same state is filmed while the intro plays. */
+  hold(frames: number) {
+    for (let i = 0; i < frames; i++) this.states.push(this.state)
+  }
+  /** A frame computed by a production runner (signature combos) joins this shot as is. */
+  adopt(state: FightState) {
+    this.state = state
+    this.record()
   }
   /** A button press through the production command path. */
   press(action: MoveAction, input: Input = {}, side: FightSide = 'player') {
@@ -375,6 +399,7 @@ export class Shot {
       victory: this.victory.length ? this.victory : undefined,
       companion: this.companion,
       filmVariant: this.filmVariant,
+      entrance: this.entrance,
       hero: this.hero,
       twin: this.twin?.segment(),
       error,

@@ -51,6 +51,9 @@ function speedAt(segment: Segment, sim: number) {
 
 function baseSpeed(segment: Segment, sim: number) {
   if (segment.card === 'title') return 1.6
+  // A steady shot runs in real time, easing only a little into each contact.
+  if (segment.steady)
+    return segment.impacts.some((i) => sim >= i.at - 2 && sim < i.at + 8) ? 1.4 : 2
   if (portraitAt(segment, sim)) return 1.1
   if (segment.impacts.some((i) => sim >= i.at - 2 && sim < i.at + 10)) return 0.6
   if (segment.beats.some((b) => sim >= b.at - 1 && sim < b.at + 10)) return 1.1
@@ -142,6 +145,9 @@ function segmentShots(segment: Segment, place: { index: number; start: number; l
       shot.fx = fxAt(shot.local, kicks, length)
       // Portraits keep the lens steady: only the flash survives.
       if (shot.portrait) shot.fx = { ...calm(), flash: shot.fx.flash, zoom: 1 }
+      // A steady cut is a plain cut: no flash or speed lines unless a blow lands there.
+      if (segment.steady && shot.local < 5 && !kicks.some((k) => Math.abs(k.at - shot.local) < 2))
+        shot.fx = { ...shot.fx, flash: 0, lines: 0 }
     }
   if (last) cues.push({ at: start + Math.round(length * 0.3), kind: 'final' })
   return { shots, cues }

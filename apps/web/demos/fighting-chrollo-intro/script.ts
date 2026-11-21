@@ -275,6 +275,7 @@ export function split(id: string, whole: Segment): Built[] {
         whole.companion && whole.companion.at < to
           ? { ...whole.companion, at: whole.companion.at - from }
           : undefined,
+      entrance: whole.entrance !== undefined ? whole.entrance + from / 60 : undefined,
       part: whole.splits.length > 0,
       card: i === 0 ? whole.card : undefined,
       twin: twins[i],

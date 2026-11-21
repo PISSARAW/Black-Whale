@@ -8,7 +8,7 @@ const hero = {
   id: 'hisoka' as const,
   first: 'HISOKA',
   last: 'CHROLLO',
-  kicker: 'HEAVENS ARENA · 200TH FLOOR',
+  kicker: 'THE BLACK WHALE · CENTRAL DINING HALL',
   build: buildDuelReel,
   overlay: VersusOverlay as HeroConfig['overlay'],
 }

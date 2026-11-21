@@ -41,6 +41,7 @@ import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
+  cornerPushbackTransfer,
   nextComboHits,
   openingDamageMultiplier,
   openingType,
@@ -215,10 +216,16 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const points = impactPoints({ state, defence, critical, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
+  // A grounded hit stopped by the corner pushes the attacker back with the refused distance.
+  // Blocked hits keep their transfer through the guard recoil; this covers the real hits.
+  const corneredAttacker =
+    !defence.avoided && !defence.blocked && data.knockback > 0
+      ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
+      : spent
   let next: FightState = {
     ...state,
     [side]: recoilGuardedAttack({
-      attacker: spent,
+      attacker: corneredAttacker,
       defender: defence.fighter,
       struck,
       knockback: data.knockback,

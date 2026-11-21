@@ -3,7 +3,7 @@ import type { CombatSetup, CombatState } from '../../combat/types'
 import { stateChecksum } from './checksum'
 import {
   ARENA_REPLAY_VERSION,
-  DEFAULT_REPLAY_MATCH,
+  PRE_CLASH_REPLAY_MATCH,
   type ArenaReplay,
   type ArenaReplayMatch,
   type ReplayCommand,
@@ -39,7 +39,7 @@ export class ArenaRecorder {
     tickRate = 60,
     initialTick = 0,
     initialCommands = [],
-    match = { ...DEFAULT_REPLAY_MATCH, legacyRules: true },
+    match = { ...PRE_CLASH_REPLAY_MATCH, legacyRules: true },
     initialState,
   }: ArenaRecording) {
     this.setup = setup

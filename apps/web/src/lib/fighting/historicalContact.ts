@@ -62,6 +62,7 @@ export function resolveHistoricalContact(
       : strikeProjectileDefender({
           fighter: defence.fighter,
           attacker,
+          zone: projectile.targetZone,
           damage,
           blocked: defence.blocked,
           knockdown: false,

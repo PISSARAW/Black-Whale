@@ -78,6 +78,11 @@ export function sampleGamepad(
     buttons.plugWounds = !buttons.coverEars && pressed(pad, 5)
     buttons.call = buttons.guard = buttons.aura = false
   }
+  // Press both sticks together: deliberate, otherwise-unused defensive Burst chord.
+  if (pressed(pad, 10) && pressed(pad, 11)) {
+    buttons.burst = true
+    buttons.arena = buttons.gyo = false
+  }
   const input = mergeFightInput(nenPadChords(pad, buttons), stickInput(pad, lastInput))
   return {
     input,

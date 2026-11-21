@@ -1,5 +1,5 @@
 import { luiniAnchor } from './luiniSpatial'
-import { DOOR_FRAMES, doorNenAvailable } from './voconteDoors'
+import { doorFramesFor, doorNenAvailable } from './voconteDoors'
 import { ownsVisitHatsu } from './visitSceneKit'
 import type { FightSide, FightState } from './types'
 
@@ -28,6 +28,7 @@ function actor(state: FightState, side: FightSide) {
     voconte: doorNenAvailable(fighter),
     linked: Boolean(state.voconteDoors?.networks[side]?.active),
     transit: state.voconteDoors?.lastTransit?.[side],
+    frames: doorFramesFor(state, side),
   }
 }
 function snapshot(state: FightState) {
@@ -70,16 +71,17 @@ function doorChanges(before: Actor, next: Actor, owner: FightSide): NewAccent[] 
       source: 'voconte',
       owner,
       kind: next.linked ? 'link' : 'close',
-      from: { x: DOOR_FRAMES[0].x, y: 0 },
-      to: { x: DOOR_FRAMES[1].x, y: 0 },
+      from: { x: next.frames[0].x, y: 0 },
+      to: { x: next.frames[1].x, y: 0 },
     },
   ]
 }
-function transitChange(before: Actor, next: Actor, traveler: FightSide): NewAccent | null {
-  const transit = next.transit
+function transitChange(before: Actor, next: Snapshot, traveler: FightSide): NewAccent | null {
+  const transit = next[traveler].transit
   if (!transit || transit.frame === before.transit?.frame) return null
-  const from = DOOR_FRAMES.find((entry) => entry.id === transit.from)!,
-    to = DOOR_FRAMES.find((entry) => entry.id === transit.to)!
+  const frames = next[transit.owner].frames
+  const from = frames.find((entry) => entry.id === transit.from)!,
+    to = frames.find((entry) => entry.id === transit.to)!
   return {
     source: 'voconte',
     owner: transit.owner,
@@ -124,7 +126,7 @@ export function createPassageClock() {
         ...luiniChanges(previous[side], next[side], side),
         ...doorChanges(previous[side], next[side], side),
       ]
-      const transit = transitChange(previous[side], next[side], side)
+      const transit = transitChange(previous[side], next, side)
       if (transit) changes.push(transit)
       for (const event of changes) held.push(stamp(event, next))
     }

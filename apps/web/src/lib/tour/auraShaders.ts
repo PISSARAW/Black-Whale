@@ -103,6 +103,9 @@ export const tenFragmentShader = `
 // REN
 export const renVertexShader = `
   uniform float u_time;
+  uniform float u_renPressure;
+  uniform float u_renStability;
+  uniform float u_renIntent;
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vViewPosition;
@@ -110,13 +113,34 @@ export const renVertexShader = `
   void main() {
     vUv = uv;
     vNormal = normalize(normalMatrix * normal);
-    vec3 noisePos = position * 3.0;
-    noisePos.y += u_time * 4.0;
+    float power = u_renPressure * u_renPressure;
+    float fatigue = (1.0 - u_renStability) * (1.0 - u_renIntent * 0.72);
+    float tempo = mix(1.55, 0.78, u_renStability) * (1.0 + u_renIntent * 0.4);
+    float reach = mix(0.2, 1.65, power);
+    float turbulence = mix(1.9, 0.4, u_renStability);
+    vec3 noisePos = position * mix(5.2, 2.2, u_renStability);
+    noisePos.y += u_time * 4.0 * tempo;
     float noiseVal = cnoise(noisePos);
-    vec3 newPosition = position + normal * noiseVal * 0.2;
+    vec3 newPosition = position + normal * noiseVal * 0.24 * reach * turbulence;
+    // Exhausted Ren rocks as a whole before its light gutters in the fragment pass.
+    newPosition.x += sin(u_time * 2.15 + position.y * 0.55) * fatigue * 0.2 * position.y;
+    newPosition.z += sin(u_time * 1.7 + 1.8 + position.y) * fatigue * 0.12 * position.y;
+    // A dominant, controlled output climbs like a sustained flame rather than swelling sideways.
+    float blaze = smoothstep(0.68, 1.0, u_renPressure) * u_renStability;
+    newPosition.y += max(0.0, noiseVal) * blaze * 0.3 * smoothstep(0.1, 1.8, position.y);
+    float crown = smoothstep(0.42, 1.0, uv.y);
+    float flameTongue = max(0.0, cnoise(vec3(position.x * 6.0, position.z * 6.0, u_time * 4.2)));
+    newPosition.y += crown * blaze * (0.12 + flameTongue * 0.48);
+    float hostileBeat = 1.0 + sin(u_time * (3.0 + u_renIntent * 7.0)) * u_renIntent * 0.2;
+    newPosition.xz *= hostileBeat;
+    // Hostility makes narrow outward teeth: recognisably dangerous even in silhouette.
+    float threatNoise = max(0.0, cnoise(position * 11.0 + vec3(0.0, u_time * 7.0, u_time * 2.0)));
+    float spike = pow(threatNoise, 3.0) * u_renIntent * (0.22 + u_renPressure * 0.55);
+    newPosition += normal * (max(0.0, noiseVal) * u_renIntent * 0.1 + spike);
     if(position.y > 0.0) {
-        newPosition.x += cnoise(vec3(position.x, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
-        newPosition.z += cnoise(vec3(position.x + 10.0, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
+        float sway = 0.36 * reach * mix(1.55, 0.35, u_renStability);
+        newPosition.x += cnoise(vec3(position.x, position.y + u_time * 5.0 * tempo, position.z)) * sway * position.y;
+        newPosition.z += cnoise(vec3(position.x + 10.0, position.y + u_time * 5.0 * tempo, position.z)) * sway * position.y;
     }
     vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
     vViewPosition = -mvPosition.xyz;
@@ -129,14 +153,19 @@ export const renFragmentShader = `
   uniform vec3 u_colorCore;
   uniform vec3 u_colorEdge;
   uniform float u_opacity;
+  uniform float u_renPressure;
+  uniform float u_renStability;
+  uniform float u_renIntent;
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vViewPosition;
   ${commonShaderFunctions}
   void main() {
     vec2 noiseUv = vUv;
-    noiseUv.y -= u_time * 2.5;
-    float noiseVal = cnoise(vec3(noiseUv * 8.0, u_time * 1.5));
+    float fatigue = (1.0 - u_renStability) * (1.0 - u_renIntent * 0.72);
+    float tempo = mix(1.5, 0.82, u_renStability) * (1.0 + u_renIntent * 0.35);
+    noiseUv.y -= u_time * 2.5 * tempo;
+    float noiseVal = cnoise(vec3(noiseUv * mix(9.5, 7.0, u_renStability), u_time * 1.5 * tempo));
     noiseVal = noiseVal * 0.5 + 0.5;
     
     vec3 normal = normalize(vNormal);
@@ -145,14 +174,25 @@ export const renFragmentShader = `
     fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
     fresnel = pow(fresnel, 1.5);
     
-    float intensity = noiseVal * fresnel * 2.5;
+    float pulse = 1.0 + sin(u_time * (2.0 + u_renIntent * 7.0)) * u_renIntent * 0.42;
+    float power = u_renPressure * u_renPressure;
+    float blaze = smoothstep(0.7, 1.0, u_renPressure) * u_renStability;
+    float threatNoise = max(0.0, cnoise(vec3(noiseUv * 14.0, u_time * 8.0)));
+    float threatFlash = pow(threatNoise, 4.0) * u_renIntent * 4.0;
+    float intensity = noiseVal * fresnel * 2.5 * mix(0.22, 1.82, power) * pulse;
+    intensity += blaze * (0.12 + fresnel * 0.72) + threatFlash;
     vec3 color = mix(u_colorCore, u_colorEdge, min(1.0, intensity));
     
     // Saturate to white at high intensity
-    color = mix(color, vec3(1.0), smoothstep(1.5, 2.5, intensity));
+    color = mix(color, vec3(1.0), smoothstep(1.1, 2.1, intensity) * (0.55 + blaze * 0.45));
     
     float verticalFade = smoothstep(0.0, 0.2, vUv.y) * smoothstep(1.0, 0.6, vUv.y);
-    float alpha = intensity * u_opacity * verticalFade;
+    // Low stability visibly loses the aura, then catches again. Hostility suppresses
+    // this fatigue signature so a dangerous Ren snaps instead of merely flickering.
+    float gutterWave = sin(u_time * (3.0 + fatigue * 7.0) + sin(u_time * 1.65) * 2.2);
+    float gutter = smoothstep(-0.3, 0.48, gutterWave);
+    float sustain = mix(1.0, mix(0.06, 1.0, gutter), pow(fatigue, 1.45));
+    float alpha = intensity * u_opacity * verticalFade * sustain;
     
     gl_FragColor = vec4(color, alpha);
   }

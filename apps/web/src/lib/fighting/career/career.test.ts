@@ -71,6 +71,9 @@ describe('persistent local Clash career', () => {
       bestCombo: 3,
       frames: 600,
     })
+    profile.consumeMorale('match-1')
+    profile.consumeMorale('match-1')
+    expect(readCareer(storage).moraleSeen).toEqual(['match-1'])
   })
   it('retains lifetime mastery when the bounded match history evicts old results', () => {
     const profile = createCareerProfile(() => undefined)

@@ -21,6 +21,8 @@ interface SteppedHuman extends CarriedHuman {
   y: number
   humanPose?: HumanPose
   humanHeading?: number
+  /** A body worn by the camera: it is where the eyes are, never walking there. */
+  humanPinned?: boolean
 }
 
 /** What a rebuilt apparition keeps from the one it replaces. */
@@ -64,6 +66,7 @@ export function step(
   camera: { position: Vector3 },
   timing: { seconds: number; delta: number },
 ) {
+  if (held.humanPinned) return pin(held)
   const heading =
     held.humanHeading ??
     held.facing ??
@@ -75,4 +78,11 @@ export function step(
   )
   held.facing = held.root.rotation.y
   return locomotion
+}
+
+function pin(held: SteppedHuman): { pose: HumanPose; layer: undefined } {
+  held.root.position.set(held.at[0], held.y, held.at[1])
+  held.root.rotation.y = held.humanHeading ?? held.root.rotation.y
+  held.facing = held.root.rotation.y
+  return { pose: held.humanPose ?? 'idle', layer: undefined }
 }

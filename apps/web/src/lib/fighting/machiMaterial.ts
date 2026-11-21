@@ -6,6 +6,7 @@ import {
 import { canAct } from './fightActorState'
 import { machiSourceActive, MACHI_SUTURE_HEAL } from './machiThread'
 import { isBiscuitTrueForm } from './biscuitForm'
+import { machiSpoolAllows, machiSpoolOptions, performMachiSpool } from './machiSpool'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -43,8 +44,11 @@ export function sutureWound(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function performMachiMaterial({ state, side, command }: ArsenalInvocation): FightState {
+  if (!machiSpoolAllows({ state, side, command })) return state
   if (command.action === 'machi-reattach') return performMachiReattachment({ state, side, command })
   if (!machiMaterialReady(state, side)) return state
+  if (command.action === 'machi-trap' || command.action === 'machi-cut')
+    return performMachiSpool({ state, side, command })
   if (command.action === 'machi-suture') return startSuture(state, side, command.target)
   if (command.action === 'machi-anchor') return anchorObject(state, side, command.target)
   if (command.action === 'machi-pull') return pullObject(state, side)
@@ -239,8 +243,13 @@ export function machiMaterialOptions(state: FightState, side: FightSide): Arsena
         en: `Attach thread · ${entry.id}`,
       })),
   ]
+  const spool = machiSpoolOptions(state, side).map((option) => ({
+    ...option,
+    ready: performMachiMaterial({ state, side, command: option.command }) !== state,
+  }))
   return [
     ...machiReattachmentOptions(state, side),
+    ...spool,
     ...entries.map(({ command, fr, en }) => ({
       command,
       labelFr: fr,

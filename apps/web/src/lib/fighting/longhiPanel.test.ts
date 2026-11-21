@@ -34,7 +34,7 @@ describe('Moonlight Act consent panel', () => {
       },
     }
     expect(html(state)).toContain('5 secondes de combat')
-    expect(html(state)).toContain('Proposer le pacte')
+    expect(html(state)).toContain('Proposer ce pacte')
     expect(html(state)).not.toContain('Signer librement')
   })
 

@@ -1,4 +1,5 @@
 import { interceptProjectileWorld } from './projectileInterception'
+import { passProjectileThroughDoor } from './voconteDoorProjectiles'
 import { rosterProjectileTarget } from './rosterGuestContacts'
 import { canReceiveCombatHit } from './combatTargets'
 import { BODYGUARD_PISTOL, hasBodyguardFirearm, bodyguardShotHeight } from './bodyguardFirearms'
@@ -19,6 +20,7 @@ import { thetaShotAim } from './thetaFirearm'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
 import { benjaminBurstReady } from './benjaminWeapon'
+import { comboShotHeight } from './culdceptHold'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
@@ -289,7 +291,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     owner: side,
     fighterId: fighter.id,
     x: fighter.x + fighter.facing * 3.4,
-    y: fighter.y + aim.y,
+    y: comboShotHeight(state, side, fighter.y + aim.y),
     velocityX: fighter.facing * profile.speed,
     width: profile.width,
     height: profile.height,
@@ -300,7 +302,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     knockback: profile.knockback,
     targetZone: aim.targetZone,
     guard: 'mid',
-    canHitDowned: false,
+    canHitDowned: Boolean(fighter.attack.accel),
     shape: profile.shape,
     colour: profile.colour,
     ...rangedMaterial(fighter, profile),
@@ -350,9 +352,11 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const projectile = advanceProjectileMotion(state, held, step)
-    if (!projectile) continue
-    const contact = interceptProjectileWorld(state, { projectile, previousX: held.x })
+    const moved = advanceProjectileMotion(state, held, step)
+    if (!moved) continue
+    const passage = passProjectileThroughDoor(state, { projectile: moved, previousX: held.x })
+    const projectile = passage.projectile
+    const contact = interceptProjectileWorld(state, passage)
     state = contact.state
     if (contact.intercepted) {
       if (contact.terrain && projectile.gumFlight) kept.push(settleGumProjectile(projectile, true))

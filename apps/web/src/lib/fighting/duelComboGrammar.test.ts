@@ -53,9 +53,9 @@ function move(fighter: FighterId, name: Parameters<typeof moveForSlot>[1]): Figh
 }
 
 describe('tiered cancel grammar', () => {
-  it('covers every profile except the four recovery links into slow techniques', () => {
+  it('covers every duel profile through the universal cancel grammar', () => {
     const outside = DUEL_COMBO_FIGHTERS.filter((fighter) => !hasCancelGrammar(fighter))
-    expect(outside.sort()).toEqual(['bonolenov', 'leorio', 'padaille', 'phinks'])
+    expect(outside).toEqual([])
   })
 
   it.each(GRAMMAR_FIGHTERS)('%s: cancels, links and chains never loop', (fighter) => {
@@ -82,10 +82,11 @@ describe('tiered cancel grammar', () => {
       'lowHeavy',
       'forwardHeavy',
     ])
-    for (const ender of ['lowHeavy', 'forwardHeavy'] as const) {
-      expect(move(fighter, ender).cancelInto.map(slot)).toEqual([superSlot])
+    // The sweep also relaunches into the forward heavy (accelCancel.test.ts).
+    expect(move(fighter, 'lowHeavy').cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
+    expect(move(fighter, 'forwardHeavy').cancelInto.map(slot)).toEqual([superSlot])
+    for (const ender of ['lowHeavy', 'forwardHeavy'] as const)
       expect(move(fighter, ender).cancelOnBlockInto).toEqual([])
-    }
     expect(move(fighter, superSlot).cancelInto).toEqual([])
     expect(move(fighter, 'airLight').cancelInto.map(slot)).toEqual(['airHeavy'])
   })
@@ -98,7 +99,7 @@ describe('tiered cancel grammar', () => {
     expect(tieredComboScale(20, true)).toBe(TIERED_SUPER_FLOOR)
   })
 
-  it('keeps full grounded hitstun for the grammar and decays it for others', () => {
+  it('keeps full grounded hitstun for every grammar fighter', () => {
     const fight = beginFight(createFight('kurapika', 'hisoka', { mode: 'versus-local' }))
     const options = { defender: fight.opponent, hitstun: 20, comboHits: 6 }
     const attacking = (state: FightState, side: 'player' | 'opponent'): FightState['player'] => ({
@@ -109,7 +110,7 @@ describe('tiered cancel grammar', () => {
     expect(groundedComboStun({ ...options, attacker: attacking(kurapika, 'player') })).toBe(20)
     const phinks = beginFight(createFight('phinks', 'kurapika', { mode: 'versus-local' }))
     const struck = performMove({ state: phinks, side: 'player', action: 'light' })
-    expect(groundedComboStun({ ...options, attacker: attacking(struck, 'player') })).toBe(8)
+    expect(groundedComboStun({ ...options, attacker: attacking(struck, 'player') })).toBe(20)
   })
 })
 

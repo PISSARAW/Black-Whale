@@ -14,7 +14,8 @@ import { confirmedThrow } from '../throwCinematic'
 import { buildFightFigure } from '../fighterFigure'
 import { fightWorldX, fightWorldY } from '../fightCoordinates'
 import { commandMary } from '../bloodyMaryAction'
-import { beginPredatorAnalysis, launchPredator, predatorReady } from '../predator'
+import { beginPredatorAnalysis } from '../predator'
+import { investigatePredator } from '../predatorFixtures'
 import { createPredatorScene } from '../predatorScene'
 import { createCamillaCatScene } from '../camillaCatScene'
 import { createCinematicPropsScene } from '../cinematicPropsScene'
@@ -219,20 +220,18 @@ describe('fifth batch: conditioned abilities and personality stay faithful to re
   it('Rihan keeps Predator on its real Nen prey after studying and launching it', () => {
     let state = duel('rihan')
     state = { ...state, opponent: { ...state.opponent, x: 56 } }
-    state = advance(
-      performAuraAttack({
-        state,
-        side: 'opponent',
-        kind: 'special',
-        moveId: 'hisoka:neutralSpecial',
-        auraCharged: false,
+    state = investigatePredator({
+      state,
+      side: 'player',
+      watch: (s) => beginPredatorAnalysis(s, 'player'),
+      manifest: (s) => ({
+        ...s,
+        bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
       }),
-      35,
-    )
+    })
     expect(state.bungeeGum).toBeTruthy()
-    state = advance(beginPredatorAnalysis(state, 'player'), 260)
     expect(
-      predatorReady(state, 'player'),
+      Boolean(state.player.predator?.hunt),
       JSON.stringify({
         predator: state.player.predator,
         gum: state.bungeeGum,
@@ -242,7 +241,6 @@ describe('fifth batch: conditioned abilities and personality stay faithful to re
         facing: state.player.facing,
       }),
     ).toBe(true)
-    state = launchPredator(state, 'player')
     state = { ...state, opponent: { ...state.opponent, x: state.player.x + 5 } }
     state = grabbed({ id: 'rihan', powered: true, seed: state })
     const before = structuredClone(state),

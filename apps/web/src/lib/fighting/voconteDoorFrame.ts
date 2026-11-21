@@ -1,5 +1,5 @@
 import { advanceAiCadence } from './aiCadence'
-import { DOOR_FRAMES, doorBodyPositions, transportDoorBodies } from './voconteDoors'
+import { doorBodyPositions, doorFramesFor, transportDoorBodies } from './voconteDoors'
 import type { FutureControls } from './parallelFutureTypes'
 import type { FightInput, FightState } from './types'
 
@@ -33,7 +33,7 @@ function faceDoorArrival(state: FightState): FightState {
   let next = state
   for (const side of state.voconteDoors?.transported ?? []) {
     const transit = state.voconteDoors?.lastTransit?.[side]
-    const exit = DOOR_FRAMES.find((frame) => frame.id === transit?.to)
+    const exit = transit && doorFramesFor(state, transit.owner).find((f) => f.id === transit.to)
     if (exit) next = { ...next, [side]: { ...next[side], facing: exit.arrivalFacing } }
   }
   return next

@@ -41,6 +41,8 @@ export const SECOND_DUEL_PROFILES = {
   biscuit: {
     window: 7,
     block: 'standingHeavy',
+    // Retour à la vraie forme (signatureCombosBiscuitPhinks.ts): forward from the Stone Sweep.
+    dash: { lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 1 },
@@ -72,6 +74,10 @@ export const SECOND_DUEL_PROFILES = {
       },
       forwardSpecial: { tuning: { startup: 10, damage: 19, knockback: 4.2, reach: 19 }, into: [] },
       finisher: { tuning: { startup: 18, knockback: 6, reach: 21 }, into: [] },
+      // Retour à la vraie forme: capture, Perfect Ken, Ko Fist, Full Impact.
+      throw: { into: ['backSpecial'] },
+      backSpecial: { into: ['downSpecial'] },
+      downSpecial: { into: ['finisher'] },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
       airHeavy: { into: [] },
     },

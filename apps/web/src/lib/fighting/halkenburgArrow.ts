@@ -1,4 +1,6 @@
 import { attackPhase } from './frameData'
+import { abandonHalkenburgShot, halkenburgShotConditionsHold } from './halkenburgCollective'
+import { readyCohort } from './preparationWorld'
 import { applyHalkenburgSoulArrow } from './halkenburgSouls'
 import { controlledSoulKey, halkenburgMode, soulBodyKey } from './halkenburgSoulTypes'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
@@ -30,6 +32,8 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
   )
     return state
   if (!actor.hatsuEffects.arrowNocked || !actor.halkenburgSupporter) return state
+  if (!halkenburgShotConditionsHold(state, side, readyCohort(state, side)))
+    return abandonHalkenburgShot(state, side)
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     owner: side,

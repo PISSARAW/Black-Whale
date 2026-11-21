@@ -349,9 +349,17 @@ function canAct(fighter: ArcadeFighter): boolean {
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
-    fighter.attack === null
+    freeOrCapturing(fighter)
   )
 }
+
+/** Verdict écarlate: the eyes may redden while a confirmed capture or Chain Jail holds the target. */
+function freeOrCapturing(fighter: ArcadeFighter): boolean {
+  const attack = fighter.attack
+  if (!attack) return true
+  return CAPTURES.includes(attack.moveId ?? '') && Boolean(attack.confirmedHit)
+}
+const CAPTURES = ['kurapika:throw', 'kurapika:neutralSpecial']
 
 export function kurapikaAiActivation(state: FightState): FightState | null {
   const fighter = state.opponent

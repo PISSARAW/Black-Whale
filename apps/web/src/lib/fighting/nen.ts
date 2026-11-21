@@ -22,8 +22,10 @@ import {
 } from './nenAdvanced'
 import { categoryPower, fightCategoryEfficiency, constructionFactor } from './nenCategories'
 import { abilityPower } from './nenAbility'
+import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nenTransfer'
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
+import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -50,6 +52,7 @@ export function createFightingNen() {
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   if (!illumiBodyFree(fighter)) return fighter
+  if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (fighter.moonlightZetsu) return forceZetsu(fighter)
   const restricted = restrictedChainAura(fighter, input)
@@ -90,6 +93,7 @@ function holdsRyu(fighter: ArcadeFighter): boolean {
 
 function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.attack?.auraCharged || fighter.attack.impacted || fighter.nen.ko) return fighter
+  if (fighter.nenTransfer) return fighter
   if (fighter.aura < KO_COST) {
     return {
       ...withAction(fighter, { type: 'TEN' }),
@@ -106,6 +110,7 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
+  fighter = advanceNenTransfer(fighter, dt)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (fighter.drainingChain) return advanceOn(fighter)
   const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
@@ -120,6 +125,7 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
   if (fighter.nen.on) return 0
   return (
     baseAuraFlow(fighter) -
+    bodyMemoryRyuDrain(fighter) -
     advancedAuraDrain(fighter) -
     Number(fighter.nen.gyo || Boolean(bodyGyoZone(fighter))) * BODY_GYO_DRAIN
   )
@@ -137,16 +143,9 @@ function baseAuraFlow(fighter: ArcadeFighter): number {
 export function focusGuardRyu(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
-  const otherZones = (['head', 'torso', 'hands', 'feet'] as const).filter(
-    (candidate) => candidate !== zone,
-  )
-  const distribution: Partial<Record<FightNenZone, number>> = { [zone]: 76 }
-  for (const other of otherZones) distribution[other] = 8
+  const distribution = { head: 0.08, torso: 0.08, hands: 0.08, feet: 0.08, [zone]: 0.76 }
   return {
-    ...withAction(
-      { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
-      { type: 'RYU', distribution },
-    ),
+    ...requestNenTransfer(fighter, { zone, shares: distribution }),
     ryuWindow: 9,
   }
 }
@@ -155,22 +154,22 @@ export function focusAttackRyu(fighter: ArcadeFighter, kind: AttackKind): Arcade
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
   const zone = attackData(kind, fighter).auraZone
-  const distribution: Partial<Record<FightNenZone, number>> = {
-    head: 8,
-    torso: 12,
-    hands: 8,
-    feet: 8,
-    [zone]: 72,
+  const distribution = {
+    head: 0.08,
+    torso: 0.12,
+    hands: 0.08,
+    feet: 0.08,
+    [zone]: 0.72,
   }
-  return withAction(
-    { ...fighter, nen: { ...fighter.nen, mode: 'ren', ken: false } },
-    { type: 'RYU', distribution },
-  )
+  return requestNenTransfer(fighter, { zone, shares: distribution })
 }
 
 export function releaseFocusedAura(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.nen.ko && !hasRyu(fighter)) return fighter
-  return withAction(fighter, { type: 'TEN' })
+  return withAction(
+    { ...fighter, lastAuraShares: currentAuraShares(fighter), nenTransfer: undefined },
+    { type: 'TEN' },
+  )
 }
 
 export function setIn(fighter: ArcadeFighter, on: boolean): ArcadeFighter {
@@ -194,7 +193,12 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  return factor * attackCategoryPower(fighter, kind) * weaponPower(fighter, zone)
+  return (
+    factor *
+    attackCategoryPower(fighter, kind) *
+    weaponPower(fighter, zone) *
+    bodyMemoryAttackFactor(fighter, zone)
+  )
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {

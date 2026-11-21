@@ -45,6 +45,16 @@ La maîtrise vaut 20 points par match terminé, cinq par manche gagnée et au pl
 de la pratique de jeu : aucun niveau, habillage ou résultat ne fournit d’aura,
 d’équipement, de Hatsu, de statistiques ou de conditions acquises.
 
+## Fatigue morale entre les matchs
+
+Le résultat décisif le plus récent de chaque combattant laisse un résidu au début
+de son prochain duel de carrière. Une défaite sévère 0–2 ajoute temporairement de
+l’appréhension ; une victoire nette 2–0 ajoute de la résolution. Le résultat d’un
+autre combattant, un match serré, l’entraînement, les parcours solo et les équipes
+n’appliquent rien. L’état est annoncé sur la carte d’ouverture, puis se dissipe par
+la récupération psychologique ordinaire du combat. Le résultat est marqué comme
+consommé au lancement : quitter ce duel ne reporte pas son résidu sur le suivant.
+
 ## Saison PvP partagée
 
 L’inscription est volontaire et distincte du pseudo local. `clashSeasons.ts`

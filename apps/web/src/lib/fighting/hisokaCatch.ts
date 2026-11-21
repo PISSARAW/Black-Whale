@@ -33,6 +33,7 @@ export function catchBungeeObject(state: FightState, hit: ProjectileHit): FightS
   const struck = strikeProjectileDefender({
     fighter,
     attacker: state[shot.owner],
+    zone: 'hands',
     projectile: shot,
     damage,
     blocked: false,

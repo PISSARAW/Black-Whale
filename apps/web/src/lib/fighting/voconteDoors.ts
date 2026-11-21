@@ -3,16 +3,14 @@ import { hatsuSourceFor } from './hatsu'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+import { doorFramesFor } from './voconteDoorSites'
 import type { DoorFrame, DoorPositions, DoorTransit } from './voconteDoorTypes'
+
+export { DOOR_FRAMES, doorFramesFor } from './voconteDoorSites'
 
 export const DOOR_SETUP_FRAMES = 18
 export const DOOR_SETUP_AURA = 20
 export const DOOR_MOVE = 'voconte:neutralSpecial'
-/** Two existing physical frames are supplied by the duel, not an attested limit of Door. */
-export const DOOR_FRAMES: readonly DoorFrame[] = [
-  { id: 'A', x: 30, direction: 1, destination: 'B', arrivalFacing: 1 },
-  { id: 'B', x: 70, direction: -1, destination: 'A', arrivalFacing: -1 },
-]
 const SIDES: readonly FightSide[] = ['player', 'opponent']
 
 export function doorNenAvailable(fighter: ArcadeFighter): boolean {
@@ -104,13 +102,9 @@ function transportBody(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (doors.transported.includes(side) || fighter.hanzoProjection || fighter.health <= 0)
     return state
-  const frame = DOOR_FRAMES.find((entry) => crossedDoor(doors.origins![side], fighter, entry))
-  if (!frame) return state
-  const owner = SIDES.find(
-    (entry) => doors.networks[entry]?.active && doorNenAvailable(state[entry]),
-  )
-  if (!owner) return state
-  const exit = DOOR_FRAMES.find((entry) => entry.id === frame.destination)!
+  const crossing = crossedDoorNetwork(state, { from: doors.origins![side], to: fighter })
+  if (!crossing) return state
+  const { owner, frame, exit } = crossing
   const transit: DoorTransit = { from: frame.id, to: exit.id, owner, frame: state.frame }
   return {
     ...state,
@@ -128,6 +122,26 @@ function transportBody(state: FightState, side: FightSide): FightState {
       lastTransit: { ...doors.lastTransit, [side]: transit },
     },
   }
+}
+
+export interface DoorCrossing {
+  owner: FightSide
+  frame: DoorFrame
+  exit: DoorFrame
+}
+
+/** The first open network whose own chosen frames the swept path really crosses. */
+export function crossedDoorNetwork(
+  state: FightState,
+  path: { from: { x: number; y: number }; to: { x: number; y: number } },
+): DoorCrossing | null {
+  for (const owner of SIDES) {
+    if (!state.voconteDoors?.networks[owner]?.active || !doorNenAvailable(state[owner])) continue
+    const frames = doorFramesFor(state, owner)
+    const frame = frames.find((entry) => crossedDoor(path.from, path.to, entry))
+    if (frame) return { owner, frame, exit: frames.find((e) => e.id === frame.destination)! }
+  }
+  return null
 }
 
 export function doorFramesVisible(state: FightState): boolean {

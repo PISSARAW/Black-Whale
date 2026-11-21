@@ -89,6 +89,6 @@ describe('kameos in private PvP (lot 8)', () => {
   })
 
   it('names the new ruleset', () => {
-    expect(PVP_RULESET.startsWith('clash-pvp-6:')).toBe(true)
+    expect(PVP_RULESET.startsWith('clash-pvp-7:')).toBe(true)
   })
 })

@@ -36,15 +36,21 @@ export function prioritiseCommitmentPunish(context: ArsenalAiContext, slots: rea
 /** Small preparation/recovery accents on the authored pose. Contact poses and root separation stay exact. */
 export function withNenCommitment(plan: BodyPlan | null, fighter: ArcadeFighter): BodyPlan | null {
   if (!plan || !canAccent(fighter)) return plan
-  if (fighter.nenTransfer && !fighter.attack)
+  if (fighter.nenTransfer && !fighter.attack) {
+    const transfer = fighter.nenTransfer
+    const progress = Math.min(1, Math.max(0, transfer.age / transfer.duration))
+    const weight = Math.sin(Math.PI * progress)
     return {
       ...plan,
-      pose: addPoses(plan.pose, {
-        chest: [0.035, 0, 0],
-        leadElbow: [-0.08, 0, 0],
-        rearElbow: [-0.06, 0, 0],
-      }),
+      pose: addPoses(
+        plan.pose,
+        scalePose(
+          { chest: [0.035, 0, 0], leadElbow: [-0.08, 0, 0], rearElbow: [-0.06, 0, 0] },
+          weight,
+        ),
+      ),
     }
+  }
   if (!fighter.attack || attackPhase(fighter) !== 'recovery') return plan
   const data = attackData(fighter.attack.kind, fighter)
   const remaining =

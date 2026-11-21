@@ -139,6 +139,10 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter extends RetrospectiveFighterState {
+  /** Repeated limb trauma retained until this match ends. */
+  bodyMemory?: import('./bodyMemory').BodyMemoryState
+  /** Defensive Burst aftermath: voluntary Nen remains sealed for this many frames. */
+  burstZetsuFrames?: number
   throwTechRecoveryFrames?: number
   /** Cosmetic scenes; their props never enter battlefield or projectile state. */
   easterEgg?: import('./easterEggs').EasterEggPlayback
@@ -205,6 +209,10 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   knockdownFrames: number
   wakeupInvulnerableFrames: number
   reversalWindow: number
+  /** Relance heat (accelCancel.ts); absent while cold. */
+  accelHeat?: import('./accelCancel').AccelHeat
+  /** Frames of tension élastique spent in the current combo (elasticHold.ts). */
+  elasticHold?: number
   comboHits: number
   comboDamage: number
   juggleCount: number
@@ -267,6 +275,8 @@ export interface FighterDash {
   frame: number
   frames: number
   peak: number
+  /** Started by an accélération (dashCancel.ts). */
+  accel?: true
 }
 
 export interface FighterMotion {
@@ -340,11 +350,23 @@ export interface FightImpact {
   zone: FightNenZone
   concealed: boolean
   avoided: boolean
+  /** A last-health On heavy consumed the attacker's grudge for one lethal strike. */
+  onRage?: boolean
   projectileId: number | null
   position: { x: number; y: number }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
-  objectTransfer?: { objectId: string; owner: FightSide; damage: number }
-  transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean }
+  /** `ally`: the wound came from the owner's own kameo, held by the right hand. */
+  objectTransfer?: { objectId: string; owner: FightSide; damage: number; ally?: true }
+  transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean; ally?: true }
+}
+
+export interface FightAttackClash {
+  sequence: number
+  frame: number
+  winner: FightSide | null
+  playerRen: number
+  opponentRen: number
+  position: { x: number; y: number }
 }
 
 export type ProjectileShape =
@@ -401,6 +423,14 @@ import type { BungeeGumAttachment } from './bungeeTypes'
 export type { BungeeGumAttachment } from './bungeeTypes'
 
 export interface FightState {
+  /** One defensive Burst per seat and round; optional only for older snapshots. */
+  burstAvailable?: Record<FightSide, boolean>
+  /** Latest defensive Burst, retained as a deterministic presentation event. */
+  burst?: { side: FightSide; frame: number; sequence: number }
+  /** A wall-breaking KO has carried the round into an adjacent ship room. */
+  stageTransition?: import('./stageTransition').FightStageTransition
+  /** Latest same-frame Ko collision; separate from impacts because neither strike lands. */
+  attackClash?: FightAttackClash
   throwTech?: { frame: number; sequence: number }
   training?: import('./trainingTypes').TrainingState
   arena?: import('./arenaTypes').ArenaState

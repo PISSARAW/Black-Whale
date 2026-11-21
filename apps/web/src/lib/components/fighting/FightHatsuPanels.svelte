@@ -84,7 +84,8 @@
   {state}
   {language}
   {paused}
-  onOffer={(side) => dispatch(side, (current) => offerMoonlightContract({ state: current, side }))}
+  onOffer={(side, clause) =>
+    dispatch(side, (current) => offerMoonlightContract({ state: current, side, clause }))}
   onRespond={(side, accept) =>
     dispatch(side, (current) => respondMoonlightContract({ state: current, side, accept }))}
 />

@@ -13,6 +13,11 @@ interface Exchange {
   power?: number
   range?: number
   targetAt?: FighterState['position']
+  recovery?: number
+  /** Strongest impact the move may deal, whatever the aura contest says. */
+  ceiling?: Impact
+  /** Clash rules: grades the blow instead of Arena's aura ratio (combat/clashGrade.ts). */
+  grade?: import('./clashGrade').ExchangeGrade
   clock: number
   walls: WallSegment[]
 }
@@ -34,9 +39,11 @@ export function resolveExchange(exchange: Exchange): ExchangeResult {
   )
     return resultOf(exchange, 'miss')
 
+  if (exchange.grade)
+    return resultOf(exchange, exchange.grade(exchange.attacker, exchange.defender, exchange.zone))
   const offence = offensiveAura(exchange.attacker, exchange.technique) * (exchange.power ?? 1)
   const defence = defensiveAura(exchange.defender, exchange.zone)
-  const impact = impactOf(offence, defence)
+  const impact = capImpact(impactOf(offence, defence), exchange.ceiling)
   return resultOf(exchange, impact)
 }
 
@@ -117,6 +124,13 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
   return output * reserve * 0.45
 }
 
+const IMPACT_ORDER: readonly Impact[] = ['miss', 'blocked', 'clean', 'critical', 'knockdown', 'ko']
+
+function capImpact(impact: Impact, ceiling: Impact | undefined): Impact {
+  if (!ceiling) return impact
+  return IMPACT_ORDER.indexOf(impact) > IMPACT_ORDER.indexOf(ceiling) ? ceiling : impact
+}
+
 export function impactOf(offence: number, defence: number): Impact {
   if (offence <= 0) return 'blocked'
   if (defence <= 0) return 'ko'
@@ -131,7 +145,10 @@ export function impactOf(offence: number, defence: number): Impact {
 function resultOf(exchange: Exchange, impact: Impact): ExchangeResult {
   const points = pointsFor(impact)
   return {
-    attacker: { ...exchange.attacker, cooldown: exchange.technique === 'ko' ? 1.1 : 0.65 },
+    attacker: {
+      ...exchange.attacker,
+      cooldown: exchange.recovery ?? (exchange.technique === 'ko' ? 1.1 : 0.65),
+    },
     defender: applyImpact(exchange.defender, impact),
     event: {
       at: exchange.clock,

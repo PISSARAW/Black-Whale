@@ -251,6 +251,8 @@ type Built = BuiltSegment
 export function split(id: string, whole: Segment): Built[] {
   const bounds = [0, ...whole.splits.map((c) => c.at), whole.states.length - 1]
   const stages = [whole.stage, ...whole.splits.map((c) => c.stage)]
+  // A twin is cut on the same frames, so its parts pair up one to one.
+  const twins = whole.twin ? split(id, whole.twin) : []
   return stages.map((stage, i) => {
     const [from, to] = [bounds[i], bounds[i + 1]]
     const inside = <T extends { at: number }>(list: T[]) =>
@@ -275,6 +277,7 @@ export function split(id: string, whole: Segment): Built[] {
           : undefined,
       part: whole.splits.length > 0,
       card: i === 0 ? whole.card : undefined,
+      twin: twins[i],
     }
   })
 }

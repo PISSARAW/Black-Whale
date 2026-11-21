@@ -2,6 +2,8 @@ import { readAura } from '../combat/perception'
 import { STRIKE_RANGE } from '../combat/resolve'
 import { combatReducer } from '../combat/reducer'
 import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
+import type { FighterId } from '../fighting/types'
+import { aiKoZone, aiOpeningSlot, continueAiCombo } from './aiCombo'
 
 const THINK_EVERY = 0.45
 export type ArenaDifficulty = 'initiate' | 'fighter' | 'master'
@@ -27,21 +29,31 @@ export const OPPONENT_DOCTRINES: Record<
 export interface ArenaOpponentOptions {
   doctrine?: OpponentDoctrine
   difficulty?: ArenaDifficulty
+  fighterId?: FighterId
 }
 
 export function advanceArena(
   state: CombatState,
   dt: number,
-  { doctrine = 'counter', difficulty = 'fighter' }: ArenaOpponentOptions = {},
+  { doctrine = 'counter', difficulty = 'fighter', fighterId }: ArenaOpponentOptions = {},
 ): CombatState {
   const ticked = rememberObservedStrike(combatReducer(state, { type: 'TICK', dt }))
   if (ticked.outcome !== 'playing') return ticked
+  const combo = fighterId ? continueAiCombo(ticked, fighterId, difficulty) : null
+  if (combo) return combo
   const cadence = DIFFICULTY_CADENCE[difficulty]
   if (Math.floor(ticked.clock / cadence) === Math.floor(state.clock / cadence)) return ticked
-  return decide(ticked, doctrine, cadence)
+  return decide(ticked, { doctrine, cadence, fighterId })
 }
 
-function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number): CombatState {
+interface ArenaDecisionOptions {
+  doctrine: OpponentDoctrine
+  cadence: number
+  fighterId?: FighterId
+}
+
+function decide(state: CombatState, options: ArenaDecisionOptions): CombatState {
+  const { doctrine, cadence, fighterId } = options
   const ai = state.opponent
   if (ai.condition !== 'ready') return state
   if (ai.intent) return state
@@ -108,13 +120,25 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   }
 
   if (current.opponent.aura >= 35 && current.clock % 3 < THINK_EVERY) {
-    return combatReducer(current, { type: 'KO', side: 'opponent', zone })
+    const koZone =
+      current.nenRules === 'clash' && fighterId
+        ? aiKoZone(fighterId, Math.floor(current.clock / cadence) + 1)
+        : zone
+    return combatReducer(current, { type: 'KO', side: 'opponent', zone: koZone })
   }
   const hidden =
     doctrine === 'deceiver' ||
     (Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30)
   current = combatReducer(current, { type: 'IN', side: 'opponent', on: hidden })
-  return combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
+  return fighterId
+    ? combatReducer(current, {
+        type: 'FIGHTING_MOVE',
+        side: 'opponent',
+        fighterId,
+        slot: aiOpeningSlot(fighterId, Math.floor(current.clock / cadence)),
+        targetAt: current.player.position,
+      })
+    : combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
 }
 
 function rememberObservedStrike(state: CombatState): CombatState {

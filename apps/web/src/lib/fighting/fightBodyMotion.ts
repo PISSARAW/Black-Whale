@@ -1,3 +1,4 @@
+import { fighterStance } from './biscuitBody'
 import { animateHanzoBlade } from './hanzoBladeFigure'
 import { plantHanzoSoles } from './hanzoGrounding'
 import { beginSettledPose } from './fightSettledPose'
@@ -16,6 +17,7 @@ import { usesRightHandPose } from './fightHandConvention'
 import { fighterKeyedMove } from './fighterKeyedMove'
 import { chrolloBodyStance } from './chrolloBodyStance'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
+import { keepFightPosture } from './fightPostureBudget'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
@@ -234,10 +236,13 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
   const plan = awake && closeBodyPlan(awake, fighter, context.rival)
-  if (plan && fighter.id === 'feitan') return feitanHandedPlan(plan, fighter)
-  return plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
-    ? rightHandedPlan(plan)
-    : plan
+  const handed =
+    plan && fighter.id === 'feitan'
+      ? feitanHandedPlan(plan, fighter)
+      : plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
+        ? rightHandedPlan(plan)
+        : plan
+  return handed && keepFightPosture(handed, fighter)
 }
 
 function rightHandedPlan(plan: BodyPlan): BodyPlan {
@@ -251,7 +256,7 @@ function rightHandedPlan(plan: BodyPlan): BodyPlan {
 
 function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   if (!['down', 'ko', 'wakeup'].includes(fighter.pose)) return null
-  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
   return reactionPlan(fighter, context, standing)
 }
 
@@ -268,7 +273,7 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
       key: 'astral-double',
       blend: 0.12,
     }
-  const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
+  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
   const personal = chrolloBodyStance(fighter, standing)
   if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
   return restingWithConstraint(fighter, context, personal)
@@ -279,7 +284,7 @@ function luiniBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
     key: 'luini-occupied-passage',
     plant: false,
     blend: 0.08,
-    pose: stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, 0),
+    pose: stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, 0),
   }
 }
 

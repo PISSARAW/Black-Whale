@@ -1,5 +1,17 @@
 import type { AuraConcentration } from './nenConcentration'
-import type { FightSide, FightState } from './types'
+import { fightStrikeLimb } from './fightStrikeLimb'
+import type { FightNenZone, FightSide, FightState } from './types'
+
+export const RYU_VISUAL_TRANSFER_FRAMES = 8
+
+interface VisualTransfer {
+  key: string
+  from: AuraConcentration
+  to: AuraConcentration
+  zone: FightNenZone
+  since: number
+  duration: number
+}
 
 interface Clock {
   previousFrame: number
@@ -11,6 +23,7 @@ interface Clock {
   release: { aura: AuraConcentration; at: number; move?: string } | null
   sequence: number
   transfer: boolean
+  visualTransfer: VisualTransfer | null
 }
 
 /** The engine spends focus at contact. Its visible discharge holds in hitstop, then dissipates. */
@@ -25,20 +38,51 @@ export function createConcentrationClock(side: FightSide) {
     release: null,
     sequence: 0,
     transfer: false,
+    visualTransfer: null,
   }
   return (state: FightState, actual: AuraConcentration | null) => {
     const reset = advanceClock(clock, state, side)
     observeDischarge(clock, { state, side, actual })
-    const concentration = actual ?? clock.release?.aura ?? null
-    const strength = clock.release ? Math.max(0, 1 - (clock.time - clock.release.at) / 6) : 1
-    const next = JSON.stringify(concentration)
-    if (next !== clock.key) {
-      clock.key = next
-      if (!clock.transfer) clock.since = reset ? -Infinity : clock.time
+    const visual = visualTransferFrame(clock, { state, side, actual })
+    const concentration = shownConcentration(clock, visual?.concentration, actual)
+    const strength = releaseStrength(clock)
+    observeConcentrationKey(clock, concentration, reset)
+    clock.transfer = transferRunning(clock, state, side)
+    return {
+      concentration,
+      strength,
+      time: clock.time,
+      age: clock.time - clock.since,
+      visualTransfer: visual?.timing,
     }
-    clock.transfer = Boolean(state[side].nenTransfer)
-    return { concentration, strength, time: clock.time, age: clock.time - clock.since }
   }
+}
+
+function shownConcentration(
+  clock: Clock,
+  visual: AuraConcentration | undefined,
+  actual: AuraConcentration | null,
+) {
+  return visual ?? actual ?? clock.release?.aura ?? null
+}
+
+function releaseStrength(clock: Clock) {
+  return clock.release ? Math.max(0, 1 - (clock.time - clock.release.at) / 6) : 1
+}
+
+function observeConcentrationKey(
+  clock: Clock,
+  concentration: AuraConcentration | null,
+  reset: boolean,
+) {
+  const next = JSON.stringify(concentration)
+  if (next === clock.key) return
+  clock.key = next
+  if (!clock.transfer) clock.since = reset ? -Infinity : clock.time
+}
+
+function transferRunning(clock: Clock, state: FightState, side: FightSide) {
+  return Boolean(state[side].nenTransfer || clock.visualTransfer)
 }
 
 function advanceClock(clock: Clock, state: FightState, side: FightSide) {
@@ -53,12 +97,86 @@ function advanceClock(clock: Clock, state: FightState, side: FightSide) {
       previousFrame: state.frame,
       sequence: 0,
       transfer: false,
+      visualTransfer: null,
     })
   }
   clock.identity = identity
   if (!state.hitstop) clock.time += Math.max(0, state.frame - clock.previousFrame)
   clock.previousFrame = state.frame
   return reset
+}
+
+function visualTransferFrame(
+  clock: Clock,
+  context: { state: FightState; side: FightSide; actual: AuraConcentration | null },
+) {
+  const fighter = context.state[context.side]
+  observeVisualTransfer(clock, fighter, context.actual)
+  const visual = clock.visualTransfer
+  if (!visual) return null
+  const frame = sampleVisualTransfer(visual, clock.time)
+  if (frame.timing.age >= visual.duration) clock.visualTransfer = null
+  return frame
+}
+
+function observeVisualTransfer(
+  clock: Clock,
+  fighter: FightState[FightSide],
+  actual: AuraConcentration | null,
+) {
+  const transfer = fighter.nenTransfer
+  if (!transfer) {
+    if (!actual) clock.visualTransfer = null
+    return
+  }
+  const key = `${transfer.zone}:${Boolean(transfer.ko)}:${JSON.stringify(transfer.from)}:${JSON.stringify(transfer.to)}`
+  if (clock.visualTransfer?.key === key) return
+  const focus = dominantZone(transfer.from)
+  const visibleFrom = clock.visualTransfer
+    ? sampleVisualTransfer(clock.visualTransfer, clock.time).concentration
+    : null
+  clock.visualTransfer = {
+    key,
+    zone: transfer.zone,
+    since: visibleFrom ? clock.time : clock.time - transfer.age,
+    duration: Math.max(RYU_VISUAL_TRANSFER_FRAMES, transfer.duration),
+    from: visibleFrom ?? {
+      technique: 'ryu',
+      shares: transfer.from,
+      limb: fightStrikeLimb(fighter, focus),
+    },
+    to: {
+      technique: transfer.ko ? 'ko' : 'ryu',
+      shares: transfer.to,
+      limb: fightStrikeLimb(fighter, transfer.zone),
+    },
+  }
+}
+
+function sampleVisualTransfer(visual: VisualTransfer, time: number) {
+  const age = Math.min(visual.duration, Math.max(0, time - visual.since))
+  const p = age / visual.duration
+  const weight = p * p * (3 - 2 * p)
+  const concentration: AuraConcentration = {
+    technique: p >= 1 ? visual.to.technique : visual.from.technique,
+    limb: p < 0.5 ? visual.from.limb : visual.to.limb,
+    shares: {
+      head: mix(visual.from.shares.head, visual.to.shares.head, weight),
+      torso: mix(visual.from.shares.torso, visual.to.shares.torso, weight),
+      hands: mix(visual.from.shares.hands, visual.to.shares.hands, weight),
+      feet: mix(visual.from.shares.feet, visual.to.shares.feet, weight),
+    },
+  }
+  const timing = { age, travelFrames: visual.duration, zone: visual.zone }
+  return { concentration, timing }
+}
+
+function dominantZone(shares: Record<FightNenZone, number>): FightNenZone {
+  return (Object.keys(shares) as FightNenZone[]).reduce((a, b) => (shares[a] >= shares[b] ? a : b))
+}
+
+function mix(from: number, to: number, weight: number) {
+  return from + (to - from) * weight
 }
 
 function observeDischarge(

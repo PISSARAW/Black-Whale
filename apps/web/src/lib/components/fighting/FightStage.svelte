@@ -66,7 +66,7 @@
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
   $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
-  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
+  $: sceneKey = `${stageId}:${state.stageTransition?.sequence ?? 0}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
   $: if (sceneKey) victory.sceneLoading()
   $: throwTech = isThrowTech(visibleState)
 </script>
@@ -125,9 +125,34 @@
         {/key}
       {/if}
       {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
+      {#if state.burst && state.frame - state.burst.frame < 20}
+        {#key state.burst.sequence}
+          <div class:from-player={state.burst.side === 'player'} class="burst-release"></div>
+          <div class:from-player={state.burst.side === 'player'} class="burst-callout">BURST</div>
+        {/key}
+      {/if}
       <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
       {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
       <slot />
+    {/if}
+    {#if state.stageTransition}
+      {#key state.stageTransition.sequence}
+        <div
+          class="stage-breach"
+          class:left={state.stageTransition.direction === 'left'}
+          class:right={state.stageTransition.direction === 'right'}
+          aria-live="polite"
+        >
+          <div class="stage-breach-flash"></div>
+          {#each Array(12) as _, shard (shard)}<i style={`--shard:${shard}`}></i>{/each}
+          <strong>{language === 'fr' ? 'MUR DÉTRUIT' : 'WALL BREACH'}</strong>
+          <span
+            >{language === 'fr'
+              ? state.stageTransition.toNameFr
+              : state.stageTransition.toNameEn}</span
+          >
+        </div>
+      {/key}
     {/if}
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
     <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
@@ -240,6 +265,93 @@
   .damage-callout.from-player {
     left: 62%;
   }
+  .burst-release {
+    position: absolute;
+    z-index: 12;
+    top: 50%;
+    left: 73%;
+    width: 34vmin;
+    aspect-ratio: 1;
+    border: 5px solid #bff7ff;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0 5%, #69e8ff99 18%, transparent 62%);
+    box-shadow:
+      0 0 50px #51dfff,
+      inset 0 0 32px #fff;
+    pointer-events: none;
+    animation: burst-release 420ms cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+  }
+  .burst-release.from-player {
+    left: 27%;
+  }
+  .burst-callout {
+    position: absolute;
+    z-index: 14;
+    top: 38%;
+    left: 70%;
+    color: #d9fbff;
+    font: 900 2rem/1 var(--font-display);
+    letter-spacing: 0.14em;
+    text-shadow:
+      0 0 16px #42dfff,
+      0 3px 4px #000;
+    pointer-events: none;
+    animation: callout 700ms ease-out forwards;
+  }
+  .burst-callout.from-player {
+    left: 20%;
+  }
+  .stage-breach {
+    position: absolute;
+    z-index: 18;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    display: grid;
+    place-content: center;
+    color: #f5e7c3;
+    text-align: center;
+    text-shadow: 0 3px 8px #000;
+    animation: breach-fade 1.35s ease-out forwards;
+  }
+  .stage-breach-flash {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 44%;
+    background: radial-gradient(ellipse at center, #fff 0 4%, #e6bb6999 18%, transparent 68%);
+    filter: contrast(1.3);
+  }
+  .stage-breach.left .stage-breach-flash {
+    left: -8%;
+  }
+  .stage-breach.right .stage-breach-flash {
+    right: -8%;
+  }
+  .stage-breach i {
+    --angle: calc(var(--shard) * 30deg);
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    width: calc(7px + var(--shard) * 0.8px);
+    height: calc(14px + var(--shard) * 1.1px);
+    background: #827466;
+    clip-path: polygon(50% 0, 100% 100%, 0 72%);
+    animation: breach-shard 900ms cubic-bezier(0.12, 0.62, 0.3, 1) forwards;
+    transform: rotate(var(--angle)) translateY(-24px);
+  }
+  .stage-breach strong {
+    z-index: 1;
+    font: 900 clamp(1.6rem, 5vw, 3.5rem) / 0.95 var(--font-display);
+    letter-spacing: 0.12em;
+  }
+  .stage-breach span {
+    z-index: 1;
+    margin-top: 0.55rem;
+    font: 700 clamp(0.8rem, 2vw, 1.1rem) / 1.2 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
   .high-contrast .fight-arena {
     filter: contrast(1.25);
   }
@@ -262,6 +374,31 @@
   @keyframes flash {
     from {
       opacity: 0.42;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes burst-release {
+    from {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.05);
+    }
+    to {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(2.8);
+    }
+  }
+  @keyframes breach-shard {
+    to {
+      opacity: 0;
+      transform: rotate(calc(var(--angle) + 160deg)) translateY(-42vmin);
+    }
+  }
+  @keyframes breach-fade {
+    0%,
+    55% {
+      opacity: 1;
     }
     to {
       opacity: 0;

@@ -4,7 +4,12 @@ export const ROSTER_DUEL_PROFILES = {
   hisoka: {
     window: 7,
     block: 'standingHeavy',
-    grammar: { specials: ['lowHeavy', 'backHeavy'], supers: ['neutralSpecial', 'finisher'] },
+    grammar: {
+      specials: ['lowHeavy', 'backHeavy'],
+      supers: ['neutralSpecial', 'finisher'],
+      // Élastique meurtrier (signatureCombos.ts): back from the attachment to stretch the link.
+      dash: { neutralSpecial: 'back' },
+    },
     moves: {
       standingLight: {
         tuning: { startup: 3, hitstun: 12, knockback: 1 },
@@ -12,7 +17,8 @@ export const ROSTER_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 4, hitstun: 14, knockback: 0.8 },
-        into: ['forwardLight', 'standingHeavy'],
+        // Élastique meurtrier: the low card confirms into the recall of a stretched link.
+        into: ['forwardLight', 'standingHeavy', 'forwardSpecial'],
       },
       standingHeavy: {
         tuning: { startup: 8, hitstun: 19, knockback: 1.5, reach: 11.5 },
@@ -37,13 +43,19 @@ export const ROSTER_DUEL_PROFILES = {
       neutralSpecial: { tuning: { startup: 11, damage: 17, knockback: 4, reach: 19 }, into: [] },
       finisher: { tuning: { startup: 18, knockback: 6, reach: 21 }, into: [] },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
-      airHeavy: { into: [] },
+      // Élastique meurtrier: the Aerial Axe closes on the Elastic Execution.
+      airHeavy: { into: ['finisher'] },
     },
   },
   chrollo: {
     window: 6,
     block: 'backHeavy',
-    grammar: { specials: ['lowHeavy', 'forwardLight'], supers: ['neutralSpecial'] },
+    grammar: {
+      specials: ['lowHeavy', 'forwardLight'],
+      supers: ['neutralSpecial'],
+      // Double page (signatureCombosBookArmy.ts): the Silent Reap opens the accélération.
+      dash: { lowHeavy: 'forward' },
+    },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 14, knockback: 0.7 },
@@ -72,7 +84,8 @@ export const ROSTER_DUEL_PROFILES = {
       },
       forwardLight: {
         tuning: { startup: 9, recovery: 22, damage: 12, knockback: 6.8, reach: 14 },
-        into: [],
+        // Double page: the Quick Palm alone opens the bookmarked page; no normal does.
+        into: ['finisher'],
       },
       neutralSpecial: { into: [] },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },

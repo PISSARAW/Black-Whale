@@ -16,6 +16,77 @@ Arena is split into three deterministic layers:
 - `apps/web/src/lib/arena/match.ts` owns formats and boss setup. It may end a running combat, but never replaces a terminal combat verdict.
 - `apps/web/src/lib/arena/replay/` records commands plus the complete match configuration and uses the same referee as the live page.
 
+`FIGHTING_MOVE` is the shared first-person combat bridge. Arena keeps planar
+locomotion, walls and aiming, while
+[combat/fightingMove.ts](../combat/fightingMove.ts) projects Fighting's authored
+startup, reach, recovery, aura cost and strength onto each attacker's local 3D
+axis. The camera wears the player's own fighter model
+([selfBody.ts](selfBody.ts)): its head is not drawn, the body stands just
+behind the eyes and turns with them, so looking down shows the chest and feet,
+and a guard or a strike lifts its arms into view
+([tour/humanFirstPerson.ts](../tour/humanFirstPerson.ts)). The opponent uses the
+same shared character rig. Hisoka's special is routed through Arena's
+persistent Bungee Gum tether rule.
+
+### Clash combat grammar in first person
+
+Arena keeps its open room; the duel inside it speaks Clash.
+
+- **Commands** — [moveSlot.ts](moveSlot.ts) reads Clash's stick in first
+  person: Space/click light, B heavy, Y special, M throw, P finisher
+  (X, C and E stay with Zetsu, Ko and the passage link). Holding
+  forward or back picks the forward/back variant; aiming at the legs is Clash's
+  "down". Air moves wait for a jump. All fifteen authored slots except the two
+  air ones are reachable.
+- **Combos** — [combat/moveChain.ts](../combat/moveChain.ts) applies each
+  landed move's authored hitstun, blockstun and knockback (frames at 60 fps,
+  lane units at 0.2 m), then opens its `cancelWindow` on `cancelInto` after a
+  hit or `cancelOnBlockInto` after a block. A press during the running move is
+  buffered for 0.2 s and released on impact.
+- **Throws** ignore the active guard window and take an unguarded zone. The
+  **finisher** is Arena's combo ender: only against a staggered or downed body.
+- **Scoring** — the aura contest still decides blocked or connected, but the
+  move's authored damage, after Clash's `tieredComboScale`, caps the impact:
+  under 9 at most clean, under 15 at most critical, above that knockdown. Only
+  the finisher can knock out. A combo scores once, at its best hit, and a move
+  without damage scores nothing. Knockback can carry the opponent out of a
+  short move's reach; closing the gap is the player's job, since Clash's lunge
+  is not projected yet.
+- **Nen** — Arena matches carry `nenRules: 'clash'`
+  ([combat/clashNen.ts](../combat/clashNen.ts)). Aura flows at Clash's rates:
+  Ten +1.4/s, Ren −4, Ken −8, Zetsu +10, plus Gyo −2.4, In −3, En −9 and
+  Shu −4. A Clash move is graded by
+  [combat/clashGrade.ts](../combat/clashGrade.ts): the guard command blocks
+  (throws excepted); otherwise authored damage × combo scaling × the
+  attacker's Nen on the striking limb (Ren ×1.22, Ryu share, Ko +0.82, Zetsu
+  0.7) × what the shared `nenDefenceFactor` of
+  [nen-engine](../../../../../packages/nen-engine/src/techniques.ts) lets
+  through (Zetsu ×1.45). Under 12 clean, under 20 critical, then knockdown.
+  Ko no longer strikes by itself: C engages it (20 aura, 2.5 s) on the hands,
+  or the feet when aiming low; a jab on that limb is at least critical, a blow
+  from another limb is purely physical and every other zone is bare until the
+  move lands. A held Ko cannot be redistributed by Ryu. Arena's Ryu stays a
+  permanent split, mapped onto Clash's four zones. Nen categories are not
+  modelled. Replays recorded before this flag, Hunt duels and Hatsu keep
+  Arena's own rules.
+- **Nen bar** — [nenDock.ts](nenDock.ts) lays out Clash's techniques above the
+  move row: guard, Ten, Ren, Ken, Zetsu, Gyo, In, Ko, Ryu and Hatsu, with what
+  is held lit. Ten is lit by default and Ko only once engaged; a resting body
+  is drawn in Ten, the Ryu flux only once the split is moved. Gyo sharpens the
+  whole view ([ArenaGyoSight](../components/arena/ArenaGyoSight.svelte)) and
+  draws nothing in front of the eyes.
+- **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
+  follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
+
+Still Clash-only, in rough order of value: jump and air moves; lunge;
+hitstop and camera shake; per-fighter Hatsu systems behind the specials;
+psychology, expressions and Ren presentation; frame data, training and
+lessons; replay coaching; rollback PvP.
+
+Both roster identities are stored in the match. Each player command also carries
+its fighter and move slot, while the opponent AI reuses its recorded roster
+moveset. Replay validation therefore never depends on mutable UI state.
+
 ## Match lifecycle
 
 The page resolves the URL into one `ArenaReplayMatch`, creates the initial state with `initialArenaMatchState`, then calls `applyArenaMatchRules` after every accepted command and simulation tick. `finishRun` is the only local completion path.

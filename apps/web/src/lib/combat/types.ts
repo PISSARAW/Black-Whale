@@ -1,4 +1,4 @@
-import type { Polygon, Vec2, WallSegment } from '../tour/types'
+import type { DangerBoundary, PassageBoundary, Polygon, Vec2, WallSegment } from '../tour/types'
 
 export type CombatSide = 'player' | 'opponent'
 export type BodyZone = 'head' | 'torso' | 'arms' | 'legs'
@@ -26,6 +26,16 @@ export interface AttackIntent {
   zone: BodyZone
   remaining: number
   targetAt: Vec2
+  technique?: 'strike' | 'hatsu'
+  power?: number
+  range?: number
+  recovery?: number
+  /** Clash move this intent performs; absent for Arena's own strikes. */
+  moveId?: string
+  /** Clash moves of the running combo, this one included. */
+  combo?: readonly string[]
+  /** Points the combo had already scored when this move was prepared. */
+  scored?: number
 }
 
 export interface ElasticTether {
@@ -81,6 +91,10 @@ export interface FighterState {
   condition: FighterCondition
   recovery: number
   score: number
+  /** Cancel window left open by the last landed Clash move. */
+  chain?: import('./moveChain').MoveChain | null
+  /** Clash move pressed before the running one landed. */
+  buffered?: import('./moveChain').BufferedMove | null
 }
 
 export interface CombatEvent {
@@ -103,6 +117,8 @@ export interface CombatState {
   nenEffects: PersistentNenEffect[]
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
+  /** `clash`: Arena duels use Clash's Nen economy and exchange factors (combat/clashNen.ts). */
+  nenRules?: 'clash'
   environment: {
     context: ArenaDuelContext
     noise: number
@@ -128,6 +144,12 @@ export interface CombatTerrainPhysics {
   id: string
   footprint: Polygon
   walls: WallSegment[]
+  /**
+   * The footprint's open edges: ways out (`passage`) and exposed hazards
+   * (`danger`). Solid edges are colliders carried by `walls` and are not repeated
+   * here, which keeps the two from drifting apart.
+   */
+  boundaries?: Array<PassageBoundary | DangerBoundary>
 }
 
 export interface CombatSetup {
@@ -153,6 +175,13 @@ export type CombatAction =
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
+  | {
+      type: 'FIGHTING_MOVE'
+      side: CombatSide
+      fighterId: import('../fighting/types').FighterId
+      slot: import('../fighting/types').MoveSlot
+      targetAt: Vec2
+    }
   | { type: 'PREPARE_HATSU'; side: CombatSide; hatsuId: 'parallel-future' | 'rihan-predator' }
   | {
       type: 'HATSU'

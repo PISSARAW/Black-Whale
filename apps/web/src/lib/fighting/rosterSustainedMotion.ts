@@ -1,6 +1,7 @@
+import { fighterStance } from './biscuitBody'
 import { bashoWriting, BASHO_WRITING_FRAMES } from './bashoPoem'
 import { addPoses, type BodyPlan } from './fightPose'
-import { fightStance, stanceAt, type FightStance } from './fightStance'
+import { stanceAt, type FightStance } from './fightStance'
 import { TECHNIQUE_GESTURES } from './rosterTechniqueGestures'
 import type { ArcadeFighter } from './types'
 
@@ -20,7 +21,7 @@ function interrupted(fighter: ArcadeFighter): boolean {
 export function rosterSustainedMotion(fighter: ArcadeFighter, seconds: number): BodyPlan | null {
   if (interrupted(fighter) || fighter.coveringEars || fighter.pluggingWounds || fighter.blocking)
     return null
-  const stance = fightStance(fighter.id)
+  const stance = fighterStance(fighter)
   if (!stance) return null
   // No render-clock breathing during a fixed writing counter.
   if (bashoWriting(fighter)) {

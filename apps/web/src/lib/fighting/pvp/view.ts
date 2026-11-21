@@ -15,7 +15,7 @@ import { futureVisibleState } from '../parallelFuturePresentation'
 import { bungeeVisible } from '../hisokaTechnique'
 import { privateGumNetwork, privateGumFuture, privateGumProjectiles } from '../bungeePrivacy'
 import { perceivesProjectile, gyoSight } from '../nenPerception'
-import { createFightingNen } from '../nen'
+import { concealNenInformation } from '../nenInformationWar'
 import { encodeFightSnapshot } from '../fightReplaySnapshot'
 import { fightReplayHash } from '../fightReplayHash'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
@@ -210,11 +210,8 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (gyoSight(observer)) return
   if (enemy.gumProstheses?.hidden) enemy.gumProstheses = undefined
   hideGumObjectAnchors(enemy)
-  if (enemy.nen.in) {
-    enemy.nen = createFightingNen()
-    enemy.gyoFocus = undefined
-    enemy.gyoLow = undefined
-    enemy.defensiveKo = undefined
+  if (enemy.nen.in) concealNenInformation(enemy, observer)
+  if (enemy.aura < 0) {
     enemy.dowsingSession = undefined
     enemy.dowsingMapPose = undefined
   }

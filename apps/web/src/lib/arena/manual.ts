@@ -11,7 +11,17 @@ export const ARENA_MANUAL_CONTROLS = [
     descriptionFr: 'Esquiver (Gauche/Droite)',
   },
   { keys: ['V'], description: 'Feint', descriptionFr: 'Feinter' },
-  { keys: ['Space', 'Click'], description: 'Strike', descriptionFr: 'Frapper' },
+  { keys: ['Space', 'Click'], description: 'Light attack', descriptionFr: 'Attaque légère' },
+  {
+    keys: ['B', 'Y', 'M', 'P'],
+    description: 'Heavy, special, throw, finisher',
+    descriptionFr: 'Lourde, spéciale, projection, coup final',
+  },
+  {
+    keys: ['Z / S', 'Aim low'],
+    description: 'Forward, back and low variants of each attack',
+    descriptionFr: 'Variantes avant, arrière et basses de chaque attaque',
+  },
   { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer un Hatsu' },
   {
     keys: ['T', 'R', 'X'],
@@ -25,5 +35,9 @@ export const ARENA_MANUAL_CONTROLS = [
     descriptionFr: 'Déplacer la garde Ryu',
   },
   { keys: ['−', '='], description: 'Adjust Ryu', descriptionFr: 'Ajuster le Ryu' },
-  { keys: ['C'], description: 'Gather Ko', descriptionFr: 'Rassembler Ko' },
+  {
+    keys: ['C'],
+    description: 'Ko on the next attack (hands, feet when aiming low)',
+    descriptionFr: 'Ko sur la prochaine attaque (mains, pieds en visant bas)',
+  },
 ]

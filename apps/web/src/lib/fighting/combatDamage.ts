@@ -8,7 +8,9 @@ import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
+import { rememberBodyHit } from './bodyMemory'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
+import { pinnedKnockback } from './groundedPin'
 
 const GROUND = 0
 const MIN_X = 7
@@ -76,6 +78,7 @@ function attackDamage(
 }
 
 interface StrikeOptions {
+  zone?: FightNenZone
   melee?: boolean
   fighter: ArcadeFighter
   attacker: ArcadeFighter
@@ -109,13 +112,18 @@ function struckFighter(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
 ): ArcadeFighter {
   const direction = options.fighter.x > options.attacker.x ? 1 : -1
-  return {
+  const struck = {
     ...options.fighter,
     ...launchState(options),
     airRecovery: airRecoveryOnHit(options),
     ...stunState(options),
     ...comboState(options),
-    x: clamp(options.fighter.x + direction * options.knockback, MIN_X, MAX_X),
+    x: clamp(
+      options.fighter.x +
+        direction * pinnedKnockback(options.fighter, options.attacker, options.knockback),
+      MIN_X,
+      MAX_X,
+    ),
     health: Math.max(0, options.fighter.health - options.damage),
     aura:
       options.blocked && options.fighter.nen.ken
@@ -134,6 +142,7 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
+  return rememberBodyHit(struck, options.zone, options.damage, options.blocked)
 }
 
 function airRecoveryOnHit(options: StrikeOptions): true | undefined {
@@ -246,6 +255,27 @@ export function atWall(
   const direction = defender.x > attacker.x ? 1 : -1
   const destination = defender.x + direction * knockback
   return destination <= MIN_X || destination >= MAX_X
+}
+
+/**
+ * Grounded pushback the defender could not absorb before the wall: the remaining distance
+ * is transferred to the attacker, as in Street Fighter, so a grounded combo cannot loop in
+ * the corner once hitstun no longer decays.
+ */
+export function cornerPushbackTransfer(
+  attacker: ArcadeFighter,
+  defender: ArcadeFighter,
+  knockback: number,
+): ArcadeFighter {
+  const direction = defender.x > attacker.x ? 1 : -1
+  const landing = defender.x + direction * knockback
+  const wall = direction > 0 ? MAX_X : MIN_X
+  const missing = direction > 0 ? Math.max(0, landing - wall) : Math.max(0, wall - landing)
+  if (missing <= 0) return attacker
+  // The refused pushback goes to the attacker, pushed away from the defender: against a right
+  // wall the attacker retreats to the left, against a left wall it advances to the right.
+  const x = direction > 0 ? attacker.x - missing : attacker.x + missing
+  return { ...attacker, x: clamp(x, MIN_X, MAX_X) }
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

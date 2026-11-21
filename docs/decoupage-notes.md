@@ -25,3 +25,6 @@ déplacement.
 - Le reste de l'audit du mode (objectif « confirmer des hostiles » qui compte les passants,
   « Rompre le pacte » sans pacte qui marque traître, retour aux factions sans `init`, garde
   invincible, unité éliminée sélectionnable en français…) attend son propre lot.
+- Repéré, non corrigé : `advanceSecretWindowFeed` et `relaySecretWindowSpeech`
+  (`apps/web/src/lib/fighting/secretWindow.ts`) ne sont appelés nulle part ; le journal privé
+  passe désormais par `secretWindowJournal.ts`. Leur suppression attend un lot de nettoyage.

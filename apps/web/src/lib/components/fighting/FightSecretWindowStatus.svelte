@@ -45,6 +45,18 @@
   <div class="secret-window-status">
     Secret Window · {language === 'fr' ? 'Hibou d’épaule : écoute' : 'Shoulder owl: listening'}
     {#if listening.heard}<span>{listening.heard.text}</span>{/if}
+    {#if (listening.log?.length ?? 0) > 1}
+      <details>
+        <summary
+          >{language === 'fr'
+            ? 'Consulter les paroles entendues'
+            : 'Review overheard words'}</summary
+        >
+        {#each listening.log ?? [] as words (words)}
+          <span>{Math.floor(words.frame / 60)} s · {words.text}</span>
+        {/each}
+      </details>
+    {/if}
   </div>
 {/if}
 

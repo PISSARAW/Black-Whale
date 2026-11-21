@@ -41,7 +41,7 @@
   {state}
   {language}
   {paused}
-  onOffer={(side) => send(side, { kind: 'offer' })}
+  onOffer={(side, clause) => send(side, { kind: 'offer', clause })}
   onRespond={(side, accept) => send(side, { kind: 'respond', accept })}
 />
 <FightLynchInterrogation

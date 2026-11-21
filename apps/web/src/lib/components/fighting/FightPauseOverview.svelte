@@ -2,6 +2,7 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightStage } from '$lib/fighting/stages'
   import { fightFormat } from '$lib/fighting/formats'
+  import FightRivalryRules from './FightRivalryRules.svelte'
   import type { FightState } from '$lib/fighting/types'
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -39,6 +40,7 @@
       </dd>
     </div>
   </dl>
+  <FightRivalryRules {state} {language} compact />
   <p class="pause-reassurance">
     {fr
       ? 'Prends ton temps. Le chrono, les coups et les ressources restent figés.'

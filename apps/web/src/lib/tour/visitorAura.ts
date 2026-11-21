@@ -23,6 +23,15 @@ export function visitorAuraMaterial(THREE: Three, technique: VisitorAuraTechniqu
       u_colorCore: { value: new THREE.Color(colours[0]) },
       u_colorEdge: { value: new THREE.Color(colours[1] || colours[0]) },
       u_opacity: { value: 0.8 },
+      // Ren keeps one visual grammar, while combat can vary how forcefully,
+      // steadily and aggressively that grammar is spoken per fighter.
+      ...(on
+        ? {}
+        : {
+            u_renPressure: { value: 0.65 },
+            u_renStability: { value: 0.75 },
+            u_renIntent: { value: 0.15 },
+          }),
       ...(on ? { u_intensityMultiplier: { value: 1 } } : {}),
     },
     transparent: true,

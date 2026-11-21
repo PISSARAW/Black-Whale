@@ -29,3 +29,14 @@ export interface VoconteDoors {
   transported: FightSide[]
   lastTransit?: Partial<Record<FightSide, DoorTransit>>
 }
+
+/** A real doorframe already built into a level; Door can only link two of these. */
+export interface DoorSite {
+  id: string
+  x: number
+  labelFr: string
+  labelEn: string
+}
+
+/** Two site ids chosen before the round. */
+export type DoorFramePick = readonly [string, string]

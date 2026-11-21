@@ -425,9 +425,10 @@
     animation: arena-ken-shell 620ms ease-out both;
   }
 
-  .command-fx.gyo .command-ring {
-    border-width: 0.2rem 1px;
-    animation-name: arena-gyo-focus;
+  /* Gyo sharpens the eyes' own sight (ArenaGyoSight); it draws nothing in front of them. */
+  .command-fx.gyo .command-ring,
+  .command-fx.gyo .command-core {
+    display: none;
   }
 
   .command-fx.in .command-ring,
@@ -445,88 +446,6 @@
   .command-fx[class*='zone-'] .command-ring {
     border-radius: 20%;
     animation-name: arena-ryu-flow;
-  }
-
-  .combat-hands {
-    position: absolute;
-    z-index: 8;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .hand {
-    position: absolute;
-    bottom: 8.5rem;
-    display: block;
-    width: 4.4rem;
-    height: 5.8rem;
-    border: 1px solid #9ee9fb66;
-    border-radius: 48% 48% 38% 38%;
-    background: linear-gradient(145deg, #b8d7df 0 42%, #63828c 68%, #25383f 100%);
-    box-shadow:
-      inset -0.7rem -0.8rem 1.2rem #10252e88,
-      0 0 1.2rem #62d9f344;
-    opacity: 0.78;
-    transform-origin: 50% 100%;
-  }
-
-  .hand b {
-    position: absolute;
-    right: 12%;
-    bottom: -2.2rem;
-    left: 12%;
-    height: 3rem;
-    border: inherit;
-    border-top: 0;
-    border-radius: 0 0 1.2rem 1.2rem;
-    background: #557681;
-  }
-
-  .left-hand {
-    left: calc(50% - 10rem);
-    transform: rotate(-18deg) translateY(2.4rem);
-  }
-
-  .right-hand {
-    right: calc(50% - 10rem);
-    transform: rotate(18deg) translateY(2.4rem);
-  }
-
-  .combat-hands.striking .right-hand {
-    animation: arena-strike 280ms cubic-bezier(0.2, 0.8, 0.25, 1);
-  }
-
-  .combat-hands.guarding .left-hand {
-    animation: arena-guard-left 360ms ease-out;
-  }
-
-  .combat-hands.guarding .right-hand {
-    animation: arena-guard-right 360ms ease-out;
-  }
-
-  .combat-hands.charging .hand {
-    border-color: #f5d27d;
-    box-shadow:
-      inset -0.7rem -0.8rem 1.2rem #392b1288,
-      0 0 1rem #f3cc68,
-      0 0 3rem #f3cc6899;
-    animation: arena-charge 420ms ease-in-out infinite alternate;
-  }
-
-  .combat-hands.ren .hand {
-    box-shadow:
-      inset -0.7rem -0.8rem 1.2rem #10252e88,
-      0 0 1.2rem #62d9f3aa,
-      0 0 3.2rem #62d9f366;
-  }
-
-  .player-empowered .combat-hands .hand {
-    border-color: #f3d77c;
-    box-shadow:
-      inset 0 0 1.4rem #e7bd4c55,
-      0 0 1.2rem #f3d77cbb,
-      0 0 4rem #b882ef77;
   }
 
   .opponent-card.bound {
@@ -547,13 +466,6 @@
     content: '';
     transform: translate(-50%, -50%) rotate(-8deg);
     pointer-events: none;
-  }
-
-  .combat-hands.zetsu .hand {
-    border-color: #ffffff18;
-    box-shadow: none;
-    filter: saturate(0.25);
-    opacity: 0.35;
   }
 
   .impact-wash {
@@ -1200,44 +1112,6 @@
   }
 }
 
-@keyframes arena-strike {
-  0% {
-    transform: rotate(18deg) translateY(2.4rem) scale(1);
-  }
-  42% {
-    transform: translate(-4.2rem, -14rem) rotate(-8deg) scale(1.35);
-    opacity: 1;
-  }
-  62% {
-    transform: translate(-4.2rem, -14rem) rotate(-8deg) scale(1.35);
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(18deg) translateY(2.4rem) scale(1);
-  }
-}
-
-@keyframes arena-guard-left {
-  45% {
-    transform: translate(3.8rem, -7rem) rotate(34deg) scale(1.15);
-    opacity: 1;
-  }
-}
-
-@keyframes arena-guard-right {
-  45% {
-    transform: translate(-3.8rem, -7rem) rotate(-34deg) scale(1.15);
-    opacity: 1;
-  }
-}
-
-@keyframes arena-charge {
-  to {
-    filter: brightness(1.35);
-    opacity: 1;
-  }
-}
-
 @keyframes arena-hit {
   0% {
     opacity: 1;
@@ -1321,20 +1195,6 @@
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(5.5);
-  }
-}
-
-@keyframes arena-gyo-focus {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(4) rotate(0);
-  }
-  45% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.12) rotate(90deg);
   }
 }
 
@@ -1735,19 +1595,6 @@
       font-size: 0.58rem;
     }
 
-    .combat-hands .hand {
-      bottom: 4.8rem;
-      opacity: 0.55;
-    }
-
-    .left-hand {
-      left: calc(50% - 7.5rem);
-    }
-
-    .right-hand {
-      right: calc(50% - 7.5rem);
-    }
-
     .briefing-card {
       padding: 1.35rem;
     }
@@ -1931,12 +1778,11 @@
   .arena-action-dock {
     position: absolute;
     z-index: 14;
-    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    /* Above the move row, the way Clash stacks its Nen bar over its strikes. */
+    bottom: calc(7.75rem + env(safe-area-inset-bottom));
     left: 50%;
     display: grid;
     width: min(40rem, calc(100vw - 2rem));
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.35rem;
     transform: translateX(-50%);
   }
 
@@ -1956,11 +1802,6 @@
     color: #05090c;
   }
 
-  .arena-action-dock button.ko-action {
-    border-color: rgb(225 198 129 / 58%);
-    color: #e1c681;
-  }
-
   .arena-action-dock button.hatsu-action {
     display: grid;
     grid-column: auto;
@@ -1977,7 +1818,7 @@
 
   .ryu-card {
     top: auto;
-    bottom: 4.75rem;
+    bottom: 11.75rem;
     width: min(32rem, calc(100vw - 2rem));
     grid-template-columns: 4rem 1fr;
     grid-template-areas: 'diagram header' 'diagram flow' 'zones zones' 'actions actions';
@@ -2058,7 +1899,7 @@
 
   .arena-lesson {
     top: auto;
-    bottom: 4.9rem;
+    bottom: 11.75rem;
     left: 50%;
     width: min(24rem, calc(100vw - 2rem));
     transform: translateX(-50%);
@@ -2070,7 +1911,7 @@
 
   .event-line {
     right: auto;
-    bottom: 4.9rem;
+    bottom: 11.75rem;
     left: 50%;
     min-height: 0;
     padding: 0.45rem 0.7rem;
@@ -2147,10 +1988,8 @@
     }
 
     .arena-action-dock {
-      bottom: calc(4.75rem + env(safe-area-inset-bottom));
+      bottom: calc(7.75rem + env(safe-area-inset-bottom));
       width: calc(100vw - 1.1rem);
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.25rem;
     }
 
     .arena-action-dock button {
@@ -2165,14 +2004,9 @@
       display: none;
     }
 
-    .arena-action-dock button.ko-action,
-    .arena-action-dock button.hatsu-action {
-      display: none;
-    }
-
     .ryu-card {
       top: auto;
-      bottom: calc(8.45rem + env(safe-area-inset-bottom));
+      bottom: calc(14.4rem + env(safe-area-inset-bottom));
       width: calc(100vw - 1.1rem);
       grid-template-columns: auto minmax(5rem, 1fr);
       grid-template-areas: 'header flow' 'zones zones' 'actions actions';
@@ -2216,7 +2050,7 @@
     }
 
     .event-line {
-      bottom: calc(8.45rem + env(safe-area-inset-bottom));
+      bottom: calc(14.4rem + env(safe-area-inset-bottom));
     }
 
     .arena-lesson p {

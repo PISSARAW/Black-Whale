@@ -99,6 +99,8 @@ export const ARSENAL_ACTION_IDS = [
   'machi-detach',
   'machi-anchor',
   'machi-pull',
+  'machi-trap',
+  'machi-cut',
   'dolphin-loan',
   'halkenburg-transfer',
   'halkenburg-host-motion',

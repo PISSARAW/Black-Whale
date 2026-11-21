@@ -1,4 +1,5 @@
-import { rosterMoveShape, rosterMotionStyle } from './rosterStrikeMotion'
+import { fighterMotionStyle } from './biscuitBody'
+import { rosterMoveShape } from './rosterStrikeMotion'
 import { scalePose, type FightPose } from './fightPose'
 import type { StrikeShape } from './rosterChoreography'
 import type { FightState } from './types'
@@ -96,7 +97,7 @@ export function rosterContactMotion(state: FightState): StrikeContactMotion | un
     return undefined
   const shape = rosterMoveShape(attacker.attack.moveId)
   if (!shape) return undefined
-  const amplitude = rosterMotionStyle(attacker.id)?.amplitude ?? 1
+  const amplitude = fighterMotionStyle(attacker)?.amplitude ?? 1
   return {
     shape: impact.antiAir ? 'uppercut' : shape,
     weight: amplitude * (impact.kind === 'light' ? 0.72 : 1),

@@ -31,6 +31,8 @@ export interface FightPreparation {
   resources: PreparationResource[]
   /** Explicit scenario premise: these allies already bear the feather and share this side's will. */
   cohorts: FightSide[]
+  /** Physical kit packed before the fight for Biohazard; absent keeps the default carried kit. */
+  hinrighKit?: import('./hinrighKit').HinrighKit
 }
 
 export type PreparedEntityKind =

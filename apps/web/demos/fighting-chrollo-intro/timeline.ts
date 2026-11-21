@@ -46,6 +46,10 @@ function portraitAt(segment: Segment, sim: number): Portrait | null {
 }
 
 function speedAt(segment: Segment, sim: number) {
+  return baseSpeed(segment, sim) * (segment.slow ?? 1)
+}
+
+function baseSpeed(segment: Segment, sim: number) {
   if (segment.card === 'title') return 1.6
   if (portraitAt(segment, sim)) return 1.1
   if (segment.impacts.some((i) => sim >= i.at - 2 && sim < i.at + 10)) return 0.6

@@ -25,11 +25,13 @@ export function createFightImpactScene(options: {
     hit: options.geometry(new THREE.SphereGeometry(0.045, 5, 4)),
     guard: options.geometry(new THREE.BoxGeometry(0.025, 0.09, 0.025)),
     parry: options.geometry(new THREE.TorusGeometry(0.16, 0.014, 4, 24)),
+    clash: options.geometry(new THREE.TorusGeometry(0.22, 0.025, 6, 32)),
   }
   const materials = {
     hit: options.glow(0xffd36a, 1),
     guard: options.glow(0x67d9ff, 1),
     parry: options.glow(0xffffff, 1),
+    clash: options.glow(0x9ee7ff, 1),
   }
   const sparks: Array<{
     mesh: Three.Mesh
@@ -39,10 +41,34 @@ export function createFightImpactScene(options: {
     ring: boolean
   }> = []
   let last = options.initial.impact?.sequence ?? 0
+  let lastClash = options.initial.attackClash?.sequence ?? 0
   const shake = createCombatImpactShake()
   return {
     emit(state: FightState, now: number) {
       shake.observe(state)
+      const clash = state.attackClash
+      if (clash && clash.sequence !== lastClash) {
+        lastClash = clash.sequence
+        const origin = new THREE.Vector3(
+          fightWorldX(clash.position.x),
+          fightWorldY(clash.position.y),
+          0.3,
+        )
+        for (let i = 0; i < 2; i++) {
+          const mesh = new THREE.Mesh(shapes.clash, materials.clash)
+          mesh.name = 'fight-contact-clash'
+          mesh.rotation.z = i * (Math.PI / 2)
+          mesh.position.copy(origin)
+          scene.add(mesh)
+          sparks.push({
+            mesh,
+            velocity: new THREE.Vector3(),
+            born: now,
+            size: 0.9 + i * 0.25,
+            ring: true,
+          })
+        }
+      }
       const impact = state.impact
       if (!impact || impact.sequence === last) return
       last = impact.sequence

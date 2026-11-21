@@ -192,9 +192,12 @@ describe('Voconte — Door, actual directional passage', () => {
     expect(next.player.hitStun).toBeGreaterThan(0)
   })
 
-  it.each(['object', 'nen'] as const)(
-    'leaves a travelling %s projectile on its real trajectory',
-    (matter) => {
+  it.each([
+    ['object', 72],
+    ['nen', 30.15],
+  ] as const)(
+    'moves a travelling %s projectile to x=%d: only thrown matter crosses the threshold',
+    (matter, expected) => {
       const state: FightState = {
         ...opened(),
         projectiles: [
@@ -222,7 +225,8 @@ describe('Voconte — Door, actual directional passage', () => {
         ],
       }
       const next = advance(state, 1)
-      expect(next.projectiles[0].x).toBeCloseTo(30.15)
+      expect(next.projectiles[0].x).toBeCloseTo(expected)
+      expect(next.projectiles[0].velocityX).toBe(12)
       expect(next.voconteDoors?.lastTransit).toBeUndefined()
     },
   )
@@ -408,7 +412,7 @@ describe('Voconte — Door, actual directional passage', () => {
     expect(JSON.stringify(state)).toBe(frozen)
   })
 
-  it('draws two physical frames and enables only their directional threshold indicators', () => {
+  it('draws one pair of physical frames per seat and enables only their indicators', () => {
     const scene = new THREE.Scene()
     const effect = createVoconteDoorScene({
       THREE,
@@ -418,7 +422,8 @@ describe('Voconte — Door, actual directional passage', () => {
     })
     const root = scene.getObjectByName('voconte:physical-frames')!
     effect.sync(duel(), 0)
-    expect(root.children).toHaveLength(2)
+    expect(root.children).toHaveLength(4)
+    expect(root.children.filter((frame) => frame.visible)).toHaveLength(2)
     expect(root.visible).toBe(true)
     expect(root.children[0].children[3].visible).toBe(false)
     effect.sync(opened(), 0)

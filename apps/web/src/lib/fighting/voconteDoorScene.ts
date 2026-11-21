@@ -1,5 +1,5 @@
 import { doorLetter } from './voconteDoorLabels'
-import { DOOR_FRAMES, doorFramesVisible } from './voconteDoors'
+import { DOOR_FRAMES, doorFramesFor, doorFramesVisible } from './voconteDoors'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightState } from './types'
 import { threadVisible } from './fineControlAnchors'
@@ -29,7 +29,9 @@ export function createVoconteDoorScene(options: EffectSceneOptions): FighterEffe
   const arrowGeometry = new THREE.ConeGeometry(0.18, 0.45, 3)
   const lights: import('three').Mesh[] = []
   const labels: ReturnType<typeof doorLetter>[] = []
-  for (const frame of DOOR_FRAMES) {
+  const groups: import('three').Group[] = []
+  /** One pair per seat: each Door user links the two frames they chose before the round. */
+  for (const frame of [...DOOR_FRAMES, ...DOOR_FRAMES]) {
     const group = new THREE.Group()
     group.name = `voconte:frame:${frame.id}`
     group.position.set(worldX(frame.x), worldY(0), 0)
@@ -51,12 +53,14 @@ export function createVoconteDoorScene(options: EffectSceneOptions): FighterEffe
     labels.push(label)
     group.add(lintel, threshold, arrow, label)
     lights.push(threshold, arrow)
+    groups.push(group)
     root.add(group)
   }
   scene.add(root)
   return {
     sync: (state: FightState) => {
       root.visible = doorFramesVisible(state)
+      placeChosenFrames({ state, groups, worldX })
       const active = (['player', 'opponent'] as const).some(
         (side) => state.voconteDoors?.networks[side]?.active && threadVisible(options, state, side),
       )
@@ -75,4 +79,20 @@ export function createVoconteDoorScene(options: EffectSceneOptions): FighterEffe
       for (const material of [wood, aura, arrowMaterial]) material.dispose()
     },
   }
+}
+
+/** Frames are fixed for the round; a second seat sharing a position does not draw twice. */
+function placeChosenFrames(c: {
+  state: FightState
+  groups: import('three').Group[]
+  worldX: (x: number) => number
+}) {
+  const frames = [...doorFramesFor(c.state, 'player'), ...doorFramesFor(c.state, 'opponent')]
+  const seen = new Set<string>()
+  frames.forEach((frame, index) => {
+    const key = `${frame.id}:${frame.x}`
+    c.groups[index].visible = !seen.has(key)
+    c.groups[index].position.x = c.worldX(frame.x)
+    seen.add(key)
+  })
 }

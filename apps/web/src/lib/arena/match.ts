@@ -7,7 +7,8 @@ export type ArenaActionCounts = Partial<Record<CombatAction['type'], number>>
 
 /** Creates the exact initial state used by both a live bout and its replay. */
 export function initialArenaMatchState(setup: CombatSetup, match: ArenaReplayMatch): CombatState {
-  const state = initialCombatState(setup)
+  const base = initialCombatState(setup)
+  const state = match.nenRules ? { ...base, nenRules: match.nenRules } : base
   if (match.bossRule !== 'aura-tax') return state
   return {
     ...state,
@@ -36,5 +37,11 @@ export function countArenaAction(
   action: CombatAction,
 ): ArenaActionCounts {
   if (action.type === 'TICK') return actions
-  return { ...actions, [action.type]: (actions[action.type] ?? 0) + 1 }
+  const type =
+    action.type === 'FIGHTING_MOVE'
+      ? action.slot === 'neutralSpecial'
+        ? 'HATSU'
+        : 'STRIKE'
+      : action.type
+  return { ...actions, [type]: (actions[type] ?? 0) + 1 }
 }

@@ -66,6 +66,9 @@ const KURAPIKA: Partial<Record<MoveSlot, ComboMove>> = {
   },
   airLight: { tuning: { hitstun: 17, knockback: 1.4 }, into: ['airHeavy'] },
   airHeavy: { into: [] },
+  // Verdict écarlate: the capture holds the target for Judgment Chain (signatureCombos.ts).
+  throw: { into: ['finisher'] },
+  neutralSpecial: { into: ['finisher'] },
 }
 
 const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
@@ -113,6 +116,8 @@ const BENJAMIN: Partial<Record<MoveSlot, ComboMove>> = {
   },
   airLight: { tuning: { hitstun: 18, knockback: 1.4 }, into: ['airHeavy'] },
   airHeavy: { into: [] },
+  // Commandement absolu: the capture holds the target while the Aura Rectangle opens.
+  throw: { into: ['downSpecial'] },
 }
 
 const ENDERS: readonly MoveSlot[] = ['lowHeavy', 'forwardHeavy']
@@ -122,13 +127,25 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
     moves: KURAPIKA,
     window: 6,
     block: 'standingHeavy',
-    grammar: { specials: ENDERS, supers: ['forwardSpecial'] },
+    grammar: {
+      specials: ENDERS,
+      supers: ['forwardSpecial'],
+      accel: true,
+      // Verdict écarlate (signatureCombos.ts): back from the hook, forward from the whip.
+      dash: { standingHeavy: 'back', forwardSpecial: 'forward' },
+    },
   },
   benjamin: {
     moves: BENJAMIN,
     window: 8,
     block: 'standingHeavy',
-    grammar: { specials: ENDERS, supers: ['neutralSpecial'] },
+    // Commandement absolu (signatureCombosBookArmy.ts): forward from Air Blow into the capture.
+    grammar: {
+      specials: ENDERS,
+      supers: ['neutralSpecial'],
+      accel: true,
+      dash: { neutralSpecial: 'forward' },
+    },
   },
   ...ROSTER_DUEL_PROFILES,
   ...SECOND_DUEL_PROFILES,
@@ -143,17 +160,6 @@ const PROFILES: Partial<Record<FighterId, DuelComboProfile>> = {
 }
 export const DUEL_COMBO_FIGHTERS = Object.keys(PROFILES) as FighterId[]
 export const hasDuelComboProfile = (fighter: string): boolean => Object.hasOwn(PROFILES, fighter)
-/**
- * Kept outside the derived grammar: each places a slow technique that cannot be cancelled
- * (Phinks' charged punch, Leorio's remote punch, Bonolenov's spear, Padaille's drill into
- * the sweep) through a recovery link, which needs a big plus that also links into the jab.
- */
-const DERIVATION_EXCLUDED: ReadonlySet<FighterId> = new Set([
-  'phinks',
-  'leorio',
-  'bonolenov',
-  'padaille',
-])
 /** Grammars derived while the movesets are built (lot 4); authored grammars win. */
 const DERIVED_GRAMMARS = new Map<string, CancelGrammar>()
 export const cancelGrammarFor = (fighter: string): CancelGrammar | undefined =>
@@ -163,9 +169,10 @@ export const hasCancelGrammar = (fighter: string): boolean => Boolean(cancelGram
 export function tuneDuelComboProfile(moveset: FighterMoveset): FighterMoveset {
   const authored = PROFILES[moveset.fighterId]
   if (!authored) return moveset
-  const derive = !authored.grammar && !DERIVATION_EXCLUDED.has(moveset.fighterId)
+  const derive = !authored.grammar
   const profile = derive ? deriveGrammarProfile(moveset, authored) : authored
-  if (derive && profile.grammar) DERIVED_GRAMMARS.set(moveset.fighterId, profile.grammar)
+  if (derive && profile.grammar)
+    DERIVED_GRAMMARS.set(moveset.fighterId, { ...profile.grammar, dash: authored.dash })
   return { ...moveset, moves: moveset.moves.map((move) => tune(move, profile)) }
 }
 

@@ -89,7 +89,7 @@ function serpentTarget(state: FightState, shot: FightProjectile) {
   if (
     !emitter ||
     !paperAbilityAvailable(emitter, 'serpent') ||
-    !paperMarksAt(state, { owner, target, zone: shot.targetZone })
+    !paperMarksAt(state, { owner, target, zone: shot.targetZone, use: 'guide' })
   )
     return undefined
   return physicalBodyAt(state, target.owner, target.member)
@@ -101,7 +101,12 @@ export function plantPaperAfterHit(state: FightState, shot: FightProjectile): Fi
   const target = shot.owner === 'player' ? 'opponent' : 'player'
   const owner = shot.paperOwner ?? activePaperOwner(state, shot.owner)
   if (
-    paperMarksAt(state, { owner, target: activePaperOwner(state, target), zone: shot.targetZone })
+    paperMarksAt(state, {
+      owner,
+      target: activePaperOwner(state, target),
+      zone: shot.targetZone,
+      use: 'guide',
+    })
   )
     return state
   return {

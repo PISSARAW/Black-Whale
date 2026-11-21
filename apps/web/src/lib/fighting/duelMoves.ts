@@ -5,6 +5,8 @@ import { openingAllows } from './comboOpenings'
 import type { FighterMove } from './movesetTypes'
 import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
+import { accelAdmitted } from './accelCancel'
+import { culdceptComboCancel } from './culdceptHold'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
 type CancelMove = `${AttackVariant}:${AttackKind}`
@@ -92,22 +94,27 @@ export function variantData(options: {
 
 export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   const attack = fighter.attack
-  if (!attack || attack.variant === 'throw') return false
+  // Only a combo capture (throwRules.ts) may cancel, through its authored routes.
+  if (!attack || (attack.variant === 'throw' && !attack.accel)) return false
+  if (culdceptComboCancel(fighter, kind, moveId)) return true
   const currentMove = moveById(attack.moveId)
-  if (currentMove)
-    return Boolean(
-      moveId &&
-      nenDestinationReady(fighter, moveId) &&
-      ((preparedNenDestinations(fighter).includes(moveId) &&
-        preparedBranchReady(fighter, moveId)) ||
-        openingAllows(fighter, moveId) ||
-        confirmedRoutes(fighter, currentMove).includes(moveId)),
-    )
+  if (currentMove) return moveCancelAllowed(fighter, currentMove, moveId)
   return legacyCancel(fighter, kind)
 }
 
+function moveCancelAllowed(fighter: ArcadeFighter, move: FighterMove, moveId?: string): boolean {
+  return Boolean(
+    moveId &&
+    nenDestinationReady(fighter, moveId) &&
+    ((preparedNenDestinations(fighter).includes(moveId) && preparedBranchReady(fighter, moveId)) ||
+      openingAllows(fighter, moveId) ||
+      confirmedRoutes(fighter, move).includes(moveId)),
+  )
+}
+
 function confirmedRoutes(fighter: ArcadeFighter, move: FighterMove): readonly string[] {
-  if (fighter.attack?.confirmedHit) return move.cancelInto
+  if (fighter.attack?.confirmedHit)
+    return move.cancelInto.filter((id) => accelAdmitted(fighter, id))
   return fighter.attack?.confirmedBlock ? move.cancelOnBlockInto : []
 }
 

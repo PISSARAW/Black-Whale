@@ -7,6 +7,8 @@ export interface FightEnvironment {
   /** Explicit non-canonical experiment; absent in ordinary manga-rule scenarios. */
   halkenburgRosterVariant?: boolean
   arenaInteractions?: boolean
+  /** Door: two real frames of this level chosen per seat before the round. */
+  doorFrames?: Partial<Record<FightSide, import('./voconteDoorTypes').DoorFramePick>>
   needleStock?: Partial<Record<FightSide, boolean>>
   preparation?: FightPreparation
   stageId: FightStageId
@@ -18,6 +20,7 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
   return {
     ...(options.halkenburgRosterVariant ? { halkenburgRosterVariant: true } : {}),
     arenaInteractions: options.arenaInteractions ?? false,
+    ...(options.doorFrames ? { doorFrames: { ...options.doorFrames } } : {}),
     needleStock: options.needleStock ? { ...options.needleStock } : undefined,
     preparation: options.preparation
       ? {
@@ -27,6 +30,7 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
             : {}),
           resources: [...options.preparation.resources],
           cohorts: [...options.preparation.cohorts],
+          ...copyHinrighKit(options.preparation.hinrighKit),
         }
       : undefined,
     stageId: options.stageId ?? DEFAULT_FIGHT_STAGE,
@@ -37,4 +41,13 @@ export function createFightEnvironment(options: Partial<FightEnvironment> = {}):
 
 export function inMorenasHideout(environment: FightEnvironment): boolean {
   return environment.stageId === 'heilly-hideout' && environment.morenaPresent
+}
+
+function copyHinrighKit(kit: import('./hinrighKit').HinrighKit | undefined) {
+  if (!kit) return {}
+  return {
+    hinrighKit: Object.fromEntries(
+      Object.entries(kit).map(([side, items]) => [side, [...(items ?? [])]]),
+    ),
+  }
 }

@@ -5,11 +5,14 @@ import { arsenalMindAvailable } from './arsenalMind'
 import { sleepingBody } from './hanzoProjection'
 import { secretWindowNenActive } from './secretWindowAccess'
 import { recordDolphinEffects } from './kurapikaDolphin'
+import { journalOverheard } from './secretWindowJournal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface SecretWindowListening {
   activatedAt: number
   heard?: { frame: number; text: string }
+  /** Private journal of overheard words, consultable by the owner only. */
+  log?: readonly { frame: number; text: string }[]
 }
 declare module './types' {
   interface ArcadeFighter {
@@ -61,10 +64,10 @@ export function captureShoulderWindowSpeech(
         continue
       next = changeDolphinBody(next, { owner, member }, (body) => ({
         ...body,
-        secretWindowListening: {
-          ...body.secretWindowListening!,
-          heard: { frame: state.frame, text: speech.text },
-        },
+        secretWindowListening: journalOverheard(body.secretWindowListening!, {
+          frame: state.frame,
+          text: speech.text,
+        }),
       }))
     }
   }

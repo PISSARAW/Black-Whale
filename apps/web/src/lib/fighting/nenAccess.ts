@@ -60,6 +60,7 @@ function forcedZetsu(fighter: ArcadeFighter): boolean {
     fighter.chainJail ||
     fighter.drainingChain ||
     fighter.moonlightZetsu ||
+    (fighter.burstZetsuFrames ?? 0) > 0 ||
     fighter.hatsuEffects.forcedZetsuFrames > 0 ||
     (fighter.predator?.sealFrames ?? 0) > 0 ||
     emperorBlackout(fighter),

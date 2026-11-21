@@ -39,7 +39,8 @@ export const ROSTER_TECHNIQUES: Record<RosterFighterId, Techniques> = {
   camilla: ['observe', 'palm', 'lowKick', 'backhand', 'observe'],
   halkenburg: ['bow', 'bow', 'bow', 'observe', 'bow'],
   gel: ['snake', 'snake', 'snake', 'snake', 'snake'],
-  lynch: ['cross', 'cross', 'lowJab', 'backhand', 'cross'],
+  // L asks the question; the following J/K is the punch that forces the answer.
+  lynch: ['observe', 'cross', 'lowJab', 'backhand', 'cross'],
   luini: ['door', 'cross', 'lowKick', 'backhand', 'door'],
   bill: ['grow', 'palm', 'lowKick', 'backhand', 'grow'],
   furykov: ['console', 'cross', 'lowKick', 'backhand', 'uppercut'],

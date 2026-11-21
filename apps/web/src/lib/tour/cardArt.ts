@@ -25,31 +25,46 @@ import type { CardFace } from './morena'
  */
 export const CARD_STOCK = '#f6f3ec'
 
+/** Sets a drawing made on the 120-unit answer grid into the 60×84 field. */
+const answer = (marks: string): string => `<g transform="translate(0 12) scale(0.5)">${marks}</g>`
+
+/**
+ * The stock each answer card is printed on, in the panel.
+ *
+ * The table lays the five answers in saturated colours under warm light, and
+ * what reaches the eye there is a pastel. The panel has no lamp, so it prints
+ * the pastel directly: the card in the hand and the same card on the wood read
+ * as one card. Questions have no entry; they stay on white stock.
+ */
+export const ANSWER_CARD_STOCK: Partial<Record<CardFace, string>> = {
+  yes: '#eaa79c',
+  no: '#93a8dc',
+  back: '#abc99c',
+  joker: '#e6ca7d',
+  x: '#c9b8e2',
+}
+
 export const CARD_ART: Record<CardFace, string> = {
+  // The five answers are drawn bold and centred on a 120-unit grid, then set
+  // into the 60×84 field at half size: one mark, thick enough to read across
+  // the table, and the name left to the frame.
   // Yes is the maru: the circle a Japanese form is marked correct with, which
   // is what she is asking Borksen to write on hers.
-  yes: `<circle cx="30" cy="38" r="19" stroke-width="3" />
-    <circle cx="30" cy="38" r="12" stroke-width="1" opacity="0.45" />
-    <path d="M14 66h32" stroke-width="1.5" opacity="0.5" />`,
+  yes: answer(`<circle cx="60" cy="60" r="40" stroke-width="10" />`),
   // And No is the batsu, drawn the way the panel draws it: white on black.
-  no: `<rect x="8" y="16" width="44" height="44" fill="currentColor" stroke="none" />
-    <path d="M18 26 42 50M42 26 18 50" stroke="var(--card-face, ${CARD_STOCK})" stroke-width="4" />
-    <path d="M14 66h32" stroke-width="1.5" opacity="0.5" />`,
+  no: answer(`<rect x="20" y="20" width="80" height="80" rx="6" fill="currentColor" stroke="none" />
+    <path d="M38 38 82 82M82 38 38 82" stroke="var(--card-face, ${CARD_STOCK})" stroke-width="10" />`),
   // Return: an arrow that goes down into the pile and comes back up.
-  back: `<path d="M44 20v14a10 10 0 0 1-10 10H18" stroke-width="3" />
-    <path d="M26 36 17 44l9 8" stroke-width="3" />
-    <path d="M12 60h36" stroke-width="1.5" opacity="0.5" />
-    <path d="M12 66h24" stroke-width="1.5" opacity="0.3" />`,
-  // The joker is the one card drawn twice on itself: whichever way up you hold
-  // it, it is already the other answer.
-  joker: `<path d="M8 12 52 72" stroke-width="1" opacity="0.4" />
-    <circle cx="20" cy="24" r="9" stroke-width="2.5" />
-    <rect x="31" y="48" width="18" height="18" fill="currentColor" stroke="none" />
-    <path d="M35 52l10 10M45 52 35 62" stroke="var(--card-face, ${CARD_STOCK})" stroke-width="3" />`,
-  // X voids the game, so it is drawn as the thing that swallows it.
-  x: `<path d="M30 8c-14 8-22 18-22 30s10 22 22 22 22-8 22-22-8-22-22-30z" opacity="0.25" />
-    <path d="M14 22 46 54M46 22 14 54" stroke-width="4" />
-    <circle cx="30" cy="38" r="26" stroke-width="1" opacity="0.4" />`,
+  back: answer(`<path d="M92 26v40q0 16-16 16H34" stroke-width="10" />
+    <path d="M50 64 30 82l20 18" stroke-width="10" />`),
+  // The joker carries both answers at once: the circle, and the boxed cross.
+  joker: answer(`<circle cx="38" cy="38" r="18" stroke-width="8" />
+    <path d="M50 50 72 72" stroke-width="8" />
+    <rect x="66" y="66" width="36" height="36" rx="4" fill="currentColor" stroke="none" />
+    <path d="M75 75 93 93M93 75 75 93" stroke="var(--card-face, ${CARD_STOCK})" stroke-width="6" />`),
+  // X voids the game: a cross held inside a circle.
+  x: answer(`<circle cx="60" cy="60" r="42" stroke-width="9" />
+    <path d="M33 33 87 87M87 33 33 87" stroke-width="9" />`),
   // Aim: the eye the chapter draws on her side of the fan, and the light coming
   // off it.
   goal: `<path d="M8 38c8-11 15-16 22-16s14 5 22 16c-8 11-15 16-22 16s-14-5-22-16z" stroke-width="2.5" />

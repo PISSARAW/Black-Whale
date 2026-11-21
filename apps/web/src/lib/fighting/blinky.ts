@@ -4,6 +4,7 @@ import { voluntaryNenAvailable } from './nenAccess'
 import { sleepingBody } from './hanzoProjection'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
+import { priorityLineOfSight } from './priorityOptics'
 import type { ArcadeFighter, FightInput, FightProjectile, FightSide, FightState } from './types'
 
 export type BlinkyTarget = 'bullet' | 'card' | 'stone' | 'needle'
@@ -119,13 +120,30 @@ export function plugWoundsInput(fighter: ArcadeFighter, input: FightInput): Arca
   }
 }
 
+/**
+ * Blinky only acts along a free path: real cover or an umbrella between the nozzle
+ * and what it aims at stops the suction, for objects and for blood alike.
+ */
+export function blinkyPathClear(
+  state: FightState,
+  side: FightSide,
+  point: { x: number; y: number },
+): boolean {
+  const fighter = state[side]
+  const ray = { x: fighter.x + fighter.facing, y: blinkyNozzleY(fighter) }
+  return priorityLineOfSight(state, { ...ray, targetX: point.x, targetY: point.y })
+}
+
+/** Blood needs a real uncovered wound, the body in the nozzle and nothing in between. */
 export function blinkyBloodReady(state: FightState, side: FightSide): boolean {
   const other = side === 'player' ? 'opponent' : 'player'
   const body = sleepingBody(state[other])
+  const wound = { x: body.x, y: body.y + 6.1 }
   return (
     blinkyAvailable(state[side]) &&
     exposedBlinkyWounds(state[other]) > 0 &&
-    inBlinkyNozzle(state[side], { x: body.x, y: body.y + 6.1 })
+    inBlinkyNozzle(state[side], wound) &&
+    blinkyPathClear(state, side, wound)
   )
 }
 

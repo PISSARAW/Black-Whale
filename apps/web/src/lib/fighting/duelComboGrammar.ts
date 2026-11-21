@@ -1,6 +1,7 @@
 import type { FighterMove } from './movesetTypes'
 import type { CancelGrammar, ComboMove } from './duelComboTypes'
 import type { MoveSlot } from './types'
+import { accelTargets } from './accelCancel'
 
 export interface GrammarCancels {
   cancelInto: readonly string[]
@@ -23,7 +24,11 @@ export function grammarCancels(
   const chains = spec?.into ?? []
   if (grammar.supers.includes(move.slot)) return { cancelInto: [], cancelOnBlockInto: [] }
   if (grammar.specials.includes(move.slot))
-    return { cancelInto: ids(fighter, grammar.supers), cancelOnBlockInto: [] }
+    return {
+      // A special keeps its written chains (target combos, e.g. Double page).
+      cancelInto: ids(fighter, [...chains, ...accelTargets(grammar, move.slot), ...grammar.supers]),
+      cancelOnBlockInto: [],
+    }
   if (!GROUND_NORMALS.has(move.category) || move.variant === 'air')
     return { cancelInto: ids(fighter, chains), cancelOnBlockInto: [] }
   return {

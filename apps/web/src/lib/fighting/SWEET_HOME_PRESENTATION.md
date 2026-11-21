@@ -14,6 +14,25 @@ aucune blessure dans le combattant et ne retarde pas l’application des dégât
   rupture. Les dégâts proviennent de `objectTransfer.damage`, car les dégâts
   corporels de l’impact sont alors nuls.
 
+## Circuit de transfert manuel autour d'un allié
+
+Avec un kaméo sur scène, la main droite de Terebellum peut le protéger pendant
+les frames actives de Sweet Home avant ou bas (`sweetHomeHands.ts`). Le coup
+adverse qui atteint le kaméo est alors repris par la main droite et doit sortir
+par la gauche (`sweetHomeAlly.ts`, appelé depuis `kameos/contacts.ts`) :
+
+- objet choisi pour la main gauche, réel, intact et à portée : il reçoit toute
+  la blessure, le kaméo et Terebellum restent intacts ;
+- aucun réceptacle : la blessure finit dans sa propre main gauche
+  (`transfer.backlash`), avec le hitstun que le coup aurait donné au kaméo.
+
+Les deux contacts sont relus à l'impact. Une main ne tient qu'un corps : tant que
+la droite protège l'allié, elle n'absorbe pas l'adversaire. Il n'existe ni réseau
+de fusibles, ni marque à distance, ni bascule automatique : une caisse brisée
+n'est jamais remplacée par une autre. `ally: true` sur `transfer` ou
+`objectTransfer` fait partir le flux de la main droite dans le rendu.
+`sweetHomeAlly.test.ts` vérifie ces cas.
+
 `sweetHomePresentation.ts` lit les transferts confirmés, une fois par séquence
 d’impact. Une posture seule, un contact manqué ou un réceptacle détruit ne produit
 aucun flux. Une reconstruction, un retour en arrière ou un changement de manche

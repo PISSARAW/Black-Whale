@@ -1,6 +1,8 @@
 <script lang="ts">
   import { fightLesson } from '$lib/fighting/fightLessons'
   import { combatRoute } from '$lib/fighting/combatRoutes'
+  import { isSignatureLesson } from '$lib/fighting/signatureSchool'
+  import { signatureCombo } from '$lib/fighting/signatureCombos'
   import { FIGHT_CHALLENGES } from '$lib/fighting/fightChallenges'
   import { ARCADE_ENCOUNTERS } from '$lib/fighting/clashArcade'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
@@ -16,7 +18,12 @@
   $: fr = language === 'fr'
   $: index = fr ? 0 : 1
   $: lesson = $lessons ? fightLesson($lessons.id) : null
-  $: route = $school && !$school.id.endsWith(':defense') ? combatRoute($school.id) : null
+  // A signature combo is not a combat route: its title and step count come from its own list.
+  $: signature = $school && isSignatureLesson($school.id) ? signatureCombo($school.id) : null
+  $: route =
+    $school && !signature && !$school.id.endsWith(':defense') ? combatRoute($school.id) : null
+  $: title = signature?.title[index] ?? route?.title[index]
+  $: total = signature?.steps.length ?? route?.moves.length ?? 2
   $: challenge = FIGHT_CHALLENGES.find((entry) => entry.id === $practice.challenge?.id)
   $: encounter = $practice.arcade ? ARCADE_ENCOUNTERS[$practice.arcade.index] : null
   function hint(text: string) {
@@ -44,14 +51,14 @@
 {:else if $school}
   <aside class="battle-objective">
     <strong
-      >{$school.demo ? (fr ? 'Démonstration' : 'Demonstration') : fr ? 'Exercice' : 'Exercise'} · {route
-        ?.title[index] ?? (fr ? 'Bloquer puis punir' : 'Block and punish')}</strong
+      >{$school.demo ? (fr ? 'Démonstration' : 'Demonstration') : fr ? 'Exercice' : 'Exercise'} · {title ??
+        (fr ? 'Bloquer puis punir' : 'Block and punish')}</strong
     ><span role="status"
       >{$school.complete
         ? fr
           ? 'Exercice réussi'
           : 'Exercise complete'
-        : `${$school.step} / ${route?.moves.length ?? 2}`}</span
+        : `${$school.step} / ${total}`}</span
     >
   </aside>
 {:else if challenge}

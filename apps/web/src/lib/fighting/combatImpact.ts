@@ -3,7 +3,9 @@ import { catchBungeeObject } from './hisokaCatch'
 import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
 import { canReceiveCombatHit } from './combatTargets'
-import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
+import { resolveThrowTech, throwMisses, throwTechPossible } from './throwRules'
+import { confirmShot } from './shotConfirm'
+import { attackCanResolve, launchesTarget } from './impactAdmission'
 import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead, interruptedHatsuMove } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
@@ -18,8 +20,10 @@ import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { observeComboMaster } from './comboMaster'
+import { onRageDamage } from './onTechnique'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { sleepingBody } from './hanzoProjection'
+import { nenOutputCapacity } from './nenBudget'
 export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
@@ -28,17 +32,16 @@ import { launchesWithDirectionalEnding } from './directionalChain'
 import {
   activeHitbox,
   attackData,
-  attackPhase,
   boxesOverlap,
   contactPoint,
   hurtboxes,
-  isAntiAir,
   otherSide,
 } from './frameData'
 import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
+  cornerPushbackTransfer,
   nextComboHits,
   openingDamageMultiplier,
   openingType,
@@ -66,11 +69,63 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
 
 /** Melee between the two bodies of a duel only: no clock, observer or verdict runs here. */
 export function resolveMeleePair(state: FightState): FightState {
+  const clash = resolveKoClash(state)
+  if (clash) return clash
   const trade = canTrade(state)
   const next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
   if (trade) return resolveTrade(state, next)
   if (next.phase !== 'fighting') return next
   return recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
+}
+
+const CLASH_PUSHBACK = 4
+const CLASH_HITSTOP = 8
+
+/** Two committed Ko hitboxes meeting on one frame cancel before either body is struck. */
+function resolveKoClash(state: FightState): FightState | null {
+  const playerBox = koHitbox(state.player)
+  const opponentBox = koHitbox(state.opponent)
+  if (!playerBox || !opponentBox || !boxesOverlap(playerBox, opponentBox)) return null
+
+  const playerRen = nenOutputCapacity(state.player)
+  const opponentRen = nenOutputCapacity(state.opponent)
+  const winner = playerRen === opponentRen ? null : playerRen > opponentRen ? 'player' : 'opponent'
+  const position = contactPoint(playerBox, opponentBox)
+  let player = cancelKoAttack(state.player)
+  let opponent = cancelKoAttack(state.opponent)
+
+  if (winner === 'player') opponent = pushFromClash(opponent, player)
+  if (winner === 'opponent') player = pushFromClash(player, opponent)
+
+  return {
+    ...state,
+    player,
+    opponent,
+    hitstop: Math.max(state.hitstop, CLASH_HITSTOP),
+    attackClash: {
+      sequence: (state.attackClash?.sequence ?? 0) + 1,
+      frame: state.frame,
+      winner,
+      playerRen,
+      opponentRen,
+      position,
+    },
+  }
+}
+
+function koHitbox(fighter: ArcadeFighter) {
+  if (!attackCanResolve(fighter) || !isCriticalAuraStrike(fighter)) return null
+  return activeHitbox(fighter)
+}
+
+function cancelKoAttack(fighter: ArcadeFighter): ArcadeFighter {
+  const released = releaseFocusedAura(fighter)
+  return { ...released, attack: null, pose: released.y > 0 ? 'jump' : 'idle' }
+}
+
+function pushFromClash(loser: ArcadeFighter, winner: ArcadeFighter): ArcadeFighter {
+  const direction = winner.x <= loser.x ? 1 : -1
+  return { ...loser, x: Math.max(7, Math.min(93, loser.x + direction * CLASH_PUSHBACK)) }
 }
 
 function canTrade(state: FightState): boolean {
@@ -102,7 +157,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = attackerComboScale(attacker, comboHits)
   const critical = isCriticalAuraStrike(attacker)
-  const damage = resolvedDamage({
+  const ordinaryDamage = resolvedDamage({
     attacker,
     defence,
     base: data.damage,
@@ -111,6 +166,15 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
+  const rageStrike = onRageDamage(
+    attacker,
+    sleepingBody(defender),
+    attacker.attack.kind,
+    ordinaryDamage,
+    defence.blocked,
+    defence.avoided,
+  )
+  const damage = rageStrike.damage
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -141,6 +205,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (needle) return needle
   const struck = strikeAfterDefence(defence, {
     attacker,
+    zone: data.targetZone,
     damage,
     knockdown,
     antiAir: launchesWithDirectionalEnding(attacker, antiAir),
@@ -151,10 +216,16 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const points = impactPoints({ state, defence, critical, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
+  // A grounded hit stopped by the corner pushes the attacker back with the refused distance.
+  // Blocked hits keep their transfer through the guard recoil; this covers the real hits.
+  const corneredAttacker =
+    !defence.avoided && !defence.blocked && data.knockback > 0
+      ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
+      : spent
   let next: FightState = {
     ...state,
     [side]: recoilGuardedAttack({
-      attacker: spent,
+      attacker: corneredAttacker,
       defender: defence.fighter,
       struck,
       knockback: data.knockback,
@@ -184,6 +255,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
       avoided: defence.avoided,
+      onRage: rageStrike.rage,
       projectileId: null,
       position: collision.position,
     },
@@ -273,21 +345,6 @@ function spendAttacker(
   return spent
 }
 
-function launchesTarget(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
-  return isAntiAir(attacker) && sleepingBody(defender).y > 0
-}
-
-function throwTechPossible(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
-  return attacker.attack?.variant === 'throw' && canTechThrow(defender)
-}
-
-function throwMisses(
-  attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
-  defender: ArcadeFighter,
-): boolean {
-  return attacker.attack.variant === 'throw' && throwImmune(defender)
-}
-
 function shouldResolveHatsu(
   fighter: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
@@ -341,6 +398,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
     : strikeProjectileDefender({
         fighter: defence.fighter,
         attacker,
+        zone: hit.projectile.targetZone,
         projectile: hit.projectile,
         damage,
         blocked: defence.blocked,
@@ -355,7 +413,7 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   const next = {
     ...state,
-    [side]: attacker,
+    [side]: confirmShot(attacker, hit.projectile, defence),
     [hit.defenderSide]: struck,
     score,
     knockdowns,
@@ -409,12 +467,6 @@ function immediateProjectileResolution(state: FightState, hit: ProjectileHit): F
   )
     return state
   return captureIncomingProjectile(state, hit)
-}
-
-function attackCanResolve(
-  fighter: ArcadeFighter,
-): fighter is ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> } {
-  return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {

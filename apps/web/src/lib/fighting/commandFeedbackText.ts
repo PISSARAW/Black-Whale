@@ -22,6 +22,10 @@ const FAILURES: Record<CommandFailure, readonly [string, string]> = {
     'Nen indisponible ou technique scellée dans votre état actuel.',
     'Nen unavailable or technique sealed in your current state.',
   ],
+  overload: [
+    'Surcharge cognitive : relâchez une opération de Nen avant d’en ouvrir une autre.',
+    'Cognitive overload: release a Nen operation before starting another.',
+  ],
   aura: [
     'Aura insuffisante pour le coût réel de cette commande.',
     'Not enough aura for this command’s actual cost.',

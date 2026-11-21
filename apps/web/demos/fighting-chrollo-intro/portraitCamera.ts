@@ -39,13 +39,16 @@ function heroHead(scene: Scene, hero: string): Object3D | undefined {
  * Before each main render, put the real 3D camera in front of the hero's face, using the
  * head's own front axis; the production camera is restored right after the render.
  */
-export function installPortraitCamera(hero: string, current: () => Portrait | null) {
+export function installPortraitCamera(
+  hero: string | (() => string),
+  current: () => Portrait | null,
+) {
   let restore: (() => void) | null = null
   Scene.prototype.onBeforeRender = function (_renderer, scene, camera) {
     const mode = current()
     if (!mode || !(camera instanceof PerspectiveCamera)) return
     if (!scene.getObjectByName('fight-collision-boxes')) return
-    const head = heroHead(scene, hero)
+    const head = heroHead(scene, typeof hero === 'string' ? hero : hero())
     if (!head) return
     restore?.()
     const saved = {

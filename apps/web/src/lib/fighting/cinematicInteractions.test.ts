@@ -10,6 +10,7 @@ import {
 } from './engine'
 import { cinematicEvents, cameraSnapshot } from './cinematicEvents'
 import { cinematicDuel, cinematicStep } from './cinematicFixtures'
+import { investigationStep } from './predatorFixtures'
 import { recordFightInjuries } from './feitanPain'
 import { DOOR_FRAMES, doorBodyPositions, transportDoorBodies } from './voconteDoors'
 import { EMPTY_INPUT } from './types'
@@ -215,13 +216,22 @@ describe('confirmed cinematic interactions', () => {
       ...s,
       player: { ...s.player, x: 48, aura: 100 },
       opponent: { ...s.opponent, x: 53 },
-      bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
     }
-    const watching = performAttack(ready, 'player', 'special')
+    const watching = {
+      ...cinematicStep(performAttack(ready, 'player', 'special')),
+      bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+    } satisfies FightState
     const early = track(watching, 30)
     expect(early.state.player.predator?.known).toContain('bungee-gum')
     expect(early.ids).not.toContain('rihan.ready')
-    expect(track(early.state, 160).ids).toContain('rihan.ready')
+    let state = early.state
+    const ids: string[] = []
+    for (let i = 0; i < 200 && !ids.includes('rihan.ready'); i++) {
+      const before = cameraSnapshot(state)
+      state = investigationStep(state, 'player', i)
+      ids.push(...cinematicEvents(state, before).flatMap((e) => e.detail?.eventId ?? []))
+    }
+    expect(ids).toContain('rihan.ready')
   })
   it('frames Melody’s completed heartbeat listening at the engine’s real listening threshold', () => {
     const state = cinematicDuel('melody')

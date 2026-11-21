@@ -33,6 +33,10 @@ export const ON_BLOCKED_BURN = 8
 export const ON_KEN_BURN = 16
 /** Frames during which a clean On blow seals the victim's Hatsu (2 s). */
 export const ON_SEAL_FRAMES = 120
+/** Last-health comeback window, shared by every fighter who has sworn On. */
+export const ON_RAGE_HEALTH_PERCENT = 20
+/** A lethal rage strike needs enough hatred left to sustain one final blow. */
+export const ON_RAGE_GRUDGE = 50
 /** The distribution On imposes: hatred pours into the limbs that strike. */
 export const ON_DISTRIBUTION: Record<FightNenZone, number> = {
   hands: 40,
@@ -46,6 +50,28 @@ const NO_ON = { grudge: 0, sealFrames: 0 } as const
 
 export function onOf(fighter: Pick<ArcadeFighter, 'on'>) {
   return fighter.on ?? NO_ON
+}
+
+/** A clean heavy can become one lethal strike while the On user is near defeat. */
+export function onRageReady(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.nen.on &&
+    fighter.health > 0 &&
+    healthPercent(fighter) < ON_RAGE_HEALTH_PERCENT &&
+    onOf(fighter).grudge >= ON_RAGE_GRUDGE
+  )
+}
+
+export function onRageDamage(
+  attacker: ArcadeFighter,
+  defender: ArcadeFighter,
+  kind: import('./types').AttackKind,
+  ordinaryDamage: number,
+  blocked: boolean,
+  avoided: boolean,
+): { damage: number; rage: boolean } {
+  const rage = kind === 'heavy' && !blocked && !avoided && onRageReady(attacker)
+  return { damage: rage ? defender.health : ordinaryDamage, rage }
 }
 
 export function canSwearOn(fighter: ArcadeFighter): boolean {
@@ -136,13 +162,21 @@ export function resolveOnImpacts(before: FightState, after: FightState): FightSt
   const impact = after.impact
   if (!impact || impact.sequence === before.impact?.sequence) return fed
   if (!before[impact.attacker].nen.on || impact.avoided) return fed
-  return resolveOnBlow(fed, impact.attacker, impact.blocked)
+  return resolveOnBlow(fed, impact.attacker, impact.blocked, impact.onRage)
 }
 
-function resolveOnBlow(state: FightState, attacker: FightSide, blocked: boolean): FightState {
+function resolveOnBlow(
+  state: FightState,
+  attacker: FightSide,
+  blocked: boolean,
+  rage = false,
+): FightState {
   const defenderSide: FightSide = attacker === 'player' ? 'opponent' : 'player'
   const defender = state[defenderSide]
-  if (!blocked) return { ...state, [defenderSide]: sealHatsu(defender) }
+  if (!blocked) {
+    const struck = { ...state, [defenderSide]: sealHatsu(defender) }
+    return rage ? { ...struck, [attacker]: burnGrudge(struck[attacker], 100) } : struck
+  }
   const burn = defender.nen.ken ? ON_KEN_BURN : ON_BLOCKED_BURN
   return { ...state, [attacker]: burnGrudge(state[attacker], burn) }
 }

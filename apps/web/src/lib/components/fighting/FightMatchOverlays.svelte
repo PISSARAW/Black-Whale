@@ -1,6 +1,7 @@
 <script lang="ts">
   import FightCeremony from './FightCeremony.svelte'
   import FightResults from './FightResults.svelte'
+  import FightRivalryRules from './FightRivalryRules.svelte'
   import type { FightState } from '$lib/fighting/types'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightingCopy } from '../../../routes/fighting/fightingCopy'
@@ -23,6 +24,7 @@
       {fighterDefinition(state.opponent.id).name}
     </p>
     <h2>{copy.ready}</h2>
+    <FightRivalryRules {state} {language} />
     <button type="button" onclick={startFight}>{copy.fight}</button>
   </div>
 {:else if state.phase === 'finished' && !replay}

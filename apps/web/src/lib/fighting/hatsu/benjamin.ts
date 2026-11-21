@@ -1,6 +1,7 @@
 import { benjaminMoveAvailable, benjaminNenActive } from '../benjaminBaton'
 import { releaseCuldceptCard } from '../benjaminCuldcept'
 import { attackPhase } from '../frameData'
+import { advanceCuldceptHold } from '../culdceptHold'
 import { attachSecretWindow } from '../secretWindowContact'
 import { startSecretWindowListening } from '../secretWindowListening'
 import type { FightSide, FightState } from '../types'
@@ -14,7 +15,11 @@ export const benjaminHatsu: FighterHatsu = {
   },
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: (state) => tickSide(tickSide(state, 'player'), 'opponent'),
+  onFrame: (state) =>
+    advanceCuldceptHold(
+      advanceCuldceptHold(tickSide(tickSide(state, 'player'), 'opponent'), 'player'),
+      'opponent',
+    ),
 }
 
 function tickSide(state: FightState, side: FightSide): FightState {

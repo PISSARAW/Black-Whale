@@ -55,6 +55,15 @@
   let victoryFrame = $derived(
     segment && shot.kind === 'clip' ? filmAt(segment, simOverride ?? shot.sim) : null,
   )
+  /** A twin fight plays in the lower half, frame for frame with the main one. */
+  let twinState = $derived(
+    segment?.twin && shot.kind === 'clip'
+      ? segment.twin.states[Math.min(segment.twin.states.length - 1, Math.floor(simOverride ?? shot.sim))]
+      : undefined,
+  )
+  let twinFilm = $derived(
+    segment?.twin && shot.kind === 'clip' ? filmAt(segment.twin, simOverride ?? shot.sim) : null,
+  )
   let mask = $derived(
     shot.kind === 'clip'
       ? lit[shot.clip][Math.floor(shot.sim)]
@@ -71,7 +80,10 @@
       : 1,
   )
 
-  installPortraitCamera(hero.id, () => (shot.kind === 'clip' ? shot.portrait : null))
+  /** Videos with one hero per scene film whoever the current shot is about. */
+  const filmed = () => segment?.hero ?? hero.id
+  const Overlay = hero.overlay ?? IntroOverlay
+  installPortraitCamera(filmed, () => (shot.kind === 'clip' ? shot.portrait : null))
   installCompanion(hero.id, () =>
     segment && shot.kind === 'clip' ? companionAt(segment, simOverride ?? shot.sim) : null,
   )
@@ -132,31 +144,44 @@
   }
 </script>
 
-<main style={`--aura:#${fighterAuraHex(hero.id).toString(16).padStart(6, '0')}`}>
+{#snippet view(
+  shown: NonNullable<typeof state>,
+  stageId: NonNullable<typeof segment>['stage'],
+  film: typeof victoryFrame,
+)}
+  <FightScene
+    state={shown}
+    {comfort}
+    language="en"
+    {stageId}
+    viewer="player"
+    keepCombatantMarkers={false}
+    hideSecondaryView
+    victoryFrame={film}
+  />
+{/snippet}
+
+<main style={`--aura:#${fighterAuraHex(filmed()).toString(16).padStart(6, '0')}`}>
   {#if segment && state && shot.kind === 'clip'}
     <div
       class="camera"
       style={`transform: translate(${shot.fx.shakeX}px, ${shot.fx.shakeY}px) rotate(${shot.fx.tilt}deg) scale(${shot.fx.zoom * push}); transform-origin: ${push > 1 ? '40% 50%' : '50% 58%'}; filter: contrast(${1.1 + shot.fx.split * 0.1}) saturate(${1.2 + shot.fx.split * 0.25});`}
     >
       {#key segmentIndex}
-        {#if segment.live}
+        {#if segment.twin && twinState}
+          <div class="half top">{@render view(state, segment.stage, victoryFrame)}</div>
+          <div class="half bottom">
+            {@render view(twinState, segment.twin.stage, twinFilm)}
+          </div>
+        {:else if segment.live}
           <FightLiveScene {state} {comfort} language="en" stageId={segment.stage} viewer="player" />
         {:else}
-          <FightScene
-            {state}
-            {comfort}
-            language="en"
-            stageId={segment.stage}
-            viewer="player"
-            keepCombatantMarkers={false}
-            hideSecondaryView
-            {victoryFrame}
-          />
+          {@render view(state, segment.stage, victoryFrame)}
         {/if}
       {/key}
     </div>
   {/if}
-  <IntroOverlay {shot} {mask} {hero} />
+  <Overlay {shot} {mask} {hero} {segment} />
 </main>
 
 <style>
@@ -182,6 +207,20 @@
     position: absolute;
     inset: -3%;
     transform-origin: 50% 58%;
+  }
+  .half {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+  }
+  .half.top {
+    top: 0;
+  }
+  .half.bottom {
+    bottom: 0;
+    border-top: 6px solid #d9b674;
   }
   .camera :global(.live-scene) {
     position: absolute;

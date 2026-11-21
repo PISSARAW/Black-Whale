@@ -1,9 +1,11 @@
 import { interruptHanzoBlade } from './hanzoBlade'
+import { cyclotronAllowsAttack } from './phinksCyclotron'
 import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
 import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
 import { newGumSource } from './bungeeSource'
 import { openingFollowup } from './comboOpenings'
+import { accelStart } from './accelCancel'
 import { advanceAttackBuffer } from './attackBuffer'
 import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -62,6 +64,12 @@ export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
     : next
 }
 
+/** An explicit cost (copied page, buffered cancel) wins over the move's own cost. */
+function startingAuraCost(options: Parameters<typeof startFighterAttack>[0]): number {
+  const { fighter, kind, moveId, concealed } = options
+  return options.auraCost ?? attackAuraCost({ fighter, kind, moveId, concealed })
+}
+
 export function startFighterAttack(options: {
   fighter: ArcadeFighter
   kind: AttackKind
@@ -76,6 +84,7 @@ export function startFighterAttack(options: {
 }): ArcadeFighter {
   const { fighter, kind, auraCharged, concealed } = options
   const comboFollowup = openingFollowup(fighter, options.moveId)
+  const accel = accelStart(fighter, options.moveId)
   const data = attackData(kind, {
     ...fighter,
     attack: {
@@ -101,9 +110,7 @@ export function startFighterAttack(options: {
     ...takeoffFor(fighter, options.directionalChain),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
-    aura:
-      fighter.aura -
-      (options.auraCost ?? attackAuraCost({ fighter, kind, moveId: options.moveId, concealed })),
+    aura: fighter.aura - startingAuraCost(options),
     pose: kind,
     blocking: false,
     guardFrames: 0,
@@ -111,10 +118,12 @@ export function startFighterAttack(options: {
     throwTechFrames: throwTechFramesFor(fighter, options.variant),
     ryuWindow: usesRyu ? 10 : fighter.ryuWindow,
     hatsuChargeFrames: 0,
+    ...accel.fighter,
     attack: {
       moveId: options.moveId,
       superThrow: options.superThrow,
       ...(comboFollowup ? { comboFollowup } : {}),
+      ...accel.attack,
       ...(options.directionalChain ? { directionalChain: options.directionalChain } : {}),
       kind,
       variant: options.variant,
@@ -188,6 +197,8 @@ function characterAttackAvailable(
 ): boolean {
   if (fighter.id === 'theta' && kind === 'special') return false
   if (chainsImmobilize(fighter)) return false
+  // Winding Phinks still strikes with ordinary blows (rotation en mouvement).
+  if (!cyclotronAllowsAttack(fighter, kind, { moveId })) return false
   if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
@@ -286,7 +297,6 @@ function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
     Boolean(fighter.luiniPassage) ||
     Boolean(fighter.preparationRecovery) ||
     Boolean(fighter.pluggingWounds) ||
-    Boolean(fighter.cyclotronWindup) ||
     crossGameBusy(fighter) ||
     melodyRestrictsCombat(fighter) ||
     battlePreparing(fighter) ||

@@ -1,4 +1,4 @@
-import { PREDATOR_ANALYSIS_FRAMES } from './predatorTuning'
+import { sheetComplete } from './predatorSheet'
 import { MELODY_LISTEN_FRAMES } from './melodyTuning'
 import { rulesFor, selfPart, targetPart, prop, node, rig, point } from './cinematicRules'
 import type { CameraContext } from './cinematicRules'
@@ -56,7 +56,7 @@ export const RIHAN_CAMERA_RULES = rulesFor('rihan', [
   {
     id: 'ready',
     label: ['Predator · Analyse achevée', 'Predator · Analysis complete'],
-    select: (c) => (c.self.predator?.analysis?.observedFrames ?? 0) >= PREDATOR_ANALYSIS_FRAMES,
+    select: (c) => Boolean(c.self.predator?.analysis && sheetComplete(c.self.predator.analysis)),
     anchors: selfPart('head'),
     private: true,
     priority: 2.5,

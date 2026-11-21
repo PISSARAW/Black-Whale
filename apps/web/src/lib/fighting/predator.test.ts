@@ -21,6 +21,8 @@ import {
   choosePredatorPrey,
 } from './predator'
 import { PREDATOR_SEAL_FRAMES, predatorNenLocked } from './predatorSeal'
+import { investigatePredator } from './predatorFixtures'
+import { facetsFilled, PREDATOR_FACETS } from './predatorSheet'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -69,13 +71,12 @@ function gum(state: FightState, owner: FightSide = 'opponent'): FightState {
   }
 }
 
-function studied(owner: FightSide = 'player'): FightState {
-  const state = gum(duel(owner), owner === 'player' ? 'opponent' : 'player')
-  return frames(performMove({ state, side: owner, action: 'special' }), PREDATOR_ANALYSIS_FRAMES)
+function studied(owner: FightSide = 'player', state: FightState = duel(owner)): FightState {
+  const enemy = owner === 'player' ? 'opponent' : 'player'
+  return investigatePredator({ state, side: owner, manifest: (s) => gum(s, enemy) })
 }
 
 function succeed(state: FightState, owner: FightSide = 'player'): FightState {
-  state = performMove({ state, side: owner, action: 'finisher' })
   expect(state[owner].predator?.hunt).toBeTruthy()
   for (let n = 0; n < 180 && !predatorNenLocked(state[owner]); n++) state = frames(state, 1)
   expect(predatorNenLocked(state[owner])).toBe(true)
@@ -112,15 +113,18 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
   })
 
   it.each(['player', 'opponent'] as const)(
-    'studies only the visible specific manifestation (%s)',
+    'fills the five-line sheet in person, then releases the matching counter on its own (%s)',
     (side) => {
       const state = studied(side)
-      expect(state[side].predator?.analysis).toMatchObject({
+      const analysis = state[side].predator!.analysis!
+      expect(analysis).toMatchObject({
         preyId: 'bungee-gum',
         observedFrames: PREDATOR_ANALYSIS_FRAMES,
       })
+      expect(facetsFilled(analysis)).toEqual(PREDATOR_FACETS)
       expect(state[side].predator?.known).toEqual(['bungee-gum'])
-      expect(predatorReady(state, side)).toBe(true)
+      expect(state[side].predator?.hunt?.preyId).toBe('bungee-gum')
+      expect(state[side].aura).toBe(100 - 40)
       expect(hatsuDefenceFactor(state[side])).toBe(1)
     },
   )
@@ -210,28 +214,28 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
       expect(next.knockdowns).toEqual(ready.knockdowns)
       expect(next.impact).toBeNull()
       expect(next.phase).toBe('fighting')
-      expect(next[side].aura).toBeLessThan(ready[side].aura)
+      expect(ready[side].predator?.hunt?.preyId).toBe('bungee-gum')
     },
   )
 
   it('does not remove another Hatsu or prevent the opponent from using Nen', () => {
-    let state = duel('player', 'chrollo')
+    const state = duel('player', 'chrollo')
     state.opponent.chrolloBook = {
       pages: ['hisoka', 'sun-and-moon'],
       page: 0,
       open: true,
       bookmark: 'sun-and-moon',
     }
-    state.player.hatsuEffects.sunMark = 1
-    state = frames(performMove({ state: gum(state), side: 'player', action: 'special' }), 180)
-    const next = succeed(state)
+    const hunting = studied('player', state)
+    hunting.player.hatsuEffects.sunMark = 1
+    const next = succeed(hunting)
     expect(next.player.hatsuEffects.sunMark).toBe(1)
     expect(canUseFightHatsu(next.opponent)).toBe(true)
     expect(applyAuraContext(next.opponent, { ...EMPTY_INPUT, aura: true }).nen.mode).toBe('ren')
   })
 
   it('pays no 48-hour seal if the studied manifestation disappears before capture', () => {
-    let state = performMove({ state: studied(), side: 'player', action: 'finisher' })
+    let state = studied()
     state.bungeeGum = null
     state = frames(state, 1)
     expect(state.player.predator?.hunt).toBeNull()
@@ -241,7 +245,7 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
   })
 
   it('cancels the hunt when Rihan loses access to Predator', () => {
-    const state = performMove({ state: studied(), side: 'player', action: 'finisher' })
+    const state = studied()
     state.player.hatsuEffects.hatsuStolen = 1
     const next = advancePredator(state)
     expect(next.player.predator?.hunt).toBeNull()
@@ -254,10 +258,16 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
     state.player.aura = 0
     state = performMove({ state, side: 'player', action: 'special' })
     expect(state.player.predator?.watching).toBe(true)
-    const ready = studied()
-    ready.player.aura = 39
+    const poor = duel()
+    poor.player.aura = 10
+    const ready = studied('player', poor)
+    expect(facetsFilled(ready.player.predator!.analysis!)).toEqual(PREDATOR_FACETS)
+    expect(ready.player.predator?.hunt).toBeNull()
     expect(predatorReady(ready, 'player')).toBe(false)
     expect(performMove({ state: ready, side: 'player', action: 'finisher' })).toBe(ready)
+    expect(ready.player.aura).toBeLessThan(40)
+    ready.player.aura = 40
+    expect(frames(ready, 1).player.predator?.hunt?.preyId).toBe('bungee-gum')
   })
 
   it.each([
@@ -344,11 +354,11 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
   })
 
   it('makes Skill Hunter perform its own analysis and pay the same lasting price', () => {
-    let state = duel()
-    state.player.id = 'chrollo'
-    state.player.chrolloBook = { pages: ['rihan'], page: 0, open: true, bookmark: 'rihan' }
-    state.player.hatsuEffects.stolenHatsu = 'rihan'
-    state = frames(performMove({ state: gum(state), side: 'player', action: 'special' }), 180)
+    const book = duel()
+    book.player.id = 'chrollo'
+    book.player.chrolloBook = { pages: ['rihan'], page: 0, open: true, bookmark: 'rihan' }
+    book.player.hatsuEffects.stolenHatsu = 'rihan'
+    const state = studied('player', book)
     expect(state.player.predator?.analysis?.observedFrames).toBe(180)
     const next = succeed(state)
     next.player.chrolloBook = { pages: ['black-voice'], page: 0, open: true, bookmark: null }
@@ -367,5 +377,66 @@ describe('Rihan — analysis, targeted predation and the 48-hour price', () => {
       const move = moveForSlot('rihan', slot)!
       expect(move.tuning).toMatchObject({ damage: 0, lunge: 0, reach: 0, hitstun: 0, knockback: 0 })
     }
+  })
+  it('cannot fill the trigger line for a manifestation already active before the watch', () => {
+    let state = frames(performMove({ state: gum(duel()), side: 'player', action: 'special' }), 300)
+    const analysis = state.player.predator!.analysis!
+    expect(analysis.observedFrames).toBe(PREDATOR_ANALYSIS_FRAMES)
+    expect(analysis.sheet.trigger).toBe(false)
+    expect(state.player.predator?.hunt).toBeNull()
+    // Seeing it vanish and come back under Rihan's own eyes is what documents the trigger.
+    state.bungeeGum = null
+    state = investigatePredator({ state, side: 'player', manifest: gum, watch: (s) => s })
+    expect(state.player.predator?.analysis?.sheet.trigger).toBe(true)
+    expect(state.player.predator?.hunt?.preyId).toBe('bungee-gum')
+  })
+
+  it('documents a trigger that appeared during the watch while Rihan was reeling', () => {
+    let state = frames(performMove({ state: duel(), side: 'player', action: 'special' }), 1)
+    state = gum({ ...state, player: { ...state.player, hitStun: 20 } })
+    state = frames(state, 10)
+    expect(state.player.predator?.analysis).toBeNull()
+    state = frames(state, 30)
+    expect(state.player.predator?.analysis?.sheet.trigger).toBe(true)
+  })
+
+  it('leaves range and conditions open while neither fighter changes anything', () => {
+    let state = frames(performMove({ state: duel(), side: 'player', action: 'special' }), 1)
+    state = frames(gum(state), 300)
+    const analysis = state.player.predator!.analysis!
+    expect(facetsFilled(analysis)).toEqual(['trigger', 'target', 'behaviour'])
+    expect(state.player.predator?.hunt).toBeNull()
+  })
+
+  it('never fills a line from a report, a witnessed flag or a power never manifested', () => {
+    let state = duel()
+    state.player.hatsuEffects.witnessedHatsu = 'hisoka'
+    state.opponent.predator = {
+      ...state.player.predator!,
+      watching: false,
+      known: ['bungee-gum'],
+      analysis: null,
+      hunt: null,
+      sealFrames: 0,
+      successes: 0,
+    }
+    state = frames(performMove({ state, side: 'player', action: 'special' }), 300)
+    expect(state.player.predator?.known).toEqual([])
+    expect(state.player.predator?.analysis).toBeNull()
+  })
+
+  it('always produces the counter of the studied Hatsu, whatever command is pressed', () => {
+    let state = frames(performMove({ state: duel(), side: 'player', action: 'special' }), 1)
+    state = gum(state)
+    for (let n = 0; n < 40; n++)
+      state = performMove({ state: frames(state, 1), side: 'player', action: 'finisher' })
+    expect(state.player.predator?.hunt).toBeNull()
+    const hunting = investigatePredator({
+      state,
+      side: 'player',
+      manifest: (s) => s,
+      watch: (s) => s,
+    })
+    expect(hunting.player.predator?.hunt?.preyId).toBe(hunting.player.predator?.analysis?.preyId)
   })
 })

@@ -6,6 +6,7 @@ import { chrolloHasActivePage } from '../chrolloBook'
 import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import { COHORT_WILL_FRAMES } from '../preparationTuning'
 import { replaceHalkenburgBody } from '../halkenburgTransfer'
+import { cohortConcentrationBroken } from '../halkenburgCollective'
 import { launchHalkenburgArrow, resolveHalkenburgArrow } from '../halkenburgArrow'
 import type { ProjectileHit } from '../projectiles'
 import type { ArcadeFighter, FightState } from '../types'
@@ -109,7 +110,10 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
     hasBowReserve(fighter) &&
     !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
     readyCohort(state, side).length > 0
-  const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
+  const will =
+    gathers && !cohortConcentrationBroken(fighter)
+      ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1)
+      : 0
   const possessed = effects.possessedFrames
   const protection = groupProtection(fighter, gathers)
   if (tickUnchanged(fighter, { will, possessed, protection })) return fighter

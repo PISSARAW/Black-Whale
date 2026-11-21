@@ -5,12 +5,13 @@ const HANDLE_BOOK: MoveTimeline = [
   {
     phase: 'startup',
     at: 0.5,
-    pose: { head: [0.25, 0, 0], leadElbow: [-1.6, 0, 0], rearElbow: [-1.4, 0, 0] },
+    // Offsets from Chrollo's already folded book stance, not absolute elbow targets.
+    pose: { head: [0.25, 0, 0], leadElbow: [-0.35, 0, 0], rearElbow: [-0.5, 0, 0] },
   },
   {
     phase: 'active',
     at: 0,
-    pose: { head: [0.18, 0, 0], leadElbow: [-1.5, 0, 0], rearWrist: [0, 0, -0.4] },
+    pose: { head: [0.18, 0, 0], leadElbow: [-0.28, 0, 0], rearWrist: [0, 0, -0.4] },
   },
   { phase: 'recovery', at: 0.6, pose: {} },
 ]

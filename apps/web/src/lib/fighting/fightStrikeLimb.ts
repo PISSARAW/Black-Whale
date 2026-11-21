@@ -37,9 +37,10 @@ function anatomicalLimb(
   const lead = motionScore(options.contact, joints.lead)
   const rear = motionScore(options.contact, joints.rear)
   if (Math.max(lead, rear) < 0.1 || Math.max(lead, rear) < Math.min(lead, rear) * 1.3) return 'both'
-  const rightHand =
+  const fixedRightHand =
     options.zone === 'hands' && usesRightHandPose(fighter, `attack:${fighter.attack!.moveId}`)
-  const leadIsRight = rightHand || fighter.facing === 1
+  if (fixedRightHand) return 'right'
+  const leadIsRight = fighter.facing === 1
   const isLead = lead > rear
   return isLead === leadIsRight ? 'right' : 'left'
 }

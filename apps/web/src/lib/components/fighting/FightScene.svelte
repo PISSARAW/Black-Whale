@@ -26,6 +26,8 @@
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightReactionPresentation } from '$lib/fighting/fightReactionPresentation'
   import { createPresentedModelRefresh } from '$lib/fighting/refreshPresentedModel'
+  import { auraPsychology } from '$lib/fighting/nenPsychology'
+  import { syncRenExpression } from '$lib/fighting/nenRenPresentation'
   import { createFightContactAlignment } from '$lib/fighting/fightContactAlignment'
   import FightStageDescription from './FightStageDescription.svelte'
   import { presentedFigures } from '$lib/fighting/presentation/figures'
@@ -259,6 +261,7 @@
         }
         const animateFighter = (options: FighterSceneAnimation) => {
           const { side, model, seconds } = options
+          syncRenExpression(model.root, auraPsychology(state, side))
           const falling = finishedFall(state, side, {
             fighter: presentation.fighter(state, side),
             position: presentation.bodyPosition(state, side),

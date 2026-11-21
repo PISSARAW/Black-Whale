@@ -1,3 +1,4 @@
+import type { PredatorSheet } from './predatorSheet'
 import type { FightSide } from './types'
 
 export type PredatorPreyId =
@@ -17,7 +18,10 @@ export type PredatorPreyId =
 export interface PredatorAnalysis {
   owner: FightSide
   preyId: PredatorPreyId
+  /** Behaviour line of the sheet: frames of personal sight of this manifestation. */
   observedFrames: number
+  /** Trigger, target, range and conditions, each from Rihan's own observation. */
+  sheet: PredatorSheet
 }
 
 export interface PredatorHunt {
@@ -35,6 +39,8 @@ export interface PredatorState {
   hunt: PredatorHunt | null
   sealFrames: number
   successes: number
+  /** Live prey already accounted for: active when the watch began, or already studied. */
+  liveBefore?: readonly PredatorPreyId[]
 }
 
 export function createPredatorState(): PredatorState {

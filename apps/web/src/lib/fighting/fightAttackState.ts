@@ -17,6 +17,8 @@ export interface FightAttack {
   confirmedHit?: boolean
   comboOpening?: import('./comboOpenings').ComboOpening
   comboFollowup?: import('./comboOpenings').ComboOpening
+  /** Started by a relance; it may strike a body put down by its predecessor. */
+  accel?: true
   directionalChain?: import('./directionalChain').DirectionalChain
   kind: AttackKind
   frame: number
@@ -26,6 +28,8 @@ export interface FightAttack {
   hatsuSource: FighterId | null
   projectileSpawned: boolean
   projectilesSpawned?: number
+  /** Blinky already swallowed its one named object during this suction. */
+  blinkySwallowed?: true
   /** Charge committed to this one right punch, including a miss. */
   cyclotronTurns?: number
   reversal: boolean

@@ -1,5 +1,6 @@
 import { benjaminMoveAvailable, benjaminNenActive } from './benjaminBaton'
 import { attackPhase } from './frameData'
+import { comboShotHeight } from './culdceptHold'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -48,8 +49,10 @@ export function releaseCuldceptCard(state: FightState, side: FightSide): FightSt
     id: state.nextProjectileId,
     owner: side,
     x: fighter.x + fighter.facing * 3.4,
-    y: fighter.y + 6.1,
+    y: comboShotHeight(state, side, fighter.y + 6.1),
     velocityX: Math.abs(baton.card.velocityX) * fighter.facing,
+    // A card that continues a combo route reaches the held body (culdceptHold.ts).
+    canHitDowned: Boolean(fighter.attack.accel),
     age: 0,
   }
   return {

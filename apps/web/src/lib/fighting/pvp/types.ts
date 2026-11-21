@@ -7,8 +7,8 @@ import type { MaryCommand } from '../bloodyMary'
 import type { LynchQuestionId } from '../lynchTypes'
 import { REPLAY_RULESET } from '../fightReplayTypes'
 
-// 6: optional support kameos in the setup and the kameo call bit in inputs.
-export const PVP_RULESET = `clash-pvp-6:${REPLAY_RULESET}`
+// 7: one round Burst resource and its appended rollback input bit.
+export const PVP_RULESET = `clash-pvp-7:${REPLAY_RULESET}`
 export const PVP_HEARTBEAT_MS = 3_000
 export const PVP_GRACE_MS = 30_000
 export interface PvpSetup {
@@ -23,7 +23,8 @@ export interface PvpSetup {
 export type PvpCommand =
   | { kind: 'arsenal'; command: import('../retrospectiveTypes').ArsenalCommand }
   | { kind: 'move'; action: MoveAction | 'ranged'; input: number }
-  | { kind: 'emperor' | 'call' | 'offer' }
+  | { kind: 'emperor' | 'call' }
+  | { kind: 'offer'; clause?: import('../moonlightClauses').MoonlightClauseId }
   | { kind: 'easter'; slot: 1 | 2 | 3 | 4 }
   | { kind: 'battle'; moveId: string }
   | { kind: 'talk'; words: string }

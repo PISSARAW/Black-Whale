@@ -35,6 +35,10 @@
     <FightDirectionPad {language} {onControl} />
     <div class="touch-defense">
       <FightHeldButton
+        label={fr ? 'Burst défensif' : 'Defensive Burst'}
+        onHold={(active) => onControl('burst', active)}>BURST</FightHeldButton
+      >
+      <FightHeldButton
         label={fr ? 'Garde' : 'Block'}
         onHold={(active) => onControl('guard', active)}>{fr ? 'Garde' : 'Block'}</FightHeldButton
       >

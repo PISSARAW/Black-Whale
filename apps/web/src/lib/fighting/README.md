@@ -5,6 +5,9 @@ Les [sept techniques avancées au combat](./NEN_COMBAT.md) proposent des usages
 complémentaires, leurs contre-jeux, les commandes Xbox et six exercices pratiques.
 Le menu et la préparation en plusieurs pages sont décrits dans [LOBBY.md](./LOBBY.md).
 
+Les [combos signature](./SIGNATURE_COMBOS.md) de Kurapika et d’Hisoka tiennent dans un
+seul compteur, du premier coup à la technique finale, par les vraies commandes.
+
 Les [profils En des quarante combattants](./EN.md) séparent preuves, portées
 observées et réglages arcade ; seules les pratiques qualifiées sont activables.
 
@@ -741,9 +744,18 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
 - Rihan étudie personnellement **un Hatsu précis** avec L (`predator.ts`).
   Seules les manifestations actives qu’il voit entrent dans son catalogue ; In
   exige Gyo, une information rapportée ou un simple indicateur de Hatsu aperçu ne
-  suffit pas. Avant/arrière + L change de proie et recommence son analyse ; bas + L
-  l’abandonne. Après 180 frames d’observation cumulée de cette manifestation, H
-  (ou L) matérialise Predator pour 40 aura. La durée, le coût, le déplacement et
+  suffit pas. Avant/arrière + L change d’enquête et recommence la fiche ; bas + L
+  l’abandonne. La fiche (`predatorSheet.ts`) a cinq lignes, chacune remplie par ce
+  que Rihan voit lui-même : **déclencheur** (une apparition survenue pendant son
+  observation, même s’il encaissait le coup à ce moment — une manifestation déjà
+  active avant l’observation ne le documente pas), **cible**
+  (manifestation et utilisateur à vue ensemble), **portée** (tenue malgré un écart
+  entre combattants qui varie de 6 unités), **conditions** (tenue pendant qu’un des
+  deux combattants change d’état : attaque, saut, garde, choc) et **comportement**
+  (180 frames d’observation cumulée). Fiche complète, Predator part seul la frame
+  suivante pour 40 aura (dès que l’aura est disponible) : le joueur ne choisit ni
+  le moment ni la créature, et le contre vise toujours la manifestation étudiée —
+  jamais de « mauvais Predator » aléatoire. La durée, le coût, le déplacement et
   la dissipation du chasseur en un coup sont des adaptations de duel, sans
   prétendre simuler toutes les déductions du manga.
   `predatorPrey.ts` limite la prédation aux manifestations prises en charge,
@@ -760,8 +772,8 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   persiste entre les manches et après fermeture du livre ou restitution de la
   capacité copiée ; les commandes Nen, On et attaques chargées restent bloquées.
   Le combat physique continue. Un nouveau match réinitialise ce prix, comme les
-  autres états du duel. Le HUD montre la technique ciblée, la progression et le
-  compte à rebours ; l’IA étudie avant de lancer Predator.
+  autres états du duel. Le HUD montre la technique ciblée, les cinq lignes de la
+  fiche, la progression et le compte à rebours ; l’IA étudie et Predator part seul.
 - Zakuro utilise son propre sang avec la perfusion réelle portée dès le début du
   duel (`blood-infusion` dans `preparationTypes.ts`). `bloodyMary.ts` sépare sang,
   poches, matière déployée et prise physique ; le Hatsu ne copie aucun matériel
@@ -835,6 +847,14 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   la durée, le prêt et la sanction ; `moonlightAction.ts` contrôle le démarrage
   effectif des commandes. Les clauses de cette trêve sont une adaptation explicite,
   pas un contrat montré au manga. Une nouvelle partie réinitialise prêts et sanctions.
+  Le panneau propose un **catalogue fermé** (`moonlightClauses.ts`), jamais un
+  éditeur libre : trêve mutuelle (5 s, un usage au destinataire), duel à mains
+  nues (8 s, coups physiques sans aura chargée seulement, +20 d’aura à chaque
+  signataire) et longue trêve (10 s, aucune attaque, +35 d’aura à chaque
+  signataire). La touche L offre la trêve mutuelle. Toute l’entente — termes,
+  durée, récompense, sanction — est copiée dans l’offre et affichée au
+  destinataire avant signature ; la récompense ne touche que les signataires.
+  Sous mains nues, l’IA continue de frapper à mains nues et ne lance rien d’autre.
 - Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**
   si **Morena est présente** et si son adversaire est déclaré **intrus en infraction**
   dans la préparation du duel. `fightEnvironment.ts` transmet ce scénario au moteur.
@@ -919,6 +939,12 @@ Ces tests ne constituent pas une mesure de latence sur une manette physique.
   sous l’identité `sayird:littleEye`, distincte des frappes martiales. Aucun animal
   cible n’est fourni en duel strict. En scénario, un animal réel fournit une
   observation distante ; le contrôle persiste même si l’utilisateur est inconscient.
+  La boule d’aura voyage réellement : une couverture réelle de l’arène entre
+  Sayird et l’animal l’arrête. Les seuls ordres sont se déplacer, regarder,
+  rester et libérer — l’animal n’a aucune attaque. Le corps de Sayird reste
+  frappable pendant le pilotage. Un projectile réel ou un coup bas (accroupi
+  ou visant les pieds) qui balaie l’animal le blesse ou le tue, et le contrôle
+  se perd.
   Dolphin conserve l’exigence d’un animal réel au moment de l’usage.
   Les coups de Sayird restent des adaptations martiales même quand Little Eye
   est retenu. La manche suivante rend la capacité à son propriétaire.
@@ -1480,13 +1506,25 @@ interrogatoire et rend ensuite la capacité, sans effacer l’information appris
 
 `voconteDoors.ts` transporte les corps réels qui franchissent une huisserie active,
 avec leur trajectoire simulée avant les collisions puis après une éventuelle poussée.
-L relie ou referme deux cadres physiques fournis par le duel : A à x=30, vers la
-droite, mène à B ; B à x=70, vers la gauche, ramène à A. Le seuil de retour fixe
-l’orientation d’arrivée. Les deux combattants peuvent subir le transport, sans
-nettoyage du hitstun, invulnérabilité, impact offensif ou charge d’esquive.
-Marcher à contresens ou sauter au-dessus du linteau ne déclenche rien. Les
-projectiles, armes lancées et constructions de Nen ne sont pas transportés ;
-le double contrôlé de Hanzo ne se substitue pas à son corps endormi.
+L relie ou referme deux cadres physiques du niveau. Avant la manche, chaque siège
+capable de Door (`DOOR_CAPABLE_FIGHTERS`) choisit deux huisseries parmi celles du
+décor (`voconteDoorSites.ts`, catalogue par type de scène, écart minimal de 20) ;
+le choix vit dans `environment.doorFrames`, passe par la relecture et le protocole
+PvP, et ne change plus pendant la manche. Sans choix valide, la paire historique
+A à x=30 / B à x=70 s’applique. Le cadre de gauche est A (franchi vers la droite,
+mène à B), celui de droite B (franchi vers la gauche, ramène à A). Le seuil de
+retour fixe l’orientation d’arrivée. Les deux combattants peuvent subir le
+transport, sans nettoyage du hitstun, invulnérabilité, impact offensif ou charge
+d’esquive. Marcher à contresens ou sauter au-dessus du linteau ne déclenche rien.
+
+`voconteDoorProjectiles.ts` fait passer les projectiles **matériels** (`matter:
+'object'`) qui franchissent réellement un cadre ouvert, dans son sens et sous le
+linteau : vitesse et cap conservés, sortie de l’autre côté du cadre lié, et le
+monde situé entre les deux cadres (couverts, caisses) est sauté. L’aura émise,
+les tirs attachés (Bungee Gum, poing télécommandé) et les constructions de Nen ne
+passent pas ; le double contrôlé de Hanzo ne se substitue pas à son corps endormi.
+Ce passage des objets est un choix de jeu explicite qui s’écarte de la lecture
+du manga citée ci-dessous.
 
 La préparation de 18 frames est interruptible. Les deux cadres fournis, leur
 position, leurs dimensions, la sortie à deux unités, le coût de 20 aura, la
@@ -1512,6 +1550,17 @@ dans la zone sélectionnée. Aucun compteur de coups, bonus de détonation ou se
 de vie : le flux passe par les collisions, la défense et les dégâts ordinaires.
 Le papier planté reste physique après interruption du Nen ; le flux perd alors
 sa poursuite. Chaque nouvelle manche repart sans papier ni poupée.
+
+Écoute et attaque utilisent des papiers distincts. Seul un fragment **fixé à une
+personne** peut alimenter une poupée : confectionner la poupée engage un fragment
+déjà planté sur le sujet (`kallutoListeningFragment.ts`), celui de la zone
+sélectionnée, sinon le plus récent, un seul par sujet. Ce fragment d’écoute
+(`listening` sur `PlantedPaper`) ne guide plus le serpent ni ne bloque une
+nouvelle marque dans sa zone ; les marques de guidage, elles, n’alimentent aucune
+poupée. Espionner coûte donc une marque offensive : il faut replanter pour
+attaquer. Les confettis dispersés restent une matière physique, ramassable et
+réutilisable par le serpent, et ne deviennent jamais des capteurs. Aucun papier
+n’est créé : la poupée et le fragment sortent de la réserve finie.
 
 ← L confectionne une poupée du sujet marqué. `kallutoListening.ts` relaie les
 paroles émises par T/V ou Parler à proximité de ce sujet, indépendamment de la

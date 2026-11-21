@@ -24,6 +24,7 @@ import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
 import { createBiohazardDevices } from './legacyBiohazardDevices'
 import { createBiohazardInventory } from './biohazard'
+import { prepareHinrighKits } from './hinrighKitFighters'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
 import { createChrolloBook } from './chrolloBook'
@@ -35,6 +36,8 @@ import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats
 import { createFightingNen } from './nen'
 import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
+import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
+import { carryBodyMemory } from './bodyMemory'
 
 interface CreateFightOptions {
   formatId?: FightFormatId
@@ -81,9 +84,15 @@ export function createFightState(
     projectiles: [],
     nextProjectileId: 1,
     impact: null,
+    burstAvailable: { player: true, opponent: true },
   })
   return applyControlSchemes(
-    prepareHisokaAsphyxia(prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created)))),
+    prepareHinrighKits(
+      prepareHisokaAsphyxia(
+        prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created))),
+      ),
+      createBiohazardInventory,
+    ),
     typeof options === 'string' ? undefined : options.controls,
   )
 }
@@ -91,7 +100,7 @@ export function createFightState(
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
-  return carryMoonlightRound(
+  const next = carryMoonlightRound(
     {
       ...state,
       battlefield: carryPaperWorld(
@@ -110,27 +119,36 @@ export function nextFightRound(state: FightState): FightState {
       lsdf: undefined,
       expulsion: undefined,
       deaths: undefined,
+      attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
-      player: preserveLifespan(
-        createFighter({
-          id: state.player.halkenburgOrigin ?? state.player.id,
-          x: 22,
-          facing: 1,
-          health: format.health,
-        }),
+      burst: undefined,
+      burstAvailable: { player: true, opponent: true },
+      player: carryBodyMemory(
+        preserveLifespan(
+          createFighter({
+            id: state.player.halkenburgOrigin ?? state.player.id,
+            x: 22,
+            facing: 1,
+            health: format.health,
+          }),
+          state.player,
+          state.frame,
+        ),
         state.player,
-        state.frame,
       ),
-      opponent: preserveLifespan(
-        createFighter({
-          id: state.opponent.halkenburgOrigin ?? state.opponent.id,
-          x: 78,
-          facing: -1,
-          health: format.health,
-        }),
+      opponent: carryBodyMemory(
+        preserveLifespan(
+          createFighter({
+            id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+            x: 78,
+            facing: -1,
+            health: format.health,
+          }),
+          state.opponent,
+          state.frame,
+        ),
         state.opponent,
-        state.frame,
       ),
       ...(state.kameos && {
         kameos: nextRoundKameos(state.kameos, (fighter, side) =>
@@ -160,6 +178,7 @@ export function nextFightRound(state: FightState): FightState {
     },
     state,
   )
+  return prepareHinrighKits(next, createBiohazardInventory)
 }
 
 export function preserveLifespan(
@@ -167,6 +186,13 @@ export function preserveLifespan(
   previous: ArcadeFighter,
   elapsedFrames: number,
 ): ArcadeFighter {
+  fighter = {
+    ...fighter,
+    // A round break recovers one quarter; the remaining residue lasts for the match.
+    nenMentalFatigue: Math.round((previous.nenMentalFatigue ?? 0) * 0.75),
+    // The break halves emotional residue and recentres composure/resolve toward neutral.
+    nenPsychology: restedNenPsychology(fighter.id, previous.nenPsychology),
+  }
   fighter = carryHalkenburgSoul(fighter, previous)
   fighter = carryIllumiFace(fighter, previous, elapsedFrames)
   fighter = carryNeedleFace(fighter, previous)
@@ -224,7 +250,10 @@ export function createFighter(options: {
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
+    burstZetsuFrames: 0,
     aura: 55,
+    nenMentalFatigue: 0,
+    nenPsychology: initialNenPsychology(options.id),
     nen: createFightingNen(),
     pose: 'idle',
     hitStun: 0,

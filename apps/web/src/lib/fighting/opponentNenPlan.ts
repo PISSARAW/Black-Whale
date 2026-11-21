@@ -7,6 +7,8 @@ import { applyAuraContext } from './nen'
 import { chainsImmobilize } from './kurapika'
 import { opponentWantsOn } from './onTechnique'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
+import { nenApprehensionRatio, readAuraPsychology } from './nenPsychology'
+import { nenPsychologyProfile } from './nenPsychologyProfiles'
 
 export function planOpponentNen(state: FightState): FightState {
   const locked = lockedOpponentNen(state)
@@ -16,8 +18,11 @@ export function planOpponentNen(state: FightState): FightState {
   const rest = zetsuRest(opponent, gap)
   if (rest) return applyOpponentAura(state, rest)
   if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
+  const observed = psychologyObservationInput(state, gap)
+  if (observed) return applyOpponentAura(state, observed)
   const focused = aiFocusedDefence(state, gap)
   if (focused) return applyOpponentAura(state, focused)
+  if (psychologyNeedsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
   if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
   return advancedOpponentNen(state) ?? restingOpponentNen(state, gap)
 }
@@ -59,6 +64,27 @@ const needsKen = (state: FightState, gap: number) =>
   state.opponent.aura > 28 &&
   !state.opponent.nen.ken &&
   ['heavy', 'special'].includes(state.player.pose)
+const psychologyNeedsKen = (state: FightState, gap: number) => {
+  const reading = readAuraPsychology(state, 'player', 'opponent')
+  const profile = nenPsychologyProfile(state.opponent.id)
+  return (
+    seesCombatBody(state.opponent) &&
+    gap < 24 &&
+    state.opponent.aura > 28 &&
+    !state.opponent.nen.ken &&
+    ((reading?.pressure === 'overwhelming' && profile.auraResponse !== 'press') ||
+      nenApprehensionRatio(state.opponent) >= profile.guardAtApprehension)
+  )
+}
+export const psychologyObservationInput = (
+  state: FightState,
+  gap: number,
+): Partial<FightInput> | null => {
+  const profile = nenPsychologyProfile(state.opponent.id)
+  if (profile.auraResponse !== 'observe' || state.opponent.nen.gyo || gap >= 28) return null
+  const reading = readAuraPsychology(state, 'player', 'opponent')
+  return reading?.pressure === 'high' || reading?.pressure === 'overwhelming' ? { gyo: true } : null
+}
 const wantsRen = (fighter: ArcadeFighter, gap: number) =>
   gap < 12 && fighter.aura > 55 && fighter.nen.mode === 'ten'
 

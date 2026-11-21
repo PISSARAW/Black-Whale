@@ -17,6 +17,7 @@ import {
 import type { FightSide, FightState } from './types'
 import { moveMaryScout, maryScoutSees } from './bloodyMaryScouts'
 import { sleepingBody } from './hanzoProjection'
+import { lureMaryDrop, MARY_DISPERSAL_FRAMES, stepDispersedDrop } from './bloodyMaryReserve'
 
 export function advanceBloodyMary(state: FightState): FightState {
   if (state.phase !== 'fighting' || state.catsName) return state
@@ -152,10 +153,10 @@ function advanceDrops(state: FightState, side: FightSide): FightState {
 
 function stepDrop(state: FightState, side: FightSide, drop: MaryDrop): MaryDrop {
   const remainingFrames = drop.remainingFrames - 1
-  if (drop.reformFrames > 0)
-    return { ...drop, remainingFrames, reformFrames: drop.reformFrames - 1 }
-  if (maryStruckAt(state, side, drop)) return { ...drop, remainingFrames, reformFrames: 30 }
-  return { ...moveMaryScout(state, side, drop), remainingFrames }
+  if (drop.reformFrames > 0) return stepDispersedDrop(state, side, { ...drop, remainingFrames })
+  if (maryStruckAt(state, side, drop))
+    return { ...drop, remainingFrames, reformFrames: MARY_DISPERSAL_FRAMES }
+  return { ...moveMaryScout(state, side, lureMaryDrop(state, side, drop)), remainingFrames }
 }
 
 function observeWithDrop(state: FightState, side: FightSide, drop: MaryDrop): FightState {

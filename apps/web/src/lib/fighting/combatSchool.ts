@@ -28,6 +28,18 @@ import {
   type WakeupSettings,
 } from './combatWakeupPractice'
 import {
+  isSignatureLesson,
+  observeSignatureLesson,
+  signatureDemoAction,
+  signatureDemoCommand,
+  signatureDemoInput,
+  startSignatureLesson,
+  type SignatureProgress,
+} from './signatureSchool'
+import { performArsenalAction } from './arsenalExecution'
+import { performAuraAttack } from './engine'
+import type { ArsenalCommand } from './retrospectiveTypes'
+import {
   WHIFF_PUNISH_START,
   whiffDemonstrationInput,
   whiffPunishReady,
@@ -36,7 +48,10 @@ import {
 interface SchoolProgress extends CombatProgress {
   wakeup?: WakeupProgress
   wakeupSettings?: WakeupSettings
+  signature?: true
 }
+const signatureOf = (progress: SchoolProgress | null) =>
+  progress?.signature ? (progress as SignatureProgress) : null
 
 export function createCombatSchool() {
   const view = writable<SchoolProgress | null>(null)
@@ -44,6 +59,7 @@ export function createCombatSchool() {
   let opponentAt = -1000
   let whiffAt = 0
   let wakeupSent = { player: false, opponent: false }
+  let signatureSentAt = -1
   function definition(id: string) {
     return id.endsWith(':defense')
       ? combatRoutesFor(id.split(':')[0] as CombatFighter)[0]
@@ -60,34 +76,14 @@ export function createCombatSchool() {
     get useFixedTiming() {
       const current = get(view)
       return Boolean(
+        current?.signature ||
         current?.wakeupSettings ||
         (current && definition(current.id).kameo) ||
         (current?.demo && definition(current.id).whiff),
       )
     },
     start(id: string, demo = false, wakeup: Partial<WakeupSettings> = DEFAULT_WAKEUP): FightState {
-      const settings: WakeupSettings = { ...DEFAULT_WAKEUP, ...wakeup }
-      const route = definition(id)
-      if (!route) throw Error('Unknown combat exercise')
-      sentStep = -1
-      opponentAt = -1000
-      wakeupSent = { player: false, opponent: false }
-      const progress = initialCombatProgress(id, demo, Boolean(route.whiff))
-      view.set(route.wakeup ? { ...progress, wakeupSettings: settings } : progress)
-      // A common, genuinely punishable heavy keeps this lesson stable across personal links.
-      const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
-      const state = createCombatRouteFight(route, defensePartner)
-      whiffAt = state.frame + WHIFF_PUNISH_START
-      if (route.wakeup) return prepareWakeupFight(state, settings)
-      if (route.kameo) {
-        const x = settings.position === 'corner' ? 93 : 50
-        return {
-          ...state,
-          player: { ...state.player, x: x - 6 },
-          opponent: { ...state.opponent, x },
-        }
-      }
-      return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
+      return isSignatureLesson(id) ? startSignature(id, demo) : startRoute(id, demo, wakeup)
     },
     release() {
       sentStep = -1
@@ -99,6 +95,8 @@ export function createCombatSchool() {
     observe(state: FightState) {
       const current = get(view)
       if (!current) return
+      const signature = signatureOf(current)
+      if (signature) return observeSignature(signature, state)
       const route = definition(current.id)
       if (
         state.mode !== 'training' ||
@@ -114,6 +112,8 @@ export function createCombatSchool() {
     input(state: FightState, input: FightInput): FightInput {
       const current = get(view)
       if (!current?.demo) return input
+      const signature = signatureOf(current)
+      if (signature) return signatureInput(signature, state)
       if (current.wakeup && current.wakeupSettings)
         return current.wakeup.result
           ? EMPTY_INPUT
@@ -145,22 +145,81 @@ export function createCombatSchool() {
       return [player, opponent].filter((entry): entry is ReplayCommand => Boolean(entry))
     },
     command(state: FightState): ReplayCommand | null {
-      const current = get(view)
-      if (!current || current.complete || current.failed) return null
-      if (current.id.endsWith(':defense')) {
-        const command = defenseCommand(current, state, opponentAt)
-        if (command) opponentAt = state.frame
-        return command
-      }
-      const practice = definition(current.id).whiff
-      if (practice && state.frame >= whiffAt && opponentAt < 0) {
-        opponentAt = state.frame
-        return { kind: 'move', side: 'opponent', action: 'heavy', input: 0 }
-      }
-      const command = demonstrationCommand(current, state, sentStep)
-      if (command) sentStep = current.step
+      const signature = signatureOf(get(view))
+      return signature ? signatureCommand(signature, state) : routeCommand(state)
+    },
+    /** A Hatsu command of a signature demonstration that is not an attack. */
+    action(state: FightState): ArsenalCommand | null {
+      const signature = signatureOf(get(view))
+      if (!signature || state.frame <= signatureSentAt) return null
+      const command = signatureDemoAction(signature, state)
+      if (command) signatureSentAt = state.frame
       return command
     },
+  }
+  function startRoute(id: string, demo: boolean, wakeup: Partial<WakeupSettings>): FightState {
+    const settings: WakeupSettings = { ...DEFAULT_WAKEUP, ...wakeup }
+    const route = definition(id)
+    if (!route) throw Error('Unknown combat exercise')
+    sentStep = -1
+    opponentAt = -1000
+    wakeupSent = { player: false, opponent: false }
+    const progress = initialCombatProgress(id, demo, Boolean(route.whiff))
+    view.set(route.wakeup ? { ...progress, wakeupSettings: settings } : progress)
+    // A common, genuinely punishable heavy keeps this lesson stable across personal links.
+    const defensePartner = id.endsWith(':defense') ? ('benjamin' as const) : undefined
+    const state = createCombatRouteFight(route, defensePartner)
+    whiffAt = state.frame + WHIFF_PUNISH_START
+    if (route.wakeup) return prepareWakeupFight(state, settings)
+    if (route.kameo) {
+      const x = settings.position === 'corner' ? 93 : 50
+      return {
+        ...state,
+        player: { ...state.player, x: x - 6 },
+        opponent: { ...state.opponent, x },
+      }
+    }
+    return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
+  }
+  function routeCommand(state: FightState): ReplayCommand | null {
+    const current = get(view)
+    if (!current || current.complete || current.failed) return null
+    if (current.id.endsWith(':defense')) {
+      const command = defenseCommand(current, state, opponentAt)
+      if (command) opponentAt = state.frame
+      return command
+    }
+    const practice = definition(current.id).whiff
+    if (practice && state.frame >= whiffAt && opponentAt < 0) {
+      opponentAt = state.frame
+      return { kind: 'move', side: 'opponent', action: 'heavy', input: 0 }
+    }
+    const command = demonstrationCommand(current, state, sentStep)
+    if (command) sentStep = current.step
+    return command
+  }
+  function startSignature(id: string, demo: boolean): FightState {
+    const lesson = startSignatureLesson(id, demo)
+    signatureSentAt = -1
+    view.set(lesson.progress)
+    return lesson.state
+  }
+  function observeSignature(progress: SignatureProgress, state: FightState) {
+    if (state.mode !== 'training' || state.frame < progress.lastFrame) return view.set(null)
+    const next = observeSignatureLesson(progress, state)
+    if (next !== progress) view.set(next)
+  }
+  function signatureInput(progress: SignatureProgress, state: FightState): FightInput {
+    const { input, tapFrom } = signatureDemoInput(progress, state)
+    const next: SignatureProgress = { ...progress, tapFrom }
+    if (tapFrom !== progress.tapFrom) view.set(next)
+    return input
+  }
+  function signatureCommand(progress: SignatureProgress, state: FightState) {
+    if (state.frame <= signatureSentAt) return null
+    const command = signatureDemoCommand(progress, state)
+    if (command) signatureSentAt = state.frame
+    return command
   }
 }
 export type CombatSchool = ReturnType<typeof createCombatSchool>
@@ -227,6 +286,11 @@ function advanceSchoolFrame(options: CombatSchoolFrame): FightState {
   const { school, match, state } = options
   const command = school.command(state)
   if (command) match.enqueue(state, command)
+  const action = school.action(state)
+  if (action)
+    match.queue((current) =>
+      performArsenalAction({ state: current, side: 'player', command: action }, performAuraAttack),
+    )
   if (state.frameAccumulator + options.dt >= FIXED_STEP)
     for (const queued of school.wakeupCommands(state)) match.enqueue(state, queued)
   return match.advance(state, school.input(state, options.input), {

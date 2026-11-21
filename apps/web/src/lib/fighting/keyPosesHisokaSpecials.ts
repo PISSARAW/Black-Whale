@@ -17,11 +17,11 @@ export const HISOKA_SPECIAL_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
     },
   ],
   forwardSpecial: [
-    { phase: 'startup', at: 0.7, pose: { leadShoulder: [-1.05, 0, 0.2], leadElbow: [0.5, 0, 0] } },
+    { phase: 'startup', at: 0.5, pose: { leadShoulder: [-1.05, 0, 0.2], leadElbow: [0.5, 0, 0] } },
     {
       phase: 'active',
       at: 0,
-      ease: 'snap',
+      ease: 'smooth',
       pose: {
         body: [-0.15, 0, 0],
         leadShoulder: [-0.2, 0, 0.1],

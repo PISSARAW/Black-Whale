@@ -13,6 +13,7 @@
   class:ready={gauge.ready}
   class:burning={gauge.burning}
   class:sealed={gauge.sealed}
+  class:rage={gauge.rage}
 >
   <div class="bar"><span style={`width:${gauge.share * 100}%`}></span></div>
   <small>{gauge.label}</small>
@@ -59,6 +60,16 @@
   .burning small,
   .sealed small {
     color: #ff6f9f;
+  }
+  .rage .bar {
+    border-color: #ffb020;
+    box-shadow: 0 0 9px rgb(255 98 32 / 75%);
+  }
+  .rage .bar span {
+    background: linear-gradient(90deg, #6b0715, #e32f2f 62%, #ffb020);
+  }
+  .rage small {
+    color: #ffd37a;
   }
   @keyframes smoulder {
     from {

@@ -3,11 +3,14 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
+  import { bodyMemoryLabel } from '$lib/fighting/bodyMemory'
+  import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
+  import FightAccelHeat from './FightAccelHeat.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -21,6 +24,8 @@
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
+    {@const memory = bodyMemoryLabel(fighter, language)}
+    {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
       {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
       <div class="fighter-gauges">
@@ -41,13 +46,18 @@
         <FightHealth {fighter} {language} {mirrored} {detailed} />
         {#if !state.spectatorView}<div
             class="aura"
+            class:hidden={!auraKnown}
             role="meter"
-            aria-label="Aura"
+            aria-label={auraKnown
+              ? 'Aura'
+              : language === 'fr'
+                ? 'Aura dissimulée'
+                : 'Concealed aura'}
             aria-valuemin="0"
             aria-valuemax="100"
-            aria-valuenow={fighter.aura}
+            aria-valuenow={auraKnown ? fighter.aura : undefined}
           >
-            <span style={`width:${fighter.aura}%`}></span>
+            <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
           </div>{/if}
         <div class="nen-status">
           <span
@@ -57,14 +67,29 @@
                 : 'Public view'
               : !mirrored
                 ? nenStatus(fighter).join(' · ')
-                : state.player.nen.gyo
+                : auraKnown
                   ? auraDistribution(fighter)
                   : language === 'fr'
                     ? 'Nen masqué'
                     : 'Nen hidden'}</span
           >
-          {#if !state.spectatorView}<b>{Math.floor(fighter.aura)}<small> / 100</small></b>{/if}
+          {#if !state.spectatorView}<b
+              >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
+            >{/if}
         </div>
+        {#if memory}<div class="body-memory">{memory}</div>{/if}
+        {#if !state.spectatorView}<div
+            class:spent={state.burstAvailable?.[side] === false}
+            class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
+            class="burst-status"
+          >
+            {state.burstAvailable?.[side] === false
+              ? (fighter.burstZetsuFrames ?? 0) > 0
+                ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
+                : 'BURST · SPENT'
+              : 'BURST · READY'}
+          </div>{/if}
+        {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
         <FightComboMaster {state} {side} {language} compact />
         <FightKameoBadge {state} {side} {language} />
       </div>
@@ -164,6 +189,9 @@
     height: 100%;
     background: #7ad4ee;
   }
+  .aura.hidden > span {
+    background: repeating-linear-gradient(135deg, #24333d 0 7px, #111b22 7px 14px);
+  }
   .nen-status {
     margin-top: 0.3rem;
     color: #a6deec;
@@ -178,6 +206,30 @@
   .nen-status small {
     color: #a6b7c6;
     font-size: inherit;
+  }
+  .burst-status {
+    margin-top: 0.2rem;
+    color: #8ff3ff;
+    font: 800 calc(0.65rem * var(--hud-scale, 1))/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+  .body-memory {
+    margin-top: 0.2rem;
+    color: #ffad96;
+    font: 700 calc(0.65rem * var(--hud-scale, 1))/1.2 var(--font-mono);
+    text-transform: uppercase;
+  }
+  .opponent-meter .body-memory {
+    text-align: right;
+  }
+  .burst-status.spent {
+    color: #667782;
+  }
+  .burst-status.zetsu {
+    color: #ff9b8d;
+  }
+  .opponent-meter .burst-status {
+    text-align: right;
   }
   .opponent-meter .meter-label,
   .opponent-meter .nen-status {

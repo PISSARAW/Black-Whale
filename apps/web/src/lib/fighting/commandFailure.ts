@@ -1,5 +1,6 @@
 import { attackAuraCost } from './fightAttackCost'
-import { nenActionAllowed } from './nenActionRules'
+import { nenActionAllowed, usesVoluntaryNen } from './nenActionRules'
+import { nenCognitiveAllows } from './nenCognitiveLoad'
 import { preparationCheck } from './preparationRequirements'
 import { moveById, moveForAction } from './movesets'
 import { fightAcceptsCommands } from './fightOutcome'
@@ -15,6 +16,7 @@ export type CommandFailure =
   | 'recovery'
   | 'hands'
   | 'nen'
+  | 'overload'
   | 'aura'
   | 'equipment'
   | 'preparation'
@@ -50,6 +52,11 @@ function techniqueFailure(state: FightState, intent: CommandIntent): CommandFail
   const grab = superThrowFailure(fighter, intent)
   if (grab) return grab
   const { kind, moveId } = selectedCommand(fighter, intent)
+  if (
+    usesVoluntaryNen(fighter, { kind, moveId }) &&
+    !nenCognitiveAllows(state, intent.side, { kind, moveId })
+  )
+    return 'overload'
   if (!nenActionAllowed({ state, side: intent.side, kind, moveId })) return 'nen'
   if (kind === 'special') {
     const required = preparationFailure(state, { ...intent, moveId })

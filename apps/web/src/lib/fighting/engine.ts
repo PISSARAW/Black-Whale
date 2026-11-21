@@ -47,7 +47,7 @@ import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
 import { performDirectionalChain } from './directionalChainCommand'
 import { pursuitAttackAllowed } from './airPursuitCommand'
-import { resolveMoonlightAction } from './moonlightAction'
+import { moonlightAiBareHands, resolveMoonlightAction } from './moonlightAction'
 import { characterAuraAction } from './characterAuraAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
 import { callHanzoBody } from './hanzoBodyCall'
@@ -63,6 +63,7 @@ import { TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
 import { canUseMovesetMove, moveForAction } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
+import { applyRivalryRules } from './rivalryRules'
 import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
@@ -80,7 +81,11 @@ import type {
 } from './types'
 
 export { TOWER_WIN_SCORE }
-export { createFightState as createFight, nextFightRound as nextRound }
+export { nextFightRound as nextRound }
+
+export function createFight(...args: Parameters<typeof createFightState>): FightState {
+  return applyRivalryRules(createFightState(...args))
+}
 
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
@@ -292,7 +297,14 @@ export const opponentAttack = (state: FightState): FightState =>
 function intentionalOpponentAttack(state: FightState): FightState {
   const counter = nativeRecoveryCounter(state, performAuraAttack)
   if (counter) return counter
+  // Bare strikes cost no aura, so a bare-hands pact keeps the AI fighting even while it recovers.
+  const bareHands = fightAcceptsCommands(state) && moonlightAiBareHands(state, aiBareStrike)
+  if (bareHands) return bareHands
   return reservingAura(state.opponent) ? planOpponentNen(state) : contextualOpponentAttack(state)
+}
+
+function aiBareStrike(state: FightState, kind: 'light' | 'heavy'): FightState {
+  return performAttack(state, 'opponent', kind)
 }
 
 function contextualOpponentAttack(state: FightState): FightState {

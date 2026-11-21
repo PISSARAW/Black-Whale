@@ -81,7 +81,8 @@ describe('physical paper receivers at P2, replay and Dolphin boundaries', () => 
       expect(after).not.toBe(state)
       packet([0, 0, 0, [panelReplayCommand(state, after)]])
     }
-    for (const slot of ['neutralSpecial', 'backSpecial']) {
+    // The doll commits the first fragment to listening; a second one guides the serpent.
+    for (const slot of ['neutralSpecial', 'backSpecial', 'neutralSpecial']) {
       command((before) =>
         performAuraAttack({
           state: before,
@@ -165,7 +166,9 @@ describe('physical paper receivers at P2, replay and Dolphin boundaries', () => 
       player: actor,
       opponent: {
         ...base.opponent,
-        plantedPaper: [{ owner: 'player' as const, ownerMember: 0, zone: 'torso' as const }],
+        plantedPaper: [
+          { owner: 'player' as const, ownerMember: 0, zone: 'torso' as const, listening: true },
+        ],
       },
     }
     expect(paperListening(state, 'player')).toBe(true)

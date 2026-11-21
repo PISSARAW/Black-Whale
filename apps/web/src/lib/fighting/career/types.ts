@@ -37,6 +37,7 @@ export interface CareerProfile {
   history: CareerMatch[]
   totals: Partial<Record<FighterId, FighterTotals>>
   seen: string[]
+  moraleSeen: string[]
   revision: number
 }
 export interface FighterTotals {
@@ -59,6 +60,7 @@ export const emptyCareer = (): CareerProfile => ({
   history: [],
   totals: {},
   seen: [],
+  moraleSeen: [],
   revision: 0,
 })
 export const CAREER_STORAGE = 'black-whale:clash:career:1'

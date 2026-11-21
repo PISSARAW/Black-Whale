@@ -231,15 +231,15 @@ describe('throws, techs and wakeup have explicit windows', () => {
     state = resolve(performThrow(state, 'player'))
     expect(state.impact).toMatchObject({ blocked: false, punish: true })
   })
-  it('only accepts the final six frames as a reversal buffer', () => {
+  it('only accepts the final four frames as a reversal buffer', () => {
     let state = duel()
     state = { ...state, opponent: { ...state.opponent, knockdownFrames: 20 } }
     const refused = performMove({ state, side: 'opponent', action: 'heavy' })
     expect(refused).toBe(state)
-    state = step(state, 14)
+    state = step(state, 16)
     state = performMove({ state, side: 'opponent', action: 'heavy' })
     expect(state.opponent.bufferedAttack?.bufferFrames).toBe(INPUT_BUFFER_FRAMES)
-    state = step(state, 6)
+    state = step(state, 4)
     expect(state.opponent.attack).toMatchObject({ reversal: true, kind: 'heavy', frame: 0 })
     expect(state.opponent.wakeupInvulnerableFrames).toBe(0)
   })

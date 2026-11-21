@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { completePredatorSheet } from './predatorSheet'
 import { beginFight, createFight, performMove } from './engine'
 import {
   canUseMovesetMove,
@@ -410,6 +411,7 @@ function withFinisherCondition(state: FightState): FightState {
               owner: 'opponent',
               preyId: 'bungee-gum',
               observedFrames: 180,
+              sheet: completePredatorSheet(),
             },
           },
         },

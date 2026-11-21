@@ -1,20 +1,36 @@
 import { ContinuousDirector } from './continuousDirector'
-import { predatorReady } from '../../src/lib/fighting/predator'
 import { predatorNenLocked } from '../../src/lib/fighting/predatorSeal'
 import { isBodyguardBullet } from '../../src/lib/fighting/bodyguardFirearms'
 import { rihanPlan, RIHAN_TIMING } from '../../src/lib/fighting/victory/rihanPlan'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 
+function hop(f: ContinuousDirector, side: FightSide) {
+  f.held[side] = { jump: true }
+  f.advance()
+  f.held[side] = {}
+}
+
+const released = (f: ContinuousDirector, side: FightSide) => Boolean(f.state[side].predator?.hunt)
+
+/**
+ * Rihan's own investigation: he watches before the Hatsu appears (trigger), then backs off
+ * while it holds (range). Its user acting supplies the conditions; a complete sheet then
+ * sends Predator by itself, with no release command.
+ */
 function study(f: ContinuousDirector, side: FightSide) {
   const other = side === 'player' ? 'opponent' : 'player'
   if (f.state[other].id === 'hisoka') {
     f.close(other, 4)
+    f.move(side, 'neutralSpecial')
+    // Watching before the hit: the gum appears during the watch, even while Rihan reels.
     f.hit(other, 'neutralSpecial')
     f.until(() => f.free(side) && f.free(other))
-    f.move(side, 'neutralSpecial')
-    f.until(() => predatorReady(f.state, side), 240)
-    return
+    f.retreat(other, 20)
+    hop(f, side)
+    f.until(() => released(f, side), 300)
+    if (released(f, side)) return
+    throw new Error('Native study requires a live manifestation, not guessed knowledge')
   }
   f.move(side, 'neutralSpecial')
   for (let cast = 0; cast < 18; cast++) {
@@ -28,7 +44,13 @@ function study(f: ContinuousDirector, side: FightSide) {
     f.move(other, 'neutralSpecial')
     for (let frame = 0; frame < 100; frame++) {
       f.advance()
-      if (predatorReady(f.state, side) && f.state[other].hatsuEffects.blinkyFrames > 16) return
+      if (f.state[other].hatsuEffects.blinkyFrames > 16) {
+        f.retreat(side, 4)
+        hop(f, side)
+        f.until(() => released(f, side), 240)
+        if (released(f, side)) return
+      }
+      if (released(f, side)) return
       if (!f.state[other].attack) break
     }
   }
@@ -39,8 +61,7 @@ function hunt(f: ContinuousDirector, side: FightSide) {
   study(f, side)
   const studied = f.state[side].predator?.analysis
   const health = [f.state.player.health, f.state.opponent.health]
-  f.move(side, 'finisher')
-  const launched = Boolean(f.state[side].predator?.hunt)
+  const launched = released(f, side)
   f.until(() => predatorNenLocked(f.state[side]), 180)
   const sealed = predatorNenLocked(f.state[side]) && f.state[side].nen.mode === 'zetsu'
   const harmless = health[0] === f.state.player.health && health[1] === f.state.opponent.health

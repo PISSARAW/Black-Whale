@@ -3,6 +3,7 @@ import { advancePaperScatters } from './kallutoScatterFrame'
 import { paperCommand, paperCommandReady } from './kallutoPaper'
 import { paperAbilityAvailable } from './kallutoAccess'
 import { makePaperDoll } from './kallutoSurveillance'
+import { bindListeningFragment } from './kallutoListeningFragment'
 import { launchKallutoPaper } from './kallutoFlight'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -33,7 +34,7 @@ function emitPaper(state: FightState, side: FightSide, command: PaperCommand): F
     return recordDolphinEffects(state, launchKallutoPaper(state, side, command), side)
   const receiver = makePaperDoll(state, side)
   const next = {
-    ...state,
+    ...bindListeningFragment(state, side),
     [side]: {
       ...receiver,
       attack: { ...fighter.attack!, impacted: true },

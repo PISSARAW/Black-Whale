@@ -1,3 +1,4 @@
+import { phinksLowDodge } from './phinksLowDodge'
 import { styleMobility } from './styleMobility'
 import { bodyLegFactor } from './bodyDamage'
 import { FIXED_STEP } from './fightClock'
@@ -105,6 +106,11 @@ function inputDirection(input: FightInput): -1 | 0 | 1 {
   return (Number(input.right) - Number(input.left)) as -1 | 0 | 1
 }
 
+/** The direction a double tap completes on this frame's input, without consuming it. */
+export function doubleTapDirection(fighter: ArcadeFighter, input: FightInput): -1 | 0 | 1 {
+  return trackTaps(fighter, inputDirection(input)).dash
+}
+
 function trackTaps(
   fighter: ArcadeFighter,
   direction: -1 | 0 | 1,
@@ -129,7 +135,9 @@ function canDash(fighter: ArcadeFighter, dash: -1 | 0 | 1): dash is -1 | 1 {
 
 function startDash(fighter: ArcadeFighter, direction: -1 | 1): FighterDash {
   const mobility = styleMobility(fighter)
-  const profile = direction === fighter.facing ? mobility.forwardDash : mobility.backDash
+  const profile =
+    phinksLowDodge(fighter, direction) ??
+    (direction === fighter.facing ? mobility.forwardDash : mobility.backDash)
   return { direction, frame: 0, ...profile }
 }
 

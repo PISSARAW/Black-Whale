@@ -11,11 +11,7 @@ import type { HumanPose } from '../../../tour/humanAnimation'
 export const CROWD_PALETTE = [0x6f5a4c, 0x8a6d5a, 0x4d5b70, 0x7a4040, 0x5d6b4a, 0x9a8a72, 0x3f4656]
 const HAIR = [0x1d1a18, 0x3b2a1e, 0x6a4a2c, 0x8f8a80, 0x2a2420]
 const SKIN = 0xc9a387
-/** Chrollo's own head, worn by a spectator after Convert Hands. */
-const CHROLLO_HEAD = 0x111015
 const HEAD_RADIUS = 0.11
-/** The hall's referee: an authority, not a tone of anonymous crowd. */
-const REFEREE_HEX = 0x3a4152
 
 export interface CrowdScene {
   root: Three.Group
@@ -23,66 +19,11 @@ export interface CrowdScene {
   sync: (crowd: CrowdState, seconds?: number) => void
 }
 
-type Pose = { centreY: number; height: number; lying: boolean; scale: number }
-
-function poseOf(body: CrowdInstance): Pose {
-  const height = body.height * 0.82
-  switch (body.posture) {
-    case 'seated':
-      return { centreY: body.at.y + 0.32, height: height * 0.55, lying: false, scale: 1 }
-    case 'injured':
-    case 'dead':
-      return { centreY: body.at.y + 0.14, height, lying: true, scale: 1 }
-    case 'evacuated':
-    case 'vanished':
-      return { centreY: body.at.y, height, lying: false, scale: 0 }
-    default:
-      return { centreY: body.at.y + height / 2, height, lying: false, scale: 1 }
-  }
-}
-
 interface Meshes {
-  bodies: Three.InstancedMesh
   heads: Three.InstancedMesh
   placed: Three.Object3D
   colour: Three.Color
   skin: Three.Color
-}
-
-interface BodySlots {
-  body: number
-  head: number
-}
-
-function placeBody(meshes: Meshes, body: CrowdInstance, slots: BodySlots): number {
-  const { placed, colour } = meshes
-  const { body: bodyIndex, head: headIndex } = slots
-  const pose = poseOf(body)
-  placed.position.set(body.at.x, pose.centreY, body.at.z)
-  placed.rotation.set(pose.lying ? Math.PI / 2 : 0, 0, 0)
-  placed.scale.set(pose.scale, pose.height * pose.scale, pose.scale)
-  placed.updateMatrix()
-  meshes.bodies.setMatrixAt(bodyIndex, placed.matrix)
-  const dim = body.posture === 'dead' ? 0.45 : 1
-  colour
-    .setHex(body.referee ? REFEREE_HEX : CROWD_PALETTE[body.palette % CROWD_PALETTE.length])
-    .multiplyScalar(0.42 * dim)
-  meshes.bodies.setColorAt(bodyIndex, colour)
-  if (body.headless) return headIndex
-  // The head sits on top of the body, or beyond its end when the body lies down.
-  const reach = pose.height / 2 + HEAD_RADIUS
-  placed.position.set(
-    body.at.x,
-    pose.lying ? pose.centreY : pose.centreY + reach,
-    pose.lying ? body.at.z + reach : body.at.z,
-  )
-  placed.rotation.set(0, 0, 0)
-  placed.scale.setScalar(pose.scale)
-  placed.updateMatrix()
-  meshes.heads.setMatrixAt(headIndex, placed.matrix)
-  colour.setHex(body.chrolloFace ? CHROLLO_HEAD : HAIR[bodyIndex % HAIR.length])
-  meshes.heads.setColorAt(headIndex, colour.lerp(meshes.skin, 0.35 * dim))
-  return headIndex + 1
 }
 
 function placeDetachedHead(meshes: Meshes, at: { x: number; y: number; z: number }, index: number) {
@@ -138,26 +79,41 @@ function placeCharacter(char: CrowdCharacter, body: CrowdInstance): void {
   char.figure.root.rotation.y = Math.sign(body.at.x) * 0.12
 }
 
-/** Instanced bodies and heads, one pair per spectator, up to `capacity` (copies included). */
+/** Places the heads the crowd still carries, detached from their bodies. */
+function placeCrowdHeads(meshes: Meshes, crowd: CrowdState, capacity: number): number {
+  let headCount = 0
+  for (const head of headsOf(crowd)) {
+    if (head.spent || headCount >= capacity) continue
+    placeDetachedHead(meshes, head.at, headCount)
+    headCount += 1
+  }
+  meshes.heads.count = headCount
+  meshes.heads.instanceMatrix.needsUpdate = true
+  if (meshes.heads.instanceColor) meshes.heads.instanceColor.needsUpdate = true
+  return headCount
+}
+
+/**
+ * Human bodies and detached heads, one pair per spectator, up to `capacity`.
+ *
+ * Every human body in the hall — character, referee or anonymous crowd member —
+ * is drawn as a human figure posed like the body that stands there; the bodies
+ * without a declared likeness run on the generic simplified profile.
+ */
 export function buildCrowdScene(kit: SceneryKit, capacity: number): CrowdScene {
   const { THREE, glow, geometry } = kit
   const root = new THREE.Group()
   const meshes: Meshes = {
-    bodies: new THREE.InstancedMesh(
-      geometry(new THREE.BoxGeometry(0.36, 1, 0.26)),
-      glow(0xffffff, 1),
-      capacity,
-    ),
     heads: new THREE.InstancedMesh(
       geometry(new THREE.SphereGeometry(HEAD_RADIUS, 8, 6)),
       glow(0xffffff, 1),
       capacity,
     ),
-    placed: new THREE.Object3D(),
-    colour: new THREE.Color(),
-    skin: new THREE.Color(SKIN),
+    placed: new Three.Object3D(),
+    colour: new Three.Color(),
+    skin: new Three.Color(SKIN),
   }
-  root.add(meshes.bodies, meshes.heads)
+  root.add(meshes.heads)
   const characters = new Map<string, CrowdCharacter>()
   const characterFor = (character: string, pose: HumanPose): CrowdCharacter => {
     const made = characters.get(character) ?? buildCharacter(kit, character, pose)
@@ -171,22 +127,8 @@ export function buildCrowdScene(kit: SceneryKit, capacity: number): CrowdScene {
       const bodies = crowdInstances(crowd).slice(0, capacity)
       const charactersHere = bodies.filter((body) => body.character)
       const refereesHere = bodies.filter((body) => body.referee && !body.character)
-      const anonymous = bodies.filter((body) => !body.character && !body.referee)
-      let headCount = 0
-      anonymous.forEach((body, index) => {
-        headCount = placeBody(meshes, body, { body: index, head: headCount })
-      })
-      for (const head of headsOf(crowd)) {
-        if (head.spent || headCount >= capacity) continue
-        placeDetachedHead(meshes, head.at, headCount)
-        headCount += 1
-      }
-      meshes.bodies.count = anonymous.length
-      meshes.heads.count = headCount
-      for (const mesh of [meshes.bodies, meshes.heads]) {
-        mesh.instanceMatrix.needsUpdate = true
-        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
-      }
+      const anonymousHere = bodies.filter((body) => !body.character && !body.referee)
+      placeCrowdHeads(meshes, crowd, capacity)
       for (const body of charactersHere) {
         const character = characterFor(body.character!, characterPose(body))
         placeCharacter(character, body)
@@ -194,6 +136,11 @@ export function buildCrowdScene(kit: SceneryKit, capacity: number): CrowdScene {
       }
       for (const body of refereesHere) {
         const character = characterFor('referee', characterPose(body))
+        placeCharacter(character, body)
+        character.figure.animate(seconds ?? 0, character.pose, {})
+      }
+      for (const body of anonymousHere) {
+        const character = characterFor(`crowd:${body.id}`, characterPose(body))
         placeCharacter(character, body)
         character.figure.animate(seconds ?? 0, character.pose, {})
       }

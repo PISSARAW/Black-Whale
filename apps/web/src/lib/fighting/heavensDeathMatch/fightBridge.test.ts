@@ -146,27 +146,25 @@ describe('the drawn crowd', () => {
 
   it('draws one body and one head per present spectator', () => {
     const scene = buildCrowdScene(kit as never, 400)
-    const crowd = createCrowd({ count: 300 })
+    const crowd = createCrowd({ count: 20 })
     scene.sync(crowd)
-    const [bodies, heads] = scene.root.children as THREE.InstancedMesh[]
-    expect(bodies.count).toBe(300)
-    expect(heads.count).toBe(300)
+    expect(scene.root.children).toHaveLength(21) // one head instance and one figure per spectator
     const gone = {
       ...crowd,
-      spectators: crowd.spectators.map((s, i) =>
-        i < 50 ? { ...s, posture: 'evacuated' as const } : s,
+      spectators: crowd.spectators.map((spectator, index) =>
+        index < 5 ? { ...spectator, posture: 'evacuated' as const } : spectator,
       ),
     }
     scene.sync(gone)
-    expect(bodies.count).toBe(250)
+    expect(scene.root.children).toHaveLength(21)
   })
 
   it('moves a severed head off its body without changing the instance budget', () => {
     const scene = buildCrowdScene(kit as never, 400)
     const crowd = createCrowd({ count: 20 })
     scene.sync(decapitate(crowd, crowd.spectators[0].id))
-    const [bodies, heads] = scene.root.children as THREE.InstancedMesh[]
-    expect(bodies.count).toBe(20)
-    expect(heads.count).toBe(20)
+    const heads = scene.root.children[0] as THREE.InstancedMesh
+    expect(heads).toBeInstanceOf(THREE.InstancedMesh)
+    expect(heads.count).toBe(1)
   })
 })

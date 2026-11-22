@@ -6,6 +6,7 @@ import { createCrowd, updateSpectator } from './create'
 import { crowdInstances, lodCounts } from './lod'
 import { stepCrowd, type CrowdContext } from './step'
 import type { CrowdState } from './types'
+import { REFEREE_ID, createDeathMatchWorld } from '../chrolloPlan/world'
 
 const context = (extra: Partial<CrowdContext> = {}): CrowdContext => ({
   fighters: [],
@@ -96,6 +97,29 @@ describe('simulated crowd', () => {
     expect(counts.near + counts.mid + counts.far).toBe(260)
     expect(counts.near).toBeGreaterThan(0)
     expect(counts.far).toBeGreaterThan(0)
+  })
+
+  it('flags the referee apart from the anonymous crowd', () => {
+    const { crowd } = createDeathMatchWorld()
+    const referee = crowdInstances(crowd).find((instance) => instance.id === REFEREE_ID)
+    expect(referee?.referee).toBe(true)
+    expect(referee?.character).toBeNull()
+  })
+
+  it('flags the character a crowd body stands for', () => {
+    const crowd = createCrowd({ count: 20 })
+    const copy = updateSpectator(crowd, 's0', (spectator) => ({
+      ...spectator,
+      nature: 'copy',
+      copyOf: 's0',
+    }))
+    expect(crowdInstances(copy).find((instance) => instance.id === 's0')?.character).toBe('hisoka')
+    const chrollo = updateSpectator(crowd, 's1', (spectator) => ({ ...spectator, face: 'chrollo' }))
+    expect(crowdInstances(chrollo).find((instance) => instance.id === 's1')?.character).toBe(
+      'chrollo-lucilfer',
+    )
+    const human = crowdInstances(crowd).find((instance) => instance.id === 's2')
+    expect(human?.character).toBeNull()
   })
 
   it('steps 300 bodies in panic fast enough for a frame', () => {

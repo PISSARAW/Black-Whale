@@ -1,3 +1,4 @@
+import { REFEREE_ID } from '../chrolloPlan/world'
 import type { Vec3 } from '../stands/geometry'
 import { present, type CrowdState, type Spectator } from './types'
 
@@ -32,6 +33,10 @@ export interface CrowdInstance {
   /** Chrollo's face worn by a spectator: the renderer draws his head, not theirs. */
   chrolloFace: boolean
   headless: boolean
+  /** The hall's referee: an authority between the Floor Masters, not an anonymous body. */
+  referee?: boolean
+  /** The character a body stands for, when it is not an anonymous crowd member. */
+  character?: string | null
 }
 
 /** What the renderer needs per body. The nature is deliberately absent. */
@@ -44,5 +49,12 @@ export function crowdInstances(crowd: CrowdState): CrowdInstance[] {
     posture: spectator.posture,
     chrolloFace: spectator.face === 'chrollo',
     headless: Boolean(spectator.headless),
+    referee: spectator.id === REFEREE_ID,
+    character:
+      spectator.nature === 'copy'
+        ? 'hisoka'
+        : spectator.face === 'chrollo'
+          ? 'chrollo-lucilfer'
+          : null,
   }))
 }

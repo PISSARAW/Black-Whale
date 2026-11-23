@@ -5,7 +5,7 @@ import { FIGHTING_ROSTER } from '../roster'
 import { fightReplayHash } from '../fightReplayHash'
 import { introduction, ending, resolvedCeremonyWinner } from './ceremony'
 import { characterLine, DIALOGUES } from './dialogues'
-import { rivalLine, RIVALS } from './rivals'
+import { rivalExchange, rivalKey, rivalLine, RIVALS } from './rivals'
 import { defaultPreferences } from './collection'
 import { createPresentationProfile, PRESENTATION_STORAGE } from './profile'
 import { emptySoloSave, SOLO_STORAGE } from '../solo/storage'
@@ -45,6 +45,19 @@ describe('original presentation without private knowledge or Nen changes', () =>
         state.opponent.secretWindow = undefined
         expect(fightReplayHash(state)).toBe(hash)
       }
+    }
+  })
+  it('indexes each sourced dialogue once and covers the playable roster', () => {
+    expect(new Set(RIVALS.flatMap(({ pair }) => pair))).toEqual(
+      new Set(FIGHTING_ROSTER.map(({ id }) => id)),
+    )
+    expect(new Set(RIVALS.map(({ pair }) => rivalKey(...pair))).size).toBe(RIVALS.length)
+    for (const row of RIVALS) {
+      const [first, second] = row.pair
+      expect(first).not.toBe(second)
+      expect(row.reference).toMatch(/(?:ch|ép)\.\s+\d+/i)
+      expect(row.lines).toHaveLength(4)
+      expect(rivalExchange(second, first)).toBe(row)
     }
   })
   it('uses no rival text for a mirror, or an unrelated pairing', () => {

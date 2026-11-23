@@ -3,9 +3,18 @@ import cast from '../../../../scripts/clash-voice-cast.json'
 import { KAMEO_IDS } from '../kameos/catalogue'
 import { FIGHTING_ROSTER } from '../roster'
 import { FIGHTER_VOICE_ATLAS, FIGHTER_VOICE_RATE, type FighterVoiceLine } from './fighterVoice'
+import { fighterSelectionLine } from './selectionVoice'
 
 describe('Clash roster voice cast', () => {
   const roster = FIGHTING_ROSTER.map(({ id }) => id)
+
+  it('writes a different selection line for every fighter in both languages', () => {
+    for (const locale of ['fr', 'en'] as const) {
+      const lines = roster.map((fighter) => fighterSelectionLine(fighter, locale))
+      expect(lines.every((line) => line && line.length > 10)).toBe(true)
+      expect(new Set(lines).size).toBe(roster.length)
+    }
+  })
 
   it('casts every playable fighter once, in waves of five with distinct source speakers', () => {
     expect(cast.map((wave) => Object.keys(wave).length)).toEqual(Array(8).fill(5))

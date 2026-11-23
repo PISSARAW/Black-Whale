@@ -1,9 +1,11 @@
 # Présentation et collection
 
 L’[étape 9](../STEP9.md) ajoute des textes originaux et une garde-robe locale.
-`dialogues.ts` couvre les quarante combattants sélectionnables ; `rivals.ts`
-choisit huit échanges à partir des seules identités publiques. `ceremony.ts`
-attend un verdict réel pour les fins, sans annoncer un pouvoir caché.
+`dialogues.ts` couvre les quarante combattants sélectionnables. `rivals.ts`
+résout les échanges de `rivalExchanges.json` à partir des deux identités
+publiques. Le catalogue bilingue note le chapitre ou l’épisode qui motive
+chaque échange. Les textes sont écrits pour Clash. `ceremony.ts` attend un
+verdict réel pour les fins, sans annoncer un pouvoir caché.
 
 Les duels contre l'IA et en local jouent une introduction dans leur décor réel :
 2,4 secondes par combattant, puis 1,6 seconde pour le signal de départ.

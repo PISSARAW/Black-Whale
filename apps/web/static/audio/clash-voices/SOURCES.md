@@ -30,3 +30,12 @@ les phonèmes et les répliques par vague de cinq. Exécuter
 avec Piper, NumPy, ONNX Runtime et FFmpeg. L’option `--wave 1` régénère une
 vague seule. Chaque modèle requiert son fichier `.onnx.json` à côté du
 `.onnx`.
+
+L’option `--selection` génère les répliques de sélection avec les mêmes
+locuteurs et traitements. Les textes bilingues figurent dans
+`apps/web/src/lib/fighting/audio/selectionLines.json`.
+
+L’option `--rivals` génère les échanges contextuels depuis
+`apps/web/src/lib/fighting/presentation/rivalExchanges.json`, qui contient les
+repères du manga et de l’anime. Pour ne rebâtir qu’un duel, ajouter
+`--pair chrollo--kurapika`.

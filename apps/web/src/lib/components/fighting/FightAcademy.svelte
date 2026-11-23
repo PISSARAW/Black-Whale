@@ -3,6 +3,7 @@
   import FightCombatSchool from './FightCombatSchool.svelte'
   import FightPracticeHub from './FightPracticeHub.svelte'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
+  import { selectionVoice } from '$lib/fighting/audio/selectionVoice'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
   import type { LessonId } from '$lib/fighting/fightLessons'
   import type { CombatSchool } from '$lib/fighting/combatSchool'
@@ -57,6 +58,7 @@
         >{fr ? 'Ton personnage pour le parcours Arcade' : 'Your Arcade route fighter'}<select
           aria-label={fr ? 'Personnage Arcade' : 'Arcade fighter'}
           value={player}
+          use:selectionVoice={language}
           onchange={(event) => onPlayer(event.currentTarget.value as FighterId)}
           >{#each FIGHTING_ROSTER as fighter (fighter.id)}<option value={fighter.id}
               >{fighter.name}</option

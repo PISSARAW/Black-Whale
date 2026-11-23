@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { FIGHTING_ROSTER, fighterDefinition } from '$lib/fighting/roster'
+  import { selectionVoice } from '$lib/fighting/audio/selectionVoice'
   import {
     SOLO_MODES,
     SOLO_ROUTES,
@@ -70,6 +71,7 @@
       <label
         >{fr ? 'Personnage pour les duels' : 'Fighter for duels'}<select
           bind:value={fighter}
+          use:selectionVoice={language}
           aria-label={fr ? 'Personnage pour les duels' : 'Fighter for duels'}
           >{#each allowed as entry (entry.id)}<option value={entry.id}>{entry.name}</option
             >{/each}</select

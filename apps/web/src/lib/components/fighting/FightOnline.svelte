@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
+  import { selectionVoice } from '$lib/fighting/audio/selectionVoice'
   import type { FighterId } from '$lib/fighting/types'
   import type { RankingCredential } from '$lib/fighting/career/ranking'
   import type { OnlineView, OnlineQueue } from '$lib/fighting/online/types'
@@ -143,6 +144,7 @@
           >{fr ? 'Personnage' : 'Fighter'}<select
             aria-label={fr ? 'Personnage' : 'Fighter'}
             bind:value={fighter}
+            use:selectionVoice={language}
             >{#each FIGHTING_ROSTER as entry (entry.id)}<option value={entry.id}
                 >{entry.name}</option
               >{/each}</select

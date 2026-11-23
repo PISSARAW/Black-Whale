@@ -45,7 +45,7 @@ export function loadVoiceAsset(context: AudioContext, key: string) {
   }
   bank.set(key, pack)
   if (bank.size > 16) {
-    const oldest = [...bank.keys()].find((name) => name.startsWith('roster/'))
+    const oldest = [...bank.keys()].find((name) => name.includes('/'))
     if (oldest) bank.delete(oldest)
   }
   return pack

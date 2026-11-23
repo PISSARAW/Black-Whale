@@ -95,3 +95,17 @@ Deux sous-titres au maximum s’affichent à la fois, avec priorité aux annonce
 aux alertes tactiques.
 La pause, le changement de point de vue et le saut dans un replay effacent les
 signaux en cours.
+
+En sélection, chaque combattant a une réplique originale en français et en
+anglais, jouée au choix du portrait. La fiche affiche le texte et permet de
+réécouter la voix. Les listes de personnages des autres modes déclenchent
+aussi la réplique à la sélection. Le fader des voix, le registre et le mode
+silencieux s’appliquent. Une nouvelle sélection interrompt la phrase précédente.
+Le banc navigateur `node apps/web/scripts/check-fighting-selection-voices.mjs`
+vérifie les deux langues, la réécoute et l’interruption des répliques.
+
+Quand les deux personnages ont un échange dans `presentation/rivalExchanges.json`,
+la sélection du duel et le PvP privé jouent leurs deux prises, dans l’ordre
+écrit. La fiche de sélection affiche les deux répliques avec leur locuteur.
+Pour un duel sans échange écrit, le personnage choisi conserve sa phrase
+individuelle.

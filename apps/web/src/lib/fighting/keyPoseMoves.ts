@@ -27,6 +27,7 @@ import { ROSTER_WAVE_ONE_DIRECTIONAL_POSES } from './keyPosesRosterWaveOneDirect
 import { ROSTER_WAVE_ONE_FINISH_POSES } from './keyPosesRosterWaveOneFinish'
 import { ROSTER_WAVE_TWO_GROUNDED_POSES } from './keyPosesRosterWaveTwo'
 import { ROSTER_WAVE_TWO_DIRECTIONAL_POSES } from './keyPosesRosterWaveTwoDirectional'
+import { ROSTER_WAVE_TWO_FINISH_POSES } from './keyPosesRosterWaveTwoFinish'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -53,6 +54,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
       {
         ...ROSTER_WAVE_TWO_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_TWO_GROUNDED_POSES],
         ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_TWO_DIRECTIONAL_POSES],
+        ...ROSTER_WAVE_TWO_FINISH_POSES[id as keyof typeof ROSTER_WAVE_TWO_FINISH_POSES],
       },
     ]),
   ),
@@ -67,6 +69,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   theta: {
     ...ROSTER_WAVE_TWO_GROUNDED_POSES.theta,
     ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.theta,
+    ...ROSTER_WAVE_TWO_FINISH_POSES.theta,
     ...THETA_SHOT_POSES,
   },
   shizuku: SHIZUKU_KEY_POSES,
@@ -82,6 +85,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   leorio: {
     ...ROSTER_WAVE_TWO_GROUNDED_POSES.leorio,
     ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.leorio,
+    ...ROSTER_WAVE_TWO_FINISH_POSES.leorio,
     neutralSpecial: LEORIO_REMOTE_PUNCH,
   },
   hanzo: HANZO_KEY_POSES,

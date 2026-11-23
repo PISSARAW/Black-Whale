@@ -5,7 +5,11 @@ import { moveById } from './movesets'
 import type { ArcadeFighter } from './types'
 
 const FIGHTERS = new Set<string>(ROSTER_WAVE_TWO_FIGHTERS)
-const SLOTS = new Set<string>([...ROSTER_WAVE_TWO_SLOTS, ...ROSTER_WAVE_TWO_DIRECTIONAL_SLOTS])
+const SLOTS = new Set<string>([
+  ...ROSTER_WAVE_TWO_SLOTS,
+  ...ROSTER_WAVE_TWO_DIRECTIONAL_SLOTS,
+  'lowHeavy',
+])
 
 export function rosterWaveTwoSupport(fighter: ArcadeFighter, frames: PhaseFrames) {
   const attack = fighter.attack

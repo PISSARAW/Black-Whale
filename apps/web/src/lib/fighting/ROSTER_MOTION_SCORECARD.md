@@ -157,3 +157,25 @@ retreating routes remain based over the rear support.
 The roster total is now 231 dedicated physical clips and 129 generated clips.
 The second wave's remaining common priorities are `lowHeavy`, `airLight` and
 `airHeavy`.
+
+## P6 — second-wave low power and air completion
+
+Dedicated `lowHeavy`, `airLight` and `airHeavy` clips complete the second wave.
+Low Heavy keeps its rear support and lead pivot in both facings. Air attacks
+tuck, hold contact, prepare descent and never acquire a planted-foot constraint.
+
+| Fighter  |  P5 |  P6 |
+| -------- | --: | --: |
+| Musse    | 8.7 | 9.6 |
+| Padaille | 8.7 | 9.5 |
+| Rihan    | 8.7 | 9.5 |
+| Theta    | 8.7 | 9.6 |
+| Yokotani | 8.7 | 9.5 |
+| Basho    | 8.6 | 9.5 |
+| Beyond   | 8.6 | 9.4 |
+| Leorio   | 8.6 | 9.5 |
+| Longhi   | 8.6 | 9.5 |
+| Lynch    | 8.6 | 9.5 |
+
+All ten second-wave fighters now have 9/9 dedicated physical clips. The roster
+total is 261 dedicated clips and 99 generated clips.

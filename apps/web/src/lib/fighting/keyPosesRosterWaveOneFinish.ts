@@ -7,7 +7,7 @@ import {
   type GroundedSignature,
 } from './keyPosesRosterWaveOne'
 import { rosterKeyPoses } from './rosterKeyPoses'
-import type { MoveSlot } from './types'
+import type { FighterId, MoveSlot } from './types'
 
 export const ROSTER_WAVE_ONE_FINISH_SLOTS = [
   'lowHeavy',
@@ -15,7 +15,7 @@ export const ROSTER_WAVE_ONE_FINISH_SLOTS = [
   'airHeavy',
 ] as const satisfies readonly MoveSlot[]
 
-const LOW_HEAVY: GroundedSignature = {
+export const ROSTER_LOW_HEAVY_ACCENT: GroundedSignature = {
   load: {
     pelvis: [-0.11, -0.16, 0],
     body: [-0.08, 0, 0],
@@ -37,7 +37,7 @@ const LOW_HEAVY: GroundedSignature = {
   settle: { pelvis: [-0.02, 0, 0], leadKnee: [0.08, 0, 0], rearKnee: [0.05, 0, 0] },
 }
 
-const AIR: Record<'airLight' | 'airHeavy', GroundedSignature> = {
+export const ROSTER_AIR_ACCENTS: Record<'airLight' | 'airHeavy', GroundedSignature> = {
   airLight: {
     load: {
       root: [0, 0.025, 0],
@@ -89,24 +89,24 @@ export const ROSTER_WAVE_ONE_FINISH_POSES = Object.fromEntries(
         id,
         'lowHeavy',
         ROSTER_WAVE_ONE_SIGNATURES[id],
-        LOW_HEAVY,
+        ROSTER_LOW_HEAVY_ACCENT,
       ),
-      airLight: airTimeline(id, 'airLight'),
-      airHeavy: airTimeline(id, 'airHeavy'),
+      airLight: rosterAuthoredAirTimeline(id, 'airLight', ROSTER_WAVE_ONE_SIGNATURES[id]),
+      airHeavy: rosterAuthoredAirTimeline(id, 'airHeavy', ROSTER_WAVE_ONE_SIGNATURES[id]),
     },
   ]),
 ) as Record<(typeof ROSTER_WAVE_ONE_FIGHTERS)[number], Partial<Record<MoveSlot, MoveTimeline>>>
 
-function airTimeline(
-  id: (typeof ROSTER_WAVE_ONE_FIGHTERS)[number],
+export function rosterAuthoredAirTimeline(
+  id: FighterId,
   slot: 'airLight' | 'airHeavy',
+  signature: GroundedSignature,
 ): MoveTimeline {
   const source = rosterKeyPoses(id)[slot]!
   const startup = source.find(({ phase }) => phase === 'startup')!
   const contact = source.find(({ phase, at }) => phase === 'active' && at === 0)!
   const recovery = source.find(({ phase }) => phase === 'recovery')!
-  const signature = ROSTER_WAVE_ONE_SIGNATURES[id]
-  const accent = AIR[slot]
+  const accent = ROSTER_AIR_ACCENTS[slot]
   const force = slot === 'airHeavy' ? 1 : 0.72
   const loaded = addPoses(startup.pose, scalePose(signature.load, force * 0.65), accent.load)
   const struck = addPoses(contact.pose, scalePose(signature.contact, force * 0.75), accent.contact)
@@ -152,5 +152,5 @@ function airTimeline(
 }
 
 export function rosterWaveOneAirContact(slot: MoveSlot): FightPose | null {
-  return slot === 'airLight' || slot === 'airHeavy' ? AIR[slot].contact : null
+  return slot === 'airLight' || slot === 'airHeavy' ? ROSTER_AIR_ACCENTS[slot].contact : null
 }

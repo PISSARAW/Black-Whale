@@ -78,7 +78,11 @@ describe('AI combo follow-up', () => {
 
   it('leaves fighters outside the grammar to the ordinary cadence', () => {
     const state = confirmed('phinks', { blocked: false, seed: seedWhere((c) => c < 0.1) })
-    expect(aiComboFollowUp(state)).toBeNull()
+    const outsideGrammar = {
+      ...state,
+      opponent: { ...state.opponent, id: 'morena' as const },
+    }
+    expect(aiComboFollowUp(outsideGrammar)).toBeNull()
   })
 
   it('lands real multi-hit combos in a versus-AI match against an idle player', () => {

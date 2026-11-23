@@ -235,7 +235,7 @@ que le sang sortant de plaies ouvertes non bouchées ; sans plaie, le finisher r
 
 Transformer les menottes en pigeon jusqu’à la capture au contact → accélération avant → Coup bas
 discret → Pigeon de métal → Crosse animale → Fauchage de la famille → accélération avant →
-Capture de la Xi-Yu → recul → couteau réel de conclusion
+Capture de la Xi-Yu → recul → couteau réel lancé en conclusion
 (`signatureCombosHunters.ts`). Six touches. Les animaux restent les objets transformés et les
 couteaux sont finis (stock réellement décrémenté).
 
@@ -276,7 +276,7 @@ Préparation : ouverture d’une blessure réelle. Combo : Gouttes-yeux → acc�
 ## Battement désaccordé — Melody (flûte)
 
 Revers défensif → accélération arrière → Musique envoûtante jusqu’à l’apaisement (0 dégât) →
-arrêt de la flûte → double accélération avant → Coup bas → Balayage →
+arrêt de la flûte → retour à portée → Coup bas → Balayage →
 accélération avant → Projection (`signatureCombosLot2A.ts`).
 
 ## Le poing qui brûle — Basho (Great Hiker)

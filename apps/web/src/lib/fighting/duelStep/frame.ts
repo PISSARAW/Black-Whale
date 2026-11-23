@@ -40,6 +40,7 @@ import {
   advanceHinrighZakuroLuiniUpgrades,
   breakHinrighHandcuffs,
 } from '../hinrighZakuroLuiniUpgrades'
+import { advanceBlackWhaleCanonUpgrades } from '../blackWhaleCanonUpgrades'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -106,6 +107,7 @@ export function openFrame(
   state = resolveFirearmReload(state, inputs)
   state = advanceSeiyaku(state, inputs)
   state = advanceZodiacAndHeirUpgrades(state, inputs)
+  state = advanceBlackWhaleCanonUpgrades(state, inputs)
   state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)

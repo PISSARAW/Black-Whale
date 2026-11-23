@@ -241,7 +241,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
   if (kind === 'special' && fighter.attack?.hatsuSource) {
-    if (halkenburgHatsuLocked(fighter)) return 0
+    if (halkenburgHatsuLocked(fighter) || fighter.tserriednichBeastSealed) return 0
     return abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter) * predatorHatsuFactor(fighter)
   }
   return categoryPower(fighter, 'enhancer')

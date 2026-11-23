@@ -1,3 +1,4 @@
+import { isBiscuitTrueForm } from './biscuitForm'
 import { fightingStyle } from './fightStyles'
 import { fighterNenTraining } from './nenMastery'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
@@ -23,7 +24,7 @@ export function nenOutputCapacity(fighter: ArcadeFighter): number {
   const control = fighterNenTraining(fighter, 'enhancer').level
   const style = fightingStyle(fighter.nenOwner ?? fighter.id)
   const pace = Math.max(-0.2, Math.min(0.2, style.moveScale - 1))
-  return Math.round(68 + control * 8 + pace * 30)
+  return Math.round(68 + control * 8 + pace * 30) + (isBiscuitTrueForm(fighter) ? 1 : 0)
 }
 
 function investedAura(shot: FightProjectile): number {

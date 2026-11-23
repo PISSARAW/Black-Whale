@@ -25,6 +25,7 @@ import {
   REN_PRESSURE_BLOCKSTUN,
   firearmGuardFactor,
 } from './nenPillars'
+import { franklinKenDrain } from './troupeUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -167,7 +168,8 @@ function struckFighter(
         ? Math.max(
             0,
             options.fighter.aura -
-              (2 + options.damage * 0.1) * bashoKenCostFactor(options.fighter),
+              ((2 + options.damage * 0.1) * bashoKenCostFactor(options.fighter) +
+                franklinKenDrain(options.attacker, options.fighter, options.blocked)),
           )
         : options.fighter.aura,
     nen: contactNen(options.fighter, options.blocked),

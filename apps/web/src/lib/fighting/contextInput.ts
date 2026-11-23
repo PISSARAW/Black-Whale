@@ -1,4 +1,5 @@
 import { arenaObjects } from './arenaActions'
+import { hasIllumiNeedleOrder } from './illumiBiscuitUpgrades'
 import { canSpeak } from './saiyuSenses'
 import type { FightInput, FightSide, FightState } from './types'
 
@@ -34,6 +35,7 @@ export function resolveContextInput(
 ): FightInput {
   if (!input.context) return input
   const fighter = state[side]
+  if (hasIllumiNeedleOrder(fighter)) return { ...input, removeNeedle: true }
   if ((fighter.openWounds ?? 0) > 0) return { ...input, plugWounds: true }
   if (soundThreatActive(state, side)) return { ...input, coverEars: true }
   if (nearbyArenaObject(state, side)) return { ...input, interact: true }

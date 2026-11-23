@@ -27,6 +27,21 @@ import { advanceBashoHaiku, extinguishBashoBurn } from '../bashoHaiku'
 import { advanceNenPillars, startFirearmReload } from '../nenPillars'
 import { advanceSeiyaku } from '../seiyaku'
 import { advanceZodiacAndHeirUpgrades } from '../zodiacAndHeirUpgrades'
+import { advanceTroupeUpgrades } from '../troupeUpgrades'
+import {
+  advanceIllumiBiscuitUpgrades,
+  hasIllumiNeedleOrder,
+  removeIllumiNeedle,
+} from '../illumiBiscuitUpgrades'
+
+function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (inputs[side]?.context && hasIllumiNeedleOrder(state[side])) {
+      state = { ...state, [side]: removeIllumiNeedle(state[side]) }
+    }
+  }
+  return state
+}
 
 function resolveFirearmReload(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -76,6 +91,7 @@ export function openFrame(
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
+  state = resolveNeedleRemoval(state, inputs)
   state = resolveBurnExtinguish(state, inputs)
   state = resolveFirearmReload(state, inputs)
   state = advanceSeiyaku(state, inputs)
@@ -114,14 +130,18 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceNenPillars(
-    advanceBashoHaiku(
-      advanceFurykovProfile(
-        advanceMusseOwl(
-          advanceLeorioSonar(
-            advanceTsk17(
-              advanceChrolloBookIntel(
-                reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+  return advanceIllumiBiscuitUpgrades(
+    advanceTroupeUpgrades(
+      advanceNenPillars(
+        advanceBashoHaiku(
+          advanceFurykovProfile(
+            advanceMusseOwl(
+              advanceLeorioSonar(
+                advanceTsk17(
+                  advanceChrolloBookIntel(
+                    reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+                  ),
+                ),
               ),
             ),
           ),

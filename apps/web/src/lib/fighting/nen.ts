@@ -33,6 +33,7 @@ import { musseOwlDrain } from './musseWindowUpgrades'
 import { bashoKenCostFactor } from './bashoHaiku'
 import { seiyakuExhaustionThreshold, seiyakuHatsuPowerFactor } from './seiyaku'
 import { predatorHatsuFactor } from './predatorUpgrades'
+import { applyIllumiMotorParasite, biscuitRyuFocusShare } from './illumiBiscuitUpgrades'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -66,6 +67,7 @@ export function createFightingNen() {
 
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  input = applyIllumiMotorParasite(fighter, input)
   if (!illumiBodyFree(fighter)) return fighter
   if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
@@ -185,12 +187,14 @@ export function focusAttackRyu(fighter: ArcadeFighter, kind: AttackKind): Arcade
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
   const zone = attackData(kind, fighter).auraZone
+  const focus = biscuitRyuFocusShare(fighter)
+  const rest = (1 - focus) / 3
   const distribution = {
-    head: 0.08,
-    torso: 0.12,
-    hands: 0.08,
-    feet: 0.08,
-    [zone]: 0.72,
+    head: rest,
+    torso: rest,
+    hands: rest,
+    feet: rest,
+    [zone]: focus,
   }
   return requestNenTransfer(fighter, { zone, shares: distribution })
 }

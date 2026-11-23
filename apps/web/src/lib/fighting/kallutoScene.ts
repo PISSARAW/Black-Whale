@@ -1,6 +1,12 @@
 import { createPaperScatterScene } from './kallutoScatterScene'
 import { createFineControlClock } from './fineControlPresentation'
-import { fineControlEase, fineControlReduced } from './fineControlAnchors'
+import { fineControlReduced } from './fineControlAnchors'
+import {
+  PAPER_SCATTER_PIECES,
+  PAPER_STREAM_PIECES,
+  paperRibbonDirection,
+  paperRibbonFragment,
+} from './kallutoPaperRibbon'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { FightProjectile, FightSide, FightState } from './types'
 import type { FineControlFrame } from './fineControlPresentation'
@@ -17,29 +23,30 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
   const pieces = new Map<number, import('three').Mesh[]>()
   const originals = new Map<number, import('three').Object3D>()
   scene.add(group)
-  function show(shot: FightProjectile) {
+  function show(state: FightState, shot: FightProjectile) {
     let held = pieces.get(shot.id)
     if (!held) {
       held = Array.from(
-        { length: shot.kallutoPaper === 'serpent' ? 16 : 6 },
+        {
+          length:
+            shot.kallutoPaper === 'serpent' ? PAPER_STREAM_PIECES : PAPER_SCATTER_PIECES,
+        },
         () => new THREE.Mesh(geometry, material),
       )
       group.add(...held)
       pieces.set(shot.id, held)
     }
     const reduced = fineControlReduced(options)
-    const seconds = shot.age / 60
-    const gather = 0.55 + 0.45 * fineControlEase(shot.age / 18)
+    const direction = paperRibbonDirection(state, shot)
     held.forEach((mesh, trail) => {
-      const length = shot.kallutoPaper === 'serpent' ? 0.035 : 0.018
-      const wave = reduced ? 0 : Math.sin(seconds * 12 - trail * 0.5)
+      const fragment = paperRibbonFragment({ shot, index: trail, reduced, direction })
       mesh.position.set(
-        worldX(shot.x) - Math.sign(shot.velocityX) * trail * length,
-        worldY(shot.y) + wave * (trail + 1) * 0.009 * gather,
-        0.35 + (trail % 3) * 0.006,
+        worldX(shot.x) + fragment.x,
+        worldY(shot.y) + fragment.y,
+        0.35 + fragment.z,
       )
-      mesh.rotation.z = reduced ? trail * 0.35 : seconds * 7 + trail
-      mesh.scale.setScalar(reduced ? 1 : gather)
+      mesh.rotation.z = fragment.rotation
+      mesh.scale.setScalar(fragment.scale)
     })
     // The physical cluster replaces only this live projectile's generic card mesh.
     const generic = originals.get(shot.id) ?? scene.getObjectByName(`fight-projectile:${shot.id}`)
@@ -61,7 +68,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
           pieces.delete(id)
           originals.delete(id)
         }
-      shots.forEach(show)
+      shots.forEach((shot) => show(state, shot))
       for (const side of ['player', 'opponent'] as const)
         posePaper(options, { state, side, frame: frames[side] })
     },

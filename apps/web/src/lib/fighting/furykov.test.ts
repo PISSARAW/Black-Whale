@@ -137,12 +137,20 @@ describe('Furykov — Combo Master alert', () => {
 
   it('never predicts a buffered action or an attack aimed away from the owner', () => {
     const ready = open(duel())
-    const enemy = { ...ready.opponent, hitStun: 5, hatsuChargeFrames: IN_CHARGE_FRAMES }
-    const queued = performMove({
-      state: { ...ready, opponent: enemy },
-      side: 'opponent',
-      action: 'special',
-    })
+    const queued = {
+      ...ready,
+      opponent: {
+        ...ready.opponent,
+        hitStun: 5,
+        bufferedAttack: {
+          kind: 'special' as const,
+          moveId: 'hisoka:neutralSpecial',
+          auraCharged: false,
+          concealed: true,
+          hatsuSource: 'hisoka' as const,
+        },
+      },
+    }
     expect(queued.opponent.bufferedAttack).not.toBeNull()
     expect(queued.opponent.attack).toBeNull()
     expect(queued.player.comboMaster?.alert).toBeNull()

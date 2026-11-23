@@ -3,6 +3,7 @@ import { FIGHTING_ROSTER } from './roster'
 import * as THREE from 'three'
 import { createKallutoPaperScene } from './kallutoScene'
 import { PAPER_STREAM_PIECES } from './kallutoPaperRibbon'
+import { createPaperKit } from './kallutoMaterials'
 import { advanceBlinky } from './blinkyFrames'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAuraAttack, tickFight, nextRound } from './engine'
@@ -322,7 +323,23 @@ describe('Kalluto paper and surveillance dolls', () => {
   it('renders attached scraps, a paper stream and the matching doll without a blast', () => {
     const scene = new THREE.Scene()
     const effect = createKallutoPaperScene({ THREE, scene, worldX: (v) => v, worldY: (v) => v })
-    let state = step(cast(marked(), 'backSpecial'), 35)
+    let state = marked()
+    state = {
+      ...state,
+      player: { ...state.player, paperKit: createPaperKit('player:kalluto:kit') },
+    }
+    state = step(cast(state, 'backSpecial'), 35)
+    state = {
+      ...state,
+      player: { ...state.player, attack: null, pose: 'idle' },
+      opponent: {
+        ...state.opponent,
+        plantedPaper: [
+          ...(state.opponent.plantedPaper ?? []),
+          { owner: 'player', zone: 'torso' },
+        ],
+      },
+    }
     state = launchKallutoPaper(state, 'player', 'serpent')
     effect.sync(state, 1)
     const group = scene.getObjectByName('kalluto-paper')!

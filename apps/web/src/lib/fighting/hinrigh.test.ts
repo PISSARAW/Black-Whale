@@ -161,7 +161,7 @@ describe('Hinrigh’s physical Biohazard objects', () => {
     expect(next.opponent.y).toBe(0)
     expect(next.opponent.blocking).toBe(false)
     expect(next.opponent.bufferedAttack).toBeNull()
-    expect(next.opponent.nen.mode).toBe('zetsu')
+    expect(next.opponent.nen.mode).toBe('ren')
   })
   it('expires after 48 combat frames, drops the same opened handcuffs and gives recapture immunity', () => {
     const state = frames(captured(), BIOHAZARD_CAPTURE)

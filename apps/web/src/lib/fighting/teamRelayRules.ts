@@ -67,6 +67,7 @@ const BODY_FIELDS = new Set([
   'guardFrames',
   'ryuWindow',
   'attack',
+  'attackDrive',
   'bufferedAttack',
   'throwTechFrames',
   'throwTechRecoveryFrames',

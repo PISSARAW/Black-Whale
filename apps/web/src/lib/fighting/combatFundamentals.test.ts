@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { fightSoundEvents } from './audio/events'
 import { beginFight, createFight, performMove, performThrow, tickFight } from './engine'
 import { attackData, attackPhase } from './frameData'
 import { resolveFightImpacts } from './combatImpact'
@@ -384,6 +385,14 @@ describe('downed bodies and juggle ceilings', () => {
       attacker: 'player',
     })
   })
+  it('keeps each confirmed projectile contact in a same-frame volley audible once', () => {
+    const base = duel()
+    const result = resolveFightImpacts(base, [shot(base), shot(base, { id: 2 })])
+    const sounds = fightSoundEvents(base, result).filter(({ kind }) => kind === 'impact')
+    expect(sounds.map(({ impact }) => impact?.projectileId)).toEqual([1, 2])
+    expect(fightSoundEvents(result, result)).toEqual([])
+  })
+
   it('applies the juggle ceiling to every hit in a simultaneous projectile volley', () => {
     const base = duel()
     const state = { ...base, opponent: { ...base.opponent, y: 4, juggleCount: 2, comboHits: 2 } }

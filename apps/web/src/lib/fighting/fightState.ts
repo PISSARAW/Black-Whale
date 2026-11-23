@@ -207,6 +207,8 @@ export function nextFightRound(state: FightState): FightState {
       projectiles: [],
       nextProjectileId: 1,
       impact: null,
+      audioContacts: undefined,
+      audioInterceptions: undefined,
     },
     state,
   )

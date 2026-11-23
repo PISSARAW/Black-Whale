@@ -32,11 +32,14 @@
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
+  export let audioSeek = 0
+  export let audioState: FightState | null = null
+  export let audioPaused: boolean | undefined = undefined
   export let victoryEnabled = true
   export let victoryPaused = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
-  $: victory.observe(state, victoryEnabled)
+  $: victory.observe(audioState ?? state, victoryEnabled)
   $: victoryActive = Boolean($victory?.active)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let minimal = false
@@ -73,10 +76,11 @@
 </script>
 
 <FightAudio
-  {state}
+  state={audioState ?? state}
   {language}
-  paused={paused || victoryActive}
+  paused={audioPaused ?? paused}
   viewer={sensoryViewer}
+  {audioSeek}
   showSettings={!minimal}
   bind:settings={audioSettings}
 />

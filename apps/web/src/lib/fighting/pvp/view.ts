@@ -183,6 +183,7 @@ export function privatePvpState(
   redactPriorityWorld(view, side)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
+  redactConcealedSound(view, side, other)
   view.bungeeGum = bungeeVisible(view, side) ? view.bungeeGum : null
   view.projectiles = privateGumProjectiles(view, side)
   view.gumNetwork = privateGumNetwork(view, side)
@@ -197,6 +198,20 @@ export function privatePvpState(
   return presented
 }
 
+function redactConcealedSound(view: FightState, side: FightSide, other: FightSide) {
+  if (gyoSight(view[side])) return
+  if (view.audioInterceptions)
+    view.audioInterceptions = view.audioInterceptions.filter(
+      (cue) => cue.side !== other || !cue.concealed,
+    )
+  if (view.audioContacts) {
+    view.audioContacts = view.audioContacts.map((contact) =>
+      contact.impact.attacker === other && contact.impact.concealed
+        ? { ...contact, moveId: undefined, shape: undefined }
+        : contact,
+    )
+  }
+}
 const privateForecast = {
   player: new WeakMap<FutureFrame, FutureFrame>(),
   opponent: new WeakMap<FutureFrame, FutureFrame>(),

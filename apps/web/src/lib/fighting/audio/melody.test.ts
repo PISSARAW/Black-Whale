@@ -19,7 +19,7 @@ describe('continuous flute audio', () => {
   beforeEach(() => vi.clearAllMocks())
 
   it('waits for preparation, sustains both performers, and silences an interrupted performance', () => {
-    const mix = { context: { currentTime: 1 }, effects: {} } as FightMix
+    const mix = { context: { currentTime: 1 }, channels: { techniques: {} } } as FightMix
     const voices = createMelodyVoices(mix)
     let state = beginFight(createFight('melody', 'melody', { mode: 'versus-local' }))
     state = { ...state, player: { ...state.player, x: 10 }, opponent: { ...state.opponent, x: 90 } }

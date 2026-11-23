@@ -34,6 +34,8 @@ export type Graph = {
   reverbSend: GainNode
   /** A mode-owned destination, already placed and reverberated. */
   oneShotTarget?: AudioNode
+  /** Optional onset offset for multiple contacts delivered in one update. */
+  timeOffset?: number
   /** Optional lifecycle owner for one-shots borrowed by an isolated mode. */
   registerSource?: (source: AudioScheduledSourceNode) => void
 }

@@ -1,10 +1,33 @@
 <script lang="ts">
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
-  import { saveFightAudioSettings } from '$lib/fighting/audio/settings'
+  import {
+    FIGHT_AUDIO_PRESETS,
+    FIGHT_CHANNELS,
+    saveFightAudioSettings,
+  } from '$lib/fighting/audio/settings'
+  const labels = {
+    effects: ['Impacts et garde', 'Impacts and guard'],
+    movement: ['Déplacements', 'Movement'],
+    techniques: ['Techniques et Nen', 'Techniques and Nen'],
+    voices: ['Voix des combattants', 'Fighter voices'],
+    announcer: ['Voix de bord', 'Ship announcer'],
+    interface: ['Signaux de combat', 'Combat cues'],
+    music: ['Musique', 'Music'],
+    ambience: ['Ambiance du terrain', 'Stage ambience'],
+    tension: ['Tension et tic-tac', 'Tension and ticking'],
+    cinematics: ['Cinématiques', 'Cinematics'],
+  } as const
+  $: en = language === 'en' ? 1 : 0
+  function preset(name: keyof typeof FIGHT_AUDIO_PRESETS) {
+    settings = { ...FIGHT_AUDIO_PRESETS[name], muted: settings.muted, mono: settings.mono }
+    remember()
+  }
   export let settings = { ...DEFAULT_FIGHT_AUDIO }
   export let language: 'fr' | 'en'
   export let unavailable = false
   export let inline = false
+  let open = inline
+  $: if (inline) open = true
   export let onChange: () => void = () => saveFightAudioSettings(settings)
   const controlKey = (event: KeyboardEvent) => {
     if (!inline) event.stopPropagation()
@@ -30,45 +53,47 @@
         ? 'Activé'
         : 'On'}
   </button>
-  <details open={inline}>
+  <details bind:open>
     <summary onkeydown={controlKey}>{language === 'fr' ? 'Mixage' : 'Mix'}</summary>
     <div class="mix-panel">
-      <label
-        >{language === 'fr' ? 'Coups et techniques' : 'Strikes and techniques'}
+      <div class="presets">
+        <button type="button" onclick={() => preset('default')}>{en ? 'Default' : 'Défaut'}</button>
+        <button type="button" onclick={() => preset('competitive')}
+          >{en ? 'Competition' : 'Compétition'}</button
+        >
+        <button type="button" onclick={() => preset('accessible')}
+          >{en ? 'Accessibility' : 'Accessibilité'}</button
+        >
+      </div>
+      <label class="mono">
         <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-          bind:value={settings.effects}
-          onchange={remember}
+          type="checkbox"
+          checked={settings.mono}
+          onchange={(event) => {
+            settings = { ...settings, mono: event.currentTarget.checked }
+            remember()
+          }}
           onkeydown={controlKey}
         />
+        Mono
       </label>
-      <label
-        >{language === 'fr' ? 'Ambiance du stage' : 'Stage ambience'}
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-          bind:value={settings.ambience}
-          onchange={remember}
-          onkeydown={controlKey}
-        />
-      </label>
-      <label
-        >{language === 'fr' ? 'Tension et tic-tac' : 'Tension and ticking'}
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-          bind:value={settings.tension}
-          onchange={remember}
-          onkeydown={controlKey}
-        />
-      </label>
+      {#each FIGHT_CHANNELS as channel (channel)}
+        <label>
+          {labels[channel][en]}
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={settings[channel]}
+            onchange={(event) => {
+              settings = { ...settings, [channel]: event.currentTarget.valueAsNumber }
+              remember()
+            }}
+            onkeydown={controlKey}
+          />
+        </label>
+      {/each}
     </div>
   </details>
   {#if unavailable}<span>{language === 'fr' ? 'Audio indisponible' : 'Audio unavailable'}</span
@@ -130,6 +155,24 @@
   input {
     width: 100%;
     accent-color: #d2b56e;
+  }
+  .presets,
+  .mono {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .mono input {
+    width: auto;
+  }
+  .mix-panel {
+    max-height: 65vh;
+    overflow: auto;
+  }
+  .inline .mix-panel {
+    max-height: none;
+    overflow: visible;
   }
   .inline {
     display: grid;

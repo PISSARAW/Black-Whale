@@ -184,8 +184,22 @@ describe('combat sound coverage', () => {
     const events = []
     for (let frame = 1; frame <= 60; frame++)
       events.push(...fightSoundEvents(walk(frame - 1), walk(frame)))
-    expect(events.filter((event) => event.kind === 'step')).toHaveLength(3)
-    expect(fightSoundEvents(walk(36), walk(36))).toEqual([])
+    expect(events.filter((event) => event.kind === 'step')).toEqual([
+      expect.objectContaining({ x: 23.6, take: expect.any(Number) }),
+    ])
+    expect(fightSoundEvents(walk(36), { ...walk(36), frame: 72 })).toEqual([])
+    expect(
+      fightSoundEvents(walk(14), walk(17)).filter((event) => event.kind === 'step'),
+    ).toHaveLength(1)
+  })
+
+  it('plays a single ground contact when a downed airborne fighter lands', () => {
+    const before = fighting()
+    const air: FightState = { ...before, player: { ...before.player, y: 2, pose: 'down' } }
+    const grounded: FightState = { ...air, player: { ...air.player, y: 0 } }
+    expect(kinds(before, air)).toEqual([])
+    expect(kinds(air, grounded)).toEqual(['fall'])
+    expect(kinds(grounded, grounded)).toEqual([])
   })
 
   it('announces utility transformations and actual armour/sun transitions without an impact', () => {

@@ -22,7 +22,7 @@ describe('Bonolenov body instrument', () => {
   beforeEach(() => vi.clearAllMocks())
 
   it('unwraps once through simulation, sounds ordinary combat on both sides, and keeps holes exposed at rest', () => {
-    const mix = { context: { currentTime: 1 }, effects: {} } as FightMix
+    const mix = { context: { currentTime: 1 }, channels: { techniques: {} } } as FightMix
     const voices = createBonolenovVoices(mix)
     const initial = beginFight(createFight('bonolenov', 'bonolenov', { mode: 'versus-local' }))
     expect(bonolenovInstrumentExposed(initial.player)).toBe(false)
@@ -48,7 +48,7 @@ describe('Bonolenov body instrument', () => {
   it('follows preparation counters and cuts sound on interruption, hitstop, pause, mute and round end', () => {
     const initial = beginFight(createFight('bonolenov', 'hisoka', { mode: 'versus-local' }))
     const state = performAttack(initial, 'player', 'special')
-    const mix = { context: { currentTime: 1 }, effects: {} } as FightMix
+    const mix = { context: { currentTime: 1 }, channels: { techniques: {} } } as FightMix
     const voices = createBonolenovVoices(mix)
     const sources = audio.continuous.mock.results.map((result) => result.value)
     voices.update(state, true)

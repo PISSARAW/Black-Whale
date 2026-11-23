@@ -3,14 +3,26 @@ import { outputBus } from '$lib/audio/output'
 import { noiseBuffer } from '$lib/audio/hatsu/synth'
 import { impulseResponse } from '$lib/tour/atmosphere'
 import { STAGE_SOUNDS, type StageSoundProfile } from './stages'
+import type { FightAudioSettings, FightChannel } from './settings'
 import type { FightStageId } from '../stages'
 
 interface Voice {
+  priority: number
   graph: Graph
   nodes: AudioNode[]
   sources: Set<AudioScheduledSourceNode>
   timer: ReturnType<typeof setTimeout>
 }
+
+type MixChannel = Exclude<FightChannel, 'cinematics'>
+const EXTRA_CHANNELS = [
+  'movement',
+  'techniques',
+  'voices',
+  'announcer',
+  'interface',
+  'music',
+] as const
 
 export interface FightMix {
   context: AudioContext
@@ -18,8 +30,9 @@ export interface FightMix {
   ambience: GainNode
   pressure: GainNode
   profile: StageSoundProfile
-  channels: { music: GainNode }
-  event: (x: number, bus?: 'effects' | 'ambience' | 'pressure') => Graph
+  channels: Record<MixChannel, GainNode>
+  event: (x: number, bus?: MixChannel, priority?: number) => Graph | null
+  configure: (settings: FightAudioSettings, duck: number) => void
   hearing: readonly AudioParam[]
   setActive: (active: boolean) => void
   dispose: () => void
@@ -31,15 +44,21 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
   const effects = context.createGain()
   const ambience = context.createGain()
   const pressure = context.createGain()
-  const music = context.createGain()
   const gateEffects = context.createGain()
   const gateAmbient = context.createGain()
   const hearing = context.createBiquadFilter()
   hearing.type = 'lowpass'
   hearing.frequency.value = 18000
+  const extra = Object.fromEntries(
+    EXTRA_CHANNELS.map((channel) => {
+      const node = context.createGain()
+      node.connect(channel === 'music' ? gateAmbient : gateEffects)
+      return [channel, node]
+    }),
+  ) as Record<(typeof EXTRA_CHANNELS)[number], GainNode>
+  const channels = { effects, ambience, tension: pressure, ...extra }
   effects.connect(gateEffects)
   ambience.connect(gateAmbient)
-  music.connect(gateAmbient)
   const hearingAmbient = context.createBiquadFilter()
   hearingAmbient.type = 'lowpass'
   hearingAmbient.frequency.value = 18000
@@ -63,9 +82,14 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     const index = voices.indexOf(voice)
     if (index >= 0) voices.splice(index, 1)
   }
-  const event = (x: number, bus: 'effects' | 'ambience' | 'pressure' = 'effects'): Graph => {
-    // Attacks remain legible in long barrages; old tails give way to new action.
-    if (voices.length >= 32) disconnectVoice(voices[0])
+  const event: FightMix['event'] = (x, bus = 'effects', priority = 1) => {
+    if (voices.length >= 32) {
+      const weakest = voices.reduce((oldest, voice) =>
+        voice.priority < oldest.priority ? voice : oldest,
+      )
+      if (weakest.priority > priority) return null
+      disconnectVoice(weakest)
+    }
     const muffle = context.createBiquadFilter()
     muffle.type = 'lowpass'
     muffle.frequency.value = 14000
@@ -80,8 +104,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     const send = context.createGain()
     send.gain.value = 0.22
     muffle.connect(air).connect(master).connect(panner)
-    const target = { effects, ambience, pressure }[bus]
-    panner.connect(target)
+    panner.connect(channels[bus])
     if (bus === 'effects') panner.connect(send).connect(room)
     const reverbSend = context.createGain()
     reverbSend.gain.value = 0.12
@@ -89,7 +112,14 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     const sources = new Set<AudioScheduledSourceNode>()
     const registerSource = (source: AudioScheduledSourceNode) => {
       sources.add(source)
-      source.addEventListener('ended', () => sources.delete(source), { once: true })
+      source.addEventListener(
+        'ended',
+        () => {
+          sources.delete(source)
+          if (!sources.size && voices.includes(voice)) disconnectVoice(voice)
+        },
+        { once: true },
+      )
     }
     const graph = {
       context,
@@ -102,6 +132,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     }
     const nodes = [muffle, air, master, panner, send, reverbSend]
     const voice: Voice = {
+      priority,
       graph,
       nodes,
       sources,
@@ -110,10 +141,24 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     voices.push(voice)
     return graph
   }
-  const setActive = (active: boolean) => {
+  let active = true
+  const setActive = (next: boolean) => {
+    if (next === active) return
+    active = next
+    if (!active) voices.slice().forEach(disconnectVoice)
     const now = context.currentTime
     for (const node of [gateEffects, gateAmbient])
       node.gain.setTargetAtTime(active ? 1 : 0, now, 0.025)
+  }
+  const configure = (settings: FightAudioSettings, duck: number) => {
+    for (const channel of EXTRA_CHANNELS) {
+      const level = settings[channel] * (channel === 'music' ? duck : 1)
+      channels[channel].gain.setTargetAtTime(level, context.currentTime, 0.025)
+    }
+    for (const gate of [gateEffects, gateAmbient]) {
+      gate.channelCount = settings.mono ? 1 : 2
+      gate.channelCountMode = 'explicit'
+    }
   }
   const dispose = () => {
     setActive(false)
@@ -121,10 +166,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     // Disconnect gates after the release; never close the ship's context.
     setTimeout(() => {
       ;[
-        effects,
-        ambience,
-        music,
-        pressure,
+        ...Object.values(channels),
         gateEffects,
         gateAmbient,
         hearing,
@@ -140,7 +182,8 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     ambience,
     pressure,
     profile,
-    channels: { music },
+    channels,
+    configure,
     event,
     setActive,
     hearing: [hearing.frequency, hearingAmbient.frequency],
@@ -188,7 +231,12 @@ export function continuousVoice(
     frequency = source.frequency
   }
   source.connect(filter)
-  source.start()
+  // Every sustained layer used to begin at sample zero of the same shared
+  // buffer. In the arena those perfectly correlated copies reinforced one
+  // another and sounded like electrical crackle. Give each layer its own
+  // phase; one-shot noises already do the same in `rush`.
+  if ('buffer' in source) source.start(0, Math.random() * source.buffer!.duration)
+  else source.start()
   return {
     frequency,
     level: gain.gain,

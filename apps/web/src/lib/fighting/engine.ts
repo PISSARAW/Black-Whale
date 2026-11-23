@@ -1,3 +1,4 @@
+import { retainSoundContacts } from './audio/impactHistory'
 import { nativeRecoveryCounter } from './recoveryCounterAction'
 import { stepDeathMatchFight } from './heavensDeathMatch/fightBridge'
 import { movesetFor } from './movesets'
@@ -157,6 +158,7 @@ export function tickFight(
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
+    next = retainSoundContacts(beforeFrame, next)
     settings.onFrame?.(beforeFrame, next)
   }
   return advanceEasterEggs(next, false)

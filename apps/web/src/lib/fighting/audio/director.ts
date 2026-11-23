@@ -7,28 +7,25 @@ import { saiyuAudioEnabled } from '../saiyuSenses'
 import { activeSoundNen, fightSoundEvents, newSoundRound } from './events'
 import { createClashMusic, stageMusicUrl } from './clashMusic'
 import { continuousVoice, createFightMix, type ContinuousVoice, type FightMix } from './mixer'
+import { createBoardVoice, playCombatVoice } from './combatDialogue'
+import type { VoiceLocale } from './speechSamples'
 import { playFightSound } from './play'
 import { FIGHTER_SOUNDS } from './profiles'
 import { combatPressure } from './stages'
 
-export interface FightAudioSettings {
-  muted: boolean
-  effects: number
-  ambience: number
-  tension: number
-}
-
-export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
-  muted: false,
-  effects: 0.85,
-  ambience: 0.65,
-  tension: 0.65,
-}
+import type { FightAudioSettings } from './settings'
+export { DEFAULT_FIGHT_AUDIO, type FightAudioSettings } from './settings'
 
 export interface FightAudioDirector {
   update: (
     state: FightState,
-    options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide },
+    options: {
+      paused: boolean
+      settings: FightAudioSettings
+      viewer?: FightSide
+      seek?: number
+      locale?: VoiceLocale
+    },
   ) => void
   dispose: () => void
 }
@@ -41,31 +38,38 @@ interface AuraVoices {
 
 function auraVoices(mix: FightMix): AuraVoices {
   return {
-    hum: continuousVoice(mix, { target: mix.effects, hz: 110, level: 0 }),
-    beating: continuousVoice(mix, { target: mix.effects, hz: 111, type: 'triangle', level: 0 }),
-    air: continuousVoice(mix, { target: mix.effects, hz: 500, noise: true, level: 0 }),
+    hum: continuousVoice(mix, { target: mix.channels.techniques, hz: 110, level: 0 }),
+    beating: continuousVoice(mix, {
+      target: mix.channels.techniques,
+      hz: 111,
+      type: 'triangle',
+      level: 0,
+    }),
+    air: continuousVoice(mix, { target: mix.channels.techniques, hz: 500, noise: true, level: 0 }),
   }
 }
 
 function stageVoices(mix: FightMix): ContinuousVoice[] {
-  const { profile, ambience, pressure } = mix
+  const { profile, ambience, pressure, channels } = mix
   return [
     continuousVoice(mix, {
       target: ambience,
       hz: profile.noiseHz,
       noise: true,
-      level: profile.air,
+      // A little air gives the room a body; at the old full level it read as
+      // a permanent electrical crackle once aura and pressure were added.
+      level: profile.air * 0.2,
     }),
-    continuousVoice(mix, { target: ambience, hz: profile.droneHz, level: 0.018 }),
+    continuousVoice(mix, { target: channels.music, hz: profile.droneHz, level: 0.018 }),
     continuousVoice(mix, {
-      target: ambience,
+      target: channels.music,
       hz: profile.droneHz * 2.006,
       type: 'triangle',
       level: 0.008,
     }),
     continuousVoice(mix, { target: pressure, hz: 73.42, type: 'triangle', level: 0.018 }),
     continuousVoice(mix, { target: pressure, hz: 74.2, type: 'triangle', level: 0.016 }),
-    continuousVoice(mix, { target: pressure, hz: 450, noise: true, level: 0.018 }),
+    continuousVoice(mix, { target: pressure, hz: 450, noise: true, level: 0.004 }),
   ]
 }
 
@@ -80,10 +84,15 @@ function updateMusic(
   options: { active: boolean; state: FightState; settings: FightAudioSettings },
 ): boolean {
   if (!music) return false
-  const audible =
-    options.active && options.state.phase !== 'finished' && options.settings.ambience > 0
+  const audible = options.active && options.state.phase !== 'finished' && options.settings.music > 0
   music.setTarget(audible ? mix.channels.music : null)
   return music.playing
+}
+
+function audioTransition(previous: FightState | null, state: FightState, seeking: boolean) {
+  if (!previous) return null
+  if (seeking || previous.environment.stageId !== state.environment.stageId) return 'track'
+  return newSoundRound(previous, state) ? 'mix' : null
 }
 
 /** No timers drive combat cues: simulation frames own time, hitstop and pause. */
@@ -97,8 +106,9 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
   let bodyMusic = createBonolenovVoices(mix)
   let auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   let previous: FightState | null = null
-  let active = true
   let disposed = false
+  let lastSeek = 0
+  const board = createBoardVoice()
   const stop = () => {
     melodies.stop()
     bodyMusic.stop()
@@ -114,26 +124,54 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     bodyMusic = createBonolenovVoices(mix)
     auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   }
-  const update: FightAudioDirector['update'] = (state, options) => {
-    if (disposed) return
-    const stageChanged = previous && previous.environment.stageId !== state.environment.stageId
-    if (stageChanged) {
+  const synchronizeRound = (state: FightState, seeking: boolean) => {
+    const transition = audioTransition(previous, state, seeking)
+    if (transition === 'track') {
       music?.dispose()
       music = stageMusic(context, state)
     }
-    if (previous && newSoundRound(previous, state)) rebuild(state)
-    active = !options.paused && !options.settings.muted
-    active = active && saiyuAudioEnabled(state, options.viewer)
+    if (transition) rebuild(state)
+  }
+  const update: FightAudioDirector['update'] = (state, options) => {
+    if (disposed) return
+    const seek = options.seek ?? 0
+    const seeking = seek !== lastSeek
+    lastSeek = seek
+    synchronizeRound(state, seeking)
+    const active =
+      !options.paused && !options.settings.muted && saiyuAudioEnabled(state, options.viewer)
     mix.setActive(active)
     const scored = updateMusic(music, mix, { active, state, settings: options.settings })
     melodies.update(state, active)
     bodyMusic.update(state, active)
-    updateLevels(mix, { state, settings: options.settings, viewer: options.viewer })
+    const locale = options.locale ?? 'fr'
+    board.update(mix, {
+      before: previous,
+      state,
+      locale,
+      seeking,
+      enabled: active && options.settings.announcer > 0,
+    })
+    updateLevels(mix, {
+      state,
+      settings: options.settings,
+      viewer: options.viewer,
+      announcing: board.announcing(context.currentTime),
+    })
     updateStageDrone(mix, { voices: stages, scored })
     updateStagePressure(mix, stages, state)
     for (const side of ['player', 'opponent'] as const)
       updateAura(mix, { voices: auras[side], state, side })
-    playConfirmedCues(mix, { before: previous, state, active, scored })
+    if (!seeking)
+      playConfirmedCues(mix, {
+        before: previous,
+        state,
+        active,
+        scored,
+        viewer: options.viewer,
+        locale,
+        voices: options.settings.voices,
+      })
     previous = state
   }
   return {
@@ -142,6 +180,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
       if (!disposed) {
         disposed = true
         music?.dispose()
+        board.dispose()
         stop()
       }
     },
@@ -150,25 +189,46 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
 
 function playConfirmedCues(
   mix: FightMix,
-  options: { before: FightState | null; state: FightState; active: boolean; scored: boolean },
+  options: {
+    before: FightState | null
+    state: FightState
+    active: boolean
+    scored: boolean
+    locale: VoiceLocale
+    voices: number
+    viewer?: FightSide
+  },
 ): void {
   if (!options.active || mix.context.state !== 'running') return
-  for (const event of fightSoundEvents(options.before, options.state))
-    if (!options.scored || event.kind !== 'stage') playFightSound(mix, event, options.state)
+  for (const event of fightSoundEvents(options.before, options.state, options.viewer)) {
+    if (event.kind !== 'windup' && (!options.scored || event.kind !== 'stage'))
+      playFightSound(mix, event, options.state)
+    if (options.voices > 0) playCombatVoice(mix, event, options)
+  }
+}
+
+function ambienceDuck(state: FightState): number {
+  if (state.phase === 'finished') return 0.1
+  if (state.hitstop > 0) return 0.45
+  return state.player.kurapika?.emperorTime || state.opponent.kurapika?.emperorTime ? 0.65 : 1
 }
 
 function updateLevels(
   mix: FightMix,
-  options: { state: FightState; settings: FightAudioSettings; viewer?: FightSide },
+  options: {
+    state: FightState
+    settings: FightAudioSettings
+    viewer?: FightSide
+    announcing: boolean
+  },
 ): void {
   const { state, settings } = options
   const now = mix.context.currentTime
   const pressure = combatPressure(state)
   // Action has priority: ambience ducks during impacts and Emperor Time.
-  const emperor = state.player.kurapika?.emperorTime || state.opponent.kurapika?.emperorTime
-  const duck = state.hitstop > 0 ? 0.45 : emperor ? 0.65 : 1
+  const duck = ambienceDuck(state) * (options.announcing ? 0.6 : 1)
   mix.effects.gain.setTargetAtTime(settings.effects, now, 0.025)
-  mix.channels.music.gain.setTargetAtTime(settings.ambience * duck, now, 0.025)
+  mix.configure(settings, duck)
   mix.ambience.gain.setTargetAtTime(settings.ambience * duck * 0.7, now, 0.09)
   mix.pressure.gain.setTargetAtTime(settings.tension * pressure * duck, now, 0.12)
   const listener = state.mode === 'versus-local' ? (options.viewer ?? 'player') : 'player'
@@ -236,7 +296,7 @@ function auraTone(state: FightState, side: 'player' | 'opponent') {
     level: 0.004 + sound.volume * 0.015,
     beat: 0.7,
     cutoff: Math.min(1600, sound.highHz * 2),
-    air: sound.noise * 0.03,
+    air: sound.noise * 0.008,
   }
 }
 

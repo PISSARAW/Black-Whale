@@ -308,13 +308,18 @@
     paused = replayReturnPaused
     resetFightInputs()
   }
+  let audioSeek = 0
   function restartReplay() {
+    audioSeek++
     state = replays.restart()
     resetFightInputs()
   }
   function seekReplay(packet: number) {
     const next = match.seekReplay(packet)
-    if (next) state = next
+    if (next) {
+      audioSeek++
+      state = next
+    }
     resetFightInputs()
   }
   function takeoverReplay() {
@@ -443,6 +448,7 @@
       {school}
       {practice}
       {replayActions}
+      {audioSeek}
       bind:easterEggPreferences
     />
   {/if}

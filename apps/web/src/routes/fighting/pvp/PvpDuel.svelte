@@ -117,6 +117,8 @@
     bind:victoryActive
     {state}
     comfort={$client.view?.rollback ? rollbackComfort : standardComfort}
+    audioState={$client.state}
+    audioPaused={$client.connection !== 'connected' || $client.view?.status === 'interrupted'}
     {language}
     stageId={state.environment.stageId}
     showControls

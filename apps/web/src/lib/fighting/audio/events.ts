@@ -1,3 +1,10 @@
+import { footPlant } from './footFoley'
+import { interceptionEvents } from './projectileAudioEvents'
+import { FIGHT_FPS } from '../fightClock'
+import { newSoundContacts } from './impactHistory'
+import { tacticalSoundEvents, type TacticalSoundKind } from './tacticalEvents'
+import { gyoSight } from '../nenPerception'
+import { perceivedProjectiles } from '../projectilePerception'
 import { activeEnRadius } from '../en/access'
 import type { NenTechnique } from '@black-whale/nen-engine'
 import { attackData } from '../frameData'
@@ -18,6 +25,7 @@ import { characterSoundEvents } from './states'
 import { clockSubdivision } from './stages'
 
 export type FightSoundKind =
+  | TacticalSoundKind
   | 'intro'
   | 'start'
   | 'finish'
@@ -29,6 +37,7 @@ export type FightSoundKind =
   | 'swing'
   | 'hatsu'
   | 'projectile'
+  | 'projectile-intercept'
   | 'impact'
   | 'guard'
   | 'crouch'
@@ -68,6 +77,10 @@ export interface FightSoundEvent {
   shape?: ProjectileShape
   slot?: MoveSlot
   page?: ChrolloPage | null
+  concealed?: boolean
+  terrain?: boolean
+  take?: number
+  delay?: number
 }
 
 export function fighterEvent(
@@ -97,7 +110,11 @@ export function newSoundRound(before: FightState, after: FightState): boolean {
 }
 
 /** Presentation only: consumes immutable snapshots; never mutates the simulation. */
-export function fightSoundEvents(before: FightState | null, after: FightState): FightSoundEvent[] {
+export function fightSoundEvents(
+  before: FightState | null,
+  after: FightState,
+  viewer: FightSide = 'player',
+): FightSoundEvent[] {
   if (!before || newSoundRound(before, after)) {
     const events: FightSoundEvent[] = [{ kind: 'intro', x: 50 }]
     if (after.phase === 'fighting') events.push({ kind: 'start', x: 50 })
@@ -105,22 +122,33 @@ export function fightSoundEvents(before: FightState | null, after: FightState): 
   }
   const events = phaseEvents(before, after)
   if (before.phase !== 'fighting') return events
-  events.push(...impactEvents(before, after), ...clockEvents(before, after))
+  events.push(...impactEvents(before, after, viewer), ...clockEvents(before, after))
+  events.push(...tacticalSoundEvents(before, after, viewer))
   for (const side of ['player', 'opponent'] as const) {
     events.push(
       ...fighterEvents({
         before: before[side],
         after: after[side],
         side,
-        state: after,
-        previousFrame: before.frame,
       }),
     )
     events.push(...characterSoundEvents(before, after, side))
   }
+  events.push(...projectileEvents(before, after, viewer), ...interceptionEvents(before, after))
+  if (isThrowTech(after) && !isThrowTech(before)) events.push({ kind: 'throw-tech', x: 50 })
+  if (gyoSight(after[viewer])) return events
+  return events.filter((event) => !event.concealed || event.side === viewer)
+}
+
+function projectileEvents(before: FightState, after: FightState, viewer: FightSide) {
+  const events: FightSoundEvent[] = []
   const oldIds = new Set(before.projectiles.map((projectile) => projectile.id))
+  const perceivedIds = new Set(perceivedProjectiles(after, viewer).map(({ id }) => id))
   for (const projectile of after.projectiles) {
-    if (!oldIds.has(projectile.id))
+    if (
+      !oldIds.has(projectile.id) &&
+      (projectile.owner === viewer || perceivedIds.has(projectile.id))
+    )
       events.push({
         kind: 'projectile',
         side: projectile.owner,
@@ -128,9 +156,9 @@ export function fightSoundEvents(before: FightState | null, after: FightState): 
         fighter: after[projectile.owner].id,
         source: projectile.fighterId,
         shape: projectile.shape,
+        take: projectile.id % 4,
       })
   }
-  if (isThrowTech(after) && !isThrowTech(before)) events.push({ kind: 'throw-tech', x: 50 })
   return events
 }
 
@@ -148,10 +176,31 @@ function phaseEvents(before: FightState, after: FightState): FightSoundEvent[] {
   ]
 }
 
-function impactEvents(before: FightState, after: FightState): FightSoundEvent[] {
+function impactEvents(before: FightState, after: FightState, viewer: FightSide): FightSoundEvent[] {
+  const contacts = newSoundContacts(before, after)
+  if (contacts.length) {
+    const firstFrame = contacts[0].frame
+    return contacts.flatMap(({ impact, moveId, shape, frame }) =>
+      contactEvents(after, { impact, moveId, shape }, viewer).map((event) => ({
+        ...event,
+        delay: Math.min(0.034, (frame - firstFrame) / FIGHT_FPS),
+      })),
+    )
+  }
   const impact = after.impact
   if (!impact || impact.sequence === before.impact?.sequence) return []
+  if (impact.sequence === after.audioContacts?.at(-1)?.impact.sequence) return []
+  return contactEvents(after, { impact, moveId: after[impact.attacker].attack?.moveId }, viewer)
+}
+
+function contactEvents(
+  after: FightState,
+  contact: { impact: FightImpact; moveId?: string; shape?: ProjectileShape },
+  viewer: FightSide,
+) {
+  const { impact, moveId, shape } = contact
   const attacker = after[impact.attacker]
+  const disguised = impact.concealed && impact.attacker !== viewer && !gyoSight(after[viewer])
   const events: FightSoundEvent[] = [
     {
       kind: 'impact',
@@ -159,7 +208,8 @@ function impactEvents(before: FightState, after: FightState): FightSoundEvent[] 
       impact,
       side: impact.attacker,
       fighter: attacker.id,
-      moveId: attacker.attack?.moveId,
+      moveId: disguised ? undefined : moveId,
+      shape: disguised ? undefined : shape,
     },
   ]
   if (impact.points > 0) events.push({ kind: 'score', x: 50, value: impact.points })
@@ -186,8 +236,6 @@ interface FighterTransition {
   before: ArcadeFighter
   after: ArcadeFighter
   side: FightSide
-  state: FightState
-  previousFrame: number
 }
 
 function fighterEvents(change: FighterTransition): FightSoundEvent[] {
@@ -212,7 +260,9 @@ function nenEvents(
   const changed = technique !== activeSoundNen(before)
   const shifted =
     technique === 'ryu' && nenTacticalState(after).focusZone !== nenTacticalState(before).focusZone
-  return changed || shifted ? [{ ...fighterEvent(after, side, 'nen'), technique }] : []
+  return changed || shifted
+    ? [{ ...fighterEvent(after, side, 'nen'), technique, concealed: technique === 'in' }]
+    : []
 }
 
 function attackEvents(
@@ -241,6 +291,8 @@ function attackEvent(fighter: ArcadeFighter, side: FightSide): FightSoundEvent {
     ...fighterEvent(fighter, side, 'windup'),
     moveId: attack.moveId,
     source: attack.hatsuSource ?? fighter.id,
+    concealed: attack.concealed,
+    value: attack.kind === 'light' ? 1 : 2,
     slot: moveById(attack.moveId)?.slot,
     page: chrolloPageForMove(fighter, attack.moveId),
   }
@@ -259,22 +311,18 @@ function movementEvents(change: FighterTransition): FightSoundEvent[] {
   const { before, after, side } = change
   const events = aerialEvents(change)
   const push = (kind: FightSoundKind) => events.push(fighterEvent(after, side, kind))
-  if (after.pose === 'down' && before.pose !== 'down') push('fall')
   if (after.pose === 'wakeup' && before.pose !== 'wakeup') push('wakeup')
   if (after.motion?.dash && !before.motion?.dash) push('dash')
-  if (walkingStep(change)) push('step')
+  const take = footPlant(before, after)
+  if (take !== undefined) events.push({ ...fighterEvent(after, side, 'step'), take })
   return events
 }
 
 function aerialEvents({ before, after, side }: FighterTransition): FightSoundEvent[] {
-  const events: FightSoundEvent[] = []
-  if (after.y > 0 && before.y === 0) events.push(fighterEvent(after, side, 'jump'))
-  if (after.y === 0 && before.y > 0) events.push(fighterEvent(after, side, 'land'))
-  return events
-}
-
-function walkingStep({ before, after, state, previousFrame }: FighterTransition): boolean {
-  if (after.pose !== 'walk' || after.y !== 0 || after.motion?.dash) return false
-  const cadence = Math.floor(state.frame / 18) !== Math.floor(previousFrame / 18)
-  return cadence && Math.abs(after.x - before.x) > 0.01
+  if (after.y > 0)
+    return before.y === 0 && after.pose === 'jump' ? [fighterEvent(after, side, 'jump')] : []
+  if (after.y < 0) return []
+  if (after.pose === 'down')
+    return before.y > 0 || before.pose !== 'down' ? [fighterEvent(after, side, 'fall')] : []
+  return before.y > 0 ? [fighterEvent(after, side, 'land')] : []
 }

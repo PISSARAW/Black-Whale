@@ -2,7 +2,7 @@
 
 Le combat réutilise les recettes de `../../audio/hatsuSounds.ts`, le bruit partagé
 de `../../audio/hatsu/synth.ts`, les profils `NEN_PRESENTATION` et la réponse
-acoustique `impulseResponse` de la visite. Aucun sample tiers n'est chargé.
+acoustique `impulseResponse` de la visite.
 
 - `profiles.ts` écrit la matière, le poids, le souffle et le motif de chacun des
   quarante combattants ; `catalogueProfiles.ts` couvre les autres identités.
@@ -38,8 +38,36 @@ acoustique `impulseResponse` de la visite. Aucun sample tiers n'est chargé.
   silence ne sont pas rejoués. Sortir ou changer de manche libère les sources et
   conserve l'AudioContext partagé.
 
-Les réglages actions / ambiance / tension et le mute sont locaux au combat,
-mémorisés dans `black-whale:fighting-audio`. Ils restent soumis aux faders généraux
-du site. Les respirations sont des gestes synthétisés, sans doublage d'acteurs.
+Les volumes d’impacts, déplacements, techniques, voix, interface, musique, ambiance,
+tension et cinématiques sont mémorisés dans `black-whale:fighting-audio`, avec
+sortie mono et préréglages Compétition et Accessibilité. Les faders généraux
+du site s’appliquent à la sortie. La voix de bord et les voix de combat ont
+chacune leur fader. Les prises courtes sont accordées au registre du combattant.
+Le nom du Kaméo retentit à son entrée effective. Les annonces suivent le
+départ, la manche décisive et le verdict confirmé.
 
-Vérification : `pnpm --filter @black-whale/web test src/lib/fighting/audio src/lib/audio`.
+Les voix françaises et anglaises suivent la langue du jeu. Les deux banques
+sont synthétisées hors ligne. Les modèles et le script de génération figurent
+dans [les crédits des voix](../../../../static/audio/clash-voices/SOURCES.md).
+
+Les contacts confirmés traversent les mises à jour groupées dans un historique
+court qui couvre aussi les deux coups d’un échange simultané. En PvP, l’audio
+suit les instantanés confirmés. La tête de lecture d’un replay repart en silence
+après un saut. Burst, choc de Ko et parade ont priorité sous forte polyphonie.
+
+Les contacts physiques combinent une attaque courte, le corps du choc et une
+résonance qui reste présente sur de petits haut-parleurs. Les coups répétés
+alternent quatre variations et les longues séries atténuent leur corps. Un
+coup léger, une garde et un coup de chaîne ont des signatures propres. Les
+pas suivent les transitions d’appui de la marche rendue, tandis que les
+réceptions et les chutes se calent sur le retour au sol. Les interceptions
+de projectiles suivent les collisions du moteur, même entre deux mises à jour
+visuelles.
+
+Les cinématiques ont leur propre fader et un repli sur la piste de victoire du
+personnage. La détonation de la piste Sun and Moon est à 0,4 seconde, sur la
+24e image de la scène.
+
+Tests unitaires avec `pnpm --filter @black-whale/web test src/lib/fighting/audio`.
+Le banc navigateur `node apps/web/scripts/check-fighting-audio.mjs` fait jouer
+Kurapika contre Chrollo avec Luzurus et vérifie aussi le repli Sun and Moon.

@@ -53,6 +53,7 @@ import {
 import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
 import { attackerComboScale } from './comboDamageScale'
 import { grammarAllowsWallSplat } from './grammarWallSplat'
+import { retainSoundContacts } from './audio/impactHistory'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -74,8 +75,10 @@ export function resolveMeleePair(state: FightState): FightState {
   const trade = canTrade(state)
   const next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
   if (trade) return resolveTrade(state, next)
-  if (next.phase !== 'fighting') return next
-  return recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
+  if (next.phase !== 'fighting') return retainSoundContacts(state, next)
+  const first = retainSoundContacts(state, next)
+  const second = recordCyclotronContact(first, resolveAttack(first, 'opponent'), 'opponent')
+  return retainSoundContacts(first, second)
 }
 
 function canTrade(state: FightState): boolean {
@@ -317,6 +320,10 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
+  return retainSoundContacts(state, applyProjectileHit(state, hit), { projectile: hit.projectile })
+}
+
+function applyProjectileHit(state: FightState, hit: ProjectileHit): FightState {
   if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
   if (
     state.phase !== 'fighting' ||
@@ -449,7 +456,7 @@ function finishAfterImpact(
 
 function resolveTrade(original: FightState, first: FightState): FightState {
   const second = recordCyclotronContact(original, resolveAttack(original, 'opponent'), 'opponent')
-  if (first === original || second === original) return first
+  if (first === original || second === original) return retainSoundContacts(original, first)
   const traded: FightState = {
     ...original,
     player: tradeFighter({
@@ -477,10 +484,8 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
-  return {
-    ...traded,
-    deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])],
-  }
+  const resolved = { ...traded, deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])] }
+  return retainSoundContacts(original, resolved, { simultaneous: first })
 }
 
 function impactWallSplat(options: {

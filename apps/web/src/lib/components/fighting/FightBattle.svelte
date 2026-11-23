@@ -49,6 +49,7 @@
   export let replays: FightReplayController
   export let pausePlan: FightPausePlan
   export let diagnostics: FightMatchRuntime['diagnostics']
+  export let audioSeek = 0
   export let lessons: FightLessonsController
   export let school: CombatSchool
   export let practice: ClashPractice
@@ -165,6 +166,7 @@
       training={state.mode === 'training' && detailed}
       stageId={state.environment.stageId}
       bind:audioSettings
+      {audioSeek}
       bind:easterEggPreferences
       onEasterEgg={(side, slot) => actions.queueCommand({ kind: 'easter', side, slot })}
       onAttack={actions.attack}

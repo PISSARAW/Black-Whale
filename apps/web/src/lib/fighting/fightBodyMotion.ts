@@ -77,6 +77,7 @@ import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
 import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
+import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -144,6 +145,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     const anchor = plan.plant ? captureFootPlant(rig) : null
     const drawn = drawBodyPose(options, rig, plan)
     applyFightPose(rig, drawn, fighter.facing)
+    animateKurapikaGoldenHeavyIdentity(human.figure, fighter)
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)

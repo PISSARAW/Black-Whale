@@ -18,6 +18,7 @@ import { steerFutureAi } from '../parallelFutureAi'
 import { canRejoinHanzoBody, steerHanzoProjection, wakeHanzoBody } from '../hanzoProjection'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from '../nen'
 import { moveCounterplayOpponent } from '../counterplayOpponent'
+import { aiWakeupInput } from '../movementTechAi'
 import { advanceFighterPhysics } from '../fighterPhysics'
 import { steerFighter } from '../fighterMovement'
 import { dashCancel } from '../dashCancel'
@@ -80,7 +81,10 @@ export function updateOpponent(
   player: ArcadeFighter,
   state: FightState,
 ): ArcadeFighter {
-  const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  const advanced = blinkyAiDefense(
+    state,
+    advanceFighterPhysics(fighter, aiWakeupInput(fighter, player, state.frame)),
+  )
   const soul = halkenburgBodyControl(advanced)
   if (soul) return soul
   if (advanced.easterEgg) return poseFighter(advanced)

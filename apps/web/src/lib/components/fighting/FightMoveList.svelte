@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fightTouchBindings } from '$lib/fighting/fightTouchHints'
   import FightStyleGuide from './FightStyleGuide.svelte'
+  import FightMovementGuide from './FightMovementGuide.svelte'
   import FightMoveProperties from './FightMoveProperties.svelte'
   import { finisherHint, useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
@@ -50,6 +51,7 @@
       </p>
     </header>
     <FightStyleGuide {fighterId} {language} />
+    <FightMovementGuide {fighterId} {language} />
     {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
     {#if arena}
       <h3>

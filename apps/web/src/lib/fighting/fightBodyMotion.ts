@@ -67,6 +67,7 @@ import {
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
 import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
+import { movementTechPose } from './movementTechPoses'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
@@ -415,18 +416,8 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     key,
     blend: 0.1,
   })
-  const dash = dashPose(fighter, standing)
-  if (dash)
-    return {
-      pose: dash.pose,
-      plant: true,
-      key: `dash:${dash.forward}`,
-      blend: 0.025,
-    }
-  const prejump = prejumpPose(fighter, standing)
-  if (prejump) return { ...prejump, plant: true }
-  const landing = landingPose(fighter, standing)
-  if (landing) return { ...landing, plant: true }
+  const active = movementTechPose(fighter, standing) ?? locomotionPlan(fighter, standing)
+  if (active) return active
   if (fighter.crouching) {
     const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
@@ -435,6 +426,15 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   // A fighter never strolls: it shuffles in its whole stance, guard and legs.
   if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')
+}
+
+function locomotionPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+  const dash = dashPose(fighter, standing)
+  if (dash) return { pose: dash.pose, plant: true, key: `dash:${dash.forward}`, blend: 0.025 }
+  const prejump = prejumpPose(fighter, standing)
+  if (prejump) return { ...prejump, plant: true }
+  const landing = landingPose(fighter, standing)
+  return landing ? { ...landing, plant: true } : null
 }
 
 function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: ArcadeFighter): void {

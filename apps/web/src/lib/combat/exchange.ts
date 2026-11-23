@@ -1,4 +1,5 @@
 import { resolveExchange } from './resolve'
+import { applyArenaParry } from './parry'
 import { releaseBufferedMove } from './fightingMove'
 import { clashExchange, settleFightingMove, throwOpening } from './moveChain'
 import { engageClashKo, expireClashKo, spentKo, usesClashNen } from './clashNen'
@@ -168,20 +169,23 @@ export function strike(request: StrikeRequest): CombatState {
   if (technique === 'strike' && attacker.ko && !request.grade) return state
 
   const defenderSide = otherSide(side)
-  const result = resolveExchange({
-    attacker: technique === 'ko' ? { ...attacker, ko: null } : attacker,
-    defender: state[defenderSide],
-    attackerSide: side,
-    zone,
-    technique,
-    clock: state.clock,
-    walls: state.terrain.walls,
-    power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
-    range: request.range,
-    targetAt: request.targetAt,
-    recovery: request.recovery,
-    ceiling: request.ceiling,
-    grade: request.grade,
+  const result = applyArenaParry({
+    before: state,
+    result: resolveExchange({
+      attacker: technique === 'ko' ? { ...attacker, ko: null } : attacker,
+      defender: state[defenderSide],
+      attackerSide: side,
+      zone,
+      technique,
+      clock: state.clock,
+      walls: state.terrain.walls,
+      power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
+      range: request.range,
+      targetAt: request.targetAt,
+      recovery: request.recovery,
+      ceiling: request.ceiling,
+      grade: request.grade,
+    }),
   })
   const owed = Math.max(0, result.event.points - (request.scored ?? 0))
   const counterBonus = state[defenderSide].recoveryWindow > 0 && owed > 0 ? 1 : 0

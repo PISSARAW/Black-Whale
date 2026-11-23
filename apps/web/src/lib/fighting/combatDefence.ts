@@ -1,3 +1,4 @@
+import { PARRY_WINDOW_FRAMES, resolvesParry } from '@black-whale/nen-engine'
 import { readableImpact } from './nenCombat/impactRead'
 import { melodyRestrictsCombat } from './melodyRules'
 import { melodyParryBonus } from './melodyHearing'
@@ -11,7 +12,7 @@ import type { ImpactDefence } from './combatDamage'
 import type { CombatRead } from './combatRead'
 import type { ArcadeFighter, FightNenZone } from './types'
 
-export const PARRY_WINDOW_FRAMES = 6
+export { PARRY_WINDOW_FRAMES }
 
 export function prepareDefence(
   fighter: ArcadeFighter,
@@ -57,10 +58,10 @@ function parryActive(
   blocked: boolean,
   read: { attacker?: ArcadeFighter; bonus: number },
 ): boolean {
-  return (
-    blocked &&
-    fighter.guardFrames > 0 &&
-    fighter.guardFrames <=
-      PARRY_WINDOW_FRAMES + read.bonus + melodyParryBonus(fighter, read.attacker)
-  )
+  return resolvesParry({
+    blocked,
+    readable: true,
+    guardFrames: fighter.guardFrames,
+    bonusFrames: read.bonus + melodyParryBonus(fighter, read.attacker),
+  })
 }

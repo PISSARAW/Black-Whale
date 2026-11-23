@@ -69,10 +69,11 @@ export function settleRyu(fighter: FighterState, dt: number): FighterState {
   if (!fighter.ryuShift) return fighter
   const remaining = fighter.ryuShift.remaining - dt
   if (remaining > 0) return { ...fighter, ryuShift: { ...fighter.ryuShift, remaining } }
+  const allocation = fighter.ryuShift.restore ?? fighter.ryuShift
   return {
     ...fighter,
-    attackShare: fighter.ryuShift.attackShare,
-    guard: fighter.ryuShift.guard,
+    attackShare: allocation.attackShare,
+    guard: allocation.guard,
     ryuShift: null,
   }
 }

@@ -1,8 +1,15 @@
 import { combatReducer } from '../combat/reducer'
-import { initialCombatState, type CombatAction, type CombatSetup, type CombatState } from '../combat/types'
+import {
+  initialCombatState,
+  type CombatAction,
+  type CombatSetup,
+  type CombatState,
+} from '../combat/types'
 import type { FighterId } from '../fighting/types'
 
 export const PARITY_TICK_RATE = 60
+/** Allows one 60 Hz integration step of drift between Arena seconds and Clash frames. */
+export const PARITY_AURA_EPSILON = 0.05
 
 export interface ParityCommand {
   frame: number
@@ -24,6 +31,7 @@ export interface ParityEvent {
   impact: 'miss' | 'blocked' | 'clean' | 'critical' | 'knockdown' | 'ko'
   points: number
   technique: 'strike' | 'ko' | 'hatsu'
+  parried: boolean
 }
 
 export interface ParityFighterDigest {
@@ -58,8 +66,8 @@ export function runArenaParityScenario(scenario: ArenaParityScenario): ArenaPari
     for (const action of commands.get(frame) ?? []) state = combatReducer(state, action)
     state = combatReducer(state, { type: 'TICK', dt: 1 / PARITY_TICK_RATE })
     if (state.lastEvent && state.lastEvent !== previousEvent) {
-      const { attacker, zone, impact, points, technique } = state.lastEvent
-      events.push({ frame, attacker, zone, impact, points, technique })
+      const { attacker, zone, impact, points, technique, parried = false } = state.lastEvent
+      events.push({ frame, attacker, zone, impact, points, technique, parried })
       previousEvent = state.lastEvent
     }
   }
@@ -82,7 +90,15 @@ export function compareParityEvents(
   for (let index = 0; index < length; index += 1) {
     const arenaEvent = arena.events[index]
     const clashEvent = clash.events[index]
-    for (const field of ['frame', 'attacker', 'zone', 'impact', 'points', 'technique'] as const) {
+    for (const field of [
+      'frame',
+      'attacker',
+      'zone',
+      'impact',
+      'points',
+      'technique',
+      'parried',
+    ] as const) {
       if (arenaEvent?.[field] === clashEvent?.[field]) continue
       differences.push({
         path: `events.${index}.${field}`,
@@ -102,6 +118,8 @@ export function compareParityResults(
   compareValue({ differences, path: 'outcome', arena: arena.outcome, clash: clash.outcome })
   for (const side of ['player', 'opponent'] as const) {
     for (const field of ['aura', 'condition', 'score'] as const) {
+      if (field === 'aura' && Math.abs(arena[side].aura - clash[side].aura) <= PARITY_AURA_EPSILON)
+        continue
       compareValue({
         differences,
         path: `${side}.${field}`,

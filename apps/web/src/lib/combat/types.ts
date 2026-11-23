@@ -20,6 +20,8 @@ export interface RyuShift {
   attackShare: number
   guard: BodyZone
   remaining: number
+  /** A timed automatic focus returns to this allocation instead of settling permanently. */
+  restore?: Pick<RyuShift, 'attackShare' | 'guard'>
 }
 
 export interface AttackIntent {
@@ -104,6 +106,7 @@ export interface CombatEvent {
   impact: Impact
   points: number
   technique: 'strike' | 'ko' | 'hatsu'
+  parried?: boolean
 }
 
 export interface CombatState {

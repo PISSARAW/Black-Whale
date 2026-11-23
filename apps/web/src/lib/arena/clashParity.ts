@@ -86,6 +86,7 @@ function parityEvent(state: FightState): ParityEvent {
     impact: impactKind(state),
     points: impact.points,
     technique: impact.kind === 'special' ? 'hatsu' : 'strike',
+    parried: impact.parried,
   }
 }
 

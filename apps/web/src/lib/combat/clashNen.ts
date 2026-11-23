@@ -21,7 +21,7 @@ export const CLASH_KO_HOLD = 2.5
 const KO_ZONE_DEFENCE = 1.2
 
 /** Aura per second, from `baseAuraFlow`, `advancedAuraDrain` and body Gyo in Clash. */
-const FLOW = { zetsu: 10, ken: -8, ren: -4, gyoAtRest: 0, ten: 1.4 }
+const FLOW = { zetsu: 10, ken: -8, ryu: -6, ren: -4, gyoAtRest: 0, ten: 1.4 }
 const DRAIN = { gyo: 2.4, in: 3, en: 9, shu: 4 }
 
 export const usesClashNen = (state: CombatState) => state.nenRules === 'clash'
@@ -108,6 +108,7 @@ export function clashAuraFlow(fighter: FighterState): number {
 function baseFlow(fighter: FighterState): number {
   if (fighter.mode === 'zetsu') return FLOW.zetsu
   if (fighter.ken) return FLOW.ken
+  if (fighter.ryuShift?.restore) return FLOW.ryu
   if (fighter.mode === 'ren') return FLOW.ren
   return fighter.gyo ? FLOW.gyoAtRest : FLOW.ten
 }

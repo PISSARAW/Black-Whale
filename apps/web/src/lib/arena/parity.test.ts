@@ -62,11 +62,26 @@ describe('Arena and Clash parity traces', () => {
     expect(arena.events[0]).toMatchObject({
       attacker: 'player',
       impact: 'blocked',
+      parried: true,
       points: 0,
     })
     expect(compareParityEvents(arena, clash)).toEqual([])
-    // Clash's held guard engages Ken and drains aura; Arena's guard window is currently free.
-    expect(compareParityResults(arena, clash).map(({ path }) => path)).toEqual(['opponent.aura'])
+    expect(compareParityResults(arena, clash)).toEqual([])
+  })
+
+  it('keeps an older guard as a block without upgrading it to a parry', () => {
+    const scenario = kurapikaJab()
+    const attack = scenario.commands[0]!
+    scenario.commands = [
+      { frame: 0, action: { type: 'GUARD', side: 'opponent' } },
+      { ...attack, frame: 4 },
+    ]
+
+    const arena = runArenaParityScenario(scenario)
+    const clash = runClashParityScenario(scenario)
+
+    expect(arena.events[0]).toMatchObject({ impact: 'blocked', parried: false })
+    expect(compareParityResults(arena, clash)).toEqual([])
   })
 
   it('matches the unguarded pilot exchange across Arena and Clash', () => {

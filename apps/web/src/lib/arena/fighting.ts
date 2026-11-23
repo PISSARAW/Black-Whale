@@ -32,8 +32,9 @@ export function arenaFightingMove(options: {
   slot: MoveSlot
   position: Vec2
   heading: number
+  targetObject?: { id: string; position: Vec2 }
 }): Extract<CombatAction, { type: 'FIGHTING_MOVE' }> {
-  const { side, fighterId, slot, position, heading } = options
+  const { side, fighterId, slot, position, heading, targetObject } = options
   const move = moveForSlot(fighterId, slot)
   const range = move ? Math.min(8, Math.max(1.6, move.tuning.reach / 5)) : 2.2
   return {
@@ -42,6 +43,7 @@ export function arenaFightingMove(options: {
     fighterId,
     slot,
     targetAt: strikeTarget(position, heading, range),
+    ...(targetObject ? { targetObject } : {}),
   }
 }
 

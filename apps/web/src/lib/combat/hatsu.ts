@@ -317,13 +317,9 @@ const NAMED_HATSU_HANDLERS: Record<string, NamedHatsuHandler> = {
   'skill-hunter': skillHunter,
   'pain-packer': (context) =>
     context.hit(1.2 + (1 - context.paid.aura / context.paid.capacity) * 2.4, 6),
-  blinky: (context) =>
-    context.gap > 7
-      ? context.state
-      : context.target(
-          { empowered: 0, bound: 1, aura: Math.max(0, context.rival.aura - 12) },
-          { cooldown: 1.2 },
-        ),
+  // The carried Hatsu panel can manifest Blinky, but suction needs an explicit
+  // non-living scene target and therefore belongs to FIGHTING_MOVE.
+  blinky: (context) => context.self({ cooldown: 0.25 }),
   'nen-stitches': nenStitches,
   'illumi-needle-people': illumiNeedlePeople,
   'emperor-time': (context) =>

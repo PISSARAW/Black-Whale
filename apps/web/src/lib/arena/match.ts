@@ -3,6 +3,7 @@ import type { CombatAction, CombatSetup, CombatState } from '../combat/types'
 import { ARENA_FORMATS, formatOutcome } from './formats'
 import type { ArenaReplayMatch } from './replay/types'
 import { fightingHatsuRoute } from '../combat/fightingHatsu'
+import { isBlinkyUtilityMove } from '../combat/fightingBlinky'
 
 export type ArenaActionCounts = Partial<Record<CombatAction['type'], number>>
 
@@ -40,7 +41,7 @@ export function countArenaAction(
   if (action.type === 'TICK') return actions
   const type =
     action.type === 'FIGHTING_MOVE'
-      ? fightingHatsuRoute(action.fighterId, action.slot)
+      ? fightingHatsuRoute(action.fighterId, action.slot) || isBlinkyUtilityMove(action)
         ? 'HATSU'
         : 'STRIKE'
       : action.type

@@ -92,9 +92,13 @@ Nen Stitches, Needle People, Cross Game and Biohazard. Dynamic routes now keep
 their stateful condition too: Parallel Future prepares only from Zetsu and
 consumes that vision when the player diverges; Jupiter counts three uninterrupted
 beats before releasing its authored Arena impact. Both survive hitstop buffering
-and deterministic replay. Blinky and Skill Hunter stay on their authored Clash
-moves until Arena can represent physical matter, wounds and stolen book pages;
-they are not replaced by a convenient generic drain or buff.
+and deterministic replay. Blinky now consumes the exact non-living solid selected
+by the POV raycast, removes it from Tour collision and rendering, keeps one
+last-object slot, then restores that same solid at the authored ejection point.
+Object identity and position live in combat state, so recording, branching and
+replay reproduce the room mutation. Its carried Hatsu no longer invents an aura
+drain. Blood suction remains closed until Arena represents actual open wounds;
+Skill Hunter remains closed until Arena represents stolen book pages.
 
 [duelPresence.ts](duelPresence.ts) projects Clash's authored psychology profiles into
 what the player can actually read: facial bearing, felt Ren pressure and, under
@@ -117,7 +121,7 @@ timeline once, identifies conservative recovery opportunities and punishments,
 then lets the player review the contact or branch from just before the exchange.
 The diagnosis never consults concealed intent and is explicitly non-exhaustive.
 
-Still Clash-only: physical Blinky targets and Skill Hunter book state.
+Still Clash-only: Blinky blood through open wounds and Skill Hunter book state.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

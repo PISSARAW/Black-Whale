@@ -19,6 +19,7 @@ export function stateChecksum(state: CombatState): string {
       remaining: rounded(tether.remaining),
     })),
     nenEffects: state.nenEffects,
+    physicalObjects: state.physicalObjects,
     lastHatsuBySide: state.lastHatsuBySide,
     environment: state.environment,
     opponentMemory: state.opponentMemory,

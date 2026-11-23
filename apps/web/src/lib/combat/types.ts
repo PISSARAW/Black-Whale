@@ -74,6 +74,13 @@ export interface PersistentNenEffect {
   detail: string | null
 }
 
+/** A non-living Arena solid that a deterministic combat command has displaced. */
+export interface ArenaPhysicalObject {
+  id: string
+  position: Vec2
+  storedBy: CombatSide | null
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -141,6 +148,8 @@ export interface CombatState {
   terrain: CombatTerrainPhysics
   tethers: ElasticTether[]
   nenEffects: PersistentNenEffect[]
+  /** Physical scenery touched by combat, keyed by the Tour structure id. */
+  physicalObjects: Record<string, ArenaPhysicalObject>
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
   /** `clash`: Arena duels use Clash's Nen economy and exchange factors (combat/clashNen.ts). */
@@ -208,6 +217,8 @@ export type CombatAction =
       fighterId: import('../fighting/types').FighterId
       slot: import('../fighting/types').MoveSlot
       targetAt: Vec2
+      /** A raycast-selected, non-living Tour solid; absent when aiming at a body or empty space. */
+      targetObject?: { id: string; position: Vec2 }
     }
   | { type: 'PREPARE_HATSU'; side: CombatSide; hatsuId: 'parallel-future' | 'rihan-predator' }
   | {
@@ -271,6 +282,7 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     terrain: setup.terrain,
     tethers: [],
     nenEffects: [],
+    physicalObjects: {},
     opponentMemory: {
       observedEventAt: null,
       zones: { head: 0, torso: 0, arms: 0, legs: 0 },

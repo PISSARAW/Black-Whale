@@ -45,6 +45,7 @@
   import { replayArenaHref } from '$lib/arena/replay/navigation'
   import { auraPercent } from '$lib/arena/controls'
   import { arenaFighter, arenaFighterColour, arenaFightingMove } from '$lib/arena/fighting'
+  import { arenaBlinkyWorld } from '$lib/arena/blinkyWorld'
   import { handleArenaKey } from '$lib/arena/keyboard'
   import {
     arenaFormatGoal,
@@ -72,7 +73,6 @@
   import { combatReducer } from '$lib/combat/reducer'
   import { BODY_ZONES, type BodyZone, type CombatAction, type CombatEvent } from '$lib/combat/types'
   import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
-  import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
@@ -313,6 +313,7 @@
       : null,
   )
   let detailedRyu = $derived(ryuDistribution(game.player))
+  let sceneWorld = $derived(arenaBlinkyWorld(game))
 
   function objectiveLabel(objective: ChallengeObjective): string {
     if (objective.kind === 'win') return $t.arena.ui.objective.win
@@ -408,6 +409,9 @@
         slot,
         position: game.player.position,
         heading,
+        targetObject: aimedSolidAt
+          ? { id: aimedSolidAt.id, position: solidCentre(aimedSolidAt) }
+          : undefined,
       }),
       'strike',
     )
@@ -920,7 +924,7 @@
     bind:jumpAt
     bind:jumpHeading
     bind:jumpPitch
-    world={EMPTY_WORLD}
+    world={sceneWorld}
     nen={playerNen}
     keyboardNen={false}
     inputDisabled={briefingOpen ||

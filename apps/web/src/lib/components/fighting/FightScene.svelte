@@ -4,6 +4,7 @@
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
   import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
+  import { createFightStagingScene } from '$lib/fighting/fightStagingScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
   import { updateFightCameraFog } from '$lib/fighting/fightSceneFog'
@@ -223,6 +224,12 @@
         })
         const modelOf = createPresentedModelRefresh({ scene, models, nenKey, buildFighter })
         const alignPhysicalContact = createFightContactAlignment((side) => models[side].model.turns)
+        const staging = createFightStagingScene({
+          THREE,
+          scene,
+          figureOf: (side) => models[side].model.root,
+          comfort: visualComfort,
+        })
 
         const impacts = createFightImpactScene({
           THREE,
@@ -403,6 +410,7 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
+          staging.sync(state)
           motionTrails.sync(state, now)
           alignPhysicalContact(state)
           impacts.emit(state, now)
@@ -447,6 +455,7 @@
           trackingSilhouettes.dispose()
           impacts.dispose()
           motionTrails.dispose()
+          staging.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
           collisions.dispose()
           projectileScene.dispose()

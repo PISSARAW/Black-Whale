@@ -313,3 +313,18 @@ The pass is fight-only apart from Kurapika's corrected source palette, adds no
 simulation state, and caps the new vertical-slice decoration at fourteen meshes
 per fighter. Other roster models remain unchanged so the result can be reviewed
 as a controlled visual benchmark before P16 propagation.
+
+## P15 — complete fight staging
+
+Every stage now receives the same restrained combat composition above its own
+authored scenery: one soft floor pool frames the full lane, while one faint
+identity-coloured halo behind each fighter separates hair, shoulders and limbs
+from busy rooms without flattening the backdrop. High-contrast mode increases
+the separation slightly; reduced motion needs no alternate path because the
+layer is stable rather than animated.
+
+Contact shadows are also kept on the deck during jumps instead of rising with
+their model root. They broaden with height, return to their authored footprint
+on landing and remain excluded from gameplay bounds. The complete layer costs
+three meshes, no dynamic lights or shadow maps, reads interpolated presentation
+positions only and never mutates combat, replay or camera state.

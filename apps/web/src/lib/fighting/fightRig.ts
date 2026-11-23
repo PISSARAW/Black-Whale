@@ -1,4 +1,5 @@
 import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
+import { applyProceduralClavicles } from './fightClavicle'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FightPose, Turn } from './fightPose'
@@ -27,6 +28,7 @@ export interface FightRig {
   elbows: readonly Object3D[]
   wrists: readonly Object3D[]
   ankles: readonly Object3D[]
+  restShoulders: readonly Vector3[]
   restWrists: readonly Euler[]
   restAnkles: readonly Euler[]
   probe: Vector3
@@ -75,6 +77,7 @@ export function borrowFightRig(human: AnimatedHuman): { rig: FightRig; restore: 
   return {
     rig,
     restore() {
+      rig.human.arms.forEach((arm, index) => arm.position.copy(rig.restShoulders[index]))
       children.forEach((child) => human.figure.add(child))
       rig.chest.removeFromParent()
     },
@@ -94,6 +97,7 @@ function buildFightRig(human: AnimatedHuman): FightRig {
     elbows,
     wrists,
     ankles,
+    restShoulders: human.arms.map((arm) => arm.position.clone()),
     restWrists: wrists.map((wrist) => wrist.rotation.clone()),
     restAnkles: ankles.map((ankle) => ankle.rotation.clone()),
     probe: human.figure.position.clone(),
@@ -120,6 +124,7 @@ function liftChest(figure: Group, above: number): Group {
 export function resetFightRig(rig: FightRig): void {
   rig.chest.position.set(0, 0, 0)
   rig.chest.rotation.set(0, 0, 0)
+  rig.human.arms.forEach((arm, index) => arm.position.copy(rig.restShoulders[index]))
   rig.wrists.forEach((wrist, index) => wrist.rotation.copy(rig.restWrists[index]))
   rig.ankles.forEach((ankle, index) => ankle.rotation.copy(rig.restAnkles[index]))
 }
@@ -158,6 +163,7 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
   applyLimbs(rig, pose, sides)
   keepHumanJoints(rig)
   constrainFightRig(rig)
+  applyProceduralClavicles(rig.human.arms, rig.restShoulders)
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {

@@ -23,6 +23,7 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
   return (state: FightState) => {
     separateBodies(state)
     if (!physicalRosterPair(state.player.id, state.opponent.id)) return
+    const pending: Array<{ side: FightSide; zone: FightNenZone; target: Vector3 }> = []
     for (const side of ['player', 'opponent'] as const) {
       const fighter = state[side],
         other = side === 'player' ? 'opponent' : 'player'
@@ -53,11 +54,12 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
         identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
       })
       alignStrike(ownRig, fighter, { target, weight })
-      rememberImpactSurface(figureOf(side), { state, side, zone, position: target })
+      pending.push({ side, zone, target })
     }
     // This is the final pose boundary: support IK, contact IK, passive arms,
     // expressions and head tracking have all run by now.
     keepFinalJoints(figureOf, state)
+    rememberFinalImpacts(figureOf, state, pending)
     settleBothBodies(figureOf)
   }
 }
@@ -151,6 +153,29 @@ function strikeParts(
     root: feet ? rig.human.legs[index] : rig.human.arms[index],
     hinge: feet ? rig.human.knees[index] : rig.elbows[index],
     end: tool ?? (feet ? rig.ankles[index] : rig.wrists[index]),
+  }
+}
+
+function rememberFinalImpacts(
+  figureOf: (side: FightSide) => Object3D,
+  state: FightState,
+  pending: ReadonlyArray<{ side: FightSide; zone: FightNenZone; target: Vector3 }>,
+): void {
+  for (const entry of pending) {
+    const other: FightSide = entry.side === 'player' ? 'opponent' : 'player'
+    const rival = humanAnimationRig(figureOf(other))
+    const position = rival
+      ? fightContactSurface(fightRigOf(rival), entry.zone, {
+          facing: state[entry.side].facing,
+          near: entry.target,
+        })
+      : entry.target
+    rememberImpactSurface(figureOf(entry.side), {
+      state,
+      side: entry.side,
+      zone: entry.zone,
+      position,
+    })
   }
 }
 

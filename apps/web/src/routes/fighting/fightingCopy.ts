@@ -17,11 +17,11 @@ export function fightingCopy(language: 'fr' | 'en') {
         rematch: 'Revanche',
         roster: 'Changer de combattants',
         controls: 'Commandes',
-        movement: 'Q / D ou flèches : déplacement · double appui : dash',
-        jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
+        movement: 'ZQSD / WASD : déplacement · double appui : dash',
+        jump: 'Espace : garde · C : Aura',
         attacks:
-          'J/K : normales · direction + J/K : command normals · direction + L : techniques · U : projectile · H : finisher',
-        aura: 'Bas ou saut + J/K : variantes basses et aériennes · O : projection/déprojection. Les routes et la condition du finisher sont propres au combattant. Espace : Aura. R : En · F : Shu · X : In · G : Gyo · 1–4 : Ryu (tête, torse, mains, jambes).',
+          'J/K/L : léger/lourd/Hatsu · I : ultime · O : projectile · M : projection',
+        aura: 'U : Kaméo · N : Burst · G : On · V : commandes Nen · P : pause',
       }
     : {
         eyebrow: 'NEW MODE · 2D DUEL',
@@ -38,10 +38,10 @@ export function fightingCopy(language: 'fr' | 'en') {
         rematch: 'Rematch',
         roster: 'Change fighters',
         controls: 'Controls',
-        movement: 'A / D or arrows: move · double tap: dash',
-        jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
+        movement: 'WASD / ZQSD: movement · double tap: dash',
+        jump: 'Space: Guard · C: Aura',
         attacks:
-          'J/K: normals · direction + J/K: command normals · direction + L: techniques · U: projectile · H: finisher',
-        aura: 'Down or jump + J/K: low and aerial variants · O: throw/tech. Routes and finisher conditions are fighter-specific. Space: Aura. R: En · F: Shu · X: In · G: Gyo · 1–4: Ryu (head, torso, hands, legs).',
+          'J/K/L: Light/Heavy/Hatsu · I: Finisher · O: Projectile · M: Throw',
+        aura: 'U: Kameo · N: Burst · G: On · V: Nen controls · P: Pause',
       }
 }

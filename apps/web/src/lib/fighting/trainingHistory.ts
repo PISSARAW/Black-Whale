@@ -33,7 +33,10 @@ function sampleSide(state: FightState, side: FightSide, input: FightInput): Figh
   const lab = state.training!
   const label =
     Object.keys(input)
-      .filter((key) => input[key as keyof FightInput])
+      .filter(
+        (key) =>
+          key !== 'directControls' && key !== 'directionalZetsu' && input[key as keyof FightInput],
+      )
       .sort()
       .join(' + ') || 'neutral'
   if (lab.lastInputs[side] === label) {

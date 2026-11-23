@@ -187,6 +187,7 @@ export function nextFightRound(state: FightState): FightState {
       remainingFrames: format.roundFrames,
       frameAccumulator: 0,
       hitstop: 0,
+      directMoveBuffer: undefined,
       winner: null,
       finishReason: null,
       roundNumber: state.roundNumber + 1,

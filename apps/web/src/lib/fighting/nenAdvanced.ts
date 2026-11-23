@@ -96,7 +96,9 @@ function applyManualFocus(
 ): ArcadeFighter {
   const zone = selectedNenZone(input)
   if (!available || !zone) return fighter
-  return input.gyo && !input.aura ? focusBodyGyo(fighter, zone) : focusNenZone(fighter, zone)
+  return (input.gyo || input.directControls) && !input.aura
+    ? focusBodyGyo(fighter, zone)
+    : focusNenZone(fighter, zone)
 }
 
 function applySightInputs(
@@ -106,7 +108,8 @@ function applySightInputs(
 ): ArcadeFighter {
   let next = applyOcularInput(fighter, input, available)
   const directionalIn = Boolean(
-    input.aura && !input.guard && !input.down && !input.jump && holdingBack(fighter, input),
+    !input.directControls && input.aura && !input.guard && !input.down && !input.jump &&
+      holdingBack(fighter, input),
   )
   const wantIn = Boolean(input.conceal || directionalIn || fighter.attack?.concealed)
   if (wantIn || fighter.nen.in)

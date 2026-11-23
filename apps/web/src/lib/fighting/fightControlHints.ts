@@ -12,19 +12,19 @@ export function useFightBindings(): Readable<KeyboardBindings> {
 
 export function throwHint(bindings: KeyboardBindings, side: FightSide = 'player'): string {
   return side === 'player'
-    ? `${bindings.playerLight}+${bindings.playerHeavy}`
+    ? bindings.playerThrow
     : `${bindings.opponentLight}+${bindings.opponentHeavy}`
 }
 
 export function finisherHint(bindings: KeyboardBindings, side: FightSide = 'player'): string {
   return side === 'player'
-    ? `${bindings.playerHeavy}+${bindings.playerSpecial}`
+    ? bindings.playerFinisher
     : `${bindings.opponentHeavy}+${bindings.opponentSpecial}`
 }
 
 export function rangedHint(bindings: KeyboardBindings, side: FightSide = 'player'): string {
   return side === 'player'
-    ? `${bindings.playerGuard}+${bindings.playerSpecial}`
+    ? bindings.playerProjectile
     : `${bindings.opponentGuard}+${bindings.opponentSpecial}`
 }
 
@@ -41,8 +41,8 @@ export function moveInputHint(
     K: heavy,
     L: special,
     U: special,
-    O: `${light}+${heavy}`,
-    H: `${heavy}+${special}`,
+    O: throwHint(bindings, side),
+    H: finisherHint(bindings, side),
   }
   return text.replace(/\b[JKLUHO]\b/g, (key) => map[key] ?? key)
 }

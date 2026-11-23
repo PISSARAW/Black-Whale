@@ -29,51 +29,37 @@ function pad(buttons: number[] = [], axes = [0, 0], index = 0): FightPad {
 const key = (value: string, code = value) => ({ key: value, code })
 
 describe('fight keyboard configuration', () => {
-  it('keeps the 8-button layout and pause distinct for both players', () => {
+  it('keeps the direct layout and pause distinct for both players', () => {
     const keys = defaultBindings()
     expect(bindingError(keys)).toBeNull()
     expect(keys.playerKameo).toBe('u')
-    expect(keys.playerBurst).toBe('o')
+    expect(keys.playerBurst).toBe('n')
+    expect(keys.playerProjectile).toBe('o')
+    expect(keys.playerNen).toBe('v')
     expect(keys.playerContext).toBe('h')
-    expect(keys.opponentKameo).toBe('.')
-    expect(keys.opponentBurst).toBe('/')
+    expect(keys.opponentKameo).toBe('e')
+    expect(keys.opponentBurst).toBe('x')
     expect(keys.opponentContext).toBe('b')
     expect(keys.pause).toBe('p')
   })
   it('rejects duplicate keys, browser shortcuts and Easter Egg keys', () => {
-    for (const value of [
-      'k',
-      'F2',
-      'F4',
-      'F5',
-      'Tab',
-      'Escape',
-      'R',
-      'F',
-      'X',
-      'G',
-      '1',
-      '2',
-      '3',
-      '4',
-      '[',
-    ])
+    for (const value of ['k', 'F2', 'F4', 'F5', 'Tab', 'Escape', 'R', 'F', 'X', 'G', 'P'])
       expect(assignControlKey(defaultBindings(), 'playerLight', value)).toBeNull()
   })
   it('remaps the physical key and disables its former primary shortcut', () => {
     const duplicate = assignControlKey(defaultBindings(), 'playerLight', 'M')
-    expect(duplicate).toBeNull() // P2 heavy already owns M.
+    expect(duplicate).toBeNull() // M belongs to Throw.
     const custom = assignControlKey(defaultBindings(), 'playerLight', 'é')!
     const mapper = createKeyboardMapper()
-    expect(mapper.key(key('é', 'KeyE'), true, custom)).toBe('j')
+    expect(mapper.key(key('é', 'Digit2'), true, custom)).toBe('direct:playerLight')
     expect(mapper.key(key('j', 'KeyJ'), true, custom)).toBeNull()
   })
   it('releases the original command when remapping takes place during a held key', () => {
     const mapper = createKeyboardMapper()
     const original = assignControlKey(defaultBindings(), 'playerLight', 'é')!
-    mapper.key(key('é', 'KeyE'), true, original)
-    expect(mapper.key(key('é', 'KeyE'), true, defaultBindings())).toBe('j')
-    expect(mapper.key(key('é', 'KeyE'), false, defaultBindings())).toBe('j')
+    mapper.key(key('é', 'Digit2'), true, original)
+    expect(mapper.key(key('é', 'Digit2'), true, defaultBindings())).toBe('direct:playerLight')
+    expect(mapper.key(key('é', 'Digit2'), false, defaultBindings())).toBe('direct:playerLight')
   })
   it('loads only complete valid bindings and tolerates damaged or inaccessible storage', () => {
     const original = assignControlKey(defaultBindings(), 'playerLight', 'é')!
@@ -271,9 +257,9 @@ describe('configured fight input dispatch', () => {
   })
   it('renders configured move commands without replacing technique names', () => {
     const bindings = { ...defaultBindings(), playerSpecial: 'é', playerHeavy: '`' }
-    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / `+é')
+    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / i')
     expect(moveInputHint('HISOKA · HATSU · KO', bindings)).toBe('HISOKA · HATSU · KO')
-    expect(moveInputHint('L / H', bindings, 'opponent')).toBe(', / m+,')
+    expect(moveInputHint('L / H', bindings, 'opponent')).toBe('y / t+y')
   })
 })
 

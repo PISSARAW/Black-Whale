@@ -1,4 +1,5 @@
 import { defensiveKo } from './nenCombat/guardKo'
+import { requestsZetsu } from './fightInputTypes'
 import { regionalDefence } from './nenCombat/protection'
 import { bodyGyoZone, BODY_GYO_DRAIN, gyoStatus } from './nenCombat/bodyGyo'
 import { activeEnRadius } from './en/access'
@@ -71,6 +72,7 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   const sworn = applyOnContext(fighter, input)
   if (sworn) return sworn
   if (fighter.auraExhausted) return withAction(fighter, { type: 'ZETSU' })
+  if (input.zetsuIntent) return forceZetsu({ ...fighter, defensiveKo: undefined })
 
   const committed = defensiveKo(fighter, input)
   if (committed) return committed
@@ -79,6 +81,7 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (requestsZetsu(input)) return withAction(fighter, { type: 'ZETSU' })
   if (!input.aura) {
     const released = commitKoOnRelease(fighter)
     if (released !== fighter) return released
@@ -86,9 +89,8 @@ function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFight
     return withAction(released, { type: 'TEN' })
   }
 
-  if (input.down && !input.en) return withAction(fighter, { type: 'ZETSU' })
   if (input.guard) return withAction(fighter, { type: 'KEN', on: true })
-  if (input.jump) {
+  if (input.jump && !input.directControls) {
     const ten = withAction(fighter, { type: 'TEN' })
     return withAction(ten, { type: 'GYO', on: true })
   }

@@ -179,8 +179,10 @@ describe('held inputs and neutral gating', () => {
     const mapper = createKeyboardMapper(),
       bindings = defaultBindings()
     const event = { key: 'd', code: 'KeyD' }
-    expect(mapper.key(event, true, bindings)).toBe('d')
-    expect(mapper.key({ ...event, key: 'x' }, false, { ...bindings, playerRight: 'x' })).toBe('d')
+    expect(mapper.key(event, true, bindings)).toBe('direct:playerRight')
+    expect(mapper.key({ ...event, key: 'x' }, false, { ...bindings, playerRight: 'x' })).toBe(
+      'direct:playerRight',
+    )
     mapper.key({ key: 'l', code: 'KeyL' }, true, bindings)
     mapper.clear()
     expect(mapper.key({ key: 'l', code: 'KeyL' }, false, bindings)).toBeNull()

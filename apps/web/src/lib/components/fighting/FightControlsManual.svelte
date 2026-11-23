@@ -3,6 +3,7 @@
   import {
     CONTROL_KEYS,
     CONTROL_LABELS,
+    controlKeyLabel,
     type ControlCommand,
   } from '$lib/fighting/fightInputBindings'
   const bindings = useFightBindings()
@@ -24,11 +25,7 @@
     {#each commands as command (command)}
       <div>
         <span>{CONTROL_LABELS[command][language === 'fr' ? 0 : 1]}</span><kbd
-          >{$bindings[command] === ' '
-            ? language === 'fr'
-              ? 'Espace'
-              : 'Space'
-            : $bindings[command]}</kbd
+          >{controlKeyLabel($bindings[command], language)}</kbd
         >
       </div>
     {/each}
@@ -45,13 +42,18 @@
   </p>
   <p>
     {language === 'fr'
-      ? `${$bindings.playerLight}+${$bindings.playerHeavy} : projection. ${$bindings.playerGuard}+${$bindings.playerSpecial} : projectile. ${$bindings.playerHeavy}+${$bindings.playerSpecial} : ultime. Garde + ${$bindings.playerLight}+${$bindings.playerHeavy} (ou ${$bindings.playerBurst}) : Burst. ${$bindings.playerContext} : action contextuelle (plaies, oreilles, objet, arène, parler).`
-      : `${$bindings.playerLight}+${$bindings.playerHeavy}: throw. ${$bindings.playerGuard}+${$bindings.playerSpecial}: projectile. ${$bindings.playerHeavy}+${$bindings.playerSpecial}: finisher. Guard + ${$bindings.playerLight}+${$bindings.playerHeavy} (or ${$bindings.playerBurst}): Burst. ${$bindings.playerContext}: context action (wounds, ears, object, arena, speak).`}
+      ? 'Aura + Projection engage la super-projection. Le mode Classique utilise ↓ ↘ → + Hatsu pour les supers à motion. Le Kaméo prend la direction du déplacement au moment de l’appel.'
+      : 'Aura + Throw commits to a super throw. Classic uses ↓ ↘ → + Hatsu for motion supers. The Kameo uses the movement direction at the time of the call.'}
   </p>
   <p>
     {language === 'fr'
-      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu maintenu ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. R = En, F = Shu, X = In, G = Gyo et G + 1/2/3/4 cible tête/torse/mains/jambes. Shu est automatique en Ren avec une arme.'
-      : 'Aura (modifier): alone = Ren; + Down = sustained Zetsu; + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. R = En, F = Shu, X = In, G = Gyo, and G + 1/2/3/4 targets head/torso/hands/legs. Shu is automatic during Ren with a weapon.'}
+      ? 'Maintiens la touche Nen avant le second appui : Léger / Lourd / Hatsu / Ultime donnent En / In / Shu / Gyo. Kaméo / Projectile / Projection / Burst ciblent tête / torse / mains / jambes. Aura donne Ren, Aura + Garde donne Ken. Une zone sous Aura donne Ryu et une zone sous Garde demande le Ko défensif.'
+      : 'Hold Nen before the second press: Light / Heavy / Hatsu / Finisher select En / In / Shu / Gyo. Kameo / Projectile / Throw / Burst target head / torso / hands / legs. Aura gives Ren, Aura + Guard gives Ken. Use a zone with Aura for Ryu or with Guard for defensive Ko.'}
+  </p>
+  <p>
+    {language === 'fr'
+      ? 'Nen + Aura : Zetsu. Nen + On : Gyo faible. Pour un Seiyaku directionnel, maintiens d’abord la direction, puis Nen + Contexte. Nen + gauche / droite / haut / bas : parler / interagir / couvrir les oreilles / boucher les plaies.'
+      : 'Nen + Aura: Zetsu. Nen + On: low Gyo. For a directional Seiyaku, hold the direction first, then Nen + Context. Nen + Left / Right / Up / Down: speak / interact / cover ears / plug wounds.'}
   </p>
   <FightMoveList {fighterId} {language} />
 </aside>

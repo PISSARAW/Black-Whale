@@ -7,15 +7,19 @@
   export let fighter: ArcadeFighter | undefined = undefined
   export let language: 'fr' | 'en'
   export let onControl: (key: keyof FightInput, held: boolean) => void = () => {}
-  const controls: { key: keyof FightInput; shortcut: string; label: string }[] = [
-    { key: 'en', shortcut: 'R', label: 'En' },
-    { key: 'shu', shortcut: 'F', label: 'Shu' },
-    { key: 'conceal', shortcut: 'X', label: 'In' },
-    { key: 'gyo', shortcut: 'G', label: 'Gyo' },
-    { key: 'focusHead', shortcut: '1', label: 'Tête / Head' },
-    { key: 'focusTorso', shortcut: '2', label: 'Torse / Torso' },
-    { key: 'focusHands', shortcut: '3', label: 'Mains / Hands' },
-    { key: 'focusFeet', shortcut: '4', label: 'Jambes / Legs' },
+  const controls: { key: keyof FightInput; label: string }[] = [
+    { key: 'en', label: 'En' },
+    { key: 'shu', label: 'Shu' },
+    { key: 'conceal', label: 'In' },
+    { key: 'gyo', label: 'Gyo' },
+    { key: 'zetsuIntent', label: 'Zetsu' },
+    { key: 'onIntent', label: 'On' },
+    { key: 'seiyakuIntent', label: 'Seiyaku' },
+    { key: 'lowGyoIntent', label: 'Gyo faible / Low Gyo' },
+    { key: 'focusHead', label: 'Tête / Head' },
+    { key: 'focusTorso', label: 'Torse / Torso' },
+    { key: 'focusHands', label: 'Mains / Hands' },
+    { key: 'focusFeet', label: 'Jambes / Legs' },
   ]
 </script>
 
@@ -33,7 +37,6 @@
       disabled={control.key === 'en' && (!fighter || enProfile(fighter).radiusUnits === null)}
       onHold={(active) => onControl(control.key, active)}
     >
-      <kbd>{control.shortcut}</kbd>
       {control.label.includes('/')
         ? control.label.split(' / ')[language === 'fr' ? 0 : 1]
         : control.label}
@@ -64,9 +67,5 @@
   .tactics :global(button:focus-visible) {
     outline: 2px solid #e7ca7c;
     outline-offset: 2px;
-  }
-  kbd {
-    color: #e7ca7c;
-    font: inherit;
   }
 </style>

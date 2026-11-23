@@ -23,6 +23,10 @@
   $: special = fightSpecialPresentation(state, language)
   $: shot = projectileProfile(state.player.id)
   $: finisher = moveForSlot(state.player.id, 'finisher')
+  function hold(key: keyof FightInput, active: boolean) {
+    if (active) onControl('directControls', true)
+    onControl(key, active)
+  }
 </script>
 
 <div
@@ -32,23 +36,23 @@
   oncontextmenu={(event) => event.preventDefault()}
 >
   <div class="touch-movement">
-    <FightDirectionPad {language} {onControl} />
+    <FightDirectionPad {language} onControl={hold} />
     <div class="touch-defense">
       <FightHeldButton
         label={fr ? 'Burst défensif' : 'Defensive Burst'}
-        onHold={(active) => onControl('burst', active)}>BURST</FightHeldButton
+        onHold={(active) => hold('burst', active)}>BURST</FightHeldButton
       >
       <FightHeldButton
         label={fr ? 'Garde' : 'Block'}
-        onHold={(active) => onControl('guard', active)}>{fr ? 'Garde' : 'Block'}</FightHeldButton
+        onHold={(active) => hold('guard', active)}>{fr ? 'Garde' : 'Block'}</FightHeldButton
       >
       <FightHeldButton
         label={fr ? 'Maintenir Aura' : 'Hold aura'}
-        onHold={(active) => onControl('aura', active)}>Aura</FightHeldButton
+        onHold={(active) => hold('aura', active)}>Aura</FightHeldButton
       >
     </div>
   </div>
-  <FightTouchTools {state} {language} {onControl} {onEmperor} {onCall} {onMoves} />
+  <FightTouchTools {state} {language} onControl={hold} {onEmperor} {onCall} {onMoves} />
   <div
     class="touch-attacks"
     role="group"
@@ -72,14 +76,14 @@
     <FightHeldButton
       label={fr ? 'Action contextuelle' : 'Context action'}
       className="context-button"
-      onHold={(active) => onControl('context', active)}
+      onHold={(active) => hold('context', active)}
       >{fr ? 'Contexte' : 'Context'}</FightHeldButton
     >
     {#if state.player.id !== 'camilla'}
       <FightHeldButton
         className="special-button"
         label={moveInputHint(special.hint, fightTouchBindings(language))}
-        onHold={(active) => onControl('hatsu', active)}
+        onHold={(active) => hold('hatsu', active)}
         onPress={() => onAttack('special')}>Hatsu</FightHeldButton
       >
     {/if}

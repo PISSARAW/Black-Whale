@@ -22,7 +22,7 @@ function nearbyArenaObject(state: FightState, side: FightSide): boolean {
 }
 
 /**
- * Resolves the unified Context button (`H` / `RT`) by state priority:
+ * Resolves the unified Context button by state priority:
  * 1. Open wounds -> plugWounds
  * 2. Active sound threat -> coverEars
  * 3. Nearby arena object -> interact
@@ -35,6 +35,7 @@ export function resolveContextInput(
   input: FightInput,
 ): FightInput {
   if (!input.context) return input
+  if (hasManualContext(input)) return input
   const fighter = state[side]
   if (hasIllumiNeedleOrder(fighter)) return { ...input, removeNeedle: true }
   if (fighter.hinrighCuffed || fighter.biohazardRestraint) return { ...input, breakCuffs: true }
@@ -42,6 +43,17 @@ export function resolveContextInput(
   if (state.moonlightOffer?.status === 'offered' && state.moonlightOffer.target === side) {
     return { ...input, acceptContract: true }
   }
+  return ordinaryContext(state, side, input)
+}
+
+function hasManualContext(input: FightInput): boolean {
+  return Boolean(
+    input.directControls && (input.call || input.interact || input.plugWounds || input.coverEars),
+  )
+}
+
+function ordinaryContext(state: FightState, side: FightSide, input: FightInput): FightInput {
+  const fighter = state[side]
   if ((fighter.openWounds ?? 0) > 0) return { ...input, plugWounds: true }
   if (soundThreatActive(state, side)) return { ...input, coverEars: true }
   if (nearbyArenaObject(state, side)) return { ...input, interact: true }

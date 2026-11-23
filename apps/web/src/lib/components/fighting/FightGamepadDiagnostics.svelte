@@ -2,8 +2,10 @@
   import { onMount } from 'svelte'
   import { createGamepadDiagnostics, xboxButtonLabel } from '$lib/fighting/gamepadDiagnostics'
   import { trainingInputLabel } from '$lib/fighting/trainingLabels'
+  import { RIGHT_STICK_ACTIONS, type RightStickLayout } from '$lib/fighting/directFightGamepad'
   export let language: 'fr' | 'en'
-  const capture = createGamepadDiagnostics()
+  export let layout: RightStickLayout = [...RIGHT_STICK_ACTIONS]
+  const capture = createGamepadDiagnostics(() => layout)
   let report = capture.report()
   export let running = false
   let unavailable = false

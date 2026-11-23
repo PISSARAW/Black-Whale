@@ -242,8 +242,8 @@
       <p class="warning">{explanation.risk}</p>
       <p>
         {language === 'fr'
-          ? 'Maintenir : Ren · + garde : Ken · + bas : Zetsu · + haut : Gyo · relâcher sur un coup : Ko · R : En · F : Shu · X : In · G : Gyo · 1–4 : Ryu tête/torse/mains/jambes · + L (rancune 50) : On'
-          : 'Hold: Ren · + guard: Ken · + down: Zetsu · + up: Gyo · release on a strike: Ko · R: En · F: Shu · X: In · G: Gyo · 1–4: Ryu head/torso/hands/legs · + L (grudge 50): On'}
+          ? 'Maintiens Aura pour Ren, puis Garde pour Ken. Relâche Aura sur un coup chargé pour engager le Ko offensif. Le Zetsu et On ont leurs propres commandes.'
+          : 'Hold Aura for Ren, then Guard for Ken. Release Aura during a charged strike for offensive Ko. Zetsu and On have their own controls.'}
       </p>
     </div>
   {/if}

@@ -131,10 +131,12 @@ describe('8-button combat layout and chords', () => {
 
   it('allows 3-frame chord lenience (plinking L -> Throw within startup) and avoids macOS Alt dead keys', () => {
     const keys = defaultBindings()
-    expect(keys.opponentAura).toBe('v')
+    expect(keys.opponentAura).toBe('r')
     const mapper = createKeyboardMapper()
-    expect(mapper.key({ key: 'Dead', code: 'KeyN', altKey: true }, true, keys)).toBe('n')
-    expect(mapper.key({ key: '≤', code: 'Comma', altKey: true }, true, keys)).toBe(',')
+    expect(mapper.key({ key: 'Dead', code: 'KeyN', altKey: true }, true, keys)).toBe(
+      'direct:playerBurst',
+    )
+    expect(mapper.key({ key: '≤', code: 'Comma', altKey: true }, true, keys)).toBeNull()
 
     const start = { ...createFightState('kurapika', 'hisoka'), phase: 'fighting' as const }
     const withLight = performMove({

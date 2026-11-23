@@ -125,8 +125,7 @@ describe('Nen techniques in an actual 2D duel', () => {
       shu: true,
       gyo: true,
       conceal: true,
-      aura: true,
-      down: true,
+      zetsuIntent: true,
     })
     expect(zetsu.nen).toMatchObject({ mode: 'zetsu', en: null, shu: [], in: false, gyo: false })
     expect(aura(en, {}).nen.en).toBeNull()

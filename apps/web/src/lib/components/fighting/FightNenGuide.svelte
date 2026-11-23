@@ -23,13 +23,13 @@
   </p>
   <p>
     <b>{fr ? 'Commandes' : 'Controls'}</b> — {fr
-      ? 'Clavier par défaut : R = En, X = In, G = yeux ; G + 1/2/3/4 = Gyo tête/torse/mains/jambes. Sur tactile, maintiens Gyo et une zone ensemble.'
-      : 'Default keys: R = En, X = In, G = eyes; G + 1/2/3/4 = head/torso/hands/legs Gyo. On touch, hold Gyo and a zone together.'}
+      ? 'Clavier par défaut : V + J/K/L/I pour En/In/Shu/Gyo ; V + U/O/M/N pour tête/torse/mains/jambes. Sur tactile, maintiens Gyo et une zone ensemble.'
+      : 'Default keys: V + J/K/L/I for En/In/Shu/Gyo; V + U/O/M/N for head/torso/hands/legs. On touch, hold Gyo and a zone together.'}
   </p>
   <p>
     <b>Xbox</b> — {fr
-      ? 'View + croix ↑/↓/←/→ : En/In/Shu/Gyo. Clic stick droit + croix ↑/↓/←/→ : Gyo tête/torse/mains/jambes. Aura + croix conserve les commandes directionnelles normales, dont Aura + Bas = Zetsu. Le stick gauche et les boutons d’attaque restent libres.'
-      : 'View + D-pad ↑/↓/←/→: En/In/Shu/Gyo. Right-stick click + D-pad ↑/↓/←/→: head/torso/hands/legs Gyo. Aura + D-pad keeps the normal directional commands, including Aura + Down = Zetsu. Left-stick movement and attack buttons remain free.'}
+      ? 'Maintiens View puis croix ↑/↓/←/→ : En/In/Shu/Gyo. R3 + croix ↑/↓/←/→ cible tête/torse/mains/jambes. View + stick droit ↓ donne Zetsu, ↑ engage un Seiyaku. View + A/B/X/Y donne parole/interaction/oreilles/plaies.'
+      : 'Hold View, then D-pad ↑/↓/←/→ for En/In/Shu/Gyo. R3 + D-pad ↑/↓/←/→ targets head/torso/hands/legs. View + right stick ↓ gives Zetsu, ↑ commits to a Seiyaku. View + A/B/X/Y selects speech/interaction/ears/wounds.'}
   </p>
   <small
     >{fr

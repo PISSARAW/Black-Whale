@@ -11,5 +11,8 @@ export function fightTouchBindings(language: 'fr' | 'en'): KeyboardBindings {
     playerKameo: fr ? 'Kaméo' : 'Kameo',
     playerBurst: 'Burst',
     playerContext: fr ? 'Contexte' : 'Context',
+    playerThrow: fr ? 'Proj.' : 'Throw',
+    playerFinisher: fr ? 'Ultime' : 'Super',
+    playerProjectile: fr ? 'Tir' : 'Shot',
   }
 }

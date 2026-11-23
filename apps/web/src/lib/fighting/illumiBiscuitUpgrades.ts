@@ -1,4 +1,5 @@
 import { isBiscuitTrueForm } from './biscuitForm'
+import { requestsZetsu } from './fightInputTypes'
 import type { ArcadeFighter, FightInput, FightState } from './types'
 
 export const ILLUMI_NEEDLE_ORDER_FRAMES = 240 // 4 s
@@ -58,7 +59,7 @@ export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInp
     }
   }
   // 'zetsu' order blocks Ken (guard + aura) and Ren (aura without down) until needle is pulled.
-  if (input.aura && !input.down) return { ...input, aura: false }
+  if (input.aura && !requestsZetsu(input)) return { ...input, aura: false }
   return input
 }
 

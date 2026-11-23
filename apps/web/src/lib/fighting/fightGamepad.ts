@@ -1,5 +1,11 @@
 import { resolvePadChords } from './combatChords'
 import { nenPadChords } from './nenCombat/padChords'
+import {
+  createDirectPadSampler,
+  rightStickNeutral,
+  RIGHT_STICK_ACTIONS,
+  type RightStickLayout,
+} from './directFightGamepad'
 import { EMPTY_INPUT, type FightInput, type FightSide, type MoveAction } from './types'
 
 export interface FightPad {
@@ -46,7 +52,10 @@ function stickInput(pad: FightPad, previous: FightInput): FightInput {
     down: axisDirection(y, previous.down, 1),
   }
 }
-function padActions(pad: FightPad, previous: FightPad | null): {
+function padActions(
+  pad: FightPad,
+  previous: FightPad | null,
+): {
   actions: PadAction[]
   burst: boolean
 } {
@@ -106,13 +115,18 @@ interface PadSlot {
   previous: FightPad | null
   input: FightInput
   armed: boolean
+  direct: ReturnType<typeof createDirectPadSampler>
 }
 const clonePad = (pad: FightPad): FightPad => ({
   ...pad,
   axes: [...pad.axes],
   buttons: pad.buttons.map((button) => ({ pressed: button.pressed, value: button.value })),
 })
-function syncSlots(slots: Partial<Record<FightSide, PadSlot>>, connected: readonly FightPad[]) {
+function syncSlots(
+  slots: Partial<Record<FightSide, PadSlot>>,
+  connected: readonly FightPad[],
+  local: boolean,
+) {
   for (const side of ['player', 'opponent'] as const) {
     const slot = slots[side]
     if (slot && !connected.some((pad) => pad.index === slot.index && pad.id === slot.id))
@@ -120,7 +134,9 @@ function syncSlots(slots: Partial<Record<FightSide, PadSlot>>, connected: readon
   }
   for (const pad of connected) {
     if (Object.values(slots).some((slot) => slot.index === pad.index)) continue
-    const side = !slots.player ? 'player' : !slots.opponent ? 'opponent' : null
+    const order: FightSide[] =
+      local && connected.length === 1 ? ['opponent', 'player'] : ['player', 'opponent']
+    const side = order.find((candidate) => !slots[candidate])
     if (side)
       slots[side] = {
         index: pad.index,
@@ -128,21 +144,50 @@ function syncSlots(slots: Partial<Record<FightSide, PadSlot>>, connected: readon
         previous: null,
         input: { ...EMPTY_INPUT },
         armed: false,
+        direct: createDirectPadSampler(),
       }
   }
 }
-function readSlot(slot: PadSlot, pad: FightPad, enabled: boolean): PadFrame {
-  const frame = sampleGamepad(pad, slot.previous, slot.input)
+function readSlot(
+  slot: PadSlot,
+  pad: FightPad,
+  options: {
+    enabled: boolean
+    layout?: RightStickLayout
+  },
+): PadFrame {
+  const frame = options.layout
+    ? sampleDirectGamepad(pad, slot, options.layout)
+    : sampleGamepad(pad, slot.previous, slot.input)
   slot.previous = clonePad(pad)
   slot.input = frame.input
   const wasArmed = slot.armed
   if (frame.neutral) slot.armed = true
   const actions = frame.actions.filter((action) => action === 'pause')
-  if (!enabled) slot.armed = false
+  if (!options.enabled) slot.armed = false
   if (!slot.armed || !wasArmed) return { ...frame, input: { ...EMPTY_INPUT }, actions }
   return frame
 }
-export function createGamepadReader() {
+export function sampleDirectGamepad(
+  pad: FightPad,
+  slot: { input: FightInput; previous: FightPad | null; direct: PadSlot['direct'] },
+  layout: RightStickLayout,
+): PadFrame {
+  const input = stickInput(pad, slot.input)
+  input.guard = pressed(pad, 4)
+  input.burst = pressed(pad, 6)
+  const actions = slot.direct({ pad, previous: slot.previous, input, layout })
+  const neutral =
+    !pad.buttons.some((button) => button.pressed) &&
+    !input.left &&
+    !input.right &&
+    !input.jump &&
+    !input.down &&
+    rightStickNeutral(pad)
+  if (neutral) delete input.directControls
+  return { input, actions, neutral }
+}
+export function createGamepadReader(direct = false) {
   const slots: Partial<Record<FightSide, PadSlot>> = {}
   const inputs: Record<FightSide, FightInput> = {
     player: { ...EMPTY_INPUT },
@@ -150,24 +195,38 @@ export function createGamepadReader() {
   }
   return {
     inputs,
+    resetSeats() {
+      delete slots.player
+      delete slots.opponent
+    },
     release() {
       for (const side of ['player', 'opponent'] as const) {
         inputs[side] = { ...EMPTY_INPUT }
         if (slots[side]) slots[side]!.armed = false
       }
     },
-    poll(pads: readonly (FightPad | null)[], enabled: boolean) {
+    poll(
+      pads: readonly (FightPad | null)[],
+      enabled: boolean,
+      settings?: {
+        local?: boolean
+        layout?: RightStickLayout
+      },
+    ) {
       const connected = pads.filter((pad): pad is FightPad =>
         Boolean(pad?.connected && pad.mapping === 'standard'),
       )
-      syncSlots(slots, connected)
+      syncSlots(slots, connected, Boolean(settings?.local))
       const actions: { side: FightSide; action: PadAction }[] = []
       for (const side of ['player', 'opponent'] as const) {
         inputs[side] = { ...EMPTY_INPUT }
         const slot = slots[side]
         const pad = connected.find((candidate) => candidate.index === slot?.index)
         if (!slot || !pad) continue
-        const frame = readSlot(slot, pad, enabled)
+        const frame = readSlot(slot, pad, {
+          enabled,
+          layout: direct ? (settings?.layout ?? [...RIGHT_STICK_ACTIONS]) : undefined,
+        })
         inputs[side] = frame.input
         actions.push(...frame.actions.map((action) => ({ side, action })))
       }

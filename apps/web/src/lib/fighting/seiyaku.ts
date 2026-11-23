@@ -119,7 +119,8 @@ export function holdingForward(fighter: ArcadeFighter, input?: FightInput): bool
  * - Back / Up -> 'blind' (-25% Hatsu cost, no Gyo)
  */
 export function resolveSeiyakuInput(fighter: ArcadeFighter, input?: FightInput): ArcadeFighter {
-  if (!input?.aura || !input.context) return fighter
+  if (!input || !(input.seiyakuIntent || (!input.directControls && input.aura && input.context)))
+    return fighter
   const kind: SeiyakuKind = holdingForward(fighter, input)
     ? 'aggression'
     : holdingBack(fighter, input) || input.jump

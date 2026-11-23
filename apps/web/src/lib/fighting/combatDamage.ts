@@ -11,6 +11,15 @@ import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
 import { updateTextureOnHit } from './textureSurpriseMask'
 import { thetaBulletDamageFactor } from './martialSpecialists'
+import {
+  LEORIO_TEN_CHIP_FACTOR,
+  LEORIO_TEN_LAUNCH_VY,
+  LEORIO_TEN_LAUNCH_Y,
+  leorioBreaksTenGuard,
+  leorioSurgicalStack,
+} from './leorioMedical'
+import { furykovResistanceFactor } from './furykovProfile'
+import { bashoFireAttackFactor, bashoIgnoresTenGuard, bashoKenCostFactor } from './bashoHaiku'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -57,7 +66,9 @@ function attackDamage(
   },
 ): number {
   const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
-  const guard = blocked ? 0.28 : 1
+  const guardBypassed = blocked && bashoIgnoresTenGuard(attacker, defender)
+  const leorioChip = leorioBreaksTenGuard(attacker, defender, blocked)
+  const guard = !blocked || guardBypassed ? 1 : leorioChip ? 0.28 * LEORIO_TEN_CHIP_FACTOR : 0.28
   const rawDamage = Math.round(
     base *
       (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
@@ -68,8 +79,10 @@ function attackDamage(
         (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
       hatsuDefenceFactor(defender) *
       guard *
-      shuGuardFactor(defender, blocked, options.physicalProjectile) *
+      shuGuardFactor(defender, blocked && !guardBypassed, options.physicalProjectile) *
       thetaBulletDamageFactor(attacker, options.physicalProjectile) *
+      furykovResistanceFactor(defender, attacker) *
+      bashoFireAttackFactor(attacker) *
       openingMultiplier,
   )
   // Scale the rounded wound down so successive light hits cannot round back up.
@@ -138,11 +151,24 @@ function struckFighter(
     health: Math.max(0, options.fighter.health - options.damage),
     aura:
       options.blocked && options.fighter.nen.ken
-        ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1)
+        ? Math.max(
+            0,
+            options.fighter.aura -
+              (2 + options.damage * 0.1) * bashoKenCostFactor(options.fighter),
+          )
         : options.fighter.aura,
     nen: contactNen(options.fighter, options.blocked),
     textureSurprise: textureUpdate.textureSurprise,
     ...(textureUpdate.trapped ? { hitStun: 0, blockStun: 0 } : {}),
+    ...(leorioBreaksTenGuard(options.attacker, options.fighter, options.blocked)
+      ? { y: Math.max(options.fighter.y, LEORIO_TEN_LAUNCH_Y), velocityY: LEORIO_TEN_LAUNCH_VY }
+      : {}),
+    ...(!options.blocked &&
+    options.damage > 0 &&
+    options.attacker.bashoHaikuBuff?.theme === 'fire' &&
+    options.attacker.bashoHaikuBuff.quality === 'masterpiece'
+      ? { haikuBurn: true }
+      : {}),
     easterEgg: undefined,
     easterEggSequence: 0,
     melodyPerformance: undefined,
@@ -153,7 +179,10 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
-  return rememberBodyHit(struck, options.zone, options.damage, options.blocked)
+  const stacks = leorioSurgicalStack(options.attacker, options.fighter)
+  let updated = rememberBodyHit(struck, options.zone, options.damage, options.blocked)
+  if (stacks > 1) updated = rememberBodyHit(updated, options.zone, options.damage, options.blocked)
+  return updated
 }
 
 function airRecoveryOnHit(options: StrikeOptions): true | undefined {

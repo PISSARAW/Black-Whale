@@ -22,6 +22,7 @@ declare module './types' {
 const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
 export function nenTransferFrames(fighter: ArcadeFighter): number {
+  if (fighter.musseOwlActive) return 1
   // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
   const trained = fighterNenTraining(fighter, 'enhancer').level
   const base =

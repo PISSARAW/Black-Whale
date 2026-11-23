@@ -20,6 +20,19 @@ import { advanceBurstZetsu, resolveBurstInputs } from '../fightBurst'
 import { advanceTsk17, canReleaseTsk17, releaseTsk17 } from '../tsk17'
 import { advanceChrolloBookIntel } from '../chrolloDeck'
 import { pickChrolloFlipSlot } from '../chrolloBookAction'
+import { advanceLeorioSonar } from '../leorioMedical'
+import { advanceMusseOwl } from '../musseWindowUpgrades'
+import { advanceFurykovProfile } from '../furykovProfile'
+import { advanceBashoHaiku, extinguishBashoBurn } from '../bashoHaiku'
+
+function resolveBurnExtinguish(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (inputs[side]?.context && state[side].haikuBurn) {
+      state = { ...state, [side]: extinguishBashoBurn(state[side]) }
+    }
+  }
+  return state
+}
 
 function resolveChrolloFlipInputs(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -50,6 +63,7 @@ export function openFrame(
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
+  state = resolveBurnExtinguish(state, inputs)
   state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)
@@ -84,7 +98,17 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceTsk17(
-    advanceChrolloBookIntel(reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))),
+  return advanceBashoHaiku(
+    advanceFurykovProfile(
+      advanceMusseOwl(
+        advanceLeorioSonar(
+          advanceTsk17(
+            advanceChrolloBookIntel(
+              reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+            ),
+          ),
+        ),
+      ),
+    ),
   )
 }

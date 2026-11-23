@@ -29,6 +29,8 @@ import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 import { chrolloRightHandOccupied } from './chrolloDeck'
 import { textureSurpriseDrain } from './textureSurpriseMask'
 import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialists'
+import { musseOwlDrain } from './musseWindowUpgrades'
+import { bashoKenCostFactor } from './bashoHaiku'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -151,6 +153,7 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
     baseAuraFlow(fighter) -
     bodyMemoryRyuDrain(fighter) -
     textureSurpriseDrain(fighter) -
+    musseOwlDrain(fighter) -
     advancedAuraDrain(fighter) -
     Number(fighter.nen.gyo || Boolean(bodyGyoZone(fighter))) * BODY_GYO_DRAIN
   )
@@ -158,7 +161,7 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
 
 function baseAuraFlow(fighter: ArcadeFighter): number {
   if (fighter.nen.mode === 'zetsu') return 10
-  if (fighter.nen.ken) return -8
+  if (fighter.nen.ken) return -8 * bashoKenCostFactor(fighter)
   if (hasRyu(fighter)) return -6
   if (fighter.nen.mode === 'ren') return isBeyond(fighter) ? BEYOND_REN_DRAIN : -4
   if (fighter.nen.gyo) return 0

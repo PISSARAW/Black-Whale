@@ -1,4 +1,5 @@
 import { bodyMemoryWeak } from './bodyMemory'
+import { isFurykov } from './furykovProfile'
 import type { TextureSurpriseState } from './hisokaTextureOrigin'
 import type { ArcadeFighter, AttackKind, AttackVariant, FightNenZone } from './types'
 
@@ -109,12 +110,13 @@ export function textureSurpriseView(
     }
   }
   const fullGyo = Boolean(observer.nen.gyo && !observer.gyoLow)
+  const furykovPierces = isFurykov(observer)
   return {
     maskActive: true,
     displayedHp: texture!.displayedHp ?? target.health,
     realHp: target.health,
     showGhostHp: fullGyo,
-    maskBodyMemory: true,
+    maskBodyMemory: !furykovPierces,
     maskWounds: true,
     auraSeeping: fullGyo,
   }

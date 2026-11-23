@@ -30,6 +30,7 @@ import { ROSTER_WAVE_TWO_DIRECTIONAL_POSES } from './keyPosesRosterWaveTwoDirect
 import { ROSTER_WAVE_TWO_FINISH_POSES } from './keyPosesRosterWaveTwoFinish'
 import { ROSTER_WAVE_THREE_GROUNDED_POSES } from './keyPosesRosterWaveThree'
 import { ROSTER_WAVE_THREE_DIRECTIONAL_POSES } from './keyPosesRosterWaveThreeDirectional'
+import { ROSTER_WAVE_THREE_FINISH_POSES } from './keyPosesRosterWaveThreeFinish'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -58,6 +59,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
         ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES[
           id as keyof typeof ROSTER_WAVE_THREE_DIRECTIONAL_POSES
         ],
+        ...ROSTER_WAVE_THREE_FINISH_POSES[id as keyof typeof ROSTER_WAVE_THREE_FINISH_POSES],
       },
     ]),
   ),
@@ -74,6 +76,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   voconte: {
     ...ROSTER_WAVE_THREE_GROUNDED_POSES.voconte,
     ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.voconte,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.voconte,
     neutralSpecial: DOOR_LINK_POSE,
   },
   kurapika: {
@@ -98,6 +101,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   franklin: {
     ...ROSTER_WAVE_THREE_GROUNDED_POSES.franklin,
     ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.franklin,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.franklin,
     ...FRANKLIN_KEY_POSES,
   },
   kalluto: KALLUTO_KEY_POSES,
@@ -114,6 +118,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   furykov: {
     ...ROSTER_WAVE_THREE_GROUNDED_POSES.furykov,
     ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.furykov,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.furykov,
     neutralSpecial: FURYKOV_CONSOLE_POSE,
   },
   feitan: {

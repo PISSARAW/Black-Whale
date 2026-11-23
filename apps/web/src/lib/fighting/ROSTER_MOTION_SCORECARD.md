@@ -225,3 +225,27 @@ and retreating attacks remain based over the rear foot.
 | Saiyu      | 8.0 | 8.8 |
 
 The roster total is now 327 dedicated physical clips and 33 generated clips.
+
+## P9 — final-wave low power, air completion and certification
+
+Dedicated `lowHeavy`, `airLight` and `airHeavy` clips close the final gap. Low
+Heavy anchors over the rear support in both facings; air attacks tuck during
+anticipation, hold contact, remain unplanted and prepare their descent during
+recovery.
+
+| Fighter    |  P8 |  P9 |
+| ---------- | --: | --: |
+| Phinks     | 8.6 | 9.4 |
+| Zakuro     | 8.6 | 9.4 |
+| Franklin   | 8.7 | 9.4 |
+| Sayird     | 8.7 | 9.5 |
+| Voconte    | 8.7 | 9.4 |
+| Bill       | 8.7 | 9.4 |
+| Biscuit    | 8.8 | 9.5 |
+| Furykov    | 8.8 | 9.6 |
+| Halkenburg | 8.7 | 9.4 |
+| Hinrigh    | 8.7 | 9.5 |
+| Saiyu      | 8.8 | 9.5 |
+
+All 40 fighters now pass the same nine-slot contract: 360/360 physical attacks
+use dedicated choreography, with no generated roster or archetype fallback.

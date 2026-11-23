@@ -63,8 +63,13 @@ export const ROSTER_WAVE_THREE_SIGNATURES: Record<
     settle: { pelvis: [0.012, 0.045, 0], rearKnee: [0.055, 0, 0] },
   },
   biscuit: {
-    load: { pelvis: [-0.04, -0.18, 0], chest: [0.025, -0.18, 0], rearKnee: [0.22, 0, 0] },
-    contact: { pelvis: [0.065, 0.3, 0], chest: [0.05, 0.3, -0.025], rearFoot: [-0.025, 0.17, 0] },
+    load: { pelvis: [-0.04, -0.18, 0], chest: [0.025, -0.18, 0], rearKnee: [0.28, 0, 0] },
+    contact: {
+      pelvis: [0.065, 0.3, 0],
+      chest: [0.05, 0.3, -0.025],
+      rearKnee: [0.12, 0, 0],
+      rearFoot: [-0.025, 0.17, 0],
+    },
     recoil: { chest: [-0.04, -0.16, 0.025], leadWrist: [0.08, 0, 0] },
     settle: { pelvis: [0.01, 0.045, 0], leadPalm: [-0.035, 0, 0] },
   },

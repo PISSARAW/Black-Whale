@@ -11,7 +11,7 @@ export function tuneLonghiMoveset(base: FighterMoveset): FighterMoveset {
     'Direct aérien|Air Straight',
     'Trêve de cinq secondes|Five-Second Truce',
     'Clause d’approche|Approach Clause',
-    'Signature forcée|Forced Signature',
+    'Revers|Backfist',
     'Sanction contractuelle|Contractual Sanction',
     'Moonlight Act · Proposer un pacte|Moonlight Act · Offer a Pact',
     '',

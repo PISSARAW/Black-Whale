@@ -132,6 +132,9 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFurykovMoveset)
     .map(tuneBonolenovMoveset)
     .map(declareMoveCombatRules)
+    // Reference routes are authored globally and may still contain the old
+    // finisher links. Re-apply Cyclotron's canon boundary after that pass.
+    .map(tunePhinksMoveset)
     .map(attachMoveFollowUps)
     .map((moveset) => [moveset.fighterId, moveset]),
 )

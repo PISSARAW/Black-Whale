@@ -68,41 +68,6 @@ export const KURAPIKA_KEY_POSES: Partial<Record<MoveSlot, MoveTimeline>> = {
       pose: { chest: [0, -0.15, 0], leadShoulder: [-0.5, 0, 0], leadElbow: [0.8, 0, 0] },
     },
   ],
-  // Dowsing Backfist: wound across the body, unrolled upward as an anti-air.
-  standingHeavy: [
-    {
-      phase: 'startup',
-      at: 0.7,
-      ease: 'out',
-      pose: {
-        chest: [0.05, 0.45, 0],
-        leadShoulder: [0.1, 0, -0.55],
-        leadElbow: [-0.4, 0, 0],
-        leadKnee: [0.2, 0, 0],
-        rearKnee: [0.25, 0, 0],
-      },
-    },
-    {
-      phase: 'active',
-      at: 0,
-      ease: 'snap',
-      pose: {
-        body: [-0.12, 0, 0],
-        chest: [-0.1, -0.55, 0],
-        head: [-0.15, 0, 0],
-        leadShoulder: [-1.5, 0, 0.35],
-        leadElbow: [1.2, 0, 0],
-        leadWrist: [0.4, 0, 0],
-        leadKnee: [-0.3, 0, 0],
-      },
-    },
-    {
-      phase: 'recovery',
-      at: 0.4,
-      ease: 'out',
-      pose: { chest: [0, -0.3, 0], leadShoulder: [-0.9, 0, 0.2], leadElbow: [0.6, 0, 0] },
-    },
-  ],
   // Low Dowsing Chain: a jab skimming the floor from the crouch.
   lowLight: [
     {

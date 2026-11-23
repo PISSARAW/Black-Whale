@@ -7,6 +7,7 @@ import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
 import { accelAdmitted, accelChains } from './accelCancel'
 import { culdceptComboCancel } from './culdceptHold'
+import { hanzoDoubleCrossUp } from './shizukuHanzoKallutoUpgrades'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
 type CancelMove = `${AttackVariant}:${AttackKind}`
@@ -138,6 +139,7 @@ export function cancelRoutes(
 }
 
 export function blocksAttack(defender: ArcadeFighter, attacker: ArcadeFighter): boolean {
+  if (hanzoDoubleCrossUp(attacker) && !defender.nen.ken && !defender.nen.ko) return false
   const move = moveById(attacker.attack?.moveId)
   return blocksGuardRequirement(defender, move?.guard ?? guardForVariant(attacker.attack?.variant))
 }

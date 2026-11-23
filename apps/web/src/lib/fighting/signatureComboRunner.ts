@@ -193,6 +193,8 @@ function startMove(state: FightState, slot: Parameters<typeof moveForSlot>[1]): 
   if (move.variant === 'air' && state.player.y <= 0) return state
   // A forward accélération runs until contact range, as a player would time it.
   if (closingDash(state)) return state
+  // A non-striking Hatsu cast (e.g. Pain Packer armour) must finish before the next move starts.
+  if (state.player.attack && !state.player.attack.confirmedHit) return state
   if (!canStartFighterAttack(comboAdmissionBody(state, 'player', move), move.kind, move.id))
     return state
   const after = performTrainingAction({

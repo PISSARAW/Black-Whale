@@ -37,7 +37,7 @@ export function resolveContextInput(
   if (!input.context) return input
   const fighter = state[side]
   if (hasIllumiNeedleOrder(fighter)) return { ...input, removeNeedle: true }
-  if (fighter.hinrighCuffed) return { ...input, breakCuffs: true }
+  if (fighter.hinrighCuffed || fighter.biohazardRestraint) return { ...input, breakCuffs: true }
   if (canSubdueCamilla(state, side)) return { ...input, subdue: true }
   if (state.moonlightOffer?.status === 'offered' && state.moonlightOffer.target === side) {
     return { ...input, acceptContract: true }

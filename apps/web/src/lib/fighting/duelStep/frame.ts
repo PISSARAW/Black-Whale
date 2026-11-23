@@ -50,7 +50,7 @@ function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState
     if (!inputs[side]?.context) continue
     if (hasIllumiNeedleOrder(state[side])) {
       state = { ...state, [side]: removeIllumiNeedle(state[side]) }
-    } else if (state[side].hinrighCuffed) {
+    } else if (state[side].hinrighCuffed || state[side].biohazardRestraint) {
       state = { ...state, [side]: breakHinrighHandcuffs(state[side]) }
     }
   }

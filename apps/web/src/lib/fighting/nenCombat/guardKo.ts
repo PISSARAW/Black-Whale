@@ -35,7 +35,7 @@ export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFi
   if (!voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })) return null
   const continuing = continuesKo(fighter, zone)
   if (pendingKo(fighter, continuing)) return fighter
-  if ([fighter.hitStun, fighter.knockdownFrames].some(Boolean)) return null
+  if ([fighter.hitStun, fighter.knockdownFrames, fighter.maryCapture].some(Boolean)) return null
   if (fighter.attack && !continuing) return null
   if (!continuing && fighter.aura < DEFENSIVE_KO_COST) return null
   const nen = transitionNen(

@@ -18,6 +18,7 @@ import { crossGameBusy } from './crossGame'
 import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
+import { hinrighBlocksHandAction } from './hinrighZakuroLuiniUpgrades'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable, chrolloRightHandOccupied } from './chrolloBook'
 import { EN_STARTUP_BONUS } from './nenPillars'
@@ -201,6 +202,9 @@ function characterAttackAvailable(
   if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (chrolloRightHandOccupied(fighter) && moveById(moveId)?.category === 'throw') return false
+  const zone = attackData(kind, fighter).auraZone
+  const isThrow = moveById(moveId)?.category === 'throw'
+  if (hinrighBlocksHandAction(fighter, isThrow ? 'throw' : kind, zone)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
   return true
 }
@@ -249,11 +253,18 @@ const CHORD_LENIENCE_FRAMES = 3
 
 function isChordOverride(fighter: ArcadeFighter, moveId?: string): boolean {
   const current = fighter.attack
-  if (!current || current.impacted || current.frame > CHORD_LENIENCE_FRAMES) return false
+  if (
+    !current ||
+    current.impacted ||
+    current.frame > CHORD_LENIENCE_FRAMES ||
+    current.accel ||
+    current.kind === 'special'
+  )
+    return false
   const next = moveById(moveId)
   if (!next) return false
   if (next.category === 'throw') return current.kind === 'light' || current.kind === 'heavy'
-  if (next.category === 'finisher') return current.kind === 'heavy' || current.kind === 'special'
+  if (next.category === 'finisher') return current.kind === 'heavy'
   return false
 }
 

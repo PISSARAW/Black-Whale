@@ -39,6 +39,7 @@ export function updateControlledFighter(fighter: ArcadeFighter, input: FightInpu
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
+    input,
   )
   if (advanced.needlePuppet) return advanced
   if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))

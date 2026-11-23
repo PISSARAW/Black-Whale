@@ -14,6 +14,7 @@ import { commitProjectileNen } from './nenProjectiles'
 import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
 import { predatorNenLocked } from './predatorSeal'
 import { CAMILLA_PISTOL, camillaCanFire, spendCamillaRound } from './camillaWeapon'
+import { firearmCanShoot, spendFirearmRound } from './nenPillars'
 import { hinrighCanThrow, spendHinrighKnife, hinrighRangedBody } from './hinrighKnives'
 import { spendBiohazardGunRound } from './biohazardGun'
 import { thetaShotAim } from './thetaFirearm'
@@ -237,6 +238,7 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 }
 function physicalRangedUnavailable(fighter: ArcadeFighter): boolean {
   return (
+    !firearmCanShoot(fighter) ||
     !camillaCanFire(fighter) ||
     !hinrighCanThrow(fighter) ||
     fighter.biohazardGunRounds === 0 ||
@@ -442,6 +444,6 @@ function advanceProjectileMotion(
 
 function spendRangedObject(fighter: ArcadeFighter): ArcadeFighter {
   fighter = hinrighRangedBody(fighter)
-  const spent = spendHinrighKnife(spendCamillaRound(fighter))
+  const spent = spendFirearmRound(spendHinrighKnife(spendCamillaRound(fighter)))
   return (fighter.nenOwner ?? fighter.id) === 'camilla' ? spent : spendBiohazardGunRound(spent)
 }

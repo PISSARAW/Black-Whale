@@ -64,6 +64,11 @@ async function openPlayer(seed) {
     if (request.method() !== 'POST' || !request.url().includes('/fighting/pvp/api/matches')) return
     if (['input', 'inputs'].includes(request.postDataJSON()?.kind)) network.httpInputs++
   })
+  if (!networkBench) watchDirectSocket(page, network)
+  return page
+}
+
+function watchDirectSocket(page, network) {
   page.on('websocket', (socket) => {
     const url = new URL(socket.url())
     if (!url.pathname.startsWith('/fighting/pvp/socket/')) return
@@ -77,7 +82,6 @@ async function openPlayer(seed) {
       if (Buffer.isBuffer(payload) && payload[1] === 0) network.received++
     })
   })
-  return page
 }
 
 async function readView(page) {

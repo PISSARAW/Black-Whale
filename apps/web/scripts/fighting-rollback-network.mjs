@@ -23,7 +23,7 @@ function random(seed) {
 }
 
 const SOCKET_PATH = '/fighting/pvp/socket/'
-const CALIBRATION_BATCH = 20
+const CALIBRATION_BATCH = 8
 export const RTT_TOLERANCE_MS = 5
 
 export function percentile(samples, fraction) {
@@ -37,11 +37,11 @@ function bridgeSockets(browser, relay, options) {
   relay.on('open', () => {
     for (const [data, binary] of pending.splice(0)) relay.send(data, { binary })
   })
-  for (const [source, destination] of [
-    [browser, relay],
-    [relay, browser],
+  for (const [source, destination, outbound] of [
+    [browser, relay, true],
+    [relay, browser, false],
   ]) {
-    forward(source, destination, { ...options, timers, pending })
+    forward(source, destination, { ...options, outbound, timers, pending })
     source.on('error', () => source.terminate())
     source.on('close', (code, reason) => {
       for (const timer of timers) clearTimeout(timer)
@@ -53,16 +53,11 @@ function bridgeSockets(browser, relay, options) {
   }
 }
 
-function forward(source, destination, { peer, profile, delay, timers, pending }) {
+function forward(source, destination, options) {
+  const { peer, profile, delay, timers, pending } = options
   let due = 0
   source.on('message', (data, binary) => {
-    if (binary && data[1] === FRAME) {
-      peer.stats.attempted++
-      if (peer.loss() < profile.loss) {
-        peer.stats.dropped++
-        return
-      }
-    }
+    if (binary && data[1] === FRAME && dropFrame(data, options)) return
     const now = performance.now()
     const lag = Math.max(0, delay() + (peer.jitter() - 0.5) * profile.jitter)
     // Keep each WebSocket leg ordered when jitter changes between messages.
@@ -76,12 +71,28 @@ function forward(source, destination, { peer, profile, delay, timers, pending })
   })
 }
 
+function dropFrame(data, { peer, profile, outbound, epoch }) {
+  const { stats } = peer
+  if (outbound) {
+    stats.sent++
+    recordConfirmedHashes(data, epoch, stats.hashes)
+  }
+  stats.attempted++
+  if (peer.loss() < profile.loss) {
+    stats.dropped++
+    return true
+  }
+  if (!outbound) stats.received++
+  return false
+}
+
 /** A local WebSocket bridge keeps combat packets off the Playwright event queue. */
 export async function createRollbackNetwork(base, profile) {
   if (!profile.rtt && !profile.jitter && !profile.loss) return null
   const peers = new Map()
   const readings = []
-  let legDelay = profile.rtt / 4
+  // Leave room for browser scheduling and local relay overhead on the first batch.
+  let legDelay = Math.max(0, profile.rtt / 4 - 10)
   const server = new WebSocketServer({ host: '127.0.0.1', port: 0, perMessageDeflate: false })
   server.on('connection', (browser, request) => {
     const target = new URL(request.url, base)
@@ -91,6 +102,8 @@ export async function createRollbackNetwork(base, profile) {
       return
     }
     target.searchParams.delete('benchPeer')
+    const epoch = Number(target.searchParams.get('epoch'))
+    peer.stats.epochs.add(epoch)
     target.protocol = target.protocol === 'https:' ? 'wss:' : 'ws:'
     const protocols = request.headers['sec-websocket-protocol']
       .split(',')
@@ -102,6 +115,7 @@ export async function createRollbackNetwork(base, profile) {
     bridgeSockets(browser, relay, {
       peer,
       profile,
+      epoch,
       delay: () => legDelay,
     })
   })
@@ -120,7 +134,7 @@ export async function createRollbackNetwork(base, profile) {
         // Correct a shared delay across four hops. Bound adjustments after transient stalls.
         legDelay = Math.max(
           0,
-          Math.min(profile.rtt / 4 + 5, legDelay + Math.max(-4, Math.min(4, error / 4))),
+          Math.min(profile.rtt / 4 + 5, legDelay + Math.max(-12, Math.min(6, error / 4))),
         )
       })
       await page.addInitScript(

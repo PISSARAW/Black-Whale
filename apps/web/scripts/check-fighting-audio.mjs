@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
+import { verifyRosterVoiceWaves } from './fighting-roster-voice-check.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const atlas = JSON.parse(
@@ -14,6 +15,13 @@ const atlas = JSON.parse(
 const descriptions = JSON.parse(
   await readFile(path.join(root, 'src/lib/fighting/audio/descriptionAtlas.json'), 'utf8'),
 )
+const atlasDir = path.join(root, 'src/lib/fighting/audio/fighterVoiceAtlas')
+const voiceWaves = await Promise.all(
+  (await readdir(atlasDir))
+    .sort()
+    .map(async (file) => JSON.parse(await readFile(path.join(atlasDir, file)))),
+)
+const rosterVoices = Object.assign({}, ...voiceWaves)
 const cacheDir = await mkdtemp(path.join(tmpdir(), 'black-whale-audio-'))
 const server = await createServer({
   configFile: false,
@@ -29,12 +37,14 @@ const server = await createServer({
 })
 function identifyVoiceSamples(manifest, locale, calls) {
   return calls.flatMap((call) => {
-    const hit = Object.entries(manifest.locales[locale]).find(
+    const fighter = call.rosterBank?.slice(3)
+    const lines = fighter ? rosterVoices[fighter]?.[locale] : manifest.locales[locale]
+    const hit = Object.entries(lines ?? {}).find(
       ([, [start, duration]]) =>
         Math.abs(call.offset * manifest.sampleRate - start) < 0.2 &&
         Math.abs(call.duration * manifest.sampleRate - duration) < 0.2,
     )
-    return hit ? [{ line: hit[0], rate: call.rate }] : []
+    return hit ? [{ line: hit[0], rate: call.rate, fighter }] : []
   })
 }
 
@@ -53,6 +63,16 @@ try {
     window.cuePitches = []
     window.voiceStarts = []
     window.voiceBanks = 0
+    window.rosterVoiceBanks = new Set()
+    const rosterBytes = new WeakMap()
+    const rosterBuffers = new WeakMap()
+    const arrayBuffer = Response.prototype.arrayBuffer
+    Response.prototype.arrayBuffer = async function () {
+      const bytes = await arrayBuffer.call(this)
+      const voice = this.url.match(/\/clash-voices\/roster\/([\w-]+)\.mp3$/)
+      if (voice) rosterBytes.set(bytes, voice[1])
+      return bytes
+    }
     window.descriptionBanks = 0
     window.descriptionStops = 0
     window.descriptionStarts = []
@@ -61,8 +81,13 @@ try {
     const decode = AudioContext.prototype.decodeAudioData
     AudioContext.prototype.decodeAudioData = function (...args) {
       const pending = decode.apply(this, args)
+      const rosterBank = rosterBytes.get(args[0])
       void pending.then(
         (buffer) => {
+          if (rosterBank) {
+            rosterBuffers.set(buffer, rosterBank)
+            window.rosterVoiceBanks.add(rosterBank)
+          }
           if (buffer.duration > 16 && buffer.duration < 35 && buffer.numberOfChannels === 1)
             window.voiceBanks++
           if (isDescription(buffer)) window.descriptionBanks++
@@ -75,7 +100,12 @@ try {
     AudioBufferSourceNode.prototype.start = function (at, offset, duration) {
       if (isDescription(this.buffer)) window.descriptionStarts.push({ offset, duration })
       else if (duration !== undefined)
-        window.voiceStarts.push({ offset, duration, rate: this.playbackRate.value })
+        window.voiceStarts.push({
+          offset,
+          duration,
+          rate: this.playbackRate.value,
+          rosterBank: rosterBuffers.get(this.buffer),
+        })
       if (this.loop && this.buffer?.duration > 35) window.musicLoops++
       return Reflect.apply(playSample, this, arguments)
     }
@@ -135,6 +165,9 @@ try {
     return options.mono && options.effects === 1 && options.music === 0.2
   })
   await page.waitForFunction(() => window.voiceBanks >= 1)
+  await page.waitForFunction(() =>
+    ['fr-kurapika', 'fr-chrollo'].every((voice) => window.rosterVoiceBanks.has(voice)),
+  )
   const voiceLines = async (locale = 'fr') => {
     const calls = await page.evaluate(() => window.voiceStarts.splice(0))
     return identifyVoiceSamples(atlas, locale, calls)
@@ -166,7 +199,7 @@ try {
     calls.map(({ line }) => line),
     ['call-luzurus'],
   )
-  assert.ok(calls[0].rate > 0.9, 'the Kameo call uses Kurapika’s voice register')
+  assert.equal(calls[0].fighter, 'kurapika', 'the Kameo call uses Kurapika’s bank')
   let pitches = await page.evaluate(() => window.cuePitches.splice(0))
   for (const pitch of [475, 665, 990]) assert.ok(pitches.includes(pitch), 'assist pitch ' + pitch)
 
@@ -180,9 +213,9 @@ try {
     const sounded = await voiceLines()
     const effort = sounded.find(({ line }) => line.startsWith('effort-'))
     const pain = sounded.find(({ line }) => line.startsWith('pain-'))
-    assert.ok(effort && effort.rate < 0.85, 'Chrollo’s attack effort uses his lower register')
+    assert.equal(effort?.fighter, 'chrollo', 'Chrollo’s attack effort uses his bank')
     assert.equal(Boolean(pain), guard === 'none', 'only confirmed damage produces a cry')
-    if (pain) assert.ok(pain.rate > effort.rate, 'Kurapika’s cry uses his own register')
+    if (pain) assert.equal(pain.fighter, 'kurapika', 'Kurapika’s cry uses his bank')
   }
   pitches = await page.evaluate(() => window.cuePitches.splice(0))
   assert.ok(pitches.includes(940), 'parry scheduled in Web Audio')
@@ -351,7 +384,8 @@ try {
   await waitForLine('comment-parry')
   const first = await voiceLines()
   assert.equal(first.filter(({ line }) => line === 'comment-parry').length, 1)
-  assert.ok(first.find(({ line }) => line.startsWith('effort-'))?.rate < 0.7, 'deep voice register')
+  const deepRate = first.find(({ line }) => line.startsWith('effort-'))?.rate ?? 0
+  assert.ok(Math.abs(deepRate - 0.86) < 0.001, 'deep voice register')
   await page.evaluate(() => window.audioFixture.advanceIdle(32))
   await page.evaluate(() => window.audioFixture.opening('late'))
   assert.ok(
@@ -442,6 +476,8 @@ try {
     ),
     'vip-casino',
   )
+  assert.deepEqual(errors, [])
+  await verifyRosterVoiceWaves(page, voiceWaves)
   assert.deepEqual(errors, [])
   process.stdout.write(
     'Kurapika vs Chrollo with Luzurus: mix, combat cues, voices, jukebox, commentary, victory narration and muted FR/EN sound captions verified.\n',

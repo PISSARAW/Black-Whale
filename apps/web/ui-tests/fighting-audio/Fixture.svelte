@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
   import FightJukebox from '$lib/components/fighting/FightJukebox.svelte'
+  import FightAudio from '$lib/components/fighting/FightAudio.svelte'
   import FightMenuMusic from '$lib/components/fighting/FightMenuMusic.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import {
@@ -16,12 +17,19 @@
   import { FIXED_STEP } from '$lib/fighting/fightClock'
   import { withKameos } from '$lib/fighting/kameos/state'
   import { fightSoundEvents } from '$lib/fighting/audio/events'
-  import { EMPTY_INPUT, type FightInput, type FightState } from '$lib/fighting/types'
+  import { preloadFighterVoice } from '$lib/fighting/audio/fighterVoice'
+  import { sharedAudioContext } from '$lib/audio/context'
+  import {
+    EMPTY_INPUT,
+    type FighterId,
+    type FightInput,
+    type FightState,
+  } from '$lib/fighting/types'
 
   const noop = () => {}
   const stageId = 'screening-room'
-  function duel(arenaInteractions = false) {
-    const ready = createFight('kurapika', 'chrollo', {
+  function duel(arenaInteractions = false, cast: [FighterId, FighterId] = ['kurapika', 'chrollo']) {
+    const ready = createFight(...cast, {
       mode: 'versus-local',
       formatId: 'knockout',
       environment: { stageId, arenaInteractions },
@@ -38,6 +46,7 @@
   let language: 'fr' | 'en' = 'fr'
   let paused = false
   let showingMenu = false
+  let voiceBench = false
   let victoryActive = false
   let audioSeek = 0
   let events: string[] = []
@@ -182,6 +191,20 @@
     showingMenu = show
     await tick()
   }
+  async function setCastDuel(cast: [FighterId, FighterId]) {
+    voiceBench = true
+    audioSeek++
+    state = duel(false, cast)
+    await tick()
+    const context = sharedAudioContext()
+    if (context)
+      await Promise.all(
+        cast.map((fighter) => preloadFighterVoice(context, { fighter, locale: language })?.loaded),
+      )
+  }
+  async function playCastEfforts() {
+    await publish(performAttack(performAttack(state, 'opponent', 'light'), 'player', 'light'))
+  }
   onMount(() => {
     Object.assign(window, {
       audioFixture: {
@@ -200,6 +223,8 @@
         setLocale,
         pauseAudio,
         showMenu,
+        setCastDuel,
+        playCastEfforts,
         advanceIdle: advance,
       },
     })
@@ -210,6 +235,8 @@
   {#if showingMenu}
     <FightMenuMusic />
     <FightJukebox {language} />
+  {:else if voiceBench}
+    <FightAudio {state} {language} {audioSeek} showSettings={false} />
   {:else}
     <FightStage
       {state}

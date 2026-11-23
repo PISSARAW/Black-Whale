@@ -261,3 +261,15 @@ amplify the response, while low and air routes preserve their own support rules.
 This layer is presentation-only. It reads the public hit/block confirmation and
 does not alter frame data, collision, damage, replay state or the golden
 Kurapika heavy, which retains its more specific authored outcomes.
+
+## P11 — synchronized impact punctuation
+
+Physical contacts now share one public punctuation profile across particles,
+camera and synthesized sound. Light, heavy and decisive contacts receive ranked
+accents; head and low hits shift the lens toward the anatomical target; guards
+recoil in the opposite direction; counters, punishes, knockdowns and wall hits
+add a short wave, directional rays, low thump and transient crack.
+
+The profile depends only on the already resolved public impact. Evasions remain
+silent, comfort settings still control flashes and shake, and neither combat
+state nor replay hashes are changed by the presentation layer.

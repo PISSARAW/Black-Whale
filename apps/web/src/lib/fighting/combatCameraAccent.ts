@@ -1,6 +1,7 @@
 import { isAirPursuit } from './directionalChain'
 import type { CinematicDirection } from './cinematicTypes'
 import type { FightSide, FightState } from './types'
+import { fightImpactPunctuation } from './fightImpactPunctuation'
 
 export interface CombatCameraAccent {
   push: number
@@ -42,7 +43,14 @@ export function strikeCameraAccent(state: FightState, side: FightSide): CombatCa
   }
   const confirmed = attack.confirmedHit ? 1 : 0.55
   const push = attack.kind === 'light' ? 0.2 : attack.kind === 'heavy' ? 0.46 : 0.6
-  return { ...REST_CAMERA_ACCENT, push: push * confirmed, side }
+  const impact = state.impact?.attacker === side ? fightImpactPunctuation(state.impact) : null
+  return {
+    ...REST_CAMERA_ACCENT,
+    push: Math.min(0.7, push * confirmed + (impact?.cameraPush ?? 0)),
+    look: impact?.cameraLook ?? 0,
+    tilt: impact?.cameraTilt ?? 0,
+    side,
+  }
 }
 
 /** Personal technique details can own the lens; ordinary aura changes never add a second push. */

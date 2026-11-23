@@ -33,6 +33,7 @@ export function createPaperShot(
     age: 0,
     lifetime: 120,
     concealed: fighter.attack?.concealed,
+    canHitDowned: Boolean(fighter.attack?.accel),
     matter: released.part.materialCopyId ? 'nen' : 'object',
     materialCopyId: released.part.materialCopyId,
     ...paperShotOrigin(released, command),

@@ -4,6 +4,9 @@ export const FIFTH_DUEL_PROFILES = {
   gel: {
     window: 6,
     block: 'standingHeavy',
+    // Mâchoire allongée (signatureCombosLot2B.ts): press in after low snake strike.
+    dash: { downSpecial: 'forward' },
+    accelInto: { forwardSpecial: ['forwardHeavy'], forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -11,7 +14,7 @@ export const FIFTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -43,6 +46,9 @@ export const FIFTH_DUEL_PROFILES = {
   lynch: {
     window: 6,
     block: 'standingHeavy',
+    // Body and Soul (signatureCombosLot2B.ts): forward accélération after sweep into capture.
+    dash: { lowHeavy: 'forward' },
+    accelInto: { forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -80,6 +86,8 @@ export const FIFTH_DUEL_PROFILES = {
   padaille: {
     window: 7,
     block: 'standingHeavy',
+    // Outil tranchant (signatureCombosLot3B.ts): press in to drill, then forward capture after sweep.
+    dash: { forwardLight: 'forward', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -87,7 +95,7 @@ export const FIFTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 6, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -128,6 +136,9 @@ export const FIFTH_DUEL_PROFILES = {
   zakuro: {
     window: 7,
     block: 'standingHeavy',
+    // Limier écarlate (signatureCombosLot2A.ts): press in after sweep into shoulder & throw.
+    dash: { lowHeavy: 'forward' },
+    accelInto: { forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },

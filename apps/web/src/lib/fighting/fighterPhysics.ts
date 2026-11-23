@@ -1,6 +1,7 @@
 import { WAKEUP_INVULNERABLE_FRAMES, REVERSAL_WINDOW_FRAMES } from './throwRules'
 import { holdMary, maryHeld } from './bloodyMary'
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
+import { comboRestraintHeld } from './comboRestraintHold'
 import { crossGameRestrained, holdCrossGame } from './crossGame'
 import { sleepingBody } from './hanzoProjection'
 import { advanceCyclotron } from './phinksCyclotron'
@@ -8,6 +9,7 @@ import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
 import { applyAirRecovery } from './airRecovery'
 import { resolveWakeupMovement } from './wakeupMovement'
+import { resolveTechLandingRoll } from './defensiveMovementTech'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
 import { advanceNen } from './nen'
 import { coolAccelHeat } from './accelCancel'
@@ -27,6 +29,11 @@ export function advanceFighterPhysics(
   fighter = applyAirRecovery(fighter, input)
   const vertical =
     crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
+  const techLand = resolveTechLandingRoll(
+    { ...fighter, ...vertical },
+    input,
+    justTouchedGround(fighter.y, vertical.y),
+  )
   const wakeup = advanceWakeup(fighter, input)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
@@ -36,6 +43,7 @@ export function advanceFighterPhysics(
     ...vertical,
     airRecovery: vertical.y > GROUND ? fighter.airRecovery : undefined,
     ...wakeup,
+    ...techLand,
     ...combo,
     throwTechRecoveryFrames: Math.max(0, (fighter.throwTechRecoveryFrames ?? 0) - 1),
     hitStun: Math.max(0, fighter.hitStun - 1),
@@ -45,6 +53,10 @@ export function advanceFighterPhysics(
     ...(fighter.accelHeat ? { accelHeat: coolAccelHeat(fighter.accelHeat) } : {}),
   })
   return holdMary(holdCrossGame(advanceNen(advanced, FIXED_STEP)))
+}
+
+function justTouchedGround(beforeY: number, afterY: number): boolean {
+  return beforeY > GROUND && afterY <= GROUND
 }
 
 function advanceWakeup(
@@ -77,7 +89,7 @@ function advanceCombo(
 ): Pick<ArcadeFighter, 'comboHits' | 'comboDamage' | 'juggleCount'> {
   const standing = y === GROUND && wakeup.knockdownFrames === 0
   // A body held by Machi's bind cannot defend: the combo it is in goes on (machiThread.ts).
-  const bound = fighter.machiThread?.kind === 'bind'
+  const bound = comboRestraintHeld(fighter)
   const resetCombo = standing && fighter.hitStun <= 1 && fighter.knockdownFrames === 0 && !bound
   return {
     comboHits: resetCombo ? 0 : fighter.comboHits,

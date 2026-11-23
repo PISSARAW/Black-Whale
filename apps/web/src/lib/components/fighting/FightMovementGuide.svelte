@@ -19,7 +19,18 @@
       'Low slide (Down + double Forward) & Thread pull-in toward a marked target.',
     ],
     phinks: LOW_SLIDE_NOTE,
-    hanzo: LOW_SLIDE_NOTE,
+    hanzo: [
+      'Glissade basse (Bas + double Avant) & Feinte ninja (un Frein de dash enchaîne directement sur le dash opposé).',
+      'Low slide (Down + double Forward) & Shinobi reverse step (a dash brake snaps straight into the opposite dash).',
+    ],
+    franklin: [
+      'Appui d’ancrage : en garde accroupie ou pendant tes tirs, le recul des projectiles bloqués est réduit de 20 %.',
+      'Braced stance: while crouch-guarding or firing, blocked projectile pushback is reduced by 20%.',
+    ],
+    tserriednich: [
+      'Décalage de divergence : pendant Parallel Future en divergence, le délai du Back Sway est divisé par deux.',
+      'Divergence sway: during Parallel Future divergence, Back Sway cooldown is halved.',
+    ],
     kalluto: LOW_SLIDE_NOTE,
     illumi: LOW_SLIDE_NOTE,
     chrollo: [
@@ -57,10 +68,10 @@
       : 'release Up during pre-jump for a short hop; quick Down then Up for a Super jump (+20%); Up during a forward dash to carry momentum.'}
   </p>
   <p>
-    <strong>{language === 'fr' ? 'Course & Frein de dash' : 'Run & Dash brake'}</strong> ·
+    <strong>{language === 'fr' ? 'Course & Frein de dash / backdash' : 'Run & Dash / Backdash brake'}</strong> ·
     {language === 'fr'
-      ? 'maintiens Avant à la fin d’un dash pour courir (×1,25) ; Arrière, Bas ou Garde après la poussée stoppe net le dash.'
-      : 'hold Forward at the end of a dash to keep running (×1.25); Back, Down or Guard after the push stops cleanly.'}
+      ? 'maintiens Avant à la fin d’un dash pour courir (×1,25) ; Arrière, Bas ou Garde après la poussée stoppe le dash avant ; Bas en fin de backdash reprend la garde basse.'
+      : 'hold Forward at the end of a dash to keep running (×1.25); Back, Down or Guard after the push stops a forward dash; Down late in a backdash recovers into crouch guard.'}
   </p>
   <p>
     <strong>{language === 'fr' ? 'Rebond mural (profils agiles)' : 'Wall jump (agile styles)'}</strong> ·
@@ -75,10 +86,10 @@
       : 'Back + Guard pulls your torso back to whiff-punish highs (legs remain exposed).'}
   </p>
   <p>
-    <strong>{language === 'fr' ? 'Relevée (Ukemi / Retardée)' : 'Wakeup (Ukemi / Delayed)'}</strong> ·
+    <strong>{language === 'fr' ? 'Relevée, réception & déprojection' : 'Wakeup, tech landing & throw-tech'}</strong> ·
     {language === 'fr'
-      ? 'Gauche/Droite + Garde à la relevée pour rouler ; maintiens Bas pour retarder une fois la relevée.'
-      : 'Left/Right + Guard on wakeup to roll; hold Down to delay wakeup once.'}
+      ? 'Gauche/Droite + Garde à la relevée pour rouler (Ukemi), Bas pour retarder ; Gauche/Droite à l’atterrissage d’un Air Recovery pour rouler ; Arrière/Avant sur déprojection ajuste l’écart ; Avant + Garde précise en Ren/Ken repousse l’attaquant (4 aura).'
+      : 'Left/Right + Guard on wakeup to roll (Ukemi), Down to delay; Left/Right touching down from Air Recovery to roll; Back/Forward on throw-tech tunes spacing; timely Forward + Guard in Ren/Ken pushblocks (4 aura).'}
   </p>
   <p>
     <strong>{language === 'fr' ? 'Nen & appuis' : 'Nen footwork'}</strong> ·

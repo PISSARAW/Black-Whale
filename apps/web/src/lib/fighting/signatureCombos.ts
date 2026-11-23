@@ -2,11 +2,19 @@ import { SECOND_SIGNATURE_COMBOS } from './signatureCombosSecond'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { CombatFighter } from './combatRoutes'
 import type { FighterId, MoveSlot } from './types'
+import type { SignatureLotStep } from './signatureLotSteps'
+import type { SignatureLot2Step } from './signatureLot2Steps'
 import type { SignatureMotionStep } from './signatureMotionSteps'
 import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
 import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
 import { SENSES_SIGNATURE_COMBOS } from './signatureCombosSenses'
 import { ARMORY_SIGNATURE_COMBOS } from './signatureCombosArmory'
+import { TROUPE_ZOLDYCK_SIGNATURES } from './signatureCombosTroupeZoldyck'
+import { HUNTERS_SIGNATURES } from './signatureCombosHunters'
+import { LOT2A_SIGNATURES } from './signatureCombosLot2A'
+import { LOT2B_SIGNATURES } from './signatureCombosLot2B'
+import { LOT3A_SIGNATURES } from './signatureCombosLot3A'
+import { LOT3B_SIGNATURES } from './signatureCombosLot3B'
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -34,6 +42,8 @@ export type SignatureStep =
   /** Biscuit reveals her natural body: a state for the round, not a strike (biscuitForm.ts). */
   | { trueForm: true }
   | SignatureMotionStep
+  | SignatureLotStep
+  | SignatureLot2Step
 
 /** Preparation also lets the opponent fire its ranged attack (a projectile to capture). */
 export type SignaturePreparationStep = SignatureStep | { incoming: true }
@@ -67,8 +77,8 @@ const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
     opponent: 'hisoka',
     title: ['Verdict écarlate', 'Scarlet Verdict'],
     requirement: [
-      'Direct bas, Pas et direct, Crochet au corps, accélération arrière, Contre en retrait, Fouet divinatoire, accélération avant, Capture divinatoire, Emperor Time pendant la capture, Judgment Chain. 59 aura au total.',
-      'Low Straight, Step-in Straight, Body Hook, back accélération, Retreating Counter, Dowsing Whip, forward accélération, Dowsing Capture, Emperor Time during the capture, Judgment Chain. 59 aura in all.',
+      'Direct bas, Pendule rasant, Crochet au corps, accélération arrière, Rappel du geôlier, Fouet divinatoire, accélération avant, Verdict écarlate, Emperor Time pendant la capture, Judgment Chain. 59 aura au total.',
+      'Low Straight, Low Pendulum, Body Hook, back accélération, Jailer Recall, Dowsing Whip, forward accélération, Scarlet Verdict, Emperor Time during the capture, Judgment Chain. 59 aura in all.',
     ],
     steps: [...VERDICT_OPENING, { move: 'throw' }, { emperor: true }, { move: 'finisher' }],
   },
@@ -94,8 +104,8 @@ const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
     opponent: 'chrollo',
     title: ['Élastique meurtrier', 'Elastic Murder'],
     requirement: [
-      'Entaille de carte, Attache Bungee Gum, accélération arrière pour tendre le lien, Carte basse, Rappel élastique, Vrille du clown, ancrage au plafond, Rebond de gomme vertical, Hache aérienne, Exécution élastique. Une barre d’aura pleine : le Rappel et le Rebond coûtent 5, l’Exécution 40, tant que la cible reste prise.',
-      'Card Slash, Bungee Gum Attach, back accélération to stretch the link, Low Card Cut, Elastic Recall, Clown Corkscrew, ceiling anchor, vertical Gum Rebound, Aerial Axe, Elastic Execution. A full aura bar: Recall and Rebound cost 5 and the Execution 40 while the target stays caught.',
+      'Entaille de carte, Attache Bungee Gum, accélération arrière pour tendre le lien, Carte basse, Rappel élastique, Tête de marteau, ancrage au plafond, Rebond de gomme vertical, Trapèze meurtrier, Exécution élastique. Une barre d’aura pleine : le Rappel et le Rebond coûtent 5, l’Exécution 40, tant que la cible reste prise.',
+      'Card Slash, Bungee Gum Attach, back accélération to stretch the link, Low Card Cut, Elastic Recall, Hammerhead, ceiling anchor, vertical Gum Rebound, Deadly Trapeze, Elastic Execution. A full aura bar: Recall and Rebound cost 5 and the Execution 40 while the target stays caught.',
     ],
     steps: [
       { move: 'standingLight' },
@@ -119,6 +129,12 @@ const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
 export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   ...FIRST_SIGNATURE_COMBOS,
   ...SECOND_SIGNATURE_COMBOS,
+  ...TROUPE_ZOLDYCK_SIGNATURES,
+  ...HUNTERS_SIGNATURES,
+  ...LOT2A_SIGNATURES,
+  ...LOT2B_SIGNATURES,
+  ...LOT3A_SIGNATURES,
+  ...LOT3B_SIGNATURES,
 ]
 
 export const signatureCombosFor = (fighter: FighterId) =>
@@ -148,10 +164,18 @@ function moveHits(step: SignatureStep): number {
   return step.hits ?? 1
 }
 
+function breaksCombo(step: SignatureStep): boolean {
+  if ('riposte' in step || 'disobey' in step || 'fatalRiposte' in step) return true
+  if ('melody' in step) return step.melody === 'play'
+  if ('future' in step) return step.future === 'close'
+  if ('astral' in step) return step.astral === 'project'
+  return 'dance' in step && step.dance === 'jupiter'
+}
+
 export function signatureComboCounts(combo: SignatureCombo): number[] {
   let count = 0
   return combo.steps.flatMap((step) => {
-    if ('riposte' in step || ('future' in step && step.future === 'close')) count = 0
+    if (breaksCombo(step)) count = 0
     const hits = 'ranged' in step ? step.hits : moveHits(step)
     return Array.from({ length: hits }, () => ++count)
   })

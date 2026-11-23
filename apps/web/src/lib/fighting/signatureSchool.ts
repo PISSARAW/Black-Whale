@@ -12,6 +12,8 @@ import {
   type SignatureCombo,
   type SignatureStep,
 } from './signatureCombos'
+import { isLotStep } from './signatureLotSteps'
+import { isLot2Step } from './signatureLot2Steps'
 import { createSignatureFight } from './signatureComboRunner'
 import {
   dashTapReady,
@@ -40,8 +42,13 @@ export interface SignatureProgress extends CombatProgress {
  * (signatureCombosSecond.ts) breaks the combo on purpose and needs the opponent to act: those
  * routes stay out of the Academy for now.
  */
-export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS.filter((combo) =>
-  combo.steps.every((step) => !('future' in step) && !('riposte' in step)),
+export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS.filter(
+  (combo) =>
+    combo.fighter !== 'illumi' &&
+    combo.fighter !== 'lynch' &&
+    combo.steps.every(
+      (step) => !('future' in step) && !('riposte' in step) && !isLotStep(step) && !isLot2Step(step),
+    ),
 )
 export const isSignatureLesson = (id: string) => ACADEMY_SIGNATURES.some((combo) => combo.id === id)
 
@@ -168,6 +175,11 @@ function contactMatches(
   return moves.at(-2) === expected
 }
 
+function contactHitCount(impact: NonNullable<FightState['impact']>, lastImpact: number): number {
+  if (impact.projectileId === null || impact.projectileId === undefined) return 1
+  return Math.max(1, impact.sequence - lastImpact)
+}
+
 function observeContact(combo: SignatureCombo, progress: SignatureProgress, state: FightState) {
   const impact = state.impact!
   const next = { ...progress, lastImpact: impact.sequence }
@@ -175,8 +187,9 @@ function observeContact(combo: SignatureCombo, progress: SignatureProgress, stat
   if (impact.blocked || impact.avoided || impact.invulnerable) return fail(next, 'blocked')
   const expected = signatureHits(combo)[progress.hits]
   if (!expected || !contactMatches({ combo, progress }, state, expected)) return fail(next, 'wrong')
-  if ((impact.comboHits ?? 0) !== progress.hits + 1) return fail(next, 'dropped')
-  return { ...next, hits: progress.hits + 1, lastContact: state.frame }
+  const added = contactHitCount(impact, progress.lastImpact)
+  if ((impact.comboHits ?? 0) !== progress.hits + added) return fail(next, 'dropped')
+  return { ...next, hits: progress.hits + added, lastContact: state.frame }
 }
 
 /** The demonstration's command for this frame: an attack or Emperor Time. */

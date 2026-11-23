@@ -41,6 +41,7 @@ import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { comboRestraintHeld } from './comboRestraintHold'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 import { guardKnockbackFactor } from './characterMovementTech'
+import { franklinProjectileGuardFactor } from './defensiveMovementTech'
 
 const GROUND = 0
 const MIN_X = 7
@@ -186,7 +187,8 @@ function struckFighter(
       options.fighter.x +
         direction *
           pinnedKnockback(options, options.knockback) *
-          guardKnockbackFactor(options.fighter, options.blocked),
+          guardKnockbackFactor(options.fighter, options.blocked) *
+          franklinProjectileGuardFactor(options.fighter, options.blocked, options.melee),
       MIN_X,
       MAX_X,
     ),

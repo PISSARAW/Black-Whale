@@ -4,6 +4,8 @@ export const TENTH_DUEL_PROFILES = {
   halkenburg: {
     window: 7,
     block: 'standingHeavy',
+    // Garde princière (signatureCombosLot2B.ts): step back after hook, press in after sweep.
+    dash: { standingHeavy: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -11,7 +13,7 @@ export const TENTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 6, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -42,6 +44,8 @@ export const TENTH_DUEL_PROFILES = {
   yokotani: {
     window: 6,
     block: 'standingHeavy',
+    // Droit de retrait (signatureCombosLot3B.ts): step back then forward capture outside jurisdiction.
+    dash: { standingHeavy: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -49,7 +53,7 @@ export const TENTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: {

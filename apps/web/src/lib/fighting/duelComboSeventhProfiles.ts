@@ -52,6 +52,9 @@ export const SEVENTH_DUEL_PROFILES = {
   basho: {
     window: 7,
     block: 'standingHeavy',
+    // Le poing qui brûle (signatureCombosLot2A.ts): press in after sweep into shoulder & throw.
+    dash: { lowHeavy: 'forward' },
+    accelInto: { forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -90,6 +93,8 @@ export const SEVENTH_DUEL_PROFILES = {
   camilla: {
     window: 6,
     block: 'standingHeavy',
+    // Deuxième vie (signatureCombosLot2A.ts): step back after sweep to fire the handgun.
+    dash: { lowHeavy: 'back' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -128,6 +133,8 @@ export const SEVENTH_DUEL_PROFILES = {
   longhi: {
     window: 6,
     block: 'standingHeavy',
+    // Clair de lune (signatureCombosLot3A.ts): step back then forward capture without forced contract.
+    dash: { forwardLight: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -135,7 +142,7 @@ export const SEVENTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },

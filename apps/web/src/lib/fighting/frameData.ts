@@ -208,12 +208,17 @@ function movesetAttackData(
       box: {
         left: 1.4,
         right: biscuitReach(fighter, data.reach) * zakuroBloodReachFactor(fighter),
-        bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
+        bottom: attackBoxBottom(fighter, data.bottom, antiAir),
         top: antiAir ? Math.max(15, data.top) : data.top,
       },
     },
     fighter.attack?.comboFollowup,
   )
+}
+
+function attackBoxBottom(fighter: ArcadeFighter, bottom: number, antiAir: boolean): number {
+  if (fighter.attack?.accel) return Math.min(bottom, 0)
+  return antiAir ? Math.min(2.4, bottom) : bottom
 }
 
 function attackReach(kind: AttackKind, reach: number, specialRange: number): number {

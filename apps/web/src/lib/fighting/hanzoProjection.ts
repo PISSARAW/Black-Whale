@@ -118,10 +118,11 @@ export function steerHanzoProjection(fighter: ArcadeFighter, input: FightInput):
   const control = constructionFactor(fighter)
   const horizontal = Number(input.right) - Number(input.left)
   const vertical = Number(input.jump) - Number(input.down)
+  const nextY = Math.max(0, Math.min(12, fighter.y + vertical * 0.4 * control))
   return {
     ...fighter,
     x: Math.max(7, Math.min(93, fighter.x + horizontal * 0.5 * control)),
-    y: Math.max(0, Math.min(12, fighter.y + vertical * 0.4 * control)),
+    y: nextY < 0.01 ? 0 : nextY,
     velocityY: 0,
     motion: undefined,
     crouching: false,

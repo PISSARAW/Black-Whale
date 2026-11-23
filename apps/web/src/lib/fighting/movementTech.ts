@@ -1,5 +1,6 @@
 import { bodyLegFactor } from './bodyDamage'
 import { dashBrakeMinFrame } from './advancedMovementTech'
+import { shouldBrakeBackdash, swayCooldownFor } from './defensiveMovementTech'
 import type { ArcadeFighter, FightInput, FighterDash } from './types'
 
 declare module './types' {
@@ -36,6 +37,7 @@ export function shouldBrakeDash(options: {
   input: FightInput
 }): boolean {
   const { fighter, dash, direction, input } = options
+  if (shouldBrakeBackdash(fighter, dash, input)) return true
   if (dash.direction !== fighter.facing || dash.frame < dashBrakeMinFrame(fighter, DASH_BRAKE_MIN_FRAME))
     return false
   if (direction === -fighter.facing || input.guard) return true
@@ -93,7 +95,7 @@ export function advanceSway(
   const swayCooldown = Math.max(0, (fighter.swayCooldown ?? 0) - 1)
   if (!mobile || fighter.y > 0) return setSway(fighter, 0, swayCooldown)
   if (swayFrames === 0 && swayCooldown === 0 && shouldTriggerSway(fighter, input)) {
-    return setSway(fighter, SWAY_FRAMES, SWAY_COOLDOWN)
+    return setSway(fighter, SWAY_FRAMES, swayCooldownFor(fighter, SWAY_COOLDOWN))
   }
   return setSway(fighter, swayFrames, swayCooldown)
 }

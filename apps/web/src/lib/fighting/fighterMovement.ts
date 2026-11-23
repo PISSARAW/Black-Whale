@@ -22,6 +22,7 @@ import {
   runSpeedFactor,
   tryWallJump,
 } from './advancedMovementTech'
+import { hanzoReverseDash } from './defensiveMovementTech'
 import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, FightInput, FighterDash, FighterMotion } from './types'
@@ -152,6 +153,8 @@ function stepActiveDash(
 ): ArcadeFighter {
   const direction = inputDirection(options.input)
   if (shouldBrakeDash({ fighter, dash, direction, input: options.input })) {
+    const reverse = hanzoReverseDash(fighter, dash.direction, direction)
+    if (reverse) return advanceDash(fighter, reverse, direction)
     const braked = withMotion(fighter, { dash: null, running: undefined })
     return braked.blocking || braked.crouching ? { ...braked, pose: 'idle' } : walk(braked, direction)
   }

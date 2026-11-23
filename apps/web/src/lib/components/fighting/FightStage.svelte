@@ -27,7 +27,7 @@
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
-  import { impactCallout } from '$lib/fighting/impactCallout'
+  import { resolveImpactCallout } from '$lib/fighting/perception/tacticalCallout'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
@@ -120,7 +120,7 @@
               class="impact-flash"
             ></div>{/if}
           <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
-            {impactCallout(visibleState.impact, language)}
+            {resolveImpactCallout({ state: visibleState, language, mode: hudMode })}
           </div>
         {/key}
       {/if}
@@ -132,7 +132,7 @@
         {/key}
       {/if}
       <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
-      {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
+      {#if minimal}<FightEssentialStatus state={visibleState} {language} {hudMode} />{/if}
       <slot />
     {/if}
     {#if state.stageTransition}

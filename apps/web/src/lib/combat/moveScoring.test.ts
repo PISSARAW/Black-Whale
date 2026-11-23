@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { combatReducer, initialCombatState } from './reducer'
 import type { CombatState } from './types'
-import type { MoveSlot } from '../fighting/types'
+import type { FighterId, MoveSlot } from '../fighting/types'
 
 const terrain = initialCombatState().terrain
 
@@ -15,11 +15,11 @@ function duel(guard: CombatState['opponent']['guard'] = 'torso'): CombatState {
   }
 }
 
-function press(state: CombatState, slot: MoveSlot): CombatState {
+function press(state: CombatState, slot: MoveSlot, fighterId: FighterId = 'kurapika'): CombatState {
   return combatReducer(state, {
     type: 'FIGHTING_MOVE',
     side: 'player',
-    fighterId: 'kurapika',
+    fighterId,
     slot,
     targetAt: [3, 0],
   })
@@ -51,7 +51,7 @@ describe('Clash damage scoring in Arena', () => {
   })
 
   it('scores nothing for a move without authored damage', () => {
-    const bound = tick(press(duel(), 'neutralSpecial'), 12 / 60)
+    const bound = tick(press(duel(), 'neutralSpecial', 'theta'), 12 / 60)
 
     expect(bound.lastEvent?.attacker).toBe('player')
     expect(bound.player.score).toBe(0)

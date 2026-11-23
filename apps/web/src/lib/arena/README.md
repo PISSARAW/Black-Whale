@@ -25,8 +25,8 @@ axis. The camera wears the player's own fighter model
 behind the eyes and turns with them, so looking down shows the chest and feet,
 and a guard or a strike lifts its arms into view
 ([tour/humanFirstPerson.ts](../tour/humanFirstPerson.ts)). The opponent uses the
-same shared character rig. Hisoka's special is routed through Arena's
-persistent Bungee Gum tether rule.
+same shared character rig. Exact named specials are routed through their
+per-fighter Arena systems rather than flattened into generic strikes.
 
 ### Clash combat grammar in first person
 
@@ -86,9 +86,17 @@ Authored contact hitstop now freezes Arena's combat clock and bodies while
 keeping a follow-up command buffered. The POV camera reads the same deterministic
 freeze for ranked impact recoil, disabled by reduced-motion preferences.
 
-Still Clash-only, in rough order of value: per-fighter Hatsu systems behind the specials;
-psychology, expressions and Ren presentation; frame data, training and
-lessons; replay coaching; rollback PvP.
+[combat/fightingHatsu.ts](../combat/fightingHatsu.ts) is the explicit identity gate for twenty neutral
+specials, including Chain Jail, Bungee Gum, Cyclotron, Double Machine Gun,
+Nen Stitches, Needle People, Cross Game, Biohazard and the Black Whale named
+systems whose Arena conditions are already complete. Dynamic or multi-step
+slots stay on their authored Clash move until Arena can preserve their exact
+condition; Blinky, Jupiter, Skill Hunter and Parallel Future are deliberately
+not replaced by a convenient generic effect.
+
+Still Clash-only, in rough order of value: the remaining dynamic Hatsu;
+psychology, expressions and Ren presentation; frame data, training and lessons;
+replay coaching; rollback PvP.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

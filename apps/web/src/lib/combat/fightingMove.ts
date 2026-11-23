@@ -3,6 +3,9 @@ import type { FighterMove } from '../fighting/movesetTypes'
 import type { FightNenZone } from '../fighting/types'
 import { CHAIN_BUFFER, LANE_METRE, chainAccepts, comboHistory } from './moveChain'
 import { usesClashNen } from './clashNen'
+import { reactEnvironment } from './environment'
+import { fightingHatsuAction } from './fightingHatsu'
+import { castHatsu } from './hatsuCast'
 import {
   otherSide,
   type AttackIntent,
@@ -14,22 +17,6 @@ import {
 } from './types'
 
 type FightingMoveAction = Extract<CombatAction, { type: 'FIGHTING_MOVE' }>
-
-/** Named specials whose canonical Arena rule already exists bypass the generic strike projection. */
-export function fightingHatsuAction(
-  action: FightingMoveAction,
-): Extract<CombatAction, { type: 'HATSU' }> | null {
-  if (action.fighterId !== 'hisoka' || action.slot !== 'neutralSpecial') return null
-  const move = moveForSlot(action.fighterId, action.slot)
-  return {
-    type: 'HATSU',
-    side: action.side,
-    effect: 'bind',
-    zone: 'arms',
-    hatsuId: 'bungee-gum',
-    cost: move?.auraCost,
-  }
-}
 
 /**
  * Projects authored Fighting frame data onto the attacker's local 3D combat axis.
@@ -123,11 +110,11 @@ export function releaseBufferedMove(state: CombatState, side: CombatSide): Comba
   const cleared = { ...state, [side]: { ...state[side], buffered: null } }
   if (buffered.until < state.clock) return cleared
   const { fighterId, slot, targetAt } = buffered
-  return prepareFightingMove(
-    cleared,
-    { type: 'FIGHTING_MOVE', side, fighterId, slot, targetAt },
-    { buffer: false },
-  )
+  const action: FightingMoveAction = { type: 'FIGHTING_MOVE', side, fighterId, slot, targetAt }
+  const hatsu = fightingHatsuAction(action)
+  if (!hatsu) return prepareFightingMove(cleared, action, { buffer: false })
+  const cast = castHatsu(cleared, hatsu)
+  return cast === cleared ? cleared : reactEnvironment(cast, hatsu)
 }
 
 function bufferMove(state: CombatState, action: FightingMoveAction): CombatState {

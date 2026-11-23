@@ -2,6 +2,7 @@ import { initialCombatState } from '../combat/reducer'
 import type { CombatAction, CombatSetup, CombatState } from '../combat/types'
 import { ARENA_FORMATS, formatOutcome } from './formats'
 import type { ArenaReplayMatch } from './replay/types'
+import { fightingHatsuRoute } from '../combat/fightingHatsu'
 
 export type ArenaActionCounts = Partial<Record<CombatAction['type'], number>>
 
@@ -39,7 +40,7 @@ export function countArenaAction(
   if (action.type === 'TICK') return actions
   const type =
     action.type === 'FIGHTING_MOVE'
-      ? action.slot === 'neutralSpecial'
+      ? fightingHatsuRoute(action.fighterId, action.slot)
         ? 'HATSU'
         : 'STRIKE'
       : action.type

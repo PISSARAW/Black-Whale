@@ -37,6 +37,7 @@ import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
 import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
+import { carryTskPoison } from './tsk17'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
 import { carryBodyMemory } from './bodyMemory'
@@ -128,31 +129,38 @@ export function nextFightRound(state: FightState): FightState {
       attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
+      tsk17: undefined,
       burst: undefined,
       burstAvailable: { player: true, opponent: true },
-      player: carryBodyMemory(
-        preserveLifespan(
-          createFighter({
-            id: state.player.halkenburgOrigin ?? state.player.id,
-            x: 22,
-            facing: 1,
-            health: format.health,
-          }),
+      player: carryTskPoison(
+        carryBodyMemory(
+          preserveLifespan(
+            createFighter({
+              id: state.player.halkenburgOrigin ?? state.player.id,
+              x: 22,
+              facing: 1,
+              health: format.health,
+            }),
+            state.player,
+            state.frame,
+          ),
           state.player,
-          state.frame,
         ),
         state.player,
       ),
-      opponent: carryBodyMemory(
-        preserveLifespan(
-          createFighter({
-            id: state.opponent.halkenburgOrigin ?? state.opponent.id,
-            x: 78,
-            facing: -1,
-            health: format.health,
-          }),
+      opponent: carryTskPoison(
+        carryBodyMemory(
+          preserveLifespan(
+            createFighter({
+              id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+              x: 78,
+              facing: -1,
+              health: format.health,
+            }),
+            state.opponent,
+            state.frame,
+          ),
           state.opponent,
-          state.frame,
         ),
         state.opponent,
       ),

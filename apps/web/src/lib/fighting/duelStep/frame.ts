@@ -17,6 +17,15 @@ import { bufferKameoCalls } from '../kameos/buffer'
 import { advanceNenMentalFatigue } from '../nenCognitiveLoad'
 import { advanceNenPsychology } from '../nenPsychology'
 import { advanceBurstZetsu, resolveBurstInputs } from '../fightBurst'
+import { advanceTsk17, canReleaseTsk17, releaseTsk17 } from '../tsk17'
+
+function resolveTsk17Inputs(state: FightState, inputs: DuelInputs): FightState {
+  if (inputs.player.context && !state.player.openWounds && canReleaseTsk17(state, 'player'))
+    state = releaseTsk17(state, 'player')
+  if (inputs.opponent?.context && !state.opponent.openWounds && canReleaseTsk17(state, 'opponent'))
+    state = releaseTsk17(state, 'opponent')
+  return state
+}
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -26,6 +35,7 @@ export function openFrame(
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
+  state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
@@ -58,5 +68,5 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))
+  return advanceTsk17(reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))))
 }

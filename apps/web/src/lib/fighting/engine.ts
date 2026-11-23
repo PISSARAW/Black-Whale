@@ -85,6 +85,7 @@ import type {
 
 export { TOWER_WIN_SCORE }
 export { nextFightRound as nextRound }
+export { releaseTsk17, canReleaseTsk17 } from './tsk17'
 
 export function createFight(...args: Parameters<typeof createFightState>): FightState {
   return applyRivalryRules(createFightState(...args))

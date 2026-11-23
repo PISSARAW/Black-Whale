@@ -30,6 +30,9 @@
     {#if pain && pain.injuries > 0 && !pain.sun}<span
         >{language === 'fr' ? 'Douleur' : 'Pain'} · {Math.round(pain.injuries)}</span
       >{/if}
+    {#if state.player.tskPoisoned}<span class="poisoned"
+        >TSK-17 · {language === 'fr' ? 'Empoisonné' : 'Poisoned'}</span
+      >{/if}
   </div>
   {#if feedback && feedback.outcome === 'refused'}<p class="battle-command-toast" role="status">
       {commandFeedbackText(feedback, language)}

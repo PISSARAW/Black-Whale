@@ -120,6 +120,7 @@ function redactEnemy(enemy: ArcadeFighter) {
     }
   enemy.heardCorpse = undefined
   enemy.bodyAndSoulReplies = undefined
+  enemy.halkSedativeSpent = undefined
   enemy.secretWindow = undefined
   enemy.secretWindowListening = undefined
   enemy.melodyHearing = undefined

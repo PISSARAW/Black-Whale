@@ -7,9 +7,14 @@ import {
   REN_FEAR_STAGGER,
   REN_PRESSURE_BLOCKSTUN,
   advanceNenPillars,
+  firearmCanShoot,
   firearmCapacity,
+  spendFirearmRound,
   startFirearmReload,
 } from './nenPillars'
+import { BODYGUARD_FIREARMS } from './bodyguardFirearms'
+import { readNenBudget } from './nenBudget'
+import { readNenCognitiveLoad } from './nenCognitiveLoad'
 import {
   SEIYAKU_AGGRESSION_POWER,
   SEIYAKU_AGGRESSION_SEAL_FRAMES,
@@ -222,5 +227,42 @@ describe('Seiyaku — Soft Lock and Breach Penalties', () => {
       { dt: DT, opponentInput: EMPTY_INPUT },
     )
     expect(recovering.player.auraExhausted).toBe(true)
+  })
+
+  it('swears Speed, Aggression, and Blind directly from live Aura + Context inputs and tracks bodyguard firearms & sustained Nen budgets', () => {
+    const base = beginFight(createFight('kurapika', 'hisoka'))
+    const liveSpeed = advanceSeiyaku(base, {
+      player: { ...EMPTY_INPUT, aura: true, context: true },
+    })
+    expect(liveSpeed.player.seiyaku?.kind).toBe('speed')
+
+    const liveAggression = advanceSeiyaku(base, {
+      player: { ...EMPTY_INPUT, aura: true, context: true, right: true },
+    })
+    expect(liveAggression.player.seiyaku?.kind).toBe('aggression')
+
+    const liveBlind = advanceSeiyaku(base, {
+      player: { ...EMPTY_INPUT, aura: true, context: true, left: true },
+    })
+    expect(liveBlind.player.seiyaku?.kind).toBe('blind')
+
+    for (const id of BODYGUARD_FIREARMS) {
+      const f = createFight(id, 'hisoka').player
+      expect(firearmCapacity(f)).toBe(6)
+      const tracked = spendFirearmRound({ ...f, firearmAmmo: 1 })
+      expect(tracked.firearmAmmo).toBe(0)
+      expect(firearmCanShoot(tracked)).toBe(false)
+    }
+
+    const musseFight = beginFight(createFight('musse', 'hisoka'))
+    const withOwl = {
+      ...musseFight,
+      player: { ...musseFight.player, musseOwlActive: true },
+      musseOwl: { owner: 'player' as const, attachedTo: 'opponent' as const, active: true },
+    }
+    expect(readNenBudget(withOwl, 'player').maintained).toBeGreaterThan(0)
+    expect(readNenCognitiveLoad(withOwl, 'player').load).toBeGreaterThan(
+      readNenCognitiveLoad(musseFight, 'player').load,
+    )
   })
 })

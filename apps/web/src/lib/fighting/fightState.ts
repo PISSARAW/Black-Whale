@@ -41,6 +41,7 @@ import { carryTskPoison } from './tsk17'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
 import { carryBodyMemory } from './bodyMemory'
+import { applyBiscuitInterRoundCare } from './illumiBiscuitUpgrades'
 import { carryOpponentIntel, createFightIntel } from './perception/opponentIntel'
 
 interface CreateFightOptions {
@@ -136,34 +137,38 @@ export function nextFightRound(state: FightState): FightState {
       burstAvailable: { player: true, opponent: true },
       opponentIntel: carryOpponentIntel(state.opponentIntel),
       player: carryTskPoison(
-        carryBodyMemory(
-          preserveLifespan(
-            createFighter({
-              id: state.player.halkenburgOrigin ?? state.player.id,
-              x: 22,
-              facing: 1,
-              health: format.health,
-            }),
+        applyBiscuitInterRoundCare(
+          carryBodyMemory(
+            preserveLifespan(
+              createFighter({
+                id: state.player.halkenburgOrigin ?? state.player.id,
+                x: 22,
+                facing: 1,
+                health: format.health,
+              }),
+              state.player,
+              state.frame,
+            ),
             state.player,
-            state.frame,
           ),
-          state.player,
         ),
         state.player,
       ),
       opponent: carryTskPoison(
-        carryBodyMemory(
-          preserveLifespan(
-            createFighter({
-              id: state.opponent.halkenburgOrigin ?? state.opponent.id,
-              x: 78,
-              facing: -1,
-              health: format.health,
-            }),
+        applyBiscuitInterRoundCare(
+          carryBodyMemory(
+            preserveLifespan(
+              createFighter({
+                id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+                x: 78,
+                facing: -1,
+                health: format.health,
+              }),
+              state.opponent,
+              state.frame,
+            ),
             state.opponent,
-            state.frame,
           ),
-          state.opponent,
         ),
         state.opponent,
       ),

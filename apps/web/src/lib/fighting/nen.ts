@@ -26,6 +26,7 @@ import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nen
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
+import { nenBodyOutput } from './nenBudget'
 import { chrolloRightHandOccupied } from './chrolloDeck'
 import { textureSurpriseDrain } from './textureSurpriseMask'
 import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialists'
@@ -255,7 +256,7 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
   fighter = enforcePredatorSeal(physicalNenBody(fighter))
-  const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
+  const bodyShare = (fighter.nen.shu.length ? SHU_BODY_SHARE : 1) * nenBodyOutput(fighter)
   const spread = activeEnRadius(fighter) ? 0.45 : 1
   const eyeFocus =
     fighter.nen.gyo && (fighter.nen.ken || hasRyu(fighter) || fighter.nen.ko) ? 0.62 : 1

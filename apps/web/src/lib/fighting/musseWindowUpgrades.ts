@@ -53,14 +53,19 @@ export function musseOwlVisibleTo(state: FightState, observer: FightSide): boole
 
 /** While Musse's owl watches a target, In cannot hide HUD info, Ryu, or Chrollo's open page. */
 export function musseCancelsIn(state: FightState, targetSide: FightSide): boolean {
-  return Boolean(state.musseOwl?.active && state.musseOwl.target === targetSide)
+  const observerSide: FightSide = targetSide === 'player' ? 'opponent' : 'player'
+  const canonicalOwl = state[observerSide].secretWindow?.target === targetSide
+  return Boolean(canonicalOwl || (state.musseOwl?.active && state.musseOwl.target === targetSide))
 }
 
 /** Reads an incoming charged Ko zone 3-4 frames early for Musse's HUD. */
 export function musseKoWarningZone(state: FightState, musseSide: FightSide): FightNenZone | null {
   const owl = state.musseOwl
-  if (!owl?.active || owl.owner !== musseSide) return null
-  const target = state[owl.target]
+  const canonicalTarget = state[musseSide].secretWindow?.target
+  const targetSide =
+    owl?.active && owl.owner === musseSide ? owl.target : canonicalTarget ?? null
+  if (!targetSide) return null
+  const target = state[targetSide]
   if (!target.attack?.auraCharged || target.attack.impacted) return null
   return target.attack.kind === 'heavy' ? 'feet' : 'hands'
 }

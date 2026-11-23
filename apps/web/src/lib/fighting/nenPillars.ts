@@ -1,4 +1,5 @@
 import { activeEnRadius, enContains } from './en/access'
+import { hasBodyguardFirearm } from './bodyguardFirearms'
 import { isBeyond } from './martialSpecialists'
 import type { ArcadeFighter, FightState } from './types'
 
@@ -80,8 +81,18 @@ function applyRenMalice(
 
 export function firearmCapacity(fighter: Pick<ArcadeFighter, 'id'>): number {
   if (fighter.id === 'benjamin') return 3
-  if (fighter.id === 'theta' || fighter.id === 'camilla') return 6
+  if (fighter.id === 'theta' || fighter.id === 'camilla' || hasBodyguardFirearm(fighter.id)) return 6
   return 0
+}
+
+export function firearmCanShoot(fighter: ArcadeFighter): boolean {
+  if ((fighter.firearmReloadFrames ?? 0) > 0) return false
+  return fighter.firearmAmmo === undefined || fighter.firearmAmmo > 0
+}
+
+export function spendFirearmRound(fighter: ArcadeFighter): ArcadeFighter {
+  if (fighter.firearmAmmo === undefined) return fighter
+  return { ...fighter, firearmAmmo: Math.max(0, fighter.firearmAmmo - 1) }
 }
 
 export function startFirearmReload(fighter: ArcadeFighter): ArcadeFighter {

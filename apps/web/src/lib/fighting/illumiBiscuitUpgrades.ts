@@ -34,7 +34,10 @@ export function implantIllumiNeedleOrder(
 }
 
 export function hasIllumiNeedleOrder(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.illumiNeedleOrder && fighter.illumiNeedleOrder.remainingFrames > 0)
+  return Boolean(
+    (fighter.illumiNeedleOrder && fighter.illumiNeedleOrder.remainingFrames > 0) ||
+      fighter.needlePuppet?.needleEmbedded,
+  )
 }
 
 /** Parasites the victim's commands without locking the controller. */
@@ -61,10 +64,13 @@ export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInp
 
 /** Context button (`removeNeedle`) pulls the needle out, leaving a brief punishable opening. */
 export function removeIllumiNeedle(fighter: ArcadeFighter): ArcadeFighter {
-  if (!fighter.illumiNeedleOrder) return fighter
+  if (!fighter.illumiNeedleOrder && !fighter.needlePuppet?.needleEmbedded) return fighter
   return {
     ...fighter,
     illumiNeedleOrder: undefined,
+    needlePuppet: fighter.needlePuppet
+      ? { ...fighter.needlePuppet, needleEmbedded: false }
+      : undefined,
     hitStun: Math.max(fighter.hitStun, ILLUMI_NEEDLE_REMOVE_STUN),
   }
 }

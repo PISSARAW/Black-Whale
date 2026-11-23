@@ -64,9 +64,33 @@ export function seiyakuExhaustionThreshold(fighter: ArcadeFighter): number {
   return fighter.zetsuReleaseThreshold ?? EXHAUSTION_RELEASE_AURA
 }
 
-function holdingBack(fighter: ArcadeFighter, input?: FightInput): boolean {
+export function holdingBack(fighter: ArcadeFighter, input?: FightInput): boolean {
   if (!input) return false
   return fighter.facing === 1 ? input.left && !input.right : input.right && !input.left
+}
+
+export function holdingForward(fighter: ArcadeFighter, input?: FightInput): boolean {
+  if (!input) return false
+  return fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
+}
+
+/**
+ * Aura + Context (+ direction) swears a Soft-Lock Seiyaku:
+ * - Neutral / Down -> 'speed' (1f transfer, no Ken)
+ * - Forward -> 'aggression' (+25% Hatsu power, no retreat > 10f)
+ * - Back / Up -> 'blind' (-25% Hatsu cost, no Gyo)
+ */
+export function resolveSeiyakuInput(
+  fighter: ArcadeFighter,
+  input?: FightInput,
+): ArcadeFighter {
+  if (!input?.aura || !input.context) return fighter
+  const kind: SeiyakuKind = holdingForward(fighter, input)
+    ? 'aggression'
+    : holdingBack(fighter, input) || input.jump
+      ? 'blind'
+      : 'speed'
+  return swearSeiyaku(fighter, kind)
 }
 
 function breachSeiyaku(fighter: ArcadeFighter, kind: SeiyakuKind): ArcadeFighter {
@@ -111,8 +135,10 @@ export function advanceSeiyaku(
   inputs: { player: FightInput; opponent?: FightInput },
 ): FightState {
   if (state.phase !== 'fighting') return state
-  const player = stepFighterSeiyaku(state.player, inputs.player)
-  const opponent = stepFighterSeiyaku(state.opponent, inputs.opponent)
+  const swornPlayer = resolveSeiyakuInput(state.player, inputs.player)
+  const swornOpponent = resolveSeiyakuInput(state.opponent, inputs.opponent)
+  const player = stepFighterSeiyaku(swornPlayer, inputs.player)
+  const opponent = stepFighterSeiyaku(swornOpponent, inputs.opponent)
   if (player === state.player && opponent === state.opponent) return state
   return { ...state, player, opponent }
 }

@@ -30,9 +30,16 @@ const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
 function baseTransferFrames(fighter: ArcadeFighter): number {
   // Layer 1: Hard body override (Halkenburg anonymous guard swap)
-  if ((fighter.halkenburgSwappedFrames ?? 0) > 0) return HALKENBURG_GUARD_TRANSFER_FRAMES
+  if ((fighter.halkenburgSwappedFrames ?? 0) > 0 || fighter.hatsuEffects.possessedFrames > 0)
+    return HALKENBURG_GUARD_TRANSFER_FRAMES
   // Layer 2: Posture / vow / owl reflex override (1f) or tactical / specialist mastery (2f)
-  if (fighter.musseOwlActive || fighter.enReflexActive || seiyakuSpeedActive(fighter)) return 1
+  if (
+    fighter.musseOwlActive ||
+    Boolean(fighter.secretWindow) ||
+    fighter.enReflexActive ||
+    seiyakuSpeedActive(fighter)
+  )
+    return 1
   if (
     fighter.rihanTacticalRead ||
     (fighter.nenOwner ?? fighter.id) === 'biscuit' ||

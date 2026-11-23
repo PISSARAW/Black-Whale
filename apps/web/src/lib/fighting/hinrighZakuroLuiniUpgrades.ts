@@ -52,18 +52,19 @@ export function hinrighBlocksHandAction(
   kind: AttackKind,
   zone?: FightNenZone,
 ): boolean {
-  if (!fighter.hinrighCuffed) return false
+  if (!fighter.hinrighCuffed && !fighter.biohazardRestraint) return false
   if (kind === 'throw') return true
   return zone === 'hands'
 }
 
 /** Padaille drills free instantly (0 stun); everyone else pays a 16-frame opening via Contexte. */
 export function breakHinrighHandcuffs(fighter: ArcadeFighter): ArcadeFighter {
-  if (!fighter.hinrighCuffed) return fighter
+  if (!fighter.hinrighCuffed && !fighter.biohazardRestraint) return fighter
   const isPadaille = (fighter.nenOwner ?? fighter.id) === 'padaille'
   return {
     ...fighter,
     hinrighCuffed: undefined,
+    biohazardRestraint: undefined,
     hitStun: isPadaille ? fighter.hitStun : Math.max(fighter.hitStun, HINRIGH_CUFF_BREAK_STUN),
   }
 }
@@ -114,18 +115,35 @@ function stepZakuroBlood(state: FightState): FightState {
   let next = state
   for (const side of ['player', 'opponent'] as const) {
     const f = next[side]
-    if ((f.nenOwner ?? f.id) === 'zakuro' && (f.openWounds ?? 0) > 0 && f.health > 1) {
-      next = {
-        ...next,
-        [side]: { ...f, health: Math.max(1, f.health - ZAKURO_BLEED_HP_DPS / FIGHT_FPS) },
-      }
-    }
     if (f.zakuroRevealedFrames) {
       const rem = Math.max(0, f.zakuroRevealedFrames - 1) || undefined
       next = { ...next, [side]: { ...next[side], zakuroRevealedFrames: rem } }
     }
   }
   const drops = next.zakuroBloodDrops
+  const canonicalDropsA = next.player.bloodyMary?.drops ?? []
+  const canonicalDropsB = next.opponent.bloodyMary?.drops ?? []
+  for (const [ownerSide, list] of [
+    ['player', canonicalDropsA],
+    ['opponent', canonicalDropsB],
+  ] as const) {
+    if (!list.length) continue
+    const foeSide: FightSide = ownerSide === 'player' ? 'opponent' : 'player'
+    const foe = next[foeSide]
+    const nearDrop = list.some(
+      (d) => d.reformFrames === 0 && Math.abs(foe.x - d.x) <= ZAKURO_BLOOD_DROP_RADIUS,
+    )
+    if (nearDrop && (foe.nen.in || foe.nen.mode === 'zetsu')) {
+      next = {
+        ...next,
+        [foeSide]: {
+          ...foe,
+          nen: { ...foe.nen, in: false },
+          zakuroRevealedFrames: ZAKURO_REVEAL_FRAMES,
+        },
+      }
+    }
+  }
   if (!drops) return next
   const foeSide: FightSide = drops.owner === 'player' ? 'opponent' : 'player'
   const foe = next[foeSide]

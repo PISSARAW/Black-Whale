@@ -43,7 +43,7 @@ export function applyHalkenburgBodySwap(
 }
 
 export function halkenburgHatsuLocked(fighter: ArcadeFighter): boolean {
-  return (fighter.halkenburgSwappedFrames ?? 0) > 0
+  return (fighter.halkenburgSwappedFrames ?? 0) > 0 || fighter.hatsuEffects.possessedFrames > 0
 }
 
 /** Bonolenov Jupiter impact: adds +2f to nenTransferFrames unless target covered ears via Contexte. */

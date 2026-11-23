@@ -130,7 +130,10 @@ export function deployKallutoListeningDoll(state: FightState, side: FightSide): 
 }
 
 export function kallutoDollRevealsOpponent(state: FightState, kallutoSide: FightSide): boolean {
-  return Boolean(state.kallutoDoll?.active && state.kallutoDoll.owner === kallutoSide)
+  const canonicalDoll = Boolean(state[kallutoSide].kallutoPaper?.doll?.active)
+  return Boolean(
+    canonicalDoll || (state.kallutoDoll?.active && state.kallutoDoll.owner === kallutoSide),
+  )
 }
 
 export function advanceShizukuHanzoKallutoUpgrades(state: FightState): FightState {

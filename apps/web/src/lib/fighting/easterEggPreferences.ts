@@ -2,13 +2,24 @@ import { EASTER_EGGS, type EasterEggFighter, type EasterEggSlot } from './easter
 import type { FightInput, FightSide, FightState } from './types'
 
 const STORAGE_KEY = 'black-whale.clash.easter-eggs.v1'
-export const EASTER_EGG_KEYS = ['F2', 'F4', 'F6', 'F7', 'F8', 'F9'] as const
+const KEYBOARD_DEFAULTS_VERSION = 2
+export const EASTER_EGG_NUMBER_KEYS = ['1', '8'] as const
+export const EASTER_EGG_KEYS = [
+  ...EASTER_EGG_NUMBER_KEYS,
+  'F2',
+  'F4',
+  'F6',
+  'F7',
+  'F8',
+  'F9',
+] as const
+const LEGACY_DEFAULT_KEYS = { player: 'F2', opponent: 'F4' }
 export interface EasterEggPreferences {
   keys: Record<FightSide, string>
   discoveries: Partial<Record<EasterEggFighter, number>>
 }
 export const defaultEasterEggPreferences = (): EasterEggPreferences => ({
-  keys: { player: 'F2', opponent: 'F4' },
+  keys: { player: EASTER_EGG_NUMBER_KEYS[0], opponent: EASTER_EGG_NUMBER_KEYS[1] },
   discoveries: {},
 })
 
@@ -28,12 +39,24 @@ export function readEasterEggPreferences(
     const saved = JSON.parse(storage?.getItem(STORAGE_KEY) ?? 'null')
     if (!saved || typeof saved !== 'object') return result
     if (validKeys(saved.keys))
-      result.keys = { player: saved.keys.player, opponent: saved.keys.opponent }
+      result.keys = restoreKeys(saved.keys, saved.keyboardDefaults, result.keys)
     result.discoveries = validDiscoveries(saved.discoveries)
   } catch {
     /* Private browsing and damaged saves must not prevent playing. */
   }
   return result
+}
+
+function restoreKeys(
+  saved: EasterEggPreferences['keys'],
+  version: unknown,
+  defaults: EasterEggPreferences['keys'],
+): EasterEggPreferences['keys'] {
+  const keys = { player: saved.player, opponent: saved.opponent }
+  if (version === KEYBOARD_DEFAULTS_VERSION) return keys
+  for (const side of ['player', 'opponent'] as const)
+    if (keys[side] === LEGACY_DEFAULT_KEYS[side]) keys[side] = defaults[side]
+  return validKeys(keys) ? keys : saved
 }
 
 function validDiscoveries(saved: EasterEggPreferences['discoveries'] | undefined) {
@@ -63,7 +86,10 @@ export function saveEasterEggPreferences(
   storage: Pick<Storage, 'setItem'> | undefined = browserStorage(),
 ): void {
   try {
-    storage?.setItem(STORAGE_KEY, JSON.stringify(preferences))
+    storage?.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...preferences, keyboardDefaults: KEYBOARD_DEFAULTS_VERSION }),
+    )
   } catch {
     /* Memory-only fallback. */
   }

@@ -37,8 +37,8 @@
   </p>
   <p>
     {language === 'fr'
-      ? 'Easter Eggs : F2 (P2 : F4), touches configurables dans « Gestes et secrets ». Seule : geste 1 ; avec avant : 2 ; arrière : 3 ; bas : secret. Les boutons fonctionnent aussi au tactile.'
-      : 'Easter Eggs: F2 (P2: F4), configurable in “Gestures and secrets”. Alone: gesture 1; with forward: 2; back: 3; down: secret. Buttons also work on touchscreens.'}
+      ? 'Easter Eggs : 1 pour P1 et 8 pour P2, sur la rangée du haut sans Maj ni Fn. Les touches se règlent dans « Gestes et secrets ». Sans direction : geste 1. Avant : 2. Arrière : 3. Bas : secret.'
+      : 'Easter Eggs: 1 for P1 and 8 for P2 on the top row, without Shift or Fn. Configure them in “Gestures and secrets”. Neutral: gesture 1. Forward: 2. Back: 3. Down: secret.'}
   </p>
   <p>
     {language === 'fr'

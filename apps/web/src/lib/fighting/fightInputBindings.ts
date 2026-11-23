@@ -1,4 +1,4 @@
-import { EASTER_EGG_KEYS } from './easterEggPreferences'
+import { EASTER_EGG_KEYS, EASTER_EGG_NUMBER_KEYS } from './easterEggPreferences'
 
 const LEGACY_KEYS = {
   playerLeft: 'q',
@@ -80,8 +80,11 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
 }
 const STORAGE_KEY = 'black-whale:fighting-controls:v3'
 const LEGACY_STORAGE_KEY = 'black-whale:fighting-controls:v2'
+// Labels produced by the two newly reserved physical keys on AZERTY or QWERTY.
+const EASTER_NUMBER_LABELS = new Set<string>([...EASTER_EGG_NUMBER_KEYS, '&', '_', '!', '*'])
 const RESERVED = new Set<string>([
   ...EASTER_EGG_KEYS,
+  ...EASTER_NUMBER_LABELS,
   'Escape',
   'Tab',
   'Meta',
@@ -122,7 +125,8 @@ function decodeBindings(saved: unknown): KeyboardBindings {
   for (const command of Object.keys(result) as ControlCommand[]) {
     const value = values[command]
     if (typeof value !== 'string') return defaultBindings()
-    result[command] = normalizeControlKey(value)
+    const key = normalizeControlKey(value)
+    if (!EASTER_NUMBER_LABELS.has(key)) result[command] = key
   }
   return bindingError(result) ? defaultBindings() : result
 }
@@ -153,6 +157,8 @@ const CODE_KEYS: Readonly<Record<string, string>> = {
 
 export function physicalControlKey(event: Pick<KeyboardEvent, 'code' | 'key'>): string {
   const label = normalizeControlKey(event.key)
+  const eggKey = EASTER_EGG_NUMBER_KEYS.find((key) => event.code === `Digit${key}`)
+  if (eggKey) return eggKey
   // M shifts rows between AZERTY and QWERTY. Both layouts use the printed M.
   if (label === 'm' || event.code === 'KeyM') return label
   if (event.code === 'KeyA') return 'q'
@@ -165,6 +171,7 @@ export function physicalControlKey(event: Pick<KeyboardEvent, 'code' | 'key'>): 
 
 function mappedKey(key: string, bindings: KeyboardBindings, layer: boolean): string | null {
   if (key === 'p') return 'p'
+  if (EASTER_EGG_KEYS.some((candidate) => candidate === key)) return key
   const command = (Object.keys(bindings) as ControlCommand[]).find((id) => bindings[id] === key)
   if (!command) return key.startsWith('F') ? key : null
   if (command === 'pause') return 'p'

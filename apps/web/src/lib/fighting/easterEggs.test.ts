@@ -267,24 +267,43 @@ describe('Easter Egg controls and collection', () => {
     const state = ready()
     const keys = defaultEasterEggPreferences().keys
     const options = { state, keys, input: EMPTY_INPUT, opponentInput: EMPTY_INPUT }
-    expect(easterEggKeyCommand('F2', options)).toEqual({ side: 'player', slot: 1 })
+    expect(easterEggKeyCommand('1', options)).toEqual({ side: 'player', slot: 1 })
     expect(
-      easterEggKeyCommand('F2', { ...options, input: { ...EMPTY_INPUT, right: true } })?.slot,
+      easterEggKeyCommand('1', { ...options, input: { ...EMPTY_INPUT, right: true } })?.slot,
     ).toBe(2)
     expect(
-      easterEggKeyCommand('F4', { ...options, opponentInput: { ...EMPTY_INPUT, left: true } })
-        ?.slot,
+      easterEggKeyCommand('8', { ...options, opponentInput: { ...EMPTY_INPUT, left: true } })?.slot,
     ).toBe(2)
     expect(
-      easterEggKeyCommand('F4', { ...options, opponentInput: { ...EMPTY_INPUT, right: true } })
+      easterEggKeyCommand('8', { ...options, opponentInput: { ...EMPTY_INPUT, right: true } })
         ?.slot,
     ).toBe(3)
     expect(
-      easterEggKeyCommand('F2', { ...options, input: { ...EMPTY_INPUT, down: true } })?.slot,
+      easterEggKeyCommand('1', { ...options, input: { ...EMPTY_INPUT, down: true } })?.slot,
     ).toBe(4)
     expect(
-      easterEggKeyCommand('F4', { ...options, state: { ...state, mode: 'versus-ai' } }),
+      easterEggKeyCommand('8', { ...options, state: { ...state, mode: 'versus-ai' } }),
     ).toBeNull()
+  })
+
+  it('migrates the old defaults while retaining discoveries and explicit legacy choices', () => {
+    let record = JSON.stringify({
+      keys: { player: 'F2', opponent: 'F7' },
+      discoveries: { leorio: 1 },
+    })
+    const storage = {
+      getItem: () => record,
+      setItem: (_key: string, value: string) => {
+        record = value
+      },
+    }
+    expect(readEasterEggPreferences(storage)).toEqual({
+      keys: { player: '1', opponent: 'F7' },
+      discoveries: { leorio: 1 },
+    })
+    const legacy = { keys: { player: 'F2', opponent: 'F4' }, discoveries: { leorio: 1 } }
+    saveEasterEggPreferences(legacy, storage)
+    expect(readEasterEggPreferences(storage)).toEqual(legacy)
   })
 
   it('persists only completed discoveries, validates saves and ignores forecast snapshots', () => {

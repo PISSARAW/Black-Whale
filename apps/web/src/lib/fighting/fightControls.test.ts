@@ -29,6 +29,23 @@ function pad(buttons: number[] = [], axes = [0, 0], index = 0): FightPad {
 const key = (value: string, code = value) => ({ key: value, code })
 
 describe('fight keyboard configuration', () => {
+  it('routes the top-row Easter Egg keys on AZERTY and QWERTY without consuming pause or Nen', () => {
+    const bindings = defaultBindings()
+    const mapper = createKeyboardMapper()
+    expect(mapper.key(key('v', 'KeyV'), true, bindings)).toBe('direct:playerNen')
+    for (const [number, azerty] of [
+      ['1', '&'],
+      ['8', '_'],
+    ]) {
+      const code = `Digit${number}`
+      expect(mapper.key(key(azerty, code), true, bindings)).toBe(number)
+      mapper.key(key(azerty, code), false, bindings)
+      expect(mapper.key(key(number, code), true, bindings)).toBe(number)
+      mapper.key(key(number, code), false, bindings)
+      expect(assignControlKey(bindings, 'playerLight', number)).toBeNull()
+    }
+    expect(mapper.key(key('p', 'KeyP'), true, bindings)).toBe('p')
+  })
   it('keeps the direct layout and pause distinct for both players', () => {
     const keys = defaultBindings()
     expect(bindingError(keys)).toBeNull()

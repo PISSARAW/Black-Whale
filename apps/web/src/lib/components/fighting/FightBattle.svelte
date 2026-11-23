@@ -33,7 +33,10 @@
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
   import type { FightState } from '$lib/fighting/types'
   import {
+    readHudModePreference,
     resolveFightHudMode,
+    saveHudModePreference,
+    toggleHudModePreference,
     type FightHudModePreference,
   } from '$lib/fighting/perception/hudMode'
   import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
@@ -63,6 +66,7 @@
   let detailed = false
   let hudScale = 1
   let hudModePreference: FightHudModePreference = 'auto'
+  let hudPreferenceLoaded = false
   let controlMode = 'auto'
   let touchDevice = false
   let pauseTab = 'overview'
@@ -71,6 +75,9 @@
   $: stage = fightStage(state.environment.stageId)
   $: format = fightFormat(state.formatId)
   $: hudMode = resolveFightHudMode({ state, replay: replays.active, preference: hudModePreference })
+  $: if (hudPreferenceLoaded && typeof window !== 'undefined') {
+    saveHudModePreference(hudModePreference, window.localStorage)
+  }
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
@@ -80,6 +87,8 @@
     actions.togglePause()
   }
   onMount(() => {
+    hudModePreference = readHudModePreference(window.localStorage)
+    hudPreferenceLoaded = true
     const pointer = window.matchMedia(
       '(any-pointer: coarse), (max-width: 600px), (max-width: 1000px) and (max-height: 600px)',
     )
@@ -104,6 +113,23 @@
       ></i><span>{fr ? stage.nameFr : stage.nameEn}</span>
     </div>
     <div class="battle-actions">
+      <button
+        type="button"
+        class="battle-menu-button hud-mode-toggle"
+        aria-pressed={hudMode === 'omniscient'}
+        title={fr
+          ? 'Basculer entre HUD tactique (HxH) et HUD complet'
+          : 'Switch between tactical (HxH) HUD and full HUD'}
+        onclick={() => (hudModePreference = toggleHudModePreference(hudMode))}
+      >
+        {hudMode === 'omniscient'
+          ? fr
+            ? 'HUD complet'
+            : 'Full HUD'
+          : fr
+            ? 'HUD tactique'
+            : 'Tactical HUD'}
+      </button>
       <FightFullscreenButton {language} {target} compact />
       <button
         type="button"

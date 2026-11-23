@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { resolveFightHudMode } from './hudMode'
+import {
+  readHudModePreference,
+  resolveFightHudMode,
+  saveHudModePreference,
+  toggleHudModePreference,
+} from './hudMode'
 
 describe('resolveFightHudMode', () => {
   it('defaults to tactical in versus-ai combat', () => {
@@ -19,5 +24,22 @@ describe('resolveFightHudMode', () => {
     expect(
       resolveFightHudMode({ state: { mode: 'training' }, preference: 'tactical' }),
     ).toBe('tactical')
+  })
+
+  it('persists and restores the player HUD preference safely', () => {
+    const data = new Map<string, string>()
+    const storage = {
+      getItem: (key: string) => data.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        data.set(key, value)
+      },
+    }
+    expect(readHudModePreference(storage)).toBe('auto')
+    saveHudModePreference('omniscient', storage)
+    expect(readHudModePreference(storage)).toBe('omniscient')
+    data.set('black-whale:clash-hud-mode:v1', 'invalid')
+    expect(readHudModePreference(storage)).toBe('auto')
+    expect(toggleHudModePreference('tactical')).toBe('omniscient')
+    expect(toggleHudModePreference('omniscient')).toBe('tactical')
   })
 })

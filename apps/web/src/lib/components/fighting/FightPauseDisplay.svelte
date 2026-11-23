@@ -21,7 +21,7 @@
       bind:value={hudModePreference}
       ><option value="auto">{fr ? 'Auto (Tactique en combat)' : 'Auto (Tactical in combat)'}</option
       ><option value="tactical">{fr ? 'Tactique (HxH)' : 'Tactical (HxH)'}</option><option
-        value="omniscient">{fr ? 'Omniscient (Complet)' : 'Omniscient (Full)'}</option
+        value="omniscient">{fr ? 'HUD complet (Omniscient)' : 'Full HUD (Omniscient)'}</option
       ></select
     ></label
   >

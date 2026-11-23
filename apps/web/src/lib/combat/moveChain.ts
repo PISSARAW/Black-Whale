@@ -140,7 +140,7 @@ export function settleFightingMove({ before, after, side, intent }: Settlement):
   const defender = knockBack({
     defender: stunned,
     from: after[side].position,
-    metres: connected === 'hit' ? move.tuning.knockback * LANE_METRE : 0,
+    metres: move.tuning.knockback * LANE_METRE,
     walls: after.terrain.walls,
   })
   const points = (intent.scored ?? 0) + event.points

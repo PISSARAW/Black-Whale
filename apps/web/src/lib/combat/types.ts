@@ -38,6 +38,13 @@ export interface AttackIntent {
   combo?: readonly string[]
   /** Points the combo had already scored when this move was prepared. */
   scored?: number
+  /** Authored Clash lunge, projected progressively onto the attacker's local 3D axis. */
+  drive?: {
+    total: number
+    applied: number
+    duration: number
+    direction: Vec2
+  }
 }
 
 export interface ElasticTether {

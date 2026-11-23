@@ -42,8 +42,8 @@ export function runClashParityScenario(scenario: ArenaParityScenario): ArenaPari
   return {
     id: scenario.id,
     events,
-    player: fighterDigest(state, 'player'),
-    opponent: fighterDigest(state, 'opponent'),
+    player: fighterDigest(state, 'player', scenario),
+    opponent: fighterDigest(state, 'opponent', scenario),
     outcome: outcome(state),
   }
 }
@@ -100,7 +100,11 @@ function impactKind(state: FightState): ParityEvent['impact'] {
   return impact.critical ? 'critical' : 'clean'
 }
 
-function fighterDigest(state: FightState, side: FightSide): ParityFighterDigest {
+function fighterDigest(
+  state: FightState,
+  side: FightSide,
+  scenario: ArenaParityScenario,
+): ParityFighterDigest {
   const fighter = state[side]
   return {
     aura: rounded(fighter.aura),
@@ -113,8 +117,23 @@ function fighterDigest(state: FightState, side: FightSide): ParityFighterDigest 
             ? 'staggered'
             : 'ready',
     score: state.score[side],
-    position: [rounded(fighter.x * LANE_METRE), rounded(fighter.y * LANE_METRE)],
+    position: projectedPosition(fighter.x, scenario),
   }
+}
+
+/** Projects Clash's one-dimensional lane back onto the scenario's Arena attack axis. */
+function projectedPosition(x: number, scenario: ArenaParityScenario): readonly [number, number] {
+  const { playerAt, opponentAt } = scenario.setup
+  const dx = opponentAt[0] - playerAt[0]
+  const dz = opponentAt[1] - playerAt[1]
+  const gap = Math.hypot(dx, dz)
+  const direction = gap === 0 ? ([1, 0] as const) : ([dx / gap, dz / gap] as const)
+  const centre: readonly [number, number] = [
+    (playerAt[0] + opponentAt[0]) / 2,
+    (playerAt[1] + opponentAt[1]) / 2,
+  ]
+  const offset = (x - 50) * LANE_METRE
+  return [rounded(centre[0] + direction[0] * offset), rounded(centre[1] + direction[1] * offset)]
 }
 
 function commandsByFrame(commands: readonly ParityCommand[]) {

@@ -1,7 +1,7 @@
 import { moveForSlot } from '../fighting/movesets'
 import type { FighterMove } from '../fighting/movesetTypes'
 import type { FightNenZone } from '../fighting/types'
-import { CHAIN_BUFFER, chainAccepts, comboHistory } from './moveChain'
+import { CHAIN_BUFFER, LANE_METRE, chainAccepts, comboHistory } from './moveChain'
 import { usesClashNen } from './clashNen'
 import {
   otherSide,
@@ -77,9 +77,10 @@ function fightingIntent(options: {
   chained: boolean
 }): AttackIntent {
   const { fighter, move, targetAt, chained } = options
+  const duration = Math.max(1, move.tuning.startup) / 60
   return {
     zone: arenaZone(move.tuning.targetZone),
-    remaining: move.tuning.startup / 60,
+    remaining: duration,
     targetAt,
     technique: move.kind === 'special' ? 'hatsu' : 'strike',
     power: 0.45 + move.tuning.damage / 15,
@@ -88,7 +89,23 @@ function fightingIntent(options: {
     moveId: move.id,
     combo: comboHistory(fighter, move, chained),
     scored: chained ? (fighter.chain?.points ?? 0) : 0,
+    drive: {
+      total: move.tuning.lunge * LANE_METRE,
+      applied: 0,
+      duration,
+      direction: directionTo(fighter.position, targetAt),
+    },
   }
+}
+
+function directionTo(
+  from: FighterState['position'],
+  to: FighterState['position'],
+): [number, number] {
+  const dx = to[0] - from[0]
+  const dz = to[1] - from[1]
+  const length = Math.hypot(dx, dz)
+  return length === 0 ? [0, 0] : [dx / length, dz / length]
 }
 
 /** Releases the press kept while the previous move was running, once that move has landed. */

@@ -1,6 +1,7 @@
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
 import { clashAuraFlow, usesClashNen } from './clashNen'
+import { advanceIntentDrive } from './intentDrive'
 import type { BodyZone, CombatAction, CombatSide, CombatState, FighterState, Impact } from './types'
 
 /** What a fighter needs to know about the world for one frame of the clock. */
@@ -49,7 +50,13 @@ export function advanceFighter(
     ? chargeClashAura(recovered, context.dt)
     : chargeContinuous(recovered, context.dt)
   const shifted = settleRyu(charged, context.dt)
-  const moved = move(shifted, rival, context)
+  const driven = advanceIntentDrive({
+    fighter: shifted,
+    rival,
+    walls: context.state.terrain.walls,
+    dt: context.dt,
+  })
+  const moved = move(driven, rival, context)
   return {
     ...moved,
     cooldown: Math.max(0, moved.cooldown - context.dt),

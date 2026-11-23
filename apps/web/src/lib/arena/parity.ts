@@ -10,6 +10,8 @@ import type { FighterId } from '../fighting/types'
 export const PARITY_TICK_RATE = 60
 /** Allows one 60 Hz integration step of drift between Arena seconds and Clash frames. */
 export const PARITY_AURA_EPSILON = 0.05
+/** One centimetre absorbs only floating-point drift, not a missed authored movement. */
+export const PARITY_POSITION_EPSILON = 0.01
 
 export interface ParityCommand {
   frame: number
@@ -125,6 +127,17 @@ export function compareParityResults(
         path: `${side}.${field}`,
         arena: arena[side][field],
         clash: clash[side][field],
+      })
+    }
+    for (const axis of [0, 1] as const) {
+      if (
+        Math.abs(arena[side].position[axis] - clash[side].position[axis]) <= PARITY_POSITION_EPSILON
+      )
+        continue
+      differences.push({
+        path: `${side}.position.${axis}`,
+        arena: arena[side].position[axis],
+        clash: clash[side].position[axis],
       })
     }
   }

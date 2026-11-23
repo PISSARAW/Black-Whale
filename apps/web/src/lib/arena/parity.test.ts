@@ -92,5 +92,32 @@ describe('Arena and Clash parity traces', () => {
     expect(clash.events).toHaveLength(1)
     expect(compareParityEvents(arena, clash)).toEqual([])
     expect(compareParityResults(arena, clash)).toEqual([])
+    expect(arena.player.position[0]).toBeGreaterThan(setup.playerAt[0])
+    expect(arena.opponent.position[0]).toBeGreaterThan(setup.opponentAt[0])
+  })
+
+  it('projects Clash lane movement onto Arena local 3D attack axis', () => {
+    const scenario = kurapikaJab()
+    const opponentAt = [0, 1.5] as const
+    scenario.setup = { ...setup, opponentAt }
+    scenario.commands = [
+      {
+        frame: 0,
+        action: {
+          type: 'FIGHTING_MOVE',
+          side: 'player',
+          fighterId: 'kurapika',
+          slot: 'standingLight',
+          targetAt: opponentAt,
+        },
+      },
+    ]
+
+    const arena = runArenaParityScenario(scenario)
+    const clash = runClashParityScenario(scenario)
+
+    expect(compareParityResults(arena, clash)).toEqual([])
+    expect(arena.player.position[0]).toBe(0)
+    expect(arena.player.position[1]).toBeGreaterThan(0)
   })
 })

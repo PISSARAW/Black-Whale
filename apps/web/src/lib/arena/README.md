@@ -78,7 +78,11 @@ Arena keeps its open room; the duel inside it speaks Clash.
 - **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
   follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
 
-Still Clash-only, in rough order of value: jump and air moves; lunge;
+Authored lunges now advance progressively during startup on the fighter's local
+3D attack axis, stop at bodies and walls, and are checked against Clash's lane
+position in the parity gate.
+
+Still Clash-only, in rough order of value: jump and air moves;
 hitstop and camera shake; per-fighter Hatsu systems behind the specials;
 psychology, expressions and Ren presentation; frame data, training and
 lessons; replay coaching; rollback PvP.

@@ -28,7 +28,9 @@ function isCombatState(state: CombatState | FightState): state is CombatState {
 }
 
 function privateArenaState(state: CombatState, side: CombatSide): CombatState {
-  const view = structuredClone(state)
+  // Svelte state is a Proxy and cannot be structured-cloned in the browser.
+  // Only fighters are redacted here, so clone exactly the records this view mutates.
+  const view = { ...state, player: { ...state.player }, opponent: { ...state.opponent } }
   const other = side === 'player' ? 'opponent' : 'player'
   const observer = view[side]
   const target = view[other]

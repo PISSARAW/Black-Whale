@@ -13,6 +13,7 @@
   import ArenaFightingControls from '$lib/components/arena/ArenaFightingControls.svelte'
   import ArenaNenDock from '$lib/components/arena/ArenaNenDock.svelte'
   import ArenaGyoSight from '$lib/components/arena/ArenaGyoSight.svelte'
+  import ArenaDuelPresence from '$lib/components/arena/ArenaDuelPresence.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -92,6 +93,7 @@
   import { comboCount } from '$lib/combat/moveChain'
   import { arenaSelfBody } from '$lib/arena/selfBody'
   import { arenaOpponentActor } from '$lib/arena/combatActors'
+  import { arenaDuelPresence } from '$lib/arena/duelPresence'
   import { arenaJumpAction } from '$lib/arena/jump'
   import { arenaImpactCamera } from '$lib/arena/impactCamera'
   import { ryuDistribution } from '$lib/combat/ryu'
@@ -242,6 +244,14 @@
   let opponentNen = $derived(arenaNen(pov.opponent))
   let playerFighter = $derived(arenaFighter(fighterId))
   let opponentFighter = $derived(arenaFighter(opponentFighterId))
+  let opponentPresence = $derived(
+    arenaDuelPresence({
+      state: pov,
+      subject: 'opponent',
+      fighterId: opponentFighterId,
+      motion: opponentMotion,
+    }),
+  )
   let opponentActor = $derived<Apparition[]>([
     arenaOpponentActor({
       fighter: opponentFighter,
@@ -252,8 +262,8 @@
       spaceId: terrain.id,
       tierId: terrain.tierId,
       colour: arenaFighterColour(opponentFighterId),
-      stage: actorStage(),
       nen: opponentNen,
+      expression: opponentPresence.expression,
     }),
   ])
   let selfActor = $derived(
@@ -582,20 +592,6 @@
     jumpPitch = 0
   }
 
-  function actorStage(): number {
-    const mode = { ten: 0, ren: 1, zetsu: 2 }[game.opponent.mode]
-    const fallen = game.opponent.condition === 'down' || game.opponent.condition === 'ko'
-    const pose = fallen ? 'down' : pov.opponent.intent ? 'attack' : opponentMotion
-    const poseIndex: Record<ArenaCombatMotion, number> = {
-      idle: 0,
-      guard: 1,
-      hit: 2,
-      down: 3,
-      attack: 4,
-    }
-    return mode + poseIndex[pose] * 3
-  }
-
   function animateExchange(event: CombatEvent) {
     eventVisible = true
     later(() => (eventVisible = false), 1_800)
@@ -873,6 +869,8 @@
     loadingLabel={$t.tour.loading}
     unsupportedLabel={$t.tour.unsupported}
   />
+
+  <ArenaDuelPresence presence={opponentPresence} french={$locale === 'fr'} />
 
   <div class="reticle" class:near={inRange} class:locked={aimedExtra === 'arena-opponent'}>
     <span>{$t.arena.zone[aimedZone]}</span>

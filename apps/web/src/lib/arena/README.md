@@ -94,9 +94,16 @@ slots stay on their authored Clash move until Arena can preserve their exact
 condition; Blinky, Jupiter, Skill Hunter and Parallel Future are deliberately
 not replaced by a convenient generic effect.
 
+[duelPresence.ts](duelPresence.ts) projects Clash's authored psychology profiles into
+what the player can actually read: facial bearing, felt Ren pressure and, under
+Gyo, stability and hostile intent. It is presentation-only and consumes the POV
+filtered state, so concealed aura stays concealed and replay checksums never gain
+private psychology. The opponent's shared Tour figure takes the resulting facial
+expression, while `ArenaDuelPresence` lets strong Ren occupy the edge of the
+first-person frame. Reduced-motion keeps the pressure static.
+
 Still Clash-only, in rough order of value: the remaining dynamic Hatsu;
-psychology, expressions and Ren presentation; frame data, training and lessons;
-replay coaching; rollback PvP.
+frame data, training and lessons; replay coaching; rollback PvP.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

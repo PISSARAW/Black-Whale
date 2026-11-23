@@ -1,6 +1,8 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { Pace } from './cast/pace'
 
+export type HumanExpression = 'neutral' | 'severe' | 'tired' | 'anxious' | 'hostile'
+
 export interface HumanAppearance {
   role:
     | 'witness'
@@ -44,6 +46,8 @@ export interface HumanAppearance {
   /** Stable identity seed: named character when known, otherwise apparition id. */
   identity?: string
   alert?: boolean
+  /** Presentation-only facial bearing; combat can change it without changing identity. */
+  expression?: HumanExpression
   /** The beat this body walks, when it does not simply stand. See `cast/pace.ts`. */
   pace?: Pace
   /**

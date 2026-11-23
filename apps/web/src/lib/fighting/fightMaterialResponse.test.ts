@@ -39,8 +39,12 @@ describe('P18 responsive extremities and tailoring', () => {
   it('keeps held children unscaled while sharing hand morph and hem geometry', () => {
     const first = figure()
     const second = figure()
-    expect(first.turns.userData.materialResponse).toBe('kurapika-extremities-and-tailoring')
-    expect(figure('chrollo').turns.userData.materialResponse).toBeUndefined()
+    expect(first.turns.userData.materialResponse).toBe('roster-extremities-and-tailoring')
+    const other = figure('chrollo')
+    expect(other.turns.userData.materialResponse).toBe('roster-extremities-and-tailoring')
+    expect(
+      (other.root.getObjectByName('hand-left') as THREE.Mesh).geometry.userData.fightGripMorph,
+    ).toBe(true)
 
     for (const side of ['left', 'right'] as const) {
       const hand = first.root.getObjectByName(`hand-${side}`) as THREE.Mesh

@@ -3,7 +3,7 @@ import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 
 type Three = HumanFigureBuild['THREE']
-const SCALED_HANDS = new WeakMap<BufferGeometry, Map<number, BufferGeometry>>()
+const SCALED_HANDS = new WeakMap<BufferGeometry, Map<string, BufferGeometry>>()
 
 /**
  * Fight-only roster finish grown from the Kurapika/Hisoka vertical slice.
@@ -46,8 +46,10 @@ function refineExtremities(
     const hand = root.getObjectByName(`hand-${side}`)
     if (hand) {
       const scale = extremityScale(profile)
-      if (profile.likeness === 'kurapika') scaleHandGeometry(hand as Mesh, scale)
-      else hand.scale.multiplyScalar(scale)
+      // Franklin's ten physical finger rigs are themselves held children and
+      // were authored against the scaled wrist; every ordinary hand is baked.
+      if (profile.likeness === 'franklin-bordeau') hand.scale.multiplyScalar(scale)
+      else scaleHandGeometry(hand as Mesh, scale)
       const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.061 * scale, 0.004, 0.006), ink)
       knuckles.name = `fight-hand-knuckles-${side}`
       knuckles.position.set(0, 0.014, 0.029)
@@ -59,23 +61,31 @@ function refineExtremities(
   }
 }
 
-/** Preserve chains and held equipment: only Kurapika's skin buffer receives the hero scale. */
+/** Preserve chains and held equipment: visual mass belongs to skin geometry, never the joint. */
 function scaleHandGeometry(hand: Mesh, scale: number): void {
   const source = hand.geometry
+  const baked = hand.scale.clone().multiplyScalar(scale)
+  const key = baked.toArray().join(':')
   let variants = SCALED_HANDS.get(source)
   if (!variants) {
     variants = new Map()
     SCALED_HANDS.set(source, variants)
   }
-  let geometry = variants.get(scale)
+  let geometry = variants.get(key)
   if (!geometry) {
-    geometry = source.clone().scale(scale, scale, scale)
-    geometry.userData = { ...geometry.userData, sharedHuman: true, fightExtremityScale: scale }
-    variants.set(scale, geometry)
+    geometry = source.clone().scale(baked.x, baked.y, baked.z)
+    geometry.userData = {
+      ...geometry.userData,
+      sharedHuman: true,
+      fightExtremityScale: scale,
+      bakedHandScale: baked.toArray(),
+    }
+    variants.set(key, geometry)
   }
   hand.geometry = geometry
   const thumb = hand.children.find((child) => (child as Mesh).isMesh)
-  thumb?.scale.multiplyScalar(scale)
+  thumb?.scale.multiply(baked)
+  hand.scale.set(1, 1, 1)
 }
 
 function extremityScale(profile: HumanProfile): number {

@@ -13,7 +13,7 @@ interface IdentityGeometry {
 const GEOMETRY = new WeakMap<object, IdentityGeometry>()
 
 /**
- * Kurapika's fight-camera identity lock.
+ * Fight-camera identity contract shared by the roster.
  *
  * These are broad, canonical value breaks rather than glow or UI markers. Each
  * feature stays large enough to survive the normal camera while remaining a
@@ -25,12 +25,18 @@ export function addFightGameplayIdentity(options: {
   profile: HumanProfile
 }): void {
   const { THREE, model, profile } = options
-  if (profile.likeness !== 'kurapika' || model.root.getObjectByName('fight-gameplay-identity'))
-    return
+  if (!profile.likeness || model.root.getObjectByName('fight-gameplay-identity')) return
   const identity = new THREE.Group()
   identity.name = 'fight-gameplay-identity'
   identity.userData.cameraContract = { height: 560, minimumFeaturePixels: 3 }
+  identity.userData.identity = profile.likeness
+  identity.userData.identityAnchors = identityAnchors(model.root)
+  identity.userData.authoredFeatures = profile.likeness === 'kurapika' ? 5 : 0
   model.turns.add(identity)
+
+  // Every likeness is certified against its authored broad masses. Kurapika's
+  // P19 slice additionally keeps the five custom accents below.
+  if (profile.likeness !== 'kurapika') return
 
   const geometry = identityGeometry(THREE)
   const hairShadow = material(THREE, darken(profile.hair, 0.62))
@@ -41,6 +47,11 @@ export function addFightGameplayIdentity(options: {
   addChainBand(THREE, model.root, geometry.chainBand, chainMetal)
   mountTailoringOnTorso(model.root)
   strengthenFrontRead(model.root)
+}
+
+function identityAnchors(root: Object3D): string[] {
+  const head = root.getObjectByName('face-eye-left')?.parent
+  return [head?.name, 'torso', 'hand-right'].filter((name): name is string => Boolean(name))
 }
 
 function addHairLocks(

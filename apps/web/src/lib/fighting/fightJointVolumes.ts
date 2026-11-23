@@ -27,7 +27,7 @@ export interface FightJointVolumes {
 const geometryByThree = new WeakMap<object, BufferGeometry>()
 
 /**
- * Fight-only anatomy prototype for Kurapika.
+ * Fight-only articulated anatomy shared by the roster.
  *
  * The authored skeleton remains authoritative. These masses sit on its live
  * hinges and squash as the elbow or knee closes, so a bent limb reads as one
@@ -39,16 +39,18 @@ export function addFightJointVolumes(options: {
   profile: HumanProfile
 }): FightJointVolumes | null {
   const { THREE, model, profile } = options
-  if (profile.likeness !== 'kurapika' || model.root.getObjectByName('fight-joint-volumes'))
-    return null
+  if (!profile.likeness || model.root.getObjectByName('fight-joint-volumes')) return null
 
   const owner = new THREE.Group()
   owner.name = 'fight-joint-volumes'
-  owner.userData.prototype = 'kurapika-articulated-anatomy'
+  owner.userData.rollout = 'roster-articulated-anatomy'
+  owner.userData.identity = profile.likeness
   model.turns.add(owner)
 
   const joints: DeformingJoint[] = []
   const shoulders: DeformingShoulder[] = []
+  const girth =
+    profile.likeness === 'kurapika' ? 1 : { slim: 0.9, average: 1, broad: 1.12 }[profile.build]
   for (const side of ['left', 'right'] as const) {
     const arm = model.root.getObjectByName(`shoulder-${side}`)
     const elbow = model.root.getObjectByName(`elbow-${side}`)
@@ -67,7 +69,7 @@ export function addFightJointVolumes(options: {
       }
     }
     if (elbow) {
-      const volume = jointVolume(THREE, elbow, `fight-elbow-volume-${side}`, 0.052)
+      const volume = jointVolume(THREE, elbow, `fight-elbow-volume-${side}`, 0.052 * girth)
       if (volume)
         joints.push({
           hinge: elbow,
@@ -79,7 +81,7 @@ export function addFightJointVolumes(options: {
         })
     }
     if (knee) {
-      const volume = jointVolume(THREE, knee, `fight-knee-volume-${side}`, 0.066)
+      const volume = jointVolume(THREE, knee, `fight-knee-volume-${side}`, 0.066 * girth)
       if (volume)
         joints.push({
           hinge: knee,

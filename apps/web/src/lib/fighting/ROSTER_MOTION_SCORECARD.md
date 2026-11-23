@@ -386,3 +386,27 @@ chest twist instead of remaining figure-level decoration. Five cached meshes
 carry the new identity contract, each sized to retain at least a three-pixel
 axis in a 560-pixel fight viewport. No aura, UI marker, light, combat state or
 camera rule is introduced.
+
+## P20 — controlled roster rollout
+
+The P17–P19 foundation now covers all forty fighters. Every combat skeleton
+receives proportional shoulder, elbow and knee continuity; every authored hand
+can close through the shared grip morph; and every shoe responds to support or
+kick load. Hand mass is baked into skin geometry across the roster, leaving the
+joint itself at unit scale so books, firearms, chains, fans and other held
+objects keep their authored proportions.
+
+Franklin retains the one deliberate exception: his ten sectioned fingers are
+the hand rig itself, not held equipment, and keep their authored scaled wrist so
+their muzzle positions remain aligned with the emitted bullets.
+
+Existing flexible garments are opted into deterministic follow-through by name:
+ties, sashes, jacket tails, hems, coats, robes and skirts move only when their
+model actually declares one. Kurapika retains the two P18 lower-jacket panels;
+no generic coat is invented for another fighter. Each likeness also exposes the
+same 560-pixel camera contract through its authored head, torso and hand anchors,
+while Kurapika keeps his five bespoke P19 accents.
+
+The rollout shares one joint buffer and a bounded set of hand morph variants.
+It changes presentation transforms only, adds no simulation or replay state and
+keeps the existing nine-move choreography contract intact.

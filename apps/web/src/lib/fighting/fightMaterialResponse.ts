@@ -22,6 +22,8 @@ interface MaterialResponse {
   tieRest?: RestTransform
   hems: Group[]
   hemRest: RestTransform[]
+  drapes: Object3D[]
+  drapeRest: RestTransform[]
 }
 
 const MODELS = new WeakMap<Object3D, MaterialResponse>()
@@ -29,7 +31,7 @@ const GRIP_GEOMETRY = new WeakMap<BufferGeometry, BufferGeometry>()
 const HEM_GEOMETRY = new WeakMap<object, BufferGeometry>()
 
 /**
- * Register Kurapika's P18 material response without adding simulation state.
+ * Register the roster's material response without adding simulation state.
  * Hand morphing changes vertices only, so held equipment keeps its own scale.
  */
 export function addFightMaterialResponse(options: {
@@ -38,7 +40,7 @@ export function addFightMaterialResponse(options: {
   profile: HumanProfile
 }): void {
   const { THREE, model, profile } = options
-  if (profile.likeness !== 'kurapika' || MODELS.has(model.turns)) return
+  if (!profile.likeness || MODELS.has(model.turns)) return
   const hands = ['left', 'right']
     .map((side) => model.root.getObjectByName(`hand-${side}`))
     .filter((part): part is Mesh => (part as Mesh | undefined)?.isMesh === true)
@@ -50,8 +52,25 @@ export function addFightMaterialResponse(options: {
   const shoes = ['left', 'right']
     .map((side) => model.root.getObjectByName(`knee-${side}`)?.children[1])
     .filter((part): part is Object3D => Boolean(part))
-  const hems = addJacketHems(THREE, model)
-  const tie = model.root.getObjectByName('kurapika-tie')
+  const hems = profile.likeness === 'kurapika' ? addJacketHems(THREE, model) : []
+  const tie = findNamed(model.root, [
+    'kurapika-tie',
+    'manga-tie',
+    'marayam-bowtie',
+    'luzurus-puff-tie',
+  ])
+  const drapes = findNamedAll(model.root, [
+    'machi-sash-tails',
+    'hinrigh-jacket-tail',
+    'mizaistom-jacket-hem',
+    'salesale-robe-hem',
+    'zhanglei-tunic-hem-trim',
+    'manga-long-coat',
+    'chrollo-long-cross-coat',
+    'beyond-loose-robe',
+    'biscuit-petal-skirt',
+    'camilla-skirt',
+  ])
   MODELS.set(model.turns, {
     hands,
     thumbs,
@@ -62,8 +81,11 @@ export function addFightMaterialResponse(options: {
     tieRest: tie ? restOf(tie) : undefined,
     hems,
     hemRest: hems.map(restOf),
+    drapes,
+    drapeRest: drapes.map(restOf),
   })
-  model.turns.userData.materialResponse = 'kurapika-extremities-and-tailoring'
+  model.turns.userData.materialResponse = 'roster-extremities-and-tailoring'
+  model.turns.userData.flexibleGarments = Number(Boolean(tie)) + hems.length + drapes.length
 }
 
 /** Apply deterministic pose response after the current combat state is known. */
@@ -75,8 +97,16 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
   const rear = 1 - lead
   const grips: [number, number] = [0.24, 0.24]
   if (fighter.attack?.kind === 'ranged') {
-    grips[0] = 0.98
-    grips[1] = 0.52
+    const occupied = model.hands.map((hand) =>
+      hand.children.some(
+        (child) =>
+          child.visible &&
+          /(handgun|rifle|pistol|book|fan|needle|flute|blinky|umbrella)/.test(child.name),
+      ),
+    )
+    const weapon = occupied[0] ? 0 : occupied[1] ? 1 : lead
+    grips[weapon] = 0.98
+    grips[1 - weapon] = 0.52
   } else if (fighter.attack) {
     const legStrike =
       fighter.attack.kind === 'heavy' && ['low', 'air'].includes(fighter.attack.variant ?? '')
@@ -126,6 +156,14 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
     hem.rotation.x -= Math.abs(travel) * 0.58
     hem.rotation.y += travel * side * 0.34
     hem.rotation.z -= travel * side * 0.16
+  })
+  model.drapes.forEach((drape, index) => {
+    const rest = model.drapeRest[index]
+    drape.position.copy(rest.position)
+    drape.rotation.copy(rest.rotation)
+    drape.position.z -= Math.abs(travel) * 0.018
+    drape.rotation.x -= Math.abs(travel) * 0.12
+    drape.rotation.z -= travel * 0.08
   })
 }
 
@@ -219,6 +257,20 @@ function restOf(part: Object3D): RestTransform {
     rotation: part.rotation.clone(),
     scale: part.scale.clone(),
   }
+}
+
+function findNamed(root: Object3D, names: readonly string[]): Object3D | undefined {
+  for (const name of names) {
+    const part = root.getObjectByName(name)
+    if (part) return part
+  }
+}
+
+function findNamedAll(root: Object3D, names: readonly string[]): Object3D[] {
+  return names.flatMap((name) => {
+    const part = root.getObjectByName(name)
+    return part ? [part] : []
+  })
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

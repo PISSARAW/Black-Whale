@@ -19,8 +19,8 @@ const JOINTS = [
   'fight-knee-volume-right',
 ] as const
 
-describe('Kurapika articulated anatomy prototype', () => {
-  it('is fight-only, hero-scoped and shares its joint geometry', () => {
+describe('P17 anatomy and P20 roster rollout', () => {
+  it('is fight-only, roster-wide and shares its joint geometry', () => {
     const fighter = createFightState('kurapika', 'hisoka').player
     const first = buildFightFigure({ THREE, glow, fighter })
     const second = buildFightFigure({ THREE, glow, fighter })
@@ -30,8 +30,10 @@ describe('Kurapika articulated anatomy prototype', () => {
       fighter: createFightState('chrollo', 'hisoka').player,
     })
 
-    expect(first.root.getObjectByName('fight-joint-volumes')).toBeDefined()
-    expect(other.root.getObjectByName('fight-joint-volumes')).toBeUndefined()
+    expect(first.root.getObjectByName('fight-joint-volumes')?.userData.rollout).toBe(
+      'roster-articulated-anatomy',
+    )
+    expect(other.root.getObjectByName('fight-joint-volumes')).toBeDefined()
     for (const name of JOINTS) expect(first.root.getObjectByName(name), name).toBeDefined()
     expect(
       JOINTS.filter((name) => name.includes('elbow') || name.includes('knee')).reduce(
@@ -43,6 +45,9 @@ describe('Kurapika articulated anatomy prototype', () => {
       const a = first.root.getObjectByName(name)!.children[0] as THREE.Mesh
       const b = second.root.getObjectByName(name)!.children[0] as THREE.Mesh
       expect(a.geometry).toBe(b.geometry)
+      expect(a.geometry).toBe(
+        (other.root.getObjectByName(name)!.children[0] as THREE.Mesh).geometry,
+      )
       expect(a.geometry.userData.fightJointVolume).toBe(true)
     }
   })

@@ -33,7 +33,9 @@ describe('P19 gameplay-camera identity lock', () => {
     const second = figure('kurapika')
     const marker = first.root.getObjectByName('fight-gameplay-identity')!
     expect(marker.userData.cameraContract).toEqual({ height: 560, minimumFeaturePixels: 3 })
-    expect(figure('chrollo').root.getObjectByName('fight-gameplay-identity')).toBeUndefined()
+    const other = figure('chrollo').root.getObjectByName('fight-gameplay-identity')!
+    expect(other.userData.authoredFeatures).toBe(0)
+    expect(other.userData.identityAnchors).toHaveLength(3)
     for (const name of FEATURES) {
       const part = first.root.getObjectByName(name) as THREE.Mesh
       const duplicate = second.root.getObjectByName(name) as THREE.Mesh

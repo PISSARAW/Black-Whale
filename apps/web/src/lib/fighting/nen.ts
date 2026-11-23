@@ -28,6 +28,7 @@ import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './type
 import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 import { chrolloRightHandOccupied } from './chrolloDeck'
 import { textureSurpriseDrain } from './textureSurpriseMask'
+import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialists'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -159,7 +160,7 @@ function baseAuraFlow(fighter: ArcadeFighter): number {
   if (fighter.nen.mode === 'zetsu') return 10
   if (fighter.nen.ken) return -8
   if (hasRyu(fighter)) return -6
-  if (fighter.nen.mode === 'ren') return -4
+  if (fighter.nen.mode === 'ren') return isBeyond(fighter) ? BEYOND_REN_DRAIN : -4
   if (fighter.nen.gyo) return 0
   return 1.4
 }
@@ -215,7 +216,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   let factor = fighter.nen.mode === 'ren' ? 1.22 : 1
   const share = Number(fighter.nen.ryu[zone] ?? 0)
   if (share > 0) factor += share * 0.48
-  if (fighter.nen.ko) factor += 0.82
+  if (fighter.nen.ko) factor += isBeyond(fighter) ? BEYOND_KO_BONUS : 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
   const bookPenalty = kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
   return (

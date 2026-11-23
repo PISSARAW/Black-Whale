@@ -1,4 +1,5 @@
 import { physicalNenBody } from './physicalNenBody'
+import { isBeyond } from './martialSpecialists'
 import { categoryProximity, type ActiveNenCategory } from '@black-whale/nen-engine'
 import { FIGHT_NEN_PROFILES, FIGHT_ABILITY_CATEGORIES } from './nenCatalogue.gen'
 import type { ArcadeFighter } from './types'
@@ -23,6 +24,7 @@ export function fightCategoryEfficiency(
   if (physicalNenBody(fighter).nen.mode === 'zetsu') return 0
   const owner = fighter.nenOwner ?? fighter.id
   if (owner === 'kurapika' && ownEmperorTime(fighter)) return 1
+  if (isBeyond(fighter) && category === 'enhancer') return 1
   const affinity = FIGHT_NEN_PROFILES[owner]?.affinity ?? 'unknown'
   return affinityEfficiency(affinity, category)
 }

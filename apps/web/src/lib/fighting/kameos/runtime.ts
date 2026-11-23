@@ -5,6 +5,7 @@ import type { FightInput, FightSide, FightState } from '../types'
 import { kameoDefinition } from './catalogue'
 import type { KameoDefinition } from './catalogue'
 import { advanceKameoTraps, deliverKameoEffect } from './effects'
+import { kameoCooldownFactor } from '../martialSpecialists'
 import type { KameoCallId, KameoId, KameoSlot } from './types'
 
 /** The calls pressed this frame, by side; an absent side did not call. */
@@ -45,7 +46,7 @@ function advanceSlot(state: FightState, side: FightSide, call?: KameoCallId): Fi
   const definition = kameoDefinition(slot.fighter.id as KameoId)
   if (stepped.phase === 'entering') return withSlot(state, side, entering(stepped, definition))
   if (stepped.phase === 'acting') return acting(withSlot(state, side, stepped), side, definition)
-  return withSlot(state, side, leaving(stepped, definition))
+  return withSlot(state, side, leaving(stepped, definition, state[side]))
 }
 
 function reserve(state: FightState, side: FightSide, call?: KameoCallId): FightState {
@@ -93,9 +94,14 @@ function acting(state: FightState, side: FightSide, definition: KameoDefinition)
   return withSlot(landed, side, phase(landed.kameos![side]!, 'leaving'))
 }
 
-function leaving(slot: KameoSlot, definition: KameoDefinition): KameoSlot {
+function leaving(
+  slot: KameoSlot,
+  definition: KameoDefinition,
+  leader: FightState['player'],
+): KameoSlot {
   if (slot.phaseFrames < definition.timing.leave) return slot
-  return { ...phase(slot, 'reserve'), call: null, cooldownFrames: definition.cooldownFrames }
+  const cooldownFrames = Math.max(1, Math.round(definition.cooldownFrames * kameoCooldownFactor(leader)))
+  return { ...phase(slot, 'reserve'), call: null, cooldownFrames }
 }
 
 function phase(slot: KameoSlot, next: KameoSlot['phase']): KameoSlot {

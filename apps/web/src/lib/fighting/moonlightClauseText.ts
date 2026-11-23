@@ -14,6 +14,7 @@ const NAMES: Record<MoonlightClauseId, [string, string]> = {
   truce: ['Trêve mutuelle', 'Mutual truce'],
   'bare-hands': ['Duel à mains nues', 'Bare-hands duel'],
   'long-truce': ['Longue trêve', 'Long truce'],
+  'no-ken-surge': ['Afflux sans Ken', 'No-Ken Surge'],
 }
 
 const TERMS: Record<MoonlightClause['terms'], [string, string]> = {
@@ -25,6 +26,10 @@ const TERMS: Record<MoonlightClause['terms'], [string, string]> = {
     'Coups physiques sans aura chargée seulement : aucun projectile, spécial ni Hatsu.',
     'Uncharged physical strikes only: no projectiles, specials or Hatsu.',
   ],
+  'no-ken': [
+    'Combat libre, mais activer Ken est interdit pendant toute la durée du pacte.',
+    'Full combat stays open, but activating Ken is forbidden for the duration of the pact.',
+  ],
 }
 
 function rewardText(clause: MoonlightClause, language: Language): string {
@@ -32,6 +37,10 @@ function rewardText(clause: MoonlightClause, language: Language): string {
     return language === 'fr'
       ? 'Le destinataire reçoit un usage de Moonlight Act.'
       : 'The recipient receives one use of Moonlight Act.'
+  if (clause.immediateAura)
+    return language === 'fr'
+      ? `Chaque signataire reçoit immédiatement +${clause.immediateAura} d’aura à la signature.`
+      : `Each signatory immediately gains +${clause.immediateAura} aura upon signing.`
   return language === 'fr'
     ? `Chaque signataire récupère ${clause.auraReward} d’aura.`
     : `Each signatory recovers ${clause.auraReward} aura.`

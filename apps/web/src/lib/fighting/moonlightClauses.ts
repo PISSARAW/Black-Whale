@@ -5,9 +5,13 @@ import type { ArcadeFighter } from './types'
  * editor. Every field below is disclosed before signature and copied into the offer, so a
  * signed agreement can never carry a term the recipient did not see.
  */
-export type MoonlightClauseId = 'truce' | 'bare-hands' | 'long-truce'
-/** `no-attacks`: no strike, projectile or technique. `no-techniques`: bare strikes stay legal. */
-export type MoonlightTerms = 'no-attacks' | 'no-techniques'
+export type MoonlightClauseId = 'truce' | 'bare-hands' | 'long-truce' | 'no-ken-surge'
+/**
+ * `no-attacks`: no strike, projectile or technique.
+ * `no-techniques`: bare strikes stay legal.
+ * `no-ken`: full combat stays legal, but activating Ken breaches the pact (high-stakes PvP dilemma).
+ */
+export type MoonlightTerms = 'no-attacks' | 'no-techniques' | 'no-ken'
 export type MoonlightReward = 'one-use-of-moonlight-act' | 'aura-for-each-signatory'
 export type MoonlightPenalty = 'one-week-zetsu'
 
@@ -19,6 +23,8 @@ export interface MoonlightClause {
   durationFrames: number
   /** Aura granted to each signatory by `aura-for-each-signatory`; zero otherwise. */
   auraReward: number
+  /** Immediate aura surge granted to both signatories upon signing (creates real PvP temptation). */
+  immediateAura?: number
 }
 
 export const MOONLIGHT_CLAUSES: readonly MoonlightClause[] = [
@@ -46,6 +52,15 @@ export const MOONLIGHT_CLAUSES: readonly MoonlightClause[] = [
     durationFrames: 600,
     auraReward: 35,
   },
+  {
+    id: 'no-ken-surge',
+    terms: 'no-ken',
+    reward: 'aura-for-each-signatory',
+    penalty: 'one-week-zetsu',
+    durationFrames: 480,
+    auraReward: 0,
+    immediateAura: 30,
+  },
 ]
 
 export const DEFAULT_MOONLIGHT_CLAUSE: MoonlightClauseId = 'truce'
@@ -66,6 +81,7 @@ export function agreementClause(agreement: { clause?: MoonlightClauseId }): Moon
 
 /** A bare, uncharged strike is the only action `no-techniques` leaves to the signatories. */
 export function clausePermitsAction(terms: MoonlightTerms, after: ArcadeFighter): boolean {
+  if (terms === 'no-ken') return !after.nen.ken
   if (terms === 'no-attacks') return false
   const attack = after.attack
   if (!attack || attack.auraCharged) return false

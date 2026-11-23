@@ -1,6 +1,7 @@
 import { fightingStyle } from './fightStyles'
 import { fighterNenTraining } from './nenMastery'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
+import { hasFastMartialTransfer } from './martialSpecialists'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -24,7 +25,7 @@ export function nenTransferFrames(fighter: ArcadeFighter): number {
   // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
   const trained = fighterNenTraining(fighter, 'enhancer').level
   const base =
-    (fighter.nenOwner ?? fighter.id) === 'biscuit'
+    (fighter.nenOwner ?? fighter.id) === 'biscuit' || hasFastMartialTransfer(fighter)
       ? 2
       : Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
   const fatigue = nenMentalFatigueRatio(fighter)

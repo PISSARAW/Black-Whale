@@ -10,6 +10,7 @@ import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
 import { updateTextureOnHit } from './textureSurpriseMask'
+import { thetaBulletDamageFactor } from './martialSpecialists'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -68,6 +69,7 @@ function attackDamage(
       hatsuDefenceFactor(defender) *
       guard *
       shuGuardFactor(defender, blocked, options.physicalProjectile) *
+      thetaBulletDamageFactor(attacker, options.physicalProjectile) *
       openingMultiplier,
   )
   // Scale the rounded wound down so successive light hits cannot round back up.

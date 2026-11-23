@@ -1,4 +1,5 @@
 import { arenaObjects } from './arenaActions'
+import { canSpeak } from './saiyuSenses'
 import type { FightInput, FightSide, FightState } from './types'
 
 const INTERACT_RANGE = 6
@@ -37,5 +38,5 @@ export function resolveContextInput(
   if (soundThreatActive(state, side)) return { ...input, coverEars: true }
   if (nearbyArenaObject(state, side)) return { ...input, interact: true }
   if (state.arena) return { ...input, arena: true }
-  return { ...input, call: true }
+  return canSpeak(fighter) ? { ...input, call: true } : input
 }

@@ -144,7 +144,7 @@ describe('Moonlight Act predefined contracts', () => {
       'Chaque signataire récupère 35 d’aura',
     ])
       expect(body).toContain(text)
-    expect(body.match(/data-moonlight-clause=/g)).toHaveLength(3)
+    expect(body.match(/data-moonlight-clause=/g)).toHaveLength(4)
   })
 
   it('shows the recipient exactly the offered contract next to the signature', () => {

@@ -172,14 +172,19 @@ def build_rivals(models, cast, pair_keys):
     roles = {fighter: role for wave in cast for fighter, role in wave.items()}
     voices = [load(models / f"{name}.onnx") for name in MODELS.values()]
     gap = np.zeros(int(RATE * 0.18), dtype="<i2")
+    timings = atlas.with_name("rivalVoiceAtlas.json")
+    spans = json.loads(timings.read_text(encoding="utf-8")) if pair_keys and timings.exists() else {}
     for key in pair_keys or by_key:
         exchange = by_key[key]
         pair, lines = exchange["pair"], exchange["lines"]
+        spans[key] = {}
         for index, (locale, voice) in enumerate(zip(MODELS, voices)):
             first = render(voice, ("selection", lines[index], index), roles[pair[0]])
             second = render(voice, ("selection", lines[index + 2], index), roles[pair[1]])
             write_voice_mp3(audio / f"{locale}-{key}.mp3", np.concatenate((first, gap, second)))
+            spans[key][locale] = [[0, len(first)], [len(first) + len(gap), len(second)]]
         print(f"Rivals: {key}", flush=True)
+    write_atlas(timings, dict(sorted(spans.items())))
 
 
 def main():

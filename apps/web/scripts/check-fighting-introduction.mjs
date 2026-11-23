@@ -6,6 +6,7 @@ import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { chromium } from 'playwright'
 import { inspectIntroDirection } from './inspect-intro-direction.mjs'
+import { installIntroSpeechProbe, verifyIntroSpeech } from './check-intro-speech.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = '/tmp/black-whale-introduction-ui'
@@ -27,6 +28,7 @@ const server = await createServer({
 })
 await server.listen()
 const browser = await chromium.launch({
+  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
   headless: true,
   args: [
     '--no-proxy-server',
@@ -36,6 +38,7 @@ const browser = await chromium.launch({
   ],
 })
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+await installIntroSpeechProbe(page)
 const errors = [],
   checks = []
 page.on('pageerror', (error) => errors.push(error.message))
@@ -72,6 +75,8 @@ try {
     `http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-introduction/`,
   )
   await page.waitForSelector('.fight-scene.ready')
+  await verifyIntroSpeech(page, { reset, snapshot, pause })
+  checks.push('kurapika-chrollo-luzurus-bilingual-audio-subtitles-pause-skip')
   await reset()
   await page.waitForSelector('[data-intro-shot="player"] .actor')
   await page.waitForTimeout(800)

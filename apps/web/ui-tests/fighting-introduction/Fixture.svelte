@@ -2,14 +2,21 @@
   import { get } from 'svelte/store'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightMatchOverlays from '$lib/components/fighting/FightMatchOverlays.svelte'
-  import { createFight, beginFight } from '$lib/fighting/engine'
+  import { createFight, beginFight, tickFight } from '$lib/fighting/engine'
+  import { FIXED_STEP } from '$lib/fighting/fightClock'
+  import { withKameos } from '$lib/fighting/kameos/state'
+  import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/settings'
   import { clashCareer } from '$lib/fighting/career/profile'
   import type { CareerAppearance } from '$lib/fighting/career/types'
-  import type { FighterId } from '$lib/fighting/types'
-  let state = createFight('kurapika', 'hisoka')
+  import { EMPTY_INPUT, type FighterId } from '$lib/fighting/types'
+  let state = duel()
+  let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
   let paused = false
   let language: 'fr' | 'en' = 'fr'
   let starts = 0
+  function duel(player: FighterId = 'kurapika', opponent: FighterId = 'chrollo') {
+    return withKameos(createFight(player, opponent), { player: 'luzurus' })
+  }
   function start() {
     starts++
     state = beginFight(state)
@@ -26,7 +33,7 @@
       ...get(clashCareer).appearance,
       intro: options.mode ?? 'full',
     })
-    state = createFight(options.player ?? 'kurapika', options.opponent ?? 'hisoka')
+    state = duel(options.player, options.opponent)
     language = options.language ?? 'fr'
     paused = false
   }
@@ -34,6 +41,11 @@
     introductionFixture: {
       reset,
       pause: (value: boolean) => (paused = value),
+      mute: (muted: boolean) => (audioSettings = { ...audioSettings, muted }),
+      callLuzurus: () => {
+        state = tickFight(state, { ...EMPTY_INPUT, kameo: true }, { dt: FIXED_STEP, ai: false })
+        return state.kameos?.player
+      },
       snapshot: () => ({ state, starts }),
     },
   })
@@ -45,6 +57,7 @@
   {paused}
   minimal
   introEnabled
+  bind:audioSettings
   onIntroComplete={start}
   onAttack={() => {}}
   onThrow={() => {}}

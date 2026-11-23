@@ -38,6 +38,8 @@
   import { readFightSetup, saveFightSetup } from '$lib/fighting/fightSetupDraft'
   import { link, locale } from '$lib/i18n'
   import { createFight } from '$lib/fighting/engine'
+  import { introDialogue } from '$lib/fighting/presentation/introDialogue'
+  import { primeIntroSpeech } from '$lib/fighting/audio/introSpeech'
   import { withKameos, type KameoPicks } from '$lib/fighting/kameos/state'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
@@ -51,7 +53,6 @@
     type FighterId,
     type MoveAction,
   } from '$lib/fighting/types'
-  import { attackKeys } from './fightingKeys'
   import './fighting.css'
   import './fightingMatch.css'
   let mounted = false
@@ -163,6 +164,10 @@
     )
     resetFightInputs()
     match.begin(state)
+    if (state.mode !== 'training' && $clashCareer.appearance.intro === 'full') {
+      const dialogue = introDialogue(state)
+      if (dialogue) primeIntroSpeech(dialogue, language)
+    }
     paused = false
   }
   function startFight() {
@@ -174,7 +179,7 @@
   }
   function rematch() {
     prepareFight()
-    startFight()
+    if (state?.mode === 'training') startFight()
   }
   function continueMatch() {
     if (!state) return

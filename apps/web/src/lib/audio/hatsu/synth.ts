@@ -13,7 +13,8 @@ function registerSource(g: Graph, source: AudioScheduledSourceNode): void {
   g.registerSource?.(source)
 }
 
-export const startsAt = (g: Graph) => g.context.currentTime + LEAD + (g.timeOffset ?? 0)
+export const startsAt = (g: Pick<Graph, 'context' | 'timeOffset'>) =>
+  g.context.currentTime + LEAD + (g.timeOffset ?? 0)
 
 // ── The bench ────────────────────────────────────────────────────────────
 //

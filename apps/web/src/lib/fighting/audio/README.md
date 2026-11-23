@@ -109,3 +109,7 @@ la sélection du duel et le PvP privé jouent leurs deux prises, dans l’ordre
 écrit. La fiche de sélection affiche les deux répliques avec leur locuteur.
 Pour un duel sans échange écrit, le personnage choisi conserve sa phrase
 individuelle.
+
+Les intros complètes des duels contre l’IA et en local réutilisent ces prises
+avec les sous-titres et le cadrage du locuteur. La voix suit le fader et le
+registre du mixage.

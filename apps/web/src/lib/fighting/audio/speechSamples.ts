@@ -69,7 +69,7 @@ export function voiceSample(
 }
 
 export function playVoiceSlice(
-  graph: Graph,
+  graph: Pick<Graph, 'context' | 'master' | 'oneShotTarget' | 'registerSource' | 'timeOffset'>,
   audio: AudioBuffer,
   options: { offset: number; duration: number; level: number; speed?: number; at?: number },
 ) {

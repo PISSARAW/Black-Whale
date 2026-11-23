@@ -5,6 +5,8 @@
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
   import FightVictoryNarration from './FightVictoryNarration.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
+  import FightIntroduction from './FightIntroduction.svelte'
+  import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
   import FightEssentialStatus from './FightEssentialStatus.svelte'
@@ -39,9 +41,15 @@
   export let audioPaused: boolean | undefined = undefined
   export let victoryEnabled = true
   export let victoryPaused = false
+  export let introEnabled = false
+  export let onIntroComplete: () => void = () => {}
   let descriptionSpeaking = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
+  const intro = createIntroPlayback(
+    () => onIntroComplete(),
+    () => paused,
+  )
   $: victory.observe(audioState ?? state, victoryEnabled)
   $: victoryActive = Boolean($victory?.active)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
@@ -74,8 +82,20 @@
   let futurePreview: number | null = null
   $: visibleState = parallelFutureMain(state, futureViewer, futurePreview)
   $: sceneKey = `${stageId}:${state.stageTransition?.sequence ?? 0}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
-  $: if (sceneKey) victory.sceneLoading()
+  $: if (sceneKey) {
+    victory.sceneLoading()
+    intro.sceneLoading()
+  }
+  $: intro.observe(state, { enabled: introEnabled, mode: $clashCareer.appearance.intro })
   $: throwTech = isThrowTech(visibleState)
+  function sceneReady() {
+    victory.sceneReady()
+    intro.sceneReady()
+  }
+  function sceneFailed() {
+    victory.sceneFailed()
+    intro.sceneFailed()
+  }
 </script>
 
 <FightAudio
@@ -97,7 +117,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} {hudMode} />
+    {#if !victoryActive && !$intro}<FightHud state={visibleState} {language} {detailed} {hudMode} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -111,12 +131,13 @@
         previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
         victoryFrame={$victory}
-        onSceneReady={victory.sceneReady}
-        onSceneFailed={victory.sceneFailed}
+        introFrame={$intro}
+        onSceneReady={sceneReady}
+        onSceneFailed={sceneFailed}
       />
     {/key}
 
-    {#if !victoryActive}
+    {#if !victoryActive && !$intro}
       {#if training}
         <FightTrainingOverlay state={visibleState} {language} />
       {/if}
@@ -176,6 +197,9 @@
       paused={victoryPaused}
       ducked={descriptionSpeaking}
     />
+    {#if introEnabled && state.phase === 'ready'}
+      <FightIntroduction playback={intro} {state} {language} {paused} settings={audioSettings} />
+    {/if}
   </div>
   <FightSoundCaptions
     state={audioState ?? state}
@@ -194,7 +218,7 @@
         onOpenEyes={() => onAttack('special')}
       />{/if}
     {#if !minimal}<FightDecisionReadout state={visibleState} {language} />{/if}
-    {#if showControls && !paused}<FightTouchControls
+    {#if showControls && !paused && !$intro}<FightTouchControls
         state={visibleState}
         {language}
         {onAttack}

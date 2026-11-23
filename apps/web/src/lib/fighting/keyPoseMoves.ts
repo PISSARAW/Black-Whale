@@ -68,6 +68,8 @@ export interface KeyedMove {
   authored: boolean
 }
 
+export type KeyPoseSource = 'dedicated' | 'roster' | 'archetype'
+
 export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
   const authored = keyPoseTimeline(id, slot)
   if (authored) return { timeline: authored, authored: true }
@@ -77,6 +79,13 @@ export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
 /** The personal timeline of a move, or null for a legacy family gesture. */
 export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
   return KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
+}
+
+/** Audit provenance: dedicated clips outrank generated roster grammar. */
+export function keyPoseSource(id: FighterId, slot: MoveSlot): KeyPoseSource {
+  if (KEY_POSES[id]?.[slot]) return 'dedicated'
+  if (rosterKeyPoses(id)[slot]) return 'roster'
+  return 'archetype'
 }
 
 export function keyedSlots(id: FighterId): MoveSlot[] {

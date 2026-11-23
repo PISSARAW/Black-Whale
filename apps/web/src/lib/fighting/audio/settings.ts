@@ -1,9 +1,22 @@
+import { writable } from 'svelte/store'
+import { readTrackChoice, type ClashTrackChoice } from './jukebox'
+
+export const fightAudioChanges = writable(0)
+export type CombatVoiceStyle = 'original' | 'low' | 'clear'
+export const COMBAT_VOICE_RATES: Record<CombatVoiceStyle, number> = {
+  original: 1,
+  low: 0.86,
+  clear: 1.12,
+}
+
 export const FIGHT_CHANNELS = [
   'effects',
   'movement',
   'techniques',
   'voices',
   'announcer',
+  'commentary',
+  'description',
   'interface',
   'music',
   'ambience',
@@ -11,16 +24,27 @@ export const FIGHT_CHANNELS = [
   'cinematics',
 ] as const
 export type FightChannel = (typeof FIGHT_CHANNELS)[number]
-export type FightAudioSettings = Record<FightChannel, number> & { muted: boolean; mono: boolean }
+export type FightAudioSettings = Record<FightChannel, number> & {
+  muted: boolean
+  mono: boolean
+  menuTrack: ClashTrackChoice
+  battleTrack: ClashTrackChoice
+  voiceStyle: CombatVoiceStyle
+}
 
 export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
   muted: false,
   mono: false,
+  menuTrack: 'auto',
+  battleTrack: 'auto',
+  voiceStyle: 'original',
   effects: 0.85,
   movement: 0.85,
   techniques: 0.85,
   voices: 0.85,
   announcer: 0.88,
+  commentary: 0,
+  description: 0,
   interface: 0.8,
   music: 0.65,
   ambience: 0.65,
@@ -47,6 +71,7 @@ export const FIGHT_AUDIO_PRESETS = {
     movement: 0.95,
     interface: 1,
     announcer: 1,
+    description: 0.88,
     techniques: 0.95,
     ambience: 0.15,
     music: 0.1,
@@ -59,10 +84,16 @@ const KEY = 'black-whale:fighting-audio'
 export function readFightAudioSettings(): FightAudioSettings {
   try {
     const stored = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<FightAudioSettings>
-    const result = {
+    const result: FightAudioSettings = {
       ...DEFAULT_FIGHT_AUDIO,
       muted: stored.muted === true,
       mono: stored.mono === true,
+      menuTrack: readTrackChoice(stored.menuTrack),
+      battleTrack: readTrackChoice(stored.battleTrack),
+      voiceStyle:
+        stored.voiceStyle === 'low' || stored.voiceStyle === 'clear'
+          ? stored.voiceStyle
+          : 'original',
     }
     const legacy = {
       movement: stored.effects,
@@ -86,6 +117,7 @@ export function readFightAudioSettings(): FightAudioSettings {
 export function saveFightAudioSettings(settings: FightAudioSettings): void {
   try {
     localStorage.setItem(KEY, JSON.stringify(settings))
+    fightAudioChanges.update((value) => value + 1)
   } catch {
     /* Storage may be disabled. */
   }

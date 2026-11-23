@@ -10,15 +10,25 @@ interface VoicePack {
   loaded: Promise<AudioBuffer | undefined>
 }
 
-const banks = new WeakMap<AudioContext, Partial<Record<VoiceLocale, VoicePack>>>()
+const banks = new WeakMap<AudioContext, Map<string, VoicePack>>()
 
 export function preloadFightSpeech(context: AudioContext, locale: VoiceLocale) {
+  return loadVoiceBank(context, locale)
+}
+
+export function loadVoiceBank(
+  context: AudioContext,
+  locale: VoiceLocale,
+  kind: 'speech' | 'description' = 'speech',
+) {
   if (typeof window === 'undefined') return
-  const bank = banks.get(context) ?? {}
+  const bank = banks.get(context) ?? new Map<string, VoicePack>()
   banks.set(context, bank)
-  if (bank[locale]) return bank[locale]
+  const key = kind === 'description' ? `description-${locale}` : locale
+  const cached = bank.get(key)
+  if (cached) return cached
   const pack: VoicePack = {
-    loaded: fetch(`/audio/clash-voices/${locale}.mp3`)
+    loaded: fetch(`/audio/clash-voices/${key}.mp3`)
       .then((response) => (response.ok ? response.arrayBuffer() : null))
       .then(async (bytes) => {
         if (bytes) pack.audio = await context.decodeAudioData(bytes)
@@ -26,12 +36,12 @@ export function preloadFightSpeech(context: AudioContext, locale: VoiceLocale) {
       })
       .catch(() => undefined),
   }
-  bank[locale] = pack
+  bank.set(key, pack)
   return pack
 }
 
 export function fightSpeechBuffer(context: AudioContext, locale: VoiceLocale) {
-  return banks.get(context)?.[locale]?.audio
+  return banks.get(context)?.get(locale)?.audio
 }
 
 export function voiceSample(

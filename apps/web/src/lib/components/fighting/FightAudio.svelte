@@ -14,6 +14,7 @@
   export let state: FightState
   export let language: 'fr' | 'en' = 'fr'
   export let paused = false
+  export let cinematic = false
   export let viewer: FightSide = 'player'
   export let audioSeek = 0
 
@@ -31,6 +32,7 @@
       viewer,
       seek: audioSeek,
       locale: language,
+      cinematic,
     })
 
   $: if (mounted) {
@@ -48,7 +50,14 @@
     const start = () => {
       if (!mounted || hidden || settings.muted) return
       director ??= createFightAudioDirector(state)
-      director?.update(state, { paused, settings, viewer, seek: audioSeek, locale: language })
+      director?.update(state, {
+        paused,
+        settings,
+        viewer,
+        seek: audioSeek,
+        locale: language,
+        cinematic,
+      })
     }
     if (context.state === 'suspended')
       void context
@@ -75,6 +84,7 @@
         viewer,
         seek: audioSeek,
         locale: language,
+        cinematic,
       })
     }
     if (sharedAudioContext()?.state === 'running') unlock()

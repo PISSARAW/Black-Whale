@@ -11,6 +11,8 @@
     techniques: ['Techniques et Nen', 'Techniques and Nen'],
     voices: ['Voix des combattants', 'Fighter voices'],
     announcer: ['Voix de bord', 'Ship announcer'],
+    commentary: ['Commentaire dynamique', 'Dynamic commentary'],
+    description: ['Audiodescription des victoires', 'Victory audio description'],
     interface: ['Signaux de combat', 'Combat cues'],
     music: ['Musique', 'Music'],
     ambience: ['Ambiance du terrain', 'Stage ambience'],
@@ -19,7 +21,14 @@
   } as const
   $: en = language === 'en' ? 1 : 0
   function preset(name: keyof typeof FIGHT_AUDIO_PRESETS) {
-    settings = { ...FIGHT_AUDIO_PRESETS[name], muted: settings.muted, mono: settings.mono }
+    settings = {
+      ...FIGHT_AUDIO_PRESETS[name],
+      muted: settings.muted,
+      mono: settings.mono,
+      menuTrack: settings.menuTrack,
+      battleTrack: settings.battleTrack,
+      voiceStyle: settings.voiceStyle,
+    }
     remember()
   }
   export let settings = { ...DEFAULT_FIGHT_AUDIO }
@@ -76,6 +85,24 @@
           onkeydown={controlKey}
         />
         Mono
+      </label>
+      <label>
+        {en ? 'Voice register' : 'Registre des voix'}
+        <select
+          value={settings.voiceStyle}
+          onchange={(event) => {
+            const style = event.currentTarget.value
+            settings = {
+              ...settings,
+              voiceStyle: style === 'low' || style === 'clear' ? style : 'original',
+            }
+            remember()
+          }}
+        >
+          <option value="original">{en ? 'Original' : 'Original'}</option>
+          <option value="low">{en ? 'Deep' : 'Grave'}</option>
+          <option value="clear">{en ? 'Bright' : 'Clair'}</option>
+        </select>
       </label>
       {#each FIGHT_CHANNELS as channel (channel)}
         <label>
@@ -162,6 +189,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.4rem;
+  }
+  select {
+    color: inherit;
+    background: #101923;
+    border: 1px solid #465664;
   }
   .mono input {
     width: auto;

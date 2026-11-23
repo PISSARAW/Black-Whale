@@ -36,6 +36,12 @@ SPEECH = {
     "pain-0": ("Ouf !", "Oof!"),
     "pain-1": ("Ah !", "Ah!"),
     "pain-2": ("Aïe !", "Agh!"),
+    "comment-parry": ("Belle parade.", "Clean parry."),
+    "comment-punish": ("Une ouverture bien saisie.", "They caught the opening."),
+    "comment-counter": ("Contre en plein mouvement.", "Caught them mid-attack."),
+    "comment-string": ("L’enchaînement se prolonge.", "The combo keeps going."),
+    "comment-burst": ("Le Burst casse la pression.", "Burst breaks the pressure."),
+    "comment-assist": ("Le soutien entre en scène.", "Support enters the fight."),
 }
 MODELS = ("fr_FR-siwis-medium", "en_US-ljspeech-medium")
 
@@ -49,10 +55,10 @@ def ffmpeg(*args: str) -> bytes:
 
 def samples(voice, key, text, raw):
     board = not key.startswith(("call-", "effort-", "pain-"))
-    pace = 0.92 if board else 0.68
+    pace = 0.84 if key.startswith("description-") else (0.92 if board else 0.68)
     with wave.open(str(raw), "wb") as target:
         voice.synthesize_wav(text, target, syn_config=SynthesisConfig(length_scale=pace))
-    eq = "highpass=f=210,lowpass=f=3700,acompressor=threshold=0.12:ratio=3" if board else (
+    eq = "highpass=f=210,lowpass=f=3700,acompressor=threshold=0.12:ratio=3" if board and not key.startswith("description-") else (
         "highpass=f=94,lowpass=f=6700,acompressor=threshold=0.17:ratio=2"
     )
     pcm = ffmpeg("-i", str(raw), "-af", eq, "-ar", str(RATE), "-ac", "1", "-f", "s16le", "pipe:1")
@@ -70,7 +76,7 @@ def samples(voice, key, text, raw):
     return (signal * (26300 / peak)).astype("<i2")
 
 
-def pack(model, index, destination):
+def pack(model, index, destination, speech=SPEECH):
     voice = PiperVoice.load(str(model))
     clips = {}
     pad = np.zeros(1200, dtype="<i2")
@@ -79,7 +85,7 @@ def pack(model, index, destination):
         packed = Path(work) / "atlas.wav"
         with wave.open(str(packed), "wb") as target:
             target.setparams((1, 2, RATE, 0, "NONE", "not compressed"))
-            for key, labels in SPEECH.items():
+            for key, labels in speech.items():
                 signal = samples(voice, key, labels[index], raw)
                 target.writeframesraw(pad.tobytes())
                 clips[key] = [target.tell(), len(signal)]
@@ -89,16 +95,29 @@ def pack(model, index, destination):
     return clips
 
 
+def description_speech(code):
+    scenes = json.loads((code / "victoryDescriptions.json").read_text(encoding="utf-8"))
+    return {
+        f"description-{scene}-{index}": (fr, en)
+        for scene, cues in scenes.items()
+        for index, (_, fr, en) in enumerate(cues)
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("models", type=Path, help="Directory of the two Piper .onnx models")
+    parser.add_argument("--description", action="store_true", help="Build the victory narration banks")
     args = parser.parse_args()
     audio = WEB / "static/audio/clash-voices"
+    code = WEB / "src/lib/fighting/audio"
+    name_prefix = "description-" if args.description else ""
+    speech = description_speech(code) if args.description else SPEECH
     audio.mkdir(parents=True, exist_ok=True)
     manifest = {"sampleRate": RATE, "locales": {}}
     for index, (locale, name) in enumerate(zip(("fr", "en"), MODELS)):
-        manifest["locales"][locale] = pack(args.models / f"{name}.onnx", index, audio / f"{locale}.mp3")
-    (WEB / "src/lib/fighting/audio/speechAtlas.json").write_text(
+        manifest["locales"][locale] = pack(args.models / f"{name}.onnx", index, audio / f"{name_prefix}{locale}.mp3", speech)
+    (code / ("descriptionAtlas.json" if args.description else "speechAtlas.json")).write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8",
     )
 

@@ -1,18 +1,14 @@
 import type { FightStageId } from '../stages'
+import { readTrackChoice, type ClashTrack, type ClashTrackChoice } from './jukebox'
 
-const MUSIC_ROOT = '/audio/clash'
-export const CLASH_MENU_MUSIC = `${MUSIC_ROOT}/menu.mp3`
+export function clashTrackUrl(track: ClashTrackChoice, automatic?: ClashTrack): string | undefined {
+  const selected = track === 'auto' ? automatic : track
+  return selected && selected !== 'off' ? `/audio/clash/${selected}.mp3` : undefined
+}
 
-const SCORED_STAGES = new Set<FightStageId>([
-  'whale-hold',
-  'heavens-arena',
-  'vip-casino',
-  'banquet-hall',
-  'princes-burial-chamber',
-])
-
-export function stageMusicUrl(stage: FightStageId): string | undefined {
-  return SCORED_STAGES.has(stage) ? `${MUSIC_ROOT}/${stage}.mp3` : undefined
+export function stageMusicUrl(stage: FightStageId, choice: ClashTrackChoice = 'auto') {
+  const automatic = readTrackChoice(stage)
+  return clashTrackUrl(choice, automatic === 'auto' || automatic === 'off' ? undefined : automatic)
 }
 
 const EDGE_FADE = 0.015

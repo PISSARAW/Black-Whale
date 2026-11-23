@@ -1,3 +1,5 @@
+import { commentaryLine, type CommentaryLine } from './commentary'
+import { COMBAT_VOICE_RATES, type CombatVoiceStyle } from './settings'
 import type { FightState } from '../types'
 import { fightContactStyle } from '../fightContactStyle'
 import { otherSide } from '../frameData'
@@ -29,7 +31,7 @@ interface VocalCue {
 export function playCombatVoice(
   mix: FightMix,
   event: FightSoundEvent,
-  options: { state: FightState; locale: VoiceLocale },
+  options: { state: FightState; locale: VoiceLocale; voiceStyle: CombatVoiceStyle },
 ) {
   const cue = vocalCue(event, options.state)
   if (!cue) return
@@ -44,7 +46,12 @@ export function playCombatVoice(
   }
   const line = cue.line ?? (`${cue.kind}-${cue.take}` as SpeechLine)
   const speed = Math.max(0.69, Math.min(1.16, 0.76 + (profile.breath - 100) * 0.0044))
-  voiceSample(graph, audio, { locale: options.locale, line, speed, level: cue.intensity })
+  voiceSample(graph, audio, {
+    locale: options.locale,
+    line,
+    speed: speed * COMBAT_VOICE_RATES[options.voiceStyle],
+    level: cue.intensity,
+  })
 }
 
 function vocalCue(event: FightSoundEvent, state: FightState): VocalCue | undefined {
@@ -88,29 +95,36 @@ function hurtCue(event: FightSoundEvent, state: FightState): VocalCue | undefine
   }
 }
 
+interface SpokenCue {
+  locale: VoiceLocale
+  lines: readonly (BoardLine | CommentaryLine)[]
+  channel: 'announcer' | 'commentary'
+  voiceStyle: CombatVoiceStyle
+}
+
 export function createBoardVoice() {
   let owner: { mix: FightMix; locale: VoiceLocale } | null = null
   let revision = 0
   let until = 0
+  let nextComment = 0
+  let channel: SpokenCue['channel'] | undefined
   const sources = new Set<AudioBufferSourceNode>()
 
   function clear() {
     revision++
     until = 0
+    channel = undefined
     for (const source of sources) source.stop()
     sources.clear()
   }
 
-  function speak(
-    mix: FightMix,
-    audio: AudioBuffer,
-    cue: { locale: VoiceLocale; lines: BoardLine[] },
-  ) {
-    const graph = mix.event(50, 'announcer', 3)
+  function speak(mix: FightMix, audio: AudioBuffer, cue: SpokenCue) {
+    const graph = mix.event(50, cue.channel, cue.channel === 'announcer' ? 3 : 1)
     if (!graph) return
     let at = mix.context.currentTime + 0.028
+    const speed = COMBAT_VOICE_RATES[cue.voiceStyle]
     for (const line of cue.lines) {
-      const { source, ends } = voiceSample(graph, audio, { ...cue, line, at, level: 0.68 })
+      const { source, ends } = voiceSample(graph, audio, { ...cue, line, at, speed, level: 0.68 })
       sources.add(source)
       source.addEventListener('ended', () => sources.delete(source), { once: true })
       at = ends + 0.12
@@ -118,13 +132,41 @@ export function createBoardVoice() {
     }
   }
 
-  function queue(mix: FightMix, cue: { locale: VoiceLocale; lines: BoardLine[] }) {
+  function queue(mix: FightMix, cue: SpokenCue) {
     clear()
+    channel = cue.channel
     const ticket = revision
     const expires = mix.context.currentTime + 0.75
     void preloadFightSpeech(mix.context, cue.locale)?.loaded.then((audio) => {
-      if (audio && ticket === revision && mix.context.currentTime <= expires) speak(mix, audio, cue)
+      if (ticket !== revision) return
+      if (audio && mix.context.currentTime <= expires) speak(mix, audio, cue)
+      if (!until) channel = undefined
     })
+  }
+
+  function resetOwner(mix: FightMix, locale: VoiceLocale) {
+    if (owner?.mix === mix && owner.locale === locale) return
+    clear()
+    nextComment = 0
+    owner = { mix, locale }
+  }
+
+  function commentaryReady({
+    state,
+    commentary,
+    now,
+  }: {
+    state: FightState
+    commentary: number
+    now: number
+  }) {
+    return (
+      commentary > 0 &&
+      state.phase === 'fighting' &&
+      state.mode !== 'training' &&
+      !(channel && !until) &&
+      now >= Math.max(until, nextComment)
+    )
   }
 
   return {
@@ -134,18 +176,28 @@ export function createBoardVoice() {
         before: FightState | null
         state: FightState
         locale: VoiceLocale
-        enabled: boolean
-        seeking: boolean
+        active: boolean
+        announcer: number
+        commentary: number
+        voiceStyle: CombatVoiceStyle
+        events: readonly FightSoundEvent[]
       },
     ) {
-      const { before, state, locale, enabled, seeking } = options
-      if (owner?.mix !== mix || owner.locale !== locale) {
-        clear()
-        owner = { mix, locale }
+      const { before, state, locale, active, announcer, commentary, voiceStyle } = options
+      resetOwner(mix, locale)
+      if (!active || mix.context.state !== 'running') return clear()
+      if (channel && options[channel] === 0) clear()
+      const lines = announcer > 0 ? matchVoiceLines(before, state) : []
+      if (lines.length) {
+        queue(mix, { locale, lines, voiceStyle, channel: 'announcer' })
+        return
       }
-      if (!enabled || seeking || mix.context.state !== 'running') return clear()
-      const lines = matchVoiceLines(before, state)
-      if (lines.length) queue(mix, { locale, lines })
+      const now = mix.context.currentTime
+      if (!commentaryReady({ state, commentary, now })) return
+      const remark = commentaryLine(options.events)
+      if (!remark) return
+      nextComment = now + 7
+      queue(mix, { locale, lines: [remark], voiceStyle, channel: 'commentary' })
     },
     announcing(now: number) {
       return now < until

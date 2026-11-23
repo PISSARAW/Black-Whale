@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
+  import FightJukebox from '$lib/components/fighting/FightJukebox.svelte'
+  import FightMenuMusic from '$lib/components/fighting/FightMenuMusic.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import {
     beginFight,
@@ -35,6 +37,7 @@
   let state = duel()
   let language: 'fr' | 'en' = 'fr'
   let paused = false
+  let showingMenu = false
   let victoryActive = false
   let audioSeek = 0
   let events: string[] = []
@@ -175,6 +178,10 @@
     paused = value
     await tick()
   }
+  async function showMenu(show: boolean) {
+    showingMenu = show
+    await tick()
+  }
   onMount(() => {
     Object.assign(window, {
       audioFixture: {
@@ -192,25 +199,33 @@
         points,
         setLocale,
         pauseAudio,
+        showMenu,
+        advanceIdle: advance,
       },
     })
   })
 </script>
 
 <main class="clash-battle">
-  <FightStage
-    {state}
-    {stageId}
-    {audioSeek}
-    {language}
-    {paused}
-    bind:victoryActive
-    onAttack={noop}
-    onThrow={noop}
-    onCall={noop}
-    onFinisher={noop}
-    onControl={noop}
-  />
+  {#if showingMenu}
+    <FightMenuMusic />
+    <FightJukebox {language} />
+  {:else}
+    <FightStage
+      {state}
+      {stageId}
+      {audioSeek}
+      {language}
+      {paused}
+      victoryPaused={paused}
+      bind:victoryActive
+      onAttack={noop}
+      onThrow={noop}
+      onCall={noop}
+      onFinisher={noop}
+      onControl={noop}
+    />
+  {/if}
 </main>
 
 <style>

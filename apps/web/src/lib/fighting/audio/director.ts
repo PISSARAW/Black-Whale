@@ -4,7 +4,7 @@ import { NEN_PRESENTATION } from '@black-whale/nen-engine'
 import { sharedAudioContext } from '$lib/audio/context'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import { saiyuAudioEnabled } from '../saiyuSenses'
-import { activeSoundNen, fightSoundEvents, newSoundRound } from './events'
+import { activeSoundNen, fightSoundEvents, newSoundRound, type FightSoundEvent } from './events'
 import { createClashMusic, stageMusicUrl } from './clashMusic'
 import { continuousVoice, createFightMix, type ContinuousVoice, type FightMix } from './mixer'
 import { createBoardVoice, playCombatVoice } from './combatDialogue'
@@ -13,7 +13,7 @@ import { playFightSound } from './play'
 import { FIGHTER_SOUNDS } from './profiles'
 import { combatPressure } from './stages'
 
-import type { FightAudioSettings } from './settings'
+import type { CombatVoiceStyle, FightAudioSettings } from './settings'
 export { DEFAULT_FIGHT_AUDIO, type FightAudioSettings } from './settings'
 
 export interface FightAudioDirector {
@@ -25,6 +25,7 @@ export interface FightAudioDirector {
       viewer?: FightSide
       seek?: number
       locale?: VoiceLocale
+      cinematic?: boolean
     },
   ) => void
   dispose: () => void
@@ -73,16 +74,12 @@ function stageVoices(mix: FightMix): ContinuousVoice[] {
   ]
 }
 
-function stageMusic(context: AudioContext, state: FightState) {
-  const url = stageMusicUrl(state.environment.stageId)
-  return url ? createClashMusic(context, url) : undefined
-}
-
 function updateMusic(
-  music: ReturnType<typeof stageMusic>,
+  music: ReturnType<typeof createClashMusic> | undefined,
   mix: FightMix,
   options: { active: boolean; state: FightState; settings: FightAudioSettings },
 ): boolean {
+  if (options.settings.battleTrack === 'off') return true
   if (!music) return false
   const audible = options.active && options.state.phase !== 'finished' && options.settings.music > 0
   music.setTarget(audible ? mix.channels.music : null)
@@ -101,7 +98,8 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
   if (!context) return null
   let mix = createFightMix(context, initial.environment.stageId)
   let stages = stageVoices(mix)
-  let music = stageMusic(context, initial)
+  let music: ReturnType<typeof createClashMusic> | undefined
+  let track: string | undefined
   let melodies = createMelodyVoices(mix)
   let bodyMusic = createBonolenovVoices(mix)
   let auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
@@ -124,11 +122,16 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     bodyMusic = createBonolenovVoices(mix)
     auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   }
-  const synchronizeRound = (state: FightState, seeking: boolean) => {
-    const transition = audioTransition(previous, state, seeking)
-    if (transition === 'track') {
+  const synchronizeRound = (
+    state: FightState,
+    options: { seeking: boolean; settings: FightAudioSettings },
+  ) => {
+    const transition = audioTransition(previous, state, options.seeking)
+    const next = stageMusicUrl(state.environment.stageId, options.settings.battleTrack)
+    if (next !== track || transition === 'track') {
       music?.dispose()
-      music = stageMusic(context, state)
+      music = next ? createClashMusic(context, next) : undefined
+      track = next
     }
     if (transition) rebuild(state)
   }
@@ -137,7 +140,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     const seek = options.seek ?? 0
     const seeking = seek !== lastSeek
     lastSeek = seek
-    synchronizeRound(state, seeking)
+    synchronizeRound(state, { seeking, settings: options.settings })
     const active =
       !options.paused && !options.settings.muted && saiyuAudioEnabled(state, options.viewer)
     mix.setActive(active)
@@ -145,12 +148,17 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     melodies.update(state, active)
     bodyMusic.update(state, active)
     const locale = options.locale ?? 'fr'
+    const enabled = !seeking && active && context.state === 'running'
+    const events = enabled ? fightSoundEvents(previous, state, options.viewer) : []
     board.update(mix, {
       before: previous,
       state,
       locale,
-      seeking,
-      enabled: active && options.settings.announcer > 0,
+      events,
+      active: enabled,
+      announcer: announcementVolume(options),
+      commentary: options.settings.commentary,
+      voiceStyle: options.settings.voiceStyle,
     })
     updateLevels(mix, {
       state,
@@ -162,16 +170,13 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     updateStagePressure(mix, stages, state)
     for (const side of ['player', 'opponent'] as const)
       updateAura(mix, { voices: auras[side], state, side })
-    if (!seeking)
-      playConfirmedCues(mix, {
-        before: previous,
-        state,
-        active,
-        scored,
-        viewer: options.viewer,
-        locale,
-        voices: options.settings.voices,
-      })
+    playConfirmedCues(mix, events, {
+      state,
+      scored,
+      locale,
+      voices: options.settings.voices,
+      voiceStyle: options.settings.voiceStyle,
+    })
     previous = state
   }
   return {
@@ -187,20 +192,22 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
   }
 }
 
+function announcementVolume(options: { cinematic?: boolean; settings: FightAudioSettings }) {
+  return options.cinematic && options.settings.description > 0 ? 0 : options.settings.announcer
+}
+
 function playConfirmedCues(
   mix: FightMix,
+  events: readonly FightSoundEvent[],
   options: {
-    before: FightState | null
     state: FightState
-    active: boolean
     scored: boolean
     locale: VoiceLocale
     voices: number
-    viewer?: FightSide
+    voiceStyle: CombatVoiceStyle
   },
 ): void {
-  if (!options.active || mix.context.state !== 'running') return
-  for (const event of fightSoundEvents(options.before, options.state, options.viewer)) {
+  for (const event of events) {
     if (event.kind !== 'windup' && (!options.scored || event.kind !== 'stage'))
       playFightSound(mix, event, options.state)
     if (options.voices > 0) playCombatVoice(mix, event, options)

@@ -1,7 +1,7 @@
 import type { FightSoundEvent, FightSoundKind } from './events'
 import type { FightChannel } from './settings'
 
-type Channel = Exclude<FightChannel, 'cinematics'>
+type Channel = Exclude<FightChannel, 'cinematics' | 'description'>
 const CHANNELS: Partial<Record<FightSoundKind, Channel>> = {
   intro: 'music',
   stage: 'music',

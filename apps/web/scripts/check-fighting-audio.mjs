@@ -11,6 +11,9 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const atlas = JSON.parse(
   await readFile(path.join(root, 'src/lib/fighting/audio/speechAtlas.json'), 'utf8'),
 )
+const descriptions = JSON.parse(
+  await readFile(path.join(root, 'src/lib/fighting/audio/descriptionAtlas.json'), 'utf8'),
+)
 const cacheDir = await mkdtemp(path.join(tmpdir(), 'black-whale-audio-'))
 const server = await createServer({
   configFile: false,
@@ -50,6 +53,11 @@ try {
     window.cuePitches = []
     window.voiceStarts = []
     window.voiceBanks = 0
+    window.descriptionBanks = 0
+    window.descriptionStops = 0
+    window.descriptionStarts = []
+    window.musicLoops = 0
+    const isDescription = (buffer) => buffer?.numberOfChannels === 1 && buffer.duration > 100
     const decode = AudioContext.prototype.decodeAudioData
     AudioContext.prototype.decodeAudioData = function (...args) {
       const pending = decode.apply(this, args)
@@ -57,6 +65,7 @@ try {
         (buffer) => {
           if (buffer.duration > 16 && buffer.duration < 35 && buffer.numberOfChannels === 1)
             window.voiceBanks++
+          if (isDescription(buffer)) window.descriptionBanks++
         },
         () => {},
       )
@@ -64,9 +73,16 @@ try {
     }
     const playSample = AudioBufferSourceNode.prototype.start
     AudioBufferSourceNode.prototype.start = function (at, offset, duration) {
-      if (duration !== undefined)
+      if (isDescription(this.buffer)) window.descriptionStarts.push({ offset, duration })
+      else if (duration !== undefined)
         window.voiceStarts.push({ offset, duration, rate: this.playbackRate.value })
+      if (this.loop && this.buffer?.duration > 35) window.musicLoops++
       return Reflect.apply(playSample, this, arguments)
+    }
+    const stopSample = AudioBufferSourceNode.prototype.stop
+    AudioBufferSourceNode.prototype.stop = function (...args) {
+      if (isDescription(this.buffer)) window.descriptionStops++
+      return Reflect.apply(stopSample, this, args)
     }
     const createLimiter = AudioContext.prototype.createDynamicsCompressor
     AudioContext.prototype.createDynamicsCompressor = function () {
@@ -319,9 +335,82 @@ try {
       return media?.readyState >= 2 && !media.paused && media.currentTime > 0.12
     }, filename)
   }
+  await page.unroute('**/chrollo-sun-moon.m4a')
+  const fader = (name, value) =>
+    page.getByRole('slider', { name, exact: true }).evaluate((input, value) => {
+      input.value = String(value)
+      input.dispatchEvent(new Event('change', { bubbles: true }))
+    }, value)
+  await page.evaluate(() => window.audioFixture.reset())
+  await fader('Voix de bord', 0)
+  await fader('Commentaire dynamique', 1)
+  await page.getByLabel('Registre des voix').selectOption('low')
+  await voiceLines()
+  const parry = await page.evaluate(() => window.audioFixture.opening('late'))
+  assert.equal(parry?.parried, true)
+  await waitForLine('comment-parry')
+  const first = await voiceLines()
+  assert.equal(first.filter(({ line }) => line === 'comment-parry').length, 1)
+  assert.ok(first.find(({ line }) => line.startsWith('effort-'))?.rate < 0.7, 'deep voice register')
+  await page.evaluate(() => window.audioFixture.advanceIdle(32))
+  await page.evaluate(() => window.audioFixture.opening('late'))
+  assert.ok(
+    !(await voiceLines()).some(({ line }) => line.startsWith('comment-')),
+    'commentary cooldown',
+  )
+
+  await fader('Audiodescription des victoires', 1)
+  await page.waitForFunction(() => window.descriptionBanks >= 1)
+  await page.evaluate(async () => {
+    await window.audioFixture.reset()
+    return window.audioFixture.sunMoon()
+  })
+  const [sample, length] = descriptions.locales.fr['description-chrollo-sun-moon-0']
+  await page.waitForFunction(
+    ({ offset, duration }) =>
+      window.descriptionStarts.some(
+        (clip) => clip.offset >= offset && clip.offset < offset + 0.4 && clip.duration <= duration,
+      ),
+    { offset: sample / descriptions.sampleRate, duration: length / descriptions.sampleRate },
+  )
+  const stopsBeforePause = await page.evaluate(() => window.descriptionStops)
+  await page.evaluate(() => window.audioFixture.pauseAudio(true))
+  await page.waitForFunction((count) => window.descriptionStops > count, stopsBeforePause)
+  const startsBeforeResume = await page.evaluate(() => window.descriptionStarts.length)
+  await page.evaluate(() => window.audioFixture.pauseAudio(false))
+  await page.waitForFunction((count) => window.descriptionStarts.length > count, startsBeforeResume)
+  const stopsBeforeSkip = await page.evaluate(() => window.descriptionStops)
+  await page.locator('.skip-victory').click()
+  await page.waitForFunction((count) => window.descriptionStops > count, stopsBeforeSkip)
+
+  await page.evaluate(() => window.audioFixture.showMenu(true))
+  await page.locator('.jukebox summary').click()
+  await page.getByLabel('Musique du menu').selectOption('off')
+  await page.getByLabel('Piste à écouter').selectOption('whale-hold')
+  const preview = page.waitForResponse('**/audio/clash/whale-hold.mp3')
+  const loops = await page.evaluate(() => window.musicLoops)
+  await page.getByRole('button', { name: 'Écouter', exact: true }).click()
+  assert.equal((await preview).status(), 200)
+  await page.waitForFunction((count) => window.musicLoops > count, loops)
+  await page.getByRole('button', { name: 'Arrêter l’extrait' }).click()
+  await page.getByLabel('Musique des combats').selectOption('vip-casino')
+  const battle = page.waitForResponse('**/audio/clash/vip-casino.mp3')
+  const loopsBeforeBattle = await page.evaluate(() => window.musicLoops)
+  await page.evaluate(async () => {
+    await window.audioFixture.reset()
+    await window.audioFixture.showMenu(false)
+  })
+  assert.equal((await battle).status(), 200)
+  await page.waitForFunction((count) => window.musicLoops > count, loopsBeforeBattle)
+  assert.equal(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem('black-whale:fighting-audio')).battleTrack,
+    ),
+    'vip-casino',
+  )
   assert.deepEqual(errors, [])
   process.stdout.write(
-    'Kurapika vs Chrollo, Luzurus, audio mono Competition, Burst, guard/parry, punish at 30 Hz, physical contacts, fighter voices and Luzurus, FR/EN announcements and Sun and Moon verified.\n',
+    'Kurapika vs Chrollo, Luzurus, audio mono Competition, Burst, guard/parry, punish at 30 Hz, physical contacts, fighter voices and Luzurus, FR/EN announcements, jukebox, alternate register, commentary and victory narration verified.\n',
   )
 } finally {
   await browser?.close()

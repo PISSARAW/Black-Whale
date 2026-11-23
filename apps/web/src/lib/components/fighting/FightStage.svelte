@@ -3,6 +3,7 @@
   import { createVictoryPlayback } from '$lib/fighting/victory/playback'
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
+  import FightVictoryNarration from './FightVictoryNarration.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
@@ -37,6 +38,7 @@
   export let audioPaused: boolean | undefined = undefined
   export let victoryEnabled = true
   export let victoryPaused = false
+  let descriptionSpeaking = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
   $: victory.observe(audioState ?? state, victoryEnabled)
@@ -80,6 +82,7 @@
   {language}
   paused={audioPaused ?? paused}
   viewer={sensoryViewer}
+  cinematic={victoryActive}
   {audioSeek}
   showSettings={!minimal}
   bind:settings={audioSettings}
@@ -159,7 +162,19 @@
       {/key}
     {/if}
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
-    <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
+    <FightVictoryNarration
+      frame={$victory}
+      settings={audioSettings}
+      {language}
+      paused={victoryPaused}
+      bind:speaking={descriptionSpeaking}
+    />
+    <FightVictoryAudio
+      frame={$victory}
+      settings={audioSettings}
+      paused={victoryPaused}
+      ducked={descriptionSpeaking}
+    />
   </div>
   {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture

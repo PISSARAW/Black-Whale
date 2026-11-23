@@ -71,3 +71,16 @@ personnage. La détonation de la piste Sun and Moon est à 0,4 seconde, sur la
 Tests unitaires avec `pnpm --filter @black-whale/web test src/lib/fighting/audio`.
 Le banc navigateur `node apps/web/scripts/check-fighting-audio.mjs` fait jouer
 Kurapika contre Chrollo avec Luzurus et vérifie aussi le repli Sun and Moon.
+
+Le jukebox du menu principal permet de préécouter les six pistes et de choisir
+séparément la musique du menu et celle des combats. Le mode automatique garde
+la programmation par terrain. Les registres Original, Grave et Clair modulent
+les banques existantes. Le commentaire, facultatif, lit les événements confirmés
+et laisse passer au moins sept secondes entre deux remarques. Le verdict a
+priorité.
+
+L’audiodescription, réglable séparément et incluse dans le préréglage
+Accessibilité, charge une banque dédiée. Ses repères suivent les images
+des 39 cinématiques et variantes, en français et en anglais. Pendant une
+scène décrite, elle passe devant les annonces et atténue la bande-son à
+l’endroit des répliques. La pause et le saut arrêtent la narration.

@@ -9,6 +9,7 @@
   export let frame: VictoryFrame | null
   export let settings: FightAudioSettings
   export let paused = false
+  export let ducked = false
   let element: HTMLAudioElement
   let token = ''
   let fallback = false
@@ -18,7 +19,7 @@
   let waiting = false
 
   $: if (element)
-    synchronize(frame, paused || hidden, { audio: settings, master: $audioLevels.effects })
+    synchronize(frame, paused || hidden, { audio: settings, master: $audioLevels.effects, ducked })
 
   onMount(() => {
     const visibility = () => {
@@ -69,7 +70,7 @@
   function synchronize(
     current: VictoryFrame | null,
     stopped: boolean,
-    levels: { audio: FightAudioSettings; master: number },
+    levels: { audio: FightAudioSettings; master: number; ducked: boolean },
   ) {
     const { audio, master } = levels
     if (!current?.active) {
@@ -84,7 +85,7 @@
     }
     connect()
     element.muted = audio.muted
-    level(audio, master, victoryTrack(current, fallback).gain)
+    level(audio, master, victoryTrack(current, fallback).gain * (levels.ducked ? 0.3 : 1))
     if (!shouldPlay(current.elapsed, stopped || audio.muted)) {
       element.pause()
       return
@@ -100,7 +101,7 @@
 
   function loaded() {
     waiting = false
-    synchronize(frame, paused || hidden, { audio: settings, master: $audioLevels.effects })
+    synchronize(frame, paused || hidden, { audio: settings, master: $audioLevels.effects, ducked })
   }
 </script>
 

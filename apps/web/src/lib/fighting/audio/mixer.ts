@@ -14,12 +14,13 @@ interface Voice {
   timer: ReturnType<typeof setTimeout>
 }
 
-type MixChannel = Exclude<FightChannel, 'cinematics'>
+type MixChannel = Exclude<FightChannel, 'cinematics' | 'description'>
 const EXTRA_CHANNELS = [
   'movement',
   'techniques',
   'voices',
   'announcer',
+  'commentary',
   'interface',
   'music',
 ] as const
@@ -152,7 +153,8 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
   }
   const configure = (settings: FightAudioSettings, duck: number) => {
     for (const channel of EXTRA_CHANNELS) {
-      const level = settings[channel] * (channel === 'music' ? duck : 1)
+      const musicDuck = settings.battleTrack === 'off' ? 0 : duck
+      const level = settings[channel] * (channel === 'music' ? musicDuck : 1)
       channels[channel].gain.setTargetAtTime(level, context.currentTime, 0.025)
     }
     for (const gate of [gateEffects, gateAmbient]) {

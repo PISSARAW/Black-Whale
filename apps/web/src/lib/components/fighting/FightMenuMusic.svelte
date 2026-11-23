@@ -2,8 +2,10 @@
   import { onMount } from 'svelte'
   import { sharedAudioContext } from '$lib/audio/context'
   import { outputBus } from '$lib/audio/output'
-  import { CLASH_MENU_MUSIC, createClashMusic } from '$lib/fighting/audio/clashMusic'
-  import { readFightAudioSettings } from '$lib/fighting/audio/settings'
+  import { get } from 'svelte/store'
+  import { jukeboxPreview } from '$lib/fighting/audio/jukebox'
+  import { clashTrackUrl, createClashMusic } from '$lib/fighting/audio/clashMusic'
+  import { fightAudioChanges, readFightAudioSettings } from '$lib/fighting/audio/settings'
 
   onMount(() => {
     const audioContext = sharedAudioContext()
@@ -12,19 +14,27 @@
     const context = audioContext
     const volume = context.createGain()
     volume.connect(bus)
-    const music = createClashMusic(context, CLASH_MENU_MUSIC)
+    let music: ReturnType<typeof createClashMusic> | undefined
+    let track: string | undefined
     let mounted = true
+
+    function selectTrack(next: string | undefined) {
+      if (next === track) return
+      music?.dispose()
+      music = next ? createClashMusic(context, next) : undefined
+      track = next
+    }
 
     function synchronize() {
       if (!mounted) return
-      const settings: { muted: boolean; ambience: number; music?: number; mono?: boolean } =
-        readFightAudioSettings()
-      const level = settings.music ?? settings.ambience
+      const settings = readFightAudioSettings()
+      selectTrack(clashTrackUrl(get(jukeboxPreview) ?? settings.menuTrack, 'menu'))
+      const level = settings.music
       const audible = !document.hidden && !settings.muted && level > 0
       volume.channelCount = settings.mono ? 1 : 2
       volume.channelCountMode = 'explicit'
       volume.gain.setTargetAtTime(level * 0.55, context.currentTime, 0.025)
-      music.setTarget(audible && context.state === 'running' ? volume : null)
+      music?.setTarget(audible && context.state === 'running' ? volume : null)
     }
 
     function unlock() {
@@ -37,7 +47,8 @@
           .catch(() => {})
     }
 
-    synchronize()
+    const cancelPreferences = fightAudioChanges.subscribe(synchronize)
+    const cancelPreview = jukeboxPreview.subscribe(synchronize)
     window.addEventListener('pointerdown', unlock, { passive: true })
     window.addEventListener('keydown', unlock)
     window.addEventListener('storage', synchronize)
@@ -48,7 +59,9 @@
       window.removeEventListener('keydown', unlock)
       window.removeEventListener('storage', synchronize)
       document.removeEventListener('visibilitychange', synchronize)
-      music.dispose()
+      cancelPreview()
+      cancelPreferences()
+      music?.dispose()
       setTimeout(() => volume.disconnect(), 30)
     }
   })

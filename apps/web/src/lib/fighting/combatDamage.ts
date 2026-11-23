@@ -20,6 +20,11 @@ import {
 } from './leorioMedical'
 import { furykovResistanceFactor } from './furykovProfile'
 import { bashoFireAttackFactor, bashoIgnoresTenGuard, bashoKenCostFactor } from './bashoHaiku'
+import {
+  FIREARM_BODY_MEMORY_WEIGHT,
+  REN_PRESSURE_BLOCKSTUN,
+  firearmGuardFactor,
+} from './nenPillars'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -68,7 +73,13 @@ function attackDamage(
   const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
   const guardBypassed = blocked && bashoIgnoresTenGuard(attacker, defender)
   const leorioChip = leorioBreaksTenGuard(attacker, defender, blocked)
-  const guard = !blocked || guardBypassed ? 1 : leorioChip ? 0.28 * LEORIO_TEN_CHIP_FACTOR : 0.28
+  const guard = options.physicalProjectile
+    ? firearmGuardFactor(defender, blocked)
+    : !blocked || guardBypassed
+      ? 1
+      : leorioChip
+        ? 0.28 * LEORIO_TEN_CHIP_FACTOR
+        : 0.28
   const rawDamage = Math.round(
     base *
       (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
@@ -87,6 +98,7 @@ function attackDamage(
   )
   // Scale the rounded wound down so successive light hits cannot round back up.
   const damage = Math.floor(rawDamage * damageScale)
+  if (options.physicalProjectile && blocked && (defender.nen.ken || defender.nen.ko)) return 0
   // Ken absorbs ordinary guarded blows, but its protection has finite output.
   const absorption =
     blocked && defender.nen.ken ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
@@ -179,9 +191,15 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
+  const firearmHit = Boolean(!options.melee && options.zone && !options.blocked && options.damage > 0)
   const stacks = leorioSurgicalStack(options.attacker, options.fighter)
   let updated = rememberBodyHit(struck, options.zone, options.damage, options.blocked)
   if (stacks > 1) updated = rememberBodyHit(updated, options.zone, options.damage, options.blocked)
+  if (firearmHit && (options.zone === 'hands' || options.zone === 'feet')) {
+    const prev = options.fighter.bodyMemory?.hits[options.zone] ?? 0
+    const nextHits = Math.min(3, prev + FIREARM_BODY_MEMORY_WEIGHT)
+    updated = { ...updated, bodyMemory: { hits: { ...updated.bodyMemory?.hits, [options.zone]: nextHits } } }
+  }
   return updated
 }
 
@@ -214,9 +232,16 @@ function stunState(
   options: StrikeOptions & { hitstun: number; blockstun: number },
 ): Pick<ArcadeFighter, 'hitStun' | 'blockStun' | 'pose' | 'blocking'> {
   const hitStun = options.hitstun + Number(options.counterHit) * 3 + Number(options.wallSplat) * 5
+  const renPressure =
+    options.blocked &&
+    options.attacker.nen.mode === 'ren' &&
+    !options.fighter.nen.ken &&
+    !options.fighter.nen.ko
+      ? REN_PRESSURE_BLOCKSTUN
+      : 0
   return {
     hitStun: options.blocked ? 0 : contactHitstun(options, hitStun),
-    blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 : 0,
+    blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 + renPressure : 0,
     pose: options.blocked ? 'guard' : 'hit',
     blocking: options.blocked,
   }

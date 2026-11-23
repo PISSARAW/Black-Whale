@@ -31,6 +31,7 @@ import { textureSurpriseDrain } from './textureSurpriseMask'
 import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialists'
 import { musseOwlDrain } from './musseWindowUpgrades'
 import { bashoKenCostFactor } from './bashoHaiku'
+import { seiyakuExhaustionThreshold, seiyakuHatsuPowerFactor } from './seiyaku'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -141,7 +142,7 @@ export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
   if (fighter.drainingChain) return advanceOn(fighter)
   const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
   const depleted = fighter.auraExhausted || aura === 0
-  const auraExhausted = depleted && aura < EXHAUSTION_RELEASE_AURA
+  const auraExhausted = depleted && aura < seiyakuExhaustionThreshold(fighter)
   const next = { ...fighter, aura, auraExhausted }
   return advanceOn(auraExhausted ? withAction(next, { type: 'ZETSU' }) : next)
 }
@@ -233,7 +234,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
   return kind === 'special' && fighter.attack?.hatsuSource
-    ? abilityPower(fighter)
+    ? abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter)
     : categoryPower(fighter, 'enhancer')
 }
 

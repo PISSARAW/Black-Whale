@@ -24,6 +24,18 @@ import { advanceLeorioSonar } from '../leorioMedical'
 import { advanceMusseOwl } from '../musseWindowUpgrades'
 import { advanceFurykovProfile } from '../furykovProfile'
 import { advanceBashoHaiku, extinguishBashoBurn } from '../bashoHaiku'
+import { advanceNenPillars, startFirearmReload } from '../nenPillars'
+import { advanceSeiyaku } from '../seiyaku'
+
+function resolveFirearmReload(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (inputs[side]?.context) {
+      const reloaded = startFirearmReload(state[side])
+      if (reloaded !== state[side]) state = { ...state, [side]: reloaded }
+    }
+  }
+  return state
+}
 
 function resolveBurnExtinguish(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -64,6 +76,8 @@ export function openFrame(
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
   state = resolveBurnExtinguish(state, inputs)
+  state = resolveFirearmReload(state, inputs)
+  state = advanceSeiyaku(state, inputs)
   state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)
@@ -98,13 +112,15 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceBashoHaiku(
-    advanceFurykovProfile(
-      advanceMusseOwl(
-        advanceLeorioSonar(
-          advanceTsk17(
-            advanceChrolloBookIntel(
-              reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+  return advanceNenPillars(
+    advanceBashoHaiku(
+      advanceFurykovProfile(
+        advanceMusseOwl(
+          advanceLeorioSonar(
+            advanceTsk17(
+              advanceChrolloBookIntel(
+                reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+              ),
             ),
           ),
         ),

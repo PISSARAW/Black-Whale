@@ -20,6 +20,7 @@ import { melodyRestrictsCombat } from './melodyRules'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable, chrolloRightHandOccupied } from './chrolloBook'
+import { EN_STARTUP_BONUS } from './nenPillars'
 import { chainsImmobilize, kurapikaMoveAvailable } from './kurapika'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { feitanMoveAvailable } from './feitanPain'
@@ -128,7 +129,8 @@ export function startFighterAttack(options: {
       kind,
       variant: options.variant,
       confirmedHit: false,
-      frame: 0,
+      frame:
+        fighter.enReflexActive && (kind === 'light' || kind === 'heavy') ? EN_STARTUP_BONUS : 0,
       impacted: false,
       auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
@@ -175,6 +177,7 @@ function ordinaryCanStartFighterAttack(
 ): boolean {
   const { moveId } = intent
   if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
+  if ((fighter.firearmReloadFrames ?? 0) > 0) return false
   if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   if (!biohazardBodyFree(fighter)) return false

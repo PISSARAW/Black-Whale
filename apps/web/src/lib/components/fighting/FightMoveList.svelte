@@ -17,6 +17,7 @@
 
   $: hints = touch ? fightTouchBindings(language) : $bindings
   $: moveset = movesetFor(fighterId)
+  $: combos = new Map(moveset?.combos.map((route) => [route.join(':'), route]))
   $: arena = arenaTechnique(fighterId)
   $: groups = moveset
     ? ([
@@ -97,7 +98,7 @@
           : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
       </p>
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each moveset.combos as route (route.join(':'))}
+      {#each combos as [key, route] (key)}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

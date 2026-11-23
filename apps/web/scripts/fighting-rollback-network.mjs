@@ -27,8 +27,11 @@ const CALIBRATION_BATCH = 8
 export const RTT_TOLERANCE_MS = 5
 
 export function percentile(samples, fraction) {
+  if (!samples.length) return undefined
   const sorted = samples.toSorted((a, b) => a - b)
-  return sorted[Math.floor(sorted.length * fraction)]
+  const index = fraction * (sorted.length - 1)
+  const low = Math.floor(index)
+  return sorted[low] + (sorted[Math.ceil(index)] - sorted[low]) * (index - low)
 }
 
 function bridgeSockets(browser, relay, options) {

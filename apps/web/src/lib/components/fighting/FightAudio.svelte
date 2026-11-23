@@ -8,8 +8,9 @@
     type FightAudioDirector,
   } from '$lib/fighting/audio/director'
   import { preloadFightSpeech } from '$lib/fighting/audio/speechSamples'
+  import { preloadFighterVoice } from '$lib/fighting/audio/fighterVoice'
   import { readFightAudioSettings, saveFightAudioSettings } from '$lib/fighting/audio/settings'
-  import type { FightSide, FightState } from '$lib/fighting/types'
+  import type { FighterId, FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en' = 'fr'
@@ -35,9 +36,15 @@
       cinematic,
     })
 
-  $: if (mounted) {
+  $: player = state.player.id
+  $: opponent = state.opponent.id
+  $: if (mounted && !settings.muted) preloadVoices(language, [player, opponent])
+
+  function preloadVoices(locale: 'fr' | 'en', fighters: readonly FighterId[]) {
     const context = sharedAudioContext()
-    if (context) preloadFightSpeech(context, language)
+    if (!context) return
+    preloadFightSpeech(context, locale)
+    for (const fighter of fighters) preloadFighterVoice(context, { fighter, locale })
   }
 
   function unlock(): void {

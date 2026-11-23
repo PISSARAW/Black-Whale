@@ -47,7 +47,10 @@ Le nom du Kaméo retentit à son entrée effective. Les annonces suivent le
 départ, la manche décisive et le verdict confirmé.
 
 Les voix françaises et anglaises suivent la langue du jeu. Les deux banques
-sont synthétisées hors ligne. Les modèles et le script de génération figurent
+de la voix de bord sont synthétisées hors ligne. En combat, les banques
+propres aux deux combattants sont préchargées à la sélection de la langue et
+du duel. Chaque combattant a ses prises d’effort, de douleur et d’appel. Les
+modèles et les scripts de génération figurent
 dans [les crédits des voix](../../../../static/audio/clash-voices/SOURCES.md).
 
 Les contacts confirmés traversent les mises à jour groupées dans un historique

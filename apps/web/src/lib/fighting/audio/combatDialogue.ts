@@ -4,6 +4,7 @@ import type { FightState } from '../types'
 import { fightContactStyle } from '../fightContactStyle'
 import { otherSide } from '../frameData'
 import { isKameoId } from '../kameos/catalogue'
+import { playFighterTake, type FighterVoiceLine } from './fighterVoice'
 import type { FightMix } from './mixer'
 import type { FightSoundEvent } from './events'
 import { FIGHTER_SOUNDS } from './profiles'
@@ -13,7 +14,6 @@ import {
   fightSpeechBuffer,
   preloadFightSpeech,
   voiceSample,
-  type SpeechLine,
   type VoiceLocale,
 } from './speechSamples'
 
@@ -25,7 +25,7 @@ interface VocalCue {
   intensity: number
   take: number
   delay?: number
-  line?: SpeechLine
+  line?: FighterVoiceLine
 }
 
 export function playCombatVoice(
@@ -38,18 +38,29 @@ export function playCombatVoice(
   const graph = mix.event(cue.x, 'voices', cue.kind === 'call' ? 2 : 0)
   if (!graph) return
   graph.timeOffset = cue.delay
+  const line = cue.line ?? (`${cue.kind}-${cue.take}` as FighterVoiceLine)
+  const register = COMBAT_VOICE_RATES[options.voiceStyle]
+  if (
+    playFighterTake(graph, {
+      fighter: cue.fighter,
+      locale: options.locale,
+      line,
+      speed: register,
+      level: cue.intensity,
+    })
+  )
+    return
   const profile = FIGHTER_SOUNDS[cue.fighter]
   const audio = fightSpeechBuffer(mix.context, options.locale)
   if (!audio) {
     breath(graph, { profile, pain: cue.kind === 'pain', force: cue.intensity })
     return
   }
-  const line = cue.line ?? (`${cue.kind}-${cue.take}` as SpeechLine)
   const speed = Math.max(0.69, Math.min(1.16, 0.76 + (profile.breath - 100) * 0.0044))
   voiceSample(graph, audio, {
     locale: options.locale,
     line,
-    speed: speed * COMBAT_VOICE_RATES[options.voiceStyle],
+    speed: speed * register,
     level: cue.intensity,
   })
 }

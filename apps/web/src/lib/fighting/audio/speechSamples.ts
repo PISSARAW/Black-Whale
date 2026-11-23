@@ -21,12 +21,19 @@ export function loadVoiceBank(
   locale: VoiceLocale,
   kind: 'speech' | 'description' = 'speech',
 ) {
+  return loadVoiceAsset(context, kind === 'description' ? `description-${locale}` : locale)
+}
+
+export function loadVoiceAsset(context: AudioContext, key: string) {
   if (typeof window === 'undefined') return
   const bank = banks.get(context) ?? new Map<string, VoicePack>()
   banks.set(context, bank)
-  const key = kind === 'description' ? `description-${locale}` : locale
   const cached = bank.get(key)
-  if (cached) return cached
+  if (cached) {
+    bank.delete(key)
+    bank.set(key, cached)
+    return cached
+  }
   const pack: VoicePack = {
     loaded: fetch(`/audio/clash-voices/${key}.mp3`)
       .then((response) => (response.ok ? response.arrayBuffer() : null))
@@ -37,6 +44,10 @@ export function loadVoiceBank(
       .catch(() => undefined),
   }
   bank.set(key, pack)
+  if (bank.size > 16) {
+    const oldest = [...bank.keys()].find((name) => name.startsWith('roster/'))
+    if (oldest) bank.delete(oldest)
+  }
   return pack
 }
 
@@ -50,8 +61,20 @@ export function voiceSample(
   options: { locale: VoiceLocale; line: SpeechLine; level: number; speed?: number; at?: number },
 ) {
   const [from, count] = atlas.locales[options.locale][options.line]
+  return playVoiceSlice(graph, audio, {
+    ...options,
+    offset: from / atlas.sampleRate,
+    duration: count / atlas.sampleRate,
+  })
+}
+
+export function playVoiceSlice(
+  graph: Graph,
+  audio: AudioBuffer,
+  options: { offset: number; duration: number; level: number; speed?: number; at?: number },
+) {
   const at = options.at ?? startsAt(graph)
-  const duration = count / atlas.sampleRate
+  const { offset, duration } = options
   const speed = options.speed ?? 1
   const gain = graph.context.createGain()
   gain.gain.value = options.level
@@ -68,6 +91,6 @@ export function voiceSample(
     },
     { once: true },
   )
-  source.start(at, from / atlas.sampleRate, duration)
+  source.start(at, offset, duration)
   return { source, ends: at + duration / speed }
 }

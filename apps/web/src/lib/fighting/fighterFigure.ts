@@ -27,6 +27,7 @@ import { addFranklinHands } from './franklinHands'
 import { addChrolloBook } from './chrolloFigure'
 import { improveFightBodyReadability } from './fightBodyReadability'
 import { addFightRosterFinish } from './fightRosterFinish'
+import { addFightJointVolumes } from './fightJointVolumes'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { biscuitTrueFormProfile, shapeBiscuitTrueForm } from './biscuitFigure'
 import { isBiscuitTrueForm } from './biscuitForm'
@@ -114,6 +115,7 @@ export function buildFightFigure(options: {
     profile: finalProfile,
   })
   addFightRosterFinish({ THREE, model, profile: finalProfile })
+  const jointVolumes = addFightJointVolumes({ THREE, model, profile: finalProfile })
   improveFightBodyReadability(model.root)
   if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)
@@ -125,6 +127,13 @@ export function buildFightFigure(options: {
   addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
   registerFightExpression({ THREE, model, fighter })
+  if (jointVolumes) {
+    const animate = model.animate
+    model.animate = (seconds, pose, layer) => {
+      animate(seconds, pose, layer)
+      jointVolumes.sync()
+    }
+  }
   return model
 }
 

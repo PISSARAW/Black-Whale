@@ -344,3 +344,17 @@ hand, knee and shoe joints, so all 360 physical attacks, held equipment and
 special forms keep their existing transforms. Tour models are unchanged; the
 finish exists only on Clash figures and adds at most two general-purpose meshes
 to either fighter.
+
+## P17 — articulated anatomy prototype
+
+Kurapika now carries deformable shoulder, elbow and knee masses on the existing
+combat skeleton. Each mass follows its live hinge, broadens across the bend and
+compresses along the limb as the joint closes. Heavy, low and air attacks
+therefore retain a continuous body volume through their most extreme keys
+instead of reading as rigid tapered tubes meeting at an empty pivot.
+
+The pass is visual and fight-only: it does not move a joint, change a bone
+length, alter ground contact, touch hitboxes or enter simulation and replay
+state. The elbow and knee geometry is shared, while the existing shoulder cap
+is reused rather than duplicated. Kurapika remains the controlled prototype
+before the anatomy treatment is propagated to the rest of the roster.

@@ -26,6 +26,7 @@ import {
   firearmGuardFactor,
 } from './nenPillars'
 import { franklinKenDrain } from './troupeUpgrades'
+import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -58,6 +59,7 @@ interface ResolvedDamageOptions {
 export function resolvedDamage(options: ResolvedDamageOptions): number {
   if (options.base === 0) return 0
   if (options.defence.fighter.crossGameStasis) return 0
+  if (hanzoDoubleIgnoresTenPhysical(options.attacker, options.defence.fighter)) return 0
   if (options.defence.parried || options.defence.avoided) return 0
   return attackDamage({
     ...options,

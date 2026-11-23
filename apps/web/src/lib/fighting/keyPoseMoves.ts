@@ -21,6 +21,7 @@ import { KALLUTO_KEY_POSES } from './keyPosesKalluto'
 import { KURAPIKA_REFERENCE_POSES } from './keyPosesKurapikaReference'
 import { KURAPIKA_CAST_POSES } from './keyPosesKurapikaCasts'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
+import { KURAPIKA_GOLDEN_HEAVY_TIMELINE } from './keyPosesKurapikaGoldenHeavy'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -37,6 +38,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
     ...KURAPIKA_COMMAND_POSES,
     ...KURAPIKA_REFERENCE_POSES,
     ...KURAPIKA_CAST_POSES,
+    standingHeavy: KURAPIKA_GOLDEN_HEAVY_TIMELINE,
   },
   theta: THETA_SHOT_POSES,
   shizuku: SHIZUKU_KEY_POSES,

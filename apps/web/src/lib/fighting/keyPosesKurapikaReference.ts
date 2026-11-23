@@ -19,20 +19,6 @@ export const KURAPIKA_REFERENCE_POSES: Partial<Record<MoveSlot, MoveTimeline>> =
     },
     { chest: [0, -0.1, 0], leadShoulder: [-0.15, 0, 0], leadElbow: [0.2, 0, 0] },
   ),
-  standingHeavy: strike(
-    { chest: [0.04, -0.3, 0], rearShoulder: [0.05, 0, -0.25], rearElbow: [-0.65, 0, 0] },
-    {
-      body: [0.08, 0, 0],
-      chest: [0.1, 0.48, -0.06],
-      rearShoulder: [-1.05, 0.2, -0.35],
-      rearElbow: [0.25, 0, 0],
-      rearWrist: [-0.1, 0, 0],
-      leadShoulder: [-0.2, 0, 0.1],
-      leadElbow: [-0.6, 0, 0],
-      rearHip: [0.14, 0, 0],
-    },
-    { chest: [0.03, 0.18, 0], rearShoulder: [-0.25, 0, -0.15], rearElbow: [-0.2, 0, 0] },
-  ),
   lowLight: strike(
     { chest: [0, 0.15, 0], leadElbow: [-0.2, 0, 0], rearElbow: [-0.5, 0, 0] },
     {

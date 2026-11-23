@@ -86,13 +86,15 @@ Authored contact hitstop now freezes Arena's combat clock and bodies while
 keeping a follow-up command buffered. The POV camera reads the same deterministic
 freeze for ranked impact recoil, disabled by reduced-motion preferences.
 
-[combat/fightingHatsu.ts](../combat/fightingHatsu.ts) is the explicit identity gate for twenty neutral
-specials, including Chain Jail, Bungee Gum, Cyclotron, Double Machine Gun,
-Nen Stitches, Needle People, Cross Game, Biohazard and the Black Whale named
-systems whose Arena conditions are already complete. Dynamic or multi-step
-slots stay on their authored Clash move until Arena can preserve their exact
-condition; Blinky, Jupiter, Skill Hunter and Parallel Future are deliberately
-not replaced by a convenient generic effect.
+[combat/fightingHatsu.ts](../combat/fightingHatsu.ts) is the explicit identity gate for named
+specials including Chain Jail, Bungee Gum, Cyclotron, Double Machine Gun,
+Nen Stitches, Needle People, Cross Game and Biohazard. Dynamic routes now keep
+their stateful condition too: Parallel Future prepares only from Zetsu and
+consumes that vision when the player diverges; Jupiter counts three uninterrupted
+beats before releasing its authored Arena impact. Both survive hitstop buffering
+and deterministic replay. Blinky and Skill Hunter stay on their authored Clash
+moves until Arena can represent physical matter, wounds and stolen book pages;
+they are not replaced by a convenient generic drain or buff.
 
 [duelPresence.ts](duelPresence.ts) projects Clash's authored psychology profiles into
 what the player can actually read: facial bearing, felt Ren pressure and, under
@@ -115,7 +117,8 @@ timeline once, identifies conservative recovery opportunities and punishments,
 then lets the player review the contact or branch from just before the exchange.
 The diagnosis never consults concealed intent and is explicitly non-exhaustive.
 
-Still Clash-only, in rough order of value: the remaining dynamic Hatsu; rollback PvP.
+Still Clash-only, in rough order of value: physical Blinky targets and Skill Hunter
+book state; rollback PvP.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

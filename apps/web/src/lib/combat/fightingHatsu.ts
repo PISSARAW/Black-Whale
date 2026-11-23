@@ -1,14 +1,17 @@
 import { moveForSlot } from '../fighting/movesets'
 import type { FighterId, MoveSlot } from '../fighting/types'
-import type { ArenaHatsuEffect, BodyZone, CombatAction } from './types'
+import type { ArenaHatsuEffect, BodyZone, CombatAction, CombatState } from './types'
 
 type FightingMoveAction = Extract<CombatAction, { type: 'FIGHTING_MOVE' }>
 type HatsuAction = Extract<CombatAction, { type: 'HATSU' }>
+type PrepareHatsuAction = Extract<CombatAction, { type: 'PREPARE_HATSU' }>
 
 interface FightingHatsuRoute {
   hatsuId: string
   effect: ArenaHatsuEffect
   zone: BodyZone
+  preparation?: PrepareHatsuAction['hatsuId']
+  sequenceCost?: true
 }
 
 const ROUTES = {
@@ -56,6 +59,23 @@ const ROUTES = {
     zone: 'arms',
   },
   'yokotani:neutralSpecial': { hatsuId: 'lsdf', effect: 'bind', zone: 'torso' },
+  'bonolenov:finisher': {
+    hatsuId: 'battle-cantabile-jupiter',
+    effect: 'impact',
+    zone: 'torso',
+    sequenceCost: true,
+  },
+  'tserriednich:neutralSpecial': {
+    hatsuId: 'parallel-future',
+    effect: 'enhance',
+    zone: 'head',
+    preparation: 'parallel-future',
+  },
+  'tserriednich:finisher': {
+    hatsuId: 'parallel-future',
+    effect: 'enhance',
+    zone: 'head',
+  },
 } satisfies Partial<Record<`${FighterId}:${MoveSlot}`, FightingHatsuRoute>>
 
 export function fightingHatsuRoute(
@@ -67,16 +87,32 @@ export function fightingHatsuRoute(
 }
 
 /** Routes only slots whose authored move names the same complete Arena Hatsu. */
-export function fightingHatsuAction(action: FightingMoveAction): HatsuAction | null {
+export function fightingHatsuAction(
+  state: CombatState,
+  action: FightingMoveAction,
+): HatsuAction | PrepareHatsuAction | null {
   const route = fightingHatsuRoute(action.fighterId, action.slot)
   const move = moveForSlot(action.fighterId, action.slot)
   if (!route || !move) return null
+  if (route.preparation && !preparationReady(state, action.side, route.preparation)) {
+    return { type: 'PREPARE_HATSU', side: action.side, hatsuId: route.preparation }
+  }
   return {
     type: 'HATSU',
     side: action.side,
     effect: route.effect,
     zone: route.zone,
     hatsuId: route.hatsuId,
-    cost: move.auraCost,
+    cost: route.sequenceCost ? undefined : move.auraCost,
   }
+}
+
+function preparationReady(
+  state: CombatState,
+  side: FightingMoveAction['side'],
+  hatsuId: PrepareHatsuAction['hatsuId'],
+): boolean {
+  const preparation = state[side].hatsuPreparation
+  if (preparation?.id !== hatsuId || preparation.expiresAt < state.clock) return false
+  return hatsuId !== 'rihan-predator' || preparation.observations >= 3
 }

@@ -96,8 +96,9 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'FIGHTING_MOVE') {
-    const hatsu = fightingHatsuAction(action)
+    const hatsu = fightingHatsuAction(state, action)
     if (!hatsu) return prepareFightingMove(state, action)
+    if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(state, hatsu.side, hatsu.hatsuId)
     const cast = castHatsu(state, hatsu)
     return cast === state ? state : reactEnvironment(cast, hatsu)
   }

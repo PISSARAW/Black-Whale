@@ -5,7 +5,7 @@ import { CHAIN_BUFFER, LANE_METRE, chainAccepts, comboHistory } from './moveChai
 import { usesClashNen } from './clashNen'
 import { reactEnvironment } from './environment'
 import { fightingHatsuAction } from './fightingHatsu'
-import { castHatsu } from './hatsuCast'
+import { castHatsu, prepareHatsu } from './hatsuCast'
 import {
   otherSide,
   type AttackIntent,
@@ -111,8 +111,9 @@ export function releaseBufferedMove(state: CombatState, side: CombatSide): Comba
   if (buffered.until < state.clock) return cleared
   const { fighterId, slot, targetAt } = buffered
   const action: FightingMoveAction = { type: 'FIGHTING_MOVE', side, fighterId, slot, targetAt }
-  const hatsu = fightingHatsuAction(action)
+  const hatsu = fightingHatsuAction(cleared, action)
   if (!hatsu) return prepareFightingMove(cleared, action, { buffer: false })
+  if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(cleared, hatsu.side, hatsu.hatsuId)
   const cast = castHatsu(cleared, hatsu)
   return cast === cleared ? cleared : reactEnvironment(cast, hatsu)
 }

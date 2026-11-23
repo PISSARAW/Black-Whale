@@ -68,9 +68,14 @@ export function castHatsu(
   if (!prepared(state, side, hatsuId)) return state
   const sequenceCost = requestedCost ?? sequenceAuraCost(hatsuId)
   if (!canCast(fighter, hatsuId, sequenceCost)) return state
-  const paid = { ...fighter, aura: fighter.aura - sequenceCost, intent: null }
+  const paid = {
+    ...fighter,
+    aura: fighter.aura - sequenceCost,
+    intent: null,
+    hatsuPreparation: null,
+  }
   const current = {
-    ...replace(state, side, { ...paid, hatsuPreparation: null }),
+    ...replace(state, side, paid),
     lastHatsuBySide: { ...state.lastHatsuBySide, [side]: hatsuId ?? null },
   }
   const rivalSide = otherSide(side)

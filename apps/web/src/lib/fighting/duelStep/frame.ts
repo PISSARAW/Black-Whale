@@ -41,6 +41,7 @@ import {
   breakHinrighHandcuffs,
 } from '../hinrighZakuroLuiniUpgrades'
 import { advanceBlackWhaleCanonUpgrades } from '../blackWhaleCanonUpgrades'
+import { advanceOpponentIntel } from '../perception/opponentIntel'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -142,20 +143,24 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceHinrighZakuroLuiniUpgrades(
-    advanceHalkenburgBonolenovUpgrades(
-      advanceShizukuHanzoKallutoUpgrades(
-        advanceFeitanTerebellumUpgrades(
-          advanceIllumiBiscuitUpgrades(
-            advanceTroupeUpgrades(
-              advanceNenPillars(
-                advanceBashoHaiku(
-                  advanceFurykovProfile(
-                    advanceMusseOwl(
-                      advanceLeorioSonar(
-                        advanceTsk17(
-                          advanceChrolloBookIntel(
-                            reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+  return advanceOpponentIntel(
+    advanceHinrighZakuroLuiniUpgrades(
+      advanceHalkenburgBonolenovUpgrades(
+        advanceShizukuHanzoKallutoUpgrades(
+          advanceFeitanTerebellumUpgrades(
+            advanceIllumiBiscuitUpgrades(
+              advanceTroupeUpgrades(
+                advanceNenPillars(
+                  advanceBashoHaiku(
+                    advanceFurykovProfile(
+                      advanceMusseOwl(
+                        advanceLeorioSonar(
+                          advanceTsk17(
+                            advanceChrolloBookIntel(
+                              reconcileBattleCantabile(
+                                reconcileMelodySound(finishExpiredFight(next)),
+                              ),
+                            ),
                           ),
                         ),
                       ),

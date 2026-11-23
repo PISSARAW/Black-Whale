@@ -29,6 +29,7 @@
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { impactCallout } from '$lib/fighting/impactCallout'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let victoryEnabled = true
@@ -56,6 +57,7 @@
   export let onBlinkyCommand: (side: FightSide, command: BlinkyCommand) => void = () => {}
   export let onOpponentControl: (key: keyof FightInput, active: boolean) => void = () => {}
   export let detailed = false
+  export let hudMode: FightHudMode = 'omniscient'
   export let showControls = false
   export let training = false
   export let paused = false
@@ -87,7 +89,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} {hudMode} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}

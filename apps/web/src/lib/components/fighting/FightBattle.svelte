@@ -32,6 +32,10 @@
   import type { ClashPractice } from '$lib/fighting/clashPractice'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
   import type { FightState } from '$lib/fighting/types'
+  import {
+    resolveFightHudMode,
+    type FightHudModePreference,
+  } from '$lib/fighting/perception/hudMode'
   import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
   import './fightBattle.css'
   export let language: 'fr' | 'en'
@@ -58,6 +62,7 @@
   let audioSettings = { ...DEFAULT_FIGHT_AUDIO }
   let detailed = false
   let hudScale = 1
+  let hudModePreference: FightHudModePreference = 'auto'
   let controlMode = 'auto'
   let touchDevice = false
   let pauseTab = 'overview'
@@ -65,6 +70,7 @@
   $: fr = language === 'fr'
   $: stage = fightStage(state.environment.stageId)
   $: format = fightFormat(state.formatId)
+  $: hudMode = resolveFightHudMode({ state, replay: replays.active, preference: hudModePreference })
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
@@ -120,6 +126,7 @@
       {comfort}
       {showControls}
       {detailed}
+      {hudMode}
       minimal
       onMoves={() => {
         pauseTab = 'moves'
@@ -219,6 +226,7 @@
           bind:comfort
           bind:detailed
           bind:hudScale
+          bind:hudModePreference
           bind:controlMode
         /><FightAudioSettings {language} bind:settings={audioSettings} inline />
       {:else if pauseTab === 'replays'}<FightReplays

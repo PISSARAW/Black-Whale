@@ -6,6 +6,7 @@
   import { bodyMemoryLabel } from '$lib/fighting/bodyMemory'
   import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
   import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
+  import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
@@ -16,6 +17,7 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let detailed = false
+  export let hudMode: FightHudMode = 'omniscient'
 
   const sides: FightSide[] = ['player', 'opponent']
   $: format = fightFormat(state.formatId)
@@ -23,7 +25,7 @@
   $: untimed = state.mode === 'training' || format.timeLimit === false
 </script>
 
-<div class="hud">
+<div class="hud" data-hud-mode={hudMode}>
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}

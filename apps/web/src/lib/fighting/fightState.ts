@@ -41,6 +41,7 @@ import { carryTskPoison } from './tsk17'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
 import { carryBodyMemory } from './bodyMemory'
+import { carryOpponentIntel, createFightIntel } from './perception/opponentIntel'
 
 interface CreateFightOptions {
   formatId?: FightFormatId
@@ -88,6 +89,7 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
     burstAvailable: { player: true, opponent: true },
+    opponentIntel: createFightIntel(),
   })
   return applyControlSchemes(
     prepareHinrighKits(
@@ -132,6 +134,7 @@ export function nextFightRound(state: FightState): FightState {
       tsk17: undefined,
       burst: undefined,
       burstAvailable: { player: true, opponent: true },
+      opponentIntel: carryOpponentIntel(state.opponentIntel),
       player: carryTskPoison(
         carryBodyMemory(
           preserveLifespan(

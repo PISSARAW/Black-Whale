@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { chrolloNenActive } from '$lib/fighting/chrolloBook'
   import { chrolloPageName } from '$lib/fighting/chrolloPageNames'
@@ -15,7 +15,7 @@
   $: active = chrolloNenActive(fighter)
   $: effects = state[side === 'player' ? 'opponent' : 'player'].hatsuEffects
   $: useKey = side === 'player' ? $bindings.playerSpecial : $bindings.opponentSpecial
-  $: secondaryKey = side === 'player' ? $bindings.playerFinisher : $bindings.opponentFinisher
+  $: secondaryKey = finisherHint($bindings, side)
 </script>
 
 {#if fighter.id === 'chrollo' && book}

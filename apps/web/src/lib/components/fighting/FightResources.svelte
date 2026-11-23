@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fightSeatLabel } from '$lib/fighting/pvp/presentation'
-  import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import FightDoorStatus from './FightDoorStatus.svelte'
   import FightIllumiStatus from './FightIllumiStatus.svelte'
@@ -100,7 +100,7 @@
             class:ready={canUseRangedAttack(fighter)}
             title={`${language === 'fr' ? ranged.labelFr : ranged.labelEn} · ${rangedAuraCost(fighter.id)} aura`}
           >
-            {$bindings.playerRanged} · {language === 'fr' ? ranged.labelFr : ranged.labelEn} · {canUseRangedAttack(
+            {$bindings.playerSpecial} · {language === 'fr' ? ranged.labelFr : ranged.labelEn} · {canUseRangedAttack(
               fighter,
             )
               ? language === 'fr'
@@ -129,7 +129,7 @@
                 $bindings,
               )}
             >
-              {$bindings.playerFinisher} · {language === 'fr' ? finisher.nameFr : finisher.nameEn} · {finisherReady(
+              {finisherHint($bindings)} · {language === 'fr' ? finisher.nameFr : finisher.nameEn} · {finisherReady(
                 state,
                 'player',
               )

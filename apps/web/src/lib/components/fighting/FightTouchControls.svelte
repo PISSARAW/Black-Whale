@@ -65,17 +65,18 @@
     <FightTouchButton label={fr ? 'Projection / déprojection' : 'Throw / tech'} onPress={onThrow}
       >{fr ? 'Proj.' : 'Throw'}</FightTouchButton
     >
-    <FightTouchButton
-      label={fr ? shot.labelFr : shot.labelEn}
-      className="ranged-button"
-      onPress={() => onAttack('ranged')}>{fr ? 'Tir' : 'Shot'}</FightTouchButton
+    <FightHeldButton
+      label={fr ? 'Action contextuelle' : 'Context action'}
+      className="context-button"
+      onHold={(active) => onControl('context', active)}
+      >{fr ? 'Contexte' : 'Context'}</FightHeldButton
     >
     {#if state.player.id !== 'camilla'}
       <FightHeldButton
         className="special-button"
         label={moveInputHint(special.hint, fightTouchBindings(language))}
         onHold={(active) => onControl('hatsu', active)}
-        onCommit={() => onAttack('special')}>Hatsu</FightHeldButton
+        onPress={() => onAttack('special')}>Hatsu</FightHeldButton
       >
     {/if}
     {#if movesetFor(state.player.id) && finisher}

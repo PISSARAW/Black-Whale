@@ -63,11 +63,7 @@
       opponentControl: () => {},
       opponentAttack: () => {},
       attack: move,
-      action: (value) => {
-        if (value === 'o') move('throw')
-        else if (value === 'h') move('finisher')
-        else if (attackKeys[value]) move(attackKeys[value])
-      },
+      action: () => {},
     })
   }
   async function join() {

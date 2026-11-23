@@ -124,26 +124,24 @@
         <dd>{language === 'fr' ? 'Déplacement, saut, accroupi' : 'Move, jump, crouch'}</dd>
         <dt>A / B / X / Y</dt>
         <dd>
-          {language === 'fr' ? 'Léger / lourd / Hatsu / tir' : 'Light / heavy / Hatsu / ranged'}
+          {language === 'fr'
+            ? 'Léger / Lourd / Hatsu / Kaméo (A+B : Projection · B+X : Ultime)'
+            : 'Light / Heavy / Hatsu / Kameo (A+B: Throw · B+X: Finisher)'}
         </dd>
         <dt>LB / RB</dt>
-        <dd>{language === 'fr' ? 'Garde / Aura' : 'Guard / Aura'}</dd>
+        <dd>
+          {language === 'fr'
+            ? 'Garde / Aura (Garde+Aura = Ken, + dir. = Ko défensif · Aura+X = On)'
+            : 'Guard / Aura (Guard+Aura = Ken, + dir = defensive Ko · Aura+X = On)'}
+        </dd>
         <dt>LT / RT</dt>
         <dd>
           {language === 'fr'
-            ? 'Projection / ultime (Aura + RT : Emperor Time)'
-            : 'Throw / finisher (Aura + RT: Emperor Time)'}
+            ? 'Burst / Contexte (arène, objet, plaies, oreilles, parler)'
+            : 'Burst / Context (arena, object, wounds, ears, speak)'}
         </dd>
-        <dt>Start / Back</dt>
-        <dd>{language === 'fr' ? 'Lancer ou pause / parler' : 'Start or pause / speak'}</dd>
-        <dt>Back + LB / RB</dt>
-        <dd>
-          {language === 'fr'
-            ? 'Couvrir les oreilles / les plaies (mains occupées)'
-            : 'Cover ears / wounds (hands occupied)'}
-        </dd>
-        <dt>L3 / R3</dt>
-        <dd>{language === 'fr' ? 'Arène / Gyo' : 'Arena / Gyo'}</dd>
+        <dt>Start</dt>
+        <dd>{language === 'fr' ? 'Lancer ou pause' : 'Start or pause'}</dd>
       </dl>
       <p>
         {language === 'fr'

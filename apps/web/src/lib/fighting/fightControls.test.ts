@@ -29,21 +29,24 @@ function pad(buttons: number[] = [], axes = [0, 0], index = 0): FightPad {
 const key = (value: string, code = value) => ({ key: value, code })
 
 describe('fight keyboard configuration', () => {
-  it('keeps projections, arena commands and pause distinct for both players', () => {
+  it('keeps the 8-button layout and pause distinct for both players', () => {
     const keys = defaultBindings()
     expect(bindingError(keys)).toBeNull()
-    expect(keys.playerThrow).toBe('o')
-    expect(keys.playerArena).toBe('F3')
-    expect(keys.opponentArena).toBe('F10')
+    expect(keys.playerKameo).toBe('u')
+    expect(keys.playerBurst).toBe('o')
+    expect(keys.playerContext).toBe('h')
+    expect(keys.opponentKameo).toBe('.')
+    expect(keys.opponentBurst).toBe('/')
+    expect(keys.opponentContext).toBe('b')
     expect(keys.pause).toBe('p')
   })
-  it('rejects duplicate keys, advanced Nen keys, browser shortcuts and Easter Egg keys', () => {
-    for (const value of ['k', 'g', '1', 'F2', 'F4', 'F5', 'Tab', 'Escape'])
+  it('rejects duplicate keys, browser shortcuts and Easter Egg keys', () => {
+    for (const value of ['k', 'F2', 'F4', 'F5', 'Tab', 'Escape'])
       expect(assignControlKey(defaultBindings(), 'playerLight', value)).toBeNull()
   })
   it('remaps the physical key and disables its former primary shortcut', () => {
-    const bindings = assignControlKey(defaultBindings(), 'playerLight', 'V')!
-    expect(bindings).toBeNull() // P2 speech already owns V.
+    const duplicate = assignControlKey(defaultBindings(), 'playerLight', 'M')
+    expect(duplicate).toBeNull() // P2 heavy already owns M.
     const custom = assignControlKey(defaultBindings(), 'playerLight', 'é')!
     const mapper = createKeyboardMapper()
     expect(mapper.key(key('é', 'KeyE'), true, custom)).toBe('j')
@@ -88,11 +91,13 @@ describe('standard fighting gamepads', () => {
     expect(sampleGamepad(pad([], [0.4, 0]), null, held.input).input.right).toBe(true)
     expect(sampleGamepad(pad([], [0.25, 0]), null, held.input).input.right).toBe(false)
   })
-  it('triggers attacks once per press and Hatsu once on release', () => {
+  it('triggers attacks and Hatsu once on press (no negative edge)', () => {
     expect(sampleGamepad(pad([0]), pad()).actions).toEqual(['light'])
     expect(sampleGamepad(pad([0]), pad([0])).actions).toEqual([])
-    expect(sampleGamepad(pad([2]), pad()).input.hatsu).toBe(true)
-    expect(sampleGamepad(pad(), pad([2])).actions).toEqual(['special'])
+    const hatsuPress = sampleGamepad(pad([2]), pad())
+    expect(hatsuPress.input.hatsu).toBe(true)
+    expect(hatsuPress.actions).toEqual(['special'])
+    expect(sampleGamepad(pad(), pad([2])).actions).toEqual([])
     expect(sampleGamepad(pad(), pad()).actions).toEqual([])
   })
   it('requires neutral after connection and does not fire a held attack on startup', () => {
@@ -153,7 +158,7 @@ describe('configured fight input dispatch', () => {
     mapper.clear()
     expect(mapper.key(key('l'), false, defaultBindings())).toBeNull()
   })
-  it('keeps throw and pause reachable in local mode while retaining arena commands', () => {
+  it('keeps burst, context and pause reachable in local mode', () => {
     const action = vi.fn(),
       control = vi.fn(),
       opponentControl = vi.fn()
@@ -169,31 +174,33 @@ describe('configured fight input dispatch', () => {
       attack: vi.fn(),
       action,
     }
-    for (const key of ['o', 'p', 'F3', 'F10']) {
+    for (const key of ['o', 'h', 'p', 'b', '/']) {
       dispatchFightKey(
         { key, repeat: false, preventDefault: vi.fn() } as unknown as KeyboardEvent,
         true,
         options,
       )
     }
-    expect(action.mock.calls.map(([key]) => key)).toEqual(['o', 'p'])
-    expect(control).toHaveBeenCalledWith('arena', true)
-    expect(opponentControl).toHaveBeenCalledWith('arena', true)
+    expect(action.mock.calls.map(([key]) => key)).toEqual(['p'])
+    expect(control).toHaveBeenCalledWith('burst', true)
+    expect(control).toHaveBeenCalledWith('context', true)
+    expect(opponentControl).toHaveBeenCalledWith('context', true)
+    expect(opponentControl).toHaveBeenCalledWith('burst', true)
   })
   it('renders configured move commands without replacing technique names', () => {
-    const bindings = { ...defaultBindings(), playerSpecial: 'é', playerFinisher: '`' }
-    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / `')
+    const bindings = { ...defaultBindings(), playerSpecial: 'é', playerHeavy: '`' }
+    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / `+é')
     expect(moveInputHint('HISOKA · HATSU · KO', bindings)).toBe('HISOKA · HATSU · KO')
-    expect(moveInputHint('L / H', bindings, 'opponent')).toBe(', / b')
+    expect(moveInputHint('L / H', bindings, 'opponent')).toBe(', / m+,')
   })
 })
 
-it('does not release a charged Hatsu accidentally when focus returns after blur', () => {
+it('does not trigger Hatsu accidentally when focus returns after blur', () => {
   const reader = createGamepadReader()
   reader.poll([pad()], true)
   reader.poll([pad([2])], true)
   reader.release()
   expect(reader.poll([pad()], true).actions).toEqual([])
-  reader.poll([pad([2])], true)
-  expect(reader.poll([pad()], true).actions).toEqual([{ side: 'player', action: 'special' }])
+  expect(reader.poll([pad([2])], true).actions).toEqual([{ side: 'player', action: 'special' }])
+  expect(reader.poll([pad()], true).actions).toEqual([])
 })

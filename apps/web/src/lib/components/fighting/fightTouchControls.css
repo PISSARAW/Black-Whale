@@ -24,7 +24,7 @@
 }
 .touch-defense {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   width: 100%;
   gap: 6px;
 }
@@ -48,6 +48,14 @@
   font-size: 0.65rem;
   background: #4d3268eb;
   border-color: #c5a0fa;
+}
+.touch-controls .touch-attacks .context-button {
+  width: 100%;
+  padding: 0.2rem;
+  border-radius: 50%;
+  font-size: 0.58rem;
+  background: #2b2740eb;
+  border-color: #9e8ec2;
 }
 .touch-tools {
   display: flex;

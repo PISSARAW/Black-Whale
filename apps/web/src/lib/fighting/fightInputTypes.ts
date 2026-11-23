@@ -1,5 +1,7 @@
 /** Per-tick fighter input. Re-exported by types.ts; extracted to keep it under 500 lines. */
 export interface FightInput {
+  /** Unified tactical/context button: resolves to wounds, ears, interact, arena, or call. */
+  context?: boolean
   /** One-shot defensive aura release while suffering a combo. */
   burst?: boolean
   /** Calls the selected support actor, with a direction-relative entry. */

@@ -1,13 +1,46 @@
-import type { AttackKind, FightInput, FightMode, MoveAction } from '$lib/fighting/types'
-import { opponentAttackKeys, opponentMovementKeys } from './fightingKeys'
+import { createCombatChordTracker } from '$lib/fighting/combatChords'
+import type { FightInput, FightMode, MoveAction } from '$lib/fighting/types'
+import { attackKeys, opponentAttackKeys, opponentMovementKeys } from './fightingKeys'
 import { isDisplayInput } from './fightingPageHelpers'
+
+const playerChords = createCombatChordTracker()
+const opponentChords = createCombatChordTracker()
+
+export function resetKeyboardChords(): void {
+  playerChords.clear()
+  opponentChords.clear()
+}
 
 export function ignoresFightKey(event: KeyboardEvent, active: boolean): boolean {
   return active && isDisplayInput(event.target)
 }
 
+interface SideAttackOptions {
+  input: Pick<FightInput, 'guard'>
+  control: (key: keyof FightInput, active: boolean) => void
+  onMove: (action: MoveAction) => void
+}
+
+function handleOffensiveKey(
+  tracker: ReturnType<typeof createCombatChordTracker>,
+  action: 'light' | 'heavy' | 'special',
+  options: SideAttackOptions & { active: boolean; repeat: boolean },
+): void {
+  if (action === 'special') options.control('hatsu', options.active)
+  if (!options.active) {
+    tracker.release(action)
+    return
+  }
+  if (options.repeat) return
+  const resolved = tracker.press(action, options.input)
+  if (!resolved) return
+  if (resolved.kind === 'burst') options.control('burst', true)
+  else options.onMove(resolved.action)
+}
+
 interface OpponentKeys {
   mode: FightMode
+  input: FightInput
   control: (key: keyof FightInput, active: boolean) => void
   attack: (action: MoveAction | 'ranged') => void
 }
@@ -23,36 +56,32 @@ export function dispatchOpponentKey(
   const action = opponentAttackKeys[key]
   if (!movement && !action) return false
   event.preventDefault()
-  if (action === 'special') return opponentHatsu(event, active, options)
   if (movement) options.control(movement, active)
-  if (action && active && !event.repeat) options.attack(action)
-  return true
-}
-
-/** P2 uses the same hold/release contract as P1, including charging and the On oath. */
-function opponentHatsu(event: KeyboardEvent, active: boolean, options: OpponentKeys): boolean {
-  if (active && !event.repeat) options.control('hatsu', true)
-  if (!active) {
-    options.attack('special')
-    options.control('hatsu', false)
+  if (action) {
+    handleOffensiveKey(opponentChords, action, {
+      input: options.input,
+      control: options.control,
+      onMove: options.attack,
+      active,
+      repeat: event.repeat,
+    })
   }
   return true
 }
 
-export function dispatchHatsuKey(
+export function dispatchPlayerAttackKey(
   event: KeyboardEvent,
   active: boolean,
-  options: {
-    control: (key: keyof FightInput, active: boolean) => void
-    attack: (kind: AttackKind) => void
-  },
+  options: SideAttackOptions,
 ): boolean {
-  if (event.key.toLowerCase() !== 'l') return false
+  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
+  const action = attackKeys[key]
+  if (!action) return false
   event.preventDefault()
-  if (active && !event.repeat) options.control('hatsu', true)
-  if (!active) {
-    options.attack('special')
-    options.control('hatsu', false)
-  }
+  handleOffensiveKey(playerChords, action, {
+    ...options,
+    active,
+    repeat: event.repeat,
+  })
   return true
 }

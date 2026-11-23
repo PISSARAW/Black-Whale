@@ -30,7 +30,15 @@ import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
+export const EN_HOLD_FRAMES = 18
 export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
+
+declare module './types' {
+  interface ArcadeFighter {
+    /** Consecutive frames holding Aura + Down (transitions Zetsu -> En at EN_HOLD_FRAMES). */
+    auraDownFrames?: number
+  }
+}
 
 export type FightNenTactic =
   'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko' | 'on' | 'en' | 'shu' | 'in'
@@ -64,7 +72,14 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   const committed = defensiveKo(fighter, input)
   if (committed) return committed
   if (fighter.defensiveKo) fighter = { ...fighter, defensiveKo: undefined }
-  return applyAdvancedNen(heldAuraContext(fighter, input), input)
+  const holdingAuraDown = Boolean(input.aura && input.down && !input.guard)
+  const auraDownFrames = holdingAuraDown ? (fighter.auraDownFrames ?? 0) + 1 : 0
+  const tracked =
+    auraDownFrames > 0 || fighter.auraDownFrames
+      ? { ...fighter, auraDownFrames: auraDownFrames || undefined }
+      : fighter
+  const enInput = auraDownFrames >= EN_HOLD_FRAMES ? { ...input, en: true } : input
+  return applyAdvancedNen(heldAuraContext(tracked, enInput), enInput)
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -75,7 +90,7 @@ function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFight
     return withAction(released, { type: 'TEN' })
   }
 
-  if (input.down) return withAction(fighter, { type: 'ZETSU' })
+  if (input.down && !input.en) return withAction(fighter, { type: 'ZETSU' })
   if (input.guard) return withAction(fighter, { type: 'KEN', on: true })
   if (input.jump) {
     const ten = withAction(fighter, { type: 'TEN' })

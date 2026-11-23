@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { benjaminNenActive } from '$lib/fighting/benjaminBaton'
   import type { FightSide, FightState } from '$lib/fighting/types'
@@ -12,7 +12,7 @@
   $: fighter = state[side]
   $: baton = fighter.hatsuEffects.baton
   $: active = benjaminNenActive(fighter)
-  $: cardKey = side === 'player' ? $bindings.playerFinisher : $bindings.opponentFinisher
+  $: cardKey = finisherHint($bindings, side)
 </script>
 
 {#if fighter.id === 'benjamin' && baton}

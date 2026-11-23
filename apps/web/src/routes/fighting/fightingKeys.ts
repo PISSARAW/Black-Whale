@@ -1,22 +1,16 @@
 import type { AttackKind, FightInput, MoveAction } from '$lib/fighting/types'
 
-/** Keyboard layout of the duel: P1 on letters, P2 on arrows in local versus. */
+/**
+ * 8-button keyboard layout:
+ * P1: ZQSD (or WASD/Arrows) + Shift (Guard), Space (Aura), J (Light), K (Heavy),
+ *     L (Hatsu), U (Kameo), O (Burst), H (Context).
+ * P2: Arrows + Enter (Guard), Alt (Aura), N (Light), M (Heavy),
+ *     , (Hatsu), . (Kameo), / (Burst), B (Context).
+ */
 export const movementKeys: Record<string, keyof FightInput> = {
-  CapsLock: 'burst',
-  F3: 'arena',
-  '6': 'interact',
-  r: 'en',
-  f: 'shu',
-  x: 'conceal',
-  g: 'gyo',
-  '1': 'focusHead',
-  '2': 'focusTorso',
-  '3': 'focusHands',
-  '4': 'focusFeet',
-  y: 'plugWounds',
-  e: 'coverEars',
-  t: 'call',
-  '<': 'kameo',
+  u: 'kameo',
+  o: 'burst',
+  h: 'context',
   ArrowLeft: 'left',
   q: 'left',
   a: 'left',
@@ -28,32 +22,19 @@ export const movementKeys: Record<string, keyof FightInput> = {
   ArrowDown: 'down',
   s: 'down',
   Shift: 'guard',
-  i: 'guard',
   ' ': 'aura',
 }
 
-export const attackKeys: Record<string, AttackKind> = {
+export const attackKeys: Record<string, Extract<AttackKind, 'light' | 'heavy' | 'special'>> = {
   j: 'light',
   k: 'heavy',
-  u: 'ranged',
+  l: 'special',
 }
 
 export const opponentMovementKeys: Record<string, keyof FightInput> = {
-  Delete: 'burst',
-  F10: 'arena',
-  '=': 'interact',
-  '[': 'en',
-  ']': 'shu',
-  '\\': 'conceal',
-  ';': 'gyo',
-  '7': 'focusHead',
-  '8': 'focusTorso',
-  '9': 'focusHands',
-  '0': 'focusFeet',
-  '5': 'plugWounds',
-  c: 'coverEars',
-  v: 'call',
-  Backspace: 'kameo',
+  '.': 'kameo',
+  '/': 'burst',
+  b: 'context',
   ArrowLeft: 'left',
   ArrowRight: 'right',
   ArrowUp: 'jump',
@@ -62,11 +43,8 @@ export const opponentMovementKeys: Record<string, keyof FightInput> = {
   Alt: 'aura',
 }
 
-export const opponentAttackKeys: Record<string, MoveAction | 'ranged'> = {
+export const opponentAttackKeys: Record<string, Extract<MoveAction, 'light' | 'heavy' | 'special'>> = {
   n: 'light',
   m: 'heavy',
   ',': 'special',
-  '.': 'ranged',
-  '/': 'throw',
-  b: 'finisher',
 }

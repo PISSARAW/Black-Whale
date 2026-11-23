@@ -1,4 +1,4 @@
-import { moveInputHint } from './fightControlHints'
+import { finisherHint, moveInputHint } from './fightControlHints'
 import type { KeyboardBindings } from './fightInputBindings'
 import { moveForSlot } from './movesets'
 import type { SignatureCombo, SignatureStep } from './signatureCombos'
@@ -26,12 +26,12 @@ export function signatureStepLabel(
 function techniqueLabel(step: SignatureStep, language: Language, bindings: KeyboardBindings) {
   if ('ranged' in step)
     return language === 0
-      ? `Tir (${bindings.playerRanged}, ${step.hits} balles)`
-      : `Ranged (${bindings.playerRanged}, ${step.hits} shots)`
+      ? `Tir (${bindings.playerSpecial}, ${step.hits} balles)`
+      : `Ranged (${bindings.playerSpecial}, ${step.hits} shots)`
   if ('emperor' in step)
     return language === 0
-      ? `Emperor Time (Aura + ${bindings.playerFinisher}, pendant la capture)`
-      : `Emperor Time (Aura + ${bindings.playerFinisher}, during the capture)`
+      ? `Emperor Time (Aura + ${finisherHint(bindings)}, pendant la capture)`
+      : `Emperor Time (Aura + ${finisherHint(bindings)}, during the capture)`
   return language === 0
     ? 'Ancrage au plafond (Arsenal · Bungee Gum · Plafond / poutre)'
     : 'Ceiling anchor (Arsenal · Bungee Gum · Ceiling / beam)'

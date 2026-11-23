@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import type { ArcadeFighter, FightSide } from '$lib/fighting/types'
   import { createPainPacker } from '$lib/fighting/feitanPain'
@@ -16,9 +16,7 @@
   $: preparation =
     fighter.id === 'chrollo'
       ? useKey
-      : side === 'opponent' && local
-        ? $bindings.opponentFinisher
-        : $bindings.playerFinisher
+      : finisherHint($bindings, side === 'opponent' && local ? 'opponent' : 'player')
 </script>
 
 {#if visible && pain}

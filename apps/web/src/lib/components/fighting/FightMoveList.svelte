@@ -2,7 +2,7 @@
   import { fightTouchBindings } from '$lib/fighting/fightTouchHints'
   import FightStyleGuide from './FightStyleGuide.svelte'
   import FightMoveProperties from './FightMoveProperties.svelte'
-  import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { movesetFor, moveById } from '$lib/fighting/movesets'
   import type { FighterId } from '$lib/fighting/types'
@@ -54,8 +54,8 @@
     {#if arena}
       <h3>
         {language === 'fr'
-          ? `Action d’arène · ${hints.playerArena}${touch ? '' : ` (P2 : ${hints.opponentArena})`}`
-          : `Arena action · ${hints.playerArena}${touch ? '' : ` (P2: ${hints.opponentArena})`}`}
+          ? `Action d’arène · ${hints.playerContext}${touch ? '' : ` (P2 : ${hints.opponentContext})`}`
+          : `Arena action · ${hints.playerContext}${touch ? '' : ` (P2: ${hints.opponentContext})`}`}
       </h3>
       <p>{arena.name[language === 'fr' ? 0 : 1]} · {arena.effect[language === 'fr' ? 0 : 1]}</p>
       <p>{arena.condition[language === 'fr' ? 0 : 1]}</p>
@@ -99,7 +99,7 @@
       <footer>
         <strong
           >{fighterId === 'chrollo'
-            ? `Double Face · ${hints.playerFinisher}`
+            ? `Double Face · ${finisherHint(hints)}`
             : language === 'fr'
               ? 'Condition du finisher'
               : 'Finisher condition'}</strong

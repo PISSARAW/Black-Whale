@@ -68,6 +68,8 @@ import { applyRivalryRules } from './rivalryRules'
 import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
+import { resolveContextInput } from './contextInput'
+import { applyOnContext, canSwearOn } from './onTechnique'
 import { resolveContacts, settleBodies } from './duelStep/contacts'
 import { closeFrame, openFrame } from './duelStep/frame'
 import { resolveKameoFrameContacts, stepKameoFrame } from './kameos/frame'
@@ -166,7 +168,10 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
-  const inputs = { player: input, opponent: opponentInput }
+  const inputs = {
+    player: resolveContextInput(state, 'player', input),
+    opponent: opponentInput ? resolveContextInput(state, 'opponent', opponentInput) : undefined,
+  }
   const opened = openFrame(state, inputs, performAuraAttack)
   if (opened.pending) return opened.state
   const start = opened.state
@@ -202,6 +207,14 @@ export function performMove(options: PerformMoveOptions): FightState {
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
+  if (
+    options.action === 'special' &&
+    options.input?.aura &&
+    canSwearOn(options.state[options.side])
+  ) {
+    const sworn = applyOnContext(options.state[options.side], { ...options.input, hatsu: true })
+    if (sworn) return { ...options.state, [options.side]: sworn }
+  }
   return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
 }
 

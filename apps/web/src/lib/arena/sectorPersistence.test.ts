@@ -3,6 +3,7 @@ import { initialCombatState } from '../combat/types'
 import { TIER5_PARCEL_ACTIVITY } from '../tour/simulation/tier5Loop'
 import {
   captureArenaSector,
+  connectArenaSectorToTour,
   createArenaSectorSnapshot,
   parseArenaSector,
   restoreArenaSector,
@@ -57,5 +58,30 @@ describe('persistent Arena sector', () => {
       securityAlert: 2,
     })
     expect(restored.physicalObjects.crate).toEqual(snapshot.physicalObjects.crate)
+  })
+
+  it('adopts the active Tour world and returns combat aura and incidents to it', () => {
+    const snapshot = createArenaSectorSnapshot()
+    snapshot.simulation.incidents.push('arena-history')
+    const tour = createArenaSectorSnapshot().simulation
+    tour.id = 'free-life:tour'
+    tour.mode = 'FREE_LIFE'
+    tour.player.aura = 64
+    tour.incidents.push('tour-history')
+
+    const connected = connectArenaSectorToTour(snapshot, tour)
+    const restored = restoreArenaSector(combat(), connected)
+    restored.player.aura = 41
+    restored.outcome = 'won'
+    const captured = captureArenaSector(restored, connected, 'tier-5-transverse-corridor')
+
+    expect(captured.simulation.mode).toBe('FREE_LIFE')
+    expect(captured.simulation.incidents).toEqual(
+      expect.arrayContaining(['arena-history', 'tour-history', 'arena-duel:1:won']),
+    )
+    expect(captured.simulation.player).toMatchObject({
+      aura: 41,
+      spaceId: 'tier-5-transverse-corridor',
+    })
   })
 })

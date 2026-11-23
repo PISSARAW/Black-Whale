@@ -38,11 +38,13 @@
   import {
     ARENA_SECTOR_STORAGE_KEY,
     captureArenaSector,
+    connectArenaSectorToTour,
     createArenaSectorSnapshot,
     parseArenaSector,
     restoreArenaSector,
     serializeArenaSector,
   } from '$lib/arena/sectorPersistence'
+  import { arenaSectorSituation } from '$lib/arena/sectorTour'
   import { ARENA_CHALLENGES } from '$lib/arena/challenges/catalogue'
   import { evaluateChallenge, evaluateChallengeProgress } from '$lib/arena/challenges/evaluate'
   import type { ChallengeObjective } from '$lib/arena/challenges/types'
@@ -84,6 +86,7 @@
   import { BODY_ZONES, type BodyZone, type CombatAction, type CombatEvent } from '$lib/combat/types'
   import { floorOf, theShip, crossingsOn, spaceAt } from '$lib/tour/blueprint'
   import { TIER5_PARCEL_ACTIVITY } from '$lib/tour/simulation/tier5Loop'
+  import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
@@ -284,6 +287,13 @@
   let opponentFighter = $derived(arenaFighter(opponentFighterId))
   let playerSpaceId = $derived(spaceAt(plan, game.player.position)?.id ?? terrain.id)
   let opponentSpaceId = $derived(spaceAt(plan, game.opponent.position)?.id ?? terrain.id)
+  let sectorReturnHref = $derived(
+    persistentSector
+      ? $link(
+          `/tour?world=${sectorSnapshot.simulation.mode === 'FREE_LIFE' ? 'free' : 'alternative'}&space=${playerSpaceId}`,
+        )
+      : null,
+  )
   let opponentPresence = $derived(
     arenaDuelPresence({
       state: pov,
@@ -353,6 +363,7 @@
   let sectorLead = $derived(
     sectorSnapshot.simulation.activities[TIER5_PARCEL_ACTIVITY]?.stage ?? 'UNNOTICED',
   )
+  let sectorSituation = $derived(arenaSectorSituation(sectorSnapshot))
 
   function objectiveLabel(objective: ChallengeObjective): string {
     if (objective.kind === 'win') return $t.arena.ui.objective.win
@@ -784,6 +795,7 @@
     if (persistentSector) {
       sectorSnapshot = captureArenaSector(game, sectorSnapshot, playerSpaceId)
       safeStorageSet(localStorage, ARENA_SECTOR_STORAGE_KEY, serializeArenaSector(sectorSnapshot))
+      saveTourSimulation(localStorage, sectorSnapshot.simulation)
     }
     if (sourceHandoff) saveArenaHandoffResult(sessionStorage, sourceHandoff.id, game)
     safeStorageSet(sessionStorage, 'black-whale:arena-last-replay', serializeReplay(lastReplay))
@@ -894,6 +906,10 @@
     difficulty = experience.difficulty
     if (persistentSector) {
       sectorSnapshot = parseArenaSector(safeStorageGet(localStorage, ARENA_SECTOR_STORAGE_KEY))
+      const tourSimulation = loadTourSimulation(localStorage)
+      if (tourSimulation) {
+        sectorSnapshot = connectArenaSectorToTour(sectorSnapshot, tourSimulation)
+      }
     }
     game = freshGame(replayMatch())
     if (persistentSector) game = restoreArenaSector(game, sectorSnapshot)
@@ -1010,6 +1026,8 @@
   {#if briefingOpen}
     <ArenaBriefing
       goal={arenaFormatGoal(activeFormat, $locale === 'fr')}
+      sector={persistentSector ? sectorSituation : null}
+      french={$locale === 'fr'}
       onStart={() => (briefingOpen = false)}
     />
   {/if}
@@ -1466,6 +1484,10 @@
       {#if returnHref}
         <a class="handoff-return" href={returnHref}>
           {returnLabel()}
+        </a>
+      {:else if sectorReturnHref}
+        <a class="handoff-return" href={sectorReturnHref}>
+          {$locale === 'fr' ? 'Retourner dans la Tour' : 'Return to the Tour'}
         </a>
       {/if}
       <div class="difficulty-picker" aria-label={$t.arena.ui.difficulty}>

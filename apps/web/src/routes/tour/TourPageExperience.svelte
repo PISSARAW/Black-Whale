@@ -92,6 +92,14 @@
   import { pressureWitnesses, systemicNenWitnesses } from '$lib/tour/simulation/nenWitnesses'
   import { nenSimulationFor } from '$lib/tour/simulation/nenSession'
   import { ensureNenPilotZone } from '$lib/tour/simulation/nenEnvironment'
+  import { WAREHOUSE_SPACE } from '$lib/tour/warehouseView'
+  import {
+    ARENA_SECTOR_STORAGE_KEY,
+    parseArenaSector,
+    type ArenaSectorSnapshot,
+  } from '$lib/arena/sectorPersistence'
+  import { safeStorageGet } from '$lib/arena/storage'
+  import { arenaSectorSituation, projectArenaSectorIntoTour } from '$lib/arena/sectorTour'
   import TourNenProfilePanel from '$lib/components/tour/TourNenProfilePanel.svelte'
   import type { PageData } from './$types'
 
@@ -120,6 +128,7 @@
   const navigation = new TourNavigationState(ship, initialTierId)
   const tourMode = $derived(tourWorldMode($page.url.searchParams.get('world')))
   let simulation = $state<TourSimulationV1 | null>(null)
+  let arenaSector = $state<ArenaSectorSnapshot | null>(null)
   let previousPressure: 'none' | 'ren' | 'on' = 'none'
   const routeActive = $derived($page.url.searchParams.get('route') === TSERRIEDNICH_ROUTE_ID)
   const routeHref = $derived.by(() => {
@@ -140,6 +149,17 @@
   const deck = $derived(deckOf(ship, tierId))
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
+  const sectorSituation = $derived(arenaSector ? arenaSectorSituation(arenaSector) : null)
+  const sectorTitle = $derived.by(() => {
+    if (!sectorSituation) return french ? 'Engager le duel du secteur' : 'Enter the sector duel'
+    if (sectorSituation.phase === 'lockdown')
+      return french ? 'Intervention imminente' : 'Intervention imminent'
+    if (sectorSituation.phase === 'watched')
+      return french ? 'Secteur sous surveillance' : 'Sector under watch'
+    if (sectorSituation.phase === 'altered')
+      return french ? 'Reprendre le duel altéré' : 'Resume the altered duel'
+    return french ? 'Engager le duel du secteur' : 'Enter the sector duel'
+  })
   const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
   const sourceOf = (entity: { source: string; sourceFr: string }) => localizedSource(entity, french)
   const sortedSpaces = $derived(
@@ -459,6 +479,8 @@
       spaceId: currentSpace?.id,
     })
     if (!simulation) return
+    arenaSector = parseArenaSector(safeStorageGet(localStorage, ARENA_SECTOR_STORAGE_KEY))
+    world = projectArenaSectorIntoTour(world, arenaSector)
     simulation = ensureNenPilotZone(simulation)
     hatsuSession.nen = simulation.player.nen
     hatsuSession.reserve = simulation.player.aura
@@ -1217,6 +1239,38 @@
   </TourPageStage>
 </TourWorkspace>
 
+{#if simulation && currentSpace?.id === WAREHOUSE_SPACE}
+  <a
+    class="arena-sector-entry"
+    data-phase={sectorSituation?.phase ?? 'quiet'}
+    href={$link('/arena?terrain=tier-5-warehouse&fighter=kurapika&enemy=hisoka&source=tour')}
+  >
+    <small>ARENA × TOUR</small>
+    <strong>{sectorTitle}</strong>
+    {#if sectorSituation}
+      <span class="arena-sector-state">
+        {french ? 'COMBATS' : 'FIGHTS'}
+        {sectorSituation.fights} ·
+        {french ? 'TÉMOINS' : 'WITNESSES'}
+        {sectorSituation.witnesses} ·
+        {french ? 'ALERTE' : 'ALERT'}
+        {sectorSituation.securityAlert}/5
+      </span>
+      <span>
+        {sectorSituation.changedObjects}
+        {french ? 'OBJETS ALTÉRÉS' : 'ALTERED OBJECTS'} ·
+        {sectorSituation.parcelStage.replaceAll('_', ' ')}
+      </span>
+    {:else}
+      <span
+        >{french
+          ? 'Combat 3D · conséquences persistantes'
+          : '3D combat · persistent consequences'}</span
+      >
+    {/if}
+  </a>
+{/if}
+
 {#if simulation}
   <TourNenProfilePanel
     {simulation}
@@ -1248,3 +1302,65 @@
 {#if castView.secret}
   <TourSecretCard secret={castView.secret} {french} onClose={() => (castView.secret = null)} />
 {/if}
+
+<style>
+  .arena-sector-entry {
+    position: fixed;
+    z-index: 34;
+    bottom: calc(7.5rem + env(safe-area-inset-bottom));
+    left: 50%;
+    display: flex;
+    width: min(22rem, calc(100vw - 2rem));
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgb(255 215 0 / 42%);
+    border-left: 3px solid #ffd700;
+    background: rgb(4 9 12 / 90%);
+    color: #fffff0;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-family: 'IBM Plex Mono', monospace;
+    text-decoration: none;
+    transform: translateX(-50%);
+    backdrop-filter: blur(10px);
+  }
+
+  .arena-sector-entry small,
+  .arena-sector-entry span {
+    color: #a8b3b7;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .arena-sector-entry strong {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .arena-sector-entry[data-phase='watched'] {
+    border-left-color: #ff9e43;
+  }
+
+  .arena-sector-entry[data-phase='lockdown'] {
+    border-color: rgb(255 77 94 / 55%);
+    border-left-color: #ff4d5e;
+  }
+
+  .arena-sector-entry .arena-sector-state {
+    color: #fffff0;
+  }
+
+  .arena-sector-entry:hover,
+  .arena-sector-entry:focus-visible {
+    border-color: #ffd700;
+    background: rgb(10 18 22 / 96%);
+    outline: none;
+  }
+
+  @media (max-width: 760px) {
+    .arena-sector-entry {
+      bottom: calc(5.8rem + env(safe-area-inset-bottom));
+    }
+  }
+</style>

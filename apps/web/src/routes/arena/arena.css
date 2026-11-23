@@ -65,6 +65,40 @@
     text-transform: uppercase;
   }
 
+  .briefing-sector {
+    display: grid;
+    margin: 0.9rem 0;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgb(255 215 0 / 30%);
+    border-left: 3px solid #ffd700;
+    background: rgb(255 215 0 / 5%);
+    gap: 0.18rem;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .briefing-sector[data-phase='watched'] {
+    border-left-color: #ff9e43;
+  }
+
+  .briefing-sector[data-phase='lockdown'] {
+    border-left-color: #ff4d5e;
+    background: rgb(255 77 94 / 7%);
+  }
+
+  .briefing-sector strong {
+    color: #fffff0;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .briefing-sector span,
+  .briefing-sector small {
+    color: #a8b3b7;
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+  }
+
   .briefing-goal {
     margin: 16px 0 26px;
     color: rgb(255 255 240 / 72%);

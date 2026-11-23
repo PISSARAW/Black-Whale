@@ -1,5 +1,9 @@
 import type { CombatState } from '../combat/types'
-import { actOnTier5Parcel, startTier5ParcelLoop } from '../tour/simulation/tier5Loop'
+import {
+  TIER5_PARCEL_ACTIVITY,
+  actOnTier5Parcel,
+  startTier5ParcelLoop,
+} from '../tour/simulation/tier5Loop'
 import {
   createTourSimulation,
   evolveTourSimulation,
@@ -44,6 +48,10 @@ export function createArenaSectorSnapshot(): ArenaSectorSnapshot {
 export function restoreArenaSector(state: CombatState, snapshot: ArenaSectorSnapshot): CombatState {
   return {
     ...state,
+    player: {
+      ...state.player,
+      aura: Math.max(0, Math.min(state.player.capacity, snapshot.simulation.player.aura)),
+    },
     physicalObjects: clonePhysicalObjects(snapshot.physicalObjects),
     environment: {
       ...state.environment,
@@ -52,6 +60,17 @@ export function restoreArenaSector(state: CombatState, snapshot: ArenaSectorSnap
       securityAlert: snapshot.securityAlert,
     },
   }
+}
+
+/** Adopts Tour's active world while retaining Arena history created before the bridge existed. */
+export function connectArenaSectorToTour(
+  snapshot: ArenaSectorSnapshot,
+  tour: TourSimulationV1,
+): ArenaSectorSnapshot {
+  const simulation = startTier5ParcelLoop(
+    evolveTourSimulation(tour, (draft) => mergeSectorHistory(draft, snapshot.simulation)),
+  )
+  return { ...snapshot, simulation }
 }
 
 export function captureArenaSector(
@@ -102,6 +121,7 @@ function recordFight(
   return evolveTourSimulation(simulation, (draft) => {
     draft.clock += state.clock
     draft.player.spaceId = playerSpaceId
+    draft.player.aura = state.player.aura
     const incident = `arena-duel:${fight}:${state.outcome}`
     if (!draft.incidents.includes(incident)) draft.incidents.push(incident)
     if (state.environment.witnesses > 0) recordWorkerWitness(draft, incident)
@@ -109,6 +129,27 @@ function recordFight(
       draft.incidents.push(`arena-scenery-altered:${fight}`)
     }
   })
+}
+
+function mergeSectorHistory(target: TourSimulationV1, sector: TourSimulationV1): void {
+  target.clock = Math.max(target.clock, sector.clock)
+  appendUnique(target.incidents, sector.incidents)
+  appendUnique(target.witnesses, sector.witnesses)
+  for (const [witness, knowledge] of Object.entries(sector.witnessKnowledge)) {
+    appendUnique((target.witnessKnowledge[witness] ??= []), knowledge)
+  }
+  const parcel = sector.activities[TIER5_PARCEL_ACTIVITY]
+  if (parcel && !target.activities[TIER5_PARCEL_ACTIVITY]) {
+    target.activities[TIER5_PARCEL_ACTIVITY] = JSON.parse(JSON.stringify(parcel))
+  }
+  const worker = sector.actors['warehouse-worker']
+  if (!worker) return
+  const targetWorker = (target.actors['warehouse-worker'] ??= JSON.parse(JSON.stringify(worker)))
+  appendUnique(targetWorker.memory, worker.memory)
+}
+
+function appendUnique(target: string[], additions: readonly string[]): void {
+  for (const value of additions) if (!target.includes(value)) target.push(value)
 }
 
 function recordWorkerWitness(simulation: TourSimulationV1, incident: string): void {

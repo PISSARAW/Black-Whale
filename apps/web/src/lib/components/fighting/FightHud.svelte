@@ -8,10 +8,10 @@
   import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import { resolveOpponentHudView } from '$lib/fighting/perception/opponentHudView'
-  import { livingPortraitTierLabel } from '$lib/fighting/perception/livingPortraitPose'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightLivingPortrait from './FightLivingPortrait.svelte'
+  import FightOpponentDossier from './FightOpponentDossier.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
@@ -28,7 +28,6 @@
   $: untimed = state.mode === 'training' || format.timeLimit === false
   $: opponentView = resolveOpponentHudView({ state, observerSide: 'player', mode: hudMode })
   $: tacticalOpponent = hudMode === 'tactical' && !state.spectatorView
-  $: vitalityLabel = livingPortraitTierLabel({ tier: opponentView.health.tier, language })
 </script>
 
 <div class="hud" data-hud-mode={hudMode}>
@@ -70,12 +69,7 @@
           </span>
         </div>
         {#if useLivingPortrait}
-          <div class="vitality-readout" class:adrenaline={opponentView.health.adrenalineAlert}>
-            {#if vitalityLabel}<span>{vitalityLabel}</span>{/if}
-            {#if opponentView.health.adrenalineAlert}
-              <b>{language === 'fr' ? 'ADRÉNALINE' : 'ADRENALINE'}</b>
-            {/if}
-          </div>
+          <FightOpponentDossier {state} view={opponentView} {language} />
         {:else}
           <FightHealth
             {fighter}
@@ -87,55 +81,55 @@
             textureMasked={texturePov.maskActive}
             auraSeeping={texturePov.auraSeeping}
           />
+          {#if !state.spectatorView}<div
+              class="aura"
+              class:hidden={!auraKnown}
+              role="meter"
+              aria-label={auraKnown
+                ? 'Aura'
+                : language === 'fr'
+                  ? 'Aura dissimulée'
+                  : 'Concealed aura'}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={auraKnown ? fighter.aura : undefined}
+            >
+              <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
+            </div>{/if}
+          <div class="nen-status">
+            <span
+              >{state.spectatorView
+                ? language === 'fr'
+                  ? 'Vue publique'
+                  : 'Public view'
+                : !mirrored
+                  ? nenStatus(fighter).join(' · ')
+                  : auraKnown
+                    ? auraDistribution(fighter)
+                    : language === 'fr'
+                      ? 'Nen masqué'
+                      : 'Nen hidden'}</span
+            >
+            {#if !state.spectatorView}<b
+                >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
+              >{/if}
+          </div>
+          {#if memory}<div class="body-memory">{memory}</div>{/if}
+          {#if !state.spectatorView}<div
+              class:spent={state.burstAvailable?.[side] === false}
+              class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
+              class="burst-status"
+            >
+              {state.burstAvailable?.[side] === false
+                ? (fighter.burstZetsuFrames ?? 0) > 0
+                  ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
+                  : 'BURST · SPENT'
+                : 'BURST · READY'}
+            </div>{/if}
+          {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
+          <FightComboMaster {state} {side} {language} compact />
+          <FightKameoBadge {state} {side} {language} />
         {/if}
-        {#if !state.spectatorView}<div
-            class="aura"
-            class:hidden={!auraKnown}
-            role="meter"
-            aria-label={auraKnown
-              ? 'Aura'
-              : language === 'fr'
-                ? 'Aura dissimulée'
-                : 'Concealed aura'}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow={auraKnown ? fighter.aura : undefined}
-          >
-            <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
-          </div>{/if}
-        <div class="nen-status">
-          <span
-            >{state.spectatorView
-              ? language === 'fr'
-                ? 'Vue publique'
-                : 'Public view'
-              : !mirrored
-                ? nenStatus(fighter).join(' · ')
-                : auraKnown
-                  ? auraDistribution(fighter)
-                  : language === 'fr'
-                    ? 'Nen masqué'
-                    : 'Nen hidden'}</span
-          >
-          {#if !state.spectatorView}<b
-              >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
-            >{/if}
-        </div>
-        {#if memory}<div class="body-memory">{memory}</div>{/if}
-        {#if !state.spectatorView}<div
-            class:spent={state.burstAvailable?.[side] === false}
-            class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
-            class="burst-status"
-          >
-            {state.burstAvailable?.[side] === false
-              ? (fighter.burstZetsuFrames ?? 0) > 0
-                ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
-                : 'BURST · SPENT'
-              : 'BURST · READY'}
-          </div>{/if}
-        {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
-        <FightComboMaster {state} {side} {language} compact />
-        <FightKameoBadge {state} {side} {language} />
       </div>
     </div>
   {/each}
@@ -282,20 +276,6 @@
   }
   .opponent-meter .aura {
     transform: scaleX(-1);
-  }
-  .vitality-readout {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.45rem;
-    min-height: calc(20px * var(--hud-scale, 1));
-    color: #d5c7b2;
-    font: 700 var(--hud-font)/1.2 var(--font-mono);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .vitality-readout.adrenaline b {
-    color: #ff8e7b;
   }
   .tower-score {
     container-type: inline-size;

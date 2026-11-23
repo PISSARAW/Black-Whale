@@ -202,3 +202,26 @@ accents plus explicit support and pivot feet.
 | Saiyu      |      7.3 | 8.0 |
 
 The roster total is now 294 dedicated physical clips and 66 generated clips.
+
+## P8 — final-wave low and directional control
+
+Dedicated `lowLight`, `forwardHeavy` and `backHeavy` routes give the final wave
+distinct compression, forward drive and backward braking. Their runtime support
+now follows the move semantics: advancing attacks plant the lead foot, while low
+and retreating attacks remain based over the rear foot.
+
+| Fighter    |  P7 |  P8 |
+| ---------- | --: | --: |
+| Phinks     | 7.9 | 8.6 |
+| Zakuro     | 7.8 | 8.6 |
+| Franklin   | 8.0 | 8.7 |
+| Sayird     | 8.0 | 8.7 |
+| Voconte    | 8.0 | 8.7 |
+| Bill       | 8.0 | 8.7 |
+| Biscuit    | 8.0 | 8.8 |
+| Furykov    | 8.0 | 8.8 |
+| Halkenburg | 8.0 | 8.7 |
+| Hinrigh    | 8.0 | 8.7 |
+| Saiyu      | 8.0 | 8.8 |
+
+The roster total is now 327 dedicated physical clips and 33 generated clips.

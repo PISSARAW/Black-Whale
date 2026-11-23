@@ -8,6 +8,7 @@ import {
   HALKENBURG_GUARD_TRANSFER_FRAMES,
   JUPITER_TRANSFER_PENALTY,
 } from './halkenburgBonolenovUpgrades'
+import { RIHAN_TACTICAL_TRANSFER_FRAMES } from './matchupValves'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -30,6 +31,7 @@ const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 export function nenTransferFrames(fighter: ArcadeFighter): number {
   if ((fighter.halkenburgSwappedFrames ?? 0) > 0) return HALKENBURG_GUARD_TRANSFER_FRAMES
   if (fighter.musseOwlActive || fighter.enReflexActive || seiyakuSpeedActive(fighter)) return 1
+  if (fighter.rihanTacticalRead) return RIHAN_TACTICAL_TRANSFER_FRAMES
   // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
   const trained = fighterNenTraining(fighter, 'enhancer').level
   const base =

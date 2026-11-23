@@ -30,13 +30,14 @@ declare module './types' {
   }
 }
 
-/** Shizuku 5S: Blinky swallows non-Nen physical projectiles and confetti, storing the last item. */
+/** Shizuku 5S: Blinky swallows non-living, non-Nen physical projectiles and confetti (rejects Shu/Nen & living Biohazard). */
 export function blinkySwallowNonNen(state: FightState, side: FightSide): FightState {
   const shizuku = state[side]
   let swallowed = shizuku.shizukuSwallowed
   const kept = state.projectiles.filter((p) => {
     const inRange = Math.abs(p.x - shizuku.x) <= BLINKY_VACUUM_RANGE
-    const nonNen = Boolean(p.physical || p.id.includes('confetti') || p.id.includes('item'))
+    const nenCharged = Boolean(p.shuCharged || p.nenInvestment)
+    const nonNen = !nenCharged && Boolean(p.physical || p.id.includes('confetti') || p.id.includes('item'))
     if (p.owner !== side && inRange && nonNen) {
       swallowed = p.id
       return false
@@ -48,16 +49,10 @@ export function blinkySwallowNonNen(state: FightState, side: FightSide): FightSt
     state.kallutoConfetti.owner !== side &&
     Math.abs(state.kallutoConfetti.x - shizuku.x) <= BLINKY_VACUUM_RANGE
   if (confettiCleared) swallowed = 'kalluto-confetti'
-  const pigeonCleared =
-    state.hinrighBioPigeon?.active &&
-    state.hinrighBioPigeon.owner !== side &&
-    Math.abs(state.hinrighBioPigeon.x - shizuku.x) <= BLINKY_VACUUM_RANGE
-  if (pigeonCleared) swallowed = 'hinrigh-bio-pigeon'
   return {
     ...state,
     projectiles: kept,
     kallutoConfetti: confettiCleared ? undefined : state.kallutoConfetti,
-    hinrighBioPigeon: pigeonCleared ? undefined : state.hinrighBioPigeon,
     [side]: { ...shizuku, shizukuSwallowed: swallowed },
   }
 }

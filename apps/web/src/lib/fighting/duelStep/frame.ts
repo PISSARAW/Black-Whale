@@ -41,6 +41,7 @@ import {
   breakHinrighHandcuffs,
 } from '../hinrighZakuroLuiniUpgrades'
 import { advanceBlackWhaleCanonUpgrades } from '../blackWhaleCanonUpgrades'
+import { advanceMatchupValves } from '../matchupValves'
 import { advanceOpponentIntel } from '../perception/opponentIntel'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
@@ -109,6 +110,7 @@ export function openFrame(
   state = advanceSeiyaku(state, inputs)
   state = advanceZodiacAndHeirUpgrades(state, inputs)
   state = advanceBlackWhaleCanonUpgrades(state, inputs)
+  state = advanceMatchupValves(state, inputs)
   state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)

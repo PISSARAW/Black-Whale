@@ -8,6 +8,7 @@ export const THETA_BULLET_LETHALITY = 1.2
 export const THETA_STEALTH_BONUS = 1.15
 export const THETA_IN_DRAIN = 1.5
 export const MARTIAL_KAMEO_COOLDOWN_FACTOR = 0.7
+export const YOKOTANI_KAMEO_COOLDOWN_FACTOR = 0.65
 
 const ownerId = (fighter: Pick<ArcadeFighter, 'id' | 'nenOwner'>) => fighter.nenOwner ?? fighter.id
 
@@ -23,8 +24,9 @@ export function hasFastMartialTransfer(fighter: Pick<ArcadeFighter, 'id' | 'nenO
   return FAST_TRANSFER_MARTIALS.has(ownerId(fighter))
 }
 
-/** Cluck, Sayird, and Yokotani cycle Kameo support 30% faster to offset having no duel Hatsu. */
+/** Cluck, Sayird (-30%), and Yokotani (-35%) cycle Kameo support faster to offset having no duel Hatsu. */
 export function kameoCooldownFactor(leader: Pick<ArcadeFighter, 'id' | 'nenOwner'>): number {
+  if (ownerId(leader) === 'yokotani') return YOKOTANI_KAMEO_COOLDOWN_FACTOR
   return hasFastMartialTransfer(leader) ? MARTIAL_KAMEO_COOLDOWN_FACTOR : 1
 }
 

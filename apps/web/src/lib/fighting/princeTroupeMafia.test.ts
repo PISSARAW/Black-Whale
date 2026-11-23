@@ -104,9 +104,9 @@ describe('5-fighter upgrades: Halkenburg, Bonolenov, Hinrigh, Zakuro, Luini', ()
 
     const withPigeon = deployHinrighBioPigeon(beginFight(createFight('shizuku', 'hinrigh', { mode: 'versus-local' })), 'opponent')
     const closePigeon = { ...withPigeon, hinrighBioPigeon: { ...withPigeon.hinrighBioPigeon!, x: withPigeon.player.x + 5 } }
-    const swallowed = blinkySwallowNonNen(closePigeon, 'player')
-    expect(swallowed.hinrighBioPigeon).toBeUndefined()
-    expect(swallowed.player.shizukuSwallowed).toBe('hinrigh-bio-pigeon')
+    const rejected = blinkySwallowNonNen(closePigeon, 'player')
+    expect(rejected.hinrighBioPigeon?.active).toBe(true)
+    expect(rejected.player.shizukuSwallowed).toBeUndefined()
   })
 
   it('Zakuro gains +30% reach while wounded and blood-eye drops reveal In/Zetsu foes without Gyo', () => {

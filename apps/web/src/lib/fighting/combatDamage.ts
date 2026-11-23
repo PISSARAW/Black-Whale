@@ -28,6 +28,7 @@ import {
 import { franklinKenDrain } from './troupeUpgrades'
 import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
 import { isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
+import { rihanTacticalDefenceFactor } from './matchupValves'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -99,6 +100,7 @@ function attackDamage(
       shuGuardFactor(defender, blocked && !guardBypassed, options.physicalProjectile) *
       thetaBulletDamageFactor(attacker, options.physicalProjectile) *
       furykovResistanceFactor(defender, attacker) *
+      rihanTacticalDefenceFactor(defender) *
       bashoFireAttackFactor(attacker) *
       openingMultiplier,
   )

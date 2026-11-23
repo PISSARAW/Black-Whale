@@ -3,7 +3,7 @@ import { selectedGumLink } from './bungeeNetwork'
 import { prepareCombatRoute, type CombatRouteSetup } from './combatRouteSetup'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { canAct } from './fightActorState'
-import { attackData } from './frameData'
+import { attackData, INPUT_BUFFER_FRAMES } from './frameData'
 import {
   EMPTY_INPUT,
   type FighterId,
@@ -59,6 +59,19 @@ function tap(state: FightState, input: Partial<FightInput> = {}, action: MoveAct
   return performMove({ state, side: 'player', action, input: { ...EMPTY_INPUT, ...input } })
 }
 
+/**
+ * The 4-frame input buffer opens the pursuit anticipation window at startup + active + 2 - buffer,
+ * so a tap performed right at the launch frame (startup + active - buffer - 2) is no longer accepted.
+ */
+function tapInAnticipationWindow(
+  state: FightState,
+  input: Partial<FightInput> = {},
+  action: MoveAction = 'light',
+) {
+  const data = attackData(state.player.attack!.kind, state.player)
+  return tap(afterActive(state, data.startup + data.active + 2 - INPUT_BUFFER_FRAMES), input, action)
+}
+
 function launcher(state: FightState) {
   const first = until(tap(state), (next) => next.impact?.comboHits === 1, false)
   const second = until(tap(first), (next) => next.impact?.comboHits === 2)
@@ -87,7 +100,7 @@ function resolveRace(launch: FightState, state: FightState) {
 describe.each(['kurapika', 'hisoka'] as const)('poursuite de %s', (id) => {
   it.each([false, true])('convertit le léger immédiat, coin %s', (corner) => {
     const launch = launcher(duel(id, { corner }))
-    const buffered = tap(launch, { right: true })
+    const buffered = tapInAnticipationWindow(launch, { right: true })
     expect(buffered.player.bufferedAttack?.directionalChain).toBe('pursuit')
     const { state, defended } = resolveRace(launch, buffered)
     expect(defended).toBe(false)
@@ -130,7 +143,7 @@ describe.each(['kurapika', 'hisoka'] as const)('poursuite de %s', (id) => {
 describe.each(FIGHTING_ROSTER.map(({ id }) => id))('poursuite du roster, %s', (id) => {
   it.each([false, true])('sépare la conversion et la reprise du défenseur, coin %s', (corner) => {
     const launch = launcher(duel(id, { corner }))
-    const immediate = resolveRace(launch, tap(launch, { right: true }))
+    const immediate = resolveRace(launch, tapInAnticipationWindow(launch, { right: true }))
     expect(immediate.defended).toBe(false)
     expect(immediate.state.impact).toMatchObject({
       attacker: 'player',
@@ -161,7 +174,7 @@ it.each(PREPARED_STRIKES)(
     expect(tap(normal, { right: true }, 'special')).toEqual(normal)
     for (const corner of [false, true]) {
       const prepared = launcher(duel(id, { corner, prep }))
-      const intent = tap(prepared, { right: true }, 'special')
+      const intent = tapInAnticipationWindow(prepared, { right: true }, 'special')
       expect(intent.player.bufferedAttack?.moveId).toBe(`${id}:${slot}`)
       const { state, defended } = resolveRace(prepared, intent)
       expect(defended).toBe(false)
@@ -187,7 +200,7 @@ it('Chrollo convertit une frappe copiée sans transformer la page historique en 
     },
   }
   const launch = launcher(openBook)
-  const { state, defended } = resolveRace(launch, tap(launch, { right: true }, 'special'))
+  const { state, defended } = resolveRace(launch, tapInAnticipationWindow(launch, { right: true }, 'special'))
   expect(defended).toBe(false)
   expect(state.impact?.comboHits).toBe(4)
   expect(state.player.attack).toMatchObject({

@@ -14,6 +14,9 @@ import { interpolateJointTurn } from './fightPoseSlerp'
  * - shoulders and hips: x < 0 swings the limb forward and up, z > 0 opens it
  *   away from the body.
  * - elbows: x < 0 bends. Knees: x > 0 bends. Wrists and ankles: x tilts.
+ * - `neck`, palms and feet are additive articulation layered after head, wrist
+ *   and ankle motion. Clavicles are local shoulder translations
+ *   `[inward, lift, protract]`, not Euler turns.
  * - `root`: a position offset [sideways, up, forward] of the whole figure.
  */
 export type Turn = readonly [number, number, number]
@@ -22,17 +25,24 @@ export const FIGHT_JOINTS = [
   'root',
   'body',
   'chest',
+  'neck',
   'head',
+  'leadClavicle',
+  'rearClavicle',
   'leadShoulder',
   'rearShoulder',
   'leadElbow',
   'rearElbow',
   'leadWrist',
   'rearWrist',
+  'leadPalm',
+  'rearPalm',
   'leadHip',
   'rearHip',
   'leadKnee',
   'rearKnee',
+  'leadFoot',
+  'rearFoot',
 ] as const
 
 export type FightJoint = (typeof FIGHT_JOINTS)[number]
@@ -91,18 +101,24 @@ export function pickJoints(pose: FightPose, joints: readonly FightJoint[]): Figh
 
 export const UPPER_JOINTS: readonly FightJoint[] = [
   'chest',
+  'neck',
   'head',
+  'leadClavicle',
+  'rearClavicle',
   'leadShoulder',
   'rearShoulder',
   'leadElbow',
   'rearElbow',
   'leadWrist',
   'rearWrist',
+  'leadPalm',
+  'rearPalm',
 ]
 
 export const STANCE_FRAME_JOINTS: readonly FightJoint[] = [
   'body',
   'chest',
+  'neck',
   'head',
   'leadHip',
   'rearHip',

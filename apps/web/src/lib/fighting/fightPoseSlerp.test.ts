@@ -37,7 +37,9 @@ describe('fightPoseSlerp', () => {
     const to = [-1.5, -0.6, 0.9] as const
     const actual = interpolateJointTurn('leadShoulder', { from, to }, 0.5)
 
-    const qa = new THREE.Quaternion().setFromEuler(new THREE.Euler(from[0], from[1], from[2], 'XYZ'))
+    const qa = new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(from[0], from[1], from[2], 'XYZ'),
+    )
     const qb = new THREE.Quaternion().setFromEuler(new THREE.Euler(to[0], to[1], to[2], 'XYZ'))
     const expected = new THREE.Euler().setFromQuaternion(qa.clone().slerp(qb, 0.5), 'XYZ')
 
@@ -101,5 +103,36 @@ describe('fightClavicle', () => {
     applyFightPose(borrowed.rig, { leadShoulder: [-1.6, 0, 0] }, 1)
     borrowed.restore()
     expect(human2.arms[1].position.distanceTo(rest2)).toBeCloseTo(0, 6)
+  })
+
+  it('supports authored neck, clavicle, palm and foot articulation without accumulating it', () => {
+    const human = makeFigure()
+    const rig = fightRigOf(human)
+    const lead = 1
+    const restShoulder = rig.restShoulders[lead].clone()
+    const restWrist = rig.restWrists[lead].clone()
+    const restFoot = rig.restAnkles[lead].clone()
+    const restHead = human.head.rotation.clone()
+
+    applyFightPose(
+      rig,
+      {
+        neck: [0.12, 0.08, -0.04],
+        leadClavicle: [-0.02, 0.03, 0.025],
+        leadPalm: [-0.22, 0.14, 0.1],
+        leadFoot: [0.18, 0.06, -0.08],
+      },
+      1,
+    )
+
+    expect(human.head.rotation.x).toBeCloseTo(restHead.x + 0.12)
+    expect(human.arms[lead].position.y).toBeGreaterThan(restShoulder.y + 0.02)
+    expect(rig.wrists[lead].rotation.x).toBeCloseTo(restWrist.x - 0.22)
+    expect(rig.ankles[lead].rotation.x).toBeCloseTo(restFoot.x + 0.18)
+
+    resetFightRig(rig)
+    expect(human.arms[lead].position.distanceTo(restShoulder)).toBeCloseTo(0, 6)
+    expect(rig.wrists[lead].rotation.x).toBeCloseTo(restWrist.x)
+    expect(rig.ankles[lead].rotation.x).toBeCloseTo(restFoot.x)
   })
 })

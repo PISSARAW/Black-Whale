@@ -158,12 +158,14 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
     human.figure.position.z += pose.root[2]
   }
   turnBy(human.figure, pose.body, mirror)
+  turnBy(human.head, pose.neck, mirror)
   turnBy(human.head, pose.head, mirror)
   applyChest(rig, pose.chest && humanChestTurn(pose.chest), mirror)
   applyLimbs(rig, pose, sides)
   keepHumanJoints(rig)
   constrainFightRig(rig)
   applyProceduralClavicles(rig.human.arms, rig.restShoulders)
+  applyAuthoredClavicles(rig, pose, sides)
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {
@@ -185,10 +187,31 @@ function applyLimbs(rig: FightRig, pose: FightPose, sides: PoseSides): void {
   turnBy(rig.elbows[rear], pose.rearElbow, mirror)
   turnBy(rig.wrists[lead], pose.leadWrist, mirror)
   turnBy(rig.wrists[rear], pose.rearWrist, mirror)
+  turnBy(rig.wrists[lead], pose.leadPalm, mirror)
+  turnBy(rig.wrists[rear], pose.rearPalm, mirror)
   turnBy(human.legs[lead], pose.leadHip, mirror)
   turnBy(human.legs[rear], pose.rearHip, mirror)
   turnBy(human.knees[lead], pose.leadKnee, mirror)
   turnBy(human.knees[rear], pose.rearKnee, mirror)
+  turnBy(rig.ankles[lead], pose.leadFoot, mirror)
+  turnBy(rig.ankles[rear], pose.rearFoot, mirror)
+}
+
+function applyAuthoredClavicles(rig: FightRig, pose: FightPose, sides: PoseSides): void {
+  const { lead, rear, mirror } = sides
+  shiftClavicle(rig.human.arms[lead], pose.leadClavicle, mirror)
+  shiftClavicle(rig.human.arms[rear], pose.rearClavicle, mirror)
+}
+
+function shiftClavicle(part: Object3D, shift: Turn | undefined, mirror: 1 | -1): void {
+  if (!shift) return
+  part.position.x += clamp(shift[0], -0.055, 0.055) * mirror
+  part.position.y += clamp(shift[1], -0.05, 0.05)
+  part.position.z += clamp(shift[2], -0.055, 0.055)
+}
+
+function clamp(value: number, minimum: number, maximum: number): number {
+  return Math.min(maximum, Math.max(minimum, value))
 }
 
 /** Height of the lower foot, in the space the figure stands in. */

@@ -126,6 +126,12 @@ export interface FighterState {
     expiresAt: number
   } | null
   skillHunterBook: ArenaSkillHunterBook | null
+  /** Real, uncovered injuries that Blinky can draw blood through. */
+  openWounds: number
+  /** Both hands are occupied covering at most two open wounds. */
+  pluggingWounds: boolean
+  /** Deterministic amount of blood already extracted by Blinky. */
+  bloodLoss: number
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -210,6 +216,7 @@ export type CombatAction =
   | { type: 'TICK'; dt: number }
   | { type: 'SYNC_POSITION'; side: CombatSide; position: Vec2 }
   | { type: 'FACE'; side: CombatSide; heading: number }
+  | { type: 'PLUG_WOUNDS'; side: CombatSide; on: boolean }
   | { type: 'EVADE'; side: CombatSide; vector: Vec2 }
   | { type: 'MOVE'; side: CombatSide; vector: Vec2 }
   | { type: 'JUMP'; side: CombatSide; vector: Vec2 }
@@ -277,6 +284,9 @@ export function initialFighter(position: Vec2): FighterState {
     hatsuSequence: null,
     hatsuPreparation: null,
     skillHunterBook: null,
+    openWounds: 0,
+    pluggingWounds: false,
+    bloodLoss: 0,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

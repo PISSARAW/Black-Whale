@@ -61,10 +61,20 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
       ? bufferFightingMove(state, action)
       : prepareFightingMove(state, action)
   if (state.hitstop > 0) return state
+  state = releaseCoveredWounds(state, action)
   if (action.type === 'SYNC_POSITION')
     return replace(state, action.side, syncPosition(state[action.side], action.position))
   if (action.type === 'FACE')
     return replace(state, action.side, { ...state[action.side], facing: action.heading })
+  if (action.type === 'PLUG_WOUNDS') {
+    const fighter = state[action.side]
+    if (fighter.openWounds <= 0 || fighter.condition !== 'ready' || fighter.intent) return state
+    return replace(state, action.side, {
+      ...fighter,
+      pluggingWounds: action.on,
+      movement: action.on ? [0, 0] : fighter.movement,
+    })
+  }
   if (action.type === 'EVADE') return evade(state, action.side, action.vector)
   if (action.type === 'MOVE')
     return replace(state, action.side, setMovement(state[action.side], action.vector))
@@ -126,6 +136,16 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   }
   if (action.type === 'KO') return chargeKo(state, action.side, action.zone)
   return state
+}
+
+function releaseCoveredWounds(state: CombatState, action: CombatAction): CombatState {
+  if (!('side' in action)) return state
+  if (action.type === 'FACE' || action.type === 'SYNC_POSITION' || action.type === 'PLUG_WOUNDS')
+    return state
+  const fighter = state[action.side]
+  return fighter.pluggingWounds
+    ? replace(state, action.side, { ...fighter, pluggingWounds: false })
+    : state
 }
 
 function advanceHitstop(state: CombatState, dt: number): CombatState {

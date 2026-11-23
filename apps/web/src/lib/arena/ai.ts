@@ -57,6 +57,9 @@ function decide(state: CombatState, options: ArenaDecisionOptions): CombatState 
   const ai = state.opponent
   if (ai.condition !== 'ready') return state
   if (ai.intent) return state
+  if (shouldCoverBlinkyWounds(state)) {
+    return combatReducer(state, { type: 'PLUG_WOUNDS', side: 'opponent', on: true })
+  }
   if (state.player.condition !== 'ready') {
     return combatReducer(state, { type: 'MOVE', side: 'opponent', vector: [0, 0] })
   }
@@ -139,6 +142,17 @@ function decide(state: CombatState, options: ArenaDecisionOptions): CombatState 
         targetAt: current.player.position,
       })
     : combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
+}
+
+function shouldCoverBlinkyWounds(state: CombatState): boolean {
+  const event = state.lastEvent
+  return Boolean(
+    !state.opponent.pluggingWounds &&
+    state.opponent.openWounds > 0 &&
+    state.opponent.openWounds <= 2 &&
+    event?.attacker === 'player' &&
+    event.moveId?.startsWith('shizuku:'),
+  )
 }
 
 function rememberObservedStrike(state: CombatState): CombatState {

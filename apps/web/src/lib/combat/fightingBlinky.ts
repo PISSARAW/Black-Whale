@@ -2,6 +2,10 @@ import { moveForSlot } from '../fighting/movesets'
 import { pointInPolygon } from '../tour/geometry'
 import type { Vec2 } from '../tour/types'
 import type { CombatAction, CombatSide, CombatState } from './types'
+import { otherSide } from './types'
+import { outcomeOf } from './exchange'
+import { lineOfSightClear } from './resolve'
+import { exposedArenaWounds } from './wounds'
 
 type FightingMoveAction = Extract<CombatAction, { type: 'FIGHTING_MOVE' }>
 
@@ -18,14 +22,49 @@ export function isBlinkyUtilityMove(action: FightingMoveAction): boolean {
 }
 
 /**
- * Applies selective suction and last-object return to Arena's physical scenery.
- * Blood deliberately remains unavailable until Arena has explicit wounds.
+ * Applies selective suction, last-object return and blood extraction through real wounds.
  */
 export function resolveFightingBlinky(state: CombatState, action: FightingMoveAction): CombatState {
   if (!isBlinkyUtilityMove(action)) return state
-  if (action.slot === 'finisher') return state
+  if (action.slot === 'finisher') return drawBlood(state, action)
   if (action.slot === 'backSpecial') return ejectStoredObject(state, action)
   return swallowTargetObject(state, action)
+}
+
+function drawBlood(state: CombatState, action: FightingMoveAction): CombatState {
+  const targetSide = otherSide(action.side)
+  const target = state[targetSide]
+  if (!canUseBlinky(state, action) || target.openWounds <= 0) return state
+  if (distance(state[action.side].position, target.position) > BLINKY_RANGE) return state
+  if (!lineOfSightClear(state.terrain.walls, state[action.side].position, target.position))
+    return state
+  const paid = spend(state, action, state.physicalObjects)
+  const exposed = exposedArenaWounds(target)
+  if (exposed <= 0) return paid
+  const attacker = { ...paid[action.side], score: paid[action.side].score + 2 }
+  const defender = {
+    ...paid[targetSide],
+    bloodLoss: paid[targetSide].bloodLoss + exposed,
+    condition: paid[targetSide].condition === 'ko' ? ('ko' as const) : ('staggered' as const),
+    recovery: paid[targetSide].condition === 'ko' ? 0 : 0.55,
+    movement: [0, 0] as Vec2,
+    intent: null,
+  }
+  return {
+    ...paid,
+    [action.side]: attacker,
+    [targetSide]: defender,
+    lastEvent: {
+      at: state.clock,
+      attacker: action.side,
+      zone: 'torso',
+      impact: 'critical',
+      points: 2,
+      technique: 'hatsu',
+      moveId: 'shizuku:finisher',
+    },
+    outcome: outcomeOf(action.side, attacker, defender),
+  }
 }
 
 function swallowTargetObject(state: CombatState, action: FightingMoveAction): CombatState {

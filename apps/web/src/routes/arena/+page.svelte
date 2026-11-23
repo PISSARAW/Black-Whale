@@ -16,6 +16,7 @@
   import ArenaDuelPresence from '$lib/components/arena/ArenaDuelPresence.svelte'
   import ArenaTrainingFeedback from '$lib/components/arena/ArenaTrainingFeedback.svelte'
   import ArenaSkillHunterBook from '$lib/components/arena/ArenaSkillHunterBook.svelte'
+  import ArenaWoundStatus from '$lib/components/arena/ArenaWoundStatus.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -1038,6 +1039,15 @@
       {/if}
     </div>
   </header>
+
+  {#if game.player.openWounds > 0 || game.opponent.openWounds > 0}
+    <ArenaWoundStatus
+      player={game.player}
+      opponent={game.opponent}
+      french={$locale === 'fr'}
+      onToggle={(on) => send({ type: 'PLUG_WOUNDS', side: 'player', on })}
+    />
+  {/if}
 
   {#if game.outcome === 'playing'}
     <nav class="arena-tools" aria-label={$locale === 'fr' ? "Outils de l'arène" : 'Arena tools'}>

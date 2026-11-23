@@ -97,7 +97,11 @@ by the POV raycast, removes it from Tour collision and rendering, keeps one
 last-object slot, then restores that same solid at the authored ejection point.
 Object identity and position live in combat state, so recording, branching and
 replay reproduce the room mutation. Its carried Hatsu no longer invents an aura
-drain. Blood suction remains closed until Arena represents actual open wounds.
+drain. Connected physical Blinky strikes now create explicit open wounds. A
+fighter may occupy both hands to cover two of them; any other active command
+releases that cover. The finisher draws only the exposed blood at four metres
+through a clear path, records blood loss without subtracting aura, and preserves
+the wound, cover and extraction state through replay and branching.
 
 Skill Hunter carries Clash's four prepared Heavens Arena pages plus its fifth
 stolen slot. Back Special turns the selected page, Down Special places or opens
@@ -130,8 +134,6 @@ Finished Arena replays now include a player-POV coach. It scans the deterministi
 timeline once, identifies conservative recovery opportunities and punishments,
 then lets the player review the contact or branch from just before the exchange.
 The diagnosis never consults concealed intent and is explicitly non-exhaustive.
-
-Still Clash-only: Blinky blood through explicit open wounds.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

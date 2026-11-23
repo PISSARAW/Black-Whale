@@ -1,4 +1,4 @@
-import type { WallSegment } from '../tour/types'
+import type { Vec2, WallSegment } from '../tour/types'
 import type { BodyZone, CombatEvent, CombatSide, FighterState, Impact } from './types'
 import { ryuDistribution } from './ryu'
 
@@ -64,13 +64,11 @@ function distanceToLine(
 }
 
 function isObstructed(exchange: Exchange): boolean {
-  return exchange.walls.some((wall) =>
-    crosses({
-      from: exchange.attacker.position,
-      to: exchange.defender.position,
-      wall,
-    }),
-  )
+  return !lineOfSightClear(exchange.walls, exchange.attacker.position, exchange.defender.position)
+}
+
+export function lineOfSightClear(walls: WallSegment[], from: Vec2, to: Vec2): boolean {
+  return !walls.some((wall) => crosses({ from, to, wall }))
 }
 
 function crosses(reading: {

@@ -27,6 +27,7 @@ import {
   type FighterState,
   type Impact,
 } from './types'
+import { recordArenaWound } from './wounds'
 
 /** One blow, described fully enough that the resolver needs nothing else. */
 export interface StrikeRequest {
@@ -213,7 +214,8 @@ export function strike(request: StrikeRequest): CombatState {
     impact: result.event.impact,
     walls: state.terrain.walls,
   })
-  const defender = connected ? { ...pushed, intent: null } : pushed
+  const interrupted = connected ? { ...pushed, intent: null } : pushed
+  const defender = recordArenaWound(interrupted, request.moveId, result.event.impact)
   const outcome = outcomeOf(side, scored, defender)
   return ringOut({
     ...state,

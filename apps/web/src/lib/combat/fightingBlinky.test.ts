@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { moveForSlot } from '../fighting/movesets'
 import { combatReducer } from './reducer'
+import { strike } from './exchange'
 import { initialCombatState, type CombatAction, type CombatState } from './types'
 
 function move(
@@ -82,4 +83,72 @@ describe('Arena Blinky physical targets', () => {
     const initial = state()
     expect(combatReducer(initial, move('finisher'))).toBe(initial)
   })
+
+  it('opens a wound only when a physical Blinky strike connects', () => {
+    const initial = {
+      ...state(),
+      opponent: { ...state().opponent, position: [1, 0] as [number, number] },
+    }
+    const connected = strike({
+      state: initial,
+      side: 'player',
+      zone: 'torso',
+      technique: 'strike',
+      moveId: 'shizuku:standingHeavy',
+      grade: () => 'clean',
+    })
+    const ordinary = strike({
+      state: initial,
+      side: 'player',
+      zone: 'torso',
+      technique: 'strike',
+      moveId: 'hisoka:standingHeavy',
+      grade: () => 'clean',
+    })
+
+    expect(connected.opponent.openWounds).toBe(1)
+    expect(ordinary.opponent.openWounds).toBe(0)
+  })
+
+  it('draws blood through exposed wounds without draining aura', () => {
+    const initial = woundedState(2)
+    const result = combatReducer(initial, move('finisher'))
+
+    expect(result.opponent.bloodLoss).toBe(2)
+    expect(result.opponent.aura).toBe(initial.opponent.aura)
+    expect(result.lastEvent).toMatchObject({
+      moveId: 'shizuku:finisher',
+      impact: 'critical',
+      technique: 'hatsu',
+    })
+  })
+
+  it('lets both hands cover two wounds but leaves a third exposed', () => {
+    const covered = combatReducer(woundedState(2, true), move('finisher'))
+    const leaking = combatReducer(woundedState(3, true), move('finisher'))
+
+    expect(covered.opponent.bloodLoss).toBe(0)
+    expect(covered.player.aura).toBeLessThan(100)
+    expect(leaking.opponent.bloodLoss).toBe(1)
+  })
+
+  it('cannot draw blood through a wall', () => {
+    const initial = woundedState(1)
+    initial.terrain.walls = [{ start: [1.5, -2], end: [1.5, 2] }]
+
+    expect(combatReducer(initial, move('finisher'))).toBe(initial)
+  })
 })
+
+function woundedState(openWounds: number, pluggingWounds = false): CombatState {
+  const initial = state()
+  return {
+    ...initial,
+    opponent: {
+      ...initial.opponent,
+      position: [3, 0],
+      openWounds,
+      pluggingWounds,
+    },
+  }
+}

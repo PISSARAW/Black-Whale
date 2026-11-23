@@ -107,3 +107,29 @@ mid-air.
 
 All ten first-wave fighters now have 9/9 dedicated physical clips. The roster
 total is 171 dedicated clips and 189 generated clips.
+
+## P4 — second-wave grounded fundamentals
+
+The next ten fighters receive dedicated `standingLight`, `standingHeavy` and
+`forwardLight` timelines with semantic support, opposite-foot pivot, staged
+pelvis-to-chest drive, held contact and three recovery keys.
+
+| Fighter  | Baseline |  P4 |
+| -------- | -------: | --: |
+| Musse    |      6.9 | 7.9 |
+| Padaille |      6.9 | 7.7 |
+| Rihan    |      6.9 | 7.8 |
+| Theta    |      6.9 | 7.9 |
+| Yokotani |      6.9 | 7.8 |
+| Basho    |      7.0 | 7.9 |
+| Beyond   |      7.0 | 7.8 |
+| Leorio   |      7.0 | 7.9 |
+| Longhi   |      7.0 | 7.8 |
+| Lynch    |      7.0 | 7.9 |
+
+Their motion accents preserve the intended discipline: Musse observes, Padaille
+keeps his weapon hand narrow, Rihan analyses, Theta stays drilled, Yokotani
+braces, Basho protects the writing hand, Beyond and Lynch commit their mass,
+Leorio boxes straight and Longhi turns with precise wrists.
+
+The roster total is now 201 dedicated physical clips and 159 generated clips.

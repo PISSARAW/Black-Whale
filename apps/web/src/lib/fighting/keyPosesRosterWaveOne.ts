@@ -108,7 +108,7 @@ export const ROSTER_WAVE_ONE_GROUNDED_POSES = Object.fromEntries(
 ) as Record<(typeof ROSTER_WAVE_ONE_FIGHTERS)[number], Partial<Record<MoveSlot, MoveTimeline>>>
 
 export function rosterWaveOneGroundedTimeline(
-  id: (typeof ROSTER_WAVE_ONE_FIGHTERS)[number],
+  id: FighterId,
   slot: MoveSlot,
   signature: GroundedSignature,
   accent: GroundedSignature = { load: {}, contact: {}, recoil: {}, settle: {} },

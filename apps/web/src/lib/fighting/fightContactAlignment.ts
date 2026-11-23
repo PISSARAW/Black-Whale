@@ -15,6 +15,7 @@ import { clearPassiveArms } from './fightLimbClearance'
 import { anatomicalContactZone, rememberSurfaceContact } from './fightSurfaceContact'
 import { createFightBodySeparation, bodySurfaceBox, projectionBody } from './fightBodySeparation'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
+import { boundedGoldenHeavyContact } from './kurapikaGoldenHeavyContact'
 
 /** Bounded anatomical correction after both actors have been posed, before aura and impacts. */
 export function createFightContactAlignment(figureOf: (side: FightSide) => Object3D) {
@@ -134,8 +135,9 @@ function alignStrike(
   const indices = limb === 'both' ? [0, 1] : [limb === 'left' ? 0 : 1]
   for (const index of indices) {
     const { root, hinge, end } = strikeParts(rig, { fighter, feet, index })
-    const target = options.target.clone()
-    target.x -= fighter.facing * (feet ? 0.08 : 0.045)
+    const desired = options.target.clone()
+    desired.x -= fighter.facing * (feet ? 0.08 : 0.045)
+    const target = boundedGoldenHeavyContact(fighter, end.getWorldPosition(new Vector3()), desired)
     reachLimb({ root, hinge, end }, target, options.weight)
   }
 }

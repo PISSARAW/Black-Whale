@@ -21,3 +21,12 @@ branch only after the shared contact pose.
 
 Review frames are `0, 2, 4, 6, 7, 8, 11, 14, 19, 25`. The move must remain
 convincing without camera, VFX or audio at 25%, 50%, 100% and 200% playback.
+
+## Certification gate
+
+The automated matrix covers both facings, hit/block/whiff, small/medium/large
+opponents, four playback rates and entry from idle/advance/retreat/dash: 288
+scenarios and 2,880 deterministic review draws. The browser gate additionally
+renders all 60 combinations of review frame, facing and outcome, reports both
+foot trajectories and rejects an active fist more than 4 cm away from its
+authored contact.

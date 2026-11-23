@@ -35,6 +35,8 @@ try {
     count: window.fightMotionFixture.count,
     ids: window.fightMotionFixture.ids,
     slots: window.fightMotionFixture.slots,
+    goldenOutcomes: window.fightMotionFixture.goldenOutcomes,
+    goldenReviewFrames: window.fightMotionFixture.goldenReviewFrames,
   }))
   assert.equal(fixture.ids.length, 40)
   assert.equal(fixture.slots.length, 9)
@@ -54,9 +56,39 @@ try {
     }
   }
   assert.equal(await page.evaluate(() => window.fightMotionFixture.renderedCount()), 360)
+  let goldenDraws = 0
+  const maxima = { planted: [0, ''], pivot: [0, ''], fist: [0, ''] }
+  for (const facing of [1, -1]) {
+    for (const outcome of fixture.goldenOutcomes) {
+      for (const frame of fixture.goldenReviewFrames) {
+        const result = await page.evaluate(
+          ({ frame, facing, outcome }) =>
+            window.fightMotionFixture.inspect('kurapika', 'standingHeavy', frame, facing, outcome),
+          { frame, facing, outcome },
+        )
+        const diagnostic = result.diagnostics
+        assert.ok(diagnostic, `missing golden diagnostics at ${facing}:${outcome}:${frame}`)
+        const key = `${facing}:${outcome}:${frame}`
+        if (diagnostic.plantedFootDrift > maxima.planted[0])
+          maxima.planted = [diagnostic.plantedFootDrift, key]
+        if (diagnostic.pivotFootDrift > maxima.pivot[0])
+          maxima.pivot = [diagnostic.pivotFootDrift, key]
+        if (frame >= 8 && frame <= 11 && diagnostic.fistToContact > maxima.fist[0])
+          maxima.fist = [diagnostic.fistToContact, key]
+        goldenDraws += 1
+      }
+      await page.screenshot({
+        path: path.join(output, `kurapika-golden-${outcome}-${facing}.png`),
+      })
+    }
+  }
+  assert.equal(goldenDraws, 60)
+  assert.ok(maxima.planted[0] <= 0.15, `unstable support foot at ${maxima.planted[1]}`)
+  assert.ok(maxima.pivot[0] <= 0.25, `unstable pivot foot at ${maxima.pivot[1]}`)
+  assert.ok(maxima.fist[0] <= 0.04, `fist left active contact at ${maxima.fist[1]}`)
   assert.deepEqual(errors, [])
   process.stdout.write(
-    `40 fighters × 9 attacks × 3 phases × 2 facings rendered; 24 reference sheets captured. Review images: ${output}\n`,
+    `40 fighters × 9 attacks × 3 phases × 2 facings rendered; 60 golden reviews and 30 reference sheets captured. Review images: ${output}\n`,
   )
 } finally {
   await browser?.close()

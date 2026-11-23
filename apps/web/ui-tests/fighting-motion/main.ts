@@ -12,6 +12,7 @@ import {
   type GoldenHeavyDiagnostics,
 } from '../../src/lib/fighting/fightMotionDiagnostics'
 import { KURAPIKA_GOLDEN_HEAVY } from '../../src/lib/fighting/kurapikaGoldenHeavy'
+import { GOLDEN_HEAVY_OUTCOMES } from '../../src/lib/fighting/kurapikaGoldenHeavyCertification'
 import type { FighterId, MoveSlot } from '../../src/lib/fighting/types'
 import {
   clampMotionFrame,
@@ -89,8 +90,21 @@ function modelFor(id: FighterId, slot: MoveSlot): MotionEntry {
   return made
 }
 let tick = 0
-let inspected: { id: FighterId; slot: MoveSlot; frame: number; facing: 1 | -1 } | null = null
-function poseFighter(entry: MotionEntry, frame: number, facing: 1 | -1): void {
+type GoldenOutcome = (typeof GOLDEN_HEAVY_OUTCOMES)[number]
+let inspected: {
+  id: FighterId
+  slot: MoveSlot
+  frame: number
+  facing: 1 | -1
+  outcome: GoldenOutcome
+} | null = null
+function poseFighter(
+  entry: MotionEntry,
+  frame: number,
+  facing: 1 | -1,
+  outcome: GoldenOutcome = 'whiff',
+  passes = 2,
+): void {
   const { id, slot, model, fighter } = entry
   const move = moveForSlot(id, slot)!
   const current = {
@@ -104,7 +118,9 @@ function poseFighter(entry: MotionEntry, frame: number, facing: 1 | -1): void {
       variant: move.variant,
       kind: move.kind,
       frame: clampMotionFrame(frame, move.tuning),
-      impacted: false,
+      impacted: outcome !== 'whiff',
+      confirmedHit: outcome === 'hit',
+      confirmedBlock: outcome === 'block',
       auraCharged: false,
       concealed: false,
       hatsuSource: null,
@@ -117,9 +133,10 @@ function poseFighter(entry: MotionEntry, frame: number, facing: 1 | -1): void {
   model.animate(tick, 'idle', {
     motion: fightBodyMotion({ fighter: current, seconds: tick, progress: 0 }),
   })
-  model.animate(tick + 1, 'idle', {
-    motion: fightBodyMotion({ fighter: current, seconds: tick + 1, progress: 0 }),
-  })
+  if (passes > 1)
+    model.animate(tick + 1, 'idle', {
+      motion: fightBodyMotion({ fighter: current, seconds: tick + 1, progress: 0 }),
+    })
 }
 
 function show(
@@ -150,16 +167,22 @@ function show(
   })
 }
 
-function inspect(id: FighterId, slot: MoveSlot, frame = 0, facing: 1 | -1 = 1) {
+function inspect(
+  id: FighterId,
+  slot: MoveSlot,
+  frame = 0,
+  facing: 1 | -1 = 1,
+  outcome: GoldenOutcome = 'whiff',
+) {
   const entry = modelFor(id, slot)
   const move = moveForSlot(id, slot)!
   const currentFrame = clampMotionFrame(frame, move.tuning)
-  inspected = { id, slot, frame: currentFrame, facing }
+  inspected = { id, slot, frame: currentFrame, facing, outcome }
   tick += 2
   title.textContent = `${id} · ${slot} · frame ${currentFrame} · ${phaseAtFrame(currentFrame, move.tuning)}`
   renderer.setSize(720, 720)
   models.forEach(({ model }) => (model.root.visible = false))
-  const diagnostics = goldenDiagnostics(entry, currentFrame, facing)
+  const diagnostics = goldenDiagnostics(entry, currentFrame, facing, outcome)
   renderer.setViewport(0, 0, 720, 720)
   renderer.setScissor(0, 0, 720, 720)
   camera.left = -1.5
@@ -181,20 +204,27 @@ function goldenDiagnostics(
   entry: MotionEntry,
   frame: number,
   facing: 1 | -1,
+  outcome: GoldenOutcome,
 ): GoldenHeavyDiagnostics | null {
   if (entry.id !== 'kurapika' || entry.slot !== KURAPIKA_GOLDEN_HEAVY.slot) {
-    poseFighter(entry, frame, facing)
+    poseFighter(entry, frame, facing, outcome)
     return null
   }
-  const human = humanAnimationRig(entry.model.turns)
+  const model = buildFightFigure({ THREE, glow, fighter: entry.fighter })
+  const isolated = { ...entry, model }
+  scene.add(model.root)
+  const human = humanAnimationRig(model.turns)
   if (!human) throw new Error('Kurapika motion lab figure has no animation rig')
   const rig = fightRigOf(human)
-  poseFighter(entry, 0, facing)
+  poseFighter(isolated, 0, facing, outcome, 1)
   const stance = captureFightMotionSnapshot(rig, facing)
-  poseFighter(entry, KURAPIKA_GOLDEN_HEAVY.frames.startup, facing)
+  poseFighter(isolated, frame, facing, outcome, 1)
+  const current = captureFightMotionSnapshot(rig, facing)
+  poseFighter(isolated, KURAPIKA_GOLDEN_HEAVY.frames.startup, facing, outcome, 1)
   const contact = captureFightMotionSnapshot(rig, facing)
-  poseFighter(entry, frame, facing)
-  return goldenHeavyDiagnostics(captureFightMotionSnapshot(rig, facing), stance, contact, facing)
+  scene.remove(model.root)
+  poseFighter(entry, frame, facing, outcome)
+  return goldenHeavyDiagnostics(current, stance, contact, facing)
 }
 
 const fields = controls.elements as typeof controls.elements & {
@@ -261,6 +291,8 @@ Object.assign(window, {
     count: ids.length * slots.length,
     ids,
     slots,
+    goldenOutcomes: GOLDEN_HEAVY_OUTCOMES,
+    goldenReviewFrames: KURAPIKA_GOLDEN_HEAVY.reviewFrames,
     renderedCount: () => models.size,
   },
 })

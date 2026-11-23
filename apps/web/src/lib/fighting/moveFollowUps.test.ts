@@ -6,10 +6,160 @@ import { EMPTY_INPUT, type FighterId } from './types'
 
 describe('priority signature moves and contextual follow-ups', () => {
   it('advances the replay ruleset for the updated moveset behaviour', () => {
-    expect(REPLAY_RULESET).toBe('clash-combat-90')
+    expect(REPLAY_RULESET).toBe('clash-combat-91')
   })
 
   it.each([
+    [
+      'kurapika',
+      {
+        forwardLight: ['Pendule rasant', 'Low Pendulum'],
+        forwardHeavy: ['Pas de l’index', 'Index Step'],
+        backHeavy: ['Rappel du geôlier', 'Jailer Recall'],
+        airHeavy: ['Croix des cinq doigts', 'Five-Finger Cross'],
+        throw: ['Verdict écarlate', 'Scarlet Verdict'],
+      },
+    ],
+    [
+      'chrollo',
+      {
+        forwardLight: ['Page tranchante', 'Cutting Page'],
+        forwardHeavy: ['Lecture en mouvement', 'Moving Reading'],
+        backHeavy: ['Pas du voleur', 'Thief’s Step'],
+        airHeavy: ['Signet trompeur', 'Deceptive Bookmark'],
+        throw: ['Chapitre final', 'Final Chapter'],
+      },
+    ],
+    [
+      'benjamin',
+      {
+        forwardLight: ['Percée du premier prince', 'First Prince Breakthrough'],
+        forwardHeavy: ['Genou d’exécution', 'Execution Knee'],
+        backHeavy: ['Discipline de fer', 'Iron Discipline'],
+        airHeavy: ['Air Blow ascendant', 'Ascending Air Blow'],
+        throw: ['Commandement absolu', 'Absolute Command'],
+      },
+    ],
+    [
+      'tserriednich',
+      {
+        forwardLight: ['Pas déjà vu', 'Déjà Vu Step'],
+        forwardHeavy: ['Tir de divergence', 'Divergence Shot'],
+        backHeavy: ['Seconde condamnation', 'Second Condemnation'],
+        airHeavy: ['Angle mort princier', 'Princely Blind Spot'],
+        throw: ['Dix secondes d’avance', 'Ten Seconds Ahead'],
+      },
+    ],
+    [
+      'theta',
+      {
+        forwardLight: ['Tir de contrôle', 'Control Shot'],
+        forwardHeavy: ['Pas d’instructrice', 'Instructor Step'],
+        backHeavy: ['Leçon sévère', 'Severe Lesson'],
+        airHeavy: ['Crosse montante', 'Rising Stock'],
+        throw: ['Décision impossible', 'Impossible Decision'],
+      },
+    ],
+    [
+      'biscuit',
+      {
+        forwardLight: ['Leçon de posture', 'Posture Lesson'],
+        forwardHeavy: ['Petit pas Shingen', 'Short Shingen Step'],
+        backHeavy: ['Révélation musculaire', 'Muscular Reveal'],
+        airHeavy: ['Paume montante', 'Rising Palm'],
+        throw: ['Correction absolue', 'Absolute Correction'],
+      },
+    ],
+    [
+      'phinks',
+      {
+        forwardLight: ['Marche du Cyclotron', 'Cyclotron March'],
+        forwardHeavy: ['Bélier de Meteor City', 'Meteor City Ram'],
+        backHeavy: ['Faux relâchement', 'False Release'],
+        airHeavy: ['Tour mort', 'Dead Turn'],
+        throw: ['Poing sans retour', 'No-Return Fist'],
+      },
+    ],
+    [
+      'franklin',
+      {
+        forwardLight: ['Marche de suppression', 'Suppression March'],
+        forwardHeavy: ['Croisement balistique', 'Ballistic Crossfire'],
+        backHeavy: ['Crosse humaine', 'Human Stock'],
+        airHeavy: ['Rideau antiaérien', 'Anti-Air Curtain'],
+        throw: ['Dernière cartouche', 'Last Round'],
+      },
+    ],
+    [
+      'illumi',
+      {
+        forwardLight: ['Pas sans présence', 'Presenceless Step'],
+        forwardHeavy: ['Visage mort', 'Dead Face'],
+        backHeavy: ['Aiguille de recul', 'Recoil Needle'],
+        airHeavy: ['Articulation déplacée', 'Displaced Joint'],
+        throw: ['Cortège funèbre', 'Funeral Procession'],
+      },
+    ],
+    [
+      'bonolenov',
+      {
+        forwardLight: ['Tambour de guerre', 'War Drum'],
+        forwardHeavy: ['Pas spiralé', 'Spiral Step'],
+        backHeavy: ['Silence rompu', 'Broken Silence'],
+        airHeavy: ['Crescendo vertical', 'Vertical Crescendo'],
+        throw: ['Finale de Jupiter', 'Jupiter Finale'],
+      },
+    ],
+    [
+      'shizuku',
+      {
+        forwardLight: ['Blinky marteau', 'Hammer Blinky'],
+        forwardHeavy: ['Nettoyage latéral', 'Lateral Cleaning'],
+        backHeavy: ['Zone propre', 'Clean Zone'],
+        airHeavy: ['Remontée de poussière', 'Dust Uprise'],
+        throw: ['Hémorragie aspirée', 'Vacuumed Hemorrhage'],
+      },
+    ],
+    [
+      'hinrigh',
+      {
+        forwardLight: ['Pigeon de métal', 'Metal Pigeon'],
+        forwardHeavy: ['Menottes rapaces', 'Raptor Handcuffs'],
+        backHeavy: ['Faune de couverture', 'Cover Fauna'],
+        airHeavy: ['Serpent de canon', 'Barrel Serpent'],
+        throw: ['Biohazard urbain', 'Urban Biohazard'],
+      },
+    ],
+    [
+      'mizaistom',
+      {
+        forwardLight: ['Contrôle d’identité', 'Identity Check'],
+        forwardHeavy: ['Ligne jaune', 'Yellow Line'],
+        backHeavy: ['Carte rouge', 'Red Card'],
+        airHeavy: ['Interpellation', 'Apprehension'],
+        throw: ['Audience close', 'Hearing Closed'],
+      },
+    ],
+    [
+      'leorio',
+      {
+        forwardLight: ['Direct d’urgence', 'Emergency Straight'],
+        forwardHeavy: ['Diagnostic bas', 'Low Diagnosis'],
+        backHeavy: ['Réanimation combative', 'Combat Resuscitation'],
+        airHeavy: ['Poing sous le pont', 'Under-Bridge Fist'],
+        throw: ['Salle d’opération', 'Operating Room'],
+      },
+    ],
+    [
+      'hanzo',
+      {
+        forwardLight: ['Pas du plafond', 'Ceiling Step'],
+        forwardHeavy: ['Fausse décapitation', 'False Decapitation'],
+        backHeavy: ['Corps laissé derrière', 'Body Left Behind'],
+        airHeavy: ['Clé du shinobi', 'Shinobi Lock'],
+        throw: ['Exécution sans bruit', 'Silent Execution'],
+      },
+    ],
     [
       'feitan',
       {
@@ -60,9 +210,9 @@ describe('priority signature moves and contextual follow-ups', () => {
         throw: ['Cage des trois singes', 'Three Monkeys Cage'],
       },
     ],
-  ] as const)('replaces the five generic physical slots for %s while keeping 15 slots', (id, map) => {
+  ] as const)('replaces the five generic physical slots for %s', (id, map) => {
     const moveset = movesetFor(id as FighterId)!
-    expect(moveset.moves).toHaveLength(15)
+    expect(moveset.followUps?.length).toBeGreaterThanOrEqual(2)
     for (const [slot, [fr, en]] of Object.entries(map)) {
       const move = moveForSlot(id as FighterId, slot as keyof typeof map)!
       expect(move.nameFr).toBe(fr)

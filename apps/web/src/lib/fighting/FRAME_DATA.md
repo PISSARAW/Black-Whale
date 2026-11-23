@@ -68,9 +68,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet au corps | `standingHeavy` | mid | 8 | 4 | 14 | +3 | −4 |
 | Direct bas | `lowLight` | low | 5 | 3 | 9 | +2 | −4 |
 | Balayage | `lowHeavy` | low | 10 | 4 | 19 | Sol | −8 |
-| Pas et direct | `forwardLight` | mid | 6 | 3 | 5 | +4 | −2 |
-| Croisé en avancée | `forwardHeavy` | mid | 13 | 5 | 22 | Sol | −8 |
-| Contre en retrait | `backHeavy` | mid | 10 | 4 | 16 | +9 | −4 |
+| Pendule rasant | `forwardLight` | mid | 6 | 3 | 5 | +4 | −2 |
+| Pas de l’index | `forwardHeavy` | mid | 13 | 5 | 22 | Sol | −8 |
+| Rappel du geôlier | `backHeavy` | mid | 10 | 4 | 16 | +9 | −4 |
 
 ### Hisoka
 
@@ -92,9 +92,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coup de pied d’arrêt | `standingHeavy` | mid | 8 | 4 | 9 | +3 | +1 |
 | Frappe basse | `lowLight` | low | 5 | 3 | 10 | +3 | −5 |
 | Fauchage silencieux | `lowHeavy` | low | 10 | 4 | 19 | Sol | −8 |
-| Paume rapide | `forwardLight` | mid | 9 | 3 | 22 | Sol | −13 |
-| Coude du chef | `forwardHeavy` | mid | 13 | 5 | 20 | −2 | −6 |
-| Contre du voleur | `backHeavy` | mid | 9 | 4 | 16 | +3 | −4 |
+| Page tranchante | `forwardLight` | mid | 9 | 3 | 22 | Sol | −13 |
+| Lecture en mouvement | `forwardHeavy` | mid | 13 | 5 | 20 | −2 | −6 |
+| Pas du voleur | `backHeavy` | mid | 9 | 4 | 16 | +3 | −4 |
 
 ### Benjamin
 
@@ -104,9 +104,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Marteau royal | `standingHeavy` | mid | 10 | 4 | 17 | +3 | −7 |
 | Frappe au genou | `lowLight` | low | 6 | 3 | 11 | +2 | −6 |
 | Balayage tactique | `lowHeavy` | low | 11 | 4 | 21 | Sol | −10 |
-| Percée de garde | `forwardLight` | mid | 8 | 3 | 13 | +4 | −4 |
-| Charge blindée | `forwardHeavy` | mid | 15 | 5 | 25 | Sol | −11 |
-| Crosse de retour | `backHeavy` | mid | 12 | 4 | 16 | +11 | −4 |
+| Percée du premier prince | `forwardLight` | mid | 8 | 3 | 13 | +4 | −4 |
+| Genou d’exécution | `forwardHeavy` | mid | 15 | 5 | 25 | Sol | −11 |
+| Discipline de fer | `backHeavy` | mid | 12 | 4 | 16 | +11 | −4 |
 
 ### Tserriednich
 
@@ -116,9 +116,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coup de crosse | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Tir aux jambes | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Fauchage calculé | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas princier | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
-| Angle mort | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Recul tactique | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
+| Pas déjà vu | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
+| Tir de divergence | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Seconde condamnation | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
 
 ### Feitan
 
@@ -152,9 +152,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crosse descendante | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup de crosse bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Fauchage de garde | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas de tir | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Percée de garde | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Retraite armée | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
+| Tir de contrôle | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Pas d’instructrice | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Leçon sévère | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
 
 ### Biscuit
 
@@ -164,9 +164,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet de maître | `standingHeavy` | mid | 8 | 4 | 13 | +4 | −3 |
 | Poing au corps | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Balayage de pierre | `lowHeavy` | low | 9 | 4 | 19 | Sol | −8 |
-| Pas du maître | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Épaule véritable | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Paume de recul | `backHeavy` | mid | 10 | 4 | 14 | +4 | −2 |
+| Leçon de posture | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Petit pas Shingen | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Révélation musculaire | `backHeavy` | mid | 10 | 4 | 14 | +4 | −2 |
 
 ### Phinks
 
@@ -176,9 +176,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet de la Brigade | `standingHeavy` | mid | 11 | 4 | 12 | +4 | −2 |
 | Poing rasant | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Fauchage brutal | `lowHeavy` | low | 11 | 4 | 21 | Sol | −10 |
-| Pas du cogneur | `forwardLight` | mid | 8 | 3 | 12 | +4 | −3 |
-| Épaule blindée | `forwardHeavy` | mid | 16 | 5 | 27 | Sol | −13 |
-| Revers de garde | `backHeavy` | mid | 12 | 4 | 17 | +3 | −5 |
+| Marche du Cyclotron | `forwardLight` | mid | 8 | 3 | 12 | +4 | −3 |
+| Bélier de Meteor City | `forwardHeavy` | mid | 16 | 5 | 27 | Sol | −13 |
+| Faux relâchement | `backHeavy` | mid | 12 | 4 | 17 | +3 | −5 |
 
 ### Franklin
 
@@ -188,9 +188,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Marteau de la Brigade | `standingHeavy` | mid | 11 | 4 | 18 | +4 | −8 |
 | Coup aux côtes | `lowLight` | low | 6 | 3 | 11 | +4 | −6 |
 | Fauchage massif | `lowHeavy` | low | 11 | 4 | 21 | Sol | −10 |
-| Percée du colosse | `forwardLight` | mid | 8 | 3 | 14 | +4 | −5 |
-| Double bélier | `forwardHeavy` | mid | 16 | 5 | 27 | Sol | −13 |
-| Revers pare-balles | `backHeavy` | mid | 12 | 4 | 18 | +2 | −6 |
+| Marche de suppression | `forwardLight` | mid | 8 | 3 | 14 | +4 | −5 |
+| Croisement balistique | `forwardHeavy` | mid | 16 | 5 | 27 | Sol | −13 |
+| Crosse humaine | `backHeavy` | mid | 12 | 4 | 18 | +2 | −6 |
 
 ### Machi
 
@@ -212,9 +212,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Paume Zoldyck | `standingHeavy` | mid | 8 | 4 | 12 | +4 | −2 |
 | Aiguille basse | `lowLight` | low | 4 | 3 | 8 | +4 | −3 |
 | Fauchage silencieux | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas d’assassinat | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Paume cardiaque | `forwardHeavy` | mid | 12 | 5 | 23 | Sol | −9 |
-| Revers d’aiguille | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Pas sans présence | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Visage mort | `forwardHeavy` | mid | 12 | 5 | 23 | Sol | −9 |
+| Aiguille de recul | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Kalluto
 
@@ -236,9 +236,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coude tribal | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Battement bas | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Ronde guerrière | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Marche rituelle | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Vrille de guerre | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Contre syncopé | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Tambour de guerre | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Pas spiralé | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Silence rompu | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Shizuku
 
@@ -248,9 +248,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Marteau aspirant | `standingHeavy` | mid | 10 | 4 | 15 | +4 | −5 |
 | Tuyau rasant | `lowLight` | low | 5 | 3 | 10 | +4 | −5 |
 | Balayage ménager | `lowHeavy` | low | 10 | 4 | 20 | Sol | −9 |
-| Pas de nettoyage | `forwardLight` | mid | 7 | 3 | 12 | +4 | −3 |
-| Coup de réservoir | `forwardHeavy` | mid | 14 | 5 | 25 | Sol | −11 |
-| Retour de manche | `backHeavy` | mid | 10 | 4 | 16 | +3 | −4 |
+| Blinky marteau | `forwardLight` | mid | 7 | 3 | 12 | +4 | −3 |
+| Nettoyage latéral | `forwardHeavy` | mid | 14 | 5 | 25 | Sol | −11 |
+| Zone propre | `backHeavy` | mid | 10 | 4 | 16 | +3 | −4 |
 
 ### Hinrigh
 
@@ -260,9 +260,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crosse animale | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas discret | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Fauchage de la famille | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas de la Xi-Yu | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Charge du garde | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Revers du couteau | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Pigeon de métal | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Menottes rapaces | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Faune de couverture | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Mizaistom
 
@@ -272,9 +272,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coup de paume | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Coup au corps | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
+| Contrôle d’identité | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Ligne jaune | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Carte rouge | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
 
 ### Leorio
 
@@ -284,9 +284,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 10 | 4 | 15 | +4 | −5 |
 | Coup au corps | `lowLight` | low | 5 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 10 | 4 | 20 | Sol | −9 |
-| Direct en avançant | `forwardLight` | mid | 7 | 3 | 12 | +4 | −3 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 25 | Sol | −11 |
-| Revers | `backHeavy` | mid | 12 | 4 | 21 | +4 | −9 |
+| Direct d’urgence | `forwardLight` | mid | 7 | 3 | 12 | +4 | −3 |
+| Diagnostic bas | `forwardHeavy` | mid | 14 | 5 | 25 | Sol | −11 |
+| Réanimation combative | `backHeavy` | mid | 12 | 4 | 21 | +4 | −9 |
 
 ### Hanzo
 
@@ -296,9 +296,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Tranchant de la main | `standingHeavy` | mid | 7 | 4 | 12 | +3 | −2 |
 | Coup au tendon | `lowLight` | low | 4 | 3 | 8 | +3 | −3 |
 | Fauchage furtif | `lowHeavy` | low | 8 | 4 | 17 | Sol | −6 |
-| Pas sans trace | `forwardLight` | mid | 6 | 3 | 8 | +3 | +1 |
-| Paume de contrôle | `forwardHeavy` | mid | 11 | 5 | 22 | Sol | −8 |
-| Revers du ninja | `backHeavy` | mid | 8 | 4 | 13 | +3 | −1 |
+| Pas du plafond | `forwardLight` | mid | 6 | 3 | 8 | +3 | +1 |
+| Fausse décapitation | `forwardHeavy` | mid | 11 | 5 | 22 | Sol | −8 |
+| Corps laissé derrière | `backHeavy` | mid | 8 | 4 | 13 | +3 | −1 |
 
 ### Rihan
 

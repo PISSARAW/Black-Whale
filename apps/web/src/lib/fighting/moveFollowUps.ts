@@ -7,7 +7,7 @@ import type {
 } from './movesetTypes'
 import type { ArcadeFighter, FightInput, FighterId, MoveAction, MoveSlot } from './types'
 
-interface FollowUpSpec {
+export interface FollowUpSpec {
   id: string
   sourceSlot: MoveSlot
   baseSlot: MoveSlot
@@ -16,6 +16,246 @@ interface FollowUpSpec {
 }
 
 const PRIORITY_SPECS: Partial<Record<FighterId, readonly FollowUpSpec[]>> = {
+  kurapika: [
+    {
+      id: 'kurapika:five-finger-cross',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'kurapika:scarlet-verdict-followup',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  chrollo: [
+    {
+      id: 'chrollo:deceptive-bookmark',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'chrollo:final-chapter',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  benjamin: [
+    {
+      id: 'benjamin:ascending-air-blow',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'benjamin:absolute-command-followup',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  tserriednich: [
+    {
+      id: 'tserriednich:princely-blind-spot',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'tserriednich:ten-seconds-ahead-followup',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  theta: [
+    {
+      id: 'theta:rising-stock',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'theta:impossible-decision',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  biscuit: [
+    {
+      id: 'biscuit:rising-palm',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'biscuit:absolute-correction',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  phinks: [
+    {
+      id: 'phinks:false-release',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'backHeavy',
+      input: 'heavy',
+      condition: 'on-block',
+    },
+    {
+      id: 'phinks:no-return-fist',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  franklin: [
+    {
+      id: 'franklin:anti-air-curtain',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'franklin:last-round',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  illumi: [
+    {
+      id: 'illumi:displaced-joint',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'illumi:funeral-procession',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  bonolenov: [
+    {
+      id: 'bonolenov:vertical-crescendo',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'bonolenov:jupiter-finale',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  shizuku: [
+    {
+      id: 'shizuku:dust-uprise',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'shizuku:vacuumed-hemorrhage',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  hinrigh: [
+    {
+      id: 'hinrigh:barrel-serpent',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'hinrigh:urban-biohazard',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  mizaistom: [
+    {
+      id: 'mizaistom:apprehension',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'mizaistom:hearing-closed',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  leorio: [
+    {
+      id: 'leorio:under-bridge-fist',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'leorio:operating-room',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
+  hanzo: [
+    {
+      id: 'hanzo:shinobi-lock',
+      sourceSlot: 'forwardLight',
+      baseSlot: 'airHeavy',
+      input: 'heavy',
+      condition: 'airborne',
+    },
+    {
+      id: 'hanzo:silent-execution',
+      sourceSlot: 'forwardHeavy',
+      baseSlot: 'throw',
+      input: 'heavy',
+      condition: 'on-hit',
+    },
+  ],
   feitan: [
     {
       id: 'feitan:pain-stairway',

@@ -17,10 +17,11 @@ const MARTIAL_NAMES: Partial<Record<MoveSlot, readonly [string, string]>> = {
   lowLight: ['Direct bas', 'Low Straight'],
   lowHeavy: ['Balayage', 'Leg Sweep'],
   airLight: ['Direct aérien', 'Air Straight'],
-  airHeavy: ['Talon descendant', 'Descending Heel'],
-  forwardLight: ['Pas et direct', 'Step-in Straight'],
-  forwardHeavy: ['Croisé en avancée', 'Advancing Cross'],
-  backHeavy: ['Contre en retrait', 'Retreating Counter'],
+  airHeavy: ['Croix des cinq doigts', 'Five-Finger Cross'],
+  forwardLight: ['Pendule rasant', 'Low Pendulum'],
+  forwardHeavy: ['Pas de l’index', 'Index Step'],
+  backHeavy: ['Rappel du geôlier', 'Jailer Recall'],
+  throw: ['Verdict écarlate', 'Scarlet Verdict'],
 }
 const CHAIN_MOVES: Partial<Record<MoveSlot, ChainTuning>> = {
   neutralSpecial: { variant: 'standing', guard: 'mid', tuning: CHAIN_CAST },

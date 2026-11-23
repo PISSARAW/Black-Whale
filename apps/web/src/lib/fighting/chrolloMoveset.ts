@@ -37,9 +37,11 @@ const PHYSICAL_NAMES: Partial<Record<MoveSlot, readonly [string, string]>> = {
   standingHeavy: ['Coup de pied d’arrêt', 'Stop Kick'],
   lowLight: ['Frappe basse', 'Low Strike'],
   airLight: ['Main du voleur', 'Thief’s Hand'],
-  forwardLight: ['Paume rapide', 'Quick Palm'],
-  forwardHeavy: ['Coude du chef', 'Leader Elbow'],
-  backHeavy: ['Contre du voleur', 'Thief Counter'],
+  airHeavy: ['Signet trompeur', 'Deceptive Bookmark'],
+  forwardLight: ['Page tranchante', 'Cutting Page'],
+  forwardHeavy: ['Lecture en mouvement', 'Moving Reading'],
+  backHeavy: ['Pas du voleur', 'Thief’s Step'],
+  throw: ['Chapitre final', 'Final Chapter'],
 }
 
 export function tuneChrolloMoveset(moveset: FighterMoveset): FighterMoveset {

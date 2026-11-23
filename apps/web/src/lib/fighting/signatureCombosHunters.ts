@@ -13,14 +13,13 @@ export const HUNTERS_SIGNATURES: readonly SignatureCombo[] = [
     opponent: 'feitan',
     title: ['Ménagerie urbaine', 'Urban Menagerie'],
     requirement: [
-      'Transformer les menottes en pigeon jusqu’à la capture au contact, accélération avant, Coup bas discret, Direct du mafieux, Pigeon de métal, Crosse animale, Fauchage de la famille, accélération avant, Biohazard urbain, accélération arrière, couteau réel de conclusion. Les animaux restent les objets transformés ; les couteaux sont finis.',
-      'Transform the handcuffs into a pigeon until contact capture, forward accélération, Discrete Low, Mafia Straight, Metal Pigeon, Animal Stock, Family Sweep, forward accélération, Urban Biohazard, back accélération, real finishing knife. Animals stay transformed objects; knives are finite.',
+      'Transformer les menottes en pigeon jusqu’à la capture au contact, accélération avant, Coup bas discret, Pigeon de métal, Crosse animale, Fauchage de la famille, accélération avant, Biohazard urbain, recul et couteau réel de conclusion. Les animaux restent les objets transformés ; les couteaux sont finis.',
+      'Transform the handcuffs into a pigeon until contact capture, forward accélération, Discrete Low, Metal Pigeon, Animal Stock, Family Sweep, forward accélération, Urban Biohazard, retreat and real finishing knife. Animals stay transformed objects; knives are finite.',
     ],
     steps: [
       { biohazard: 'capture' },
       { dash: 'forward', free: true },
       { move: 'lowLight' },
-      { move: 'standingLight' },
       { move: 'forwardLight' },
       { move: 'standingHeavy' },
       { move: 'lowHeavy' },

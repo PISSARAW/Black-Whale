@@ -61,7 +61,6 @@ describe('Dix tours, un poing', () => {
     expect(run.contacts.map((hit) => hit.move)).toEqual([
       'phinks:standingLight',
       'phinks:standingHeavy',
-      'phinks:forwardHeavy',
       'phinks:finisher',
     ])
     expect(run.state.player.hatsuEffects.cyclotronTurns).toBe(0)

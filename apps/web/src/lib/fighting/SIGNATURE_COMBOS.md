@@ -106,8 +106,9 @@ Huit touches ; Ken parfait 28, Poing de Ko 20, Impact total 40 quand il conclut 
 ## Dix tours, un poing — Phinks
 
 Démarrer Ripper Cyclotron → accélération arrière en tournant → esquive basse en tournant
-→ saut croisé → atterrissage derrière la cible → Direct de météore → Crochet de la Brigade
-→ Bélier de Meteor City → terminer le dernier tour → libérer Ripper Cyclotron. Quatre touches.
+→ saut croisé → atterrissage derrière la cible → revenir à portée → Direct de météore
+→ Crochet de la Brigade → libérer immédiatement Ripper Cyclotron. Trois touches ; les
+déplacements ont déjà complété les tours consommés par la libération.
 
 - **Rotation en mouvement** (`phinksCyclotron.ts`), dans tous les combats : le bras droit
   continue de tourner pendant les déplacements, les sauts, l’accroupi et les coups
@@ -118,9 +119,9 @@ Démarrer Ripper Cyclotron → accélération arrière en tournant → esquive b
 - **Saut croisé** : le moteur ne pousse pas deux corps dont l’un dépasse 7 de hauteur ;
   après l’esquive, le saut passe au-dessus de la cible.
 - **Libération en combo** (`phinksComboRelease.ts`) : avec au moins un tour complet, le
-  poing droit annule un coup ordinaire confirmé dont la chaîne écrite le nomme (Épaule
-  blindée), avance de 4 et atteint le corps que ce coup a mis au sol. Seule la
-  libération consomme les tours.
+  poing droit annule un coup ordinaire confirmé dont la chaîne écrite le nomme (Crochet
+  de la Brigade), avance de 4 et atteint le corps touché. Seule la libération consomme
+  les tours.
 
 ## Dix secondes d’avance — Tserriednich (Spécialisation)
 
@@ -233,9 +234,9 @@ que le sang sortant de plaies ouvertes non bouchées ; sans plaie, le finisher r
 ## Ménagerie urbaine — Hinrigh (matérialisation)
 
 Transformer les menottes en pigeon jusqu’à la capture au contact → accélération avant → Coup bas
-discret → Direct du mafieux → Pigeon de métal → Crosse animale → Fauchage de la famille →
-accélération avant → Capture de la Xi-Yu → accélération arrière → couteau réel de conclusion
-(`signatureCombosHunters.ts`). Sept touches. Les animaux restent les objets transformés et les
+discret → Pigeon de métal → Crosse animale → Fauchage de la famille → accélération avant →
+Capture de la Xi-Yu → recul → couteau réel de conclusion
+(`signatureCombosHunters.ts`). Six touches. Les animaux restent les objets transformés et les
 couteaux sont finis (stock réellement décrémenté).
 
 ## Audience interrompue — Mizaistom (contrôle conditionnel)
@@ -262,7 +263,7 @@ exposé au sol et tout contact avec celui-ci interrompt immédiatement la projec
 ## Analyse parfaite — Rihan (Predator)
 
 Accélération arrière → observation d’une manifestation de Nen en direct (fiche 5 facettes) →
-Prédation ciblée → accélération avant → Avancée → Contre → Balayage → accélération avant →
+Prédation ciblée → accélération avant → Avancée → Balayage → accélération avant →
 Projection (`signatureCombosLot2A.ts`). Fonctionne uniquement contre une manifestation observable
 et entièrement comprise.
 
@@ -275,7 +276,7 @@ Préparation : ouverture d’une blessure réelle. Combo : Gouttes-yeux → acc�
 ## Battement désaccordé — Melody (flûte)
 
 Revers défensif → accélération arrière → Musique envoûtante jusqu’à l’apaisement (0 dégât) →
-arrêt de la flûte → double accélération avant → Coup bas → Coup de paume → Balayage →
+arrêt de la flûte → double accélération avant → Coup bas → Balayage →
 accélération avant → Projection (`signatureCombosLot2A.ts`).
 
 ## Le poing qui brûle — Basho (Great Hiker)

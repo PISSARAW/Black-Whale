@@ -10,6 +10,10 @@ describe('Lot 3 signature combos & 40/40 roster coverage (31–40)', () => {
     expect(SIGNATURE_COMBOS.length).toBeGreaterThanOrEqual(41)
   })
 
+  it('keeps every signature route within ten movements', () => {
+    expect(SIGNATURE_COMBOS.filter((combo) => combo.steps.length > 10)).toEqual([])
+  })
+
   it('Musse: marks the opponent with Secret Window during preparation before firing the pistol', () => {
     const combo = signatureCombo('musse:secret-window')
     const prepared = createSignatureFight(combo, { mirrored: false, gap: 5 })

@@ -132,7 +132,13 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     avoided: defence.avoided,
     critical,
   })
-  const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
+  const wallSplat = impactWallSplat({
+    defence,
+    defender,
+    attacker,
+    knockback: data.knockback,
+    counterHit: opening.counterHit,
+  })
   const spent = spendAttacker(
     attacker,
     defence,
@@ -482,10 +488,11 @@ function impactWallSplat(options: {
   defender: ArcadeFighter
   attacker: ArcadeFighter
   knockback: number
+  counterHit: boolean
 }): boolean {
   return (
     !options.defence.avoided &&
-    grammarAllowsWallSplat(options.attacker, options.knockback) &&
+    grammarAllowsWallSplat(options.attacker, options.knockback, options.counterHit) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }

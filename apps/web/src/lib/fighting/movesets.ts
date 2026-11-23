@@ -43,6 +43,7 @@ import { tuneThetaMoveset } from './thetaMoveset'
 import { tuneMelodyMoveset } from './melodyMoveset'
 import { melodyMoveResources } from './melodyRules'
 import { thetaShotMove } from './thetaFirearm'
+import { firearmCanShoot } from './nenPillars'
 import { isErigeronAction } from './billSupport'
 import { tuneParallelFutureMoveset } from './parallelFutureMoveset'
 import { futureMoveResources } from './parallelFutureAbility'
@@ -265,7 +266,8 @@ function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): bool
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
-  if (thetaShotMove(fighter, move.id)) return true
+  if (thetaShotMove(fighter, move.id))
+    return !fighter.weaponsConfiscated && firearmCanShoot(fighter)
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources

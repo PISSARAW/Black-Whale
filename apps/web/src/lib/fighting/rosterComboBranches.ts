@@ -108,12 +108,10 @@ export const ROSTER_TECHNIQUE_BRANCHES: Partial<
   Record<FighterId, Partial<Record<ComboOpening, readonly TechniqueBranch[]>>>
 > = {
   benjamin: { tip: technique('neutralSpecial') },
-  feitan: { tip: technique('forwardSpecial') },
   saiyu: { 'anti-air': technique('forwardSpecial') },
   theta: { 'corner-counter': technique('downSpecial') },
   biscuit: { 'anti-air': technique('finisher') },
   machi: { 'corner-counter': technique('forwardSpecial') },
-  kalluto: { 'corner-counter': technique('forwardSpecial') },
   shizuku: { 'corner-counter': technique('forwardSpecial') },
   gel: { 'anti-air': technique('forwardSpecial') },
   padaille: { 'corner-counter': technique('downSpecial') },

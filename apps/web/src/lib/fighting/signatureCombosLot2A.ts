@@ -13,8 +13,8 @@ export const LOT2A_SIGNATURES: readonly SignatureCombo[] = [
     opponent: 'hanzo',
     title: ['Analyse parfaite', 'Perfect Analysis'],
     requirement: [
-      'Accélération arrière, manifestation de Nen observable, analyse complète par Predator, avancée mesurée, Direct, Avancée, Contre, Balayage, accélération avant, Projection, Prédation ciblée. Ne fonctionne que contre une manifestation de Nen observable et entièrement comprise.',
-      'Back accélération, observable Nen manifestation, complete Predator analysis, measured advance, Straight, Advance, Counter, Sweep, forward accélération, Throw, targeted Predation. Works only against a live, fully understood Nen manifestation.',
+      'Accélération arrière, manifestation de Nen observable, analyse complète par Predator, avancée mesurée, Balayage, accélération avant, Projection, Prédation ciblée. Ne fonctionne que contre une manifestation de Nen observable et entièrement comprise.',
+      'Back accélération, observable Nen manifestation, complete Predator analysis, measured advance, Sweep, forward accélération, Throw, targeted Predation. Works only against a live, fully understood Nen manifestation.',
     ],
     steps: [
       { dash: 'back', free: true },
@@ -24,7 +24,6 @@ export const LOT2A_SIGNATURES: readonly SignatureCombo[] = [
       { predator: 'launch' },
       { dash: 'forward', free: true },
       { move: 'forwardLight' },
-      { move: 'standingHeavy' },
       { move: 'lowHeavy' },
       { dash: 'forward' },
       { move: 'throw' },
@@ -59,8 +58,8 @@ export const LOT2A_SIGNATURES: readonly SignatureCombo[] = [
     opponent: 'kurapika',
     title: ['Battement désaccordé', 'Detuned Heartbeat'],
     requirement: [
-      'Revers défensif, accélération arrière, jouer la Musique envoûtante jusqu’à l’apaisement (zéro dégât), arrêter la flûte, accélération avant, Coup de paume, Balayage, accélération avant, Projection. Melody doit arrêter de jouer avant d’attaquer.',
-      'Defensive Backfist, back accélération, play Enchanting Music until entranced (zero damage), stop the flute, forward accélération, Palm Strike, Sweep, forward accélération, Throw. Melody must stop playing before attacking.',
+      'Revers défensif, accélération arrière, jouer la Musique envoûtante jusqu’à l’apaisement (zéro dégât), arrêter la flûte, double accélération avant, Coup bas, Balayage, accélération avant, Projection. Melody doit arrêter de jouer avant d’attaquer.',
+      'Defensive Backfist, back accélération, play Enchanting Music until entranced (zero damage), stop the flute, double forward accélération, Low Strike, Sweep, forward accélération, Throw. Melody must stop playing before attacking.',
     ],
     steps: [
       { move: 'backHeavy' },
@@ -70,7 +69,6 @@ export const LOT2A_SIGNATURES: readonly SignatureCombo[] = [
       { dash: 'forward', free: true },
       { dash: 'forward', free: true },
       { move: 'lowLight' },
-      { move: 'standingHeavy' },
       { move: 'lowHeavy' },
       { dash: 'forward' },
       { move: 'throw' },

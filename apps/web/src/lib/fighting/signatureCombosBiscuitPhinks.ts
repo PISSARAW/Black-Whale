@@ -33,8 +33,8 @@ export const BISCUIT_AND_PHINKS_SIGNATURES: readonly SignatureCombo[] = [
     opponent: 'biscuit',
     title: ['Dix tours, un poing', 'Ten Turns, One Fist'],
     requirement: [
-      'Démarrer Ripper Cyclotron, accélération arrière en tournant, esquive basse en tournant (bas + avant, avant), saut croisé, atterrissage derrière la cible, Direct de météore, Crochet de la Brigade, Épaule blindée, terminer le dernier tour, libérer Ripper Cyclotron. Les coups intermédiaires ne reçoivent aucun bonus : seule la libération consomme les tours complets.',
-      'Start Ripper Cyclotron, back dash while turning, low dodge while turning (down + forward, forward), cross-up jump, land behind the target, Meteor Straight, Troupe Hook, Armored Shoulder, finish the last turn, release Ripper Cyclotron. The blows in between gain nothing: only the release consumes the full turns.',
+      'Démarrer Ripper Cyclotron, accélération arrière en tournant, esquive basse en tournant (bas + avant, avant), saut croisé, atterrissage derrière la cible, revenir à portée, Direct de météore, Crochet de la Brigade, libérer immédiatement Ripper Cyclotron. Les déplacements ont complété les tours ; les coups intermédiaires ne reçoivent aucun bonus et seule la libération les consomme.',
+      'Start Ripper Cyclotron, back dash while turning, low dodge while turning (down + forward, forward), cross-up jump, land behind the target, return to striking range, Meteor Straight, Troupe Hook, immediately release Ripper Cyclotron. Movement completed the turns; the blows in between gain nothing and only the release consumes them.',
     ],
     steps: [
       { wind: true },
@@ -42,10 +42,9 @@ export const BISCUIT_AND_PHINKS_SIGNATURES: readonly SignatureCombo[] = [
       { dash: 'forward', free: true, low: true },
       { jump: 'forward' },
       { land: true },
+      { approach: true },
       { move: 'standingLight' },
       { move: 'standingHeavy' },
-      { move: 'forwardHeavy' },
-      { turn: true },
       { move: 'finisher' },
     ],
   },

@@ -3,7 +3,7 @@ import { combatRoute, combatRoutesFor } from './combatRoutes'
 import { combatRouteAction, combatRouteInput, createCombatRouteFight } from './combatRouteFight'
 import { performMove, tickFight } from './engine'
 import { canStartFighterAttack } from './fighterAttacks'
-import { moveForSlot } from './movesets'
+import { moveById, moveForSlot } from './movesets'
 import { comboChoices } from './comboChoices'
 import { EMPTY_INPUT, type FightState, type MoveSlot } from './types'
 
@@ -46,7 +46,7 @@ function execute(id: string, initial?: FightState) {
     const aura = state.player.aura
     state = command(state, slot)
     spent += aura - state.player.aura
-    expect(state.player.attack?.moveId).toBe(move.id)
+    expect(moveById(state.player.attack?.moveId)?.slot).toBe(slot)
     state = contact(state)
   }
   expect(state.opponent.comboHits).toBe(route.moves.length)
@@ -76,8 +76,7 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
     expect(carry.distance).toBeGreaterThan(economy.distance + 2)
     expect(carry.damage).toBeGreaterThan(economy.damage)
     expect(economy.state.opponent.knockdownFrames).toBeGreaterThan(0)
-    if (fighter === 'chrollo') expect(carry.state.opponent.knockdownFrames).toBe(0)
-    else expect(carry.state.opponent.knockdownFrames).toBeGreaterThan(0)
+    expect(carry.state.opponent.knockdownFrames).toBeGreaterThan(0)
   })
 
   it('honors the exact physical finisher selected after a common opening', () => {
@@ -91,10 +90,9 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
       expect(next.player.attack?.moveId).toBe(`${fighter}:${slot}`)
       expect(next.player.aura).toBe(state.player.aura)
       const landed = contact(next)
-      if (fighter === 'chrollo' && slot === 'forwardLight') {
-        expect(landed.opponent.knockdownFrames).toBe(0)
+      expect(landed.opponent.knockdownFrames).toBeGreaterThan(0)
+      if (fighter === 'chrollo' && slot === 'forwardLight')
         expect(landed.opponent.x).toBeGreaterThan(state.opponent.x)
-      } else expect(landed.opponent.knockdownFrames).toBeGreaterThan(0)
     }
   })
 
@@ -179,7 +177,7 @@ describe('personal powers and recovery links', () => {
     })
   })
 
-  it('pays for a complete Phinks rotation, preserves it on a sweep, and spends it on a real link', () => {
+  it('pays for a complete Phinks rotation, preserves it on a sweep, and spends it on release', () => {
     const prepared = createCombatRouteFight(combatRoute('phinks:charged'))
     expect(prepared.player.hatsuEffects.cyclotronTurns).toBe(1)
     expect(prepared.player.aura).toBeCloseTo(98, 1)
@@ -189,16 +187,20 @@ describe('personal powers and recovery links', () => {
     state = contact(command(state, 'standingLight'))
     state = contact(command(state, 'standingHeavy'))
     expect(comboChoices(state).find((choice) => choice.move.slot === 'finisher')).toMatchObject({
-      link: true,
-      status: 'wait',
+      link: false,
+      status: 'unavailable',
     })
-    expect(command(state, 'finisher').player.attack?.moveId).toBe('phinks:standingHeavy')
     expect(state.player.hatsuEffects.cyclotronTurns).toBe(1)
     while (state.player.attack) state = tick(state)
     const started = command(state, 'finisher')
     expect(started.player.hatsuEffects.cyclotronTurns).toBe(0)
     expect(started.player.attack?.cyclotronTurns).toBe(1)
-    expect(contact(started).opponent.comboHits).toBe(3)
+    const sequence = started.impact?.sequence ?? 0
+    state = started
+    for (let frame = 0; frame < 100 && (state.impact?.sequence ?? 0) === sequence; frame++)
+      state = tick(state)
+    expect(state.impact).toMatchObject({ sequence: sequence + 1, blocked: true })
+    expect(state.opponent.comboHits).toBe(0)
     expect(
       comboChoices(pivot('phinks')).find((choice) => choice.move.slot === 'finisher')?.status,
     ).toBe('unavailable')

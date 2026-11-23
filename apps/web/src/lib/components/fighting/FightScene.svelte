@@ -3,6 +3,7 @@
   import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
+  import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
   import { updateFightCameraFog } from '$lib/fighting/fightSceneFog'
@@ -232,6 +233,12 @@
           geometry,
           glow,
         })
+        const motionTrails = createFightMotionTrailScene({
+          THREE,
+          scene,
+          comfort: visualComfort,
+          figureOf: (side) => models[side].model.turns,
+        })
 
         const fit = () => {
           resizeFightCanvas({ canvas, renderer, camera, post, graphics: comfort.graphics })
@@ -396,6 +403,7 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
+          motionTrails.sync(state, now)
           alignPhysicalContact(state)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
@@ -404,6 +412,7 @@
           updateCombatCamera(dt, now)
 
           impacts.animate(now)
+          motionTrails.animate(now)
 
           collisions.sync(state)
           scenery.update?.(seconds)
@@ -437,6 +446,7 @@
           victoryRenderer.dispose()
           trackingSilhouettes.dispose()
           impacts.dispose()
+          motionTrails.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
           collisions.dispose()
           projectileScene.dispose()

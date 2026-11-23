@@ -273,3 +273,15 @@ add a short wave, directional rays, low thump and transient crack.
 The profile depends only on the already resolved public impact. Evasions remain
 silent, comfort settings still control flashes and shake, and neither combat
 state nor replay hashes are changed by the presentation layer.
+
+## P12 — velocity-led limb smears
+
+Fast hands and knees now leave a short, tapered smear between their previous
+and current rendered positions. The scene selects only the fastest limb for a
+light and at most two for a heavy, colours the trace from the attack's declared
+aura, rejects model-refresh teleports and reuses a fixed pool of 24 meshes.
+
+Trails are presentation-only, freeze during hitstop, clear on rewind or round
+change, and disappear immediately when flashes or reduced motion are enabled.
+They clarify acceleration between authored keys without becoming persistent
+motion blur or hiding the contact silhouette.

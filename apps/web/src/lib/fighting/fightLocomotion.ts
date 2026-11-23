@@ -12,7 +12,7 @@ import { shufflePhase, shufflePose } from './fightShuffleStep'
 import { physicalWalkAccent } from './fightLocomotionInertia'
 import { kurapikaDashPoses, KURAPIKA_WALK_STYLE } from './kurapikaLocomotion'
 import { benjaminDashPoses, BENJAMIN_WALK_STYLE } from './benjaminLocomotion'
-import { firstFiveMotion, firstFiveWalk } from './firstFiveCombatMotion'
+import { combatLocomotion, combatWalk } from './firstFiveCombatMotion'
 
 /**
  * Authored locomotion poses for the short, explosive movements that should not
@@ -227,11 +227,12 @@ export function prejumpPose(fighter: ArcadeFighter, standing: FightPose): Locomo
   if (!(frames > 0)) return null
   const profile = fighterMotionProfile(fighter.id)
   const compression = 1 - frames / PREJUMP_FRAMES
+  const style = combatLocomotion(fighter)
   return {
     pose: addPoses(
       standing,
       scalePose(
-        addPoses(PREJUMP, firstFiveMotion(fighter)?.jump ?? {}),
+        addPoses(PREJUMP, style?.takeoff ?? style?.jump ?? {}),
         easeInOut(compression) * profile.jump,
       ),
     ),
@@ -245,11 +246,12 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
   if (!(frames > 0)) return null
   const profile = fighterMotionProfile(fighter.id)
   const compression = frames / LANDING_FRAMES
+  const style = combatLocomotion(fighter)
   return {
     pose: addPoses(
       standing,
       scalePose(
-        addPoses(LANDING, firstFiveMotion(fighter)?.jump ?? {}),
+        addPoses(LANDING, style?.landing ?? style?.jump ?? {}),
         easeOut(compression) * profile.landing,
       ),
     ),
@@ -267,9 +269,9 @@ export function walkPose(fighter: ArcadeFighter, standing: FightPose): Locomotio
   const phase = shufflePhase(fighter)
   const rhythm = scalePose(style.rhythm, Math.sin(phase) * profile.walk * (advancing ? 1 : 0.65))
   const posture = scalePose(advancing ? style.advance : style.retreat, profile.walk)
-  const signature = firstFiveMotion(fighter)
+  const signature = combatLocomotion(fighter)
   const accent = signature
-    ? scalePose(firstFiveWalk(signature, phase, advancing), profile.walk)
+    ? scalePose(combatWalk(signature, phase, advancing), profile.walk)
     : personal
       ? {}
       : scalePose(physicalWalkAccent(fighter, advancing), profile.walk)
@@ -282,7 +284,7 @@ export function walkPose(fighter: ArcadeFighter, standing: FightPose): Locomotio
 }
 
 export function locomotionGuard(fighter: ArcadeFighter, standing: FightPose): FightPose {
-  const signature = firstFiveMotion(fighter)
+  const signature = combatLocomotion(fighter)
   return signature ? addPoses(defensiveStance(standing), signature.guard) : defensiveStance(standing)
 }
 

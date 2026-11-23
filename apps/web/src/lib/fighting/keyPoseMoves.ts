@@ -9,6 +9,7 @@ import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { BONOLENOV_KEY_POSES } from './keyPosesBonolenov'
 import { archetypeTimeline } from './fightArchetypes'
 import { rosterKeyPoses } from './rosterKeyPoses'
+import { hasSecondFiveNormal, secondFiveNormalTimeline } from './secondFiveNormals'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
@@ -144,12 +145,13 @@ export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
 
 /** The personal timeline of a move, or null for a legacy family gesture. */
 export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
-  return KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
+  const native = KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
+  return native && secondFiveNormalTimeline(id, slot, native)
 }
 
 /** Audit provenance: dedicated clips outrank generated roster grammar. */
 export function keyPoseSource(id: FighterId, slot: MoveSlot): KeyPoseSource {
-  if (KEY_POSES[id]?.[slot]) return 'dedicated'
+  if (KEY_POSES[id]?.[slot] || hasSecondFiveNormal(id, slot)) return 'dedicated'
   if (rosterKeyPoses(id)[slot]) return 'roster'
   return 'archetype'
 }

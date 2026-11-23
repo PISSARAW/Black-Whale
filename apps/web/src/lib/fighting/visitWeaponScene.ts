@@ -28,7 +28,9 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
             model: 'priest-staff',
             fit: { height: 1.8 },
           })
-          placeVisitHand(options, { state, side, root: staff.root, hand: freeVisitHand(fighter) })
+          const hand =
+            fighter.id === 'saiyu' && fighter.facing === -1 ? 'left' : freeVisitHand(fighter)
+          placeVisitHand(options, { state, side, root: staff.root, hand })
           staff.root.rotateZ(fighter.facing * staffSwing(fighter))
         }
         const attack = fighter.attack
@@ -61,8 +63,45 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
 }
 
 function staffSwing(fighter: ArcadeFighter): number {
+  const normal = fighter.id === 'saiyu' && saiyuNormalStaffAngle(fighter)
+  if (typeof normal === 'number') return normal
+  if (fighter.id === 'saiyu' && !fighter.attack) return saiyuStaffCarriage(fighter)
   if (!fighter.attack || visitAttackSource(fighter) !== 'saiyu') return -0.12
   return -0.12 + Math.sin(attackProgress(fighter) * Math.PI) * 1.5
+}
+
+/** Each normal sets a wind-up and contact angle around the actual grip. */
+const SAIYU_STAFF_ARCS: Readonly<Record<string, readonly [number, number]>> = {
+  standingLight: [-0.24, 1.28],
+  standingHeavy: [-0.86, 1.85],
+  lowLight: [0.3, 2.05],
+  lowHeavy: [-0.65, 1.65],
+  airLight: [0.2, 1.1],
+  airHeavy: [-0.77, 2.17],
+  forwardLight: [0.45, 1.36],
+  forwardHeavy: [-0.94, 1.51],
+  backHeavy: [0.92, -0.83],
+}
+
+function saiyuNormalStaffAngle(fighter: ArcadeFighter): number | undefined {
+  const attack = fighter.attack
+  if (!attack || (attack.kind !== 'light' && attack.kind !== 'heavy')) return
+  const slot = attack.moveId?.split(':')[1]
+  const arc = slot && SAIYU_STAFF_ARCS[slot]
+  if (!arc) return
+  const { startup, active, recovery } = attackData(attack.kind, fighter)
+  const [windup, contact] = arc
+  if (attack.frame < startup) {
+    return windup + (contact - windup) * fineControlEase(attack.frame / Math.max(1, startup))
+  }
+  const release = Math.max(0, attack.frame - startup - active) / Math.max(1, recovery)
+  return contact + (saiyuStaffCarriage(fighter) - contact) * fineControlEase(Math.min(1, release))
+}
+
+function saiyuStaffCarriage(fighter: ArcadeFighter): number {
+  if (fighter.pose === 'guard') return 0.63
+  if (fighter.y > 0) return -0.59
+  return -0.12
 }
 
 function armExtension(fighter: ArcadeFighter): number {

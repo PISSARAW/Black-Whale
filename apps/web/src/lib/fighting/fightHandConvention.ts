@@ -9,7 +9,7 @@ export function usesRightHandPose(fighter: ArcadeFighter, key: string): boolean 
   if (hanzoBladeAttack(fighter)) return true
   if (fighter.id === 'bonolenov' && fighter.battleCantabile?.prologue) return true
   return (
-    ['chrollo', 'kurapika', 'luini', 'shizuku', 'kalluto'].includes(fighter.id) ||
+    ['chrollo', 'kurapika', 'luini', 'shizuku', 'kalluto', 'theta'].includes(fighter.id) ||
     bodyguardFiring(fighter) ||
     key === 'roster-writing' ||
     key === 'roster-console'

@@ -1,8 +1,9 @@
 import { addPoses, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, FighterId } from './types'
+import { secondFiveLocomotion } from './secondFiveLocomotion'
 
-interface CombatMotion {
+export interface CombatLocomotion {
   stride: number
   stepScale: number
   advance: FightPose
@@ -11,6 +12,11 @@ interface CombatMotion {
   swing: FightPose
   guard: FightPose
   jump: FightPose
+  takeoff?: FightPose
+  landing?: FightPose
+}
+
+interface CombatMotion extends CombatLocomotion {
   loadAt: number
   settleAt: number
   load: FightPose
@@ -106,11 +112,15 @@ const MOTION: Partial<Record<FighterId, CombatMotion>> = {
   },
 }
 
-export function firstFiveMotion(fighter: ArcadeFighter): CombatMotion | undefined {
-  return MOTION[fighter.id]
+export function combatLocomotion(fighter: ArcadeFighter): CombatLocomotion | undefined {
+  return secondFiveLocomotion(fighter) ?? MOTION[fighter.id]
 }
 
-export function firstFiveWalk(profile: CombatMotion, phase: number, advancing: boolean): FightPose {
+export function combatWalk(
+  profile: CombatLocomotion,
+  phase: number,
+  advancing: boolean,
+): FightPose {
   const swing = Math.sin(phase)
   const weight = Math.cos(phase) ** 2
   return addPoses(
@@ -124,7 +134,7 @@ export function firstFiveStrike(
   fighter: ArcadeFighter,
   timing: { frames: AttackFrameData; frame: number },
 ): FightPose {
-  const profile = firstFiveMotion(fighter)
+  const profile = MOTION[fighter.id]
   const attack = fighter.attack
   if (!profile || !attack || (attack.kind !== 'light' && attack.kind !== 'heavy')) {
     return NEUTRAL_POSE

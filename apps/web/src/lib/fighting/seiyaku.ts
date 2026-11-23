@@ -1,6 +1,7 @@
 import { transitionNen } from '@black-whale/nen-engine'
 import { EXHAUSTION_RELEASE_AURA } from './nen'
 import { onOf } from './onTechnique'
+import { canSpeak } from './saiyuSenses'
 import type { ArcadeFighter, FightInput, FightState } from './types'
 
 export type SeiyakuKind = 'speed' | 'aggression' | 'blind'
@@ -29,6 +30,7 @@ declare module './types' {
 
 /** Swears a Soft-Lock Seiyaku: never disables any button, punishes panic breaches immediately. */
 export function swearSeiyaku(fighter: ArcadeFighter, kind: SeiyakuKind): ArcadeFighter {
+  if (!canSpeak(fighter)) return fighter
   if (fighter.seiyaku && !fighter.seiyaku.breached) return fighter
   const remainingFrames =
     kind === 'speed'

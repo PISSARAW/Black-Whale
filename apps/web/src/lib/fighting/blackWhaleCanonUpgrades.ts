@@ -1,5 +1,6 @@
 import { FIGHT_FPS } from './fightClock'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
+import { saiyuAudioCuesMuted } from './finalFiveUpgrades'
 import type { ArcadeFighter, FighterId, FightInput, FightSide, FightState } from './types'
 
 export const STEALTH_DOLPHIN_LIFE_DPS = 2.5
@@ -53,7 +54,7 @@ export function readMelodyHeartbeat(
   opponentInput?: FightInput,
 ): MelodyHeartbeatReading | null {
   const melody = state[melodySide]
-  if ((melody.nenOwner ?? melody.id) !== 'melody') return null
+  if ((melody.nenOwner ?? melody.id) !== 'melody' || saiyuAudioCuesMuted(melody)) return null
   const foe = state[melodySide === 'player' ? 'opponent' : 'player']
   return {
     bluffing: Boolean(opponentInput?.call),

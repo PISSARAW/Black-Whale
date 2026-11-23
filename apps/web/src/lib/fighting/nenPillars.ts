@@ -1,4 +1,5 @@
 import { activeEnRadius, enContains } from './en/access'
+import { isBeyond } from './martialSpecialists'
 import type { ArcadeFighter, FightState } from './types'
 
 export const EN_STARTUP_BONUS = 2
@@ -57,7 +58,8 @@ function applyRenMalice(
   const attacker = state[attackerSide]
   const target = state[targetSide]
   if (attacker.nen.mode !== 'ren' || attacker.nen.en || attacker.nen.ko) return state
-  if (Math.abs(attacker.x - target.x) > REN_MALICE_RANGE) return state
+  const maliceRange = isBeyond(attacker) ? REN_MALICE_RANGE * 2 : REN_MALICE_RANGE
+  if (Math.abs(attacker.x - target.x) > maliceRange) return state
   if ((target.fearCooldownFrames ?? 0) > 0 || target.health <= 0) return state
   const vulnerable =
     target.nen.mode === 'zetsu' ||

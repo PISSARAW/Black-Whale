@@ -39,6 +39,9 @@ export function resolveContextInput(
   if (hasIllumiNeedleOrder(fighter)) return { ...input, removeNeedle: true }
   if (fighter.hinrighCuffed) return { ...input, breakCuffs: true }
   if (canSubdueCamilla(state, side)) return { ...input, subdue: true }
+  if (state.moonlightOffer?.status === 'offered' && state.moonlightOffer.target === side) {
+    return { ...input, acceptContract: true }
+  }
   if ((fighter.openWounds ?? 0) > 0) return { ...input, plugWounds: true }
   if (soundThreatActive(state, side)) return { ...input, coverEars: true }
   if (nearbyArenaObject(state, side)) return { ...input, interact: true }

@@ -29,6 +29,13 @@ import { franklinKenDrain } from './troupeUpgrades'
 import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
 import { isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
 import { rihanTacticalDefenceFactor } from './matchupValves'
+import {
+  PADAILLE_DRILL_TEN_CHIP,
+  padailleAxeOpensWound,
+  padailleDrillBodyMemoryStack,
+  padailleDrillPiercesTen,
+  padailleHammerKenDrain,
+} from './finalFiveUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -80,13 +87,16 @@ function attackDamage(
   const halkenburgPierce = isHalkenburgUnblockableArrow(attacker)
   const guardBypassed = blocked && (bashoIgnoresTenGuard(attacker, defender) || halkenburgPierce)
   const leorioChip = leorioBreaksTenGuard(attacker, defender, blocked)
+  const padailleDrill = padailleDrillPiercesTen(attacker, defender, blocked)
   const guard = options.physicalProjectile
     ? firearmGuardFactor(defender, blocked)
     : !blocked || guardBypassed
       ? 1
       : leorioChip
         ? 0.28 * LEORIO_TEN_CHIP_FACTOR
-        : 0.28
+        : padailleDrill
+          ? 0.28 * PADAILLE_DRILL_TEN_CHIP
+          : 0.28
   const rawDamage = Math.round(
     base *
       (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
@@ -177,9 +187,13 @@ function struckFighter(
             0,
             options.fighter.aura -
               ((2 + options.damage * 0.1) * bashoKenCostFactor(options.fighter) +
-                franklinKenDrain(options.attacker, options.fighter, options.blocked)),
+                franklinKenDrain(options.attacker, options.fighter, options.blocked) +
+                padailleHammerKenDrain(options.attacker, options.fighter, options.blocked)),
           )
         : options.fighter.aura,
+    ...(padailleAxeOpensWound(options.attacker, options.blocked, options.damage)
+      ? { openWounds: (options.fighter.openWounds ?? 0) + 1 }
+      : {}),
     nen: contactNen(options.fighter, options.blocked),
     textureSurprise: textureUpdate.textureSurprise,
     ...(textureUpdate.trapped ? { hitStun: 0, blockStun: 0 } : {}),
@@ -203,7 +217,10 @@ function struckFighter(
     throwTechRecoveryFrames: 0,
   }
   const firearmHit = Boolean(!options.melee && options.zone && !options.blocked && options.damage > 0)
-  const stacks = leorioSurgicalStack(options.attacker, options.fighter)
+  const stacks = Math.max(
+    leorioSurgicalStack(options.attacker, options.fighter),
+    padailleDrillBodyMemoryStack(options.attacker),
+  )
   let updated = rememberBodyHit(struck, options.zone, options.damage, options.blocked)
   if (stacks > 1) updated = rememberBodyHit(updated, options.zone, options.damage, options.blocked)
   if (firearmHit && (options.zone === 'hands' || options.zone === 'feet')) {

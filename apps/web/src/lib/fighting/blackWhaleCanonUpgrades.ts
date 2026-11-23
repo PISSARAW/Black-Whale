@@ -1,10 +1,8 @@
-import { FIGHT_FPS } from './fightClock'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
 import { saiyuAudioCuesMuted } from './finalFiveUpgrades'
 import type { FightStageId } from './stages'
 import type { ArcadeFighter, FighterId, FightInput, FightSide, FightState } from './types'
 
-export const STEALTH_DOLPHIN_LIFE_DPS = 2.5
 /** Two warnings are shown in the published material; the third effect remains unknown. */
 export const TSERRIEDNICH_MAX_LIES = 2
 export const BENJAMIN_ROYAL_GUARDS: readonly FighterId[] = ['musse', 'furykov', 'rihan']
@@ -34,16 +32,15 @@ export function camillaCatsNameEligible(_victim: ArcadeFighter): boolean {
   return true
 }
 
-/** 2. Kurapika: holding an unused stolen Hatsu traps him in Emperor Time with continuous life drain. */
+/** 2. Kurapika: a loaded Dolphin keeps Emperor Time active until the ability is discharged. */
 export function kurapikaDolphinTrapped(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.kurapika?.held && !fighter.kurapika.held.used)
+  return Boolean(fighter.kurapika?.held?.loaded || fighter.kurapika?.dolphinLoans?.length)
 }
 
 export function stepKurapikaDolphinDrain(fighter: ArcadeFighter): ArcadeFighter {
-  if (!kurapikaDolphinTrapped(fighter) || fighter.health <= 1) return fighter
+  if (!kurapikaDolphinTrapped(fighter) || fighter.kurapika?.emperorTime) return fighter
   return {
     ...fighter,
-    health: Math.max(1, fighter.health - STEALTH_DOLPHIN_LIFE_DPS / FIGHT_FPS),
     kurapika: fighter.kurapika ? { ...fighter.kurapika, emperorTime: true } : fighter.kurapika,
   }
 }

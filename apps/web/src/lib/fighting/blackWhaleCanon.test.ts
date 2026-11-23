@@ -4,7 +4,6 @@ import { EMPTY_INPUT } from './types'
 import { camillaHatsu } from './hatsu/camilla'
 import { createKurapika } from './kurapika'
 import { nenAttackFactor } from './nen'
-import { FIGHT_FPS } from './fightClock'
 import {
   advanceBlackWhaleCanonUpgrades,
   camillaCatsNameEligible,
@@ -12,7 +11,6 @@ import {
   kurapikaDolphinTrapped,
   readMelodyHeartbeat,
   recordTserriednichLie,
-  STEALTH_DOLPHIN_LIFE_DPS,
   triggerVoconteArenaTransition,
   TSERRIEDNICH_MAX_LIES,
 } from './blackWhaleCanonUpgrades'
@@ -41,7 +39,7 @@ describe('6 canonical Black Whale upgrades: Camilla, Kurapika, Melody, Benjamin,
     expect(camillaCatsNameEligible(deadByTsk.player)).toBe(true)
   })
 
-  it('Kurapika Stealth Dolphin locks Emperor Time and continuously drains HP while holding an unused stolen Hatsu', () => {
+  it('Kurapika Stealth Dolphin locks Emperor Time only after loading, without inventing HP drain', () => {
     const state = beginFight(createFight('kurapika', 'cluck', { mode: 'versus-local' }))
     const trapped = {
       ...state,
@@ -67,10 +65,16 @@ describe('6 canonical Black Whale upgrades: Camilla, Kurapika, Melody, Benjamin,
       opponent: EMPTY_INPUT,
     })
     expect(ticked.player.kurapika?.emperorTime).toBe(true)
-    expect(trapped.player.health - ticked.player.health).toBeCloseTo(
-      STEALTH_DOLPHIN_LIFE_DPS / FIGHT_FPS,
-      6,
-    )
+    expect(ticked.player.health).toBe(trapped.player.health)
+    expect(
+      kurapikaDolphinTrapped({
+        ...trapped.player,
+        kurapika: {
+          ...trapped.player.kurapika!,
+          held: { ...trapped.player.kurapika!.held!, loaded: false },
+        },
+      }),
+    ).toBe(false)
   })
 
   it('Melody passively reads heartbeat for bluffs, critical On, mental fatigue, and active Seiyaku', () => {

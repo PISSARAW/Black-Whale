@@ -4,6 +4,10 @@ import { nenMentalFatigueRatio } from './nenCognitiveLoad'
 import { hasFastMartialTransfer } from './martialSpecialists'
 import { seiyakuSpeedActive } from './seiyaku'
 import { GEL_VENOM_TRANSFER_PENALTY } from './zodiacAndHeirUpgrades'
+import {
+  HALKENBURG_GUARD_TRANSFER_FRAMES,
+  JUPITER_TRANSFER_PENALTY,
+} from './halkenburgBonolenovUpgrades'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -24,6 +28,7 @@ declare module './types' {
 const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
 export function nenTransferFrames(fighter: ArcadeFighter): number {
+  if ((fighter.halkenburgSwappedFrames ?? 0) > 0) return HALKENBURG_GUARD_TRANSFER_FRAMES
   if (fighter.musseOwlActive || fighter.enReflexActive || seiyakuSpeedActive(fighter)) return 1
   // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
   const trained = fighterNenTraining(fighter, 'enhancer').level
@@ -34,7 +39,8 @@ export function nenTransferFrames(fighter: ArcadeFighter): number {
   const fatigue = nenMentalFatigueRatio(fighter)
   const slowdown = fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
   const venom = (fighter.gelVenomFrames ?? 0) > 0 ? GEL_VENOM_TRANSFER_PENALTY : 0
-  return Math.max(2, Math.round(base * slowdown)) + venom
+  const jupiter = (fighter.jupiterAcousticFrames ?? 0) > 0 ? JUPITER_TRANSFER_PENALTY : 0
+  return Math.max(2, Math.round(base * slowdown)) + venom + jupiter
 }
 
 export function currentAuraShares(fighter: ArcadeFighter): Shares | undefined {

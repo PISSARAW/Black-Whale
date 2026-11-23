@@ -27,6 +27,7 @@ import {
 } from './nenPillars'
 import { franklinKenDrain } from './troupeUpgrades'
 import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
+import { isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -75,7 +76,8 @@ function attackDamage(
   },
 ): number {
   const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
-  const guardBypassed = blocked && bashoIgnoresTenGuard(attacker, defender)
+  const halkenburgPierce = isHalkenburgUnblockableArrow(attacker)
+  const guardBypassed = blocked && (bashoIgnoresTenGuard(attacker, defender) || halkenburgPierce)
   const leorioChip = leorioBreaksTenGuard(attacker, defender, blocked)
   const guard = options.physicalProjectile
     ? firearmGuardFactor(defender, blocked)
@@ -105,7 +107,9 @@ function attackDamage(
   if (options.physicalProjectile && blocked && (defender.nen.ken || defender.nen.ko)) return 0
   // Ken absorbs ordinary guarded blows, but its protection has finite output.
   const absorption =
-    blocked && defender.nen.ken ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
+    blocked && !halkenburgPierce && defender.nen.ken
+      ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer')
+      : 0
   return absorption ? Math.max(0, damage - Math.round(absorption)) : Math.max(1, damage)
 }
 

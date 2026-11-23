@@ -34,6 +34,7 @@ import { bashoKenCostFactor } from './bashoHaiku'
 import { seiyakuExhaustionThreshold, seiyakuHatsuPowerFactor } from './seiyaku'
 import { predatorHatsuFactor } from './predatorUpgrades'
 import { applyIllumiMotorParasite, biscuitRyuFocusShare } from './illumiBiscuitUpgrades'
+import { halkenburgHatsuLocked } from './halkenburgBonolenovUpgrades'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -125,7 +126,7 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
     }
   }
   const zone = attackData(fighter.attack.kind, fighter).auraZone
-  if (zone === 'hands' && chrolloRightHandOccupied(fighter)) {
+  if (zone === 'hands' && (chrolloRightHandOccupied(fighter) || fighter.hinrighCuffed)) {
     return {
       ...withAction(fighter, { type: 'TEN' }),
       attack: { ...fighter.attack, auraCharged: false },
@@ -239,9 +240,11 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
-  return kind === 'special' && fighter.attack?.hatsuSource
-    ? abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter) * predatorHatsuFactor(fighter)
-    : categoryPower(fighter, 'enhancer')
+  if (kind === 'special' && fighter.attack?.hatsuSource) {
+    if (halkenburgHatsuLocked(fighter)) return 0
+    return abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter) * predatorHatsuFactor(fighter)
+  }
+  return categoryPower(fighter, 'enhancer')
 }
 
 function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {

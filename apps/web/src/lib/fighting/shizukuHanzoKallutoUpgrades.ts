@@ -48,10 +48,16 @@ export function blinkySwallowNonNen(state: FightState, side: FightSide): FightSt
     state.kallutoConfetti.owner !== side &&
     Math.abs(state.kallutoConfetti.x - shizuku.x) <= BLINKY_VACUUM_RANGE
   if (confettiCleared) swallowed = 'kalluto-confetti'
+  const pigeonCleared =
+    state.hinrighBioPigeon?.active &&
+    state.hinrighBioPigeon.owner !== side &&
+    Math.abs(state.hinrighBioPigeon.x - shizuku.x) <= BLINKY_VACUUM_RANGE
+  if (pigeonCleared) swallowed = 'hinrigh-bio-pigeon'
   return {
     ...state,
     projectiles: kept,
     kallutoConfetti: confettiCleared ? undefined : state.kallutoConfetti,
+    hinrighBioPigeon: pigeonCleared ? undefined : state.hinrighBioPigeon,
     [side]: { ...shizuku, shizukuSwallowed: swallowed },
   }
 }

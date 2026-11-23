@@ -35,11 +35,19 @@ import {
 } from '../illumiBiscuitUpgrades'
 import { advanceFeitanTerebellumUpgrades } from '../feitanTerebellumUpgrades'
 import { advanceShizukuHanzoKallutoUpgrades } from '../shizukuHanzoKallutoUpgrades'
+import { advanceHalkenburgBonolenovUpgrades } from '../halkenburgBonolenovUpgrades'
+import {
+  advanceHinrighZakuroLuiniUpgrades,
+  breakHinrighHandcuffs,
+} from '../hinrighZakuroLuiniUpgrades'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
-    if (inputs[side]?.context && hasIllumiNeedleOrder(state[side])) {
+    if (!inputs[side]?.context) continue
+    if (hasIllumiNeedleOrder(state[side])) {
       state = { ...state, [side]: removeIllumiNeedle(state[side]) }
+    } else if (state[side].hinrighCuffed) {
+      state = { ...state, [side]: breakHinrighHandcuffs(state[side]) }
     }
   }
   return state
@@ -132,18 +140,22 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceShizukuHanzoKallutoUpgrades(
-    advanceFeitanTerebellumUpgrades(
-      advanceIllumiBiscuitUpgrades(
-        advanceTroupeUpgrades(
-          advanceNenPillars(
-            advanceBashoHaiku(
-              advanceFurykovProfile(
-                advanceMusseOwl(
-                  advanceLeorioSonar(
-                    advanceTsk17(
-                      advanceChrolloBookIntel(
-                        reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+  return advanceHinrighZakuroLuiniUpgrades(
+    advanceHalkenburgBonolenovUpgrades(
+      advanceShizukuHanzoKallutoUpgrades(
+        advanceFeitanTerebellumUpgrades(
+          advanceIllumiBiscuitUpgrades(
+            advanceTroupeUpgrades(
+              advanceNenPillars(
+                advanceBashoHaiku(
+                  advanceFurykovProfile(
+                    advanceMusseOwl(
+                      advanceLeorioSonar(
+                        advanceTsk17(
+                          advanceChrolloBookIntel(
+                            reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))),
+                          ),
+                        ),
                       ),
                     ),
                   ),

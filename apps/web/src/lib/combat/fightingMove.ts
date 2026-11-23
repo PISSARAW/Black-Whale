@@ -5,6 +5,8 @@ import { CHAIN_BUFFER, LANE_METRE, chainAccepts, comboHistory } from './moveChai
 import { usesClashNen } from './clashNen'
 import { reactEnvironment } from './environment'
 import { fightingHatsuAction } from './fightingHatsu'
+import { isBlinkyUtilityMove, resolveFightingBlinky } from './fightingBlinky'
+import { isSkillHunterMove, resolveFightingSkillHunter } from './fightingSkillHunter'
 import { castHatsu, prepareHatsu } from './hatsuCast'
 import {
   otherSide,
@@ -32,9 +34,9 @@ export function prepareFightingMove(
   const fighter = state[action.side]
   const move = moveForSlot(action.fighterId, action.slot)
   if (!move || !canPerform(state, action.side, move)) return state
-  if (state.hitstop > 0) return buffer ? bufferMove(state, action) : state
+  if (state.hitstop > 0) return buffer ? bufferFightingMove(state, action) : state
   const chained = chainAccepts(fighter, move, state.clock)
-  if (moveIsBusy(fighter, chained)) return buffer ? bufferMove(state, action) : state
+  if (moveIsBusy(fighter, chained)) return buffer ? bufferFightingMove(state, action) : state
   return {
     ...state,
     [action.side]: {
@@ -109,8 +111,17 @@ export function releaseBufferedMove(state: CombatState, side: CombatSide): Comba
   if (!buffered) return state
   const cleared = { ...state, [side]: { ...state[side], buffered: null } }
   if (buffered.until < state.clock) return cleared
-  const { fighterId, slot, targetAt } = buffered
-  const action: FightingMoveAction = { type: 'FIGHTING_MOVE', side, fighterId, slot, targetAt }
+  const { fighterId, slot, targetAt, targetObject } = buffered
+  const action: FightingMoveAction = {
+    type: 'FIGHTING_MOVE',
+    side,
+    fighterId,
+    slot,
+    targetAt,
+    targetObject,
+  }
+  if (isBlinkyUtilityMove(action)) return resolveFightingBlinky(cleared, action)
+  if (isSkillHunterMove(action)) return resolveFightingSkillHunter(cleared, action)
   const hatsu = fightingHatsuAction(cleared, action)
   if (!hatsu) return prepareFightingMove(cleared, action, { buffer: false })
   if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(cleared, hatsu.side, hatsu.hatsuId)
@@ -118,9 +129,9 @@ export function releaseBufferedMove(state: CombatState, side: CombatSide): Comba
   return cast === cleared ? cleared : reactEnvironment(cast, hatsu)
 }
 
-function bufferMove(state: CombatState, action: FightingMoveAction): CombatState {
-  const { side, fighterId, slot, targetAt } = action
-  const buffered = { fighterId, slot, targetAt, until: state.clock + CHAIN_BUFFER }
+export function bufferFightingMove(state: CombatState, action: FightingMoveAction): CombatState {
+  const { side, fighterId, slot, targetAt, targetObject } = action
+  const buffered = { fighterId, slot, targetAt, targetObject, until: state.clock + CHAIN_BUFFER }
   return { ...state, [side]: { ...state[side], buffered } }
 }
 

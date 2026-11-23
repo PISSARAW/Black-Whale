@@ -199,14 +199,7 @@ function stealChain(context: NamedHatsuContext): CombatState {
 }
 
 function skillHunter(context: NamedHatsuContext): CombatState {
-  const page = (context.paid.hatsuSequence?.count ?? 0) % 3
-  return context.self({
-    hatsuSequence: { id: context.hatsuId!, count: page + 1, lastAt: context.state.clock },
-    empowered: page === 0 ? 5 : 2,
-    in: page === 1,
-    ken: page === 2,
-    cooldown: 0.8,
-  })
+  return context.self({ cooldown: 0.25 })
 }
 
 function nenStitches(context: NamedHatsuContext): CombatState {

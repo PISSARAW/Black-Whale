@@ -44,5 +44,26 @@ function privateArenaState(state: CombatState, side: CombatSide): CombatState {
     target.guard = 'torso'
     target.ryuShift = null
   }
+  redactSkillHunterBook(observer, target)
   return view
+}
+
+function redactSkillHunterBook(
+  observer: CombatState['player'],
+  target: CombatState['opponent'],
+): void {
+  const book = target.skillHunterBook
+  if (!book) return
+  const visible = observer.gyo && book.open ? book.selectedSlot : null
+  target.skillHunterBook = {
+    ...book,
+    deck: book.deck.map((page, slot) => (visible === slot ? page : 'unknown-page')) as [
+      string,
+      string,
+      string,
+      string,
+    ],
+    stolenPage: visible === 'stolen' ? book.stolenPage : null,
+    bookmarkSlot: null,
+  }
 }

@@ -26,6 +26,7 @@ export function prepareHatsu(
   hatsuId: 'parallel-future' | 'rihan-predator',
 ): CombatState {
   const fighter = state[side]
+  if (capturedAbility(state, side, hatsuId)) return state
   if (fighter.condition !== 'ready' || fighter.cooldown > 0) return state
   if (hatsuId === 'parallel-future') {
     if (fighter.mode !== 'zetsu') return state
@@ -60,11 +61,24 @@ export function prepareHatsu(
   })
 }
 
+function capturedAbility(
+  state: CombatState,
+  side: CombatSide,
+  hatsuId: string | undefined,
+): boolean {
+  if (!hatsuId) return false
+  return state.nenEffects.some(
+    (effect) =>
+      effect.kind === 'CAPTURED_ABILITY' && effect.target === side && effect.detail === hatsuId,
+  )
+}
+
 export function castHatsu(
   state: CombatState,
   { side, effect, zone, hatsuId, targetAt, cost: requestedCost }: HatsuCast,
 ): CombatState {
   const fighter = state[side]
+  if (capturedAbility(state, side, hatsuId)) return state
   if (!prepared(state, side, hatsuId)) return state
   const sequenceCost = requestedCost ?? sequenceAuraCost(hatsuId)
   if (!canCast(fighter, hatsuId, sequenceCost)) return state

@@ -40,6 +40,7 @@ export interface BufferedMove {
   fighterId: import('../fighting/types').FighterId
   slot: import('../fighting/types').MoveSlot
   targetAt: Vec2
+  targetObject?: { id: string; position: Vec2 }
   until: number
 }
 

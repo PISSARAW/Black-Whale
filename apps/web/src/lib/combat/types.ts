@@ -81,6 +81,17 @@ export interface ArenaPhysicalObject {
   storedBy: CombatSide | null
 }
 
+export type ArenaBookSlot = 0 | 1 | 2 | 3 | 'stolen'
+
+/** Arena projection of Clash's four prepared pages plus Skill Hunter's stolen slot. */
+export interface ArenaSkillHunterBook {
+  deck: readonly [string, string, string, string]
+  stolenPage: string | null
+  selectedSlot: ArenaBookSlot
+  open: boolean
+  bookmarkSlot: ArenaBookSlot | null
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -114,6 +125,7 @@ export interface FighterState {
     targetHatsuId: string | null
     expiresAt: number
   } | null
+  skillHunterBook: ArenaSkillHunterBook | null
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -264,6 +276,7 @@ export function initialFighter(position: Vec2): FighterState {
     empowered: 0,
     hatsuSequence: null,
     hatsuPreparation: null,
+    skillHunterBook: null,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

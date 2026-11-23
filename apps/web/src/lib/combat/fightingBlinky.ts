@@ -61,6 +61,12 @@ function canUseBlinky(state: CombatState, action: FightingMoveAction): boolean {
   const move = moveForSlot(action.fighterId, action.slot)
   return Boolean(
     move &&
+    !state.nenEffects.some(
+      (effect) =>
+        effect.kind === 'CAPTURED_ABILITY' &&
+        effect.target === action.side &&
+        effect.detail === 'blinky',
+    ) &&
     fighter.mode !== 'zetsu' &&
     fighter.condition === 'ready' &&
     fighter.cooldown <= 0 &&
@@ -80,6 +86,7 @@ function spend(
   return {
     ...state,
     physicalObjects,
+    lastHatsuBySide: { ...state.lastHatsuBySide, [action.side]: 'blinky' },
     [action.side]: {
       ...fighter,
       aura: fighter.aura - move.auraCost,

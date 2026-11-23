@@ -43,9 +43,10 @@ export {
 } from './fighter'
 import { advancePersistentNenEffects } from './effects'
 import { advanceEnvironment, reactEnvironment } from './environment'
-import { prepareFightingMove, releaseBufferedMove } from './fightingMove'
+import { bufferFightingMove, prepareFightingMove, releaseBufferedMove } from './fightingMove'
 import { fightingHatsuAction } from './fightingHatsu'
 import { isBlinkyUtilityMove, resolveFightingBlinky } from './fightingBlinky'
+import { isSkillHunterMove, resolveFightingSkillHunter } from './fightingSkillHunter'
 import { castHatsu, prepareHatsu } from './hatsuCast'
 import { usesClashNen } from './clashNen'
 import { startJump } from './airMovement'
@@ -55,10 +56,11 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (state.outcome !== 'playing') return state
   if (action.type === 'TICK')
     return state.hitstop > 0 ? advanceHitstop(state, action.dt) : tick(state, action.dt)
-  if (state.hitstop > 0)
-    return action.type === 'FIGHTING_MOVE' && !isBlinkyUtilityMove(action)
-      ? prepareFightingMove(state, action)
-      : state
+  if (state.hitstop > 0 && action.type === 'FIGHTING_MOVE')
+    return isBlinkyUtilityMove(action) || isSkillHunterMove(action)
+      ? bufferFightingMove(state, action)
+      : prepareFightingMove(state, action)
+  if (state.hitstop > 0) return state
   if (action.type === 'SYNC_POSITION')
     return replace(state, action.side, syncPosition(state[action.side], action.position))
   if (action.type === 'FACE')
@@ -100,6 +102,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'FIGHTING_MOVE') {
     if (isBlinkyUtilityMove(action)) return resolveFightingBlinky(state, action)
+    if (isSkillHunterMove(action)) return resolveFightingSkillHunter(state, action)
     const hatsu = fightingHatsuAction(state, action)
     if (!hatsu) return prepareFightingMove(state, action)
     if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(state, hatsu.side, hatsu.hatsuId)

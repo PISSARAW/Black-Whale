@@ -15,6 +15,7 @@
   import ArenaGyoSight from '$lib/components/arena/ArenaGyoSight.svelte'
   import ArenaDuelPresence from '$lib/components/arena/ArenaDuelPresence.svelte'
   import ArenaTrainingFeedback from '$lib/components/arena/ArenaTrainingFeedback.svelte'
+  import ArenaSkillHunterBook from '$lib/components/arena/ArenaSkillHunterBook.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -324,7 +325,17 @@
     return `${$t.arena.ui.objective.use} ${objective.action} × ${objective.count}`
   }
 
-  function freshGame(match: ArenaReplayMatch = DEFAULT_REPLAY_MATCH) {
+  function freshGame(
+    match: ArenaReplayMatch = {
+      ...DEFAULT_REPLAY_MATCH,
+      formatId: data.formatId,
+      opponentId: data.opponentId,
+      challengeId: data.challengeId,
+      missionId: data.missionId,
+      fighterId: data.fighterId,
+      opponentFighterId: data.opponentFighterId,
+    },
+  ) {
     return initialArenaMatchState(combatSetup(), match)
   }
 
@@ -1356,4 +1367,7 @@
     controls={ARENA_MANUAL_CONTROLS}
     onClose={() => (manualOpen = false)}
   />
+  {#if game.player.skillHunterBook}
+    <ArenaSkillHunterBook book={game.player.skillHunterBook} />
+  {/if}
 </div>

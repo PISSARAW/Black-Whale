@@ -4,13 +4,25 @@ import { ARENA_FORMATS, formatOutcome } from './formats'
 import type { ArenaReplayMatch } from './replay/types'
 import { fightingHatsuRoute } from '../combat/fightingHatsu'
 import { isBlinkyUtilityMove } from '../combat/fightingBlinky'
+import { initialArenaSkillHunterBook, isSkillHunterMove } from '../combat/fightingSkillHunter'
 
 export type ArenaActionCounts = Partial<Record<CombatAction['type'], number>>
 
 /** Creates the exact initial state used by both a live bout and its replay. */
 export function initialArenaMatchState(setup: CombatSetup, match: ArenaReplayMatch): CombatState {
   const base = initialCombatState(setup)
-  const state = match.nenRules ? { ...base, nenRules: match.nenRules } : base
+  const roster = {
+    ...base,
+    player:
+      match.fighterId === 'chrollo'
+        ? { ...base.player, skillHunterBook: initialArenaSkillHunterBook() }
+        : base.player,
+    opponent:
+      match.opponentFighterId === 'chrollo'
+        ? { ...base.opponent, skillHunterBook: initialArenaSkillHunterBook() }
+        : base.opponent,
+  }
+  const state = match.nenRules ? { ...roster, nenRules: match.nenRules } : roster
   if (match.bossRule !== 'aura-tax') return state
   return {
     ...state,
@@ -41,7 +53,9 @@ export function countArenaAction(
   if (action.type === 'TICK') return actions
   const type =
     action.type === 'FIGHTING_MOVE'
-      ? fightingHatsuRoute(action.fighterId, action.slot) || isBlinkyUtilityMove(action)
+      ? fightingHatsuRoute(action.fighterId, action.slot) ||
+        isBlinkyUtilityMove(action) ||
+        isSkillHunterMove(action)
         ? 'HATSU'
         : 'STRIKE'
       : action.type

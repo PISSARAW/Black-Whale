@@ -97,8 +97,18 @@ by the POV raycast, removes it from Tour collision and rendering, keeps one
 last-object slot, then restores that same solid at the authored ejection point.
 Object identity and position live in combat state, so recording, branching and
 replay reproduce the room mutation. Its carried Hatsu no longer invents an aura
-drain. Blood suction remains closed until Arena represents actual open wounds;
-Skill Hunter remains closed until Arena represents stolen book pages.
+drain. Blood suction remains closed until Arena represents actual open wounds.
+
+Skill Hunter carries Clash's four prepared Heavens Arena pages plus its fifth
+stolen slot. Back Special turns the selected page, Down Special places or opens
+Double Face's bookmark, Neutral Special invokes the open page and the finisher
+invokes the bookmarked page. Forward Special steals the last Hatsu actually
+manifested in Chrollo's POV at the 1.2 m cover-palm range; In hides that evidence
+unless Chrollo has Gyo. This condenses the spoken interview into Arena's combat
+observation, but retains the physical contact, one replaceable stolen slot and
+the original owner's loss of access. Book state, capture seals and copied casts
+are all replay/checksum state rather than HUD-only selection. An opponent's
+inventory stays private; Gyo reveals only the page currently open in the POV.
 
 [duelPresence.ts](duelPresence.ts) projects Clash's authored psychology profiles into
 what the player can actually read: facial bearing, felt Ren pressure and, under
@@ -121,7 +131,7 @@ timeline once, identifies conservative recovery opportunities and punishments,
 then lets the player review the contact or branch from just before the exchange.
 The diagnosis never consults concealed intent and is explicitly non-exhaustive.
 
-Still Clash-only: Blinky blood through open wounds and Skill Hunter book state.
+Still Clash-only: Blinky blood through explicit open wounds.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

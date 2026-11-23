@@ -249,3 +249,15 @@ recovery.
 
 All 40 fighters now pass the same nine-slot contract: 360/360 physical attacks
 use dedicated choreography, with no generated roster or archetype fallback.
+
+## P10 — outcome-driven contact weight
+
+The same contact no longer falls into one universal recovery. Every one of the
+360 physical attacks now branches visually after its active window: confirmed
+hits carry momentum through the target, guarded attacks recoil from resistance,
+and misses overextend before returning to guard. Heavy and directional attacks
+amplify the response, while low and air routes preserve their own support rules.
+
+This layer is presentation-only. It reads the public hit/block confirmation and
+does not alter frame data, collision, damage, replay state or the golden
+Kurapika heavy, which retains its more specific authored outcomes.

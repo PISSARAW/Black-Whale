@@ -77,6 +77,7 @@ import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
 import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
+import { physicalAttackOutcomePose } from './fightAttackOutcome'
 import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
 import { rosterWaveOneSupport } from './rosterWaveOneSupport'
 import { rosterWaveTwoSupport } from './rosterWaveTwoSupport'
@@ -389,6 +390,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       attackMotionAccent({ fighter, frames, authored, frame: at }),
       strikeSupportPose(fighter, { transfer, frame: at, frames }),
       strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
+      physicalAttackOutcomePose(fighter, { slot, frame: at, frames }),
       kurapikaGoldenHeavyOutcomePose(fighter, { frame: at, frames }),
     )
   return {

@@ -474,20 +474,20 @@
       "head": { "face": "narrow", "hairStyle": "bob", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "Référence manga fournie pour le costume noir et la cravate noire ; blond repris de l’anime 2011",
+        "source": "Référence manga fournie pour le costume bleu nuit et la cravate noire ; blond repris de l’anime 2011",
         "skin": "0xf0e0cc",
         "hair": "0xe8c860",
         "attire": {
-          "jacket": "0x141419",
+          "jacket": "0x14243d",
           "shirt": "0xf2efe8",
-          "trousers": "0x141419",
+          "trousers": "0x14243d",
           "accent": "0x17171c"
         }
       },
       "attire": "suit",
       "signatures": ["chain-right-hand"],
       "verified": { "chapterIds": ["ch-343", "ch-358"], "status": "confirmed" },
-      "note": "Les yeux écarlates sont un état — EFFECT_STATE_CHANGED via Emperor Time — et pas un fait d'appearance. Ce qui est déclaré ici est le carré blond, le costume sombre et la cravate noire d'employé de la famille (rendu aligné sur la référence manga fournie) ; la chaîne n'apparaît qu'au cast."
+      "note": "Les yeux écarlates sont un état — EFFECT_STATE_CHANGED via Emperor Time — et pas un fait d'appearance. Ce qui est déclaré ici est le carré blond, le costume bleu nuit et la cravate noire d'employé de la famille (rendu aligné sur la référence manga fournie) ; la chaîne n'apparaît qu'au cast."
     },
     {
       "id": "leorio-paradinight",

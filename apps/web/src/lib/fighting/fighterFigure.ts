@@ -26,6 +26,7 @@ import { fighterAuraHex } from './auraColours'
 import { addFranklinHands } from './franklinHands'
 import { addChrolloBook } from './chrolloFigure'
 import { improveFightBodyReadability } from './fightBodyReadability'
+import { addFightHeroFinish } from './fightHeroFinish'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { biscuitTrueFormProfile, shapeBiscuitTrueForm } from './biscuitFigure'
 import { isBiscuitTrueForm } from './biscuitForm'
@@ -112,6 +113,7 @@ export function buildFightFigure(options: {
     seen,
     profile: finalProfile,
   })
+  addFightHeroFinish({ THREE, model, profile: finalProfile })
   improveFightBodyReadability(model.root)
   if (options.readability !== false) improveFightFace(model, finalProfile)
   if (trueForm) shapeBiscuitTrueForm(model)

@@ -297,3 +297,19 @@ specific close-up treatment.
 The result adds readable shoulder, limb and clothing volume without runtime
 lights, shadow maps, extra meshes or per-frame material work. Shared geometry
 still shares one cached combat variant across the roster.
+
+## P14 — premium hero vertical slice
+
+Kurapika and Hisoka establish the reusable finish target for the roster. Their
+combat models now enlarge the hands slightly, expose a knuckle plane and retain
+the existing articulated skeleton, fixed limb lengths and authored attacks.
+Kurapika's canonical suit is corrected from neutral black to a readable dark
+navy, with restrained construction seams and lower eyelids mounted on his
+custom head. Hisoka's existing fitted waistcoat gains deep side planes, bright
+fasteners, dark shoulder and wrist accents, a sharper nose bridge and a lower
+lip plane; every joint detail follows the live rig.
+
+The pass is fight-only apart from Kurapika's corrected source palette, adds no
+simulation state, and caps the new vertical-slice decoration at fourteen meshes
+per fighter. Other roster models remain unchanged so the result can be reviewed
+as a controlled visual benchmark before P16 propagation.

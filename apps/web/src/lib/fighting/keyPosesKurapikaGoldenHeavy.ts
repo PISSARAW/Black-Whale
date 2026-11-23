@@ -21,6 +21,14 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'startup',
     at: 0.5,
     ease: 'in',
+    jointEase: {
+      pelvis: 'out',
+      rearHip: 'out',
+      rearKnee: 'out',
+      chest: 'in',
+      rearShoulder: 'in',
+      rearElbow: 'in',
+    },
     pose: {
       root: [0, -0.025, -0.025],
       pelvis: [-0.055, -0.16, 0],
@@ -42,6 +50,13 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'startup',
     at: 0.75,
     ease: 'smooth',
+    jointEase: {
+      pelvis: 'out',
+      rearFoot: 'out',
+      chest: 'in',
+      rearShoulder: 'in',
+      rearWrist: 'in',
+    },
     pose: {
       root: [0, -0.032, -0.032],
       pelvis: [-0.07, -0.28, 0],
@@ -66,6 +81,13 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'startup',
     at: 0.875,
     ease: 'in',
+    jointEase: {
+      pelvis: 'out',
+      rearHip: 'out',
+      chest: 'in',
+      rearShoulder: 'in',
+      rearElbow: 'in',
+    },
     pose: {
       root: [0, -0.025, -0.02],
       pelvis: [-0.04, -0.12, 0],
@@ -88,6 +110,17 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'active',
     at: 0,
     ease: 'snap',
+    jointEase: {
+      pelvis: 'out',
+      rearHip: 'out',
+      rearFoot: 'out',
+      chest: 'snap',
+      rearClavicle: 'snap',
+      rearShoulder: 'snap',
+      rearElbow: 'snap',
+      rearWrist: 'out',
+      rearPalm: 'out',
+    },
     pose: {
       root: [0, -0.006, 0.065],
       pelvis: [0.08, 0.42, 0],
@@ -141,6 +174,13 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'recovery',
     at: 0.15,
     ease: 'out',
+    jointEase: {
+      pelvis: 'out',
+      chest: 'out',
+      rearShoulder: 'smooth',
+      rearElbow: 'smooth',
+      rearWrist: 'smooth',
+    },
     pose: {
       root: [0, -0.01, 0.052],
       pelvis: [0.065, 0.5, 0],
@@ -162,6 +202,13 @@ export const KURAPIKA_GOLDEN_HEAVY_TIMELINE: MoveTimeline = [
     phase: 'recovery',
     at: 0.5,
     ease: 'smooth',
+    jointEase: {
+      pelvis: 'out',
+      rearFoot: 'out',
+      chest: 'smooth',
+      rearShoulder: 'in',
+      rearElbow: 'in',
+    },
     pose: {
       root: [0, -0.012, 0.022],
       pelvis: [0.02, 0.14, 0],

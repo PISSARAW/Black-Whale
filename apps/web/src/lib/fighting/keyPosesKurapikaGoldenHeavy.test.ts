@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { KURAPIKA_GOLDEN_HEAVY_TIMELINE } from './keyPosesKurapikaGoldenHeavy'
-import { keyFrameOf } from './keyPoseTimeline'
+import { keyFrameOf, sampleTimeline } from './keyPoseTimeline'
 import { KURAPIKA_GOLDEN_HEAVY } from './kurapikaGoldenHeavy'
 
 describe('Kurapika golden heavy key poses', () => {
@@ -20,5 +20,30 @@ describe('Kurapika golden heavy key poses', () => {
     expect(contact.pose.rearElbow?.[0]).toBeLessThan(0)
     expect(contact.pose.leadElbow?.[0]).toBeLessThan(-0.7)
     expect(contact.pose.rearFoot?.[1]).toBeGreaterThan(0.2)
+  })
+
+  it('stages lower-body drive ahead of the shoulder instead of moving every joint together', () => {
+    const pose = sampleTimeline(KURAPIKA_GOLDEN_HEAVY_TIMELINE, {
+      frame: 5,
+      frames: KURAPIKA_GOLDEN_HEAVY.frames,
+      continuous: true,
+    })
+    const pelvisProgress = Math.abs((pose.pelvis?.[1] ?? 0) / -0.28)
+    const shoulderProgress = Math.abs((pose.rearShoulder?.[0] ?? 0) / 0.13)
+    expect(pelvisProgress).toBeGreaterThan(shoulderProgress)
+  })
+
+  it('holds the exact contact numbers throughout active frames', () => {
+    const contact = sampleTimeline(KURAPIKA_GOLDEN_HEAVY_TIMELINE, {
+      frame: 8,
+      frames: KURAPIKA_GOLDEN_HEAVY.frames,
+    })
+    for (let frame = 9; frame < 12; frame++)
+      expect(
+        sampleTimeline(KURAPIKA_GOLDEN_HEAVY_TIMELINE, {
+          frame,
+          frames: KURAPIKA_GOLDEN_HEAVY.frames,
+        }),
+      ).toEqual(contact)
   })
 })

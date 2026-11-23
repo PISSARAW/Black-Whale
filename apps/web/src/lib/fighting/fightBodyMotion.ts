@@ -68,6 +68,7 @@ import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from '
 import { attackData } from './frameData'
 import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
 import { withLocomotionInertia } from './fightLocomotionInertia'
+import { withSecondaryMotion } from './fightSecondaryMotion'
 import { movementTechPose } from './movementTechPoses'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
@@ -231,7 +232,8 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
       : plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
         ? rightHandedPlan(plan)
         : plan
-  return handed && keepFightPosture(handed, fighter)
+  const layered = withSecondaryMotion(handed, context.secondaryMotion)
+  return layered && keepFightPosture(layered, fighter)
 }
 
 function rightHandedPlan(plan: BodyPlan): BodyPlan {

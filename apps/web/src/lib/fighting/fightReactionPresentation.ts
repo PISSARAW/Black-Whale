@@ -5,6 +5,7 @@ import { rosterContactMotion } from './rosterHitReaction'
 import { physicalHitAtContact } from './fightHitResponse'
 import { createFightPoseContinuity } from './fightPoseContinuity'
 import { createLocomotionInertia } from './fightLocomotionInertia'
+import { createSecondaryMotion } from './fightSecondaryMotion'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import type { ReactionContext } from './fightReactions'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -24,6 +25,7 @@ export function createFightReactionPresentation() {
   let clock = createFightPoseClock()
   let motion = { player: createFightPoseContinuity(), opponent: createFightPoseContinuity() }
   let inertia = { player: createLocomotionInertia(), opponent: createLocomotionInertia() }
+  let secondary = { player: createSecondaryMotion(), opponent: createSecondaryMotion() }
   return (state: FightState, side: FightSide, input: Input): ReactionContext => {
     const nextKey = `${state.player.id}:${state.opponent.id}:${state.roundNumber}`
     if (key !== nextKey || state.frame < lastFrame) {
@@ -33,6 +35,7 @@ export function createFightReactionPresentation() {
       clock = createFightPoseClock()
       motion = { player: createFightPoseContinuity(), opponent: createFightPoseContinuity() }
       inertia = { player: createLocomotionInertia(), opponent: createLocomotionInertia() }
+      secondary = { player: createSecondaryMotion(), opponent: createSecondaryMotion() }
     }
     lastFrame = state.frame
     const impact = receivedImpact(state, side)
@@ -52,6 +55,11 @@ export function createFightReactionPresentation() {
       ...contacts[side]?.contact,
       nenConstraint: nenConstraintPlan(state, side),
       locomotionInertia: inertia[side](input.fighter, {
+        frame: state.frame,
+        seconds: input.seconds,
+        frozen: state.hitstop > 0,
+      }),
+      secondaryMotion: secondary[side](input.fighter, {
         frame: state.frame,
         seconds: input.seconds,
         frozen: state.hitstop > 0,

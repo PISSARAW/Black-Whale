@@ -43,6 +43,7 @@ export interface ReactionContext {
   nenCarry?: FightPose
   nenConstraint?: BodyPlan | null
   locomotionInertia?: FightPose
+  secondaryMotion?: FightPose
   poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
 

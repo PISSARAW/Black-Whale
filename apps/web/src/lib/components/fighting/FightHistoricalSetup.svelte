@@ -16,32 +16,8 @@
 
   $: fr = language === 'fr'
   $: options = historicalOptions(environment)
+  $: experience = options.playMode === 'scripted' ? 'reconstruction' : 'player'
   $: groups = [
-    {
-      key: 'chrolloSide' as const,
-      label: fr ? 'Ton camp' : 'Your side',
-      choices: [
-        { value: 'opponent', name: 'Hisoka', hint: fr ? 'Chrollo en P2' : 'Chrollo as P2' },
-        { value: 'player', name: 'Chrollo', hint: fr ? 'Hisoka en P2' : 'Hisoka as P2' },
-      ],
-    },
-    {
-      key: 'playMode' as const,
-      label: fr ? 'Déroulement' : 'Course of events',
-      choices: [
-        {
-          value: 'scripted',
-          name: fr ? 'Scripté' : 'Scripted',
-          hint: fr ? 'Revoir le combat' : 'Watch it again',
-        },
-        {
-          value: 'semi-free',
-          name: fr ? 'Semi-libre' : 'Semi-free',
-          hint: fr ? 'Changer certains événements' : 'Change some events',
-        },
-        { value: 'free', name: fr ? 'Libre' : 'Free', hint: fr ? 'Tout ordre' : 'Any order' },
-      ],
-    },
     {
       key: 'difficulty' as const,
       label: fr ? 'Difficulté' : 'Difficulty',
@@ -60,8 +36,14 @@
       ],
     },
   ]
-  function pick(key: 'chrolloSide' | 'playMode' | 'difficulty', value: string) {
+  function pick(key: 'difficulty', value: string) {
     onOptions({ [key]: value } as Partial<DeathMatchOptions>)
+  }
+  function pickExperience(next: 'reconstruction' | 'player') {
+    onOptions({
+      chrolloSide: 'opponent',
+      playMode: next === 'reconstruction' ? 'scripted' : 'semi-free',
+    })
   }
 </script>
 
@@ -79,6 +61,48 @@
   </p>
   <div class="historical-layout">
     <div class="historical-options">
+      <fieldset>
+        <legend>{fr ? 'Expérience' : 'Experience'}</legend>
+        <div class="choices experience-choices">
+          <button
+            type="button"
+            class:selected={experience === 'reconstruction'}
+            aria-pressed={experience === 'reconstruction'}
+            onclick={() => pickExperience('reconstruction')}
+          >
+            <strong>{fr ? 'Reconstitution canonique' : 'Canonical reconstruction'}</strong>
+            <small
+              >{fr
+                ? 'Hisoka et Chrollo rejouent automatiquement les chapitres 351 à 357.'
+                : 'Hisoka and Chrollo automatically replay chapters 351–357.'}</small
+            >
+          </button>
+          <button
+            type="button"
+            class:selected={experience === 'player'}
+            aria-pressed={experience === 'player'}
+            onclick={() => pickExperience('player')}
+          >
+            <strong>{fr ? 'Jouer Hisoka' : 'Play as Hisoka'}</strong>
+            <small
+              >{fr
+                ? 'Tu contrôles Hisoka ; Chrollo adapte son plan et ses marionnettes.'
+                : 'You control Hisoka; Chrollo adapts his plan and puppets.'}</small
+            >
+          </button>
+        </div>
+      </fieldset>
+      <p class="experience-note">
+        {#if experience === 'reconstruction'}
+          {fr
+            ? 'Mode spectateur : aucune attaque manuelle n’est nécessaire.'
+            : 'Spectator mode: no manual attack is required.'}
+        {:else}
+          {fr
+            ? 'Mode jouable : déplace-toi et attaque près des cibles contextuelles pour répondre au plan de Chrollo.'
+            : 'Playable mode: move and attack near contextual targets to answer Chrollo’s plan.'}
+        {/if}
+      </p>
       {#each groups as group (group.key)}
         <fieldset>
           <legend>{group.label}</legend>
@@ -169,6 +193,18 @@
     background: #2b1838;
     border-color: #d64b8c;
   }
+  .experience-choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .experience-note {
+    background: #130f18;
+    border-left: 3px solid #d64b8c;
+    color: #cdbfd4;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    margin: -0.5rem 0 1.4rem;
+    padding: 0.7rem 0.85rem;
+  }
   small {
     color: #b9a8c4;
     font-size: 0.78rem;
@@ -209,6 +245,9 @@
   }
   @media (max-width: 760px) {
     .historical-layout {
+      grid-template-columns: 1fr;
+    }
+    .experience-choices {
       grid-template-columns: 1fr;
     }
   }

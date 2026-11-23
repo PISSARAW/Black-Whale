@@ -55,6 +55,8 @@ export interface WorldInput {
   reported?: readonly string[]
   /** Hisoka's own canonical plan plays him (CPU or scripted replay). */
   hisokaPlan?: boolean
+  /** A human-controlled Hisoka is attacking, so his contextual action may resolve. */
+  hisokaAction?: boolean
 }
 
 /** A head Hisoka threw that reached Chrollo this frame. */
@@ -65,7 +67,8 @@ function headOnChrollo(world: DeathMatchWorld): { world: DeathMatchWorld; hit: b
 }
 
 function actHisoka(world: DeathMatchWorld, input: WorldInput): HisokaOutcome | null {
-  return input.hisokaPlan ? executeHisoka(world, decideHisoka(world), true) : null
+  if (input.hisokaPlan) return executeHisoka(world, decideHisoka(world), true)
+  return input.hisokaAction ? executeHisoka(world, decideHisoka(world), false) : null
 }
 
 function moveCrowd(next: DeathMatchWorld): DeathMatchWorld {

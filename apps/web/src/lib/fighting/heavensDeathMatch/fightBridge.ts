@@ -168,18 +168,20 @@ export function stepDeathMatchFight(state: FightState, attack: PerformAttack): F
   const sides = deathMatchSides(state)
   const hisoka = state[sides.hisoka]
   const hisokaLed = hisokaPlanLeads(state, world)
+  const hisokaActing = busy(hisoka)
   const led = planLeads(state, world)
     ? world
     : { ...world, chrollo: { ...world.chrollo, at: laneToHall(state[sides.chrollo]) } }
   const frame = stepDeathMatchWorld(led, {
     hisoka: hisokaLed
-      ? { busy: busy(hisoka) }
+      ? { busy: hisokaActing }
       : {
           at: laneToHall(hisoka),
           facing: { x: hisoka.facing, z: 0 },
-          busy: busy(hisoka),
+          busy: hisokaActing,
         },
     hisokaPlan: hisokaLed,
+    hisokaAction: !hisokaLed && hisokaActing,
   })
   let next: FightState = { ...state, deathMatch: frame.world }
   if (chrolloInStands(frame.world)) next = parkChrollo(next, sides.chrollo, frame.world.chrollo.at)

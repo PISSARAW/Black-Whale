@@ -7,6 +7,7 @@ import { advanceCyclotron } from './phinksCyclotron'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
 import { applyAirRecovery } from './airRecovery'
+import { resolveWakeupMovement } from './wakeupMovement'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
 import { advanceNen } from './nen'
 import { coolAccelHeat } from './accelCancel'
@@ -26,7 +27,7 @@ export function advanceFighterPhysics(
   fighter = applyAirRecovery(fighter, input)
   const vertical =
     crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
-  const wakeup = advanceWakeup(fighter)
+  const wakeup = advanceWakeup(fighter, input)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
     ...fighter,
@@ -48,16 +49,21 @@ export function advanceFighterPhysics(
 
 function advanceWakeup(
   fighter: ArcadeFighter,
-): Pick<ArcadeFighter, 'knockdownFrames' | 'wakeupInvulnerableFrames' | 'reversalWindow'> {
-  const knockdownFrames = Math.max(0, fighter.knockdownFrames - 1)
+  input: FightInput,
+): Partial<ArcadeFighter> & Pick<ArcadeFighter, 'knockdownFrames' | 'wakeupInvulnerableFrames' | 'reversalWindow'> {
+  const rawKnockdown = Math.max(0, fighter.knockdownFrames - 1)
+  const move = resolveWakeupMovement(fighter, input, rawKnockdown)
+  const knockdownFrames = move.knockdownFrames ?? rawKnockdown
   const wokeUp = fighter.knockdownFrames > 0 && knockdownFrames === 0
   if (wokeUp)
     return {
+      ...move,
       knockdownFrames,
       wakeupInvulnerableFrames: WAKEUP_INVULNERABLE_FRAMES,
       reversalWindow: REVERSAL_WINDOW_FRAMES,
     }
   return {
+    ...move,
     knockdownFrames,
     wakeupInvulnerableFrames: Math.max(0, fighter.wakeupInvulnerableFrames - 1),
     reversalWindow: Math.max(0, fighter.reversalWindow - 1),

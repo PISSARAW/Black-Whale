@@ -27,7 +27,7 @@ import {
 } from './nenPillars'
 import { franklinKenDrain } from './troupeUpgrades'
 import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
-import { isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
+import { applyJupiterAcousticImpact, isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
 import { rihanTacticalDefenceFactor } from './matchupValves'
 import {
   PADAILLE_DRILL_TEN_CHIP,
@@ -38,6 +38,7 @@ import {
 } from './finalFiveUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
+import { guardKnockbackFactor } from './characterMovementTech'
 
 const GROUND = 0
 const MIN_X = 7
@@ -148,12 +149,16 @@ export function strikeDefender(options: StrikeOptions): ArcadeFighter {
 export function strikeProjectileDefender(
   options: StrikeOptions & { projectile: ProjectileHit['projectile'] },
 ): ArcadeFighter {
-  return struckFighter({
+  const struck = struckFighter({
     ...options,
     knockback: options.projectile.knockback,
     hitstun: options.projectile.hitstun,
     blockstun: options.projectile.blockstun,
   })
+  if (options.projectile.jupiter || options.projectile.fighterId === 'bonolenov') {
+    return applyJupiterAcousticImpact(struck, Boolean(options.fighter.coveringEars))
+  }
+  return struck
 }
 
 function struckFighter(
@@ -176,7 +181,10 @@ function struckFighter(
     ...stunState(options),
     ...comboState(options),
     x: clamp(
-      options.fighter.x + direction * pinnedKnockback(options, options.knockback),
+      options.fighter.x +
+        direction *
+          pinnedKnockback(options, options.knockback) *
+          guardKnockbackFactor(options.fighter, options.blocked),
       MIN_X,
       MAX_X,
     ),

@@ -20,6 +20,12 @@ export interface OpponentKnowledge {
   opponent: FighterId
   entries: readonly OpponentKnowledgeEntry[]
 }
+export type RematchVowKind = 'no-retreat' | 'open-hatsu' | 'single-hatsu'
+export interface PendingRematchVow {
+  kind: RematchVowKind
+  opponent: FighterId
+  sourceMatchId: string
+}
 
 export interface FighterPractice {
   bestCombo: number
@@ -60,6 +66,7 @@ export interface CareerProfile {
   seen: string[]
   moraleSeen: string[]
   opponentKnowledge: Partial<Record<FighterId, OpponentKnowledge>>
+  rematchVows: Partial<Record<FighterId, PendingRematchVow>>
   revision: number
 }
 export interface FighterTotals {
@@ -84,6 +91,7 @@ export const emptyCareer = (): CareerProfile => ({
   seen: [],
   moraleSeen: [],
   opponentKnowledge: {},
+  rematchVows: {},
   revision: 0,
 })
 export const CAREER_STORAGE = 'black-whale:clash:career:1'

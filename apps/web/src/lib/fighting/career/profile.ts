@@ -7,6 +7,7 @@ import {
   type CareerAppearance,
   type CareerMatch,
   type CareerProfile,
+  type RematchVowKind,
 } from './types'
 import type { FighterId } from '../types'
 import { FIGHTING_ROSTER } from '../roster'
@@ -61,6 +62,21 @@ export function createCareerProfile(
         ...base,
         revision: base.revision + 1,
         moraleSeen: [...base.moraleSeen, matchId].slice(-2000),
+      })
+    },
+    pledgeRematch(matchId: string, kind: RematchVowKind) {
+      const current = get(store),
+        saved = readCareer(storage())
+      const base = saved.revision > current.revision ? saved : current
+      const match = base.history.find((entry) => entry.id === matchId)
+      if (!match || match.winner !== 'opponent') return
+      write({
+        ...base,
+        revision: base.revision + 1,
+        rematchVows: {
+          ...base.rematchVows,
+          [match.opponent]: { kind, opponent: match.opponent, sourceMatchId: match.id },
+        },
       })
     },
     clear() {

@@ -2,6 +2,7 @@
   import { clashCareer } from '$lib/fighting/career/profile'
   import { createCareerTracker } from '$lib/fighting/career/runtime'
   import { applyCareerMorale } from '$lib/fighting/career/morale'
+  import { applyRematchVow } from '$lib/fighting/career/rematchVow'
   import { createCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
@@ -145,15 +146,18 @@
     navigate('battle')
     school.exit()
     practice.exit()
-    state = applyCareerMorale(
-      withKameos(
-        createFight(selectedPlayer, selectedOpponent, {
-          formatId: selectedFormat,
-          mode: selectedMode,
-          environment,
-          controls: controls.schemesFor(selectedMode, coarsePointer()),
-        }),
-        kameos,
+    state = applyRematchVow(
+      applyCareerMorale(
+        withKameos(
+          createFight(selectedPlayer, selectedOpponent, {
+            formatId: selectedFormat,
+            mode: selectedMode,
+            environment,
+            controls: controls.schemesFor(selectedMode, coarsePointer()),
+          }),
+          kameos,
+        ),
+        $clashCareer,
       ),
       $clashCareer,
     )

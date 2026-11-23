@@ -29,5 +29,16 @@ export function addCareerMatch(profile: CareerProfile, match: CareerMatch): Care
     seen: [...profile.seen, match.id].slice(-2000),
     history: mergeHistory(profile.history, [match]),
     opponentKnowledge: rememberOpponentIntel(profile.opponentKnowledge, match),
+    rematchVows: settleRematchVow(profile, match),
   }
+}
+
+function settleRematchVow(
+  profile: CareerProfile,
+  match: CareerMatch,
+): CareerProfile['rematchVows'] {
+  if (!profile.rematchVows[match.opponent]) return profile.rematchVows
+  const vows = { ...profile.rematchVows }
+  delete vows[match.opponent]
+  return vows
 }

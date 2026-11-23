@@ -71,10 +71,29 @@ export function readCareer(storage?: Pick<Storage, 'getItem'>): CareerProfile {
       appearance: readAppearance(value.appearance),
       history: mergeHistory(value.history.filter(careerMatch), []),
       opponentKnowledge: readOpponentKnowledge(value.opponentKnowledge),
+      rematchVows: readRematchVows(value.rematchVows),
     }
   } catch {
     return emptyCareer()
   }
+}
+
+function readRematchVows(value: unknown): CareerProfile['rematchVows'] {
+  const vows: CareerProfile['rematchVows'] = {}
+  if (!record(value)) return vows
+  const ids = new Set(FIGHTING_ROSTER.map(({ id }) => id))
+  for (const [id, vow] of Object.entries(value)) {
+    if (
+      !ids.has(id as never) ||
+      !record(vow) ||
+      vow.opponent !== id ||
+      !oneOf(vow.kind, ['no-retreat', 'open-hatsu', 'single-hatsu']) ||
+      typeof vow.sourceMatchId !== 'string'
+    )
+      continue
+    vows[id as keyof typeof vows] = vow as never
+  }
+  return vows
 }
 
 function readOpponentKnowledge(value: unknown): CareerProfile['opponentKnowledge'] {

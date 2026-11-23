@@ -308,9 +308,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coude du garde | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Coup au corps | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Fauchage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Avancée mesurée | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Contre | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Regard prédateur | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
+| Pas sans hypothèse | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Analyse interrompue | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Zakuro
 
@@ -320,9 +320,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Coup d’épaule | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
+| Gouttes éclaireuses | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Fil rouge | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Reflux | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
 
 ### Melody
 
@@ -332,9 +332,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coup de paume | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Coup d’épaule | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Mesure brisée | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Note apaisante | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Souffle suspendu | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Basho
 
@@ -344,9 +344,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Coup de pied bas | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Revers du poing | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
+| Trait de pinceau | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Vers interrompu | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Papier sacrifié | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
 
 ### Camilla
 
@@ -356,9 +356,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Revers princier | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Coup de talon bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Fauchage insolent | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Décret d’approche | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Sentence royale | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Révérence piégée | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Marche impériale | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Giflé royale | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Fausse ouverture | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Halkenburg
 
@@ -368,9 +368,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crosse de garde | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Tir aux jambes | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Balayage de la garde | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Marche des fidèles | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Percée collective | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Parade du prince | `backHeavy` | mid | 8 | 4 | 17 | +4 | −5 |
+| Pas de procession | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Épaule fraternelle | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Mur d’unisson | `backHeavy` | mid | 8 | 4 | 17 | +4 | −5 |
 
 ### Gel
 
@@ -380,9 +380,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coude à écailles | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Morsure basse | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
 | Fauchage en spirale | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Allonge serpentine | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Frappe étendue | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Retrait en garde | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Crochet de vipère | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Mue basse | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Frappe à deux temps | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Lynch
 
@@ -392,9 +392,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet Xi-Yu | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Coup au foie | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
 | Fauchage brutal | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Question pressante | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Réponse forcée | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Contre-interrogatoire | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Question directe | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Réponse du corps | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Silence suspect | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Luini
 
@@ -404,9 +404,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Entaille au couteau | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pointe en avançant | `forwardLight` | mid | 6 | 3 | 9 | +4 | 0 |
-| Entaille en avançant | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 12 | +4 | 0 |
+| Porte dérobée | `forwardLight` | mid | 6 | 3 | 9 | +4 | 0 |
+| Couloir meurtrier | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Pièce condamnée | `backHeavy` | mid | 8 | 4 | 12 | +4 | 0 |
 
 ### Bill
 
@@ -416,9 +416,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Coup au corps | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
+| Garde du berceau | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
+| Paume de croissance | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Relève du garde | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
 
 ### Furykov
 
@@ -428,9 +428,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet du premier prince | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Frappe au genou | `lowLight` | low | 6 | 3 | 8 | +4 | −3 |
 | Fauchage réglementaire | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Pas de lecture | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Briseur de cadence | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Réponse automatique | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Test de garde | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Lecture des yeux | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Punition du novice | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Cluck
 
@@ -440,9 +440,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Aile du Zodiac | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Bec rasant | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
 | Fauchage rasant | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Envol tactique | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Battement massif | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Repli sous l’aile | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Aile rasante | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Relais aérien | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Rappel du perchoir | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Beyond
 
@@ -452,9 +452,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Marteau Netero | `standingHeavy` | mid | 11 | 4 | 16 | +4 | −6 |
 | Coup de piste | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Fauchage du continent | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Marche sans retour | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Percée du Continent Sombre | `forwardHeavy` | mid | 15 | 5 | 24 | Sol | −10 |
-| Survie instinctive | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
+| Pas du Continent Sombre | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Prise de l’explorateur | `forwardHeavy` | mid | 15 | 5 | 24 | Sol | −10 |
+| Instinct de survie | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
 
 ### Longhi
 
@@ -464,9 +464,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Coup d’épaule | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Clause d’approche | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Signature forcée | `forwardHeavy` | mid | 12 | 5 | 24 | Sol | −10 |
+| Sanction contractuelle | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Musse
 
@@ -476,9 +476,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 8 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Coup d’épaule | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
+| Tir couvert | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Hibou au contact | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Faux rapport | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
 
 ### Padaille
 
@@ -488,9 +488,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Coup de coude | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Coup au corps | `lowLight` | low | 6 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
-| Coup d’épaule | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Marteau d’abattage | `forwardLight` | mid | 6 | 3 | 12 | +4 | −3 |
+| Foret de percée | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Changement en impact | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Sayird
 
@@ -500,9 +500,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet de Sayird | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Coup bas | `lowLight` | low | 5 | 3 | 9 | +4 | −4 |
 | Fauchage de contrôle | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Approche balisée | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Frappe précise | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Repli | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
+| Regard déporté | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Angle de Little Eye | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Appât vivant | `backHeavy` | mid | 8 | 4 | 14 | +4 | −2 |
 
 ### Terebellum
 
@@ -512,9 +512,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet de retour | `standingHeavy` | mid | 10 | 4 | 16 | +4 | −6 |
 | Dégât rasant | `lowLight` | low | 6 | 3 | 9 | +4 | −4 |
 | Fauchage répercuté | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Avance conductrice | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
-| Surcharge corporelle | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
-| Renvoi défensif | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
+| Main gauche réceptrice | `forwardLight` | mid | 6 | 3 | 11 | +4 | −2 |
+| Main droite relais | `forwardHeavy` | mid | 14 | 5 | 24 | Sol | −10 |
+| Fausse vulnérabilité | `backHeavy` | mid | 8 | 4 | 15 | +4 | −3 |
 
 ### Voconte
 
@@ -524,9 +524,9 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Revers de porte | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Trappe basse | `lowLight` | low | 5 | 3 | 8 | +4 | −3 |
 | Fauchage du seuil | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Avance physique | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
-| Charge hors cadre | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Revers en recul | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
+| Cadre d’entrée | `forwardLight` | mid | 6 | 3 | 10 | +4 | −1 |
+| Pas de seuil | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Porte refermée | `backHeavy` | mid | 8 | 4 | 13 | +4 | −1 |
 
 ### Yokotani
 
@@ -536,6 +536,6 @@ laisse « avantage − démarrage du coup suivant » frames pour lancer la suite
 | Crochet | `standingHeavy` | mid | 9 | 4 | 16 | +4 | −6 |
 | Coup au corps | `lowLight` | low | 5 | 3 | 10 | +4 | −5 |
 | Balayage | `lowHeavy` | low | 9 | 4 | 18 | Sol | −7 |
-| Direct en avançant | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
-| Coup d’épaule | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
-| Revers | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |
+| Objection | `forwardLight` | mid | 6 | 3 | 7 | +4 | +2 |
+| Constat d’intrusion | `forwardHeavy` | mid | 13 | 5 | 24 | Sol | −10 |
+| Expulsion ordonnée | `backHeavy` | mid | 8 | 4 | 16 | +4 | −4 |

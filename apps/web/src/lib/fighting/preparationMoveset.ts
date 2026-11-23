@@ -28,11 +28,11 @@ const LUINI_NORMALS: Record<string, string> = {
   lowLight: 'Coup bas|Low kick',
   lowHeavy: 'Balayage|Sweep',
   airLight: 'Entaille aérienne|Air slash',
-  airHeavy: 'Talon descendant|Descending heel',
-  forwardLight: 'Pointe en avançant|Advancing thrust',
-  forwardHeavy: 'Entaille en avançant|Advancing slash',
-  backHeavy: 'Revers|Backfist',
-  throw: 'Projection|Throw',
+  airHeavy: 'Fausse sortie|False Exit',
+  forwardLight: 'Porte dérobée|Hidden Door',
+  forwardHeavy: 'Couloir meurtrier|Deadly Corridor',
+  backHeavy: 'Pièce condamnée|Sealed Room',
+  throw: 'Tour du monde intérieur|Inner World Tour',
 }
 
 /** Replace the old offensive carrier with the utility that the simulation actually performs. */

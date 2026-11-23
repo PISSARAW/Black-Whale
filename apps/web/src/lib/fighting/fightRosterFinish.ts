@@ -4,30 +4,30 @@ import type { HumanProfile } from '$lib/tour/humanProfiles'
 
 type Three = HumanFigureBuild['THREE']
 
-const HEROES = new Set(['kurapika', 'hisoka'])
-
 /**
- * Fight-only hero finish for the visual vertical slice.
+ * Fight-only roster finish grown from the Kurapika/Hisoka vertical slice.
  *
  * The shared tour rig remains untouched: these pieces are mounted on the live
  * combat joints, so hands, cuffs and facial accents follow every authored pose.
- * The vocabulary is deliberately reusable for later roster passes.
+ * Hero-specific tailoring stays authored; extremity readability is proportional
+ * to every fighter's declared frame and build.
  */
-export function addFightHeroFinish(options: {
+export function addFightRosterFinish(options: {
   THREE: Three
   model: HumanFigure
   profile: HumanProfile
 }): void {
   const { THREE, model, profile } = options
   const id = profile.likeness
-  if (!id || !HEROES.has(id) || model.root.getObjectByName('fight-hero-finish')) return
+  if (!id || model.root.getObjectByName('fight-roster-finish')) return
 
   const finish = new THREE.Group()
-  finish.name = 'fight-hero-finish'
+  finish.name = 'fight-roster-finish'
+  finish.userData.finishTier = id === 'kurapika' || id === 'hisoka' ? 'hero' : 'roster'
   model.turns.add(finish)
   refineExtremities(THREE, model.root, profile, finish)
   if (id === 'hisoka') finishHisoka(THREE, model, profile, finish)
-  else finishKurapika(THREE, model, profile, finish)
+  else if (id === 'kurapika') finishKurapika(THREE, model, profile, finish)
 }
 
 function material(THREE: Three, colour: number): Material {
@@ -44,8 +44,9 @@ function refineExtremities(
   for (const side of ['left', 'right'] as const) {
     const hand = root.getObjectByName(`hand-${side}`)
     if (hand) {
-      hand.scale.multiplyScalar(profile.likeness === 'kurapika' ? 1.1 : 1.14)
-      const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.061, 0.004, 0.006), ink)
+      const scale = extremityScale(profile)
+      hand.scale.multiplyScalar(scale)
+      const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.061 * scale, 0.004, 0.006), ink)
       knuckles.name = `fight-hand-knuckles-${side}`
       knuckles.position.set(0, 0.014, 0.029)
       hand.add(knuckles)
@@ -54,6 +55,13 @@ function refineExtremities(
     const shoe = root.getObjectByName(`knee-${side}`)?.children[1]
     if (shoe) shoe.scale.multiply(new THREE.Vector3(1.04, 1.02, 1.06))
   }
+}
+
+function extremityScale(profile: HumanProfile): number {
+  if (profile.likeness === 'hisoka') return 1.14
+  if (profile.likeness === 'kurapika') return 1.1
+  if (profile.frame !== 'adult') return 1.06
+  return { slim: 1.08, average: 1.1, broad: 1.12 }[profile.build]
 }
 
 function finishHisoka(

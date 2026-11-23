@@ -328,3 +328,19 @@ their model root. They broaden with height, return to their authored footprint
 on landing and remain excluded from gameplay bounds. The complete layer costs
 three meshes, no dynamic lights or shadow maps, reads interpolated presentation
 positions only and never mutates combat, replay or camera state.
+
+## P16 — roster-wide premium finish
+
+The Kurapika/Hisoka extremity treatment now covers all forty fighters. Hands
+gain a readable palm and knuckle plane, while shoes receive the same restrained
+silhouette lift used by the vertical slice. Scaling follows the declared body:
+children remain delicate, slim fighters stay precise, and broad fighters carry
+more mass. Kurapika and Hisoka retain their exact P14 proportions and authored
+tailoring.
+
+This completes rather than duplicates the shared close-up face finish already
+mounted on every declared likeness. The additions remain children of the live
+hand, knee and shoe joints, so all 360 physical attacks, held equipment and
+special forms keep their existing transforms. Tour models are unchanged; the
+finish exists only on Clash figures and adds at most two general-purpose meshes
+to either fighter.

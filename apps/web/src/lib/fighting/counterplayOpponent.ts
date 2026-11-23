@@ -7,6 +7,7 @@ import { aiBackSwayInput } from './movementTechAi'
 import { readCounterplay, type CounterplayCue } from './fightCounterplay'
 import { styleMatchup } from './styleMatchups'
 import { styleReactionFrames } from './styleMobility'
+import { zetsuStealthDelay } from './advancedMovementTech'
 import { steerFighter } from './fighterMovement'
 import { canMove, playerCanJump, canGuard } from './fightActorState'
 import { moveOpponent } from './opponentMovement'
@@ -39,7 +40,7 @@ export function moveCounterplayOpponent(options: {
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }
-  if (frames <= styleReactionFrames(fighter) || !canRespond(fighter, cue))
+  if (frames <= styleReactionFrames(fighter) + zetsuStealthDelay(fighter, target) || !canRespond(fighter, cue))
     return moveRememberedOpponent(view, fighter)
   const input = responseInput(fighter, cue)
   return applyResponse(

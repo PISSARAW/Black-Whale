@@ -1,4 +1,5 @@
 import { bodyLegFactor } from './bodyDamage'
+import { dashBrakeMinFrame } from './advancedMovementTech'
 import type { ArcadeFighter, FightInput, FighterDash } from './types'
 
 declare module './types' {
@@ -35,7 +36,8 @@ export function shouldBrakeDash(options: {
   input: FightInput
 }): boolean {
   const { fighter, dash, direction, input } = options
-  if (dash.direction !== fighter.facing || dash.frame < DASH_BRAKE_MIN_FRAME) return false
+  if (dash.direction !== fighter.facing || dash.frame < dashBrakeMinFrame(fighter, DASH_BRAKE_MIN_FRAME))
+    return false
   if (direction === -fighter.facing || input.guard) return true
   return !dash.lowDodge && input.down
 }

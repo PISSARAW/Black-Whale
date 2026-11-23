@@ -1,4 +1,5 @@
 import { voiceSpeedFactor } from './blackVoiceAutopilot'
+import { chrolloFreeHandsFactor } from './advancedMovementTech'
 import { bodyLegFactor } from './bodyDamage'
 import { fightingStyle } from './fightStyles'
 import { styleMatchup, type StyleRole } from './styleMatchups'
@@ -47,7 +48,7 @@ export function styleMobility(fighter: ArcadeFighter): Mobility & { walkScale: n
   const role =
     fighter.id === 'biscuit' && !fighter.biscuitTrueForm ? 'control' : styleMatchup(fighter.id).role
   const base = MOBILITY[role],
-    factor = voiceSpeedFactor(fighter) * bodyLegFactor(fighter)
+    factor = voiceSpeedFactor(fighter) * bodyLegFactor(fighter) * chrolloFreeHandsFactor(fighter)
   return {
     ...base,
     walkScale: fightingStyle(fighter.id).moveScale * factor,

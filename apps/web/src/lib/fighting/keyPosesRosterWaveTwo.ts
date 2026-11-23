@@ -21,7 +21,10 @@ export const ROSTER_WAVE_TWO_SLOTS = [
   'forwardLight',
 ] as const satisfies readonly MoveSlot[]
 
-const SIGNATURES: Record<(typeof ROSTER_WAVE_TWO_FIGHTERS)[number], GroundedSignature> = {
+export const ROSTER_WAVE_TWO_SIGNATURES: Record<
+  (typeof ROSTER_WAVE_TWO_FIGHTERS)[number],
+  GroundedSignature
+> = {
   musse: {
     load: { pelvis: [-0.025, -0.12, 0], neck: [0.012, 0.04, 0], rearWrist: [-0.08, 0, 0] },
     contact: { pelvis: [0.04, 0.18, 0], neck: [-0.012, -0.03, 0], rearPalm: [-0.07, 0.04, 0] },
@@ -90,7 +93,7 @@ export const ROSTER_WAVE_TWO_GROUNDED_POSES = Object.fromEntries(
     Object.fromEntries(
       ROSTER_WAVE_TWO_SLOTS.map((slot) => [
         slot,
-        rosterWaveOneGroundedTimeline(id, slot, SIGNATURES[id]),
+        rosterWaveOneGroundedTimeline(id, slot, ROSTER_WAVE_TWO_SIGNATURES[id]),
       ]),
     ),
   ]),

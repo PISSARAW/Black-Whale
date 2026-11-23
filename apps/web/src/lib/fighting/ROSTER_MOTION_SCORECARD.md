@@ -133,3 +133,27 @@ braces, Basho protects the writing hand, Beyond and Lynch commit their mass,
 Leorio boxes straight and Longhi turns with precise wrists.
 
 The roster total is now 201 dedicated physical clips and 159 generated clips.
+
+## P5 — second-wave low and directional control
+
+The second wave adds dedicated `lowLight`, `forwardHeavy` and `backHeavy`
+timelines. The shared directional contract now also guarantees that Forward
+Light plants the lead foot and pivots the rear foot in both waves; low and
+retreating routes remain based over the rear support.
+
+| Fighter  |  P4 |  P5 |
+| -------- | --: | --: |
+| Musse    | 7.9 | 8.7 |
+| Padaille | 7.7 | 8.7 |
+| Rihan    | 7.8 | 8.7 |
+| Theta    | 7.9 | 8.7 |
+| Yokotani | 7.8 | 8.7 |
+| Basho    | 7.9 | 8.6 |
+| Beyond   | 7.8 | 8.6 |
+| Leorio   | 7.9 | 8.6 |
+| Longhi   | 7.8 | 8.6 |
+| Lynch    | 7.9 | 8.6 |
+
+The roster total is now 231 dedicated physical clips and 129 generated clips.
+The second wave's remaining common priorities are `lowHeavy`, `airLight` and
+`airHeavy`.

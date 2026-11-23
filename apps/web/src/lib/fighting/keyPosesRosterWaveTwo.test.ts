@@ -42,7 +42,7 @@ describe('roster motion wave two grounded fundamentals', () => {
           reversal: false,
         }
         const lead = slot !== 'standingLight'
-        expect(bodyPlan(fighter, { seconds: 1, progress: 0 })).toMatchObject({
+        expect(bodyPlan(fighter, { seconds: 1, progress: 0 }), `${id}:${slot}`).toMatchObject({
           supportFoot: lead ? 'lead' : 'rear',
           pivotFoot: lead ? 'rear' : 'lead',
         })

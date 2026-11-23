@@ -28,7 +28,7 @@ export function rosterWaveOneSupport(
   const forward = slot === 'forwardLight' || slot === 'forwardHeavy'
   const back = slot === 'backHeavy'
   const heavy = slot === 'standingHeavy' || slot === 'forwardHeavy' || back
-  const supportFoot = heavy && !back ? 'lead' : 'rear'
+  const supportFoot = (heavy || forward) && !back ? 'lead' : 'rear'
   const pivotFoot = supportFoot === 'lead' ? 'rear' : 'lead'
   const load = smooth(Math.min(1, attack.frame / Math.max(1, frames.startup)))
   const recovery = Math.max(0, attack.frame - frames.startup - frames.active)

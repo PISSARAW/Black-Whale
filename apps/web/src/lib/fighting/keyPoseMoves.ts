@@ -26,6 +26,7 @@ import { ROSTER_WAVE_ONE_GROUNDED_POSES } from './keyPosesRosterWaveOne'
 import { ROSTER_WAVE_ONE_DIRECTIONAL_POSES } from './keyPosesRosterWaveOneDirectional'
 import { ROSTER_WAVE_ONE_FINISH_POSES } from './keyPosesRosterWaveOneFinish'
 import { ROSTER_WAVE_TWO_GROUNDED_POSES } from './keyPosesRosterWaveTwo'
+import { ROSTER_WAVE_TWO_DIRECTIONAL_POSES } from './keyPosesRosterWaveTwoDirectional'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -46,7 +47,15 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
       },
     ]),
   ),
-  ...ROSTER_WAVE_TWO_GROUNDED_POSES,
+  ...Object.fromEntries(
+    Object.keys(ROSTER_WAVE_TWO_GROUNDED_POSES).map((id) => [
+      id,
+      {
+        ...ROSTER_WAVE_TWO_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_TWO_GROUNDED_POSES],
+        ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_TWO_DIRECTIONAL_POSES],
+      },
+    ]),
+  ),
   voconte: { neutralSpecial: DOOR_LINK_POSE },
   kurapika: {
     ...holdNormalContacts(KURAPIKA_KEY_POSES),
@@ -55,7 +64,11 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
     ...KURAPIKA_CAST_POSES,
     standingHeavy: KURAPIKA_GOLDEN_HEAVY_TIMELINE,
   },
-  theta: { ...ROSTER_WAVE_TWO_GROUNDED_POSES.theta, ...THETA_SHOT_POSES },
+  theta: {
+    ...ROSTER_WAVE_TWO_GROUNDED_POSES.theta,
+    ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.theta,
+    ...THETA_SHOT_POSES,
+  },
   shizuku: SHIZUKU_KEY_POSES,
   hisoka: {
     ...holdNormalContacts(HISOKA_KEY_POSES),
@@ -66,7 +79,11 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   kalluto: KALLUTO_KEY_POSES,
   chrollo: { ...CHROLLO_NORMAL_POSES, ...CHROLLO_COMMAND_POSES, ...CHROLLO_KEY_POSES },
   benjamin: { ...BENJAMIN_NORMAL_POSES, ...BENJAMIN_COMMAND_POSES },
-  leorio: { ...ROSTER_WAVE_TWO_GROUNDED_POSES.leorio, neutralSpecial: LEORIO_REMOTE_PUNCH },
+  leorio: {
+    ...ROSTER_WAVE_TWO_GROUNDED_POSES.leorio,
+    ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.leorio,
+    neutralSpecial: LEORIO_REMOTE_PUNCH,
+  },
   hanzo: HANZO_KEY_POSES,
   bonolenov: BONOLENOV_KEY_POSES,
   furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },

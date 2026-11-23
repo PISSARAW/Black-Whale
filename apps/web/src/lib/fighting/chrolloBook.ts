@@ -1,6 +1,28 @@
 import { voluntaryNenAvailable } from './nenAccess'
 import { historicalChrolloPage, type HistoricalChrolloPage } from './chrolloHistoricalPages'
+import {
+  CHROLLO_DECK_PRESETS,
+  selectChrolloSlot,
+  slotForPage,
+  syncChrolloBook,
+  type BookSlot,
+  type ChrolloDeck,
+  type ChrolloDeckPreset,
+} from './chrolloDeck'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
+
+export type { BookSlot, ChrolloDeck, ChrolloDeckPreset } from './chrolloDeck'
+export {
+  CHROLLO_DECK_PRESETS,
+  advanceChrolloBookIntel,
+  chrolloRightHandOccupied,
+  isSlotRevealed,
+  pageAtSlot,
+  revealBookSlot,
+  selectChrolloSlot,
+  slotForPage,
+  syncChrolloBook,
+} from './chrolloDeck'
 
 export type ChrolloSourcePage = HistoricalChrolloPage | Exclude<FighterId, 'chrollo'>
 export type ChrolloPage = ChrolloSourcePage | `${FighterId}:${MoveSlot}` | 'biscuit:cookie'
@@ -12,6 +34,18 @@ export interface ChrolloBookState {
   page: number
   open: boolean
   bookmark: ChrolloPage | null
+  /** 4 prepared pages chosen before the match. */
+  deck?: ChrolloDeck
+  /** 5th slot filled only when Skill Hunter (6S) succeeds. */
+  stolenPage?: ChrolloPage | null
+  /** Active slot (0..3 or 'stolen'), null when the book is closed. */
+  openSlot?: BookSlot | null
+  /** Page marked by Double Face (2S). */
+  bookmarkSlot?: BookSlot | null
+  /** True while 4S is held to pick a deck slot directly. */
+  isFlipping?: boolean
+  /** Slots already revealed to the opponent (used or read with full Gyo). */
+  revealedSlots?: readonly BookSlot[]
 }
 
 export const CHROLLO_USE = 'chrollo:neutralSpecial'
@@ -20,9 +54,25 @@ export const CHROLLO_BOOKMARK = 'chrollo:downSpecial'
 export const CHROLLO_TURN = 'chrollo:backSpecial'
 export const CHROLLO_SECONDARY = 'chrollo:finisher'
 
-/** Heavens Arena loadout, before Shalnark's death; never a claim about his ship loadout. */
-export function createChrolloBook(): ChrolloBookState {
-  return { pages: ['sun-and-moon', 'black-voice'], page: 0, open: true, bookmark: null }
+/** Creates Bandit's Secret with a 4-page prepared deck and an empty 5th stolen slot. */
+export function createChrolloBook(
+  presetOrDeck: ChrolloDeckPreset | ChrolloDeck = 'heavens-arena',
+): ChrolloBookState {
+  const deck = Array.isArray(presetOrDeck)
+    ? (presetOrDeck as ChrolloDeck)
+    : CHROLLO_DECK_PRESETS[presetOrDeck as ChrolloDeckPreset]
+  return syncChrolloBook({
+    deck,
+    stolenPage: null,
+    pages: [...deck],
+    page: 0,
+    open: true,
+    openSlot: 0,
+    bookmark: null,
+    bookmarkSlot: null,
+    isFlipping: false,
+    revealedSlots: [],
+  })
 }
 
 export function chrolloNenActive(fighter: ArcadeFighter): boolean {
@@ -102,20 +152,48 @@ function projectionActive(fighter: ArcadeFighter): boolean {
 }
 
 export function turnChrolloPage(book: ChrolloBookState): ChrolloBookState {
-  return { ...book, page: (book.page + 1) % book.pages.length, open: true }
+  const slots: BookSlot[] = book.stolenPage ? [0, 1, 2, 3, 'stolen'] : [0, 1, 2, 3]
+  const currentSlot: BookSlot =
+    book.page === 4 && book.stolenPage
+      ? 'stolen'
+      : ((Math.min(3, Math.max(0, book.page))) as 0 | 1 | 2 | 3)
+  const currentIdx = slots.indexOf(currentSlot)
+  const nextSlot = slots[(currentIdx + 1) % slots.length]
+  return selectChrolloSlot(syncChrolloBook(book), nextSlot)
 }
 
-/** One bookmark: placing it replaces the old one; reopening preserves its page. */
+/** One bookmark: placing it replaces the old one and closes the book; reopening preserves it. */
 export function toggleChrolloBookmark(book: ChrolloBookState): ChrolloBookState {
-  if (!book.open) return { ...book, open: true }
-  const page = book.pages[book.page]
-  if (book.bookmark === page) return { ...book, bookmark: null }
-  return { ...book, bookmark: page, open: false }
+  const synced = syncChrolloBook(book)
+  if (!synced.open) {
+    const reopenSlot: BookSlot =
+      synced.page === 4 && synced.stolenPage ? 'stolen' : ((Math.min(3, synced.page)) as 0 | 1 | 2 | 3)
+    return syncChrolloBook({ ...synced, open: true, openSlot: reopenSlot, isFlipping: false })
+  }
+  const activeSlot = synced.openSlot ?? (synced.page as BookSlot)
+  if (synced.bookmarkSlot === activeSlot) {
+    return syncChrolloBook({ ...synced, bookmarkSlot: null, bookmark: null, isFlipping: false })
+  }
+  return syncChrolloBook({
+    ...synced,
+    bookmarkSlot: activeSlot,
+    openSlot: null,
+    open: false,
+    isFlipping: false,
+  })
 }
 
 export function addChrolloPage(book: ChrolloBookState, page: ChrolloPage): ChrolloBookState {
-  const pages = book.pages.includes(page) ? book.pages : [...book.pages, page]
-  return { ...book, pages, page: pages.indexOf(page), open: true }
+  const synced = syncChrolloBook(book)
+  const existing = slotForPage(synced, page)
+  if (existing !== null) return selectChrolloSlot(synced, existing)
+  return syncChrolloBook({
+    ...synced,
+    stolenPage: page,
+    openSlot: 'stolen',
+    open: true,
+    isFlipping: false,
+  })
 }
 
 function activeAttackPage(fighter: ArcadeFighter, moveId: string): ChrolloPage | undefined {

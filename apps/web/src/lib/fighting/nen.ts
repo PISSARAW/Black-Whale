@@ -26,6 +26,7 @@ import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nen
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
+import { chrolloRightHandOccupied } from './chrolloDeck'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -116,6 +117,12 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
     }
   }
   const zone = attackData(fighter.attack.kind, fighter).auraZone
+  if (zone === 'hands' && chrolloRightHandOccupied(fighter)) {
+    return {
+      ...withAction(fighter, { type: 'TEN' }),
+      attack: { ...fighter.attack, auraCharged: false },
+    }
+  }
   const focused = withAction(withAction(fighter, { type: 'TEN' }), { type: 'KO', zone })
   return {
     ...focused,
@@ -208,8 +215,10 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
+  const bookPenalty = kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
   return (
     factor *
+    bookPenalty *
     attackCategoryPower(fighter, kind) *
     weaponPower(fighter, zone) *
     bodyMemoryAttackFactor(fighter, zone)

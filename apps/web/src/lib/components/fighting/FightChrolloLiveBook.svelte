@@ -1,138 +1,89 @@
 <script lang="ts">
-  import { hunterOptions } from '$lib/fighting/skillHunterAcquisition'
-  import { historicalOptions } from '$lib/fighting/chrolloHistoricalOptions'
-  import { HISTORICAL_CHROLLO_PAGES } from '$lib/fighting/chrolloHistoricalPages'
   import { chrolloPageName } from '$lib/fighting/chrolloPageNames'
   import {
-    liveBookEffects,
-    liveFishRoomCue,
-    liveBookMove,
-    liveBookMoveReady,
-    liveBookReady,
-    type LiveBookActions,
-  } from '$lib/fighting/chrolloLiveBook'
-  import { performArsenalAction } from '$lib/fighting/arsenalExecution'
-  import { performAuraAttack } from '$lib/fighting/engine'
-  import { observeFightCommand } from '$lib/fighting/commandFeedback'
-  import type { ArsenalCommand } from '$lib/fighting/retrospectiveTypes'
+    CHROLLO_DECK_PRESETS,
+    isSlotRevealed,
+    type BookSlot,
+  } from '$lib/fighting/chrolloDeck'
+  import type { LiveBookActions } from '$lib/fighting/chrolloLiveBook'
   import type { FightSide, FightState } from '$lib/fighting/types'
+
   export let state: FightState
   export let language: 'fr' | 'en'
   export let side: FightSide = 'player'
   export let readOnly = false
-  $: other = (side === 'player' ? 'opponent' : 'player') as FightSide
-  export let actions: LiveBookActions
-  let open = false
+  export let actions: LiveBookActions | undefined = undefined
+  export let perspective: 'owner' | 'opponent' = 'owner'
+  $: void readOnly
+  $: void actions
+
   $: fr = language === 'fr'
   $: book = state[side].chrolloBook
-  $: ready = !readOnly && liveBookReady(state, side)
-  $: options = open
-    ? [...historicalOptions(state, side), ...hunterOptions(state, side)].filter(
-        (option) => option.command.action !== 'history-page',
-      )
-    : []
-  $: effects = liveBookEffects(state, language, side)
-  $: roomCue = liveFishRoomCue(state, language, side)
-  function use(command: ArsenalCommand) {
-    actions.queueAction((current) =>
-      observeFightCommand(current, { side, action: 'utility' }, (next) =>
-        performArsenalAction({ state: next, side, command }, performAuraAttack),
-      ),
-    )
-  }
-  function selectPage(event: Event) {
-    use({ action: 'history-page', target: (event.currentTarget as HTMLSelectElement).value })
+  $: deck = book?.deck ?? CHROLLO_DECK_PRESETS['heavens-arena']
+  $: slots = ([0, 1, 2, 3] as const).map((index) => ({
+    slot: index as BookSlot,
+    key: ['L', 'H', 'U', 'Ctx'][index],
+    page: deck[index],
+  }))
+
+  function slotLabel(slot: BookSlot, page: string | null | undefined): string {
+    if (!page) return '—'
+    if (perspective === 'opponent' && book && !isSlotRevealed(book, slot)) return '?'
+    return chrolloPageName(page as Parameters<typeof chrolloPageName>[0], language)
   }
 </script>
 
 {#if book}
-  <details
+  <aside
     class="live-book"
-    bind:open
-    aria-label={fr ? 'Livre de Chrollo en combat' : 'Chrollo combat book'}
+    class:flipping={book.isFlipping}
+    aria-label={fr ? 'Bandit’s Secret · Indicateur passif' : 'Bandit’s Secret · Passive HUD'}
   >
-    <summary
-      >{side === 'player' ? 'P1' : 'P2'} · {fr ? 'Livre' : 'Book'} · {chrolloPageName(
-        book.pages[book.page],
-        language,
-      )} · {state[side].facing === 1 ? '→' : '←'}
-      {Math.abs(state[side].x - state[other].x).toFixed(1)} u</summary
-    >
-    {#if open}
-      <div
-        class="book-panel"
-        aria-label={fr ? 'Pages et actions de Skill Hunter' : 'Skill Hunter pages and actions'}
-      >
-        <p class="book-state" role="status">
-          {book.open
-            ? fr
-              ? 'Livre ouvert · main droite occupée'
-              : 'Book open · right hand occupied'
-            : fr
-              ? 'Livre fermé · mains libres'
-              : 'Book closed · hands free'}
-          <br />{fr ? 'Signet' : 'Bookmark'} : {chrolloPageName(book.bookmark, language)}
-        </p>
-        <p class="distance">
-          {state[side].facing === 1 ? '→' : '←'} · {fr ? 'Distance du duel' : 'Duel distance'} : {Math.abs(
-            state[side].x - state[other].x,
-          ).toFixed(1)} u
-        </p>
-        {#if book.pages[book.page] === 'indoor-fish'}<p class="room-cue">{roomCue}</p>{/if}
-        <label
-          >{fr ? 'Page historique' : 'Historical page'}
-          <select
-            aria-label={fr ? 'Page de Skill Hunter' : 'Skill Hunter page'}
-            value={book.pages[book.page]}
-            disabled={!ready}
-            onchange={selectPage}
-          >
-            {#each Object.entries(HISTORICAL_CHROLLO_PAGES) as [id, label] (id)}
-              <option value={id}>{label}</option>
-            {/each}
-          </select>
-        </label>
-        <div class="book-moves">
-          <button
-            type="button"
-            disabled={readOnly || !liveBookMoveReady(state, 'use', side)}
-            onclick={() => actions.queueCommand(liveBookMove('use', side))}
-            >{fr ? 'Utiliser la page' : 'Use page'}</button
-          >
-          <button
-            type="button"
-            disabled={readOnly || !liveBookMoveReady(state, 'bookmark', side)}
-            onclick={() => actions.queueCommand(liveBookMove('bookmark', side))}>Double Face</button
-          >
-          <button
-            type="button"
-            disabled={readOnly || !liveBookMoveReady(state, 'secondary', side)}
-            onclick={() => actions.queueCommand(liveBookMove('secondary', side))}
-            >{fr ? 'Page au signet / Lune' : 'Bookmarked page / Moon'}</button
-          >
-        </div>
-        {#each options as option (`${option.command.action}:${option.command.target ?? ''}`)}
-          <button
-            class="application"
-            type="button"
-            disabled={readOnly || !option.ready}
-            title={fr ? option.conditionFr : option.conditionEn}
-            onclick={() => use(option.command)}>{fr ? option.labelFr : option.labelEn}</button
-          >
-        {/each}
-        {#each effects as effect (effect)}<p class="effect" role="status">{effect}</p>{/each}
-        <small
-          >{readOnly
-            ? fr
-              ? 'Replay · commandes verrouillées.'
-              : 'Replay · controls locked.'
-            : fr
-              ? 'Le combat continue. Les contacts, les mains libres et les coûts restent nécessaires.'
-              : 'Combat continues. Contact, free hands and costs still apply.'}</small
+    <header class="book-head">
+      <strong>{side === 'player' ? 'P1' : 'P2'} · BANDIT’S SECRET</strong>
+      <span class="hand-state">
+        {book.open
+          ? fr
+            ? 'Livre ouvert · main droite occupée'
+            : 'Book open · right hand occupied'
+          : fr
+            ? 'Livre fermé · deux mains libres'
+            : 'Book closed · both hands free'}
+      </span>
+    </header>
+    <ul class="deck-slots">
+      {#each slots as entry (entry.slot)}
+        <li
+          class:active={book.open && book.openSlot === entry.slot}
+          class:bookmarked={book.bookmarkSlot === entry.slot}
         >
-      </div>
-    {/if}
-  </details>
+          <span class="slot-key">{book.isFlipping ? entry.key : entry.slot + 1}</span>
+          <span class="slot-name">{slotLabel(entry.slot, entry.page)}</span>
+          {#if book.bookmarkSlot === entry.slot}
+            <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}>★</span>
+          {/if}
+        </li>
+      {/each}
+      <li
+        class="stolen-slot"
+        class:active={book.open && book.openSlot === 'stolen'}
+        class:bookmarked={book.bookmarkSlot === 'stolen'}
+        class:empty={!book.stolenPage}
+      >
+        <span class="slot-key">6S</span>
+        <span class="slot-name">
+          {book.stolenPage
+            ? slotLabel('stolen', book.stolenPage)
+            : fr
+              ? 'Slot volé (vide)'
+              : 'Stolen slot (empty)'}
+        </span>
+        {#if book.bookmarkSlot === 'stolen'}
+          <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}>★</span>
+        {/if}
+      </li>
+    </ul>
+  </aside>
 {/if}
 
 <style>
@@ -140,84 +91,82 @@
     position: absolute;
     top: 8.6rem;
     right: 0.8rem;
-    z-index: 28;
-    width: min(310px, 42vw);
-    color: #eee2fa;
-    font: 0.72rem/1.4 var(--font-mono);
-  }
-  summary {
-    padding: 0.6rem 0.8rem;
-    border: 1px solid #9c7ab5;
-    background: #180f23ed;
-    cursor: pointer;
-    min-height: 44px;
-  }
-  .book-panel {
-    display: grid;
-    gap: 0.4rem;
-    padding: 0.65rem;
-    max-height: 57vh;
-    overflow: auto;
-    background: #120b1bf0;
+    z-index: 26;
+    width: min(260px, 38vw);
+    padding: 0.5rem 0.6rem;
     border: 1px solid #725586;
+    background: #120b1bd9;
+    color: #eee2fa;
+    font: 600 0.62rem/1.35 var(--font-mono);
+    pointer-events: none;
   }
-  p {
+  .live-book.flipping {
+    border-color: #ff9b61;
+    box-shadow: 0 0 14px #ff864b33;
+  }
+  .book-head {
+    display: grid;
+    gap: 0.15rem;
+    margin-bottom: 0.35rem;
+    border-bottom: 1px solid #ffffff1a;
+    padding-bottom: 0.3rem;
+  }
+  .book-head strong {
+    color: #f6e7ff;
+    letter-spacing: 0.06em;
+  }
+  .hand-state {
+    color: #c2adc9;
+    font-size: 0.55rem;
+  }
+  .deck-slots {
+    list-style: none;
     margin: 0;
-  }
-  .book-state {
-    color: #dac4ed;
-  }
-  .distance {
-    color: #c6bdce;
-  }
-  label {
+    padding: 0;
     display: grid;
-    gap: 0.25rem;
+    gap: 0.2rem;
   }
-  select,
-  button {
-    width: 100%;
-    min-height: 36px;
-    border: 1px solid #816593;
-    background: #2c1b39;
-    color: #f2e7fa;
-    padding: 0.35rem;
-    font: inherit;
-    cursor: pointer;
+  .deck-slots li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.22rem 0.35rem;
+    border: 1px solid #4d395d;
+    background: #1c1228;
+    color: #cbb9db;
   }
-  .book-moves {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.3rem;
+  .deck-slots li.active {
+    border-color: #ff9b61;
+    background: #381f24;
+    color: #fff2e6;
   }
-  .book-moves button:last-child {
-    grid-column: 1 / -1;
+  .deck-slots li.bookmarked {
+    border-left: 3px solid #c5a0fa;
   }
-  button:disabled,
-  select:disabled {
-    opacity: 0.45;
-    cursor: default;
+  .deck-slots li.empty {
+    opacity: 0.55;
+    border-style: dashed;
   }
-  button:focus-visible,
-  summary:focus-visible,
-  select:focus-visible {
-    outline: 2px solid #f6cb91;
-    outline-offset: 2px;
+  .slot-key {
+    min-width: 1.5rem;
+    text-align: center;
+    color: #ff9b61;
+    font-size: 0.55rem;
   }
-  .effect {
-    padding: 0.25rem;
-    border-left: 2px solid #daa5ff;
-    color: #f0cdff;
+  .slot-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  small {
-    color: #bcaec7;
-    font-size: 0.65rem;
+  .slot-mark {
+    margin-left: auto;
+    color: #c5a0fa;
   }
   @media (max-width: 600px) {
     .live-book {
       top: 7.5rem;
       right: 0.4rem;
-      width: min(280px, 62vw);
+      width: min(215px, 52vw);
     }
   }
 </style>

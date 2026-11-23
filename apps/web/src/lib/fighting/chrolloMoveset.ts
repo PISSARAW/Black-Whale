@@ -21,7 +21,7 @@ const BOOK_MOVES: Partial<Record<MoveSlot, { cost: number; tuning: Partial<MoveT
   },
   backSpecial: {
     cost: 0,
-    tuning: { startup: 3, active: 1, recovery: 12, damage: 0, lunge: 0, reach: 0 },
+    tuning: { startup: 2, active: 1, recovery: 7, damage: 0, lunge: 0, reach: 0 },
   },
   downSpecial: {
     cost: 0,

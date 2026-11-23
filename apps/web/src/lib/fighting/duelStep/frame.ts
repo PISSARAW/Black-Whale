@@ -18,6 +18,21 @@ import { advanceNenMentalFatigue } from '../nenCognitiveLoad'
 import { advanceNenPsychology } from '../nenPsychology'
 import { advanceBurstZetsu, resolveBurstInputs } from '../fightBurst'
 import { advanceTsk17, canReleaseTsk17, releaseTsk17 } from '../tsk17'
+import { advanceChrolloBookIntel } from '../chrolloDeck'
+import { pickChrolloFlipSlot } from '../chrolloBookAction'
+
+function resolveChrolloFlipInputs(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    const input = inputs[side]
+    const book = state[side].chrolloBook
+    if (!input || !book?.isFlipping) continue
+    if (input.kameo) state = pickChrolloFlipSlot(state, side, 2) ?? state
+    else if (input.context) state = pickChrolloFlipSlot(state, side, 3) ?? state
+    else if (!input.hatsu)
+      state = { ...state, [side]: { ...state[side], chrolloBook: { ...book, isFlipping: false } } }
+  }
+  return state
+}
 
 function resolveTsk17Inputs(state: FightState, inputs: DuelInputs): FightState {
   if (inputs.player.context && !state.player.openWounds && canReleaseTsk17(state, 'player'))
@@ -35,6 +50,7 @@ export function openFrame(
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
+  state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
@@ -68,5 +84,7 @@ export function closeFrame(start: FightState, resolved: FightState): FightState 
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceTsk17(reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next))))
+  return advanceTsk17(
+    advanceChrolloBookIntel(reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))),
+  )
 }

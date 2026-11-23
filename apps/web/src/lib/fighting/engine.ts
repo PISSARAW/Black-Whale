@@ -70,6 +70,9 @@ import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
 import { resolveContextInput } from './contextInput'
 import { applyOnContext, canSwearOn } from './onTechnique'
+import { performChrolloBookAction, pickChrolloFlipSlot } from './chrolloBookAction'
+import { CHROLLO_STEAL } from './chrolloBook'
+import { revealBookSlot } from './chrolloDeck'
 import { resolveContacts, settleBodies } from './duelStep/contacts'
 import { closeFrame, openFrame } from './duelStep/frame'
 import { resolveKameoFrameContacts, stepKameoFrame } from './kameos/frame'
@@ -208,6 +211,27 @@ export function performMove(options: PerformMoveOptions): FightState {
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
+  if (options.state[options.side].chrolloBook?.isFlipping) {
+    const slot = options.action === 'light' ? 0 : options.action === 'heavy' ? 1 : null
+    if (slot !== null) return pickChrolloFlipSlot(options.state, options.side, slot) ?? options.state
+  }
+  const chrollo = options.state[options.side]
+  if (
+    options.action === 'special' &&
+    chrollo.id === 'chrollo' &&
+    chrollo.chrolloBook?.stolenPage &&
+    options.input &&
+    (chrollo.facing === 1 ? options.input.right && !options.input.left : options.input.left && !options.input.right) &&
+    !options.input.down
+  ) {
+    const flipped = performChrolloBookAction({
+      state: options.state,
+      side: options.side,
+      kind: 'special',
+      moveId: CHROLLO_STEAL,
+    })
+    if (flipped) return flipped
+  }
   if (
     options.action === 'special' &&
     options.input?.aura &&
@@ -216,7 +240,25 @@ export function performMove(options: PerformMoveOptions): FightState {
     const sworn = applyOnContext(options.state[options.side], { ...options.input, hatsu: true })
     if (sworn) return { ...options.state, [options.side]: sworn }
   }
-  return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+  const executed = resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+  return revealUsedChrolloSlot(executed, options.side, options.action)
+}
+
+function revealUsedChrolloSlot(
+  state: FightState,
+  side: FightSide,
+  action: MoveAction,
+): FightState {
+  const book = state[side].chrolloBook
+  if (!book || (action !== 'special' && action !== 'finisher')) return state
+  const slot =
+    action === 'finisher'
+      ? (book.bookmarkSlot ?? null)
+      : book.open
+        ? (book.openSlot ?? null)
+        : (book.bookmarkSlot ?? null)
+  const revealed = revealBookSlot(book, slot)
+  return revealed === book ? state : { ...state, [side]: { ...state[side], chrolloBook: revealed } }
 }
 
 function executeFightMove(options: PerformMoveOptions): FightState {

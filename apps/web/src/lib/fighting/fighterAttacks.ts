@@ -19,7 +19,7 @@ import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import { remotePunchAvailable } from './leorioAttack'
-import { chrolloMoveAvailable } from './chrolloBook'
+import { chrolloMoveAvailable, chrolloRightHandOccupied } from './chrolloBook'
 import { chainsImmobilize, kurapikaMoveAvailable } from './kurapika'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { feitanMoveAvailable } from './feitanPain'
@@ -197,6 +197,7 @@ function characterAttackAvailable(
   if (!cyclotronAllowsAttack(fighter, kind, { moveId })) return false
   if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
+  if (chrolloRightHandOccupied(fighter) && moveById(moveId)?.category === 'throw') return false
   if (attackRestricted(fighter, kind, moveId)) return false
   return true
 }

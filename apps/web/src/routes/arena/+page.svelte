@@ -14,6 +14,7 @@
   import ArenaNenDock from '$lib/components/arena/ArenaNenDock.svelte'
   import ArenaGyoSight from '$lib/components/arena/ArenaGyoSight.svelte'
   import ArenaDuelPresence from '$lib/components/arena/ArenaDuelPresence.svelte'
+  import ArenaTrainingFeedback from '$lib/components/arena/ArenaTrainingFeedback.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -94,6 +95,7 @@
   import { arenaSelfBody } from '$lib/arena/selfBody'
   import { arenaOpponentActor } from '$lib/arena/combatActors'
   import { arenaDuelPresence } from '$lib/arena/duelPresence'
+  import { advanceArenaLesson, ARENA_LESSON_COUNT } from '$lib/arena/training'
   import { arenaJumpAction } from '$lib/arena/jump'
   import { arenaImpactCamera } from '$lib/arena/impactCamera'
   import { ryuDistribution } from '$lib/combat/ryu'
@@ -354,18 +356,10 @@
       recorder.record(action)
     }
     game = applyArenaMatchRules(reduced, replayMatch(), actionCounts)
-    advanceLesson(action)
+    lesson = advanceArenaLesson({ lesson, action, before: previousGame, after: game })
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
     finishRun()
     return true
-  }
-
-  function advanceLesson(action: CombatAction) {
-    if (lesson === 0 && action.type === 'RYU') lesson = 1
-    else if (lesson === 1 && action.type === 'GUARD') lesson = 2
-    else if (lesson === 2 && action.type === 'FEINT') lesson = 3
-    else if (lesson === 3 && (action.type === 'STRIKE' || action.type === 'FIGHTING_MOVE'))
-      lesson = 4
   }
 
   function command(action: CombatAction, animation: CommandAnimation): boolean {
@@ -1050,9 +1044,9 @@
     />
   {/if}
 
-  {#if lesson < 4 && game.outcome === 'playing' && arenaPanel === null}
+  {#if lesson < ARENA_LESSON_COUNT && game.outcome === 'playing' && arenaPanel === null}
     <aside class="arena-lesson" aria-live="polite">
-      <small>{$t.arena.training} · {lesson + 1}/4</small>
+      <small>{$t.arena.training} · {lesson + 1}/{ARENA_LESSON_COUNT}</small>
       <strong>{$t.arena.lesson[lesson].title}</strong>
       <p>{$t.arena.lesson[lesson].body}</p>
     </aside>
@@ -1185,10 +1179,12 @@
   </section>
 
   {#if eventVisible && game.lastEvent}
-    <div class="event-line" aria-live="polite">
-      <strong>{$t.arena.impact[game.lastEvent.impact]}</strong>
-      <span>· {$t.arena.zone[game.lastEvent.zone]}</span>
-    </div>
+    <ArenaTrainingFeedback
+      event={game.lastEvent}
+      french={$locale === 'fr'}
+      impact={$t.arena.impact[game.lastEvent.impact]}
+      zone={$t.arena.zone[game.lastEvent.zone]}
+    />
   {/if}
 
   {#if game.outcome !== 'playing'}

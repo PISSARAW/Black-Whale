@@ -102,8 +102,16 @@ private psychology. The opponent's shared Tour figure takes the resulting facial
 expression, while `ArenaDuelPresence` lets strong Ren occupy the edge of the
 first-person frame. Reduced-motion keeps the pressure static.
 
+[training.ts](training.ts) exposes the same authored startup, active and recovery
+frames used by Clash. The optional POV lab inspects the command currently under
+the pointer or keyboard focus; static normals also show their measured hit/block
+advantage, while dynamic specials deliberately show no invented value. Resolved
+exchanges explain confirms, whiffs, safe pressure and punish windows. The six-step
+Arena initiation now requires a real authored hit, a two-hit cancel route and an
+actually blocked opponent move rather than completing on button presses alone.
+
 Still Clash-only, in rough order of value: the remaining dynamic Hatsu;
-frame data, training and lessons; replay coaching; rollback PvP.
+replay coaching; rollback PvP.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

@@ -5,6 +5,7 @@ import type { BodyZone, CombatAction, CombatSide } from '../combat/types'
 import { arenaMoveSlot, type ArenaDirection } from './moveSlot'
 import type { Vec2 } from '../tour/types'
 import { strikeTarget } from './controls'
+import { arenaFrameReadout } from './training'
 
 export const ARENA_FIGHTERS = FIGHTING_ROSTER
 export const DEFAULT_ARENA_FIGHTER: FighterId = 'kurapika'
@@ -76,6 +77,7 @@ export function arenaMoveLabels(
       key: ARENA_MOVE_KEYS[action].label,
       name: move ? (french ? move.nameFr : move.nameEn) : null,
       auraCost: move?.auraCost ?? 0,
+      frames: move ? arenaFrameReadout(move, french ? 'fr' : 'en') : null,
     }
   })
 }

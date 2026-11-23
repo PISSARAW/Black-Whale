@@ -34,6 +34,9 @@
     onJump,
   }: Props = $props()
   let moves = $derived(arenaMoveLabels(playerFighterId, french, { direction, aimed, airborne }))
+  let labOpen = $state(false)
+  let inspected = $state<MoveAction>('light')
+  let sample = $derived(moves.find(({ action }) => action === inspected) ?? moves[0])
 </script>
 
 <article class="fighting-controls">
@@ -42,6 +45,12 @@
       {#if combo > 1}<b class="combo" role="status">{combo} {french ? 'coups' : 'hits'}</b
         >{:else}{french ? 'Duel en vue subjective' : 'First-person duel'}{/if}
     </span>
+    <button
+      class="lab-toggle"
+      type="button"
+      aria-pressed={labOpen}
+      onclick={() => (labOpen = !labOpen)}>{french ? 'LABO' : 'LAB'}</button
+    >
     <div class="fighters">
       <label>
         <small>{french ? 'Vous' : 'You'}</small>
@@ -86,6 +95,8 @@
         disabled={disabled || !move.name}
         title={move.slot}
         data-arena-action={move.action === 'light' ? 'strike' : undefined}
+        onfocus={() => (inspected = move.action)}
+        onpointerenter={() => (inspected = move.action)}
         onclick={() => onMove(move.action)}
       >
         <kbd>{move.key}</kbd>
@@ -94,6 +105,27 @@
       </button>
     {/each}
   </div>
+  {#if labOpen && sample?.frames}
+    <footer class="frame-data" aria-live="polite">
+      <strong>{sample.name}</strong>
+      <span><b>{sample.frames.startup}</b>f {french ? 'démarrage' : 'startup'}</span>
+      <span><b>{sample.frames.active}</b>f {french ? 'actif' : 'active'}</span>
+      <span><b>{sample.frames.recovery}</b>f {french ? 'récup.' : 'recovery'}</span>
+      <span>{french ? 'Touche' : 'Hit'} <b>{sample.frames.onHit}</b></span>
+      <span>{french ? 'Garde' : 'Block'} <b>{sample.frames.onBlock}</b></span>
+      {#if sample.frames.safeOnBlock !== null}
+        <em class:safe={sample.frames.safeOnBlock}
+          >{sample.frames.safeOnBlock
+            ? french
+              ? 'SÛR'
+              : 'SAFE'
+            : french
+              ? 'PUNISSABLE'
+              : 'PUNISHABLE'}</em
+        >
+      {/if}
+    </footer>
+  {/if}
 </article>
 
 <style>
@@ -121,6 +153,22 @@
   header {
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  .lab-toggle {
+    flex: 0 0 auto;
+    padding: 0.25rem 0.45rem;
+    color: #73d8ee;
+    border-color: #73d8ee66;
+    font:
+      600 0.52rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.12em;
+  }
+
+  .lab-toggle[aria-pressed='true'] {
+    color: #071318;
+    background: #73d8ee;
   }
 
   .fighters,
@@ -189,6 +237,40 @@
     color: #fffff0;
   }
 
+  .frame-data {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.4rem 0.5rem;
+    color: #a9bec4;
+    border-top: 1px solid #73d8ee44;
+    font:
+      500 0.55rem 'IBM Plex Mono',
+      monospace;
+  }
+
+  .frame-data strong {
+    overflow: hidden;
+    margin-right: auto;
+    color: #fffff0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .frame-data b {
+    color: #73d8ee;
+  }
+
+  .frame-data em {
+    color: #ff9f84;
+    font-style: normal;
+  }
+
+  .frame-data em.safe {
+    color: #8ed9a6;
+  }
+
   @media (max-width: 680px) {
     .fighting-controls {
       bottom: 0.5rem;
@@ -209,6 +291,16 @@
     .moves {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+    }
+
+    .frame-data {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 0.25rem 0.55rem;
+    }
+
+    .frame-data strong {
+      grid-column: 1 / -1;
     }
 
     button {

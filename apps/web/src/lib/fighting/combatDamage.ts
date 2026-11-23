@@ -8,6 +8,7 @@ import type { ProjectileHit } from './projectiles'
 import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
+import { followUpLaunchVelocity } from './moveFollowUpPhysics'
 import { rememberBodyHit } from './bodyMemory'
 import { updateTextureOnHit } from './textureSurpriseMask'
 import { thetaBulletDamageFactor } from './martialSpecialists'
@@ -37,6 +38,7 @@ import {
   padailleHammerKenDrain,
 } from './finalFiveUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
+import { comboRestraintHeld } from './comboRestraintHold'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 import { guardKnockbackFactor } from './characterMovementTech'
 
@@ -255,12 +257,13 @@ function launchState(options: StrikeOptions): Pick<ArcadeFighter, 'y' | 'velocit
   if (!options.antiAir || options.blocked) {
     return { y: options.fighter.y, velocityY: options.fighter.velocityY }
   }
+  const followUpVelocity = followUpLaunchVelocity(options.attacker)
+  const targetVelocity =
+    followUpVelocity ??
+    (options.attacker.attack?.directionalChain === 'air' ? DIRECTIONAL_LAUNCH_SPEED : 18)
   return {
     y: Math.max(0.2, options.fighter.y),
-    velocityY: Math.max(
-      options.attacker.attack?.directionalChain === 'air' ? DIRECTIONAL_LAUNCH_SPEED : 18,
-      options.fighter.velocityY,
-    ),
+    velocityY: Math.max(targetVelocity, options.fighter.velocityY),
   }
 }
 
@@ -337,7 +340,7 @@ export function openingDamageMultiplier(opening: { counterHit: boolean; punish: 
 export function nextComboHits(defender: ArcadeFighter, defence: ImpactDefence): number {
   if (defence.blocked || defence.avoided) return 0
   const continuing =
-    defender.machiThread?.kind === 'bind' ||
+    comboRestraintHeld(defender) ||
     defender.hitStun > 0 ||
     defender.knockdownFrames > 0 ||
     defender.y > GROUND ||

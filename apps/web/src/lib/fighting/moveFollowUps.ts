@@ -7,6 +7,7 @@ import type {
 } from './movesetTypes'
 import type { ArcadeFighter, FightInput, FighterId, MoveAction, MoveSlot } from './types'
 import { LATE_WAVE_FOLLOW_UPS } from './moveFollowUpSpecsLate'
+import { followUpPhysicsFor } from './moveFollowUpPhysics'
 
 export interface FollowUpSpec {
   id: string
@@ -354,7 +355,13 @@ export function attachMoveFollowUps(moveset: FighterMoveset): FighterMoveset {
     const source = bySlot.get(spec.sourceSlot)
     const base = bySlot.get(spec.baseSlot)
     if (!source || !base) return []
-    const move: FighterMove = { ...base, id: spec.id }
+    const physics = followUpPhysicsFor(spec.id)
+    const move: FighterMove = {
+      ...base,
+      id: spec.id,
+      ...(physics?.guard ? { guard: physics.guard } : {}),
+      ...(physics?.tuning ? { tuning: { ...base.tuning, ...physics.tuning } } : {}),
+    }
     return [
       {
         id: spec.id,

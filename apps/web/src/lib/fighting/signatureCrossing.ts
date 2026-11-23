@@ -1,4 +1,5 @@
 import type { ArcadeFighter, FighterDash } from './types'
+import { followUpCrossesPushbox } from './moveFollowUpPhysics'
 
 /**
  * Crossing (SIGNATURE_COMBOS.md): a 2D stand-in for the low passes and lateral circling the
@@ -9,7 +10,7 @@ import type { ArcadeFighter, FighterDash } from './types'
 export const CROSSING_SPEED = 1.4
 
 export function crossesBody(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.motion?.dash?.through)
+  return Boolean(fighter.motion?.dash?.through) || followUpCrossesPushbox(fighter)
 }
 
 /** Tserriednich, diverging from his own forecast, may slip past the opponent's prediction. */

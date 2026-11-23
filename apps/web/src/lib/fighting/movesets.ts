@@ -2,6 +2,7 @@ import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { comboAdmissionBody } from './comboAuraCost'
 import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
+import { attachMoveFollowUps, resolveMoveFollowUp } from './moveFollowUps'
 import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -130,12 +131,14 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFurykovMoveset)
     .map(tuneBonolenovMoveset)
     .map(declareMoveCombatRules)
+    .map(attachMoveFollowUps)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
-  [...MOVESETS.values()].flatMap((moveset) =>
-    moveset.moves.map((move) => [move.id, move] as const),
-  ),
+  [...MOVESETS.values()].flatMap((moveset) => [
+    ...moveset.moves.map((move) => [move.id, move] as const),
+    ...(moveset.followUps?.map((entry) => [entry.id, entry.move] as const) ?? []),
+  ]),
 )
 
 export const WAVE_ONE_FIGHTERS = WAVE_ONE_MOVESETS.map((moveset) => moveset.fighterId)
@@ -159,6 +162,13 @@ export function moveForAction(
 ): FighterMove | null {
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
+  const followUp = resolveMoveFollowUp({
+    fighter,
+    action,
+    input,
+    followUps: moveset.followUps,
+  })
+  if (followUp) return followUp
   const slot =
     fighter.id === 'musse' && action === 'special' && input.down
       ? 'downSpecial'

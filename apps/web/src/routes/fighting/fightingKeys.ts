@@ -40,7 +40,7 @@ export const opponentMovementKeys: Record<string, keyof FightInput> = {
   ArrowUp: 'jump',
   ArrowDown: 'down',
   Enter: 'guard',
-  Alt: 'aura',
+  v: 'aura',
 }
 
 export const opponentAttackKeys: Record<string, Extract<MoveAction, 'light' | 'heavy' | 'special'>> = {

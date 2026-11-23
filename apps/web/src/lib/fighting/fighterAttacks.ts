@@ -241,8 +241,22 @@ function canAct(fighter: ArcadeFighter): boolean {
   )
 }
 
+const CHORD_LENIENCE_FRAMES = 3
+
+function isChordOverride(fighter: ArcadeFighter, moveId?: string): boolean {
+  const current = fighter.attack
+  if (!current || current.impacted || current.frame > CHORD_LENIENCE_FRAMES) return false
+  const next = moveById(moveId)
+  if (!next) return false
+  if (next.category === 'throw') return current.kind === 'light' || current.kind === 'heavy'
+  if (next.category === 'finisher') return current.kind === 'heavy' || current.kind === 'special'
+  return false
+}
+
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
-  if (!fighter.attack || !legalCancel(fighter, kind, intent)) return false
+  if (!fighter.attack) return false
+  if (isChordOverride(fighter, intent.moveId)) return true
+  if (!legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
   if (isAirPursuit(intent.directionalChain)) return pursuitWindow(fighter.attack.frame, data)
   const window = moveById(fighter.attack.moveId)?.cancelWindow

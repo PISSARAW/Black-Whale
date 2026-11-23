@@ -18,7 +18,7 @@ export const CONTROL_KEYS = {
   opponentJump: 'ArrowUp',
   opponentDown: 'ArrowDown',
   opponentGuard: 'Enter',
-  opponentAura: 'Alt',
+  opponentAura: 'v',
   opponentLight: 'n',
   opponentHeavy: 'm',
   opponentSpecial: ',',
@@ -100,12 +100,29 @@ export function saveBindings(bindings: KeyboardBindings, storage?: Pick<Storage,
     /* Session-only fallback. */
   }
 }
+const CODE_KEYS: Readonly<Record<string, string>> = {
+  Comma: ',',
+  Period: '.',
+  Slash: '/',
+  Space: ' ',
+}
+
+function physicalFallbackKey(code: string): string | null {
+  if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase()
+  if (/^Digit[0-9]$/.test(code)) return code.slice(5)
+  return CODE_KEYS[code] ?? null
+}
+
 /** Key-up uses the original command even if the binding or focus changed while held. */
 export function createKeyboardMapper() {
   const held = new Map<string, string | null>()
   return {
     clear: () => held.clear(),
-    key(event: Pick<KeyboardEvent, 'key' | 'code'>, active: boolean, bindings: KeyboardBindings) {
+    key(
+      event: Pick<KeyboardEvent, 'key' | 'code'> & { altKey?: boolean },
+      active: boolean,
+      bindings: KeyboardBindings,
+    ) {
       const physical = event.code || event.key
       if (active && held.has(physical)) return held.get(physical)!
       if (!active && held.has(physical)) {
@@ -114,7 +131,10 @@ export function createKeyboardMapper() {
         return logical
       }
       if (!active) return null
-      const key = normalizeControlKey(event.key)
+      const rawKey = normalizeControlKey(event.key)
+      const fallback = event.altKey ? physicalFallbackKey(event.code) : null
+      const key =
+        fallback && !Object.values(bindings).includes(rawKey) ? fallback : rawKey
       const command = (Object.keys(bindings) as ControlCommand[]).find((id) => bindings[id] === key)
       const logical = command
         ? CONTROL_KEYS[command]

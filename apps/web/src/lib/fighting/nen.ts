@@ -30,7 +30,7 @@ import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
-export const EN_HOLD_FRAMES = 18
+export const EN_HOLD_FRAMES = 10
 export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
 
 declare module './types' {

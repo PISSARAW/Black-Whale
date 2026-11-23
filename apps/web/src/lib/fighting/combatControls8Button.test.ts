@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createFightState } from './fightState'
-import { performMove } from './engine'
+import { performMove, tickFight } from './engine'
 import { applyAuraContext, EN_HOLD_FRAMES } from './nen'
 import { resolveContextInput } from './contextInput'
 import { sampleGamepad, type FightPad } from './fightGamepad'
 import { createCombatChordTracker } from './combatChords'
+import { createKeyboardMapper, defaultBindings } from './fightInputBindings'
 import { dispatchPlayerAttackKey, resetKeyboardChords } from '../../routes/fighting/fightingKeyboard'
 import { EMPTY_INPUT } from './types'
 
@@ -73,14 +74,39 @@ describe('8-button combat layout and chords', () => {
     tracker.press('light', { guard: true })
     expect(tracker.press('heavy', { guard: true })).toEqual({ kind: 'burst' })
   })
+
+  it('allows 3-frame chord lenience (plinking L -> Throw within startup) and avoids macOS Alt dead keys', () => {
+    const keys = defaultBindings()
+    expect(keys.opponentAura).toBe('v')
+    const mapper = createKeyboardMapper()
+    expect(mapper.key({ key: 'Dead', code: 'KeyN', altKey: true }, true, keys)).toBe('n')
+    expect(mapper.key({ key: '≤', code: 'Comma', altKey: true }, true, keys)).toBe(',')
+
+    const start = { ...createFightState('kurapika', 'hisoka'), phase: 'fighting' as const }
+    const withLight = performMove({ state: start, side: 'player', action: 'light', input: EMPTY_INPUT })
+    expect(withLight.player.attack?.kind).toBe('light')
+    const frame2 = tickFight(tickFight(withLight, EMPTY_INPUT, { dt: 1 / 60 }), EMPTY_INPUT, { dt: 1 / 60 })
+    const plinked = performMove({ state: frame2, side: 'player', action: 'throw', input: EMPTY_INPUT })
+    expect(plinked.player.attack?.variant).toBe('throw')
+  })
 })
 
 describe('compressed directional Nen and automatic Shu', () => {
-  it('uses Aura + Guard + Direction for defensive Ko while keeping Aura + Guard neutral as Ken', () => {
+  it('uses Aura + Guard + Up/Forward/Down for defensive Ko while keeping Neutral and Back as Ken', () => {
     const state = createFightState('kurapika', 'hisoka')
     const ken = applyAuraContext(state.player, { ...EMPTY_INPUT, aura: true, guard: true })
     expect(ken.nen.ken).toBe(true)
     expect(ken.nen.ko).toBeNull()
+
+    const backKen = applyAuraContext(state.player, {
+      ...EMPTY_INPUT,
+      aura: true,
+      guard: true,
+      left: true,
+    })
+    expect(backKen.nen.ken).toBe(true)
+    expect(backKen.nen.ko).toBeNull()
+    expect(backKen.aura).toBe(state.player.aura)
 
     const headKo = applyAuraContext(state.player, {
       ...EMPTY_INPUT,

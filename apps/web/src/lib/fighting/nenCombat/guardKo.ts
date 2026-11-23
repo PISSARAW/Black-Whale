@@ -21,7 +21,6 @@ function directionalGuardZone(fighter: ArcadeFighter, input: FightInput): FightN
   const forward = fighter.facing === 1 ? input.right : input.left
   const back = fighter.facing === 1 ? input.left : input.right
   if (forward && !back) return 'hands'
-  if (back && !forward) return 'torso'
   return null
 }
 function requestedZone(fighter: ArcadeFighter, input: FightInput): FightNenZone | null {

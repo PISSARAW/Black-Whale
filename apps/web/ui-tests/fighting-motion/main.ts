@@ -4,6 +4,14 @@ import { createFightState } from '../../src/lib/fighting/fightState'
 import { fightBodyMotion } from '../../src/lib/fighting/fightBodyMotion'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
 import { FIGHTING_ROSTER } from '../../src/lib/fighting/roster'
+import { humanAnimationRig } from '../../src/lib/tour/humanAnimation'
+import { fightRigOf } from '../../src/lib/fighting/fightRig'
+import {
+  captureFightMotionSnapshot,
+  goldenHeavyDiagnostics,
+  type GoldenHeavyDiagnostics,
+} from '../../src/lib/fighting/fightMotionDiagnostics'
+import { KURAPIKA_GOLDEN_HEAVY } from '../../src/lib/fighting/kurapikaGoldenHeavy'
 import type { FighterId, MoveSlot } from '../../src/lib/fighting/types'
 import {
   clampMotionFrame,
@@ -45,6 +53,7 @@ controls.innerHTML = `
   <button name="next" type="button">Next frame</button>
   <button name="grid" type="button">Review grid</button>
   <output name="readout" aria-live="polite"></output>
+  <output name="diagnostics" aria-live="polite"></output>
 `
 document.body.append(controls)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
@@ -150,7 +159,7 @@ function inspect(id: FighterId, slot: MoveSlot, frame = 0, facing: 1 | -1 = 1) {
   title.textContent = `${id} · ${slot} · frame ${currentFrame} · ${phaseAtFrame(currentFrame, move.tuning)}`
   renderer.setSize(720, 720)
   models.forEach(({ model }) => (model.root.visible = false))
-  poseFighter(entry, currentFrame, facing)
+  const diagnostics = goldenDiagnostics(entry, currentFrame, facing)
   renderer.setViewport(0, 0, 720, 720)
   renderer.setScissor(0, 0, 720, 720)
   camera.left = -1.5
@@ -164,12 +173,34 @@ function inspect(id: FighterId, slot: MoveSlot, frame = 0, facing: 1 | -1 = 1) {
     frame: currentFrame,
     phase: phaseAtFrame(currentFrame, move.tuning),
     frames: move.tuning,
+    diagnostics,
   }
+}
+
+function goldenDiagnostics(
+  entry: MotionEntry,
+  frame: number,
+  facing: 1 | -1,
+): GoldenHeavyDiagnostics | null {
+  if (entry.id !== 'kurapika' || entry.slot !== KURAPIKA_GOLDEN_HEAVY.slot) {
+    poseFighter(entry, frame, facing)
+    return null
+  }
+  const human = humanAnimationRig(entry.model.turns)
+  if (!human) throw new Error('Kurapika motion lab figure has no animation rig')
+  const rig = fightRigOf(human)
+  poseFighter(entry, 0, facing)
+  const stance = captureFightMotionSnapshot(rig, facing)
+  poseFighter(entry, KURAPIKA_GOLDEN_HEAVY.frames.startup, facing)
+  const contact = captureFightMotionSnapshot(rig, facing)
+  poseFighter(entry, frame, facing)
+  return goldenHeavyDiagnostics(captureFightMotionSnapshot(rig, facing), stance, contact, facing)
 }
 
 const fields = controls.elements as typeof controls.elements & {
   namedItem(
-    name: 'fighter' | 'slot' | 'phase' | 'facing' | 'frame' | 'frameOutput' | 'readout',
+    name:
+      'fighter' | 'slot' | 'phase' | 'facing' | 'frame' | 'frameOutput' | 'readout' | 'diagnostics',
   ): HTMLInputElement | HTMLSelectElement | HTMLOutputElement
 }
 const fighterSelect = fields.namedItem('fighter') as HTMLSelectElement
@@ -179,6 +210,7 @@ const facingSelect = fields.namedItem('facing') as HTMLSelectElement
 const frameInput = fields.namedItem('frame') as HTMLInputElement
 const frameOutput = fields.namedItem('frameOutput') as HTMLOutputElement
 const readout = fields.namedItem('readout') as HTMLOutputElement
+const diagnosticOutput = fields.namedItem('diagnostics') as HTMLOutputElement
 fighterSelect.innerHTML = ids.map((id) => `<option value="${id}">${id}</option>`).join('')
 slotSelect.innerHTML = slots.map((slot) => `<option value="${slot}">${slot}</option>`).join('')
 
@@ -193,6 +225,9 @@ function syncScrubber(useRepresentative = false): void {
   frameInput.value = String(result.frame)
   frameOutput.value = `${result.frame} / ${totalMoveFrames(move.tuning) - 1}`
   readout.value = `${result.phase} · ${move.tuning.startup}f startup · ${move.tuning.active}f active · ${move.tuning.recovery}f recovery`
+  diagnosticOutput.value = result.diagnostics
+    ? `plant ${(result.diagnostics.plantedFootDrift * 100).toFixed(1)}cm · pivot ${(result.diagnostics.pivotFootDrift * 100).toFixed(1)}cm · fist ${(result.diagnostics.fistToContact * 100).toFixed(1)}cm`
+    : ''
 }
 
 fighterSelect.addEventListener('change', () => syncScrubber(true))

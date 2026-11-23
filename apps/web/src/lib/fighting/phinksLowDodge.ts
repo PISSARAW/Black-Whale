@@ -6,12 +6,12 @@ import type { ArcadeFighter } from './types'
  * dashing. A martial step, not a Hatsu; the Cyclotron keeps turning (rotation en mouvement).
  * About six units over 12 frames. Duel tuning, not canon.
  */
-export const PHINKS_LOW_DODGE = { frames: 12, peak: 60 } as const
+export const PHINKS_LOW_DODGE = { frames: 12, peak: 60, lowDodge: true } as const
 
 export function phinksLowDodge(
   fighter: ArcadeFighter,
   direction: -1 | 1,
-): { frames: number; peak: number } | null {
+): { frames: number; peak: number; lowDodge: true } | null {
   const low = fighter.id === 'phinks' && fighter.crouching && direction === fighter.facing
   return low ? PHINKS_LOW_DODGE : null
 }

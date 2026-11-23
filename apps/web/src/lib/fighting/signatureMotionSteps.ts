@@ -52,7 +52,7 @@ function wind(state: FightState): MotionFrame {
 function jump(state: FightState): MotionFrame {
   if (state.player.y > 0) return { state, input: EMPTY_INPUT, done: true }
   // A low dodge stays crouched until it ends.
-  const down = state.player.crouching
+  const down = state.player.crouching ?? false
   if (state.player.motion?.dash) return { state, input: { ...EMPTY_INPUT, down }, done: false }
   return { state, input: jumpInput(state), done: false }
 }

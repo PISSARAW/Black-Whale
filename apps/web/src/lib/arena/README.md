@@ -83,6 +83,13 @@ hitstop and camera shake; per-fighter Hatsu systems behind the specials;
 psychology, expressions and Ren presentation; frame data, training and
 lessons; replay coaching; rollback PvP.
 
+`parity.ts` is the migration boundary toward one combat truth. It runs Arena
+commands on Clash's 60 Hz cadence and emits a small, presentation-independent
+trace of impacts, aura, conditions, scores and positions. `clashParity.ts`
+translates the same pilot commands into Clash frames. The first Kurapika versus
+Hisoka strike now has an executable parity gate; its guarded variant also names
+the remaining economy difference instead of hiding it behind duplicated tuning.
+
 Both roster identities are stored in the match. Each player command also carries
 its fighter and move slot, while the opponent AI reuses its recorded roster
 moveset. Replay validation therefore never depends on mutable UI state.

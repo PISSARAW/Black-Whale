@@ -14,6 +14,7 @@ const audio = vi.hoisted(() => {
     createMix: vi.fn(() => {
       const mix = {
         context,
+        channels: { music: { gain: param() } },
         effects: { gain: param() },
         ambience: { gain: param() },
         pressure: { gain: param() },

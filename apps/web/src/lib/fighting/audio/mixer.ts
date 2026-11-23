@@ -18,6 +18,7 @@ export interface FightMix {
   ambience: GainNode
   pressure: GainNode
   profile: StageSoundProfile
+  channels: { music: GainNode }
   event: (x: number, bus?: 'effects' | 'ambience' | 'pressure') => Graph
   hearing: readonly AudioParam[]
   setActive: (active: boolean) => void
@@ -30,6 +31,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
   const effects = context.createGain()
   const ambience = context.createGain()
   const pressure = context.createGain()
+  const music = context.createGain()
   const gateEffects = context.createGain()
   const gateAmbient = context.createGain()
   const hearing = context.createBiquadFilter()
@@ -37,6 +39,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
   hearing.frequency.value = 18000
   effects.connect(gateEffects)
   ambience.connect(gateAmbient)
+  music.connect(gateAmbient)
   const hearingAmbient = context.createBiquadFilter()
   hearingAmbient.type = 'lowpass'
   hearingAmbient.frequency.value = 18000
@@ -120,6 +123,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
       ;[
         effects,
         ambience,
+        music,
         pressure,
         gateEffects,
         gateAmbient,
@@ -136,6 +140,7 @@ export function createFightMix(context: AudioContext, stageId: FightStageId): Fi
     ambience,
     pressure,
     profile,
+    channels: { music },
     event,
     setActive,
     hearing: [hearing.frequency, hearingAmbient.frequency],

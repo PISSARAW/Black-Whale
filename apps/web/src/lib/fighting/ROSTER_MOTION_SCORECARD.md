@@ -36,3 +36,26 @@ animation.
 The first production wave starts with grounded fundamentals before polishing
 air attacks: support mechanics, anticipation, contact silhouette, outcome-led
 recovery and the character's free-hand/secondary-motion sentence.
+
+## P1 — grounded fundamentals
+
+The first wave now owns dedicated `standingLight`, `standingHeavy` and
+`forwardLight` timelines: 30 new seven-key clips. Each has a semantic support
+foot and opposite pivot, two-stage anticipation, a held active silhouette and
+three recovery keys. Character-specific pelvis, chest, wrist, palm and foot
+accents preserve ten distinct movement identities.
+
+| Fighter      |  P0 |  P1 |
+| ------------ | --: | --: |
+| Melody       | 6.7 | 7.8 |
+| Mizaistom    | 6.7 | 7.8 |
+| Camilla      | 6.8 | 7.8 |
+| Gel          | 6.8 | 7.6 |
+| Illumi       | 6.8 | 7.7 |
+| Terebellum   | 6.8 | 7.8 |
+| Tserriednich | 6.8 | 7.7 |
+| Cluck        | 6.9 | 7.8 |
+| Luini        | 6.9 | 7.8 |
+| Machi        | 6.9 | 7.7 |
+
+The roster total is now 111 dedicated physical clips and 249 generated clips.

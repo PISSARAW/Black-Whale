@@ -37,10 +37,10 @@ describe('roster motion scorecard', () => {
       stagedChain: true,
       activeHold: true,
     })
-    expect(moveMotionScore('melody', 'standingHeavy').source).toBe('roster')
+    expect(moveMotionScore('bill', 'standingHeavy').source).toBe('roster')
     expect(moveMotionScore('tyson', 'standingHeavy').source).toBe('archetype')
     expect(moveMotionScore('kurapika', 'standingHeavy').score).toBeGreaterThan(
-      moveMotionScore('melody', 'standingHeavy').score,
+      moveMotionScore('bill', 'standingHeavy').score,
     )
   })
 

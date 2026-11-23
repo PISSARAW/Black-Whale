@@ -2,6 +2,7 @@ import { bodyMemoryWeak } from '../bodyMemory'
 import { impactCallout } from '../impactCallout'
 import type { FightImpact, FightState } from '../types'
 import type { FightHudMode } from './hudMode'
+import { rivalSide } from './hudLayout'
 import { resolvePerceptionLevel } from './opponentHudView'
 
 export interface ResolveImpactCalloutInput {
@@ -87,12 +88,12 @@ function collectTacticalHitTags(
   return tags
 }
 
+/** The attacker confirms a weakened limb only if they are human and perceive at Level 2. */
 function confirmsWeakenedLimb(state: FightState, impact: FightImpact): boolean {
-  if (impact.attacker !== 'player') return false
-  const level = resolvePerceptionLevel({ state, observerSide: 'player' })
+  const observerSide = impact.attacker
+  if (observerSide !== 'player' && state.mode !== 'versus-local') return false
+  const level = resolvePerceptionLevel({ state, observerSide })
   if (level < 2) return false
-  return (
-    bodyMemoryWeak(state.opponent, 'hands') ||
-    bodyMemoryWeak(state.opponent, 'feet')
-  )
+  const defender = state[rivalSide(observerSide)]
+  return bodyMemoryWeak(defender, 'hands') || bodyMemoryWeak(defender, 'feet')
 }

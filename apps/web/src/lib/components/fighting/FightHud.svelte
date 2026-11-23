@@ -7,6 +7,7 @@
   import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
   import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
+  import { opaqueHudSides, rivalSide } from '$lib/fighting/perception/hudLayout'
   import { resolveOpponentHudView } from '$lib/fighting/perception/opponentHudView'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
@@ -26,16 +27,21 @@
   $: format = fightFormat(state.formatId)
   /** Training and the death match have no clock: the bout ends otherwise. */
   $: untimed = state.mode === 'training' || format.timeLimit === false
-  $: opponentView = resolveOpponentHudView({ state, observerSide: 'player', mode: hudMode })
-  $: tacticalOpponent = hudMode === 'tactical' && !state.spectatorView
+  $: opaqueSides = opaqueHudSides({ state, mode: hudMode })
+  /** Each side is seen through the eyes of its rival (double-opaque in local versus). */
+  $: views = {
+    player: resolveOpponentHudView({ state, observerSide: 'opponent', mode: hudMode }),
+    opponent: resolveOpponentHudView({ state, observerSide: 'player', mode: hudMode }),
+  }
 </script>
 
-<div class="hud" data-hud-mode={hudMode}>
+<div class="hud" data-hud-mode={hudMode} data-opaque-sides={opaqueSides.join(' ')}>
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
-    {@const useLivingPortrait = mirrored && tacticalOpponent}
-    {@const texturePov = textureSurpriseView(fighter, state.player, mirrored ? 'opponent' : 'owner')}
+    {@const useLivingPortrait = opaqueSides.includes(side)}
+    {@const sideView = views[side]}
+    {@const texturePov = textureSurpriseView(fighter, state[rivalSide(side)], mirrored ? 'opponent' : 'owner')}
     {@const memory = texturePov.maskBodyMemory ? null : bodyMemoryLabel(fighter, language)}
     {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
@@ -43,11 +49,11 @@
         {#if useLivingPortrait}
           <FightLivingPortrait
             id={fighter.id}
-            mood={opponentView.health.portraitMood}
-            textureMasked={opponentView.health.textureMasked}
-            auraSeeping={opponentView.health.auraSeeping}
-            adrenalineAlert={opponentView.health.adrenalineAlert}
-            blinded={opponentView.blinded}
+            mood={sideView.health.portraitMood}
+            textureMasked={sideView.health.textureMasked}
+            auraSeeping={sideView.health.auraSeeping}
+            adrenalineAlert={sideView.health.adrenalineAlert}
+            blinded={sideView.blinded}
           />
         {:else}
           <FightIdentityPortrait id={fighter.id} />
@@ -69,7 +75,7 @@
           </span>
         </div>
         {#if useLivingPortrait}
-          <FightOpponentDossier {state} view={opponentView} {language} />
+          <FightOpponentDossier {state} {side} view={sideView} {language} />
         {:else}
           <FightHealth
             {fighter}

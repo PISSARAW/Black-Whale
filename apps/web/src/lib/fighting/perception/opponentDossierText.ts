@@ -1,6 +1,6 @@
 import { KAMEO_CATALOGUE } from '../kameos/catalogue'
 import type { KameoId } from '../kameos/types'
-import type { FightState } from '../types'
+import type { FightSide, FightState } from '../types'
 import type {
   AuraBracket,
   OpponentBurstView,
@@ -47,19 +47,20 @@ export function conditionLabel(condition: ObservedCondition, language: 'fr' | 'e
 }
 
 /**
- * Formats the opponent's Kameo for the tactical dossier: invisible until first summoned,
+ * Formats a rival Kameo for the tactical dossier: invisible until first summoned,
  * then shows only identity and coarse presence (never role or exact cooldown).
  */
-export function tacticalKameoEntry(
-  state: FightState,
-  view: OpponentKameoView,
-  language: 'fr' | 'en',
-): TacticalKameoReadout | null {
-  if (!view.visible) return null
-  const slot = state.kameos?.opponent
+export function tacticalKameoEntry(input: {
+  state: FightState
+  view: OpponentKameoView
+  language: 'fr' | 'en'
+  targetSide?: FightSide
+}): TacticalKameoReadout | null {
+  if (!input.view.visible) return null
+  const slot = input.state.kameos?.[input.targetSide ?? 'opponent']
   if (!slot) return null
   const def = KAMEO_CATALOGUE[slot.fighter.id as KameoId]
-  const lang = language === 'fr' ? 0 : 1
+  const lang = input.language === 'fr' ? 0 : 1
   if (slot.phase === 'eliminated') {
     return { name: def.name, status: ['Mort', 'Dead'][lang], active: false }
   }

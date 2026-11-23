@@ -7,8 +7,14 @@ import { resolveImpactCallout } from './tacticalCallout'
 function makeImpact(overrides: Partial<FightImpact> = {}): FightImpact {
   return {
     attacker: 'player',
+    kind: 'light',
     damage: 14,
+    damageScale: 1,
     points: 1,
+    zone: 'torso',
+    concealed: false,
+    projectileId: null,
+    position: { x: 50, y: 0 },
     blocked: false,
     parried: false,
     avoided: false,
@@ -66,6 +72,21 @@ describe('resolveImpactCallout', () => {
 
     // Level 2 (full Gyo): confirms weakened limb
     state.player.nen.gyo = true
+    expect(resolveImpactCallout({ state, language: 'fr', mode: 'tactical' })).toBe(
+      'COUP FRANC · ZONE FRAGILISÉE',
+    )
+  })
+
+  it('lets P2 confirm a weakened limb in local versus, but never the AI', () => {
+    const state = createFightState('kurapika', 'hisoka')
+    for (let i = 0; i < 3; i++) {
+      state.player = rememberBodyHit(state.player, 'feet', 10, false)
+    }
+    state.opponent.nen.gyo = true
+    state.impact = makeImpact({ attacker: 'opponent', damage: 12 })
+
+    expect(resolveImpactCallout({ state, language: 'fr', mode: 'tactical' })).toBe('COUP FRANC')
+    state.mode = 'versus-local'
     expect(resolveImpactCallout({ state, language: 'fr', mode: 'tactical' })).toBe(
       'COUP FRANC · ZONE FRAGILISÉE',
     )

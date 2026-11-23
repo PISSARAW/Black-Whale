@@ -21,8 +21,14 @@ describe('opponentIntel', () => {
     base.phase = 'fighting'
     base.impact = {
       attacker: 'player',
+      kind: 'light',
       damage: 14,
+      damageScale: 1,
       points: 1,
+      zone: 'torso',
+      concealed: false,
+      projectileId: null,
+      position: { x: 50, y: 0 },
       blocked: false,
       parried: false,
       avoided: false,

@@ -9,23 +9,25 @@
     tacticalKameoEntry,
   } from '$lib/fighting/perception/opponentDossierText'
   import type { OpponentHudView } from '$lib/fighting/perception/opponentHudView'
-  import type { FightState } from '$lib/fighting/types'
+  import type { FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let view: OpponentHudView
   export let language: 'fr' | 'en'
+  /** Fighter described by this dossier (the opponent, or both seats in local versus). */
+  export let side: FightSide = 'opponent'
 
-  $: opponent = state.opponent
+  $: target = state[side]
   $: vitalityLabel = livingPortraitTierLabel({ tier: view.health.tier, language })
   $: bracketText = auraBracketLabel(view.aura.bracket, language)
   $: burstInfo = burstDossierLabel(view.burst, language)
-  $: kameoEntry = tacticalKameoEntry(state, view.kameo, language)
+  $: kameoEntry = tacticalKameoEntry({ state, view: view.kameo, language, targetSide: side })
   $: memory =
-    view.level === 2 && !view.health.textureMasked ? bodyMemoryLabel(opponent, language) : null
+    view.level === 2 && !view.health.textureMasked ? bodyMemoryLabel(target, language) : null
   $: gyoActive = view.aura.level === 2 && view.aura.exact !== null
 </script>
 
-<div class="opponent-dossier" data-perception-level={view.level}>
+<div class="opponent-dossier" class:left-side={side === 'player'} data-perception-level={view.level}>
   <div class="vitality-row" class:adrenaline={view.health.adrenalineAlert}>
     {#if vitalityLabel}<span class="vitality-tier">{vitalityLabel}</span>{/if}
     {#if view.health.adrenalineAlert}
@@ -47,7 +49,7 @@
       </div>
       <div class="gyo-nen-line">
         <b>{view.aura.exact}<small> / 100</small></b>
-        <span>{auraDistribution(opponent)}</span>
+        <span>{auraDistribution(target)}</span>
       </div>
     {:else if bracketText}
       <div class="dossier-chip aura-chip">{bracketText}</div>
@@ -191,5 +193,21 @@
     .gyo-layer {
       transition: none;
     }
+  }
+  /* Player-side dossier (local versus): mirror the alignment to the left edge. */
+  .left-side,
+  .left-side .gyo-layer {
+    justify-items: start;
+    text-align: left;
+  }
+  .left-side .vitality-row,
+  .left-side .dossier-conditions {
+    justify-content: flex-start;
+  }
+  .left-side .gyo-aura-bar {
+    transform: none;
+  }
+  .left-side .gyo-nen-line {
+    flex-direction: row-reverse;
   }
 </style>

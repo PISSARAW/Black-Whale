@@ -23,17 +23,32 @@ describe('opponentDossierText', () => {
     state.kameos!.opponent!.cooldownFrames = 240
 
     expect(
-      tacticalKameoEntry(state, { visible: false, showCooldown: false, showRole: false }, 'fr'),
+      tacticalKameoEntry({
+        state,
+        view: { visible: false, showCooldown: false, showRole: false },
+        language: 'fr',
+      }),
     ).toBeNull()
 
-    const revealed = tacticalKameoEntry(
+    const revealed = tacticalKameoEntry({
       state,
-      { visible: true, showCooldown: false, showRole: false },
-      'fr',
-    )
+      view: { visible: true, showCooldown: false, showRole: false },
+      language: 'fr',
+    })
     expect(revealed).not.toBeNull()
     expect(revealed?.status).toBe('En réserve')
     expect(revealed?.status).not.toContain('4')
+  })
+
+  it('reads the player-side Kameo when the dossier targets player (local versus)', () => {
+    const state = withKameos(createFightState('kurapika', 'hisoka'), { player: 'tubeppa' })
+    const view = { visible: true, showCooldown: false, showRole: false }
+    expect(tacticalKameoEntry({ state, view, language: 'en' })).toBeNull()
+    expect(tacticalKameoEntry({ state, view, language: 'en', targetSide: 'player' })).toEqual({
+      name: 'Tubeppa',
+      status: 'In reserve',
+      active: false,
+    })
   })
 
   it('formats Burst dossier cues without leaking unused availability at level 0', () => {

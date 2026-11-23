@@ -159,6 +159,7 @@ function impactEvents(before: FightState, after: FightState): FightSoundEvent[] 
       impact,
       side: impact.attacker,
       fighter: attacker.id,
+      moveId: attacker.attack?.moveId,
     },
   ]
   if (impact.points > 0) events.push({ kind: 'score', x: 50, value: impact.points })

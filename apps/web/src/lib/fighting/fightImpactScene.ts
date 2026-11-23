@@ -77,6 +77,7 @@ export function createFightImpactScene(options: {
       const profile = comfortableImpact({
         impact,
         attacker: state[impact.attacker].id,
+        moveId: state[impact.attacker].attack?.moveId,
         comfort: comfort(),
       })
       shake.hit(impact, { profile, facing: state[impact.attacker].facing })

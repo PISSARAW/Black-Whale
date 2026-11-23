@@ -17,6 +17,7 @@ import { playFightHatsu } from './hatsu'
 import type { FightMix } from './mixer'
 import { FIGHTER_SOUNDS } from './profiles'
 import { combatPressure } from './stages'
+import { isKurapikaGoldenHeavy, kurapikaGoldenHeavyAudioAccent } from '../kurapikaGoldenHeavyImpact'
 import { breath, fighterMotif, floorContact, heartbeat, materialStrike, watchTick } from './voices'
 import { playEasterEggSound } from './easterEggs'
 
@@ -262,6 +263,7 @@ function impactCue(cue: Cue): void {
   }
   if (impact.blocked) {
     materialStrike(g, { material: 'wood', force: 0.75 })
+    goldenHeavyImpactAudio(cue, true)
     return
   }
   const force = Math.min(1.8, 0.7 + impact.damage / 28)
@@ -271,6 +273,22 @@ function impactCue(cue: Cue): void {
   breath(g, { profile: FIGHTER_SOUNDS[victim.id], pain: true, force })
   if (impact.wallSplat) floorContact(g, { stage: mix.profile, weight: 1.6, landing: true })
   impactAccent(cue)
+  goldenHeavyImpactAudio(cue, false)
+}
+
+function goldenHeavyImpactAudio({ g, event }: Cue, blocked: boolean): void {
+  if (!isKurapikaGoldenHeavy(event.moveId)) return
+  const accent = kurapikaGoldenHeavyAudioAccent(blocked)
+  swept(g, startsAt(g), {
+    type: 'sine',
+    from: accent.thumpFrom,
+    to: accent.thumpTo,
+    peak: accent.thumpPeak,
+    duration: accent.duration,
+    attack: 0.001,
+    release: blocked ? 0.045 : 0.08,
+  })
+  metallic(g, { root: 740, force: accent.chainForce })
 }
 
 function impactAccent({ g, event }: Cue): void {

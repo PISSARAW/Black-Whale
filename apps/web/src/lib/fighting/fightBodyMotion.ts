@@ -6,7 +6,6 @@ import { feitanAirPlan } from './feitanLocomotion'
 import { feitanHandedPlan } from './feitanHandedPose'
 import { feitanUmbrellaPlan } from './feitanEquipmentPose'
 import { plantBodyFrame } from './fightPlantedPose'
-import { defensiveStance } from './fightDefensiveStance'
 import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
@@ -66,7 +65,7 @@ import {
 } from './fightRig'
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
-import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
+import { dashPose, landingPose, locomotionGuard, prejumpPose, walkPose } from './fightLocomotion'
 import { withLocomotionInertia } from './fightLocomotionInertia'
 import { withSecondaryMotion } from './fightSecondaryMotion'
 import { movementTechPose } from './movementTechPoses'
@@ -439,10 +438,10 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   const active = movementTechPose(fighter, standing) ?? locomotionPlan(fighter, standing)
   if (active) return active
   if (fighter.crouching) {
-    const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
+    const upper = pickJoints(guarding ? locomotionGuard(fighter, standing) : standing, UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
-  if (guarding) return plan(defensiveStance(standing), 'guard')
+  if (guarding) return plan(locomotionGuard(fighter, standing), 'guard')
   // A fighter never strolls: it shuffles in its whole stance, guard and legs.
   if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')

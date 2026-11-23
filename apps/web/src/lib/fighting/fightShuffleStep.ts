@@ -3,10 +3,12 @@ import type { FightPose } from './fightPose'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { FIGHT_WORLD_X } from './fightCoordinates'
 import { motionOf } from './fighterMovement'
+import { firstFiveMotion } from './firstFiveCombatMotion'
 
 /** Shorter legs take shorter steps; cadence follows travelled ground. */
 export function shuffleStride(fighter: ArcadeFighter): number {
-  return 1.04 * Math.min(1.4, Math.max(0.55, fightPhysicalProfile(fighter).height / 1.8))
+  const scale = firstFiveMotion(fighter)?.stride ?? 1
+  return 1.04 * scale * Math.min(1.4, Math.max(0.55, fightPhysicalProfile(fighter).height / 1.8))
 }
 export function shufflePhase(fighter: ArcadeFighter): number {
   return (fighter.x * FIGHT_WORLD_X * fighter.facing * Math.PI * 2) / shuffleStride(fighter)
@@ -15,8 +17,9 @@ export function shufflePose(fighter: ArcadeFighter): FightPose {
   const physical = fightPhysicalProfile(fighter)
   const mass = Math.min(1.35, Math.max(0.85, 1 / physical.resistance))
   const wave = Math.sin(shufflePhase(fighter)),
-    a = Math.max(0, wave),
-    b = Math.max(0, -wave)
+    stepScale = firstFiveMotion(fighter)?.stepScale ?? 1,
+    a = Math.max(0, wave) * stepScale,
+    b = Math.max(0, -wave) * stepScale
   return {
     root: [0.012 * wave * physical.step, -0.014 * Math.abs(wave) * (0.85 + mass * 0.22), 0],
     body: [0, 0, -0.024 * wave * physical.rotation],

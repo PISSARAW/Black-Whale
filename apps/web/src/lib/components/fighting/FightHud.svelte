@@ -7,8 +7,11 @@
   import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
   import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
+  import { resolveOpponentHudView } from '$lib/fighting/perception/opponentHudView'
+  import { livingPortraitTierLabel } from '$lib/fighting/perception/livingPortraitPose'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
+  import FightLivingPortrait from './FightLivingPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
@@ -23,17 +26,34 @@
   $: format = fightFormat(state.formatId)
   /** Training and the death match have no clock: the bout ends otherwise. */
   $: untimed = state.mode === 'training' || format.timeLimit === false
+  $: opponentView = resolveOpponentHudView({ state, observerSide: 'player', mode: hudMode })
+  $: tacticalOpponent = hudMode === 'tactical' && !state.spectatorView
+  $: vitalityLabel = livingPortraitTierLabel({ tier: opponentView.health.tier, language })
 </script>
 
 <div class="hud" data-hud-mode={hudMode}>
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
+    {@const useLivingPortrait = mirrored && tacticalOpponent}
     {@const texturePov = textureSurpriseView(fighter, state.player, mirrored ? 'opponent' : 'owner')}
     {@const memory = texturePov.maskBodyMemory ? null : bodyMemoryLabel(fighter, language)}
     {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
-      {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
+      {#key fighter.id}
+        {#if useLivingPortrait}
+          <FightLivingPortrait
+            id={fighter.id}
+            mood={opponentView.health.portraitMood}
+            textureMasked={opponentView.health.textureMasked}
+            auraSeeping={opponentView.health.auraSeeping}
+            adrenalineAlert={opponentView.health.adrenalineAlert}
+            blinded={opponentView.blinded}
+          />
+        {:else}
+          <FightIdentityPortrait id={fighter.id} />
+        {/if}
+      {/key}
       <div class="fighter-gauges">
         <div class="meter-label">
           <strong>{fighterDefinition(fighter.id).name}</strong>
@@ -49,16 +69,25 @@
             >
           </span>
         </div>
-        <FightHealth
-          {fighter}
-          {language}
-          {mirrored}
-          {detailed}
-          displayedHealth={texturePov.displayedHp}
-          ghostHealth={texturePov.showGhostHp ? texturePov.realHp : undefined}
-          textureMasked={texturePov.maskActive}
-          auraSeeping={texturePov.auraSeeping}
-        />
+        {#if useLivingPortrait}
+          <div class="vitality-readout" class:adrenaline={opponentView.health.adrenalineAlert}>
+            {#if vitalityLabel}<span>{vitalityLabel}</span>{/if}
+            {#if opponentView.health.adrenalineAlert}
+              <b>{language === 'fr' ? 'ADRÉNALINE' : 'ADRENALINE'}</b>
+            {/if}
+          </div>
+        {:else}
+          <FightHealth
+            {fighter}
+            {language}
+            {mirrored}
+            {detailed}
+            displayedHealth={texturePov.displayedHp}
+            ghostHealth={texturePov.showGhostHp ? texturePov.realHp : undefined}
+            textureMasked={texturePov.maskActive}
+            auraSeeping={texturePov.auraSeeping}
+          />
+        {/if}
         {#if !state.spectatorView}<div
             class="aura"
             class:hidden={!auraKnown}
@@ -253,6 +282,20 @@
   }
   .opponent-meter .aura {
     transform: scaleX(-1);
+  }
+  .vitality-readout {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: calc(20px * var(--hud-scale, 1));
+    color: #d5c7b2;
+    font: 700 var(--hud-font)/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .vitality-readout.adrenaline b {
+    color: #ff8e7b;
   }
   .tower-score {
     container-type: inline-size;

@@ -170,7 +170,13 @@ export function rosterWaveOneGroundedTimeline(
 }
 
 function forceFor(slot: MoveSlot): number {
-  if (slot === 'standingHeavy' || slot === 'forwardHeavy' || slot === 'backHeavy') return 1
+  if (
+    slot === 'standingHeavy' ||
+    slot === 'lowHeavy' ||
+    slot === 'forwardHeavy' ||
+    slot === 'backHeavy'
+  )
+    return 1
   if (slot === 'forwardLight') return 0.82
   if (slot === 'lowLight') return 0.72
   return 0.68

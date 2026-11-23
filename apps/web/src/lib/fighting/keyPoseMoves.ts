@@ -24,6 +24,7 @@ import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
 import { KURAPIKA_GOLDEN_HEAVY_TIMELINE } from './keyPosesKurapikaGoldenHeavy'
 import { ROSTER_WAVE_ONE_GROUNDED_POSES } from './keyPosesRosterWaveOne'
 import { ROSTER_WAVE_ONE_DIRECTIONAL_POSES } from './keyPosesRosterWaveOneDirectional'
+import { ROSTER_WAVE_ONE_FINISH_POSES } from './keyPosesRosterWaveOneFinish'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -40,6 +41,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
       {
         ...ROSTER_WAVE_ONE_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_ONE_GROUNDED_POSES],
         ...ROSTER_WAVE_ONE_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_ONE_DIRECTIONAL_POSES],
+        ...ROSTER_WAVE_ONE_FINISH_POSES[id as keyof typeof ROSTER_WAVE_ONE_FINISH_POSES],
       },
     ]),
   ),

@@ -5,7 +5,11 @@ import { moveById } from './movesets'
 import type { ArcadeFighter } from './types'
 
 const FIGHTERS = new Set<string>(ROSTER_WAVE_ONE_FIGHTERS)
-const SLOTS = new Set<string>([...ROSTER_WAVE_ONE_SLOTS, ...ROSTER_WAVE_ONE_DIRECTIONAL_SLOTS])
+const SLOTS = new Set<string>([
+  ...ROSTER_WAVE_ONE_SLOTS,
+  ...ROSTER_WAVE_ONE_DIRECTIONAL_SLOTS,
+  'lowHeavy',
+])
 
 export interface RosterWaveOneSupport {
   supportFoot: 'lead' | 'rear'

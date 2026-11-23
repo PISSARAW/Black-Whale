@@ -83,3 +83,27 @@ brake backward over the rear support instead of reusing the forward silhouette.
 The roster total is now 141 dedicated physical clips and 219 generated clips.
 The first wave's remaining common priorities are `airLight`, `airHeavy` and
 `lowHeavy`.
+
+## P3 — low power and air completion
+
+`lowHeavy`, `airLight` and `airHeavy` complete the first wave's nine physical
+attacks. Low Heavy compresses over a rear support and lead pivot. Air attacks
+remain unplanted, tuck the legs during anticipation, hold their active
+silhouette and finish by preparing the descent rather than snapping to guard in
+mid-air.
+
+| Fighter      |  P2 |  P3 |
+| ------------ | --: | --: |
+| Melody       | 8.7 | 9.6 |
+| Mizaistom    | 8.7 | 9.6 |
+| Camilla      | 8.7 | 9.5 |
+| Gel          | 8.6 | 9.5 |
+| Illumi       | 8.7 | 9.5 |
+| Terebellum   | 8.7 | 9.5 |
+| Tserriednich | 8.6 | 9.5 |
+| Cluck        | 8.6 | 9.5 |
+| Luini        | 8.7 | 9.5 |
+| Machi        | 8.6 | 9.5 |
+
+All ten first-wave fighters now have 9/9 dedicated physical clips. The roster
+total is 171 dedicated clips and 189 generated clips.

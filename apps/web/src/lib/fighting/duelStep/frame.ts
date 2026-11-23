@@ -44,6 +44,7 @@ import { advanceBlackWhaleCanonUpgrades } from '../blackWhaleCanonUpgrades'
 import { advanceMatchupValves } from '../matchupValves'
 import { advanceFinalFiveUpgrades, startThetaSilentReload } from '../finalFiveUpgrades'
 import { advanceOpponentIntel } from '../perception/opponentIntel'
+import { advanceFightWitnesses } from '../fightWitnesses'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -164,6 +165,7 @@ const CLOSE_FRAME_PIPELINE: readonly ((state: FightState) => FightState)[] = [
   advanceMusseOwl,
   advanceFurykovProfile,
   advanceOpponentIntel,
+  advanceFightWitnesses,
 ]
 
 /** Advances the frame counter and round clock from the frame's opening world. */

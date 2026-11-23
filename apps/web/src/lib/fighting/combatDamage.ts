@@ -56,6 +56,7 @@ interface ResolvedDamageOptions {
 
 export function resolvedDamage(options: ResolvedDamageOptions): number {
   if (options.base === 0) return 0
+  if (options.defence.fighter.crossGameStasis) return 0
   if (options.defence.parried || options.defence.avoided) return 0
   return attackDamage({
     ...options,

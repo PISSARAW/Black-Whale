@@ -3,6 +3,7 @@ import { fighterNenTraining } from './nenMastery'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
 import { hasFastMartialTransfer } from './martialSpecialists'
 import { seiyakuSpeedActive } from './seiyaku'
+import { GEL_VENOM_TRANSFER_PENALTY } from './zodiacAndHeirUpgrades'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -32,7 +33,8 @@ export function nenTransferFrames(fighter: ArcadeFighter): number {
       : Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
   const fatigue = nenMentalFatigueRatio(fighter)
   const slowdown = fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
-  return Math.max(2, Math.round(base * slowdown))
+  const venom = (fighter.gelVenomFrames ?? 0) > 0 ? GEL_VENOM_TRANSFER_PENALTY : 0
+  return Math.max(2, Math.round(base * slowdown)) + venom
 }
 
 export function currentAuraShares(fighter: ArcadeFighter): Shares | undefined {

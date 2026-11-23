@@ -130,10 +130,11 @@ export function advanceBashoHaiku(state: FightState): FightState {
           : { ...f, bashoRhythm: { ...f.bashoRhythm, frame } }
     }
     if (f.haikuBurn && f.health > 0) {
+      const catalyst = (f.erigeronCatalystFrames ?? 0) > 0 ? 2 : 1
       f = {
         ...f,
-        health: Math.max(1, f.health - BASHO_BURN_HP_DPS / FIGHT_FPS),
-        aura: Math.max(0, f.aura - BASHO_BURN_AURA_DPS / FIGHT_FPS),
+        health: Math.max(1, f.health - (BASHO_BURN_HP_DPS * catalyst) / FIGHT_FPS),
+        aura: Math.max(0, f.aura - (BASHO_BURN_AURA_DPS * catalyst) / FIGHT_FPS),
       }
     }
     if (f !== next[side]) next = { ...next, [side]: f }

@@ -6,6 +6,7 @@ import { kameoDefinition } from './catalogue'
 import type { KameoDefinition } from './catalogue'
 import { advanceKameoTraps, deliverKameoEffect } from './effects'
 import { kameoCooldownFactor } from '../martialSpecialists'
+import { ERIGERON_KAMEO_FACTOR } from '../zodiacAndHeirUpgrades'
 import type { KameoCallId, KameoId, KameoSlot } from './types'
 
 /** The calls pressed this frame, by side; an absent side did not call. */
@@ -100,7 +101,11 @@ function leaving(
   leader: FightState['player'],
 ): KameoSlot {
   if (slot.phaseFrames < definition.timing.leave) return slot
-  const cooldownFrames = Math.max(1, Math.round(definition.cooldownFrames * kameoCooldownFactor(leader)))
+  const surge = (leader.erigeronSurgeFrames ?? 0) > 0 ? ERIGERON_KAMEO_FACTOR : 1
+  const cooldownFrames = Math.max(
+    1,
+    Math.round(definition.cooldownFrames * kameoCooldownFactor(leader) * surge),
+  )
   return { ...phase(slot, 'reserve'), call: null, cooldownFrames }
 }
 

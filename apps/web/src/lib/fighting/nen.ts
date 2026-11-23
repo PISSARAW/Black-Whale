@@ -32,6 +32,7 @@ import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialist
 import { musseOwlDrain } from './musseWindowUpgrades'
 import { bashoKenCostFactor } from './bashoHaiku'
 import { seiyakuExhaustionThreshold, seiyakuHatsuPowerFactor } from './seiyaku'
+import { predatorHatsuFactor } from './predatorUpgrades'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -161,12 +162,13 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
 }
 
 function baseAuraFlow(fighter: ArcadeFighter): number {
-  if (fighter.nen.mode === 'zetsu') return 10
+  const surge = (fighter.erigeronSurgeFrames ?? 0) > 0
+  if (fighter.nen.mode === 'zetsu') return fighter.auraExhausted && surge ? 20 : 10
   if (fighter.nen.ken) return -8 * bashoKenCostFactor(fighter)
   if (hasRyu(fighter)) return -6
   if (fighter.nen.mode === 'ren') return isBeyond(fighter) ? BEYOND_REN_DRAIN : -4
   if (fighter.nen.gyo) return 0
-  return 1.4
+  return surge ? 2.8 : 1.4
 }
 
 export function focusGuardRyu(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
@@ -234,7 +236,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
   return kind === 'special' && fighter.attack?.hatsuSource
-    ? abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter)
+    ? abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter) * predatorHatsuFactor(fighter)
     : categoryPower(fighter, 'enhancer')
 }
 

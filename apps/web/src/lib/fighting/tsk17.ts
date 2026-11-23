@@ -49,7 +49,8 @@ export function releaseTsk17(state: FightState, side: FightSide): FightState {
 export function tsk17TickDamage(fighter: ArcadeFighter): number {
   if (!fighter.tskPoisoned || fighter.health <= 0) return 0
   const factor = fighter.nen.mode === 'zetsu' ? TSK17_ZETSU_MULTIPLIER : 1
-  return (TSK17_BASE_DPS * factor) / FIGHT_FPS
+  const catalyst = (fighter.erigeronCatalystFrames ?? 0) > 0 ? 2 : 1
+  return (TSK17_BASE_DPS * factor * catalyst) / FIGHT_FPS
 }
 
 function poisonFighter(fighter: ArcadeFighter): ArcadeFighter {

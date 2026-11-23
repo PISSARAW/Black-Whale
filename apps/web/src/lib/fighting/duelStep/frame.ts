@@ -26,6 +26,7 @@ import { advanceFurykovProfile } from '../furykovProfile'
 import { advanceBashoHaiku, extinguishBashoBurn } from '../bashoHaiku'
 import { advanceNenPillars, startFirearmReload } from '../nenPillars'
 import { advanceSeiyaku } from '../seiyaku'
+import { advanceZodiacAndHeirUpgrades } from '../zodiacAndHeirUpgrades'
 
 function resolveFirearmReload(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -78,6 +79,7 @@ export function openFrame(
   state = resolveBurnExtinguish(state, inputs)
   state = resolveFirearmReload(state, inputs)
   state = advanceSeiyaku(state, inputs)
+  state = advanceZodiacAndHeirUpgrades(state, inputs)
   state = resolveChrolloFlipInputs(state, inputs)
   state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)

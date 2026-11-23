@@ -12,11 +12,16 @@ export function shufflePhase(fighter: ArcadeFighter): number {
   return (fighter.x * FIGHT_WORLD_X * fighter.facing * Math.PI * 2) / shuffleStride(fighter)
 }
 export function shufflePose(fighter: ArcadeFighter): FightPose {
+  const physical = fightPhysicalProfile(fighter)
+  const mass = Math.min(1.35, Math.max(0.85, 1 / physical.resistance))
   const wave = Math.sin(shufflePhase(fighter)),
     a = Math.max(0, wave),
     b = Math.max(0, -wave)
   return {
-    root: [0, -0.014 * Math.abs(wave), 0],
+    root: [0.012 * wave * physical.step, -0.014 * Math.abs(wave) * (0.85 + mass * 0.22), 0],
+    body: [0, 0, -0.024 * wave * physical.rotation],
+    chest: [0, -0.045 * wave * physical.rotation, 0],
+    head: [0, 0, 0.018 * wave * physical.rotation],
     leadHip: [-0.14 * a, 0, 0],
     leadKnee: [0.28 * a, 0, 0],
     rearHip: [-0.12 * b, 0, 0],

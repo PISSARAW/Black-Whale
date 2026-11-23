@@ -67,6 +67,7 @@ import {
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
 import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
+import { withLocomotionInertia } from './fightLocomotionInertia'
 import { movementTechPose } from './movementTechPoses'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
@@ -458,7 +459,7 @@ function restingWithConstraint(
   if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
   return (
     feitanUmbrellaPlan(fighter, standing) ??
-    restingPlan(fighter, standing) ??
+    withLocomotionInertia(restingPlan(fighter, standing), context.locomotionInertia) ??
     feitanAirPlan(fighter, standing) ??
     reactionPlan(fighter, context, standing)
   )

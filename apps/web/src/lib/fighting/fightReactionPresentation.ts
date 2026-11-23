@@ -4,6 +4,7 @@ import { createFightPoseClock } from './fightPoseClock'
 import { rosterContactMotion } from './rosterHitReaction'
 import { physicalHitAtContact } from './fightHitResponse'
 import { createFightPoseContinuity } from './fightPoseContinuity'
+import { createLocomotionInertia } from './fightLocomotionInertia'
 import { physicalRosterPair } from './fightPhysicalRoster'
 import type { ReactionContext } from './fightReactions'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -22,6 +23,7 @@ export function createFightReactionPresentation() {
   const contacts: Partial<Record<FightSide, Received>> = {}
   let clock = createFightPoseClock()
   let motion = { player: createFightPoseContinuity(), opponent: createFightPoseContinuity() }
+  let inertia = { player: createLocomotionInertia(), opponent: createLocomotionInertia() }
   return (state: FightState, side: FightSide, input: Input): ReactionContext => {
     const nextKey = `${state.player.id}:${state.opponent.id}:${state.roundNumber}`
     if (key !== nextKey || state.frame < lastFrame) {
@@ -30,6 +32,7 @@ export function createFightReactionPresentation() {
       delete contacts.opponent
       clock = createFightPoseClock()
       motion = { player: createFightPoseContinuity(), opponent: createFightPoseContinuity() }
+      inertia = { player: createLocomotionInertia(), opponent: createLocomotionInertia() }
     }
     lastFrame = state.frame
     const impact = receivedImpact(state, side)
@@ -48,6 +51,11 @@ export function createFightReactionPresentation() {
       rival: rivalOf(state, side),
       ...contacts[side]?.contact,
       nenConstraint: nenConstraintPlan(state, side),
+      locomotionInertia: inertia[side](input.fighter, {
+        frame: state.frame,
+        seconds: input.seconds,
+        frozen: state.hitstop > 0,
+      }),
       poseContinuity: physicalRosterPair(state.player.id, state.opponent.id)
         ? motion[side]
         : undefined,

@@ -7,7 +7,8 @@ import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
 import type { ArcadeFighter, FighterId } from './types'
 import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
 import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
-import { shufflePose } from './fightShuffleStep'
+import { shufflePhase, shufflePose } from './fightShuffleStep'
+import { physicalWalkAccent } from './fightLocomotionInertia'
 
 /**
  * Authored locomotion poses for the short, explosive movements that should not
@@ -240,14 +241,16 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
 export function walkPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose {
   const motion = motionOf(fighter)
   const advancing = motion.heldDirection === fighter.facing
-  const style = PERSONAL_WALKS[fighter.id] ?? WALK_STYLES[fightFamily(fighter.id)]
+  const personal = PERSONAL_WALKS[fighter.id]
+  const style = personal ?? WALK_STYLES[fightFamily(fighter.id)]
   const profile = fighterMotionProfile(fighter.id)
-  const phase = Math.sin(fighter.x * fighter.facing * 0.251)
+  const phase = Math.sin(shufflePhase(fighter))
   const rhythm = scalePose(style.rhythm, phase * profile.walk * (advancing ? 1 : 0.65))
   const posture = scalePose(advancing ? style.advance : style.retreat, profile.walk)
+  const accent = personal ? {} : scalePose(physicalWalkAccent(fighter, advancing), profile.walk)
   const steps = shufflePose(fighter)
   return {
-    pose: addPoses(standing, posture, rhythm, scalePose(steps, profile.walk)),
+    pose: addPoses(standing, posture, accent, rhythm, scalePose(steps, profile.walk)),
     key: advancing ? 'walk:forward' : 'walk:backward',
     blend: 0.055,
   }

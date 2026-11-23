@@ -84,13 +84,19 @@ export function fightStance(id: FighterId): FightStance | null {
 }
 
 export function stanceAt(stance: FightStance, seconds: number): FightPose {
-  const dip = stance.bounce * (0.5 - 0.5 * Math.cos(seconds * Math.PI * 2 * stance.tempo))
+  const primary = 0.5 - 0.5 * Math.cos(seconds * Math.PI * 2 * stance.tempo)
+  const sway = 0.5 - 0.5 * Math.cos(seconds * Math.PI * 2 * stance.tempo * 0.5 + 0.9)
+  const dip = stance.bounce * (primary * 0.82 + sway * 0.18)
+  const breath = Math.sin(seconds * Math.PI * 2 * (0.24 + stance.tempo * 0.12))
   return addPoses(stance.pose, {
     // Hip and knee bend together, so the bounce sinks the body instead of the shins.
+    chest: [-breath * 0.014, 0, 0],
+    head: [breath * 0.01, 0, 0],
+    leadShoulder: [-breath * 0.018, 0, breath * 0.012],
+    rearShoulder: [dip * 0.3 - breath * 0.016, 0, -breath * 0.012],
     leadHip: [-dip * 0.6, 0, 0],
     leadKnee: [dip * 0.6, 0, 0],
     rearHip: [-dip * 0.3, 0, 0],
     rearKnee: [dip * 0.4, 0, 0],
-    rearShoulder: [dip * 0.3, 0, 0],
   })
 }

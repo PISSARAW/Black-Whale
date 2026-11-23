@@ -372,3 +372,17 @@ horizontal velocity and airborne cadence. Their motion is deterministic, so
 hitstop and replay retain the same image; it adds no cloth simulation, gameplay
 state or collision. P18 remains a Kurapika prototype and contributes four
 clothing meshes while sharing both hand-morph and hem geometry.
+
+## P19 — gameplay-camera identity lock
+
+Kurapika's recognisable value pattern is now protected at the actual fight
+camera: two darker tips break the outer blond bob, two restrained blue edges
+hold the lapel line against the dark-navy jacket, and a silver band identifies
+the chain hand without materialising an attack chain at rest. The existing
+white collar and black tie receive a small width correction rather than a glow.
+
+The P14 jacket seams are also remounted on the torso, so they finally follow
+chest twist instead of remaining figure-level decoration. Five cached meshes
+carry the new identity contract, each sized to retain at least a three-pixel
+axis in a 560-pixel fight viewport. No aura, UI marker, light, combat state or
+camera rule is introduced.

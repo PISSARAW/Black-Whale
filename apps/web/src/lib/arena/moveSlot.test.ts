@@ -49,6 +49,17 @@ describe('Clash commands in first person', () => {
     held.up('KeyW')
     expect(held.current()).toBe('back')
   })
+
+  it('projects held 3D directions into camera-relative jump and evade vectors', () => {
+    const held = createHeldDirection()
+    held.down('KeyW')
+    expect(held.vector(0)).toEqual([0, -1])
+    held.clear()
+    held.down('KeyD')
+    expect(held.vector(0)).toEqual([1, 0])
+    held.clear()
+    expect(held.vector(0, 'back')).toEqual([0, 1])
+  })
 })
 
 describe('Arena opponent on authored Clash routes', () => {

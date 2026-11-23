@@ -196,6 +196,19 @@
     transform: translateX(-50%) rotate(-45deg);
   }
 
+  .arena-en-presence {
+    position: absolute;
+    z-index: 8;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.55rem;
+    background: rgb(5 10 14 / 88%);
+    color: #ebd2fa;
+    font-size: 0.75rem;
+    pointer-events: none;
+  }
+
   .attack-telegraph {
     position: absolute;
     z-index: 9;
@@ -1674,6 +1687,38 @@
     display: none;
   }
 
+  .sector-readout {
+    position: absolute;
+    z-index: 8;
+    top: 8rem;
+    left: 1rem;
+    display: flex;
+    max-width: min(19rem, calc(100vw - 2rem));
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgb(255 215 0 / 32%);
+    border-left: 2px solid #ffd700;
+    background: rgb(5 10 14 / 82%);
+    color: #fffff0;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-family: 'IBM Plex Mono', monospace;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .sector-readout strong,
+  .sector-readout span,
+  .sector-readout small {
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sector-readout span,
+  .sector-readout small {
+    color: #9aa8ae;
+  }
+
   .arena-tools {
     position: absolute;
     z-index: 32;
@@ -2302,7 +2347,7 @@
       flex-direction: row;
     }
 
-    .status-card header span {
+    .status-card header span:not(.nen-on) {
       display: none;
     }
 

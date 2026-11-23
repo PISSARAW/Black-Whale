@@ -62,6 +62,25 @@ describe("Arena's first-person body", () => {
     expect(hidden.length).toBeGreaterThan(0)
   })
 
+  it('draws the complete fighter at the simulated body in third person', () => {
+    const state = { ...initialFighter([4, 5]), mode: 'ren' as const }
+    const seen = arenaSelfBody({
+      fighter: arenaFighter('kurapika'),
+      state,
+      motion: 'guard',
+      at: [3, 2],
+      heading: 0.5,
+      place,
+      perspective: 'third-person',
+    })
+
+    expect(seen.at).toEqual([4, 5])
+    expect(seen.heading).toBeCloseTo(0.5 + Math.PI)
+    expect(seen.human?.firstPerson).toBe(false)
+    expect(seen.human?.aura).toBe('ren')
+    expect(seen.human?.pose).toBe('guard')
+  })
+
   it.each(['kurapika', 'hisoka', 'chrollo'] as const)(
     "raises %s's guard and strike into the field of view",
     (fighterId) => {

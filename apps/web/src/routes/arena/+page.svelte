@@ -34,7 +34,15 @@
     recordEvent,
     type ArenaStats,
   } from '$lib/arena/progression'
-  import { buildCombatTerrain } from '$lib/arena/terrain'
+  import { WAREHOUSE_SECTOR_ID, buildCombatTerrain } from '$lib/arena/terrain'
+  import {
+    ARENA_SECTOR_STORAGE_KEY,
+    captureArenaSector,
+    createArenaSectorSnapshot,
+    parseArenaSector,
+    restoreArenaSector,
+    serializeArenaSector,
+  } from '$lib/arena/sectorPersistence'
   import { ARENA_CHALLENGES } from '$lib/arena/challenges/catalogue'
   import { evaluateChallenge, evaluateChallengeProgress } from '$lib/arena/challenges/evaluate'
   import type { ChallengeObjective } from '$lib/arena/challenges/types'
@@ -74,7 +82,8 @@
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer } from '$lib/combat/reducer'
   import { BODY_ZONES, type BodyZone, type CombatAction, type CombatEvent } from '$lib/combat/types'
-  import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
+  import { floorOf, theShip, crossingsOn, spaceAt } from '$lib/tour/blueprint'
+  import { TIER5_PARCEL_ACTIVITY } from '$lib/tour/simulation/tier5Loop'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
@@ -89,6 +98,7 @@
   import type { PageData } from './$types'
   import { arenaNen } from '$lib/nen/tourAdapters'
   import { isNenControlCode } from '$lib/nen/controls'
+  import { detectWithEn } from '@black-whale/nen-engine'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import type { FighterId, MoveAction } from '$lib/fighting/types'
   import {
@@ -121,6 +131,7 @@
   const DT = 1 / 60
   const ship = theShip()
   const terrain = untrack(() => buildCombatTerrain(data.terrainId))
+  const persistentSector = terrain.id === WAREHOUSE_SECTOR_ID
   let plan = $state(ship.plans.get(terrain.tierId)!)
   let ground = $derived(floorOf(terrain.space, plan.tier))
 
@@ -134,11 +145,13 @@
   let heading = $state(0)
   let lookPitch = $state(0)
   let aimedExtra = $state<string | null>(null)
+  let visibleOpponentAt = $state<Vec2 | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
   let touch = $state(false)
   let tierId = $state(terrain.tierId)
+  let sectorSnapshot = $state(createArenaSectorSnapshot())
 
   const nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
     if (!entity) return ''
@@ -177,6 +190,9 @@
   const heldDirection = createHeldDirection()
   const clashKeyboard = createKeyboardMapper()
   let clashBindings = $state(defaultBindings())
+  let clashAuraHeld = false
+  let clashGuardHeld = false
+  let focusSequence = $state(0)
   let moveDirection = $state<ArenaDirection>(null)
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
@@ -242,10 +258,12 @@
   let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
   let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
   let hatsuDefinition = $derived(arenaDefinition($activeHatsu))
-  let gap = $derived(distance(game.player.position, game.opponent.position))
-  let inRange = $derived(gap <= STRIKE_RANGE)
+  let opponentVisible = $derived(visibleOpponentAt !== null)
+  let opponentAimed = $derived(opponentVisible && aimedExtra === 'arena-opponent')
+  let inRange = $derived(
+    opponentAimed && distance(game.player.position, game.opponent.position) <= STRIKE_RANGE,
+  )
   let hideOpponentIntent = $derived(replayMatch().bossRule === 'no-visible-intent')
-  let threatened = $derived(!hideOpponentIntent && reading.intentRemaining !== null)
   let aimedZone = $derived(zoneFromPitch(lookPitch))
   const extendedNen = new ModeNenState()
   let playerNen = $derived({
@@ -255,8 +273,17 @@
     on: extendedNen.value.on,
   })
   let opponentNen = $derived(arenaNen(pov.opponent))
+  let sensedOpponent = $derived(
+    !opponentVisible &&
+      playerNen.en !== null &&
+      detectWithEn({ at: position, nen: playerNen }, [
+        { id: 'arena-opponent', at: game.opponent.position },
+      ]).length > 0,
+  )
   let playerFighter = $derived(arenaFighter(fighterId))
   let opponentFighter = $derived(arenaFighter(opponentFighterId))
+  let playerSpaceId = $derived(spaceAt(plan, game.player.position)?.id ?? terrain.id)
+  let opponentSpaceId = $derived(spaceAt(plan, game.opponent.position)?.id ?? terrain.id)
   let opponentPresence = $derived(
     arenaDuelPresence({
       state: pov,
@@ -272,11 +299,12 @@
       motion: opponentMotion,
       intentVisible: !hideOpponentIntent && Boolean(pov.opponent.intent),
       ground,
-      spaceId: terrain.id,
+      spaceId: opponentSpaceId,
       tierId: terrain.tierId,
       colour: arenaFighterColour(opponentFighterId),
       nen: opponentNen,
       expression: opponentPresence.expression,
+      heading: facing(game.opponent.position, game.player.position) + Math.PI,
     }),
   ])
   let selfActor = $derived(
@@ -286,10 +314,16 @@
       motion: playerMotion,
       at: position,
       heading,
-      place: { spaceId: terrain.id, tierId: terrain.tierId, ground: ground + game.player.height },
+      place: {
+        spaceId: playerSpaceId,
+        tierId: terrain.tierId,
+        ground: ground + game.player.height,
+      },
+      perspective: 'third-person',
+      nen: playerNen,
     }),
   )
-  let opponentWalls = $derived(blockerAt(game.opponent.position, terrain.id))
+  let opponentWalls = $derived(blockerAt(game.opponent.position, opponentSpaceId))
   let selectedChallenge = $derived(
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
   )
@@ -316,6 +350,9 @@
   )
   let detailedRyu = $derived(ryuDistribution(game.player))
   let sceneWorld = $derived(arenaBlinkyWorld(game))
+  let sectorLead = $derived(
+    sectorSnapshot.simulation.activities[TIER5_PARCEL_ACTIVITY]?.stage ?? 'UNNOTICED',
+  )
 
   function objectiveLabel(objective: ChallengeObjective): string {
     if (objective.kind === 'win') return $t.arena.ui.objective.win
@@ -358,6 +395,7 @@
       playerAt: terrain.spawns[0],
       opponentAt: terrain.spawns[1],
       terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
+      context: persistentSector ? ('CLANDESTINE' as const) : ('REGULATED' as const),
     }
   }
 
@@ -430,7 +468,7 @@
   }
 
   function jump() {
-    send(arenaJumpAction(heading, heldDirection.current()))
+    send(arenaJumpAction(heldDirection.vector(heading)))
   }
 
   function gatherKo() {
@@ -449,6 +487,20 @@
   function evade(side: -1 | 1) {
     const vector: Vec2 = [Math.cos(heading) * side, -Math.sin(heading) * side]
     command({ type: 'EVADE', side: 'player', vector }, 'ken')
+  }
+
+  function spatialEvade() {
+    command({ type: 'EVADE', side: 'player', vector: heldDirection.vector(heading, 'back') }, 'ken')
+  }
+
+  function focusOpponent() {
+    if (opponentVisible) focusSequence += 1
+  }
+
+  function togglePause() {
+    arenaPanel = null
+    manualOpen = !manualOpen
+    document.exitPointerLock?.()
   }
 
   function castHatsu() {
@@ -483,8 +535,20 @@
     }
   }
 
+  function toggleOn() {
+    useStandardNen({
+      type: 'ON',
+      on: !playerNen.on,
+      distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
+    })
+  }
+
   function useClashCommand(event: KeyboardEvent, active: boolean): boolean {
     const control = clashKeyboard.key(event, active, clashBindings)
+    if (control === 'p') {
+      if (active && !event.repeat && !briefingOpen) togglePause()
+      return true
+    }
     if (!control?.startsWith('direct:')) return false
     if (
       [
@@ -496,29 +560,30 @@
     )
       return false
     if (!active) {
-      if (control === 'direct:playerAura') useStandardNen({ type: 'TEN' })
+      if (control === 'direct:playerAura') {
+        clashAuraHeld = false
+        useStandardNen({ type: 'TEN' })
+      } else if (control === 'direct:playerGuard') clashGuardHeld = false
       return true
     }
     if (manualOpen || briefingOpen || arenaPanel || game.outcome !== 'playing') return true
     if (event.repeat) return true
 
-    if (control === 'direct:playerGuard') guard()
-    else if (control === 'direct:playerLight') fightingMove('light')
+    if (control === 'direct:playerGuard') {
+      clashGuardHeld = true
+      if (clashAuraHeld) gatherKo()
+      else guard()
+    } else if (control === 'direct:playerLight') fightingMove('light')
     else if (control === 'direct:playerHeavy') fightingMove('heavy')
     else if (control === 'direct:playerSpecial') fightingMove('special')
     else if (control === 'direct:playerThrow') fightingMove('throw')
     else if (control === 'direct:playerFinisher') fightingMove('finisher')
-    else if (control === 'direct:playerProjectile') fightingMove('special')
-    else if (control === 'direct:playerKameo') jump()
-    else if (control === 'direct:playerBurst') gatherKo()
-    else if (control === 'direct:playerAura') useStandardNen({ type: 'REN' })
-    else if (control === 'direct:playerContext') castHatsu()
-    else if (control === 'direct:playerOn')
-      useStandardNen({
-        type: 'ON',
-        on: !playerNen.on,
-        distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
-      })
+    else if (control === 'direct:playerAura') {
+      clashAuraHeld = true
+      if (clashGuardHeld) gatherKo()
+      else useStandardNen({ type: 'REN' })
+    } else if (control === 'direct:playerContext') castHatsu()
+    else if (control === 'direct:playerOn') toggleOn()
     else if (control === 'direct:nen:playerLight')
       useStandardNen({ type: 'EN', radius: playerNen.en ? null : 8 })
     else if (control === 'direct:nen:playerHeavy')
@@ -541,6 +606,16 @@
     return true
   }
 
+  function useArenaSpatialCommand(event: KeyboardEvent, active: boolean): boolean {
+    if (!['KeyX', 'KeyR', 'KeyF'].includes(event.code)) return false
+    if (!active || event.repeat) return true
+    if (manualOpen || briefingOpen || arenaPanel || game.outcome !== 'playing') return true
+    if (event.code === 'KeyX') jump()
+    else if (event.code === 'KeyR') spatialEvade()
+    else focusOpponent()
+    return true
+  }
+
   function clashKey(command: ControlCommand): string {
     return controlKeyLabel(clashBindings[command], $locale)
   }
@@ -548,7 +623,7 @@
   function onKeyDown(event: KeyboardEvent) {
     heldDirection.down(event.code)
     moveDirection = heldDirection.current()
-    if (useClashCommand(event, true)) {
+    if (useArenaSpatialCommand(event, true) || useClashCommand(event, true)) {
       event.preventDefault()
       event.stopPropagation()
       return
@@ -570,13 +645,15 @@
   function onKeyUp(event: KeyboardEvent | FocusEvent) {
     if ('code' in event) {
       heldDirection.up(event.code)
-      if (useClashCommand(event, false)) {
+      if (useArenaSpatialCommand(event, false) || useClashCommand(event, false)) {
         event.preventDefault()
         event.stopPropagation()
       }
     } else {
       heldDirection.clear()
       clashKeyboard.clear()
+      clashAuraHeld = false
+      clashGuardHeld = false
     }
     moveDirection = heldDirection.current()
   }
@@ -628,8 +705,10 @@
 
   function restart() {
     game = freshGame(replayMatch())
+    if (persistentSector) game = restoreArenaSector(game, sectorSnapshot)
     if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     extendedNen.reset()
+    visibleOpponentAt = null
     tierId = terrain.tierId
     plan = ship.plans.get(terrain.tierId)!
     position = terrain.spawns[0]
@@ -653,7 +732,7 @@
       doctrine: opponentDoctrine,
       difficulty,
       match: replayMatch(),
-      initialState: sourceHandoff ? game : undefined,
+      initialState: sourceHandoff || persistentSector ? game : undefined,
     })
     owed = 0
     last = 0
@@ -663,6 +742,7 @@
     if (!lastReplay) return
     const branch = forkReplayAtTick(lastReplay, tick)
     game = branch.state
+    visibleOpponentAt = null
     recorder = branch.recorder
     position = game.player.position
     agreed = game.player.position
@@ -701,6 +781,10 @@
     graded = true
     lastReplay = recorder.finish(game)
     replayOrigin = 'local'
+    if (persistentSector) {
+      sectorSnapshot = captureArenaSector(game, sectorSnapshot, playerSpaceId)
+      safeStorageSet(localStorage, ARENA_SECTOR_STORAGE_KEY, serializeArenaSector(sectorSnapshot))
+    }
     if (sourceHandoff) saveArenaHandoffResult(sessionStorage, sourceHandoff.id, game)
     safeStorageSet(sessionStorage, 'black-whale:arena-last-replay', serializeReplay(lastReplay))
     const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
@@ -808,12 +892,17 @@
     })
     opponentDoctrine = experience.doctrine
     difficulty = experience.difficulty
+    if (persistentSector) {
+      sectorSnapshot = parseArenaSector(safeStorageGet(localStorage, ARENA_SECTOR_STORAGE_KEY))
+    }
     game = freshGame(replayMatch())
+    if (persistentSector) game = restoreArenaSector(game, sectorSnapshot)
     recorder = new ArenaRecorder({
       setup: combatSetup(),
       doctrine: opponentDoctrine,
       difficulty,
       match: replayMatch(),
+      initialState: persistentSector ? game : undefined,
     })
     sourceHandoff = consumeArenaHandoff(sessionStorage)
     if (sourceHandoff) {
@@ -886,7 +975,7 @@
 <div
   class="arena-world"
   class:player-empowered={game.player.empowered > 0}
-  class:opponent-bound={game.opponent.bound > 0}
+  class:opponent-bound={opponentVisible && game.opponent.bound > 0}
 >
   <TourModeFullscreen />
   {#if arenaPanel === 'map'}
@@ -909,6 +998,9 @@
         {decks}
         {crossings}
         {nameOf}
+        marker={visibleOpponentAt
+          ? { at: visibleOpponentAt, label: opponentDisplayName }
+          : undefined}
         onSelectDeck={selectTier}
       />
     </div>
@@ -928,6 +1020,7 @@
     bind:heading
     bind:lookPitch
     bind:aimedExtra
+    bind:visibleExtraAt={visibleOpponentAt}
     bind:aimedSolidAt
     bind:currentSpace
     bind:engaged
@@ -939,6 +1032,14 @@
     world={sceneWorld}
     nen={playerNen}
     keyboardNen={false}
+    sightExtra="arena-opponent"
+    {focusSequence}
+    thirdPerson={{
+      target: game.opponent.position,
+      distance: 3.6,
+      shoulder: 0.48,
+      lockOn: true,
+    }}
     inputDisabled={briefingOpen ||
       manualOpen ||
       arenaPanel !== null ||
@@ -960,14 +1061,16 @@
     unsupportedLabel={$t.tour.unsupported}
   />
 
-  <ArenaDuelPresence presence={opponentPresence} french={$locale === 'fr'} />
+  {#if opponentVisible && !briefingOpen && !manualOpen}
+    <ArenaDuelPresence presence={opponentPresence} french={$locale === 'fr'} />
+  {/if}
 
-  <div class="reticle" class:near={inRange} class:locked={aimedExtra === 'arena-opponent'}>
-    <span>{$t.arena.zone[aimedZone]}</span>
+  <div class="reticle" class:near={inRange} class:locked={inRange}>
+    {#if inRange}<span>{$t.arena.zone[aimedZone]}</span>{/if}
   </div>
 
-  {#if (pov.opponent.intent || pov.opponent.ko) && !hideOpponentIntent}
-    <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">
+  {#if opponentVisible && !hideOpponentIntent && (reading.intentZone || reading.koZone) && !briefingOpen && !manualOpen}
+    <div class="attack-telegraph" aria-live="assertive">
       {#if reading.intentZone}
         <small>{$t.arena.ui.intentRead}</small>
         <strong>{$t.arena.zone[reading.intentZone]}</strong>
@@ -980,14 +1083,17 @@
         <i
           style:--threat-progress={`${Math.max(0, 1 - (pov.opponent.ko?.remaining ?? 0) / 0.8) * 100}%`}
         ></i>
-      {:else}
-        <small>{$t.arena.ui.auraDisturbance}</small>
-        <strong>?</strong>
       {/if}
     </div>
   {/if}
 
-  {#if pov.tethers.length > 0}
+  {#if sensedOpponent && !briefingOpen && !manualOpen && game.outcome === 'playing'}
+    <div class="arena-en-presence" role="status">
+      {$locale === 'fr' ? 'Présence dans En' : 'Presence within En'}
+    </div>
+  {/if}
+
+  {#if pov.tethers.length > 0 && (opponentVisible || pov.tethers[0].anchor)}
     <div class="elastic-readout" aria-live="polite">
       BUNGEE GUM · {pov.tethers[0].anchor ? $t.arena.ui.scenery : opponentDisplayName}
       · {pov.tethers[0].remaining.toFixed(1)}s
@@ -1029,7 +1135,6 @@
     <div class="match-rule">
       <span>{$locale === 'fr' ? activeFormat.titleFr : activeFormat.titleEn}</span>
       <strong>{game.player.score} — {game.opponent.score}</strong>
-      <small>{$t.arena.distance} · {gap.toFixed(1)} m</small>
       {#if remainingSeconds !== null}<small>⏱ {remainingSeconds.toFixed(1)} s</small>{/if}
       {#if waitingForRequiredAction}
         <small
@@ -1040,10 +1145,24 @@
     </div>
   </header>
 
-  {#if game.player.openWounds > 0 || game.opponent.openWounds > 0}
+  {#if persistentSector}
+    <aside class="sector-readout" aria-live="polite">
+      <strong>{$locale === 'fr' ? 'SECTEUR PERSISTANT' : 'PERSISTENT SECTOR'}</strong>
+      <span>
+        {$locale === 'fr' ? 'TÉMOINS' : 'WITNESSES'}
+        {game.environment.witnesses} ·
+        {$locale === 'fr' ? 'ALERTE' : 'ALERT'}
+        {game.environment.securityAlert}/5 ·
+        {Object.keys(game.physicalObjects).length} OBJ.
+      </span>
+      <small>{sectorLead.replaceAll('_', ' ')}</small>
+    </aside>
+  {/if}
+
+  {#if game.player.openWounds > 0 || (opponentVisible && game.opponent.openWounds > 0)}
     <ArenaWoundStatus
       player={game.player}
-      opponent={game.opponent}
+      opponent={opponentVisible ? game.opponent : undefined}
       french={$locale === 'fr'}
       onToggle={(on) => send({ type: 'PLUG_WOUNDS', side: 'player', on })}
     />
@@ -1121,10 +1240,15 @@
       <span class:active={commandGroup(commandAnimation) === 'mode'}
         ><kbd>{clashKey('playerAura')}</kbd>Aura</span
       >
+      <span><kbd>{clashKey('playerOn')}</kbd>On</span>
       <span><kbd>{clashKey('playerNen')} + J/K/L/I/H</kbd>Nen</span>
       <span class:active={commandGroup(commandAnimation) === 'hatsu'}
         ><kbd>{clashKey('playerContext')}</kbd>Hatsu</span
       >
+      <span><kbd>X</kbd>{$locale === 'fr' ? 'Saut' : 'Jump'}</span>
+      <span><kbd>R</kbd>{$locale === 'fr' ? 'Esquive' : 'Evade'}</span>
+      <span><kbd>F</kbd>{$locale === 'fr' ? 'Recentrer' : 'Recenter'}</span>
+      <span><kbd>{clashKey('pause')}</kbd>Pause</span>
     </div>
   {/if}
 
@@ -1134,6 +1258,7 @@
       aimed={aimedZone}
       ryuOpen={arenaPanel === 'ryu'}
       hatsuName={carriedHatsu?.name ?? 'Hatsu'}
+      onActive={playerNen.on}
       onCommand={(nen) => {
         arenaPanel = null
         command(nen.action, nen.animation)
@@ -1143,6 +1268,10 @@
         guard()
       }}
       onRyu={() => toggleArenaPanel('ryu')}
+      onOn={() => {
+        arenaPanel = null
+        toggleOn()
+      }}
       onHatsu={() => {
         arenaPanel = null
         castHatsu()
@@ -1185,13 +1314,16 @@
     />
     <article class="status-card" class:expanded={arenaPanel === 'status'}>
       <header>
-        <strong>{playerFighter.name}</strong><span>{$t.arena.mode[game.player.mode]}</span>
+        <strong>{playerFighter.name}</strong><span class:nen-on={playerNen.on}
+          >{$t.arena.mode[game.player.mode]}{playerNen.on ? ' · ON' : ''}</span
+        >
       </header>
       <div class="meter">
         <i style:width={`${auraPercent(game.player.aura, game.player.capacity)}%`}></i>
       </div>
       <p>{$t.arena.aura} · {Math.ceil(game.player.aura)} / {game.player.capacity}</p>
       <div class="tags">
+        {#if playerNen.on}<span>On</span>{/if}
         {#if game.player.gyo}<span>{$t.arena.state.gyo}</span>{/if}
         {#if game.player.in}<span>{$t.arena.state.in}</span>{/if}
         {#if game.player.ken}<span>{$t.arena.state.ken}</span>{/if}
@@ -1252,39 +1384,38 @@
       </article>
     {/if}
 
-    <article
-      class="status-card opponent-card"
-      class:bound={game.opponent.bound > 0}
-      class:expanded={arenaPanel === 'status'}
-    >
-      <header>
-        <strong>{opponentDisplayName}</strong>
-        <span
-          >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[pov.opponent.mode]}</span
-        >
-      </header>
-      <div class="meter enemy">
-        <i
-          style:width={`${game.player.gyo ? auraPercent(pov.opponent.aura, pov.opponent.capacity) : 0}%`}
-        ></i>
-      </div>
-      <p>
-        {#if game.player.gyo}{$t.arena.aura} · {Math.ceil(pov.opponent.aura)}{:else}—{/if}
-      </p>
-      <div class="tags">
-        {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}
-        {#if reading.ken}<span>{$t.arena.state.ken}</span>{/if}
-        {#if reading.koZone}<span>{$t.arena.state.ko} · {$t.arena.zone[reading.koZone]}</span>{/if}
-        {#if reading.intentZone && !hideOpponentIntent}
-          <span class="threat-tag">
-            {$t.arena.ui.attack} · {$t.arena.zone[reading.intentZone]}
-          </span>
-        {/if}
-      </div>
-    </article>
+    {#if opponentVisible && arenaPanel === 'status'}
+      <article class="status-card opponent-card expanded" class:bound={game.opponent.bound > 0}>
+        <header>
+          <strong>{opponentDisplayName}</strong>
+          <span
+            >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[pov.opponent.mode]}</span
+          >
+        </header>
+        <div class="meter enemy">
+          <i
+            style:width={`${game.player.gyo ? auraPercent(pov.opponent.aura, pov.opponent.capacity) : 0}%`}
+          ></i>
+        </div>
+        <p>
+          {#if game.player.gyo}{$t.arena.aura} · {Math.ceil(pov.opponent.aura)}{:else}—{/if}
+        </p>
+        <div class="tags">
+          {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}
+          {#if reading.ken}<span>{$t.arena.state.ken}</span>{/if}
+          {#if reading.koZone}<span>{$t.arena.state.ko} · {$t.arena.zone[reading.koZone]}</span
+            >{/if}
+          {#if reading.intentZone && !hideOpponentIntent}
+            <span class="threat-tag">
+              {$t.arena.ui.attack} · {$t.arena.zone[reading.intentZone]}
+            </span>
+          {/if}
+        </div>
+      </article>
+    {/if}
   </section>
 
-  {#if eventVisible && game.lastEvent}
+  {#if opponentVisible && eventVisible && game.lastEvent}
     <ArenaTrainingFeedback
       event={game.lastEvent}
       french={$locale === 'fr'}

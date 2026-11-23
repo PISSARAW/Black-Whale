@@ -1,15 +1,11 @@
 import type { CombatAction } from '../combat/types'
-import type { ArenaDirection } from './moveSlot'
+import type { Vec2 } from '../tour/types'
 
 /** Turns the held first-person direction into a deterministic planar jump drift. */
-export function arenaJumpAction(
-  heading: number,
-  direction: ArenaDirection,
-): Extract<CombatAction, { type: 'JUMP' }> {
-  const sign = direction === 'forward' ? 1 : direction === 'back' ? -1 : 0
+export function arenaJumpAction(vector: Vec2): Extract<CombatAction, { type: 'JUMP' }> {
   return {
     type: 'JUMP',
     side: 'player',
-    vector: [-Math.sin(heading) * sign, -Math.cos(heading) * sign],
+    vector,
   }
 }

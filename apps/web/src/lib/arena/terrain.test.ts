@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { pointInPolygon, structureWalls } from '../tour/geometry'
-import { BANQUET_HALL_ID, SCREENING_ROOM_ID, arenaTerrainId, buildCombatTerrain } from './terrain'
+import { spaceAt, theShip } from '../tour/blueprint'
+import {
+  BANQUET_HALL_ID,
+  SCREENING_ROOM_ID,
+  WAREHOUSE_CORRIDOR_ID,
+  WAREHOUSE_SECTOR_ID,
+  arenaTerrainId,
+  buildCombatTerrain,
+} from './terrain'
 
 describe('a combat terrain from the Black Whale', () => {
   const terrain = buildCombatTerrain()
@@ -45,6 +53,22 @@ describe('a combat terrain from the Black Whale', () => {
     expect(screening.structures).toHaveLength(31)
     expect(screening.footprint).not.toEqual(terrain.footprint)
     expect(screening.spawns).not.toEqual(terrain.spawns)
+  })
+
+  it('opens the Tier 5 warehouse duel through its real corridor threshold', () => {
+    const sector = buildCombatTerrain(WAREHOUSE_SECTOR_ID)
+    const plan = theShip().plans.get('tier-5')!
+    expect(spaceAt(plan, sector.spawns[0])?.id).toBe(WAREHOUSE_SECTOR_ID)
+    expect(spaceAt(plan, sector.spawns[1])?.id).toBe(WAREHOUSE_CORRIDOR_ID)
+    expect(
+      sector.walls.some(
+        ({ start, end }) =>
+          start[1] === 3.5 &&
+          end[1] === 3.5 &&
+          Math.min(start[0], end[0]) <= 21 &&
+          Math.max(start[0], end[0]) >= 21,
+      ),
+    ).toBe(false)
   })
 
   it('rejects unknown terrain ids at the route boundary', () => {

@@ -13,13 +13,26 @@
     aimed: BodyZone
     ryuOpen: boolean
     hatsuName: string
+    onActive: boolean
     onCommand: (command: ArenaCommand) => void
     onGuard: () => void
     onRyu: () => void
+    onOn: () => void
     onHatsu: () => void
   }
 
-  let { player, aimed, ryuOpen, hatsuName, onCommand, onGuard, onRyu, onHatsu }: Props = $props()
+  let {
+    player,
+    aimed,
+    ryuOpen,
+    hatsuName,
+    onActive,
+    onCommand,
+    onGuard,
+    onRyu,
+    onOn,
+    onHatsu,
+  }: Props = $props()
 
   let techniques = $derived(nenDockButtons(player))
 </script>
@@ -39,6 +52,13 @@
       ><kbd>{technique.key}</kbd><span>{technique.label}</span></button
     >
   {/each}
+  <button
+    type="button"
+    class="technique on"
+    class:active={onActive}
+    aria-pressed={onActive}
+    onclick={onOn}><kbd>G</kbd><span>On</span></button
+  >
   <button type="button" class:active={ryuOpen} aria-expanded={ryuOpen} onclick={onRyu}
     ><kbd>1–4</kbd><span>Ryu · {Math.round(player.attackShare * 100)}%</span></button
   >
@@ -74,7 +94,7 @@
 
   @media (max-width: 760px) {
     .arena-action-dock {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
 </style>

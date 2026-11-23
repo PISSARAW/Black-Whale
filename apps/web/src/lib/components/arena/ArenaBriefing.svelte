@@ -20,11 +20,11 @@
         <span><strong>{$t.arena.ui.approach}</strong>{$t.arena.ui.approachSuffix}</span>
       </li>
       <li>
-        <kbd>CLIC · F</kbd>
+        <kbd>CLIC · J</kbd>
         <span><strong>{$t.arena.ui.strike}</strong>{$t.arena.ui.strikeSuffix}</span>
       </li>
       <li>
-        <kbd>MAJ</kbd>
+        <kbd>ESPACE</kbd>
         <span><strong>{$t.arena.ui.block}</strong>{$t.arena.ui.blockSuffix}</span>
       </li>
     </ol>

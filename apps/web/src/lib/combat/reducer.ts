@@ -114,7 +114,12 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     if (isBlinkyUtilityMove(action)) return resolveFightingBlinky(state, action)
     if (isSkillHunterMove(action)) return resolveFightingSkillHunter(state, action)
     const hatsu = fightingHatsuAction(state, action)
-    if (!hatsu) return prepareFightingMove(state, action)
+    if (!hatsu) {
+      const prepared = prepareFightingMove(state, action)
+      return prepared === state
+        ? state
+        : reactEnvironment(prepared, { type: 'STRIKE', side: action.side, zone: 'torso' })
+    }
     if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(state, hatsu.side, hatsu.hatsuId)
     const cast = castHatsu(state, hatsu)
     return cast === state ? state : reactEnvironment(cast, hatsu)

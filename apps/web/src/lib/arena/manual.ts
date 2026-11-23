@@ -1,11 +1,20 @@
 export const ARENA_MANUAL_CONTROLS = [
   {
-    keys: ['Z', 'Q', 'S', 'D'],
-    description: 'Move / Approach',
-    descriptionFr: "Se déplacer / S'approcher",
+    keys: ['ZQSD / WASD', 'Mouse'],
+    description: 'Move, aim and choose the attack height',
+    descriptionFr: "Se déplacer, viser et choisir la hauteur d'attaque",
   },
+  { keys: ['Shift'], description: 'Sprint', descriptionFr: 'Courir' },
+  { keys: ['X'], description: 'Directional jump', descriptionFr: 'Saut directionnel' },
+  {
+    keys: ['R + direction'],
+    description: 'Directional evade; R alone backsteps',
+    descriptionFr: 'Esquive directionnelle ; R seul recule',
+  },
+  { keys: ['F'], description: 'Recenter on opponent', descriptionFr: "Recentrer sur l'adversaire" },
+  { keys: ['E'], description: 'Interact with the arena', descriptionFr: "Interagir avec l'arène" },
+  { keys: ['P'], description: 'Pause and controls', descriptionFr: 'Pause et commandes' },
   { keys: ['Space'], description: 'Active guard', descriptionFr: 'Garde active' },
-  { keys: ['U'], description: 'Jump / Air moves', descriptionFr: 'Saut / Coups aériens' },
   { keys: ['J', 'Click'], description: 'Light attack', descriptionFr: 'Attaque légère' },
   {
     keys: ['K', 'L', 'M', 'I'],
@@ -18,9 +27,9 @@ export const ARENA_MANUAL_CONTROLS = [
     descriptionFr: 'Variantes avant, arrière et basses de chaque attaque',
   },
   {
-    keys: ['C', 'G', 'H'],
-    description: 'Aura, On, contextual Hatsu',
-    descriptionFr: 'Aura, On, Hatsu contextuel',
+    keys: ['C', 'C + Space', 'G', 'H'],
+    description: 'Aura, Ko, On, contextual Hatsu',
+    descriptionFr: 'Aura, Ko, On, Hatsu contextuel',
   },
   {
     keys: ['V + J/K/L/I/H'],

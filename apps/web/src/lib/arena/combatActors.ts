@@ -15,6 +15,7 @@ interface OpponentActorOptions {
   colour: number
   nen: NonNullable<NonNullable<Apparition['human']>['nen']>
   expression: HumanExpression
+  heading?: number
 }
 
 /** Projects Arena's deterministic body state into the shared Tour human renderer. */
@@ -30,6 +31,7 @@ export function arenaOpponentActor(options: OpponentActorOptions): Apparition {
     colour,
     nen,
     expression,
+    heading,
   } = options
   return {
     id: 'arena-opponent',
@@ -37,7 +39,7 @@ export function arenaOpponentActor(options: OpponentActorOptions): Apparition {
     spaceId,
     tierId,
     at: state.position,
-    heading: state.facing,
+    heading: heading ?? state.facing,
     y: ground + state.height,
     size: 1,
     colour,

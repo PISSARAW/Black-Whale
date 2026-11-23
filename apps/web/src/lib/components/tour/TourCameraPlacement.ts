@@ -37,6 +37,13 @@ interface CameraPlacement {
   impulse?: Vec2
 }
 
+export interface ThirdPersonCamera {
+  target: Vec2
+  distance: number
+  shoulder: number
+  lockOn?: boolean
+}
+
 /** Keeps authored and combat eye offsets inside the same camera placement seam. */
 export function placeTourCamera(options: CameraPlacement): void {
   const { camera, at, eye, yaw, pitch, roll, pullback, impulse = [0, 0] } = options
@@ -45,4 +52,27 @@ export function placeTourCamera(options: CameraPlacement): void {
   camera.rotateY(yaw + impulse[0])
   camera.rotateX(pitch + impulse[1])
   camera.rotateZ(roll)
+}
+
+/** Places a shoulder camera behind the walked body while keeping the reticle on its target. */
+export function placeThirdPersonCamera(
+  options: CameraPlacement & { thirdPerson: ThirdPersonCamera; ground: number },
+): void {
+  const { camera, at, eye, yaw, pitch, roll, impulse = [0, 0], thirdPerson, ground } = options
+  const distance = thirdPerson.distance * Math.max(1, 1.15 / camera.aspect)
+  camera.position.set(
+    at[0] + Math.sin(yaw) * distance + Math.cos(yaw) * thirdPerson.shoulder,
+    eye + 0.18,
+    at[1] + Math.cos(yaw) * distance - Math.sin(yaw) * thirdPerson.shoulder,
+  )
+  camera.up.set(0, 1, 0)
+  camera.lookAt(thirdPerson.target[0], ground + 1.05, thirdPerson.target[1])
+  camera.rotateX(pitch + impulse[1])
+  camera.rotateY(impulse[0])
+  camera.rotateZ(roll)
+}
+
+/** Heading used by the walk and by Arena attacks while a target is locked. */
+export function thirdPersonHeading(at: Vec2, target: Vec2): number {
+  return Math.atan2(at[0] - target[0], at[1] - target[1])
 }

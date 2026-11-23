@@ -98,6 +98,11 @@
         href={hrefFor('tier-3-observation-deck')}
         data-sveltekit-reload>{$t.arena.ui.terrains.observation}</a
       >
+      <a
+        class:active={terrainId === 'tier-5-warehouse'}
+        href={hrefFor('tier-5-warehouse')}
+        data-sveltekit-reload>{$locale === 'fr' ? 'Secteur Entrepôt T5' : 'T5 Warehouse Sector'}</a
+      >
     </nav>
 
     <nav class="terrain-picker" aria-label="PvP">

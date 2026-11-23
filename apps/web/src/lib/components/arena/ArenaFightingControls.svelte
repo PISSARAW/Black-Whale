@@ -86,7 +86,7 @@
       : 'Moving forward / back and aiming at the legs change the variant. Chain on impact.'}
   >
     <button type="button" disabled={disabled || airborne} onclick={onJump}>
-      <kbd>U</kbd>
+      <kbd>X</kbd>
       <strong>{french ? 'Saut' : 'Jump'}</strong>
     </button>
     {#each moves as move (move.action)}

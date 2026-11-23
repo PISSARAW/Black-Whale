@@ -132,7 +132,14 @@
     stopSteps,
   } from '$lib/audio/steps'
   import TourSoundControls from './TourSoundControls.svelte'
-  import { placeTourCamera, TourCameraFov } from './TourCameraPlacement'
+  import {
+    placeThirdPersonCamera,
+    placeTourCamera,
+    thirdPersonHeading,
+    TourCameraFov,
+    type ThirdPersonCamera,
+  } from './TourCameraPlacement'
+  import { CameraSight } from '$lib/tour/cameraSight'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
@@ -249,6 +256,13 @@
     eyeHeightOffset?: number
     /** Presentation-only yaw and pitch impulse owned by the active game. */
     cameraImpulse?: Vec2
+    /** Optional shoulder camera owned by a game layered over the walk. */
+    thirdPerson?: ThirdPersonCamera | null
+    /** Track this apparition only while it is visible from the rendered camera. */
+    sightExtra?: string
+    visibleExtraAt?: Vec2 | null
+    /** Request a single recenter on the tracked apparition, if it is still visible. */
+    focusSequence?: number
     /**
      * What Nen is currently doing to the ship. The scene is the only thing that
      * draws it; `$lib/tour/hatsu` is the only thing that decides it.
@@ -615,6 +629,10 @@
     lookPitch = $bindable(0),
     eyeHeightOffset = 0,
     cameraImpulse = [0, 0],
+    thirdPerson = null,
+    sightExtra,
+    visibleExtraAt = $bindable(null),
+    focusSequence = 0,
     world = EMPTY_WORLD,
     auraColour = null,
     nen,
@@ -1211,6 +1229,7 @@
       const stairs = new StairNavigator(ship)
       let yaw = 0
       let pitch = 0
+      let appliedFocusSequence = focusSequence
       // A manga plan can lift the camera out of the visitor's body. It remains
       // stable until the visitor walks or another jump restores eye level.
       let authoredEyeHeight: number | null = null
@@ -3224,11 +3243,66 @@
       // an empty list and never runs.
 
       const picker = new THREE.Raycaster()
+      const cameraSight = new CameraSight(camera)
+      const sightBox = new THREE.Box3()
+      const sightPoint = new THREE.Vector3()
       /** The middle of the screen, where a held pointer is always looking. */
       const RETICLE = new THREE.Vector2(0, 0)
       let focusDistance = 10
       /** And where a free cursor is, in clip space, for a page that has one. */
       const cursor = new THREE.Vector2()
+
+      function updateExtraSight(placeCamera: () => void) {
+        if (!sightExtra) return
+        const extra = apparitions[sightExtra]
+        const body = extra?.humanLod
+          ? extra.humanLod.near.visible
+            ? extra.humanLod.near
+            : extra.humanLod.far
+          : extra?.root
+        const cover: import('three').Object3D[] = []
+        for (const room of visible?.rooms ?? []) {
+          for (const object of [room.mesh, room.fittings, room.doors, room.details]) {
+            if (object?.visible) cover.push(object)
+          }
+        }
+        for (const solid of Object.values(solids)) {
+          if (solid?.mesh.visible) cover.push(solid.mesh)
+        }
+        const canSee = () => {
+          if (!body || !extra?.root.visible || blinded || !visible) return false
+          camera.updateMatrixWorld()
+          body.updateWorldMatrix(true, true)
+          sightBox.setFromObject(body)
+          if (sightBox.isEmpty()) return false
+          sightBox.getCenter(sightPoint)
+          const height = sightBox.max.y - sightBox.min.y
+          return [0.5, 0.83, 0.17].some((fraction) => {
+            sightPoint.y = sightBox.min.y + height * fraction
+            return cameraSight.sees(sightPoint, body, cover)
+          })
+        }
+
+        let seen = canSee()
+        if (focusSequence !== appliedFocusSequence) {
+          appliedFocusSequence = focusSequence
+          if (seen && extra && !inputDisabled) {
+            yaw = Math.atan2(pointer[0] - extra.root.position.x, pointer[1] - extra.root.position.z)
+            pitch = 0
+            placeCamera()
+            seen = canSee()
+          }
+        }
+        const at = seen && extra ? extra.root.position : null
+        const previous = untrack(() => visibleExtraAt)
+        if (!at) {
+          if (previous) visibleExtraAt = null
+        } else if (at.x !== previous?.[0] || at.z !== previous[1]) {
+          visibleExtraAt = [at.x, at.z]
+        }
+        const picked = seen && body && cameraSight.aimsAt(body, cover) ? sightExtra : null
+        if (picked !== untrack(() => aimedExtra)) aimedExtra = picked
+      }
 
       /** The cursor, or a finger, in the clip space the raycaster wants. */
       function aimFrom(clientX: number, clientY: number) {
@@ -3789,7 +3863,9 @@
         const sensitivity = LOOK_SENSITIVITY * $comfort.sensitivity
         // Snap turning is the one thing that reliably settles a stomach: the view
         // is either still or already somewhere else, never swinging.
-        if ($comfort.snapTurn) {
+        if (thirdPerson?.lockOn) {
+          swung = 0
+        } else if ($comfort.snapTurn) {
           swung -= dx * sensitivity
           const step = snapStep()
           while (Math.abs(swung) >= step) {
@@ -4378,6 +4454,7 @@
           running = false
           yaw += (Math.random() - 0.5) * 0.1
         }
+        if (thirdPerson?.lockOn) yaw = thirdPersonHeading(pointer, thirdPerson.target)
         // Jump-only mode leaves the ship where it is and takes away the moving
         // camera: the plan and the index still put the visitor in any room, and
         // nothing walks them there.
@@ -4525,19 +4602,27 @@
           delta,
         })
         // Preserve the panorama's horizontal framing on portrait screens.
-        const cameraPullback = authoredCameraDistance * Math.max(1, 1.4 / camera.aspect)
-        placeTourCamera({
-          camera,
-          at: pointer,
-          eye,
-          yaw,
-          pitch,
-          pullback: cameraPullback,
-          impulse: $reducedMotion ? [0, 0] : cameraImpulse,
-          roll:
-            bob.roll +
-            (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
-        })
+        const cameraPullback = thirdPerson
+          ? thirdPerson.distance * Math.max(1, 1.15 / camera.aspect)
+          : authoredCameraDistance * Math.max(1, 1.4 / camera.aspect)
+        const placeCamera = () => {
+          const frame = {
+            camera,
+            at: pointer,
+            eye,
+            yaw,
+            pitch,
+            pullback: cameraPullback,
+            impulse: ($reducedMotion ? [0, 0] : cameraImpulse) as Vec2,
+            roll:
+              bob.roll +
+              (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
+          }
+          if (thirdPerson) placeThirdPersonCamera({ ...frame, thirdPerson, ground })
+          else placeTourCamera(frame)
+        }
+        placeCamera()
+        updateExtraSight(placeCamera)
         {
           nenAura.update(effectiveNen, camera, {
             ground,
@@ -4827,7 +4912,7 @@
         // lying on a table is not going anywhere between two frames. Traced
         // rather than walked — see `whatIsUnder` — and skipped outright where
         // nothing was handed over, which is everywhere but Morena's table.
-        if (onPick && ++sincePick >= 6) {
+        if (!sightExtra && onPick && ++sincePick >= 6) {
           sincePick = 0
           const picked = whatIsUnder(pointerIsHeld() || touch ? RETICLE : cursor)
           if (picked !== aimedExtra) aimedExtra = picked

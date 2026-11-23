@@ -13,6 +13,7 @@
     position: Vec2
     heading: number
     currentSpaceId: string | null
+    marker?: { at: Vec2; label: string }
     decks?: DeckOption[]
     crossings?: Crossing[]
     nameOf?: (entity: Space | { name: string; nameFr: string } | undefined) => string
@@ -30,6 +31,7 @@
     position,
     heading,
     currentSpaceId,
+    marker,
     decks = [],
     crossings = [],
     nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
@@ -71,6 +73,7 @@
     {position}
     {heading}
     {currentSpaceId}
+    {marker}
     {label}
     {crossings}
     {nameOf}

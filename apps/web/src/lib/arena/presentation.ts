@@ -10,8 +10,8 @@ export function arenaFormatGoal(format: ArenaFormat, french: boolean): string {
       : `Take the lead before ${format.timeLimit} seconds expire. Attacks only connect at close range.`
   const plural = format.scoreToWin > 1 ? 's' : ''
   return french
-    ? `Le premier à ${format.scoreToWin} point${plural} gagne. Surveillez la distance en haut de l’écran.`
-    : `First to ${format.scoreToWin} point${plural} wins. Watch the distance at the top of the screen.`
+    ? `Le premier à ${format.scoreToWin} point${plural} gagne.`
+    : `First to ${format.scoreToWin} point${plural} wins.`
 }
 
 export function reactionFor(impact: Impact): ArenaCombatMotion {

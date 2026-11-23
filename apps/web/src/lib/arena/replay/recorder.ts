@@ -46,10 +46,10 @@ export class ArenaRecorder {
     this.doctrine = doctrine
     this.difficulty = difficulty
     this.tickRate = tickRate
-    this.match = structuredClone(match)
-    this.initialState = initialState ? structuredClone(initialState) : undefined
+    this.match = replayClone(match)
+    this.initialState = initialState ? replayClone(initialState) : undefined
     this.tick = initialTick
-    this.commands = structuredClone(initialCommands)
+    this.commands = replayClone(initialCommands)
   }
 
   record(action: ReplayCommand) {
@@ -60,10 +60,10 @@ export class ArenaRecorder {
       previous.action.type === action.type &&
       previous.action.side === action.side
     ) {
-      previous.action = structuredClone(action)
+      previous.action = replayClone(action)
       return
     }
-    this.commands.push({ tick: this.tick, action: structuredClone(action) })
+    this.commands.push({ tick: this.tick, action: replayClone(action) })
   }
 
   advance() {
@@ -75,13 +75,18 @@ export class ArenaRecorder {
       version: ARENA_REPLAY_VERSION,
       tickRate: this.tickRate,
       ticks: this.tick,
-      setup: structuredClone(this.setup),
+      setup: replayClone(this.setup),
       doctrine: this.doctrine,
       difficulty: this.difficulty,
-      match: structuredClone(this.match),
-      ...(this.initialState ? { initialState: structuredClone(this.initialState) } : {}),
-      commands: structuredClone(this.commands),
+      match: replayClone(this.match),
+      ...(this.initialState ? { initialState: replayClone(this.initialState) } : {}),
+      commands: replayClone(this.commands),
       checksum: stateChecksum(state),
     }
   }
+}
+
+/** Replay data is a JSON contract; this also unwraps Svelte's reactive proxies. */
+function replayClone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
 }

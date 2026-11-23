@@ -9,6 +9,8 @@ import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
 import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
 import { shufflePhase, shufflePose } from './fightShuffleStep'
 import { physicalWalkAccent } from './fightLocomotionInertia'
+import { kurapikaDashPoses, KURAPIKA_WALK_STYLE } from './kurapikaLocomotion'
+import { benjaminDashPoses, BENJAMIN_WALK_STYLE } from './benjaminLocomotion'
 
 /**
  * Authored locomotion poses for the short, explosive movements that should not
@@ -118,7 +120,7 @@ const DASH_ACCENTS: Record<FightFamily, FightPose> = {
   },
 }
 
-interface WalkStyle {
+export interface WalkStyle {
   advance: FightPose
   retreat: FightPose
   rhythm: FightPose
@@ -129,12 +131,16 @@ const PERSONAL_WALKS: Partial<Record<FighterId, WalkStyle>> = {
   hisoka: HISOKA_WALK_STYLE,
   feitan: FEITAN_WALK_STYLE,
   hanzo: HANZO_WALK_STYLE,
+  kurapika: KURAPIKA_WALK_STYLE,
+  benjamin: BENJAMIN_WALK_STYLE,
 }
 const PERSONAL_DASHES: Partial<Record<FighterId, (forward: boolean) => FightPose[]>> = {
   chrollo: chrolloDashPoses,
   hisoka: hisokaDashPoses,
   feitan: feitanDashPoses,
   hanzo: hanzoDashPoses,
+  kurapika: kurapikaDashPoses,
+  benjamin: benjaminDashPoses,
 }
 
 const WALK_STYLES: Record<FightFamily, WalkStyle> = {

@@ -27,8 +27,9 @@
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
-  import { impactCallout } from '$lib/fighting/impactCallout'
+  import { resolveImpactCallout } from '$lib/fighting/perception/tacticalCallout'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
   export let victoryEnabled = true
@@ -56,6 +57,7 @@
   export let onBlinkyCommand: (side: FightSide, command: BlinkyCommand) => void = () => {}
   export let onOpponentControl: (key: keyof FightInput, active: boolean) => void = () => {}
   export let detailed = false
+  export let hudMode: FightHudMode = 'omniscient'
   export let showControls = false
   export let training = false
   export let showRecovery = false
@@ -88,7 +90,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} />
+    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} {hudMode} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -120,7 +122,7 @@
               class="impact-flash"
             ></div>{/if}
           <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
-            {impactCallout(visibleState.impact, language)}
+            {resolveImpactCallout({ state: visibleState, language, mode: hudMode })}
           </div>
         {/key}
       {/if}
@@ -132,7 +134,7 @@
         {/key}
       {/if}
       <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
-      {#if minimal}<FightEssentialStatus state={visibleState} {language} />{/if}
+      {#if minimal}<FightEssentialStatus state={visibleState} {language} {hudMode} />{/if}
       <slot />
     {/if}
     {#if state.stageTransition}

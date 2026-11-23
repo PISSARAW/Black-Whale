@@ -45,13 +45,13 @@
   </p>
   <p>
     {language === 'fr'
-      ? 'E maintenu (P2 : C) : se couvrir les oreilles, sans garde ni attaque.'
-      : 'Hold E (P2: C): cover your ears, without guarding or attacking.'}
+      ? `${$bindings.playerLight}+${$bindings.playerHeavy} : projection. ${$bindings.playerHeavy}+${$bindings.playerSpecial} : ultime. Garde + ${$bindings.playerLight}+${$bindings.playerHeavy} (ou ${$bindings.playerBurst}) : Burst. ${$bindings.playerContext} : action contextuelle (plaies, oreilles, objet, arène, parler).`
+      : `${$bindings.playerLight}+${$bindings.playerHeavy}: throw. ${$bindings.playerHeavy}+${$bindings.playerSpecial}: finisher. Guard + ${$bindings.playerLight}+${$bindings.playerHeavy} (or ${$bindings.playerBurst}): Burst. ${$bindings.playerContext}: context action (wounds, ears, object, arena, speak).`}
   </p>
   <p>
     {language === 'fr'
-      ? `${$bindings.playerCall} : interpeller Hanzo ou parler à proximité de Bonolenov. En local, ${$bindings.opponentCall} permet à P2 de répondre ; les deux voix sont requises pour apprendre le modèle de Metamorphosen.`
-      : `${$bindings.playerCall}: call to Hanzo or speak near Bonolenov. In local play, ${$bindings.opponentCall} lets P2 reply; both voices are required to learn a Metamorphosen model.`}
+      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu (maintenu = En) ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. Shu est automatique en Ren avec une arme.'
+      : 'Aura (modifier): alone = Ren; + Down = Zetsu (held = En); + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. Shu is automatic during Ren with a weapon.'}
   </p>
   <FightMoveList {fighterId} {language} />
 </aside>

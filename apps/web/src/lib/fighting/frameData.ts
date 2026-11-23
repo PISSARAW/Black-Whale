@@ -27,12 +27,14 @@ import { feitanUtilityMove } from './feitanPain'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { sleepingBody } from './hanzoProjection'
 import { luiniHurtboxes } from './luiniPassage'
+import { swayUpperShift } from './movementTech'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { directionalFrameData } from './directionalChain'
 import { fightingStyle } from './fightStyles'
 import { moveById } from './movesets'
 import { biscuitReach } from './biscuitForm'
+import { zakuroBloodReachFactor } from './hinrighZakuroLuiniUpgrades'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
 
 export { FIGHT_FPS, FIXED_STEP, ROUND_FRAMES, INPUT_BUFFER_FRAMES } from './fightClock'
@@ -205,7 +207,7 @@ function movesetAttackData(
         : data.startup + data.active + 6,
       box: {
         left: 1.4,
-        right: biscuitReach(fighter, data.reach),
+        right: biscuitReach(fighter, data.reach) * zakuroBloodReachFactor(fighter),
         bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
         top: antiAir ? Math.max(15, data.top) : data.top,
       },
@@ -308,11 +310,12 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
     return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]
   }
   const crouch = fighter.crouching ? 4 : 0
+  const sway = swayUpperShift(fighter)
   return [
     worldBox(fighter, { left: -1.7, right: 1.7, bottom: 0, top: 5.2 - crouch }),
     worldBox(fighter, {
-      left: -2.1,
-      right: 2.1,
+      left: -2.1 - sway,
+      right: 2.1 - sway,
       bottom: 4.8 - crouch,
       top: 12 - crouch,
     }),

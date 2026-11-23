@@ -2,6 +2,7 @@ import { advanceMachiMaterial, sutureWound } from '../machiMaterial'
 import { attackPhase } from '../frameData'
 import { machiStrikeThreadAvailable } from '../machiSpool'
 import { advanceMachiTraps } from '../machiTraps'
+import { troupeBind } from '../machiTroupeBind'
 import {
   advanceMachiThreads,
   machiMoveId,
@@ -17,7 +18,11 @@ export const machiHatsu: FighterHatsu = {
   onImpact: threadImpact,
   onFrame: (state) =>
     advanceMachiMaterial(
-      advanceMachiThreads(advanceMachiTraps(suture(suture(state, 'player'), 'opponent'))),
+      advanceMachiThreads(
+        advanceMachiTraps(
+          troupeBind(troupeBind(suture(suture(state, 'player'), 'opponent'), 'player'), 'opponent'),
+        ),
+      ),
     ),
 }
 

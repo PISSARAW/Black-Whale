@@ -36,7 +36,7 @@ import { performFranklinAim, franklinAimOptions } from './franklinAim'
 import { performBlinkyEvidence, blinkyEvidenceOptions } from './blinkyEvidence'
 import { performIllumiSupplement, conditioningOptions } from './illumiConditioning'
 import { historicalWeaponOptions } from './historicalWeapons'
-import { gumHeartOptions } from './hisokaHeart'
+import { gumHeartOptions, performGumHeart } from './hisokaHeart'
 import { biohazardDeviceOptions } from './biohazardDeviceArsenal'
 import {
   performHalkenburgSoulCommand,
@@ -162,6 +162,8 @@ const COMMAND_HANDLERS: readonly [
   string,
   (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
+  // Shares the `gum` prefix: listed here so the gum network family never swallows it.
+  ['gum-heart', (state, side, command) => performGumHeart({ state, side, command })],
   ['needle-face-remove', performNeedleFaceRemoval],
   ['illumi-needle-mode', performNeedleModeCommand],
   ['illumi-face-', performIllumiFaceCommand],

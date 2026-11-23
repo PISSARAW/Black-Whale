@@ -115,17 +115,18 @@ describe('Phinks — right-arm rotations, then one Ripper Cyclotron punch', () =
     )
   })
 
-  it('cannot move, jump, guard, throw or queue ordinary attacks while winding', () => {
+  // Rotation en mouvement (Dix tours, un poing): the arm keeps turning while Phinks moves
+  // and strikes with ordinary blows; guard stops it and a throw stays refused.
+  it('keeps winding while moving, jumping and striking; guard stops it, throws stay refused', () => {
     const state = charge(1)
-    const held = advance(state, 10, { right: true, jump: true, guard: true })
-    expect(held.player).toMatchObject({
-      x: 40,
-      y: 0,
-      blocking: false,
-      attack: null,
-      bufferedAttack: null,
-    })
-    expect(performAttack(state, 'player', 'light').player.attack).toBeNull()
+    const moved = advance(state, 10, { right: true, jump: true })
+    expect(moved.player.cyclotronWindup).toBeDefined()
+    expect(moved.player.y > 0 || moved.player.x !== state.player.x).toBe(true)
+    const struck = performAttack(state, 'player', 'light')
+    expect(struck.player.attack?.moveId).toBe('phinks:standingLight')
+    expect(advance(struck, 4).player.cyclotronWindup).toBeDefined()
+    const back = state.player.facing === 1 ? { left: true } : { right: true }
+    expect(advance(state, 4, { guard: true, ...back }).player.cyclotronWindup).toBeUndefined()
     expect(performThrow(state, 'player')).toBe(state)
   })
 

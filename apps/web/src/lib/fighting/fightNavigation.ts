@@ -7,6 +7,7 @@ export const FIGHT_SCREENS = [
   'academy',
   'replays',
   'battle',
+  'historical',
 ] as const
 export type FightScreen = 'menu' | (typeof FIGHT_SCREENS)[number]
 

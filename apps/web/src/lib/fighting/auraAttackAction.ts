@@ -9,7 +9,8 @@ import { paperMaterialsReady } from './kallutoMaterials'
 import { blinkyActionAllowed } from './blinkyAction'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { isErigeronAction } from './billSupport'
-import { comboAdmissionBody, comboAuraCost } from './comboAuraCost'
+import { comboAdmissionBody, comboMoveCost } from './comboAuraCost'
+import { recordComboTechnique } from './comboHalfPrice'
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { triggerAttackHatsu } from './attackHatsuTrigger'
 import { padailleMoveAvailable } from './padailleWeapon'
@@ -51,7 +52,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   const state = hatsuSource
     ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId, concealed })
     : options.state
-  const fighter = state[side]
+  const fighter = recordComboTechnique(state, side, moveById(moveId))
   return observeComboMaster({
     ...state,
     [side]: startFighterAttack({
@@ -65,7 +66,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
       concealed,
       hatsuSource,
       auraCost:
-        comboAuraCost(options.state, side, moveId) ??
+        comboMoveCost(options.state, side, moveById(moveId)) ??
         attackAuraCost({
           fighter: original,
           kind,

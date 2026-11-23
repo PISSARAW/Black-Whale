@@ -21,6 +21,14 @@
   import FightRulesSelection from './FightRulesSelection.svelte'
   import FightAcademy from './FightAcademy.svelte'
   import FightReplays from './FightReplays.svelte'
+  import FightHistoricalSetup from './FightHistoricalSetup.svelte'
+  import {
+    duelFormat,
+    historicalEnvironment,
+    historicalSeats,
+  } from '$lib/fighting/heavensDeathMatch/historicalSetup'
+  import { DEATH_MATCH_FORMAT } from '$lib/fighting/heavensDeathMatch/loadout'
+  import type { DeathMatchOptions } from '$lib/fighting/heavensDeathMatch/scenario'
   import './clashLobby.css'
   export let language: 'fr' | 'en'
   export let screen: FightScreen
@@ -56,11 +64,37 @@
   }
   function chooseMode(next: FightMode) {
     onMode(next)
+    onFormat(duelFormat(format))
     navigate('characters')
+  }
+  /** The historical fight: Hisoka and Chrollo, the death-match format, the Tower. */
+  function setHistorical(options: Partial<DeathMatchOptions>) {
+    const next = historicalEnvironment(environment, options)
+    const seats = historicalSeats(next.deathMatch?.chrolloSide ?? 'opponent')
+    onEnvironment(next)
+    onPlayer(seats.player)
+    onOpponent(seats.opponent)
+    onFormat(DEATH_MATCH_FORMAT)
+    onMode('versus-ai')
+  }
+  // Reached by its address too: the screen always installs its own fight.
+  $: if (screen === 'historical' && format !== DEATH_MATCH_FORMAT) setHistorical({})
+  function chooseHistorical() {
+    setHistorical({})
+    navigate('historical')
   }
 </script>
 
-{#if screen === 'characters'}
+{#if screen === 'historical'}
+  <FightHistoricalSetup
+    {language}
+    {player}
+    {opponent}
+    {environment}
+    onOptions={setHistorical}
+    {onLaunch}
+  />
+{:else if screen === 'characters'}
   <FightCharacterSelection
     {language}
     {player}
@@ -117,7 +151,13 @@
     <FightReplays {replays} {language} {...replayActions} expanded />
   </section>
 {:else}
-  <FightMainMenu {language} {player} {opponent} onMode={chooseMode} />
+  <FightMainMenu
+    {language}
+    {player}
+    {opponent}
+    onMode={chooseMode}
+    onHistorical={chooseHistorical}
+  />
 {/if}
 
 <style>

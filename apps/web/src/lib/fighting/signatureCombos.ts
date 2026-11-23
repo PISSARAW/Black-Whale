@@ -1,9 +1,12 @@
+import { SECOND_SIGNATURE_COMBOS } from './signatureCombosSecond'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { CombatFighter } from './combatRoutes'
 import type { FighterId, MoveSlot } from './types'
 import type { SignatureMotionStep } from './signatureMotionSteps'
 import { BOOK_AND_ARMY_SIGNATURES } from './signatureCombosBookArmy'
 import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
+import { SENSES_SIGNATURE_COMBOS } from './signatureCombosSenses'
+import { ARMORY_SIGNATURE_COMBOS } from './signatureCombosArmory'
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -13,11 +16,19 @@ import { BISCUIT_AND_PHINKS_SIGNATURES } from './signatureCombosBiscuitPhinks'
  */
 export type SignatureStep =
   /** `hit: false` marks a technique that moves bodies without striking (recall, rebound). */
-  | { move: MoveSlot; hit?: false }
-  /** `free`: a dash from neutral, not an accélération; `low`: Phinks's low dodge (down held). */
-  | { dash: 'back' | 'forward'; free?: true; low?: true }
+  /** `hits`: contacts the move must land, for a volley (each bullet is one hit of the combo). */
+  | { move: MoveSlot; hit?: false; hits?: number }
+  /**
+   * `through` crosses the other body (signatureCrossing.ts); `free`: a dash from neutral, not
+   * an accélération; `low`: Phinks's low dodge (down held).
+   */
+  | { dash: 'back' | 'forward' | 'through'; free?: true; low?: true }
   | { emperor: true }
   | { command: ArsenalCommand }
+  /** Parallel Future: close the eyes in Zetsu, wait for the vision, open them to diverge. */
+  | { future: 'close' | 'vision' | 'open' }
+  /** The opponent strikes back with this move; the step ends once the player is hurt. */
+  | { riposte: MoveSlot }
   /** The fighter's ranged attack; `hits` is the number of projectiles that must land. */
   | { ranged: true; hits: number }
   /** Biscuit reveals her natural body: a state for the round, not a strike (biscuitForm.ts). */
@@ -49,7 +60,7 @@ const VERDICT_OPENING: readonly SignatureStep[] = [
   { dash: 'forward' },
 ]
 
-export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
+const FIRST_SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   {
     id: 'kurapika:scarlet-verdict',
     fighter: 'kurapika',
@@ -101,6 +112,13 @@ export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   },
   ...BOOK_AND_ARMY_SIGNATURES,
   ...BISCUIT_AND_PHINKS_SIGNATURES,
+  ...SENSES_SIGNATURE_COMBOS,
+  ...ARMORY_SIGNATURE_COMBOS,
+]
+
+export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
+  ...FIRST_SIGNATURE_COMBOS,
+  ...SECOND_SIGNATURE_COMBOS,
 ]
 
 export const signatureCombosFor = (fighter: FighterId) =>
@@ -116,5 +134,25 @@ export function signatureCombo(id: string): SignatureCombo {
 export const signatureHits = (combo: SignatureCombo): (MoveSlot | 'ranged')[] =>
   combo.steps.flatMap((step) => {
     if ('ranged' in step) return Array<'ranged'>(step.hits).fill('ranged')
-    return 'move' in step && step.hit !== false ? [step.move] : []
+    if (!('move' in step) || step.hit === false) return []
+    return Array<MoveSlot>(step.hits ?? 1).fill(step.move)
   })
+
+/**
+ * Expected combo counter of each striking step. A riposte, or closing the eyes for a
+ * vision, is a deliberate break: the next strike opens a new combo.
+ */
+/** Contacts a move step must land: none for a technique that only moves bodies. */
+function moveHits(step: SignatureStep): number {
+  if (!('move' in step) || step.hit === false) return 0
+  return step.hits ?? 1
+}
+
+export function signatureComboCounts(combo: SignatureCombo): number[] {
+  let count = 0
+  return combo.steps.flatMap((step) => {
+    if ('riposte' in step || ('future' in step && step.future === 'close')) count = 0
+    const hits = 'ranged' in step ? step.hits : moveHits(step)
+    return Array.from({ length: hits }, () => ++count)
+  })
+}

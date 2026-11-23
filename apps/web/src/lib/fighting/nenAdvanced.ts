@@ -7,6 +7,7 @@ import { transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
 import type { ArcadeFighter, FightInput, FightNenZone } from './types'
 import { shuSupportAvailable } from './nenApplications'
 import { requestNenTransfer } from './nenTransfer'
+import { isTheta, THETA_IN_DRAIN } from './martialSpecialists'
 
 /** Duel distances/maintenance costs are tuning, not claims about manga measurements. */
 /** Legacy arcade constant, never a character range or proof of learned En. */
@@ -55,12 +56,28 @@ function action(fighter: ArcadeFighter, value: NenTechniqueAction<FightNenZone>)
   return { ...fighter, nen: transitionNen(fighter.nen, value).state }
 }
 
+function hasShuWeapon(fighter: ArcadeFighter): boolean {
+  if (fighter.weaponsConfiscated && !conjuredWeapon(fighter)) return false
+  return Boolean(WEAPONS[fighter.id] || fighter.historicalWeapon)
+}
+
+function holdingBack(fighter: ArcadeFighter, input: FightInput): boolean {
+  return fighter.facing === 1 ? input.left && !input.right : input.right && !input.left
+}
+
+function autoShuActive(fighter: ArcadeFighter, input: FightInput): boolean {
+  if (!hasShuWeapon(fighter)) return false
+  if (fighter.nen.mode !== 'ren' || fighter.nen.ken || fighter.nen.en) return false
+  if (input.gyo || selectedNenZone(input)) return false
+  return true
+}
+
 /** Held overlays never survive releasing their input, Zetsu, exhaustion or an impact. */
 export function applyAdvancedNen(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   fighter = clearBodyGyo(fighter)
   const available = advancedNenAvailable(fighter)
   const en = available && Boolean(input.en) && canMaintainEn(fighter, input)
-  const shu = available && Boolean(input.shu) && shuSupportAvailable(fighter)
+  const shu = available && Boolean(input.shu || autoShuActive(fighter, input)) && shuSupportAvailable(fighter)
   if (fighter.nen.ko) {
     const overlaid = action(fighter, { type: 'SHU', objectId: shuObject(fighter), on: shu })
     return applySightInputs(overlaid, input, available)
@@ -88,10 +105,14 @@ function applySightInputs(
   available: boolean,
 ): ArcadeFighter {
   let next = applyOcularInput(fighter, input, available)
-  if (input.conceal || fighter.nen.in)
+  const directionalIn = Boolean(
+    input.aura && !input.guard && !input.down && !input.jump && holdingBack(fighter, input),
+  )
+  const wantIn = Boolean(input.conceal || directionalIn || fighter.attack?.concealed)
+  if (wantIn || fighter.nen.in)
     next = action(next, {
       type: 'IN',
-      on: available && Boolean(input.conceal || fighter.attack?.concealed),
+      on: available && wantIn,
     })
   return next
 }
@@ -118,9 +139,10 @@ export function canRedistributeAura(fighter: ArcadeFighter): boolean {
 }
 
 export function advancedAuraDrain(fighter: ArcadeFighter): number {
+  const inDrain = isTheta(fighter) ? THETA_IN_DRAIN : IN_DRAIN
   return (
     Number(Boolean(activeEnRadius(fighter))) * EN_DRAIN +
     Number(fighter.nen.shu.length > 0) * SHU_DRAIN +
-    Number(fighter.nen.in) * IN_DRAIN
+    Number(fighter.nen.in) * inDrain
   )
 }

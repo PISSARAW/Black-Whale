@@ -44,6 +44,9 @@ les refus de relais et la conservation du terrain physique entre combattants.
 L’[étape 9](./STEP9.md) enrichit les dialogues, fins et tenues locales,
 avec les titres des parcours solo équipables dans le profil.
 
+Le [combat historique Hisoka contre Chrollo](./heavensDeathMatch/README.md) pose le
+format à mort, le livre préparé et la machine d’état des chapitres 351 à 357.
+
 ## Capacités d’arène
 
 L’option « Arène interactive » ajoute des couverts physiques destructibles.

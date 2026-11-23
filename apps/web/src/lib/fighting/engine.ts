@@ -1,4 +1,5 @@
 import { nativeRecoveryCounter } from './recoveryCounterAction'
+import { stepDeathMatchFight } from './heavensDeathMatch/fightBridge'
 import { movesetFor } from './movesets'
 import { nativeNenCombo } from './nativeNenCombo'
 import { reservingAura } from './combatIntentPolicy'
@@ -67,6 +68,11 @@ import { applyRivalryRules } from './rivalryRules'
 import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
+import { resolveContextInput } from './contextInput'
+import { applyOnContext, canSwearOn } from './onTechnique'
+import { performChrolloBookAction, pickChrolloFlipSlot } from './chrolloBookAction'
+import { CHROLLO_STEAL } from './chrolloBook'
+import { revealBookSlot } from './chrolloDeck'
 import { resolveContacts, settleBodies } from './duelStep/contacts'
 import { closeFrame, openFrame } from './duelStep/frame'
 import { resolveKameoFrameContacts, stepKameoFrame } from './kameos/frame'
@@ -82,6 +88,7 @@ import type {
 
 export { TOWER_WIN_SCORE }
 export { nextFightRound as nextRound }
+export { releaseTsk17, canReleaseTsk17 } from './tsk17'
 
 export function createFight(...args: Parameters<typeof createFightState>): FightState {
   return applyRivalryRules(createFightState(...args))
@@ -144,7 +151,7 @@ export function tickFight(
       ),
       frameAccumulator: accumulator,
     }
-    next = { ...next, previousPositions }
+    next = stepDeathMatchFight({ ...next, previousPositions }, performAttack)
     if (next.phase === 'finished') {
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
@@ -165,7 +172,10 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
-  const inputs = { player: input, opponent: opponentInput }
+  const inputs = {
+    player: resolveContextInput(state, 'player', input),
+    opponent: opponentInput ? resolveContextInput(state, 'opponent', opponentInput) : undefined,
+  }
   const opened = openFrame(state, inputs, performAuraAttack)
   if (opened.pending) return opened.state
   const start = opened.state
@@ -201,7 +211,54 @@ export function performMove(options: PerformMoveOptions): FightState {
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
-  return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+  if (options.state[options.side].chrolloBook?.isFlipping) {
+    const slot = options.action === 'light' ? 0 : options.action === 'heavy' ? 1 : null
+    if (slot !== null) return pickChrolloFlipSlot(options.state, options.side, slot) ?? options.state
+  }
+  const chrollo = options.state[options.side]
+  if (
+    options.action === 'special' &&
+    chrollo.id === 'chrollo' &&
+    chrollo.chrolloBook?.stolenPage &&
+    options.input &&
+    (chrollo.facing === 1 ? options.input.right && !options.input.left : options.input.left && !options.input.right) &&
+    !options.input.down
+  ) {
+    const flipped = performChrolloBookAction({
+      state: options.state,
+      side: options.side,
+      kind: 'special',
+      moveId: CHROLLO_STEAL,
+    })
+    if (flipped) return flipped
+  }
+  if (
+    options.action === 'special' &&
+    options.input?.aura &&
+    canSwearOn(options.state[options.side])
+  ) {
+    const sworn = applyOnContext(options.state[options.side], { ...options.input, hatsu: true })
+    if (sworn) return { ...options.state, [options.side]: sworn }
+  }
+  const executed = resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+  return revealUsedChrolloSlot(executed, options.side, options.action)
+}
+
+function revealUsedChrolloSlot(
+  state: FightState,
+  side: FightSide,
+  action: MoveAction,
+): FightState {
+  const book = state[side].chrolloBook
+  if (!book || (action !== 'special' && action !== 'finisher')) return state
+  const slot =
+    action === 'finisher'
+      ? (book.bookmarkSlot ?? null)
+      : book.open
+        ? (book.openSlot ?? null)
+        : (book.bookmarkSlot ?? null)
+  const revealed = revealBookSlot(book, slot)
+  return revealed === book ? state : { ...state, [side]: { ...state[side], chrolloBook: revealed } }
 }
 
 function executeFightMove(options: PerformMoveOptions): FightState {
@@ -286,13 +343,20 @@ function executeUnboundAuraAttack(options: AuraAttackOptions): FightState {
   return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
 }
 
-export const opponentAttack = (state: FightState): FightState =>
-  hisokaInterceptionAi(state) ??
-  (projectileDefenceHolds(state)
-    ? state
-    : (priorityBusyAi(state, performAuraAttack) ??
-      maryAiAction(state, performAuraAttack) ??
-      intentionalOpponentAttack(state)))
+export const opponentAttack = (state: FightState): FightState => {
+  // The historical hall has its own frame-by-frame plans for Chrollo and CPU Hisoka.
+  // Letting the generic duel AI run too makes it spend frames on Ken and blocks the
+  // canonical feints, retreats and surprise strikes executed after the duel frame.
+  if (state.deathMatch) return state
+  return (
+    hisokaInterceptionAi(state) ??
+    (projectileDefenceHolds(state)
+      ? state
+      : (priorityBusyAi(state, performAuraAttack) ??
+        maryAiAction(state, performAuraAttack) ??
+        intentionalOpponentAttack(state)))
+  )
+}
 
 function intentionalOpponentAttack(state: FightState): FightState {
   const counter = nativeRecoveryCounter(state, performAuraAttack)

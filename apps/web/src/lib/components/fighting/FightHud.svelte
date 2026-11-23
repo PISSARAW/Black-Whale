@@ -5,8 +5,14 @@
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import { bodyMemoryLabel } from '$lib/fighting/bodyMemory'
   import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
+  import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
+  import type { FightHudMode } from '$lib/fighting/perception/hudMode'
+  import { opaqueHudSides, rivalSide } from '$lib/fighting/perception/hudLayout'
+  import { resolveOpponentHudView } from '$lib/fighting/perception/opponentHudView'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
+  import FightLivingPortrait from './FightLivingPortrait.svelte'
+  import FightOpponentDossier from './FightOpponentDossier.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
@@ -15,19 +21,44 @@
   export let state: FightState
   export let language: 'fr' | 'en'
   export let detailed = false
+  export let hudMode: FightHudMode = 'omniscient'
 
   const sides: FightSide[] = ['player', 'opponent']
   $: format = fightFormat(state.formatId)
+  /** Training and the death match have no clock: the bout ends otherwise. */
+  $: untimed = state.mode === 'training' || format.timeLimit === false
+  $: opaqueSides = opaqueHudSides({ state, mode: hudMode })
+  /** Each side is seen through the eyes of its rival (double-opaque in local versus). */
+  $: views = {
+    player: resolveOpponentHudView({ state, observerSide: 'opponent', mode: hudMode }),
+    opponent: resolveOpponentHudView({ state, observerSide: 'player', mode: hudMode }),
+  }
 </script>
 
-<div class="hud">
+<div class="hud" data-hud-mode={hudMode} data-opaque-sides={opaqueSides.join(' ')}>
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
-    {@const memory = bodyMemoryLabel(fighter, language)}
+    {@const useLivingPortrait = opaqueSides.includes(side)}
+    {@const sideView = views[side]}
+    {@const texturePov = textureSurpriseView(fighter, state[rivalSide(side)], mirrored ? 'opponent' : 'owner')}
+    {@const memory = texturePov.maskBodyMemory ? null : bodyMemoryLabel(fighter, language)}
     {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
-      {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
+      {#key fighter.id}
+        {#if useLivingPortrait}
+          <FightLivingPortrait
+            id={fighter.id}
+            mood={sideView.health.portraitMood}
+            textureMasked={sideView.health.textureMasked}
+            auraSeeping={sideView.health.auraSeeping}
+            adrenalineAlert={sideView.health.adrenalineAlert}
+            blinded={sideView.blinded}
+          />
+        {:else}
+          <FightIdentityPortrait id={fighter.id} />
+        {/if}
+      {/key}
       <div class="fighter-gauges">
         <div class="meter-label">
           <strong>{fighterDefinition(fighter.id).name}</strong>
@@ -43,61 +74,74 @@
             >
           </span>
         </div>
-        <FightHealth {fighter} {language} {mirrored} {detailed} />
-        {#if !state.spectatorView}<div
-            class="aura"
-            class:hidden={!auraKnown}
-            role="meter"
-            aria-label={auraKnown
-              ? 'Aura'
-              : language === 'fr'
-                ? 'Aura dissimulée'
-                : 'Concealed aura'}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow={auraKnown ? fighter.aura : undefined}
-          >
-            <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
-          </div>{/if}
-        <div class="nen-status">
-          <span
-            >{state.spectatorView
-              ? language === 'fr'
-                ? 'Vue publique'
-                : 'Public view'
-              : !mirrored
-                ? nenStatus(fighter).join(' · ')
-                : auraKnown
-                  ? auraDistribution(fighter)
-                  : language === 'fr'
-                    ? 'Nen masqué'
-                    : 'Nen hidden'}</span
-          >
-          {#if !state.spectatorView}<b
-              >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
-            >{/if}
-        </div>
-        {#if memory}<div class="body-memory">{memory}</div>{/if}
-        {#if !state.spectatorView}<div
-            class:spent={state.burstAvailable?.[side] === false}
-            class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
-            class="burst-status"
-          >
-            {state.burstAvailable?.[side] === false
-              ? (fighter.burstZetsuFrames ?? 0) > 0
-                ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
-                : 'BURST · SPENT'
-              : 'BURST · READY'}
-          </div>{/if}
-        {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
-        <FightComboMaster {state} {side} {language} compact />
-        <FightKameoBadge {state} {side} {language} />
+        {#if useLivingPortrait}
+          <FightOpponentDossier {state} {side} view={sideView} {language} />
+        {:else}
+          <FightHealth
+            {fighter}
+            {language}
+            {mirrored}
+            {detailed}
+            displayedHealth={texturePov.displayedHp}
+            ghostHealth={texturePov.showGhostHp ? texturePov.realHp : undefined}
+            textureMasked={texturePov.maskActive}
+            auraSeeping={texturePov.auraSeeping}
+          />
+          {#if !state.spectatorView}<div
+              class="aura"
+              class:hidden={!auraKnown}
+              role="meter"
+              aria-label={auraKnown
+                ? 'Aura'
+                : language === 'fr'
+                  ? 'Aura dissimulée'
+                  : 'Concealed aura'}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={auraKnown ? fighter.aura : undefined}
+            >
+              <span style={`width:${auraKnown ? fighter.aura : 100}%`}></span>
+            </div>{/if}
+          <div class="nen-status">
+            <span
+              >{state.spectatorView
+                ? language === 'fr'
+                  ? 'Vue publique'
+                  : 'Public view'
+                : !mirrored
+                  ? nenStatus(fighter).join(' · ')
+                  : auraKnown
+                    ? auraDistribution(fighter)
+                    : language === 'fr'
+                      ? 'Nen masqué'
+                      : 'Nen hidden'}</span
+            >
+            {#if !state.spectatorView}<b
+                >{auraKnown ? Math.floor(fighter.aura) : '?'}<small> / 100</small></b
+              >{/if}
+          </div>
+          {#if memory}<div class="body-memory">{memory}</div>{/if}
+          {#if !state.spectatorView}<div
+              class:spent={state.burstAvailable?.[side] === false}
+              class:zetsu={(fighter.burstZetsuFrames ?? 0) > 0}
+              class="burst-status"
+            >
+              {state.burstAvailable?.[side] === false
+                ? (fighter.burstZetsuFrames ?? 0) > 0
+                  ? `BURST · ZETSU ${((fighter.burstZetsuFrames ?? 0) / 60).toFixed(1)}s`
+                  : 'BURST · SPENT'
+                : 'BURST · READY'}
+            </div>{/if}
+          {#if !state.spectatorView}<FightAccelHeat {fighter} {language} {mirrored} />{/if}
+          <FightComboMaster {state} {side} {language} compact />
+          <FightKameoBadge {state} {side} {language} />
+        {/if}
       </div>
     </div>
   {/each}
   <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>
-    <div class="timer" class:urgent={state.mode !== 'training' && state.time <= 10}>
-      {state.mode === 'training' ? '∞' : Math.ceil(state.time)}
+    <div class="timer" class:urgent={untimed === false && state.time <= 10}>
+      {untimed ? '∞' : Math.ceil(state.time)}
     </div>
     {#if format.hitTarget !== null}
       <div class="point-score" aria-label="Points">

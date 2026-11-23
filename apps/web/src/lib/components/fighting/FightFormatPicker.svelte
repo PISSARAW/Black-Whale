@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { FIGHT_FORMATS, type FightFormatId } from '$lib/fighting/formats'
+  import { PICKABLE_FIGHT_FORMATS, type FightFormatId } from '$lib/fighting/formats'
   import { HEALTH_PER_BAR } from '$lib/fighting/health'
 
   export let selected: FightFormatId
@@ -10,7 +10,7 @@
 <section class="format-picker" aria-label={language === 'fr' ? 'Type de combat' : 'Fight type'}>
   <p class="format-label"><span>04</span>{language === 'fr' ? 'Type de combat' : 'Fight type'}</p>
   <div class="format-grid">
-    {#each FIGHT_FORMATS as format (format.id)}
+    {#each PICKABLE_FIGHT_FORMATS as format (format.id)}
       <button
         type="button"
         class:selected={selected === format.id}

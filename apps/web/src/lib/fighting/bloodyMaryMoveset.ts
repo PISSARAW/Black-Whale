@@ -30,11 +30,11 @@ const NORMALS: Record<string, string> = {
   lowLight: 'Coup bas|Low strike',
   lowHeavy: 'Balayage|Sweep',
   airLight: 'Direct aérien|Air straight',
-  airHeavy: 'Talon descendant|Descending heel',
-  forwardLight: 'Direct en avançant|Advancing straight',
-  forwardHeavy: 'Coup d’épaule|Shoulder strike',
-  backHeavy: 'Revers|Backfist',
-  throw: 'Projection|Throw',
+  airHeavy: 'Aiguille sanguine|Blood Needle',
+  forwardLight: 'Gouttes éclaireuses|Scouting Drops',
+  forwardHeavy: 'Fil rouge|Red Thread',
+  backHeavy: 'Reflux|Backflow',
+  throw: 'Bloody Mary|Bloody Mary',
 }
 
 export function tuneZakuroMoveset(base: FighterMoveset): FighterMoveset {

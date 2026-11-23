@@ -1,5 +1,8 @@
 import { createFightingNen } from './nen'
 import { gyoSight } from './nenPerception'
+import { musseCancelsIn } from './musseWindowUpgrades'
+import { enTargetInside } from './nenPillars'
+import { kallutoDollRevealsOpponent } from './shizukuHanzoKallutoUpgrades'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Private snapshots use a sentinel rather than leaking the authoritative reserve. */
@@ -45,5 +48,13 @@ export function auraInformationKnown(
 ): boolean {
   if (observerSide === sourceSide) return true
   const source = state[sourceSide]
+  if (
+    (source.sonarRevealFrames ?? 0) > 0 ||
+    (source.zakuroRevealedFrames ?? 0) > 0 ||
+    musseCancelsIn(state, sourceSide) ||
+    kallutoDollRevealsOpponent(state, observerSide) ||
+    enTargetInside(state, observerSide)
+  )
+    return true
   return source.aura !== CONCEALED_AURA && !nenInformationConcealed(source, state[observerSide])
 }

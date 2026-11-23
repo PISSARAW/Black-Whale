@@ -16,7 +16,7 @@ export interface ActiveRivalryRule {
   descriptionEn: string
 }
 
-const HEAVENS_ARENA_PAGES: readonly ChrolloPage[] = [
+export const HEAVENS_ARENA_PAGES: readonly ChrolloPage[] = [
   'sun-and-moon',
   'black-voice',
   'gallery-fake',

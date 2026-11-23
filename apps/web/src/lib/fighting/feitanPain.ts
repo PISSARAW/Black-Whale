@@ -1,6 +1,7 @@
 import { chainAbilitySealed } from './kurapika'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
+import { feitanBodyMemoryChargeFactor } from './feitanTerebellumUpgrades'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export interface RisingSun {
@@ -83,11 +84,12 @@ function recordInjury(before: ArcadeFighter, after: ArcadeFighter): ArcadeFighte
   const damage = Math.max(0, before.health - after.health)
   if (damage === 0) return after
   const pain = after.hatsuEffects.painPacker ?? createPainPacker()
+  const charged = damage * feitanBodyMemoryChargeFactor(after)
   return {
     ...after,
     hatsuEffects: {
       ...after.hatsuEffects,
-      painPacker: { ...pain, injuries: Math.min(100, pain.injuries + damage) },
+      painPacker: { ...pain, injuries: Math.min(100, pain.injuries + charged) },
     },
   }
 }

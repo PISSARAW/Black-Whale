@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { SIGNATURE_COMBOS, signatureCombo, signatureHits } from './signatureCombos'
+import {
+  SIGNATURE_COMBOS,
+  signatureCombo,
+  signatureComboCounts,
+  signatureHits,
+} from './signatureCombos'
 import { createSignatureFight, playSignatureCombo } from './signatureComboRunner'
 import { dashCancel } from './dashCancel'
 import { ACCEL_HEAT_MAX } from './accelCancel'
@@ -18,9 +23,7 @@ describe('signature combos are true combos through real commands', () => {
         expect(run.contacts.map((hit) => hit.move)).toEqual(
           signatureHits(combo).map((slot) => `${combo.fighter}:${slot}`),
         )
-        expect(run.contacts.map((hit) => hit.combo)).toEqual(
-          run.contacts.map((_, index) => index + 1),
-        )
+        expect(run.contacts.map((hit) => hit.combo)).toEqual(signatureComboCounts(combo))
         expect(run.contacts.some((hit) => hit.blocked)).toBe(false)
       })
 })

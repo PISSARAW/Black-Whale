@@ -44,6 +44,17 @@ export interface FighterMove {
   linkInto?: readonly string[]
 }
 
+export type MoveFollowUpInput = 'light' | 'heavy' | 'special'
+export type MoveFollowUpCondition = 'on-hit' | 'on-block' | 'airborne' | 'crossed' | 'counter'
+
+export interface MoveFollowUp {
+  id: string
+  sourceMoveId: string
+  input: MoveFollowUpInput
+  condition: MoveFollowUpCondition
+  move: FighterMove
+}
+
 export interface FighterMoveset {
   fighterId: FighterId
   mechanicFr: string
@@ -51,5 +62,6 @@ export interface FighterMoveset {
   finisherConditionFr: string
   finisherConditionEn: string
   moves: readonly FighterMove[]
+  followUps?: readonly MoveFollowUp[]
   combos: readonly (readonly string[])[]
 }

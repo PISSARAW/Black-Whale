@@ -3,14 +3,18 @@
   import { finisherReady } from '$lib/fighting/movesets'
   import { visibleCommandFeedback } from '$lib/fighting/commandFeedback'
   import { commandFeedbackText } from '$lib/fighting/commandFeedbackText'
+  import type { FightHudMode } from '$lib/fighting/perception/hudMode'
+  import { activeAnalystCue } from '$lib/fighting/perception/analystCue'
   import type { FightState } from '$lib/fighting/types'
   export let state: FightState
   export let language: 'fr' | 'en'
+  export let hudMode: FightHudMode = 'omniscient'
   $: special = fightSpecialPresentation(state, language)
   $: ultimate = finisherReady(state, 'player')
   $: feedback = visibleCommandFeedback(state, 'player')
   $: turns = state.player.hatsuEffects.cyclotronTurns
   $: pain = state.player.hatsuEffects.painPacker
+  $: analyst = hudMode === 'tactical' ? activeAnalystCue(state, 'player', language) : null
 </script>
 
 {#if state.phase === 'fighting'}
@@ -30,6 +34,10 @@
     {#if pain && pain.injuries > 0 && !pain.sun}<span
         >{language === 'fr' ? 'Douleur' : 'Pain'} · {Math.round(pain.injuries)}</span
       >{/if}
+    {#if state.player.tskPoisoned}<span class="poisoned"
+        >TSK-17 · {language === 'fr' ? 'Empoisonné' : 'Poisoned'}</span
+      >{/if}
+    {#if analyst}<span class="analyst-cue" data-analyst={analyst.id}>{analyst.label}</span>{/if}
   </div>
   {#if feedback && feedback.outcome === 'refused'}<p class="battle-command-toast" role="status">
       {commandFeedbackText(feedback, language)}
@@ -63,6 +71,10 @@
   .essential-status .super-ready {
     color: #ffc095;
     border-color: #ff864b90;
+  }
+  .essential-status .analyst-cue {
+    color: #9be7ff;
+    border-color: #62c4e890;
   }
   b {
     margin-left: 0.3rem;

@@ -56,11 +56,13 @@ export function stopParallelFuture(state: FightState, keepField = false): FightS
     player: {
       ...state.player,
       parallelEyesClosed: false,
+      futureDiverging: undefined,
       futureIllusionActive: keepField && state.player.futureIllusionActive,
     },
     opponent: {
       ...state.opponent,
       parallelEyesClosed: false,
+      futureDiverging: undefined,
       futureIllusionActive: keepField && state.opponent.futureIllusionActive,
     },
   }
@@ -72,7 +74,7 @@ export function beginFutureDivergence(state: FightState, side: FightSide): Fight
   const field = startFutureField(state, side)
   return startFuturePerception({
     ...field,
-    [side]: { ...field[side], parallelEyesClosed: false },
+    [side]: { ...field[side], parallelEyesClosed: false, futureDiverging: true },
     parallelFuture: { ...future, phase: 'diverging', cursor: 0 },
   })
 }

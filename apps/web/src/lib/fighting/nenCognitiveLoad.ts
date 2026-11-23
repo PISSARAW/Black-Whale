@@ -76,6 +76,26 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
   if (fighter.hanzoProjection) add('hanzo-projection', 'directed', 26)
   if (fighter.melodyPerformance) add('melody-performance', 'directed', 24)
   if (fighter.machiSuture) add('machi-suture', 'directed', 22)
+  if (fighter.hatsuEffects.painPacker?.sun) add('rising-sun', 'maintained', 16)
+  if (
+    fighter.musseOwlActive ||
+    fighter.secretWindow ||
+    (state.musseOwl?.active && state.musseOwl.owner === side)
+  ) {
+    add('secret-window', 'maintained', 8)
+  }
+  if ((state.kallutoDoll?.active && state.kallutoDoll.owner === side) || fighter.paperDoll) {
+    add('kalluto-doll', 'maintained', 8)
+  }
+  if (state.zakuroBloodDrops?.owner === side || fighter.bloodyMary?.drops.length) {
+    add('zakuro-drops', 'directed', 10)
+  }
+  if (state.hinrighBioPigeon?.active && state.hinrighBioPigeon.owner === side) {
+    add('biohazard-pigeon', 'maintained', 8)
+  }
+  if (state.voconteDoors?.networks[side]?.active) {
+    add('voconte-doors', 'maintained', 8)
+  }
   if (fighter.attack?.hatsuSource) {
     const unfamiliar = fighter.attack.hatsuSource !== (fighter.nenOwner ?? fighter.id)
     add('active-hatsu', 'directed', unfamiliar ? 16 : 12)

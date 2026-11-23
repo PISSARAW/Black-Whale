@@ -1,6 +1,14 @@
 import { fightingStyle } from './fightStyles'
 import { fighterNenTraining } from './nenMastery'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
+import { hasFastMartialTransfer } from './martialSpecialists'
+import { seiyakuSpeedActive } from './seiyaku'
+import { GEL_VENOM_TRANSFER_PENALTY } from './zodiacAndHeirUpgrades'
+import {
+  HALKENBURG_GUARD_TRANSFER_FRAMES,
+  JUPITER_TRANSFER_PENALTY,
+} from './halkenburgBonolenovUpgrades'
+import { RIHAN_TACTICAL_TRANSFER_FRAMES } from './matchupValves'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -20,16 +28,47 @@ declare module './types' {
 }
 const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
-export function nenTransferFrames(fighter: ArcadeFighter): number {
-  // Biscuit explicitly teaches these transfers. Other rates are style-based duel tuning, not manga ranks.
+function baseTransferFrames(fighter: ArcadeFighter): number {
+  // Layer 1: Hard body override (Halkenburg anonymous guard swap)
+  if ((fighter.halkenburgSwappedFrames ?? 0) > 0 || fighter.hatsuEffects.possessedFrames > 0)
+    return HALKENBURG_GUARD_TRANSFER_FRAMES
+  // Layer 2: Posture / vow / owl reflex override (1f) or tactical / specialist mastery (2f)
+  if (
+    fighter.musseOwlActive ||
+    Boolean(fighter.secretWindow) ||
+    fighter.enReflexActive ||
+    seiyakuSpeedActive(fighter)
+  )
+    return 1
+  if (
+    fighter.rihanTacticalRead ||
+    (fighter.nenOwner ?? fighter.id) === 'biscuit' ||
+    hasFastMartialTransfer(fighter)
+  ) {
+    return RIHAN_TACTICAL_TRANSFER_FRAMES
+  }
   const trained = fighterNenTraining(fighter, 'enhancer').level
-  const base =
-    (fighter.nenOwner ?? fighter.id) === 'biscuit'
-      ? 2
-      : Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
+  return Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
+}
+
+/**
+ * Deterministic 4-layer transfer pipeline:
+ * 1. Hard body override (Halkenburg 6f)
+ * 2. Posture/mastery base (En/Seiyaku/Owl 1f, Rihan/Biscuit/Specialist 2f, Style 3..6f)
+ * 3. Internal cognitive fatigue multiplier (1f reflex transcends fatigue below critical 85% overload)
+ * 4. Additive external debuffs (Gel neurotoxic venom +2f, Bonolenov Jupiter acoustic stun +2f)
+ */
+export function nenTransferFrames(fighter: ArcadeFighter): number {
+  const base = baseTransferFrames(fighter)
   const fatigue = nenMentalFatigueRatio(fighter)
-  const slowdown = fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
-  return Math.max(2, Math.round(base * slowdown))
+  const transcendsFatigue = base === 1 && fatigue < 0.85
+  const slowdown =
+    transcendsFatigue || fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
+  const core =
+    base === 1 ? (transcendsFatigue ? 1 : 2) : Math.max(2, Math.round(base * slowdown))
+  const venom = (fighter.gelVenomFrames ?? 0) > 0 ? GEL_VENOM_TRANSFER_PENALTY : 0
+  const jupiter = (fighter.jupiterAcousticFrames ?? 0) > 0 ? JUPITER_TRANSFER_PENALTY : 0
+  return core + venom + jupiter
 }
 
 export function currentAuraShares(fighter: ArcadeFighter): Shares | undefined {

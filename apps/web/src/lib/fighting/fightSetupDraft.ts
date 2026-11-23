@@ -1,5 +1,5 @@
 import { FIGHTING_ROSTER } from './roster'
-import { FIGHT_FORMATS, DEFAULT_FIGHT_FORMAT, type FightFormatId } from './formats'
+import { PICKABLE_FIGHT_FORMATS, DEFAULT_FIGHT_FORMAT, type FightFormatId } from './formats'
 import { FIGHT_STAGES } from './stages'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import type { FighterId, FightMode } from './types'
@@ -31,7 +31,8 @@ function restoreDraft(value: Record<string, unknown>): FightSetupDraft {
   const player = FIGHTING_ROSTER.find((entry) => entry.id === value.player)?.id ?? fallback.player
   const opponent =
     FIGHTING_ROSTER.find((entry) => entry.id === value.opponent)?.id ?? fallback.opponent
-  const format = FIGHT_FORMATS.find((entry) => entry.id === value.format)?.id ?? fallback.format
+  const format =
+    PICKABLE_FIGHT_FORMATS.find((entry) => entry.id === value.format)?.id ?? fallback.format
   const mode =
     (['versus-ai', 'versus-local', 'training'] as const).find((entry) => entry === value.mode) ??
     fallback.mode

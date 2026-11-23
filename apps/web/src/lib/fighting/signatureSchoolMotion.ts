@@ -1,4 +1,5 @@
 import { packReplayInput } from './fightReplayInput'
+import { dashWindowOpen } from './dashCancel'
 import type { ReplayCommand } from './fightReplayTypes'
 import type { SignatureStep } from './signatureCombos'
 import { isMotionStep, motionStepDone, motionStepFrame } from './signatureMotionSteps'
@@ -9,7 +10,7 @@ import { EMPTY_INPUT, type FightInput, type FightState } from './types'
  * wind-up and turns, jump and landing, and dashes from neutral (back dash, low dodge). They are
  * judged on the same simulated facts as signatureMotionSteps.ts.
  */
-type Dash = Extract<SignatureStep, { dash: 'back' | 'forward' }>
+type Dash = Extract<SignatureStep, { dash: unknown }>
 
 /** Whether this step is done on this frame; null for the steps signatureSchool.ts judges. */
 export function motionLessonDone(step: SignatureStep, state: FightState): boolean | null {
@@ -23,7 +24,7 @@ export function motionLessonDone(step: SignatureStep, state: FightState): boolea
 function freeDashing(state: FightState, step: Dash): boolean {
   const dash = state.player.motion?.dash
   if (!dash || dash.accel || (step.low && !state.player.crouching)) return false
-  return (dash.direction === state.player.facing) === (step.dash === 'forward')
+  return (dash.direction === state.player.facing) === (step.dash !== 'back')
 }
 
 const SPECIAL: ReplayCommand = {
@@ -58,5 +59,5 @@ export function motionDemoInput(step: SignatureStep, state: FightState): FightIn
 /** A dash from neutral waits for a free body; an accélération for a confirmed hit. */
 export function dashTapReady(step: Dash, state: FightState): boolean {
   if (step.free) return !state.player.attack && !state.player.motion?.dash
-  return Boolean(state.player.attack?.confirmedHit) && state.hitstop === 0
+  return dashWindowOpen(state.player) && state.hitstop === 0
 }

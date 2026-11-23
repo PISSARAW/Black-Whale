@@ -3,6 +3,7 @@ import { moveById, moveForSlot } from './movesets'
 import { rangedAuraCost } from './projectiles'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
 import { SUPER_THROW_COST } from './superThrow'
+import { seiyakuHatsuCostFactor } from './seiyaku'
 import type { ArcadeFighter, AttackKind } from './types'
 
 export const CONCEALED_AURA_SURCHARGE = 12
@@ -23,7 +24,8 @@ export function attackAuraCost(options: AttackCostOptions): number {
   const copied = copiedMove(options)
   const move = moveById(moveId)
   const base = copied?.auraCost ?? move?.auraCost ?? legacyCost(fighter, kind)
-  return base + (concealed ? CONCEALED_AURA_SURCHARGE : 0)
+  const scaled = kind === 'special' ? Math.round(base * seiyakuHatsuCostFactor(fighter)) : base
+  return scaled + (concealed ? CONCEALED_AURA_SURCHARGE : 0)
 }
 
 function copiedMove(options: AttackCostOptions) {

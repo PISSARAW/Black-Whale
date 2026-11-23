@@ -15,17 +15,27 @@ function zoneFor(input: FightInput): FightNenZone | null {
   if (input.focusHands) return 'hands'
   return input.focusFeet ? 'feet' : null
 }
-function requestedZone(input: FightInput): FightNenZone | null {
-  return input.aura && input.guard && input.gyo ? zoneFor(input) : null
+function directionalGuardZone(fighter: ArcadeFighter, input: FightInput): FightNenZone | null {
+  if (input.jump) return 'head'
+  if (input.down) return 'feet'
+  const forward = fighter.facing === 1 ? input.right : input.left
+  const back = fighter.facing === 1 ? input.left : input.right
+  if (forward && !back) return 'hands'
+  return null
+}
+function requestedZone(fighter: ArcadeFighter, input: FightInput): FightNenZone | null {
+  if (!input.aura || !input.guard) return null
+  if (input.gyo) return zoneFor(input) ?? directionalGuardZone(fighter, input)
+  return directionalGuardZone(fighter, input)
 }
 /** Explicit commitment: a correct guard zone is strong, every other zone loses aura protection. */
 export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFighter | null {
-  const zone = requestedZone(input)
+  const zone = requestedZone(fighter, input)
   if (!zone) return null
   if (!voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })) return null
   const continuing = continuesKo(fighter, zone)
   if (pendingKo(fighter, continuing)) return fighter
-  if ([fighter.hitStun, fighter.knockdownFrames].some(Boolean)) return null
+  if ([fighter.hitStun, fighter.knockdownFrames, fighter.maryCapture].some(Boolean)) return null
   if (fighter.attack && !continuing) return null
   if (!continuing && fighter.aura < DEFENSIVE_KO_COST) return null
   const nen = transitionNen(

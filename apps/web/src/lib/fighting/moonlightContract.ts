@@ -167,11 +167,22 @@ export function respondMoonlightContract(options: {
   )
     return state
   const issuer = state[offer.issuer]
+  const recipient = state[offer.recipient]
   const loan = issuer.moonlightLoan ?? 0
+  const clause = agreementClause(offer)
+  const surge = clause.immediateAura ?? 0
   const signed: FightState = {
     ...state,
-    [offer.issuer]: { ...issuer, moonlightLoan: loan > 0 ? loan - 1 : loan },
-    moonlight: { active: { ...offer, remainingFrames: agreementClause(offer).durationFrames } },
+    [offer.issuer]: {
+      ...issuer,
+      aura: Math.min(100, issuer.aura + surge),
+      moonlightLoan: loan > 0 ? loan - 1 : loan,
+    },
+    [offer.recipient]: {
+      ...recipient,
+      aura: Math.min(100, recipient.aura + surge),
+    },
+    moonlight: { active: { ...offer, remainingFrames: clause.durationFrames } },
   }
   return resolveJudgmentCommunication(signed, side, state[offer.issuer].id)
 }
@@ -206,6 +217,13 @@ export function advanceMoonlightContract(state: FightState): FightState {
   if (offer) return tickOffer(state, offer)
   const pact = state.moonlight?.active
   if (!pact) return tickCooldown(state)
+  if (pact.terms === 'no-ken') {
+    for (const side of ['player', 'opponent'] as const) {
+      if (state[side].nen.ken && moonlightBinds(state, side, pact)) {
+        return breachMoonlightContract(state, side)
+      }
+    }
+  }
   const remainingFrames = pact.remainingFrames - 1
   if (remainingFrames > 0) return { ...state, moonlight: { active: { ...pact, remainingFrames } } }
   return {

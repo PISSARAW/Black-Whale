@@ -36,7 +36,7 @@
         onclick={() => (open = false)}>×</button
       >
     </header>
-    <FightNenTactics {language} {onControl} />
+    <FightNenTactics fighter={state.player} {language} {onControl} />
     <div class="touch-context-actions">
       <FightHeldButton
         label={fr ? 'Se couvrir les oreilles' : 'Cover ears'}

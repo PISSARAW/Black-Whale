@@ -23,6 +23,13 @@
         ? 'Le chat capture un meurtrier vivant et absorbe sa vie pour la ressusciter.'
         : 'The cat captures a living killer and absorbs their life to revive her.'}</span
     >
+    {#if fighter.tskPoisoned}
+      <strong class="poison-alert"
+        >TSK-17 · {language === 'fr'
+          ? 'empoisonnement persistant actif'
+          : 'persistent poisoning active'}</strong
+      >
+    {/if}
     <span
       >{language === 'fr'
         ? 'U : pistolet réel · points, temps et TKO : aucune résurrection.'

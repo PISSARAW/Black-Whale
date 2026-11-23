@@ -1,3 +1,4 @@
+import { ERIGERON_BODY_MEMORY_DRAIN } from './zodiacAndHeirUpgrades'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 export type BodyMemoryZone = Extract<FightNenZone, 'hands' | 'feet'>
@@ -35,7 +36,8 @@ export function bodyMemoryRyuDrain(fighter: ArcadeFighter): number {
   const focus = (['hands', 'feet'] as const).find(
     (zone) => bodyMemoryWeak(fighter, zone) && Number(fighter.nen.ryu[zone] ?? 0) >= 0.5,
   )
-  return focus ? BODY_MEMORY_RYU_DRAIN : 0
+  if (!focus) return 0
+  return (fighter.erigeronCatalystFrames ?? 0) > 0 ? ERIGERON_BODY_MEMORY_DRAIN : BODY_MEMORY_RYU_DRAIN
 }
 
 /** Continuing to strike with an overused limb remains possible, but is deliberately inefficient. */

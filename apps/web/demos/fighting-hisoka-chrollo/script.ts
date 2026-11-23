@@ -1,104 +1,218 @@
 import { Shot } from '../fighting-chrollo-intro/reel'
 import { split } from '../fighting-chrollo-intro/script'
 import type { BuiltSegment } from '../fighting-chrollo-intro/hero'
-import { performArsenalAction } from '../../src/lib/fighting/arsenalExecution'
-import { performAuraAttack } from '../../src/lib/fighting/engine'
-import { createSunMoonVictoryWitness } from '../../src/lib/fighting/chrolloDetonation'
-import { moveForSlot } from '../../src/lib/fighting/movesets'
-import type { FightSide, FighterId } from '../../src/lib/fighting/types'
+import type { FightStageId } from '../../src/lib/fighting/stages'
+import { act, recover, until } from './passages'
+import { performArsenalCommand } from '../../src/lib/fighting/retrospectiveArsenal'
+import { brawl } from './brawl'
 
 /**
- * Hisoka vs Chrollo at Heavens Arena: one continuous fight in the production engine, cut
- * like a tournament highlight. Every blow, guard, Burst and Hatsu is a real command; the
- * Moon detonation ends it, and Chrollo's own Sun and Moon film closes the video.
+ * Hisoka vs Chrollo, one continuous fight in the production engine, edited like a film:
+ * both entrances, hand-to-hand exchanges where Chrollo fights with the game's own AI, then
+ * the book in the order the manga opens it (Benz's knife, Black Voice, Gallery Fake and
+ * Order Stamp, Sun and Moon), Hisoka's gum in between, and no winner: the last frame is the
+ * instant two Ko meet.
  */
-const STAGE = 'heavens-arena'
-type Command = Parameters<typeof performArsenalAction>[0]['command']
+const STAGE = 'central-dining-hall' as FightStageId
+const CHROLLO_CLOSE_UPS = new Set<number>()
 
-const free = (s: Shot, side: FightSide) => {
-  const f = s.state[side]
-  return !f.hitStun && !f.knockdownFrames && !f.wakeupInvulnerableFrames && !f.attack
-}
-const recover = (s: Shot, side: FightSide = 'opponent', limit = 120) => {
-  for (let i = 0; i < limit && !free(s, side); i++) s.step()
-}
-const act = (s: Shot, side: FightSide, command: Command) => {
-  s.state = performArsenalAction({ state: s.state, side, command }, performAuraAttack)
+/** A Black Voice phone order from Chrollo's side, aimed at Hisoka. */
+function voice(s: Shot, action: 'voice-phone' | 'voice-stay' | 'voice-pocket' | 'voice-remove') {
+  s.state = performArsenalCommand(s.state, 'opponent', { action, target: 'player' })
   s.states[s.frame] = s.state
-}
-const gap = (s: Shot) => Math.abs(s.state.player.x - s.state.opponent.x)
-/** Hisoka backs off until the two are `distance` apart. */
-function spacing(s: Shot, distance: number) {
-  for (let i = 0; i < 90 && gap(s) < distance; i++) s.step(1, { left: true })
-  s.approach('player', distance)
+  s.step(6)
 }
 
-/** J · J · ↑J, then (with `ko`) a Ko light catching the air: for either side. */
-function airChain(s: Shot, side: FightSide, ko = true) {
-  s.approach(side, 5)
-  s.press('light', {}, side)
-  s.hits(1, side, 40)
-  s.press('light', {}, side)
-  s.hits(1, side, 40)
-  s.press('light', { jump: true }, side)
-  s.hits(1, side, 50)
-  if (!ko) return s.idle(side, 60)
-  for (let d = 0; d < 30; d += 2) {
-    const before = s.state[side].attack
-    s.press('light', { aura: true }, side)
-    if (s.state[side].attack && s.state[side].attack !== before) break
-    s.step(2)
-  }
-  s.hits(1, side, 60)
-  s.idle(side, 60)
+/** Film Chrollo for the next part (the part opened by this cut). */
+function onChrollo(s: Shot) {
+  s.cut(STAGE)
+  CHROLLO_CLOSE_UPS.add(s.splits.length)
 }
 
-/** Opening portraits: the two faces before the bell. */
-function face(hero: FighterId, opponent: FighterId, title: boolean) {
-  const s = new Shot(STAGE, opponent, { hero, gap: 10 })
-  if (title) s.card = 'title'
-  s.held.player = { aura: true }
-  s.portrait('face', 60)
-  s.step(60)
+/** Both entrances, held in the ready phase, with the pair's own pre-fight lines. */
+function entrances() {
+  const s = new Shot(STAGE, 'chrollo', { hero: 'hisoka', gap: 12, ready: true })
+  s.entrance = 0
+  s.beat('', 'HISOKA · “Let us give this duel our full attention.”')
+  s.hold(144)
+  s.cut(STAGE)
+  s.beat('', 'CHROLLO · “Then watch every choice.”')
+  s.hold(144)
+  s.cut(STAGE)
+  s.hold(96)
   return s
 }
 
-/** The fight itself, beat by beat. Returns the shot and which parts film Chrollo up close. */
-function fight() {
-  const s = new Shot(STAGE, 'chrollo', { hero: 'hisoka', gap: 14 })
-  const chrolloParts = new Set<number>()
-  // The bell: both settle in guard while ROUND 1 and FIGHT! are called.
-  s.step(150)
-  // 1. Opening range: a card wrapped in Shu.
+/** I. Hand to hand: Chrollo fights with the game's AI while the camera circles them. */
+function handToHand(s: Shot) {
+  s.cut(STAGE)
+  s.portrait('profile', 110)
+  brawl(s, { frames: 110, seed: 3 })
+  s.cut(STAGE)
+  brawl(s, { frames: 130, seed: 5 })
+  s.cut(STAGE)
+  s.portrait('wide-low', 110)
+  brawl(s, { frames: 110, seed: 8 })
+}
+
+/** A card wrapped in Shu, thrown from range: Hisoka's first answer. */
+function shuCard(s: Shot) {
+  s.cut(STAGE)
+  recover(s, 'player')
+  for (let i = 0; i < 60 && Math.abs(s.state.player.x - s.state.opponent.x) < 16; i++)
+    s.step(1, { left: true })
   s.held.player = { shu: true }
   s.step(6)
   s.ranged()
-  s.beat('SHU CARD', 'Hisoka opens from range')
-  s.hits(1, 'player', 60)
+  s.beat('SHU', 'A playing card, sharp as a blade')
+  s.hits(1, 'player', 50)
   s.held.player = {}
-  recover(s, 'player')
-  recover(s, 'opponent')
-  // 2. Chrollo walks through it: J · J · ↑J, Ko juggle.
+  s.step(16)
   s.cut(STAGE)
-  s.beat('CHROLLO', 'J · J · ↑J · Ko juggle')
-  airChain(s, 'opponent')
-  recover(s, 'player')
-  // 3. Same frame, same Ko: the blows cancel.
+  s.portrait('profile', 120)
+  brawl(s, { frames: 140, seed: 9 })
+}
+
+/** II. Hisoka's gum: stuck to him, pulled in, struck. */
+function gumPull(s: Shot) {
   s.cut(STAGE)
-  spacing(s, 13)
-  s.press('light', { aura: true })
-  s.press('light', { aura: true }, 'opponent')
-  s.beat('KO CLASH!', 'Ren against Ren')
-  for (let i = 0; i < 30 && !s.state.attackClash; i++) s.step()
-  s.step(20)
   recover(s, 'opponent')
   recover(s, 'player')
-  // 4. Bungee Gum, then the Elastic Execution.
-  s.cut(STAGE)
   s.approach('player', 5)
   s.move('neutralSpecial')
   s.beat('BUNGEE GUM', 'Rubber and gum. He is attached.')
-  for (let i = 0; i < 60 && !s.state.bungeeGum; i++) s.step()
+  until(s, () => Boolean(s.state.bungeeGum), 60)
+  s.idle('player', 60)
+  s.step(14, { left: true })
+  s.move('forwardSpecial')
+  s.step(18)
+  s.press('heavy')
+  s.hits(1, 'player', 50)
+  s.idle()
+  s.cut(STAGE)
+  s.portrait('over', 90)
+  brawl(s, { frames: 120, seed: 13 })
+}
+
+/** III and IV. Benz's knife, then Black Voice: the antenna takes his body. */
+function knifeAndVoice(s: Shot) {
+  onChrollo(s)
+  recover(s, 'opponent')
+  recover(s, 'player')
+  act(s, { action: 'weapon-ready' }, 'opponent')
+  s.portrait('bust', 30)
+  s.beat('BENZ KNIFE', 'Poisoned steel from a dead man')
+  s.step(16)
+  s.cut(STAGE)
+  for (let i = 0; i < 2; i++) {
+    s.approach('opponent', 5)
+    s.press('light', {}, 'opponent')
+    s.hits(1, 'opponent', 50)
+    s.idle('opponent', 40)
+  }
+  recover(s, 'player')
+  s.cut(STAGE)
+  if (s.state.opponent.historicalWeapon) act(s, { action: 'weapon-ready' }, 'opponent')
+  s.step(14)
+  act(s, { action: 'history-page', target: 'black-voice' }, 'opponent')
+  s.step(14)
+  s.approach('opponent', 5)
+  s.move('neutralSpecial', {}, 'opponent')
+  s.beat('BLACK VOICE', 'The antenna goes in')
+  s.step(55)
+  // The phone gives the order: Hisoka's body stays where it is.
+  voice(s, 'voice-phone')
+  voice(s, 'voice-stay')
+  s.beat('', '“Stay.” His body obeys the antenna.')
+  for (let i = 0; i < 2; i++) {
+    s.approach('opponent', 5)
+    s.press(i ? 'heavy' : 'light', {}, 'opponent')
+    s.hits(1, 'opponent', 50)
+    s.idle('opponent', 40)
+  }
+  // The phone goes back in his pocket: his hands are free for the next page.
+  voice(s, 'voice-pocket')
+  recover(s, 'player')
+  s.cut(STAGE)
+  brawl(s, { frames: 100, seed: 21 })
+}
+
+/** V. Gallery Fake and Order Stamp: a copy of Hisoka, then the puppet sent at him. */
+function puppets(s: Shot) {
+  onChrollo(s)
+  recover(s, 'opponent')
+  act(s, { action: 'history-page', target: 'gallery-fake' }, 'opponent')
+  s.step(14)
+  s.move('downSpecial', {}, 'opponent')
+  s.idle('opponent', 40)
+  s.step(4)
+  act(s, { action: 'history-use', target: 'player' }, 'opponent')
+  s.beat('GALLERY FAKE', 'His own shape, copied')
+  s.step(40)
+  s.cut(STAGE)
+  s.portrait('high', 120)
+  act(s, { action: 'history-page', target: 'order-stamp' }, 'opponent')
+  s.step(14)
+  act(s, { action: 'history-use' }, 'opponent')
+  s.beat('ORDER STAMP', 'The copy becomes a puppet')
+  s.step(20)
+  act(s, { action: 'history-order-attack' }, 'opponent')
+  s.hits(1, 'opponent', 110)
+  s.step(20)
+  // VI. Hisoka answers in kind: gum on his own heart, for later.
+  s.cut(STAGE)
+  recover(s, 'player')
+  s.state = performArsenalCommand(s.state, 'player', { action: 'gum-heart' })
+  s.states[s.frame] = s.state
+  s.portrait('face', 60)
+  s.beat('', 'Gum around his own heart. Just in case.')
+  s.step(60)
+}
+
+/** Texture Surprise: what you see on Hisoka is only what he painted there. */
+function texture(s: Shot) {
+  s.cut(STAGE)
+  recover(s, 'player')
+  s.move('downSpecial')
+  s.portrait('bust', 60)
+  s.beat('TEXTURE SURPRISE', 'Thin as paper. Fake as a card trick.')
+  s.idle('player', 90)
+  s.step(10)
+}
+
+/** VII. Sun and Moon: the Sun on contact, Double Face, the Moon, and the blast. */
+function sunAndMoon(s: Shot) {
+  s.cut(STAGE)
+  act(s, { action: 'history-page', target: 'sun-and-moon' }, 'opponent')
+  s.step(14)
+  s.approach('opponent', 5)
+  s.move('neutralSpecial', {}, 'opponent')
+  s.beat('SUN', 'The first mark')
+  until(s, () => Boolean(s.state.player.hatsuEffects.sunMark), 60)
+  s.idle('opponent', 60)
+  recover(s, 'player')
+  onChrollo(s)
+  s.portrait('front', 46)
+  s.move('downSpecial', {}, 'opponent')
+  s.beat('', 'He closes the book')
+  s.idle('opponent', 60)
+  s.step(6)
+  s.cut(STAGE)
+  for (let i = 0; i < 120 && (s.state.player.comboHits > 0 || s.state.player.hitStun); i++) s.step()
+  s.approach('opponent', 4.5)
+  s.portrait('wide-low', 90)
+  s.move('finisher', {}, 'opponent')
+  s.beat('MOON', 'Sun and Moon')
+  s.step(80)
+  recover(s, 'player')
+}
+
+/** VIII. Hisoka still smiling: gum, J · J · →J, the Elastic Execution. */
+function elastic(s: Shot) {
+  s.cut(STAGE)
+  s.approach('player', 5)
+  s.move('neutralSpecial')
+  until(s, () => Boolean(s.state.bungeeGum), 60)
   s.idle('player', 60)
   recover(s, 'opponent')
   s.approach('player', 5)
@@ -109,117 +223,78 @@ function fight() {
   s.hits(1)
   s.held.player = {}
   s.cut(STAGE)
-  s.portrait('quarter', 50, -2)
+  s.portrait('quarter', 50)
   s.press('light', { right: true })
   s.beat('ELASTIC EXECUTION', 'J · J · →J')
   s.hits(1, 'player', 90)
   s.idle()
+  s.cut(STAGE)
+  brawl(s, { frames: 110, seed: 34 })
+}
+
+/** Both step back, gather everything, two faces, and two Ko meet: the film ends there. */
+function finale(s: Shot) {
+  s.cut(STAGE)
   recover(s, 'opponent')
-  // 5. Benz's knife comes out.
-  s.cut(STAGE)
-  act(s, 'opponent', { action: 'weapon-ready' })
-  s.beat('BENZ KNIFE', 'Poisoned steel')
-  s.step(14)
-  for (let i = 0; i < 2; i++) {
-    s.approach('opponent', 5)
-    s.press('light', {}, 'opponent')
-    s.hits(1, 'opponent', 50)
-    s.idle('opponent', 40)
-  }
   recover(s, 'player')
-  // 6. Texture Surprise: the next touch peels it.
+  s.ai = false
+  for (let i = 0; i < 90 && Math.abs(s.state.player.x - s.state.opponent.x) < 13; i++)
+    s.step(1, { left: true }, { right: true })
+  s.approach('player', 13)
+  s.portrait('wide-low', 90)
+  s.beat('', 'Everything, in one fist')
+  // The stand-off lasts until both can pay for a Ko.
+  for (let i = 0; i < 600 && Math.min(s.state.player.aura, s.state.opponent.aura) < 21; i++) s.step()
+  s.step(20)
   s.cut(STAGE)
-  s.move('downSpecial')
-  s.beat('TEXTURE SURPRISE', 'Fake as a card trick')
-  s.idle('player', 90)
-  s.approach('opponent', 5)
-  s.press('heavy', {}, 'opponent')
-  s.hits(1, 'opponent', 60)
-  recover(s, 'player')
-  // 7. The Sun is set on him.
+  s.portrait('eyes', 34)
+  s.step(34)
+  onChrollo(s)
+  s.portrait('eyes', 34)
+  s.step(34)
   s.cut(STAGE)
-  s.approach('opponent', 5)
-  s.move('neutralSpecial', {}, 'opponent')
-  s.beat('SUN', 'Sun and Moon: the first mark')
-  for (let i = 0; i < 60 && !s.state.player.hatsuEffects.sunMark; i++) s.step()
-  s.idle('opponent', 60)
-  recover(s, 'player')
-  // 8. Caught again, Hisoka bursts out.
-  s.cut(STAGE)
-  s.approach('opponent', 5)
-  s.press('light', {}, 'opponent')
-  s.hits(1, 'opponent', 40)
-  s.press('light', {}, 'opponent')
-  s.hits(1, 'opponent', 40)
-  s.step(1, { burst: true })
-  s.beat('BURST!', 'Half his aura to break free')
-  s.step(40)
-  recover(s, 'opponent')
-  // 9. Wear him down until the Moon can finish it.
-  // Highlight edit: the first and last of these exchanges stay, the ones between are cut.
-  const worn: number[] = []
-  for (let round = 0; round < 14 && s.state.player.health > 60; round++) {
-    recover(s, 'player')
-    s.cut(STAGE)
-    worn.push(s.splits.length)
-    airChain(s, 'opponent', false)
-  }
-  // Single blows bring him into the Moon's range without finishing him.
-  for (let i = 0; i < 30 && s.state.player.health > 20; i++) {
-    recover(s, 'player')
-    s.approach('opponent', 5)
-    s.press('light', {}, 'opponent')
-    s.hits(1, 'opponent', 40)
-    s.idle('opponent', 40)
-  }
-  const skipped = new Set(worn.slice(1, -1))
-  if (skipped.size) s.beats.push({ at: s.splits.at(-1)!.at + 2, word: 'THE BATTLE RAGES ON', line: '' })
-  recover(s, 'player')
-  recover(s, 'opponent')
-  // The Moon needs its aura: Chrollo keeps his distance while it comes back.
-  const moonCost = moveForSlot('chrollo', 'finisher')?.auraCost ?? 0
-  for (let i = 0; i < 900 && s.state.opponent.aura < moonCost + 4; i++) s.step()
-  // The knife goes back before Double Face: the Moon is a palm, not a cut.
-  if (s.state.opponent.historicalWeapon) act(s, 'opponent', { action: 'weapon-ready' })
-  s.step(14)
-  // 10. The book closes, facing camera, and the Moon lands.
-  chrolloParts.add(s.splits.length + 1)
-  s.cut(STAGE)
-  s.portrait('front', 46, -2)
-  s.move('downSpecial', {}, 'opponent')
-  s.beat('', 'He closes the book')
-  s.idle('opponent', 60)
-  s.step(4)
-  s.cut(STAGE)
-  // A fresh exchange: the Moon is not a combo continuation.
-  for (let i = 0; i < 120 && (s.state.player.comboHits > 0 || !free(s, 'player')); i++) s.step()
-  s.approach('opponent', 4.5)
-  s.move('finisher', {}, 'opponent')
-  s.beat('MOON', 'Sun and Moon. Boom.')
-  for (let i = 0; i < 120 && s.state.phase !== 'finished'; i++) s.step()
-  s.step(30)
-  if (s.state.phase !== 'finished') throw new Error(`no KO: Hisoka still has ${s.state.player.health}`)
-  // The engine's own witness decides whether the decisive Sun and Moon film plays.
-  const witness = createSunMoonVictoryWitness()
-  if (s.states.some((state) => witness(state)))
-    s.filmVariant = { variant: 'chrollo-sun-moon', duration: 3 }
-  s.cut(STAGE)
-  s.film(0)
-  s.step(180)
-  return { s, chrolloParts, skipped }
+  s.press('light', { aura: true })
+  s.press('light', { aura: true }, 'opponent')
+  s.portrait('profile', 40)
+  for (let i = 0; i < 40 && !s.state.attackClash; i++) s.step()
+  s.beat('KO CLASH', '')
+  s.step(36)
+}
+
+function fight() {
+  const s = new Shot(STAGE, 'chrollo', { hero: 'hisoka', gap: 12 })
+  s.step(70)
+  const acts = [handToHand, shuCard, gumPull, knifeAndVoice, puppets, sunAndMoon]
+  for (const scene of [...acts, texture, elastic, finale]) scene(s)
+  return s
+}
+
+/** Long stretches become shots of a few seconds: a film cut, not one long take. */
+function chunk(s: Shot, longest = 200) {
+  const cuts = [0, ...s.splits.map((c) => c.at), s.frame]
+  for (let i = 0; i < cuts.length - 1; i++)
+    for (let at = cuts[i] + longest; at < cuts[i + 1] - 40; at += longest)
+      s.splits.push({ at, stage: STAGE })
+  s.splits.sort((a, b) => a.at - b.at)
 }
 
 export function buildDuelReel(): BuiltSegment[] {
-  const parts: BuiltSegment[] = [
-    ...split('hisoka', face('hisoka', 'chrollo', true).segment()),
-    ...split('chrollo', face('chrollo', 'hisoka', false).segment()),
-  ]
+  const parts: BuiltSegment[] = split('entrance', entrances().segment()).map((part) => ({
+    ...part,
+    steady: true,
+  }))
   try {
-    const { s, chrolloParts, skipped } = fight()
-    const pieces = split('fight', s.segment())
-      .map((part, i) => (chrolloParts.has(i) ? { ...part, hero: 'chrollo' as const } : part))
-      .filter((_, i) => !skipped.has(i))
-    parts.push(...pieces)
+    CHROLLO_CLOSE_UPS.clear()
+    const s = fight()
+    const closeUps = new Set([...CHROLLO_CLOSE_UPS].map((index) => s.splits[index - 1].at))
+    chunk(s)
+    parts.push(
+      ...split('fight', s.segment()).map((part, i) => ({
+        ...part,
+        steady: true,
+        ...(i > 0 && closeUps.has(s.splits[i - 1].at) ? { hero: 'chrollo' as const } : {}),
+      })),
+    )
   } catch (error) {
     parts.push({ id: 'fight', ...new Shot(STAGE, 'chrollo').segment((error as Error).message) })
   }

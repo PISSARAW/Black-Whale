@@ -7,7 +7,12 @@ import {
   saveBindings,
   type KeyboardBindings,
 } from '$lib/fighting/fightInputBindings'
-import { ignoresFightKey, dispatchOpponentKey, dispatchHatsuKey } from './fightingKeyboard'
+import {
+  ignoresFightKey,
+  dispatchOpponentKey,
+  dispatchPlayerAttackKey,
+  resetKeyboardChords,
+} from './fightingKeyboard'
 import {
   fightControlSchemes,
   readControlScheme,
@@ -79,6 +84,7 @@ export function createFightControls(onAction: (side: FightSide, action: PadActio
     },
     release() {
       keyboard.clear()
+      resetKeyboardChords()
       gamepads.release()
     },
     combine(side: FightSide, input: FightInput) {
@@ -130,7 +136,7 @@ interface KeyDispatch {
   control: (key: keyof FightInput, active: boolean) => void
   opponentControl: (key: keyof FightInput, active: boolean) => void
   opponentAttack: (action: MoveAction | 'ranged') => void
-  attack: (kind: AttackKind) => void
+  attack: (kind: MoveAction | AttackKind) => void
   action: (key: string) => void
 }
 export function dispatchFightKey(event: KeyboardEvent, active: boolean, options: KeyDispatch) {
@@ -138,12 +144,20 @@ export function dispatchFightKey(event: KeyboardEvent, active: boolean, options:
   if (
     dispatchOpponentKey(event, active, {
       mode: options.state.mode,
+      input: options.opponentInput,
       control: options.opponentControl,
       attack: options.opponentAttack,
     })
   )
     return
-  if (dispatchHatsuKey(event, active, options)) return
+  if (
+    dispatchPlayerAttackKey(event, active, {
+      input: options.input,
+      control: options.control,
+      onMove: options.attack,
+    })
+  )
+    return
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
   const movement = movementKeys[key]
   if (movement) {
@@ -152,6 +166,6 @@ export function dispatchFightKey(event: KeyboardEvent, active: boolean, options:
     return
   }
   if (!active || event.repeat) return
-  if (['o', 'h', 'j', 'k', 'u', 'p', 'Enter'].includes(key)) event.preventDefault()
+  if (['p', 'Enter'].includes(key)) event.preventDefault()
   options.action(key)
 }

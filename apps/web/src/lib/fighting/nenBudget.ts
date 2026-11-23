@@ -1,3 +1,4 @@
+import { isBiscuitTrueForm } from './biscuitForm'
 import { fightingStyle } from './fightStyles'
 import { fighterNenTraining } from './nenMastery'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
@@ -23,7 +24,7 @@ export function nenOutputCapacity(fighter: ArcadeFighter): number {
   const control = fighterNenTraining(fighter, 'enhancer').level
   const style = fightingStyle(fighter.nenOwner ?? fighter.id)
   const pace = Math.max(-0.2, Math.min(0.2, style.moveScale - 1))
-  return Math.round(68 + control * 8 + pace * 30)
+  return Math.round(68 + control * 8 + pace * 30) + (isBiscuitTrueForm(fighter) ? 1 : 0)
 }
 
 function investedAura(shot: FightProjectile): number {
@@ -33,12 +34,36 @@ function investedAura(shot: FightProjectile): number {
   return investment.amount
 }
 
-function maintainedAura(fighter: ArcadeFighter): number {
-  // Only actions which already require continued presence/control in the duel.
+function maintainedAura(state: FightState, side: FightSide, fighter: ArcadeFighter): number {
+  const otherSide: FightSide = side === 'player' ? 'opponent' : 'player'
+  const painSun = Boolean(fighter.hatsuEffects.painPacker?.sun)
+  const owlActive = Boolean(
+    fighter.musseOwlActive ||
+      fighter.secretWindow ||
+      (state.musseOwl?.active && state.musseOwl.owner === side),
+  )
+  const machiBind = Boolean(state[otherSide].machiThread?.owner === side)
+  const kallutoDoll = Boolean(
+    (state.kallutoDoll?.active && state.kallutoDoll.owner === side) || fighter.paperDoll,
+  )
+  const zakuroDrops = Boolean(
+    state.zakuroBloodDrops?.owner === side || fighter.bloodyMary?.drops.length,
+  )
+  const bioPigeon = Boolean(
+    state.hinrighBioPigeon?.active && state.hinrighBioPigeon.owner === side,
+  )
+  const voconteDoor = Boolean(state.voconteDoors?.networks[side]?.active)
   return (
     Number(Boolean(fighter.hanzoProjection)) * 24 +
     Number(Boolean(fighter.melodyPerformance)) * 18 +
-    Number(Boolean(fighter.machiSuture)) * 12
+    Number(Boolean(fighter.machiSuture)) * 12 +
+    Number(painSun) * 20 +
+    Number(owlActive) * 8 +
+    Number(machiBind) * 10 +
+    Number(kallutoDoll) * 8 +
+    Number(zakuroDrops) * 8 +
+    Number(bioPigeon) * 10 +
+    Number(voconteDoor) * 10
   )
 }
 
@@ -48,7 +73,7 @@ export function readNenBudget(state: FightState, side: FightSide): NenBudget {
   const detached = state.projectiles
     .filter((shot) => shot.owner === side)
     .reduce((sum, shot) => sum + investedAura(shot), 0)
-  const maintained = maintainedAura(fighter)
+  const maintained = maintainedAura(state, side, fighter)
   return {
     reserve: fighter.aura,
     capacity,

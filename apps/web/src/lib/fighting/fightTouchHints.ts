@@ -8,9 +8,8 @@ export function fightTouchBindings(language: 'fr' | 'en'): KeyboardBindings {
     playerLight: fr ? 'Léger' : 'Light',
     playerHeavy: fr ? 'Lourd' : 'Heavy',
     playerSpecial: 'Hatsu',
-    playerRanged: fr ? 'Tir' : 'Shot',
-    playerFinisher: fr ? 'Ultime' : 'Super',
-    playerThrow: fr ? 'Proj.' : 'Throw',
-    playerArena: fr ? 'Nen › Arène' : 'Nen › Arena',
+    playerKameo: fr ? 'Kaméo' : 'Kameo',
+    playerBurst: 'Burst',
+    playerContext: fr ? 'Contexte' : 'Context',
   }
 }

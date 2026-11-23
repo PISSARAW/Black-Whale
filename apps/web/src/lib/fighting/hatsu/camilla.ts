@@ -1,5 +1,6 @@
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
 import { beginCatsName } from '../camillaCat'
+import { camillaCatsNameEligible } from '../blackWhaleCanonUpgrades'
 import { CATS_NAME } from '../outsideDuelAbility'
 
 /**
@@ -15,5 +16,8 @@ export const camillaHatsu: FighterHatsu = {
   get stealableOutsideDuel() {
     return CATS_NAME
   },
-  onDeath: ({ state, victimSide, killerSide }) => beginCatsName(state, victimSide, killerSide),
+  onDeath: ({ state, victimSide, killerSide }) =>
+    camillaCatsNameEligible(state[victimSide])
+      ? beginCatsName(state, victimSide, killerSide)
+      : state,
 }

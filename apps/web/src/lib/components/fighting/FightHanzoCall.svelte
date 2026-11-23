@@ -26,7 +26,7 @@
       ? 'Interpeller le corps endormi à proximité'
       : 'Call to the nearby sleeping body'}
     onclick={onCall}
-    ><kbd>{$bindings.playerCall}</kbd> {language === 'fr' ? 'Interpeller' : 'Call out'}</button
+    ><kbd>{$bindings.playerContext}</kbd> {language === 'fr' ? 'Interpeller' : 'Call out'}</button
   >
 {/if}
 

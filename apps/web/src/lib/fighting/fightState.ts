@@ -28,6 +28,8 @@ import { prepareHinrighKits } from './hinrighKitFighters'
 import { createBenjaminBaton } from './benjaminBaton'
 import { carryMoonlightRound } from './moonlightContract'
 import { createChrolloBook } from './chrolloBook'
+import { prepareDeathMatchLoadout } from './heavensDeathMatch/loadout'
+import { prepareDeathMatchWorld } from './heavensDeathMatch/prepare'
 import { createKurapika } from './kurapika'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import { createPainPacker } from './feitanPain'
@@ -35,9 +37,12 @@ import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
 import { KAMEO_SPAWN, nextRoundKameos } from './kameos/rounds'
+import { carryTskPoison } from './tsk17'
 import type { ArcadeFighter, FightMode, FightState, FighterId } from './types'
 import { initialNenPsychology, restedNenPsychology } from './nenPsychologyProfiles'
 import { carryBodyMemory } from './bodyMemory'
+import { applyBiscuitInterRoundCare } from './illumiBiscuitUpgrades'
+import { carryOpponentIntel, createFightIntel } from './perception/opponentIntel'
 
 interface CreateFightOptions {
   formatId?: FightFormatId
@@ -85,11 +90,16 @@ export function createFightState(
     nextProjectileId: 1,
     impact: null,
     burstAvailable: { player: true, opponent: true },
+    opponentIntel: createFightIntel(),
   })
   return applyControlSchemes(
     prepareHinrighKits(
       prepareHisokaAsphyxia(
-        prepareFortuneScenario(prepareBodyDamage(prepareMusseHistory(created))),
+        prepareFortuneScenario(
+          prepareBodyDamage(
+            prepareMusseHistory(prepareDeathMatchWorld(prepareDeathMatchLoadout(created))),
+          ),
+        ),
       ),
       createBiohazardInventory,
     ),
@@ -122,31 +132,43 @@ export function nextFightRound(state: FightState): FightState {
       attackClash: undefined,
       catsName: undefined,
       catsNameConsumed: undefined,
+      tsk17: undefined,
       burst: undefined,
       burstAvailable: { player: true, opponent: true },
-      player: carryBodyMemory(
-        preserveLifespan(
-          createFighter({
-            id: state.player.halkenburgOrigin ?? state.player.id,
-            x: 22,
-            facing: 1,
-            health: format.health,
-          }),
-          state.player,
-          state.frame,
+      opponentIntel: carryOpponentIntel(state.opponentIntel),
+      player: carryTskPoison(
+        applyBiscuitInterRoundCare(
+          carryBodyMemory(
+            preserveLifespan(
+              createFighter({
+                id: state.player.halkenburgOrigin ?? state.player.id,
+                x: 22,
+                facing: 1,
+                health: format.health,
+              }),
+              state.player,
+              state.frame,
+            ),
+            state.player,
+          ),
         ),
         state.player,
       ),
-      opponent: carryBodyMemory(
-        preserveLifespan(
-          createFighter({
-            id: state.opponent.halkenburgOrigin ?? state.opponent.id,
-            x: 78,
-            facing: -1,
-            health: format.health,
-          }),
-          state.opponent,
-          state.frame,
+      opponent: carryTskPoison(
+        applyBiscuitInterRoundCare(
+          carryBodyMemory(
+            preserveLifespan(
+              createFighter({
+                id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+                x: 78,
+                facing: -1,
+                health: format.health,
+              }),
+              state.opponent,
+              state.frame,
+            ),
+            state.opponent,
+          ),
         ),
         state.opponent,
       ),

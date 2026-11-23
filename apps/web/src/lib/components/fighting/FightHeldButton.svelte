@@ -5,9 +5,13 @@
   export let label: string
   export let disabled = false
   export let onHold: (held: boolean) => void
+  export let onPress: (() => void) | undefined = undefined
   export let onCommit: (() => void) | undefined = undefined
   const held = createHeldFightControl({
-    hold: (active) => onHold(active),
+    hold: (active) => {
+      onHold(active)
+      if (active) onPress?.()
+    },
     commit: () => onCommit?.(),
   })
   $: if (disabled) held.cancel()

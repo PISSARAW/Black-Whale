@@ -11,7 +11,7 @@
   $: technique = arenaTechnique(state[side].id)
   $: locale = language === 'fr' ? 0 : 1
   $: objects = arenaObjects(state)
-  $: arenaKey = side === 'player' ? $bindings.playerArena : $bindings.opponentArena
+  $: arenaKey = side === 'player' ? $bindings.playerContext : $bindings.opponentContext
   $: local = side === 'player' || state.mode === 'versus-local'
 </script>
 

@@ -195,6 +195,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   health: number
   /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
   parallelEyesClosed?: boolean
+  /** Owner of a Parallel Future in its diverging phase (parallelFutureAbility.ts). */
+  futureDiverging?: true
   aura: number
   nen: NenTechniqueState<FightNenZone>
   facing: -1 | 1
@@ -211,6 +213,8 @@ export interface ArcadeFighter extends RetrospectiveFighterState {
   reversalWindow: number
   /** Relance heat (accelCancel.ts); absent while cold. */
   accelHeat?: import('./accelCancel').AccelHeat
+  /** Techniques started in the current combo, for the reduced price (comboHalfPrice.ts). */
+  comboTechniques?: import('./comboHalfPrice').ComboTechniques
   /** Frames of tension élastique spent in the current combo (elasticHold.ts). */
   elasticHold?: number
   comboHits: number
@@ -277,6 +281,8 @@ export interface FighterDash {
   peak: number
   /** Started by an accélération (dashCancel.ts). */
   accel?: true
+  /** Passes through the other body: no pushbox (signatureCrossing.ts). Hurtboxes stay. */
+  through?: true
 }
 
 export interface FighterMotion {
@@ -446,7 +452,8 @@ export interface FightState {
   futurePerception?: FightState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
-  /** Fatal causes collected before one common verdict, including simultaneous hits. */
+  /** Hall, crowd and scenario of the Hisoka-Chrollo death match (heavensDeathMatch/). */
+  deathMatch?: import('./heavensDeathMatch/chrolloPlan/world').DeathMatchWorld
   environment: FightEnvironment
   /** Autonomous, invulnerable guards; these are never avoidance charges on a fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>

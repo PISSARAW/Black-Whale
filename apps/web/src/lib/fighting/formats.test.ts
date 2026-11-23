@@ -4,7 +4,12 @@ import { FIGHT_FORMATS, fightFormat } from './formats'
 
 describe('2D fight formats', () => {
   it('keeps Tour judging separate from health-based duels', () => {
-    expect(FIGHT_FORMATS.map(({ victory }) => victory)).toEqual(['points', 'health', 'health'])
+    expect(FIGHT_FORMATS.map(({ victory }) => victory)).toEqual([
+      'points',
+      'health',
+      'health',
+      'health',
+    ])
     expect(fightFormat('heavens-arena').hitTarget).toBe(10)
     expect(fightFormat('heavens-arena').knockdownTarget).toBe(3)
     expect(fightFormat('knockout').hitTarget).toBeNull()

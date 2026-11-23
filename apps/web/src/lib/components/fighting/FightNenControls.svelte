@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  import { finisherHint, useFightBindings } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { bodyGyoCopy } from '$lib/fighting/nenCombat/copy'
   import { advancedNenCopy } from '$lib/fighting/nenTacticalCopy'
@@ -229,7 +229,7 @@
             (fighter.kurapika?.blackoutFrames ?? 0) > 0}
         >
           <kbd
-            >{$bindings.playerAura === ' ' ? 'Aura' : $bindings.playerAura} + {$bindings.playerFinisher}</kbd
+            >{$bindings.playerAura === ' ' ? 'Aura' : $bindings.playerAura} + {finisherHint($bindings)}</kbd
           > EMPEROR TIME
         </button>
       {/if}

@@ -47,7 +47,7 @@ describe('Dix tours, un poing', () => {
   const opening = combo.steps.slice(0, 5)
 
   it('keeps winding through the back dash, the low dodge and the cross-up jump', () => {
-    const run = playSignatureSteps(opening, 0, start(combo))
+    const run = playSignatureSteps({ steps: opening, hits: 0 }, start(combo))
     const { player, opponent } = run.state
     expect(player.cyclotronWindup).toBeDefined()
     expect(player.hatsuEffects.cyclotronTurns).toBeGreaterThan(0)
@@ -83,7 +83,7 @@ describe('Dix tours, un poing', () => {
   })
 
   it('stops winding under guard', () => {
-    const winding = playSignatureSteps(opening.slice(0, 1), 0, start(combo)).state
+    const winding = playSignatureSteps({ steps: opening.slice(0, 1), hits: 0 }, start(combo)).state
     const back = winding.player.facing === 1 ? { left: true } : { right: true }
     let state = winding
     for (let i = 0; i < 4; i++) state = tick(state, { ...EMPTY_INPUT, guard: true, ...back })

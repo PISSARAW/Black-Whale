@@ -17,6 +17,86 @@ import { bufferKameoCalls } from '../kameos/buffer'
 import { advanceNenMentalFatigue } from '../nenCognitiveLoad'
 import { advanceNenPsychology } from '../nenPsychology'
 import { advanceBurstZetsu, resolveBurstInputs } from '../fightBurst'
+import { advanceTsk17, canReleaseTsk17, releaseTsk17 } from '../tsk17'
+import { advanceChrolloBookIntel } from '../chrolloDeck'
+import { pickChrolloFlipSlot } from '../chrolloBookAction'
+import { advanceLeorioSonar } from '../leorioMedical'
+import { advanceMusseOwl } from '../musseWindowUpgrades'
+import { advanceFurykovProfile } from '../furykovProfile'
+import { advanceBashoHaiku, extinguishBashoBurn } from '../bashoHaiku'
+import { advanceNenPillars, startFirearmReload } from '../nenPillars'
+import { advanceSeiyaku } from '../seiyaku'
+import { advanceZodiacAndHeirUpgrades } from '../zodiacAndHeirUpgrades'
+import { advanceTroupeUpgrades } from '../troupeUpgrades'
+import {
+  advanceIllumiBiscuitUpgrades,
+  hasIllumiNeedleOrder,
+  removeIllumiNeedle,
+} from '../illumiBiscuitUpgrades'
+import { advanceFeitanTerebellumUpgrades } from '../feitanTerebellumUpgrades'
+import { advanceShizukuHanzoKallutoUpgrades } from '../shizukuHanzoKallutoUpgrades'
+import { advanceHalkenburgBonolenovUpgrades } from '../halkenburgBonolenovUpgrades'
+import {
+  advanceHinrighZakuroLuiniUpgrades,
+  breakHinrighHandcuffs,
+} from '../hinrighZakuroLuiniUpgrades'
+import { advanceBlackWhaleCanonUpgrades } from '../blackWhaleCanonUpgrades'
+import { advanceMatchupValves } from '../matchupValves'
+import { advanceFinalFiveUpgrades, startThetaSilentReload } from '../finalFiveUpgrades'
+import { advanceOpponentIntel } from '../perception/opponentIntel'
+
+function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (!inputs[side]?.context) continue
+    if (hasIllumiNeedleOrder(state[side])) {
+      state = { ...state, [side]: removeIllumiNeedle(state[side]) }
+    } else if (state[side].hinrighCuffed || state[side].biohazardRestraint) {
+      state = { ...state, [side]: breakHinrighHandcuffs(state[side]) }
+    }
+  }
+  return state
+}
+
+function resolveFirearmReload(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (inputs[side]?.context) {
+      const silent = startThetaSilentReload(state[side])
+      const reloaded = silent !== state[side] ? silent : startFirearmReload(state[side])
+      if (reloaded !== state[side]) state = { ...state, [side]: reloaded }
+    }
+  }
+  return state
+}
+
+function resolveBurnExtinguish(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    if (inputs[side]?.context && state[side].haikuBurn) {
+      state = { ...state, [side]: extinguishBashoBurn(state[side]) }
+    }
+  }
+  return state
+}
+
+function resolveChrolloFlipInputs(state: FightState, inputs: DuelInputs): FightState {
+  for (const side of ['player', 'opponent'] as const) {
+    const input = inputs[side]
+    const book = state[side].chrolloBook
+    if (!input || !book?.isFlipping) continue
+    if (input.kameo) state = pickChrolloFlipSlot(state, side, 2) ?? state
+    else if (input.context) state = pickChrolloFlipSlot(state, side, 3) ?? state
+    else if (!input.hatsu)
+      state = { ...state, [side]: { ...state[side], chrolloBook: { ...book, isFlipping: false } } }
+  }
+  return state
+}
+
+function resolveTsk17Inputs(state: FightState, inputs: DuelInputs): FightState {
+  if (inputs.player.context && !state.player.openWounds && canReleaseTsk17(state, 'player'))
+    state = releaseTsk17(state, 'player')
+  if (inputs.opponent?.context && !state.opponent.openWounds && canReleaseTsk17(state, 'opponent'))
+    state = releaseTsk17(state, 'opponent')
+  return state
+}
 
 /** Shared world clocks, preparation and arena, before any body moves. */
 export function openFrame(
@@ -26,6 +106,16 @@ export function openFrame(
 ): DuelPhaseResult {
   if (state.gumResuscitation) return { state: stepGumResuscitation(state), pending: true }
   state = resolveBurstInputs(state, inputs)
+  state = resolveNeedleRemoval(state, inputs)
+  state = resolveBurnExtinguish(state, inputs)
+  state = resolveFirearmReload(state, inputs)
+  state = advanceSeiyaku(state, inputs)
+  state = advanceZodiacAndHeirUpgrades(state, inputs)
+  state = advanceBlackWhaleCanonUpgrades(state, inputs)
+  state = advanceMatchupValves(state, inputs)
+  state = advanceFinalFiveUpgrades(state, inputs)
+  state = resolveChrolloFlipInputs(state, inputs)
+  state = resolveTsk17Inputs(state, inputs)
   state = advancePredatorClock(state)
   state = advanceEmperorClock(state)
   if (state.catsName) return { state: advanceCatsName(state), pending: true }
@@ -48,15 +138,46 @@ function hitstopFrame(state: FightState): FightState {
   })
 }
 
+/**
+ * Deterministic 5-phase end-of-frame pipeline:
+ * 1. Clock & sound channels
+ * 2. Continuous DoTs & thermal/blood hazards
+ * 3. Fighter status timers & spatial traps
+ * 4. Universal Nen pillars (En reflex & Ren Malice)
+ * 5. Information & HUD perception (Book, Sonar, Owl, Profile, Opponent Intel)
+ */
+const CLOSE_FRAME_PIPELINE: readonly ((state: FightState) => FightState)[] = [
+  finishExpiredFight,
+  reconcileMelodySound,
+  reconcileBattleCantabile,
+  advanceTsk17,
+  advanceBashoHaiku,
+  advanceFeitanTerebellumUpgrades,
+  advanceShizukuHanzoKallutoUpgrades,
+  advanceTroupeUpgrades,
+  advanceIllumiBiscuitUpgrades,
+  advanceHalkenburgBonolenovUpgrades,
+  advanceHinrighZakuroLuiniUpgrades,
+  advanceNenPillars,
+  advanceChrolloBookIntel,
+  advanceLeorioSonar,
+  advanceMusseOwl,
+  advanceFurykovProfile,
+  advanceOpponentIntel,
+]
+
 /** Advances the frame counter and round clock from the frame's opening world. */
 export function closeFrame(start: FightState, resolved: FightState): FightState {
   const remainingFrames =
     start.mode === 'training' ? start.remainingFrames : Math.max(0, start.remainingFrames - 1)
-  const next = {
+  let next: FightState = {
     ...advanceNenPsychology(start, advanceBurstZetsu(resolved, start.frame)),
     frame: start.frame + 1,
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))
+  for (const step of CLOSE_FRAME_PIPELINE) {
+    next = step(next)
+  }
+  return next
 }

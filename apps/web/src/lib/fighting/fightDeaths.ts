@@ -1,5 +1,6 @@
 import { beginGumResuscitation } from './gumResuscitation'
 import { resolveDeathHatsu } from './hatsu'
+import { resolveGumHeart } from './hisokaHeart'
 import type { FightSide, FightState } from './types'
 
 export type FightDeathCause =
@@ -35,6 +36,13 @@ export function resolvePostMortemDeaths(state: FightState): FightState {
   for (const death of state.deaths ?? []) {
     const pumping = beginGumResuscitation(state, death)
     if (pumping) return pumping
+    // The older one-shot gum order: a restart at 1 HP after asphyxia, once.
+    const restarted = resolveGumHeart(state, death)
+    if (restarted)
+      return {
+        ...restarted,
+        deaths: restarted.deaths?.filter((entry) => entry.victimSide !== death.victimSide),
+      }
     if (!hasLivingKiller(state, death)) continue
     const triggered = resolveDeathHatsu(state, death.killerSide!, death.victimSide)
     if (triggered) return { ...triggered, deaths: undefined }

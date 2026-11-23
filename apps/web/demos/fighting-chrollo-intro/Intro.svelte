@@ -64,6 +64,17 @@
   let twinFilm = $derived(
     segment?.twin && shot.kind === 'clip' ? filmAt(segment.twin, simOverride ?? shot.sim) : null,
   )
+  /** The fighters' own entrance animations, on a shot held in the ready phase. */
+  let introFrame = $derived(
+    segment?.entrance !== undefined && shot.kind === 'clip'
+      ? {
+          elapsed: Math.min(6.39, segment.entrance + (simOverride ?? shot.sim) / 60),
+          duration: 6.4,
+          mode: 'full' as const,
+          waiting: false,
+        }
+      : null,
+  )
   let mask = $derived(
     shot.kind === 'clip'
       ? lit[shot.clip][Math.floor(shot.sim)]
@@ -158,6 +169,7 @@
     keepCombatantMarkers={false}
     hideSecondaryView
     victoryFrame={film}
+    {introFrame}
   />
 {/snippet}
 

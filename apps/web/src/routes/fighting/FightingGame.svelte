@@ -247,17 +247,13 @@
       control,
       opponentControl,
       opponentAttack,
-      attack,
+      attack: (action) => sendMove('player', action),
       action: handleActionKey,
     })
   }
   function handleActionKey(key: string) {
     if (handlePauseKey(key)) return
     if (paused || !canControlFight(state, paused)) return
-    if (key === 'o') return throwAttack()
-    if (key === 'h') return finisher()
-    const attackKind = attackKeys[key]
-    if (attackKind) return attack(attackKind)
     if (key === 'Enter' && state?.phase === 'ready') startFight()
   }
   function handlePauseKey(key: string): boolean {

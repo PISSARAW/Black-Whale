@@ -1,8 +1,7 @@
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import { pointInPolygon } from '../tour/geometry'
 import type { CombatSide, CombatState, FighterState } from './types'
-import type { CombatBoundary } from '../tour/types'
-import type { Vec2 } from '../tour/types'
+import type { CombatBoundary, Vec2 } from '../tour/types'
 import { MOVE_SPEED, MIN_SEPARATION, distance } from './fighter'
 import { usesClashNen } from './clashNen'
 
@@ -11,6 +10,9 @@ export const JUMP_INITIAL_VELOCITY = 4.5
 
 /** Gravity of a jump, in metres per second squared. */
 export const JUMP_GRAVITY = 9.8
+
+/** Two positions closer than this are the same position. */
+const SAME_POSITION_EPSILON = 1e-6
 
 export interface JumpTrajectory {
   /** Height of the body above the ground, in metres, at `dt` seconds. */
@@ -105,7 +107,7 @@ export function moveThroughOpenRoom(state: CombatState, side: CombatSide, dt: nu
   })
   const rival = side === 'player' ? state.opponent.position : state.player.position
   const separated = distance(resolved, rival) < MIN_SEPARATION
-  const wallBlocked = resolved[0] !== proposed[0] || resolved[1] !== proposed[1]
+  const wallBlocked = distance(resolved, proposed) > SAME_POSITION_EPSILON
   const fighterStep: FighterState = separated
     ? { ...fighter, movement: [0, 0] }
     : { ...fighter, position: resolved, movement: fighter.movement }

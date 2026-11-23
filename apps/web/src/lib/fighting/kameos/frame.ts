@@ -17,6 +17,7 @@ export function stepKameoFrame(state: FightState, inputs: DuelInputs): FightStat
 }
 
 function framesCalls(state: FightState, inputs: DuelInputs): KameoCalls {
+  if (state.deathMatch) return {}
   const opponent = inputs.opponent
     ? kameoCall(inputs.opponent, state.opponent.facing)
     : state.mode === 'versus-ai'

@@ -9,8 +9,36 @@ import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
+import { updateTextureOnHit } from './textureSurpriseMask'
+import { thetaBulletDamageFactor } from './martialSpecialists'
+import {
+  LEORIO_TEN_CHIP_FACTOR,
+  LEORIO_TEN_LAUNCH_VY,
+  LEORIO_TEN_LAUNCH_Y,
+  leorioBreaksTenGuard,
+  leorioSurgicalStack,
+} from './leorioMedical'
+import { furykovResistanceFactor } from './furykovProfile'
+import { bashoFireAttackFactor, bashoIgnoresTenGuard, bashoKenCostFactor } from './bashoHaiku'
+import {
+  FIREARM_BODY_MEMORY_WEIGHT,
+  REN_PRESSURE_BLOCKSTUN,
+  firearmGuardFactor,
+} from './nenPillars'
+import { franklinKenDrain } from './troupeUpgrades'
+import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
+import { applyJupiterAcousticImpact, isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
+import { rihanTacticalDefenceFactor } from './matchupValves'
+import {
+  PADAILLE_DRILL_TEN_CHIP,
+  padailleAxeOpensWound,
+  padailleDrillBodyMemoryStack,
+  padailleDrillPiercesTen,
+  padailleHammerKenDrain,
+} from './finalFiveUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
-import { pinnedKnockback } from './groundedPin'
+import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
+import { guardKnockbackFactor } from './characterMovementTech'
 
 const GROUND = 0
 const MIN_X = 7
@@ -40,6 +68,8 @@ interface ResolvedDamageOptions {
 
 export function resolvedDamage(options: ResolvedDamageOptions): number {
   if (options.base === 0) return 0
+  if (options.defence.fighter.crossGameStasis) return 0
+  if (hanzoDoubleIgnoresTenPhysical(options.attacker, options.defence.fighter)) return 0
   if (options.defence.parried || options.defence.avoided) return 0
   return attackDamage({
     ...options,
@@ -55,7 +85,19 @@ function attackDamage(
   },
 ): number {
   const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
-  const guard = blocked ? 0.28 : 1
+  const halkenburgPierce = isHalkenburgUnblockableArrow(attacker)
+  const guardBypassed = blocked && (bashoIgnoresTenGuard(attacker, defender) || halkenburgPierce)
+  const leorioChip = leorioBreaksTenGuard(attacker, defender, blocked)
+  const padailleDrill = padailleDrillPiercesTen(attacker, defender, blocked)
+  const guard = options.physicalProjectile
+    ? firearmGuardFactor(defender, blocked)
+    : !blocked || guardBypassed
+      ? 1
+      : leorioChip
+        ? 0.28 * LEORIO_TEN_CHIP_FACTOR
+        : padailleDrill
+          ? 0.28 * PADAILLE_DRILL_TEN_CHIP
+          : 0.28
   const rawDamage = Math.round(
     base *
       (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
@@ -66,14 +108,21 @@ function attackDamage(
         (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker))) *
       hatsuDefenceFactor(defender) *
       guard *
-      shuGuardFactor(defender, blocked, options.physicalProjectile) *
+      shuGuardFactor(defender, blocked && !guardBypassed, options.physicalProjectile) *
+      thetaBulletDamageFactor(attacker, options.physicalProjectile) *
+      furykovResistanceFactor(defender, attacker) *
+      rihanTacticalDefenceFactor(defender) *
+      bashoFireAttackFactor(attacker) *
       openingMultiplier,
   )
   // Scale the rounded wound down so successive light hits cannot round back up.
   const damage = Math.floor(rawDamage * damageScale)
+  if (options.physicalProjectile && blocked && (defender.nen.ken || defender.nen.ko)) return 0
   // Ken absorbs ordinary guarded blows, but its protection has finite output.
   const absorption =
-    blocked && defender.nen.ken ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer') : 0
+    blocked && !halkenburgPierce && defender.nen.ken
+      ? 4 + 5 * fightCategoryEfficiency(defender, 'enhancer')
+      : 0
   return absorption ? Math.max(0, damage - Math.round(absorption)) : Math.max(1, damage)
 }
 
@@ -100,18 +149,31 @@ export function strikeDefender(options: StrikeOptions): ArcadeFighter {
 export function strikeProjectileDefender(
   options: StrikeOptions & { projectile: ProjectileHit['projectile'] },
 ): ArcadeFighter {
-  return struckFighter({
+  const struck = struckFighter({
     ...options,
     knockback: options.projectile.knockback,
     hitstun: options.projectile.hitstun,
     blockstun: options.projectile.blockstun,
   })
+  if (options.projectile.jupiter || options.projectile.fighterId === 'bonolenov') {
+    return applyJupiterAcousticImpact(struck, Boolean(options.fighter.coveringEars))
+  }
+  return struck
 }
 
 function struckFighter(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
 ): ArcadeFighter {
   const direction = options.fighter.x > options.attacker.x ? 1 : -1
+  const textureUpdate = updateTextureOnHit({
+    fighter: options.fighter,
+    attacker: options.attacker,
+    damage: options.damage,
+    blocked: options.blocked,
+    zone: options.zone,
+    kind: options.attacker.attack?.kind,
+    variant: options.attacker.attack?.variant,
+  })
   const struck = {
     ...options.fighter,
     ...launchState(options),
@@ -120,18 +182,38 @@ function struckFighter(
     ...comboState(options),
     x: clamp(
       options.fighter.x +
-        direction * pinnedKnockback(options.fighter, options.attacker, options.knockback),
+        direction *
+          pinnedKnockback(options, options.knockback) *
+          guardKnockbackFactor(options.fighter, options.blocked),
       MIN_X,
       MAX_X,
     ),
     health: Math.max(0, options.fighter.health - options.damage),
     aura:
       options.blocked && options.fighter.nen.ken
-        ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1)
+        ? Math.max(
+            0,
+            options.fighter.aura -
+              ((2 + options.damage * 0.1) * bashoKenCostFactor(options.fighter) +
+                franklinKenDrain(options.attacker, options.fighter, options.blocked) +
+                padailleHammerKenDrain(options.attacker, options.fighter, options.blocked)),
+          )
         : options.fighter.aura,
+    ...(padailleAxeOpensWound(options.attacker, options.blocked, options.damage)
+      ? { openWounds: (options.fighter.openWounds ?? 0) + 1 }
+      : {}),
     nen: contactNen(options.fighter, options.blocked),
-    // Contact exposes the cloth disguise; it supplies no armour or evasion.
-    textureSurprise: undefined,
+    textureSurprise: textureUpdate.textureSurprise,
+    ...(textureUpdate.trapped ? { hitStun: 0, blockStun: 0 } : {}),
+    ...(leorioBreaksTenGuard(options.attacker, options.fighter, options.blocked)
+      ? { y: Math.max(options.fighter.y, LEORIO_TEN_LAUNCH_Y), velocityY: LEORIO_TEN_LAUNCH_VY }
+      : {}),
+    ...(!options.blocked &&
+    options.damage > 0 &&
+    options.attacker.bashoHaikuBuff?.theme === 'fire' &&
+    options.attacker.bashoHaikuBuff.quality === 'masterpiece'
+      ? { haikuBurn: true }
+      : {}),
     easterEgg: undefined,
     easterEggSequence: 0,
     melodyPerformance: undefined,
@@ -142,7 +224,19 @@ function struckFighter(
     throwTechFrames: 0,
     throwTechRecoveryFrames: 0,
   }
-  return rememberBodyHit(struck, options.zone, options.damage, options.blocked)
+  const firearmHit = Boolean(!options.melee && options.zone && !options.blocked && options.damage > 0)
+  const stacks = Math.max(
+    leorioSurgicalStack(options.attacker, options.fighter),
+    padailleDrillBodyMemoryStack(options.attacker),
+  )
+  let updated = rememberBodyHit(struck, options.zone, options.damage, options.blocked)
+  if (stacks > 1) updated = rememberBodyHit(updated, options.zone, options.damage, options.blocked)
+  if (firearmHit && (options.zone === 'hands' || options.zone === 'feet')) {
+    const prev = options.fighter.bodyMemory?.hits[options.zone] ?? 0
+    const nextHits = Math.min(3, prev + FIREARM_BODY_MEMORY_WEIGHT)
+    updated = { ...updated, bodyMemory: { hits: { ...updated.bodyMemory?.hits, [options.zone]: nextHits } } }
+  }
+  return updated
 }
 
 function airRecoveryOnHit(options: StrikeOptions): true | undefined {
@@ -174,9 +268,16 @@ function stunState(
   options: StrikeOptions & { hitstun: number; blockstun: number },
 ): Pick<ArcadeFighter, 'hitStun' | 'blockStun' | 'pose' | 'blocking'> {
   const hitStun = options.hitstun + Number(options.counterHit) * 3 + Number(options.wallSplat) * 5
+  const renPressure =
+    options.blocked &&
+    options.attacker.nen.mode === 'ren' &&
+    !options.fighter.nen.ken &&
+    !options.fighter.nen.ko
+      ? REN_PRESSURE_BLOCKSTUN
+      : 0
   return {
     hitStun: options.blocked ? 0 : contactHitstun(options, hitStun),
-    blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 : 0,
+    blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 + renPressure : 0,
     pose: options.blocked ? 'guard' : 'hit',
     blocking: options.blocked,
   }
@@ -210,8 +311,8 @@ function comboState(
   }
 }
 
-function knockdownFrames(options: StrikeOptions): number {
-  if (!options.knockdown || options.blocked) return options.fighter.knockdownFrames
+function knockdownFrames(options: StrikeOptions & { hitstun: number }): number {
+  if (!options.knockdown || options.blocked) return pinnedKnockdown(options, options.hitstun)
   return Math.max(options.fighter.knockdownFrames, cinematicThrowKnockdown(options.attacker))
 }
 
@@ -236,6 +337,7 @@ export function openingDamageMultiplier(opening: { counterHit: boolean; punish: 
 export function nextComboHits(defender: ArcadeFighter, defence: ImpactDefence): number {
   if (defence.blocked || defence.avoided) return 0
   const continuing =
+    defender.machiThread?.kind === 'bind' ||
     defender.hitStun > 0 ||
     defender.knockdownFrames > 0 ||
     defender.y > GROUND ||

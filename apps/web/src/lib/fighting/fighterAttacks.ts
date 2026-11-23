@@ -18,8 +18,10 @@ import { crossGameBusy } from './crossGame'
 import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
+import { hinrighBlocksHandAction } from './hinrighZakuroLuiniUpgrades'
 import { remotePunchAvailable } from './leorioAttack'
-import { chrolloMoveAvailable } from './chrolloBook'
+import { chrolloMoveAvailable, chrolloRightHandOccupied } from './chrolloBook'
+import { EN_STARTUP_BONUS } from './nenPillars'
 import { chainsImmobilize, kurapikaMoveAvailable } from './kurapika'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { feitanMoveAvailable } from './feitanPain'
@@ -128,7 +130,8 @@ export function startFighterAttack(options: {
       kind,
       variant: options.variant,
       confirmedHit: false,
-      frame: 0,
+      frame:
+        fighter.enReflexActive && (kind === 'light' || kind === 'heavy') ? EN_STARTUP_BONUS : 0,
       impacted: false,
       auraCharged: auraCharged && canChargeAura(fighter, kind),
       concealed,
@@ -179,6 +182,7 @@ function ordinaryCanStartFighterAttack(
 ): boolean {
   const { moveId } = intent
   if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
+  if ((fighter.firearmReloadFrames ?? 0) > 0) return false
   if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   if (!biohazardBodyFree(fighter)) return false
@@ -201,6 +205,10 @@ function characterAttackAvailable(
   if (!cyclotronAllowsAttack(fighter, kind, { moveId })) return false
   if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
+  if (chrolloRightHandOccupied(fighter) && moveById(moveId)?.category === 'throw') return false
+  const zone = attackData(kind, fighter).auraZone
+  const isThrow = moveById(moveId)?.category === 'throw'
+  if (hinrighBlocksHandAction(fighter, isThrow ? 'throw' : kind, zone)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
   return true
 }
@@ -245,8 +253,29 @@ function canAct(fighter: ArcadeFighter): boolean {
   )
 }
 
+const CHORD_LENIENCE_FRAMES = 3
+
+function isChordOverride(fighter: ArcadeFighter, moveId?: string): boolean {
+  const current = fighter.attack
+  if (
+    !current ||
+    current.impacted ||
+    current.frame > CHORD_LENIENCE_FRAMES ||
+    current.accel ||
+    current.kind === 'special'
+  )
+    return false
+  const next = moveById(moveId)
+  if (!next) return false
+  if (next.category === 'throw') return current.kind === 'light' || current.kind === 'heavy'
+  if (next.category === 'finisher') return current.kind === 'heavy'
+  return false
+}
+
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
-  if (!fighter.attack || !legalCancel(fighter, kind, intent)) return false
+  if (!fighter.attack) return false
+  if (isChordOverride(fighter, intent.moveId)) return true
+  if (!legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
   if (isAirPursuit(intent.directionalChain)) return pursuitWindow(fighter.attack.frame, data)
   const window = moveById(fighter.attack.moveId)?.cancelWindow

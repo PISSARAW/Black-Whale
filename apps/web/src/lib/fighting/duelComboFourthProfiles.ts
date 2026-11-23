@@ -4,6 +4,14 @@ export const FOURTH_DUEL_PROFILES = {
   saiyu: {
     window: 6,
     block: 'standingHeavy',
+    // Les trois interdits (signatureCombosSenses.ts): through the target after Kikazaru.
+    dash: { forwardSpecial: 'through' },
+    // Behind the target: staff circle, Iwazaru, crushing pillar, final strike.
+    accelInto: {
+      backSpecial: ['downSpecial'],
+      downSpecial: ['forwardHeavy'],
+      forwardHeavy: ['finisher'],
+    },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -36,7 +44,8 @@ export const FOURTH_DUEL_PROFILES = {
       },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
       airHeavy: { into: [] },
-      neutralSpecial: { tuning: { startup: 10, knockback: 4.3, reach: 20 }, into: [] },
+      // Les trois interdits: Mizaru that lands opens the monkey sweep.
+      neutralSpecial: { tuning: { startup: 10, knockback: 4.3, reach: 20 }, into: ['lowHeavy'] },
       forwardSpecial: { tuning: { startup: 10, knockback: 4.3, reach: 20 }, into: [] },
       downSpecial: { tuning: { startup: 10, knockback: 4.3, reach: 20 }, into: [] },
     },

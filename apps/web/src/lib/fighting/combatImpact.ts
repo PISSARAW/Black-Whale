@@ -23,7 +23,7 @@ import { observeComboMaster } from './comboMaster'
 import { onRageDamage } from './onTechnique'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { sleepingBody } from './hanzoProjection'
-import { nenOutputCapacity } from './nenBudget'
+import { resolveKoClash } from './koClash'
 export { finishFight } from './combatVerdict'
 import { tradeGumState, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
@@ -76,56 +76,6 @@ export function resolveMeleePair(state: FightState): FightState {
   if (trade) return resolveTrade(state, next)
   if (next.phase !== 'fighting') return next
   return recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
-}
-
-const CLASH_PUSHBACK = 4
-const CLASH_HITSTOP = 8
-
-/** Two committed Ko hitboxes meeting on one frame cancel before either body is struck. */
-function resolveKoClash(state: FightState): FightState | null {
-  const playerBox = koHitbox(state.player)
-  const opponentBox = koHitbox(state.opponent)
-  if (!playerBox || !opponentBox || !boxesOverlap(playerBox, opponentBox)) return null
-
-  const playerRen = nenOutputCapacity(state.player)
-  const opponentRen = nenOutputCapacity(state.opponent)
-  const winner = playerRen === opponentRen ? null : playerRen > opponentRen ? 'player' : 'opponent'
-  const position = contactPoint(playerBox, opponentBox)
-  let player = cancelKoAttack(state.player)
-  let opponent = cancelKoAttack(state.opponent)
-
-  if (winner === 'player') opponent = pushFromClash(opponent, player)
-  if (winner === 'opponent') player = pushFromClash(player, opponent)
-
-  return {
-    ...state,
-    player,
-    opponent,
-    hitstop: Math.max(state.hitstop, CLASH_HITSTOP),
-    attackClash: {
-      sequence: (state.attackClash?.sequence ?? 0) + 1,
-      frame: state.frame,
-      winner,
-      playerRen,
-      opponentRen,
-      position,
-    },
-  }
-}
-
-function koHitbox(fighter: ArcadeFighter) {
-  if (!attackCanResolve(fighter) || !isCriticalAuraStrike(fighter)) return null
-  return activeHitbox(fighter)
-}
-
-function cancelKoAttack(fighter: ArcadeFighter): ArcadeFighter {
-  const released = releaseFocusedAura(fighter)
-  return { ...released, attack: null, pose: released.y > 0 ? 'jump' : 'idle' }
-}
-
-function pushFromClash(loser: ArcadeFighter, winner: ArcadeFighter): ArcadeFighter {
-  const direction = winner.x <= loser.x ? 1 : -1
-  return { ...loser, x: Math.max(7, Math.min(93, loser.x + direction * CLASH_PUSHBACK)) }
 }
 
 function canTrade(state: FightState): boolean {
@@ -222,16 +172,18 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     !defence.avoided && !defence.blocked && data.knockback > 0
       ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
       : spent
+  const recoiledAttacker = recoilGuardedAttack({
+    attacker: corneredAttacker,
+    defender: defence.fighter,
+    struck,
+    knockback: data.knockback,
+    blocked: defence.blocked,
+    avoided: defence.avoided,
+    cyclotronTurns: attacker.attack.cyclotronTurns ?? 0,
+  })
   let next: FightState = {
     ...state,
-    [side]: recoilGuardedAttack({
-      attacker: corneredAttacker,
-      defender: defence.fighter,
-      struck,
-      knockback: data.knockback,
-      blocked: defence.blocked,
-      avoided: defence.avoided,
-    }),
+    [side]: recoiledAttacker,
     [defenderSide]: struck,
     score,
     knockdowns,

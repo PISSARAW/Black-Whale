@@ -1,4 +1,5 @@
 import { witnessedHatsuState } from './nenWitness'
+import { comboShotHeight } from './culdceptHold'
 import { commitProjectileNen } from './nenProjectiles'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide } from './frameData'
 import { franklinNenAvailable, franklinSalvo, franklinShotAt } from './franklinAttack'
@@ -13,7 +14,7 @@ export function spawnFranklinBarrage(state: FightState, side: FightSide): FightS
   if (shot !== (attack.projectilesSpawned ?? 0)) return state
   const projectile = checkMuzzlePath(
     state,
-    makeBullet({ fighter, shot, side, id: state.nextProjectileId }),
+    makeBullet({ fighter, shot, side, id: state.nextProjectileId }, state),
   )
   const witnessSide = otherSide(side)
   const witness = state[witnessSide]
@@ -50,12 +51,11 @@ function canKeepFiring(fighter: ArcadeFighter): boolean {
   )
 }
 
-function makeBullet(options: {
-  fighter: ArcadeFighter
-  shot: number
-  side: FightSide
-  id: number
-}): FightProjectile {
+/** A volley that extends a combo out of an accélération aims at the held body, even on the ground. */
+function makeBullet(
+  options: { fighter: ArcadeFighter; shot: number; side: FightSide; id: number },
+  state: FightState,
+): FightProjectile {
   const { fighter, shot, side, id } = options
   const salvo = franklinSalvo(fighter)
   const hand = shot % 2
@@ -68,7 +68,11 @@ function makeBullet(options: {
     owner: side,
     fighterId: 'franklin',
     x: fighter.x + direction * (hand === 0 ? 5.3 : 9.5),
-    y: fighter.y + sweep + (hand === 0 ? -0.05 : 0.05) + (finger - 2) * 0.025,
+    y:
+      comboShotHeight(state, side, fighter.y + sweep) +
+      (hand === 0 ? -0.05 : 0.05) +
+      (finger - 2) * 0.025,
+    canHitDowned: Boolean(fighter.attack?.accel),
     velocityX: direction * 82,
     width: 0.45,
     height: 0.18,

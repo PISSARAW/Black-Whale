@@ -1,4 +1,5 @@
 import { judgmentForbidsContact } from './judgmentCommunication'
+import { recordVocalExchange } from './halkenburgBonolenovUpgrades'
 import { speakPaperWords, voiceAvailable } from './kallutoListening'
 import { canSpeak, senseDeprived } from './saiyuSenses'
 import { resolveHanzoBodyCalls } from './hanzoBodyCall'
@@ -34,10 +35,14 @@ export function speakBattleWords(state: FightState, side: FightSide, text?: stri
   const other = side === 'player' ? 'opponent' : 'player'
   const reply = autoReplyAvailable(state, side)
   if (reply) state = speakPaperWords(state, 'opponent', 'Je t’écoute.')
+  const speakerBody =
+    state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]
+  const otherBody =
+    state[other].id === 'bonolenov' ? recordVocalExchange(state[other]) : state[other]
   return {
     ...state,
-    [side]: { ...state[side], battleUtteranceFrame: state.frame },
-    [other]: reply ? { ...state[other], battleUtteranceFrame: state.frame } : state[other],
+    [side]: { ...speakerBody, battleUtteranceFrame: state.frame },
+    [other]: reply ? { ...otherBody, battleUtteranceFrame: state.frame } : otherBody,
   }
 }
 

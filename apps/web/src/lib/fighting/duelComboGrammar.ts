@@ -22,7 +22,9 @@ export function grammarCancels(
 ): GrammarCancels {
   const fighter = move.id.split(':')[0]
   const chains = spec?.into ?? []
-  if (grammar.supers.includes(move.slot)) return { cancelInto: [], cancelOnBlockInto: [] }
+  // A super keeps only its own written chains (target combos, e.g. Les trois interdits).
+  if (grammar.supers.includes(move.slot))
+    return { cancelInto: ids(fighter, chains), cancelOnBlockInto: [] }
   if (grammar.specials.includes(move.slot))
     return {
       // A special keeps its written chains (target combos, e.g. Double page).

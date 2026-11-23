@@ -21,7 +21,7 @@ const BOOK_MOVES: Partial<Record<MoveSlot, { cost: number; tuning: Partial<MoveT
   },
   backSpecial: {
     cost: 0,
-    tuning: { startup: 3, active: 1, recovery: 12, damage: 0, lunge: 0, reach: 0 },
+    tuning: { startup: 2, active: 1, recovery: 7, damage: 0, lunge: 0, reach: 0 },
   },
   downSpecial: {
     cost: 0,
@@ -37,9 +37,11 @@ const PHYSICAL_NAMES: Partial<Record<MoveSlot, readonly [string, string]>> = {
   standingHeavy: ['Coup de pied d’arrêt', 'Stop Kick'],
   lowLight: ['Frappe basse', 'Low Strike'],
   airLight: ['Main du voleur', 'Thief’s Hand'],
-  forwardLight: ['Paume rapide', 'Quick Palm'],
-  forwardHeavy: ['Coude du chef', 'Leader Elbow'],
-  backHeavy: ['Contre du voleur', 'Thief Counter'],
+  airHeavy: ['Signet trompeur', 'Deceptive Bookmark'],
+  forwardLight: ['Page tranchante', 'Cutting Page'],
+  forwardHeavy: ['Lecture en mouvement', 'Moving Reading'],
+  backHeavy: ['Pas du voleur', 'Thief’s Step'],
+  throw: ['Chapitre final', 'Final Chapter'],
 }
 
 export function tuneChrolloMoveset(moveset: FighterMoveset): FighterMoveset {

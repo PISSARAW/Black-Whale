@@ -1,3 +1,4 @@
+import { moveById } from './movesets'
 import type { ArcadeFighter } from './types'
 
 /**
@@ -8,10 +9,28 @@ import type { ArcadeFighter } from './types'
 export const GROUNDED_PIN_KNOCKBACK = 1.5
 
 export function pinnedKnockback(
-  defender: ArcadeFighter,
-  attacker: ArcadeFighter,
+  hit: { fighter: ArcadeFighter; attacker: ArcadeFighter; melee?: boolean },
   knockback: number,
 ): number {
-  if (defender.knockdownFrames === 0 || !attacker.attack?.accel) return knockback
-  return Math.min(knockback, GROUNDED_PIN_KNOCKBACK)
+  if (hit.fighter.knockdownFrames === 0 || !hit.attacker.attack?.accel) return knockback
+  // A shot that holds the lying body (pinnedKnockdown below) does not push it out of the cone.
+  return hit.melee ? Math.min(knockback, GROUNDED_PIN_KNOCKBACK) : 0
+}
+
+/**
+ * Feu de suppression (SIGNATURE_COMBOS.md): a shot that extends a combo out of an accélération
+ * and reaches a body on the ground keeps it there for at least the hitstun of its volley. The volley aims
+ * at the lying body (culdceptHold.ts comboShotHeight), so the body never stands up mid-volley.
+ */
+export function pinnedKnockdown(
+  options: { fighter: ArcadeFighter; attacker: ArcadeFighter; melee?: boolean; blocked: boolean },
+  hitstun: number,
+): number {
+  const { fighter, attacker } = options
+  if (options.melee || options.blocked || fighter.knockdownFrames === 0)
+    return fighter.knockdownFrames
+  if (!attacker.attack?.accel) return fighter.knockdownFrames
+  // The hold lasts the volley's own hitstun, not the single bullet's.
+  const volley = moveById(attacker.attack.moveId)?.tuning.hitstun ?? 0
+  return Math.max(fighter.knockdownFrames, hitstun, volley)
 }

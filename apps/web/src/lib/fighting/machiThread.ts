@@ -44,9 +44,17 @@ export function machiSourceActive(fighter: ArcadeFighter): boolean {
   return held?.source === 'machi' && held.used
 }
 
+const THREAD_HOLDING_MOVES = [
+  'machi:downSpecial',
+  'machi:lowHeavy',
+  'machi:throw',
+  'machi:finisher',
+]
+
 function holdingBind(fighter: ArcadeFighter): boolean {
   const move = machiMoveId(fighter)
-  const handsFree = !fighter.attack || move === 'machi:downSpecial' || move === 'machi:finisher'
+  // The stitched sweep and the Troupe Bind (machiTroupeBind.ts) keep hold of the thread.
+  const handsFree = !fighter.attack || THREAD_HOLDING_MOVES.includes(move ?? '')
   return handsFree && fighter.hitStun === 0 && fighter.knockdownFrames === 0 && !fighter.blocking
 }
 

@@ -1,11 +1,13 @@
 <script lang="ts">
   import FightFullscreenButton from './FightFullscreenButton.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
+  import type { FightHudModePreference } from '$lib/fighting/perception/hudMode'
   import FightComfortSettings from './FightComfortSettings.svelte'
   export let language: 'fr' | 'en'
   export let comfort = defaultFightComfort()
   export let detailed = false
   export let hudScale = 1
+  export let hudModePreference: FightHudModePreference = 'auto'
   export let controlMode = 'auto'
   export let target: HTMLElement | undefined
   $: fr = language === 'fr'
@@ -13,6 +15,16 @@
 
 <div class="pause-display">
   <h3>{fr ? 'Affichage du combat' : 'Battle display'}</h3>
+  <label
+    ><span>{fr ? 'Perception du HUD' : 'HUD perception'}</span><select
+      aria-label={fr ? 'Perception du HUD' : 'HUD perception'}
+      bind:value={hudModePreference}
+      ><option value="auto">{fr ? 'Auto (Tactique en combat)' : 'Auto (Tactical in combat)'}</option
+      ><option value="tactical">{fr ? 'Tactique (HxH)' : 'Tactical (HxH)'}</option><option
+        value="omniscient">{fr ? 'HUD complet (Omniscient)' : 'Full HUD (Omniscient)'}</option
+      ></select
+    ></label
+  >
   <label
     ><span>{fr ? 'Taille du HUD' : 'HUD size'}</span><select
       aria-label={fr ? 'Taille du HUD' : 'HUD size'}

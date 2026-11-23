@@ -140,6 +140,10 @@ export function deriveGrammarProfile(moveset: FighterMoveset, profile: DuelCombo
   return {
     ...profile,
     moves,
-    grammar: { specials, supers: authoredSupers({ moveset, profile }) },
+    grammar: {
+      specials,
+      supers: authoredSupers({ moveset, profile }),
+      ...(profile.relance ? { accel: true as const } : {}),
+    },
   } satisfies DuelComboProfile
 }

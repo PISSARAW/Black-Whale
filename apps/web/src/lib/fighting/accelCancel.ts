@@ -1,5 +1,6 @@
 import { cancelGrammarFor } from './duelComboProfiles'
 import { moveById } from './movesets'
+import type { FighterMove } from './movesetTypes'
 import type { CancelGrammar } from './duelComboTypes'
 import type { ArcadeFighter, MoveSlot } from './types'
 
@@ -31,7 +32,18 @@ export function isAccelCancel(fighter: ArcadeFighter, moveId?: string): boolean 
   const current = moveById(fighter.attack?.moveId)
   const target = moveById(moveId)
   if (!grammar || !current || !target || !fighter.attack?.confirmedHit) return false
-  return accelTargets(grammar, current.slot).includes(target.slot)
+  return (
+    accelTargets(grammar, current.slot).includes(target.slot) ||
+    superChain(grammar, current, target.id)
+  )
+}
+
+/**
+ * A super that cancels into its own written chain (duelComboGrammar.ts) is a relance too:
+ * it heats the Ren, which bounds the loop the grammar's ender → super cancel would close.
+ */
+function superChain(grammar: CancelGrammar, current: FighterMove, targetId: string): boolean {
+  return grammar.supers.includes(current.slot) && current.cancelInto.includes(targetId)
 }
 
 export function accelOverheated(fighter: ArcadeFighter): boolean {
@@ -68,4 +80,11 @@ export function coolAccelHeat(heat: AccelHeat | undefined): AccelHeat | undefine
   if (!heat) return undefined
   const next = Math.max(0, heat.heat - ACCEL_HEAT_DRAIN)
   return next === 0 ? undefined : { heat: next, overheated: heat.overheated }
+}
+
+/** Chains a move gains when it was started out of an accélération (`CancelGrammar.accelInto`). */
+export function accelChains(fighter: ArcadeFighter, move: { slot: MoveSlot }): string[] {
+  if (!fighter.attack?.accel) return []
+  const chains = cancelGrammarFor(fighter.id)?.accelInto?.[move.slot] ?? []
+  return chains.map((slot) => `${fighter.id}:${slot}`)
 }

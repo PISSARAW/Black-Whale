@@ -1299,13 +1299,13 @@
       },
       "colours": {
         "basis": "attested",
-        "source": "Références anime fournies par le mainteneur le 2026-11-16 : cheveux noir vert effilés, manteau bleu noir, foulard violet à bord gris hachuré et emblème de crâne aux ailes magenta ; Pain Packer bordeaux, ivoire, noir et métal.",
+        "source": "Modèle 3D de référence fourni par le mainteneur le 2026-11-21 (Feitan.glb, plus fidèle que les références anime du 2026-11-16) : cheveux noir vert effilés, haut col et manteau bleu nuit, bordure grise à zigzag en V, crâne et tibias blancs, pantalon gris, rangers noires lacées ; Pain Packer bordeaux, ivoire, noir et métal.",
         "skin": "0xecd6bd",
         "hair": "0x111c1a",
         "attire": {
           "jacket": "0x192530",
           "trousers": "0x353b3d",
-          "shirt": "0x3b3353",
+          "shirt": "0x1f2733",
           "accent": "0x828a9b"
         }
       },
@@ -1315,7 +1315,7 @@
         "chapterIds": ["ch-371", "ch-395"],
         "status": "confirmed"
       },
-      "note": "Références fournies : petit gabarit, mèches irrégulières en raie, yeux mi-clos, manteau sombre long plissé, bottes souples et foulard violet à bordure hachurée avec crâne blanc et ailes magenta. Pain Packer : capuche pointue bordeaux à motifs ivoire, grille dentelée, sangles noires croisées, manteau évasé ivoire à flèches bordeaux, médaillon, pendeloques dorées, manches et gants bordeaux à boucles métalliques."
+      "note": "Références fournies : petit gabarit, mèches irrégulières en raie, yeux mi-clos, manteau sombre plissé arrêté sous le genou, rangers lacées montant à mi-mollet, haut col bleu nuit à bordure grise en zigzag formant un V sur la poitrine et dans le dos, crâne blanc sur tibias croisés. Pain Packer : capuche pointue bordeaux à motifs ivoire, grille dentelée, sangles noires croisées, manteau évasé ivoire à flèches bordeaux, médaillon, pendeloques dorées, manches et gants bordeaux à boucles métalliques."
     },
     {
       "id": "phinks-magcub",

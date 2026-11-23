@@ -5,7 +5,7 @@
     type LessonId,
   } from '$lib/fighting/fightLessons'
   import type { FightLessonsController } from '$lib/fighting/fightLessonController'
-  import { useFightBindings } from '$lib/fighting/fightControlHints'
+  import { finisherHint, throwHint, useFightBindings } from '$lib/fighting/fightControlHints'
   import type { ControlCommand } from '$lib/fighting/fightInputBindings'
   export let lessons: FightLessonsController
   export let language: 'fr' | 'en'
@@ -16,13 +16,11 @@
   const bindings = useFightBindings()
   const commands: Record<string, ControlCommand> = {
     light: 'playerLight',
-    throw: 'playerThrow',
     aura: 'playerAura',
     guard: 'playerGuard',
     down: 'playerDown',
     heavy: 'playerHeavy',
     special: 'playerSpecial',
-    finisher: 'playerFinisher',
     left: 'playerLeft',
     right: 'playerRight',
   }
@@ -31,6 +29,8 @@
   $: next = $lessons?.complete ? lessons.next() : null
   function hint(text: string): string {
     return text.replace(/\{(\w+)\}/g, (_, key: string) => {
+      if (key === 'throw') return throwHint($bindings)
+      if (key === 'finisher') return finisherHint($bindings)
       const value = $bindings[commands[key]]
       return value === ' '
         ? language === 'fr'

@@ -28,7 +28,11 @@
   /** The trail shows where the bar was a third of a second ago. */
   let trail = $derived(segment ? frameOf(segment.states, sim - 20) : undefined)
   let fight = $derived(Boolean(segment?.id.startsWith('fight')))
-  let opening = $derived(segment?.id === 'fight-1' && shot.kind === 'clip' ? shot.local : -1)
+  let opening = $derived(
+    (segment?.id === 'fight-1' || segment?.id === 'fight-1-1') && shot.kind === 'clip'
+      ? shot.local
+      : -1,
+  )
   let filming = $derived(Boolean(segment?.victory?.length))
   let knocked = $derived(state?.phase === 'finished' && !filming)
   let fx = $derived(shot.kind === 'clip' ? shot.fx : undefined)
@@ -36,8 +40,15 @@
     shot.kind === 'clip' && shot.beat && shot.beat.age < 34 && opening < 0 ? shot.beat : null,
   )
   const pct = (v: number) => `${Math.max(0, Math.min(100, v * 100))}%`
-  const life = (s: FightState, side: 'player' | 'opponent') => s[side].health / s[side].maxHealth
-  const NAMES = { player: hero.first, opponent: hero.last } as const
+  type Side = 'player' | 'opponent'
+  const life = (s: FightState, side: Side) => s[side].health / s[side].maxHealth
+  /** Hisoka stays on the left whichever seat the passage gives him. */
+  const seats = (s: FightState): [Side, Side] =>
+    s.player.id === 'hisoka' ? ['player', 'opponent'] : ['opponent', 'player']
+  const NAME: Record<string, string> = { hisoka: 'HISOKA', chrollo: 'CHROLLO' }
+  let winner = $derived(
+    state?.winner === 'player' || state?.winner === 'opponent' ? NAME[state[state.winner].id] : '',
+  )
 </script>
 
 {#if shot.kind === 'clip' && fx}
@@ -48,38 +59,46 @@
 {/if}
 
 {#if shot.kind === 'clip' && !fight}
-  <!-- The two faces before the bell. -->
+  <!-- The entrances: a name for each, then the pair's own lines as subtitles. -->
+  <div class="bars"></div>
   <div class="intro">
-    {#if segment?.hero === 'chrollo'}
-      <div class="vs" style={slam(shot.local, 2)}>VS</div>
-      <div class="name gold" style={slam(shot.local, 8)}>CHROLLO</div>
-      <div class="kicker" style={slam(shot.local, 16)}>LEADER OF THE PHANTOM TROUPE</div>
+    {#if segment?.id === 'entrance-1'}
+      <div class="name" style={slam(shot.local, 6)}>HISOKA</div>
+      <div class="kicker" style={slam(shot.local, 12)}>THE MAGICIAN</div>
+    {:else if segment?.id === 'entrance-2'}
+      <div class="name gold" style={slam(shot.local, 6)}>CHROLLO</div>
+      <div class="kicker" style={slam(shot.local, 12)}>LEADER OF THE PHANTOM TROUPE</div>
     {:else}
-      <div class="kicker" style={slam(shot.local, 4)}>{hero.kicker}</div>
-      <div class="name" style={slam(shot.local, 10)}>HISOKA</div>
-      <div class="kicker" style={slam(shot.local, 18)}>THE MAGICIAN</div>
+      <div class="kicker" style={slam(shot.local, 2)}>{hero.kicker}</div>
+      <div class="name small" style={slam(shot.local, 8)}>HISOKA</div>
+      <div class="vs small" style={slam(shot.local, 12)}>VS</div>
+      <div class="name gold small" style={slam(shot.local, 16)}>CHROLLO</div>
     {/if}
   </div>
+  {#if shot.beat?.line}<div class="subtitle">{shot.beat.line}</div>{/if}
 {:else if shot.kind === 'clip' && state && trail}
-  {#if !filming}
+  {#if shot.portrait}<div class="bars"></div>{/if}
+  {#if !filming && !shot.portrait}
+    {@const [left, right] = seats(state)}
     <div class="hud">
-      {#each ['player', 'opponent'] as const as side (side)}
-        <div class="side" class:right={side === 'opponent'}>
+      {#each [left, right] as side, i (side)}
+        <div class="side" class:right={i === 1}>
           <div class="bar">
             <i class="trail" style={`width:${pct(life(trail, side))}`}></i>
             <i class="life" class:low={life(state, side) < 0.25} style={`width:${pct(life(state, side))}`}></i>
           </div>
           <div class="aura"><i style={`width:${pct(state[side].aura / 100)}`}></i></div>
-          <div class="who">{NAMES[side]}</div>
+          <div class="who">{NAME[state[side].id]}</div>
         </div>
       {/each}
-      <div class="timer">{Math.max(0, Math.ceil(state.remainingFrames / 60))}</div>
+      <div class="timer">R1</div>
     </div>
-    {#if state.opponent.comboHits >= 2}
-      <div class="combo left"><b>{state.opponent.comboHits}</b><span>HITS</span></div>
+    <!-- A combo counter sits on the side of the fighter landing it. -->
+    {#if state[right].comboHits >= 2}
+      <div class="combo left"><b>{state[right].comboHits}</b><span>HITS</span></div>
     {/if}
-    {#if state.player.comboHits >= 2}
-      <div class="combo right"><b>{state.player.comboHits}</b><span>HITS</span></div>
+    {#if state[left].comboHits >= 2}
+      <div class="combo right"><b>{state[left].comboHits}</b><span>HITS</span></div>
     {/if}
   {/if}
   {#if opening >= 0 && opening < 40}
@@ -87,7 +106,9 @@
   {:else if opening >= 40 && opening < 64}
     <div class="call fight" style={slam(opening, 40)}>FIGHT!</div>
   {/if}
-  {#if callout && !knocked}
+  {#if callout && !knocked && !callout.word && callout.line}
+    <div class="subtitle">{callout.line}</div>
+  {:else if callout && !knocked}
     <div class="callout" style={`opacity:${callout.age > 28 ? 1 - (callout.age - 28) / 6 : 1}`}>
       {#if callout.word}<b style={slam(callout.age)}>{callout.word}</b>{/if}
       {#if callout.line}<span style={slam(callout.age, 3)}>{callout.line}</span>{/if}
@@ -96,13 +117,13 @@
   {#if knocked}
     <div class="call ko" style={slam(shot.local, 0)}>K.O.</div>
   {/if}
-  {#if filming && shot.local > shot.length - 40}
-    <div class="winner" style={slam(shot.local, shot.length - 40)}>CHROLLO WINS</div>
+  {#if filming && winner && shot.local > shot.length - 40 && segment?.victory?.some((key) => key.elapsed >= 8)}
+    <div class="winner" style={slam(shot.local, shot.length - 40)}>{winner} WINS</div>
   {/if}
   <div class="site">{SITE}</div>
 {:else if shot.kind !== 'clip'}
   <div class="card">
-    <div class="kicker" style={slam(shot.local, 0)}>THE FIGHT IS YOURS</div>
+    <div class="kicker" style={slam(shot.local, 0)}>TO BE CONTINUED</div>
     <div class="name small" style={slam(shot.local, 6)}>HISOKA</div>
     <div class="vs small" style={slam(shot.local, 12)}>VS</div>
     <div class="name gold small" style={slam(shot.local, 18)}>CHROLLO</div>
@@ -307,6 +328,32 @@
     color: #ffd23a;
     -webkit-text-stroke: 4px #000;
   }
+  .bars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      #000 0 9%,
+      transparent 9% 91%,
+      #000 91% 100%
+    );
+  }
+  .subtitle {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    bottom: 200px;
+    text-align: center;
+    font:
+      italic 40px/1.25 Georgia,
+      'Times New Roman',
+      serif;
+    color: #fff;
+    text-shadow:
+      0 2px 6px #000,
+      0 0 2px #000;
+  }
   .site {
     position: absolute;
     left: 0;
@@ -324,7 +371,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 170px;
+    top: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;

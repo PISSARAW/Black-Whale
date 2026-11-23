@@ -1,3 +1,4 @@
+import { resolvePadChords } from './combatChords'
 import { nenPadChords } from './nenCombat/padChords'
 import { EMPTY_INPUT, type FightInput, type FightSide, type MoveAction } from './types'
 
@@ -15,18 +16,13 @@ export interface PadFrame {
   actions: PadAction[]
   neutral: boolean
 }
-const PRESSED_ACTIONS: Record<number, PadAction> = {
-  0: 'light',
-  1: 'heavy',
-  3: 'ranged',
-  6: 'throw',
-  7: 'finisher',
-  9: 'pause',
-}
 const BUTTON_INPUTS: Record<number, keyof FightInput> = {
   2: 'hatsu',
+  3: 'kameo',
   4: 'guard',
   5: 'aura',
+  6: 'burst',
+  7: 'context',
   8: 'call',
   10: 'arena',
   11: 'gyo',
@@ -34,8 +30,6 @@ const BUTTON_INPUTS: Record<number, keyof FightInput> = {
   13: 'down',
   14: 'left',
   15: 'right',
-  // Guide: the only standard button left free; the support kameo call (KAMEOS.md).
-  16: 'kameo',
 }
 const pressed = (pad: FightPad, button: number) => Boolean(pad.buttons[button]?.pressed)
 function axisDirection(value: number, previouslyHeld: boolean, sign: -1 | 1): boolean {
@@ -52,14 +46,23 @@ function stickInput(pad: FightPad, previous: FightInput): FightInput {
     down: axisDirection(y, previous.down, 1),
   }
 }
-function padActions(pad: FightPad, previous: FightPad | null): PadAction[] {
-  if (!previous) return []
-  const actions: PadAction[] = []
-  for (const [button, action] of Object.entries(PRESSED_ACTIONS)) {
-    if (pressed(pad, Number(button)) && !pressed(previous, Number(button))) actions.push(action)
-  }
-  if (pressed(previous, 2) && !pressed(pad, 2)) actions.push('special')
-  return actions
+function padActions(pad: FightPad, previous: FightPad | null): {
+  actions: PadAction[]
+  burst: boolean
+} {
+  if (!previous) return { actions: [], burst: false }
+  const chord = resolvePadChords({
+    light: pressed(pad, 0),
+    heavy: pressed(pad, 1),
+    special: pressed(pad, 2),
+    guard: pressed(pad, 4),
+    prevLight: pressed(previous, 0),
+    prevHeavy: pressed(previous, 1),
+    prevSpecial: pressed(previous, 2),
+  })
+  const actions: PadAction[] = [...chord.actions]
+  if (pressed(pad, 9) && !pressed(previous, 9)) actions.push('pause')
+  return { actions, burst: chord.burst }
 }
 export function sampleGamepad(
   pad: FightPad,
@@ -78,15 +81,12 @@ export function sampleGamepad(
     buttons.plugWounds = !buttons.coverEars && pressed(pad, 5)
     buttons.call = buttons.guard = buttons.aura = false
   }
-  // Press both sticks together: deliberate, otherwise-unused defensive Burst chord.
-  if (pressed(pad, 10) && pressed(pad, 11)) {
-    buttons.burst = true
-    buttons.arena = buttons.gyo = false
-  }
+  const { actions, burst } = padActions(pad, previous)
+  if (burst) buttons.burst = true
   const input = mergeFightInput(nenPadChords(pad, buttons), stickInput(pad, lastInput))
   return {
     input,
-    actions: padActions(pad, previous),
+    actions,
     neutral: !Object.values(input).some(Boolean) && !pad.buttons.some((button) => button.pressed),
   }
 }

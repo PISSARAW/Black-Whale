@@ -1,4 +1,5 @@
 import { SCENARIO_RESOURCE_IDS } from './preparationResources'
+import { parseDeathMatchOptions } from './heavensDeathMatch/optionsCodec'
 import { FIGHTING_ROSTER } from './roster'
 import { decodeFightSnapshot } from './fightReplaySnapshot'
 import { readPanelReplayCommand } from './fightReplayPanels'
@@ -63,6 +64,10 @@ function preparation(value: unknown): FightPreparation | undefined {
     ...(hinrighKit ? { hinrighKit } : {}),
   }
 }
+function deathMatchOptions(value: unknown) {
+  const options = parseDeathMatchOptions(value)
+  return options === null ? fail() : options
+}
 function doorFrames(value: unknown) {
   const picks = parseDoorFramePicks(value)
   return picks === null ? fail() : picks
@@ -112,6 +117,7 @@ function setup(value: unknown): ReplaySetup {
           }
         : undefined,
       preparation: preparation(env.preparation),
+      deathMatch: deathMatchOptions(env.deathMatch),
     }),
   }
 }

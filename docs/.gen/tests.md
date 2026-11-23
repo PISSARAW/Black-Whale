@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1150
+Fichiers : 1167
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -216,6 +216,10 @@ Fichiers : 1150
 
 - Fighting moves in the 3D Arena > projects authored startup, reach and recovery onto the Arena plane
 
+## `apps/web/src/lib/combat/locomotion.test.ts`
+
+- the open-room locomotion layer > stops a ground move against a solid wall without sanctioning the fighter
+
 ## `apps/web/src/lib/combat/moveChain.test.ts`
 
 - Clash combat grammar in the 3D Arena > applies authored hitstun and knockback, then opens the cancel window
@@ -248,6 +252,10 @@ Fichiers : 1150
 ## `apps/web/src/lib/components/map/projection/tierAnchors.test.ts`
 
 - anchors > gives every reconstructed room a place of its own to stand
+
+## `apps/web/src/lib/fighting/accelHeatPresentation.test.ts`
+
+- relance heat in the HUD > is shown only for fighters with the relance
 
 ## `apps/web/src/lib/fighting/arenaTechnique.test.ts`
 
@@ -947,6 +955,39 @@ Fichiers : 1150
 
 - fighter Hatsu registry > lets an aimed, prepared Blinky swallow named objects but never Nen constructs
 
+## `apps/web/src/lib/fighting/heavensDeathMatch/chrolloPlan/canonicalRun.test.ts`
+
+- the canonical plan, played to the final explosion > reaches the final explosion in the scripted order
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/chrolloPlan/chrolloPlan.test.ts`
+
+- Chrollo’s book in the hand > reaches Gallery Fake open with Sun and Moon under the bookmark, one gesture at a time
+- the hierarchical plan > reads its phase from the scenario frontier
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/crowd/crowd.test.ts`
+
+- simulated crowd > seats the same real people on every visit
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/fightBridge.test.ts`
+
+- the death match inside the duel > converts the lane to the hall and back
+- the historical setup > reads replayed options and rejects malformed ones
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/heavensDeathMatch.test.ts`
+
+- death-match rules > has no points, TKO, rounds or clock, and stays out of the free picker
+- death-match scenario > replays every canonical beat deterministically
+- death-match checkpoints and gallery > round-trips a save and rejects a damaged one
+- Hisoka’s knowledge > hides Chrollo’s secrets from the Hisoka player until he deduces them
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/puppets/puppets.test.ts`
+
+- the puppet pipeline > copies a touched person only while Gallery Fake is active
+
+## `apps/web/src/lib/fighting/heavensDeathMatch/stands/stands.test.ts`
+
+- playable stands > walks on the ring, the pit, the rows and the aisle stairs
+
 ## `apps/web/src/lib/fighting/hinrigh.test.ts`
 
 - Hinrigh’s physical Biohazard objects > starts with two real pairs; activation transforms one without a damaging attack or stat buff
@@ -970,6 +1011,10 @@ Fichiers : 1150
 ## `apps/web/src/lib/fighting/hisokaEffects.test.ts`
 
 - Hisoka accents follow the live scene > mounts the elastic on the posed hand and chest, freezes with simulation time, and leaves no phantom strand
+
+## `apps/web/src/lib/fighting/hisokaHeart.test.ts`
+
+- Hisoka’s gum order around the heart, in an ordinary duel > reaches the heart order through the arsenal rather than the gum network family
 
 ## `apps/web/src/lib/fighting/historicalMaterialGestures.test.ts`
 
@@ -1200,6 +1245,10 @@ Fichiers : 1150
 ## `apps/web/src/lib/fighting/machiSpool.test.ts`
 
 - Machi’s finite thread > counts every engaged strand against one physical spool
+
+## `apps/web/src/lib/fighting/machiWound.test.ts`
+
+- Fil court: the Seamstress Elbow opens a wound inside a combo > opens one when it continues a combo
 
 ## `apps/web/src/lib/fighting/melody.test.ts`
 
@@ -1530,6 +1579,31 @@ Fichiers : 1150
 - accélération > cancels a confirmed hit into a dash in the listed direction
 - combo capture > seizes a stunned or downed body only when it ends an accélération
 - Hisoka combo prices and tension élastique > discounts recall, rebound and execution only while the opponent is held in the combo
+
+## `apps/web/src/lib/fighting/signatureCombosArmory.test.ts`
+
+- Feu de suppression > lands every bullet of every volley in one combo
+- Fil court > opens the wound, binds, rebinds with the Troupe Bind and ends on the final tension
+
+## `apps/web/src/lib/fighting/signatureCombosBiscuitPhinks.test.ts`
+
+- Retour à la vraie forme > reveals True Form during the capture and keeps it for the round
+- Dix tours, un poing > keeps winding through the back dash, the low dodge and the cross-up jump
+
+## `apps/web/src/lib/fighting/signatureCombosBookArmy.test.ts`
+
+- Double page > prepares Sun and the bookmark before the combo, never during it
+- Commandement absolu > plays the card captured in preparation, never a bullet of its own burst
+- grounded pin > limits only the push of a combo route on a body lying on the ground
+
+## `apps/web/src/lib/fighting/signatureCombosSecond.test.ts`
+
+- Douleur en vitesse — Feitan > packs exactly the riposte actually taken, and the sun burns in proportion
+
+## `apps/web/src/lib/fighting/signatureCombosSenses.test.ts`
+
+- Les trois interdits > lands each monkey on its own, seals three senses and forces no Zetsu
+- Leçon de tir > keeps Theta to her real handgun and close combat
 
 ## `apps/web/src/lib/fighting/singleCombatArsenal.test.ts`
 

@@ -11,8 +11,8 @@ export const BISCUIT_AND_PHINKS_SIGNATURES: readonly SignatureCombo[] = [
     opponent: 'phinks',
     title: ['Retour à la vraie forme', 'Return to True Form'],
     requirement: [
-      'Direct Shingen, Pas du maître, Crochet de maître, Balayage de pierre, accélération avant, Projection Shingen, Vraie forme pendant la capture, Ken parfait, Poing de Ko, Impact total. La vraie forme reste pour la manche : puissance, portée et inertie. Ken parfait 28, Poing de Ko 20, Impact total 40 en combo.',
-      'Shingen Straight, Master Step, Master Hook, Stone Sweep, forward accélération, Shingen Throw, True Form during the capture, Perfect Ken, Ko Fist, Full Impact. True Form lasts the round: power, reach and inertia. Perfect Ken 28, Ko Fist 20, Full Impact 40 in a combo.',
+      'Direct Shingen, Pas du maître, Crochet de maître, Balayage de pierre, accélération avant, Projection Shingen, Vraie forme pendant la capture, Ken parfait, Poing de Ko, Impact total. La vraie forme reste pour la manche : puissance, portée et inertie. Ken parfait 28, Poing de Ko 20, Impact total 40 quand il conclut la chaîne de capture.',
+      'Shingen Straight, Master Step, Master Hook, Stone Sweep, forward accélération, Shingen Throw, True Form during the capture, Perfect Ken, Ko Fist, Full Impact. True Form lasts the round: power, reach and inertia. Perfect Ken 28, Ko Fist 20, Full Impact 40 when it concludes the capture chain.',
     ],
     steps: [
       { move: 'standingLight' },

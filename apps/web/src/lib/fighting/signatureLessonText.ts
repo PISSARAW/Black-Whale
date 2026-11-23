@@ -1,4 +1,4 @@
-import { moveInputHint } from './fightControlHints'
+import { finisherHint, moveInputHint } from './fightControlHints'
 import type { KeyboardBindings } from './fightInputBindings'
 import { moveForSlot } from './movesets'
 import type { SignatureCombo, SignatureStep } from './signatureCombos'
@@ -19,24 +19,43 @@ export function signatureStepLabel(
   }
   if ('dash' in step)
     return step.free ? freeDashLabel(step, language) : dashLabel(step.dash, language)
+  if ('future' in step || 'riposte' in step) return hingeLabel(step, language)
   return motionLabel(step, language, bindings) ?? techniqueLabel(step, language, bindings)
 }
 
 function techniqueLabel(step: SignatureStep, language: Language, bindings: KeyboardBindings) {
   if ('ranged' in step)
     return language === 0
-      ? `Tir (${bindings.playerRanged}, ${step.hits} balles)`
-      : `Ranged (${bindings.playerRanged}, ${step.hits} shots)`
+      ? `Tir (${bindings.playerSpecial}, ${step.hits} balles)`
+      : `Ranged (${bindings.playerSpecial}, ${step.hits} shots)`
   if ('emperor' in step)
     return language === 0
-      ? `Emperor Time (Aura + ${bindings.playerFinisher}, pendant la capture)`
-      : `Emperor Time (Aura + ${bindings.playerFinisher}, during the capture)`
+      ? `Emperor Time (Aura + ${finisherHint(bindings)}, pendant la capture)`
+      : `Emperor Time (Aura + ${finisherHint(bindings)}, during the capture)`
   return language === 0
     ? 'Ancrage au plafond (Arsenal · Bungee Gum · Plafond / poutre)'
     : 'Ceiling anchor (Arsenal · Bungee Gum · Ceiling / beam)'
 }
 
-function freeDashLabel(step: { dash: 'back' | 'forward'; low?: true }, language: Language) {
+/** The deliberate breaks of a route (signatureCombosSecond.ts). */
+function hingeLabel(
+  step: Extract<SignatureStep, { future: unknown } | { riposte: unknown }>,
+  language: Language,
+): string {
+  if ('riposte' in step)
+    return language === 0 ? 'Encaisser volontairement une riposte' : 'Take a riposte on purpose'
+  const labels = {
+    close: ['Zetsu, yeux fermés', 'Zetsu, eyes closed'],
+    vision: ['Vision du futur', 'Future vision'],
+    open: ['Ouverture des yeux · Diverger', 'Open eyes · Diverge'],
+  } as const
+  return labels[step.future][language]
+}
+
+function freeDashLabel(
+  step: { dash: 'back' | 'forward' | 'through'; low?: true },
+  language: Language,
+) {
   if (step.low) return language === 0 ? 'Esquive basse (↓ + → →)' : 'Low dodge (↓ + → →)'
   const arrows = step.dash === 'back' ? '← ←' : '→ →'
   return language === 0 ? `Dash (${arrows})` : `Dash (${arrows})`
@@ -61,7 +80,11 @@ function motionLabel(
   return MOTION_LABELS[key][language].replace('(L', `(${bindings.playerSpecial}`)
 }
 
-function dashLabel(dash: 'back' | 'forward', language: Language): string {
+function dashLabel(dash: 'back' | 'forward' | 'through', language: Language): string {
+  if (dash === 'through')
+    return language === 0
+      ? 'Accélération traversante (→ → après la touche)'
+      : 'Crossing accélération (→ → after the hit)'
   const arrows = dash === 'back' ? '← ←' : '→ →'
   if (language === 0)
     return `Accélération ${dash === 'back' ? 'arrière' : 'avant'} (${arrows} après la touche)`

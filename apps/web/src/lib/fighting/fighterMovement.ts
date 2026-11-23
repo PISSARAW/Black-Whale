@@ -1,6 +1,20 @@
 import { phinksLowDodge } from './phinksLowDodge'
 import { styleMobility } from './styleMobility'
-import { bodyLegFactor } from './bodyDamage'
+import { crossingDash } from './signatureCrossing'
+import {
+  advanceSway,
+  enReflexBackdashBoost,
+  jumpLaunchSpeed,
+  legRyuBoost,
+  prejumpDuration,
+  shouldBrakeDash,
+  walkPaceFactor,
+} from './movementTech'
+import {
+  assassinLowSlide,
+  bonolenovPrologueDash,
+  fallGravityFor,
+} from './characterMovementTech'
 import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, FightInput, FighterDash, FighterMotion } from './types'
@@ -71,7 +85,7 @@ export function advanceAirborne(
   if (fighter.y <= GROUND && fighter.velocityY <= 0) {
     return { x: fighter.x, y: GROUND, velocityY: 0, motion: { ...motion, landingFrames } }
   }
-  const gravity = fighter.velocityY > 0 ? GRAVITY_RISE : GRAVITY_FALL
+  const gravity = fighter.velocityY > 0 ? GRAVITY_RISE : fallGravityFor(fighter, GRAVITY_FALL)
   const velocityY = fighter.velocityY - gravity * FIXED_STEP
   const y = Math.max(GROUND, fighter.y + velocityY * FIXED_STEP)
   const drift = fighter.hitStun > 0 ? 0 : motion.velocityX
@@ -90,16 +104,30 @@ export interface SteerOptions {
 /** Turns held directions into walk, dash or jump for a fighter free to move. */
 export function steerFighter(fighter: ArcadeFighter, options: SteerOptions): ArcadeFighter {
   const direction = inputDirection(options.input)
-  const { fighter: tracked, dash } = trackTaps(fighter, direction)
+  const { fighter: tapped, dash } = trackTaps(fighter, direction)
+  const tracked = advanceSway(tapped, options.input, options.mobile)
   const motion = motionOf(tracked)
   if (!options.mobile) return withMotion(tracked, { dash: null, prejumpFrames: 0 })
-  if (motion.prejumpFrames > 0) return advancePrejump(tracked)
+  if (motion.prejumpFrames > 0) return advancePrejump(tracked, options.input.jump)
   if (options.jumpable && motion.landingFrames === 0) return beginPrejump(tracked, direction)
-  if (motion.dash) return advanceDash(tracked, motion.dash)
+  if (motion.dash) return stepActiveDash(tracked, motion.dash, options)
   if (canDash(tracked, dash)) return advanceDash(tracked, startDash(tracked, dash))
   if (tracked.y > GROUND || tracked.blocking) return tracked
   if (motion.landingFrames > 0) return { ...tracked, pose: 'idle' }
   return walk(tracked, direction)
+}
+
+function stepActiveDash(
+  fighter: ArcadeFighter,
+  dash: FighterDash,
+  options: SteerOptions,
+): ArcadeFighter {
+  const direction = inputDirection(options.input)
+  if (shouldBrakeDash({ fighter, dash, direction, input: options.input })) {
+    const braked = withMotion(fighter, { dash: null })
+    return braked.blocking || braked.crouching ? { ...braked, pose: 'idle' } : walk(braked, direction)
+  }
+  return advanceDash(fighter, dash)
 }
 
 function inputDirection(input: FightInput): -1 | 0 | 1 {
@@ -135,10 +163,18 @@ function canDash(fighter: ArcadeFighter, dash: -1 | 0 | 1): dash is -1 | 1 {
 
 function startDash(fighter: ArcadeFighter, direction: -1 | 1): FighterDash {
   const mobility = styleMobility(fighter)
-  const profile =
-    phinksLowDodge(fighter, direction) ??
-    (direction === fighter.facing ? mobility.forwardDash : mobility.backDash)
-  return { direction, frame: 0, ...profile }
+  const forward = direction === fighter.facing
+  const lowProfile = phinksLowDodge(fighter, direction) ?? assassinLowSlide(fighter, direction)
+  const baseProfile = lowProfile ?? (forward ? mobility.forwardDash : mobility.backDash)
+  const styled = lowProfile ? baseProfile : bonolenovPrologueDash(fighter, baseProfile)
+  const boost = forward ? legRyuBoost(fighter) : enReflexBackdashBoost(fighter, direction)
+  return {
+    direction,
+    frame: 0,
+    ...styled,
+    peak: styled.peak * boost,
+    ...crossingDash(fighter, direction),
+  }
 }
 
 function advanceDash(fighter: ArcadeFighter, dash: FighterDash): ArcadeFighter {
@@ -152,25 +188,31 @@ function advanceDash(fighter: ArcadeFighter, dash: FighterDash): ArcadeFighter {
 function beginPrejump(fighter: ArcadeFighter, direction: -1 | 0 | 1): ArcadeFighter {
   const started = withMotion(
     { ...fighter, blocking: false, pose: 'idle' },
-    { prejumpFrames: PREJUMP_FRAMES, jumpDirection: direction, dash: null },
+    { prejumpFrames: prejumpDuration(fighter, PREJUMP_FRAMES), jumpDirection: direction, dash: null },
   )
-  return advancePrejump(started)
+  return advancePrejump(started, true)
 }
 
-function advancePrejump(fighter: ArcadeFighter): ArcadeFighter {
+function advancePrejump(fighter: ArcadeFighter, holdingJump: boolean): ArcadeFighter {
   const motion = motionOf(fighter)
   const prejumpFrames = motion.prejumpFrames - 1
   if (prejumpFrames > 0) return withMotion({ ...fighter, blocking: false }, { prejumpFrames })
   const velocityX = motion.jumpDirection * walkSpeed(fighter) * JUMP_DRIFT_RATIO
   return withMotion(
-    { ...fighter, velocityY: JUMP_SPEED * bodyLegFactor(fighter), pose: 'jump', blocking: false },
+    {
+      ...fighter,
+      velocityY: jumpLaunchSpeed(fighter, JUMP_SPEED, holdingJump),
+      pose: 'jump',
+      blocking: false,
+    },
     { prejumpFrames: 0, velocityX },
   )
 }
 
 function walk(fighter: ArcadeFighter, direction: -1 | 0 | 1): ArcadeFighter {
   const backward = direction !== 0 && direction !== fighter.facing
-  const speed = walkSpeed(fighter) * (backward ? styleMobility(fighter).backWalk : 1)
+  const pace = backward ? styleMobility(fighter).backWalk : walkPaceFactor(fighter, direction)
+  const speed = walkSpeed(fighter) * pace
   const x = clamp(fighter.x + direction * speed * FIXED_STEP, MIN_X, MAX_X)
   return { ...fighter, x, pose: direction === 0 ? 'idle' : 'walk' }
 }

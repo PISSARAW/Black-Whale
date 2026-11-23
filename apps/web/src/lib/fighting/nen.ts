@@ -26,11 +26,29 @@ import { advanceNenTransfer, currentAuraShares, requestNenTransfer } from './nen
 import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
+import { nenBodyOutput } from './nenBudget'
+import { chrolloRightHandOccupied } from './chrolloDeck'
+import { textureSurpriseDrain } from './textureSurpriseMask'
+import { BEYOND_KO_BONUS, BEYOND_REN_DRAIN, isBeyond } from './martialSpecialists'
+import { musseOwlDrain } from './musseWindowUpgrades'
+import { bashoKenCostFactor } from './bashoHaiku'
+import { seiyakuExhaustionThreshold, seiyakuHatsuPowerFactor } from './seiyaku'
+import { predatorHatsuFactor } from './predatorUpgrades'
+import { applyIllumiMotorParasite, biscuitRyuFocusShare } from './illumiBiscuitUpgrades'
+import { halkenburgHatsuLocked } from './halkenburgBonolenovUpgrades'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
+export const EN_HOLD_FRAMES = 10
 export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
+
+declare module './types' {
+  interface ArcadeFighter {
+    /** Consecutive frames holding Aura + Down (transitions Zetsu -> En at EN_HOLD_FRAMES). */
+    auraDownFrames?: number
+  }
+}
 
 export type FightNenTactic =
   'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko' | 'on' | 'en' | 'shu' | 'in'
@@ -51,6 +69,7 @@ export function createFightingNen() {
 
 /** One held Aura input, interpreted from the physical context. */
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  input = applyIllumiMotorParasite(fighter, input)
   if (!illumiBodyFree(fighter)) return fighter
   if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
@@ -64,7 +83,14 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   const committed = defensiveKo(fighter, input)
   if (committed) return committed
   if (fighter.defensiveKo) fighter = { ...fighter, defensiveKo: undefined }
-  return applyAdvancedNen(heldAuraContext(fighter, input), input)
+  const holdingAuraDown = Boolean(input.aura && input.down && !input.guard)
+  const auraDownFrames = holdingAuraDown ? (fighter.auraDownFrames ?? 0) + 1 : 0
+  const tracked =
+    auraDownFrames > 0 || fighter.auraDownFrames
+      ? { ...fighter, auraDownFrames: auraDownFrames || undefined }
+      : fighter
+  const enInput = auraDownFrames >= EN_HOLD_FRAMES ? { ...input, en: true } : input
+  return applyAdvancedNen(heldAuraContext(tracked, enInput), enInput)
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -75,7 +101,7 @@ function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFight
     return withAction(released, { type: 'TEN' })
   }
 
-  if (input.down) return withAction(fighter, { type: 'ZETSU' })
+  if (input.down && !input.en) return withAction(fighter, { type: 'ZETSU' })
   if (input.guard) return withAction(fighter, { type: 'KEN', on: true })
   if (input.jump) {
     const ten = withAction(fighter, { type: 'TEN' })
@@ -101,6 +127,12 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
     }
   }
   const zone = attackData(fighter.attack.kind, fighter).auraZone
+  if (zone === 'hands' && (chrolloRightHandOccupied(fighter) || fighter.hinrighCuffed)) {
+    return {
+      ...withAction(fighter, { type: 'TEN' }),
+      attack: { ...fighter.attack, auraCharged: false },
+    }
+  }
   const focused = withAction(withAction(fighter, { type: 'TEN' }), { type: 'KO', zone })
   return {
     ...focused,
@@ -115,7 +147,7 @@ export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
   if (fighter.drainingChain) return advanceOn(fighter)
   const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
   const depleted = fighter.auraExhausted || aura === 0
-  const auraExhausted = depleted && aura < EXHAUSTION_RELEASE_AURA
+  const auraExhausted = depleted && aura < seiyakuExhaustionThreshold(fighter)
   const next = { ...fighter, aura, auraExhausted }
   return advanceOn(auraExhausted ? withAction(next, { type: 'ZETSU' }) : next)
 }
@@ -126,18 +158,21 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
   return (
     baseAuraFlow(fighter) -
     bodyMemoryRyuDrain(fighter) -
+    textureSurpriseDrain(fighter) -
+    musseOwlDrain(fighter) -
     advancedAuraDrain(fighter) -
     Number(fighter.nen.gyo || Boolean(bodyGyoZone(fighter))) * BODY_GYO_DRAIN
   )
 }
 
 function baseAuraFlow(fighter: ArcadeFighter): number {
-  if (fighter.nen.mode === 'zetsu') return 10
-  if (fighter.nen.ken) return -8
+  const surge = (fighter.erigeronSurgeFrames ?? 0) > 0
+  if (fighter.nen.mode === 'zetsu') return fighter.auraExhausted && surge ? 20 : 10
+  if (fighter.nen.ken) return -8 * bashoKenCostFactor(fighter)
   if (hasRyu(fighter)) return -6
-  if (fighter.nen.mode === 'ren') return -4
+  if (fighter.nen.mode === 'ren') return isBeyond(fighter) ? BEYOND_REN_DRAIN : -4
   if (fighter.nen.gyo) return 0
-  return 1.4
+  return surge ? 2.8 : 1.4
 }
 
 export function focusGuardRyu(fighter: ArcadeFighter, zone: FightNenZone): ArcadeFighter {
@@ -154,12 +189,14 @@ export function focusAttackRyu(fighter: ArcadeFighter, kind: AttackKind): Arcade
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (!canRedistributeAura(fighter) || bodyGyoZone(fighter) || fighter.nen.ko) return fighter
   const zone = attackData(kind, fighter).auraZone
+  const focus = biscuitRyuFocusShare(fighter)
+  const rest = (1 - focus) / 3
   const distribution = {
-    head: 0.08,
-    torso: 0.12,
-    hands: 0.08,
-    feet: 0.08,
-    [zone]: 0.72,
+    head: rest,
+    torso: rest,
+    hands: rest,
+    feet: rest,
+    [zone]: focus,
   }
   return requestNenTransfer(fighter, { zone, shares: distribution })
 }
@@ -191,10 +228,12 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   let factor = fighter.nen.mode === 'ren' ? 1.22 : 1
   const share = Number(fighter.nen.ryu[zone] ?? 0)
   if (share > 0) factor += share * 0.48
-  if (fighter.nen.ko) factor += 0.82
+  if (fighter.nen.ko) factor += isBeyond(fighter) ? BEYOND_KO_BONUS : 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
+  const bookPenalty = kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
   return (
     factor *
+    bookPenalty *
     attackCategoryPower(fighter, kind) *
     weaponPower(fighter, zone) *
     bodyMemoryAttackFactor(fighter, zone)
@@ -202,9 +241,11 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
 }
 
 function attackCategoryPower(fighter: ArcadeFighter, kind: AttackKind): number {
-  return kind === 'special' && fighter.attack?.hatsuSource
-    ? abilityPower(fighter)
-    : categoryPower(fighter, 'enhancer')
+  if (kind === 'special' && fighter.attack?.hatsuSource) {
+    if (halkenburgHatsuLocked(fighter) || fighter.tserriednichBeastSealed) return 0
+    return abilityPower(fighter) * seiyakuHatsuPowerFactor(fighter) * predatorHatsuFactor(fighter)
+  }
+  return categoryPower(fighter, 'enhancer')
 }
 
 function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
@@ -215,7 +256,7 @@ function weaponPower(fighter: ArcadeFighter, zone: FightNenZone): number {
 
 export function nenDamageFactor(fighter: ArcadeFighter, zone: FightNenZone): number {
   fighter = enforcePredatorSeal(physicalNenBody(fighter))
-  const bodyShare = fighter.nen.shu.length ? SHU_BODY_SHARE : 1
+  const bodyShare = (fighter.nen.shu.length ? SHU_BODY_SHARE : 1) * nenBodyOutput(fighter)
   const spread = activeEnRadius(fighter) ? 0.45 : 1
   const eyeFocus =
     fighter.nen.gyo && (fighter.nen.ken || hasRyu(fighter) || fighter.nen.ko) ? 0.62 : 1

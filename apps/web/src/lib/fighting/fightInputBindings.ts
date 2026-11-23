@@ -10,29 +10,21 @@ export const CONTROL_KEYS = {
   playerLight: 'j',
   playerHeavy: 'k',
   playerSpecial: 'l',
-  playerRanged: 'u',
-  playerThrow: 'o',
-  playerFinisher: 'h',
-  playerCall: 't',
-  playerArena: 'F3',
-  playerKameo: '<',
-  playerBurst: 'CapsLock',
+  playerKameo: 'u',
+  playerBurst: 'o',
+  playerContext: 'h',
   opponentLeft: 'ArrowLeft',
   opponentRight: 'ArrowRight',
   opponentJump: 'ArrowUp',
   opponentDown: 'ArrowDown',
   opponentGuard: 'Enter',
-  opponentAura: 'Alt',
+  opponentAura: 'v',
   opponentLight: 'n',
   opponentHeavy: 'm',
   opponentSpecial: ',',
-  opponentRanged: '.',
-  opponentThrow: '/',
-  opponentFinisher: 'b',
-  opponentCall: 'v',
-  opponentArena: 'F10',
-  opponentKameo: 'Backspace',
-  opponentBurst: 'Delete',
+  opponentKameo: '.',
+  opponentBurst: '/',
+  opponentContext: 'b',
   pause: 'p',
 } as const
 export type ControlCommand = keyof typeof CONTROL_KEYS
@@ -47,13 +39,9 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
   playerLight: ['P1 · Coup léger', 'P1 · Light'],
   playerHeavy: ['P1 · Coup lourd', 'P1 · Heavy'],
   playerSpecial: ['P1 · Hatsu', 'P1 · Hatsu'],
-  playerRanged: ['P1 · Tir', 'P1 · Ranged'],
-  playerThrow: ['P1 · Projection', 'P1 · Throw'],
-  playerFinisher: ['P1 · Ultime', 'P1 · Finisher'],
-  playerCall: ['P1 · Parler', 'P1 · Speak'],
-  playerArena: ['P1 · Arène', 'P1 · Arena'],
   playerKameo: ['P1 · Kaméo', 'P1 · Kameo'],
   playerBurst: ['P1 · Burst', 'P1 · Burst'],
+  playerContext: ['P1 · Contexte', 'P1 · Context'],
   opponentLeft: ['P2 · Gauche', 'P2 · Left'],
   opponentRight: ['P2 · Droite', 'P2 · Right'],
   opponentJump: ['P2 · Saut', 'P2 · Jump'],
@@ -63,16 +51,12 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
   opponentLight: ['P2 · Coup léger', 'P2 · Light'],
   opponentHeavy: ['P2 · Coup lourd', 'P2 · Heavy'],
   opponentSpecial: ['P2 · Hatsu', 'P2 · Hatsu'],
-  opponentRanged: ['P2 · Tir', 'P2 · Ranged'],
-  opponentThrow: ['P2 · Projection', 'P2 · Throw'],
-  opponentFinisher: ['P2 · Ultime', 'P2 · Finisher'],
-  opponentCall: ['P2 · Parler', 'P2 · Speak'],
-  opponentArena: ['P2 · Arène', 'P2 · Arena'],
   opponentKameo: ['P2 · Kaméo', 'P2 · Kameo'],
   opponentBurst: ['P2 · Burst', 'P2 · Burst'],
+  opponentContext: ['P2 · Contexte', 'P2 · Context'],
   pause: ['Pause / Reprendre', 'Pause / Resume'],
 }
-const STORAGE_KEY = 'black-whale:fighting-controls:v1'
+const STORAGE_KEY = 'black-whale:fighting-controls:v2'
 const RESERVED = new Set<string>([
   ...EASTER_EGG_KEYS,
   'Escape',
@@ -83,27 +67,6 @@ const RESERVED = new Set<string>([
   'F5',
   'F11',
   'F12',
-  'r',
-  'f',
-  'x',
-  'g',
-  '1',
-  '2',
-  '3',
-  '4',
-  '6',
-  'y',
-  'e',
-  '[',
-  ']',
-  '\\',
-  ';',
-  '7',
-  '8',
-  '9',
-  '0',
-  '5',
-  'c',
 ])
 export const defaultBindings = (): KeyboardBindings => ({ ...CONTROL_KEYS })
 export const normalizeControlKey = (key: string) => (key.length === 1 ? key.toLowerCase() : key)
@@ -137,12 +100,29 @@ export function saveBindings(bindings: KeyboardBindings, storage?: Pick<Storage,
     /* Session-only fallback. */
   }
 }
+const CODE_KEYS: Readonly<Record<string, string>> = {
+  Comma: ',',
+  Period: '.',
+  Slash: '/',
+  Space: ' ',
+}
+
+function physicalFallbackKey(code: string): string | null {
+  if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase()
+  if (/^Digit[0-9]$/.test(code)) return code.slice(5)
+  return CODE_KEYS[code] ?? null
+}
+
 /** Key-up uses the original command even if the binding or focus changed while held. */
 export function createKeyboardMapper() {
   const held = new Map<string, string | null>()
   return {
     clear: () => held.clear(),
-    key(event: Pick<KeyboardEvent, 'key' | 'code'>, active: boolean, bindings: KeyboardBindings) {
+    key(
+      event: Pick<KeyboardEvent, 'key' | 'code'> & { altKey?: boolean },
+      active: boolean,
+      bindings: KeyboardBindings,
+    ) {
       const physical = event.code || event.key
       if (active && held.has(physical)) return held.get(physical)!
       if (!active && held.has(physical)) {
@@ -151,7 +131,10 @@ export function createKeyboardMapper() {
         return logical
       }
       if (!active) return null
-      const key = normalizeControlKey(event.key)
+      const rawKey = normalizeControlKey(event.key)
+      const fallback = event.altKey ? physicalFallbackKey(event.code) : null
+      const key =
+        fallback && !Object.values(bindings).includes(rawKey) ? fallback : rawKey
       const command = (Object.keys(bindings) as ControlCommand[]).find((id) => bindings[id] === key)
       const logical = command
         ? CONTROL_KEYS[command]

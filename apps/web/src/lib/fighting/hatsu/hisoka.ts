@@ -5,6 +5,7 @@ import { newGumSource } from '../bungeeSource'
 import { maintainTextureSurprise } from '../hisokaTextureOrigin'
 import { applySelectedTexture, advancePaperTextures } from '../paperTexture'
 import { advanceGumArsenal } from '../hisokaArsenal'
+import { advanceGumHeart } from '../hisokaHeart'
 import { advanceDocumentWorld } from '../paperDocumentWorld'
 import { advanceGumObjectAnchors } from '../gumObjectAnchorFrames'
 import { categoryPower } from '../nenCategories'
@@ -47,8 +48,10 @@ export const hisokaHatsu: FighterHatsu = {
     advanceElasticHold(
       advanceGumObjectAnchors(
         advanceGumArsenal(
-          advanceGumMotion(
-            SIDES.reduce(advanceTechnique, advancePaperTextures(advanceDocumentWorld(state))),
+          advanceGumHeart(
+            advanceGumMotion(
+              SIDES.reduce(advanceTechnique, advancePaperTextures(advanceDocumentWorld(state))),
+            ),
           ),
         ),
       ),

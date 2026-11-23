@@ -100,6 +100,12 @@ describe('standard fighting gamepads', () => {
     expect(sampleGamepad(pad(), pad([2])).actions).toEqual([])
     expect(sampleGamepad(pad(), pad()).actions).toEqual([])
   })
+  it('uses Guard + Hatsu for the ranged action without arming Hatsu', () => {
+    const frame = sampleGamepad(pad([4, 2]), pad([4]))
+    expect(frame.actions).toEqual(['ranged'])
+    expect(frame.input.guard).toBe(true)
+    expect(frame.input.hatsu).toBe(false)
+  })
   it('requires neutral after connection and does not fire a held attack on startup', () => {
     const reader = createGamepadReader()
     expect(reader.poll([pad([0])], true).actions).toEqual([])

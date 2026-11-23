@@ -22,6 +22,12 @@ export function finisherHint(bindings: KeyboardBindings, side: FightSide = 'play
     : `${bindings.opponentHeavy}+${bindings.opponentSpecial}`
 }
 
+export function rangedHint(bindings: KeyboardBindings, side: FightSide = 'player'): string {
+  return side === 'player'
+    ? `${bindings.playerGuard}+${bindings.playerSpecial}`
+    : `${bindings.opponentGuard}+${bindings.opponentSpecial}`
+}
+
 export function moveInputHint(
   text: string,
   bindings: KeyboardBindings,

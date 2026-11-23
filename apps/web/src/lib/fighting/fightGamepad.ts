@@ -82,13 +82,17 @@ export function sampleGamepad(
     buttons.call = buttons.guard = buttons.aura = false
   }
   const { actions, burst } = padActions(pad, previous)
-  if (burst) buttons.burst = true
+  applyActionInputs(buttons, actions, burst)
   const input = mergeFightInput(nenPadChords(pad, buttons), stickInput(pad, lastInput))
   return {
     input,
     actions,
     neutral: !Object.values(input).some(Boolean) && !pad.buttons.some((button) => button.pressed),
   }
+}
+function applyActionInputs(buttons: FightInput, actions: PadAction[], burst: boolean): void {
+  if (burst) buttons.burst = true
+  if (actions.includes('ranged')) buttons.hatsu = false
 }
 export function mergeFightInput(keyboard: FightInput, gamepad: FightInput): FightInput {
   const merged = { ...keyboard }

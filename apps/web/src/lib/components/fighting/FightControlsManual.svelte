@@ -45,13 +45,13 @@
   </p>
   <p>
     {language === 'fr'
-      ? `${$bindings.playerLight}+${$bindings.playerHeavy} : projection. ${$bindings.playerHeavy}+${$bindings.playerSpecial} : ultime. Garde + ${$bindings.playerLight}+${$bindings.playerHeavy} (ou ${$bindings.playerBurst}) : Burst. ${$bindings.playerContext} : action contextuelle (plaies, oreilles, objet, arène, parler).`
-      : `${$bindings.playerLight}+${$bindings.playerHeavy}: throw. ${$bindings.playerHeavy}+${$bindings.playerSpecial}: finisher. Guard + ${$bindings.playerLight}+${$bindings.playerHeavy} (or ${$bindings.playerBurst}): Burst. ${$bindings.playerContext}: context action (wounds, ears, object, arena, speak).`}
+      ? `${$bindings.playerLight}+${$bindings.playerHeavy} : projection. ${$bindings.playerGuard}+${$bindings.playerSpecial} : projectile. ${$bindings.playerHeavy}+${$bindings.playerSpecial} : ultime. Garde + ${$bindings.playerLight}+${$bindings.playerHeavy} (ou ${$bindings.playerBurst}) : Burst. ${$bindings.playerContext} : action contextuelle (plaies, oreilles, objet, arène, parler).`
+      : `${$bindings.playerLight}+${$bindings.playerHeavy}: throw. ${$bindings.playerGuard}+${$bindings.playerSpecial}: projectile. ${$bindings.playerHeavy}+${$bindings.playerSpecial}: finisher. Guard + ${$bindings.playerLight}+${$bindings.playerHeavy} (or ${$bindings.playerBurst}): Burst. ${$bindings.playerContext}: context action (wounds, ears, object, arena, speak).`}
   </p>
   <p>
     {language === 'fr'
-      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu (maintenu = En) ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. Shu est automatique en Ren avec une arme.'
-      : 'Aura (modifier): alone = Ren; + Down = Zetsu (held = En); + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. Shu is automatic during Ren with a weapon.'}
+      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu maintenu ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. R maintient En. Shu est automatique en Ren avec une arme.'
+      : 'Aura (modifier): alone = Ren; + Down = sustained Zetsu; + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. Hold R for En. Shu is automatic during Ren with a weapon.'}
   </p>
   <FightMoveList {fighterId} {language} />
 </aside>

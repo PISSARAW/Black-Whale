@@ -65,6 +65,10 @@
     <FightTouchButton label={fr ? 'Projection / déprojection' : 'Throw / tech'} onPress={onThrow}
       >{fr ? 'Proj.' : 'Throw'}</FightTouchButton
     >
+    <FightTouchButton
+      label={fr ? `${shot.labelFr} · projectile` : `${shot.labelEn} · projectile`}
+      onPress={() => onAttack('ranged')}>{fr ? 'Tir' : 'Shot'}</FightTouchButton
+    >
     <FightHeldButton
       label={fr ? 'Action contextuelle' : 'Context action'}
       className="context-button"

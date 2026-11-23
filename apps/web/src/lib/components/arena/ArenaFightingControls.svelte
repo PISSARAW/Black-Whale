@@ -307,4 +307,80 @@
       display: grid;
     }
   }
+
+  /* Keep the move row as immediate as Clash; roster and lab are contextual. */
+  .fighting-controls {
+    width: min(40rem, calc(100vw - 2rem));
+    gap: 0;
+    padding: 1px;
+    border: 0;
+    background: rgb(95 113 123 / 28%);
+  }
+
+  .fighting-controls > header {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.4rem);
+    width: max-content;
+    max-width: 100%;
+    padding: 0.35rem;
+    border: 1px solid rgb(255 255 240 / 12%);
+    background: rgb(4 10 14 / 92%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.35rem);
+    transition:
+      opacity 140ms ease,
+      transform 140ms ease;
+  }
+
+  .fighting-controls:hover > header,
+  .fighting-controls:focus-within > header {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .fighting-controls > header > span {
+    display: none;
+  }
+
+  .moves {
+    gap: 1px;
+    background: rgb(95 113 123 / 28%);
+  }
+
+  .moves button {
+    min-height: 3.15rem;
+    border: 0;
+    border-radius: 0;
+    background: rgb(4 10 14 / 90%);
+  }
+
+  .moves button small {
+    display: none;
+  }
+
+  .moves button:hover:not(:disabled),
+  .moves button:focus-visible {
+    background: rgb(23 34 39 / 96%);
+    outline: 1px solid #d8be73;
+    outline-offset: -1px;
+  }
+
+  @media (max-width: 680px) {
+    .fighting-controls {
+      bottom: 0.5rem;
+      width: calc(100vw - 1rem);
+    }
+
+    .fighting-controls > header {
+      display: none;
+    }
+
+    .moves button {
+      min-height: 3rem;
+      padding: 0.3rem 0.2rem;
+    }
+  }
 </style>

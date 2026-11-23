@@ -45,21 +45,15 @@ export function arenaFightingMove(options: {
   }
 }
 
-/**
- * Keys of the five Clash commands. X and C stay with Zetsu and Ko, and E with
- * the Tour scene's passage link.
+/** Default keys of Clash's five offensive commands. Arena also reads Clash's
+ * saved custom bindings at runtime; these labels are the no-preference fallback.
  */
 export const ARENA_MOVE_KEYS: Record<MoveAction, { code: string; label: string }> = {
-  light: { code: 'Space', label: 'Espace' },
-  heavy: { code: 'KeyB', label: 'B' },
-  special: { code: 'KeyY', label: 'Y' },
+  light: { code: 'KeyJ', label: 'J' },
+  heavy: { code: 'KeyK', label: 'K' },
+  special: { code: 'KeyL', label: 'L' },
   throw: { code: 'KeyM', label: 'M' },
-  finisher: { code: 'KeyP', label: 'P' },
-}
-
-export function arenaMoveAction(code: string): MoveAction | null {
-  const entry = Object.entries(ARENA_MOVE_KEYS).find(([, key]) => key.code === code)
-  return entry ? (entry[0] as MoveAction) : null
+  finisher: { code: 'KeyI', label: 'I' },
 }
 
 /** The variant each command performs right now, given the held direction and the aim. */

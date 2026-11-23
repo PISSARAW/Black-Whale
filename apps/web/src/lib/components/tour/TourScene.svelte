@@ -260,6 +260,8 @@
     nen?: NenTechniqueState
     /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
     showNenControls?: boolean
+    /** Lets a mode replace the Tour keyboard vocabulary with its own shared control scheme. */
+    keyboardNen?: boolean
     /** Freezes movement and scene shortcuts while a modal owned by the page is open. */
     inputDisabled?: boolean
     concert?: ConcertPerformance
@@ -619,6 +621,7 @@
     onNenChange,
     onPhysicalNenAction,
     showNenControls = true,
+    keyboardNen = true,
     inputDisabled = false,
     concert = { mode: null, playing: false },
     nenAvailability = {},
@@ -3651,14 +3654,14 @@
         }
         if (inputDisabled) return
         if (sceneKeyIsForElsewhere(event, canvas)) return
-        if (event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
+        if (keyboardNen && event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
         if (hatsuWheelOpen && wheelZone !== null) {
           if (wheelZone < hatsuVariants.length) hatsuVariantIndex = wheelZone
           event.preventDefault()
           return
         }
-        if (useNenShortcut(event)) return
+        if (keyboardNen && useNenShortcut(event)) return
         pressed[event.code] = true
         // Space and the arrows scroll the page underneath an engaged pointer.
         if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
@@ -3687,7 +3690,7 @@
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
-        finishHatsu(event)
+        if (keyboardNen) finishHatsu(event)
       }
 
       function toggleGangway(): boolean {

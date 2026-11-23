@@ -2066,3 +2066,300 @@
     }
   }
 }
+
+/* Clash-like combat HUD: one quiet top rail, the arena stays in view. */
+@scope (.arena-world) {
+  .combat-console::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 8.5rem;
+    background: linear-gradient(180deg, rgb(3 7 11 / 90%), rgb(3 7 11 / 42%) 58%, transparent);
+    content: '';
+  }
+
+  .arena-overlay-header {
+    top: 0.8rem;
+  }
+
+  .match-rule {
+    min-width: 5.5rem;
+    padding: 0 0.5rem 0.4rem;
+    border: 0;
+    border-bottom: 2px solid #d4b765;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .match-rule span {
+    color: #b5c0c5;
+    font-size: 0.5rem;
+  }
+
+  .match-rule strong {
+    margin: 0.1rem 0 0;
+    font:
+      italic 850 1.7rem/1 Arial,
+      sans-serif;
+  }
+
+  .match-rule small {
+    display: none;
+  }
+
+  .status-card,
+  .status-card.opponent-card {
+    top: 0.8rem;
+    width: min(28rem, calc(50vw - 6.5rem));
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .status-card {
+    left: clamp(1rem, 4vw, 4rem);
+    transform: none;
+  }
+
+  .status-card.opponent-card {
+    right: clamp(1rem, 4vw, 4rem);
+    left: auto;
+    transform: none;
+  }
+
+  .status-card header,
+  .status-card.opponent-card header {
+    flex-direction: row;
+    align-items: baseline;
+    min-height: 1.35rem;
+    font:
+      italic 800 0.95rem/1.2 Arial,
+      sans-serif;
+    letter-spacing: 0.015em;
+  }
+
+  .status-card.opponent-card header {
+    flex-direction: row-reverse;
+  }
+
+  .status-card header span {
+    font:
+      600 0.52rem/1 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.08em;
+  }
+
+  .status-card .meter {
+    height: 0.8rem;
+    margin: 0.3rem 0 0;
+    border: 1px solid rgb(139 180 196 / 46%);
+    background: rgb(7 19 26 / 84%);
+    box-shadow: none;
+  }
+
+  .status-card .meter i {
+    background: linear-gradient(0deg, #2e8dac, #8be2f2);
+    box-shadow: none;
+  }
+
+  .status-card .meter.enemy {
+    border-color: rgb(185 109 103 / 48%);
+  }
+
+  .status-card .meter.enemy i {
+    background: linear-gradient(0deg, #9d413c, #ef968b);
+    box-shadow: none;
+  }
+
+  .status-card:not(.expanded) p,
+  .status-card:not(.expanded) .tags {
+    display: none;
+  }
+
+  .status-card.expanded,
+  .status-card.opponent-card.expanded {
+    width: min(28rem, calc(50vw - 6.5rem));
+    padding: 0.65rem;
+    border: 1px solid rgb(255 255 240 / 14%);
+    background: rgb(4 10 14 / 90%);
+    pointer-events: auto;
+    backdrop-filter: blur(12px);
+  }
+
+  .arena-tools {
+    top: 5.4rem;
+    left: clamp(1rem, 4vw, 4rem);
+    gap: 0.25rem;
+  }
+
+  .arena-tools button {
+    width: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0;
+    justify-content: center;
+    border-color: rgb(255 255 240 / 10%);
+    background: rgb(4 9 12 / 54%);
+    box-shadow: none;
+    backdrop-filter: blur(8px);
+  }
+
+  .arena-tools button > span {
+    font-size: 0.75rem;
+  }
+
+  .arena-tools button > b {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .arena-action-dock {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    width: min(40rem, calc(100vw - 2rem));
+    gap: 1px;
+    padding: 1px;
+    background: rgb(95 113 123 / 28%);
+  }
+
+  .arena-action-dock button {
+    min-height: 2.75rem;
+    border: 0;
+    border-radius: 0;
+    background: rgb(4 10 14 / 88%);
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .arena-action-dock button.primary {
+    border: 0;
+  }
+
+  .arena-action-dock kbd {
+    color: #d8be73;
+    font-size: 0.54rem;
+  }
+
+  .ryu-card {
+    bottom: calc(8.4rem + env(safe-area-inset-bottom));
+  }
+
+  .event-line {
+    bottom: calc(8.5rem + env(safe-area-inset-bottom));
+  }
+
+  @media (max-width: 800px) {
+    .combat-console::before {
+      height: 6.25rem;
+    }
+
+    .arena-overlay-header {
+      top: 0.45rem;
+    }
+
+    .match-rule {
+      min-width: 4.2rem;
+      padding-inline: 0.25rem;
+    }
+
+    .match-rule span {
+      display: none;
+    }
+
+    .match-rule strong {
+      font-size: 1.25rem;
+    }
+
+    .status-card,
+    .status-card.opponent-card,
+    .status-card.expanded,
+    .status-card.opponent-card.expanded {
+      top: 0.55rem;
+      width: calc(50% - 3.3rem);
+      padding: 0;
+    }
+
+    .status-card {
+      left: 0.55rem;
+    }
+
+    .status-card.opponent-card {
+      right: 0.55rem;
+    }
+
+    .status-card header,
+    .status-card.opponent-card header {
+      font-size: 0.72rem;
+    }
+
+    .status-card.opponent-card header {
+      flex-direction: row;
+    }
+
+    .status-card header span {
+      display: none;
+    }
+
+    .status-card .meter {
+      height: 0.55rem;
+      margin-top: 0.2rem;
+    }
+
+    .status-card.expanded p,
+    .status-card.expanded .tags {
+      display: none;
+    }
+
+    .arena-tools {
+      top: 3.55rem;
+      left: 0.55rem;
+    }
+
+    .arena-tools button {
+      display: inline-flex !important;
+      width: 1.8rem;
+      min-width: 1.8rem;
+      min-height: 1.8rem;
+    }
+
+    .arena-tools button:nth-child(3) {
+      display: none !important;
+    }
+
+    .arena-action-dock {
+      bottom: calc(7.15rem + env(safe-area-inset-bottom));
+      width: calc(100vw - 1rem);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .arena-action-dock button {
+      min-height: 2.8rem;
+    }
+
+    .ryu-card,
+    .event-line {
+      bottom: calc(13.25rem + env(safe-area-inset-bottom));
+    }
+
+    .arena-lesson {
+      top: 6.6rem;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .arena-action-dock,
+    .fighting-controls {
+      display: none;
+    }
+
+    .event-line {
+      bottom: 1rem;
+    }
+  }
+}

@@ -89,6 +89,13 @@
   import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import type { FighterId, MoveAction } from '$lib/fighting/types'
+  import {
+    createKeyboardMapper,
+    controlKeyLabel,
+    defaultBindings,
+    readBindings,
+    type ControlCommand,
+  } from '$lib/fighting/fightInputBindings'
   import { arenaMoveSlot, createHeldDirection, type ArenaDirection } from '$lib/arena/moveSlot'
   import { standardNenCommand, type CommandAnimation } from '$lib/arena/nenCommands'
   import { comboCount } from '$lib/combat/moveChain'
@@ -166,6 +173,8 @@
   let opponentMotionSeq = 0
   let commandAnimation = $state<CommandAnimation | null>(null)
   const heldDirection = createHeldDirection()
+  const clashKeyboard = createKeyboardMapper()
+  let clashBindings = $state(defaultBindings())
   let moveDirection = $state<ArenaDirection>(null)
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
@@ -458,9 +467,76 @@
     }
   }
 
+  function useClashCommand(event: KeyboardEvent, active: boolean): boolean {
+    const control = clashKeyboard.key(event, active, clashBindings)
+    if (!control?.startsWith('direct:')) return false
+    if (
+      [
+        'direct:playerLeft',
+        'direct:playerRight',
+        'direct:playerJump',
+        'direct:playerDown',
+      ].includes(control)
+    )
+      return false
+    if (!active) {
+      if (control === 'direct:playerAura') useStandardNen({ type: 'TEN' })
+      return true
+    }
+    if (manualOpen || briefingOpen || arenaPanel || game.outcome !== 'playing') return true
+    if (event.repeat) return true
+
+    if (control === 'direct:playerGuard') guard()
+    else if (control === 'direct:playerLight') fightingMove('light')
+    else if (control === 'direct:playerHeavy') fightingMove('heavy')
+    else if (control === 'direct:playerSpecial') fightingMove('special')
+    else if (control === 'direct:playerThrow') fightingMove('throw')
+    else if (control === 'direct:playerFinisher') fightingMove('finisher')
+    else if (control === 'direct:playerProjectile') fightingMove('special')
+    else if (control === 'direct:playerKameo') jump()
+    else if (control === 'direct:playerBurst') gatherKo()
+    else if (control === 'direct:playerAura') useStandardNen({ type: 'REN' })
+    else if (control === 'direct:playerContext') castHatsu()
+    else if (control === 'direct:playerOn')
+      useStandardNen({
+        type: 'ON',
+        on: !playerNen.on,
+        distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
+      })
+    else if (control === 'direct:nen:playerLight')
+      useStandardNen({ type: 'EN', radius: playerNen.en ? null : 8 })
+    else if (control === 'direct:nen:playerHeavy')
+      useStandardNen({ type: 'IN', on: !game.player.in })
+    else if (control === 'direct:nen:playerSpecial' && aimedSolidAt)
+      useStandardNen({
+        type: 'SHU',
+        objectId: aimedSolidAt.id,
+        on: !playerNen.shu.includes(aimedSolidAt.id),
+      })
+    else if (control === 'direct:nen:playerFinisher')
+      useStandardNen({ type: 'GYO', on: !game.player.gyo })
+    else if (control === 'direct:nen:playerContext')
+      useStandardNen({ type: 'KEN', on: !game.player.ken })
+    else if (control === 'direct:nen:playerAura') useStandardNen({ type: 'ZETSU' })
+    else if (control === 'direct:nen:playerKameo') setZone('head')
+    else if (control === 'direct:nen:playerProjectile') setZone('torso')
+    else if (control === 'direct:nen:playerThrow') setZone('arms')
+    else if (control === 'direct:nen:playerBurst') setZone('legs')
+    return true
+  }
+
+  function clashKey(command: ControlCommand): string {
+    return controlKeyLabel(clashBindings[command], $locale)
+  }
+
   function onKeyDown(event: KeyboardEvent) {
     heldDirection.down(event.code)
     moveDirection = heldDirection.current()
+    if (useClashCommand(event, true)) {
+      event.preventDefault()
+      event.stopPropagation()
+      return
+    }
     handleArenaKey(event, {
       blocked: () => manualOpen || briefingOpen || Boolean(arenaPanel),
       panelOpen: () => Boolean(arenaPanel),
@@ -470,20 +546,22 @@
         manualOpen = !manualOpen
       },
       start: () => (started = true),
-      finished: () => game.outcome !== 'playing',
       nenKey: isNenControlCode,
       movementKey: isMovement,
-      move: fightingMove,
-      jump,
-      guard,
-      feint,
-      evade,
     })
   }
 
   function onKeyUp(event: KeyboardEvent | FocusEvent) {
-    if ('code' in event) heldDirection.up(event.code)
-    else heldDirection.clear()
+    if ('code' in event) {
+      heldDirection.up(event.code)
+      if (useClashCommand(event, false)) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    } else {
+      heldDirection.clear()
+      clashKeyboard.clear()
+    }
     moveDirection = heldDirection.current()
   }
 
@@ -755,6 +833,7 @@
       replayOrigin = 'shared'
     }
     bestGrade = safeStorageGet(localStorage, 'black-whale:arena-best-grade')
+    clashBindings = readBindings(localStorage)
     openHatsuGate({
       admits: worksInArena,
       reason:
@@ -762,16 +841,16 @@
           ? 'Arena ne propose que les Hatsu dont les règles s’appliquent à un duel direct.'
           : 'Arena only offers Hatsu whose rules apply to a direct duel.',
     })
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
+    document.addEventListener('keydown', onKeyDown, true)
+    document.addEventListener('keyup', onKeyUp, true)
     window.addEventListener('blur', onKeyUp)
     frame = requestAnimationFrame(tick)
   })
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
-    window.removeEventListener('keydown', onKeyDown)
-    window.removeEventListener('keyup', onKeyUp)
+    document.removeEventListener('keydown', onKeyDown, true)
+    document.removeEventListener('keyup', onKeyUp, true)
     window.removeEventListener('blur', onKeyUp)
     cancelAnimationFrame(frame)
     for (const timer of motionTimers) window.clearTimeout(timer)
@@ -843,6 +922,7 @@
     bind:jumpPitch
     world={EMPTY_WORLD}
     nen={playerNen}
+    keyboardNen={false}
     inputDisabled={briefingOpen ||
       manualOpen ||
       arenaPanel !== null ||
@@ -1002,23 +1082,24 @@
   {#if arenaPanel === 'keys'}
     <div class="combat-keys" aria-label={$t.arena.keys.label}>
       <span class:active={commandGroup(commandAnimation) === 'strike'}
-        ><kbd>{$t.arena.keys.strike}</kbd>{$t.arena.action.strike}</span
+        ><kbd>{clashKey('playerLight')}</kbd>{$locale === 'fr' ? 'Léger' : 'Light'}</span
       >
-      <span class:active={commandGroup(commandAnimation) === 'ko'}
-        ><kbd>{$t.arena.keys.ko}</kbd>{$t.arena.action.ko}</span
+      <span class:active={commandGroup(commandAnimation) === 'strike'}
+        ><kbd>{clashKey('playerHeavy')}</kbd>{$locale === 'fr' ? 'Lourd' : 'Heavy'}</span
       >
-      <span class:active={commandGroup(commandAnimation) === 'ryu'}
-        ><kbd>{$t.arena.keys.ryu}</kbd>Ryu</span
+      <span class:active={commandGroup(commandAnimation) === 'strike'}
+        ><kbd>{clashKey('playerSpecial')}</kbd>{$locale === 'fr' ? 'Spécial' : 'Special'}</span
       >
+      <span><kbd>{clashKey('playerThrow')}</kbd>{$locale === 'fr' ? 'Projection' : 'Throw'}</span>
+      <span><kbd>{clashKey('playerFinisher')}</kbd>{$locale === 'fr' ? 'Ultime' : 'Finisher'}</span>
+      <span><kbd>{clashKey('playerGuard')}</kbd>{$t.arena.action.guard}</span>
       <span class:active={commandGroup(commandAnimation) === 'mode'}
-        ><kbd>{$t.arena.keys.modes}</kbd>Ten · Ren · Zetsu</span
+        ><kbd>{clashKey('playerAura')}</kbd>Aura</span
       >
-      <span class:active={commandGroup(commandAnimation) === 'gyo'}><kbd>G</kbd>Gyo</span>
-      <span class:active={commandGroup(commandAnimation) === 'in'}><kbd>I</kbd>In</span>
-      <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
-      <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
-      <span><kbd>V</kbd>{$t.arena.action.feint}</span>
-      <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
+      <span><kbd>{clashKey('playerNen')} + J/K/L/I/H</kbd>Nen</span>
+      <span class:active={commandGroup(commandAnimation) === 'hatsu'}
+        ><kbd>{clashKey('playerContext')}</kbd>Hatsu</span
+      >
     </div>
   {/if}
 

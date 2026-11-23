@@ -1,20 +1,11 @@
-import type { MoveAction } from '../fighting/types'
-import { arenaMoveAction } from './fighting'
-
 interface ArenaKeyboardOptions {
   blocked: () => boolean
   panelOpen: () => boolean
   closePanel: () => void
   toggleManual: () => void
   start: () => void
-  finished: () => boolean
   nenKey: (code: string) => boolean
   movementKey: (code: string) => boolean
-  move: (action: MoveAction) => void
-  jump: () => void
-  guard: () => void
-  feint: () => void
-  evade: (side: -1 | 1) => void
 }
 
 export function handleArenaKey(event: KeyboardEvent, options: ArenaKeyboardOptions): void {
@@ -23,10 +14,6 @@ export function handleArenaKey(event: KeyboardEvent, options: ArenaKeyboardOptio
   if (global) return handled(event, global)
   if (options.blocked() || options.nenKey(event.code)) return
   if (options.movementKey(event.code)) return options.start()
-  if (inactive(event, options)) return
-
-  const action = keyAction(event.code, options)
-  if (action) handled(event, action)
 }
 
 function modified(event: KeyboardEvent): boolean {
@@ -36,21 +23,6 @@ function modified(event: KeyboardEvent): boolean {
 function globalAction(event: KeyboardEvent, options: ArenaKeyboardOptions): (() => void) | null {
   if (event.key === 'Escape' && options.panelOpen()) return options.closePanel
   return event.key === '?' ? options.toggleManual : null
-}
-
-function inactive(event: KeyboardEvent, options: ArenaKeyboardOptions): boolean {
-  return event.repeat || options.finished()
-}
-
-function keyAction(code: string, options: ArenaKeyboardOptions): (() => void) | null {
-  const move = arenaMoveAction(code)
-  if (move) return () => options.move(move)
-  if (code === 'ShiftLeft' || code === 'ShiftRight') return options.guard
-  if (code === 'KeyV') return options.feint
-  if (code === 'KeyJ') return () => options.evade(-1)
-  if (code === 'KeyL') return () => options.evade(1)
-  if (code === 'KeyU') return options.jump
-  return null
 }
 
 function handled(event: KeyboardEvent, action: () => void): void {

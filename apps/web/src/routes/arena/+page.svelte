@@ -374,6 +374,17 @@
     return `${$t.arena.ui.objective.use} ${objective.action} × ${objective.count}`
   }
 
+  function sectorResolutionLabel(): string {
+    const resolution = sectorSnapshot.lastResolution
+    if (resolution === 'controlled')
+      return $locale === 'fr' ? 'Secteur sous contrôle' : 'Sector under control'
+    if (resolution === 'exposed')
+      return $locale === 'fr' ? 'Victoire, mais couverture perdue' : 'Victory, but cover blown'
+    if (resolution === 'intercepted')
+      return $locale === 'fr' ? 'Interception de la sécurité' : 'Security intervention'
+    return $locale === 'fr' ? 'Hisoka conserve le secteur' : 'Hisoka holds the sector'
+  }
+
   function freshGame(
     match: ArenaReplayMatch = {
       ...DEFAULT_REPLAY_MATCH,
@@ -1174,6 +1185,11 @@
         {Object.keys(game.physicalObjects).length} OBJ.
       </span>
       <small>{sectorLead.replaceAll('_', ' ')}</small>
+      {#if game.environment.interventionIn !== null}
+        <small class="threat-tag">
+          INTERVENTION · {game.environment.interventionIn.toFixed(1)} s
+        </small>
+      {/if}
     </aside>
   {/if}
 
@@ -1454,6 +1470,16 @@
         <span>{stats.hatsu} Hatsu</span>
         {#if bestGrade}<small>BEST · {bestGrade}</small>{/if}
       </div>
+      {#if persistentSector && sectorSnapshot.lastResolution}
+        <section class="sector-resolution" data-resolution={sectorSnapshot.lastResolution}>
+          <strong>{sectorResolutionLabel()}</strong>
+          <span>
+            {$locale === 'fr' ? 'Hisoka a mémorisé' : 'Hisoka remembers'}
+            {sectorSituation.opponentReads}
+            {$locale === 'fr' ? 'attaques lisibles' : 'readable attacks'}
+          </span>
+        </section>
+      {/if}
       {#if selectedChallenge && challengeResult}
         <section class="challenge-result" class:complete={challengeResult.complete}>
           <b>{challengeResult.grade}</b>

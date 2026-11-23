@@ -14,6 +14,8 @@ import { WAREHOUSE_SECTOR_ID } from './terrain'
 export const ARENA_SECTOR_STORAGE_KEY = 'black-whale:arena-sector:tier-5-warehouse'
 export const ARENA_SECTOR_VERSION = 1 as const
 
+export type ArenaSectorResolution = 'controlled' | 'exposed' | 'intercepted' | 'rival-held'
+
 export interface ArenaSectorSnapshot {
   version: typeof ARENA_SECTOR_VERSION
   terrainId: typeof WAREHOUSE_SECTOR_ID
@@ -21,7 +23,9 @@ export interface ArenaSectorSnapshot {
   witnesses: number
   securityAlert: number
   physicalObjects: CombatState['physicalObjects']
+  opponentMemory: CombatState['opponentMemory']
   lastOutcome: CombatState['outcome'] | null
+  lastResolution: ArenaSectorResolution | null
   simulation: TourSimulationV1
 }
 
@@ -40,7 +44,9 @@ export function createArenaSectorSnapshot(): ArenaSectorSnapshot {
     witnesses: 0,
     securityAlert: 0,
     physicalObjects: {},
+    opponentMemory: emptyOpponentMemory(),
     lastOutcome: null,
+    lastResolution: null,
     simulation,
   }
 }
@@ -53,11 +59,17 @@ export function restoreArenaSector(state: CombatState, snapshot: ArenaSectorSnap
       aura: Math.max(0, Math.min(state.player.capacity, snapshot.simulation.player.aura)),
     },
     physicalObjects: clonePhysicalObjects(snapshot.physicalObjects),
+    opponentMemory: {
+      ...cloneOpponentMemory(snapshot.opponentMemory),
+      observedEventAt: null,
+    },
     environment: {
       ...state.environment,
       context: 'CLANDESTINE',
       witnesses: snapshot.witnesses,
       securityAlert: snapshot.securityAlert,
+      interventionIn: sectorUnderIntervention(snapshot) ? 8 : null,
+      intervened: false,
     },
   }
 }
@@ -79,10 +91,12 @@ export function captureArenaSector(
   playerSpaceId: string,
 ): ArenaSectorSnapshot {
   const witnessed = state.environment.witnesses > previous.witnesses
+  const resolution = resolveSectorFight(state, previous)
   let simulation = recordFight(previous.simulation, {
     state,
     playerSpaceId,
     fight: previous.fights + 1,
+    resolution,
   })
   if (witnessed) simulation = actOnTier5Parcel(simulation, 'HEAR_DISPUTE')
   return {
@@ -91,7 +105,9 @@ export function captureArenaSector(
     witnesses: Math.max(previous.witnesses, state.environment.witnesses),
     securityAlert: Math.max(previous.securityAlert, state.environment.securityAlert),
     physicalObjects: clonePhysicalObjects(state.physicalObjects),
+    opponentMemory: cloneOpponentMemory(state.opponentMemory),
     lastOutcome: state.outcome,
+    lastResolution: resolution,
     simulation,
   }
 }
@@ -115,20 +131,44 @@ export function parseArenaSector(value: string | null): ArenaSectorSnapshot {
 
 function recordFight(
   simulation: TourSimulationV1,
-  event: { state: CombatState; playerSpaceId: string; fight: number },
+  event: {
+    state: CombatState
+    playerSpaceId: string
+    fight: number
+    resolution: ArenaSectorResolution
+  },
 ): TourSimulationV1 {
-  const { state, playerSpaceId, fight } = event
+  const { state, playerSpaceId, fight, resolution } = event
   return evolveTourSimulation(simulation, (draft) => {
     draft.clock += state.clock
     draft.player.spaceId = playerSpaceId
     draft.player.aura = state.player.aura
     const incident = `arena-duel:${fight}:${state.outcome}`
     if (!draft.incidents.includes(incident)) draft.incidents.push(incident)
+    draft.incidents.push(`arena-sector:${fight}:${resolution}`)
     if (state.environment.witnesses > 0) recordWorkerWitness(draft, incident)
     if (Object.keys(state.physicalObjects).length > 0) {
       draft.incidents.push(`arena-scenery-altered:${fight}`)
     }
   })
+}
+
+function resolveSectorFight(
+  state: CombatState,
+  previous: ArenaSectorSnapshot,
+): ArenaSectorResolution {
+  if (state.environment.intervened) return 'intercepted'
+  if (state.outcome !== 'won') return 'rival-held'
+  if (
+    state.environment.securityAlert > previous.securityAlert ||
+    state.environment.witnesses > previous.witnesses
+  )
+    return 'exposed'
+  return 'controlled'
+}
+
+function sectorUnderIntervention(snapshot: ArenaSectorSnapshot): boolean {
+  return snapshot.securityAlert >= 2 || snapshot.witnesses >= 3
 }
 
 function mergeSectorHistory(target: TourSimulationV1, sector: TourSimulationV1): void {
@@ -166,4 +206,21 @@ function clonePhysicalObjects(
   physicalObjects: CombatState['physicalObjects'],
 ): CombatState['physicalObjects'] {
   return JSON.parse(JSON.stringify(physicalObjects)) as CombatState['physicalObjects']
+}
+
+function cloneOpponentMemory(memory: CombatState['opponentMemory']): CombatState['opponentMemory'] {
+  return JSON.parse(JSON.stringify(memory)) as CombatState['opponentMemory']
+}
+
+function emptyOpponentMemory(): CombatState['opponentMemory'] {
+  return {
+    observedEventAt: null,
+    zones: { head: 0, torso: 0, arms: 0, legs: 0 },
+    hypothesis: {
+      preferredZone: null,
+      confidence: 0,
+      concealedAttacks: 0,
+      knownHatsuIds: [],
+    },
+  }
 }

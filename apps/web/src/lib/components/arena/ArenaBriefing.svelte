@@ -31,6 +31,17 @@
     if (sector.phase === 'watched') return french ? 'Entrer sous surveillance' : 'Enter under watch'
     return french ? 'Reprendre le duel' : 'Resume the duel'
   })
+
+  const objectiveLabel = $derived.by(() => {
+    if (!sector) return null
+    if (sector.objective === 'beat-intervention')
+      return french ? "Vaincre avant l'arrivée de la sécurité" : 'Win before security intervenes'
+    if (sector.objective === 'stay-unseen')
+      return french ? "Gagner sans augmenter l'alerte" : 'Win without raising the alert'
+    if (sector.objective === 'break-adaptation')
+      return french ? "Briser l'adaptation de Hisoka" : "Break Hisoka's adaptation"
+    return french ? 'Prendre le contrôle du secteur' : 'Take control of the sector'
+  })
 </script>
 
 <div
@@ -46,6 +57,7 @@
     {#if sector}
       <div class="briefing-sector" data-phase={sector.phase}>
         <strong>{phaseLabel}</strong>
+        <em>{objectiveLabel}</em>
         <span>
           {french ? 'Combats' : 'Fights'}
           {sector.fights} ·
@@ -57,6 +69,8 @@
         <small>
           {sector.changedObjects}
           {french ? 'objets altérés' : 'altered objects'} ·
+          {sector.opponentReads}
+          {french ? 'lectures adverses' : 'opponent reads'} ·
           {sector.parcelStage.replaceAll('_', ' ')}
         </small>
       </div>

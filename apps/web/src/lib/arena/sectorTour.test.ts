@@ -25,7 +25,10 @@ describe('Arena sector inside Tour', () => {
   it('escalates the next duel briefing from altered to watched to lockdown', () => {
     const snapshot = createArenaSectorSnapshot()
     snapshot.fights = 1
-    expect(arenaSectorSituation(snapshot).phase).toBe('altered')
+    expect(arenaSectorSituation(snapshot)).toMatchObject({
+      phase: 'altered',
+      objective: 'break-adaptation',
+    })
 
     snapshot.witnesses = 1
     expect(arenaSectorSituation(snapshot).phase).toBe('watched')
@@ -33,9 +36,22 @@ describe('Arena sector inside Tour', () => {
     snapshot.securityAlert = 2
     expect(arenaSectorSituation(snapshot)).toMatchObject({
       phase: 'lockdown',
+      objective: 'beat-intervention',
+      interventionSeconds: 8,
       fights: 1,
       witnesses: 1,
       securityAlert: 2,
+    })
+  })
+
+  it('reports how much of the player the persistent rival has learned', () => {
+    const snapshot = createArenaSectorSnapshot()
+    snapshot.opponentMemory.zones = { head: 2, torso: 1, arms: 0, legs: 3 }
+    snapshot.lastResolution = 'exposed'
+
+    expect(arenaSectorSituation(snapshot)).toMatchObject({
+      opponentReads: 6,
+      lastResolution: 'exposed',
     })
   })
 })

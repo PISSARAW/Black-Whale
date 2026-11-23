@@ -160,6 +160,18 @@
       return french ? 'Reprendre le duel altéré' : 'Resume the altered duel'
     return french ? 'Engager le duel du secteur' : 'Enter the sector duel'
   })
+  const sectorAftermath = $derived.by(() => {
+    const resolution = sectorSituation?.lastResolution
+    if (resolution === 'controlled')
+      return french ? 'DERNIÈRE ISSUE · SECTEUR CONTRÔLÉ' : 'LAST OUTCOME · SECTOR CONTROLLED'
+    if (resolution === 'exposed')
+      return french ? 'DERNIÈRE ISSUE · COUVERTURE PERDUE' : 'LAST OUTCOME · COVER BLOWN'
+    if (resolution === 'intercepted')
+      return french ? 'DERNIÈRE ISSUE · INTERCEPTION' : 'LAST OUTCOME · INTERCEPTED'
+    if (resolution === 'rival-held')
+      return french ? 'DERNIÈRE ISSUE · HISOKA TIENT LE SECTEUR' : 'LAST OUTCOME · HISOKA HOLDS'
+    return french ? 'OBJECTIF · PRENDRE LE CONTRÔLE' : 'OBJECTIVE · TAKE CONTROL'
+  })
   const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
   const sourceOf = (entity: { source: string; sourceFr: string }) => localizedSource(entity, french)
   const sortedSpaces = $derived(
@@ -1259,8 +1271,11 @@
       <span>
         {sectorSituation.changedObjects}
         {french ? 'OBJETS ALTÉRÉS' : 'ALTERED OBJECTS'} ·
+        {sectorSituation.opponentReads}
+        {french ? 'LECTURES ADVERSES' : 'OPPONENT READS'} ·
         {sectorSituation.parcelStage.replaceAll('_', ' ')}
       </span>
+      <span>{sectorAftermath}</span>
     {:else}
       <span
         >{french

@@ -1,6 +1,6 @@
 import type { TourWorld } from '../tour/hatsu'
 import { TIER5_PARCEL_ACTIVITY } from '../tour/simulation/tier5Loop'
-import type { ArenaSectorSnapshot } from './sectorPersistence'
+import type { ArenaSectorResolution, ArenaSectorSnapshot } from './sectorPersistence'
 
 export type ArenaSectorPhase = 'quiet' | 'altered' | 'watched' | 'lockdown'
 
@@ -12,6 +12,10 @@ export interface ArenaSectorSituation {
   changedObjects: number
   storedObjects: number
   parcelStage: string
+  objective: 'take-control' | 'break-adaptation' | 'stay-unseen' | 'beat-intervention'
+  opponentReads: number
+  interventionSeconds: number | null
+  lastResolution: ArenaSectorResolution | null
 }
 
 /** Replays Arena scenery changes through the Tour renderer's native solid overrides. */
@@ -42,7 +46,21 @@ export function arenaSectorSituation(snapshot: ArenaSectorSnapshot): ArenaSector
     changedObjects: objects.length,
     storedObjects: objects.filter((object) => object.storedBy !== null).length,
     parcelStage: snapshot.simulation.activities[TIER5_PARCEL_ACTIVITY]?.stage ?? 'UNNOTICED',
+    objective: objectiveFor(phase),
+    opponentReads: Object.values(snapshot.opponentMemory.zones).reduce(
+      (total, count) => total + count,
+      0,
+    ),
+    interventionSeconds: phase === 'lockdown' ? 8 : null,
+    lastResolution: snapshot.lastResolution,
   }
+}
+
+function objectiveFor(phase: ArenaSectorPhase): ArenaSectorSituation['objective'] {
+  if (phase === 'lockdown') return 'beat-intervention'
+  if (phase === 'watched') return 'stay-unseen'
+  if (phase === 'altered') return 'break-adaptation'
+  return 'take-control'
 }
 
 function sectorPhase(snapshot: ArenaSectorSnapshot, changedObjects: number): ArenaSectorPhase {

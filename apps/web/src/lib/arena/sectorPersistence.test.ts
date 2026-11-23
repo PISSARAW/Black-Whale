@@ -49,6 +49,13 @@ describe('persistent Arena sector', () => {
     snapshot.witnesses = 3
     snapshot.securityAlert = 2
     snapshot.physicalObjects.crate = { id: 'crate', position: [7, 2], storedBy: 'player' }
+    snapshot.opponentMemory.zones.head = 4
+    snapshot.opponentMemory.hypothesis = {
+      preferredZone: 'head',
+      confidence: 1,
+      concealedAttacks: 0,
+      knownHatsuIds: ['judgment-chain'],
+    }
 
     const restored = restoreArenaSector(combat(), parseArenaSector(serializeArenaSector(snapshot)))
 
@@ -58,6 +65,12 @@ describe('persistent Arena sector', () => {
       securityAlert: 2,
     })
     expect(restored.physicalObjects.crate).toEqual(snapshot.physicalObjects.crate)
+    expect(restored.opponentMemory).toMatchObject({
+      observedEventAt: null,
+      zones: { head: 4 },
+      hypothesis: { preferredZone: 'head', knownHatsuIds: ['judgment-chain'] },
+    })
+    expect(restored.environment.interventionIn).toBe(8)
   })
 
   it('adopts the active Tour world and returns combat aura and incidents to it', () => {
@@ -83,5 +96,27 @@ describe('persistent Arena sector', () => {
       aura: 41,
       spaceId: 'tier-5-transverse-corridor',
     })
+  })
+
+  it('records whether the fighter controlled, exposed, or lost the sector', () => {
+    const previous = createArenaSectorSnapshot()
+    const controlled = combat()
+    controlled.outcome = 'won'
+
+    const first = captureArenaSector(controlled, previous, 'tier-5-warehouse')
+    expect(first.lastResolution).toBe('controlled')
+
+    const exposed = combat()
+    exposed.outcome = 'won'
+    exposed.environment.witnesses = 1
+    const second = captureArenaSector(exposed, first, 'tier-5-warehouse')
+    expect(second.lastResolution).toBe('exposed')
+
+    const intercepted = combat()
+    intercepted.outcome = 'lost'
+    intercepted.environment.intervened = true
+    const third = captureArenaSector(intercepted, second, 'tier-5-warehouse')
+    expect(third.lastResolution).toBe('intercepted')
+    expect(third.simulation.incidents).toContain('arena-sector:3:intercepted')
   })
 })

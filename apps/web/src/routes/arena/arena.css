@@ -92,11 +92,45 @@
     letter-spacing: 0.08em;
   }
 
+  .briefing-sector em {
+    color: #ffd700;
+    font-size: 0.66rem;
+    font-style: normal;
+    letter-spacing: 0.04em;
+  }
+
   .briefing-sector span,
   .briefing-sector small {
     color: #a8b3b7;
     font-size: 0.58rem;
     letter-spacing: 0.05em;
+  }
+
+  .sector-resolution {
+    display: grid;
+    width: min(28rem, 100%);
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgb(255 215 0 / 32%);
+    border-left: 3px solid #ffd700;
+    background: rgb(255 215 0 / 5%);
+    gap: 0.2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .sector-resolution[data-resolution='exposed'],
+  .sector-resolution[data-resolution='rival-held'] {
+    border-left-color: #ff9e43;
+  }
+
+  .sector-resolution[data-resolution='intercepted'] {
+    border-left-color: #ff4d5e;
+    background: rgb(255 77 94 / 7%);
+  }
+
+  .sector-resolution span {
+    color: #a8b3b7;
+    font-size: 0.62rem;
   }
 
   .briefing-goal {

@@ -76,6 +76,7 @@ import { moveById } from './movesets'
 import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
 import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
+import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -380,6 +381,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       attackMotionAccent({ fighter, frames, authored, frame: at }),
       strikeSupportPose(fighter, { transfer, frame: at, frames }),
       strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
+      kurapikaGoldenHeavyOutcomePose(fighter, { frame: at, frames }),
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),

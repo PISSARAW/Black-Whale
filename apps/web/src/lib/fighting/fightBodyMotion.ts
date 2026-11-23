@@ -75,6 +75,7 @@ import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
 import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
+import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -367,6 +368,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const base = basePose(variant, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
+  const goldenSupport = kurapikaGoldenHeavySupport(fighter, frames)
   const poseAt = (at: number) =>
     addPoses(
       base,
@@ -384,6 +386,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
+    ...goldenSupport,
     attackFlow: {
       frame,
       startup: frames.startup,

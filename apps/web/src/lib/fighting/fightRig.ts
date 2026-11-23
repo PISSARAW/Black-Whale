@@ -46,6 +46,7 @@ export interface PlantFeetOptions {
   transfer?: boolean
   support?: number
   horizontal?: boolean
+  pivot?: { index: number; angle: number }
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -157,6 +158,7 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
     human.figure.position.y += pose.root[1]
     human.figure.position.z += pose.root[2]
   }
+  turnBy(human.figure, pose.pelvis, mirror)
   turnBy(human.figure, pose.body, mirror)
   turnBy(human.head, pose.neck, mirror)
   turnBy(human.head, pose.head, mirror)
@@ -239,6 +241,11 @@ export function captureFootPlant(rig: FightRig): FootPlantAnchor {
  */
 export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const { human } = rig
+  if (options.pivot) {
+    rig.ankles[options.pivot.index].rotation.y += options.pivot.angle * options.facing
+    keepHumanJoint(rig.ankles[options.pivot.index], 'ankle')
+    constrainCombatJoint(rig.ankles[options.pivot.index], 'ankle')
+  }
   rig.ankles.forEach((ankle, index) => {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)

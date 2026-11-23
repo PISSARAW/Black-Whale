@@ -23,6 +23,7 @@ export type Turn = readonly [number, number, number]
 
 export const FIGHT_JOINTS = [
   'root',
+  'pelvis',
   'body',
   'chest',
   'neck',
@@ -138,4 +139,9 @@ export interface BodyPlan {
   attackFlow?: import('./fightAttackFlow').AttackFlowFrame
   /** Simulation age of a contact reaction; repeated renders during hitstop keep the same pose. */
   reactionFrame?: number
+  /** Optional authored base of support for a planted presentation pose. */
+  supportFoot?: 'lead' | 'rear'
+  /** A planted foot may rotate around its anchor without translating. */
+  pivotFoot?: 'lead' | 'rear'
+  pivotAngle?: number
 }

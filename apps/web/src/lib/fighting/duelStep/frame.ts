@@ -138,45 +138,46 @@ function hitstopFrame(state: FightState): FightState {
   })
 }
 
+/**
+ * Deterministic 5-phase end-of-frame pipeline:
+ * 1. Clock & sound channels
+ * 2. Continuous DoTs & thermal/blood hazards
+ * 3. Fighter status timers & spatial traps
+ * 4. Universal Nen pillars (En reflex & Ren Malice)
+ * 5. Information & HUD perception (Book, Sonar, Owl, Profile, Opponent Intel)
+ */
+const CLOSE_FRAME_PIPELINE: readonly ((state: FightState) => FightState)[] = [
+  finishExpiredFight,
+  reconcileMelodySound,
+  reconcileBattleCantabile,
+  advanceTsk17,
+  advanceBashoHaiku,
+  advanceFeitanTerebellumUpgrades,
+  advanceShizukuHanzoKallutoUpgrades,
+  advanceTroupeUpgrades,
+  advanceIllumiBiscuitUpgrades,
+  advanceHalkenburgBonolenovUpgrades,
+  advanceHinrighZakuroLuiniUpgrades,
+  advanceNenPillars,
+  advanceChrolloBookIntel,
+  advanceLeorioSonar,
+  advanceMusseOwl,
+  advanceFurykovProfile,
+  advanceOpponentIntel,
+]
+
 /** Advances the frame counter and round clock from the frame's opening world. */
 export function closeFrame(start: FightState, resolved: FightState): FightState {
   const remainingFrames =
     start.mode === 'training' ? start.remainingFrames : Math.max(0, start.remainingFrames - 1)
-  const next = {
+  let next: FightState = {
     ...advanceNenPsychology(start, advanceBurstZetsu(resolved, start.frame)),
     frame: start.frame + 1,
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return advanceOpponentIntel(
-    advanceHinrighZakuroLuiniUpgrades(
-      advanceHalkenburgBonolenovUpgrades(
-        advanceShizukuHanzoKallutoUpgrades(
-          advanceFeitanTerebellumUpgrades(
-            advanceIllumiBiscuitUpgrades(
-              advanceTroupeUpgrades(
-                advanceNenPillars(
-                  advanceBashoHaiku(
-                    advanceFurykovProfile(
-                      advanceMusseOwl(
-                        advanceLeorioSonar(
-                          advanceTsk17(
-                            advanceChrolloBookIntel(
-                              reconcileBattleCantabile(
-                                reconcileMelodySound(finishExpiredFight(next)),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  )
+  for (const step of CLOSE_FRAME_PIPELINE) {
+    next = step(next)
+  }
+  return next
 }

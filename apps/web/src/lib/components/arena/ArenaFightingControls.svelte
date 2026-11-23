@@ -11,10 +11,12 @@
     disabled: boolean
     direction: ArenaDirection
     aimed: BodyZone
+    airborne: boolean
     combo: number
     onPlayerChange: (fighterId: FighterId) => void
     onOpponentChange: (fighterId: FighterId) => void
     onMove: (action: MoveAction) => void
+    onJump: () => void
   }
 
   let {
@@ -24,12 +26,14 @@
     disabled,
     direction,
     aimed,
+    airborne,
     combo,
     onPlayerChange,
     onOpponentChange,
     onMove,
+    onJump,
   }: Props = $props()
-  let moves = $derived(arenaMoveLabels(playerFighterId, french, { direction, aimed }))
+  let moves = $derived(arenaMoveLabels(playerFighterId, french, { direction, aimed, airborne }))
 </script>
 
 <article class="fighting-controls">
@@ -72,6 +76,10 @@
       ? 'Avancer / reculer et viser les jambes changent la variante. Enchaîne pendant l’impact.'
       : 'Moving forward / back and aiming at the legs change the variant. Chain on impact.'}
   >
+    <button type="button" disabled={disabled || airborne} onclick={onJump}>
+      <kbd>U</kbd>
+      <strong>{french ? 'Saut' : 'Jump'}</strong>
+    </button>
     {#each moves as move (move.action)}
       <button
         type="button"
@@ -200,7 +208,7 @@
 
     .moves {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
 
     button {

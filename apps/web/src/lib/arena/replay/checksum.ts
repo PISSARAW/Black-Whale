@@ -36,6 +36,8 @@ function fighterDigest(fighter: CombatState['player']) {
     aura: rounded(fighter.aura),
     position: fighter.position.map(rounded),
     movement: fighter.movement.map(rounded),
+    height: rounded(fighter.height),
+    jump: fighter.jump ? { ...fighter.jump, elapsed: rounded(fighter.jump.elapsed) } : null,
     cooldown: rounded(fighter.cooldown),
     recovery: rounded(fighter.recovery),
   }

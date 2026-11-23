@@ -36,8 +36,8 @@ Arena keeps its open room; the duel inside it speaks Clash.
   person: Space/click light, B heavy, Y special, M throw, P finisher
   (X, C and E stay with Zetsu, Ko and the passage link). Holding
   forward or back picks the forward/back variant; aiming at the legs is Clash's
-  "down". Air moves wait for a jump. All fifteen authored slots except the two
-  air ones are reachable.
+  "down". U launches a deterministic jump; light and heavy become the authored
+  air slots until landing. All fifteen authored slots are reachable.
 - **Combos** — [combat/moveChain.ts](../combat/moveChain.ts) applies each
   landed move's authored hitstun, blockstun and knockback (frames at 60 fps,
   lane units at 0.2 m), then opens its `cancelWindow` on `cancelInto` after a
@@ -82,8 +82,8 @@ Authored lunges now advance progressively during startup on the fighter's local
 3D attack axis, stop at bodies and walls, and are checked against Clash's lane
 position in the parity gate.
 
-Still Clash-only, in rough order of value: jump and air moves;
-hitstop and camera shake; per-fighter Hatsu systems behind the specials;
+Still Clash-only, in rough order of value: hitstop and camera shake;
+per-fighter Hatsu systems behind the specials;
 psychology, expressions and Ren presentation; frame data, training and
 lessons; replay coaching; rollback PvP.
 

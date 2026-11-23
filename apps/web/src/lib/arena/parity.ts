@@ -38,6 +38,7 @@ export interface ParityEvent {
 
 export interface ParityFighterDigest {
   aura: number
+  airborne: boolean
   condition: CombatState['player']['condition']
   score: number
   position: readonly [number, number]
@@ -119,7 +120,7 @@ export function compareParityResults(
   const differences = compareParityEvents(arena, clash)
   compareValue({ differences, path: 'outcome', arena: arena.outcome, clash: clash.outcome })
   for (const side of ['player', 'opponent'] as const) {
-    for (const field of ['aura', 'condition', 'score'] as const) {
+    for (const field of ['aura', 'airborne', 'condition', 'score'] as const) {
       if (field === 'aura' && Math.abs(arena[side].aura - clash[side].aura) <= PARITY_AURA_EPSILON)
         continue
       compareValue({
@@ -165,6 +166,7 @@ function commandsByFrame(commands: readonly ParityCommand[]) {
 function fighterDigest(fighter: CombatState['player']): ParityFighterDigest {
   return {
     aura: rounded(fighter.aura),
+    airborne: fighter.height > 0,
     condition: fighter.condition,
     score: fighter.score,
     position: [rounded(fighter.position[0]), rounded(fighter.position[1])],

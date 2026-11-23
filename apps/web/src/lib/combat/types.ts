@@ -24,6 +24,12 @@ export interface RyuShift {
   restore?: Pick<RyuShift, 'attackShare' | 'guard'>
 }
 
+export interface ArenaJump {
+  elapsed: number
+  velocity: number
+  direction: Vec2
+}
+
 export interface AttackIntent {
   zone: BodyZone
   remaining: number
@@ -72,6 +78,9 @@ export interface FighterState {
   /** Position in the metric coordinates of the reconstructed room. */
   position: Vec2
   movement: Vec2
+  /** Vertical metres above the room floor; planar position remains in `position`. */
+  height: number
+  jump: ArenaJump | null
   facing: number
   mode: AuraMode
   attackShare: number
@@ -175,6 +184,7 @@ export type CombatAction =
   | { type: 'FACE'; side: CombatSide; heading: number }
   | { type: 'EVADE'; side: CombatSide; vector: Vec2 }
   | { type: 'MOVE'; side: CombatSide; vector: Vec2 }
+  | { type: 'JUMP'; side: CombatSide; vector: Vec2 }
   | { type: 'MODE'; side: CombatSide; mode: AuraMode }
   | { type: 'RYU'; side: CombatSide; attackShare?: number; guard?: BodyZone }
   | { type: 'GYO'; side: CombatSide; on: boolean }
@@ -215,6 +225,8 @@ export function initialFighter(position: Vec2): FighterState {
     capacity: 100,
     position,
     movement: [0, 0],
+    height: 0,
+    jump: null,
     facing: 0,
     mode: 'ten',
     attackShare: 0.5,

@@ -21,6 +21,12 @@ describe('Clash commands in first person', () => {
       'downSpecial',
     )
     expect(arenaMoveSlot({ ...base, action: 'throw', direction: 'forward' })).toBe('throw')
+    expect(arenaMoveSlot({ ...base, action: 'light', direction: null, airborne: true })).toBe(
+      'airLight',
+    )
+    expect(arenaMoveSlot({ ...base, action: 'heavy', direction: null, airborne: true })).toBe(
+      'airHeavy',
+    )
   })
 
   // Camilla is the one fighter without a special at all; she keeps a neutral fallback.

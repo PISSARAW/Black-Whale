@@ -11,6 +11,7 @@ export interface ArenaMoveInput {
   direction: ArenaDirection
   /** Zone under the crosshair: aiming at the legs is Clash's "down". */
   aimed: BodyZone
+  airborne?: boolean
 }
 
 /**
@@ -25,8 +26,9 @@ export function arenaMoveSlot(input: ArenaMoveInput): MoveSlot {
   return neutralSlot(input.action)
 }
 
-function preferredSlot({ action, direction, aimed }: ArenaMoveInput): MoveSlot {
+function preferredSlot({ action, direction, aimed, airborne = false }: ArenaMoveInput): MoveSlot {
   if (action === 'throw' || action === 'finisher') return action
+  if (airborne && action !== 'special') return action === 'light' ? 'airLight' : 'airHeavy'
   const low = aimed === 'legs'
   if (action === 'special') return specialSlot(direction, low)
   return normalSlot(action, { direction, low })

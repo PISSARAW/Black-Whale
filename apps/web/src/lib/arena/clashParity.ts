@@ -20,18 +20,20 @@ export function runClashParityScenario(scenario: ArenaParityScenario): ArenaPari
   let state = initialFight(scenario)
   const commands = commandsByFrame(scenario.commands)
   const guardUntil = { player: -1, opponent: -1 }
+  const jumpUntil = { player: -1, opponent: -1 }
   const events: ParityEvent[] = []
   let impactSequence = state.impact?.sequence ?? 0
 
   for (let frame = 0; frame < scenario.frames; frame += 1) {
     for (const action of commands.get(frame) ?? []) {
       if (action.type === 'GUARD') guardUntil[action.side] = frame + guardFrames()
+      else if (action.type === 'JUMP') jumpUntil[action.side] = frame + 4
       else state = applyAction(state, action)
     }
-    state = tickFight(state, input(frame, guardUntil.player), {
+    state = tickFight(state, input(frame, guardUntil.player, jumpUntil.player), {
       dt: 1 / PARITY_TICK_RATE,
       ai: false,
-      opponentInput: input(frame, guardUntil.opponent),
+      opponentInput: input(frame, guardUntil.opponent, jumpUntil.opponent),
     })
     if (state.impact && state.impact.sequence !== impactSequence) {
       events.push(parityEvent(state))
@@ -108,6 +110,7 @@ function fighterDigest(
   const fighter = state[side]
   return {
     aura: rounded(fighter.aura),
+    airborne: fighter.y > 0,
     condition:
       fighter.health <= 0
         ? 'ko'
@@ -145,8 +148,9 @@ function commandsByFrame(commands: readonly ParityCommand[]) {
   return byFrame
 }
 
-function input(frame: number, until: number): FightInput {
-  return frame <= until ? { ...EMPTY_INPUT, guard: true } : EMPTY_INPUT
+function input(frame: number, guardUntil: number, jumpUntil: number): FightInput {
+  if (frame > guardUntil && frame > jumpUntil) return EMPTY_INPUT
+  return { ...EMPTY_INPUT, guard: frame <= guardUntil, jump: frame <= jumpUntil }
 }
 
 function guardFrames(): number {

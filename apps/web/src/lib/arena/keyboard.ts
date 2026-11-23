@@ -11,6 +11,7 @@ interface ArenaKeyboardOptions {
   nenKey: (code: string) => boolean
   movementKey: (code: string) => boolean
   move: (action: MoveAction) => void
+  jump: () => void
   guard: () => void
   feint: () => void
   evade: (side: -1 | 1) => void
@@ -48,6 +49,7 @@ function keyAction(code: string, options: ArenaKeyboardOptions): (() => void) | 
   if (code === 'KeyV') return options.feint
   if (code === 'KeyJ') return () => options.evade(-1)
   if (code === 'KeyL') return () => options.evade(1)
+  if (code === 'KeyU') return options.jump
   return null
 }
 

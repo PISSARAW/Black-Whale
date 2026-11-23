@@ -65,7 +65,7 @@ export function arenaMoveAction(code: string): MoveAction | null {
 export function arenaMoveLabels(
   fighterId: FighterId,
   french: boolean,
-  context: { direction: ArenaDirection; aimed: BodyZone },
+  context: { direction: ArenaDirection; aimed: BodyZone; airborne?: boolean },
 ) {
   return (Object.keys(ARENA_MOVE_KEYS) as MoveAction[]).map((action) => {
     const slot = arenaMoveSlot({ fighterId, action, ...context })

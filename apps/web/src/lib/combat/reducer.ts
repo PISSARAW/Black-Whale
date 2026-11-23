@@ -49,6 +49,7 @@ import { advanceEnvironment, reactEnvironment } from './environment'
 import { resolveNamedHatsu } from './hatsu'
 import { fightingHatsuAction, prepareFightingMove } from './fightingMove'
 import { usesClashNen } from './clashNen'
+import { startJump } from './airMovement'
 import {
   initialCombatState,
   otherSide,
@@ -69,6 +70,8 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'EVADE') return evade(state, action.side, action.vector)
   if (action.type === 'MOVE')
     return replace(state, action.side, setMovement(state[action.side], action.vector))
+  if (action.type === 'JUMP')
+    return replace(state, action.side, startJump(state[action.side], action.vector))
   if (action.type === 'MODE')
     return replace(state, action.side, setMode(state[action.side], action.mode))
   if (action.type === 'RYU') return ryu(state, action)

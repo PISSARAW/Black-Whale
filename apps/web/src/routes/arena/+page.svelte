@@ -91,6 +91,8 @@
   import { standardNenCommand, type CommandAnimation } from '$lib/arena/nenCommands'
   import { comboCount } from '$lib/combat/moveChain'
   import { arenaSelfBody } from '$lib/arena/selfBody'
+  import { arenaOpponentActor } from '$lib/arena/combatActors'
+  import { arenaJumpAction } from '$lib/arena/jump'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
@@ -242,36 +244,18 @@
   let playerFighter = $derived(arenaFighter(fighterId))
   let opponentFighter = $derived(arenaFighter(opponentFighterId))
   let opponentActor = $derived<Apparition[]>([
-    {
-      id: 'arena-opponent',
-      kind: 'combatant',
+    arenaOpponentActor({
+      fighter: opponentFighter,
+      state: game.opponent,
+      motion: opponentMotion,
+      intentVisible: !hideOpponentIntent && Boolean(pov.opponent.intent),
+      ground,
       spaceId: terrain.id,
       tierId: terrain.tierId,
-      at: game.opponent.position,
-      heading: game.opponent.facing,
-      y: ground,
-      size: 1,
       colour: arenaFighterColour(opponentFighterId),
       stage: actorStage(),
-      human: {
-        role: opponentFighter.modelRole,
-        identity: opponentFighter.modelId,
-        pose:
-          game.opponent.condition === 'down' || game.opponent.condition === 'ko'
-            ? 'fallen'
-            : (!hideOpponentIntent && pov.opponent.intent) || opponentMotion === 'attack'
-              ? 'attack'
-              : opponentMotion === 'guard'
-                ? 'guard'
-                : opponentMotion === 'hit'
-                  ? 'held'
-                  : 'idle',
-        aura: game.opponent.mode,
-        nen: opponentNen,
-      },
-      hidden: false,
-      pick: true,
-    },
+      nen: opponentNen,
+    }),
   ])
   let selfActor = $derived(
     arenaSelfBody({
@@ -280,7 +264,7 @@
       motion: playerMotion,
       at: position,
       heading,
-      place: { spaceId: terrain.id, tierId: terrain.tierId, ground },
+      place: { spaceId: terrain.id, tierId: terrain.tierId, ground: ground + game.player.height },
     }),
   )
   let opponentWalls = $derived(blockerAt(game.opponent.position, terrain.id))
@@ -403,6 +387,7 @@
       action,
       direction: heldDirection.current(),
       aimed: aimedZone,
+      airborne: game.player.height > 0,
     })
     command(
       arenaFightingMove({
@@ -414,6 +399,10 @@
       }),
       'strike',
     )
+  }
+
+  function jump() {
+    send(arenaJumpAction(heading, heldDirection.current()))
   }
 
   /** Clash's Ko powers the striking limb of the next move: the hands, or the feet when aiming low. */
@@ -483,6 +472,7 @@
       nenKey: isNenControlCode,
       movementKey: isMovement,
       move: fightingMove,
+      jump,
       guard,
       feint,
       evade,
@@ -865,7 +855,12 @@
     bind:jumpPitch
     world={EMPTY_WORLD}
     nen={playerNen}
-    inputDisabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
+    inputDisabled={briefingOpen ||
+      manualOpen ||
+      arenaPanel !== null ||
+      game.outcome !== 'playing' ||
+      game.player.height > 0}
+    eyeHeightOffset={game.player.height}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
     extras={[...opponentActor, selfActor]}
@@ -1078,6 +1073,7 @@
       disabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
       direction={moveDirection}
       aimed={aimedZone}
+      airborne={game.player.height > 0}
       combo={comboCount(game.player, game.clock)}
       onPlayerChange={(selected) => {
         fighterId = selected
@@ -1088,6 +1084,7 @@
         applyOptions()
       }}
       onMove={fightingMove}
+      onJump={jump}
     />
     <article class="status-card" class:expanded={arenaPanel === 'status'}>
       <header>

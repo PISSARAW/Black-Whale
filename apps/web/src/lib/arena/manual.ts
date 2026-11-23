@@ -11,6 +11,7 @@ export const ARENA_MANUAL_CONTROLS = [
     descriptionFr: 'Esquiver (Gauche/Droite)',
   },
   { keys: ['V'], description: 'Feint', descriptionFr: 'Feinter' },
+  { keys: ['U'], description: 'Jump / Air moves', descriptionFr: 'Saut / Coups aériens' },
   { keys: ['Space', 'Click'], description: 'Light attack', descriptionFr: 'Attaque légère' },
   {
     keys: ['B', 'Y', 'M', 'P'],

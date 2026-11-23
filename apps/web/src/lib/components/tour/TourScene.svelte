@@ -132,6 +132,7 @@
     stopSteps,
   } from '$lib/audio/steps'
   import TourSoundControls from './TourSoundControls.svelte'
+  import { placeTourCamera, TourCameraFov } from './TourCameraPlacement'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
@@ -253,6 +254,8 @@
     heading?: number
     /** Vertical camera angle, exposed for games whose reticle targets body height. */
     lookPitch?: number
+    /** Live eye displacement owned by a game, such as an Arena jump arc. */
+    eyeHeightOffset?: number
     /**
      * What Nen is currently doing to the ship. The scene is the only thing that
      * draws it; `$lib/tour/hatsu` is the only thing that decides it.
@@ -615,6 +618,7 @@
     position = $bindable([0, 0]),
     heading = $bindable(0),
     lookPitch = $bindable(0),
+    eyeHeightOffset = 0,
     world = EMPTY_WORLD,
     auraColour = null,
     nen,
@@ -3979,9 +3983,7 @@
        * not a setting — the visitor's own field of view is added underneath it,
        * so changing it in the panel mid-sprint does the right thing.
        */
-      let fovLift = 0
-      const SPRINT_FOV = 4
-      const FOV_EASE = 0.25
+      const cameraFov = new TourCameraFov(camera)
 
       /**
        * The air the current room wants, and the densities already measured.
@@ -4517,30 +4519,27 @@
         const eye =
           ground +
           (authoredEyeHeight ?? eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT)) +
-          (authoredEyeHeight === null ? bob.rise + breath + swingRise : 0)
-        // Open on the run, close on the walk. Off the speed actually being made
-        // rather than off the sprint key, so a visitor held against a bulkhead
-        // is not sprinting and the view says so.
-        const lift = velocity[0] || velocity[1] ? Math.min(1, gait / 1.5) ** 2 * SPRINT_FOV : 0
-        if (Math.abs(lift - fovLift) > 1e-4) {
-          fovLift += (lift - fovLift) * Math.min(1, delta / FOV_EASE)
-          camera.fov = $comfort.fov + fovLift
-          camera.updateProjectionMatrix()
-        }
+          (authoredEyeHeight === null ? bob.rise + breath + swingRise : 0) +
+          eyeHeightOffset
+        cameraFov.update({
+          base: $comfort.fov,
+          gait,
+          moving: Boolean(velocity[0] || velocity[1]),
+          delta,
+        })
         // Preserve the panorama's horizontal framing on portrait screens.
         const cameraPullback = authoredCameraDistance * Math.max(1, 1.4 / camera.aspect)
-        camera.position.set(
-          pointer[0] + Math.sin(yaw) * cameraPullback,
+        placeTourCamera({
+          camera,
+          at: pointer,
           eye,
-          pointer[1] + Math.cos(yaw) * cameraPullback,
-        )
-        camera.rotation.set(0, 0, 0)
-        camera.rotateY(yaw)
-        camera.rotateX(pitch)
-        camera.rotateZ(
-          bob.roll +
+          yaw,
+          pitch,
+          pullback: cameraPullback,
+          roll:
+            bob.roll +
             (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
-        )
+        })
         {
           nenAura.update(effectiveNen, camera, {
             ground,

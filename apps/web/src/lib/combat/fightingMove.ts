@@ -65,6 +65,8 @@ export function prepareFightingMove(
 function canPerform(state: CombatState, side: CombatSide, move: FighterMove): boolean {
   const fighter = state[side]
   if (fighter.condition !== 'ready' || fighter.aura < move.auraCost) return false
+  const airMove = move.slot === 'airLight' || move.slot === 'airHeavy'
+  if (airMove !== fighter.height > 0) return false
   // Under Clash rules a held Ko waits for this very move.
   if (fighter.ko && !usesClashNen(state)) return false
   return finisherOpen(state, side, move)

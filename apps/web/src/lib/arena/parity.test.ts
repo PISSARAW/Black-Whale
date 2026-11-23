@@ -120,4 +120,29 @@ describe('Arena and Clash parity traces', () => {
     expect(arena.player.position[0]).toBe(0)
     expect(arena.player.position[1]).toBeGreaterThan(0)
   })
+
+  it('runs the authored air-light slot only after both fighters leave the ground', () => {
+    const scenario = kurapikaJab()
+    scenario.id = 'kurapika-hisoka-air-light'
+    scenario.commands = [
+      { frame: 0, action: { type: 'JUMP', side: 'player', vector: [0, 0] } },
+      {
+        frame: 4,
+        action: {
+          type: 'FIGHTING_MOVE',
+          side: 'player',
+          fighterId: 'kurapika',
+          slot: 'airLight',
+          targetAt: setup.opponentAt,
+        },
+      },
+    ]
+
+    const arena = runArenaParityScenario(scenario)
+    const clash = runClashParityScenario(scenario)
+
+    expect(arena.player.airborne).toBe(true)
+    expect(arena.events[0]).toMatchObject({ attacker: 'player', technique: 'strike' })
+    expect(compareParityResults(arena, clash)).toEqual([])
+  })
 })

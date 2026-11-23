@@ -1,8 +1,9 @@
-import type { Group, Material, Mesh, Object3D } from 'three'
+import type { BufferGeometry, Group, Material, Mesh, Object3D } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 
 type Three = HumanFigureBuild['THREE']
+const SCALED_HANDS = new WeakMap<BufferGeometry, Map<number, BufferGeometry>>()
 
 /**
  * Fight-only roster finish grown from the Kurapika/Hisoka vertical slice.
@@ -45,7 +46,8 @@ function refineExtremities(
     const hand = root.getObjectByName(`hand-${side}`)
     if (hand) {
       const scale = extremityScale(profile)
-      hand.scale.multiplyScalar(scale)
+      if (profile.likeness === 'kurapika') scaleHandGeometry(hand as Mesh, scale)
+      else hand.scale.multiplyScalar(scale)
       const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.061 * scale, 0.004, 0.006), ink)
       knuckles.name = `fight-hand-knuckles-${side}`
       knuckles.position.set(0, 0.014, 0.029)
@@ -55,6 +57,25 @@ function refineExtremities(
     const shoe = root.getObjectByName(`knee-${side}`)?.children[1]
     if (shoe) shoe.scale.multiply(new THREE.Vector3(1.04, 1.02, 1.06))
   }
+}
+
+/** Preserve chains and held equipment: only Kurapika's skin buffer receives the hero scale. */
+function scaleHandGeometry(hand: Mesh, scale: number): void {
+  const source = hand.geometry
+  let variants = SCALED_HANDS.get(source)
+  if (!variants) {
+    variants = new Map()
+    SCALED_HANDS.set(source, variants)
+  }
+  let geometry = variants.get(scale)
+  if (!geometry) {
+    geometry = source.clone().scale(scale, scale, scale)
+    geometry.userData = { ...geometry.userData, sharedHuman: true, fightExtremityScale: scale }
+    variants.set(scale, geometry)
+  }
+  hand.geometry = geometry
+  const thumb = hand.children.find((child) => (child as Mesh).isMesh)
+  thumb?.scale.multiplyScalar(scale)
 }
 
 function extremityScale(profile: HumanProfile): number {

@@ -358,3 +358,17 @@ length, alter ground contact, touch hitboxes or enter simulation and replay
 state. The elbow and knee geometry is shared, while the existing shoulder cap
 is reused rather than duplicated. Kurapika remains the controlled prototype
 before the anatomy treatment is propagated to the rest of the roster.
+
+## P18 — responsive extremities and tailoring
+
+Kurapika's hands now close through a cached vertex morph instead of carrying one
+open silhouette through every contact. The thumb follows the grip while the
+chain and service pistol retain their own scale: the hero hand enlargement is
+now baked into skin geometry rather than inherited by every held child. Shoes
+compress across planted weight and lengthen subtly through low and air kicks.
+
+Two outlined lower-jacket panels and the existing tie respond to attack travel,
+horizontal velocity and airborne cadence. Their motion is deterministic, so
+hitstop and replay retain the same image; it adds no cloth simulation, gameplay
+state or collision. P18 remains a Kurapika prototype and contributes four
+clothing meshes while sharing both hand-morph and hem geometry.

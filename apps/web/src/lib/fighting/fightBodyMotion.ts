@@ -82,6 +82,7 @@ import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentit
 import { rosterWaveOneSupport } from './rosterWaveOneSupport'
 import { rosterWaveTwoSupport } from './rosterWaveTwoSupport'
 import { rosterWaveThreeSupport } from './rosterWaveThreeSupport'
+import { animateFightMaterialResponse } from './fightMaterialResponse'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -132,6 +133,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
+    animateFightMaterialResponse(human.figure, fighter)
     restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
     if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)

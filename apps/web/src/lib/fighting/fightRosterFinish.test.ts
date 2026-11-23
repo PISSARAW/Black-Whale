@@ -88,7 +88,10 @@ describe('P14 hero finish and P16 roster propagation', () => {
     for (const side of ['left', 'right'] as const) {
       const hand = model.root.getObjectByName(`hand-${side}`)!
       const shoe = model.root.getObjectByName(`knee-${side}`)?.children[1]
-      expect(hand.scale.x, `${id}:${side}:hand`).toBeGreaterThan(1)
+      if (id === 'kurapika') {
+        expect(hand.scale.x, `${id}:${side}:held-child-scale`).toBe(1)
+        expect((hand as THREE.Mesh).geometry.userData.fightExtremityScale).toBeCloseTo(1.1)
+      } else expect(hand.scale.x, `${id}:${side}:hand`).toBeGreaterThan(1)
       expect(
         hand.getObjectByName(`fight-hand-knuckles-${side}`),
         `${id}:${side}:knuckles`,

@@ -5,6 +5,7 @@
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import { bodyMemoryLabel } from '$lib/fighting/bodyMemory'
   import { auraInformationKnown } from '$lib/fighting/nenInformationWar'
+  import { textureSurpriseView } from '$lib/fighting/textureSurpriseMask'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightHealth from './FightHealth.svelte'
@@ -26,7 +27,8 @@
   {#each sides as side (side)}
     {@const fighter = state[side]}
     {@const mirrored = side === 'opponent'}
-    {@const memory = bodyMemoryLabel(fighter, language)}
+    {@const texturePov = textureSurpriseView(fighter, state.player, mirrored ? 'opponent' : 'owner')}
+    {@const memory = texturePov.maskBodyMemory ? null : bodyMemoryLabel(fighter, language)}
     {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>
       {#key fighter.id}<FightIdentityPortrait id={fighter.id} />{/key}
@@ -45,7 +47,16 @@
             >
           </span>
         </div>
-        <FightHealth {fighter} {language} {mirrored} {detailed} />
+        <FightHealth
+          {fighter}
+          {language}
+          {mirrored}
+          {detailed}
+          displayedHealth={texturePov.displayedHp}
+          ghostHealth={texturePov.showGhostHp ? texturePov.realHp : undefined}
+          textureMasked={texturePov.maskActive}
+          auraSeeping={texturePov.auraSeeping}
+        />
         {#if !state.spectatorView}<div
             class="aura"
             class:hidden={!auraKnown}

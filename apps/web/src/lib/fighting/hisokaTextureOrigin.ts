@@ -9,11 +9,20 @@ import { chainAbilityGroup } from './chainAbilityGroup'
 import { chrolloAbilityActive } from './chrolloAbilityActive'
 import { voluntaryNenAvailable } from './nenAccess'
 import { gumSupportAvailable } from './hisokaSupportOrigin'
-import type { ArcadeFighter, FightSide, FightState } from './types'
+import { buildTextureMask } from './textureSurpriseMask'
+import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
 export interface TextureSurpriseState extends GumSource {
   surface: 'cloth' | 'gum-prostheses'
   supportId?: string
+  /** Body memory limbs hidden from the opponent. */
+  maskedLimbs?: readonly FightNenZone[]
+  /** HP displayed to the opponent (lags real damage at 50%). */
+  displayedHp?: number
+  /** Hidden Bungee Gum prosthesis trap under a weakened limb ('hands' | 'feet'). */
+  bungeeTrapLimb?: 'hands' | 'feet' | null
+  /** Breaks to 0 on clean Heavy / Ko / Throw impact. */
+  integrity?: number
 }
 
 declare module './types' {
@@ -25,9 +34,10 @@ declare module './types' {
 export function createTextureSurprise(actor: ArcadeFighter): TextureSurpriseState | undefined {
   if (actor.textureTarget === 'paper') return undefined
   const origin = actor.attack?.nenOrigin ?? newGumSource(actor)
-  if (actor.textureTarget !== 'gum-prostheses') return { surface: 'cloth', ...origin }
+  const mask = buildTextureMask(actor)
+  if (actor.textureTarget !== 'gum-prostheses') return { surface: 'cloth', ...origin, ...mask }
   if (!textureTargetAvailable(actor)) return undefined
-  return { surface: 'gum-prostheses', supportId: actor.gumProstheses!.id, ...origin }
+  return { surface: 'gum-prostheses', supportId: actor.gumProstheses!.id, ...origin, ...mask }
 }
 
 export function textureTargetAvailable(actor: ArcadeFighter): boolean {

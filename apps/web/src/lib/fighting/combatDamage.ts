@@ -9,6 +9,7 @@ import { fighterDefinition } from './roster'
 import { groundedComboStun } from './groundedComboStun'
 import { DIRECTIONAL_LAUNCH_SPEED } from './directionalChain'
 import { rememberBodyHit } from './bodyMemory'
+import { updateTextureOnHit } from './textureSurpriseMask'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 
@@ -112,6 +113,15 @@ function struckFighter(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
 ): ArcadeFighter {
   const direction = options.fighter.x > options.attacker.x ? 1 : -1
+  const textureUpdate = updateTextureOnHit({
+    fighter: options.fighter,
+    attacker: options.attacker,
+    damage: options.damage,
+    blocked: options.blocked,
+    zone: options.zone,
+    kind: options.attacker.attack?.kind,
+    variant: options.attacker.attack?.variant,
+  })
   const struck = {
     ...options.fighter,
     ...launchState(options),
@@ -129,8 +139,8 @@ function struckFighter(
         ? Math.max(0, options.fighter.aura - 2 - options.damage * 0.1)
         : options.fighter.aura,
     nen: contactNen(options.fighter, options.blocked),
-    // Contact exposes the cloth disguise; it supplies no armour or evasion.
-    textureSurprise: undefined,
+    textureSurprise: textureUpdate.textureSurprise,
+    ...(textureUpdate.trapped ? { hitStun: 0, blockStun: 0 } : {}),
     easterEgg: undefined,
     easterEggSequence: 0,
     melodyPerformance: undefined,

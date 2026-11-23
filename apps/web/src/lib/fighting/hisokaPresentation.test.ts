@@ -132,7 +132,7 @@ describe('Hisoka type 1 accents', () => {
         if (age !== null) ages.push(age)
         expect(camera.update(next).detail).toBeNull()
       })
-      expect(end[side].textureSurprise).toEqual({
+      expect(end[side].textureSurprise).toMatchObject({
         surface: 'cloth',
         source: 'personal',
         theftId: undefined,

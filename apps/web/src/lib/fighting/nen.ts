@@ -27,6 +27,7 @@ import { advanceOn, applyOnContext, ON_ATTACK_BONUS } from './onTechnique'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 import { bodyMemoryAttackFactor, bodyMemoryRyuDrain } from './bodyMemory'
 import { chrolloRightHandOccupied } from './chrolloDeck'
+import { textureSurpriseDrain } from './textureSurpriseMask'
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
@@ -148,6 +149,7 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
   return (
     baseAuraFlow(fighter) -
     bodyMemoryRyuDrain(fighter) -
+    textureSurpriseDrain(fighter) -
     advancedAuraDrain(fighter) -
     Number(fighter.nen.gyo || Boolean(bodyGyoZone(fighter))) * BODY_GYO_DRAIN
   )

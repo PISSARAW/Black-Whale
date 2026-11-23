@@ -53,9 +53,11 @@ describe('Clash combat grammar in the 3D Arena', () => {
     const landed = tick(press(duel(), 'standingLight'), 4 / 60)
     const cancelled = press(landed, 'standingHeavy')
 
-    expect(cancelled.player.intent?.moveId).toBe('kurapika:standingHeavy')
-    expect(cancelled.player.cooldown).toBe(0)
-    const second = tick(cancelled, 8 / 60)
+    expect(cancelled.player.buffered?.slot).toBe('standingHeavy')
+    const resumed = tick(cancelled, cancelled.hitstop)
+    expect(resumed.player.intent?.moveId).toBe('kurapika:standingHeavy')
+    expect(resumed.player.cooldown).toBe(0)
+    const second = tick(resumed, 8 / 60)
     expect(second.lastEvent?.attacker).toBe('player')
     expect(['clean', 'critical', 'knockdown', 'ko']).toContain(second.lastEvent?.impact)
     expect(comboCount(second.player, second.clock)).toBe(2)
@@ -70,18 +72,20 @@ describe('Clash combat grammar in the 3D Arena', () => {
 
   it('closes the window once its authored frames have elapsed', () => {
     const landed = tick(press(duel(), 'standingLight'), 4 / 60)
-    const late = press(tick(landed, 10 / 60), 'standingHeavy')
+    const late = press(tick(landed, landed.hitstop + 10 / 60), 'standingHeavy')
 
     expect(late.player.intent).toBeNull()
   })
 
-  it('releases a move buffered during startup as soon as the first one lands', () => {
+  it('releases a startup buffer after the first contact hitstop', () => {
     const buffered = press(press(duel(), 'standingLight'), 'standingHeavy')
     expect(buffered.player.buffered?.slot).toBe('standingHeavy')
 
     const landed = tick(buffered, 4 / 60)
-    expect(landed.player.intent?.moveId).toBe('kurapika:standingHeavy')
-    expect(landed.player.intent?.combo).toEqual([
+    expect(landed.player.buffered?.slot).toBe('standingHeavy')
+    const resumed = tick(landed, landed.hitstop)
+    expect(resumed.player.intent?.moveId).toBe('kurapika:standingHeavy')
+    expect(resumed.player.intent?.combo).toEqual([
       'kurapika:standingLight',
       'kurapika:standingHeavy',
     ])

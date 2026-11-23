@@ -82,8 +82,11 @@ Authored lunges now advance progressively during startup on the fighter's local
 3D attack axis, stop at bodies and walls, and are checked against Clash's lane
 position in the parity gate.
 
-Still Clash-only, in rough order of value: hitstop and camera shake;
-per-fighter Hatsu systems behind the specials;
+Authored contact hitstop now freezes Arena's combat clock and bodies while
+keeping a follow-up command buffered. The POV camera reads the same deterministic
+freeze for ranked impact recoil, disabled by reduced-motion preferences.
+
+Still Clash-only, in rough order of value: per-fighter Hatsu systems behind the specials;
 psychology, expressions and Ren presentation; frame data, training and
 lessons; replay coaching; rollback PvP.
 

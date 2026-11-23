@@ -47,7 +47,7 @@ import type { Vec2 } from '../tour/types'
 import { advancePersistentNenEffects } from './effects'
 import { advanceEnvironment, reactEnvironment } from './environment'
 import { resolveNamedHatsu } from './hatsu'
-import { fightingHatsuAction, prepareFightingMove } from './fightingMove'
+import { fightingHatsuAction, prepareFightingMove, releaseBufferedMove } from './fightingMove'
 import { usesClashNen } from './clashNen'
 import { startJump } from './airMovement'
 import {
@@ -62,7 +62,10 @@ import {
 
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
   if (state.outcome !== 'playing') return state
-  if (action.type === 'TICK') return tick(state, action.dt)
+  if (action.type === 'TICK')
+    return state.hitstop > 0 ? advanceHitstop(state, action.dt) : tick(state, action.dt)
+  if (state.hitstop > 0)
+    return action.type === 'FIGHTING_MOVE' ? prepareFightingMove(state, action) : state
   if (action.type === 'SYNC_POSITION')
     return replace(state, action.side, syncPosition(state[action.side], action.position))
   if (action.type === 'FACE')
@@ -125,6 +128,15 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   }
   if (action.type === 'KO') return chargeKo(state, action.side, action.zone)
   return state
+}
+
+function advanceHitstop(state: CombatState, dt: number): CombatState {
+  const freeze = state.hitstop
+  const remaining = freeze - dt
+  const held = { ...state, hitstop: remaining > 1e-9 ? remaining : 0 }
+  if (held.hitstop > 0) return held
+  const resumed = releaseBufferedMove(releaseBufferedMove(held, 'player'), 'opponent')
+  return dt - freeze > 1e-9 ? tick(resumed, dt - freeze) : resumed
 }
 
 export { initialCombatState }

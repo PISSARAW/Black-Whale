@@ -34,14 +34,15 @@ interface CameraPlacement {
   pitch: number
   roll: number
   pullback: number
+  impulse?: Vec2
 }
 
 /** Keeps authored and combat eye offsets inside the same camera placement seam. */
 export function placeTourCamera(options: CameraPlacement): void {
-  const { camera, at, eye, yaw, pitch, roll, pullback } = options
+  const { camera, at, eye, yaw, pitch, roll, pullback, impulse = [0, 0] } = options
   camera.position.set(at[0] + Math.sin(yaw) * pullback, eye, at[1] + Math.cos(yaw) * pullback)
   camera.rotation.set(0, 0, 0)
-  camera.rotateY(yaw)
-  camera.rotateX(pitch)
+  camera.rotateY(yaw + impulse[0])
+  camera.rotateX(pitch + impulse[1])
   camera.rotateZ(roll)
 }

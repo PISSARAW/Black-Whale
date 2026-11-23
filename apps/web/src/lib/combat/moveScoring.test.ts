@@ -40,11 +40,11 @@ describe('Clash damage scoring in Arena', () => {
 
   it('scores a combo once, at the value of its best hit', () => {
     let state = tick(press(duel(), 'standingLight'), 4 / 60)
-    state = tick(press(state, 'standingHeavy'), 8 / 60)
+    state = tick(press(state, 'standingHeavy'), state.hitstop + 8 / 60)
     expect(state.lastEvent?.impact).toBe('critical')
     expect(state.player.score).toBe(2)
 
-    state = tick(press(state, 'forwardSpecial'), 10 / 60)
+    state = tick(press(state, 'forwardSpecial'), state.hitstop + 10 / 60)
     expect(state.lastEvent?.impact).toBe('knockdown')
     expect(state.player.score).toBe(3)
     expect(state.player.chain?.points).toBe(3)
@@ -58,7 +58,8 @@ describe('Clash damage scoring in Arena', () => {
   })
 
   it('keeps the knockout for the finisher on a staggered body', () => {
-    const opened = tick(tick(press(duel('head'), 'standingLight'), 4 / 60), 0.19)
+    const contact = tick(press(duel('head'), 'standingLight'), 4 / 60)
+    const opened = tick(contact, contact.hitstop + 0.19)
     expect(opened.opponent.condition).toBe('staggered')
 
     // The jab's knockback put the opponent out of the finisher's reach: step back in.

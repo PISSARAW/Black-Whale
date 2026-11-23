@@ -38,6 +38,8 @@ export interface StrikeRequest {
   range?: number
   targetAt?: Vec2
   recovery?: number
+  hitstop?: number
+  moveId?: string
   /** Strongest impact allowed, from a Clash move's authored damage. */
   ceiling?: Impact
   grade?: import('./clashGrade').ExchangeGrade
@@ -95,6 +97,8 @@ export function landReadyIntent(state: CombatState): CombatState {
       power: intent.power,
       range: intent.range,
       recovery: intent.recovery,
+      hitstop: intent.hitstop,
+      moveId: intent.moveId,
       ...clashExchange(current, intent),
     })
     current = intent.moveId
@@ -189,7 +193,13 @@ export function strike(request: StrikeRequest): CombatState {
   })
   const owed = Math.max(0, result.event.points - (request.scored ?? 0))
   const counterBonus = state[defenderSide].recoveryWindow > 0 && owed > 0 ? 1 : 0
-  const event = { ...result.event, points: owed + counterBonus }
+  const contactFreeze = result.event.impact === 'miss' ? 0 : (request.hitstop ?? 0)
+  const event = {
+    ...result.event,
+    points: owed + counterBonus,
+    ...(request.moveId ? { moveId: request.moveId } : {}),
+    ...(contactFreeze > 0 ? { hitstop: contactFreeze } : {}),
+  }
   const scored = {
     ...result.attacker,
     score: result.attacker.score + event.points,
@@ -210,6 +220,7 @@ export function strike(request: StrikeRequest): CombatState {
     [side]: scored,
     [defenderSide]: defender,
     lastEvent: event,
+    hitstop: Math.max(state.hitstop, contactFreeze),
     outcome,
   })
 }

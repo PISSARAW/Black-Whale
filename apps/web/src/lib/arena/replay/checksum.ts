@@ -7,6 +7,7 @@ function rounded(value: number): number {
 export function stateChecksum(state: CombatState): string {
   const stable = JSON.stringify({
     clock: rounded(state.clock),
+    hitstop: rounded(state.hitstop),
     outcome: state.outcome,
     player: fighterDigest(state.player),
     opponent: fighterDigest(state.opponent),

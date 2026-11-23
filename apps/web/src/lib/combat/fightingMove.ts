@@ -45,9 +45,9 @@ export function prepareFightingMove(
   const fighter = state[action.side]
   const move = moveForSlot(action.fighterId, action.slot)
   if (!move || !canPerform(state, action.side, move)) return state
+  if (state.hitstop > 0) return buffer ? bufferMove(state, action) : state
   const chained = chainAccepts(fighter, move, state.clock)
-  if (!chained && (fighter.cooldown > 0 || fighter.intent))
-    return buffer ? bufferMove(state, action) : state
+  if (moveIsBusy(fighter, chained)) return buffer ? bufferMove(state, action) : state
   return {
     ...state,
     [action.side]: {
@@ -60,6 +60,10 @@ export function prepareFightingMove(
       buffered: null,
     },
   }
+}
+
+function moveIsBusy(fighter: FighterState, chained: boolean): boolean {
+  return !chained && Boolean(fighter.cooldown > 0 || fighter.intent)
 }
 
 function canPerform(state: CombatState, side: CombatSide, move: FighterMove): boolean {
@@ -88,6 +92,7 @@ function fightingIntent(options: {
     power: 0.45 + move.tuning.damage / 15,
     range: Math.min(8, Math.max(1.6, move.tuning.reach / 5)),
     recovery: (move.tuning.active + move.tuning.recovery) / 60,
+    hitstop: move.tuning.hitstop / 60,
     moveId: move.id,
     combo: comboHistory(fighter, move, chained),
     scored: chained ? (fighter.chain?.points ?? 0) : 0,
@@ -112,6 +117,7 @@ function directionTo(
 
 /** Releases the press kept while the previous move was running, once that move has landed. */
 export function releaseBufferedMove(state: CombatState, side: CombatSide): CombatState {
+  if (state.hitstop > 0) return state
   const buffered = state[side].buffered
   if (!buffered) return state
   const cleared = { ...state, [side]: { ...state[side], buffered: null } }

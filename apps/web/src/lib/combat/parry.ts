@@ -1,7 +1,10 @@
 import { focusedRyuDistribution, resolvesParry } from '@black-whale/nen-engine'
-import { GUARD_WINDOW, RYU_SHIFT_TIME } from './fighter'
+import { GUARD_WINDOW } from './fighter'
 import type { ExchangeResult } from './resolve'
 import { BODY_ZONES, type CombatState } from './types'
+
+/** Arena's edge-triggered guard carries Clash's focus through its release boundary. */
+const PARRY_RYU_TIME = 12 / 60
 
 interface ArenaParry {
   before: CombatState
@@ -34,7 +37,7 @@ export function applyArenaParry({ before, result }: ArenaParry): ExchangeResult 
       ryuShift: {
         attackShare: 1 - focusShare,
         guard: result.event.zone,
-        remaining: RYU_SHIFT_TIME,
+        remaining: PARRY_RYU_TIME,
         restore: { attackShare: defender.attackShare, guard: defender.guard },
       },
     },

@@ -38,6 +38,8 @@ export interface AttackIntent {
   power?: number
   range?: number
   recovery?: number
+  /** Authored Clash contact freeze, expressed in Arena seconds. */
+  hitstop?: number
   /** Clash move this intent performs; absent for Arena's own strikes. */
   moveId?: string
   /** Clash moves of the running combo, this one included. */
@@ -123,12 +125,17 @@ export interface CombatEvent {
   points: number
   technique: 'strike' | 'ko' | 'hatsu'
   parried?: boolean
+  moveId?: string
+  /** Contact freeze applied by this event, expressed in seconds. */
+  hitstop?: number
 }
 
 export interface CombatState {
   player: FighterState
   opponent: FighterState
   clock: number
+  /** Remaining authored contact freeze; replay ticks continue while combat time does not. */
+  hitstop: number
   outcome: MatchOutcome
   lastEvent: CombatEvent | null
   terrain: CombatTerrainPhysics
@@ -258,6 +265,7 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     player: initialFighter(setup.playerAt),
     opponent: initialFighter(setup.opponentAt),
     clock: 0,
+    hitstop: 0,
     outcome: 'playing',
     lastEvent: null,
     terrain: setup.terrain,

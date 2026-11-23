@@ -226,20 +226,11 @@
     jumpVisibleSpaceIds?: readonly string[] | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
-    /**
-     * Whether the walk is being driven by touch. Two-way: the scene decides it,
-     * from the pointer the browser reports and from the first finger to land,
-     * and the page reads it to stop telling a phone to click.
-     */
+    /** Whether the walk is being driven by touch. */
     touch?: boolean
     /** Labels for the on-screen controls a touchscreen gets. */
     touchLabels: { move: string; cast: string }
-    /**
-     * What the button that silences the walk is called, in both states.
-     *
-     * The walk makes a noise — its own footsteps, and the room answering them —
-     * so it has to be possible to stop it without leaving the page.
-     */
+    /** Labels for silencing and restoring the walk audio. */
     soundLabels: { silence: string; restore: string }
     /** Labels for the chapter 419 gangway control. */
     gangwayLabels?: { extend: string; retract: string }
@@ -256,6 +247,8 @@
     lookPitch?: number
     /** Live eye displacement owned by a game, such as an Arena jump arc. */
     eyeHeightOffset?: number
+    /** Presentation-only yaw and pitch impulse owned by the active game. */
+    cameraImpulse?: Vec2
     /**
      * What Nen is currently doing to the ship. The scene is the only thing that
      * draws it; `$lib/tour/hatsu` is the only thing that decides it.
@@ -619,6 +612,7 @@
     heading = $bindable(0),
     lookPitch = $bindable(0),
     eyeHeightOffset = 0,
+    cameraImpulse = [0, 0],
     world = EMPTY_WORLD,
     auraColour = null,
     nen,
@@ -4536,6 +4530,7 @@
           yaw,
           pitch,
           pullback: cameraPullback,
+          impulse: $reducedMotion ? [0, 0] : cameraImpulse,
           roll:
             bob.roll +
             (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),

@@ -93,6 +93,7 @@
   import { arenaSelfBody } from '$lib/arena/selfBody'
   import { arenaOpponentActor } from '$lib/arena/combatActors'
   import { arenaJumpAction } from '$lib/arena/jump'
+  import { arenaImpactCamera } from '$lib/arena/impactCamera'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
@@ -218,8 +219,6 @@
       return $locale === 'fr' ? "Retourner à l'enquête" : 'Return to investigation'
     return $locale === 'fr' ? 'Retourner à la traque' : 'Return to the hunt'
   }
-  // Bookkeeping, not state: nothing renders from it, it only holds timer
-  // handles so they can be cleared on teardown.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const motionTimers = new Set<number>()
 
@@ -405,7 +404,6 @@
     send(arenaJumpAction(heading, heldDirection.current()))
   }
 
-  /** Clash's Ko powers the striking limb of the next move: the hands, or the feet when aiming low. */
   function gatherKo() {
     const zone = aimedZone === 'legs' ? 'legs' : 'arms'
     command({ type: 'KO', side: 'player', zone }, 'ko')
@@ -861,6 +859,7 @@
       game.outcome !== 'playing' ||
       game.player.height > 0}
     eyeHeightOffset={game.player.height}
+    cameraImpulse={arenaImpactCamera(game)}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
     extras={[...opponentActor, selfActor]}

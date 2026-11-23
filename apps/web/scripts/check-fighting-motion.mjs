@@ -31,18 +31,33 @@ try {
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-motion/`)
   await page.waitForFunction(() => window.fightMotionFixture)
-  assert.equal(await page.evaluate(() => window.fightMotionFixture.count), 36)
-  for (const facing of [1, -1]) {
-    for (const phase of ['startup', 'active', 'recovery']) {
-      await page.evaluate(({ phase, facing }) => window.fightMotionFixture.show(phase, facing), {
-        phase,
-        facing,
-      })
-      await page.screenshot({ path: path.join(output, `${phase}-${facing}.png`) })
+  const fixture = await page.evaluate(() => ({
+    count: window.fightMotionFixture.count,
+    ids: window.fightMotionFixture.ids,
+    slots: window.fightMotionFixture.slots,
+  }))
+  assert.equal(fixture.ids.length, 40)
+  assert.equal(fixture.slots.length, 9)
+  assert.equal(fixture.count, 360)
+  const references = new Set(['kurapika', 'hisoka', 'chrollo', 'benjamin'])
+  for (const id of fixture.ids) {
+    for (const facing of [1, -1]) {
+      for (const phase of ['startup', 'active', 'recovery']) {
+        await page.evaluate(
+          ({ id, phase, facing }) => window.fightMotionFixture.show(phase, facing, id),
+          { id, phase, facing },
+        )
+        if (references.has(id)) {
+          await page.screenshot({ path: path.join(output, `${id}-${phase}-${facing}.png`) })
+        }
+      }
     }
   }
+  assert.equal(await page.evaluate(() => window.fightMotionFixture.renderedCount()), 360)
   assert.deepEqual(errors, [])
-  process.stdout.write(`36 attacks × 3 phases × 2 facings rendered. Review images: ${output}\n`)
+  process.stdout.write(
+    `40 fighters × 9 attacks × 3 phases × 2 facings rendered; 24 reference sheets captured. Review images: ${output}\n`,
+  )
 } finally {
   await browser?.close()
   await server.close()

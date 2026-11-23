@@ -3,6 +3,7 @@ import { buildFightFigure } from '../../src/lib/fighting/fighterFigure'
 import { createFightState } from '../../src/lib/fighting/fightState'
 import { fightBodyMotion } from '../../src/lib/fighting/fightBodyMotion'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
+import { FIGHTING_ROSTER } from '../../src/lib/fighting/roster'
 import type { FighterId, MoveSlot } from '../../src/lib/fighting/types'
 import {
   clampMotionFrame,
@@ -12,7 +13,7 @@ import {
   type MotionPhase,
 } from './motionLab'
 
-const ids: FighterId[] = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
+const ids: FighterId[] = FIGHTING_ROSTER.map(({ id }) => id)
 const slots: MoveSlot[] = [
   'standingLight',
   'standingHeavy',
@@ -48,7 +49,7 @@ controls.innerHTML = `
 document.body.append(controls)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
 renderer.setPixelRatio(1)
-renderer.setSize(1440, slots.length * 180)
+renderer.setSize(1080, 540)
 renderer.setScissorTest(true)
 renderer.setClearColor(0x101923)
 document.body.append(renderer.domElement)
@@ -58,18 +59,29 @@ camera.position.set(0, 1.05, 12)
 camera.lookAt(0, 1.05, 0)
 const glow = (color: number, opacity: number) =>
   new THREE.MeshBasicMaterial({ color, opacity, transparent: opacity < 1 })
-const models = slots.flatMap((slot) =>
-  ids.map((id) => {
-    const fighter = createFightState(id, 'hisoka').player
-    const model = buildFightFigure({ THREE, glow, fighter })
-    scene.add(model.root)
-    model.root.visible = false
-    return { id, slot, model, fighter }
-  }),
-)
+type MotionModel = ReturnType<typeof buildFightFigure>
+interface MotionEntry {
+  id: FighterId
+  slot: MoveSlot
+  model: MotionModel
+  fighter: ReturnType<typeof createFightState>['player']
+}
+const models = new Map<string, MotionEntry>()
+function modelFor(id: FighterId, slot: MoveSlot): MotionEntry {
+  const key = `${id}:${slot}`
+  const held = models.get(key)
+  if (held) return held
+  const fighter = createFightState(id, id === 'hisoka' ? 'kurapika' : 'hisoka').player
+  const model = buildFightFigure({ THREE, glow, fighter })
+  scene.add(model.root)
+  model.root.visible = false
+  const made = { id, slot, model, fighter }
+  models.set(key, made)
+  return made
+}
 let tick = 0
 let inspected: { id: FighterId; slot: MoveSlot; frame: number; facing: 1 | -1 } | null = null
-function poseFighter(entry: (typeof models)[number], frame: number, facing: 1 | -1): void {
+function poseFighter(entry: MotionEntry, frame: number, facing: 1 | -1): void {
   const { id, slot, model, fighter } = entry
   const move = moveForSlot(id, slot)!
   const current = {
@@ -101,19 +113,24 @@ function poseFighter(entry: (typeof models)[number], frame: number, facing: 1 | 
   })
 }
 
-function show(phase: MotionPhase = 'active', facing: 1 | -1 = 1) {
+function show(
+  phase: MotionPhase = 'active',
+  facing: 1 | -1 = 1,
+  id: FighterId = (fighterSelect?.value as FighterId) || ids[0],
+) {
   inspected = null
   tick += 2
-  title.textContent = `Kurapika · Hisoka · Chrollo · Benjamin — ${phase} — face ${facing}`
-  renderer.setSize(1440, slots.length * 180)
-  models.forEach((entry, i) => {
-    const { id, slot, model } = entry
+  title.textContent = `${id} — 9 attacks — ${phase} — face ${facing}`
+  renderer.setSize(1080, 540)
+  slots.forEach((slot, i) => {
+    const entry = modelFor(id, slot)
+    const { model } = entry
     const move = moveForSlot(id, slot)!
     poseFighter(entry, representativeFrame(phase, move.tuning), facing)
-    const col = i % 4
-    const row = Math.floor(i / 4)
-    renderer.setViewport(col * 360, (slots.length - 1 - row) * 180, 360, 180)
-    renderer.setScissor(col * 360, (slots.length - 1 - row) * 180, 360, 180)
+    const col = i % 3
+    const row = Math.floor(i / 3)
+    renderer.setViewport(col * 360, (2 - row) * 180, 360, 180)
+    renderer.setScissor(col * 360, (2 - row) * 180, 360, 180)
     camera.left = -2.4
     camera.right = 2.4
     camera.top = 1.2
@@ -125,8 +142,7 @@ function show(phase: MotionPhase = 'active', facing: 1 | -1 = 1) {
 }
 
 function inspect(id: FighterId, slot: MoveSlot, frame = 0, facing: 1 | -1 = 1) {
-  const entry = models.find((candidate) => candidate.id === id && candidate.slot === slot)
-  if (!entry) throw new Error(`Unknown motion ${id}:${slot}`)
+  const entry = modelFor(id, slot)
   const move = moveForSlot(id, slot)!
   const currentFrame = clampMotionFrame(frame, move.tuning)
   inspected = { id, slot, frame: currentFrame, facing }
@@ -195,7 +211,11 @@ controls.elements.namedItem('next')?.addEventListener('click', () => {
 controls.elements
   .namedItem('grid')
   ?.addEventListener('click', () =>
-    show(phaseSelect.value as MotionPhase, Number(facingSelect.value) as 1 | -1),
+    show(
+      phaseSelect.value as MotionPhase,
+      Number(facingSelect.value) as 1 | -1,
+      fighterSelect.value as FighterId,
+    ),
   )
 show()
 Object.assign(window, {
@@ -203,6 +223,9 @@ Object.assign(window, {
     show,
     inspect,
     current: () => inspected,
-    count: models.length,
+    count: ids.length * slots.length,
+    ids,
+    slots,
+    renderedCount: () => models.size,
   },
 })

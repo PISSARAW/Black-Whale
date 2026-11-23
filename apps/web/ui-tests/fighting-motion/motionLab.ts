@@ -25,3 +25,24 @@ export function representativeFrame(phase: MotionPhase, frames: AttackFrameData)
     frames.startup + frames.active + Math.floor(frames.recovery * 0.45),
   )
 }
+
+export interface MotionReviewCase<Fighter extends string, Slot extends string> {
+  fighter: Fighter
+  slot: Slot
+  phase: MotionPhase
+  facing: 1 | -1
+}
+
+/** Deterministic review matrix shared by the browser lab and its coverage test. */
+export function motionReviewCases<Fighter extends string, Slot extends string>(
+  fighters: readonly Fighter[],
+  slots: readonly Slot[],
+): MotionReviewCase<Fighter, Slot>[] {
+  return fighters.flatMap((fighter) =>
+    slots.flatMap((slot) =>
+      (['startup', 'active', 'recovery'] as const).flatMap((phase) =>
+        ([1, -1] as const).map((facing) => ({ fighter, slot, phase, facing })),
+      ),
+    ),
+  )
+}

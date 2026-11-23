@@ -84,3 +84,11 @@ Accessibilité, charge une banque dédiée. Ses repères suivent les images
 des 39 cinématiques et variantes, en français et en anglais. Pendant une
 scène décrite, elle passe devant les annonces et atténue la bande-son à
 l’endroit des répliques. La pause et le saut arrêtent la narration.
+
+Les sous-titres des sons de combat sont disponibles dans Mixage et inclus dans
+le préréglage Accessibilité. Ils fonctionnent avec la sortie audio coupée et
+suivent les mêmes instantanés confirmés et règles de perception que le son.
+Deux sous-titres au maximum s’affichent à la fois, avec priorité aux annonces et
+aux alertes tactiques.
+La pause, le changement de point de vue et le saut dans un replay effacent les
+signaux en cours.

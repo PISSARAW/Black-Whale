@@ -86,6 +86,18 @@
         />
         Mono
       </label>
+      <label class="mono">
+        <input
+          type="checkbox"
+          checked={settings.captions}
+          onchange={(event) => {
+            settings = { ...settings, captions: event.currentTarget.checked }
+            remember()
+          }}
+          onkeydown={controlKey}
+        />
+        {en ? 'Combat sound captions' : 'Sous-titres des sons de combat'}
+      </label>
       <label>
         {en ? 'Voice register' : 'Registre des voix'}
         <select

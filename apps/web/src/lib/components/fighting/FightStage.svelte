@@ -27,6 +27,7 @@
   import FightResources from './FightResources.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
+  import FightSoundCaptions from './FightSoundCaptions.svelte'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { resolveImpactCallout } from '$lib/fighting/perception/tacticalCallout'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
@@ -176,6 +177,14 @@
       ducked={descriptionSpeaking}
     />
   </div>
+  <FightSoundCaptions
+    state={audioState ?? state}
+    {language}
+    paused={audioPaused ?? paused}
+    viewer={sensoryViewer}
+    seek={audioSeek}
+    enabled={audioSettings.captions}
+  />
   {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
         {state}

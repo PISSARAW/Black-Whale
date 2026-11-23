@@ -57,9 +57,9 @@
     events = []
     await tick()
   }
-  async function kameo() {
+  async function kameo(frames = 720) {
     await advance(1, { ...EMPTY_INPUT, kameo: true })
-    await advance(720)
+    await advance(frames)
     return events
   }
   async function opening(guard: 'none' | 'early' | 'late') {

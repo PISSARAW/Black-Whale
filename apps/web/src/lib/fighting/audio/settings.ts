@@ -27,6 +27,7 @@ export type FightChannel = (typeof FIGHT_CHANNELS)[number]
 export type FightAudioSettings = Record<FightChannel, number> & {
   muted: boolean
   mono: boolean
+  captions: boolean
   menuTrack: ClashTrackChoice
   battleTrack: ClashTrackChoice
   voiceStyle: CombatVoiceStyle
@@ -35,6 +36,7 @@ export type FightAudioSettings = Record<FightChannel, number> & {
 export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
   muted: false,
   mono: false,
+  captions: false,
   menuTrack: 'auto',
   battleTrack: 'auto',
   voiceStyle: 'original',
@@ -67,6 +69,7 @@ export const FIGHT_AUDIO_PRESETS = {
   },
   accessible: {
     ...DEFAULT_FIGHT_AUDIO,
+    captions: true,
     effects: 1,
     movement: 0.95,
     interface: 1,
@@ -88,6 +91,7 @@ export function readFightAudioSettings(): FightAudioSettings {
       ...DEFAULT_FIGHT_AUDIO,
       muted: stored.muted === true,
       mono: stored.mono === true,
+      captions: stored.captions === true,
       menuTrack: readTrackChoice(stored.menuTrack),
       battleTrack: readTrackChoice(stored.battleTrack),
       voiceStyle:

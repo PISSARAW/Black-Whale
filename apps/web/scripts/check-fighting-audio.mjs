@@ -129,7 +129,7 @@ try {
     true,
     'mix stays open after a preset',
   )
-  await panel.locator('input[type=checkbox]').check()
+  await panel.getByRole('checkbox', { name: 'Mono' }).check()
   await page.waitForFunction(() => {
     const options = JSON.parse(localStorage.getItem('black-whale:fighting-audio') ?? '{}')
     return options.mono && options.effects === 1 && options.music === 0.2
@@ -383,6 +383,40 @@ try {
   await page.locator('.skip-victory').click()
   await page.waitForFunction((count) => window.descriptionStops > count, stopsBeforeSkip)
 
+  const captions = page.locator('.sound-captions')
+  const captionSetting = page.getByRole('checkbox', { name: 'Sous-titres des sons de combat' })
+  assert.equal(await captions.count(), 0, 'captions are opt-in')
+  await page.getByRole('button', { name: 'Accessibilité', exact: true }).click()
+  assert.equal(await captionSetting.isChecked(), true)
+  await page.getByRole('button', { name: 'Son · Activé' }).click()
+  await page.evaluate(async () => {
+    await window.audioFixture.reset()
+    await window.audioFixture.kameo(2)
+  })
+  await captions.getByText('Kaméo · Luzurus', { exact: true }).waitFor()
+  await page.evaluate(() => window.audioFixture.pauseAudio(true))
+  assert.equal(await captions.innerText(), '', 'pausing clears active captions')
+  await page.evaluate(async () => {
+    await window.audioFixture.restartRound()
+    await window.audioFixture.pauseAudio(false)
+    await window.audioFixture.opening('late')
+  })
+  await captions.getByText('Parade', { exact: true }).waitFor()
+  assert.equal(await captions.getByText('Combat !', { exact: true }).count(), 0)
+  await page.evaluate(() => window.audioFixture.reset())
+  assert.equal(await captions.innerText(), '', 'seeking clears active captions')
+  await page.evaluate(() => window.audioFixture.burst())
+  await captions.getByText('Burst', { exact: true }).waitFor()
+  await page.evaluate(async () => {
+    await window.audioFixture.setLocale('en')
+    await window.audioFixture.timeout(false)
+  })
+  await captions.getByText('Time up · Kurapika wins the round', { exact: true }).waitFor()
+  await page.waitForFunction(() => document.querySelector('.sound-captions')?.textContent === '')
+  await page.evaluate(() => window.audioFixture.setLocale('fr'))
+  await page.getByRole('button', { name: 'Son · Coupé' }).click()
+  await captionSetting.uncheck()
+
   await page.evaluate(() => window.audioFixture.showMenu(true))
   await page.locator('.jukebox summary').click()
   await page.getByLabel('Musique du menu').selectOption('off')
@@ -410,7 +444,7 @@ try {
   )
   assert.deepEqual(errors, [])
   process.stdout.write(
-    'Kurapika vs Chrollo, Luzurus, audio mono Competition, Burst, guard/parry, punish at 30 Hz, physical contacts, fighter voices and Luzurus, FR/EN announcements, jukebox, alternate register, commentary and victory narration verified.\n',
+    'Kurapika vs Chrollo with Luzurus: mix, combat cues, voices, jukebox, commentary, victory narration and muted FR/EN sound captions verified.\n',
   )
 } finally {
   await browser?.close()

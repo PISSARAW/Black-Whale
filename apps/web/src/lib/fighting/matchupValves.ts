@@ -101,8 +101,10 @@ export function releaseUniversalLocksOnBurst(state: FightState, side: FightSide)
       tserriednichBeastSealed: undefined,
       halkenburgSwappedFrames: undefined,
       illumiNeedleOrder: undefined,
+      needlePuppet: undefined,
       hinrighCuffed: undefined,
-      hatsuEffects: { ...f.hatsuEffects, senseSeals: 0 },
+      biohazardRestraint: undefined,
+      hatsuEffects: { ...f.hatsuEffects, senseSeals: 0, possessedFrames: 0 },
     },
   }
   if (next.musseOwl?.target === side) next = clearMusseOwl(next)

@@ -457,16 +457,23 @@ function locomotionPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan |
   return landing ? { ...landing, plant: true } : null
 }
 
+const weaponsByFigure = new WeakMap<import('three').Object3D, import('three').Object3D[]>()
+
 function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: ArcadeFighter): void {
-  for (const name of [
-    'theta-physical-handgun',
-    'signature-katana',
-    'signature-umbrella',
-    'luini-physical-knife',
-  ]) {
-    const weapon = figure.getObjectByName(name)
-    if (weapon) weapon.visible = !fighter.weaponsConfiscated
+  let weapons = weaponsByFigure.get(figure)
+  if (!weapons) {
+    weapons = [
+      'theta-physical-handgun',
+      'signature-katana',
+      'signature-umbrella',
+      'luini-physical-knife',
+    ].flatMap((name) => {
+      const weapon = figure.getObjectByName(name)
+      return weapon ? [weapon] : []
+    })
+    weaponsByFigure.set(figure, weapons)
   }
+  for (const weapon of weapons) weapon.visible = !fighter.weaponsConfiscated
 }
 
 function restingWithConstraint(

@@ -16,6 +16,8 @@ import type { FightSide } from '$lib/fighting/types'
 import { clashSeasons, type ClashSeasons, type RankedProfile } from './clashSeasons'
 import { spectatorSnapshot } from '$lib/fighting/pvp/spectator'
 import type { ClashPvpTerminal } from './clashPvpTerminal'
+import { ClashRollbackRound } from './clashRollbackRound'
+import type { FrameMessage } from '$lib/fighting/pvp/rollback/session'
 
 interface Seat {
   token: string
@@ -34,6 +36,8 @@ interface Lobby {
   disconnectedSide: FightSide | null
   lastAdvancedAt: number
   match: AuthoritativeClashMatch
+  experimental: boolean
+  rollback?: ClashRollbackRound
   profiles: Partial<Record<FightSide, RankedProfile>>
   watchToken: string
   joinToken: string
@@ -57,7 +61,7 @@ export class ClashPvpRegistry {
     private randomId: () => string = () => crypto.randomUUID(),
     private seasons: ClashSeasons = clashSeasons,
   ) {}
-  create(setup: PvpSetup, profile?: RankedProfile): PvpSession {
+  create(setup: PvpSetup, profile?: RankedProfile, experimental = false): PvpSession {
     this.sweep()
     if (this.lobbies.size >= 100) throw new ClashPvpError('CAPACITY')
     const id = this.randomId(),
@@ -78,7 +82,8 @@ export class ClashPvpRegistry {
       status: 'waiting',
       disconnectedSide: null,
       match: new AuthoritativeClashMatch(state),
-      profiles: { player: profile },
+      experimental,
+      profiles: experimental ? {} : { player: profile },
       watchToken: this.randomId(),
       joinToken: this.randomId(),
       ranked: false,
@@ -101,7 +106,7 @@ export class ClashPvpRegistry {
     if (options.invitation !== lobby.joinToken) throw new ClashPvpError('INVITATION')
     const token = this.randomId()
     lobby.seats.opponent = { token, seenAt: this.now() }
-    lobby.profiles.opponent = options.profile
+    if (!lobby.experimental) lobby.profiles.opponent = options.profile
     lobby.status = 'ready'
     return session(id, 'opponent', token)
   }
@@ -109,11 +114,47 @@ export class ClashPvpRegistry {
   seatFor(id: string, token: string): FightSide {
     return this.access(id, token).side
   }
+  rollbackSeat(id: string, token: string, epoch: number | null): FightSide {
+    const { lobby, side } = this.access(id, token)
+    if (!lobby.experimental && epoch === null) return side
+    if (lobby.status === 'playing' && lobby.rollback?.epoch === epoch) return side
+    throw new ClashPvpError('NOT_PLAYING')
+  }
+  rollbackStart(id: string, token: string, epoch: number) {
+    this.rollbackSeat(id, token, epoch)
+    return { epoch, snapshot: this.lobby(id).rollback!.initial }
+  }
+  receiveRollback(id: string, epoch: number, input: { side: FightSide; frames: FrameMessage[] }) {
+    const lobby = this.lobby(id)
+    const round = lobby.rollback
+    if (lobby.status !== 'playing' || round?.epoch !== epoch) return false
+    if (!round.receive(input.side, input.frames)) return false
+    this.touch(lobby, input.side)
+    this.advance(lobby)
+    return true
+  }
+  disconnectRollback(id: string, epoch: number) {
+    const lobby = this.lobbies.get(id)
+    if (lobby?.status !== 'playing' || lobby.rollback?.epoch !== epoch) return
+    lobby.match.release()
+    this.startRollbackEpoch(lobby)
+  }
+  private startRollbackEpoch(lobby: Lobby) {
+    if (!lobby.experimental) return
+    lobby.rollback = new ClashRollbackRound(
+      lobby.match.acknowledgement('player').inputEpoch,
+      lobby.match,
+    )
+    lobby.lastAdvancedAt = this.now()
+  }
+  private touch(lobby: Lobby, side: FightSide) {
+    lobby.seats[side]!.seenAt = this.now()
+    lobby.touchedAt = this.now()
+  }
   view(id: string, token: string): PvpView {
     const { lobby, side } = this.access(id, token)
     this.advance(lobby)
-    lobby.seats[side]!.seenAt = this.now()
-    lobby.touchedAt = this.now()
+    this.touch(lobby, side)
     this.resume(lobby)
     return this.snapshotView(lobby, side)
   }
@@ -124,8 +165,11 @@ export class ClashPvpRegistry {
     return this.snapshotView(lobby, side)
   }
   private snapshotView(lobby: Lobby, side: FightSide): PvpView {
-    const state = lobby.match.snapshot()
+    const state = lobby.match.readState()
     return {
+      ...(lobby.experimental && {
+        rollback: { epoch: lobby.rollback?.epoch ?? 0, frame: lobby.rollback?.frame ?? 0 },
+      }),
       matchId: lobby.id,
       side,
       setup: structuredClone(lobby.setup),
@@ -142,7 +186,7 @@ export class ClashPvpRegistry {
       revision: ++lobby.revision,
       tick: lobby.match.tick,
       authorityHash: fightReplayHash(state),
-      ...pvpSnapshot(state, side),
+      ...pvpSnapshot(state, side, !lobby.experimental),
       disconnectedSide: lobby.disconnectedSide,
       practice: lobby.match.summary(),
       ranking: this.rankingStatus(lobby),
@@ -184,7 +228,7 @@ export class ClashPvpRegistry {
   ) {
     const { lobby, side } = this.access(id, options.token)
     this.advance(lobby)
-    if (lobby.status !== 'playing') throw new ClashPvpError('NOT_PLAYING')
+    if (lobby.experimental || lobby.status !== 'playing') throw new ClashPvpError('NOT_PLAYING')
     if (options.round !== undefined && options.round !== lobby.match.roundNumber)
       throw new ClashPvpError('NOT_PLAYING')
     if (
@@ -196,8 +240,7 @@ export class ClashPvpRegistry {
       const result = lobby.match.submit(side, packet, this.now())
       if (result === 'sequence' || result === 'busy') throw new ClashPvpError(result.toUpperCase())
     }
-    lobby.seats[side]!.seenAt = this.now()
-    lobby.touchedAt = this.now()
+    this.touch(lobby, side)
     return {
       matchId: id,
       side,
@@ -253,13 +296,11 @@ export class ClashPvpRegistry {
       return
     }
     const steps = Math.min(15, Math.floor(((now - lobby.lastAdvancedAt) * 60) / 1000 + 1e-6))
-    for (let step = 0; step < steps; step++)
-      lobby.match.advance(lobby.lastAdvancedAt + ((step + 1) * 1000) / 60)
-    lobby.lastAdvancedAt += (steps * 1000) / 60
+    const advanced = lobby.rollback ? lobby.rollback.advance(steps) : advanceClassic(lobby, steps)
+    lobby.lastAdvancedAt += (advanced * 1000) / 60
     if (now - lobby.lastAdvancedAt > 250) lobby.lastAdvancedAt = now
-    const state = lobby.match.snapshot()
-    if (state.phase === 'finished') {
-      lobby.status = state.matchWinner ? 'finished' : 'ready'
+    if (lobby.match.phase === 'finished') {
+      lobby.status = lobby.match.snapshot().matchWinner ? 'finished' : 'ready'
       lobby.ready = { player: false, opponent: false }
       lobby.match.release()
       this.rank(lobby)
@@ -288,8 +329,9 @@ export class ClashPvpRegistry {
     }
   }
   private rank(lobby: Lobby) {
+    if (lobby.experimental || lobby.ranked) return
     const winner = lobby.match.snapshot().matchWinner
-    if (!winner || lobby.ranked) return
+    if (!winner) return
     lobby.ranked = this.seasons.record({
       id: lobby.id,
       player: lobby.profiles.player,
@@ -299,7 +341,7 @@ export class ClashPvpRegistry {
   }
   private detectDisconnect(lobby: Lobby) {
     if (!lobby.seats.opponent) return
-    if (lobby.match.snapshot().phase === 'ready') return
+    if (lobby.match.phase === 'ready') return
     const missing = (['player', 'opponent'] as const).find((side) => !this.connected(lobby, side))
     if (!missing) return
     const elapsed = this.now() - lobby.seats[missing]!.seenAt
@@ -329,6 +371,7 @@ export class ClashPvpRegistry {
     lobby.disconnectedSide = null
     lobby.lastAdvancedAt = this.now()
     lobby.match.release()
+    if (lobby.status === 'playing') this.startRollbackEpoch(lobby)
   }
   private beginConfirmedRound(lobby: Lobby) {
     if (
@@ -343,6 +386,7 @@ export class ClashPvpRegistry {
     lobby.match.replaceRound(beginFight(state.phase === 'finished' ? nextRound(state) : state))
     lobby.lastAdvancedAt = this.now()
     lobby.status = 'playing'
+    this.startRollbackEpoch(lobby)
   }
   private connected(lobby: Lobby, side: FightSide) {
     const seat = lobby.seats[side]
@@ -366,6 +410,11 @@ export class ClashPvpRegistry {
     for (const [id, lobby] of this.lobbies)
       if (this.now() - lobby.touchedAt > 30 * 60_000) this.lobbies.delete(id)
   }
+}
+function advanceClassic(lobby: Lobby, steps: number) {
+  for (let step = 0; step < steps; step++)
+    lobby.match.advance(lobby.lastAdvancedAt + ((step + 1) * 1000) / 60)
+  return steps
 }
 function session(matchId: string, side: FightSide, token: string): PvpSession {
   return { matchId, side, token, inviteHref: `/fighting/pvp/${matchId}` }

@@ -1,27 +1,91 @@
-import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
-import type { FutureControls, FutureFrame, SimulateFutureFrame } from './parallelFutureTypes'
+import { EMPTY_INPUT, type ArcadeFighter, type FightSide, type FightState } from './types'
+import type {
+  FutureControls,
+  FutureFrame,
+  ParallelFutureState,
+  SimulateFutureFrame,
+} from './parallelFutureTypes'
 import { FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
-import { immutableFightSnapshot } from './immutableFightSnapshot'
+import { primeFutureFrameHash } from './fightReplayHash'
+import { createImmutableFightSnapshots } from './immutableFightSnapshot'
 
-/** Uses the same fixed step, projectiles, impacts, AI cadence and RNG as the real duel. */
-export function forecastParallelFuture(
-  state: FightState,
-  controls: FutureControls,
-  simulate: SimulateFutureFrame,
-): readonly FutureFrame[] {
-  const future = state.parallelFuture!
-  let predicted: FightState = {
+type ForecastTail = Pick<ParallelFutureState, 'frames' | 'forecast'>
+interface ForecastExtension {
+  origin: FightState
+  controls: FutureControls
+  owner: FightSide
+  simulate: SimulateFutureFrame
+  end: number
+  tail: ForecastTail
+}
+const extensions = new WeakMap<readonly FutureFrame[], ForecastExtension>()
+
+interface ForecastSnapshots {
+  copy: ReturnType<typeof createImmutableFightSnapshots>
+  canonical: WeakMap<object, string>
+}
+const snapshotsByTail = new WeakMap<FightState, ForecastSnapshots>()
+
+export function startFutureForecast(state: FightState): FightState {
+  return {
     ...state,
     parallelFuture: undefined,
     futurePerception: undefined,
     forecastSimulation: true,
   }
-  const held = predictionControls(controls, future.owner)
-  const frames: FutureFrame[] = []
-  for (let frame = 0; frame < FUTURE_WINDOW_FRAMES; frame++) {
+}
+
+/** Extend only as far as the next consumer needs. Earlier snapshots share the immutable prefix. */
+export function extendFutureForecast(
+  future: ParallelFutureState,
+  needed: number,
+  simulate: SimulateFutureFrame,
+): ParallelFutureState {
+  const end = Math.min(needed, FUTURE_WINDOW_FRAMES)
+  if (end <= future.frames.length || !future.forecast || !future.controls) return future
+  const extension = extensions.get(future.frames)
+  if (extension && sameExtension(extension, { future, end, simulate }))
+    return { ...future, ...extension.tail }
+  const tail = generateTail({ future, end, simulate })
+  extensions.set(future.frames, {
+    origin: future.forecast,
+    controls: future.controls,
+    owner: future.owner,
+    end,
+    simulate,
+    tail,
+  })
+  return { ...future, ...tail }
+}
+
+interface ForecastWork {
+  future: ParallelFutureState
+  end: number
+  simulate: SimulateFutureFrame
+}
+
+function sameExtension(extension: ForecastExtension, { future, end, simulate }: ForecastWork) {
+  return (
+    extension.origin === future.forecast &&
+    extension.controls === future.controls &&
+    extension.owner === future.owner &&
+    extension.end === end &&
+    extension.simulate === simulate
+  )
+}
+
+function generateTail({ future, end, simulate }: ForecastWork): ForecastTail {
+  const held = predictionControls(future.controls!, future.owner)
+  const frames: FutureFrame[] = [...future.frames]
+  let predicted = future.forecast!
+  const snapshots = snapshotsByTail.get(predicted) ?? {
+    copy: createImmutableFightSnapshots(),
+    canonical: new WeakMap(),
+  }
+  while (frames.length < end) {
     const before = predicted
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
-    frames.push({
+    const snapshot: FutureFrame = snapshots.copy({
       documentContext: predicted.battlefield?.entities.some((entry) => entry.document)
         ? { frame: predicted.frame }
         : undefined,
@@ -53,8 +117,14 @@ export function forecastParallelFuture(
       aiCooldown: predicted.aiCooldown,
       command: futureCommand(before, predicted),
     })
+    primeFutureFrameHash(snapshot, snapshots.canonical)
+    frames.push(snapshot)
   }
-  return immutableFightSnapshot(frames)
+  if (end < FUTURE_WINDOW_FRAMES) snapshotsByTail.set(predicted, snapshots)
+  return {
+    frames: Object.freeze(frames),
+    forecast: end < FUTURE_WINDOW_FRAMES ? predicted : undefined,
+  }
 }
 
 function predictionControls(

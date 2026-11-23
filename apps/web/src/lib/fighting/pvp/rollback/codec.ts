@@ -6,6 +6,7 @@ export const ROLLBACK_WIRE_VERSION = 1
 const MAX_INPUTS = 32
 const MAX_CHECKSUMS = 4
 const MAX_COMMAND_BYTES = 2048
+export const MAX_ROLLBACK_PAYLOAD = 8192
 
 /** Everything that crosses the relay socket (plan, lot L3). */
 export type RollbackWire =
@@ -96,17 +97,33 @@ class Reader {
   }
 }
 
+function commandBytes(commands: readonly PvpCommand[]): Uint8Array {
+  return commands.length ? encoder.encode(JSON.stringify(commands)) : new Uint8Array()
+}
+
+export function rollbackCommandCount(commands: readonly PvpCommand[]): number {
+  let count = Math.min(8, commands.length)
+  while (count > 1 && commandBytes(commands.slice(0, count)).length > MAX_COMMAND_BYTES) count--
+  return count
+}
+
 function writeMessage(out: Writer, message: RollbackMessage) {
-  out.i32(message.ack)
-  out.u8(Math.min(message.inputs.length, MAX_INPUTS))
-  for (const { frame, seat } of message.inputs.slice(0, MAX_INPUTS)) {
-    out.i32(frame)
-    out.u32(seat.input)
-    out.blob(
-      seat.commands.length ? encoder.encode(JSON.stringify(seat.commands)) : new Uint8Array(),
-    )
-  }
   const checksums = message.checksums.slice(-MAX_CHECKSUMS)
+  const inputs = []
+  let bytesLeft = MAX_ROLLBACK_PAYLOAD - out.length - 6 - checksums.length * 8
+  for (const { frame, seat } of message.inputs.slice(0, MAX_INPUTS)) {
+    const commands = commandBytes(seat.commands)
+    bytesLeft -= 10 + commands.length
+    if (bytesLeft < 0) break
+    inputs.push({ frame, input: seat.input, commands })
+  }
+  out.i32(message.ack)
+  out.u8(inputs.length)
+  for (const { frame, input, commands } of inputs) {
+    out.i32(frame)
+    out.u32(input)
+    out.blob(commands)
+  }
   out.u8(checksums.length)
   for (const [frame, hash] of checksums) {
     out.i32(frame)

@@ -86,7 +86,7 @@ async function buildBaseScenery(
   if (stage.kind === 'heavens-arena') return buildHeavensArenaScenery(kit, context)
   if (stage.kind === 'ship-room' && stage.spaceId) {
     const { buildShipRoomScenery } = await import('./stageShipRoom')
-    return buildShipRoomScenery(kit, stage.spaceId)
+    return buildShipRoomScenery(kit, stage.spaceId, context)
   }
   return buildHoldScenery(kit)
 }
@@ -99,7 +99,7 @@ async function buildTransitionedScenery(
   const target = context.fight?.().stageTransition?.toSpaceId
   if (!target) return buildBaseScenery(kit, stageId, context)
   const { buildShipRoomScenery } = await import('./stageShipRoom')
-  return buildShipRoomScenery(kit, target)
+  return buildShipRoomScenery(kit, target, context)
 }
 
 /** Compose Easter Eggs after the room computes its collision-free fighting lane. */

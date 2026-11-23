@@ -1,27 +1,15 @@
 <script lang="ts">
-  import FightScene from './FightScene.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FutureCameraView } from '$lib/fighting/parallelFutureCamera'
   import type { CameraDetailRect } from '$lib/fighting/cinematicDetailLayout'
   import type { FightComfort } from '$lib/fighting/fightComfort'
-  import type { FightStageId } from '$lib/fighting/stages'
   export let prediction: FutureCameraView
   export let active = true
   export let rect: CameraDetailRect
   export let comfort: FightComfort
   export let language: 'fr' | 'en'
-  export let stageId: FightStageId
-  const stillCamera = { strength: 0, side: null, detail: null }
-  $: quiet = { ...comfort, camera: 0 as const, shake: 0 as const }
   $: owner = prediction.state[prediction.owner]
   $: observer = prediction.state[prediction.owner === 'player' ? 'opponent' : 'player']
-  // Preserve the terminal predicted effects without running a real victory ceremony.
-  $: renderState = {
-    ...prediction.state,
-    phase: prediction.state.phase === 'finished' ? ('fighting' as const) : prediction.state.phase,
-    winner: null,
-    matchWinner: null,
-  }
 </script>
 
 <div
@@ -41,19 +29,6 @@
     ? 'Laplace Demon : action prédite, distincte de la réalité'
     : 'Laplace Demon: predicted action, separate from reality'}
 >
-  <div class="view">
-    <FightScene
-      {active}
-      state={renderState}
-      {stageId}
-      {language}
-      comfort={quiet}
-      viewer={prediction.owner}
-      cameraDirection={stillCamera}
-      cameraFrame={comfort.camera === 0 ? undefined : prediction.cameraFrame}
-      viewRole="prediction"
-    />
-  </div>
   <div class="prediction-title">
     <span
       >{language === 'fr' ? 'VISION DE' : 'PERCEIVED BY'}
@@ -92,7 +67,6 @@
     box-sizing: border-box;
     border: 1px solid #e8a987;
     box-shadow: 0 4px 18px #0009;
-    background: #070e17;
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
@@ -100,10 +74,8 @@
     grid-template-rows: auto minmax(0, 1fr) auto;
     container-type: inline-size;
   }
-  .view {
-    position: relative;
-    grid-row: 2;
-    min-height: 0;
+  .prediction-result {
+    grid-row: 3;
   }
   .prediction-title,
   .prediction-result {

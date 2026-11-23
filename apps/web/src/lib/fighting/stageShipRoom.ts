@@ -7,6 +7,7 @@ import { applySurfaceDetail } from '../tour/surfaceDetail'
 import type { Space } from '../tour/types'
 import { floorSheen, roomDust, type StageEffect } from './stageAtmosphere'
 import type { FightScenery, SceneryKit } from './stageKit'
+import type { StageBackgroundContext } from './stageBackgroundTypes'
 import type { FightLane } from './stageLane'
 import { cachedRoomFightLane } from './stageRoomLane'
 import { roomCutDepth } from './stageRoomCut'
@@ -162,6 +163,7 @@ function roomSurfaces(parts: RoomParts): { root: Three.Group; dispose: () => voi
 export async function buildShipRoomScenery(
   kit: SceneryKit,
   spaceId: string,
+  context: StageBackgroundContext = {},
 ): Promise<FightScenery> {
   const { THREE } = kit
   const ship = theShip()
@@ -199,9 +201,13 @@ export async function buildShipRoomScenery(
   // The air and the floor: motes inside the turned room, sheen along the lane.
   const dust = roomDust({ THREE, space, tier: plan.tier })
   if (dust) room.root.add(dust.object)
-  const sheen = await floorSheen(THREE, FLOOR_SHEEN)
+  const effects: StageEffect[] = dust ? [dust] : []
+  const sheen = await floorSheen(THREE, FLOOR_SHEEN, () => {
+    const phase = context.fight?.().parallelFuture?.phase
+    return phase !== 'vision' && phase !== 'diverging'
+  })
   root.add(sheen.object)
-  const effects: StageEffect[] = dust ? [dust, sheen] : [sheen]
+  effects.push(sheen)
   return {
     root,
     // The same density function as the visit, rather than a generic depth ramp.

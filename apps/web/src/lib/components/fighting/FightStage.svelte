@@ -11,7 +11,7 @@
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   export let comfort = defaultFightComfort()
-  import { parallelFutureCamera } from '$lib/fighting/parallelFutureCamera'
+  import { parallelFutureMain } from '$lib/fighting/parallelFutureCamera'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
   import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
@@ -66,7 +66,7 @@
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
-  $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
+  $: visibleState = parallelFutureMain(state, futureViewer, futurePreview)
   $: sceneKey = `${stageId}:${state.stageTransition?.sequence ?? 0}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
   $: if (sceneKey) victory.sceneLoading()
   $: throwTech = isThrowTech(visibleState)

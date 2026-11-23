@@ -91,7 +91,11 @@ const SHEEN_FRONT = 11
  * In scene coordinates — the lane is always the `x` axis, so the strip is laid
  * where the duel is and not across a hall nobody is looking at.
  */
-export async function floorSheen(THREE: typeof Three, strength: number): Promise<StageEffect> {
+export async function floorSheen(
+  THREE: typeof Three,
+  strength: number,
+  visible?: () => boolean,
+): Promise<StageEffect> {
   const { Reflector } = await import('three/examples/jsm/objects/Reflector.js')
   const geometry = new THREE.PlaneGeometry(SHEEN_SIZE[0], SHEEN_SIZE[1])
   const mirror = new Reflector(geometry, {
@@ -110,6 +114,16 @@ export async function floorSheen(THREE: typeof Three, strength: number): Promise
       fragmentShader: SHEEN_FRAGMENT,
     },
   })
+  // The reflected room is faint and costs a second draw of the scene. Refresh its
+  // texture on alternate display frames and keep compositing the last complete image.
+  const renderReflection = mirror.onBeforeRender
+  let refresh = true
+  let frame = 0
+  mirror.onBeforeRender = (...args) => {
+    if (!refresh) return
+    refresh = false
+    renderReflection.apply(mirror, args)
+  }
   const material = mirror.material as Three.ShaderMaterial
   material.transparent = true
   material.blending = THREE.AdditiveBlending
@@ -118,7 +132,11 @@ export async function floorSheen(THREE: typeof Three, strength: number): Promise
   mirror.position.set(0, SHEEN_HEIGHT, SHEEN_FRONT - SHEEN_SIZE[1] / 2)
   return {
     object: mirror,
-    update: () => undefined,
+    update: () => {
+      const wasVisible = mirror.visible
+      mirror.visible = visible?.() ?? true
+      refresh = mirror.visible && (!wasVisible || frame++ % 2 === 0)
+    },
     dispose: () => {
       geometry.dispose()
       mirror.dispose()

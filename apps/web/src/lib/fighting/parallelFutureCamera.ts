@@ -1,8 +1,13 @@
 import { futureVisibleState } from './parallelFuturePresentation'
 import type { FightSide, FightState } from './types'
-import type { FutureFrame, ParallelFutureState } from './parallelFutureTypes'
+import {
+  FUTURE_WINDOW_FRAMES,
+  type FutureFrame,
+  type ParallelFutureState,
+} from './parallelFutureTypes'
 import type { CinematicDirection } from './cinematicTypes'
-import { createCinematicTrack, type CinematicFrame } from './cinematicTrack'
+import type { CinematicFrame } from './cinematicTrack'
+import { fightWorldX, fightWorldY } from './fightCoordinates'
 
 export interface FutureCameraView {
   state: FightState
@@ -16,7 +21,11 @@ export interface FutureCameraView {
   elapsedFrames: number
   durationFrames: number
 }
-const tracks = new WeakMap<readonly FutureFrame[], CinematicFrame[]>()
+export function parallelFutureMain(state: FightState, viewer: FightSide, preview?: number | null) {
+  return state.parallelFuture?.frames.length && canCompare(state, viewer)
+    ? state
+    : futureVisibleState(state, viewer, preview)
+}
 /** Owner view and shared local play compare reality to the opponent's predicted perception. */
 export function parallelFutureCamera(
   state: FightState,
@@ -43,7 +52,7 @@ export function parallelFutureCamera(
       owner: future.owner,
       index,
       phase: future.phase,
-      cameraFrame: predictionTrack(state, future)[index],
+      cameraFrame: predictionCameraFrame(frame),
       damage: Math.max(
         0,
         future.frames[Math.max(0, index - 8)][future.owner].health - frame[future.owner].health,
@@ -51,23 +60,15 @@ export function parallelFutureCamera(
       damageTaken: Math.max(0, future.frames[0][future.owner].health - frame[future.owner].health),
       realHealth: state[future.owner].health,
       elapsedFrames: future.phase === 'vision' ? index + 1 : future.cursor,
-      durationFrames: future.frames.length,
+      durationFrames: FUTURE_WINDOW_FRAMES,
     } as FutureCameraView,
   }
 }
-function predictionTrack(state: FightState, future: ParallelFutureState) {
-  let track = tracks.get(future.frames)
-  if (!track) {
-    // The exact dolly/fit code used by SolarVision in the reference film.
-    const states = future.frames.map((frame, index) => ({
-      ...predictedFightState(state, frame, { origin: 0, index }),
-      phase: 'fighting' as const,
-      winner: null,
-    }))
-    track = createCinematicTrack(states).frames
-    tracks.set(future.frames, track)
-  }
-  return track
+/** The inset fits the selected pose to its real aspect ratio when drawing. */
+function predictionCameraFrame(frame: FutureFrame): CinematicFrame {
+  const height = Math.max(fightWorldY(frame.player.y), fightWorldY(frame.opponent.y))
+  const midpoint = (fightWorldX(frame.player.x) + fightWorldX(frame.opponent.x)) / 2
+  return { x: midpoint, lookY: 1.24 + height * 0.42, z: 5.9, intensity: 0 }
 }
 function canCompare(state: FightState, viewer: FightSide) {
   return (

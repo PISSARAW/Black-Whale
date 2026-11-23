@@ -30,6 +30,9 @@ describe('roster calls remain deterministic across Parallel Future', () => {
     for (let frame = 0; frame < FUTURE_PREPARATION_FRAMES; frame++)
       state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: true })
     expect(state.parallelFuture?.phase).toBe('vision')
+    // The held AI controls are fixed at activation, while vision generates the tail on demand.
+    for (let step = 0; step < 149; step++)
+      state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: true })
     const callIndex = state.parallelFuture!.frames.findIndex(
       (frame) => frame.command?.arsenal?.action === 'voice-stay',
     )

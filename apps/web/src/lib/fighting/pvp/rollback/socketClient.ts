@@ -1,7 +1,13 @@
-import { decodeRollbackWire, encodeRollbackWire, type RollbackWire } from './codec'
+import {
+  decodeRollbackWire,
+  encodeRollbackWire,
+  rollbackCommandCount,
+  type RollbackWire,
+} from './codec'
 import { RollbackSession, type RollbackSessionOptions } from './session'
 import { TimeSync } from './timeSync'
 import type { PvpSeatFrame } from './frameInput'
+import type { PvpCommand } from '../types'
 
 /** The part of a WebSocket this client uses: the browser's and `ws` both fit. */
 export interface RollbackSocketLike {
@@ -39,6 +45,7 @@ export class RollbackSocketClient {
   readonly time = new TimeSync()
   readonly status: RollbackSocketStatus = { open: false, peerConnected: false, closeCode: null }
   waitedFrames = 0
+  private pendingCommands: PvpCommand[] = []
   private ticks = 0
   private nextPing = 0
   private readonly clock: () => number
@@ -60,22 +67,34 @@ export class RollbackSocketClient {
 
   /** One wall-clock frame: maybe wait for the peer, else record, simulate and send. */
   tick(seat: PvpSeatFrame): boolean {
+    this.pendingCommands.push(...seat.commands)
     if (this.socket.readyState !== OPEN) return false
     this.ticks++
     if (this.ticks % PING_EVERY === 1) this.ping()
     if (this.time.shouldWait(this.session.frame)) {
       this.waitedFrames++
+      this.sendFrame()
       return false
     }
-    this.session.addLocalInput(seat)
+    const commands = this.pendingCommands.slice(0, rollbackCommandCount(this.pendingCommands))
+    if (this.session.addLocalInput({ input: seat.input, commands }))
+      this.pendingCommands.splice(0, commands.length)
     const advanced = this.session.advance()
+    this.sendFrame()
+    return advanced
+  }
+
+  release() {
+    this.pendingCommands = []
+  }
+
+  private sendFrame() {
     this.send({
       type: 'frame',
       frame: this.session.frame,
       advantage: this.time.advantage,
       message: this.session.outgoing(),
     })
-    return advanced
   }
 
   close() {

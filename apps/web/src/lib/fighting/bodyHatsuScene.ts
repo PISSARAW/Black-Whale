@@ -52,6 +52,7 @@ function poseSelectedTool(
   options: EffectSceneOptions,
   c: { state: FightState; side: FightSide; frame: BodyHatsuFrame },
 ) {
+  if (c.state[c.side].id !== 'padaille') return
   const figure = options.figureOf?.(c.side)
   if (!figure) return
   const reduced = fineControlReduced(options)

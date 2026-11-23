@@ -25,10 +25,10 @@ function legacyHash(state: ReturnType<typeof createFight>) {
 }
 
 describe('replay hash shared subtree reuse', () => {
-  it('reuses only certified immutable forecasts and preserves the legacy hash for every prefix', () => {
+  it('reuses immutable frame hashes and matches imported forecasts for every prefix', () => {
     const state = createFight('tserriednich', 'chrollo')
-    const frames = immutableFightSnapshot(
-      Array.from({ length: 600 }, () => ({
+    const frames = Array.from({ length: 600 }, () =>
+      immutableFightSnapshot({
         player: state.player,
         opponent: state.opponent,
         projectiles: state.projectiles,
@@ -37,7 +37,7 @@ describe('replay hash shared subtree reuse', () => {
         time: state.time,
         rng: state.rng,
         command: null,
-      })),
+      }),
     )
     const future: FightState = {
       ...state,
@@ -51,13 +51,16 @@ describe('replay hash shared subtree reuse', () => {
         controls: null,
       },
     }
-    expect(fightReplayHash(future)).toBe(legacyHash(future))
+    const reference = () => fightReplayHash(structuredClone(future))
+    expect(fightReplayHash(future)).toBe(reference())
+    const digest = immutableSnapshotDigest(frames[0])?.hash
+    expect(digest).toBeDefined()
     future.parallelFuture!.previewCursor = 10
-    expect(fightReplayHash(future)).toBe(legacyHash(future))
-    expect(immutableSnapshotDigest(frames)!.hashes.size).toBe(1)
+    expect(fightReplayHash(future)).toBe(reference())
     future.rng++
     future.parallelFuture!.cursor++
-    expect(fightReplayHash(future)).toBe(legacyHash(future))
+    expect(fightReplayHash(future)).toBe(reference())
+    expect(immutableSnapshotDigest(frames[0])?.hash).toBe(digest)
     expect(Object.isFrozen(state.player)).toBe(false)
     expect(Object.isFrozen(frames[0].player)).toBe(true)
     expect(() => {
@@ -93,9 +96,11 @@ describe('replay hash shared subtree reuse', () => {
     sparse[1] = undefined
     sparse[2] = 'end'
     const input = Object.assign(future, { hashProbe: sparse })
-    expect(fightReplayHash(input)).toBe(legacyHash(input))
+    const first = fightReplayHash(input)
+    expect(first).toBe(fightReplayHash(structuredClone(input)))
     frame.player.health--
-    expect(fightReplayHash(input)).toBe(legacyHash(input))
+    expect(fightReplayHash(input)).not.toBe(first)
+    expect(fightReplayHash(input)).toBe(fightReplayHash(structuredClone(input)))
     expect(immutableSnapshotDigest(future.parallelFuture!.frames)).toBeUndefined()
   })
   it('keeps the exact legacy fingerprint for a large shared snapshot graph', () => {

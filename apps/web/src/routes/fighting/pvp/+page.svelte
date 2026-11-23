@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
+  import { onMount } from 'svelte'
   import { link, locale } from '$lib/i18n'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
   import { FIGHT_FORMATS } from '$lib/fighting/formats'
@@ -20,8 +21,13 @@
   let player: FighterId = 'kurapika',
     opponent: FighterId = 'hisoka'
   let formatId: FightFormatId = 'knockout'
+  let rollback = false
   let environment = createFightEnvironment({ arenaInteractions: true })
   let language: 'fr' | 'en'
+  let mounted = false
+  onMount(() => {
+    mounted = true
+  })
   let creating = false,
     error = ''
   $: language = $locale === 'fr' ? 'fr' : 'en'
@@ -34,6 +40,7 @@
         headers: { 'content-type': 'application/json', 'x-clash-profile': rankingToken() },
         body: JSON.stringify({
           ruleset: PVP_RULESET,
+          rollback,
           setup: { player, opponent, formatId, environment, ...kameoSetupField($chosenKameos) },
         }),
       })
@@ -120,7 +127,13 @@
     onEnvironment={(next) => (environment = next)}
   />
   <FightKameoPicker {language} />
-  <button type="button" onclick={create} disabled={creating}
+  <label>
+    <input type="checkbox" bind:checked={rollback} />
+    {language === 'fr'
+      ? 'Rollback expérimental · duel privé hors classement'
+      : 'Experimental rollback · unranked private duel'}
+  </label>
+  <button type="button" onclick={create} disabled={!mounted || creating}
     >{language === 'fr' ? 'Créer une invitation' : 'Create invite'}</button
   >
   {#if error}<p role="alert">{error}</p>{/if}

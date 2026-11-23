@@ -134,7 +134,9 @@ describe('server-side Clash command execution', () => {
     const vision = step(server, 32)
     expect(vision.parallelFuture?.phase).toBe('vision')
     expect(privatePvpState(vision, 'opponent').parallelFuture).toBeUndefined()
-    expect(privatePvpState(vision, 'player').parallelFuture?.frames).toHaveLength(600)
+    expect(privatePvpState(vision, 'player').parallelFuture?.frames).toHaveLength(
+      vision.parallelFuture!.frames.length,
+    )
     server.submit(
       'opponent',
       { sequence: 0, input: 0, commands: [{ kind: 'move', action: 'special', input: 0 }] },

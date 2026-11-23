@@ -58,6 +58,8 @@ export interface PvpSession {
 }
 export type PvpStatus = 'waiting' | 'ready' | 'playing' | 'interrupted' | 'finished' | 'abandoned'
 export interface PvpView {
+  /** Present only in opt-in private matches. */
+  rollback?: import('./rollback/experimental').ExperimentalRollbackView
   /** Server-owned control generation; changes when held/queued controls are released. */
   inputEpoch: number
   matchId: string

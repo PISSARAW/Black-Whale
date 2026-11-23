@@ -69,6 +69,8 @@ export interface ParallelFutureState {
   previewCursor: number
   frames: readonly FutureFrame[]
   controls: FutureControls | null
+  /** Tail of the alternate simulation, present only while more frames can be generated. */
+  forecast?: FightState
   /** Only the engine may dispatch the opponent's already predicted commands. */
   replaying?: boolean
 }

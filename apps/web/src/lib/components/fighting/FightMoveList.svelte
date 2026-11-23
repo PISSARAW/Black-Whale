@@ -3,6 +3,7 @@
   import FightStyleGuide from './FightStyleGuide.svelte'
   import FightMovementGuide from './FightMovementGuide.svelte'
   import FightMoveProperties from './FightMoveProperties.svelte'
+  import FightFollowUps from './FightFollowUps.svelte'
   import { finisherHint, useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { movesetFor, moveById } from '$lib/fighting/movesets'
@@ -79,6 +80,9 @@
         {/if}
       {/each}
     </div>
+    {#if moveset.followUps?.length}
+      <FightFollowUps followUps={moveset.followUps} {language} {touch} />
+    {/if}
     <div class="routes">
       <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
       <p>

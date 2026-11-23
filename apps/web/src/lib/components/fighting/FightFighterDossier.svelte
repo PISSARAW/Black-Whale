@@ -1,5 +1,6 @@
 <script lang="ts">
   import { movesetFor } from '$lib/fighting/movesets'
+  import { formatFollowUpRow } from '$lib/fighting/moveFollowUpDisplay'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { styleMatchup } from '$lib/fighting/styleMatchups'
   import { useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
@@ -13,6 +14,7 @@
   $: moveset = movesetFor(fighterId)
   $: matchup = styleMatchup(fighterId)
   $: routes = combatRoutesFor(fighterId)
+  $: followUps = (moveset?.followUps ?? []).map((entry) => formatFollowUpRow(entry, language))
 </script>
 
 {#if moveset}
@@ -27,6 +29,18 @@
         <dd>{moveInputHint(fr ? moveset.mechanicFr : moveset.mechanicEn, $bindings)}</dd>
         <dt>{fr ? 'Contre-jeu' : 'Counterplay'}</dt>
         <dd>{matchup.counter[fr ? 0 : 1]}</dd>
+        {#if followUps.length}
+          <dt>{fr ? 'Suites contextuelles' : 'Contextual follow-ups'}</dt>
+          <dd>
+            {#each followUps as row (row.id)}
+              <div>
+                <strong>{row.name}</strong> ({moveInputHint(row.input, $bindings)}) — {fr
+                  ? 'après'
+                  : 'after'} {row.sourceName} · {row.condition}
+              </div>
+            {/each}
+          </dd>
+        {/if}
       </dl>
       <p class="training">
         {fr

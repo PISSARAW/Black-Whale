@@ -80,6 +80,7 @@ import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
 import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
 import { rosterWaveOneSupport } from './rosterWaveOneSupport'
 import { rosterWaveTwoSupport } from './rosterWaveTwoSupport'
+import { rosterWaveThreeSupport } from './rosterWaveThreeSupport'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -376,6 +377,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const goldenSupport = kurapikaGoldenHeavySupport(fighter, frames)
   const waveOneSupport = rosterWaveOneSupport(fighter, frames)
   const waveTwoSupport = rosterWaveTwoSupport(fighter, frames)
+  const waveThreeSupport = rosterWaveThreeSupport(fighter, frames)
   const poseAt = (at: number) =>
     addPoses(
       base,
@@ -394,7 +396,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
-    ...(goldenSupport ?? waveOneSupport ?? waveTwoSupport),
+    ...(goldenSupport ?? waveOneSupport ?? waveTwoSupport ?? waveThreeSupport),
     attackFlow: {
       frame,
       startup: frames.startup,

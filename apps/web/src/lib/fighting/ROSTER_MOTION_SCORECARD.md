@@ -179,3 +179,26 @@ tuck, hold contact, prepare descent and never acquire a planted-foot constraint.
 
 All ten second-wave fighters now have 9/9 dedicated physical clips. The roster
 total is 261 dedicated clips and 99 generated clips.
+
+## P7 — final-wave grounded fundamentals
+
+The final eleven fighters now own dedicated `standingLight`, `standingHeavy`
+and `forwardLight` timelines. Each route has a seven-key anticipation, held
+contact and recovery chain, with character-specific root, torso, wrist and leg
+accents plus explicit support and pivot feet.
+
+| Fighter    | Baseline |  P7 |
+| ---------- | -------: | --: |
+| Phinks     |      7.0 | 7.9 |
+| Zakuro     |      7.0 | 7.8 |
+| Franklin   |      7.2 | 8.0 |
+| Sayird     |      7.2 | 8.0 |
+| Voconte    |      7.2 | 8.0 |
+| Bill       |      7.3 | 8.0 |
+| Biscuit    |      7.3 | 8.0 |
+| Furykov    |      7.3 | 8.0 |
+| Halkenburg |      7.3 | 8.0 |
+| Hinrigh    |      7.3 | 8.0 |
+| Saiyu      |      7.3 | 8.0 |
+
+The roster total is now 294 dedicated physical clips and 66 generated clips.

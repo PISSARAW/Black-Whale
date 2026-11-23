@@ -28,6 +28,7 @@ import { ROSTER_WAVE_ONE_FINISH_POSES } from './keyPosesRosterWaveOneFinish'
 import { ROSTER_WAVE_TWO_GROUNDED_POSES } from './keyPosesRosterWaveTwo'
 import { ROSTER_WAVE_TWO_DIRECTIONAL_POSES } from './keyPosesRosterWaveTwoDirectional'
 import { ROSTER_WAVE_TWO_FINISH_POSES } from './keyPosesRosterWaveTwoFinish'
+import { ROSTER_WAVE_THREE_GROUNDED_POSES } from './keyPosesRosterWaveThree'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -48,6 +49,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
       },
     ]),
   ),
+  ...ROSTER_WAVE_THREE_GROUNDED_POSES,
   ...Object.fromEntries(
     Object.keys(ROSTER_WAVE_TWO_GROUNDED_POSES).map((id) => [
       id,
@@ -58,7 +60,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
       },
     ]),
   ),
-  voconte: { neutralSpecial: DOOR_LINK_POSE },
+  voconte: { ...ROSTER_WAVE_THREE_GROUNDED_POSES.voconte, neutralSpecial: DOOR_LINK_POSE },
   kurapika: {
     ...holdNormalContacts(KURAPIKA_KEY_POSES),
     ...KURAPIKA_COMMAND_POSES,
@@ -78,7 +80,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
     ...HISOKA_COMMAND_POSES,
     ...HISOKA_SPECIAL_POSES,
   },
-  franklin: FRANKLIN_KEY_POSES,
+  franklin: { ...ROSTER_WAVE_THREE_GROUNDED_POSES.franklin, ...FRANKLIN_KEY_POSES },
   kalluto: KALLUTO_KEY_POSES,
   chrollo: { ...CHROLLO_NORMAL_POSES, ...CHROLLO_COMMAND_POSES, ...CHROLLO_KEY_POSES },
   benjamin: { ...BENJAMIN_NORMAL_POSES, ...BENJAMIN_COMMAND_POSES },
@@ -90,7 +92,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   },
   hanzo: HANZO_KEY_POSES,
   bonolenov: BONOLENOV_KEY_POSES,
-  furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
+  furykov: { ...ROSTER_WAVE_THREE_GROUNDED_POSES.furykov, neutralSpecial: FURYKOV_CONSOLE_POSE },
   feitan: {
     ...FEITAN_BLADE_POSES,
     neutralSpecial: FEITAN_PAIN_PACKER,

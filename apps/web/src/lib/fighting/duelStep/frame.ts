@@ -46,6 +46,7 @@ import { advanceFinalFiveUpgrades, startThetaSilentReload } from '../finalFiveUp
 import { advanceOpponentIntel } from '../perception/opponentIntel'
 import { advanceFightWitnesses } from '../fightWitnesses'
 import { advanceRematchVow } from '../career/rematchVow'
+import { advanceCausalObjectLedger } from '../causalObjectLedger'
 
 function resolveNeedleRemoval(state: FightState, inputs: DuelInputs): FightState {
   for (const side of ['player', 'opponent'] as const) {
@@ -168,6 +169,7 @@ const CLOSE_FRAME_PIPELINE: readonly ((state: FightState) => FightState)[] = [
   advanceOpponentIntel,
   advanceFightWitnesses,
   advanceRematchVow,
+  advanceCausalObjectLedger,
 ]
 
 /** Advances the frame counter and round clock from the frame's opening world. */

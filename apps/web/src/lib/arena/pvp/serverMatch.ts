@@ -21,6 +21,8 @@ export interface ArenaPlayerCommand {
 export interface ArenaServerSnapshot {
   matchId: string
   tick: number
+  /** Monotonic for ticks and accepted commands, including several commands inside one tick. */
+  revision: number
   state: CombatState
   checksum: string
 }
@@ -36,6 +38,7 @@ interface AuthoritativeArenaOptions {
 export class AuthoritativeArenaMatch {
   private state: CombatState
   private tick = 0
+  private revision = 0
   private readonly sequenceByPlayer = new Map<string, number>()
   private actionCounts: ArenaActionCounts = {}
 
@@ -68,6 +71,7 @@ export class AuthoritativeArenaMatch {
       this.actionCounts,
     )
     this.sequenceByPlayer.set(command.playerId, command.sequence + 1)
+    this.revision += 1
     return { accepted: true }
   }
 
@@ -80,6 +84,7 @@ export class AuthoritativeArenaMatch {
         this.actionCounts,
       )
       this.tick += 1
+      this.revision += 1
     }
     return this.snapshot()
   }
@@ -88,6 +93,7 @@ export class AuthoritativeArenaMatch {
     return {
       matchId: this.id,
       tick: this.tick,
+      revision: this.revision,
       state: structuredClone(this.state),
       checksum: stateChecksum(this.state),
     }

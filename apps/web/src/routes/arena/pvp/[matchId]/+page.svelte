@@ -1,9 +1,15 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
   import { link, locale } from '$lib/i18n'
-  import { pvpSessionKey, type ArenaPvpSession, type ArenaPvpView } from '$lib/arena/pvp/transport'
+  import {
+    pvpSessionKey,
+    type ArenaPvpCommand,
+    type ArenaPvpSession,
+    type ArenaPvpView,
+  } from '$lib/arena/pvp/transport'
+  import { ArenaRollbackClient, type ArenaRollbackStats } from '$lib/arena/pvp/rollbackClient'
   import type { NetworkAction } from '$lib/arena/pvp/serverMatch'
-  import type { BodyZone, CombatSide } from '$lib/combat/types'
+  import type { BodyZone, CombatSide, CombatState } from '$lib/combat/types'
   import type { PageData } from './$types'
 
   type UnsidedNetworkAction = NetworkAction extends infer Action
@@ -16,13 +22,22 @@
   let token = $state('')
   let view = $state<ArenaPvpView | null>(null)
   let joining = $state(false)
-  let sending = $state(false)
   let error = $state('')
   let copied = $state(false)
   let targetZone = $state<BodyZone>('torso')
   let pollTimer: ReturnType<typeof setInterval> | null = null
+  let rollback: ArenaRollbackClient | null = null
+  let outbox: ArenaPvpCommand[] = []
+  let draining = false
+  let predictedState = $state<CombatState | null>(null)
+  let pendingCommands = $state(0)
+  let rollbackStats = $state<ArenaRollbackStats>({
+    rollbacks: 0,
+    replayedCommands: 0,
+    longestReplay: 0,
+  })
 
-  const matchState = $derived(view?.snapshot?.state ?? null)
+  const matchState = $derived(predictedState ?? view?.snapshot?.state ?? null)
   const side = $derived(view?.side ?? null)
   const fighter = $derived(matchState && side ? matchState[side] : null)
   const rivalSide = $derived<CombatSide | null>(
@@ -72,31 +87,66 @@
     try {
       const response = await fetch(api(''), { headers: authorization() })
       if (!response.ok) throw new Error((await response.json()).error)
-      view = (await response.json()) as ArenaPvpView
+      acceptView((await response.json()) as ArenaPvpView)
       error = ''
     } catch (reason) {
       error = message(reason)
     }
   }
 
-  async function command(action: NetworkAction) {
-    if (!view || sending || view.status !== 'playing') return
-    sending = true
-    try {
-      const response = await fetch(api('/commands'), {
-        method: 'POST',
-        headers: { ...authorization(), 'content-type': 'application/json' },
-        body: JSON.stringify({ sequence: view.nextSequence, action }),
-      })
-      if (!response.ok) throw new Error((await response.json()).error)
-      view = (await response.json()) as ArenaPvpView
-      error = ''
-    } catch (reason) {
-      error = message(reason)
-      await refresh()
-    } finally {
-      sending = false
+  function command(action: NetworkAction) {
+    if (!view || !rollback || view.status !== 'playing') return
+    const packet = rollback.predict(action)
+    if (!packet) return
+    outbox.push(packet)
+    syncPrediction()
+    void drainOutbox()
+  }
+
+  async function drainOutbox() {
+    if (draining) return
+    draining = true
+    while (outbox.length) {
+      const packet = outbox[0]
+      try {
+        const response = await fetch(api('/commands'), {
+          method: 'POST',
+          headers: { ...authorization(), 'content-type': 'application/json' },
+          body: JSON.stringify(packet),
+        })
+        if (!response.ok) throw new Error((await response.json()).error)
+        outbox.shift()
+        acceptView((await response.json()) as ArenaPvpView)
+        error = ''
+      } catch (reason) {
+        error = message(reason)
+        await refresh()
+        if ((view?.nextSequence ?? packet.sequence) <= packet.sequence) {
+          rejectFrom(packet.sequence)
+          break
+        }
+        outbox.shift()
+      }
     }
+    draining = false
+  }
+
+  function acceptView(next: ArenaPvpView) {
+    rollback ??= new ArenaRollbackClient(next.side)
+    if (rollback.receive(next).accepted) view = next
+    syncPrediction()
+  }
+
+  function rejectFrom(sequence: number) {
+    rollback?.reject(sequence)
+    outbox = outbox.filter((packet) => packet.sequence < sequence)
+    syncPrediction()
+  }
+
+  function syncPrediction() {
+    predictedState = rollback?.state ?? null
+    pendingCommands = rollback?.pendingCommands ?? 0
+    if (rollback) rollbackStats = { ...rollback.stats }
   }
 
   function sided(action: UnsidedNetworkAction): NetworkAction {
@@ -210,6 +260,12 @@
         >
         <p class="mt-2 font-mono text-xs text-white/45">
           {matchState.clock.toFixed(1)}s · {gap.toFixed(1)}m
+        </p>
+        <p class="mt-2 font-mono text-[10px] uppercase tracking-wider text-sky-200/60">
+          Rollback · {pendingCommands}
+          {$locale === 'fr' ? 'en attente' : 'pending'} ·
+          {rollbackStats.rollbacks}
+          {$locale === 'fr' ? 'corrections' : 'corrections'}
         </p>
         {#if ownOutcome !== 'playing'}<p class="mt-5 text-2xl font-black uppercase text-amber-200">
             {ownOutcome === 'won'

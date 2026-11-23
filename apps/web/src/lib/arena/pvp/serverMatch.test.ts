@@ -54,6 +54,7 @@ describe('authoritative Arena PvP match', () => {
     const before = match.snapshot()
     const after = match.advance(1 / 60)
     expect(after.tick).toBe(before.tick + 1)
+    expect(after.revision).toBe(before.revision + 1)
     expect(after.checksum).not.toBe(before.checksum)
   })
 
@@ -64,5 +65,27 @@ describe('authoritative Arena PvP match', () => {
     const snapshot = match.snapshot()
     snapshot.state.player.aura = 0
     expect(match.snapshot().state.player.aura).toBe(100)
+  })
+
+  it('orders multiple commands accepted inside the same simulation tick', () => {
+    const match = new AuthoritativeArenaMatch('match-4', setup, {
+      players: { player: 'alice', opponent: 'bob' },
+    })
+    const before = match.snapshot()
+    match.submit({
+      matchId: 'match-4',
+      playerId: 'alice',
+      sequence: 0,
+      action: { type: 'GUARD', side: 'player' },
+    })
+    match.submit({
+      matchId: 'match-4',
+      playerId: 'bob',
+      sequence: 0,
+      action: { type: 'GUARD', side: 'opponent' },
+    })
+    const after = match.snapshot()
+    expect(after.tick).toBe(before.tick)
+    expect(after.revision).toBe(before.revision + 2)
   })
 })

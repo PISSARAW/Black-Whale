@@ -117,8 +117,7 @@ timeline once, identifies conservative recovery opportunities and punishments,
 then lets the player review the contact or branch from just before the exchange.
 The diagnosis never consults concealed intent and is explicitly non-exhaustive.
 
-Still Clash-only, in rough order of value: physical Blinky targets and Skill Hunter
-book state; rollback PvP.
+Still Clash-only: physical Blinky targets and Skill Hunter book state.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent
@@ -153,3 +152,10 @@ Campaign links are full presets: terrain, challenge, doctrine, difficulty, forma
 `bridge.ts` defines the session handoff contract. Hunt can hand an active duel to Arena; Infiltration can hand off an identified agent who has already completed the required objective. Investigation deliberately has no handoff: its confrontations compare testimony and do not identify a physical opponent.
 
 `/arena/pvp` creates an invite-only match. The HTTP transport authenticates each seat with an opaque session token, rejects client ticks and teleports, and polls snapshots from `AuthoritativeArenaMatch`. The token in session storage supports page reloads while the server process lives. The registry is intentionally in-process: horizontal deployment or restart-safe matches require a shared coordinator before PvP can span several Node processes.
+
+The PvP client predicts only its own authenticated commands. Each authoritative
+snapshot acknowledges a sequence, discards confirmed inputs and replays the
+remaining queue over the corrected state. Stale polling responses cannot rewind
+the client, rejected commands discard every dependent prediction, and the HUD
+reports pending inputs and corrections. The server remains the sole clock and
+referee; Arena never predicts an opponent command.

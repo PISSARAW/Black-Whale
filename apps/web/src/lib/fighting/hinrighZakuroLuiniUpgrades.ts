@@ -1,5 +1,4 @@
 import { activeEnRadius } from './en/access'
-import { FIGHT_FPS } from './fightClock'
 import type { ArcadeFighter, AttackKind, FightNenZone, FightSide, FightState } from './types'
 
 export const HINRIGH_CUFF_BREAK_STUN = 16
@@ -49,7 +48,7 @@ export function applyHinrighHandcuffs(target: ArcadeFighter): ArcadeFighter {
 
 export function hinrighBlocksHandAction(
   fighter: ArcadeFighter,
-  kind: AttackKind,
+  kind: AttackKind | 'throw',
   zone?: FightNenZone,
 ): boolean {
   if (!fighter.hinrighCuffed && !fighter.biohazardRestraint) return false
@@ -72,7 +71,10 @@ export function breakHinrighHandcuffs(fighter: ArcadeFighter): ArcadeFighter {
 /** Hinrigh real-object Biohazard pigeon persists even in Zetsu (but Blinky can swallow it). */
 export function deployHinrighBioPigeon(state: FightState, side: FightSide): FightState {
   const hinrigh = state[side]
-  return { ...state, hinrighBioPigeon: { owner: side, x: hinrigh.x + hinrigh.facing * 8, active: true } }
+  return {
+    ...state,
+    hinrighBioPigeon: { owner: side, x: hinrigh.x + hinrigh.facing * 8, active: true },
+  }
 }
 
 /** Zakuro gains +30% reach while deliberately keeping a wound open. */
@@ -81,7 +83,7 @@ export function zakuroBloodReachFactor(fighter: ArcadeFighter): number {
   return (fighter.openWounds ?? 0) > 0 ? ZAKURO_BLEED_REACH_FACTOR : 1
 }
 
-/** Zakuro 4S: drops blood-eye beacons that reveal foes under In or Zetsu without Gyo. */
+/** Zakuro 4S: places physical blood drops; they do not reveal hidden aura. */
 export function placeZakuroBloodDrops(state: FightState, side: FightSide): FightState {
   const zakuro = state[side]
   const x = Math.max(10, Math.min(90, zakuro.x + zakuro.facing * 8))
@@ -118,39 +120,6 @@ function stepZakuroBlood(state: FightState): FightState {
     if (f.zakuroRevealedFrames) {
       const rem = Math.max(0, f.zakuroRevealedFrames - 1) || undefined
       next = { ...next, [side]: { ...next[side], zakuroRevealedFrames: rem } }
-    }
-  }
-  const drops = next.zakuroBloodDrops
-  const canonicalDropsA = next.player.bloodyMary?.drops ?? []
-  const canonicalDropsB = next.opponent.bloodyMary?.drops ?? []
-  for (const [ownerSide, list] of [
-    ['player', canonicalDropsA],
-    ['opponent', canonicalDropsB],
-  ] as const) {
-    if (!list.length) continue
-    const foeSide: FightSide = ownerSide === 'player' ? 'opponent' : 'player'
-    const foe = next[foeSide]
-    const nearDrop = list.some(
-      (d) => d.reformFrames === 0 && Math.abs(foe.x - d.x) <= ZAKURO_BLOOD_DROP_RADIUS,
-    )
-    if (nearDrop && (foe.nen.in || foe.nen.mode === 'zetsu')) {
-      next = {
-        ...next,
-        [foeSide]: {
-          ...foe,
-          nen: { ...foe.nen, in: false },
-          zakuroRevealedFrames: ZAKURO_REVEAL_FRAMES,
-        },
-      }
-    }
-  }
-  if (!drops) return next
-  const foeSide: FightSide = drops.owner === 'player' ? 'opponent' : 'player'
-  const foe = next[foeSide]
-  if (Math.abs(foe.x - drops.x) <= drops.radius && (foe.nen.in || foe.nen.mode === 'zetsu')) {
-    next = {
-      ...next,
-      [foeSide]: { ...foe, nen: { ...foe.nen, in: false }, zakuroRevealedFrames: ZAKURO_REVEAL_FRAMES },
     }
   }
   return next

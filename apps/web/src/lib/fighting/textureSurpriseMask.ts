@@ -1,5 +1,4 @@
 import { bodyMemoryWeak } from './bodyMemory'
-import { isFurykov } from './furykovProfile'
 import type { TextureSurpriseState } from './hisokaTextureOrigin'
 import type { ArcadeFighter, AttackKind, AttackVariant, FightNenZone } from './types'
 
@@ -33,15 +32,17 @@ export interface TextureSurprisePov {
 }
 
 /** Captures weakened limbs and starting HP when Hisoka applies Texture Surprise. */
-export function buildTextureMask(actor: ArcadeFighter): Pick<
-  TextureSurpriseState,
-  'maskedLimbs' | 'displayedHp' | 'bungeeTrapLimb' | 'integrity'
-> {
+export function buildTextureMask(
+  actor: ArcadeFighter,
+): Pick<TextureSurpriseState, 'maskedLimbs' | 'displayedHp' | 'bungeeTrapLimb' | 'integrity'> {
   const maskedLimbs: FightNenZone[] = []
   if (bodyMemoryWeak(actor, 'hands')) maskedLimbs.push('hands')
   if (bodyMemoryWeak(actor, 'feet')) maskedLimbs.push('feet')
-  const bungeeTrapLimb =
-    maskedLimbs.includes('hands') ? 'hands' : maskedLimbs.includes('feet') ? 'feet' : null
+  const bungeeTrapLimb = maskedLimbs.includes('hands')
+    ? 'hands'
+    : maskedLimbs.includes('feet')
+      ? 'feet'
+      : null
   return {
     maskedLimbs,
     displayedHp: actor.health,
@@ -57,11 +58,7 @@ export function textureSurpriseDrain(fighter: ArcadeFighter): number {
 
 function isHeavyBreak(input: TextureHitInput): boolean {
   if (input.blocked) return false
-  return (
-    input.kind === 'heavy' ||
-    input.variant === 'throw' ||
-    Boolean(input.attacker.nen.ko)
-  )
+  return input.kind === 'heavy' || input.variant === 'throw' || Boolean(input.attacker.nen.ko)
 }
 
 /**
@@ -75,9 +72,9 @@ export function updateTextureOnHit(input: TextureHitInput): TextureHitResult {
   if (!texture) return { textureSurprise: undefined, trapped: false }
   const trapped = Boolean(
     !input.blocked &&
-      input.damage > 0 &&
-      texture.bungeeTrapLimb &&
-      input.zone === texture.bungeeTrapLimb,
+    input.damage > 0 &&
+    texture.bungeeTrapLimb &&
+    input.zone === texture.bungeeTrapLimb,
   )
   if (trapped || isHeavyBreak(input)) {
     return { textureSurprise: undefined, trapped }
@@ -110,13 +107,12 @@ export function textureSurpriseView(
     }
   }
   const fullGyo = Boolean(observer.nen.gyo && !observer.gyoLow)
-  const furykovPierces = isFurykov(observer)
   return {
     maskActive: true,
     displayedHp: texture!.displayedHp ?? target.health,
     realHp: target.health,
     showGhostHp: fullGyo,
-    maskBodyMemory: !furykovPierces,
+    maskBodyMemory: true,
     maskWounds: true,
     auraSeeping: fullGyo,
   }

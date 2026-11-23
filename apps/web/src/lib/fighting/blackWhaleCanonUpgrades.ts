@@ -1,11 +1,12 @@
 import { FIGHT_FPS } from './fightClock'
 import { nenMentalFatigueRatio } from './nenCognitiveLoad'
 import { saiyuAudioCuesMuted } from './finalFiveUpgrades'
+import type { FightStageId } from './stages'
 import type { ArcadeFighter, FighterId, FightInput, FightSide, FightState } from './types'
 
 export const STEALTH_DOLPHIN_LIFE_DPS = 2.5
-export const TSERRIEDNICH_MAX_LIES = 3
-export const TSERRIEDNICH_PUNISH_ZETSU_FRAMES = 300
+/** Two warnings are shown in the published material; the third effect remains unknown. */
+export const TSERRIEDNICH_MAX_LIES = 2
 export const BENJAMIN_ROYAL_GUARDS: readonly FighterId[] = ['musse', 'furykov', 'rihan']
 export const VOCONTE_DEFAULT_DESTINATION = 'heilly-hideout'
 
@@ -28,9 +29,9 @@ declare module './types' {
   }
 }
 
-/** 1. Camilla: Cat's Name activates on fatal blow only if Camilla is in Zetsu (or TSK-17 poisoned). */
-export function camillaCatsNameEligible(victim: ArcadeFighter): boolean {
-  return victim.nen.mode === 'zetsu' || Boolean(victim.tskPoisoned)
+/** Cat's Name is post-mortem Nen. Zetsu was Camilla's tactic, not a revealed condition. */
+export function camillaCatsNameEligible(_victim: ArcadeFighter): boolean {
+  return true
 }
 
 /** 2. Kurapika: holding an unused stolen Hatsu traps him in Emperor Time with continuous life drain. */
@@ -64,31 +65,26 @@ export function readMelodyHeartbeat(
   }
 }
 
-/** 4. Benjamin: inherits a fallen/heavy-struck royal guard Kameo's Hatsu (Musse, Furykov, Rihan). */
+/** Benjamin inherits only after an eligible loyal private-army soldier actually dies. */
 export function inheritBenjaminGuardKameo(
   leader: ArcadeFighter,
   guardId: FighterId,
+  guardDead = false,
 ): ArcadeFighter {
   if ((leader.nenOwner ?? leader.id) !== 'benjamin') return leader
-  if (!BENJAMIN_ROYAL_GUARDS.includes(guardId)) return leader
+  if (!guardDead || !BENJAMIN_ROYAL_GUARDS.includes(guardId)) return leader
   const current = leader.benjaminInheritedHatsus ?? []
   if (current.includes(guardId)) return leader
   return { ...leader, benjaminInheritedHatsus: [...current, guardId] }
 }
 
-/** 5. Tserriednich: his Nen Beast marks liars (bluff call, Texture Surprise, In); 3 marks = Zetsu + seal. */
+/**
+ * Tserriednich's Guardian Spirit Beast records the two published warnings.
+ * The consequence of a third lie is deliberately not simulated because it has not been revealed.
+ */
 export function recordTserriednichLie(target: ArcadeFighter, frame: number): ArcadeFighter {
   if (target.tserriednichLastLieFrame === frame) return target
   const marks = Math.min(TSERRIEDNICH_MAX_LIES, (target.tserriednichLieMarks ?? 0) + 1)
-  if (marks >= TSERRIEDNICH_MAX_LIES) {
-    return {
-      ...target,
-      tserriednichLieMarks: marks,
-      tserriednichLastLieFrame: frame,
-      tserriednichBeastSealed: true,
-      burstZetsuFrames: Math.max(target.burstZetsuFrames ?? 0, TSERRIEDNICH_PUNISH_ZETSU_FRAMES),
-    }
-  }
   return { ...target, tserriednichLieMarks: marks, tserriednichLastLieFrame: frame }
 }
 
@@ -102,22 +98,19 @@ function stepTserriednichBeast(
     const foeSide: FightSide = side === 'player' ? 'opponent' : 'player'
     const foe = next[foeSide]
     const foeInput = inputs[foeSide]
-    const lied = Boolean(foeInput?.call || foe.textureSurprise || (foe.nen.in && foe.attack))
+    const lied = Boolean(foeInput?.call)
     if (lied) next = { ...next, [foeSide]: recordTserriednichLie(foe, next.frame) }
   }
   return next
 }
 
-/** 6. Voconte: crossing the Door threshold transitions the fight to another Black Whale room. */
+/** Legacy entry point; real frame traversal is handled by the Door arena system. */
 export function triggerVoconteArenaTransition(
   state: FightState,
-  targetArenaId = VOCONTE_DEFAULT_DESTINATION,
+  targetArenaId: FightStageId = VOCONTE_DEFAULT_DESTINATION,
 ): FightState {
-  return {
-    ...state,
-    arenaId: targetArenaId,
-    voconteRoomTransitionCount: (state.voconteRoomTransitionCount ?? 0) + 1,
-  }
+  void targetArenaId
+  return state
 }
 
 export function advanceBlackWhaleCanonUpgrades(

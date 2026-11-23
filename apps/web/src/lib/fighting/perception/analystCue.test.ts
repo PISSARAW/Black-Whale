@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { createFightState } from '../fightState'
-import { FURYKOV_TIER_1 } from '../furykovProfile'
 import { SENSE_BITS } from '../saiyuSenses'
 import { activeAnalystCue } from './analystCue'
 
@@ -10,7 +9,7 @@ describe('activeAnalystCue', () => {
     expect(activeAnalystCue(state, 'player', 'fr')).toBeNull()
   })
 
-  it('identifies Gyo, Sonar, Furykov, and Melody hearing', () => {
+  it('identifies Gyo and Melody hearing without invented Leorio or Furykov analysis', () => {
     const gyoState = createFightState('kurapika', 'hisoka')
     gyoState.player.nen.gyo = true
     expect(activeAnalystCue(gyoState, 'player', 'fr')).toEqual({
@@ -20,17 +19,10 @@ describe('activeAnalystCue', () => {
 
     const sonarState = createFightState('leorio', 'hisoka')
     sonarState.opponent.sonarRevealFrames = 60
-    expect(activeAnalystCue(sonarState, 'player', 'en')).toEqual({
-      id: 'sonar',
-      label: 'SONAR · ACTIVE',
-    })
+    expect(activeAnalystCue(sonarState, 'player', 'en')).toBeNull()
 
     const furykovState = createFightState('furykov', 'hisoka')
-    furykovState.player.furykovGauge = FURYKOV_TIER_1
-    expect(activeAnalystCue(furykovState, 'player', 'fr')).toEqual({
-      id: 'furykov',
-      label: 'ANALYSE · FURYKOV',
-    })
+    expect(activeAnalystCue(furykovState, 'player', 'fr')).toBeNull()
 
     const melodyState = createFightState('melody', 'hisoka')
     melodyState.player.hatsuEffects.senseSeals = SENSE_BITS.sight

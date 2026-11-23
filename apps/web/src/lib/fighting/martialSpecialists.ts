@@ -1,14 +1,14 @@
 import type { ArcadeFighter } from './types'
 
-const FAST_TRANSFER_MARTIALS = new Set(['cluck', 'sayird', 'yokotani'])
+const FAST_TRANSFER_MARTIALS = new Set<string>()
 
-export const BEYOND_REN_DRAIN = -2
-export const BEYOND_KO_BONUS = 1.05
-export const THETA_BULLET_LETHALITY = 1.2
-export const THETA_STEALTH_BONUS = 1.15
-export const THETA_IN_DRAIN = 1.5
-export const MARTIAL_KAMEO_COOLDOWN_FACTOR = 0.7
-export const YOKOTANI_KAMEO_COOLDOWN_FACTOR = 0.65
+export const BEYOND_REN_DRAIN = -4
+export const BEYOND_KO_BONUS = 0.82
+export const THETA_BULLET_LETHALITY = 1
+export const THETA_STEALTH_BONUS = 1
+export const THETA_IN_DRAIN = 3
+export const MARTIAL_KAMEO_COOLDOWN_FACTOR = 1
+export const YOKOTANI_KAMEO_COOLDOWN_FACTOR = 1
 
 const ownerId = (fighter: Pick<ArcadeFighter, 'id' | 'nenOwner'>) => fighter.nenOwner ?? fighter.id
 
@@ -24,15 +24,18 @@ export function hasFastMartialTransfer(fighter: Pick<ArcadeFighter, 'id' | 'nenO
   return FAST_TRANSFER_MARTIALS.has(ownerId(fighter))
 }
 
-/** Cluck, Sayird (-30%), and Yokotani (-35%) cycle Kameo support faster to offset having no duel Hatsu. */
+/** No character receives an invented Kameo bonus merely for lacking a revealed duel Hatsu. */
 export function kameoCooldownFactor(leader: Pick<ArcadeFighter, 'id' | 'nenOwner'>): number {
-  if (ownerId(leader) === 'yokotani') return YOKOTANI_KAMEO_COOLDOWN_FACTOR
-  return hasFastMartialTransfer(leader) ? MARTIAL_KAMEO_COOLDOWN_FACTOR : 1
+  void leader
+  return 1
 }
 
-/** Theta's physical handgun ignores Emission penalties and gains stealth lethality from In/Zetsu. */
-export function thetaBulletDamageFactor(attacker: ArcadeFighter, physicalProjectile?: boolean): number {
-  if (!physicalProjectile || !isTheta(attacker)) return 1
-  const stealth = attacker.nen.in || attacker.nen.mode === 'zetsu'
-  return THETA_BULLET_LETHALITY * (stealth ? THETA_STEALTH_BONUS : 1)
+/** Theta's material handgun uses the ordinary physical-projectile damage rules. */
+export function thetaBulletDamageFactor(
+  attacker: ArcadeFighter,
+  physicalProjectile?: boolean,
+): number {
+  void attacker
+  void physicalProjectile
+  return 1
 }

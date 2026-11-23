@@ -1,4 +1,3 @@
-import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
 export const LEORIO_SONAR_COST = 10
@@ -16,32 +15,10 @@ declare module './types' {
   }
 }
 
-const isLeorio = (fighter: Pick<ArcadeFighter, 'id' | 'nenOwner'>) =>
-  (fighter.nenOwner ?? fighter.id) === 'leorio'
-
-function mostHitLimb(fighter: ArcadeFighter): Extract<FightNenZone, 'hands' | 'feet'> {
-  const hands = fighter.bodyMemory?.hits.hands ?? 0
-  const feet = fighter.bodyMemory?.hits.feet ?? 0
-  return feet > hands ? 'feet' : 'hands'
-}
-
-/** 2S Medical Sonar: reveals Zetsu/In for 2s without En's defense penalty and scans anatomy for 8s. */
+/** Legacy entry point. Leorio has shown remote emission through a surface, not a Nen sonar. */
 export function castLeorioSonar(state: FightState, side: FightSide): FightState {
-  const caster = state[side]
-  if (!isLeorio(caster) || caster.y > 0 || !voluntaryNenAvailable(caster)) return state
-  if (caster.aura < LEORIO_SONAR_COST) return state
-  const targetSide: FightSide = side === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  return {
-    ...state,
-    [side]: { ...caster, aura: caster.aura - LEORIO_SONAR_COST },
-    [targetSide]: {
-      ...target,
-      sonarRevealFrames: LEORIO_SONAR_REVEAL_FRAMES,
-      sonarScanFrames: LEORIO_SONAR_SCAN_FRAMES,
-      sonarTargetLimb: mostHitLimb(target),
-    },
-  }
+  void side
+  return state
 }
 
 export function advanceLeorioSonar(state: FightState): FightState {
@@ -64,22 +41,21 @@ export function advanceLeorioSonar(state: FightState): FightState {
   return next
 }
 
-/** Remote Punch breaks ordinary Ten guard; only Ken or Defensive Ko (feet) blocks it cleanly. */
+/** Remote Punch has no attested property that bypasses ordinary Nen defence. */
 export function leorioBreaksTenGuard(
   attacker: ArcadeFighter,
   defender: ArcadeFighter,
   blocked: boolean,
 ): boolean {
-  if (!blocked || !isLeorio(attacker)) return false
-  const moveId = attacker.attack?.moveId
-  const isRemote =
-    attacker.attack?.kind === 'special' &&
-    (!moveId || moveId === 'leorio:neutralSpecial' || moveId === 'leorio:forwardSpecial')
-  if (!isRemote) return false
-  return !defender.nen.ken && defender.nen.ko !== 'feet'
+  void attacker
+  void defender
+  void blocked
+  return false
 }
 
-/** Surgical strike: scanned targets take double Body Memory stacks (2 clean hits instead of 3). */
+/** Leorio has no attested combat scan that accelerates Body Memory. */
 export function leorioSurgicalStack(attacker: ArcadeFighter, defender: ArcadeFighter): number {
-  return isLeorio(attacker) && (defender.sonarScanFrames ?? 0) > 0 ? 2 : 1
+  void attacker
+  void defender
+  return 1
 }

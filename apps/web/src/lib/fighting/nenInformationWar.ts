@@ -49,7 +49,6 @@ export function auraInformationKnown(
   if (observerSide === sourceSide) return true
   const source = state[sourceSide]
   if (
-    (source.sonarRevealFrames ?? 0) > 0 ||
     (source.zakuroRevealedFrames ?? 0) > 0 ||
     musseCancelsIn(state, sourceSide) ||
     kallutoDollRevealsOpponent(state, observerSide) ||

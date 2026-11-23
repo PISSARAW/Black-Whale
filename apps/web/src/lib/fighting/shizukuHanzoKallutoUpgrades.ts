@@ -3,7 +3,7 @@ import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const BLINKY_VACUUM_RANGE = 16
 export const BLINKY_HEMORRHAGE_HP_DPS = 7
-export const BLINKY_HEMORRHAGE_AURA_DPS = 9
+export const BLINKY_HEMORRHAGE_AURA_DPS = 0
 export const KALLUTO_CONFETTI_RADIUS = 10
 export const KALLUTO_CONFETTI_CUT_THRESHOLD = 3
 
@@ -21,7 +21,7 @@ export interface KallutoListeningDoll {
 
 declare module './types' {
   interface ArcadeFighter {
-    shizukuSwallowed?: string
+    shizukuSwallowed?: number | 'kalluto-confetti'
     confettiCuts?: number
   }
   interface FightState {
@@ -37,7 +37,7 @@ export function blinkySwallowNonNen(state: FightState, side: FightSide): FightSt
   const kept = state.projectiles.filter((p) => {
     const inRange = Math.abs(p.x - shizuku.x) <= BLINKY_VACUUM_RANGE
     const nenCharged = Boolean(p.shuCharged || p.nenInvestment)
-    const nonNen = !nenCharged && Boolean(p.physical || p.id.includes('confetti') || p.id.includes('item'))
+    const nonNen = !nenCharged && p.matter === 'object' && !p.living
     if (p.owner !== side && inRange && nonNen) {
       swallowed = p.id
       return false
@@ -62,30 +62,35 @@ export function blinkySpitLastSwallowed(state: FightState, side: FightSide): Fig
   const shizuku = state[side]
   if (!shizuku.shizukuSwallowed) return state
   const shot = {
-    id: `blinky-spit:${shizuku.shizukuSwallowed}:${state.frame}`,
+    id: state.nextProjectileId,
     owner: side,
+    fighterId: shizuku.id,
     x: shizuku.x + shizuku.facing * 4,
     y: Math.max(4, shizuku.y + 4),
-    vx: shizuku.facing * 2.2,
-    vy: 0,
-    radius: 2.2,
+    velocityX: shizuku.facing * 2.2,
+    width: 2.2,
+    height: 2.2,
     damage: 11,
     knockback: 4,
     hitstun: 14,
     blockstun: 10,
+    hitstop: 7,
+    targetZone: 'torso' as const,
+    shape: 'stone' as const,
+    colour: '#a9b4bc',
+    matter: 'object' as const,
     age: 0,
     lifetime: 70,
-    physical: true,
-    zone: 'torso' as const,
   }
   return {
     ...state,
+    nextProjectileId: state.nextProjectileId + 1,
     projectiles: [...state.projectiles, shot],
     [side]: { ...shizuku, shizukuSwallowed: undefined },
   }
 }
 
-/** Shizuku 2S: drains both HP and aura remotely if the opponent has an unplugged open wound. */
+/** Shizuku drains blood through an open wound; this does not drain aura. */
 export function applyBlinkyForcedHemorrhage(state: FightState, side: FightSide): FightState {
   const foeSide: FightSide = side === 'player' ? 'opponent' : 'player'
   const foe = state[foeSide]
@@ -95,7 +100,7 @@ export function applyBlinkyForcedHemorrhage(state: FightState, side: FightSide):
     [foeSide]: {
       ...foe,
       health: Math.max(0, foe.health - BLINKY_HEMORRHAGE_HP_DPS / FIGHT_FPS),
-      aura: Math.max(0, foe.aura - BLINKY_HEMORRHAGE_AURA_DPS / FIGHT_FPS),
+      aura: foe.aura,
     },
   }
 }
@@ -123,17 +128,16 @@ export function scatterKallutoConfetti(state: FightState, side: FightSide): Figh
   return { ...state, kallutoConfetti: { owner: side, x, radius: KALLUTO_CONFETTI_RADIUS } }
 }
 
-/** Kalluto 4S: deploys a listening paper doll that reveals Seiyaku and negates In aura hiding. */
+/** Kalluto deploys a material listening doll; it does not reveal aura or vows. */
 export function deployKallutoListeningDoll(state: FightState, side: FightSide): FightState {
   const kalluto = state[side]
   return { ...state, kallutoDoll: { owner: side, x: kalluto.x, active: true } }
 }
 
 export function kallutoDollRevealsOpponent(state: FightState, kallutoSide: FightSide): boolean {
-  const canonicalDoll = Boolean(state[kallutoSide].kallutoPaper?.doll?.active)
-  return Boolean(
-    canonicalDoll || (state.kallutoDoll?.active && state.kallutoDoll.owner === kallutoSide),
-  )
+  void state
+  void kallutoSide
+  return false
 }
 
 export function advanceShizukuHanzoKallutoUpgrades(state: FightState): FightState {

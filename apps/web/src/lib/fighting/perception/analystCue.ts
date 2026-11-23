@@ -1,4 +1,3 @@
-import { furykovTier, isFurykov } from '../furykovProfile'
 import { canHear } from '../melodyRules'
 import { musseCancelsIn } from '../musseWindowUpgrades'
 import { enTargetInside } from '../nenPillars'
@@ -35,15 +34,12 @@ export function activeAnalystCue(
 function detectSource(state: FightState, observerSide: FightSide): AnalystSourceId | null {
   const targetSide: FightSide = observerSide === 'player' ? 'opponent' : 'player'
   const observer = state[observerSide]
-  const target = state[targetSide]
   const blinded = senseDeprived(observer, 'sight')
 
   if ((observer.nenOwner ?? observer.id) === 'melody' && canHear(observer)) return 'melody'
   if (blinded) return null
   if (observer.nen.gyo && !observer.gyoLow) return 'gyo'
   if (enTargetInside(state, observerSide)) return 'en'
-  if ((target.sonarRevealFrames ?? 0) > 0) return 'sonar'
   if (musseCancelsIn(state, targetSide)) return 'musse'
-  if (isFurykov(observer) && furykovTier(observer) >= 1) return 'furykov'
   return null
 }

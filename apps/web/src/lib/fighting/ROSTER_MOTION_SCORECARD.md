@@ -59,3 +59,27 @@ accents preserve ten distinct movement identities.
 | Machi        | 6.9 | 7.7 |
 
 The roster total is now 111 dedicated physical clips and 249 generated clips.
+
+## P2 — low and directional control
+
+The same ten fighters now own dedicated `lowLight`, `forwardHeavy` and
+`backHeavy` timelines. Low attacks add measurable level compression, advancing
+heavies drive the root forward from a lead-foot base, and retreating heavies
+brake backward over the rear support instead of reusing the forward silhouette.
+
+| Fighter      |  P1 |  P2 |
+| ------------ | --: | --: |
+| Melody       | 7.8 | 8.7 |
+| Mizaistom    | 7.8 | 8.7 |
+| Camilla      | 7.8 | 8.7 |
+| Gel          | 7.6 | 8.6 |
+| Illumi       | 7.7 | 8.7 |
+| Terebellum   | 7.8 | 8.7 |
+| Tserriednich | 7.7 | 8.6 |
+| Cluck        | 7.8 | 8.6 |
+| Luini        | 7.8 | 8.7 |
+| Machi        | 7.7 | 8.6 |
+
+The roster total is now 141 dedicated physical clips and 219 generated clips.
+The first wave's remaining common priorities are `airLight`, `airHeavy` and
+`lowHeavy`.

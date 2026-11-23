@@ -22,14 +22,17 @@ export const ROSTER_WAVE_ONE_SLOTS = [
   'forwardLight',
 ] as const satisfies readonly MoveSlot[]
 
-interface GroundedSignature {
+export interface GroundedSignature {
   load: FightPose
   contact: FightPose
   recoil: FightPose
   settle: FightPose
 }
 
-const SIGNATURES: Record<(typeof ROSTER_WAVE_ONE_FIGHTERS)[number], GroundedSignature> = {
+export const ROSTER_WAVE_ONE_SIGNATURES: Record<
+  (typeof ROSTER_WAVE_ONE_FIGHTERS)[number],
+  GroundedSignature
+> = {
   melody: {
     load: { pelvis: [-0.025, -0.08, 0], chest: [0.02, -0.08, 0], leadPalm: [-0.04, 0, 0] },
     contact: { pelvis: [0.035, 0.14, 0], leadKnee: [0.12, 0, 0], rearFoot: [0, 0.08, 0] },
@@ -96,29 +99,37 @@ export const ROSTER_WAVE_ONE_GROUNDED_POSES = Object.fromEntries(
   ROSTER_WAVE_ONE_FIGHTERS.map((id) => [
     id,
     Object.fromEntries(
-      ROSTER_WAVE_ONE_SLOTS.map((slot) => [slot, groundedTimeline(id, slot, SIGNATURES[id])]),
+      ROSTER_WAVE_ONE_SLOTS.map((slot) => [
+        slot,
+        rosterWaveOneGroundedTimeline(id, slot, ROSTER_WAVE_ONE_SIGNATURES[id]),
+      ]),
     ),
   ]),
 ) as Record<(typeof ROSTER_WAVE_ONE_FIGHTERS)[number], Partial<Record<MoveSlot, MoveTimeline>>>
 
-function groundedTimeline(
+export function rosterWaveOneGroundedTimeline(
   id: (typeof ROSTER_WAVE_ONE_FIGHTERS)[number],
-  slot: (typeof ROSTER_WAVE_ONE_SLOTS)[number],
+  slot: MoveSlot,
   signature: GroundedSignature,
+  accent: GroundedSignature = { load: {}, contact: {}, recoil: {}, settle: {} },
 ): MoveTimeline {
   const source = rosterKeyPoses(id)[slot]!
   const startup = source.find(({ phase }) => phase === 'startup')!
   const contact = source.find(({ phase, at }) => phase === 'active' && at === 0)!
   const recovery = source.find(({ phase }) => phase === 'recovery')!
-  const force = slot === 'standingHeavy' ? 1 : slot === 'forwardLight' ? 0.82 : 0.68
-  const loaded = addPoses(startup.pose, scalePose(signature.load, force))
-  const struck = addPoses(contact.pose, scalePose(signature.contact, force))
+  const force = forceFor(slot)
+  const loaded = addPoses(startup.pose, scalePose(signature.load, force), accent.load)
+  const struck = addPoses(contact.pose, scalePose(signature.contact, force), accent.contact)
   return [
     {
       phase: 'startup',
       at: 0.28,
       ease: 'smooth',
-      pose: addPoses(scalePose(startup.pose, 0.42), scalePose(signature.load, force * 0.48)),
+      pose: addPoses(
+        scalePose(startup.pose, 0.42),
+        scalePose(signature.load, force * 0.48),
+        scalePose(accent.load, 0.55),
+      ),
     },
     {
       ...startup,
@@ -137,19 +148,30 @@ function groundedTimeline(
       phase: 'recovery',
       at: 0.16,
       ease: 'out',
-      pose: addPoses(scalePose(struck, 0.7), scalePose(signature.recoil, force)),
+      pose: addPoses(scalePose(struck, 0.7), scalePose(signature.recoil, force), accent.recoil),
     },
     {
       phase: 'recovery',
       at: 0.52,
       ease: 'smooth',
-      pose: addPoses(recovery.pose, scalePose(signature.recoil, force * 0.42)),
+      pose: addPoses(
+        recovery.pose,
+        scalePose(signature.recoil, force * 0.42),
+        scalePose(accent.recoil, 0.4),
+      ),
     },
     {
       phase: 'recovery',
       at: 0.86,
       ease: 'smooth',
-      pose: scalePose(signature.settle, force),
+      pose: addPoses(scalePose(signature.settle, force), accent.settle),
     },
   ]
+}
+
+function forceFor(slot: MoveSlot): number {
+  if (slot === 'standingHeavy' || slot === 'forwardHeavy' || slot === 'backHeavy') return 1
+  if (slot === 'forwardLight') return 0.82
+  if (slot === 'lowLight') return 0.72
+  return 0.68
 }

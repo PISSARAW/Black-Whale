@@ -23,6 +23,7 @@ import { KURAPIKA_CAST_POSES } from './keyPosesKurapikaCasts'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
 import { KURAPIKA_GOLDEN_HEAVY_TIMELINE } from './keyPosesKurapikaGoldenHeavy'
 import { ROSTER_WAVE_ONE_GROUNDED_POSES } from './keyPosesRosterWaveOne'
+import { ROSTER_WAVE_ONE_DIRECTIONAL_POSES } from './keyPosesRosterWaveOneDirectional'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -33,7 +34,15 @@ import type { FighterId, MoveSlot } from './types'
  * The family fallback is retained only for legacy, non-playable identities.
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
-  ...ROSTER_WAVE_ONE_GROUNDED_POSES,
+  ...Object.fromEntries(
+    Object.keys(ROSTER_WAVE_ONE_GROUNDED_POSES).map((id) => [
+      id,
+      {
+        ...ROSTER_WAVE_ONE_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_ONE_GROUNDED_POSES],
+        ...ROSTER_WAVE_ONE_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_ONE_DIRECTIONAL_POSES],
+      },
+    ]),
+  ),
   voconte: { neutralSpecial: DOOR_LINK_POSE },
   kurapika: {
     ...holdNormalContacts(KURAPIKA_KEY_POSES),

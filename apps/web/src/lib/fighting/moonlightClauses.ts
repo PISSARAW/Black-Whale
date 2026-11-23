@@ -1,4 +1,5 @@
 import type { ArcadeFighter } from './types'
+import { nenContractPermitsAction, type NenContractDefinition } from './nenContract'
 
 /**
  * Moonlight Act in Clash offers a short list of fixed, balanced contracts instead of a free
@@ -81,11 +82,41 @@ export function agreementClause(agreement: { clause?: MoonlightClauseId }): Moon
 
 /** A bare, uncharged strike is the only action `no-techniques` leaves to the signatories. */
 export function clausePermitsAction(terms: MoonlightTerms, after: ArcadeFighter): boolean {
-  if (terms === 'no-ken') return !after.nen.ken
-  if (terms === 'no-attacks') return false
-  const attack = after.attack
-  if (!attack || attack.auraCharged) return false
-  return attack.kind === 'light' || attack.kind === 'heavy'
+  return nenContractPermitsAction(moonlightTermsContract(terms), after)
+}
+
+export function moonlightNenContract(clause: MoonlightClause): NenContractDefinition {
+  return {
+    id: `moonlight:${clause.id}`,
+    source: 'moonlight',
+    restrictions: [moonlightRestriction(clause.terms)],
+    reward:
+      clause.reward === 'one-use-of-moonlight-act'
+        ? 'borrowed-use'
+        : clause.auraReward || clause.immediateAura
+          ? 'aura'
+          : 'none',
+    penalty: 'one-week-zetsu',
+    durationFrames: clause.durationFrames,
+    disclosure: 'signatories',
+    consent: 'two-signatures',
+  }
+}
+
+function moonlightTermsContract(terms: MoonlightTerms): NenContractDefinition {
+  return moonlightNenContract({
+    ...MOONLIGHT_CLAUSES[0],
+    id: 'truce',
+    terms,
+  })
+}
+
+function moonlightRestriction(terms: MoonlightTerms) {
+  return terms === 'no-attacks'
+    ? 'no-attacks'
+    : terms === 'no-techniques'
+      ? 'no-techniques'
+      : 'no-ken'
 }
 
 export function rewardSignatory(fighter: ArcadeFighter, clause: MoonlightClause): ArcadeFighter {

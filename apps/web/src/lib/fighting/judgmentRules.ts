@@ -1,4 +1,5 @@
 import type { ArcadeFighter, FightSide } from './types'
+import type { NenContractDefinition, NenContractRestriction } from './nenContract'
 
 export type JudgmentClause =
   'zetsu' | 'no-troupe-contact' | 'truthful-answers' | 'no-disclosure' | 'return-hostage'
@@ -41,4 +42,22 @@ export function createJudgmentSeal(
   return clauses.length === 1
     ? { owner, ownerMember: member, rule: clauses[0] }
     : { owner, ownerMember: member, rule: clauses[0], clauses: [...clauses] }
+}
+
+export function judgmentNenContract(fighter: ArcadeFighter): NenContractDefinition {
+  const clauses = fighter.judgmentDeclaration?.clauses ?? selectedJudgmentClauses(fighter)
+  return {
+    id: `judgment:${clauses.join('+')}`,
+    source: 'judgment',
+    restrictions: clauses.map(judgmentRestriction),
+    reward: 'none',
+    penalty: 'death',
+    durationFrames: null,
+    disclosure: 'implanted-target',
+    consent: 'physical-implantation',
+  }
+}
+
+function judgmentRestriction(clause: JudgmentClause): NenContractRestriction {
+  return clause === 'zetsu' ? 'forced-zetsu' : clause
 }

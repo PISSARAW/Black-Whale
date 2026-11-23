@@ -110,8 +110,12 @@ exchanges explain confirms, whiffs, safe pressure and punish windows. The six-st
 Arena initiation now requires a real authored hit, a two-hit cancel route and an
 actually blocked opponent move rather than completing on button presses alone.
 
-Still Clash-only, in rough order of value: the remaining dynamic Hatsu;
-replay coaching; rollback PvP.
+Finished Arena replays now include a player-POV coach. It scans the deterministic
+timeline once, identifies conservative recovery opportunities and punishments,
+then lets the player review the contact or branch from just before the exchange.
+The diagnosis never consults concealed intent and is explicitly non-exhaustive.
+
+Still Clash-only, in rough order of value: the remaining dynamic Hatsu; rollback PvP.
 
 `parity.ts` is the migration boundary toward one combat truth. It runs Arena
 commands on Clash's 60 Hz cadence and emits a small, presentation-independent

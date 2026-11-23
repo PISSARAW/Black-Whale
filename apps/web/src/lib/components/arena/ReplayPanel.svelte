@@ -3,6 +3,7 @@
   import { stateAtTick } from '$lib/arena/replay/player'
   import { projectFrame, type ReplayPerspective } from '$lib/arena/replay/perspective'
   import { replayShareUrl } from '$lib/arena/replay/share'
+  import ArenaReplayCoach from './ArenaReplayCoach.svelte'
   import { untrack } from 'svelte'
 
   interface Props {
@@ -79,6 +80,7 @@
   {:else}
     <p>{locale === 'fr' ? 'Aucun échange à cet instant.' : 'No exchange at this moment.'}</p>
   {/if}
+  <ArenaReplayCoach {replay} {locale} onSeek={(next) => (tick = next)} {onResume} />
 </section>
 
 <style>

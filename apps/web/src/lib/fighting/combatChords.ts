@@ -1,18 +1,16 @@
 import type { FightInput, MoveAction } from './types'
 
 export type CombatChordResult =
-  | { kind: 'action'; action: MoveAction | 'ranged' }
-  | { kind: 'burst' }
-  | null
+  { kind: 'action'; action: MoveAction | 'ranged' } | { kind: 'burst' } | null
 
 type OffensiveButton = 'light' | 'heavy' | 'special'
 
 /**
  * Tracks held offensive keys per side so simultaneous presses resolve cleanly:
  * - Guard + Light + Heavy -> Burst
+ * - Heavy + Special -> Finisher
  * - Guard + Special -> ranged attack
  * - Light + Heavy -> Throw
- * - Heavy + Special -> Finisher
  */
 export function createCombatChordTracker() {
   const held = new Set<OffensiveButton>()
@@ -25,14 +23,17 @@ export function createCombatChordTracker() {
     },
     press(button: OffensiveButton, input: Pick<FightInput, 'guard'>): CombatChordResult {
       held.add(button)
-      if (held.has('light') && held.has('heavy')) {
-        return input.guard ? { kind: 'burst' } : { kind: 'action', action: 'throw' }
+      if (input.guard && held.has('light') && held.has('heavy')) {
+        return { kind: 'burst' }
+      }
+      if (held.has('heavy') && held.has('special')) {
+        return { kind: 'action', action: 'finisher' }
       }
       if (input.guard && button === 'special') {
         return { kind: 'action', action: 'ranged' }
       }
-      if (held.has('heavy') && held.has('special')) {
-        return { kind: 'action', action: 'finisher' }
+      if (held.has('light') && held.has('heavy')) {
+        return { kind: 'action', action: 'throw' }
       }
       return { kind: 'action', action: button }
     },
@@ -57,20 +58,29 @@ export function resolvePadChords(pad: PadChordState): {
   const lightNew = newlyPressed(pad.light, pad.prevLight)
   const heavyNew = newlyPressed(pad.heavy, pad.prevHeavy)
   const specialNew = newlyPressed(pad.special, pad.prevSpecial)
-  if (newPair({ left: pad.light, right: pad.heavy, leftNew: lightNew, rightNew: heavyNew })) {
-    return pad.guard ? { actions: [], burst: true } : { actions: ['throw'], burst: false }
+  const lightHeavy = newPair({
+    left: pad.light,
+    right: pad.heavy,
+    leftNew: lightNew,
+    rightNew: heavyNew,
+  })
+  if (pad.guard && lightHeavy) {
+    return { actions: [], burst: true }
+  }
+  if (
+    newPair({
+      left: pad.heavy,
+      right: pad.special,
+      leftNew: heavyNew,
+      rightNew: specialNew,
+    })
+  ) {
+    return { actions: ['finisher'], burst: false }
   }
   if (pad.guard && specialNew) {
     return { actions: ['ranged'], burst: false }
   }
-  if (newPair({
-    left: pad.heavy,
-    right: pad.special,
-    leftNew: heavyNew,
-    rightNew: specialNew,
-  })) {
-    return { actions: ['finisher'], burst: false }
-  }
+  if (lightHeavy) return { actions: ['throw'], burst: false }
   return { actions: individualActions(lightNew, heavyNew, specialNew), burst: false }
 }
 

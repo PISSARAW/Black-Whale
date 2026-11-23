@@ -41,7 +41,23 @@ describe('fight keyboard configuration', () => {
     expect(keys.pause).toBe('p')
   })
   it('rejects duplicate keys, browser shortcuts and Easter Egg keys', () => {
-    for (const value of ['k', 'F2', 'F4', 'F5', 'Tab', 'Escape'])
+    for (const value of [
+      'k',
+      'F2',
+      'F4',
+      'F5',
+      'Tab',
+      'Escape',
+      'R',
+      'F',
+      'X',
+      'G',
+      '1',
+      '2',
+      '3',
+      '4',
+      '[',
+    ])
       expect(assignControlKey(defaultBindings(), 'playerLight', value)).toBeNull()
   })
   it('remaps the physical key and disables its former primary shortcut', () => {
@@ -192,6 +208,66 @@ describe('configured fight input dispatch', () => {
     expect(control).toHaveBeenCalledWith('context', true)
     expect(opponentControl).toHaveBeenCalledWith('context', true)
     expect(opponentControl).toHaveBeenCalledWith('burst', true)
+  })
+  it('dispatches every advertised keyboard Nen shortcut', () => {
+    const control = vi.fn()
+    const options = {
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-ai' }),
+      keys: { player: 'F2', opponent: 'F4' },
+      input: EMPTY_INPUT,
+      opponentInput: EMPTY_INPUT,
+      easter: vi.fn(),
+      control,
+      opponentControl: vi.fn(),
+      opponentAttack: vi.fn(),
+      attack: vi.fn(),
+      action: vi.fn(),
+    }
+    const shortcuts = {
+      r: 'en',
+      f: 'shu',
+      x: 'conceal',
+      g: 'gyo',
+      '1': 'focusHead',
+      '2': 'focusTorso',
+      '3': 'focusHands',
+      '4': 'focusFeet',
+    } as const
+    for (const [pressed, input] of Object.entries(shortcuts)) {
+      dispatchFightKey(
+        { key: pressed, repeat: false, preventDefault: vi.fn() } as unknown as KeyboardEvent,
+        true,
+        options,
+      )
+      expect(control).toHaveBeenLastCalledWith(input, true)
+    }
+  })
+  it('gives arrows to P2 locally and keeps them as P1 aliases against the AI', () => {
+    const control = vi.fn(),
+      opponentControl = vi.fn()
+    const options = {
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-local' }),
+      keys: { player: 'F2', opponent: 'F4' },
+      input: EMPTY_INPUT,
+      opponentInput: EMPTY_INPUT,
+      easter: vi.fn(),
+      control,
+      opponentControl,
+      opponentAttack: vi.fn(),
+      attack: vi.fn(),
+      action: vi.fn(),
+    }
+    const event = () =>
+      ({ key: 'ArrowLeft', repeat: false, preventDefault: vi.fn() }) as unknown as KeyboardEvent
+    dispatchFightKey(event(), true, options)
+    expect(opponentControl).toHaveBeenCalledWith('left', true)
+    expect(control).not.toHaveBeenCalled()
+
+    dispatchFightKey(event(), true, {
+      ...options,
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-ai' }),
+    })
+    expect(control).toHaveBeenCalledWith('left', true)
   })
   it('renders configured move commands without replacing technique names', () => {
     const bindings = { ...defaultBindings(), playerSpecial: 'é', playerHeavy: '`' }

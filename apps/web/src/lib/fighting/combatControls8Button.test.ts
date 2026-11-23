@@ -6,7 +6,10 @@ import { resolveContextInput } from './contextInput'
 import { sampleGamepad, type FightPad } from './fightGamepad'
 import { createCombatChordTracker } from './combatChords'
 import { createKeyboardMapper, defaultBindings } from './fightInputBindings'
-import { dispatchPlayerAttackKey, resetKeyboardChords } from '../../routes/fighting/fightingKeyboard'
+import {
+  dispatchPlayerAttackKey,
+  resetKeyboardChords,
+} from '../../routes/fighting/fightingKeyboard'
 import { EMPTY_INPUT } from './types'
 
 function pad(buttons: number[] = []): FightPad {
@@ -92,7 +95,10 @@ describe('8-button combat layout and chords', () => {
     expect(tracker.press('light', { guard: false })).toEqual({ kind: 'action', action: 'light' })
     expect(tracker.press('heavy', { guard: false })).toEqual({ kind: 'action', action: 'throw' })
     tracker.release('light')
-    expect(tracker.press('special', { guard: false })).toEqual({ kind: 'action', action: 'finisher' })
+    expect(tracker.press('special', { guard: false })).toEqual({
+      kind: 'action',
+      action: 'finisher',
+    })
     tracker.clear()
     expect(tracker.press('special', { guard: true })).toEqual({
       kind: 'action',
@@ -103,6 +109,26 @@ describe('8-button combat layout and chords', () => {
     expect(tracker.press('heavy', { guard: true })).toEqual({ kind: 'burst' })
   })
 
+  it('keeps Finisher above projectile and Throw when three offensive buttons overlap', () => {
+    const guarded = createCombatChordTracker()
+    guarded.press('heavy', { guard: true })
+    expect(guarded.press('special', { guard: true })).toEqual({
+      kind: 'action',
+      action: 'finisher',
+    })
+
+    const unguarded = createCombatChordTracker()
+    unguarded.press('light', { guard: false })
+    unguarded.press('heavy', { guard: false })
+    expect(unguarded.press('special', { guard: false })).toEqual({
+      kind: 'action',
+      action: 'finisher',
+    })
+
+    expect(sampleGamepad(pad([4, 1, 2]), pad([4])).actions).toEqual(['finisher'])
+    expect(sampleGamepad(pad([0, 1, 2]), pad()).actions).toEqual(['finisher'])
+  })
+
   it('allows 3-frame chord lenience (plinking L -> Throw within startup) and avoids macOS Alt dead keys', () => {
     const keys = defaultBindings()
     expect(keys.opponentAura).toBe('v')
@@ -111,10 +137,22 @@ describe('8-button combat layout and chords', () => {
     expect(mapper.key({ key: '≤', code: 'Comma', altKey: true }, true, keys)).toBe(',')
 
     const start = { ...createFightState('kurapika', 'hisoka'), phase: 'fighting' as const }
-    const withLight = performMove({ state: start, side: 'player', action: 'light', input: EMPTY_INPUT })
+    const withLight = performMove({
+      state: start,
+      side: 'player',
+      action: 'light',
+      input: EMPTY_INPUT,
+    })
     expect(withLight.player.attack?.kind).toBe('light')
-    const frame2 = tickFight(tickFight(withLight, EMPTY_INPUT, { dt: 1 / 60 }), EMPTY_INPUT, { dt: 1 / 60 })
-    const plinked = performMove({ state: frame2, side: 'player', action: 'throw', input: EMPTY_INPUT })
+    const frame2 = tickFight(tickFight(withLight, EMPTY_INPUT, { dt: 1 / 60 }), EMPTY_INPUT, {
+      dt: 1 / 60,
+    })
+    const plinked = performMove({
+      state: frame2,
+      side: 'player',
+      action: 'throw',
+      input: EMPTY_INPUT,
+    })
     expect(plinked.player.attack?.variant).toBe('throw')
   })
 })

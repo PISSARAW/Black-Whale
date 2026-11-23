@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { sampleGamepad, type FightPad } from '../fightGamepad'
+import { createFightState } from '../fightState'
+import { applyAuraContext } from '../nen'
 function pad(...held: number[]): FightPad {
   return {
     index: 0,
@@ -48,6 +50,25 @@ describe('Xbox Nen chords', () => {
     p.axes = [1, 0]
     expect(sampleGamepad(p, pad()).input).toMatchObject({ en: true, right: true, jump: false })
     expect(sampleGamepad(pad(), p).neutral).toBe(true)
+  })
+  it('keeps Aura + D-pad directional Nen free from the body-Gyo modifier', () => {
+    const down = sampleGamepad(pad(5, 13), pad()).input
+    expect(down).toMatchObject({
+      aura: true,
+      down: true,
+      gyo: false,
+    })
+    expect(down.focusTorso).not.toBe(true)
+    expect(applyAuraContext(createFightState('kurapika', 'hisoka').player, down).nen.mode).toBe(
+      'zetsu',
+    )
+    const back = sampleGamepad(pad(5, 14), pad()).input
+    expect(back).toMatchObject({
+      aura: true,
+      left: true,
+      gyo: false,
+    })
+    expect(back.focusHands).not.toBe(true)
   })
   it('preserves the existing ears/wounds and pause shortcuts', () => {
     expect(sampleGamepad(pad(8, 4), pad()).input.coverEars).toBe(true)

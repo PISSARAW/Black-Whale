@@ -50,8 +50,8 @@
   </p>
   <p>
     {language === 'fr'
-      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu maintenu ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. R maintient En. Shu est automatique en Ren avec une arme.'
-      : 'Aura (modifier): alone = Ren; + Down = sustained Zetsu; + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. Hold R for En. Shu is automatic during Ren with a weapon.'}
+      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu maintenu ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. R = En, F = Shu, X = In, G = Gyo et G + 1/2/3/4 cible tête/torse/mains/jambes. Shu est automatique en Ren avec une arme.'
+      : 'Aura (modifier): alone = Ren; + Down = sustained Zetsu; + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. R = En, F = Shu, X = In, G = Gyo, and G + 1/2/3/4 targets head/torso/hands/legs. Shu is automatic during Ren with a weapon.'}
   </p>
   <FightMoveList {fighterId} {language} />
 </aside>

@@ -59,6 +59,17 @@ export const CONTROL_LABELS: Record<ControlCommand, [string, string]> = {
 const STORAGE_KEY = 'black-whale:fighting-controls:v2'
 const RESERVED = new Set<string>([
   ...EASTER_EGG_KEYS,
+  // Direct Nen shortcuts are intentionally not configurable. Reserving them
+  // prevents the keyboard mapper from silently replacing the technique.
+  'r',
+  'f',
+  'x',
+  'g',
+  '1',
+  '2',
+  '3',
+  '4',
+  '[',
   'Escape',
   'Tab',
   'Meta',
@@ -133,8 +144,7 @@ export function createKeyboardMapper() {
       if (!active) return null
       const rawKey = normalizeControlKey(event.key)
       const fallback = event.altKey ? physicalFallbackKey(event.code) : null
-      const key =
-        fallback && !Object.values(bindings).includes(rawKey) ? fallback : rawKey
+      const key = fallback && !Object.values(bindings).includes(rawKey) ? fallback : rawKey
       const command = (Object.keys(bindings) as ControlCommand[]).find((id) => bindings[id] === key)
       const logical = command
         ? CONTROL_KEYS[command]

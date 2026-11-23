@@ -20,7 +20,7 @@ import {
 } from '$lib/fighting/controlSchemePreference'
 import type { ControlScheme } from '$lib/fighting/controlScheme'
 import { handleEasterKey, isDisplayInput } from './fightingPageHelpers'
-import { movementKeys } from './fightingKeys'
+import { playerMovementKey } from './fightingKeys'
 import type {
   FightInput,
   FightMode,
@@ -159,7 +159,7 @@ export function dispatchFightKey(event: KeyboardEvent, active: boolean, options:
   )
     return
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
-  const movement = movementKeys[key]
+  const movement = playerMovementKey(key, options.state.mode === 'versus-ai')
   if (movement) {
     event.preventDefault()
     options.control(movement, active)

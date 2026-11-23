@@ -28,8 +28,8 @@
   </p>
   <p>
     <b>Xbox</b> — {fr
-      ? 'View + croix ↑/↓/←/→ : En/In/Shu/Gyo. Clic stick droit + croix ↑/↓/←/→ : Gyo tête/torse/mains/jambes. Le stick gauche et les boutons d’attaque restent libres.'
-      : 'View + D-pad ↑/↓/←/→: En/In/Shu/Gyo. Right-stick click + D-pad ↑/↓/←/→: head/torso/hands/legs Gyo. Left-stick movement and attack buttons remain free.'}
+      ? 'View + croix ↑/↓/←/→ : En/In/Shu/Gyo. Clic stick droit + croix ↑/↓/←/→ : Gyo tête/torse/mains/jambes. Aura + croix conserve les commandes directionnelles normales, dont Aura + Bas = Zetsu. Le stick gauche et les boutons d’attaque restent libres.'
+      : 'View + D-pad ↑/↓/←/→: En/In/Shu/Gyo. Right-stick click + D-pad ↑/↓/←/→: head/torso/hands/legs Gyo. Aura + D-pad keeps the normal directional commands, including Aura + Down = Zetsu. Left-stick movement and attack buttons remain free.'}
   </p>
   <small
     >{fr

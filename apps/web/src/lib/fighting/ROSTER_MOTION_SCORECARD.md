@@ -285,3 +285,15 @@ Trails are presentation-only, freeze during hitstop, clear on rewind or round
 change, and disappear immediately when flashes or reduced motion are enabled.
 They clarify acceleration between authored keys without becoming persistent
 motion blur or hiding the contact silhouette.
+
+## P13 — fight-only body volume
+
+Combat surfaces now receive a cached three-tone directional key plus a narrow
+camera-facing rim. The bake replaces the tour's broad vertical split only on
+solid front-facing fighter surfaces; ink shells, transparent details, eyes and
+equipment retain their authored materials, while the face keeps its more
+specific close-up treatment.
+
+The result adds readable shoulder, limb and clothing volume without runtime
+lights, shadow maps, extra meshes or per-frame material work. Shared geometry
+still shares one cached combat variant across the roster.

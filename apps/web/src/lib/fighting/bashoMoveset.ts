@@ -7,11 +7,11 @@ const NAMES: Record<string, string> = {
   lowLight: 'Coup de pied bas|Low kick',
   lowHeavy: 'Balayage|Sweep',
   airLight: 'Direct aérien|Air straight',
-  airHeavy: 'Coup de pied aérien|Air kick',
-  forwardLight: 'Direct en avançant|Advancing straight',
-  forwardHeavy: 'Coup d’épaule|Shoulder strike',
-  backHeavy: 'Revers du poing|Backfist',
-  throw: 'Projection|Throw',
+  airHeavy: 'Rime de feu|Fire Rhyme',
+  forwardLight: 'Trait de pinceau|Brush Stroke',
+  forwardHeavy: 'Vers interrompu|Interrupted Verse',
+  backHeavy: 'Papier sacrifié|Sacrificed Paper',
+  throw: 'Dernier tercet|Final Tercet',
   neutralSpecial: 'Great Hiker · Écrire le poème|Great Hiker · Write the poem',
 }
 

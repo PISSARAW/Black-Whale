@@ -7,11 +7,11 @@ const NAMES: Record<string, readonly [string, string]> = {
   lowLight: ['Coup bas', 'Low Strike'],
   lowHeavy: ['Balayage', 'Sweep'],
   airLight: ['Direct aérien', 'Air Straight'],
-  airHeavy: ['Coup descendant', 'Descending Strike'],
-  forwardLight: ['Direct en avançant', 'Advancing Straight'],
-  forwardHeavy: ['Coup d’épaule', 'Shoulder Strike'],
-  backHeavy: ['Revers', 'Backfist'],
-  throw: ['Projection', 'Throw'],
+  airHeavy: ['Battement entendu', 'Heard Heartbeat'],
+  forwardLight: ['Mesure brisée', 'Broken Measure'],
+  forwardHeavy: ['Note apaisante', 'Soothing Note'],
+  backHeavy: ['Souffle suspendu', 'Suspended Breath'],
+  throw: ['Trois minutes de silence', 'Three Minutes of Silence'],
 }
 
 /** One attested musical Hatsu; mundane combat remains an arcade abstraction. */

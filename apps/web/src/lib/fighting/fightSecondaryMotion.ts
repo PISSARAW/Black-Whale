@@ -67,10 +67,7 @@ export function createSecondaryMotion() {
 }
 
 /** Layer secondary follow-through onto a plan without altering attack startup or active contacts. */
-export function withSecondaryMotion(
-  plan: BodyPlan | null,
-  secondary?: FightPose,
-): BodyPlan | null {
+export function withSecondaryMotion(plan: BodyPlan | null, secondary?: FightPose): BodyPlan | null {
   if (!plan || !secondary || EXCLUDED_KEYS.has(plan.key)) return plan
   if (isAttackContactWindow(plan) || Object.keys(secondary).length === 0) return plan
   return { ...plan, pose: addPoses(plan.pose, secondary) }

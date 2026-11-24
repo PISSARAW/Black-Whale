@@ -237,9 +237,9 @@ try {
                 ? 'Black-Whale-Clash-How-A-Fight-Turns.mp4'
                 : demo === 'hisoka-chrollo'
                   ? 'Black-Whale-Clash-Hisoka-vs-Chrollo.mp4'
-          : short
-          ? 'Black-Whale-Clash-Top-16-Combos-45s.mp4'
-          : 'Black-Whale-Clash-40-Combos-Vertical.mp4',
+                  : short
+                    ? 'Black-Whale-Clash-Top-16-Combos-45s.mp4'
+                    : 'Black-Whale-Clash-40-Combos-Vertical.mp4',
     )
     await run('ffmpeg', [
       ...['-hide_banner', '-loglevel', 'error', '-y', '-i', silent, '-i', wav],

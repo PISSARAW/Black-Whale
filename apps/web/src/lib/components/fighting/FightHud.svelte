@@ -41,7 +41,11 @@
     {@const mirrored = side === 'opponent'}
     {@const useLivingPortrait = opaqueSides.includes(side)}
     {@const sideView = views[side]}
-    {@const texturePov = textureSurpriseView(fighter, state[rivalSide(side)], mirrored ? 'opponent' : 'owner')}
+    {@const texturePov = textureSurpriseView(
+      fighter,
+      state[rivalSide(side)],
+      mirrored ? 'opponent' : 'owner',
+    )}
     {@const memory = texturePov.maskBodyMemory ? null : bodyMemoryLabel(fighter, language)}
     {@const auraKnown = auraInformationKnown(state, 'player', side)}
     <div class="fighter-meter" class:opponent-meter={mirrored}>

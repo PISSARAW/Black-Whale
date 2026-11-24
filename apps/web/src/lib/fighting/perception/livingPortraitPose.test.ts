@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  livingPortraitPose,
-  livingPortraitTierLabel,
-} from './livingPortraitPose'
+import { livingPortraitPose, livingPortraitTierLabel } from './livingPortraitPose'
 
 describe('livingPortraitPose', () => {
   it('produces distinct calm, strained, and critical facial poses for expressive fighters', () => {

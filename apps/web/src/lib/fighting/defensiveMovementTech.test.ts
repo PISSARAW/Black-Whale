@@ -84,8 +84,18 @@ describe('defensive & spacing movement tech', () => {
     const base = duel()
     const backHold: FightState = {
       ...base,
-      player: { ...base.player, x: 40, facing: 1, motion: { ...motionOf(base.player), heldDirection: -1 } },
-      opponent: { ...base.opponent, x: 50, facing: -1, motion: { ...motionOf(base.opponent), heldDirection: -1 } },
+      player: {
+        ...base.player,
+        x: 40,
+        facing: 1,
+        motion: { ...motionOf(base.player), heldDirection: -1 },
+      },
+      opponent: {
+        ...base.opponent,
+        x: 50,
+        facing: -1,
+        motion: { ...motionOf(base.opponent), heldDirection: -1 },
+      },
     }
     const resolved = resolveThrowTech(backHold, 'player')
     expect(40 - resolved.player.x).toBeCloseTo(THROW_TECH_BACK_DIST, 4)

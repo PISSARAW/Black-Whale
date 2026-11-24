@@ -85,7 +85,11 @@
         <div class="side" class:right={i === 1}>
           <div class="bar">
             <i class="trail" style={`width:${pct(life(trail, side))}`}></i>
-            <i class="life" class:low={life(state, side) < 0.25} style={`width:${pct(life(state, side))}`}></i>
+            <i
+              class="life"
+              class:low={life(state, side) < 0.25}
+              style={`width:${pct(life(state, side))}`}
+            ></i>
           </div>
           <div class="aura"><i style={`width:${pct(state[side].aura / 100)}`}></i></div>
           <div class="who">{NAME[state[side].id]}</div>
@@ -332,12 +336,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      #000 0 9%,
-      transparent 9% 91%,
-      #000 91% 100%
-    );
+    background: linear-gradient(180deg, #000 0 9%, transparent 9% 91%, #000 91% 100%);
   }
   .subtitle {
     position: absolute;

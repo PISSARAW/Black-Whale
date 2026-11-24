@@ -334,10 +334,7 @@ describe('Kalluto paper and surveillance dolls', () => {
       player: { ...state.player, attack: null, pose: 'idle' },
       opponent: {
         ...state.opponent,
-        plantedPaper: [
-          ...(state.opponent.plantedPaper ?? []),
-          { owner: 'player', zone: 'torso' },
-        ],
+        plantedPaper: [...(state.opponent.plantedPaper ?? []), { owner: 'player', zone: 'torso' }],
       },
     }
     state = launchKallutoPaper(state, 'player', 'serpent')

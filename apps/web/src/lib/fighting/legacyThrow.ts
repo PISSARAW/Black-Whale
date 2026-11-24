@@ -3,11 +3,10 @@ import type { AuraAttackOptions } from './auraAttackAction'
 import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
 
 export function performLegacyThrow(
-  state: FightState,
-  side: FightSide,
+  options: { state: FightState; side: FightSide; input?: FightInput },
   perform: (options: AuraAttackOptions) => FightState,
-  input: FightInput = EMPTY_INPUT,
 ): FightState {
+  const { state, side, input = EMPTY_INPUT } = options
   const fighter = state[side]
   if (fighter.y > 0 || !canMove(fighter)) return state
   return perform({ state, side, kind: 'heavy', variant: 'throw', auraCharged: input.aura })

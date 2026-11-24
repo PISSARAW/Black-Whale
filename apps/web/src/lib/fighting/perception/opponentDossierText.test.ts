@@ -54,28 +54,52 @@ describe('opponentDossierText', () => {
   it('formats Burst dossier cues without leaking unused availability at level 0', () => {
     expect(
       burstDossierLabel(
-        { level: 0, knownSpent: false, exactAvailable: null, zetsuSeconds: null, tensionAlert: false },
+        {
+          level: 0,
+          knownSpent: false,
+          exactAvailable: null,
+          zetsuSeconds: null,
+          tensionAlert: false,
+        },
         'fr',
       ),
     ).toBeNull()
 
     expect(
       burstDossierLabel(
-        { level: 1, knownSpent: true, exactAvailable: null, zetsuSeconds: null, tensionAlert: false },
+        {
+          level: 1,
+          knownSpent: true,
+          exactAvailable: null,
+          zetsuSeconds: null,
+          tensionAlert: false,
+        },
         'fr',
       ),
     ).toEqual({ text: 'BURST DÉPENSÉ', tone: 'spent' })
 
     expect(
       burstDossierLabel(
-        { level: 2, knownSpent: false, exactAvailable: null, zetsuSeconds: null, tensionAlert: true },
+        {
+          level: 2,
+          knownSpent: false,
+          exactAvailable: null,
+          zetsuSeconds: null,
+          tensionAlert: true,
+        },
         'fr',
       ),
     ).toEqual({ text: 'TENSION D’AURA', tone: 'tension' })
 
     expect(
       burstDossierLabel(
-        { level: 2, knownSpent: true, exactAvailable: null, zetsuSeconds: 1.5, tensionAlert: false },
+        {
+          level: 2,
+          knownSpent: true,
+          exactAvailable: null,
+          zetsuSeconds: 1.5,
+          tensionAlert: false,
+        },
         'en',
       ),
     ).toEqual({ text: 'ZETSU 1.5s', tone: 'zetsu' })

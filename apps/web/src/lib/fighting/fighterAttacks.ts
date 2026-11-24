@@ -93,10 +93,10 @@ export function startFighterAttack(options: {
     ...fighter,
     attack: {
       ...fighter.attack!,
+      superThrow: options.superThrow,
       kind,
       variant: options.variant,
       moveId: options.moveId,
-      superThrow: options.superThrow,
       comboFollowup,
       directionalChain: options.directionalChain,
     },
@@ -119,7 +119,7 @@ export function startFighterAttack(options: {
     blocking: false,
     guardFrames: 0,
     wakeupInvulnerableFrames: 0,
-    throwTechFrames: options.variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames,
+    throwTechFrames: throwTechFramesFor(fighter, options.variant),
     ryuWindow: usesRyu ? 10 : fighter.ryuWindow,
     hatsuChargeFrames: 0,
     ...accel.fighter,
@@ -146,6 +146,10 @@ export function startFighterAttack(options: {
     },
     bufferedAttack: null,
   }
+}
+
+function throwTechFramesFor(fighter: ArcadeFighter, variant?: AttackVariant) {
+  return variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames
 }
 
 function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain, moveId?: string) {

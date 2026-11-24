@@ -82,7 +82,8 @@ function analyzePredator(state: FightState): Lot2Frame {
   if (predatorReady(state, 'player')) return { state, input: EMPTY_INPUT, done: true }
   const sheet = state.player.predator?.analysis?.sheet
   if (!sheet) return { state, input: EMPTY_INPUT, done: false }
-  if (sheet.postures.length < 3) return { state, input: { ...EMPTY_INPUT, guard: true }, done: false }
+  if (sheet.postures.length < 3)
+    return { state, input: { ...EMPTY_INPUT, guard: true }, done: false }
   const spread = sheet.spacing ? sheet.spacing.max - sheet.spacing.min : 0
   const input = spread < PREDATOR_RANGE_SPREAD ? predatorAdvanceInput(state) : EMPTY_INPUT
   return { state, input, done: false }
@@ -113,7 +114,11 @@ function scoutMary(state: FightState): Lot2Frame {
   if ((state.player.bloodyMary?.drops.length ?? 0) > 0)
     return { state, input: EMPTY_INPUT, done: true }
   const after = commandMary({ state, side: 'player', command: 'scout' }, performAuraAttack)
-  return { state: after, input: EMPTY_INPUT, done: (after.player.bloodyMary?.drops.length ?? 0) > 0 }
+  return {
+    state: after,
+    input: EMPTY_INPUT,
+    done: (after.player.bloodyMary?.drops.length ?? 0) > 0,
+  }
 }
 
 function maryRecalled(state: FightState): boolean {

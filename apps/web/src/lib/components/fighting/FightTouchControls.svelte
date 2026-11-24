@@ -42,9 +42,8 @@
         label={fr ? 'Burst défensif' : 'Defensive Burst'}
         onHold={(active) => hold('burst', active)}>BURST</FightHeldButton
       >
-      <FightHeldButton
-        label={fr ? 'Garde' : 'Block'}
-        onHold={(active) => hold('guard', active)}>{fr ? 'Garde' : 'Block'}</FightHeldButton
+      <FightHeldButton label={fr ? 'Garde' : 'Block'} onHold={(active) => hold('guard', active)}
+        >{fr ? 'Garde' : 'Block'}</FightHeldButton
       >
       <FightHeldButton
         label={fr ? 'Maintenir Aura' : 'Hold aura'}
@@ -76,8 +75,7 @@
     <FightHeldButton
       label={fr ? 'Action contextuelle' : 'Context action'}
       className="context-button"
-      onHold={(active) => hold('context', active)}
-      >{fr ? 'Contexte' : 'Context'}</FightHeldButton
+      onHold={(active) => hold('context', active)}>{fr ? 'Contexte' : 'Context'}</FightHeldButton
     >
     {#if state.player.id !== 'camilla'}
       <FightHeldButton

@@ -79,8 +79,7 @@ function routeContact(
     }
   }
   if (rejectedContact(state)) return { ...next, cue: 'blocked', failed: true }
-  if (route.whiff && progress.step === 0 && state.player.attack?.comboOpening !== 'whiff-punish')
-    return { ...next, cue: 'wrong', failed: true }
+  if (wrongWhiffOpening(state, progress, route)) return { ...next, cue: 'wrong', failed: true }
   const hits = (state.impact!.comboHits ?? 0) - routeHitsBefore(route, progress.step)
   const gained = hits - progress.stepHits
   if (!validRouteHit(state, progress, { route, hits, gained }))
@@ -96,6 +95,10 @@ function routeContact(
     complete,
     cue: complete ? 'complete' : 'wait',
   }
+}
+
+function wrongWhiffOpening(state: FightState, progress: CombatProgress, route: CombatRoute) {
+  return route.whiff && progress.step === 0 && state.player.attack?.comboOpening !== 'whiff-punish'
 }
 
 function utilityRouteContact(state: FightState, progress: CombatProgress, route: CombatRoute) {

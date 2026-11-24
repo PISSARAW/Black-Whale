@@ -17,6 +17,7 @@
   export let onSceneFailed: () => void = () => {}
   export let state: FightState
   export let active = true
+  export let showRecovery = false
   export let stageId: FightStageId
   export let language: 'fr' | 'en' = 'fr'
   export let viewer: FightSide = 'player'
@@ -44,6 +45,7 @@
 <div class="live-scene" bind:this={host}>
   <FightScene
     {active}
+    {showRecovery}
     state={comparison.main}
     {prediction}
     {stageId}

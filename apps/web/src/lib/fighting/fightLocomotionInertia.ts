@@ -59,10 +59,7 @@ export function createLocomotionInertia() {
 }
 
 /** Layer grounded locomotion inertia onto stance, walk and guard plans without touching attacks. */
-export function withLocomotionInertia(
-  plan: BodyPlan | null,
-  inertia?: FightPose,
-): BodyPlan | null {
+export function withLocomotionInertia(plan: BodyPlan | null, inertia?: FightPose): BodyPlan | null {
   if (!plan || !inertia || plan.attackFlow || !plan.plant) return plan
   if (!ELASTIC_KEYS.has(plan.key) || !hasPoseOffset(inertia)) return plan
   return { ...plan, pose: addPoses(plan.pose, inertia) }

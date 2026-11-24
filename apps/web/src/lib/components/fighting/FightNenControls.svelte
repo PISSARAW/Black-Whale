@@ -229,7 +229,9 @@
             (fighter.kurapika?.blackoutFrames ?? 0) > 0}
         >
           <kbd
-            >{$bindings.playerAura === ' ' ? 'Aura' : $bindings.playerAura} + {finisherHint($bindings)}</kbd
+            >{$bindings.playerAura === ' ' ? 'Aura' : $bindings.playerAura} + {finisherHint(
+              $bindings,
+            )}</kbd
           > EMPEROR TIME
         </button>
       {/if}

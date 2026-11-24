@@ -1,6 +1,11 @@
 <script lang="ts">
   import { canBurst } from '$lib/fighting/fightBurst'
-  import { onOf, onRageReady, ON_RAGE_GRUDGE, ON_RAGE_HEALTH_PERCENT } from '$lib/fighting/onTechnique'
+  import {
+    onOf,
+    onRageReady,
+    ON_RAGE_GRUDGE,
+    ON_RAGE_HEALTH_PERCENT,
+  } from '$lib/fighting/onTechnique'
   import { bodyMemoryLabel, BODY_MEMORY_HIT_THRESHOLD } from '$lib/fighting/bodyMemory'
   import { careerMoraleLabel } from '$lib/fighting/career/morale'
   import { nenPsychologyOf, MAX_NEN_PSYCHOLOGY } from '$lib/fighting/nenPsychology'
@@ -22,7 +27,9 @@
 {#if kind === 'burst'}
   <div class="panel">
     <h4>{name(state)} · BURST</h4>
-    <div class="row"><span>AURA</span><i><b style={`width:${pct(state.player.aura / 100)}`}></b></i></div>
+    <div class="row">
+      <span>AURA</span><i><b style={`width:${pct(state.player.aura / 100)}`}></b></i>
+    </div>
     <div class="row"><span>COMBO TAKEN</span><em>{state.player.comboHits} HITS</em></div>
     <p class:alert={(state.player.burstZetsuFrames ?? 0) > 0}>
       {(state.player.burstZetsuFrames ?? 0) > 0
@@ -37,18 +44,39 @@
 {:else if kind === 'rage'}
   <div class="panel">
     <h4>{name(state)} · LAST STAND</h4>
-    <div class="row"><span>HP</span><i><b style={`width:${pct(hp(state))}`}></b><s style={`left:${ON_RAGE_HEALTH_PERCENT}%`}></s></i></div>
-    <div class="row"><span>GRUDGE</span><i><b class="grudge" style={`width:${pct(onOf(state.player).grudge / 100)}`}></b><s style={`left:${ON_RAGE_GRUDGE}%`}></s></i></div>
+    <div class="row">
+      <span>HP</span><i
+        ><b style={`width:${pct(hp(state))}`}></b><s style={`left:${ON_RAGE_HEALTH_PERCENT}%`}
+        ></s></i
+      >
+    </div>
+    <div class="row">
+      <span>GRUDGE</span><i
+        ><b class="grudge" style={`width:${pct(onOf(state.player).grudge / 100)}`}></b><s
+          style={`left:${ON_RAGE_GRUDGE}%`}
+        ></s></i
+      >
+    </div>
     <p class:alert={onRageReady(state.player)}>
-      {onRageReady(state.player) ? 'RAGE · THE NEXT CLEAN HEAVY IS LETHAL' : state.player.nen.on ? 'ON SWORN' : 'UNDER 20% HP · 50 GRUDGE · ON'}
+      {onRageReady(state.player)
+        ? 'RAGE · THE NEXT CLEAN HEAVY IS LETHAL'
+        : state.player.nen.on
+          ? 'ON SWORN'
+          : 'UNDER 20% HP · 50 GRUDGE · ON'}
     </p>
   </div>
 {:else if kind === 'clash'}
   <div class="panel">
     <h4>KO AGAINST KO</h4>
     {#if state.attackClash}
-      <div class="row"><span>{name(state)}</span><em>REN {Math.round(state.attackClash.playerRen)}</em></div>
-      <div class="row"><span>{fighterDefinition(state.opponent.id).name.toUpperCase()}</span><em>REN {Math.round(state.attackClash.opponentRen)}</em></div>
+      <div class="row">
+        <span>{name(state)}</span><em>REN {Math.round(state.attackClash.playerRen)}</em>
+      </div>
+      <div class="row">
+        <span>{fighterDefinition(state.opponent.id).name.toUpperCase()}</span><em
+          >REN {Math.round(state.attackClash.opponentRen)}</em
+        >
+      </div>
       <p class="alert">
         {state.attackClash.winner
           ? `${fighterDefinition(state[state.attackClash.winner].id).name.toUpperCase()} PUSHES THROUGH`
@@ -63,7 +91,14 @@
   <div class="panel">
     <h4>{fighterDefinition(state.opponent.id).name.toUpperCase()} · BODY MEMORY</h4>
     {#each [['ARMS', memory.hands ?? 0], ['LEGS', memory.feet ?? 0]] as const as [label, hits] (label)}
-      <div class="row"><span>{label}</span><i><b class:worn={hits >= BODY_MEMORY_HIT_THRESHOLD} style={`width:${pct(hits / BODY_MEMORY_HIT_THRESHOLD)}`}></b></i></div>
+      <div class="row">
+        <span>{label}</span><i
+          ><b
+            class:worn={hits >= BODY_MEMORY_HIT_THRESHOLD}
+            style={`width:${pct(hits / BODY_MEMORY_HIT_THRESHOLD)}`}
+          ></b></i
+        >
+      </div>
     {/each}
     <p class:alert={Boolean(bodyMemoryLabel(state.opponent, 'en'))}>
       {bodyMemoryLabel(state.opponent, 'en')?.toUpperCase() ?? 'EACH LANDED BLOW IS REMEMBERED'}
@@ -75,7 +110,9 @@
     <div class="panel" class:upper={where === 'top'} class:lower={where === 'bottom'}>
       <h4>{s.careerMorale ? careerMoraleLabel(s.careerMorale, 'en').toUpperCase() : name(s)}</h4>
       {#each [['COMPOSURE', psyche.composure], ['APPREHENSION', psyche.apprehension], ['RESOLVE', psyche.resolve]] as const as [label, value] (label)}
-        <div class="row"><span>{label}</span><i><b style={`width:${pct(value / MAX_NEN_PSYCHOLOGY)}`}></b></i></div>
+        <div class="row">
+          <span>{label}</span><i><b style={`width:${pct(value / MAX_NEN_PSYCHOLOGY)}`}></b></i>
+        </div>
       {/each}
     </div>
   {/each}

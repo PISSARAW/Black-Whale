@@ -4,6 +4,7 @@ import type { CameraDetailRect } from './cinematicDetailLayout'
 import type { FutureCameraView } from './parallelFutureCamera'
 import { fitCinematicView } from './cinematicTrack'
 import { fightBodyMotion } from './fightBodyMotion'
+import { createFightReactionPresentation } from './fightReactionPresentation'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import { FIGHTER_FACING_ANGLE, trackFightOpponent } from './fighterFacing'
 import { fightGroundContact } from './fightGroundContact'
@@ -95,6 +96,7 @@ function createInsetScene(options: InsetOptions, initial: FutureCameraView) {
   const feitan = createFeitanScene(fx)
   const viewport = createInsetViewport(THREE, scene, camera)
   const stride = createStrideClocks()
+  const reaction = createFightReactionPresentation()
   let posed: FightState | null = null
 
   function pose(side: FightSide, seconds: number) {
@@ -112,7 +114,11 @@ function createInsetScene(options: InsetOptions, initial: FutureCameraView) {
         opponent: rival,
         bodyAngle,
         seconds,
-        motion: fightBodyMotion({ fighter: actor, seconds }),
+        motion: fightBodyMotion({
+          fighter: actor,
+          seconds,
+          ...reaction(state, side, { fighter: actor, seconds }),
+        }),
       }),
       strideClock: stride(side, x, actor.facing),
       afterMotion: fightGroundContact(actor),

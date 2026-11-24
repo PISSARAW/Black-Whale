@@ -13,7 +13,9 @@
   }: { shot: Shot; mask: number; hero: HeroConfig; segment: BuiltSegment | undefined } = $props()
 
   const SITE = 'exploreblackwhale.com/fighting'
-  const outro = $derived(hero.outro ?? { kicker: 'NOW YOU KNOW', word: 'NEN', tag: 'USE IT YOURSELF' })
+  const outro = $derived(
+    hero.outro ?? { kicker: 'NOW YOU KNOW', word: 'NEN', tag: 'USE IT YOURSELF' },
+  )
   const ease = (t: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3)
   const slam = (local: number, at = 0) => {
     const t = (local - at) / 5
@@ -322,7 +324,13 @@
     align-items: center;
     gap: 10px;
     padding: 26px 0;
-    background: linear-gradient(90deg, transparent, rgba(5, 7, 11, 0.85) 18%, rgba(5, 7, 11, 0.85) 82%, transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(5, 7, 11, 0.85) 18%,
+      rgba(5, 7, 11, 0.85) 82%,
+      transparent
+    );
   }
   .example {
     position: absolute;

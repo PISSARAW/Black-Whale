@@ -14,7 +14,7 @@ export function liveCameraFraming(options: {
   scenery: Pick<FightScenery, 'framing'>
 }) {
   const { state, aspect, scenery } = options
-  const pair = projectionCameraSpan(state, options.positions, fightWorldX)
+  const pair = projectionCameraSpan(state, options.positions, { worldX: fightWorldX, aspect })
   const span = camillaCameraSpan({ state, ...pair, worldX: fightWorldX })
   const base = sceneryCameraFrame(biscuitCameraFrame({ state, ...span, aspect }), scenery)
   return { span, base }

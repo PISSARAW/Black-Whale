@@ -164,6 +164,7 @@
       }}
       bind:victoryActive
       victoryEnabled={!$replays.playback}
+      showRecovery={state.mode === 'training' || Boolean($replays.playback)}
       victoryPaused={pausedView}
       paused={pausedView}
       training={state.mode === 'training' && detailed}

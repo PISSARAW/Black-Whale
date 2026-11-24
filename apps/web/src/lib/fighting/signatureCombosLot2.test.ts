@@ -28,18 +28,25 @@ describe('Lot 2 signature combos — canonical conditions (21–30)', () => {
     const hpBefore = start.player.health
     const run = playSignatureCombo(combo, start)
     expect(run.reached).toBe(combo.steps.length)
-    expect(run.state.player.bloodyMary?.returning || (run.state.player.bloodyMary?.sealedWounds ?? 0) > 0).toBe(true)
+    expect(
+      run.state.player.bloodyMary?.returning ||
+        (run.state.player.bloodyMary?.sealedWounds ?? 0) > 0,
+    ).toBe(true)
     expect(run.state.player.health).toBeLessThanOrEqual(hpBefore)
   })
 
   it('Melody: entraces opponent with zero music damage and stops playing before striking', () => {
     const combo = signatureCombo('melody:detuned-heartbeat')
     let entranced = false
-    const run = playSignatureCombo(combo, createSignatureFight(combo, { mirrored: false, gap: 5 }), {
-      onFrame: (state) => {
-        if (state.opponent.hatsuEffects.entrancedFrames > 0) entranced = true
+    const run = playSignatureCombo(
+      combo,
+      createSignatureFight(combo, { mirrored: false, gap: 5 }),
+      {
+        onFrame: (state) => {
+          if (state.opponent.hatsuEffects.entrancedFrames > 0) entranced = true
+        },
       },
-    })
+    )
     expect(run.reached).toBe(combo.steps.length)
     expect(entranced).toBe(true)
     expect(run.state.player.melodyPerformance).toBeUndefined()
@@ -55,11 +62,15 @@ describe('Lot 2 signature combos — canonical conditions (21–30)', () => {
   it('Camilla: triggers Cat’s Name only after real opponent-caused death in Zetsu, then revives', () => {
     const combo = signatureCombo('camilla:second-life')
     let sawCats = false
-    const run = playSignatureCombo(combo, createSignatureFight(combo, { mirrored: false, gap: 5 }), {
-      onFrame: (state) => {
-        if (state.catsName) sawCats = true
+    const run = playSignatureCombo(
+      combo,
+      createSignatureFight(combo, { mirrored: false, gap: 5 }),
+      {
+        onFrame: (state) => {
+          if (state.catsName) sawCats = true
+        },
       },
-    })
+    )
     expect(run.reached).toBe(combo.steps.length)
     expect(sawCats).toBe(true)
     expect(run.state.catsName).toBeUndefined()
@@ -83,11 +94,15 @@ describe('Lot 2 signature combos — canonical conditions (21–30)', () => {
   it('Lynch: asks a spoken question and triggers Body and Soul on real fist contact', () => {
     const combo = signatureCombo('lynch:body-and-soul')
     let asked = false
-    const run = playSignatureCombo(combo, createSignatureFight(combo, { mirrored: false, gap: 5 }), {
-      onFrame: (state) => {
-        if (state.player.lynchQuestion) asked = true
+    const run = playSignatureCombo(
+      combo,
+      createSignatureFight(combo, { mirrored: false, gap: 5 }),
+      {
+        onFrame: (state) => {
+          if (state.player.lynchQuestion) asked = true
+        },
       },
-    })
+    )
     expect(run.reached).toBe(combo.steps.length)
     expect(asked).toBe(true)
   })

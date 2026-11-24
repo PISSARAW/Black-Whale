@@ -47,7 +47,9 @@ describe('physical tuning of priority contextual follow-ups', () => {
     const launched = performMove({ state, side: 'player', action: 'heavy', input: EMPTY_INPUT })
     expect(launched.player.attack?.moveId).toBe('feitan:pain-stairway')
     expect(launched.player.y).toBeGreaterThan(0)
-    expect(launched.player.velocityY).toBe(followUpPhysicsFor('feitan:pain-stairway')!.selfLiftVelocityY)
+    expect(launched.player.velocityY).toBe(
+      followUpPhysicsFor('feitan:pain-stairway')!.selfLiftVelocityY,
+    )
     expect(launchesTarget(launched.player, launched.opponent)).toBe(true)
 
     let next = launched

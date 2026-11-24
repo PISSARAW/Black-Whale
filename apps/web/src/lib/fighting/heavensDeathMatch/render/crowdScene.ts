@@ -58,10 +58,8 @@ function buildCharacter(kit: SceneryKit, character: string, pose: HumanPose): Cr
     hidden: false,
     human: { identity: character, role: 'fighter', pose, aura: 'none' },
   }
-  const glow: (colour: number, opacity: number) => Three.MeshBasicMaterial = (
-    colour,
-    opacity,
-  ) => new Three.MeshBasicMaterial({ color: colour, opacity })
+  const glow: (colour: number, opacity: number) => Three.MeshBasicMaterial = (colour, opacity) =>
+    new Three.MeshBasicMaterial({ color: colour, opacity })
   const figure = buildHumanFigure({ THREE: kit.THREE, glow, seen, profile: humanProfile(seen) })
   return { figure, character, pose }
 }

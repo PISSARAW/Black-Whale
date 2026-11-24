@@ -156,7 +156,7 @@ export function turnChrolloPage(book: ChrolloBookState): ChrolloBookState {
   const currentSlot: BookSlot =
     book.page === 4 && book.stolenPage
       ? 'stolen'
-      : ((Math.min(3, Math.max(0, book.page))) as 0 | 1 | 2 | 3)
+      : (Math.min(3, Math.max(0, book.page)) as 0 | 1 | 2 | 3)
   const currentIdx = slots.indexOf(currentSlot)
   const nextSlot = slots[(currentIdx + 1) % slots.length]
   return selectChrolloSlot(syncChrolloBook(book), nextSlot)
@@ -167,7 +167,9 @@ export function toggleChrolloBookmark(book: ChrolloBookState): ChrolloBookState 
   const synced = syncChrolloBook(book)
   if (!synced.open) {
     const reopenSlot: BookSlot =
-      synced.page === 4 && synced.stolenPage ? 'stolen' : ((Math.min(3, synced.page)) as 0 | 1 | 2 | 3)
+      synced.page === 4 && synced.stolenPage
+        ? 'stolen'
+        : (Math.min(3, synced.page) as 0 | 1 | 2 | 3)
     return syncChrolloBook({ ...synced, open: true, openSlot: reopenSlot, isFlipping: false })
   }
   const activeSlot = synced.openSlot ?? (synced.page as BookSlot)

@@ -36,10 +36,7 @@ export function advanceBurstZetsu(state: FightState, activationFrame: number): F
   for (const side of ['player', 'opponent'] as const) {
     const fighter = next[side]
     const frames = fighter.burstZetsuFrames ?? 0
-    if (
-      frames <= 0 ||
-      (state.burst?.frame === activationFrame && frames === BURST_ZETSU_FRAMES)
-    )
+    if (frames <= 0 || (state.burst?.frame === activationFrame && frames === BURST_ZETSU_FRAMES))
       continue
     next = {
       ...next,

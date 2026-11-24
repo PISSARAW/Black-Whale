@@ -5,7 +5,9 @@ import { FIGHTING_ROSTER } from './roster'
 
 describe('fighterMovementBible', () => {
   it('covers every roster fighter with bounded presentation multipliers', () => {
-    expect(Object.keys(FIGHTER_MOVEMENT_BIBLE).length).toBeGreaterThanOrEqual(FIGHTING_ROSTER.length)
+    expect(Object.keys(FIGHTER_MOVEMENT_BIBLE).length).toBeGreaterThanOrEqual(
+      FIGHTING_ROSTER.length,
+    )
     for (const fighter of FIGHTING_ROSTER) {
       const bible = fighterMovementBible(fighter.id)
       expect(bible.freeHand.length).toBeGreaterThan(8)

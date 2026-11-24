@@ -1,3 +1,4 @@
+import { createPursuitCameraHold } from './pursuitCamera'
 import { fightWorldX, fightWorldY } from './fightCoordinates'
 import type { CinematicDirection } from './cinematicDirector'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -40,6 +41,7 @@ export interface CombatCameraOptions {
   companion?: FightSide
   fallenBounds?: FallenBodyBounds
   accent?: CombatCameraAccent
+  pursuit?: boolean
 }
 interface SafeRegion {
   left: number
@@ -250,8 +252,11 @@ export function createCombatCamera() {
   let lastFrame = -1
   let pair = ''
   let detailWeight = 0
+  const pursuit = createPursuitCameraHold()
   return {
-    update(options: CombatCameraOptions): CombatCameraFrame {
+    pursuit,
+    update(input: CombatCameraOptions): CombatCameraFrame {
+      const options = { ...input, pursuit: input.pursuit ?? pursuit(input.state) }
       const key = `${options.state.player.id}:${options.state.opponent.id}:${options.state.roundNumber}`
       const reset = !held || lastFrame > options.state.frame || key !== pair
       if (reset) detailWeight = 0

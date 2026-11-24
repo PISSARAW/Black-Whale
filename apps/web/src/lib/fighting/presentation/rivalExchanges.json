@@ -1,416 +1,1382 @@
 [
-  {"pair": ["kurapika", "chrollo"], "reference": "Yorknew · ép. 56–58",
-   "lines": ["Pakunoda a tenu parole. Souviens-toi de l’échange.", "Pakunoda kept her word. Remember the exchange.",
-             "Les souvenirs de Pakunoda sont restés avec l’Araignée.", "Pakunoda’s memories stayed with the Spider."]},
-  {"pair": ["chrollo", "hisoka"], "reference": "Ch. 351–357 et 405",
-   "lines": ["La Tour céleste était assez grande pour Kortopi et moi.", "Heavens Arena was big enough for Kortopi and me.",
-             "Shalnark n’est plus là pour te prêter son téléphone.", "Shalnark isn’t here to lend you his phone."]},
-  {"pair": ["kurapika", "leorio"], "reference": "Ép. 1, 54 et 140",
-   "lines": ["Si Gon nous entendait nous disputer encore…", "If Gon could hear us arguing again…",
-             "Il nous ferait monter dans la mâture, comme sur le bateau de l’examen !", "He’d send us up the rigging, just like on the exam ship!"]},
-  {"pair": ["kurapika", "hisoka"], "reference": "Ép. 15 et 45–55",
-   "lines": ["Tes messages sur Uvogin avaient un prix.", "Your messages about Uvogin came at a price.",
-             "Et la fausse prédiction de Neon a été mon meilleur tour.", "And Neon’s fake fortune was my best trick."]},
-  {"pair": ["kurapika", "melody"], "reference": "Ép. 43 et 48–58",
-   "lines": ["À Yorknew, tu entendais mon cœur avant même que je parle.", "In Yorknew you heard my heart before I spoke.",
-             "Respire, Kurapika. Pense à la voix de Pairo.", "Breathe, Kurapika. Think of Pairo’s voice."]},
-  {"pair": ["kurapika", "basho"], "reference": "Ép. 39 et 48",
-   "lines": ["Dalzollene aurait trouvé ce remue-ménage inutile.", "Dalzollene would have called all this commotion pointless.",
-             "Je n’ai toujours pas trouvé la rime qui ferait sourire Dalzollene.", "I still haven’t found a rhyme that would make Dalzollene smile."]},
-  {"pair": ["kurapika", "bill"], "reference": "Ch. 359–369, 388",
-   "lines": ["Oito et Woble comptent sur nous. Comme dans la chambre 1014.", "Oito and Woble are counting on us. Just like in room 1014.",
-             "Je garde la porte. C’est ce que Woody aurait fait.", "I’ll watch the door. It’s what Woody would have done."]},
-  {"pair": ["kurapika", "sayird"], "reference": "Ch. 359–361",
-   "lines": ["Je n’ai pas oublié le visage de Kurton.", "I haven’t forgotten Kurton’s face.",
-             "Ce qui est arrivé à Kurton ne devait pas arriver.", "What happened to Kurton was never meant to happen."]},
-  {"pair": ["bill", "sayird"], "reference": "Ch. 359–361",
-   "lines": ["J’entends encore la porte se fermer après Woody.", "I can still hear the door closing after Woody.",
-             "Si seulement Kurton avait quitté la pièce.", "If only Kurton had left the room."]},
-  {"pair": ["kurapika", "furykov"], "reference": "Ch. 369, 371 et 375",
-   "lines": ["Au cours, Belerainte a su rester derrière la ligne blanche.", "In class, Belerainte knew to stay behind the white line.",
-             "Belerainte a levé la main. Moi, j’ai regardé les autres.", "Belerainte raised his hand. I watched everyone else."]},
-  {"pair": ["kurapika", "longhi"], "reference": "Ch. 369, 401",
-   "lines": ["Un accord pour Tubeppa. Je lirai aussi les petites lignes.", "A deal for Tubeppa. I’ll read the fine print, too.",
-             "Vous pouvez les lire devant Oito. Je maintiens mon offre.", "You can read them in front of Oito. My offer stands."]},
-  {"pair": ["longhi", "furykov"], "reference": "Ch. 369–375",
-   "lines": ["Belerainte écoute. Vous, vous cherchez qui ment.", "Belerainte listens. You’re looking for whoever is lying.",
-             "Tubeppa vous a choisie pour observer, elle aussi.", "Tubeppa chose you to watch, too."]},
-  {"pair": ["kurapika", "mizaistom"], "reference": "Ch. 343–344",
-   "lines": ["Vous avez trouvé des yeux que même Light Nostrade n’avait pas vus.", "You found eyes even Light Nostrade hadn’t seen.",
-             "Cheadle voulait votre aide. Je savais où chercher la vôtre.", "Cheadle wanted your help. I knew where to find yours."]},
-  {"pair": ["kurapika", "hanzo"], "reference": "Ép. 6–21 et ch. 368",
-   "lines": ["À l’examen, Gon refusait déjà d’abandonner.", "Gon already refused to give up in the exam.",
-             "Il m’a forcé à céder. Netero a dû bien rire.", "He made me give in. Netero must have had a good laugh."]},
-  {"pair": ["kurapika", "illumi"], "reference": "Ép. 19–24",
-   "lines": ["Killua n’est pas une décision que tu peux prendre à sa place.", "Killua isn’t a decision you get to make.",
-             "Gittarackur avait un avantage : personne ne posait de questions.", "Gittarackur had one advantage: nobody asked questions."]},
-  {"pair": ["kurapika", "phinks"], "reference": "Yorknew · ép. 57–58",
-   "lines": ["Pakunoda a empêché un massacre ce soir-là.", "Pakunoda prevented a massacre that night.",
-             "Ses dernières balles nous ont appris ce que tu avais fait.", "Her last bullets taught us what you’d done."]},
-  {"pair": ["kurapika", "feitan"], "reference": "Yorknew · ép. 57–58",
-   "lines": ["Pakunoda savait ce que coûterait sa décision.", "Pakunoda knew what her decision would cost.",
-             "Si Nobunaga t’avait trouvé le premier…", "If Nobunaga had found you first…"]},
-  {"pair": ["hisoka", "illumi"], "reference": "Ép. 136–144 et ch. 377",
-   "lines": ["Un contrat de plus, et cette fois je suis la cible.", "Another contract, and this time I’m the mark.",
-             "Tu aurais pu t’adresser à Silva. Le tarif aurait changé.", "You could’ve asked Silva. The fee would have been different."]},
-  {"pair": ["hisoka", "machi"], "reference": "Ch. 357",
-   "lines": ["Tu recousais mieux les bras que les adieux.", "You stitched arms better than farewells.",
-             "Demande à Kastro ce que coûtait ton premier tour.", "Ask Kastro what your first trick cost you."]},
-  {"pair": ["hisoka", "biscuit"], "reference": "Greed Island · ép. 68–71",
-   "lines": ["Un match de ballon ? Il faudrait rappeler Razor.", "A game of dodgeball? We’d have to call Razor back.",
-             "Et demander à Goreinu de compter les joueurs, cette fois.", "And ask Goreinu to count the players this time."]},
-  {"pair": ["hisoka", "leorio"], "reference": "Ép. 5, 16 et 50",
-   "lines": ["Tu frappes toujours aussi franc que dans le marais ?", "Do you still swing as honest as you did in the marsh?",
-             "Je m’en suis sorti. Gon aussi, malgré ton fichu jeu.", "I made it out. So did Gon, despite your rotten game."]},
-  {"pair": ["hisoka", "hanzo"], "reference": "Ép. 18–21",
-   "lines": ["Tu as donné à Gon un match plus long que je ne l’aurais cru.", "You gave Gon a longer match than I’d expected.",
-             "Il aurait préféré perdre un bras. Même Satotz s’en souvient.", "He’d rather have lost an arm. Even Satotz remembers that."]},
-  {"pair": ["hisoka", "hinrigh"], "reference": "Ch. 393",
-   "lines": ["Ton billet pour le premier pont était une invitation bien polie.", "That ticket to Tier One was a very polite invitation.",
-             "On voulait épargner le bateau. On n’a pas oublié Onior.", "We wanted to spare the ship. We haven’t forgotten Onior."]},
-  {"pair": ["hisoka", "bonolenov"], "reference": "Ch. 405",
-   "lines": ["Au cinéma, le siège de Shalnark est resté vide.", "Shalnark’s seat at the cinema stayed empty.",
-             "J’en avais un autre en réserve. Chrollo connaît la danse.", "I had another one in reserve. Chrollo knows the dance."]},
-  {"pair": ["hisoka", "tserriednich"], "reference": "Ch. 420",
-   "lines": ["On termine cette partie loin des machines à sous ?", "Shall we finish this game away from the slot machines?",
-             "Tu peux garder la mise. Salkov sait que je m’intéresse au prochain coup.", "Keep the wager. Salkov knows I’m interested in the next move."]},
-  {"pair": ["hisoka", "franklin"], "reference": "Yorknew et ch. 380",
-   "lines": ["On m’a dit que tu préférais attendre à table.", "I hear you’d rather wait at the table.",
-             "Uvogin aurait couru après toi. Moi, j’ai choisi ma place.", "Uvogin would have chased you. I picked my spot."]},
-  {"pair": ["hisoka", "phinks"], "reference": "Yorknew · ép. 55–58",
-   "lines": ["Neon n’avait pas prévu que je changerais son texte.", "Neon didn’t see me changing her lines coming.",
-             "J’aurais dû laisser Nobunaga lire entre les lignes.", "I should’ve let Nobunaga read between the lines."]},
-  {"pair": ["hisoka", "feitan"], "reference": "Yorknew · ép. 55–58",
-   "lines": ["La fausse prédiction de Neon t’a fait hésiter, non ?", "Neon’s fake fortune made you hesitate, didn’t it?",
-             "Je laisserai moins de temps pour lire cette fois.", "I’ll leave less time for reading this time."]},
-  {"pair": ["hisoka", "shizuku"], "reference": "Yorknew · ép. 55 et ch. 377",
-   "lines": ["Neon avait écrit quelque chose sur une chambre solitaire.", "Neon wrote something about a lonely room.",
-             "Je me rappelle le poème. Pas pourquoi je devais te croire.", "I remember the poem. Not why I was supposed to believe you."]},
-  {"pair": ["chrollo", "feitan"], "reference": "Ch. 377 et Yorknew",
-   "lines": ["Feitan, laisse à Nobunaga le soin de discuter.", "Feitan, leave the talking to Nobunaga.",
-             "Tant qu’il ne nous fait pas attendre comme à Yorknew.", "As long as he doesn’t keep us waiting like in Yorknew."]},
-  {"pair": ["chrollo", "phinks"], "reference": "Ch. 396–397",
-   "lines": ["Sarasa se serait moquée de ton jeu d’acteur.", "Sarasa would have teased you about your acting.",
-             "Elle aurait surtout voulu qu’on finisse le spectacle.", "She’d have wanted us to finish the show first."]},
-  {"pair": ["chrollo", "franklin"], "reference": "Ch. 395–397",
-   "lines": ["Tu gardais déjà les autres ensemble quand on doublait les Power Cleaners.", "You already kept us together back when we dubbed Power Cleaners.",
-             "Et Sheila revenait quand même avec son livre.", "And Sheila still came back with her book."]},
-  {"pair": ["chrollo", "machi"], "reference": "Ch. 397",
-   "lines": ["Tu as suivi Renko après la disparition de Sarasa.", "You followed Renko after Sarasa disappeared.",
-             "Je voulais comprendre comment elle prenait soin de Sarasa.", "I wanted to know how she took care of Sarasa."]},
-  {"pair": ["chrollo", "bonolenov"], "reference": "Ch. 377 et 405",
-   "lines": ["On se séparera après le hall, comme prévu.", "We’ll split up after the hall, as planned.",
-             "Je peux changer de visage. Sheila, elle, changeait de route.", "I can change faces. Sheila used to change roads."]},
-  {"pair": ["chrollo", "shizuku"], "reference": "Yorknew et ch. 377",
-   "lines": ["Reviens au hall. Kortopi avait ce même talent pour passer inaperçu.", "Meet back at the hall. Kortopi had that same knack for passing unnoticed.",
-             "D’accord. Je vais le noter pour une fois.", "All right. I’ll write it down for once."]},
-  {"pair": ["chrollo", "illumi"], "reference": "Ch. 377 et Yorknew",
-   "lines": ["Silva a toujours su ce que valait un contrat.", "Silva always knew the worth of a contract.",
-             "Zeno t’avait même donné le temps de lui poser une question.", "Zeno even gave you time to ask him a question."]},
-  {"pair": ["chrollo", "kalluto"], "reference": "Ch. 377",
-   "lines": ["Tu écoutes bien. C’est une qualité que Pakunoda respectait.", "You listen well. Pakunoda respected that.",
-             "Je voudrais que Kikyo puisse voir mes progrès.", "I wish Kikyo could see how far I’ve come."]},
-  {"pair": ["illumi", "kalluto"], "reference": "Ép. 21–24 et ch. 377–380",
-   "lines": ["Kikyo se demandera où tu as appris ce pli.", "Kikyo will wonder where you learnt that fold.",
-             "Killua aurait déjà trouvé un moyen de l’ouvrir.", "Killua would have figured out how to unfold it by now."]},
-  {"pair": ["feitan", "phinks"], "reference": "Meteor City et ch. 371, 380",
-   "lines": ["Zazan m’a pris moins de temps que tes explications.", "Zazan took less time than your explanations.",
-             "Et moi j’attends encore de savoir qui a compté mes tours.", "I’m still waiting to hear who counted my turns."]},
-  {"pair": ["feitan", "franklin"], "reference": "Ch. 371, 377",
-   "lines": ["Au prochain interrogatoire, je pose les questions.", "I’ll ask the questions next time we interrogate someone.",
-             "La dernière fois, les hommes de Buor avaient déjà compris le message.", "Last time, Buor’s men had already got the message."]},
-  {"pair": ["feitan", "machi"], "reference": "Yorknew et ch. 377",
-   "lines": ["Tu as raccommodé plus de manches que de gens raisonnables.", "You’ve mended more sleeves than sensible people.",
-             "Tu dis ça comme si Uvogin avait jamais su rester tranquille.", "You say that like Uvogin ever knew how to sit still."]},
-  {"pair": ["feitan", "shizuku"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Tu as laissé à Blinky de quoi s’occuper après Pike ?", "Did you leave Blinky anything to do after Pike?",
-             "Il m’a fallu un moment. Les blessures étaient petites.", "It took a while. The wounds were small."]},
-  {"pair": ["feitan", "bonolenov"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Tu as fait trembler le sol avant que Zazan m’entende.", "You shook the ground before Zazan heard me.",
-             "Les pas d’un danseur ne se cachent pas tous.", "A dancer can’t hide every footstep."]},
-  {"pair": ["feitan", "kalluto"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Tu regardais toujours nos pieds chez Zazan.", "You kept watching our feet in Zazan’s nest.",
-             "Je croyais être plus près de votre niveau.", "I thought I was closer to your level."]},
-  {"pair": ["feitan", "illumi"], "reference": "Ch. 377",
-   "lines": ["L’Araignée a déjà engagé des Zoldyck. Tu connais le tarif.", "The Spider has hired Zoldycks before. You know the rate.",
-             "Silva ne ferait sûrement pas le même calcul.", "Silva probably wouldn’t make the same calculation."]},
-  {"pair": ["phinks", "franklin"], "reference": "Ch. 371, 377, 396–397",
-   "lines": ["Nobunaga t’aurait encore laissé faire le discours.", "Nobunaga would’ve left the speech to you again.",
-             "Et toi, tu aurais tourné le bras pendant le discours.", "And you’d have wound up your arm during it."]},
-  {"pair": ["phinks", "machi"], "reference": "Ch. 396–397",
-   "lines": ["À Meteor City, tu savais déjà quand on mentait.", "Back in Meteor City, you already knew when we were lying.",
-             "Sarasa savait le dire plus gentiment que moi.", "Sarasa knew how to say it more kindly than I do."]},
-  {"pair": ["phinks", "shizuku"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Je te rappelle que Zazan avait une armée entière.", "Let me remind you, Zazan had a whole army.",
-             "J’avais surtout retenu les chemins qui menaient à Pike.", "I mostly remembered the paths that led to Pike."]},
-  {"pair": ["phinks", "bonolenov"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Moi, je compte mes tours. Shalnark aurait compté tes pas.", "I count my winds. Shalnark would have counted your steps.",
-             "Ma tribu m’a appris à écouter le rythme, pas à le compter.", "My tribe taught me to hear the rhythm, not count it."]},
-  {"pair": ["phinks", "kalluto"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Garde ton papier, Kalluto. Zazan, c’est fini.", "Save your paper, Kalluto. Zazan’s finished.",
-             "Je l’utilise aussi pour écouter, Phinks.", "I use it to listen, too, Phinks."]},
-  {"pair": ["phinks", "illumi"], "reference": "Ch. 377",
-   "lines": ["J’ai déjà attendu des nouvelles d’un Zoldyck.", "I’ve waited for news from a Zoldyck before.",
-             "Silva répond plus vite quand les conditions sont claires.", "Silva answers faster when the terms are clear."]},
-  {"pair": ["franklin", "machi"], "reference": "Ch. 395–397",
-   "lines": ["Sheila nous aurait demandé de baisser le ton.", "Sheila would have told us to keep it down.",
-             "Elle aurait d’abord ramassé son livre.", "She’d have picked up her book first."]},
-  {"pair": ["franklin", "shizuku"], "reference": "Yorknew · ép. 41 et ch. 377",
-   "lines": ["À Yorknew, je tirais. Toi, tu travaillais avec Kortopi.", "In Yorknew, I did the shooting. You worked with Kortopi.",
-             "Blinky se souvient mieux des détails que moi.", "Blinky remembers the details better than I do."]},
-  {"pair": ["franklin", "bonolenov"], "reference": "Ch. 377",
-   "lines": ["Si on se sépare, on se retrouve au hall. Pas besoin de signal.", "If we split up, meet at the hall. No signal needed.",
-             "Tu tenais déjà la mesure quand Uvogin s’impatientait.", "You kept time even when Uvogin got impatient."]},
-  {"pair": ["franklin", "kalluto"], "reference": "Ch. 377",
-   "lines": ["Ne confonds pas patience et immobilité. Nobunaga le fait déjà assez.", "Don’t confuse patience with standing still. Nobunaga does that enough.",
-             "Je peux attendre. Mon papier, lui, continue de bouger.", "I can wait. My paper keeps moving."]},
-  {"pair": ["franklin", "illumi"], "reference": "Ch. 377",
-   "lines": ["Je n’ai pas demandé ce que coûte le contrat de mon voisin.", "I didn’t ask what the contract on my neighbour costs.",
-             "Pas comme Silva. Il vérifie toujours le montant.", "Unlike Silva. He always checks the figure."]},
-  {"pair": ["machi", "kalluto"], "reference": "Ch. 377",
-   "lines": ["Ton papier accroche. Kikyo ne t’a pas montré comment lâcher le fil ?", "Your paper is snagging. Didn’t Kikyo show you how to let go of the thread?",
-             "Maman voulait surtout que je ne le casse pas.", "Mother mostly wanted me not to break it."]},
-  {"pair": ["machi", "illumi"], "reference": "Ch. 377",
-   "lines": ["Entre ton aiguille et mon fil, il vaut mieux garder ses distances.", "Between your needle and my thread, people should keep their distance.",
-             "Kikyo dirait que la distance dépend du travail.", "Kikyo would say the distance depends on the job."]},
-  {"pair": ["machi", "bonolenov"], "reference": "Ch. 377",
-   "lines": ["Je peux recoudre un bras. Pas refaire la danse de ta tribu.", "I can stitch up an arm. I can’t recreate your tribe’s dance.",
-             "Pas plus que je pourrais imiter les mains de Renko.", "No more than I could imitate Renko’s hands."]},
-  {"pair": ["machi", "shizuku"], "reference": "Yorknew et ch. 377",
-   "lines": ["Ne laisse pas Blinky avaler les fils. Je n’ai pas le secours de Pakunoda.", "Don’t let Blinky swallow the thread. Pakunoda isn’t here to help.",
-             "Blinky trie les choses. C’est moi qui perds le compte.", "Blinky sorts things out. I’m the one who loses count."]},
-  {"pair": ["bonolenov", "shizuku"], "reference": "Ch. 377–380",
-   "lines": ["On devait attendre au passage. Tu te souviens de l’étage ?", "We were to wait at the passage. Do you remember the deck?",
-             "Je me souviens que Kortopi aurait fait un repère.", "I remember Kortopi would have left a marker."]},
-  {"pair": ["bonolenov", "kalluto"], "reference": "Meteor City · ép. 96–97, ch. 377",
-   "lines": ["Tu étais déjà silencieux au repaire de Zazan.", "You were already quiet at Zazan’s lair.",
-             "Le papier s’en souvient. Il n’a pas besoin de parler.", "The paper remembers. It doesn’t need to speak."]},
-  {"pair": ["bonolenov", "illumi"], "reference": "Ch. 377",
-   "lines": ["Je peux danser sans musique. Tu travailles sans un mot.", "I can dance without music. You work without a word.",
-             "Silva dit qu’un bruit inutile augmente le prix.", "Silva says any needless noise raises the price."]},
-  {"pair": ["shizuku", "kalluto"], "reference": "Meteor City · ép. 96–97",
-   "lines": ["Ton papier est plus facile à retrouver que Pike dans ses toiles.", "Your paper is easier to find than Pike in his webs.",
-             "Pike s’imaginait sans doute que personne ne le voyait.", "Pike probably thought nobody could see him."]},
-  {"pair": ["shizuku", "illumi"], "reference": "Ch. 377",
-   "lines": ["Je me souviens de Silva. Toi, je n’ai pas encore noté ton numéro.", "I remember Silva. I haven’t written down your number yet.",
-             "Note le contrat. C’est plus important que le numéro.", "Write down the contract. It matters more than the number."]},
-  {"pair": ["benjamin", "tserriednich"], "reference": "Ch. 348, 416–418",
-   "lines": ["Père peut garder son urne. Je me charge de toi.", "Father can keep his urn. I’ll deal with you myself.",
-             "Fais prévenir Salkov. Je déteste les démonstrations sans public.", "Let Salkov know. I hate demonstrations without an audience."]},
-  {"pair": ["benjamin", "camilla"], "reference": "Ch. 363, 373, 416",
-   "lines": ["L’affaire de Musse n’est pas close.", "Musse’s case isn’t closed.",
-             "Demande à Nasubi ce qu’il pense de fermer les affaires de Camilla.", "Ask Nasubi how he feels about closing Camilla’s cases."]},
-  {"pair": ["benjamin", "halkenburg"], "reference": "Ch. 349, 404",
-   "lines": ["Tu défendais déjà tes idées devant le roi. Même Balsamilco s’en souvient.", "You already defended those ideas before the king. Even Balsamilco remembers.",
-             "Je lui ai demandé de nous écouter. Je lui demanderais encore.", "I asked him to hear us. I’d ask him again."]},
-  {"pair": ["camilla", "tserriednich"], "reference": "Ch. 349 et 359",
-   "lines": ["Laisse Duazul aux convenances. On connaît tous les deux les règles.", "Leave the manners to Duazul. We both know the rules.",
-             "Je préfère voir ce qu’il se passe quand quelqu’un les brise.", "I’d rather see what happens when someone breaks them."]},
-  {"pair": ["camilla", "halkenburg"], "reference": "Ch. 349 et 359",
-   "lines": ["Duazul pourrait encore croire que tu souhaites convaincre Nasubi.", "Duazul might still think you mean to persuade Nasubi.",
-             "Je voulais convaincre notre père. Pas lui ressembler.", "I wanted to persuade our father. Not become him."]},
-  {"pair": ["tserriednich", "halkenburg"], "reference": "Ch. 349 et 359",
-   "lines": ["Nous ne sommes pas au banquet. Tu peux parler franchement.", "We’re not at the banquet. You can speak freely.",
-             "Je parlais franchement devant Nasubi aussi.", "I spoke freely in front of Nasubi too."]},
-  {"pair": ["theta", "tserriednich"], "reference": "Ch. 366–387",
-   "lines": ["Salkov peut attendre dehors. On reprend l’exercice.", "Salkov can wait outside. We’ll repeat the exercise.",
-             "Encore ? J’appréciais tant la façon dont le dernier s’est terminé.", "Again? I so enjoyed how the last one ended."]},
-  {"pair": ["benjamin", "furykov"], "reference": "Ch. 366, 373, 413",
-   "lines": ["Je veux un rapport avant que Balsamilco le demande.", "I want a report before Balsamilco has to ask.",
-             "Je vous dirai aussi ce que les autres ont essayé de cacher.", "I’ll also tell you what the others tried to hide."]},
-  {"pair": ["camilla", "furykov"], "reference": "Ch. 373 et 416",
-   "lines": ["Musse croyait pouvoir se mettre entre moi et mon frère.", "Musse thought he could stand between me and my brother.",
-             "Nos ordres venaient de Benjamin. Pas de Duazul.", "Our orders came from Benjamin. Not Duazul."]},
-  {"pair": ["camilla", "musse"], "reference": "Ch. 373",
-   "lines": ["Nasubi aurait dû te laisser observer de loin.", "Nasubi should have let you watch from a distance.",
-             "J’observe mieux quand j’ai la cible en vue.", "I watch better when I can see my target."]},
-  {"pair": ["benjamin", "musse"], "reference": "Ch. 373–374",
-   "lines": ["Rends compte à Balsamilco dès que Camilla franchit le seuil.", "Report to Balsamilco as soon as Camilla crosses the threshold.",
-             "Vous aurez son trajet, même si je dois la laisser passer.", "You’ll have her route, even if I have to let her pass."]},
-  {"pair": ["benjamin", "rihan"], "reference": "Ch. 375–389",
-   "lines": ["Pour Salé-salé, j’avais besoin de ton jugement.", "With Sale-Sale, I needed your judgement.",
-             "Alors laissez-moi observer sans me donner les réponses.", "Then let me observe without giving me the answers."]},
-  {"pair": ["tserriednich", "furykov"], "reference": "Ch. 416",
-   "lines": ["Tes bottes dans la chambre 1004 étaient déjà un avertissement.", "Your boots in room 1004 were warning enough.",
-             "Balsamilco nous a appris à entrer sans demander d’invitation.", "Balsamilco taught us to enter without asking for an invitation."]},
-  {"pair": ["benjamin", "mizaistom"], "reference": "Ch. 410",
-   "lines": ["Le Bureau de justice n’a pas à m’apprendre mon rang.", "The Justice Bureau doesn’t need to teach me my rank.",
-             "Le rang ne dispense personne de répondre à Cleapatro.", "Rank excuses no one from answering to Cleapatro."]},
-  {"pair": ["hanzo", "biscuit"], "reference": "Ch. 368–375",
-   "lines": ["La porte de Marayam n’ouvrait même plus sur la bonne chambre.", "Marayam’s door didn’t even lead to the right room anymore.",
-             "Et pourtant, tu oublies encore de regarder derrière toi.", "And you still forget to look behind you."]},
-  {"pair": ["leorio", "hanzo"], "reference": "Ép. 18–21",
-   "lines": ["Gon avait le bras en vrac et refusait de te lâcher.", "Gon’s arm was wrecked, and he still wouldn’t let you go.",
-             "Netero l’a vu. Je n’ai jamais regretté d’avoir cédé.", "Netero saw it. I’ve never regretted giving in."]},
-  {"pair": ["leorio", "illumi"], "reference": "Ép. 19–24 et 140",
-   "lines": ["Tu as dit à Killua qui il devait être. Il a choisi Gon.", "You told Killua what he had to be. He chose Gon.",
-             "Kikyo n’avait pas tout prévu, elle non plus.", "Kikyo didn’t foresee everything either."]},
-  {"pair": ["leorio", "melody"], "reference": "Yorknew · ép. 56–58",
-   "lines": ["Tu entendais ma nervosité pendant l’échange de Pakunoda, hein ?", "You heard my nerves during the exchange for Pakunoda, didn’t you?",
-             "Ton cœur essayait surtout de rassurer Gon.", "Your heart was mostly trying to reassure Gon."]},
-  {"pair": ["melody", "basho"], "reference": "Ép. 39–48",
-   "lines": ["La maison Nostrade était bruyante. Tes vers coupaient le vacarme.", "The Nostrade house was loud. Your verses cut through the noise.",
-             "Neon n’aimait pas toutes mes rimes. Toi non plus, je crois.", "Neon didn’t like all my rhymes. I don’t think you did either."]},
-  {"pair": ["melody", "chrollo"], "reference": "Yorknew · ép. 56–58",
-   "lines": ["Le cœur de Pakunoda disait plus que vos menaces.", "Pakunoda’s heart said more than your threats.",
-             "Elle a dit ce qu’elle avait choisi de dire à l’Araignée.", "She told the Spider exactly what she chose to tell it."]},
-  {"pair": ["melody", "mizaistom"], "reference": "Ch. 400",
-   "lines": ["Fugetsu avait besoin de repos, pas d’un nouvel entretien.", "Fugetsu needed rest, not another interview.",
-             "J’espérais que Kacho pourrait encore nous aider à comprendre.", "I hoped Kacho might still help us understand."]},
-  {"pair": ["mizaistom", "leorio"], "reference": "Ch. 342–344",
-   "lines": ["Le poing que tu as envoyé à Ging n’était pas un entretien d’embauche.", "That punch you threw at Ging wasn’t a job interview.",
-             "Dis ça à Cheadle ! C’est après ça qu’on m’a appelé.", "Tell Cheadle that! It was after that they called me."]},
-  {"pair": ["gel", "leorio"], "reference": "Ch. 380",
-   "lines": ["Cheadle compte sur nous. Le service ne ferme pas pendant ton duel.", "Cheadle is counting on us. The ward doesn’t close for your duel.",
-             "Je reviendrai avant la prochaine tournée. Je te dois un café.", "I’ll be back before the next round. I owe you a coffee."]},
-  {"pair": ["mizaistom", "gel"], "reference": "Ch. 342–344 et 380",
-   "lines": ["Botobai tient le dossier. Qu’a dit Cheadle à l’hôpital ?", "Botobai has the file. What did Cheadle say at the hospital?",
-             "Qu’il faut d’abord s’occuper de ceux qui sont encore vivants.", "That we need to see to the people who are still alive first."]},
-  {"pair": ["mizaistom", "cluck"], "reference": "Ch. 380",
-   "lines": ["Tes oiseaux ont couvert plus de terrain que les hommes de Botobai.", "Your birds covered more ground than Botobai’s men.",
-             "Et ils n’ont pas réclamé de réunion pour le faire.", "And they didn’t ask for a meeting about it."]},
-  {"pair": ["mizaistom", "saiyu"], "reference": "Ch. 346",
-   "lines": ["On peut reprendre ce débat sans Kanzai qui nous coupe ?", "Can we finish that argument without Kanzai interrupting?",
-             "Tu préfères vraiment quand le Tigre ne dit rien ?", "Do you really prefer it when the Tiger says nothing?"]},
-  {"pair": ["mizaistom", "beyond"], "reference": "Ch. 340–346",
-   "lines": ["Botobai voudrait que tu restes dans tes quartiers.", "Botobai would prefer you to stay in your quarters.",
-             "Mon père ne se serait jamais contenté de quartiers.", "My father would never have settled for quarters."]},
-  {"pair": ["gel", "beyond"], "reference": "Ch. 340, 346",
-   "lines": ["Cheadle m’a demandé de vérifier que tu restais sous bonne garde.", "Cheadle asked me to make sure you stayed under close guard.",
-             "Même Isaac n’aurait pas pu garder la mer sous clé.", "Even Isaac couldn’t have kept the sea under lock and key."]},
-  {"pair": ["saiyu", "beyond"], "reference": "Ch. 412",
-   "lines": ["Cleapatro pose beaucoup de questions pour quelqu’un qui aime le silence.", "Cleapatro asks a lot of questions for someone who likes silence.",
-             "Elle aurait détesté les silences de mon père.", "She would have hated my father’s silences."]},
-  {"pair": ["cluck", "gel"], "reference": "Ch. 342–346",
-   "lines": ["Cheadle voudrait une autre réunion. Tu viens ou je t’envoie un oiseau ?", "Cheadle wants another meeting. Are you coming or shall I send a bird?",
-             "Envoie-le à Kanzai. C’est lui qui est toujours en retard.", "Send it to Kanzai. He’s the one who’s always late."]},
-  {"pair": ["cluck", "saiyu"], "reference": "Ch. 342–346",
-   "lines": ["Pyon t’a laissé lire jusqu’au bout, cette fois ?", "Did Pyon let you finish reading this time?",
-             "J’écoute même quand j’ai l’air de ne pas écouter.", "I listen even when I don’t look like I’m listening."]},
-  {"pair": ["gel", "saiyu"], "reference": "Ch. 342–346",
-   "lines": ["Botobai réclame un rapport avant la prochaine réunion.", "Botobai wants a report before the next meeting.",
-             "Dis-lui que je mets les détails les plus bruyants à la fin.", "Tell him I put the loudest details at the end."]},
-  {"pair": ["hinrigh", "lynch"], "reference": "Ch. 390–392, 406",
-   "lines": ["Quand Onior te pose une question, laisse les poings au repos.", "When Onior asks you a question, give your fists a rest.",
-             "Et s’il me répond honnêtement, je prendrai même des notes.", "And if he answers honestly, I’ll even take notes."]},
-  {"pair": ["hinrigh", "zakuro"], "reference": "Ch. 390–392",
-   "lines": ["Onior t’a donné une mission. Ne la vide pas de ton sang.", "Onior gave you a job. Don’t bleed yourself dry doing it.",
-             "Je garde toujours de quoi couvrir Lynch.", "I always keep enough in reserve to cover Lynch."]},
-  {"pair": ["lynch", "zakuro"], "reference": "Ch. 390–392",
-   "lines": ["Hanal n’était pas le bon. Le prochain, je lui pose la question en face.", "Hanal wasn’t the one. I’ll ask the next one straight to his face.",
-             "Laisse-moi au moins le temps de couvrir la sortie.", "At least give me time to cover the exit."]},
-  {"pair": ["bonolenov", "lynch"], "reference": "Ch. 392, 405–406",
-   "lines": ["Ton poing s’intéresse à des choses que les visages cachent.", "Your fist is interested in things faces hide.",
-             "Hanal n’avait rien à cacher. Tu veux passer le même test ?", "Hanal had nothing to hide. Want to take the same test?"]},
-  {"pair": ["bonolenov", "zakuro"], "reference": "Ch. 392, 405",
-   "lines": ["Le sang laisse une piste. Les souvenirs aussi.", "Blood leaves a trail. So do memories.",
-             "Je me souviens de la question de Lynch à Hanal. De ta réponse, moins bien.", "I remember Lynch’s question to Hanal. Your answer’s a little hazier."]},
-  {"pair": ["chrollo", "hinrigh"], "reference": "Ch. 405–406",
-   "lines": ["Je t’ai écouté au sujet du cinéma. Et du corps retrouvé.", "I heard what you said about the cinema. And about the body they found.",
-             "Onior peut attendre. Moi, je veux comprendre ce qui cloche.", "Onior can wait. I want to know what doesn’t add up."]},
-  {"pair": ["hinrigh", "padaille"], "reference": "Ch. 391",
-   "lines": ["Tes mains m’ont fait regretter de ne pas avoir apporté plus de menottes.", "Your hands made me wish I’d brought more handcuffs.",
-             "Quorolle t’aurait trouvé encore plus drôle avec une main en moins.", "Quorolle would’ve found you even funnier with one less hand."]},
-  {"pair": ["hinrigh", "phinks"], "reference": "Ch. 395–400",
-   "lines": ["Pour la prochaine fouille, je confie l’émetteur à Nobunaga.", "Next search, I’m giving the transmitter to Nobunaga.",
-             "Lui au moins sait quand il vaut mieux défoncer la porte.", "At least he knows when to kick the door in."]},
-  {"pair": ["hinrigh", "feitan"], "reference": "Ch. 395–400",
-   "lines": ["Les cabines de ce pont ont des murs plus bavards qu’elles en ont l’air.", "The cabins on this deck have chattier walls than they look.",
-             "Demande à Nobunaga. Il sait laquelle écouter.", "Ask Nobunaga. He knows which one to listen to."]},
-  {"pair": ["hinrigh", "terebellum"], "reference": "Ch. 399",
-   "lines": ["Nobunaga avait une bonne raison de ne pas lâcher son sabre.", "Nobunaga had a good reason to keep hold of his sword.",
-             "Tu aurais dû te demander qui prendrait le choc.", "You should’ve asked who would take the hit."]},
-  {"pair": ["hinrigh", "yokotani"], "reference": "Ch. 399",
-   "lines": ["Sans ton règlement, Nobunaga et moi aurions fini la visite.", "Without your rules, Nobunaga and I would’ve finished the visit.",
-             "Vous êtes sortis en un seul morceau. C’est déjà un service.", "You left in one piece. That’s already a service."]},
-  {"pair": ["luini", "phinks"], "reference": "Ch. 378–393",
-   "lines": ["Nobunaga avait vraiment besoin de dégainer ?", "Did Nobunaga really need to draw his sword?",
-             "Fallait lui demander avant de passer ta tête par la porte.", "Should’ve asked before you stuck your head through the door."]},
-  {"pair": ["luini", "feitan"], "reference": "Ch. 378–395",
-   "lines": ["Vous n’avez vraiment pas aimé ma première visite.", "You really didn’t like my first visit.",
-             "Buor n’a pas trouvé ça drôle non plus.", "Buor didn’t find it funny either."]},
-  {"pair": ["luini", "padaille"], "reference": "Ch. 378",
-   "lines": ["Morena a choisi vingt-trois joueurs. Tu fais encore cavalier seul ?", "Morena picked twenty-three players. Still going it alone?",
-             "Demande à Quorolle qui préfère rester devant quand ça cogne.", "Ask Quorolle who likes to stay up front when things get rough."]},
-  {"pair": ["luini", "terebellum"], "reference": "Ch. 378",
-   "lines": ["Ça t’a rassuré quand Morena a fermé la porte de la 302 ?", "Did it make you feel safer when Morena shut the door of room 302?",
-             "Une porte fermée n’a jamais empêché les dégâts.", "A closed door never stopped the damage."]},
-  {"pair": ["luini", "voconte"], "reference": "Ch. 378",
-   "lines": ["Si on demande à Morena qui ouvre le passage, elle choisit lequel de nous ?", "If we ask Morena who opens the way, which one of us does she pick?",
-             "Elle choisit celui qui sait aussi le refermer.", "She picks the one who also knows how to close it."]},
-  {"pair": ["luini", "yokotani"], "reference": "Ch. 378",
-   "lines": ["Tu comptes aussi les intrusions quand personne n’ouvre la porte ?", "Do you count trespassing when nobody opens the door?",
-             "Je peux demander à Morena de te lire le règlement.", "I can ask Morena to read you the rules."]},
-  {"pair": ["padaille", "terebellum"], "reference": "Ch. 378",
-   "lines": ["Heureusement que Quorolle aime travailler en équipe.", "Good thing Quorolle likes working as a team.",
-             "Un choc mal placé, et même lui ne pourra pas te couvrir.", "One hit in the wrong place, and even he can’t cover you."]},
-  {"pair": ["padaille", "voconte"], "reference": "Ch. 378",
-   "lines": ["Ouvre-moi un raccourci. Quorolle et moi avons une course à finir.", "Open me a shortcut. Quorolle and I have an errand to finish.",
-             "Morena préfère qu’on referme derrière soi.", "Morena prefers us to close up behind ourselves."]},
-  {"pair": ["padaille", "yokotani"], "reference": "Ch. 378",
-   "lines": ["Tu comptes mes mains dans la catégorie des armes ?", "Do my hands count under the weapons clause?",
-             "Demande à Morena si elle souhaite faire appel.", "Ask Morena if she’d like to appeal."]},
-  {"pair": ["terebellum", "voconte"], "reference": "Ch. 378, 398–399",
-   "lines": ["Ne laisse pas Dogman devant toutes les portes à la fois.", "Don’t leave Dogman in front of every door at once.",
-             "Il aboie assez fort pour qu’on sache laquelle il garde.", "He’s loud enough for us to know which one he’s guarding."]},
-  {"pair": ["terebellum", "yokotani"], "reference": "Ch. 398–399",
-   "lines": ["Quand Nobunaga lève son sabre, ne lui tourne pas le dos.", "When Nobunaga raises his sword, don’t turn your back to him.",
-             "Je préfère lui montrer la sortie. C’est plus réglementaire.", "I’d rather show him the exit. It’s more by the book."]},
-  {"pair": ["voconte", "yokotani"], "reference": "Ch. 378, 408–410",
-   "lines": ["Pour Borksen, il fallait surtout une porte qui se ferme.", "What we really needed for Borksen was a door that shut.",
-             "Pour le reste, Morena avait déjà préparé les cartes.", "Morena had the cards ready for the rest."]},
-  {"pair": ["mizaistom", "illumi"], "reference": "Ch. 380",
-   "lines": ["Quand Fugetsu traverse un couloir, tu ne la suis pas.", "When Fugetsu walks down a corridor, you don’t follow her.",
-             "Il faudrait d’abord quelqu’un pour payer le trajet.", "Someone would have to pay for the trip first."]},
-  {"pair": ["mizaistom", "kalluto"], "reference": "Ch. 380",
-   "lines": ["Fugetsu n’avait pas besoin d’autres yeux sur elle.", "Fugetsu didn’t need another pair of eyes on her.",
-             "Les yeux font parfois plus de bruit que le papier.", "Eyes sometimes make more noise than paper."]},
-  {"pair": ["basho", "halkenburg"], "reference": "Ch. 369–400",
-   "lines": ["Un prince qui veut parler au roi. J’en ferais presque un poème.", "A prince who wants to talk to the king. I could almost make a poem of it.",
-             "Parle plutôt de Sumidori. Il a choisi de rester.", "Write about Sumidori instead. He chose to stay."]},
-  {"pair": ["kurapika", "biscuit"], "reference": "Ch. 350",
-   "lines": ["Killua avait raison. Je peux te confier Marayam.", "Killua was right. I can trust you with Marayam.",
-             "Il t’a aussi dit d’arrêter de juger les gens à leur taille ?", "Did he also tell you to stop judging people by their size?"]},
-  {"pair": ["leorio", "halkenburg"], "reference": "Ch. 404",
-   "lines": ["Cheadle et moi, on a vu arriver le brancard. Pas question de te revoir dessus.", "Cheadle and I saw the stretcher come in. I don’t want to see you back on it.",
-             "Vous avez fait votre travail. C’est tout ce que je pouvais demander.", "You did your job. That was all I could ask."]},
-  {"pair": ["kurapika", "saiyu"], "reference": "Ch. 346",
-   "lines": ["Mizaistom et moi aurons encore des questions, après la réunion.", "Mizaistom and I will have more questions after the meeting.",
-             "D’abord, fais taire Kanzai. On s’entendra mieux.", "Quiet Kanzai first. We’ll hear each other better."]},
-  {"pair": ["leorio", "saiyu"], "reference": "Ch. 346–349",
-   "lines": ["Tu te portes volontaire pour annoncer ça à Kanzai ?", "Are you volunteering to break it to Kanzai?",
-             "Tu veux le faire à ma place, docteur ?", "Would you like to do it for me, Doctor?"]},
-  {"pair": ["kurapika", "gel"], "reference": "Ch. 346–349",
-   "lines": ["Cheadle a dit que ton équipe tiendrait l’infirmerie.", "Cheadle said your team would run the infirmary.",
-             "Elle a aussi dit que tu pouvais nous éviter du travail.", "She also said you could save us some work."]},
-  {"pair": ["kurapika", "cluck"], "reference": "Ch. 346–349",
-   "lines": ["Pyon consulte son téléphone. Toi, tu préfères les oiseaux.", "Pyon checks her phone. You prefer birds.",
-             "Un oiseau au moins ne me demande pas de le recharger.", "At least a bird doesn’t ask me to recharge it."]},
-  {"pair": ["leorio", "cluck"], "reference": "Ch. 346–349",
-   "lines": ["Si Cheadle me demande, dis-lui que je suis en chemin !", "If Cheadle asks for me, tell her I’m on my way!",
-             "Tu veux qu’un oiseau aille lui dire à quelle vitesse ?", "Do you want a bird to go tell her how fast?"]},
-  {"pair": ["illumi", "hanzo"], "reference": "Ép. 19–21",
-   "lines": ["Au dernier tour, Netero avait prévu plus d’une façon de gagner.", "In the last round, Netero had more than one way to win.",
-             "Gon avait trouvé la sienne : nous faire perdre patience.", "Gon found his: making us lose our patience."]},
-  {"pair": ["furykov", "rihan"], "reference": "Ch. 374, 402 et 415",
-   "lines": ["Balsamilco voulait un rapport écrit. Tu voulais une salle vide.", "Balsamilco wanted a written report. You wanted an empty room.",
-             "Un indice donné trop tôt ne sert qu’à gâcher la chasse.", "A clue given too soon only spoils the hunt."]},
-  {"pair": ["longhi", "rihan"], "reference": "Ch. 401–402",
-   "lines": ["Tubeppa a choisi un partenaire, pas un superviseur.", "Tubeppa chose a partner, not a supervisor.",
-             "Mon travail commence là où les partenaires cessent de parler.", "My work begins when the partners stop talking."]},
-  {"pair": ["leorio", "phinks"], "reference": "Yorknew · ép. 57–58",
-   "lines": ["Pakunoda était venue seule, comme convenu. Je m’en souviens.", "Pakunoda came alone, as agreed. I remember.",
-             "Elle tenait à sa parole. À toi de tenir à la tienne.", "She kept her word. You’d better keep yours."]},
-  {"pair": ["kurapika", "benjamin"], "reference": "Ch. 359 et 363–364",
-   "lines": ["Vincent est venu en uniforme. Ça ne lui donnait aucun droit sur Woble.", "Vincent came in uniform. That gave him no claim over Woble.",
-             "Je vous laisse le soin d’expliquer votre version à Balsamilco.", "I’ll leave you to explain your version to Balsamilco."]},
-  {"pair": ["kurapika", "camilla"], "reference": "Ch. 349, 359 et 363",
-   "lines": ["Woble ne peut pas encore parler. Son silence ne vaut pas un accord.", "Woble can’t speak yet. Silence doesn’t mean consent.",
-             "Si tu veux un débat sur les règles, adresse-toi à Nasubi.", "If you want to debate the rules, take it up with Nasubi."]},
-  {"pair": ["kurapika", "halkenburg"], "reference": "Ch. 359 et 386–387",
-   "lines": ["Sumidori a choisi de vous suivre. Woble, elle, n’a rien choisi.", "Sumidori chose to follow you. Woble never made a choice.",
-             "J’aurais préféré que notre père nous laisse tous choisir.", "I wish our father had let all of us choose."]},
-  {"pair": ["kurapika", "tserriednich"], "reference": "Ch. 343–345 et 359",
-   "lines": ["Quand je pense à Pairo, je sais pourquoi tes vitrines doivent s’ouvrir.", "When I think of Pairo, I know why those display cases must open.",
-             "Tu as traversé tout un navire pour me parler de collection ?", "You crossed an entire ship to talk to me about collecting?"]}
+  {
+    "pair": ["kurapika", "chrollo"],
+    "reference": "Yorknew · ép. 56–58",
+    "lines": [
+      "Pakunoda a tenu parole. Souviens-toi de l’échange.",
+      "Pakunoda kept her word. Remember the exchange.",
+      "Les souvenirs de Pakunoda sont restés avec l’Araignée.",
+      "Pakunoda’s memories stayed with the Spider."
+    ]
+  },
+  {
+    "pair": ["chrollo", "hisoka"],
+    "reference": "Ch. 351–357 et 405",
+    "lines": [
+      "La Tour céleste était assez grande pour Kortopi et moi.",
+      "Heavens Arena was big enough for Kortopi and me.",
+      "Shalnark n’est plus là pour te prêter son téléphone.",
+      "Shalnark isn’t here to lend you his phone."
+    ]
+  },
+  {
+    "pair": ["kurapika", "leorio"],
+    "reference": "Ép. 1, 54 et 140",
+    "lines": [
+      "Si Gon nous entendait nous disputer encore…",
+      "If Gon could hear us arguing again…",
+      "Il nous ferait monter dans la mâture, comme sur le bateau de l’examen !",
+      "He’d send us up the rigging, just like on the exam ship!"
+    ]
+  },
+  {
+    "pair": ["kurapika", "hisoka"],
+    "reference": "Ép. 15 et 45–55",
+    "lines": [
+      "Tes messages sur Uvogin avaient un prix.",
+      "Your messages about Uvogin came at a price.",
+      "Et la fausse prédiction de Neon a été mon meilleur tour.",
+      "And Neon’s fake fortune was my best trick."
+    ]
+  },
+  {
+    "pair": ["kurapika", "melody"],
+    "reference": "Ép. 43 et 48–58",
+    "lines": [
+      "À Yorknew, tu entendais mon cœur avant même que je parle.",
+      "In Yorknew you heard my heart before I spoke.",
+      "Respire, Kurapika. Pense à la voix de Pairo.",
+      "Breathe, Kurapika. Think of Pairo’s voice."
+    ]
+  },
+  {
+    "pair": ["kurapika", "basho"],
+    "reference": "Ép. 39 et 48",
+    "lines": [
+      "Dalzollene aurait trouvé ce remue-ménage inutile.",
+      "Dalzollene would have called all this commotion pointless.",
+      "Je n’ai toujours pas trouvé la rime qui ferait sourire Dalzollene.",
+      "I still haven’t found a rhyme that would make Dalzollene smile."
+    ]
+  },
+  {
+    "pair": ["kurapika", "bill"],
+    "reference": "Ch. 359–369, 388",
+    "lines": [
+      "Oito et Woble comptent sur nous. Comme dans la chambre 1014.",
+      "Oito and Woble are counting on us. Just like in room 1014.",
+      "Je garde la porte. C’est ce que Woody aurait fait.",
+      "I’ll watch the door. It’s what Woody would have done."
+    ]
+  },
+  {
+    "pair": ["kurapika", "sayird"],
+    "reference": "Ch. 359–361",
+    "lines": [
+      "Je n’ai pas oublié le visage de Kurton.",
+      "I haven’t forgotten Kurton’s face.",
+      "Ce qui est arrivé à Kurton ne devait pas arriver.",
+      "What happened to Kurton was never meant to happen."
+    ]
+  },
+  {
+    "pair": ["bill", "sayird"],
+    "reference": "Ch. 359–361",
+    "lines": [
+      "J’entends encore la porte se fermer après Woody.",
+      "I can still hear the door closing after Woody.",
+      "Si seulement Kurton avait quitté la pièce.",
+      "If only Kurton had left the room."
+    ]
+  },
+  {
+    "pair": ["kurapika", "furykov"],
+    "reference": "Ch. 369, 371 et 375",
+    "lines": [
+      "Au cours, Belerainte a su rester derrière la ligne blanche.",
+      "In class, Belerainte knew to stay behind the white line.",
+      "Belerainte a levé la main. Moi, j’ai regardé les autres.",
+      "Belerainte raised his hand. I watched everyone else."
+    ]
+  },
+  {
+    "pair": ["kurapika", "longhi"],
+    "reference": "Ch. 369, 401",
+    "lines": [
+      "Un accord pour Tubeppa. Je lirai aussi les petites lignes.",
+      "A deal for Tubeppa. I’ll read the fine print, too.",
+      "Vous pouvez les lire devant Oito. Je maintiens mon offre.",
+      "You can read them in front of Oito. My offer stands."
+    ]
+  },
+  {
+    "pair": ["longhi", "furykov"],
+    "reference": "Ch. 369–375",
+    "lines": [
+      "Belerainte écoute. Vous, vous cherchez qui ment.",
+      "Belerainte listens. You’re looking for whoever is lying.",
+      "Tubeppa vous a choisie pour observer, elle aussi.",
+      "Tubeppa chose you to watch, too."
+    ]
+  },
+  {
+    "pair": ["kurapika", "mizaistom"],
+    "reference": "Ch. 343–344",
+    "lines": [
+      "Vous avez trouvé des yeux que même Light Nostrade n’avait pas vus.",
+      "You found eyes even Light Nostrade hadn’t seen.",
+      "Cheadle voulait votre aide. Je savais où chercher la vôtre.",
+      "Cheadle wanted your help. I knew where to find yours."
+    ]
+  },
+  {
+    "pair": ["kurapika", "hanzo"],
+    "reference": "Ép. 6–21 et ch. 368",
+    "lines": [
+      "À l’examen, Gon refusait déjà d’abandonner.",
+      "Gon already refused to give up in the exam.",
+      "Il m’a forcé à céder. Netero a dû bien rire.",
+      "He made me give in. Netero must have had a good laugh."
+    ]
+  },
+  {
+    "pair": ["kurapika", "illumi"],
+    "reference": "Ép. 19–24",
+    "lines": [
+      "Killua n’est pas une décision que tu peux prendre à sa place.",
+      "Killua isn’t a decision you get to make.",
+      "Gittarackur avait un avantage : personne ne posait de questions.",
+      "Gittarackur had one advantage: nobody asked questions."
+    ]
+  },
+  {
+    "pair": ["kurapika", "phinks"],
+    "reference": "Yorknew · ép. 57–58",
+    "lines": [
+      "Pakunoda a empêché un massacre ce soir-là.",
+      "Pakunoda prevented a massacre that night.",
+      "Ses dernières balles nous ont appris ce que tu avais fait.",
+      "Her last bullets taught us what you’d done."
+    ]
+  },
+  {
+    "pair": ["kurapika", "feitan"],
+    "reference": "Yorknew · ép. 57–58",
+    "lines": [
+      "Pakunoda savait ce que coûterait sa décision.",
+      "Pakunoda knew what her decision would cost.",
+      "Si Nobunaga t’avait trouvé le premier…",
+      "If Nobunaga had found you first…"
+    ]
+  },
+  {
+    "pair": ["hisoka", "illumi"],
+    "reference": "Ép. 136–144 et ch. 377",
+    "lines": [
+      "Un contrat de plus, et cette fois je suis la cible.",
+      "Another contract, and this time I’m the mark.",
+      "Tu aurais pu t’adresser à Silva. Le tarif aurait changé.",
+      "You could’ve asked Silva. The fee would have been different."
+    ]
+  },
+  {
+    "pair": ["hisoka", "machi"],
+    "reference": "Ch. 357",
+    "lines": [
+      "Tu recousais mieux les bras que les adieux.",
+      "You stitched arms better than farewells.",
+      "Demande à Kastro ce que coûtait ton premier tour.",
+      "Ask Kastro what your first trick cost you."
+    ]
+  },
+  {
+    "pair": ["hisoka", "biscuit"],
+    "reference": "Greed Island · ép. 68–71",
+    "lines": [
+      "Un match de ballon ? Il faudrait rappeler Razor.",
+      "A game of dodgeball? We’d have to call Razor back.",
+      "Et demander à Goreinu de compter les joueurs, cette fois.",
+      "And ask Goreinu to count the players this time."
+    ]
+  },
+  {
+    "pair": ["hisoka", "leorio"],
+    "reference": "Ép. 5, 16 et 50",
+    "lines": [
+      "Tu frappes toujours aussi franc que dans le marais ?",
+      "Do you still swing as honest as you did in the marsh?",
+      "Je m’en suis sorti. Gon aussi, malgré ton fichu jeu.",
+      "I made it out. So did Gon, despite your rotten game."
+    ]
+  },
+  {
+    "pair": ["hisoka", "hanzo"],
+    "reference": "Ép. 18–21",
+    "lines": [
+      "Tu as donné à Gon un match plus long que je ne l’aurais cru.",
+      "You gave Gon a longer match than I’d expected.",
+      "Il aurait préféré perdre un bras. Même Satotz s’en souvient.",
+      "He’d rather have lost an arm. Even Satotz remembers that."
+    ]
+  },
+  {
+    "pair": ["hisoka", "hinrigh"],
+    "reference": "Ch. 393",
+    "lines": [
+      "Ton billet pour le premier pont était une invitation bien polie.",
+      "That ticket to Tier One was a very polite invitation.",
+      "On voulait épargner le bateau. On n’a pas oublié Onior.",
+      "We wanted to spare the ship. We haven’t forgotten Onior."
+    ]
+  },
+  {
+    "pair": ["hisoka", "bonolenov"],
+    "reference": "Ch. 405",
+    "lines": [
+      "Au cinéma, le siège de Shalnark est resté vide.",
+      "Shalnark’s seat at the cinema stayed empty.",
+      "J’en avais un autre en réserve. Chrollo connaît la danse.",
+      "I had another one in reserve. Chrollo knows the dance."
+    ]
+  },
+  {
+    "pair": ["hisoka", "tserriednich"],
+    "reference": "Ch. 420",
+    "lines": [
+      "On termine cette partie loin des machines à sous ?",
+      "Shall we finish this game away from the slot machines?",
+      "Tu peux garder la mise. Salkov sait que je m’intéresse au prochain coup.",
+      "Keep the wager. Salkov knows I’m interested in the next move."
+    ]
+  },
+  {
+    "pair": ["hisoka", "franklin"],
+    "reference": "Yorknew et ch. 380",
+    "lines": [
+      "On m’a dit que tu préférais attendre à table.",
+      "I hear you’d rather wait at the table.",
+      "Uvogin aurait couru après toi. Moi, j’ai choisi ma place.",
+      "Uvogin would have chased you. I picked my spot."
+    ]
+  },
+  {
+    "pair": ["hisoka", "phinks"],
+    "reference": "Yorknew · ép. 55–58",
+    "lines": [
+      "Neon n’avait pas prévu que je changerais son texte.",
+      "Neon didn’t see me changing her lines coming.",
+      "J’aurais dû laisser Nobunaga lire entre les lignes.",
+      "I should’ve let Nobunaga read between the lines."
+    ]
+  },
+  {
+    "pair": ["hisoka", "feitan"],
+    "reference": "Yorknew · ép. 55–58",
+    "lines": [
+      "La fausse prédiction de Neon t’a fait hésiter, non ?",
+      "Neon’s fake fortune made you hesitate, didn’t it?",
+      "Je laisserai moins de temps pour lire cette fois.",
+      "I’ll leave less time for reading this time."
+    ]
+  },
+  {
+    "pair": ["hisoka", "shizuku"],
+    "reference": "Yorknew · ép. 55 et ch. 377",
+    "lines": [
+      "Neon avait écrit quelque chose sur une chambre solitaire.",
+      "Neon wrote something about a lonely room.",
+      "Je me rappelle le poème. Pas pourquoi je devais te croire.",
+      "I remember the poem. Not why I was supposed to believe you."
+    ]
+  },
+  {
+    "pair": ["chrollo", "feitan"],
+    "reference": "Ch. 377 et Yorknew",
+    "lines": [
+      "Feitan, laisse à Nobunaga le soin de discuter.",
+      "Feitan, leave the talking to Nobunaga.",
+      "Tant qu’il ne nous fait pas attendre comme à Yorknew.",
+      "As long as he doesn’t keep us waiting like in Yorknew."
+    ]
+  },
+  {
+    "pair": ["chrollo", "phinks"],
+    "reference": "Ch. 396–397",
+    "lines": [
+      "Sarasa se serait moquée de ton jeu d’acteur.",
+      "Sarasa would have teased you about your acting.",
+      "Elle aurait surtout voulu qu’on finisse le spectacle.",
+      "She’d have wanted us to finish the show first."
+    ]
+  },
+  {
+    "pair": ["chrollo", "franklin"],
+    "reference": "Ch. 395–397",
+    "lines": [
+      "Tu gardais déjà les autres ensemble quand on doublait les Power Cleaners.",
+      "You already kept us together back when we dubbed Power Cleaners.",
+      "Et Sheila revenait quand même avec son livre.",
+      "And Sheila still came back with her book."
+    ]
+  },
+  {
+    "pair": ["chrollo", "machi"],
+    "reference": "Ch. 397",
+    "lines": [
+      "Tu as suivi Renko après la disparition de Sarasa.",
+      "You followed Renko after Sarasa disappeared.",
+      "Je voulais comprendre comment elle prenait soin de Sarasa.",
+      "I wanted to know how she took care of Sarasa."
+    ]
+  },
+  {
+    "pair": ["chrollo", "bonolenov"],
+    "reference": "Ch. 377 et 405",
+    "lines": [
+      "On se séparera après le hall, comme prévu.",
+      "We’ll split up after the hall, as planned.",
+      "Je peux changer de visage. Sheila, elle, changeait de route.",
+      "I can change faces. Sheila used to change roads."
+    ]
+  },
+  {
+    "pair": ["chrollo", "shizuku"],
+    "reference": "Yorknew et ch. 377",
+    "lines": [
+      "Reviens au hall. Kortopi avait ce même talent pour passer inaperçu.",
+      "Meet back at the hall. Kortopi had that same knack for passing unnoticed.",
+      "D’accord. Je vais le noter pour une fois.",
+      "All right. I’ll write it down for once."
+    ]
+  },
+  {
+    "pair": ["chrollo", "illumi"],
+    "reference": "Ch. 377 et Yorknew",
+    "lines": [
+      "Silva a toujours su ce que valait un contrat.",
+      "Silva always knew the worth of a contract.",
+      "Zeno t’avait même donné le temps de lui poser une question.",
+      "Zeno even gave you time to ask him a question."
+    ]
+  },
+  {
+    "pair": ["chrollo", "kalluto"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Tu écoutes bien. C’est une qualité que Pakunoda respectait.",
+      "You listen well. Pakunoda respected that.",
+      "Je voudrais que Kikyo puisse voir mes progrès.",
+      "I wish Kikyo could see how far I’ve come."
+    ]
+  },
+  {
+    "pair": ["illumi", "kalluto"],
+    "reference": "Ép. 21–24 et ch. 377–380",
+    "lines": [
+      "Kikyo se demandera où tu as appris ce pli.",
+      "Kikyo will wonder where you learnt that fold.",
+      "Killua aurait déjà trouvé un moyen de l’ouvrir.",
+      "Killua would have figured out how to unfold it by now."
+    ]
+  },
+  {
+    "pair": ["feitan", "phinks"],
+    "reference": "Meteor City et ch. 371, 380",
+    "lines": [
+      "Zazan m’a pris moins de temps que tes explications.",
+      "Zazan took less time than your explanations.",
+      "Et moi j’attends encore de savoir qui a compté mes tours.",
+      "I’m still waiting to hear who counted my turns."
+    ]
+  },
+  {
+    "pair": ["feitan", "franklin"],
+    "reference": "Ch. 371, 377",
+    "lines": [
+      "Au prochain interrogatoire, je pose les questions.",
+      "I’ll ask the questions next time we interrogate someone.",
+      "La dernière fois, les hommes de Buor avaient déjà compris le message.",
+      "Last time, Buor’s men had already got the message."
+    ]
+  },
+  {
+    "pair": ["feitan", "machi"],
+    "reference": "Yorknew et ch. 377",
+    "lines": [
+      "Tu as raccommodé plus de manches que de gens raisonnables.",
+      "You’ve mended more sleeves than sensible people.",
+      "Tu dis ça comme si Uvogin avait jamais su rester tranquille.",
+      "You say that like Uvogin ever knew how to sit still."
+    ]
+  },
+  {
+    "pair": ["feitan", "shizuku"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Tu as laissé à Blinky de quoi s’occuper après Pike ?",
+      "Did you leave Blinky anything to do after Pike?",
+      "Il m’a fallu un moment. Les blessures étaient petites.",
+      "It took a while. The wounds were small."
+    ]
+  },
+  {
+    "pair": ["feitan", "bonolenov"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Tu as fait trembler le sol avant que Zazan m’entende.",
+      "You shook the ground before Zazan heard me.",
+      "Les pas d’un danseur ne se cachent pas tous.",
+      "A dancer can’t hide every footstep."
+    ]
+  },
+  {
+    "pair": ["feitan", "kalluto"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Tu regardais toujours nos pieds chez Zazan.",
+      "You kept watching our feet in Zazan’s nest.",
+      "Je croyais être plus près de votre niveau.",
+      "I thought I was closer to your level."
+    ]
+  },
+  {
+    "pair": ["feitan", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "L’Araignée a déjà engagé des Zoldyck. Tu connais le tarif.",
+      "The Spider has hired Zoldycks before. You know the rate.",
+      "Silva ne ferait sûrement pas le même calcul.",
+      "Silva probably wouldn’t make the same calculation."
+    ]
+  },
+  {
+    "pair": ["phinks", "franklin"],
+    "reference": "Ch. 371, 377, 396–397",
+    "lines": [
+      "Nobunaga t’aurait encore laissé faire le discours.",
+      "Nobunaga would’ve left the speech to you again.",
+      "Et toi, tu aurais tourné le bras pendant le discours.",
+      "And you’d have wound up your arm during it."
+    ]
+  },
+  {
+    "pair": ["phinks", "machi"],
+    "reference": "Ch. 396–397",
+    "lines": [
+      "À Meteor City, tu savais déjà quand on mentait.",
+      "Back in Meteor City, you already knew when we were lying.",
+      "Sarasa savait le dire plus gentiment que moi.",
+      "Sarasa knew how to say it more kindly than I do."
+    ]
+  },
+  {
+    "pair": ["phinks", "shizuku"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Je te rappelle que Zazan avait une armée entière.",
+      "Let me remind you, Zazan had a whole army.",
+      "J’avais surtout retenu les chemins qui menaient à Pike.",
+      "I mostly remembered the paths that led to Pike."
+    ]
+  },
+  {
+    "pair": ["phinks", "bonolenov"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Moi, je compte mes tours. Shalnark aurait compté tes pas.",
+      "I count my winds. Shalnark would have counted your steps.",
+      "Ma tribu m’a appris à écouter le rythme, pas à le compter.",
+      "My tribe taught me to hear the rhythm, not count it."
+    ]
+  },
+  {
+    "pair": ["phinks", "kalluto"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Garde ton papier, Kalluto. Zazan, c’est fini.",
+      "Save your paper, Kalluto. Zazan’s finished.",
+      "Je l’utilise aussi pour écouter, Phinks.",
+      "I use it to listen, too, Phinks."
+    ]
+  },
+  {
+    "pair": ["phinks", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "J’ai déjà attendu des nouvelles d’un Zoldyck.",
+      "I’ve waited for news from a Zoldyck before.",
+      "Silva répond plus vite quand les conditions sont claires.",
+      "Silva answers faster when the terms are clear."
+    ]
+  },
+  {
+    "pair": ["franklin", "machi"],
+    "reference": "Ch. 395–397",
+    "lines": [
+      "Sheila nous aurait demandé de baisser le ton.",
+      "Sheila would have told us to keep it down.",
+      "Elle aurait d’abord ramassé son livre.",
+      "She’d have picked up her book first."
+    ]
+  },
+  {
+    "pair": ["franklin", "shizuku"],
+    "reference": "Yorknew · ép. 41 et ch. 377",
+    "lines": [
+      "À Yorknew, je tirais. Toi, tu travaillais avec Kortopi.",
+      "In Yorknew, I did the shooting. You worked with Kortopi.",
+      "Blinky se souvient mieux des détails que moi.",
+      "Blinky remembers the details better than I do."
+    ]
+  },
+  {
+    "pair": ["franklin", "bonolenov"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Si on se sépare, on se retrouve au hall. Pas besoin de signal.",
+      "If we split up, meet at the hall. No signal needed.",
+      "Tu tenais déjà la mesure quand Uvogin s’impatientait.",
+      "You kept time even when Uvogin got impatient."
+    ]
+  },
+  {
+    "pair": ["franklin", "kalluto"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Ne confonds pas patience et immobilité. Nobunaga le fait déjà assez.",
+      "Don’t confuse patience with standing still. Nobunaga does that enough.",
+      "Je peux attendre. Mon papier, lui, continue de bouger.",
+      "I can wait. My paper keeps moving."
+    ]
+  },
+  {
+    "pair": ["franklin", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Je n’ai pas demandé ce que coûte le contrat de mon voisin.",
+      "I didn’t ask what the contract on my neighbour costs.",
+      "Pas comme Silva. Il vérifie toujours le montant.",
+      "Unlike Silva. He always checks the figure."
+    ]
+  },
+  {
+    "pair": ["machi", "kalluto"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Ton papier accroche. Kikyo ne t’a pas montré comment lâcher le fil ?",
+      "Your paper is snagging. Didn’t Kikyo show you how to let go of the thread?",
+      "Maman voulait surtout que je ne le casse pas.",
+      "Mother mostly wanted me not to break it."
+    ]
+  },
+  {
+    "pair": ["machi", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Entre ton aiguille et mon fil, il vaut mieux garder ses distances.",
+      "Between your needle and my thread, people should keep their distance.",
+      "Kikyo dirait que la distance dépend du travail.",
+      "Kikyo would say the distance depends on the job."
+    ]
+  },
+  {
+    "pair": ["machi", "bonolenov"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Je peux recoudre un bras. Pas refaire la danse de ta tribu.",
+      "I can stitch up an arm. I can’t recreate your tribe’s dance.",
+      "Pas plus que je pourrais imiter les mains de Renko.",
+      "No more than I could imitate Renko’s hands."
+    ]
+  },
+  {
+    "pair": ["machi", "shizuku"],
+    "reference": "Yorknew et ch. 377",
+    "lines": [
+      "Ne laisse pas Blinky avaler les fils. Je n’ai pas le secours de Pakunoda.",
+      "Don’t let Blinky swallow the thread. Pakunoda isn’t here to help.",
+      "Blinky trie les choses. C’est moi qui perds le compte.",
+      "Blinky sorts things out. I’m the one who loses count."
+    ]
+  },
+  {
+    "pair": ["bonolenov", "shizuku"],
+    "reference": "Ch. 377–380",
+    "lines": [
+      "On devait attendre au passage. Tu te souviens de l’étage ?",
+      "We were to wait at the passage. Do you remember the deck?",
+      "Je me souviens que Kortopi aurait fait un repère.",
+      "I remember Kortopi would have left a marker."
+    ]
+  },
+  {
+    "pair": ["bonolenov", "kalluto"],
+    "reference": "Meteor City · ép. 96–97, ch. 377",
+    "lines": [
+      "Tu étais déjà silencieux au repaire de Zazan.",
+      "You were already quiet at Zazan’s lair.",
+      "Le papier s’en souvient. Il n’a pas besoin de parler.",
+      "The paper remembers. It doesn’t need to speak."
+    ]
+  },
+  {
+    "pair": ["bonolenov", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Je peux danser sans musique. Tu travailles sans un mot.",
+      "I can dance without music. You work without a word.",
+      "Silva dit qu’un bruit inutile augmente le prix.",
+      "Silva says any needless noise raises the price."
+    ]
+  },
+  {
+    "pair": ["shizuku", "kalluto"],
+    "reference": "Meteor City · ép. 96–97",
+    "lines": [
+      "Ton papier est plus facile à retrouver que Pike dans ses toiles.",
+      "Your paper is easier to find than Pike in his webs.",
+      "Pike s’imaginait sans doute que personne ne le voyait.",
+      "Pike probably thought nobody could see him."
+    ]
+  },
+  {
+    "pair": ["shizuku", "illumi"],
+    "reference": "Ch. 377",
+    "lines": [
+      "Je me souviens de Silva. Toi, je n’ai pas encore noté ton numéro.",
+      "I remember Silva. I haven’t written down your number yet.",
+      "Note le contrat. C’est plus important que le numéro.",
+      "Write down the contract. It matters more than the number."
+    ]
+  },
+  {
+    "pair": ["benjamin", "tserriednich"],
+    "reference": "Ch. 348, 416–418",
+    "lines": [
+      "Père peut garder son urne. Je me charge de toi.",
+      "Father can keep his urn. I’ll deal with you myself.",
+      "Fais prévenir Salkov. Je déteste les démonstrations sans public.",
+      "Let Salkov know. I hate demonstrations without an audience."
+    ]
+  },
+  {
+    "pair": ["benjamin", "camilla"],
+    "reference": "Ch. 363, 373, 416",
+    "lines": [
+      "L’affaire de Musse n’est pas close.",
+      "Musse’s case isn’t closed.",
+      "Demande à Nasubi ce qu’il pense de fermer les affaires de Camilla.",
+      "Ask Nasubi how he feels about closing Camilla’s cases."
+    ]
+  },
+  {
+    "pair": ["benjamin", "halkenburg"],
+    "reference": "Ch. 349, 404",
+    "lines": [
+      "Tu défendais déjà tes idées devant le roi. Même Balsamilco s’en souvient.",
+      "You already defended those ideas before the king. Even Balsamilco remembers.",
+      "Je lui ai demandé de nous écouter. Je lui demanderais encore.",
+      "I asked him to hear us. I’d ask him again."
+    ]
+  },
+  {
+    "pair": ["camilla", "tserriednich"],
+    "reference": "Ch. 349 et 359",
+    "lines": [
+      "Laisse Duazul aux convenances. On connaît tous les deux les règles.",
+      "Leave the manners to Duazul. We both know the rules.",
+      "Je préfère voir ce qu’il se passe quand quelqu’un les brise.",
+      "I’d rather see what happens when someone breaks them."
+    ]
+  },
+  {
+    "pair": ["camilla", "halkenburg"],
+    "reference": "Ch. 349 et 359",
+    "lines": [
+      "Duazul pourrait encore croire que tu souhaites convaincre Nasubi.",
+      "Duazul might still think you mean to persuade Nasubi.",
+      "Je voulais convaincre notre père. Pas lui ressembler.",
+      "I wanted to persuade our father. Not become him."
+    ]
+  },
+  {
+    "pair": ["tserriednich", "halkenburg"],
+    "reference": "Ch. 349 et 359",
+    "lines": [
+      "Nous ne sommes pas au banquet. Tu peux parler franchement.",
+      "We’re not at the banquet. You can speak freely.",
+      "Je parlais franchement devant Nasubi aussi.",
+      "I spoke freely in front of Nasubi too."
+    ]
+  },
+  {
+    "pair": ["theta", "tserriednich"],
+    "reference": "Ch. 366–387",
+    "lines": [
+      "Salkov peut attendre dehors. On reprend l’exercice.",
+      "Salkov can wait outside. We’ll repeat the exercise.",
+      "Encore ? J’appréciais tant la façon dont le dernier s’est terminé.",
+      "Again? I so enjoyed how the last one ended."
+    ]
+  },
+  {
+    "pair": ["benjamin", "furykov"],
+    "reference": "Ch. 366, 373, 413",
+    "lines": [
+      "Je veux un rapport avant que Balsamilco le demande.",
+      "I want a report before Balsamilco has to ask.",
+      "Je vous dirai aussi ce que les autres ont essayé de cacher.",
+      "I’ll also tell you what the others tried to hide."
+    ]
+  },
+  {
+    "pair": ["camilla", "furykov"],
+    "reference": "Ch. 373 et 416",
+    "lines": [
+      "Musse croyait pouvoir se mettre entre moi et mon frère.",
+      "Musse thought he could stand between me and my brother.",
+      "Nos ordres venaient de Benjamin. Pas de Duazul.",
+      "Our orders came from Benjamin. Not Duazul."
+    ]
+  },
+  {
+    "pair": ["camilla", "musse"],
+    "reference": "Ch. 373",
+    "lines": [
+      "Nasubi aurait dû te laisser observer de loin.",
+      "Nasubi should have let you watch from a distance.",
+      "J’observe mieux quand j’ai la cible en vue.",
+      "I watch better when I can see my target."
+    ]
+  },
+  {
+    "pair": ["benjamin", "musse"],
+    "reference": "Ch. 373–374",
+    "lines": [
+      "Rends compte à Balsamilco dès que Camilla franchit le seuil.",
+      "Report to Balsamilco as soon as Camilla crosses the threshold.",
+      "Vous aurez son trajet, même si je dois la laisser passer.",
+      "You’ll have her route, even if I have to let her pass."
+    ]
+  },
+  {
+    "pair": ["benjamin", "rihan"],
+    "reference": "Ch. 375–389",
+    "lines": [
+      "Pour Salé-salé, j’avais besoin de ton jugement.",
+      "With Sale-Sale, I needed your judgement.",
+      "Alors laissez-moi observer sans me donner les réponses.",
+      "Then let me observe without giving me the answers."
+    ]
+  },
+  {
+    "pair": ["tserriednich", "furykov"],
+    "reference": "Ch. 416",
+    "lines": [
+      "Tes bottes dans la chambre 1004 étaient déjà un avertissement.",
+      "Your boots in room 1004 were warning enough.",
+      "Balsamilco nous a appris à entrer sans demander d’invitation.",
+      "Balsamilco taught us to enter without asking for an invitation."
+    ]
+  },
+  {
+    "pair": ["benjamin", "mizaistom"],
+    "reference": "Ch. 410",
+    "lines": [
+      "Le Bureau de justice n’a pas à m’apprendre mon rang.",
+      "The Justice Bureau doesn’t need to teach me my rank.",
+      "Le rang ne dispense personne de répondre à Cleapatro.",
+      "Rank excuses no one from answering to Cleapatro."
+    ]
+  },
+  {
+    "pair": ["hanzo", "biscuit"],
+    "reference": "Ch. 368–375",
+    "lines": [
+      "La porte de Marayam n’ouvrait même plus sur la bonne chambre.",
+      "Marayam’s door didn’t even lead to the right room anymore.",
+      "Et pourtant, tu oublies encore de regarder derrière toi.",
+      "And you still forget to look behind you."
+    ]
+  },
+  {
+    "pair": ["leorio", "hanzo"],
+    "reference": "Ép. 18–21",
+    "lines": [
+      "Gon avait le bras en vrac et refusait de te lâcher.",
+      "Gon’s arm was wrecked, and he still wouldn’t let you go.",
+      "Netero l’a vu. Je n’ai jamais regretté d’avoir cédé.",
+      "Netero saw it. I’ve never regretted giving in."
+    ]
+  },
+  {
+    "pair": ["leorio", "illumi"],
+    "reference": "Ép. 19–24 et 140",
+    "lines": [
+      "Tu as dit à Killua qui il devait être. Il a choisi Gon.",
+      "You told Killua what he had to be. He chose Gon.",
+      "Kikyo n’avait pas tout prévu, elle non plus.",
+      "Kikyo didn’t foresee everything either."
+    ]
+  },
+  {
+    "pair": ["leorio", "melody"],
+    "reference": "Yorknew · ép. 56–58",
+    "lines": [
+      "Tu entendais ma nervosité pendant l’échange de Pakunoda, hein ?",
+      "You heard my nerves during the exchange for Pakunoda, didn’t you?",
+      "Ton cœur essayait surtout de rassurer Gon.",
+      "Your heart was mostly trying to reassure Gon."
+    ]
+  },
+  {
+    "pair": ["melody", "basho"],
+    "reference": "Ép. 39–48",
+    "lines": [
+      "La maison Nostrade était bruyante. Tes vers coupaient le vacarme.",
+      "The Nostrade house was loud. Your verses cut through the noise.",
+      "Neon n’aimait pas toutes mes rimes. Toi non plus, je crois.",
+      "Neon didn’t like all my rhymes. I don’t think you did either."
+    ]
+  },
+  {
+    "pair": ["melody", "chrollo"],
+    "reference": "Yorknew · ép. 56–58",
+    "lines": [
+      "Le cœur de Pakunoda disait plus que vos menaces.",
+      "Pakunoda’s heart said more than your threats.",
+      "Elle a dit ce qu’elle avait choisi de dire à l’Araignée.",
+      "She told the Spider exactly what she chose to tell it."
+    ]
+  },
+  {
+    "pair": ["melody", "mizaistom"],
+    "reference": "Ch. 400",
+    "lines": [
+      "Fugetsu avait besoin de repos, pas d’un nouvel entretien.",
+      "Fugetsu needed rest, not another interview.",
+      "J’espérais que Kacho pourrait encore nous aider à comprendre.",
+      "I hoped Kacho might still help us understand."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "leorio"],
+    "reference": "Ch. 342–344",
+    "lines": [
+      "Le poing que tu as envoyé à Ging n’était pas un entretien d’embauche.",
+      "That punch you threw at Ging wasn’t a job interview.",
+      "Dis ça à Cheadle ! C’est après ça qu’on m’a appelé.",
+      "Tell Cheadle that! It was after that they called me."
+    ]
+  },
+  {
+    "pair": ["gel", "leorio"],
+    "reference": "Ch. 380",
+    "lines": [
+      "Cheadle compte sur nous. Le service ne ferme pas pendant ton duel.",
+      "Cheadle is counting on us. The ward doesn’t close for your duel.",
+      "Je reviendrai avant la prochaine tournée. Je te dois un café.",
+      "I’ll be back before the next round. I owe you a coffee."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "gel"],
+    "reference": "Ch. 342–344 et 380",
+    "lines": [
+      "Botobai tient le dossier. Qu’a dit Cheadle à l’hôpital ?",
+      "Botobai has the file. What did Cheadle say at the hospital?",
+      "Qu’il faut d’abord s’occuper de ceux qui sont encore vivants.",
+      "That we need to see to the people who are still alive first."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "cluck"],
+    "reference": "Ch. 380",
+    "lines": [
+      "Tes oiseaux ont couvert plus de terrain que les hommes de Botobai.",
+      "Your birds covered more ground than Botobai’s men.",
+      "Et ils n’ont pas réclamé de réunion pour le faire.",
+      "And they didn’t ask for a meeting about it."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "saiyu"],
+    "reference": "Ch. 346",
+    "lines": [
+      "On peut reprendre ce débat sans Kanzai qui nous coupe ?",
+      "Can we finish that argument without Kanzai interrupting?",
+      "Tu préfères vraiment quand le Tigre ne dit rien ?",
+      "Do you really prefer it when the Tiger says nothing?"
+    ]
+  },
+  {
+    "pair": ["mizaistom", "beyond"],
+    "reference": "Ch. 340–346",
+    "lines": [
+      "Botobai voudrait que tu restes dans tes quartiers.",
+      "Botobai would prefer you to stay in your quarters.",
+      "Mon père ne se serait jamais contenté de quartiers.",
+      "My father would never have settled for quarters."
+    ]
+  },
+  {
+    "pair": ["gel", "beyond"],
+    "reference": "Ch. 340, 346",
+    "lines": [
+      "Cheadle m’a demandé de vérifier que tu restais sous bonne garde.",
+      "Cheadle asked me to make sure you stayed under close guard.",
+      "Même Isaac n’aurait pas pu garder la mer sous clé.",
+      "Even Isaac couldn’t have kept the sea under lock and key."
+    ]
+  },
+  {
+    "pair": ["saiyu", "beyond"],
+    "reference": "Ch. 412",
+    "lines": [
+      "Cleapatro pose beaucoup de questions pour quelqu’un qui aime le silence.",
+      "Cleapatro asks a lot of questions for someone who likes silence.",
+      "Elle aurait détesté les silences de mon père.",
+      "She would have hated my father’s silences."
+    ]
+  },
+  {
+    "pair": ["cluck", "gel"],
+    "reference": "Ch. 342–346",
+    "lines": [
+      "Cheadle voudrait une autre réunion. Tu viens ou je t’envoie un oiseau ?",
+      "Cheadle wants another meeting. Are you coming or shall I send a bird?",
+      "Envoie-le à Kanzai. C’est lui qui est toujours en retard.",
+      "Send it to Kanzai. He’s the one who’s always late."
+    ]
+  },
+  {
+    "pair": ["cluck", "saiyu"],
+    "reference": "Ch. 342–346",
+    "lines": [
+      "Pyon t’a laissé lire jusqu’au bout, cette fois ?",
+      "Did Pyon let you finish reading this time?",
+      "J’écoute même quand j’ai l’air de ne pas écouter.",
+      "I listen even when I don’t look like I’m listening."
+    ]
+  },
+  {
+    "pair": ["gel", "saiyu"],
+    "reference": "Ch. 342–346",
+    "lines": [
+      "Botobai réclame un rapport avant la prochaine réunion.",
+      "Botobai wants a report before the next meeting.",
+      "Dis-lui que je mets les détails les plus bruyants à la fin.",
+      "Tell him I put the loudest details at the end."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "lynch"],
+    "reference": "Ch. 390–392, 406",
+    "lines": [
+      "Quand Onior te pose une question, laisse les poings au repos.",
+      "When Onior asks you a question, give your fists a rest.",
+      "Et s’il me répond honnêtement, je prendrai même des notes.",
+      "And if he answers honestly, I’ll even take notes."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "zakuro"],
+    "reference": "Ch. 390–392",
+    "lines": [
+      "Onior t’a donné une mission. Ne la vide pas de ton sang.",
+      "Onior gave you a job. Don’t bleed yourself dry doing it.",
+      "Je garde toujours de quoi couvrir Lynch.",
+      "I always keep enough in reserve to cover Lynch."
+    ]
+  },
+  {
+    "pair": ["lynch", "zakuro"],
+    "reference": "Ch. 390–392",
+    "lines": [
+      "Hanal n’était pas le bon. Le prochain, je lui pose la question en face.",
+      "Hanal wasn’t the one. I’ll ask the next one straight to his face.",
+      "Laisse-moi au moins le temps de couvrir la sortie.",
+      "At least give me time to cover the exit."
+    ]
+  },
+  {
+    "pair": ["bonolenov", "lynch"],
+    "reference": "Ch. 392, 405–406",
+    "lines": [
+      "Ton poing s’intéresse à des choses que les visages cachent.",
+      "Your fist is interested in things faces hide.",
+      "Hanal n’avait rien à cacher. Tu veux passer le même test ?",
+      "Hanal had nothing to hide. Want to take the same test?"
+    ]
+  },
+  {
+    "pair": ["bonolenov", "zakuro"],
+    "reference": "Ch. 392, 405",
+    "lines": [
+      "Le sang laisse une piste. Les souvenirs aussi.",
+      "Blood leaves a trail. So do memories.",
+      "Je me souviens de la question de Lynch à Hanal. De ta réponse, moins bien.",
+      "I remember Lynch’s question to Hanal. Your answer’s a little hazier."
+    ]
+  },
+  {
+    "pair": ["chrollo", "hinrigh"],
+    "reference": "Ch. 405–406",
+    "lines": [
+      "Je t’ai écouté au sujet du cinéma. Et du corps retrouvé.",
+      "I heard what you said about the cinema. And about the body they found.",
+      "Onior peut attendre. Moi, je veux comprendre ce qui cloche.",
+      "Onior can wait. I want to know what doesn’t add up."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "padaille"],
+    "reference": "Ch. 391",
+    "lines": [
+      "Tes mains m’ont fait regretter de ne pas avoir apporté plus de menottes.",
+      "Your hands made me wish I’d brought more handcuffs.",
+      "Quorolle t’aurait trouvé encore plus drôle avec une main en moins.",
+      "Quorolle would’ve found you even funnier with one less hand."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "phinks"],
+    "reference": "Ch. 395–400",
+    "lines": [
+      "Pour la prochaine fouille, je confie l’émetteur à Nobunaga.",
+      "Next search, I’m giving the transmitter to Nobunaga.",
+      "Lui au moins sait quand il vaut mieux défoncer la porte.",
+      "At least he knows when to kick the door in."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "feitan"],
+    "reference": "Ch. 395–400",
+    "lines": [
+      "Les cabines de ce pont ont des murs plus bavards qu’elles en ont l’air.",
+      "The cabins on this deck have chattier walls than they look.",
+      "Demande à Nobunaga. Il sait laquelle écouter.",
+      "Ask Nobunaga. He knows which one to listen to."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "terebellum"],
+    "reference": "Ch. 399",
+    "lines": [
+      "Nobunaga avait une bonne raison de ne pas lâcher son sabre.",
+      "Nobunaga had a good reason to keep hold of his sword.",
+      "Tu aurais dû te demander qui prendrait le choc.",
+      "You should’ve asked who would take the hit."
+    ]
+  },
+  {
+    "pair": ["hinrigh", "yokotani"],
+    "reference": "Ch. 399",
+    "lines": [
+      "Sans ton règlement, Nobunaga et moi aurions fini la visite.",
+      "Without your rules, Nobunaga and I would’ve finished the visit.",
+      "Vous êtes sortis en un seul morceau. C’est déjà un service.",
+      "You left in one piece. That’s already a service."
+    ]
+  },
+  {
+    "pair": ["luini", "phinks"],
+    "reference": "Ch. 378–393",
+    "lines": [
+      "Nobunaga avait vraiment besoin de dégainer ?",
+      "Did Nobunaga really need to draw his sword?",
+      "Fallait lui demander avant de passer ta tête par la porte.",
+      "Should’ve asked before you stuck your head through the door."
+    ]
+  },
+  {
+    "pair": ["luini", "feitan"],
+    "reference": "Ch. 378–395",
+    "lines": [
+      "Vous n’avez vraiment pas aimé ma première visite.",
+      "You really didn’t like my first visit.",
+      "Buor n’a pas trouvé ça drôle non plus.",
+      "Buor didn’t find it funny either."
+    ]
+  },
+  {
+    "pair": ["luini", "padaille"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Morena a choisi vingt-trois joueurs. Tu fais encore cavalier seul ?",
+      "Morena picked twenty-three players. Still going it alone?",
+      "Demande à Quorolle qui préfère rester devant quand ça cogne.",
+      "Ask Quorolle who likes to stay up front when things get rough."
+    ]
+  },
+  {
+    "pair": ["luini", "terebellum"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Ça t’a rassuré quand Morena a fermé la porte de la 302 ?",
+      "Did it make you feel safer when Morena shut the door of room 302?",
+      "Une porte fermée n’a jamais empêché les dégâts.",
+      "A closed door never stopped the damage."
+    ]
+  },
+  {
+    "pair": ["luini", "voconte"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Si on demande à Morena qui ouvre le passage, elle choisit lequel de nous ?",
+      "If we ask Morena who opens the way, which one of us does she pick?",
+      "Elle choisit celui qui sait aussi le refermer.",
+      "She picks the one who also knows how to close it."
+    ]
+  },
+  {
+    "pair": ["luini", "yokotani"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Tu comptes aussi les intrusions quand personne n’ouvre la porte ?",
+      "Do you count trespassing when nobody opens the door?",
+      "Je peux demander à Morena de te lire le règlement.",
+      "I can ask Morena to read you the rules."
+    ]
+  },
+  {
+    "pair": ["padaille", "terebellum"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Heureusement que Quorolle aime travailler en équipe.",
+      "Good thing Quorolle likes working as a team.",
+      "Un choc mal placé, et même lui ne pourra pas te couvrir.",
+      "One hit in the wrong place, and even he can’t cover you."
+    ]
+  },
+  {
+    "pair": ["padaille", "voconte"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Ouvre-moi un raccourci. Quorolle et moi avons une course à finir.",
+      "Open me a shortcut. Quorolle and I have an errand to finish.",
+      "Morena préfère qu’on referme derrière soi.",
+      "Morena prefers us to close up behind ourselves."
+    ]
+  },
+  {
+    "pair": ["padaille", "yokotani"],
+    "reference": "Ch. 378",
+    "lines": [
+      "Tu comptes mes mains dans la catégorie des armes ?",
+      "Do my hands count under the weapons clause?",
+      "Demande à Morena si elle souhaite faire appel.",
+      "Ask Morena if she’d like to appeal."
+    ]
+  },
+  {
+    "pair": ["terebellum", "voconte"],
+    "reference": "Ch. 378, 398–399",
+    "lines": [
+      "Ne laisse pas Dogman devant toutes les portes à la fois.",
+      "Don’t leave Dogman in front of every door at once.",
+      "Il aboie assez fort pour qu’on sache laquelle il garde.",
+      "He’s loud enough for us to know which one he’s guarding."
+    ]
+  },
+  {
+    "pair": ["terebellum", "yokotani"],
+    "reference": "Ch. 398–399",
+    "lines": [
+      "Quand Nobunaga lève son sabre, ne lui tourne pas le dos.",
+      "When Nobunaga raises his sword, don’t turn your back to him.",
+      "Je préfère lui montrer la sortie. C’est plus réglementaire.",
+      "I’d rather show him the exit. It’s more by the book."
+    ]
+  },
+  {
+    "pair": ["voconte", "yokotani"],
+    "reference": "Ch. 378, 408–410",
+    "lines": [
+      "Pour Borksen, il fallait surtout une porte qui se ferme.",
+      "What we really needed for Borksen was a door that shut.",
+      "Pour le reste, Morena avait déjà préparé les cartes.",
+      "Morena had the cards ready for the rest."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "illumi"],
+    "reference": "Ch. 380",
+    "lines": [
+      "Quand Fugetsu traverse un couloir, tu ne la suis pas.",
+      "When Fugetsu walks down a corridor, you don’t follow her.",
+      "Il faudrait d’abord quelqu’un pour payer le trajet.",
+      "Someone would have to pay for the trip first."
+    ]
+  },
+  {
+    "pair": ["mizaistom", "kalluto"],
+    "reference": "Ch. 380",
+    "lines": [
+      "Fugetsu n’avait pas besoin d’autres yeux sur elle.",
+      "Fugetsu didn’t need another pair of eyes on her.",
+      "Les yeux font parfois plus de bruit que le papier.",
+      "Eyes sometimes make more noise than paper."
+    ]
+  },
+  {
+    "pair": ["basho", "halkenburg"],
+    "reference": "Ch. 369–400",
+    "lines": [
+      "Un prince qui veut parler au roi. J’en ferais presque un poème.",
+      "A prince who wants to talk to the king. I could almost make a poem of it.",
+      "Parle plutôt de Sumidori. Il a choisi de rester.",
+      "Write about Sumidori instead. He chose to stay."
+    ]
+  },
+  {
+    "pair": ["kurapika", "biscuit"],
+    "reference": "Ch. 350",
+    "lines": [
+      "Killua avait raison. Je peux te confier Marayam.",
+      "Killua was right. I can trust you with Marayam.",
+      "Il t’a aussi dit d’arrêter de juger les gens à leur taille ?",
+      "Did he also tell you to stop judging people by their size?"
+    ]
+  },
+  {
+    "pair": ["leorio", "halkenburg"],
+    "reference": "Ch. 404",
+    "lines": [
+      "Cheadle et moi, on a vu arriver le brancard. Pas question de te revoir dessus.",
+      "Cheadle and I saw the stretcher come in. I don’t want to see you back on it.",
+      "Vous avez fait votre travail. C’est tout ce que je pouvais demander.",
+      "You did your job. That was all I could ask."
+    ]
+  },
+  {
+    "pair": ["kurapika", "saiyu"],
+    "reference": "Ch. 346",
+    "lines": [
+      "Mizaistom et moi aurons encore des questions, après la réunion.",
+      "Mizaistom and I will have more questions after the meeting.",
+      "D’abord, fais taire Kanzai. On s’entendra mieux.",
+      "Quiet Kanzai first. We’ll hear each other better."
+    ]
+  },
+  {
+    "pair": ["leorio", "saiyu"],
+    "reference": "Ch. 346–349",
+    "lines": [
+      "Tu te portes volontaire pour annoncer ça à Kanzai ?",
+      "Are you volunteering to break it to Kanzai?",
+      "Tu veux le faire à ma place, docteur ?",
+      "Would you like to do it for me, Doctor?"
+    ]
+  },
+  {
+    "pair": ["kurapika", "gel"],
+    "reference": "Ch. 346–349",
+    "lines": [
+      "Cheadle a dit que ton équipe tiendrait l’infirmerie.",
+      "Cheadle said your team would run the infirmary.",
+      "Elle a aussi dit que tu pouvais nous éviter du travail.",
+      "She also said you could save us some work."
+    ]
+  },
+  {
+    "pair": ["kurapika", "cluck"],
+    "reference": "Ch. 346–349",
+    "lines": [
+      "Pyon consulte son téléphone. Toi, tu préfères les oiseaux.",
+      "Pyon checks her phone. You prefer birds.",
+      "Un oiseau au moins ne me demande pas de le recharger.",
+      "At least a bird doesn’t ask me to recharge it."
+    ]
+  },
+  {
+    "pair": ["leorio", "cluck"],
+    "reference": "Ch. 346–349",
+    "lines": [
+      "Si Cheadle me demande, dis-lui que je suis en chemin !",
+      "If Cheadle asks for me, tell her I’m on my way!",
+      "Tu veux qu’un oiseau aille lui dire à quelle vitesse ?",
+      "Do you want a bird to go tell her how fast?"
+    ]
+  },
+  {
+    "pair": ["illumi", "hanzo"],
+    "reference": "Ép. 19–21",
+    "lines": [
+      "Au dernier tour, Netero avait prévu plus d’une façon de gagner.",
+      "In the last round, Netero had more than one way to win.",
+      "Gon avait trouvé la sienne : nous faire perdre patience.",
+      "Gon found his: making us lose our patience."
+    ]
+  },
+  {
+    "pair": ["furykov", "rihan"],
+    "reference": "Ch. 374, 402 et 415",
+    "lines": [
+      "Balsamilco voulait un rapport écrit. Tu voulais une salle vide.",
+      "Balsamilco wanted a written report. You wanted an empty room.",
+      "Un indice donné trop tôt ne sert qu’à gâcher la chasse.",
+      "A clue given too soon only spoils the hunt."
+    ]
+  },
+  {
+    "pair": ["longhi", "rihan"],
+    "reference": "Ch. 401–402",
+    "lines": [
+      "Tubeppa a choisi un partenaire, pas un superviseur.",
+      "Tubeppa chose a partner, not a supervisor.",
+      "Mon travail commence là où les partenaires cessent de parler.",
+      "My work begins when the partners stop talking."
+    ]
+  },
+  {
+    "pair": ["leorio", "phinks"],
+    "reference": "Yorknew · ép. 57–58",
+    "lines": [
+      "Pakunoda était venue seule, comme convenu. Je m’en souviens.",
+      "Pakunoda came alone, as agreed. I remember.",
+      "Elle tenait à sa parole. À toi de tenir à la tienne.",
+      "She kept her word. You’d better keep yours."
+    ]
+  },
+  {
+    "pair": ["kurapika", "benjamin"],
+    "reference": "Ch. 359 et 363–364",
+    "lines": [
+      "Vincent est venu en uniforme. Ça ne lui donnait aucun droit sur Woble.",
+      "Vincent came in uniform. That gave him no claim over Woble.",
+      "Je vous laisse le soin d’expliquer votre version à Balsamilco.",
+      "I’ll leave you to explain your version to Balsamilco."
+    ]
+  },
+  {
+    "pair": ["kurapika", "camilla"],
+    "reference": "Ch. 349, 359 et 363",
+    "lines": [
+      "Woble ne peut pas encore parler. Son silence ne vaut pas un accord.",
+      "Woble can’t speak yet. Silence doesn’t mean consent.",
+      "Si tu veux un débat sur les règles, adresse-toi à Nasubi.",
+      "If you want to debate the rules, take it up with Nasubi."
+    ]
+  },
+  {
+    "pair": ["kurapika", "halkenburg"],
+    "reference": "Ch. 359 et 386–387",
+    "lines": [
+      "Sumidori a choisi de vous suivre. Woble, elle, n’a rien choisi.",
+      "Sumidori chose to follow you. Woble never made a choice.",
+      "J’aurais préféré que notre père nous laisse tous choisir.",
+      "I wish our father had let all of us choose."
+    ]
+  },
+  {
+    "pair": ["kurapika", "tserriednich"],
+    "reference": "Ch. 343–345 et 359",
+    "lines": [
+      "Quand je pense à Pairo, je sais pourquoi tes vitrines doivent s’ouvrir.",
+      "When I think of Pairo, I know why those display cases must open.",
+      "Tu as traversé tout un navire pour me parler de collection ?",
+      "You crossed an entire ship to talk to me about collecting?"
+    ]
+  }
 ]

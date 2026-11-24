@@ -28,7 +28,10 @@ import {
 } from './nenPillars'
 import { franklinKenDrain } from './troupeUpgrades'
 import { hanzoDoubleIgnoresTenPhysical } from './shizukuHanzoKallutoUpgrades'
-import { applyJupiterAcousticImpact, isHalkenburgUnblockableArrow } from './halkenburgBonolenovUpgrades'
+import {
+  applyJupiterAcousticImpact,
+  isHalkenburgUnblockableArrow,
+} from './halkenburgBonolenovUpgrades'
 import { rihanTacticalDefenceFactor } from './matchupValves'
 import {
   PADAILLE_DRILL_TEN_CHIP,
@@ -150,7 +153,11 @@ function resolveWound(context: WoundContext): number {
         (context.physicalProjectile ? 1 : hatsuDamageFactor(context.attacker))) *
       hatsuDefenceFactor(context.defender) *
       context.guard *
-      shuGuardFactor(context.defender, context.blocked && !context.guardBypassed, context.physicalProjectile) *
+      shuGuardFactor(
+        context.defender,
+        context.blocked && !context.guardBypassed,
+        context.physicalProjectile,
+      ) *
       thetaBulletDamageFactor(context.attacker, context.physicalProjectile) *
       furykovResistanceFactor(context.defender, context.attacker) *
       rihanTacticalDefenceFactor(context.defender) *
@@ -170,7 +177,8 @@ interface DamageContext {
 }
 
 function resolveDamageGuard(context: DamageContext): number {
-  const { defender, physicalProjectile, blocked, guardBypassed, leorioChip, padailleDrill } = context
+  const { defender, physicalProjectile, blocked, guardBypassed, leorioChip, padailleDrill } =
+    context
   if (physicalProjectile) return firearmGuardFactor(defender, blocked)
   if (!blocked || guardBypassed) return 1
   if (leorioChip) return 0.28 * LEORIO_TEN_CHIP_FACTOR
@@ -297,7 +305,10 @@ function firearmBodyMemoryUpdate(
   if (options.zone !== 'hands' && options.zone !== 'feet') return updated
   const prev = options.fighter.bodyMemory?.hits[options.zone] ?? 0
   const nextHits = Math.min(3, prev + FIREARM_BODY_MEMORY_WEIGHT)
-  return { ...updated, bodyMemory: { hits: { ...updated.bodyMemory?.hits, [options.zone]: nextHits } } }
+  return {
+    ...updated,
+    bodyMemory: { hits: { ...updated.bodyMemory?.hits, [options.zone]: nextHits } },
+  }
 }
 
 function knockbackPosition(
@@ -323,7 +334,9 @@ function struckAura(
   return Math.max(
     0,
     fighter.aura -
-      ((2 + damage * 0.1) * bashoKenCostFactor(fighter) + franklinKenDrain(attacker, fighter, blocked) + padailleHammerKenDrain(attacker, fighter, blocked)),
+      ((2 + damage * 0.1) * bashoKenCostFactor(fighter) +
+        franklinKenDrain(attacker, fighter, blocked) +
+        padailleHammerKenDrain(attacker, fighter, blocked)),
   )
 }
 
@@ -331,12 +344,12 @@ function openWoundState(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
 ): { openWounds?: number } {
   const { attacker, blocked, damage, fighter } = options
-  return padailleAxeOpensWound(attacker, blocked, damage) ? { openWounds: (fighter.openWounds ?? 0) + 1 } : {}
+  return padailleAxeOpensWound(attacker, blocked, damage)
+    ? { openWounds: (fighter.openWounds ?? 0) + 1 }
+    : {}
 }
 
-function leorioLaunchState(
-  options: StrikeOptions,
-): { y?: number; velocityY?: number } {
+function leorioLaunchState(options: StrikeOptions): { y?: number; velocityY?: number } {
   if (!leorioBreaksTenGuard(options.attacker, options.fighter, options.blocked)) return {}
   return { y: Math.max(options.fighter.y, LEORIO_TEN_LAUNCH_Y), velocityY: LEORIO_TEN_LAUNCH_VY }
 }
@@ -387,7 +400,9 @@ function stunState(
       : 0
   return {
     hitStun: options.blocked ? 0 : contactHitstun(options, hitStun),
-    blockStun: options.blocked ? options.blockstun + Number(options.wallSplat) * 3 + renPressure : 0,
+    blockStun: options.blocked
+      ? options.blockstun + Number(options.wallSplat) * 3 + renPressure
+      : 0,
     pose: options.blocked ? 'guard' : 'hit',
     blocking: options.blocked,
   }

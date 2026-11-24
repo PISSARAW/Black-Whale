@@ -158,16 +158,14 @@ function chargeBomb(world: DeathMatchWorld): ChrolloIntent {
       return distance(trigger.at, linked.at) <= TOUCH
         ? { kind: 'detonate-linked', target: linked.id }
         : trigger.order === 'touch-sun'
-          // The antenna carrier already knows where to go. Chrollo must clear its path;
-          // standing beside it makes the fighter collision pass shove it away forever.
-          ? { kind: 'retreat', to: hidingSpot(world) }
+          ? // The antenna carrier already knows where to go. Chrollo must clear its path;
+            // standing beside it makes the fighter collision pass shove it away forever.
+            { kind: 'retreat', to: hidingSpot(world) }
           : { kind: 'drive-trigger', target: trigger.id }
     const carrier = nearest(
       world,
       (spectator) =>
-        spectator.id !== REFEREE_ID &&
-        spectator.id !== linked.id &&
-        spectator.nature !== 'copy',
+        spectator.id !== REFEREE_ID && spectator.id !== linked.id && spectator.nature !== 'copy',
     )
     if (!carrier) return { kind: 'hold' }
     if (!carrier.marks.moon)

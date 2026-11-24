@@ -81,7 +81,8 @@ function applyRenMalice(
 
 export function firearmCapacity(fighter: Pick<ArcadeFighter, 'id'>): number {
   if (fighter.id === 'benjamin') return 3
-  if (fighter.id === 'theta' || fighter.id === 'camilla' || hasBodyguardFirearm(fighter.id)) return 6
+  if (fighter.id === 'theta' || fighter.id === 'camilla' || hasBodyguardFirearm(fighter.id))
+    return 6
   return 0
 }
 

@@ -35,8 +35,9 @@ export function stepActors(state: FightState, inputs: DuelInputs): DuelBodies {
 }
 
 export function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  if (!halkenburgOwnBody(fighter)) return halkenburgBodyControl(advanceFighterPhysics(fighter))!
-  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter))
+  if (!halkenburgOwnBody(fighter))
+    return halkenburgBodyControl(advanceFighterPhysics(fighter, input))!
+  if (fighter.easterEgg) return poseFighter(advanceFighterPhysics(fighter, input))
   fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),

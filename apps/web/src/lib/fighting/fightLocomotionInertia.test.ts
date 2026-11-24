@@ -71,10 +71,7 @@ describe('fightLocomotionInertia', () => {
     const inertia = createLocomotionInertia()
     const base = fighter('kurapika', { x: 40, facing: 1, pose: 'walk' })
     inertia(base, { frame: 0, seconds: 0, frozen: false })
-    const moving = inertia(
-      { ...base, x: 40.5 },
-      { frame: 1, seconds: FIXED_STEP, frozen: false },
-    )
+    const moving = inertia({ ...base, x: 40.5 }, { frame: 1, seconds: FIXED_STEP, frozen: false })
     const frozen = inertia(
       { ...base, x: 41.0 },
       { frame: 2, seconds: 2 * FIXED_STEP, frozen: true },

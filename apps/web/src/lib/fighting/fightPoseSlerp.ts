@@ -2,12 +2,7 @@ import type { FightJoint, Turn } from './fightPose'
 
 type Quat = readonly [number, number, number, number]
 
-const SPHERICAL_JOINTS = new Set<FightJoint>([
-  'leadShoulder',
-  'rearShoulder',
-  'leadHip',
-  'rearHip',
-])
+const SPHERICAL_JOINTS = new Set<FightJoint>(['leadShoulder', 'rearShoulder', 'leadHip', 'rearHip'])
 
 const MAX_SAFE_Y = 1.35
 const MAX_SAFE_STEP = 2.8

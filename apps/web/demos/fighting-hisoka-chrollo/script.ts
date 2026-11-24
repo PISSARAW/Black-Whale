@@ -244,7 +244,8 @@ function finale(s: Shot) {
   s.portrait('wide-low', 90)
   s.beat('', 'Everything, in one fist')
   // The stand-off lasts until both can pay for a Ko.
-  for (let i = 0; i < 600 && Math.min(s.state.player.aura, s.state.opponent.aura) < 21; i++) s.step()
+  for (let i = 0; i < 600 && Math.min(s.state.player.aura, s.state.opponent.aura) < 21; i++)
+    s.step()
   s.step(20)
   s.cut(STAGE)
   s.portrait('eyes', 34)

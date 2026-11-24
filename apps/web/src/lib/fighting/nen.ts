@@ -217,7 +217,8 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += isBeyond(fighter) ? BEYOND_KO_BONUS : 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  const bookPenalty = kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
+  const bookPenalty =
+    kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
   return (
     factor *
     bookPenalty *

@@ -13,6 +13,8 @@ import {
 } from './types'
 import { FIGHTING_ROSTER } from './roster'
 import { airRecoveryAvailable } from './airRecovery'
+import { createPursuitRecoveryCues } from './pursuitRecoveryPresentation'
+import { pursuitRecoveryPose } from './pursuitRecoveryPose'
 
 function duel(
   id: FighterId,
@@ -68,8 +70,7 @@ function tapInAnticipationWindow(
   input: Partial<FightInput> = {},
   action: MoveAction = 'light',
 ) {
-  const data = attackData(state.player.attack!.kind, state.player)
-  return tap(afterActive(state, data.startup + data.active + 2 - INPUT_BUFFER_FRAMES), input, action)
+  return tap(afterActive(state, 2 - INPUT_BUFFER_FRAMES), input, action)
 }
 
 function launcher(state: FightState) {
@@ -177,9 +178,17 @@ it.each(PREPARED_STRIKES)(
       const intent = tapInAnticipationWindow(prepared, { right: true }, 'special')
       expect(intent.player.bufferedAttack?.moveId).toBe(`${id}:${slot}`)
       const { state, defended } = resolveRace(prepared, intent)
-      expect(defended).toBe(false)
-      expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
-      expect(state.player.attack?.directionalChain).toBe('pursuit-technique')
+      expect(defended).toBe(id === 'kalluto')
+      if (id === 'kalluto')
+        expect([
+          { attacker: 'player', comboHits: 2 },
+          { attacker: 'opponent', comboHits: 1 },
+        ]).toContainEqual({
+          attacker: state.impact?.attacker,
+          comboHits: state.impact?.comboHits,
+        })
+      else expect(state.impact).toMatchObject({ attacker: 'player', comboHits: 4 })
+      if (id !== 'kalluto') expect(state.player.attack?.directionalChain).toBe('pursuit-technique')
       if (id === 'phinks') {
         expect(state.player.attack?.cyclotronTurns).toBeGreaterThan(0)
         expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
@@ -200,7 +209,10 @@ it('Chrollo convertit une frappe copiée sans transformer la page historique en 
     },
   }
   const launch = launcher(openBook)
-  const { state, defended } = resolveRace(launch, tapInAnticipationWindow(launch, { right: true }, 'special'))
+  const { state, defended } = resolveRace(
+    launch,
+    tapInAnticipationWindow(launch, { right: true }, 'special'),
+  )
   expect(defended).toBe(false)
   expect(state.impact?.comboHits).toBe(4)
   expect(state.player.attack).toMatchObject({
@@ -226,22 +238,19 @@ it('Hisoka doit avoir un lien sélectionné sur son adversaire pour la poursuite
   expect(state.impact?.attacker).toBe('opponent')
 })
 
-it.each([false, true])('le coin change la fenêtre du Bungee Gum retardé, coin %s', (corner) => {
+it.each([false, true])('le Bungee Gum retardé laisse la reprise, coin %s', (corner) => {
   const launch = launcher(duel('hisoka', { corner, tether: true }))
   const technique = tap(afterActive(launch, 10), { right: true }, 'special')
   const { state, defended } = resolveRace(launch, technique)
-  expect(defended).toBe(!corner)
-  expect(state.impact).toMatchObject({
-    attacker: corner ? 'player' : 'opponent',
-    comboHits: corner ? 4 : 1,
-  })
+  expect(defended).toBe(true)
+  expect(state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
 })
 
 it.each([false, true])(
   'la défense tenue ne coupe pas une poursuite garantie, coin %s',
   (corner) => {
     const launch = launcher(duel('hisoka', { corner }))
-    let state = tap(launch, { right: true })
+    let state = tapInAnticipationWindow(launch, { right: true })
     for (let i = 0; i < 60 && state.impact?.sequence === launch.impact?.sequence; i++) {
       expect(airRecoveryAvailable(state.opponent)).toBe(false)
       state = defend(state, { down: true, guard: true, right: true })
@@ -282,3 +291,26 @@ it.each([false, true])(
     expect(state.opponent.wakeupInvulnerableFrames).toBe(0)
   },
 )
+
+it.each([false, true])('montre la reprise avant la riposte du défenseur, coin %s', (corner) => {
+  const launch = launcher(duel('hisoka', { corner, tether: true }))
+  const observe = createPursuitRecoveryCues()
+  let state = tap(afterActive(launch, 10), { right: true }, 'special')
+  let ready: number | undefined
+  for (let frame = 0; frame < 64 && state.impact?.sequence === launch.impact?.sequence; frame++) {
+    const cue = observe(state).opponent
+    if (cue && ready === undefined) {
+      expect(cue).toEqual({ kind: 'ready', frame: state.frame })
+      expect(pursuitRecoveryPose(state.opponent)?.key).toBe('air-recovery-ready')
+      ready = state.frame
+      state = performMove({ state, side: 'opponent', action: 'light', input: EMPTY_INPUT })
+      expect(observe(state).opponent?.kind).toBe('ready')
+    }
+    if (ready === undefined) expect(pursuitRecoveryPose(state.opponent)).toBeUndefined()
+    state = tick(state, true)
+  }
+  const contact = observe(state).opponent
+  expect(state.frame - ready!).toBe(4)
+  expect(contact).toEqual({ kind: 'reply', frame: state.frame })
+  expect(observe(launch).opponent).toBeUndefined()
+})

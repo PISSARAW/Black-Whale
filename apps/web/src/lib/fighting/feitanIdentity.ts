@@ -5,15 +5,15 @@ import type { ArcadeFighter } from './types'
 export function feitanIconicIdle(fighter: ArcadeFighter): boolean {
   return Boolean(
     fighter.id === 'feitan' &&
-      fighter.pose === 'idle' &&
-      !fighter.attack &&
-      !motionOf(fighter).dash &&
-      fighter.y === 0 &&
-      fighter.hitStun === 0 &&
-      fighter.blockStun === 0 &&
-      !fighter.blocking &&
-      !fighter.umbrellaFeintFrames &&
-      !fighter.hatsuEffects.painPacker?.armour,
+    fighter.pose === 'idle' &&
+    !fighter.attack &&
+    !motionOf(fighter).dash &&
+    fighter.y === 0 &&
+    fighter.hitStun === 0 &&
+    fighter.blockStun === 0 &&
+    !fighter.blocking &&
+    !fighter.umbrellaFeintFrames &&
+    !fighter.hatsuEffects.painPacker?.armour,
   )
 }
 

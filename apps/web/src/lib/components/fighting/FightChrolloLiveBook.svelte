@@ -1,10 +1,6 @@
 <script lang="ts">
   import { chrolloPageName } from '$lib/fighting/chrolloPageNames'
-  import {
-    CHROLLO_DECK_PRESETS,
-    isSlotRevealed,
-    type BookSlot,
-  } from '$lib/fighting/chrolloDeck'
+  import { CHROLLO_DECK_PRESETS, isSlotRevealed, type BookSlot } from '$lib/fighting/chrolloDeck'
   import type { LiveBookActions } from '$lib/fighting/chrolloLiveBook'
   import type { FightSide, FightState } from '$lib/fighting/types'
 
@@ -60,7 +56,9 @@
           <span class="slot-key">{book.isFlipping ? entry.key : entry.slot + 1}</span>
           <span class="slot-name">{slotLabel(entry.slot, entry.page)}</span>
           {#if book.bookmarkSlot === entry.slot}
-            <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}>★</span>
+            <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}
+              >★</span
+            >
           {/if}
         </li>
       {/each}
@@ -79,7 +77,8 @@
               : 'Stolen slot (empty)'}
         </span>
         {#if book.bookmarkSlot === 'stolen'}
-          <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}>★</span>
+          <span class="slot-mark" title={fr ? 'Signet Double Face' : 'Double Face bookmark'}>★</span
+          >
         {/if}
       </li>
     </ul>

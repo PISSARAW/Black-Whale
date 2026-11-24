@@ -18,12 +18,12 @@ describe('resolveFightHudMode', () => {
   })
 
   it('respects explicit player preference overrides', () => {
-    expect(
-      resolveFightHudMode({ state: { mode: 'versus-ai' }, preference: 'omniscient' }),
-    ).toBe('omniscient')
-    expect(
-      resolveFightHudMode({ state: { mode: 'training' }, preference: 'tactical' }),
-    ).toBe('tactical')
+    expect(resolveFightHudMode({ state: { mode: 'versus-ai' }, preference: 'omniscient' })).toBe(
+      'omniscient',
+    )
+    expect(resolveFightHudMode({ state: { mode: 'training' }, preference: 'tactical' })).toBe(
+      'tactical',
+    )
   })
 
   it('persists and restores the player HUD preference safely', () => {

@@ -161,7 +161,11 @@ const combos: Scene = () => {
 
 /** A support kameo from the ship: Tubeppa answers the call and closes the leader's wounds. */
 const kameo: Scene = () => {
-  const s = new Shot('vip-casino', 'phinks', { hero: 'kurapika', gap: 6, kameos: { player: 'tubeppa' } })
+  const s = new Shot('vip-casino', 'phinks', {
+    hero: 'kurapika',
+    gap: 6,
+    kameos: { player: 'tubeppa' },
+  })
   s.step(4)
   for (let i = 0; i < 2; i++) {
     s.approach('opponent', 4)

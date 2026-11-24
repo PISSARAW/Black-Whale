@@ -51,7 +51,8 @@ export const FIGHT_EXPRESSION_PROFILES: Partial<Record<FighterId, ExpressionProf
     shoulder: 0.004,
   },
   feitan: {
-    direction: 'Hostilité du regard ; après une blessure grave, rictus sous le col et calme menaçant.',
+    direction:
+      'Hostilité du regard ; après une blessure grave, rictus sous le col et calme menaçant.',
     eye: 0.8,
     brow: 0.18,
     smile: 0,

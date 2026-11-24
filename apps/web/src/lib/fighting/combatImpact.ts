@@ -120,7 +120,14 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
-  const rageStrike = onRageDamage(attacker, sleepingBody(defender), attacker.attack.kind, ordinaryDamage, defence.blocked, defence.avoided)
+  const rageStrike = onRageDamage(
+    attacker,
+    sleepingBody(defender),
+    attacker.attack.kind,
+    ordinaryDamage,
+    defence.blocked,
+    defence.avoided,
+  )
   const damage = rageStrike.damage
   const knockdown = isJudgedKnockdown({
     attacker,
@@ -236,9 +243,10 @@ function resolveAttackOutcome(context: AttackResolutionContext): FightState {
   })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
-  const corneredAttacker = !defence.avoided && !defence.blocked && data.knockback > 0
-    ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
-    : spent
+  const corneredAttacker =
+    !defence.avoided && !defence.blocked && data.knockback > 0
+      ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
+      : spent
   const recoiledAttacker = recoilGuardedAttack({
     attacker: corneredAttacker,
     defender: defence.fighter,
@@ -285,9 +293,17 @@ function resolveAttackOutcome(context: AttackResolutionContext): FightState {
     after: next,
     damagedSide: defenderSide,
   })
-  const scorched = resolveLynchContact(state, resolveBashoPoemImpact(state, transferred, side), side)
+  const scorched = resolveLynchContact(
+    state,
+    resolveBashoPoemImpact(state, transferred, side),
+    side,
+  )
   if (transferred !== next)
-    return finishAfterImpact(scorched, transferred.impact!.attacker, otherSide(transferred.impact!.attacker))
+    return finishAfterImpact(
+      scorched,
+      transferred.impact!.attacker,
+      otherSide(transferred.impact!.attacker),
+    )
   next = recordHistoricalWeaponHit(state, recordBlinkyWound(state, scorched, side), side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
@@ -305,7 +321,6 @@ function resolveAttackOutcome(context: AttackResolutionContext): FightState {
   }
   return finishAfterImpact(next, side, defenderSide)
 }
-
 
 function strikeAfterDefence(
   defence: ImpactDefence,
@@ -375,14 +390,8 @@ export function resolveProjectileHit(state: FightState, hit: ProjectileHit): Fig
 }
 
 function applyProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
-  if (
-    state.phase !== 'fighting' ||
-    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
-  )
-    return state
-  const captured = captureIncomingProjectile(state, hit)
-  if (captured) return captured
+  const immediate = immediateProjectileResolution(state, hit)
+  if (immediate) return immediate
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
@@ -479,6 +488,16 @@ function applyProjectileHit(state: FightState, hit: ProjectileHit): FightState {
     archived.impact!.attacker,
     otherSide(archived.impact!.attacker),
   )
+}
+
+function immediateProjectileResolution(state: FightState, hit: ProjectileHit): FightState | null {
+  if (hit.projectile.halkenburgArrow) return settleHalkenburgArrow(state, hit)
+  if (
+    state.phase !== 'fighting' ||
+    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
+  )
+    return state
+  return captureIncomingProjectile(state, hit)
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {

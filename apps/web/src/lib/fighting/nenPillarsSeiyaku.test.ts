@@ -39,7 +39,11 @@ describe('En — absolute reflex zone', () => {
     const base = beginFight(createFight('hinrigh', 'hisoka'))
     const close = {
       ...base,
-      player: { ...base.player, x: 45, nen: { ...base.player.nen, mode: 'ren' as const, en: { radius: 20 } } },
+      player: {
+        ...base.player,
+        x: 45,
+        nen: { ...base.player.nen, mode: 'ren' as const, en: { radius: 20 } },
+      },
       opponent: { ...base.opponent, x: 52, nen: { ...base.opponent.nen, in: true } },
     }
     const stepped = advanceNenPillars(close)
@@ -101,7 +105,13 @@ describe('Black Whale firearms — Ten chip, Ken/Ko immunity, 1.5 Body Memory, a
     const tenChip = resolvedDamage({
       physicalProjectile: true,
       attacker: base.player,
-      defence: { fighter: base.opponent, blocked: true, parried: false, avoided: false, invulnerable: false },
+      defence: {
+        fighter: base.opponent,
+        blocked: true,
+        parried: false,
+        avoided: false,
+        invulnerable: false,
+      },
       base: 20,
       zone: 'hands',
       kind: 'ranged',
@@ -212,8 +222,16 @@ describe('Seiyaku — Soft Lock and Breach Penalties', () => {
 
     // Blind vow
     const blindFighter = swearSeiyaku(base.player, 'blind')
-    const normalCost = attackAuraCost({ fighter: base.player, kind: 'special', moveId: 'kurapika:neutralSpecial' })
-    const blindCost = attackAuraCost({ fighter: blindFighter, kind: 'special', moveId: 'kurapika:neutralSpecial' })
+    const normalCost = attackAuraCost({
+      fighter: base.player,
+      kind: 'special',
+      moveId: 'kurapika:neutralSpecial',
+    })
+    const blindCost = attackAuraCost({
+      fighter: blindFighter,
+      kind: 'special',
+      moveId: 'kurapika:neutralSpecial',
+    })
     expect(blindCost).toBe(Math.round(normalCost * SEIYAKU_BLIND_COST_FACTOR))
 
     const brokenBlind = advanceSeiyaku(

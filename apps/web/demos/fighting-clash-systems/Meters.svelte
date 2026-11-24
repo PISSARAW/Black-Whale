@@ -9,11 +9,7 @@
   import type { MeterKind } from './meterKinds'
 
   /** Gauges read straight from the engine state of the frame on screen. */
-  let {
-    kind,
-    segment,
-    sim,
-  }: { kind: MeterKind; segment: BuiltSegment; sim: number } = $props()
+  let { kind, segment, sim }: { kind: MeterKind; segment: BuiltSegment; sim: number } = $props()
   const at = (states: FightState[]) => states[Math.min(states.length - 1, Math.floor(sim))]
   let state = $derived(at(segment.states))
   let twin = $derived(segment.twin ? at(segment.twin.states) : undefined)
@@ -44,20 +40,33 @@
   <div class="panel">
     <h4>{fighterDefinition(state.player.id).name.toUpperCase()} · ATTENTION</h4>
     <div class="row">
-      <span>LOAD</span><i class:over={load.overloaded}><b style={`width:${pct(load.ratio / 2)}`}></b><em style="left:50%"></em></i>
+      <span>LOAD</span><i class:over={load.overloaded}
+        ><b style={`width:${pct(load.ratio / 2)}`}></b><em style="left:50%"></em></i
+      >
     </div>
-    <div class="row"><span>FATIGUE</span><i><b class="tired" style={`width:${pct(fatigue)}`}></b></i></div>
+    <div class="row">
+      <span>FATIGUE</span><i><b class="tired" style={`width:${pct(fatigue)}`}></b></i>
+    </div>
     <p class:alert={load.overloaded}>
-      {load.overloaded ? 'OVERLOADED · NEW NEN REFUSED' : load.strained ? 'STRAINED' : 'CLEAR'} · {Math.round(load.ratio * 100)}% OF CAPACITY
+      {load.overloaded ? 'OVERLOADED · NEW NEN REFUSED' : load.strained ? 'STRAINED' : 'CLEAR'} · {Math.round(
+        load.ratio * 100,
+      )}% OF CAPACITY
     </p>
   </div>
 {:else if kind === 'ryu'}
   {#each [[state, 'top'], ...(twin ? [[twin, 'bottom']] : [])] as const as [s, where] (where)}
     {@const share = shares(s)}
     <div class="panel ryu" class:low={where === 'bottom'}>
-      <h4>{fighterDefinition(s.player.id).name.toUpperCase()} · {nenTransferFrames(s.player)} FRAMES PER SHIFT</h4>
+      <h4>
+        {fighterDefinition(s.player.id).name.toUpperCase()} · {nenTransferFrames(s.player)} FRAMES PER
+        SHIFT
+      </h4>
       {#each ZONES as zone (zone)}
-        <div class="row"><span>{zone.toUpperCase()}</span><i><b style={`width:${pct(share?.[zone] ?? 0.25)}`}></b></i></div>
+        <div class="row">
+          <span>{zone.toUpperCase()}</span><i
+            ><b style={`width:${pct(share?.[zone] ?? 0.25)}`}></b></i
+          >
+        </div>
       {/each}
     </div>
   {/each}
@@ -70,7 +79,11 @@
       ).toUpperCase()}
     </h4>
     <p>{kameo.phase.toUpperCase()}</p>
-    <div class="row"><span>LEADER HP</span><i><b style={`width:${pct(state.player.health / state.player.maxHealth)}`}></b></i></div>
+    <div class="row">
+      <span>LEADER HP</span><i
+        ><b style={`width:${pct(state.player.health / state.player.maxHealth)}`}></b></i
+      >
+    </div>
   </div>
 {/if}
 

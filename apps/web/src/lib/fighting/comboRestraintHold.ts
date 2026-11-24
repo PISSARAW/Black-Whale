@@ -8,8 +8,8 @@ import type { ArcadeFighter } from './types'
 export function comboRestraintHeld(fighter: ArcadeFighter): boolean {
   return Boolean(
     fighter.machiThread?.kind === 'bind' ||
-      fighter.needlePuppet?.needleEmbedded ||
-      fighter.biohazardRestraint ||
-      crossGameRestrained(fighter),
+    fighter.needlePuppet?.needleEmbedded ||
+    fighter.biohazardRestraint ||
+    crossGameRestrained(fighter),
   )
 }

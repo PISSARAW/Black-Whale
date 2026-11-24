@@ -123,15 +123,11 @@ const OBSERVERS: readonly [DeathMatchBeat, Observer][] = [
   ['hisoka-buried', (world) => world.hisoka.wounds.compression >= BURIED],
   ['hisoka-asphyxiated', (world) => world.hisoka.wounds.cause === 'asphyxia'],
   ['chrollo-declared-winner', (world) => world.hisoka.wounds.cause === 'asphyxia'],
-  [
-    'rescue-arrives',
-    (world) => (world.hisoka.wounds.deadFor ?? -1) >= RESCUE_DELAY_FRAMES,
-  ],
+  ['rescue-arrives', (world) => (world.hisoka.wounds.deadFor ?? -1) >= RESCUE_DELAY_FRAMES],
   ['troupe-gathers', (world) => world.scenario.done.includes('rescue-arrives')],
   [
     'resuscitation',
-    (world) =>
-      world.scenario.done.includes('troupe-gathers') && world.hisoka.wounds.cause === null,
+    (world) => world.scenario.done.includes('troupe-gathers') && world.hisoka.wounds.cause === null,
   ],
   ['prosthetics-formed', (world) => world.hisoka.prosthetics],
   ['machi-bound', (world) => world.hisoka.machiBound],

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1248
+Fichiers : 1283
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -44,6 +44,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/arena/ai.test.ts`
 
 - the arena opponent > closes distance without walking through the other fighter
+
+## `apps/web/src/lib/arena/blinkyWorld.test.ts`
+
+- Arena Blinky scene projection > hides stored solids and moves released ones through the Tour world
 
 ## `apps/web/src/lib/arena/bridge.test.ts`
 
@@ -126,6 +130,10 @@ Fichiers : 1248
 
 - authoritative Arena PvP match > accepts ordered commands only for the side owned by the sender
 
+## `apps/web/src/lib/arena/replay/blinkyReplay.test.ts`
+
+- Blinky replay > records the selected solid and reconstructs its stored state
+
 ## `apps/web/src/lib/arena/replay/branch.test.ts`
 
 - interactive replay branch > resumes from a selected tick and produces a valid divergent replay
@@ -145,6 +153,22 @@ Fichiers : 1248
 ## `apps/web/src/lib/arena/replay/share.test.ts`
 
 - Arena replay URL sharing > round-trips an authenticated replay while preserving route options
+
+## `apps/web/src/lib/arena/replay/skillHunterReplay.test.ts`
+
+- Skill Hunter replay > reconstructs the fifth page, its seal and the selected book slot
+
+## `apps/web/src/lib/arena/sectorPersistence.test.ts`
+
+- persistent Arena sector > turns a witnessed duel into Tour knowledge and a parcel-loop lead
+
+## `apps/web/src/lib/arena/sectorTour.test.ts`
+
+- Arena sector inside Tour > keeps swallowed scenery absent and displaced scenery at its combat position
+
+## `apps/web/src/lib/arena/skillHunterPov.test.ts`
+
+- Skill Hunter POV privacy > hides the opponent book and reveals only its open page under Gyo
 
 ## `apps/web/src/lib/arena/targeting.test.ts`
 
@@ -244,6 +268,10 @@ Fichiers : 1248
 
 - reactive Arena environment > alerts witnesses and schedules guards after noisy clandestine Hatsu
 
+## `apps/web/src/lib/combat/fightingBlinky.test.ts`
+
+- Arena Blinky physical targets > stores the designated scene solid without draining the opponent
+
 ## `apps/web/src/lib/combat/fightingHatsu.test.ts`
 
 - per-fighter Arena Hatsu routes > routes only authored specials with an exact named Arena system
@@ -251,6 +279,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/combat/fightingMove.test.ts`
 
 - Fighting moves in the 3D Arena > projects authored startup, reach and recovery onto the Arena plane
+
+## `apps/web/src/lib/combat/fightingSkillHunter.test.ts`
+
+- Arena Skill Hunter book > opens with Clash’s four prepared Heavens Arena pages
 
 ## `apps/web/src/lib/combat/hitstop.test.ts`
 
@@ -297,6 +329,10 @@ Fichiers : 1248
 
 - anchors > gives every reconstructed room a place of its own to stand
 
+## `apps/web/src/lib/components/tour/TourCameraPlacement.test.ts`
+
+- third-person combat camera > locks the walking heading onto each side of a target
+
 ## `apps/web/src/lib/fighting/accelHeatPresentation.test.ts`
 
 - relance heat in the HUD > is shown only for fighters with the relance
@@ -330,9 +366,29 @@ Fichiers : 1248
 
 - combat sound coverage > carries the authored move id into an impact cue
 
+## `apps/web/src/lib/fighting/audio/matchVoiceLines.test.ts`
+
+- ship announcements > announces the start once, then a tied final round
+
 ## `apps/web/src/lib/fighting/audio/melody.test.ts`
 
 - continuous flute audio > waits for preparation, sustains both performers, and silences an interrupted performance
+
+## `apps/web/src/lib/fighting/audio/mixer.test.ts`
+
+- sustained combat noise > starts shared noise layers at independent positions in the buffer
+
+## `apps/web/src/lib/fighting/audio/optionalAudio.test.ts`
+
+- optional audio features > restricts music selections to the shipped catalogue and supports auto and off
+
+## `apps/web/src/lib/fighting/audio/soundCaptions.test.ts`
+
+- combat sound captions > only exposes resource alerts for the selected viewer
+
+## `apps/web/src/lib/fighting/audio/tacticalEvents.test.ts`
+
+- tactical audio events > renders both actual sides of a trade exactly once, retaining the move IDs
 
 ## `apps/web/src/lib/fighting/auraColours.test.ts`
 
@@ -775,6 +831,10 @@ Fichiers : 1248
 - fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
 - keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
 
+## `apps/web/src/lib/fighting/fightBodyReadability.test.ts`
+
+- fight body readability > bakes a reusable three-tone key and rim without mutating source geometry
+
 ## `apps/web/src/lib/fighting/fightBodySeparation.test.ts`
 
 - material bodies cannot occupy the same space > moves the available body at the arena wall and preserves the anchored one
@@ -804,17 +864,33 @@ Fichiers : 1248
 
 - the six fighters express combat through their existing face > gives the six fighters distinct expressions and keeps Chrollo restrained
 
+## `apps/web/src/lib/fighting/fightGameplayIdentity.test.ts`
+
+- P19 gameplay-camera identity lock > mounts five shared canonical accents on the parts that own them
+
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
+## `apps/web/src/lib/fighting/fightImpactPunctuation.test.ts`
+
+- shared impact punctuation > ranks light, heavy and decisive contacts and silences evasions
 
 ## `apps/web/src/lib/fighting/fightJointLimits.test.ts`
 
 - fighters only move like a human body > never plays the civilian walking stride in a duel
 
+## `apps/web/src/lib/fighting/fightJointVolumes.test.ts`
+
+- P17 anatomy and P20 roster rollout > is fight-only, roster-wide and shares its joint geometry
+
 ## `apps/web/src/lib/fighting/fightLocomotionInertia.test.ts`
 
 - fightLocomotionInertia > lags on walk start, brakes forward on stop, and settles back to neutral
+
+## `apps/web/src/lib/fighting/fightMaterialResponse.test.ts`
+
+- P18 responsive extremities and tailoring > keeps held children unscaled while sharing hand morph and hem geometry
 
 ## `apps/web/src/lib/fighting/fightMobile.test.ts`
 
@@ -823,6 +899,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/fighting/fightMotionDiagnostics.test.ts`
 
 - golden heavy motion diagnostics > measures the planted foot, pivot, pelvis and authored fist target
+
+## `apps/web/src/lib/fighting/fightMotionTrailScene.test.ts`
+
+- fight motion trails > draws only the fastest attacking limbs and fades its fixed pool
 
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
@@ -867,7 +947,7 @@ Fichiers : 1248
 
 ## `apps/web/src/lib/fighting/fightReplayHash.test.ts`
 
-- replay hash shared subtree reuse > reuses only certified immutable forecasts and preserves the legacy hash for every prefix
+- replay hash shared subtree reuse > reuses immutable frame hashes and matches imported forecasts for every prefix
 
 ## `apps/web/src/lib/fighting/fightReplayPanels.test.ts`
 
@@ -882,6 +962,10 @@ Fichiers : 1248
 
 - response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
 
+## `apps/web/src/lib/fighting/fightRosterFinish.test.ts`
+
+- P14 hero finish and P16 roster propagation > deepens Hisoka fitted waistcoat and mounts dark accents on animated joints
+
 ## `apps/web/src/lib/fighting/fightSecondaryMotion.test.ts`
 
 - fightSecondaryMotion > absorbs landing impact on head, wrists and shoulders, then settles to neutral
@@ -889,6 +973,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/fighting/fightSetupDraft.test.ts`
 
 - Clash setup restoration > restores the selected matchup, mode, format and stage after a refresh
+
+## `apps/web/src/lib/fighting/fightStagingScene.test.ts`
+
+- P15 fight staging > adds one bounded lane pool and two identity halos
 
 ## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
 
@@ -1485,7 +1573,7 @@ Fichiers : 1248
 
 ## `apps/web/src/lib/fighting/moveFollowUps.test.ts`
 
-- priority signature moves and contextual follow-ups > advances the replay ruleset for the updated moveset behaviour
+- priority signature moves and contextual follow-ups > uses the current replay ruleset
 
 ## `apps/web/src/lib/fighting/movementTech.test.ts`
 
@@ -1668,6 +1756,10 @@ Fichiers : 1248
 
 - Phinks — right-arm rotations, then one Ripper Cyclotron punch > starts a vulnerable wind-up without a hitbox, movement, charge or immediate aura payment
 
+## `apps/web/src/lib/fighting/physicalCombatProfiles.test.ts`
+
+- Hatsu-inspired physical combat profiles > changes the actual pace, dashes and jump arcs on the same controls
+
 ## `apps/web/src/lib/fighting/pipelineAndSensoryHud.test.ts`
 
 - Deterministic 4-layer transfer pipeline & zero-text Sensory HUD > 1. 4-layer nenTransferFrames: 1f reflex transcends normal fatigue but still suffers Gel venom & Jupiter stun
@@ -1754,6 +1846,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/fighting/pvp/rollback/frameInput.test.ts`
 
 - PvP frame input (rollback lot L1) > resolves place 1 before place 2 within a frame
+
+## `apps/web/src/lib/fighting/pvp/rollback/socketClient.test.ts`
+
+- rollback command buffer > keeps each press once and in order through a full prediction window
 
 ## `apps/web/src/lib/fighting/pvp/rollback/timeSync.test.ts`
 
@@ -1849,6 +1945,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/fighting/sayird.test.ts`
 
 - Sayird and Little Eye outside the 2D duel > describes control, sight, hearing and real small targets in both languages
+
+## `apps/web/src/lib/fighting/secondFiveCombatMotion.test.ts`
+
+- second five Hatsu combat styles > draws distinct ground and jump poses through the standard motion path
 
 ## `apps/web/src/lib/fighting/secretWindowBodies.test.ts`
 
@@ -3024,6 +3124,10 @@ Fichiers : 1248
 ## `apps/web/src/lib/tour/burialChamberView.test.ts`
 
 - the princes burial chamber reconstructed from chapter 371 > satisfies the shared blueprint invariants for the burial rotunda
+
+## `apps/web/src/lib/tour/cameraSight.test.ts`
+
+- camera sight > drops both visibility and aim behind cover and restores them when it moves
 
 ## `apps/web/src/lib/tour/camillaApartmentView.test.ts`
 

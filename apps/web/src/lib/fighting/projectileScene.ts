@@ -43,9 +43,9 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       ? 'franklin-bullet'
       : feitanSpike(projectile)
         ? 'feitan-spike'
-      : handgunBullet(projectile)
-        ? 'handgun'
-        : projectile.shape
+        : handgunBullet(projectile)
+          ? 'handgun'
+          : projectile.shape
     const shape = shapes.get(key) ?? projectileGeometry(options, projectile)
     shapes.set(key, shape)
     return shape

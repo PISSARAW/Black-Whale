@@ -8,14 +8,14 @@ La bande-son mêle polar de chambre et percussions de coque. Dans les salons, l�
 
 Les tempos correspondent au pouls mesuré dans les passages montés. Les repères sont exprimés en secondes depuis le début des exports dans `Musique/`.
 
-| Morceau | Tempo approx. | Passage source | Durée en boucle | Fichier dans `static/audio/clash/` |
-| --- | ---: | ---: | ---: | --- |
-| La pression des ponts | 107 BPM | 6,340–82,610 | 76,270 s | `menu.mp3` |
-| Sous la ligne de flottaison | 107 BPM | 48,520–120,290 | 71,770 s | `whale-hold.mp3` |
-| Au-dessus des gradins | 146 BPM | 24,190–93,395 | 69,205 s | `heavens-arena.mp3` |
-| Le dernier jeton | 133 BPM | 19,380–80,735 | 61,355 s | `vip-casino.mp3` |
-| Or sous la nappe | 88 BPM | 32,320–97,780 | 65,460 s | `banquet-hall.mp3` |
-| Quatorze places | 103 BPM | 71,570–155,415 | 83,845 s | `princes-burial-chamber.mp3` |
+| Morceau                     | Tempo approx. | Passage source | Durée en boucle | Fichier dans `static/audio/clash/` |
+| --------------------------- | ------------: | -------------: | --------------: | ---------------------------------- |
+| La pression des ponts       |       107 BPM |   6,340–82,610 |        76,270 s | `menu.mp3`                         |
+| Sous la ligne de flottaison |       107 BPM | 48,520–120,290 |        71,770 s | `whale-hold.mp3`                   |
+| Au-dessus des gradins       |       146 BPM |  24,190–93,395 |        69,205 s | `heavens-arena.mp3`                |
+| Le dernier jeton            |       133 BPM |  19,380–80,735 |        61,355 s | `vip-casino.mp3`                   |
+| Or sous la nappe            |        88 BPM |  32,320–97,780 |        65,460 s | `banquet-hall.mp3`                 |
+| Quatorze places             |       103 BPM | 71,570–155,415 |        83,845 s | `princes-burial-chamber.mp3`       |
 
 Chaque raccord utilise un fondu de 50 ms dans le rythme du passage. Les fichiers livrés contiennent 250 ms d’audio de garde de chaque côté pour l’encodage MP3. Le lecteur boucle entre ces marges.
 
@@ -72,6 +72,7 @@ Les 33 boucles visent **60 à 90 secondes en jeu**. L’identifiant sous chaque 
 ### Arènes et lieux emblématiques
 
 #### Sous la ligne de flottaison — Soute du Black Whale
+
 `whale-hold`
 
 ```text
@@ -79,6 +80,7 @@ Instrumental fighting-game loop, 126 BPM. Industrial maritime noir, bowed steel,
 ```
 
 #### Au-dessus des gradins — Tour Céleste
+
 `heavens-arena`
 
 ```text
@@ -86,6 +88,7 @@ Instrumental stone-ring fighting-game loop, 148 BPM. Skin drums, clipped brass c
 ```
 
 #### Or sous la nappe — Salle du banquet
+
 `banquet-hall`
 
 ```text
@@ -93,6 +96,7 @@ Instrumental fighting-game loop, 120 BPM. Sinister ballroom chamber music with a
 ```
 
 #### Le dernier jeton — Casino VIP
+
 `vip-casino`
 
 ```text
@@ -100,6 +104,7 @@ Instrumental combat loop, 132 BPM. Tight noir jazz-funk with a clipped upright-b
 ```
 
 #### Horizon de verre — Pont d’observation
+
 `observation-deck`
 
 ```text
@@ -107,6 +112,7 @@ Instrumental combat loop, 116 BPM. Cold maritime electronica with an airy synth 
 ```
 
 #### La dernière bobine — Salle de projection
+
 `screening-room`
 
 ```text
@@ -114,6 +120,7 @@ Instrumental combat loop, 118 BPM. Projector-like rhythmic flutter played by bru
 ```
 
 #### Le poids du verdict — Cour suprême
+
 `supreme-court`
 
 ```text
@@ -121,6 +128,7 @@ Instrumental fighting-game loop, 110 BPM. Bass clarinet, short stop-start cello 
 ```
 
 #### Quatorze places — Chambre funéraire des princes
+
 `princes-burial-chamber`
 
 ```text
@@ -128,6 +136,7 @@ Instrumental ritual chamber combat loop, 104 BPM. Slow bronze bell tones, bowed 
 ```
 
 #### Le seuil de Morena — Planque Heil-Ly
+
 `heilly-hideout`
 
 ```text
@@ -137,6 +146,7 @@ Instrumental hideout combat loop, 140 BPM. Broken industrial drum pattern, gritt
 ### Ponts de service, espaces publics et extérieurs
 
 #### Fret sous scellés — Entrepôt Cha-R
+
 `cha-r-warehouse`
 
 ```text
@@ -144,6 +154,7 @@ Instrumental combat loop, 128 BPM. Wooden box percussion, syncopated muted bass 
 ```
 
 #### Deuxième service — Réfectoire central
+
 `central-dining-hall`
 
 ```text
@@ -151,6 +162,7 @@ Instrumental combat loop, 114 BPM. Brushed snare, dry baritone guitar, wooden ta
 ```
 
 #### Avant la séance — Hall du cinéplexe
+
 `cineplex-concourse`
 
 ```text
@@ -158,6 +170,7 @@ Instrumental combat loop, 124 BPM. Worn electric organ, staccato vibraphone and 
 ```
 
 #### Derrière l’écran — Couloir des salles du cinéplexe
+
 `cineplex-screen-corridor`
 
 ```text
@@ -165,6 +178,7 @@ Instrumental combat loop, 128 BPM. Thin pulsing synth, close viola tremolo, rim 
 ```
 
 #### Les comptes de la famille — Bureau de la famille Cha-R
+
 `cha-r-office`
 
 ```text
@@ -172,6 +186,7 @@ Instrumental combat loop, 112 BPM. Muted baritone guitar, close-miked double bas
 ```
 
 #### Sous les galeries — Atrium du commissariat
+
 `police-atrium`
 
 ```text
@@ -179,6 +194,7 @@ Instrumental combat loop, 122 BPM. Disciplined tom patterns, measured staccato s
 ```
 
 #### Porte de fret — Entrée du hangar
+
 `hangar-entrance`
 
 ```text
@@ -186,6 +202,7 @@ Instrumental combat loop, 134 BPM. Rolling low toms, clipped analog arpeggio, bo
 ```
 
 #### Le ventre du navire — Baie des ressorts
+
 `hull-suspension`
 
 ```text
@@ -193,6 +210,7 @@ Instrumental combat loop, 130 BPM. Pitched springs, elastic muted bass and dry k
 ```
 
 #### La mer de travers — Pont extérieur principal
+
 `exterior-main-deck`
 
 ```text
@@ -200,6 +218,7 @@ Instrumental combat loop, 136 BPM. Deep skin drums with windlike bowed strings, 
 ```
 
 #### Les amarres — Pont des canots — tribord
+
 `starboard-lifeboats`
 
 ```text
@@ -209,6 +228,7 @@ Instrumental combat loop, 125 BPM. Hollow wooden percussion, plucked metallic ca
 ### Salons royaux et appartements des princes
 
 #### La chaise du roi — Salon royal de Nasubi
+
 `royal-salon`
 
 ```text
@@ -216,6 +236,7 @@ Instrumental salon combat loop, 106 BPM. Regal low strings, sparse prepared pian
 ```
 
 #### Le silence d’Unma — Salon de la reine Unma
+
 `unma-salon`
 
 ```text
@@ -223,6 +244,7 @@ Instrumental salon combat loop, 108 BPM. Muted viola, bass flute, dry pizzicato 
 ```
 
 #### Ordre de marche — Salon de Benjamin
+
 `benjamin-salon`
 
 ```text
@@ -230,6 +252,7 @@ Instrumental salon combat loop, 126 BPM. Tight marching snare played softly, mut
 ```
 
 #### Une couronne suffit — Salon de Camilla
+
 `camilla-salon`
 
 ```text
@@ -237,6 +260,7 @@ Instrumental salon combat loop, 118 BPM. Imperious harpsichord figures, sharply 
 ```
 
 #### Les pièces en réserve — Salon de Zhang Lei
+
 `zhang-lei-salon`
 
 ```text
@@ -244,6 +268,7 @@ Instrumental salon combat loop, 112 BPM. Soft bronze disks struck as pitched per
 ```
 
 #### La collection privée — Salon de Tserriednich
+
 `tserriednich-salon`
 
 ```text
@@ -251,6 +276,7 @@ Instrumental salon combat loop, 128 BPM. Finely articulated harpsichord, muted c
 ```
 
 #### L’hypothèse froide — Salon de Tubeppa
+
 `tubeppa-salon`
 
 ```text
@@ -258,6 +284,7 @@ Instrumental salon combat loop, 120 BPM. Minimal chamber electronica with clocke
 ```
 
 #### Le sourire de trop — Salon de Salé-salé
+
 `salesale-salon`
 
 ```text
@@ -265,6 +292,7 @@ Instrumental salon combat loop, 116 BPM. Slinky lounge groove with electric pian
 ```
 
 #### Une seule flèche — Salon de Halkenburg
+
 `halkenburg-salon`
 
 ```text
@@ -272,6 +300,7 @@ Instrumental salon combat loop, 132 BPM. Unison strings, frame drum and restrain
 ```
 
 #### Le sourire en coin — Salon de Kacho
+
 `kacho-salon`
 
 ```text
@@ -279,6 +308,7 @@ Instrumental salon combat loop, 128 BPM. Fast dry pizzicato, hand percussion, li
 ```
 
 #### Une porte entrouverte — Salon de Fugetsu
+
 `fugetsu-salon`
 
 ```text
@@ -286,6 +316,7 @@ Instrumental salon combat loop, 118 BPM. Airy flute, plucked harp, soft cello pu
 ```
 
 #### La chambre trop calme — Salon de Momoze
+
 `momoze-salon`
 
 ```text
@@ -293,6 +324,7 @@ Instrumental salon combat loop, 108 BPM. Low felt piano, soft wooden mallets, dr
 ```
 
 #### La pièce de trop — Salon de Marayam
+
 `marayam-salon`
 
 ```text
@@ -300,6 +332,7 @@ Instrumental salon combat loop, 122 BPM. Plucked toy piano, soft block percussio
 ```
 
 #### Tant que la veille tient — Salon de Woble
+
 `woble-salon`
 
 ```text

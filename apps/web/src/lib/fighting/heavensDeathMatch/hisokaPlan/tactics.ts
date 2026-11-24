@@ -1,12 +1,6 @@
 import { TRUSS } from '../../heavensArenaLayout'
 import { headsOf } from '../crowd/heads'
-import {
-  living,
-  present,
-  type DetachedHead,
-  type HisokaLimb,
-  type Spectator,
-} from '../crowd/types'
+import { living, present, type DetachedHead, type HisokaLimb, type Spectator } from '../crowd/types'
 import { BALCONY, type Vec3 } from '../stands/geometry'
 import { REFEREE_ID, distance, hisokaSeesChrollo, type DeathMatchWorld } from '../chrolloPlan/world'
 import { hisokaPhase, type HisokaPhase } from './phases'

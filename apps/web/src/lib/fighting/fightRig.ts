@@ -46,6 +46,7 @@ export interface PlantFeetOptions {
   transfer?: boolean
   support?: number
   horizontal?: boolean
+  pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
   anchorLowest?: boolean
   pivot?: { index: number; angle: number }
 }
@@ -293,6 +294,7 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   target.z += root[2]
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
+  biasPursuitSupport(correction, { ...options, after })
   if (options.anchorLowest) {
     correction.y =
       Math.min(options.anchor.positions[0].y, options.anchor.positions[1].y) +
@@ -301,6 +303,22 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   }
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
+}
+
+function biasPursuitSupport(
+  correction: Vector3,
+  options: PlantFeetOptions & { after: FootPlantAnchor },
+): void {
+  const { pursuitSupport, anchor, after } = options
+  if (!pursuitSupport?.weight) return
+  const feet = pursuitSupport.foot === 'both' ? [0, 1] : [pursuitSupport.foot]
+  const drift = feet.reduce(
+    (total, foot) => total.add(anchor.positions[foot]).sub(after.positions[foot]),
+    correction.clone().set(0, 0, 0),
+  )
+  drift.divideScalar(feet.length)
+  correction.x += (drift.x - correction.x) * pursuitSupport.weight
+  correction.z += (drift.z - correction.z) * pursuitSupport.weight
 }
 
 function blendFootCorrections(

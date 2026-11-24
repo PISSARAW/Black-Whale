@@ -12,10 +12,7 @@ export interface AccelHeatView {
 }
 
 /** Relance heat as the HUD shows it; null for fighters without the relance. */
-export function accelHeatView(
-  fighter: ArcadeFighter,
-  language: 'fr' | 'en',
-): AccelHeatView | null {
+export function accelHeatView(fighter: ArcadeFighter, language: 'fr' | 'en'): AccelHeatView | null {
   if (!cancelGrammarFor(fighter.id)?.accel) return null
   const heat = fighter.accelHeat
   const percent = Math.round(((heat?.heat ?? 0) / ACCEL_HEAT_MAX) * 100)

@@ -2,624 +2,162 @@
   "sampleRate": 24000,
   "locales": {
     "fr": {
-      "description-hisoka-0": [
-        1200,
-        60514
-      ],
-      "description-hisoka-1": [
-        64114,
-        68769
-      ],
-      "description-chrollo-0": [
-        135283,
-        64869
-      ],
-      "description-chrollo-1": [
-        202552,
-        61752
-      ],
-      "description-kurapika-0": [
-        266704,
-        57060
-      ],
-      "description-kurapika-1": [
-        326164,
-        58736
-      ],
-      "description-feitan-0": [
-        387300,
-        48673
-      ],
-      "description-feitan-1": [
-        438373,
-        70946
-      ],
-      "description-phinks-0": [
-        511719,
-        35441
-      ],
-      "description-phinks-1": [
-        549560,
-        74242
-      ],
-      "description-franklin-0": [
-        626202,
-        53722
-      ],
-      "description-franklin-1": [
-        682324,
-        66359
-      ],
-      "description-benjamin-0": [
-        751083,
-        52822
-      ],
-      "description-benjamin-1": [
-        806305,
-        60510
-      ],
-      "description-tserriednich-0": [
-        869215,
-        52680
-      ],
-      "description-tserriednich-1": [
-        924295,
-        76985
-      ],
-      "description-leorio-0": [
-        1003680,
-        47213
-      ],
-      "description-leorio-1": [
-        1053293,
-        67324
-      ],
-      "description-halkenburg-0": [
-        1123017,
-        83378
-      ],
-      "description-halkenburg-1": [
-        1208795,
-        51628
-      ],
-      "description-camilla-0": [
-        1262823,
-        43067
-      ],
-      "description-camilla-1": [
-        1308290,
-        74370
-      ],
-      "description-kalluto-0": [
-        1385060,
-        56324
-      ],
-      "description-kalluto-1": [
-        1443784,
-        46629
-      ],
-      "description-machi-0": [
-        1492813,
-        43172
-      ],
-      "description-machi-1": [
-        1538385,
-        73147
-      ],
-      "description-shizuku-0": [
-        1613932,
-        64225
-      ],
-      "description-shizuku-1": [
-        1680557,
-        84266
-      ],
-      "description-bonolenov-0": [
-        1767223,
-        43011
-      ],
-      "description-bonolenov-1": [
-        1812634,
-        75515
-      ],
-      "description-illumi-0": [
-        1890549,
-        45673
-      ],
-      "description-illumi-1": [
-        1938622,
-        53123
-      ],
-      "description-biscuit-0": [
-        1994145,
-        38930
-      ],
-      "description-biscuit-1": [
-        2035475,
-        53099
-      ],
-      "description-saiyu-0": [
-        2090974,
-        49460
-      ],
-      "description-saiyu-1": [
-        2142834,
-        64983
-      ],
-      "description-hanzo-0": [
-        2210217,
-        46224
-      ],
-      "description-hanzo-1": [
-        2258841,
-        64417
-      ],
-      "description-bill-0": [
-        2325658,
-        48458
-      ],
-      "description-bill-1": [
-        2376516,
-        43081
-      ],
-      "description-melody-0": [
-        2421997,
-        29881
-      ],
-      "description-melody-1": [
-        2454278,
-        40328
-      ],
-      "description-hinrigh-0": [
-        2497006,
-        46411
-      ],
-      "description-hinrigh-1": [
-        2545817,
-        73305
-      ],
-      "description-terebellum-0": [
-        2621522,
-        57404
-      ],
-      "description-terebellum-1": [
-        2681326,
-        62138
-      ],
-      "description-voconte-0": [
-        2745864,
-        55841
-      ],
-      "description-voconte-1": [
-        2804105,
-        48480
-      ],
-      "description-longhi-0": [
-        2854985,
-        64328
-      ],
-      "description-longhi-1": [
-        2921713,
-        72325
-      ],
-      "description-furykov-0": [
-        2996438,
-        56814
-      ],
-      "description-furykov-1": [
-        3055652,
-        64843
-      ],
-      "description-theta-0": [
-        3122895,
-        43542
-      ],
-      "description-theta-1": [
-        3168837,
-        65257
-      ],
-      "description-mizaistom-0": [
-        3236494,
-        56245
-      ],
-      "description-mizaistom-1": [
-        3295139,
-        62611
-      ],
-      "description-rihan-0": [
-        3360150,
-        64360
-      ],
-      "description-rihan-1": [
-        3426910,
-        72762
-      ],
-      "description-zakuro-0": [
-        3502072,
-        49554
-      ],
-      "description-zakuro-1": [
-        3554026,
-        78780
-      ],
-      "description-lynch-0": [
-        3635206,
-        58907
-      ],
-      "description-lynch-1": [
-        3696513,
-        41850
-      ],
-      "description-luini-0": [
-        3740763,
-        39705
-      ],
-      "description-luini-1": [
-        3782868,
-        44593
-      ],
-      "description-basho-0": [
-        3829861,
-        48584
-      ],
-      "description-basho-1": [
-        3880845,
-        41597
-      ],
-      "description-kurapika-judgment-0": [
-        3924842,
-        68462
-      ],
-      "description-kurapika-judgment-1": [
-        3995704,
-        63631
-      ],
-      "description-kurapika-troupe-0": [
-        4061735,
-        67638
-      ],
-      "description-kurapika-troupe-1": [
-        4131773,
-        64311
-      ],
-      "description-chrollo-sun-moon-0": [
-        4198484,
-        55088
-      ],
-      "description-rihan-physical-0": [
-        4255972,
-        51000
-      ],
-      "description-rihan-physical-1": [
-        4309372,
-        67685
-      ],
-      "description-beyond-curse-longhi-0": [
-        4379457,
-        46861
-      ],
-      "description-beyond-curse-longhi-1": [
-        4428718,
-        62384
-      ],
-      "description-beyond-curse-furykov-0": [
-        4493502,
-        53173
-      ],
-      "description-beyond-curse-furykov-1": [
-        4549075,
-        69603
-      ]
+      "description-hisoka-0": [1200, 60514],
+      "description-hisoka-1": [64114, 68769],
+      "description-chrollo-0": [135283, 64869],
+      "description-chrollo-1": [202552, 61752],
+      "description-kurapika-0": [266704, 57060],
+      "description-kurapika-1": [326164, 58736],
+      "description-feitan-0": [387300, 48673],
+      "description-feitan-1": [438373, 70946],
+      "description-phinks-0": [511719, 35441],
+      "description-phinks-1": [549560, 74242],
+      "description-franklin-0": [626202, 53722],
+      "description-franklin-1": [682324, 66359],
+      "description-benjamin-0": [751083, 52822],
+      "description-benjamin-1": [806305, 60510],
+      "description-tserriednich-0": [869215, 52680],
+      "description-tserriednich-1": [924295, 76985],
+      "description-leorio-0": [1003680, 47213],
+      "description-leorio-1": [1053293, 67324],
+      "description-halkenburg-0": [1123017, 83378],
+      "description-halkenburg-1": [1208795, 51628],
+      "description-camilla-0": [1262823, 43067],
+      "description-camilla-1": [1308290, 74370],
+      "description-kalluto-0": [1385060, 56324],
+      "description-kalluto-1": [1443784, 46629],
+      "description-machi-0": [1492813, 43172],
+      "description-machi-1": [1538385, 73147],
+      "description-shizuku-0": [1613932, 64225],
+      "description-shizuku-1": [1680557, 84266],
+      "description-bonolenov-0": [1767223, 43011],
+      "description-bonolenov-1": [1812634, 75515],
+      "description-illumi-0": [1890549, 45673],
+      "description-illumi-1": [1938622, 53123],
+      "description-biscuit-0": [1994145, 38930],
+      "description-biscuit-1": [2035475, 53099],
+      "description-saiyu-0": [2090974, 49460],
+      "description-saiyu-1": [2142834, 64983],
+      "description-hanzo-0": [2210217, 46224],
+      "description-hanzo-1": [2258841, 64417],
+      "description-bill-0": [2325658, 48458],
+      "description-bill-1": [2376516, 43081],
+      "description-melody-0": [2421997, 29881],
+      "description-melody-1": [2454278, 40328],
+      "description-hinrigh-0": [2497006, 46411],
+      "description-hinrigh-1": [2545817, 73305],
+      "description-terebellum-0": [2621522, 57404],
+      "description-terebellum-1": [2681326, 62138],
+      "description-voconte-0": [2745864, 55841],
+      "description-voconte-1": [2804105, 48480],
+      "description-longhi-0": [2854985, 64328],
+      "description-longhi-1": [2921713, 72325],
+      "description-furykov-0": [2996438, 56814],
+      "description-furykov-1": [3055652, 64843],
+      "description-theta-0": [3122895, 43542],
+      "description-theta-1": [3168837, 65257],
+      "description-mizaistom-0": [3236494, 56245],
+      "description-mizaistom-1": [3295139, 62611],
+      "description-rihan-0": [3360150, 64360],
+      "description-rihan-1": [3426910, 72762],
+      "description-zakuro-0": [3502072, 49554],
+      "description-zakuro-1": [3554026, 78780],
+      "description-lynch-0": [3635206, 58907],
+      "description-lynch-1": [3696513, 41850],
+      "description-luini-0": [3740763, 39705],
+      "description-luini-1": [3782868, 44593],
+      "description-basho-0": [3829861, 48584],
+      "description-basho-1": [3880845, 41597],
+      "description-kurapika-judgment-0": [3924842, 68462],
+      "description-kurapika-judgment-1": [3995704, 63631],
+      "description-kurapika-troupe-0": [4061735, 67638],
+      "description-kurapika-troupe-1": [4131773, 64311],
+      "description-chrollo-sun-moon-0": [4198484, 55088],
+      "description-rihan-physical-0": [4255972, 51000],
+      "description-rihan-physical-1": [4309372, 67685],
+      "description-beyond-curse-longhi-0": [4379457, 46861],
+      "description-beyond-curse-longhi-1": [4428718, 62384],
+      "description-beyond-curse-furykov-0": [4493502, 53173],
+      "description-beyond-curse-furykov-1": [4549075, 69603]
     },
     "en": {
-      "description-hisoka-0": [
-        1200,
-        58323
-      ],
-      "description-hisoka-1": [
-        61923,
-        58800
-      ],
-      "description-chrollo-0": [
-        123123,
-        53833
-      ],
-      "description-chrollo-1": [
-        179356,
-        59014
-      ],
-      "description-kurapika-0": [
-        240770,
-        65091
-      ],
-      "description-kurapika-1": [
-        308261,
-        59328
-      ],
-      "description-feitan-0": [
-        369989,
-        49838
-      ],
-      "description-feitan-1": [
-        422227,
-        64552
-      ],
-      "description-phinks-0": [
-        489179,
-        35450
-      ],
-      "description-phinks-1": [
-        527029,
-        80156
-      ],
-      "description-franklin-0": [
-        609585,
-        68771
-      ],
-      "description-franklin-1": [
-        680756,
-        60921
-      ],
-      "description-benjamin-0": [
-        744077,
-        61592
-      ],
-      "description-benjamin-1": [
-        808069,
-        63343
-      ],
-      "description-tserriednich-0": [
-        873812,
-        65202
-      ],
-      "description-tserriednich-1": [
-        941414,
-        82668
-      ],
-      "description-leorio-0": [
-        1026482,
-        57182
-      ],
-      "description-leorio-1": [
-        1086064,
-        79463
-      ],
-      "description-halkenburg-0": [
-        1167927,
-        74684
-      ],
-      "description-halkenburg-1": [
-        1245011,
-        54876
-      ],
-      "description-camilla-0": [
-        1302287,
-        48363
-      ],
-      "description-camilla-1": [
-        1353050,
-        71645
-      ],
-      "description-kalluto-0": [
-        1427095,
-        73893
-      ],
-      "description-kalluto-1": [
-        1503388,
-        40581
-      ],
-      "description-machi-0": [
-        1546369,
-        69032
-      ],
-      "description-machi-1": [
-        1617801,
-        87115
-      ],
-      "description-shizuku-0": [
-        1707316,
-        65202
-      ],
-      "description-shizuku-1": [
-        1774918,
-        83232
-      ],
-      "description-bonolenov-0": [
-        1860550,
-        55322
-      ],
-      "description-bonolenov-1": [
-        1918272,
-        99961
-      ],
-      "description-illumi-0": [
-        2020633,
-        58175
-      ],
-      "description-illumi-1": [
-        2081208,
-        58395
-      ],
-      "description-biscuit-0": [
-        2142003,
-        47290
-      ],
-      "description-biscuit-1": [
-        2191693,
-        56674
-      ],
-      "description-saiyu-0": [
-        2250767,
-        46987
-      ],
-      "description-saiyu-1": [
-        2300154,
-        63990
-      ],
-      "description-hanzo-0": [
-        2366544,
-        52357
-      ],
-      "description-hanzo-1": [
-        2421301,
-        71532
-      ],
-      "description-bill-0": [
-        2495233,
-        42380
-      ],
-      "description-bill-1": [
-        2540013,
-        58177
-      ],
-      "description-melody-0": [
-        2600590,
-        32759
-      ],
-      "description-melody-1": [
-        2635749,
-        40753
-      ],
-      "description-hinrigh-0": [
-        2678902,
-        58628
-      ],
-      "description-hinrigh-1": [
-        2739930,
-        70537
-      ],
-      "description-terebellum-0": [
-        2812867,
-        80131
-      ],
-      "description-terebellum-1": [
-        2895398,
-        72121
-      ],
-      "description-voconte-0": [
-        2969919,
-        72861
-      ],
-      "description-voconte-1": [
-        3045180,
-        49253
-      ],
-      "description-longhi-0": [
-        3096833,
-        63748
-      ],
-      "description-longhi-1": [
-        3162981,
-        71703
-      ],
-      "description-furykov-0": [
-        3237084,
-        55828
-      ],
-      "description-furykov-1": [
-        3295312,
-        81711
-      ],
-      "description-theta-0": [
-        3379423,
-        50596
-      ],
-      "description-theta-1": [
-        3432419,
-        64174
-      ],
-      "description-mizaistom-0": [
-        3498993,
-        45741
-      ],
-      "description-mizaistom-1": [
-        3547134,
-        59005
-      ],
-      "description-rihan-0": [
-        3608539,
-        65982
-      ],
-      "description-rihan-1": [
-        3676921,
-        66814
-      ],
-      "description-zakuro-0": [
-        3746135,
-        50718
-      ],
-      "description-zakuro-1": [
-        3799253,
-        78092
-      ],
-      "description-lynch-0": [
-        3879745,
-        54798
-      ],
-      "description-lynch-1": [
-        3936943,
-        68673
-      ],
-      "description-luini-0": [
-        4008016,
-        36301
-      ],
-      "description-luini-1": [
-        4046717,
-        62849
-      ],
-      "description-basho-0": [
-        4111966,
-        51034
-      ],
-      "description-basho-1": [
-        4165400,
-        51995
-      ],
-      "description-kurapika-judgment-0": [
-        4219795,
-        66350
-      ],
-      "description-kurapika-judgment-1": [
-        4288545,
-        61344
-      ],
-      "description-kurapika-troupe-0": [
-        4352289,
-        52706
-      ],
-      "description-kurapika-troupe-1": [
-        4407395,
-        69278
-      ],
-      "description-chrollo-sun-moon-0": [
-        4479073,
-        54614
-      ],
-      "description-rihan-physical-0": [
-        4536087,
-        58486
-      ],
-      "description-rihan-physical-1": [
-        4596973,
-        69315
-      ],
-      "description-beyond-curse-longhi-0": [
-        4668688,
-        50012
-      ],
-      "description-beyond-curse-longhi-1": [
-        4721100,
-        76128
-      ],
-      "description-beyond-curse-furykov-0": [
-        4799628,
-        56013
-      ],
-      "description-beyond-curse-furykov-1": [
-        4858041,
-        85046
-      ]
+      "description-hisoka-0": [1200, 58323],
+      "description-hisoka-1": [61923, 58800],
+      "description-chrollo-0": [123123, 53833],
+      "description-chrollo-1": [179356, 59014],
+      "description-kurapika-0": [240770, 65091],
+      "description-kurapika-1": [308261, 59328],
+      "description-feitan-0": [369989, 49838],
+      "description-feitan-1": [422227, 64552],
+      "description-phinks-0": [489179, 35450],
+      "description-phinks-1": [527029, 80156],
+      "description-franklin-0": [609585, 68771],
+      "description-franklin-1": [680756, 60921],
+      "description-benjamin-0": [744077, 61592],
+      "description-benjamin-1": [808069, 63343],
+      "description-tserriednich-0": [873812, 65202],
+      "description-tserriednich-1": [941414, 82668],
+      "description-leorio-0": [1026482, 57182],
+      "description-leorio-1": [1086064, 79463],
+      "description-halkenburg-0": [1167927, 74684],
+      "description-halkenburg-1": [1245011, 54876],
+      "description-camilla-0": [1302287, 48363],
+      "description-camilla-1": [1353050, 71645],
+      "description-kalluto-0": [1427095, 73893],
+      "description-kalluto-1": [1503388, 40581],
+      "description-machi-0": [1546369, 69032],
+      "description-machi-1": [1617801, 87115],
+      "description-shizuku-0": [1707316, 65202],
+      "description-shizuku-1": [1774918, 83232],
+      "description-bonolenov-0": [1860550, 55322],
+      "description-bonolenov-1": [1918272, 99961],
+      "description-illumi-0": [2020633, 58175],
+      "description-illumi-1": [2081208, 58395],
+      "description-biscuit-0": [2142003, 47290],
+      "description-biscuit-1": [2191693, 56674],
+      "description-saiyu-0": [2250767, 46987],
+      "description-saiyu-1": [2300154, 63990],
+      "description-hanzo-0": [2366544, 52357],
+      "description-hanzo-1": [2421301, 71532],
+      "description-bill-0": [2495233, 42380],
+      "description-bill-1": [2540013, 58177],
+      "description-melody-0": [2600590, 32759],
+      "description-melody-1": [2635749, 40753],
+      "description-hinrigh-0": [2678902, 58628],
+      "description-hinrigh-1": [2739930, 70537],
+      "description-terebellum-0": [2812867, 80131],
+      "description-terebellum-1": [2895398, 72121],
+      "description-voconte-0": [2969919, 72861],
+      "description-voconte-1": [3045180, 49253],
+      "description-longhi-0": [3096833, 63748],
+      "description-longhi-1": [3162981, 71703],
+      "description-furykov-0": [3237084, 55828],
+      "description-furykov-1": [3295312, 81711],
+      "description-theta-0": [3379423, 50596],
+      "description-theta-1": [3432419, 64174],
+      "description-mizaistom-0": [3498993, 45741],
+      "description-mizaistom-1": [3547134, 59005],
+      "description-rihan-0": [3608539, 65982],
+      "description-rihan-1": [3676921, 66814],
+      "description-zakuro-0": [3746135, 50718],
+      "description-zakuro-1": [3799253, 78092],
+      "description-lynch-0": [3879745, 54798],
+      "description-lynch-1": [3936943, 68673],
+      "description-luini-0": [4008016, 36301],
+      "description-luini-1": [4046717, 62849],
+      "description-basho-0": [4111966, 51034],
+      "description-basho-1": [4165400, 51995],
+      "description-kurapika-judgment-0": [4219795, 66350],
+      "description-kurapika-judgment-1": [4288545, 61344],
+      "description-kurapika-troupe-0": [4352289, 52706],
+      "description-kurapika-troupe-1": [4407395, 69278],
+      "description-chrollo-sun-moon-0": [4479073, 54614],
+      "description-rihan-physical-0": [4536087, 58486],
+      "description-rihan-physical-1": [4596973, 69315],
+      "description-beyond-curse-longhi-0": [4668688, 50012],
+      "description-beyond-curse-longhi-1": [4721100, 76128],
+      "description-beyond-curse-furykov-0": [4799628, 56013],
+      "description-beyond-curse-furykov-1": [4858041, 85046]
     }
   }
 }

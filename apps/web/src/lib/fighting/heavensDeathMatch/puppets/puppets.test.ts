@@ -98,10 +98,11 @@ describe('the puppet pipeline', () => {
         spectator.id === 's0' ? { ...spectator, order: 'touch-sun' as const } : spectator,
       ),
     }
-    const driven = steerPuppets(
-      commanded,
-      { hisoka: { x: 0, y: 0, z: 0 }, chrollo: { x: 2, y: 0, z: 0 }, sun },
-    )
+    const driven = steerPuppets(commanded, {
+      hisoka: { x: 0, y: 0, z: 0 },
+      chrollo: { x: 2, y: 0, z: 0 },
+      sun,
+    })
     expect(driven.spectators[0].marks.blackVoice).toBe(true)
     expect(driven.spectators[0].goal).toBe(sun)
   })

@@ -117,7 +117,13 @@ describe('Bandit’s Secret and Double Face', () => {
   it('retains acquired pages and revokes their owner even when turning away', () => {
     const acquired = stolen()
     expect(acquired.player.chrolloBook).toMatchObject({
-      pages: ['sun-and-moon', 'black-voice', 'order-stamp', 'convert-hands', 'illumi:neutralSpecial'],
+      pages: [
+        'sun-and-moon',
+        'black-voice',
+        'order-stamp',
+        'convert-hands',
+        'illumi:neutralSpecial',
+      ],
       page: 4,
       openSlot: 'stolen',
       stolenPage: 'illumi:neutralSpecial',

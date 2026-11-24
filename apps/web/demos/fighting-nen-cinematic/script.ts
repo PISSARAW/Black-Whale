@@ -46,7 +46,11 @@ function catsName(): Shot {
   }
   for (let i = 0; i < 200 && s.state.phase !== 'finished'; i++) s.step()
   finishAndFilm(s, [[1.2, 3.8]])
-  s.beats.push({ at: s.splits[0].at + 4, word: 'POST-MORTEM', line: 'Some Nen only wakes when you die' })
+  s.beats.push({
+    at: s.splits[0].at + 4,
+    word: 'POST-MORTEM',
+    line: 'Some Nen only wakes when you die',
+  })
   return s
 }
 
@@ -58,49 +62,92 @@ const t = (chapter: number, concept: string, example: string): NenTopic => ({
 })
 
 const TAKES: Take[] = [
-  { id: 'title', hero: 'hisoka', vs: 'kurapika', stage: 'heavens-arena', windows: [[3.1, 1.6]], topic: null },
   {
-    id: 'enhancer', hero: 'phinks', vs: 'hisoka', stage: 'heavens-arena', windows: [[2.5, 3]],
+    id: 'title',
+    hero: 'hisoka',
+    vs: 'kurapika',
+    stage: 'heavens-arena',
+    windows: [[3.1, 1.6]],
+    topic: null,
+  },
+  {
+    id: 'enhancer',
+    hero: 'phinks',
+    vs: 'hisoka',
+    stage: 'heavens-arena',
+    windows: [[2.5, 3]],
     topic: t(0, 'ENHANCER', 'PHINKS · THE LAST REVOLUTION'),
     beat: ['ENHANCER', 'Strengthen what you already have'],
   },
   {
-    id: 'transmuter', hero: 'machi', vs: 'kalluto', stage: 'heavens-arena', windows: [[3.9, 2.6]],
+    id: 'transmuter',
+    hero: 'machi',
+    vs: 'kalluto',
+    stage: 'heavens-arena',
+    windows: [[3.9, 2.6]],
     topic: t(0, 'TRANSMUTER', 'MACHI · THE FINAL STITCH'),
     beat: ['TRANSMUTER', 'Aura with the properties of thread'],
   },
   {
-    id: 'emitter', hero: 'franklin', vs: 'phinks', stage: 'heavens-arena', windows: [[2.5, 2.5]],
+    id: 'emitter',
+    hero: 'franklin',
+    vs: 'phinks',
+    stage: 'heavens-arena',
+    windows: [[2.5, 2.5]],
     topic: t(0, 'EMITTER', 'FRANKLIN · SILENCE AFTER THE BARRAGE'),
     beat: ['EMITTER', 'Send the aura away from the body'],
   },
   {
-    id: 'conjurer', hero: 'kurapika', vs: 'chrollo', stage: 'heavens-arena', windows: [[1.5, 2.6]],
+    id: 'conjurer',
+    hero: 'kurapika',
+    vs: 'chrollo',
+    stage: 'heavens-arena',
+    windows: [[1.5, 2.6]],
     topic: t(0, 'CONJURER', 'KURAPIKA · CHAIN JAIL'),
     beat: ['CONJURER', 'Make a real object out of aura'],
   },
   {
-    id: 'manipulator', hero: 'illumi', vs: 'leorio', stage: 'heavens-arena', windows: [[3.8, 2.5]],
+    id: 'manipulator',
+    hero: 'illumi',
+    vs: 'leorio',
+    stage: 'heavens-arena',
+    windows: [[3.8, 2.5]],
     topic: t(0, 'MANIPULATOR', 'ILLUMI · EVEN AFTER DEATH'),
     beat: ['MANIPULATOR', 'Control people and things'],
   },
   {
-    id: 'specialist', hero: 'chrollo', vs: 'franklin', stage: 'heavens-arena', windows: [[2.8, 3.4]],
+    id: 'specialist',
+    hero: 'chrollo',
+    vs: 'franklin',
+    stage: 'heavens-arena',
+    windows: [[2.8, 3.4]],
     topic: t(0, 'SPECIALIST', 'CHROLLO · STOLEN PAGES'),
     beat: ['SPECIALIST', 'An ability no other type can learn'],
   },
   {
-    id: 'vow', hero: 'kurapika', vs: 'hisoka', stage: 'heavens-arena', windows: [[1.2, 3.6]],
+    id: 'vow',
+    hero: 'kurapika',
+    vs: 'hisoka',
+    stage: 'heavens-arena',
+    windows: [[1.2, 3.6]],
     topic: t(1, 'VOW', 'KURAPIKA · JUDGMENT CHAIN'),
     beat: ['VOW', 'A strict rule makes the ability stronger'],
   },
   {
-    id: 'full-power', hero: 'feitan', vs: 'hisoka', stage: 'heavens-arena', windows: [[4.5, 3]],
+    id: 'full-power',
+    hero: 'feitan',
+    vs: 'hisoka',
+    stage: 'heavens-arena',
+    windows: [[4.5, 3]],
     topic: t(1, 'FULL POWER', 'FEITAN · THE SUN OF TORMENT'),
     beat: ['FULL POWER', 'Every wound paid back as a sun'],
   },
   {
-    id: 'finale', hero: 'hisoka', vs: 'kurapika', stage: 'heavens-arena', windows: [[8.2, 1.8]],
+    id: 'finale',
+    hero: 'hisoka',
+    vs: 'kurapika',
+    stage: 'heavens-arena',
+    windows: [[8.2, 1.8]],
     topic: t(1, 'FULL POWER', 'HISOKA · LOOK AT ME'),
     beat: ['LOOK AT ME', ''],
   },
@@ -114,7 +161,16 @@ const takes = (ids: string[]): Built[] =>
   })
 
 const PLAN: Built[] = [
-  ...takes(['title', 'enhancer', 'transmuter', 'emitter', 'conjurer', 'manipulator', 'specialist', 'vow']),
+  ...takes([
+    'title',
+    'enhancer',
+    'transmuter',
+    'emitter',
+    'conjurer',
+    'manipulator',
+    'specialist',
+    'vow',
+  ]),
   ['post-mortem', catsName, t(1, 'POST-MORTEM', 'CAMILLA · CAT’S NAME')],
   [
     'curses',

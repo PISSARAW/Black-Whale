@@ -68,10 +68,7 @@ function disobeyFrame(state: FightState, slot: MoveSlot): LotStepFrame {
   return { state: after, input: EMPTY_INPUT, done: crossGameRestrained(after.opponent) }
 }
 
-function astralFrame(
-  state: FightState,
-  phase: 'project' | 'cross' | 'descend',
-): LotStepFrame {
+function astralFrame(state: FightState, phase: 'project' | 'cross' | 'descend'): LotStepFrame {
   if (phase === 'project') return projectAstral(state)
   if (phase === 'descend') return descendAstral(state)
   return crossAstral(state)

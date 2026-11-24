@@ -195,9 +195,7 @@ function expectPhysicalBranch(hit: FightState, event: ComboOpening) {
   const branch = rosterPhysicalBranch(hit.player.id, event)!
   expect(branch.slot).not.toBe(event === 'corner-counter' ? 'backHeavy' : 'forwardHeavy')
   const list = comboChoices(hit).filter(({ move }) => move.slot === branch.slot)
-  expect(list).toContainEqual(
-    expect.objectContaining({ status: 'ready', opening: event, cost: 0 }),
-  )
+  expect(list).toContainEqual(expect.objectContaining({ status: 'ready', opening: event, cost: 0 }))
   for (const down of [false, true]) {
     const started = routeMove(hit, branch.slot)
     expect(moveById(started.player.attack?.moveId)?.slot).toBe(branch.slot)

@@ -40,7 +40,9 @@ function hitString(fighter: FighterId, accelHeat?: AccelHeat): Played {
     const next = performMove({ state, side: 'player', action, input })
     if (next.player.attack && next.player.attack !== state.player.attack) {
       const cancelled = played.moves.length === 0 || state.player.attack !== null
-      played.moves.push(`${slot(next.player.attack.moveId!)}${cancelled ? '' : ' (after recovery)'}`)
+      played.moves.push(
+        `${slot(next.player.attack.moveId!)}${cancelled ? '' : ' (after recovery)'}`,
+      )
       state = next
     }
     const health = state.opponent.health
@@ -59,12 +61,15 @@ describe('relance (special → special on hit)', () => {
   it.each([
     ['kurapika', 'forwardSpecial'],
     ['benjamin', 'neutralSpecial'],
-  ] as const)('%s: the sweep relaunches into the forward heavy, never back', (fighter, superSlot) => {
-    const sweep = moveForSlot(fighter, 'lowHeavy')!
-    expect(sweep.cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
-    expect(sweep.cancelOnBlockInto).toEqual([])
-    expect(moveForSlot(fighter, 'forwardHeavy')!.cancelInto.map(slot)).toEqual([superSlot])
-  })
+  ] as const)(
+    '%s: the sweep relaunches into the forward heavy, never back',
+    (fighter, superSlot) => {
+      const sweep = moveForSlot(fighter, 'lowHeavy')!
+      expect(sweep.cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
+      expect(sweep.cancelOnBlockInto).toEqual([])
+      expect(moveForSlot(fighter, 'forwardHeavy')!.cancelInto.map(slot)).toEqual([superSlot])
+    },
+  )
 
   it('stays off for derived grammars', () => {
     const hisoka = moveForSlot('hisoka', 'lowHeavy')!

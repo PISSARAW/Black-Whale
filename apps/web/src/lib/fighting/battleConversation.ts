@@ -48,8 +48,10 @@ function battleUtteranceState(
   other: FightSide,
   reply: boolean,
 ): FightState {
-  const speakerBody = state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]
-  const otherBody = state[other].id === 'bonolenov' ? recordVocalExchange(state[other]) : state[other]
+  const speakerBody =
+    state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]
+  const otherBody =
+    state[other].id === 'bonolenov' ? recordVocalExchange(state[other]) : state[other]
   return {
     ...state,
     [side]: { ...speakerBody, battleUtteranceFrame: state.frame },

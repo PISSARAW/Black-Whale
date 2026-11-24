@@ -11,11 +11,17 @@ export const CHROLLO_DECK_PRESETS: Readonly<Record<ChrolloDeckPreset, ChrolloDec
   'black-whale': ['sun-and-moon', 'black-voice', 'indoor-fish', 'fun-fun-cloth'],
 }
 
-export function bookPagesFromDeck(deck: ChrolloDeck, stolenPage: ChrolloPage | null): ChrolloPage[] {
+export function bookPagesFromDeck(
+  deck: ChrolloDeck,
+  stolenPage: ChrolloPage | null,
+): ChrolloPage[] {
   return stolenPage ? [...deck, stolenPage] : [...deck]
 }
 
-export function pageAtSlot(book: ChrolloBookState, slot: BookSlot | null | undefined): ChrolloPage | null {
+export function pageAtSlot(
+  book: ChrolloBookState,
+  slot: BookSlot | null | undefined,
+): ChrolloPage | null {
   if (slot === null || slot === undefined) return null
   if (slot === 'stolen') return book.stolenPage ?? null
   return book.deck?.[slot] ?? book.pages[slot] ?? null
@@ -43,8 +49,10 @@ export function syncChrolloBook(book: ChrolloBookState): ChrolloBookState {
   const deck = book.deck ?? CHROLLO_DECK_PRESETS['heavens-arena']
   const stolenPage = book.stolenPage ?? null
   const pages = bookPagesFromDeck(deck, stolenPage)
-  const openSlot = book.openSlot === undefined ? (book.open ? (book.page as BookSlot) : null) : book.openSlot
-  const bookmarkSlot = book.bookmarkSlot === undefined ? slotForPage(book, book.bookmark) : book.bookmarkSlot
+  const openSlot =
+    book.openSlot === undefined ? (book.open ? (book.page as BookSlot) : null) : book.openSlot
+  const bookmarkSlot =
+    book.bookmarkSlot === undefined ? slotForPage(book, book.bookmark) : book.bookmarkSlot
   const open = openSlot !== null
   const activePage = openSlot === 'stolen' ? pages.length - 1 : (openSlot ?? book.page)
   return {

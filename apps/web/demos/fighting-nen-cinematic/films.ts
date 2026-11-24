@@ -64,4 +64,3 @@ export const curses = () => {
   top.twin = bottom
   return top
 }
-

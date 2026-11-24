@@ -128,24 +128,26 @@ export class Shot {
       options.kameos ? withKameos(state, options.kameos) : state
     const begin = options.ready ? (state: FightState) => state : beginFight
     const fresh = begin(
-      created(createFight(options.hero ?? 'chrollo', opponent, {
-        mode: 'versus-local',
-        formatId: 'knockout',
-        environment: {
-          stageId: stage,
-          ...(options.arena ? { arenaInteractions: true } : {}),
-          ...(options.preparation
-            ? {
-                preparation: {
-                  mode: 'scenario' as const,
-                  ...(options.preparation === true
-                    ? { resources: ['rooms', 'objects'] as const, cohorts: [] }
-                    : options.preparation),
-                },
-              }
-            : {}),
-        },
-      } as Parameters<typeof createFight>[2])),
+      created(
+        createFight(options.hero ?? 'chrollo', opponent, {
+          mode: 'versus-local',
+          formatId: 'knockout',
+          environment: {
+            stageId: stage,
+            ...(options.arena ? { arenaInteractions: true } : {}),
+            ...(options.preparation
+              ? {
+                  preparation: {
+                    mode: 'scenario' as const,
+                    ...(options.preparation === true
+                      ? { resources: ['rooms', 'objects'] as const, cohorts: [] }
+                      : options.preparation),
+                  },
+                }
+              : {}),
+          },
+        } as Parameters<typeof createFight>[2]),
+      ),
     )
     const gap = options.gap ?? 8
     const centre = options.centre ?? 50

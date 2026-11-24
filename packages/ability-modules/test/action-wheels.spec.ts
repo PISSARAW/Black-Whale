@@ -79,6 +79,7 @@ describe('roues d’action', () => {
     if (!door) throw new Error('Door must remain registered')
     expect(
       wheelOf(door)
+        .filter(({ visibility }) => visibility !== 'locked')
         .map(({ id }) => id)
         .sort(),
     ).toEqual(['close-door', 'open-door', 'walk-through'])

@@ -26,9 +26,7 @@ export function resolveFightHudMode(input: ResolveHudModeInput): FightHudMode {
   return 'tactical'
 }
 
-export function readHudModePreference(
-  storage?: Pick<Storage, 'getItem'>,
-): FightHudModePreference {
+export function readHudModePreference(storage?: Pick<Storage, 'getItem'>): FightHudModePreference {
   try {
     const raw = storage?.getItem(STORAGE_KEY)
     if (raw && VALID_PREFERENCES.includes(raw as FightHudModePreference)) {

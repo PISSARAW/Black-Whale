@@ -1,7 +1,152 @@
 {
-  "feitan": {"fr":{"effort-0":[960,6688],"effort-1":[8608,4737],"effort-2":[14305,7524],"pain-0":[22789,9474],"pain-1":[33223,9036],"pain-2":[43219,8081],"call-tubeppa":[52260,23105],"call-marayam":[76325,26620],"call-zhanglei":[103905,29148],"call-morena":[134013,22203],"call-luzurus":[157176,22814],"call-salesale":[180950,28481]},"en":{"effort-0":[960,4101],"effort-1":[6021,5647],"effort-2":[12628,4454],"pain-0":[18042,4045],"pain-1":[23047,3890],"pain-2":[27897,5900],"call-tubeppa":[34757,21142],"call-marayam":[56859,15367],"call-zhanglei":[73186,15742],"call-morena":[89888,13779],"call-luzurus":[104627,19727],"call-salesale":[125314,17507]}},
-  "saiyu": {"fr":{"effort-0":[960,7920],"effort-1":[9840,7920],"effort-2":[18720,7920],"pain-0":[27600,9512],"pain-1":[38072,11040],"pain-2":[50072,9030],"call-tubeppa":[60062,22849],"call-marayam":[83871,24242],"call-zhanglei":[109073,25726],"call-morena":[135759,24703],"call-luzurus":[161422,25078],"call-salesale":[187460,26712]},"en":{"effort-0":[960,5059],"effort-1":[6979,2709],"effort-2":[10648,3929],"pain-0":[15537,3538],"pain-1":[20035,5198],"pain-2":[26193,3857],"call-tubeppa":[31010,26255],"call-marayam":[58225,12292],"call-zhanglei":[71477,13871],"call-morena":[86308,11138],"call-luzurus":[98406,16478],"call-salesale":[115844,15132]}},
-  "theta": {"fr":{"effort-0":[960,7245],"effort-1":[9165,7920],"effort-2":[18045,7920],"pain-0":[26925,11040],"pain-1":[38925,11040],"pain-2":[50925,10310],"call-tubeppa":[62195,26750],"call-marayam":[89905,29258],"call-zhanglei":[120123,31765],"call-morena":[152848,31765],"call-luzurus":[185573,34552],"call-salesale":[221085,35666]},"en":{"effort-0":[960,5572],"effort-1":[7492,5050],"effort-2":[13502,3967],"pain-0":[18429,7436],"pain-1":[26825,6577],"pain-2":[34362,5995],"call-tubeppa":[41317,22692],"call-marayam":[64969,17519],"call-zhanglei":[83448,18090],"call-morena":[102498,15304],"call-luzurus":[118762,21647],"call-salesale":[141369,19098]}},
-  "biscuit": {"fr":{"effort-0":[960,5016],"effort-1":[6936,5016],"effort-2":[12912,6409],"pain-0":[20281,4180],"pain-1":[25421,7245],"pain-2":[33626,8360],"call-tubeppa":[42946,18391],"call-marayam":[62297,17555],"call-zhanglei":[80812,26193],"call-morena":[107965,18669],"call-luzurus":[127594,19505],"call-salesale":[148059,26193]},"en":{"effort-0":[960,2916],"effort-1":[4836,5576],"effort-2":[11372,5613],"pain-0":[17945,5450],"pain-1":[24355,4650],"pain-2":[29965,5336],"call-tubeppa":[36261,26219],"call-marayam":[63440,16041],"call-zhanglei":[80441,17015],"call-morena":[98416,13033],"call-luzurus":[112409,21666],"call-salesale":[135035,19111]}},
-  "phinks": {"fr":{"effort-0":[960,5109],"effort-1":[7029,4620],"effort-2":[12609,5573],"pain-0":[19142,7487],"pain-1":[27589,5573],"pain-2":[34122,6990],"call-tubeppa":[42072,17087],"call-marayam":[60119,18948],"call-zhanglei":[80027,17276],"call-morena":[98263,16294],"call-luzurus":[115517,19505],"call-salesale":[135982,22366]},"en":{"effort-0":[960,4475],"effort-1":[6395,3709],"effort-2":[11064,5071],"pain-0":[17095,5027],"pain-1":[23082,4393],"pain-2":[28435,5852],"call-tubeppa":[35247,26426],"call-marayam":[62633,15043],"call-zhanglei":[78636,16098],"call-morena":[95694,13133],"call-luzurus":[109787,18175],"call-salesale":[128922,18267]}}
+  "feitan": {
+    "fr": {
+      "effort-0": [960, 6688],
+      "effort-1": [8608, 4737],
+      "effort-2": [14305, 7524],
+      "pain-0": [22789, 9474],
+      "pain-1": [33223, 9036],
+      "pain-2": [43219, 8081],
+      "call-tubeppa": [52260, 23105],
+      "call-marayam": [76325, 26620],
+      "call-zhanglei": [103905, 29148],
+      "call-morena": [134013, 22203],
+      "call-luzurus": [157176, 22814],
+      "call-salesale": [180950, 28481]
+    },
+    "en": {
+      "effort-0": [960, 4101],
+      "effort-1": [6021, 5647],
+      "effort-2": [12628, 4454],
+      "pain-0": [18042, 4045],
+      "pain-1": [23047, 3890],
+      "pain-2": [27897, 5900],
+      "call-tubeppa": [34757, 21142],
+      "call-marayam": [56859, 15367],
+      "call-zhanglei": [73186, 15742],
+      "call-morena": [89888, 13779],
+      "call-luzurus": [104627, 19727],
+      "call-salesale": [125314, 17507]
+    }
+  },
+  "saiyu": {
+    "fr": {
+      "effort-0": [960, 7920],
+      "effort-1": [9840, 7920],
+      "effort-2": [18720, 7920],
+      "pain-0": [27600, 9512],
+      "pain-1": [38072, 11040],
+      "pain-2": [50072, 9030],
+      "call-tubeppa": [60062, 22849],
+      "call-marayam": [83871, 24242],
+      "call-zhanglei": [109073, 25726],
+      "call-morena": [135759, 24703],
+      "call-luzurus": [161422, 25078],
+      "call-salesale": [187460, 26712]
+    },
+    "en": {
+      "effort-0": [960, 5059],
+      "effort-1": [6979, 2709],
+      "effort-2": [10648, 3929],
+      "pain-0": [15537, 3538],
+      "pain-1": [20035, 5198],
+      "pain-2": [26193, 3857],
+      "call-tubeppa": [31010, 26255],
+      "call-marayam": [58225, 12292],
+      "call-zhanglei": [71477, 13871],
+      "call-morena": [86308, 11138],
+      "call-luzurus": [98406, 16478],
+      "call-salesale": [115844, 15132]
+    }
+  },
+  "theta": {
+    "fr": {
+      "effort-0": [960, 7245],
+      "effort-1": [9165, 7920],
+      "effort-2": [18045, 7920],
+      "pain-0": [26925, 11040],
+      "pain-1": [38925, 11040],
+      "pain-2": [50925, 10310],
+      "call-tubeppa": [62195, 26750],
+      "call-marayam": [89905, 29258],
+      "call-zhanglei": [120123, 31765],
+      "call-morena": [152848, 31765],
+      "call-luzurus": [185573, 34552],
+      "call-salesale": [221085, 35666]
+    },
+    "en": {
+      "effort-0": [960, 5572],
+      "effort-1": [7492, 5050],
+      "effort-2": [13502, 3967],
+      "pain-0": [18429, 7436],
+      "pain-1": [26825, 6577],
+      "pain-2": [34362, 5995],
+      "call-tubeppa": [41317, 22692],
+      "call-marayam": [64969, 17519],
+      "call-zhanglei": [83448, 18090],
+      "call-morena": [102498, 15304],
+      "call-luzurus": [118762, 21647],
+      "call-salesale": [141369, 19098]
+    }
+  },
+  "biscuit": {
+    "fr": {
+      "effort-0": [960, 5016],
+      "effort-1": [6936, 5016],
+      "effort-2": [12912, 6409],
+      "pain-0": [20281, 4180],
+      "pain-1": [25421, 7245],
+      "pain-2": [33626, 8360],
+      "call-tubeppa": [42946, 18391],
+      "call-marayam": [62297, 17555],
+      "call-zhanglei": [80812, 26193],
+      "call-morena": [107965, 18669],
+      "call-luzurus": [127594, 19505],
+      "call-salesale": [148059, 26193]
+    },
+    "en": {
+      "effort-0": [960, 2916],
+      "effort-1": [4836, 5576],
+      "effort-2": [11372, 5613],
+      "pain-0": [17945, 5450],
+      "pain-1": [24355, 4650],
+      "pain-2": [29965, 5336],
+      "call-tubeppa": [36261, 26219],
+      "call-marayam": [63440, 16041],
+      "call-zhanglei": [80441, 17015],
+      "call-morena": [98416, 13033],
+      "call-luzurus": [112409, 21666],
+      "call-salesale": [135035, 19111]
+    }
+  },
+  "phinks": {
+    "fr": {
+      "effort-0": [960, 5109],
+      "effort-1": [7029, 4620],
+      "effort-2": [12609, 5573],
+      "pain-0": [19142, 7487],
+      "pain-1": [27589, 5573],
+      "pain-2": [34122, 6990],
+      "call-tubeppa": [42072, 17087],
+      "call-marayam": [60119, 18948],
+      "call-zhanglei": [80027, 17276],
+      "call-morena": [98263, 16294],
+      "call-luzurus": [115517, 19505],
+      "call-salesale": [135982, 22366]
+    },
+    "en": {
+      "effort-0": [960, 4475],
+      "effort-1": [6395, 3709],
+      "effort-2": [11064, 5071],
+      "pain-0": [17095, 5027],
+      "pain-1": [23082, 4393],
+      "pain-2": [28435, 5852],
+      "call-tubeppa": [35247, 26426],
+      "call-marayam": [62633, 15043],
+      "call-zhanglei": [78636, 16098],
+      "call-morena": [95694, 13133],
+      "call-luzurus": [109787, 18175],
+      "call-salesale": [128922, 18267]
+    }
+  }
 }

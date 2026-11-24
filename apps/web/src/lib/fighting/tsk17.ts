@@ -81,7 +81,8 @@ function resolveTsk17Outcome(state: FightState): FightState {
   const deadPlayer = state.player.health <= 0 && Boolean(state.player.tskPoisoned)
   const deadOpponent = state.opponent.health <= 0 && Boolean(state.opponent.tskPoisoned)
   if (!deadPlayer && !deadOpponent) return state
-  if (deadPlayer && deadOpponent) return finishFight(state, state.tsk17?.releasedBy ?? 'player', 'knockout')
+  if (deadPlayer && deadOpponent)
+    return finishFight(state, state.tsk17?.releasedBy ?? 'player', 'knockout')
   const deadSide: FightSide = deadPlayer ? 'player' : 'opponent'
   const otherSide: FightSide = deadSide === 'player' ? 'opponent' : 'player'
   if (isCamilla(state[deadSide])) return beginCatsName(state, deadSide, otherSide)

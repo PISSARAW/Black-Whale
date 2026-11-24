@@ -36,7 +36,8 @@
               <div>
                 <strong>{row.name}</strong> ({moveInputHint(row.input, $bindings)}) — {fr
                   ? 'après'
-                  : 'after'} {row.sourceName} · {row.condition}
+                  : 'after'}
+                {row.sourceName} · {row.condition}
               </div>
             {/each}
           </dd>

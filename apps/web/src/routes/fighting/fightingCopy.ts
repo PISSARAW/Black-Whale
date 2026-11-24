@@ -19,8 +19,7 @@ export function fightingCopy(language: 'fr' | 'en') {
         controls: 'Commandes',
         movement: 'ZQSD / WASD : déplacement · double appui : dash',
         jump: 'Espace : garde · C : Aura',
-        attacks:
-          'J/K/L : léger/lourd/Hatsu · I : ultime · O : projectile · M : projection',
+        attacks: 'J/K/L : léger/lourd/Hatsu · I : ultime · O : projectile · M : projection',
         aura: 'U : Kaméo · N : Burst · G : On · V : commandes Nen · P : pause',
       }
     : {
@@ -40,8 +39,7 @@ export function fightingCopy(language: 'fr' | 'en') {
         controls: 'Controls',
         movement: 'WASD / ZQSD: movement · double tap: dash',
         jump: 'Space: Guard · C: Aura',
-        attacks:
-          'J/K/L: Light/Heavy/Hatsu · I: Finisher · O: Projectile · M: Throw',
+        attacks: 'J/K/L: Light/Heavy/Hatsu · I: Finisher · O: Projectile · M: Throw',
         aura: 'U: Kameo · N: Burst · G: On · V: Nen controls · P: Pause',
       }
 }

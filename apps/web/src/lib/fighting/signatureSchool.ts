@@ -47,7 +47,8 @@ export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS.fi
     combo.fighter !== 'illumi' &&
     combo.fighter !== 'lynch' &&
     combo.steps.every(
-      (step) => !('future' in step) && !('riposte' in step) && !isLotStep(step) && !isLot2Step(step),
+      (step) =>
+        !('future' in step) && !('riposte' in step) && !isLotStep(step) && !isLot2Step(step),
     ),
 )
 export const isSignatureLesson = (id: string) => ACADEMY_SIGNATURES.some((combo) => combo.id === id)

@@ -19,14 +19,14 @@
       bas + {$bindings.playerSpecial} retire le signet.
     </p>
     <p>
-      {p1Finisher} utilise la page au signet. Sun and Moon : {$bindings.playerSpecial} pose
-      le Soleil à gauche ; {p1Finisher} pose le Soleil si le livre est ouvert, la Lune à
-      droite s’il est fermé. Les deux contacts sur la même cible déclenchent l’explosion.
+      {p1Finisher} utilise la page au signet. Sun and Moon : {$bindings.playerSpecial} pose le Soleil
+      à gauche ; {p1Finisher} pose le Soleil si le livre est ouvert, la Lune à droite s’il est fermé.
+      Les deux contacts sur la même cible déclenchent l’explosion.
     </p>
     <p>
       Exemple : Soleil avec {$bindings.playerSpecial} → bas + {$bindings.playerSpecial} pour fermer →
-      {p1Finisher} pour la Lune. Pour combiner deux pouvoirs : bas + {$bindings.playerSpecial},
-      puis arrière + {$bindings.playerSpecial}. Changer une page sans signet coupe ses effets ; les
+      {p1Finisher} pour la Lune. Pour combiner deux pouvoirs : bas + {$bindings.playerSpecial}, puis
+      arrière + {$bindings.playerSpecial}. Changer une page sans signet coupe ses effets ; les
       marques Soleil/Lune persistent.
     </p>
     <small
@@ -45,9 +45,9 @@
       open page removes the bookmark.
     </p>
     <p>
-      {p1Finisher} uses the bookmarked page. Sun and Moon: {$bindings.playerSpecial} stamps
-      the Sun with the left hand; {p1Finisher} stamps Sun while the book is open, or Moon
-      with the right hand while closed. Both contacts on the same target trigger the explosion.
+      {p1Finisher} uses the bookmarked page. Sun and Moon: {$bindings.playerSpecial} stamps the Sun with
+      the left hand; {p1Finisher} stamps Sun while the book is open, or Moon with the right hand while
+      closed. Both contacts on the same target trigger the explosion.
     </p>
     <p>
       Example: Sun with {$bindings.playerSpecial} → down + {$bindings.playerSpecial} to close → {p1Finisher}

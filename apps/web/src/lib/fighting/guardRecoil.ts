@@ -22,7 +22,12 @@ export function recoilGuardedAttack(options: {
     furykovStagger > 0
       ? { ...phinksRecoiled, hitStun: Math.max(phinksRecoiled.hitStun, furykovStagger) }
       : phinksRecoiled
-  if (!options.blocked || options.avoided || staggered.hanzoProjection || fighterAnchored(staggered))
+  if (
+    !options.blocked ||
+    options.avoided ||
+    staggered.hanzoProjection ||
+    fighterAnchored(staggered)
+  )
     return staggered
   const missing = Math.max(0, knockback - Math.abs(struck.x - defender.x))
   const direction = staggered.x <= defender.x ? -1 : 1
@@ -30,5 +35,6 @@ export function recoilGuardedAttack(options: {
     missing === 0
       ? staggered
       : { ...staggered, x: Math.max(7, Math.min(93, staggered.x + direction * missing)) }
-  return applyAuraPushblock({ attacker: cornerRecoiled, defender, blocked: options.blocked }).attacker
+  return applyAuraPushblock({ attacker: cornerRecoiled, defender, blocked: options.blocked })
+    .attacker
 }

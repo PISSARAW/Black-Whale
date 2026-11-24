@@ -61,10 +61,7 @@ export function jumpArcMultipliers(
   const staff = staffVaultBoost(fighter, motion.jumpDirection)
   return {
     vy: (superBoost ? SUPER_JUMP_VY_RATIO : 1) * staff.vy,
-    vx:
-      (superBoost ? SUPER_JUMP_VX_RATIO : 1) *
-      (dashBoost ? DASH_JUMP_VX_RATIO : 1) *
-      staff.vx,
+    vx: (superBoost ? SUPER_JUMP_VX_RATIO : 1) * (dashBoost ? DASH_JUMP_VX_RATIO : 1) * staff.vx,
   }
 }
 
@@ -106,11 +103,7 @@ const AGILE_WALL_JUMPERS: ReadonlySet<import('./types').FighterId> = new Set([
   'saiyu',
 ])
 
-function canWallJump(
-  fighter: ArcadeFighter,
-  motion: FighterMotion,
-  input: FightInput,
-): boolean {
+function canWallJump(fighter: ArcadeFighter, motion: FighterMotion, input: FightInput): boolean {
   if (!input.jump || fighter.y < WALL_JUMP_MIN_Y || motion.wallJumped) return false
   if (styleMatchup(fighter.id).role !== 'mobile' && !AGILE_WALL_JUMPERS.has(fighter.id))
     return false
@@ -121,11 +114,7 @@ function canWallJump(
 
 /** Ko Fast Drop: holding Down in mid-air with Ko focused in the feet drops rapidly. */
 export function applyKoFastDrop(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const drop =
-    fighter.y > 0 &&
-    fighter.hitStun === 0 &&
-    input.down &&
-    fighter.nen.ko === 'feet'
+  const drop = fighter.y > 0 && fighter.hitStun === 0 && input.down && fighter.nen.ko === 'feet'
   if (!drop) return fighter
   return { ...fighter, velocityY: Math.min(fighter.velocityY, -KO_FAST_DROP_SPEED) }
 }
@@ -185,11 +174,7 @@ export function performMachiThreadPull(state: FightState, side: FightSide): Figh
   }
 }
 
-function canThreadPull(
-  actor: ArcadeFighter,
-  target: ArcadeFighter,
-  side: FightSide,
-): boolean {
+function canThreadPull(actor: ArcadeFighter, target: ArcadeFighter, side: FightSide): boolean {
   if (!machiSourceActive(actor) || !canMove(actor) || actor.y > 0) return false
   if (actor.aura < MACHI_THREAD_PULL_COST || actor.motion?.dash) return false
   if (target.machiThread?.owner !== side) return false

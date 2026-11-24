@@ -59,22 +59,38 @@
   $: characterNote = entry ? entry[language === 'fr' ? 0 : 1] : null
 </script>
 
-<aside class="movement-guide" aria-label={language === 'fr' ? 'Déplacements avancés' : 'Advanced movement'}>
+<aside
+  class="movement-guide"
+  aria-label={language === 'fr' ? 'Déplacements avancés' : 'Advanced movement'}
+>
   <h3>{language === 'fr' ? 'Déplacements avancés' : 'Advanced movement'}</h3>
   <p>
-    <strong>{language === 'fr' ? 'Saut court / Super saut / Saut en course' : 'Short hop / Super jump / Dash jump'}</strong> ·
+    <strong
+      >{language === 'fr'
+        ? 'Saut court / Super saut / Saut en course'
+        : 'Short hop / Super jump / Dash jump'}</strong
+    >
+    ·
     {language === 'fr'
       ? 'relâche Haut pendant le pré-saut pour un saut court ; Bas puis Haut rapide pour un Super saut (+20 %) ; Haut pendant un dash avant pour conserver l’élan.'
       : 'release Up during pre-jump for a short hop; quick Down then Up for a Super jump (+20%); Up during a forward dash to carry momentum.'}
   </p>
   <p>
-    <strong>{language === 'fr' ? 'Course & Frein de dash / backdash' : 'Run & Dash / Backdash brake'}</strong> ·
+    <strong
+      >{language === 'fr'
+        ? 'Course & Frein de dash / backdash'
+        : 'Run & Dash / Backdash brake'}</strong
+    >
+    ·
     {language === 'fr'
       ? 'maintiens Avant à la fin d’un dash pour courir (×1,25) ; Arrière, Bas ou Garde après la poussée stoppe le dash avant ; Bas en fin de backdash reprend la garde basse.'
       : 'hold Forward at the end of a dash to keep running (×1.25); Back, Down or Guard after the push stops a forward dash; Down late in a backdash recovers into crouch guard.'}
   </p>
   <p>
-    <strong>{language === 'fr' ? 'Rebond mural (profils agiles)' : 'Wall jump (agile styles)'}</strong> ·
+    <strong
+      >{language === 'fr' ? 'Rebond mural (profils agiles)' : 'Wall jump (agile styles)'}</strong
+    >
+    ·
     {language === 'fr'
       ? 'en l’air contre un mur, Direction opposée + Haut permet un rebond unique par saut.'
       : 'airborne against a wall, Opposite direction + Up kicks off once per jump.'}
@@ -86,7 +102,12 @@
       : 'Back + Guard pulls your torso back to whiff-punish highs (legs remain exposed).'}
   </p>
   <p>
-    <strong>{language === 'fr' ? 'Relevée, réception & déprojection' : 'Wakeup, tech landing & throw-tech'}</strong> ·
+    <strong
+      >{language === 'fr'
+        ? 'Relevée, réception & déprojection'
+        : 'Wakeup, tech landing & throw-tech'}</strong
+    >
+    ·
     {language === 'fr'
       ? 'Gauche/Droite + Garde à la relevée pour rouler (Ukemi), Bas pour retarder ; Gauche/Droite à l’atterrissage d’un Air Recovery pour rouler ; Arrière/Avant sur déprojection ajuste l’écart ; Avant + Garde précise en Ren/Ken repousse l’attaquant (4 aura).'
       : 'Left/Right + Guard on wakeup to roll (Ukemi), Down to delay; Left/Right touching down from Air Recovery to roll; Back/Forward on throw-tech tunes spacing; timely Forward + Guard in Ren/Ken pushblocks (4 aura).'}

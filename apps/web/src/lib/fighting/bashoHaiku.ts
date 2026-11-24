@@ -109,10 +109,10 @@ export function bashoIgnoresTenGuard(attacker: ArcadeFighter, defender: ArcadeFi
   const buff = attacker.bashoHaikuBuff
   return Boolean(
     buff?.theme === 'wind' &&
-      buff.ignoresTenGuard &&
-      attacker.attack?.kind === 'heavy' &&
-      !defender.nen.ken &&
-      !defender.nen.ko,
+    buff.ignoresTenGuard &&
+    attacker.attack?.kind === 'heavy' &&
+    !defender.nen.ken &&
+    !defender.nen.ko,
   )
 }
 

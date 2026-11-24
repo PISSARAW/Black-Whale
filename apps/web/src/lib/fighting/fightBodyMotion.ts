@@ -31,6 +31,8 @@ import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
+import { pursuitRecoveryPose } from './pursuitRecoveryPose'
+import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { attackMotionAccent } from './fightAttackMotion'
 import { strikePresentationFrame } from './fightStrikeRhythm'
 import { strikeSupportPose } from './fightStrikeSupport'
@@ -98,7 +100,6 @@ import { animateFightMaterialResponse } from './fightMaterialResponse'
  * has none yet), attacks through its keyed moves (`keyPoseMoves.ts`) and reacts
  * through `fightReactions.ts`. Only a throw tech still falls back to the motion
  * the scene computed.
- *
  * Changing from one plan to another — a stance into a move, a move back to the
  * stance, a hit — cross-fades from the pose last drawn, so the extra joints the
  * visit's animation does not blend (chest, wrists) never jump.
@@ -166,9 +167,21 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animateBenjaminRifle(rig, fighter)
     animateBonolenovSpear(rig, fighter)
     keepHumanJoints(rig)
-    plantBodyFrame(rig, { anchor, pose: drawn, fighter, plan })
+    plantBodyFrame(rig, {
+      anchor,
+      pose: drawn,
+      fighter,
+      plan,
+      pursuitSupport: attackSupport(plan.attackFlow),
+    })
     if (anchor) plantHanzoSoles(rig, fighter)
   })
+}
+
+function attackSupport(attack: AttackFlowFrame | undefined) {
+  if (!attack?.pursuit) return
+  const foot = pursuitSupport(attack.pursuit, attack.facing)
+  if (foot !== undefined) return { foot, weight: pursuitLoadWeight(attack.frame / attack.startup) }
 }
 
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
@@ -384,6 +397,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
+  const pursuit = pursuitGesture(fighter, slot)
   const base = basePose(fighter, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
@@ -408,12 +422,13 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: !fighter.hanzoProjection && variant !== 'air' && fighter.y <= 0,
+    plant: attackOnGround(fighter, { variant, pursuit, frame, startup: frames.startup }),
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
     ...(goldenSupport ?? support ?? waveTwoSupport ?? waveThreeSupport),
     attackFlow: {
       frame,
+      pursuit,
       startup: frames.startup,
       active: frames.active,
       recovery: frames.recovery,
@@ -421,16 +436,38 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       loadAt: fightPhysicalProfile(fighter).loadAt,
       facing: fighter.facing,
       transfer,
-      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt }),
+      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
     },
   }
 }
 
+function attackOnGround(
+  fighter: ArcadeFighter,
+  timing: {
+    variant: AttackVariant
+    pursuit?: ReturnType<typeof pursuitGesture>
+    frame: number
+    startup: number
+  },
+): boolean {
+  const { variant, pursuit, frame, startup } = timing
+  if (fighter.hanzoProjection) return false
+  if (pursuit && !pursuit.support) return false
+  if (pursuit && fighter.y <= 0.15 && frame < startup) return true
+  return fighter.y <= 0 && variant !== 'air'
+}
+
 function bridgeContact(
   moveId: string | undefined,
-  timing: { frame: number; startup: number; poseAt: (frame: number) => FightPose },
+  timing: {
+    frame: number
+    startup: number
+    poseAt: (frame: number) => FightPose
+    pursuit?: ReturnType<typeof pursuitGesture>
+  },
 ): FightPose | undefined {
-  if (timing.frame < timing.startup && bridgeTarget(moveId)) return timing.poseAt(timing.startup)
+  if (timing.frame < timing.startup && (bridgeTarget(moveId) || timing.pursuit))
+    return timing.poseAt(timing.startup)
 }
 
 function hasTechedThrow(fighter: ArcadeFighter): boolean {
@@ -497,6 +534,7 @@ function restingWithConstraint(
     feitanUmbrellaPlan(fighter, standing) ??
     feitanWoundedPlan(fighter, standing) ??
     feitanIconicPlan(fighter) ??
+    pursuitRecoveryPose(fighter) ??
     withLocomotionInertia(restingPlan(fighter, standing), context.locomotionInertia) ??
     feitanAirPlan(fighter, standing) ??
     reactionPlan(fighter, context, standing)

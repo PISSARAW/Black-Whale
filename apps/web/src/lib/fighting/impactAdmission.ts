@@ -5,7 +5,10 @@ import type { ArcadeFighter } from './types'
 
 /** Extracted from combatImpact.ts (CLAUDE.md § 3): unchanged predicates of a strike's resolution. */
 export function launchesTarget(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
-  return Boolean(followUpLaunchVelocity(attacker)) || (isAntiAir(attacker) && sleepingBody(defender).y > 0)
+  return (
+    Boolean(followUpLaunchVelocity(attacker)) ||
+    (isAntiAir(attacker) && sleepingBody(defender).y > 0)
+  )
 }
 
 export function attackCanResolve(

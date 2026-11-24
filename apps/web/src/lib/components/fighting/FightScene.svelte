@@ -18,6 +18,7 @@
   import { markFightRender } from '$lib/fighting/fightRenderObservation'
   import { cinematicDetailRect, type CameraDetailRect } from '$lib/fighting/cinematicDetailLayout'
   import FightCameraDetail from './FightCameraDetail.svelte'
+  import FightPursuitRecovery from './FightPursuitRecovery.svelte'
   import FightTrackingMarkers from './FightTrackingMarkers.svelte'
   import { createCombatCamera } from '$lib/fighting/combatCamera'
   import { visibleSecondaryView } from '$lib/fighting/directionalComboCamera'
@@ -54,7 +55,10 @@
   import { defaultAppearance, type CareerAppearance } from '$lib/fighting/career/types'
   import { introBodyMotion as fightBodyMotion } from '$lib/fighting/presentation/introMotion'
   import { defaultFightComfort, effectiveFightComfort } from '$lib/fighting/fightComfort'
-  import { createFightPresentation } from '$lib/fighting/fightPresentationContext'
+  import {
+    createFightPresentation,
+    fightFrameDeltaSeconds,
+  } from '$lib/fighting/fightPresentationContext'
   import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
   import { loadFightStage } from '$lib/fighting/loadFightStage'
   import { motionOf } from '$lib/fighting/fighterMovement'
@@ -73,6 +77,7 @@
   import { drawFightScene } from '$lib/fighting/drawFightScene'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
+  import './FightScene.css'
   const presentation = createFightPresentation()
   const interpolatedPosition = presentation.position
   export let viewer: 'player' | 'opponent' = 'player'
@@ -96,6 +101,8 @@
   export let onSceneFailed: () => void = () => {}
   export let language: 'fr' | 'en' = 'fr'
 
+  export let showRecovery = false
+  let recovery: FightPursuitRecovery
   let canvas: HTMLCanvasElement
   let failed = false
   let ready = false
@@ -324,7 +331,12 @@
             : null
           const direction =
             cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
-          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView && !detailLayout)
+          const pursuit = combatCamera.pursuit(state)
+          detail = visibleSecondaryView(
+            state,
+            direction.detail,
+            (hideSecondaryView && !detailLayout) || pursuit,
+          )
           detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
@@ -341,6 +353,7 @@
             aspect: camera.aspect,
             dt,
             direction,
+            pursuit,
             detail: Boolean(detail),
             detailRect,
             fallenBounds: fightCameraBodyBounds(state, models),
@@ -375,15 +388,41 @@
           impacts.shake(camera, now)
         }
 
+        const finishCombatFrame = (now: number) => {
+          drawFightScene({
+            victory: victoryRenderer,
+            state,
+            frame: victoryFrame,
+            comfort: visualComfort(),
+            models: { player: models.player.model.root, opponent: models.opponent.model.root },
+            draw: () => (post ? post.render() : renderer.render(scene, camera)),
+            failed: onSceneFailed,
+          })
+          inset.draw(renderer, { prediction, rect: detailRect, visible: detailVisible, now })
+          recovery?.locate(camera, (side) => models[side].model.root)
+          if (!ready) onSceneReady()
+          ready = true
+          if (
+            detail &&
+            !hideSecondaryView &&
+            !detailScene.draw({ renderer, state, detail, rect: detailRect })
+          )
+            detail = null
+        }
+        let drawnState: FightState | undefined
         const render = (now: number) => {
           if (disposed) return
-          if (!active) {
+          if (!active && (!showRecovery || drawnState === state)) {
             lastFrameAt = null
             animationFrame = requestAnimationFrame(render)
             return
           }
-          const dt = Math.min(0.1, lastFrameAt === null ? 0 : (now - lastFrameAt) / 1000)
+          const dt =
+            lastFrameAt === null
+              ? fightFrameDeltaSeconds(drawnState?.frame, state.frame)
+              : Math.min(0.1, (now - lastFrameAt) / 1000)
           motionSeconds += dt
+          drawnState = state
           const seconds = presentationSeconds ?? motionSeconds
           presentation.observe(state, seconds, {
             reduced: motionPreference.matches,
@@ -425,24 +464,7 @@
           collisions.sync(state)
           scenery.update?.(seconds)
           markFightRender(scene, state)
-          drawFightScene({
-            victory: victoryRenderer,
-            state,
-            frame: victoryFrame,
-            comfort: visualComfort(),
-            models: { player: models.player.model.root, opponent: models.opponent.model.root },
-            draw: () => (post ? post.render() : renderer.render(scene, camera)),
-            failed: onSceneFailed,
-          })
-          inset.draw(renderer, { prediction, rect: detailRect, visible: detailVisible, now })
-          if (!ready) onSceneReady()
-          ready = true
-          if (
-            detail &&
-            !hideSecondaryView &&
-            !detailScene.draw({ renderer, state, detail, rect: detailRect })
-          )
-            detail = null
+          finishCombatFrame(now)
           animationFrame = requestAnimationFrame(render)
         }
 
@@ -488,6 +510,7 @@
 <FightStageDescription {state} {stageId} {language} />
 <div class:failed class:ready class="fight-scene" aria-hidden="true">
   <canvas bind:this={canvas}></canvas>
+  <FightPursuitRecovery bind:this={recovery} {state} {language} enabled={showRecovery} />
   <FightDirectionalShot {state} intensity={comfort.camera ?? 1} />
   <FightTrackingMarkers
     {state}
@@ -501,23 +524,3 @@
     />{/if}
   {#if failed}<span>3D</span>{/if}
 </div>
-
-<style>
-  .fight-scene {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: radial-gradient(ellipse at 50% 42%, #162e3a, #05090d 70%);
-  }
-  canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .failed {
-    display: grid;
-    place-items: center;
-    color: #8096a3;
-    font: 700 1rem/1 var(--font-mono);
-  }
-</style>

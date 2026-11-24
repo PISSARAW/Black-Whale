@@ -135,7 +135,11 @@ const manipulator: Scene = () => {
 /** Skill Hunter's full route, reused from Chrollo's own presentation. */
 const specialist: Scene = () => {
   const s = chrollo.steal()
-  s.beats.splice(0, s.beats.length, { at: 6, word: 'SPECIALIST', line: 'An ability no other type can learn' })
+  s.beats.splice(0, s.beats.length, {
+    at: 6,
+    word: 'SPECIALIST',
+    line: 'An ability no other type can learn',
+  })
   return s
 }
 
@@ -288,10 +292,18 @@ const PLAN: Entry[] = [
   ['hatsu', hatsu, { chapter: 0, concept: 'HATSU', example: 'BONOLENOV · BATTLE CANTABILE' }],
   ['enhancer', enhancer, { chapter: 1, concept: 'ENHANCER', example: 'PHINKS · RIPPER CYCLOTRON' }],
   ['transmuter', transmuter, { chapter: 1, concept: 'TRANSMUTER', example: 'HISOKA · BUNGEE GUM' }],
-  ['emitter', emitter, { chapter: 1, concept: 'EMITTER', example: 'FRANKLIN · DOUBLE MACHINE GUN' }],
+  [
+    'emitter',
+    emitter,
+    { chapter: 1, concept: 'EMITTER', example: 'FRANKLIN · DOUBLE MACHINE GUN' },
+  ],
   ['conjurer', conjurer, { chapter: 1, concept: 'CONJURER', example: 'KURAPIKA · CHAIN JAIL' }],
   ['manipulator', manipulator, { chapter: 1, concept: 'MANIPULATOR', example: 'ILLUMI · NEEDLES' }],
-  ['specialist', specialist, { chapter: 1, concept: 'SPECIALIST', example: 'CHROLLO · SKILL HUNTER' }],
+  [
+    'specialist',
+    specialist,
+    { chapter: 1, concept: 'SPECIALIST', example: 'CHROLLO · SKILL HUNTER' },
+  ],
   ['in', hidden, { chapter: 2, concept: 'IN', example: 'HISOKA · HIDDEN GUM' }],
   ['gyo', gyo, { chapter: 2, concept: 'GYO', example: 'CHROLLO · SEES THE GUM' }],
   ['en', en, { chapter: 2, concept: 'EN', example: 'HINRIGH · AURA DOME' }],
@@ -300,7 +312,11 @@ const PLAN: Entry[] = [
   ['ko', ko, { chapter: 2, concept: 'KO', example: 'BISCUIT · ONE PUNCH' }],
   ['ryu', ryu, { chapter: 2, concept: 'RYU', example: 'FEITAN · J · J · →J' }],
   ['vow', vow, { chapter: 3, concept: 'VOW', example: 'KURAPIKA · JUDGMENT CHAIN' }],
-  ['post-mortem', postMortem, { chapter: 3, concept: 'POST-MORTEM', example: 'CAMILLA · CAT’S NAME' }],
+  [
+    'post-mortem',
+    postMortem,
+    { chapter: 3, concept: 'POST-MORTEM', example: 'CAMILLA · CAT’S NAME' },
+  ],
   ['full-power', fullPower, { chapter: 3, concept: 'FULL POWER', example: 'FEITAN · PAIN PACKER' }],
 ]
 

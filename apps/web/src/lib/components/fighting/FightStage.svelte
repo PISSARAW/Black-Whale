@@ -74,6 +74,7 @@
   export let hudMode: FightHudMode = 'omniscient'
   export let showControls = false
   export let training = false
+  export let showRecovery = false
   export let paused = false
   export let easterEggPreferences = defaultEasterEggPreferences()
   export let onEasterEgg: (side: FightSide, slot: EasterEggSlot) => void = () => {}
@@ -123,6 +124,7 @@
     {#key sceneKey}
       <FightLiveScene
         active={!paused}
+        showRecovery={showRecovery && !victoryActive}
         {state}
         {stageId}
         {language}

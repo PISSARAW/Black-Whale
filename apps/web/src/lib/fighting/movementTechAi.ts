@@ -28,10 +28,7 @@ export function aiWakeupInput(
  * Deterministic AI Back Sway against a visible standing strike startup at poke range.
  * Reserved to mobile/control styles and gated by normal sway cooldown and guard rules.
  */
-export function aiBackSwayInput(
-  fighter: ArcadeFighter,
-  target: ArcadeFighter,
-): FightInput | null {
+export function aiBackSwayInput(fighter: ArcadeFighter, target: ArcadeFighter): FightInput | null {
   if (!swayEligible(fighter) || !visibleHighPoke(fighter, target)) return null
   const back = -fighter.facing
   return { ...EMPTY_INPUT, left: back < 0, right: back > 0, guard: true }

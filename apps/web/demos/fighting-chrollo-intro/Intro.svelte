@@ -58,7 +58,9 @@
   /** A twin fight plays in the lower half, frame for frame with the main one. */
   let twinState = $derived(
     segment?.twin && shot.kind === 'clip'
-      ? segment.twin.states[Math.min(segment.twin.states.length - 1, Math.floor(simOverride ?? shot.sim))]
+      ? segment.twin.states[
+          Math.min(segment.twin.states.length - 1, Math.floor(simOverride ?? shot.sim))
+        ]
       : undefined,
   )
   let twinFilm = $derived(

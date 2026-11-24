@@ -28,17 +28,17 @@ contrats détaillés restent dans les movesets et
 
 ## Matrice fonctionnelle
 
-| Axe | Personnages | Contrat de jeu |
-| --- | --- | --- |
-| Perception privée | Rihan, Musse, Furykov, Lynch | Analyse fondée sur les manifestations attestées ; aucune lecture de l’input, des pensées ou d’un futur. |
-| Contrats | Longhi, Judgment Chain, Seiyaku | Consentement, déclaration et violation sont des états explicites ; aucune signature forcée. |
-| Corps | Camilla, Halkenburg | Cat’s Name reste post-mortem ; les consciences d’Halkenburg occupent des corps matériels sans soin ni duplication. |
-| Espaces | Voconte, Yokotani | Door relie des huisseries physiques ; LSDF exige la planque, Morena et un intrus présenté. |
-| Contacts | Terebellum | Blessure personnelle par la main gauche ; blessure d’autrui reçue à droite puis transmise à gauche. |
-| Matière I | Machi, Kalluto, Zakuro | Fils, papier et sang restent des matières suivies, finies et attribuées à leur source. |
-| Matière II | Hinrigh, Shizuku | Biohazard transforme des objets réels ; Blinky aspire ce qui est admissible sans drainer l’aura. |
-| Corps et performance | Biscuit, Bonolenov, Feitan, Phinks | Forme naturelle, trous corporels, blessures reçues et rotations du bras droit ne deviennent pas des jauges génériques. |
-| Techniques martiales | Saiyu, Leorio, Sayird, Theta, Kurapika | Les effets de Nen attestés sont séparés des coups, armes et déplacements physiques. |
+| Axe                  | Personnages                            | Contrat de jeu                                                                                                         |
+| -------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Perception privée    | Rihan, Musse, Furykov, Lynch           | Analyse fondée sur les manifestations attestées ; aucune lecture de l’input, des pensées ou d’un futur.                |
+| Contrats             | Longhi, Judgment Chain, Seiyaku        | Consentement, déclaration et violation sont des états explicites ; aucune signature forcée.                            |
+| Corps                | Camilla, Halkenburg                    | Cat’s Name reste post-mortem ; les consciences d’Halkenburg occupent des corps matériels sans soin ni duplication.     |
+| Espaces              | Voconte, Yokotani                      | Door relie des huisseries physiques ; LSDF exige la planque, Morena et un intrus présenté.                             |
+| Contacts             | Terebellum                             | Blessure personnelle par la main gauche ; blessure d’autrui reçue à droite puis transmise à gauche.                    |
+| Matière I            | Machi, Kalluto, Zakuro                 | Fils, papier et sang restent des matières suivies, finies et attribuées à leur source.                                 |
+| Matière II           | Hinrigh, Shizuku                       | Biohazard transforme des objets réels ; Blinky aspire ce qui est admissible sans drainer l’aura.                       |
+| Corps et performance | Biscuit, Bonolenov, Feitan, Phinks     | Forme naturelle, trous corporels, blessures reçues et rotations du bras droit ne deviennent pas des jauges génériques. |
+| Techniques martiales | Saiyu, Leorio, Sayird, Theta, Kurapika | Les effets de Nen attestés sont séparés des coups, armes et déplacements physiques.                                    |
 
 ## Intégration système
 

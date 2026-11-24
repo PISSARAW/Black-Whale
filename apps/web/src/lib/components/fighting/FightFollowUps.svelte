@@ -21,7 +21,8 @@
         <kbd>{moveInputHint(row.input, hints)}</kbd>
         <span class="name">{row.name}</span>
         <small class="details">
-          {language === 'fr' ? 'Après' : 'After'} {row.sourceName} · {row.condition}{#if row.tags.length}
+          {language === 'fr' ? 'Après' : 'After'}
+          {row.sourceName} · {row.condition}{#if row.tags.length}
             · {row.tags.join(' · ')}{/if}
         </small>
       </p>

@@ -2,12 +2,7 @@ import { senseDeprived } from '../saiyuSenses'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 
 export type ObservedCondition =
-  | 'painPacker'
-  | 'cyclotron'
-  | 'seiyaku'
-  | 'tsk17'
-  | 'emperorTime'
-  | 'catsName'
+  'painPacker' | 'cyclotron' | 'seiyaku' | 'tsk17' | 'emperorTime' | 'catsName'
 
 export interface OpponentIntel {
   /** Clean unblocked hits landed on the opponent during the current round. */
@@ -80,11 +75,7 @@ export function advanceOpponentIntel(state: FightState): FightState {
   const current = state.opponentIntel ?? createFightIntel()
   const playerIntel = updateSideIntel(state, 'player', current.player)
   const opponentIntel = updateSideIntel(state, 'opponent', current.opponent)
-  if (
-    state.opponentIntel &&
-    playerIntel === current.player &&
-    opponentIntel === current.opponent
-  ) {
+  if (state.opponentIntel && playerIntel === current.player && opponentIntel === current.opponent) {
     return state
   }
   return {
@@ -139,10 +130,10 @@ function hasVisibleActiveNen(target: ArcadeFighter): boolean {
   if (target.nen.in || target.nen.mode === 'zetsu') return false
   return Boolean(
     target.nen.mode === 'ren' ||
-      target.nen.ken ||
-      target.nen.ko ||
-      target.nen.en ||
-      target.attack?.hatsuSource,
+    target.nen.ken ||
+    target.nen.ko ||
+    target.nen.en ||
+    target.attack?.hatsuSource,
   )
 }
 

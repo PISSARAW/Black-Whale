@@ -7,7 +7,11 @@ import { EMPTY_INPUT, type FightState } from './types'
 
 function duel(): FightState {
   const state = beginFight(createFight('hisoka', 'chrollo', { mode: 'versus-local' }))
-  return { ...state, player: { ...state.player, x: 40, aura: 100 }, opponent: { ...state.opponent, x: 60 } }
+  return {
+    ...state,
+    player: { ...state.player, x: 40, aura: 100 },
+    opponent: { ...state.opponent, x: 60 },
+  }
 }
 function frames(state: FightState, count: number): FightState {
   for (let i = 0; i < count; i++)

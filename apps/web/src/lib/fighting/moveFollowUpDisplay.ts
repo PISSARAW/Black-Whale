@@ -25,10 +25,7 @@ export interface FollowUpDisplayRow {
   tags: readonly string[]
 }
 
-export function formatFollowUpRow(
-  entry: MoveFollowUp,
-  language: 'fr' | 'en',
-): FollowUpDisplayRow {
+export function formatFollowUpRow(entry: MoveFollowUp, language: 'fr' | 'en'): FollowUpDisplayRow {
   const fr = language === 'fr'
   const source = moveById(entry.sourceMoveId)
   const key = INPUT_KEYS[entry.input]

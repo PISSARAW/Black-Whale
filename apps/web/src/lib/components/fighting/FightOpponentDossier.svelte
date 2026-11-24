@@ -27,7 +27,11 @@
   $: gyoActive = view.aura.level === 2 && view.aura.exact !== null
 </script>
 
-<div class="opponent-dossier" class:left-side={side === 'player'} data-perception-level={view.level}>
+<div
+  class="opponent-dossier"
+  class:left-side={side === 'player'}
+  data-perception-level={view.level}
+>
   <div class="vitality-row" class:adrenaline={view.health.adrenalineAlert}>
     {#if vitalityLabel}<span class="vitality-tier">{vitalityLabel}</span>{/if}
     {#if view.health.adrenalineAlert}

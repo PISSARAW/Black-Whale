@@ -24,10 +24,14 @@ function comboVictim(state: FightState, side: 'player' | 'opponent', aura = 80):
 }
 
 function frame(state: FightState, input: Partial<FightInput> = {}, opponent?: Partial<FightInput>) {
-  return tickFight(state, { ...EMPTY_INPUT, ...input }, {
-    dt: FIXED_STEP,
-    ...(opponent && { opponentInput: { ...EMPTY_INPUT, ...opponent } }),
-  })
+  return tickFight(
+    state,
+    { ...EMPTY_INPUT, ...input },
+    {
+      dt: FIXED_STEP,
+      ...(opponent && { opponentInput: { ...EMPTY_INPUT, ...opponent } }),
+    },
+  )
 }
 
 describe('defensive Burst', () => {
@@ -79,9 +83,13 @@ describe('defensive Burst', () => {
   })
 
   it('holds Zetsu for exactly two simulation seconds, excluding the activation frame', () => {
-    let state = frame(comboVictim(beginFight(createFight('kurapika', 'hisoka')), 'player'), {
-      burst: true,
-    }, {})
+    let state = frame(
+      comboVictim(beginFight(createFight('kurapika', 'hisoka')), 'player'),
+      {
+        burst: true,
+      },
+      {},
+    )
     for (let i = 0; i < BURST_ZETSU_FRAMES; i += 1) state = frame(state, {}, {})
     expect(state.player.burstZetsuFrames).toBe(0)
     expect(state.player.nen.mode).toBe('zetsu')

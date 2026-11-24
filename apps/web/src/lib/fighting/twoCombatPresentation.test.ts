@@ -83,10 +83,12 @@ describe('visible applications from the two-encounter audit', () => {
       for (const [part, visible] of original) expect(part.visible).toBe(visible)
       expect(lower.visible).toBe(false)
       expect(model.turns.rotation.z).toBeCloseTo(0)
-      expect(projectionCameraSpan(state, [8.5, 7], (x) => x / 10)).toEqual({
-        centre: 5.25,
-        gap: 6.5,
-      })
+      expect(projectionCameraSpan(state, [8.5, 7], { worldX: (x) => x / 10, aspect: 1.7 })).toEqual(
+        {
+          centre: 5.25,
+          gap: 6.5,
+        },
+      )
       effect.dispose()
       expect(scene.children).toEqual([model.root])
     },

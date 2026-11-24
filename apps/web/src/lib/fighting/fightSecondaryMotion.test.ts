@@ -51,10 +51,7 @@ describe('fightSecondaryMotion', () => {
     const secondary = createSecondaryMotion()
     const base = fighter('hisoka', { x: 40, y: 0, facing: 1, pose: 'walk' })
     secondary(base, { frame: 0, seconds: 0, frozen: false })
-    const moving = secondary(
-      { ...base, x: 41.2 },
-      { frame: 1, seconds: FIXED_STEP, frozen: false },
-    )
+    const moving = secondary({ ...base, x: 41.2 }, { frame: 1, seconds: FIXED_STEP, frozen: false })
     const frozen = secondary(
       { ...base, x: 41.2 },
       { frame: 2, seconds: 2 * FIXED_STEP, frozen: true },

@@ -10,9 +10,7 @@ describe('opaqueHudSides', () => {
   })
 
   it('masks only the opponent in tactical solo or online play', () => {
-    expect(opaqueHudSides({ state: { mode: 'versus-ai' }, mode: 'tactical' })).toEqual([
-      'opponent',
-    ])
+    expect(opaqueHudSides({ state: { mode: 'versus-ai' }, mode: 'tactical' })).toEqual(['opponent'])
   })
 
   it('masks both sides in tactical local versus (shared screen)', () => {

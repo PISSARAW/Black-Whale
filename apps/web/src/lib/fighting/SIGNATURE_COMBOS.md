@@ -293,32 +293,32 @@ ressuscite Camilla (`signatureCombosLot2A.ts`). Aucun déclenchement volontaire 
 
 ## Lot 2B — Halkenburg, Gel, Lynch, Luini et Bill
 
-- **Halkenburg** (*Garde de l’unisson*) : fondamentaux martiaux et accélération ; sans partisans
+- **Halkenburg** (_Garde de l’unisson_) : fondamentaux martiaux et accélération ; sans partisans
   consentants en 1v1, la flèche collective reste impossible (`signatureCombosLot2B.ts`).
-- **Gel** (*Mâchoire allongée*) : bras serpent bas puis allongé en chaîne d’accélération, sans
+- **Gel** (_Mâchoire allongée_) : bras serpent bas puis allongé en chaîne d’accélération, sans
   venin inventé (`signatureCombosLot2B.ts`).
-- **Lynch** (*Body and Soul*) : question audible puis Direct déclenchant la réponse intérieure,
+- **Lynch** (_Body and Soul_) : question audible puis Direct déclenchant la réponse intérieure,
   suivi de la route de capture (`signatureCombosLot2B.ts`).
-- **Luini** (*Passage clos*) : accélération traversante vers l’angle mort et capture ; sans pièces
+- **Luini** (_Passage clos_) : accélération traversante vers l’angle mort et capture ; sans pièces
   closes, aucune téléportation gratuite (`signatureCombosLot2B.ts`).
-- **Bill** (*Garde rapprochée*) : fondamentaux de protection ; Erigeron reste strictement non
+- **Bill** (_Garde rapprochée_) : fondamentaux de protection ; Erigeron reste strictement non
   offensif (`signatureCombosLot2B.ts`).
 
 ## Lot 3 — Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird, Terebellum, Voconte et Yokotani
 
-- **Furykov** (*Lecture du garde*), **Cluck** (*Vol de messagers*), **Longhi** (*Clair de lune*),
-  **Sayird** (*Petit œil*) et **Yokotani** (*Droit de retrait*) : routes martiales complètes à
+- **Furykov** (_Lecture du garde_), **Cluck** (_Vol de messagers_), **Longhi** (_Clair de lune_),
+  **Sayird** (_Petit œil_) et **Yokotani** (_Droit de retrait_) : routes martiales complètes à
   accélérations respectant la nature non offensive ou conditionnelle de leurs capacités
   (`signatureCombosLot3A.ts`, `signatureCombosLot3B.ts`).
-- **Beyond** (*Pression du Ren*) : enchaînement martial sous Ren (`downSpecial → dash(forward) →
-  forwardSpecial → forwardHeavy → throw`), distinct de la malédiction sacrificielle hors duel.
-- **Musse** (*Fenêtre discrète*) : préparation Secret Window au contact (information seule, sans
+- **Beyond** (_Pression du Ren_) : enchaînement martial sous Ren (`downSpecial → dash(forward) →
+forwardSpecial → forwardHeavy → throw`), distinct de la malédiction sacrificielle hors duel.
+- **Musse** (_Fenêtre discrète_) : préparation Secret Window au contact (information seule, sans
   bonus de dégâts), puis enchaînement jusqu’au tir de pistolet réel.
-- **Padaille** (*Outil tranchant*) : matérialisation réelle de la perceuse (`forwardSpecial`,
+- **Padaille** (_Outil tranchant_) : matérialisation réelle de la perceuse (`forwardSpecial`,
   20 aura) annulée dans le balayage et la capture.
-- **Terebellum** (*Transfert de blessure*) : enchaînement avec prise Sweet Home (`neutralSpecial`)
+- **Terebellum** (_Transfert de blessure_) : enchaînement avec prise Sweet Home (`neutralSpecial`)
   et accélération avant vers la capture.
-- **Voconte** (*Porte de service*) : accélération traversante vers l’angle mort et capture, sans
+- **Voconte** (_Porte de service_) : accélération traversante vers l’angle mort et capture, sans
   téléportation gratuite hors lieux réels.
 
 ## Coût réduit — Saiyu et Franklin
@@ -329,24 +329,24 @@ change. Saiyu termine avec 18 aura, Franklin avec 36.
 
 ## Règles générales ajoutées
 
-| Règle                    | Fichier                                 | Effet                                                                                                                                                                                                       |
-| ------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Accélération             | `dashCancel.ts`, `CancelGrammar.dash`   | Sur touche, un coup listé s’annule dans un dash par double appui. Chauffe le Ren de 50, comme une relance : deux au plus avant la surchauffe. Le coup qui interrompt ce dash peut toucher un corps à terre. |
-| Capture en combo         | `throwRules.ts`, `duelMoves.ts`         | Une projection qui termine une accélération saisit un corps étourdi ou à terre (jamais en l’air), le retient sans le projeter et peut s’annuler par ses chaînes écrites.                                    |
-| Emperor Time en capture  | `kurapikaActions.ts`                    | Activable pendant une capture ou une Chain Jail confirmée.                                                                                                                                                  |
-| Chaînes des spéciaux     | `duelComboGrammar.ts`                   | Un spécial de la grammaire garde aussi ses chaînes écrites. Seule Paume rapide → page au signet (Chrollo) en déclare une ; aucun normal n’ouvre la page au signet.                                          |
-| Portée prolongée         | `accelCancel.ts`                        | Un coup annulé depuis un coup qui a atteint un corps à terre l’atteint aussi : la portée tient jusqu’à la fin de la route.                                                                                  |
-| Corps plaqué au sol      | `groundedPin.ts`, `combatDamage.ts`     | Un coup de route (accélération, prise) qui atteint un corps à terre le pousse de 1,5 au plus.                                                                                                               |
-| Passage                  | `signatureCrossing.ts`                  | Une accélération `through`, ou le dash avant de Tserriednich pendant sa divergence, ignore les boîtes de poussée. Volumes touchables et gardes inchangés.                                                   |
-| Chaînes d’accélération   | `CancelGrammar.accelInto`               | Un coup lancé depuis une accélération gagne les chaînes listées ; la chauffe du Ren les borne.                                                                                                              |
-| Relance dérivée          | `DuelComboProfile.relance`              | Un profil à grammaire dérivée peut activer la relance (spécial → spécial plus tardif sur touche).                                                                                                           |
-| Zone chaude              | `comboCapture.ts`                       | Sous Pain Packer revêtu, la projection de Feitan retient sa cible sans la projeter.                                                                                                                         |
-| Chaînes des supers       | `duelComboGrammar.ts`, `accelCancel.ts` | Un super garde ses propres chaînes écrites ; les suivre chauffe le Ren comme une relance, ce qui borne la boucle fin physique → super.                                                                      |
-| Tir confirmé             | `shotConfirm.ts`                        | Une balle qui touche confirme l’attaque qui l’a tirée (tir ou salve de Hatsu) ; ses annulations sur touche deviennent possibles. Gardée ou évitée, elle ne confirme rien.                                   |
-| Salve complète           | `ComboMove.windowStart`                 | Une salve ne s’annule qu’après son dernier tir (Franklin). L’accélération respecte aussi ce début de fenêtre.                                                                                               |
-| Corps tenu par une salve | `groundedPin.ts`                        | Une balle de route qui atteint un corps à terre l’y maintient le hitstun de sa salve et ne le pousse pas.                                                                                                   |
-| Coût réduit              | `comboHalfPrice.ts`                     | Saiyu et Franklin : un tiers du prix pour chaque technique après la première, tant que la cible reste prise.                                                                                                |
-| Ligature / contention    | `comboRestraintHold.ts`, `fighterPhysics.ts` | Une cible ligaturée (Machi), marionnette crânienne (Illumi), menottée (Hinrigh) ou confinée par Cross Game (Mizaistom) reste dans son combo tant que la contention physique tient.                        |
+| Règle                    | Fichier                                      | Effet                                                                                                                                                                                                       |
+| ------------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accélération             | `dashCancel.ts`, `CancelGrammar.dash`        | Sur touche, un coup listé s’annule dans un dash par double appui. Chauffe le Ren de 50, comme une relance : deux au plus avant la surchauffe. Le coup qui interrompt ce dash peut toucher un corps à terre. |
+| Capture en combo         | `throwRules.ts`, `duelMoves.ts`              | Une projection qui termine une accélération saisit un corps étourdi ou à terre (jamais en l’air), le retient sans le projeter et peut s’annuler par ses chaînes écrites.                                    |
+| Emperor Time en capture  | `kurapikaActions.ts`                         | Activable pendant une capture ou une Chain Jail confirmée.                                                                                                                                                  |
+| Chaînes des spéciaux     | `duelComboGrammar.ts`                        | Un spécial de la grammaire garde aussi ses chaînes écrites. Seule Paume rapide → page au signet (Chrollo) en déclare une ; aucun normal n’ouvre la page au signet.                                          |
+| Portée prolongée         | `accelCancel.ts`                             | Un coup annulé depuis un coup qui a atteint un corps à terre l’atteint aussi : la portée tient jusqu’à la fin de la route.                                                                                  |
+| Corps plaqué au sol      | `groundedPin.ts`, `combatDamage.ts`          | Un coup de route (accélération, prise) qui atteint un corps à terre le pousse de 1,5 au plus.                                                                                                               |
+| Passage                  | `signatureCrossing.ts`                       | Une accélération `through`, ou le dash avant de Tserriednich pendant sa divergence, ignore les boîtes de poussée. Volumes touchables et gardes inchangés.                                                   |
+| Chaînes d’accélération   | `CancelGrammar.accelInto`                    | Un coup lancé depuis une accélération gagne les chaînes listées ; la chauffe du Ren les borne.                                                                                                              |
+| Relance dérivée          | `DuelComboProfile.relance`                   | Un profil à grammaire dérivée peut activer la relance (spécial → spécial plus tardif sur touche).                                                                                                           |
+| Zone chaude              | `comboCapture.ts`                            | Sous Pain Packer revêtu, la projection de Feitan retient sa cible sans la projeter.                                                                                                                         |
+| Chaînes des supers       | `duelComboGrammar.ts`, `accelCancel.ts`      | Un super garde ses propres chaînes écrites ; les suivre chauffe le Ren comme une relance, ce qui borne la boucle fin physique → super.                                                                      |
+| Tir confirmé             | `shotConfirm.ts`                             | Une balle qui touche confirme l’attaque qui l’a tirée (tir ou salve de Hatsu) ; ses annulations sur touche deviennent possibles. Gardée ou évitée, elle ne confirme rien.                                   |
+| Salve complète           | `ComboMove.windowStart`                      | Une salve ne s’annule qu’après son dernier tir (Franklin). L’accélération respecte aussi ce début de fenêtre.                                                                                               |
+| Corps tenu par une salve | `groundedPin.ts`                             | Une balle de route qui atteint un corps à terre l’y maintient le hitstun de sa salve et ne le pousse pas.                                                                                                   |
+| Coût réduit              | `comboHalfPrice.ts`                          | Saiyu et Franklin : un tiers du prix pour chaque technique après la première, tant que la cible reste prise.                                                                                                |
+| Ligature / contention    | `comboRestraintHold.ts`, `fighterPhysics.ts` | Une cible ligaturée (Machi), marionnette crânienne (Illumi), menottée (Hinrigh) ou confinée par Cross Game (Mizaistom) reste dans son combo tant que la contention physique tient.                          |
 
 Une commande entrée pendant le hitstop est perdue : le double appui d’une accélération
 se joue après l’impact (une salve en provoque une frame sur deux ; un joueur qui tient la

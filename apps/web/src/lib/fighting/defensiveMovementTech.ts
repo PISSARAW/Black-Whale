@@ -20,11 +20,7 @@ export function shouldBrakeBackdash(
   dash: FighterDash,
   input: FightInput,
 ): boolean {
-  return (
-    dash.direction !== fighter.facing &&
-    dash.frame >= BACKDASH_BRAKE_MIN_FRAME &&
-    input.down
-  )
+  return dash.direction !== fighter.facing && dash.frame >= BACKDASH_BRAKE_MIN_FRAME && input.down
 }
 
 /**
@@ -67,7 +63,8 @@ function canAuraPushblock(defender: ArcadeFighter, blocked: boolean): boolean {
   if (!blocked || defender.guardFrames === 0 || defender.guardFrames > AURA_PUSHBLOCK_WINDOW) {
     return false
   }
-  const hasAura = (defender.nen.ken || defender.nen.mode === 'ren') && defender.aura >= AURA_PUSHBLOCK_COST
+  const hasAura =
+    (defender.nen.ken || defender.nen.mode === 'ren') && defender.aura >= AURA_PUSHBLOCK_COST
   return hasAura && (defender.motion?.heldDirection ?? 0) === defender.facing
 }
 

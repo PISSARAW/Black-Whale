@@ -25,13 +25,7 @@ export interface MotionFrame {
 }
 
 export function isMotionStep(step: object): step is SignatureMotionStep {
-  return (
-    'wind' in step ||
-    'jump' in step ||
-    'land' in step ||
-    'approach' in step ||
-    'turn' in step
-  )
+  return 'wind' in step || 'jump' in step || 'land' in step || 'approach' in step || 'turn' in step
 }
 
 export function motionStepFrame(state: FightState, step: SignatureMotionStep): MotionFrame {

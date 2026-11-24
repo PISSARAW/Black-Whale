@@ -1,11 +1,7 @@
 import { KAMEO_CATALOGUE } from '../kameos/catalogue'
 import type { KameoId } from '../kameos/types'
 import type { FightSide, FightState } from '../types'
-import type {
-  AuraBracket,
-  OpponentBurstView,
-  OpponentKameoView,
-} from './opponentHudView'
+import type { AuraBracket, OpponentBurstView, OpponentKameoView } from './opponentHudView'
 import type { ObservedCondition } from './opponentIntel'
 
 const AURA_BRACKETS: Record<AuraBracket, [string, string]> = {

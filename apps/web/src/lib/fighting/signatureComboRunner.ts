@@ -147,7 +147,9 @@ function opponentControls(
   struck: boolean,
 ) {
   if (dummy.ai) return { dt: 1 / 60, ai: true }
-  const riposte = Boolean(step && ('riposte' in step || 'disobey' in step || 'fatalRiposte' in step))
+  const riposte = Boolean(
+    step && ('riposte' in step || 'disobey' in step || 'fatalRiposte' in step),
+  )
   return { dt: 1 / 60, ai: false, opponentInput: dummyInput(struck && !riposte) }
 }
 
@@ -198,7 +200,11 @@ function hingeStep(
   }
 }
 
-function moveBlocked(state: FightState, move: NonNullable<ReturnType<typeof moveForSlot>>, utility: boolean): boolean {
+function moveBlocked(
+  state: FightState,
+  move: NonNullable<ReturnType<typeof moveForSlot>>,
+  utility: boolean,
+): boolean {
   if (move.variant === 'air' && state.player.y <= 0) return true
   if (closingDash(state) || (!utility && waitingForPuppetApproach(state))) return true
   if (state.player.attack && !state.player.attack.confirmedHit) return true

@@ -37,7 +37,7 @@ export function implantIllumiNeedleOrder(
 export function hasIllumiNeedleOrder(fighter: ArcadeFighter): boolean {
   return Boolean(
     (fighter.illumiNeedleOrder && fighter.illumiNeedleOrder.remainingFrames > 0) ||
-      fighter.needlePuppet?.needleEmbedded,
+    fighter.needlePuppet?.needleEmbedded,
   )
 }
 
@@ -46,7 +46,8 @@ export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInp
   const order = fighter.illumiNeedleOrder?.order
   if (!order) return input
   if (order === 'retreat') {
-    const pressingForward = fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
+    const pressingForward =
+      fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
     const reversedMove = pressingForward
       ? { left: !input.left, right: !input.right }
       : { left: input.left, right: input.right }
@@ -116,7 +117,8 @@ export function advanceIllumiBiscuitUpgrades(state: FightState): FightState {
       ...next,
       [side]: {
         ...f,
-        illumiNeedleOrder: remaining > 0 ? { ...f.illumiNeedleOrder, remainingFrames: remaining } : undefined,
+        illumiNeedleOrder:
+          remaining > 0 ? { ...f.illumiNeedleOrder, remainingFrames: remaining } : undefined,
       },
     }
   }

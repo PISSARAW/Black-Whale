@@ -11,6 +11,7 @@ export function plantBodyFrame(
     pose: FightPose
     plan: BodyPlan
     fighter: ArcadeFighter
+    pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
   },
 ): void {
   if (!frame.anchor) return
@@ -37,6 +38,7 @@ export function plantBodyFrame(
     anchorLowest:
       fighter.crouching || (!fighter.attack && ['idle', 'guard'].includes(fighter.pose)),
     horizontal: fighter.pose !== 'walk',
+    pursuitSupport: frame.pursuitSupport,
   })
 }
 

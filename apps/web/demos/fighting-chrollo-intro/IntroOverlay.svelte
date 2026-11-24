@@ -3,11 +3,8 @@
   import { TECHNIQUES } from './techniques'
   import type { BuiltSegment, HeroConfig } from './hero'
 
-  let {
-    shot,
-    mask,
-    hero,
-  }: { shot: Shot; mask: number; hero: HeroConfig; segment?: BuiltSegment } = $props()
+  let { shot, mask, hero }: { shot: Shot; mask: number; hero: HeroConfig; segment?: BuiltSegment } =
+    $props()
 
   const SITE = 'exploreblackwhale.com/fighting'
   const ease = (t: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3)

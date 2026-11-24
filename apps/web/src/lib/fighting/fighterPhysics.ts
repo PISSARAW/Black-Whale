@@ -62,7 +62,8 @@ function justTouchedGround(beforeY: number, afterY: number): boolean {
 function advanceWakeup(
   fighter: ArcadeFighter,
   input: FightInput,
-): Partial<ArcadeFighter> & Pick<ArcadeFighter, 'knockdownFrames' | 'wakeupInvulnerableFrames' | 'reversalWindow'> {
+): Partial<ArcadeFighter> &
+  Pick<ArcadeFighter, 'knockdownFrames' | 'wakeupInvulnerableFrames' | 'reversalWindow'> {
   const rawKnockdown = Math.max(0, fighter.knockdownFrames - 1)
   const move = resolveWakeupMovement(fighter, input, rawKnockdown)
   const knockdownFrames = move.knockdownFrames ?? rawKnockdown

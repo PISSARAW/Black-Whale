@@ -37,7 +37,9 @@ export function bodyMemoryRyuDrain(fighter: ArcadeFighter): number {
     (zone) => bodyMemoryWeak(fighter, zone) && Number(fighter.nen.ryu[zone] ?? 0) >= 0.5,
   )
   if (!focus) return 0
-  return (fighter.erigeronCatalystFrames ?? 0) > 0 ? ERIGERON_BODY_MEMORY_DRAIN : BODY_MEMORY_RYU_DRAIN
+  return (fighter.erigeronCatalystFrames ?? 0) > 0
+    ? ERIGERON_BODY_MEMORY_DRAIN
+    : BODY_MEMORY_RYU_DRAIN
 }
 
 /** Continuing to strike with an overused limb remains possible, but is deliberately inefficient. */

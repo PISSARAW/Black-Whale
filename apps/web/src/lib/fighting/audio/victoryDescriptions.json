@@ -1,10 +1,6 @@
 {
   "hisoka": [
-    [
-      110,
-      "Hisoka s’approche. Son adversaire se fige.",
-      "Hisoka approaches. His opponent freezes."
-    ],
+    [110, "Hisoka s’approche. Son adversaire se fige.", "Hisoka approaches. His opponent freezes."],
     [
       365,
       "L’aura se referme. Son adversaire s’effondre.",
@@ -48,11 +44,7 @@
     ]
   ],
   "phinks": [
-    [
-      55,
-      "Phinks fait tourner son bras droit.",
-      "Phinks winds his right arm."
-    ],
+    [55, "Phinks fait tourner son bras droit.", "Phinks winds his right arm."],
     [
       270,
       "Son coup projette l’adversaire au sol. Un cratère s’ouvre.",
@@ -96,11 +88,7 @@
     ]
   ],
   "leorio": [
-    [
-      90,
-      "Leorio se penche et arme son poing.",
-      "Leorio leans down and readies his fist."
-    ],
+    [90, "Leorio se penche et arme son poing.", "Leorio leans down and readies his fist."],
     [
       340,
       "Un poing surgit sous l’adversaire et le propulse vers le plafond.",
@@ -120,11 +108,7 @@
     ]
   ],
   "camilla": [
-    [
-      110,
-      "Un chat de Nen apparaît auprès de Camilla.",
-      "A Nen cat appears beside Camilla."
-    ],
+    [110, "Un chat de Nen apparaît auprès de Camilla.", "A Nen cat appears beside Camilla."],
     [
       408,
       "La créature se penche vers Camilla. Elle reprend son souffle.",
@@ -137,11 +121,7 @@
       "Kalluto sourit. Des morceaux de papier s’envolent.",
       "Kalluto smiles. Pieces of paper lift into the air."
     ],
-    [
-      284,
-      "Le papier tourbillonne autour de son adversaire.",
-      "Paper whirls around his opponent."
-    ]
+    [284, "Le papier tourbillonne autour de son adversaire.", "Paper whirls around his opponent."]
   ],
   "machi": [
     [
@@ -168,11 +148,7 @@
     ]
   ],
   "bonolenov": [
-    [
-      80,
-      "Bonolenov fait danser son corps découvert.",
-      "Bonolenov dances with his body uncovered."
-    ],
+    [80, "Bonolenov fait danser son corps découvert.", "Bonolenov dances with his body uncovered."],
     [
       260,
       "Une sphère gigantesque, Jupiter, se matérialise devant lui.",
@@ -192,11 +168,7 @@
     ]
   ],
   "biscuit": [
-    [
-      98,
-      "Biscuit reprend sa forme musclée.",
-      "Biscuit returns to her muscular form."
-    ],
+    [98, "Biscuit reprend sa forme musclée.", "Biscuit returns to her muscular form."],
     [
       365,
       "Une petite masseuse de Nen apparaît près de Biscuit.",
@@ -204,11 +176,7 @@
     ]
   ],
   "saiyu": [
-    [
-      95,
-      "Les singes de Saiyu apparaissent un à un.",
-      "Saiyu’s monkeys appear one by one."
-    ],
+    [95, "Les singes de Saiyu apparaissent un à un.", "Saiyu’s monkeys appear one by one."],
     [
       300,
       "Saiyu fait tournoyer son bâton. L’adversaire vacille.",
@@ -228,11 +196,7 @@
     ]
   ],
   "bill": [
-    [
-      112,
-      "Bill avance au contact de son adversaire.",
-      "Bill closes in on his opponent."
-    ],
+    [112, "Bill avance au contact de son adversaire.", "Bill closes in on his opponent."],
     [
       336,
       "Une plante se déploie au milieu de l’échange.",
@@ -240,23 +204,11 @@
     ]
   ],
   "melody": [
-    [
-      55,
-      "Melody joue de la flûte.",
-      "Melody plays her flute."
-    ],
-    [
-      332,
-      "Le décor se change en prairie fleurie.",
-      "The setting becomes a flowering meadow."
-    ]
+    [55, "Melody joue de la flûte.", "Melody plays her flute."],
+    [332, "Le décor se change en prairie fleurie.", "The setting becomes a flowering meadow."]
   ],
   "hinrigh": [
-    [
-      76,
-      "Hinrigh métamorphose des objets en animaux.",
-      "Hinrigh transforms objects into animals."
-    ],
+    [76, "Hinrigh métamorphose des objets en animaux.", "Hinrigh transforms objects into animals."],
     [
       276,
       "Les créatures encerclent l’adversaire pendant qu’il avance.",
@@ -281,11 +233,7 @@
       "Voconte traverse une porte et reparaît ailleurs.",
       "Voconte crosses a doorway and reappears elsewhere."
     ],
-    [
-      346,
-      "L’adversaire chute et heurte la passerelle.",
-      "His opponent falls and hits the catwalk."
-    ]
+    [346, "L’adversaire chute et heurte la passerelle.", "His opponent falls and hits the catwalk."]
   ],
   "longhi": [
     [
@@ -312,11 +260,7 @@
     ]
   ],
   "theta": [
-    [
-      87,
-      "Theta engage un chargeur dans son pistolet.",
-      "Theta loads a magazine into her pistol."
-    ],
+    [87, "Theta engage un chargeur dans son pistolet.", "Theta loads a magazine into her pistol."],
     [
       373,
       "Un coup part. L’adversaire bascule en arrière.",
@@ -324,11 +268,7 @@
     ]
   ],
   "mizaistom": [
-    [
-      90,
-      "Mizaistom présente un carton à son adversaire.",
-      "Mizaistom shows his opponent a card."
-    ],
+    [90, "Mizaistom présente un carton à son adversaire.", "Mizaistom shows his opponent a card."],
     [
       315,
       "Un panneau se matérialise sur la trajectoire de l’adversaire.",
@@ -372,28 +312,12 @@
     ]
   ],
   "luini": [
-    [
-      84,
-      "Une ouverture s’élargit dans la paroi.",
-      "An opening widens in the wall."
-    ],
-    [
-      345,
-      "Luini attaque en surgissant du passage.",
-      "Luini emerges from the opening to strike."
-    ]
+    [84, "Une ouverture s’élargit dans la paroi.", "An opening widens in the wall."],
+    [345, "Luini attaque en surgissant du passage.", "Luini emerges from the opening to strike."]
   ],
   "basho": [
-    [
-      72,
-      "Basho écrit un poème sur une feuille.",
-      "Basho writes a poem on a sheet of paper."
-    ],
-    [
-      386,
-      "Des flammes jaillissent au fil de ses frappes.",
-      "Flames erupt as he lands his strikes."
-    ]
+    [72, "Basho écrit un poème sur une feuille.", "Basho writes a poem on a sheet of paper."],
+    [386, "Des flammes jaillissent au fil de ses frappes.", "Flames erupt as he lands his strikes."]
   ],
   "kurapika-judgment": [
     [
@@ -420,11 +344,7 @@
     ]
   ],
   "chrollo-sun-moon": [
-    [
-      25,
-      "Les sceaux éclatent. L’adversaire tombe.",
-      "The seals burst. The opponent falls."
-    ]
+    [25, "Les sceaux éclatent. L’adversaire tombe.", "The seals burst. The opponent falls."]
   ],
   "rihan-physical": [
     [
@@ -439,11 +359,7 @@
     ]
   ],
   "beyond-curse-longhi": [
-    [
-      148,
-      "Un sceau apparaît sur le visage de Longhi.",
-      "A seal appears on Longhi’s face."
-    ],
+    [148, "Un sceau apparaît sur le visage de Longhi.", "A seal appears on Longhi’s face."],
     [
       356,
       "Une présence de Nen quitte Longhi et gagne le prince.",
@@ -451,11 +367,7 @@
     ]
   ],
   "beyond-curse-furykov": [
-    [
-      148,
-      "Un sceau apparaît sur le visage de Furykov.",
-      "A seal appears on Furykov’s face."
-    ],
+    [148, "Un sceau apparaît sur le visage de Furykov.", "A seal appears on Furykov’s face."],
     [
       356,
       "Une présence de Nen quitte Furykov et gagne le prince.",

@@ -4,10 +4,7 @@ import { halkenburgMindCanWake } from './halkenburgMindAccess'
 import type { HalkenburgSoulExchange, HalkenburgPassenger } from './halkenburgSoulTypes'
 
 /** A falling body is visible; the exact consciousness drawn from the group is private. */
-export function privateHalkenburgSouls(
-  state: FightState,
-  viewer: FightSide | null,
-): FightState {
+export function privateHalkenburgSouls(state: FightState, viewer: FightSide | null): FightState {
   const bodies = [
     state.player,
     state.opponent,
@@ -35,9 +32,7 @@ export function privateHalkenburgSouls(
       : [],
   )
   const privateGraphMind = <T extends { identity?: import('./types').FighterId }>(mind: T): T =>
-    mind.identity && visibleIdentities.has(mind.identity)
-      ? mind
-      : { ...mind, identity: undefined }
+    mind.identity && visibleIdentities.has(mind.identity) ? mind : { ...mind, identity: undefined }
   const privateState = mapPhysicalBodies(state, (body) => {
     const soul = body.halkenburgSoul
     const graph = body.halkSoul
@@ -103,6 +98,6 @@ function victimWakeReady(state: FightState, soul: HalkenburgSoulExchange): boole
     })
   )
 }
-function privatePassenger(passenger: HalkenburgPassenger | undefined, viewer: FightSide) {
+function privatePassenger(passenger: HalkenburgPassenger | undefined, viewer: FightSide | null) {
   return passenger && passenger.owner !== viewer ? { ...passenger, motion: undefined } : passenger
 }

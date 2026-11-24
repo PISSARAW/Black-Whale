@@ -34,14 +34,16 @@ export function createFastController(side: FightSide, seed = 17) {
     sequence = (Math.imul(sequence, 1664525) + 1013904223) >>> 0
     return sequence / 4294967296
   }
+  const resetRound = (state: FightState) => {
+    if (round === state.roundNumber) return
+    round = state.roundNumber
+    due = 12
+    specialDue = 0
+    lastMove = ''
+  }
   return (state: FightState, plan: TacticalPlan): FastDecision => {
     plan = resolvedTacticalPlan(state, side, plan)
-    if (round !== state.roundNumber) {
-      round = state.roundNumber
-      due = 12
-      specialDue = 0
-      lastMove = ''
-    }
+    resetRound(state)
     const input = reflexInput(state, side, plan)
     const continuation = continuedDecision({ state, side, input }, plan)
     if (continuation) return continuation

@@ -28,8 +28,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
     if (!held) {
       held = Array.from(
         {
-          length:
-            shot.kallutoPaper === 'serpent' ? PAPER_STREAM_PIECES : PAPER_SCATTER_PIECES,
+          length: shot.kallutoPaper === 'serpent' ? PAPER_STREAM_PIECES : PAPER_SCATTER_PIECES,
         },
         () => new THREE.Mesh(geometry, material),
       )
@@ -40,11 +39,7 @@ export function createKallutoPaperScene(options: EffectSceneOptions): FighterEff
     const direction = paperRibbonDirection(state, shot)
     held.forEach((mesh, trail) => {
       const fragment = paperRibbonFragment({ shot, index: trail, reduced, direction })
-      mesh.position.set(
-        worldX(shot.x) + fragment.x,
-        worldY(shot.y) + fragment.y,
-        0.35 + fragment.z,
-      )
+      mesh.position.set(worldX(shot.x) + fragment.x, worldY(shot.y) + fragment.y, 0.35 + fragment.z)
       mesh.rotation.z = fragment.rotation
       mesh.scale.setScalar(fragment.scale)
     })

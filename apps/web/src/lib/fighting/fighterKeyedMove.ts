@@ -1,3 +1,4 @@
+import { padailleArmedNormal } from './padailleNormalTools'
 import { padailleKeyedMove } from './padaillePoses'
 import { feitanEquipmentMove } from './feitanEquipmentPose'
 import { musseKeyedMove } from './mussePoses'
@@ -25,7 +26,7 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
     chrolloKeyedMove(fighter) ??
     benjaminKeyedMove(fighter) ??
     hisokaKeyedMove(fighter) ??
-    keyedMove(fighter.id, slot)
+    padailleArmedNormal(fighter, keyedMove(fighter.id, slot))
   const directed = rosterDirectionalMove(fighter, native)
   return {
     ...directed,

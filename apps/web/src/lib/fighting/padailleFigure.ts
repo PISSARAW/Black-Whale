@@ -74,7 +74,17 @@ export function addPadailleWeapon(options: {
   const axe = new THREE.Mesh(shapes.axe, metal)
   axe.position.z = -0.0275
   tools.axe.add(neck.clone(), axe)
+  addToolContact(THREE, tools.hammer, [0, -0.28, 0])
+  addToolContact(THREE, tools.drill, [0, -0.35, 0])
+  addToolContact(THREE, tools.axe, [0.28, -0.19, 0])
   MODELS.set(model.turns, { hand, tools })
+}
+
+function addToolContact(THREE: Three, tool: Group, position: [number, number, number]): void {
+  const contact = new THREE.Object3D()
+  contact.name = `${tool.name}-contact`
+  contact.position.set(...position)
+  tool.add(contact)
 }
 
 export function animatePadailleWeapon(

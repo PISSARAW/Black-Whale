@@ -5,6 +5,7 @@ import { gelSnakeNormalReach } from './gelSnakeNormals'
 import { luiniKnifeStrike } from './luiniKnife'
 import { usesFranklinBarrage } from './franklinAttack'
 import { moveById } from './movesets'
+import { padailleNormalTool } from './padailleNormalTools'
 import type { FightJoint, FightPose } from './fightPose'
 import type { ArcadeFighter, FightNenZone } from './types'
 
@@ -22,20 +23,23 @@ const LEGS: Record<'lead' | 'rear', FightJoint[]> = {
 export function fightStrikeLimb(fighter: ArcadeFighter, zone: FightNenZone): Limb {
   if (uncommittedLimb(fighter, zone)) return 'both'
   if (zone === 'hands' && usesFranklinBarrage(fighter)) return 'both'
-  if (
-    zone === 'hands' &&
-    (bodyguardFiring(fighter) ||
-      bodyguardPistolStrike(fighter) ||
-      gelSnakeNormalReach(fighter) ||
-      luiniKnifeStrike(fighter))
-  )
-    return 'right'
+  if (zone === 'hands' && rightHandStrike(fighter)) return 'right'
   const move = moveById(fighter.attack!.moveId)
   if (!move) return 'both'
   const { timeline } = fighterKeyedMove(fighter, move.slot)
   const contact = timeline.find((key) => key.phase === 'active' && key.at === 0)?.pose
   if (!contact) return 'both'
   return anatomicalLimb(fighter, { zone, contact })
+}
+
+function rightHandStrike(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    bodyguardFiring(fighter) ||
+    bodyguardPistolStrike(fighter) ||
+    gelSnakeNormalReach(fighter) ||
+    luiniKnifeStrike(fighter) ||
+    padailleNormalTool(fighter),
+  )
 }
 
 function anatomicalLimb(

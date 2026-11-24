@@ -45,6 +45,7 @@ const PISTOL_STRIKES: Partial<Record<FighterId, string>> = {
   furykov: 'furykov:backHeavy',
   longhi: 'longhi:backHeavy',
   musse: 'musse:standingHeavy',
+  sayird: 'sayird:backHeavy',
 }
 
 /** Close strikes with a physical contact point on the gripped service weapon. */

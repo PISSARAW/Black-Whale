@@ -4,6 +4,7 @@ import type { ArcadeFighter, FighterId } from './types'
 import { secondFiveLocomotion } from './secondFiveLocomotion'
 import { thirdFiveLocomotion } from './thirdFiveLocomotion'
 import { fourthFiveLocomotion } from './fourthFiveLocomotion'
+import { fifthFiveLocomotion } from './fifthFiveLocomotion'
 
 export interface CombatLocomotion {
   stride: number
@@ -119,7 +120,8 @@ export function combatLocomotion(fighter: ArcadeFighter): CombatLocomotion | und
     MOTION[fighter.id] ??
     secondFiveLocomotion(fighter) ??
     thirdFiveLocomotion(fighter) ??
-    fourthFiveLocomotion(fighter)
+    fourthFiveLocomotion(fighter) ??
+    fifthFiveLocomotion(fighter)
   )
 }
 

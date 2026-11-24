@@ -2,6 +2,7 @@ import { addPoses, scalePose, type FightPose } from './fightPose'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { THIRD_FIVE_NORMAL_STYLES } from './thirdFiveNormals'
 import { FOURTH_FIVE_NORMAL_STYLES } from './fourthFiveNormals'
+import { FIFTH_FIVE_NORMAL_STYLES } from './fifthFiveNormals'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
 
@@ -31,6 +32,7 @@ export interface NormalStyle {
 const NORMAL_STYLES: Partial<Record<FighterId, NormalStyle>> = {
   ...THIRD_FIVE_NORMAL_STYLES,
   ...FOURTH_FIVE_NORMAL_STYLES,
+  ...FIFTH_FIVE_NORMAL_STYLES,
   feitan: {
     prepareAt: 0.22,
     recoverAt: 0.28,

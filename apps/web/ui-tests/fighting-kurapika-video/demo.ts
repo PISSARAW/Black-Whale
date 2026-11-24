@@ -6,6 +6,8 @@ import {
   tickFight,
 } from '../../src/lib/fighting/engine'
 import { canStartFighterAttack } from '../../src/lib/fighting/fighterAttacks'
+import type { CinematicFrame } from '../../src/lib/fighting/cinematicTrack'
+import { fightWorldX } from '../../src/lib/fighting/fightCoordinates'
 import { toggleEmperorTime } from '../../src/lib/fighting/kurapikaActions'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
 import {
@@ -16,7 +18,7 @@ import {
   type MoveSlot,
 } from '../../src/lib/fighting/types'
 
-function fresh(distance = 12): FightState {
+function fresh(distance = 10): FightState {
   const initial = beginFight(
     createFight('kurapika', 'mizaistom', {
       mode: 'versus-local',
@@ -32,7 +34,7 @@ function fresh(distance = 12): FightState {
 }
 
 export function createKurapikaVideoDemo() {
-  let state = fresh(24)
+  let state = fresh(10)
   let frame = 0
   const moves = new Set<string>()
   let dashFrames = 0,
@@ -69,7 +71,7 @@ export function createKurapikaVideoDemo() {
     if (frame === 356) attack('player', 'forwardHeavy')
     if (frame === 410) attack('player', 'airHeavy')
 
-    if (frame === 480) reset(30)
+    if (frame === 480) reset(12)
     if (frame === 515) state = performAttack(state, 'player', 'ranged')
     if (frame === 585) attack('player', 'forwardSpecial')
     if (frame === 660) attack('player', 'downSpecial')
@@ -81,6 +83,13 @@ export function createKurapikaVideoDemo() {
     if (frame === 760) attack('player', 'backSpecial')
     if (frame === 850) attack('player', 'forwardSpecial')
     if (frame === 930) attack('player', 'standingHeavy')
+    if (frame === 990) attack('player', 'forwardLight')
+    if (frame === 1045) attack('opponent', 'standingHeavy')
+    if (frame === 1105) attack('player', 'standingHeavy')
+    if (frame === 1165) attack('player', 'airHeavy')
+    if (frame === 1225) attack('opponent', 'forwardHeavy')
+    if (frame === 1285) attack('player', 'forwardSpecial')
+    if (frame === 1360) attack('player', 'forwardHeavy')
   }
 
   function opponentCommands() {
@@ -127,6 +136,65 @@ export function createKurapikaVideoDemo() {
       phase: state.phase,
     }),
   }
+}
+
+export function cinematicFrame(state: FightState, frame: number): CinematicFrame {
+  const player = fightWorldX(state.player.x)
+  const opponent = fightWorldX(state.opponent.x)
+  const centre = (player + opponent) / 2
+  if (frame < 110) return { x: centre, lookY: 1.18, z: 4.55, intensity: 0.4, yaw: -0.035 }
+  if (frame < 205)
+    return {
+      x: player * 0.78 + centre * 0.22,
+      lookY: 1.28,
+      z: 3.35,
+      intensity: 1,
+      yaw: -0.1,
+    }
+  if (frame < 240) return { x: centre, lookY: 1.2, z: 3.65, intensity: 1, yaw: 0.08 }
+  if (frame < 480)
+    return {
+      x: centre,
+      lookY: state.player.y > 0 ? 1.48 : 1.18,
+      z: frame > 390 ? 3.7 : 3.95,
+      intensity: 0.9,
+      yaw: frame > 330 ? -0.07 : 0.05,
+    }
+  if (frame < 615)
+    return {
+      x: player * 0.65 + centre * 0.35,
+      lookY: 1.25,
+      z: 3.55,
+      intensity: 1,
+      yaw: -0.12,
+    }
+  if (frame < 720) return { x: centre, lookY: 1.2, z: 3.75, intensity: 0.9, yaw: 0.06 }
+  if (frame < 790)
+    return {
+      x: player * 0.82 + centre * 0.18,
+      lookY: 1.36,
+      z: 3.2,
+      intensity: 1,
+      yaw: -0.14,
+    }
+  if (frame < 960) return { x: centre, lookY: 1.22, z: 3.7, intensity: 1, yaw: 0.08 }
+  return {
+    x: centre + Math.sin(frame / 90) * 0.08,
+    lookY: state.player.y > 0 ? 1.42 : 1.2,
+    z: 3.72 + Math.sin(frame / 70) * 0.12,
+    intensity: 0.9,
+    yaw: Math.sin(frame / 75) * 0.075,
+  }
+}
+
+export function transitionOpacity(frame: number): number {
+  return Math.max(
+    0,
+    ...[0, 240, 480, 720, 960].map((cut) => {
+      const distance = Math.abs(frame - cut)
+      return distance >= 10 ? 0 : 1 - distance / 10
+    }),
+  )
 }
 
 function playerInput(state: FightState, frame: number): FightInput {

@@ -1,3 +1,4 @@
+import { gelSnakeNormalReach } from './gelSnakeNormals'
 import { throwKnockback } from './comboCapture'
 import type { GuardRequirement } from './combatProperties'
 import { openingFrameData } from './comboOpenings'
@@ -193,10 +194,12 @@ function movesetAttackData(
 ): AttackFrameData {
   const data = move.tuning
   const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
+  const snakeReach = gelSnakeNormalReach(fighter)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return openingFrameData(
     {
       ...data,
+      auraZone: snakeReach ? 'hands' : data.auraZone,
       guard: move.guard,
       canHitDowned: move.canHitDowned || Boolean(fighter.attack?.accel),
       knockback: throwKnockback(move, fighter, data.knockback),
@@ -207,7 +210,9 @@ function movesetAttackData(
         : data.startup + data.active + 6,
       box: {
         left: 1.4,
-        right: biscuitReach(fighter, data.reach) * zakuroBloodReachFactor(fighter),
+        right:
+          biscuitReach(fighter, data.reach + snakeReach) *
+          zakuroBloodReachFactor(fighter),
         bottom: attackBoxBottom(fighter, data.bottom, antiAir),
         top: antiAir ? Math.max(15, data.top) : data.top,
       },

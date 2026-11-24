@@ -1,6 +1,8 @@
 import { fighterKeyedMove } from './fighterKeyedMove'
 import { usesRightHandPose } from './fightHandConvention'
-import { bodyguardFiring } from './bodyguardFirearms'
+import { bodyguardFiring, bodyguardPistolStrike } from './bodyguardFirearms'
+import { gelSnakeNormalReach } from './gelSnakeNormals'
+import { luiniKnifeStrike } from './luiniKnife'
 import { usesFranklinBarrage } from './franklinAttack'
 import { moveById } from './movesets'
 import type { FightJoint, FightPose } from './fightPose'
@@ -20,7 +22,14 @@ const LEGS: Record<'lead' | 'rear', FightJoint[]> = {
 export function fightStrikeLimb(fighter: ArcadeFighter, zone: FightNenZone): Limb {
   if (uncommittedLimb(fighter, zone)) return 'both'
   if (zone === 'hands' && usesFranklinBarrage(fighter)) return 'both'
-  if (zone === 'hands' && bodyguardFiring(fighter)) return 'right'
+  if (
+    zone === 'hands' &&
+    (bodyguardFiring(fighter) ||
+      bodyguardPistolStrike(fighter) ||
+      gelSnakeNormalReach(fighter) ||
+      luiniKnifeStrike(fighter))
+  )
+    return 'right'
   const move = moveById(fighter.attack!.moveId)
   if (!move) return 'both'
   const { timeline } = fighterKeyedMove(fighter, move.slot)

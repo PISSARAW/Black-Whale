@@ -1,5 +1,5 @@
 import { hanzoBladeAttack } from './hanzoBlade'
-import { bodyguardFiring } from './bodyguardFirearms'
+import { bodyguardFiring, bodyguardPistolStrike } from './bodyguardFirearms'
 import type { ArcadeFighter } from './types'
 
 const PADAILLE_RIGHT_ARM = new Set([
@@ -16,8 +16,9 @@ export function usesRightHandPose(fighter: ArcadeFighter, key: string): boolean 
   if (hanzoBladeAttack(fighter)) return true
   if (fighter.id === 'bonolenov' && fighter.battleCantabile?.prologue) return true
   return (
-    ['chrollo', 'kurapika', 'luini', 'shizuku', 'kalluto', 'theta'].includes(fighter.id) ||
+    ['chrollo', 'kurapika', 'luini', 'shizuku', 'kalluto', 'theta', 'gel'].includes(fighter.id) ||
     bodyguardFiring(fighter) ||
+    bodyguardPistolStrike(fighter) ||
     key === 'roster-writing' ||
     key === 'roster-console'
   )

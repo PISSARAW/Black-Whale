@@ -1,0 +1,255 @@
+import type { NormalStyle } from './secondFiveNormals'
+import type { FighterId } from './types'
+
+export const SIXTH_FIVE_NORMAL_STYLES: Partial<Record<FighterId, NormalStyle>> = {
+  halkenburg: {
+    prepareAt: 0.28,
+    recoverAt: 0.47,
+    load: { chest: [0, 0.17, 0], rearElbow: [-0.3, 0, 0], rearKnee: [0.18, 0, 0] },
+    recover: { chest: [-0.07, -0.11, 0], rearElbow: [-0.31, 0, 0], rearKnee: [0.14, 0, 0] },
+    impact: {
+      standingLight: {
+        chest: [-0.02, -0.13, 0],
+        leadPalm: [-0.15, 0.21, 0],
+        rearElbow: [-0.26, 0, 0],
+      },
+      standingHeavy: {
+        pelvis: [0, -0.18, 0],
+        chest: [0.09, -0.13, 0],
+        rearShoulder: [0.17, 0, -0.12],
+      },
+      lowLight: { body: [0.13, 0, 0], leadWrist: [-0.17, 0.12, 0], rearHip: [-0.11, 0, 0] },
+      lowHeavy: { pelvis: [0, -0.2, 0], leadPalm: [-0.16, 0.17, 0], rearKnee: [0.21, 0, 0] },
+      airLight: { chest: [-0.04, -0.18, 0.1], rearElbow: [-0.32, 0, 0], rearHip: [0.23, 0, -0.1] },
+      airHeavy: {
+        chest: [-0.11, -0.19, 0.09],
+        leadPalm: [-0.22, 0.24, 0],
+        rearElbow: [-0.41, 0, 0],
+      },
+      forwardLight: { body: [0.11, 0, 0], leadPalm: [-0.18, 0.24, 0.1], rearHip: [0.14, 0, 0] },
+      forwardHeavy: { pelvis: [0, -0.25, 0], chest: [0.14, -0.14, 0], rearKnee: [0.16, 0, 0] },
+      backHeavy: { body: [-0.17, 0, 0], leadPalm: [-0.23, 0.26, 0.11], rearKnee: [0.25, 0, 0] },
+    },
+    contact: {
+      standingHeavy: {
+        leadShoulder: [-0.71, -0.17, 0.14],
+        leadElbow: [-0.45, 0, 0],
+        leadWrist: [0.24, 0.25, -0.24],
+      },
+      airHeavy: {
+        leadShoulder: [-0.91, 0, 0.17],
+        leadElbow: [0.05, 0, 0],
+        rearShoulder: [0.13, 0.24, -0.19],
+        rearElbow: [-0.62, 0, 0],
+        leadHip: [-0.17, 0, 0.13],
+        rearHip: [0.25, 0, -0.12],
+        rearKnee: [0.28, 0, 0],
+      },
+    },
+  },
+  gel: {
+    prepareAt: 0.2,
+    recoverAt: 0.49,
+    load: { chest: [0.03, 0.24, 0.13], leadElbow: [-0.5, 0, 0], leadWrist: [0.16, 0.23, 0.11] },
+    recover: {
+      body: [-0.1, 0, 0.09],
+      chest: [0, 0.17, 0],
+      leadElbow: [-0.39, 0, 0],
+      leadWrist: [0.17, 0.16, 0.13],
+    },
+    impact: {
+      standingLight: {
+        chest: [-0.02, -0.14, 0.09],
+        leadWrist: [-0.17, 0.19, 0.12],
+        rearElbow: [-0.23, 0, 0],
+      },
+      standingHeavy: {
+        pelvis: [0, -0.27, 0.08],
+        leadWrist: [0.24, -0.19, -0.21],
+        rearShoulder: [0.23, 0, -0.21],
+      },
+      lowLight: { body: [0.12, 0, 0.13], leadWrist: [-0.22, 0.25, 0.13], rearHip: [-0.12, 0, 0] },
+      lowHeavy: { pelvis: [0, -0.29, 0.14], leadElbow: [-0.28, 0, 0], rearKnee: [0.21, 0, 0] },
+      airLight: {
+        chest: [-0.11, -0.16, 0.14],
+        leadWrist: [-0.24, 0.18, 0.13],
+        rearHip: [0.23, 0, -0.14],
+      },
+      airHeavy: {
+        body: [0.04, 0, 0.2],
+        chest: [0.04, -0.28, 0.11],
+        leadWrist: [0.19, -0.16, -0.21],
+      },
+      forwardLight: {
+        chest: [0.11, -0.16, 0.08],
+        leadPalm: [-0.27, 0.21, 0.08],
+        rearHip: [0.16, 0, 0],
+      },
+      forwardHeavy: { pelvis: [0, -0.29, 0.12], chest: [0.07, -0.11, 0], rearKnee: [0.22, 0, 0] },
+      backHeavy: {
+        body: [-0.18, 0, 0.17],
+        chest: [0, 0.24, 0],
+        leadWrist: [0.25, 0.17, 0.21],
+        rearKnee: [0.24, 0, 0],
+      },
+    },
+    contact: {
+      standingHeavy: {
+        leadShoulder: [-0.8, -0.35, 0.13],
+        leadElbow: [-0.45, 0, 0],
+        leadWrist: [0.19, -0.25, -0.16],
+      },
+      airHeavy: {
+        leadShoulder: [-0.91, 0.13, 0.28],
+        leadElbow: [-0.32, 0, 0],
+        rearShoulder: [0.22, 0.1, -0.32],
+        rearElbow: [-0.43, 0, 0],
+        leadHip: [-0.22, 0, 0.17],
+        rearHip: [0.19, 0, -0.14],
+        leadKnee: [0.22, 0, 0],
+        rearKnee: [0.33, 0, 0],
+      },
+    },
+  },
+  lynch: {
+    prepareAt: 0.17,
+    recoverAt: 0.37,
+    load: { pelvis: [0, 0.22, 0], chest: [0.09, 0.14, 0], rearElbow: [-0.3, 0, 0] },
+    recover: { chest: [0.09, -0.14, 0], leadElbow: [-0.3, 0, 0], rearKnee: [0.18, 0, 0] },
+    impact: {
+      standingLight: {
+        chest: [0.09, -0.13, 0],
+        rearElbow: [-0.31, 0, 0],
+        leadWrist: [-0.17, 0, 0],
+      },
+      standingHeavy: { pelvis: [0, -0.26, 0], chest: [0.12, -0.16, 0], rearHip: [0.17, 0, 0] },
+      lowLight: { body: [0.15, 0, 0], chest: [0.09, -0.14, 0], rearKnee: [0.17, 0, 0] },
+      lowHeavy: { pelvis: [0, -0.26, 0], leadElbow: [-0.24, 0, 0], rearKnee: [0.23, 0, 0] },
+      airLight: { chest: [0.13, -0.18, 0.05], rearElbow: [-0.3, 0, 0], rearHip: [0.24, 0, -0.11] },
+      airHeavy: { chest: [0.15, -0.22, 0.13], leadElbow: [-0.24, 0, 0], rearWrist: [-0.18, 0, 0] },
+      forwardLight: { body: [0.14, 0, 0], rearHip: [0.17, 0, 0], rearElbow: [-0.27, 0, 0] },
+      forwardHeavy: { pelvis: [0, -0.27, 0], chest: [0.15, -0.17, 0], rearWrist: [-0.21, 0, 0] },
+      backHeavy: { body: [-0.13, 0, 0.09], chest: [0.08, 0.16, 0], rearKnee: [0.23, 0, 0] },
+    },
+    contact: {
+      airHeavy: {
+        leadShoulder: [-0.37, 0.14, 0.27],
+        leadElbow: [-0.39, 0, 0],
+        rearShoulder: [-1.15, -0.24, -0.18],
+        rearElbow: [-0.28, 0, 0],
+        leadHip: [-0.2, 0, 0.13],
+        rearHip: [0.23, 0, -0.12],
+        rearKnee: [0.36, 0, 0],
+      },
+    },
+  },
+  luini: {
+    prepareAt: 0.33,
+    recoverAt: 0.24,
+    load: { chest: [0, 0.22, 0.09], leadElbow: [-0.38, 0, 0], leadWrist: [0.18, 0.2, 0.1] },
+    recover: { body: [-0.09, 0, 0.14], chest: [0, 0.16, 0], leadElbow: [-0.36, 0, 0] },
+    impact: {
+      standingLight: {
+        chest: [0.08, -0.14, 0.09],
+        leadWrist: [-0.21, 0.16, 0.12],
+        rearElbow: [-0.19, 0, 0],
+      },
+      standingHeavy: {
+        pelvis: [0, -0.26, 0.12],
+        leadWrist: [0.2, -0.21, -0.21],
+        rearShoulder: [0.14, 0, -0.23],
+      },
+      lowLight: { body: [0.12, 0, 0.17], leadWrist: [-0.22, 0.17, 0.11], rearHip: [-0.14, 0, 0] },
+      lowHeavy: { pelvis: [0, -0.25, 0.12], leadElbow: [-0.31, 0, 0], rearKnee: [0.25, 0, 0] },
+      airLight: {
+        chest: [-0.11, 0.19, 0.15],
+        leadWrist: [-0.23, 0.18, 0.14],
+        rearHip: [0.24, 0, -0.13],
+      },
+      airHeavy: {
+        body: [0.1, 0, 0.23],
+        chest: [0.08, -0.27, 0.12],
+        leadWrist: [0.25, -0.23, -0.19],
+      },
+      forwardLight: {
+        chest: [0.09, -0.21, 0.07],
+        leadWrist: [-0.27, 0.18, 0.09],
+        rearHip: [0.13, 0, 0],
+      },
+      forwardHeavy: {
+        pelvis: [0, -0.32, 0.13],
+        leadWrist: [0.18, -0.25, -0.16],
+        rearShoulder: [0.24, 0, -0.25],
+      },
+      backHeavy: {
+        body: [-0.19, 0, 0.2],
+        chest: [-0.07, 0.23, 0],
+        leadWrist: [0.24, 0.25, 0.21],
+        rearKnee: [0.23, 0, 0],
+      },
+    },
+    contact: {
+      standingLight: { leadShoulder: [-1.06, 0.11, 0.12], leadElbow: [0.1, 0, 0] },
+      standingHeavy: { leadShoulder: [-0.82, -0.29, -0.18], leadElbow: [-0.24, 0, 0] },
+      airHeavy: {
+        leadShoulder: [-0.92, -0.21, 0.14],
+        leadElbow: [-0.26, 0, 0],
+        rearShoulder: [0.25, 0.13, -0.26],
+        rearElbow: [-0.41, 0, 0],
+        leadHip: [-0.21, 0, 0.13],
+        rearHip: [0.24, 0, -0.16],
+        rearKnee: [0.31, 0, 0],
+      },
+    },
+  },
+  bill: {
+    prepareAt: 0.24,
+    recoverAt: 0.45,
+    load: { chest: [0.07, 0.13, 0], leadPalm: [-0.16, 0.2, 0.1], rearElbow: [-0.29, 0, 0] },
+    recover: { chest: [0.1, -0.09, 0], leadPalm: [-0.2, 0.21, 0.09], rearKnee: [0.17, 0, 0] },
+    impact: {
+      standingLight: {
+        chest: [0.065, -0.12, 0],
+        leadWrist: [-0.19, 0.11, 0],
+        rearElbow: [-0.22, 0, 0],
+      },
+      standingHeavy: {
+        pelvis: [0, -0.23, 0],
+        rearShoulder: [-0.19, 0, -0.17],
+        rearKnee: [0.18, 0, 0],
+      },
+      lowLight: { body: [0.15, 0, 0], leadPalm: [-0.2, 0.24, 0.09], rearHip: [-0.12, 0, 0] },
+      lowHeavy: { pelvis: [0, -0.21, 0], leadElbow: [-0.2, 0, 0], rearKnee: [0.2, 0, 0] },
+      airLight: {
+        chest: [0.08, -0.12, 0.11],
+        leadPalm: [-0.21, 0.18, 0.09],
+        rearKnee: [0.22, 0, 0],
+      },
+      airHeavy: {
+        chest: [0.14, -0.12, 0],
+        leadPalm: [-0.22, 0.22, 0.12],
+        rearPalm: [-0.17, -0.15, -0.1],
+      },
+      forwardLight: { body: [0.15, 0, 0], leadPalm: [-0.24, 0.21, 0.09], rearHip: [0.14, 0, 0] },
+      forwardHeavy: { pelvis: [0, -0.25, 0], chest: [0.16, -0.17, 0], rearHip: [0.16, 0, 0] },
+      backHeavy: {
+        body: [-0.12, 0, 0],
+        chest: [0.08, 0.15, 0],
+        leadWrist: [0.22, 0.19, -0.15],
+        rearKnee: [0.23, 0, 0],
+      },
+    },
+    contact: {
+      airHeavy: {
+        leadShoulder: [-0.71, 0.14, 0.24],
+        leadElbow: [-0.25, 0, 0],
+        rearShoulder: [-0.57, -0.12, -0.21],
+        rearElbow: [-0.39, 0, 0],
+        leadHip: [0.19, 0, 0.13],
+        rearHip: [-0.2, 0, -0.13],
+        rearKnee: [0.32, 0, 0],
+      },
+      backHeavy: { leadShoulder: [-0.73, -0.17, 0.17], leadElbow: [-0.34, 0, 0] },
+    },
+  },
+}

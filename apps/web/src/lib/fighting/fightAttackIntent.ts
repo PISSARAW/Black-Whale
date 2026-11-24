@@ -4,14 +4,16 @@ import { canUseRangedAttack } from './projectiles'
 import { IN_CHARGE_FRAMES } from './nen'
 import { attackAuraCost } from './fightAttackCost'
 import { bodyguardPhysicalShot } from './bodyguardFirearms'
+import { gelSnakeNormalAvailable } from './gelSnakeNormals'
 import type { ArcadeFighter, AttackKind } from './types'
 
 export function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string) {
   const move = moveById(moveId)
   const usesHatsu = move ? ['special', 'finisher'].includes(move.category) : kind === 'special'
+  const snake = (kind === 'light' || kind === 'heavy') && gelSnakeNormalAvailable(fighter, moveId)
   const concealed = concealedHatsu(fighter, kind, moveId)
   return {
-    hatsuSource: usesHatsu ? hatsuSourceFor(fighter, moveId) : null,
+    hatsuSource: usesHatsu || snake ? hatsuSourceFor(fighter, moveId) : null,
     concealed,
     resourceReady: move
       ? fighter.aura >= attackAuraCost({ fighter, kind, moveId, concealed })

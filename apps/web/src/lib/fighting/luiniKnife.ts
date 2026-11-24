@@ -37,6 +37,7 @@ export function addLuiniKnife(options: {
   const blade = new THREE.Mesh(shapes.blade, glow(0xc3cbd3, 1))
   blade.position.y = -0.29
   const point = new THREE.Mesh(shapes.point, glow(0xc3cbd3, 1))
+  point.name = 'luini-knife-point'
   point.rotation.z = Math.PI
   point.position.y = -0.53
   root.add(grip, guard, blade, point)
@@ -47,6 +48,6 @@ export function addLuiniKnife(options: {
 export function luiniKnifeStrike(fighter: ArcadeFighter): boolean {
   const attack = fighter.attack
   if (fighter.id !== 'luini' || fighter.weaponsConfiscated || !attack) return false
-  if (attack.variant === 'low') return false
-  return attack.kind === 'light' || (attack.kind === 'heavy' && attack.variant !== 'air')
+  if (attack.variant === 'low' || attack.variant === 'throw') return false
+  return attack.kind === 'light' || attack.kind === 'heavy'
 }

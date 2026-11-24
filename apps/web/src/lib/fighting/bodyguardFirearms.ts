@@ -39,6 +39,16 @@ export function bodyguardFiring(fighter: ArcadeFighter): boolean {
   return bodyguardPhysicalShot(fighter, fighter.attack?.kind ?? 'light')
 }
 
+/** Two close strikes use the gripped service weapon as a physical contact prop. */
+export function bodyguardPistolStrike(fighter: ArcadeFighter): boolean {
+  if (fighter.weaponsConfiscated || fighter.attack?.kind !== 'heavy') return false
+  const move = fighter.attack.moveId
+  return (
+    (fighter.id === 'halkenburg' && move === 'halkenburg:standingHeavy') ||
+    (fighter.id === 'bill' && move === 'bill:backHeavy')
+  )
+}
+
 /** Release height follows the compact bodies; the gun stays physical in either Biscuit form. */
 export function bodyguardShotHeight(fighter: ArcadeFighter, fallback: number): number {
   if (fighter.id === 'biscuit') return fighter.biscuitTrueForm ? 14.4 : 5.3

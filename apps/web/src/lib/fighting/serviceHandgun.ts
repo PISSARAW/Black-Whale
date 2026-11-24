@@ -1,6 +1,7 @@
 import type { Group, Object3D } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import { attackData } from './frameData'
+import { bodyguardPistolStrike } from './bodyguardFirearms'
 import type { ArcadeFighter, FighterId } from './types'
 
 type Three = HumanFigureBuild['THREE']
@@ -20,7 +21,7 @@ function pistolShapes(THREE: Three) {
   return shapes
 }
 
-/** A physical service weapon, drawn only for a shot; its holster stays with the body. */
+/** A physical service weapon drawn for shots and dedicated close strikes. */
 export function addServiceHandgun(options: {
   THREE: Three
   glow: HumanFigureBuild['glow']
@@ -44,7 +45,10 @@ export function addServiceHandgun(options: {
   const guard = new THREE.Mesh(shapes.guard, glow(0x333a40, 1))
   guard.position.set(0, -0.015, 0.1)
   guard.rotation.y = Math.PI / 2
-  held.add(slide, grip, guard)
+  const butt = new THREE.Object3D()
+  butt.name = `${owner}-pistol-butt`
+  butt.position.set(0, -0.082, 0.038)
+  held.add(slide, grip, guard, butt)
   const stowed = held.clone()
   stowed.name = `${owner}-holstered-handgun`
   stowed.position.set(hand === 'left' ? -0.22 : 0.22, 0.75, 0.05)
@@ -71,8 +75,10 @@ export function animateServiceHandgun(figure: Object3D, fighter: ArcadeFighter):
     return
   }
   const firing = fighter.attack?.kind === 'ranged'
-  pistol.held.visible = firing
-  pistol.stowed.visible = !firing && !fighter.hanzoProjection
+  const striking = bodyguardPistolStrike(fighter)
+  pistol.held.visible = firing || striking
+  pistol.stowed.visible = !pistol.held.visible && !fighter.hanzoProjection
+  pistol.held.rotation.z = striking ? Math.PI / 2 : 0
   const frame = fighter.attack?.frame ?? 0
   const startup = firing ? attackData('ranged', fighter).startup : 0
   pistol.flash.visible = firing && frame >= startup && frame < startup + 2

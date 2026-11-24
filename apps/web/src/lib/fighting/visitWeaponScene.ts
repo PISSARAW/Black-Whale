@@ -1,5 +1,5 @@
 import { attackData, attackPhase, attackProgress } from './frameData'
-import type { Object3D } from 'three'
+import type { Object3D, Vector3 } from 'three'
 import type { ArcadeFighter, FightSide } from './types'
 import {
   visitAttackSource,
@@ -10,6 +10,7 @@ import {
 } from './visitSceneKit'
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import { fineControlEase } from './fineControlAnchors'
+import { gelSnakeNormalReach } from './gelSnakeNormals'
 
 /** Shared conjured props follow the actual user's rig, including active page/loan uses. */
 export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffectScene {
@@ -34,7 +35,12 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
           staff.root.rotateZ(fighter.facing * staffSwing(fighter))
         }
         const attack = fighter.attack
-        if (!attack || visitAttackSource(fighter) !== 'gel' || attack.kind !== 'special') continue
+        const normal = gelSnakeNormalReach(fighter) > 0
+        if (
+          !attack ||
+          (!normal && (attack.kind !== 'special' || visitAttackSource(fighter) !== 'gel'))
+        )
+          continue
         const snake = pool.get(`gel-snake-arm:${side}`, {
           model: 'snake-arm',
           anchor: 'floor',
@@ -44,9 +50,14 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
         placeVisitHand(options, { state, side, root: snake.root })
         hideSnakeHand(options, side, hiddenHands)
         const target = state[side === 'player' ? 'opponent' : 'player']
-        direction.set(options.worldX(target.x) - snake.root.position.x, 0.03, 0).normalize()
+        let extension = armExtension(fighter)
+        if (normal) {
+          const length = aimNormalSnake(direction, { options, fighter, wrist: snake.root.position })
+          extension *= length / (snake.root.scale.y * 1.3)
+        } else {
+          direction.set(options.worldX(target.x) - snake.root.position.x, 0.03, 0).normalize()
+        }
         snake.root.quaternion.setFromUnitVectors(up, direction)
-        const extension = armExtension(fighter)
         snake.body.scale.y = extension
         const head = snake.joints.get('gel-snake-head')!
         head.rotation.set(0, direction.x >= 0 ? -Math.PI / 2 : Math.PI / 2, 0)
@@ -102,6 +113,21 @@ function saiyuStaffCarriage(fighter: ArcadeFighter): number {
   if (fighter.pose === 'guard') return 0.63
   if (fighter.y > 0) return -0.59
   return -0.12
+}
+
+function aimNormalSnake(
+  direction: Vector3,
+  aim: { options: EffectSceneOptions; fighter: ArcadeFighter; wrist: Vector3 },
+): number {
+  const { options, fighter, wrist } = aim
+  const { box } = attackData(fighter.attack!.kind, fighter)
+  const x = options.worldX(fighter.x + fighter.facing * box.right)
+  const y = options.worldY(fighter.y + (box.top + box.bottom) / 2)
+  const forward = Math.max(0.16, (x - wrist.x) * fighter.facing)
+  direction.set(fighter.facing * forward, y - wrist.y, 0)
+  const length = direction.length()
+  direction.normalize()
+  return length
 }
 
 function armExtension(fighter: ArcadeFighter): number {

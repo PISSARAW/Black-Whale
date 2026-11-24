@@ -1,3 +1,4 @@
+import { gelSnakeNormalAvailable } from './gelSnakeNormals'
 import { interruptHanzoBlade } from './hanzoBlade'
 import { cyclotronAllowsAttack } from './phinksCyclotron'
 import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
@@ -160,8 +161,10 @@ function attackNenOrigin(options: Parameters<typeof startFighterAttack>[0]) {
 }
 
 function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
-  return options.kind === 'special'
-    ? (options.hatsuSource ?? hatsuSourceFor(options.fighter, options.moveId))
+  const { fighter, kind, moveId } = options
+  const snake = (kind === 'light' || kind === 'heavy') && gelSnakeNormalAvailable(fighter, moveId)
+  return kind === 'special' || snake
+    ? (options.hatsuSource ?? hatsuSourceFor(fighter, moveId))
     : null
 }
 

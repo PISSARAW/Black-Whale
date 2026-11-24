@@ -1,3 +1,5 @@
+import { meleeWeaponContact } from './meleeWeaponContact'
+import { gelSnakeNormalReach } from './gelSnakeNormals'
 import { settleObservedPose } from './fightSettledPose'
 import { constrainFightRig } from './fightAnatomy'
 import { Vector3, type Object3D } from 'three'
@@ -59,7 +61,8 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
           fighter.attack!.frame < data.startup + data.active,
         identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
       })
-      if (!joint) alignStrike(ownRig, fighter, { target, weight })
+      if (!joint && !gelSnakeNormalReach(fighter))
+        alignStrike(ownRig, fighter, { target, weight })
       pending.push({ side, zone, target })
     }
     // This is the final pose boundary: support IK, contact IK, passive arms,
@@ -117,7 +120,7 @@ export function fightContactSurface(
 
 function strikeRoot(rig: FightRig, fighter: ArcadeFighter, joint?: StrikeContactJoint): Object3D {
   if (joint) return authoredContactJoint(rig, fighter.facing, joint)
-  const feet = strikingFeet(fighter)
+  const feet = !meleeWeaponContact(rig.human.figure, fighter) && strikingFeet(fighter)
   const limb = fightStrikeLimb(fighter, feet ? 'feet' : 'hands')
   const index = limb === 'left' ? 0 : 1
   return feet ? rig.human.legs[index] : rig.human.arms[index]
@@ -147,7 +150,7 @@ function alignStrike(
   fighter: ArcadeFighter,
   options: { target: Vector3; weight: number },
 ) {
-  const feet = strikingFeet(fighter)
+  const feet = !meleeWeaponContact(rig.human.figure, fighter) && strikingFeet(fighter)
   const limb = fightStrikeLimb(fighter, feet ? 'feet' : 'hands')
   const indices = limb === 'both' ? [0, 1] : [limb === 'left' ? 0 : 1]
   for (const index of indices) {
@@ -164,10 +167,12 @@ function strikeParts(
   options: { fighter: ArcadeFighter; feet: boolean; index: number },
 ) {
   const { fighter, feet, index } = options
+  const figure = rig.human.figure
   const tool =
-    fighter.attack?.moveId === 'shizuku:standingHeavy'
-      ? rig.human.figure.getObjectByName('shizuku-blinky')
-      : null
+    meleeWeaponContact(figure, fighter) ??
+    (fighter.attack?.moveId === 'shizuku:standingHeavy'
+      ? figure.getObjectByName('shizuku-blinky')
+      : undefined)
   return {
     root: feet ? rig.human.legs[index] : rig.human.arms[index],
     hinge: feet ? rig.human.knees[index] : rig.elbows[index],

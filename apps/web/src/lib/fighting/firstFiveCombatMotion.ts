@@ -5,6 +5,7 @@ import { secondFiveLocomotion } from './secondFiveLocomotion'
 import { thirdFiveLocomotion } from './thirdFiveLocomotion'
 import { fourthFiveLocomotion } from './fourthFiveLocomotion'
 import { fifthFiveLocomotion } from './fifthFiveLocomotion'
+import { sixthFiveLocomotion } from './sixthFiveLocomotion'
 
 export interface CombatLocomotion {
   stride: number
@@ -121,7 +122,8 @@ export function combatLocomotion(fighter: ArcadeFighter): CombatLocomotion | und
     secondFiveLocomotion(fighter) ??
     thirdFiveLocomotion(fighter) ??
     fourthFiveLocomotion(fighter) ??
-    fifthFiveLocomotion(fighter)
+    fifthFiveLocomotion(fighter) ??
+    sixthFiveLocomotion(fighter)
   )
 }
 

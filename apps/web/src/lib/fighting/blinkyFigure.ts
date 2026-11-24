@@ -2,6 +2,7 @@ import { blinkyAvailable, blinkyCommand } from './blinky'
 import { attackPhase } from './frameData'
 import { blinkyStrikeArc } from './shizukuStrikeMotion'
 import { supportBlinkyGrip } from './shizukuGrip'
+import { blinkyCarryAngle } from './shizukuToolMotion'
 import type { ArcadeFighter } from './types'
 import type { Object3D, Quaternion } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
@@ -37,7 +38,7 @@ export function animateBlinky(figure: Object3D, fighter: ArcadeFighter, seconds:
   // Utility commands aim upright; physical strikes carry the tool through its authored arc.
   model.root.parent!.getWorldQuaternion(model.root.quaternion).invert()
   model.root.quaternion.multiply(figure.getWorldQuaternion(held.orientation))
-  const arc = blinkyStrikeArc(fighter)
+  const arc = blinkyStrikeArc(fighter) ?? blinkyCarryAngle(fighter)
   if (arc) {
     model.root.rotateX(arc[0])
     model.root.rotateY(arc[1])

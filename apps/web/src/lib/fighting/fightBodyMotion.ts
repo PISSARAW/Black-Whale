@@ -76,7 +76,7 @@ import {
 import { withLocomotionInertia } from './fightLocomotionInertia'
 import { withSecondaryMotion } from './fightSecondaryMotion'
 import { movementTechPose } from './movementTechPoses'
-import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
+import { hanzoAstralRestPlan, hanzoAstralStrikePlan } from './hanzoAstralMotion'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
 import { strikingStance } from './strikingLegs'
@@ -272,15 +272,11 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
   const easterEgg = easterEggBodyPlan(fighter)
   if (easterEgg) return easterEgg
   const special =
-    pluggingWoundsPlan(fighter) ?? biohazardBodyPlan(fighter) ?? techniqueBodyPlan(fighter, context)
+    pluggingWoundsPlan(fighter) ??
+    biohazardBodyPlan(fighter) ??
+    techniqueBodyPlan(fighter, context) ??
+    hanzoAstralRestPlan(fighter, context.seconds)
   if (special) return special
-  if (fighter.hanzoProjection && !fighter.attack)
-    return {
-      pose: HANZO_FLOAT_POSE,
-      plant: false,
-      key: 'astral-double',
-      blend: 0.12,
-    }
   const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
   const personal = chrolloBodyStance(fighter, standing)
   if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
@@ -379,6 +375,8 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   if (!attack || hasTechedThrow(fighter)) return null
   const variant = attack.variant ?? 'standing'
   const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
+  const astral = hanzoAstralStrikePlan(fighter, slot, fraction)
+  if (astral) return astral
   const { timeline, authored } = fighterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
@@ -406,7 +404,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: variant !== 'air' && fighter.y <= 0,
+    plant: !fighter.hanzoProjection && variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
     ...(goldenSupport ?? support ?? waveTwoSupport ?? waveThreeSupport),

@@ -236,8 +236,10 @@ export function prejumpPose(fighter: ArcadeFighter, standing: FightPose): Locomo
     pose: addPoses(
       standing,
       scalePose(
-        PHYSICAL_LOCOMOTION[fighter.id]?.takeoff ??
-          addPoses(PREJUMP, style?.takeoff ?? style?.jump ?? {}),
+        addPoses(
+          PHYSICAL_LOCOMOTION[fighter.id]?.takeoff ?? PREJUMP,
+          style?.takeoff ?? style?.jump ?? {},
+        ),
         easeInOut(compression) * profile.jump,
       ),
     ),
@@ -256,8 +258,10 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
     pose: addPoses(
       standing,
       scalePose(
-        PHYSICAL_LOCOMOTION[fighter.id]?.landing ??
-          addPoses(LANDING, style?.landing ?? style?.jump ?? {}),
+        addPoses(
+          PHYSICAL_LOCOMOTION[fighter.id]?.landing ?? LANDING,
+          style?.landing ?? style?.jump ?? {},
+        ),
         easeOut(compression) * profile.landing,
       ),
     ),
@@ -295,9 +299,9 @@ export function crouchPose(fighter: ArcadeFighter): FightPose {
 
 export function locomotionGuard(fighter: ArcadeFighter, standing: FightPose): FightPose {
   const signature = combatLocomotion(fighter)
-  if (signature) return addPoses(defensiveStance(standing), signature.guard)
   const guard = PHYSICAL_LOCOMOTION[fighter.id]?.guard
-  return guard ? addPoses(standing, guard) : defensiveStance(standing)
+  const base = guard ? addPoses(standing, guard) : defensiveStance(standing)
+  return signature ? addPoses(base, signature.guard) : base
 }
 
 function dashAccent(fighter: ArcadeFighter, progress: number, forward: boolean): FightPose {

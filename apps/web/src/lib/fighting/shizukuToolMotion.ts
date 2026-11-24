@@ -1,5 +1,17 @@
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { Turn } from './fightPose'
+import { shufflePhase } from './fightShuffleStep'
+import type { ArcadeFighter } from './types'
+
+export function blinkyCarryAngle(fighter: ArcadeFighter): Turn | undefined {
+  if (fighter.attack) return undefined
+  if (fighter.pose === 'guard') return [-0.49, 0.37, 0.15]
+  if (fighter.pose === 'jump') return [0.27, 0.15, -0.23]
+  if (fighter.pose === 'walk') {
+    const swing = Math.sin(shufflePhase(fighter))
+    return [0.13 + 0.1 * swing, 0.07 * swing, -0.12 + 0.06 * swing]
+  }
+}
 
 function toolArc(load: Turn, contact: Turn, follow: Turn): MoveTimeline {
   return [

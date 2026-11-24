@@ -1,5 +1,7 @@
+import { spearNormal } from './bonolenovArmedProfile'
 import { meleeWeaponContact } from './meleeWeaponContact'
 import { gelSnakeNormalReach } from './gelSnakeNormals'
+import { spearContactPoint } from './bonolenovSpear'
 import { settleObservedPose } from './fightSettledPose'
 import { constrainFightRig } from './fightAnatomy'
 import { Vector3, type Object3D } from 'three'
@@ -40,8 +42,10 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       constrainFightRig(fightRigOf(own))
       const slot = moveById(fighter.attack?.moveId)?.slot
       const authored = slot ? authoredStrikeDirection(fighter.id, slot) : undefined
+      const spear = spearNormal(fighter, slot)
       const weapon = meleeWeaponContact(own.figure, fighter)
-      const joint = weapon || typeof authored !== 'object' ? undefined : authored.contactJoint
+      const joint =
+        spear || weapon || typeof authored !== 'object' ? undefined : authored.contactJoint
       const weight = contactWeight(fighter, state[other], Boolean(authored))
       if (weight <= 0) continue
       const zone = anatomicalContactZone(
@@ -53,6 +57,7 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       const fresh = fightContactSurface(fightRigOf(rival), zone, {
         facing: fighter.facing,
         near:
+          (spear && spearContactPoint(ownRig, spear.contact)) ??
           weapon?.getWorldPosition(new Vector3()) ??
           strikeRoot(ownRig, fighter, joint).getWorldPosition(new Vector3()),
       })
@@ -64,7 +69,7 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
           fighter.attack!.frame < data.startup + data.active,
         identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
       })
-      if (!joint && !gelSnakeNormalReach(fighter))
+      if (!joint && !spear && !gelSnakeNormalReach(fighter))
         alignStrike(ownRig, fighter, { target, weight })
       pending.push({ side, zone, target })
     }

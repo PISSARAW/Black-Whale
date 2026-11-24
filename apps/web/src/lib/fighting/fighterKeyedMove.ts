@@ -1,3 +1,4 @@
+import { bonolenovArmedNormal } from './bonolenovArmedNormals'
 import { padailleArmedNormal } from './padailleNormalTools'
 import { padailleKeyedMove } from './padaillePoses'
 import { feitanEquipmentMove } from './feitanEquipmentPose'
@@ -22,6 +23,7 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
   const native =
     feitanEquipmentMove(fighter) ??
     padailleKeyedMove(fighter) ??
+    bonolenovArmedNormal(fighter, slot) ??
     musseKeyedMove(fighter) ??
     chrolloKeyedMove(fighter) ??
     benjaminKeyedMove(fighter) ??

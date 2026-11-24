@@ -31,11 +31,10 @@ export function battleTechniqueAvailable(fighter: ArcadeFighter, moveId?: string
   )
 }
 
-export function battleMindAvailable(fighter: ArcadeFighter): boolean {
+export function battleMindAvailable(fighter: ArcadeFighter, holdingSpear = false): boolean {
   return (
-    fighter.hitStun === 0 &&
-    fighter.blockStun === 0 &&
-    fighter.knockdownFrames === 0 &&
+    (holdingSpear ||
+      (fighter.hitStun === 0 && fighter.blockStun === 0 && fighter.knockdownFrames === 0)) &&
     !fighter.hanzoProjection &&
     !musicPacifies(fighter) &&
     ![
@@ -99,10 +98,8 @@ export function battleInput(
   fighter: ArcadeFighter,
   input: import('./types').FightInput,
 ): ArcadeFighter {
-  if (!fighter.battleCantabile) return fighter
-  if (fighter.battleCantabile.form) return fighter
-  const interrupted =
-    input.guard || input.jump || (battlePreparing(fighter) && (input.left || input.right))
+  if (!battlePreparing(fighter)) return fighter
+  const interrupted = input.guard || input.jump || input.left || input.right
   return interrupted ? stopBattleMusic(fighter) : fighter
 }
 

@@ -45,6 +45,7 @@ const PISTOL_STRIKES: Partial<Record<FighterId, string>> = {
   furykov: 'furykov:backHeavy',
   longhi: 'longhi:backHeavy',
   musse: 'musse:standingHeavy',
+  theta: 'theta:standingHeavy',
   sayird: 'sayird:backHeavy',
 }
 

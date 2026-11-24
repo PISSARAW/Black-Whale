@@ -1,3 +1,11 @@
+import { WAVE_SIX_WEAPON_STRIKES } from './physicalStrikeWaveSixWeapons'
+import { WAVE_SIX_MARTIAL_STRIKES } from './physicalStrikeWaveSixMartial'
+import { HANZO_PHYSICAL_STRIKES } from './physicalStrikeWaveSixHanzo'
+import { WAVE_FIVE_REACH_STRIKES } from './physicalStrikeWaveFiveReach'
+import { WAVE_FIVE_HAND_STRIKES } from './physicalStrikeWaveFiveHands'
+import { WAVE_FOUR_RHYTHM_STRIKES } from './physicalStrikeWaveFourRhythm'
+import { WAVE_FOUR_GUARD_STRIKES } from './physicalStrikeWaveFourGuard'
+import { YOKOTANI_STRIKES } from './physicalStrikeWaveFourBoundary'
 import { WAVE_THREE_POWER_STRIKES } from './physicalStrikeWaveThree'
 import { WAVE_THREE_COUNTER_STRIKES } from './physicalStrikeWaveThreeCounters'
 import { WAVE_TWO_STRIKE_DIRECTIONS } from './physicalStrikeWaveTwo'
@@ -341,6 +349,26 @@ const AUTHORED_STRIKES: Partial<Record<FighterId, PhysicalStrikeDirections>> = {
   ...WAVE_TWO_COUNTER_STRIKES,
   ...WAVE_THREE_POWER_STRIKES,
   ...WAVE_THREE_COUNTER_STRIKES,
+  ...WAVE_FOUR_RHYTHM_STRIKES,
+  ...WAVE_FOUR_GUARD_STRIKES,
+  yokotani: YOKOTANI_STRIKES,
+  ...WAVE_FIVE_REACH_STRIKES,
+  ...WAVE_FIVE_HAND_STRIKES,
+  ...WAVE_SIX_WEAPON_STRIKES,
+  ...WAVE_SIX_MARTIAL_STRIKES,
+  hanzo: HANZO_PHYSICAL_STRIKES,
+}
+
+const FULL_PHYSICAL_POSES = new Set<string>([
+  ...Object.keys(WAVE_FIVE_REACH_STRIKES),
+  ...Object.keys(WAVE_FIVE_HAND_STRIKES),
+  ...Object.keys(WAVE_SIX_WEAPON_STRIKES),
+  ...Object.keys(WAVE_SIX_MARTIAL_STRIKES),
+  'hanzo',
+])
+
+export function usesFullPhysicalPoses(id: FighterId): boolean {
+  return FULL_PHYSICAL_POSES.has(id)
 }
 
 export function authoredStrikeDirection(id: FighterId, slot: MoveSlot): Direction | undefined {

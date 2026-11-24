@@ -21,7 +21,7 @@ import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
-import { bonolenovBodyPlan } from './bonolenovPoses'
+import { armedCarryPlan, bonolenovBodyPlan } from './bonolenovPoses'
 import { animateBonolenovSpear } from './bonolenovSpear'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
@@ -242,7 +242,7 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
     fighter,
   )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })
-  const plan = awake && closeBodyPlan(awake, fighter, context.rival)
+  const plan = armedCarryPlan(awake && closeBodyPlan(awake, fighter, context.rival), fighter)
   const handed =
     plan && fighter.id === 'feitan'
       ? feitanHandedPlan(plan, fighter)
@@ -303,7 +303,7 @@ function attackingPlan(
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const maintained = luiniBodyPlan(fighter) ?? rosterSustainedMotion(fighter, context.seconds)
   if (maintained) return maintained
-  const dance = bonolenovBodyPlan(fighter)
+  const dance = bonolenovBodyPlan(fighter, context.seconds)
   if (dance) return dance
   const crossGame = crossGameBodyPlan(fighter)
   if (crossGame) return crossGame

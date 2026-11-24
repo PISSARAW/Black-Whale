@@ -1,3 +1,4 @@
+import { bonolenovHasSpear } from './bonolenovArmedProfile'
 import { battleCanStart } from './battleCantabileAction'
 import { battleCommand, battlePreparing, battleTechniqueAvailable } from './battleCantabileRules'
 import { BATTLE_MOVES } from './battleCantabileTypes'
@@ -20,7 +21,7 @@ export function bonolenovResources(fighter: ArcadeFighter, move: FighterMove): b
   if (command === BATTLE_MOVES.stop) return Boolean(fighter.battleCantabile)
   if (!battleTechniqueAvailable(fighter, command)) return false
   if (command === BATTLE_MOVES.spear)
-    return Boolean(fighter.battleCantabile?.prologue) && fighter.aura >= move.auraCost
+    return bonolenovHasSpear(fighter) && fighter.aura >= move.auraCost
   return fighter.aura >= move.auraCost
 }
 

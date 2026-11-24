@@ -11,6 +11,8 @@ import {
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import { fineControlEase } from './fineControlAnchors'
 import { gelSnakeNormalReach } from './gelSnakeNormals'
+import { motionOf } from './fighterMovement'
+import { supportSaiyuStaff } from './saiyuStaffGrip'
 
 /** Shared conjured props follow the actual user's rig, including active page/loan uses. */
 export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffectScene {
@@ -33,6 +35,8 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
             fighter.id === 'saiyu' && fighter.facing === -1 ? 'left' : freeVisitHand(fighter)
           placeVisitHand(options, { state, side, root: staff.root, hand })
           staff.root.rotateZ(fighter.facing * staffSwing(fighter))
+          if (fighter.id === 'saiyu')
+            supportSaiyuStaff(fighter, options.figureOf?.(side), staff.root)
         }
         const attack = fighter.attack
         const normal = gelSnakeNormalReach(fighter) > 0
@@ -75,8 +79,8 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
 
 function staffSwing(fighter: ArcadeFighter): number {
   const normal = fighter.id === 'saiyu' && saiyuNormalStaffAngle(fighter)
-  if (typeof normal === 'number') return normal
-  if (fighter.id === 'saiyu' && !fighter.attack) return saiyuStaffCarriage(fighter)
+  if (typeof normal === 'number') return -normal
+  if (fighter.id === 'saiyu' && !fighter.attack) return -saiyuStaffCarriage(fighter)
   if (!fighter.attack || visitAttackSource(fighter) !== 'saiyu') return -0.12
   return -0.12 + Math.sin(attackProgress(fighter) * Math.PI) * 1.5
 }
@@ -110,8 +114,12 @@ function saiyuNormalStaffAngle(fighter: ArcadeFighter): number | undefined {
 }
 
 function saiyuStaffCarriage(fighter: ArcadeFighter): number {
-  if (fighter.pose === 'guard') return 0.63
+  if (fighter.blocking) return 1.12
+  const { dash, heldDirection, landingFrames } = motionOf(fighter)
+  if (landingFrames > 0) return 0.55
   if (fighter.y > 0) return -0.59
+  if (dash) return dash.direction === fighter.facing ? 0.83 : -0.68
+  if (heldDirection) return heldDirection === fighter.facing ? 0.28 : -0.51
   return -0.12
 }
 

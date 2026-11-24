@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove } from './engine'
 import { buildFightFigure } from './fighterFigure'
+import { fightStrikeLimb } from './fightStrikeLimb'
 import { usesRightHandPose } from './fightHandConvention'
 import { animateServiceHandgun } from './serviceHandgun'
 import { meleeWeaponContact } from './meleeWeaponContact'
@@ -14,6 +15,7 @@ describe('seventh wave firearm melee', () => {
     ['furykov', true],
     ['longhi', true],
     ['musse', false],
+    ['theta', false],
   ] as const)('%s strikes with the equipped butt in either orientation', (id, back) => {
     for (const side of ['player', 'opponent'] as const) {
       const facing = side === 'player' ? 1 : -1
@@ -34,16 +36,33 @@ describe('seventh wave firearm melee', () => {
       expect(usesRightHandPose(actor, `attack:${id}:${slot}`)).toBe(true)
       const model = buildFightFigure({ THREE, glow, fighter: actor })
       animateServiceHandgun(model.turns, actor)
-      const gun = model.root.getObjectByName(`${id}-handgun`)!
+      const gun = model.root.getObjectByName(
+        id === 'theta' ? 'theta-physical-handgun' : `${id}-handgun`,
+      )!
       expect(gun.visible).toBe(true)
       expect(gun.parent?.name).toBe('hand-right')
       expect(meleeWeaponContact(model.turns, actor)).toBe(gun.getObjectByName(`${id}-pistol-butt`))
-      expect(model.root.getObjectByName(`${id}-muzzle-flash`)?.visible).toBe(false)
+      expect(model.root.getObjectByName(`${id}-muzzle-flash`)?.visible ?? false).toBe(false)
       expect(strike.projectiles).toHaveLength(0)
       const disarmed = { ...actor, weaponsConfiscated: true }
       animateServiceHandgun(model.turns, disarmed)
       expect(gun.visible).toBe(false)
       expect(meleeWeaponContact(model.turns, disarmed)).toBeUndefined()
     }
+  })
+  it.each(['player', 'opponent'] as const)('uses Theta’s free left palm on J for %s', (side) => {
+    const state = beginFight(
+      createFight(
+        side === 'player' ? 'theta' : 'hisoka',
+        side === 'opponent' ? 'theta' : 'hisoka',
+        {
+          mode: 'versus-local',
+        },
+      ),
+    )
+    const next = performMove({ state, side, action: 'light' })
+    expect(next[side].attack?.moveId).toBe('theta:standingLight')
+    expect(fightStrikeLimb(next[side], 'hands')).toBe('left')
+    expect(next.projectiles).toHaveLength(0)
   })
 })

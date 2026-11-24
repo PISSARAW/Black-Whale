@@ -15,8 +15,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   zakuro: entry(
     'control',
     [
-      'Gérer le sang disponible et les gouttes de surveillance.',
-      'Manage available blood and surveillance droplets.',
+      'Accrocher de la main et ramener du coude. Gérer la réserve de sang et les gouttes de surveillance.',
+      'Hook with the hand and pull back with the elbow. Manage blood reserves and surveillance droplets.',
     ],
     [
       'Punir les engagements et respecter la trajectoire du sang ; la réserve est finie.',
@@ -26,8 +26,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   melody: entry(
     'support',
     [
-      'Obtenir une ouverture pour la flûte et conserver l’écoute.',
-      'Find a flute opening and preserve hearing.',
+      'Faire manquer par un retrait souple et reprendre de la paume. Obtenir une ouverture pour la flûte et conserver l’écoute.',
+      'Draw a miss with a flowing retreat and return with the palm. Find a flute opening and preserve hearing.',
     ],
     [
       'Sortir de portée ou couvrir les oreilles, au prix des deux mains.',
@@ -59,8 +59,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   halkenburg: entry(
     'preparation',
     [
-      'Réunir les partisans consentants et préparer la flèche.',
-      'Gather consenting supporters and prepare the arrow.',
+      'Mesurer dans l’axe de la main avant, reculer droit et riposter du poing arrière. Réunir les partisans consentants pour préparer la flèche.',
+      'Measure with the lead hand, retreat in line and answer with the rear fist. Gather consenting supporters to prepare the arrow.',
     ],
     [
       'Interrompre le rassemblement ou éviter l’axe du tir ; les soutiens ne sont jamais copiés.',
@@ -70,8 +70,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   gel: entry(
     'pressure',
     [
-      'Gagner la distance où le bras-serpent peut toucher.',
-      'Enter the range where the snake arm can connect.',
+      'Mesurer de la main, enrouler l’épaule et détendre le bras droit après un écart.',
+      'Measure with the hand, coil the shoulder, then snap the right arm out after slipping away.',
     ],
     [
       'Faire manquer l’allonge puis punir le retour du bras.',
@@ -92,8 +92,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   luini: entry(
     'preparation',
     [
-      'Préparer une pièce fermée et un lieu personnellement visité.',
-      'Prepare a sealed room and a personally visited destination.',
+      'Piquer au couteau puis ressortir sur le revers. Préparer une pièce fermée et un lieu personnellement visité.',
+      'Stab with the knife and exit with a reverse slash. Prepare a sealed room and a personally visited destination.',
     ],
     [
       'Ouvrir la porte invalide cet ancrage pour la manche ; le passage ne donne pas d’invulnérabilité.',
@@ -103,8 +103,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   bill: entry(
     'support',
     [
-      'Utiliser une graine réelle puis défendre sa préparation.',
-      'Use a real seed and defend its preparation.',
+      'Avancer en couvrant de la paume, puis pousser des deux mains. Utiliser une graine réelle et défendre sa préparation.',
+      'Advance behind an open palm, then drive with both hands. Use a real seed and defend its preparation.',
     ],
     [
       'Presser avec les coups physiques ; Erigeron ne donne ni soin personnel ni bonus offensif.',
@@ -191,8 +191,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   yokotani: entry(
     'control',
     [
-      'Réunir la juridiction et la présence de Morena avant LSDF.',
-      'Establish jurisdiction and Morena’s presence before LSDF.',
+      'Barrer le passage de l’avant-bras et reconduire de la paume. Réunir la juridiction et la présence de Morena avant LSDF.',
+      'Bar the passage with the forearm and guide the opponent away with the palm. Establish jurisdiction and Morena’s presence before LSDF.',
     ],
     [
       'Les gardes sont invulnérables ; priver le porteur de son Hatsu exige les conditions habituelles.',

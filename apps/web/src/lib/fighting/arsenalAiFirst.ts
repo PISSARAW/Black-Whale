@@ -23,7 +23,7 @@ export const FIRST_ARSENAL_AI = {
   hisoka: hisokaSlots,
   chrollo: ({ state, roll, gap }) => chrolloAiSlots(state, roll, gap),
   benjamin: ({ state, roll, gap }) => benjaminAiSlots(state, roll, gap),
-  tserriednich: martialSlots,
+  tserriednich: () => [], // Future perception has its own decision path.
   feitan: ({ state, gap }) =>
     state.opponent.hatsuEffects.painPacker?.armour
       ? ['finisher', 'standingLight']
@@ -53,7 +53,7 @@ export const FIRST_ARSENAL_AI = {
       ? ['finisher', 'standingHeavy', 'standingLight']
       : gap > 12
         ? ['neutralSpecial']
-        : ['standingLight', 'forwardHeavy'],
+        : [],
 } satisfies Record<string, ArsenalAiPlan>
 
 function kurapikaSlots({

@@ -94,6 +94,13 @@ describe('Hatsu-inspired physical combat profiles', () => {
 const COHORTS = [
   { wave: 2, fighters: ['musse', 'hinrigh', 'longhi', 'voconte', 'furykov'], retreat: 'longhi' },
   { wave: 3, fighters: ['beyond', 'padaille', 'lynch', 'rihan', 'basho'], retreat: 'rihan' },
+  {
+    wave: 4,
+    fighters: ['bonolenov', 'halkenburg', 'bill', 'yokotani', 'melody'],
+    retreat: 'halkenburg',
+  },
+  { wave: 5, fighters: ['saiyu', 'zakuro', 'gel', 'illumi', 'machi'], retreat: 'gel' },
+  { wave: 6, fighters: ['luini', 'theta', 'tserriednich', 'leorio', 'hanzo'], retreat: 'luini' },
 ] as const
 const GROUND_COMMANDS = [
   ['standingLight', 'light', {}],

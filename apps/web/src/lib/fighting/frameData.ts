@@ -1,3 +1,4 @@
+import { spearNormal } from './bonolenovArmedProfile'
 import { gelSnakeNormalReach } from './gelSnakeNormals'
 import { throwKnockback } from './comboCapture'
 import type { GuardRequirement } from './combatProperties'
@@ -194,12 +195,13 @@ function movesetAttackData(
 ): AttackFrameData {
   const data = move.tuning
   const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
+  const spear = spearNormal(fighter, move.slot)
   const snakeReach = gelSnakeNormalReach(fighter)
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return openingFrameData(
     {
       ...data,
-      auraZone: snakeReach ? 'hands' : data.auraZone,
+      auraZone: spear || snakeReach ? 'hands' : data.auraZone,
       guard: move.guard,
       canHitDowned: move.canHitDowned || Boolean(fighter.attack?.accel),
       knockback: throwKnockback(move, fighter, data.knockback),
@@ -211,7 +213,7 @@ function movesetAttackData(
       box: {
         left: 1.4,
         right:
-          biscuitReach(fighter, data.reach + snakeReach) *
+          biscuitReach(fighter, data.reach + (spear?.reach ?? 0) + snakeReach) *
           zakuroBloodReachFactor(fighter),
         bottom: attackBoxBottom(fighter, data.bottom, antiAir),
         top: antiAir ? Math.max(15, data.top) : data.top,

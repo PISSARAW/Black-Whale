@@ -48,8 +48,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   tserriednich: entry(
     'preparation',
     [
-      'Créer une ouverture pour fermer les yeux et préparer la vision.',
-      'Create space to close the eyes and prepare the vision.',
+      'Marquer une pause avant le revers. Créer une ouverture pour fermer les yeux et préparer la vision.',
+      'Pause before the backfist. Create space to close the eyes and prepare the vision.',
     ],
     [
       'Toucher pendant la préparation du Zetsu ; aucune anticipation avant une vision acquise.',
@@ -70,8 +70,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   saiyu: entry(
     'control',
     [
-      'Placer les singes pour retirer séparément les sens.',
-      'Land the monkeys to remove individual senses.',
+      'Tenir la distance avec la pointe du bâton. Placer les singes pour retirer séparément les sens.',
+      'Control distance with the staff tip. Land the monkeys to remove individual senses.',
     ],
     [
       'Garder ou esquiver les contacts ; Gyo ne répare pas une vue scellée.',
@@ -81,8 +81,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   theta: entry(
     'ranged',
     [
-      'Alterner pistolet physique et coups à courte portée.',
-      'Alternate a physical handgun with close-range strikes.',
+      'Intercepter de la paume libre puis frapper de la crosse à courte portée.',
+      'Intercept with the free palm and follow with the pistol butt at close range.',
     ],
     [
       'Garder les balles ou sauter puis approcher ; Zetsu ne supprime pas le pistolet.',
@@ -125,8 +125,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   machi: entry(
     'control',
     [
-      'Poser le fil, maintenir la bonne distance, suturer avec une ouverture.',
-      'Attach thread, maintain spacing, and suture during an opening.',
+      'Changer d’appui, écarter de la paume et ramener du crochet. Poser le fil et suturer pendant une ouverture.',
+      'Shift your weight, strike with the palm, then pull with the hook. Attach thread and suture during an opening.',
     ],
     [
       'Frapper le porteur ou dépasser la longueur de contention ; le pistage peut rester.',
@@ -136,8 +136,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   illumi: entry(
     'control',
     [
-      'Chercher un contact réel de l’aiguille ; préparer le visage à couvert.',
-      'Seek actual needle contact; prepare the disguise safely.',
+      'Entrer en ligne et viser d’un geste bref. Toucher de l’aiguille et préparer le visage à couvert.',
+      'Step straight in and strike with a small motion. Land a needle and prepare the disguise safely.',
     ],
     [
       'Éviter ou garder l’aiguille ; couper le Nen ne répare pas Needle People.',
@@ -158,8 +158,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   bonolenov: entry(
     'preparation',
     [
-      'Trouver le temps de danser avant les techniques musicales.',
-      'Find time to dance before committing musical techniques.',
+      'Alterner genou et talon sur des changements d’appui. Trouver le temps de danser avant les techniques musicales.',
+      'Alternate knee and heel strikes over changing footwork. Find time to dance before committing musical techniques.',
     ],
     [
       'Interrompre la danse ou sortir de la trajectoire ; copier ne fournit pas ses trous corporels.',
@@ -202,8 +202,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   leorio: entry(
     'control',
     [
-      'Choisir le point de sortie du poing à travers le sol.',
-      'Choose where the fist emerges through the floor.',
+      'Prendre appui avant l’uppercut. Choisir le point de sortie du poing à travers le sol.',
+      'Set your feet before the uppercut. Choose where the fist emerges through the floor.',
     ],
     [
       'Bouger pendant la préparation et éviter le poing émergent ; pas de frappe instantanée.',
@@ -213,8 +213,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   hanzo: entry(
     'mobile',
     [
-      'Fermer la distance par des pas brefs, frapper de la main ouverte et contrôler le corps-à-corps. Préparer le double exige de laisser son corps endormi exposé.',
-      'Close with brief steps, strike with open hands and control close range. Preparing the double leaves the sleeping body exposed.',
+      'Fermer la distance par des pas brefs, alterner la main ouverte et le talon pivoté au corps-à-corps. Préparer le double exige de laisser son corps endormi exposé.',
+      'Close with brief steps, alternate open-hand strikes and pivoting heels at close range. Preparing the double leaves the sleeping body exposed.',
     ],
     [
       'Approcher le corps et le toucher ou l’appeler si la parole peut être entendue.',

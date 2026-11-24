@@ -5,6 +5,8 @@ export function tuneBonolenovMoveset(moveset: FighterMoveset): FighterMoveset {
   if (moveset.fighterId !== 'bonolenov') return moveset
   return {
     ...moveset,
+    mechanicFr: `${moveset.mechanicFr} Après Prologue, les coups ordinaires manient la lance. J pique de la pointe, K balaie de la hampe et le lourd arrière frappe du talon de la lance.`,
+    mechanicEn: `${moveset.mechanicEn} After Prologue, ordinary attacks wield the spear. J thrusts with the point, K sweeps with the shaft, and back heavy strikes with the butt.`,
     finisherConditionFr: 'Danse de Jupiter complète ; cible dans la portée du son.',
     finisherConditionEn: 'Complete Jupiter’s dance; target within earshot.',
     moves: moveset.moves.map(tuneMove),

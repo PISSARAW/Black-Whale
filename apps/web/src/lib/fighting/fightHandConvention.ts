@@ -1,3 +1,4 @@
+import { bonolenovHasSpear } from './bonolenovArmedProfile'
 import { hanzoBladeAttack } from './hanzoBlade'
 import { bodyguardFiring, bodyguardPistolStrike } from './bodyguardFirearms'
 import { padailleRightStrike } from './padailleNormalTools'
@@ -16,6 +17,7 @@ const ASYMMETRIC_LOCOMOTION = new Set([
 
 /** Keep equipment on the anatomical hand used by the existing authored rig. */
 export function usesRightHandPose(fighter: ArcadeFighter, key: string): boolean {
+  if (key === 'padaille-cuff-escape') return false
   if (fighter.id === 'padaille')
     return ASYMMETRIC_LOCOMOTION.has(key) || padailleRightStrike(key.replace(/^attack:/, ''))
   if (fighter.id === 'terebellum' && ASYMMETRIC_LOCOMOTION.has(key)) return true
@@ -31,7 +33,7 @@ export function usesRightHandPose(fighter: ArcadeFighter, key: string): boolean 
 function usesRightHandEquipment(fighter: ArcadeFighter): boolean {
   return (
     hanzoBladeAttack(fighter) ||
-    (fighter.id === 'bonolenov' && Boolean(fighter.battleCantabile?.prologue)) ||
+    bonolenovHasSpear(fighter) ||
     bodyguardFiring(fighter) ||
     bodyguardPistolStrike(fighter)
   )

@@ -30,6 +30,10 @@ function battleValid(fighter: ArcadeFighter): boolean {
     return battleTechniqueAvailable(fighter, BATTLE_MOVES.metamorphosen)
   const dance = fighter.battleCantabile?.preparation
   const move = dance ? BATTLE_MOVES[dance.piece] : undefined
+  if (!dance && fighter.battleCantabile?.prologue)
+    return (
+      fighter.health > 0 && battleTechniqueAvailable(fighter) && battleMindAvailable(fighter, true)
+    )
   return (
     freeCombatBody(fighter) &&
     battleTechniqueAvailable(fighter, move) &&

@@ -6,7 +6,7 @@ import { EMPTY_INPUT, type FighterId } from './types'
 
 describe('priority signature moves and contextual follow-ups', () => {
   it('uses the current replay ruleset', () => {
-    expect(REPLAY_RULESET).toBe('clash-combat-102')
+    expect(REPLAY_RULESET).toBe('clash-combat-104')
   })
 
   it.each([
@@ -43,21 +43,21 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'tserriednich',
       {
-        forwardLight: ['Pas déjà vu', 'Déjà Vu Step'],
-        forwardHeavy: ['Tir de divergence', 'Divergence Shot'],
-        backHeavy: ['Seconde condamnation', 'Second Condemnation'],
-        airHeavy: ['Angle mort princier', 'Princely Blind Spot'],
-        throw: ['Dix secondes d’avance', 'Ten Seconds Ahead'],
+        forwardLight: ['Pas après la pause', 'Step after the Pause'],
+        forwardHeavy: ['Rupture de l’axe', 'Break the Line'],
+        backHeavy: ['Temps volé', 'Stolen Beat'],
+        airHeavy: ['Revers suspendu', 'Suspended Backfist'],
+        throw: ['Un instant de retard', 'A Moment Too Late'],
       },
     ],
     [
       'theta',
       {
-        forwardLight: ['Tir de contrôle', 'Control Shot'],
-        forwardHeavy: ['Pas d’instructrice', 'Instructor Step'],
-        backHeavy: ['Leçon sévère', 'Severe Lesson'],
-        airHeavy: ['Crosse montante', 'Rising Stock'],
-        throw: ['Décision impossible', 'Impossible Decision'],
+        forwardLight: ['Prise de ligne', 'Line Check'],
+        forwardHeavy: ['Interception au genou', 'Knee Intercept'],
+        backHeavy: ['Contre sous couverture', 'Covering Counter'],
+        airHeavy: ['Talon de barrage', 'Blocking Heel'],
+        throw: ['Mise à l’écart', 'Removal from the Line'],
       },
     ],
     [
@@ -93,21 +93,21 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'illumi',
       {
-        forwardLight: ['Pas sans présence', 'Presenceless Step'],
-        forwardHeavy: ['Visage mort', 'Dead Face'],
-        backHeavy: ['Aiguille de recul', 'Recoil Needle'],
-        airHeavy: ['Articulation déplacée', 'Displaced Joint'],
-        throw: ['Cortège funèbre', 'Funeral Procession'],
+        forwardLight: ['Pas arrêté', 'Stop Step'],
+        forwardHeavy: ['Percussion du talon', 'Heel Intercept'],
+        backHeavy: ['Reprise dans l’axe', 'Line Reset'],
+        airHeavy: ['Tranchant en descente', 'Descending Hand Edge'],
+        throw: ['L’articulation inutile', 'The Useless Joint'],
       },
     ],
     [
       'bonolenov',
       {
-        forwardLight: ['Tambour de guerre', 'War Drum'],
-        forwardHeavy: ['Pas spiralé', 'Spiral Step'],
-        backHeavy: ['Silence rompu', 'Broken Silence'],
-        airHeavy: ['Crescendo vertical', 'Vertical Crescendo'],
-        throw: ['Finale de Jupiter', 'Jupiter Finale'],
+        forwardLight: ['Pas en travers', 'Cross Step'],
+        forwardHeavy: ['Tour du talon', 'Turning Heel'],
+        backHeavy: ['Reprise sur le contretemps', 'Offbeat Return'],
+        airHeavy: ['Talon de cadence', 'Cadence Heel'],
+        throw: ['La valse du guerrier', 'The Warrior’s Waltz'],
       },
     ],
     [
@@ -143,21 +143,21 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'leorio',
       {
-        forwardLight: ['Direct d’urgence', 'Emergency Straight'],
-        forwardHeavy: ['Diagnostic bas', 'Low Diagnosis'],
-        backHeavy: ['Réanimation combative', 'Combat Resuscitation'],
-        airHeavy: ['Poing sous le pont', 'Under-Bridge Fist'],
-        throw: ['Salle d’opération', 'Operating Room'],
+        forwardLight: ['Double pas de boxe', 'Boxing Step'],
+        forwardHeavy: ['Direct du droit en charge', 'Driving Right Cross'],
+        backHeavy: ['Crochet de recul', 'Pull Counter'],
+        airHeavy: ['Crochet à la retombée', 'Dropping Hook'],
+        throw: ['La bascule de l’épaule', 'The Shoulder Turn'],
       },
     ],
     [
       'hanzo',
       {
-        forwardLight: ['Pas du plafond', 'Ceiling Step'],
-        forwardHeavy: ['Fausse décapitation', 'False Decapitation'],
-        backHeavy: ['Corps laissé derrière', 'Body Left Behind'],
-        airHeavy: ['Clé du shinobi', 'Shinobi Lock'],
-        throw: ['Exécution sans bruit', 'Silent Execution'],
+        forwardLight: ['Pas masqué', 'Hidden Step'],
+        forwardHeavy: ['Paume de traversée', 'Crossing Palm'],
+        backHeavy: ['Retrait en ciseaux', 'Scissor Retreat'],
+        airHeavy: ['Talon rabattu', 'Dropping Heel'],
+        throw: ['La clef silencieuse', 'The Silent Lock'],
       },
     ],
     [
@@ -173,11 +173,11 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'machi',
       {
-        forwardLight: ['Point invisible', 'Invisible Stitch'],
-        forwardHeavy: ['Croix de couture', 'Seam Cross'],
-        backHeavy: ['Marionnette brisée', 'Broken Puppet'],
-        airHeavy: ['Rappel de l’aiguille', 'Needle Recall'],
-        throw: ['Suture punitive', 'Punitive Suture'],
+        forwardLight: ['Pas de couture', 'Stitch Step'],
+        forwardHeavy: ['Double appui de traction', 'Braced Pull'],
+        backHeavy: ['Reprise au poignet', 'Wrist Return'],
+        airHeavy: ['Crochet qui ramène', 'Drawing Hook'],
+        throw: ['Le point de croix', 'The Cross-Stitch'],
       },
     ],
     [
@@ -203,11 +203,11 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'saiyu',
       {
-        forwardLight: ['Perche du singe', 'Monkey Pole'],
-        forwardHeavy: ['Queue balayante', 'Sweeping Tail'],
-        backHeavy: ['Trois refus', 'Three Refusals'],
-        airHeavy: ['Bond du pèlerin', 'Pilgrim Leap'],
-        throw: ['Cage des trois singes', 'Three Monkeys Cage'],
+        forwardLight: ['Pas de pointe', 'Staff Step'],
+        forwardHeavy: ['Grand arc de la hampe', 'Wide Staff Arc'],
+        backHeavy: ['Talon du bâton', 'Staff Butt'],
+        airHeavy: ['Hampe descendante', 'Descending Shaft'],
+        throw: ['Le grand levier', 'The Long Lever'],
       },
     ],
   ] as const)('replaces the five generic physical slots for %s', (id, map) => {

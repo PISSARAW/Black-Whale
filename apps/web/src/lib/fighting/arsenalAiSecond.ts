@@ -3,11 +3,11 @@ import { predatorAiSlots } from './predatorAi'
 import { voconteAiSlots } from './vocontePresentation'
 import { controlledEntities } from './preparationActions'
 import { COHORT_WILL_FRAMES } from './preparationTuning'
-import { martialSlots, varySlots, type ArsenalAiPlan } from './arsenalAiTypes'
+import { varySlots, type ArsenalAiPlan } from './arsenalAiTypes'
 
 export const SECOND_ARSENAL_AI = {
   rihan: ({ state }) => predatorAiSlots(state),
-  zakuro: martialSlots, // Blood commands run through maryAiAction, including copied blood.
+  zakuro: () => [], // Blood commands run through maryAiAction, including copied blood.
   melody: () => ['neutralSpecial'],
   basho: ({ state, gap }) =>
     !state.opponent.bashoPoem?.ready && gap > 10 ? ['neutralSpecial'] : [],

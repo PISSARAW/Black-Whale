@@ -1,3 +1,6 @@
+import { WAVE_SIX_STANDING_STRIKES } from './standingStrikesWaveSix'
+import { WAVE_FIVE_STANDING_STRIKES } from './standingStrikesWaveFive'
+import { WAVE_FOUR_STANDING_STRIKES } from './standingStrikesWaveFour'
 import { WAVE_THREE_STANDING_STRIKES } from './standingStrikesWaveThree'
 import { WAVE_TWO_STANDING_STRIKES } from './standingStrikesWaveTwo'
 import type { FightPose } from './fightPose'
@@ -337,4 +340,7 @@ export const STANDING_STRIKES: Partial<Record<FighterId, Record<StandingSlot, St
   },
   ...WAVE_TWO_STANDING_STRIKES,
   ...WAVE_THREE_STANDING_STRIKES,
+  ...WAVE_FOUR_STANDING_STRIKES,
+  ...WAVE_FIVE_STANDING_STRIKES,
+  ...WAVE_SIX_STANDING_STRIKES,
 }

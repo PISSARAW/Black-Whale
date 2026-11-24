@@ -1,3 +1,9 @@
+import { WAVE_SIX_WEAPON_MOVEMENT } from './physicalLocomotionWaveSixWeapons'
+import { WAVE_SIX_MARTIAL_MOVEMENT } from './physicalLocomotionWaveSixMartial'
+import { WAVE_FIVE_HANDS_MOVEMENT } from './physicalLocomotionWaveFiveHands'
+import { WAVE_FIVE_REACH_MOVEMENT } from './physicalLocomotionWaveFiveReach'
+import { WAVE_FOUR_RHYTHM_MOVEMENT } from './physicalLocomotionWaveFourRhythm'
+import { WAVE_FOUR_GUARD_MOVEMENT } from './physicalLocomotionWaveFourGuard'
 import { WAVE_THREE_PRESSURE_MOVEMENT } from './physicalLocomotionWaveThree'
 import { WAVE_THREE_RETREAT_MOVEMENT } from './physicalLocomotionWaveThreeCounters'
 import type { WalkStyle } from './fightLocomotion'
@@ -327,4 +333,10 @@ export const PHYSICAL_LOCOMOTION: Partial<Record<FighterId, PhysicalLocomotion>>
   ...WAVE_TWO_COUNTER_MOVEMENT,
   ...WAVE_THREE_PRESSURE_MOVEMENT,
   ...WAVE_THREE_RETREAT_MOVEMENT,
+  ...WAVE_FOUR_RHYTHM_MOVEMENT,
+  ...WAVE_FOUR_GUARD_MOVEMENT,
+  ...WAVE_FIVE_REACH_MOVEMENT,
+  ...WAVE_FIVE_HANDS_MOVEMENT,
+  ...WAVE_SIX_WEAPON_MOVEMENT,
+  ...WAVE_SIX_MARTIAL_MOVEMENT,
 }

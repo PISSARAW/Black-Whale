@@ -19,6 +19,7 @@ import { addBodyguardPistol } from './bodyguardFigure'
 import { registerFightExpression } from './fightExpressionRig'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
+import { addHanzoBlade } from './hanzoBladeFigure'
 import { addLuiniKnife } from './luiniKnife'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
@@ -153,6 +154,7 @@ function addFighterEquipment(
   addBodyguardPistol({ THREE, glow, fighter, model })
   addLuiniKnife({ THREE, glow, fighter, model })
   addBonolenovPrologue({ THREE, glow, fighter, model })
+  addHanzoBlade({ THREE, glow, fighter, model })
   addHanzoActivation(options, model)
   if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
     addPadailleWeapon({ THREE, glow, model })

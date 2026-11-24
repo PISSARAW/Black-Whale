@@ -2,6 +2,7 @@ import type { Group, Object3D } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import { attackData } from './frameData'
 import { bodyguardPistolStrike } from './bodyguardFirearms'
+import { animateThetaHandgun } from './thetaFigure'
 import type { ArcadeFighter, FighterId } from './types'
 
 type Three = HumanFigureBuild['THREE']
@@ -68,6 +69,7 @@ export function addServiceHandgun(options: {
 }
 
 export function animateServiceHandgun(figure: Object3D, fighter: ArcadeFighter): void {
+  if (fighter.id === 'theta') return animateThetaHandgun(figure, fighter)
   const pistol = PISTOLS.get(figure)
   if (!pistol) return
   if (fighter.weaponsConfiscated) {

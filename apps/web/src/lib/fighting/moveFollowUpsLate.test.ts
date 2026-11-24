@@ -17,21 +17,21 @@ describe('wave 3, wave 4 and final roster signature moves and follow-ups', () =>
     [
       'zakuro',
       {
-        forwardLight: ['Gouttes éclaireuses', 'Scouting Drops'],
-        forwardHeavy: ['Fil rouge', 'Red Thread'],
-        backHeavy: ['Reflux', 'Backflow'],
-        airHeavy: ['Aiguille sanguine', 'Blood Needle'],
-        throw: ['Bloody Mary', 'Bloody Mary'],
+        forwardLight: ['Main d’accroche', 'Reaching Hand'],
+        forwardHeavy: ['Rabattage du bras arrière', 'Rear-Arm Turn'],
+        backHeavy: ['Retour de traction', 'Pulling Return'],
+        airHeavy: ['Talon qui rabat', 'Hooking Heel'],
+        throw: ['Le faux pas écarlate', 'The Scarlet Misstep'],
       },
     ],
     [
       'melody',
       {
-        forwardLight: ['Mesure brisée', 'Broken Measure'],
-        forwardHeavy: ['Note apaisante', 'Soothing Note'],
-        backHeavy: ['Souffle suspendu', 'Suspended Breath'],
-        airHeavy: ['Battement entendu', 'Heard Heartbeat'],
-        throw: ['Trois minutes de silence', 'Three Minutes of Silence'],
+        forwardLight: ['Paume en passant', 'Passing Palm'],
+        forwardHeavy: ['Reprise circulaire', 'Circular Return'],
+        backHeavy: ['Contre sur l’expire', 'Exhaling Counter'],
+        airHeavy: ['Talon à la reprise', 'Return Heel'],
+        throw: ['Le contretemps', 'The Offbeat'],
       },
     ],
     [
@@ -57,21 +57,21 @@ describe('wave 3, wave 4 and final roster signature moves and follow-ups', () =>
     [
       'halkenburg',
       {
-        forwardLight: ['Pas de procession', 'Procession Step'],
-        forwardHeavy: ['Épaule fraternelle', 'Fraternal Shoulder'],
-        backHeavy: ['Mur d’unisson', 'Unison Wall'],
-        airHeavy: ['Arc du prince', 'Prince’s Bow'],
-        throw: ['Flèche de Grimmel', 'Grimmel’s Arrow'],
+        forwardLight: ['Prise de ligne', 'Taking the Line'],
+        forwardHeavy: ['Percée dans l’axe', 'Straight Breakthrough'],
+        backHeavy: ['Dégagement de l’axe', 'Clearing the Line'],
+        airHeavy: ['Poing à la retombée', 'Landing Cross'],
+        throw: ['La ligne brisée', 'The Broken Line'],
       },
     ],
     [
       'gel',
       {
-        forwardLight: ['Crochet de vipère', 'Viper Hook'],
-        forwardHeavy: ['Mue basse', 'Low Shedding'],
-        backHeavy: ['Frappe à deux temps', 'Two-Beat Strike'],
-        airHeavy: ['Spirale constrictrice', 'Constricting Spiral'],
-        throw: ['Croc du Zodiaque', 'Zodiac Fang'],
+        forwardLight: ['Percée du poignet', 'Wrist Entry'],
+        forwardHeavy: ['Allonge en spirale', 'Spiral Extension'],
+        backHeavy: ['Détente sur l’écart', 'Slip and Release'],
+        airHeavy: ['Frappe en crochet droit', 'Right-Hand Arc'],
+        throw: ['Le bracelet vivant', 'The Living Bracelet'],
       },
     ],
     [
@@ -87,21 +87,21 @@ describe('wave 3, wave 4 and final roster signature moves and follow-ups', () =>
     [
       'luini',
       {
-        forwardLight: ['Porte dérobée', 'Hidden Door'],
-        forwardHeavy: ['Couloir meurtrier', 'Deadly Corridor'],
-        backHeavy: ['Pièce condamnée', 'Sealed Room'],
-        airHeavy: ['Fausse sortie', 'False Exit'],
-        throw: ['Tour du monde intérieur', 'Inner World Tour'],
+        forwardLight: ['Pointe au seuil', 'Threshold Stab'],
+        forwardHeavy: ['Coupe de traversée', 'Crossing Slash'],
+        backHeavy: ['Revers au retrait', 'Retreating Slash'],
+        airHeavy: ['Lame à la retombée', 'Falling Blade'],
+        throw: ['La sortie dérobée', 'The Hidden Exit'],
       },
     ],
     [
       'bill',
       {
-        forwardLight: ['Garde du berceau', 'Cradle Guard'],
-        forwardHeavy: ['Paume de croissance', 'Growth Palm'],
-        backHeavy: ['Relève du garde', 'Guard Relief'],
-        airHeavy: ['Liane d’obstacle', 'Obstacle Vine'],
-        throw: ['Croissance d’urgence', 'Emergency Growth'],
+        forwardLight: ['Pas de protection', 'Cover Step'],
+        forwardHeavy: ['Poussée sous garde', 'Guarded Drive'],
+        backHeavy: ['Paume de relève', 'Relief Palm'],
+        airHeavy: ['Paumes à la retombée', 'Dropping Palms'],
+        throw: ['Le tuteur', 'The Stake'],
       },
     ],
     [
@@ -197,11 +197,11 @@ describe('wave 3, wave 4 and final roster signature moves and follow-ups', () =>
     [
       'yokotani',
       {
-        forwardLight: ['Objection', 'Objection'],
-        forwardHeavy: ['Constat d’intrusion', 'Trespass Record'],
-        backHeavy: ['Expulsion ordonnée', 'Ordered Expulsion'],
-        airHeavy: ['Assignation', 'Summons'],
-        throw: ['LSDF', 'LSDF'],
+        forwardLight: ['Avant-bras de seuil', 'Threshold Forearm'],
+        forwardHeavy: ['Reconduite de l’épaule', 'Shoulder Escort'],
+        backHeavy: ['Droit de retrait', 'Right to Withdraw'],
+        airHeavy: ['Talon de remise en ligne', 'Line-Reset Heel'],
+        throw: ['Fin de non-recevoir', 'Objection Sustained'],
       },
     ],
   ] as const)(

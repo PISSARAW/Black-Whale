@@ -430,7 +430,7 @@ de garde du corps et du pistolet attesté.
 
 La colonne « Proche avant refonte » indique le voisin mécanique le plus proche
 dans le banc, indépendamment de sa vague. La dernière colonne décrit la
-direction de conception. Les trois premières vagues l’appliquent en jeu.
+direction de conception. Les six premières vagues l’appliquent en jeu.
 
 | Vague | Combattant | Proche avant refonte | Direction à la caméra et en combat |
 | --- | --- | --- | --- |
@@ -485,15 +485,16 @@ de simulation passe au règlement `clash-combat-96`.
 
 Le modèle garde son axe vertical quand les pieds sont au sol. La flexion et
 l’inclinaison passent par le buste articulé à la taille. Les appuis et la rotation
-du bassin donnent la direction à la frappe. L’alignement de la main ou du pied
+du bassin donnent la direction à la frappe. Si les deux appuis restent derrière
+le bassin dans le sens du mouvement, le buste se redresse autour de la taille
+et les pieds restent au sol. L’alignement de la main ou du pied
 vers le rival intervient après une touche ou une garde confirmée sur J et K.
 
-Les quinze combattants des trois premières vagues ont des séquences J/K entièrement
-dessinées. Pour 15 autres, le geste, le pied d’appui, la rotation et la préparation sont
+Les trente combattants des six premières vagues ont des séquences J/K
+entièrement dessinées. Pour 2 autres, le geste, le pied d’appui, la rotation et la préparation sont
 individualisés sur ces deux commandes. La validation compare les articulations
 après la passe de contact et vérifie les ruées dans les deux sens de part et
 d’autre de l’adversaire. La correction de l’axe est entrée avec `clash-combat-97`.
-
 
 ### Vague 2
 
@@ -512,7 +513,6 @@ chorégraphies de projection et les quatre techniques martiales de Furykov
 adoptent leur propre geste. Les pouvoirs gardent leurs déclencheurs du duel.
 Ce changement de simulation passe au règlement `clash-combat-98`.
 
-
 ### Vague 3
 
 Beyond avance avec une garde lourde, engage l’épaule et reprend appui après
@@ -529,3 +529,59 @@ La transformation de Padaille, la question de Lynch, Predator et la préparation
 des poèmes utilisent leurs conditions propres. L’Académie adapte le pas de retour
 de Lynch à sa nouvelle distance de reprise. Le règlement courant est
 `clash-combat-99`.
+
+### Vague 4
+
+Bonolenov croise les pas, monte sur un appui et dessine un cercle avec les bras.
+Son genou ou son talon marque le temps fort avant le retour à la mesure. Sa
+ruée avant exécute une pirouette; le retrait s’ouvre sur un pivot plus court. Halkenburg tient une visée
+mains nues, recule en ligne et lance son poing arrière après un temps de tension.
+Bill avance à couvert derrière une paume puis pousse des deux mains. Yokotani
+barre l’entrée de l’avant-bras et écarte de la paume ou de l’épaule. Melody
+travaille sur une levée et un contretemps, avec des retraits souples qui dégagent
+les mains.
+
+La vague couvre les neuf coups, les entrées de prise, la posture de garde et
+les déplacements des cinq. Les projections réussies utilisent leurs séquences
+dédiées. La lance de Prologue, la flèche de Grimmel, la croissance d’Erigeron,
+l’expulsion de LSDF et la flûte de Melody gardent leurs déclencheurs propres.
+Après Prologue, les neuf coups ordinaires de Bonolenov utilisent la pointe,
+la hampe ou le talon de la lance et leur portée suit le contact choisi. Il
+garde sa prise en mouvement, en garde et en l’air.
+Cette vague utilise le règlement `clash-combat-100`.
+
+### Vague 5
+
+Saiyu tient la distance avec le bout du bâton, le balaie à deux mains et change
+de prise entre l’avance et le retrait. Zakuro accroche de la main avant et tire
+avec le coude arrière, puis recule sur un changement d’appui. Gel enroule
+l’épaule avant de détendre le bras droit et sort de portée sur K arrière.
+Illumi avance dans l’axe, s’arrête court et frappe du bout des doigts ou du
+tranchant de la main. Machi écarte de la paume, ramène du crochet et change
+d’appui avec les mains séparées comme pour tendre un fil.
+
+Les neuf coups, les entrées de prise, la garde, les deux directions de marche
+et de ruée, le saut et l’atterrissage ont chacun leurs poses et leurs rythmes.
+Les projections réussies utilisent leurs séquences dédiées. La gestuelle de
+Gel est jouable à main nue sous Zetsu. Le bras-serpent peut prolonger ses
+frappes au poignet quand son Nen est disponible. Cette vague utilise le règlement
+`clash-combat-103`.
+
+
+### Vague 6
+
+Luini garde le couteau près du corps, pique en entrant puis ressort sur un
+revers. Theta protège son axe de la paume gauche et frappe de la crosse droite
+à courte portée. Tserriednich mesure de la main et laisse passer un temps
+avant le revers. Leorio avance en garde de boxe, abaisse ses appuis puis
+remonte en uppercut. Hanzo enchaîne une paume brève avec un talon de pivot
+et se replie sur des pas courts.
+
+Les neuf coups normaux, les entrées de prise, la marche, les ruées, la garde,
+la position basse, le saut et l’atterrissage ont leurs propres poses. Les
+projections réussies utilisent leurs séquences dédiées. Le passage de Luini,
+la vision de Tserriednich, le poing transmis par Leorio et le double de Hanzo
+restent des commandes distinctes. Les deux orientations de la crosse et de
+la paume libre de Theta sont vérifiées. L’Académie recale les exercices de
+punition de Hanzo, Luini et Theta sur leurs nouveaux appuis. Le règlement
+courant est `clash-combat-104`.

@@ -1,3 +1,4 @@
+import { bonolenovHasSpear } from './bonolenovArmedProfile'
 import { selectedBattleModel } from './metamorphosenModels'
 import { triggerHatsu } from './hatsu'
 import { freeCombatBody } from './fightActorState'
@@ -28,8 +29,7 @@ export function battleCanStart(state: FightState, side: FightSide, moveId: strin
   const fighter = state[side]
   if (moveId === BATTLE_MOVES.stop) return Boolean(fighter.battleCantabile)
   if (!battleTechniqueAvailable(fighter, moveId) || !danceBodyReady(fighter)) return false
-  if (moveId === BATTLE_MOVES.spear)
-    return Boolean(fighter.battleCantabile?.prologue) && fighter.aura >= 12
+  if (moveId === BATTLE_MOVES.spear) return bonolenovHasSpear(fighter) && fighter.aura >= 12
   const piece = PIECES[moveId]
   if (!piece || fighter.aura < BATTLE_COST[piece]) return false
   return pieceConditions(state, side, piece)

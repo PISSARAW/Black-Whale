@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
-import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
+import { beginFight, createFight, performAuraAttack, performMove, tickFight } from './engine'
 import { emptyBattleCantabile, BATTLE_MOVES } from './battleCantabileTypes'
 import { bonolenovDancePlan } from './bonolenovPoses'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
@@ -112,6 +112,78 @@ describe('Bonolenov reference combat', () => {
       }
     },
   )
+
+  it.each([1, -1] as const)('actually wields Prologue’s spear on J and K facing %s', (facing) => {
+    const unarmed = duel()
+    const armed = frames(command(unarmed), 60)
+    const signatures: THREE.Vector3[] = []
+    for (const action of ['light', 'heavy'] as const) {
+      const armedAttack = performMove({ state: armed, side: 'player', action }).player
+      const unarmedAttack = performMove({ state: unarmed, side: 'player', action }).player
+      const data = attackData(action, armedAttack)
+      expect(data.box.right).toBeGreaterThan(attackData(action, unarmedAttack).box.right + 2)
+      expect(armedAttack.attack?.auraCharged).toBe(false)
+      expect(armedAttack.attack?.hatsuSource).toBeNull()
+      const fighter = {
+        ...armedAttack,
+        facing,
+        attack: { ...armedAttack.attack!, frame: data.startup },
+      }
+      const model = draw(fighter)
+      const spear = model.root.getObjectByName('bonolenov-prologue-spear')!
+      expect(spear.parent?.name).toBe('hand-right')
+      const forward = new THREE.Vector3(0, 0, 1).transformDirection(model.root.matrixWorld)
+      const contact = spear.localToWorld(new THREE.Vector3(0, action === 'light' ? 1.59 : 1, 0))
+      signatures.push(contact.clone().sub(position(spear)))
+      expect(contact.clone().sub(position(spear)).dot(forward)).toBeGreaterThan(0.15)
+    }
+    expect(signatures[0].distanceTo(signatures[1])).toBeGreaterThan(0.45)
+    expect(draw(unarmed.player).root.getObjectByName('bonolenov-prologue-spear')).toBeUndefined()
+  })
+
+  it('uses the point to hit beyond bare-knee range and loses that reach if disarmed', () => {
+    const unarmed = duel()
+    const armed = frames(command(unarmed), 60)
+    const start = performMove({ state: unarmed, side: 'player', action: 'light' })
+    const ordinary = attackData('light', start.player)
+    const targetX = unarmed.player.x + ordinary.box.right + ordinary.lunge + 3.5
+    const hitWithLight = (state: FightState) =>
+      frames(
+        performMove({
+          state: { ...state, opponent: { ...state.opponent, x: targetX } },
+          side: 'player',
+          action: 'light',
+        }),
+        12,
+      ).opponent.health
+    expect(hitWithLight(unarmed)).toBe(unarmed.opponent.health)
+    expect(hitWithLight(armed)).toBeLessThan(armed.opponent.health)
+    const confiscated = { ...armed, player: { ...armed.player, weaponsConfiscated: true } }
+    expect(hitWithLight(confiscated)).toBe(armed.opponent.health)
+    expect(command(confiscated, BATTLE_MOVES.spear)).toBe(confiscated)
+  })
+
+  it('carries the real spear from the guard into a jumping normal', () => {
+    const armed = frames(command(duel()), 60)
+    const guarded = tickFight(
+      armed,
+      { ...EMPTY_INPUT, guard: true },
+      { dt: 1 / 60, opponentInput: EMPTY_INPUT },
+    )
+    expect(guarded.player.battleCantabile?.prologue).toBe(true)
+    let jumping = armed
+    for (let i = 0; i < 7; i++)
+      jumping = tickFight(
+        jumping,
+        { ...EMPTY_INPUT, jump: true },
+        { dt: 1 / 60, opponentInput: EMPTY_INPUT },
+      )
+    expect(jumping.player.y).toBeGreaterThan(0)
+    expect(jumping.player.battleCantabile?.prologue).toBe(true)
+    const attack = performMove({ state: jumping, side: 'player', action: 'heavy' })
+    expect(attack.player.attack?.moveId).toBe('bonolenov:airHeavy')
+    expect(attackData('heavy', attack.player).auraZone).toBe('hands')
+  })
 
   it('mounts the musical arm openings on their moving joints and restores bandages on rebuild', () => {
     const state = frames(command(duel()), 15)

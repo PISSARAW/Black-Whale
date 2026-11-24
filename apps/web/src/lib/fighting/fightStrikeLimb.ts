@@ -1,3 +1,4 @@
+import { spearNormal } from './bonolenovArmedProfile'
 import { fighterKeyedMove } from './fighterKeyedMove'
 import { usesRightHandPose } from './fightHandConvention'
 import { bodyguardFiring, bodyguardPistolStrike } from './bodyguardFirearms'
@@ -14,6 +15,7 @@ const ARMS: Record<'lead' | 'rear', FightJoint[]> = {
   lead: ['leadShoulder', 'leadElbow', 'leadWrist'],
   rear: ['rearShoulder', 'rearElbow', 'rearWrist'],
 }
+const THETA_FREE_HAND = new Set(['theta:standingLight', 'theta:forwardLight', 'theta:airLight'])
 const LEGS: Record<'lead' | 'rear', FightJoint[]> = {
   lead: ['leadHip', 'leadKnee'],
   rear: ['rearHip', 'rearKnee'],
@@ -26,6 +28,8 @@ export function fightStrikeLimb(fighter: ArcadeFighter, zone: FightNenZone): Lim
   if (zone === 'hands' && rightHandStrike(fighter)) return 'right'
   const move = moveById(fighter.attack!.moveId)
   if (!move) return 'both'
+  if (zone === 'hands' && THETA_FREE_HAND.has(move.id)) return 'left'
+  if (zone === 'hands' && spearNormal(fighter, move.slot)) return 'right'
   const { timeline } = fighterKeyedMove(fighter, move.slot)
   const contact = timeline.find((key) => key.phase === 'active' && key.at === 0)?.pose
   if (!contact) return 'both'

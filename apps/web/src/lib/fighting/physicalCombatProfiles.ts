@@ -1,3 +1,6 @@
+import { WAVE_SIX_MOBILITY, WAVE_SIX_MOVES } from './physicalCombatWaveSix'
+import { WAVE_FIVE_MOBILITY, WAVE_FIVE_MOVES } from './physicalCombatWaveFive'
+import { WAVE_FOUR_MOBILITY, WAVE_FOUR_MOVES } from './physicalCombatWaveFour'
 import { WAVE_THREE_MOBILITY, WAVE_THREE_MOVES } from './physicalCombatWaveThree'
 import { WAVE_TWO_MOBILITY, WAVE_TWO_MOVES } from './physicalCombatWaveTwo'
 import type { FighterMoveset, MoveTuning } from './movesetTypes'
@@ -101,6 +104,9 @@ const MOBILITY: Partial<Record<FighterId, CombatProfile>> = {
   ...PROFILES,
   ...WAVE_TWO_MOBILITY,
   ...WAVE_THREE_MOBILITY,
+  ...WAVE_FOUR_MOBILITY,
+  ...WAVE_FIVE_MOBILITY,
+  ...WAVE_SIX_MOBILITY,
 }
 
 export function physicalCombatProfile(id: FighterId): CombatProfile | undefined {
@@ -451,6 +457,9 @@ const PHYSICAL_MOVES: Partial<Record<FighterId, Partial<Record<MoveSlot, Physica
   ...STRIKES,
   ...WAVE_TWO_MOVES,
   ...WAVE_THREE_MOVES,
+  ...WAVE_FOUR_MOVES,
+  ...WAVE_FIVE_MOVES,
+  ...WAVE_SIX_MOVES,
 }
 
 export function tunePhysicalCombat(moveset: FighterMoveset): FighterMoveset {

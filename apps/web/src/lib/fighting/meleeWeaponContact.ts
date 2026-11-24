@@ -7,7 +7,7 @@ import type { ArcadeFighter } from './types'
 export function meleeWeaponContact(figure: Object3D, fighter: ArcadeFighter): Object3D | undefined {
   if (bodyguardPistolStrike(fighter))
     return figure
-      .getObjectByName(`${fighter.id}-handgun`)
+      .getObjectByName(fighter.id === 'theta' ? 'theta-physical-handgun' : `${fighter.id}-handgun`)
       ?.getObjectByName(`${fighter.id}-pistol-butt`)
   if (luiniKnifeStrike(fighter)) return figure.getObjectByName('luini-knife-point')
   const tool = padailleNormalTool(fighter)

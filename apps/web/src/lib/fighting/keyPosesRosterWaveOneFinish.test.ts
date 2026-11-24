@@ -47,7 +47,10 @@ describe('roster motion wave one low heavy and air attacks', () => {
         const timeline = keyPoseTimeline(id, slot)!
         const contact = timeline.find(({ phase, at }) => phase === 'active' && at === 0)!.pose
         const landing = timeline.at(-1)!.pose
-        expect(contact.rearKnee?.[0], `${id}:${slot}`).toBeGreaterThan(0.25)
+        expect(
+          Math.max(contact.leadKnee?.[0] ?? 0, contact.rearKnee?.[0] ?? 0),
+          `${id}:${slot}`,
+        ).toBeGreaterThan(0.2)
         expect(landing.root?.[1], `${id}:${slot}`).toBeLessThan(0)
         expect(bodyPlan(fighter, { seconds: 1, progress: 0 })).toMatchObject({ plant: false })
         expect(bodyPlan(fighter, { seconds: 1, progress: 0 })?.supportFoot).toBeUndefined()

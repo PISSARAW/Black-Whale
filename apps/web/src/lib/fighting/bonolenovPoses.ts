@@ -1,10 +1,16 @@
-import { lerpPose, type BodyPlan, type FightPose } from './fightPose'
+import { bonolenovHasSpear } from './bonolenovArmedProfile'
+import { bonolenovIdleBeat } from './bonolenovDanceFootwork'
+import { fightStance } from './fightStance'
+import { motionOf } from './fighterMovement'
+import { movementTechPose } from './movementTechPoses'
+import { addPoses, lerpPose, type BodyPlan, type FightPose } from './fightPose'
 import type { ArcadeFighter } from './types'
 import { battleBodyAvailable, battleMindAvailable } from './battleCantabileRules'
 import { freeCombatBody } from './fightActorState'
 import { PROLOGUE_CARRY_POSE } from './keyPosesBonolenov'
 import { bonolenovStepPlan } from './bonolenovLocomotion'
 
+export { armedCarryPlan } from './bonolenovArmedNormals'
 export { PROLOGUE_SPEAR_POSE } from './keyPosesBonolenov'
 
 /** Alternating one-foot balances and open arms: reference video 1:12–1:42. */
@@ -77,20 +83,25 @@ export function bonolenovDancePlan(fighter: ArcadeFighter): BodyPlan | null {
   return { key: 'battle-cantabile-dance', plant: true, blend: 0.06, pose }
 }
 
-export function bonolenovBodyPlan(fighter: ArcadeFighter): BodyPlan | null {
+export function bonolenovBodyPlan(fighter: ArcadeFighter, seconds: number): BodyPlan | null {
   const dance = bonolenovDancePlan(fighter)
   if (dance) return dance
   if (!danceBodyReady(fighter)) return null
   const step = bonolenovStepPlan(fighter)
   if (step) return step
-  if (
-    !fighter.battleCantabile?.prologue ||
-    fighter.pose !== 'idle' ||
-    fighter.crouching ||
-    !danceBodyReady(fighter)
-  )
+  if (fighter.pose !== 'idle' || fighter.crouching) return null
+  if (bonolenovHasSpear(fighter))
+    return { key: 'bonolenov:prologue-ready', plant: true, blend: 0.1, pose: PROLOGUE_CARRY_POSE }
+  const motion = motionOf(fighter)
+  const standing = fightStance('bonolenov')!.pose
+  if (motion.prejumpFrames || motion.landingFrames || movementTechPose(fighter, standing))
     return null
-  return { key: 'bonolenov:prologue-ready', plant: true, blend: 0.1, pose: PROLOGUE_CARRY_POSE }
+  return {
+    key: 'bonolenov:unarmed-rhythm',
+    plant: true,
+    blend: 0.1,
+    pose: addPoses(standing, bonolenovIdleBeat(seconds)),
+  }
 }
 
 function danceBodyReady(fighter: ArcadeFighter): boolean {

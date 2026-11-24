@@ -5,6 +5,7 @@ import { fightRigOf, type FightRig } from './fightRig'
 import { reachFightFoot } from './fightFootReach'
 import { keepHumanJoint } from './fightJointLimits'
 import { preserveSupportDepth } from './fightSupportDepth'
+import { balanceGroundedTorso } from './fightGroundedBalance'
 import { supportCycle } from './fightSupportCycle'
 import { clearFootTarget } from './fightLimbClearance'
 import { shuffleSupport } from './fightShuffleStep'
@@ -119,6 +120,7 @@ export function createSeparationSupport() {
       prepare(figure, fighter, timing)
     if (!prepared || !support) return
     syncFeet(prepared, support)
+    if (prepared.cycle.free === undefined) balanceGroundedTorso(prepared.rig)
   }
   return Object.assign(sync, { prepare })
 }

@@ -1,3 +1,4 @@
+import { danceStrikePhrase } from './bonolenovAttackPhrase'
 import { KURAPIKA_COMMAND_POSES, HISOKA_COMMAND_POSES } from './keyPosesKurapikaHisokaCommands'
 import { CHROLLO_COMMAND_POSES, BENJAMIN_COMMAND_POSES } from './keyPosesChrolloBenjaminCommands'
 import { holdNormalContacts } from './keyPoseContact'
@@ -9,7 +10,7 @@ import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { BONOLENOV_KEY_POSES } from './keyPosesBonolenov'
 import { archetypeTimeline } from './fightArchetypes'
 import { rosterKeyPoses, authoredStrikeTimeline } from './rosterKeyPoses'
-import { authoredStrikeDirection } from './physicalStrikeDirections'
+import { authoredStrikeDirection, usesFullPhysicalPoses } from './physicalStrikeDirections'
 import { standingStrikeTimeline } from './standingStrikeMotion'
 import { hasPersonalNormal, personalNormalTimeline } from './secondFiveNormals'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
@@ -150,6 +151,10 @@ export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | n
   const native =
     authoredStrikeTimeline(id, slot) ?? KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
   const base = standingStrikeTimeline(id, slot, native)
+  if (usesFullPhysicalPoses(id) && authoredStrikeDirection(id, slot)) return base
+  // Cantabile's grounded and aerial phrases carry their own beat and support.
+  if (base && id === 'bonolenov' && authoredStrikeDirection(id, slot))
+    return danceStrikePhrase(slot, base)
   return base && personalNormalTimeline(id, slot, base)
 }
 

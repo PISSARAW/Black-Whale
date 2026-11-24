@@ -15,6 +15,21 @@ const AERIAL_PLANS: ReadonlySet<FighterId> = new Set([
   'lynch',
   'rihan',
   'basho',
+  'bonolenov',
+  'halkenburg',
+  'bill',
+  'yokotani',
+  'melody',
+  'saiyu',
+  'zakuro',
+  'gel',
+  'illumi',
+  'machi',
+  'luini',
+  'theta',
+  'tserriednich',
+  'leorio',
+  'hanzo',
 ])
 
 const PLANS: Partial<Record<FighterId, ArsenalAiPlan>> = {
@@ -99,6 +114,91 @@ const PLANS: Partial<Record<FighterId, ArsenalAiPlan>> = {
     if (state.opponent.bashoPoem?.ready && gap < 10) return ['standingLight', 'standingHeavy']
     if (visibleRecovery(state.player)) return ['backHeavy', 'forwardLight']
     return gap < 8 && roll < 0.58 ? ['standingLight', 'lowLight'] : ['forwardHeavy', 'forwardLight']
+  },
+  bonolenov: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (gap < 8) return roll < 0.46 ? ['standingLight', 'lowHeavy'] : ['standingHeavy', 'backHeavy']
+    return ['forwardLight', 'forwardHeavy']
+  },
+  halkenburg: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (visibleRecovery(state.player)) return ['forwardHeavy', 'standingHeavy']
+    return gap < 8 && roll < 0.5 ? ['backHeavy', 'lowLight'] : ['standingLight', 'forwardLight']
+  },
+  bill: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (gap <= 6 && roll < 0.25) return ['throw', 'standingLight']
+    return gap < 9
+      ? ['standingLight', 'standingHeavy', 'lowHeavy']
+      : ['forwardLight', 'forwardHeavy']
+  },
+  yokotani: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['forwardHeavy', 'standingHeavy']
+    return gap < 8 && roll < 0.56 ? ['standingLight', 'standingHeavy'] : ['lowLight', 'backHeavy']
+  },
+  melody: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (visibleRecovery(state.player)) return ['backHeavy', 'forwardLight']
+    return gap < 8 && roll < 0.45 ? ['standingHeavy', 'lowLight'] : ['standingLight', 'backHeavy']
+  },
+  saiyu: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (visibleRecovery(state.player)) return ['forwardLight', 'standingHeavy']
+    return gap < 8 && roll < 0.55 ? ['standingLight', 'lowHeavy'] : ['forwardLight', 'backHeavy']
+  },
+  zakuro: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (gap < 6 && roll < 0.25) return ['throw', 'standingLight']
+    return gap < 8 ? ['standingHeavy', 'lowLight'] : ['forwardLight', 'backHeavy']
+  },
+  gel: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['standingHeavy', 'forwardHeavy']
+    return gap < 8 && roll < 0.45 ? ['lowLight', 'standingLight'] : ['backHeavy', 'forwardLight']
+  },
+  illumi: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (visibleRecovery(state.player)) return ['forwardLight', 'standingLight']
+    return gap < 8 && roll < 0.55
+      ? ['standingLight', 'standingHeavy']
+      : ['backHeavy', 'forwardHeavy']
+  },
+  machi: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['backHeavy', 'forwardLight']
+    return gap < 8 && roll < 0.48
+      ? ['standingLight', 'standingHeavy']
+      : ['forwardLight', 'lowHeavy']
+  },
+  luini: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (visibleRecovery(state.player)) return ['forwardLight', 'forwardHeavy']
+    return gap < 8 && roll < 0.45 ? ['standingLight', 'lowLight'] : ['backHeavy', 'forwardLight']
+  },
+  theta: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['forwardLight', 'standingHeavy']
+    return gap < 8 && roll < 0.58 ? ['standingLight', 'backHeavy'] : ['lowLight', 'forwardHeavy']
+  },
+  tserriednich: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['standingHeavy', 'forwardHeavy']
+    return gap < 8 ? ['standingLight', 'lowLight'] : ['backHeavy', 'forwardLight']
+  },
+  leorio: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (gap < 6 && roll < 0.24) return ['throw', 'standingLight']
+    return gap < 8
+      ? ['standingLight', 'standingHeavy', 'lowHeavy']
+      : ['forwardHeavy', 'forwardLight']
+  },
+  hanzo: ({ gap, roll, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    if (visibleRecovery(state.player)) return ['forwardHeavy', 'forwardLight']
+    return gap < 7 && roll < 0.5
+      ? ['standingLight', 'standingHeavy']
+      : ['forwardLight', 'backHeavy']
   },
 }
 

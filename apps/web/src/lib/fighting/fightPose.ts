@@ -1,3 +1,5 @@
+import { interpolateJointTurn } from './fightPoseSlerp'
+
 /**
  * A fighting pose: joint offsets added on top of the shared body's rest pose.
  *
@@ -12,25 +14,36 @@
  * - shoulders and hips: x < 0 swings the limb forward and up, z > 0 opens it
  *   away from the body.
  * - elbows: x < 0 bends. Knees: x > 0 bends. Wrists and ankles: x tilts.
+ * - `neck`, palms and feet are additive articulation layered after head, wrist
+ *   and ankle motion. Clavicles are local shoulder translations
+ *   `[inward, lift, protract]`, not Euler turns.
  * - `root`: a position offset [sideways, up, forward] of the whole figure.
  */
 export type Turn = readonly [number, number, number]
 
 export const FIGHT_JOINTS = [
   'root',
+  'pelvis',
   'body',
   'chest',
+  'neck',
   'head',
+  'leadClavicle',
+  'rearClavicle',
   'leadShoulder',
   'rearShoulder',
   'leadElbow',
   'rearElbow',
   'leadWrist',
   'rearWrist',
+  'leadPalm',
+  'rearPalm',
   'leadHip',
   'rearHip',
   'leadKnee',
   'rearKnee',
+  'leadFoot',
+  'rearFoot',
 ] as const
 
 export type FightJoint = (typeof FIGHT_JOINTS)[number]
@@ -40,12 +53,8 @@ const ZERO: Turn = [0, 0, 0]
 
 export const NEUTRAL_POSE: FightPose = {}
 
-function lerpTurn(from: Turn, to: Turn, amount: number): Turn {
-  return [
-    from[0] + (to[0] - from[0]) * amount,
-    from[1] + (to[1] - from[1]) * amount,
-    from[2] + (to[2] - from[2]) * amount,
-  ]
+function scaleTurn(turn: Turn, amount: number): Turn {
+  return [turn[0] * amount, turn[1] * amount, turn[2] * amount]
 }
 
 function jointsOf(...poses: FightPose[]): FightJoint[] {
@@ -55,7 +64,11 @@ function jointsOf(...poses: FightPose[]): FightJoint[] {
 export function lerpPose(from: FightPose, to: FightPose, amount: number): FightPose {
   const blended: FightPose = {}
   for (const joint of jointsOf(from, to)) {
-    blended[joint] = lerpTurn(from[joint] ?? ZERO, to[joint] ?? ZERO, amount)
+    blended[joint] = interpolateJointTurn(
+      joint,
+      { from: from[joint] ?? ZERO, to: to[joint] ?? ZERO },
+      amount,
+    )
   }
   return blended
 }
@@ -73,7 +86,11 @@ function addTurn(a: Turn, b: Turn): Turn {
 }
 
 export function scalePose(pose: FightPose, amount: number): FightPose {
-  return lerpPose(NEUTRAL_POSE, pose, amount)
+  const scaled: FightPose = {}
+  for (const joint of jointsOf(pose)) {
+    scaled[joint] = scaleTurn(pose[joint] ?? ZERO, amount)
+  }
+  return scaled
 }
 
 /** Keep only the listed joints: a walk keeps the stance's upper body, not its legs. */
@@ -85,18 +102,24 @@ export function pickJoints(pose: FightPose, joints: readonly FightJoint[]): Figh
 
 export const UPPER_JOINTS: readonly FightJoint[] = [
   'chest',
+  'neck',
   'head',
+  'leadClavicle',
+  'rearClavicle',
   'leadShoulder',
   'rearShoulder',
   'leadElbow',
   'rearElbow',
   'leadWrist',
   'rearWrist',
+  'leadPalm',
+  'rearPalm',
 ]
 
 export const STANCE_FRAME_JOINTS: readonly FightJoint[] = [
   'body',
   'chest',
+  'neck',
   'head',
   'leadHip',
   'rearHip',
@@ -116,4 +139,9 @@ export interface BodyPlan {
   attackFlow?: import('./fightAttackFlow').AttackFlowFrame
   /** Simulation age of a contact reaction; repeated renders during hitstop keep the same pose. */
   reactionFrame?: number
+  /** Optional authored base of support for a planted presentation pose. */
+  supportFoot?: 'lead' | 'rear'
+  /** A planted foot may rotate around its anchor without translating. */
+  pivotFoot?: 'lead' | 'rear'
+  pivotAngle?: number
 }

@@ -1618,11 +1618,11 @@ séries de `easterEggRosterOne.ts` à `easterEggRosterFour.ts`. Il s’agit d’
 écrits pour Clash : les répliques ne sont pas des citations du manga et les scènes
 n’ajoutent aucun Hatsu.
 
-F2 (P1) et F4 (P2 en local ou entraînement), configurables dans le panneau « Easter Eggs
+1 (P1) et 8 (P2 en local ou entraînement) sur la rangée du haut sans Maj ni Fn, configurables dans le panneau « Easter Eggs
 · Gestes et secrets », jouent le geste 1 sans direction, le 2 avec avant, le 3 avec
 arrière et le secret avec bas. Avant et arrière suivent le côté regardé par chaque
-combattant. Les quatre boutons du panneau servent au tactile. Les touches de fonction
-peuvent nécessiter Fn selon le clavier.
+combattant. Les quatre boutons du panneau servent au tactile. Les anciens raccourcis F2 et F4
+restent disponibles dans les réglages.
 
 Les gestes 1, 2 puis 3 doivent se terminer dans cet ordre, dans la même manche, pour
 ouvrir les secrets fondés sur une série. D’autres exigent un geste terminé ou un

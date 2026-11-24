@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store'
 
+import { outputBus } from '../output'
 import {
   applyMuffle,
   BAR,
@@ -26,8 +27,37 @@ const ENABLED_KEY = 'black-whale:ambient'
 let scheduler: ReturnType<typeof setInterval> | null = null
 let nextBar = 0
 let barIndex = 0
+let themeOutput: GainNode | undefined
+let themeSuppressions = 0
 
 export const ambientPlaying = writable(false)
+
+function updateThemeOutput() {
+  if (!themeOutput) return
+  const now = themeOutput.context.currentTime
+  themeOutput.gain.setTargetAtTime(themeSuppressions ? 0 : 1, now, 0.05)
+}
+
+/** A mode with its own score can suspend the voyage theme without changing its preference. */
+export function suppressVoyageTheme(): () => void {
+  themeSuppressions += 1
+  updateThemeOutput()
+  return () => {
+    themeSuppressions -= 1
+    updateThemeOutput()
+  }
+}
+
+function buildThemeGraph(): Graph {
+  const bus = outputBus('ambient')
+  if (!bus) return buildGraph()
+  const output = bus.context.createGain()
+  output.gain.value = themeSuppressions ? 0 : 1
+  const graph = buildGraph('ambient', output)
+  output.connect(bus)
+  themeOutput = output
+  return graph
+}
 
 /** A minor, natural: the mode most of Hirano's quieter cues sit in. */
 const A3 = 57
@@ -186,7 +216,7 @@ export async function startAmbient() {
   // The ship may have no Web Audio at all, in which case there is no theme and
   // the page is otherwise untouched.
   try {
-    graph = themeGraph() ?? buildGraph()
+    graph = themeGraph() ?? buildThemeGraph()
   } catch {
     return
   }
@@ -211,6 +241,8 @@ export function stopAmbient() {
   }
   const graph = themeGraph()
   if (graph) {
+    const output = themeOutput
+    themeOutput = undefined
     const now = graph.context.currentTime
     graph.master.gain.cancelScheduledValues(now)
     graph.master.gain.setTargetAtTime(0.0001, now, 0.4)
@@ -222,7 +254,8 @@ export function stopAmbient() {
     // tail ring out first, or the silence starts with a click.
     const { master } = graph
     setTimeout(() => {
-      if (!scheduler) master.disconnect()
+      master.disconnect()
+      output?.disconnect()
     }, 2500)
     setThemeGraph(null)
   }

@@ -27,6 +27,7 @@
     /** Facing, in radians, matching the camera's yaw. */
     heading: number
     currentSpaceId: string | null
+    marker?: { at: Vec2; label: string }
     label: string
     /**
      * The stairs, lifts, bulkheads and interior doors that touch this level,
@@ -59,6 +60,7 @@
     position,
     heading,
     currentSpaceId,
+    marker,
     label,
     crossings = [],
     nameOf = (space) => {
@@ -282,6 +284,18 @@
       </g>
     {/each}
 
+    {#if marker}
+      <circle
+        cx={marker.at[0]}
+        cy={marker.at[1]}
+        r={unit * 5}
+        fill="#e5c476"
+        role="img"
+        aria-label={marker.label}
+      >
+        <title>{marker.label}</title>
+      </circle>
+    {/if}
     {#if showPosition}
       <path d={cone} fill="#FFFFF0" opacity="0.55" />
       <circle cx={position[0]} cy={position[1]} r={unit * 5} fill="#FFFFF0" />

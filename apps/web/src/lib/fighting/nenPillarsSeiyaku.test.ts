@@ -39,7 +39,11 @@ describe('En — absolute reflex zone', () => {
     const base = beginFight(createFight('hinrigh', 'hisoka'))
     const close = {
       ...base,
-      player: { ...base.player, x: 45, nen: { ...base.player.nen, mode: 'ren' as const, en: { radius: 20 } } },
+      player: {
+        ...base.player,
+        x: 45,
+        nen: { ...base.player.nen, mode: 'ren' as const, en: { radius: 20 } },
+      },
       opponent: { ...base.opponent, x: 52, nen: { ...base.opponent.nen, in: true } },
     }
     const stepped = advanceNenPillars(close)
@@ -101,7 +105,13 @@ describe('Black Whale firearms — Ten chip, Ken/Ko immunity, 1.5 Body Memory, a
     const tenChip = resolvedDamage({
       physicalProjectile: true,
       attacker: base.player,
-      defence: { fighter: base.opponent, blocked: true, parried: false, avoided: false, invulnerable: false },
+      defence: {
+        fighter: base.opponent,
+        blocked: true,
+        parried: false,
+        avoided: false,
+        invulnerable: false,
+      },
       base: 20,
       zone: 'hands',
       kind: 'ranged',
@@ -135,16 +145,19 @@ describe('Black Whale firearms — Ten chip, Ken/Ko immunity, 1.5 Body Memory, a
       x: 50,
       y: 6,
       velocityX: 40,
-      radius: 1,
+      width: 1,
+      height: 1,
       damage: 18,
       knockback: 1,
       hitstun: 10,
       blockstun: 6,
+      hitstop: 6,
+      targetZone: 'hands' as const,
+      colour: '#d7d7d7',
       age: 0,
       lifetime: 60,
       matter: 'object' as const,
       shape: 'bullet' as const,
-      zone: 'hands' as const,
     }
     const hit1 = strikeProjectileDefender({
       fighter: base.opponent,
@@ -209,8 +222,16 @@ describe('Seiyaku — Soft Lock and Breach Penalties', () => {
 
     // Blind vow
     const blindFighter = swearSeiyaku(base.player, 'blind')
-    const normalCost = attackAuraCost({ fighter: base.player, kind: 'special', moveId: 'kurapika:neutralSpecial' })
-    const blindCost = attackAuraCost({ fighter: blindFighter, kind: 'special', moveId: 'kurapika:neutralSpecial' })
+    const normalCost = attackAuraCost({
+      fighter: base.player,
+      kind: 'special',
+      moveId: 'kurapika:neutralSpecial',
+    })
+    const blindCost = attackAuraCost({
+      fighter: blindFighter,
+      kind: 'special',
+      moveId: 'kurapika:neutralSpecial',
+    })
     expect(blindCost).toBe(Math.round(normalCost * SEIYAKU_BLIND_COST_FACTOR))
 
     const brokenBlind = advanceSeiyaku(
@@ -258,7 +279,7 @@ describe('Seiyaku — Soft Lock and Breach Penalties', () => {
     const withOwl = {
       ...musseFight,
       player: { ...musseFight.player, musseOwlActive: true },
-      musseOwl: { owner: 'player' as const, attachedTo: 'opponent' as const, active: true },
+      musseOwl: { owner: 'player' as const, target: 'opponent' as const, active: true },
     }
     expect(readNenBudget(withOwl, 'player').maintained).toBeGreaterThan(0)
     expect(readNenCognitiveLoad(withOwl, 'player').load).toBeGreaterThan(

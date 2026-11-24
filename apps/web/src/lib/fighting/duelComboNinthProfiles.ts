@@ -4,6 +4,8 @@ export const NINTH_DUEL_PROFILES = {
   rihan: {
     window: 7,
     block: 'standingHeavy',
+    // Analyse parfaite (signatureCombosLot2A.ts): forward accélération after sweep into throw.
+    dash: { lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -50,6 +52,8 @@ export const NINTH_DUEL_PROFILES = {
   melody: {
     window: 6,
     block: 'standingHeavy',
+    // Battement désaccordé (signatureCombosLot2A.ts): step back to play, press in after sweep.
+    dash: { backHeavy: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -88,6 +92,9 @@ export const NINTH_DUEL_PROFILES = {
   terebellum: {
     window: 7,
     block: 'standingHeavy',
+    // Transfert de blessure (signatureCombosLot3B.ts): press in after physical carrier into capture.
+    dash: { neutralSpecial: 'forward' },
+    accelInto: { forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -95,7 +102,7 @@ export const NINTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 6, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -128,6 +135,8 @@ export const NINTH_DUEL_PROFILES = {
   voconte: {
     window: 6,
     block: 'standingHeavy',
+    // Porte de service (signatureCombosLot3B.ts): cross into blind spot then forward capture.
+    dash: { standingHeavy: 'through', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -135,7 +144,7 @@ export const NINTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },

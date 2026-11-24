@@ -1,6 +1,8 @@
 import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
 import { clashAuraFlow, usesClashNen } from './clashNen'
+import { advanceIntentDrive } from './intentDrive'
+import { advanceAirMovement } from './airMovement'
 import type { BodyZone, CombatAction, CombatSide, CombatState, FighterState, Impact } from './types'
 
 /** What a fighter needs to know about the world for one frame of the clock. */
@@ -49,7 +51,19 @@ export function advanceFighter(
     ? chargeClashAura(recovered, context.dt)
     : chargeContinuous(recovered, context.dt)
   const shifted = settleRyu(charged, context.dt)
-  const moved = move(shifted, rival, context)
+  const driven = advanceIntentDrive({
+    fighter: shifted,
+    rival,
+    walls: context.state.terrain.walls,
+    dt: context.dt,
+  })
+  const airborne = advanceAirMovement({
+    fighter: driven,
+    rival,
+    walls: context.state.terrain.walls,
+    dt: context.dt,
+  })
+  const moved = move(airborne, rival, context)
   return {
     ...moved,
     cooldown: Math.max(0, moved.cooldown - context.dt),
@@ -69,10 +83,11 @@ export function settleRyu(fighter: FighterState, dt: number): FighterState {
   if (!fighter.ryuShift) return fighter
   const remaining = fighter.ryuShift.remaining - dt
   if (remaining > 0) return { ...fighter, ryuShift: { ...fighter.ryuShift, remaining } }
+  const allocation = fighter.ryuShift.restore ?? fighter.ryuShift
   return {
     ...fighter,
-    attackShare: fighter.ryuShift.attackShare,
-    guard: fighter.ryuShift.guard,
+    attackShare: allocation.attackShare,
+    guard: allocation.guard,
     ryuShift: null,
   }
 }
@@ -188,7 +203,7 @@ export function setRyu(
 }
 
 export function activeGuard(fighter: FighterState): FighterState {
-  if (fighter.condition !== 'ready' || fighter.mode === 'zetsu') return fighter
+  if (fighter.condition !== 'ready' || fighter.mode === 'zetsu' || fighter.jump) return fighter
   return { ...fighter, guardWindow: GUARD_WINDOW, ko: null }
 }
 
@@ -234,7 +249,8 @@ export function setMovement(fighter: FighterState, vector: Vec2): FighterState {
 }
 
 export function syncPosition(fighter: FighterState, position: Vec2): FighterState {
-  if (fighter.condition !== 'ready' || fighter.bound > 0 || fighter.intent) return fighter
+  if (fighter.condition !== 'ready' || fighter.bound > 0 || fighter.intent || fighter.jump)
+    return fighter
   return { ...fighter, position, movement: [0, 0] }
 }
 

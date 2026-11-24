@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight } from './engine'
-import { EMPTY_INPUT } from './types'
+import { EMPTY_INPUT, type ArcadeFighter } from './types'
 import { bodyMemoryWeak, rememberBodyHit } from './bodyMemory'
 import { applyAuraContext, focusAttackRyu } from './nen'
 import { nenOutputCapacity } from './nenBudget'
@@ -32,16 +32,16 @@ import {
 } from './illumiBiscuitUpgrades'
 
 describe('5-fighter upgrades: Machi, Phinks, Franklin, Illumi, Biscuit', () => {
-  it('Machi suture heals wounds & erases Body Memory; In-tripwire cuts runners; tracking thread cancels Zetsu & pulls', () => {
+  it('Machi sutures wounds without erasing strain; In-tripwire cuts runners; tracking thread pulls', () => {
     let state = beginFight(createFight('machi', 'hisoka', { mode: 'versus-local' }))
-    let machi = { ...state.player, aura: 40, openWounds: 2 }
+    let machi: ArcadeFighter = { ...state.player, aura: 40, openWounds: 2 }
     for (let i = 0; i < 3; i++) machi = rememberBodyHit(machi, 'hands', 10, false)
     expect(bodyMemoryWeak(machi, 'hands')).toBe(true)
 
     const sutured = applyMachiCombatSuture(machi)
     expect(sutured.aura).toBe(40 - MACHI_SUTURE_AURA_COST)
     expect(sutured.openWounds).toBe(0)
-    expect(bodyMemoryWeak(sutured, 'hands')).toBe(false)
+    expect(bodyMemoryWeak(sutured, 'hands')).toBe(true)
 
     state = placeMachiInTripwire(state, 'player')
     expect(machiTripwireVisibleTo(state, 'opponent')).toBe(false)
@@ -64,14 +64,16 @@ describe('5-fighter upgrades: Machi, Phinks, Franklin, Illumi, Biscuit', () => {
       opponent: { ...state.opponent, nen: { ...state.opponent.nen, mode: 'zetsu' as const } },
     }
     const tracked = plantMachiTrackingThread(stealthState, 'player')
-    expect(tracked.opponent.nen.mode).toBe('ten')
+    expect(tracked.opponent.nen.mode).toBe('zetsu')
     const startX = tracked.opponent.x
     const pulled = pullMachiTrackedTarget(tracked, 'player')
-    expect(Math.abs(pulled.opponent.x - pulled.player.x)).toBeLessThan(Math.abs(startX - pulled.player.x))
+    expect(Math.abs(pulled.opponent.x - pulled.player.x)).toBeLessThan(
+      Math.abs(startX - pulled.player.x),
+    )
     expect(pulled.opponent.machiTrackedBy).toBeUndefined()
   })
 
-  it('Phinks hides turns under In, keeps half on cancel for 3s, and suffers Body Memory at 10+ turns', () => {
+  it('Phinks hides turns under In without invented charge storage or automatic recoil', () => {
     const state = beginFight(createFight('phinks', 'hisoka', { mode: 'versus-local' }))
     const winding = {
       ...state.player,
@@ -83,18 +85,28 @@ describe('5-fighter upgrades: Machi, Phinks, Franklin, Illumi, Biscuit', () => {
     expect(phinksDisplayedTurns(winding, gyoFoe)).toBe(8)
 
     const cancelled = cancelCyclotronWithStorage(winding)
-    expect(cancelled.hatsuEffects.cyclotronTurns).toBe(4)
-    expect(cancelled.phinksStoredTurnsFrames).toBe(180)
+    expect(cancelled.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(cancelled.phinksStoredTurnsFrames).toBeUndefined()
 
     const recoiled = applyPhinksRecoil(cancelled, PHINKS_OVERDRIVE_THRESHOLD)
-    expect(bodyMemoryWeak(recoiled, 'hands')).toBe(true)
+    expect(bodyMemoryWeak(recoiled, 'hands')).toBe(false)
   })
 
-  it('Franklin Emission salvos drain heavy Ken aura and distinguish 5S suppression vs 6S heavy salvo', () => {
+  it('Franklin uses ordinary Ken drain while distinguishing suppression and heavy salvos', () => {
     const state = beginFight(createFight('franklin', 'hisoka', { mode: 'versus-local' }))
     const attacker = {
       ...state.player,
-      attack: { kind: 'special' as const, frame: 5, impacted: false, variant: 'forward' as const },
+      attack: {
+        kind: 'special' as const,
+        moveId: 'franklin:forwardSpecial',
+        frame: 5,
+        impacted: false,
+        auraCharged: false,
+        concealed: false,
+        hatsuSource: 'franklin' as const,
+        projectileSpawned: false,
+        reversal: false,
+      },
     }
     const kenDefender = {
       ...state.opponent,

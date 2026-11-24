@@ -2,31 +2,32 @@
 
 # Graphe des dépendances
 
-Nœuds : 25 · Arêtes uniques : 62
+Nœuds : 25 · Arêtes uniques : 63
 
 ## Arêtes
 
 | Source | Cible | Occurrences |
 | ------ | ----- | ----------- |
-| `lib:arena` | `lib:combat` | 62 |
-| `lib:arena` | `lib:fighting` | 18 |
+| `lib:arena` | `lib:combat` | 99 |
+| `lib:arena` | `lib:fighting` | 36 |
 | `lib:arena` | `lib:nen` | 9 |
-| `lib:arena` | `lib:tour` | 18 |
+| `lib:arena` | `lib:tour` | 32 |
 | `lib:arena` | `package:@black-whale/nen-engine` | 5 |
 | `lib:assets` | `lib:components` | 1 |
 | `lib:assets` | `lib:map` | 2 |
 | `lib:assets` | `lib:tour` | 6 |
 | `lib:audio` | `lib:infiltration` | 1 |
 | `lib:audio` | `package:@black-whale/nen-engine` | 4 |
-| `lib:combat` | `lib:fighting` | 12 |
-| `lib:combat` | `lib:tour` | 14 |
-| `lib:combat` | `package:@black-whale/nen-engine` | 1 |
+| `lib:combat` | `lib:arena` | 2 |
+| `lib:combat` | `lib:fighting` | 20 |
+| `lib:combat` | `lib:tour` | 20 |
+| `lib:combat` | `package:@black-whale/nen-engine` | 2 |
 | `lib:components` | `package:@black-whale/domain` | 11 |
 | `lib:components` | `package:@black-whale/nen-engine` | 3 |
 | `lib:fighting` | `lib:components` | 2 |
-| `lib:fighting` | `lib:tour` | 84 |
+| `lib:fighting` | `lib:tour` | 87 |
 | `lib:fighting` | `package:@black-whale/domain` | 1 |
-| `lib:fighting` | `package:@black-whale/nen-engine` | 26 |
+| `lib:fighting` | `package:@black-whale/nen-engine` | 28 |
 | `lib:hunt` | `lib:arena` | 3 |
 | `lib:hunt` | `lib:combat` | 1 |
 | `lib:hunt` | `lib:nen` | 1 |
@@ -73,4 +74,5 @@ Nœuds : 25 · Arêtes uniques : 62
 
 ## Cycles
 
-- `lib:fighting` → `lib:tour` → `lib:fighting`
+- `lib:tour` → `lib:fighting` → `lib:tour`
+- `lib:arena` → `lib:combat` → `lib:arena`

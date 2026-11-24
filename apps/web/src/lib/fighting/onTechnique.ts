@@ -97,7 +97,8 @@ export function hatsuSealedByOn(fighter: Pick<ArcadeFighter, 'nen' | 'on'>): boo
  */
 export function applyOnContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter | null {
   if (fighter.nen.on) return fighter
-  if (!input.aura || !input.hatsu || !canSwearOn(fighter)) return null
+  const requested = input.onIntent || (!input.directControls && input.aura && input.hatsu)
+  if (!requested || !canSwearOn(fighter)) return null
   const result = transitionNen(fighter.nen, {
     type: 'ON',
     on: true,

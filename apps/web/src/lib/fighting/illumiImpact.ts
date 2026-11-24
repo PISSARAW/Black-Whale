@@ -22,10 +22,12 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
   const target = defence.fighter
   const captured = canImplant(options)
   const warpsFace = attacker.attack.illumiNeedleMode === 'face-warp'
+  const comboHits = captured && target.comboHits > 0 ? target.comboHits + 1 : 0
+  const caster = resolvedNeedleCaster(spent, captured, warpsFace)
   const next = {
     ...state,
-    [side]: captured && warpsFace ? spentNeedleFaceCaster(spent) : spent,
-    [targetSide]: resolvedNeedleVictim(options, captured),
+    [side]: caster,
+    [targetSide]: resolvedNeedleVictim(options, captured, comboHits),
     impact: {
       sequence: (state.impact?.sequence ?? 0) + 1,
       attacker: side,
@@ -42,7 +44,7 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
       antiAir: false,
       wallSplat: false,
       invulnerable: defence.invulnerable,
-      comboHits: 0,
+      comboHits,
       damageScale: 1,
       points: 0,
       zone: 'head' as const,
@@ -55,9 +57,20 @@ export function resolveIllumiContact(options: NeedleContact): FightState | null 
   return recordDolphinEffects(state, next, side)
 }
 
+function resolvedNeedleCaster(
+  spent: ArcadeFighter,
+  captured: boolean,
+  warpsFace: boolean,
+): ArcadeFighter {
+  if (!captured) return spent
+  if (warpsFace) return spentNeedleFaceCaster(spent)
+  return spent.attack ? { ...spent, attack: { ...spent.attack, confirmedHit: true } } : spent
+}
+
 function resolvedNeedleVictim(
   { state, side, defence }: NeedleContact,
   captured: boolean,
+  comboHits: number,
 ): ArcadeFighter {
   const target = defence.fighter
   if (!captured) return target
@@ -71,6 +84,7 @@ function resolvedNeedleVictim(
       needleEmbedded: true,
       mediumCopyId: attacker.equipmentProps?.needles?.copyId,
     },
+    ...(comboHits > 0 ? { comboHits, knockdownFrames: 0, hitStun: 0 } : {}),
     attack: null,
     bufferedAttack: null,
     blocking: false,
@@ -105,7 +119,8 @@ function alreadyControlled(target: ArcadeFighter): boolean {
 }
 
 function skullContact(attacker: ArcadeFighter, target: ArcadeFighter): boolean {
-  if (target.hanzoProjection || target.knockdownFrames > 0) return false
+  if (target.hanzoProjection) return false
+  if (target.knockdownFrames > 0 && !attacker.attack?.accel) return false
   const hitbox = activeHitbox(attacker)
   const offset = target.crouching ? 4 : 0
   return Boolean(

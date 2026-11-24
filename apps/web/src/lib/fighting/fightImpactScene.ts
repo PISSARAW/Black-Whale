@@ -9,6 +9,7 @@ import { physicalRosterPair } from './fightPhysicalRoster'
 import { fightContactTarget } from './fightContactAlignment'
 import { fightRigOf } from './fightRig'
 import { anatomicalContactZone, surfaceContactAt } from './fightSurfaceContact'
+import { fightImpactPunctuation } from './fightImpactPunctuation'
 import type { FightImpact, FightSide, FightState } from './types'
 
 export function createFightImpactScene(options: {
@@ -26,6 +27,8 @@ export function createFightImpactScene(options: {
     guard: options.geometry(new THREE.BoxGeometry(0.025, 0.09, 0.025)),
     parry: options.geometry(new THREE.TorusGeometry(0.16, 0.014, 4, 24)),
     clash: options.geometry(new THREE.TorusGeometry(0.22, 0.025, 6, 32)),
+    ray: options.geometry(new THREE.BoxGeometry(0.24, 0.014, 0.014)),
+    wave: options.geometry(new THREE.TorusGeometry(0.13, 0.012, 5, 28)),
   }
   const materials = {
     hit: options.glow(0xffd36a, 1),
@@ -77,8 +80,10 @@ export function createFightImpactScene(options: {
       const profile = comfortableImpact({
         impact,
         attacker: state[impact.attacker].id,
+        moveId: state[impact.attacker].attack?.moveId,
         comfort: comfort(),
       })
+      const punctuation = fightImpactPunctuation(impact)
       shake.hit(impact, { profile, facing: state[impact.attacker].facing })
       const origin = new THREE.Vector3(
         fightWorldX(impact.position.x),
@@ -104,6 +109,39 @@ export function createFightImpactScene(options: {
           born: now,
           size: profile.sparkSize,
           ring: style === 'parry',
+        })
+      }
+      if (punctuation.wave) {
+        const mesh = new THREE.Mesh(shapes.wave, materials[style])
+        mesh.name = 'fight-contact-wave'
+        mesh.position.copy(origin)
+        scene.add(mesh)
+        sparks.push({
+          mesh,
+          velocity: new THREE.Vector3(),
+          born: now,
+          size: 0.8 + punctuation.rank * 0.18,
+          ring: true,
+        })
+      }
+      for (let i = 0; i < punctuation.rays; i++) {
+        const spread = punctuation.rays <= 1 ? 0 : i / (punctuation.rays - 1) - 0.5
+        const angle = spread * Math.PI * 1.15 + (punctuation.direction < 0 ? Math.PI : 0)
+        const mesh = new THREE.Mesh(shapes.ray, materials[style])
+        mesh.name = 'fight-contact-ray'
+        mesh.rotation.z = angle
+        mesh.position.copy(origin)
+        scene.add(mesh)
+        sparks.push({
+          mesh,
+          velocity: new THREE.Vector3(
+            Math.cos(angle) * profile.sparkSpeed * 0.72,
+            Math.sin(angle) * profile.sparkSpeed * 0.72,
+            0,
+          ),
+          born: now,
+          size: 0.55 + punctuation.rank * 0.12,
+          ring: false,
         })
       }
     },

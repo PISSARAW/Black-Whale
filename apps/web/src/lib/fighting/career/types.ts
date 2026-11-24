@@ -1,6 +1,31 @@
 import type { FightMode, FightSide, FighterId } from '../types'
 import type { FightFormatId } from '../formats'
 import type { FightStageId } from '../stages'
+import type { ObservedCondition } from '../perception/opponentIntel'
+
+export interface CareerMatchIntel {
+  auraObserved: boolean
+  kameoRevealed: boolean
+  revealedConditions: readonly ObservedCondition[]
+}
+export type OpponentKnowledgeFact = 'aura' | 'kameo' | `condition:${ObservedCondition}`
+export interface OpponentKnowledgeEntry {
+  fact: OpponentKnowledgeFact
+  observations: number
+  confidence: 'suspected' | 'confirmed' | 'established'
+  lastMatchId: string
+  lastSeenAt: number
+}
+export interface OpponentKnowledge {
+  opponent: FighterId
+  entries: readonly OpponentKnowledgeEntry[]
+}
+export type RematchVowKind = 'no-retreat' | 'open-hatsu' | 'single-hatsu'
+export interface PendingRematchVow {
+  kind: RematchVowKind
+  opponent: FighterId
+  sourceMatchId: string
+}
 
 export interface FighterPractice {
   bestCombo: number
@@ -24,6 +49,8 @@ export interface CareerMatch {
   rounds: Record<FightSide, number>
   practice: MatchPractice
   ruleset: string
+  /** Only information the player actually observed; never grants a combat modifier. */
+  intel?: CareerMatchIntel
 }
 export interface CareerAppearance {
   theme: 'whale' | 'heavens' | 'nocturne'
@@ -38,6 +65,8 @@ export interface CareerProfile {
   totals: Partial<Record<FighterId, FighterTotals>>
   seen: string[]
   moraleSeen: string[]
+  opponentKnowledge: Partial<Record<FighterId, OpponentKnowledge>>
+  rematchVows: Partial<Record<FighterId, PendingRematchVow>>
   revision: number
 }
 export interface FighterTotals {
@@ -61,6 +90,8 @@ export const emptyCareer = (): CareerProfile => ({
   totals: {},
   seen: [],
   moraleSeen: [],
+  opponentKnowledge: {},
+  rematchVows: {},
   revision: 0,
 })
 export const CAREER_STORAGE = 'black-whale:clash:career:1'

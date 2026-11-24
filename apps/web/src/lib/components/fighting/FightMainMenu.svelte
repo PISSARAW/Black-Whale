@@ -3,6 +3,7 @@
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
   import { FIGHT_STAGES } from '$lib/fighting/stages'
   import type { FightMode, FighterId } from '$lib/fighting/types'
+  import FightJukebox from './FightJukebox.svelte'
   import FightPortrait from './FightPortrait.svelte'
   export let language: 'fr' | 'en'
   export let player: FighterId
@@ -97,6 +98,7 @@
     >
     <span class="mode-action">{fr ? 'Revivre' : 'Relive'}<span aria-hidden="true">↗</span></span>
   </button>
+  <FightJukebox {language} />
   <div class="clash-menu-links">
     <a href={$link('/fighting/profile')}
       ><span aria-hidden="true">◇</span><span

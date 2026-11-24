@@ -1,5 +1,6 @@
 import type { CareerMatch, CareerProfile, FighterTotals } from './types'
 import { mergeHistory } from './storage'
+import { rememberOpponentIntel } from './opponentKnowledge'
 
 export const emptyTotals = (): FighterTotals => ({
   matches: 0,
@@ -27,5 +28,17 @@ export function addCareerMatch(profile: CareerProfile, match: CareerMatch): Care
     totals: { ...profile.totals, [match.player]: total },
     seen: [...profile.seen, match.id].slice(-2000),
     history: mergeHistory(profile.history, [match]),
+    opponentKnowledge: rememberOpponentIntel(profile.opponentKnowledge, match),
+    rematchVows: settleRematchVow(profile, match),
   }
+}
+
+function settleRematchVow(
+  profile: CareerProfile,
+  match: CareerMatch,
+): CareerProfile['rematchVows'] {
+  if (!profile.rematchVows[match.opponent]) return profile.rematchVows
+  const vows = { ...profile.rematchVows }
+  delete vows[match.opponent]
+  return vows
 }

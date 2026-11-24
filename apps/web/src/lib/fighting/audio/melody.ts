@@ -5,8 +5,13 @@ import type { FightState } from '../types'
 export function createMelodyVoices(mix: FightMix) {
   const voices = (['player', 'opponent'] as const).map((side) => ({
     side,
-    fundamental: continuousVoice(mix, { target: mix.effects, hz: 349.23, level: 0 }),
-    breath: continuousVoice(mix, { target: mix.effects, hz: 1400, noise: true, level: 0 }),
+    fundamental: continuousVoice(mix, { target: mix.channels.techniques, hz: 349.23, level: 0 }),
+    breath: continuousVoice(mix, {
+      target: mix.channels.techniques,
+      hz: 1400,
+      noise: true,
+      level: 0,
+    }),
   }))
   return {
     update(state: FightState, audible: boolean) {

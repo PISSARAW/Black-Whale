@@ -33,6 +33,13 @@ export function createCareerTracker(record: (match: CareerMatch) => void, now = 
         rounds: { ...after.roundsWon },
         practice: practice.snapshot(),
         ruleset: REPLAY_RULESET,
+        intel: after.opponentIntel
+          ? {
+              auraObserved: after.opponentIntel.player.auraObserved,
+              kameoRevealed: after.opponentIntel.player.kameoRevealed,
+              revealedConditions: [...after.opponentIntel.player.revealedConditions],
+            }
+          : undefined,
       })
     },
   }

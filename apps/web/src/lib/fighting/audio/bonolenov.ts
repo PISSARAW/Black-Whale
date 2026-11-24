@@ -24,10 +24,10 @@ export function createBonolenovVoices(mix: FightMix) {
   const performers = (['player', 'opponent'] as const).map((side) => ({
     side,
     voices: [
-      continuousVoice(mix, { target: mix.effects, hz: 220, level: 0 }),
-      continuousVoice(mix, { target: mix.effects, hz: 440, level: 0 }),
-      continuousVoice(mix, { target: mix.effects, hz: 660, level: 0 }),
-      continuousVoice(mix, { target: mix.effects, hz: 1200, noise: true, level: 0 }),
+      continuousVoice(mix, { target: mix.channels.techniques, hz: 220, level: 0 }),
+      continuousVoice(mix, { target: mix.channels.techniques, hz: 440, level: 0 }),
+      continuousVoice(mix, { target: mix.channels.techniques, hz: 660, level: 0 }),
+      continuousVoice(mix, { target: mix.channels.techniques, hz: 1200, noise: true, level: 0 }),
     ],
   }))
   return {

@@ -41,6 +41,7 @@ export function spawnRemotePunch(state: FightState, side: FightSide): FightState
     shape: 'remote-fist',
     colour: '#bcecff',
     matter: 'nen',
+    canHitDowned: Boolean(attack.accel),
     age: 0,
     lifetime: travelFrames + REMOTE_PUNCH_VISIBLE_FRAMES,
     remotePunch: { originX, targetX, travelFrames, struck: false },
@@ -70,5 +71,6 @@ export function remotePunchCanHit(projectile: FightProjectile): boolean {
   const remote = projectile.remotePunch
   if (!remote) return true
   const emerging = projectile.age - remote.travelFrames
-  return !remote.struck && emerging >= REMOTE_PUNCH_RISE_FRAMES && emerging < 8
+  const rise = projectile.canHitDowned ? 1 : REMOTE_PUNCH_RISE_FRAMES
+  return !remote.struck && emerging >= rise && emerging < 8
 }

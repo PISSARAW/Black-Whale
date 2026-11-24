@@ -5,6 +5,7 @@ export type ReplayPerspective = 'reality' | CombatSide
 
 export interface FighterProjection {
   position: FighterState['position']
+  height: number
   condition: FighterState['condition']
   score: number
   aura: number | null
@@ -58,6 +59,7 @@ export function projectFrame(
 function omniscient(fighter: FighterState): FighterProjection {
   return {
     position: fighter.position,
+    height: fighter.height,
     condition: fighter.condition,
     score: fighter.score,
     aura: fighter.aura,
@@ -70,6 +72,7 @@ function subjective(observer: FighterState, target: FighterState): FighterProjec
   const reading = readAura(observer, target)
   return {
     position: target.position,
+    height: target.height,
     condition: target.condition,
     score: target.score,
     aura: observer.gyo ? target.aura : null,

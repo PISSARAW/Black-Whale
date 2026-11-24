@@ -2,10 +2,13 @@
   import { onMount } from 'svelte'
   import { clashCareer, careerFighters } from '$lib/fighting/career/profile'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { rematchVowLabel } from '$lib/fighting/career/rematchVow'
+  import type { RematchVowKind } from '$lib/fighting/career/types'
   export let career = clashCareer
   export let language: 'fr' | 'en'
   $: fr = language === 'fr'
   $: played = careerFighters($career)
+  const rematchVows: readonly RematchVowKind[] = ['no-retreat', 'open-hatsu', 'single-hatsu']
   onMount(() => career.load())
 </script>
 
@@ -110,6 +113,13 @@
           >{Math.round(match.practice.frames / 60)} s · {fr ? 'PV perdus' : 'Health lost'}
           {match.practice.player.healthLost.toFixed(1)} · {match.stage}</small
         >
+        {#if match.winner === 'opponent'}<div class="vows">
+            {#each rematchVows as kind}<button
+                type="button"
+                onclick={() => career.pledgeRematch(match.id, kind)}
+                >{rematchVowLabel(kind, language)}</button
+              >{/each}
+          </div>{/if}
       </li>{/each}
   </ol>
   <details>
@@ -171,6 +181,11 @@
   span,
   small {
     display: block;
+  }
+  .vows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
   summary {
     min-height: 44px;

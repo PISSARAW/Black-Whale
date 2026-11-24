@@ -84,7 +84,7 @@ try {
   await page.keyboard.press('F7')
   assert.equal(await page.evaluate(() => window.easterEggFixture.current().egg), undefined)
   await page.evaluate(() => window.easterEggFixture.pause(false))
-  await page.keyboard.press('F4')
+  await page.keyboard.press('8')
   assert.equal(await page.evaluate(() => window.easterEggFixture.current().opponentEgg.slot), 1)
   const roster = await page.evaluate(() => window.easterEggFixture.roster())
   assert.equal(roster.length, 40)

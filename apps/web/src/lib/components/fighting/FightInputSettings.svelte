@@ -4,16 +4,25 @@
     CONTROL_KEYS,
     assignControlKey,
     defaultBindings,
+    physicalControlKey,
+    controlKeyLabel,
     type ControlCommand,
   } from '$lib/fighting/fightInputBindings'
   import type { FightControls } from '../../../routes/fighting/fightingControls'
   import FightGamepadDiagnostics from './FightGamepadDiagnostics.svelte'
   import FightControlSchemeSetting from './FightControlSchemeSetting.svelte'
+  import { RIGHT_STICK_ACTIONS, type RightStickLayout } from '$lib/fighting/directFightGamepad'
   export let controls: FightControls
   export let language: 'fr' | 'en'
   export let inline = false
   export let onEditing: () => void = () => {}
-  const { bindings, devices } = controls
+  const { bindings, devices, rightStickLayout, directionalZetsu } = controls
+  const stickLabels: Record<RightStickLayout[number], [string, string]> = {
+    ranged: ['Projectile', 'Projectile'],
+    throw: ['Projection', 'Throw'],
+    onIntent: ['On', 'On'],
+    context: ['Contexte', 'Context'],
+  }
   let panel: HTMLDetailsElement
   let capture: ControlCommand | null = null
   let error = ''
@@ -22,7 +31,7 @@
   $: commands = (Object.keys(CONTROL_KEYS) as ControlCommand[]).filter(
     (command) => command.startsWith(tab) || (tab === 'player' && command === 'pause'),
   )
-  const keyLabel = (key: string) => (key === ' ' ? (language === 'fr' ? 'Espace' : 'Space') : key)
+  const keyLabel = (key: string) => controlKeyLabel(key, language)
   function bindKey(event: KeyboardEvent) {
     if (!capture) return
     event.preventDefault()
@@ -32,7 +41,7 @@
       error = ''
       return
     }
-    const next = assignControlKey($bindings, capture, event.key)
+    const next = assignControlKey($bindings, capture, physicalControlKey(event))
     if (!next) {
       error =
         language === 'fr'
@@ -103,12 +112,26 @@
       {/if}
     </nav>
     <FightControlSchemeSetting {controls} {language} />
+    <label>
+      <input
+        type="checkbox"
+        checked={$directionalZetsu}
+        onchange={(event) => controls.saveDirectionalZetsu(event.currentTarget.checked)}
+      />
+      {language === 'fr'
+        ? 'Compatibilité · Aura + Bas : Zetsu'
+        : 'Compatibility · Aura + Down: Zetsu'}
+    </label>
     {#if tab === 'pad'}
-      <FightGamepadDiagnostics {language} bind:running={measurementRunning} />
+      <FightGamepadDiagnostics
+        {language}
+        layout={$rightStickLayout}
+        bind:running={measurementRunning}
+      />
       <p>
         {language === 'fr'
-          ? 'Manettes au format standard : appuie sur un bouton, puis relâche les commandes pour activer la manette.'
-          : 'Standard gamepads: press a button, then release the controls to activate the gamepad.'}
+          ? 'Manettes standard : appuie puis relâche pour activer la manette. En versus local avec une seule manette, le clavier contrôle P1 et la manette P2.'
+          : 'Standard gamepads: press and release to activate the controller. In local versus with one controller, keyboard controls P1 and gamepad controls P2.'}
       </p>
       {#each $devices.names as name, index (index)}<p>
           P{index + 1} · {name ||
@@ -125,24 +148,38 @@
         <dt>A / B / X / Y</dt>
         <dd>
           {language === 'fr'
-            ? 'Léger / Lourd / Hatsu / Kaméo (A+B : Projection · B+X : Ultime)'
-            : 'Light / Heavy / Hatsu / Kameo (A+B: Throw · B+X: Finisher)'}
+            ? 'Léger / Lourd / Hatsu / Ultime'
+            : 'Light / Heavy / Hatsu / Finisher'}
         </dd>
         <dt>LB / RB</dt>
         <dd>
-          {language === 'fr'
-            ? 'Garde / Aura (Garde+Aura = Ken, + dir. = Ko défensif · Aura+X = On)'
-            : 'Guard / Aura (Guard+Aura = Ken, + dir = defensive Ko · Aura+X = On)'}
+          {language === 'fr' ? 'Garde / Kaméo' : 'Guard / Kameo'}
         </dd>
         <dt>LT / RT</dt>
-        <dd>
-          {language === 'fr'
-            ? 'Burst / Contexte (arène, objet, plaies, oreilles, parler)'
-            : 'Burst / Context (arena, object, wounds, ears, speak)'}
-        </dd>
+        <dd>Burst / Aura</dd>
         <dt>Start</dt>
         <dd>{language === 'fr' ? 'Lancer ou pause' : 'Start or pause'}</dd>
       </dl>
+      <div class="binding-grid">
+        {#each ['←', '→', '↑', '↓'] as direction, index (direction)}
+          <label>
+            {language === 'fr' ? 'Stick droit' : 'Right stick'}
+            {direction}
+            <select
+              value={$rightStickLayout[index]}
+              onchange={(event) =>
+                controls.swapStickAction(
+                  index,
+                  event.currentTarget.value as RightStickLayout[number],
+                )}
+            >
+              {#each RIGHT_STICK_ACTIONS as action (action)}
+                <option value={action}>{stickLabels[action][language === 'fr' ? 0 : 1]}</option>
+              {/each}
+            </select>
+          </label>
+        {/each}
+      </div>
       <p>
         {language === 'fr'
           ? 'Les symboles indiquent les positions Xbox ; les boutons équivalents fonctionnent sur les autres manettes standard.'
@@ -151,8 +188,8 @@
     {:else}
       <p>
         {language === 'fr'
-          ? 'Sélectionne une commande, puis appuie sur une touche. Échap annule. Les touches des techniques avancées et des secrets restent réservées.'
-          : 'Select a command, then press a key. Escape cancels. Advanced-technique and secret keys remain reserved.'}
+          ? 'Sélectionne une commande, puis appuie sur une touche. Échap annule. Les lettres doubles indiquent les positions AZERTY / QWERTY. P ouvre toujours la pause.'
+          : 'Select a command, then press a key. Escape cancels. Paired letters show AZERTY / QWERTY positions. P always opens pause.'}
       </p>
       <div class="binding-grid">
         {#each commands as command (command)}

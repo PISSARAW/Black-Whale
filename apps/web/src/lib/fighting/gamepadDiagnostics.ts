@@ -1,9 +1,11 @@
-import { sampleGamepad, type FightPad, type PadFrame } from './fightGamepad'
+import { sampleDirectGamepad, sampleGamepad, type FightPad, type PadFrame } from './fightGamepad'
 import { EMPTY_INPUT } from './types'
+import { createDirectPadSampler, type RightStickLayout } from './directFightGamepad'
 
 interface PreviousPad {
   pad: FightPad
   input: PadFrame['input']
+  direct: ReturnType<typeof createDirectPadSampler>
 }
 interface PadEvent {
   at: number
@@ -43,7 +45,7 @@ function percentile(values: number[], fraction: number) {
 }
 
 /** Local browser sampling, deliberately independent of fight state and private Nen. */
-export function createGamepadDiagnostics() {
+export function createGamepadDiagnostics(layout?: () => RightStickLayout) {
   let previous = new Map<number, PreviousPad>()
   let intervals: number[] = []
   let events: PadEvent[] = []
@@ -64,11 +66,9 @@ export function createGamepadDiagnostics() {
         .map((pad) => {
           const held = previous.get(pad.index)
           const old = held?.pad.id === pad.id ? held : undefined
-          const frame =
-            pad.mapping === 'standard'
-              ? sampleGamepad(pad, old?.pad ?? null, old?.input ?? EMPTY_INPUT)
-              : { input: { ...EMPTY_INPUT }, actions: [], neutral: true }
-          next.set(pad.index, { pad: snapshot(pad), input: frame.input })
+          const direct = old?.direct ?? createDirectPadSampler()
+          const frame = describeFrame(pad, { old, direct, layout: layout?.() })
+          next.set(pad.index, { pad: snapshot(pad), input: frame.input, direct })
           if (frame.actions.length)
             events = [...events, { at: now, index: pad.index, actions: [...frame.actions] }].slice(
               -80,
@@ -101,6 +101,21 @@ export function createGamepadDiagnostics() {
     },
   }
 }
+function describeFrame(
+  pad: FightPad,
+  options: {
+    old?: PreviousPad
+    direct: PreviousPad['direct']
+    layout?: RightStickLayout
+  },
+): PadFrame {
+  if (pad.mapping !== 'standard') return { input: { ...EMPTY_INPUT }, actions: [], neutral: true }
+  const input = options.old?.input ?? EMPTY_INPUT
+  const previous = options.old?.pad ?? null
+  return options.layout
+    ? sampleDirectGamepad(pad, { previous, input, direct: options.direct }, options.layout)
+    : sampleGamepad(pad, previous, input)
+}
 
 function describePad(pad: FightPad, frame: PadFrame) {
   return {
@@ -114,7 +129,7 @@ function describePad(pad: FightPad, frame: PadFrame) {
       return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0
     }),
     held: Object.entries(frame.input)
-      .filter(([, active]) => active)
+      .filter(([key, active]) => active && key !== 'directControls')
       .map(([key]) => key),
     neutral: frame.neutral,
   }

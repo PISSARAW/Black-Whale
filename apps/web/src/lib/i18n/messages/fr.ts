@@ -2753,7 +2753,18 @@ export const fr: Messages = {
         title: 'Provoquez une réaction',
         body: 'Pressez V pour feinter sur la zone actuellement visée.',
       },
-      { title: 'Punissez l’ouverture', body: 'Frappez pendant que l’adversaire récupère.' },
+      {
+        title: 'Confirmez une touche Clash',
+        body: 'Touchez avec un coup affiché dans le labo. L’impact révèle ses frames.',
+      },
+      {
+        title: 'Enchaînez sur confirmation',
+        body: 'Pressez la suite pendant la fenêtre de cancel pour obtenir un combo de 2 coups.',
+      },
+      {
+        title: 'Bloquez vraiment',
+        body: 'Fermez la garde sur un coup adverse et lisez si sa récupération est punissable.',
+      },
     ],
     state: { gyo: 'Gyo', in: 'In', ken: 'Ken', ko: 'Ko en charge', concealed: 'Aura dissimulée' },
     outcome: { won: 'Match gagné', lost: 'Match perdu' },

@@ -1,5 +1,12 @@
 /** Per-tick fighter input. Re-exported by types.ts; extracted to keep it under 500 lines. */
 export interface FightInput {
+  /** Direct layout separates these intents from legacy Aura combinations. */
+  directControls?: boolean
+  zetsuIntent?: boolean
+  onIntent?: boolean
+  seiyakuIntent?: boolean
+  lowGyoIntent?: boolean
+  directionalZetsu?: boolean
   /** Unified tactical/context button: resolves to wounds, ears, interact, arena, or call. */
   context?: boolean
   /** One-shot defensive aura release while suffering a combo. */
@@ -40,4 +47,10 @@ export const EMPTY_INPUT: FightInput = {
   guard: false,
   aura: false,
   hatsu: false,
+}
+
+export function requestsZetsu(input: FightInput): boolean {
+  if (input.zetsuIntent) return true
+  const directional = !input.directControls || input.directionalZetsu
+  return Boolean(directional && input.aura && input.down && !input.en)
 }

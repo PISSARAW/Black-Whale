@@ -1,5 +1,6 @@
 import { nenMasteryProfile } from './nenMastery'
 import { fightingStyle } from './fightStyles'
+import { physicalCombatProfile } from './physicalCombatProfiles'
 import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FighterId } from './types'
 
@@ -18,7 +19,6 @@ const PERSONAL_RANGES: Readonly<Partial<Record<FighterId, Range>>> = {
   melody: [18, 26],
   luini: [8, 16],
   voconte: [9, 18],
-  sayird: [10, 18],
   phinks: [4, 8],
   bill: [7, 11],
   biscuit: [4, 8],
@@ -38,7 +38,10 @@ export function nenCombatDoctrine(fighter: ArcadeFighter) {
   const profile = nenMasteryProfile(fighter.nenOwner ?? fighter.id)
   const style = fightingStyle(fighter.id)
   const preferred =
-    PERSONAL_RANGES[fighter.id] ?? TYPE_RANGES[profile.affinity] ?? style.preferredRange
+    physicalCombatProfile(fighter.id)?.range ??
+    PERSONAL_RANGES[fighter.id] ??
+    TYPE_RANGES[profile.affinity] ??
+    style.preferredRange
   const ranged = profile.affinity === 'emitter'
   const available = voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })
   const range: Range = ranged && (!available || fighter.aura < 16) ? [5, 9] : preferred

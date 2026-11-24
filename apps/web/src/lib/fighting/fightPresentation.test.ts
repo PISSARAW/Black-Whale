@@ -149,6 +149,30 @@ describe('fight presentation', () => {
     expect(heavy.shakeX).toBeGreaterThan(light.shakeX)
   })
 
+  it('presents Kurapika standing heavy as a compact horizontal body blow', () => {
+    const generic = impactPresentation({
+      kind: 'heavy',
+      blocked: false,
+      critical: false,
+      knockdown: false,
+      wallSplat: false,
+    })
+    const golden = impactPresentation(
+      {
+        kind: 'heavy',
+        blocked: false,
+        critical: false,
+        knockdown: false,
+        wallSplat: false,
+      },
+      'kurapika',
+      'kurapika:standingHeavy',
+    )
+    expect(golden.shakeX).toBeGreaterThan(generic.shakeX)
+    expect(golden.shakeY).toBeLessThan(generic.shakeY)
+    expect(golden.sparks).toBeLessThan(generic.sparks)
+  })
+
   it('gives every playable fighter a complete individual motion profile', () => {
     const signatures = FIGHTING_ROSTER.map(({ id }) => {
       const profile = fighterMotionProfile(id)

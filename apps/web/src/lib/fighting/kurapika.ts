@@ -8,6 +8,7 @@ import { abilityCategoryEfficiency } from './nenCategories'
 import { transitionNen } from '@black-whale/nen-engine'
 import { outsideDuelAbility } from './outsideDuelAbility'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
+import { requestsZetsu } from './fightInputTypes'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
@@ -183,10 +184,13 @@ function judgmentNenInput(fighter: ArcadeFighter, input: FightInput): boolean {
     })
   )
     return false
-  if (input.aura) return !input.down
+  if (requestsZetsu(input)) return false
+  if (input.aura) return true
   if (fighter.hitStun > 0 || fighter.knockdownFrames > 0) return false
   return [
     input.gyo,
+    input.lowGyoIntent,
+    input.onIntent,
     input.en,
     input.shu,
     input.conceal,

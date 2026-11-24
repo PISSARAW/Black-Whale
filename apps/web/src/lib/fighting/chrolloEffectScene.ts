@@ -75,7 +75,7 @@ function createActorEffects(options: EffectSceneOptions, side: FightSide) {
       if (!visible(options, state, side) || comfort?.camera === 0) return
       root.visible = true
       root.children.forEach((child) => (child.visible = false))
-      poseBook(options, { state, side, frame, save })
+      if (hasBookMotion(frame)) poseBook(options, { state, side, frame, save })
       poseManifestations(options, { side, frame, save })
       const focal = focus(options, { state, side, frame })
       if (!focal || comfort?.flashes === false) return
@@ -112,6 +112,9 @@ interface PoseContext {
   frame: ChrolloAnimationFrame
   save: (node: Object3D) => void
 }
+function hasBookMotion(frame: ChrolloAnimationFrame) {
+  return frame.page !== null || frame.book !== null || frame.bookmark !== null
+}
 function poseBook(options: EffectSceneOptions, c: PoseContext & { state: FightState }) {
   const figure = options.figureOf?.(c.side)
   const book = figure?.getObjectByName(
@@ -140,16 +143,18 @@ function poseBook(options: EffectSceneOptions, c: PoseContext & { state: FightSt
 }
 function poseManifestations(options: EffectSceneOptions, c: PoseContext) {
   const formation = (name: string, age: number | null) => {
+    if (age === null) return
     const node = options.scene.getObjectByName(name)
-    if (!node || age === null) return
+    if (!node) return
     c.save(node)
     const t = Math.min(1, age / 30)
     node.scale.multiplyScalar(0.15 + 0.85 * t * t * (3 - 2 * t))
   }
   for (let i = 0; i < 2; i++) formation(`chrollo-fish:${c.side}:${i}`, c.frame.fish)
   formation(`prepared:${c.frame.copyId}`, c.frame.copy)
+  if (c.frame.cloth === null) return
   const cloth = options.scene.getObjectByName(`chrollo-cloth:${c.side}`)
-  if (cloth && c.frame.cloth !== null) {
+  if (cloth) {
     c.save(cloth)
     cloth.rotation.z += Math.sin(Math.PI * Math.min(1, c.frame.cloth / 50)) * 1.3
   }

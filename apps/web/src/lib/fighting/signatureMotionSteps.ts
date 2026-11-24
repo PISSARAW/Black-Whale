@@ -13,6 +13,8 @@ export type SignatureMotionStep =
   | { jump: 'forward' }
   /** Wait for the landing that follows a jump. */
   | { land: true }
+  /** Walk back into close striking range after a crossing movement. */
+  | { approach: true }
   /** Wait until the turn in progress completes. */
   | { turn: true }
 
@@ -23,13 +25,14 @@ export interface MotionFrame {
 }
 
 export function isMotionStep(step: object): step is SignatureMotionStep {
-  return 'wind' in step || 'jump' in step || 'land' in step || 'turn' in step
+  return 'wind' in step || 'jump' in step || 'land' in step || 'approach' in step || 'turn' in step
 }
 
 export function motionStepFrame(state: FightState, step: SignatureMotionStep): MotionFrame {
   if ('wind' in step) return wind(state)
   if ('jump' in step) return jump(state)
   if ('land' in step) return { state, input: EMPTY_INPUT, done: state.player.y === 0 }
+  if ('approach' in step) return approach(state)
   return { state, input: EMPTY_INPUT, done: motionStepDone(state, step) }
 }
 
@@ -39,7 +42,25 @@ export function motionStepDone(state: FightState, step: SignatureMotionStep): bo
   if ('wind' in step) return Boolean(player.cyclotronWindup)
   if ('jump' in step) return player.y > 0
   if ('land' in step) return player.y === 0
+  if ('approach' in step) return closeEnough(state)
   return player.cyclotronWindup?.frame === 0
+}
+
+const STRIKING_GAP = 5.5
+
+function closeEnough(state: FightState): boolean {
+  return Math.abs(state.opponent.x - state.player.x) <= STRIKING_GAP
+}
+
+/** Hold the actual direction of the target until a short normal can connect. */
+function approach(state: FightState): MotionFrame {
+  if (closeEnough(state)) return { state, input: EMPTY_INPUT, done: true }
+  const direction = Math.sign(state.opponent.x - state.player.x)
+  return {
+    state,
+    input: { ...EMPTY_INPUT, right: direction === 1, left: direction === -1 },
+    done: false,
+  }
 }
 
 function wind(state: FightState): MotionFrame {

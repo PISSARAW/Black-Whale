@@ -1,3 +1,4 @@
+import { retainSoundContacts } from './audio/impactHistory'
 import { nativeRecoveryCounter } from './recoveryCounterAction'
 import { stepDeathMatchFight } from './heavensDeathMatch/fightBridge'
 import { movesetFor } from './movesets'
@@ -70,6 +71,7 @@ import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
 import { resolveContextInput } from './contextInput'
 import { applyOnContext, canSwearOn } from './onTechnique'
+import { flushDirectMoves } from './directFightBuffer'
 import { performChrolloBookAction, pickChrolloFlipSlot } from './chrolloBookAction'
 import { CHROLLO_STEAL } from './chrolloBook'
 import { revealBookSlot } from './chrolloDeck'
@@ -156,6 +158,7 @@ export function tickFight(
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
+    next = retainSoundContacts(beforeFrame, next)
     settings.onFrame?.(beforeFrame, next)
   }
   return advanceEasterEggs(next, false)
@@ -172,6 +175,7 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
+  state = flushDirectMoves(state, performTrainingAction)
   const inputs = {
     player: resolveContextInput(state, 'player', input),
     opponent: opponentInput ? resolveContextInput(state, 'opponent', opponentInput) : undefined,
@@ -213,7 +217,8 @@ export function performMove(options: PerformMoveOptions): FightState {
   if (crossGameBusy(options.state[options.side])) return options.state
   if (options.state[options.side].chrolloBook?.isFlipping) {
     const slot = options.action === 'light' ? 0 : options.action === 'heavy' ? 1 : null
-    if (slot !== null) return pickChrolloFlipSlot(options.state, options.side, slot) ?? options.state
+    if (slot !== null)
+      return pickChrolloFlipSlot(options.state, options.side, slot) ?? options.state
   }
   const chrollo = options.state[options.side]
   if (
@@ -221,7 +226,9 @@ export function performMove(options: PerformMoveOptions): FightState {
     chrollo.id === 'chrollo' &&
     chrollo.chrolloBook?.stolenPage &&
     options.input &&
-    (chrollo.facing === 1 ? options.input.right && !options.input.left : options.input.left && !options.input.right) &&
+    (chrollo.facing === 1
+      ? options.input.right && !options.input.left
+      : options.input.left && !options.input.right) &&
     !options.input.down
   ) {
     const flipped = performChrolloBookAction({
@@ -234,6 +241,7 @@ export function performMove(options: PerformMoveOptions): FightState {
   }
   if (
     options.action === 'special' &&
+    !options.input?.directControls &&
     options.input?.aura &&
     canSwearOn(options.state[options.side])
   ) {
@@ -244,11 +252,7 @@ export function performMove(options: PerformMoveOptions): FightState {
   return revealUsedChrolloSlot(executed, options.side, options.action)
 }
 
-function revealUsedChrolloSlot(
-  state: FightState,
-  side: FightSide,
-  action: MoveAction,
-): FightState {
+function revealUsedChrolloSlot(state: FightState, side: FightSide, action: MoveAction): FightState {
   const book = state[side].chrolloBook
   if (!book || (action !== 'special' && action !== 'finisher')) return state
   const slot =

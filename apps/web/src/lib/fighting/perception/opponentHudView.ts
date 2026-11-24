@@ -1,4 +1,3 @@
-import { furykovTier, isFurykov } from '../furykovProfile'
 import { canHear } from '../melodyRules'
 import { musseCancelsIn } from '../musseWindowUpgrades'
 import { CONCEALED_AURA, nenInformationConcealed } from '../nenInformationWar'
@@ -7,11 +6,7 @@ import { senseDeprived } from '../saiyuSenses'
 import { textureSurpriseView } from '../textureSurpriseMask'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 import type { FightHudMode } from './hudMode'
-import {
-  createOpponentIntel,
-  type ObservedCondition,
-  type OpponentIntel,
-} from './opponentIntel'
+import { createOpponentIntel, type ObservedCondition, type OpponentIntel } from './opponentIntel'
 
 export type PerceptionLevel = 0 | 1 | 2
 export type HealthEstimateTier = 'intact' | 'scratched' | 'wounded' | 'critical'
@@ -109,7 +104,13 @@ export function resolveOpponentHudView(input: OpponentPerceptionInput): Opponent
     level,
     blinded,
     health: buildHealthView({ target, observer, intel, mode, level }),
-    aura: buildAuraView({ state: input.state, observerSide: input.observerSide, intel, mode, level }),
+    aura: buildAuraView({
+      state: input.state,
+      observerSide: input.observerSide,
+      intel,
+      mode,
+      level,
+    }),
     burst: buildBurstView({ state: input.state, targetSide, intel, mode, level }),
     kameo: buildKameoView(intel, mode),
     hatsu: buildHatsuView(intel, mode, level),
@@ -122,11 +123,9 @@ function hasLevelTwoPerception(
   targetSide: FightSide,
 ): boolean {
   const observer = state[observerSide]
-  const target = state[targetSide]
   const fullGyo = Boolean(observer.nen.gyo && !observer.gyoLow)
   if (fullGyo || enTargetInside(state, observerSide)) return true
-  if ((target.sonarRevealFrames ?? 0) > 0 || musseCancelsIn(state, targetSide)) return true
-  if (isFurykov(observer) && furykovTier(observer) >= 1) return true
+  if (musseCancelsIn(state, targetSide)) return true
   return hasMelodyHearing(observer)
 }
 
@@ -156,9 +155,7 @@ function buildHealthView(input: {
   const texturePov = textureSurpriseView(target, observer, 'opponent')
   const shownHealth = texturePov.displayedHp
   const ratio = Math.max(0, Math.min(1, shownHealth / max))
-  const portraitMood: LivingPortraitMood = texturePov.maskWounds
-    ? 'calm'
-    : moodFromRatio(ratio)
+  const portraitMood: LivingPortraitMood = texturePov.maskWounds ? 'calm' : moodFromRatio(ratio)
   const melodyActive = hasMelodyHearing(observer)
   const healthLevel = resolveHealthLevel({ intel, mode, level, melodyActive })
 
@@ -208,26 +205,11 @@ function buildAuraView(input: {
   const observer = input.state[input.observerSide]
   const target = input.state[targetSide]
   const concealed = target.aura === CONCEALED_AURA || nenInformationConcealed(target, observer)
-  const pierced = input.level === 2 && (!concealed || hasAuraPierce(input.state, input.observerSide))
+  const pierced =
+    input.level === 2 && (!concealed || hasAuraPierce(input.state, input.observerSide))
 
-  if (input.mode === 'omniscient') {
-    return {
-      level: concealed ? 0 : 2,
-      exact: concealed ? null : Math.floor(target.aura),
-      bracket: concealed ? null : auraBracket(target.aura),
-      ryuVisible: !concealed,
-      concealed,
-    }
-  }
-  if (pierced) {
-    return {
-      level: 2,
-      exact: Math.floor(target.aura),
-      bracket: auraBracket(target.aura),
-      ryuVisible: true,
-      concealed: false,
-    }
-  }
+  if (input.mode === 'omniscient') return omniscientAuraView(target.aura, concealed)
+  if (pierced) return perceivedAuraView(target.aura)
   const showBracket = input.intel.auraObserved && !concealed
   return {
     level: showBracket ? 1 : 0,
@@ -238,15 +220,33 @@ function buildAuraView(input: {
   }
 }
 
+function omniscientAuraView(aura: number, concealed: boolean): OpponentAuraView {
+  return {
+    level: concealed ? 0 : 2,
+    exact: concealed ? null : Math.floor(aura),
+    bracket: concealed ? null : auraBracket(aura),
+    ryuVisible: !concealed,
+    concealed,
+  }
+}
+
+function perceivedAuraView(aura: number): OpponentAuraView {
+  return {
+    level: 2,
+    exact: Math.floor(aura),
+    bracket: auraBracket(aura),
+    ryuVisible: true,
+    concealed: false,
+  }
+}
+
 function hasAuraPierce(state: FightState, observerSide: FightSide): boolean {
   const targetSide: FightSide = observerSide === 'player' ? 'opponent' : 'player'
   const observer = state[observerSide]
-  const target = state[targetSide]
   return Boolean(
     (observer.nen.gyo && !observer.gyoLow) ||
-      enTargetInside(state, observerSide) ||
-      (target.sonarRevealFrames ?? 0) > 0 ||
-      musseCancelsIn(state, targetSide),
+    enTargetInside(state, observerSide) ||
+    musseCancelsIn(state, targetSide),
   )
 }
 
@@ -267,23 +267,30 @@ function buildBurstView(input: {
   const target = state[targetSide]
   const available = state.burstAvailable?.[targetSide] !== false
   const zetsuFrames = target.burstZetsuFrames ?? 0
-  if (mode === 'omniscient') {
-    return {
-      level: 2,
-      knownSpent: !available,
-      exactAvailable: available,
-      zetsuSeconds: zetsuFrames > 0 ? Number((zetsuFrames / 60).toFixed(1)) : null,
-      tensionAlert: false,
-    }
-  }
+  if (mode === 'omniscient') return omniscientBurstView(available, zetsuFrames)
   const tensionAlert = level === 2 && available && (target.hitStun > 0 || target.aura >= 75)
   return {
-    level: intel.burstUsedSeen ? 1 : level === 2 ? 2 : 0,
+    level: observedBurstLevel(intel.burstUsedSeen, level),
     knownSpent: intel.burstUsedSeen,
     exactAvailable: null,
     zetsuSeconds: level === 2 && zetsuFrames > 0 ? Number((zetsuFrames / 60).toFixed(1)) : null,
     tensionAlert,
   }
+}
+
+function omniscientBurstView(available: boolean, zetsuFrames: number): OpponentBurstView {
+  return {
+    level: 2,
+    knownSpent: !available,
+    exactAvailable: available,
+    zetsuSeconds: zetsuFrames > 0 ? Number((zetsuFrames / 60).toFixed(1)) : null,
+    tensionAlert: false,
+  }
+}
+
+function observedBurstLevel(spent: boolean, level: PerceptionLevel): PerceptionLevel {
+  if (spent) return 1
+  return level === 2 ? 2 : 0
 }
 
 function buildKameoView(intel: OpponentIntel, mode: FightHudMode): OpponentKameoView {

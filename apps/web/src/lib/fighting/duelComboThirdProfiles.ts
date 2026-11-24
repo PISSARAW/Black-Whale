@@ -4,6 +4,9 @@ export const THIRD_DUEL_PROFILES = {
   illumi: {
     window: 6,
     block: 'standingHeavy',
+    // Consigne implantée (signatureCombosTroupeZoldyck.ts): capture, implant, step back.
+    dash: { standingHeavy: 'forward', neutralSpecial: 'back' },
+    accelInto: { throw: ['neutralSpecial'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 18, knockback: 0.8 },
@@ -24,7 +27,7 @@ export const THIRD_DUEL_PROFILES = {
       },
       backHeavy: {
         tuning: { startup: 8, hitstun: 24, knockback: 1.2, reach: 12 },
-        into: ['lowHeavy', 'forwardHeavy'],
+        into: ['lowHeavy', 'forwardHeavy', 'throw'],
       },
       lowHeavy: {
         tuning: { startup: 9, recovery: 18, damage: 9, knockback: 3.1, reach: 12 },
@@ -41,6 +44,12 @@ export const THIRD_DUEL_PROFILES = {
   kalluto: {
     window: 6,
     block: 'standingHeavy',
+    // Serpent de papier (signatureCombosTroupeZoldyck.ts): step back after the sweep to scatter and converge paper.
+    dash: { lowHeavy: 'back' },
+    accelInto: {
+      downSpecial: ['forwardSpecial'],
+      forwardSpecial: ['finisher'],
+    },
     moves: {
       standingLight: {
         tuning: { startup: 3, hitstun: 18, knockback: 0.8 },
@@ -48,7 +57,7 @@ export const THIRD_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 4, hitstun: 18, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       standingHeavy: {
         tuning: { startup: 8, hitstun: 28, knockback: 1.4, reach: 12 },
@@ -87,10 +96,13 @@ export const THIRD_DUEL_PROFILES = {
   shizuku: {
     window: 7,
     block: 'standingHeavy',
+    // Nettoyage clinique (signatureCombosTroupeZoldyck.ts): close in to wound, step back to draw blood.
+    dash: { standingHeavy: 'forward', lowHeavy: 'back' },
+    accelInto: { forwardSpecial: ['throw'], throw: ['lowHeavy'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 1 },
-        into: ['standingHeavy', 'forwardLight'],
+        into: ['lowLight', 'standingHeavy', 'forwardLight'],
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -124,6 +136,9 @@ export const THIRD_DUEL_PROFILES = {
   leorio: {
     window: 8,
     block: 'standingHeavy',
+    // Sous le plancher (signatureCombosHunters.ts): step back to strike the floor, dash in on hit.
+    dash: { lowHeavy: 'back', neutralSpecial: 'forward' },
+    accelInto: { forwardHeavy: ['throw'] },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 20, knockback: 1 },
@@ -154,7 +169,7 @@ export const THIRD_DUEL_PROFILES = {
         tuning: { startup: 14, recovery: 25, damage: 16, knockback: 7.5, reach: 16 },
         into: [],
       },
-      neutralSpecial: { into: [] },
+      neutralSpecial: { into: [], window: 28 },
       airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
       airHeavy: { into: [] },
     },

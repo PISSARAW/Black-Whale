@@ -24,6 +24,7 @@ function directionalGuardZone(fighter: ArcadeFighter, input: FightInput): FightN
   return null
 }
 function requestedZone(fighter: ArcadeFighter, input: FightInput): FightNenZone | null {
+  if (input.directControls && input.guard) return zoneFor(input)
   if (!input.aura || !input.guard) return null
   if (input.gyo) return zoneFor(input) ?? directionalGuardZone(fighter, input)
   return directionalGuardZone(fighter, input)
@@ -32,7 +33,7 @@ function requestedZone(fighter: ArcadeFighter, input: FightInput): FightNenZone 
 export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFighter | null {
   const zone = requestedZone(fighter, input)
   if (!zone) return null
-  if (!voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })) return null
+  if (!canCommitKo(fighter)) return null
   const continuing = continuesKo(fighter, zone)
   if (pendingKo(fighter, continuing)) return fighter
   if ([fighter.hitStun, fighter.knockdownFrames, fighter.maryCapture].some(Boolean)) return null
@@ -53,6 +54,13 @@ export function defensiveKo(fighter: ArcadeFighter, input: FightInput): ArcadeFi
       aura: fighter.aura - Number(!continuing) * DEFENSIVE_KO_COST,
     },
     zone,
+  )
+}
+
+function canCommitKo(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.illumiNeedleOrder?.order !== 'zetsu' &&
+    voluntaryNenAvailable(fighter, { requireHatsu: false, requireReserve: true })
   )
 }
 

@@ -1,12 +1,11 @@
-import { BODY_MEMORY_HIT_THRESHOLD, bodyMemoryWeak } from './bodyMemory'
-import type { ArcadeFighter, AttackVariant, FightSide, FightState } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const MACHI_SUTURE_AURA_COST = 15
 export const MACHI_TRIPWIRE_HITSTUN = 14
 export const MACHI_PULL_STEP = 14
 export const PHINKS_STORED_TURNS_FRAMES = 180
 export const PHINKS_OVERDRIVE_THRESHOLD = 10
-export const FRANKLIN_KEN_GUARD_DRAIN = 14
+export const FRANKLIN_KEN_GUARD_DRAIN = 0
 export const FRANKLIN_SUPPRESSION_AURA = 4
 export const FRANKLIN_HEAVY_SALVO_AURA = 14
 
@@ -33,17 +32,13 @@ declare module './types' {
   }
 }
 
-/** Machi 2S: costs 15 aura, closes open wounds, and erases one weakened Body Memory zone. */
+/** Machi can close open wounds with thread, but sutures do not erase accumulated limb strain. */
 export function applyMachiCombatSuture(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.aura < MACHI_SUTURE_AURA_COST) return fighter
-  const hits = { ...fighter.bodyMemory?.hits }
-  if (bodyMemoryWeak(fighter, 'hands')) hits.hands = 0
-  else if (bodyMemoryWeak(fighter, 'feet')) hits.feet = 0
   return {
     ...fighter,
     aura: fighter.aura - MACHI_SUTURE_AURA_COST,
     openWounds: 0,
-    bodyMemory: fighter.bodyMemory ? { hits } : fighter.bodyMemory,
   }
 }
 
@@ -62,7 +57,7 @@ export function machiTripwireVisibleTo(state: FightState, observer: FightSide): 
   return Boolean(viewer.nen.gyo && !viewer.gyoLow)
 }
 
-/** Machi Throw (L+H): plants a discreet tracking thread that cancels stealth Zetsu. */
+/** Machi plants a physical tracking thread without changing the target's aura state. */
 export function plantMachiTrackingThread(state: FightState, side: FightSide): FightState {
   const targetSide: FightSide = side === 'player' ? 'opponent' : 'player'
   const target = state[targetSide]
@@ -71,7 +66,6 @@ export function plantMachiTrackingThread(state: FightState, side: FightSide): Fi
     [targetSide]: {
       ...target,
       machiTrackedBy: side,
-      nen: target.nen.mode === 'zetsu' ? { ...target.nen, mode: 'ten' } : target.nen,
     },
   }
 }
@@ -86,7 +80,12 @@ export function pullMachiTrackedTarget(state: FightState, side: FightSide): Figh
   const nextX = Math.max(7, Math.min(93, target.x + direction * MACHI_PULL_STEP))
   return {
     ...state,
-    [targetSide]: { ...target, x: nextX, machiTrackedBy: undefined, hitStun: Math.max(target.hitStun, 10) },
+    [targetSide]: {
+      ...target,
+      x: nextX,
+      machiTrackedBy: undefined,
+      hitStun: Math.max(target.hitStun, 10),
+    },
   }
 }
 
@@ -100,41 +99,36 @@ export function phinksDisplayedTurns(
   return turns
 }
 
-/** Phinks cancel: dash/guard cancels windup while keeping half the accumulated turns for 3s. */
+/** Cancelling Ripper Cyclotron loses the incomplete charge. */
 export function cancelCyclotronWithStorage(fighter: ArcadeFighter): ArcadeFighter {
-  const kept = Math.floor(fighter.hatsuEffects.cyclotronTurns / 2)
   return {
     ...fighter,
     cyclotronWindup: undefined,
-    hatsuEffects: { ...fighter.hatsuEffects, cyclotronTurns: kept },
-    phinksStoredTurnsFrames: kept > 0 ? PHINKS_STORED_TURNS_FRAMES : undefined,
+    hatsuEffects: { ...fighter.hatsuEffects, cyclotronTurns: 0 },
+    phinksStoredTurnsFrames: undefined,
   }
 }
 
-/** Phinks canonical recoil: releasing 10+ turns inflicts Body Memory (hands) on himself. */
+/** Ripper Cyclotron has no demonstrated automatic recoil threshold. */
 export function applyPhinksRecoil(fighter: ArcadeFighter, turns: number): ArcadeFighter {
-  if (turns < PHINKS_OVERDRIVE_THRESHOLD) return fighter
-  return {
-    ...fighter,
-    bodyMemory: {
-      hits: { ...fighter.bodyMemory?.hits, hands: BODY_MEMORY_HIT_THRESHOLD },
-    },
-  }
+  void turns
+  return fighter
 }
 
-/** Franklin's cut-finger Seiyaku: Emission salvos drain heavy aura against Ken guard. */
+/** Franklin's bullets use the ordinary Ken contact rules without an extra aura drain. */
 export function franklinKenDrain(
   attacker: ArcadeFighter,
   defender: ArcadeFighter,
   blocked: boolean,
 ): number {
-  const isFranklin = (attacker.nenOwner ?? attacker.id) === 'franklin'
-  if (!isFranklin || !blocked || !defender.nen.ken) return 0
-  return attacker.attack?.kind === 'special' ? FRANKLIN_KEN_GUARD_DRAIN : 0
+  void attacker
+  void defender
+  void blocked
+  return 0
 }
 
 /** Franklin 5S (suppression) vs 6S (heavy two-hand salvo pushing Ren & cancelling weaker shots). */
-export function franklinSalvoProfile(variant?: AttackVariant): FranklinSalvoProfile {
+export function franklinSalvoProfile(variant?: 'neutral' | 'forward'): FranklinSalvoProfile {
   if (variant === 'forward') {
     return {
       auraCost: FRANKLIN_HEAVY_SALVO_AURA,

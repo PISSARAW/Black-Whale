@@ -1,7 +1,9 @@
 <script lang="ts">
   import { fightTouchBindings } from '$lib/fighting/fightTouchHints'
   import FightStyleGuide from './FightStyleGuide.svelte'
+  import FightMovementGuide from './FightMovementGuide.svelte'
   import FightMoveProperties from './FightMoveProperties.svelte'
+  import FightFollowUps from './FightFollowUps.svelte'
   import { finisherHint, useFightBindings, moveInputHint } from '$lib/fighting/fightControlHints'
   const bindings = useFightBindings()
   import { movesetFor, moveById } from '$lib/fighting/movesets'
@@ -15,6 +17,7 @@
 
   $: hints = touch ? fightTouchBindings(language) : $bindings
   $: moveset = movesetFor(fighterId)
+  $: combos = new Map(moveset?.combos.map((route) => [route.join(':'), route]))
   $: arena = arenaTechnique(fighterId)
   $: groups = moveset
     ? ([
@@ -50,6 +53,7 @@
       </p>
     </header>
     <FightStyleGuide {fighterId} {language} />
+    <FightMovementGuide {fighterId} {language} />
     {#if fighterId === 'bonolenov'}
       <p>
         {language === 'fr'
@@ -84,6 +88,9 @@
         {/if}
       {/each}
     </div>
+    {#if moveset.followUps?.length}
+      <FightFollowUps followUps={moveset.followUps} {language} {touch} />
+    {/if}
     <div class="routes">
       <h3>{language === 'fr' ? 'Appel en combo' : 'Combo support call'}</h3>
       <p>
@@ -98,7 +105,7 @@
           : 'Luzurus can extend on the ground, Zhang Lei boost attacks, Marayam protect recovery. Find all six examples in Nen Academy → Combos & defense.'}
       </p>
       <h3>{language === 'fr' ? 'Exemples de combos' : 'Example combos'}</h3>
-      {#each moveset.combos as route, index (`${index}:${route.join(':')}`)}
+      {#each combos as [key, route] (key)}
         <p>{route.map(moveName).join(' → ')}</p>
       {/each}
     </div>

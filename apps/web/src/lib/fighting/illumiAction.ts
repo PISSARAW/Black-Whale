@@ -21,7 +21,7 @@ export function performIllumiAction(options: AuraAttackOptions): FightState | nu
   if (kind !== 'special' || !illumiMove(fighter, moveId)) return null
   const available =
     moveId === 'illumi:backSpecial' ? illumiDisguiseAvailable(fighter) : illumiAvailable(fighter)
-  if (!illumiBodyFree(fighter) || !available || !canIssueCommand(fighter)) return state
+  if (!illumiBodyFree(fighter) || !available || !canIssueCommand(fighter, moveId)) return state
   return performCommand(options)
 }
 
@@ -82,7 +82,9 @@ function disguise(state: FightState, side: FightSide): FightState {
   }
 }
 
-function canIssueCommand(fighter: import('./types').ArcadeFighter): boolean {
+function canIssueCommand(fighter: import('./types').ArcadeFighter, moveId?: string): boolean {
+  if (!moveId || moveId === 'illumi:neutralSpecial')
+    return canStartFighterAttack(fighter, 'special', moveId)
   return !fighter.attack && canStartFighterAttack(fighter, 'light')
 }
 function undoDisguise(state: FightState, side: FightSide): FightState {

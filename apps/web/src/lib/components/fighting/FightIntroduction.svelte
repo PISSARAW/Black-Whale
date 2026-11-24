@@ -3,17 +3,55 @@
   import { mountIntroClock } from '$lib/fighting/presentation/introClock'
   import { introShot, type IntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { introduction } from '$lib/fighting/presentation/ceremony'
+  import { introDialogue } from '$lib/fighting/presentation/introDialogue'
+  import { createIntroSpeech } from '$lib/fighting/audio/introSpeech'
+  import { COMBAT_VOICE_RATES, type FightAudioSettings } from '$lib/fighting/audio/settings'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightState } from '$lib/fighting/types'
   export let playback: IntroPlayback
   export let state: FightState
   export let language: 'fr' | 'en'
   export let paused = false
+  export let settings: FightAudioSettings
+  const speech = createIntroSpeech()
+  let mounted = false
+  let hidden = false
   $: frame = $playback
   $: shot = frame ? introShot(frame) : null
   $: actor = shot?.side ? fighterDefinition(state[shot.side].id) : null
   $: fr = language === 'fr'
-  onMount(() => mountIntroClock({ playback, paused: () => paused }))
+  $: dialogue = state.phase === 'ready' ? introDialogue(state) : undefined
+  $: if (mounted && frame && dialogue) {
+    speech.update(frame, dialogue, {
+      locale: language,
+      level: settings.muted ? 0 : settings.voices,
+      speed: COMBAT_VOICE_RATES[settings.voiceStyle],
+      paused: paused || hidden,
+    })
+  } else speech.stop()
+  onMount(() => {
+    const visibility = () => (hidden = document.hidden)
+    visibility()
+    mounted = true
+    const stopClock = mountIntroClock({
+      playback,
+      paused: () => paused,
+      warming: () =>
+        Boolean(
+          frame &&
+          dialogue &&
+          !settings.muted &&
+          settings.voices > 0 &&
+          speech.warming(frame, dialogue, language),
+        ),
+    })
+    document.addEventListener('visibilitychange', visibility)
+    return () => {
+      speech.stop()
+      stopClock()
+      document.removeEventListener('visibilitychange', visibility)
+    }
+  })
 </script>
 
 {#if frame && frame.mode !== 'off'}
@@ -24,7 +62,7 @@
     {#if frame.waiting}
       <p class="signal" role="status">{fr ? 'Entrée en scène…' : 'Entering the arena…'}</p>
     {:else if actor && shot?.side}
-      {#key shot.side}
+      {#key `${frame.run}:${shot.side}`}
         <div class="actor" style={`--intro-accent:${actor.colour}`}>
           <span>{shot.side === 'player' ? 'P1' : 'P2'} / {fr ? actor.titleFr : actor.titleEn}</span>
           <h2>{actor.name}</h2>

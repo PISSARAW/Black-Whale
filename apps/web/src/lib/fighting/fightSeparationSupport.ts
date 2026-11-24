@@ -38,7 +38,6 @@ interface Prepared {
   targets: Vector3[]
   cycle: ReturnType<typeof supportCycle>
   walking: boolean
-  dt: number
   resting: boolean
   floor: number
 }
@@ -110,7 +109,6 @@ export function createSeparationSupport() {
       targets,
       cycle,
       walking,
-      dt,
       floor,
       resting: restingBody(fighter),
     }
@@ -157,7 +155,7 @@ function walkingCycle(
   return { walk, gait, cycle: gait }
 }
 
-function groundRig(rig: FightRig, cycle: Prepared['cycle']) {
+function projectSolesToFloor(rig: FightRig, cycle: Prepared['cycle']) {
   const { human } = rig
   const floor = (human.figure.parent?.getWorldPosition(new Vector3()).y ?? 0) + FOOT_CLEARANCE
   const bottom = Math.min(
@@ -170,6 +168,11 @@ function groundRig(rig: FightRig, cycle: Prepared['cycle']) {
     position.y += floor - bottom
     human.figure.position.copy(human.figure.parent.worldToLocal(position))
   }
+  return floor
+}
+
+function groundRig(rig: FightRig, cycle: Prepared['cycle']) {
+  const floor = projectSolesToFloor(rig, cycle)
   const soles = rig.ankles.map((ankle) => ankle.getWorldPosition(new Vector3()))
   const grounds = rig.ankles.map((ankle, i) => soles[i].y - lowestFootHeight(ankle) + floor)
   return { floor, soles, grounds }
@@ -180,12 +183,12 @@ function groundRig(rig: FightRig, cycle: Prepared['cycle']) {
 export function settleFightSupport(rig: FightRig, fighter: ArcadeFighter): void {
   if (rig.planted === false || !groundedSupport(fighter)) return
   const cycle = supportCycle(fighter)
-  if (cycle.free !== undefined && !walkingBody(fighter)) groundRig(rig, cycle)
+  if (cycle.free !== undefined && !walkingBody(fighter)) projectSolesToFloor(rig, cycle)
   const floor = (rig.human.figure.parent?.getWorldPosition(new Vector3()).y ?? 0) + FOOT_CLEARANCE
-  if (!walkingBody(fighter)) clearFloorFeet(rig, floor)
+  if (!walkingBody(fighter) && !restingBody(fighter)) clearFloorFeet(rig, floor)
   // Anatomical limits can leave a small residual, especially during a cancel.
   // Resolve it in the root without stretching a bone or lifting both soles.
-  groundRig(rig, { support: cycle.support, pivot: 0 })
+  projectSolesToFloor(rig, { support: cycle.support, pivot: 0 })
 }
 
 function clearFloorFeet(rig: FightRig, floor: number): void {
@@ -215,14 +218,14 @@ function needsSupportReset(
 }
 
 function syncFeet(prepared: Prepared, support: Support) {
-  const { rig, targets, cycle, walking, dt, resting, floor } = prepared
+  const { rig, targets, cycle, walking, resting, floor } = prepared
   for (const [index, target] of targets.entries()) {
     if (!walking && cycle.free === index) continue
     const options = {
       target,
       pivot: cycle.support === index ? cycle.pivot : 0,
-      bend: support.feet[index].bend,
-      kneeTravel: resting ? (dt * 4) / 60 : Infinity,
+      bend: resting ? rig.human.knees[index].rotation.x : support.feet[index].bend,
+      kneeTravel: resting ? 0.03 : Infinity,
     }
     const surface = floor + target.y - support.feet[index].ground
     for (let pass = 0; pass < 3; pass++) {

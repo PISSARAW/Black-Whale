@@ -51,6 +51,8 @@ function duel(id: FighterId, facing: 1 | -1 = 1) {
       const human = humanAnimationRig(models.player.turns)!
       const knees = human.knees.map((knee) => knee.rotation.x)
       align(state)
+      expect(human.figure.rotation.x).toBe(0)
+      expect(human.figure.rotation.z).toBe(0)
       return { human, knees, rig: fightRigOf(human) }
     },
   }

@@ -10,6 +10,14 @@ import { performTrainingAction } from './trainingAction'
 import { setTrainingResources } from './trainingSession'
 import { isMotionStep, motionStepFrame, type SignatureMotionStep } from './signatureMotionSteps'
 import {
+  isLotStep,
+  lotStepFrame,
+  utilityCommandDone,
+  waitingForPuppetApproach,
+  type SignatureLotStep,
+} from './signatureLotSteps'
+import { isLot2Step, lot2StepFrame, type SignatureLot2Step } from './signatureLot2Steps'
+import {
   signatureHits,
   type SignatureCombo,
   type SignaturePreparationStep,
@@ -19,7 +27,7 @@ import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 /** Frames of the double tap: press, release, press. */
 const TAP_FRAMES = 3
-const MAX_FRAMES = 900
+const MAX_FRAMES = 1800
 
 export interface SignatureContact {
   move: string | undefined
@@ -44,6 +52,8 @@ interface Cursor {
   tap: number
   /** Player health when a riposte step began. */
   health?: number
+  /** Whether Cat's Name post-mortem sequence has begun during a fatal riposte step. */
+  catsSeen?: boolean
 }
 
 /** The fight a signature demonstration starts from: full aura, the dummy guards after a hit. */
@@ -137,7 +147,9 @@ function opponentControls(
   struck: boolean,
 ) {
   if (dummy.ai) return { dt: 1 / 60, ai: true }
-  const riposte = Boolean(step && 'riposte' in step)
+  const riposte = Boolean(
+    step && ('riposte' in step || 'disobey' in step || 'fatalRiposte' in step),
+  )
   return { dt: 1 / 60, ai: false, opponentInput: dummyInput(struck && !riposte) }
 }
 
@@ -148,6 +160,8 @@ function attempt(
   if ('dash' in step) return dashFrame(cursor, step)
   if ('future' in step || 'riposte' in step) return hingeStep(cursor, step)
   if (isMotionStep(step)) return motionAttempt(cursor, step)
+  if (isLotStep(step)) return lotAttempt(cursor, step)
+  if (isLot2Step(step)) return lot2Attempt(cursor, step)
   const state = cursor.state
   const after = commandStep(state, step)
   const done = 'emperor' in step ? Boolean(after.player.kurapika?.emperorTime) : after !== state
@@ -159,7 +173,7 @@ function attempt(
 
 /** One command attempt; the unchanged state when the engine refuses it this frame. */
 function commandStep(state: FightState, step: SignaturePreparationStep): FightState {
-  if ('move' in step) return startMove(state, step.move)
+  if ('move' in step) return startMove(state, step.move, step.hit === false)
   if ('ranged' in step) return fire(state, 'player')
   if ('incoming' in step) return incoming(state)
   if ('trueForm' in step) return revealTrueForm(state)
@@ -186,17 +200,24 @@ function hingeStep(
   }
 }
 
-function startMove(state: FightState, slot: Parameters<typeof moveForSlot>[1]): FightState {
+function moveBlocked(
+  state: FightState,
+  move: NonNullable<ReturnType<typeof moveForSlot>>,
+  utility: boolean,
+): boolean {
+  if (move.variant === 'air' && state.player.y <= 0) return true
+  if (closingDash(state) || (!utility && waitingForPuppetApproach(state))) return true
+  if (state.player.attack && !state.player.attack.confirmedHit) return true
+  return !canStartFighterAttack(comboAdmissionBody(state, 'player', move), move.kind, move.id)
+}
+
+function startMove(
+  state: FightState,
+  slot: Parameters<typeof moveForSlot>[1],
+  utility = false,
+): FightState {
   const move = moveForSlot(state.player.id, slot)
-  if (!move) return state
-  // An air move waits for the body to leave the ground rather than becoming a ground move.
-  if (move.variant === 'air' && state.player.y <= 0) return state
-  // A forward accélération runs until contact range, as a player would time it.
-  if (closingDash(state)) return state
-  // A non-striking Hatsu cast (e.g. Pain Packer armour) must finish before the next move starts.
-  if (state.player.attack && !state.player.attack.confirmedHit) return state
-  if (!canStartFighterAttack(comboAdmissionBody(state, 'player', move), move.kind, move.id))
-    return state
+  if (!move || moveBlocked(state, move, utility)) return state
   const after = performTrainingAction({
     state,
     side: 'player',
@@ -204,7 +225,8 @@ function startMove(state: FightState, slot: Parameters<typeof moveForSlot>[1]): 
     input: combatRouteInput(slot, state.player.facing),
   })
   const started =
-    after.player.attack?.moveId === move.id && after.player.attack !== state.player.attack
+    (after.player.attack?.moveId === move.id && after.player.attack !== state.player.attack) ||
+    (utility && utilityCommandDone(state, after))
   return started ? after : state
 }
 
@@ -219,6 +241,19 @@ function motionAttempt(cursor: Cursor, step: SignatureMotionStep) {
   const frame = motionStepFrame(cursor.state, step)
   const index = cursor.index + Number(frame.done)
   return { cursor: { ...cursor, state: frame.state, index }, input: frame.input }
+}
+
+function lotAttempt(cursor: Cursor, step: SignatureLotStep) {
+  const frame = lotStepFrame(cursor.state, step)
+  const index = cursor.index + Number(frame.done)
+  return { cursor: { ...cursor, state: frame.state, index }, input: frame.input }
+}
+
+function lot2Attempt(cursor: Cursor, step: SignatureLot2Step) {
+  const frame = lot2StepFrame(cursor.state, step, cursor.catsSeen)
+  const index = cursor.index + Number(frame.done)
+  const catsSeen = frame.done ? undefined : frame.catsSeen
+  return { cursor: { ...cursor, state: frame.state, index, catsSeen }, input: frame.input }
 }
 
 /** Neutral special reveals the natural body; only a real change of form counts as done. */
@@ -298,6 +333,11 @@ function contactMove(state: FightState, shots: Map<number, string>): string | un
   return shots.get(id) ?? state.player.attack?.moveId ?? `${state.player.id}:ranged`
 }
 
+function simultaneousShotHits(impact: NonNullable<FightState['impact']>, seen: number): number {
+  if (impact.projectileId === null || impact.projectileId === undefined || impact.blocked) return 1
+  return Math.max(1, Math.min(impact.sequence - seen, impact.comboHits || 1))
+}
+
 /** Appends the player's new contact, if this frame produced one; returns the impact seen. */
 function recordContact(
   state: FightState,
@@ -306,11 +346,17 @@ function recordContact(
 ): number {
   const impact = state.impact
   if (!impact || impact.sequence === seen) return seen
-  if (impact.attacker === 'player')
-    record.contacts.push({
-      move: contactMove(state, record.shots),
-      combo: impact.comboHits ?? 0,
-      blocked: Boolean(impact.blocked),
-    })
+  if (impact.attacker === 'player') {
+    const move = contactMove(state, record.shots)
+    const total = impact.comboHits ?? 0
+    const blocked = Boolean(impact.blocked)
+    const count = simultaneousShotHits(impact, seen)
+    for (let i = 0; i < count; i++)
+      record.contacts.push({
+        move,
+        combo: total >= count ? total - (count - 1 - i) : total,
+        blocked,
+      })
+  }
   return impact.sequence
 }

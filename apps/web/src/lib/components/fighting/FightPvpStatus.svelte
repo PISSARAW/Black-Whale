@@ -50,6 +50,13 @@
     </p>
   {/if}
   {#if view}
+    {#if view.rollback}
+      <p>
+        {language === 'fr'
+          ? 'Rollback expérimental · hors classement'
+          : 'Experimental rollback · unranked'}
+      </p>
+    {/if}
     <p>
       {fighterDefinition(view.setup.player).name} — {fighterDefinition(view.setup.opponent).name} · {view
         .setup.environment.stageId} · {view.setup.formatId}

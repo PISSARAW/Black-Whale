@@ -47,6 +47,7 @@
     {active}
     {showRecovery}
     state={comparison.main}
+    {prediction}
     {stageId}
     {language}
     {viewer}
@@ -69,14 +70,7 @@
     />
   {/if}
   {#key viewer}
-    <FightFuturePool
-      {prediction}
-      active={detailVisible && active}
-      {rect}
-      {comfort}
-      {language}
-      {stageId}
-    />
+    <FightFuturePool {prediction} active={detailVisible && active} {rect} {comfort} {language} />
   {/key}
 </div>
 

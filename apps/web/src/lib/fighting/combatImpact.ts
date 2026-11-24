@@ -36,6 +36,7 @@ import {
   contactPoint,
   hurtboxes,
   otherSide,
+  type AttackFrameData,
 } from './frameData'
 import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
@@ -53,6 +54,7 @@ import {
 import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
 import { attackerComboScale } from './comboDamageScale'
 import { grammarAllowsWallSplat } from './grammarWallSplat'
+import { retainSoundContacts } from './audio/impactHistory'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
@@ -74,8 +76,10 @@ export function resolveMeleePair(state: FightState): FightState {
   const trade = canTrade(state)
   const next = recordCyclotronContact(state, resolveAttack(state, 'player'), 'player')
   if (trade) return resolveTrade(state, next)
-  if (next.phase !== 'fighting') return next
-  return recordCyclotronContact(next, resolveAttack(next, 'opponent'), 'opponent')
+  if (next.phase !== 'fighting') return retainSoundContacts(state, next)
+  const first = retainSoundContacts(state, next)
+  const second = recordCyclotronContact(first, resolveAttack(first, 'opponent'), 'opponent')
+  return retainSoundContacts(first, second)
 }
 
 function canTrade(state: FightState): boolean {
@@ -132,25 +136,99 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     avoided: defence.avoided,
     critical,
   })
-  const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
-  const spent = spendAttacker(
-    attacker,
+  const wallSplat = impactWallSplat({
     defence,
-    comboOpening({
-      attacker,
-      defender: sleepingBody(defender),
-      position: collision.position,
-      reach: data.box.right,
-      damage,
-      defence,
-      launch: antiAir,
-      counter: opening.counterHit,
-      punish: opening.punish,
-      wall: wallSplat,
-      knockdown,
-      hits: comboHits,
-    }),
-  )
+    defender,
+    attacker,
+    knockback: data.knockback,
+    counterHit: opening.counterHit,
+  })
+  const combo = comboOpening({
+    attacker,
+    defender: sleepingBody(defender),
+    position: collision.position,
+    reach: data.box.right,
+    damage,
+    defence,
+    launch: antiAir,
+    counter: opening.counterHit,
+    punish: opening.punish,
+    wall: wallSplat,
+    knockdown,
+    hits: comboHits,
+  })
+  const spent = spendAttacker(attacker, defence, combo)
+  const context: AttackResolutionContext = {
+    state,
+    side,
+    defenderSide,
+    attacker,
+    defender,
+    spent,
+    data,
+    defence,
+    opening,
+    antiAir,
+    comboHits,
+    damage,
+    knockdown,
+    wallSplat,
+    critical,
+    damageScale,
+    points: impactPoints({ state, defence, critical, knockdown }),
+    combo,
+    rage: rageStrike.rage,
+    position: collision.position,
+  }
+  return resolveAttackOutcome(context)
+}
+
+interface AttackResolutionContext {
+  state: FightState
+  side: FightSide
+  defenderSide: FightSide
+  attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> }
+  defender: ArcadeFighter
+  spent: ArcadeFighter
+  data: AttackFrameData
+  defence: ImpactDefence
+  opening: { counterHit: boolean; punish: boolean }
+  antiAir: boolean
+  comboHits: number
+  damage: number
+  knockdown: boolean
+  wallSplat: boolean
+  critical: boolean
+  damageScale: number
+  points: number
+  combo: ComboOpening | undefined
+  rage: boolean
+  position: { x: number; y: number }
+}
+
+function resolveAttackOutcome(context: AttackResolutionContext): FightState {
+  const {
+    state,
+    side,
+    defenderSide,
+    attacker,
+    defender,
+    spent,
+    data,
+    defence,
+    opening,
+    antiAir,
+    comboHits,
+    damage,
+    knockdown,
+    wallSplat,
+    critical,
+    damageScale,
+    points,
+    combo,
+    rage,
+    position,
+  } = context
   const needle = resolveMindContact({ state, side, defence, spent })
   if (needle) return needle
   const struck = strikeAfterDefence(defence, {
@@ -163,11 +241,8 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     counterHit: opening.counterHit,
     comboHits,
   })
-  const points = impactPoints({ state, defence, critical, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
-  // A grounded hit stopped by the corner pushes the attacker back with the refused distance.
-  // Blocked hits keep their transfer through the guard recoil; this covers the real hits.
   const corneredAttacker =
     !defence.avoided && !defence.blocked && data.knockback > 0
       ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
@@ -207,9 +282,9 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
       avoided: defence.avoided,
-      onRage: rageStrike.rage,
+      onRage: rage,
       projectileId: null,
-      position: collision.position,
+      position,
     },
     hitstop: data.hitstop,
   }
@@ -311,6 +386,10 @@ function shouldResolveHatsu(
 }
 
 export function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
+  return retainSoundContacts(state, applyProjectileHit(state, hit), { projectile: hit.projectile })
+}
+
+function applyProjectileHit(state: FightState, hit: ProjectileHit): FightState {
   const immediate = immediateProjectileResolution(state, hit)
   if (immediate) return immediate
   const side = hit.projectile.owner
@@ -447,7 +526,7 @@ function finishAfterImpact(
 
 function resolveTrade(original: FightState, first: FightState): FightState {
   const second = recordCyclotronContact(original, resolveAttack(original, 'opponent'), 'opponent')
-  if (first === original || second === original) return first
+  if (first === original || second === original) return retainSoundContacts(original, first)
   const traded: FightState = {
     ...original,
     player: tradeFighter({
@@ -475,10 +554,8 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
-  return {
-    ...traded,
-    deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])],
-  }
+  const resolved = { ...traded, deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])] }
+  return retainSoundContacts(original, resolved, { simultaneous: first })
 }
 
 function impactWallSplat(options: {
@@ -486,10 +563,11 @@ function impactWallSplat(options: {
   defender: ArcadeFighter
   attacker: ArcadeFighter
   knockback: number
+  counterHit: boolean
 }): boolean {
   return (
     !options.defence.avoided &&
-    grammarAllowsWallSplat(options.attacker, options.knockback) &&
+    grammarAllowsWallSplat(options.attacker, options.knockback, options.counterHit) &&
     atWall(sleepingBody(options.defender), options.attacker, options.knockback)
   )
 }

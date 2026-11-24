@@ -5,6 +5,7 @@ import type { BodyZone, CombatAction, CombatSide } from '../combat/types'
 import { arenaMoveSlot, type ArenaDirection } from './moveSlot'
 import type { Vec2 } from '../tour/types'
 import { strikeTarget } from './controls'
+import { arenaFrameReadout } from './training'
 
 export const ARENA_FIGHTERS = FIGHTING_ROSTER
 export const DEFAULT_ARENA_FIGHTER: FighterId = 'kurapika'
@@ -31,8 +32,9 @@ export function arenaFightingMove(options: {
   slot: MoveSlot
   position: Vec2
   heading: number
+  targetObject?: { id: string; position: Vec2 }
 }): Extract<CombatAction, { type: 'FIGHTING_MOVE' }> {
-  const { side, fighterId, slot, position, heading } = options
+  const { side, fighterId, slot, position, heading, targetObject } = options
   const move = moveForSlot(fighterId, slot)
   const range = move ? Math.min(8, Math.max(1.6, move.tuning.reach / 5)) : 2.2
   return {
@@ -41,31 +43,26 @@ export function arenaFightingMove(options: {
     fighterId,
     slot,
     targetAt: strikeTarget(position, heading, range),
+    ...(targetObject ? { targetObject } : {}),
   }
 }
 
-/**
- * Keys of the five Clash commands. X and C stay with Zetsu and Ko, and E with
- * the Tour scene's passage link.
+/** Default keys of Clash's five offensive commands. Arena also reads Clash's
+ * saved custom bindings at runtime; these labels are the no-preference fallback.
  */
 export const ARENA_MOVE_KEYS: Record<MoveAction, { code: string; label: string }> = {
-  light: { code: 'Space', label: 'Espace' },
-  heavy: { code: 'KeyB', label: 'B' },
-  special: { code: 'KeyY', label: 'Y' },
+  light: { code: 'KeyJ', label: 'J' },
+  heavy: { code: 'KeyK', label: 'K' },
+  special: { code: 'KeyL', label: 'L' },
   throw: { code: 'KeyM', label: 'M' },
-  finisher: { code: 'KeyP', label: 'P' },
-}
-
-export function arenaMoveAction(code: string): MoveAction | null {
-  const entry = Object.entries(ARENA_MOVE_KEYS).find(([, key]) => key.code === code)
-  return entry ? (entry[0] as MoveAction) : null
+  finisher: { code: 'KeyI', label: 'I' },
 }
 
 /** The variant each command performs right now, given the held direction and the aim. */
 export function arenaMoveLabels(
   fighterId: FighterId,
   french: boolean,
-  context: { direction: ArenaDirection; aimed: BodyZone },
+  context: { direction: ArenaDirection; aimed: BodyZone; airborne?: boolean },
 ) {
   return (Object.keys(ARENA_MOVE_KEYS) as MoveAction[]).map((action) => {
     const slot = arenaMoveSlot({ fighterId, action, ...context })
@@ -76,6 +73,7 @@ export function arenaMoveLabels(
       key: ARENA_MOVE_KEYS[action].label,
       name: move ? (french ? move.nameFr : move.nameEn) : null,
       auraCost: move?.auraCost ?? 0,
+      frames: move ? arenaFrameReadout(move, french ? 'fr' : 'en') : null,
     }
   })
 }

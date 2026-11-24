@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createSolarShowcase } from '../../../demos/fighting-showcase/solarChoreography'
+import { tickFight } from './engine'
+import { EMPTY_INPUT } from './types'
 import { parallelFutureCamera } from './parallelFutureCamera'
 
 describe('Laplace Demon prediction inset', () => {
@@ -49,7 +51,10 @@ describe('Laplace Demon prediction inset', () => {
     expect(owner.prediction?.owner).toBe('opponent')
   })
   it('scrubs the detached vision in the inset without changing the real duel', () => {
-    const vision = film.states.find((s) => s.parallelFuture?.phase === 'vision')!
+    let vision = film.states.find((s) => s.parallelFuture?.phase === 'vision')!
+    expect(parallelFutureCamera(vision, 'opponent', 599).prediction?.index).toBe(3)
+    for (let step = 0; step < 149; step++)
+      vision = tickFight(vision, EMPTY_INPUT, { dt: 1 / 60, ai: false })
     const start = parallelFutureCamera(vision, 'opponent', 0)
     const end = parallelFutureCamera(vision, 'opponent', 599)
     expect(start.main).toBe(vision)

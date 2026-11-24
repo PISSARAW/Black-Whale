@@ -100,7 +100,12 @@ function advanceGuard(state: FightState, side: FightSide, guard: LsdfGuard): Fig
   const target = state[guard.target]
   const body = sleepingBody(target)
   // Further aggression after the charges are declared increases the alert level.
-  const level = Math.min(5, guard.level + Number(target.attack?.frame === 1))
+  const witnessedLevel =
+    state.securityAlert?.lastActor === guard.target ? state.securityAlert.level : guard.level
+  const level = Math.min(
+    5,
+    Math.max(guard.level, witnessedLevel) + Number(target.attack?.frame === 1),
+  )
   const x = approach(guard.x, body.x, (0.45 + level * 0.08) * constructionFactor(state[side]))
   const arrived = Math.abs(x - body.x) <= 2.5 && body.y <= 3
   const nextGuard: LsdfGuard = { ...guard, x, level, phase: arrived ? 'escorting' : 'approaching' }

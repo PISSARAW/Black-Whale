@@ -49,6 +49,7 @@
   export let replays: FightReplayController
   export let pausePlan: FightPausePlan
   export let diagnostics: FightMatchRuntime['diagnostics']
+  export let audioSeek = 0
   export let lessons: FightLessonsController
   export let school: CombatSchool
   export let practice: ClashPractice
@@ -81,6 +82,7 @@
   $: pausedView = paused || Boolean($replays.playback && !$replays.playback.running)
   $: showControls = controlMode === 'on' || (controlMode === 'auto' && touchDevice)
   $: hasTraining = state.mode === 'training' || Boolean($school || $lessons || practice.active)
+  $: introEnabled = !$replays.playback && !hasTraining
   function menuKey(event: KeyboardEvent) {
     if (event.key !== 'Escape' || event.repeat || event.defaultPrevented || paused) return
     event.preventDefault()
@@ -154,6 +156,8 @@
       {detailed}
       {hudMode}
       minimal
+      {introEnabled}
+      onIntroComplete={actions.startFight}
       onMoves={() => {
         pauseTab = 'moves'
         actions.togglePause()
@@ -166,6 +170,7 @@
       training={state.mode === 'training' && detailed}
       stageId={state.environment.stageId}
       bind:audioSettings
+      {audioSeek}
       bind:easterEggPreferences
       onEasterEgg={(side, slot) => actions.queueCommand({ kind: 'easter', side, slot })}
       onAttack={actions.attack}
@@ -188,6 +193,7 @@
         {state}
         {language}
         replay={replays.active}
+        {introEnabled}
         startFight={() => {
           if (touchDevice) void enterFightFullscreen(target)
           actions.startFight()

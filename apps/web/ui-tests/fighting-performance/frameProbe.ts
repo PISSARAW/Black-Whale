@@ -7,6 +7,8 @@ interface Sample {
   triangles: number
   geometries: number
   textures: number
+  prediction?: boolean
+  predictionRefreshed?: boolean
   gpuMs?: number
 }
 const LIMIT = 40000
@@ -25,6 +27,8 @@ export function installFrameProbe() {
   let gpuSupported = false
   let gpuDisjoint = 0
   let gpuTiming = false
+  let prediction = false
+  let predictionRefreshed = false
   const pending: Array<{ query: WebGLQuery; sample: Sample }> = []
   let callbacks: Record<number, { name: string; count: number; total: number; max: number }> = {}
   window.requestAnimationFrame = (callback) => {
@@ -33,7 +37,11 @@ export function installFrameProbe() {
     return original((now) => {
       active = id
       const start = performance.now()
-      if (id === render) renderer?.info.reset()
+      if (id === render) {
+        renderer?.info.reset()
+        prediction = false
+        predictionRefreshed = false
+      }
       const context = gpuTiming && id === render ? renderer?.getContext() : null
       const gl = context instanceof WebGL2RenderingContext ? context : null
       const timer = gl?.getExtension('EXT_disjoint_timer_query_webgl2')
@@ -78,6 +86,8 @@ export function installFrameProbe() {
               triangles: renderer.info.render.triangles,
               geometries: renderer.info.memory.geometries,
               textures: renderer.info.memory.textures,
+              prediction,
+              predictionRefreshed,
             }
             samples.push(sample)
             if (query) pending.push({ query, sample })
@@ -96,6 +106,12 @@ export function installFrameProbe() {
       renderer = current
       renderer.info.autoReset = false
       render = active
+    },
+    drawPrediction() {
+      prediction = true
+    },
+    refreshPrediction() {
+      predictionRefreshed = true
     },
     freezeTime(value: number) {
       renderTime = value

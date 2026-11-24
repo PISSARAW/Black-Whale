@@ -22,11 +22,14 @@ describe('Double page', () => {
   })
 
   it('stamps Moon from the bookmarked page and detonates both marks', () => {
-    const run = play(combo)
+    const start = createSignatureFight(combo, { mirrored: false, gap: 5 })
+    const pages = start.player.chrolloBook?.pages
+    const run = playSignatureCombo(combo, start)
     expect(run.contacts.at(-1)).toMatchObject({ move: 'chrollo:finisher', combo: 6 })
     expect(run.state.opponent.hatsuEffects).toMatchObject({ sunMark: 0, moonMark: 0 })
-    // No Hatsu is stolen: the book still holds only its prepared pages.
-    expect(run.state.player.chrolloBook?.pages).toEqual(['sun-and-moon', 'black-voice'])
+    // No Hatsu is stolen: the prepared book remains unchanged throughout the combo.
+    expect(run.state.player.chrolloBook?.pages).toEqual(pages)
+    expect(pages).toEqual(expect.arrayContaining(['sun-and-moon', 'black-voice']))
   })
 
   it('does not detonate without the prepared Sun', () => {
@@ -68,8 +71,15 @@ describe('grounded pin', () => {
     const down = { knockdownFrames: 4 } as ArcadeFighter
     const route = { attack: { accel: true } } as ArcadeFighter
     const native = { attack: {} } as ArcadeFighter
-    expect(pinnedKnockback({ fighter: { ...down, knockdownFrames: 0 }, attacker: route, melee: true }, 6.8)).toBe(6.8)
+    expect(
+      pinnedKnockback(
+        { fighter: { ...down, knockdownFrames: 0 }, attacker: route, melee: true },
+        6.8,
+      ),
+    ).toBe(6.8)
     expect(pinnedKnockback({ fighter: down, attacker: native, melee: true }, 6.8)).toBe(6.8)
-    expect(pinnedKnockback({ fighter: down, attacker: route, melee: true }, 6.8)).toBe(GROUNDED_PIN_KNOCKBACK)
+    expect(pinnedKnockback({ fighter: down, attacker: route, melee: true }, 6.8)).toBe(
+      GROUNDED_PIN_KNOCKBACK,
+    )
   })
 })

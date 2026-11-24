@@ -1,5 +1,6 @@
 <script lang="ts">
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
+  import { selectionVoice } from '$lib/fighting/audio/selectionVoice'
   import { personalEquipment } from '$lib/fighting/preparationWorld'
   import { arenaTechnique } from '$lib/fighting/arenaTechnique'
   import { moveTeamSlot } from '$lib/fighting/teams/draft'
@@ -31,6 +32,7 @@
         >{label} · {index + 1}
         <select
           value={id}
+          use:selectionVoice={language}
           aria-label={`${label} · ${fr ? 'Combattant' : 'Fighter'} ${index + 1}`}
           onchange={(event) =>
             onChange(

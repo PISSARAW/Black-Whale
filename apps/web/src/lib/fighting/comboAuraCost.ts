@@ -14,6 +14,7 @@ const COMBO_COSTS: Readonly<Record<string, number>> = {
   'hisoka:backSpecial': GUM_RECALL_COST,
   'hisoka:finisher': 40,
   'biscuit:finisher': 40,
+  'hanzo:finisher': 40,
 }
 
 export function comboAuraCost(state: FightState, side: FightSide, moveId?: string) {
@@ -29,6 +30,8 @@ function discountEarned(fighter: FightState['player'], moveId: string): boolean 
   if (moveId === 'hisoka:finisher') return Boolean(fighter.elasticHold)
   // Retour à la vraie forme: Full Impact cancels the Ko Fist of the capture chain.
   if (moveId === 'biscuit:finisher') return fighter.attack?.moveId === 'biscuit:downSpecial'
+  // Corps vide: the astral choke concludes a combo while Skill 4 is active.
+  if (moveId === 'hanzo:finisher') return Boolean(fighter.hanzoProjection)
   return true
 }
 

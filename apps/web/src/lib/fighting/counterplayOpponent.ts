@@ -3,9 +3,11 @@ import { paperKitNavigation } from './kallutoMaterialNavigation'
 import { deviceNavigation } from './deviceNavigation'
 import { approximateTarget } from './opponentAwareness'
 import { rememberOpponentHabits, habitGuardInput, repeatedHabit } from './opponentHabits'
+import { aiBackSwayInput } from './movementTechAi'
 import { readCounterplay, type CounterplayCue } from './fightCounterplay'
 import { styleMatchup } from './styleMatchups'
 import { styleReactionFrames } from './styleMobility'
+import { zetsuStealthDelay } from './advancedMovementTech'
 import { steerFighter } from './fighterMovement'
 import { canMove, playerCanJump, canGuard } from './fightActorState'
 import { moveOpponent } from './opponentMovement'
@@ -38,7 +40,10 @@ export function moveCounterplayOpponent(options: {
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }
-  if (frames <= styleReactionFrames(fighter) || !canRespond(fighter, cue))
+  if (
+    frames <= styleReactionFrames(fighter) + zetsuStealthDelay(fighter, target) ||
+    !canRespond(fighter, cue)
+  )
     return moveRememberedOpponent(view, fighter)
   const input = responseInput(fighter, cue)
   return applyResponse(
@@ -52,7 +57,7 @@ export function moveCounterplayOpponent(options: {
 
 function respondToHabits(state: FightState): ArcadeFighter {
   const fighter = { ...state.opponent, counterplayRead: undefined }
-  const input = habitGuardInput(state, fighter)
+  const input = habitGuardInput(state, fighter) ?? aiBackSwayInput(fighter, state.player)
   return input && canMove(fighter)
     ? applyResponse(fighter, input)
     : (deviceNavigation(state, fighter) ??

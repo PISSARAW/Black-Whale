@@ -1,6 +1,7 @@
 import { fighterAnchored } from './fighterAnchors'
 import { furykovDefensiveKoStagger } from './furykovProfile'
 import { applyPhinksRecoil } from './troupeUpgrades'
+import { applyAuraPushblock } from './defensiveMovementTech'
 import type { ArcadeFighter } from './types'
 
 /** Preserve the normal push distance when the wall prevents the guarding body moving. */
@@ -21,11 +22,19 @@ export function recoilGuardedAttack(options: {
     furykovStagger > 0
       ? { ...phinksRecoiled, hitStun: Math.max(phinksRecoiled.hitStun, furykovStagger) }
       : phinksRecoiled
-  if (!options.blocked || options.avoided || staggered.hanzoProjection || fighterAnchored(staggered))
+  if (
+    !options.blocked ||
+    options.avoided ||
+    staggered.hanzoProjection ||
+    fighterAnchored(staggered)
+  )
     return staggered
   const missing = Math.max(0, knockback - Math.abs(struck.x - defender.x))
   const direction = staggered.x <= defender.x ? -1 : 1
-  return missing === 0
-    ? staggered
-    : { ...staggered, x: Math.max(7, Math.min(93, staggered.x + direction * missing)) }
+  const cornerRecoiled =
+    missing === 0
+      ? staggered
+      : { ...staggered, x: Math.max(7, Math.min(93, staggered.x + direction * missing)) }
+  return applyAuraPushblock({ attacker: cornerRecoiled, defender, blocked: options.blocked })
+    .attacker
 }

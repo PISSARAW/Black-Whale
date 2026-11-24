@@ -1,4 +1,5 @@
-import { lerpPose, NEUTRAL_POSE, type FightPose } from './fightPose'
+import { FIGHT_JOINTS, NEUTRAL_POSE, type FightJoint, type FightPose, type Turn } from './fightPose'
+import { interpolateJointTurn } from './fightPoseSlerp'
 import type { AttackPhase } from './types'
 
 /**
@@ -28,6 +29,8 @@ export interface KeyPose {
   pose: FightPose
   /** How the body travels from the previous key to this one. */
   ease?: KeyEase
+  /** Optional destination curves let the kinetic chain arrive joint by joint. */
+  jointEase?: Partial<Record<FightJoint, KeyEase>>
 }
 
 export type MoveTimeline = readonly KeyPose[]
@@ -79,9 +82,35 @@ export function sampleTimeline(timeline: MoveTimeline, sample: TimelineSample): 
     const at = keyFrameOf(key, sample.frames)
     if (frame < at) {
       const travel = (frame - previous.frame) / Math.max(1e-6, at - previous.frame)
-      return lerpPose(previous.pose, key.pose, EASES[key.ease ?? 'smooth'](travel))
+      return interpolateKeyPose(previous.pose, key, travel)
     }
     previous = { frame: at, pose: key.pose }
   }
   return previous.pose
+}
+
+const ZERO: Turn = [0, 0, 0]
+
+function interpolateKeyPose(from: FightPose, key: KeyPose, travel: number): FightPose {
+  if (travel <= 0) return from
+  if (travel >= 1) return key.pose
+  const pose: FightPose = {}
+  for (const joint of FIGHT_JOINTS) {
+    const start = from[joint]
+    const end = key.pose[joint]
+    if (!start && !end) continue
+    const a = start ?? ZERO
+    const b = end ?? ZERO
+    if (sameTurn(a, b)) {
+      pose[joint] = b
+      continue
+    }
+    const ease = key.jointEase?.[joint] ?? key.ease ?? 'smooth'
+    pose[joint] = interpolateJointTurn(joint, { from: a, to: b }, EASES[ease](travel))
+  }
+  return pose
+}
+
+function sameTurn(a: Turn, b: Turn): boolean {
+  return a[0] === b[0] && a[1] === b[1] && a[2] === b[2]
 }

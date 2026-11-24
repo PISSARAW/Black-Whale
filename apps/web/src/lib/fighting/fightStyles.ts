@@ -3,6 +3,7 @@ import { SECOND_WAVE_STYLES } from './fightStylesSecondWave'
 import { THIRD_WAVE_STYLES } from './fightStylesThirdWave'
 import { FOURTH_WAVE_STYLES } from './fightStylesFourthWave'
 import { COMBAT_COMPLETION_STYLES } from './fightStylesCombatCompletion'
+import { physicalCombatProfile } from './physicalCombatProfiles'
 import { styleMatchup } from './styleMatchups'
 
 export interface AttackTuning {
@@ -403,10 +404,13 @@ const DETAILED_STYLES = new Map<FighterId, FightingStyle>(
     .flatMap((wave) => Object.values(wave))
     .map((style) => {
       const matchup = styleMatchup(style.id)
+      const physical = physicalCombatProfile(style.id)
       return [
         style.id,
         {
           ...style,
+          preferredRange: physical?.range ?? style.preferredRange,
+          guardRange: physical?.guardRange ?? style.guardRange,
           descriptionFr: `${matchup.plan[0]} ${matchup.counter[0]}`,
           descriptionEn: `${matchup.plan[1]} ${matchup.counter[1]}`,
         },

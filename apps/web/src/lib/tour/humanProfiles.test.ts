@@ -174,4 +174,11 @@ describe('shared human profiles', () => {
     }
     expect(humanStateKey(attack)).toBe(humanStateKey(idle))
   })
+
+  it('rebuilds only when an Arena fighter changes visible expression', () => {
+    const neutral = person('hisoka', 'fighter')
+    neutral.kind = 'combatant'
+    const hostile = { ...neutral, human: { ...neutral.human!, expression: 'hostile' as const } }
+    expect(humanStateKey(hostile)).not.toBe(humanStateKey(neutral))
+  })
 })

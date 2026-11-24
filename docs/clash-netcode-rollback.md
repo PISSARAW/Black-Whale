@@ -15,6 +15,44 @@
 >
 > **Définition de « réussi ».** Voir la section [Critères d'acceptation](#critères-dacceptation).
 
+## Salon privé expérimental
+
+L’option **Rollback expérimental** se trouve sur la page des invitations privées de Clash.
+Les deux places confirment la configuration au début de chaque manche. Le relais WebSocket
+transmet les entrées par frame, avec un délai partagé de deux frames et une fenêtre de huit.
+Les appuis ponctuels restent en file pendant une attente, jusqu’à leur affectation à une frame.
+
+Le serveur avance sur les entrées des deux places et publie les verdicts dans les vues de salon.
+Une reconnexion crée une nouvelle génération de WebSocket à partir du dernier état confirmé.
+Le salon ne compte pas pour le classement. Comme prévu par D1, l’état complet est accessible
+aux deux clients authentifiés et la présentation applique le filtre de chaque place.
+
+Parallel Future calcule quatre nouvelles frames par pas de vision. En divergence, il complète
+la prévision au fur et à mesure de sa lecture. Le combat contre l’IA conserve son anticipation
+de 60 frames. Les instantanés de replay peuvent reprendre une prévision partielle et le
+règlement passe à `clash-combat-95` avec le hash des frames de prévision.
+Chaque frame immuable garde son empreinte et une resimulation peut réutiliser la suite
+calculée depuis le même état. Le rendu affiche l’incrustation dans le contexte WebGL principal
+et rafraîchit son image jusqu’à 30 Hz sur un décor simplifié, selon le temps de frame disponible.
+Le profil Performance sert de défaut dans le salon expérimental en l’absence d’un réglage
+graphique enregistré. Le sol du décor principal réutilise son reflet entre deux rafraîchissements
+et suspend le reflet lorsque les deux vues sont actives.
+
+Le parcours réel invitation → reconnexion → deux manches → verdict se vérifie avec
+`pnpm --filter @black-whale/web exec node scripts/check-fighting-private-rollback.mjs`.
+Le script utilise deux instances de Chrome. `CLASH_TEST_URL` permet de viser un serveur déjà lancé.
+Avec `CLASH_TEST_RTT_MS=150 CLASH_TEST_FUTURE=1`, le test arme Parallel Future et vise une
+médiane mesurée de 150 ms aller-retour pour chaque navigateur. Un proxy WebSocket local ajuste
+le délai ajouté sur les quatre trajets à partir des pongs mesurés dans Chrome. Le test échoue
+si l’une des médianes s’écarte de plus de 5 ms de la cible. Par défaut, chaque trajet reçoit
+une gigue de ±5 ms et perd 2 % des messages de combat. Le relais et le serveur de jeu restent
+réels. Le script compare les empreintes des frames confirmées et le verdict sur les deux places.
+
+Le banc de rendu mesure les intervalles réellement affichés, y compris ceux de l’incrustation.
+Il se lance avec `FIGHT_PERF_CPU=4 FIGHT_PERF_CASES=future-performance FIGHT_PERF_SECONDS=35
+pnpm --filter @black-whale/web exec node scripts/check-fighting-performance.mjs --stress`.
+Chrome applique le ralentissement ×4 via CDP et conserve le rendu WebGL accéléré.
+
 ## Ce qui rend le chantier faisable
 
 Le moteur a déjà les trois propriétés qu'un rollback exige.
@@ -181,7 +219,7 @@ empreintes identiques entre A, B et une simulation de référence.
 > d'entrées et devra devenir une entrée de frame (L4) ; les deux places doivent avoir le même
 > délai d'entrée.
 
-**L3 — Transport WebSocket et relais. Transport fait ; intégration au duel restante.**
+**L3 — Transport WebSocket et relais. Intégré au salon privé expérimental.**
 Route WebSocket sur l'adaptateur Node (vérifier le passage par Caddy, déjà compatible avec
 les WebSockets), authentifiée par le jeton de place existant. Paquets binaires compacts,
 redondance des entrées, ping applicatif. _Fini quand_ : `check-fighting-pvp.mjs` joue un duel
@@ -216,7 +254,7 @@ complet entre deux contextes navigateurs à travers le relais.
 > (`PvpDuel.svelte`, contrôles, rendu de l'état local, masquage D1-a de `view.ts` côté client)
 > derrière une option de salon, puis faire jouer `check-fighting-pvp.mjs` à travers le relais.
 
-**L4 — Arbitre en retard confirmé.**
+**L4 — Arbitre en retard confirmé. Disponible dans le salon expérimental.**
 `refereeMatch.ts` simule à partir des entrées confirmées, publie les verdicts et une empreinte
 toutes les 30 frames. Un client en désaccord demande un état complet et repart de là (même
 chemin que la divergence actuelle). _Fini quand_ : un client falsifiant ses propres empreintes

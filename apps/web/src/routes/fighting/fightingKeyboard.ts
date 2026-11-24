@@ -18,7 +18,7 @@ export function ignoresFightKey(event: KeyboardEvent, active: boolean): boolean 
 interface SideAttackOptions {
   input: Pick<FightInput, 'guard'>
   control: (key: keyof FightInput, active: boolean) => void
-  onMove: (action: MoveAction) => void
+  onMove: (action: MoveAction | 'ranged') => void
 }
 
 function handleOffensiveKey(
@@ -26,8 +26,8 @@ function handleOffensiveKey(
   action: 'light' | 'heavy' | 'special',
   options: SideAttackOptions & { active: boolean; repeat: boolean },
 ): void {
-  if (action === 'special') options.control('hatsu', options.active)
   if (!options.active) {
+    if (action === 'special') options.control('hatsu', false)
     tracker.release(action)
     return
   }
@@ -35,7 +35,10 @@ function handleOffensiveKey(
   const resolved = tracker.press(action, options.input)
   if (!resolved) return
   if (resolved.kind === 'burst') options.control('burst', true)
-  else options.onMove(resolved.action)
+  else {
+    if (action === 'special') options.control('hatsu', resolved.action === 'special')
+    options.onMove(resolved.action)
+  }
 }
 
 interface OpponentKeys {

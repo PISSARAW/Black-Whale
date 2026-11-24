@@ -1,4 +1,5 @@
 import { resolveExchange } from './resolve'
+import { applyArenaParry } from './parry'
 import { releaseBufferedMove } from './fightingMove'
 import { clashExchange, settleFightingMove, throwOpening } from './moveChain'
 import { engageClashKo, expireClashKo, spentKo, usesClashNen } from './clashNen'
@@ -26,6 +27,7 @@ import {
   type FighterState,
   type Impact,
 } from './types'
+import { recordArenaWound } from './wounds'
 
 /** One blow, described fully enough that the resolver needs nothing else. */
 export interface StrikeRequest {
@@ -37,6 +39,8 @@ export interface StrikeRequest {
   range?: number
   targetAt?: Vec2
   recovery?: number
+  hitstop?: number
+  moveId?: string
   /** Strongest impact allowed, from a Clash move's authored damage. */
   ceiling?: Impact
   grade?: import('./clashGrade').ExchangeGrade
@@ -94,6 +98,8 @@ export function landReadyIntent(state: CombatState): CombatState {
       power: intent.power,
       range: intent.range,
       recovery: intent.recovery,
+      hitstop: intent.hitstop,
+      moveId: intent.moveId,
       ...clashExchange(current, intent),
     })
     current = intent.moveId
@@ -168,24 +174,33 @@ export function strike(request: StrikeRequest): CombatState {
   if (technique === 'strike' && attacker.ko && !request.grade) return state
 
   const defenderSide = otherSide(side)
-  const result = resolveExchange({
-    attacker: technique === 'ko' ? { ...attacker, ko: null } : attacker,
-    defender: state[defenderSide],
-    attackerSide: side,
-    zone,
-    technique,
-    clock: state.clock,
-    walls: state.terrain.walls,
-    power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
-    range: request.range,
-    targetAt: request.targetAt,
-    recovery: request.recovery,
-    ceiling: request.ceiling,
-    grade: request.grade,
+  const result = applyArenaParry({
+    before: state,
+    result: resolveExchange({
+      attacker: technique === 'ko' ? { ...attacker, ko: null } : attacker,
+      defender: state[defenderSide],
+      attackerSide: side,
+      zone,
+      technique,
+      clock: state.clock,
+      walls: state.terrain.walls,
+      power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
+      range: request.range,
+      targetAt: request.targetAt,
+      recovery: request.recovery,
+      ceiling: request.ceiling,
+      grade: request.grade,
+    }),
   })
   const owed = Math.max(0, result.event.points - (request.scored ?? 0))
   const counterBonus = state[defenderSide].recoveryWindow > 0 && owed > 0 ? 1 : 0
-  const event = { ...result.event, points: owed + counterBonus }
+  const contactFreeze = result.event.impact === 'miss' ? 0 : (request.hitstop ?? 0)
+  const event = {
+    ...result.event,
+    points: owed + counterBonus,
+    ...(request.moveId ? { moveId: request.moveId } : {}),
+    ...(contactFreeze > 0 ? { hitstop: contactFreeze } : {}),
+  }
   const scored = {
     ...result.attacker,
     score: result.attacker.score + event.points,
@@ -199,13 +214,15 @@ export function strike(request: StrikeRequest): CombatState {
     impact: result.event.impact,
     walls: state.terrain.walls,
   })
-  const defender = connected ? { ...pushed, intent: null } : pushed
+  const interrupted = connected ? { ...pushed, intent: null } : pushed
+  const defender = recordArenaWound(interrupted, request.moveId, result.event.impact)
   const outcome = outcomeOf(side, scored, defender)
   return ringOut({
     ...state,
     [side]: scored,
     [defenderSide]: defender,
     lastEvent: event,
+    hitstop: Math.max(state.hitstop, contactFreeze),
     outcome,
   })
 }

@@ -25,8 +25,8 @@ axis. The camera wears the player's own fighter model
 behind the eyes and turns with them, so looking down shows the chest and feet,
 and a guard or a strike lifts its arms into view
 ([tour/humanFirstPerson.ts](../tour/humanFirstPerson.ts)). The opponent uses the
-same shared character rig. Hisoka's special is routed through Arena's
-persistent Bungee Gum tether rule.
+same shared character rig. Exact named specials are routed through their
+per-fighter Arena systems rather than flattened into generic strikes.
 
 ### Clash combat grammar in first person
 
@@ -36,8 +36,8 @@ Arena keeps its open room; the duel inside it speaks Clash.
   person: Space/click light, B heavy, Y special, M throw, P finisher
   (X, C and E stay with Zetsu, Ko and the passage link). Holding
   forward or back picks the forward/back variant; aiming at the legs is Clash's
-  "down". Air moves wait for a jump. All fifteen authored slots except the two
-  air ones are reachable.
+  "down". U launches a deterministic jump; light and heavy become the authored
+  air slots until landing. All fifteen authored slots are reachable.
 - **Combos** — [combat/moveChain.ts](../combat/moveChain.ts) applies each
   landed move's authored hitstun, blockstun and knockback (frames at 60 fps,
   lane units at 0.2 m), then opens its `cancelWindow` on `cancelInto` after a
@@ -78,10 +78,70 @@ Arena keeps its open room; the duel inside it speaks Clash.
 - **Opponent** — [aiCombo.ts](aiCombo.ts) opens on an authored ground route and
   follows it inside the cancel window: 1, 3 or 5 moves by difficulty.
 
-Still Clash-only, in rough order of value: jump and air moves; lunge;
-hitstop and camera shake; per-fighter Hatsu systems behind the specials;
-psychology, expressions and Ren presentation; frame data, training and
-lessons; replay coaching; rollback PvP.
+Authored lunges now advance progressively during startup on the fighter's local
+3D attack axis, stop at bodies and walls, and are checked against Clash's lane
+position in the parity gate.
+
+Authored contact hitstop now freezes Arena's combat clock and bodies while
+keeping a follow-up command buffered. The POV camera reads the same deterministic
+freeze for ranked impact recoil, disabled by reduced-motion preferences.
+
+[combat/fightingHatsu.ts](../combat/fightingHatsu.ts) is the explicit identity gate for named
+specials including Chain Jail, Bungee Gum, Cyclotron, Double Machine Gun,
+Nen Stitches, Needle People, Cross Game and Biohazard. Dynamic routes now keep
+their stateful condition too: Parallel Future prepares only from Zetsu and
+consumes that vision when the player diverges; Jupiter counts three uninterrupted
+beats before releasing its authored Arena impact. Both survive hitstop buffering
+and deterministic replay. Blinky now consumes the exact non-living solid selected
+by the POV raycast, removes it from Tour collision and rendering, keeps one
+last-object slot, then restores that same solid at the authored ejection point.
+Object identity and position live in combat state, so recording, branching and
+replay reproduce the room mutation. Its carried Hatsu no longer invents an aura
+drain. Connected physical Blinky strikes now create explicit open wounds. A
+fighter may occupy both hands to cover two of them; any other active command
+releases that cover. The finisher draws only the exposed blood at four metres
+through a clear path, records blood loss without subtracting aura, and preserves
+the wound, cover and extraction state through replay and branching.
+
+Skill Hunter carries Clash's four prepared Heavens Arena pages plus its fifth
+stolen slot. Back Special turns the selected page, Down Special places or opens
+Double Face's bookmark, Neutral Special invokes the open page and the finisher
+invokes the bookmarked page. Forward Special steals the last Hatsu actually
+manifested in Chrollo's POV at the 1.2 m cover-palm range; In hides that evidence
+unless Chrollo has Gyo. This condenses the spoken interview into Arena's combat
+observation, but retains the physical contact, one replaceable stolen slot and
+the original owner's loss of access. Book state, capture seals and copied casts
+are all replay/checksum state rather than HUD-only selection. An opponent's
+inventory stays private; Gyo reveals only the page currently open in the POV.
+
+[duelPresence.ts](duelPresence.ts) projects Clash's authored psychology profiles into
+what the player can actually read: facial bearing, felt Ren pressure and, under
+Gyo, stability and hostile intent. It is presentation-only and consumes the POV
+filtered state, so concealed aura stays concealed and replay checksums never gain
+private psychology. The opponent's shared Tour figure takes the resulting facial
+expression, while `ArenaDuelPresence` lets strong Ren occupy the edge of the
+first-person frame. Reduced-motion keeps the pressure static.
+
+[training.ts](training.ts) exposes the same authored startup, active and recovery
+frames used by Clash. The optional POV lab inspects the command currently under
+the pointer or keyboard focus; static normals also show their measured hit/block
+advantage, while dynamic specials deliberately show no invented value. Resolved
+exchanges explain confirms, whiffs, safe pressure and punish windows. The six-step
+Arena initiation now requires a real authored hit, a two-hit cancel route and an
+actually blocked opponent move rather than completing on button presses alone.
+
+Finished Arena replays now include a player-POV coach. It scans the deterministic
+timeline once, identifies conservative recovery opportunities and punishments,
+then lets the player review the contact or branch from just before the exchange.
+The diagnosis never consults concealed intent and is explicitly non-exhaustive.
+
+`parity.ts` is the migration boundary toward one combat truth. It runs Arena
+commands on Clash's 60 Hz cadence and emits a small, presentation-independent
+trace of impacts, aura, conditions, scores and positions. `clashParity.ts`
+translates the same pilot commands into Clash frames. The first Kurapika versus
+Hisoka strike now has an executable parity gate. Its guarded variant shares the
+Nen engine's six-frame parry contract, records parry separately from block and
+temporarily focuses Ryū on the struck zone before restoring its prior split.
 
 Both roster identities are stored in the match. Each player command also carries
 its fighter and move slot, while the opponent AI reuses its recorded roster
@@ -108,3 +168,10 @@ Campaign links are full presets: terrain, challenge, doctrine, difficulty, forma
 `bridge.ts` defines the session handoff contract. Hunt can hand an active duel to Arena; Infiltration can hand off an identified agent who has already completed the required objective. Investigation deliberately has no handoff: its confrontations compare testimony and do not identify a physical opponent.
 
 `/arena/pvp` creates an invite-only match. The HTTP transport authenticates each seat with an opaque session token, rejects client ticks and teleports, and polls snapshots from `AuthoritativeArenaMatch`. The token in session storage supports page reloads while the server process lives. The registry is intentionally in-process: horizontal deployment or restart-safe matches require a shared coordinator before PvP can span several Node processes.
+
+The PvP client predicts only its own authenticated commands. Each authoritative
+snapshot acknowledges a sequence, discards confirmed inputs and replays the
+remaining queue over the corrected state. Stale polling responses cannot rewind
+the client, rejected commands discard every dependent prediction, and the HUD
+reports pending inputs and corrections. The server remains the sole clock and
+referee; Arena never predicts an opponent command.

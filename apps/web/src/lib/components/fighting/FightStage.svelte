@@ -3,7 +3,10 @@
   import { createVictoryPlayback } from '$lib/fighting/victory/playback'
   import { mountVictoryClock } from '$lib/fighting/victory/clock'
   import FightVictoryOverlay from './FightVictoryOverlay.svelte'
+  import FightVictoryNarration from './FightVictoryNarration.svelte'
   import FightVictoryAudio from './FightVictoryAudio.svelte'
+  import FightIntroduction from './FightIntroduction.svelte'
+  import { createIntroPlayback } from '$lib/fighting/presentation/introPlayback'
   import { clashCareer } from '$lib/fighting/career/profile'
   import { DEFAULT_FIGHT_AUDIO } from '$lib/fighting/audio/director'
   import FightEssentialStatus from './FightEssentialStatus.svelte'
@@ -11,7 +14,7 @@
   import FightDecisionReadout from './FightDecisionReadout.svelte'
   import { defaultFightComfort } from '$lib/fighting/fightComfort'
   export let comfort = defaultFightComfort()
-  import { parallelFutureCamera } from '$lib/fighting/parallelFutureCamera'
+  import { parallelFutureMain } from '$lib/fighting/parallelFutureCamera'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightBlinkyPanel from './FightBlinkyPanel.svelte'
   import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
@@ -26,17 +29,28 @@
   import FightResources from './FightResources.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
+  import FightSoundCaptions from './FightSoundCaptions.svelte'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { resolveImpactCallout } from '$lib/fighting/perception/tacticalCallout'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { FightHudMode } from '$lib/fighting/perception/hudMode'
   import type { AttackKind, FightInput, FightState, FightSide } from '$lib/fighting/types'
 
+  export let audioSeek = 0
+  export let audioState: FightState | null = null
+  export let audioPaused: boolean | undefined = undefined
   export let victoryEnabled = true
   export let victoryPaused = false
+  export let introEnabled = false
+  export let onIntroComplete: () => void = () => {}
+  let descriptionSpeaking = false
   export let victoryActive = false
   const victory = createVictoryPlayback()
-  $: victory.observe(state, victoryEnabled)
+  const intro = createIntroPlayback(
+    () => onIntroComplete(),
+    () => paused,
+  )
+  $: victory.observe(audioState ?? state, victoryEnabled)
   $: victoryActive = Boolean($victory?.active)
   onMount(() => mountVictoryClock({ playback: victory, paused: () => victoryPaused }))
   export let minimal = false
@@ -67,17 +81,31 @@
   let sensoryViewer: 'player' | 'opponent' = 'player'
   let futureViewer: 'player' | 'opponent' = 'player'
   let futurePreview: number | null = null
-  $: visibleState = parallelFutureCamera(state, futureViewer, futurePreview).main
+  $: visibleState = parallelFutureMain(state, futureViewer, futurePreview)
   $: sceneKey = `${stageId}:${state.stageTransition?.sequence ?? 0}:${state.player.id}:${state.opponent.id}:${comfort.graphics ?? 'quality'}`
-  $: if (sceneKey) victory.sceneLoading()
+  $: if (sceneKey) {
+    victory.sceneLoading()
+    intro.sceneLoading()
+  }
+  $: intro.observe(state, { enabled: introEnabled, mode: $clashCareer.appearance.intro })
   $: throwTech = isThrowTech(visibleState)
+  function sceneReady() {
+    victory.sceneReady()
+    intro.sceneReady()
+  }
+  function sceneFailed() {
+    victory.sceneFailed()
+    intro.sceneFailed()
+  }
 </script>
 
 <FightAudio
-  {state}
+  state={audioState ?? state}
   {language}
-  paused={paused || victoryActive}
+  paused={audioPaused ?? paused}
   viewer={sensoryViewer}
+  cinematic={victoryActive}
+  {audioSeek}
   showSettings={!minimal}
   bind:settings={audioSettings}
 />
@@ -90,7 +118,7 @@
   aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}
 >
   <div class="fight-arena">
-    {#if !victoryActive}<FightHud state={visibleState} {language} {detailed} {hudMode} />
+    {#if !victoryActive && !$intro}<FightHud state={visibleState} {language} {detailed} {hudMode} />
       <FightCatsName state={visibleState} {language} />
       <FightEasterEggCaptions state={visibleState} {language} />{/if}
     {#key sceneKey}
@@ -105,12 +133,13 @@
         previewIndex={futurePreview}
         appearance={$clashCareer.appearance}
         victoryFrame={$victory}
-        onSceneReady={victory.sceneReady}
-        onSceneFailed={victory.sceneFailed}
+        introFrame={$intro}
+        onSceneReady={sceneReady}
+        onSceneFailed={sceneFailed}
       />
     {/key}
 
-    {#if !victoryActive}
+    {#if !victoryActive && !$intro}
       {#if training}
         <FightTrainingOverlay state={visibleState} {language} />
       {/if}
@@ -157,8 +186,31 @@
       {/key}
     {/if}
     <FightVictoryOverlay frame={$victory} {state} {language} onSkip={victory.skip} />
-    <FightVictoryAudio frame={$victory} settings={audioSettings} paused={victoryPaused} />
+    <FightVictoryNarration
+      frame={$victory}
+      settings={audioSettings}
+      {language}
+      paused={victoryPaused}
+      bind:speaking={descriptionSpeaking}
+    />
+    <FightVictoryAudio
+      frame={$victory}
+      settings={audioSettings}
+      paused={victoryPaused}
+      ducked={descriptionSpeaking}
+    />
+    {#if introEnabled && state.phase === 'ready'}
+      <FightIntroduction playback={intro} {state} {language} {paused} settings={audioSettings} />
+    {/if}
   </div>
+  <FightSoundCaptions
+    state={audioState ?? state}
+    {language}
+    paused={audioPaused ?? paused}
+    viewer={sensoryViewer}
+    seek={audioSeek}
+    enabled={audioSettings.captions}
+  />
   {#if !victoryActive}
     {#if !minimal || state.parallelFuture}<FightParallelFuture
         {state}
@@ -168,7 +220,7 @@
         onOpenEyes={() => onAttack('special')}
       />{/if}
     {#if !minimal}<FightDecisionReadout state={visibleState} {language} />{/if}
-    {#if showControls && !paused}<FightTouchControls
+    {#if showControls && !paused && !$intro}<FightTouchControls
         state={visibleState}
         {language}
         {onAttack}

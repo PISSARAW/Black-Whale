@@ -1,7 +1,8 @@
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { franklinBarrageMotion } from './franklinBarrageMotion'
-import { lerpPose, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
+import { addPoses, lerpPose, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
+import { firstFiveStrike } from './firstFiveCombatMotion'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, AttackKind } from './types'
 
@@ -113,6 +114,16 @@ export interface AttackMotionOptions {
 }
 
 export function attackMotionAccent(options: AttackMotionOptions): FightPose {
+  const { fighter, frames } = options
+  const signature = firstFiveStrike(fighter, {
+    frames,
+    frame: options.frame ?? fighter.attack?.frame ?? 0,
+  })
+  const family = familyAttackMotion(options)
+  return signature === NEUTRAL_POSE ? family : addPoses(family, signature)
+}
+
+function familyAttackMotion(options: AttackMotionOptions): FightPose {
   const { fighter, frames, authored } = options
   const attack = fighter.attack
   if (!attack || attack.variant === 'air' || attack.variant === 'throw') return NEUTRAL_POSE

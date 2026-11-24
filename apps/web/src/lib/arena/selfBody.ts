@@ -23,6 +23,8 @@ export interface ArenaSelfBody {
   at: Vec2
   heading: number
   place: { spaceId: string; tierId: string; ground: number }
+  perspective?: 'first-person' | 'third-person'
+  nen?: HumanAppearance['nen']
 }
 
 /** The camera looks along (−sin, −cos) of its heading; the neck is behind it. */
@@ -45,12 +47,13 @@ function selfPose(body: ArenaSelfBody): HumanAppearance['pose'] {
  * body: the scene already draws the visitor's aura around the eyes.
  */
 export function arenaSelfBody(body: ArenaSelfBody): Apparition {
+  const thirdPerson = body.perspective === 'third-person'
   return {
     id: ARENA_SELF_ID,
     kind: 'combatant',
     spaceId: body.place.spaceId,
     tierId: body.place.tierId,
-    at: behindEyes(body.at, body.heading),
+    at: thirdPerson ? body.state.position : behindEyes(body.at, body.heading),
     // A figure faces (sin, cos) of its heading, the camera the opposite way.
     heading: body.heading + Math.PI,
     y: body.place.ground,
@@ -61,8 +64,9 @@ export function arenaSelfBody(body: ArenaSelfBody): Apparition {
       role: body.fighter.modelRole,
       identity: body.fighter.modelId,
       pose: selfPose(body),
-      aura: 'none',
-      firstPerson: true,
+      aura: thirdPerson ? body.state.mode : 'none',
+      nen: thirdPerson ? body.nen : undefined,
+      firstPerson: !thirdPerson,
     },
     hidden: false,
     pick: false,

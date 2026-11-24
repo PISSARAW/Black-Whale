@@ -79,14 +79,21 @@ export function createResponseDiagnostics() {
       update(id, { ...result, appliedFrame: before.frame, queueMs: Math.max(0, now - arrival) })
       if (result.outcome === 'buffered') {
         finish(side, { outcome: 'cancelled', reason: 'replaced' })
-        const buffer = after[side].bufferedAttack!
-        pending[side] = { id, command, moveId: buffer.moveId, kind: buffer.kind }
+        pending[side] = pendingCommand(id, command, after)
       }
     },
     observeFrame(before: FightState, after: FightState) {
       for (const side of SIDES) {
         const intent = pending[side]
         if (!intent) continue
+        if (intent.kind === 'hitstop') {
+          if (after.directMoveBuffer?.[side]) continue
+          const result = commandResult(before, after, intent.command)
+          if (result.outcome === 'buffered') {
+            pending[side] = pendingCommand(intent.id, intent.command, after)
+          } else finish(side, result)
+          continue
+        }
         const resolution = bufferResolution(before, after, intent)
         if (resolution) finish(side, resolution)
       }
@@ -109,11 +116,18 @@ export function createResponseDiagnostics() {
     },
   }
 }
+function pendingCommand(id: number, command: ActorCommand, state: FightState): Pending {
+  const side = command.side
+  if (state.directMoveBuffer?.[side]) return { id, command, kind: 'hitstop' }
+  const buffer = state[side].bufferedAttack
+  return { id, command, moveId: buffer?.moveId, kind: buffer?.kind ?? command.kind }
+}
 function commandResult(
   before: FightState,
   after: FightState,
   command: ActorCommand,
 ): Partial<ResponseAttempt> {
+  if (queuedDuringHitstop(before, after, command.side)) return { outcome: 'buffered' }
   const feedback = after.commandFeedback?.[command.side]
   const fresh = feedback?.sequence !== before.commandFeedback?.[command.side]?.sequence
   if (fresh && feedback) {
@@ -123,6 +137,10 @@ function commandResult(
   return before === after
     ? { outcome: 'refused', reason: refusal(before, command) }
     : { outcome: 'executed', executedFrame: before.frame }
+}
+function queuedDuringHitstop(before: FightState, after: FightState, side: FightSide): boolean {
+  const deferred = after.directMoveBuffer?.[side]
+  return Boolean(deferred && deferred !== before.directMoveBuffer?.[side])
 }
 function bufferResolution(
   before: FightState,

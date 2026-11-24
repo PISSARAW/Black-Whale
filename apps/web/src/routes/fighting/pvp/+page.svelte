@@ -1,7 +1,9 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
+  import { onMount } from 'svelte'
   import { link, locale } from '$lib/i18n'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
+  import { selectionVoice } from '$lib/fighting/audio/selectionVoice'
   import { FIGHT_FORMATS } from '$lib/fighting/formats'
   import { FIGHT_STAGES } from '$lib/fighting/stages'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
@@ -20,8 +22,13 @@
   let player: FighterId = 'kurapika',
     opponent: FighterId = 'hisoka'
   let formatId: FightFormatId = 'knockout'
+  let rollback = false
   let environment = createFightEnvironment({ arenaInteractions: true })
   let language: 'fr' | 'en'
+  let mounted = false
+  onMount(() => {
+    mounted = true
+  })
   let creating = false,
     error = ''
   $: language = $locale === 'fr' ? 'fr' : 'en'
@@ -34,6 +41,7 @@
         headers: { 'content-type': 'application/json', 'x-clash-profile': rankingToken() },
         body: JSON.stringify({
           ruleset: PVP_RULESET,
+          rollback,
           setup: { player, opponent, formatId, environment, ...kameoSetupField($chosenKameos) },
         }),
       })
@@ -74,7 +82,9 @@
   </p>
   <div class="pvp-setup">
     <label
-      >{language === 'fr' ? 'Ton personnage · P1' : 'Your fighter · P1'}<select bind:value={player}
+      >{language === 'fr' ? 'Ton personnage · P1' : 'Your fighter · P1'}<select
+        bind:value={player}
+        use:selectionVoice={{ locale: language, other: opponent }}
         >{#each FIGHTING_ROSTER as fighter (fighter.id)}<option value={fighter.id}
             >{fighter.name}</option
           >{/each}</select
@@ -83,6 +93,7 @@
     <label
       >{language === 'fr' ? 'Personnage invité · P2' : 'Guest fighter · P2'}<select
         bind:value={opponent}
+        use:selectionVoice={{ locale: language, other: player }}
         >{#each FIGHTING_ROSTER as fighter (fighter.id)}<option value={fighter.id}
             >{fighter.name}</option
           >{/each}</select
@@ -120,7 +131,13 @@
     onEnvironment={(next) => (environment = next)}
   />
   <FightKameoPicker {language} />
-  <button type="button" onclick={create} disabled={creating}
+  <label>
+    <input type="checkbox" bind:checked={rollback} />
+    {language === 'fr'
+      ? 'Rollback expérimental · duel privé hors classement'
+      : 'Experimental rollback · unranked private duel'}
+  </label>
+  <button type="button" onclick={create} disabled={!mounted || creating}
     >{language === 'fr' ? 'Créer une invitation' : 'Create invite'}</button
   >
   {#if error}<p role="alert">{error}</p>{/if}

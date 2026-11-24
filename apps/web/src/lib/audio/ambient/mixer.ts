@@ -34,6 +34,8 @@ export type Graph = {
   reverbSend: GainNode
   /** A mode-owned destination, already placed and reverberated. */
   oneShotTarget?: AudioNode
+  /** Optional onset offset for multiple contacts delivered in one update. */
+  timeOffset?: number
   /** Optional lifecycle owner for one-shots borrowed by an isolated mode. */
   registerSource?: (source: AudioScheduledSourceNode) => void
 }
@@ -70,7 +72,7 @@ export const isMuffled = () => muffled
 
 export const midiToHz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12)
 
-export function buildGraph(bus: Bus = 'ambient'): Graph {
+export function buildGraph(bus: Bus = 'ambient', destination?: AudioNode): Graph {
   const context = sharedAudioContext()
   if (!context) throw new Error('no Web Audio')
 
@@ -113,7 +115,7 @@ export function buildGraph(bus: Bus = 'ambient'): Graph {
   // on. `destination` only when there is no output stage at all, which is a
   // browser that has a context and refuses to build a gain — it cannot happen,
   // and the sound still comes out if it does.
-  master.connect(outputBus(bus) ?? context.destination)
+  master.connect(destination ?? outputBus(bus) ?? context.destination)
 
   return { context, master, muffle, air, reverbSend }
 }

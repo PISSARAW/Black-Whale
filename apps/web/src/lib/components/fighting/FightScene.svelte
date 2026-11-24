@@ -3,12 +3,16 @@
   import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
+  import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
+  import { createFightStagingScene } from '$lib/fighting/fightStagingScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
   import { updateFightCameraFog } from '$lib/fighting/fightSceneFog'
   import { createCinematicDetailScene } from '$lib/fighting/cinematicDetailScene'
   import type { CinematicDirection } from '$lib/fighting/cinematicTypes'
   import { createFighterTrackingSilhouettes } from '$lib/fighting/fighterTrackingSilhouette'
+  import { createParallelFutureInset } from '$lib/fighting/parallelFutureInsetRenderer'
+  import type { FutureCameraView } from '$lib/fighting/parallelFutureCamera'
   import { markFightRender } from '$lib/fighting/fightRenderObservation'
   import { cinematicDetailRect, type CameraDetailRect } from '$lib/fighting/cinematicDetailLayout'
   import FightCameraDetail from './FightCameraDetail.svelte'
@@ -54,7 +58,7 @@
     fightFrameDeltaSeconds,
   } from '$lib/fighting/fightPresentationContext'
   import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
-  import { createFightRenderResources, createFightPost } from '$lib/fighting/fightRenderer'
+  import { loadFightStage } from '$lib/fighting/loadFightStage'
   import { motionOf } from '$lib/fighting/fighterMovement'
   import {
     FIGHT_MODEL_POSES,
@@ -87,7 +91,7 @@
   export let keepCombatantMarkers = true
   export let hideSecondaryView = false
   export let detailVisible = false
-  export let viewRole: 'primary' | 'prediction' = 'primary'
+  export let prediction: FutureCameraView | null = null
   export let victoryFrame: VictoryFrame | null = null
   export let introFrame: IntroFrame | null = null
   export let onSceneReady: () => void = () => {}
@@ -114,56 +118,25 @@
 
     async function mountScene() {
       try {
-        const THREE = await import('three')
         const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
-        const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         const { createVictoryRenderer } = await import('$lib/fighting/victory/renderer')
         if (disposed || !canvas) return
-
-        const {
-          renderer,
-          glow,
-          geometry,
-          dispose: disposeRendering,
-        } = createFightRenderResources(THREE, canvas, comfort.graphics)
-        teardown = disposeRendering
-
-        const scene = new THREE.Scene()
-        scene.userData.fightView = viewRole
-        const trackingSilhouettes = createFighterTrackingSilhouettes()
-        scene.fog = new THREE.Fog(0x05090d, 8, 18)
-        const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30)
-        camera.position.set(0, 2.25, 9.2)
-        const combatCamera = createCombatCamera()
-
-        const scenery = await buildFightScenery({ THREE, glow, geometry }, stageId, {
-          fight: () => state,
-          reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-        })
-        if (disposed) {
-          scenery.dispose()
-          disposeRendering()
-          return
-        }
-        renderer.localClippingEnabled = scenery.clipped
-        renderer.setClearColor(scenery.fog.colour, 1)
-        scene.fog =
-          scenery.fog.kind === 'exp2'
-            ? new THREE.FogExp2(scenery.fog.colour, scenery.fog.density)
-            : new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
-        camera.far = Math.max(100, scenery.cameraFar)
-        scene.add(scenery.root)
-        const post = await createFightPost({
-          ...{ THREE, renderer, scene, camera },
-          bloom: scenery.bloom,
+        const loaded = await loadFightStage({
+          canvas,
           graphics: comfort.graphics,
+          stageId,
+          state: () => state,
+          reducedMotion: motionPreference.matches,
+          disposed: () => disposed,
         })
-        if (disposed) {
-          post?.dispose()
-          scenery.dispose()
-          disposeRendering()
+        if (!loaded || disposed) {
+          loaded?.dispose()
           return
         }
+        const { THREE, renderer, glow, geometry, dispose, scene, camera, scenery, post } = loaded
+        teardown = dispose
+        const trackingSilhouettes = createFighterTrackingSilhouettes()
+        const combatCamera = createCombatCamera()
 
         const { buildFighter, nenKey, buildReference, models } = presentedFigures({
           build: buildFightFigure,
@@ -227,8 +200,21 @@
           figureOf: (side) => models[side].model.turns,
           comfort: visualComfort,
         })
+        const inset = createParallelFutureInset({
+          resources: { THREE, glow, geometry },
+          build: buildFightFigure,
+          key: fightFigureKey,
+          comfort: visualComfort,
+          preferences: () => $clashPresentation.preferences,
+        })
         const modelOf = createPresentedModelRefresh({ scene, models, nenKey, buildFighter })
         const alignPhysicalContact = createFightContactAlignment((side) => models[side].model.turns)
+        const staging = createFightStagingScene({
+          THREE,
+          scene,
+          figureOf: (side) => models[side].model.root,
+          comfort: visualComfort,
+        })
 
         const impacts = createFightImpactScene({
           THREE,
@@ -238,6 +224,12 @@
           figureOf: (side) => models[side].model.turns,
           geometry,
           glow,
+        })
+        const motionTrails = createFightMotionTrailScene({
+          THREE,
+          scene,
+          comfort: visualComfort,
+          figureOf: (side) => models[side].model.turns,
         })
 
         const fit = () => {
@@ -322,7 +314,11 @@
           const direction =
             cameraDirection ?? observed ?? cinematicDirector.update(state, cameraIntensity(), dt)
           const pursuit = combatCamera.pursuit(state)
-          detail = visibleSecondaryView(state, direction.detail, hideSecondaryView || pursuit)
+          detail = visibleSecondaryView(
+            state,
+            direction.detail,
+            (hideSecondaryView && !detailLayout) || pursuit,
+          )
           detailRect = detailLayout ?? cinematicDetailRect(camera.aspect)
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
@@ -374,7 +370,7 @@
           impacts.shake(camera, now)
         }
 
-        const finishCombatFrame = () => {
+        const finishCombatFrame = (now: number) => {
           drawFightScene({
             victory: victoryRenderer,
             state,
@@ -384,6 +380,7 @@
             draw: () => (post ? post.render() : renderer.render(scene, camera)),
             failed: onSceneFailed,
           })
+          inset.draw(renderer, { prediction, rect: detailRect, visible: detailVisible, now })
           recovery?.locate(camera, (side) => models[side].model.root)
           if (!ready) onSceneReady()
           ready = true
@@ -430,6 +427,8 @@
             model: modelOf('opponent', state.opponent),
             seconds,
           })
+          staging.sync(state)
+          motionTrails.sync(state, now)
           alignPhysicalContact(state)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
@@ -438,11 +437,12 @@
           updateCombatCamera(dt, now)
 
           impacts.animate(now)
+          motionTrails.animate(now)
 
           collisions.sync(state)
           scenery.update?.(seconds)
           markFightRender(scene, state)
-          finishCombatFrame()
+          finishCombatFrame(now)
           animationFrame = requestAnimationFrame(render)
         }
 
@@ -452,9 +452,12 @@
         teardown = () => {
           cancelAnimationFrame(animationFrame)
           resize?.disconnect()
+          inset.dispose()
           victoryRenderer.dispose()
           trackingSilhouettes.dispose()
           impacts.dispose()
+          motionTrails.dispose()
+          staging.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
           collisions.dispose()
           projectileScene.dispose()
@@ -464,9 +467,7 @@
           lsdfScene.dispose()
           feitanScene.dispose()
           projectionScene.dispose()
-          post?.dispose()
-          scenery.dispose()
-          disposeRendering()
+          dispose()
         }
       } catch {
         failed = true

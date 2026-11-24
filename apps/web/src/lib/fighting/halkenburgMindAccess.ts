@@ -1,6 +1,7 @@
 import { physicalBodyAt } from './fightBodyIdentity'
 import type { HalkenburgSoulExchange } from './halkenburgSoulTypes'
 import type { FightSide, FightState, ArcadeFighter } from './types'
+import { combatIdentityOf, type CombatIdentity } from './combatIdentity'
 
 export interface HalkenburgMindContext {
   host: FightSide
@@ -33,6 +34,19 @@ export function halkenburgMindBody(state: FightState, context: HalkenburgMindCon
   return donor.kind === 'fighter'
     ? physicalBodyAt(state, donor.owner, donor.member)
     : state.battlefield?.entities.find((entry) => entry.id === donor.id)
+}
+export function halkenburgCombatIdentity(
+  state: FightState,
+  context: HalkenburgMindContext,
+): CombatIdentity | undefined {
+  const body = halkenburgMindBody(state, context)
+  if (!body || !('nen' in body)) return undefined
+  const controller = context.role === 'initiator' ? context.soul.owner : context.soul.target.owner
+  return {
+    ...combatIdentityOf(body, controller),
+    mindId: `halkenburg-soul:${context.soul.id}:${context.role}`,
+    controllerSide: controller,
+  }
 }
 export function halkenburgMindCanWake(state: FightState, context: HalkenburgMindContext): boolean {
   const body = halkenburgMindBody(state, context)

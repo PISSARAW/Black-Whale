@@ -51,9 +51,9 @@ function capturing(state: FightState): boolean {
   return Boolean(attack?.confirmedHit && /:(throw|neutralSpecial)$/.test(attack.moveId ?? ''))
 }
 
-/** Held inputs of a jump (and of a low dodge still running before it); null otherwise. */
+/** Held inputs of a jump, low dodge or authored close-range approach; null otherwise. */
 export function motionDemoInput(step: SignatureStep, state: FightState): FightInput | null {
-  return 'jump' in step ? motionStepFrame(state, step).input : null
+  return 'jump' in step || 'approach' in step ? motionStepFrame(state, step).input : null
 }
 
 /** A dash from neutral waits for a free body; an accélération for a confirmed hit. */

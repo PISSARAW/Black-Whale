@@ -61,6 +61,7 @@ export function humanStateKey(seen: Apparition): string {
     role: seen.human.role,
     identity: seen.human.identity,
     aura: seen.human.aura,
+    expression: seen.human.expression,
     firstPerson: seen.human.firstPerson,
     likeness,
   })
@@ -180,10 +181,14 @@ export function buildHumanFigure({
   glow,
   glass,
   seen,
-  profile = humanProfile(seen),
+  profile: suppliedProfile,
   observerSight = 'sight',
   auraStyle = 'human',
 }: HumanFigureBuild): HumanFigure {
+  const baseProfile = suppliedProfile ?? humanProfile(seen)
+  const profile = seen.human?.expression
+    ? { ...baseProfile, expression: seen.human.expression }
+    : baseProfile
   const root = new THREE.Group()
   const figure = new THREE.Group()
   const far = new THREE.Group()

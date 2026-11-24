@@ -9,6 +9,9 @@ import {
   tickFight,
 } from './engine'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
+import { fightReplayHash } from './fightReplayHash'
+import { decodeReplay, encodeReplay } from './clashReplayCodec'
+import { privatePvpState } from './pvp/view'
 import { futureVisibleState } from './parallelFuturePresentation'
 import { hatsuAvoidsImpact, triggerHatsu } from './hatsu'
 import { finisherReady, movesetFor } from './movesets'
@@ -109,17 +112,25 @@ describe('Laplace Devil in the real 2D engine', () => {
     },
   )
 
-  it('forecasts exactly 600 frames, including existing projectiles, without changing the real world', () => {
+  it('extends the vision four frames at a time to 600 without changing the real world', () => {
     const base = incomingBullet(duel())
     const ready = vision(base)
     const future = ready.parallelFuture!
     expect(future.phase).toBe('vision')
-    expect(future.frames).toHaveLength(FUTURE_WINDOW_FRAMES)
-    expect(future.frames.some((frame) => frame.player.health < base.player.health)).toBe(true)
+    expect(future.frames).toHaveLength(4)
+    const next = advance(ready, 1).parallelFuture!
+    expect(next.frames).toHaveLength(8)
+    expect(advance(ready, 1).parallelFuture!.frames).toBe(next.frames)
     expect(ready.player.health).toBe(base.player.health)
     expect(ready.frame).toBe(FUTURE_PREPARATION_FRAMES)
     expect(ready.projectiles[0].age).toBe(FUTURE_PREPARATION_FRAMES)
-    const watched = advance(ready, 120, { left: true, guard: true })
+    const watched = advance(ready, 149, { left: true, guard: true })
+    expect(watched.parallelFuture!.frames).toHaveLength(FUTURE_WINDOW_FRAMES)
+    expect(watched.parallelFuture!.forecast).toBeUndefined()
+    expect(watched.parallelFuture!.frames[0]).toBe(future.frames[0])
+    expect(
+      watched.parallelFuture!.frames.some((frame) => frame.player.health < base.player.health),
+    ).toBe(true)
     expect(watched.frame).toBe(ready.frame)
     expect(watched.time).toBe(ready.time)
     expect(watched.rng).toBe(ready.rng)
@@ -130,7 +141,7 @@ describe('Laplace Devil in the real 2D engine', () => {
   it('does not apply a predicted KO, points or round victory to reality', () => {
     const base = incomingBullet(duel())
     base.player = { ...base.player, health: 1 }
-    const ready = vision(base)
+    const ready = advance(vision(base), 80)
     expect(ready.parallelFuture!.frames.some((frame) => frame.phase === 'finished')).toBe(true)
     expect(ready.phase).toBe('fighting')
     expect(ready.winner).toBeNull()
@@ -189,11 +200,17 @@ describe('Laplace Devil in the real 2D engine', () => {
     },
   )
 
-  it('is deterministic and serializable, without recursive forecasts inside frames', () => {
+  it('resumes a serialized partial forecast and generates the same prefix whether read in vision or divergence', () => {
     const first = vision(incomingBullet(duel()))
-    const second = vision(incomingBullet(duel()))
-    expect(JSON.stringify(first.parallelFuture)).toBe(JSON.stringify(second.parallelFuture))
-    expect(JSON.parse(JSON.stringify(first)).parallelFuture.frames).toHaveLength(600)
+    const restored = decodeReplay(encodeReplay(first)) as FightState
+    expect(restored.parallelFuture?.frames).toHaveLength(4)
+    expect(restored.parallelFuture?.forecast?.parallelFuture).toBeUndefined()
+    expect(privatePvpState(first, 'player').parallelFuture?.forecast).toBeUndefined()
+    const watched = advance(first, 30)
+    const replayed = advance(restored, 30)
+    expect(fightReplayHash(replayed)).toBe(fightReplayHash(watched))
+    const diverged = advance(performAttack(first, 'player', 'special'), 60)
+    expect(diverged.parallelFuture!.frames).toEqual(watched.parallelFuture!.frames.slice(0, 60))
   })
 
   it('uses one non-damaging ability instead of invented beast and prophetic attacks', () => {
@@ -243,13 +260,13 @@ describe('Laplace Devil in the real 2D engine', () => {
     for (let frame = 0; frame < 60; frame++)
       next = tickFight(next, EMPTY_INPUT, { dt: 1 / 60, ai: true })
     expect(next.opponent.x).toBeLessThan(displaced.opponent.x)
-    expect(next.opponent.facing).toBe(started.parallelFuture!.frames[59].opponent.facing)
+    expect(next.opponent.facing).toBe(next.parallelFuture!.frames[59].opponent.facing)
     expect(next.opponent.facing).toBe(-1)
     expect(next.player.x).toBe(90)
   })
 
   it('renders the chosen forecast frame without advancing or mutating reality', () => {
-    const ready = vision(incomingBullet(duel()))
+    const ready = advance(vision(incomingBullet(duel())), 75)
     const shown = futureVisibleState(ready, 'player', 300)
     expect(shown.player.health).toBe(ready.parallelFuture!.frames[300].player.health)
     expect(shown.player.health).toBeLessThan(ready.player.health)

@@ -20,6 +20,14 @@ export interface RyuShift {
   attackShare: number
   guard: BodyZone
   remaining: number
+  /** A timed automatic focus returns to this allocation instead of settling permanently. */
+  restore?: Pick<RyuShift, 'attackShare' | 'guard'>
+}
+
+export interface ArenaJump {
+  elapsed: number
+  velocity: number
+  direction: Vec2
 }
 
 export interface AttackIntent {
@@ -30,12 +38,21 @@ export interface AttackIntent {
   power?: number
   range?: number
   recovery?: number
+  /** Authored Clash contact freeze, expressed in Arena seconds. */
+  hitstop?: number
   /** Clash move this intent performs; absent for Arena's own strikes. */
   moveId?: string
   /** Clash moves of the running combo, this one included. */
   combo?: readonly string[]
   /** Points the combo had already scored when this move was prepared. */
   scored?: number
+  /** Authored Clash lunge, projected progressively onto the attacker's local 3D axis. */
+  drive?: {
+    total: number
+    applied: number
+    duration: number
+    direction: Vec2
+  }
 }
 
 export interface ElasticTether {
@@ -57,12 +74,33 @@ export interface PersistentNenEffect {
   detail: string | null
 }
 
+/** A non-living Arena solid that a deterministic combat command has displaced. */
+export interface ArenaPhysicalObject {
+  id: string
+  position: Vec2
+  storedBy: CombatSide | null
+}
+
+export type ArenaBookSlot = 0 | 1 | 2 | 3 | 'stolen'
+
+/** Arena projection of Clash's four prepared pages plus Skill Hunter's stolen slot. */
+export interface ArenaSkillHunterBook {
+  deck: readonly [string, string, string, string]
+  stolenPage: string | null
+  selectedSlot: ArenaBookSlot
+  open: boolean
+  bookmarkSlot: ArenaBookSlot | null
+}
+
 export interface FighterState {
   aura: number
   capacity: number
   /** Position in the metric coordinates of the reconstructed room. */
   position: Vec2
   movement: Vec2
+  /** Vertical metres above the room floor; planar position remains in `position`. */
+  height: number
+  jump: ArenaJump | null
   facing: number
   mode: AuraMode
   attackShare: number
@@ -87,6 +125,13 @@ export interface FighterState {
     targetHatsuId: string | null
     expiresAt: number
   } | null
+  skillHunterBook: ArenaSkillHunterBook | null
+  /** Real, uncovered injuries that Blinky can draw blood through. */
+  openWounds: number
+  /** Both hands are occupied covering at most two open wounds. */
+  pluggingWounds: boolean
+  /** Deterministic amount of blood already extracted by Blinky. */
+  bloodLoss: number
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -104,17 +149,25 @@ export interface CombatEvent {
   impact: Impact
   points: number
   technique: 'strike' | 'ko' | 'hatsu'
+  parried?: boolean
+  moveId?: string
+  /** Contact freeze applied by this event, expressed in seconds. */
+  hitstop?: number
 }
 
 export interface CombatState {
   player: FighterState
   opponent: FighterState
   clock: number
+  /** Remaining authored contact freeze; replay ticks continue while combat time does not. */
+  hitstop: number
   outcome: MatchOutcome
   lastEvent: CombatEvent | null
   terrain: CombatTerrainPhysics
   tethers: ElasticTether[]
   nenEffects: PersistentNenEffect[]
+  /** Physical scenery touched by combat, keyed by the Tour structure id. */
+  physicalObjects: Record<string, ArenaPhysicalObject>
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
   /** `clash`: Arena duels use Clash's Nen economy and exchange factors (combat/clashNen.ts). */
@@ -163,8 +216,10 @@ export type CombatAction =
   | { type: 'TICK'; dt: number }
   | { type: 'SYNC_POSITION'; side: CombatSide; position: Vec2 }
   | { type: 'FACE'; side: CombatSide; heading: number }
+  | { type: 'PLUG_WOUNDS'; side: CombatSide; on: boolean }
   | { type: 'EVADE'; side: CombatSide; vector: Vec2 }
   | { type: 'MOVE'; side: CombatSide; vector: Vec2 }
+  | { type: 'JUMP'; side: CombatSide; vector: Vec2 }
   | { type: 'MODE'; side: CombatSide; mode: AuraMode }
   | { type: 'RYU'; side: CombatSide; attackShare?: number; guard?: BodyZone }
   | { type: 'GYO'; side: CombatSide; on: boolean }
@@ -181,6 +236,8 @@ export type CombatAction =
       fighterId: import('../fighting/types').FighterId
       slot: import('../fighting/types').MoveSlot
       targetAt: Vec2
+      /** A raycast-selected, non-living Tour solid; absent when aiming at a body or empty space. */
+      targetObject?: { id: string; position: Vec2 }
     }
   | { type: 'PREPARE_HATSU'; side: CombatSide; hatsuId: 'parallel-future' | 'rihan-predator' }
   | {
@@ -205,6 +262,8 @@ export function initialFighter(position: Vec2): FighterState {
     capacity: 100,
     position,
     movement: [0, 0],
+    height: 0,
+    jump: null,
     facing: 0,
     mode: 'ten',
     attackShare: 0.5,
@@ -224,6 +283,10 @@ export function initialFighter(position: Vec2): FighterState {
     empowered: 0,
     hatsuSequence: null,
     hatsuPreparation: null,
+    skillHunterBook: null,
+    openWounds: 0,
+    pluggingWounds: false,
+    bloodLoss: 0,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,
@@ -236,11 +299,13 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     player: initialFighter(setup.playerAt),
     opponent: initialFighter(setup.opponentAt),
     clock: 0,
+    hitstop: 0,
     outcome: 'playing',
     lastEvent: null,
     terrain: setup.terrain,
     tethers: [],
     nenEffects: [],
+    physicalObjects: {},
     opponentMemory: {
       observedEventAt: null,
       zones: { head: 0, torso: 0, arms: 0, legs: 0 },

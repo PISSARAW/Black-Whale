@@ -6,7 +6,6 @@ import { feitanAirPlan } from './feitanLocomotion'
 import { feitanHandedPlan } from './feitanHandedPose'
 import { feitanUmbrellaPlan } from './feitanEquipmentPose'
 import { plantBodyFrame } from './fightPlantedPose'
-import { defensiveStance } from './fightDefensiveStance'
 import { withNenCommitment } from './nenCommitment'
 import { animateBenjaminRifle } from './benjaminRiflePose'
 import { onAwakeningBodyPlan } from './onAwakening'
@@ -66,14 +65,33 @@ import {
   resetFightRig,
   type FightRig,
 } from './fightRig'
-import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
+import { AIR_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
-import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
+import {
+  crouchPose,
+  dashPose,
+  landingPose,
+  locomotionGuard,
+  prejumpPose,
+  walkPose,
+} from './fightLocomotion'
+import { withLocomotionInertia } from './fightLocomotionInertia'
+import { withSecondaryMotion } from './fightSecondaryMotion'
+import { movementTechPose } from './movementTechPoses'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
 import { strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
+import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
+import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
+import { physicalAttackOutcomePose } from './fightAttackOutcome'
+import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
+import { rosterWaveOneSupport } from './rosterWaveOneSupport'
+import { standingStrikeSupport } from './standingStrikeMotion'
+import { rosterWaveTwoSupport } from './rosterWaveTwoSupport'
+import { rosterWaveThreeSupport } from './rosterWaveThreeSupport'
+import { animateFightMaterialResponse } from './fightMaterialResponse'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -123,6 +141,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     syncConfiscatedWeapons(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
+    animateFightMaterialResponse(human.figure, fighter)
     restoreMelodyFlute(human.figure, Boolean(fighter.melodyPerformance))
     if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)
@@ -139,7 +158,8 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     }
     const anchor = plan.plant ? captureFootPlant(rig) : null
     const drawn = drawBodyPose(options, rig, plan)
-    applyFightPose(rig, drawn, fighter.facing)
+    applyFightPose(rig, drawn, { facing: fighter.facing, planted: plan.plant })
+    animateKurapikaGoldenHeavyIdentity(human.figure, fighter)
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
@@ -242,7 +262,8 @@ export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
       : plan && usesRightHandPose(fighter, plan.key) && fighter.facing === -1
         ? rightHandedPlan(plan)
         : plan
-  return handed && keepFightPosture(handed, fighter)
+  const layered = withSecondaryMotion(handed, context.secondaryMotion)
+  return layered && keepFightPosture(layered, fighter)
 }
 
 function rightHandedPlan(plan: BodyPlan): BodyPlan {
@@ -328,10 +349,11 @@ function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPl
   return null
 }
 
-function basePose(variant: AttackVariant, standing: FightPose, authored: boolean): FightPose {
+function basePose(fighter: ArcadeFighter, standing: FightPose, authored: boolean): FightPose {
+  const variant = fighter.attack?.variant
   // Hand-keyed moves strike from the fighter's own guard; family gestures from a ready one.
   const upper = authored ? pickJoints(standing, UPPER_JOINTS) : READY_ARMS
-  if (variant === 'low') return addPoses(upper, CROUCH_POSE)
+  if (variant === 'low') return addPoses(upper, crouchPose(fighter))
   if (variant === 'air') return addPoses(upper, AIR_POSE)
   if (authored) return standing
   return addPoses(pickJoints(standing, STANCE_FRAME_JOINTS), READY_ARMS)
@@ -374,9 +396,14 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
   const frames = attackData(attack.kind, fighter)
   const frame = attack.frame + fraction
   const pursuit = pursuitGesture(fighter, slot)
-  const base = basePose(variant, strikingStance(fighter.id, standing), authored)
+  const base = basePose(fighter, strikingStance(fighter.id, standing), authored)
   const transfer = attackTransfer(fighter, slot)
   const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
+  const goldenSupport = kurapikaGoldenHeavySupport(fighter, frames)
+  const support =
+    standingStrikeSupport(fighter, slot, frames) ?? rosterWaveOneSupport(fighter, frames)
+  const waveTwoSupport = rosterWaveTwoSupport(fighter, frames)
+  const waveThreeSupport = rosterWaveThreeSupport(fighter, frames)
   const poseAt = (at: number) =>
     addPoses(
       base,
@@ -388,12 +415,15 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): 
       attackMotionAccent({ fighter, frames, authored, frame: at }),
       strikeSupportPose(fighter, { transfer, frame: at, frames }),
       strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
+      physicalAttackOutcomePose(fighter, { slot, frame: at, frames }),
+      kurapikaGoldenHeavyOutcomePose(fighter, { frame: at, frames }),
     )
   return {
     pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
     plant: attackOnGround(fighter, { variant, pursuit, frame, startup: frames.startup }),
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: 0,
+    ...(goldenSupport ?? support ?? waveTwoSupport ?? waveThreeSupport),
     attackFlow: {
       frame,
       pursuit,
@@ -441,13 +471,8 @@ function hasTechedThrow(fighter: ArcadeFighter): boolean {
   return fighter.attack?.variant === 'throw' && Boolean(fighter.throwTechFrames)
 }
 
-function readyPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
-  return pursuitRecoveryPose(fighter) ?? restingPlan(fighter, standing)
-}
-
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
   if (!STANDING_POSES.has(fighter.pose) || fighter.y > 0) return null
-  // The guard pose raises the arms itself; the stance only sets the frame.
   const guarding = fighter.pose === 'guard'
   const plan = (pose: FightPose, key: string): BodyPlan => ({
     pose,
@@ -455,38 +480,44 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     key,
     blend: 0.1,
   })
-  const dash = dashPose(fighter, standing)
-  if (dash)
-    return {
-      pose: dash.pose,
-      plant: true,
-      key: `dash:${dash.forward}`,
-      blend: 0.025,
-    }
-  const prejump = prejumpPose(fighter, standing)
-  if (prejump) return { ...prejump, plant: true }
-  const landing = landingPose(fighter, standing)
-  if (landing) return { ...landing, plant: true }
+  const active = movementTechPose(fighter, standing) ?? locomotionPlan(fighter, standing)
+  if (active) return active
   if (fighter.crouching) {
-    const upper = pickJoints(guarding ? defensiveStance(standing) : standing, UPPER_JOINTS)
-    return plan(addPoses(upper, CROUCH_POSE), 'crouch')
+    const upper = pickJoints(guarding ? locomotionGuard(fighter, standing) : standing, UPPER_JOINTS)
+    return plan(addPoses(upper, crouchPose(fighter)), 'crouch')
   }
-  if (guarding) return plan(defensiveStance(standing), 'guard')
+  if (guarding) return plan(locomotionGuard(fighter, standing), 'guard')
   // A fighter never strolls: it shuffles in its whole stance, guard and legs.
   if (fighter.pose === 'walk') return { ...walkPose(fighter, standing), plant: true }
   return plan(standing, 'stance')
 }
 
+function locomotionPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+  const dash = dashPose(fighter, standing)
+  if (dash) return { pose: dash.pose, plant: true, key: `dash:${dash.forward}`, blend: 0.025 }
+  const prejump = prejumpPose(fighter, standing)
+  if (prejump) return { ...prejump, plant: true }
+  const landing = landingPose(fighter, standing)
+  return landing ? { ...landing, plant: true } : null
+}
+
+const weaponsByFigure = new WeakMap<import('three').Object3D, import('three').Object3D[]>()
+
 function syncConfiscatedWeapons(figure: import('three').Object3D, fighter: ArcadeFighter): void {
-  for (const name of [
-    'theta-physical-handgun',
-    'signature-katana',
-    'signature-umbrella',
-    'luini-physical-knife',
-  ]) {
-    const weapon = figure.getObjectByName(name)
-    if (weapon) weapon.visible = !fighter.weaponsConfiscated
+  let weapons = weaponsByFigure.get(figure)
+  if (!weapons) {
+    weapons = [
+      'theta-physical-handgun',
+      'signature-katana',
+      'signature-umbrella',
+      'luini-physical-knife',
+    ].flatMap((name) => {
+      const weapon = figure.getObjectByName(name)
+      return weapon ? [weapon] : []
+    })
+    weaponsByFigure.set(figure, weapons)
   }
+  for (const weapon of weapons) weapon.visible = !fighter.weaponsConfiscated
 }
 
 function restingWithConstraint(
@@ -498,7 +529,8 @@ function restingWithConstraint(
   if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
   return (
     feitanUmbrellaPlan(fighter, standing) ??
-    readyPlan(fighter, standing) ??
+    pursuitRecoveryPose(fighter) ??
+    withLocomotionInertia(restingPlan(fighter, standing), context.locomotionInertia) ??
     feitanAirPlan(fighter, standing) ??
     reactionPlan(fighter, context, standing)
   )

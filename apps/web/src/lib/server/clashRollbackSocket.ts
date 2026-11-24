@@ -4,10 +4,15 @@ import { WebSocketServer, type RawData, type WebSocket } from 'ws'
 import { clashPvpRegistry } from './clashPvp'
 import { ClashRollbackRelay } from './clashRollbackRelay'
 
-/** Socket of one match: `/fighting/pvp/socket/<matchId>`. The seat token never enters the URL. */
-export const CLASH_SOCKET_PATH = '/fighting/pvp/socket/'
-/** First subprotocol; the second one is the seat token (a UUID, valid as a protocol token). */
-export const CLASH_SOCKET_PROTOCOL = 'clash-rollback-1'
+import { CLASH_SOCKET_PATH, CLASH_SOCKET_PROTOCOL } from '$lib/fighting/pvp/rollback/experimental'
+import { MAX_ROLLBACK_PAYLOAD } from '$lib/fighting/pvp/rollback/codec'
+
+export { CLASH_SOCKET_PATH, CLASH_SOCKET_PROTOCOL }
+
+function readChannel(channel: string) {
+  const [id, epoch] = channel.split('/')
+  return { id, epoch: epoch === undefined ? null : Number(epoch) }
+}
 
 type Upgrade = (request: IncomingMessage, socket: Duplex, head: Buffer) => boolean
 
@@ -16,11 +21,25 @@ const shared = globalThis as typeof globalThis & {
   __clashRollbackUpgrade?: Upgrade
 }
 const relay = (shared.__clashRollbackRelay ??= new ClashRollbackRelay({
-  authorize: (matchId, token) => clashPvpRegistry.seatFor(matchId, token),
+  authorize: (channel, token) => {
+    const { id, epoch } = readChannel(channel)
+    return clashPvpRegistry.rollbackSeat(id, token, epoch)
+  },
+  receiveFrames: (channel, side, wire) => {
+    const { id, epoch } = readChannel(channel)
+    return (
+      epoch === null ||
+      clashPvpRegistry.receiveRollback(id, epoch, { side, frames: wire.message.inputs })
+    )
+  },
+  disconnect: (channel) => {
+    const { id, epoch } = readChannel(channel)
+    if (epoch !== null) clashPvpRegistry.disconnectRollback(id, epoch)
+  },
 }))
 const sockets = new WebSocketServer({
   noServer: true,
-  maxPayload: 8192,
+  maxPayload: MAX_ROLLBACK_PAYLOAD,
   handleProtocols: (protocols) =>
     protocols.has(CLASH_SOCKET_PROTOCOL) ? CLASH_SOCKET_PROTOCOL : false,
 })
@@ -59,29 +78,60 @@ function attach(socket: WebSocket, matchId: string, token: string) {
     send: (data) => socket.readyState === socket.OPEN && socket.send(data),
     close: (code, reason) => socket.close(code, reason),
   })
-  socket.on('message', (data, binary) =>
-    binary ? connection.receive(bytes(data)) : socket.close(4002, 'invalid'),
-  )
+  socket.on('message', (data, binary) => {
+    try {
+      if (binary) connection.receive(bytes(data))
+      else socket.close(4002, 'invalid')
+    } catch {
+      socket.close(1011, 'rollback stream failed')
+    }
+  })
+  socket.on('error', () => socket.terminate())
   socket.on('close', () => connection.closed())
+}
+
+function validEpoch(value: string | null, epoch: number | null) {
+  return (
+    value === null ||
+    (epoch !== null && Number.isSafeInteger(epoch) && epoch > 0 && String(epoch) === value)
+  )
+}
+
+function validUpgrade(details: {
+  matchId: string
+  epoch: string | null
+  epochNumber: number | null
+  offered: string[]
+}) {
+  const { matchId, epoch, epochNumber, offered } = details
+  return (
+    Boolean(matchId) &&
+    !matchId.includes('/') &&
+    validEpoch(epoch, epochNumber) &&
+    offered.includes(CLASH_SOCKET_PROTOCOL)
+  )
 }
 
 /** True when the request was this socket's to answer (accepted or refused). */
 export const handleClashUpgrade: Upgrade = (request, socket, head) => {
-  const path = new URL(request.url ?? '/', 'http://local').pathname
+  const { pathname: path, searchParams } = new URL(request.url ?? '/', 'http://local')
   if (!path.startsWith(CLASH_SOCKET_PATH)) return false
   const matchId = path.slice(CLASH_SOCKET_PATH.length)
+  const epoch = searchParams.get('epoch')
+  const epochNumber = epoch === null ? null : Number(epoch)
+  const channel = epoch === null ? matchId : `${matchId}/${epoch}`
   const offered = protocols(request)
   const token = offered.find((entry) => entry !== CLASH_SOCKET_PROTOCOL)
-  if (!matchId || !token || !offered.includes(CLASH_SOCKET_PROTOCOL)) refuse(socket, 400)
+  if (!token || !validUpgrade({ matchId, epoch, epochNumber, offered })) refuse(socket, 400)
   else if (!sameOrigin(request)) refuse(socket, 403)
   else {
     try {
-      clashPvpRegistry.seatFor(matchId, token)
+      clashPvpRegistry.rollbackSeat(matchId, token, epochNumber)
     } catch {
       refuse(socket, 401)
       return true
     }
-    sockets.handleUpgrade(request, socket, head, (ws) => attach(ws, matchId, token))
+    sockets.handleUpgrade(request, socket, head, (ws) => attach(ws, channel, token))
   }
   return true
 }

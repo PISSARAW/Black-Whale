@@ -1,4 +1,5 @@
 import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
+import { applyProceduralClavicles } from './fightClavicle'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FightPose, Turn } from './fightPose'
@@ -27,6 +28,7 @@ export interface FightRig {
   elbows: readonly Object3D[]
   wrists: readonly Object3D[]
   ankles: readonly Object3D[]
+  restShoulders: readonly Vector3[]
   restWrists: readonly Euler[]
   restAnkles: readonly Euler[]
   probe: Vector3
@@ -45,6 +47,8 @@ export interface PlantFeetOptions {
   support?: number
   horizontal?: boolean
   pursuitSupport?: { foot: 0 | 1 | 'both'; weight: number }
+  anchorLowest?: boolean
+  pivot?: { index: number; angle: number }
 }
 
 /** The upper body starts a little above the hip joints. */
@@ -76,6 +80,7 @@ export function borrowFightRig(human: AnimatedHuman): { rig: FightRig; restore: 
   return {
     rig,
     restore() {
+      rig.human.arms.forEach((arm, index) => arm.position.copy(rig.restShoulders[index]))
       children.forEach((child) => human.figure.add(child))
       rig.chest.removeFromParent()
     },
@@ -95,6 +100,7 @@ function buildFightRig(human: AnimatedHuman): FightRig {
     elbows,
     wrists,
     ankles,
+    restShoulders: human.arms.map((arm) => arm.position.clone()),
     restWrists: wrists.map((wrist) => wrist.rotation.clone()),
     restAnkles: ankles.map((ankle) => ankle.rotation.clone()),
     probe: human.figure.position.clone(),
@@ -121,6 +127,7 @@ function liftChest(figure: Group, above: number): Group {
 export function resetFightRig(rig: FightRig): void {
   rig.chest.position.set(0, 0, 0)
   rig.chest.rotation.set(0, 0, 0)
+  rig.human.arms.forEach((arm, index) => arm.position.copy(rig.restShoulders[index]))
   rig.wrists.forEach((wrist, index) => wrist.rotation.copy(rig.restWrists[index]))
   rig.ankles.forEach((ankle, index) => ankle.rotation.copy(rig.restAnkles[index]))
 }
@@ -144,8 +151,12 @@ function turnBy(part: Object3D, turn: Turn | undefined, mirror: 1 | -1): void {
   part.rotation.z += turn[2] * mirror
 }
 
-export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): void {
+type PoseOrientation = 1 | -1 | { facing: 1 | -1; planted: boolean }
+
+export function applyFightPose(rig: FightRig, pose: FightPose, orientation: PoseOrientation): void {
   const { human } = rig
+  const facing = typeof orientation === 'number' ? orientation : orientation.facing
+  const planted = typeof orientation !== 'number' && orientation.planted
   const sides = sidesFor(facing)
   const { mirror } = sides
   if (pose.root) {
@@ -153,12 +164,40 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
     human.figure.position.y += pose.root[1]
     human.figure.position.z += pose.root[2]
   }
-  turnBy(human.figure, pose.body, mirror)
+  const chest = applyBodyTurns(rig, pose, { mirror, planted })
+  turnBy(human.head, pose.neck, mirror)
   turnBy(human.head, pose.head, mirror)
-  applyChest(rig, pose.chest && humanChestTurn(pose.chest), mirror)
+  applyChest(rig, chest && humanChestTurn(chest), mirror)
   applyLimbs(rig, pose, sides)
   keepHumanJoints(rig)
   constrainFightRig(rig)
+  applyProceduralClavicles(rig.human.arms, rig.restShoulders)
+  applyAuthoredClavicles(rig, pose, sides)
+}
+
+/** In a planted pose the feet support the hips; pitch and roll articulate at the waist. */
+function applyBodyTurns(
+  rig: FightRig,
+  pose: FightPose,
+  { mirror, planted }: { mirror: 1 | -1; planted: boolean },
+): Turn | undefined {
+  const figure = rig.human.figure
+  if (!planted) {
+    turnBy(figure, pose.pelvis, mirror)
+    turnBy(figure, pose.body, mirror)
+    return pose.chest
+  }
+  const [hipPitch, hipYaw, hipRoll] = pose.pelvis ?? [0, 0, 0]
+  const [bodyPitch, bodyYaw, bodyRoll] = pose.body ?? [0, 0, 0]
+  const [chestPitch, chestYaw, chestRoll] = pose.chest ?? [0, 0, 0]
+  figure.rotation.x = 0
+  figure.rotation.z = 0
+  figure.rotation.y += (hipYaw + bodyYaw) * mirror
+  return [
+    chestPitch + (hipPitch + bodyPitch) * 0.5,
+    chestYaw,
+    chestRoll + (hipRoll + bodyRoll) * 0.5,
+  ]
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {
@@ -180,10 +219,31 @@ function applyLimbs(rig: FightRig, pose: FightPose, sides: PoseSides): void {
   turnBy(rig.elbows[rear], pose.rearElbow, mirror)
   turnBy(rig.wrists[lead], pose.leadWrist, mirror)
   turnBy(rig.wrists[rear], pose.rearWrist, mirror)
+  turnBy(rig.wrists[lead], pose.leadPalm, mirror)
+  turnBy(rig.wrists[rear], pose.rearPalm, mirror)
   turnBy(human.legs[lead], pose.leadHip, mirror)
   turnBy(human.legs[rear], pose.rearHip, mirror)
   turnBy(human.knees[lead], pose.leadKnee, mirror)
   turnBy(human.knees[rear], pose.rearKnee, mirror)
+  turnBy(rig.ankles[lead], pose.leadFoot, mirror)
+  turnBy(rig.ankles[rear], pose.rearFoot, mirror)
+}
+
+function applyAuthoredClavicles(rig: FightRig, pose: FightPose, sides: PoseSides): void {
+  const { lead, rear, mirror } = sides
+  shiftClavicle(rig.human.arms[lead], pose.leadClavicle, mirror)
+  shiftClavicle(rig.human.arms[rear], pose.rearClavicle, mirror)
+}
+
+function shiftClavicle(part: Object3D, shift: Turn | undefined, mirror: 1 | -1): void {
+  if (!shift) return
+  part.position.x += clamp(shift[0], -0.055, 0.055) * mirror
+  part.position.y += clamp(shift[1], -0.05, 0.05)
+  part.position.z += clamp(shift[2], -0.055, 0.055)
+}
+
+function clamp(value: number, minimum: number, maximum: number): number {
+  return Math.min(maximum, Math.max(minimum, value))
 }
 
 /** Height of the lower foot, in the space the figure stands in. */
@@ -211,6 +271,11 @@ export function captureFootPlant(rig: FightRig): FootPlantAnchor {
  */
 export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const { human } = rig
+  if (options.pivot) {
+    rig.ankles[options.pivot.index].rotation.y += options.pivot.angle * options.facing
+    keepHumanJoint(rig.ankles[options.pivot.index], 'ankle')
+    constrainCombatJoint(rig.ankles[options.pivot.index], 'ankle')
+  }
   rig.ankles.forEach((ankle, index) => {
     const pitch = human.legs[index].rotation.x + human.knees[index].rotation.x
     const level = -(pitch + human.figure.rotation.x)
@@ -230,6 +295,12 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
   biasPursuitSupport(correction, { ...options, after })
+  if (options.anchorLowest) {
+    correction.y =
+      Math.min(options.anchor.positions[0].y, options.anchor.positions[1].y) +
+      root[1] -
+      Math.min(after.positions[0].y, after.positions[1].y)
+  }
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
 }

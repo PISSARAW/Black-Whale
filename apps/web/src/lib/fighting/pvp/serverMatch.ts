@@ -26,6 +26,13 @@ export class AuthoritativeClashMatch {
   snapshot(): FightState {
     return structuredClone(this.current)
   }
+  /** Serialization and hashing can read the immutable current state without cloning it. */
+  readState(): Readonly<FightState> {
+    return this.current
+  }
+  get phase() {
+    return this.current.phase
+  }
   get roundNumber() {
     return this.current.roundNumber
   }
@@ -80,10 +87,14 @@ export class AuthoritativeClashMatch {
   }
   advance(now: number) {
     if (this.current.phase !== 'fighting') return
-    const before = this.current
-    this.current = stepPvpFrame(this.current, this.frameInput(now))
-    this.tick += 1
+    this.advanceConfirmed(this.frameInput(now))
     for (const side of SIDES) this.acknowledge(side)
+  }
+  advanceConfirmed(input: PvpFrameInput) {
+    if (this.current.phase !== 'fighting') return
+    const before = this.current
+    this.current = stepPvpFrame(before, input)
+    this.tick += 1
     this.practice.observe(before, this.current)
   }
   /** Server policy only: at most 8 queued commands per seat, held input expires after 250 ms. */

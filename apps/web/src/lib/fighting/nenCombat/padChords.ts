@@ -8,7 +8,7 @@ const zones = ['focusHead', 'focusTorso', 'focusHands', 'focusFeet'] as const
 export function nenPadChords(pad: FightPad, input: FightInput): FightInput {
   if (!directions.some((button) => held(pad, button))) return input
   const back = held(pad, 8),
-    right = held(pad, 11) || held(pad, 5)
+    right = held(pad, 11)
   if (!back && !right && !held(pad, 4)) return input
   const next = {
     ...input,
@@ -19,15 +19,10 @@ export function nenPadChords(pad: FightPad, input: FightInput): FightInput {
     right: false,
     gyo: right,
   }
-  if (bodilyBumper(pad)) next.aura = false
   const focused = right || (!back && held(pad, 4))
   directions.forEach((button, index) => {
     if (back) next[tools[index]] = Boolean(next[tools[index]] || held(pad, button))
     if (focused) next[zones[index]] = held(pad, button)
   })
   return next
-}
-
-function bodilyBumper(pad: FightPad): boolean {
-  return held(pad, 5) && !held(pad, 4) && !held(pad, 11)
 }

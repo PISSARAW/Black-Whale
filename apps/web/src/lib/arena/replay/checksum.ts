@@ -7,6 +7,7 @@ function rounded(value: number): number {
 export function stateChecksum(state: CombatState): string {
   const stable = JSON.stringify({
     clock: rounded(state.clock),
+    hitstop: rounded(state.hitstop),
     outcome: state.outcome,
     player: fighterDigest(state.player),
     opponent: fighterDigest(state.opponent),
@@ -18,6 +19,7 @@ export function stateChecksum(state: CombatState): string {
       remaining: rounded(tether.remaining),
     })),
     nenEffects: state.nenEffects,
+    physicalObjects: state.physicalObjects,
     lastHatsuBySide: state.lastHatsuBySide,
     environment: state.environment,
     opponentMemory: state.opponentMemory,
@@ -36,6 +38,8 @@ function fighterDigest(fighter: CombatState['player']) {
     aura: rounded(fighter.aura),
     position: fighter.position.map(rounded),
     movement: fighter.movement.map(rounded),
+    height: rounded(fighter.height),
+    jump: fighter.jump ? { ...fighter.jump, elapsed: rounded(fighter.jump.elapsed) } : null,
     cooldown: rounded(fighter.cooldown),
     recovery: rounded(fighter.recovery),
   }

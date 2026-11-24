@@ -3,6 +3,7 @@
   import {
     CONTROL_KEYS,
     CONTROL_LABELS,
+    controlKeyLabel,
     type ControlCommand,
   } from '$lib/fighting/fightInputBindings'
   const bindings = useFightBindings()
@@ -24,11 +25,7 @@
     {#each commands as command (command)}
       <div>
         <span>{CONTROL_LABELS[command][language === 'fr' ? 0 : 1]}</span><kbd
-          >{$bindings[command] === ' '
-            ? language === 'fr'
-              ? 'Espace'
-              : 'Space'
-            : $bindings[command]}</kbd
+          >{controlKeyLabel($bindings[command], language)}</kbd
         >
       </div>
     {/each}
@@ -40,18 +37,23 @@
   </p>
   <p>
     {language === 'fr'
-      ? 'Easter Eggs : F2 (P2 : F4), touches configurables dans « Gestes et secrets ». Seule : geste 1 ; avec avant : 2 ; arrière : 3 ; bas : secret. Les boutons fonctionnent aussi au tactile.'
-      : 'Easter Eggs: F2 (P2: F4), configurable in “Gestures and secrets”. Alone: gesture 1; with forward: 2; back: 3; down: secret. Buttons also work on touchscreens.'}
+      ? 'Easter Eggs : 1 pour P1 et 8 pour P2, sur la rangée du haut sans Maj ni Fn. Les touches se règlent dans « Gestes et secrets ». Sans direction : geste 1. Avant : 2. Arrière : 3. Bas : secret.'
+      : 'Easter Eggs: 1 for P1 and 8 for P2 on the top row, without Shift or Fn. Configure them in “Gestures and secrets”. Neutral: gesture 1. Forward: 2. Back: 3. Down: secret.'}
   </p>
   <p>
     {language === 'fr'
-      ? `${$bindings.playerLight}+${$bindings.playerHeavy} : projection. ${$bindings.playerHeavy}+${$bindings.playerSpecial} : ultime. Garde + ${$bindings.playerLight}+${$bindings.playerHeavy} (ou ${$bindings.playerBurst}) : Burst. ${$bindings.playerContext} : action contextuelle (plaies, oreilles, objet, arène, parler).`
-      : `${$bindings.playerLight}+${$bindings.playerHeavy}: throw. ${$bindings.playerHeavy}+${$bindings.playerSpecial}: finisher. Guard + ${$bindings.playerLight}+${$bindings.playerHeavy} (or ${$bindings.playerBurst}): Burst. ${$bindings.playerContext}: context action (wounds, ears, object, arena, speak).`}
+      ? 'Aura + Projection engage la super-projection. Le mode Classique utilise ↓ ↘ → + Hatsu pour les supers à motion. Le Kaméo prend la direction du déplacement au moment de l’appel.'
+      : 'Aura + Throw commits to a super throw. Classic uses ↓ ↘ → + Hatsu for motion supers. The Kameo uses the movement direction at the time of the call.'}
   </p>
   <p>
     {language === 'fr'
-      ? 'Aura (modificateur) : seul = Ren ; + Bas = Zetsu (maintenu = En) ; + Haut = Gyo ; + Arrière = In ; + Garde = Ken (+ direction = Ko défensif) ; + Hatsu = On. Shu est automatique en Ren avec une arme.'
-      : 'Aura (modifier): alone = Ren; + Down = Zetsu (held = En); + Up = Gyo; + Back = In; + Guard = Ken (+ direction = defensive Ko); + Hatsu = On. Shu is automatic during Ren with a weapon.'}
+      ? 'Maintiens la touche Nen avant le second appui : Léger / Lourd / Hatsu / Ultime donnent En / In / Shu / Gyo. Kaméo / Projectile / Projection / Burst ciblent tête / torse / mains / jambes. Aura donne Ren, Aura + Garde donne Ken. Une zone sous Aura donne Ryu et une zone sous Garde demande le Ko défensif.'
+      : 'Hold Nen before the second press: Light / Heavy / Hatsu / Finisher select En / In / Shu / Gyo. Kameo / Projectile / Throw / Burst target head / torso / hands / legs. Aura gives Ren, Aura + Guard gives Ken. Use a zone with Aura for Ryu or with Guard for defensive Ko.'}
+  </p>
+  <p>
+    {language === 'fr'
+      ? 'Nen + Aura : Zetsu. Nen + On : Gyo faible. Pour un Seiyaku directionnel, maintiens d’abord la direction, puis Nen + Contexte. Nen + gauche / droite / haut / bas : parler / interagir / couvrir les oreilles / boucher les plaies.'
+      : 'Nen + Aura: Zetsu. Nen + On: low Gyo. For a directional Seiyaku, hold the direction first, then Nen + Context. Nen + Left / Right / Up / Down: speak / interact / cover ears / plug wounds.'}
   </p>
   <FightMoveList {fighterId} {language} />
 </aside>

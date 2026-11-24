@@ -8,7 +8,10 @@ import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { BONOLENOV_KEY_POSES } from './keyPosesBonolenov'
 import { archetypeTimeline } from './fightArchetypes'
-import { rosterKeyPoses } from './rosterKeyPoses'
+import { rosterKeyPoses, authoredStrikeTimeline } from './rosterKeyPoses'
+import { authoredStrikeDirection } from './physicalStrikeDirections'
+import { standingStrikeTimeline } from './standingStrikeMotion'
+import { hasPersonalNormal, personalNormalTimeline } from './secondFiveNormals'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
@@ -21,6 +24,16 @@ import { KALLUTO_KEY_POSES } from './keyPosesKalluto'
 import { KURAPIKA_REFERENCE_POSES } from './keyPosesKurapikaReference'
 import { KURAPIKA_CAST_POSES } from './keyPosesKurapikaCasts'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
+import { KURAPIKA_GOLDEN_HEAVY_TIMELINE } from './keyPosesKurapikaGoldenHeavy'
+import { ROSTER_WAVE_ONE_GROUNDED_POSES } from './keyPosesRosterWaveOne'
+import { ROSTER_WAVE_ONE_DIRECTIONAL_POSES } from './keyPosesRosterWaveOneDirectional'
+import { ROSTER_WAVE_ONE_FINISH_POSES } from './keyPosesRosterWaveOneFinish'
+import { ROSTER_WAVE_TWO_GROUNDED_POSES } from './keyPosesRosterWaveTwo'
+import { ROSTER_WAVE_TWO_DIRECTIONAL_POSES } from './keyPosesRosterWaveTwoDirectional'
+import { ROSTER_WAVE_TWO_FINISH_POSES } from './keyPosesRosterWaveTwoFinish'
+import { ROSTER_WAVE_THREE_GROUNDED_POSES } from './keyPosesRosterWaveThree'
+import { ROSTER_WAVE_THREE_DIRECTIONAL_POSES } from './keyPosesRosterWaveThreeDirectional'
+import { ROSTER_WAVE_THREE_FINISH_POSES } from './keyPosesRosterWaveThreeFinish'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
@@ -31,28 +44,86 @@ import type { FighterId, MoveSlot } from './types'
  * The family fallback is retained only for legacy, non-playable identities.
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
-  voconte: { neutralSpecial: DOOR_LINK_POSE },
+  ...Object.fromEntries(
+    Object.keys(ROSTER_WAVE_ONE_GROUNDED_POSES).map((id) => [
+      id,
+      {
+        ...ROSTER_WAVE_ONE_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_ONE_GROUNDED_POSES],
+        ...ROSTER_WAVE_ONE_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_ONE_DIRECTIONAL_POSES],
+        ...ROSTER_WAVE_ONE_FINISH_POSES[id as keyof typeof ROSTER_WAVE_ONE_FINISH_POSES],
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    Object.keys(ROSTER_WAVE_THREE_GROUNDED_POSES).map((id) => [
+      id,
+      {
+        ...ROSTER_WAVE_THREE_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_THREE_GROUNDED_POSES],
+        ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES[
+          id as keyof typeof ROSTER_WAVE_THREE_DIRECTIONAL_POSES
+        ],
+        ...ROSTER_WAVE_THREE_FINISH_POSES[id as keyof typeof ROSTER_WAVE_THREE_FINISH_POSES],
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    Object.keys(ROSTER_WAVE_TWO_GROUNDED_POSES).map((id) => [
+      id,
+      {
+        ...ROSTER_WAVE_TWO_GROUNDED_POSES[id as keyof typeof ROSTER_WAVE_TWO_GROUNDED_POSES],
+        ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES[id as keyof typeof ROSTER_WAVE_TWO_DIRECTIONAL_POSES],
+        ...ROSTER_WAVE_TWO_FINISH_POSES[id as keyof typeof ROSTER_WAVE_TWO_FINISH_POSES],
+      },
+    ]),
+  ),
+  voconte: {
+    ...ROSTER_WAVE_THREE_GROUNDED_POSES.voconte,
+    ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.voconte,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.voconte,
+    neutralSpecial: DOOR_LINK_POSE,
+  },
   kurapika: {
     ...holdNormalContacts(KURAPIKA_KEY_POSES),
     ...KURAPIKA_COMMAND_POSES,
     ...KURAPIKA_REFERENCE_POSES,
     ...KURAPIKA_CAST_POSES,
+    standingHeavy: KURAPIKA_GOLDEN_HEAVY_TIMELINE,
   },
-  theta: THETA_SHOT_POSES,
+  theta: {
+    ...ROSTER_WAVE_TWO_GROUNDED_POSES.theta,
+    ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.theta,
+    ...ROSTER_WAVE_TWO_FINISH_POSES.theta,
+    ...THETA_SHOT_POSES,
+  },
   shizuku: SHIZUKU_KEY_POSES,
   hisoka: {
     ...holdNormalContacts(HISOKA_KEY_POSES),
     ...HISOKA_COMMAND_POSES,
     ...HISOKA_SPECIAL_POSES,
   },
-  franklin: FRANKLIN_KEY_POSES,
+  franklin: {
+    ...ROSTER_WAVE_THREE_GROUNDED_POSES.franklin,
+    ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.franklin,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.franklin,
+    ...FRANKLIN_KEY_POSES,
+  },
   kalluto: KALLUTO_KEY_POSES,
   chrollo: { ...CHROLLO_NORMAL_POSES, ...CHROLLO_COMMAND_POSES, ...CHROLLO_KEY_POSES },
   benjamin: { ...BENJAMIN_NORMAL_POSES, ...BENJAMIN_COMMAND_POSES },
-  leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
+  leorio: {
+    ...ROSTER_WAVE_TWO_GROUNDED_POSES.leorio,
+    ...ROSTER_WAVE_TWO_DIRECTIONAL_POSES.leorio,
+    ...ROSTER_WAVE_TWO_FINISH_POSES.leorio,
+    neutralSpecial: LEORIO_REMOTE_PUNCH,
+  },
   hanzo: HANZO_KEY_POSES,
   bonolenov: BONOLENOV_KEY_POSES,
-  furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
+  furykov: {
+    ...ROSTER_WAVE_THREE_GROUNDED_POSES.furykov,
+    ...ROSTER_WAVE_THREE_DIRECTIONAL_POSES.furykov,
+    ...ROSTER_WAVE_THREE_FINISH_POSES.furykov,
+    neutralSpecial: FURYKOV_CONSOLE_POSE,
+  },
   feitan: {
     ...FEITAN_BLADE_POSES,
     neutralSpecial: FEITAN_PAIN_PACKER,
@@ -66,6 +137,8 @@ export interface KeyedMove {
   authored: boolean
 }
 
+export type KeyPoseSource = 'dedicated' | 'roster' | 'archetype'
+
 export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
   const authored = keyPoseTimeline(id, slot)
   if (authored) return { timeline: authored, authored: true }
@@ -74,7 +147,18 @@ export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
 
 /** The personal timeline of a move, or null for a legacy family gesture. */
 export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
-  return KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
+  const native =
+    authoredStrikeTimeline(id, slot) ?? KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
+  const base = standingStrikeTimeline(id, slot, native)
+  return base && personalNormalTimeline(id, slot, base)
+}
+
+/** Audit provenance: dedicated clips outrank generated roster grammar. */
+export function keyPoseSource(id: FighterId, slot: MoveSlot): KeyPoseSource {
+  if (authoredStrikeDirection(id, slot) || KEY_POSES[id]?.[slot] || hasPersonalNormal(id, slot))
+    return 'dedicated'
+  if (rosterKeyPoses(id)[slot]) return 'roster'
+  return 'archetype'
 }
 
 export function keyedSlots(id: FighterId): MoveSlot[] {

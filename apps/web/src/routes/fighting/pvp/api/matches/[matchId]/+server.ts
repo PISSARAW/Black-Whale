@@ -23,6 +23,14 @@ export const GET: RequestHandler = ({ params, request, getClientAddress, url }) 
   const limited = clashThrottle(`poll:${getClientAddress()}`, 3000)
   if (limited) return limited
   try {
+    const epoch = url.searchParams.get('rollback')
+    if (epoch !== null)
+      return json(
+        clashPvpRegistry.rollbackStart(params.matchId, clashBearer(request), Number(epoch)),
+        {
+          headers: { 'cache-control': 'no-store' },
+        },
+      )
     return json(
       url.searchParams.has('watch')
         ? clashPvpRegistry.watch(params.matchId, clashBearer(request))

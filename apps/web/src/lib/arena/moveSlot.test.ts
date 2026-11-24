@@ -21,6 +21,12 @@ describe('Clash commands in first person', () => {
       'downSpecial',
     )
     expect(arenaMoveSlot({ ...base, action: 'throw', direction: 'forward' })).toBe('throw')
+    expect(arenaMoveSlot({ ...base, action: 'light', direction: null, airborne: true })).toBe(
+      'airLight',
+    )
+    expect(arenaMoveSlot({ ...base, action: 'heavy', direction: null, airborne: true })).toBe(
+      'airHeavy',
+    )
   })
 
   // Camilla is the one fighter without a special at all; she keeps a neutral fallback.
@@ -42,6 +48,17 @@ describe('Clash commands in first person', () => {
     expect(held.current()).toBeNull()
     held.up('KeyW')
     expect(held.current()).toBe('back')
+  })
+
+  it('projects held 3D directions into camera-relative jump and evade vectors', () => {
+    const held = createHeldDirection()
+    held.down('KeyW')
+    expect(held.vector(0)).toEqual([0, -1])
+    held.clear()
+    held.down('KeyD')
+    expect(held.vector(0)).toEqual([1, 0])
+    held.clear()
+    expect(held.vector(0, 'back')).toEqual([0, 1])
   })
 })
 

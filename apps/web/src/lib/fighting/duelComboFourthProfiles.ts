@@ -53,6 +53,9 @@ export const FOURTH_DUEL_PROFILES = {
   bonolenov: {
     window: 7,
     block: 'standingHeavy',
+    // Cantabile céleste (signatureCombosTroupeZoldyck.ts): press in with the spear, then step back for Jupiter.
+    dash: { lowHeavy: 'forward', forwardHeavy: 'back' },
+    accelInto: { forwardSpecial: ['forwardHeavy'] },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -60,7 +63,7 @@ export const FOURTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 6, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -92,6 +95,8 @@ export const FOURTH_DUEL_PROFILES = {
   hinrigh: {
     window: 6,
     block: 'standingHeavy',
+    // Ménagerie urbaine (signatureCombosHunters.ts): capture after sweep, step back for final knife.
+    dash: { lowHeavy: 'forward', throw: 'back' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -99,7 +104,7 @@ export const FOURTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -129,6 +134,9 @@ export const FOURTH_DUEL_PROFILES = {
   mizaistom: {
     window: 7,
     block: 'standingHeavy',
+    // Audience interrompue (signatureCombosHunters.ts): step back to warn, press in after Restraint.
+    dash: { standingHeavy: 'back', forwardLight: 'forward' },
+    accelInto: { throw: ['lowHeavy'] },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },

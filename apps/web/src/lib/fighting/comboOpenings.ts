@@ -199,7 +199,7 @@ export function openingFrameData(data: AttackFrameData, opening?: ComboOpening):
 }
 
 const STARTUP_CAP: Record<ComboOpening, number> = {
-  tip: 12,
+  tip: 10,
   'anti-air': 8,
   'corner-counter': 10,
   'whiff-punish': 12,

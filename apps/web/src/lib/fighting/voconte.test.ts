@@ -248,10 +248,13 @@ describe('Voconte — Door, actual directional passage', () => {
     state = advance(performAttack(state, 'opponent', 'special'), 31)
     state = { ...state, player: { ...state.player, x: 10 }, opponent: { ...state.opponent, x: 27 } }
     state = advance(performAttack(state, 'player', 'special'), FUTURE_PREPARATION_FRAMES - 1)
-    const vision = tickFight(state, EMPTY_INPUT, {
-      dt: 1 / 60,
-      opponentInput: { ...EMPTY_INPUT, right: true },
-    })
+    const vision = advance(
+      tickFight(state, EMPTY_INPUT, {
+        dt: 1 / 60,
+        opponentInput: { ...EMPTY_INPUT, right: true },
+      }),
+      25,
+    )
     expect(vision.parallelFuture?.phase).toBe('vision')
     expect(vision.voconteDoors?.lastTransit?.opponent).toBeUndefined()
     const index = vision.parallelFuture!.frames.findIndex(

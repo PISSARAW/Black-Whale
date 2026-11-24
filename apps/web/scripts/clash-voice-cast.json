@@ -1,0 +1,418 @@
+[
+  {
+    "kurapika": {
+      "direction": "Jeune, androgyne, très contrôlé. L’urgence affleure sous l’articulation nette du garde de Woble.",
+      "speaker": [1, 2],
+      "pace": 0.73,
+      "body": 0,
+      "edge": 2,
+      "call": ["{name}, maintenant !", "{name}, now!"],
+      "effort": ["tsə", "hˈa", "hjˈa"],
+      "pain": ["kˈəh", "nˈəɡ", "ˈaɡh"]
+    },
+    "hisoka": {
+      "direction": "Magicien prédateur. Attaques exhalées, sourire dans les voyelles et invitation traînante.",
+      "speaker": [32, 19],
+      "pace": 0.84,
+      "body": 1,
+      "edge": -1,
+      "call": ["À toi, {name}.", "Your turn, {name}."],
+      "effort": ["fˈah", "hˈɛ", "sˈa"],
+      "pain": ["hˈəf", "nˈəh", "ˈah"]
+    },
+    "chrollo": {
+      "direction": "Chef de la Brigade, posé et presque feutré. Ordres brefs et effort étouffé, même touché.",
+      "speaker": [35, 7],
+      "pace": 0.8,
+      "body": 2,
+      "edge": -3,
+      "call": ["{name}. Avance.", "{name}. Proceed."],
+      "effort": ["hˈə", "hˈʌp", "kʰˈa"],
+      "pain": ["ˈəh", "nˈəɡ", "ɡˈəh"]
+    },
+    "benjamin": {
+      "direction": "Officier et premier prince. Autorité frontale, attaque de poitrine et ordre de déploiement.",
+      "speaker": [13, 3],
+      "pace": 0.67,
+      "body": 4,
+      "edge": 2,
+      "call": ["{name}, en avant !", "{name}, move out!"],
+      "effort": ["ɹˈa", "hˈum", "ɡɹˈa"],
+      "pain": ["ˈʌɡ", "ɡɹˈa", "ˈaɹɡh"]
+    },
+    "tserriednich": {
+      "direction": "Diction aristocratique, curiosité froide. Petite inflexion de dédain, consonnes soigneusement découpées.",
+      "speaker": [17, 28],
+      "pace": 0.91,
+      "body": -1,
+      "edge": 2,
+      "call": ["Voyons, {name}.", "Let's see, {name}."],
+      "effort": ["hˈe", "tʃˈə", "hˈa"],
+      "pain": ["hˈəm", "nˈəɡ", "kʰˈah"]
+    }
+  },
+  {
+    "feitan": {
+      "direction": "Phrase réduite à l’essentiel, sifflée et serrée. La douleur se transforme vite en rage.",
+      "speaker": [56, 88],
+      "pace": 0.65,
+      "body": -3,
+      "edge": 4,
+      "call": ["{name}. Vite.", "{name}. Quick."],
+      "effort": ["tʃˈə", "sˈa", "kˈɛh"],
+      "pain": ["kˈəh", "ɡˈah", "ɹɹˈah"]
+    },
+    "saiyu": {
+      "direction": "Zodiaque du Singe. Timbre mobile, insolence légère et attaques rapides à la langue.",
+      "speaker": [7, 35],
+      "pace": 0.72,
+      "body": 0,
+      "edge": 3,
+      "call": ["Allez, {name} !", "Come on, {name}!"],
+      "effort": ["hˈai", "hˈɔp", "jˈa"],
+      "pain": ["ˈuh", "ˈaɡh", "wˈah"]
+    },
+    "theta": {
+      "direction": "Garde sous pression, lucidité professionnelle. Chaque consigne est courte, souffle tendu et retenu.",
+      "speaker": [31, 33],
+      "pace": 0.74,
+      "body": 0,
+      "edge": 0,
+      "call": ["{name}, couvrez-moi !", "{name}, cover me!"],
+      "effort": ["hˈa", "tsə", "hˈɛp"],
+      "pain": ["ˈuf", "nˈəɡ", "ˈah"]
+    },
+    "biscuit": {
+      "direction": "Maîtresse martiale au ton sucré et enjoué. L’effort sort beaucoup plus sec que la conversation.",
+      "speaker": [53, 54],
+      "pace": 0.69,
+      "body": -2,
+      "edge": 3,
+      "call": ["Montre-leur, {name} !", "Show them, {name}!"],
+      "effort": ["hˈɔp", "hjˈa", "tˈah"],
+      "pain": ["ˈuj", "ˈah", "hˈəŋ"]
+    },
+    "phinks": {
+      "direction": "Brigade, poings en avant. Grosse projection et impatience de bagarreur.",
+      "speaker": [28, 21],
+      "pace": 0.67,
+      "body": 3,
+      "edge": 3,
+      "call": ["Fonce, {name} !", "Get in there, {name}!"],
+      "effort": ["jˈa", "hˈa", "ɹˈa"],
+      "pain": ["ˈʊf", "ɡˈah", "ɹɹˈəɡ"]
+    }
+  },
+  {
+    "franklin": {
+      "direction": "Assise très basse et massive. Volume mesuré, voix de médiateur malgré la carrure.",
+      "speaker": [6, 36],
+      "pace": 0.87,
+      "body": 5,
+      "edge": -3,
+      "call": ["{name}, à côté de moi.", "{name}, beside me."],
+      "effort": ["hˈum", "hˈʌ", "wˈʊm"],
+      "pain": ["ˈʊŋɡ", "ˈəh", "ɡɹˈəh"]
+    },
+    "machi": {
+      "direction": "Les mots tombent comme des points de suture. Impatience sèche, aucun ornement.",
+      "speaker": [39, 40],
+      "pace": 0.66,
+      "body": 0,
+      "edge": 3,
+      "call": ["{name}, prends le relais.", "{name}, take over."],
+      "effort": ["tsə", "kˈah", "hˈa"],
+      "pain": ["tʃˈə", "hˈəŋ", "ˈaɡh"]
+    },
+    "illumi": {
+      "direction": "Phrasé froid, presque égal, avec une politesse inquiétante. Frappes et douleur peu projetées.",
+      "speaker": [71, 55],
+      "pace": 0.89,
+      "body": -1,
+      "edge": -2,
+      "call": ["Je te laisse faire, {name}.", "I'll leave it to you, {name}."],
+      "effort": ["hˈəm", "hˈə", "tˈah"],
+      "pain": ["nˈəh", "ˈəh", "ˈah"]
+    },
+    "kalluto": {
+      "direction": "Jeunesse et réserve du benjamin Zoldyck. Une voix fine, très polie, plus ferme que timide.",
+      "speaker": [34, 57],
+      "pace": 0.81,
+      "body": -4,
+      "edge": 0,
+      "call": ["Je vous en prie, {name}.", "If you please, {name}."],
+      "effort": ["hjˈa", "ʃˈəh", "hˈih"],
+      "pain": ["ˈah", "hˈə", "nˈəɡ"]
+    },
+    "bonolenov": {
+      "direction": "Danseur de la Brigade, attaques scandées sur la respiration. Timbre creux et syllabes espacées.",
+      "speaker": [46, 27],
+      "pace": 0.84,
+      "body": 3,
+      "edge": -4,
+      "call": ["Suis mon rythme, {name}.", "Follow my beat, {name}."],
+      "effort": ["hˈo", "hˈa", "hˈum"],
+      "pain": ["ˈəh", "ˈuh", "hˈoh"]
+    }
+  },
+  {
+    "shizuku": {
+      "direction": "Détachement et franchise. Une petite montée interrogative, avec effort presque distrait.",
+      "speaker": [18, 46],
+      "pace": 0.88,
+      "body": -2,
+      "edge": -1,
+      "call": ["{name}, tu viens ?", "{name}, are you coming?"],
+      "effort": ["hˈʌp", "hˈɔp", "hˈa"],
+      "pain": ["ˈups", "ˈah", "ˈuh"]
+    },
+    "hinrigh": {
+      "direction": "Cadre Xi-Yu à l’aise sous la pression. Grain bas, débit pratique et consigne sans emphase.",
+      "speaker": [36, 43],
+      "pace": 0.81,
+      "body": 3,
+      "edge": -1,
+      "call": ["À mon signal, {name}.", "On my mark, {name}."],
+      "effort": ["hˈa", "kˈʌh", "ɹˈʌh"],
+      "pain": ["ˈʌɡ", "nˈəɡ", "ɡˈʌh"]
+    },
+    "mizaistom": {
+      "direction": "Autorité calme d’enquêteur. Appui franc sur les consonnes et mots pesés.",
+      "speaker": [67, 48],
+      "pace": 0.82,
+      "body": 2,
+      "edge": 0,
+      "call": ["{name}, sécurisez ici.", "{name}, secure this spot."],
+      "effort": ["hˈʌt", "tˈah", "hˈa"],
+      "pain": ["hˈəŋ", "ɡˈʌh", "ˈah"]
+    },
+    "leorio": {
+      "direction": "Cœur sur la manche, voix ouverte et puissante. Le cri monte vite et l’appel ressemble à une urgence.",
+      "speaker": [64, 49],
+      "pace": 0.71,
+      "body": 2,
+      "edge": 4,
+      "call": ["Un coup de main, {name} !", "Give me a hand, {name}!"],
+      "effort": ["alˈe", "jˈa", "ɹˈaːh"],
+      "pain": ["ˈaj", "ˈʊf", "ˈaːh"]
+    },
+    "hanzo": {
+      "direction": "Ninja assuré, extraverti malgré la discipline. Claquement rapide avant chaque effort.",
+      "speaker": [58, 24],
+      "pace": 0.65,
+      "body": 0,
+      "edge": 3,
+      "call": ["{name}, à l’ouverture !", "{name}, hit the opening!"],
+      "effort": ["hjˈa", "tʃˈa", "kjˈai"],
+      "pain": ["kˈəh", "ˈaɡh", "hˈaːh"]
+    }
+  },
+  {
+    "rihan": {
+      "direction": "Analyste de Benjamin. Débit d’observation puis décision franche, réaction de douleur contenue.",
+      "speaker": [21, 72],
+      "pace": 0.77,
+      "body": 1,
+      "edge": 1,
+      "call": ["J’ai compris. {name} !", "I've got it. {name}!"],
+      "effort": ["hˈʌ", "hˈɛp", "kˈah"],
+      "pain": ["nˈəɡ", "kʰˈah", "ˈəh"]
+    },
+    "zakuro": {
+      "direction": "Jeune du Xi-Yu. Souffle nerveux et solidaire, attaque plus précipitée que l’ordre.",
+      "speaker": [79, 53],
+      "pace": 0.71,
+      "body": -1,
+      "edge": 3,
+      "call": ["Avec moi, {name} !", "With me, {name}!"],
+      "effort": ["hˈʌp", "hˈa", "ˈej"],
+      "pain": ["ˈah", "ˈuf", "ˈaɡh"]
+    },
+    "melody": {
+      "direction": "Chaleur et écoute de la musicienne. Phrasé lié, respiration ronde et appel rassurant.",
+      "speaker": [51, 59],
+      "pace": 0.92,
+      "body": 1,
+      "edge": -4,
+      "call": ["Je t'écoute, {name}.", "I'm listening, {name}."],
+      "effort": ["hˈu", "hˈa", "ˈoh"],
+      "pain": ["ˈuh", "ˈah", "hˈə"]
+    },
+    "basho": {
+      "direction": "Poète et motard. Grain rugueux, phrase scandée en deux appuis, puissance ouverte.",
+      "speaker": [63, 51],
+      "pace": 0.79,
+      "body": 3,
+      "edge": 1,
+      "call": ["À toi le dernier mot, {name} !", "Last word is yours, {name}!"],
+      "effort": ["ɹˈa", "hˈo", "dˈah"],
+      "pain": ["ɡˈah", "ˈaɹɡ", "ˈʊf"]
+    },
+    "camilla": {
+      "direction": "Certitude aristocratique et impatience de princesse. Attaque lisse et ordre qui tombe de haut.",
+      "speaker": [29, 66],
+      "pace": 0.86,
+      "body": -1,
+      "edge": 2,
+      "call": ["{name}, je t’attends.", "{name}, I'm waiting."],
+      "effort": ["hˈa", "tʃˈə", "hˈe"],
+      "pain": ["ˈah", "hˈəŋ", "ˈaːh"]
+    }
+  },
+  {
+    "halkenburg": {
+      "direction": "Idéaliste qui parle à ses alliés comme à des égaux. Projection ample, sans ton de caserne.",
+      "speaker": [20, 42],
+      "pace": 0.85,
+      "body": 2,
+      "edge": 0,
+      "call": ["Ensemble, {name} !", "Together, {name}!"],
+      "effort": ["hˈa", "hˈa", "jˈa"],
+      "pain": ["ˈəh", "ˈʊf", "ˈaːh"]
+    },
+    "gel": {
+      "direction": "Zodiaque du Serpent. Calme clinique, consonnes sifflantes et fin de phrase basse.",
+      "speaker": [60, 64],
+      "pace": 0.85,
+      "body": -1,
+      "edge": -1,
+      "call": ["Doucement, {name}.", "Easy, {name}."],
+      "effort": ["ssˈa", "hˈa", "tsə"],
+      "pain": ["hˈəs", "hˈəŋ", "ˈah"]
+    },
+    "lynch": {
+      "direction": "Interrogatrice Xi-Yu. Directe et mordante, la question part comme un coup.",
+      "speaker": [47, 73],
+      "pace": 0.65,
+      "body": 1,
+      "edge": 4,
+      "call": ["À toi de jouer, {name} !", "You're up, {name}!"],
+      "effort": ["hˈe", "kˈah", "ɹˈa"],
+      "pain": ["ˈaj", "ɡˈah", "ˈah"]
+    },
+    "luini": {
+      "direction": "Téléporteur Heil-Ly exalté. Petits à-coups, timbre haut, guette le moment de surprendre.",
+      "speaker": [9, 56],
+      "pace": 0.66,
+      "body": -3,
+      "edge": 4,
+      "call": ["Surprise, {name} !", "Surprise, {name}!"],
+      "effort": ["hˈe", "hˈɛ", "jˈa"],
+      "pain": ["ˈih", "ˈaɡh", "wˈah"]
+    },
+    "bill": {
+      "direction": "Garde de Woble fiable et humain. Ton chaleureux, appui franc, peu de théâtre.",
+      "speaker": [10, 16],
+      "pace": 0.77,
+      "body": 2,
+      "edge": -1,
+      "call": ["Je te couvre, {name} !", "I've got your back, {name}!"],
+      "effort": ["hˈʌp", "hˈoh", "hˈa"],
+      "pain": ["ˈuf", "ˈəh", "ɡˈah"]
+    }
+  },
+  {
+    "furykov": {
+      "direction": "Soldat observateur impatient d’éprouver ses conclusions. Ordre tendu et débit sec.",
+      "speaker": [74, 52],
+      "pace": 0.69,
+      "body": 2,
+      "edge": 3,
+      "call": ["{name}, interviens !", "{name}, engage!"],
+      "effort": ["hˈʌt", "kˈah", "ɡɹˈa"],
+      "pain": ["kˈəh", "ɡɹˈəh", "ˈaɡh"]
+    },
+    "cluck": {
+      "direction": "Zodiaque à la répartie vive. Attaque vocale haute, impatiente, très rythmée.",
+      "speaker": [62, 91],
+      "pace": 0.65,
+      "body": -2,
+      "edge": 5,
+      "call": ["On se dépêche, {name} !", "Hurry it up, {name}!"],
+      "effort": ["hˈe", "tʃˈah", "hˈai"],
+      "pain": ["ˈah", "ˈuj", "ˈaɡh"]
+    },
+    "beyond": {
+      "direction": "Aventurier plus âgé. Baryton sonore et sourire d’explorateur jusque dans le combat.",
+      "speaker": [5, 31],
+      "pace": 0.9,
+      "body": 5,
+      "edge": 0,
+      "call": ["Viens voir, {name} !", "Come see, {name}!"],
+      "effort": ["hˈoh", "hˈaɹ", "hɹˈaːh"],
+      "pain": ["ˈʊɹɡ", "ɡɹˈa", "ˈuh"]
+    },
+    "longhi": {
+      "direction": "Négociatrice de Tubeppa. Diction posée et précise, garde un ton mesuré sous la menace.",
+      "speaker": [85, 39],
+      "pace": 0.82,
+      "body": 0,
+      "edge": 1,
+      "call": ["{name}, à votre tour.", "{name}, your turn."],
+      "effort": ["hˈa", "hˈɛp", "tˈah"],
+      "pain": ["ˈah", "nˈəh", "ˈuh"]
+    },
+    "musse": {
+      "direction": "Garde espion du premier prince. Voix basse et discrète, instruction en quelques mots.",
+      "speaker": [77, 86],
+      "pace": 0.73,
+      "body": 2,
+      "edge": -4,
+      "call": ["{name}, sans bruit.", "{name}, quietly."],
+      "effort": ["hˈə", "hˈʌt", "kˈʌh"],
+      "pain": ["nˈəɡ", "ˈəh", "kˈəh"]
+    }
+  },
+  {
+    "padaille": {
+      "direction": "Arsenal humain des Heil-Ly. Attaques râpeuses, bouche ouverte, défi bravache.",
+      "speaker": [84, 90],
+      "pace": 0.68,
+      "body": 5,
+      "edge": 4,
+      "call": ["Dans le tas, {name} !", "Right into them, {name}!"],
+      "effort": ["dˈah", "ɡɹˈa", "ɹɹˈah"],
+      "pain": ["ɡˈah", "ˈʊf", "ˈaɹh"]
+    },
+    "sayird": {
+      "direction": "Surveillant de Woble, voix filtrée par la concentration. Rapport télégraphique, peu de vibrato.",
+      "speaker": [78, 70],
+      "pace": 0.76,
+      "body": -1,
+      "edge": 0,
+      "call": ["Cible repérée, {name}.", "Target spotted, {name}."],
+      "effort": ["tsə", "hˈʌp", "kˈɛh"],
+      "pain": ["ˈəh", "hˈəŋ", "ˈah"]
+    },
+    "terebellum": {
+      "direction": "Heil-Ly qui absorbe la pression sans haussement de ton. Masse basse et syllabes lourdes.",
+      "speaker": [27, 50],
+      "pace": 0.89,
+      "body": 5,
+      "edge": -4,
+      "call": ["{name}, je tiens.", "{name}, I'm holding."],
+      "effort": ["ˈʌm", "hˈum", "ɹˈʌh"],
+      "pain": ["ɡˈʌh", "ˈuh", "ˈʊŋɡ"]
+    },
+    "voconte": {
+      "direction": "Passeur des Heil-Ly. Invitation souple, détendue, un mouvement dans chaque fin de phrase.",
+      "speaker": [89, 67],
+      "pace": 0.79,
+      "body": 0,
+      "edge": 1,
+      "call": ["Par ici, {name}.", "This way, {name}."],
+      "effort": ["hˈɔp", "hˈɛ", "fˈah"],
+      "pain": ["ˈoh", "nˈəɡ", "ˈaɡh"]
+    },
+    "yokotani": {
+      "direction": "Avocat Heil-Ly. Énonciation formelle, assurance de procédure et irritation quand elle déraille.",
+      "speaker": [66, 81],
+      "pace": 0.91,
+      "body": 0,
+      "edge": 2,
+      "call": ["{name}, faites le nécessaire.", "{name}, do what's necessary."],
+      "effort": ["hˈəm", "hˈa", "tʃˈə"],
+      "pain": ["nˈəh", "ˈaɡh", "ˈah"]
+    }
+  }
+]

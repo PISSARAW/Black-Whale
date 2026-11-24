@@ -23,11 +23,26 @@ export function plantBodyFrame(
     transfer: Boolean(frame.plan.attackFlow?.transfer),
     // Authored one-leg balances choose their support from the lower sole. A
     // fixed idle support would pin the raised leg when the dance alternates.
-    support:
-      fighter.attack || frame.plan.key === 'battle-cantabile-dance'
+    support: frame.plan.supportFoot
+      ? footIndex(frame.plan.supportFoot, fighter.facing)
+      : fighter.attack || frame.plan.key === 'battle-cantabile-dance'
         ? undefined
         : supportCycle(fighter).support,
+    pivot:
+      frame.plan.pivotFoot && frame.plan.pivotAngle
+        ? {
+            index: footIndex(frame.plan.pivotFoot, fighter.facing),
+            angle: frame.plan.pivotAngle,
+          }
+        : undefined,
+    anchorLowest:
+      fighter.crouching || (!fighter.attack && ['idle', 'guard'].includes(fighter.pose)),
     horizontal: fighter.pose !== 'walk',
     pursuitSupport: frame.pursuitSupport,
   })
+}
+
+export function footIndex(foot: 'lead' | 'rear', facing: 1 | -1): number {
+  const lead = facing === 1 ? 1 : 0
+  return foot === 'lead' ? lead : 1 - lead
 }

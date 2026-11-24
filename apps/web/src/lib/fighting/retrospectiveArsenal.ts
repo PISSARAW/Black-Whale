@@ -43,6 +43,10 @@ import {
   halkenburgHostOptions,
   isHalkenburgSoulCommand,
 } from './halkenburgHostCommands'
+import {
+  performHalkenburgSoulCommand as performHalkenburgMaterialSoulCommand,
+  halkenburgSoulOptions,
+} from './halkenburgSoulActions'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
 import { withDolphinSupply } from './dolphinSupply'
 import { performDolphinLoan, dolphinLoanOptions } from './dolphinLoanAction'
@@ -124,6 +128,8 @@ export function performArsenalCommand(
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
   if (isHalkenburgSoulCommand(command)) return performHalkenburgSoulCommand(state, side, command)
+  if (command.action.startsWith('halkenburg-'))
+    return performHalkenburgMaterialSoulCommand({ state, side, command })
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!arsenalMindAvailable(state[side])) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
@@ -273,6 +279,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...copiedArsenalOptions(state, side),
     ...historicalOptions(state, side),
     ...halkenburgTransferOptions(state, side),
+    ...halkenburgSoulOptions(state, side),
   ]
 }
 

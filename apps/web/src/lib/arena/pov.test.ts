@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { arenaPov } from './pov'
 import { beginFight, createFight, performAttack } from '../fighting/engine'
 import type { FightAttack } from '../fighting/fightAttackState'
+import { initialCombatState } from '../combat/types'
 
 function concealedAttack(): FightAttack {
   return {
@@ -37,5 +38,22 @@ describe('the arena POV projection', () => {
     arenaPov(state, 'player')
     arenaPov(state, 'opponent')
     expect(state).toEqual(before)
+  })
+
+  it('projects Arena combat without passing it through the Clash state filter', () => {
+    const state = initialCombatState()
+    state.opponent.in = true
+    state.opponent.intent = {
+      zone: 'head',
+      remaining: 0.4,
+      targetAt: state.player.position,
+    }
+    const before = structuredClone(state)
+
+    expect(arenaPov(state, 'player').opponent.intent).toBeNull()
+
+    state.player.gyo = true
+    expect(arenaPov(state, 'player').opponent.intent?.zone).toBe('head')
+    expect(before.opponent.intent?.zone).toBe('head')
   })
 })

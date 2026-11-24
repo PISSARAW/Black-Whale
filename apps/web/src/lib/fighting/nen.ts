@@ -1,4 +1,5 @@
 import { defensiveKo } from './nenCombat/guardKo'
+import { requestsZetsu } from './fightInputTypes'
 import { regionalDefence } from './nenCombat/protection'
 import { bodyGyoZone, BODY_GYO_DRAIN, gyoStatus } from './nenCombat/bodyGyo'
 import { activeEnRadius } from './en/access'
@@ -40,15 +41,7 @@ import { halkenburgHatsuLocked } from './halkenburgBonolenovUpgrades'
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
-export const EN_HOLD_FRAMES = 10
 export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
-
-declare module './types' {
-  interface ArcadeFighter {
-    /** Consecutive frames holding Aura + Down (transitions Zetsu -> En at EN_HOLD_FRAMES). */
-    auraDownFrames?: number
-  }
-}
 
 export type FightNenTactic =
   'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko' | 'on' | 'en' | 'shu' | 'in'
@@ -79,21 +72,16 @@ export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): Arc
   const sworn = applyOnContext(fighter, input)
   if (sworn) return sworn
   if (fighter.auraExhausted) return withAction(fighter, { type: 'ZETSU' })
+  if (input.zetsuIntent) return forceZetsu({ ...fighter, defensiveKo: undefined })
 
   const committed = defensiveKo(fighter, input)
   if (committed) return committed
   if (fighter.defensiveKo) fighter = { ...fighter, defensiveKo: undefined }
-  const holdingAuraDown = Boolean(input.aura && input.down && !input.guard)
-  const auraDownFrames = holdingAuraDown ? (fighter.auraDownFrames ?? 0) + 1 : 0
-  const tracked =
-    auraDownFrames > 0 || fighter.auraDownFrames
-      ? { ...fighter, auraDownFrames: auraDownFrames || undefined }
-      : fighter
-  const enInput = auraDownFrames >= EN_HOLD_FRAMES ? { ...input, en: true } : input
-  return applyAdvancedNen(heldAuraContext(tracked, enInput), enInput)
+  return applyAdvancedNen(heldAuraContext(fighter, input), input)
 }
 
 function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (requestsZetsu(input)) return withAction(fighter, { type: 'ZETSU' })
   if (!input.aura) {
     const released = commitKoOnRelease(fighter)
     if (released !== fighter) return released
@@ -101,9 +89,8 @@ function heldAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFight
     return withAction(released, { type: 'TEN' })
   }
 
-  if (input.down && !input.en) return withAction(fighter, { type: 'ZETSU' })
   if (input.guard) return withAction(fighter, { type: 'KEN', on: true })
-  if (input.jump) {
+  if (input.jump && !input.directControls) {
     const ten = withAction(fighter, { type: 'TEN' })
     return withAction(ten, { type: 'GYO', on: true })
   }
@@ -230,7 +217,8 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += isBeyond(fighter) ? BEYOND_KO_BONUS : 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  const bookPenalty = kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
+  const bookPenalty =
+    kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
   return (
     factor *
     bookPenalty *

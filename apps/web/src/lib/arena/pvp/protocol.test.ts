@@ -11,6 +11,11 @@ describe('Arena PvP public command protocol', () => {
       side: 'opponent',
       vector: [-1, 0],
     })
+    expect(parseNetworkAction({ type: 'JUMP', side: 'player', vector: [0, -1] })).toEqual({
+      type: 'JUMP',
+      side: 'player',
+      vector: [0, -1],
+    })
   })
 
   it('rejects server ticks, teleports and unbounded values', () => {

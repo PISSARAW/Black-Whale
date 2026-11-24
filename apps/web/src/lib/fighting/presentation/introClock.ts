@@ -1,10 +1,15 @@
 import type { IntroFrame, IntroPlayback } from './introPlayback'
 
-export function mountIntroClock(options: { playback: IntroPlayback; paused: () => boolean }) {
+export function mountIntroClock(options: {
+  playback: IntroPlayback
+  paused: () => boolean
+  warming?: () => boolean
+}) {
   let frame: IntroFrame | null = null
   let last = performance.now()
   let request = 0
   let held = true
+  const warming = options.warming ?? (() => false)
   const unsubscribe = options.playback.subscribe((value) => (frame = value))
   const visibility = () => (last = performance.now())
   const key = (event: KeyboardEvent) => {
@@ -18,7 +23,7 @@ export function mountIntroClock(options: { playback: IntroPlayback; paused: () =
   }
   const tick = (now: number) => {
     const blocked = document.hidden || options.paused()
-    options.playback.advance(Math.min(0.1, (now - last) / 1000), blocked)
+    options.playback.advance(Math.min(0.1, (now - last) / 1000), blocked || warming())
     last = now
     const pressed = Array.from(navigator.getGamepads?.() ?? []).some(
       (pad) => pad?.buttons[0]?.pressed,

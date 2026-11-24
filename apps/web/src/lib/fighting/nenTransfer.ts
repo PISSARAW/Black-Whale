@@ -8,7 +8,6 @@ import {
   HALKENBURG_GUARD_TRANSFER_FRAMES,
   JUPITER_TRANSFER_PENALTY,
 } from './halkenburgBonolenovUpgrades'
-import { RIHAN_TACTICAL_TRANSFER_FRAMES } from './matchupValves'
 import type { ArcadeFighter, FightNenZone } from './types'
 
 type Shares = Record<FightNenZone, number>
@@ -30,8 +29,7 @@ const ZONES: readonly FightNenZone[] = ['head', 'torso', 'hands', 'feet']
 
 function baseTransferFrames(fighter: ArcadeFighter): number {
   // Layer 1: Hard body override (Halkenburg anonymous guard swap)
-  if ((fighter.halkenburgSwappedFrames ?? 0) > 0 || fighter.hatsuEffects.possessedFrames > 0)
-    return HALKENBURG_GUARD_TRANSFER_FRAMES
+  if (fighter.hatsuEffects.possessedFrames > 0) return HALKENBURG_GUARD_TRANSFER_FRAMES
   // Layer 2: Posture / vow / owl reflex override (1f) or tactical / specialist mastery (2f)
   if (
     fighter.musseOwlActive ||
@@ -40,13 +38,7 @@ function baseTransferFrames(fighter: ArcadeFighter): number {
     seiyakuSpeedActive(fighter)
   )
     return 1
-  if (
-    fighter.rihanTacticalRead ||
-    (fighter.nenOwner ?? fighter.id) === 'biscuit' ||
-    hasFastMartialTransfer(fighter)
-  ) {
-    return RIHAN_TACTICAL_TRANSFER_FRAMES
-  }
+  if ((fighter.nenOwner ?? fighter.id) === 'biscuit' || hasFastMartialTransfer(fighter)) return 2
   const trained = fighterNenTraining(fighter, 'enhancer').level
   return Math.max(3, Math.min(6, Math.round(7 - trained - fightingStyle(fighter.id).moveScale)))
 }
@@ -62,10 +54,8 @@ export function nenTransferFrames(fighter: ArcadeFighter): number {
   const base = baseTransferFrames(fighter)
   const fatigue = nenMentalFatigueRatio(fighter)
   const transcendsFatigue = base === 1 && fatigue < 0.85
-  const slowdown =
-    transcendsFatigue || fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
-  const core =
-    base === 1 ? (transcendsFatigue ? 1 : 2) : Math.max(2, Math.round(base * slowdown))
+  const slowdown = transcendsFatigue || fatigue <= 0.3 ? 1 : 1 + ((fatigue - 0.3) / 0.7) * 0.5
+  const core = base === 1 ? (transcendsFatigue ? 1 : 2) : Math.max(2, Math.round(base * slowdown))
   const venom = (fighter.gelVenomFrames ?? 0) > 0 ? GEL_VENOM_TRANSFER_PENALTY : 0
   const jupiter = (fighter.jupiterAcousticFrames ?? 0) > 0 ? JUPITER_TRANSFER_PENALTY : 0
   return core + venom + jupiter

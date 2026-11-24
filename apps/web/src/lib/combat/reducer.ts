@@ -11,7 +11,6 @@ import {
 import {
   activeGuard,
   advanceFighter,
-  distance,
   feint,
   replace,
   setKen,
@@ -42,33 +41,45 @@ export {
   STRIKE_WINDUP,
   ZETSU_RECOVERY,
 } from './fighter'
-import { HATSU_COST } from './fighter'
-import type { Vec2 } from '../tour/types'
 import { advancePersistentNenEffects } from './effects'
 import { advanceEnvironment, reactEnvironment } from './environment'
-import { resolveNamedHatsu } from './hatsu'
-import { fightingHatsuAction, prepareFightingMove } from './fightingMove'
+import { bufferFightingMove, prepareFightingMove, releaseBufferedMove } from './fightingMove'
+import { fightingHatsuAction } from './fightingHatsu'
+import { isBlinkyUtilityMove, resolveFightingBlinky } from './fightingBlinky'
+import { isSkillHunterMove, resolveFightingSkillHunter } from './fightingSkillHunter'
+import { castHatsu, prepareHatsu } from './hatsuCast'
 import { usesClashNen } from './clashNen'
-import {
-  initialCombatState,
-  otherSide,
-  type ArenaHatsuEffect,
-  type BodyZone,
-  type CombatAction,
-  type CombatSide,
-  type CombatState,
-} from './types'
+import { startJump } from './airMovement'
+import { initialCombatState, type CombatAction, type CombatState } from './types'
 
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
   if (state.outcome !== 'playing') return state
-  if (action.type === 'TICK') return tick(state, action.dt)
+  if (action.type === 'TICK')
+    return state.hitstop > 0 ? advanceHitstop(state, action.dt) : tick(state, action.dt)
+  if (state.hitstop > 0 && action.type === 'FIGHTING_MOVE')
+    return isBlinkyUtilityMove(action) || isSkillHunterMove(action)
+      ? bufferFightingMove(state, action)
+      : prepareFightingMove(state, action)
+  if (state.hitstop > 0) return state
+  state = releaseCoveredWounds(state, action)
   if (action.type === 'SYNC_POSITION')
     return replace(state, action.side, syncPosition(state[action.side], action.position))
   if (action.type === 'FACE')
     return replace(state, action.side, { ...state[action.side], facing: action.heading })
+  if (action.type === 'PLUG_WOUNDS') {
+    const fighter = state[action.side]
+    if (fighter.openWounds <= 0 || fighter.condition !== 'ready' || fighter.intent) return state
+    return replace(state, action.side, {
+      ...fighter,
+      pluggingWounds: action.on,
+      movement: action.on ? [0, 0] : fighter.movement,
+    })
+  }
   if (action.type === 'EVADE') return evade(state, action.side, action.vector)
   if (action.type === 'MOVE')
     return replace(state, action.side, setMovement(state[action.side], action.vector))
+  if (action.type === 'JUMP')
+    return replace(state, action.side, startJump(state[action.side], action.vector))
   if (action.type === 'MODE')
     return replace(state, action.side, setMode(state[action.side], action.mode))
   if (action.type === 'RYU') return ryu(state, action)
@@ -100,8 +111,16 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'FIGHTING_MOVE') {
-    const hatsu = fightingHatsuAction(action)
-    if (!hatsu) return prepareFightingMove(state, action)
+    if (isBlinkyUtilityMove(action)) return resolveFightingBlinky(state, action)
+    if (isSkillHunterMove(action)) return resolveFightingSkillHunter(state, action)
+    const hatsu = fightingHatsuAction(state, action)
+    if (!hatsu) {
+      const prepared = prepareFightingMove(state, action)
+      return prepared === state
+        ? state
+        : reactEnvironment(prepared, { type: 'STRIKE', side: action.side, zone: 'torso' })
+    }
+    if (hatsu.type === 'PREPARE_HATSU') return prepareHatsu(state, hatsu.side, hatsu.hatsuId)
     const cast = castHatsu(state, hatsu)
     return cast === state ? state : reactEnvironment(cast, hatsu)
   }
@@ -122,6 +141,25 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   }
   if (action.type === 'KO') return chargeKo(state, action.side, action.zone)
   return state
+}
+
+function releaseCoveredWounds(state: CombatState, action: CombatAction): CombatState {
+  if (!('side' in action)) return state
+  if (action.type === 'FACE' || action.type === 'SYNC_POSITION' || action.type === 'PLUG_WOUNDS')
+    return state
+  const fighter = state[action.side]
+  return fighter.pluggingWounds
+    ? replace(state, action.side, { ...fighter, pluggingWounds: false })
+    : state
+}
+
+function advanceHitstop(state: CombatState, dt: number): CombatState {
+  const freeze = state.hitstop
+  const remaining = freeze - dt
+  const held = { ...state, hitstop: remaining > 1e-9 ? remaining : 0 }
+  if (held.hitstop > 0) return held
+  const resumed = releaseBufferedMove(releaseBufferedMove(held, 'player'), 'opponent')
+  return dt - freeze > 1e-9 ? tick(resumed, dt - freeze) : resumed
 }
 
 export { initialCombatState }
@@ -147,170 +185,4 @@ function tick(state: CombatState, dt: number): CombatState {
     ),
     dt,
   )
-}
-
-/** The whole of a HATSU action, which is what `castHatsu` reads anyway. */
-interface HatsuCast {
-  side: CombatSide
-  effect: ArenaHatsuEffect
-  zone: BodyZone
-  hatsuId?: string
-  targetAt?: Vec2
-  cost?: number
-}
-
-function prepareHatsu(
-  state: CombatState,
-  side: CombatSide,
-  hatsuId: 'parallel-future' | 'rihan-predator',
-): CombatState {
-  const fighter = state[side]
-  if (fighter.condition !== 'ready' || fighter.cooldown > 0) return state
-  if (hatsuId === 'parallel-future') {
-    if (fighter.mode !== 'zetsu') return state
-    return replace(state, side, {
-      ...fighter,
-      hatsuPreparation: {
-        id: hatsuId,
-        observations: 1,
-        targetHatsuId: null,
-        expiresAt: state.clock + 2,
-      },
-      movement: [0, 0],
-      cooldown: 0.35,
-    })
-  }
-  const targetHatsuId = state.lastHatsuBySide[otherSide(side)]
-  if (!targetHatsuId) return state
-  const previous = fighter.hatsuPreparation
-  const observations =
-    previous?.id === hatsuId && previous.targetHatsuId === targetHatsuId
-      ? previous.observations + 1
-      : 1
-  return replace(state, side, {
-    ...fighter,
-    hatsuPreparation: {
-      id: hatsuId,
-      observations,
-      targetHatsuId,
-      expiresAt: state.clock + 20,
-    },
-    cooldown: 0.25,
-  })
-}
-
-function castHatsu(
-  state: CombatState,
-  { side, effect, zone, hatsuId, targetAt, cost: requestedCost }: HatsuCast,
-): CombatState {
-  const fighter = state[side]
-  const preparation = fighter.hatsuPreparation
-  if (
-    hatsuId === 'parallel-future' &&
-    (fighter.mode !== 'zetsu' || preparation?.id !== hatsuId || preparation.expiresAt < state.clock)
-  )
-    return state
-  if (
-    hatsuId === 'rihan-predator' &&
-    (preparation?.id !== hatsuId ||
-      preparation.observations < 3 ||
-      preparation.expiresAt < state.clock)
-  )
-    return state
-  const sequenceCost =
-    requestedCost ??
-    (hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter' ? 6 : HATSU_COST)
-  if (
-    (fighter.condition !== 'ready' && hatsuId !== 'cats-name') ||
-    fighter.cooldown > 0 ||
-    fighter.aura < sequenceCost
-  )
-    return state
-  const paid = { ...fighter, aura: fighter.aura - sequenceCost, intent: null }
-  let current = {
-    ...replace(state, side, { ...paid, hatsuPreparation: null }),
-    lastHatsuBySide: { ...state.lastHatsuBySide, [side]: hatsuId ?? null },
-  }
-  const rivalSide = otherSide(side)
-
-  if (hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter') {
-    const previous = fighter.hatsuSequence
-    const continuous = previous?.id === hatsuId && state.clock - previous.lastAt <= 1.2
-    const count = continuous ? previous.count + 1 : 1
-    if (count < 3) {
-      return replace(current, side, {
-        ...paid,
-        hatsuSequence: { id: hatsuId, count, lastAt: state.clock },
-        cooldown: 0.2,
-      })
-    }
-    current = replace(current, side, { ...paid, hatsuSequence: null })
-    return strike({
-      state: current,
-      side,
-      zone,
-      technique: 'hatsu',
-      power: hatsuId === 'ripper-cyclotron' ? 2.2 : 1.9,
-      range: hatsuId === 'ripper-cyclotron' ? 2.4 : 4.5,
-    })
-  }
-
-  if (hatsuId === 'double-machine-gun') {
-    return strike({ state: current, side, zone, technique: 'hatsu', power: 0.95, range: 9 })
-  }
-
-  if (hatsuId === 'bungee-gum') {
-    const anchor = targetAt ?? state[rivalSide].position
-    const subject = targetAt ? side : rivalSide
-    const gap = distance(state[subject].position, anchor)
-    if (gap > 10) return state
-    return {
-      ...replace(current, side, { ...paid, cooldown: 0.8 }),
-      tethers: [
-        ...state.tethers.filter((tether) => tether.owner !== side),
-        {
-          id: `bungee-${side}`,
-          owner: side,
-          subject,
-          anchor: targetAt ?? null,
-          restLength: Math.max(0.8, gap * 0.6),
-          remaining: 8,
-        },
-      ],
-    }
-  }
-
-  const specialized = resolveNamedHatsu(current, { side, zone, hatsuId, paid })
-  if (specialized) return specialized
-
-  if (effect === 'bind') {
-    if (distance(fighter.position, state[rivalSide].position) > 7) return state
-    current = replace(current, side, { ...paid, cooldown: 1.1 })
-    return replace(current, rivalSide, {
-      ...current[rivalSide],
-      bound: 1.6,
-      movement: [0, 0],
-      intent: null,
-    })
-  }
-  if (effect === 'restore') {
-    return replace(current, side, {
-      ...paid,
-      aura: Math.min(paid.capacity, paid.aura + 42),
-      condition: 'ready',
-      recovery: 0,
-      cooldown: 2.2,
-    })
-  }
-  if (effect === 'enhance') {
-    return replace(current, side, { ...paid, empowered: 5, cooldown: 0.8 })
-  }
-  return strike({
-    state: current,
-    side,
-    zone,
-    technique: 'hatsu',
-    power: effect === 'impact' ? 1.65 : 0.82,
-    range: effect === 'barrage' ? 9 : 2.7,
-  })
 }

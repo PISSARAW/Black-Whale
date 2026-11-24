@@ -150,7 +150,7 @@ export const SECOND_DUEL_PROFILES = {
       },
       standingHeavy: {
         tuning: { startup: 7, hitstun: 24, knockback: 1.4, reach: 11.5 },
-        into: ['forwardLight', 'lowHeavy'],
+        into: ['forwardLight', 'lowHeavy', 'downSpecial'],
       },
       forwardLight: {
         tuning: {
@@ -158,11 +158,12 @@ export const SECOND_DUEL_PROFILES = {
           active: 3,
           recovery: 8,
           hitstun: 25,
-          knockback: 1,
+          knockback: 0.6,
           reach: 12,
-          lunge: 1.3,
+          lunge: 1.8,
         },
-        into: ['forwardHeavy', 'lowHeavy'],
+        // Corps vide (signatureCombosHunters.ts): step into choke range for the astral double.
+        into: ['forwardHeavy', 'lowHeavy', 'finisher'],
         links: ['backHeavy'],
       },
       backHeavy: {
@@ -177,7 +178,10 @@ export const SECOND_DUEL_PROFILES = {
         tuning: { startup: 11, recovery: 22, damage: 14, knockback: 7, reach: 15 },
         into: [],
       },
-      airLight: { tuning: { hitstun: 18, knockback: 1.3 }, into: ['airHeavy'] },
+      backSpecial: { tuning: { startup: 7, hitstun: 24, knockback: 1 }, into: ['downSpecial'] },
+      downSpecial: { tuning: { startup: 8, hitstun: 24, knockback: 0.4, lunge: 2.2 }, into: [] },
+      finisher: { tuning: { startup: 13 }, into: [] },
+      airLight: { tuning: { hitstun: 30, knockback: 0.6 }, into: ['airHeavy'] },
       airHeavy: { into: [] },
     },
   },

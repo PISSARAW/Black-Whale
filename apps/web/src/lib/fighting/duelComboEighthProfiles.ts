@@ -5,6 +5,8 @@ export const EIGHTH_DUEL_PROFILES = {
   bill: {
     window: 7,
     block: 'standingHeavy',
+    // Garde rapprochée (signatureCombosLot2B.ts): defensive step back then forward capture.
+    dash: { standingHeavy: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.8 },
@@ -12,7 +14,7 @@ export const EIGHTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 6, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: {
@@ -51,6 +53,8 @@ export const EIGHTH_DUEL_PROFILES = {
   cluck: {
     window: 6,
     block: 'standingHeavy',
+    // Vol de messagers (signatureCombosLot3A.ts): step back then forward capture.
+    dash: { forwardLight: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -58,7 +62,7 @@ export const EIGHTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -89,6 +93,8 @@ export const EIGHTH_DUEL_PROFILES = {
   sayird: {
     window: 6,
     block: 'standingHeavy',
+    // Petit œil (signatureCombosLot3B.ts): step back then forward capture.
+    dash: { standingHeavy: 'back', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -96,7 +102,7 @@ export const EIGHTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },
@@ -127,6 +133,8 @@ export const EIGHTH_DUEL_PROFILES = {
   luini: {
     window: 6,
     block: 'standingHeavy',
+    // Passage clos (signatureCombosLot2B.ts): cross into blind spot then forward capture.
+    dash: { forwardLight: 'through', lowHeavy: 'forward' },
     moves: {
       standingLight: {
         tuning: { startup: 4, hitstun: 19, knockback: 0.8 },
@@ -134,7 +142,7 @@ export const EIGHTH_DUEL_PROFILES = {
       },
       lowLight: {
         tuning: { startup: 5, hitstun: 19, knockback: 0.7 },
-        into: ['forwardLight', 'standingHeavy'],
+        into: ['standingLight', 'forwardLight', 'standingHeavy'],
       },
       forwardLight: {
         tuning: { startup: 6, hitstun: 25, knockback: 1, reach: 12, lunge: 1.3 },

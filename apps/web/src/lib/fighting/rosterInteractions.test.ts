@@ -32,7 +32,9 @@ describe('Saiyu Iwazaru x Context call', () => {
         hatsuEffects: { ...base.player.hatsuEffects, senseSeals: SENSE_BITS.speech },
       },
     }
-    expect(resolveContextInput(silenced, 'player', { ...EMPTY_INPUT, context: true }).call).toBeUndefined()
+    expect(
+      resolveContextInput(silenced, 'player', { ...EMPTY_INPUT, context: true }).call,
+    ).toBeUndefined()
   })
 })
 
@@ -63,7 +65,7 @@ describe('Longhi Moonlight Act PvP dilemma (no-ken-surge)', () => {
 })
 
 describe('No-duel-Hatsu Nen engine specialists', () => {
-  it('gives Beyond 100% Enhancer efficiency, -2/s Ren drain, and superior Ko power', () => {
+  it('does not invent reduced Ren drain or superior Ko power for Beyond', () => {
     const beyond = beginFight(createFight('beyond', 'phinks')).player
     const phinks = beginFight(createFight('beyond', 'phinks')).opponent
     expect(fightCategoryEfficiency(beyond, 'enhancer')).toBe(1)
@@ -71,12 +73,18 @@ describe('No-duel-Hatsu Nen engine specialists', () => {
     const beyondRen = applyAuraContext(beyond, { ...EMPTY_INPUT, aura: true })
     expect(auraFlowRate(beyondRen)).toBe(BEYOND_REN_DRAIN)
 
-    const beyondKo = { ...beyond, nen: { ...beyond.nen, mode: 'ren' as const, ko: 'feet' as const } }
-    const phinksKo = { ...phinks, nen: { ...phinks.nen, mode: 'ren' as const, ko: 'feet' as const } }
-    expect(nenAttackFactor(beyondKo, 'heavy')).toBeGreaterThan(nenAttackFactor(phinksKo, 'heavy'))
+    const beyondKo = {
+      ...beyond,
+      nen: { ...beyond.nen, mode: 'ren' as const, ko: 'feet' as const },
+    }
+    const phinksKo = {
+      ...phinks,
+      nen: { ...phinks.nen, mode: 'ren' as const, ko: 'feet' as const },
+    }
+    expect(nenAttackFactor(beyondKo, 'heavy')).toBe(nenAttackFactor(phinksKo, 'heavy'))
   })
 
-  it('gives Theta lethal physical bullets (+stealth bonus from In/Zetsu) and cheap In upkeep', () => {
+  it('keeps Theta material bullets and In on ordinary rules', () => {
     const theta = beginFight(createFight('theta', 'hisoka')).player
     expect(thetaBulletDamageFactor(theta, true)).toBe(THETA_BULLET_LETHALITY)
     const hidden = { ...theta, nen: { ...theta.nen, in: true } }
@@ -86,10 +94,10 @@ describe('No-duel-Hatsu Nen engine specialists', () => {
     expect(advancedAuraDrain(hidden)).toBe(THETA_IN_DRAIN)
   })
 
-  it('gives Cluck, Sayird, and Yokotani 2-frame Ryu transfers and 30% faster Kameo cooldowns', () => {
+  it('does not compensate unrevealed duel Hatsu with generic transfer or Kameo bonuses', () => {
     for (const id of ['cluck', 'sayird', 'yokotani'] as const) {
       const fighter = beginFight(createFight(id, 'hisoka')).player
-      expect(nenTransferFrames(fighter)).toBe(2)
+      expect(nenTransferFrames(fighter)).toBeGreaterThan(2)
       expect(kameoCooldownFactor(fighter)).toBe(MARTIAL_KAMEO_COOLDOWN_FACTOR)
     }
   })

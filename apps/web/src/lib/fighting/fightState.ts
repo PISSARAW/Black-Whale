@@ -122,6 +122,9 @@ export function nextFightRound(state: FightState): FightState {
           ? createArenaState()
           : undefined,
       rosterGuests: undefined,
+      halkSoulLinks: undefined,
+      halkSoulMinds: undefined,
+      halkSoulOrigins: undefined,
       throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
@@ -141,7 +144,8 @@ export function nextFightRound(state: FightState): FightState {
           carryBodyMemory(
             preserveLifespan(
               createFighter({
-                id: state.player.halkenburgOrigin ?? state.player.id,
+                id:
+                  state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
                 x: 22,
                 facing: 1,
                 health: format.health,
@@ -159,7 +163,10 @@ export function nextFightRound(state: FightState): FightState {
           carryBodyMemory(
             preserveLifespan(
               createFighter({
-                id: state.opponent.halkenburgOrigin ?? state.opponent.id,
+                id:
+                  state.halkSoulOrigins?.opponent ??
+                  state.opponent.halkenburgOrigin ??
+                  state.opponent.id,
                 x: 78,
                 facing: -1,
                 health: format.health,
@@ -187,6 +194,7 @@ export function nextFightRound(state: FightState): FightState {
       remainingFrames: format.roundFrames,
       frameAccumulator: 0,
       hitstop: 0,
+      directMoveBuffer: undefined,
       winner: null,
       finishReason: null,
       roundNumber: state.roundNumber + 1,
@@ -197,6 +205,8 @@ export function nextFightRound(state: FightState): FightState {
       projectiles: [],
       nextProjectileId: 1,
       impact: null,
+      audioContacts: undefined,
+      audioInterceptions: undefined,
     },
     state,
   )

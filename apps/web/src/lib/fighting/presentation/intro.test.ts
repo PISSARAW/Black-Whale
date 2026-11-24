@@ -6,6 +6,10 @@ import { FIGHTING_ROSTER } from '../roster'
 import { createIntroPlayback, introShot, type IntroFrame } from './introPlayback'
 import { introBodyPlan } from './introMotion'
 import { applyPresentationCamera } from './introCamera'
+import { introDialogue, RIVAL_VOICE_ATLAS, RIVAL_VOICE_SAMPLE_RATE } from './introDialogue'
+import { introSpeechCue } from '../audio/introSpeech'
+import { COMBAT_VOICE_RATES } from '../audio/settings'
+import { RIVALS, rivalKey } from './rivals'
 
 const full = { enabled: true, mode: 'full' as const }
 const sample = (elapsed: number): IntroFrame => ({
@@ -19,7 +23,7 @@ describe('combat entrances', () => {
   it('waits for the first rendered scene, plays both fighters, then starts exactly once', () => {
     const complete = vi.fn()
     const playback = createIntroPlayback(complete)
-    const state = createFight('kurapika', 'hisoka')
+    const state = createFight('bill', 'hisoka')
     const before = structuredClone(state)
     playback.observe(state, full)
     playback.advance(20)
@@ -38,6 +42,44 @@ describe('combat entrances', () => {
     expect(complete).toHaveBeenCalledTimes(1)
     expect(get(playback)).toBeNull()
     expect(state).toEqual(before)
+  })
+
+  it('holds the authored speaker and subtitle together when the rivals swap sides', () => {
+    const state = createFight('chrollo', 'kurapika')
+    const dialogue = introDialogue(state)!
+    const playback = createIntroPlayback(vi.fn())
+    playback.observe(state, full)
+    expect(introSpeechCue(get(playback)!, dialogue, 'fr')).toBeUndefined()
+    playback.sceneReady()
+    const opening = get(playback)!
+    expect(introShot(opening)).toEqual({ side: 'opponent', progress: 0 })
+    expect(introSpeechCue(opening, dialogue, 'fr')).toMatchObject({ side: 'opponent', offset: 0 })
+    playback.advance(dialogue.shotSeconds[0])
+    const response = get(playback)!
+    const [offset] = dialogue.spans.fr[1]
+    expect(introSpeechCue(response, dialogue, 'fr')).toMatchObject({
+      side: 'player',
+      elapsed: 0,
+      offset: offset / RIVAL_VOICE_SAMPLE_RATE,
+    })
+  })
+
+  it('fits both takes of every exchange in the matched camera shots at the slowest register', () => {
+    expect(Object.keys(RIVAL_VOICE_ATLAS).sort()).toEqual(
+      RIVALS.map(({ pair }) => rivalKey(...pair)).sort(),
+    )
+    for (const { pair } of RIVALS) {
+      const state = createFight(...pair)
+      const dialogue = introDialogue(state)!
+      for (const spans of Object.values(dialogue.spans)) {
+        expect(spans[0][0]).toBe(0)
+        expect(spans[1][0] - spans[0][1]).toBe(4320)
+        for (const [index, [, length]] of spans.entries())
+          expect(length / (RIVAL_VOICE_SAMPLE_RATE * COMBAT_VOICE_RATES.low)).toBeLessThan(
+            dialogue.shotSeconds[index],
+          )
+      }
+    }
   })
 
   it('freezes while paused or hidden and ignores invalid time deltas', () => {

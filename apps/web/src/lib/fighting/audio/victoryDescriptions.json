@@ -1,0 +1,465 @@
+{
+  "hisoka": [
+    [
+      110,
+      "Hisoka s’approche. Son adversaire se fige.",
+      "Hisoka approaches. His opponent freezes."
+    ],
+    [
+      365,
+      "L’aura se referme. Son adversaire s’effondre.",
+      "The aura closes in. His opponent collapses."
+    ]
+  ],
+  "chrollo": [
+    [
+      133,
+      "Chrollo ouvre son livre. Des poissons surgissent.",
+      "Chrollo opens his book. Fish emerge."
+    ],
+    [
+      390,
+      "Les poissons convergent. Chrollo referme le livre.",
+      "The fish converge. Chrollo closes his book."
+    ]
+  ],
+  "kurapika": [
+    [
+      60,
+      "Kurapika tend ses chaînes vers son adversaire.",
+      "Kurapika extends his chains toward his opponent."
+    ],
+    [
+      345,
+      "Les maillons se resserrent. Kurapika reste debout.",
+      "The links tighten. Kurapika remains standing."
+    ]
+  ],
+  "feitan": [
+    [
+      125,
+      "Une sphère brûlante s’élève au-dessus de Feitan.",
+      "A blazing sphere rises above Feitan."
+    ],
+    [
+      302,
+      "La chaleur enveloppe son adversaire. Feitan reste à couvert.",
+      "Heat engulfs his opponent. Feitan remains shielded."
+    ]
+  ],
+  "phinks": [
+    [
+      55,
+      "Phinks fait tourner son bras droit.",
+      "Phinks winds his right arm."
+    ],
+    [
+      270,
+      "Son coup projette l’adversaire au sol. Un cratère s’ouvre.",
+      "His blow drives the opponent into the floor, opening a crater."
+    ]
+  ],
+  "franklin": [
+    [
+      75,
+      "Franklin lève les deux mains, doigts écartés.",
+      "Franklin raises both hands, fingers spread."
+    ],
+    [
+      288,
+      "Une rafale traverse la salle. La fumée retombe.",
+      "A volley cuts across the room. The smoke settles."
+    ]
+  ],
+  "benjamin": [
+    [
+      85,
+      "Benjamin avance droit sur son adversaire.",
+      "Benjamin advances straight toward his opponent."
+    ],
+    [
+      290,
+      "Il termine l’échange. Son adversaire tombe.",
+      "He ends the exchange. His opponent falls."
+    ]
+  ],
+  "tserriednich": [
+    [
+      90,
+      "Plusieurs silhouettes rejouent les mouvements de Tserriednich.",
+      "Several silhouettes replay Tserriednich’s movements."
+    ],
+    [
+      260,
+      "Une image se superpose à l’adversaire. Tserriednich l’a devancé.",
+      "An echo overlaps his opponent. Tserriednich has moved ahead of them."
+    ]
+  ],
+  "leorio": [
+    [
+      90,
+      "Leorio se penche et arme son poing.",
+      "Leorio leans down and readies his fist."
+    ],
+    [
+      340,
+      "Un poing surgit sous l’adversaire et le propulse vers le plafond.",
+      "A fist erupts beneath his opponent and launches them toward the ceiling."
+    ]
+  ],
+  "halkenburg": [
+    [
+      134,
+      "Ses alliés se rangent derrière Halkenburg. Il lève son arc.",
+      "His allies line up behind Halkenburg. He raises his bow."
+    ],
+    [
+      347,
+      "La flèche traverse la salle vers l’adversaire.",
+      "The arrow crosses the room toward his opponent."
+    ]
+  ],
+  "camilla": [
+    [
+      110,
+      "Un chat de Nen apparaît auprès de Camilla.",
+      "A Nen cat appears beside Camilla."
+    ],
+    [
+      408,
+      "La créature se penche vers Camilla. Elle reprend son souffle.",
+      "The creature bends over Camilla. She draws breath again."
+    ]
+  ],
+  "kalluto": [
+    [
+      45,
+      "Kalluto sourit. Des morceaux de papier s’envolent.",
+      "Kalluto smiles. Pieces of paper lift into the air."
+    ],
+    [
+      284,
+      "Le papier tourbillonne autour de son adversaire.",
+      "Paper whirls around his opponent."
+    ]
+  ],
+  "machi": [
+    [
+      70,
+      "Machi tire des fils de Nen entre ses doigts.",
+      "Machi pulls Nen threads between her fingers."
+    ],
+    [
+      378,
+      "Les fils relient l’adversaire. Machi les défait d’un geste.",
+      "Threads bind the opponent. Machi unpicks them with one motion."
+    ]
+  ],
+  "shizuku": [
+    [
+      74,
+      "Shizuku dirige l’embout de Blinky vers l’adversaire.",
+      "Shizuku points Blinky’s nozzle at her opponent."
+    ],
+    [
+      325,
+      "Blinky aspire. Shizuku ramène l’aspirateur contre elle.",
+      "Blinky sucks the debris in. Shizuku draws the vacuum back."
+    ]
+  ],
+  "bonolenov": [
+    [
+      80,
+      "Bonolenov fait danser son corps découvert.",
+      "Bonolenov dances with his body uncovered."
+    ],
+    [
+      260,
+      "Une sphère gigantesque, Jupiter, se matérialise devant lui.",
+      "A gigantic sphere, Jupiter, materializes in front of him."
+    ]
+  ],
+  "illumi": [
+    [
+      66,
+      "Illumi présente ses aiguilles entre ses doigts.",
+      "Illumi holds up needles between his fingers."
+    ],
+    [
+      320,
+      "Les aiguilles atteignent l’adversaire, qui se raidit.",
+      "The needles reach his opponent, who stiffens."
+    ]
+  ],
+  "biscuit": [
+    [
+      98,
+      "Biscuit reprend sa forme musclée.",
+      "Biscuit returns to her muscular form."
+    ],
+    [
+      365,
+      "Une petite masseuse de Nen apparaît près de Biscuit.",
+      "A small Nen masseuse appears beside Biscuit."
+    ]
+  ],
+  "saiyu": [
+    [
+      95,
+      "Les singes de Saiyu apparaissent un à un.",
+      "Saiyu’s monkeys appear one by one."
+    ],
+    [
+      300,
+      "Saiyu fait tournoyer son bâton. L’adversaire vacille.",
+      "Saiyu swings his staff. His opponent staggers."
+    ]
+  ],
+  "hanzo": [
+    [
+      75,
+      "Un double de Hanzo se détache de son corps.",
+      "A double of Hanzo detaches from his body."
+    ],
+    [
+      385,
+      "Le double relâche l’adversaire et revient vers Hanzo.",
+      "The double releases the opponent and returns toward Hanzo."
+    ]
+  ],
+  "bill": [
+    [
+      112,
+      "Bill avance au contact de son adversaire.",
+      "Bill closes in on his opponent."
+    ],
+    [
+      336,
+      "Une plante se déploie au milieu de l’échange.",
+      "A plant unfurls in the middle of the exchange."
+    ]
+  ],
+  "melody": [
+    [
+      55,
+      "Melody joue de la flûte.",
+      "Melody plays her flute."
+    ],
+    [
+      332,
+      "Le décor se change en prairie fleurie.",
+      "The setting becomes a flowering meadow."
+    ]
+  ],
+  "hinrigh": [
+    [
+      76,
+      "Hinrigh métamorphose des objets en animaux.",
+      "Hinrigh transforms objects into animals."
+    ],
+    [
+      276,
+      "Les créatures encerclent l’adversaire pendant qu’il avance.",
+      "The creatures surround his opponent as he advances."
+    ]
+  ],
+  "terebellum": [
+    [
+      132,
+      "Terebellum se place entre l’adversaire et un objet.",
+      "Terebellum positions himself between his opponent and an object."
+    ],
+    [
+      385,
+      "Terebellum redirige le choc. L’adversaire tombe.",
+      "Terebellum redirects the impact. His opponent falls."
+    ]
+  ],
+  "voconte": [
+    [
+      94,
+      "Voconte traverse une porte et reparaît ailleurs.",
+      "Voconte crosses a doorway and reappears elsewhere."
+    ],
+    [
+      346,
+      "L’adversaire chute et heurte la passerelle.",
+      "His opponent falls and hits the catwalk."
+    ]
+  ],
+  "longhi": [
+    [
+      120,
+      "Longhi et son adversaire signent le même document.",
+      "Longhi and her opponent sign the same document."
+    ],
+    [
+      292,
+      "Le pacte se brise. Longhi enchaîne au corps à corps.",
+      "The pact breaks. Longhi follows up at close range."
+    ]
+  ],
+  "furykov": [
+    [
+      88,
+      "Furykov observe les mains et les appuis de l’adversaire.",
+      "Furykov watches his opponent’s hands and footing."
+    ],
+    [
+      270,
+      "Il intercepte l’attaque et riposte à courte distance.",
+      "He intercepts the attack and strikes back at close range."
+    ]
+  ],
+  "theta": [
+    [
+      87,
+      "Theta engage un chargeur dans son pistolet.",
+      "Theta loads a magazine into her pistol."
+    ],
+    [
+      373,
+      "Un coup part. L’adversaire bascule en arrière.",
+      "A shot rings out. Her opponent tips backward."
+    ]
+  ],
+  "mizaistom": [
+    [
+      90,
+      "Mizaistom présente un carton à son adversaire.",
+      "Mizaistom shows his opponent a card."
+    ],
+    [
+      315,
+      "Un panneau se matérialise sur la trajectoire de l’adversaire.",
+      "A panel materializes in the opponent’s path."
+    ]
+  ],
+  "rihan": [
+    [
+      102,
+      "Rihan observe l’adversaire avant de libérer une créature.",
+      "Rihan studies his opponent before releasing a creature."
+    ],
+    [
+      348,
+      "La créature se jette sur sa proie. Rihan avance.",
+      "The creature lunges at its prey. Rihan advances."
+    ]
+  ],
+  "zakuro": [
+    [
+      90,
+      "Des gouttes de sang flottent autour de Zakuro.",
+      "Droplets of blood float around Zakuro."
+    ],
+    [
+      328,
+      "Les gouttes se rassemblent. Deux impacts font reculer l’adversaire.",
+      "The droplets gather. Two impacts drive his opponent back."
+    ]
+  ],
+  "lynch": [
+    [
+      48,
+      "Lynch s’approche et interroge son adversaire.",
+      "Lynch approaches and questions her opponent."
+    ],
+    [
+      323,
+      "Elle enchaîne les coups avant de porter le dernier.",
+      "She delivers a flurry, then lands the last blow."
+    ]
+  ],
+  "luini": [
+    [
+      84,
+      "Une ouverture s’élargit dans la paroi.",
+      "An opening widens in the wall."
+    ],
+    [
+      345,
+      "Luini attaque en surgissant du passage.",
+      "Luini emerges from the opening to strike."
+    ]
+  ],
+  "basho": [
+    [
+      72,
+      "Basho écrit un poème sur une feuille.",
+      "Basho writes a poem on a sheet of paper."
+    ],
+    [
+      386,
+      "Des flammes jaillissent au fil de ses frappes.",
+      "Flames erupt as he lands his strikes."
+    ]
+  ],
+  "kurapika-judgment": [
+    [
+      151,
+      "Kurapika implante sa chaîne près du cœur de l’adversaire.",
+      "Kurapika implants his chain near the opponent’s heart."
+    ],
+    [
+      350,
+      "L’adversaire tente un mouvement. La chaîne se resserre.",
+      "His opponent tries to move. The chain tightens."
+    ]
+  ],
+  "kurapika-troupe": [
+    [
+      64,
+      "Les chaînes de Kurapika immobilisent le membre de la Brigade.",
+      "Kurapika’s chains bind the Troupe member."
+    ],
+    [
+      312,
+      "Kurapika frappe. Les chaînes finissent par se retirer.",
+      "Kurapika strikes. The chains eventually pull away."
+    ]
+  ],
+  "chrollo-sun-moon": [
+    [
+      25,
+      "Les sceaux éclatent. L’adversaire tombe.",
+      "The seals burst. The opponent falls."
+    ]
+  ],
+  "rihan-physical": [
+    [
+      88,
+      "Rihan réduit la distance, les poings levés.",
+      "Rihan closes the distance with fists raised."
+    ],
+    [
+      336,
+      "Il tire à courte distance. L’adversaire s’affaisse.",
+      "He fires at close range. His opponent slumps."
+    ]
+  ],
+  "beyond-curse-longhi": [
+    [
+      148,
+      "Un sceau apparaît sur le visage de Longhi.",
+      "A seal appears on Longhi’s face."
+    ],
+    [
+      356,
+      "Une présence de Nen quitte Longhi et gagne le prince.",
+      "A Nen presence leaves Longhi and moves toward the prince."
+    ]
+  ],
+  "beyond-curse-furykov": [
+    [
+      148,
+      "Un sceau apparaît sur le visage de Furykov.",
+      "A seal appears on Furykov’s face."
+    ],
+    [
+      356,
+      "Une présence de Nen quitte Furykov et gagne le prince.",
+      "A Nen presence leaves Furykov and moves toward the prince."
+    ]
+  ]
+}

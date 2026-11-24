@@ -12,6 +12,7 @@ import { applyReplayCommand } from './fightReplayCommands'
 import { applyPvpCommand } from './pvp/commands'
 import { fightReplayHash } from './fightReplayHash'
 import { performTrainingAction } from './trainingAction'
+import { toggleChrolloBookmark } from './chrolloBook'
 
 const aura = { ...EMPTY_INPUT, aura: true }
 function duel(id: FighterId = 'hisoka', side: FightSide = 'player'): FightState {
@@ -44,7 +45,12 @@ function impact(state: FightState, side: FightSide = 'player') {
 
 describe('Aura + throw commits a distinct super grab', () => {
   it.each(FIGHTING_ROSTER.map((f) => f.id))('%s pays once for the stronger second throw', (id) => {
-    const before = duel(id)
+    const setup = duel(id)
+    const book = setup.player.chrolloBook
+    // A book in hand intentionally blocks throws. Free both hands for this roster check.
+    const before = book?.open
+      ? { ...setup, player: { ...setup.player, chrolloBook: toggleChrolloBookmark(book) } }
+      : setup
     const plain = performThrow(before, 'player')
     const powered = performThrow(before, 'player', aura)
     expect(plain.player.aura).toBe(100)

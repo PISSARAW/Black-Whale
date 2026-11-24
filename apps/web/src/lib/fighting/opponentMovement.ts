@@ -8,7 +8,8 @@ import { hasRecoveryCancel } from './recoveryPunish'
 import { attackPhase } from './frameData'
 import { steerFighter } from './fighterMovement'
 import { EMPTY_INPUT } from './types'
-import { canMove as combatCanMove } from './fightActorState'
+import { canMove as combatCanMove, playerCanJump } from './fightActorState'
+import { cluckApproachJump } from './physicalCombatAi'
 import { seesCombatBody } from './fightCounterplay'
 import { illumiBodyFree } from './illumiState'
 import { crossGameBusy } from './crossGame'
@@ -44,12 +45,21 @@ function walkFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
   const blocking = next.blocking
   if (!canMove(next) || blocking) return next
   const direction = (target.x < next.x ? -1 : 1) * opponentMotion(next, gap)
-  const input = { ...EMPTY_INPUT, left: direction < 0, right: direction > 0 }
+  const input = {
+    ...EMPTY_INPUT,
+    left: direction < 0,
+    right: direction > 0,
+    jump: cluckApproachJump(fighter, target),
+  }
   // Ordinary AI spacing is a walk; only deliberate double-tap commands initiate dashes.
   const tracked = next.motion
     ? { ...next, motion: { ...next.motion, tapWindow: 0, tapDirection: 0 as const } }
     : next
-  return steerFighter(tracked, { input, mobile: canMove(tracked), jumpable: false })
+  return steerFighter(tracked, {
+    input,
+    mobile: canMove(tracked),
+    jumpable: playerCanJump(tracked, input),
+  })
 }
 
 function opponentCannotGuard(fighter: ArcadeFighter): boolean {

@@ -2,6 +2,7 @@ import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { comboAdmissionBody } from './comboAuraCost'
 import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
+import { tunePhysicalCombat } from './physicalCombatProfiles'
 import { attachMoveFollowUps, resolveMoveFollowUp } from './moveFollowUps'
 import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
@@ -43,6 +44,7 @@ import { tuneThetaMoveset } from './thetaMoveset'
 import { tuneMelodyMoveset } from './melodyMoveset'
 import { melodyMoveResources } from './melodyRules'
 import { thetaShotMove } from './thetaFirearm'
+import { firearmCanShoot } from './nenPillars'
 import { isErigeronAction } from './billSupport'
 import { tuneParallelFutureMoveset } from './parallelFutureMoveset'
 import { futureMoveResources } from './parallelFutureAbility'
@@ -131,6 +133,10 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFurykovMoveset)
     .map(tuneBonolenovMoveset)
     .map(declareMoveCombatRules)
+    .map(tunePhysicalCombat)
+    // Reference routes are authored globally and may still contain the old
+    // finisher links. Re-apply Cyclotron's canon boundary after that pass.
+    .map(tunePhinksMoveset)
     .map(attachMoveFollowUps)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
@@ -265,7 +271,8 @@ function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): bool
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
-  if (thetaShotMove(fighter, move.id)) return true
+  if (thetaShotMove(fighter, move.id))
+    return !fighter.weaponsConfiscated && firearmCanShoot(fighter)
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources

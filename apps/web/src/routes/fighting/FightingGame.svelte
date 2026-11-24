@@ -2,6 +2,7 @@
   import { clashCareer } from '$lib/fighting/career/profile'
   import { createCareerTracker } from '$lib/fighting/career/runtime'
   import { applyCareerMorale } from '$lib/fighting/career/morale'
+  import { applyRematchVow } from '$lib/fighting/career/rematchVow'
   import { createCombatSchool } from '$lib/fighting/combatSchool'
   import { createClashPractice } from '$lib/fighting/clashPractice'
   import { createFightMatchRuntime } from '$lib/fighting/fightMatchRuntime'
@@ -37,6 +38,8 @@
   import { readFightSetup, saveFightSetup } from '$lib/fighting/fightSetupDraft'
   import { link, locale } from '$lib/i18n'
   import { createFight } from '$lib/fighting/engine'
+  import { introDialogue } from '$lib/fighting/presentation/introDialogue'
+  import { primeIntroSpeech } from '$lib/fighting/audio/introSpeech'
   import { withKameos, type KameoPicks } from '$lib/fighting/kameos/state'
   import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
@@ -50,7 +53,6 @@
     type FighterId,
     type MoveAction,
   } from '$lib/fighting/types'
-  import { attackKeys } from './fightingKeys'
   import './fighting.css'
   import './fightingMatch.css'
   let mounted = false
@@ -145,20 +147,27 @@
     navigate('battle')
     school.exit()
     practice.exit()
-    state = applyCareerMorale(
-      withKameos(
-        createFight(selectedPlayer, selectedOpponent, {
-          formatId: selectedFormat,
-          mode: selectedMode,
-          environment,
-          controls: controls.schemesFor(selectedMode, coarsePointer()),
-        }),
-        kameos,
+    state = applyRematchVow(
+      applyCareerMorale(
+        withKameos(
+          createFight(selectedPlayer, selectedOpponent, {
+            formatId: selectedFormat,
+            mode: selectedMode,
+            environment,
+            controls: controls.schemesFor(selectedMode, coarsePointer()),
+          }),
+          kameos,
+        ),
+        $clashCareer,
       ),
       $clashCareer,
     )
     resetFightInputs()
     match.begin(state)
+    if (state.mode !== 'training' && $clashCareer.appearance.intro === 'full') {
+      const dialogue = introDialogue(state)
+      if (dialogue) primeIntroSpeech(dialogue, language)
+    }
     paused = false
   }
   function startFight() {
@@ -170,7 +179,7 @@
   }
   function rematch() {
     prepareFight()
-    startFight()
+    if (state?.mode === 'training') startFight()
   }
   function continueMatch() {
     if (!state) return
@@ -304,13 +313,18 @@
     paused = replayReturnPaused
     resetFightInputs()
   }
+  let audioSeek = 0
   function restartReplay() {
+    audioSeek++
     state = replays.restart()
     resetFightInputs()
   }
   function seekReplay(packet: number) {
     const next = match.seekReplay(packet)
-    if (next) state = next
+    if (next) {
+      audioSeek++
+      state = next
+    }
     resetFightInputs()
   }
   function takeoverReplay() {
@@ -439,6 +453,7 @@
       {school}
       {practice}
       {replayActions}
+      {audioSeek}
       bind:easterEggPreferences
     />
   {/if}

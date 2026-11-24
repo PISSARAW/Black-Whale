@@ -1,4 +1,3 @@
-import { revealBookSlot } from './chrolloDeck'
 import type { ArcadeFighter, FightNenZone, FightSide, FightState } from './types'
 
 export const MUSSE_OWL_UPKEEP = 1.5
@@ -51,44 +50,31 @@ export function musseOwlVisibleTo(state: FightState, observer: FightSide): boole
   return Boolean(viewer.nen.gyo && !viewer.gyoLow)
 }
 
-/** While Musse's owl watches a target, In cannot hide HUD info, Ryu, or Chrollo's open page. */
+/** Secret Window observes bodily actions; it does not cancel In or reveal aura. */
 export function musseCancelsIn(state: FightState, targetSide: FightSide): boolean {
-  const observerSide: FightSide = targetSide === 'player' ? 'opponent' : 'player'
-  const canonicalOwl = state[observerSide].secretWindow?.target === targetSide
-  return Boolean(canonicalOwl || (state.musseOwl?.active && state.musseOwl.target === targetSide))
+  void state
+  void targetSide
+  return false
 }
 
-/** Reads an incoming charged Ko zone 3-4 frames early for Musse's HUD. */
+/** Secret Window records gestures and words; it never predicts a charged Ko zone. */
 export function musseKoWarningZone(state: FightState, musseSide: FightSide): FightNenZone | null {
-  const owl = state.musseOwl
-  const canonicalTarget = state[musseSide].secretWindow?.target
-  const targetSide =
-    owl?.active && owl.owner === musseSide ? owl.target : canonicalTarget ?? null
-  if (!targetSide) return null
-  const target = state[targetSide]
-  if (!target.attack?.auraCharged || target.attack.impacted) return null
-  return target.attack.kind === 'heavy' ? 'feet' : 'hands'
+  void state
+  void musseSide
+  return null
 }
 
 export function musseOwlDrain(fighter: ArcadeFighter): number {
   return fighter.musseOwlActive ? MUSSE_OWL_UPKEEP : 0
 }
 
-/** Advances owl effects: reveals Chrollo's open page and dispels on Burst or exhaustion. */
+/** Advances upkeep; the owl records bodily actions without exposing Nen or book pages. */
 export function advanceMusseOwl(state: FightState): FightState {
   const owl = state.musseOwl
   if (!owl?.active) return state
   const owner = state[owl.owner]
-  const target = state[owl.target]
-  if (owner.auraExhausted || owner.nen.mode === 'zetsu' || (target.burstZetsuFrames ?? 0) > 0) {
+  if (owner.auraExhausted || owner.nen.mode === 'zetsu') {
     return clearMusseOwl(state)
-  }
-  const book = target.chrolloBook
-  if (book?.open && book.openSlot !== null && book.openSlot !== undefined) {
-    const revealed = revealBookSlot(book, book.openSlot)
-    if (revealed !== book) {
-      return { ...state, [owl.target]: { ...target, chrolloBook: revealed } }
-    }
   }
   return state
 }

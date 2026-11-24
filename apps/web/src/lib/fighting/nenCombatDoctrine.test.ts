@@ -6,6 +6,7 @@ import { prioritiseNenSlots, doctrineOpponentNen } from './nenDoctrineActions'
 import { moveOpponent } from './opponentMovement'
 import { ARSENAL_AI, arsenalAttackSlots } from './arsenalAi'
 import { martialSlots } from './arsenalAiTypes'
+import { physicalAttackSlots } from './physicalCombatAi'
 import { forceZetsu } from './nen'
 import { moveForSlot } from './movesets'
 import type { FighterId, MoveSlot } from './types'
@@ -36,7 +37,13 @@ it.each(FIGHTING_ROSTER.map(({ id }) => id))(
       expect(nenSpacingDirection(fighter, { gap, health: 100 })).toBe(direction)
     }
     const context = { state, gap: 8, roll: 0.7 }
-    const authored = [...new Set([...(ARSENAL_AI[id]?.(context) ?? []), ...martialSlots(context)])]
+    const authored = [
+      ...new Set([
+        ...(ARSENAL_AI[id]?.(context) ?? []),
+        ...(physicalAttackSlots(context) ?? []),
+        ...martialSlots(context),
+      ]),
+    ]
     expect([...arsenalAttackSlots(context)].sort()).toEqual(authored.sort())
   },
 )

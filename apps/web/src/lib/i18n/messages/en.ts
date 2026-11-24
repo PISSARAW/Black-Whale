@@ -2934,7 +2934,18 @@ export const en = {
         body: 'Hold your read, then press Shift as the attack arrives.',
       },
       { title: 'Force a reaction', body: 'Press V to feint toward the zone you are targeting.' },
-      { title: 'Punish the opening', body: 'Strike while your opponent is recovering.' },
+      {
+        title: 'Confirm a Clash hit',
+        body: 'Land a move shown in the lab. Contact reveals its frame data.',
+      },
+      {
+        title: 'Chain the confirm',
+        body: 'Press the follow-up during the cancel window for a 2-hit combo.',
+      },
+      {
+        title: 'Block for real',
+        body: 'Guard an opponent move and read whether its recovery is punishable.',
+      },
     ],
     state: { gyo: 'Gyo', in: 'In', ken: 'Ken', ko: 'Ko gathering', concealed: 'Aura concealed' },
     outcome: { won: 'Match won', lost: 'Match lost' },

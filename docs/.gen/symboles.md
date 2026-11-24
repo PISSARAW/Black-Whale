@@ -750,8 +750,12 @@ Entrées analysées : 11
 | `NenTechniqueState` | `packages/nen-engine/src/techniques.ts:7` |
 | `NenTechnique` | `packages/nen-engine/src/techniques.ts:2` |
 | `NenTransition` | `packages/nen-engine/src/techniques.ts:35` |
+| `PARRY_RYU_FOCUS` | `packages/nen-engine/src/guard.ts:2` |
+| `PARRY_WINDOW_FRAMES` | `packages/nen-engine/src/guard.ts:1` |
+| `ParryReading` | `packages/nen-engine/src/guard.ts:4` |
 | `PerspectiveModifier` | `packages/nen-engine/src/engine.ts:115` |
 | `ProjectedEffect` | `packages/nen-engine/src/engine.ts:79` |
+| `RyuFocus` | `packages/nen-engine/src/guard.ts:19` |
 | `ValidationResult` | `packages/nen-engine/src/engine.ts:45` |
 | `WhyCondition` | `packages/nen-engine/src/engine.ts:231` |
 | `canSeeIn` | `packages/nen-engine/src/techniques.ts:226` |
@@ -761,11 +765,13 @@ Entrées analysées : 11
 | `createNenTechniqueState` | `packages/nen-engine/src/techniques.ts:58` |
 | `detectWithEn` | `packages/nen-engine/src/techniques.ts:263` |
 | `evaluateBaseAction` | `packages/nen-engine/src/engine.ts:491` |
+| `focusedRyuDistribution` | `packages/nen-engine/src/guard.ts:26` |
 | `isAuraAtRest` | `packages/nen-engine/src/techniques.ts:219` |
 | `isAuraVisibleTo` | `packages/nen-engine/src/techniques.ts:227` |
 | `nenDefenceFactor` | `packages/nen-engine/src/techniques.ts:230` |
 | `parseNenActionRequest` | `packages/nen-engine/src/runtime.ts:82` |
 | `resolveNenCategoryAction` | `packages/nen-engine/src/categories.ts:157` |
+| `resolvesParry` | `packages/nen-engine/src/guard.ts:12` |
 | `transitionNen` | `packages/nen-engine/src/techniques.ts:118` |
 
 ## `packages/simulation-engine/src/index.ts`

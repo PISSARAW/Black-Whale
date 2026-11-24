@@ -6,6 +6,8 @@ import type {
   MoveFollowUpInput,
 } from './movesetTypes'
 import type { ArcadeFighter, FightInput, FighterId, MoveAction, MoveSlot } from './types'
+import { LATE_WAVE_FOLLOW_UPS } from './moveFollowUpSpecsLate'
+import { followUpPhysicsFor } from './moveFollowUpPhysics'
 
 export interface FollowUpSpec {
   id: string
@@ -346,14 +348,20 @@ const PRIORITY_SPECS: Partial<Record<FighterId, readonly FollowUpSpec[]>> = {
 }
 
 export function attachMoveFollowUps(moveset: FighterMoveset): FighterMoveset {
-  const specs = PRIORITY_SPECS[moveset.fighterId]
+  const specs = PRIORITY_SPECS[moveset.fighterId] ?? LATE_WAVE_FOLLOW_UPS[moveset.fighterId]
   if (!specs?.length) return moveset
   const bySlot = new Map(moveset.moves.map((move) => [move.slot, move]))
   const followUps: MoveFollowUp[] = specs.flatMap((spec) => {
     const source = bySlot.get(spec.sourceSlot)
     const base = bySlot.get(spec.baseSlot)
     if (!source || !base) return []
-    const move: FighterMove = { ...base, id: spec.id }
+    const physics = followUpPhysicsFor(spec.id)
+    const move: FighterMove = {
+      ...base,
+      id: spec.id,
+      ...(physics?.guard ? { guard: physics.guard } : {}),
+      ...(physics?.tuning ? { tuning: { ...base.tuning, ...physics.tuning } } : {}),
+    }
     return [
       {
         id: spec.id,

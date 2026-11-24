@@ -25,9 +25,13 @@
   let comfort = defaultFightComfort()
   let primaryScene: THREE.Scene | undefined
   THREE.Scene.prototype.onAfterRender = function (renderer, scene) {
-    if (scene.userData.fightView === 'prediction' && !predictionRenderers.has(renderer)) {
-      predictionRenderers.add(renderer)
-      predictionContexts++
+    if (scene.userData.fightView === 'prediction-composite') probe.drawPrediction()
+    if (scene.userData.fightView === 'prediction') {
+      probe.refreshPrediction()
+      if (!predictionRenderers.has(renderer)) {
+        predictionRenderers.add(renderer)
+        predictionContexts++
+      }
     }
     if (scene.userData.fightView === 'primary') {
       primaryScene = scene

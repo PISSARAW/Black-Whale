@@ -1,3 +1,4 @@
+import { retainProjectileInterception } from './audio/projectileAudioEvents'
 import { interceptProjectileWorld } from './projectileInterception'
 import { passProjectileThroughDoor } from './voconteDoorProjectiles'
 import { rosterProjectileTarget } from './rosterGuestContacts'
@@ -361,6 +362,7 @@ export function advanceProjectiles(
     const contact = interceptProjectileWorld(state, passage)
     state = contact.state
     if (contact.intercepted) {
+      state = retainProjectileInterception(state, projectile, contact.terrain)
       if (contact.terrain && projectile.gumFlight) kept.push(settleGumProjectile(projectile, true))
       continue
     }

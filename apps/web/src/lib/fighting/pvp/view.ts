@@ -18,6 +18,8 @@ import { perceivesProjectile, gyoSight } from '../nenPerception'
 import { concealNenInformation } from '../nenInformationWar'
 import { encodeFightSnapshot } from '../fightReplaySnapshot'
 import { fightReplayHash } from '../fightReplayHash'
+import { immutableFightSnapshot, immutableSnapshotDigest } from '../immutableFightSnapshot'
+import type { FutureFrame } from '../parallelFutureTypes'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
 
 /** Presentation only: local controls always operate P1; the referee keeps canonical seats. */
@@ -120,6 +122,7 @@ function redactEnemy(enemy: ArcadeFighter) {
     }
   enemy.heardCorpse = undefined
   enemy.bodyAndSoulReplies = undefined
+  enemy.halkSedativeSpent = undefined
   enemy.secretWindow = undefined
   enemy.secretWindowListening = undefined
   enemy.melodyHearing = undefined
@@ -148,9 +151,21 @@ function redactEnemy(enemy: ArcadeFighter) {
 function privateBaton(baton: ArcadeFighter['hatsuEffects']['baton']) {
   return baton ? { ...baton, markedTarget: null, musseArchive: undefined } : baton
 }
-export function privatePvpState(state: FightState, side: FightSide): FightState {
+export function privatePvpState(
+  state: FightState,
+  side: FightSide,
+  includeTimeline = true,
+): FightState {
+  const visible = futureVisibleState(state, side)
+  const future = visible.parallelFuture?.owner === side ? visible.parallelFuture : undefined
   const view = privateHalkenburgSouls(
-    privateNeedleFaces(structuredClone(futureVisibleState(state, side)), side),
+    privateNeedleFaces(
+      structuredClone({
+        ...visible,
+        parallelFuture: future && { ...future, frames: [], forecast: undefined, controls: null },
+      }),
+      side,
+    ),
     side,
   )
   view.arsenalTrace = undefined
@@ -168,9 +183,7 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   redactPriorityWorld(view, side)
   hideConcealedAura(view[other], view[side])
   view.commandFeedback = { [side]: view.commandFeedback?.[side] }
-  if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
-  redactForecast(view, side, other)
-  if (view.parallelFuture) view.parallelFuture.controls = null
+  redactConcealedSound(view, side, other)
   view.bungeeGum = bungeeVisible(view, side) ? view.bungeeGum : null
   view.projectiles = privateGumProjectiles(view, side)
   view.gumNetwork = privateGumNetwork(view, side)
@@ -179,31 +192,80 @@ export function privatePvpState(state: FightState, side: FightSide): FightState 
   )
   // No second perspective selector or opponent-private controls in the ordinary HUD.
   const result = localPerspective(view, side === 'opponent') as FightState
-  return { ...result, mode: 'versus-ai', pvpSeat: side }
+  const presented = { ...result, mode: 'versus-ai' as const, pvpSeat: side }
+  if (includeTimeline && future)
+    presented.parallelFuture!.frames = projectForecast(future.frames, view, side)
+  return presented
 }
-function redactForecast(view: FightState, side: FightSide, other: FightSide): void {
-  for (const frame of view.parallelFuture?.frames ?? []) {
-    privateGumFuture(view, frame, side)
-    concealDeviceMedia(frame.battlefield)
-    concealDolphinPeople(frame, side)
-    concealPaperScatters(frame, side)
-    const documentView = privateHalkenburgSouls(
-      privateNeedleFaces({ ...view, ...frame, ...frame.documentContext }, side),
-      side,
+
+function redactConcealedSound(view: FightState, side: FightSide, other: FightSide) {
+  if (gyoSight(view[side])) return
+  if (view.audioInterceptions)
+    view.audioInterceptions = view.audioInterceptions.filter(
+      (cue) => cue.side !== other || !cue.concealed,
     )
-    frame.player = documentView.player
-    frame.opponent = documentView.opponent
-    concealFortuneWorld(documentView, side)
-    concealDocumentWorld(documentView, side)
-    concealCorpseWorld(documentView, side)
-    frame.battlefield = documentView.battlefield
-    redactEnemy(frame[other])
-    hideConcealedAura(frame[other], frame[side])
-    frame.projectiles = frame.projectiles.filter(
-      (shot) => shot.owner === side || perceivesProjectile(frame[side], shot),
+  if (view.audioContacts) {
+    view.audioContacts = view.audioContacts.map((contact) =>
+      contact.impact.attacker === other && contact.impact.concealed
+        ? { ...contact, moveId: undefined, shape: undefined }
+        : contact,
     )
-    frame.command = null
   }
+}
+const privateForecast = {
+  player: new WeakMap<FutureFrame, FutureFrame>(),
+  opponent: new WeakMap<FutureFrame, FutureFrame>(),
+}
+
+function projectForecast(frames: readonly FutureFrame[], view: FightState, side: FightSide) {
+  const cache = privateForecast[side]
+  const sharedContext =
+    view.halkSoulOrigins ||
+    view.halkSoulMinds ||
+    view.halkSoulLinks ||
+    view.teamMatch ||
+    view.rosterGuests?.length
+  return frames.map((frame) => {
+    // Papers can depend on the live document context and Halkenburg can depend on live
+    // identities outside the two forecast bodies. Re-evaluate those views each time.
+    const reusable =
+      !sharedContext &&
+      !frame.battlefield?.entities.some((entry) => entry.document) &&
+      immutableSnapshotDigest(frame)
+    if (!reusable) return projectForecastFrame(frame, view, side)
+    let projected = cache.get(frame)
+    if (!projected) {
+      projected = immutableFightSnapshot(projectForecastFrame(frame, view, side))
+      cache.set(frame, projected)
+    }
+    return projected
+  })
+}
+
+function projectForecastFrame(source: FutureFrame, view: FightState, side: FightSide): FutureFrame {
+  const frame = structuredClone(source)
+  const other = side === 'player' ? 'opponent' : 'player'
+  privateGumFuture(view, frame, side)
+  concealDeviceMedia(frame.battlefield)
+  concealDolphinPeople(frame, side)
+  concealPaperScatters(frame, side)
+  const documentView = privateHalkenburgSouls(
+    privateNeedleFaces({ ...view, ...frame, ...frame.documentContext }, side),
+    side,
+  )
+  frame.player = documentView.player
+  frame.opponent = documentView.opponent
+  concealFortuneWorld(documentView, side)
+  concealDocumentWorld(documentView, side)
+  concealCorpseWorld(documentView, side)
+  frame.battlefield = documentView.battlefield
+  redactEnemy(frame[other])
+  hideConcealedAura(frame[other], frame[side])
+  frame.projectiles = frame.projectiles.filter(
+    (shot) => shot.owner === side || perceivesProjectile(frame[side], shot),
+  )
+  frame.command = null
+  return localPerspective(frame, side === 'opponent') as FutureFrame
 }
 function redactGuests(view: FightState, other: FightSide): void {
   for (const guest of view.rosterGuests ?? []) if (guest.owner === other) redactEnemy(guest.fighter)
@@ -214,12 +276,15 @@ function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
   if (enemy.gumProstheses?.hidden) enemy.gumProstheses = undefined
   hideGumObjectAnchors(enemy)
   if (enemy.nen.in) concealNenInformation(enemy, observer)
+  hideUnavailableDowsing(enemy)
+  if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
+  if (enemy.attack?.concealed) enemy.attack = null
+}
+function hideUnavailableDowsing(enemy: ArcadeFighter) {
   if (enemy.aura < 0) {
     enemy.dowsingSession = undefined
     enemy.dowsingMapPose = undefined
   }
-  if (enemy.gumCatch?.hidden && !enemy.gumCatch.projectile) enemy.gumCatch = undefined
-  if (enemy.attack?.concealed) enemy.attack = null
 }
 function hideGumObjectAnchors(enemy: ArcadeFighter): void {
   const anchors = enemy.gumObjectAnchors?.filter((anchor) => !anchor.hidden)
@@ -227,8 +292,8 @@ function hideGumObjectAnchors(enemy: ArcadeFighter): void {
   enemy.asphyxiaCertificate = undefined
   enemy.gumObjectAnchors = anchors?.length ? anchors : undefined
 }
-export function pvpSnapshot(state: FightState, side: FightSide) {
-  const visible = privatePvpState(state, side)
+export function pvpSnapshot(state: FightState, side: FightSide, includeTimeline = true) {
+  const visible = privatePvpState(state, side, includeTimeline)
   return { snapshot: encodeFightSnapshot(visible), snapshotHash: fightReplayHash(visible) }
 }
 

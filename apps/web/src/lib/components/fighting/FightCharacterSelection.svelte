@@ -7,6 +7,7 @@
   import FightRosterPortrait from './FightRosterPortrait.svelte'
   import FightFighterDossier from './FightFighterDossier.svelte'
   import FightSetupFooter from './FightSetupFooter.svelte'
+  import FightSelectionVoice from './FightSelectionVoice.svelte'
   export let language: 'fr' | 'en'
   export let player: FighterId
   export let opponent: FighterId
@@ -16,14 +17,17 @@
   let selecting: FightSide = 'player'
   let search = ''
   let group = 'all'
+  let voice: FightSelectionVoice
   const groups = groupedFightingRoster(FIGHTING_ROSTER)
   const roster = groups.flatMap((entry) =>
     entry.fighters.map((fighter) => ({ ...fighter, group: entry.id })),
   )
   $: fr = language === 'fr'
   $: active = selecting === 'player' ? player : opponent
+  $: other = selecting === 'player' ? opponent : player
   $: definition = fighterDefinition(active)
   $: style = fightingStyle(active)
+  $: if (selecting) voice?.stop()
   $: filtered = roster.filter(
     (fighter) =>
       (group === 'all' || fighter.group === group) &&
@@ -32,6 +36,7 @@
   function choose(id: FighterId) {
     if (selecting === 'player') onPlayer(id)
     else onOpponent(id)
+    voice?.play(id, other)
   }
   function next() {
     if (selecting === 'opponent') return onContinue()
@@ -74,6 +79,7 @@
         <h2>{definition.name}</h2>
         <p class="style-name">{fr ? style.nameFr : style.nameEn}</p>
         <p>{fr ? style.descriptionFr : style.descriptionEn}</p>
+        <FightSelectionVoice fighter={active} {other} {language} bind:this={voice} />
         <FightFighterDossier fighterId={active} {language} />
       </div>
     </aside>

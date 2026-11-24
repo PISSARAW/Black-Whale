@@ -1,5 +1,6 @@
 import { canAct } from './fightActorState'
 import { sleepingBody } from './hanzoProjection'
+import { throwTechSeparation } from './defensiveMovementTech'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 /** Explicit arcade windows, not manga timings. */
@@ -12,7 +13,7 @@ export const REVERSAL_WINDOW_FRAMES = 5
 export function throwImmune(fighter: ArcadeFighter, comboCapture?: boolean): boolean {
   const body = sleepingBody(fighter)
   if (body.y > 0 || body.health <= 0) return true
-  if (comboCapture) return false
+  if (comboCapture || fighter.needlePuppet?.needleEmbedded) return false
   return (
     body.hitStun > 0 ||
     body.blockStun > 0 ||
@@ -37,9 +38,10 @@ export function resolveThrowTech(state: FightState, side: FightSide): FightState
 
 function techBody(fighter: ArcadeFighter, opponent: ArcadeFighter): ArcadeFighter {
   const direction = fighter.x <= opponent.x ? -1 : 1
+  const distance = throwTechSeparation(fighter)
   return {
     ...fighter,
-    x: Math.max(7, Math.min(93, fighter.x + direction * 2)),
+    x: Math.max(7, Math.min(93, fighter.x + direction * distance)),
     attack: null,
     bufferedAttack: null,
     throwTechFrames: 0,

@@ -1,7 +1,47 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
+  import type { ArenaSectorSituation } from '$lib/arena/sectorTour'
 
-  let { onStart, goal }: { onStart: () => void; goal: string } = $props()
+  let {
+    onStart,
+    goal,
+    sector = null,
+    french = false,
+  }: {
+    onStart: () => void
+    goal: string
+    sector?: ArenaSectorSituation | null
+    french?: boolean
+  } = $props()
+
+  const phaseLabel = $derived.by(() => {
+    if (!sector) return null
+    if (sector.phase === 'lockdown')
+      return french ? 'Intervention imminente' : 'Intervention imminent'
+    if (sector.phase === 'watched') return french ? 'Secteur surveillé' : 'Sector under watch'
+    if (sector.phase === 'altered')
+      return french ? 'Terrain déjà altéré' : 'Terrain already altered'
+    return french ? 'Secteur calme' : 'Quiet sector'
+  })
+
+  const startLabel = $derived.by(() => {
+    if (!sector || sector.phase === 'quiet') return $t.arena.ui.enterArena
+    if (sector.phase === 'lockdown')
+      return french ? "Entrer avant l'intervention" : 'Enter before intervention'
+    if (sector.phase === 'watched') return french ? 'Entrer sous surveillance' : 'Enter under watch'
+    return french ? 'Reprendre le duel' : 'Resume the duel'
+  })
+
+  const objectiveLabel = $derived.by(() => {
+    if (!sector) return null
+    if (sector.objective === 'beat-intervention')
+      return french ? "Vaincre avant l'arrivée de la sécurité" : 'Win before security intervenes'
+    if (sector.objective === 'stay-unseen')
+      return french ? "Gagner sans augmenter l'alerte" : 'Win without raising the alert'
+    if (sector.objective === 'break-adaptation')
+      return french ? "Briser l'adaptation de Hisoka" : "Break Hisoka's adaptation"
+    return french ? 'Prendre le contrôle du secteur' : 'Take control of the sector'
+  })
 </script>
 
 <div
@@ -14,20 +54,41 @@
     <p class="briefing-kicker">{$t.arena.ui.beforeFight}</p>
     <h2 id="combat-briefing-title">{$t.arena.ui.briefingTitle}</h2>
     <p class="briefing-goal">{goal}</p>
+    {#if sector}
+      <div class="briefing-sector" data-phase={sector.phase}>
+        <strong>{phaseLabel}</strong>
+        <em>{objectiveLabel}</em>
+        <span>
+          {french ? 'Combats' : 'Fights'}
+          {sector.fights} ·
+          {french ? 'Témoins' : 'Witnesses'}
+          {sector.witnesses} ·
+          {french ? 'Alerte' : 'Alert'}
+          {sector.securityAlert}/5
+        </span>
+        <small>
+          {sector.changedObjects}
+          {french ? 'objets altérés' : 'altered objects'} ·
+          {sector.opponentReads}
+          {french ? 'lectures adverses' : 'opponent reads'} ·
+          {sector.parcelStage.replaceAll('_', ' ')}
+        </small>
+      </div>
+    {/if}
     <ol class="briefing-steps">
       <li>
         <kbd>{$t.arena.ui.moveKeys}</kbd>
         <span><strong>{$t.arena.ui.approach}</strong>{$t.arena.ui.approachSuffix}</span>
       </li>
       <li>
-        <kbd>CLIC · F</kbd>
+        <kbd>CLIC · J</kbd>
         <span><strong>{$t.arena.ui.strike}</strong>{$t.arena.ui.strikeSuffix}</span>
       </li>
       <li>
-        <kbd>MAJ</kbd>
+        <kbd>ESPACE</kbd>
         <span><strong>{$t.arena.ui.block}</strong>{$t.arena.ui.blockSuffix}</span>
       </li>
     </ol>
-    <button class="briefing-start" onclick={onStart}>{$t.arena.ui.enterArena}</button>
+    <button class="briefing-start" onclick={onStart}>{startLabel}</button>
   </div>
 </div>

@@ -6,6 +6,7 @@ import { selectedGumLink } from './bungeeNetwork'
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { attackData } from './frameData'
+import { moveById } from './movesets'
 import { FIGHTING_ROSTER } from './roster'
 import { rosterPhysicalBranch, ROSTER_TECHNIQUE_BRANCHES } from './rosterComboBranches'
 import type { ComboOpening } from './comboOpenings'
@@ -115,7 +116,7 @@ it('only offers the contextual route after a clean confirmation and does not unl
   const reach = attackData('light', started.player).box.right
   const x = started.player.x + reach + 1.2
   const aimed = { ...started, opponent: { ...started.opponent, x } }
-  expect(comboChoices(aimed).some(({ move }) => move.slot === 'forwardHeavy')).toBe(false)
+  expect(comboChoices(aimed).some(({ opening }) => opening === 'tip')).toBe(false)
   const blocked = contact({
     ...aimed,
     opponent: { ...aimed.opponent, blocking: true, guardFrames: 20 },
@@ -132,10 +133,10 @@ it('does not grant the tip conversion on a whiff or through ordinary close conta
   const started = command(duel('kurapika', 1), 'light', 1)
   const whiff = contact({ ...started, opponent: { ...started.opponent, x: 93 } })
   expect(whiff.impact).toBeNull()
-  expect(command(whiff, 'heavy', 1).player.attack?.moveId).toBe('kurapika:forwardLight')
+  expect(command(whiff, 'heavy', 1).player.attack?.comboOpening).toBeUndefined()
   const close = contact(started)
   expect(close.impact?.comboHits).toBe(1)
-  expect(command(close, 'heavy', 1).player.attack?.moveId).toBe('kurapika:forwardLight')
+  expect(command(close, 'heavy', 1).player.attack?.comboOpening).toBeUndefined()
 })
 
 function routeMove(state: FightState, slot: MoveSlot) {
@@ -194,11 +195,10 @@ function expectPhysicalBranch(hit: FightState, event: ComboOpening) {
   const branch = rosterPhysicalBranch(hit.player.id, event)!
   expect(branch.slot).not.toBe(event === 'corner-counter' ? 'backHeavy' : 'forwardHeavy')
   const list = comboChoices(hit).filter(({ move }) => move.slot === branch.slot)
-  expect(list).toHaveLength(1)
-  expect(list[0]).toMatchObject({ status: 'ready', opening: event, cost: 0 })
+  expect(list).toContainEqual(expect.objectContaining({ status: 'ready', opening: event, cost: 0 }))
   for (const down of [false, true]) {
     const started = routeMove(hit, branch.slot)
-    expect(started.player.attack?.moveId).toBe(`${hit.player.id}:${branch.slot}`)
+    expect(moveById(started.player.attack?.moveId)?.slot).toBe(branch.slot)
     const converted = keepGuard(started, 2, down)
     if (branch.slot === 'lowHeavy') expect(converted.opponent.knockdownFrames).toBeGreaterThan(0)
   }
@@ -230,12 +230,13 @@ describe.each([1, -1] as const)('personal conversions facing %s', (facing) => {
     expect(selectedGumLink(keepGuard(finisher, 2), 'player')).toBeFalsy()
   })
 
-  it('lets Franklin choose the short burst at range and either barrage from a wall counter', () => {
+  it('lets Franklin mix either barrage into a ranged hit or a wall counter', () => {
     const ranged = tip('franklin', facing)
     const atWall = corner('franklin', facing)
     const short = keepGuard(routeMove(ranged, 'forwardSpecial'), 11)
     expect(short.player.attack?.moveId).toBe('franklin:forwardSpecial')
-    expect(routeMove(ranged, 'neutralSpecial').player.attack).toBe(ranged.player.attack)
+    const long = routeMove(ranged, 'neutralSpecial')
+    expect(long.player.attack?.moveId).toBe('franklin:neutralSpecial')
     const shortWall = routeMove(atWall, 'forwardSpecial')
     const longWall = routeMove(atWall, 'neutralSpecial')
     expect(atWall.player.aura - shortWall.player.aura).toBe(24)
@@ -243,6 +244,7 @@ describe.each([1, -1] as const)('personal conversions facing %s', (facing) => {
     expect(attackData('special', shortWall.player).recovery).toBeLessThan(
       attackData('special', longWall.player).recovery,
     )
+    keepGuard(long, 21)
     keepGuard(shortWall, 11)
     keepGuard(longWall, 21)
   })

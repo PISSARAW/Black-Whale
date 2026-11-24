@@ -14,6 +14,8 @@ const audio = vi.hoisted(() => {
     createMix: vi.fn(() => {
       const mix = {
         context,
+        channels: { techniques: {}, music: { gain: param() } },
+        configure: vi.fn(),
         effects: { gain: param() },
         ambience: { gain: param() },
         pressure: { gain: param() },
@@ -25,7 +27,7 @@ const audio = vi.hoisted(() => {
       mixes.push(mix)
       return mix
     }),
-    continuous: vi.fn(() => {
+    continuous: vi.fn((_mix: unknown, _options: { noise?: boolean; level: number }) => {
       const voice = { frequency: param(), level: param(), pan: param(), stop: vi.fn() }
       voices.push(voice)
       return voice
@@ -82,6 +84,20 @@ describe('combat sound lifecycle', () => {
     expect(audio.context.close).not.toHaveBeenCalled()
   })
 
+  it('resets audio when seeking forward and consumes the destination without playing it', () => {
+    const start = beginFight(createFight('kurapika', 'chrollo'))
+    const director = createFightAudioDirector(start)!
+    const options = { paused: false, settings: DEFAULT_FIGHT_AUDIO }
+    director.update(start, options)
+    audio.play.mockClear()
+    const jumped = { ...start, frame: 500, time: 5, remainingFrames: 300 }
+    director.update(jumped, { ...options, seek: 1 })
+    director.update(jumped, { ...options, seek: 1 })
+    expect(audio.play).not.toHaveBeenCalled()
+    expect(audio.mixes[0].dispose).toHaveBeenCalledOnce()
+    director.dispose()
+  })
+
   it('stays inert after disposal', () => {
     const state = beginFight(createFight('kurapika', 'hisoka'))
     const director = createFightAudioDirector(state)!
@@ -100,6 +116,18 @@ describe('combat sound lifecycle', () => {
     for (const cutoff of hearing) expect(cutoff.setTargetAtTime.mock.lastCall?.[0]).toBe(420)
     director.update(state, { ...options, viewer: 'player' })
     for (const cutoff of hearing) expect(cutoff.setTargetAtTime.mock.lastCall?.[0]).toBe(18000)
+    director.dispose()
+  })
+
+  it('keeps the permanent noise floor below the audible action accents', () => {
+    const state = beginFight(createFight('kurapika', 'hisoka'))
+    const director = createFightAudioDirector(state)!
+    const sustainedNoise = audio.continuous.mock.calls
+      .map((call) => call[1])
+      .filter((options) => options.noise && options.level > 0)
+      .map((options) => options.level)
+
+    expect(sustainedNoise).toEqual([0.004, 0.004])
     director.dispose()
   })
 })

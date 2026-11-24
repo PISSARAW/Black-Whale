@@ -9,6 +9,7 @@ type ActionParser = (value: ActionRecord, side: CombatSide) => NetworkAction | n
 
 const PARSERS: Record<string, ActionParser> = {
   MOVE: (value, side) => movement('MOVE', value, side),
+  JUMP: (value, side) => movement('JUMP', value, side),
   EVADE: (value, side) => movement('EVADE', value, side),
   MODE: mode,
   RYU: ryu,
@@ -29,7 +30,7 @@ export function parseNetworkAction(value: unknown): NetworkAction | null {
 }
 
 function movement(
-  type: 'MOVE' | 'EVADE',
+  type: 'MOVE' | 'JUMP' | 'EVADE',
   value: ActionRecord,
   side: CombatSide,
 ): NetworkAction | null {

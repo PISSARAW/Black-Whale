@@ -21,6 +21,12 @@ export interface RelayConnection {
 export interface RelayOptions {
   /** Seat of a token in a match; throws when the token holds none. */
   authorize: (matchId: string, token: string) => FightSide
+  receiveFrames?: (
+    channel: string,
+    side: FightSide,
+    wire: Extract<RollbackWire, { type: 'frame' }>,
+  ) => boolean
+  disconnect?: (channel: string) => void
   now?: () => number
   /** Datagrams per seat per second; a 60 Hz client sends 60 frames plus pings. */
   rate?: number
@@ -85,11 +91,18 @@ export class ClashRollbackRelay {
 
   private receive(from: { matchId: string; side: FightSide; seat: Seat }, bytes: Uint8Array) {
     const { seat } = from
+    if (this.matches.get(from.matchId)?.[from.side] !== seat) return
     if (!this.withinRate(seat)) return seat.socket.close(CLOSE_RATE, 'rate')
     const wire = decodeRollbackWire(bytes)
-    if (!wire || wire.type === 'peer' || (wire.type === 'frame' && !validFrame(wire)))
+    if (!wire || !this.acceptWire(from.matchId, from.side, wire))
       return seat.socket.close(CLOSE_INVALID, 'invalid')
     this.matches.get(from.matchId)?.[other(from.side)]?.socket.send(bytes)
+  }
+
+  private acceptWire(channel: string, side: FightSide, wire: RollbackWire) {
+    if (wire.type === 'peer') return false
+    if (wire.type !== 'frame') return true
+    return validFrame(wire) && this.options.receiveFrames?.(channel, side, wire) !== false
   }
 
   private withinRate(seat: Seat): boolean {
@@ -105,6 +118,7 @@ export class ClashRollbackRelay {
     const seats = this.matches.get(matchId)
     if (seats?.[side] !== seat) return
     delete seats[side]
+    this.options.disconnect?.(matchId)
     this.tell(seats[other(side)], { type: 'peer', connected: false })
     if (!seats[other(side)]) this.matches.delete(matchId)
   }

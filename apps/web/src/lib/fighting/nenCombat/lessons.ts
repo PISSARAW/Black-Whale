@@ -9,8 +9,8 @@ export const NEN_COMBAT_LESSONS: readonly FightLesson[] = [
     title: ['En : intercepter sans la vue', 'En: intercept without sight'],
     steps: [
       [
-        'La vue est scellée dans cet exercice. Maintiens En (R, ou View + croix haut) et observe le contour d’un projectile entrant.',
-        'Sight is sealed in this exercise. Hold En (R, or View + D-pad up) and observe an incoming projectile contour.',
+        'La vue est scellée dans cet exercice. Maintiens En (V + J, ou View + croix haut) et observe le contour d’un projectile entrant.',
+        'Sight is sealed in this exercise. Hold En (V + J, or View + D-pad up) and observe an incoming projectile contour.',
       ],
       [
         'Maintiens En et commence ta garde ({guard}) juste avant le contact pour parer manuellement le projectile.',
@@ -29,8 +29,8 @@ export const NEN_COMBAT_LESSONS: readonly FightLesson[] = [
     title: ['In : dissimuler un tir de Nen', 'In: conceal a Nen shot'],
     steps: [
       [
-        'Maintiens In (X, ou View + croix bas). Ton corps reste visible ; seule l’aura dissimulable est cachée.',
-        'Hold In (X, or View + D-pad down). Your body remains visible; only concealable aura is hidden.',
+        'Maintiens In (V + K, ou View + croix bas). Ton corps reste visible ; seule l’aura dissimulable est cachée.',
+        'Hold In (V + K, or View + D-pad down). Your body remains visible; only concealable aura is hidden.',
       ],
       [
         'En gardant In, tire ({ranged}) et touche le mannequin avec un projectile effectivement dissimulé.',
@@ -49,8 +49,8 @@ export const NEN_COMBAT_LESSONS: readonly FightLesson[] = [
     title: ['Gyo : choisir entre voir et renforcer', 'Gyo: choose sight or reinforcement'],
     steps: [
       [
-        'Maintiens Gyo + Mains (G + 3, ou clic stick droit + croix gauche). Observe les autres zones moins protégées.',
-        'Hold Gyo + Hands (G + 3, or right-stick click + D-pad left). Observe the more exposed other zones.',
+        'Cible les mains sans Aura ni Garde (V + M, ou R3 + croix gauche). Observe les autres zones moins protégées.',
+        'Target the hands without Aura or Guard (V + M, or R3 + D-pad left). Observe the more exposed other zones.',
       ],
       [
         'Garde cette concentration et touche avec un léger ({light}). Un geste sans collision ne valide pas l’exercice.',
@@ -89,8 +89,8 @@ export const NEN_COMBAT_LESSONS: readonly FightLesson[] = [
     title: ['Shu + Ko : engager son arme', 'Shu + Ko: commit your weapon'],
     steps: [
       [
-        'Maintiens Shu (F ou View + croix gauche) sur les cartes réelles d’Hisoka.',
-        'Hold Shu (F or View + D-pad left) on Hisoka’s real cards.',
+        'Maintiens Shu (V + L ou View + croix gauche) sur les cartes réelles d’Hisoka.',
+        'Hold Shu (V + L or View + D-pad left) on Hisoka’s real cards.',
       ],
       [
         'En gardant Shu, engage Ko dans les mains : Aura + Garde + Gyo + Mains.',
@@ -113,12 +113,12 @@ export const NEN_COMBAT_LESSONS: readonly FightLesson[] = [
     title: ['Ryu : passer de l’attaque à la défense', 'Ryu: switch offense to defense'],
     steps: [
       [
-        'Concentre Ryu dans les mains (3, ou Garde + croix gauche sur Xbox), sans Gyo oculaire.',
-        'Focus Ryu in the hands (3, or Guard + D-pad left on Xbox), without ocular Gyo.',
+        'Maintiens Aura puis cible les mains (V + M, ou R3 + croix gauche sur Xbox) pour concentrer Ryu.',
+        'Hold Aura and target the hands (V + M, or R3 + D-pad left on Xbox) to focus Ryu.',
       ],
       [
-        'Déplace la répartition vers la tête (1, ou Garde + croix haut), puis garde cette zone.',
-        'Shift allocation to the head (1, or Guard + D-pad up), then guard that zone.',
+        'Déplace la répartition vers la tête sous Aura (V + U, ou R3 + croix haut), puis garde cette zone.',
+        'Shift Aura allocation to the head (V + U, or R3 + D-pad up), then guard that zone.',
       ],
       [
         'Bloque effectivement un léger du mannequin avec la tête renforcée. Un changement de pourcentage seul ne suffit pas.',

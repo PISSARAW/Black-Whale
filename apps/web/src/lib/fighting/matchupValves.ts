@@ -1,11 +1,10 @@
 import { finishFight } from './combatVerdict'
+import { lsdfJurisdiction } from './lsdf'
 import { clearMusseOwl } from './musseWindowUpgrades'
-import { observableAuraManifestation, PREDATOR_FULL_FRAMES } from './predatorUpgrades'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
 
 export const CAMILLA_CAPTURE_HP_THRESHOLD = 15
-export const RIHAN_TACTICAL_DEFENCE_FACTOR = 0.85
-export const RIHAN_TACTICAL_TRANSFER_FRAMES = 2
+export const RIHAN_TACTICAL_DEFENCE_FACTOR = 1
 export const YOKOTANI_DEFENSE_LINE_DISTANCE = 10
 export const KURAPIKA_ACTIVE_CHAIN_DRAIN_FACTOR = 1.5
 
@@ -34,46 +33,37 @@ export function canSubdueCamilla(state: FightState, actorSide: FightSide): boole
 
 export function subdueCamillaWithoutKill(state: FightState, actorSide: FightSide): FightState {
   if (!canSubdueCamilla(state, actorSide)) return state
-  return finishFight(state, actorSide, 'decision')
+  return finishFight(state, actorSide, 'technical-knockout')
 }
 
-/** 3. Yokotani (inside hideout): LSDF only activates if the intruder uses aggressive Hatsu or crosses his line. */
+/** Yokotani's jurisdiction uses the prepared hideout, Morena, and unlawful-intruder facts. */
 export function yokotaniIntrusionBreached(state: FightState, intruderSide: FightSide): boolean {
-  if (state.arenaId !== 'heilly-hideout') return false
   const yokotaniSide: FightSide = intruderSide === 'player' ? 'opponent' : 'player'
-  const intruder = state[intruderSide]
-  const yokotani = state[yokotaniSide]
-  const aggressiveHatsu = Boolean(intruder.attack?.hatsuSource)
-  const crossedLine = Math.abs(intruder.x - yokotani.x) <= YOKOTANI_DEFENSE_LINE_DISTANCE
-  return aggressiveHatsu || crossedLine
+  return lsdfJurisdiction(state, yokotaniSide)
 }
 
-/** 4. Rihan: against non-conjured/non-persistent foes, 3s study grants Tactical Read (2f transfer, +15% def) without 48h seal. */
+/** Legacy entry point: observation does not grant Rihan a generic defensive buff. */
 export function activateRihanTacticalRead(state: FightState, rihanSide: FightSide): FightState {
-  const rihan = state[rihanSide]
-  const foeSide: FightSide = rihanSide === 'player' ? 'opponent' : 'player'
-  if ((rihan.predatorStudyFrames ?? 0) < PREDATOR_FULL_FRAMES) return state
-  if (observableAuraManifestation(state, foeSide) !== null) return state
-  return {
-    ...state,
-    [rihanSide]: { ...rihan, predatorStudyFrames: 0, rihanTacticalRead: true },
-  }
+  void rihanSide
+  return state
 }
 
 export function rihanTacticalDefenceFactor(defender: ArcadeFighter): number {
-  return defender.rihanTacticalRead ? RIHAN_TACTICAL_DEFENCE_FACTOR : 1
+  void defender
+  return 1
 }
 
 /** 5. Tserriednich: Zetsu concentration is broken by Ren Malice, sound attacks, or active remote Kameo. */
 export function tserriednichConcentrationBroken(state: FightState, tserSide: FightSide): boolean {
   const tser = state[tserSide]
-  if ((tser.nenOwner ?? tser.id) !== 'tserriednich' || tser.nen.mode !== 'zetsu') return false
+  if ((tser.nenOwner ?? tser.id) !== 'tserriednich') return false
+  if (tser.nen.mode !== 'zetsu') return false
   const foeSide: FightSide = tserSide === 'player' ? 'opponent' : 'player'
   const foe = state[foeSide]
-  const soundThreat = Boolean(foe.melodyPerformance || foe.battleCantabile)
+  const soundThreat = [foe.melodyPerformance, foe.battleCantabile].some(Boolean)
   const kameoActing = state.kameos?.[foeSide]?.phase === 'acting'
   const fearStaggered = tser.hitStun > 0 && Boolean(tser.fearCooldownFrames)
-  return soundThreat || kameoActing || fearStaggered
+  return [soundThreat, kameoActing, fearStaggered].some(Boolean)
 }
 
 /** 6. Kurapika: Dowsing Chain detects `call` bluffs outside the Troupe; active chains accelerate Emperor Time cost. */

@@ -29,7 +29,7 @@ export function futureVisibleState(
   const deceived = futureDeceives(state, viewer)
   if (!preview && !deceived) return fieldView
   const index = preview ? (previewIndex ?? future.previewCursor) : Math.max(0, future.cursor - 1)
-  const predicted = future.frames[index]
+  const predicted = future.frames[Math.max(0, Math.min(index, future.frames.length - 1))]
   return {
     ...state,
     enReadings: undefined,

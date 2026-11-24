@@ -1,4 +1,4 @@
-import { theShip } from '../tour/blueprint'
+import { theShip, type TierPlan } from '../tour/blueprint'
 import { closestPointOnSegment, pointInPolygon, structureWalls } from '../tour/geometry'
 import type { Polygon, Space, Structure, Vec2, WallSegment } from '../tour/types'
 
@@ -6,11 +6,14 @@ export const BANQUET_HALL_ID = 'tier-1-banquet-hall'
 export const SCREENING_ROOM_ID = 'tier-2-screening-room'
 export const VIP_CASINO_ID = 'tier-1-vip-casino'
 export const OBSERVATION_DECK_ID = 'tier-3-observation-deck'
+export const WAREHOUSE_SECTOR_ID = 'tier-5-warehouse'
+export const WAREHOUSE_CORRIDOR_ID = 'tier-5-transverse-corridor'
 export const ARENA_TERRAIN_IDS = [
   BANQUET_HALL_ID,
   SCREENING_ROOM_ID,
   VIP_CASINO_ID,
   OBSERVATION_DECK_ID,
+  WAREHOUSE_SECTOR_ID,
 ] as const
 export type ArenaTerrainId = (typeof ARENA_TERRAIN_IDS)[number]
 
@@ -22,6 +25,7 @@ export const ARENA_TERRAINS: ReadonlyArray<{
   { id: SCREENING_ROOM_ID, tacticalRole: 'lanes' },
   { id: VIP_CASINO_ID, tacticalRole: 'cover' },
   { id: OBSERVATION_DECK_ID, tacticalRole: 'open' },
+  { id: WAREHOUSE_SECTOR_ID, tacticalRole: 'lanes' },
 ]
 const SPAWN_CLEARANCE = 1.5
 const SAMPLE_STEP = 2.5
@@ -54,6 +58,8 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
   const plan = ship.plans.get(space.tierId)
   if (!plan) throw new Error(`Combat terrain tier ${space.tierId} has no plan`)
 
+  if (spaceId === WAREHOUSE_SECTOR_ID) return buildWarehouseSector(space, plan)
+
   const structures = plan.structures.filter((structure) => structure.spaceId === space.id)
   const walls = [
     ...plan.walls.filter((wall) => wall.spaceId === space.id),
@@ -70,6 +76,33 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
     structures,
     spawns,
     bounds: boundsOf(space.footprint),
+  }
+}
+
+function buildWarehouseSector(space: Space, plan: TierPlan): CombatTerrain {
+  const footprint: Polygon = [
+    [-35, -45.5],
+    [77, -45.5],
+    [77, 10.5],
+    [-35, 10.5],
+  ]
+  const spaceIds = new Set([WAREHOUSE_SECTOR_ID, WAREHOUSE_CORRIDOR_ID])
+  const structures = plan.structures.filter((structure) => spaceIds.has(structure.spaceId))
+  const walls = [
+    ...plan.walls.filter((wall) => spaceIds.has(wall.spaceId)),
+    ...structures.flatMap(structureWalls),
+    ...boundaryWalls(space.id, footprint),
+  ]
+  const candidates = clearPoints(footprint, walls)
+  return {
+    id: space.id,
+    tierId: space.tierId,
+    space,
+    footprint,
+    walls,
+    structures,
+    spawns: [nearestTo(candidates, [21, -6]), nearestTo(candidates, [21, 7])],
+    bounds: boundsOf(footprint),
   }
 }
 

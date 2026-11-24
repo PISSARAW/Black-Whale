@@ -1,5 +1,6 @@
 import { addPoses, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { AIR_POSE } from './fightStance'
+import { FEITAN_JUMP } from './secondFiveLocomotion'
 import type { ArcadeFighter } from './types'
 
 /** Low acceleration, free arm trailing, eyes fixed ahead: reference 0:20–1:10. */
@@ -88,15 +89,18 @@ export function feitanAirPlan(fighter: ArcadeFighter, standing: FightPose): Body
   if (fighter.id !== 'feitan' || fighter.pose !== 'jump') return null
   const tuck = Math.max(0, 1 - Math.abs(fighter.velocityY) / 54)
   return {
-    pose: addPoses(standing, scalePose(AIR_POSE, 0.4 + tuck * 0.6), {
-      body: [0.2, 0, 0],
-      head: [-0.16, 0, 0],
-      rearShoulder: [0.65, 0, -0.6],
-      rearElbow: [-0.45, 0, 0],
-      leadShoulder: [-0.55, 0, 0.2],
-      leadElbow: [-1.1, 0, 0],
-      leadWrist: [0.2, 0, 0],
-    }),
+    pose: addPoses(
+      standing,
+      scalePose(AIR_POSE, 0.4 + tuck * 0.6),
+      scalePose(FEITAN_JUMP, 0.68 + tuck * 0.32),
+      {
+        rearShoulder: [0.65, 0, -0.6],
+        rearElbow: [-0.45, 0, 0],
+        leadShoulder: [-0.55, 0, 0.2],
+        leadElbow: [-1.1, 0, 0],
+        leadWrist: [0.2, 0, 0],
+      },
+    ),
     plant: false,
     key: 'feitan:air',
     blend: 0.045,

@@ -1,5 +1,6 @@
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { fightContactStyle } from './fightContactStyle'
+import { isKurapikaGoldenHeavy, kurapikaGoldenHeavyImpact } from './kurapikaGoldenHeavyImpact'
 import type { AttackKind, FighterId, FightImpact } from './types'
 
 /** Visual weight of an impact. This never changes damage, stun or hitstop. */
@@ -51,6 +52,7 @@ export function impactPresentation(
   impact: Pick<FightImpact, 'kind' | 'blocked' | 'critical' | 'knockdown' | 'wallSplat'> &
     Partial<Pick<FightImpact, 'parried' | 'avoided' | 'invulnerable'>>,
   attacker?: FighterId,
+  moveId?: string,
 ): ImpactPresentation {
   const base = PROFILES[impact.kind]
   if (fightContactStyle(impact) === 'evaded')
@@ -59,7 +61,7 @@ export function impactPresentation(
   const decisive = impact.critical || impact.knockdown || impact.wallSplat ? 1.25 : 1
   const force = character * decisive
   const guard = impact.blocked ? 0.72 : 1
-  return {
+  const profile = {
     sparks: Math.round(base.sparks * force),
     sparkSpeed: base.sparkSpeed * force,
     sparkSize: base.sparkSize * guard,
@@ -67,4 +69,7 @@ export function impactPresentation(
     shakeX: base.shakeX * force * guard,
     shakeY: base.shakeY * force * guard,
   }
+  return isKurapikaGoldenHeavy(moveId)
+    ? kurapikaGoldenHeavyImpact(profile, impact.blocked)
+    : profile
 }

@@ -48,4 +48,31 @@ describe('reactive Arena environment', () => {
     expect(next.environment.intervened).toBe(true)
     expect(next.outcome).toBe('lost')
   })
+
+  it('counts a Clash fighting move as audible in a clandestine Tour space', () => {
+    const state = initialCombatState({
+      playerAt: [0, 0],
+      opponentAt: [2, 0],
+      terrain: {
+        id: 'warehouse',
+        footprint: [
+          [-5, -5],
+          [5, -5],
+          [5, 5],
+          [-5, 5],
+        ],
+        walls: [],
+      },
+      context: 'CLANDESTINE',
+    })
+    const next = combatReducer(state, {
+      type: 'FIGHTING_MOVE',
+      side: 'player',
+      fighterId: 'kurapika',
+      slot: 'standingLight',
+      targetAt: state.opponent.position,
+    })
+
+    expect(next.environment.noise).toBe(1)
+  })
 })

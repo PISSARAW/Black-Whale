@@ -6,7 +6,7 @@ import {
 } from './parallelFutureAbility'
 import { fieldDeceives } from './futureIllusion'
 import { soloFutureControlsLive, simulateFuturePerception } from './futurePerception'
-import { forecastParallelFuture } from './parallelFutureForecast'
+import { extendFutureForecast, startFutureForecast } from './parallelFutureForecast'
 import { packReplayInput, unpackReplayInput } from './fightReplayInput'
 import { FUTURE_PREPARATION_FRAMES, FUTURE_WINDOW_FRAMES } from './parallelFutureTypes'
 import type {
@@ -15,6 +15,9 @@ import type {
   SimulateFutureFrame,
 } from './parallelFutureTypes'
 import type { ArcadeFighter, FightSide, FightState } from './types'
+
+const VISION_FRAMES_PER_STEP = 4
+const AI_LOOKAHEAD = 60
 
 interface FutureEngine {
   simulate: SimulateFutureFrame
@@ -30,7 +33,7 @@ export function stepParallelFuture(
   if (!future) return simulateFuturePerception(state, controls, engine.simulate)
   if (!futureValid(state)) return engine.simulate(stopParallelFuture(state), controls)
   if (future.phase === 'preparing') return stepPreparation(state, controls, engine.simulate)
-  if (future.phase === 'vision') return stepVision(state, controls)
+  if (future.phase === 'vision') return stepVision(state, controls, engine.simulate)
   return stepDivergence(state, controls, engine)
 }
 
@@ -59,10 +62,16 @@ function stepPreparation(
     player: unpackReplayInput(packReplayInput(controls.player)),
     opponent: controls.opponent && unpackReplayInput(packReplayInput(controls.opponent)),
   }
-  const frames = forecastParallelFuture(prepared, held, simulate)
+  const vision = {
+    ...future,
+    preparation,
+    phase: 'vision' as const,
+    controls: held,
+    forecast: startFutureForecast(prepared),
+  }
   return {
     ...prepared,
-    parallelFuture: { ...prepared.parallelFuture, phase: 'vision', frames, controls: held },
+    parallelFuture: extendFutureForecast(vision, VISION_FRAMES_PER_STEP, simulate),
     [future.owner]: { ...owner, parallelEyesClosed: true },
   }
 }
@@ -79,13 +88,16 @@ function preparationInterrupted(before: FightState, after: FightState): boolean 
   )
 }
 
-function stepVision(state: FightState, controls: FutureControls): FightState {
+function stepVision(
+  state: FightState,
+  controls: FutureControls,
+  simulate: SimulateFutureFrame,
+): FightState {
   const future = state.parallelFuture!
   if (future.owner === 'opponent' && controls.ai) return beginFutureDivergence(state, 'opponent')
-  return {
-    ...state,
-    parallelFuture: { ...future, previewCursor: (future.previewCursor + 4) % FUTURE_WINDOW_FRAMES },
-  }
+  const previewCursor = (future.previewCursor + VISION_FRAMES_PER_STEP) % FUTURE_WINDOW_FRAMES
+  const next = extendFutureForecast(future, previewCursor + VISION_FRAMES_PER_STEP, simulate)
+  return { ...state, parallelFuture: { ...next, previewCursor } }
 }
 
 function stepDivergence(
@@ -93,21 +105,33 @@ function stepDivergence(
   controls: FutureControls,
   engine: FutureEngine,
 ): FightState {
-  const future = state.parallelFuture!
+  const prepared = prepareDivergenceForecast(state, controls, engine.simulate)
+  const future = prepared.parallelFuture!
   const held = future.controls!
   const replayControls =
     future.owner === 'player'
       ? { ...controls, opponent: held.opponent, ai: false }
       : { ...controls, player: soloFutureControlsLive(state) ? controls.player : held.player }
   let next = restorePerceivedFacing(
-    simulateFuturePerception(state, replayControls, engine.simulate),
-    state,
+    simulateFuturePerception(prepared, replayControls, engine.simulate),
+    prepared,
   )
   if (!next.parallelFuture) return next
-  if (future.owner === 'player' && held.ai) next = replayAi(next, state, engine.replay)
+  if (future.owner === 'player' && held.ai) next = replayAi(next, prepared, engine.replay)
   if (next.phase !== 'fighting' || future.cursor + 1 >= FUTURE_WINDOW_FRAMES)
     return stopParallelFuture(next, next.phase === 'fighting' && Boolean(next.futureIllusion))
   return { ...next, parallelFuture: { ...future, cursor: future.cursor + 1 } }
+}
+
+function prepareDivergenceForecast(
+  state: FightState,
+  controls: FutureControls,
+  simulate: SimulateFutureFrame,
+): FightState {
+  const active = state.parallelFuture!
+  const lookahead = active.owner === 'opponent' && controls.ai ? AI_LOOKAHEAD : 1
+  const future = extendFutureForecast(active, active.cursor + lookahead, simulate)
+  return future === active ? state : { ...state, parallelFuture: future }
 }
 
 function restorePerceivedFacing(next: FightState, original: FightState): FightState {

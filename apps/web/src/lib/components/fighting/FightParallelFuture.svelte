@@ -16,7 +16,8 @@
   $: future = state.parallelFuture
   $: ownView = future?.owner === viewer
   $: if (future?.phase !== 'vision') scrub = null
-  $: index = scrub ?? future?.previewCursor ?? 0
+  $: lastAvailable = Math.max(0, (future?.frames.length ?? 0) - 1)
+  $: index = Math.min(lastAvailable, scrub ?? future?.previewCursor ?? 0)
   $: sample = future?.frames[index]
   $: echo = future?.frames[Math.max(0, future.cursor - 1)]
   $: active = Boolean(future)
@@ -116,7 +117,7 @@
           <input
             type="range"
             min="0"
-            max={FUTURE_WINDOW_FRAMES - 1}
+            max={lastAvailable}
             value={index}
             oninput={(event) => (scrub = Number(event.currentTarget.value))}
           />

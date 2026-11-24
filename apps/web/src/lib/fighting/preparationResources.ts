@@ -20,6 +20,11 @@ export const SCENARIO_RESOURCES: readonly {
   },
   { id: 'corpses', fr: 'Cadavres réels à implanter', en: 'Real corpses for implantation' },
   { id: 'hostages', fr: 'Otages déjà retenus', en: 'Already held hostages' },
+  {
+    id: 'sedatives',
+    fr: 'Sédatif réel préparé pour le sommeil prolongé d’une conscience',
+    en: 'Actual sedative prepared for a consciousness’ prolonged sleep',
+  },
   { id: 'documents', fr: 'Documents papier déjà écrits', en: 'Already written paper documents' },
   { id: 'maps', fr: 'Plans papier de l’arène', en: 'Paper arena maps' },
   {

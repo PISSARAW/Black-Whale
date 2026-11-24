@@ -1,19 +1,46 @@
 import { writable } from 'svelte/store'
 import type { CareerAppearance } from '../career/types'
 import type { FightSide, FightState } from '../types'
+import { INTRO_SHOT_MIN_SECONDS, introDialogue } from './introDialogue'
+
+const DEFAULT_SHOTS = [INTRO_SHOT_MIN_SECONDS, INTRO_SHOT_MIN_SECONDS] as const
 
 export interface IntroFrame {
   elapsed: number
   duration: number
   mode: CareerAppearance['intro']
   waiting: boolean
+  run?: number
+  firstSide?: FightSide
+  shotSeconds?: readonly [number, number]
 }
 
 export function introShot(frame: IntroFrame): { side: FightSide | null; progress: number } {
   if (frame.mode !== 'full') return { side: null, progress: frame.elapsed / frame.duration }
-  if (frame.elapsed < 2.4) return { side: 'player', progress: frame.elapsed / 2.4 }
-  if (frame.elapsed < 4.8) return { side: 'opponent', progress: (frame.elapsed - 2.4) / 2.4 }
-  return { side: null, progress: (frame.elapsed - 4.8) / 1.6 }
+  const [first, second] = frame.shotSeconds ?? DEFAULT_SHOTS
+  const opening = frame.firstSide ?? 'player'
+  if (frame.elapsed < first) return { side: opening, progress: frame.elapsed / first }
+  if (frame.elapsed < first + second)
+    return {
+      side: opening === 'player' ? 'opponent' : 'player',
+      progress: (frame.elapsed - first) / second,
+    }
+  return { side: null, progress: (frame.elapsed - first - second) / 1.6 }
+}
+
+function makeIntroFrame(
+  state: FightState,
+  options: Pick<IntroFrame, 'mode' | 'run' | 'waiting'>,
+): IntroFrame {
+  const dialogue = options.mode === 'full' ? introDialogue(state) : undefined
+  const shots = dialogue?.shotSeconds ?? DEFAULT_SHOTS
+  return {
+    ...options,
+    elapsed: 0,
+    duration: options.mode === 'full' ? shots[0] + shots[1] + 1.6 : 1.6,
+    firstSide: dialogue?.firstSide,
+    shotSeconds: dialogue?.shotSeconds,
+  }
 }
 
 /** The simulation stays ready until both entrances and the opening signal finish. */
@@ -24,6 +51,7 @@ export function createIntroPlayback(complete: () => void, paused: () => boolean 
   let ready = false
   let failed = false
   let skipped = false
+  let run = 0
   const publish = () => store.set(frame ? { ...frame } : null)
   function finish() {
     if (!frame) return
@@ -40,19 +68,20 @@ export function createIntroPlayback(complete: () => void, paused: () => boolean 
     observe(state: FightState, options: { enabled: boolean; mode: CareerAppearance['intro'] }) {
       if (!options.enabled || state.phase !== 'ready') {
         source = null
-        frame = null
-        publish()
+        if (frame) {
+          frame = null
+          publish()
+        }
         return
       }
       if (source === state) return
       source = state
       skipped = false
-      frame = {
-        elapsed: 0,
-        duration: options.mode === 'full' ? 6.4 : 1.6,
+      frame = makeIntroFrame(state, {
         mode: options.mode,
         waiting: !ready,
-      }
+        run: ++run,
+      })
       publish()
       release()
     },

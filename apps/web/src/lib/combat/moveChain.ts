@@ -40,6 +40,7 @@ export interface BufferedMove {
   fighterId: import('../fighting/types').FighterId
   slot: import('../fighting/types').MoveSlot
   targetAt: Vec2
+  targetObject?: { id: string; position: Vec2 }
   until: number
 }
 
@@ -140,7 +141,7 @@ export function settleFightingMove({ before, after, side, intent }: Settlement):
   const defender = knockBack({
     defender: stunned,
     from: after[side].position,
-    metres: connected === 'hit' ? move.tuning.knockback * LANE_METRE : 0,
+    metres: move.tuning.knockback * LANE_METRE,
     walls: after.terrain.walls,
   })
   const points = (intent.scored ?? 0) + event.points

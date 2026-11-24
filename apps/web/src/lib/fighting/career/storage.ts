@@ -70,10 +70,54 @@ export function readCareer(storage?: Pick<Storage, 'getItem'>): CareerProfile {
       ...readTotals(value),
       appearance: readAppearance(value.appearance),
       history: mergeHistory(value.history.filter(careerMatch), []),
+      opponentKnowledge: readOpponentKnowledge(value.opponentKnowledge),
+      rematchVows: readRematchVows(value.rematchVows),
     }
   } catch {
     return emptyCareer()
   }
+}
+
+function readRematchVows(value: unknown): CareerProfile['rematchVows'] {
+  const vows: CareerProfile['rematchVows'] = {}
+  if (!record(value)) return vows
+  const ids = new Set(FIGHTING_ROSTER.map(({ id }) => id))
+  for (const [id, vow] of Object.entries(value)) {
+    if (
+      !ids.has(id as never) ||
+      !record(vow) ||
+      vow.opponent !== id ||
+      !oneOf(vow.kind, ['no-retreat', 'open-hatsu', 'single-hatsu']) ||
+      typeof vow.sourceMatchId !== 'string'
+    )
+      continue
+    vows[id as keyof typeof vows] = vow as never
+  }
+  return vows
+}
+
+function readOpponentKnowledge(value: unknown): CareerProfile['opponentKnowledge'] {
+  const knowledge: CareerProfile['opponentKnowledge'] = {}
+  if (!record(value)) return knowledge
+  const ids = new Set(FIGHTING_ROSTER.map(({ id }) => id))
+  for (const [id, dossier] of Object.entries(value)) {
+    if (!ids.has(id as never) || !record(dossier) || !Array.isArray(dossier.entries)) continue
+    const entries = dossier.entries.filter((entry) => {
+      if (!record(entry) || typeof entry.fact !== 'string') return false
+      return (
+        (entry.fact === 'aura' || entry.fact === 'kameo' || entry.fact.startsWith('condition:')) &&
+        isNumber(entry.observations) &&
+        oneOf(entry.confidence, ['suspected', 'confirmed', 'established']) &&
+        typeof entry.lastMatchId === 'string' &&
+        isNumber(entry.lastSeenAt)
+      )
+    })
+    knowledge[id as keyof typeof knowledge] = {
+      opponent: id as keyof typeof knowledge,
+      entries: entries.slice(0, 32) as never,
+    }
+  }
+  return knowledge
 }
 function readAppearance(value: Record<string, unknown>): CareerProfile['appearance'] {
   return {

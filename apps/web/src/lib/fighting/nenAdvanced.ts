@@ -77,7 +77,8 @@ export function applyAdvancedNen(fighter: ArcadeFighter, input: FightInput): Arc
   fighter = clearBodyGyo(fighter)
   const available = advancedNenAvailable(fighter)
   const en = available && Boolean(input.en) && canMaintainEn(fighter, input)
-  const shu = available && Boolean(input.shu || autoShuActive(fighter, input)) && shuSupportAvailable(fighter)
+  const shu =
+    available && Boolean(input.shu || autoShuActive(fighter, input)) && shuSupportAvailable(fighter)
   if (fighter.nen.ko) {
     const overlaid = action(fighter, { type: 'SHU', objectId: shuObject(fighter), on: shu })
     return applySightInputs(overlaid, input, available)
@@ -96,7 +97,9 @@ function applyManualFocus(
 ): ArcadeFighter {
   const zone = selectedNenZone(input)
   if (!available || !zone) return fighter
-  return input.gyo && !input.aura ? focusBodyGyo(fighter, zone) : focusNenZone(fighter, zone)
+  return (input.gyo || input.directControls) && !input.aura
+    ? focusBodyGyo(fighter, zone)
+    : focusNenZone(fighter, zone)
 }
 
 function applySightInputs(
@@ -106,7 +109,12 @@ function applySightInputs(
 ): ArcadeFighter {
   let next = applyOcularInput(fighter, input, available)
   const directionalIn = Boolean(
-    input.aura && !input.guard && !input.down && !input.jump && holdingBack(fighter, input),
+    !input.directControls &&
+    input.aura &&
+    !input.guard &&
+    !input.down &&
+    !input.jump &&
+    holdingBack(fighter, input),
   )
   const wantIn = Boolean(input.conceal || directionalIn || fighter.attack?.concealed)
   if (wantIn || fighter.nen.in)

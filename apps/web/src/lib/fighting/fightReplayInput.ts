@@ -25,8 +25,15 @@ export const REPLAY_INPUT_KEYS = [
   'kameo',
   'burst',
   'context',
+  'directControls',
+  'zetsuIntent',
+  'onIntent',
+  'seiyakuIntent',
+  'lowGyoIntent',
+  'directionalZetsu',
 ] as const satisfies readonly (keyof FightInput)[]
 export const REPLAY_INPUT_MASK = 2 ** REPLAY_INPUT_KEYS.length - 1
+const DIRECT_CONTROL_START = REPLAY_INPUT_KEYS.indexOf('directControls')
 export function packReplayInput(input: FightInput): number {
   return REPLAY_INPUT_KEYS.reduce(
     (bits, key, index) => bits | (Number(Boolean(input[key])) << index),
@@ -36,7 +43,8 @@ export function packReplayInput(input: FightInput): number {
 export function unpackReplayInput(bits: number): FightInput {
   const input = { ...EMPTY_INPUT }
   REPLAY_INPUT_KEYS.forEach((key, index) => {
-    input[key] = Boolean(bits & (1 << index))
+    const held = Boolean(bits & (1 << index))
+    if (held || index < DIRECT_CONTROL_START) input[key] = held
   })
   return input
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { combatReducer, initialCombatState } from './reducer'
 import type { CombatState } from './types'
-import type { MoveSlot } from '../fighting/types'
+import type { FighterId, MoveSlot } from '../fighting/types'
 
 const terrain = initialCombatState().terrain
 
@@ -15,11 +15,11 @@ function duel(guard: CombatState['opponent']['guard'] = 'torso'): CombatState {
   }
 }
 
-function press(state: CombatState, slot: MoveSlot): CombatState {
+function press(state: CombatState, slot: MoveSlot, fighterId: FighterId = 'kurapika'): CombatState {
   return combatReducer(state, {
     type: 'FIGHTING_MOVE',
     side: 'player',
-    fighterId: 'kurapika',
+    fighterId,
     slot,
     targetAt: [3, 0],
   })
@@ -40,25 +40,26 @@ describe('Clash damage scoring in Arena', () => {
 
   it('scores a combo once, at the value of its best hit', () => {
     let state = tick(press(duel(), 'standingLight'), 4 / 60)
-    state = tick(press(state, 'standingHeavy'), 8 / 60)
+    state = tick(press(state, 'standingHeavy'), state.hitstop + 8 / 60)
     expect(state.lastEvent?.impact).toBe('critical')
     expect(state.player.score).toBe(2)
 
-    state = tick(press(state, 'forwardSpecial'), 10 / 60)
+    state = tick(press(state, 'forwardSpecial'), state.hitstop + 10 / 60)
     expect(state.lastEvent?.impact).toBe('knockdown')
     expect(state.player.score).toBe(3)
     expect(state.player.chain?.points).toBe(3)
   })
 
   it('scores nothing for a move without authored damage', () => {
-    const bound = tick(press(duel(), 'neutralSpecial'), 12 / 60)
+    const bound = tick(press(duel(), 'neutralSpecial', 'theta'), 12 / 60)
 
     expect(bound.lastEvent?.attacker).toBe('player')
     expect(bound.player.score).toBe(0)
   })
 
   it('keeps the knockout for the finisher on a staggered body', () => {
-    const opened = tick(tick(press(duel('head'), 'standingLight'), 4 / 60), 0.19)
+    const contact = tick(press(duel('head'), 'standingLight'), 4 / 60)
+    const opened = tick(contact, contact.hitstop + 0.19)
     expect(opened.opponent.condition).toBe('staggered')
 
     // The jab's knockback put the opponent out of the finisher's reach: step back in.

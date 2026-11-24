@@ -46,8 +46,8 @@ function advanceSlot(state: FightState, side: FightSide, call?: KameoCallId): Fi
   const stepped = { ...moved, phaseFrames: moved.phaseFrames + 1 }
   if (interrupted(state, side, stepped)) {
     const inherited =
-      stepped.fighter.health <= 0 || stepped.fighter.knockdownFrames > 0
-        ? inheritBenjaminGuardKameo(state[side], stepped.fighter.id)
+      stepped.fighter.health <= 0
+        ? inheritBenjaminGuardKameo(state[side], stepped.fighter.id, stepped.fighter.health <= 0)
         : state[side]
     const updated = inherited !== state[side] ? { ...state, [side]: inherited } : state
     return withSlot(updated, side, phase(stepped, 'leaving'))

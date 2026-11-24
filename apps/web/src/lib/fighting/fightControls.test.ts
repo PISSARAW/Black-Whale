@@ -29,35 +29,54 @@ function pad(buttons: number[] = [], axes = [0, 0], index = 0): FightPad {
 const key = (value: string, code = value) => ({ key: value, code })
 
 describe('fight keyboard configuration', () => {
-  it('keeps the 8-button layout and pause distinct for both players', () => {
+  it('routes the top-row Easter Egg keys on AZERTY and QWERTY without consuming pause or Nen', () => {
+    const bindings = defaultBindings()
+    const mapper = createKeyboardMapper()
+    expect(mapper.key(key('v', 'KeyV'), true, bindings)).toBe('direct:playerNen')
+    for (const [number, azerty] of [
+      ['1', '&'],
+      ['8', '_'],
+    ]) {
+      const code = `Digit${number}`
+      expect(mapper.key(key(azerty, code), true, bindings)).toBe(number)
+      mapper.key(key(azerty, code), false, bindings)
+      expect(mapper.key(key(number, code), true, bindings)).toBe(number)
+      mapper.key(key(number, code), false, bindings)
+      expect(assignControlKey(bindings, 'playerLight', number)).toBeNull()
+    }
+    expect(mapper.key(key('p', 'KeyP'), true, bindings)).toBe('p')
+  })
+  it('keeps the direct layout and pause distinct for both players', () => {
     const keys = defaultBindings()
     expect(bindingError(keys)).toBeNull()
     expect(keys.playerKameo).toBe('u')
-    expect(keys.playerBurst).toBe('o')
+    expect(keys.playerBurst).toBe('n')
+    expect(keys.playerProjectile).toBe('o')
+    expect(keys.playerNen).toBe('v')
     expect(keys.playerContext).toBe('h')
-    expect(keys.opponentKameo).toBe('.')
-    expect(keys.opponentBurst).toBe('/')
+    expect(keys.opponentKameo).toBe('e')
+    expect(keys.opponentBurst).toBe('x')
     expect(keys.opponentContext).toBe('b')
     expect(keys.pause).toBe('p')
   })
   it('rejects duplicate keys, browser shortcuts and Easter Egg keys', () => {
-    for (const value of ['k', 'F2', 'F4', 'F5', 'Tab', 'Escape'])
+    for (const value of ['k', 'F2', 'F4', 'F5', 'Tab', 'Escape', 'R', 'F', 'X', 'G', 'P'])
       expect(assignControlKey(defaultBindings(), 'playerLight', value)).toBeNull()
   })
   it('remaps the physical key and disables its former primary shortcut', () => {
     const duplicate = assignControlKey(defaultBindings(), 'playerLight', 'M')
-    expect(duplicate).toBeNull() // P2 heavy already owns M.
+    expect(duplicate).toBeNull() // M belongs to Throw.
     const custom = assignControlKey(defaultBindings(), 'playerLight', 'é')!
     const mapper = createKeyboardMapper()
-    expect(mapper.key(key('é', 'KeyE'), true, custom)).toBe('j')
+    expect(mapper.key(key('é', 'Digit2'), true, custom)).toBe('direct:playerLight')
     expect(mapper.key(key('j', 'KeyJ'), true, custom)).toBeNull()
   })
   it('releases the original command when remapping takes place during a held key', () => {
     const mapper = createKeyboardMapper()
     const original = assignControlKey(defaultBindings(), 'playerLight', 'é')!
-    mapper.key(key('é', 'KeyE'), true, original)
-    expect(mapper.key(key('é', 'KeyE'), true, defaultBindings())).toBe('j')
-    expect(mapper.key(key('é', 'KeyE'), false, defaultBindings())).toBe('j')
+    mapper.key(key('é', 'Digit2'), true, original)
+    expect(mapper.key(key('é', 'Digit2'), true, defaultBindings())).toBe('direct:playerLight')
+    expect(mapper.key(key('é', 'Digit2'), false, defaultBindings())).toBe('direct:playerLight')
   })
   it('loads only complete valid bindings and tolerates damaged or inaccessible storage', () => {
     const original = assignControlKey(defaultBindings(), 'playerLight', 'é')!
@@ -99,6 +118,12 @@ describe('standard fighting gamepads', () => {
     expect(hatsuPress.actions).toEqual(['special'])
     expect(sampleGamepad(pad(), pad([2])).actions).toEqual([])
     expect(sampleGamepad(pad(), pad()).actions).toEqual([])
+  })
+  it('uses Guard + Hatsu for the ranged action without arming Hatsu', () => {
+    const frame = sampleGamepad(pad([4, 2]), pad([4]))
+    expect(frame.actions).toEqual(['ranged'])
+    expect(frame.input.guard).toBe(true)
+    expect(frame.input.hatsu).toBe(false)
   })
   it('requires neutral after connection and does not fire a held attack on startup', () => {
     const reader = createGamepadReader()
@@ -187,11 +212,71 @@ describe('configured fight input dispatch', () => {
     expect(opponentControl).toHaveBeenCalledWith('context', true)
     expect(opponentControl).toHaveBeenCalledWith('burst', true)
   })
+  it('dispatches every advertised keyboard Nen shortcut', () => {
+    const control = vi.fn()
+    const options = {
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-ai' }),
+      keys: { player: 'F2', opponent: 'F4' },
+      input: EMPTY_INPUT,
+      opponentInput: EMPTY_INPUT,
+      easter: vi.fn(),
+      control,
+      opponentControl: vi.fn(),
+      opponentAttack: vi.fn(),
+      attack: vi.fn(),
+      action: vi.fn(),
+    }
+    const shortcuts = {
+      r: 'en',
+      f: 'shu',
+      x: 'conceal',
+      g: 'gyo',
+      '1': 'focusHead',
+      '2': 'focusTorso',
+      '3': 'focusHands',
+      '4': 'focusFeet',
+    } as const
+    for (const [pressed, input] of Object.entries(shortcuts)) {
+      dispatchFightKey(
+        { key: pressed, repeat: false, preventDefault: vi.fn() } as unknown as KeyboardEvent,
+        true,
+        options,
+      )
+      expect(control).toHaveBeenLastCalledWith(input, true)
+    }
+  })
+  it('gives arrows to P2 locally and keeps them as P1 aliases against the AI', () => {
+    const control = vi.fn(),
+      opponentControl = vi.fn()
+    const options = {
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-local' }),
+      keys: { player: 'F2', opponent: 'F4' },
+      input: EMPTY_INPUT,
+      opponentInput: EMPTY_INPUT,
+      easter: vi.fn(),
+      control,
+      opponentControl,
+      opponentAttack: vi.fn(),
+      attack: vi.fn(),
+      action: vi.fn(),
+    }
+    const event = () =>
+      ({ key: 'ArrowLeft', repeat: false, preventDefault: vi.fn() }) as unknown as KeyboardEvent
+    dispatchFightKey(event(), true, options)
+    expect(opponentControl).toHaveBeenCalledWith('left', true)
+    expect(control).not.toHaveBeenCalled()
+
+    dispatchFightKey(event(), true, {
+      ...options,
+      state: createFightState('kurapika', 'hisoka', { mode: 'versus-ai' }),
+    })
+    expect(control).toHaveBeenCalledWith('left', true)
+  })
   it('renders configured move commands without replacing technique names', () => {
     const bindings = { ...defaultBindings(), playerSpecial: 'é', playerHeavy: '`' }
-    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / `+é')
+    expect(moveInputHint('← + L / H', bindings)).toBe('← + é / i')
     expect(moveInputHint('HISOKA · HATSU · KO', bindings)).toBe('HISOKA · HATSU · KO')
-    expect(moveInputHint('L / H', bindings, 'opponent')).toBe(', / m+,')
+    expect(moveInputHint('L / H', bindings, 'opponent')).toBe('y / t+y')
   })
 })
 

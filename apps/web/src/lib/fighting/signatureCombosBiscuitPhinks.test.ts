@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { signatureCombo, type SignatureCombo } from './signatureCombos'
-import { createSignatureFight, playSignatureCombo, playSignatureSteps } from './signatureComboRunner'
+import {
+  createSignatureFight,
+  playSignatureCombo,
+  playSignatureSteps,
+} from './signatureComboRunner'
 import { BISCUIT_TRUE_FORM_REACH } from './biscuitForm'
 import { attackData } from './frameData'
 import { performMove, tickFight } from './engine'
@@ -61,7 +65,6 @@ describe('Dix tours, un poing', () => {
     expect(run.contacts.map((hit) => hit.move)).toEqual([
       'phinks:standingLight',
       'phinks:standingHeavy',
-      'phinks:forwardHeavy',
       'phinks:finisher',
     ])
     expect(run.state.player.hatsuEffects.cyclotronTurns).toBe(0)

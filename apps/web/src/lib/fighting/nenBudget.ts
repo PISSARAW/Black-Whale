@@ -1,5 +1,6 @@
 import { isBiscuitTrueForm } from './biscuitForm'
 import { fightingStyle } from './fightStyles'
+import { paperDolls } from './kallutoSurveillance'
 import { fighterNenTraining } from './nenMastery'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
@@ -39,19 +40,18 @@ function maintainedAura(state: FightState, side: FightSide, fighter: ArcadeFight
   const painSun = Boolean(fighter.hatsuEffects.painPacker?.sun)
   const owlActive = Boolean(
     fighter.musseOwlActive ||
-      fighter.secretWindow ||
-      (state.musseOwl?.active && state.musseOwl.owner === side),
+    fighter.secretWindow ||
+    (state.musseOwl?.active && state.musseOwl.owner === side),
   )
   const machiBind = Boolean(state[otherSide].machiThread?.owner === side)
   const kallutoDoll = Boolean(
-    (state.kallutoDoll?.active && state.kallutoDoll.owner === side) || fighter.paperDoll,
+    (state.kallutoDoll?.active && state.kallutoDoll.owner === side) ||
+    paperDolls(fighter).some((doll) => doll.active !== false),
   )
   const zakuroDrops = Boolean(
     state.zakuroBloodDrops?.owner === side || fighter.bloodyMary?.drops.length,
   )
-  const bioPigeon = Boolean(
-    state.hinrighBioPigeon?.active && state.hinrighBioPigeon.owner === side,
-  )
+  const bioPigeon = Boolean(state.hinrighBioPigeon?.active && state.hinrighBioPigeon.owner === side)
   const voconteDoor = Boolean(state.voconteDoors?.networks[side]?.active)
   return (
     Number(Boolean(fighter.hanzoProjection)) * 24 +

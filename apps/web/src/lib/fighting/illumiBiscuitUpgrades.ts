@@ -1,4 +1,5 @@
 import { isBiscuitTrueForm } from './biscuitForm'
+import { requestsZetsu } from './fightInputTypes'
 import type { ArcadeFighter, FightInput, FightState } from './types'
 
 export const ILLUMI_NEEDLE_ORDER_FRAMES = 240 // 4 s
@@ -36,7 +37,7 @@ export function implantIllumiNeedleOrder(
 export function hasIllumiNeedleOrder(fighter: ArcadeFighter): boolean {
   return Boolean(
     (fighter.illumiNeedleOrder && fighter.illumiNeedleOrder.remainingFrames > 0) ||
-      fighter.needlePuppet?.needleEmbedded,
+    fighter.needlePuppet?.needleEmbedded,
   )
 }
 
@@ -45,7 +46,8 @@ export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInp
   const order = fighter.illumiNeedleOrder?.order
   if (!order) return input
   if (order === 'retreat') {
-    const pressingForward = fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
+    const pressingForward =
+      fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
     const reversedMove = pressingForward
       ? { left: !input.left, right: !input.right }
       : { left: input.left, right: input.right }
@@ -58,7 +60,7 @@ export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInp
     }
   }
   // 'zetsu' order blocks Ken (guard + aura) and Ren (aura without down) until needle is pulled.
-  if (input.aura && !input.down) return { ...input, aura: false }
+  if (input.aura && !requestsZetsu(input)) return { ...input, aura: false }
   return input
 }
 
@@ -115,7 +117,8 @@ export function advanceIllumiBiscuitUpgrades(state: FightState): FightState {
       ...next,
       [side]: {
         ...f,
-        illumiNeedleOrder: remaining > 0 ? { ...f.illumiNeedleOrder, remainingFrames: remaining } : undefined,
+        illumiNeedleOrder:
+          remaining > 0 ? { ...f.illumiNeedleOrder, remainingFrames: remaining } : undefined,
       },
     }
   }

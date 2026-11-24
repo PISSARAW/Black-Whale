@@ -1,6 +1,11 @@
 <script lang="ts">
   import { clashCareer } from '$lib/fighting/career/profile'
   import FightCeremony from '$lib/components/fighting/FightCeremony.svelte'
+  import {
+    defaultFightComfort,
+    readFightComfort,
+    type FightComfort,
+  } from '$lib/fighting/fightComfort'
   import { mountPvpDuelLoop } from '$lib/fighting/pvp/duelLoop'
   import { FIGHT_VISUAL_PREDICTION } from '$lib/fighting/fightVisualPrediction'
   import { onMount, setContext } from 'svelte'
@@ -11,7 +16,6 @@
   import FightControlsManual from '$lib/components/fighting/FightControlsManual.svelte'
   import { createFightControls, dispatchFightKey } from '../fightingControls'
   import { listenFightEvents } from '../fightingEvents'
-  import { attackKeys } from '../fightingKeys'
   import { FIGHT_CONTROLS_CONTEXT } from '$lib/fighting/fightControlHints'
   import { defaultEasterEggPreferences } from '$lib/fighting/easterEggPreferences'
   import { packReplayInput } from '$lib/fighting/fightReplayInput'
@@ -23,6 +27,8 @@
   export let invite = ''
   export let watchInvite = ''
   export let autoConnect = false
+  const standardComfort = defaultFightComfort()
+  let rollbackComfort: FightComfort = { ...standardComfort, graphics: 'performance' }
   let victoryActive = false
   let input = { ...EMPTY_INPUT }
   let joined = autoConnect
@@ -32,7 +38,7 @@
   })
   setContext(FIGHT_CONTROLS_CONTEXT, controls.bindings)
   setContext(FIGHT_VISUAL_PREDICTION, () => client.visualPrediction)
-  $: state = $client.state
+  $: state = $client.rollbackState ?? $client.state
   $: enabled = $client.connection === 'connected' && $client.view?.status === 'playing'
   $: if (!enabled) release()
   function release() {
@@ -72,6 +78,11 @@
   }
   onMount(() => {
     clashCareer.load()
+    try {
+      rollbackComfort = { graphics: 'performance', ...readFightComfort(localStorage) }
+    } catch {
+      // Storage can be unavailable in an isolated browser.
+    }
     controls.load()
     const unlisten = listenFightEvents({ controls, handleKey: key, release, hidden: release })
     const stopLoop = mountPvpDuelLoop({
@@ -105,6 +116,9 @@
   <FightStage
     bind:victoryActive
     {state}
+    comfort={$client.view?.rollback ? rollbackComfort : standardComfort}
+    audioState={$client.state}
+    audioPaused={$client.connection !== 'connected' || $client.view?.status === 'interrupted'}
     {language}
     stageId={state.environment.stageId}
     showControls

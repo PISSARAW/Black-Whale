@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { createFightState } from '../fightState'
-import { FURYKOV_TIER_1 } from '../furykovProfile'
 import { resolveOpponentHudView, resolvePerceptionLevel } from './opponentHudView'
 
 describe('opponentHudView', () => {
@@ -48,7 +47,7 @@ describe('opponentHudView', () => {
     expect(view.kameo).toEqual({ visible: true, showCooldown: false, showRole: false })
   })
 
-  it('elevates to level 2 with full ocular Gyo, Sonar, or Furykov analysis', () => {
+  it('elevates to level 2 with full ocular Gyo or Sonar, but not Furykov alone', () => {
     const state = createFightState('kurapika', 'hisoka')
     const max = state.opponent.maxHealth ?? 100
     state.opponent.aura = 64
@@ -62,8 +61,7 @@ describe('opponentHudView', () => {
     expect(gyoView.health.adrenalineAlert).toBe(true)
 
     const furykovState = createFightState('furykov', 'hisoka')
-    furykovState.player.furykovGauge = FURYKOV_TIER_1
-    expect(resolvePerceptionLevel({ state: furykovState, observerSide: 'player' })).toBe(2)
+    expect(resolvePerceptionLevel({ state: furykovState, observerSide: 'player' })).toBe(0)
   })
 
   it('locks Hisoka living portrait mood to calm while Texture Surprise masks wounds', () => {

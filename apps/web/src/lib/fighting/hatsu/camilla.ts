@@ -6,10 +6,10 @@ import { CATS_NAME } from '../outsideDuelAbility'
 /**
  * Cat's Name — Camilla (Succession Contest).
  *
- * Conditional Nen: it does nothing while Camilla lives, so she fights on Ren and
- * martial skill. Only her attributed death wakes it: the cat kills the one who
- * landed the fatal blow and Camilla comes back. A knockdown TKO, a points loss
- * or the timer kill no one, so they never wake it.
+ * Post-mortem Nen: it does nothing while Camilla lives. Only her attributed death
+ * wakes it: the cat kills the one who landed the fatal blow and Camilla comes back.
+ * Zetsu was her tactic in the shown scene, not a revealed activation condition.
+ * A knockdown TKO, a points loss or the timer kill no one, so they never wake it.
  */
 export const camillaHatsu: FighterHatsu = {
   ...martialOnlyHatsu('camilla'),

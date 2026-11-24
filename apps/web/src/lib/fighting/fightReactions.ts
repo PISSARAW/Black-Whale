@@ -9,6 +9,8 @@ import {
   type FightPose,
 } from './fightPose'
 import { AIR_POSE } from './fightStance'
+import { PHYSICAL_LOCOMOTION } from './physicalLocomotion'
+import { combatLocomotion } from './firstFiveCombatMotion'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import { sampleTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FightNenZone } from './types'
@@ -42,6 +44,8 @@ export interface ReactionContext {
   nenResponse?: NenImpactResponse
   nenCarry?: FightPose
   nenConstraint?: BodyPlan | null
+  locomotionInertia?: FightPose
+  secondaryMotion?: FightPose
   poseContinuity?: ReturnType<typeof createFightPoseContinuity>
 }
 
@@ -179,7 +183,7 @@ export function reactionPlan(
         blend: 0.05,
       }
     case 'jump':
-      return jumpPlan(progress, standing)
+      return jumpPlan(progress, standing, fighter)
     default:
       return null
   }
@@ -252,9 +256,12 @@ function directedRecoil(context: ReactionContext): FightPose | null {
   return shizukuHitReaction(context) ?? rosterHitReaction(context)
 }
 
-function jumpPlan(progress: number, standing: FightPose): BodyPlan {
+function jumpPlan(progress: number, standing: FightPose, fighter: ArcadeFighter): BodyPlan {
   // Legs stretch on take-off and landing, tuck at the apex.
   const tuck = Math.sin(Math.min(1, Math.max(0, progress)) * Math.PI)
-  const pose = addPoses(pickJoints(standing, UPPER_JOINTS), scalePose(AIR_POSE, 0.35 + 0.65 * tuck))
+  const air =
+    PHYSICAL_LOCOMOTION[fighter.id]?.air ??
+    addPoses(AIR_POSE, combatLocomotion(fighter)?.jump ?? {})
+  const pose = addPoses(pickJoints(standing, UPPER_JOINTS), scalePose(air, 0.35 + 0.65 * tuck))
   return { pose, plant: false, key: 'jump', blend: 0.06 }
 }

@@ -41,6 +41,7 @@ import {
   type DirectionalIntent,
 } from './directionalChain'
 import { pursuitTakeoff } from './fighterMovement'
+import { followUpPhysicsFor } from './moveFollowUpPhysics'
 
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
   fighter = advanceAttackBuffer(interruptUnavailableNen(interruptHanzoBlade(fighter)))
@@ -109,7 +110,7 @@ export function startFighterAttack(options: {
     nenConversionCount:
       (fighter.nenConversionCount ?? 0) +
       Number(nextNenBranchCount(fighter, options.moveId) > (fighter.nenBranchCount ?? 0)),
-    ...takeoffFor(fighter, options.directionalChain),
+    ...takeoffFor(fighter, options.directionalChain, options.moveId),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
     aura: fighter.aura - startingAuraCost(options),
@@ -150,9 +151,11 @@ function throwTechFramesFor(fighter: ArcadeFighter, variant?: AttackVariant) {
   return variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames
 }
 
-function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain) {
+function takeoffFor(fighter: ArcadeFighter, chain?: DirectionalChain, moveId?: string) {
   if (chain === 'pursuit' || (chain === 'pursuit-technique' && fighter.id === 'hisoka'))
     return pursuitTakeoff(fighter)
+  const lift = followUpPhysicsFor(moveId)?.selfLiftVelocityY
+  if (lift) return { y: Math.max(0.2, fighter.y), velocityY: Math.max(lift, fighter.velocityY) }
 }
 
 function attackNenOrigin(options: Parameters<typeof startFighterAttack>[0]) {

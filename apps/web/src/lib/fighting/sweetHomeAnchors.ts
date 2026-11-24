@@ -61,7 +61,7 @@ export function createSweetHomeAnchors(options: EffectSceneOptions) {
   return {
     path(state: FightState, event: SweetHomeAccent): SweetHomePath {
       const observed = {
-        key: `${state.frame}:${state.player.x}:${state.player.y}:${state.player.facing}:${state.opponent.x}:${state.opponent.y}:${state.opponent.facing}`,
+        key: `${state.frame}:${state.player.x}:${state.player.y}:${state.player.facing}:${state.opponent.x}:${state.opponent.y}:${state.opponent.facing}:${event.from}:${event.backlash}:${event.ally === true}:${event.recipient.kind}:${event.recipient.kind === 'body' ? event.recipient.side : event.recipient.id}`,
         owner: options.figureOf?.(event.owner),
         source: options.figureOf?.(event.from),
         target: targetObject(options, event),

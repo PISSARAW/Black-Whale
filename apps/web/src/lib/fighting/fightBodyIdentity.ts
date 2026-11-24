@@ -1,4 +1,5 @@
 import { battleAppearance } from './battleCantabileRules'
+import { combatIdentityOf } from './combatIdentity'
 import type { ArcadeFighter, FighterId, FightSide, FightState } from './types'
 
 /** An opaque physical body reference, independent of disguise, copied Hatsu or active relay. */
@@ -7,7 +8,7 @@ export function physicalBodyKey(state: FightState, side: FightSide): string {
   return `${owner}:${state.teamMatch?.seats[side].active ?? 0}`
 }
 export function visibleBodyAppearance(actor: ArcadeFighter): FighterId {
-  return battleAppearance({ ...actor, id: actor.nenOwner ?? actor.id })
+  return battleAppearance({ ...actor, id: combatIdentityOf(actor).nenOwnerId })
 }
 
 /** Reserves remain at their actual team's gate; a relay never transfers their possessions or haunting. */

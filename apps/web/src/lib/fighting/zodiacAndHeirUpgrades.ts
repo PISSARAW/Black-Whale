@@ -1,16 +1,15 @@
-import { revealBookSlot, type BookSlot } from './chrolloDeck'
 import type { ArcadeFighter, FightInput, FightSide, FightState } from './types'
 
 export const ERIGERON_SURGE_FRAMES = 360
 export const ERIGERON_CATALYST_FRAMES = 360
-export const ERIGERON_KAMEO_FACTOR = 0.5
-export const ERIGERON_BODY_MEMORY_DRAIN = 5
+export const ERIGERON_KAMEO_FACTOR = 1
+export const ERIGERON_BODY_MEMORY_DRAIN = 3
 export const LYNCH_CONFESSION_FRAMES = 360
 export const MIZAISTOM_YELLOW_FRAMES = 180
 export const MIZAISTOM_RED_STASIS_FRAMES = 90
 export const GEL_VENOM_FRAMES = 300
-export const GEL_VENOM_TRANSFER_PENALTY = 2
-export const GEL_CONSTRICTION_DRAIN = 15
+export const GEL_VENOM_TRANSFER_PENALTY = 0
+export const GEL_CONSTRICTION_DRAIN = 0
 
 export interface CrossGameCardState {
   issuer: FightSide
@@ -32,65 +31,36 @@ declare module './types' {
   }
 }
 
-/** Bill 5S: doubles Ten regen, halves Kameo cooldown, and doubles forced Zetsu recovery. */
+/** Erigeron requires a suitable living growth target; it is not a self-buff. */
 export function activateErigeronSurge(fighter: ArcadeFighter): ArcadeFighter {
-  return { ...fighter, erigeronSurgeFrames: ERIGERON_SURGE_FRAMES }
+  return fighter
 }
 
-/** Bill 6S: accelerates poison/burn ticks (x2) and raises Body Memory Ryu drain to +5/s. */
+/** Erigeron does not catalyse poison, burns, or Body Memory. */
 export function applyErigeronCatalyst(target: ArcadeFighter): ArcadeFighter {
-  return { ...target, erigeronCatalystFrames: ERIGERON_CATALYST_FRAMES }
+  return target
 }
 
-/** Lynch 5S/6S: strips In & Texture Surprise, reveals Chrollo's deck, and applies 6s Soul Confession. */
+/**
+ * Body and Soul's canonical answer is recorded by lynchInterrogation.
+ * It does not dispel disguises, reveal hidden Nen or expose an opponent's arsenal.
+ */
 export function applyBodyAndSoulTruth(state: FightState, attackerSide: FightSide): FightState {
-  const targetSide: FightSide = attackerSide === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  let book = target.chrolloBook
-  if (book) {
-    for (const slot of [0, 1, 2, 3, 'stolen'] as BookSlot[]) {
-      if (slot !== 'stolen' || book.stolenPage) book = revealBookSlot(book, slot)
-    }
-  }
-  return {
-    ...state,
-    [targetSide]: {
-      ...target,
-      nen: { ...target.nen, in: false },
-      textureSurprise: undefined,
-      chrolloBook: book,
-      soulConfessionFrames: LYNCH_CONFESSION_FRAMES,
-    },
-  }
+  void attackerSide
+  return state
 }
 
-/** During Soul Confession, Lynch sees the opponent's next Ko/Ryu/Hatsu intent 3 frames early. */
+/** Body and Soul answers the spoken question; it never predicts the target's next input. */
 export function lynchConfessionIntent(state: FightState, lynchSide: FightSide): string | null {
-  const target = state[lynchSide === 'player' ? 'opponent' : 'player']
-  if (!(target.soulConfessionFrames ?? 0)) return null
-  if (target.attack?.auraCharged || target.nen.ko) return 'ko'
-  if (target.attack?.hatsuSource) return 'hatsu'
-  if (Object.values(target.nen.ryu).some((v) => Number(v) > 0)) return 'ryu'
+  void state
+  void lynchSide
   return null
 }
 
-/** Mizaistom 5S: imposes a 3s Yellow Card (no advancing or attacking). */
+/** Legacy entry point; canonical warning and breach handling lives in crossGameAction. */
 export function issueCrossGameYellow(state: FightState, side: FightSide): FightState {
-  const target: FightSide = side === 'player' ? 'opponent' : 'player'
-  return {
-    ...state,
-    crossGameCard: {
-      issuer: side,
-      target,
-      phase: 'yellow',
-      remainingFrames: MIZAISTOM_YELLOW_FRAMES,
-    },
-  }
-}
-
-function advancing(fighter: ArcadeFighter, input?: FightInput): boolean {
-  if (!input) return false
-  return fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
+  void side
+  return state
 }
 
 function stepCrossGameCard(
@@ -99,48 +69,23 @@ function stepCrossGameCard(
 ): FightState {
   const card = state.crossGameCard
   if (!card) return state
-  const target = state[card.target]
-  if (card.phase === 'yellow') {
-    const disobeyed = Boolean(target.attack) || advancing(target, inputs[card.target])
-    if (disobeyed) {
-      return {
-        ...state,
-        crossGameCard: { ...card, phase: 'red', remainingFrames: MIZAISTOM_RED_STASIS_FRAMES },
-        [card.target]: {
-          ...target,
-          crossGameStasis: true,
-          hitStun: Math.max(target.hitStun, MIZAISTOM_RED_STASIS_FRAMES),
-          attack: null,
-          bufferedAttack: null,
-        },
-      }
-    }
-  }
-  const remaining = card.remainingFrames - 1
-  if (remaining > 0) return { ...state, crossGameCard: { ...card, remainingFrames: remaining } }
+  void inputs
   return {
     ...state,
     crossGameCard: undefined,
-    [card.target]: { ...target, crossGameStasis: undefined },
+    [card.target]: { ...state[card.target], crossGameStasis: undefined },
   }
 }
 
-/** Gel 6S/Heavy: neurotoxic venom adds +2f to opponent's nenTransferFrames for 5s. */
+/** Gel's revealed arm transformation has no confirmed venom. */
 export function applyGelVenom(target: ArcadeFighter): ArcadeFighter {
-  return { ...target, gelVenomFrames: GEL_VENOM_FRAMES }
+  return target
 }
 
-/** Gel 2S / Constriction: drains 15 aura from opponent to feed Gel. */
+/** Gel's revealed arm transformation has no confirmed aura drain. */
 export function applyGelConstriction(state: FightState, gelSide: FightSide): FightState {
-  const targetSide: FightSide = gelSide === 'player' ? 'opponent' : 'player'
-  const gel = state[gelSide]
-  const target = state[targetSide]
-  const drained = Math.min(target.aura, GEL_CONSTRICTION_DRAIN)
-  return {
-    ...state,
-    [gelSide]: { ...gel, aura: Math.min(100, gel.aura + drained) },
-    [targetSide]: { ...target, aura: Math.max(0, target.aura - drained) },
-  }
+  void gelSide
+  return state
 }
 
 export function advanceZodiacAndHeirUpgrades(
@@ -148,30 +93,26 @@ export function advanceZodiacAndHeirUpgrades(
   inputs: { player: FightInput; opponent?: FightInput },
 ): FightState {
   if (state.phase !== 'fighting') return state
-  let next = stepCrossGameCard(state, inputs)
-  for (const side of ['player', 'opponent'] as const) {
-    const f = next[side]
-    const erigeronSurgeFrames = Math.max(0, (f.erigeronSurgeFrames ?? 0) - 1) || undefined
-    const erigeronCatalystFrames = Math.max(0, (f.erigeronCatalystFrames ?? 0) - 1) || undefined
-    const soulConfessionFrames = Math.max(0, (f.soulConfessionFrames ?? 0) - 1) || undefined
-    const gelVenomFrames = Math.max(0, (f.gelVenomFrames ?? 0) - 1) || undefined
-    if (
-      erigeronSurgeFrames !== f.erigeronSurgeFrames ||
-      erigeronCatalystFrames !== f.erigeronCatalystFrames ||
-      soulConfessionFrames !== f.soulConfessionFrames ||
-      gelVenomFrames !== f.gelVenomFrames
-    ) {
-      next = {
-        ...next,
-        [side]: {
-          ...f,
-          erigeronSurgeFrames,
-          erigeronCatalystFrames,
-          soulConfessionFrames,
-          gelVenomFrames,
-        },
-      }
-    }
+  const next = stepCrossGameCard(state, inputs)
+  const player = clearLegacyUpgradeEffects(next.player)
+  const opponent = clearLegacyUpgradeEffects(next.opponent)
+  if (player === next.player && opponent === next.opponent) return next
+  return { ...next, player, opponent }
+}
+
+function clearLegacyUpgradeEffects(fighter: ArcadeFighter): ArcadeFighter {
+  const legacy = [
+    fighter.erigeronSurgeFrames,
+    fighter.erigeronCatalystFrames,
+    fighter.soulConfessionFrames,
+    fighter.gelVenomFrames,
+  ].some(Boolean)
+  if (!legacy) return fighter
+  return {
+    ...fighter,
+    erigeronSurgeFrames: undefined,
+    erigeronCatalystFrames: undefined,
+    soulConfessionFrames: undefined,
+    gelVenomFrames: undefined,
   }
-  return next
 }

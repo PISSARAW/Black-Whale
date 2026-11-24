@@ -17,7 +17,6 @@ import {
   kurapikaDowsingDetectsBluff,
   releaseUniversalLocksOnBurst,
   RIHAN_TACTICAL_DEFENCE_FACTOR,
-  RIHAN_TACTICAL_TRANSFER_FRAMES,
   rihanTacticalDefenceFactor,
   subdueCamillaWithoutKill,
   tserriednichConcentrationBroken,
@@ -33,20 +32,25 @@ describe('Anti-9-1 canonical matchup valves & Golden Rule', () => {
       hinrighBioPigeon: { ...state.hinrighBioPigeon!, x: state.player.x + 4 },
       projectiles: [
         {
-          id: 'theta:shu-bullet',
+          id: 1,
           owner: 'opponent',
+          fighterId: 'theta',
           x: state.player.x + 4,
           y: 4,
-          vx: -2,
-          vy: 0,
-          radius: 1,
+          velocityX: -2,
+          width: 1,
+          height: 1,
           damage: 12,
           knockback: 2,
           hitstun: 10,
           blockstun: 8,
+          hitstop: 6,
+          targetZone: 'torso',
+          shape: 'bullet',
+          colour: '#d7d7d7',
+          matter: 'object',
           age: 1,
           lifetime: 40,
-          physical: true,
           shuCharged: true,
         },
       ],
@@ -68,7 +72,9 @@ describe('Anti-9-1 canonical matchup valves & Golden Rule', () => {
       },
     }
     expect(canSubdueCamilla(lowZetsu, 'player')).toBe(true)
-    expect(resolveContextInput(lowZetsu, 'player', { ...EMPTY_INPUT, context: true }).subdue).toBe(true)
+    expect(resolveContextInput(lowZetsu, 'player', { ...EMPTY_INPUT, context: true }).subdue).toBe(
+      true,
+    )
 
     const captured = subdueCamillaWithoutKill(lowZetsu, 'player')
     expect(captured.phase).toBe('finished')
@@ -76,27 +82,39 @@ describe('Anti-9-1 canonical matchup valves & Golden Rule', () => {
     expect(captured.catsName).toBeUndefined()
   })
 
-  it('3. Yokotani LSDF requires intrusion breach in hideout and gets -35% Kameo cooldown outside', () => {
+  it('3. Yokotani LSDF uses real hideout jurisdiction and gets no generic Kameo bonus', () => {
     const state = beginFight(createFight('yokotani', 'hisoka', { mode: 'versus-local' }))
     expect(kameoCooldownFactor(state.player)).toBe(YOKOTANI_KAMEO_COOLDOWN_FACTOR)
 
     const inHideout = {
       ...state,
-      arenaId: 'heilly-hideout',
+      battlefield: undefined,
+      environment: {
+        ...state.environment,
+        stageId: 'heilly-hideout' as const,
+        morenaPresent: true,
+        unlawfulIntruders: { ...state.environment.unlawfulIntruders, opponent: true },
+      },
       player: { ...state.player, x: 20 },
       opponent: { ...state.opponent, x: 60 },
     }
-    expect(yokotaniIntrusionBreached(inHideout, 'opponent')).toBe(false)
-    const breached = { ...inHideout, opponent: { ...inHideout.opponent, x: 25 } }
-    expect(yokotaniIntrusionBreached(breached, 'opponent')).toBe(true)
+    expect(yokotaniIntrusionBreached(inHideout, 'opponent')).toBe(true)
+    const outside = {
+      ...inHideout,
+      environment: { ...inHideout.environment, stageId: 'heavens-arena' as const },
+    }
+    expect(yokotaniIntrusionBreached(outside, 'opponent')).toBe(false)
   })
 
-  it('4. Rihan gets Tactical Read (2f transfer + 15% defence, no 48h seal) against non-conjured foes', () => {
+  it('4. Rihan gets no invented generic Tactical Read outside Predator', () => {
     const state = beginFight(createFight('rihan', 'beyond', { mode: 'versus-local' }))
-    const studied = { ...state, player: { ...state.player, predatorStudyFrames: PREDATOR_FULL_FRAMES } }
+    const studied = {
+      ...state,
+      player: { ...state.player, predatorStudyFrames: PREDATOR_FULL_FRAMES },
+    }
     const read = activateRihanTacticalRead(studied, 'player')
-    expect(read.player.rihanTacticalRead).toBe(true)
-    expect(nenTransferFrames(read.player)).toBe(RIHAN_TACTICAL_TRANSFER_FRAMES)
+    expect(read.player.rihanTacticalRead).not.toBe(true)
+    expect(nenTransferFrames(read.player)).toBe(nenTransferFrames(state.player))
     expect(rihanTacticalDefenceFactor(read.player)).toBe(RIHAN_TACTICAL_DEFENCE_FACTOR)
   })
 
@@ -116,7 +134,9 @@ describe('Anti-9-1 canonical matchup valves & Golden Rule', () => {
   it('6. Kurapika Dowsing detects call bluffs and active chains accelerate Emperor Time drain', () => {
     const state = beginFight(createFight('kurapika', 'hisoka', { mode: 'versus-local' }))
     expect(kurapikaDowsingDetectsBluff(state, 'player', { ...EMPTY_INPUT, call: true })).toBe(true)
-    expect(kurapikaChainDrainMultiplier({ ...state.player, chainJail: { holder: 'player' } as never })).toBe(1.5)
+    expect(
+      kurapikaChainDrainMultiplier({ ...state.player, chainJail: { holder: 'player' } as never }),
+    ).toBe(1.5)
   })
 
   it('Golden Rule: Burst clears absolute binary locks (Beast seal, swap, needles, cuffs, sense seals, owl)', () => {

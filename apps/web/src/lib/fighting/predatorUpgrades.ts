@@ -1,15 +1,13 @@
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-export const PREDATOR_EARLY_FRAMES = 90 // 1.5 s -> weak Predator (weakens Hatsu)
-export const PREDATOR_FULL_FRAMES = 180 // 3.0 s -> lethal Predator (destroys & seals Hatsu for round)
-export const PREDATOR_WEAK_FACTOR = 0.75
+// Legacy timings kept for save/replay compatibility. Canonical Predator readiness is
+// determined by the five-part observation sheet in predator.ts.
+export const PREDATOR_EARLY_FRAMES = 90
+export const PREDATOR_FULL_FRAMES = 180
+export const PREDATOR_WEAK_FACTOR = 1
 
 export type PredatorManifestationKind =
-  | 'rising-sun'
-  | 'musse-owl'
-  | 'machi-threads'
-  | 'bungee-gum'
-  | 'conjured-weapon'
+  'rising-sun' | 'musse-owl' | 'machi-threads' | 'bungee-gum' | 'conjured-weapon'
 
 declare module './types' {
   interface ArcadeFighter {
@@ -25,58 +23,41 @@ export function observableAuraManifestation(
   targetSide: FightSide,
 ): PredatorManifestationKind | null {
   const target = state[targetSide]
-  if (target.hatsuEffects.painPacker?.sun) return 'rising-sun'
-  if (state.musseOwl?.active && state.musseOwl.owner === targetSide) return 'musse-owl'
-  if (state.bungeeGum?.owner === targetSide || state.gumNetwork?.owner === targetSide)
-    return 'bungee-gum'
   const otherSide: FightSide = targetSide === 'player' ? 'opponent' : 'player'
-  if (state[otherSide].machiThread?.owner === targetSide) return 'machi-threads'
-  if (target.chrolloBook?.open || target.kurapika) return 'conjured-weapon'
-  return null
+  const candidates: readonly [boolean, PredatorManifestationKind][] = [
+    [hasRisingSun(target), 'rising-sun'],
+    [hasMusseOwl(state, targetSide), 'musse-owl'],
+    [hasBungeeGum(state, targetSide), 'bungee-gum'],
+    [hasMachiThread(state, otherSide, targetSide), 'machi-threads'],
+    [hasConjuredWeapon(target), 'conjured-weapon'],
+  ]
+  return candidates.find(([present]) => present)?.[1] ?? null
 }
 
+const hasRisingSun = (target: ArcadeFighter) => Boolean(target.hatsuEffects.painPacker?.sun)
+const hasMusseOwl = (state: FightState, side: FightSide) =>
+  Boolean(state.musseOwl?.active && state.musseOwl.owner === side)
+const hasBungeeGum = (state: FightState, side: FightSide) =>
+  Boolean(
+    state.bungeeGum?.owner === side || state.gumNetwork?.links.some((link) => link.owner === side),
+  )
+const hasMachiThread = (state: FightState, other: FightSide, side: FightSide) =>
+  state[other].machiThread?.owner === side
+const hasConjuredWeapon = (target: ArcadeFighter) =>
+  Boolean(target.chrolloBook?.open || target.kurapika)
+
 export function predatorCertaintyTier(fighter: ArcadeFighter): 'none' | 'weak' | 'lethal' {
-  const frames = fighter.predatorStudyFrames ?? 0
-  if (frames >= PREDATOR_FULL_FRAMES) return 'lethal'
-  if (frames >= PREDATOR_EARLY_FRAMES) return 'weak'
+  void fighter
   return 'none'
 }
 
-/** Releases Predator based on certainty gauge: 1.5s weakens Hatsu; 3s destroys construct & seals Hatsu all round. */
+/** Legacy entry point. Predator launches only through the canonical observation sheet. */
 export function releaseCertaintyPredator(state: FightState, rihanSide: FightSide): FightState {
-  const rihan = state[rihanSide]
-  const tier = predatorCertaintyTier(rihan)
-  if (tier === 'none') return state
-  const targetSide: FightSide = rihanSide === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  if (tier === 'weak') {
-    return {
-      ...state,
-      [rihanSide]: { ...rihan, predatorStudyFrames: 0 },
-      [targetSide]: { ...target, predatorWeakenedHatsu: true },
-    }
-  }
-  const clearedOwl = state.musseOwl?.owner === targetSide ? undefined : state.musseOwl
-  const clearedGum = state.bungeeGum?.owner === targetSide ? null : state.bungeeGum
-  return {
-    ...state,
-    musseOwl: clearedOwl,
-    bungeeGum: clearedGum,
-    [rihanSide]: { ...rihan, predatorStudyFrames: 0 },
-    [targetSide]: {
-      ...target,
-      predatorRoundSealed: true,
-      hatsuEffects: {
-        ...target.hatsuEffects,
-        painPacker: target.hatsuEffects.painPacker
-          ? { ...target.hatsuEffects.painPacker, sun: null }
-          : target.hatsuEffects.painPacker,
-      },
-    },
-  }
+  void rihanSide
+  return state
 }
 
 export function predatorHatsuFactor(fighter: ArcadeFighter): number {
-  if (fighter.predatorRoundSealed) return 0
-  return fighter.predatorWeakenedHatsu ? PREDATOR_WEAK_FACTOR : 1
+  void fighter
+  return 1
 }

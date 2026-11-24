@@ -5,6 +5,7 @@ import { rememberBodyHit } from './bodyMemory'
 import { applyGelVenom, GEL_VENOM_TRANSFER_PENALTY } from './zodiacAndHeirUpgrades'
 import { applyJupiterAcousticImpact, JUPITER_TRANSFER_PENALTY } from './halkenburgBonolenovUpgrades'
 import { readNenSensoryHud } from './nenSensoryHud'
+import type { ArcadeFighter } from './types'
 
 describe('Deterministic 4-layer transfer pipeline & zero-text Sensory HUD', () => {
   it('1. 4-layer nenTransferFrames: 1f reflex transcends normal fatigue but still suffers Gel venom & Jupiter stun', () => {
@@ -27,11 +28,16 @@ describe('Deterministic 4-layer transfer pipeline & zero-text Sensory HUD', () =
     )
   })
 
-  it('2. readNenSensoryHud converts budget, cognitive load, psychology, Body Memory & venom into sensory cues', () => {
+  it('2. readNenSensoryHud keeps canon cues without invented Gel venom or Beyond saturation', () => {
     let state = beginFight(createFight('hanzo', 'beyond', { mode: 'versus-local' }))
-    let hanzo = {
+    let hanzo: ArcadeFighter = {
       ...state.player,
-      hanzoProjection: { bodyX: 20, bodyFacing: 1 as const, startedFrame: 0 },
+      hanzoProjection: {
+        bodyX: 20,
+        bodyFacing: 1 as const,
+        bodyNen: state.player.nen,
+        startupFrames: 0,
+      },
       nenMentalFatigue: 6000,
       fearCooldownFrames: 60,
     }
@@ -56,17 +62,19 @@ describe('Deterministic 4-layer transfer pipeline & zero-text Sensory HUD', () =
       'player',
       'player',
     )
-    expect(poisonedHud.limbRingTint.hands).toBe('venom')
+    expect(poisonedHud.limbRingTint.hands).toBe('crimson')
 
-    // Viewing Beyond in Ren adds Gyo saturation jitter on his aura gauge
+    // Beyond has no revealed Gyo-saturation property.
     const viewingBeyond = readNenSensoryHud(state, 'opponent', 'player')
-    expect(viewingBeyond.auraBarJitter).toBeGreaterThanOrEqual(0.45)
+    expect(viewingBeyond.auraBarJitter).toBe(0)
   })
 
-  it('3. readNenSensoryHud suppresses Theta portrait stress for unread opponents', () => {
+  it('3. readNenSensoryHud does not give Theta an invented stress-hiding passive', () => {
     const state = beginFight(createFight('theta', 'hisoka', { mode: 'versus-local' }))
     const lowTheta = { ...state, player: { ...state.player, health: 10, nenMentalFatigue: 5000 } }
     expect(readNenSensoryHud(lowTheta, 'player', 'player').portraitStressLevel).toBeGreaterThan(0.5)
-    expect(readNenSensoryHud(lowTheta, 'player', 'opponent').portraitStressLevel).toBe(0)
+    expect(readNenSensoryHud(lowTheta, 'player', 'opponent').portraitStressLevel).toBeGreaterThan(
+      0.5,
+    )
   })
 })

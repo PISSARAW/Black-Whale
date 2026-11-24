@@ -32,6 +32,12 @@ import {
 } from './rosterChoreography'
 import { ROSTER_TECHNIQUES, type TechniqueDirection } from './rosterTechniqueDirection'
 import { TECHNIQUE_GESTURES } from './rosterTechniqueGestures'
+import {
+  physicalStrikeDirection,
+  physicalStrikeShape,
+  authoredStrikeDirection,
+} from './physicalStrikeDirections'
+import { standingFootwork } from './standingFootwork'
 import type { FighterId, MoveSlot } from './types'
 
 const STRIKES: StrikeLibrary = {
@@ -74,6 +80,14 @@ const SPECIALS: readonly MoveSlot[] = [
 ]
 
 export function rosterStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
+  return (
+    physicalStrikeShape(authoredStrikeDirection(id, slot) ?? physicalStrikeDirection(id, slot)) ??
+    standingFootwork(id, slot)?.[0] ??
+    rosterBaseStrikeShape(id, slot)
+  )
+}
+
+export function rosterBaseStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
   return ROSTER_CHOREOGRAPHY[id as RosterFighterId]?.strikes[NORMALS.indexOf(slot)]
 }
 
@@ -169,15 +183,55 @@ export function rosterKeyPoses(fighterId: FighterId): Partial<Record<MoveSlot, M
   const held = CACHE.get(id)
   if (held) return held
   const direction = ROSTER_CHOREOGRAPHY[id]
-  const entries: Array<[MoveSlot, MoveTimeline]> = NORMALS.map((slot, index) => [
-    slot,
-    directedTimeline({ id, gesture: STRIKES[direction.strikes[index]], physical: true }),
-  ])
-  SPECIALS.forEach((slot, index) =>
-    entries.push([slot, technique(id, ROSTER_TECHNIQUES[id][index])]),
-  )
+  const entries: Array<[MoveSlot, MoveTimeline]> = NORMALS.map((slot, index) => {
+    const personal = physicalStrikeDirection(id, slot)
+    const shape =
+      physicalStrikeShape(personal) ?? standingFootwork(id, slot)?.[0] ?? direction.strikes[index]
+    const gesture =
+      typeof personal === 'object' ? (personal.gesture ?? STRIKES[shape]) : STRIKES[shape]
+    return [slot, directedTimeline({ id, gesture, physical: true })]
+  })
+  SPECIALS.forEach((slot, index) => {
+    const shape = physicalStrikeShape(physicalStrikeDirection(id, slot))
+    entries.push([slot, technique(id, shape ?? ROSTER_TECHNIQUES[id][index])])
+  })
   entries.push(['throw', throwTimeline(direction)])
   const made = Object.fromEntries(entries) as Record<MoveSlot, MoveTimeline>
   CACHE.set(id, made)
   return made
+}
+
+const PHYSICAL_TIMELINES = new Map<string, MoveTimeline>()
+
+export function authoredStrikeTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | undefined {
+  const direction = authoredStrikeDirection(id, slot)
+  if (typeof direction !== 'object' || !direction.gesture) return undefined
+  const key = `${id}:${slot}`
+  const cached = PHYSICAL_TIMELINES.get(key)
+  if (cached) return cached
+
+  const [load, contact, hold, release] = directedTimeline({
+    id: id as RosterFighterId,
+    gesture: direction.gesture,
+    physical: true,
+  })
+  const settle = scalePose(release.pose, 0.23)
+  if (slot === 'airLight' || slot === 'airHeavy')
+    settle.root = [settle.root?.[0] ?? 0, -0.035, settle.root?.[2] ?? 0]
+  const timeline: MoveTimeline = [
+    { phase: 'startup', at: 0.18, pose: scalePose(load.pose, 0.43), ease: 'out' },
+    load,
+    contact,
+    hold,
+    {
+      phase: 'recovery',
+      at: 0.12,
+      pose: addPoses(scalePose(contact.pose, 0.66), scalePose(release.pose, 0.34)),
+      ease: 'out',
+    },
+    release,
+    { phase: 'recovery', at: 0.86, pose: settle, ease: 'out' },
+  ]
+  PHYSICAL_TIMELINES.set(key, timeline)
+  return timeline
 }

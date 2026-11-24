@@ -51,9 +51,10 @@ export function effectiveFightComfort(value: FightComfort, reducedMotion: boolea
 export function comfortableImpact(options: {
   impact: NonNullable<FightState['impact']>
   attacker: FighterId
+  moveId?: string
   comfort: FightComfort
 }) {
-  const profile = impactPresentation(options.impact, options.attacker)
+  const profile = impactPresentation(options.impact, options.attacker, options.moveId)
   return {
     ...profile,
     shakeMs: profile.shakeMs * options.comfort.shake,

@@ -11,11 +11,14 @@ import { PVP_RULESET, pvpSessionKey, type PvpCommand, type PvpSession, type PvpV
 import type { FightState } from '../types'
 import { rankingToken } from '../career/ranking'
 import { recordOnlineCareer } from '../career/online'
+import { createBrowserRollback, openBrowserRollback } from './rollback/browserClient'
+import type { ExperimentalRollbackStart } from './rollback/experimental'
 
 interface ClientState {
   neutralRequired: boolean
   view: PvpView | null
   state: FightState | null
+  rollbackState: FightState | null
   connection: 'connecting' | 'connected' | 'reconnecting' | 'diverged' | 'error' | 'version'
   ping: number | null
   error: string
@@ -33,6 +36,7 @@ export function createPvpClient(options: ClientOptions) {
     neutralRequired: false,
     view: null,
     state: null,
+    rollbackState: null,
     connection: 'connecting',
     ping: null,
     error: '',
@@ -41,6 +45,18 @@ export function createPvpClient(options: ClientOptions) {
   const clock = options.now ?? (() => performance.now())
   const transport = options.fetch
   let token = options.storage?.getItem(pvpSessionKey(options.matchId)) ?? ''
+  const rollback = createBrowserRollback({
+    start: async (epoch) => {
+      const separator = options.endpoint.includes('?') ? '&' : '?'
+      return (await request(
+        undefined,
+        undefined,
+        `${separator}rollback=${epoch}`,
+      )) as ExperimentalRollbackStart
+    },
+    connect: (epoch) => openBrowserRollback(options.matchId, token, epoch),
+    now: clock,
+  })
   const prediction = createPvpPrediction(clock)
   const controls = createPvpControlGate()
   let stopped = false
@@ -75,9 +91,9 @@ export function createPvpClient(options: ClientOptions) {
     failed: streamFailure,
     now: clock,
   })
-  async function request(body?: unknown, signal?: AbortSignal): Promise<unknown> {
+  async function request(body?: unknown, signal?: AbortSignal, suffix = ''): Promise<unknown> {
     const start = clock()
-    const response = await transport(options.endpoint, {
+    const response = await transport(options.endpoint + suffix, {
       method: body ? 'POST' : 'GET',
       cache: 'no-store',
       headers: {
@@ -130,6 +146,10 @@ export function createPvpClient(options: ClientOptions) {
       pipeline.reset(view.nextSequence)
       prediction.clear()
     }
+    if (view.rollback) {
+      rollback.synchronize(view)
+      return
+    }
     if (view.status === 'playing') {
       if (get(store).state?.roundNumber !== state.roundNumber) pipeline.reset(view.nextSequence)
       pipeline.acknowledge(view.nextSequence)
@@ -151,11 +171,15 @@ export function createPvpClient(options: ClientOptions) {
       ...value,
       view,
       state,
+      rollbackState:
+        view.status === 'playing' && view.rollback?.epoch === value.view?.rollback?.epoch
+          ? value.rollbackState
+          : null,
       connection: 'connected',
       neutralRequired: controls.blocked,
       error: '',
     }))
-    recordOnlineCareer(view)
+    if (!view.rollback) recordOnlineCareer(view)
     if (['finished', 'abandoned'].includes(view.status)) stream.stop()
   }
   function streamFailure(error: unknown) {
@@ -211,6 +235,14 @@ export function createPvpClient(options: ClientOptions) {
     return inFlight
   }
 
+  function pumpClassic(input: number, current: ClientState) {
+    if (current.connection !== 'diverged') stream.start()
+    if (current.connection === 'connected' && current.view.status === 'playing')
+      void pipeline.send(controlledInput(input))
+    const interval = current.view.status === 'playing' ? 100 : 250
+    if (needsPolling(current) && clock() - polledAt >= interval) void refresh()
+  }
+
   const api = {
     subscribe: store.subscribe,
     get visualPrediction() {
@@ -218,12 +250,15 @@ export function createPvpClient(options: ClientOptions) {
     },
     queue(command: PvpCommand) {
       if (controls.blocked) return
+      const current = get(store)
+      if (current.connection !== 'connected' || current.view?.status !== 'playing') return
       const intent = { ...command }
-      if (get(store).connection === 'connected' && get(store).view?.status === 'playing')
-        pipeline.queue(intent, () => prediction.command(intent))
+      if (current.view.rollback) rollback.queue(intent)
+      else pipeline.queue(intent, () => prediction.command(intent))
     },
     release() {
       pipeline.release()
+      rollback.release()
       prediction.clear()
       visuals.set(null)
     },
@@ -231,16 +266,20 @@ export function createPvpClient(options: ClientOptions) {
       const current = get(store)
       if (stopped || current.connection !== 'connected' || current.view?.status !== 'playing')
         return
-      visuals.set(prediction.advance(dt, controlledInput(input)))
+      const controlled = controlledInput(input)
+      if (current.view.rollback) {
+        const rollbackState = rollback.advance(dt, controlled)
+        if (rollbackState) store.update((latest) => ({ ...latest, rollbackState }))
+      } else visuals.set(prediction.advance(dt, controlled))
     },
     pump(input: number) {
       const current = get(store)
       if (stopped || terminalConnection(current) || !current.view) return
-      if (current.connection !== 'diverged') stream.start()
-      if (current.connection === 'connected' && current.view.status === 'playing')
-        void pipeline.send(controlledInput(input))
-      const interval = current.view.status === 'playing' ? 100 : 250
-      if (needsPolling(current) && clock() - polledAt >= interval) void refresh()
+      if (current.view.rollback) {
+        if (clock() - polledAt >= 250) void refresh()
+        return
+      }
+      pumpClassic(input, current)
     },
     get predictionStats() {
       return {
@@ -281,7 +320,11 @@ export function createPvpClient(options: ClientOptions) {
       return exclusive(async () => {
         const current = get(store)
         if (terminalConnection(current)) return
-        if (current.view?.status === 'playing' && current.connection !== 'diverged')
+        if (
+          !current.view?.rollback &&
+          current.view?.status === 'playing' &&
+          current.connection !== 'diverged'
+        )
           await pipeline.send(controlledInput(input), true)
         if (!stream.connected || current.connection !== 'connected')
           accept((await request()) as PvpView)
@@ -291,6 +334,7 @@ export function createPvpClient(options: ClientOptions) {
       return exclusive(async () => {
         await request({ kind: 'leave' })
         stopped = true
+        rollback.close()
         stream.stop()
         prediction.clear()
         visuals.set(null)
@@ -303,6 +347,7 @@ export function createPvpClient(options: ClientOptions) {
     },
     stop() {
       stopped = true
+      rollback.close()
       pipeline.stop()
       prediction.clear()
       visuals.set(null)

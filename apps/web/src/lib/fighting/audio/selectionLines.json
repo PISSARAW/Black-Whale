@@ -1,0 +1,60 @@
+{
+  "kurapika": ["Je tiendrai ma promesse.", "I'll keep my promise."],
+  "hisoka": ["Voyons si tu sais me surprendre.", "Let's see if you can surprise me."],
+  "chrollo": ["J’ai déjà tourné la page.", "I've already turned the page."],
+  "benjamin": ["En position. J’ouvre la marche.", "Fall in. I'll take point."],
+  "tserriednich": [
+    "J’espère que tu as quelque chose à m’apprendre.",
+    "I hope you have something to teach me."
+  ],
+  "feitan": ["Moins de paroles. Plus de coups.", "Less talk. More pain."],
+  "saiyu": ["Écoute bien, tant que tu le peux.", "Listen closely, while you still can."],
+  "theta": ["On suit le plan. Reste derrière moi.", "Stick to the plan. Stay behind me."],
+  "biscuit": ["Allez, on commence par l’échauffement.", "Come on, let's start with a warm-up."],
+  "phinks": ["Attends que j’aie fini de m’échauffer.", "Wait till I'm done warming up."],
+  "franklin": ["Laisse-moi dégager le passage.", "Let me clear the way."],
+  "machi": ["Si tu tiens à ta peau, tiens-toi tranquille.", "If you value your skin, hold still."],
+  "illumi": ["Il me suffit d’une aiguille.", "One needle will do."],
+  "kalluto": ["Je ferai attention à ne rien froisser.", "I'll make sure nothing gets creased."],
+  "bonolenov": ["Que le premier pas donne le rythme.", "Let the first step set the rhythm."],
+  "shizuku": ["Il fallait retenir ton nom ?", "Was I supposed to remember your name?"],
+  "hinrigh": ["On fait ça proprement. Je m’en charge.", "Let's keep this clean. I'll handle it."],
+  "mizaistom": ["Chaque geste comptera. Garde ton calme.", "Every move will count. Stay calm."],
+  "leorio": ["Poussez-vous, je passe le premier !", "Make way, I'm going first!"],
+  "hanzo": ["Tu vas devoir suivre des yeux.", "Try to keep up with your eyes."],
+  "rihan": ["Laisse-moi un instant pour t’observer.", "Give me a moment to study you."],
+  "zakuro": [
+    "Montre-moi la sortie. Je couvre nos arrières.",
+    "Show me the way out. I'll watch our backs."
+  ],
+  "melody": ["Ton cœur parle déjà. Je t’écoute.", "Your heart is already speaking. I'm listening."],
+  "basho": ["J’ai trouvé le premier vers.", "I've found the opening verse."],
+  "camilla": ["Camilla ne demande pas la permission.", "Camilla doesn't ask for permission."],
+  "halkenburg": ["Je prendrai le même risque que vous.", "I'll take the same risk as you."],
+  "gel": ["Voyons ce que révèle ton premier réflexe.", "Let's see what your first reflex reveals."],
+  "lynch": ["Une question. J’attends ta vraie réponse.", "One question. I want the real answer."],
+  "luini": ["Devine de quel côté je vais ressortir.", "Guess which side I'll come out on."],
+  "bill": [
+    "Je reste à mon poste. Tu peux compter sur moi.",
+    "I'm staying at my post. You can count on me."
+  ],
+  "furykov": ["Je te regarde. Fais ton premier mouvement.", "I'm watching. Make your first move."],
+  "cluck": ["Dépêchons. Je n’ai pas toute la journée.", "Let's hurry. I haven't got all day."],
+  "beyond": ["Voilà enfin un terrain à explorer !", "Now there's some ground worth exploring!"],
+  "longhi": [
+    "Je propose un accord. Écoutez les termes.",
+    "I propose an agreement. Hear the terms."
+  ],
+  "musse": ["Tu ne sauras même pas où je regarde.", "You won't even know where I'm looking."],
+  "padaille": ["J’ai tout ce qu’il faut à portée de main.", "I've got all I need right at hand."],
+  "sayird": [
+    "La zone est couverte. J’ai un œil sur toi.",
+    "The area's covered. I've got eyes on you."
+  ],
+  "terebellum": ["Approche. On verra qui encaisse.", "Come closer. We'll see who takes the hit."],
+  "voconte": ["Il y a toujours une autre porte.", "There's always another door."],
+  "yokotani": [
+    "Veuillez prendre connaissance du règlement.",
+    "Please acquaint yourself with the rules."
+  ]
+}

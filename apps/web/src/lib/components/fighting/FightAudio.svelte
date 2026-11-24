@@ -7,13 +7,17 @@
     DEFAULT_FIGHT_AUDIO,
     type FightAudioDirector,
   } from '$lib/fighting/audio/director'
+  import { preloadFightSpeech } from '$lib/fighting/audio/speechSamples'
+  import { preloadFighterVoice } from '$lib/fighting/audio/fighterVoice'
   import { readFightAudioSettings, saveFightAudioSettings } from '$lib/fighting/audio/settings'
-  import type { FightSide, FightState } from '$lib/fighting/types'
+  import type { FighterId, FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en' = 'fr'
   export let paused = false
+  export let cinematic = false
   export let viewer: FightSide = 'player'
+  export let audioSeek = 0
 
   let director: FightAudioDirector | null = null
   export let settings = { ...DEFAULT_FIGHT_AUDIO }
@@ -22,7 +26,26 @@
   let mounted = false
   let unavailable = false
 
-  $: if (mounted) director?.update(state, { paused: paused || hidden, settings, viewer })
+  $: if (mounted)
+    director?.update(state, {
+      paused: paused || hidden,
+      settings,
+      viewer,
+      seek: audioSeek,
+      locale: language,
+      cinematic,
+    })
+
+  $: player = state.player.id
+  $: opponent = state.opponent.id
+  $: if (mounted && !settings.muted) preloadVoices(language, [player, opponent])
+
+  function preloadVoices(locale: 'fr' | 'en', fighters: readonly FighterId[]) {
+    const context = sharedAudioContext()
+    if (!context) return
+    preloadFightSpeech(context, locale)
+    for (const fighter of fighters) preloadFighterVoice(context, { fighter, locale })
+  }
 
   function unlock(): void {
     if (settings.muted || hidden) return
@@ -34,7 +57,14 @@
     const start = () => {
       if (!mounted || hidden || settings.muted) return
       director ??= createFightAudioDirector(state)
-      director?.update(state, { paused, settings, viewer })
+      director?.update(state, {
+        paused,
+        settings,
+        viewer,
+        seek: audioSeek,
+        locale: language,
+        cinematic,
+      })
     }
     if (context.state === 'suspended')
       void context
@@ -55,7 +85,14 @@
     mounted = true
     const visibility = () => {
       hidden = document.hidden
-      director?.update(state, { paused: paused || hidden, settings, viewer })
+      director?.update(state, {
+        paused: paused || hidden,
+        settings,
+        viewer,
+        seek: audioSeek,
+        locale: language,
+        cinematic,
+      })
     }
     if (sharedAudioContext()?.state === 'running') unlock()
     window.addEventListener('pointerdown', unlock, { passive: true })

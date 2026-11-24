@@ -1,12 +1,17 @@
 # Présentation et collection
 
 L’[étape 9](../STEP9.md) ajoute des textes originaux et une garde-robe locale.
-`dialogues.ts` couvre les quarante combattants sélectionnables ; `rivals.ts`
-choisit huit échanges à partir des seules identités publiques. `ceremony.ts`
-attend un verdict réel pour les fins, sans annoncer un pouvoir caché.
+`dialogues.ts` couvre les quarante combattants sélectionnables. `rivals.ts`
+résout les échanges de `rivalExchanges.json` à partir des deux identités
+publiques. Le catalogue bilingue note le chapitre ou l’épisode qui motive
+chaque échange. Les textes sont écrits pour Clash. `ceremony.ts` attend un
+verdict réel pour les fins, sans annoncer un pouvoir caché.
 
-Les duels contre l'IA et en local jouent une introduction dans leur décor réel :
-2,4 secondes par combattant, puis 1,6 seconde pour le signal de départ.
+Les duels contre l'IA et en local jouent une introduction dans leur décor réel.
+Chaque plan dure au moins 2,4 secondes, puis le signal prend 1,6 seconde.
+Un échange de rivalité conserve l’ordre de ses deux locuteurs même en inversant
+P1 et P2. `rivalVoiceAtlas.json` repère les deux prises du fichier de sélection
+et laisse assez de temps à chaque réplique dans les deux langues.
 `introPlayback.ts` conserve le simulateur en phase `ready` jusqu'à la fin ;
 `introMotion.ts` échantillonne une chorégraphie dédiée et `introCamera.ts`
 cadre chaque personnage. Aucun Easter Egg n'est activé ou découvert.
@@ -15,6 +20,10 @@ le combat une fois la scène chargée. Entrée, Espace, le bouton Passer et le b
 principal d'une manette passent la scène. Pause et onglet masqué figent la lecture.
 Les mouvements réduits conservent le cadrage de jeu et les poses ordinaires.
 L'entraînement et les replays gardent leur lancement habituel.
+
+Le sous-titre reste lisible quand les voix sont coupées. La pause reprend
+la prise à l’endroit où le plan s’est arrêté. Passer l’introduction arrête
+la voix et lance le combat.
 
 `introPerformancesOne.ts` à `introPerformancesFour.ts` écrivent les quarante
 préparations, chacune avec trois poses, trois clés de caméra et son rythme.

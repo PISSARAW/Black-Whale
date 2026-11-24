@@ -15,10 +15,14 @@ export function createClashLobby(body: unknown, profileToken = ''): Response {
   const setup = parsePvpSetup(body.setup)
   if (!setup) return json({ error: 'INVALID_SETUP' }, { status: 400, headers })
   try {
-    return json(clashPvpRegistry.create(setup, clashSeasons.identify(profileToken) ?? undefined), {
-      status: 201,
-      headers,
-    })
+    return json(
+      clashPvpRegistry.create(
+        setup,
+        clashSeasons.identify(profileToken) ?? undefined,
+        body.rollback === true,
+      ),
+      { status: 201, headers },
+    )
   } catch (error) {
     return clashPvpFailure(error)
   }

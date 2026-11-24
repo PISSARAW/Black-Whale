@@ -18,6 +18,7 @@ const duration = Number(process.env.FIGHT_PERF_SECONDS ?? 45)
 const warmup = Number(process.env.FIGHT_PERF_WARMUP ?? 8)
 const profileSeconds = Number(process.env.FIGHT_PERF_PROFILE ?? 0)
 const headless = process.env.FIGHT_PERF_HEADLESS !== '0'
+const cpuThrottle = Number(process.env.FIGHT_PERF_CPU ?? 1)
 const selected = process.env.FIGHT_PERF_CASES?.split(',')
 const suite =
   process.env.FIGHT_PERF_SUITE ?? (process.argv.includes('--stress') ? 'stress' : 'reference')
@@ -26,6 +27,7 @@ assert.ok(
   'Measurement duration must be between 0 and 600 seconds',
 )
 assert.ok(Number.isFinite(warmup) && warmup >= 0, 'Invalid warmup duration')
+assert.ok(Number.isFinite(cpuThrottle) && cpuThrottle >= 1, 'Invalid CPU throttle')
 const available = fightingPerformanceCases(suite)
 const cases = available.filter((entry) => !selected || selected.includes(entry.id))
 assert.ok(cases.length > 0, 'No performance case selected')
@@ -94,6 +96,10 @@ function summarize(result) {
   return {
     ...rest,
     intervals: distribution(intervals),
+    predictionIntervals: distribution(
+      samples.filter((sample) => sample.prediction).map((sample) => sample.interval),
+    ),
+    predictionRefreshes: samples.filter((sample) => sample.predictionRefreshed).length,
     renderCpu: distribution(samples.map((s) => s.work)),
     renderGpu: distribution(samples.flatMap((s) => (s.gpuMs === undefined ? [] : [s.gpuMs]))),
     drawCalls: distribution(samples.map((s) => s.calls)),
@@ -130,6 +136,10 @@ try {
       await page.evaluate(() => window.fightingPerformance.gpuTiming(true))
     await page.evaluate((entry) => window.fightingPerformance.start(entry), entry)
     await page.waitForTimeout(warmup * 1000)
+    if (cpuThrottle !== 1) {
+      const cdp = await context.newCDPSession(page)
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottle })
+    }
     const powerBefore = fightPerformancePower()
     await page.evaluate(() => window.fightingPerformance.reset())
     for (let seconds = 0; seconds < duration; seconds += 10) {
@@ -142,12 +152,21 @@ try {
     const result = {
       ...entry,
       hostLoad,
+      cpuThrottle,
       power: { before: powerBefore, after: fightPerformancePower() },
       ...summarize(raw),
     }
     result.budget = fightingPerformanceBudget(result)
     result.budget.checks.measurement =
       raw.samples.length >= duration * 20 && /Metal Renderer/.test(raw.renderer)
+    result.budget.checks.predictionDraws =
+      entry.scenario !== 'future' ||
+      (result.predictionIntervals.count >= 60 &&
+        result.predictionRefreshes >= result.predictionIntervals.count / 4)
+    result.budget.checks.predictionP99 =
+      entry.scenario !== 'future' || result.predictionIntervals.p99 <= 20
+    result.budget.pass &&=
+      result.budget.checks.predictionDraws && result.budget.checks.predictionP99
     result.budget.checks.powerStable =
       result.power.before.source === result.power.after.source &&
       result.power.before.lowPowerMode === result.power.after.lowPowerMode

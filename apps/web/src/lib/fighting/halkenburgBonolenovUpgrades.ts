@@ -4,7 +4,7 @@ import type { ArcadeFighter, FighterId, FightSide, FightState } from './types'
 export const HALKENBURG_SWAP_FRAMES = 360 // 6 s
 export const HALKENBURG_GUARD_TRANSFER_FRAMES = 6
 export const JUPITER_ACOUSTIC_FRAMES = 240 // 4 s
-export const JUPITER_TRANSFER_PENALTY = 2
+export const JUPITER_TRANSFER_PENALTY = 0
 
 declare module './types' {
   interface ArcadeFighter {
@@ -21,38 +21,27 @@ export function isHalkenburgUnblockableArrow(attacker: ArcadeFighter): boolean {
   return (
     (attacker.nenOwner ?? attacker.id) === 'halkenburg' &&
     attacker.attack?.kind === 'special' &&
-    attacker.attack.variant === 'forward'
+    attacker.attack.moveId === 'halkenburg:forwardSpecial'
   )
 }
 
-/** Halkenburg impact: transfers opponent's mind to a slow guard (6f transfer, Hatsu locked) for 6s. */
-export function applyHalkenburgBodySwap(
-  state: FightState,
-  halkenburgSide: FightSide,
-): FightState {
-  const targetSide: FightSide = halkenburgSide === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  return {
-    ...state,
-    [targetSide]: {
-      ...target,
-      halkenburgSwappedFrames: HALKENBURG_SWAP_FRAMES,
-      halkenburgSleepingBodyX: target.x,
-    },
-  }
+/** Legacy entry point. The persistent exchange is handled by the Halkenburg soul system. */
+export function applyHalkenburgBodySwap(state: FightState, halkenburgSide: FightSide): FightState {
+  void halkenburgSide
+  return state
 }
 
 export function halkenburgHatsuLocked(fighter: ArcadeFighter): boolean {
-  return (fighter.halkenburgSwappedFrames ?? 0) > 0 || fighter.hatsuEffects.possessedFrames > 0
+  return fighter.hatsuEffects.possessedFrames > 0
 }
 
-/** Bonolenov Jupiter impact: adds +2f to nenTransferFrames unless target covered ears via Contexte. */
+/** Jupiter has no demonstrated generic Nen-transfer penalty. */
 export function applyJupiterAcousticImpact(
   target: ArcadeFighter,
   coveringEars: boolean,
 ): ArcadeFighter {
-  if (coveringEars) return target
-  return { ...target, jupiterAcousticFrames: JUPITER_ACOUSTIC_FRAMES }
+  void coveringEars
+  return target
 }
 
 /** Bonolenov Metamorphosen requires both speech (blocked by Iwazaru) and a vocal `call` exchange. */

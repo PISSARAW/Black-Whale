@@ -15,6 +15,55 @@ const kinds = (before: FightState, after: FightState) =>
   fightSoundEvents(before, after).map((event) => event.kind)
 
 describe('combat sound coverage', () => {
+  it('carries the authored move id into an impact cue', () => {
+    const before = fighting()
+    const impact = {
+      kind: 'heavy' as const,
+      blocked: false,
+      critical: false,
+      knockdown: false,
+      wallSplat: false,
+      parried: false,
+      avoided: false,
+      invulnerable: false,
+      counterHit: false,
+      punish: false,
+      antiAir: false,
+      damage: 12,
+      comboHits: 1,
+      damageScale: 1,
+      points: 0,
+      concealed: false,
+      projectileId: null,
+      sequence: 1,
+      attacker: 'player' as const,
+      position: { x: 50, y: 50 },
+      zone: 'torso' as const,
+    }
+    const after = {
+      ...before,
+      impact,
+      player: {
+        ...before.player,
+        attack: {
+          kind: 'heavy' as const,
+          variant: 'standing' as const,
+          moveId: 'kurapika:standingHeavy',
+          frame: 8,
+          impacted: true,
+          auraCharged: false,
+          concealed: false,
+          hatsuSource: null,
+          projectileSpawned: false,
+          reversal: false,
+        },
+      },
+    }
+    expect(fightSoundEvents(before, after)).toContainEqual(
+      expect.objectContaining({ kind: 'impact', moveId: 'kurapika:standingHeavy' }),
+    )
+  })
+
   it('gives every playable fighter an authored identity and an existing sound recipe', () => {
     const profiles = FIGHTING_ROSTER.map(({ id }) => FIGHTER_SOUNDS[id])
     expect(
@@ -135,8 +184,22 @@ describe('combat sound coverage', () => {
     const events = []
     for (let frame = 1; frame <= 60; frame++)
       events.push(...fightSoundEvents(walk(frame - 1), walk(frame)))
-    expect(events.filter((event) => event.kind === 'step')).toHaveLength(3)
-    expect(fightSoundEvents(walk(36), walk(36))).toEqual([])
+    expect(events.filter((event) => event.kind === 'step')).toEqual([
+      expect.objectContaining({ x: 23.6, take: expect.any(Number) }),
+    ])
+    expect(fightSoundEvents(walk(36), { ...walk(36), frame: 72 })).toEqual([])
+    expect(
+      fightSoundEvents(walk(14), walk(17)).filter((event) => event.kind === 'step'),
+    ).toHaveLength(1)
+  })
+
+  it('plays a single ground contact when a downed airborne fighter lands', () => {
+    const before = fighting()
+    const air: FightState = { ...before, player: { ...before.player, y: 2, pose: 'down' } }
+    const grounded: FightState = { ...air, player: { ...air.player, y: 0 } }
+    expect(kinds(before, air)).toEqual([])
+    expect(kinds(air, grounded)).toEqual(['fall'])
+    expect(kinds(grounded, grounded)).toEqual([])
   })
 
   it('announces utility transformations and actual armour/sun transitions without an impact', () => {

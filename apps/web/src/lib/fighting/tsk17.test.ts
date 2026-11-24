@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, nextRound, tickFight } from './engine'
-import {
-  TSK17_BASE_DPS,
-  TSK17_ZETSU_MULTIPLIER,
-  releaseTsk17,
-  tsk17TickDamage,
-} from './tsk17'
+import { TSK17_BASE_DPS, TSK17_ZETSU_MULTIPLIER, releaseTsk17, tsk17TickDamage } from './tsk17'
 import { CATS_NAME_FRAMES } from './camillaCat'
 import { EMPTY_INPUT, type FightState } from './types'
 
@@ -24,7 +19,11 @@ function duel(playerHp = 300, opponentHp = 300): FightState {
 describe('TSK-17 biological weapon (Benjamin vs Camilla)', () => {
   it('releases TSK-17 via the Context button, poisoning both fighters and accelerating in Zetsu (x1.45)', () => {
     const start = duel()
-    const afterContext = tickFight(start, { ...EMPTY_INPUT, context: true }, { dt: DT, opponentInput: EMPTY_INPUT })
+    const afterContext = tickFight(
+      start,
+      { ...EMPTY_INPUT, context: true },
+      { dt: DT, opponentInput: EMPTY_INPUT },
+    )
     expect(afterContext.tsk17?.releasedBy).toBe('player')
     expect(afterContext.player.tskPoisoned).toBe(true)
     expect(afterContext.opponent.tskPoisoned).toBe(true)
@@ -82,7 +81,7 @@ describe('TSK-17 biological weapon (Benjamin vs Camilla)', () => {
       ...start,
       player: { ...start.player, on: { grudge: 80, sealFrames: 0 } },
     }
-    let state = withOn
+    let state: FightState = withOn
     for (let frame = 0; frame < 150 && state.phase === 'fighting' && !state.catsName; frame++) {
       state = tickFight(
         state,

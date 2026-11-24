@@ -3,6 +3,12 @@ import { EXHAUSTION_RELEASE_AURA } from './nen'
 import { onOf } from './onTechnique'
 import { canSpeak } from './saiyuSenses'
 import type { ArcadeFighter, FightInput, FightState } from './types'
+import {
+  nenContractBreached,
+  type NenContractDefinition,
+  type NenContractPenalty,
+  type NenContractReward,
+} from './nenContract'
 
 export type SeiyakuKind = 'speed' | 'aggression' | 'blind'
 
@@ -19,6 +25,38 @@ export interface SeiyakuState {
   remainingFrames: number | null
   backHoldFrames: number
   breached: boolean
+}
+
+const SEIYAKU_CONTRACTS: Record<
+  SeiyakuKind,
+  {
+    restriction: NenContractDefinition['restrictions'][number]
+    reward: NenContractReward
+    penalty: NenContractPenalty
+  }
+> = {
+  speed: { restriction: 'no-ken', reward: 'transfer-speed', penalty: 'aura-exhaustion' },
+  aggression: { restriction: 'no-retreat', reward: 'hatsu-power', penalty: 'on-seal' },
+  blind: { restriction: 'no-gyo', reward: 'hatsu-discount', penalty: 'raised-zetsu-threshold' },
+}
+
+export function seiyakuNenContract(kind: SeiyakuKind): NenContractDefinition {
+  const spec = SEIYAKU_CONTRACTS[kind]
+  return {
+    id: `seiyaku:${kind}`,
+    source: 'seiyaku',
+    restrictions: [spec.restriction],
+    reward: spec.reward,
+    penalty: spec.penalty,
+    durationFrames:
+      kind === 'speed'
+        ? SEIYAKU_SPEED_FRAMES
+        : kind === 'aggression'
+          ? SEIYAKU_AGGRESSION_FRAMES
+          : null,
+    disclosure: 'public',
+    consent: 'self',
+  }
 }
 
 declare module './types' {
@@ -80,11 +118,9 @@ export function holdingForward(fighter: ArcadeFighter, input?: FightInput): bool
  * - Forward -> 'aggression' (+25% Hatsu power, no retreat > 10f)
  * - Back / Up -> 'blind' (-25% Hatsu cost, no Gyo)
  */
-export function resolveSeiyakuInput(
-  fighter: ArcadeFighter,
-  input?: FightInput,
-): ArcadeFighter {
-  if (!input?.aura || !input.context) return fighter
+export function resolveSeiyakuInput(fighter: ArcadeFighter, input?: FightInput): ArcadeFighter {
+  if (!input || !(input.seiyakuIntent || (!input.directControls && input.aura && input.context)))
+    return fighter
   const kind: SeiyakuKind = holdingForward(fighter, input)
     ? 'aggression'
     : holdingBack(fighter, input) || input.jump
@@ -117,12 +153,16 @@ function breachSeiyaku(fighter: ArcadeFighter, kind: SeiyakuKind): ArcadeFighter
 function stepFighterSeiyaku(fighter: ArcadeFighter, input?: FightInput): ArcadeFighter {
   const vow = fighter.seiyaku
   if (!vow || vow.breached) return fighter
-  if (vow.kind === 'speed' && fighter.nen.ken) return breachSeiyaku(fighter, 'speed')
-  if (vow.kind === 'blind' && fighter.nen.gyo) return breachSeiyaku(fighter, 'blind')
   const backHoldFrames =
     vow.kind === 'aggression' && holdingBack(fighter, input) ? vow.backHoldFrames + 1 : 0
-  if (vow.kind === 'aggression' && backHoldFrames > SEIYAKU_AGGRESSION_BACK_LIMIT) {
-    return breachSeiyaku(fighter, 'aggression')
+  if (
+    nenContractBreached(seiyakuNenContract(vow.kind), {
+      fighter,
+      input,
+      retreatFrames: backHoldFrames,
+    })
+  ) {
+    return breachSeiyaku(fighter, vow.kind)
   }
   if (vow.remainingFrames === null) return fighter
   const remaining = vow.remainingFrames - 1

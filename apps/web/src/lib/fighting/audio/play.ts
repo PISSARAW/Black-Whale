@@ -14,10 +14,21 @@ import { rush, startsAt, swept } from '$lib/audio/hatsu/synth'
 import type { FightState, MoveSlot } from '../types'
 import type { FightSoundEvent, FightSoundKind } from './events'
 import { playFightHatsu } from './hatsu'
+import { fightCueMix } from './cueMix'
 import type { FightMix } from './mixer'
 import { FIGHTER_SOUNDS } from './profiles'
 import { combatPressure } from './stages'
+import { isKurapikaGoldenHeavy, kurapikaGoldenHeavyAudioAccent } from '../kurapikaGoldenHeavyImpact'
+import { fightImpactPunctuation } from '../fightImpactPunctuation'
 import { breath, fighterMotif, floorContact, heartbeat, materialStrike, watchTick } from './voices'
+import { bodyContact, moveMaterial, weaponMovement } from './physicalFoley'
+import { footFoley } from './footFoley'
+import {
+  projectileImpactFoley,
+  projectileInterceptionFoley,
+  projectileTravelFoley,
+} from './projectileFoley'
+import { tacticalImpact, TACTICAL_CUES } from './tacticalCues'
 import { playEasterEggSound } from './easterEggs'
 
 interface Cue {
@@ -34,7 +45,7 @@ const profileFor = ({ event, state }: Cue) => {
   return profile
 }
 
-const CUES: Record<FightSoundKind, (cue: Cue) => void> = {
+const CUES: Record<Exclude<FightSoundKind, keyof typeof TACTICAL_CUES>, (cue: Cue) => void> = {
   intro: introCue,
   start: startCue,
   finish: finishCue,
@@ -42,24 +53,19 @@ const CUES: Record<FightSoundKind, (cue: Cue) => void> = {
   watch: watchCue,
   score: ({ g, event }) => metallic(g, { root: 520 + (event.value ?? 1) * 90, force: 0.25 }),
   stage: stageCue,
-  windup: (cue) => breath(cue.g, { profile: profileFor(cue), force: 0.6 }),
+  windup: () => {},
   swing: swingCue,
   hatsu: ({ g, event }) => playFightHatsu(g, event),
   projectile: projectileCue,
+  'projectile-intercept': ({ g, event }) => projectileInterceptionFoley(g, event),
   impact: impactCue,
   guard: ({ g }) =>
     rush(g, startsAt(g), { peak: 0.022, cutoff: 1200, sweepTo: 500, duration: 0.065 }),
-  step: (cue) => floorContact(cue.g, { stage: cue.mix.profile, weight: profileFor(cue).weight }),
-  dash: dashCue,
-  jump: ({ g }) => rush(g, startsAt(g), { peak: 0.05, cutoff: 500, sweepTo: 1900, duration: 0.12 }),
-  land: (cue) =>
-    floorContact(cue.g, { stage: cue.mix.profile, weight: profileFor(cue).weight, landing: true }),
-  fall: (cue) =>
-    floorContact(cue.g, {
-      stage: cue.mix.profile,
-      weight: profileFor(cue).weight * 1.5,
-      landing: true,
-    }),
+  step: (cue) => movementCue(cue, 'step'),
+  dash: (cue) => movementCue(cue, 'dash'),
+  jump: (cue) => movementCue(cue, 'jump'),
+  land: (cue) => movementCue(cue, 'land'),
+  fall: (cue) => movementCue(cue, 'fall'),
   crouch: ({ g }) => materialStrike(g, { material: 'silk', force: 0.35, light: true }),
   charge: ({ g }) =>
     rush(g, startsAt(g), {
@@ -105,9 +111,17 @@ const CUES: Record<FightSoundKind, (cue: Cue) => void> = {
 }
 
 export function playFightSound(mix: FightMix, event: FightSoundEvent, state: FightState): void {
-  const bus = event.kind === 'stage' ? 'ambience' : event.kind === 'clock' ? 'pressure' : 'effects'
-  const g = mix.event(event.x, bus)
-  soundedFrom(null, () => withHatsuAudioGraph(g, () => CUES[event.kind]({ g, mix, event, state })))
+  const { channel, priority } = fightCueMix(event)
+  const g = mix.event(event.x, channel, priority)
+  if (!g) return
+  g.timeOffset = event.delay
+  soundedFrom(null, () => withHatsuAudioGraph(g, () => playCue({ g, mix, event, state })))
+}
+
+function playCue(cue: Cue): void {
+  const { g, event } = cue
+  if (event.kind in TACTICAL_CUES) TACTICAL_CUES[event.kind as keyof typeof TACTICAL_CUES](g, event)
+  else CUES[event.kind as keyof typeof CUES](cue)
 }
 
 function metallic(g: Graph, options: { root: number; force: number }): void {
@@ -126,8 +140,8 @@ function metallic(g: Graph, options: { root: number; force: number }): void {
 function introCue({ mix, state }: Cue): void {
   for (const side of ['player', 'opponent'] as const) {
     const fighter = state[side]
-    const g = mix.event(fighter.x)
-    fighterMotif(g, FIGHTER_SOUNDS[fighter.id])
+    const g = mix.event(fighter.x, 'music')
+    if (g) fighterMotif(g, FIGHTER_SOUNDS[fighter.id])
   }
 }
 
@@ -187,8 +201,11 @@ function swingCue(cue: Cue): void {
     attack: 0.016,
     release: 0.05,
   })
-  if (profile.material !== 'flesh')
-    materialStrike(g, { material: profile.material, force: 0.28, light: true })
+  weaponMovement(g, {
+    material: moveMaterial(event.moveId),
+    force: motion.force * 0.66,
+    take: cue.state.frame % 4,
+  })
 }
 
 const SWINGS: Record<MoveSlot, { from: number; to: number; duration: number; force: number }> = {
@@ -233,23 +250,20 @@ function projectileCue({ g, event }: Cue): void {
     })
     return
   }
-  if (event.shape === 'chain') {
-    chainRings()
-    return
-  }
-  const profile = FIGHTER_SOUNDS[event.source ?? event.fighter ?? 'kurapika']
-  materialStrike(g, { material: profile.material, force: 0.4, light: true })
-  rush(g, at, { peak: 0.045, cutoff: 1700, sweepTo: 550, duration: 0.09, release: 0.08 })
+  projectileTravelFoley(g, event)
 }
 
-function dashCue(cue: Cue): void {
-  const { g, mix } = cue
-  rush(g, startsAt(g), { peak: 0.065, cutoff: 2200, sweepTo: 350, duration: 0.16, attack: 0.015 })
-  floorContact(g, { stage: mix.profile, weight: profileFor(cue).weight * 1.3 })
+function movementCue(cue: Cue, kind: Parameters<typeof footFoley>[1]['kind']): void {
+  footFoley(cue.g, {
+    floor: cue.mix.profile.floor,
+    weight: profileFor(cue).weight,
+    kind,
+    take: cue.event.take ?? cue.state.frame % 4,
+  })
 }
 
 function impactCue(cue: Cue): void {
-  const { g, event, state, mix } = cue
+  const { g, event } = cue
   const impact = event.impact
   if (!impact) return
   if (impact.avoided || impact.invulnerable) {
@@ -260,31 +274,68 @@ function impactCue(cue: Cue): void {
     metallic(g, { root: 940, force: 1.4 })
     return
   }
+  const material = moveMaterial(event.moveId)
+  bodyContact(g, { impact, material })
+  projectileImpactFoley(g, {
+    shape: event.shape,
+    take: impact.sequence,
+    force: impact.blocked ? 0.6 : 1,
+  })
   if (impact.blocked) {
-    materialStrike(g, { material: 'wood', force: 0.75 })
+    punctuateImpactAudio(cue)
+    goldenHeavyImpactAudio(cue, true)
     return
   }
   const force = Math.min(1.8, 0.7 + impact.damage / 28)
-  materialStrike(g, { material: 'flesh', force })
-  materialStrike(g, { material: profileFor(cue).material, force: force * 0.4, light: true })
-  const victim = state[impact.attacker === 'player' ? 'opponent' : 'player']
-  breath(g, { profile: FIGHTER_SOUNDS[victim.id], pain: true, force })
-  if (impact.wallSplat) floorContact(g, { stage: mix.profile, weight: 1.6, landing: true })
+  weaponMovement(g, { material, take: impact.sequence, force: force * 0.46 })
+  tacticalImpact(g, impact)
   impactAccent(cue)
+  punctuateImpactAudio(cue)
+  goldenHeavyImpactAudio(cue, false)
+}
+
+function punctuateImpactAudio({ g, event }: Cue): void {
+  const accent = fightImpactPunctuation(event.impact!)
+  if (accent.rank < 2) return
+  swept(g, startsAt(g), {
+    type: 'sine',
+    from: accent.thumpHz,
+    to: accent.thumpHz * 0.52,
+    peak: 0.028 + accent.rank * 0.014,
+    duration: 0.07 + accent.rank * 0.025,
+    attack: 0.001,
+    release: 0.06,
+  })
+  if (accent.crack > 0)
+    rush(g, startsAt(g), {
+      type: 'highpass',
+      peak: 0.035 * accent.crack,
+      cutoff: 2800,
+      sweepTo: 900,
+      duration: 0.018,
+      attack: 0.001,
+      release: 0.045,
+    })
+}
+
+function goldenHeavyImpactAudio({ g, event }: Cue, blocked: boolean): void {
+  if (!isKurapikaGoldenHeavy(event.moveId)) return
+  const accent = kurapikaGoldenHeavyAudioAccent(blocked)
+  swept(g, startsAt(g), {
+    type: 'sine',
+    from: accent.thumpFrom,
+    to: accent.thumpTo,
+    peak: accent.thumpPeak,
+    duration: accent.duration,
+    attack: 0.001,
+    release: blocked ? 0.045 : 0.08,
+  })
+  metallic(g, { root: 740, force: accent.chainForce })
 }
 
 function impactAccent({ g, event }: Cue): void {
   const impact = event.impact!
   if (impact.critical) metallic(g, { root: 310, force: 0.8 })
-  if (impact.counterHit || impact.punish)
-    rush(g, startsAt(g), {
-      peak: 0.07,
-      cutoff: 3100,
-      sweepTo: 1000,
-      duration: 0.015,
-      attack: 0.001,
-      release: 0.06,
-    })
   if (impact.transfer) {
     swept(g, startsAt(g), { type: 'sine', from: 240, to: 50, peak: 0.12, duration: 0.2 })
   }
@@ -377,7 +428,8 @@ function stageCue({ g, mix, state, event }: Cue): void {
     attack: 0.03,
     release: 0.7,
   })
-  stageAccent(g, mix, step)
+  const room = mix.event(event.x, 'ambience', 0)
+  if (room) stageAccent(room, mix, step)
 }
 
 function stageAccent(g: Graph, mix: FightMix, step: number): void {

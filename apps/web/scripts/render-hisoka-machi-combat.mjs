@@ -39,7 +39,7 @@ try {
     args: ['--enable-unsafe-swiftshader'],
   })
   const page = await browser.newPage({
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 1,
   })
   page.setDefaultTimeout(90000)
@@ -54,8 +54,8 @@ try {
   await page.clock.pauseAt(Date.now() + 100)
   await page.clock.runFor(300)
 
-  const picture = path.join(output, 'hisoka-vs-machi-corrections-picture.mp4')
-  const video = path.join(output, 'hisoka-vs-machi-corrections.mp4')
+  const picture = path.join(output, 'hisoka-vs-machi-cinematic-picture.mp4')
+  const video = path.join(output, 'hisoka-vs-machi-cinematic.mp4')
   encoder = spawn(
     'ffmpeg',
     [
@@ -67,7 +67,7 @@ try {
       '-framerate',
       '30',
       '-vcodec',
-      'png',
+      'mjpeg',
       '-i',
       'pipe:0',
       '-an',
@@ -93,10 +93,10 @@ try {
   for (let frame = 0; frame < 720; frame++) {
     await page.evaluate(() => window.hisokaMachiVideo.advance(2))
     await page.clock.runFor(frame % 3 === 0 ? 34 : 33)
-    const png = await page.screenshot()
+    const frameBytes = await page.screenshot({ type: 'jpeg', quality: 94 })
     if ([24, 60, 155, 200, 245, 310, 360, 470, 560, 660, 710].includes(frame))
-      await writeFile(path.join(output, `frame-${frame}.png`), png)
-    if (!encoder.stdin.write(png)) await once(encoder.stdin, 'drain')
+      await writeFile(path.join(output, `cinematic-frame-${frame}.jpg`), frameBytes)
+    if (!encoder.stdin.write(frameBytes)) await once(encoder.stdin, 'drain')
     if (frame % 90 === 0) process.stdout.write(`Captured ${frame}/720 frames\n`)
   }
   encoder.stdin.end()

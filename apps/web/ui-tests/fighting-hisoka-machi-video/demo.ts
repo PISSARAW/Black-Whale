@@ -25,7 +25,7 @@ function fresh(ai = false): FightState {
     createFight(ai ? 'machi' : 'hisoka', ai ? 'hisoka' : 'machi', {
       mode: ai ? 'versus-ai' : 'versus-local',
       formatId: 'knockout',
-      environment: { stageId: 'heavens-arena' },
+      environment: { stageId: 'royal-salon' },
     }),
   )
   return {

@@ -2,6 +2,7 @@ import { moveHanzoOpponent } from './hanzoAi'
 import { wantsObservedGuard, incomingLow } from './combatPressure'
 import { moveFeitanOpponent } from './feitanAi'
 import { moveKurapikaOpponent } from './kurapikaFootwork'
+import { moveHisokaOpponent } from './hisokaFootwork'
 import { moveShizukuOpponent } from './shizukuFootwork'
 import { moveBonolenovOpponent } from './bonolenovAi'
 import { hasRecoveryCancel } from './recoveryPunish'
@@ -27,6 +28,8 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
     return fighter
   const kurapika = moveKurapikaOpponent(fighter, player)
   if (kurapika) return kurapika
+  const hisoka = moveHisokaOpponent(fighter, player)
+  if (hisoka) return hisoka
   const shizuku = moveShizukuOpponent(fighter, player)
   if (shizuku) return shizuku
   const feitan = moveFeitanOpponent(fighter, player)

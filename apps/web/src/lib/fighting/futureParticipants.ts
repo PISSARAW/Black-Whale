@@ -4,6 +4,7 @@ import type { FightSide, FightState, ArcadeFighter, FighterId } from './types'
 export function futureBodyKey(state: FightState, side: FightSide): string {
   const actor = state[side]
   if (actor.halkSoul) return actor.halkSoul.key
+  if (state.rosterGuestContext?.owner === side) return `guest:${state.rosterGuestContext.id}`
   if (state.rosterProjection?.owner === side) return `guest:${state.rosterProjection.guestId}`
   return `main:${actor.id}:${actor.halkenburgTransferFrame ?? 0}:${state.teamMatch?.seats[side].active ?? 0}`
 }

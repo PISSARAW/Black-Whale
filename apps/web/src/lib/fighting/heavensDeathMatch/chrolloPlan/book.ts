@@ -10,9 +10,21 @@ import { pageActive } from '../puppets/pipeline'
 export type BookStep = 'turn' | 'bookmark' | 'open'
 
 export function applyBookStep(book: ChrolloBookState, step: BookStep): ChrolloBookState {
+  // The historical death match predates the configurable four-page deck. Its five
+  // prepared pages are all explicit scenario resources, not a newly stolen fifth slot.
+  // Keep that closed world intact instead of letting the generic 4+1 synchronizer
+  // replace Gallery Fake with the current arcade preset midway through the replay.
+  if (!book.deck && book.pages.length > 4) return applyHistoricalStep(book, step)
   if (step === 'turn') return turnChrolloPage(book)
   if (step === 'open') return book.open ? book : { ...book, open: true }
   return toggleChrolloBookmark(book)
+}
+
+function applyHistoricalStep(book: ChrolloBookState, step: BookStep): ChrolloBookState {
+  if (step === 'open') return book.open ? book : { ...book, open: true }
+  if (step === 'turn') return { ...book, page: (book.page + 1) % book.pages.length, open: true }
+  const page = book.pages[book.page] ?? null
+  return { ...book, bookmark: book.bookmark === page ? null : page, open: false }
 }
 
 function turnsTo(book: ChrolloBookState, page: ChrolloPage): BookStep[] {

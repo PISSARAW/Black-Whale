@@ -72,6 +72,7 @@ import { stepActors } from './duelStep/actors'
 import { resolveContextInput } from './contextInput'
 import { applyOnContext, canSwearOn } from './onTechnique'
 import { flushDirectMoves } from './directFightBuffer'
+import { withCombatPressure } from './combatPressure'
 import { performChrolloBookAction, pickChrolloFlipSlot } from './chrolloBookAction'
 import { CHROLLO_STEAL } from './chrolloBook'
 import { revealBookSlot } from './chrolloDeck'
@@ -175,7 +176,7 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
-  state = flushDirectMoves(state, performTrainingAction)
+  state = withCombatPressure(flushDirectMoves(state, performTrainingAction))
   const inputs = {
     player: resolveContextInput(state, 'player', input),
     opponent: opponentInput ? resolveContextInput(state, 'opponent', opponentInput) : undefined,

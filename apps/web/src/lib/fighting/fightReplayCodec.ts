@@ -123,9 +123,20 @@ function setup(value: unknown): ReplaySetup {
 }
 function command(value: unknown): ReplayCommand {
   const entry = object(value)
-  const kind = member(entry.kind, ['start', 'round', 'move', 'emperor', 'easter', 'panel'])
+  const kind = member(entry.kind, [
+    'start',
+    'round',
+    'move',
+    'emperor',
+    'easter',
+    'panel',
+    'perceived-result',
+  ])
   if (kind === 'start' || kind === 'round') return { kind }
   if (kind === 'panel') return readPanelReplayCommand(entry)
+  if (kind === 'perceived-result') {
+    return { kind, action: member(entry.action, ['continue', 'rematch']) }
+  }
   const side = member(entry.side, ['player', 'opponent'])
   if (kind === 'emperor') return { kind, side }
   if (kind === 'easter') {

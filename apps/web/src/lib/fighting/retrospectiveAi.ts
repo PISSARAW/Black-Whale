@@ -24,6 +24,7 @@ import { performArsenalCommand } from './retrospectiveArsenal'
 import { chrolloPageForMove } from './chrolloBook'
 import { cookieCanStart, ownsCookie } from './cookie'
 import { canAct } from './fightActorState'
+import { styleReactionFrames } from './styleMobility'
 import { LUINI_ROOM_HALF_WIDTH } from './luiniSpatial'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { AuraAttackOptions } from './auraAttackAction'
@@ -218,12 +219,15 @@ function shouldSealWounds(state: FightState): boolean {
   )
 }
 function incomingObject(state: FightState): boolean {
+  const read = state.opponent.counterplayRead
   return state.projectiles.some(
     (shot) =>
       shot.owner === 'player' &&
       physicalProjectile(shot) &&
       !shot.living &&
       perceivesProjectile(state.opponent, shot) &&
+      read?.key === `projectile:${shot.id}` &&
+      read.frames >= Math.max(3, Math.floor(styleReactionFrames(state.opponent) / 2)) &&
       Math.abs(shot.x - state.opponent.x) < 18 &&
       shot.velocityX * state.opponent.facing < 0 &&
       Math.abs(shot.y - state.opponent.y - 7) < 3,

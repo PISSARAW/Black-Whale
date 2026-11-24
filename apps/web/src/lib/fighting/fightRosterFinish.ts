@@ -103,6 +103,9 @@ function finishHisoka(
 ): void {
   // Deep side planes and bright fasteners give the existing fitted waistcoat
   // enough value separation to survive gameplay distance and fast movement.
+  const torso = model.root.getObjectByName('torso')
+  const torsoY = torso?.position.y ?? 0
+  const waistcoatAnchor = torso ?? finish
   const vest = material(THREE, darken(profile.jacket, 0.72))
   const piping = material(THREE, darken(profile.jacket, 0.42))
   const pale = material(THREE, profile.shirt)
@@ -118,8 +121,11 @@ function finishHisoka(
       vest,
     )
     panel.name = side < 0 ? 'hisoka-waistcoat-left' : 'hisoka-waistcoat-right'
-    panel.position.z = 0.153
-    finish.add(panel)
+    // The finish used to live on the figure root: the body could lean or breathe
+    // underneath while the waistcoat stayed upright in world space. Keep the
+    // authored world height, but parent the fitted panel to the animated torso.
+    panel.position.set(0, -torsoY, 0.153)
+    waistcoatAnchor.add(panel)
 
     const shoulder = model.root.getObjectByName(side < 0 ? 'shoulder-left' : 'shoulder-right')
     if (shoulder) {
@@ -141,11 +147,11 @@ function finishHisoka(
     button.name = `hisoka-waistcoat-button-${index}`
     button.position.set(
       index % 2 === 0 ? -0.022 : 0.022,
-      1.23 - Math.floor(index / 2) * 0.13,
+      1.23 - Math.floor(index / 2) * 0.13 - torsoY,
       0.164,
     )
     button.scale.z = 0.45
-    finish.add(button)
+    waistcoatAnchor.add(button)
   }
 
   const head = model.root.getObjectByName('manga-head:hisoka')

@@ -28,6 +28,9 @@ describe('P14 hero finish and P16 roster propagation', () => {
     ])
       expect(model.root.getObjectByName(name), name).toBeTruthy()
     expect(model.root.getObjectByName('hisoka-waistcoat-button-3')).toBeTruthy()
+    expect(model.root.getObjectByName('hisoka-waistcoat-left')?.parent?.name).toBe('torso')
+    expect(model.root.getObjectByName('hisoka-waistcoat-right')?.parent?.name).toBe('torso')
+    expect(model.root.getObjectByName('hisoka-waistcoat-button-3')?.parent?.name).toBe('torso')
   })
 
   it('separates Kurapika navy tailoring and keeps face detail on the animated head', () => {

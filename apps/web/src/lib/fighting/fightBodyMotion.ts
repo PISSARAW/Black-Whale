@@ -277,7 +277,11 @@ function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyP
     techniqueBodyPlan(fighter, context) ??
     hanzoAstralRestPlan(fighter, context.seconds)
   if (special) return special
-  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, context.seconds)
+  // A released physical card is keyed to the simulation frame. Do not let the
+  // idle breathing clock alter the wrist silhouette between identical replays.
+  const stanceSeconds =
+    fighter.id === 'hisoka' && fighter.attack?.kind === 'ranged' ? 0 : context.seconds
+  const standing = stanceAt(fighterStance(fighter) ?? DEFAULT_STANCE, stanceSeconds)
   const personal = chrolloBodyStance(fighter, standing)
   if (fighter.attack) return attackingPlan(fighter, personal, context.poseFraction)
   return restingWithConstraint(fighter, context, personal)

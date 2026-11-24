@@ -11,6 +11,7 @@ import { zetsuStealthDelay } from './advancedMovementTech'
 import { steerFighter } from './fighterMovement'
 import { canMove, playerCanJump, canGuard } from './fightActorState'
 import { moveOpponent } from './opponentMovement'
+import { moveHisokaOpponent } from './hisokaFootwork'
 import { melodyInput } from './melodyChannel'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
@@ -40,8 +41,16 @@ export function moveCounterplayOpponent(options: {
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
   const frames = observedFrames(fighter, cue)
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }
-  if (frames <= styleReactionFrames(fighter) + zetsuStealthDelay(fighter, target) || !canRespond(fighter, cue))
+  if (
+    frames <= styleReactionFrames(fighter) + zetsuStealthDelay(fighter, target) ||
+    !canRespond(fighter, cue)
+  )
     return moveRememberedOpponent(view, fighter)
+  // Hisoka's observed retreat-and-return is a body decision, not an automatic
+  // dodge. Give it the first opportunity once the same readable cue has met the
+  // ordinary reaction delay; interruption, walls and vulnerability still apply.
+  const hisoka = moveHisokaOpponent(fighter, target)
+  if (hisoka) return hisoka
   const input = responseInput(fighter, cue)
   return applyResponse(
     {

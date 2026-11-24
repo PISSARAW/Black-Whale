@@ -6,6 +6,7 @@ import { activeHitbox, attackData, FIXED_STEP, hurtboxes } from './frameData'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
 import { bungeeVisible } from './hisokaTechnique'
 import { keyPoseTimeline } from './keyPoseMoves'
+import { TEXTURE_SURPRISE_COST } from './textureSurpriseMask'
 import { EMPTY_INPUT, type FightSide, type FightState } from './types'
 
 const ready = () => {
@@ -42,7 +43,10 @@ describe('Texture Surprise and Hisoka presentation', () => {
       expect(armed[side].textureSurprise).toBeUndefined()
       expect(frames(armed, startup - 1)[side].textureSurprise).toBeUndefined()
       const masked = frames(armed, startup)
-      expect(masked[side].textureSurprise).toEqual({ surface: 'cloth', source: 'personal' })
+      expect(masked[side].textureSurprise).toMatchObject({
+        surface: 'cloth',
+        source: 'personal',
+      })
       expect(masked.bungeeGum).toBeNull()
       expect(masked.impact).toBeNull()
       expect(masked.score).toEqual(state.score)
@@ -51,7 +55,7 @@ describe('Texture Surprise and Hisoka presentation', () => {
       expect(hurtboxes(masked[side])).toEqual(hurtboxes(state[side]))
       expect(hatsuDamageFactor(masked[side])).toBe(hatsuDamageFactor(state[side]))
       expect(hatsuDefenceFactor(masked[side])).toBe(hatsuDefenceFactor(state[side]))
-      expect(frames(masked, 300)[side].textureSurprise).toEqual({
+      expect(frames(masked, 300)[side].textureSurprise).toMatchObject({
         surface: 'cloth',
         source: 'personal',
       })
@@ -62,7 +66,7 @@ describe('Texture Surprise and Hisoka presentation', () => {
     const state = ready()
     for (const fighter of [
       { ...state.player, y: 3 },
-      { ...state.player, aura: 19 },
+      { ...state.player, aura: TEXTURE_SURPRISE_COST - 1 },
       { ...state.player, nen: { ...state.player.nen, mode: 'zetsu' as const } },
       { ...state.player, hatsuEffects: { ...state.player.hatsuEffects, hatsuStolen: 1 } },
       { ...state.player, on: { grudge: 0, sealFrames: 60 } },

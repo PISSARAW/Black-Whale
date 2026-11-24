@@ -20,6 +20,9 @@ import { createReplayRecorder } from './fightReplayRecorder'
 import { createReplayPlayer } from './fightReplayPlayer'
 import { executeReplayPacket } from './fightReplayCommands'
 import { fightReplayHash } from './fightReplayHash'
+import { startFutureField, fieldDeceives } from './futureIllusion'
+import { futurePerceivedTarget } from './parallelFuture'
+import { knownOpponentTarget } from './opponentAwareness'
 import { EMPTY_INPUT, type FightState, type FighterId } from './types'
 import type { ReplayPacket } from './fightReplayTypes'
 
@@ -258,5 +261,32 @@ describe('Hisoka reference combat', () => {
     while (!replay.done && !replay.error) replay.advance(0.05, 10)
     expect(replay.error).toBe('')
     expect(fightReplayHash(replay.state)).toBe(fightReplayHash(state))
+  })
+
+  it('attacks Tserriednich’s perceived body without learning the chapter 420 divergence', () => {
+    const base = beginFight(
+      createFight('tserriednich', 'hisoka', {
+        mode: 'versus-local',
+        formatId: 'knockout',
+      }),
+    )
+    const armed = {
+      ...base,
+      player: {
+        ...base.player,
+        x: 30,
+        futureIllusionMode: true,
+        futureStoredFrames: 1200,
+        nen: { ...base.player.nen, mode: 'zetsu' as const },
+      },
+      opponent: { ...base.opponent, x: 46 },
+    }
+    const field = startFutureField(armed, 'player')
+    const diverged = { ...field, player: { ...field.player, x: 70 } }
+    const perceived = futurePerceivedTarget(diverged, 'opponent', diverged.player)
+    expect(fieldDeceives(diverged, 'opponent')).toBe(true)
+    expect(perceived.x).toBe(30)
+    expect(knownOpponentTarget(diverged)?.x).toBe(30)
+    expect(diverged.player.x).toBe(70)
   })
 })

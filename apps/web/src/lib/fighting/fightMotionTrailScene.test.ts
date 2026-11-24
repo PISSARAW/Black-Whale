@@ -76,6 +76,29 @@ describe('fight motion trails', () => {
     ).toBe(false)
   })
 
+  it('draws four short speed echoes during Kurapika’s ordinary dash', () => {
+    const { scene, figures, trails, state } = fixture()
+    state.player.id = 'kurapika'
+    state.player.attack = null
+    state.player.motion = {
+      velocityX: 0,
+      prejumpFrames: 0,
+      jumpDirection: 0,
+      landingFrames: 0,
+      dash: { direction: 1, frame: 3, frames: 12, peak: 54 },
+      heldDirection: 0,
+      tapDirection: 0,
+      tapWindow: 0,
+    }
+    trails.sync(state, 0)
+    for (const [index, name] of ['hand-left', 'hand-right', 'knee-left', 'knee-right'].entries())
+      figures.player.getObjectByName(name)!.position.x = 0.12 + index * 0.04
+    trails.sync({ ...state, frame: 1 }, 16)
+    expect(
+      scene.children.filter(({ name, visible }) => name === 'fight-motion-trail' && visible),
+    ).toHaveLength(4)
+  })
+
   it('clears on rewind and disposes all pooled resources', () => {
     const { scene, figures, trails, state } = fixture()
     trails.sync(state, 0)

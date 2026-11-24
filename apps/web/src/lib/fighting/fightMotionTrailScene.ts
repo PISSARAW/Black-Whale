@@ -1,5 +1,6 @@
 import type * as Three from 'three'
 import { attackAuraColour } from './techniqueAuraColours'
+import { motionOf } from './fighterMovement'
 import type { FightComfort } from './fightComfort'
 import type { FightSide, FightState } from './types'
 
@@ -63,9 +64,15 @@ export function createFightMotionTrailScene(options: {
           return from ? [{ name, from, current, distance: from.distanceTo(current) }] : []
         })
         if (!shouldTrail(state, side, advanced, options.comfort())) continue
-        const threshold = fighter.attack!.kind === 'heavy' ? 0.045 : 0.065
-        const limit = fighter.attack!.kind === 'heavy' ? 2 : 1
-        const colour = attackAuraColour(fighter)
+        const dashEcho = fighter.id === 'kurapika' && Boolean(motionOf(fighter).dash)
+        const heavy = fighter.attack?.kind === 'heavy'
+        const threshold = dashEcho ? 0.025 : heavy ? 0.045 : 0.065
+        const limit = dashEcho ? 4 : heavy ? 2 : 1
+        const colour = fighter.attack
+          ? attackAuraColour(fighter)
+          : fighter.kurapika?.emperorTime
+            ? 0xd44a65
+            : 0x91abc8
         for (const sample of samples
           .filter(({ distance }) => distance >= threshold && distance <= 1.1)
           .sort((a, b) => b.distance - a.distance)
@@ -76,9 +83,9 @@ export function createFightMotionTrailScene(options: {
           mesh.quaternion.setFromUnitVectors(up, direction.clone().normalize())
           mesh.scale.set(1, sample.distance, 1)
           mesh.material.color.set(colour)
-          mesh.material.opacity = fighter.attack!.kind === 'heavy' ? 0.42 : 0.3
+          mesh.material.opacity = dashEcho ? 0.26 : heavy ? 0.42 : 0.3
           mesh.userData.born = now
-          mesh.userData.life = LIFE_MS + (fighter.attack!.kind === 'heavy' ? 35 : 0)
+          mesh.userData.life = dashEcho ? LIFE_MS + 55 : LIFE_MS + (heavy ? 35 : 0)
           mesh.visible = true
         }
       }
@@ -116,14 +123,13 @@ function shouldTrail(
 ): boolean {
   const fighter = state[side]
   const attack = fighter.attack
+  const kurapikaDash = fighter.id === 'kurapika' && Boolean(motionOf(fighter).dash)
   return Boolean(
     advanced &&
     comfort.flashes &&
     state.phase === 'fighting' &&
     state.hitstop === 0 &&
-    attack &&
-    attack.variant !== 'throw' &&
-    attack.kind !== 'ranged',
+    (kurapikaDash || (attack && attack.variant !== 'throw' && attack.kind !== 'ranged')),
   )
 }
 

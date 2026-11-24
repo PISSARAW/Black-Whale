@@ -14,8 +14,13 @@ export function poseKurapikaChainHand(
   },
 ): void {
   const figure = options.figureOf?.(pose.side)
-  const motion =
-    pose.motions.find((entry) => entry.mode === 'healing') ?? pose.motions[pose.motions.length - 1]
+  const activeMotion = pose.motions.find(
+    (entry) => entry.mode === 'healing' || entry.mode === 'attack',
+  )
+  // A maintained Jail or drain must follow the authored striking hand without
+  // taking control of its joints. Only a chain cast may override an attack pose.
+  if (pose.state[pose.side].attack && !activeMotion) return
+  const motion = activeMotion ?? pose.motions[pose.motions.length - 1]
   if (!figure || !motion) return
   const target = pose.side === 'player' ? 'opponent' : 'player'
   const local = ['healing', 'dowsing', 'map'].includes(motion.mode)

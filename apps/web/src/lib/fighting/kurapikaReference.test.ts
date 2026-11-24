@@ -11,6 +11,9 @@ import { kurapikaWhipPoints } from './kurapikaWhipPath'
 import { buildFightFigure } from './fighterFigure'
 import { fightBodyMotion } from './fightBodyMotion'
 import { EMPTY_INPUT, type FightState, type MoveSlot } from './types'
+import { fighterKeyedMove } from './fighterKeyedMove'
+import { locomotionGuard } from './fightLocomotion'
+import { fightStance, stanceAt } from './fightStance'
 
 const NORMALS: MoveSlot[] = [
   'standingLight',
@@ -59,6 +62,18 @@ describe('Kurapika · Uvogin and Phantom Rouge references', () => {
     })
     expect(s.opponent.attack?.kind).toBe('ranged')
     expect(kurapikaChainMotions(s, 'opponent')).toEqual([])
+    const pose = fighterKeyedMove(s.opponent, 'neutralSpecial')
+    expect(pose.authored).toBe(true)
+    expect(pose.timeline[1].pose.rearShoulder?.[0]).toBeLessThan(-1.5)
+  })
+  it('raises the forearm only for the guarded heavy-impact beat', () => {
+    const fighter = ready().opponent
+    const standing = stanceAt(fightStance('kurapika')!, 0)
+    const calm = locomotionGuard(fighter, standing)
+    fighter.blockStun = 8
+    const impacted = locomotionGuard(fighter, standing)
+    expect(impacted.leadShoulder![0]).toBeLessThan(calm.leadShoulder![0] - 1)
+    expect(impacted.root?.[2]).toBeLessThan(0)
   })
   it('can hit physically in Zetsu without forcing a chain or spending Hatsu aura', () => {
     let s = ready()

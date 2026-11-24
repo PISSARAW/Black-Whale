@@ -12,7 +12,11 @@ import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
 import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
 import { shufflePhase, shufflePose } from './fightShuffleStep'
 import { physicalWalkAccent } from './fightLocomotionInertia'
-import { kurapikaDashPoses, KURAPIKA_WALK_STYLE } from './kurapikaLocomotion'
+import {
+  kurapikaDashPoses,
+  KURAPIKA_BIG_BANG_GUARD,
+  KURAPIKA_WALK_STYLE,
+} from './kurapikaLocomotion'
 import { benjaminDashPoses, BENJAMIN_WALK_STYLE } from './benjaminLocomotion'
 import { combatLocomotion, combatWalk } from './firstFiveCombatMotion'
 
@@ -301,7 +305,8 @@ export function locomotionGuard(fighter: ArcadeFighter, standing: FightPose): Fi
   const signature = combatLocomotion(fighter)
   const guard = PHYSICAL_LOCOMOTION[fighter.id]?.guard
   const base = guard ? addPoses(standing, guard) : defensiveStance(standing)
-  return signature ? addPoses(base, signature.guard) : base
+  const impact = fighter.id === 'kurapika' && fighter.blockStun > 0 ? KURAPIKA_BIG_BANG_GUARD : {}
+  return signature ? addPoses(base, signature.guard, impact) : addPoses(base, impact)
 }
 
 function dashAccent(fighter: ArcadeFighter, progress: number, forward: boolean): FightPose {

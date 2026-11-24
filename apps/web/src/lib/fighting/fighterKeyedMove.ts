@@ -12,6 +12,7 @@ import { biscuitNaturalNormal } from './secondFiveNormals'
 import { directionalFinishPose } from './directionalFinishPoses'
 import { rosterDirectionalMove } from './rosterDirectionalPoses'
 import { naturalTechniqueTimeline } from './naturalTechniqueTimeline'
+import { kurapikaKeyedMove } from './kurapikaPoses'
 import type { ArcadeFighter, MoveSlot } from './types'
 
 /** The same equipment-aware timeline feeds the drawn body and its aura allocation. */
@@ -21,6 +22,7 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
   const finish = directionalFinishPose(fighter)
   if (finish) return { timeline: finish, authored: true }
   const native =
+    kurapikaKeyedMove(fighter) ??
     feitanEquipmentMove(fighter) ??
     padailleKeyedMove(fighter) ??
     bonolenovArmedNormal(fighter, slot) ??

@@ -4,6 +4,7 @@
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
   import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
+  import { createKurapikaSpeedScene } from '$lib/fighting/kurapikaSpeedScene'
   import { createFightStagingScene } from '$lib/fighting/fightStagingScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
@@ -224,6 +225,12 @@
           comfort: visualComfort,
           figureOf: (side) => models[side].model.turns,
         })
+        const kurapikaSpeed = createKurapikaSpeedScene({
+          THREE,
+          scene,
+          comfort: visualComfort,
+          figureOf: (side) => models[side].model.root,
+        })
 
         const fit = () => {
           resizeFightCanvas({ canvas, renderer, camera, post, graphics: comfort.graphics })
@@ -390,6 +397,7 @@
           })
           staging.sync(state)
           motionTrails.sync(state, now)
+          kurapikaSpeed.sync(state, now)
           alignPhysicalContact(state)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
@@ -399,6 +407,7 @@
 
           impacts.animate(now)
           motionTrails.animate(now)
+          kurapikaSpeed.animate(now)
 
           collisions.sync(state)
           scenery.update?.(seconds)
@@ -435,6 +444,7 @@
           trackingSilhouettes.dispose()
           impacts.dispose()
           motionTrails.dispose()
+          kurapikaSpeed.dispose()
           staging.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
           collisions.dispose()

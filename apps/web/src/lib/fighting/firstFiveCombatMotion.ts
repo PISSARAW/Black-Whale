@@ -8,6 +8,7 @@ import { fifthFiveLocomotion } from './fifthFiveLocomotion'
 import { sixthFiveLocomotion } from './sixthFiveLocomotion'
 import { seventhFiveLocomotion } from './seventhFiveLocomotion'
 import { eighthFiveLocomotion } from './eighthFiveLocomotion'
+import { KURAPIKA_1999_GUARD } from './kurapikaLocomotion'
 
 export interface CombatLocomotion {
   stride: number
@@ -40,7 +41,7 @@ const MOTION: Partial<Record<FighterId, CombatMotion>> = {
     retreat: { chest: [0, -0.12, 0], leadElbow: [-0.2, 0, 0], rearKnee: [0.12, 0, 0] },
     weight: { root: [0, -0.014, 0], rearHip: [-0.08, 0, 0], rearKnee: [0.13, 0, 0] },
     swing: { leadPalm: [0.19, 0.23, -0.08], leadWrist: [-0.13, 0, 0.12] },
-    guard: { chest: [0, -0.14, 0], leadShoulder: [-0.18, 0, 0.12], rearElbow: [-0.28, 0, 0] },
+    guard: KURAPIKA_1999_GUARD,
     jump: { chest: [0, -0.16, 0], leadShoulder: [-0.15, 0, 0.07], rearKnee: [0.18, 0, 0] },
     load: { chest: [0, 0.13, 0], rearKnee: [0.18, 0, 0], rearShoulder: [0.14, 0, 0] },
     strike: { chest: [0, -0.08, 0], rearShoulder: [0.21, 0, -0.12] },

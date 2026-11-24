@@ -157,6 +157,205 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(wristbands).toHaveLength(2)
     expect(laces).toHaveLength(2)
   })
+  it('draws Shimanu’s tied-back hair, oval face and standard maid robe', () => {
+    const appearance = seen('shimanu')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'shimanu',
+      build: 'average',
+      height: 0.96,
+      face: 'round',
+      hairStyle: 'ponytail',
+      clothing: 'gown',
+      expression: 'tired',
+    })
+    expect(look).toMatchObject({ eyes: 'heavy', hair: 'shimanu-ponytail' })
+    expect(model.root.getObjectByName('shimanu-hair-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('shimanu-combed-hair-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('shimanu-maid-skirt')).toBeTruthy()
+    expect(model.root.getObjectByName('shimanu-white-apron')).toBeTruthy()
+    expect(model.root.getObjectByName('shimanu-maid-bib')).toBeTruthy()
+    expect(model.root.getObjectByName('shimanu-maid-collar')).toBeTruthy()
+  })
+  it('draws Ken’i Wang’s sharp face, rectangular glasses and striped first suit', () => {
+    const appearance = seen('keni-wang')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'keni-wang',
+      build: 'slim',
+      height: 1.11,
+      face: 'narrow',
+      hairStyle: 'slicked-back',
+      clothing: 'suit',
+      signatures: ['glasses-rectangular'],
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', hair: 'keni-side-comb' })
+    expect(model.root.getObjectByName('keni-pinstripe-suit')).toBeTruthy()
+    expect(model.root.getObjectByName('keni-polka-dot-tie')).toBeTruthy()
+    const glasses: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'signature-glasses-rectangular') glasses.push(node)
+    })
+    expect(glasses).toHaveLength(2)
+  })
+  it('draws Sakata’s square eyes, mashed nose, voluminous hair and black suit', () => {
+    const appearance = seen('sakata')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'sakata',
+      build: 'average',
+      height: 1,
+      face: 'square',
+      hairStyle: 'swept',
+      clothing: 'suit',
+      expression: 'tired',
+    })
+    expect(look).toMatchObject({ eyes: 'heavy', hair: 'sakata-volume' })
+    expect(model.root.getObjectByName('sakata-mashed-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    const eyes: THREE.Object3D[] = []
+    const brows: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'sakata-square-eye') eyes.push(node)
+      if (node.name === 'sakata-short-thick-brow') brows.push(node)
+    })
+    expect(eyes).toHaveLength(2)
+    expect(brows).toHaveLength(2)
+  })
+  it('draws Keeney at Melody’s height with a receding hairline, age lines and pencil moustache', () => {
+    const appearance = seen('keeney')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'keeney',
+      build: 'average',
+      height: 0.72,
+      shoulders: 0.94,
+      face: 'round',
+      hairStyle: 'bald-crown',
+      clothing: 'suit',
+      expression: 'tired',
+      signatures: ['moustache'],
+    })
+    expect(look).toMatchObject({ eyes: 'heavy', hair: 'keeney-receding' })
+    expect(model.root.getObjectByName('keeney-age-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('keeney-pencil-moustache')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    const ears: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'keeney-protruding-ear') ears.push(node)
+    })
+    expect(ears).toHaveLength(2)
+  })
+  it('draws Shikaku’s square military build, single forelock, earpiece and zipped uniform', () => {
+    const appearance = seen('shikaku')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'shikaku',
+      build: 'broad',
+      height: 1.06,
+      shoulders: 1.13,
+      face: 'square',
+      hairStyle: 'military',
+      clothing: 'uniform',
+      expression: 'severe',
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', hair: 'shikaku-brush' })
+    expect(model.root.getObjectByName('shikaku-left-earpiece')).toBeTruthy()
+    expect(model.root.getObjectByName('shikaku-long-angular-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('shikaku-severe-mouth')).toBeTruthy()
+    expect(model.root.getObjectByName('shikaku-uniform-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('shikaku-standing-collar')).toBeTruthy()
+    const boots: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'shikaku-combat-boot-shaft') boots.push(node)
+    })
+    expect(boots).toHaveLength(2)
+  })
+  it('conceals short Sanbica behind her medical gown, gloves, cap and surgical mask', () => {
+    const appearance = seen('sanbica-norton')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'sanbica-norton',
+      build: 'slim',
+      height: 0.8,
+      shoulders: 0.9,
+      face: 'round',
+      hairStyle: 'bob',
+      clothing: 'gown',
+    })
+    expect(look).toMatchObject({ eyes: 'doll', hair: 'catalogue' })
+    expect(model.root.getObjectByName('sanbica-surgical-mask')).toBeTruthy()
+    expect(model.root.getObjectByName('sanbica-medical-cap')).toBeTruthy()
+    expect(model.root.getObjectByName('sanbica-medical-cross')).toBeTruthy()
+    expect(model.root.getObjectByName('sanbica-concealing-gown')).toBeTruthy()
+    const gloves: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'sanbica-medical-glove') gloves.push(node)
+    })
+    expect(gloves).toHaveLength(2)
+  })
+  it('draws Tokarine’s round build, beady face, two-tone bob, piercings and striped top', () => {
+    const appearance = seen('tokarine')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'tokarine',
+      build: 'broad',
+      height: 0.93,
+      shoulders: 1.16,
+      face: 'round',
+      hairStyle: 'bob',
+      clothing: 'civilian',
+      signatures: ['earrings'],
+    })
+    expect(look).toMatchObject({ eyes: 'round', hair: 'catalogue' })
+    expect(model.root.getObjectByName('tokarine-beady-eye')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-snub-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-full-lips')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-full-cheek')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-chin-fold')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-light-hair-crown')).toBeTruthy()
+    expect(model.root.getObjectByName('tokarine-striped-top')).toBeTruthy()
+    const piercings: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'tokarine-ear-piercing') piercings.push(node)
+    })
+    expect(piercings).toHaveLength(4)
+  })
+  it('draws Oito’s nephew as the short-haired, round-eyed infant publicly presented as Woble', () => {
+    const appearance = seen('oito-nephew-fake-woble')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'oito-nephew-fake-woble',
+      build: 'broad',
+      height: 0.44,
+      frame: 'infant',
+      face: 'round',
+      hairStyle: 'military',
+      clothing: 'civilian',
+    })
+    expect(look).toMatchObject({ eyes: 'doll', hair: 'catalogue' })
+    expect(model.root.getObjectByName('fake-woble-round-eye')).toBeTruthy()
+    expect(model.root.getObjectByName('fake-woble-full-cheek')).toBeTruthy()
+    expect(model.root.getObjectByName('fake-woble-button-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('fake-woble-baby-romper')).toBeTruthy()
+    expect(model.root.getObjectByName('fake-woble-round-collar')).toBeTruthy()
+  })
   it('shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-salesale') })
     const fighter = createFightState('salesale', 'hisoka').player

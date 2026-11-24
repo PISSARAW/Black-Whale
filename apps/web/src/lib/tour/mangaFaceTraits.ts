@@ -11,6 +11,13 @@ import { addMelodySoftFeatures } from './mangaMelody'
 import { addUnderworldFaceDetails } from './mangaUnderworldFaces'
 import { addBenjaminDetails } from './mangaBenjamin'
 import { addMangaFacialHair } from './mangaFacialHair'
+import { addShimanuHeadDetails } from './mangaShimanu'
+import { addSakataFace } from './mangaSakata'
+import { addKeeneyFace } from './mangaKeeney'
+import { addShikakuEarpiece } from './mangaShikaku'
+import { addSanbicaMedicalHeadwear } from './mangaSanbica'
+import { addTokarineFace } from './mangaTokarine'
+import { addFakeWobleFace } from './mangaFakeWoble'
 
 export const MANGA_FACE_SIGNATURES = new Set([
   'lips-full',
@@ -219,6 +226,13 @@ const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => vo
   kaiser: kaiserBrows,
   sarahell: sarahellGuardianFace,
   maor: maorAgeLines,
+  shimanu: addShimanuHeadDetails,
+  sakata: addSakataFace,
+  keeney: addKeeneyFace,
+  shikaku: addShikakuEarpiece,
+  'sanbica-norton': addSanbicaMedicalHeadwear,
+  tokarine: addTokarineFace,
+  'oito-nephew-fake-woble': addFakeWobleFace,
 }
 
 export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {

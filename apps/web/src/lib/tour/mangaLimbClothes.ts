@@ -21,6 +21,9 @@ import { addMangaReferenceLimbs } from './mangaReferenceLimbs'
 import { addCamillaSleeves } from './mangaCamillaSleeves'
 import { kurapikaShoeGeometry } from './kurapikaGeometry'
 import { shapeDogmanLimbs } from './mangaDogman'
+import { addShikakuCombatBoots } from './mangaShikaku'
+import { addSanbicaMedicalGloves } from './mangaSanbica'
+import { addTokarineSleeveStripes } from './mangaTokarine'
 
 function machi(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, profile, glow } = build
@@ -104,6 +107,9 @@ const REFERENCE_LIMBS: Record<string, (build: HumanLimbsBuild, limbs: HumanLimbs
   'prince-marayam': addMarayamShorts,
   'prince-zhanglei': addZhangLeiLimbs,
   'morena-prudo': addMorenaSleevesAndBoots,
+  shikaku: addShikakuCombatBoots,
+  'sanbica-norton': addSanbicaMedicalGloves,
+  tokarine: addTokarineSleeveStripes,
 }
 
 export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void {

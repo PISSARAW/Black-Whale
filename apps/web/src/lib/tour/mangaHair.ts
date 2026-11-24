@@ -25,7 +25,7 @@ import {
   mangaFlameCrest,
 } from './mangaUnderworldHair'
 import { mangaHairExtras, mangaMessyCrop, mangaRoyalUpdo } from './mangaHairExtras'
-
+import { mangaShikakuBrush } from './mangaShikaku'
 export interface MangaHairKit {
   THREE: HumanHeadBuild['THREE']
   parts: BufferGeometry[]
@@ -203,6 +203,140 @@ function maorPartedBowl(kit: MangaHairKit) {
       })
 }
 
+function shimanuPonytail(kit: MangaHairKit) {
+  cap(kit)
+  for (let i = -7; i <= 7; i++) {
+    const x = i * 0.019
+    kit.lock({
+      width: 0.019,
+      depth: 0.011,
+      points: [
+        [x, 0.16 - Math.abs(i) * 0.007, 0.145],
+        [x * 0.92, 0.205, 0.06],
+        [x * 0.72, 0.17, -0.105],
+        [x * 0.42, 0.03, -0.18],
+      ],
+    })
+  }
+  kit.parts.push(
+    new kit.THREE.TubeGeometry(
+      new kit.THREE.CatmullRomCurve3([
+        new kit.THREE.Vector3(0, 0.035, -0.17),
+        new kit.THREE.Vector3(0, -0.03, -0.26),
+        new kit.THREE.Vector3(0, -0.18, -0.29),
+        new kit.THREE.Vector3(0, -0.31, -0.21),
+      ]),
+      18,
+      0.074,
+      10,
+      false,
+    ),
+  )
+  for (let i = -5; i <= 5; i++) {
+    const x = i * 0.013
+    kit.lock({
+      width: 0.026,
+      depth: 0.017,
+      points: [
+        [x * 0.35, 0.035, -0.17],
+        [x * 0.8, -0.025, -0.235],
+        [x * 1.4, -0.17, -0.25],
+        [x * 1.8, -0.34 - Math.abs(i) * 0.004, -0.19],
+      ],
+    })
+  }
+}
+
+function keniSideComb(kit: MangaHairKit) {
+  cap(kit)
+  for (let i = 0; i < 15; i++) {
+    const x = -0.135 + i * 0.019
+    const side = i < 3 ? -1 : 1
+    kit.lock({
+      width: 0.021,
+      depth: 0.011,
+      points: [
+        [x, 0.105, 0.15],
+        [x * 0.82 + 0.025, 0.177 - Math.abs(x) * 0.12, 0.145],
+        [x * 0.55 + 0.06, 0.225 - Math.abs(x) * 0.18, 0.075],
+        [x * 0.4 + side * 0.105, 0.205 - Math.abs(x) * 0.22, -0.055],
+      ],
+    })
+  }
+  for (const side of [-1, 1])
+    for (let i = 0; i < 3; i++)
+      kit.lock({
+        width: 0.024,
+        depth: 0.015,
+        points: [
+          [side * 0.13, 0.15, -i * 0.04],
+          [side * 0.17, 0.095, -i * 0.045],
+          [side * 0.177, 0.035, -i * 0.045],
+          [side * 0.168, -0.02, -i * 0.045],
+        ],
+      })
+}
+
+function sakataVolume(kit: MangaHairKit) {
+  cap(kit)
+  kit.parts.push(
+    new kit.THREE.SphereGeometry(1, 24, 14).scale(0.19, 0.115, 0.155).translate(0, 0.175, -0.005),
+  )
+  for (let i = 0; i < 14; i++) {
+    const x = -0.145 + i * 0.022
+    kit.lock({
+      width: 0.023,
+      depth: 0.012,
+      points: [
+        [x, 0.105, 0.15],
+        [x * 0.82 - 0.015, 0.18 - Math.abs(x) * 0.08, 0.15],
+        [x * 0.55 - 0.055, 0.245 - Math.abs(x) * 0.16, 0.075],
+        [x * 0.35 - 0.12, 0.225 - Math.abs(x) * 0.18, -0.045],
+      ],
+    })
+  }
+  for (const side of [-1, 1])
+    for (let i = 0; i < 4; i++)
+      kit.lock({
+        width: 0.027,
+        depth: 0.016,
+        points: [
+          [side * 0.13, 0.17, -i * 0.035],
+          [side * 0.18, 0.115, -i * 0.04],
+          [side * 0.185, 0.045, -i * 0.04],
+          [side * 0.176, -0.025, -i * 0.04],
+        ],
+      })
+}
+
+function keeneyReceding(kit: MangaHairKit) {
+  for (const side of [-1, 1])
+    for (let i = 0; i < 5; i++)
+      kit.lock({
+        width: 0.025,
+        depth: 0.014,
+        points: [
+          [side * (0.115 + i * 0.008), 0.145 - i * 0.025, -0.055 - i * 0.025],
+          [side * 0.165, 0.105 - i * 0.026, -0.055 - i * 0.025],
+          [side * 0.183, 0.045 - i * 0.025, -0.04 - i * 0.028],
+          [side * (0.192 + i * 0.004), -0.015 - i * 0.02, -0.025 - i * 0.03],
+        ],
+      })
+  for (let i = 0; i < 9; i++) {
+    const x = -0.105 + i * 0.025
+    kit.lock({
+      width: 0.018,
+      depth: 0.009,
+      points: [
+        [x, 0.155, 0.075],
+        [x * 0.7 - 0.02, 0.205 + Math.sin(i * 0.7) * 0.008, 0.035],
+        [x * 0.45 + 0.015, 0.225, -0.015],
+        [x * 0.25 + 0.08, 0.205 - Math.abs(i - 4) * 0.004, -0.07],
+      ],
+    })
+  }
+}
+
 function long(kit: MangaHairKit, length: number) {
   swept(kit, false)
   kit.parts.push(
@@ -249,6 +383,11 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
     'salesale-wave': () => mangaSalesaleHair(kit),
     'sarahell-spikes': () => sarahellSpikes(kit),
     'maor-parted-bowl': () => maorPartedBowl(kit),
+    'shimanu-ponytail': () => shimanuPonytail(kit),
+    'keni-side-comb': () => keniSideComb(kit),
+    'sakata-volume': () => sakataVolume(kit),
+    'keeney-receding': () => keeneyReceding(kit),
+    'shikaku-brush': () => mangaShikakuBrush(kit),
     'luzurus-puffs': () => mangaLuzurusHair(kit),
     'morena-long': () => mangaMorenaHair(kit),
     'marayam-crop': () => mangaMarayamCrop(kit),

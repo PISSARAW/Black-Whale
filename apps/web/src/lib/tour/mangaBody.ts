@@ -25,6 +25,8 @@ export function mangaBodyShape(profile: HumanProfile) {
     return { chest: 0.235, waist: 0.21, depth: 0.17, neck: frame.neck }
   if (profile.likeness === 'dogman')
     return { chest: 0.315, waist: 0.205, depth: 0.205, neck: frame.neck }
+  if (profile.likeness === 'tokarine')
+    return { chest: 0.3, waist: 0.255, depth: 0.2, neck: frame.neck }
   return {
     chest: mass[0] * profile.shoulders * frame.width,
     waist: mass[1] * frame.width,

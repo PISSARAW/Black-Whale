@@ -1131,6 +1131,198 @@
       "note": "Références fournies : homme très grand et extrêmement musclé, longs cheveux noirs, masque blanc de chien à oreilles pointues, grands yeux ronds, museau ponctué, truffe noire, dents triangulaires et kanji 犬 sur le front. Il porte un tee-shirt blanc à manches courtes, des bracelets noirs, un pantalon noir et des chaussures de sport."
     },
     {
+      "id": "shimanu",
+      "body": { "build": "average", "height": 0.96, "frame": "adult", "shoulders": 1.02 },
+      "head": { "face": "round", "hairStyle": "ponytail", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, robe de domestique sombre et col, bandeau et tablier clairs interprétés depuis les planches monochromes.",
+        "skin": "0xc99776",
+        "hair": "0x1b1b20",
+        "attire": {
+          "jacket": "0x25272e",
+          "shirt": "0xe8e2d7",
+          "trousers": "0x202229",
+          "accent": "0xd7cdbd"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-360"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : tête ovale aux joues pleines, paupières légèrement lourdes, nez large, longs cheveux sombres entièrement tirés en arrière et attachés en queue-de-cheval basse par un bandeau clair. Elle porte la robe sombre standard des domestiques de la famille royale, avec col, ceinture et tablier clairs."
+    },
+    {
+      "id": "keni-wang",
+      "body": { "build": "slim", "height": 1.11, "frame": "adult", "shoulders": 0.98 },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, chemise blanche et costume à fines rayures interprétés depuis les planches monochromes.",
+        "skin": "0xd2aa8e",
+        "hair": "0x181a1f",
+        "attire": {
+          "jacket": "0x343740",
+          "shirt": "0xeeeae1",
+          "trousers": "0x292c34",
+          "accent": "0x1d2027"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular"],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-379"],
+        "status": "confirmed"
+      },
+      "note": "Apparence principale : homme grand et mince, mâchoire aiguë, yeux sombres et fins, lunettes rectangulaires et cheveux sombres soigneusement peignés avec raie latérale. Sa première tenue est un costume droit à rayures, chemise blanche et cravate sombre à pois. Lors de la confrontation avec la Brigade Fantôme, il porte un costume et une cravate sombres assortis, variante de scène non représentée par ce modèle partagé."
+    },
+    {
+      "id": "sakata",
+      "body": { "build": "average", "height": 1.0, "frame": "adult", "shoulders": 1.06 },
+      "head": { "face": "square", "hairStyle": "swept", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, chemise blanche et costume noir établis par les planches monochromes.",
+        "skin": "0xd2a480",
+        "hair": "0x1b1c21",
+        "attire": {
+          "jacket": "0x22252c",
+          "shirt": "0xeeeae1",
+          "trousers": "0x1d2026",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-365", "ch-366"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : visage et yeux carrés, petits yeux bas aux paupières lourdes, sourcils sombres très courts et épais, nez écrasé, bouche large et cheveux sombres volumineux soigneusement balayés sur le côté. En tant que garde royal, il porte un costume noir, une chemise blanche et une cravate sombre."
+    },
+    {
+      "id": "keeney",
+      "body": { "build": "average", "height": 0.72, "frame": "adult", "shoulders": 0.94 },
+      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs, chemise blanche et costume noir interprétés depuis les planches monochromes.",
+        "skin": "0xd8b395",
+        "hair": "0xb8a27b",
+        "attire": {
+          "jacket": "0x24262d",
+          "shirt": "0xeeeae1",
+          "trousers": "0x202229",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["moustache"],
+      "verified": {
+        "chapterIds": ["ch-374", "ch-377"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme de petite taille, comparable à Melody, au visage arrondi et âgé. Il a une implantation très reculée, de rares cheveux clairs rabattus sur le sommet, de grandes oreilles saillantes, des paupières tombantes, des sourcils sombres et fins, des rides marquées au front et sous les yeux, ainsi qu'une fine moustache au crayon. En tant que garde du corps de Kacho, il porte un costume noir."
+    },
+    {
+      "id": "shikaku",
+      "body": { "build": "broad", "height": 1.06, "frame": "adult", "shoulders": 1.13 },
+      "head": { "face": "square", "hairStyle": "military", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs et uniforme militaire kakinois interprétés depuis les planches monochromes.",
+        "skin": "0xc89270",
+        "hair": "0xbda77d",
+        "attire": {
+          "jacket": "0x555a4d",
+          "shirt": "0xd8d6ca",
+          "trousers": "0x4a4e44",
+          "accent": "0x24282a"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363", "ch-382"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : garde militaire grand et massif au visage extrêmement carré, aux yeux étroits et aux sourcils inclinés. Ses cheveux clairs sont brossés vers le haut, avec une seule longue mèche retombant au centre du front. Il porte l'uniforme standard de l'armée kakinoise : veste zippée à col montant, pantalon et bottes de combat sombres. Une oreillette est placée dans son oreille gauche."
+    },
+    {
+      "id": "sanbica-norton",
+      "body": { "build": "slim", "height": 0.8, "frame": "adult", "shoulders": 0.9 },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence animée fournie par le mainteneur le 2026-11-24 ; palette médicale claire et cheveux rose pâle retenus comme choix de rendu, l'apparence canonique restant largement dissimulée.",
+        "skin": "0xd8b094",
+        "hair": "0xd8b8c2",
+        "attire": {
+          "jacket": "0xe5ebe7",
+          "shirt": "0xf2f3ee",
+          "trousers": "0xd8dfdb",
+          "accent": "0x8eb79b"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-326"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : femme de petite taille dont le visage et le corps sont presque entièrement dissimulés par une tenue médicale. Seuls ses très grands yeux sombres sont nettement visibles. Elle porte une blouse ample, des gants, un masque chirurgical et une coiffe médicale claire ; les cheveux et couleurs visibles sur l'adaptation animée servent uniquement de palette choisie."
+    },
+    {
+      "id": "tokarine",
+      "body": { "build": "broad", "height": 0.93, "frame": "adult", "shoulders": 1.16 },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-24 ; cheveux foncés, sommet plus clair et vêtement rayé interprétés depuis la planche monochrome.",
+        "skin": "0xd0a07f",
+        "hair": "0x25242a",
+        "attire": {
+          "jacket": "0xd5d2c9",
+          "shirt": "0xe8e3d8",
+          "trousers": "0x3c3c43",
+          "accent": "0x27272d"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["earrings"],
+      "verified": {
+        "chapterIds": ["ch-359"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : femme ronde et corpulente au visage plein, petits yeux en perles, nez retroussé et bouche aux lèvres épaisses. Ses cheveux foncés forment un carré à frange droite avec deux mèches pointant vers les côtés ; le sommet est teint d'une couleur plus claire. Chaque oreille porte un bijou et un piercing. Elle porte un haut clair à larges rayures sombres et grand motif central."
+    },
+    {
+      "id": "oito-nephew-fake-woble",
+      "body": { "build": "broad", "height": 0.44, "frame": "infant", "shoulders": 0.96 },
+      "head": { "face": "round", "hairStyle": "military", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux courts et clairs, peau et vêtement clair interprétés depuis les planches monochromes.",
+        "skin": "0xe8c8ae",
+        "hair": "0xd1b98c",
+        "attire": {
+          "jacket": "0xe8e5dc",
+          "shirt": "0xf4f0e7",
+          "trousers": "0xdad7cf",
+          "accent": "0xc5bcae"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-358", "ch-414", "ch-415"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : nourrisson potelé au visage très rond, aux joues pleines, aux grands yeux noirs circulaires et aux cheveux clairs coupés très court. Il porte un vêtement de bébé clair à manches longues. Ce modèle appartient au neveu d'Oito publiquement présenté comme Woble, et non à la véritable princesse Woble dont l'apparence actuelle reste inconnue."
+    },
+    {
       "id": "babimyna",
       "body": { "build": "broad", "height": 1.02, "frame": "adult" },
       "head": { "face": "square", "hairStyle": "short", "expression": "severe" },

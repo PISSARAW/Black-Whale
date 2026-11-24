@@ -46,6 +46,11 @@ export interface MangaLikeness {
     | 'salesale-wave'
     | 'sarahell-spikes'
     | 'maor-parted-bowl'
+    | 'shimanu-ponytail'
+    | 'keni-side-comb'
+    | 'sakata-volume'
+    | 'keeney-receding'
+    | 'shikaku-brush'
 }
 
 // Geometry directions refine the catalogue's faces; no random face is assigned to an id.
@@ -199,6 +204,84 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
     nose: 1.1,
     mouth: 0.07,
     neck: 0.105,
+  },
+  shimanu: {
+    eyes: 'heavy',
+    cheek: 0.179,
+    jaw: 0.132,
+    chin: 0.205,
+    brow: 0.85,
+    nose: 1.42,
+    mouth: 0.058,
+    neck: 0.061,
+    hair: 'shimanu-ponytail',
+  },
+  'keni-wang': {
+    eyes: 'narrow',
+    cheek: 0.148,
+    jaw: 0.096,
+    chin: 0.248,
+    brow: 0.72,
+    nose: 1.5,
+    mouth: 0.061,
+    neck: 0.058,
+    hair: 'keni-side-comb',
+  },
+  sakata: {
+    eyes: 'heavy',
+    cheek: 0.174,
+    jaw: 0.151,
+    chin: 0.215,
+    brow: 1.5,
+    nose: 0.75,
+    mouth: 0.086,
+    neck: 0.068,
+    hair: 'sakata-volume',
+  },
+  keeney: {
+    eyes: 'heavy',
+    cheek: 0.178,
+    jaw: 0.129,
+    chin: 0.188,
+    brow: 0.38,
+    nose: 1.35,
+    mouth: 0.071,
+    neck: 0.049,
+    hair: 'keeney-receding',
+  },
+  shikaku: {
+    eyes: 'narrow',
+    cheek: 0.189,
+    jaw: 0.174,
+    chin: 0.236,
+    brow: 1.75,
+    nose: 1.55,
+    mouth: 0.092,
+    neck: 0.091,
+    hair: 'shikaku-brush',
+  },
+  'sanbica-norton': {
+    eyes: 'doll',
+    cheek: 0.157,
+    jaw: 0.074,
+    brow: 0.45,
+    nose: 0.75,
+  },
+  tokarine: {
+    eyes: 'round',
+    cheek: 0.195,
+    jaw: 0.154,
+    brow: 0.58,
+    nose: 0.72,
+    mouth: 0.082,
+  },
+  'oito-nephew-fake-woble': {
+    eyes: 'doll',
+    cheek: 0.184,
+    jaw: 0.13,
+    brow: 0.42,
+    nose: 0.58,
+    neck: 0.042,
   },
   'hinrigh-biganduffno': {
     eyes: 'round',

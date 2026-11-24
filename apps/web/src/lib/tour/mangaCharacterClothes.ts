@@ -36,6 +36,12 @@ import { addMangaHoodie } from './mangaHood'
 import { addMangaWaistcoat } from './mangaWaistcoat'
 import { mergeHumanDetails } from './humanDetailGeometry'
 import { addDogmanShirt } from './mangaDogman'
+import { addShimanuMaidDress } from './mangaShimanu'
+import { addKeniStripedSuit } from './mangaKeniWang'
+import { addShikakuUniform } from './mangaShikaku'
+import { addSanbicaMedicalGown } from './mangaSanbica'
+import { addTokarineStripedTop } from './mangaTokarine'
+import { addFakeWobleRomper } from './mangaFakeWoble'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -218,6 +224,12 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'franklin-bordeau': addFranklinOveralls,
   'bonolenov-ndongo': addMangaBodyBandages,
   dogman: addDogmanShirt,
+  shimanu: addShimanuMaidDress,
+  'keni-wang': addKeniStripedSuit,
+  shikaku: addShikakuUniform,
+  'sanbica-norton': addSanbicaMedicalGown,
+  tokarine: addTokarineStripedTop,
+  'oito-nephew-fake-woble': addFakeWobleRomper,
 }
 
 export function addMangaCharacterClothes(build: HumanClothesBuild): boolean {

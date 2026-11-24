@@ -66,7 +66,7 @@ function hairParts(THREE: Three, signatures: readonly string[], long: boolean) {
 }
 export function addMangaFacialHair(build: HumanHeadBuild, head: Group) {
   const { THREE, profile, geometry, materials } = build
-  if (profile.likeness === 'basho') return
+  if (profile.likeness === 'basho' || profile.likeness === 'keeney') return
   const supported = new Set(['beard-full', 'moustache', 'mutton-chops', 'goatee'])
   const signatures = profile.signatures.filter((piece) => supported.has(piece))
   if (!signatures.length) return

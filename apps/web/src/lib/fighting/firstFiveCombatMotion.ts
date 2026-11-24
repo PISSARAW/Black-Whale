@@ -2,6 +2,7 @@ import { addPoses, NEUTRAL_POSE, scalePose, type FightPose } from './fightPose'
 import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, FighterId } from './types'
 import { secondFiveLocomotion } from './secondFiveLocomotion'
+import { thirdFiveLocomotion } from './thirdFiveLocomotion'
 
 export interface CombatLocomotion {
   stride: number
@@ -113,7 +114,7 @@ const MOTION: Partial<Record<FighterId, CombatMotion>> = {
 }
 
 export function combatLocomotion(fighter: ArcadeFighter): CombatLocomotion | undefined {
-  return secondFiveLocomotion(fighter) ?? MOTION[fighter.id]
+  return MOTION[fighter.id] ?? secondFiveLocomotion(fighter) ?? thirdFiveLocomotion(fighter)
 }
 
 export function combatWalk(

@@ -1,5 +1,7 @@
 import { addPoses, type BodyPlan, type FightPose } from './fightPose'
 import { motionOf } from './fighterMovement'
+import { combatLocomotion, combatWalk } from './firstFiveCombatMotion'
+import { shufflePhase } from './fightShuffleStep'
 import { fightStance } from './fightStance'
 import { PROLOGUE_CARRY_POSE } from './keyPosesBonolenov'
 import type { ArcadeFighter } from './types'
@@ -10,14 +12,20 @@ export function bonolenovStepPlan(fighter: ArcadeFighter): BodyPlan | null {
   const motion = motionOf(fighter)
   const dash = motion.dash
   const advancing = (dash?.direction ?? motion.heldDirection) === fighter.facing
-  const { wave, turn } = stepCycle(fighter)
+  const { phase, wave, turn } = stepCycle(fighter)
   const armed = Boolean(fighter.battleCantabile?.prologue)
   const standing = armed ? PROLOGUE_CARRY_POSE : fightStance('bonolenov')!.pose
+  const style = combatLocomotion(fighter)
+  const accent = style && !dash && !armed ? combatWalk(style, phase, advancing) : {}
   return {
     key: dash ? `bonolenov:pivot:${advancing}` : `bonolenov:step:${advancing}`,
     plant: true,
     blend: dash ? 0.025 : 0.06,
-    pose: addPoses(standing, stepPose({ advancing, wave, turn, armed })),
+    pose: addPoses(
+      standing,
+      stepPose({ advancing, wave, turn, armed, dashing: Boolean(dash) }),
+      accent,
+    ),
   }
 }
 
@@ -30,12 +38,13 @@ function canDanceStep(fighter: ArcadeFighter): boolean {
 function stepCycle(fighter: ArcadeFighter) {
   const dash = motionOf(fighter).dash
   const progress = dash ? Math.min(1, dash.frame / Math.max(1, dash.frames - 1)) : 0
-  const wave = Math.sin(dash ? progress * Math.PI * 2 : fighter.x * fighter.facing * 0.8)
+  const phase = dash ? progress * Math.PI * 2 : shufflePhase(fighter)
+  const wave = Math.sin(phase)
   const turn =
     dash && !fighter.battleCantabile?.prologue
       ? Math.PI * 2 * Math.sin(progress * Math.PI) ** 2
-      : wave * 0.24
-  return { wave, turn }
+      : wave * (dash ? 0.24 : 0.17)
+  return { phase, wave, turn }
 }
 
 function stepPose({
@@ -43,14 +52,17 @@ function stepPose({
   wave,
   turn,
   armed,
+  dashing,
 }: {
   advancing: boolean
   wave: number
   turn: number
   armed: boolean
+  dashing: boolean
 }): FightPose {
-  const lead = Math.max(0, wave),
-    rear = Math.max(0, -wave)
+  const stride = dashing ? 1 : 0.77
+  const lead = Math.max(0, wave) * stride
+  const rear = Math.max(0, -wave) * stride
   return {
     body: [advancing ? 0.04 : -0.025, turn, wave * 0.035],
     chest: [0, wave * 0.14, 0],

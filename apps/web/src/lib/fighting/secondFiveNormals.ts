@@ -1,5 +1,6 @@
 import { addPoses, scalePose, type FightPose } from './fightPose'
 import { isBiscuitTrueForm } from './biscuitForm'
+import { THIRD_FIVE_NORMAL_STYLES } from './thirdFiveNormals'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
 
@@ -17,15 +18,17 @@ export const COMBAT_NORMALS = [
 
 type Normal = (typeof COMBAT_NORMALS)[number]
 
-interface NormalStyle {
+export interface NormalStyle {
   prepareAt: number
   recoverAt: number
   load: FightPose
   recover: FightPose
   impact: Record<Normal, FightPose>
+  contact?: Partial<Record<Normal, FightPose>>
 }
 
 const NORMAL_STYLES: Partial<Record<FighterId, NormalStyle>> = {
+  ...THIRD_FIVE_NORMAL_STYLES,
   feitan: {
     prepareAt: 0.22,
     recoverAt: 0.28,
@@ -183,7 +186,7 @@ const NORMAL_STYLES: Partial<Record<FighterId, NormalStyle>> = {
   },
 }
 
-export function hasSecondFiveNormal(id: FighterId, slot: MoveSlot): slot is Normal {
+export function hasPersonalNormal(id: FighterId, slot: MoveSlot): slot is Normal {
   return Boolean(NORMAL_STYLES[id] && COMBAT_NORMALS.some((normal) => normal === slot))
 }
 
@@ -231,12 +234,12 @@ const AIR_HEAVY_CONTACT: Partial<Record<FighterId, FightPose>> = {
   },
 }
 
-export function secondFiveNormalTimeline(
+export function personalNormalTimeline(
   id: FighterId,
   slot: MoveSlot,
   native: MoveTimeline,
 ): MoveTimeline {
-  if (!hasSecondFiveNormal(id, slot)) return native
+  if (!hasPersonalNormal(id, slot)) return native
   const key = `${id}:${slot}`
   const cached = CACHE.get(key)
   if (cached) return cached
@@ -249,7 +252,7 @@ export function secondFiveNormalTimeline(
     active: impact,
     recovery: scalePose(style.recover, weight),
   }
-  const strike = slot === 'airHeavy' ? AIR_HEAVY_CONTACT[id] : undefined
+  const strike = style.contact?.[slot] ?? (slot === 'airHeavy' ? AIR_HEAVY_CONTACT[id] : undefined)
   const timeline = native.map((key) => accentKey(key, accents, strike))
   if (preparation.length === 1 && style.prepareAt < preparation[0].at) {
     const first = preparation[0]
@@ -321,7 +324,7 @@ export function biscuitNaturalNormal(
   slot: MoveSlot,
   timeline: MoveTimeline,
 ): MoveTimeline {
-  if (!isBiscuitTrueForm(fighter) || !hasSecondFiveNormal(fighter.id, slot)) return timeline
+  if (!isBiscuitTrueForm(fighter) || !hasPersonalNormal(fighter.id, slot)) return timeline
   const cached = NATURAL_CACHE.get(timeline)
   if (cached) return cached
   const heavier = timeline.map((key) => accentKey(key, NATURAL))

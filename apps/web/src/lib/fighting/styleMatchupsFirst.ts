@@ -180,8 +180,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   hinrigh: entry(
     'control',
     [
-      'Transformer des menottes réelles et récupérer les objets perdus.',
-      'Transform real handcuffs and recover dropped objects.',
+      'Entrer en diagonale, chercher le contact de la main et rabattre l’adversaire. Biohazard transforme les menottes réelles.',
+      'Step in at an angle, find contact with the lead hand and turn the opponent. Biohazard transforms real handcuffs.',
     ],
     [
       'Garder ou éviter le pigeon ; blesser le porteur rompt la capture.',
@@ -191,8 +191,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   mizaistom: entry(
     'control',
     [
-      'Faire entendre le carton jaune avant de sanctionner une désobéissance.',
-      'Make the yellow warning audible before punishing disobedience.',
+      'Tenir la mi-distance avec l’avant-bras et le talon. Le carton jaune avertit avant de sanctionner une désobéissance.',
+      'Hold midrange with forearm and heel checks. The yellow card warns before it punishes disobedience.',
     ],
     [
       'Respecter l’avertissement perceptible ; le carton n’est pas une attaque invisible.',

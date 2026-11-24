@@ -1,4 +1,5 @@
 import { hatsuSourceFor } from './hatsu'
+import { paperDolls } from './kallutoSurveillance'
 import { nenMasteryProfile } from './nenMastery'
 import type { AttackKind, FightSide, FightState } from './types'
 
@@ -84,7 +85,10 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
   ) {
     add('secret-window', 'maintained', 8)
   }
-  if ((state.kallutoDoll?.active && state.kallutoDoll.owner === side) || fighter.paperDoll) {
+  if (
+    (state.kallutoDoll?.active && state.kallutoDoll.owner === side) ||
+    paperDolls(fighter).some((doll) => doll.active !== false)
+  ) {
     add('kalluto-doll', 'maintained', 8)
   }
   if (state.zakuroBloodDrops?.owner === side || fighter.bloodyMary?.drops.length) {

@@ -1,4 +1,5 @@
 import { bodyLegFactor } from './bodyDamage'
+import { physicalCombatProfile } from './physicalCombatProfiles'
 import { dashBrakeMinFrame } from './advancedMovementTech'
 import { shouldBrakeBackdash, swayCooldownFor } from './defensiveMovementTech'
 import type { ArcadeFighter, FightInput, FighterDash } from './types'
@@ -38,7 +39,10 @@ export function shouldBrakeDash(options: {
 }): boolean {
   const { fighter, dash, direction, input } = options
   if (shouldBrakeBackdash(fighter, dash, input)) return true
-  if (dash.direction !== fighter.facing || dash.frame < dashBrakeMinFrame(fighter, DASH_BRAKE_MIN_FRAME))
+  if (
+    dash.direction !== fighter.facing ||
+    dash.frame < dashBrakeMinFrame(fighter, DASH_BRAKE_MIN_FRAME)
+  )
     return false
   if (direction === -fighter.facing || input.guard) return true
   return !dash.lowDodge && input.down
@@ -107,14 +111,11 @@ function shouldTriggerSway(fighter: ArcadeFighter, input: FightInput): boolean {
 
 /** Horizontal pullback applied to the upper hurtbox during an active Back Sway. */
 export function swayUpperShift(fighter: ArcadeFighter): number {
-  return (fighter.swayFrames ?? 0) > 0 ? SWAY_UPPER_SHIFT : 0
+  const shift = SWAY_UPPER_SHIFT * (physicalCombatProfile(fighter.id)?.sway ?? 1)
+  return (fighter.swayFrames ?? 0) > 0 ? shift : 0
 }
 
-function setSway(
-  fighter: ArcadeFighter,
-  swayFrames: number,
-  swayCooldown: number,
-): ArcadeFighter {
+function setSway(fighter: ArcadeFighter, swayFrames: number, swayCooldown: number): ArcadeFighter {
   if (!swayFrames && !swayCooldown && !fighter.swayFrames && !fighter.swayCooldown) return fighter
   return {
     ...fighter,

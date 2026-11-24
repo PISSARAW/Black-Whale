@@ -36,6 +36,7 @@ import {
   contactPoint,
   hurtboxes,
   otherSide,
+  type AttackFrameData,
 } from './frameData'
 import { resolveHatsuImpact } from './hatsu'
 import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
@@ -119,14 +120,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     damageScale,
     openingMultiplier: openingDamageMultiplier(opening),
   })
-  const rageStrike = onRageDamage(
-    attacker,
-    sleepingBody(defender),
-    attacker.attack.kind,
-    ordinaryDamage,
-    defence.blocked,
-    defence.avoided,
-  )
+  const rageStrike = onRageDamage(attacker, sleepingBody(defender), attacker.attack.kind, ordinaryDamage, defence.blocked, defence.avoided)
   const damage = rageStrike.damage
   const knockdown = isJudgedKnockdown({
     attacker,
@@ -142,24 +136,92 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     knockback: data.knockback,
     counterHit: opening.counterHit,
   })
-  const spent = spendAttacker(
+  const combo = comboOpening({
     attacker,
+    defender: sleepingBody(defender),
+    position: collision.position,
+    reach: data.box.right,
+    damage,
     defence,
-    comboOpening({
-      attacker,
-      defender: sleepingBody(defender),
-      position: collision.position,
-      reach: data.box.right,
-      damage,
-      defence,
-      launch: antiAir,
-      counter: opening.counterHit,
-      punish: opening.punish,
-      wall: wallSplat,
-      knockdown,
-      hits: comboHits,
-    }),
-  )
+    launch: antiAir,
+    counter: opening.counterHit,
+    punish: opening.punish,
+    wall: wallSplat,
+    knockdown,
+    hits: comboHits,
+  })
+  const spent = spendAttacker(attacker, defence, combo)
+  const context: AttackResolutionContext = {
+    state,
+    side,
+    defenderSide,
+    attacker,
+    defender,
+    spent,
+    data,
+    defence,
+    opening,
+    antiAir,
+    comboHits,
+    damage,
+    knockdown,
+    wallSplat,
+    critical,
+    damageScale,
+    points: impactPoints({ state, defence, critical, knockdown }),
+    combo,
+    rage: rageStrike.rage,
+    position: collision.position,
+  }
+  return resolveAttackOutcome(context)
+}
+
+interface AttackResolutionContext {
+  state: FightState
+  side: FightSide
+  defenderSide: FightSide
+  attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> }
+  defender: ArcadeFighter
+  spent: ArcadeFighter
+  data: AttackFrameData
+  defence: ImpactDefence
+  opening: { counterHit: boolean; punish: boolean }
+  antiAir: boolean
+  comboHits: number
+  damage: number
+  knockdown: boolean
+  wallSplat: boolean
+  critical: boolean
+  damageScale: number
+  points: number
+  combo: ComboOpening | undefined
+  rage: boolean
+  position: { x: number; y: number }
+}
+
+function resolveAttackOutcome(context: AttackResolutionContext): FightState {
+  const {
+    state,
+    side,
+    defenderSide,
+    attacker,
+    defender,
+    spent,
+    data,
+    defence,
+    opening,
+    antiAir,
+    comboHits,
+    damage,
+    knockdown,
+    wallSplat,
+    critical,
+    damageScale,
+    points,
+    combo,
+    rage,
+    position,
+  } = context
   const needle = resolveMindContact({ state, side, defence, spent })
   if (needle) return needle
   const struck = strikeAfterDefence(defence, {
@@ -172,15 +234,11 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     counterHit: opening.counterHit,
     comboHits,
   })
-  const points = impactPoints({ state, defence, critical, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
-  // A grounded hit stopped by the corner pushes the attacker back with the refused distance.
-  // Blocked hits keep their transfer through the guard recoil; this covers the real hits.
-  const corneredAttacker =
-    !defence.avoided && !defence.blocked && data.knockback > 0
-      ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
-      : spent
+  const corneredAttacker = !defence.avoided && !defence.blocked && data.knockback > 0
+    ? cornerPushbackTransfer(spent, defence.fighter, data.knockback)
+    : spent
   const recoiledAttacker = recoilGuardedAttack({
     attacker: corneredAttacker,
     defender: defence.fighter,
@@ -216,9 +274,9 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
       avoided: defence.avoided,
-      onRage: rageStrike.rage,
+      onRage: rage,
       projectileId: null,
-      position: collision.position,
+      position,
     },
     hitstop: data.hitstop,
   }
@@ -227,17 +285,9 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     after: next,
     damagedSide: defenderSide,
   })
-  const scorched = resolveLynchContact(
-    state,
-    resolveBashoPoemImpact(state, transferred, side),
-    side,
-  )
+  const scorched = resolveLynchContact(state, resolveBashoPoemImpact(state, transferred, side), side)
   if (transferred !== next)
-    return finishAfterImpact(
-      scorched,
-      transferred.impact!.attacker,
-      otherSide(transferred.impact!.attacker),
-    )
+    return finishAfterImpact(scorched, transferred.impact!.attacker, otherSide(transferred.impact!.attacker))
   next = recordHistoricalWeaponHit(state, recordBlinkyWound(state, scorched, side), side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
@@ -255,6 +305,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   }
   return finishAfterImpact(next, side, defenderSide)
 }
+
 
 function strikeAfterDefence(
   defence: ImpactDefence,

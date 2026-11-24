@@ -3,8 +3,10 @@ import { chrolloDashPoses, CHROLLO_WALK_STYLE } from './chrolloLocomotion'
 import { fightFamily, type FightFamily } from './fightArchetypes'
 import { fighterMotionProfile } from './fighterMotionProfile'
 import { addPoses, lerpPose, scalePose, type FightPose } from './fightPose'
+import { landingDuration, motionOf, PREJUMP_FRAMES } from './fighterMovement'
 import { defensiveStance } from './fightDefensiveStance'
-import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
+import { PHYSICAL_LOCOMOTION } from './physicalLocomotion'
+import { CROUCH_POSE } from './fightStance'
 import type { ArcadeFighter, FighterId } from './types'
 import { feitanDashPoses, FEITAN_WALK_STYLE } from './feitanLocomotion'
 import { hisokaDashPoses, HISOKA_WALK_STYLE } from './hisokaLocomotion'
@@ -213,11 +215,13 @@ export function dashPose(fighter: ArcadeFighter, standing: FightPose): DashPose 
   if (!dash) return null
   const forward = dash.direction === fighter.facing
   const progress = Math.min(1, Math.max(0, dash.frame / dash.frames))
+  const personal = PHYSICAL_LOCOMOTION[fighter.id]
   const poses =
+    (forward ? personal?.forward : personal?.backward) ??
     PERSONAL_DASHES[fighter.id]?.(forward) ??
     (forward ? [FORWARD_PUSH, FORWARD_TRAVEL, FORWARD_CATCH] : [BACK_PUSH, BACK_TRAVEL, BACK_CATCH])
   const profile = fighterMotionProfile(fighter.id)
-  const accent = dashAccent(fighter, progress, forward)
+  const accent = personal ? {} : dashAccent(fighter, progress, forward)
   const travel = scalePose(sampleThreeBeat(poses, progress), profile.dash)
   return { pose: addPoses(standing, travel, accent), forward }
 }
@@ -232,7 +236,8 @@ export function prejumpPose(fighter: ArcadeFighter, standing: FightPose): Locomo
     pose: addPoses(
       standing,
       scalePose(
-        addPoses(PREJUMP, style?.takeoff ?? style?.jump ?? {}),
+        PHYSICAL_LOCOMOTION[fighter.id]?.takeoff ??
+          addPoses(PREJUMP, style?.takeoff ?? style?.jump ?? {}),
         easeInOut(compression) * profile.jump,
       ),
     ),
@@ -245,13 +250,14 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
   const frames = motionOf(fighter).landingFrames
   if (!(frames > 0)) return null
   const profile = fighterMotionProfile(fighter.id)
-  const compression = frames / LANDING_FRAMES
+  const compression = frames / landingDuration(fighter)
   const style = combatLocomotion(fighter)
   return {
     pose: addPoses(
       standing,
       scalePose(
-        addPoses(LANDING, style?.landing ?? style?.jump ?? {}),
+        PHYSICAL_LOCOMOTION[fighter.id]?.landing ??
+          addPoses(LANDING, style?.landing ?? style?.jump ?? {}),
         easeOut(compression) * profile.landing,
       ),
     ),
@@ -263,7 +269,7 @@ export function landingPose(fighter: ArcadeFighter, standing: FightPose): Locomo
 export function walkPose(fighter: ArcadeFighter, standing: FightPose): LocomotionPose {
   const motion = motionOf(fighter)
   const advancing = motion.heldDirection === fighter.facing
-  const personal = PERSONAL_WALKS[fighter.id]
+  const personal = PHYSICAL_LOCOMOTION[fighter.id]?.walk ?? PERSONAL_WALKS[fighter.id]
   const style = personal ?? WALK_STYLES[fightFamily(fighter.id)]
   const profile = fighterMotionProfile(fighter.id)
   const phase = shufflePhase(fighter)
@@ -283,9 +289,15 @@ export function walkPose(fighter: ArcadeFighter, standing: FightPose): Locomotio
   }
 }
 
+export function crouchPose(fighter: ArcadeFighter): FightPose {
+  return PHYSICAL_LOCOMOTION[fighter.id]?.crouch ?? CROUCH_POSE
+}
+
 export function locomotionGuard(fighter: ArcadeFighter, standing: FightPose): FightPose {
   const signature = combatLocomotion(fighter)
-  return signature ? addPoses(defensiveStance(standing), signature.guard) : defensiveStance(standing)
+  if (signature) return addPoses(defensiveStance(standing), signature.guard)
+  const guard = PHYSICAL_LOCOMOTION[fighter.id]?.guard
+  return guard ? addPoses(standing, guard) : defensiveStance(standing)
 }
 
 function dashAccent(fighter: ArcadeFighter, progress: number, forward: boolean): FightPose {

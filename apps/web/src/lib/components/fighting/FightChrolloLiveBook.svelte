@@ -21,7 +21,7 @@
   $: book = state[side].chrolloBook
   $: deck = book?.deck ?? CHROLLO_DECK_PRESETS['heavens-arena']
   $: slots = ([0, 1, 2, 3] as const).map((index) => ({
-    slot: index as BookSlot,
+    slot: index,
     key: ['L', 'H', 'U', 'Ctx'][index],
     page: deck[index],
   }))

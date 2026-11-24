@@ -34,6 +34,8 @@ export function plantBodyFrame(
             angle: frame.plan.pivotAngle,
           }
         : undefined,
+    anchorLowest:
+      fighter.crouching || (!fighter.attack && ['idle', 'guard'].includes(fighter.pose)),
     horizontal: fighter.pose !== 'walk',
   })
 }

@@ -102,7 +102,7 @@ describe('advanced universal martial & Nen movement', () => {
       nen: { ...start.player.nen, mode: 'zetsu' as const },
     }
     expect(zetsuStealthDelay(start.opponent, zetsuPlayer)).toBe(ZETSU_STEALTH_DELAY)
-    const withEn = { ...start.opponent, nen: { ...start.opponent.nen, en: 20 } }
+    const withEn = { ...start.opponent, nen: { ...start.opponent.nen, en: { radius: 20 } } }
     expect(zetsuStealthDelay(withEn, zetsuPlayer)).toBe(0)
   })
 })

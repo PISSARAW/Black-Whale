@@ -244,7 +244,6 @@ describe('unified Context button priority', () => {
       opponent: {
         ...base.opponent,
         melodyPerformance: {
-          piece: 'lullaby',
           startupFrames: 0,
           playingFrames: 10,
           originX: base.opponent.x,

@@ -1,5 +1,6 @@
 import { phinksLowDodge } from './phinksLowDodge'
 import { styleMobility } from './styleMobility'
+import { physicalCombatProfile } from './physicalCombatProfiles'
 import { crossingDash } from './signatureCrossing'
 import {
   advanceSway,
@@ -10,11 +11,7 @@ import {
   shouldBrakeDash,
   walkPaceFactor,
 } from './movementTech'
-import {
-  assassinLowSlide,
-  bonolenovPrologueDash,
-  fallGravityFor,
-} from './characterMovementTech'
+import { assassinLowSlide, bonolenovPrologueDash, fallGravityFor } from './characterMovementTech'
 import {
   applyKoFastDrop,
   jumpArcMultipliers,
@@ -102,7 +99,7 @@ export function advanceAirborne(
   const landed = {
     ...motion,
     velocityX: 0,
-    landingFrames: LANDING_FRAMES,
+    landingFrames: landingDuration(fighter),
     wallJumped: undefined,
     superJump: undefined,
     dashJump: undefined,
@@ -120,9 +117,13 @@ export interface SteerOptions {
 export function steerFighter(fighter: ArcadeFighter, options: SteerOptions): ArcadeFighter {
   const direction = inputDirection(options.input)
   const { fighter: tapped, dash } = trackTaps(fighter, direction)
-  const tracked = trackGroundWindow(advanceSway(tapped, options.input, options.mobile), options.input)
+  const tracked = trackGroundWindow(
+    advanceSway(tapped, options.input, options.mobile),
+    options.input,
+  )
   const motion = motionOf(tracked)
-  if (!options.mobile) return withMotion(tracked, { dash: null, prejumpFrames: 0, running: undefined })
+  if (!options.mobile)
+    return withMotion(tracked, { dash: null, prejumpFrames: 0, running: undefined })
   if (motion.prejumpFrames > 0) return advancePrejump(tracked, options.input.jump)
   if (options.jumpable && motion.landingFrames === 0) return beginPrejump(tracked, direction)
   if (motion.dash) return stepActiveDash(tracked, motion.dash, options)
@@ -156,7 +157,9 @@ function stepActiveDash(
     const reverse = hanzoReverseDash(fighter, dash.direction, direction)
     if (reverse) return advanceDash(fighter, reverse, direction)
     const braked = withMotion(fighter, { dash: null, running: undefined })
-    return braked.blocking || braked.crouching ? { ...braked, pose: 'idle' } : walk(braked, direction)
+    return braked.blocking || braked.crouching
+      ? { ...braked, pose: 'idle' }
+      : walk(braked, direction)
   }
   return advanceDash(fighter, dash, direction)
 }
@@ -218,7 +221,10 @@ function advanceDash(
   const frame = dash.frame + 1
   const finished = frame >= dash.frames
   const keepRunning =
-    finished && !dash.lowDodge && dash.direction === fighter.facing && heldDirection === fighter.facing
+    finished &&
+    !dash.lowDodge &&
+    dash.direction === fighter.facing &&
+    heldDirection === fighter.facing
   return withMotion(
     { ...fighter, x, pose: 'walk' },
     { dash: finished ? null : { ...dash, frame }, running: keepRunning ? true : undefined },
@@ -248,11 +254,13 @@ function advancePrejump(fighter: ArcadeFighter, holdingJump: boolean): ArcadeFig
   const prejumpFrames = motion.prejumpFrames - 1
   if (prejumpFrames > 0) return withMotion({ ...fighter, blocking: false }, { prejumpFrames })
   const arc = jumpArcMultipliers(fighter, motion, holdingJump)
-  const velocityX = motion.jumpDirection * walkSpeed(fighter) * JUMP_DRIFT_RATIO * arc.vx
+  const profile = physicalCombatProfile(fighter.id)
+  const velocityX =
+    motion.jumpDirection * walkSpeed(fighter) * JUMP_DRIFT_RATIO * arc.vx * (profile?.drift ?? 1)
   return withMotion(
     {
       ...fighter,
-      velocityY: jumpLaunchSpeed(fighter, JUMP_SPEED, holdingJump) * arc.vy,
+      velocityY: jumpLaunchSpeed(fighter, JUMP_SPEED * (profile?.jump ?? 1), holdingJump) * arc.vy,
       pose: 'jump',
       blocking: false,
     },
@@ -277,10 +285,16 @@ export function walkSpeed(fighter: ArcadeFighter): number {
   return fighterDefinition(fighter.id).speed * WALK_SCALE * styleMobility(fighter).walkScale
 }
 
+export function landingDuration(fighter: ArcadeFighter): number {
+  return physicalCombatProfile(fighter.id)?.landing ?? LANDING_FRAMES
+}
+
 /** 0 at take-off, 0.5 at the apex, 1 on landing — drives the jump pose. */
 export function jumpProgress(fighter: ArcadeFighter): number {
-  if (fighter.velocityY >= 0) return clamp((1 - fighter.velocityY / JUMP_SPEED) / 2, 0, 0.5)
-  return clamp(0.5 + -fighter.velocityY / LANDING_SPEED / 2, 0.5, 1)
+  const jump = physicalCombatProfile(fighter.id)?.jump ?? 1
+  if (fighter.velocityY >= 0)
+    return clamp((1 - fighter.velocityY / (JUMP_SPEED * jump)) / 2, 0, 0.5)
+  return clamp(0.5 + -fighter.velocityY / (LANDING_SPEED * jump) / 2, 0.5, 1)
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

@@ -1,5 +1,6 @@
 import { addPoses, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { motionOf } from './fighterMovement'
+import { PHYSICAL_LOCOMOTION } from './physicalLocomotion'
 import { SWAY_FRAMES } from './movementTech'
 import { UKEMI_ROLL_FRAMES } from './wakeupMovement'
 import type { ArcadeFighter } from './types'
@@ -65,8 +66,9 @@ function ukemiPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan {
     ...UKEMI_TUCK_POSE,
     body: [UKEMI_TUCK_POSE.body![0] * dir, 0, 0],
   }
+  const catchPose = PHYSICAL_LOCOMOTION[fighter.id]?.landing ?? {}
   return {
-    pose: addPoses(standing, scalePose(tuck, arc)),
+    pose: addPoses(standing, scalePose(tuck, arc), scalePose(catchPose, arc * 0.35)),
     plant: true,
     key: `ukemi:${dir}`,
     blend: 0.03,
@@ -88,8 +90,10 @@ function lowSlidePlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan {
 function swayPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan {
   const progress = 1 - (fighter.swayFrames ?? 0) / SWAY_FRAMES
   const strength = Math.sin(progress * Math.PI)
+  const retreat = PHYSICAL_LOCOMOTION[fighter.id]?.backward[1]
+  const sway = retreat ? addPoses(scalePose(SWAY_POSE, 0.48), retreat) : SWAY_POSE
   return {
-    pose: addPoses(standing, scalePose(SWAY_POSE, strength)),
+    pose: addPoses(standing, scalePose(sway, strength)),
     plant: true,
     key: 'sway:back',
     blend: 0.03,

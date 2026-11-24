@@ -82,7 +82,7 @@ describe('TSK-17 biological weapon (Benjamin vs Camilla)', () => {
       ...start,
       player: { ...start.player, on: { grudge: 80, sealFrames: 0 } },
     }
-    let state = withOn
+    let state: FightState = withOn
     for (let frame = 0; frame < 150 && state.phase === 'fighting' && !state.catsName; frame++) {
       state = tickFight(
         state,

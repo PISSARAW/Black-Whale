@@ -410,3 +410,122 @@ while Kurapika keeps his five bespoke P19 accents.
 The rollout shares one joint buffer and a bounded set of hand morph variants.
 It changes presentation transforms only, adds no simulation or replay state and
 keeps the existing nine-move choreography contract intact.
+
+## Refonte des styles par vagues de cinq
+
+Le banc de départ a joué les 40 combattants contre Benjamin avec les mêmes
+commandes. Il a mesuré cinq déplacements et neuf attaques physiques à trois
+distances, soit 1 280 situations. La proximité mécanique compare les
+trajectoires, les temps de frappe, les portées, les dégâts et les déplacements
+à l’impact. Elle sert à choisir les comparaisons à visionner. Avant la refonte,
+40 lourds bas reprenaient un balayage, 40 lourds arrière un revers et 36 lourds
+aériens une plongeante. Un clip dédié pouvait donc rester très proche d’un
+autre à la caméra de duel.
+
+La direction de chaque vague lie l’allure, le placement, le choix de frappe et
+la récupération aux conditions ou au comportement de son Hatsu. Les styles
+martiaux sont des adaptations de Clash. Les techniques conservent leurs
+conditions de déclenchement. Pour Theta, la lecture du combat part des gestes
+de garde du corps et du pistolet attesté.
+
+La colonne « Proche avant refonte » indique le voisin mécanique le plus proche
+dans le banc, indépendamment de sa vague. La dernière colonne décrit la
+direction de conception. Les trois premières vagues l’appliquent en jeu.
+
+| Vague | Combattant | Proche avant refonte | Direction à la caméra et en combat |
+| --- | --- | --- | --- |
+| 1 | Mizaistom | Terebellum | Cross Game inspire une ligne à défendre. Pas courts, avant-bras de barrage, interception montante et renvoi hors de la zone. |
+| 1 | Terebellum | Mizaistom | Sweet Home inspire un combat à portée de mains. Appuis larges, réception de la droite, saisie basse et transferts de poids lents et lourds. |
+| 1 | Cluck | Sayird | Le relais du pigeon inspire des traversées vives. Appuis légers, rotations, frappe en passage puis sortie hors de portée. |
+| 1 | Sayird | Cluck | Little Eye inspire une garde d’observation. Gestes courts sous couverture, pas d’entrée bref et coups directs dès l’ouverture. |
+| 1 | Camilla | Musse | Cat’s Name inspire l’appât et la riposte. Avance droite et mesurée, retrait vif, gifles et paumes. Le retour d’entre les morts garde sa condition. |
+| 2 | Musse | Camilla | Secret Window et le pistolet suggèrent une silhouette fermée et calme. Tenir un axe, observer, pivoter brièvement puis reprendre la ligne de tir. |
+| 2 | Hinrigh | Longhi | Biohazard invite à contourner. Une main de contact, des pas autour du matériel, des frappes qui orientent le rival vers un objet disponible. |
+| 2 | Longhi | Hinrigh | Moonlight inspire l’offre et la distance de négociation. Paume offerte, retrait contrôlé, défense du poignet et châtiment des entrées brusques. |
+| 2 | Voconte | Hinrigh | Door inspire un jeu de seuils. Arrêts marqués, pivots, protection d’un côté de la porte et reprise d’axe dès un franchissement. |
+| 2 | Furykov | Voconte | L’observation du Nen suggère de petites sondes et des changements de largeur de garde. Mettre l’accent sur la reconnaissance d’une ouverture réelle. |
+| 3 | Beyond | Padaille | Le corps massif et la ténacité donnent une marche lourde, une pression continue et des coups qui engagent le tronc. La malédiction reste préparée. |
+| 3 | Padaille | Lynch | Les transformations corporelles doivent changer l’angle, la portée et le risque de chaque outil. Bras droit et main libre restent lisibles en mouvement. |
+| 3 | Lynch | Padaille | Body and Soul inspire une marche directe vers la portée du poing. Poser la question, fermer l’angle puis frapper depuis des appuis stables. |
+| 3 | Rihan | Basho | Predator inspire l’observation patiente. Petits retraits, feintes sobres, frappes de maintien de distance et vraie fenêtre pour l’analyse. |
+| 3 | Basho | Rihan | Le haïku exige une main libre et un temps d’écriture. Retraits de protection, garde asymétrique et bras armé seulement à la reprise. |
+| 4 | Bonolenov | Rihan | Battle Cantabile donne des pas syncopés, rotations et contacts calés sur la danse. La silhouette descend ou s’ouvre selon le rythme joué. |
+| 4 | Halkenburg | Bonolenov | La flèche collective inspire la protection du temps de charge. Posture d’archer, reculs rectilignes et bras qui dégagent un axe de tir. |
+| 4 | Bill | Rihan | Erigeron inspire une progression régulière au contact. Pas solide, paumes ouvertes, posture de protection pendant le soutien. |
+| 4 | Yokotani | Mizaistom | LSDF inspire une ligne à tenir et une expulsion. Barrière d’avant-bras et pas latéral dans la pose, avec une vraie distinction entre combat et juridiction. |
+| 4 | Melody | Theta | Le souffle et la flûte inspirent le tempo. Déplacements souples et continus, gestes arrondis et reprises courtes qui dégagent les mains. |
+| 5 | Saiyu | Zakuro | Bâton et singes imposent une longue distance. Travail des deux mains sur la hampe, changements de prise et frappes qui couvrent les angles. |
+| 5 | Zakuro | Saiyu | Bloody Mary inspire la traction et l’enroulement. Dos et bras accompagnent le matériel déjà déployé, appuis dissymétriques, reprises courtes. |
+| 5 | Gel | Lynch | La transformation du bras droit change sa silhouette. Épaules dissymétriques, esquives courbes et allonge qui se retire après le contact. |
+| 5 | Illumi | Voconte | Les aiguilles demandent un alignement précis. Un bras reste bas, le poignet dominant conduit le contact et le pas se coupe net au lancer. |
+| 5 | Machi | Illumi | Les fils demandent des écarts de mains et un axe de traction. Petite garde, pivots francs et frappes brèves qui n’occupent pas les deux mains inutilement. |
+| 6 | Luini | Voconte | La pièce ancrée inspire l’aller-retour. Appuis fuyants, couteau près du corps et attaque brève à l’arrivée, avec les franchissements autorisés. |
+| 6 | Theta | Sayird | Le comportement de garde du corps inspire la discipline des angles. Crosse et pistolet visibles, déplacements courts et garde stable en service. |
+| 6 | Tserriednich | Hinrigh | Parallel Future inspire la préparation suivie d’une reprise rapide. Phase immobile, trajet direct après réouverture des yeux et feintes de tempo. |
+| 6 | Leorio | Shizuku | Le poing transmis par une surface inspire l’axe de boxe et l’abaissement franc. Frappes directes en haut, ancrage net avant la transmission. |
+| 6 | Hanzo | Machi | La projection impose de protéger le corps réel. Distinguer appuis de l’assassin, immobilité du corps endormi et flottement du double. |
+| 7 | Kurapika | Shizuku | Les chaînes se tendent et se relâchent à des distances distinctes. Main dominante, ancrages et rappel doivent rester visibles dans les déplacements et les frappes. |
+| 7 | Hisoka | Machi | Bungee Gum inspire la tension puis la relance. Mains dissymétriques, corps qui s’allonge ou se replie et reprises de distance élastiques. |
+| 7 | Benjamin | Beyond | Air Blow et la discipline militaire donnent des axes directs. Marche lourde, arrêt sec, charges sans détour et récupération engagée. |
+| 7 | Biscuit | Illumi | La forme naturelle donne un contraste de masse et de cadence. Frappes sobres en forme courante, appuis et inertie lisiblement différents après transformation. |
+| 7 | Franklin | Phinks | Les émissions des dix doigts imposent une base stable. Pas lourds, mains ouvertes entre deux rafales et percussion de près avec les épaules. |
+| 8 | Shizuku | Leorio | Blinky mène la silhouette. Préserver le maniement à deux mains dans les coups et réexaminer surtout les appuis, la récupération et les trajets courts. |
+| 8 | Feitan | Hanzo | Garder la garde basse et les coupes courtes. Pain Packer inspire le contraste entre l’économie du duel physique et l’explosion après blessure. |
+| 8 | Phinks | Franklin | La rotation du bras droit donne le sens du mouvement. Distinguer les coups physiques simples, la mise en charge et la frappe qui engage toute sa masse. |
+| 8 | Kalluto | Illumi | L’éventail conduit l’orientation du corps. Préserver les ouvertures asymétriques, le pas léger et l’alternance entre papier et main libre. |
+| 8 | Chrollo | Basho | Le livre impose une main occupée et des déplacements de conservation. Garder l’identité du livre ouvert, du changement de page et de la main rendue libre. |
+
+La vague 1 modifie les neuf coups normaux, les prises, les variantes purement
+martiales de Cluck et Sayird, la marche avant et arrière, les deux ruées, la
+garde, la posture accroupie, le saut, l’atterrissage, l’esquive arrière et la roulade. Les corps, le placement et les
+choix de l’IA utilisent les nouveaux réglages dans le duel normal. Ce changement
+de simulation passe au règlement `clash-combat-96`.
+
+### Axe du corps et frappes J/K au sol
+
+Le modèle garde son axe vertical quand les pieds sont au sol. La flexion et
+l’inclinaison passent par le buste articulé à la taille. Les appuis et la rotation
+du bassin donnent la direction à la frappe. L’alignement de la main ou du pied
+vers le rival intervient après une touche ou une garde confirmée sur J et K.
+
+Les quinze combattants des trois premières vagues ont des séquences J/K entièrement
+dessinées. Pour 15 autres, le geste, le pied d’appui, la rotation et la préparation sont
+individualisés sur ces deux commandes. La validation compare les articulations
+après la passe de contact et vérifie les ruées dans les deux sens de part et
+d’autre de l’adversaire. La correction de l’axe est entrée avec `clash-combat-97`.
+
+
+### Vague 2
+
+Musse contrôle l’axe à la main avant et au coude, avance à petits pas et recule
+vite. Hinrigh entre en diagonale dans sa pose, cherche le contact de la paume et
+pivote autour de son appui. Longhi offre la paume, marque un temps et rétablit
+la distance avec le talon ou un retrait. Voconte cadence son avance autour
+d’un départ sec et d’un freinage net, avec l’avant-bras pour fermer le passage.
+Furykov sonde de la main et du pied avant, puis revient avec le bras arrière
+quand l’adversaire s’engage.
+
+Chaque combattant dispose de neuf trajectoires de frappe, d’une tentative de
+prise et d’une locomotion propres. La forme, le rythme de récupération et
+l’engagement au sol sont réglés par coup. Les prises réussies conservent leurs
+chorégraphies de projection et les quatre techniques martiales de Furykov
+adoptent leur propre geste. Les pouvoirs gardent leurs déclencheurs du duel.
+Ce changement de simulation passe au règlement `clash-combat-98`.
+
+
+### Vague 3
+
+Beyond avance avec une garde lourde, engage l’épaule et reprend appui après
+l’impact. Padaille mesure de la main libre et décompose trois gestes à main nue,
+dont le marteau descendant sur K. Lynch ferme l’écart rapidement et alterne ses
+poings dans l’axe. Rihan dévie de la paume, pivote au coude et sort brièvement
+de portée pour préparer la riposte. Basho maintient une main disponible et
+pose ses appuis avant chaque accent du poing.
+
+Les neuf coups de base, les tentatives de prise et les déplacements des cinq ont
+leurs propres poses. Les projections réussies utilisent leurs séquences dédiées.
+Les quatre commandes spéciales de Beyond représentent des frappes martiales.
+La transformation de Padaille, la question de Lynch, Predator et la préparation
+des poèmes utilisent leurs conditions propres. L’Académie adapte le pas de retour
+de Lynch à sa nouvelle distance de reprise. Le règlement courant est
+`clash-combat-99`.

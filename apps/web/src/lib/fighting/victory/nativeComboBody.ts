@@ -49,7 +49,7 @@ export function drawNativeVictoryBody(
   if (!plan) throw new Error('Native combo has no native body plan')
   const anchor = captureFootPlant(rig)
   const drawn = nativeComboPose(actor.root, plan, clock)
-  applyFightPose(rig, drawn, fighter.facing)
+  applyFightPose(rig, drawn, { facing: fighter.facing, planted: plan.plant })
   if (plan.plant) plantFeet(rig, { anchor, root: plan.pose.root, facing: fighter.facing })
   enter()
   if (plan.plant) groundVictoryActor(actor)

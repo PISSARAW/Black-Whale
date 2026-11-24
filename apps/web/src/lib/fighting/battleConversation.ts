@@ -25,20 +25,31 @@ function nearModel(state: FightState): boolean {
   )
 }
 
+function maySpeakBattleWords(state: FightState, side: FightSide): boolean {
+  if (![state.player.id, state.opponent.id].includes('bonolenov')) return false
+  return canExchange(state[side])
+}
+
 /** Each local player supplies their own words. An available AI may reply to the player. */
 export function speakBattleWords(state: FightState, side: FightSide, text?: string): FightState {
   if (!voiceAvailable(state, side)) return state
   state = speakPaperWords(state, side, text)
   if (state.phase !== 'fighting' || state.catsName || !nearModel(state)) return state
-  if (![state.player.id, state.opponent.id].includes('bonolenov') || !canExchange(state[side]))
-    return state
+  if (!maySpeakBattleWords(state, side)) return state
   const other = side === 'player' ? 'opponent' : 'player'
   const reply = autoReplyAvailable(state, side)
   if (reply) state = speakPaperWords(state, 'opponent', 'Je t’écoute.')
-  const speakerBody =
-    state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]
-  const otherBody =
-    state[other].id === 'bonolenov' ? recordVocalExchange(state[other]) : state[other]
+  return battleUtteranceState(state, side, other, reply)
+}
+
+function battleUtteranceState(
+  state: FightState,
+  side: FightSide,
+  other: FightSide,
+  reply: boolean,
+): FightState {
+  const speakerBody = state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]
+  const otherBody = state[other].id === 'bonolenov' ? recordVocalExchange(state[other]) : state[other]
   return {
     ...state,
     [side]: { ...speakerBody, battleUtteranceFrame: state.frame },

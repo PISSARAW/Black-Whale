@@ -5,8 +5,8 @@ import { REPLAY_RULESET } from './fightReplayTypes'
 import { EMPTY_INPUT, type FighterId } from './types'
 
 describe('priority signature moves and contextual follow-ups', () => {
-  it('advances the replay ruleset for the updated moveset behaviour', () => {
-    expect(REPLAY_RULESET).toBe('clash-combat-93')
+  it('uses the current replay ruleset', () => {
+    expect(REPLAY_RULESET).toBe('clash-combat-99')
   })
 
   it.each([
@@ -123,21 +123,21 @@ describe('priority signature moves and contextual follow-ups', () => {
     [
       'hinrigh',
       {
-        forwardLight: ['Pigeon de métal', 'Metal Pigeon'],
-        forwardHeavy: ['Menottes rapaces', 'Raptor Handcuffs'],
-        backHeavy: ['Faune de couverture', 'Cover Fauna'],
-        airHeavy: ['Serpent de canon', 'Barrel Serpent'],
-        throw: ['Biohazard urbain', 'Urban Biohazard'],
+        forwardLight: ['Main sur l’épaule', 'Shoulder Check'],
+        forwardHeavy: ['Percée de l’épaule', 'Shoulder Entry'],
+        backHeavy: ['Revers de dégagement', 'Clearing Backfist'],
+        airHeavy: ['Rabattage à deux bras', 'Two-Arm Takedown'],
+        throw: ['La poignée de main des Xi-Yu', 'The Xi-Yu Handshake'],
       },
     ],
     [
       'mizaistom',
       {
-        forwardLight: ['Contrôle d’identité', 'Identity Check'],
-        forwardHeavy: ['Ligne jaune', 'Yellow Line'],
-        backHeavy: ['Carte rouge', 'Red Card'],
-        airHeavy: ['Interpellation', 'Apprehension'],
-        throw: ['Audience close', 'Hearing Closed'],
+        forwardLight: ['Marquer la ligne', 'Mark the Line'],
+        forwardHeavy: ['Refoulement', 'Pushback'],
+        backHeavy: ['Coude de barrage', 'Barring Elbow'],
+        airHeavy: ['Coude d’interception', 'Intercepting Elbow'],
+        throw: ['Fin de la déposition', 'End of Deposition'],
       },
     ],
     [
@@ -248,9 +248,9 @@ describe('priority signature moves and contextual follow-ups', () => {
       },
     }
     expect(moveForAction(afterCrossingHit, 'heavy', EMPTY_INPUT)?.id).toBe('feitan:pain-stairway')
-    expect(
-      moveForAction(afterCrossingHit, 'heavy', { ...EMPTY_INPUT, left: true })?.id,
-    ).toBe('feitan:shadowless-blade')
+    expect(moveForAction(afterCrossingHit, 'heavy', { ...EMPTY_INPUT, left: true })?.id).toBe(
+      'feitan:shadowless-blade',
+    )
 
     const airborneLauncher = {
       ...afterCrossingHit,

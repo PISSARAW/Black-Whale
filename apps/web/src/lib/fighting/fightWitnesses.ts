@@ -52,7 +52,7 @@ export function advanceFightWitnesses(state: FightState): FightState {
     const confidence = Math.min(1, witness.credibility * (event.kind === 'concealed-nen' ? 0.8 : 1))
     return {
       ...witness,
-      fear: Math.min(100, witness.fear + 5 + state.securityAlert?.level * 2),
+      fear: Math.min(100, witness.fear + 5 + (state.securityAlert?.level ?? 0) * 2),
       memories: [...witness.memories, { ...event, confidence }].slice(-16),
     }
   })

@@ -36,7 +36,7 @@ export function hanzoReverseDash(
   brakedDirection: -1 | 1,
   direction: -1 | 0 | 1,
 ): FighterDash | null {
-  if (fighter.id !== 'hanzo' || direction !== -brakedDirection) return null
+  if (fighter.id !== 'hanzo' || direction === 0 || direction !== -brakedDirection) return null
   const mobility = styleMobility(fighter)
   const profile = direction === fighter.facing ? mobility.forwardDash : mobility.backDash
   return { direction, frame: 0, ...profile }

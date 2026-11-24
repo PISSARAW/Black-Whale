@@ -2,6 +2,8 @@ import { shuffleSupport } from './fightShuffleStep'
 import { attackData } from './frameData'
 import { fightStrikeLimb } from './fightStrikeLimb'
 import { rosterMoveShape } from './rosterStrikeMotion'
+import { moveById } from './movesets'
+import { standingStrikeSupport } from './standingStrikeMotion'
 import type { ArcadeFighter } from './types'
 
 const KICKS = new Set(['kick', 'lowKick', 'sweep', 'spin', 'dive'])
@@ -30,6 +32,13 @@ export function supportCycle(fighter: ArcadeFighter): {
     const free = limb === 'both' ? lead : limb === 'left' ? 0 : 1
     return { support: 1 - free, free, pivot: Math.sin(Math.PI * progress * 0.8) * 0.18 }
   }
+  const slot = moveById(attack.moveId)?.slot
+  const personal = slot && standingStrikeSupport(fighter, slot, data)
+  if (personal)
+    return {
+      support: personal.supportFoot === 'lead' ? lead : 1 - lead,
+      pivot: personal.pivotAngle,
+    }
   return {
     support: progress < 0.55 ? 1 - lead : lead,
     pivot: Math.sin(Math.PI * progress * 0.85) * 0.1,

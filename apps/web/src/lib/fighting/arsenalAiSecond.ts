@@ -10,32 +10,27 @@ export const SECOND_ARSENAL_AI = {
   zakuro: martialSlots, // Blood commands run through maryAiAction, including copied blood.
   melody: () => ['neutralSpecial'],
   basho: ({ state, gap }) =>
-    !state.opponent.bashoPoem?.ready && gap > 10
-      ? ['neutralSpecial']
-      : ['standingLight', 'forwardLight', 'standingHeavy'],
-  camilla: martialSlots, // Death triggers Cat's Name; the AI must never cast it.
+    !state.opponent.bashoPoem?.ready && gap > 10 ? ['neutralSpecial'] : [],
+  camilla: () => [], // Death triggers Cat's Name; the AI must never cast it.
   halkenburg: ({ state }) =>
     state.opponent.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES ? ['neutralSpecial'] : [],
   gel: ({ roll }) =>
     varySlots(roll, ['neutralSpecial', 'forwardSpecial', 'downSpecial', 'backSpecial']),
-  lynch: ({ state, gap }) =>
-    !state.opponent.lynchQuestion && gap <= 18
-      ? ['neutralSpecial']
-      : ['standingLight', 'forwardLight', 'standingHeavy'],
+  lynch: ({ state, gap }) => (!state.opponent.lynchQuestion && gap <= 18 ? ['neutralSpecial'] : []),
   luini: ({ roll }) => (roll > 0.65 ? ['neutralSpecial'] : []),
   bill: ({ state }) =>
     controlledEntities(state, 'opponent', 'bill').length ? [] : ['neutralSpecial'],
   furykov: ({ state }) => (!state.opponent.comboMaster ? ['neutralSpecial'] : []),
   cluck: ({ state }) =>
     controlledEntities(state, 'opponent', 'cluck').length ? [] : ['neutralSpecial'],
-  beyond: martialSlots, // No prepared sacrifice is created by selecting a martial attack.
+  beyond: () => [], // The ordinary martial plan supplies its moves.
   longhi: () => ['neutralSpecial'],
   musse: ({ state, gap }) =>
     gap <= 6 && !state.opponent.secretWindow
       ? ['neutralSpecial']
       : !state.opponent.secretWindowListening
-        ? ['downSpecial', 'standingLight']
-        : ['standingLight', 'forwardLight', 'standingHeavy'],
+        ? ['downSpecial']
+        : [],
   padaille: ({ roll }) => [
     roll < 0.33 ? 'neutralSpecial' : roll < 0.66 ? 'forwardSpecial' : 'downSpecial',
   ],

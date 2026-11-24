@@ -255,7 +255,7 @@ describe('Easter Egg controls and collection', () => {
     state = frames(performAttack(state, 'player', 'special'), FUTURE_PREPARATION_FRAMES - 1)
     state = performEasterEgg(state, 'opponent', 1)
     expect(state.opponent.easterEgg).toBeDefined()
-    state = frames(state, 1)
+    state = frames(state, 26)
     const forecast = state.parallelFuture!.frames
     expect(forecast[0].opponent.easterEgg).toBeDefined()
     expect(forecast[100].opponent.easterEgg).toBeUndefined()

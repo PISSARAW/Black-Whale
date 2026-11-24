@@ -2,6 +2,7 @@ import { sunMoonStrikeAllowed } from './sunMoonStrikeHands'
 import { comboAdmissionBody } from './comboAuraCost'
 import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
+import { tunePhysicalCombat } from './physicalCombatProfiles'
 import { attachMoveFollowUps, resolveMoveFollowUp } from './moveFollowUps'
 import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
@@ -132,6 +133,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFurykovMoveset)
     .map(tuneBonolenovMoveset)
     .map(declareMoveCombatRules)
+    .map(tunePhysicalCombat)
     // Reference routes are authored globally and may still contain the old
     // finisher links. Re-apply Cyclotron's canon boundary after that pass.
     .map(tunePhinksMoveset)

@@ -4,8 +4,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   rihan: entry(
     'preparation',
     [
-      'Observer une manifestation puis construire une analyse personnelle.',
-      'Observe a manifestation and build personal analysis.',
+      'Céder du terrain pour observer et punir une ouverture réelle. Predator s’étudie sur une manifestation visible.',
+      'Give ground to observe and punish a real opening. Predator studies a visible manifestation.',
     ],
     [
       'Presser physiquement l’observateur ; aucune analyse automatique d’un pouvoir caché.',
@@ -37,8 +37,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   basho: entry(
     'preparation',
     [
-      'Écrire le poème avant de chercher le contact du poing.',
-      'Write the poem before seeking fist contact.',
+      'Poser les appuis et alterner la main libre avec des frappes de poing. Le poème doit être écrit avant que le poing puisse en déclencher l’effet.',
+      'Plant the feet and alternate the free hand with fist strikes. Write the poem before a fist can trigger its effect.',
     ],
     [
       'Interrompre l’écriture et éviter le poing ; aucun feu gratuit à distance.',
@@ -48,8 +48,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   camilla: entry(
     'ranged',
     [
-      'Utiliser le pistolet sans confondre Cat’s Name avec une attaque volontaire.',
-      'Use the handgun; Cat’s Name is not a voluntary attack.',
+      'Provoquer une avance avec le pistolet ou une garde ouverte, puis utiliser le retrait et le revers arrière. Cat’s Name répond à une mort attribuée.',
+      'Draw an approach with the pistol or open guard, then retreat and riposte. Cat’s Name responds to an attributed death.',
     ],
     [
       'Un coup fatal n’annule pas le Nen post-mortem ; un vol exige ses vraies conditions.',
@@ -81,8 +81,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   lynch: entry(
     'pressure',
     [
-      'Poser une question audible puis toucher avec le poing.',
-      'Ask an audible question, then connect with the fist.',
+      'Entrer vite et alterner les poings dans l’axe. Pour obtenir une réponse, poser une question audible avant la frappe.',
+      'Close fast and alternate straight punches. Ask an audible question before the hit to get an answer.',
     ],
     [
       'Éviter le contact : une garde qui reçoit le poing peut encore fournir une réponse privée.',
@@ -114,8 +114,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   furykov: entry(
     'control',
     [
-      'Lire les alertes de Combo Master sans abandonner la garde manuelle.',
-      'Read Combo Master alerts while maintaining manual defense.',
+      'Sonder du poing et du pied avant, puis frapper dès qu’une ouverture se montre. Combo Master laisse la garde manuelle.',
+      'Probe with the lead hand and foot, then strike once an opening shows. Combo Master leaves defense manual.',
     ],
     [
       'Varier les ouvertures ; une commande en attente n’est jamais une attaque prédite.',
@@ -125,8 +125,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   longhi: entry(
     'control',
     [
-      'Proposer le pacte puis exploiter seulement une récompense réellement acquise.',
-      'Offer the pact and use only an actually earned reward.',
+      'Tendre la paume pour fixer la distance, puis se retirer ou intercepter du talon. Moonlight Act passe par une offre volontaire.',
+      'Offer the palm to set the distance, then step away or intercept with the heel. Moonlight Act begins with a voluntary offer.',
     ],
     [
       'Refuser reste possible ; aucune signature forcée ni sanction avant contrat.',
@@ -136,8 +136,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   musse: entry(
     'ranged',
     [
-      'Poser Secret Window au contact puis exploiter son observation privée.',
-      'Attach Secret Window at contact and use private observation.',
+      'Fermer la ligne avec la main avant, couvrir au coude et reculer vite. Poser Secret Window au contact pour observer.',
+      'Check the line with the lead hand, cover with the elbow and retreat quickly. Attach Secret Window at contact to observe.',
     ],
     [
       'Éviter la pose et punir le pistolet ; le hibou privé ne révèle pas de données au public.',
@@ -147,8 +147,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   padaille: entry(
     'pressure',
     [
-      'Choisir marteau, foret ou hache en tenant compte de leur récupération.',
-      'Choose hammer, drill, or axe with their recovery in mind.',
+      'Jauger de la main libre, puis frapper du bras droit. Choisir marteau, foret ou hache selon leur temps de récupération.',
+      'Gauge with the free hand, then strike with the right arm. Choose hammer, drill or axe by their recovery.',
     ],
     [
       'Faire manquer l’outil puis punir ; changer de forme n’annule pas un engagement.',
@@ -158,8 +158,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   sayird: entry(
     'support',
     [
-      'Contrôler un animal réel disponible, sans copie du matériel.',
-      'Control an available real animal; copying supplies no equipment.',
+      'Observer sous couverture, puis entrer d’un pas court et direct. Little Eye passe par un petit animal réel disponible.',
+      'Observe from cover, then enter with a short direct step. Little Eye uses an available real small animal.',
     ],
     [
       'Presser le corps du manipulateur ; l’observation n’est pas une frappe ou une guérison.',
@@ -169,8 +169,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   terebellum: entry(
     'control',
     [
-      'Aligner les contacts des mains pour absorber ou transférer une blessure.',
-      'Align hand contact to absorb or transfer a wound.',
+      'Avancer avec des appuis lourds et des frappes à portée de main. Sweet Home exige d’aligner les contacts pour absorber ou transférer une blessure.',
+      'Advance with heavy footing and strikes at hand range. Sweet Home requires hand contact to absorb or transfer a wound.',
     ],
     [
       'Rompre la portée ou l’orientation des mains ; aucun renvoi automatique sans contact.',
@@ -180,8 +180,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   voconte: entry(
     'control',
     [
-      'Relier les huisseries puis provoquer un franchissement dans le bon sens.',
-      'Link the frames, then cause a crossing in the correct direction.',
+      'Marquer un seuil avec l’avant-bras, accélérer puis s’arrêter net. Door demande deux huisseries et le bon sens de passage.',
+      'Check the threshold with the forearm, burst in and stop sharply. Door requires two linked frames and the correct crossing direction.',
     ],
     [
       'Garder ses distances aux seuils ; les projectiles ne sont pas transportés.',
@@ -202,8 +202,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   cluck: entry(
     'support',
     [
-      'Utiliser le pigeon réel pour sa livraison puis défendre le contact.',
-      'Use the real pigeon for delivery, then defend close range.',
+      'Traverser la distance d’une ruée ou d’un saut, frapper en passage puis se replier. Le pigeon réel sert à la livraison.',
+      'Cross the distance with a dash or jump, strike in passing and disengage. The real pigeon delivers the dispatch.',
     ],
     [
       'Presser physiquement ; aucun essaim offensif ou bonus de combat inventé.',
@@ -213,8 +213,8 @@ export const SECOND_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   beyond: entry(
     'pressure',
     [
-      'Jouer ses capacités physiques ; les malédictions préparées restent hors du duel.',
-      'Use physical abilities; prepared curses remain outside the duel.',
+      'Avancer sous une garde lourde, engager l’épaule et garder l’adversaire à portée. La malédiction de Beyond exige sa préparation.',
+      'Advance behind a heavy guard, commit the shoulder and keep the opponent in range. Beyond’s curse requires its preparation.',
     ],
     [
       'Punir les engagements physiques ; aucun sacrifice ou transfert de malédiction automatique.',

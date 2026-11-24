@@ -136,7 +136,7 @@ function buildPose(state: SecondaryState): FightPose {
 function isAttackContactWindow(plan: BodyPlan): boolean {
   const flow = plan.attackFlow
   if (!flow) return false
-  return flow.frame < flow.startup + flow.active
+  return flow.frame < flow.startup + (flow.active ?? 0)
 }
 
 function isSecondaryEligible(fighter: ArcadeFighter): boolean {

@@ -38,7 +38,6 @@ interface Prepared {
   targets: Vector3[]
   cycle: ReturnType<typeof supportCycle>
   walking: boolean
-  dt: number
   resting: boolean
   floor: number
 }
@@ -110,7 +109,6 @@ export function createSeparationSupport() {
       targets,
       cycle,
       walking,
-      dt,
       floor,
       resting: restingBody(fighter),
     }
@@ -187,7 +185,7 @@ export function settleFightSupport(rig: FightRig, fighter: ArcadeFighter): void 
   const cycle = supportCycle(fighter)
   if (cycle.free !== undefined && !walkingBody(fighter)) projectSolesToFloor(rig, cycle)
   const floor = (rig.human.figure.parent?.getWorldPosition(new Vector3()).y ?? 0) + FOOT_CLEARANCE
-  if (!walkingBody(fighter)) clearFloorFeet(rig, floor)
+  if (!walkingBody(fighter) && !restingBody(fighter)) clearFloorFeet(rig, floor)
   // Anatomical limits can leave a small residual, especially during a cancel.
   // Resolve it in the root without stretching a bone or lifting both soles.
   projectSolesToFloor(rig, { support: cycle.support, pivot: 0 })
@@ -220,14 +218,14 @@ function needsSupportReset(
 }
 
 function syncFeet(prepared: Prepared, support: Support) {
-  const { rig, targets, cycle, walking, dt, resting, floor } = prepared
+  const { rig, targets, cycle, walking, resting, floor } = prepared
   for (const [index, target] of targets.entries()) {
     if (!walking && cycle.free === index) continue
     const options = {
       target,
       pivot: cycle.support === index ? cycle.pivot : 0,
-      bend: support.feet[index].bend,
-      kneeTravel: resting ? (dt * 4) / 60 : Infinity,
+      bend: resting ? rig.human.knees[index].rotation.x : support.feet[index].bend,
+      kneeTravel: resting ? 0.03 : Infinity,
     }
     const surface = floor + target.y - support.feet[index].ground
     for (let pass = 0; pass < 3; pass++) {

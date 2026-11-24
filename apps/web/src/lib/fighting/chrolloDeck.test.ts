@@ -122,7 +122,7 @@ describe('Chrollo open-book right hand cost, Double Face and Gyo intel', () => {
       ...openChrollo,
       attack: {
         kind: 'heavy' as const,
-        variant: 'forward' as const,
+        variant: 'standing' as const,
         moveId: 'chrollo:forwardHeavy',
         frame: 1,
         impacted: false,
@@ -131,6 +131,7 @@ describe('Chrollo open-book right hand cost, Double Face and Gyo intel', () => {
         hatsuSource: null,
         projectileSpawned: false,
         confirmedHit: false,
+        reversal: false,
       },
     }
     const closedHeavy = { ...openHeavy, chrolloBook: closedBook }

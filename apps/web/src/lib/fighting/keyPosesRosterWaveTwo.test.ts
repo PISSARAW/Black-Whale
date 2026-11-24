@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { createFightState } from './fightState'
 import { bodyPlan } from './fightBodyMotion'
 import { keyPoseSource, keyPoseTimeline } from './keyPoseMoves'
+import { standingStrikeSupport } from './standingStrikeMotion'
 import { ROSTER_WAVE_TWO_FIGHTERS, ROSTER_WAVE_TWO_SLOTS } from './keyPosesRosterWaveTwo'
 import { moveForSlot } from './movesets'
 import { fighterMotionScore } from './rosterMotionScorecard'
@@ -41,10 +42,11 @@ describe('roster motion wave two grounded fundamentals', () => {
           projectileSpawned: false,
           reversal: false,
         }
-        const lead = slot !== 'standingLight'
+        const authored = standingStrikeSupport(fighter, slot, move.tuning)
+        const support = authored?.supportFoot ?? (slot === 'standingLight' ? 'rear' : 'lead')
         expect(bodyPlan(fighter, { seconds: 1, progress: 0 }), `${id}:${slot}`).toMatchObject({
-          supportFoot: lead ? 'lead' : 'rear',
-          pivotFoot: lead ? 'rear' : 'lead',
+          supportFoot: support,
+          pivotFoot: support === 'lead' ? 'rear' : 'lead',
         })
       }
     }

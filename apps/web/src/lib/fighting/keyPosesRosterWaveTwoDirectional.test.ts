@@ -4,6 +4,7 @@ import { bodyPlan } from './fightBodyMotion'
 import { keyPoseSource, keyPoseTimeline } from './keyPoseMoves'
 import { ROSTER_WAVE_TWO_FIGHTERS } from './keyPosesRosterWaveTwo'
 import { ROSTER_WAVE_TWO_DIRECTIONAL_SLOTS } from './keyPosesRosterWaveTwoDirectional'
+import { authoredStrikeDirection } from './physicalStrikeDirections'
 import { moveForSlot } from './movesets'
 import { rosterKeyPoses } from './rosterKeyPoses'
 import { fighterMotionScore } from './rosterMotionScorecard'
@@ -29,6 +30,12 @@ describe('roster motion wave two directional attacks', () => {
     for (const id of ROSTER_WAVE_TWO_FIGHTERS) {
       const contact = (slot: (typeof ROSTER_WAVE_TWO_DIRECTIONAL_SLOTS)[number]) =>
         keyPoseTimeline(id, slot)!.find(({ phase, at }) => phase === 'active' && at === 0)!.pose
+      if (authoredStrikeDirection(id, 'forwardHeavy')) {
+        expect(contact('lowLight').root?.[1] ?? 0, id).toBeLessThanOrEqual(0)
+        expect(contact('forwardHeavy').root?.[2] ?? 0, id).toBeGreaterThanOrEqual(0)
+        expect(contact('backHeavy').root?.[2], id).toBeLessThan(0)
+        continue
+      }
       const generated = (slot: (typeof ROSTER_WAVE_TWO_DIRECTIONAL_SLOTS)[number]) =>
         rosterKeyPoses(id)[slot]!.find(({ phase, at }) => phase === 'active' && at === 0)!.pose
       expect(contact('lowLight').leadKnee?.[0], id).toBeGreaterThan(

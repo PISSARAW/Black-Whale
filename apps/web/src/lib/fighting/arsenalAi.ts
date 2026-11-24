@@ -5,6 +5,7 @@ import { SECOND_ARSENAL_AI } from './arsenalAiSecond'
 import { martialSlots, type ArsenalAiContext, type ArsenalAiPlan } from './arsenalAiTypes'
 import type { FighterId, MoveSlot } from './types'
 import { prioritiseNenSlots } from './nenDoctrineActions'
+import { physicalAttackSlots } from './physicalCombatAi'
 
 /** Each playable fighter has a plan. No new power, equipment or consent is granted here. */
 export const ARSENAL_AI: Partial<Record<FighterId, ArsenalAiPlan>> = {
@@ -13,7 +14,8 @@ export const ARSENAL_AI: Partial<Record<FighterId, ArsenalAiPlan>> = {
 }
 
 export function arsenalAttackSlots(context: ArsenalAiContext): readonly MoveSlot[] {
-  if (context.state.opponent.y > 0) return martialSlots(context)
+  const physical = physicalAttackSlots(context)
+  if (context.state.opponent.y > 0) return physical ?? martialSlots(context)
   const feitan = feitanArsenalSlots(context)
   if (feitan) return prioritiseCommitmentPunish(context, feitan)
   const plan = ARSENAL_AI[context.state.opponent.id]
@@ -21,7 +23,11 @@ export function arsenalAttackSlots(context: ArsenalAiContext): readonly MoveSlot
   return prioritiseCommitmentPunish(
     context,
     prioritiseNenSlots(context, [
-      ...new Set([...(intent?.slots ?? plan?.(context) ?? []), ...martialSlots(context)]),
+      ...new Set([
+        ...(intent?.slots ?? plan?.(context) ?? []),
+        ...(physical ?? []),
+        ...martialSlots(context),
+      ]),
     ]),
   )
 }

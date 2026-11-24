@@ -30,6 +30,7 @@ describe('witness-driven security alerts', () => {
       witnesses: ['guard-a', 'guard-b'],
     })
     expect(observed.fightWitnesses?.every(({ memories }) => memories.length === 1)).toBe(true)
+    expect(observed.fightWitnesses?.map(({ fear }) => fear)).toEqual([5, 5])
   })
 
   it('requires Gyo perception for concealed Nen and never double-counts a frame', () => {

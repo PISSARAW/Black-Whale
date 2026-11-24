@@ -208,7 +208,7 @@ describe('canon character movement techniques', () => {
       ...start,
       player: {
         ...start.player,
-        battleCantabile: { preparation: null, prologue: true, form: null, learnedModels: [] },
+        battleCantabile: { models: {}, preparation: null, prologue: true, form: null },
       },
     }
     const spinDash = startForwardDash(dancing)

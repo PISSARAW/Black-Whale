@@ -42,16 +42,27 @@ const CHROLLO_GAPS = {
   musse: 11,
   padaille: 11,
   sayird: 10.5,
-  terebellum: 11,
+  terebellum: 11.5,
   voconte: 10.5,
   yokotani: 11,
 } satisfies Record<Exclude<Fighter, 'chrollo'>, number>
+
+// These profiles need an extra step to get back into strike range.
+const WHIFF_ADVANCE: Partial<Record<Fighter, number>> = {
+  camilla: 2,
+  cluck: 2,
+  furykov: 2,
+  longhi: 2,
+  lynch: 1,
+  musse: 2,
+}
 
 function practice(fighter: Fighter): CombatWhiffPractice {
   if (fighter === 'chrollo') return { opponent: 'kurapika', gap: 11.5, advanceFrames: 9 }
   if (fighter === 'feitan')
     return { opponent: 'chrollo', gap: CHROLLO_GAPS.feitan, advanceFrames: 3 }
-  return { opponent: 'chrollo', gap: CHROLLO_GAPS[fighter] }
+  const advanceFrames = WHIFF_ADVANCE[fighter]
+  return { opponent: 'chrollo', gap: CHROLLO_GAPS[fighter], advanceFrames }
 }
 
 function lesson(fighter: Fighter): CombatRoute {

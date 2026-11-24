@@ -46,6 +46,7 @@ export interface PlantFeetOptions {
   transfer?: boolean
   support?: number
   horizontal?: boolean
+  anchorLowest?: boolean
   pivot?: { index: number; angle: number }
 }
 
@@ -149,8 +150,12 @@ function turnBy(part: Object3D, turn: Turn | undefined, mirror: 1 | -1): void {
   part.rotation.z += turn[2] * mirror
 }
 
-export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): void {
+type PoseOrientation = 1 | -1 | { facing: 1 | -1; planted: boolean }
+
+export function applyFightPose(rig: FightRig, pose: FightPose, orientation: PoseOrientation): void {
   const { human } = rig
+  const facing = typeof orientation === 'number' ? orientation : orientation.facing
+  const planted = typeof orientation !== 'number' && orientation.planted
   const sides = sidesFor(facing)
   const { mirror } = sides
   if (pose.root) {
@@ -158,16 +163,40 @@ export function applyFightPose(rig: FightRig, pose: FightPose, facing: 1 | -1): 
     human.figure.position.y += pose.root[1]
     human.figure.position.z += pose.root[2]
   }
-  turnBy(human.figure, pose.pelvis, mirror)
-  turnBy(human.figure, pose.body, mirror)
+  const chest = applyBodyTurns(rig, pose, { mirror, planted })
   turnBy(human.head, pose.neck, mirror)
   turnBy(human.head, pose.head, mirror)
-  applyChest(rig, pose.chest && humanChestTurn(pose.chest), mirror)
+  applyChest(rig, chest && humanChestTurn(chest), mirror)
   applyLimbs(rig, pose, sides)
   keepHumanJoints(rig)
   constrainFightRig(rig)
   applyProceduralClavicles(rig.human.arms, rig.restShoulders)
   applyAuthoredClavicles(rig, pose, sides)
+}
+
+/** In a planted pose the feet support the hips; pitch and roll articulate at the waist. */
+function applyBodyTurns(
+  rig: FightRig,
+  pose: FightPose,
+  { mirror, planted }: { mirror: 1 | -1; planted: boolean },
+): Turn | undefined {
+  const figure = rig.human.figure
+  if (!planted) {
+    turnBy(figure, pose.pelvis, mirror)
+    turnBy(figure, pose.body, mirror)
+    return pose.chest
+  }
+  const [hipPitch, hipYaw, hipRoll] = pose.pelvis ?? [0, 0, 0]
+  const [bodyPitch, bodyYaw, bodyRoll] = pose.body ?? [0, 0, 0]
+  const [chestPitch, chestYaw, chestRoll] = pose.chest ?? [0, 0, 0]
+  figure.rotation.x = 0
+  figure.rotation.z = 0
+  figure.rotation.y += (hipYaw + bodyYaw) * mirror
+  return [
+    chestPitch + (hipPitch + bodyPitch) * 0.5,
+    chestYaw,
+    chestRoll + (hipRoll + bodyRoll) * 0.5,
+  ]
 }
 
 function applyChest(rig: FightRig, chest: Turn | undefined, mirror: 1 | -1): void {
@@ -264,6 +293,12 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   target.z += root[2]
   const correction = target.sub(after.positions[support])
   if (options.transfer) blendFootCorrections(correction, { ...options, after, support })
+  if (options.anchorLowest) {
+    correction.y =
+      Math.min(options.anchor.positions[0].y, options.anchor.positions[1].y) +
+      root[1] -
+      Math.min(after.positions[0].y, after.positions[1].y)
+  }
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
 }

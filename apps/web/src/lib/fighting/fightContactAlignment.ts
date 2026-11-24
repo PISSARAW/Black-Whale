@@ -40,7 +40,8 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       constrainFightRig(fightRigOf(own))
       const slot = moveById(fighter.attack?.moveId)?.slot
       const authored = slot ? authoredStrikeDirection(fighter.id, slot) : undefined
-      const joint = typeof authored === 'object' ? authored.contactJoint : undefined
+      const weapon = meleeWeaponContact(own.figure, fighter)
+      const joint = weapon || typeof authored !== 'object' ? undefined : authored.contactJoint
       const weight = contactWeight(fighter, state[other], Boolean(authored))
       if (weight <= 0) continue
       const zone = anatomicalContactZone(
@@ -51,7 +52,9 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
       const ownRig = fightRigOf(own)
       const fresh = fightContactSurface(fightRigOf(rival), zone, {
         facing: fighter.facing,
-        near: strikeRoot(ownRig, fighter, joint).getWorldPosition(new Vector3()),
+        near:
+          weapon?.getWorldPosition(new Vector3()) ??
+          strikeRoot(ownRig, fighter, joint).getWorldPosition(new Vector3()),
       })
       const data = attackData(fighter.attack!.kind, fighter)
       const target = latches[side](fighter, contactPart(fightRigOf(rival), zone), {

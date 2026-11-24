@@ -1,0 +1,136 @@
+import type { CombatLocomotion } from './firstFiveCombatMotion'
+import type { ArcadeFighter, FighterId } from './types'
+
+const LOCOMOTION: Partial<Record<FighterId, CombatLocomotion>> = {
+  furykov: {
+    stride: 0.91,
+    stepScale: 0.86,
+    advance: { chest: [0.06, -0.11, 0], head: [-0.07, 0.1, 0], leadElbow: [-0.25, 0, 0] },
+    retreat: { body: [-0.075, 0, 0], head: [-0.04, -0.1, 0], rearElbow: [-0.29, 0, 0] },
+    weight: { root: [0, -0.017, 0], chest: [0.04, 0, 0] },
+    swing: { chest: [0, -0.1, 0], head: [0, 0.09, 0], rearShoulder: [-0.07, 0, -0.06] },
+    guard: {
+      chest: [0.07, -0.15, 0],
+      head: [-0.08, 0.11, 0],
+      leadElbow: [-0.33, 0, 0],
+      rearShoulder: [-0.23, 0.11, -0.17],
+    },
+    takeoff: { body: [0.045, 0, 0], leadElbow: [-0.27, 0, 0], rearKnee: [0.18, 0, 0] },
+    jump: {
+      chest: [0.06, -0.18, 0.06],
+      head: [-0.06, 0.13, 0],
+      leadElbow: [-0.38, 0, 0],
+      rearElbow: [-0.26, 0, 0],
+      leadHip: [-0.15, 0, 0.11],
+      rearHip: [0.2, 0, -0.11],
+    },
+    landing: { body: [0.095, 0, 0], head: [-0.12, 0.05, 0], leadElbow: [-0.25, 0, 0] },
+  },
+  cluck: {
+    stride: 1.07,
+    stepScale: 1.05,
+    advance: {
+      chest: [0, -0.15, 0.09],
+      leadShoulder: [0.14, 0, 0.18],
+      rearShoulder: [0.19, 0, -0.18],
+    },
+    retreat: { body: [-0.1, 0, 0.12], chest: [-0.08, 0.18, 0], leadElbow: [-0.24, 0, 0] },
+    weight: { root: [0, -0.021, 0], chest: [0.05, 0, 0] },
+    swing: {
+      pelvis: [0, 0.18, 0.08],
+      leadShoulder: [0.14, 0, 0.16],
+      rearShoulder: [-0.12, 0, -0.17],
+    },
+    guard: {
+      chest: [-0.055, -0.11, 0.08],
+      leadShoulder: [-0.24, 0, 0.28],
+      rearShoulder: [-0.21, 0, -0.29],
+      leadElbow: [-0.23, 0, 0],
+    },
+    takeoff: { body: [0.07, 0, 0.09], rearKnee: [0.23, 0, 0], rearShoulder: [0.2, 0, -0.28] },
+    jump: {
+      body: [-0.11, 0, 0.17],
+      leadShoulder: [0.13, 0, 0.43],
+      rearShoulder: [0.14, 0, -0.47],
+      leadHip: [-0.22, 0, 0.16],
+      rearHip: [0.21, 0, -0.15],
+      leadKnee: [0.22, 0, 0],
+    },
+    landing: { body: [0.12, 0, 0.1], leadShoulder: [-0.16, 0, 0.17], rearKnee: [0.16, 0, 0] },
+  },
+  beyond: {
+    stride: 1.17,
+    stepScale: 0.95,
+    advance: { chest: [0.12, -0.09, 0], leadShoulder: [0.1, 0, 0.1], rearElbow: [-0.28, 0, 0] },
+    retreat: { body: [-0.06, 0, 0], chest: [0.09, 0.07, 0], rearElbow: [-0.34, 0, 0] },
+    weight: { root: [0, -0.023, 0], chest: [0.08, 0, 0] },
+    swing: { pelvis: [0, 0.1, 0], chest: [0, -0.07, 0.035], rearElbow: [0.09, 0, 0] },
+    guard: {
+      body: [0.09, 0, 0],
+      chest: [0.12, -0.08, 0],
+      leadElbow: [-0.33, 0, 0],
+      rearElbow: [-0.32, 0, 0],
+    },
+    takeoff: { body: [0.16, 0, 0], chest: [0.07, -0.11, 0], rearKnee: [0.22, 0, 0] },
+    jump: {
+      body: [0.16, 0, 0],
+      chest: [0.11, -0.12, 0],
+      leadShoulder: [-0.25, 0, 0.23],
+      rearShoulder: [0.18, 0, -0.25],
+      leadHip: [-0.14, 0, 0.12],
+      rearKnee: [0.23, 0, 0],
+    },
+    landing: { body: [0.16, 0, 0], leadKnee: [0.22, 0, 0], rearKnee: [0.19, 0, 0] },
+  },
+  longhi: {
+    stride: 0.95,
+    stepScale: 0.88,
+    advance: { chest: [-0.045, -0.13, 0], leadPalm: [-0.2, 0.22, 0.1], rearElbow: [-0.28, 0, 0] },
+    retreat: {
+      body: [-0.11, 0, 0],
+      leadShoulder: [-0.2, 0.08, 0.16],
+      leadPalm: [-0.22, 0.19, 0.11],
+    },
+    weight: { root: [0, -0.018, 0], chest: [0.039, 0, 0] },
+    swing: { chest: [0, -0.1, 0.08], leadWrist: [0.12, 0.17, 0.08], rearWrist: [-0.08, -0.12, 0] },
+    guard: { chest: [-0.06, -0.11, 0.075], leadPalm: [-0.28, 0.24, 0.1], rearElbow: [-0.37, 0, 0] },
+    takeoff: { body: [-0.08, 0, 0.085], leadElbow: [-0.27, 0, 0], rearKnee: [0.15, 0, 0] },
+    jump: {
+      chest: [-0.1, 0.22, 0.1],
+      leadPalm: [-0.24, 0.24, 0.1],
+      leadElbow: [-0.35, 0, 0],
+      rearShoulder: [-0.21, 0.12, -0.16],
+      leadHip: [-0.18, 0, 0.12],
+      rearHip: [0.14, 0, -0.16],
+    },
+    landing: { body: [-0.095, 0, 0], leadPalm: [-0.23, 0.22, 0.1], rearKnee: [0.16, 0, 0] },
+  },
+  musse: {
+    stride: 0.89,
+    stepScale: 0.92,
+    advance: { chest: [0.075, -0.12, 0], head: [-0.04, 0.12, 0.08], rearElbow: [-0.32, 0, 0] },
+    retreat: { body: [-0.06, 0, 0.08], head: [0.045, -0.16, 0.07], leadElbow: [-0.28, 0, 0] },
+    weight: { root: [0, -0.013, 0], chest: [0.055, 0, 0] },
+    swing: { chest: [0, 0.08, 0], head: [0, -0.08, 0.055], rearElbow: [-0.1, 0, 0] },
+    guard: {
+      chest: [0.055, -0.15, 0],
+      head: [0.034, -0.16, 0.09],
+      leadElbow: [-0.24, 0, 0],
+      rearElbow: [-0.46, 0, 0],
+    },
+    takeoff: { body: [0.08, 0, 0], rearElbow: [-0.26, 0, 0], rearKnee: [0.18, 0, 0] },
+    jump: {
+      chest: [0.11, -0.14, 0.06],
+      head: [0.04, -0.17, 0.08],
+      leadElbow: [-0.27, 0, 0],
+      rearElbow: [-0.48, 0, 0],
+      leadHip: [-0.16, 0, 0.08],
+      rearHip: [0.16, 0, -0.13],
+    },
+    landing: { body: [0.095, 0, 0], head: [-0.06, -0.13, 0.05], rearElbow: [-0.26, 0, 0] },
+  },
+}
+
+export function seventhFiveLocomotion(fighter: ArcadeFighter): CombatLocomotion | undefined {
+  return LOCOMOTION[fighter.id]
+}

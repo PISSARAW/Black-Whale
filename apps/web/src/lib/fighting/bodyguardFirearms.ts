@@ -39,14 +39,19 @@ export function bodyguardFiring(fighter: ArcadeFighter): boolean {
   return bodyguardPhysicalShot(fighter, fighter.attack?.kind ?? 'light')
 }
 
-/** Two close strikes use the gripped service weapon as a physical contact prop. */
+const PISTOL_STRIKES: Partial<Record<FighterId, string>> = {
+  halkenburg: 'halkenburg:standingHeavy',
+  bill: 'bill:backHeavy',
+  furykov: 'furykov:backHeavy',
+  longhi: 'longhi:backHeavy',
+  musse: 'musse:standingHeavy',
+}
+
+/** Close strikes with a physical contact point on the gripped service weapon. */
 export function bodyguardPistolStrike(fighter: ArcadeFighter): boolean {
   if (fighter.weaponsConfiscated || fighter.attack?.kind !== 'heavy') return false
-  const move = fighter.attack.moveId
-  return (
-    (fighter.id === 'halkenburg' && move === 'halkenburg:standingHeavy') ||
-    (fighter.id === 'bill' && move === 'bill:backHeavy')
-  )
+  const move = PISTOL_STRIKES[fighter.id]
+  return Boolean(move && move === fighter.attack.moveId)
 }
 
 /** Release height follows the compact bodies; the gun stays physical in either Biscuit form. */

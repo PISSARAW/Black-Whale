@@ -4,6 +4,7 @@ import { THIRD_FIVE_NORMAL_STYLES } from './thirdFiveNormals'
 import { FOURTH_FIVE_NORMAL_STYLES } from './fourthFiveNormals'
 import { FIFTH_FIVE_NORMAL_STYLES } from './fifthFiveNormals'
 import { SIXTH_FIVE_NORMAL_STYLES } from './sixthFiveNormals'
+import { SEVENTH_FIVE_NORMAL_STYLES } from './seventhFiveNormals'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
 
@@ -35,6 +36,7 @@ const NORMAL_STYLES: Partial<Record<FighterId, NormalStyle>> = {
   ...FOURTH_FIVE_NORMAL_STYLES,
   ...FIFTH_FIVE_NORMAL_STYLES,
   ...SIXTH_FIVE_NORMAL_STYLES,
+  ...SEVENTH_FIVE_NORMAL_STYLES,
   feitan: {
     prepareAt: 0.22,
     recoverAt: 0.28,

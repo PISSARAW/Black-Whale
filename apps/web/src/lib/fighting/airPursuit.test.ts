@@ -70,8 +70,7 @@ function tapInAnticipationWindow(
   input: Partial<FightInput> = {},
   action: MoveAction = 'light',
 ) {
-  const data = attackData(state.player.attack!.kind, state.player)
-  return tap(afterActive(state, data.startup + data.active + 2 - INPUT_BUFFER_FRAMES), input, action)
+  return tap(afterActive(state, 2 - INPUT_BUFFER_FRAMES), input, action)
 }
 
 function launcher(state: FightState) {
@@ -210,7 +209,10 @@ it('Chrollo convertit une frappe copiée sans transformer la page historique en 
     },
   }
   const launch = launcher(openBook)
-  const { state, defended } = resolveRace(launch, tapInAnticipationWindow(launch, { right: true }, 'special'))
+  const { state, defended } = resolveRace(
+    launch,
+    tapInAnticipationWindow(launch, { right: true }, 'special'),
+  )
   expect(defended).toBe(false)
   expect(state.impact?.comboHits).toBe(4)
   expect(state.player.attack).toMatchObject({
@@ -248,7 +250,7 @@ it.each([false, true])(
   'la défense tenue ne coupe pas une poursuite garantie, coin %s',
   (corner) => {
     const launch = launcher(duel('hisoka', { corner }))
-    let state = tap(launch, { right: true })
+    let state = tapInAnticipationWindow(launch, { right: true })
     for (let i = 0; i < 60 && state.impact?.sequence === launch.impact?.sequence; i++) {
       expect(airRecoveryAvailable(state.opponent)).toBe(false)
       state = defend(state, { down: true, guard: true, right: true })

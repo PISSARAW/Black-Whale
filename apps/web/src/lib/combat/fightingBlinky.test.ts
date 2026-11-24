@@ -134,7 +134,7 @@ describe('Arena Blinky physical targets', () => {
 
   it('cannot draw blood through a wall', () => {
     const initial = woundedState(1)
-    initial.terrain.walls = [{ start: [1.5, -2], end: [1.5, 2] }]
+    initial.terrain.walls = [{ spaceId: initial.terrain.id, start: [1.5, -2], end: [1.5, 2] }]
 
     expect(combatReducer(initial, move('finisher'))).toBe(initial)
   })

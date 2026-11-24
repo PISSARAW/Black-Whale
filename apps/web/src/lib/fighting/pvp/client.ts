@@ -237,9 +237,9 @@ export function createPvpClient(options: ClientOptions) {
 
   function pumpClassic(input: number, current: ClientState) {
     if (current.connection !== 'diverged') stream.start()
-    if (current.connection === 'connected' && current.view.status === 'playing')
-      void pipeline.send(controlledInput(input))
-    const interval = current.view.status === 'playing' ? 100 : 250
+    const playing = current.view?.status === 'playing'
+    if (current.connection === 'connected' && playing) void pipeline.send(controlledInput(input))
+    const interval = playing ? 100 : 250
     if (needsPolling(current) && clock() - polledAt >= interval) void refresh()
   }
 

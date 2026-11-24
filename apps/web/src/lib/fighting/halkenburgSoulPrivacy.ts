@@ -98,6 +98,6 @@ function victimWakeReady(state: FightState, soul: HalkenburgSoulExchange): boole
     })
   )
 }
-function privatePassenger(passenger: HalkenburgPassenger | undefined, viewer: FightSide) {
+function privatePassenger(passenger: HalkenburgPassenger | undefined, viewer: FightSide | null) {
   return passenger && passenger.owner !== viewer ? { ...passenger, motion: undefined } : passenger
 }

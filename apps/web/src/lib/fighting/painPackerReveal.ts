@@ -40,11 +40,11 @@ export function createPainPackerReveal(outfit: VisitHatsuModel) {
             if (painAmount < 0.001 || vPainHeight > painAmount) discard;
             float seam = smoothstep(painAmount - 0.12, painAmount, vPainHeight);
             seam *= 1.0 - smoothstep(0.96, 1.0, painAmount);
-            diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.72, 0.30, 0.85), seam * 0.75);
+            diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0, 0.18, 0.035), seam * 0.9);
           `,
           )
       }
-      material.customProgramCacheKey = () => 'clash-pain-packer-reveal-v1'
+      material.customProgramCacheKey = () => 'clash-pain-packer-reveal-v2'
       mesh.material = material
       mesh.userData.painReveal = amount
       sections.push({ section, amount })

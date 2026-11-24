@@ -5,6 +5,7 @@
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
   import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
   import { createKurapikaSpeedScene } from '$lib/fighting/kurapikaSpeedScene'
+  import { createFeitanSpeedScene } from '$lib/fighting/feitanSpeedScene'
   import { createFightStagingScene } from '$lib/fighting/fightStagingScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
@@ -57,6 +58,7 @@
   import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
   import { loadFightStage } from '$lib/fighting/loadFightStage'
   import { motionOf } from '$lib/fighting/fighterMovement'
+  import { feitanHeatVictimLift } from '$lib/fighting/feitanHeatLift'
   import {
     FIGHT_MODEL_POSES,
     createStrideClocks,
@@ -225,6 +227,14 @@
           comfort: visualComfort,
           figureOf: (side) => models[side].model.turns,
         })
+        const feitanSpeed = createFeitanSpeedScene({
+          THREE,
+          scene,
+          comfort: visualComfort,
+          figureOf: (side) => models[side].model.root,
+          worldX,
+          worldY,
+        })
         const kurapikaSpeed = createKurapikaSpeedScene({
           THREE,
           scene,
@@ -270,6 +280,7 @@
           const { progress } = reaction
           const drawn = falling.position
           model.root.position.set(worldX(drawn.x), worldY(drawn.y), drawn.z ?? 0)
+          model.root.position.y += feitanHeatVictimLift(state, side)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           const fallback = fightSceneReaction({ fighter, state, progress, side })
@@ -397,6 +408,7 @@
           })
           staging.sync(state)
           motionTrails.sync(state, now)
+          feitanSpeed.sync(state, now)
           kurapikaSpeed.sync(state, now)
           alignPhysicalContact(state)
           impacts.emit(state, now)
@@ -407,6 +419,7 @@
 
           impacts.animate(now)
           motionTrails.animate(now)
+          feitanSpeed.animate(now)
           kurapikaSpeed.animate(now)
 
           collisions.sync(state)
@@ -444,6 +457,7 @@
           trackingSilhouettes.dispose()
           impacts.dispose()
           motionTrails.dispose()
+          feitanSpeed.dispose()
           kurapikaSpeed.dispose()
           staging.dispose()
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))

@@ -1,6 +1,7 @@
 import { attackData } from './frameData'
 import { fightExpressionProfile } from './fightExpressionProfiles'
 import type { ArcadeFighter, FighterId } from './types'
+import { feitanWounded } from './feitanIdentity'
 
 export type FightEmotion = 'concentration' | 'effort' | 'pain' | 'rest'
 export interface FightFacePose {
@@ -55,6 +56,13 @@ export function fightExpressionTarget(fighter: ArcadeFighter, progress: number, 
     gaze: fighter.facing * (profile.gaze ?? 0.005),
     headRoll: pain * 0.045 * body,
     shoulder: profile.shoulder * (0.3 + effort + pain * 0.65),
+  }
+  if (feitanWounded(fighter) && stimulus.mode === 'concentration') {
+    pose.eye = Math.min(pose.eye, 0.64)
+    pose.brow = Math.max(pose.brow, 0.29)
+    pose.smile = 0.38
+    pose.headPitch = -0.035
+    pose.headRoll = -0.035
   }
   return { mode: stimulus.mode, pose: constrainExpression(fighter, pose) }
 }

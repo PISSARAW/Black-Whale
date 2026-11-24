@@ -260,6 +260,26 @@ function movementCue(cue: Cue, kind: Parameters<typeof footFoley>[1]['kind']): v
     kind,
     take: cue.event.take ?? cue.state.frame % 4,
   })
+  if (kind === 'dash' && cue.event.fighter === 'feitan') {
+    const at = startsAt(cue.g)
+    rush(cue.g, at, {
+      type: 'highpass',
+      peak: 0.085,
+      cutoff: 5200,
+      sweepTo: 920,
+      duration: 0.045,
+      attack: 0.001,
+      release: 0.055,
+    })
+    rush(cue.g, at + 0.035, {
+      peak: 0.045,
+      cutoff: 1450,
+      sweepTo: 280,
+      duration: 0.065,
+      attack: 0.002,
+      release: 0.07,
+    })
+  }
 }
 
 function impactCue(cue: Cue): void {

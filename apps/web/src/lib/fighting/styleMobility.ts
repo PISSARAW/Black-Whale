@@ -44,16 +44,25 @@ const MOBILITY: Record<StyleRole, Mobility> = {
   },
 }
 
+const FEITAN_MOBILITY: Mobility = {
+  backWalk: 0.96,
+  forwardDash: { frames: 14, peak: 140 },
+  backDash: { frames: 12, peak: 124 },
+}
+
 /** Body identity only: Skill Hunter and Dolphin cannot copy someone else's footwork. */
 export function styleMobility(fighter: ArcadeFighter): Mobility & { walkScale: number } {
   const role =
     fighter.id === 'biscuit' && !fighter.biscuitTrueForm ? 'control' : styleMatchup(fighter.id).role
   const personal = physicalCombatProfile(fighter.id)
-  const base = personal ?? MOBILITY[role],
+  const base = fighter.id === 'feitan' ? FEITAN_MOBILITY : (personal ?? MOBILITY[role]),
     factor = voiceSpeedFactor(fighter) * bodyLegFactor(fighter) * chrolloFreeHandsFactor(fighter)
   return {
     backWalk: base.backWalk,
-    walkScale: fightingStyle(fighter.id).moveScale * (personal?.walk ?? 1) * factor,
+    walkScale:
+      fightingStyle(fighter.id).moveScale *
+      (fighter.id === 'feitan' ? (personal?.walk ?? 1) * 1.08 : (personal?.walk ?? 1)) *
+      factor,
     forwardDash: { ...base.forwardDash, peak: base.forwardDash.peak * factor },
     backDash: { ...base.backDash, peak: base.backDash.peak * factor },
   }
@@ -62,6 +71,6 @@ export function styleMobility(fighter: ArcadeFighter): Mobility & { walkScale: n
 export function styleReactionFrames(fighter: ArcadeFighter): number {
   return (
     physicalCombatProfile(fighter.id)?.reaction ??
-    (styleMatchup(fighter.id).role === 'mobile' ? 10 : 14)
+    (fighter.id === 'feitan' || styleMatchup(fighter.id).role === 'mobile' ? 10 : 14)
   )
 }

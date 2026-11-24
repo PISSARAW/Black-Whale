@@ -1,6 +1,7 @@
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
 import type { ArcadeFighter, FightSide } from './types'
 import { createFeitanBladeTrail } from './feitanBladeTrail'
+import { feitanIconicIdle } from './feitanIdentity'
 
 /** Physical blade attached to the anatomical weapon hand, including after a rig rebuild. */
 export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffectScene {
@@ -64,6 +65,12 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
     if (root.parent !== hand) hand.add(root)
     const usable = !actor.weaponsConfiscated && !actor.hatsuEffects.painPacker?.armour
     root.visible = usable
+    const iconic = feitanIconicIdle(actor)
+    const forwardHeavy = ['feitan:standingHeavy', 'feitan:forwardHeavy'].includes(
+      actor.attack?.moveId ?? '',
+    )
+    root.rotation.set(0, 0, iconic ? -Math.PI / 2 : forwardHeavy ? 0.58 : 0)
+    root.position.set(iconic ? 0.04 : 0, iconic ? -0.01 : 0, 0)
     setOriginal(source, usable && !actor.umbrellaFeintFrames)
     const cloth = figure.getObjectByName('signature-umbrella-cloth')
     if (cloth) setOriginal(cloth, source.visible)

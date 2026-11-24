@@ -2,7 +2,7 @@ import { fighterStance } from './biscuitBody'
 import { animateHanzoBlade } from './hanzoBladeFigure'
 import { plantHanzoSoles } from './hanzoGrounding'
 import { beginSettledPose } from './fightSettledPose'
-import { feitanAirPlan } from './feitanLocomotion'
+import { feitanAirPlan, feitanIconicPlan, feitanWoundedPlan } from './feitanLocomotion'
 import { feitanHandedPlan } from './feitanHandedPose'
 import { feitanUmbrellaPlan } from './feitanEquipmentPose'
 import { plantBodyFrame } from './fightPlantedPose'
@@ -495,6 +495,8 @@ function restingWithConstraint(
   if (constraint) return { ...constraint, pose: addPoses(standing, constraint.pose) }
   return (
     feitanUmbrellaPlan(fighter, standing) ??
+    feitanWoundedPlan(fighter, standing) ??
+    feitanIconicPlan(fighter) ??
     withLocomotionInertia(restingPlan(fighter, standing), context.locomotionInertia) ??
     feitanAirPlan(fighter, standing) ??
     reactionPlan(fighter, context, standing)

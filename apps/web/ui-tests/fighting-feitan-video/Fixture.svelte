@@ -36,7 +36,7 @@
       <span>BLACK WHALE CLASH / FEITAN</span>
       <h1>{title}</h1>
     </div>
-    <p>Marche +19 %<br />Dash et recul accélérés</p>
+    <p>Marche +28 %<br />Dash et recul accélérés</p>
   </header>
   <div class="arena">
     <FightLiveScene

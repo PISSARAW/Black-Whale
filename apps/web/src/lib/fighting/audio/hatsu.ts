@@ -105,6 +105,11 @@ const BENJAMIN_MOVES: Record<string, () => void> = {
   'benjamin:finisher': () => selectACard(3),
 }
 
+const FEITAN_MOVES: Record<string, () => void> = {
+  'feitan:neutralSpecial': curseSet,
+  'feitan:finisher': raiseTheSun,
+}
+
 export function playFightHatsu(g: Graph, event: FightSoundEvent): void {
   const source = event.source ?? event.fighter ?? 'kurapika'
   const recipe = moveRecipe({ ...event, source })
@@ -144,7 +149,7 @@ export function playFightHatsu(g: Graph, event: FightSoundEvent): void {
 
 function moveRecipe(event: FightSoundEvent): (() => void) | null {
   const source = event.source ?? 'kurapika'
-  if (source === 'feitan') return null
+  if (source === 'feitan') return FEITAN_MOVES[event.moveId ?? ''] ?? null
   if (source === 'biscuit' && event.moveId === 'biscuit:neutralSpecial') return null
   if (source === 'phinks') return event.value ? () => windTheArm(event.value) : null
   if (source === 'franklin') return null // The actual projectiles own each gunshot.

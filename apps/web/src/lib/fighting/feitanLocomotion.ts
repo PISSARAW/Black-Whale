@@ -2,6 +2,28 @@ import { addPoses, scalePose, type BodyPlan, type FightPose } from './fightPose'
 import { AIR_POSE } from './fightStance'
 import { FEITAN_JUMP } from './secondFiveLocomotion'
 import type { ArcadeFighter } from './types'
+import { feitanIconicIdle, feitanWounded } from './feitanIdentity'
+
+export const FEITAN_ICONIC_POSE: FightPose = {
+  body: [0.025, 0, 0],
+  chest: [0.045, -0.34, 0.018],
+  head: [-0.055, 0.04, 0.07],
+  leadShoulder: [-0.92, 0.14, 0.2],
+  leadElbow: [-0.46, 0, 0],
+  leadWrist: [0.08, 0, 0.08],
+  rearShoulder: [-0.72, 0.08, -0.42],
+  rearElbow: [-1.02, 0, 0],
+  rearWrist: [-0.16, 0, -0.18],
+  leadHip: [-0.08, 0, 0.025],
+  leadKnee: [0.1, 0, 0],
+  rearHip: [0.06, 0, -0.025],
+  rearKnee: [0.06, 0, 0],
+}
+
+export function feitanIconicPlan(fighter: ArcadeFighter): BodyPlan | null {
+  if (!feitanIconicIdle(fighter)) return null
+  return { pose: FEITAN_ICONIC_POSE, plant: true, key: 'feitan:iconic-guard', blend: 0.12 }
+}
 
 /** Low acceleration, free arm trailing, eyes fixed ahead: reference 0:20–1:10. */
 export const FEITAN_WALK_STYLE = {
@@ -104,5 +126,32 @@ export function feitanAirPlan(fighter: ArcadeFighter, standing: FightPose): Body
     plant: false,
     key: 'feitan:air',
     blend: 0.045,
+  }
+}
+
+/** The free arm hangs damaged before Pain Packer is manifested. */
+export function feitanWoundedPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
+  if (
+    !feitanWounded(fighter) ||
+    fighter.attack ||
+    fighter.pose !== 'idle' ||
+    fighter.hitStun > 0 ||
+    fighter.blockStun > 0
+  )
+    return null
+  return {
+    pose: addPoses(standing, {
+      body: [0.08, 0, 0.035],
+      chest: [0.09, 0.06, 0.08],
+      head: [-0.1, 0, -0.06],
+      rearShoulder: [1.12, 0, -0.2],
+      rearElbow: [0.72, 0, 0],
+      rearWrist: [0.34, 0, 0.12],
+      leadShoulder: [-0.18, 0, 0.08],
+      leadElbow: [-0.42, 0, 0],
+    }),
+    plant: true,
+    key: 'feitan:wounded-arm',
+    blend: 0.12,
   }
 }

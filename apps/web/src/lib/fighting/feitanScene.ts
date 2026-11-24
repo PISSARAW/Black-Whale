@@ -11,6 +11,8 @@ import { createPainPackerReveal } from './painPackerReveal'
 import { createPainPackerConjuration } from './painPackerConjuration'
 import { createFeitanSolarCorona } from './feitanSolarCorona'
 import type { FightComfort } from './fightComfort'
+import { createFeitanBodyAccentScene } from './feitanBodyAccentScene'
+import { createFeitanHeatAtmosphere } from './feitanHeatAtmosphere'
 
 interface FeitanSceneOptions extends EffectSceneOptions {
   figureOf: (side: FightSide) => import('three').Object3D
@@ -24,6 +26,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
   const { THREE, scene } = options
   const umbrella = createUmbrellaFeintScene(options)
   const blade = createFeitanBladeScene(options)
+  const bodyAccents = createFeitanBodyAccentScene(options)
+  const atmosphere = createFeitanHeatAtmosphere(options)
   const clock = createFeitanPresentationClock(options.initial)
   const reducedMotion = () =>
     options.reducedMotion?.() ??
@@ -119,6 +123,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     sync(state: FightState, _seconds: number) {
       blade.sync(state, _seconds)
       umbrella.sync(state)
+      bodyAccents.sync(state)
+      atmosphere.sync(state, _seconds)
       const frames = clock(state)
       for (const side of ['player', 'opponent'] as const) {
         syncArmour(side, state, frames)
@@ -128,6 +134,8 @@ export function createFeitanScene(options: FeitanSceneOptions): FighterEffectSce
     dispose() {
       blade.dispose()
       umbrella.dispose()
+      bodyAccents.dispose()
+      atmosphere.dispose()
       for (const drawn of Object.values(held)) {
         restorePainPackerWearer(drawn.armour)
         drawn.outfit.dispose()

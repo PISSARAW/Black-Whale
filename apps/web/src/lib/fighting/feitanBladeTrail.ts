@@ -14,9 +14,9 @@ interface Trace {
 export function createFeitanBladeTrail(options: EffectSceneOptions) {
   const { THREE, scene } = options
   const material = new THREE.MeshBasicMaterial({
-    color: '#e0e6eb',
+    color: '#f4f7fb',
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.46,
     depthWrite: false,
     side: THREE.DoubleSide,
     fog: false,

@@ -41,6 +41,8 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   const shapeFor = (projectile: FightProjectile) => {
     const key = franklinBullet(projectile)
       ? 'franklin-bullet'
+      : feitanSpike(projectile)
+        ? 'feitan-spike'
       : handgunBullet(projectile)
         ? 'handgun'
         : projectile.shape
@@ -61,6 +63,22 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
         : options.glow(colour, 1)
     const mesh = new THREE.Mesh(shapeFor(projectile), material)
     mesh.name = `fight-projectile:${projectile.id}`
+    if (feitanSpike(projectile)) {
+      const burst = new THREE.Group()
+      burst.name = 'feitan-spike-burst'
+      for (let i = 0; i < 8; i++) {
+        const ray = new THREE.Mesh(
+          options.geometry(new THREE.BoxGeometry(0.34, 0.009, 0.009)),
+          options.glow(0xf4f7fb, 0.42),
+        )
+        ray.rotation.z = (i * Math.PI) / 4
+        ray.position.x = Math.cos(ray.rotation.z) * 0.18
+        ray.position.y = Math.sin(ray.rotation.z) * 0.18
+        burst.add(ray)
+      }
+      mesh.add(burst)
+      mesh.userData.feitanBurst = burst
+    }
     if (projectile.shuCharged) {
       const aura = new THREE.Mesh(mesh.geometry, options.glow(0xffe1a3, 0.4))
       aura.scale.setScalar(1.2)
@@ -90,6 +108,11 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
       mesh.rotation.z = projectileZRotation(projectile, seconds)
+      const burst = mesh.userData.feitanBurst as import('three').Group | undefined
+      if (burst) {
+        burst.visible = projectile.age < 8 && (options.comfort?.().flashes ?? true)
+        burst.scale.setScalar(0.55 + projectile.age * 0.12)
+      }
     }
     for (const [id, mesh] of meshes) {
       if (active.has(id)) continue
@@ -144,6 +167,11 @@ function projectileGeometry(
   if (projectile.shape === 'eye') return geometry(new THREE.TorusGeometry(0.2, 0.065, 5, 12))
   if (handgunBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.016, 0.08, 3, 7))
   if (franklinBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.019, 0.18, 3, 7))
+  if (feitanSpike(projectile)) {
+    const spike = new THREE.ConeGeometry(0.042, 0.48, 8)
+    spike.rotateZ(-Math.PI / 2)
+    return geometry(spike)
+  }
   if (projectile.shape === 'bullet') return geometry(new THREE.CapsuleGeometry(0.055, 0.3, 3, 7))
   if (projectile.shape === 'stone') {
     const stone = new THREE.DodecahedronGeometry(0.24, 0)
@@ -159,8 +187,13 @@ function handgunBullet(projectile: FightProjectile): boolean {
 }
 
 function projectileZRotation(projectile: FightProjectile, seconds: number): number {
+  if (feitanSpike(projectile)) return projectile.velocityX < 0 ? Math.PI : 0
   if (handgunBullet(projectile) || franklinBullet(projectile)) return -Math.PI / 2
   return projectile.shape === 'card' ? seconds * 8 : seconds * 2
+}
+
+function feitanSpike(projectile: FightProjectile): boolean {
+  return projectile.fighterId === 'feitan' && projectile.shape === 'bullet'
 }
 
 function franklinBullet(projectile: FightProjectile): boolean {

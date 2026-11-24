@@ -8,22 +8,21 @@ import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
 import { tuneBeyondMoveset } from './beyondMoveset'
+import { equipmentMoveResources } from './equipmentMoveResources'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
 import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
 import { tuneKallutoMoveset } from './kallutoMoveset'
 import { illumiBodyFree } from './illumiState'
 import { tuneVoconteMoveset } from './voconteMoveset'
-import { voconteMoveResources } from './voconteDoorAction'
 import { illumiMoveReadiness } from './illumiPresentation'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
 import { tuneIllumiMoveset } from './illumiMoveset'
-import { illumiResources } from './illumiAccess'
 import { tuneMachiMoveset } from './machiMoveset'
 import { machiBindReady } from './machiThread'
 import { tuneZakuroMoveset, zakuroMoveReady } from './bloodyMaryMoveset'
 import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
-import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
+import { tuneBiohazardMoveset } from './biohazardMoveset'
 import { preparedSource, preparedActionReady } from './preparationActions'
 import { tunePreparationMoveset } from './preparationMoveset'
 import { preparationCheck } from './preparationRequirements'
@@ -243,12 +242,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (move.id === 'machi:neutralSpecial' && !fighter.openWounds) return false
-  const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
-  if (door !== null) return door
-  const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
-  if (needles !== null) return needles && fighter.aura >= move.auraCost
-  const biohazard = biohazardMoveResources(fighter, move.id)
-  if (biohazard !== null) return biohazard
+  const equipment = equipmentMoveResources(fighter, move)
+  if (equipment !== null) return equipment
   return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
 }
 

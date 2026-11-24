@@ -18,6 +18,13 @@ droite. Une courte trace suit la lame réelle pendant les tailles actives.
 `feitanLocomotion.ts` abaisse les appuis par les hanches et les genoux, avec un
 bras armé fléchi pendant les déplacements et les bonds.
 
+La garde au repos reprend désormais la silhouette emblématique : sabre gauche
+horizontal devant le torse, main libre relevée et index articulé par un accent
+dédié. `feitanSpeedScene.ts` ajoute trois rémanences de corps entier par dash,
+des lignes de vitesse, de la poussière au départ et de très brèves occultations
+aux frames 2–3 et 7. La collision continue son déplacement normal pendant ces
+occultations : il ne s'agit ni d'une téléportation ni d'une invulnérabilité.
+
 La comparaison avec la première vidéo corrige le bras armé vers 0:58 et les
 appuis bas vers 1:57. Dans la seconde, les passages vers 1:02–1:07 guident la
 prise du manche à la bouche et la toile bordeaux portant un crâne noir. Le
@@ -30,7 +37,7 @@ n’accorde ni bouclier ni invulnérabilité. Le tir possède sa propre pose de 
 Avant + L, bas + L et arrière + L sont des frappes physiques sans dépense d’aura,
 utilisables en Zetsu et soumises à la présence de l’arme. Leurs noms, coûts,
 portées et durées sont des adaptations du duel, pas des mesures de l’animé.
-La marche avant passe de 36,38 à 43,28 unités/s, soit environ +19 %.
+La marche avant passe de 36,38 à environ 46,7 unités/s, soit environ +28 %.
 Le recul conserve 96 % de cette vitesse. Le dash avant culmine à 140 unités/s
 sur 14 frames ; le retrait culmine à 124 unités/s sur 12 frames. Ces accélérations
 restent des déplacements physiques soumis aux collisions et aux interruptions.
@@ -49,6 +56,13 @@ l’espace et au moins 20 % de sa vie perdue (minimum 20 PV), elle peut prépare
 Pain Packer ; le soleil exige ensuite sa tenue
 chargée. Les règles de [Pain Packer et Rising Sun](./FEITAN_PRESENTATION.md)
 continuent de gérer les blessures, la protection et la chaleur.
+
+À partir de 20 % de dégâts réellement mémorisés, la présentation laisse pendre
+le bras libre, affiche des marques de sang et durcit le regard avant la tenue.
+Pain Packer se révèle par une couture rouge-orange et des marques de pression.
+Rising Sun ajoute une teinte de fournaise, des bandes de chaleur, des braises et
+une suspension purement visuelle de la victime touchée. La fatalité conserve sa
+carbonisation, ses cendres et sa dissolution terminale.
 
 Ces corrections ont été introduites avec `clash-combat-65-feitan-motion` et sont
 conservées dans les rulesets suivants.

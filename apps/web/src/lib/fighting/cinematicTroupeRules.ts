@@ -1,4 +1,5 @@
 import { rulesFor, selfPart, targetPart, pair, node, rig } from './cinematicRules'
+import { motionOf } from './fighterMovement'
 
 export const HISOKA_CAMERA_RULES = rulesFor('hisoka', [
   {
@@ -36,6 +37,34 @@ export const HISOKA_CAMERA_RULES = rulesFor('hisoka', [
 ])
 export { CHROLLO_CAMERA_RULES } from './cinematicChrolloRules'
 export const FEITAN_CAMERA_RULES = rulesFor('feitan', [
+  {
+    id: 'speed',
+    label: ['Feitan · Accélération', 'Feitan · Acceleration'],
+    select: (c) => motionOf(c.self).dash?.frame ?? 0,
+    edge: 'increase',
+    anchors: (c) => [rig(c.side, 'body'), rig(c.other, 'body')],
+    kind: 'body',
+    priority: 1.7,
+    duration: 24,
+    strength: 0.72,
+  },
+  {
+    id: 'umbrella',
+    label: ['Feitan · Écran du parapluie', 'Feitan · Umbrella screen'],
+    select: (c) => c.self.umbrellaFeintFrames ?? 0,
+    edge: 'change',
+    anchors: (c) => [node(`feitan-umbrella:${c.side}`, rig(c.side, 'hands'))],
+    priority: 2.2,
+    duration: 42,
+  },
+  {
+    id: 'spike',
+    label: ['Feitan · Pointe du parapluie', 'Feitan · Umbrella spike'],
+    select: (c) => c.self.attack?.kind === 'ranged' && Boolean(c.self.attack.projectileSpawned),
+    anchors: selfPart('hands'),
+    priority: 2.5,
+    duration: 32,
+  },
   {
     id: 'injured',
     label: ['Pain Packer · Blessure accumulée', 'Pain Packer · Injury banked'],

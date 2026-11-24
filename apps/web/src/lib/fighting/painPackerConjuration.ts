@@ -5,7 +5,7 @@ export function createPainPackerConjuration(THREE: EffectSceneOptions['THREE']) 
   const root = new THREE.Group()
   root.name = 'pain-packer-conjuration'
   const material = new THREE.MeshBasicMaterial({
-    color: 0xb178ce,
+    color: 0xff4b18,
     transparent: true,
     opacity: 0,
     blending: THREE.AdditiveBlending,
@@ -22,6 +22,15 @@ export function createPainPackerConjuration(THREE: EffectSceneOptions['THREE']) 
     root.add(mesh)
     return geometry
   })
+  const glyphGeometry = new THREE.BoxGeometry(0.018, 0.34, 0.012)
+  const glyphs = Array.from({ length: 5 }, (_, index) => {
+    const glyph = new THREE.Mesh(glyphGeometry, material)
+    glyph.name = 'pain-packer-pressure-mark'
+    glyph.position.set((index - 2) * 0.17, 1.15 + (index % 2) * 0.3, 0.4)
+    glyph.rotation.z = (index - 2) * 0.08
+    root.add(glyph)
+    return glyph
+  })
   root.visible = false
   return {
     root,
@@ -31,11 +40,15 @@ export function createPainPackerConjuration(THREE: EffectSceneOptions['THREE']) 
       const t = frame / PAIN_PACKER_ENTRY_FRAMES
       material.opacity = Math.sin(Math.PI * t) * 0.45
       root.rotation.y = t * Math.PI * 1.4
+      glyphs.forEach((glyph, index) => {
+        glyph.scale.y = 0.5 + Math.sin(t * Math.PI * 3 + index) * 0.3
+      })
       return 1.08 - feitanEase(t) * 0.18
     },
     dispose() {
       root.removeFromParent()
       curves.forEach((geometry) => geometry.dispose())
+      glyphGeometry.dispose()
       material.dispose()
     },
   }

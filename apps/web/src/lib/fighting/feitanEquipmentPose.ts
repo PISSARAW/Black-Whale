@@ -12,7 +12,7 @@ const UMBRELLA_SHOT = feitanStrike({
   },
   contact: {
     chest: [0.02, -0.08, 0],
-    rearShoulder: [-1.35, 0, -0.12],
+    rearShoulder: [-1.78, 0, -0.12],
     rearElbow: [-0.2, 0, 0],
     rearWrist: [0.1, 0, 0],
     leadShoulder: [-0.45, 0, 0.15],

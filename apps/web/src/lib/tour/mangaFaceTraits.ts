@@ -18,6 +18,13 @@ import { addShikakuEarpiece } from './mangaShikaku'
 import { addSanbicaMedicalHeadwear } from './mangaSanbica'
 import { addTokarineFace } from './mangaTokarine'
 import { addFakeWobleFace } from './mangaFakeWoble'
+import { addOitoFaceAndHair } from './mangaOito'
+import { addNasubiRoyalFace } from './mangaNasubi'
+import { addUnmaFaceAndHair } from './mangaUnma'
+import { addDuazulGentleFaceAndWaves } from './mangaDuazul'
+import { addTangZhaoLiPortraitFace } from './mangaTangZhaoLi'
+import { addMomozeElaboratePonytail } from './mangaMomoze'
+import { addKurtonAngularFace } from './mangaKurton'
 
 export const MANGA_FACE_SIGNATURES = new Set([
   'lips-full',
@@ -233,6 +240,13 @@ const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => vo
   'sanbica-norton': addSanbicaMedicalHeadwear,
   tokarine: addTokarineFace,
   'oito-nephew-fake-woble': addFakeWobleFace,
+  'queen-oito': addOitoFaceAndHair,
+  'nasubi-hui-guo-rou': addNasubiRoyalFace,
+  'unma-hui-guo-rou': addUnmaFaceAndHair,
+  'duazul-hui-guo-rou': addDuazulGentleFaceAndWaves,
+  'tang-zhao-li-hui-guo-rou': addTangZhaoLiPortraitFace,
+  'prince-momoze': addMomozeElaboratePonytail,
+  kurton: addKurtonAngularFace,
 }
 
 export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {

@@ -2,8 +2,8 @@
   "declared": [
     {
       "id": "nasubi-hui-guo-rou",
-      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.18 },
-      "head": { "face": "round", "hairStyle": "shaved", "expression": "neutral" },
+      "body": { "build": "broad", "height": 1.02, "frame": "adult", "shoulders": 1.22 },
+      "head": { "face": "round", "hairStyle": "chonmage", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
         "source": "planches n&b ch. 349, 358 ; pourpre et or comme couleurs de cour kakine, tenues stables sur toute la famille royale",
@@ -18,18 +18,18 @@
       },
       "attire": "kakin-robe",
       "signatures": ["crown"],
-      "verified": { "chapterIds": ["ch-349", "ch-358"], "status": "confirmed" },
-      "note": "Fidélisation ch. 358 : roi glabre au visage rond et double menton, casque/couronne bulbeuse kakine ornée de cabochons, manteau impérial ouvert sur pantalon et grand plastron pectoral cérémoniel."
+      "verified": { "chapterIds": ["ch-340", "ch-349", "ch-358"], "status": "confirmed" },
+      "note": "Références fournies : roi obèse au visage rond et au double menton, petits yeux étroits soulignés de longs cils, sourcils arqués, moustache aux pointes recourbées et chonmage sombre. Sa tenue traditionnelle est volontairement surchargée : coiffe royale à cabochons, manteau ouvert serti de joyaux, grand plastron à rangs de plumes, collier et bracelets d'apparat."
     },
     {
       "id": "unma-hui-guo-rou",
-      "body": { "build": "broad", "height": 0.98, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "bun", "expression": "severe" },
+      "body": { "build": "broad", "height": 1.01, "frame": "adult", "shoulders": 1.08 },
+      "head": { "face": "square", "hairStyle": "bob", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 374 ; palette de cour assombrie pour l'aînée",
-        "skin": "0xd0a98d",
-        "hair": "0x2c2724",
+        "source": "Portrait ch. 374 et apparition physique ch. 403 ; cheveux blonds et peau claire canoniques, palette de robe choisie pour les planches monochromes.",
+        "skin": "0xe4c7aa",
+        "hair": "0xd8c38f",
         "attire": {
           "jacket": "0x3c3550",
           "shirt": "0xe6e0d4",
@@ -39,18 +39,18 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
-      "note": "Première épouse : le port est massif et droit, le visage lourd et immobile. La coiffure exacte reste à confirmer ; le chignon strict est ce que les planches recensées laissent lire."
+      "verified": { "chapterIds": ["ch-374", "ch-403"], "status": "confirmed" },
+      "note": "Le modèle suit l'apparence physique définitive du ch. 403 plutôt que la silhouette préliminaire du ch. 349 : cheveux blonds peignés vers l'arrière, coupés en bob près des épaules, visage rectangulaire, nez large et plat, peau claire et robe de cour à grands volants superposés."
     },
     {
       "id": "duazul-hui-guo-rou",
       "body": { "build": "average", "height": 1.0, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "severe" },
+      "head": { "face": "narrow", "hairStyle": "bun", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 366, 374 ; bleu de cour, choix éditorial stable",
-        "skin": "0xd8b49a",
-        "hair": "0x241f26",
+        "source": "Références manga ch. 366 et description fournie le 2026-11-24 ; cheveux clairs canoniques, bleu de cour conservé comme choix éditorial.",
+        "skin": "0xe1c2a7",
+        "hair": "0xd7c39a",
         "attire": {
           "jacket": "0x27364e",
           "shirt": "0xe8e4da",
@@ -60,18 +60,18 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-366", "ch-374"], "status": "partial" },
-      "note": "Mère de quatre prétendants sérieux : mûre, altière, le regard dur d'une stratège. Les détails sous la silhouette restent à confirmer."
+      "verified": { "chapterIds": ["ch-366", "ch-374"], "status": "confirmed" },
+      "note": "Références fournies : reine aux cheveux clairs et ondulés, relevés au sommet et déployés en mèches souples de chaque côté du visage. Son visage étroit garde une expression constamment douce. Elle porte une tenue formelle de cour à col haut, dans le même registre que ses enfants."
     },
     {
       "id": "tang-zhao-li-hui-guo-rou",
-      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bun", "expression": "neutral" },
+      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "curly", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 374 ; tenue traditionnelle sobre, palette éteinte",
-        "skin": "0xdfbb9b",
-        "hair": "0x231e1c",
+        "source": "Portrait canonique ch. 374 et description fournie le 2026-11-24 ; peau foncée et cheveux blonds explicitement établis, tenue de cour choisie faute d'apparition physique.",
+        "skin": "0x7a4c38",
+        "hair": "0xe2c879",
         "attire": {
           "jacket": "0x3f4740",
           "shirt": "0xe9e3d5",
@@ -81,8 +81,8 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
-      "note": "Réservée, chignon serré : la mère effacée d'un fils calme. À confirmer sous la silhouette."
+      "verified": { "chapterIds": ["ch-374"], "status": "confirmed" },
+      "note": "Le modèle suit le portrait du ch. 374 plutôt que la silhouette préliminaire du ch. 349 : peau foncée, grands yeux sombres, nez long et fin, cheveux blonds courts formant une couronne de boucles souples. La robe reste une reconstruction sobre, aucune apparition physique ne montrant encore sa tenue complète."
     },
     {
       "id": "sevanti-hui-guo-rou",
@@ -107,24 +107,27 @@
     },
     {
       "id": "queen-oito",
-      "body": { "build": "slim", "height": 0.95, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "anxious" },
+      "body": { "build": "slim", "height": 1.07, "frame": "adult", "shoulders": 0.92 },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "anxious" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 359, 361 ; robe simple et claire, loin du faste des aînées",
-        "skin": "0xf0dfc9",
-        "hair": "0x2a2530",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-24 ; cheveux noirs canoniques et kimono bleu clair décrit, avec palette choisie pour les planches monochromes.",
+        "skin": "0xe8cdb7",
+        "hair": "0x1c1d24",
         "attire": {
-          "jacket": "0x9aa6b2",
-          "shirt": "0xf2eee5",
-          "trousers": "0x6e7987",
-          "accent": "0xb9c4cd"
+          "jacket": "0xa9c7d7",
+          "shirt": "0xe9f1f2",
+          "trousers": "0x8daebe",
+          "accent": "0x738fa2"
         }
       },
-      "attire": "gown",
+      "attire": "kimono",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
-      "note": "La huitième et la plus jeune : fine, cheveux sombres mi-longs et raides, frange, grands yeux inquiets. Woble contre elle — les deux silhouettes vont ensemble, ce qui est la raison du gabarit `infant`."
+      "verified": {
+        "chapterIds": ["ch-348", "ch-349", "ch-358", "ch-361"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : femme grande et mince au visage allongé, aux yeux noirs ovales et à l'expression inquiète. Ses cheveux noirs ondulés sont tirés derrière les oreilles et rassemblés bas dans le dos ; elle les porte parfois en chignon ou en queue-de-cheval, variantes non représentées séparément. Son apparence principale utilise un kimono bleu clair à motifs discrets et large obi."
     },
     {
       "id": "prince-benjamin",
@@ -407,24 +410,24 @@
     },
     {
       "id": "prince-momoze",
-      "body": { "build": "slim", "height": 0.9, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "ponytail", "expression": "anxious" },
+      "body": { "build": "slim", "height": 0.88, "frame": "adult", "shoulders": 0.9 },
+      "head": { "face": "round", "hairStyle": "ponytail", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 350, 359 et couleurs officielles ; longs cheveux orange en queue-de-cheval",
-        "skin": "0xf0dfcb",
-        "hair": "0xd87a3f",
+        "source": "Références manga et description fournies le 2026-11-24 ; cheveux clairs canoniques, palette de robe choisie pour les planches monochromes.",
+        "skin": "0xefd5c2",
+        "hair": "0xe1c48f",
         "attire": {
-          "jacket": "0xa8b0b8",
-          "shirt": "0xf4f0e7",
-          "trousers": "0x77808a",
-          "accent": "0xc7ced4"
+          "jacket": "0xe6d9d0",
+          "shirt": "0x30303a",
+          "trousers": "0xcbbdb7",
+          "accent": "0xd4b96e"
         }
       },
       "attire": "gown",
-      "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "partial" },
-      "note": "Menue, avec de longs cheveux orange attachés en queue-de-cheval. `adult` avec une hauteur basse plutôt que `child` : une adolescente n'a pas les proportions d'un enfant."
+      "signatures": ["tiara"],
+      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "confirmed" },
+      "note": "Références fournies : jeune femme petite aux traits délicats, grands yeux noirs et longs cheveux clairs brillants. La coiffure associe une frange arrondie, deux longues anglaises devant les épaules et une queue-de-cheval très volumineuse en cascade. Le modèle combine la robe trapèze raffinée du festival avec la tiare, le collier et les manches Juliette du banquet royal."
     },
     {
       "id": "prince-marayam",
@@ -818,6 +821,27 @@
         "status": "partial"
       },
       "note": "Références fournies : cheveux en flammes à implantation anguleuse, visage allongé, yeux mi-clos cernés de plusieurs plis, sourcils froncés et costume sombre avec chemise, cravate et insigne H. La couleur des cheveux reste un choix de palette pour une référence manga en noir et blanc."
+    },
+    {
+      "id": "kurton",
+      "body": { "build": "average", "height": 1.01, "frame": "adult", "shoulders": 1.04 },
+      "head": { "face": "narrow", "hairStyle": "military", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies le 2026-11-24 ; costume noir canonique, palette choisie pour les planches monochromes.",
+        "skin": "0xd8b49a",
+        "hair": "0x242329",
+        "attire": {
+          "jacket": "0x1d2026",
+          "shirt": "0xf0eee8",
+          "trousers": "0x17191e",
+          "accent": "0x343842"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-359", "ch-360"], "status": "confirmed" },
+      "note": "Références fournies : garde royal aux cheveux courts fortement hérissés, sourcils très épais et anguleux, yeux étroits et nez long. Il porte le costume noir, la chemise claire et la cravate sombre standards de la garde royale."
     },
     {
       "id": "melody",

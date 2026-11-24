@@ -36,6 +36,146 @@ function mesh(root: THREE.Object3D, name: string) {
   return node as THREE.Mesh
 }
 describe('manga cast shared by the visit and Fighting', () => {
+  it('draws Kurton with short spikes, heavy angular brows and a royal bodyguard suit', () => {
+    const appearance = seen('kurton')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'kurton',
+      build: 'average',
+      height: 1.01,
+      shoulders: 1.04,
+      face: 'narrow',
+      hairStyle: 'military',
+      clothing: 'suit',
+      expression: 'neutral',
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', nose: 1.65, brow: 1.6 })
+    expect(model.root.getObjectByName('kurton-thick-brows-and-long-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('kurton-short-spiky-hair')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-layered-hair')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('kurton-hunter-badge')).toBeTruthy()
+  })
+  it('draws Momoze with black eyes, elaborate fair ponytail, ringlets and royal banquet dress', () => {
+    const appearance = seen('prince-momoze')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'prince-momoze',
+      build: 'slim',
+      height: 0.88,
+      shoulders: 0.9,
+      face: 'round',
+      hairStyle: 'ponytail',
+      clothing: 'gown',
+      expression: 'neutral',
+      signatures: ['tiara'],
+    })
+    expect(look).toMatchObject({ eyes: 'doll' })
+    expect(model.root.getObjectByName('momoze-voluminous-ponytail')).toBeTruthy()
+    expect(model.root.getObjectByName('momoze-front-ringlets')).toBeTruthy()
+    expect(model.root.getObjectByName('momoze-lustrous-hair-shine')).toBeTruthy()
+    expect(model.root.getObjectByName('momoze-dark-blouse')).toBeTruthy()
+    expect(model.root.getObjectByName('momoze-juliet-sleeve')).toBeTruthy()
+    expect(model.root.getObjectByName('momoze-refined-necklace')).toBeTruthy()
+    expect(model.root.getObjectByName('signature-tiara')).toBeTruthy()
+    expect(model.root.getObjectByName('court-gown')).toBeTruthy()
+  })
+  it('draws Tang Zhao Li from her finalized portrait with dark skin, large eyes and blonde curls', () => {
+    const appearance = seen('tang-zhao-li-hui-guo-rou')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'tang-zhao-li-hui-guo-rou',
+      build: 'slim',
+      height: 0.98,
+      face: 'narrow',
+      hairStyle: 'curly',
+      clothing: 'gown',
+      expression: 'neutral',
+      skin: 0x7a4c38,
+      hair: 0xe2c879,
+    })
+    expect(look).toMatchObject({ eyes: 'doll', nose: 0.8, brow: 0.7 })
+    expect(model.root.getObjectByName('tang-zhao-li-thin-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('tang-zhao-li-blonde-curl-highlights')).toBeTruthy()
+    expect(model.root.getObjectByName('court-gown')).toBeTruthy()
+  })
+  it('draws Duazul with fair side waves, a gentle face and formal high-collared dress', () => {
+    const appearance = seen('duazul-hui-guo-rou')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'duazul-hui-guo-rou',
+      build: 'average',
+      height: 1,
+      face: 'narrow',
+      hairStyle: 'bun',
+      clothing: 'gown',
+      expression: 'neutral',
+    })
+    expect(look).toMatchObject({ eyes: 'almond', hair: 'loose-bun', brow: 0.75 })
+    expect(model.root.getObjectByName('duazul-fair-wavy-updo')).toBeTruthy()
+    expect(model.root.getObjectByName('duazul-swept-forehead')).toBeTruthy()
+    expect(model.root.getObjectByName('duazul-wave-highlights')).toBeTruthy()
+    expect(model.root.getObjectByName('duazul-standing-collar')).toBeTruthy()
+    expect(model.root.getObjectByName('duazul-collar-seam')).toBeTruthy()
+    expect(model.root.getObjectByName('court-gown')).toBeTruthy()
+  })
+  it('draws Unma from her finalized portrait with a combed blonde bob, flat nose and frilly dress', () => {
+    const appearance = seen('unma-hui-guo-rou')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'unma-hui-guo-rou',
+      build: 'broad',
+      height: 1.01,
+      shoulders: 1.08,
+      face: 'square',
+      hairStyle: 'bob',
+      clothing: 'gown',
+      expression: 'neutral',
+    })
+    expect(look).toMatchObject({ eyes: 'almond', hair: 'catalogue' })
+    expect(model.root.getObjectByName('unma-wide-flat-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('unma-swept-forehead')).toBeTruthy()
+    expect(model.root.getObjectByName('unma-combed-back-hair-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('unma-layered-neck-ruffles')).toBeTruthy()
+    expect(model.root.getObjectByName('unma-frill-cuff')).toBeTruthy()
+    expect(model.root.getObjectByName('court-gown')).toBeTruthy()
+  })
+  it('draws Nasubi as an obese jeweled king with narrow eyes, curled facial hair and a topknot', () => {
+    const appearance = seen('nasubi-hui-guo-rou')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'nasubi-hui-guo-rou',
+      build: 'broad',
+      height: 1.02,
+      shoulders: 1.22,
+      face: 'round',
+      hairStyle: 'chonmage',
+      clothing: 'kakin-robe',
+      signatures: ['crown'],
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', brow: 1.4 })
+    expect(model.root.getObjectByName('nasubi-topknot')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-curled-brows-lashes-moustache')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-cheek-curls')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-pectoral-feathers')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-necklace-jewel')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-coat-gem')).toBeTruthy()
+    expect(model.root.getObjectByName('nasubi-baggy-trouser')).toBeTruthy()
+    expect(model.root.getObjectByName('signature-crown')).toBeTruthy()
+    expect(model.root.getObjectByName('kakin-double-chin')).toBeTruthy()
+  })
   it('draws Borksen from the supplied manga reference', () => {
     const appearance = seen('borksen')
     const profile = humanProfile(appearance)
@@ -355,6 +495,29 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(model.root.getObjectByName('fake-woble-button-nose')).toBeTruthy()
     expect(model.root.getObjectByName('fake-woble-baby-romper')).toBeTruthy()
     expect(model.root.getObjectByName('fake-woble-round-collar')).toBeTruthy()
+  })
+  it('draws Oito tall and slim with oval eyes, swept waves and a light patterned kimono', () => {
+    const appearance = seen('queen-oito')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'queen-oito',
+      build: 'slim',
+      height: 1.07,
+      shoulders: 0.92,
+      face: 'narrow',
+      hairStyle: 'slicked-back',
+      clothing: 'kimono',
+      expression: 'anxious',
+    })
+    expect(look).toMatchObject({ eyes: 'almond' })
+    expect(model.root.getObjectByName('oito-oval-eye')).toBeTruthy()
+    expect(model.root.getObjectByName('oito-swept-wave-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('oito-low-ponytail')).toBeTruthy()
+    expect(model.root.getObjectByName('attire-kimono')).toBeTruthy()
+    expect(model.root.getObjectByName('attire-obi')).toBeTruthy()
+    expect(model.root.getObjectByName('oito-kimono-pattern')).toBeTruthy()
   })
   it('shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-salesale') })

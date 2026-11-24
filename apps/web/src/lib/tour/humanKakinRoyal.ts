@@ -101,47 +101,47 @@ export function buildKakinRobe(hang: KakinHang): void {
   for (const side of [-1, 1]) {
     body({
       key: 'attire:kakin-coat-flank',
-      make: () => new THREE.BoxGeometry(0.14, 0.76, 0.28),
+      make: () => new THREE.BoxGeometry(0.19, 0.76, 0.34),
       material: paint.cloth,
-      at: [side * 0.22, 0.76, 0],
+      at: [side * 0.285, 0.76, 0],
       name: side === -1 ? 'attire-kakin-robe' : undefined,
     })
     body({
       key: 'attire:kakin-coat-trim',
       make: () => new THREE.PlaneGeometry(0.05, 0.76),
       material: paint.accent,
-      at: [side * 0.15, 0.76, 0.142],
+      at: [side * 0.205, 0.76, 0.172],
     })
   }
 
   // Pan arrière du manteau d'apparat
   body({
     key: 'attire:kakin-coat-back',
-    make: () => new THREE.PlaneGeometry(0.42, 0.76),
+    make: () => new THREE.PlaneGeometry(0.56, 0.76),
     material: paint.cloth,
-    at: [0, 0.76, -0.142],
+    at: [0, 0.76, -0.172],
   })
 
   // Grand plastron pectoral cérémoniel (écailles d'or)
   body({
     key: 'attire:kakin-pectoral-bib',
-    make: () => new THREE.BoxGeometry(0.34, 0.22, 0.03),
+    make: () => new THREE.BoxGeometry(0.55, 0.27, 0.03),
     material: paint.accent,
-    at: [0, 1.25, 0.185],
+    at: [0, 1.24, 0.245],
     name: 'kakin-pectoral',
   })
   body({
     key: 'attire:kakin-pectoral-collar',
-    make: () => new THREE.TorusGeometry(0.14, 0.016, 4, 12, Math.PI),
+    make: () => new THREE.TorusGeometry(0.21, 0.018, 4, 16, Math.PI),
     material: paint.accent,
-    at: [0, 1.38, 0.07],
+    at: [0, 1.39, 0.1],
     turn: [0.4, 0, 0],
   })
 
   // Ceinture d'apparat et boucle circulaire médaillon
   body({
     key: 'attire:kakin-belt',
-    make: () => new THREE.BoxGeometry(0.44, 0.07, 0.26),
+    make: () => new THREE.BoxGeometry(0.62, 0.08, 0.34),
     material: paint.cloth,
     at: [0, 0.84, 0],
   })
@@ -149,6 +149,6 @@ export function buildKakinRobe(hang: KakinHang): void {
     key: 'attire:kakin-belt-medallion',
     make: () => new THREE.CircleGeometry(0.055, 8),
     material: paint.accent,
-    at: [0, 0.84, 0.145],
+    at: [0, 0.84, 0.185],
   })
 }

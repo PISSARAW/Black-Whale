@@ -42,6 +42,11 @@ import { addShikakuUniform } from './mangaShikaku'
 import { addSanbicaMedicalGown } from './mangaSanbica'
 import { addTokarineStripedTop } from './mangaTokarine'
 import { addFakeWobleRomper } from './mangaFakeWoble'
+import { addOitoKimono } from './mangaOito'
+import { addNasubiRoyalOrnaments } from './mangaNasubi'
+import { addUnmaFrillyDress } from './mangaUnma'
+import { addDuazulFormalDress } from './mangaDuazul'
+import { addMomozeRoyalGown } from './mangaMomoze'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -199,6 +204,7 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   luini: addLuiniPatternedJacket,
   bill: addBodyguardReferenceSuit,
   basho: addBodyguardReferenceSuit,
+  kurton: addBodyguardReferenceSuit,
   saiyu: addSaiyuCostume,
   cluck: addCluckFeatherCostume,
   gel: addGelScallopedTop,
@@ -230,6 +236,11 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'sanbica-norton': addSanbicaMedicalGown,
   tokarine: addTokarineStripedTop,
   'oito-nephew-fake-woble': addFakeWobleRomper,
+  'queen-oito': addOitoKimono,
+  'nasubi-hui-guo-rou': addNasubiRoyalOrnaments,
+  'unma-hui-guo-rou': addUnmaFrillyDress,
+  'duazul-hui-guo-rou': addDuazulFormalDress,
+  'prince-momoze': addMomozeRoyalGown,
 }
 
 export function addMangaCharacterClothes(build: HumanClothesBuild): boolean {

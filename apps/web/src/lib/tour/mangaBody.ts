@@ -27,6 +27,8 @@ export function mangaBodyShape(profile: HumanProfile) {
     return { chest: 0.315, waist: 0.205, depth: 0.205, neck: frame.neck }
   if (profile.likeness === 'tokarine')
     return { chest: 0.3, waist: 0.255, depth: 0.2, neck: frame.neck }
+  if (profile.likeness === 'nasubi-hui-guo-rou')
+    return { chest: 0.325, waist: 0.315, depth: 0.255, neck: frame.neck }
   return {
     chest: mass[0] * profile.shoulders * frame.width,
     waist: mass[1] * frame.width,
@@ -37,6 +39,19 @@ export function mangaBodyShape(profile: HumanProfile) {
 
 export function mangaBodySections(profile: HumanProfile): ReadonlyArray<readonly [number, number]> {
   if (profile.likeness === 'prince-salesale') return SALESALE_SECTIONS
+  if (profile.likeness === 'nasubi-hui-guo-rou')
+    return [
+      [0, 0.7],
+      [0.31, 0.7],
+      [0.34, 0.82],
+      [0.355, 0.98],
+      [0.345, 1.13],
+      [0.33, 1.28],
+      [0.325, 1.35],
+      [0.29, 1.41],
+      [0.12, 1.49],
+      [0, 1.5],
+    ]
   const { chest, waist } = mangaBodyShape(profile)
   return [
     [0, 0.73],
